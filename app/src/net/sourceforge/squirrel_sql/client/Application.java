@@ -202,12 +202,18 @@ class Application implements IApplication
 	/**
 	 * Application is shutting down.
 	 */
-	public void shutdown()
+	public boolean shutdown()
 	{
 		s_log.info(s_stringMgr.getString("Application.shutdown",
 									Calendar.getInstance().getTime()));
 
-		_sessionWindowManager.closeAllSessions();
+		if (!_sessionWindowManager.closeAllSessions())
+		{
+			s_log.info(s_stringMgr.getString("Application.shutdownCancelled",
+					Calendar.getInstance().getTime()));
+			return false;
+		}
+
 		_pluginManager.unloadPlugins();
 
 		// Remember the currently selected entries in the
@@ -217,8 +223,8 @@ class Application implements IApplication
 		idx = _mainFrame.getDriversToolWindow().getSelectedIndex();
 		_prefs.setDriversSelectedIndex(idx);
 
- 		// No longer the first run of SQuirrel.
- 		_prefs.setFirstRun(false);
+		// No longer the first run of SQuirrel.
+		_prefs.setFirstRun(false);
 
 		_prefs.save();
 
@@ -285,6 +291,8 @@ class Application implements IApplication
 										Calendar.getInstance().getTime());
 		s_log.info(msg);
 		LoggerController.shutdown();
+
+		return true;
 	}
 
 	public PluginManager getPluginManager()
@@ -598,21 +606,21 @@ class Application implements IApplication
 
 		indicateNewStartupTask(splash, "Showing main window...");
 		_mainFrame.setVisible(true);
- 		_mainFrame.toFront();	// Required on Linux
+		_mainFrame.toFront();	// Required on Linux
 
 		new ConnectToStartupAliasesCommand(this).execute();
 
- 		if (_prefs.isFirstRun())
- 		{
- 			try
- 			{
- 				new ViewHelpCommand(this).execute();
- 			}
- 			catch (BaseException ex)
- 			{
- 				s_log.error("Error showing help window", ex);
- 			}
- 		}
+		if (_prefs.isFirstRun())
+		{
+			try
+			{
+				new ViewHelpCommand(this).execute();
+			}
+			catch (BaseException ex)
+			{
+				s_log.error("Error showing help window", ex);
+			}
+		}
 	}
 
 	/**
