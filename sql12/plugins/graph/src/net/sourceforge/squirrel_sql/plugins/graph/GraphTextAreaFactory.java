@@ -17,12 +17,13 @@ public class GraphTextAreaFactory
 
       _txtZoomColumns = new ZoomableColumnTextArea(toolTipProvider, zoomer, zoomColumsFont);
       _txtZoomColumns.setBackground(new Color(255,255,204));
+
    }
 
 
    public JComponent getComponent(boolean zoomEnabled)
    {
-       if(zoomEnabled)
+      if(zoomEnabled)
       {
          return _txtZoomColumns;
       }

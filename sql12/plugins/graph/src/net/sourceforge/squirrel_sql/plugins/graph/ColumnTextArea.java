@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.event.MouseEvent;
 
 
-public class ColumnTextArea extends JTextArea implements IColumnTextArea
+public class ColumnTextArea extends JTextArea
 {
    private TableToolTipProvider _toolTipProvider;
 
