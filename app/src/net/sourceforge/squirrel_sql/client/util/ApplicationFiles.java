@@ -18,6 +18,8 @@ package net.sourceforge.squirrel_sql.client.util;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.io.File;
+import java.io.FilenameFilter;
+import java.util.Arrays;
 
 import net.sourceforge.squirrel_sql.fw.util.IJavaPropertyNames;
 
@@ -41,6 +43,12 @@ public class ApplicationFiles
 
 	/** Documentation folder. */
 	private String _documentationDir;
+	
+	/** Flag for cleaning up execution log files on app entry. **/
+	private static boolean needExecutionLogCleanup = true;
+	
+	/** Flag for cleaning up debug log files on app entry. **/
+	private static boolean needDebugLogCleanup = true;
 
 	/**
 	 * Ctor.
@@ -130,8 +138,16 @@ public class ApplicationFiles
 	 */
 	public File getExecutionLogFile()
 	{
-		return new File(_userSettingsDir + File.separator + "logs"
-							+ File.separator + "squirrel-sql.log");
+		final String dirPath = _userSettingsDir + File.separator + "logs";
+		final String logBaseName = "squirrel-sql.log";
+		
+		if (needExecutionLogCleanup) {
+			// first time through this method in program, so go cleanup
+			// old log files
+			deleteOldFiles(dirPath, logBaseName);
+			needExecutionLogCleanup = false;
+		}
+		return new File(dirPath	+ File.separator + logBaseName);
 	}
 
 	/**
@@ -139,8 +155,16 @@ public class ApplicationFiles
 	 */
 	public File getJDBCDebugLogFile()
 	{
-		return new File(_userSettingsDir + File.separator + "logs"
-				+ File.separator + "jdbcdebug.log");
+		final String dirPath = _userSettingsDir + File.separator + "logs";
+		final String logBaseName = "jdbcdebug.log";
+		
+		if (needDebugLogCleanup) {
+			// first time through this method in program, so go cleanup
+			// old log files
+			deleteOldFiles(dirPath, logBaseName);
+			needDebugLogCleanup = false;
+		}
+		return new File(dirPath	+ File.separator + logBaseName);
 	}
 
 	/**
@@ -197,5 +221,69 @@ public class ApplicationFiles
 	public File getLicenceFile()
 	{
 		return new File(_documentationDir + File.separator + "licences/squirrel_licence.txt");
+	}
+	
+	/**
+	 * Internal method to remove old files such as log files.
+	 * The dirPath is the path name of the directory containing the files.
+	 * The fileBase is the base name of all files in the set to be culled,
+	 * i.e. this method removes old versions of files named <fileBase>*,
+	 * but not the file named <fileBase> or recent versions of that file.
+	 * It is assumed that files are named with dates such that the names of
+	 * older files are alphabetically before newer files.
+	 */
+	private void deleteOldFiles(String dirPath, String fileBase) {
+		
+		// the number of files to keep is arbitrarilly set here
+		final int numberToKeep = 3;
+		
+		// define filter to select only names using the fileBase
+		class OldFileNameFilter implements FilenameFilter {
+			String fBase;
+			OldFileNameFilter(String fileBase) {
+				fBase = fileBase;
+			}
+			public boolean accept (File dir, String name) {
+				if (name.startsWith(fBase))
+					return true;
+				return false;
+			}
+		}
+		
+		// get the directory
+		File dir = new File(dirPath);
+		
+		// create filename filter and attach to directory
+		OldFileNameFilter fileFilter = new OldFileNameFilter(fileBase);
+		
+		// get list of files using that base name
+		String fileNames[] = dir.list(fileFilter);
+		if (fileNames == null || fileNames.length <= numberToKeep)
+			return;	// not too many old files
+		
+		// we do not expect a lot of files in this directory,
+		// so just do things linearly
+		
+		// sort the list
+		Arrays.sort(fileNames);
+		
+		// If the file using the base name with no extention exists,
+		// it is first.  The other files are in order from oldest to newest.
+		// The set of files to delete is slightly different depending on
+		// whether the base name file exists or not.
+		int startIndex = 0;
+		int endIndex = fileNames.length - numberToKeep;
+		if (fileNames[0].equals(fileBase)) {
+			// since the base name file exists, we need to skip it
+			// and bump up the endIndex
+			startIndex = 1;
+			endIndex++;
+		}
+		
+		for (int i = startIndex; i < endIndex; i++) {
+			// delete the old file
+			File oldFile = new File(dirPath + File.separator + fileNames[i]);
+			oldFile.delete();
+		}
 	}
 }
