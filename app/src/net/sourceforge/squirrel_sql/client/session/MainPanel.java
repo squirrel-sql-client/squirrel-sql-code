@@ -43,6 +43,7 @@ import net.sourceforge.squirrel_sql.client.session.action.GotoPreviousResultsTab
 import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
 import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
+import net.sourceforge.squirrel_sql.client.session.action.EditWhereColsAction;
 import net.sourceforge.squirrel_sql.client.session.action.ShowNativeSQLAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ObjectTreeTab;
@@ -206,6 +207,7 @@ class MainPanel extends JPanel
 			actions.get(ShowNativeSQLAction.class).setEnabled(true);
 			actions.get(RefreshObjectTreeAction.class).setEnabled(false);
 			actions.get(SQLFilterAction.class).setEnabled(false);
+			actions.get(EditWhereColsAction.class).setEnabled(false);
 		}
 		else
 		{
@@ -215,6 +217,7 @@ class MainPanel extends JPanel
 			actions.get(ShowNativeSQLAction.class).setEnabled(false);
 			actions.get(RefreshObjectTreeAction.class).setEnabled(true);
 			actions.get(SQLFilterAction.class).setEnabled(true);
+			actions.get(EditWhereColsAction.class).setEnabled(true);
 		}
 		final boolean isAutoCommit = _session.getProperties().getAutoCommit();
 		actions.get(CommitAction.class).setEnabled(!isAutoCommit);

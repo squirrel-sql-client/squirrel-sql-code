@@ -68,6 +68,7 @@ import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeActio
 import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeItemAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
 import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
+import net.sourceforge.squirrel_sql.client.session.action.EditWhereColsAction;
 import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
 import net.sourceforge.squirrel_sql.client.session.action.SetDefaultCatalogAction;
 import net.sourceforge.squirrel_sql.client.session.action.ShowNativeSQLAction;
@@ -383,6 +384,7 @@ public final class ActionCollection
 		add(new ShowLoadedDriversOnlyAction(_app));
 		add(new ShowNativeSQLAction(_app));
 		add(new SQLFilterAction(_app));
+		add(new EditWhereColsAction(_app));
 		add(new TileAction(_app));
 		add(new TileHorizontalAction(_app));
 		add(new TileVerticalAction(_app));

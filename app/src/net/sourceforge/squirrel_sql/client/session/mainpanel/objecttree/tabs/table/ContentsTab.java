@@ -18,12 +18,12 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.ta
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.sql.DatabaseMetaData;
-import java.sql.Types;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
 import javax.swing.JOptionPane;
+import java.util.HashMap;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
@@ -36,13 +36,13 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.OrderByClausePanel;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterClauses;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.WhereClausePanel;
+import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
+
 /**
  * This is the tab showing the contents (data) of the table.
  *
@@ -61,6 +61,12 @@ public class ContentsTab extends BaseTableTab
 	 * on the first pass.
 	 */
 	String previousTableName = "";
+	
+	/**
+	 * This is the long name of the current table including everything that might be able to distinguish it
+	 * from another table of the same name in a different DB.
+	 */
+	String fullTableName = null;
 
 	/**
 	 * We need to save the name of the SessionProperties display class at the time
@@ -114,6 +120,26 @@ public class ContentsTab extends BaseTableTab
 	public String getHint()
 	{
 		return i18n.HINT;
+	}
+	
+	/**
+	 * Get the full name of this table, creating that name the first time we are called
+	 */
+	private String getFullTableName() {
+		if (fullTableName == null) {
+			try {
+				final ISession session = getSession();
+				final ITableInfo ti = getTableInfo();
+				
+				fullTableName = session.getAlias().getUrl()+":"+
+					ti.getCatalogName()+":"+ti.getSchemaName()+
+					":"+ti.getSimpleName();
+			}
+			catch (Exception e) {
+					// not sure what to do with this exception???
+			}
+		}
+		return fullTableName;
 	}
 
 	/**
@@ -305,10 +331,7 @@ public class ContentsTab extends BaseTableTab
 				// distinguish this table from other tables in the DB.
 				// We also include the URL used to connect to the DB so that
 				// the same table/DB on different machines is treated differently.
-				String fullTableName = session.getAlias().getUrl()+":"+
-					ti.getCatalogName()+":"+ti.getSchemaName()+
-					":"+ti.getSimpleName();
-				rsds.setContentsTabResultSet(rs, fullTableName, props.getLargeResultSetObjectInfo());
+				rsds.setContentsTabResultSet(rs, getFullTableName(), props.getLargeResultSetObjectInfo());
 
 				// KLUDGE:
 				// We want some info about the columns to be available for validating the
@@ -617,8 +640,21 @@ public class ContentsTab extends BaseTableTab
 	{
 
 		StringBuffer whereClause = new StringBuffer("");
+		
+		// For tables that have a lot of columns, the user may have limited the set of columns
+		// to use in the where clause, so see if there is a table of col names
+		HashMap colNames = (EditWhereCols.getInstance()).get(getFullTableName());
 
 		for (int i=0; i< colDefs.length; i++) {
+			
+			// if the user has said to not use this column, then skip it
+			if (colNames != null) {
+				// the user has restricted the set of columns to use.
+				// If this name is NOT in the list, then skip it; otherwise we fall through
+				// and use the column in the WHERE clause
+				if (colNames.get(colDefs[i].getLabel()) == null)
+					continue;	// go on to the next item
+			}
 
 			// for the column that is being changed, use the value
 			// passed in by the caller (which may be either the
@@ -633,7 +669,6 @@ public class ContentsTab extends BaseTableTab
 
 			// do different things depending on data type
 			String clause = CellComponentFactory.getWhereClauseValue(colDefs[i], value);	
-
 
 			if (clause != null && clause.length() > 0)
 				if (whereClause.length() == 0)
