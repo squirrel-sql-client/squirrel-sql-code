@@ -41,16 +41,19 @@ public class SessionFactory
 	/**
 	 * Create a new session.
 	 *
-	 * @param   app	Application API.
-	 * @param   driver	JDBC driver for session.
-	 * @param   alias	Defines URL to database.
-	 * @param   conn	Connection to database.
+	 * @param	app			Application API.
+	 * @param	driver		JDBC driver for session.
+	 * @param	alias		Defines URL to database.
+	 * @param	conn		Connection to database.
+	 * @param	user		User name connected with.
+	 * @param	password	Password for <TT>user</TT>
 	 *
-	 * @throws IllegalArgumentException if any parameter is null.
+	 * @throws IllegalArgumentException if IApplication, ISQLDriver, ISQLAlias,
+	 * 			or SQLConnection is passed as null.
 	 */
 	public static IClientSession createSession(IApplication app,
 									ISQLDriver driver, ISQLAlias alias,
-									SQLConnection conn)
+									SQLConnection conn, String user, String password)
 	{
 		if (app == null)
 		{
@@ -68,6 +71,6 @@ public class SessionFactory
 		{
 			throw new IllegalArgumentException("null SQLConnection passed");
 		}
-		return new Session(app, driver, alias, conn);
+		return new Session(app, driver, alias, conn, user, password);
 	}
 }

@@ -58,7 +58,7 @@ public class ConnectToAliasCommand implements ICommand
 	}
 
 	/** Logger for this class. */
-	private static ILogger s_log =
+	private static final ILogger s_log =
 		LoggerController.createLogger(ConnectToAliasCommand.class);
 
 	/** Application API. */
@@ -335,7 +335,9 @@ public class ConnectToAliasCommand implements ICommand
 
 			try
 			{
-				conn = mgr.getConnection(sqlDriver, _alias, _user, _password);
+				OpenConnectionCommand cmd = new OpenConnectionCommand(_app, _alias, _user, _password);
+				cmd.execute();
+				conn = cmd.getSQLConnection();
 				synchronized (this)
 				{
 					if (_stopConnection)
@@ -353,7 +355,8 @@ public class ConnectToAliasCommand implements ICommand
 						if (_createSession)
 						{
 							final IClientSession session = SessionFactory.createSession(
-												_app, sqlDriver, _alias, conn);
+												_app, sqlDriver, _alias, conn,
+												_user, _password);
 							_callback.sessionCreated(session);
 							Runner runner = new Runner(session, _connSheet);
 							SwingUtilities.invokeLater(runner);

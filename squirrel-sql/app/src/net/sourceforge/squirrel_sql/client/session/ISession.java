@@ -40,20 +40,6 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
  */
 public interface ISession extends IHasIdentifier
 {
-	/**
-	 * Keys to objects stored in session.
-	 */
-	//TODO: Get rid of this crap in the object tree rewrite.
-//	public interface ISessionKeys
-//	{
-//		String DATABASE_DETAIL_PANEL_KEY =
-//			DatabaseNode.class.getName() + "_DETAIL_PANEL_KEY";
-//		String PROCEDURE_DETAIL_PANEL_KEY =
-//			ProcedureNode.class.getName() + "_DETAIL_PANEL_KEY";
-//		String TABLE_DETAIL_PANEL_KEY =
-//			TableNode.class.getName() + "_DETAIL_PANEL_KEY";
-//	}
-
 	public interface IMainPanelTabIndexes extends MainPanel.ITabIndexes
 	{
 	}
@@ -92,6 +78,11 @@ public interface ISession extends IHasIdentifier
 	 * @return the properties for this session.
 	 */
 	SessionProperties getProperties();
+
+	/**
+	 * Reconnect to the database.
+	 */
+	void reconnect();
 
 	Object getPluginObject(IPlugin plugin, String key);
 	Object putPluginObject(IPlugin plugin, String key, Object obj);

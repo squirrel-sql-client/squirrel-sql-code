@@ -31,10 +31,14 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.mainframe.action.OpenConnectionCommand;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
@@ -51,6 +55,10 @@ import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 
 class Session implements IClientSession
 {
+	/** Logger for this class. */
+	private static final ILogger s_log =
+		LoggerController.createLogger(Session.class);
+
 	private SessionSheet _sessionSheet;
 
 	/** The <TT>IIdentifier</TT> that uniquely identifies this object. */
@@ -67,6 +75,9 @@ class Session implements IClientSession
 
 	/** Alias describing how to connect to database. */
 	private ISQLAlias _alias;
+
+	private final String _user;
+	private final String _password;
 
 	/** Properties for this session. */
 	private SessionProperties _props;
@@ -89,15 +100,17 @@ class Session implements IClientSession
 	/**
 	 * Create a new session.
 	 *
-	 * @param   app	 Application API.
-	 * @param   driver  JDBC driver for session.
-	 * @param   alias   Defines URL to database.
-	 * @param   conn	Connection to database.
+	 * @param	app			Application API.
+	 * @param	driver		JDBC driver for session.
+	 * @param	alias		Defines URL to database.
+	 * @param	conn		Connection to database.
+	 * @param	user		User name connected with.
+	 * @param	password	Password for <TT>user</TT>
 	 *
 	 * @throws IllegalArgumentException if any parameter is null.
 	 */
 	public Session(IApplication app, ISQLDriver driver, ISQLAlias alias,
-					SQLConnection conn)
+					SQLConnection conn, String user, String password)
 	{
 		super();
 		if (app == null)
@@ -121,24 +134,15 @@ class Session implements IClientSession
 		_driver = driver;
 		_alias = alias;
 		_conn = conn;
+		_user = user;
+		_password = password;
 
-//		_props.assignFrom(_app.getSquirrelPreferences().getSessionProperties());
 		_props = (SessionProperties)_app.getSquirrelPreferences().getSessionProperties().clone();
 
 		// Create the API objects that give access to various
 		// areas of the session.
 		_objectTreeAPI = new ObjectTreeAPI(this);
 		_sqlPanelAPI = new SQLPanelAPI(this);
-//
-//		final IPlugin plugin = getApplication().getDummyAppPlugin();
-//
-//		//TODO: This crap should be done better.
-//		putPluginObject(plugin, ISessionKeys.DATABASE_DETAIL_PANEL_KEY,
-//						new DatabasePanel(this));
-//		putPluginObject(plugin, ISessionKeys.PROCEDURE_DETAIL_PANEL_KEY,
-//						new ProcedurePanel(this));
-//		putPluginObject(plugin, ISessionKeys.TABLE_DETAIL_PANEL_KEY,
-//						new TablePanel(this));
 	}
 
 	/**
@@ -240,17 +244,6 @@ class Session implements IClientSession
 		return _sqlPanelAPI;
 	}
 
-	/**
-	 * Return an array of <TT>IDatabaseObjectInfo</TT> objects representing all
-	 * the objects selected in the objects tree.
-	 *
-	 * @return	array of <TT>IDatabaseObjectInfo</TT> objects.
-	 */
-//	public IDatabaseObjectInfo[] getSelectedDatabaseObjects()
-//	{
-//		return _sessionSheet.getObjectsPanel().getSelectedDatabaseObjects();
-//	}
-
 	public synchronized Object getPluginObject(IPlugin plugin, String key)
 	{
 		if (plugin == null)
@@ -330,6 +323,36 @@ class Session implements IClientSession
 			{
 				_conn = null;
 			}
+		}
+	}
+
+	/**
+	 * Reconnect to the database.
+	 */
+	public void reconnect()
+	{
+		final OpenConnectionCommand cmd =
+			new OpenConnectionCommand(_app, _alias, _user, _password);
+		try
+		{
+			closeSQLConnection();
+		}
+		catch (SQLException ex)
+		{
+			final String msg = "Error occured closing connection";
+			s_log.error(msg, ex);
+			_msgHandler.showErrorMessage(msg);
+			_msgHandler.showErrorMessage(ex);
+		}
+		try
+		{
+			cmd.execute();
+			_conn = cmd.getSQLConnection();
+		}
+		catch (BaseException ex)
+		{
+			//TODO: Error
+			_msgHandler.showErrorMessage(ex);
 		}
 	}
 
