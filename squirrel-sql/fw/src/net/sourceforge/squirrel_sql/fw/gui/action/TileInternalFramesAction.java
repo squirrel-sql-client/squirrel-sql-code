@@ -107,7 +107,7 @@ public class TileInternalFramesAction extends BaseAction implements IHasJDesktop
                 int xPos = 0;
                 int yPos = 0;
 
-                DesktopManager mgr = _desktop.getDesktopManager();
+//                DesktopManager mgr = _desktop.getDesktopManager();
                 for (int y = 0; y < rows; ++y) {
                     for (int x = 0; x < cols; ++x) {
                         final int idx = y + (x * rows);
