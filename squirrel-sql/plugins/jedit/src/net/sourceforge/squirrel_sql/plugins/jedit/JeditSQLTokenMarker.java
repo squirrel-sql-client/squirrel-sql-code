@@ -35,7 +35,7 @@ public class JeditSQLTokenMarker extends SQLTokenMarker {
 			addKeywords(dmd, keywords);
 			addDataTypes(dmd, keywords);
 			addFunctions(dmd, keywords);
-		} catch (Exception ex) {
+		} catch (Throwable ex) {
 			s_log.error("Error occured creating keyword map", ex);
 		}
 		return keywords;
@@ -82,7 +82,7 @@ public class JeditSQLTokenMarker extends SQLTokenMarker {
 		StringBuffer buf = new StringBuffer();
 		try {
 			buf.append(dmd.getSQLKeywords());
-		} catch (SQLException ex) {
+		} catch (Throwable ex) {
 			s_log.error("Error", ex);
 		}
 		StringTokenizer strtok = new StringTokenizer(buf.toString(), ",");
@@ -92,19 +92,19 @@ public class JeditSQLTokenMarker extends SQLTokenMarker {
 
 		try {
 			addSingleKeyword(dmd.getCatalogTerm(), keywords);
-		} catch (SQLException ex) {
+		} catch (Throwable ex) {
 			s_log.error("Error", ex);
 		}
 
 		try {
 			addSingleKeyword(dmd.getSchemaTerm(), keywords);
-		} catch (SQLException ex) {
+		} catch (Throwable ex) {
 			s_log.error("Error", ex);
 		}
 
 		try {
 			addSingleKeyword(dmd.getProcedureTerm(), keywords);
-		} catch (SQLException ex) {
+		} catch (Throwable ex) {
 			s_log.error("Error", ex);
 		}
 	}
@@ -138,7 +138,7 @@ public class JeditSQLTokenMarker extends SQLTokenMarker {
 			} finally {
 				rs.close();
 			}
-		} catch (SQLException ex) {
+		} catch (Throwable ex) {
 			s_log.error("Error", ex);
 		}
 	}
@@ -147,19 +147,19 @@ public class JeditSQLTokenMarker extends SQLTokenMarker {
 		StringBuffer buf = new StringBuffer();
 		try {
 			buf.append(dmd.getNumericFunctions());
-		} catch (SQLException ex) {
+		} catch (Throwable ex) {
 			s_log.error("Error", ex);
 		}
 		buf.append(",");
 		try {
 			buf.append(dmd.getStringFunctions());
-		} catch (SQLException ex) {
+		} catch (Throwable ex) {
 			s_log.error("Error", ex);
 		}
 		buf.append(",");
 		try {
 			buf.append(dmd.getTimeDateFunctions());
-		} catch (SQLException ex) {
+		} catch (Throwable ex) {
 			s_log.error("Error", ex);
 		}
 
