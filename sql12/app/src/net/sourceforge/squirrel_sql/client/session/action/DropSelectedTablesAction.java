@@ -31,7 +31,7 @@ import net.sourceforge.squirrel_sql.client.session.IClientSession;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 
 /**
- * @version 	$Id: DropSelectedTablesAction.java,v 1.2 2003-03-04 11:46:00 colbell Exp $
+ * @version 	$Id: DropSelectedTablesAction.java,v 1.3 2003-03-05 10:27:53 colbell Exp $
  * @author		Johan Compagner
  */
 public class DropSelectedTablesAction extends SquirrelAction

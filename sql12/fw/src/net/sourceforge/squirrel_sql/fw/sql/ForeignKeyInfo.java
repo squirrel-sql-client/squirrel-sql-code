@@ -18,9 +18,25 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.sql.SQLException;
-
+/**
+ * This class represents a foreign key relationship.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
 public class ForeignKeyInfo extends DatabaseObjectInfo
 {
+	/**
+	 * JavaBean property names for this class.
+	 */
+	public interface IPropertyNames
+	{
+		/** Primary Key Catalog name. */
+		String PK_CATALOG_NAME = "primaryKeyCatalogName";
+
+		/** Primary Key Schema name. */
+		String PK_SCHEMA_NAME = "primaryKeySchemaName";
+	}
+
 	private final String _pkCatalog;
 	private final String _pkSchema;
 	private final String _pkTableName;

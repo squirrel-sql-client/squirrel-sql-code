@@ -31,7 +31,7 @@ import javax.swing.text.Document;
  * <code>Token</code> class.<p>
  *
  * @author Slava Pestov
- * @version $Id: SyntaxDocument.java,v 1.3 2003-03-04 11:46:02 colbell Exp $
+ * @version $Id: SyntaxDocument.java,v 1.4 2003-03-05 10:27:54 colbell Exp $
  *
  * @see org.gjt.sp.jedit.syntax.DefaultSyntaxDocument
  * @see org.gjt.sp.jedit.syntax.SyntaxEditorKit
