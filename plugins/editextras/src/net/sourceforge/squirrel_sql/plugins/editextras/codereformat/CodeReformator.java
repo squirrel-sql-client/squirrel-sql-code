@@ -499,21 +499,55 @@ public class CodeReformator
 
 	private String flatenWhiteSpaces(String in, boolean force)
 	{
+
 		if(hasCommentEndingWithLineFeed(in) && ! force)
 		{
 			// No flaten. We would turn statement parts to comment
 			return in;
 		}
 
-		int lenOld = 0;
-		int lenNew = -1;
-		while(lenOld > lenNew)
-		{
-			lenOld = in.length();
-			in = in.replaceAll("\\s\\s", " ");
-			lenNew = in.length();
-		}
-		return in.replaceAll("\\s", " ");
+
+      StringBuffer ret = new StringBuffer();
+      int aposCount = 0;
+      for(int i=0; i < in.length(); ++i)
+      {
+
+         if('\'' == in.charAt(i))
+         {
+            ++aposCount;
+         }
+
+         boolean dontAppend = false;
+
+         if(0 != aposCount % 2 )
+         {
+
+         }
+         else
+         {
+            if(Character.isWhitespace(in.charAt(i)) && i + 1 < in.length() && Character.isWhitespace(in.charAt(i+1)))
+            {
+               dontAppend = true;
+            }
+         }
+
+         if(false == dontAppend)
+         {
+            char toAppend;
+            if(Character.isWhitespace(in.charAt(i)) && 0 == aposCount % 2)
+            {
+               toAppend = ' ';
+            }
+            else
+            {
+               toAppend = in.charAt(i);
+            }
+            ret.append(toAppend);
+         }
+      }
+
+      return ret.toString();
+
 	}
 
 	boolean hasCommentEndingWithLineFeed(String in)
