@@ -791,7 +791,11 @@ determine how to display the column.</P>
 
 	<DT><B>java.sql.Types.BINARY, java.sql.Types.VARBINARY, java.sql.Types.LONGVARBINARY</B>
 	<DD>
-	The column data is displayed as a string.
+	In the SQL tab the column data is displayed as a string.
+	The ContentsTab in the Object view displays each byte using Hex format.
+	In the Popup editing window, you may choose to display these in Hex, Decimal, Octal, or Binary,
+	and you may choose to display values representing printable ASCII characters as those
+	characters (e.g. to see strings embedded in the binary object).
 
 	<DT><B>java.sql.Types.BLOB</B>
 	<DD>If the <A HREF="#session_props_sql_data_types">session property</A>
@@ -815,6 +819,10 @@ determine how to display the column.</P>
 	says to retrieve all other data types then the column data is displayed
 	as a string.
 </DL>
+<P>
+The file java.sql.Types defines several codes whose semantics are not understood by SQuirreL:
+JAVA_OBJECT, DISTINCT, STRUCT, ARRAY, REF, and DATALINK.
+These are all handled as "Any other type" as described above.
 
 
 <A NAME="global_prefs"><H2>Global Preferences</H2></A>
