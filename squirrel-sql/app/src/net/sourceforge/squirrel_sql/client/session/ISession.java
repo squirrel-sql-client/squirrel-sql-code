@@ -57,6 +57,11 @@ public interface ISession extends IHasIdentifier {
 	}
 
 	/**
+	 * Close this session.
+	 */
+	void close();
+
+	/**
 	 * Close the current connection to the database.
 	 *
 	 * @throws	SQLException  if an SQL error occurs.

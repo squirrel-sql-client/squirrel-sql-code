@@ -111,6 +111,7 @@ public class SessionSQLPropertiesPanel
 		interface SQLPropertiesPanelI18n
 		{
 			String AUTO_COMMIT = "Auto Commit SQL";
+			String BLOB = "Blob";
 			String COMMIT_ON_CLOSE = "Commit On Closing Session";
 			String NBR_ROWS_CONTENTS = "Number of rows:";
 			String NBR_ROWS_SQL = "Number of rows:";
@@ -131,6 +132,8 @@ public class SessionSQLPropertiesPanel
 		private IntegerField _sqlNbrRowsToShowField = new IntegerField();
 		private JCheckBox _sqlLimitRows = new JCheckBox(SQLPropertiesPanelI18n.LIMIT_ROWS_SQL);
 		private CharField _stmtSepChar = new CharField();
+
+		private JCheckBox _showBlobChk = new JCheckBox(SQLPropertiesPanelI18n.BLOB);
 
 		/** Label displaying the selected font. */
 		private JLabel _fontLbl = new JLabel();
@@ -155,6 +158,8 @@ public class SessionSQLPropertiesPanel
 			_showRowCount.setSelected(props.getShowRowCount());
 			_stmtSepChar.setChar(props.getSQLStatementSeparatorChar());
 
+			_showBlobChk.setSelected(props.getSQLReadBlobs());
+
 			FontInfo fi = props.getFontInfo();
 			if (fi == null)
 			{
@@ -174,6 +179,9 @@ public class SessionSQLPropertiesPanel
 			props.setSQLLimitRows(_sqlLimitRows.isSelected());
 			props.setShowRowCount(_showRowCount.isSelected());
 			props.setSQLStatementSeparatorChar(_stmtSepChar.getChar());
+
+			props.setSQLReadBlobs(_showBlobChk.isSelected());
+
 			props.setFontInfo(_fontBtn.getFontInfo());
 		}
 
@@ -188,6 +196,9 @@ public class SessionSQLPropertiesPanel
 			gbc.gridx = 0;
 			gbc.gridy = 0;
 			add(createSQLPanel(app), gbc);
+
+			++gbc.gridy;
+			add(createDataTypesPanel(), gbc);
 
 			++gbc.gridy;
 			add(createFontPanel(), gbc);
@@ -242,7 +253,6 @@ public class SessionSQLPropertiesPanel
 			++gbc.gridy;
 			pnl.add(_sqlLimitRows, gbc);
 
-			gbc.insets = new Insets(2, 0, 2, 4);
 			++gbc.gridx;
 			gbc.gridy = 0;
 			gbc.gridwidth = 3;
@@ -264,6 +274,22 @@ public class SessionSQLPropertiesPanel
 			pnl.add(_sqlNbrRowsToShowField, gbc);
 			++gbc.gridy;
 			pnl.add(_stmtSepChar, gbc);
+
+			return pnl;
+		}
+
+		private JPanel createDataTypesPanel()
+		{
+			JPanel pnl = new JPanel(new GridBagLayout());
+			pnl.setBorder(BorderFactory.createTitledBorder("Show Data Types"));
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = gbc.HORIZONTAL;
+			gbc.insets = new Insets(4, 4, 4, 4);
+			gbc.anchor = gbc.WEST;
+
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			pnl.add(_showBlobChk, gbc);
 
 			return pnl;
 		}

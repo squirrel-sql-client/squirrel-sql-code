@@ -36,8 +36,7 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 		super();
 		if (s_dscrs == null)
 		{
-			//s_dscrs = new PropertyDescriptor[27];
-			s_dscrs = new PropertyDescriptor[12];
+			s_dscrs = new PropertyDescriptor[13];
 			int i = 0;
 			s_dscrs[i++] =
 				new PropertyDescriptor(
@@ -111,6 +110,12 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 					cls,
 					"getSQLResultsOutputClassName",
 					"setSQLResultsOutputClassName");
+			s_dscrs[i++] =
+				new PropertyDescriptor(
+					SessionProperties.IPropertyNames.SQL_READ_BLOBS,
+					cls,
+					"getSQLReadBlobs",
+					"setSQLReadBlobs");
 		}
 	}
 

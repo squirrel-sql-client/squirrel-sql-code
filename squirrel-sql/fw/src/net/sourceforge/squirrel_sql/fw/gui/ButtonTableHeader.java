@@ -20,20 +20,18 @@ package net.sourceforge.squirrel_sql.fw.gui;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
-import java.net.URL;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JTable;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
@@ -41,47 +39,113 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
- * @version 	$Id: ButtonTableHeader.java,v 1.7 2002-04-06 12:09:44 colbell Exp $
+ * @version 	$Id: ButtonTableHeader.java,v 1.8 2002-07-15 12:29:17 colbell Exp $
  * @author		Johan Compagner
  */
 public class ButtonTableHeader extends JTableHeader
 {
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(ButtonTableHeader.class);
+	private static ILogger s_log =
+		LoggerController.createLogger(ButtonTableHeader.class);
 
-	protected boolean _bDragged;
-	protected boolean _bPressed;
-	protected int _iPressed;
-	private static Icon desc;
-	private static Icon asc;
+	/** Icon for "Sorted ascending". */
+	private static Icon s_ascIcon;
 
-	protected Icon current;
+	/** Icon for "Sorted descending". */
+	private static Icon s_descIcon;
+
+	/** Listens for changes in the underlying data. */
+	private TableDataListener _dataListener = new TableDataListener();
+
+	/** If <TT>true</TT> then the mouse button is currently pressed. */
+	private boolean _pressed;
+
+	/**
+	 * If <TT>true</TT> then the mouse is being dragged. This is only relevant
+	 * while the mouse is pressed.
+	 */
+	private boolean _dragged;
+
+	/**
+	 * If <tt>_pressed</TT> is <tt>true</tt> then this is the column that the
+	 * mouse was pressed in.
+	 */
+	private int _pressedColumnIdx;
+
+	/** Icon for the currently sorted column. */
+	private Icon _currentSortedColumnIcon;
+
+	/** Index of the currently sorted column. */
+	private int _currentlySortedColumnIdx = -1;
 
 	static {
-		try {
+		try
+		{
 			LibraryResources rsrc = new LibraryResources();
-			desc = rsrc.getIcon(LibraryResources.IImageNames.TABLE_DESCENDING);
-			asc = rsrc.getIcon(LibraryResources.IImageNames.TABLE_ASCENDING);
-		} catch (Exception ex) {
+			s_descIcon =
+				rsrc.getIcon(LibraryResources.IImageNames.TABLE_DESCENDING);
+			s_ascIcon =
+				rsrc.getIcon(LibraryResources.IImageNames.TABLE_ASCENDING);
+		}
+		catch (Exception ex)
+		{
 			s_log.error("Error retrieving icons", ex);
 		}
 	}
+
 	/**
 	 * Constructor for ButtonTableHeader.
-	 * @param cm
 	 */
 	public ButtonTableHeader()
 	{
 		super();
-		_bPressed = false;
-		_bDragged = false;
-		_iPressed = -1;
+		_pressed = false;
+		_dragged = false;
+		_pressedColumnIdx = -1;
 
 		setDefaultRenderer(new ButtonTableRenderer(getFont()));
 
 		HeaderListener hl = new HeaderListener();
 		addMouseListener(hl);
 		addMouseMotionListener(hl);
+	}
+
+	public void setTable(JTable table)
+	{
+		JTable oldTable = getTable();
+		if (oldTable != null)
+		{
+			Object obj = oldTable.getModel();
+			if (obj instanceof SortableTableModel)
+			{
+				SortableTableModel model = (SortableTableModel)obj;
+				model.getActualModel().removeTableModelListener(_dataListener);
+			}
+		}
+
+		super.setTable(table);
+
+		if (table != null)
+		{
+			Object obj = table.getModel();
+			if (obj instanceof SortableTableModel)
+			{
+				SortableTableModel model = (SortableTableModel)obj;
+				model.getActualModel().addTableModelListener(_dataListener);
+			}
+		}
+		_currentSortedColumnIcon = null;
+		_currentlySortedColumnIdx = -1;
+	}
+
+	private final class TableDataListener implements TableModelListener
+	{
+		public void tableChanged(TableModelEvent evt)
+		{
+			_currentSortedColumnIcon = null;
+			_currentlySortedColumnIdx = -1;
+		}
+
 	}
 
 	class HeaderListener extends MouseAdapter implements MouseMotionListener
@@ -91,9 +155,8 @@ public class ButtonTableHeader extends JTableHeader
 		 */
 		public void mousePressed(MouseEvent e)
 		{
-			_bPressed = true;
-			_iPressed = columnAtPoint(e.getPoint());
-			current = null;
+			_pressed = true;
+			_pressedColumnIdx = columnAtPoint(e.getPoint());
 			repaint();
 		}
 
@@ -102,27 +165,31 @@ public class ButtonTableHeader extends JTableHeader
 		*/
 		public void mouseReleased(MouseEvent e)
 		{
-			_bPressed = false;
-			if(!_bDragged)
+			_pressed = false;
+			if (!_dragged)
 			{
-				int column = getTable().convertColumnIndexToModel(_iPressed);
+				_currentSortedColumnIcon = null;
+				int column = getTable().convertColumnIndexToModel(_pressedColumnIdx);
 				TableModel tm = table.getModel();
 
-				if(column > -1 && column < tm.getColumnCount() && tm instanceof SortableTableModel)
+				if (column > -1
+					&& column < tm.getColumnCount()
+					&& tm instanceof SortableTableModel)
 				{
-					((SortableTableModel)tm).sortByColumn(column);
-					if(((SortableTableModel)tm)._bAscending)
+					((SortableTableModel) tm).sortByColumn(column);
+					if (((SortableTableModel) tm)._bAscending)
 					{
-						current = asc;
+						_currentSortedColumnIcon = s_ascIcon;
 					}
 					else
 					{
-						current = desc;
+						_currentSortedColumnIcon = s_descIcon;
 					}
+					_currentlySortedColumnIdx = column;
 				}
 				repaint();
 			}
-			_bDragged = false;
+			_dragged = false;
 		}
 
 		/*
@@ -130,11 +197,12 @@ public class ButtonTableHeader extends JTableHeader
 		 */
 		public void mouseDragged(MouseEvent e)
 		{
-			_bDragged = true;
-			if(_bPressed)
+			_dragged = true;
+			if (_pressed)
 			{
-				current = null;
-				_bPressed = false;
+				_currentSortedColumnIcon = null;
+				_currentlySortedColumnIdx = -1;
+				_pressed = false;
 				repaint();
 			}
 		}
@@ -144,28 +212,28 @@ public class ButtonTableHeader extends JTableHeader
 		 */
 		public void mouseMoved(MouseEvent e)
 		{
-			_bDragged = false;
+			_dragged = false;
 		}
 
 	}
 	protected class ButtonTableRenderer implements TableCellRenderer
 	{
-		JButton buttonRaised;
-		JButton buttonLowered;
+		JButton _buttonRaised;
+		JButton _buttonLowered;
 
 		ButtonTableRenderer(Font font)
 		{
-			buttonRaised = new JButton();
-			buttonRaised.setMargin(new Insets(0,0,0,0));
-			buttonRaised.setFont(font);
-			buttonLowered = new JButton();
-			buttonLowered.setMargin(new Insets(0,0,0,0));
-			buttonLowered.setFont(font);
-			buttonLowered.getModel().setArmed(true);
-			buttonLowered.getModel().setPressed(true);
+			_buttonRaised = new JButton();
+			_buttonRaised.setMargin(new Insets(0, 0, 0, 0));
+			_buttonRaised.setFont(font);
+			_buttonLowered = new JButton();
+			_buttonLowered.setMargin(new Insets(0, 0, 0, 0));
+			_buttonLowered.setFont(font);
+			_buttonLowered.getModel().setArmed(true);
+			_buttonLowered.getModel().setPressed(true);
 
-			buttonLowered.setMinimumSize(new Dimension(50,25));
-			buttonRaised.setMinimumSize(new Dimension(50,25));
+			_buttonLowered.setMinimumSize(new Dimension(50, 25));
+			_buttonRaised.setMinimumSize(new Dimension(50, 25));
 		}
 		/*
 		 * @see TableCellRenderer#getTableCellRendererComponent(JTable, Object, boolean, boolean, int, int)
@@ -180,22 +248,43 @@ public class ButtonTableHeader extends JTableHeader
 		{
 
 			if (value == null)
-				value = "";
-			if(_iPressed == column && _bPressed)
 			{
-				buttonLowered.setText(value.toString());
-				if(current != null) buttonLowered.setIcon(current);
-				return buttonLowered;
+				value = "";
+			}
+
+			// Rendering the column that the mouse has been pressed in.
+			if (_pressedColumnIdx == column && _pressed)
+			{
+				_buttonLowered.setText(value.toString());
+
+				// If this is the column that the table is currently is
+				// currently sorted by then display the sort icon.
+				if (column == _currentlySortedColumnIdx
+					&& _currentSortedColumnIcon != null)
+				{
+					_buttonLowered.setIcon(_currentSortedColumnIcon);
+				}
+				else
+				{
+					_buttonLowered.setIcon(null);
+				}
+				return _buttonLowered;
+			}
+
+			// This is not the column that the mouse has been pressed in.
+			_buttonRaised.setText(value.toString());
+			if (_currentSortedColumnIcon != null
+				&& column == _currentlySortedColumnIdx)
+			{
+				_buttonRaised.setIcon(_currentSortedColumnIcon);
 			}
 			else
 			{
-				buttonRaised.setText(value.toString());
-				if(current != null && column == _iPressed) buttonRaised.setIcon(current);
-				else buttonRaised.setIcon(null);
-				return buttonRaised;
+				_buttonRaised.setIcon(null);
 			}
+			return _buttonRaised;
 		}
-
 	}
+
 
 }

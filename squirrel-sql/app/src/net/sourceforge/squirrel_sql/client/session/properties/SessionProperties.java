@@ -45,6 +45,7 @@ public class SessionProperties implements Serializable
 		String SHOW_TOOL_BAR = "showToolBar";
 		String SQL_LIMIT_ROWS = "sqlLimitRows";
 		String SQL_NBR_ROWS_TO_SHOW = "sqlNbrOfRowsToShow";
+		String SQL_READ_BLOBS = "sqlReadBlobs";
 		String SQL_RESULTS_OUTPUT_CLASS_NAME= "sqlResultsOutputClassName";
 		String SQL_STATEMENT_SEPARATOR = "sqlStatementSeparator";
 	}
@@ -84,6 +85,9 @@ public class SessionProperties implements Serializable
 	/** Font information for the jEdit text area. */
 	private FontInfo _fi;
 
+	/** Read blobs from Result sets. */
+	private boolean _sqlReadBlobs = false;
+
 	public SessionProperties()
 	{
 		super();
@@ -101,6 +105,7 @@ public class SessionProperties implements Serializable
 		setShowToolBar(rhs.getShowToolBar());
 		setSQLLimitRows(rhs.getSQLLimitRows());
 		setSQLNbrRowsToShow(rhs.getSQLNbrRowsToShow());
+		setSQLReadBlobs(rhs.getSQLReadBlobs());
 		setSQLStatementSeparatorChar(rhs.getSQLStatementSeparatorChar());
 	}
 
@@ -321,6 +326,24 @@ public class SessionProperties implements Serializable
 			IPropertyNames.SHOW_ROW_COUNT,
 			oldValue,
 			_showRowCount);
+	}
+
+	public boolean getSQLReadBlobs()
+	{
+		return _sqlReadBlobs;
+	}
+
+	public void setSQLReadBlobs(boolean value)
+	{
+		if (_sqlReadBlobs != value)
+		{
+			final boolean oldValue = _sqlReadBlobs;
+			_sqlReadBlobs = value;
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.SQL_READ_BLOBS,
+				oldValue,
+				_sqlReadBlobs);
+		}
 	}
 
 	public FontInfo getFontInfo()

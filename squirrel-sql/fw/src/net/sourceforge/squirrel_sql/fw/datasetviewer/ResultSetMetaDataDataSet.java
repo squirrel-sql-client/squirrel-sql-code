@@ -29,8 +29,10 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-public class ResultSetMetaDataDataSet implements IDataSet {
-	private interface i18n {
+public class ResultSetMetaDataDataSet implements IDataSet
+{
+	private interface i18n
+	{
 		String UNSUPPORTED = "<Unsupported>";
 		String NAME_COLUMN = "Property Name";
 		String NULL = "<null>";
@@ -38,7 +40,8 @@ public class ResultSetMetaDataDataSet implements IDataSet {
 	}
 
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(ResultSetMetaDataDataSet.class);
+	private static ILogger s_log =
+		LoggerController.createLogger(ResultSetMetaDataDataSet.class);
 
 	private DataSetDefinition _dsDef;
 	private boolean[] _propertyMethodIndicators;
@@ -51,86 +54,122 @@ public class ResultSetMetaDataDataSet implements IDataSet {
 	 */
 	private ArrayList _data = new ArrayList();
 
-	public ResultSetMetaDataDataSet() throws DataSetException {
-		this((ResultSetMetaData)null);
+	public ResultSetMetaDataDataSet() throws DataSetException
+	{
+		this((ResultSetMetaData) null);
 	}
 
 	public ResultSetMetaDataDataSet(ResultSet rs)
-			throws IllegalArgumentException, DataSetException {
+		throws IllegalArgumentException, DataSetException
+	{
 		this(getMetaDataFromResultSet(rs));
 	}
 
 	public ResultSetMetaDataDataSet(ResultSetMetaData md)
-			throws IllegalArgumentException, DataSetException {
+		throws IllegalArgumentException, DataSetException
+	{
 		super();
 		setResultSetMetaData(md);
 	}
 
-	public synchronized void setResultSetMetaData(ResultSetMetaData md) throws DataSetException {
+	public synchronized void setResultSetMetaData(ResultSetMetaData md)
+		throws DataSetException
+	{
 		_dsDef = new DataSetDefinition(createColumnDefinitions(md));
 		load(md);
 	}
 
-	public final int getColumnCount() {
+	public final int getColumnCount()
+	{
 		return _dsDef.getColumnDefinitions().length;
 	}
 
-	public DataSetDefinition getDataSetDefinition() {
+	public DataSetDefinition getDataSetDefinition()
+	{
 		return _dsDef;
 	}
 
-	public synchronized boolean next(IMessageHandler msgHandler) throws DataSetException {
-		if (_rowsIter.hasNext()) {
-			_row = (String[])_rowsIter.next();
-		} else {
+	public synchronized boolean next(IMessageHandler msgHandler)
+		throws DataSetException
+	{
+		if (_rowsIter.hasNext())
+		{
+			_row = (String[]) _rowsIter.next();
+		}
+		else
+		{
 			_row = null;
 		}
 		return _row != null;
 	}
 
-	public Object get(int columnIndex) {
+	public Object get(int columnIndex)
+	{
 		return _row[columnIndex];
 	}
 
-	private ColumnDisplayDefinition[] createColumnDefinitions(ResultSetMetaData md) {
+	private ColumnDisplayDefinition[] createColumnDefinitions(ResultSetMetaData md)
+	{
 		final Method[] methods = ResultSetMetaData.class.getMethods();
 		_propertyMethodIndicators = new boolean[methods.length];
 		final List colDefs = new ArrayList();
-		for (int i = 0; i < methods.length; ++i) {
-			if (isPropertyMethod(methods[i])) {
+		for (int i = 0; i < methods.length; ++i)
+		{
+			if (isPropertyMethod(methods[i]))
+			{
 				colDefs.add(new ColumnDisplayDefinition(200, methods[i].getName()));
 				_propertyMethodIndicators[i] = true;
-			} else {
+			}
+			else
+			{
 				_propertyMethodIndicators[i] = false;
 			}
 		}
-		return (ColumnDisplayDefinition[])colDefs.toArray(new ColumnDisplayDefinition[colDefs.size()]);
+		return (ColumnDisplayDefinition[]) colDefs.toArray(
+			new ColumnDisplayDefinition[colDefs.size()]);
 	}
 
-	private void load(ResultSetMetaData md) {
-		try {
+	private void load(ResultSetMetaData md) throws DataSetException
+	{
+		try
+		{
 			final Method[] methods = ResultSetMetaData.class.getMethods();
 			final ArrayList line = new ArrayList();
 			for (int metaIdx = 1, metaLimit = md.getColumnCount() + 1;
-					metaIdx < metaLimit; ++metaIdx) {
-				Object[] methodParms = new Object[] {
-					new Integer(metaIdx),
-				};
+				metaIdx < metaLimit;
+				++metaIdx)
+			{
+				Object[] methodParms = new Object[] { new Integer(metaIdx), };
 				line.clear();
 				line.ensureCapacity(methods.length);
-				for (int methodIdx = 0; methodIdx < methods.length; ++methodIdx) {
-					if (_propertyMethodIndicators[methodIdx]) {
-						Object obj = executeGetter(md, methods[methodIdx], methodParms);
-						line.add(obj != null ? obj.toString() : i18n.NULL);
+				for (int methodIdx = 0; methodIdx < methods.length; ++methodIdx)
+				{
+					try
+					{
+
+						if (_propertyMethodIndicators[methodIdx])
+						{
+							Object obj = executeGetter(md, methods[methodIdx], methodParms);
+							line.add(obj != null ? obj.toString() : i18n.NULL);
+						}
 					}
+					catch (Throwable th)
+					{
+						line.add("<Error>");
+						s_log.error("Error reading column metadata", th);
+					}
+
 				}
+
 				_data.add(line.toArray(new String[line.size()]));
 			}
 
 			_rowsIter = _data.iterator();
-		} catch (Throwable th) {
-			//??Alert the user.
-			s_log.error("Error occured processing result set", th);
+		}
+		catch (SQLException ex)
+		{
+			s_log.error("Error occured processing result set", ex);
+			throw new DataSetException(ex);
 		}
 	}
 
@@ -140,28 +179,38 @@ public class ResultSetMetaDataDataSet implements IDataSet {
 	 *
 	 * @return	<TT>true</TT> if method is a property getter else <TT>false</TT>.
 	 */
-	protected boolean isPropertyMethod(Method method) {
-		return method.getParameterTypes().length == 1 &&
-				method.getParameterTypes()[0] == int.class &&
-				method.getReturnType() != Void.TYPE;
+	protected boolean isPropertyMethod(Method method)
+	{
+		return method.getParameterTypes().length == 1
+			&& method.getParameterTypes()[0] == int.class
+			&& method.getReturnType() != Void.TYPE;
 	}
 
-	protected Object executeGetter(Object bean, Method getter, Object[] parms) {
-		try {
+	protected Object executeGetter(Object bean, Method getter, Object[] parms)
+	{
+		try
+		{
 			return getter.invoke(bean, parms);
-		} catch(Throwable th) {
+		}
+		catch (Throwable th)
+		{
 			return i18n.UNSUPPORTED;
 		}
 	}
 
 	private static ResultSetMetaData getMetaDataFromResultSet(ResultSet rs)
-			throws IllegalArgumentException, DataSetException {
-		if (rs == null) {
+		throws IllegalArgumentException, DataSetException
+	{
+		if (rs == null)
+		{
 			throw new IllegalArgumentException("Null ResultSet passed");
 		}
-		try {
-	   		return rs.getMetaData();
-		} catch (SQLException ex) {
+		try
+		{
+			return rs.getMetaData();
+		}
+		catch (SQLException ex)
+		{
 			throw new DataSetException(ex);
 		}
 	}

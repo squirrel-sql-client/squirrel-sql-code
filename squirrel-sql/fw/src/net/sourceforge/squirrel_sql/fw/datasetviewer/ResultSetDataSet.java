@@ -42,6 +42,8 @@ public class ResultSetDataSet implements IDataSet
 	private DataSetDefinition _dataSetDefinition;
 	private ArrayList _alData;
 
+	private boolean _readBlobs = false;
+
 	public ResultSetDataSet() throws DataSetException
 	{
 		this(null, null);
@@ -57,6 +59,11 @@ public class ResultSetDataSet implements IDataSet
 	{
 		super();
 		setResultSet(rs, columnIndices);
+	}
+
+	public void setReadBlobs(boolean value)
+	{
+		_readBlobs = value;
 	}
 
 	public void setResultSet(ResultSet rs) throws DataSetException
@@ -222,6 +229,17 @@ public class ResultSetDataSet implements IDataSet
 								case Types.LONGVARCHAR :
 								case -9 :
 									row[i] = rs.getString(idx);
+									break;
+
+								case Types.BLOB:
+									if (_readBlobs)
+									{
+										row[i] = rs.getString(idx);
+									}
+									else
+									{
+										row[i] = "<Blob>";
+									}
 									break;
 
 								default :

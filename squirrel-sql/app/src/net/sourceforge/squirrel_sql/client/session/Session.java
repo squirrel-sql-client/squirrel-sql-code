@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * Modifications copyright (C) 2001 Johan Compagner
@@ -20,12 +20,9 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Component;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.swing.Icon;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -37,7 +34,7 @@ import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+import net.sourceforge.squirrel_sql.client.session.ISession.ISessionKeys;
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
@@ -50,7 +47,8 @@ import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.ITable
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 
-class Session implements ISession {
+class Session implements ISession
+{
 	private SessionSheet _sessionSheet;
 
 	/** The <TT>IIdentifier</TT> that uniquely identifies this object. */
@@ -91,18 +89,23 @@ class Session implements ISession {
 	 * @throws IllegalArgumentException if any parameter is null.
 	 */
 	public Session(IApplication app, ISQLDriver driver, ISQLAlias alias,
-					SQLConnection conn) {
+					SQLConnection conn)
+	{
 		super();
-		if (app == null) {
+		if (app == null)
+		{
 			throw new IllegalArgumentException("null IApplication passed");
 		}
-		if (driver == null) {
+		if (driver == null)
+		{
 			throw new IllegalArgumentException("null ISQLDriver passed");
 		}
-		if (alias == null) {
+		if (alias == null)
+		{
 			throw new IllegalArgumentException("null ISQLAlias passed");
 		}
-		if (conn == null) {
+		if (conn == null)
+		{
 			throw new IllegalArgumentException("null SQLConnection passed");
 		}
 
@@ -116,9 +119,24 @@ class Session implements ISession {
 		final IPlugin plugin = getApplication().getDummyAppPlugin();
 
 		//?? This crap should be done better.
-		putPluginObject(plugin, ISessionKeys.DATABASE_DETAIL_PANEL_KEY, new DatabasePanel(this));
-		putPluginObject(plugin, ISessionKeys.PROCEDURE_DETAIL_PANEL_KEY, new ProcedurePanel(this));
-		putPluginObject(plugin, ISessionKeys.TABLE_DETAIL_PANEL_KEY, new TablePanel(this));
+		putPluginObject(plugin, ISessionKeys.DATABASE_DETAIL_PANEL_KEY,
+						new DatabasePanel(this));
+		putPluginObject(plugin, ISessionKeys.PROCEDURE_DETAIL_PANEL_KEY,
+						new ProcedurePanel(this));
+		putPluginObject(plugin, ISessionKeys.TABLE_DETAIL_PANEL_KEY,
+						new TablePanel(this));
+	}
+
+	/**
+	 * Close this session.
+	 */
+	public void close()
+	{
+		if (_sessionSheet != null)
+		{
+			_sessionSheet.dispose();
+			_sessionSheet = null;
+		}
 	}
 
 	/**
@@ -126,7 +144,8 @@ class Session implements ISession {
 	 *
 	 * @return	the unique identifier for this session.
 	 */
-	public IIdentifier getIdentifier() {
+	public IIdentifier getIdentifier()
+	{
 		return _id;
 	}
 
@@ -135,32 +154,37 @@ class Session implements ISession {
 	 *
 	 * @return	the Application API object.
 	 */
-	public IApplication getApplication() {
+	public IApplication getApplication()
+	{
 		return _app;
 	}
 
 	/**
 	 * @return <TT>SQLConnection</TT> for this session.
 	 */
-	public SQLConnection getSQLConnection() {
+	public SQLConnection getSQLConnection()
+	{
 		return _conn;
 	}
 
 	/**
 	 * @return <TT>ISQLDriver</TT> for this session.
 	 */
-	public ISQLDriver getDriver() {
+	public ISQLDriver getDriver()
+	{
 		return _driver;
 	}
 
 	/**
 	 * @return <TT>ISQLAlias</TT> for this session.
 	 */
-	public ISQLAlias getAlias() {
+	public ISQLAlias getAlias()
+	{
 		return _alias;
 	}
 
-	public SessionProperties getProperties() {
+	public SessionProperties getProperties()
+	{
 		return _props;
 	}
 
@@ -170,92 +194,114 @@ class Session implements ISession {
 	 *
 	 * @return	array of <TT>IDatabaseObjectInfo</TT> objects.
 	 */
-	public IDatabaseObjectInfo[] getSelectedDatabaseObjects() {
+	public IDatabaseObjectInfo[] getSelectedDatabaseObjects()
+	{
 		return _sessionSheet.getObjectPanel().getSelectedDatabaseObjects();
 	}
 
-	public synchronized Object getPluginObject(IPlugin plugin, String key) {
-		if (plugin == null) {
+	public synchronized Object getPluginObject(IPlugin plugin, String key)
+	{
+		if (plugin == null)
+		{
 			throw new IllegalArgumentException("Null IPlugin passed");
 		}
-		if (key == null) {
+		if (key == null)
+		{
 			throw new IllegalArgumentException("Null key passed");
 		}
 		Map map = (Map) _pluginObjects.get(plugin.getInternalName());
-		if (map == null) {
+		if (map == null)
+		{
 			map = new HashMap();
 			_pluginObjects.put(plugin.getInternalName(), map);
 		}
 		return map.get(key);
 	}
 
-	public synchronized Object putPluginObject(IPlugin plugin,
-												String key,
-												Object value) {
-		if (plugin == null) {
+	public synchronized Object putPluginObject(IPlugin plugin, String key,
+												Object value)
+	{
+		if (plugin == null)
+		{
 			throw new IllegalArgumentException("Null IPlugin passed");
 		}
-		if (key == null) {
+		if (key == null)
+		{
 			throw new IllegalArgumentException("Null key passed");
 		}
 		Map map = (Map) _pluginObjects.get(plugin.getInternalName());
-		if (map == null) {
+		if (map == null)
+		{
 			map = new HashMap();
 			_pluginObjects.put(plugin.getInternalName(), map);
 		}
 		return map.put(key, value);
 	}
 
-	public synchronized void removePluginObject(IPlugin plugin, String key) {
-		if (plugin == null) {
+	public synchronized void removePluginObject(IPlugin plugin, String key)
+	{
+		if (plugin == null)
+		{
 			throw new IllegalArgumentException("Null IPlugin passed");
 		}
-		if (key == null) {
+		if (key == null)
+		{
 			throw new IllegalArgumentException("Null key passed");
 		}
 		Map map = (Map) _pluginObjects.get(plugin.getInternalName());
-		if (map != null) {
+		if (map != null)
+		{
 			map.remove(key);
 		}
 	}
 
-	public void closeAllSQLResultTabs() {
+	public void closeAllSQLResultTabs()
+	{
 		_sessionSheet.getSQLPanel().closeAllSQLResultTabs();
 	}
 
-	public void closeAllSQLResultFrames() {
+	public void closeAllSQLResultFrames()
+	{
 		_sessionSheet.getSQLPanel().closeAllSQLResultFrames();
 	}
 
-	public String getEntireSQLScript() {
+	public String getEntireSQLScript()
+	{
 		return _sessionSheet.getSQLEntryPanel().getText();
 	}
 
-	public String getSQLScriptToBeExecuted() {
+	public String getSQLScriptToBeExecuted()
+	{
 		return _sessionSheet.getSQLEntryPanel().getSQLToBeExecuted();
 	}
 
-	public void setEntireSQLScript(String sqlScript) {
+	public void setEntireSQLScript(String sqlScript)
+	{
 		_sessionSheet.getSQLEntryPanel().setText(sqlScript);
 	}
 
-	public void appendSQLScript(String sqlScript) {
+	public void appendSQLScript(String sqlScript)
+	{
 		_sessionSheet.getSQLEntryPanel().appendText(sqlScript);
 	}
 
-	public int getSQLScriptSelectionStart() {
+	public int getSQLScriptSelectionStart()
+	{
 		return _sessionSheet.getSQLEntryPanel().getSelectionStart();
 	}
 
-	public int getSQLScriptSelectionEnd() {
+	public int getSQLScriptSelectionEnd()
+	{
 		return _sessionSheet.getSQLEntryPanel().getSelectionEnd();
 	}
 
-	public void setSQLScriptSelectionStart(int start) {
+	public void setSQLScriptSelectionStart(int start)
+	{
 		_sessionSheet.getSQLEntryPanel().setSelectionStart(start);
 	}
 
-	public void setSQLScriptSelectionEnd(int start) {
+	public void setSQLScriptSelectionEnd(int start)
+	{
 		_sessionSheet.getSQLEntryPanel().setSelectionEnd(start);
 	}
 
@@ -265,42 +311,54 @@ class Session implements ISession {
 	 *
 	 * @return	<TT>ISQLEntryPanel</TT> object.
 	 */
-	public ISQLEntryPanel getSQLEntryPanel() {
+	public ISQLEntryPanel getSQLEntryPanel()
+	{
 		return _sessionSheet.getSQLEntryPanel();
 	}
 
-	public synchronized void closeSQLConnection() throws SQLException {
-		if (_conn != null) {
-			try {
+	public synchronized void closeSQLConnection() throws SQLException
+	{
+		if (_conn != null)
+		{
+			try
+			{
 				_conn.close();
-			} finally {
+			}
+			finally
+			{
 				_conn = null;
 			}
 		}
 	}
 
-	public IMessageHandler getMessageHandler() {
+	public IMessageHandler getMessageHandler()
+	{
 		return _msgHandler;
 	}
 
-	public void setMessageHandler(IMessageHandler handler) {
+	public void setMessageHandler(IMessageHandler handler)
+	{
 		_msgHandler = handler != null ? handler : NullMessageHandler.getInstance();
 	}
 
-	public void showMessage(Exception ex) {
+	public void showMessage(Exception ex)
+	{
 		_msgHandler.showMessage(ex);
 	}
 
-	public void showMessage(String msg) {
+	public void showMessage(String msg)
+	{
 		_msgHandler.showMessage(msg);
 	}
 
-	public void setSessionSheet(SessionSheet child) {
+	public void setSessionSheet(SessionSheet child)
+	{
 		_sessionSheet = child;
 
 	}
 
-	public SessionSheet getSessionSheet() {
+	public SessionSheet getSessionSheet()
+	{
 		return _sessionSheet;
 	}
 
@@ -312,25 +370,31 @@ class Session implements ISession {
 	 * @throws	IllegalArgumentException
 	 *		  Thrown if an invalid <TT>tabId</TT> passed.
 	 */
-	public void selectMainTab(int tabIndex) {
+	public void selectMainTab(int tabIndex)
+	{
 		_sessionSheet.selectMainTab(tabIndex);
 	}
 
 	/**
 	 * Execute the current SQL.
 	 */
-	public void executeCurrentSQL() {
+	public void executeCurrentSQL()
+	{
 		_sessionSheet.getSQLPanel().executeCurrentSQL();
 	}
 
 	/**
 	 * Commit the current SQL transaction.
 	 */
-	public void commit() {
-		try {
+	public void commit()
+	{
+		try
+		{
 			getSQLConnection().commit();
 			getMessageHandler().showMessage("Commit completed normally."); // i18n
-		} catch (Exception ex) {
+		}
+		catch (Exception ex)
+		{
 			getMessageHandler().showMessage(ex);
 		}
 	}
@@ -338,11 +402,15 @@ class Session implements ISession {
 	/**
 	 * Rollback the current SQL transaction.
 	 */
-	public void rollback() {
-		try {
+	public void rollback()
+	{
+		try
+		{
 			getSQLConnection().rollback();
 			getMessageHandler().showMessage("Rollback completed normally."); // i18n
-		} catch (Exception ex) {
+		}
+		catch (Exception ex)
+		{
 			getMessageHandler().showMessage(ex);
 		}
 	}
@@ -355,8 +423,10 @@ class Session implements ISession {
 	 * @throws	IllegalArgumentException
 	 *			If a null <TT>ISQLExecutionListener</TT> passed.
 	 */
-	public void addSQLExecutionListener(ISQLExecutionListener lis) {
-		if (lis == null) {
+	public void addSQLExecutionListener(ISQLExecutionListener lis)
+	{
+		if (lis == null)
+		{
 			throw new IllegalArgumentException("null ISQLExecutionListener passed");
 		}
 		_sessionSheet.getSQLPanel().addSQLExecutionListener(lis);
@@ -370,8 +440,10 @@ class Session implements ISession {
 	 * @throws	IllegalArgumentException
 	 *			If a null <TT>ISQLExecutionListener</TT> passed.
 	 */
-	public void removeSQLExecutionListener(ISQLExecutionListener lis) {
-		if (lis == null) {
+	public void removeSQLExecutionListener(ISQLExecutionListener lis)
+	{
+		if (lis == null)
+		{
 			throw new IllegalArgumentException("null ISQLExecutionListener passed");
 		}
 		_sessionSheet.getSQLPanel().removeSQLExecutionListener(lis);
@@ -382,8 +454,10 @@ class Session implements ISession {
 	 *
 	 * @param	lis		The listener.
 	 */
-	public void addResultTabListener(IResultTabListener lis) {
-		if (lis == null) {
+	public void addResultTabListener(IResultTabListener lis)
+	{
+		if (lis == null)
+		{
 			throw new IllegalArgumentException("null IResultTabListener passed");
 		}
 		_sessionSheet.getSQLPanel().addResultTabListener(lis);
@@ -394,8 +468,10 @@ class Session implements ISession {
 	 *
 	 * @param	lis		The listener.
 	 */
-	public void removeResultTabListener(IResultTabListener lis) {
-		if (lis == null) {
+	public void removeResultTabListener(IResultTabListener lis)
+	{
+		if (lis == null)
+		{
 			throw new IllegalArgumentException("null IResultTabListener passed");
 		}
 		_sessionSheet.getSQLPanel().removeResultTabListener(lis);
@@ -409,7 +485,8 @@ class Session implements ISession {
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>IMainPanelTab</TT> passed.
 	 */
-	public void addMainTab(IMainPanelTab tab) {
+	public void addMainTab(IMainPanelTab tab)
+	{
 		_sessionSheet.addMainTab(tab);
 	}
 
@@ -424,7 +501,8 @@ class Session implements ISession {
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ITablePanelTab</TT> passed.
 	 */
-	public void addDatabasePanelTab(IDatabasePanelTab tab) {
+	public void addDatabasePanelTab(IDatabasePanelTab tab)
+	{
 		_sessionSheet.getDatabasePanel().addDatabasePanelTab(tab);
 	}
 
@@ -439,8 +517,10 @@ class Session implements ISession {
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ITablePanelTab</TT> passed.
 	 */
-	public void addTablePanelTab(ITablePanelTab tab) {
-		if (tab == null) {
+	public void addTablePanelTab(ITablePanelTab tab)
+	{
+		if (tab == null)
+		{
 			throw new IllegalArgumentException("Null ITablePanelTab passed");
 		}
 		_sessionSheet.getTablePanel().addTablePanelTab(tab);
@@ -457,11 +537,12 @@ class Session implements ISession {
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>IProcedurePanelTab</TT> passed.
 	 */
-	public void addProcedurePanelTab(IProcedurePanelTab tab) {
-		if (tab == null) {
+	public void addProcedurePanelTab(IProcedurePanelTab tab)
+	{
+		if (tab == null)
+		{
 			throw new IllegalArgumentException("Null IProcedurePanelTab passed");
 		}
 		_sessionSheet.getProcedurePanel().addProcedurePanelTab(tab);
 	}
 }
-
