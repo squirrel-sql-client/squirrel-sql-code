@@ -174,7 +174,7 @@ public class DataTypeClob
 			_readCompleteClobs = false;	// set to the default
 			String readCompleteClobsString = DTProperties.get(thisClassName, "readCompleteClobs");
 			if (readCompleteClobsString != null && readCompleteClobsString.equals("true"))
-				_readClobs = true;
+				_readCompleteClobs = true;
 
 			_readClobsSize = LARGE_COLUMN_DEFAULT_READ_LENGTH;	// set to default
 			String readClobsSizeString = DTProperties.get(thisClassName, "readClobsSize");
