@@ -249,6 +249,7 @@
             <fileset dir="." includes="**/#*#" defaultexcludes="no"/>
             <fileset dir=".">
                 <include name="**/*.class"/>
+                <include name="**/*.bak"/>
             </fileset>
         </delete>
         <delete includeEmptyDirs="true">
