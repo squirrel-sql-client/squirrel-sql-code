@@ -23,7 +23,7 @@ import java.io.IOException;
 import javax.swing.Action;
 import javax.swing.JMenu;
 
-import net.sourceforge.squirrel_sql.fw.gui.GUIExecutionController;
+import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.Logger;
 
@@ -34,6 +34,8 @@ import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.fw.util.*;
+
 
 /**
  * Defines the API to do callbacks on the application. I'm not sure
@@ -66,11 +68,11 @@ public interface IApplication {
     MainFrame getMainFrame();
 
 	/**
-	 * Return the threaded controller for controlling SQL execution.
+	 * Return the thread pool for this app.
 	 * 
-	 * @return	the threaded controller for controlling SQL execution.
+	 * @return	the thread pool for this app.
 	 */
-    GUIExecutionController getSQLController();
+    TaskThreadPool getThreadPool();
 
 	/**
 	 * Add a hierarchical menu to a menu.

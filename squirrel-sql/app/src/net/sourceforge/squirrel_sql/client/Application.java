@@ -27,7 +27,7 @@ import javax.swing.Action;
 import javax.swing.JMenu;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
-import net.sourceforge.squirrel_sql.fw.gui.GUIExecutionController;
+import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.Debug;
 import net.sourceforge.squirrel_sql.fw.util.Logger;
@@ -43,6 +43,8 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.client.util.SplashScreen;
 import net.sourceforge.squirrel_sql.client.util.SquirrelLogger;
+import net.sourceforge.squirrel_sql.fw.util.*;
+
 
 /**
  * Defines the API to do callbacks on the application.
@@ -73,7 +75,8 @@ class Application implements IApplication {
 
     private SquirrelResources _resources;
     
-    private GUIExecutionController _sqlExecutionController = new GUIExecutionController();
+    /** Thread pool for long running tasks. */
+    private TaskThreadPool _threadPool = new TaskThreadPool();
 
     /**
      * ctor.
@@ -194,12 +197,12 @@ class Application implements IApplication {
     }
 
 	/**
-	 * Return the threaded controller for controlling SQL execution.
+	 * Return the thread pool for this app.
 	 * 
-	 * @return	the threaded controller for controlling SQL execution.
+	 * @return	the thread pool for this app.
 	 */
-    public GUIExecutionController getSQLController() {
-    	return _sqlExecutionController;
+    public TaskThreadPool getThreadPool() {
+    	return _threadPool;
     }
 
     public synchronized void addToMenu(int menuId, JMenu menu) {
