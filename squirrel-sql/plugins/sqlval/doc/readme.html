@@ -13,6 +13,10 @@ does this by using a Web Service provided by Mimer SQL. The SQL that is
 validated is stored anonymously to be used by the ISO SQL Standards
 committee.</P>
 
+<P>If you can't connect to the SQL Validation web service then you
+may need to specify a proxy server in the &quot;Proxy&quot; tab of the Global
+Preferences dialog.</P>
+
 <P>For more information
 on the web service consult http://sqlvalidator.mimer.com</P>
 
@@ -29,20 +33,28 @@ Version details shown will be sent to the Web Service along with your
 validation request otherwise &quot;N/A&quot; will be sent for these
 fields.</P>
 
-<P>The &quot;Show Confirmation Dialog&quot; checkbox, if checked, will display
-a confirmation dialog prior to sending the validation request to the web
-service.</P>
-
 <H2>New Menu Items</H2>
 
-<P>A &quot;Validate SQL&quot; item has been added to the &quot;Session&quot;
-menu. When selected this will attempt to validate the current SQL in the
-SQL entry area. If &quot;Show Confirmation Dialog&quot; was specified in the
-&quot;SQL Validator&quot tab in the Global Preferences dialog then a
-confirmation dialog will be shown otherwise the validation request will be
-sent to the web service.</P>
+<P>An &quot;SQL Validation&quot; hierarchical menu has been added to the
+&quot;Session&quot; menu. This has the following menu items:
 
-<P>Results are shown in the message area at the bottom of the session window.</P>
+<DL>
+<DT><B>Connect to SQL Validator</B>
+<DD>This will present you with a &quot;logon&quot; dialog and allow you
+	to connect to the SQL Validation web service. If you have already
+	connected then the previous connection will first be closed.
+
+<DT><B>Disconnect from SQL Validator</B>
+<DD>If you have previously connected to the SQL Validation web service
+	then this option will disconnect you.
+
+<DT><B>Validate SQL</B>
+<DD>This option will attempt to validate the current SQL in the
+	SQL entry area. If you aren't connected to the SQL Validation web
+	service then it will first display a &quot;logon&quot; dialog to
+	allow you to connect. Results are shown in the message area at the
+	bottom of the session window.
+</DL>
 
 </BODY>
 
