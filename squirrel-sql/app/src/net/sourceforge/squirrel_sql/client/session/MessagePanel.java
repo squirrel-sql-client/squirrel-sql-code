@@ -94,7 +94,7 @@ class MessagePanel extends JTextArea implements IMessageHandler
 	{
 		if (th != null)
 		{
-			setBackground(Color.WHITE);
+			setBackground(Color.white);
 			_errOccured = false;
 			privateShowMessage(th);
 		}
@@ -104,7 +104,7 @@ class MessagePanel extends JTextArea implements IMessageHandler
 	{
 		if (msg != null)
 		{
-			setBackground(Color.WHITE);
+			setBackground(Color.white);
 			_errOccured = false;
 			privateShowMessage(msg);
 		}
@@ -120,7 +120,7 @@ class MessagePanel extends JTextArea implements IMessageHandler
 	{
 		if (th != null)
 		{
-			setBackground(Color.RED);
+			setBackground(Color.red);
 			_errOccured = true;
 			privateShowMessage(th);
 		}
@@ -136,7 +136,7 @@ class MessagePanel extends JTextArea implements IMessageHandler
 	{
 		if (msg != null)
 		{
-			setBackground(Color.RED);
+			setBackground(Color.red);
 			_errOccured = true;
 			privateShowMessage(msg);
 		}
