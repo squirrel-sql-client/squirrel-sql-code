@@ -43,6 +43,8 @@ Enhancements
 
 Bug Fixes
 ---------
+- Reload Metal Look and Feel when first loading
+  SQuirreL so that the "Blue" theme is used.
 - Position focus to the text area when first displaying
   the HTML viewer window.
 - Stop driver maintenance window from resizing when jars
@@ -63,11 +65,12 @@ Bug Fixes
 
 Plugin API
 ----------
+- Move metadata methods to metadata classes.
 
 Other
 -----
+- Don't display icons in menus.
 - Cleanup ResultSetMetaData handling.
-- Move metadata methods to metadata classes.
 - Make the installation window resizeable.
 
 

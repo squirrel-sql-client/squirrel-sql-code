@@ -4,7 +4,7 @@ Change Log
 0.12
 ====
 
-- Updated for SQuirrel SQL Client 1.1beta7.
+- Updated for SQuirrel SQL Client 1.1rc1.
 
 
 0.11

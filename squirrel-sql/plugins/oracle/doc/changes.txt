@@ -4,7 +4,7 @@ Oracle Change Log
 0.11
 ====
 
-- Updated for SQuirrel SQL Client 1.1beta7.
+- Updated for SQuirrel SQL Client 1.1rc1.
 
 0.10
 ====

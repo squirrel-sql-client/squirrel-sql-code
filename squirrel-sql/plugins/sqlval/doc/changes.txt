@@ -8,7 +8,7 @@ SQL Validator Change Log
   off the Session menu.
 - Only display logon menu and open a session to the web service
   if a session doesn't already exist.
-- Make confirmation dialog resizeable.
+- Make login dialog resizeable.
 - Cleaned up the preference panels.
 - Updated for SQuirrel SQL Client 1.1rc1.
 

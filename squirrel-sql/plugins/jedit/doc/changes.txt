@@ -10,7 +10,7 @@ Bug Fixes
 
 Other
 -----
-- Updated for changes in SQuirreL 1.1beta7
+- Updated for changes in SQuirreL 1.1rc1
 
 
 0.16
