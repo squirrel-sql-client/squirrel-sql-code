@@ -67,9 +67,10 @@
 			<h1 class="body">Answers - SQuirrel SQL Client.</h1>
 			<h1 class="question"><A NAME="faq0">What database systems does SQuirreL work with?</A></h1>
 			<p class="answer">In theory SQuirreL should work with any DBMS that has a JDBC 2.0 driver. However not all
-			drivers/DBMS's are fully complient with the JDBC 2.0 specification. Users have reported SQuirreL
+			drivers/DBMS's are fully complient with the JDBC 2.0 specification. People have reported SQuirreL
 			working with the following:</p>
 			<UL>
+			<LI><A HREF="http://axion.tigris.org/">Axion Java RDBMS</A>.</LI> 
 			<LI><A HREF="http://hsqldb.sourceforge.net/">HSQL</A>.</LI>
 			<LI><A HREF="http://hsql.sourceforge.net/">Hypersonic SQL</A>.</LI>
 			<LI><A HREF="http://www.ibm.com/">IBM DB2</A> for Linux, OS/400 and Windows.</LI>
@@ -77,13 +78,19 @@
 			<LI><A HREF="http://www.interbase.com/">Interbase</A> with the <A HREF="http://www.interbase.com/">Interclient</A> JDBC driver.</LI>
 			<LI><A HREF="http://mckoi.com/database/">Mckoi SQL</A>.</LI>
 			<LI><A HREF="http://www.microsoft.com">Microsoft Access</A> with the JDBC/ODBC bridge.</LI>
-			<LI><A HREF="http://www.microsoft.com">Microsoft SQL Server</A> with both the Microsoft and
-					<A HREF="http://www.weblogic.com">WebLogic</A> JDBC drivers.</LI>
+			<LI><A HREF="http://www.microsoft.com">Microsoft SQL Server</A> with the Microsoft, 
+					<A HREF="http://www.weblogic.com">WebLogic</A> and
+					<A HREF="http://jtds.sourceforge.net">jTDS</A>
+					JDBC drivers.</LI>
+			<LI><A HREF="http://www.mimer.com/">Mimer SQL</A></LI> 
 			<LI><A HREF="http://www.mysql.com">MySQL</A> with the <A HREF="http://mmmysql.sourceforge.net/">MM MySQL</A> JDBC driver.</LI>
 			<LI><A HREF="http://www.oracle.com">Oracle 8</A> with the Oracle thin and OCI drivers.</LI>
 			<LI><A HREF="http://www.postgresql.org">PostgreSQL 7.1.3</A>.</LI>
-			<LI><A HREF="http://www.sybase.com">Sybase</A> with the <A HREF="http://www.sybase.com">JConnect</A> JDBC driver.</LI>
-			<LI><A HREF="http://www.sunopsis.com/corporate/us/products/jdbcforxml/">Sunopsis XML Driver (JDBC™ Edition)</A>.</LI>
+			<LI><A HREF="http://www.sybase.com">Sybase</A> with the <A HREF="http://www.sybase.com">JConnect</A> JDBC driver.
+					There are currently some ResultSetMetaData issues with Sybase and
+					SQuirreL 1.1. We hope to have these sorted out for the stable release.
+					SQuirreL 1.0 seems to work properly with Sybase.</LI>
+			<LI><A HREF="http://www.sunopsis.com/corporate/us/products/jdbcforxml/">Sunopsis XML Driver (JDBC Edition)</A>.</LI>
 			<LI><A HREF="http://www.thinksql.co.uk">ThinkSQL RDBMS</A>.</LI>
 			</UL>
 			<p class="answer">Please send us an <A HREF="mailto:colbell@users.sourceforge.net">email</A> if you have used SQuirreL
