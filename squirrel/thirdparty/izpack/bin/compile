@@ -1,4 +1,0 @@
-#!/bin/sh
-# Launches the IzPack compiler.
-# Use the '-?' argument to know the parameters and call syntax.
-java -jar "../lib/compiler.jar" ${1+"$@"}
