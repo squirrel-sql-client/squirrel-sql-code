@@ -18,6 +18,8 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.sql.SQLException;
+
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 /**
  * The current session.
  */
@@ -34,4 +36,17 @@ public interface IClientSession extends ISession
 	 * @throws	SQLException  if an SQL error occurs.
 	 */
 	void closeSQLConnection() throws SQLException;
+
+	/**
+	 * Register an expander for the specified database object type in the
+	 * object tree.
+	 * 
+	 * @param	dbObjectType	Databae object type.
+	 *							@see net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectTypes
+	 * @param	expander		Expander called to add children to a parent node.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> <TT>INodeExpander</TT> thrown.
+	 */
+	public void registerObjectTreeExpander(int dbObjectType, INodeExpander expander);
 }

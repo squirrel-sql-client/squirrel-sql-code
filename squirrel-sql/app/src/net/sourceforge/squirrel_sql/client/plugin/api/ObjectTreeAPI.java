@@ -17,7 +17,7 @@ package net.sourceforge.squirrel_sql.client.plugin.api;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.IClientSession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 /**
  * This class is the API through which plugins can work with the object tree.
@@ -27,7 +27,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExp
 class ObjectTreeAPI implements IObjectTreeAPI
 {
 	/** Session containing the object tree. */
-	private ISession _session;
+	private IClientSession _session;
 
 	/**
 	 * Ctor specifying the session.
@@ -37,7 +37,7 @@ class ObjectTreeAPI implements IObjectTreeAPI
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <T>null</TT> <TT>ISession</TT> passed.
 	 */
-	ObjectTreeAPI(ISession session)
+	ObjectTreeAPI(IClientSession session)
 	{
 		super();
 		if (session == null)

@@ -38,6 +38,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession.ISessionKeys;
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.objectstree.DatabasePanel;
 import net.sourceforge.squirrel_sql.client.session.objectstree.ProcedurePanel;
 import net.sourceforge.squirrel_sql.client.session.objectstree.TablePanel;
@@ -197,7 +198,7 @@ class Session implements IClientSession
 	 */
 	public IDatabaseObjectInfo[] getSelectedDatabaseObjects()
 	{
-		return _sessionSheet.getObjectPanel().getSelectedDatabaseObjects();
+		return _sessionSheet.getObjectsPanel().getSelectedDatabaseObjects();
 	}
 
 	public synchronized Object getPluginObject(IPlugin plugin, String key)
@@ -555,5 +556,25 @@ class Session implements IClientSession
 			throw new IllegalArgumentException("Null IProcedurePanelTab passed");
 		}
 		_sessionSheet.getProcedurePanel().addProcedurePanelTab(tab);
+	}
+
+	/**
+	 * Register an expander for the specified database object type in the
+	 * object tree.
+	 * 
+	 * @param	dbObjectType	Database object type.
+	 *							@see net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectTypes
+	 * @param	expander		Expander called to add children to a parent node.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> <TT>INodeExpander</TT> thrown.
+	 */
+	public void registerObjectTreeExpander(int dbObjectType, INodeExpander expander)
+	{
+		if (expander == null)
+		{
+			throw new IllegalArgumentException("Null INodeExpander passed");
+		}
+		_sessionSheet.getObjectTreePanel().registerExpander(dbObjectType, expander);
 	}
 }

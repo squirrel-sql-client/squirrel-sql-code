@@ -130,11 +130,36 @@ public class ObjectTree extends JTree {
 		}
 
 		//parentNode.addBaseNodeExpandListener(ObjectsTree.this);
-		INodeExpander[] expanders = parentNode.getExpanders();
-		if (parentNode.getChildCount() == 0 && expanders.length > 0)
+		//INodeExpander[] expanders = parentNode.getExpanders();
+
+		// If node hasn't already neen expanded.
+		if (parentNode.getChildCount() == 0)
 		{
-			TreeLoader loader = new TreeLoader(parentNode, expanders);
-			_session.getApplication().getThreadPool().addTask(loader);
+			// Add together the standard expanders for this node type and any
+			// individual expanders that there are for the node and process them.
+			int objType = parentNode.getDatabaseObjectInfo().getDatabaseObjectType();
+			INodeExpander[] stdExpanders = _model.getExpanders(objType);
+			INodeExpander[] extraExpanders = parentNode.getExpanders();
+			if (stdExpanders.length > 0 || extraExpanders.length > 0)
+			{
+				INodeExpander[] expanders = null;
+				if (stdExpanders.length > 0 && extraExpanders.length == 0)
+				{
+					expanders = stdExpanders;
+				}
+				else if (stdExpanders.length == 0 && extraExpanders.length > 0)
+				{
+					expanders = extraExpanders;
+				}
+				else
+				{
+					expanders = new INodeExpander[stdExpanders.length + extraExpanders.length];
+					System.arraycopy(stdExpanders, 0, expanders, 0, stdExpanders.length);
+					System.arraycopy(extraExpanders, 0, expanders, stdExpanders.length, extraExpanders.length);
+				}
+				TreeLoader loader = new TreeLoader(parentNode, expanders);
+				_session.getApplication().getThreadPool().addTask(loader);
+			}
 		}
 	}
 	

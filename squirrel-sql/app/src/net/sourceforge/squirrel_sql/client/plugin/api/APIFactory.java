@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.plugin.api;
 
+import net.sourceforge.squirrel_sql.client.session.IClientSession;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 /*
@@ -52,6 +53,6 @@ public class APIFactory
 		{
 			throw new IllegalArgumentException("ISession == null");
 		}
-		return new ObjectTreeAPI(session);
+		return new ObjectTreeAPI((IClientSession)session);
 	}
 }

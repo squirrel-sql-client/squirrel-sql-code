@@ -89,11 +89,14 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 	 */
 	public boolean getAllowsChildren()
 	{
-		return _expanders.size() != 0;
+		return true;
+//		return _expanders.size() != 0;
 	}
 
 	/**
-	 * Return the expanders for this node..
+	 * Return the expanders for this node. Remember that these are in addition
+	 * to the standard expanders stored in the object tree model. Normally
+	 * this would be empty.
 	 * 
 	 * @return	The <TT>INodeExpander</TT> objects for this node.
 	 */

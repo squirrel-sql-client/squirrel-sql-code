@@ -164,7 +164,7 @@ public class DatabaseExpander implements INodeExpander
 											IDatabaseObjectTypes.CATALOG,
 											conn);
 			ObjectTreeNode child = new ObjectTreeNode(session, dbo);
-			child.addExpander(this);
+//			child.addExpander(this);
 			childNodes.add(child);
 		}
 		return childNodes;
@@ -184,7 +184,7 @@ public class DatabaseExpander implements INodeExpander
 											IDatabaseObjectTypes.SCHEMA,
 											conn);
 			ObjectTreeNode child = new ObjectTreeNode(session, dbo);
-			child.addExpander(this);
+//			child.addExpander(this);
 			childNodes.add(child);
 		}
 		return childNodes;

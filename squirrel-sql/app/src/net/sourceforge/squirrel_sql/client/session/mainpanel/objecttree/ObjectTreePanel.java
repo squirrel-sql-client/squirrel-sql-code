@@ -66,6 +66,25 @@ public class ObjectTreePanel extends JPanel {
 	}
 
 	/**
+	 * Register an expander for the specified database object type in the
+	 * object tree.
+	 * 
+	 * @param	dbObjectType	Database object type.
+	 *							@see net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectTypes
+	 * @param	expander		Expander called to add children to a parent node.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> <TT>INodeExpander</TT> thrown.
+	 */
+	public void registerExpander(int dbObjectType, INodeExpander expander)
+	{
+		if (expander == null)
+		{
+			throw new IllegalArgumentException("Null INodeExpander passed");
+		}
+	}
+
+	/**
 	 * Set the panel to be shown in the data area for the passed
 	 * path.
 	 * 
