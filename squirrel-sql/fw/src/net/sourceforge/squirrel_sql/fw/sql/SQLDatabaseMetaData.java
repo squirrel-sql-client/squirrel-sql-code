@@ -88,14 +88,33 @@ public class SQLDatabaseMetaData
 	}
 
 	/**
+	 * Return the database product version for this connection.
+	 * 
+	 * @return	database product version
+	 * 
+	 * @throws	SQLException	Thrown if an SQL error occurs.
+	 */
+	public synchronized String getDatabaseProductVersion()
+		throws SQLException
+	{
+		final String key = "getDatabaseProductVersion";
+		String value = (String)_common.get(key);
+		if (value == null)
+		{
+			value = getJDBCMetaData().getDatabaseProductVersion();
+			_common.put(key, value);
+		}
+		return value;
+	}
+
+	/**
 	 * Return the JDBC driver name for this connection.
 	 * 
 	 * @return	the JDBC driver name for this connection.
 	 * 
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
-	public synchronized String getDriverName()
-		throws SQLException
+	public synchronized String getDriverName() throws SQLException
 	{
 		final String key = "getDriverName";
 		String value = (String)_common.get(key);
@@ -107,6 +126,25 @@ public class SQLDatabaseMetaData
 		return value;
 	}
 
+	/**
+	 * Return the JDBC version of this driver.
+	 * 
+	 * @return	the JDBC version of the driver.
+	 * 
+	 * @throws	SQLException	Thrown if an SQL error occurs.
+	 */
+	public synchronized int getJDBCVersion() throws SQLException
+	{
+		final String key = "getJDBCVersion";
+		Integer value = (Integer)_common.get(key);
+		if (value == null)
+		{
+			DatabaseMetaData md = getJDBCMetaData();
+			int vers = (md.getJDBCMajorVersion() * 100) + md.getJDBCMinorVersion();
+			_common.put(key, new Integer(vers));
+		}
+		return value.intValue();
+	}
 	/**
 	 * Return a string array containing the names of all the catalogs in the
 	 * database.
