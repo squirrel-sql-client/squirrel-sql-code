@@ -37,8 +37,7 @@ public class SquirrelAppender extends DailyRollingFileAppender
 		super(
 			new PatternLayout("%-4r [%t] %-5p %c %x - %m%n"),
 			getLogFile().getAbsolutePath(),
-			//"'.'yyyy-ww");
-			"'.'yyyy-MM-dd-HH-mm");
+			"'.'yyyy-ww");
 	}
 
 	private static File getLogFile()
