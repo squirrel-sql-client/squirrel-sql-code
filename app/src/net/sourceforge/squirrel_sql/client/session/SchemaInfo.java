@@ -33,12 +33,14 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 public class SchemaInfo
 {
 	private boolean _loading = false;
+	private boolean _loaded = false;
 
 	private final List _keywords = new ArrayList();
 	private final List _dataTypes = new ArrayList();
 	private final List _functions = new ArrayList();
 	private final List _tables = new ArrayList();
 	private final List _columns = new ArrayList();
+	private final List _extendedtableInfos = new ArrayList();
 
 	/** Logger for this class. */
 	private static final ILogger s_log =
@@ -124,6 +126,7 @@ public class SchemaInfo
 		finally
 		{
 			_loading = false;
+			_loaded = true;
 		}
 	}
 
@@ -493,6 +496,36 @@ public class SchemaInfo
 		}
 	}
 
+	public String[] getKeywords()
+	{
+		return (String[]) _keywords.toArray(new String[_keywords.size()]);
+	}
+
+	public String[] getDataTypes()
+	{
+		return (String[]) _dataTypes.toArray(new String[_dataTypes.size()]);
+	}
+
+	public String[] getFunctions()
+	{
+		return (String[]) _functions.toArray(new String[_functions.size()]);
+	}
+
+	public String[] getTables()
+	{
+		return (String[]) _tables.toArray(new String[_tables.size()]);
+	}
+
+	public ExtendedTableInfo[] getExtendedTableInfos()
+	{
+		return (ExtendedTableInfo[]) _extendedtableInfos.toArray(new ExtendedTableInfo[_extendedtableInfos.size()]);
+	}
+
+	public boolean isLoaded()
+	{
+		return _loaded;
+	}
+
 	private void loadTables(DatabaseMetaData dmd)
 	{
 		try
@@ -505,6 +538,10 @@ public class SchemaInfo
 				while (rs.next())
 				{
 					_tables.add(rs.getString(3).toUpperCase());
+
+					String tableName = rs.getString("TABLE_NAME");
+					String tableType = rs.getString("TABLE_TYPE");
+					_extendedtableInfos.add(new ExtendedTableInfo(tableName, tableType));
 				}
 			}
 			finally

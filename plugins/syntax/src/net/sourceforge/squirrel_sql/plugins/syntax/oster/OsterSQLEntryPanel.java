@@ -25,6 +25,7 @@ import java.awt.event.MouseListener;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.Document;
@@ -37,6 +38,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.BaseSQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
 import net.sourceforge.squirrel_sql.client.session.SessionTextEditPopupMenu;
 
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
@@ -76,6 +78,7 @@ public class OsterSQLEntryPanel extends BaseSQLEntryPanel
 
 		_textArea = new OsterTextControl(session, prefs);
 		_textPopupMenu = new SessionTextEditPopupMenu();
+		_textArea.addMouseListener(_sqlEntryMouseListener);
 	}
 
 	/**
@@ -297,14 +300,14 @@ public class OsterSQLEntryPanel extends BaseSQLEntryPanel
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>Action</TT> passed.
 	 */
-	public void addToSQLEntryAreaMenu(Action action)
+	public JMenuItem addToSQLEntryAreaMenu(Action action)
 	{
 		if (action == null)
 		{
 			throw new IllegalArgumentException("Action == null");
 		}
 
-		_textPopupMenu.add(action);
+		return _textPopupMenu.add(action);
 	}
 
 	/**
@@ -402,6 +405,15 @@ public class OsterSQLEntryPanel extends BaseSQLEntryPanel
 		_textArea.removeCaretListener(lis);
 	}
 
+	public void addSQLTokenListener(SQLTokenListener tl)
+	{
+		_textArea.addSQLTokenListener(tl);
+	}
+
+	public void removeSQLTokenListener(SQLTokenListener tl)
+	{
+		_textArea.removeSQLTokenListener(tl);
+	}
 
 	private final class MyMouseListener extends MouseAdapter
 	{

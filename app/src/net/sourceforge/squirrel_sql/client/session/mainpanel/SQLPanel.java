@@ -44,6 +44,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -625,13 +626,13 @@ public class SQLPanel extends JPanel
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>Action</TT> passed.
 	 */
-	public void addToSQLEntryAreaMenu(Action action)
+	public JMenuItem addToSQLEntryAreaMenu(Action action)
 	{
 		if (action == null)
 		{
 			throw new IllegalArgumentException("Action == null");
 		}
-		getSQLEntryPanel().addToSQLEntryAreaMenu(action);
+		return getSQLEntryPanel().addToSQLEntryAreaMenu(action);
 	}
 
 	protected void fireSQLEntryAreaInstalled()

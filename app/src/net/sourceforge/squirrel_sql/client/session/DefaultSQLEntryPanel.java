@@ -25,6 +25,7 @@ import java.awt.event.MouseListener;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JTextArea;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
@@ -252,17 +253,19 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 *
 	 * @param	action	The action to be added.
 	 *
+	 * @return	The newly cerated menu item.
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>Action</TT> passed.
 	 */
-	public void addToSQLEntryAreaMenu(Action action)
+	public JMenuItem addToSQLEntryAreaMenu(Action action)
 	{
 		if (action == null)
 		{
 			throw new IllegalArgumentException("Action == null");
 		}
 
-		_textPopupMenu.add(action);
+		return _textPopupMenu.add(action);
 	}
 
 	/**
@@ -404,6 +407,16 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 			_textPopupMenu.setTextComponent(_comp);
 			_textPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
 		}
+	}
+
+	public void addSQLTokenListener(SQLTokenListener tl)
+	{
+		// Not implemented
+	}
+
+	public void removeSQLTokenListener(SQLTokenListener tl)
+	{
+		// Not implemented
 	}
 
 	private static class MyTextArea extends JTextArea
