@@ -8,8 +8,7 @@ case "`uname -s`" in
 esac
 
 # Squirrel home.
-SQUIRREL_SQL_HOME="$INSTALL_PATH"
-# SQUIRREL_SQL_HOME='$INSTALL_PATH'
+SQUIRREL_SQL_HOME='%INSTALL_PATH'
 
 # SQuirreL home in Unix format.
 if $cygwin ; then
@@ -27,8 +26,8 @@ for a in $UNIX_STYLE_HOME/lib/*; do
 	TMP_CP="$TMP_CP":"$a";
 done
 
-# Now add the system classpath to our classpath. If running
-# Cygwin we also need to change our classpath to Windows format.
+# Now add the system classpath to the classpath. If running
+# Cygwin we also need to change the classpath to Windows format.
 if $cygwin ; then
 	TMP_CP=`cygpath -w -p $TMP_CP`
 	TMP_CP=$TMP_CP';'$CLASSPATH
