@@ -23,8 +23,11 @@ import java.util.Iterator;
 
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 import net.sourceforge.squirrel_sql.fw.gui.ModifiedDefaultListCellRenderer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 
@@ -64,6 +67,34 @@ public class AliasesList extends JList {
 		if (getModel().getSize() > 0) {
 			setSelectedIndex(0);
 		}
+
+		_model.addListDataListener(new ListDataListener() {
+			public void contentsChanged(ListDataEvent evt) {
+			}
+			public void intervalAdded(ListDataEvent evt) {
+				final int idx = evt.getIndex0();
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						clearSelection();
+						setSelectedIndex(idx);
+					}
+				});
+			}
+			public void intervalRemoved(ListDataEvent evt) {
+				final int idx = evt.getIndex0();
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						clearSelection();
+						int size = getModel().getSize();
+						if  (idx < size) {
+							setSelectedIndex(idx);
+						} else if (size > 0) {
+							setSelectedIndex(size - 1);
+						}
+					}
+				});
+			}
+		});
 	}
 
 	/**
