@@ -81,7 +81,7 @@ public class ObjectTreePanel extends JPanel {
 
 		JComponent comp = _emptyPnl;
 		if (path != null) {
-			DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
+//			DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
 //			if (node instanceof BaseNode) {
 //				comp = ((BaseNode)node).getDetailsPanel();
 //			}
