@@ -59,10 +59,6 @@ public class DriversList extends JList {
 		SquirrelResources res = _app.getResources();
 		setCellRenderer(new DriverListCellRenderer(res.getIcon("list.driver.found"),res.getIcon("list.driver.notfound")));
 
-		// Register so that we can display different tooltips depending
-		// which entry in list mouse is over.
-		ToolTipManager.sharedInstance().registerComponent(this);
-
 		// Select first item in list.
 		if (_model.getSize() > 0) {
 			setSelectedIndex(0);
@@ -95,6 +91,25 @@ public class DriversList extends JList {
 				});
 			}
 		});
+	}
+
+	/**
+	 * Component has been added to its parent.
+	 */
+	public void addNotify() {
+		super.addNotify();
+		// Register so that we can display different tooltips depending
+		// which entry in list mouse is over.
+		ToolTipManager.sharedInstance().registerComponent(this);
+	}
+
+	/**
+	 * Component has been removed from its parent.
+	 */
+	public void removeNotify() {
+		// Don't need tooltips any more.
+		ToolTipManager.sharedInstance().unregisterComponent(this);
+		super.removeNotify();
 	}
 
 	/**
