@@ -22,22 +22,18 @@ import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Frame;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
-import java.awt.Color;
 import java.awt.event.ActionListener;
 
 import javax.swing.JDialog;
 import javax.swing.JInternalFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.JButton;
@@ -51,8 +47,6 @@ import net.sourceforge.squirrel_sql.fw.gui.BaseMDIParentFrame;
 import net.sourceforge.squirrel_sql.fw.gui.ButtonTableHeader;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
-import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
-import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
@@ -120,7 +114,7 @@ public class CellDataPopup
 		}
 		if (dim.height < 100)
 		{
-			dim.height = 100;
+			dim.height = 200;
 			dimChanged = true;
 		}
 		if (dim.width > 500)
@@ -188,9 +182,7 @@ public class CellDataPopup
 	//
 	private static class ColumnDataPopupPanel extends JPanel {
 
-		private final TextPopupMenu _popupMenu = new TextPopupMenu();
-		private final JTextArea _ta;
-		private MouseAdapter _lis;
+		private final PopupEditableIOPanel ioPanel;
 		private JInternalFrame _parentFrame = null;
 		private int _row;
 		private int _col;
@@ -202,34 +194,28 @@ public class CellDataPopup
 		{
 			super(new BorderLayout());
 
-			_ta = CellComponentFactory.getJTextArea(colDef, cellContents);
-
 			if (tableIsEditable && CellComponentFactory.isEditableInPopup(colDef)) {
 				// data is editable in popup
-				_ta.setEditable(true);
-				_ta.setBackground(Color.YELLOW);	// tell user it is editable
+				ioPanel = new PopupEditableIOPanel(colDef, cellContents, true);
 				
 				// Since data is editable, we need to add control panel
 				// to manage user requests for DB update, file IO, etc.
-				JPanel editingControls = createPopupEditingControls(_ta, colDef);
+				JPanel editingControls = createPopupEditingControls(ioPanel, colDef);
 				add(editingControls, BorderLayout.SOUTH);
 			}
 			else {
 				// data is not editable in popup
-				_ta.setEditable(false);
+				ioPanel = new PopupEditableIOPanel(colDef, cellContents, false);
 			}
 
-			_ta.setLineWrap(true);
-			add(new JScrollPane(_ta), BorderLayout.CENTER);
+			add(ioPanel, BorderLayout.CENTER);
 
-			_popupMenu.add(new WrapAction());
-			_popupMenu.setTextComponent(_ta);
 		}
 		
 		/**
-		 * Set up user controls for editing.
+		 * Set up user controls to stop editing and update DB.
 		 */
-		private JPanel createPopupEditingControls(JTextArea _ta,
+		private JPanel createPopupEditingControls(PopupEditableIOPanel ioPanel,
 			ColumnDisplayDefinition colDef) {
 				
 			final ColumnDisplayDefinition _colDef = colDef;
@@ -247,11 +233,7 @@ public class CellDataPopup
 					// try to convert the text in the popup into a valid
 					// instance of type of data object being held in the table cell
 					StringBuffer messageBuffer = new StringBuffer();
-					Object newValue =
-						CellComponentFactory.validateAndConvertInPopup(
-							_colDef,
-							ColumnDataPopupPanel.this._ta.getText(),
-							messageBuffer);
+					Object newValue = ColumnDataPopupPanel.this.ioPanel.getObject(messageBuffer);
 					if (messageBuffer.length() > 0) {
 						// handle an error in conversion of text to object
 						messageBuffer.insert(0,
@@ -262,7 +244,7 @@ public class CellDataPopup
 							messageBuffer,
 							"Conversion Error",
 							JOptionPane.ERROR_MESSAGE);
-						ColumnDataPopupPanel.this._ta.requestFocus();
+						ColumnDataPopupPanel.this.ioPanel.requestFocus();
 
 					}
 					else {
@@ -304,60 +286,10 @@ public class CellDataPopup
 		 	_col = col;
 		 	_table = table;
 		 }
-
-		public void addNotify()
-		{
-			super.addNotify();
-			if (_lis == null)
-			{
-				_lis = new MouseAdapter()
-				{
-					public void mousePressed(MouseEvent evt)
-					{
-						if (evt.isPopupTrigger())
-						{
-							_popupMenu.show(evt);
-						}
-					}
-					public void mouseReleased(MouseEvent evt)
-					{
-							if (evt.isPopupTrigger())
-						{
-							_popupMenu.show(evt);
-						}
-					}
-				};
-				_ta.addMouseListener(_lis);
-			}
-		}
-
-		public void removeNotify()
-		{
-			super.removeNotify();
-			if (_lis != null)
-			{
-				_ta.removeMouseListener(_lis);
-				_lis = null;
-			}
-		}
-
-		private class WrapAction extends BaseAction
-		{
-			WrapAction()
-			{
-				super("Word Wrap");
-			}
-
-			public void actionPerformed(ActionEvent evt)
-			{
-				if (_ta != null)
-				{
-					_ta.setLineWrap(!_ta.getLineWrap());
-				}
-			}
-		}
+		 
 
 	}
+
 
 
 	// The following is only useable for a root type of InternalFrame.  If the
