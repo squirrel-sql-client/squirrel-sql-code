@@ -1,6 +1,14 @@
 jEdit Text Area Plugin Change Log
 =================================
 
+0.17
+====
+
+Bug Fixes
+---------
+- "TRIGGER" is now recognized as an SQL keyword.
+
+
 0.16
 ====
 
