@@ -6,6 +6,9 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+
+- Added SQL execution statistics to the
+  Info tab on the SQL output panel.
 - Better positioning of the Column Details
   popup (Maury Hammel)
 - Added JavaDoc target to build file (Johnathan
