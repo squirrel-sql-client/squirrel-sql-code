@@ -87,6 +87,7 @@ public class GraphController
       {
          graphControllerXmlBean = _xmlSerializer.read();
          _graphPane.setTitle(graphControllerXmlBean.getTitle());
+         _desktopController.setShowConstraintNames(graphControllerXmlBean.isShowConstraintNames());
       }
       else
       {
@@ -135,6 +136,7 @@ public class GraphController
    {
       GraphControllerXmlBean xmlBean = new GraphControllerXmlBean();
       xmlBean.setTitle(_graphPane.getTitle());
+      xmlBean.setShowConstraintNames(_desktopController.isShowConstraintNames());
 
       TableFrameControllerXmlBean[] frameXmls = new TableFrameControllerXmlBean[_openTableFrameCtrls.size()];
 

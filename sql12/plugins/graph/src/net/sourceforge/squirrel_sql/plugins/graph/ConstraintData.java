@@ -166,4 +166,9 @@ public class ConstraintData
          }
       }
    }
+
+   public String getConstraintName()
+   {
+      return _constraintName;
+   }
 }

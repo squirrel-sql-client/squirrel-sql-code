@@ -6,6 +6,9 @@ import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ConstraintViewXmlBean
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -196,11 +199,12 @@ public class ConstraintView implements GraphComponent
       int fkCenterY = getCenterY(fkPoints.points);
       int pkCenterY = getCenterY(pkPoints.points);
 
-      int signFkStub = fkPoints.pointsAreLeftOfWindow ? -1:1;
-      int signPkStub = pkPoints.pointsAreLeftOfWindow ? -1:1;;
+      int signFkStub = fkPoints.pointsAreLeftOfWindow ? -1 : 1;
+      int signPkStub = pkPoints.pointsAreLeftOfWindow ? -1 : 1;
+      ;
 
-      Point fkGatherPoint = new Point(fkPoints.points[0].x + signFkStub*STUB_LENGTH, fkCenterY);
-      Point pkGatherPoint = new Point(pkPoints.points[0].x + signPkStub*STUB_LENGTH, pkCenterY);
+      Point fkGatherPoint = new Point(fkPoints.points[0].x + signFkStub * STUB_LENGTH, fkCenterY);
+      Point pkGatherPoint = new Point(pkPoints.points[0].x + signPkStub * STUB_LENGTH, pkCenterY);
 
       GraphLine[] fkStubLines = new GraphLine[fkPoints.points.length];
       for (int i = 0; i < fkPoints.points.length; i++)
@@ -235,6 +239,12 @@ public class ConstraintView implements GraphComponent
          paintArrow(g, linesToArrow[i].end.x, linesToArrow[i].end.y, linesToArrow[i].beg.x, linesToArrow[i].beg.y);
       }
 
+      if(_desktopController.isShowConstraintNames())
+      {
+         GraphLine mainLine = _constraintGraph.getMainLine();
+         drawConstraintNameOnLine(g, mainLine);
+      }
+
       Vector foldingPoints = _constraintGraph.getFoldingPoints();
 
       for (int i = 0; i < foldingPoints.size(); i++)
@@ -243,19 +253,98 @@ public class ConstraintView implements GraphComponent
       }
    }
 
+   private void drawConstraintNameOnLine(Graphics g, GraphLine line)
+   {
+      Graphics2D g2d = (Graphics2D) g;
+      AffineTransform origTrans = g2d.getTransform();
+
+      try
+      {
+         StringBuffer drawText = new StringBuffer(_constraintData.getConstraintName());
+
+         int lineLen = (int) Math.sqrt((line.beg.x - line.end.x) * (line.beg.x - line.end.x) + (line.beg.y - line.end.y) * (line.beg.y - line.end.y));
+
+         FontMetrics fontMetrics = g.getFontMetrics(g.getFont());
+         while (lineLen < fontMetrics.stringWidth(drawText.toString()))
+         {
+            if (0 == drawText.length())
+            {
+               break;
+            }
+            drawText.setLength(drawText.length() - 1);
+         }
+
+         AffineTransform at = new AffineTransform();
+         Point right;
+         Point left;
+
+         if (line.beg.x > line.end.x)
+         {
+            right = line.beg;
+            left = line.end;
+         }
+         else if (line.beg.x < line.end.x)
+         {
+            right = line.end;
+            left = line.beg;
+         }
+         else
+         {
+            if (line.beg.y < line.end.y)
+            {
+               right = line.end;
+               left = line.beg;
+            }
+            else
+            {
+               right = line.beg;
+               left = line.end;
+            }
+         }
+
+         double angle;
+
+         if (0 != right.x - left.x)
+         {
+            angle = Math.atan((double) (right.y - left.y) / (double) (right.x - left.x));
+         }
+         else
+         {
+            angle = Math.PI / 2;
+         }
+
+
+         at.setToRotation(angle);
+         g2d.transform(at);
+
+         Point invTransBeg = (Point) at.inverseTransform(left, new Point());
+         g2d.drawString(drawText.toString(), invTransBeg.x, invTransBeg.y);
+
+         g2d.setTransform(origTrans);
+      }
+      catch (NoninvertibleTransformException e)
+      {
+         throw new RuntimeException(e);
+      }
+      finally
+      {
+         g2d.setTransform(origTrans);
+      }
+   }
+
    public Dimension getRequiredSize()
    {
       Dimension ret = new Dimension();
       for (int i = 0; i < _constraintGraph.getFoldingPoints().size(); i++)
       {
-         Point fp =(Point) _constraintGraph.getFoldingPoints().get(i);
+         Point fp = (Point) _constraintGraph.getFoldingPoints().get(i);
 
-         if(fp.x > ret.width)
+         if (fp.x > ret.width)
          {
             ret.width = fp.x;
          }
 
-         if(fp.y > ret.height)
+         if (fp.y > ret.height)
          {
             ret.height = fp.y;
          }
@@ -273,14 +362,14 @@ public class ConstraintView implements GraphComponent
       double sAng = 0.5;
 
       Point c = new Point(x2, y2);
-      Point a = new Point((int)(x1 + sAng*(y2-y1)), (int) (y1 - sAng*(x2-x1)));
-      Point b = new Point((int)(x1 - sAng*(y2-y1)), (int) (y1 + sAng*(x2-x1)));
+      Point a = new Point((int) (x1 + sAng * (y2 - y1)), (int) (y1 - sAng * (x2 - x1)));
+      Point b = new Point((int) (x1 - sAng * (y2 - y1)), (int) (y1 + sAng * (x2 - x1)));
 
       // defines the size of the arrow
-      double sLen = 10 / Math.sqrt( (a.x -c.x)*(a.x -c.x) + (a.y -c.y)*(a.y -c.y) );
+      double sLen = 10 / Math.sqrt((a.x - c.x) * (a.x - c.x) + (a.y - c.y) * (a.y - c.y));
 
-      Point arrPa = new Point((int)(c.x + sLen*(a.x - c.x)), (int)(c.y + sLen*(a.y - c.y)));
-      Point arrPb = new Point((int)(c.x + sLen*(b.x - c.x)), (int)(c.y + sLen*(b.y - c.y)));
+      Point arrPa = new Point((int) (c.x + sLen * (a.x - c.x)), (int) (c.y + sLen * (a.y - c.y)));
+      Point arrPb = new Point((int) (c.x + sLen * (b.x - c.x)), (int) (c.y + sLen * (b.y - c.y)));
 
 
       Polygon pg = new Polygon();
@@ -291,8 +380,6 @@ public class ConstraintView implements GraphComponent
    }
 
 
-
-
    private void drawFoldingPoint(Graphics g, Point fp)
    {
       int rad = 4;
@@ -301,7 +388,7 @@ public class ConstraintView implements GraphComponent
          rad = 5;
       }
 
-      g.fillOval(fp.x - rad, fp.y -rad, 2*rad, 2*rad);
+      g.fillOval(fp.x - rad, fp.y - rad, 2 * rad, 2 * rad);
 
    }
 
@@ -371,8 +458,8 @@ public class ConstraintView implements GraphComponent
       for (int i = 0; i < foldingPoints.size(); i++)
       {
          Point foldingPoint = (Point) foldingPoints.get(i);
-         if(     Math.abs(e.getPoint().x - foldingPoint.x) < hitDist
-             &&  Math.abs(e.getPoint().y - foldingPoint.y) < hitDist )
+         if (Math.abs(e.getPoint().x - foldingPoint.x) < hitDist
+            && Math.abs(e.getPoint().y - foldingPoint.y) < hitDist)
          {
             _constraintGraph.setHitFoldingPoint(foldingPoint);
             return true;
@@ -411,7 +498,7 @@ public class ConstraintView implements GraphComponent
    {
       _desktopController = desktopController;
 
-      if(null == desktopController)
+      if (null == desktopController)
       {
          _constraintGraph.removeAllFoldingPoints();
       }
@@ -455,7 +542,7 @@ public class ConstraintView implements GraphComponent
       {
          _lastPopupClickPoint = new Point(e.getX(), e.getY());
 
-         if(_constraintGraph.isHitOnConnectLine())
+         if (_constraintGraph.isHitOnConnectLine())
          {
             _connectLinePopup.show(e.getComponent(), e.getX(), e.getY());
          }
@@ -473,7 +560,7 @@ public class ConstraintView implements GraphComponent
 
    public void mouseDragged(MouseEvent e)
    {
-      if(false == _constraintGraph.isHitOnConnectLine())
+      if (false == _constraintGraph.isHitOnConnectLine())
       {
          // hit is on folding point
          _constraintGraph.moveLastHitFoldingPointTo(e.getPoint());

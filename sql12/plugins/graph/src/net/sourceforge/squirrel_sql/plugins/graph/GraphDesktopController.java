@@ -19,6 +19,7 @@ public class GraphDesktopController
    private JMenuItem _mnuSaveGraph;
    private JMenuItem _mnuRenameGraph;
    private JMenuItem _mnuRemoveGraph;
+   private JCheckBoxMenuItem _mnuShowConstraintNames;
    private GraphDesktopListener _listener;
    private ISession _session;
 
@@ -93,9 +94,20 @@ public class GraphDesktopController
          }
       });
 
+      _mnuShowConstraintNames = new JCheckBoxMenuItem("Show constraint names");
+      _mnuShowConstraintNames.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            _desktopPane.repaint();
+         }
+      });
+
+
       _popUp.add(_mnuSaveGraph);
       _popUp.add(_mnuRenameGraph);
       _popUp.add(_mnuRemoveGraph);
+      _popUp.add(_mnuShowConstraintNames);
    }
 
    private void onRemoveGraph()
@@ -285,4 +297,13 @@ public class GraphDesktopController
       return _desktopPane;
    }
 
+   public boolean isShowConstraintNames()
+   {
+      return _mnuShowConstraintNames.isSelected();
+   }
+
+   public void setShowConstraintNames(boolean showConstraintNames)
+   {
+      _mnuShowConstraintNames.setSelected(showConstraintNames);
+   }
 }
