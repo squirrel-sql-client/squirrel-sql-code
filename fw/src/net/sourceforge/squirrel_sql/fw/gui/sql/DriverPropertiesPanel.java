@@ -158,7 +158,7 @@ public class DriverPropertiesPanel extends JPanel
 	private void createUserInterface(SQLDriverProperty[] override)
 		throws SQLException
 	{
-		_tbl = new DriverPropertiesTable(_driver, _url);
+		_tbl = new DriverPropertiesTable(_driver, _url, override);
 		add(new JScrollPane(_tbl), BorderLayout.CENTER);
 		add(createButtonsPanel(), BorderLayout.SOUTH);
 	}

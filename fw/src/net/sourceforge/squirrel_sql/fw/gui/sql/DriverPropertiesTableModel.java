@@ -24,6 +24,7 @@ import java.util.Properties;
 
 import javax.swing.table.AbstractTableModel;
 
+import net.sourceforge.squirrel_sql.fw.sql.SQLDriverProperty;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -55,7 +56,14 @@ class DriverPropertiesTableModel extends AbstractTableModel
 	DriverPropertiesTableModel(Driver driver, String url)
 		throws SQLException
 	{
-		load(driver, url);
+		this(driver, url, null);
+	}
+
+	DriverPropertiesTableModel(Driver driver, String url,
+								SQLDriverProperty[] override)
+		throws SQLException
+	{
+		load(driver, url, override);
 	}
 
 	public Object getValueAt(int row, int col)
@@ -127,7 +135,30 @@ class DriverPropertiesTableModel extends AbstractTableModel
 	final void load(Driver driver, String url)
 		throws SQLException
 	{
-		load(driver.getPropertyInfo(url, new Properties()));
+		load(driver, url, null);
+	}
+
+	final void load(Driver driver, String url,
+					SQLDriverProperty[] override)
+		throws SQLException
+	{
+		final Properties props = new Properties();
+		if (override != null)
+		{
+			for (int i = 0; i < override.length; ++i)
+			{
+				final String key = override[i].getKey();
+				if (key != null)
+				{
+					final String value = override[i].getValue();
+					if (value != null)
+					{
+						props.setProperty(key, value);
+					}
+				}
+			}
+		}
+		load(driver.getPropertyInfo(url, props));
 	}
 
 	final void load(DriverPropertyInfo[] props)

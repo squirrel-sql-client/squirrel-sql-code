@@ -132,16 +132,16 @@ public class AliasMaintSheet extends BaseSheet
 	/** Listener to the drivers cache. */
 	private DriversCacheListener _driversCacheLis;
 
-	/** Alias name. */
+	/** Alias name text field.. */
 	private final JTextField _aliasName = new JTextField();
 
 	/** Dropdown of all the drivers in the system. */
 	private DriversCombo _drivers;
 
-	/** URL to the data source. */
+	/** URL to the data source text field. */
 	private final JTextField _url = new JTextField();
 
-	/** User name */
+	/** User name text field */
 	private final JTextField _userName = new JTextField();
 
 	/** If checked use the extended driver properties. */
@@ -150,6 +150,7 @@ public class AliasMaintSheet extends BaseSheet
 	/** Button that brings up the driver properties dialog. */
 	private final JButton _driverPropsBtn = new JButton("Properties");
 
+	/** Array of the driver properties. */
 	private SQLDriverProperty[] _sqlDriverProps;
 
 	/**
@@ -228,6 +229,7 @@ public class AliasMaintSheet extends BaseSheet
 		_aliasName.setText(_sqlAlias.getName());
 		_userName.setText(_sqlAlias.getUserName());
 		_useDriverPropsChk.setSelected(_sqlAlias.getUseDriverProperties());
+
 		if (_maintType != MaintenanceType.NEW)
 		{
 			_drivers.setSelectedItem(_sqlAlias.getDriverIdentifier());
@@ -302,9 +304,6 @@ public class AliasMaintSheet extends BaseSheet
 			final Frame owner = _app.getMainFrame();
 			final SQLDriverManager mgr = _app.getSQLDriverManager();
 			final Driver driver = mgr.getJDBCDriver(_sqlAlias.getDriverIdentifier());
-			//final DriverPropertiesDialog dlog = new DriverPropertiesDialog(_app.getMainFrame(), driver, _url.getText());
-			//dlog.setModal(true);
-			//dlog.setVisible(true);
 			DriverPropertyInfo[] infoAr = DriverPropertiesDialog.showDialog(owner, driver, _url.getText(), _sqlDriverProps);
 			if (infoAr != null)
 			{
