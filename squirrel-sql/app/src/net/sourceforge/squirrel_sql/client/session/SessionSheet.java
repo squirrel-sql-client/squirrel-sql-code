@@ -49,6 +49,7 @@ import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
@@ -79,6 +80,14 @@ public class SessionSheet extends JInternalFrame {
         String OBJ_TAB_DESC = "Show database objects";
     }
 
+    /**
+     * IDs of tabs in the main tabbed pane.
+     */
+    public interface IMainTabIndexes {
+        int OBJECT_TREE_TAB = 0;
+        int SQL_TAB = 1;
+    }
+
     private ISession _session;
 
     private MyPropertiesListener _propsListener = new MyPropertiesListener();
@@ -99,9 +108,7 @@ public class SessionSheet extends JInternalFrame {
 
         propertiesHaveChanged(null);
 
-
         session.getProperties().addPropertyChangeListener(_propsListener);
-
 
         _session.getApplication().getPluginManager().sessionStarted(session);
     }
@@ -118,15 +125,15 @@ public class SessionSheet extends JInternalFrame {
     public boolean hasConnection() {
         return _session.getSQLConnection() != null;
     }
-/*
-    public void commit() {
-        _sqlPnl.commit();
-    }
-
-    public void rollback() {
-        _sqlPnl.rollback();
-    }
-*/
+    /*
+        public void commit() {
+            _sqlPnl.commit();
+        }
+    
+        public void rollback() {
+            _sqlPnl.rollback();
+        }
+    */
     public ISession getSession() {
         return _session;
     }
@@ -152,6 +159,10 @@ public class SessionSheet extends JInternalFrame {
         }
     }
 
+    ObjectsPanel getObjectPanel() {
+        return _objectsPnl;
+    }
+
     void closeConnection() {
         try {
             _session.closeSQLConnection();
@@ -167,6 +178,25 @@ public class SessionSheet extends JInternalFrame {
             _objectsPnl.fixDividerLocation();
             _msgSplit.setDividerLocation(0.9d);
             _hasBeenVisible = true;
+        }
+    }
+
+    /**
+     * Select a tab in the main tabbed pane.
+     * 
+     * @param	tabIndex	The tab to select. @see #IMainTabIndexes
+     * 
+     * @throws	IllegalArgumentException
+     * 			Thrown if an invalid <TT>tabIndex</TT> passed.
+     */
+    public void selectMainTab(int tabIndex) throws IllegalArgumentException {
+        if (tabIndex >= _tabPane.getTabCount()) {
+            throw new IllegalArgumentException(
+                "" + tabIndex + " is not a valid index into the main tabbed pane.");
+        }
+
+        if (_tabPane.getSelectedIndex() != tabIndex) {
+            _tabPane.setSelectedIndex(tabIndex);
         }
     }
 
@@ -193,7 +223,9 @@ public class SessionSheet extends JInternalFrame {
             user = session.getSQLConnection().getUserName();
         } catch (BaseSQLException ex) {
             Logger logger = session.getApplication().getLogger();
-            logger.showMessage(Logger.ILogTypes.ERROR, "Error occured retrieving user name from Connection");
+            logger.showMessage(
+                Logger.ILogTypes.ERROR,
+                "Error occured retrieving user name from Connection");
             logger.showMessage(Logger.ILogTypes.ERROR, ex);
         }
         if (user != null && user.length() > 0) {
@@ -208,15 +240,20 @@ public class SessionSheet extends JInternalFrame {
 
     private void propertiesHaveChanged(String propertyName) {
         SessionProperties props = _session.getProperties();
-        if (propertyName == null || propertyName.equals(SessionProperties.IPropertyNames.COMMIT_ON_CLOSING_CONNECTION)) {
-            _session.getSQLConnection().setCommitOnClose(props.getCommitOnClosingConnection());
+        if (propertyName == null
+            || propertyName.equals(
+                SessionProperties.IPropertyNames.COMMIT_ON_CLOSING_CONNECTION)) {
+            _session.getSQLConnection().setCommitOnClose(
+                props.getCommitOnClosingConnection());
         }
         updateState();
     }
 
     private void createUserInterface() {
         setVisible(false);
-        Icon icon = _session.getApplication().getResources().getIcon(getClass(), "frameIcon"); //i18n
+        Icon icon =
+            _session.getApplication().getResources().getIcon(getClass(), "frameIcon");
+        //i18n
         if (icon != null) {
             setFrameIcon(icon);
         }
@@ -301,7 +338,7 @@ public class SessionSheet extends JInternalFrame {
 
     private static MouseListener s_dummyMouseAdapter = new MouseAdapter() {
         private void cancelEvent(MouseEvent evt) {
-            Component pane = (Component)evt.getSource();
+            Component pane = (Component) evt.getSource();
             pane.setVisible(true);
             pane.requestFocus();
         }
