@@ -31,9 +31,9 @@ import javax.swing.JTabbedPane;
 
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.OkCancelPanel;
-import net.sourceforge.squirrel_sql.fw.gui.OkCancelPanelEvent;
-import net.sourceforge.squirrel_sql.fw.gui.OkCancelPanelListener;
+import net.sourceforge.squirrel_sql.fw.gui.OkClosePanel;
+import net.sourceforge.squirrel_sql.fw.gui.OkClosePanelEvent;
+import net.sourceforge.squirrel_sql.fw.gui.OkClosePanelListener;
 
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -88,10 +88,10 @@ public class SessionPropertiesDialog extends JDialog {
         _panels.add(new OutputPropertiesPanel(i18n.OUTPUT, i18n.OUTPUT));
 
         // Ok and cancel buttons at bottom of dialog.
-        OkCancelPanel btnsPnl = new OkCancelPanel();
+        OkClosePanel btnsPnl = new OkClosePanel();
         btnsPnl.addListener(new MyOkCancelPanelListener());
 
-        getRootPane().setDefaultButton(btnsPnl.getOkButton());
+        btnsPnl.makeOKButtonDefault();
 
         final Container contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
@@ -118,12 +118,16 @@ public class SessionPropertiesDialog extends JDialog {
         GUIUtils.centerWithinParent(this);
     }
 
-    private final class MyOkCancelPanelListener implements OkCancelPanelListener {
-        public void okPressed(OkCancelPanelEvent evt) {
+    private final class MyOkCancelPanelListener implements OkClosePanelListener {
+        public void okPressed(OkClosePanelEvent evt) {
             performOk();
         }
 
-        public void cancelPressed(OkCancelPanelEvent evt) {
+        public void closePressed(OkClosePanelEvent evt) {
+            performCancel();
+        }
+
+        public void cancelPressed(OkClosePanelEvent evt) {
             performCancel();
         }
     }

@@ -33,9 +33,9 @@ import javax.swing.JTabbedPane;
 
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.OkCancelPanel;
-import net.sourceforge.squirrel_sql.fw.gui.OkCancelPanelEvent;
-import net.sourceforge.squirrel_sql.fw.gui.OkCancelPanelListener;
+import net.sourceforge.squirrel_sql.fw.gui.OkClosePanel;
+import net.sourceforge.squirrel_sql.fw.gui.OkClosePanelEvent;
+import net.sourceforge.squirrel_sql.fw.gui.OkClosePanelListener;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
@@ -123,7 +123,7 @@ public class GlobalPreferencesDialog extends JDialog {
         }
 
         // Ok and cancel buttons at bottom of dialog.
-        OkCancelPanel btnsPnl = new OkCancelPanel();
+        OkClosePanel btnsPnl = new OkClosePanel();
         btnsPnl.addListener(new MyOkCancelPanelListener());
 
         final Container contentPane = getContentPane();
@@ -132,7 +132,7 @@ public class GlobalPreferencesDialog extends JDialog {
         contentPane.add(tabPane, BorderLayout.NORTH);
         contentPane.add(btnsPnl, BorderLayout.CENTER);
 
-        getRootPane().setDefaultButton(btnsPnl.getOkButton());
+        btnsPnl.makeOKButtonDefault();
 
         pack();
         GUIUtils.centerWithinParent(this);
@@ -140,12 +140,16 @@ public class GlobalPreferencesDialog extends JDialog {
         setModal(true);
     }
 
-    private final class MyOkCancelPanelListener implements OkCancelPanelListener {
-        public void okPressed(OkCancelPanelEvent evt) {
+    private final class MyOkCancelPanelListener implements OkClosePanelListener {
+        public void okPressed(OkClosePanelEvent evt) {
             performOk();
         }
 
-        public void cancelPressed(OkCancelPanelEvent evt) {
+        public void closePressed(OkClosePanelEvent evt) {
+            performCancel();
+        }
+
+        public void cancelPressed(OkClosePanelEvent evt) {
             performCancel();
         }
     }
