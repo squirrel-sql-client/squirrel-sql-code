@@ -26,7 +26,7 @@ import javax.swing.text.PlainDocument;
  * This class is a <CODE>TextField</CODE> that only allows a single
  * character to be entered into it.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class CharField extends JTextField
 {
@@ -49,7 +49,7 @@ public class CharField extends JTextField
 	/**
 	 * Retrieve the contents of this field as a <TT>char</TT>. If it
 	 * is empty then return a single blank character.
-	 * 
+	 *
 	 * @return	the contents of this field as an <TT>char</TT>.
 	 */
 	public char getChar()
@@ -64,7 +64,7 @@ public class CharField extends JTextField
 
 	/**
 	 * Set the contents of this field to the passed <TT>char</TT>.
-	 * 
+	 *
 	 * @param	value	The new value for this field.
 	 */
 	public void setChar(char ch)
@@ -74,8 +74,8 @@ public class CharField extends JTextField
 
 	/**
 	 * Create a new document model for this control that only accepts
-	 * a single character..
-	 * 
+	 * a single character.
+	 *
 	 * @return	The new document model.
 	 */
 	protected Document createDefaultModel()
@@ -84,7 +84,7 @@ public class CharField extends JTextField
 	}
 
 	/**
-	 * This document only allows ia single character to be stored.
+	 * This document only allows a single character to be stored.
 	 */
 	static class CharacterDocument extends PlainDocument
 	{

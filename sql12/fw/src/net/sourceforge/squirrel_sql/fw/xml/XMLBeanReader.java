@@ -33,12 +33,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.squirrel_sql.fw.util.EnumerationIterator;
-
 import net.n3.nanoxml.IXMLElement;
 import net.n3.nanoxml.IXMLParser;
 import net.n3.nanoxml.StdXMLReader;
 import net.n3.nanoxml.XMLParserFactory;
+
+import net.sourceforge.squirrel_sql.fw.util.EnumerationIterator;
 
 public class XMLBeanReader
 {
@@ -203,7 +203,7 @@ public class XMLBeanReader
 			final String value = propElem.getContent();
 			if (isIndexedElement(propElem))
 			{
-				Object[] data = loadIndexedProperty(bean, propElem);
+				Object[] data = loadIndexedProperty(propElem);
 				try
 				{
 					Object obj = Array.newInstance(arrayType, data.length);
@@ -334,7 +334,7 @@ public class XMLBeanReader
 		}
 	}
 
-	private Object[] loadIndexedProperty(Object bean, IXMLElement beanElement)
+	private Object[] loadIndexedProperty(IXMLElement beanElement)
 		throws XMLException
 	{
 		final List beans = new ArrayList();

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.xml;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -18,28 +18,30 @@ package net.sourceforge.squirrel_sql.fw.xml;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
-
 /**
  * This exception indicates that a problem has occured in XML processing.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class XMLException extends BaseException {
+public class XMLException extends BaseException
+{
 	/*
 	 * Ctor.
 	 *
-	 * @param   msg	 Message describing the error.
+	 * @param	msg	 Message describing the error.
 	 */
-	public XMLException(String msg) {
+	public XMLException(String msg)
+	{
 		super(msg);
 	}
 
 	/*
 	 * Ctor. Wraps this exception around another.
 	 *
-	 * @param   wrapee  The exception that this one is wrapped around.
+	 * @param	wrapee  The exception that this one is wrapped around.
 	 */
-	public XMLException(Exception wrapee) {
+	public XMLException(Exception wrapee)
+	{
 		super(wrapee);
 	}
 }

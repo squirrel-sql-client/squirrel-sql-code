@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -18,18 +18,18 @@ package net.sourceforge.squirrel_sql.client;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin;
-
 /**
  * Dummy plugin used by the application.
  */
-public class DummyAppPlugin extends DefaultPlugin {
-
+public class DummyAppPlugin extends DefaultPlugin
+{
 	/**
 	 * Return the internal name of this plugin.
 	 *
 	 * @return  the internal name of this plugin.
 	 */
-	public String getInternalName() {
+	public String getInternalName()
+	{
 		return "app";
 	}
 
@@ -38,7 +38,8 @@ public class DummyAppPlugin extends DefaultPlugin {
 	 *
 	 * @return  the descriptive name of this plugin.
 	 */
-	public String getDescriptiveName() {
+	public String getDescriptiveName()
+	{
 		return "Dummy Application Plugin";
 	}
 
@@ -47,7 +48,8 @@ public class DummyAppPlugin extends DefaultPlugin {
 	 *
 	 * @return  the current version of this plugin.
 	 */
-	public String getVersion() {
+	public String getVersion()
+	{
 		return "0.1";
 	}
 
@@ -56,7 +58,8 @@ public class DummyAppPlugin extends DefaultPlugin {
 	 *
 	 * @return  the authors name.
 	 */
-	public String getAuthor() {
+	public String getAuthor()
+	{
 		return "Colin Bell";
 	}
 }

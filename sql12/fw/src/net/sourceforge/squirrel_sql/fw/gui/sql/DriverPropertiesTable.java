@@ -61,7 +61,6 @@ class DriverPropertiesTable extends JTable
 		PropertiesTableColumnModel()
 		{
 			super();
-			int idx = 0;
 
 			TableColumn tc = new TableColumn(IDX_NAME);
 			tc.setHeaderValue("Name");

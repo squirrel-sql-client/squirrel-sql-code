@@ -32,6 +32,7 @@ import java.sql.DriverPropertyInfo;
 import java.util.Properties;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -51,7 +52,6 @@ import net.sourceforge.squirrel_sql.fw.gui.OkClosePanelEvent;
 import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
 import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 import net.sourceforge.squirrel_sql.fw.gui.sql.DriverPropertiesDialog;
-import net.sourceforge.squirrel_sql.fw.gui.sql.DriverPropertiesPanel;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
@@ -65,7 +65,7 @@ import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
 /**
  * This internal frame allows the user to connect to an alias.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ConnectionSheet extends BaseSheet
 {
@@ -115,7 +115,7 @@ public class ConnectionSheet extends BaseSheet
 		 */
 		public void performCancelConnect(ConnectionSheet connSheet);
 	}
-	
+
 	/** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(ConnectionSheet.class);
@@ -145,6 +145,11 @@ public class ConnectionSheet extends BaseSheet
 	private JTextField _user = new JTextField();
 	private JTextField _password = new JPasswordField();
 	private OkClosePanel _btnsPnl = new OkClosePanel("Connect");
+
+	private boolean _driverPropertiesLoaded = false;
+
+	/** If checked use the extended driver properties. */
+	private final JCheckBox _useDriverPropsChk = new JCheckBox("Use Driver Properties");
 
 	/** Button that brings up the driver properties dialog. */
 	private final JButton _driverPropsBtn = new JButton("Properties...");
@@ -226,7 +231,7 @@ public class ConnectionSheet extends BaseSheet
 
 	/**
 	 * If the alias specifies autologon then connect after the Dialog is visible.
-	 * 
+	 *
 	 * @param	b	If <TT>true</TT> dialog is to be made visible.
 	 */
 	public void setVisible(boolean visible)
@@ -239,7 +244,7 @@ public class ConnectionSheet extends BaseSheet
 			{
 				public void run()
 				{
-					connect(true);
+					connect();
 				}
 			});
 		}
@@ -273,7 +278,7 @@ public class ConnectionSheet extends BaseSheet
 		{
 			public void actionPerformed(ActionEvent actionEvent)
 			{
-				ConnectionSheet.this.connect(true);
+				ConnectionSheet.this.connect();
 			}
 		};
 
@@ -299,6 +304,10 @@ public class ConnectionSheet extends BaseSheet
 		_url.setText(_alias.getUrl());
 		_user.setText(userName);
 		_password.setText(password);
+		_useDriverPropsChk.setSelected(_alias.getUseDriverProperties());
+		_driverPropsBtn.setEnabled(_useDriverPropsChk.isSelected());
+
+		loadDriverProperties();
 
 		// This is mainly for long URLs that cannot be fully
 		// displayed in the label.
@@ -307,7 +316,7 @@ public class ConnectionSheet extends BaseSheet
 		_url.setToolTipText(_url.getText());
 	}
 
-	private void connect(boolean connecting)
+	private void connect()
 	{
 		if (!_connecting)
 		{
@@ -316,6 +325,10 @@ public class ConnectionSheet extends BaseSheet
 			setStatusText(ConnectionSheetI18n.CONNECTING);
 			_user.setEnabled(false);
 			_password.setEnabled(false);
+			if (!_useDriverPropsChk.isSelected())
+			{
+				_props.clear();
+			}
 			_handler.performOK(this, _user.getText(), _password.getText(), _props);
 		}
 	}
@@ -335,29 +348,29 @@ public class ConnectionSheet extends BaseSheet
 
 	private void createGUI()
 	{
-		if (_alias.getUseDriverProperties())
-		{
-			try
-			{
-				final SQLDriverManager mgr = _app.getSQLDriverManager();
-				final Driver jdbcDriver = mgr.getJDBCDriver(_sqlDriver.getIdentifier());
-				if (jdbcDriver == null)
-				{
-					throw new BaseException("Cannot determine driver properties as the driver cannot be loaded.");
-				}
-
-				_props = _alias.getDriverProperties();
-				DriverPropertyInfo[] infoAr = jdbcDriver.getPropertyInfo(_alias.getUrl(),
-																new Properties());
-				_props.applyDriverPropertynfo(infoAr);
-			}
-			catch (Exception ex)
-			{
-				String msg = "Error loading Driver Properties";
-				s_log.error(msg, ex);
-				_app.showErrorDialog(msg, ex);
-			}
-		}
+//		if (_alias.getUseDriverProperties())
+//		{
+//			try
+//			{
+//				final SQLDriverManager mgr = _app.getSQLDriverManager();
+//				final Driver jdbcDriver = mgr.getJDBCDriver(_sqlDriver.getIdentifier());
+//				if (jdbcDriver == null)
+//				{
+//					throw new BaseException("Cannot determine driver properties as the driver cannot be loaded.");
+//				}
+//
+//				_props = _alias.getDriverProperties();
+//				DriverPropertyInfo[] infoAr = jdbcDriver.getPropertyInfo(_alias.getUrl(),
+//																new Properties());
+//				_props.applyDriverPropertynfo(infoAr);
+//			}
+//			catch (Exception ex)
+//			{
+//				String msg = "Error loading Driver Properties";
+//				s_log.error(msg, ex);
+//				_app.showErrorDialog(msg, ex);
+//			}
+//		}
 
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		GUIUtils.makeToolWindow(this, true);
@@ -376,6 +389,7 @@ public class ConnectionSheet extends BaseSheet
 
 		gbc.anchor = GridBagConstraints.WEST;
 		gbc.weightx = 1;
+		gbc.gridwidth = GridBagConstraints.REMAINDER;
 
 		// Title label at top.
 		gbc.insets = new Insets(5, 10, 5, 10);
@@ -397,12 +411,17 @@ public class ConnectionSheet extends BaseSheet
 
 		gbc.fill = GridBagConstraints.NONE;
 		gbc.weighty = 0;
-		if (_alias.getUseDriverProperties())
-		{
+//		if (_alias.getUseDriverProperties())
+//		{
 			++gbc.gridy;
+			gbc.gridwidth = 1;
+			contentPane.add(_useDriverPropsChk, gbc);
+			++gbc.gridx;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			contentPane.add(_driverPropsBtn, gbc);
-		}
+//		}
 
+		gbc.gridx = 0;
 		++gbc.gridy;
 		contentPane.add(new JLabel("Warning - Caps lock may interfere with passwords"), gbc);
 
@@ -422,6 +441,19 @@ public class ConnectionSheet extends BaseSheet
 		_statusBar.setFont(fn);
 		++gbc.gridy;
 		contentPane.add(_statusBar, gbc);
+
+		_useDriverPropsChk.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent evt)
+			{
+				boolean useDriverProps = _useDriverPropsChk.isSelected();
+				_driverPropsBtn.setEnabled(useDriverProps);
+				if (useDriverProps)
+				{
+					loadDriverProperties();
+				}
+			}
+		});
 
 		// Set focus to password control if default user name has been setup.
 		addInternalFrameListener(new InternalFrameAdapter()
@@ -460,7 +492,7 @@ public class ConnectionSheet extends BaseSheet
 
 	/**
 	 * Create the panel in which user name and password is entered.
-	 * 
+	 *
 	 * @return	user name/password panel.
 	 */
 	private Component createMainPanel()
@@ -498,16 +530,8 @@ public class ConnectionSheet extends BaseSheet
 	}
 
 	/**
-	 * Create the panel that displays driver properties.
-	 */
-	private JPanel createPropertiesPanel()
-	{
-		return new DriverPropertiesPanel(_props);
-	}
-
-	/**
 	 * Create the buttons panel.
-	 * 
+	 *
 	 * @return	The buttons panel.
 	 */
 	private JPanel createButtonsPanel()
@@ -523,6 +547,37 @@ public class ConnectionSheet extends BaseSheet
 		DriverPropertiesDialog.showDialog(owner, _props);
 	}
 
+	private void loadDriverProperties()
+	{
+		if (!_driverPropertiesLoaded)
+		{
+			if (_useDriverPropsChk.isSelected())
+			{
+				_driverPropertiesLoaded = true;
+				try
+				{
+					final SQLDriverManager mgr = _app.getSQLDriverManager();
+					final Driver jdbcDriver = mgr.getJDBCDriver(_sqlDriver.getIdentifier());
+					if (jdbcDriver == null)
+					{
+						throw new BaseException("Cannot determine driver properties as the driver cannot be loaded.");
+					}
+
+					_props = _alias.getDriverProperties();
+					DriverPropertyInfo[] infoAr = jdbcDriver.getPropertyInfo(_alias.getUrl(),
+																	new Properties());
+					_props.applyDriverPropertynfo(infoAr);
+				}
+				catch (Exception ex)
+				{
+					String msg = "Error loading Driver Properties";
+					s_log.error(msg, ex);
+					_app.showErrorDialog(msg, ex);
+				}
+			}
+		}
+	}
+
 	/**
 	 * Listener to handle button events in OK/Close panel.
 	 */
@@ -530,7 +585,7 @@ public class ConnectionSheet extends BaseSheet
 	{
 		public void okPressed(OkClosePanelEvent evt)
 		{
-			ConnectionSheet.this.connect(true);
+			ConnectionSheet.this.connect();
 		}
 
 		public void closePressed(OkClosePanelEvent evt)

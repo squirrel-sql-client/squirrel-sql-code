@@ -26,7 +26,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JWindow;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -37,7 +36,6 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 
 public class SplashScreen extends JWindow
 {
-
 	private JProgressBar _progressBar;
 
 	public SplashScreen(SquirrelResources rsrc, int progressBarSize)
@@ -85,6 +83,7 @@ public class SplashScreen extends JWindow
 		setVisible(true);
 	}
 
+
 	public void indicateNewTask(final String text)
 	{
 		// Using a thread for this gets rid of most of the "white flash".
@@ -102,14 +101,6 @@ public class SplashScreen extends JWindow
 		}
 		catch (Exception ignore)
 		{
-		}
-	}
-
-	private static class MyLabel extends JLabel
-	{
-		MyLabel(String text)
-		{
-			super(text, SwingConstants.CENTER);
 		}
 	}
 }

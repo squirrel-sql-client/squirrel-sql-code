@@ -337,7 +337,7 @@ public class SessionSheet extends BaseSheet
 	private void createUserInterface()
 	{
 		setVisible(false);
-		SessionProperties props = _session.getProperties();
+//		SessionProperties props = _session.getProperties();
 		final IApplication app = _session.getApplication();
 		Icon icon = app.getResources().getIcon(getClass(), "frameIcon"); //i18n
 		if (icon != null)

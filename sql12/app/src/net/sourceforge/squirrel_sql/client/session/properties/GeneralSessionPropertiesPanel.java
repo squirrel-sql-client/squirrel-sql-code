@@ -131,7 +131,6 @@ public class GeneralSessionPropertiesPanel
 
 	private static final class MyPanel extends JPanel
 	{
-
 		private JCheckBox _showToolBar = new JCheckBox(GeneralSessionPropertiesPanelI18n.SHOW_TOOLBAR);
 		private TabPlacementCombo _mainTabPlacementCmb = new TabPlacementCombo();
 		private TabPlacementCombo _objectTabPlacementCmb = new TabPlacementCombo();

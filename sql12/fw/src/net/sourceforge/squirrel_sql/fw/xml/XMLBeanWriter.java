@@ -39,7 +39,7 @@ import net.n3.nanoxml.XMLWriter;
 public final class XMLBeanWriter
 {
 	/** Logger for this class. */
-	private static ILogger s_log =
+	private static final ILogger s_log =
 		LoggerController.createLogger(XMLBeanWriter.class);
 
 	private IXMLElement _rootElement;

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.sql;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -21,7 +21,7 @@ import java.sql.SQLException;
 /**
  * This class represents a foreign key relationship.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ForeignKeyInfo extends DatabaseObjectInfo
 {
@@ -44,7 +44,7 @@ public class ForeignKeyInfo extends DatabaseObjectInfo
 	private final int _updateRule;
 	private final int _deleteRule;
 	private final String _pkName;
-	private final int _deferability; 
+	private final int _deferability;
 	private ForeignKeyColumnInfo[] _columnInfo;
 
 	ForeignKeyInfo(String pkCatalog, String pkSchema, String pkTableName,

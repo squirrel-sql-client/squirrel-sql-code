@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.xml;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -22,6 +22,10 @@ package net.sourceforge.squirrel_sql.fw.xml;
  * This interface is used to declare that a javabean requires to run some code
  * prior to being written out as XML.
  */
-public interface IXMLAboutToBeWritten {
+public interface IXMLAboutToBeWritten
+{
+	/**
+	 * This JavaBean is about to be written out as XML.
+	 */
 	void aboutToBeWritten();
 }

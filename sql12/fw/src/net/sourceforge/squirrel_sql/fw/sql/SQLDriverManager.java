@@ -35,7 +35,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * The main reason for replacing it is that <TT>java.ql.DriverManager</TT>
  * won't handle JDBC driver classes that were loaded by a custom classloader.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SQLDriverManager
 {
@@ -126,10 +126,10 @@ public class SQLDriverManager
 	/**
 	 * Return the <TT>java.sql.Driver</TT> being used for the passed
 	 * <TT>ISQLDriver.getIdentifier()</TT> or <TT>null</TT> if none found.
-	 * 
+	 *
 	 * @return	the <TT>java.sql.Driver</TT> being used for the passed
 	 * 			<TT>ISQLDriver.getIdentifier()</TT> or <TT>null if none found.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 *			Thrown if <TT>null</TT> IIdentifier</TT> passed.
 	 */
@@ -145,12 +145,12 @@ public class SQLDriverManager
 
 	/**
 	 * Return the <TT>SQLDriverClassLoader</TT> used for the passed driver.
-	 * 
+	 *
 	 * @param	sqlDriver	Driver to find class loader for.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 *			Thrown if <TT>null</TT> <TT>SQLDriverClassLoader</TT> passed.
-	 * 
+	 *
 	 * @return	ClassLoader or null.
 	 */
 	public SQLDriverClassLoader getSQLDriverClassLoader(ISQLDriver driver)

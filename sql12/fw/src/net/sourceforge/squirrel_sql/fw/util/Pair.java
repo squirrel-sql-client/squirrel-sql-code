@@ -21,7 +21,7 @@ package net.sourceforge.squirrel_sql.fw.util;
  * This class is a simple container that holds two objects. Should
  * really be a template.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class Pair
 {
@@ -35,4 +35,3 @@ public class Pair
 		_two = two;
 	}
 }
-
