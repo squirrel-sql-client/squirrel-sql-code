@@ -22,6 +22,9 @@ import javax.swing.JLabel;
 import javax.swing.JComboBox;
 import javax.swing.SwingConstants;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetModelJTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel;
 import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
@@ -115,7 +118,7 @@ public class OutputPropertiesPanel implements IGlobalPreferencesPanel, ISessionP
 		private OutputTypeCombo _rowIdPriviligesCmb = new OutputTypeCombo();
 		private OutputTypeCombo _versionsCmb = new OutputTypeCombo();
 		private OutputTypeCombo _procColumnsCmb = new OutputTypeCombo();
-		private OutputTypeCombo _sqlCmb = new OutputTypeCombo();
+		private OutputConverterCombo _sqlCmb = new OutputConverterCombo();
 		private OutputTypeCombo _sqlMetaDataCmb = new OutputTypeCombo();
 
 		MyPanel() {
@@ -138,7 +141,7 @@ public class OutputPropertiesPanel implements IGlobalPreferencesPanel, ISessionP
 			_rowIdPriviligesCmb.selectClassName(props.getRowIdOutputClassName());
 			_versionsCmb.selectClassName(props.getVersionsOutputClassName());
 			_procColumnsCmb.selectClassName(props.getProcedureColumnsOutputClassName());
-			_sqlCmb.selectClassName(props.getSqlOutputClassName());
+			_sqlCmb.selectClassName(props.getSqlOutputConverterClassName());
 			_sqlMetaDataCmb.selectClassName(props.getSqlOutputMetaDataClassName());
 		}
 
@@ -157,7 +160,7 @@ public class OutputPropertiesPanel implements IGlobalPreferencesPanel, ISessionP
 			props.setRowIdOutputClassName(_rowIdPriviligesCmb.getSelectedClassName());
 			props.setVersionsOutputClassName(_versionsCmb.getSelectedClassName());
 			props.setProcedureColumnsOutputClassName(_procColumnsCmb.getSelectedClassName());
-			props.setSqlOutputClassName(_sqlCmb.getSelectedClassName());
+			props.setSqlOutputConverterClassName(_sqlCmb.getSelectedClassName());
 			props.setSqlOutputMetaDataClassName(_sqlMetaDataCmb.getSelectedClassName());
 		}
 
@@ -182,8 +185,9 @@ public class OutputPropertiesPanel implements IGlobalPreferencesPanel, ISessionP
 		}
 
 		private final static class OutputType {
-			static final OutputType TEXT = new OutputType(i18n.TEXT, net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel.class.getName());
-			static final OutputType TABLE = new OutputType(i18n.TABLE, net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel.class.getName());
+			static final OutputType TEXT = new OutputType(i18n.TEXT, DataSetViewerTextPanel.class.getName());
+			static final OutputType TABLE = new OutputType(i18n.TABLE, DataSetViewerTablePanel.class.getName());
+			static final OutputType TABLE_CONVERTER = new OutputType(i18n.TABLE, DataSetModelJTableModel.class.getName());
 			private final String _name;
 			private final String _className;
 
@@ -210,10 +214,29 @@ public class OutputPropertiesPanel implements IGlobalPreferencesPanel, ISessionP
 			}
 
 			void selectClassName(String className) {
-				if (className.equals(net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel.class.getName())) {
+				if (className.equals(DataSetViewerTablePanel.class.getName())) {
 					setSelectedItem(OutputType.TABLE);
 				} else {
 					setSelectedItem(OutputType.TEXT);
+				}
+			}
+
+			String getSelectedClassName() {
+				return ((OutputType)getSelectedItem()).getPanelClassName();
+			}
+		}
+
+		private static final class OutputConverterCombo extends JComboBox {
+			OutputConverterCombo() {
+				super();
+				addItem(OutputType.TABLE_CONVERTER);
+			}
+
+			void selectClassName(String className) {
+				if (className.equals(DataSetModelJTableModel.class.getName())) {
+					setSelectedItem(OutputType.TABLE_CONVERTER);
+				} else {
+					//setSelectedItem(OutputType.TEXT);
 				}
 			}
 

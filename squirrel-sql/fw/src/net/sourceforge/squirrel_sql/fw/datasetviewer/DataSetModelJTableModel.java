@@ -17,6 +17,9 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import java.awt.Component;
+
+import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.event.TableModelListener;
 
@@ -26,7 +29,8 @@ import javax.swing.event.TableModelListener;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class DataSetModelJTableModel extends AbstractTableModel {
+public class DataSetModelJTableModel extends AbstractTableModel
+				implements IDataSetModelConverter {
 	/** <TT>IDataSetModel</TT> that this object is wrapped around. */
 	private IDataSetModel _model;
 
@@ -62,7 +66,9 @@ public class DataSetModelJTableModel extends AbstractTableModel {
 			_model.removeListener(_modelListener);
 		}
 		_model = model;
-		_model.addListener(_modelListener);
+		if (_model != null) {
+			_model.addListener(_modelListener);
+		}
 	}
 
 	/**
@@ -140,6 +146,16 @@ public class DataSetModelJTableModel extends AbstractTableModel {
 		validate();
 		_model.setValueAt(value, rowIndex, columnIndex);
 		fireTableCellUpdated(rowIndex, columnIndex);
+	}
+
+	/**
+	 * Create the default component for this converter. In this
+	 * case a <TT>JTable</TT>
+	 * 
+	 * @return	A new instance of a <TT>JTable</TT>.
+	 */
+	public Component createComponent() {
+		return new JTable(this);
 	}
 
 	/**

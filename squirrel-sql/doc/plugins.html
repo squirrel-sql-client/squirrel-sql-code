@@ -30,6 +30,7 @@
     <TR><TD>&nbsp;&nbsp;</TD><TD><A HREF="#objectcaches">Object Caches</A></TD></TR>
     <TR><TD>&nbsp;&nbsp;</TD><TD><A HREF="#addmaintab">Adding a Tab to the Main Tabbed Panel</A></TD></TR>
     <TR><TD>&nbsp;&nbsp;</TD><TD><A HREF="#addtabletab">Adding a Tab to the Table Tabbed Panel</A></TD></TR>
+    <TR><TD>&nbsp;&nbsp;</TD><TD><A HREF="#addproceduretab">Adding a Tab to the Procedure Tabbed Panel</A></TD></TR>
     <TR><TD COLSPAN="2"><A HREF="#installing">Installing Plugins</A></TD></TR>
 </TABLE>
 
@@ -313,7 +314,6 @@ Component comp, String tip)</TT> method.
 <P>In the future this method will be deprecated by being replaced by one
 similar to <A HREF="#addtabletab">Adding a Tab to the Table Tabbed Panel</A>.</P>
 
-
 <A NAME="addtabletab"><H3>Adding a Tab to the Table Tabbed Panel</H3></A>
 
 The Table tabbed panel is the panel displayed when you select a table in the
@@ -347,6 +347,41 @@ has been provided. You would normally use this class (which implements
 and <TT>getTableInfo()</TT>. It also provides the method <TT>refreshComponent</TT>
 which will be called the first time a tab is displayed for a table and is
 the appropriate place to load the information to be displayed for a table.</P> 
+
+<A NAME="addproceduretab"><H3>Adding a Tab to the Procedure Tabbed Panel</H3></A>
+
+The Procedure tabbed panel is the panel displayed when you select a
+stored procedure in the
+object tree. The method <TT>ISession.addProcedurePanelTab(IProcedurePanelTab)</TT>
+is used to add a tab to it.
+</P>
+
+<P>You should create a class that implements
+<TT>net.sourceforge.squirrel_sql.client.session.objectstree.procedurepanel.IProcedurePanelTab
+in order to create a tab. The methods<TT>IProcedurePanelTab.getTitle()</TT> and
+<TT>IProcedurePanelTab.getHint()</TT> define the title and the flyover hint
+respectively. Override <TT>IProcedurePanelTab.getComponent()</TT> to provide
+the actual component to be displayed in the tab (remember to wrap it in a
+<TT>javax.swing.JScrollPane</TT> if the contents could be larger than the
+tab).</P>
+
+<P><TT>IProcedurePanelTab.setTableInfo(ITableInfo)</TT> will be called whenever
+the currently selected procedure changes. For performance reasons please
+don't refresh the panel at this point. Use <TT>IProcedurePanelTab.select()</TT>
+for this. <TT>select()</TT> is called whenever the your tab is to be displayed.
+Remember that this could be called multiple times without a different procedure
+being selected in the object tree so you only need to refresh your component
+the first time it is called.</P>
+
+<P>As a convenience the class
+<TT>net.sourceforge.squirrel_sql.client.session.objectstree.procedurepanel.BaseProcedureTab</TT>
+has been provided. You would normally use this class (which implements
+<TT>IProcedurePanelTab</TT>) as the base for any tabs you create.</P>
+
+<P><TT>BaseProcedureTab</TT> provides the methods <TT>getSession()</TT>,
+and <TT>getProcedureInfo()</TT>. It also provides the method <TT>refreshComponent</TT>
+which will be called the first time a tab is displayed for a procedure and is
+the appropriate place to load the information to be displayed for a procedure.</P> 
 
 <A NAME="installing"><H3>Installing Plugins</H3></A>
 

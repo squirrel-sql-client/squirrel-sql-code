@@ -33,66 +33,70 @@ import net.sourceforge.squirrel_sql.fw.util.Logger;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public class ResultSetPanel extends JScrollPane {
-    private boolean _fullyCreated = false;
-    private ResultSetDataSet _ds;
-    private DataSetViewer _viewer;
-    private IDataSetViewerDestination _dest;
+	private boolean _fullyCreated = false;
+	private ResultSetDataSet _ds;
+	private DataSetViewer _viewer;
+	//private IDataSetViewerDestination _dest;
 
-    public void load(ISession session, ResultSet rs, int[] cols,
-                        String destClassName) {
-        try {
-            // Lazily create the user interface.
-            if (!_fullyCreated) {
-                createUserInterface(session, destClassName);
-                _fullyCreated = true;
-            }
+	public void load(ISession session, ResultSet rs, int[] cols,
+						String destClassName) {
+		try {
+			// Lazily create the user interface.
+			if (!_fullyCreated) {
+				createUserInterface(session, destClassName);
+				_fullyCreated = true;
+			}
 
-            try {
-                _ds.setResultSet(rs, cols);
-                _viewer.show(_ds);
-            } finally {
-                rs.close();
-            }
+			try {
+				_ds.setResultSet(rs, cols);
+				_viewer.show(_ds);
+			} finally {
+				rs.close();
+			}
 
-        } catch (Exception ex) {
-            Logger log = session.getApplication().getLogger();
-            log.showMessage(Logger.ILogTypes.ERROR, ex);
-        }
-    }
+		} catch (Exception ex) {
+			Logger log = session.getApplication().getLogger();
+			log.showMessage(Logger.ILogTypes.ERROR, ex);
+		}
+	}
 
-    /**
-     * Create a viewer panel for an <T>IDataSet</TT>. If the passed class
-     * name is invalid return a <TT>import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel</TT>.
-     *
-     * @param   destClassName   Class Name of panel to be created. This class
-     *                          must have a default constructor.
-     *
-     * @return  The newly created panel.
-     */
-    protected IDataSetViewerDestination createDestination(String destClassName) {
-        IDataSetViewerDestination dest = null;
-        try {
-            Class destClass = Class.forName(destClassName);
-            if (IDataSetViewerDestination.class.isAssignableFrom(destClass) &&
-                    Component.class.isAssignableFrom(destClass)) {
-                dest = (IDataSetViewerDestination)destClass.newInstance();
-            }
+	/**
+	 * Create a viewer panel for an <T>IDataSet</TT>. If the passed class
+	 * name is invalid return a <TT>import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel</TT>.
+	 *
+	 * @param	destClassName	Class Name of panel to be created. This class
+	 *							must have a default constructor.
+	 *
+	 * @return	The newly created panel.
+	 */
+	/*
+	protected IDataSetViewerDestination createDestination(String destClassName) {
+		IDataSetViewerDestination dest = null;
+		try {
+			Class destClass = Class.forName(destClassName);
+			if (IDataSetViewerDestination.class.isAssignableFrom(destClass) &&
+					Component.class.isAssignableFrom(destClass)) {
+				dest = (IDataSetViewerDestination)destClass.newInstance();
+			}
 
-        } catch (Exception ignore) {
-        }
-        if (dest == null) {
-            dest = new DataSetViewerTablePanel();
-        }
-        return dest;
-    }
+		} catch (Exception ignore) {
+		}
+		if (dest == null) {
+			dest = new DataSetViewerTablePanel();
+		}
+		return dest;
+	}
+*/
 
-    private void createUserInterface(ISession session, String destClassName)
-            throws DataSetException {
-        _viewer = new DataSetViewer();
-        _dest = createDestination(destClassName);
-        _viewer.setDestination(_dest);
-        _ds = new ResultSetDataSet();
-        setViewportView((Component)_dest);
-    }
+	private void createUserInterface(ISession session, String destClassName)
+			throws DataSetException {
+		_viewer = new DataSetViewer();
+//		_dest = createDestination(destClassName);
+//		_viewer.setDestination(_dest);
+		_viewer.setDestination(destClassName);
+		_ds = new ResultSetDataSet();
+//		setViewportView((Component)_dest);
+		setViewportView(_viewer.getDestinationComponent());
+	}
 }
 

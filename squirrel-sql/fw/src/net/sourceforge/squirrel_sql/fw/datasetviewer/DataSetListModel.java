@@ -28,13 +28,18 @@ import javax.swing.event.EventListenerList;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class DataSetListModel implements IDataSetModel {
+public class DataSetListModel extends BaseDataSetViewerDestination
+								implements IDataSetModel {
 	/** Event types. */
 	private interface IEventTypes {
 		int ALL_ROWS_ADDED = 1;
 		int MOVE_TO_TOP = 2;
 	}
 
+//??GETRIDOFTHIS
+public java.awt.Component getComponent() {
+	return null;
+}
 	/**
 	 * Data. Each element is an array of objects. Each object is
 	 * the data for a column.
@@ -42,10 +47,10 @@ public class DataSetListModel implements IDataSetModel {
 	private List _data = new ArrayList();
 
 	/** Column headings. */
-	private ColumnDisplayDefinition[] _hdgs = new ColumnDisplayDefinition[0];
+//	private ColumnDisplayDefinition[] _hdgs = new ColumnDisplayDefinition[0];
 
 	/** If <TT>true</TT> column headings should be shown. */
-	private boolean _showHeadings;
+//	private boolean _showHeadings;
 
 	/** Listeners for this object. */
 	private EventListenerList _listenerList = new EventListenerList();
@@ -62,27 +67,27 @@ public class DataSetListModel implements IDataSetModel {
 	 * 
 	 * @param	hdgs	Column headings to use.
 	 */
-	public void setColumnDefinitions(ColumnDisplayDefinition[] hdgs) {
-		_hdgs = hdgs != null ? hdgs : new ColumnDisplayDefinition[0];
-	}
+//	public void setColumnDefinitions(ColumnDisplayDefinition[] hdgs) {
+//		_hdgs = hdgs != null ? hdgs : new ColumnDisplayDefinition[0];
+//	}
 
 	/**
 	 * Get the column definitions.
 	 * 
 	 * @return	Column definitions.
 	 */
-	public ColumnDisplayDefinition[] getColumnDefinitions() {
-		return _hdgs;
-	}
+//	public ColumnDisplayDefinition[] getColumnDefinitions() {
+//		return _hdgs;
+//	}
 
 	/**
 	 * Specify whether to show the column headings.
 	 * 
 	 * @param	show	<TT>true</TT> if headings to be shown else <TT>false</TT>.
 	 */
-	public void showHeadings(boolean show) {
-		_showHeadings = show;
-	}
+//	public void showHeadings(boolean show) {
+//		_showHeadings = show;
+//	}
 
 	/**
 	 * Add a row.

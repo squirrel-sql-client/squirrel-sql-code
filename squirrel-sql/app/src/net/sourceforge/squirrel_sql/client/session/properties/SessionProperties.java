@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.session.properties;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetModelJTableModel;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -50,7 +51,8 @@ public class SessionProperties implements Serializable {
 		String SHOW_ROW_COUNT = "showRowCount";
 		String SQL_LIMIT_ROWS = "sqlLimitRows";
 		String SQL_NBR_ROWS_TO_SHOW = "sqlNbrOfRowsToShow";
-		String SQL_OUTPUT_CLASS_NAME = "sqlOutputClassName";
+//		String SQL_OUTPUT_CLASS_NAME = "sqlOutputClassName";
+		String SQL_OUTPUT_CONVERTER_CLASS_NAME = "sqlOutputConverterClassName";
 		String SQL_OUTPUT_META_DATA_CLASS_NAME = "sqlOutputMetaDataClassName";
 		String SQL_REUSE_OUTPUT_TABS ="sqlReuseTabs";
 		String SQL_STATEMENT_SEPARATOR="sqlStatementSeparator";
@@ -99,8 +101,13 @@ public class SessionProperties implements Serializable {
 	 */
 	private boolean _showRowCount = false;
 
-	private String _sqlOutputClassName = IDataSetDestinations.TABLE;
-	
+	/**
+	 * Name of the class to use as the <TT>IDataSetModelConverter</TT>
+	 * for SQL output.
+	 */
+	//private String _sqlOutputClassName = IDataSetDestinations.TABLE;
+	private String _sqlOutputConverterClassName = DataSetModelJTableModel.class.getName();
+
 	private String _sqlOutputMetaDataClassName = IDataSetDestinations.TABLE;
 
 	private char _sqlStmtSepChar = ';';
@@ -130,7 +137,8 @@ public class SessionProperties implements Serializable {
 		setSqlLimitRows(rhs.getSqlLimitRows());
 		setSqlReuseOutputTabs(rhs.getSqlReuseOutputTabs());
 		setSqlNbrRowsToShow(rhs.getSqlNbrRowsToShow());
-		setSqlOutputClassName(rhs.getSqlOutputClassName());
+//		setSqlOutputClassName(rhs.getSqlOutputClassName());
+		setSqlOutputConverterClassName(rhs.getSqlOutputConverterClassName());
 		setSqlOutputMetaDataClassName(rhs.getSqlOutputMetaDataClassName());
 		setSqlStatementSeparatorChar(rhs.getSqlStatementSeparatorChar());
 		setTableOutputClassName(rhs.getTableOutputClassName());
@@ -353,10 +361,42 @@ public class SessionProperties implements Serializable {
 		}
 	}
 
-	public String getSqlOutputClassName() {
-		return _sqlOutputClassName;
+	/**
+	 * Return the name of the class to use as the
+	 * <TT>IDataSetModelConverter</TT> for SQL output.
+	 * 
+	 * @return	the name of the class to use as the
+	 *			<TT>IDataSetModelConverter</TT> for SQL output.
+	 */
+	public String getSqlOutputConverterClassName() {
+		return _sqlOutputConverterClassName;
 	}
 
+//	public String getSqlOutputClassName() {
+//		return _sqlOutputClassName;
+//	}
+
+	/**
+	 * Set the name of the class to use as the
+	 * <TT>IDataSetModelConverter</TT> for SQL output.
+	 * 
+	 * @param	value	The name of the class to use as the
+	 *					<TT>IDataSetModelConverter</TT> for
+	 *					SQL output.
+	 */
+	public void setSqlOutputConverterClassName(String value) {
+		if (value == null) {
+			value = "";
+		}
+		if (!_sqlOutputConverterClassName.equals(value)) {
+			final String oldValue = _sqlOutputConverterClassName;
+			_sqlOutputConverterClassName = value;
+			_propChgReporter.firePropertyChange(IPropertyNames.SQL_OUTPUT_CONVERTER_CLASS_NAME,
+								oldValue, _sqlOutputConverterClassName);
+		}
+	}
+
+/*
 	public void setSqlOutputClassName(String value) {
 		if (value == null) {
 			value = "";
@@ -368,7 +408,7 @@ public class SessionProperties implements Serializable {
 								oldValue, _sqlOutputClassName);
 		}
 	}
-
+*/
 	public String getSqlOutputMetaDataClassName() {
 		return _sqlOutputMetaDataClassName;
 	}

@@ -49,160 +49,169 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.util.Logger;
 
 class DatabasePanel extends JTabbedPane {
-    /**
-     * This interface defines locale specific strings. This should be
-     * replaced with a property file.
-     */
-    private interface i18n {
-        String META_TAB_TITLE = "Metadata";
-        String META_TAB_DESC = "Show database metadata";
-        String TYPE_TAB_TITLE = "Data Types";
-        String TYPE_TAB_DESC = "Show all the data types available in DBMS";
-    }
+	/**
+	 * This interface defines locale specific strings. This should be
+	 * replaced with a property file.
+	 */
+	private interface i18n {
+		String META_TAB_TITLE = "Metadata";
+		String META_TAB_DESC = "Show database metadata";
+		String TYPE_TAB_TITLE = "Data Types";
+		String TYPE_TAB_DESC = "Show all the data types available in DBMS";
+	}
 
-    private ISession _session;
+	private ISession _session;
 
-    private MyBaseViewer[] _viewers = new MyBaseViewer[2];
+	private MyBaseViewer[] _viewers = new MyBaseViewer[2];
 
-    /** Viewer that displays the Database Metadata. */
-    private MyBaseViewer _metaDataViewer = new MetaDataViewer();
+	/** Viewer that displays the Database Metadata. */
+	private MyBaseViewer _metaDataViewer = new MetaDataViewer();
 
-    /** Viewer that displays the Data Types available in DBMS. */
-    private MyBaseViewer _dataTypesViewer = new DataTypesViewer();
+	/** Viewer that displays the Data Types available in DBMS. */
+	private MyBaseViewer _dataTypesViewer = new DataTypesViewer();
 
-    /** Listens to changes in <CODE>_props</CODE>. */
-    private MyPropertiesListener _propsListener;
+	/** Listens to changes in <CODE>_props</CODE>. */
+	private MyPropertiesListener _propsListener;
 
-    /**
-     * ctor specifying the properties for this window.
-     */
-    DatabasePanel(ISession session) {
-        super();
-        _session = session;
-        createUserInterface();
-        propertiesHaveChanged(null);
-    }
+	/**
+	 * ctor specifying the properties for this window.
+	 */
+	DatabasePanel(ISession session) {
+		super();
+		_session = session;
+		createUserInterface();
+		propertiesHaveChanged(null);
+	}
 
-    private void propertiesHaveChanged(String propName) {
-        if (propName == null ||
-                propName.equals(SessionProperties.IPropertyNames.META_DATA_OUTPUT_CLASS_NAME)) {
-            addMetaDataTab();
-            _metaDataViewer.setHasBeenBuilt(false);
-            _metaDataViewer.load(_session.getSQLConnection());
-        }
-        if (propName == null ||
-                propName.equals(SessionProperties.IPropertyNames.DATA_TYPES_OUTPUT_CLASS_NAME)) {
-            addDataTypesTab();
-            _dataTypesViewer.setHasBeenBuilt(false);
-            _dataTypesViewer.load(_session.getSQLConnection());
-        }
-    }
+	private void propertiesHaveChanged(String propName) {
+		if (propName == null ||
+				propName.equals(SessionProperties.IPropertyNames.META_DATA_OUTPUT_CLASS_NAME)) {
+			addMetaDataTab();
+			_metaDataViewer.setHasBeenBuilt(false);
+			_metaDataViewer.load(_session.getSQLConnection());
+		}
+		if (propName == null ||
+				propName.equals(SessionProperties.IPropertyNames.DATA_TYPES_OUTPUT_CLASS_NAME)) {
+			addDataTypesTab();
+			_dataTypesViewer.setHasBeenBuilt(false);
+			_dataTypesViewer.load(_session.getSQLConnection());
+		}
+	}
 
-    private void createUserInterface() {
-        addMetaDataTab();
-        addDataTypesTab();
-        _viewers[0] = _metaDataViewer;
-        _viewers[1] = _dataTypesViewer;
+	private void createUserInterface() {
+		addMetaDataTab();
+		addDataTypesTab();
+		_viewers[0] = _metaDataViewer;
+		_viewers[1] = _dataTypesViewer;
 
-        _propsListener = new MyPropertiesListener();
-        _session.getProperties().addPropertyChangeListener(_propsListener);
+		_propsListener = new MyPropertiesListener();
+		_session.getProperties().addPropertyChangeListener(_propsListener);
 
-        addChangeListener(new TabbedPaneListener());
-    }
+		addChangeListener(new TabbedPaneListener());
+	}
 
-    private void addMetaDataTab() {
-        addResultSetViewerTab(i18n.META_TAB_TITLE, i18n.META_TAB_DESC, _metaDataViewer,
-                                _session.getProperties().getMetaDataOutputClassName());
-    }
+	private void addMetaDataTab() {
+		addResultSetViewerTab(i18n.META_TAB_TITLE, i18n.META_TAB_DESC, _metaDataViewer,
+								_session.getProperties().getMetaDataOutputClassName());
+	}
 
-    private void addDataTypesTab() {
-        addResultSetViewerTab(i18n.TYPE_TAB_TITLE, i18n.TYPE_TAB_DESC, _dataTypesViewer,
-                                _session.getProperties().getDataTypesOutputClassName());
-    }
+	private void addDataTypesTab() {
+		addResultSetViewerTab(i18n.TYPE_TAB_TITLE, i18n.TYPE_TAB_DESC, _dataTypesViewer,
+								_session.getProperties().getDataTypesOutputClassName());
+	}
 
-    private void addResultSetViewerTab(String title, String description,
-                                                MyBaseViewer viewer,
-                                                String destClassName) {
-        IDataSetViewerDestination dest = null;
-        try {
-            Class destClass = Class.forName(destClassName);
-            if (IDataSetViewerDestination.class.isAssignableFrom(destClass) &&
-                    Component.class.isAssignableFrom(destClass)) {
-                dest = (IDataSetViewerDestination)destClass.newInstance();
-            }
+	private void addResultSetViewerTab(String title, String description,
+												MyBaseViewer viewer,
+												String destClassName) {
+/*
+		IDataSetViewerDestination dest = null;
+		try {
+			Class destClass = Class.forName(destClassName);
+			if (IDataSetViewerDestination.class.isAssignableFrom(destClass) &&
+					Component.class.isAssignableFrom(destClass)) {
+				dest = (IDataSetViewerDestination)destClass.newInstance();
+			}
 
-        } catch (Exception ignore) {
-            _session.getApplication().getLogger().showMessage(Logger.ILogTypes.ERROR, ignore.getMessage());
-        }
-        if (dest == null) {
-            dest = new DataSetViewerTablePanel();
-        }
-        viewer.setDestination(dest);
-        int idx = indexOfTab(title);
-        if (idx != -1) {
-            removeTabAt(idx);
-            insertTab(title, null, new JScrollPane((Component)dest), description, idx);
-        } else {
-            addTab(title, null, new JScrollPane((Component)dest), description);
-        }
-    }
+		} catch (Exception ignore) {
+			_session.getApplication().getLogger().showMessage(Logger.ILogTypes.ERROR, ignore.getMessage());
+		}
+		if (dest == null) {
+			dest = new DataSetViewerTablePanel();
+		}
+		viewer.setDestination(destClassName);
+*/
+		try {
+			viewer.setDestination(destClassName);
+		} catch (Exception ignore) {
+			_session.getApplication().getLogger().showMessage(Logger.ILogTypes.ERROR, ignore.getMessage());
+			viewer.setDestination(new DataSetViewerTablePanel());
+		}
+		Component comp = viewer.getDestinationComponent();
+		int idx = indexOfTab(title);
+		if (idx != -1) {
+			removeTabAt(idx);
+			insertTab(title, null, new JScrollPane(comp), description, idx);
+		} else {
+			addTab(title, null, new JScrollPane(comp), description);
+		}
+	}
 
-    private abstract class MyBaseViewer extends DataSetViewer {
-        private boolean _hasBeenBuilt = false;
+	private abstract class MyBaseViewer extends DataSetViewer {
+		private boolean _hasBeenBuilt = false;
 
-        abstract void loadImpl(SQLConnection conn) throws DataSetException,
-                                        BaseSQLException, SQLException;
+		abstract void loadImpl(SQLConnection conn) throws DataSetException,
+										BaseSQLException, SQLException;
 
-        void load(SQLConnection conn) {
-            if (!_hasBeenBuilt) {
-                try {
-                    clearDestination();
-                    loadImpl(conn);
-                } catch (Exception ex) {
-                    IMessageHandler msgHandler = _session.getMessageHandler();
-                    msgHandler.showMessage("Error in: " + getClass().getName());
-                    msgHandler.showMessage(ex);
-                }
-                _hasBeenBuilt = true;
-            }
-        }
+		void load(SQLConnection conn) {
+			if (!_hasBeenBuilt) {
+				try {
+					clearDestination();
+					loadImpl(conn);
+				} catch (Exception ex) {
+					IMessageHandler msgHandler = _session.getMessageHandler();
+					msgHandler.showMessage("Error in: " + getClass().getName());
+					msgHandler.showMessage(ex);
+				}
+				_hasBeenBuilt = true;
+			}
+		}
 
-        public void setHasBeenBuilt(boolean value) {
-            _hasBeenBuilt = value;
-        }
-    }
+		public void setHasBeenBuilt(boolean value) {
+			_hasBeenBuilt = value;
+		}
+	}
 
-    private class DataTypesViewer extends MyBaseViewer {
-        void loadImpl(SQLConnection conn) throws DataSetException, BaseSQLException, SQLException {
-            if (conn != null) {
-                show(new ResultSetDataSet(conn.getTypeInfo()), _session.getMessageHandler());
-            }
-        }
-    }
+	private class DataTypesViewer extends MyBaseViewer {
+		void loadImpl(SQLConnection conn) throws DataSetException, BaseSQLException, SQLException {
+			if (conn != null) {
+				show(new ResultSetDataSet(conn.getTypeInfo()), _session.getMessageHandler());
+			}
+		}
+	}
 
-    private class MetaDataViewer extends MyBaseViewer {
-        void loadImpl(SQLConnection conn) throws DataSetException, BaseSQLException, SQLException {
-            if (conn != null) {
-                show(conn.createMetaDataDataSet(_session.getMessageHandler()), _session.getMessageHandler());
-            }
-        }
-    }
+	private class MetaDataViewer extends MyBaseViewer {
+		void loadImpl(SQLConnection conn) throws DataSetException, BaseSQLException, SQLException {
+			if (conn != null) {
+				show(conn.createMetaDataDataSet(_session.getMessageHandler()), _session.getMessageHandler());
+			}
+		}
+	}
 
-    private class MyPropertiesListener implements PropertyChangeListener {
-        public void propertyChange(PropertyChangeEvent evt) {
-            DatabasePanel.this.propertiesHaveChanged(evt.getPropertyName());
-        }
-    }
+	private class MyPropertiesListener implements PropertyChangeListener {
+		public void propertyChange(PropertyChangeEvent evt) {
+			DatabasePanel.this.propertiesHaveChanged(evt.getPropertyName());
+		}
+	}
 
-    private class TabbedPaneListener implements ChangeListener {
-        public void stateChanged(ChangeEvent evt) {
-            Object src = evt.getSource();
-            if (src instanceof JTabbedPane) {
-                int idx = ((JTabbedPane)src).getSelectedIndex();
-                if (idx != -1) {
-                    DatabasePanel.this._viewers[idx].load(DatabasePanel.this._session.getSQLConnection());
-                }
-            }
-        }
-    }
+	private class TabbedPaneListener implements ChangeListener {
+		public void stateChanged(ChangeEvent evt) {
+			Object src = evt.getSource();
+			if (src instanceof JTabbedPane) {
+				int idx = ((JTabbedPane)src).getSelectedIndex();
+				if (idx != -1) {
+					DatabasePanel.this._viewers[idx].load(DatabasePanel.this._session.getSQLConnection());
+				}
+			}
+		}
+	}
 }

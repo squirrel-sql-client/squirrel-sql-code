@@ -108,7 +108,7 @@ public class TableInfoTab extends BaseTablePanelTab {
 		private JLabel _rowCount = new JLabel("");
 		private TableInfoDataSet _ds;
 		private DataSetViewer _viewer;
-		private IDataSetViewerDestination _dest;
+//		private IDataSetViewerDestination _dest;
 
 		MyComponent() {
 			super(new BorderLayout());
@@ -158,11 +158,12 @@ public class TableInfoTab extends BaseTablePanelTab {
 
 			// Panel displays table info.
 			String destClassName = session.getProperties().getTableOutputClassName();
-			_dest = createDestination(destClassName);
+			//_dest = createDestination(destClassName);
 			_viewer = new DataSetViewer();
-			_viewer.setDestination(_dest);
+			//_viewer.setDestination(_dest);
+			_viewer.setDestination(destClassName);
 			_ds = new TableInfoDataSet();
-			add(new JScrollPane((Component)_dest), BorderLayout.CENTER);
+			add(new JScrollPane(_viewer.getDestinationComponent()), BorderLayout.CENTER);
 		}
 	}
 }

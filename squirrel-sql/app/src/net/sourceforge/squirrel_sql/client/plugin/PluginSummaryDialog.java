@@ -65,7 +65,7 @@ public class PluginSummaryDialog extends JDialog {
         contentPane.setLayout(new BorderLayout());
 
         PluginInfo[] pluginInfo = app.getPluginManager().getPluginInformation();
-        contentPane.add(new JScrollPane(new PluginSummaryPanel(pluginInfo)), BorderLayout.CENTER);
+        contentPane.add(new JScrollPane(new PluginSummaryPanel(pluginInfo).getComponent()), BorderLayout.CENTER);
 
         // Ok button at bottom of dialog.
         JPanel btnsPnl = new JPanel();

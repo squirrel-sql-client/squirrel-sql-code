@@ -158,7 +158,7 @@ public class ProcedurePanel extends JTabbedPane {
 	}
 
 	private void createUserInterface() {
-		//addProcedurePanelTab(new ProcedureInfoTab());
+		addProcedurePanelTab(new ProcedureInfoTab());
 		addProcedurePanelTab(new ProcedureColumnsTab());
 
 		_propsListener = new MyPropertiesListener(this);

@@ -76,8 +76,8 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo {
 				"getSqlReuseOutputTabs", "setSqlReuseOutputTabs");
 			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.SQL_NBR_ROWS_TO_SHOW, cls,
 				"getSqlNbrRowsToShow", "setSqlNbrRowsToShow");
-			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.SQL_OUTPUT_CLASS_NAME, cls,
-				"getSqlOutputClassName", "setSqlOutputClassName");
+			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.SQL_OUTPUT_CONVERTER_CLASS_NAME, cls,
+				"getSqlOutputConverterClassName", "setSqlOutputConverterClassName");
 			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.SQL_OUTPUT_META_DATA_CLASS_NAME, cls,
 				"getSqlOutputMetaDataClassName", "setSqlOutputMetaDataClassName");
 			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.SQL_STATEMENT_SEPARATOR, cls,

@@ -43,6 +43,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetModelJTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetModelConverter;
 import net.sourceforge.squirrel_sql.fw.util.Logger;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 
@@ -50,8 +51,6 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
 public class ResultTab extends JPanel {
-private DataSetModelJTableModel _converter;
-
 	/** Current session. */
 	private ISession _session;
 
@@ -65,7 +64,7 @@ private DataSetModelJTableModel _converter;
 	private IDataSetModel _resultSetModel = new DataSetListModel();//?? Use a factory.
 
 	/** Panel displaying the SQL results. */
-	private /*IDataSetViewerDestination*/Component _resultSetOutput;
+	private Component _resultSetOutput;
 
 	/** Panel displaying the SQL results meta data. */
 	private IDataSetViewerDestination _metaDataOutput;
@@ -86,7 +85,6 @@ private DataSetModelJTableModel _converter;
 	private JLabel _currentSqlLbl = new JLabel();
 
 	private MyPropertiesListener _propsListener = new MyPropertiesListener();
-//	private MyActionListener _actionListener = new MyActionListener();
 
 	/**
 	 * Ctor.
@@ -139,7 +137,9 @@ private DataSetModelJTableModel _converter;
 	 * Clear results and current SQL script.
 	 */
 	public void clear() {
-		_metaDataOutput.clear();
+		if (_metaDataOutput != null) {
+			_metaDataOutput.clear();
+		}
 		_resultSetModel.clear();
 		_currentSqlLbl.setText("");
 	}
@@ -171,33 +171,6 @@ private DataSetModelJTableModel _converter;
 		}
 	}
 
-/*	private class MyActionListener implements ActionListener
-	{
-		private boolean _listening = true;
-
-		void stopListening() {
-			_listening = false;
-		}
-
-		void startListening() {
-			_listening = true;
-		}
-
-		public void actionPerformed(ActionEvent evt) {
-			if (_listening)
-			{
-				if(evt.getActionCommand().equals("close"))
-				{
-					closeTab();
-				}
-				else
-				{
-					createWindow();
-				}
-			}
-		}
-	}
-*/
 	/**
 	 * Close this tab.
 	 */
@@ -225,7 +198,7 @@ private DataSetModelJTableModel _converter;
 /*
 		if (propertyName == null || propertyName.equals(
 				SessionProperties.IPropertyNames.SQL_OUTPUT_CLASS_NAME)) {
-			final IDataSetViewerDestination previous = _resultSetOutput;
+//			final IDataSetViewerDestination previous = _resultSetOutput;
 			try {
 				Class destClass = Class.forName(props.getSqlOutputClassName());
 				if (IDataSetViewerDestination.class.isAssignableFrom(destClass) &&
@@ -245,9 +218,29 @@ private DataSetModelJTableModel _converter;
 		}
 */
 		if (propertyName == null || propertyName.equals(
-				SessionProperties.IPropertyNames.SQL_OUTPUT_CLASS_NAME)) {
-			_converter = new DataSetModelJTableModel(_resultSetModel);
-			_resultSetOutput = new JTable(_converter);
+				SessionProperties.IPropertyNames.SQL_OUTPUT_CONVERTER_CLASS_NAME)) {
+			IDataSetViewerDestination dest = null;
+//			try {
+//				Class convClass = Class.forName(props.getSqlOutputConverterClassName());
+//				if (IDataSetModelConverter.class.isAssignableFrom(convClass)) {
+//					conv = (IDataSetModelConverter)convClass.newInstance();
+//				}
+//			} catch (Exception ex) {
+//				logger.showMessage(Logger.ILogTypes.ERROR, ex.getMessage());
+//			}
+			try {
+				dest = _resultSetViewer.setDestination(props.getSqlOutputConverterClassName());
+			} catch (Exception ex) {
+				logger.showMessage(Logger.ILogTypes.ERROR, ex.getMessage());
+			}
+			IDataSetModelConverter conv = null;
+			if (dest == null || !IDataSetModelConverter.class.isAssignableFrom(dest.getClass())) {
+				conv = new DataSetModelJTableModel();
+			} else {
+				conv = (IDataSetModelConverter)dest;
+			}
+			conv.setDataSetModel(_resultSetModel);
+			_resultSetOutput = conv.createComponent();
 			_resultSetViewer.setDestination(_resultSetModel);
 			_resultSetSp.setRowHeader(null);
 			_resultSetSp.setViewportView(_resultSetOutput);
@@ -256,7 +249,7 @@ private DataSetModelJTableModel _converter;
 
 		if (propertyName == null || propertyName.equals(
 				SessionProperties.IPropertyNames.SQL_OUTPUT_META_DATA_CLASS_NAME)) {
-			final IDataSetViewerDestination previous = _metaDataOutput;
+/*
 			try {
 				Class destClass = Class.forName(props.getSqlOutputMetaDataClassName());
 				if (IDataSetViewerDestination.class.isAssignableFrom(destClass) &&
@@ -270,9 +263,16 @@ private DataSetModelJTableModel _converter;
 			if (_metaDataOutput == null) {
 				_metaDataOutput = new DataSetViewerTablePanel();
 			}
-			_metaDataViewer.setDestination(_metaDataOutput);
+*/
+			try {
+				_metaDataViewer.setDestination(props.getSqlOutputMetaDataClassName());
+			} catch (Exception ex) {
+				logger.showMessage(Logger.ILogTypes.ERROR, ex.getMessage());
+				_metaDataOutput = new DataSetViewerTablePanel();
+			}
+//			_metaDataViewer.setDestination(_metaDataOutput);
 			_metaDataSp.setRowHeader(null);
-			_metaDataSp.setViewportView((Component)_metaDataOutput);
+			_metaDataSp.setViewportView(_metaDataViewer.getDestinationComponent());
 		}
 
 	}

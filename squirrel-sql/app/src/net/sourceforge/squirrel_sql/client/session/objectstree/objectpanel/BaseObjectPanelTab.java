@@ -121,6 +121,7 @@ public abstract class BaseObjectPanelTab implements IObjectPanelTab {
 	 *
 	 * @return  The newly created panel.
 	 */
+/*
 	protected IDataSetViewerDestination createDestination(String destClassName) {
 		IDataSetViewerDestination dest = null;
 		try {
@@ -137,5 +138,6 @@ public abstract class BaseObjectPanelTab implements IObjectPanelTab {
 		}
 		return dest;
 	}
+*/
 }
 

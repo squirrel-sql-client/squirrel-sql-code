@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
@@ -29,127 +30,176 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
+//??RENAME to DataSetViewerTextDestination
 
-public class DataSetViewerTextPanel extends JPanel implements IDataSetViewerDestination {
+public class DataSetViewerTextPanel extends BaseDataSetViewerDestination implements IDataSetViewerDestination {
 
-    private final static int COLUMN_PADDING = 2;
+	private final static int COLUMN_PADDING = 2;
 
-    private boolean _showHeadings = true;
+//	private boolean _showHeadings = true;
 
-    private JTextArea _outText;
+//	private JTextArea _outText;
+	private MyJTextArea _outText = new MyJTextArea();
 
-    private ColumnDisplayDefinition[] _colDefs;
+//	private ColumnDisplayDefinition[] _colDefs = new ColumnDisplayDefinition[0];
 
-    /** Popup menu for text component. */
-    private TextPopupMenu _textPopupMenu;
+	/** Popup menu for text component. */
+//	private TextPopupMenu _textPopupMenu;
 
-    public DataSetViewerTextPanel() {
-        super();
-        createuserInterface();
-    }
+	public DataSetViewerTextPanel() {
+		super();
+		//createuserInterface();
+	}
 
-    public void showHeadings(boolean show) {
-        _showHeadings = show;
-    }
+//	public void showHeadings(boolean show) {
+//		_showHeadings = show;
+//	}
 
-    public void clear() {
-        _outText.setText("");
-    }
+	public void clear() {
+		_outText.setText("");
+	}
 
-    public void setColumnDefinitions(ColumnDisplayDefinition[] colDefs) {
-        _colDefs = colDefs;
-        if (_showHeadings) {
-            StringBuffer buf = new StringBuffer();
-            for (int i = 0; i < colDefs.length; ++i) {
-                if (i == 0) {
-                }
-                buf.append(format(colDefs[i].getLabel(), colDefs[i].getDisplayWidth(), ' '));
-            }
-            addLine(buf.toString());
-            buf = new StringBuffer();
-            for (int i = 0; i < colDefs.length; ++i) {
-                buf.append(format("", colDefs[i].getDisplayWidth(), '-'));
-            }
-            addLine(buf.toString());
-        }
-    }
+	public void setColumnDefinitions(ColumnDisplayDefinition[] colDefs) {
+		super.setColumnDefinitions(colDefs);
+		colDefs = getColumnDefinitions(); // in case superclass modifies them.
+		if (getShowHeadings()) {
+			StringBuffer buf = new StringBuffer();
+			for (int i = 0; i < colDefs.length; ++i) {
+				buf.append(format(colDefs[i].getLabel(), colDefs[i].getDisplayWidth(), ' '));
+			}
+			addLine(buf.toString());
+			buf = new StringBuffer();
+			for (int i = 0; i < colDefs.length; ++i) {
+				buf.append(format("", colDefs[i].getDisplayWidth(), '-'));
+			}
+			addLine(buf.toString());
+		}
+	}
 
-    public void addRow(Object[] row) {
-        StringBuffer buf = new StringBuffer();
-        for (int i = 0; i < row.length; ++i) {
-            buf.append(format(row[i].toString(), _colDefs[i].getDisplayWidth(), ' '));
-        }
-        addLine(buf.toString());
-    }
+	public void addRow(Object[] row) {
+		ColumnDisplayDefinition[] colDefs = getColumnDefinitions();
+		StringBuffer buf = new StringBuffer();
+		for (int i = 0; i < row.length; ++i) {
+			buf.append(format(row[i].toString(), colDefs[i].getDisplayWidth(), ' '));
+		}
+		addLine(buf.toString());
+	}
 
-    public void moveToTop() {
-        _outText.select(0, 0);
-    }
+	public void moveToTop() {
+		_outText.select(0, 0);
+	}
 
-    public void allRowsAdded() {
-    }
+	public void allRowsAdded() {
+	}
 
-    protected void addLine(String line) {
-        _outText.append(line);
-        _outText.append("\n");
-    }
+	/**
+	 * Get the component for this viewer.
+	 * 
+	 * @return	The component for this viewer.
+	 */
+	public Component getComponent() {
+		return _outText;
+	}
 
-    protected String format(String data, int displaySize, char fillChar) {
-        if (data == null) {
-            data = "";
-        }
-        data = data.replace('\n', ' ');
-        data = data.replace('\r', ' ');
-        StringBuffer output = new StringBuffer(data);
-        if (displaySize > MAX_COLUMN_WIDTH) {
-            displaySize = MAX_COLUMN_WIDTH;
-        }
+	protected void addLine(String line) {
+		_outText.append(line);
+		_outText.append("\n");
+	}
 
-        if (output.length() > displaySize) {
-            output.setLength(displaySize);
-        }
+	protected String format(String data, int displaySize, char fillChar) {
+		if (data == null) {
+			data = "";
+		}
+		data = data.replace('\n', ' ');
+		data = data.replace('\r', ' ');
+		StringBuffer output = new StringBuffer(data);
+		if (displaySize > MAX_COLUMN_WIDTH) {
+			displaySize = MAX_COLUMN_WIDTH;
+		}
 
-        displaySize+= COLUMN_PADDING;
+		if (output.length() > displaySize) {
+			output.setLength(displaySize);
+		}
 
-        int extraPadding = displaySize - output.length();
-        if (extraPadding > 0) {
-            char[] padData = new char[extraPadding];
-            Arrays.fill(padData, fillChar);
-            output.append(padData);
-        }
+		displaySize+= COLUMN_PADDING;
 
-        return output.toString();
-    }
+		int extraPadding = displaySize - output.length();
+		if (extraPadding > 0) {
+			char[] padData = new char[extraPadding];
+			Arrays.fill(padData, fillChar);
+			output.append(padData);
+		}
 
-    /**
-     * Display the popup menu for this component.
-     */
-    protected void displayPopupMenu(MouseEvent evt) {
-        _textPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
-    }
+		return output.toString();
+	}
 
-    protected void createuserInterface() {
-        setLayout(new BorderLayout());
-        _outText = new JTextArea();
-        _outText.setEditable(false);
-        _outText.setLineWrap(false);
-        _outText.setFont(new Font("Monospaced", Font.PLAIN, 12));
-        add(_outText, BorderLayout.CENTER);
+	/**
+	 * Display the popup menu for this component.
+	 */
+//	protected void displayPopupMenu(MouseEvent evt) {
+//		_textPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+//	}
 
-        _textPopupMenu = new TextPopupMenu();
-        _textPopupMenu.setTextComponent(_outText);
+/*
+	protected void createuserInterface() {
+		setLayout(new BorderLayout());
+		_outText = new JTextArea();
+		_outText.setEditable(false);
+		_outText.setLineWrap(false);
+		_outText.setFont(new Font("Monospaced", Font.PLAIN, 12));
+		add(_outText, BorderLayout.CENTER);
 
-        _outText.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent evt) {
-                if (evt.isPopupTrigger()) {
-                    DataSetViewerTextPanel.this.displayPopupMenu(evt);
-                }
-            }
-            public void mouseReleased(MouseEvent evt) {
-                if (evt.isPopupTrigger()) {
-                    DataSetViewerTextPanel.this.displayPopupMenu(evt);
-                }
-            }
-        });
-    }
+		_textPopupMenu = new TextPopupMenu();
+		_textPopupMenu.setTextComponent(_outText);
+
+		_outText.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent evt) {
+				if (evt.isPopupTrigger()) {
+					DataSetViewerTextPanel.this.displayPopupMenu(evt);
+				}
+			}
+			public void mouseReleased(MouseEvent evt) {
+				if (evt.isPopupTrigger()) {
+					DataSetViewerTextPanel.this.displayPopupMenu(evt);
+				}
+			}
+		});
+	}
+*/	
+   	private static final class MyJTextArea extends JTextArea {
+		private TextPopupMenu _textPopupMenu;
+		
+		MyJTextArea() {
+			super();
+			createUserInterface();
+		}
+
+		protected void createUserInterface() {
+			setEditable(false);
+			setLineWrap(false);
+			setFont(new Font("Monospaced", Font.PLAIN, 12));
+	
+			_textPopupMenu = new TextPopupMenu();
+			_textPopupMenu.setTextComponent(this);
+	
+			addMouseListener(new MouseAdapter() {
+				public void mousePressed(MouseEvent evt) {
+					if (evt.isPopupTrigger()) {
+						MyJTextArea.this.displayPopupMenu(evt);
+					}
+				}
+				public void mouseReleased(MouseEvent evt) {
+					if (evt.isPopupTrigger()) {
+						MyJTextArea.this.displayPopupMenu(evt);
+					}
+				}
+			});
+
+		}
+
+		void displayPopupMenu(MouseEvent evt) {
+			_textPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+		}
+	}
+
 }
