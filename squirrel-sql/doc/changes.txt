@@ -6,6 +6,8 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Information windows (such as Help) can now be moved
+  outside of the main window.
 - Add home toolbar button to the HTML Viewer.
 - Fix Refresh in HtmlViewer.
 - Change icons for commit/rollback. The old icons were
