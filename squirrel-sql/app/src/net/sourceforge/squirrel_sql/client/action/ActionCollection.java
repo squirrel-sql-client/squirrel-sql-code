@@ -81,10 +81,10 @@ public final class ActionCollection
 	private Map _actionColl = new HashMap();
 
 	/** Current <CODE>ISQLAlias</CODE>. */
-	private ISQLAlias _alias;
+	//private ISQLAlias _alias;
 
 	/** Current <CODE>ISQLDriver</CODE>. */
-	private ISQLDriver _driver;
+//	private ISQLDriver _driver;
 
 	/**
 	 * Ctor. Disable all actions that are not valid when the

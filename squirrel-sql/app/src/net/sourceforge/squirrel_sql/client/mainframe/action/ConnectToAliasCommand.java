@@ -336,8 +336,8 @@ public class ConnectToAliasCommand implements ICommand
 			final IIdentifier driverID = _alias.getDriverIdentifier();
 			final ISQLDriver sqlDriver = _app.getDataCache().getDriver(driverID);
 
-			final Thread curThread = Thread.currentThread();
-			final SQLDriverManager mgr = _app.getSQLDriverManager();
+//			final Thread curThread = Thread.currentThread();
+//			final SQLDriverManager mgr = _app.getSQLDriverManager();
 
 			try
 			{

@@ -252,7 +252,7 @@ public class SQLPanel extends JPanel
 	 */
 	public synchronized void closeAllSQLResultFrames()
 	{
-		List tabs = (List) _usedTabs.clone();
+		List tabs = (List)_usedTabs.clone();
 		for (Iterator it = tabs.iterator(); it.hasNext();)
 		{
 			ResultTabInfo ti = (ResultTabInfo) it.next();
@@ -269,7 +269,7 @@ public class SQLPanel extends JPanel
 	 */
 	public synchronized void closeAllSQLResultTabs()
 	{
-		List tabs = (List) _usedTabs.clone();
+		List tabs = (List)_usedTabs.clone();
 		for (Iterator it = tabs.iterator(); it.hasNext();)
 		{
 			ResultTabInfo ti = (ResultTabInfo) it.next();

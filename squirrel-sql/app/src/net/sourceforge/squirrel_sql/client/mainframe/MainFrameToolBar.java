@@ -102,11 +102,11 @@ class MainFrameToolBar extends ToolBar
 	 *
 	 * @param	action	<TT>Action</TT> to be added.
 	 */
-	private void addAction(Action action)
-	{
-		JButton btn = add(action);
-		btn.setAlignmentY(0.5f);
-	}
+//	private void addAction(Action action)
+//	{
+//		JButton btn = add(action);
+//		btn.setAlignmentY(0.5f);
+//	}
 
 	/**
 	 * Dropdown holding all the current <TT>ISQLAlias</TT> objects. When one is

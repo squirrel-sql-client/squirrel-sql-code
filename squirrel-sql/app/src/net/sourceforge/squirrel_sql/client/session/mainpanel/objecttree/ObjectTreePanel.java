@@ -102,7 +102,7 @@ public class ObjectTreePanel extends JPanel
 	 *  Collection of <TT>IObjectPanelTab</TT> objects to be displayed for all
 	 * nodes in the object tree.
 	 */
-	private List _tabsForAllNodes = new ArrayList();
+//	private List _tabsForAllNodes = new ArrayList();
 	
 	/**
 	 * ctor specifying the current session.
