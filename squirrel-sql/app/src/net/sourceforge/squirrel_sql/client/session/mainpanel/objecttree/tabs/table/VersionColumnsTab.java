@@ -70,7 +70,9 @@ public class VersionColumnsTab extends BaseTableTab
 		try
 		{
 			final ResultSet rs = conn.getSQLMetaData().getVersionColumns(getTableInfo());
-			return new ResultSetDataSet(rs);
+			final ResultSetDataSet rsds = new ResultSetDataSet();
+			rsds.setResultSet(rs, getSession().getProperties().getLargeResultSetObjectInfo());
+			return rsds;
 		}
 		catch (SQLException ex)
 		{

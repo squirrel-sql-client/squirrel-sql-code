@@ -205,8 +205,7 @@ public class SQLExecuterTask implements Runnable
 					_cancelPanel.setStatusLabel("Building output...");
 					ResultSetDataSet rsds = new ResultSetDataSet();
 					SessionProperties props = _session.getProperties();
-					rsds.setLargeResultSetObjectInfo(props.getLargeResultSetObjectInfo());
-					rsds.setResultSet(rs);
+					rsds.setResultSet(rs, props.getLargeResultSetObjectInfo());
 					ResultSetMetaDataDataSet rsmdds = new ResultSetMetaDataDataSet(rs);
 					_sqlPanel.addResultsTab(querySql, rsds, rsmdds, _cancelPanel);
 					_cancelPanelRemoved = true;

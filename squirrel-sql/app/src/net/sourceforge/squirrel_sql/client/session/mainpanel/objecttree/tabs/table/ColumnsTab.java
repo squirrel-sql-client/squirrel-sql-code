@@ -24,6 +24,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 /**
  * This tab shows the columns in the currently selected table.
  *
@@ -70,7 +71,9 @@ public class ColumnsTab extends BaseTableTab
 		try
 		{
 			final ResultSet rs = conn.getSQLMetaData().getColumns(getTableInfo());
-			return new ResultSetDataSet(rs);
+			final ResultSetDataSet rsds = new ResultSetDataSet();
+			rsds.setResultSet(rs, getSession().getProperties().getLargeResultSetObjectInfo());
+			return rsds;
 		}
 		catch (SQLException ex)
 		{

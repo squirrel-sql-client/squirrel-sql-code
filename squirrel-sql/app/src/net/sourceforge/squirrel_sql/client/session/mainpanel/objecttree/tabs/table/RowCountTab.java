@@ -75,7 +75,9 @@ public class RowCountTab extends BaseTableTab
 			{
 				final ResultSet rs = stmt.executeQuery("select count(*) from "
 												+ getTableInfo().getQualifiedName());
-				return new ResultSetDataSet(rs);
+				final ResultSetDataSet rsds = new ResultSetDataSet();
+				rsds.setResultSet(rs, getSession().getProperties().getLargeResultSetObjectInfo());
+				return rsds;
 			}
 			finally
 			{

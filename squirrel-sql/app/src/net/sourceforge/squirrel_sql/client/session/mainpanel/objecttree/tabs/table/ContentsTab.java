@@ -100,8 +100,7 @@ public class ContentsTab extends BaseTableTab
 				final ResultSet rs = stmt.executeQuery("select * from "
 													+ ti.getQualifiedName());
 				final ResultSetDataSet rsds = new ResultSetDataSet();
-				rsds.setLargeResultSetObjectInfo(props.getLargeResultSetObjectInfo());
-				rsds.setResultSet(rs);
+				rsds.setResultSet(rs, props.getLargeResultSetObjectInfo());
 				return rsds;
 			}
 			finally

@@ -42,38 +42,52 @@ public class ResultSetDataSet implements IDataSet
 	private DataSetDefinition _dataSetDefinition;
 	private ArrayList _alData;
 
-	private LargeResultSetObjectInfo _largeObjInfo = new LargeResultSetObjectInfo();
+//	private LargeResultSetObjectInfo _largeObjInfo = new LargeResultSetObjectInfo();
 
 	public ResultSetDataSet() throws DataSetException
 	{
-		this(null, null);
-	}
-
-	public ResultSetDataSet(ResultSet rs) throws DataSetException
-	{
-		this(rs, null);
-	}
-
-	public ResultSetDataSet(ResultSet rs, int[] columnIndices)
-		throws IllegalArgumentException, DataSetException
-	{
+//		this(null, null);
 		super();
-		setResultSet(rs, columnIndices);
 	}
 
-	public void setLargeResultSetObjectInfo(LargeResultSetObjectInfo value)
-	{
-		_largeObjInfo = value != null ? value : new LargeResultSetObjectInfo();
-	}
+//	public ResultSetDataSet(ResultSet rs) throws DataSetException
+//	{
+//		this(rs, null);
+//	}
+
+//	public ResultSetDataSet(ResultSet rs, int[] columnIndices)
+//		throws IllegalArgumentException, DataSetException
+//	{
+//		super();
+//		setResultSet(rs, columnIndices);
+//	}
 
 	public void setResultSet(ResultSet rs) throws DataSetException
 	{
-		setResultSet(rs, null);
+		setResultSet(rs, null, null);
+	}
+
+	public void setResultSet(ResultSet rs, LargeResultSetObjectInfo largeObjInfo)
+		throws DataSetException
+	{
+		setResultSet(rs, largeObjInfo, null);
 	}
 
 	public void setResultSet(ResultSet rs, int[] columnIndices)
 		throws DataSetException
 	{
+		setResultSet(rs, null, columnIndices);
+	}
+
+	public void setResultSet(ResultSet rs, LargeResultSetObjectInfo largeObjInfo,
+								int[] columnIndices)
+		throws DataSetException
+	{
+		if (largeObjInfo == null)
+		{
+			largeObjInfo = new LargeResultSetObjectInfo();
+		}
+
 		if (columnIndices != null && columnIndices.length == 0)
 		{
 			columnIndices = null;
@@ -92,7 +106,7 @@ public class ResultSetDataSet implements IDataSet
 				ColumnDisplayDefinition[] colDefs = createColumnDefinitions(md, columnIndices);
 				_dataSetDefinition = new DataSetDefinition(colDefs);
 
-				ResultSetReader rdr = new ResultSetReader(rs, _largeObjInfo, columnIndices);
+				ResultSetReader rdr = new ResultSetReader(rs, largeObjInfo, columnIndices);
 				Object[] row = null;
 				while ((row = rdr.readRow()) != null)
 				{
@@ -134,10 +148,13 @@ public class ResultSetDataSet implements IDataSet
 		return _currentRow[columnIndex];
 	}
 
-	private ColumnDisplayDefinition[] createColumnDefinitions(
-		ResultSetMetaData md,
-		int[] columnIndices)
-		throws SQLException
+//	public void setLargeResultSetObjectInfo(LargeResultSetObjectInfo value)
+//	{
+//		_largeObjInfo = value != null ? value : new LargeResultSetObjectInfo();
+//	}
+
+	private ColumnDisplayDefinition[] createColumnDefinitions(ResultSetMetaData md,
+							int[] columnIndices) throws SQLException
 	{
 		// TODO?? ColumnDisplayDefinition should also have the Type (String, Date, Double,Integer,Boolean)
 		ColumnDisplayDefinition[] columnDefs =

@@ -70,7 +70,9 @@ public class ColumnPriviligesTab extends BaseTableTab
 		try
 		{
 			final ResultSet rs = conn.getSQLMetaData().getColumnPrivileges(getTableInfo());
-			return new ResultSetDataSet(rs);
+			final ResultSetDataSet rsds = new ResultSetDataSet();
+			rsds.setResultSet(rs, getSession().getProperties().getLargeResultSetObjectInfo());
+			return rsds;
 		}
 		catch (SQLException ex)
 		{
