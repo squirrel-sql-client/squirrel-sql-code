@@ -1,3 +1,7 @@
+<!-- =========================================================== -->
+<!--  IzPack build configuration                                 -->
+<!--  Version: $Id: izpack-complete-buildmagic.xml,v 1.2 2001-11-20 19:59:36 placson Exp $                -->
+<!-- =========================================================== -->
 <installation version="1.0">
     <info>
         <appname>Squirrel SQL Client</appname>
@@ -36,27 +40,25 @@
             <description>SQL Client source</description>
             <file targetdir="$INSTALL_PATH" src="output/dist/src"/>
         </pack>
-	<!--
+
         <pack required="no" name="Plugin - Look and Feel">
             <description>Allows the Look and Feel of the application to be changed.</description>
-            <file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/laf/dist/laf.jar"/>
-            <file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/laf/dist/laf/"/>
+            <file targetdir="$INSTALL_PATH/plugins" src="output/release/plugins/laf.jar"/>
         </pack>
+
         <pack required="no" name="Plugin - SQL Scripts">
             <description>Load/save of SQL scripts etc.</description>
-            <file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/sqlscript/dist/sqlscript.jar"/>
-            <file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/sqlscript/dist/sqlscript/"/>
+            <file targetdir="$INSTALL_PATH/plugins" src="output/release/plugins/sqlscript.jar"/>
         </pack>
+
         <pack required="no" name="Plugin - Saved Queries">
             <description>Allows queries to be saved and restored.</description>
-            <file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/favs/dist/favs.jar"/>
-            <file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/favs/dist/favs/"/>
+            <file targetdir="$INSTALL_PATH/plugins" src="output/release/plugins/savedqueries.jar"/>
         </pack>
+
         <pack required="no" name="Plugin - Database Information">
             <description>Database Information.</description>
-            <file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/dbinfo/dist/dbinfo.jar"/>
-            <file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/dbinfo/dist/dbinfo/"/>
+            <file targetdir="$INSTALL_PATH/plugins" src="output/release/plugins/dbinfo.jar"/>
         </pack>
-	-->
     </packs>
 </installation>
