@@ -24,6 +24,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -53,13 +54,16 @@ public class ProcedureSourceTab extends BaseObjectPanelTab
 	/** SQL that retrieves the source of a stored procedure. */
 	private static String SQL =
 		"select text from sys.all_source where type = 'PROCEDURE'" +
-		" and owner = ? and name = ? order by line desc";
+		" and owner = ? and name = ? order by line";
 
 	/** Component to display in tab. */
 	private ProcedureSourcePanel _comp;
 
+	/** Scrolling pane for <TT>_comp. */
+	private JScrollPane _scroller;
+
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(ProcedureSourceTab.class);
+	private final static ILogger s_log = LoggerController.createLogger(ProcedureSourceTab.class);
 
 	/**
 	 * Return the title for the tab.
@@ -96,8 +100,9 @@ public class ProcedureSourceTab extends BaseObjectPanelTab
 		if (_comp == null)
 		{
 			_comp = new ProcedureSourcePanel();
+			_scroller = new JScrollPane(_comp);
 		}
-		return _comp;
+		return _scroller;
 	}
 
 	/**
@@ -110,7 +115,7 @@ public class ProcedureSourceTab extends BaseObjectPanelTab
 		{
 			throw new IllegalStateException("Null ISession");
 		}
-		((ProcedureSourcePanel)getComponent()).load(getSession(), getDatabaseObjectInfo());
+		_comp.load(getSession(), getDatabaseObjectInfo());
 	}
 
 	/**

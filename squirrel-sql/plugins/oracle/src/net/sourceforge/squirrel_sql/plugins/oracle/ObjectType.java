@@ -1,4 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.oracle;
+
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+
 /*
  * Copyright (C) 2002 Colin Bell
  * colbell@users.sourceforge.net
@@ -34,13 +37,7 @@ class ObjectType
 	/**
 	 * This is the database object type for objects of this object type.
 	 */
-	final int _dbObjType;
-
-	/**
-	 * This is the node type for objects of this object type.
-	 * @see net.sourceforge.squirrel_sql.client.mainpanel.objecttree.ObjectTreeNode.IObjectTreeNodeType
-	 */
-	final int _nodeType;
+	final DatabaseObjectType _dboType;
 
 	/**
 	 * Ctor.
@@ -48,19 +45,17 @@ class ObjectType
 	 * @param	objectTypeColumnData	data in the OBJECT_TYPE column in the
 	 *									SYS.ALL_OBJECTS table that corresponds
 	 *									to this object type.
-	 * @param	dbObjType				Database object type to use for nodes of
-	 *									this object type. See IDatabaseObjectTypes.
-	 * @param	nodeType				Node type to use for nodes of this
-	 * 									object type. See INodeTypes.
+	 * @param	dboType					Database object type to use for nodes of
+	 *									this object type.
 	 * 
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> <TT>objectTypeColumnData</TT> passed.
+	 * 			Thrown if <TT>null</TT> <TT>objectTypeColumnData</TT> or
+	 * 			<TT>DatabaseObjectType</TT> passed.
 	 */
-	ObjectType(String objectTypeColumnData, int dbObjType, int nodeType)
+	ObjectType(String objectTypeColumnData, DatabaseObjectType dboType)
 	{
 		super();
 		_objectTypeColumnData = objectTypeColumnData;
-		_dbObjType = dbObjType;
-		_nodeType = nodeType;
+		_dboType = dboType;
 	}
 }

@@ -25,8 +25,8 @@ import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectTypes;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -99,6 +99,7 @@ public class ObjectTypeExpander implements INodeExpander
 		throws SQLException
 	{
 		final SQLConnection conn = session.getSQLConnection();
+		final SQLDatabaseMetaData md = conn.getSQLMetaData();
 		final List childNodes = new ArrayList();
 
 		// Add node for each object.
@@ -111,10 +112,8 @@ public class ObjectTypeExpander implements INodeExpander
 			while (rs.next())
 			{
 				IDatabaseObjectInfo dbinfo = new DatabaseObjectInfo(catalogName,
-										schemaName,
-										rs.getString(1),
-										_objectType._nodeType,
-										conn);
+										schemaName, rs.getString(1),
+										_objectType._dboType, md);
 				childNodes.add(new ObjectTreeNode(session, dbinfo));
 			}
 		}

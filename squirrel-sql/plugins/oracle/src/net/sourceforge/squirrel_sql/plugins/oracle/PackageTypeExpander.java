@@ -25,8 +25,8 @@ import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectTypes;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -42,11 +42,11 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTr
 public class PackageTypeExpander implements INodeExpander
 {
 	/** Logger for this class. */
-	private static ILogger s_log =
+	private static final ILogger s_log =
 		LoggerController.createLogger(PackageTypeExpander.class);
 
 	/** The plugin. */
-	private OraclePlugin _plugin;
+	private final OraclePlugin _plugin;
 
 	/**
 	 * Ctor.
@@ -82,23 +82,19 @@ public class PackageTypeExpander implements INodeExpander
 		final List childNodes = new ArrayList();
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
 		final SQLConnection conn = session.getSQLConnection();
+		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
 		final String catalogName = parentDbinfo.getCatalogName();
 		final String schemaName = parentDbinfo.getSchemaName();
 
-		// Node type to use for package nodes.
-		final int nodeType = _plugin.getSessionInfo(session)._packageNodeType;
-
-		// Add node to contain standalone procedures.
+		// Add package node to contain standalone procedures.
 		IDatabaseObjectInfo dbinfo = new DatabaseObjectInfo("", schemaName,
-												"%", nodeType, conn);
+												"%", IObjectTypes.PACKAGE, md);
 		ObjectTreeNode child = new ObjectTreeNode(session, dbinfo);
 		child.setUserObject("Standalone");
 		childNodes.add(child);
 
 		// Add packages.
-		ObjectType objType = new ObjectType("PACKAGE",
-										IDatabaseObjectTypes.GENERIC_LEAF,
-										nodeType);
+		ObjectType objType = new ObjectType("PACKAGE", IObjectTypes.PACKAGE);
 		INodeExpander exp = new ObjectTypeExpander(objType);
 		childNodes.addAll(exp.createChildren(session, parentNode));
 

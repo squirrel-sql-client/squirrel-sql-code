@@ -22,12 +22,16 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
 
-import javax.swing.Action;
 import javax.swing.JMenu;
 
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptAction;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptOfCurrentSQLAction;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTableScriptAction;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
@@ -36,17 +40,8 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
-import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
-
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptAction;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptOfCurrentSQLAction;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTableScriptAction;
 
 /**
  * The SQL Script plugin class.
@@ -215,10 +210,8 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 	public boolean sessionStarted(ISession session) {
 		ActionCollection coll = getApplication().getActionCollection();
 		IObjectTreeAPI api = session.getObjectTreeAPI(this);
-		api.addToPopup(ObjectTreeNode.IObjectTreeNodeType.TABLE,
-							coll.get(CreateTableScriptAction.class));
-		api.addToPopup(ObjectTreeNode.IObjectTreeNodeType.TABLE,
-							coll.get(CreateDataScriptAction.class));
+		api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTableScriptAction.class));
+		api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateDataScriptAction.class));
 		return true;
 	}
 

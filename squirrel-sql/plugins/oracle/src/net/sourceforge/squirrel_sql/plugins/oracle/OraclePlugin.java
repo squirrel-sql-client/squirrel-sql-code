@@ -23,6 +23,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -32,7 +33,6 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode.IObjectTreeNodeType;
 /**
  * Oracle plugin class.
  *
@@ -49,11 +49,14 @@ public class OraclePlugin extends DefaultSessionPlugin
 	/** API for the Obejct Tree. */
 	private IObjectTreeAPI _treeAPI;
 
+	/** Package Group Database object type. */
+	private DatabaseObjectType _packageGroupType;
+
 	/**
 	 * Collection of <TT>SessionInfo</TT> objects keyed by
 	 * ISession.getIdentifier().
 	 */
-	private Map _sessions = new HashMap();
+//	private Map _sessions = new HashMap();
 
 	/**
 	 * Return the internal name of this plugin.
@@ -153,34 +156,13 @@ public class OraclePlugin extends DefaultSessionPlugin
 			isOracle = isOracle(session);
 			if (isOracle)
 			{
-				SessionInfo si = new SessionInfo(session, this);
-				_sessions.put(session.getIdentifier(), si);
 				_treeAPI = session.getObjectTreeAPI(this);
-				_treeAPI.registerExpander(IObjectTreeNodeType.SCHEMA, new SchemaExpander(this));
-				_treeAPI.registerExpander(si._packageNodeType, new PackageExpander());
-				_treeAPI.registerDetailTab(IObjectTreeNodeType.PROCEDURE, new ProcedureSourceTab());
+				_treeAPI.registerExpander(DatabaseObjectType.SCHEMA, new SchemaExpander(this));
+				_treeAPI.registerExpander(IObjectTypes.PACKAGE, new PackageExpander());
+				_treeAPI.registerDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureSourceTab());
 			}
 		}
 		return isOracle;
-	}
-
-	/**
-	 * Return the session information object for the passed session.
-	 * 
-	 * @param	session		Session to retrieve info object for.
-	 * 
-	 * @return	The <TT>SessionInfo</TT> object for the passed session.
-	 * 
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
-	 */
-	SessionInfo getSessionInfo(ISession session)
-	{
-		if (session == null)
-		{
-			throw new IllegalArgumentException("ISession == null");
-		}
-		return (SessionInfo)_sessions.get(session.getIdentifier());
 	}
 
 	private boolean isOracle(ISession session)
