@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -64,7 +64,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 public class SessionSheet extends BaseSheet
 {
 	/** Logger for this class. */
-	private static ILogger s_log =
+	private static final ILogger s_log =
 		LoggerController.createLogger(SessionSheet.class);
 
 	/** Session for this window. */
@@ -359,6 +359,7 @@ public class SessionSheet extends BaseSheet
 			// in toolbar.
 			SQLConnection conn = session.getSQLConnection();
 			SQLCatalogsComboBox catalogsCmb = null;
+
 			try
 			{
 				if (conn.getSQLMetaData().supportsCatalogs())

@@ -112,9 +112,8 @@ class MainFrameToolBar extends ToolBar
 	 * Dropdown holding all the current <TT>ISQLAlias</TT> objects. When one is
 	 * selected the user will be prompted to connect to it.
 	 */
-	private static class AliasesDropDown
-		extends JComboBox
-		implements ActionListener
+	private static class AliasesDropDown extends JComboBox
+											implements ActionListener
 	{
 		private IApplication _app;
 		private MainFrame _mainFrame;
@@ -133,9 +132,10 @@ class MainFrameToolBar extends ToolBar
 			{
 				setSelectedIndex(0);
 			}
+
+			// Under JDK1.4 an empty JComboBox has an almost zero width.
 			else
 			{
-				// Under JDK1.4 an empty JComboBox has an almost zero width.
 				Dimension dm = getPreferredSize();
 				dm.width = 100;
 				setPreferredSize(dm);
@@ -187,7 +187,7 @@ class MainFrameToolBar extends ToolBar
 			super();
 			_app = app;
 			load();
-			//			_app.getDataCache().addAliasesListener(new MyAliasesListener(this));
+			//_app.getDataCache().addAliasesListener(new MyAliasesListener(this));
 		}
 
 		/**
@@ -233,7 +233,7 @@ class MainFrameToolBar extends ToolBar
 		private AliasesDropDownModel _model;
 
 		/** Control for _model. */
-		AliasesDropDown _control;
+		private AliasesDropDown _control;
 
 		/**
 		 * Ctor specifying the model and control that is listening.

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.util;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -22,7 +22,12 @@ import java.io.File;
 import net.sourceforge.squirrel_sql.fw.util.IJavaPropertyNames;
 
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
-
+/**
+ * This class contains information about files and directories used by the
+ * application.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
 public class ApplicationFiles
 {
 	/** Name of directory to contain users settings. */
