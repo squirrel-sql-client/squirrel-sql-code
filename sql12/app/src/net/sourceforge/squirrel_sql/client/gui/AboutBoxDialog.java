@@ -47,6 +47,8 @@ import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.HashtableDataSet;
@@ -80,6 +82,9 @@ public class AboutBoxDialog extends JDialog
 
 	/** System panel. */
 	private SystemPanel _systemPnl;
+
+	/** Close button for dialog. */
+	private final JButton _closeBtn = new JButton("Close");
 
 	/**
 	 * This interface defines locale specific strings. This should be
@@ -187,19 +192,21 @@ public class AboutBoxDialog extends JDialog
 		contentPane.add(_tabPnl, BorderLayout.CENTER);
 
 		// Ok button at bottom of dialog.
-		JPanel btnsPnl = new JPanel();
-		JButton okBtn = new JButton("OK");
-		okBtn.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent evt)
-			{
-				setVisible(false);
-			}
-		});
-		btnsPnl.add(okBtn);
-		contentPane.add(btnsPnl, BorderLayout.SOUTH);
+//		JPanel btnsPnl = new JPanel();
+//		JButton okBtn = new JButton("OK");
 
-		getRootPane().setDefaultButton(okBtn);
+//		_closeBtn.addActionListener(new ActionListener()
+//		{
+//			public void actionPerformed(ActionEvent evt)
+//			{
+//				setVisible(false);
+//			}
+//		});
+//		btnsPnl.add(okBtn);
+//		contentPane.add(btnsPnl, BorderLayout.SOUTH);
+		contentPane.add(createButtonBar(), BorderLayout.SOUTH);
+
+		getRootPane().setDefaultButton(_closeBtn);
 
 		addWindowListener(new WindowAdapter()
 		{
@@ -224,6 +231,25 @@ public class AboutBoxDialog extends JDialog
 		pack();
 		GUIUtils.centerWithinParent(this);
 		setResizable(true);
+	}
+
+	private JPanel createButtonBar()
+	{
+		_closeBtn.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent evt)
+			{
+				setVisible(false);
+			}
+		});
+
+		final ButtonBarBuilder builder = new ButtonBarBuilder();
+		builder.addGlue();
+//		builder.addGridded(new JButton("Alter"));
+//		builder.addRelatedGap();
+		builder.addGridded(_closeBtn);
+
+		return builder.getPanel();
 	}
 
 	private static final class CreditsPanel extends JScrollPane
