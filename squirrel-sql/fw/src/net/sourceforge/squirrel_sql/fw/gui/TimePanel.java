@@ -18,7 +18,6 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -36,7 +35,8 @@ import javax.swing.border.Border;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class TimePanel extends JLabel implements ActionListener {
+public class TimePanel extends JLabel implements ActionListener
+{
 	/** Timer that updates time. */
 	private Timer _timer;
 
@@ -46,14 +46,16 @@ public class TimePanel extends JLabel implements ActionListener {
 	/**
 	 * Default ctor.
 	 */
-	public TimePanel() {
+	public TimePanel()
+	{
 		super("", JLabel.CENTER);
 	}
 
 	/**
 	 * Add component to its parent. Start the timer for auto-update.
 	 */
-	public void addNotify() {
+	public void addNotify()
+	{
 		super.addNotify();
 		_timer = new Timer(1000, this);
 		_timer.start();
@@ -62,8 +64,10 @@ public class TimePanel extends JLabel implements ActionListener {
 	/**
 	 * Remove component from its parent. Stop the timer.
 	 */
-	public void removeNotify() {
-		if (_timer != null) {
+	public void removeNotify()
+	{
+		if (_timer != null)
+		{
 			_timer.stop();
 			_timer = null;
 		}
@@ -75,7 +79,8 @@ public class TimePanel extends JLabel implements ActionListener {
 	 * 
 	 * @param	evt		The current event.
 	 */
-	public void actionPerformed(ActionEvent evt) {
+	public void actionPerformed(ActionEvent evt)
+	{
 		setText(_fmt.format(Calendar.getInstance().getTime()));
 	}
 
@@ -84,19 +89,27 @@ public class TimePanel extends JLabel implements ActionListener {
 	 * 
 	 * @return	the preferred size of this component.
 	 */
-	public Dimension getPreferredSize() {
+	public Dimension getPreferredSize()
+	{
 		Dimension dim = super.getPreferredSize();
 		FontMetrics fm = getFontMetrics(getFont());
-		dim.width = fm.stringWidth("99:99:99");
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.HOUR_OF_DAY, 23);
+		cal.set(Calendar.MINUTE, 59);
+		cal.set(Calendar.SECOND, 59);
+		dim.width = fm.stringWidth(_fmt.format(cal.getTime()));
 		Border border = getBorder();
-		if (border != null) {
+		if (border != null)
+		{
 			Insets ins = border.getBorderInsets(this);
-			if (ins != null) {
+			if (ins != null)
+			{
 				dim.width += (ins.left + ins.right);
 			}
 		}
 		Insets ins = getInsets();
-		if (ins != null) {
+		if (ins != null)
+		{
 			dim.width += (ins.left + ins.right);
 		}
 		return dim;
