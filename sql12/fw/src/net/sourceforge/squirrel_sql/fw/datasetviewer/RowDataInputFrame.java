@@ -185,8 +185,9 @@ public class RowDataInputFrame extends JInternalFrame
 		 */
 		protected  RowDataJTable(ColumnDisplayDefinition[] colDefs, Object[] initalValues) {
 			
-			super(new RowDataModel(colDefs, initalValues));
-			
+			super();
+			setModel(new RowDataModel(colDefs, initalValues));		
+	
 			// create column model
 
 			final String data = "THE QUICK BROWN FOX JUMPED OVER THE LAZY DOG";
@@ -366,7 +367,7 @@ public class RowDataInputFrame extends JInternalFrame
 			Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 
 				JTextArea ta = new JTextArea((String)value, 4, 20);
-				ta.setBackground(Color.LIGHT_GRAY);
+				ta.setBackground(Color.lightGray);
 				return ta;
 			}
 	}

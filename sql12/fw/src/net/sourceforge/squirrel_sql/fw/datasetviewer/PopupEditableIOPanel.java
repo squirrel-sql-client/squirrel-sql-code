@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+ 
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import java.awt.event.MouseAdapter;
@@ -28,6 +29,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
+import java.awt.Dimension;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -162,7 +164,14 @@ public class PopupEditableIOPanel extends JPanel
 		JPanel displayPanel = new JPanel();
 		displayPanel.setLayout(new BorderLayout());
 		scrollPane = new JScrollPane(_ta);
-		scrollPane.setWheelScrollingEnabled(true);
+		/*
+		 * TODO: When 1.4 is the earliest version supported, include
+		 * the following line here:
+		 * 	scrollPane.setWheelScrollingEnabled(true);
+		 * The scroll-wheel function is important for ease of use, but the
+		 * setWheelScrollingEnabled function is not available in java 1.3.
+		 */
+
 		displayPanel.add(scrollPane, BorderLayout.CENTER);
 		if (CellComponentFactory.useBinaryEditingPanel(colDef)) {
 			// this is a binary field, so allow for multiple viewing options
@@ -263,7 +272,10 @@ public class PopupEditableIOPanel extends JPanel
 			CellImportExportInfoSaver.getInstance().getCmdList());
 		externalCommandCombo.setSelectedIndex(-1);	// no entry selected
 		externalCommandCombo.setEditable(true);
-		externalCommandCombo.setPrototypeDisplayValue("xxxxxxxxxxxxxxxxxxxxxxxxxx");
+		
+		// make this the same size as the fileNameField
+		externalCommandCombo.setPreferredSize(fileNameField.getPreferredSize());
+	
 		eiPanel.add(externalCommandCombo, gbc);
 		
 		// add button to execute external command
