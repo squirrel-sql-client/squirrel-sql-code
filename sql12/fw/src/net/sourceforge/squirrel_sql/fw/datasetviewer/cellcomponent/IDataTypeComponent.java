@@ -32,6 +32,12 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 public interface IDataTypeComponent
 {
 	/**
+	 * Return the name of the Java class used to store this data type
+	 * in the application.
+	 */
+	public String getClassName();
+	
+	/**
 	 * Convert the given object into its printable String value.
 	 */
 	public String renderObject(Object object);
