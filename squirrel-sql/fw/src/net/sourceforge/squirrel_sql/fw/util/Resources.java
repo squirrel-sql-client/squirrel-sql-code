@@ -64,7 +64,7 @@ public abstract class Resources
 	}
 
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(Resources.class);
+	private static final ILogger s_log = LoggerController.createLogger(Resources.class);
 
 	/** Applications resource bundle. */
 	private final ResourceBundle _bundle;
@@ -151,6 +151,8 @@ public abstract class Resources
 
 		item.setToolTipText((String) action.getValue(Action.SHORT_DESCRIPTION));
 
+		item.setIcon(null);
+
 		return item;
 	}
 
@@ -194,7 +196,7 @@ public abstract class Resources
 			icon = getIcon(key, ActionProperties.IMAGE);
 			action.putValue(Action.SMALL_ICON, icon);
 		}
-		catch (MissingResourceException ignore)
+		catch (MissingResourceException ex)
 		{
 		}
 

@@ -47,6 +47,7 @@ public class SquirrelResources extends Resources
 	public interface IImageNames
 	{
 		String APPLICATION_ICON = "AppIcon";
+		String EMPTY16 = "Empty16";
 		String PERFORMANCE_WARNING = "PerformanceWarning";
 		String SPLASH_SCREEN = "SplashScreen";
 	}

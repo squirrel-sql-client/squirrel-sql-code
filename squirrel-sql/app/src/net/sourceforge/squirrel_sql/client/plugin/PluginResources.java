@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.plugin;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,21 +19,22 @@ package net.sourceforge.squirrel_sql.client.plugin;
  */
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 
-public class PluginResources extends Resources {
+public class PluginResources extends Resources
+{
 	private IPlugin _plugin;
 
 	public PluginResources(String rsrcBundleBaseName, IPlugin plugin)
-			throws IllegalArgumentException {
+	{
 		super(rsrcBundleBaseName, getClassLoader(plugin));
 		_plugin = plugin;
 	}
 
 	private static ClassLoader getClassLoader(IPlugin plugin)
-			throws IllegalArgumentException {
-		if (plugin == null) {
+	{
+		if (plugin == null)
+		{
 			throw new IllegalArgumentException("Null IPlugin passed");
 		}
 		return plugin.getClass().getClassLoader();
 	}
 }
-
