@@ -21,6 +21,8 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 
+import java.awt.print.PrinterJob;
+
 import javax.swing.JMenuItem;
 import javax.swing.JTable;
 
@@ -64,6 +66,7 @@ public class TablePopupMenu extends BasePopupMenu
 	private DeleteRowsAction _deleteRows = new DeleteRowsAction();
 	protected InsertRowAction _insertRow = new InsertRowAction();
 	private SelectAllAction _select = new SelectAllAction();
+	private PrintAction _print = new PrintAction();
 
 	// The following pointer is needed to allow the "Make Editable button
 	// to tell the application to set up an editable display panel
@@ -114,6 +117,9 @@ public class TablePopupMenu extends BasePopupMenu
 			add(_insertRow);
 			add(_deleteRows);
 		}
+		
+		addSeparator();
+		add(_print);
 	}
 	
 	/**
@@ -143,6 +149,9 @@ public class TablePopupMenu extends BasePopupMenu
 		addSeparator();
 		add(_insertRow);
 		add(_deleteRows);
+		
+		addSeparator();
+		add(_print);
 	}
 
 	public void setTable(JTable value)
@@ -346,6 +355,36 @@ public class TablePopupMenu extends BasePopupMenu
 			if (_table != null)
 			{
 				new TableSelectAllCellsCommand(_table).execute();
+			}
+		}
+	}
+	
+	
+	private class PrintAction extends BaseAction
+	{
+		PrintAction()
+		{
+			super(s_stringMgr.getString("TablePopupMenu.print"));
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			if (_table != null)
+			{
+				try {
+                                                                                
+					PrinterJob printerJob = PrinterJob.getPrinterJob();
+                                                                                
+					printerJob.setPrintable(_viewer);
+                                                                                
+					if (printerJob.printDialog()) {
+						printerJob.print();
+					}
+				}
+				catch (Exception e) {
+					//?? What should we do if we see this?
+					//??System.out.println("Failed to print; exception="+e);
+				 }
 			}
 		}
 	}
