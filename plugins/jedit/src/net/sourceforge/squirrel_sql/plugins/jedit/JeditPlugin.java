@@ -97,7 +97,7 @@ public class JeditPlugin extends DefaultSessionPlugin
 	 */
 	public String getVersion()
 	{
-		return "0.21";
+		return "0.30";
 	}
 
 	/**

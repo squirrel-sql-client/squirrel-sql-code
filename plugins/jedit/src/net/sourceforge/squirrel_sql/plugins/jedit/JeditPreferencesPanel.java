@@ -870,7 +870,7 @@ public class JeditPreferencesPanel
 				super(new DefaultListModel());
 				setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				setCellRenderer(new ListRenderer());
-				setBorder(BorderFactory.createLineBorder(Color.GRAY));
+				setBorder(BorderFactory.createLineBorder(Color.gray));
 			}
 
 			void loadData(JeditPreferences prefs)
