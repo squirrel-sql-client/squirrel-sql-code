@@ -49,4 +49,23 @@ public class UDTInfo extends DatabaseObjectInfo implements IUDTInfo {
     public String getRemarks() {
         return _remarks;
     }
+    
+    public boolean equals(Object obj)
+    {
+    	if(super.equals(obj) && obj instanceof UDTInfo)
+    	{
+    		UDTInfo info = (UDTInfo)obj;
+			if( (info._dataType == null && _dataType == null) ||
+			 ((info._dataType != null && _dataType != null) && info._dataType.equals(_dataType)) )
+			{
+				if( (info._javaClassName == null && _javaClassName == null) ||
+				 ((info._javaClassName != null && _javaClassName != null) && info._javaClassName.equals(_javaClassName)) )
+				{
+					return ( (info._remarks == null && _remarks == null) ||
+					 ((info._remarks != null && _remarks != null) && info._remarks.equals(_remarks)) );
+				}
+			}
+    	}
+    	return false;
+    }
 }

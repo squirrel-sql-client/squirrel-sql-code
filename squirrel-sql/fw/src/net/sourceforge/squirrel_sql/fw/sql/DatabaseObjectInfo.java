@@ -125,6 +125,30 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo {
 		}
 		return buf.toString();
 	}
+	
+	public boolean equals(Object obj)
+	{
+		if(obj instanceof DatabaseObjectInfo)
+		{
+			DatabaseObjectInfo info = (DatabaseObjectInfo)obj;
+			if( (info._catalog == null && _catalog == null) ||
+			 ((info._catalog != null && _catalog != null) && info._catalog.equals(_catalog)) )
+			{
+				if( (info._qualifiedName == null && _qualifiedName == null) ||
+				 ((info._qualifiedName != null && _qualifiedName != null) && info._qualifiedName.equals(_qualifiedName)) )
+				{
+					if( (info._schema == null && _schema == null) ||
+					 ((info._schema != null && _schema != null) && info._schema.equals(_schema)) )
+					{
+						return ( (info._simpleName == null && _simpleName == null) ||
+						 ((info._simpleName != null && _simpleName != null) && info._simpleName.equals(_simpleName)) );
+					}
+					
+				}
+			}
+		}
+		return false;
+	}
 }
 
 

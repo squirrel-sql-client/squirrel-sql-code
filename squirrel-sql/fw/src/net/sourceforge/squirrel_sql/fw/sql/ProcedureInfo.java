@@ -68,5 +68,20 @@ public class ProcedureInfo extends DatabaseObjectInfo implements IProcedureInfo 
                 return i18n.UNKNOWN;
         }
     }
+    
+    public boolean equals(Object obj)
+    {
+    	if(super.equals(obj) && obj instanceof ProcedureInfo)
+    	{
+    		ProcedureInfo info = (ProcedureInfo)obj;
+			if( (info._remarks == null && _remarks == null) ||
+			 ((info._remarks != null && _remarks != null) && info._remarks.equals(_remarks)) )
+			{
+				return info._type == _type;
+			}
+    	}
+    	return false;
+    }
+    
 
 }

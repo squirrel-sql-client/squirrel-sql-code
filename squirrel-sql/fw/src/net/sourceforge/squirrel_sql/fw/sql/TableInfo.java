@@ -50,4 +50,19 @@ public class TableInfo extends DatabaseObjectInfo implements ITableInfo {
     public String getRemarks() {
         return _remarks;
     }
+    
+    public boolean equals(Object obj)
+    {
+    	if(super.equals(obj) && obj instanceof TableInfo)
+    	{
+    		TableInfo info = (TableInfo)obj;
+			if( (info._type == null && _type == null) ||
+			 ((info._type != null && _type != null) && info._type.equals(_type)) )
+			{
+				return ( (info._remarks == null && _remarks == null) ||
+				 ((info._remarks != null && _remarks != null) && info._remarks.equals(_remarks)) );
+			}
+    	}
+    	return false;
+    }
 }
