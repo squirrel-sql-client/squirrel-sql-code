@@ -19,8 +19,6 @@ package net.sourceforge.squirrel_sql.fw.sql;
  */
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
@@ -81,8 +79,8 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 	/** If <TT>true</TT> then use drver properties. */
 	private boolean _useDriverProperties = false;
 
-	/** List of <TT>DriverProperty</TT> objects for this alias. */
-	private List _driverProps = new ArrayList();
+	/** Collection of <TT>SQLDriverProperty</TT> objects for this alias. */
+	private SQLDriverPropertyCollection _driverProps = new SQLDriverPropertyCollection();
 
 	/** Object to handle property change events. */
 	private transient PropertyChangeReporter _propChgReporter;
@@ -159,7 +157,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 		{
 			final SQLAlias alias = (SQLAlias)super.clone();
 			alias._propChgReporter = null;
-			alias.setDriverProperties(getDriverProperties());
+//			alias.setDriverProperties(getDriverProperties());
 			return alias;
 		}
 		catch (CloneNotSupportedException ex)
@@ -432,42 +430,18 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 	}
 
 	/**
-	 * Retrieve a clone of the SQL driver properties.
+	 * Retrieve the SQL driver properties.
 	 *
-	 * @return	a copy of the SQL driver properties.
+	 * @return	the SQL driver properties.
 	 */
-	public synchronized SQLDriverProperty[] getDriverProperties()
+	public synchronized SQLDriverPropertyCollection getDriverProperties()
 	{
-		SQLDriverProperty[] props = new SQLDriverProperty[_driverProps.size()];
-		for (int i = 0; i < props.length; ++i)
-		{
-			props[i] = (SQLDriverProperty)((SQLDriverProperty)_driverProps.get(i)).clone();
-		}
-		return props;
+		return _driverProps;
 	}
 
-	public SQLDriverProperty getDriverProperty(int idx)
-		throws ArrayIndexOutOfBoundsException
+	public void setDriverProperties(SQLDriverPropertyCollection value)
 	{
-		return (SQLDriverProperty)((SQLDriverProperty)_driverProps.get(idx)).clone();
-	}
-
-	public void setDriverProperties(SQLDriverProperty[] value)
-	{
-		_driverProps.clear();
-		if (value != null)
-		{
-			for (int i = 0; i < value.length; ++i)
-			{
-				_driverProps.add(value[i]);
-			}
-		}
-	}
-
-	public void setDriverProperty(int idx, SQLDriverProperty value)
-		throws ArrayIndexOutOfBoundsException
-	{
-		_driverProps.set(idx, value);
+		_driverProps = value != null ? value : new SQLDriverPropertyCollection();
 	}
 
 	private synchronized PropertyChangeReporter getPropertyChangeReporter()

@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.io.Serializable;
+import java.sql.DriverPropertyInfo;
 /**
  * This represents a property that can be specified when connecting to the database.
  *
@@ -25,11 +26,29 @@ import java.io.Serializable;
  */
 public class SQLDriverProperty implements Cloneable, Serializable
 {
+	/** Property names for this bean. */
+	public interface IPropertyNames
+	{
+		/** Property Key. */
+		String KEY = "key";
+
+		/** Property value. */
+		String VALUE = "value";
+
+		/** Is specified. */
+		String IS_SPECIFIED = "isSpecified";
+	}
+
 	/** Name. */
 	private String _key;
 
 	/** Value associated with the name. */
 	private String _value;
+
+	/** If <TT>true</TT> then this property is to be used. */
+	private boolean _isSpecified;
+
+	private transient DriverPropertyInfo _driverPropInfo;
 
 	/**
 	 * Default ctor. Created with the name and value being <TT>null</TT>.
@@ -40,9 +59,25 @@ public class SQLDriverProperty implements Cloneable, Serializable
 	}
 
 	/**
+	 * Create from a <TT>DriverPropertyInfo</TT> object.
+	 */
+	public SQLDriverProperty(DriverPropertyInfo value)
+	{
+		super();
+		if (value == null)
+		{
+			throw new IllegalArgumentException("DriverPropertyInfo == null");
+		}
+	
+		setKey(value.name);
+		setValue(value.value);
+		setDriverPropertyInfo(value);	
+	}
+
+	/**
 	 * ctor specifying the name and value.
 	 *
-	 * @param	name		The name
+	 * @param	name	The name
 	 * @param	value	The value associated with the name.
 	 */
 	public SQLDriverProperty(String name, String value)
@@ -89,6 +124,16 @@ public class SQLDriverProperty implements Cloneable, Serializable
 		return _value;
 	}
 
+	public boolean isSpecified()
+	{
+		return _isSpecified;
+	}
+
+	public DriverPropertyInfo getDriverPropertyInfo()
+	{
+		return _driverPropInfo;
+	}
+
 	/**
 	 * Set the name.
 	 *
@@ -108,4 +153,22 @@ public class SQLDriverProperty implements Cloneable, Serializable
 	{
 		_value = value;
 	}
+
+	public void setIsSpecified(boolean value)
+	{
+		_isSpecified = value;
+	}
+
+	public void setDriverPropertyInfo(DriverPropertyInfo value)
+	{
+		if (value != null)
+		{
+			if (!value.name.equals(getKey()))
+			{
+				throw new IllegalArgumentException("DriverPropertyInfo.name != my name");
+			}
+		}
+		_driverPropInfo = value;
+	}
 }
+

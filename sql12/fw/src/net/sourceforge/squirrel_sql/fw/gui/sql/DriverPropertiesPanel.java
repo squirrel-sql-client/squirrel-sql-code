@@ -20,9 +20,6 @@ package net.sourceforge.squirrel_sql.fw.gui.sql;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Driver;
-import java.sql.DriverPropertyInfo;
-import java.sql.SQLException;
 import java.util.EventObject;
 
 import javax.swing.JButton;
@@ -32,7 +29,7 @@ import javax.swing.event.EventListenerList;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.sql.event.IDriverPropertiesPanelListener;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDriverProperty;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 /**
  * This panel allows the user to review and maintain
  * the properties for a JDBC driver.
@@ -41,12 +38,6 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDriverProperty;
  */
 public class DriverPropertiesPanel extends JPanel
 {
-	/** The driver we want to show properties for. */
-	private final Driver _driver;
-
-	/** The database URL to show properties for. */
-	private final String _url;
-
 	/** Listeners for this object. */
 	private EventListenerList _listenerList = new EventListenerList();
 
@@ -56,39 +47,15 @@ public class DriverPropertiesPanel extends JPanel
 	/** The OK button. */
 	private JButton _okBtn;
 
-	/**
-	 * Ctor specifying driver and URL.
-	 *
-	 * @param	driver		The <TT>Driver</TT> properties are to be
-	 * 						shown for.
-	 * @param	url			URL to the database.
-	 * @param	override	Used to override the value of some or all
-	 * 						of the properties instead of using the 
-	 * 						default values.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> <TT>Driver</TT>
-	 * 			or <TT>url</TT> thrown.
-	 *
-	 * @throws	SQLException	Thrown if an SQL error occurs.
-	 */
-	public DriverPropertiesPanel(Driver driver, String url,
-								SQLDriverProperty[] override)
-		throws SQLException
+	public DriverPropertiesPanel(SQLDriverPropertyCollection props)
 	{
 		super(new BorderLayout());
-		if (driver == null)
+		if (props == null)
 		{
-			throw new IllegalArgumentException("Driver == null");
-		}
-		if (url == null)
-		{
-			throw new IllegalArgumentException("url == null");
+			throw new IllegalArgumentException("SQLDriverPropertyCollection == null");
 		}
 
-		_driver = driver;
-		_url = url;
-		createUserInterface(override);
+		createUserInterface(props);
 	}
 
 	/**
@@ -119,9 +86,9 @@ public class DriverPropertiesPanel extends JPanel
 	 *
 	 * @return		the database properties.
 	 */
-	public DriverPropertyInfo[] getDriverPropertyInfo()
+	public SQLDriverPropertyCollection getSQLDriverProperties()
 	{
-		return _tbl.getTypedModel().getDriverPropertyInfo();
+		return _tbl.getTypedModel().getSQLDriverProperties();
 	}
 
 	private void fireButtonPressed(JButton btn)
@@ -153,10 +120,9 @@ public class DriverPropertiesPanel extends JPanel
 		}
 	}
 
-	private void createUserInterface(SQLDriverProperty[] override)
-		throws SQLException
+	private void createUserInterface(SQLDriverPropertyCollection props)
 	{
-		_tbl = new DriverPropertiesTable(_driver, _url, override);
+		_tbl = new DriverPropertiesTable(props);
 		add(new JScrollPane(_tbl), BorderLayout.CENTER);
 		add(createButtonsPanel(), BorderLayout.SOUTH);
 	}

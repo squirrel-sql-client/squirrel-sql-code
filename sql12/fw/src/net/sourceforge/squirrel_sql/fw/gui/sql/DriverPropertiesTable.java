@@ -18,9 +18,7 @@ package net.sourceforge.squirrel_sql.fw.gui.sql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Component;
-import java.sql.Driver;
 import java.sql.DriverPropertyInfo;
-import java.sql.SQLException;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
@@ -31,32 +29,20 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverProperty;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 
 class DriverPropertiesTable extends JTable
+								implements DriverPropertiesTableModel.IColumnIndexes
 {
-	DriverPropertiesTable()
-	{
-		super(new DriverPropertiesTableModel(new DriverPropertyInfo[0]));
-		init();
-	}
+//	DriverPropertiesTable()
+//	{
+//		super(new DriverPropertiesTableModel(new DriverPropertyInfo[0]));
+//		init();
+//	}
 
-	DriverPropertiesTable(DriverPropertyInfo[] props)
+	DriverPropertiesTable(SQLDriverPropertyCollection props)
 	{
 		super(new DriverPropertiesTableModel(props));
-		init();
-	}
-
-	DriverPropertiesTable(Driver driver, String url)
-		throws SQLException
-	{
-		this(driver, url, null);
-	}
-
-	DriverPropertiesTable(Driver driver, String url,
-							SQLDriverProperty[] override)
-		throws SQLException
-	{
-		super(new DriverPropertiesTableModel(driver, url, override));
 		init();
 	}
 
@@ -82,19 +68,23 @@ class DriverPropertiesTable extends JTable
 			super();
 			int idx = 0;
 
-			TableColumn tc = new TableColumn(idx++);
+			TableColumn tc = new TableColumn(IDX_SPECIFY, 75, null, new SpecifiedCellEditor());
+			tc.setHeaderValue("Specify");
+			addColumn(tc);
+
+			tc = new TableColumn(IDX_NAME);
 			tc.setHeaderValue("Name");
 			addColumn(tc);
 
-			tc = new TableColumn(idx++);
+			tc = new TableColumn(IDX_REQUIRED);
 			tc.setHeaderValue("Required");
 			addColumn(tc);
 
-			tc = new TableColumn(idx++, 75, null, new ValueCellEditor());
+			tc = new TableColumn(IDX_VALUE, 75, null, new ValueCellEditor());
 			tc.setHeaderValue("Value");
 			addColumn(tc);
 
-			tc = new TableColumn(idx++);
+			tc = new TableColumn(IDX_DESCRIPTION);
 			tc.setHeaderValue("Description");
 			addColumn(tc);
 		}
@@ -112,12 +102,14 @@ class DriverPropertiesTable extends JTable
 												boolean isSelected, int row,
 												int col)
 		{
-			if (col != 2)
+			if (col != IDX_VALUE)
 			{
 				throw new IllegalStateException("Editor used for cell other than value");
 			}
 
-			DriverPropertyInfo prop = getTypedModel().getDriverPropertyInfo()[row];
+			SQLDriverPropertyCollection coll = getTypedModel().getSQLDriverProperties();
+			SQLDriverProperty sdp = coll.getDriverProperty(row);
+			DriverPropertyInfo prop = sdp.getDriverPropertyInfo();
 			if (prop.choices != null && prop.choices.length > 0)
 			{
 				final JComboBox cmb = new JComboBox(prop.choices);
@@ -128,6 +120,32 @@ class DriverPropertiesTable extends JTable
 				return cmb;
 			}
 			return super.getTableCellEditorComponent(table, value, isSelected, row, col);
+		}
+	}
+
+	private final class SpecifiedCellEditor extends DefaultCellEditor
+	{
+		SpecifiedCellEditor()
+		{
+			super(new JTextField());
+			setClickCountToStart(1);
+		}
+
+		public Component getTableCellEditorComponent(JTable table, Object value,
+												boolean isSelected, int row,
+												int col)
+		{
+			if (col != IDX_SPECIFY)
+			{
+				throw new IllegalStateException("Editor used for cell other than specify");
+			}
+
+			SQLDriverPropertyCollection coll = getTypedModel().getSQLDriverProperties();
+			SQLDriverProperty sdp = coll.getDriverProperty(row);
+			DriverPropertyInfo prop = sdp.getDriverPropertyInfo();
+			final JComboBox cmb = new JComboBox(new Object[] {Boolean.TRUE, Boolean.FALSE});
+			cmb.setSelectedItem(sdp != null ? new Boolean(sdp.isSpecified()) : Boolean.FALSE);
+			return cmb;
 		}
 	}
 }
