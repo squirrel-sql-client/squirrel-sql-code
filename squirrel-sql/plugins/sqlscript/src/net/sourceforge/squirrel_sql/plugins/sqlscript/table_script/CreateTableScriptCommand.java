@@ -122,7 +122,7 @@ public class CreateTableScriptCommand implements ICommand {
         } catch (Exception e) {
             _session.getMessageHandler().showMessage(e);
         }
-        _session.setSQLScript(sbScript.toString());
+        _session.setEntireSQLScript(sbScript.toString());
         _session.selectMainTab(ISession.IMainTabIndexes.SQL_TAB);
     }
 }

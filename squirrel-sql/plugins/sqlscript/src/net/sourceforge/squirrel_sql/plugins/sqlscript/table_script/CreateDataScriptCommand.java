@@ -140,7 +140,7 @@ public class CreateDataScriptCommand implements ICommand {
         } catch (Exception e) {
             _session.getMessageHandler().showMessage(e);
         }
-        _session.setSQLScript(sbRows.toString());
+        _session.setEntireSQLScript(sbRows.toString());
         _session.selectMainTab(ISession.IMainTabIndexes.SQL_TAB);
     }
 }

@@ -181,10 +181,9 @@ class Session implements ISession {
 		return map.get(key);
 	}
 
-	public synchronized Object putPluginObject(
-		IPlugin plugin,
-		String key,
-		Object value) {
+	public synchronized Object putPluginObject(IPlugin plugin,
+												String key,
+												Object value) {
 		if (plugin == null) {
 			throw new IllegalArgumentException("Null IPlugin passed");
 		}
@@ -199,12 +198,29 @@ class Session implements ISession {
 		return map.put(key, value);
 	}
 
-	public String getSQLScript() {
-		return _sessionSheet.getSQLScript();
+	public synchronized void removePluginObject(IPlugin plugin, String key) {
+		if (plugin == null) {
+			throw new IllegalArgumentException("Null IPlugin passed");
+		}
+		if (key == null) {
+			throw new IllegalArgumentException("Null key passed");
+		}
+		Map map = (Map) _pluginObjects.get(plugin.getInternalName());
+		if (map != null) {
+			map.remove(key);
+		}
 	}
 
-	public void setSQLScript(String sqlScript) {
-		_sessionSheet.setSQLScript(sqlScript);
+	public String getEntireSQLScript() {
+		return _sessionSheet.getEntireSQLScript();
+	}
+
+	public void setEntireSQLScript(String sqlScript) {
+		_sessionSheet.setEntireSQLScript(sqlScript);
+	}
+
+	public void appendSQLScript(String sqlScript) {
+		_sessionSheet.appendSQLScript(sqlScript);
 	}
 
 	public void closeSQLConnection() throws SQLException {

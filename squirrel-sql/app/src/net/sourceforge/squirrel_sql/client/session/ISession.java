@@ -105,12 +105,14 @@ public interface ISession extends IHasIdentifier {
 
 	Object getPluginObject(IPlugin plugin, String key);
 	Object putPluginObject(IPlugin plugin, String key, Object obj);
+	void removePluginObject(IPlugin plugin, String key);
 
 	void setMessageHandler(IMessageHandler handler);
 	IMessageHandler getMessageHandler();
 
-	String getSQLScript();
-	void setSQLScript(String sqlScript);
+	String getEntireSQLScript();
+	void setEntireSQLScript(String sqlScript);
+	void appendSQLScript(String sqlScript);
 
 	/**
 	 * Return an array of <TT>IDatabaseObjectInfo</TT> objects representing all

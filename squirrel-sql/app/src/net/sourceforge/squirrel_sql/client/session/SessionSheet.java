@@ -267,12 +267,16 @@ public class SessionSheet extends JInternalFrame {
 		_tabPane.addTab(title, icon, comp, tip);
 	}
 
-	String getSQLScript() {
-		return _sqlPnl.getSQLScript();
+	String getEntireSQLScript() {
+		return _sqlPnl.getEntireSQLScript();
 	}
 
-	void setSQLScript(String sqlScript) {
-		_sqlPnl.setSQLScript(sqlScript);
+	void setEntireSQLScript(String sqlScript) {
+		_sqlPnl.setEntireSQLScript(sqlScript);
+	}
+
+	void appendSQLScript(String sqlScript) {
+		_sqlPnl.appendSQLScript(sqlScript);
 	}
 
 	SQLPanel getSQLPanel() {

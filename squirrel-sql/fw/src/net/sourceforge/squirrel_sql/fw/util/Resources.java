@@ -131,6 +131,10 @@ public abstract class Resources {
 		return getIcon(getClassName(objClass), propName);
 	}
 
+	public String getString(String key) {
+		return _bundle.getString(key);
+	}
+
 	protected ResourceBundle getBundle() {
 		return _bundle;
 	}
@@ -154,7 +158,7 @@ public abstract class Resources {
 		return _bundle.getString(keyName + "." + propName);
 	}
 
-	private String getClassName(Class objClass) {
+	public String getClassName(Class objClass) {
 		// Retrieve class name of the passed Action minus the package name.
 		String className = objClass.getName();
 		int pos = className.lastIndexOf(".");
