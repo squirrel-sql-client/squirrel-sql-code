@@ -24,9 +24,11 @@ public class AutoCorrectProviderImpl
 
    public Hashtable getAutoCorrects()
    {
-      if(_autoCorrectData.isEnableAutoCorrects())
+      AutoCorrectData acd = getAutoCorrectData();
+
+      if(acd.isEnableAutoCorrects())
       {
-         return _autoCorrectData.getAutoCorrectsHash();
+         return acd.getAutoCorrectsHash();
       }
       else
       {
@@ -70,6 +72,7 @@ public class AutoCorrectProviderImpl
       ret.put("SLECT", "SELECT");
       ret.put("FORM", "FROM");
       ret.put("WERE", "WHERE");
+      ret.put("S*F", "SELECT * FROM ");
 
       return new AutoCorrectData(ret, true);
 
