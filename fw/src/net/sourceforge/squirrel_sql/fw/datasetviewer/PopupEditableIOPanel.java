@@ -24,7 +24,6 @@ import java.awt.event.MouseEvent;
 import java.awt.Color;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -110,13 +109,14 @@ public class PopupEditableIOPanel extends JPanel
 			if (radixList.getSelectedItem().equals("Decimal")) base = 10;
 			else if (radixList.getSelectedItem().equals("Octal")) base = 8;
 			else if (radixList.getSelectedItem().equals("Binary")) base = 2;
-			
+		
 			((RestorableJTextArea)_ta).updateText(			
 				BinaryDisplayConverter.convertToString(bytes,
 				base, showAscii.isSelected()));
 			
 			previousRadixListItem = (String)radixList.getSelectedItem();
 			previousShowAscii = showAscii.isSelected();
+
 			return;
 		}
 	}
@@ -197,7 +197,6 @@ public class PopupEditableIOPanel extends JPanel
 		_popupMenu.add(new LineWrapAction());
 		_popupMenu.add(new WordWrapAction());
 		_popupMenu.setTextComponent(_ta);
-
 		
 	}
 	

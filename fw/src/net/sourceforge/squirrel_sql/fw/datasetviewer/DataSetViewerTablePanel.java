@@ -19,34 +19,17 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.List;
 
-import javax.swing.DefaultCellEditor;	//?? May not be needed??
-import javax.swing.JDialog;
-import javax.swing.JInternalFrame;
-import javax.swing.JLayeredPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+
+import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableColumnModel;
-import javax.swing.table.TableCellEditor;	//?? May not be needed??
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.JOptionPane;
@@ -54,12 +37,9 @@ import javax.swing.JOptionPane;
 //??import javax.swing.event.TableModelListener;
 //??import javax.swing.event.TableModelEvent;
 
-import net.sourceforge.squirrel_sql.fw.gui.BaseMDIParentFrame;
 import net.sourceforge.squirrel_sql.fw.gui.ButtonTableHeader;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
-import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
-import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;

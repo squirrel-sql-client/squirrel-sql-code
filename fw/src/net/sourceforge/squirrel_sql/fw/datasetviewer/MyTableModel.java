@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Arrays;
 
 import javax.swing.table.AbstractTableModel;
-import javax.swing.JOptionPane;
 
 
 public final class MyTableModel extends AbstractTableModel

@@ -496,7 +496,6 @@ public class DataTypeClob
 		else {
 			// for convenience cast the object to ClobDescriptor
 			ClobDescriptor cdesc = (ClobDescriptor)value;
-//?? Any problem if no previous clob??
 			
 			// There are a couple of possible ways to update the data in the DB.
 			// The first is to use setString like this:
@@ -530,8 +529,6 @@ public class DataTypeClob
 			return null;
 		
 		// field is not nullable, so create a reasonable default value
-//????? for CLOB, do not know how to create a default CLOB for insertion.
-//????? Is including a CLOB on an initial insertion possible?
 		return null;
 	}
 	
