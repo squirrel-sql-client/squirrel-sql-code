@@ -1041,9 +1041,9 @@ determine how to display the column.</P>
 	characters (e.g. to see strings embedded in the binary object).
 
 	<DT><B>java.sql.Types.BLOB</B>
-	<DD>If the <A HREF="#session_props_sql_data_types">session property</A>
+	<DD>If the <A HREF="#data_type_controls">Global Preferences, Data Type Controls</A>
 	says to retrieve blobs then the column data is displayed as bytes. Note
-	that the <A HREF="#session_props_sql_data_types">session property</A> can
+	that the <A HREF="#data_type_controls">Global Preferences, Data Type Controls</A> can
 	specify the number of bytes of the blob to read in during the initial
 	setup of the ContentsTab table.  If you do not specify a limit, the
 	default operation is to not read in any data and to display "<Blob>"
@@ -1055,9 +1055,9 @@ determine how to display the column.</P>
 	containing a relatively small sized photo).
 
 	<DT><B>java.sql.Types.CLOB</B>
-	<DD>If the <A HREF="#session_props_sql_data_types">session property</A>
+	<DD>If the <A HREF="#data_type_controls">Global Preferences, Data Type Controls</A>
 	says to retrieve clobs then the column data is displayed as a string. Note
-	that the <A HREF="#session_props_sql_data_types">session property</A> can
+	that the <A HREF="#data_type_controls">Global Preferences, Data Type Controls</A> can
 	specify the number of characters of the clob to read in during the initial
         setup of the ContentsTab table.  If you do not specify a limit, the
         default operation is to not read in any data and to display "<Clob>"
@@ -1066,12 +1066,12 @@ determine how to display the column.</P>
 
 
 	<DT><B>java.sql.Types.OTHER</B>
-	<DD>If the <A HREF="#session_props_sql_data_types">session property</A>
+	<DD>If the <A HREF="#data_type_controls">Global Preferences, Data Type Controls</A>
 	says to retrieve columns of this type then the column data is displayed as
 	a string.
 
 	<DT><B>Any other type</B>
-	<DD>If the <A HREF="#session_props_sql_data_types">session property</A>
+	<DD>If the <A HREF="#data_type_controls">Global Preferences, Data Type Controls</A>
 	says to retrieve all other data types then the column data is displayed
 	as a string.
 </DL>
@@ -1240,7 +1240,7 @@ select whether to read the entire contents or just part of the data.
 If only part of the data is read, then the entire contents will be read
 when you click on that cell.</P>
 
-<P><B>(unlabeled number)</B> - When reading part of the data during
+<P><B>(number)</B> - When reading part of the data during
 inital table load, how many bytes to read.</P>
 
 <H4>CLOB (SQL Type 2005)</H4>
@@ -1256,7 +1256,7 @@ select whether to read the entire contents or just part of the data.
 If only part of the data is read, then the entire contents will be read
 when you click on that cell.</P>
 
-<P><B>(unlabeled number)</B> - When reading part of the data during
+<P><B>(number)</B> - When reading part of the data during
 inital table load, how many characters to read.</P>
 
 <P><B>Show newlines as \n within cells</B> - If checked, when the
@@ -1393,38 +1393,85 @@ See the Plugin-specific help for descriptions of the tabs added by that plugin.
 <P ALIGN="CENTER"><IMG SRC="images/session_props_general.png" BORDER="0"
 			ALT="General tab"></P>
 
-<H4>General Tab (General)</H4>
+<H4>General Tab (Appearance)</H4>
 
 <P><B>Show Tool Bar</B> - If checked then display a toolbar on the
 session window.</P>
 
+<P><B>Main Tabs</B> - Defines where the
+Main tabs (ie: "Objects" and "SQL") in the session window
+go relative to the data being displayed. This may be set to top,
+bottom, left or right.</P>
+
+<P><B>Object Tabs</B> - Defines where the
+tabs in the Object window (eg: Metadata, Contents, Status, etc.)
+go relative to the data being displayed. This may be set to top,
+bottom, left or right.</P>
+
+<P><B>SQL Execution Tabs</B> - Defines where the
+tabs for the sets of results from SQL execution in the SQL window
+go relative to the data being displayed. This may be set to top,
+bottom, left or right.</P>
+
+<P><B>SQL Results Tabs</B> - Defines where the
+tabs within a single SQL result window ("Results", "Metadata" and "Info")
+go relative to the data being displayed. This may be set to top,
+bottom, left or right.</P>
+
 <H4>General Tab (Output)</H4>
 
-<P><B>Meta Data</B> - Specify the output type for meta data displays.</P>
+<P><B>Meta Data</B> - Specify the output type (text, read-only table, or
+editable table) for meta data displays.</P>
 
-<P><B>SQL Results</B> - Specify the output type for SQL result displays.</P>
+<P><B>Table Contents</B> - Specify the output type (text, read-only table, or
+editable table) for the Contents tab in the Ojbect display.</P>
 
-<H4>General Tab (SQL Entry Area)</H4>
+<P><B>SQL Results</B> - Specify the output type (text, read-only table, or
+editable table) for SQL result displays.
+(Note that there are additional limits on what can or cannot be edited
+in the results of SQL queries, so setting this to "Editable table"
+may not result in an editable output for any given query.
+See <A HREF="#editing_sql">Editing the SQL Results</A> for details.)</P>
 
-<P><B>Font</B> - The <EM>Font</EM> button allows you to specify the font
-to be used in the SQL entry area.</P>
-
-<H3>Object Tab</H3>
+<H3>Object Tree Tab</H3>
 
 <P ALIGN="CENTER"><IMG SRC="images/session_props_object.png" BORDER="0"
 			ALT="Object tab"></P>
 
-<H4>Appearance Tab (General)</H4>
+<H4>Object Tree Tab (Object Tree)</H4>
 
-<P><B>Show Tool Bar</B> - If checked then display a toolbar on the
-session window.</P>
-????
+<P><B>Load Schemas/Catalogs into object tree</B> - If checked then
+the global DB information is automatically loaded into the Object Tree
+view of the Database.  This is useful for navigating the entire Database
+contents, but it may cause an unacceptable performance penalty, e.g. when
+using Squirrel for remote access through a low-bandwidth connection.</P>
 
-<H4>Output Tab (General)</H4>
+<P><B>Show Row Count for Tables (can slow application)</B> - If checked
+then when a table is opened
+the number of rows in the table is included in parentheses after
+the name of the table in the message bar at the bottom of the Squirrel windows.
+If not checked, then the number is not shown.
+Showing the number may slow the application.
+The number is still available by using the "Row Count" tab in the Object view.
+<P>
 
-<P><B>Meta Data</B> - If checked then display a toolbar on the
-session window.</P>
-????
+<P><B>Contents - Limit rows [number] rows</B> - If checked then
+the number of rows read from the table is limited to the number in the text box,
+which may be adjusted as needed.
+If not checked, then Squirrel will attempt to read the entire table.
+<P>
+
+<H4>Object Tree Tab (Filters)</H4>
+
+<P><B>Limit Schema Objects using these comma-delimited prefixes:</B> -
+Limit the list of objects shown in the Object Tree to only those
+with Schema names that start with the entries in this box.
+If the box is empty, then no limiting is done and all objects are shown.</P>
+
+<P><B>Limit Catalog Objects using these comma-delimited prefixes:</B> -
+Limit the list of objects shown in the Object Tree to only those
+with Catalog names that start with the entries in this box.
+If the box is empty, then no limiting is done and all objects are shown.</P>
 
 <H3>SQL Tab</H3>
 
@@ -1433,30 +1480,29 @@ session window.</P>
 <P ALIGN="CENTER"><IMG SRC="images/session_props_sql.png" BORDER="0"
 			ALT="SQL tab"></P>
 
+<H4>SQL Tab (SQL)</H4>
+
 <P><B>Auto Commit</B> - If checked then all SQL will be automatically
 committed after it is executed. If unchecked then you will be able to
 use the &quot;Commit&quot; and &quot;Rollback&quot; options on the
 &quot;Session&quot; menu.</P>
 
-<P><B>Commit on Closing Session</B> - If &quot;Auto Commit&quot; is
-not checked then this option controls whether or not a
-&quot;Commit&quot; is issued prior to closing a session. If this
-option is not checked then you will lose all uncommitted work when the
-session is closed. Only applicable if &quot;Auto Commit&quot; is not
-checked.</P>
+<P><B>Show SQL Results MetaData (can slow application)</B> - If checked then
+the MetaData associated with the results of an SQL query will be read
+and made available to the user.  This may slow down Squirrel operation,
+espcially when being used over low-speed connections.
+If unchecked, then the MetaData will not be avilable for the SQL query results.
+</P>
 
-<P><B>Show Row Count for Tables</B> - Show the number of rows for each
-table in the object tree. This will slow down the building of the
-object tree.</P>
-
-<P><B>Contents - Limit Rows/Number of Rows</B> - If <EM>Contents - Limit
+<P><B>SQL Results - Limit Rows [number] rows</B> - If <EM>SQL - Limit
 	rows</EM> is checked then only the number of rows specified in the
-<EM>Number of rows</EM> will be displayed in the <EM>Contents</EM> tab for a
-table.</P>
+<EM>rows</EM> will be displayed for an SQL query.</P>
 
-<P><B>SQL - Limit Rows/Number of Rows</B> - If <EM>SQL - Limit
-	rows</EM> is checked then only the number of rows specified in the
-<EM>Number of rows</EM> will be displayed for an SQL query.</P>
+<P><B>Abort on Error</B> - If checked then
+when executing multiple commands in a single sequence, if one of the commands
+returns an error, then the sequence is aborted at that point.
+If not checked, then the SQL commands following the one with the error
+are executed anyway.</P>
 
 <P><B>Statement Separator</B> - The character used to separate SQL statements in the
 SQL entry area.</P>
@@ -1465,26 +1511,24 @@ SQL entry area.</P>
 in the SQL entry area is a comment and should not be passed to the database for
 execution.</P>
 
-<A NAME="session_props_sql_data_types"><H4>SQL Tab (Show These Data Types)</H4></A>
 
-<P><B>Binary</B> - If checked then binary columns will be displayed.</P>
+<H4>SQL Tab (SQL Entry Area)</H4>
 
-<P><B>VarBinary</B> - If checked then varbinary columns will be displayed.</P>
+<P><B>Font</B> - The <EM>Font</EM> button allows you to specify the font
+to be used in the SQL entry area.</P>
 
-<P><B>LongVarBinary</B> - If checked then longvarbinary columns will be
-displayed.</P>
+<H4>SQL Tab (SQL History)</H4>
 
-<P><B>SQL Other</B> - If checked then <em>java.SQuirreLl.Types.Other</em>
-columns will be displayed.</P>
+<P><B>Share SQL History</B> - if checked then the SQL history is shared
+accross all Sessions.  If not, then the history is kept for this Session only.
+</P>
 
-<P><B>Blob</B> - If checked then blob columns will be displayed. You can
-specify the number of bytes to read or <EM>all</EM>.</P>
+<P><B>Limit SQL History Combo Size [number]</B> - if checked then limit
+the number of lines of SQL available in the SQL History Combo box
+(pull down list above the SQL command entry area)
+to the (adjustable) number given.
+</P>
 
-<P><B>Clob</B> - If checked then clob columns will be displayed. You can
-specify the number of characters to read or <EM>all</EM>.</P>
-
-<P><B>All Other Data Types</B> - If checked then all other columns will be
-displayed.</P>
 
 <A NAME="plugins"><H2>Plugins</H2></A>
 
