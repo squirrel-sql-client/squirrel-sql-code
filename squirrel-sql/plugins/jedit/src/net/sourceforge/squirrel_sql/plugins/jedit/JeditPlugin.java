@@ -29,7 +29,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
-import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
+import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
@@ -124,12 +124,12 @@ public class JeditPlugin extends DefaultSessionPlugin {
 	}
 
 	/**
-	 * Create preferences panel for the Global Preferences dialog.
+	 * Create preferences panel for the New Session Properties dialog.
 	 *
 	 * @return  preferences panel.
 	 */
-	public IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
-		return new IGlobalPreferencesPanel[] {
+	public INewSessionPropertiesPanel[] getNewSessionPropertiesPanels() {
+		return new INewSessionPropertiesPanel[] {
 			new JeditPreferencesPanel(_newSessionPrefs)
 		};
 	}
