@@ -1,6 +1,29 @@
 Change Log
 ==========
 
+1.1Beta3
+========
+
+- TableSorting by pressing column headers, need small icons (ascending/descending) 
+  (Johan Compagner)
+- Icon shown for drivers, instead of colors, that are loaded or not (Need better Icons!!)
+  (Johan Compagner) 
+- If only one cell selected in table when pressing copy then no header 
+  will be appended. (Johan Compagner)
+- longvarchars will also be displayed now instead of <null> (Johan Compagner)
+- If selected String are longer then 50 chars then 45 chars + "......" 
+  wil be displayed. (Johan Compagner)
+- Those strings (and everything else) can also be displayed in a TextArea if
+  you double click on it, so that you can display the whole value of a cell 
+  (Johan Compagner)
+- Drop table menu item on the ObjectTree (Johan Compagner)
+- Keeping the state when refreshing the tree works now (Johan Compagner)
+
+not yet completely working: 
+- Refresh table menu item option (so that you can refresh the selected item
+	instead of the complete tree) (Johan Compagner)
+
+
 1.1beta2
 ========
 
