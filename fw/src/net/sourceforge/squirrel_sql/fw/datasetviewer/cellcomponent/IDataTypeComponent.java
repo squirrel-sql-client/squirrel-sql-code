@@ -68,7 +68,7 @@ public interface IDataTypeComponent
 	 * Returns true if data type may be edited within a table cell,
 	 * false if not.
 	 */
-	public boolean isEditableInCell();
+	public boolean isEditableInCell(Object originalValue);
 
 	/**
 	 * Get the JTextField component for this data type to be used in a CellEditor.
@@ -84,7 +84,7 @@ public interface IDataTypeComponent
 	 * Ideally this should be a static function, but the mechanics of using CellComponentFactory
 	 * and the constraints of the Java language make that difficult.
 	 */
-	public Object validateAndConvert(String value, StringBuffer messageBuffer);
+	public Object validateAndConvert(String value, Object originalValue, StringBuffer messageBuffer);
 	
 	/*
 	 * Now the Popup-related methods.
@@ -99,7 +99,7 @@ public interface IDataTypeComponent
 	 * Returns true if data type may be edited in the popup,
 	 * false if not.
 	 */
-	public boolean isEditableInPopup();
+	public boolean isEditableInPopup(Object originalValue);
 	
 	/**
 	 * Get the JTextArea component for this data type to be used in the CellPopupDialog
@@ -116,7 +116,7 @@ public interface IDataTypeComponent
 	 * Ideally this should be a static function, but the mechanics of using CellComponentFactory
 	 * and the constraints of the Java language make that difficult.
 	 */
-	public Object validateAndConvertInPopup(String value, StringBuffer messageBuffer);
+	public Object validateAndConvertInPopup(String value, Object originalValue, StringBuffer messageBuffer);
 	
 	
 	
