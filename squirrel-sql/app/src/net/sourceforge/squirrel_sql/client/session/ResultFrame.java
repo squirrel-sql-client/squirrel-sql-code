@@ -23,6 +23,9 @@ import java.awt.Container;
 import javax.swing.JButton;
 import javax.swing.JInternalFrame;
 
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 import net.sourceforge.squirrel_sql.client.session.action.ReturnResultTabAction;
 /**
  * Torn off frame that contains SQL results.
@@ -32,6 +35,9 @@ import net.sourceforge.squirrel_sql.client.session.action.ReturnResultTabAction;
  * 
  */
 public class ResultFrame extends JInternalFrame {
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(ResultFrame.class);
+
 	/** Current session. */
 	private ISession _session;
 
@@ -67,13 +73,16 @@ public class ResultFrame extends JInternalFrame {
 	 * Close this window.
 	 */
 	public void dispose() {
+		s_log.debug("ResultFrame.dispose()", new Exception("Stack trace"));
 		if (_tab != null) {
 			_tab.closeTab();
+			_tab = null;
 		}
 		super.dispose();
 	}
 
 	public void returnToTabbedPane() {
+		s_log.debug("ResultFrame.returnToTabbedPane()");
 		getContentPane().remove(_tab.getOutputComponent());
 		_tab.returnToTabbedPane();
 		_tab = null;

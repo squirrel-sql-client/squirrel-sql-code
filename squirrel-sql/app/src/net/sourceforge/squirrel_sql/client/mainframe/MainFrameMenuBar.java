@@ -33,6 +33,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.mainframe.action.AboutAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CascadeAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CloseAllSessionsAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CopyAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CopyDriverAction;
@@ -235,6 +236,9 @@ final class MainFrameMenuBar extends JMenuBar {
         addDesktopPaneActionToMenu(rsrc, TileAction.class, menu, desktopPane);
         addDesktopPaneActionToMenu(rsrc, CascadeAction.class, menu, desktopPane);
         addDesktopPaneActionToMenu(rsrc, MaximizeAction.class, menu, desktopPane);
+
+        menu.addSeparator();
+        addDesktopPaneActionToMenu(rsrc, CloseAllSessionsAction.class, menu, desktopPane);
 
         menu.addSeparator();
 

@@ -29,6 +29,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -163,18 +164,6 @@ class SQLPanel extends JPanel {
 	}
 
 	/**
-	 * Notification to this component that it no longer has a parent component.
-	 * Remove all listeners that this component has setup.
-	 */
-	public void removeNotify() {
-		if (_propsListener != null) {
-			_session.getProperties().removePropertyChangeListener(_propsListener);
-			_propsListener = null;
-		}
-		super.removeNotify();
-	}
-
-	/**
 	 * Add a listener listening for SQL Execution.
 	 *
 	 * @param   lis	 Listener
@@ -259,6 +248,29 @@ class SQLPanel extends JPanel {
 			SQLExecuterTask task = new SQLExecuterTask(this, _session, sql);
 			_session.getApplication().getThreadPool().addTask(task);
 		}
+	}
+
+	/**
+	 * Sesssion is ending.
+	 * Remove all listeners that this component has setup. Close all
+	 * torn off result tab windows.
+	 */
+	void sessionEnding() {
+		if (_propsListener != null) {
+			_session.getProperties().removePropertyChangeListener(_propsListener);
+			_propsListener = null;
+		}
+
+		for (Iterator it = _allTabs.entrySet().iterator(); it.hasNext();) {
+			Map.Entry entry = (Map.Entry)it.next();
+			ResultTabInfo ti = (ResultTabInfo)entry.getValue();
+			if (ti._resultFrame != null) {
+				ti._resultFrame.dispose();
+				ti._resultFrame = null;
+			}
+		}
+
+		super.removeNotify();
 	}
 	
 	void replaceSQLEntryPanel(ISQLEntryPanel pnl) {
@@ -413,7 +425,7 @@ class SQLPanel extends JPanel {
 		if (tab == null) {
 			throw new IllegalArgumentException("Null ResultTab passed");
 		}
-		s_log.debug("Removing tab " + tab.getIdentifier().toString());
+		s_log.debug("SQLPanel.closeTab(" + tab.getIdentifier().toString() + ")");
 		tab.clear();
 		_tabbedResultsPanel.remove(tab);
 		_availableTabs.add(tab);
@@ -437,7 +449,7 @@ class SQLPanel extends JPanel {
 		if (tab == null) {
 			throw new IllegalArgumentException("Null ResultTab passed");
 		}
-		s_log.debug("Tearing off " + tab.getIdentifier().toString());
+		s_log.debug("SQLPanel.createWindow(" + tab.getIdentifier().toString() + ")");
 		_tabbedResultsPanel.remove(tab);
 		ResultFrame frame = new ResultFrame(_session, tab);
 		ResultTabInfo tabInfo = (ResultTabInfo)_allTabs.get(tab.getIdentifier());
@@ -466,12 +478,13 @@ class SQLPanel extends JPanel {
 			throw new IllegalArgumentException("Null ResultTab passed");
 		}
 
-		s_log.debug("Returning tab " + tab.getIdentifier().toString());
+		s_log.debug("SQLPanel.returnToTabbedPane(" + tab.getIdentifier().toString() + ")");
 
 		ResultTabInfo tabInfo = (ResultTabInfo)_allTabs.get(tab.getIdentifier());
 		if (tabInfo._resultFrame != null) {
 			addResultsTab(tab);
 			fireTornOffResultTabReturned(tab);
+			tabInfo._resultFrame = null;
 		}
 	}
 
@@ -765,7 +778,7 @@ class SQLPanel extends JPanel {
 				_sqlEntry.getComponent().requestFocus();
 			}
 		});
-}
+	}
 
 	private final class MyMouseListener extends MouseAdapter {
 		public void mousePressed(MouseEvent evt) {

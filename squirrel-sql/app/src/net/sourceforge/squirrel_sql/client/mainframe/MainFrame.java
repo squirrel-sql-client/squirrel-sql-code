@@ -45,7 +45,6 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.ScrollableDesktopPane;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-//import net.sourceforge.squirrel_sql.fw.util.log.LoggingLevel;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Version;
@@ -100,16 +99,9 @@ public class MainFrame extends BaseMDIParentFrame {
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
 
-	private boolean closeAllChildWindows() {
-		JInternalFrame[] children = getDesktopPane().getAllFrames();
-		for (int i = 0; i < children.length; ++i) {
-			children[i].dispose();
-		}
-		return true;
-	}
-
 	public void dispose() {
-		if (closeAllChildWindows()) {
+		if (closeAllNonToolWindows()) {
+			closeAllToolWindows();
 			_app.shutdown();
 			super.dispose();
 			System.exit(0);
@@ -144,26 +136,26 @@ public class MainFrame extends BaseMDIParentFrame {
 		}
 	}
 
+	/**
+	 * Return the Drivers tool window.
+	 */
+	public DriversToolWindow getDriversToolWindow() {
+		return _driversToolWindow;
+	}
+
+	/**
+	 * Return the Aliases tool window.
+	 */
+	public AliasesToolWindow getAliasesToolWindow() {
+		return _aliasesToolWindow;
+	}
+
 	Point getAliasesWindowLocation() {
 		return _aliasesToolWindow.getLocation();
 	}
 
 	Point getDriversWindowLocation() {
 		return _driversToolWindow.getLocation();
-	}
-
-	private void preferencesHaveChanged(PropertyChangeEvent evt) {
-		String propName = evt != null ? evt.getPropertyName() : null;
-
-		final SquirrelPreferences prefs = _app.getSquirrelPreferences();
-
-		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.SHOW_CONTENTS_WHEN_DRAGGING)) {
-			if (prefs.getShowContentsWhenDragging()) {
-				getDesktopPane().putClientProperty("JDesktopPane.dragMode",  null);
-			} else {
-				getDesktopPane().putClientProperty("JDesktopPane.dragMode",  "outline");
-			}
-		}
 	}
 
 	public JMenu getSessionMenu() {
@@ -190,6 +182,37 @@ public class MainFrame extends BaseMDIParentFrame {
 			throw new IllegalArgumentException("Null Action passed");
 		}
 		((MainFrameMenuBar)getJMenuBar()).addToMenu(menuId, action);
+	}
+
+	private void preferencesHaveChanged(PropertyChangeEvent evt) {
+		String propName = evt != null ? evt.getPropertyName() : null;
+
+		final SquirrelPreferences prefs = _app.getSquirrelPreferences();
+
+		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.SHOW_CONTENTS_WHEN_DRAGGING)) {
+			if (prefs.getShowContentsWhenDragging()) {
+				getDesktopPane().putClientProperty("JDesktopPane.dragMode",  null);
+			} else {
+				getDesktopPane().putClientProperty("JDesktopPane.dragMode",  "outline");
+			}
+		}
+	}
+
+	synchronized public boolean closeAllNonToolWindows() {
+		JInternalFrame[] frames = GUIUtils.getOpenNonToolWindows(getDesktopPane().getAllFrames());
+		s_log.debug("" + frames.length + " non-tool windows to be closed");
+		for (int i = 0; i < frames.length; ++i) {
+			frames[i].dispose();
+		}
+		return true;
+	}
+
+	private void closeAllToolWindows() {
+		JInternalFrame[] frames = GUIUtils.getOpenToolWindows(getDesktopPane().getAllFrames());
+		s_log.debug("" + frames.length + " tool windows to be closed");
+		for (int i = 0; i < frames.length; ++i) {
+			frames[i].dispose();
+		}
 	}
 
 	private void createUserInterface() {

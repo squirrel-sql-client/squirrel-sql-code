@@ -135,6 +135,8 @@ public class SessionSheet extends JInternalFrame {
 			_session.getProperties().removePropertyChangeListener(_propsListener);
 			_propsListener = null;
 		}
+		_objectsPnl.sessionEnding();
+		_sqlPnl.sessionEnding();
 		_session.getApplication().getPluginManager().sessionEnding(_session);
 		closeConnection();
 		super.dispose();

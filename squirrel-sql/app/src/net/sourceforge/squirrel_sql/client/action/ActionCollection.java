@@ -43,15 +43,6 @@ import net.sourceforge.squirrel_sql.client.session.action.*;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public final class ActionCollection {
-	/**
-	 * Classes of actions that are only valid if an internal frame is open.
-	 */
-	private interface IActionClassNames {
-		Class CASCADE = CascadeAction.class;
-		Class MAXIMIZE = MaximizeAction.class;
-		Class TILE = TileAction.class;
-	}
-
 	/** Logger for this class. */
 	private static ILogger s_log;
 
@@ -82,7 +73,7 @@ public final class ActionCollection {
 			s_log = LoggerController.createLogger(getClass());
 		}
 		_app = app;
-		loadActions();
+		preloadActions();
 		enableInternalFrameOptions(false);
 	}
 
@@ -227,15 +218,16 @@ public final class ActionCollection {
 	 * is open.
 	 */
 	private void enableInternalFrameOptions(boolean enable) {
-		enableAction(IActionClassNames.CASCADE, enable);
-		enableAction(IActionClassNames.MAXIMIZE, enable);
-		enableAction(IActionClassNames.TILE, enable);
+		enableAction(CascadeAction.class, enable);
+		enableAction(MaximizeAction.class, enable);
+		enableAction(TileAction.class, enable);
+		enableAction(CloseAllSessionsAction.class, enable);
 	}
 
 	/**
 	 * Load actions.
 	 */
-	private void loadActions() {
+	private void preloadActions() {
 		add(new AboutAction(_app));
 		add(new CascadeAction(_app));
 		add(new CommitAction(_app));
@@ -248,5 +240,7 @@ public final class ActionCollection {
 		add(new RollbackAction(_app));
 		add(new SessionPropertiesAction(_app));
 		add(new TileAction(_app));
+		add(new CloseAllSessionsAction(_app));
+
 	}
 }
