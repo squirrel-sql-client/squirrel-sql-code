@@ -31,23 +31,20 @@ import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public final class TableNode extends DatabaseObjectNode implements ITableInfo {
-    private interface ISessionKeys {
-        String DETAIL_PANEL_KEY = TableNode.class.getName() + "_DETAIL_PANEL_KEY";
-    }
-
     private ITableInfo _tableInfo;
 
-    public TableNode(ISession session, ObjectsTreeModel treeModel,
-                    ITableInfo tableInfo, Statement rowCountStmt)
-
-            throws IllegalArgumentException, BaseSQLException,
-                    NoConnectionException {
+    public TableNode(
+        ISession session,
+        ObjectsTreeModel treeModel,
+        ITableInfo tableInfo,
+        Statement rowCountStmt)
+        throws IllegalArgumentException, BaseSQLException, NoConnectionException {
         super(session, treeModel, tableInfo);
         if (tableInfo == null) {
             throw new IllegalArgumentException("Null ITableInfo passed");
         }
         _tableInfo = tableInfo;
-//      setUserObject(getDisplayText(rowCountStmt));
+        setUserObject(getDisplayText(rowCountStmt));
     }
 
     public void expand() {
@@ -80,11 +77,12 @@ public final class TableNode extends DatabaseObjectNode implements ITableInfo {
     public JComponent getDetailsPanel() {
         final ISession session = getSession();
         final IPlugin plugin = session.getApplication().getDummyAppPlugin();
-        TablePanel pnl = (TablePanel)session.getPluginObject(plugin, ISessionKeys.DETAIL_PANEL_KEY);
-        if (pnl == null) {
-            pnl = new TablePanel(session);
-            session.putPluginObject(plugin, ISessionKeys.DETAIL_PANEL_KEY, pnl);
-        }
+        TablePanel pnl =
+            (TablePanel) session.getPluginObject(plugin, ISession.ISessionKeys.TABLE_DETAIL_PANEL_KEY);
+//      if (pnl == null) {
+//          pnl = new TablePanel(session);
+//          session.putPluginObject(plugin, ISession.ISessionKeys.TABLE_DETAIL_PANEL_KEY, pnl);
+//      }
         pnl.setTableInfo(this);
         return pnl;
     }
@@ -93,11 +91,12 @@ public final class TableNode extends DatabaseObjectNode implements ITableInfo {
         return true;
     }
 
-/*
     private String getDisplayText(Statement rowCountStmt) {
         if (rowCountStmt != null) {
             try {
-                ResultSet rs = rowCountStmt.executeQuery("select count(*) from " + _tableInfo.getQualifiedName());
+                ResultSet rs =
+                    rowCountStmt.executeQuery(
+                        "select count(*) from " + _tableInfo.getQualifiedName());
                 long nbrRows = 0;
                 if (rs.next()) {
                     nbrRows = rs.getLong(1);
@@ -110,5 +109,4 @@ public final class TableNode extends DatabaseObjectNode implements ITableInfo {
             return _tableInfo.getSimpleName();
         }
     }
-*/
 }
