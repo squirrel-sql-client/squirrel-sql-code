@@ -24,7 +24,7 @@ import java.beans.SimpleBeanInfo;
 /**
  * This is the <CODE>BeanInfo</CODE> class for <CODE>SquirrelPreferences</CODE>.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
 	implements SquirrelPreferences.IPropertyNames
@@ -38,7 +38,7 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
 		super();
 		if (s_dscrs == null)
 		{
-			s_dscrs = new PropertyDescriptor[17];
+			s_dscrs = new PropertyDescriptor[18];
 			s_dscrs[0] = new PropertyDescriptor(SESSION_PROPERTIES, CLS,
 									"getSessionProperties", "setSessionProperties");
 			s_dscrs[1] = new PropertyDescriptor(MAIN_FRAME_STATE, CLS,
@@ -74,6 +74,8 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
 								"getShowLoadedDriversOnly", "setShowLoadedDriversOnly");
 			s_dscrs[16] = new PropertyDescriptor(MAXIMIMIZE_SESSION_SHEET_ON_OPEN, CLS,
 								"getMaximizeSessionSheetOnOpen", "setMaximizeSessionSheetOnOpen");
+			s_dscrs[17] = new PropertyDescriptor(SHOW_COLOR_ICONS_IN_TOOLBAR, CLS,
+								"getShowColoriconsInToolbar", "setShowColoriconsInToolbar");
 		}
 	}
 

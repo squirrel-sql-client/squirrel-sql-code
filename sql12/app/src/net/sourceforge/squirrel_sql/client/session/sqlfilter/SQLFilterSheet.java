@@ -37,6 +37,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.event.ChangeEvent;
@@ -228,7 +230,7 @@ public class SQLFilterSheet extends BaseSheet
   /** Create the GUI elements for the sheet */  
 	private void createGUI()
 	{
-    List columnNames = new ArrayList();
+    SortedSet columnNames = new TreeSet();
 
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setTitle(getTitle());

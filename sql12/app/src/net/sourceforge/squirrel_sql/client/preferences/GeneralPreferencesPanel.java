@@ -109,6 +109,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			String SHOW_MAIN_STATUS_BAR = "Show Main Window Status Bar";
 			String SHOW_MAIN_TOOL_BAR = "Show Main Window Tool Bar";
 			String SHOW_TOOLTIPS = "Show Tooltips";
+			String SHOW_COLOR_ICONS_IN_TOOLBAR = "Show Color Icons In Toolbars";
 			String TAB_HINT = "General";
 			String TAB_TITLE = "General";
 			String USE_SCROLLABLE_TABS = "Use Scrollable Tabbed Panes (JDK1.4 and above)";
@@ -122,6 +123,8 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 		private JCheckBox _showToolTips = new JCheckBox(i18n.SHOW_TOOLTIPS);
 		private JCheckBox _useScrollableTabbedPanes = new JCheckBox(i18n.USE_SCROLLABLE_TABS);
 		private JCheckBox _maximimizeSessionSheet = new JCheckBox(i18n.MAXIMIZE_SESSION_SHEET);
+
+		private JCheckBox _showColoriconsInToolbar = new JCheckBox(i18n.SHOW_COLOR_ICONS_IN_TOOLBAR);
 		private JLabel _executionLogFileNameLbl = new OutputLabel(" ");
 		// Must have at least 1 blank otherwise width gets set to zero.
 		private JLabel _logConfigFileNameLbl = new OutputLabel(" ");
@@ -145,7 +148,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			_showAliasesToolBar.setSelected(prefs.getShowAliasesToolBar());
 			_showDriversToolBar.setSelected(prefs.getShowDriversToolBar());
 			_maximimizeSessionSheet.setSelected(prefs.getMaximizeSessionSheetOnOpen());
-
+			_showColoriconsInToolbar.setSelected(prefs.getShowColoriconsInToolbar());
 			_executionLogFileNameLbl.setText(appFiles.getExecutionLogFile().getPath());
 
 			String configFile = ApplicationArguments.getInstance().getLoggingConfigFileName();
@@ -162,6 +165,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			prefs.setShowAliasesToolBar(_showAliasesToolBar.isSelected());
 			prefs.setShowDriversToolBar(_showDriversToolBar.isSelected());
 			prefs.setMaximizeSessionSheetOnOpen(_maximimizeSessionSheet.isSelected());
+			prefs.setShowColoriconsInToolbar(_showColoriconsInToolbar.isSelected());
 		}
 
 		private void createUserInterface()
@@ -203,6 +207,8 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			pnl.add(_showAliasesToolBar, gbc);
 			++gbc.gridy;
 			pnl.add(_maximimizeSessionSheet, gbc);
+			++gbc.gridy;
+			pnl.add(_showColoriconsInToolbar, gbc);
 
 			return pnl;
 		}

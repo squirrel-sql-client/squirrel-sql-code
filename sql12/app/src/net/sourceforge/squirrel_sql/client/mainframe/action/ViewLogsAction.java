@@ -25,19 +25,19 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 /**
  * This <CODE>Action</CODE> displays the Squirrel Logs Window.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ViewLogsAction extends SquirrelAction
 {
 	/**
 	 * Ctor.
-	 * 
+	 *
 	 * @param	app	Application API.
 	 */
 	public ViewLogsAction(IApplication app)
 	{
 		super(app);
-		app.getResources().setupAction(this);
+		app.getResources().setupAction(this, true);
 	}
 
 	/**

@@ -62,6 +62,7 @@ public class SquirrelPreferences implements Serializable
 		String SHOW_MAIN_STATUS_BAR = "showMainStatusBar";
 		String SHOW_MAIN_TOOL_BAR = "showMainToolBar";
 		String SHOW_TOOLTIPS = "showToolTips";
+		String SHOW_COLOR_ICONS_IN_TOOLBAR="showColorIconsInToolbars";
 	}
 
 	/** Logger for this class. */
@@ -106,6 +107,9 @@ public class SquirrelPreferences implements Serializable
 
 	/** Show toolbar in the aliases window. */
 	private boolean _showAliasesToolBar = true;
+
+	/** Show color icons in toolbars. */
+	private boolean _showColorIconsInToolbars = false;
 
 	/** Accelerators and mnemonics for actions. */
 	private ActionKeys[] _actionsKeys = new ActionKeys[0];
@@ -245,6 +249,19 @@ public class SquirrelPreferences implements Serializable
 											oldValue, _showDriversToolBar);
 	}
 
+	public boolean getShowColoriconsInToolbar()
+	{
+		return _showColorIconsInToolbars;
+	}
+	
+	public synchronized void setShowColoriconsInToolbar(boolean data)
+	{
+		final boolean oldValue = _showColorIconsInToolbars;
+		_showColorIconsInToolbars = data;
+		getPropertyChangeReporter().firePropertyChange(IPropertyNames.SHOW_COLOR_ICONS_IN_TOOLBAR,
+											oldValue, _showColorIconsInToolbars);
+	}
+	
 	public int getLoginTimeout()
 	{
 		return _loginTimeout;
