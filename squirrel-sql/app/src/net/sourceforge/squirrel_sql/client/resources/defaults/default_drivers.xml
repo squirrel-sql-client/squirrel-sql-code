@@ -2,6 +2,16 @@
 
 <Beans>
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<driverClassName>com.microsoft.jdbc.sqlserver.SQLServerDriver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-11</string>
+		</identifier>
+		<jarFileName/>
+		<jarFileNames Indexed="true"/>
+		<name>Microsoft MSSQL Server JDBC Driver</name>
+		<url>jdbc:microsoft:sqlserver://&lt;server_name&gt;:&lt;1433&gt;</url>
+	</Bean>
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
 		<driverClassName>com.sunopsis.jdbc.driver.xml.SnpsXmlDriver</driverClassName>
 		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
 			<string>-10</string>
