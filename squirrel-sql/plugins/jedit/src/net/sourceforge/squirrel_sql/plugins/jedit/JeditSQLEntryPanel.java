@@ -222,12 +222,19 @@ class JeditSQLEntryPanel extends BaseSQLEntryPanel {
 		styles[Token.KEYWORD1] = new SyntaxStyle(new Color(prefs.getKeyword1RGB()), false, true);
 		styles[Token.KEYWORD2] = new SyntaxStyle(new Color(prefs.getKeyword2RGB()), false, true);
 		styles[Token.KEYWORD3] = new SyntaxStyle(new Color(prefs.getKeyword3RGB()), false, true);
+		styles[Token.COLOMN] = new SyntaxStyle(new Color(prefs.getColumnRGB()), false, true);
+		styles[Token.TABLE] = new SyntaxStyle(new Color(prefs.getTableRGB()), false, true);
 		painter.setStyles(styles);
-		painter.setEOLMarkersPainted(prefs.getEolMarkers());
+		painter.setEOLMarkersPainted(prefs.getEOLMarkers());
 		painter.setBlockCaretEnabled(prefs.isBlockCaretEnabled());
 		painter.setBracketHighlightEnabled(prefs.getBracketHighlighting());
 		painter.setLineHighlightEnabled(prefs.getCurrentLineHighlighting());
 		comp.setCaretBlinkEnabled(prefs.getBlinkCaret());
+		painter.setCaretColor(new Color(prefs.getCaretRGB()));
+		painter.setSelectionColor(new Color(prefs.getSelectionRGB()));
+		painter.setLineHighlightColor(new Color(prefs.getLineHighlightRGB()));
+		painter.setEOLMarkerColor(new Color(prefs.getEOLMarkerRGB()));
+		painter.setBracketHighlightColor(new Color(prefs.getBracketHighlightRGB()));
 	}
 
 	/*

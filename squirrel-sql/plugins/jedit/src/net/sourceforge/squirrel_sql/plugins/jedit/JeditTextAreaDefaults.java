@@ -47,13 +47,13 @@ class JeditTextAreaDefaults extends TextAreaDefaults {
 		styles = SyntaxUtilities.getDefaultSyntaxStyles();
 
 //		blockCaret = true;
-		caretColor = Color.red;
-		selectionColor = new Color(0xccccff);
-		lineHighlightColor = new Color(0xe0e0e0);
+//		caretColor = Color.red;
+//		selectionColor = new Color(0xccccff);
+//		lineHighlightColor = new Color(0xe0e0e0);
 //		lineHighlight = true;
-		bracketHighlightColor = Color.black;
+//		bracketHighlightColor = Color.black;
 //		bracketHighlight = true;
-		eolMarkerColor = new Color(0x009999);
+//		eolMarkerColor = new Color(0x009999);
 //		eolMarkers = false;
 		paintInvalid = false;
 
@@ -67,11 +67,18 @@ class JeditTextAreaDefaults extends TextAreaDefaults {
 		styles[Token.KEYWORD1] = new SyntaxStyle(new Color(prefs.getKeyword1RGB()), false, true);
 		styles[Token.KEYWORD2] = new SyntaxStyle(new Color(prefs.getKeyword2RGB()), false, true);
 		styles[Token.KEYWORD3] = new SyntaxStyle(new Color(prefs.getKeyword3RGB()), false, true);
+		styles[Token.COLOMN] = new SyntaxStyle(new Color(prefs.getColumnRGB()), false, true);
+		styles[Token.TABLE] = new SyntaxStyle(new Color(prefs.getTableRGB()), false, true);
 		blockCaret = prefs.isBlockCaretEnabled();
-		eolMarkers = prefs.getEolMarkers();
+		eolMarkers = prefs.getEOLMarkers();
 		bracketHighlight = prefs.getBracketHighlighting();
 		lineHighlight = prefs.getCurrentLineHighlighting();
 		caretBlinks = prefs.getBlinkCaret();
+		caretColor = new Color(prefs.getCaretRGB());
+		selectionColor = new Color(prefs.getSelectionRGB());
+		lineHighlightColor = new Color(prefs.getLineHighlightRGB());
+		eolMarkerColor = new Color(prefs.getEOLMarkerRGB());
+		bracketHighlightColor = new Color(prefs.getBracketHighlightRGB());
 	}
 }
 

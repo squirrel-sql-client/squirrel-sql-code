@@ -36,8 +36,6 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-//import net.sourceforge.squirrel_sql.fw.gui.FontChooser;
-//import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -172,23 +170,29 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 		private JCheckBox _currentLineHighlighting = new JCheckBox(i18n.HIGHLIGHT_CURRENT_LINE);
 		private JCheckBox _blinkCaretChk = new JCheckBox(i18n.BLINK_CARET);
 
-//		private JCheckBox _fontEnabledChk = new JCheckBox("Enabled");
-
-		/** Label displaying the selected font. */
-//		private JLabel _fontLbl = new JLabel();
-
-		/** Button to select font. */
-//		private FontButton _fontBtn = new FontButton("Font", _fontLbl);
-
 		private ColorButtonListener _colorBtnActionListener = new ColorButtonListener();
 
 		private JLabel _keywordColorLbl1 = createColorLabel();
 		private JLabel _keywordColorLbl2 = createColorLabel();
 		private JLabel _keywordColorLbl3 = createColorLabel();
+		private JLabel _tableColorLbl = createColorLabel();
+		private JLabel _columnColorLbl = createColorLabel();
+		private JLabel _caretColorLbl = createColorLabel();
+		private JLabel _selectionColorLbl = createColorLabel();
+		private JLabel _lineHighlightColorLbl = createColorLabel();
+		private JLabel _eolMarkerColorLbl = createColorLabel();
+		private JLabel _bracketHighlightColorLbl = createColorLabel();
 
 		private JButton _keywordColorBtn1 = new ColorButton("Keywords", _keywordColorLbl1);
 		private JButton _keywordColorBtn2 = new ColorButton("Data Types", _keywordColorLbl2);
 		private JButton _keywordColorBtn3 = new ColorButton("Functions", _keywordColorLbl3);
+		private JButton _tableColorBtn = new ColorButton("Tables", _tableColorLbl);
+		private JButton _columnColorBtn = new ColorButton("Columns", _columnColorLbl);
+		private JButton _caretColorBtn = new ColorButton("Caret", _caretColorLbl);
+		private JButton _selectionColorBtn = new ColorButton("Selection", _selectionColorLbl);
+		private JButton _lineHighlightColorBtn = new ColorButton("Line Highlight", _lineHighlightColorLbl);
+		private JButton _eolMarkerColorBtn = new ColorButton("EOL Markers", _eolMarkerColorLbl);
+		private JButton _bracketHighlightColorBtn = new ColorButton("Bracket Highlight", _bracketHighlightColorLbl);
 
 		MyPanel() {
 			super();
@@ -197,42 +201,44 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 
 		void loadData(JeditPreferences prefs) {
 			_activeChk.setSelected(prefs.getUseJeditTextControl());
-			_eolMarkersChk.setSelected(prefs.getEolMarkers());
+			_eolMarkersChk.setSelected(prefs.getEOLMarkers());
 			_blockCaretEnabledChk.setSelected(prefs.isBlockCaretEnabled());
 			_bracketHighlighting.setSelected(prefs.getBracketHighlighting());
 			_currentLineHighlighting.setSelected(prefs.getCurrentLineHighlighting());
 			_blinkCaretChk.setSelected(prefs.getBlinkCaret());
 
-/*
-			_fontEnabledChk.setSelected(prefs.isFontEnabled());
-			FontInfo fi = prefs.getFontInfo();
-			if (fi == null) {
-				fi = JeditConstants.DEFAULT_FONT_INFO;
-			}
-			_fontLbl.setText(fi.toString());
-			_fontBtn.setSelectedFont(fi.createFont());
-			_fontBtn.setEnabled(prefs.isFontEnabled() && prefs.getUseJeditTextControl());
-*/
-
 			_keywordColorLbl1.setBackground(new Color(prefs.getKeyword1RGB()));
 			_keywordColorLbl2.setBackground(new Color(prefs.getKeyword2RGB()));
 			_keywordColorLbl3.setBackground(new Color(prefs.getKeyword3RGB()));
+			_tableColorLbl.setBackground(new Color(prefs.getTableRGB()));
+			_columnColorLbl.setBackground(new Color(prefs.getColumnRGB()));
+			_caretColorLbl.setBackground(new Color(prefs.getCaretRGB()));
+			_selectionColorLbl.setBackground(new Color(prefs.getSelectionRGB()));
+			_lineHighlightColorLbl.setBackground(new Color(prefs.getLineHighlightRGB()));
+			_eolMarkerColorLbl.setBackground(new Color(prefs.getEOLMarkerRGB()));
+			_bracketHighlightColorLbl.setBackground(new Color(prefs.getBracketHighlightRGB()));
 
 			updateControlStatus();
 		}
 
 		void applyChanges(JeditPreferences prefs) {
 			prefs.setUseJeditTextControl(_activeChk.isSelected());
-			prefs.setEolMarkers(_eolMarkersChk.isSelected());
+			prefs.setEOLMarkers(_eolMarkersChk.isSelected());
 			prefs.setBlockCaretEnabled(_blockCaretEnabledChk.isSelected());
 			prefs.setBracketHighlighting(_bracketHighlighting.isSelected());
 			prefs.setCurrentLineHighlighting(_currentLineHighlighting.isSelected());
 			prefs.setBlinkCaret(_blinkCaretChk.isSelected());
-//			prefs.setFontInfo(_fontBtn.getFontInfo());
-//			prefs.setFontEnabled(_fontEnabledChk.isSelected());
+
 			prefs.setKeyword1RGB(_keywordColorLbl1.getBackground().getRGB());
 			prefs.setKeyword2RGB(_keywordColorLbl2.getBackground().getRGB());
 			prefs.setKeyword3RGB(_keywordColorLbl3.getBackground().getRGB());
+			prefs.setTableRGB(_tableColorLbl.getBackground().getRGB());
+			prefs.setColumnRGB(_columnColorLbl.getBackground().getRGB());
+			prefs.setCaretRGB(_caretColorLbl.getBackground().getRGB());
+			prefs.setSelectionRGB(_selectionColorLbl.getBackground().getRGB());
+			prefs.setLineHighlightRGB(_lineHighlightColorLbl.getBackground().getRGB());
+			prefs.setEOLMarkerRGB(_eolMarkerColorLbl.getBackground().getRGB());
+			prefs.setBracketHighlightRGB(_bracketHighlightColorLbl.getBackground().getRGB());
 		}
 
 		private void updateControlStatus() {
@@ -240,13 +246,18 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 			_keywordColorBtn1.setEnabled(useJeditControl);
 			_keywordColorBtn2.setEnabled(useJeditControl);
 			_keywordColorBtn3.setEnabled(useJeditControl);
+			_tableColorBtn.setEnabled(useJeditControl);
+			_columnColorBtn.setEnabled(useJeditControl);
+			_caretColorBtn.setEnabled(useJeditControl);
+			_selectionColorBtn.setEnabled(useJeditControl);
+			_lineHighlightColorBtn.setEnabled(useJeditControl);
+			_eolMarkerColorBtn.setEnabled(useJeditControl);
+			_bracketHighlightColorBtn.setEnabled(useJeditControl);
 			_eolMarkersChk.setEnabled(useJeditControl);
 			_blockCaretEnabledChk.setEnabled(useJeditControl);
 			_bracketHighlighting.setEnabled(useJeditControl);
 			_currentLineHighlighting.setEnabled(useJeditControl);
 			_blinkCaretChk.setEnabled(useJeditControl);
-//			_fontEnabledChk.setEnabled(useJeditControl);
-//			_fontBtn.setEnabled(useJeditControl && _fontEnabledChk.isSelected());
 		}
 
 		private void createUserInterface() {
@@ -269,9 +280,6 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 			gbc.gridx = 0;
 			++gbc.gridy;
 			add(createGeneralPanel(), gbc);
-
-//			++gbc.gridy;
-//			add(createFontPanel(), gbc);
 
 			++gbc.gridy;
 			add(createColorPanel(), gbc);
@@ -305,37 +313,6 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 			return pnl;
 		}
 
-		/*
-		private JPanel createFontPanel() {
-			JPanel pnl = new JPanel();
-			pnl.setBorder(BorderFactory.createTitledBorder("Font"));
-			pnl.setLayout(new GridBagLayout());
-			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.fill = gbc.HORIZONTAL;
-			gbc.insets = new Insets(4, 4, 4, 4);
-
-			_fontBtn.addActionListener(new FontButtonListener());
-			_fontEnabledChk.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent evt) {
-					_fontBtn.setEnabled(_fontEnabledChk.isSelected());
-				}
-			});
-
-			gbc.gridx = 0;
-			gbc.gridy = 0;
-			pnl.add(_fontEnabledChk, gbc);
-
-			++gbc.gridx;
-			pnl.add(_fontBtn, gbc);
-
-			++gbc.gridx;
-			gbc.fill = gbc.HORIZONTAL;
-			gbc.weightx = 1.0;
-			pnl.add(_fontLbl, gbc);
-
-			return pnl;
-		}
-*/
 		private JPanel createColorPanel() {
 			JPanel pnl = new JPanel();
 			pnl.setBorder(BorderFactory.createTitledBorder("Colors"));
@@ -347,28 +324,82 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 			GUIUtils.setJButtonSizesTheSame(new JButton[] {
 					_keywordColorBtn1, _keywordColorBtn2, _keywordColorBtn3});
 
+// Col1
 			gbc.gridx = 0;
 			gbc.gridy = 0;
 			pnl.add(_keywordColorBtn1, gbc);
 
 			++gbc.gridy;
-			pnl.add(_keywordColorBtn2, gbc);
-
-			++gbc.gridy;
 			pnl.add(_keywordColorBtn3, gbc);
 
+			++gbc.gridy;
+			pnl.add(_columnColorBtn, gbc);
+
+			++gbc.gridy;
+			pnl.add(_selectionColorBtn, gbc);
+
+			++gbc.gridy;
+			pnl.add(_eolMarkerColorBtn, gbc);
+
+// Col2
 			gbc.fill = gbc.HORIZONTAL;
-			gbc.weightx = 1.0;
+			gbc.weightx = 0.5;
 
 			gbc.gridy = 0;
 			++gbc.gridx;
 			pnl.add(_keywordColorLbl1, gbc);
 
 			++gbc.gridy;
+			pnl.add(_keywordColorLbl3, gbc);
+
+			++gbc.gridy;
+			pnl.add(_columnColorLbl, gbc);
+
+			++gbc.gridy;
+			pnl.add(_selectionColorLbl, gbc);
+
+			++gbc.gridy;
+			pnl.add(_eolMarkerColorLbl, gbc);
+
+// Col3
+//			gbc.fill = 0;
+			gbc.weightx = 0;
+
+			gbc.gridy = 0;
+			++gbc.gridx;
+			pnl.add(_keywordColorBtn2, gbc);
+
+			++gbc.gridy;
+			pnl.add(_tableColorBtn, gbc);
+
+			++gbc.gridy;
+			pnl.add(_caretColorBtn, gbc);
+
+			++gbc.gridy;
+			pnl.add(_lineHighlightColorBtn, gbc);
+
+			++gbc.gridy;
+			pnl.add(_bracketHighlightColorBtn, gbc);
+
+// Col4
+			gbc.fill = gbc.HORIZONTAL;
+			gbc.weightx = 0.5;
+
+			gbc.gridy = 0;
+			++gbc.gridx;
 			pnl.add(_keywordColorLbl2, gbc);
 
 			++gbc.gridy;
-			pnl.add(_keywordColorLbl3, gbc);
+			pnl.add(_tableColorLbl, gbc);
+
+			++gbc.gridy;
+			pnl.add(_caretColorLbl, gbc);
+
+			++gbc.gridy;
+			pnl.add(_lineHighlightColorLbl, gbc);
+
+			++gbc.gridy;
+			pnl.add(_bracketHighlightColorLbl, gbc);
 
 			return pnl;
 		}
@@ -380,60 +411,7 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 			lbl.setOpaque(true);
 			return lbl;
 		}
-/*
-		private static final class FontButton extends JButton {
-			private FontInfo _fi;
-			private JLabel _lbl;
-			private Font _font;
-			private boolean _dirty;
 
-			FontButton(String text, JLabel lbl) {
-				super(text);
-				_lbl = lbl;
-			}
-			
-			FontInfo getFontInfo() {
-				return _fi;
-			}
-			
-			Font getSelectedFont() {
-				return _font;
-			}
-			
-			void setSelectedFont(Font font) {
-				_font = font;
-				if (_fi == null) {
-					_fi = new FontInfo(font);
-				} else {
-					_fi.setFont(font);
-				}
-				_dirty = true;
-			}
-			
-			boolean isDirty() {
-				return _dirty;
-			}
-		}
-*/
-/*
-		private static final class FontButtonListener implements ActionListener {
-			public void actionPerformed(ActionEvent evt) {
-				if (evt.getSource() instanceof FontButton) {
-					FontButton btn = (FontButton)evt.getSource();
-					FontInfo fi = btn.getFontInfo();
-					Font font = null;
-					if (fi != null) {
-						font = fi.createFont();
-					}
-					font = new FontChooser().showDialog(font);
-					if (font != null) {
-						btn.setSelectedFont(font);
-						btn._lbl.setText(new FontInfo(font).toString());
-					}
-				}
-			}
-		}
-*/
 		private class ColorButton extends JButton {
 			JLabel _previewLbl;
 			ColorButton(String title, JLabel previewLbl) {
