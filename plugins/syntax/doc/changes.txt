@@ -1,6 +1,14 @@
 Syntax Highlighting Plugin Change Log
 =====================================
 
+0.12
+====
+
+Bug Fixes
+---------
+- Caret row and column now shown correctly in status bar.
+
+
 0.11
 ====
 
