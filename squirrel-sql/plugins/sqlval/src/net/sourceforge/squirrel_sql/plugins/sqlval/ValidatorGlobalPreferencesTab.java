@@ -133,7 +133,7 @@ public class ValidatorGlobalPreferencesTab implements IGlobalPreferencesPanel
 		private final WebServicePreferences _prefs;
 
 		/** Show confirmation dialog checkbox. */
-		private JCheckBox _showConfirmationDialogChk = new JCheckBox("Show confirmation dialog");
+//		private JCheckBox _showConfirmationDialogChk = new JCheckBox("Show confirmation dialog");
 
 		PrefsPanel(WebServicePreferences prefs)
 		{
@@ -145,13 +145,13 @@ public class ValidatorGlobalPreferencesTab implements IGlobalPreferencesPanel
 		private void loadData()
 		{
 			_appPrefsPnl.loadData();
-			_showConfirmationDialogChk.setSelected(_prefs.getShowConfirmationDialog());
+//			_showConfirmationDialogChk.setSelected(_prefs.getShowConfirmationDialog());
 		}
 
 		private void save()
 		{
 			_appPrefsPnl.save();
-			_prefs.setShowConfirmationDialog(_showConfirmationDialogChk.isSelected());
+//			_prefs.setShowConfirmationDialog(_showConfirmationDialogChk.isSelected());
 		}
 
 		private void createGUI(WebServicePreferences prefs)
@@ -168,27 +168,27 @@ public class ValidatorGlobalPreferencesTab implements IGlobalPreferencesPanel
 			gbc.weightx = 1;
 			add(_appPrefsPnl, gbc);
 	
-			++gbc.gridy;
-			gbc.insets = new Insets(1, 4, 1, 4);
-			add(createPanel(prefs), gbc);
+//			++gbc.gridy;
+//			gbc.insets = new Insets(1, 4, 1, 4);
+//			add(createPanel(prefs), gbc);
 		}
 
-		private JPanel createPanel(WebServicePreferences prefs)
-		{
-			JPanel pnl = new JPanel();
-			pnl.setBorder(BorderFactory.createTitledBorder("General"));
-	
-			pnl.setLayout(new GridBagLayout());
-			final GridBagConstraints gbc = new GridBagConstraints();
-//			gbc.fill = gbc.HORIZONTAL;
-			gbc.insets = new Insets(0, 0, 0, 0);
-			gbc.anchor = gbc.WEST;
-
-			gbc.gridx = 0;
-			gbc.gridy = 0;
-			pnl.add(_showConfirmationDialogChk, gbc);
-	
-			return pnl;
-		}
+//		private JPanel createPanel(WebServicePreferences prefs)
+//		{
+//			JPanel pnl = new JPanel();
+//			pnl.setBorder(BorderFactory.createTitledBorder("General"));
+//	
+//			pnl.setLayout(new GridBagLayout());
+//			final GridBagConstraints gbc = new GridBagConstraints();
+////			gbc.fill = gbc.HORIZONTAL;
+//			gbc.insets = new Insets(0, 0, 0, 0);
+//			gbc.anchor = gbc.WEST;
+//
+//			gbc.gridx = 0;
+//			gbc.gridy = 0;
+//			pnl.add(_showConfirmationDialogChk, gbc);
+//	
+//			return pnl;
+//		}
 	}
 }

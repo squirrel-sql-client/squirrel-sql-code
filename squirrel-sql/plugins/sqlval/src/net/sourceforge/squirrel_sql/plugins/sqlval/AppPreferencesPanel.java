@@ -70,6 +70,9 @@ class AppPreferencesPanel extends JPanel
 	/** Client version. */
 	private OutputLabel _clientVersionLbl = new OutputLabel(" ");
 
+	/** Show confirmation dialog checkbox. */
+	private JCheckBox _showConfirmationDialogChk = new JCheckBox("Show confirmation dialog");
+
 	AppPreferencesPanel(WebServicePreferences prefs)
 	{
 		super(new GridBagLayout());
@@ -92,6 +95,7 @@ class AppPreferencesPanel extends JPanel
 		_anonClientChk.setSelected(_prefs.getUseAnonymousClient());
 		_clientNameLbl.setText(_prefs.getClientName());
 		_clientVersionLbl.setText(_prefs.getClientVersion());
+		_showConfirmationDialogChk.setSelected(_prefs.getShowConfirmationDialog());
 
 		setControlState();
 	}
@@ -107,6 +111,7 @@ class AppPreferencesPanel extends JPanel
 		_prefs.setUseAnonymousClient(_anonClientChk.isSelected());
 		_prefs.setClientName(_clientNameLbl.getText());
 		_prefs.setClientVersion(_clientVersionLbl.getText());
+		_prefs.setShowConfirmationDialog(_showConfirmationDialogChk.isSelected());
 	}
 
 	/**
@@ -147,6 +152,9 @@ class AppPreferencesPanel extends JPanel
 
 		++gbc.gridy;
 		add(createClientPanel(), gbc);
+
+		++gbc.gridy;
+		add(createGeneralPanel(), gbc);
 	}
 
 	/**
@@ -162,6 +170,7 @@ class AppPreferencesPanel extends JPanel
 		final MultipleLineLabel lbl = new MultipleLineLabel(INFO);
 		lbl.setCaretPosition(0);
 		lbl.setRows(3);
+		lbl.setColumns(30);
 		final JScrollPane sp = new JScrollPane(lbl);
 		sp.setBorder(BorderFactory.createEmptyBorder());
 		pnl.add(sp, BorderLayout.CENTER);
@@ -175,14 +184,14 @@ class AppPreferencesPanel extends JPanel
 	 */
 	private JPanel createLogonPanel()
 	{
-		//_userNameText.setColumns(20);
+		_userNameText.setColumns(15);
+		_passwordText.setColumns(15);
 	
 		JPanel pnl = new JPanel();
 		pnl.setBorder(BorderFactory.createTitledBorder("Log on as"));
 
 		pnl.setLayout(new GridBagLayout());
 		final GridBagConstraints gbc = new GridBagConstraints();
-		gbc.fill = gbc.HORIZONTAL;
 		gbc.insets = new Insets(2, 4, 2, 4);
 
 		gbc.gridx = 0;
@@ -192,17 +201,20 @@ class AppPreferencesPanel extends JPanel
 		gbc.anchor = gbc.NORTHWEST;
 		pnl.add(_anonLogonChk, gbc);
 
-		gbc.anchor = gbc.CENTER;
+		gbc.fill = gbc.HORIZONTAL;
+		gbc.anchor = gbc.EAST;
 		gbc.gridheight = 1;
+		gbc.weightx = 1;
 		++gbc.gridx;
 		pnl.add(new JLabel("User:", JLabel.RIGHT), gbc);
 
 		++gbc.gridy;
 		pnl.add(new JLabel("Password:", JLabel.RIGHT), gbc);
 		
+		gbc.fill = gbc.NONE;
 		++gbc.gridx;
 		gbc.gridy = 0;
-		gbc.weightx = 1;
+		gbc.weightx = 0;
 		pnl.add(_userNameText, gbc);
 
 		++gbc.gridy;
@@ -251,6 +263,23 @@ class AppPreferencesPanel extends JPanel
 		return pnl;
 	}
 
+	private JPanel createGeneralPanel(/*WebServicePreferences prefs*/)
+	{
+		JPanel pnl = new JPanel();
+		pnl.setBorder(BorderFactory.createTitledBorder("General"));
+
+		pnl.setLayout(new GridBagLayout());
+		final GridBagConstraints gbc = new GridBagConstraints();
+		gbc.insets = new Insets(0, 0, 0, 0);
+		gbc.anchor = gbc.WEST;
+
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		pnl.add(_showConfirmationDialogChk, gbc);
+
+		return pnl;
+	}
+
 	/**
 	 * Listener for the "Anonymous Logon" checkbox. This keeps the
 	 * user and password fields enabled/disabled appropriately.
@@ -263,5 +292,4 @@ class AppPreferencesPanel extends JPanel
 		}
 
 	}
-
 }

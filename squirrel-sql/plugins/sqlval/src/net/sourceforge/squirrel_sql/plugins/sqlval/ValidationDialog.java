@@ -59,7 +59,7 @@ class ValidationDialog extends JDialog
 	ValidationDialog(IApplication app, ValidateSQLAction.ValidationProps valProps,
 					ICommand valCmd)
 	{
-		super(app.getMainFrame(), "SQL Validation", true);
+		super(app.getMainFrame(), "SQL Validation Confirmation", true);
 		_app = app;
 		_valProps = valProps;
 		_valCmd = valCmd;
