@@ -1,7 +1,9 @@
 #! /bin/sh
 [ $JAVA_HOME ] && JAVA=$JAVA_HOME/bin/java || JAVA=java
 
-for a in squirrel-sql.jar lib/*; do
+SQUIRREL_SQL_HOME="$INSTALL_PATH"
+
+for a in $SQUIRREL_SQL_HOME/squirrel-sql.jar $SQUIRREL_SQL_HOME/lib/*; do
     TMP_CP="$TMP_CP:$a"
 done
 
@@ -17,4 +19,4 @@ else
     TMP_CP=$TMP_CP:$CLASSPATH
 fi
 
-$JAVA -cp $TMP_CP net.sourceforge.squirrel_sql.client.Main -loggingConfigFile=log4j.properties
+$JAVA -cp $TMP_CP net.sourceforge.squirrel_sql.client.Main -loggingConfigFile=$SQUIRREL_SQL_HOME/log4j.properties
