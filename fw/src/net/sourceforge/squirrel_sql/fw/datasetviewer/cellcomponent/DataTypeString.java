@@ -92,6 +92,13 @@ public class DataTypeString
 	}
 	
 	/**
+	 * Return the name of the java class used to hold this data type.
+	 */
+	public String getClassName() {
+		return "java.lang.String";
+	}
+	
+	/**
 	 * Render a value into text for this DataType.
 	 */
 	public String renderObject(Object value) {

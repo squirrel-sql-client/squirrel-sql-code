@@ -48,6 +48,18 @@ public class CellComponentFactory {
 	static JTable _table = null;
 	
 	/**
+	 * Return the name of the Java class that is used to represent
+	 * this data type within the application.
+	 */
+	public static String getClassName(ColumnDisplayDefinition colDef) {
+		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
+		if (dataTypeObject != null)
+			return dataTypeObject.getClassName();
+		else
+			return "java.lang.Object";
+	}
+	
+	/**
 	 * Render value of object as a string for text output.
 	 * Used by Text version of table.
 	 */
