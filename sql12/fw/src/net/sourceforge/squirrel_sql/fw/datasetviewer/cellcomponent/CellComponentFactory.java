@@ -92,7 +92,23 @@ public class CellComponentFactory {
 			else super.setValue(DefaultColumnRenderer.getInstance().renderObject(value));
 		}
 	}
-	
+
+
+	/**
+	 * Return true if the data type for the column may be edited
+	 * within the table cell, false if not.
+	 */
+	public static boolean isEditableInCell(ColumnDisplayDefinition colDef) {
+		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
+		
+		if (dataTypeObject != null)
+			return dataTypeObject.isEditableInCell();
+		
+		// there was no data type object, so this data type is unknown
+		// to squirrel and thus cannot be edited.	
+		return false;
+	}
+
 	
 	/**
 	 * Return a DefaultCellEditor using a JTextField with appropriate
@@ -119,6 +135,22 @@ public class CellComponentFactory {
 
 		ed.setClickCountToStart(1);
 		return ed;
+	}
+
+
+	/**
+	 * Return true if the data type for the column may be edited
+	 * in the popup, false if not.
+	 */
+	public static boolean isEditableInPopup(ColumnDisplayDefinition colDef) {
+		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
+		
+		if (dataTypeObject != null)
+			return dataTypeObject.isEditableInPopup();
+		
+		// there was no data type object, so this data type is unknown
+		// to squirrel and thus cannot be edited.	
+		return false;
 	}
 	
 	/**
