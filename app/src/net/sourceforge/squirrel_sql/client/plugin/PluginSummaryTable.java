@@ -20,19 +20,23 @@ package net.sourceforge.squirrel_sql.client.plugin;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import javax.swing.JTable;
+
+import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
-import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
+import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+
+import net.sourceforge.squirrel_sql.fw.gui.SortableTable;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-// TODO: Rename to PluginSummaryTable
 
 //TO: Enable the "load at startup" maintenance.
 // This is disabled at the moment because if a plugin is not loaded at startup
 // it will not appear in this panel (as it isn't loaded by the plugin manager)
 // and so cannot be set to load. Once unloaded it can never be loaded.
-public class PluginSummaryTable extends JTable
+public class PluginSummaryTable extends SortableTable
 {
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
@@ -40,6 +44,7 @@ public class PluginSummaryTable extends JTable
 
 	private final static String[] s_hdgs = new String[]
 	{
+// TODO: Enable once plugins can be switched off.
 //		s_stringMgr.getString("PluginSummaryTable.loadAtStartup"),
 		s_stringMgr.getString("PluginSummaryTable.name"),
 		s_stringMgr.getString("PluginSummaryTable.loaded"),
@@ -48,15 +53,47 @@ public class PluginSummaryTable extends JTable
 		s_stringMgr.getString("PluginSummaryTable.contributors"),
 	};
 
+	private final static Class[] s_dataTypes = new Class[]
+	{
+// TODO: Enable once plugins can be switched off.
+		// Boolean.class,
+		String.class,
+		String.class,
+		String.class,
+		String.class,
+		String.class,
+	};
+
+	private final static int[] s_columnWidths = new int[]
+	{
+// TODO: Enable once plugins can be switched off.
+		//10,
+		150, 50, 50, 100, 100,
+	};
+
 	public PluginSummaryTable(PluginInfo[] pluginInfo, PluginStatus[] pluginStatus)
 	{
-		super(new SortableTableModel(new MyTableModel(pluginInfo, pluginStatus)));
+		super(new MyTableModel(pluginInfo, pluginStatus));
+
+		setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		getTableHeader().setResizingAllowed(true);
+		getTableHeader().setReorderingAllowed(true);
+		setAutoCreateColumnsFromModel(false);
+		setAutoResizeMode(AUTO_RESIZE_LAST_COLUMN);
+
+		final TableColumnModel tcm = new DefaultTableColumnModel();
+		for (int i = 0; i < s_columnWidths.length; ++i)
+		{
+			final TableColumn col = new TableColumn(i, s_columnWidths[i]);
+			col.setHeaderValue(s_hdgs[i]);
+			tcm.addColumn(col);
+		}
+		setColumnModel(tcm);
 	}
 
 	PluginStatus[] getPluginStatus()
 	{
-		final SortableTableModel wrapper = (SortableTableModel)getModel();
-		return ((MyTableModel)wrapper.getActualModel()).getPluginStatus();
+		return ((MyTableModel)getSortableTableModel().getActualModel()).getPluginStatus();
 	}
 
 	private static class MyTableModel extends AbstractTableModel
@@ -105,6 +142,7 @@ public class PluginSummaryTable extends JTable
 			final PluginData pd = (PluginData)_pluginData.get(row);
 			switch (col)
 			{
+// TODO: Enable once plugins can be switched off.
 //				case 0:
 //					return new Boolean(pd._status.isLoadAtStartup());
 				case 0:
@@ -141,11 +179,7 @@ public class PluginSummaryTable extends JTable
 
 		public Class getColumnClass(int col)
 		{
-//			if (col == 0)
-//			{
-//				return Boolean.class;
-//			}
-			return String.class;
+			return s_dataTypes[col];
 		}
 
 		public boolean isCellEditable(int row, int col)
@@ -154,6 +188,7 @@ public class PluginSummaryTable extends JTable
 			//return col == 0;
 		}
 
+// TODO: Enable once plugins can be switched off.
 //        public void setValueAt(Object value, int row, int col)
 //		{
 //        	if (col == 0)
