@@ -33,7 +33,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 
 class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
-	private MyPanel _myPanel = new MyPanel();
+	private MyPanel _myPanel;
 
 	private IApplication _app;
 
@@ -50,10 +50,13 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 
 		_app = app;
 
-		_myPanel.loadData(_app.getSquirrelPreferences());
+		((MyPanel)getPanelComponent()).loadData(_app.getSquirrelPreferences());
 	}
 
-	public Component getPanelComponent() {
+	public synchronized Component getPanelComponent() {
+		if (_myPanel == null) {
+			_myPanel = new MyPanel();
+		}
 		return _myPanel;
 	}
 
@@ -150,6 +153,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 			pnl.add(new JLabel(i18n.LOGIN_TIMEOUT), gbc);
 
 			++gbc.gridx;
+			gbc.weightx = 1.0;
 			pnl.add(_loginTimeout, gbc);
 			
 			return pnl;
