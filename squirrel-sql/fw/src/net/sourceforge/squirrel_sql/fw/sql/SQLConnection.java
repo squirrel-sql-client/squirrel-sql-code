@@ -388,14 +388,31 @@ public class SQLConnection {
 
 			// At least one version of PostgreSQL through the ODBC/JDBC
 			// bridge returns an empty result set for the list of table
-			// types.
-			} else if (listSize == 0 && _dbProductName.equals("PostgreSQL")) {
-				list.add("TABLE");
-				list.add("SYSTEM TABLE");
-				list.add("VIEW");
-				list.add("INDEX");
-				list.add("SYSTEM INDEX");
-				list.add("SEQUENCE");
+			// types. Another version of PostgreSQL returns 6 entries
+			// of "SYSTEM TABLE.
+			} else if (_dbProductName.equals("PostgreSQL")) {
+				boolean fix = false;
+				if (listSize == 0) {
+					fix = true;
+				} else if (listSize == 6) {
+					fix = true;
+					for (int i = 0; i < listSize - 1; ++i) {
+						if (!((String)list.get(i)).equals((String)list.get(i + 1))) {
+							fix = false;
+							break;
+						}
+					}
+				}
+
+				if (fix) {
+					list.clear();
+					list.add("TABLE");
+					list.add("SYSTEM TABLE");
+					list.add("VIEW");
+					list.add("INDEX");
+					list.add("SYSTEM INDEX");
+					list.add("SEQUENCE");
+				}
 			}
 
 			return (String[])list.toArray(new String[list.size()]);
