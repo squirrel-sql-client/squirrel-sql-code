@@ -52,4 +52,12 @@ public interface IDataSetUpdateableTableModel extends IDataSetUpdateableModel
 	 * The name of the column might be something other than "rowID", e.g. "oid".
 	 */
 	public int getRowidCol();
+	
+	/**
+	 * Delete a set of rows from the DB.
+	 * If the delete succeeded this returns a null string.
+	 * The deletes are done within a transaction
+	 * so they are either all done or all not done.
+	 */
+	public String deleteRows(int[] rows);
 }
