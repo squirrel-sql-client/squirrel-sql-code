@@ -42,7 +42,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
-import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -202,9 +201,9 @@ public class AliasMaintSheet extends BaseSheet {
 			}
 			dispose();
 		} catch(ValidationException ex) {
-			new ErrorDialog(_app.getMainFrame(), ex).show();
+			_app.showErrorDialog(ex);
 		} catch(DuplicateObjectException ex) {
-			new ErrorDialog(_app.getMainFrame(), ex).show();
+			_app.showErrorDialog(ex);
 		}
 	}
 
@@ -346,7 +345,7 @@ public class AliasMaintSheet extends BaseSheet {
 					new ConnectToAliasCommand(_app, _app.getMainFrame(), testAlias, false,
 												new ConnectionCallBack(_app)).execute();
 				} catch (ValidationException ex) {
-					new ErrorDialog(_app.getMainFrame(), ex).show();
+					_app.showErrorDialog(ex);
 				}
 			}
 		});
@@ -411,7 +410,7 @@ public class AliasMaintSheet extends BaseSheet {
 				conn.close();
 			} catch (Throwable th) {
 				s_log.error("Error closing Connection", th);
-				new ErrorDialog(/*AliasMaintDialog.this*/_app.getMainFrame(), "Error closing opened connection: " + th.toString()).show();
+				_app.showErrorDialog("Error closing opened connection: " + th.toString());
 			}
 			Dialogs.showOk(AliasMaintSheet.this, "Connection successful");
 		}

@@ -44,7 +44,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
@@ -263,7 +262,7 @@ public class DriverMaintSheet extends BaseSheet {
 	private void displayErrorMessage(final Exception ex) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				new ErrorDialog(_app.getMainFrame(), ex).show();
+				_app.showErrorDialog(ex);
 			}
 		});
 	}

@@ -23,7 +23,6 @@ import java.sql.SQLException;
 
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
@@ -175,7 +174,7 @@ public class ConnectToAliasCommand implements ICommand {
 			synchronized (this) {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
-						new ErrorDialog(_app.getMainFrame(), msg).show();
+						_app.showErrorDialog(msg);
 					}
 				});
 			}

@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
 import java.awt.Frame;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
@@ -63,7 +62,7 @@ public class DisplayPluginSummaryCommand {
 		try {
 			new PluginSummaryDialog(_app, _frame).show();
 		} catch (DataSetException ex) {
-			new ErrorDialog(_frame, ex).show();
+			_app.showErrorDialog(ex);
 		}
 	}
 
