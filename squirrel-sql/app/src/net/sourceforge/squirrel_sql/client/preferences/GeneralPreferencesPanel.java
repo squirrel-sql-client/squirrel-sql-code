@@ -182,6 +182,10 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 			gbc.weightx = 1.0;
 			pnl.add(_loginTimeout, gbc);
 
+			++gbc.gridx;
+			gbc.weightx = 0.0;
+			pnl.add(new JLabel("Zero means unlimited"), gbc);
+
 			return pnl;
 		}
 
