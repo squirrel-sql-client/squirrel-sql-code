@@ -218,7 +218,7 @@ public class PopupEditableIOPanel extends JPanel
 		eiPanel.add(new JLabel("Use File: "), gbc);
 
 
-		fileNameField = new JTextField(TEMP_FILE_FLAG, 20);
+		fileNameField = new JTextField(TEMP_FILE_FLAG, 19);
 		gbc.gridx++;
 		eiPanel.add(fileNameField, gbc);
 
