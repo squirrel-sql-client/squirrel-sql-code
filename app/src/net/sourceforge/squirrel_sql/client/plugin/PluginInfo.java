@@ -20,7 +20,7 @@ package net.sourceforge.squirrel_sql.client.plugin;
 /**
  * This class keeps information about a plugin.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class PluginInfo
 {
@@ -43,7 +43,7 @@ public class PluginInfo
 
 	/**
 	 * Default ctor.
-	 * 
+	 *
 	 * Should only be used to treat as a Javabean.
 	 */
 	public PluginInfo()
@@ -190,7 +190,7 @@ public class PluginInfo
 	 * <TT>null</TT> if the plugin could not be
 	 * instantiated.
 	 *
-	 * @return  the <TT>IPlugin</TT>.
+	 * @return	the <TT>IPlugin</TT>.
 	 */
 	public IPlugin getPlugin()
 	{

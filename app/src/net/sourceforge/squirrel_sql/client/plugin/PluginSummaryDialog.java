@@ -43,7 +43,7 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 /**
  * This dialog displays a summary of all plugins.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class PluginSummaryDialog extends JFrame
 {
@@ -78,7 +78,7 @@ public class PluginSummaryDialog extends JFrame
 		pluginLoc.setBorder(BorderFactory.createEmptyBorder(1, 4, 1, 4));
 
 		contentPane.add(pluginLoc, BorderLayout.NORTH);
-		
+
 		// Table of loaded plugins in centre of dialog.
 		final PluginInfo[] pluginInfo = app.getPluginManager().getPluginInformation();
 		final Component pluginPnl = new PluginSummaryPanel(pluginInfo).getComponent();

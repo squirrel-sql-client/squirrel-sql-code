@@ -262,11 +262,11 @@ public class GlobalPreferencesSheet extends BaseSheet
 		for (Iterator it = _panels.iterator(); it.hasNext();)
 		{
 			IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel) it.next();
-			String title = pnl.getTitle();
+			String pnlTitle = pnl.getTitle();
 			String hint = pnl.getHint();
 			final JScrollPane sp = new JScrollPane(pnl.getPanelComponent());
 			sp.setBorder(BorderFactory.createEmptyBorder());
-			tabPane.addTab(title, null, sp/*pnl.getPanelComponent()*/, hint);
+			tabPane.addTab(pnlTitle, null, sp/*pnl.getPanelComponent()*/, hint);
 		}
 
 		// This seems to be necessary to get background colours

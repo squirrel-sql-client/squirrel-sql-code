@@ -31,6 +31,7 @@ public final class PluginInfoBeanInfo extends SimpleBeanInfo
 
 	private interface IPropNames extends PluginInfo.IPropertyNames
 	{
+		// Empty body, purely to shorten the interface name for convienience. 
 	}
 
 	public PluginInfoBeanInfo() throws IntrospectionException

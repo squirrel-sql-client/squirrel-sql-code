@@ -53,15 +53,6 @@ public class NewSessionPropertiesSheet extends BaseSheet
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(NewSessionPropertiesSheet.class);
 
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-//	private interface NewSessionPropertiesSheetI18n
-//	{
-//		String TITLE = "New Session Properties";
-//	}
-
 	/** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(NewSessionPropertiesSheet.class);
@@ -219,11 +210,11 @@ public class NewSessionPropertiesSheet extends BaseSheet
 		for (Iterator it = _panels.iterator(); it.hasNext();)
 		{
 			INewSessionPropertiesPanel pnl = (INewSessionPropertiesPanel)it.next();
-			String title = pnl.getTitle();
+			String winTitle = pnl.getTitle();
 			String hint = pnl.getHint();
 			final JScrollPane sp = new JScrollPane(pnl.getPanelComponent());
 			sp.setBorder(BorderFactory.createEmptyBorder());
-			tabPane.addTab(title, null, sp/*pnl.getPanelComponent()*/, hint);
+			tabPane.addTab(winTitle, null, sp/*pnl.getPanelComponent()*/, hint);
 		}
 
 		final JPanel contentPane = new JPanel(new GridBagLayout());

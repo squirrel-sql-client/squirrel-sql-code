@@ -40,9 +40,9 @@ public abstract class DefaultPlugin implements IPlugin
 	/**
 	 * Called on application startup before application started up.
 	 *
-	 * @param   app	 Application API.
+	 * @param	app	 Application API.
 	 */
-	public void load(IApplication app) throws PluginException
+	public void load(IApplication app)
 	{
 		if (app == null)
 		{
@@ -54,8 +54,9 @@ public abstract class DefaultPlugin implements IPlugin
 	/**
 	 * Called on application startup after application started.
 	 */
-	public void initialize() throws PluginException
+	public void initialize()
 	{
+		// Empty method.
 	}
 
 	/**
@@ -63,6 +64,7 @@ public abstract class DefaultPlugin implements IPlugin
 	 */
 	public void unload()
 	{
+		// Empty method.
 	}
 
 	/**
@@ -78,7 +80,7 @@ public abstract class DefaultPlugin implements IPlugin
 	/**
 	 * Returns the home page for this plugin.
 	 *
-	 * @return  the home page for this plugin.
+	 * @return	the home page for this plugin.
 	 */
 	public String getWebSite()
 	{

@@ -368,29 +368,20 @@ public class PluginManager
 		}
 		_pluginsClassLoader = new MyURLClassLoader(urls);
 
-		try
+		Class[] classes = _pluginsClassLoader.getAssignableClasses(IPlugin.class, s_log);
+		for (int i = 0; i < classes.length; ++i)
 		{
-			Class[] classes = _pluginsClassLoader.getAssignableClasses(IPlugin.class, s_log);
-			for (int i = 0; i < classes.length; ++i)
+			Class clazz = classes[i];
+			try
 			{
-				Class clazz = classes[i];
-				try
-				{
-					loadPlugin(clazz);
-				}
-				catch (Throwable th)
-				{
-					String msg = s_stringMgr.getString("PluginManager.error.loadpluginclass", clazz.getName());
-					s_log.error(msg, th);
-					_app.showErrorDialog(msg, th);
-				}
+				loadPlugin(clazz);
 			}
-		}
-		catch (IOException ex)
-		{
-			String msg = s_stringMgr.getString("PluginManager.error.noplugins");
-			s_log.error(msg, ex);
-			_app.showErrorDialog(msg, ex);
+			catch (Throwable th)
+			{
+				String msg = s_stringMgr.getString("PluginManager.error.loadpluginclass", clazz.getName());
+				s_log.error(msg, th);
+				_app.showErrorDialog(msg, th);
+			}
 		}
 	}
 
