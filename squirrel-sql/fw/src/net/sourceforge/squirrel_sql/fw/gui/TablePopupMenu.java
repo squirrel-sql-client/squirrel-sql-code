@@ -26,6 +26,7 @@ import javax.swing.JTable;
 import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyHtmlCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableSelectAllCellsCommand;
 
 public class TablePopupMenu extends BasePopupMenu {
@@ -33,6 +34,7 @@ public class TablePopupMenu extends BasePopupMenu {
 
     private CutAction _cut = new CutAction();
     private CopyAction _copy = new CopyAction();
+	private CopyHtmlAction _copyHtml = new CopyHtmlAction();
     private PasteAction _paste = new PasteAction();
     private ClearAction _clear = new ClearAction();
     private SelectAllAction _select = new SelectAllAction();
@@ -41,6 +43,7 @@ public class TablePopupMenu extends BasePopupMenu {
         super();
         //add(_cut);
         add(_copy);
+        add(_copyHtml);
         //add(_paste);
         addSeparator();
         //add(_clear);
@@ -100,6 +103,18 @@ public class TablePopupMenu extends BasePopupMenu {
         public void actionPerformed(ActionEvent evt) {
             if (_table != null) {
                 new TableCopyCommand(_table).execute();
+            }
+        }
+    }
+
+    private class CopyHtmlAction extends BaseAction {
+        CopyHtmlAction() {
+            super("Copy as Html");
+        }
+
+        public void actionPerformed(ActionEvent evt) {
+            if (_table != null) {
+                new TableCopyHtmlCommand(_table).execute();
             }
         }
     }

@@ -26,12 +26,12 @@ import javax.swing.JTable;
 import javax.swing.table.TableModel;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
-public class TableCopyCommand implements ICommand {
+public class TableCopyHtmlCommand implements ICommand {
     private final static String NULL_CELL = "<null>";
 
     private JTable _table;
 
-    public TableCopyCommand(JTable table) {
+    public TableCopyHtmlCommand(JTable table) {
         super();
         if (table == null) {
             throw new IllegalArgumentException("Null JTable passed");
@@ -44,26 +44,58 @@ public class TableCopyCommand implements ICommand {
         int nbrSelCols = _table.getSelectedColumnCount();
         int[] selRows = _table.getSelectedRows();
         int[] selCols = _table.getSelectedColumns();
-        if (selRows.length != 0 && selCols.length != 0) {
+		if (selRows.length != 0 && selCols.length != 0) 
+		{
 			TableModel model = _table.getModel();
             StringBuffer buf = new StringBuffer();
+            buf.append("<table border=1><tr BGCOLOR=\"#CCCCFF\">");
 			for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx) {
+				buf.append("<th>");
 				buf.append(model.getColumnName(selCols[colIdx]));
-				if (colIdx < nbrSelCols - 1) {
-					buf.append('\t');
-				}
+				buf.append("</th>");
 			}
-			buf.append('\n');
-            for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx) {
+            buf.append("</tr>\n");
+			for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx) 
+            {
+            	buf.append("<tr>");
                 for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx) {
                     Object cellObj = _table.getValueAt(selRows[rowIdx], selCols[colIdx]);
-                    buf.append(cellObj != null ? cellObj : NULL_CELL);
-                    if (colIdx < nbrSelCols - 1) {
-                        buf.append('\t');
-                    }
+                    buf.append("<td>");
+					if(cellObj == null) buf.append("&nbsp;");
+					else if(cellObj instanceof String)
+					{
+						String tmp = (String)cellObj;
+						if(tmp.trim().equals("")) buf.append("&nbsp;");
+						else 
+						{
+							for (int i = 0; i < tmp.length(); i++)
+								{
+									switch (tmp.charAt(i))
+									{
+										case '<' :
+											buf.append("&lt;");
+											break;
+										case '>' :
+											buf.append("&gt;");
+											break;
+										case '&' :
+											buf.append("&amp;");
+											break;
+										case '"' :
+											buf.append("&quot;");
+											break;
+										default :
+											buf.append(tmp.charAt(i));
+									}
+								}							
+						}
+					}
+					else buf.append(cellObj);
+                    buf.append("</td>");
                 }
-                buf.append('\n');
+                buf.append("</tr>\n");
             }
+            buf.append("</table>");
             StringSelection ss = new StringSelection(buf.toString());
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
         }
