@@ -40,7 +40,7 @@ public class MakeEditableCommand implements ICommand
 	{
 		// tell the underlying data model to make itself editable,
 		// which includes telling the GUI to rebuild itself
-		_updateableModel.forceEditMode();
+		_updateableModel.forceEditMode(true);
 	}
 
 }
