@@ -14,7 +14,7 @@ Enhancements
 Bug Fixes
 ---------
 - Fix option in Windows batch file not to show command window.
-- Show decimal positions when required.
+- Show decimal positions in column data when required.
 - Show <null> when column data is null instead of an empty string.
 - Fixed metadata problems with the JDBC/ODBC bridge.
 
