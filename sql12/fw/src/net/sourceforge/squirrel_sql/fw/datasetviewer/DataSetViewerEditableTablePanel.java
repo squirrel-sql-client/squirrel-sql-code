@@ -123,23 +123,6 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 			return false;	// no underlying data, so cannot be changed
 
 
-		// Check to see if data type can be updated by normal SQL
-		// using strings for SET and WHERE clauses.
-		// If not, then dump the whole update problem in the lap
-		// of the DataType object which said that the value was editable.
-		// Since we don't know what that DataType object needs in order
-		// to do the update, give it everything we know about.
-		if (CellComponentFactory.getSetClauseValue(_colDefs[col], newValue) == null) {
-//??? TEMP: since I haven't gotten to any of these non-simple-text data types yet,
-//??? I don't know what would be good parameters for this method.  To reduce the
-//??? re-editing of the interface and existing data types, I'm not implementing it yet.
-//??			return CellComponentFactory.updateNonTextValue(_colDefs[col],
-//??				col, newValue, oldValue, _colDefs,
-//??				getUpdateableModelReference(),getRow(row));
-return false;	//temp: data not updated
-		}
-
-
 		// check to see if new data is same as old data, in which case we
 		// do not update the underlying data.
 		//
@@ -161,23 +144,12 @@ return false;	//temp: data not updated
 		// changed and we fall-through to the change process.  Otherwise, check
 		// the object contents.
 		if (oldValue != null && newValue != null) {
-			//
-			// ASSUMPTION:
-			//	if the data is updatable as a string in a normal SQL SET statement,
-			//	we assume that it is not a complex object, and that therefore the
-			//	representation of the data as shown in the table cell (as opposed to
-			//	the Popup) is sufficient to see any differences between the old
-			//	and the new values.
-			//
-			//?? Note: if we can guarantee that ALL data objects that we deal with
-			//?? such as Integer, String, etc, have an equals() function correctly
-			//?? implemented, then we should use that instead of doing this
-			//?? string-to-string comparison.
-			if (CellComponentFactory.renderObject(oldValue, _colDefs[col]).
-				equals(CellComponentFactory.renderObject(newValue,_colDefs[col])))
+			// ask the DataType object if the two values are the same
+			if (CellComponentFactory.areEqual( _colDefs[col], oldValue, newValue))
 				return true;	// the caller does not need to know that nothing happened
 					
-			// if we reach this point, value has changed, so fall through to next section
+			// if we reach this point, the value has been changed,
+			// so fall through to next section
 		}
 
 		// call the function in the app code that checks for unexpected
@@ -241,8 +213,5 @@ return false;	//temp: data not updated
 		// no problems, so indicate a successful update of the underlying data
 		return true;
 	}
-	
-	//?? Other functions??
-
 
 }
