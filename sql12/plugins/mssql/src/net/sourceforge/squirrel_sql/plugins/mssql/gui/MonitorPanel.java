@@ -42,10 +42,6 @@ import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.util.Date;
-import org.jCharts.chartData.ChartDataException;
-import org.jCharts.chartData.PieChartDataSet;
-import org.jCharts.nonAxisChart.PieChart2D;
-import org.jCharts.properties.*;
 
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.BaseDataSetViewerDestination;
@@ -143,9 +139,6 @@ public class MonitorPanel extends net.sourceforge.squirrel_sql.client.session.ma
     }
     
     private void refreshData() {
-        /*if (!this.getComponent().isFocusOwner())
-            return;*/
-        
         ResultSet rs;
         
         try {
@@ -158,77 +151,13 @@ public class MonitorPanel extends net.sourceforge.squirrel_sql.client.session.ma
             rs = _perfStmt.executeQuery();
             _perfDataSet.setResultSet(rs);
             _perfViewer.show(_perfDataSet);
-            
-            // don't generate the graph crap.
-            if (true)
-                return;
-            
-            if (_monitorStmt.execute()) {
-                rs = _monitorStmt.getResultSet();
-                if (_monitorStmt.getMoreResults()) {
-                    rs = _monitorStmt.getResultSet();
-                    if (rs.next()) {
-                        // cpu_busy                  io_busy                   idle                      
-                        // ------------------------- ------------------------- ------------------------- 
-                        // 10071(29)-0%              10195(36)-0%              3084271(11478)-96%  
-                        String cpuStatus = rs.getString(1);
-                        String ioStatus = rs.getString(2);
-
-                        String cpuPct = cpuStatus.substring(cpuStatus.indexOf("-") + 1,cpuStatus.indexOf("%"));
-                        String ioPct = ioStatus.substring(ioStatus.indexOf("-") + 1,ioStatus.indexOf("%"));
-
-                        int cpu;
-                        int io;
-                        try {
-                            cpu = Integer.parseInt(cpuPct);
-                        }
-                        catch (java.lang.NumberFormatException e) {
-                            cpu = 0;
-                        }
-                        try {
-                            io = Integer.parseInt(ioPct);
-                        }
-                        catch (java.lang.NumberFormatException e) {
-                            io = 0;
-                        }
-
-                        String[] labels = { "Busy", "Non-busy" };
-                        java.awt.Paint[] colors = { java.awt.Color.red, java.awt.Color.blue };
-                        
-                        double[] cpuData = { cpu, 100 - cpu };
-                        double[] ioData = { io, 100 - io };
-                        
-                        try {
-                            PieChart2DProperties cpuProps = new PieChart2DProperties();
-                            cpuProps.setPieLabelType(org.jCharts.types.PieLabelType.VALUE_LABELS);
-                            cpuProps.setBorderPaint(_cpuHistory.getBackground());
-                            PieChartDataSet cpuDataSet = new PieChartDataSet("CPU Usage", cpuData, labels, colors, cpuProps);
-                            PieChart2D cpuChart = new PieChart2D(cpuDataSet, new LegendProperties(), new ChartProperties(), _cpuHistory.getWidth(), _cpuHistory.getHeight());
-                            cpuChart.setGraphics2D((java.awt.Graphics2D) _cpuHistory.getGraphics());
-                            cpuChart.render();
-
-                            PieChart2DProperties ioProps = new PieChart2DProperties();
-                            ioProps.setPieLabelType(org.jCharts.types.PieLabelType.VALUE_LABELS);
-                            ioProps.setBorderPaint(_ioHistory.getBackground());
-                            PieChartDataSet ioDataSet = new PieChartDataSet("I/O Usage", ioData, labels, colors, ioProps);
-                            PieChart2D ioChart = new PieChart2D(ioDataSet, new LegendProperties(), new ChartProperties(), _ioHistory.getWidth(), _ioHistory.getHeight());
-                            ioChart.setGraphics2D((java.awt.Graphics2D) _ioHistory.getGraphics());
-                            ioChart.render();
-                        }
-                        catch (ChartDataException ex) {
-                            ex.printStackTrace();
-                        }
-                        catch (PropertyException ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                }
-            }
         }
         catch (java.sql.SQLException ex) {
+            // let's not burden the beta-tester with error dialogs quite yet.
             ex.printStackTrace();
         }
         catch (DataSetException dse) {
+            // let's not burden the beta-tester with error dialogs quite yet.
             dse.printStackTrace();
         }
     }
@@ -239,9 +168,6 @@ public class MonitorPanel extends net.sourceforge.squirrel_sql.client.session.ma
         JPanel panel = new JPanel();
         GridBagLayout gridBag = new GridBagLayout();
         panel.setLayout(gridBag);
-        
-        //JPanel refreshPanel = new JPanel();
-        //refreshPanel.setLayout(new FlowLayout());
         
         _frequency = new JSlider();
         _frequency.setMinimum(0);
@@ -285,16 +211,6 @@ public class MonitorPanel extends net.sourceforge.squirrel_sql.client.session.ma
         });
         addComponentToGridBag(GridBagConstraints.RELATIVE,0,1,1,0.0,0.0,GridBagConstraints.NONE,gridBag,refreshButton,panel);
        
-        /*
-        _cpuHistory = new JPanel();
-        _cpuHistory.setBorder(BorderFactory.createTitledBorder("CPU Usage"));
-        addComponentToGridBag(0,1,1,1,1.0,1.0,GridBagConstraints.BOTH,gridBag,_cpuHistory,panel);
-        
-        _ioHistory = new JPanel();
-        _ioHistory.setBorder(BorderFactory.createTitledBorder("I/O Usage"));
-        addComponentToGridBag(GridBagConstraints.RELATIVE,1,1,1,1.0,1.0,GridBagConstraints.BOTH,gridBag,_ioHistory,panel);
-        */
-        
         _whoViewer = BaseDataSetViewerDestination.getInstance(props.getReadOnlySQLResultsOutputClassName(), null);
         JScrollPane whoScroll = new JScrollPane(_whoViewer.getComponent());
         whoScroll.setBorder(BorderFactory.createTitledBorder("Current Activity"));
