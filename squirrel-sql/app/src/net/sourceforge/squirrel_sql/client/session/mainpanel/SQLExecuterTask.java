@@ -23,14 +23,11 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
@@ -89,6 +86,7 @@ public class SQLExecuterTask implements Runnable {
 															new ResultSetMetaDataDataSet(rs),
 															_cancelPanel);
 									bCancelPanelRemoved = true;
+									_session.getMessageHandler().showMessage(rs.getWarnings());
 								} finally {
 									rs.close();
 								}
@@ -98,21 +96,14 @@ public class SQLExecuterTask implements Runnable {
 						}
 					}
 				}
-				//
-				if (_bStopExecution || !bCancelPanelRemoved)
-					//				{
-					//
+
+				if (_bStopExecution || !bCancelPanelRemoved) {
 					_sqlPanel.removeCancelPanel(_cancelPanel);
-				//				}
+				}
 				final long finish = System.currentTimeMillis();
 				_session.getMessageHandler().showMessage("Elapsed time for query(milliseconds) : " + (finish - start));
 				//  i18n
-//			} catch (Throwable ex) {
-//				showMessage(_session, ex);
 			} finally {
-				//if (_bStopExecution || !bCancelPanelRemoved) {
-		//			_sqlPanel.removeCancelPanel(_cancelPanel);
-				//}
 				try {
 					_stmt.close();
 				} finally {
