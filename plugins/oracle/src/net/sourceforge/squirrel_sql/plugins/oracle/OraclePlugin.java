@@ -18,7 +18,12 @@ package net.sourceforge.squirrel_sql.plugins.oracle;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.sql.SQLException;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.session.ISQLInternalFrame;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -31,6 +36,7 @@ import net.sourceforge.squirrel_sql.plugins.oracle.expander.SessionParentExpande
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.TableExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.TriggerParentExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.UserParentExpander;
+import net.sourceforge.squirrel_sql.plugins.oracle.explainplan.ExplainPlanExecuter;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.InstanceDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.ObjectSourceTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.OptionsTab;
@@ -43,9 +49,14 @@ import net.sourceforge.squirrel_sql.plugins.oracle.tab.TriggerSourceTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.UserDetailsTab;
 
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
+import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
+
 /**
  * Oracle plugin class.
  *
@@ -55,9 +66,6 @@ public class OraclePlugin extends DefaultSessionPlugin
 {
 	/** Logger for this class. */
 	private final static ILogger s_log = LoggerController.createLogger(OraclePlugin.class);
-
-	/** API for the Obejct Tree. */
-	private IObjectTreeAPI _treeAPI;
 
 	/**
 	 * Return the internal name of this plugin.
@@ -123,69 +131,20 @@ public class OraclePlugin extends DefaultSessionPlugin
 		return "licence.txt";
 	}
 
-	/**
-	 * Application is shutting down so save preferences.
-	 */
-	public void unload()
+        public void initialize() throws PluginException
 	{
-		super.unload();
+                super.initialize();
+
+                final IApplication app = getApplication();
+                app.getWindowManager().addSessionSheetListener(new OraclePluginFactory());
 	}
 
 	/**
-	 * Session has been started. If this is an Oracle session then
-	 * register an extra expander for the Schema nodes to show
-	 * Oracle Packages.
-	 *
-	 * @param	session		Session that has started.
-	 *
-	 * @return	<TT>true</TT> if session is Oracle in which case this plugin
-	 * 							is interested in it.
+	 * Application is shutting down so save preferences.
 	 */
-	public boolean sessionStarted(ISession session)
-	{
-		boolean isOracle = false;
-		if( super.sessionStarted(session))
+	public void unload() // throws PluginException
 		{
-			isOracle = isOracle(session);
-			if (isOracle)
-			{
-				_treeAPI = session.getObjectTreeAPI(this);
-
-				// Tabs to add to the database node.
-				_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new OptionsTab());
-
-				_treeAPI.addDetailTab(IObjectTypes.CONSUMER_GROUP, new DatabaseObjectInfoTab());
-				_treeAPI.addDetailTab(DatabaseObjectType.FUNCTION, new DatabaseObjectInfoTab());
-				_treeAPI.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
-				_treeAPI.addDetailTab(IObjectTypes.LOB, new DatabaseObjectInfoTab());
-				_treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
-				_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
-				_treeAPI.addDetailTab(IObjectTypes.TRIGGER_PARENT, new DatabaseObjectInfoTab());
-				_treeAPI.addDetailTab(IObjectTypes.TYPE, new DatabaseObjectInfoTab());
-
-				// Expanders.
-				_treeAPI.addExpander(DatabaseObjectType.SESSION, new DatabaseExpander());
-				_treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander(this));
-				_treeAPI.addExpander(DatabaseObjectType.TABLE, new TableExpander());
-				_treeAPI.addExpander(IObjectTypes.PACKAGE, new PackageExpander());
-				_treeAPI.addExpander(IObjectTypes.USER_PARENT, new UserParentExpander());
-				_treeAPI.addExpander(IObjectTypes.SESSION_PARENT, new SessionParentExpander());
-				_treeAPI.addExpander(IObjectTypes.INSTANCE_PARENT, new InstanceParentExpander(this));
-				_treeAPI.addExpander(IObjectTypes.TRIGGER_PARENT, new TriggerParentExpander());
-
-				_treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, new ObjectSourceTab("PROCEDURE", "Show stored procedure source"));
-				_treeAPI.addDetailTab(DatabaseObjectType.FUNCTION, new ObjectSourceTab("FUNCTION", "Show function source"));
-				_treeAPI.addDetailTab(IObjectTypes.INSTANCE, new InstanceDetailsTab());
-				_treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new SequenceDetailsTab());
-				_treeAPI.addDetailTab(IObjectTypes.SESSION, new SessionDetailsTab());
-				_treeAPI.addDetailTab(IObjectTypes.SESSION, new SessionStatisticsTab());
-				_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
-				_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab("Show trigger source"));
-				_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerColumnInfoTab());
-				_treeAPI.addDetailTab(DatabaseObjectType.USER, new UserDetailsTab());
-			}
-		}
-		return isOracle;
+		super.unload();
 	}
 
 	private boolean isOracle(ISession session)
@@ -202,4 +161,54 @@ public class OraclePlugin extends DefaultSessionPlugin
 		}
 		return dbms != null && dbms.toLowerCase().startsWith(ORACLE);
 	}
+
+        /** This class listens to new frames as they are opened and adds
+         *  object from this plugins.
+         */
+        public class OraclePluginFactory extends InternalFrameAdapter {
+          public void internalFrameOpened(InternalFrameEvent e) {
+            if (e.getInternalFrame() instanceof ISQLInternalFrame) {
+              ISQLPanelAPI panel = ((ISQLInternalFrame)e.getInternalFrame()).getSQLPanelAPI();
+              ISession session = panel.getSession();
+              if (isOracle(session))
+                panel.addExecutor(new ExplainPlanExecuter(session, panel));
+            } 
+            if (e.getInternalFrame() instanceof IObjectTreeInternalFrame) {
+              IObjectTreeAPI objTree = ((IObjectTreeInternalFrame)e.getInternalFrame()).getObjectTreeAPI();
+              ISession session = objTree.getSession();
+              if (isOracle(session)) {
+                objTree.addDetailTab(DatabaseObjectType.SESSION, new OptionsTab());
+                objTree.addDetailTab(IObjectTypes.CONSUMER_GROUP, new DatabaseObjectInfoTab());
+                objTree.addDetailTab(DatabaseObjectType.FUNCTION, new DatabaseObjectInfoTab());
+                objTree.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
+                objTree.addDetailTab(IObjectTypes.LOB, new DatabaseObjectInfoTab());
+                objTree.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
+                objTree.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
+                objTree.addDetailTab(IObjectTypes.TRIGGER_PARENT, new DatabaseObjectInfoTab());
+                objTree.addDetailTab(IObjectTypes.TYPE, new DatabaseObjectInfoTab());
+
+                // Expanders.
+                objTree.addExpander(DatabaseObjectType.SESSION, new DatabaseExpander());
+                objTree.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander(OraclePlugin.this));
+                objTree.addExpander(DatabaseObjectType.TABLE, new TableExpander());
+                objTree.addExpander(IObjectTypes.PACKAGE, new PackageExpander());
+                objTree.addExpander(IObjectTypes.USER_PARENT, new UserParentExpander());
+                objTree.addExpander(IObjectTypes.SESSION_PARENT, new SessionParentExpander());
+                objTree.addExpander(IObjectTypes.INSTANCE_PARENT, new InstanceParentExpander(OraclePlugin.this));
+                objTree.addExpander(IObjectTypes.TRIGGER_PARENT, new TriggerParentExpander());
+
+                objTree.addDetailTab(DatabaseObjectType.PROCEDURE, new ObjectSourceTab("PROCEDURE", "Show stored procedure source"));
+                objTree.addDetailTab(DatabaseObjectType.FUNCTION, new ObjectSourceTab("FUNCTION", "Show function source"));
+                objTree.addDetailTab(IObjectTypes.INSTANCE, new InstanceDetailsTab());
+                objTree.addDetailTab(DatabaseObjectType.SEQUENCE, new SequenceDetailsTab());
+                objTree.addDetailTab(IObjectTypes.SESSION, new SessionDetailsTab());
+                objTree.addDetailTab(IObjectTypes.SESSION, new SessionStatisticsTab());
+                objTree.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
+                objTree.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab());
+                objTree.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerColumnInfoTab());
+                objTree.addDetailTab(DatabaseObjectType.USER, new UserDetailsTab());
+              }
+            }
+          }
+        }
 }
