@@ -37,7 +37,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
-import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.gui.SQLCatalogsComboBox;
 import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
@@ -227,7 +226,7 @@ public class SessionSheet extends BaseSheet {
 	}
 
 	private void showError(Exception ex) {
-		new ErrorDialog(_session.getApplication().getMainFrame(), ex).show();
+		_session.getApplication().showErrorDialog(ex);
 	}
 
 	private void propertiesHaveChanged(String propertyName) {

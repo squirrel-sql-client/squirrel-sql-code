@@ -31,6 +31,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -116,7 +117,13 @@ public class GlobalPreferencesSheet extends BaseSheet {
 					if (isDebug) {
 						start = System.currentTimeMillis();
 					}
-					pnl.initialize(_app);
+					try {
+						pnl.initialize(_app);
+					} catch (Throwable th) {
+						final String msg = "Error occured loading " + pnl.getTitle();
+						s_log.error(msg, th);
+						_app.showErrorDialog(msg, th);
+					}
 					if (isDebug) {
 						s_log.debug("Panel " + pnl.getTitle() + " initialized in "
 									+ (System.currentTimeMillis() - start) + "ms");
@@ -153,18 +160,30 @@ public class GlobalPreferencesSheet extends BaseSheet {
 	 * OK button pressed so save changes.
 	 */
 	private void performOk() {
-		final boolean isDebug = s_log.isDebugEnabled();
-		long start = 0;
-		for (Iterator it = _panels.iterator(); it.hasNext();) {
-			if (isDebug) {
-				start = System.currentTimeMillis();
+		CursorChanger cursorChg = new CursorChanger(_app.getMainFrame());
+		cursorChg.show();
+		try {
+			final boolean isDebug = s_log.isDebugEnabled();
+			long start = 0;
+			for (Iterator it = _panels.iterator(); it.hasNext();) {
+				if (isDebug) {
+					start = System.currentTimeMillis();
+				}
+				IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel)it.next();
+				try {
+					pnl.applyChanges();
+				} catch (Throwable th) {
+					final String msg = "Error occured saving " + pnl.getTitle();
+					s_log.error(msg, th);
+					_app.showErrorDialog(msg, th);
+				}
+				if (isDebug) {
+					s_log.debug("Panel " + pnl.getTitle() + " applied changes in "
+								+ (System.currentTimeMillis() - start) + "ms");
+				}
 			}
-			IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel)it.next();
-			pnl.applyChanges();
-			if (isDebug) {
-				s_log.debug("Panel " + pnl.getTitle() + " applied changes in "
-							+ (System.currentTimeMillis() - start) + "ms");
-			}
+		} finally {
+			cursorChg.restore();
 		}
 
 		setVisible(false);
