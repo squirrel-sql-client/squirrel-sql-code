@@ -280,11 +280,8 @@ public class DataTypeString
 				// max size reached
 				e.consume();
 				_theComponent.getToolkit().beep();
-								
-				// tabs and newlines get put into the text before this check,
-				// so remove them
-				if (c == KeyEvent.VK_TAB || c == KeyEvent.VK_ENTER)
-					((IRestorableTextComponent)_theComponent).updateText(text.substring(0, text.length()-1));
+				
+				// Note: tabs and newlines are allowed in string fields, even though they are unusual.
 			}
 
 			// handle cases of null
