@@ -3,6 +3,8 @@ Change Log
 
 1.1 continuation
 ================
+- New Session options moved from Global Prefernces dialog to new Session Properties dialog.
+- New options on the session menu - Close all result tabs and close all Result windows.
 - New option on the Windows menu - Close all sessions.
 - Torn off result tabs are now closed if there session sheet is closed.
 - Bring aliases/driver window to front if action requested.
