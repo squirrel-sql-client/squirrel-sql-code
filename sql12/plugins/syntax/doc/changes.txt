@@ -1,6 +1,8 @@
 Syntax Highlighting Plugin Change Log
 =====================================
 
+Integration of Netbeans editor
+
 coloring of columns and bug fixes
 Fixed bug #981490
 
