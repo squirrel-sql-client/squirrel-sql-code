@@ -44,6 +44,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JComboBox;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextArea;
@@ -74,7 +75,7 @@ public class PopupEditableIOPanel extends JPanel
 	private JTextField fileNameField;
 
 	// command to use when processing data with an external program
-	private JTextField externalCommandField;
+	private JComboBox externalCommandCombo;
 	
 	// text put in file name field to indicate that we should
 	// create a temp file for export
@@ -178,10 +179,15 @@ public class PopupEditableIOPanel extends JPanel
 		gbc.gridy++;
 		gbc.gridx = 0;
 		eiPanel.add(new JLabel("With command:"), gbc);
-		
-		externalCommandField = new JTextField(20);
+
+		// add combo box for command to execute
 		gbc.gridx++;
-		eiPanel.add(externalCommandField, gbc);
+		externalCommandCombo = new JComboBox(
+			CellImportExportInfoSaver.getInstance().getCmdList());
+		externalCommandCombo.setSelectedIndex(-1);	// no entry selected
+		externalCommandCombo.setEditable(true);
+		externalCommandCombo.setPrototypeDisplayValue("xxxxxxxxxxxxxxxxxxxxxxxxxx");
+		eiPanel.add(externalCommandCombo, gbc);
 		
 		// add button to execute external command
 		JButton externalCommandButton = new JButton("Execute");
@@ -191,6 +197,16 @@ public class PopupEditableIOPanel extends JPanel
 		gbc.gridx++;
 		eiPanel.add(externalCommandButton, gbc);
 		
+		// add button for applying file & cmd info without doing anything else
+		JButton applyButton = new JButton("Apply File & Cmd");
+		applyButton.setActionCommand("apply");
+		applyButton.addActionListener(this);
+
+		gbc.gridx++;
+		gbc.gridwidth = 2;
+		eiPanel.add(applyButton, gbc);	
+		gbc.gridwidth = 1;	// reset width to normal	
+	
 		// add note to user about including file name in command
 		gbc.gridy++;
 		gbc.gridx = 0;
@@ -200,11 +216,12 @@ public class PopupEditableIOPanel extends JPanel
 
 		// load filename and command with previously entered info
 		// if not the default
-		CellImportExportInfo info = CellImportExportInfoSaver.get(_colDef.getFullTableColumnName());
+		CellImportExportInfo info = 
+			CellImportExportInfoSaver.getInstance().get(_colDef.getFullTableColumnName());
 		if (info != null) {
 			// load the info into the text fields
 			fileNameField.setText(info.getFileName());
-			externalCommandField.setText(info.getCommand());
+			externalCommandCombo.getEditor().setItem(info.getCommand());
 		}
 		
 		return eiPanel;
@@ -257,13 +274,34 @@ public class PopupEditableIOPanel extends JPanel
 				}
 			}
 		}
+		
+		else if (e.getActionCommand().equals("apply")) {
+			// If file name default and cmd is null or empty,
+			// make sure this entry is not being held in CellImportExportInfoSaver
+			if ( (fileNameField.getText() != null &&
+					fileNameField.getText().equals(TEMP_FILE_FLAG)) &&
+				(externalCommandCombo.getEditor().getItem() == null ||
+					((String)externalCommandCombo.getEditor().getItem()).length() == 0)) {
+				// user has not entered anything or has reset to defaults,
+				// so make sure there is no entry for this column in the
+				// saved info
+				CellImportExportInfoSaver.remove(_colDef.getFullTableColumnName());
+			}
+			else {
+				// user has entered some non-default info, so save it
+				CellImportExportInfoSaver.getInstance().save(
+					_colDef.getFullTableColumnName(),fileNameField.getText(),
+					((String)externalCommandCombo.getEditor().getItem()));
+			}
+			
+		}
  
  		else if (e.getActionCommand().equals("import")) {
  			
  			// IMPORT OBJECT FROM FILE
  			
  			if (fileNameField.getText() == null ||
- 				fileNameField.getText().equals("<temp file>")) {
+ 				fileNameField.getText().equals(TEMP_FILE_FLAG)) {
  				// not allowed - must have existing file for import
  				JOptionPane.showMessageDialog(this,
 						"You must select an existing file to import data from.",
@@ -298,8 +336,9 @@ public class PopupEditableIOPanel extends JPanel
 
 			// save the data - we know that it is not the default
 			// because we do not allow importing from "temp file"
-			CellImportExportInfoSaver.save(_colDef.getFullTableColumnName(),
-				fileNameField.getText(), externalCommandField.getText());
+			CellImportExportInfoSaver.getInstance().save(
+				_colDef.getFullTableColumnName(), fileNameField.getText(),
+				((String)externalCommandCombo.getEditor().getItem()));
 	
  		}
 
@@ -440,10 +479,12 @@ public class PopupEditableIOPanel extends JPanel
 			// if user did anything other than default, then save
 			// their options
 			if ( ! fileNameField.getText().equals(TEMP_FILE_FLAG) ||
-				(externalCommandField.getText() != null &&
-				externalCommandField.getText().length() > 0)) {		
-			CellImportExportInfoSaver.save(_colDef.getFullTableColumnName(),
-				fileNameField.getText(), externalCommandField.getText());
+				(((String)externalCommandCombo.getEditor().getItem()) != null &&
+				((String)externalCommandCombo.getEditor().getItem()).length() > 0)) {	
+						
+				CellImportExportInfoSaver.getInstance().save(
+					_colDef.getFullTableColumnName(), fileNameField.getText(),
+					((String)externalCommandCombo.getEditor().getItem()));
 			}
 			
 			if (e.getActionCommand().equals("export")) {
@@ -470,8 +511,8 @@ public class PopupEditableIOPanel extends JPanel
 				
 				// EXPORT OBJECT TO FILE, EXECUTE PROGRAM ON IT, IMPORT IT BACK
 				
-				if (externalCommandField.getText() == null ||
-					externalCommandField.getText().length() == 0) {
+				if (((String)externalCommandCombo.getEditor().getItem()) == null ||
+					((String)externalCommandCombo.getEditor().getItem()).length() == 0) {
 					// cannot execute a null command
 					JOptionPane.showMessageDialog(this,
 						"Cannot execute a null command.\n"+
@@ -481,7 +522,7 @@ public class PopupEditableIOPanel extends JPanel
 				}
 				
 				// replace any instance of flag in command with file name
-				String command = externalCommandField.getText();
+				String command = ((String)externalCommandCombo.getEditor().getItem());
 
 				int index;
 				while ((index = command.indexOf(FILE_REPLACE_FLAG)) >= 0) {
