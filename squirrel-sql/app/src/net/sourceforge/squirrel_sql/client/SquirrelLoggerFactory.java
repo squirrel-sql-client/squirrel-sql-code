@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.client;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.io.IOException;
+import java.util.Calendar;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.BasicConfigurator;
@@ -28,10 +29,10 @@ import org.apache.log4j.PatternLayout;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.Log4jLoggerFactory;
 
-import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 
 public class SquirrelLoggerFactory extends Log4jLoggerFactory {
+	private static ILogger s_log = null;
 
 	public SquirrelLoggerFactory() throws IllegalArgumentException {
 		super(false);
@@ -54,5 +55,35 @@ public class SquirrelLoggerFactory extends Log4jLoggerFactory {
 				BasicConfigurator.configure();
 			}
 		}
+		doStartupLogging();
 	}
+
+	private void doStartupLogging() {
+		final ILogger log = createLogger(getClass());
+		log.info("=======================================================");
+		log.info("=======================================================");
+		log.info("=======================================================");
+		log.info(Version.getVersion() + " started: " +
+		Calendar.getInstance().getTime());
+		log.info(Version.getCopyrightStatement());
+		log.info("java.vendor: " +
+		System.getProperty("java.vendor"));
+		log.info("java.version: " +
+		System.getProperty("java.version"));
+		log.info("java.runtime.name: " +
+		System.getProperty("java.runtime.name"));
+		log.info("os.name: " +
+		System.getProperty("os.name"));
+		log.info("os.version: " +
+		System.getProperty("os.version"));
+		log.info("os.arch: " +
+		System.getProperty("os.arch"));
+		log.info("user.dir: " +
+		System.getProperty("user.dir"));
+		log.info("user.home: " +
+		System.getProperty("user.home"));
+		log.info("java.home: " +
+		System.getProperty("java.home"));
+		log.info("java.class.path: " +
+		System.getProperty("java.class.path")); 	}
 }
