@@ -16,7 +16,7 @@ import java.awt.*;
  * subsystem.
  *
  * @author Slava Pestov
- * @version $Id: SyntaxUtilities.java,v 1.1 2001-12-14 11:01:40 colbell Exp $
+ * @version $Id: SyntaxUtilities.java,v 1.2 2002-01-26 00:15:52 joco01 Exp $
  */
 public class SyntaxUtilities
 {
@@ -94,6 +94,8 @@ public class SyntaxUtilities
 		styles[Token.KEYWORD1] = new SyntaxStyle(Color.black,false,true);
 		styles[Token.KEYWORD2] = new SyntaxStyle(Color.magenta,false,false);
 		styles[Token.KEYWORD3] = new SyntaxStyle(new Color(0x009600),false,false);
+		styles[Token.TABLE] = new SyntaxStyle(Color.yellow,false,false);
+		styles[Token.COLOMN] = new SyntaxStyle(Color.blue,false,false);
 		styles[Token.LITERAL1] = new SyntaxStyle(new Color(0x650099),false,false);
 		styles[Token.LITERAL2] = new SyntaxStyle(new Color(0x650099),false,true);
 		styles[Token.LABEL] = new SyntaxStyle(new Color(0x990033),false,true);
