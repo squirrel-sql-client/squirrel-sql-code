@@ -71,6 +71,7 @@ public class FilterObjectTreeAction extends SquirrelAction
 		IApplication app = getApplication();
 		try
 		{
+			// TODO: This doesn;t sdo anything
 			new ObjectTreeFilterDialog(app, _session).show();
 		}
 		catch (Throwable ex)

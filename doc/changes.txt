@@ -22,6 +22,8 @@ Enhancements
 
 Bug Fixes
 ---------
+- Remove the Filter option from the popup menu in the object tree as this
+  functionality hasn't been implemented.
 - Bring the main window to the front when it is first displayed. Required with
   some JREs on Linux.
 - Fixed logging config argument in shell script.
