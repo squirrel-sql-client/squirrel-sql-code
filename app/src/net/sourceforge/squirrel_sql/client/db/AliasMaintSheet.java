@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.db;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -69,7 +69,11 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasComman
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
-
+/**
+ * This dialog allows the maintenance of an database alias.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
 public class AliasMaintSheet extends BaseSheet
 {
 	/**
@@ -272,7 +276,7 @@ public class AliasMaintSheet extends BaseSheet
 		{
 			final SQLDriverManager mgr = _app.getSQLDriverManager();
 			final Driver driver = mgr.getJDBCDriver(_sqlAlias.getDriverIdentifier());
-			final DriverPropertiesDialog dlog = new DriverPropertiesDialog((Frame)null, driver, _url.getText());
+			final DriverPropertiesDialog dlog = new DriverPropertiesDialog(_app.getMainFrame(), driver, _url.getText());
 			dlog.setModal(true);
 			dlog.setVisible(true);
 		}
@@ -327,38 +331,6 @@ public class AliasMaintSheet extends BaseSheet
 		++gbc.gridy;
 		gbc.insets = new Insets(0, 10, 5, 10);
 		contentPane.add(new JSeparator(), gbc);
-
-//		PropertyPanel dataEntryPnl = new PropertyPanel();
-//
-//		JLabel lbl = new JLabel(i18n.NAME, SwingConstants.RIGHT);
-//		dataEntryPnl.add(lbl, _aliasName);
-//
-//		_drivers = new DriversCombo();
-//		_drivers.addItemListener(new DriversComboItemListener());
-//		lbl = new JLabel(i18n.DRIVER, SwingConstants.RIGHT);
-//		JPanel driverPnl = new JPanel(new BorderLayout());
-//		driverPnl.add(_drivers, BorderLayout.CENTER);
-//		JButton newDriverBtn = new JButton("New");
-//		newDriverBtn.addActionListener(new ActionListener()
-//		{
-//			public void actionPerformed(ActionEvent evt)
-//			{
-//				showNewDriverDialog();
-//			}
-//		});
-//		driverPnl.add(newDriverBtn, BorderLayout.EAST);
-//		dataEntryPnl.add(lbl, driverPnl);
-//
-//		lbl = new JLabel(i18n.URL, SwingConstants.RIGHT);
-//		dataEntryPnl.add(lbl, _url);
-//
-//		lbl = new JLabel(i18n.USER_NAME, SwingConstants.RIGHT);
-//		dataEntryPnl.add(lbl, _userName);
-//
-//		gbc.insets = new Insets(0, 10, 0, 10);
-//		++gbc.gridy;
-//		gbc.weighty = 1;
-//		contentPane.add(dataEntryPnl, gbc);
 
 		contentPane.add(createDataEntryPanel(), gbc);
 
