@@ -3,7 +3,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * Copyright (C) 2001-2003 Johan Companger
  * jcompagner@j-com.nl
  *
- * Modification copyright (C) 2001-2003 Colin Bell
+ * Modification copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -461,7 +461,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 		ResultSetDataSet rsds = new ResultSetDataSet();
 		_results.add(rsds);
 //		SessionProperties props = _session.getProperties();
-		rsds.setResultSet(rs);
+		rsds.setResultSet(rs, null);
 		if (_stopExecution)
 		{
 			return false;

@@ -62,7 +62,7 @@ public class ResultSetDataSet implements IDataSet
 	}
 	
 	/**
-	 * Form used by ContentsTab
+	 * Form used by ContentsTab, and for SQL results
 	 */
 	public void setContentsTabResultSet(ResultSet rs, 
 		String fullTableName)
@@ -96,7 +96,7 @@ public class ResultSetDataSet implements IDataSet
 	 * all Tab classes
 	 */
 	private void setResultSet(ResultSet rs, String fullTableName, 
- 				 int[] columnIndices, boolean computeWidths, boolean isContentsTab)
+ 				 int[] columnIndices, boolean computeWidths, boolean useColumnDefs)
  			throws DataSetException
 	{
 		reset();
@@ -128,7 +128,7 @@ public class ResultSetDataSet implements IDataSet
 				Object[] row = null;
 
 				while (true) {
-					if (isContentsTab)
+					if (useColumnDefs)
 						row = rdr.readRow(colDefs);
 					else
 						row = rdr.readRow();
