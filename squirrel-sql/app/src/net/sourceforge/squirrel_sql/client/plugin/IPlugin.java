@@ -24,6 +24,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
+import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
 
 /**
  * Base interface for all plugins.
@@ -89,6 +90,15 @@ public interface IPlugin {
 	 *			any panels in the Global Preferences Dialog.
 	 */
 	IGlobalPreferencesPanel[] getGlobalPreferencePanels();
+
+	/**
+	 * Create panels for the New Session Properties dialog.
+	 *
+	 * @return	Array of <TT>INewSessionPropertiesPanel</TT> objects. Return
+	 *			empty array of <TT>null</TT> if this plugin doesn't require
+	 *			any panels in the New Session Properties Dialog.
+	 */
+	INewSessionPropertiesPanel[] getNewSessionPropertiesPanels();
 
 	/**
 	 * Return the folder with the Squirrel application folder

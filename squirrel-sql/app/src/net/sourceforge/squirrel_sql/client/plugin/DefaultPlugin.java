@@ -24,6 +24,7 @@ import java.io.IOException;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
+import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 
 public abstract class DefaultPlugin implements IPlugin {
@@ -147,10 +148,20 @@ public abstract class DefaultPlugin implements IPlugin {
 	/**
 	 * Create panels for the Global Preferences dialog.
 	 *
-	 * @return  <TT>null</TT> to indicate that this plugin doesn't require
-	 *		  any panels in the Global Preferences Dialog.
+	 * @return	<TT>null</TT> to indicate that this plugin doesn't require
+	 *			any panels in the Global Preferences Dialog.
 	 */
 	public IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
+		return null;
+	}
+
+	/**
+	 * Create panels for the New Session Properties dialog.
+	 *
+	 * @return	<TT>null</TT>to indicate that this plugin doesn't require
+	 *			any panels in the New Session Properties Dialog.
+	 */
+	public INewSessionPropertiesPanel[] getNewSessionPropertiesPanels() {
 		return null;
 	}
 }
