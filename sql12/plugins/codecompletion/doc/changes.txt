@@ -1,13 +1,15 @@
 SQL Entry Area Enhancements
 ===========================
 
+0.20
+====
+- completes on stored procedures
+
 
 0.10
 ====
 - Initial release
 - completes on table and view aliases
 - completes on schemas and catalogs
-
-- completes on stored procedures
 
 
