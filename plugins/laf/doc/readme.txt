@@ -4,11 +4,11 @@ This plugin allows you to select a Look and Feel other than the default
 Java one and to specify the fonts for the different GUI controls. It
 ships with the following Look and Feel implementations:
 
-Kunststoff 2.0.1 - http://www.incors.org
-Metouia 1.0beta - http://mlf.sourceforge.net
-Oyoaha 3.0rc1 - http://www.oyoaha.com
-jGoodies Looks 1.1.2 - http://www.jgoodies.com
-Skin 1.2.2 - http://www.l2fprod.com
+Kunststoff 2.0.2     - /lafs/kunststoff.jar - http://www.incors.org
+Metouia 1.0beta      - /lafs/metouia.jar    - http://mlf.sourceforge.net
+Oyoaha 3.0rc1        - /lafs/oalnf.jar      - http://www.oyoaha.com
+JGoodies Looks 1.1.3 - /lafs/plastic.jar    - http://www.jgoodies.com
+Skin 1.2.9           - /lafs/skinlf.jar     - http://www.l2fprod.com
 
 The L & F tab in the Global Preferences Dialog will allow you to select
 the Look and Feel as well as optionally allowing you to configure that
@@ -16,7 +16,7 @@ Look and Feel if it supports configuration.
 
 The Fonts tab in the Global Preferences Dialog will allow you to specify
 the fonts used for various controls in SQuirreL. If you are using one of
-the jGoodies Look and Feels it is suggested that you don't specify
+the Plastic Look and Feels it is suggested that you don't specify
 fonts on the Fonts Preferences Tab as these Look and Feels do a good job
 of specifying default fonts.
 

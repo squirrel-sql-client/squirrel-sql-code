@@ -6,7 +6,14 @@ Look and Feel Plugin Change Log
 
 Enhancements
 ------------
-- Plastic Look and Feel replaced by jGoodies Looks 1.1.2
+- Kunststoff Look and Feel upgraded to 2.0.2.
+- Skin Look and Feel upgraded to 1.2.9.
+- JGoodies Plastic replaced by JGoodies Look and Feel 1.1.3.
+
+Bug Fixes
+---------
+- Upgrading the Skin Look and Feel to 1.2.9 fixed a problem with SQuirreL
+  sometimes locking when started up using the Skin Look and Feel.
 
 
 0.31
