@@ -42,6 +42,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.DeleteAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyAliasAction;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 /**
+ * JASON: Rename to AliasesToolInternalFrame
  * This window shows all the database aliases defined in the system.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>

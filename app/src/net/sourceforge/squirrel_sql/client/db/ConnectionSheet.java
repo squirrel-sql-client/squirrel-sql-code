@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.db;
 /*
- * Copyright (C) 2001-2003 Colin Bell and Johan Compagner
+ * Copyright (C) 2001-2004 Colin Bell and Johan Compagner
  * colbell@users.sourceforge.net
  * jcompagner@j-com.nl
  *
@@ -59,16 +59,17 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
+import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.IOkClosePanelListener;
 import net.sourceforge.squirrel_sql.client.gui.OkClosePanel;
 import net.sourceforge.squirrel_sql.client.gui.OkClosePanelEvent;
 /**
+ * JASON" Rename to ConnectionInternalFrame
  * This internal frame allows the user to connect to an alias.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ConnectionSheet extends BaseSheet
+public class ConnectionSheet extends BaseInternalFrame
 {
 	/** Handler called for internal frame actions. */
 	public interface IConnectionSheetHandler

@@ -28,15 +28,16 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
+import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ReturnResultTabAction;
 /**
+ * JASON: Rename to ResultInternalFrame
  * Torn off frame that contains SQL results.
  *
  * @author <A HREF="mailto:jcompagner@j-com.nl">Johan Compagner</A>
  */
-public class ResultFrame extends BaseSheet
+public class ResultFrame extends BaseInternalFrame
 {
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(ResultFrame.class);

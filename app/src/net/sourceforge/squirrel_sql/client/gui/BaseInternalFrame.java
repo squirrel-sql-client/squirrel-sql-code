@@ -21,19 +21,17 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.JInternalFrame;
 /**
- * TODO: Rename to BaseInternalFrame
- *
  * Base functionality for Squirrels internal frames.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class BaseSheet extends JInternalFrame
+public class BaseInternalFrame extends JInternalFrame
 {
 	/**
 	 * Creates a non-resizable, non-closable, non-maximizable,
 	 * non-iconifiable JInternalFrame with no title.
 	 */
-	public BaseSheet()
+	public BaseInternalFrame()
 	{
 		super();
 	}
@@ -44,7 +42,7 @@ public class BaseSheet extends JInternalFrame
 	 *
 	 * @param	title	Title for internal frame.
 	 */
-	public BaseSheet(String title)
+	public BaseInternalFrame(String title)
 	{
 		super(title);
 	}
@@ -57,7 +55,7 @@ public class BaseSheet extends JInternalFrame
 	 * @param	title		Title for internal frame.
 	 * @param	resizable	<TT>true</TT> if frame can be resized.
 	 */
-	public BaseSheet(String title, boolean resizable)
+	public BaseInternalFrame(String title, boolean resizable)
 	{
 		super(title, resizable);
 	}
@@ -71,7 +69,7 @@ public class BaseSheet extends JInternalFrame
 	 * @param	resizable	<TT>true</TT> if frame can be resized.
 	 * @param	closeable	<TT>true</TT> if frame can be closed.
 	 */
-	public BaseSheet(String title, boolean resizable, boolean closable)
+	public BaseInternalFrame(String title, boolean resizable, boolean closable)
 	{
 		super(title, resizable, closable);
 	}
@@ -85,11 +83,8 @@ public class BaseSheet extends JInternalFrame
 	 * @param	closeable	<TT>true</TT> if frame can be closed.
 	 * @param	maximizable	<TT>true</TT> if frame can be maximized.
 	 */
-	public BaseSheet(
-		String title,
-		boolean resizable,
-		boolean closable,
-		boolean maximizable)
+	public BaseInternalFrame(String title, boolean resizable,
+							boolean closable, boolean maximizable)
 	{
 		super(title, resizable, closable, maximizable);
 	}
@@ -105,12 +100,8 @@ public class BaseSheet extends JInternalFrame
 	 * @param	maximizable	<TT>true</TT> if frame can be maximized.
 	 * @param	iconifiable	<TT>true</TT> if frame can be iconified.
 	 */
-	public BaseSheet(
-		String title,
-		boolean resizable,
-		boolean closable,
-		boolean maximizable,
-		boolean iconifiable)
+	public BaseInternalFrame(String title, boolean resizable,
+				boolean closable, boolean maximizable, boolean iconifiable)
 	{
 		super(title, resizable, closable, maximizable, iconifiable);
 	}
@@ -126,7 +117,7 @@ public class BaseSheet extends JInternalFrame
 		/*
 		 * 		if (isClosed())
 					return;
-		
+
 				// JTextComponents don't consume events...
 				if (getFocusOwner() instanceof JTextComponent) {
 					// fix for the bug where key events in JTextComponents
@@ -139,15 +130,15 @@ public class BaseSheet extends JInternalFrame
 								return;
 						}
 					}
-		
+
 					Keymap keymap = ((JTextComponent) getFocusOwner()).getKeymap();
 					if (keymap.getAction(KeyStroke.getKeyStrokeForEvent(evt)) != null)
 						return;
 				}
-		
+
 				if (evt.isConsumed())
 					return;
-		
+
 				if (!evt.isConsumed())
 					super.processKeyEvent(evt);
 		*/

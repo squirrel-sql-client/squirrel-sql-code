@@ -17,11 +17,11 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -40,14 +40,15 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
+import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.session.properties.GeneralSessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionObjectTreePropertiesPanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionSQLPropertiesPanel;
 
-public class NewSessionPropertiesSheet extends BaseSheet
+// JASON: Rename to NewSessionPropertiesInternalFrame
+public class NewSessionPropertiesSheet extends BaseInternalFrame
 {
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =

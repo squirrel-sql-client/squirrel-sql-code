@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.db;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -34,12 +34,14 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 /**
+ * JASON: Rename to DriverMaintInternalFrameFactory
+ * JASON: Move functionality to Windowmanager
+ * 
  * Factory to handle creation of maintenance sheets for SQL Driver objects.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class DriverMaintSheetFactory
-	implements DriverMaintSheet.MaintenanceType
+public class DriverMaintSheetFactory implements DriverMaintSheet.MaintenanceType
 {
 	/** Logger for this class. */
 	private static ILogger s_log =
@@ -115,7 +117,7 @@ public class DriverMaintSheetFactory
 				{
 					synchronized (getInstance())
 					{
-						DriverMaintSheet frame = (DriverMaintSheet) evt.getInternalFrame();
+						DriverMaintSheet frame = (DriverMaintSheet)evt.getInternalFrame();
 						_modifySheets.remove(frame.getSQLDriver().getIdentifier());
 					}
 				}

@@ -45,6 +45,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyDriverCommand;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ShowLoadedDriversOnlyAction;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 /**
+ * JASON: Rename to DriversToolInternalFrame
  * This windows displays a list of JDBC drivers and allows the user
  * to maintain their details, add new ones etc.
  *

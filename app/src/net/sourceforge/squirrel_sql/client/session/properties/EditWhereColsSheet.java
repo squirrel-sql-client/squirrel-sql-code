@@ -43,14 +43,14 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import net.sourceforge.squirrel_sql.client.session.BaseSessionSheet;
+import net.sourceforge.squirrel_sql.client.session.BaseSessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ContentsTab;
 /**
  * Edit Where Cols dialog gui.
- *
+ * JASON: Rename to EditWhereColsInternalFrame 
  */
-public class EditWhereColsSheet extends BaseSessionSheet
+public class EditWhereColsSheet extends BaseSessionInternalFrame
 {
 	/**
 	 * This interface defines locale specific strings. This should be

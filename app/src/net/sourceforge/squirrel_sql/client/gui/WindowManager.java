@@ -46,7 +46,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
-import net.sourceforge.squirrel_sql.client.session.BaseSessionSheet;
+import net.sourceforge.squirrel_sql.client.session.BaseSessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ObjectTreeInternalFrame;
@@ -191,7 +191,7 @@ public class WindowManager
 	 * <p/><b>There is no need to call this method manually.</b> Any
 	 * classes that properly extend BaseSessionSheet will be registered.
 	 */
-	public synchronized void registerSessionSheet(BaseSessionSheet sheet)
+	public synchronized void registerSessionSheet(BaseSessionInternalFrame sheet)
 	{
 		s_log.debug("Registering " + sheet.getClass().getName() + " in WindowManager");
 		final IIdentifier sessionIdentifier = sheet.getSession().getIdentifier();
@@ -737,9 +737,9 @@ public class WindowManager
 			{
 				// Find the internal Frame in the list of internal frames
 				// and remove it.
-				if (jif instanceof BaseSessionSheet)
+				if (jif instanceof BaseSessionInternalFrame)
 				{
-					final BaseSessionSheet sessionJIF = (BaseSessionSheet)jif;
+					final BaseSessionInternalFrame sessionJIF = (BaseSessionInternalFrame)jif;
 					final IIdentifier sessionID = sessionJIF.getSession().getIdentifier();
 					List sessionSheets = (List)_sessionWindows.get(sessionID);
 					if (sessionSheets != null)
@@ -827,9 +827,9 @@ public class WindowManager
 			// then select the main window for the session.
 			ISession currSession = null;
 			JInternalFrame sif = getMainFrame().getDesktopPane().getSelectedFrame();
-			if (sif instanceof BaseSessionSheet)
+			if (sif instanceof BaseSessionInternalFrame)
 			{
-				currSession = ((BaseSessionSheet)sif).getSession();
+				currSession = ((BaseSessionInternalFrame)sif).getSession();
 			}
 			if (currSession != newSession)
 			{
@@ -865,7 +865,7 @@ public class WindowManager
 				for (Iterator sheetItr = sessionSheets.iterator();
 						sheetItr.hasNext();)
 				{
-					((BaseSessionSheet)sheetItr.next()).dispose();
+					((BaseSessionInternalFrame)sheetItr.next()).dispose();
 				}
 			}
 			_sessionWindows.remove(sessionId);
