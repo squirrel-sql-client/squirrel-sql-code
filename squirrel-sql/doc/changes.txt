@@ -20,6 +20,7 @@ Enhancements
 
 Bug Fixes
 ---------
+- Links in the Help file now work (Victor Ott).
 - Fix deadlock when viewing logs.
 - Add missing "contributors" file for About Box.
 

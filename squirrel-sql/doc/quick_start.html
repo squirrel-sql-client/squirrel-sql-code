@@ -25,6 +25,9 @@
     <TR><TD><A HREF="#the_alias">The Alias</A></TD></TR>
     <TR><TD><A HREF="#connecting">Connecting</A></TD></TR>
     <TR><TD><A HREF="#executing">Executing SQL</A></TD></TR>
+    <TR><TD><A HREF="#global_prefs">Global Preferences</A></TD></TR>
+    <TR><TD><A HREF="#session_props">New Session and Session Properties</A></TD></TR>
+    <TR><TD><A HREF="#plugins">Plugins</A></TD></TR>
 </TABLE>
 
 <A NAME="introduction"><H2>Introduction</H2></A>
@@ -33,6 +36,8 @@ database; the driver and the alias. The driver specifies the JDBC driver to
 use and the alias specifies the connection parameters.
 
 <A NAME="the_driver"><H2>The Driver</H2></A>
+
+<!-- CB - Put new graphic up showing all the default drivers -->
 
 <P>A number of default driver definitions ship with SQuirreL SQL Client.
 These can be seen in the Drivers List window (<EM>View Drivers</EM> option
@@ -76,7 +81,7 @@ and jars in the current class path. If you click on a jar file and press the
 in that jar will be placed in the <EM>Class Name</EM> dropdown control.
 
 <P>The <EM>Class Name</EM> specifies the class name of the JDBC
-driver. Either select and existing entry in the dropdown or key in the
+driver. Either select an existing entry in the dropdown or key in the
 class name of the JDBC driver (it can normally be found in the documentation
 that comes with the driver).
 
@@ -156,7 +161,7 @@ connection dialog, press OK and you should be connected.</P>
 
 <P ALIGN="CENTER"><B>The Session Window</B></P>
 
-<P>The Object Tree on the left shows the structure of the database. CLicking
+<P>The Object Tree on the left shows the structure of the database. Clicking
 on various nodes within this object tree will show further information
 in the right hand detail panel. In this example the database metadata
 is shown. Clicking on the title of a column will sort the display by
@@ -182,7 +187,7 @@ area.</P>
 taking the Execute SQL option from the Session menu or pressing the Execute
 SQL button in the session windows toolbar will execute the entered SQL.</P>
 
-<P>If a single statment is entered then pressing <TT>&lt;ctrl&gt;&lt;enter&gt;</TT>
+<P>If a single statement is entered then pressing <TT>&lt;ctrl&gt;&lt;enter&gt;</TT>
 will execute just that statement.</P>
 
 <P>If you only want to execute part of the SQL entered then hightlight the
@@ -195,6 +200,46 @@ and press <TT>&lt;ctrl&gt;&lt;enter&gt;</TT>.</P>
 
 <P>The characters -- at the beginning of a line will turn it into
 a comment.</P>
+
+<P ALIGN="CENTER"><IMG SRC="images/sql_1.png" BORDER="0"
+			ALT="Executing SQL"></P>
+
+<P>As can be seen in the above graphic, doubleclicking in a cell in the query
+results will open up a new window showing the entire contents of the cell.</P>
+
+<P>The <IMG SRC="images/createresultwindow.gif" BORDER="0"
+		ALIGN="CENTER" ALT="Tearoff icon"> icon on the tabbed folder
+		containing the SQL results allow you to &quot;tearoff&quot; the
+		query results from the tabbed folder and display it in its own
+		window.</P>
+
+<P ALIGN="CENTER"><IMG SRC="images/sql_2.png" BORDER="0"
+			ALT="&quot;Torn off&quot; query results"></P>
+
+<A NAME="global_prefs"><H2>Global Preferences</H2></A>
+
+<A NAME="session_props"><H2>New Session and Session Properties</H2></A>
+
+<A NAME="plugins"><H2>Plugins</H2></A>
+
+<P>A plugin is an application written in Java that runs within SQuirreL. This
+allows developers to enhance the functionality of SQuirreL without having to
+rebuild the SQuirreL application itself. It also allows you to &quot;pick and
+choose&quot; the functionality that you want in SQuirreL. For instance if
+you don't use Oracle then you don't need the Oracle specific functionality
+supplied by the Oracle plugin.</P>
+
+<P>Plugins can be downloaded from the SQuirreL web site http://squirrel-sql.sf.net</P>
+
+<P>To install a plugin unpack the zip or gz file into the plugins directory
+within the SQuirreL SQL Client application directory keeping the directory
+structure. To use the plugin you will need to restart SQuirreL.</P>
+
+<P>The &quot;Summary&quot; option on the &quot;Plugins&quot; menu will show
+a dialog box of the plugins currently installed.</P>
+
+<P ALIGN="CENTER"><IMG SRC="images/plugins_1.png" BORDER="0"
+			ALT="Plugins Summary"></P>
 
 </BODY>
 </HTML>
