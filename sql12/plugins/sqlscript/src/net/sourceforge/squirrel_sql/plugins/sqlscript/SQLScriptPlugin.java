@@ -313,4 +313,9 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 
 	}
 
+   public Object getExternalService()
+   {
+      return new SQLScriptExternalService(this);
+   }
+
 }
