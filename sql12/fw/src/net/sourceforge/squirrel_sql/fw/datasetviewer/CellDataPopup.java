@@ -229,7 +229,7 @@ public class CellDataPopup
 			JPanel updateControls = new JPanel();
 			
 			// set up Update button
-			JButton updateButton = new JButton("Update DB");
+			JButton updateButton = new JButton("Update Data");
 			updateButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent event) {
 
@@ -252,8 +252,9 @@ public class CellDataPopup
 					}
 					else {
 						// no problem in conversion - proceed with update
-						((DataSetViewerTablePanel.MyJTable)_table).setConvertedValueAt(
-							newValue, _row, _col);
+//						((DataSetViewerTablePanel.MyJTable)_table).setConvertedValueAt(
+//							newValue, _row, _col);
+_table.setValueAt(newValue, _row, _col);
 						ColumnDataPopupPanel.this._parentFrame.setVisible(false);
 						ColumnDataPopupPanel.this._parentFrame.dispose();
 					}
