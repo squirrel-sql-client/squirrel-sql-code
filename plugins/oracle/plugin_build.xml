@@ -35,6 +35,10 @@
 				optimize="${optimize}"
 				includeJavaRuntime="yes">
 			<classpath>
+                        <fileset dir="lib">
+					<include name="**/*.*"/>
+				</fileset>
+
 				<fileset dir="${p_plugin.core_libs_dir}">
 					<include name="**/*.*"/>
 				</fileset>
@@ -59,6 +63,12 @@
 		<copy todir="${p_plugin.dist_dir}/${internal_name}" >
 			<fileset dir="doc" >
 				<include name="*.*"/>
+			</fileset>
+		</copy>
+
+		<copy todir="${p_plugin.dist_dir}/" >
+			<fileset dir="lib" >
+				<include name="**/*.*"/>
 			</fileset>
 		</copy>
 
