@@ -24,7 +24,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SessionInfo
+class SessionInfo
 {
 	/** Session. */
 	private final ISession _session;
@@ -36,20 +36,26 @@ public class SessionInfo
 	 * Ctor specifying session.
 	 * 
 	 * @session		Session.
+	 * @plugin		The plugin
 	 * 
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
+	 * 			Thrown if a <TT>null</TT> <TT>ISession</TT> or
+	 * 			<TT>OraclePlugin</TT> passed.
 	 */
-	SessionInfo(ISession session)
+	SessionInfo(ISession session, OraclePlugin plugin)
 	{
 		super();
 		if (session == null)
 		{
 			throw new IllegalArgumentException("ISession == null");
 		}
+		if (plugin == null)
+		{
+			throw new IllegalArgumentException("OraclePlugin == null");
+		}
 		_session = session;
 
-		IObjectTreeAPI api = session.getObjectTreeAPI();
+		IObjectTreeAPI api = session.getObjectTreeAPI(plugin);
 		_packageNodeType = api.getNextAvailableNodeype();
 	}
 

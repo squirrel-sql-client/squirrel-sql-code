@@ -153,9 +153,9 @@ public class OraclePlugin extends DefaultSessionPlugin
 			isOracle = isOracle(session);
 			if (isOracle)
 			{
-				SessionInfo si = new SessionInfo(session);
+				SessionInfo si = new SessionInfo(session, this);
 				_sessions.put(session.getIdentifier(), si);
-				_treeAPI = session.getObjectTreeAPI();
+				_treeAPI = session.getObjectTreeAPI(this);
 				_treeAPI.registerExpander(IObjectTreeNodeType.SCHEMA, new SchemaExpander(this));
 				_treeAPI.registerExpander(si._packageNodeType, new PackageExpander());
 				_treeAPI.registerDetailTab(IObjectTreeNodeType.PROCEDURE, new ProcedureSourceTab());
