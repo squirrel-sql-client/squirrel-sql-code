@@ -4,12 +4,45 @@
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
 		<driverClassName>org.hsqldb.jdbcDriver</driverClassName>
 		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-20</string>
+		</identifier>
+		<jarFileName/>
+		<jarFileNames Indexed="true"/>
+		<name>HSQLDB In-Memory</name>
+		<url>jdbc:hsqldb:.</url>
+	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<driverClassName>org.hsqldb.jdbcDriver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-19</string>
+		</identifier>
+		<jarFileName/>
+		<jarFileNames Indexed="true"/>
+		<name>HSQLDB Standalone</name>
+		<url>jdbc:hsqldb:&lt;databaseName&gt;</url>
+	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<driverClassName>org.hsqldb.jdbcDriver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-18</string>
+		</identifier>
+		<jarFileName/>
+		<jarFileNames Indexed="true"/>
+		<name>HSQLDB Server</name>
+		<url>jdbc:hsqldb:hsql://&lt;server&gt;[:&lt;1476&gt;]</url>
+	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<driverClassName>org.hsqldb.jdbcDriver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
 			<string>-17</string>
 		</identifier>
 		<jarFileName/>
 		<jarFileNames Indexed="true"/>
-		<name>HSQLDB</name>
-		<url>jdbc:hsqldb:hsql://&lt;server&gt;</url>
+		<name>HSQLDB Web Server</name>
+		<url>jdbc:hsqldb:http://&lt;server&gt;[:&lt;1476&gt;]</url>
 	</Bean>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -20,7 +53,7 @@
 		<jarFileName/>
 		<jarFileNames Indexed="true"/>
 		<name>jTDS</name>
-		<url>jdbc:freetds:sqlserver://&lt;hostname&gt;[:&lt;port&gt;]/&lt;dbname&gt;[;&lt;property&gt;=&lt;value&gt;[;...]]</url>
+		<url>jdbc:freetds:sqlserver://&lt;hostname&gt;[:&lt;4100&gt;]/&lt;dbname&gt;[;&lt;property&gt;=&lt;value&gt;[;...]]</url>
 	</Bean>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -31,7 +64,7 @@
 		<jarFileName/>
 		<jarFileNames Indexed="true"/>
 		<name>Mckoi</name>
-		<url>jdbc:mckoi://&lt;host&gt;[:9157][/schema]/</url>
+		<url>jdbc:mckoi://&lt;host&gt;[:9157][/&lt;schema&gt;]/</url>
 	</Bean>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -53,7 +86,7 @@
 		<jarFileName/>
 		<jarFileNames Indexed="true"/>
 		<name>Axion</name>
-		<url>jdbc:axiondb:&lt;database-name&gt;&lt;:database-directory&gt;</url>
+		<url>jdbc:axiondb:&lt;database-name&gt;[:&lt;database-directory&gt;]</url>
 	</Bean>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -64,7 +97,7 @@
 		<jarFileName/>
 		<jarFileNames Indexed="true"/>
 		<name>Mimer SQL</name>
-		<url>jdbc:mimer:/&lt;dbname&gt;</url>
+		<url>jdbc:mimer:[//[&lt;user&gt;[:&lt;password&gt;]@]&lt;server&gt;[:&lt;1360&gt;]][/&lt;dbname&gt;][property-list]</url>
 	</Bean>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -111,7 +144,7 @@
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
 		<usesClassPath>true</usesClassPath>
 		<jarFileNames Indexed="true"/>
-		<url>jdbc:postgresql:&lt;//host&gt;:&lt;5432&gt;/&lt;database&gt;</url>;
+		<url>jdbc:postgresql:[&lt;//host&gt;[:&lt;5432&gt;/]]&lt;database&gt;</url>;
 		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
 			<string>-7</string>
 		</identifier>
@@ -123,7 +156,7 @@
 		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
 			<string>-6</string>
 		</identifier>
-		<url>jdbc:mysql://&lt;hostname&gt;&lt;:port&gt;/&lt;dbname&gt;</url>
+		<url>jdbc:mysql://&lt;hostname&gt;[&lt;:3360&gt;]/&lt;dbname&gt;</url>
 		<usesClassPath>true</usesClassPath>
 		<jarFileNames Indexed="true"/>
 		<driverClassName>org.gjt.mm.mysql.Driver</driverClassName>
@@ -144,7 +177,7 @@
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
 		<name>Oracle Thin Driver</name>
 		<driverClassName>oracle.jdbc.driver.OracleDriver</driverClassName>
-		<url>jdbc:oracle:thin:@&lt;server&gt;:&lt;1521&gt;:&lt;database_name&gt;</url>
+		<url>jdbc:oracle:thin:@&lt;server&gt;[:&lt;1521&gt;]:&lt;database_name&gt;</url>
 		<usesClassPath>true</usesClassPath>
 		<jarFileNames Indexed="true"/>
 		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
