@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.properties;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -36,31 +36,17 @@ public class SessionProperties implements Serializable
 	public interface IPropertyNames
 	{
 		String AUTO_COMMIT = "autoCommit";
-		String COLUMN_PRIVILIGES_OUTPUT_CLASS_NAME = "columnPriviligesOutputClassName";
-		String COLUMNS_OUTPUT_CLASS_NAME = "columnsOutputClassName";
 		String COMMIT_ON_CLOSING_CONNECTION = "commitOnClosingConnection";
 		String CONTENTS_LIMIT_ROWS = "contentsLimitRows";
 		String CONTENTS_NBR_ROWS_TO_SHOW = "contentsNbrOfRowsToShow";
-		String CONTENTS_OUTPUT_CLASS_NAME = "contentsOutputClassName";
-		String DATA_TYPES_OUTPUT_CLASS_NAME = "dataTypesOutputClassName";
-		String EXP_KEYS_OUTPUT_CLASS_NAME = "exportedKeysOutputClassName";
 		String FONT_INFO = "fontInfo";
-		String IMP_KEYS_OUTPUT_CLASS_NAME = "importedKeysOutputClassName";
-		String INDEXES_OUTPUT_CLASS_NAME = "indexesOutputClassName";
 		String META_DATA_OUTPUT_CLASS_NAME = "metaDataOutputClassName";
-		String PRIM_KEY_OUTPUT_CLASS_NAME = "primaryKeyOutputClassName";
-		String PRIVILIGES_OUTPUT_CLASS_NAME = "priviligesOutputClassName";
-		String PROC_COLUMNS_OUTPUT_CLASS_NAME = "procedureColumnsOutputClassName";
-		String ROWID_OUTPUT_CLASS_NAME = "rowIdOutputClassName";
 		String SHOW_ROW_COUNT = "showRowCount";
 		String SHOW_TOOL_BAR = "showToolBar";
 		String SQL_LIMIT_ROWS = "sqlLimitRows";
 		String SQL_NBR_ROWS_TO_SHOW = "sqlNbrOfRowsToShow";
-		String SQL_OUTPUT_RESULTSET_CLASS_NAME = "sqlOutputResultSetClassName";
-		String SQL_OUTPUT_META_DATA_CLASS_NAME = "sqlOutputMetaDataClassName";
+		String SQL_RESULTS_OUTPUT_CLASS_NAME= "sqlResultsOutputClassName";
 		String SQL_STATEMENT_SEPARATOR = "sqlStatementSeparator";
-		String TABLE_OUTPUT_CLASS_NAME = "tableOutputClassName";
-		String VERSIONS_OUTPUT_CLASS_NAME = "versionsOutputClassName";
 	}
 
 	/** Object to handle property change events. */
@@ -80,22 +66,8 @@ public class SessionProperties implements Serializable
 	private boolean _contentsLimitRows = true;
 	private boolean _sqlLimitRows = true;
 
-	private String _dataTypesOutputClassName = IDataSetDestinations.TABLE;
 	private String _metaDataOutputClassName = IDataSetDestinations.TABLE;
-	private String _tableOutputClassName = IDataSetDestinations.TABLE;
-	private String _contentsOutputClassName = IDataSetDestinations.TABLE;
-	private String _columnsOutputClassName = IDataSetDestinations.TABLE;
-	private String _priviligesOutputClassName = IDataSetDestinations.TABLE;
-	private String _versionsOutputClassName = IDataSetDestinations.TABLE;
-	private String _primaryKeyOutputClassName = IDataSetDestinations.TABLE;
-	private String _exportedKeysOutputClassName = IDataSetDestinations.TABLE;
-	private String _importedKeysOutputClassName = IDataSetDestinations.TABLE;
-	private String _indexesOutputClassName = IDataSetDestinations.TABLE;
-	private String _columnPriviligesOutputClassName = IDataSetDestinations.TABLE;
-	private String _rowIdOutputClassName = IDataSetDestinations.TABLE;
-
-	/** Class name for panel to display Procedure Columns info in. */
-	private String _procColsOutputClassName = IDataSetDestinations.TABLE;
+	private String _sqlResultsOutputClassName = IDataSetDestinations.TABLE;
 
 	/**
 	 * <TT>true</TT> if row count should be displayed for every table in object tree.
@@ -104,13 +76,6 @@ public class SessionProperties implements Serializable
 
 	/** <TT>true</TT> if toolbar should be shown. */
 	private boolean _showToolbar = true;
-
-	/**
-	 * Name of the class to use as the <TT>IDataSetModelConverter</TT>
-	 * for SQL output.
-	 */
-	//private String _sqlOutputClassName = IDataSetDestinations.TABLE;
-	private String _sqlOutputConverterClassName = IDataSetDestinations.TABLE;
 
 	private String _sqlOutputMetaDataClassName = IDataSetDestinations.TABLE;
 
@@ -127,31 +92,16 @@ public class SessionProperties implements Serializable
 	public void assignFrom(SessionProperties rhs)
 	{
 		setAutoCommit(rhs.getAutoCommit());
-		setColumnsOutputClassName(rhs.getColumnsOutputClassName());
-		setColumnPriviligesOutputClassName(rhs.getColumnPriviligesOutputClassName());
 		setCommitOnClosingConnection(rhs.getCommitOnClosingConnection());
 		setContentsLimitRows(rhs.getContentsLimitRows());
 		setContentsNbrRowsToShow(rhs.getContentsNbrRowsToShow());
-		setContentsOutputClassName(rhs.getContentsOutputClassName());
-		setDataTypesOutputClassName(rhs.getDataTypesOutputClassName());
-		setExportedKeysOutputClassName(rhs.getExportedKeysOutputClassName());
 		setFontInfo(rhs.getFontInfo());
-		setImportedKeysOutputClassName(rhs.getImportedKeysOutputClassName());
-		setIndexesOutputClassName(rhs.getIndexesOutputClassName());
 		setMetaDataOutputClassName(rhs.getMetaDataOutputClassName());
-		setPrimaryKeyOutputClassName(rhs.getPrimaryKeyOutputClassName());
-		setPriviligesOutputClassName(rhs.getPriviligesOutputClassName());
-		setProcedureColumnsOutputClassName(rhs.getProcedureColumnsOutputClassName());
-		setRowIdOutputClassName(rhs.getRowIdOutputClassName());
 		setShowRowCount(rhs.getShowRowCount());
 		setShowToolBar(rhs.getShowToolBar());
-		setSqlLimitRows(rhs.getSqlLimitRows());
-		setSqlNbrRowsToShow(rhs.getSqlNbrRowsToShow());
-		setSqlOutputResultSetClassName(rhs.getSqlOutputResultSetClassName());
-		setSqlOutputMetaDataClassName(rhs.getSqlOutputMetaDataClassName());
-		setSqlStatementSeparatorChar(rhs.getSqlStatementSeparatorChar());
-		setTableOutputClassName(rhs.getTableOutputClassName());
-		setVersionsOutputClassName(rhs.getVersionsOutputClassName());
+		setSQLLimitRows(rhs.getSQLLimitRows());
+		setSQLNbrRowsToShow(rhs.getSQLNbrRowsToShow());
+		setSQLStatementSeparatorChar(rhs.getSQLStatementSeparatorChar());
 	}
 
 	public void addPropertyChangeListener(PropertyChangeListener listener)
@@ -162,28 +112,6 @@ public class SessionProperties implements Serializable
 	public void removePropertyChangeListener(PropertyChangeListener listener)
 	{
 		_propChgReporter.removePropertyChangeListener(listener);
-	}
-
-	public String getDataTypesOutputClassName()
-	{
-		return _dataTypesOutputClassName;
-	}
-
-	public void setDataTypesOutputClassName(String value)
-	{
-		if (value == null)
-		{
-			value = "";
-		}
-		if (!_dataTypesOutputClassName.equals(value))
-		{
-			final String oldValue = _dataTypesOutputClassName;
-			_dataTypesOutputClassName = value;
-			_propChgReporter.firePropertyChange(
-				IPropertyNames.DATA_TYPES_OUTPUT_CLASS_NAME,
-				oldValue,
-				_dataTypesOutputClassName);
-		}
 	}
 
 	public String getMetaDataOutputClassName()
@@ -208,326 +136,25 @@ public class SessionProperties implements Serializable
 		}
 	}
 
-	public String getTableOutputClassName()
+	public String getSQLResultsOutputClassName()
 	{
-		return _tableOutputClassName;
+		return _sqlResultsOutputClassName;
 	}
 
-	public void setTableOutputClassName(String value)
+	public void setSQLResultsOutputClassName(String value)
 	{
 		if (value == null)
 		{
 			value = "";
 		}
-		if (!_tableOutputClassName.equals(value))
+		if (!_sqlResultsOutputClassName.equals(value))
 		{
-			final String oldValue = _tableOutputClassName;
-			_tableOutputClassName = value;
+			final String oldValue = _sqlResultsOutputClassName;
+			_sqlResultsOutputClassName = value;
 			_propChgReporter.firePropertyChange(
-				IPropertyNames.TABLE_OUTPUT_CLASS_NAME,
+				IPropertyNames.SQL_RESULTS_OUTPUT_CLASS_NAME,
 				oldValue,
-				_tableOutputClassName);
-		}
-	}
-
-	public String getContentsOutputClassName()
-	{
-		return _contentsOutputClassName;
-	}
-
-	public void setContentsOutputClassName(String value)
-	{
-		if (value == null)
-		{
-			value = "";
-		}
-		if (!_contentsOutputClassName.equals(value))
-		{
-			final String oldValue = _contentsOutputClassName;
-			_contentsOutputClassName = value;
-			_propChgReporter.firePropertyChange(
-				IPropertyNames.CONTENTS_OUTPUT_CLASS_NAME,
-				oldValue,
-				_contentsOutputClassName);
-		}
-	}
-
-	public String getColumnsOutputClassName()
-	{
-		return _columnsOutputClassName;
-	}
-
-	public void setColumnsOutputClassName(String value)
-	{
-		if (value == null)
-		{
-			value = "";
-		}
-		if (!_columnsOutputClassName.equals(value))
-		{
-			final String oldValue = _columnsOutputClassName;
-			_columnsOutputClassName = value;
-			_propChgReporter.firePropertyChange(
-				IPropertyNames.COLUMNS_OUTPUT_CLASS_NAME,
-				oldValue,
-				_columnsOutputClassName);
-		}
-	}
-
-	public String getPriviligesOutputClassName()
-	{
-		return _priviligesOutputClassName;
-	}
-
-	public void setPriviligesOutputClassName(String value)
-	{
-		if (value == null)
-		{
-			value = "";
-		}
-		if (!_priviligesOutputClassName.equals(value))
-		{
-			final String oldValue = _priviligesOutputClassName;
-			_priviligesOutputClassName = value;
-			_propChgReporter.firePropertyChange(
-				IPropertyNames.PRIVILIGES_OUTPUT_CLASS_NAME,
-				oldValue,
-				_priviligesOutputClassName);
-		}
-	}
-
-	public String getVersionsOutputClassName()
-	{
-		return _versionsOutputClassName;
-	}
-
-	public void setVersionsOutputClassName(String value)
-	{
-		if (value == null)
-		{
-			value = "";
-		}
-		if (!_versionsOutputClassName.equals(value))
-		{
-			final String oldValue = _versionsOutputClassName;
-			_versionsOutputClassName = value;
-			_propChgReporter.firePropertyChange(
-				IPropertyNames.VERSIONS_OUTPUT_CLASS_NAME,
-				oldValue,
-				_versionsOutputClassName);
-		}
-	}
-
-	public String getPrimaryKeyOutputClassName()
-	{
-		return _primaryKeyOutputClassName;
-	}
-
-	public void setPrimaryKeyOutputClassName(String value)
-	{
-		if (value == null)
-		{
-			value = "";
-		}
-		if (!_primaryKeyOutputClassName.equals(value))
-		{
-			final String oldValue = _primaryKeyOutputClassName;
-			_primaryKeyOutputClassName = value;
-			_propChgReporter.firePropertyChange(
-				IPropertyNames.PRIM_KEY_OUTPUT_CLASS_NAME,
-				oldValue,
-				_primaryKeyOutputClassName);
-		}
-	}
-
-	public String getExportedKeysOutputClassName()
-	{
-		return _exportedKeysOutputClassName;
-	}
-
-	public void setExportedKeysOutputClassName(String value)
-	{
-		if (value == null)
-		{
-			value = "";
-		}
-		if (!_exportedKeysOutputClassName.equals(value))
-		{
-			final String oldValue = _exportedKeysOutputClassName;
-			_exportedKeysOutputClassName = value;
-			_propChgReporter.firePropertyChange(
-				IPropertyNames.EXP_KEYS_OUTPUT_CLASS_NAME,
-				oldValue,
-				_exportedKeysOutputClassName);
-		}
-	}
-
-	public String getIndexesOutputClassName()
-	{
-		return _indexesOutputClassName;
-	}
-
-	public void setIndexesOutputClassName(String value)
-	{
-		if (value == null)
-		{
-			value = "";
-		}
-		if (!_indexesOutputClassName.equals(value))
-		{
-			final String oldValue = _indexesOutputClassName;
-			_indexesOutputClassName = value;
-			_propChgReporter.firePropertyChange(
-				IPropertyNames.INDEXES_OUTPUT_CLASS_NAME,
-				oldValue,
-				_indexesOutputClassName);
-		}
-	}
-
-	public String getImportedKeysOutputClassName()
-	{
-		return _importedKeysOutputClassName;
-	}
-
-	public void setImportedKeysOutputClassName(String value)
-	{
-		if (value == null)
-		{
-			value = "";
-		}
-		if (!_importedKeysOutputClassName.equals(value))
-		{
-			final String oldValue = _importedKeysOutputClassName;
-			_importedKeysOutputClassName = value;
-			_propChgReporter.firePropertyChange(
-				IPropertyNames.IMP_KEYS_OUTPUT_CLASS_NAME,
-				oldValue,
-				_importedKeysOutputClassName);
-		}
-	}
-
-	public String getColumnPriviligesOutputClassName()
-	{
-		return _columnPriviligesOutputClassName;
-	}
-
-	public void setColumnPriviligesOutputClassName(String value)
-	{
-		if (value == null)
-		{
-			value = "";
-		}
-		if (!_columnPriviligesOutputClassName.equals(value))
-		{
-			final String oldValue = _columnPriviligesOutputClassName;
-			_columnPriviligesOutputClassName = value;
-			_propChgReporter.firePropertyChange(
-				IPropertyNames.COLUMN_PRIVILIGES_OUTPUT_CLASS_NAME,
-				oldValue,
-				_columnPriviligesOutputClassName);
-		}
-	}
-
-	public String getRowIdOutputClassName()
-	{
-		return _rowIdOutputClassName;
-	}
-
-	public void setRowIdOutputClassName(String value)
-	{
-		if (value == null)
-		{
-			value = "";
-		}
-		if (!_rowIdOutputClassName.equals(value))
-		{
-			final String oldValue = _rowIdOutputClassName;
-			_rowIdOutputClassName = value;
-			_propChgReporter.firePropertyChange(
-				IPropertyNames.ROWID_OUTPUT_CLASS_NAME,
-				oldValue,
-				_rowIdOutputClassName);
-		}
-	}
-
-	/**
-	 * Return the name of the class to use as the
-	 * <TT>IDataSetViewer</TT> for SQL output.
-	 *
-	 * @return	the name of the class to use as the
-	 *			<TT>IDataSetViewer</TT> for SQL output.
-	 */
-	public String getSqlOutputResultSetClassName()
-	{
-		return _sqlOutputConverterClassName;
-	}
-
-	/**
-	 * Set the name of the class to use as the
-	 * <TT>IDataSetViewer</TT> for SQL output.
-	 *
-	 * @param	value	The name of the class to use as the
-	 *					<TT>IDataSetViewer</TT> for
-	 *					SQL output.
-	 */
-	public void setSqlOutputResultSetClassName(String value)
-	{
-		if (value == null)
-		{
-			value = "";
-		}
-		if (!_sqlOutputConverterClassName.equals(value))
-		{
-			final String oldValue = _sqlOutputConverterClassName;
-			_sqlOutputConverterClassName = value;
-			_propChgReporter.firePropertyChange(
-				IPropertyNames.SQL_OUTPUT_RESULTSET_CLASS_NAME,
-				oldValue,
-				_sqlOutputConverterClassName);
-		}
-	}
-
-	public String getSqlOutputMetaDataClassName()
-	{
-		return _sqlOutputMetaDataClassName;
-	}
-
-	public void setSqlOutputMetaDataClassName(String value)
-	{
-		if (value == null)
-		{
-			value = "";
-		}
-		if (!_sqlOutputMetaDataClassName.equals(value))
-		{
-			final String oldValue = _sqlOutputMetaDataClassName;
-			_sqlOutputMetaDataClassName = value;
-			_propChgReporter.firePropertyChange(
-				IPropertyNames.SQL_OUTPUT_META_DATA_CLASS_NAME,
-				oldValue,
-				_sqlOutputMetaDataClassName);
-		}
-	}
-
-	public String getProcedureColumnsOutputClassName()
-	{
-		return _procColsOutputClassName;
-	}
-
-	public void setProcedureColumnsOutputClassName(String value)
-	{
-		if (value == null)
-		{
-			value = "";
-		}
-		if (!_procColsOutputClassName.equals(value))
-		{
-			final String oldValue = _procColsOutputClassName;
-			_procColsOutputClassName = value;
-			_propChgReporter.firePropertyChange(
-				IPropertyNames.PROC_COLUMNS_OUTPUT_CLASS_NAME,
-				oldValue,
-				_procColsOutputClassName);
+				_sqlResultsOutputClassName);
 		}
 	}
 
@@ -583,12 +210,12 @@ public class SessionProperties implements Serializable
 		}
 	}
 
-	public int getSqlNbrRowsToShow()
+	public int getSQLNbrRowsToShow()
 	{
 		return _sqlNbrRowsToShow;
 	}
 
-	public void setSqlNbrRowsToShow(int value)
+	public void setSQLNbrRowsToShow(int value)
 	{
 		if (_sqlNbrRowsToShow != value)
 		{
@@ -619,12 +246,12 @@ public class SessionProperties implements Serializable
 		}
 	}
 
-	public boolean getSqlLimitRows()
+	public boolean getSQLLimitRows()
 	{
 		return _sqlLimitRows;
 	}
 
-	public void setSqlLimitRows(boolean value)
+	public void setSQLLimitRows(boolean value)
 	{
 		if (_sqlLimitRows != value)
 		{
@@ -637,12 +264,12 @@ public class SessionProperties implements Serializable
 		}
 	}
 
-	public char getSqlStatementSeparatorChar()
+	public char getSQLStatementSeparatorChar()
 	{
 		return _sqlStmtSepChar;
 	}
 
-	public void setSqlStatementSeparatorChar(char value)
+	public void setSQLStatementSeparatorChar(char value)
 	{
 		if (_sqlStmtSepChar != value)
 		{

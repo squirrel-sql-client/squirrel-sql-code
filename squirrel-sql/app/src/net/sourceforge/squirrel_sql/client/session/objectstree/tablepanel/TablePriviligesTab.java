@@ -104,7 +104,7 @@ public class TablePriviligesTab extends BaseTablePanelTab {
 		if ( ti == null) {
 			throw new IllegalStateException("Null ITableInfo");
 		}
-		String destClassName = session.getProperties().getPriviligesOutputClassName();
+		String destClassName = session.getProperties().getMetaDataOutputClassName();
 		try {
 			ResultSet rs = session.getSQLConnection().getTablePrivileges(ti);
 			// ResultSetPanel is thread save

@@ -104,7 +104,7 @@ public class ContentsTab extends BaseTablePanelTab {
 		if (ti == null) {
 			throw new IllegalStateException("Null ITableInfo");
 		}
-		String destClassName = session.getProperties().getContentsOutputClassName();
+		String destClassName = session.getProperties().getSQLResultsOutputClassName();
 		try {
 			SQLConnection conn = session.getSQLConnection();
 			Statement stmt = conn.createStatement();

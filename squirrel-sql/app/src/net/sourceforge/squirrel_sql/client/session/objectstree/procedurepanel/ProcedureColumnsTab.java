@@ -93,10 +93,9 @@ public class ProcedureColumnsTab extends BaseProcedurePanelTab {
 		if ( pi == null) {
 			throw new IllegalStateException("Null IProcedureInfo");
 		}
-		String destClassName = session.getProperties().getProcedureColumnsOutputClassName();
+		String destClassName = session.getProperties().getMetaDataOutputClassName();
 		try {
 			ResultSet rs = session.getSQLConnection().getProcedureColumns(pi);
-			// ResultSetPanel is thread save
 			((ResultSetPanel)getComponent()).load(session, rs, null, destClassName);
 		} catch (Exception ex) {
 			session.getMessageHandler().showMessage(ex);

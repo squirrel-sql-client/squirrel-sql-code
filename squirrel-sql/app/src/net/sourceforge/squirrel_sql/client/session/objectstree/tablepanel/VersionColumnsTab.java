@@ -104,7 +104,7 @@ public class VersionColumnsTab extends BaseTablePanelTab {
 		if ( ti == null) {
 			throw new IllegalStateException("Null ITableInfo");
 		}
-		String destClassName = session.getProperties().getVersionsOutputClassName();
+		String destClassName = session.getProperties().getMetaDataOutputClassName();
 		try {
 			ResultSet rs = session.getSQLConnection().getVersionColumns(ti);
 			// ResultSetPanel is thread save

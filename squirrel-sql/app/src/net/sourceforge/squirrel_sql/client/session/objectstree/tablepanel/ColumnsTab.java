@@ -104,7 +104,7 @@ public class ColumnsTab extends BaseTablePanelTab {
 		if ( ti == null) {
 			throw new IllegalStateException("Null ITableInfo");
 		}
-		String destClassName = session.getProperties().getColumnsOutputClassName();
+		String destClassName = session.getProperties().getMetaDataOutputClassName();
 		try {
 			ResultSet rs = session.getSQLConnection().getColumns(ti);
 			// ResultSetPanel is thread save

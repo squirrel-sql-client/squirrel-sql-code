@@ -239,7 +239,7 @@ public class TableInfoTab extends BaseTablePanelTab
 			pnl.add(_rowCountLbl, gbc);
 
 			// Panel displays table info.
-			String destClassName = session.getProperties().getTableOutputClassName();
+			String destClassName = session.getProperties().getMetaDataOutputClassName();
 			_viewer = BaseDataSetViewerDestination.getInstance(destClassName);
 			_ds = new TableInfoDataSet();
 			Runnable run = new Runnable()

@@ -40,6 +40,21 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 public class GeneralSessionPropertiesPanel
 	implements INewSessionPropertiesPanel, ISessionPropertiesPanel
 {
+	/**
+	 * This interface defines locale specific strings. This should be
+	 * replaced with a property file.
+	 */
+	interface GeneralSessionPropertiesPanelI18n
+	{
+		String META_DATA = "Meta Data:";
+		String SQL_RESULTS = "SQL Results:";
+		String TITLE = "General";
+		String HINT = "General settings for the current session";
+		String SHOW_TOOLBAR = "Show toolbar";
+		String TABLE = "Table";
+		String TEXT = "Text";
+	}
+
 	private IApplication _app;
 	private SessionProperties _props;
 
@@ -87,12 +102,12 @@ public class GeneralSessionPropertiesPanel
 
 	public String getTitle()
 	{
-		return MyPanel.GeneralSessionPropertiesPanelI18n.TITLE;
+		return GeneralSessionPropertiesPanelI18n.TITLE;
 	}
 
 	public String getHint()
 	{
-		return MyPanel.GeneralSessionPropertiesPanelI18n.HINT;
+		return GeneralSessionPropertiesPanelI18n.HINT;
 	}
 
 	public void applyChanges()
@@ -102,37 +117,33 @@ public class GeneralSessionPropertiesPanel
 
 	private static final class MyPanel extends JPanel
 	{
-		/**
-		 * This interface defines locale specific strings. This should be
-		 * replaced with a property file.
-		 */
-		interface GeneralSessionPropertiesPanelI18n
-		{
-			String TITLE = "General";
-			String HINT = "General settings for the current session";
-			String SHOW_TOOLBAR = "Show toolbar";
-		}
 
 		private JCheckBox _showToolBar = new JCheckBox(GeneralSessionPropertiesPanelI18n.SHOW_TOOLBAR);
+		private OutputTypeCombo _metaDataCmb = new OutputTypeCombo();
+		private OutputTypeCombo _sqlResultsCmb = new OutputTypeCombo();
+
 		MyPanel()
 		{
-			super();
+			super(new GridBagLayout());
 			createUserInterface();
 		}
 
 		void loadData(SessionProperties props)
 		{
 			_showToolBar.setSelected(props.getShowToolBar());
+			_metaDataCmb.selectClassName(props.getMetaDataOutputClassName());
+			_sqlResultsCmb.selectClassName(props.getSQLResultsOutputClassName());
 		}
 
 		void applyChanges(SessionProperties props)
 		{
 			props.setShowToolBar(_showToolBar.isSelected());
+			props.setMetaDataOutputClassName(_metaDataCmb.getSelectedClassName());
+			props.setSQLResultsOutputClassName(_sqlResultsCmb.getSelectedClassName());
 		}
 
 		private void createUserInterface()
 		{
-			setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.anchor = gbc.WEST;
 			gbc.fill = gbc.HORIZONTAL;
@@ -140,23 +151,92 @@ public class GeneralSessionPropertiesPanel
 			gbc.gridx = 0;
 			gbc.gridy = 0;
 			add(createGeneralPanel(), gbc);
+			++gbc.gridy;
+			add(createOutputPanel(), gbc);
 		}
 
 		private JPanel createGeneralPanel()
 		{
-			JPanel pnl = new JPanel();
+			JPanel pnl = new JPanel(new GridBagLayout());
 			pnl.setBorder(BorderFactory.createTitledBorder("General"));
 
-			pnl.setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = gbc.HORIZONTAL;
+			gbc.anchor = gbc.WEST;
 			gbc.insets = new Insets(4, 4, 4, 4);
+			gbc.weightx = 1.0;
 
 			gbc.gridx = 0;
 			gbc.gridy = 0;
 			pnl.add(_showToolBar, gbc);
 
 			return pnl;
+		}
+
+		private JPanel createOutputPanel()
+		{
+			JPanel pnl = new JPanel(new GridBagLayout());
+			pnl.setBorder(BorderFactory.createTitledBorder("Output"));
+
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = gbc.HORIZONTAL;
+			gbc.insets = new Insets(4, 4, 4, 4);
+
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			pnl.add(new JLabel(GeneralSessionPropertiesPanelI18n.META_DATA, SwingConstants.RIGHT), gbc);
+
+			++gbc.gridx;
+			pnl.add(_metaDataCmb, gbc);
+
+			++gbc.gridx;
+			pnl.add(new JLabel(GeneralSessionPropertiesPanelI18n.SQL_RESULTS, SwingConstants.RIGHT), gbc);
+
+			++gbc.gridx;
+			pnl.add(_sqlResultsCmb, gbc);
+
+			return pnl;
+		}
+	}
+
+	private final static class OutputType {
+		static final OutputType TEXT = new OutputType(GeneralSessionPropertiesPanelI18n.TEXT, DataSetViewerTextPanel.class.getName());
+		static final OutputType TABLE = new OutputType(GeneralSessionPropertiesPanelI18n.TABLE, DataSetViewerTablePanel.class.getName());
+		private final String _name;
+		private final String _className;
+
+		OutputType(String name, String className) {
+			super();
+			_name = name;
+			_className = className;
+		}
+
+		public String toString() {
+			return _name;
+		}
+
+		String getPanelClassName() {
+			return _className;
+		}
+	}
+
+	private static final class OutputTypeCombo extends JComboBox {
+		OutputTypeCombo() {
+			super();
+			addItem(OutputType.TABLE);
+			addItem(OutputType.TEXT);
+		}
+
+		void selectClassName(String className) {
+			if (className.equals(DataSetViewerTablePanel.class.getName())) {
+				setSelectedItem(OutputType.TABLE);
+			} else {
+				setSelectedItem(OutputType.TEXT);
+			}
+		}
+
+		String getSelectedClassName() {
+			return ((OutputType)getSelectedItem()).getPanelClassName();
 		}
 	}
 }

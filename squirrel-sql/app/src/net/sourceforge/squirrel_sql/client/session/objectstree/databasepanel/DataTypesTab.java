@@ -69,9 +69,4 @@ public class DataTypesTab extends BaseDatabasePanelTab {
 			throw new DataSetException(ex);
 		}
 	}
-
-	protected IDataSetViewer createViewer(ISession session) {
-		String destClassName = session.getProperties().getDataTypesOutputClassName();
-		return BaseDataSetViewerDestination.getInstance(destClassName);
-	}
 }

@@ -104,7 +104,7 @@ public class ExportedKeysTab extends BaseTablePanelTab {
 		if ( ti == null) {
 			throw new IllegalStateException("Null ITableInfo");
 		}
-		String destClassName = session.getProperties().getExportedKeysOutputClassName();
+		String destClassName = session.getProperties().getMetaDataOutputClassName();
 		try {
 			ResultSet rs = session.getSQLConnection().getExportedKeys(ti);
 			// ResultSetPanel is thread save

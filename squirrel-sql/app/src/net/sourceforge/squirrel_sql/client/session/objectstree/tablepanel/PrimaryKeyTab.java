@@ -104,7 +104,7 @@ public class PrimaryKeyTab extends BaseTablePanelTab {
 		if ( ti == null) {
 			throw new IllegalStateException("Null ITableInfo");
 		}
-		String destClassName = session.getProperties().getPrimaryKeyOutputClassName();
+		String destClassName = session.getProperties().getMetaDataOutputClassName();
 		try {
 			ResultSet rs = session.getSQLConnection().getPrimaryKeys(ti);
 			// ResultSetPanel is thread save

@@ -65,9 +65,4 @@ public class DateTimeFunctionsTab extends BaseDatabasePanelTab {
 			throw new DataSetException(ex);
 		}
 	}
-
-	protected IDataSetViewer createViewer(ISession session) {
-		String destClassName = session.getProperties().getMetaDataOutputClassName();
-		return BaseDataSetViewerDestination.getInstance(destClassName);
-	}
 }

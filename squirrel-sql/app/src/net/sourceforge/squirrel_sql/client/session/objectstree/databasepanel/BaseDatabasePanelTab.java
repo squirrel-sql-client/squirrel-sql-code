@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel;
  */
 import java.awt.Component;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.BaseDataSetViewerDestination;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
@@ -54,8 +55,6 @@ public abstract class BaseDatabasePanelTab extends BaseObjectPanelTab implements
 
 	protected abstract IDataSet createDataSet(ISession session) throws DataSetException;
 
-	protected abstract IDataSetViewer createViewer(ISession session);
-
 	/**
 	 * @see IObjectPanelTab#getComponent()
 	 */
@@ -73,5 +72,10 @@ public abstract class BaseDatabasePanelTab extends BaseObjectPanelTab implements
 		if (_comp != null) {
 			_comp.clear();
 		}
+	}
+
+	protected IDataSetViewer createViewer(ISession session) {
+		String destClassName = session.getProperties().getMetaDataOutputClassName();
+		return BaseDataSetViewerDestination.getInstance(destClassName);
 	}
 }

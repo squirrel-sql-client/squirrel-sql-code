@@ -143,10 +143,10 @@ public class SQLPropertiesPanel
 			_commitOnClose.setSelected(props.getCommitOnClosingConnection());
 			_contentsNbrRowsToShowField.setInt(props.getContentsNbrRowsToShow());
 			_contentsLimitRowsChk.setSelected(props.getContentsLimitRows());
-			_sqlNbrRowsToShowField.setInt(props.getSqlNbrRowsToShow());
-			_sqlLimitRows.setSelected(props.getSqlLimitRows());
+			_sqlNbrRowsToShowField.setInt(props.getSQLNbrRowsToShow());
+			_sqlLimitRows.setSelected(props.getSQLLimitRows());
 			_showRowCount.setSelected(props.getShowRowCount());
-			_stmtSepChar.setChar(props.getSqlStatementSeparatorChar());
+			_stmtSepChar.setChar(props.getSQLStatementSeparatorChar());
 
 			FontInfo fi = props.getFontInfo();
 			if (fi == null) {
@@ -161,10 +161,10 @@ public class SQLPropertiesPanel
 			props.setCommitOnClosingConnection(_commitOnClose.isSelected());
 			props.setContentsNbrRowsToShow(_contentsNbrRowsToShowField.getInt());
 			props.setContentsLimitRows(_contentsLimitRowsChk.isSelected());
-			props.setSqlNbrRowsToShow(_sqlNbrRowsToShowField.getInt());
-			props.setSqlLimitRows(_sqlLimitRows.isSelected());
+			props.setSQLNbrRowsToShow(_sqlNbrRowsToShowField.getInt());
+			props.setSQLLimitRows(_sqlLimitRows.isSelected());
 			props.setShowRowCount(_showRowCount.isSelected());
-			props.setSqlStatementSeparatorChar(_stmtSepChar.getChar());
+			props.setSQLStatementSeparatorChar(_stmtSepChar.getChar());
 			props.setFontInfo(_fontBtn.getFontInfo());
 		}
 
