@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.session;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Font;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -45,6 +46,7 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
@@ -242,7 +244,8 @@ public class SessionSheet extends BaseSheet {
 
 	private void createUserInterface() {
 		setVisible(false);
-		Icon icon = _session.getApplication().getResources().getIcon(getClass(), "frameIcon"); //i18n
+		final IApplication app = _session.getApplication();
+		Icon icon = app.getResources().getIcon(getClass(), "frameIcon"); //i18n
 		if (icon != null) {
 			setFrameIcon(icon);
 		}
@@ -253,7 +256,7 @@ public class SessionSheet extends BaseSheet {
 		content.setLayout(new BorderLayout());
 		content.add(new MyToolBar(_session, this), BorderLayout.NORTH);
 
-		MessagePanel msgPnl = new MessagePanel(_session.getApplication());
+		MessagePanel msgPnl = new MessagePanel(app);
 		_session.setMessageHandler(msgPnl);
 		msgPnl.setEditable(false);
 		msgPnl.setRows(4);
@@ -283,6 +286,9 @@ public class SessionSheet extends BaseSheet {
 				}
 			}
 		});
+
+		Font fn = app.getFontInfoStore().getStatusBarFontInfo().createFont();
+		_statusBar.setFont(fn);
 		content.add(_statusBar, BorderLayout.SOUTH);
 
 		validate();
@@ -320,7 +326,7 @@ public class SessionSheet extends BaseSheet {
 				s_log.error("Unable to retrieve catalog info", ex);
 			}
 
-			ActionCollection actions = _session.getApplication().getActionCollection();
+			ActionCollection actions = session.getApplication().getActionCollection();
 			setUseRolloverButtons(true);
 			setFloatable(false);
 			add(actions.get(SessionPropertiesAction.class));
