@@ -485,7 +485,7 @@ public class CellComponentFactory {
 				case Types.BIT:
 				case 16:
 //				case Types.BOOLEAN:
-					//??
+					dataTypeComponent = new DataTypeBoolean(table, colDef);
 					break;
 
 				case Types.TIME :
@@ -512,7 +512,7 @@ public class CellComponentFactory {
 
 				case Types.DECIMAL:
 				case Types.NUMERIC:
-					//??
+					dataTypeComponent = new DataTypeBigDecimal(table, colDef);
 					break;
 
 				case Types.INTEGER:
