@@ -8,7 +8,7 @@ Change Log
 Bug Fixes
 ------------
 - QueryTokenizer improperly parses strings with 
-  quotes on multiple lines and causes SQLException (Todd Larsen ).
+  quotes on multiple lines and causes SQLException (Todd Larsen).
 - If no alises defined then the Alises dropdown has a sensible width
   under JDK1.4.
 - If Aliases dropdown is empty when adding the first one to it then make
