@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -29,14 +29,14 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.Action;
+import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
+import javax.swing.event.EventListenerList;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
@@ -50,15 +50,16 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.CopyQualifiedObjectNameAction;
+import net.sourceforge.squirrel_sql.client.session.action.CopySimpleObjectNameAction;
 import net.sourceforge.squirrel_sql.client.session.action.DropSelectedTablesAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeItemAction;
-import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeItemAction;
 import net.sourceforge.squirrel_sql.client.session.action.SetDefaultCatalogAction;
 /**
  * This is the tree showing the structure of objects in the database.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 class ObjectTree extends JTree
 {
@@ -100,10 +101,15 @@ class ObjectTree extends JTree
 	private Map _expandedPathNames = new HashMap();
 
 	/**
+	 * Collection of listeners to this object tree.
+	 */
+	private EventListenerList _listenerList = new EventListenerList();
+
+	/**
 	 * ctor specifying session.
-	 * 
+	 *
 	 * @param	session	Current session.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>ISession</TT> passed.
 	 */
@@ -146,6 +152,9 @@ class ObjectTree extends JTree
 			s_log.debug(th);
 		}
 
+		addToPopup(actions.get(CopySimpleObjectNameAction.class));
+		addToPopup(actions.get(CopyQualifiedObjectNameAction.class));
+
 		// Mouse listener used to display popup menu.
 		addMouseListener(new MouseAdapter()
 		{
@@ -164,6 +173,8 @@ class ObjectTree extends JTree
 				}
 			}
 		});
+		setDragEnabled(true);
+		setTransferHandler(new ObjectTreeTransferHandler());
 	}
 
 	/**
@@ -182,16 +193,17 @@ class ObjectTree extends JTree
 	 */
 	public void removeNotify()
 	{
+		super.removeNotify();
+
 		// Don't need tooltips any more.
 		ToolTipManager.sharedInstance().unregisterComponent(this);
-		super.removeNotify();
 	}
 
 	/**
 	 * Return the name of the object that the mouse is currently
 	 * over as the tooltip text.
 	 *
-	 * @param   event   Used to determine the current mouse position.
+	 * @param	event	Used to determine the current mouse position.
 	 */
 	public String getToolTipText(MouseEvent evt)
 	{
@@ -210,7 +222,7 @@ class ObjectTree extends JTree
 
 	/**
 	 * Return the typed data model for this tree.
-	 * 
+	 *
 	 * @return	The typed data model for this tree.
 	 */
 	public ObjectTreeModel getTypedModel()
@@ -223,6 +235,9 @@ class ObjectTree extends JTree
 	 */
 	public void refresh()
 	{
+		// Clear cache in case metadata has changed.
+		_session.getSQLConnection().getSQLMetaData().clearCache();
+
 		final TreePath[] selectedPaths = getSelectionPaths();
 		final Map selectedPathNames = new HashMap();
 		if (selectedPaths != null)
@@ -234,7 +249,9 @@ class ObjectTree extends JTree
 		}
 		ObjectTreeNode root = _model.getRootObjectTreeNode();
 		root.removeAllChildren();
+		fireObjectTreeCleared();
 		startExpandingTree(root, false, selectedPathNames);
+		fireObjectTreeRefreshed();
 	}
 
 	/**
@@ -245,6 +262,9 @@ class ObjectTree extends JTree
 	 */
 	public void refreshSelectedNodes()
 	{
+		// Clear cache in case metadata has changed.
+		_session.getSQLConnection().getSQLMetaData().clearCache();
+
 		final TreePath[] selectedPaths = getSelectionPaths();
 		ObjectTreeNode[] nodes = getSelectedNodes();
 		final Map selectedPathNames = new HashMap();
@@ -261,11 +281,33 @@ class ObjectTree extends JTree
 	}
 
 	/**
+	 * Adds a listener for changes in this cache entry.
+	 *
+	 * @param	lis	a IObjectCacheChangeListener that will be notified when
+	 *				objects are added and removed from this cache entry.
+	 */
+	public void addObjectTreeListener(IObjectTreeListener lis)
+	{
+		_listenerList.add(IObjectTreeListener.class, lis);
+	}
+
+	/**
+	 * Removes a listener for changes in this cache entry.
+	 *
+	 * @param	lis a IObjectCacheChangeListener that will be notified when
+	 *			objects are added and removed from this cache entry.
+	 */
+	void removeObjectTreeListener(IObjectTreeListener lis)
+	{
+		_listenerList.remove(IObjectTreeListener.class, lis);
+	}
+
+	/**
 	 * Restore the expansion state of the tree starting at the passed node.
 	 * The passed node is always expanded.
-	 * 
+	 *
 	 * @param	node	Node to restore expansion state from.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if null ObjectTreeNode passed.
 	 */
@@ -281,7 +323,7 @@ class ObjectTree extends JTree
 		if (previouslySelectedTreePathNames.containsKey(nodePath.toString()))
 		{
 			selectedTreePaths.add(nodePath);
-		}		
+		}
 		expandPath(nodePath);
 
 		// Go through each child of the parent and see if it was previously
@@ -297,7 +339,7 @@ class ObjectTree extends JTree
 			if (previouslySelectedTreePathNames.containsKey(childPathName))
 			{
 				selectedTreePaths.add(childPath);
-			}		
+			}
 
 			if (_expandedPathNames.containsKey(childPathName))
 			{
@@ -360,10 +402,10 @@ class ObjectTree extends JTree
 	/**
 	 * Add an item to the popup menu for the specified node type in the object
 	 * tree.
-	 * 
+	 *
 	 * @param	dboType		Database Object Type.
 	 * @param	action		Action to add to menu.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> or
 	 *			<TT>DatabaseObjectType</TT>thrown.
@@ -379,15 +421,15 @@ class ObjectTree extends JTree
 			throw new IllegalArgumentException("Null Action passed");
 		}
 
-		JPopupMenu pop = getPopup(dboType, true);
+		final JPopupMenu pop = getPopup(dboType, true);
 		pop.add(action);
 	}
 
 	/**
 	 * Add an item to the popup menu for the all nodes.
-	 * 
+	 *
 	 * @param	action		Action to add to menu.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> thrown.
 	 */
@@ -408,13 +450,63 @@ class ObjectTree extends JTree
 	}
 
 	/**
+	 * Add an hierarchical menu to the popup menu for the specified database
+	 * object type.
+	 *
+	 * @param	dboType		Database object type.
+	 * @param	menu		<TT>JMenu</TT> to add to menu.
+	 *
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> <TT>DatabaseObjectType</TT> or
+	 * 			<TT>JMenu</TT> thrown.
+	 */
+	public void addToPopup(DatabaseObjectType dboType, JMenu menu)
+	{
+		if (dboType == null)
+		{
+			throw new IllegalArgumentException("DatabaseObjectType == null");
+		}
+		if (menu == null)
+		{
+			throw new IllegalArgumentException("JMenu == null");
+		}
+
+		final JPopupMenu pop = getPopup(dboType, true);
+		pop.add(menu);
+	}
+
+	/**
+	 * Add an hierarchical menu to the popup menu for all node types.
+	 *
+	 * @param	menu	<TT>JMenu</TT> to add to menu.
+	 *
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> <TT>JMenu</TT> thrown.
+	 */
+	public void addToPopup(JMenu menu)
+	{
+		if (menu == null)
+		{
+			throw new IllegalArgumentException("JMenu == null");
+		}
+		_globalPopup.add(menu);
+		_globalActions.add(menu);
+
+		for (Iterator it = _popups.values().iterator(); it.hasNext();)
+		{
+			JPopupMenu pop = (JPopupMenu)it.next();
+			pop.add(menu);
+		}
+	}
+
+	/**
 	 * Get the popup menu for the passed database object type. If one
 	 * doesn't exist then create one if requested to do so.
 
 	 * @param	dboType		Database Object Type.
 	 * @param	create		If <TT>true</TT> popup will eb created if it
 	 *						doesn't exist.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> or
 	 *			<TT>DatabaseObjectType</TT>thrown.
@@ -485,7 +577,7 @@ class ObjectTree extends JTree
 	/**
 	 * Get the appropriate popup menu for the currently selected nodes
 	 * in the object tree and display it.
-	 * 
+	 *
 	 * @param	x	X pos to display popup at.
 	 * @param	y	Y pos to display popup at.
 	 */
@@ -506,7 +598,7 @@ class ObjectTree extends JTree
 				}
 			}
 
-			JPopupMenu pop = null; 
+			JPopupMenu pop = null;
 			if (sameType)
 			{
 				pop = getPopup(dboType, false);
@@ -516,6 +608,54 @@ class ObjectTree extends JTree
 				pop = _globalPopup;
 			}
 			pop.show(this, x, y);
+		}
+	}
+
+	/**
+	 * Fire a "tree cleared" event to all listeners.
+	 */
+	private void fireObjectTreeCleared()
+	{
+		// Guaranteed to be non-null.
+		Object[] listeners = _listenerList.getListenerList();
+		// Process the listeners last to first, notifying
+		// those that are interested in this event.
+		ObjectTreeListenerEvent evt = null;
+		for (int i = listeners.length - 2; i >= 0; i-=2 )
+		{
+			if (listeners[i] == IObjectTreeListener.class)
+			{
+				// Lazily create the event.
+				if (evt == null)
+				{
+					evt = new ObjectTreeListenerEvent(ObjectTree.this);
+				}
+				((IObjectTreeListener)listeners[i + 1]).objectTreeCleared(evt);
+			}
+		}
+	}
+
+	/**
+	 * Fire a "tree refreshed" event to all listeners.
+	 */
+	private void fireObjectTreeRefreshed()
+	{
+		// Guaranteed to be non-null.
+		Object[] listeners = _listenerList.getListenerList();
+		// Process the listeners last to first, notifying
+		// those that are interested in this event.
+		ObjectTreeListenerEvent evt = null;
+		for (int i = listeners.length - 2; i >= 0; i-=2 )
+		{
+			if (listeners[i] == IObjectTreeListener.class)
+			{
+				// Lazily create the event.
+				if (evt == null)
+				{
+					evt = new ObjectTreeListenerEvent(ObjectTree.this);
+				}
+				((IObjectTreeListener)listeners[i + 1]).objectTreeRefreshed(evt);
+			}
 		}
 	}
 
@@ -564,7 +704,7 @@ class ObjectTree extends JTree
 			_selectNode = selectNode;
 			_selectedPathNames = selectedPathNames;
 		}
-		
+
 		public void run()
 		{
 			synchronized (ObjectTree.this._syncObject)
