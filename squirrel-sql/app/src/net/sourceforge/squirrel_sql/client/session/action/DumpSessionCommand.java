@@ -325,7 +325,7 @@ public class DumpSessionCommand implements ICommand
 		XMLBeanWriter wtr = new XMLBeanWriter(obj);
 		wtr.save(tempFile);
 
-		return null;
+		return tempFile;
 	}
 
 	private File createGeneralConnectionDumpFile(SQLConnection conn)
