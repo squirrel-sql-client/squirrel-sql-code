@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.oracle.tab;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -48,10 +48,6 @@ public class SessionDetailsTab extends BasePreparedStatementTab
 			+ " machine, terminal, program"
 			+ " from sys.v_$session"
 			+ " where sid = ?";
-
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(SessionDetailsTab.class);
 
 	public SessionDetailsTab()
 	{

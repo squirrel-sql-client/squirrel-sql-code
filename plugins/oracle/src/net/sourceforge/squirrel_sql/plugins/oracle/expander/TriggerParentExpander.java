@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.oracle.expander;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -28,9 +28,6 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
@@ -43,32 +40,16 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTr
  */
 public class TriggerParentExpander implements INodeExpander
 {
-	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(PackageParentExpander.class);
-
 	private static String SQL =
 		"select owner, trigger_name from sys.all_triggers where table_owner = ?" +
 		" and table_name = ?";
 
-	/** The plugin. */
-	private final OraclePlugin _plugin;
-
 	/**
-	 * Ctor.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> <TT>OraclePlugin</TT> passed.
+	 * Default ctor.
 	 */
-	public TriggerParentExpander(OraclePlugin plugin)
+	public TriggerParentExpander()
 	{
 		super();
-		if (plugin == null)
-		{
-			throw new IllegalArgumentException("OraclePlugin == null");
-		}
-
-		_plugin = plugin;
 	}
 
 	/**
@@ -89,20 +70,26 @@ public class TriggerParentExpander implements INodeExpander
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
 		final SQLConnection conn = session.getSQLConnection();
 		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
-		final String schemaName = parentDbinfo.getSchemaName();
 		final IDatabaseObjectInfo tableInfo = ((TriggerParentInfo)parentDbinfo).getTableInfo();
-		PreparedStatement pstmt = conn.prepareStatement(SQL);
+		final PreparedStatement pstmt = conn.prepareStatement(SQL);
 		try
 		{
 			pstmt.setString(1, tableInfo.getSchemaName());
 			pstmt.setString(2, tableInfo.getSimpleName());
 			ResultSet rs = pstmt.executeQuery();
-			while (rs.next())
+			try
 			{
-				DatabaseObjectInfo doi = new DatabaseObjectInfo(null,
-											rs.getString(1), rs.getString(2),
-											DatabaseObjectType.TRIGGER, md);
-				childNodes.add(new ObjectTreeNode(session, doi));
+				while (rs.next())
+				{
+					DatabaseObjectInfo doi = new DatabaseObjectInfo(null,
+												rs.getString(1), rs.getString(2),
+												DatabaseObjectType.TRIGGER, md);
+					childNodes.add(new ObjectTreeNode(session, doi));
+				}
+			}
+			finally
+			{
+				rs.close();
 			}
 		}
 		finally

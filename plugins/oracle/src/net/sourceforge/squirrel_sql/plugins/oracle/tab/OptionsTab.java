@@ -19,9 +19,6 @@ package net.sourceforge.squirrel_sql.plugins.oracle.tab;
  */
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
  * This tab will display the database options.
  *
@@ -43,13 +40,8 @@ public class OptionsTab extends BasePreparedStatementTab
 	private static String SQL =
 		"select parameter, value from sys.v_$option";
 
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(OptionsTab.class);
-
 	public OptionsTab()
 	{
-		//super(SQL, i18n.TITLE, i18n.HINT);
 		super(i18n.TITLE, i18n.HINT);
 	}
 
@@ -57,5 +49,4 @@ public class OptionsTab extends BasePreparedStatementTab
 	{
 		return getSession().getSQLConnection().prepareStatement(SQL);
 	}
-
 }

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.oracle.expander;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -27,8 +27,6 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
@@ -51,28 +49,12 @@ public class InstanceParentExpander implements INodeExpander
 			+ " logins, shutdown_pending, database_status, instance_role"
 			+ " from sys.v_$instance";
 
-	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(InstanceParentExpander.class);
-
-	/** The plugin. */
-	private final OraclePlugin _plugin;
-
 	/**
-	 * Ctor.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> <TT>OraclePlugin</TT> passed.
+	 * Default ctor.
 	 */
 	public InstanceParentExpander(OraclePlugin plugin)
 	{
 		super();
-		if (plugin == null)
-		{
-			throw new IllegalArgumentException("OraclePlugin == null");
-		}
-
-		_plugin = plugin;
 	}
 
 	/**
@@ -97,26 +79,33 @@ public class InstanceParentExpander implements INodeExpander
 		try
 		{
 			ResultSet rs = pstmt.executeQuery();
-			while (rs.next())
+			try
 			{
-				IDatabaseObjectInfo doi = new DatabaseObjectInfo(null, null,
-								rs.getString(1), IObjectTypes.INSTANCE, md);
-//				final Map map = new HashMap();
-//				map.put("Instance Number", new Integer(rs.getInt(1)));
-//				map.put("Name", rs.getString(2));
-//				map.put("Host Name", rs.getString(3));
-//				map.put("Version", rs.getString(4));
-//				map.put("Startup Time", rs.getDate(5));
-//				map.put("Instance Status", rs.getString(6));
-//				map.put("Parallel", rs.getString(7));
-//				map.put("Thread #", new Integer(rs.getInt(8)));
-//				map.put("Archiver", rs.getString(9));
-//				map.put("Log Switch Wait", rs.getString(10));
-//				map.put("Logins", rs.getString(11));
-//				map.put("Shutdown Pending", rs.getString(12));
-//				map.put("Database Status", rs.getString(13));
-//				map.put("Instance Role", rs.getString(14));
-				childNodes.add(new ObjectTreeNode(session, doi));
+				while (rs.next())
+				{
+					IDatabaseObjectInfo doi = new DatabaseObjectInfo(null, null,
+									rs.getString(1), IObjectTypes.INSTANCE, md);
+	//				final Map map = new HashMap();
+	//				map.put("Instance Number", new Integer(rs.getInt(1)));
+	//				map.put("Name", rs.getString(2));
+	//				map.put("Host Name", rs.getString(3));
+	//				map.put("Version", rs.getString(4));
+	//				map.put("Startup Time", rs.getDate(5));
+	//				map.put("Instance Status", rs.getString(6));
+	//				map.put("Parallel", rs.getString(7));
+	//				map.put("Thread #", new Integer(rs.getInt(8)));
+	//				map.put("Archiver", rs.getString(9));
+	//				map.put("Log Switch Wait", rs.getString(10));
+	//				map.put("Logins", rs.getString(11));
+	//				map.put("Shutdown Pending", rs.getString(12));
+	//				map.put("Database Status", rs.getString(13));
+	//				map.put("Instance Role", rs.getString(14));
+					childNodes.add(new ObjectTreeNode(session, doi));
+				}
+			}
+			finally
+			{
+				rs.close();
 			}
 		}
 		finally

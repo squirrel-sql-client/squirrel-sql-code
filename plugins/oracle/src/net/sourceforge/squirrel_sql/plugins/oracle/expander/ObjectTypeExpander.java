@@ -27,8 +27,6 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
@@ -40,10 +38,6 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTr
  */
 public class ObjectTypeExpander implements INodeExpander
 {
-	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(ObjectTypeExpander.class);
-
 	/** SQL that retrieves the objects for the object types. */
 	private static String SQL =
 		"select object_name from sys.all_objects where object_type = ?" +
@@ -86,10 +80,8 @@ public class ObjectTypeExpander implements INodeExpander
 	{
 		final List childNodes = new ArrayList();
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
-		final SQLConnection conn = session.getSQLConnection();
 		final String catalogName = parentDbinfo.getCatalogName();
 		final String schemaName = parentDbinfo.getSchemaName();
-
 		childNodes.addAll(createNodes(session, catalogName, schemaName));
 		return childNodes;
 	}
@@ -109,12 +101,19 @@ public class ObjectTypeExpander implements INodeExpander
 			pstmt.setString(1, _objectType._objectTypeColumnData);
 			pstmt.setString(2, schemaName);
 			ResultSet rs = pstmt.executeQuery();
-			while (rs.next())
+			try
 			{
-				IDatabaseObjectInfo dbinfo = new DatabaseObjectInfo(catalogName,
-										schemaName, rs.getString(1),
-										_objectType._childDboType, md);
-				childNodes.add(new ObjectTreeNode(session, dbinfo));
+				while (rs.next())
+				{
+					IDatabaseObjectInfo dbinfo = new DatabaseObjectInfo(catalogName,
+											schemaName, rs.getString(1),
+											_objectType._childDboType, md);
+					childNodes.add(new ObjectTreeNode(session, dbinfo));
+				}
+			}
+			finally
+			{
+				rs.close();
 			}
 		}
 		finally

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.oracle.expander;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -23,17 +23,13 @@ import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 
 import net.sourceforge.squirrel_sql.plugins.oracle.IObjectTypes;
-import net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin;
 /**
  * This class handles the expanding of the "Package Type" or "Package Heading"
  * node. It will give a list of all the packages available in the schema.
@@ -42,28 +38,15 @@ import net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin;
  */
 public class PackageParentExpander implements INodeExpander
 {
-	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(PackageParentExpander.class);
-
-	/** The plugin. */
-	private final OraclePlugin _plugin;
-
 	/**
-	 * Ctor.
+	 * Default ctor.
 	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>OraclePlugin</TT> passed.
 	 */
-	PackageParentExpander(OraclePlugin plugin)
+	PackageParentExpander()
 	{
 		super();
-		if (plugin == null)
-		{
-			throw new IllegalArgumentException("OraclePlugin == null");
-		}
-
-		_plugin = plugin;
 	}
 
 	/**
@@ -82,9 +65,7 @@ public class PackageParentExpander implements INodeExpander
 	{
 		final List childNodes = new ArrayList();
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
-		final SQLConnection conn = session.getSQLConnection();
 		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
-		final String catalogName = parentDbinfo.getCatalogName();
 		final String schemaName = parentDbinfo.getSchemaName();
 
 		// Add package node to contain standalone procedures.

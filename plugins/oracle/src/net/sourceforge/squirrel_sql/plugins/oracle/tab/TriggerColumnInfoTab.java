@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.oracle.tab;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -21,8 +21,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
@@ -47,10 +45,6 @@ public class TriggerColumnInfoTab extends BasePreparedStatementTab
 		"select table_owner, table_name, column_name, column_list, column_usage"
 			+ " from sys.all_trigger_cols where trigger_owner = ?"
 			+ " and trigger_name = ?";
-
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(TriggerColumnInfoTab.class);
 
 	public TriggerColumnInfoTab()
 	{

@@ -166,12 +166,12 @@ public class OraclePlugin extends DefaultSessionPlugin
 				// Expanders.
 				_treeAPI.addExpander(DatabaseObjectType.SESSION, new DatabaseExpander());
 				_treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander(this));
-				_treeAPI.addExpander(DatabaseObjectType.TABLE, new TableExpander(this));
+				_treeAPI.addExpander(DatabaseObjectType.TABLE, new TableExpander());
 				_treeAPI.addExpander(IObjectTypes.PACKAGE, new PackageExpander());
-				_treeAPI.addExpander(IObjectTypes.USER_PARENT, new UserParentExpander(this));
-				_treeAPI.addExpander(IObjectTypes.SESSION_PARENT, new SessionParentExpander(this));
+				_treeAPI.addExpander(IObjectTypes.USER_PARENT, new UserParentExpander());
+				_treeAPI.addExpander(IObjectTypes.SESSION_PARENT, new SessionParentExpander());
 				_treeAPI.addExpander(IObjectTypes.INSTANCE_PARENT, new InstanceParentExpander(this));
-				_treeAPI.addExpander(IObjectTypes.TRIGGER_PARENT, new TriggerParentExpander(this));
+				_treeAPI.addExpander(IObjectTypes.TRIGGER_PARENT, new TriggerParentExpander());
 
 				_treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, new ObjectSourceTab("PROCEDURE", "Show stored procedure source"));
 				_treeAPI.addDetailTab(DatabaseObjectType.FUNCTION, new ObjectSourceTab("FUNCTION", "Show function source"));

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.oracle.expander;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -27,14 +27,12 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.oracle.IObjectTypes;
-import net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
+
+import net.sourceforge.squirrel_sql.plugins.oracle.IObjectTypes;
 /**
  * This class handles the expanding of the "Session Parent"
  * node. It will give a list of all the sessions.
@@ -47,28 +45,12 @@ public class SessionParentExpander implements INodeExpander
 	private static String SQL =
 		"select sid from sys.v_$session";
 
-	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(SessionParentExpander.class);
-
-	/** The plugin. */
-	private final OraclePlugin _plugin;
-
 	/**
-	 * Ctor.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> <TT>OraclePlugin</TT> passed.
+	 * Default ctor.
 	 */
-	public SessionParentExpander(OraclePlugin plugin)
+	public SessionParentExpander()
 	{
 		super();
-		if (plugin == null)
-		{
-			throw new IllegalArgumentException("OraclePlugin == null");
-		}
-
-		_plugin = plugin;
 	}
 
 	/**
@@ -95,12 +77,19 @@ public class SessionParentExpander implements INodeExpander
 		try
 		{
 			ResultSet rs = pstmt.executeQuery();
-			while (rs.next())
+			try
 			{
-				IDatabaseObjectInfo doi = new DatabaseObjectInfo(null,
-												schemaName, rs.getString(1),
-												IObjectTypes.SESSION, md);
-				childNodes.add(new ObjectTreeNode(session, doi));
+				while (rs.next())
+				{
+					IDatabaseObjectInfo doi = new DatabaseObjectInfo(null,
+													schemaName, rs.getString(1),
+													IObjectTypes.SESSION, md);
+					childNodes.add(new ObjectTreeNode(session, doi));
+				}
+			}
+			finally
+			{
+				rs.close();
 			}
 		}
 		finally
