@@ -67,318 +67,324 @@ import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
 import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.client.session.objectstree.ProcedurePanel;
 import net.sourceforge.squirrel_sql.client.session.objectstree.TablePanel;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
 public class SessionSheet extends JInternalFrame {
-    /**
-     * This interface defines locale specific strings. This should be
-     * replaced with a property file.
-     */
-    private interface i18n {
-        String SQL_TAB_TITLE = "SQL";
-        String SQL_TAB_DESC = "Execute SQL statements";
-        String OBJ_TAB_TITLE = "Objects";
-        String OBJ_TAB_DESC = "Show database objects";
-        String IMPORT_TAB_TITLE = "Import Data";
-        String IMPORT_TAB_DESC = "Import csv files into database";
-    }
+	/**
+	 * This interface defines locale specific strings. This should be
+	 * replaced with a property file.
+	 */
+	private interface i18n {
+		String SQL_TAB_TITLE = "SQL";
+		String SQL_TAB_DESC = "Execute SQL statements";
+		String OBJ_TAB_TITLE = "Objects";
+		String OBJ_TAB_DESC = "Show database objects";
+		String IMPORT_TAB_TITLE = "Import Data";
+		String IMPORT_TAB_DESC = "Import csv files into database";
+	}
 
-    /**
-     * IDs of tabs in the main tabbed pane.
-     */
-    public interface IMainTabIndexes {
-        int OBJECT_TREE_TAB = 0;
-        int SQL_TAB = 1;
-    }
+	/**
+	 * IDs of tabs in the main tabbed pane.
+	 */
+	public interface IMainTabIndexes {
+		int OBJECT_TREE_TAB = 0;
+		int SQL_TAB = 1;
+	}
 
-    private ISession _session;
+	private ISession _session;
 
-    private MyPropertiesListener _propsListener = new MyPropertiesListener();
+	private MyPropertiesListener _propsListener = new MyPropertiesListener();
 
-    private JTabbedPane _tabPane = new JTabbedPane();
-    private SQLPanel _sqlPnl;
-    private ObjectsPanel _objectsPnl;
-    private JSplitPane _msgSplit;
+	private JTabbedPane _tabPane = new JTabbedPane();
+	private SQLPanel _sqlPnl;
+	private ObjectsPanel _objectsPnl;
+	private JSplitPane _msgSplit;
 
-    private boolean _hasBeenVisible = false;
+	private boolean _hasBeenVisible = false;
 
-    public SessionSheet(ISession session) throws BaseSQLException {
-        super(createTitle(session), true, true, true, true);
-        _session = session;
-        setVisible(false);
-        createUserInterface();
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+	public SessionSheet(ISession session) throws BaseSQLException {
+		super(createTitle(session), true, true, true, true);
+		_session = session;
+		setVisible(false);
+		createUserInterface();
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-        propertiesHaveChanged(null);
+		propertiesHaveChanged(null);
 
-        session.getProperties().addPropertyChangeListener(_propsListener);
-    }
+		session.getProperties().addPropertyChangeListener(_propsListener);
+	}
 
-    /**
-     * Close this window.
-     */
-    public void dispose() {
-        _session.getApplication().getPluginManager().sessionEnding(_session);
-        closeConnection();
-        super.dispose();
-    }
+	/**
+	 * Close this window.
+	 */
+	public void dispose() {
+		_session.getApplication().getPluginManager().sessionEnding(_session);
+		closeConnection();
+		super.dispose();
+	}
 
-    public boolean hasConnection() {
-        return _session.getSQLConnection() != null;
-    }
-    /*
-        public void commit() {
-            _sqlPnl.commit();
-        }
+	public boolean hasConnection() {
+		return _session.getSQLConnection() != null;
+	}
+	/*
+		public void commit() {
+			_sqlPnl.commit();
+		}
 
-        public void rollback() {
-            _sqlPnl.rollback();
-        }
-    */
-    public ISession getSession() {
-        return _session;
-    }
+		public void rollback() {
+			_sqlPnl.rollback();
+		}
+	*/
+	public ISession getSession() {
+		return _session;
+	}
 
-    public void refreshTree() throws BaseSQLException {
-        _objectsPnl.refreshTree();
-    }
+	public void refreshTree() throws BaseSQLException {
+		_objectsPnl.refreshTree();
+	}
 
-    public void updateState() {
-        ActionCollection actions = _session.getApplication().getActionCollection();
-        final String tabTitle = _tabPane.getTitleAt(_tabPane.getSelectedIndex());
-        if (tabTitle.equals(i18n.SQL_TAB_TITLE)) {
-            actions.get(ExecuteSqlAction.class).setEnabled(true);
-            boolean isAutoCommit = _session.getProperties().getAutoCommit();
-            actions.get(CommitAction.class).setEnabled(!isAutoCommit);
-            actions.get(RollbackAction.class).setEnabled(!isAutoCommit);
-            actions.get(RefreshTreeAction.class).setEnabled(false);
-        } else {
-            actions.get(ExecuteSqlAction.class).setEnabled(false);
-            actions.get(CommitAction.class).setEnabled(false);
-            actions.get(RollbackAction.class).setEnabled(false);
-            actions.get(RefreshTreeAction.class).setEnabled(true);
-        }
-    }
+	public void updateState() {
+		ActionCollection actions = _session.getApplication().getActionCollection();
+		final String tabTitle = _tabPane.getTitleAt(_tabPane.getSelectedIndex());
+		if (tabTitle.equals(i18n.SQL_TAB_TITLE)) {
+			actions.get(ExecuteSqlAction.class).setEnabled(true);
+			boolean isAutoCommit = _session.getProperties().getAutoCommit();
+			actions.get(CommitAction.class).setEnabled(!isAutoCommit);
+			actions.get(RollbackAction.class).setEnabled(!isAutoCommit);
+			actions.get(RefreshTreeAction.class).setEnabled(false);
+		} else {
+			actions.get(ExecuteSqlAction.class).setEnabled(false);
+			actions.get(CommitAction.class).setEnabled(false);
+			actions.get(RollbackAction.class).setEnabled(false);
+			actions.get(RefreshTreeAction.class).setEnabled(true);
+		}
+	}
 
-    ObjectsPanel getObjectPanel() {
-        return _objectsPnl;
-    }
+	ObjectsPanel getObjectPanel() {
+		return _objectsPnl;
+	}
 
-    TablePanel getTablePanel() {
-        final IPlugin plugin = _session.getApplication().getDummyAppPlugin();
-        return (TablePanel)_session.getPluginObject(plugin, ISession.ISessionKeys.TABLE_DETAIL_PANEL_KEY);
-    }
+	TablePanel getTablePanel() {
+		final IPlugin plugin = _session.getApplication().getDummyAppPlugin();
+		return (TablePanel)_session.getPluginObject(plugin, ISession.ISessionKeys.TABLE_DETAIL_PANEL_KEY);
+	}
 
-    void closeConnection() {
-        try {
-            _session.closeSQLConnection();
-        } catch (SQLException ex) {
-            showError(ex);
-        }
-    }
+	ProcedurePanel getProcedurePanel() {
+		final IPlugin plugin = _session.getApplication().getDummyAppPlugin();
+		return (ProcedurePanel)_session.getPluginObject(plugin, ISession.ISessionKeys.PROCEDURE_DETAIL_PANEL_KEY);
+	}
 
-    public void setVisible(boolean value) {
-        super.setVisible(value);
-        // Required under JDK1.2. Without it the divider location is reset to 0.
-        if (!_hasBeenVisible && value == true) {
-            _objectsPnl.fixDividerLocation();
-            _msgSplit.setDividerLocation(0.9d);
-            _hasBeenVisible = true;
-        }
-    }
+	void closeConnection() {
+		try {
+			_session.closeSQLConnection();
+		} catch (SQLException ex) {
+			showError(ex);
+		}
+	}
 
-    /**
-     * Select a tab in the main tabbed pane.
-     *
-     * @param    tabIndex   The tab to select. @see #IMainTabIndexes
-     *
-     * @throws  llegalArgumentException
-     *          Thrown if an invalid <TT>tabIndex</TT> passed.
-     */
-    public void selectMainTab(int tabIndex) throws IllegalArgumentException {
-        if (tabIndex >= _tabPane.getTabCount()) {
-            throw new IllegalArgumentException(
-                "" + tabIndex + " is not a valid index into the main tabbed pane.");
-        }
+	public void setVisible(boolean value) {
+		super.setVisible(value);
+		// Required under JDK1.2. Without it the divider location is reset to 0.
+		if (!_hasBeenVisible && value == true) {
+			_objectsPnl.fixDividerLocation();
+			_msgSplit.setDividerLocation(0.9d);
+			_hasBeenVisible = true;
+		}
+	}
 
-        if (_tabPane.getSelectedIndex() != tabIndex) {
-            _tabPane.setSelectedIndex(tabIndex);
-        }
-    }
+	/**
+	 * Select a tab in the main tabbed pane.
+	 *
+	 * @param	tabIndex   The tab to select. @see #IMainTabIndexes
+	 *
+	 * @throws  llegalArgumentException
+	 *		  Thrown if an invalid <TT>tabIndex</TT> passed.
+	 */
+	public void selectMainTab(int tabIndex) throws IllegalArgumentException {
+		if (tabIndex >= _tabPane.getTabCount()) {
+			throw new IllegalArgumentException(
+				"" + tabIndex + " is not a valid index into the main tabbed pane.");
+		}
 
-    /**
-     * Add a tab to the main tabbed panel.
-     *
-     * title    The title to display in the tab.
-     * icon     The icon to display in the tab. If <TT>null</TT> then no icon displayed.
-     * comp     The component to be shown when the tab is active.
-     * tip      The tooltip to be displayed for the tab. Can be <TT>null</TT>.
-     *
-     * @throws  IllegalArgumentException
-     *          If <TT>title</TT> or <TT>comp</TT> is <TT>null</TT>.
-     */
-    public void addMainTab(String title, Icon icon, Component comp, String tip)
-            throws IllegalArgumentException {
-        if (title == null) {
-            throw new IllegalArgumentException("Null title passed");
-        }
-        if (comp == null) {
-            throw new IllegalArgumentException("Null Component passed");
-        }
-        _tabPane.addTab(title, icon, comp, tip);
-    }
+		if (_tabPane.getSelectedIndex() != tabIndex) {
+			_tabPane.setSelectedIndex(tabIndex);
+		}
+	}
 
-    String getSQLScript() {
-        return _sqlPnl.getSQLScript();
-    }
+	/**
+	 * Add a tab to the main tabbed panel.
+	 *
+	 * title	The title to display in the tab.
+	 * icon	 The icon to display in the tab. If <TT>null</TT> then no icon displayed.
+	 * comp	 The component to be shown when the tab is active.
+	 * tip	  The tooltip to be displayed for the tab. Can be <TT>null</TT>.
+	 *
+	 * @throws  IllegalArgumentException
+	 *		  If <TT>title</TT> or <TT>comp</TT> is <TT>null</TT>.
+	 */
+	public void addMainTab(String title, Icon icon, Component comp, String tip)
+			throws IllegalArgumentException {
+		if (title == null) {
+			throw new IllegalArgumentException("Null title passed");
+		}
+		if (comp == null) {
+			throw new IllegalArgumentException("Null Component passed");
+		}
+		_tabPane.addTab(title, icon, comp, tip);
+	}
 
-    void setSQLScript(String sqlScript) {
-        _sqlPnl.setSQLScript(sqlScript);
-    }
+	String getSQLScript() {
+		return _sqlPnl.getSQLScript();
+	}
 
-    SQLPanel getSQLPanel() {
-        return _sqlPnl;
-    }
+	void setSQLScript(String sqlScript) {
+		_sqlPnl.setSQLScript(sqlScript);
+	}
 
-    void executeCurrentSQL() {
-        _sqlPnl.executeCurrentSQL();
-    }
+	SQLPanel getSQLPanel() {
+		return _sqlPnl;
+	}
 
-    private static String createTitle(ISession session) {
-        StringBuffer title = new StringBuffer(session.getAlias().getName());
-        String user = null;
-        try {
-            user = session.getSQLConnection().getUserName();
-        } catch (BaseSQLException ex) {
-            Logger logger = session.getApplication().getLogger();
-            logger.showMessage(
-                Logger.ILogTypes.ERROR,
-                "Error occured retrieving user name from Connection");
-            logger.showMessage(Logger.ILogTypes.ERROR, ex);
-        }
-        if (user != null && user.length() > 0) {
-            title.append(" as ").append(user); // i18n
-        }
-        return title.toString();
-    }
+	void executeCurrentSQL() {
+		_sqlPnl.executeCurrentSQL();
+	}
 
-    private void showError(Exception ex) {
-        new ErrorDialog(MainFrame.getInstance(), ex).show();
-    }
+	private static String createTitle(ISession session) {
+		StringBuffer title = new StringBuffer(session.getAlias().getName());
+		String user = null;
+		try {
+			user = session.getSQLConnection().getUserName();
+		} catch (BaseSQLException ex) {
+			Logger logger = session.getApplication().getLogger();
+			logger.showMessage(
+				Logger.ILogTypes.ERROR,
+				"Error occured retrieving user name from Connection");
+			logger.showMessage(Logger.ILogTypes.ERROR, ex);
+		}
+		if (user != null && user.length() > 0) {
+			title.append(" as ").append(user); // i18n
+		}
+		return title.toString();
+	}
 
-    private void propertiesHaveChanged(String propertyName) {
-        SessionProperties props = _session.getProperties();
-        if (propertyName == null
-            || propertyName.equals(
-                SessionProperties.IPropertyNames.COMMIT_ON_CLOSING_CONNECTION)) {
-            _session.getSQLConnection().setCommitOnClose(
-                props.getCommitOnClosingConnection());
-        }
-        updateState();
-    }
+	private void showError(Exception ex) {
+		new ErrorDialog(MainFrame.getInstance(), ex).show();
+	}
 
-    private void createUserInterface() {
-        setVisible(false);
-        Icon icon =
-            _session.getApplication().getResources().getIcon(getClass(), "frameIcon");
-        //i18n
-        if (icon != null) {
-            setFrameIcon(icon);
-        }
+	private void propertiesHaveChanged(String propertyName) {
+		SessionProperties props = _session.getProperties();
+		if (propertyName == null
+			|| propertyName.equals(
+				SessionProperties.IPropertyNames.COMMIT_ON_CLOSING_CONNECTION)) {
+			_session.getSQLConnection().setCommitOnClose(
+				props.getCommitOnClosingConnection());
+		}
+		updateState();
+	}
 
-        _sqlPnl = new SQLPanel(_session);
-        _objectsPnl = new ObjectsPanel(_session);
+	private void createUserInterface() {
+		setVisible(false);
+		Icon icon =
+			_session.getApplication().getResources().getIcon(getClass(), "frameIcon");
+		//i18n
+		if (icon != null) {
+			setFrameIcon(icon);
+		}
 
-        _tabPane.addTab(i18n.OBJ_TAB_TITLE, null, _objectsPnl, i18n.OBJ_TAB_DESC);
-        _tabPane.addTab(i18n.SQL_TAB_TITLE, null, _sqlPnl, i18n.SQL_TAB_DESC);
+		_sqlPnl = new SQLPanel(_session);
+		_objectsPnl = new ObjectsPanel(_session);
 
-        _tabPane.addChangeListener(new MyTabsListener());
+		_tabPane.addTab(i18n.OBJ_TAB_TITLE, null, _objectsPnl, i18n.OBJ_TAB_DESC);
+		_tabPane.addTab(i18n.SQL_TAB_TITLE, null, _sqlPnl, i18n.SQL_TAB_DESC);
 
-        Container content = getContentPane();
-        content.setLayout(new BorderLayout());
-        content.add(new MyToolBar(this), BorderLayout.NORTH);
+		_tabPane.addChangeListener(new MyTabsListener());
 
-        MessagePanel msgPnl = new MessagePanel(_session.getApplication());
-        _session.setMessageHandler(msgPnl);
-        msgPnl.setEditable(false);
-        msgPnl.setRows(4);
+		Container content = getContentPane();
+		content.setLayout(new BorderLayout());
+		content.add(new MyToolBar(this), BorderLayout.NORTH);
 
-        _msgSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        _msgSplit.setOneTouchExpandable(true);
-        _msgSplit.add(_tabPane, JSplitPane.LEFT);
-        _msgSplit.add(new JScrollPane(msgPnl), JSplitPane.RIGHT);
-        content.add(_msgSplit, BorderLayout.CENTER);
+		MessagePanel msgPnl = new MessagePanel(_session.getApplication());
+		_session.setMessageHandler(msgPnl);
+		msgPnl.setEditable(false);
+		msgPnl.setRows(4);
 
-        // This is to fix a problem with the JDK (up to version 1.3)
-        // where focus events were not generated correctly. The sympton
-        // is being unable to key into the text entry field unless you click
-        // elsewhere after focus is gained by the internal frame.
-        // See bug ID 4309079 on the JavaSoft bug parade (plus others).
-        addInternalFrameListener(new InternalFrameAdapter() {
-            public void internalFrameActivated(InternalFrameEvent evt) {
-                Window window = SwingUtilities.windowForComponent(SessionSheet.this._sqlPnl);
-                Component focusOwner = (window != null) ? window.getFocusOwner() : null;
-                if (focusOwner != null) {
-                    FocusEvent lost = new FocusEvent(focusOwner, FocusEvent.FOCUS_LOST);
-                    FocusEvent gained = new FocusEvent(focusOwner, FocusEvent.FOCUS_GAINED);
-                    window.dispatchEvent(lost);
-                    window.dispatchEvent(gained);
-                    window.dispatchEvent(lost);
-                    focusOwner.requestFocus();
-                }
-            }
-        });
+		_msgSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+		_msgSplit.setOneTouchExpandable(true);
+		_msgSplit.add(_tabPane, JSplitPane.LEFT);
+		_msgSplit.add(new JScrollPane(msgPnl), JSplitPane.RIGHT);
+		content.add(_msgSplit, BorderLayout.CENTER);
 
-        validate();
-    }
+		// This is to fix a problem with the JDK (up to version 1.3)
+		// where focus events were not generated correctly. The sympton
+		// is being unable to key into the text entry field unless you click
+		// elsewhere after focus is gained by the internal frame.
+		// See bug ID 4309079 on the JavaSoft bug parade (plus others).
+		addInternalFrameListener(new InternalFrameAdapter() {
+			public void internalFrameActivated(InternalFrameEvent evt) {
+				Window window = SwingUtilities.windowForComponent(SessionSheet.this._sqlPnl);
+				Component focusOwner = (window != null) ? window.getFocusOwner() : null;
+				if (focusOwner != null) {
+					FocusEvent lost = new FocusEvent(focusOwner, FocusEvent.FOCUS_LOST);
+					FocusEvent gained = new FocusEvent(focusOwner, FocusEvent.FOCUS_GAINED);
+					window.dispatchEvent(lost);
+					window.dispatchEvent(gained);
+					window.dispatchEvent(lost);
+					focusOwner.requestFocus();
+				}
+			}
+		});
 
-    private class MyToolBar extends ToolBar {
-        MyToolBar(SessionSheet frame) {
-            super();
-            ActionCollection actions = _session.getApplication().getActionCollection();
-            setUseRolloverButtons(true);
-            setFloatable(false);
-            add(actions.get(SessionPropertiesAction.class));
-            add(actions.get(RefreshTreeAction.class));
-            addSeparator();
-            add(actions.get(ExecuteSqlAction.class));
-            addSeparator();
-            add(actions.get(CommitAction.class));
-            add(actions.get(RollbackAction.class));
+		validate();
+	}
 
-            actions.get(ExecuteSqlAction.class).setEnabled(false);
-            actions.get(CommitAction.class).setEnabled(false);
-            actions.get(RollbackAction.class).setEnabled(false);
-        }
-    }
+	private class MyToolBar extends ToolBar {
+		MyToolBar(SessionSheet frame) {
+			super();
+			ActionCollection actions = _session.getApplication().getActionCollection();
+			setUseRolloverButtons(true);
+			setFloatable(false);
+			add(actions.get(SessionPropertiesAction.class));
+			add(actions.get(RefreshTreeAction.class));
+			addSeparator();
+			add(actions.get(ExecuteSqlAction.class));
+			addSeparator();
+			add(actions.get(CommitAction.class));
+			add(actions.get(RollbackAction.class));
 
-    private class MyPropertiesListener implements PropertyChangeListener {
-        public void propertyChange(PropertyChangeEvent evt) {
-            SessionSheet.this.propertiesHaveChanged(evt.getPropertyName());
-        }
-    }
+			actions.get(ExecuteSqlAction.class).setEnabled(false);
+			actions.get(CommitAction.class).setEnabled(false);
+			actions.get(RollbackAction.class).setEnabled(false);
+		}
+	}
 
-    private class MyTabsListener implements ChangeListener {
-        public void stateChanged(ChangeEvent evt) {
-            updateState();
-        }
-    }
+	private class MyPropertiesListener implements PropertyChangeListener {
+		public void propertyChange(PropertyChangeEvent evt) {
+			SessionSheet.this.propertiesHaveChanged(evt.getPropertyName());
+		}
+	}
 
-    private static MouseListener s_dummyMouseAdapter = new MouseAdapter() {
-        private void cancelEvent(MouseEvent evt) {
-            Component pane = (Component) evt.getSource();
-            pane.setVisible(true);
-            pane.requestFocus();
-        }
-        public void mouseClicked(MouseEvent evt) {
-            cancelEvent(evt);
-        }
-        public void mousePressed(MouseEvent evt) {
-            cancelEvent(evt);
-        }
-        public void mouseReleased(MouseEvent evt) {
-            cancelEvent(evt);
-        }
-    };
+	private class MyTabsListener implements ChangeListener {
+		public void stateChanged(ChangeEvent evt) {
+			updateState();
+		}
+	}
+
+	private static MouseListener s_dummyMouseAdapter = new MouseAdapter() {
+		private void cancelEvent(MouseEvent evt) {
+			Component pane = (Component) evt.getSource();
+			pane.setVisible(true);
+			pane.requestFocus();
+		}
+		public void mouseClicked(MouseEvent evt) {
+			cancelEvent(evt);
+		}
+		public void mousePressed(MouseEvent evt) {
+			cancelEvent(evt);
+		}
+		public void mouseReleased(MouseEvent evt) {
+			cancelEvent(evt);
+		}
+	};
 }

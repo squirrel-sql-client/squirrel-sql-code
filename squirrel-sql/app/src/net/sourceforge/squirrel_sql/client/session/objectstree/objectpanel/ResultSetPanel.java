@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel;
+package net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel;
 /*
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net

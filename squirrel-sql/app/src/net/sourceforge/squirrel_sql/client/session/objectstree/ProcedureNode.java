@@ -24,71 +24,68 @@ import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
-final class ProcedureNode extends BaseNode implements IProcedureInfo {
-    private interface ISessionKeys {
-        String DETAIL_PANEL_KEY = ProcedureNode.class.getName() + "_DETAIL_PANEL_KEY";
-    }
+public class ProcedureNode extends BaseNode implements IProcedureInfo {
 
-    private IProcedureInfo _procInfo;
+	private IProcedureInfo _procInfo;
 
-    ProcedureNode(ISession session, ObjectsTreeModel treeModel,
-                            IProcedureInfo procInfo) throws IllegalArgumentException {
-        super(session, treeModel, getNodeText(procInfo));
-        _procInfo = procInfo;
-    }
+	public ProcedureNode(ISession session, ObjectsTreeModel treeModel,
+							IProcedureInfo procInfo) throws IllegalArgumentException {
+		super(session, treeModel, getNodeText(procInfo));
+		_procInfo = procInfo;
+	}
 
-    public void expand() {
-    }
+	public void expand() {
+	}
 
-    public String getCatalogName() {
-        return _procInfo.getCatalogName();
-    }
+	public String getCatalogName() {
+		return _procInfo.getCatalogName();
+	}
 
-    public String getSchemaName() {
-        return _procInfo.getSchemaName();
-    }
+	public String getSchemaName() {
+		return _procInfo.getSchemaName();
+	}
 
-    public String getSimpleName() {
-        return _procInfo.getSimpleName();
-    }
+	public String getSimpleName() {
+		return _procInfo.getSimpleName();
+	}
 
-    public String getQualifiedName() {
-        return _procInfo.getQualifiedName();
-    }
+	public String getQualifiedName() {
+		return _procInfo.getQualifiedName();
+	}
 
-    public String getRemarks() {
-        return _procInfo.getRemarks();
-    }
+	public String getRemarks() {
+		return _procInfo.getRemarks();
+	}
 
-    public int getType() {
-        return _procInfo.getType();
-    }
+	public int getType() {
+		return _procInfo.getType();
+	}
 
-    public String getTypeDescription() {
-        return _procInfo.getTypeDescription();
-    }
+	public String getTypeDescription() {
+		return _procInfo.getTypeDescription();
+	}
 
-    public JComponent getDetailsPanel() {
-        final ISession session = getSession();
-        final IPlugin plugin = session.getApplication().getDummyAppPlugin();
-        ProcedurePanel pnl = (ProcedurePanel)session.getPluginObject(plugin, ISessionKeys.DETAIL_PANEL_KEY);
-        if (pnl == null) {
-            pnl = new ProcedurePanel(session);
-            session.putPluginObject(plugin, ISessionKeys.DETAIL_PANEL_KEY, pnl);
-        }
-        pnl.setProcedureInfo(this);
-        return pnl;
-    }
+	public JComponent getDetailsPanel() {
+		final ISession session = getSession();
+		final IPlugin plugin = session.getApplication().getDummyAppPlugin();
+		ProcedurePanel pnl = (ProcedurePanel)session.getPluginObject(plugin, ISession.ISessionKeys.PROCEDURE_DETAIL_PANEL_KEY);
+		//if (pnl == null) {
+		//	pnl = new ProcedurePanel(session);
+		//	session.putPluginObject(plugin, ISession.ISessionKeys.PROCEDURE_DETAIL_PANEL_KEY, pnl);
+		//}
+		pnl.setProcedureInfo(this);
+		return pnl;
+	}
 
-    public boolean isLeaf() {
-        return true;
-    }
+	public boolean isLeaf() {
+		return true;
+	}
 
-    private static String getNodeText(IProcedureInfo procInfo)
-            throws IllegalArgumentException {
-        if (procInfo == null) {
-            throw new IllegalArgumentException("Null IProcedureInfo passed");
-        }
-        return procInfo.getSimpleName();
-    }
+	private static String getNodeText(IProcedureInfo procInfo)
+			throws IllegalArgumentException {
+		if (procInfo == null) {
+			throw new IllegalArgumentException("Null IProcedureInfo passed");
+		}
+		return procInfo.getSimpleName();
+	}
 }

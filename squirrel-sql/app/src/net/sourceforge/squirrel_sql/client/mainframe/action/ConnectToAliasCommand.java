@@ -45,115 +45,117 @@ import net.sourceforge.squirrel_sql.fw.util.*;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ConnectToAliasCommand implements ICommand {
-    private IApplication _app;
+	private IApplication _app;
 
-    /** Owner of the connection dialog. */
-    private Frame _frame;
+	/** Owner of the connection dialog. */
+	private Frame _frame;
 
-    /** The <TT>ISQLAlias</TT> to connect to. */
-    private ISQLAlias _sqlAlias;
+	/** The <TT>ISQLAlias</TT> to connect to. */
+	private ISQLAlias _sqlAlias;
 
-    /**
-     * Ctor.
-     *
-     * @param   app     The <TT>IApplication</TT> that defines app API.
-     * @param   frame   Owner of the connection dialog.
-     * @param   alias   The <TT>ISQLAlias</TT> to connect to.
-     *
-     * @throws  IllegalArgumentException
-     *              Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
-     */
-    public ConnectToAliasCommand(IApplication app, Frame frame, ISQLAlias sqlAlias)
-            throws IllegalArgumentException {
-        super();
-        if (app == null) {
-            throw new IllegalArgumentException("Null IApplication passed");
-        }
-        if (sqlAlias == null) {
-            throw new IllegalArgumentException("Null ISQLAlias passed");
-        }
-        _app = app;
-        _frame = frame;
-        _sqlAlias = sqlAlias;
-    }
+	/**
+	 * Ctor.
+	 *
+	 * @param   app	 The <TT>IApplication</TT> that defines app API.
+	 * @param   frame   Owner of the connection dialog.
+	 * @param   alias   The <TT>ISQLAlias</TT> to connect to.
+	 *
+	 * @throws  IllegalArgumentException
+	 *			  Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
+	 */
+	public ConnectToAliasCommand(IApplication app, Frame frame, ISQLAlias sqlAlias)
+			throws IllegalArgumentException {
+		super();
+		if (app == null) {
+			throw new IllegalArgumentException("Null IApplication passed");
+		}
+		if (sqlAlias == null) {
+			throw new IllegalArgumentException("Null ISQLAlias passed");
+		}
+		_app = app;
+		_frame = frame;
+		_sqlAlias = sqlAlias;
+	}
 
-    /**
-     * Display connection dialog and attempt to open a connection.
-     */
-    public void execute() {
-        ConnectionDialog dlog = new ConnectionDialog(_app, _frame, _sqlAlias,
-                                            new OkHandler(_app, _sqlAlias));
-        dlog.setVisible(true);
-    }
-    /**
-     * Handler used if user presses OK in the connection dialog.
-     */
-    private static class OkHandler implements ConnectionDialog.IOkHandler {
-        private IApplication _app;
+	/**
+	 * Display connection dialog and attempt to open a connection.
+	 */
+	public void execute() {
+		ConnectionDialog dlog = new ConnectionDialog(_app, _frame, _sqlAlias,
+											new OkHandler(_app, _sqlAlias));
+		dlog.setVisible(true);
+	}
 
-        /** <TT>ISQLAlias</TT> to connect to. */
-        private ISQLAlias _alias;
+	/**
+	 * Handler used if user presses OK in the connection dialog.
+	 */
+	private static class OkHandler implements ConnectionDialog.IOkHandler {
+		private IApplication _app;
 
-        /**
-         * Ctor specifying the <TT>ISQLAlias</TT>.
-         */
-        OkHandler(IApplication app, ISQLAlias alias) {
-            super();
-            if (app == null) {
-                throw new IllegalArgumentException("Null IApplication passed");
-            }
-            if (alias == null) {
-                throw new IllegalArgumentException("Null ISQLAlias passed");
-            }
-            _app = app;
-            _alias = alias;
-        }
-        public boolean execute(ConnectionDialog connDlog, ConnectionDialog.DialogResult result) {
-            SQLConnection conn = null;
-            boolean rc = false;
-            ISQLDriver sqlDriver = _app.getDataCache().getDriver(_alias.getDriverIdentifier());
-            try {
-                SQLDriverManager mgr = _app.getSQLDriverManager();
-                conn = mgr.getConnection(sqlDriver, _alias, result._user, result._password);
-                ISession session = SessionFactory.createSession(_app, sqlDriver, _alias, conn);
-                SessionSheet child = new SessionSheet(session);
-                session.setSessionSheet(child);
-                session.getApplication().getPluginManager().sessionStarted(session);
-                MainFrame.getInstance().addInternalFrame(child);
-                child.setVisible(true);
-                rc = true;
-            } catch (BaseSQLException ex) {
-/* i18n*/       new ErrorDialog(connDlog, "Unable to open SQL Connection: " + ex.getMessage()).show();
-            } catch (ClassNotFoundException ex) {
-/* i18n*/       new ErrorDialog(connDlog, "JDBC Driver class not found: " + ex.getMessage()).show();
-                Logger logger = _app.getLogger();
-                logger.showMessage(Logger.ILogTypes.ERROR, "JDBC Driver class not found");
-                logger.showMessage(Logger.ILogTypes.ERROR, ex);
-            } catch (NoClassDefFoundError ex) {
-/* i18n*/       new ErrorDialog(connDlog, "JDBC Driver class not found: " + ex.getMessage()).show();
-                Logger logger = _app.getLogger();
-                logger.showMessage(Logger.ILogTypes.ERROR, "JDBC Driver class not found");
-                logger.showMessage(Logger.ILogTypes.ERROR, ex);
-            } catch (Throwable ex) {
-                Logger logger = _app.getLogger();
+		/** <TT>ISQLAlias</TT> to connect to. */
+		private ISQLAlias _alias;
+
+		/**
+		 * Ctor specifying the <TT>ISQLAlias</TT>.
+		 */
+		OkHandler(IApplication app, ISQLAlias alias) {
+			super();
+			if (app == null) {
+				throw new IllegalArgumentException("Null IApplication passed");
+			}
+			if (alias == null) {
+				throw new IllegalArgumentException("Null ISQLAlias passed");
+			}
+			_app = app;
+			_alias = alias;
+		}
+
+		public boolean execute(ConnectionDialog connDlog, ConnectionDialog.DialogResult result) {
+			SQLConnection conn = null;
+			boolean rc = false;
+			ISQLDriver sqlDriver = _app.getDataCache().getDriver(_alias.getDriverIdentifier());
+			try {
+				SQLDriverManager mgr = _app.getSQLDriverManager();
+				conn = mgr.getConnection(sqlDriver, _alias, result._user, result._password);
+				ISession session = SessionFactory.createSession(_app, sqlDriver, _alias, conn);
+				SessionSheet child = new SessionSheet(session);
+				session.setSessionSheet(child);
+				session.getApplication().getPluginManager().sessionStarted(session);
+				MainFrame.getInstance().addInternalFrame(child);
+				child.setVisible(true);
+				rc = true;
+			} catch (BaseSQLException ex) {
+/* i18n*/	   new ErrorDialog(connDlog, "Unable to open SQL Connection: " + ex.getMessage()).show();
+			} catch (ClassNotFoundException ex) {
+/* i18n*/	   new ErrorDialog(connDlog, "JDBC Driver class not found: " + ex.getMessage()).show();
+				Logger logger = _app.getLogger();
+				logger.showMessage(Logger.ILogTypes.ERROR, "JDBC Driver class not found");
+				logger.showMessage(Logger.ILogTypes.ERROR, ex);
+			} catch (NoClassDefFoundError ex) {
+/* i18n*/	   new ErrorDialog(connDlog, "JDBC Driver class not found: " + ex.getMessage()).show();
+				Logger logger = _app.getLogger();
+				logger.showMessage(Logger.ILogTypes.ERROR, "JDBC Driver class not found");
+				logger.showMessage(Logger.ILogTypes.ERROR, ex);
+			} catch (Throwable ex) {
+				Logger logger = _app.getLogger();
 /* i18n */  logger.showMessage(Logger.ILogTypes.ERROR, "Unexpected Error occured attempting to open an SQL connection.");
-                logger.showMessage(Logger.ILogTypes.ERROR, ex);
-                closeConnection(conn);
-                new ErrorDialog(connDlog, ex).show();
-            }
-            return rc;
-        }
+				logger.showMessage(Logger.ILogTypes.ERROR, ex);
+				closeConnection(conn);
+				new ErrorDialog(connDlog, ex).show();
+			}
+			return rc;
+		}
 
-        private void closeConnection(SQLConnection conn) {
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException ex) {
-                    Logger logger = _app.getLogger();
-                    logger.showMessage(Logger.ILogTypes.ERROR, "Error occured closing Connection");
-                    logger.showMessage(Logger.ILogTypes.ERROR, ex);
-                }
-            }
-        }
-    }
+		private void closeConnection(SQLConnection conn) {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException ex) {
+					Logger logger = _app.getLogger();
+					logger.showMessage(Logger.ILogTypes.ERROR, "Error occured closing Connection");
+					logger.showMessage(Logger.ILogTypes.ERROR, ex);
+				}
+			}
+		}
+	}
 }

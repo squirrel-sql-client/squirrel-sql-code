@@ -33,7 +33,9 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
+import net.sourceforge.squirrel_sql.client.session.objectstree.ProcedureNode;
 import net.sourceforge.squirrel_sql.client.session.objectstree.TableNode;
+import net.sourceforge.squirrel_sql.client.session.objectstree.procedurepanel.IProcedurePanelTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.ITablePanelTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
@@ -41,153 +43,166 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
  * The current session.
  */
 public interface ISession extends IHasIdentifier {
-    /**
-     * Keys to objects stored in session.
-     */
-    public interface ISessionKeys {
-        String TABLE_DETAIL_PANEL_KEY = TableNode.class.getName() + "_DETAIL_PANEL_KEY";
-    }
+	/**
+	 * Keys to objects stored in session.
+	 */
+	public interface ISessionKeys {
+        String PROCEDURE_DETAIL_PANEL_KEY = ProcedureNode.class.getName() + "_DETAIL_PANEL_KEY";
+		String TABLE_DETAIL_PANEL_KEY = TableNode.class.getName() + "_DETAIL_PANEL_KEY";
+	}
 
+	/**
+	 * IDs of tabs in the main tabbed pane.
+	 */
+	public interface IMainTabIndexes extends SessionSheet.IMainTabIndexes {
+	}
 
-    /**
-     * IDs of tabs in the main tabbed pane.
-     */
-    public interface IMainTabIndexes extends SessionSheet.IMainTabIndexes {
-    }
+	/**
+	 * Close the current connection to the database.
+	 *
+	 * @throws	SQLException  if an SQL error occurs.
+	 */
+	void closeSQLConnection() throws SQLException;
 
-    /**
-     * Close the current connection to the database.
-     *
-     * @throws    SQLException  if an SQL error occurs.
-     */
-    void closeSQLConnection() throws SQLException;
+	/**
+	 * Return the Application API object.
+	 *
+	 * @return the Application API object.
+	 */
+	IApplication getApplication();
 
-    /**
-     * Return the Application API object.
-     *
-     * @return the Application API object.
-     */
-    IApplication getApplication();
+	/**
+	 * Return the current SQL connection object.
+	 *
+	 * @return the current SQL connection object.
+	 */
+	SQLConnection getSQLConnection();
 
-    /**
-     * Return the current SQL connection object.
-     *
-     * @return the current SQL connection object.
-     */
-    SQLConnection getSQLConnection();
+	/**
+	 * Return the driver used to connect to the database.
+	 *
+	 * @return the driver used to connect to the database.
+	 */
+	ISQLDriver getDriver();
 
-    /**
-     * Return the driver used to connect to the database.
-     *
-     * @return the driver used to connect to the database.
-     */
-    ISQLDriver getDriver();
+	/**
+	 * Return the alias used to connect to the database.
+	 *
+	 * @return the alias used to connect to the database.
+	 */
+	ISQLAlias getAlias();
 
-    /**
-     * Return the alias used to connect to the database.
-     *
-     * @return the alias used to connect to the database.
-     */
-    ISQLAlias getAlias();
+	/**
+	 * Return the properties for this session.
+	 *
+	 * @return the properties for this session.
+	 */
+	SessionProperties getProperties();
 
-    /**
-     * Return the properties for this session.
-     *
-     * @return the properties for this session.
-     */
-    SessionProperties getProperties();
+	Object getPluginObject(IPlugin plugin, String key);
+	Object putPluginObject(IPlugin plugin, String key, Object obj);
 
-    Object getPluginObject(IPlugin plugin, String key);
-    Object putPluginObject(IPlugin plugin, String key, Object obj);
+	void setMessageHandler(IMessageHandler handler);
+	IMessageHandler getMessageHandler();
 
-    void setMessageHandler(IMessageHandler handler);
-    IMessageHandler getMessageHandler();
+	String getSQLScript();
+	void setSQLScript(String sqlScript);
 
-    String getSQLScript();
-    void setSQLScript(String sqlScript);
+	/**
+	 * Return an array of <TT>IDatabaseObjectInfo</TT> objects representing all
+	 * the objects selected in the objects tree.
+	 *
+	 * @return	array of <TT>IDatabaseObjectInfo</TT> objects.
+	 */
+	IDatabaseObjectInfo[] getSelectedDatabaseObjects();
 
-    /**
-     * Return an array of <TT>IDatabaseObjectInfo</TT> objects representing all
-     * the objects selected in the objects tree.
-     *
-     * @return    array of <TT>IDatabaseObjectInfo</TT> objects.
-     */
-    IDatabaseObjectInfo[] getSelectedDatabaseObjects();
+	void setSessionSheet(SessionSheet child);
+	SessionSheet getSessionSheet();
 
-    void setSessionSheet(SessionSheet child);
-    SessionSheet getSessionSheet();
+	/**
+	 * Add a listener listening for SQL Execution.
+	 *
+	 * @param	lis	 Listener
+	 *
+	 * @throws	IllegalArgumentException
+	 *			If a null <TT>ISQLExecutionListener</TT> passed.
+	 */
+	public void addSQLExecutionListener(ISQLExecutionListener lis)
+		throws IllegalArgumentException;
 
-    /**
-     * Add a listener listening for SQL Execution.
-     *
-     * @param   lis     Listener
-     *
-     * @throws  IllegalArgumentException
-     *              If a null <TT>ISQLExecutionListener</TT> passed.
-     */
-    public void addSQLExecutionListener(ISQLExecutionListener lis)
-        throws IllegalArgumentException;
+	/**
+	 * Remove an SQL execution listener.
+	 *
+	 * @param	lis	 Listener
+	 *
+	 * @throws	IllegalArgumentException
+	 *			If a null <TT>ISQLExecutionListener</TT> passed.
+	 */
+	public void removeSQLExecutionListener(ISQLExecutionListener lis)
+		throws IllegalArgumentException;
 
-    /**
-     * Remove an SQL execution listener.
-     *
-     * @param   lis     Listener
-     *
-     * @throws  IllegalArgumentException
-     *              If a null <TT>ISQLExecutionListener</TT> passed.
-     */
-    public void removeSQLExecutionListener(ISQLExecutionListener lis)
-        throws IllegalArgumentException;
+	/**
+	 * Select a tab in the main tabbed pane.
+	 *
+	 * @param	tabIndex   The tab to select. @see #IMainTabIndexes
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if an invalid <TT>tabIndex</TT> passed.
+	 */
+	void selectMainTab(int tabIndex) throws IllegalArgumentException;
 
-    /**
-     * Select a tab in the main tabbed pane.
-     *
-     * @param    tabIndex   The tab to select. @see #IMainTabIndexes
-     *
-     * @throws    IllegalArgumentException
-     *          Thrown if an invalid <TT>tabIndex</TT> passed.
-     */
-    void selectMainTab(int tabIndex) throws IllegalArgumentException;
+	/**
+	 * Execute the current SQL.
+	 */
+	void executeCurrentSQL();
 
-    /**
-     * Execute the current SQL.
-     */
-    void executeCurrentSQL();
+	/**
+	 * Commit the current SQL transaction.
+	 */
+	void commit();
 
-    /**
-     * Commit the current SQL transaction.
-     */
-    void commit();
+	/**
+	 * Rollback the current SQL transaction.
+	 */
+	void rollback();
 
-    /**
-     * Rollback the current SQL transaction.
-     */
-    void rollback();
+	/**
+	 * Add a tab to the main tabbed panel.
+	 *
+	 * title	The title to display in the tab.
+	 * icon		The icon to display in the tab. If <TT>null</TT> then no icon displayed.
+	 * comp		The component to be shown when the tab is active.
+	 * tip		The tooltip to be displayed for the tab. Can be <TT>null</TT>.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			If <TT>title</TT> or <TT>comp</TT> is <TT>null</TT>.
+	 */
+	void addMainTab(String title, Icon icon, Component comp, String tip)
+			throws IllegalArgumentException;
 
-    /**
-     * Add a tab to the main tabbed panel.
-     *
-     * title    The title to display in the tab.
-     * icon     The icon to display in the tab. If <TT>null</TT> then no icon displayed.
-     * comp     The component to be shown when the tab is active.
-     * tip      The tooltip to be displayed for the tab. Can be <TT>null</TT>.
-     *
-     * @throws  IllegalArgumentException
-     *          If <TT>title</TT> or <TT>comp</TT> is <TT>null</TT>.
-     */
-    void addMainTab(String title, Icon icon, Component comp, String tip)
-            throws IllegalArgumentException;
+	/**
+	 * Add a tab to the panel shown when a table selected in the
+	 * object tree. If a tab with this title already exists it is
+	 * removed from the tabbed pane and the passed tab inserted in its
+	 * place. New tabs are inserted at the end.
+	 *
+	 * @param	tab	 The tab to be added.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if a <TT>null</TT> <TT>ITablePanelTab</TT> passed.
+	 */
+	void addTablePanelTab(ITablePanelTab tab) throws IllegalArgumentException;
 
-    /**
-     * Add a tab to the panel shown when a table selected in the
-     * object tree. If a tab with this title already exists it is
-     * removed from the tabbed pane and the passed tab inserted in its
-     * place. New tabs are inserted at the end.
-     *
-     * @param   tab     The tab to be added.
-     *
-     * @throws  IllegalArgumentException
-     *          Thrown if a <TT>null</TT> <TT>ITablePanelTab</TT> passed.
-     */
-    void addTablePanelTab(ITablePanelTab tab) throws IllegalArgumentException;
+	/**
+	 * Add a tab to the panel shown when a procedure selected in the
+	 * object tree. If a tab with this title already exists it is
+	 * removed from the tabbed pane and the passed tab inserted in its
+	 * place. New tabs are inserted at the end.
+	 *
+	 * @param	tab	 The tab to be added.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if a <TT>null</TT> <TT>IProcedurePanelTab</TT> passed.
+	 */
+	void addProcedurePanelTab(IProcedurePanelTab tab) throws IllegalArgumentException;
 }
