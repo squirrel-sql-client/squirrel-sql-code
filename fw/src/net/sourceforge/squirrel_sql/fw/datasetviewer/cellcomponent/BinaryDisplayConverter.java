@@ -75,6 +75,12 @@ public class BinaryDisplayConverter {
 	 private static ConversionConstants octal = new ConversionConstants(3, 8);
 	 private static ConversionConstants binary = new ConversionConstants(8, 2);
 	 
+	 /**
+	  * List of characters considered "printable".
+	  */
+	 private static String printable = "0123456789abcdefghijklmnopqrstuvwxyz" +
+	 	"ABCDEFGHIJKLMNOPQRSTUVWXYZ`~!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?";
+	 
 	
 	/**
 	 * Do not allow any instances to be created.
@@ -93,23 +99,40 @@ public class BinaryDisplayConverter {
 		// Convert each byte and put into string buffer
 		for (int i=0; i < data.length; i++) {
 			int value = data[i].byteValue();
-			String s;
-			switch (base) {
-				case DECIMAL:	s = Integer.toString(value); break;
-				case OCTAL:		s = Integer.toOctalString(value); break;
-				case BINARY:	s = Integer.toBinaryString(value); break;
-				case HEX:	// fall through to default
-				default:
-					s = Integer.toHexString(value);
-			}
-			// some formats (e.g. hex) extend a negative number to multiple places
-			// (e.g. FC becomes FFFC), so chop off extra stuff in front
-			if (s.length() > convConst.width)
-				s = s.substring(s.length() - convConst.width);
+			String s = null;
 			
-			// front pad with zeros and add to output
-			if (s.length() < convConst.width)
-				buf.append("00000000".substring(8-(convConst.width - s.length())));
+			// if user wants to see ASCII chars as characters,
+			// see if this is one that should be displayed that way
+			if (showAscii) {
+if (printable.indexOf((char)value) > -1) {
+	s = new Character((char)value) + "          ".substring(10-(convConst.width-1));
+}
+			}
+			
+			// if use is not looking for ASCII chars, or if this one is one that
+			// is not printable, then convert it into numeric form
+			if (s == null) {
+				switch (base) {
+					case DECIMAL:	
+						if (value < 0)
+							value = 256 + value;
+						s = Integer.toString(value);
+						break;
+					case OCTAL:		s = Integer.toOctalString(value); break;
+					case BINARY:	s = Integer.toBinaryString(value); break;
+					case HEX:	// fall through to default
+					default:
+						s = Integer.toHexString(value);
+				}
+				// some formats (e.g. hex) extend a negative number to multiple places
+				// (e.g. FC becomes FFFC), so chop off extra stuff in front
+				if (s.length() > convConst.width)
+					s = s.substring(s.length() - convConst.width);
+			
+				// front pad with zeros and add to output
+				if (s.length() < convConst.width)
+					buf.append("00000000".substring(8-(convConst.width - s.length())));
+			}
 			buf.append(s);
 			buf.append("  ");	// always add spaces at end for consistancy
 		}
@@ -138,15 +161,28 @@ public class BinaryDisplayConverter {
 		while (stringIndex < data.length()) {
 			// get the text to be converted
 			String s = data.substring(stringIndex, stringIndex+convConst.width);
+			
+			// If the user is displaying ASCII chars as chars, then we need to
+			// convert the char into its numeric value.
+			// In all cases the display width is larger than 1, so if the
+			// byte is being displayed as a single ascii char, then the second
+			// char in the string will be a blank.  If it is being displayed
+			// as a numeric value, then the second char will not be a blank
+			// irrespective of what radix is being used.
+			if (showAscii && s.charAt(1) == ' ') {
+				bytes[byteIndex++] = new Byte((byte)s.charAt(0));
+			}
+			else {
 
-			// The following ugly conversion from text to Byte is necessary because
-			// the Byte class is inconsistant.  When asked to output as Hex, it does
-			// so as an UNSIGNED byte, but when asked to read back the same thing
-			// using the Hex radix, it insists that the input must be SIGNED.
-			// To get around this, we up-size the conversion to Integer, then 
-			// truncate that to a byte, and finally convert the byte to a Byte.  Yech.
-			bytes[byteIndex++] = new Byte(
-				(byte)(Integer.valueOf(s, convConst.radix)).intValue());		
+				// The following ugly conversion from text to Byte is necessary because
+				// the Byte class is inconsistant.  When asked to output as Hex, it does
+				// so as an UNSIGNED byte, but when asked to read back the same thing
+				// using the Hex radix, it insists that the input must be SIGNED.
+				// To get around this, we up-size the conversion to Integer, then 
+				// truncate that to a byte, and finally convert the byte to a Byte.  Yech.
+				bytes[byteIndex++] = new Byte(
+					(byte)(Integer.valueOf(s, convConst.radix)).intValue());
+			}		
 
 			stringIndex += convConst.width + 2;
 		}
