@@ -179,9 +179,10 @@ class ObjectTree extends JTree
 	 */
 	public void removeNotify()
 	{
+		super.removeNotify();
+
 		// Don't need tooltips any more.
 		ToolTipManager.sharedInstance().unregisterComponent(this);
-		super.removeNotify();
 	}
 
 	/**
@@ -220,6 +221,9 @@ class ObjectTree extends JTree
 	 */
 	public void refresh()
 	{
+		// Clear cache in case metadata has changed.
+		_session.getSQLConnection().getSQLMetaData().clearCache();
+
 		final TreePath[] selectedPaths = getSelectionPaths();
 		final Map selectedPathNames = new HashMap();
 		if (selectedPaths != null)
@@ -242,6 +246,9 @@ class ObjectTree extends JTree
 	 */
 	public void refreshSelectedNodes()
 	{
+		// Clear cache in case metadata has changed.
+		_session.getSQLConnection().getSQLMetaData().clearCache();
+
 		final TreePath[] selectedPaths = getSelectionPaths();
 		ObjectTreeNode[] nodes = getSelectedNodes();
 		final Map selectedPathNames = new HashMap();

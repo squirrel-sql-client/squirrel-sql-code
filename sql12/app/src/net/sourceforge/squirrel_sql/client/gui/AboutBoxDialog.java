@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui;
 /*
- * Copyright (C) 2001 - 2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -59,7 +59,6 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-
 /**
  * About box dialog.
  *
@@ -444,8 +443,8 @@ public class AboutBoxDialog extends JDialog
 
 		public void removeNotify()
 		{
-			stopTimer();
 			super.removeNotify();
+			stopTimer();
 		}
 
 		/**

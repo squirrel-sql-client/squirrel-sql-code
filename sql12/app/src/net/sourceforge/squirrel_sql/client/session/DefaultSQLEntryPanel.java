@@ -384,8 +384,8 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 
 		public void removeNotify()
 		{
-			_pnl.removeMouseListener(_pnl._sqlEntryMouseListener);
 			super.removeNotify();
+			_pnl.removeMouseListener(_pnl._sqlEntryMouseListener);
 		}
 	}
 
