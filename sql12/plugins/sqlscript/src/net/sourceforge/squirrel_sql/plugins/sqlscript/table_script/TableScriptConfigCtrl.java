@@ -1,16 +1,16 @@
 package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 
-import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
-import java.util.prefs.Preferences;
-import java.awt.event.ActionListener;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.prefs.Preferences;
 
 
 public class TableScriptConfigCtrl
 {
-   private MainFrame _mainFrame;
+   private JFrame _mainFrame;
    private TableScriptConfigFrame _dlg;
 
    private static final String PREFS_KEY_CONSTRAINTS_AND_INDEXES_AT_END = "Squirrel.sqlscript.constAndIndAtEnd";
@@ -20,7 +20,7 @@ public class TableScriptConfigCtrl
    private boolean _constToTablesNotInScript = true;
 
 
-   public TableScriptConfigCtrl(MainFrame mainFrame)
+   public TableScriptConfigCtrl(JFrame mainFrame)
    {
       this._mainFrame = mainFrame;
    }
