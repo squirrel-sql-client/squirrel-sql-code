@@ -40,10 +40,12 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.GlobalPreferencesAct
 import net.sourceforge.squirrel_sql.client.mainframe.action.MaximizeAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.NewSessionPropertiesAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ViewLogsAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionSheet;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsAction;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultWindowsAction;
+import net.sourceforge.squirrel_sql.client.session.action.CloseSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
 import net.sourceforge.squirrel_sql.client.session.action.DropTableAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
@@ -278,19 +280,21 @@ public final class ActionCollection
 		add(new CloseAllSessionsAction(_app));
 		add(new CloseAllSQLResultTabsAction(_app));
 		add(new CloseAllSQLResultWindowsAction(_app));
+		add(new CloseSessionAction(_app));
 		add(new CommitAction(_app));
 		add(new DisplayPluginSummaryAction(_app));
+		add(new DropTableAction(_app));
 		add(new ExecuteSqlAction(_app));
 		add(new ExitAction(_app));
 		add(new GlobalPreferencesAction(_app));
 		add(new MaximizeAction(_app));
 		add(new NewSessionPropertiesAction(_app));
 		add(new RefreshTreeAction(_app));
+		add(new RefreshTreeItemAction(_app));
 		add(new RollbackAction(_app));
 		add(new SessionPropertiesAction(_app));
 		add(new ShowNativeSQLAction(_app));
 		add(new TileAction(_app));
-		add(new DropTableAction(_app));
-		add(new RefreshTreeItemAction(_app));
+		add(new ViewLogsAction(_app));
 	}
 }

@@ -106,7 +106,9 @@ public class DataCache
 		}
 		catch (Exception ex)
 		{
-			s_log.error("Error occured saving drivers to " + driversFile.getPath(), ex);
+			String msg = "Error occured saving drivers to " + driversFile.getPath();
+			s_log.error(msg, ex);
+			_app.showErrorDialog(msg, ex);
 		}
 
 		final File aliasesFile = appFiles.getDatabaseAliasesFile();
@@ -116,7 +118,9 @@ public class DataCache
 		}
 		catch (Exception ex)
 		{
-			s_log.error("Error occured saving aliases to " + aliasesFile.getPath(), ex);
+			String msg = "Error occured saving aliases to " + aliasesFile.getPath();
+			s_log.error(msg, ex);
+			_app.showErrorDialog(msg, ex);
 		}
 	}
 
@@ -146,7 +150,9 @@ public class DataCache
 		}
 		catch (Exception ex)
 		{
-			s_log.error("Error occured removing driver from cache", ex);
+			String msg = "Error occured removing driver from cache";
+			s_log.error(msg, ex);
+			_app.showErrorDialog(msg, ex);
 		}
 	}
 
@@ -234,11 +240,10 @@ public class DataCache
 		}
 		catch (Exception ex)
 		{
-			s_log.error(
-				"Error loading driver file: "
-					+ driversFile.getPath()
-					+ ". Default drivers loaded instead.",
-				ex);
+			String msg = "Error loading driver file: " + driversFile.getPath()
+							+ ". Default drivers loaded instead.";
+			s_log.error(msg, ex);
+			_app.showErrorDialog(msg, ex);
 			loadDefaultDrivers();
 		}
 
@@ -272,9 +277,10 @@ public class DataCache
 		}
 		catch (Exception ex)
 		{
-			s_log.error(
-				"Error loading default driver file: " + url != null ? url.toExternalForm() : "",
-				ex);
+			String msg = "Error loading default driver file: " +
+							url != null ? url.toExternalForm() : "";
+			s_log.error(msg, ex);
+			_app.showErrorDialog(msg, ex);
 		}
 	}
 
@@ -298,7 +304,9 @@ public class DataCache
 			}
 			catch (Throwable th)
 			{
-				s_log.error("Unable to register JDCB driver " + sqlDriver.getName(), th);
+				String msg = "Unable to register JDCB driver " + sqlDriver.getName();
+				s_log.error(msg, th);
+				_app.showErrorDialog(msg, th);
 			}
 		}
 	}
@@ -316,7 +324,9 @@ public class DataCache
 		}
 		catch (Exception ex)
 		{
-			s_log.error("Error loading aliases file: " + aliasesFile.getPath(), ex);
+			String msg = "Error loading aliases file: " + aliasesFile.getPath();
+			s_log.error(msg, ex);
+			_app.showErrorDialog(msg, ex);
 		}
 	}
 
