@@ -75,14 +75,31 @@ public class ResultSetDataSet implements IDataSet {
 					Object[] row = new Object[_columnCount];
 					for (int i = 0; i < _columnCount; ++i) {
 						int idx = _columnIndices != null ? _columnIndices[i] : i + 1;
-//						row[i] = rs.getString(idx);
+						row[i] = rs.getObject(idx);
 						try {
 							switch (md.getColumnType(idx)) {
 								case Types.NULL:
 									row[i] = null;
 									break;
 								case Types.BIT:
-									row[i] = new Boolean(rs.getBoolean(idx));
+									if(row[i] != null && !(row[i] instanceof Boolean))
+									{
+										if(row[i] instanceof Number)
+										{
+											if(((Number)row[i]).intValue() == 0)
+											{
+												row[i] = new Boolean(false);
+											}
+											else
+											{
+												row[i] = new Boolean(true);
+											}
+										}
+										else
+										{
+											row[i] = new Boolean(row[i].toString());
+										}
+									}
 									break;
 								case Types.TIME:
 									row[i] = rs.getTime(idx);
@@ -94,19 +111,49 @@ public class ResultSetDataSet implements IDataSet {
 									row[i] = rs.getTimestamp(idx);
 									break;
 								case Types.BIGINT:
-									row[i] = new Long(rs.getLong(idx));
+									if(row[i] != null && !(row[i] instanceof Long))
+									{
+										if(row[i] instanceof Number)
+										{
+											row[i] = new Long(((Number)row[i]).longValue());
+										}
+										else
+										{
+											row[i] = new Long(row[i].toString());
+										}
+									}
 									break;
 								case Types.DECIMAL:
 								case Types.DOUBLE:
 								case Types.FLOAT:
 								case Types.NUMERIC:
 								case Types.REAL:
-									row[i] = new Double(rs.getDouble(idx));
+									if(row[i] != null && !(row[i] instanceof Double))
+									{
+										if(row[i] instanceof Number)
+										{
+											row[i] = new Double(((Number)row[i]).doubleValue());
+										}
+										else
+										{
+											row[i] = new Double(row[i].toString());
+										}
+									}
 									break;
 								case Types.INTEGER:
 								case Types.SMALLINT:
 								case Types.TINYINT:
-									row[i] = new Integer(rs.getInt(idx));
+									if(row[i] != null && !(row[i] instanceof Integer))
+									{
+										if(row[i] instanceof Number)
+										{
+											row[i] = new Integer(((Number)row[i]).intValue());
+										}
+										else
+										{
+											row[i] = new Integer(row[i].toString());
+										}
+									}
 									break;
 								case Types.CHAR:
 								case Types.VARCHAR:
