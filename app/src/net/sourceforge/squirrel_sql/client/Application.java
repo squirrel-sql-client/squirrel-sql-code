@@ -67,8 +67,8 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 /**
  * Defines the API to do callbacks on the application.
  *
- *@author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
- *@author	Lynn Pye
+ * @author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author	Lynn Pye
  */
 class Application implements IApplication
 {
@@ -273,7 +273,7 @@ class Application implements IApplication
 
 	/**
 	 * Retrieve the object that manages sessions.
-	 * 
+	 *
 	 * @return	<TT>SessionManager</TT>.
 	 */
 	public SessionManager getSessionManager()
@@ -360,7 +360,7 @@ class Application implements IApplication
 
 	/**
 	 * Retrieve the application level SQL History object.
-	 * 
+	 *
 	 * @return		the application level SQL History object.
 	 */
 	public SQLHistory getSQLHistory()
@@ -396,10 +396,10 @@ class Application implements IApplication
 	 * Execute the taks required to start SQuirreL. Each of these is displayed
 	 * as a message on the splash screen (if one is being used) in order to let the
 	 * user know what is happening.
-	 * 
+	 *
 	 * @param	splash		The splash screen (can be null).
 	 * @param	args		Application arguments.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>ApplicationArguments<.TT> is null.
 	 */

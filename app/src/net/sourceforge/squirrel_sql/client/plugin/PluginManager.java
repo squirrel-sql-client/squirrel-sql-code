@@ -84,9 +84,9 @@ public class PluginManager
 
 	/**
 	 * Ctor. Loads plugins from the plugins directory.
-	 * 
+	 *
 	 * @param	app	Application API.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException.
 	 * 			Thrown if <TT>null</TT> <TT>IApplication</TT> passed.
 	 */
@@ -273,7 +273,7 @@ public class PluginManager
 	/**
 	 * Retrieve an array of all the <TT>URL</TT> objects that are
 	 * used to find plugin classes.
-	 * 
+	 *
 	 * @return		<TT>URL[]</TT>.
 	 */
 	public URL[] getPluginURLs()
@@ -302,31 +302,38 @@ public class PluginManager
 					{
 						try
 						{
-							pluginUrls.add(file.toURL());
-							
-							// See if plugin has any jars in lib dir.
-							final String pluginDirName = Utilities.removeFileNameSuffix(file.getAbsolutePath());
-							final File libDir = new File(pluginDirName, "lib");
-							if (libDir.exists() && libDir.isDirectory())
+							if (fileName.toLowerCase().endsWith("jedit.jar"))
 							{
-								File[] libDirFiles = libDir.listFiles();
-								for (int j = 0; j < libDirFiles.length; ++j)
+								_app.showErrorDialog("jEdit plugin is no longer supported.");
+							}
+							else
+							{
+								pluginUrls.add(file.toURL());
+
+								// See if plugin has any jars in lib dir.
+								final String pluginDirName = Utilities.removeFileNameSuffix(file.getAbsolutePath());
+								final File libDir = new File(pluginDirName, "lib");
+								if (libDir.exists() && libDir.isDirectory())
 								{
-									if (libDirFiles[j].isFile())
+									File[] libDirFiles = libDir.listFiles();
+									for (int j = 0; j < libDirFiles.length; ++j)
 									{
-										final String fn = libDirFiles[j].getAbsolutePath();
-										if (fn.toLowerCase().endsWith(".zip") ||
-												fn.toLowerCase().endsWith(".jar"))
+										if (libDirFiles[j].isFile())
 										{
-											try
+											final String fn = libDirFiles[j].getAbsolutePath();
+											if (fn.toLowerCase().endsWith(".zip") ||
+													fn.toLowerCase().endsWith(".jar"))
 											{
-												pluginUrls.add(libDirFiles[j].toURL());
-											}
-											catch (IOException ex)
-											{
-												String msg = "Unable to load plugin library file: " + fn;
-												s_log.error(msg, ex);
-												_app.showErrorDialog(msg, ex);
+												try
+												{
+													pluginUrls.add(libDirFiles[j].toURL());
+												}
+												catch (IOException ex)
+												{
+													String msg = "Unable to load plugin library file: " + fn;
+													s_log.error(msg, ex);
+													_app.showErrorDialog(msg, ex);
+												}
 											}
 										}
 									}
@@ -472,4 +479,3 @@ public class PluginManager
 		return (PluginLoadInfo)_pluginLoadInfoColl.get(plugin.getInternalName());
 	}
 }
-

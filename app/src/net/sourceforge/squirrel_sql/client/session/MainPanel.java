@@ -14,7 +14,7 @@ package net.sourceforge.squirrel_sql.client.session;
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
+* License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.beans.PropertyChangeEvent;
@@ -48,7 +48,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 /**
  * This tabbed panel is the main panel within the session window.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class MainPanel extends SquirrelTabbedPane
 {
@@ -187,7 +187,7 @@ public class MainPanel extends SquirrelTabbedPane
 
 	/**
 	 * The passed session is closing so tell each tab.
-	 * 
+	 *
 	 * @param	session		Session being closed.
 	 */
 	void sessionClosing(ISession session)

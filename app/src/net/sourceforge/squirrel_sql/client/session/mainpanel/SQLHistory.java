@@ -61,6 +61,7 @@ public class SQLHistory
 		{
 			throw new IllegalArgumentException("SQLHistoryItem == null");
 		}
+		_history.remove(obj);
 		_history.add(obj);
 	}
 }

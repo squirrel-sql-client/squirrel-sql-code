@@ -20,19 +20,18 @@ package net.sourceforge.squirrel_sql.client.session;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
  * A factory that creates <TT>DefaultSQLEntrypanel</TT> objects.
- * 
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ *
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class DefaultSQLEntryPanelFactory implements ISQLEntryPanelFactory
 {
 	/**
 	 * Create a new <TT>DefaultSQLEntrypanel</TT>.
-	 * 
+	 *
 	 * @param	session	The session that an SQL entry is to be created for.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>ISession</TT> passed.
-	 * 
 	 */
 	public ISQLEntryPanel createSQLEntryPanel(ISession session)
 	{
@@ -44,4 +43,3 @@ public class DefaultSQLEntryPanelFactory implements ISQLEntryPanelFactory
 		return new DefaultSQLEntryPanel(session);
 	}
 }
-

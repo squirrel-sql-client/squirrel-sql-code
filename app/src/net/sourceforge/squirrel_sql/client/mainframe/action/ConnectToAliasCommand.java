@@ -441,24 +441,31 @@ public class ConnectToAliasCommand implements ICommand
 		public void run()
 		{
 			final IApplication app = _session.getApplication();
-			app.getPluginManager().sessionCreated(_session);
-			final SessionSheet child = new SessionSheet(_session);
-			_session.setSessionSheet(child);
-			app.getPluginManager().sessionStarted(_session);
-			app.getMainFrame().addInternalFrame(child, true, null);
-
-			// If we don't invokeLater here no Short-Cut-Key is sent
-			// to the internal frame
-			// seen under java version "1.4.1_01" and Linux
-			SwingUtilities.invokeLater(new Runnable()
+			try
 			{
-				public void run()
-				{
-					child.setVisible(true);
-				}
-			});
+				app.getPluginManager().sessionCreated(_session);
+				final SessionSheet child = new SessionSheet(_session);
+				_session.setSessionSheet(child);
+				app.getPluginManager().sessionStarted(_session);
+				app.getMainFrame().addInternalFrame(child, true, null);
 
-			_connSheet.executed(true);
+				// If we don't invokeLater here no Short-Cut-Key is sent
+				// to the internal frame
+				// seen under java version "1.4.1_01" and Linux
+				SwingUtilities.invokeLater(new Runnable()
+				{
+					public void run()
+					{
+						child.setVisible(true);
+					}
+				});
+
+				_connSheet.executed(true);
+			}
+			catch (Throwable th)
+			{
+				app.showErrorDialog("Error opening session", th);
+			}
 		}
 	}
 }
