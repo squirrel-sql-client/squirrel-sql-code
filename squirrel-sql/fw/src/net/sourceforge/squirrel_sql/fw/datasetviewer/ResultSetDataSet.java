@@ -20,16 +20,21 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 public class ResultSetDataSet implements IDataSet {
-    private ResultSet _rs;
+
+	// These 2 should be handled with an Iterator!!!
+	private int _iCurrent = -1;
+	private Object[] _currentRow;
+	
     private int[] _columnIndices;
     private int _columnCount;
     private DataSetDefinition _dataSetDefinition;
-    private Object[] _row;
+	private ArrayList _alData;
 
     public ResultSetDataSet() throws DataSetException {
         this(null, null);
@@ -50,18 +55,31 @@ public class ResultSetDataSet implements IDataSet {
     }
 
     public void setResultSet(ResultSet rs, int[] columnIndices) throws DataSetException {
-        _rs = rs;
         if (columnIndices != null && columnIndices.length == 0) {
             columnIndices = null;
         }
         _columnIndices = columnIndices;
+        _iCurrent = -1;
+        _alData = new ArrayList();
+        
         if (rs != null) {
             try {
-                ResultSetMetaData md = _rs.getMetaData();
+                ResultSetMetaData md = rs.getMetaData();
                 _columnCount = columnIndices != null ? columnIndices.length : md.getColumnCount();
                 _dataSetDefinition = new DataSetDefinition(createColumnDefinitions(md, columnIndices));
-                _row = new Object[_columnCount];
-            } catch (SQLException ex) {
+				while (rs.next()) 
+				{
+	                Object[] row = new Object[_columnCount];
+					for (int i = 0; i < _columnCount; ++i) 
+					{
+						int idx = _columnIndices != null ? _columnIndices[i] : i + 1;
+						row[i] = rs.getString(idx);
+					}
+					_alData.add(row);
+	            }
+            } 
+			catch (SQLException ex) 
+            {
                 throw new DataSetException(ex);
             }
         }
@@ -75,38 +93,20 @@ public class ResultSetDataSet implements IDataSet {
         return _dataSetDefinition;
     }
 
-    public synchronized boolean next(IMessageHandler msgHandler) throws DataSetException {
-        boolean rc = false;
-        try {
-            rc = _rs.next();
-            if (rc) {
-                for (int i = 0; i < _columnCount; ++i) {
-                    int idx = _columnIndices != null ? _columnIndices[i] : i + 1;
-                    try {
-                        _row[i] = _rs.getString(idx);
-                    } catch (SQLException ex) {
-                        if (msgHandler != null) {
-                            _row[i] = "<error>"; //i18n
-                            msgHandler.showMessage(ex);
-                        } else {
-                            throw new DataSetException(ex);
-                        }
-                    }
-                }
-            }
-            return rc;
-        } catch (SQLException ex) {
-            if (msgHandler != null) {
-                msgHandler.showMessage(ex);
-            } else {
-                throw new DataSetException(ex);
-            }
-        }
-        return rc;
-    }
+	public synchronized boolean next(IMessageHandler msgHandler) throws DataSetException 
+	{
+		// This should be handled with an Iterator!!!
+		if(++_iCurrent < _alData.size())
+		{
+			_currentRow = (Object[])_alData.get(_iCurrent);
+			return true;
+		}
+		return false;
+	}
 
-    public Object get(int columnIndex) {
-        return _row[columnIndex];
+    public Object get(int columnIndex) 
+    {
+        return _currentRow[columnIndex];
     }
 
     private ColumnDisplayDefinition[] createColumnDefinitions(ResultSetMetaData md,

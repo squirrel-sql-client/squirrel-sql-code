@@ -85,7 +85,7 @@ public class DataSetViewer {
 		_dest.moveToTop();
 	}
 	
-	protected void clearDestination() {
+	public void clearDestination() {
 		_dest.clear();
 	}
 
