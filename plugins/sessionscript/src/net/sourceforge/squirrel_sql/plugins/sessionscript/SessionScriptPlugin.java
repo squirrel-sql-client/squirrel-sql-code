@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.sessionscript;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -27,11 +27,9 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
-import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-
 /**
  * The plugin class.
  */
@@ -143,8 +141,6 @@ public class SessionScriptPlugin extends DefaultSessionPlugin
 	{
 		super.initialize();
 		IApplication app = getApplication();
-
-		PluginManager pmgr = app.getPluginManager();
 
 		// Folder within plugins folder that belongs to this
 		// plugin.

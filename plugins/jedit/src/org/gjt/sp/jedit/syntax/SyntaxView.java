@@ -19,9 +19,18 @@
 
 package org.gjt.sp.jedit.syntax;
 
-import javax.swing.text.*;
-import java.awt.*;
-import java.util.*;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Rectangle;
+
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Element;
+import javax.swing.text.PlainView;
+import javax.swing.text.Segment;
+import javax.swing.text.Utilities;
 
 /**
  * A Swing view implementation that colorizes lines of a
@@ -31,7 +40,7 @@ import java.util.*;
  * should be used instead.
  *
  * @author Slava Pestov
- * @version $Id: SyntaxView.java,v 1.2 2002-12-21 00:34:18 colbell Exp $
+ * @version $Id: SyntaxView.java,v 1.3 2003-03-04 11:46:02 colbell Exp $
  */
 public class SyntaxView extends PlainView
 {
@@ -191,7 +200,6 @@ public class SyntaxView extends PlainView
 									TextAreaDefaults taDefaults)
 	{
 		final JEditTextArea textArea = (JEditTextArea)getContainer();
-		final SyntaxDocument doc = textArea.getSyntaxDocument();
 
 		if(line >= textArea.getSelectionStartLine()
 			&& line <= textArea.getSelectionEndLine())
@@ -249,6 +257,9 @@ public class SyntaxView extends PlainView
 /*
  * ChangeLog:
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2002/12/21 00:34:18  colbell
+ * Add syntax styles
+ *
  * Revision 1.1  2002/12/06 22:50:19  colbell
  * New jedit syntax control files
  *

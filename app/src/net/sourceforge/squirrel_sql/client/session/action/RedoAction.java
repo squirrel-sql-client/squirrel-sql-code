@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 /*
- * Copyright (C) 2002 Johan Compagner
+ * Copyright (C) 2002-2003 Johan Compagner
  * jcompagner@j-com.nl
  *
  * This library is free software; you can redistribute it and/or
@@ -19,14 +19,13 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import java.awt.event.ActionEvent;
 
-import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoManager;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 
 public class RedoAction extends SquirrelAction
 {
-
 	private UndoManager _undo;
 
 	public RedoAction(IApplication app, UndoManager undo)

@@ -18,8 +18,6 @@
  */
 package org.gjt.sp.jedit.syntax;
 
-import java.awt.Color;
-
 import javax.swing.text.Document;
 
 
@@ -33,7 +31,7 @@ import javax.swing.text.Document;
  * <code>Token</code> class.<p>
  *
  * @author Slava Pestov
- * @version $Id: SyntaxDocument.java,v 1.2 2002-12-21 00:34:18 colbell Exp $
+ * @version $Id: SyntaxDocument.java,v 1.3 2003-03-04 11:46:02 colbell Exp $
  *
  * @see org.gjt.sp.jedit.syntax.DefaultSyntaxDocument
  * @see org.gjt.sp.jedit.syntax.SyntaxEditorKit
@@ -97,6 +95,9 @@ public interface SyntaxDocument extends Document
 /*
  * ChangeLog:
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2002/12/21 00:34:18  colbell
+ * Add syntax styles
+ *
  * Revision 1.1  2000/01/12 03:17:59  bruce
  *
  * Addition of Syntax Colour Highlighting Package to CVS tree.  This is LGPL code used in the Moe Editor to provide syntax highlighting.

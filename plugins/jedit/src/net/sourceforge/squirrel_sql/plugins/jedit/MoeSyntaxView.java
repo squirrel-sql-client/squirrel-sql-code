@@ -44,7 +44,7 @@ import org.gjt.sp.jedit.syntax.TokenMarker;
  * @author Bruce Quig
  * @author Michael Kolling
  *
- * @version $Id: MoeSyntaxView.java,v 1.1 2002-12-21 00:31:41 colbell Exp $
+ * @version $Id: MoeSyntaxView.java,v 1.2 2003-03-04 11:46:02 colbell Exp $
  */
 public class MoeSyntaxView extends PlainView
 {
@@ -469,7 +469,6 @@ public class MoeSyntaxView extends PlainView
 		TextAreaDefaults taDefaults)
 	{
 		final JEditTextArea textArea = (JEditTextArea)getContainer();
-		final SyntaxDocument doc = textArea.getSyntaxDocument();
 
 		if ((line >= textArea.getSelectionStartLine()) &&
 				(line <= textArea.getSelectionEndLine()))

@@ -19,8 +19,11 @@
 
 package org.gjt.sp.jedit.syntax;
 
-import javax.swing.text.*;
-import javax.swing.*;
+import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.Document;
+import javax.swing.text.Element;
+import javax.swing.text.View;
+import javax.swing.text.ViewFactory;
 
 /**
  * An implementation of <code>EditorKit</code> used for syntax colorizing.
@@ -33,7 +36,7 @@ import javax.swing.*;
  * jEdit classes.
  *
  * @author Slava Pestov
- * @version $Id: SyntaxEditorKit.java,v 1.1 2002-12-06 22:50:19 colbell Exp $
+ * @version $Id: SyntaxEditorKit.java,v 1.2 2003-03-04 11:46:02 colbell Exp $
  *
  * @see org.gjt.sp.jedit.syntax.SyntaxView
  */
@@ -77,6 +80,9 @@ public class SyntaxEditorKit extends DefaultEditorKit implements ViewFactory
 /*
  * ChangeLog:
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2002/12/06 22:50:19  colbell
+ * New jedit syntax control files
+ *
  * Revision 1.1  2000/01/12 03:17:59  bruce
  *
  * Addition of Syntax Colour Highlighting Package to CVS tree.  This is LGPL code used in the Moe Editor to provide syntax highlighting.

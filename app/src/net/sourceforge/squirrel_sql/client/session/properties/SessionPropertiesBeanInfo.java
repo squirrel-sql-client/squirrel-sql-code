@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.properties;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -40,7 +40,6 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 		if (s_dscrs == null)
 		{
 			s_dscrs = new PropertyDescriptor[16];
-			int i = 0;
 			s_dscrs[0] = new PropertyDescriptor(IPropNames.AUTO_COMMIT,
 									CLAZZ, "getAutoCommit", "setAutoCommit");
 			s_dscrs[1] = new PropertyDescriptor(IPropNames.COMMIT_ON_CLOSING_CONNECTION,

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -20,10 +20,8 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
 import java.awt.Component;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-
 /**
  * This interface defines the behaviour for a tab in one of the object panels.
  *

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.sqlval;
 /*
- * Copyright (C) 2002 Colin Bell and Olof Edlund
+ * Copyright (C) 2002-2003 Colin Bell and Olof Edlund
  * colbell@users.sourceforge.net
  *
  * This code is based on the example web service client code originally written
@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.plugins.sqlval;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.beans.PropertyChangeListener;
 import java.rmi.RemoteException;
 
 import javax.xml.namespace.QName;

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.sessionscript;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -22,9 +22,6 @@ import java.io.Serializable;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
-
-import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
-
 /**
  * An SQL script run when a session is started.
  * 

@@ -777,7 +777,6 @@ public class SQLDatabaseMetaData
 		// MM-MYSQL driver doesnt support null for column name.
 		final String dbProdName = getDatabaseProductName();
 		final String columns = dbProdName.equalsIgnoreCase("mysql") ? "%" : null;
-		final String dbProductName = getDatabaseProductName();
 		return getJDBCMetaData().getColumnPrivileges(ti.getCatalogName(),
 													ti.getSchemaName(),
 													ti.getSimpleName(),

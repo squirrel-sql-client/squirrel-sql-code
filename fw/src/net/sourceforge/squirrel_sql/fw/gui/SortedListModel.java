@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,24 +17,19 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import javax.swing.DefaultListModel;
 
 /**
  * This class is a descendant of <CODE>DefaultListModel</CODE> that will
  * keep its data in a sorted order.
  */
-public class SortedListModel extends DefaultListModel {
+public class SortedListModel extends DefaultListModel
+{
 	/**
 	 * Default ctor.
 	 */
-	public SortedListModel() {
+	public SortedListModel()
+	{
 		super();
 	}
 
@@ -42,7 +37,8 @@ public class SortedListModel extends DefaultListModel {
 	 * Add <CODE>obj</CODE> to list ignoring <CODE>index</CODE> as list
 	 * is sorted.
 	 */
-	public void add(int index, Object obj) {
+	public void add(int index, Object obj)
+	{
 		addElement(obj);
 	}
 
@@ -50,29 +46,35 @@ public class SortedListModel extends DefaultListModel {
 	 * Add <CODE>obj</CODE> to list ignoring <CODE>index</CODE> as list
 	 * is sorted.
 	 */
-	public void insertElementAt(int index, Object obj) {
+	public void insertElementAt(int index, Object obj)
+	{
 		addElement(obj);
 	}
 
 	/**
 	 * Add <CODE>obj</CODE> to list sorting by <CODE>obj.toString()</CODE>.
 	 */
-	public void addElement(Object obj) {
+	public void addElement(Object obj)
+	{
 		super.add(getIndexInList(obj), obj);
 	}
 
-	public Object remove(int index) {
+	public Object remove(int index)
+	{
 		Object obj = get(index);
 		removeElement(obj);
 		return obj;
 	}
 
-	public void removeElementAt(int index) {
+	public void removeElementAt(int index)
+	{
 		removeElement(get(index));
 	}
 
-	public void removeRange(int fromIndex, int toIndex) {
-		for (int i = fromIndex; i <= toIndex; ++i)  {
+	public void removeRange(int fromIndex, int toIndex)
+	{
+		for (int i = fromIndex; i <= toIndex; ++i)
+		{
 			remove(i);
 		}
 	}
@@ -82,11 +84,14 @@ public class SortedListModel extends DefaultListModel {
 	 * does a sequential read through the list so you wouldn't want to use it
 	 * for large lists.
 	 */
-	protected int getIndexInList(Object obj) {
+	protected int getIndexInList(Object obj)
+	{
 		final int limit = getSize();
 		final String objStr = obj.toString();
-		for (int i = 0; i < limit; ++i) {
-			if (objStr.compareToIgnoreCase(get(i).toString()) <= 0) {
+		for (int i = 0; i < limit; ++i)
+		{
+			if (objStr.compareToIgnoreCase(get(i).toString()) <= 0)
+			{
 				return i;
 			}
 		}

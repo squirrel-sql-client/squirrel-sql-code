@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.jedit;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -24,7 +24,6 @@ import javax.swing.text.Caret;
 import javax.swing.text.Document;
 
 import org.gjt.sp.jedit.syntax.DefaultSyntaxDocument;
-import org.gjt.sp.jedit.syntax.SyntaxStyle;
 import org.gjt.sp.jedit.syntax.SyntaxUtilities;
 import org.gjt.sp.jedit.syntax.TextAreaDefaults;
 import org.gjt.sp.jedit.syntax.Token;

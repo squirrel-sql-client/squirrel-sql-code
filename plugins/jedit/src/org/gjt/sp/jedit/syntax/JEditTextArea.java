@@ -8,16 +8,11 @@ package org.gjt.sp.jedit.syntax;
  * permitted, in both source and binary form, provided that this notice
  * remains intact in all source distributions of this package.
  */
-import java.awt.Component;
-
 import javax.swing.JEditorPane;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Caret;
-import javax.swing.text.Document;
 import javax.swing.text.Element;
-
 
 public class JEditTextArea extends JEditorPane
 {

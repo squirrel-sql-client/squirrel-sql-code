@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 /*
  * TODO: Delete me
- * Copyright (C) 2002 Johan Compagner
+ * Copyright (C) 2002-2003 Johan Compagner
  * jcompagner@j-com.nl
  *
  * This library is free software; you can redistribute it and/or
@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -28,10 +27,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.IClientSession;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-
 /**
- * @version 	$Id: RefreshTreeItemAction.java,v 1.1.1.1 2002-11-17 09:00:40 colbell Exp $
+ * @version 	$Id: RefreshTreeItemAction.java,v 1.2 2003-03-04 11:46:00 colbell Exp $
  * @author		Johan Compagner
  */
 public class RefreshTreeItemAction extends SquirrelAction

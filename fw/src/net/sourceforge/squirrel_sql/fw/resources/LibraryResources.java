@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.resources;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,21 +17,20 @@ package net.sourceforge.squirrel_sql.fw.resources;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.net.URL;
-
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 
-public class LibraryResources extends Resources {
+public class LibraryResources extends Resources
+{
 
-	public interface IImageNames {
+	public interface IImageNames
+	{
 		String TABLE_ASCENDING = "table.ascending";
 		String TABLE_DESCENDING = "table.descending";
 	}
 
-	public LibraryResources()
-			throws IllegalArgumentException {
-		super("net.sourceforge.squirrel_sql.fw.resources.library", LibraryResources.class.getClassLoader());
+	public LibraryResources() throws IllegalArgumentException
+	{
+		super("net.sourceforge.squirrel_sql.fw.resources.library",
+				LibraryResources.class.getClassLoader());
 	}
 }
-
-

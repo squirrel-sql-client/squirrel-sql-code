@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,8 +17,6 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import javax.swing.DefaultListModel;
-
 import java.io.File;
 import java.util.StringTokenizer;
 /**
@@ -51,5 +49,4 @@ public class ClassPathListModel extends DefaultFileListBoxModel
 			addFile(new File(strtok.nextToken()));
 		}
 	}
-
 }

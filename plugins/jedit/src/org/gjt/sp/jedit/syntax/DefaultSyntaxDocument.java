@@ -18,10 +18,12 @@
 */
 package org.gjt.sp.jedit.syntax;
 
-import java.awt.Color;
-
-import javax.swing.event.*;
-import javax.swing.text.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Element;
+import javax.swing.text.PlainDocument;
+import javax.swing.text.Segment;
 
 
 /**
@@ -29,7 +31,7 @@ import javax.swing.text.*;
 * care of inserting and deleting lines from the token marker's state.
 *
 * @author Slava Pestov
-* @version $Id: DefaultSyntaxDocument.java,v 1.2 2002-12-21 00:34:18 colbell Exp $
+* @version $Id: DefaultSyntaxDocument.java,v 1.3 2003-03-04 11:46:02 colbell Exp $
 *
 * @see org.gjt.sp.jedit.syntax.SyntaxDocument
 */
@@ -210,6 +212,9 @@ public class DefaultSyntaxDocument extends PlainDocument
 /*
 * ChangeLog:
 * $Log: not supported by cvs2svn $
+* Revision 1.2  2002/12/21 00:34:18  colbell
+* Add syntax styles
+*
 * Revision 1.2  2000/01/14 03:33:04  mik
 * changed syntax colours
 *

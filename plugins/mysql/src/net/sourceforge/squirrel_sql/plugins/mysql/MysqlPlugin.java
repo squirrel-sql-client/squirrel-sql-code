@@ -102,15 +102,15 @@ public class MysqlPlugin extends DefaultSessionPlugin
 
 		// Folder within plugins folder that belongs to this
 		// plugin.
-		File pluginAppFolder = null;
-		try
-		{
-			pluginAppFolder = getPluginAppSettingsFolder();
-		}
-		catch (IOException ex)
-		{
-			throw new PluginException(ex);
-		}
+//		File pluginAppFolder = null;
+//		try
+//		{
+//			pluginAppFolder = getPluginAppSettingsFolder();
+//		}
+//		catch (IOException ex)
+//		{
+//			throw new PluginException(ex);
+//		}
 
 		// Folder to store user settings.
 		try

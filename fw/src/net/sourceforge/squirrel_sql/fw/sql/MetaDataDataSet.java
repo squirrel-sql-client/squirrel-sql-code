@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.sql;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -21,7 +21,6 @@ import java.lang.reflect.Method;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -37,7 +36,6 @@ import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
 
 public class MetaDataDataSet implements IDataSet
 {
-
 	private final static Map s_ignoreMethods = new HashMap();
 	static {
 		s_ignoreMethods.put("getCatalogs", null);

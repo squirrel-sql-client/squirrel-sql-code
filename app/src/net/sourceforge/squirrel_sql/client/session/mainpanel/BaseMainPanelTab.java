@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,30 +17,26 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Component;
-
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-
 /**
  * Base class for tabs to the added to the main tabbed panel.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public abstract class BaseMainPanelTab implements IMainPanelTab {
+public abstract class BaseMainPanelTab implements IMainPanelTab
+{
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(BaseMainPanelTab.class);
+	private static ILogger s_log =
+		LoggerController.createLogger(BaseMainPanelTab.class);
 
 	/** Current session. */
 	private ISession _session;
 
 	/** Set to <TT>true</TT> once this tab has been displayed. */
-	private  boolean _hasBeenDisplayed;
+	private boolean _hasBeenDisplayed;
 
 	/**
 	 * Set the current session.
@@ -50,8 +46,10 @@ public abstract class BaseMainPanelTab implements IMainPanelTab {
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> ISession</TT> passed.
 	 */
-	public void setSession(ISession session) {
-		if (session == null) {
+	public void setSession(ISession session)
+	{
+		if (session == null)
+		{
 			throw new IllegalArgumentException("Null ISession passed");
 		}
 		_session = session;
@@ -62,7 +60,8 @@ public abstract class BaseMainPanelTab implements IMainPanelTab {
 	 *
 	 * @param	session		Current session.
 	 */
-	public void sessionClosing(ISession session) {
+	public void sessionClosing(ISession session)
+	{
 	}
 
 	/**
@@ -70,7 +69,8 @@ public abstract class BaseMainPanelTab implements IMainPanelTab {
 	 *
 	 * @return	Current session.
 	 */
-	public final ISession getSession() {
+	public final ISession getSession()
+	{
 		return _session;
 	}
 
@@ -78,8 +78,10 @@ public abstract class BaseMainPanelTab implements IMainPanelTab {
 	 * This tab has been selected. This will call <TT>refreshComponent()</TT>
 	 * only if it hasn't been called.
 	 */
-	public synchronized void select() {
-		if (!_hasBeenDisplayed) {
+	public synchronized void select()
+	{
+		if (!_hasBeenDisplayed)
+		{
 			s_log.debug("Refreshing " + getTitle() + " main tab.");
 			refreshComponent();
 			_hasBeenDisplayed = true;
@@ -91,4 +93,3 @@ public abstract class BaseMainPanelTab implements IMainPanelTab {
 	 */
 	protected abstract void refreshComponent();
 }
-

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.plugin;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 20031 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -18,10 +18,12 @@ package net.sourceforge.squirrel_sql.client.plugin;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
 
-public abstract class DefaultSessionPlugin extends DefaultPlugin implements ISessionPlugin {
+public abstract class DefaultSessionPlugin
+	extends DefaultPlugin
+	implements ISessionPlugin
+{
 	/**
 	 * A new session has been created. At this point the
 	 * <TT>SessionSheet</TT> does not exist for the new session.
@@ -31,7 +33,8 @@ public abstract class DefaultSessionPlugin extends DefaultPlugin implements ISes
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> ISession</TT> passed.
 	 */
-	public void sessionCreated(ISession session) {
+	public void sessionCreated(ISession session)
+	{
 	}
 
 	/**
@@ -42,7 +45,8 @@ public abstract class DefaultSessionPlugin extends DefaultPlugin implements ISes
 	 * @return	<TT>true</TT> to indicate that this plugin is
 	 *			applicable to passed session.
 	 */
-	public boolean sessionStarted(ISession session) {
+	public boolean sessionStarted(ISession session)
+	{
 		return true;
 	}
 
@@ -51,7 +55,8 @@ public abstract class DefaultSessionPlugin extends DefaultPlugin implements ISes
 	 *
 	 * @param	session	The session that is ending.
 	 */
-	public void sessionEnding(ISession session) {
+	public void sessionEnding(ISession session)
+	{
 	}
 
 	/**
@@ -61,7 +66,8 @@ public abstract class DefaultSessionPlugin extends DefaultPlugin implements ISes
 	 *
 	 * @return  <TT>null</TT> to indicate that this plugin doesn't use session property panels.
 	 */
-	public ISessionPropertiesPanel[] getSessionPropertiesPanels(ISession session) {
+	public ISessionPropertiesPanel[] getSessionPropertiesPanels(ISession session)
+	{
 		return null;
 	}
 
@@ -82,8 +88,8 @@ public abstract class DefaultSessionPlugin extends DefaultPlugin implements ISes
 	 * Let app know what extra types of objects in object tree that
 	 * plugin can handle.
 	 */
-	public IPluginDatabaseObjectType[] getObjectTypes(ISession session) {
+	public IPluginDatabaseObjectType[] getObjectTypes(ISession session)
+	{
 		return null;
 	}
 }
-
