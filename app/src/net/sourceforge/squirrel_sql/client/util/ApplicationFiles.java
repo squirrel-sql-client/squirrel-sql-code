@@ -134,6 +134,15 @@ public class ApplicationFiles
 	}
 	
 	/**
+	 * @return file that contains the selections user chose
+	 * for DataType-specific properties.
+	 */
+	public File getDTPropertiesFile()
+	{
+		return new File(_userSettingsDir + File.separator + "DTproperties.xml");
+	}
+	
+	/**
 	 * @return file that contains the selections user chose for specific columns to use
 	 * in the WHERE clause when editing a cell in a DB table.
 	 */
@@ -141,7 +150,6 @@ public class ApplicationFiles
 	{
 		return new File(_userSettingsDir + File.separator + "editWhereCols.xml");
 	}
-	
 
 	/**
 	 * @return file to log execution information to.
