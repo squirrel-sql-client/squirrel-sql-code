@@ -112,14 +112,17 @@ class ValidationDialog extends JDialog
 		setContentPane(contentPane);
 
 		final GridBagConstraints gbc = new GridBagConstraints();
-		gbc.fill = gbc.HORIZONTAL;
+		gbc.fill = gbc.BOTH;
 		gbc.insets = new Insets(1, 4, 1, 4);
+		gbc.weightx = 1;
+
+		gbc.weighty = 1;
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		gbc.weightx = 1;
 		_appPrefsPnl = new AppPreferencesPanel(_valProps._prefs);
 		contentPane.add(_appPrefsPnl, gbc);
 
+		gbc.weighty = 0;
 		++gbc.gridy;
 		_confirmPnl = new SessionSettingsPanel(_valProps._prefs, _valProps._sessionProps);
 		contentPane.add(_confirmPnl, gbc);
@@ -129,7 +132,7 @@ class ValidationDialog extends JDialog
 
 		pack();
 		GUIUtils.centerWithinParent(this);
-		setResizable(false);
+		setResizable(true);
 	}
 
 	/**

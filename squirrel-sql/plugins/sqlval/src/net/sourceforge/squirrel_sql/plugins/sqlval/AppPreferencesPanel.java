@@ -140,13 +140,16 @@ class AppPreferencesPanel extends JPanel
 		setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
 
 		final GridBagConstraints gbc = new GridBagConstraints();
-		gbc.fill = gbc.HORIZONTAL;
+		gbc.fill = gbc.BOTH;
 		gbc.insets = new Insets(1, 4, 1, 4);
+		gbc.weightx = 1;
+
+		gbc.weighty = 1;
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		gbc.weightx = 1;
 		add(createInfoPanel(), gbc);
 
+		gbc.weighty = 0;
 		++gbc.gridy;
 		add(createLogonPanel(), gbc);
 
