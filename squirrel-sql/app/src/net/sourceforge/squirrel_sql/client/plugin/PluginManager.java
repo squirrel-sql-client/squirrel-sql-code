@@ -94,7 +94,7 @@ public class PluginManager {
                 }
             } catch (Throwable th) {
                 Logger log = _app.getLogger();
-                log.showMessage(Logger.ILogTypes.ERROR, "\nError occured in IPlugin.sessionStarted() for " + plugin.getDescriptiveName());
+                log.showMessage(Logger.ILogTypes.ERROR, "Error occured in IPlugin.sessionStarted() for " + plugin.getDescriptiveName());
                 log.showMessage(Logger.ILogTypes.ERROR, th);
             }
         }
@@ -114,7 +114,7 @@ public class PluginManager {
                     plugin.sessionEnding(session);
                 } catch (Throwable th) {
                     Logger log = _app.getLogger();
-                    log.showMessage(Logger.ILogTypes.ERROR, "\nError occured in IPlugin.sessionEnding() for " + plugin.getDescriptiveName());
+                    log.showMessage(Logger.ILogTypes.ERROR, "Error occured in IPlugin.sessionEnding() for " + plugin.getDescriptiveName());
                     log.showMessage(Logger.ILogTypes.ERROR, th);
                 }
             }
@@ -198,13 +198,13 @@ public class PluginManager {
                 try {
                     loadPlugin(classes[i]);
                 } catch (Throwable th) {
-                    log.showMessage(Logger.ILogTypes.ERROR, "\nError occured loading plugin class "
+                    log.showMessage(Logger.ILogTypes.ERROR, "Error occured loading plugin class "
                                         + classes[i].getName());
                     log.showMessage(Logger.ILogTypes.ERROR, th);
                 }
             }
         } catch (IOException ex) {
-            log.showMessage(Logger.ILogTypes.ERROR, "\nError occured retrieving plugins. No plugins have been loaded.");
+            log.showMessage(Logger.ILogTypes.ERROR, "Error occured retrieving plugins. No plugins have been loaded.");
             log.showMessage(Logger.ILogTypes.ERROR, ex);
         }
     }
@@ -249,7 +249,7 @@ public class PluginManager {
 									+ " loaded in " + (System.currentTimeMillis() - now) + " ms.");
             }
         } catch (Throwable th) {
-            log.showMessage(Logger.ILogTypes.ERROR, "\nError occured loading class " +
+            log.showMessage(Logger.ILogTypes.ERROR, "Error occured loading class " +
                         pluginClass.getName() + " from plugin");
             log.showMessage(Logger.ILogTypes.ERROR, th);
         }
