@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.util;
 /*
- * Copyright (C) 2001-2004 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -20,11 +20,11 @@ package net.sourceforge.squirrel_sql.fw.util;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 /**
- * Base exception class.
+ * Base runtime exception.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class BaseException extends Exception
+public class BaseRuntimeException extends RuntimeException
 {
 	/** If this exception is wrapped around another it is stored here. */
 	private Throwable _wrapee;
@@ -33,7 +33,7 @@ public class BaseException extends Exception
 	 * Default ctor. Creates an exception with an empty string ("")
 	 * as its message.
 	 */
-	public BaseException()
+	public BaseRuntimeException()
 	{
 		this("");
 	}
@@ -43,7 +43,7 @@ public class BaseException extends Exception
 	 *
 	 * @param	msg	 The message.
 	 */
-	public BaseException(String msg)
+	public BaseRuntimeException(String msg)
 	{
 		super(msg != null ? msg : "");
 	}
@@ -54,7 +54,7 @@ public class BaseException extends Exception
 	 *
 	 * @param	wrapee	The wrapped exception.
 	 */
-	public BaseException(Throwable wrapee)
+	public BaseRuntimeException(Throwable wrapee)
 	{
 		super(getMessageFromException(wrapee));
 		_wrapee = wrapee;
@@ -105,6 +105,17 @@ public class BaseException extends Exception
 		}
 	}
 
+	/**
+	 * Retrieve the exception that this one is wrapped around. This can be
+	 * <TT>null</TT>.
+	 *
+	 * @return	The wrapped exception or <TT>null</TT>.
+	 */
+	public Throwable getWrappedThrowable()
+	{
+		return _wrapee;
+	}
+
 	private static String getMessageFromException(Throwable th)
 	{
 		String rtn = "";
@@ -117,16 +128,5 @@ public class BaseException extends Exception
 			}
 		}
 		return rtn;
-	}
-
-	/**
-	 * Retrieve the exception that this one is wrapped around. This can be
-	 * <TT>null</TT>.
-	 *
-	 * @return	The wrapped exception or <TT>null</TT>.
-	 */
-	public Throwable getWrappedThrowable()
-	{
-		return _wrapee;
 	}
 }
