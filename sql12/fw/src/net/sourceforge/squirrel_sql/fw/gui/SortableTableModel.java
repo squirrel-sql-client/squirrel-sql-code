@@ -242,6 +242,24 @@ public class SortableTableModel extends AbstractTableModel
 		}
 	}
 
+   /**
+    * When the table is sorted table methods like getSelectedRow() return row indices that
+    * correspond to the view not to the model. This method transforms the view index to
+    * the model index.
+    * @param row The view row index.
+    * @return The model row index. -1 if no model index correspondig to row was found.
+    */
+   public int transfromToModelRow(int row)
+   {
+      if(0 > row || row >= _indexes.length)
+      {
+         return -1;
+      }
+
+      return _indexes[row].intValue();
+   }
+
+
 	class TableModelComparator implements Comparator
 	{
 		private int _iColumn;

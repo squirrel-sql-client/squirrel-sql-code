@@ -39,7 +39,7 @@ import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
- * @version 	$Id: ButtonTableHeader.java,v 1.4 2004-08-16 09:16:37 colbell Exp $
+ * @version 	$Id: ButtonTableHeader.java,v 1.5 2005-01-02 19:07:29 gerdwagner Exp $
  * @author		Johan Compagner
  */
 public class ButtonTableHeader extends JTableHeader
@@ -168,7 +168,24 @@ public class ButtonTableHeader extends JTableHeader
 		return retStr;
 	}
 
-	private final class TableDataListener implements TableModelListener
+   /**
+    * @return The currently sorted column index. If no column is sorted -1.
+    */
+   public int getCurrentlySortedColumnIdx()
+   {
+      return _currentlySortedColumnIdx;
+   }
+
+   /**
+    *
+    * @return The direction of the currently sorted column. If no column is sorted false.
+    */
+   public boolean isAscending()
+   {
+      return _currentSortedColumnIcon == s_ascIcon;
+   }
+
+   private final class TableDataListener implements TableModelListener
 	{
 		public void tableChanged(TableModelEvent evt)
 		{
