@@ -109,7 +109,7 @@ class MainPanel extends JPanel
 		addMainPanelTab(new SQLTab(_session));
 
 		add(_tabPnl, BorderLayout.CENTER);
-
+	
 		propertiesHaveChanged(null);
 
 		// Refresh the currently selected tab.
@@ -286,7 +286,7 @@ class MainPanel extends JPanel
 
 	/**
 	 * Retrieve the tabbed pane for this component.
-	 *
+	 * 
 	 * @return	The tabbed pane.
 	 */
 	JTabbedPane getTabbedPane()
