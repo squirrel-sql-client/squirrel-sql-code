@@ -32,7 +32,8 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
-import net.sourceforge.squirrel_sql.client.IApplication;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
@@ -50,7 +51,8 @@ public class PluginSummaryDialog extends JDialog {
     private interface i18n {
         String TITLE = "Plugin Summary";
     }
-    public PluginSummaryDialog(IApplication app, Frame owner)
+
+    public PluginSummaryDialog(IApplication app, Frame owner)
             throws DataSetException {
         super(owner, i18n.TITLE, true);
         createUserInterface(app);
@@ -63,8 +65,7 @@ public class PluginSummaryDialog extends JDialog {
         contentPane.setLayout(new BorderLayout());
 
         PluginInfo[] pluginInfo = app.getPluginManager().getPluginInformation();
-        JScrollPane sp = new JScrollPane(new PluginSummaryPanel(pluginInfo));
-        contentPane.add(sp, BorderLayout.CENTER);
+        contentPane.add(new JScrollPane(new PluginSummaryPanel(pluginInfo)), BorderLayout.CENTER);
 
         // Ok button at bottom of dialog.
         JPanel btnsPnl = new JPanel();
