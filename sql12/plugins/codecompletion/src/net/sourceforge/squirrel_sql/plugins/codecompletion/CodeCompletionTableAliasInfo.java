@@ -25,7 +25,7 @@ public class CodeCompletionTableAliasInfo extends CodeCompletionTableInfo
 
 	public CodeCompletionTableAliasInfo(TableAliasInfo aliasInfo)
 	{
-		super(aliasInfo.tableName, "TABLE");
+		super(aliasInfo.tableName, "TABLE", null, null);
 		_aliasInfo = aliasInfo;
 	}
 

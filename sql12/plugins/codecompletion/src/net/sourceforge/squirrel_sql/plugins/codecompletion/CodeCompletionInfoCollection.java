@@ -42,7 +42,7 @@ public class CodeCompletionInfoCollection
 
 	private void load(String catalog, String schema)
 	{
-      String key = catalog + "," + schema;
+      String key = (catalog + "," + schema).toUpperCase();
 
 		if(null == _completionInfosByCataLogAndSchema.get(key))
 		{
@@ -56,9 +56,27 @@ public class CodeCompletionInfoCollection
          Vector completionInfos = new Vector();
 
          ExtendedTableInfo[] tables = _session.getSchemaInfo(catalog, schema).getExtendedTableInfos();
+
+         Hashtable completionInfoByUcTableName = new Hashtable();
          for (int i = 0; i < tables.length; i++)
          {
-            completionInfos.add(new CodeCompletionTableInfo(tables[i].getTableName(), tables[i].getTableType()));
+            String ucTableName = tables[i].getTableName().toUpperCase();
+
+            CodeCompletionTableInfo dupl = (CodeCompletionTableInfo) completionInfoByUcTableName.get(ucTableName);
+
+            CodeCompletionTableInfo tableInfo = new CodeCompletionTableInfo(tables[i].getTableName(),
+                                                                            tables[i].getTableType(),
+                                                                            tables[i].getCatalog(),
+                                                                            tables[i].getSchema());
+
+            if(null != dupl)
+            {
+               tableInfo.setHasDuplicateNameInDfifferentSchemas();
+               dupl.setHasDuplicateNameInDfifferentSchemas();
+            }
+
+            completionInfos.add(tableInfo);
+            completionInfoByUcTableName.put(ucTableName, tableInfo);
          }
 
          IProcedureInfo[] storedProceduresInfos = _session.getSchemaInfo(catalog, schema).getStoredProceduresInfos();
@@ -190,7 +208,7 @@ public class CodeCompletionInfoCollection
 
    private Vector getCompletionInfos(String catalog, String schema)
    {
-      String key = catalog + "," + schema;
+      String key = (catalog + "," + schema).toUpperCase();
       Vector ret = (Vector) _completionInfosByCataLogAndSchema.get(key);
 
       if(null == ret)
