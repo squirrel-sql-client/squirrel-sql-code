@@ -155,4 +155,26 @@ public class Utilities {
 		newStr = newStr.replace('\t', ' ');
 		return newStr;
 	}
+
+	/**
+	 * Return the suffix of the passed file name.
+	 *
+	 * @param   fileName	 File name to retrieve suffix for.
+	 *
+	 * @return  Suffix for <TT>fileName</TT> or an empty string
+	 * 			if unable to get the suffix.
+	 * 
+	 * @throws	IllegalArgumentException	if <TT>null</TT> file name passed.
+	 */
+	public static String getFileNameSuffix(String fileName)
+			throws IllegalArgumentException {
+		if (fileName == null) {
+			throw new IllegalArgumentException("Null file name passed");
+		}
+		int pos = fileName.lastIndexOf('.');
+		if (pos > 0 && pos < fileName.length() - 1) {
+			return fileName.substring(pos + 1);
+		}
+		return "";
+	}
 }
