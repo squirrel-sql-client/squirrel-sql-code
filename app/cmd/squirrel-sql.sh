@@ -35,5 +35,5 @@ else
 	TMP_CP=$TMP_CP:$CLASSPATH
 fi
 
-$JAVA -cp $TMP_CP net.sourceforge.squirrel_sql.client.Main -loggingConfigFile $SQUIRREL_SQL_HOME/log4j.properties --squirrel-home $SQUIRREL_SQL_HOME
+$JAVA -cp $TMP_CP net.sourceforge.squirrel_sql.client.Main --log-config-file $SQUIRREL_SQL_HOME/log4j.properties --squirrel-home $SQUIRREL_SQL_HOME
 

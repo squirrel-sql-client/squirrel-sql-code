@@ -11,6 +11,8 @@ Enhancements
 
 Bug Fixes
 ---------
+- Fixed logging config argument in shell script.
+- Fix displaying of clob columns. The display would appear to lockup.
 - List Drivers button now works when a JDBC driver spans multiple jar files.
 - Don't list abstract classes (I.E. JDBC drivers that can't be loaded) when
   the List Drivers button pressed.
