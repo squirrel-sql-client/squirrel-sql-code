@@ -17,29 +17,79 @@ package net.sourceforge.squirrel_sql.client.session;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.Container;
 import java.awt.BorderLayout;
+import java.awt.Container;
 
+import javax.swing.JButton;
 import javax.swing.JInternalFrame;
 
+import net.sourceforge.squirrel_sql.client.session.action.ReturnResultTabAction;
+/**
+ * Torn off frame that contains SQL results.
+ *
+ * @author  <A HREF="mailto:jcompagner@j-com.nl">Johan Compagner</A>
+ * Copyright (C) 2001 
+ * 
+ */
 public class ResultFrame extends JInternalFrame {
+	/** Current session. */
 	private ISession _session;
-    private ResultTab _tab;
 
-    public ResultFrame(ISession session, ResultTab tab) {
-        super(tab.getSqlString(),true,true,true,true);
-        _session = session;
-        _tab = tab;
-        Container cont = getContentPane();
-        cont.setLayout(new BorderLayout());
-        cont.add(tab.getOutputComponent(), BorderLayout.CENTER);
-    }
+	/** SQL Results. */
+	private ResultTab _tab;
 
-    /**
-     * Close this window.
-     */
-    public void dispose() {
-        _tab.closeTab();
-        super.dispose();
-    }
+	/**
+	 * Ctor.
+	 * 
+	 * @param	session		Current session.
+	 * @param	tab			SQL results tab.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			If a <TT>null</TT> <TT>ISession</TT> or
+	 *			<TT>ResultTab</TT> passed.
+	 */
+	public ResultFrame(ISession session, ResultTab tab)
+			throws IllegalArgumentException {
+		super(getFrameTitle(session, tab), true, true, true, true);
+		_session = session;
+		_tab = tab;
+
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+		final Container cont = getContentPane();
+		cont.setLayout(new BorderLayout());
+		JButton rtnBtn = new JButton(new ReturnResultTabAction(session.getApplication(), session, this));
+		cont.add(rtnBtn, BorderLayout.NORTH);
+		cont.add(tab.getOutputComponent(), BorderLayout.CENTER);
+	}
+
+	/**
+	 * Close this window.
+	 */
+	public void dispose() {
+		if (_tab != null) {
+			_tab.closeTab();
+		}
+		super.dispose();
+	}
+
+	public void returnToTabbedPane() {
+		getContentPane().remove(_tab.getOutputComponent());
+		_tab.returnToTabbedPane();
+		_tab = null;
+		dispose();
+	}
+
+	private static String getFrameTitle(ISession session, ResultTab tab)
+			throws IllegalArgumentException {
+		if (tab == null) {
+			throw new IllegalArgumentException("Null ResultTab passed");
+		}
+		if (session == null) {
+			throw new IllegalArgumentException("Null ISession passed");
+		}
+
+		SessionSheet sheet = session.getSessionSheet();
+		return sheet.getTitle() + " - " + tab.getSqlString();
+	}
 }
