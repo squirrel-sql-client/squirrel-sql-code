@@ -38,15 +38,18 @@ public class ObjectSourceTab extends BaseSourceTab
 
 	private final String _columnData;
 
-	public ObjectSourceTab(String columnData, String hint)
+	public ObjectSourceTab(String columnData, String hint) {
+          this(columnData, null, hint);
+        }
+
+        public ObjectSourceTab(String columnData, String title, String hint)
 	{
-		super(hint);
+		super(title, hint);
 		if (columnData == null)
 		{
 			throw new IllegalArgumentException("Column Data is null");
 		}
 		_columnData = columnData;
-
 	}
 
 	protected PreparedStatement createStatement() throws SQLException
