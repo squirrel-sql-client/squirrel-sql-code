@@ -265,6 +265,27 @@ public class DataTypeClob
 		// since we do not have all of the data from the clob, we cannot allow editing
 		return false;
 	}
+
+	/**
+	 * See if a value in a column has been limited in some way and
+	 * needs to be re-read before being used for editing.
+	 * For read-only tables this may actually return true since we want
+	 * to be able to view the entire contents of the cell even if it was not
+	 * completely loaded during the initial table setup.
+	 */
+	public boolean needToReRead(Object originalValue) {
+		// CLOBs are different from normal data types in that what is actually
+		// read from the DB is a descriptor pointing to the data rather than the
+		// data itself.  During the initial load of the table, the values read from the
+		// descriptor may have been limited, but the descriptor itself has been
+		// completely read,  Therefore we do not need to re-read the datum
+		// from the Database because we know that we have the entire
+		// descriptor.  If the contents of the CLOB have been limited during
+		// the initial table load, that will be discovered when we check if
+		// the cell is editable and the full data will be read at that time using
+		// this descriptor.
+		return false;
+	}
 	
 	/**
 	 * Return a JTextField usable in a CellEditor.
@@ -505,7 +526,7 @@ public class DataTypeClob
 	  * On input from the DB, read the data from the ResultSet into the appropriate
 	  * type of object to be stored in the table cell.
 	  */
-	public Object readResultSet(ResultSet rs, int index)
+	public Object readResultSet(ResultSet rs, int index, boolean limitDataRead)
 		throws java.sql.SQLException {
 		
 		// We always get the CLOB, even when we are not reading the contents.

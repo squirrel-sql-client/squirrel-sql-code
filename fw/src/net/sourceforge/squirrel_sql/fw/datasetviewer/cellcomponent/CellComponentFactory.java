@@ -310,6 +310,17 @@ public class CellComponentFactory {
 		return false;
 	}
 
+	/**
+	 * See if a value in a column has been limited in some way and
+	 * needs to be re-read before being used for editing.
+	 * For read-only tables this may actually return true since we want
+	 * to be able to view the entire contents of the cell even if it was not
+	 * completely loaded during the initial table setup.
+	 */
+	public static boolean needToReRead(ColumnDisplayDefinition colDef, Object originalValue) {
+		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
+		return dataTypeObject.needToReRead(originalValue);
+	};
 	
 	/**
 	 * Return a DefaultCellEditor using a JTextField with appropriate
@@ -470,14 +481,14 @@ public class CellComponentFactory {
 	  * type of object to be stored in the table cell.
 	  */
 	public static Object readResultSet(ColumnDisplayDefinition colDef,
-		ResultSet rs, int index)
+		ResultSet rs, int index, boolean limitDataRead)
 		throws java.sql.SQLException {
 			
 		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
 
 		if (dataTypeObject != null) {
 			// we have an appropriate data type object
-			return dataTypeObject.readResultSet(rs, index);
+			return dataTypeObject.readResultSet(rs, index, limitDataRead);
 		}
 
 		//?? Best guess: read object?

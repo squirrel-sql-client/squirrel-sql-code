@@ -137,6 +137,19 @@ public class DataTypeDouble
 	public boolean isEditableInCell(Object originalValue) {
 		return true;	
 	}
+
+	/**
+	 * See if a value in a column has been limited in some way and
+	 * needs to be re-read before being used for editing.
+	 * For read-only tables this may actually return true since we want
+	 * to be able to view the entire contents of the cell even if it was not
+	 * completely loaded during the initial table setup.
+	 */
+	public boolean needToReRead(Object originalValue) {
+		// this DataType does not limit the data read during the initial load of the table,
+		// so there is no need to re-read the complete data later
+		return false;
+	}
 	
 	/**
 	 * Return a JTextField usable in a CellEditor.
@@ -350,7 +363,7 @@ public class DataTypeDouble
 	  * On input from the DB, read the data from the ResultSet into the appropriate
 	  * type of object to be stored in the table cell.
 	  */
-	public Object readResultSet(ResultSet rs, int index)
+	public Object readResultSet(ResultSet rs, int index, boolean limitDataRead)
 		throws java.sql.SQLException {
 		
 		double data = rs.getDouble(index);

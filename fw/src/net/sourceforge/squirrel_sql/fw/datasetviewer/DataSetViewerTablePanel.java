@@ -175,37 +175,6 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 			return _creator;
 		}
 
-/***********************************************************
- * I used to think that the following function was needed, but the problem does not
- * seem to occur now.  Also, I have added "setSurrendersFocusOnKeystroke(true)
- * in the constructor, so that should take care of the issue for which this function was
- * created.  I am leaving the code commented out for a little while in case someone sees a problem.
-		// JTable is inconsistant with passing events such as key strokes
-		// into the components of CellEditors depending on whether you enter
-		// the cell with a tab or by clicking the mouse on it.  In one case
-		// JTable passes key events in, and in the other case it handles them
-		// itself in a pseudo-edit mode.  This makes it difficult to grab key
-		// strokes to do our own special behavior (e.g. null handling).
-		// There are several solutions proposed on the internet,but this way
-		// seems to be the easiest.  Whenever the JTable goes into edit mode on
-		// a cell, we force all events to go to that cell by having it get the
-		// focus.  The cell component is our own special class that implements
-		// the necessary behavior.
-		// Note that the special component classes use AWT event handling for
-		// processing key strokes.  There are recommendations that say that mixing
-		// AWT and Swing event processing is not recommended.  However, there is a
-		// document at the Sun Java site that recommends processing key presses in
-		// this way, so it should work.
-
-		public boolean editCellAt(int row, int col) {
-			boolean result = super.editCellAt(row, col);
-			DefaultCellEditor ed = (DefaultCellEditor)super.getCellEditor(row, col);
-			if (ed != null)
-				ed.getComponent().requestFocus();
-			return result;
-		}
-************************/
-
 		/*
 		 * override the JTable method so that whenever something asks for
 		 * the cellEditor, we save a reference to that cell editor.
@@ -453,6 +422,28 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 	public boolean isColumnEditable(int col, Object originalValue) {
 		return false;
 	}
+
+	/**
+	 * See if a value in a column has been limited in some way and
+	 * needs to be re-read before being used for editing.
+	 * For read-only tables this may actually return true since we want
+	 * to be able to view the entire contents of the cell even if it was not
+	 * completely loaded during the initial table setup.
+	 */
+	public boolean needToReRead(int col, Object originalValue) {
+		// call the DataType object for this column and have it check the current value
+		return CellComponentFactory.needToReRead(_colDefs[col], originalValue);
+	}
+	
+	/**
+	 * Re-read the contents of this cell from the database.
+	 * If there is a problem, the message will have a non-zero length after return.
+	 */
+	public Object reReadDatum(Object[] values, int col, StringBuffer message) {
+		// call the underlying model to get the whole data, if possible
+		return ((IDataSetUpdateableTableModel)_updateableModel).
+			reReadDatum(values, _colDefs, col, message);
+	}
 	
 	/**
 	 * Function to set up CellEditors.  Null for read-only tables.
@@ -463,7 +454,11 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 	 * Change the data in the permanent store that is represented by the JTable.
 	 * Does nothing in read-only table.
 	 */
-	public boolean changeUnderlyingValueAt(int row, int col, Object newValue, Object oldValue)
+	public boolean changeUnderlyingValueAt(
+		int row,
+		int col,
+		Object newValue,
+		Object oldValue)
 	{
 		return false;	// underlaying data cannot be changed
 	}
