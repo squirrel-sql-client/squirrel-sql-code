@@ -165,8 +165,8 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 
          ActionCollection coll = getApplication().getActionCollection();
 
-         session.addToToolbar(coll.get(FindAction.class));
-         session.addToToolbar(coll.get(ReplaceAction.class));
+//         session.addToToolbar(coll.get(FindAction.class));
+//         session.addToToolbar(coll.get(ReplaceAction.class));
 
 			//session.getSQLPanelAPI(this).addSQLPanelListener(_lis);
 			FrameWorkAcessor.getSQLPanelAPI(session, this).addSQLPanelListener(_lis);
@@ -239,21 +239,21 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 		coll.add(act);
 		_resources.addToMenu(act, menu);
 
-		act = new FindAction(getApplication(), _resources, this);
-		coll.add(act);
-		_resources.addToMenu(act, menu);
+//		act = new FindAction(getApplication(), _resources, this);
+//		coll.add(act);
+//		_resources.addToMenu(act, menu);
 
-		act = new RepeatLastFindAction(getApplication(), _resources, this);
-		coll.add(act);
-		_resources.addToMenu(act, menu);
+//		act = new RepeatLastFindAction(getApplication(), _resources, this);
+//		coll.add(act);
+//		_resources.addToMenu(act, menu);
 
-		act = new FindSelectedAction(getApplication(), _resources, this);
-		coll.add(act);
-		_resources.addToMenu(act, menu);
+//		act = new FindSelectedAction(getApplication(), _resources, this);
+//		coll.add(act);
+//		_resources.addToMenu(act, menu);
 
-		act = new ReplaceAction(getApplication(), _resources, this);
-		coll.add(act);
-		_resources.addToMenu(act, menu);
+//		act = new ReplaceAction(getApplication(), _resources, this);
+//		coll.add(act);
+//		_resources.addToMenu(act, menu);
 
       act = new EscapeDateAction(getApplication(), _resources);
       coll.add(act);
