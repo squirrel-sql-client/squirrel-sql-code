@@ -6,6 +6,8 @@ Change Log
 
 Enhancements
 ------------
+- Added keyboard accelerators to "Close all SQL Result Tabs" and
+  "Close all SQL Result Windows" menu options.
 - Display more information about the executing query on the
   execution panel.
 - Split query execution times into "sql execution" and "building
@@ -33,6 +35,8 @@ Enhancements
 
 Bug Fixes
 ---------
+- Ensure a sessions message panel is tall enough to display all
+  three lines of an SQL error when first displayed.
 - Fix bug where changing "autocommit" during a session wasn't
   recognized.
 - Limit rows checkbox wasn't updated when session properties
