@@ -261,8 +261,8 @@ public class SortableTableModel extends AbstractTableModel
 			Object c2 = _actualModel.getValueAt(i2.intValue(),_iColumn);
 
 			if(c1 == null && c2 == null) return 0;
-			if(c1 == null) return 1;
-			if(c2 == null) return -1;
+			if(c1 == null) return 1*_iAscending;
+			if(c2 == null) return -1*_iAscending;
 			return c1.compareTo(c2)*_iAscending;
 		}
 
