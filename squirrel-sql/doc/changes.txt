@@ -1,6 +1,14 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+1.1final
+========
+
+Enhancements
+------------
+- Drivers and Aliases windows can now be closed.
+
+
 1.1rc1
 ======
 
