@@ -6,13 +6,20 @@ Change Log
 
 Enhancements
 ------------
+- Add Sunopsis XML JDBC driver to default drivers.
+- Display session name in Session Properties Dialog to
+  differentiate it from another sessions dialog.
+- Log any error other than an SQL error to the logger
+  when user executes SQL.
 - Consolidated the plethora of "meta data" output type settings into a
   single setting.
 - Main window toolbar is now floatable.
-- Using icons from the Eclipse (www.eclipse.org) project.
+- Using icons from the Eclipse (http://www.eclipse.org) project.
 
 Bug Fixes
 ---------
+- Don't show closed property dialogs in Windows menu.
+- Directory list combo boxes now only show required file types.
 - Fix option in Windows batch file not to show command window.
 - Show decimal positions in column data when required.
 - Show <null> when column data is null instead of an empty string.
