@@ -1,11 +1,4 @@
-/*
- * WhereClausePanel.java
- *
- * Created on April 5, 2003, 10:47 AM
- */
-
 package net.sourceforge.squirrel_sql.client.session.sqlfilter;
-
 /*
  * Copyright (C) 2003 Maury Hammel
  * mjhammel@users.sourceforge.net
@@ -26,7 +19,6 @@ package net.sourceforge.squirrel_sql.client.session.sqlfilter;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -34,8 +26,9 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Map;
 import java.util.SortedSet;
-//
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -45,85 +38,102 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 /**
  * This panel allows the user to change the where clause for a Contents tab query.
  *
- * @author  <A HREF="mailto:mjhammel@users.sourceforge.net">Maury Hammel</A>
+ * @author <A HREF="mailto:mjhammel@users.sourceforge.net">Maury Hammel</A>
  */
 public class WhereClausePanel implements ISQLFilterPanel
 {
-  /** A class containing the information about the SQL filters. */  
+	/** A class containing the information about the SQL filters. */
 	private SQLFilterClauses _sqlFilterClauses;
-  
+
 	/** The actual GUI panel that allows user to do the maintenance. */
 	private WhereClauseSubPanel _myPanel;
 
-  /** Create a new instance of a WhereClausePanel
-   * @param columnList A list of column names for the database table.
-   * @param tableName The name of the database table that the filter information will apply to.
-   * @throws IllegalArgumentException The exception thrown if invalid arguments are passed.
-   */  
-	public WhereClausePanel(SortedSet columnList, String tableName) throws IllegalArgumentException
+	/**
+	 * Create a new instance of a WhereClausePanel.
+	 *
+	 * @param	columnList	A list of column names for the database table.
+	 * @param	textColumns	A collection of column names that are "text"
+	 * 						columns.
+	 * @param	tableName	The name of the database table that the filter
+	 * 						information will apply to.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			The exception thrown if invalid arguments are passed.
+	 */
+	public WhereClausePanel(SortedSet columnList, Map textColumns,
+							String tableName)
+		throws IllegalArgumentException
 	{
 		super();
-    _myPanel = new WhereClauseSubPanel(columnList, tableName);
+		_myPanel = new WhereClauseSubPanel(columnList, textColumns, tableName);
 	}
-	
-  /** Initialize the components of the WhereClausePanel.
-   * @param sqlFilterClauses An instance of a class containing information about SQL filters already in place
-   * for the table.
-   *
-   * @throws IllegalArgumentException Thrown if an invalid argument is passed.
-   *
-   */  
-	public void initialize(SQLFilterClauses sqlFilterClauses) throws IllegalArgumentException
+
+	/**
+	 * Initialize the components of the WhereClausePanel.
+	 *
+	 * @param	sqlFilterClauses	An instance of a class containing information
+	 *								about SQL filters already in place for the table.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if an invalid argument is passed.
+	 */
+	public void initialize(SQLFilterClauses sqlFilterClauses)
+		throws IllegalArgumentException
 	{
 		if (sqlFilterClauses == null)
 		{
 			throw new IllegalArgumentException("Null sqlFilterClauses passed");
 		}
-    
-    _sqlFilterClauses = sqlFilterClauses;
+
+		_sqlFilterClauses = sqlFilterClauses;
 		_myPanel.loadData(_sqlFilterClauses);
 	}
 
-  /** Returns the panel created by the class.
-   * @return Return an instance of a WhereClauseSubPanel.
-   *
-   */  
+	/**
+	 * Returns the panel created by the class.
+	 *
+	 * @return Return an instance of a WhereClauseSubPanel.
+	 */
 	public Component getPanelComponent()
 	{
 		return _myPanel;
 	}
 
-  /** Get the title of the panel.
-   * @return Return a string containing the title of the panl.
-   */  
+	/**
+	 * Get the title of the panel.
+	 *
+	 * @return	Return a string containing the title of the panl.
+	 */
 	public String getTitle()
 	{
 		return WhereClauseSubPanel.WhereClauseSubPanelI18n.WHERE_CLAUSE;
 	}
 
-  /** Get the hint text associated with the panel.
-   * @return A String value containing the hint text associated with the panel.
-   *
-   */  
+	/**
+	 * Get the hint text associated with the panel.
+	 *
+	 * @return A String value containing the hint text associated with the panel.
+	 */
 	public String getHint()
 	{
 		return WhereClauseSubPanel.WhereClauseSubPanelI18n.HINT;
 	}
 
-  /** Update the current session with any changes to the SQL filter information. */  
+	/**
+	 * Update the current session with any changes to the SQL filter
+	 * information.
+	 */
 	public void applyChanges()
 	{
 		_myPanel.applyChanges(_sqlFilterClauses);
 	}
-  
-  /** A private class that makes up the bulk of the GUI for the panel. */  
+
+	/**
+	 * A private class that makes up the bulk of the GUI for the panel.
+	 */
 	private static final class WhereClauseSubPanel extends JPanel
 	{
 		/**
@@ -132,178 +142,199 @@ public class WhereClausePanel implements ISQLFilterPanel
 		 */
 		interface WhereClauseSubPanelI18n
 		{
-      String COLUMNS = "Columns";
-      String OPERATORS = "Operators";
-      String VALUE = "Value";
-      String WHERE_CLAUSE = "Where Clause";
-      String HINT = "Where clause for the selected table";
-      String ADD = "Add";
-      String AND = "AND";
-      String OR = "OR";
-      String LIKE = "LIKE";
-      String IN = "IN";
+			String COLUMNS = "Columns";
+			String OPERATORS = "Operators";
+			String VALUE = "Value";
+			String WHERE_CLAUSE = "Where Clause";
+			String HINT = "Where clause for the selected table";
+			String ADD = "Add";
+			String AND = "AND";
+			String OR = "OR";
+			String LIKE = "LIKE";
+			String IN = "IN";
 		}
 
-    /** A JComboBox component containing a list of the names of the columns for the
-     * current table.
-     */    
-    private JComboBox _columnCombo;
-    /** A label to identify the column combo box. */    
-    private JLabel _columnLabel = new JLabel(WhereClauseSubPanelI18n.COLUMNS);
-    /** A JComboBox containing a list of valid operators used in SQL Where clause
-     * expressions.
-     */    
-    private OperatorTypeCombo _operatorCombo = new OperatorTypeCombo();
-    /** A label to identify the operator combo box. */    
-    private JLabel _operatorLabel = new JLabel(WhereClauseSubPanelI18n.OPERATORS);
-    /** A field used to enter the right-hand side of a WhereClause expression. */    
-    private JTextField _valueField = new JTextField(10);
-    /** A label to identify the valueField text area. */    
-    private JLabel _valueLabel = new JLabel(WhereClauseSubPanelI18n.VALUE);
-    /** A JComboBox used to list Where clause connectors. */    
-    private AndOrCombo _andOrCombo = new AndOrCombo();
-    /** A label to identify the andor combo box. */    
-    private JLabel _andOrLabel = new JLabel(" ");
-    /** A text area used to contain all of the information for the Where clause. */    
-    private JTextArea _whereClauseArea = new JTextArea(4, 40);
-    /** A button used to add information from the combo boxes and text fields into the
-     * Where clause text area.
-     */    
-    private JButton _addTextButton = new JButton(WhereClauseSubPanelI18n.ADD);
-    /** The name of the database table the Where clause applies to. */    
-    private String _tableName;
-    
-    /** A JPanel used for a bulk of the GUI elements of the panel.
-     * @param columnList A list of the column names for the table.
-     * @param tableName The name of the database table.
-     *
-     */    
-		WhereClauseSubPanel(SortedSet columnList, String tableName)
+		/**
+		 * A JComboBox component containing a list of the names of the
+		 * columns for the current table.
+		 */
+		private JComboBox _columnCombo;
+
+		/** A label to identify the column combo box. */
+		private JLabel _columnLabel = new JLabel(WhereClauseSubPanelI18n.COLUMNS);
+
+		/**
+		 * A JComboBox containing a list of valid operators used in SQL Where clause
+		 * expressions.
+		 */
+		private OperatorTypeCombo _operatorCombo = new OperatorTypeCombo();
+
+		/** A label to identify the operator combo box. */
+		private JLabel _operatorLabel = new JLabel(WhereClauseSubPanelI18n.OPERATORS);
+
+		/** A field used to enter the right-hand side of a WhereClause expression. */
+		private JTextField _valueField = new JTextField(10);
+
+		/** A label to identify the valueField text area. */
+		private JLabel _valueLabel = new JLabel(WhereClauseSubPanelI18n.VALUE);
+
+		/** A JComboBox used to list Where clause connectors. */
+		private AndOrCombo _andOrCombo = new AndOrCombo();
+
+		/** A label to identify the andor combo box. */
+		private JLabel _andOrLabel = new JLabel(" ");
+
+		/** A text area used to contain all of the information for the Where clause. */
+		private JTextArea _whereClauseArea = new JTextArea(4, 40);
+
+		/**
+		 * A button used to add information from the combo boxes and text fields into the
+		 * Where clause text area.
+		 */
+		private JButton _addTextButton = new JButton(WhereClauseSubPanelI18n.ADD);
+
+		/** The name of the database table the Where clause applies to. */
+		private String _tableName;
+
+		/** A List containing the names of the text columns */
+		private Map _textColumns;
+
+		/**
+		 * A JPanel used for a bulk of the GUI elements of the panel.
+		 *
+		 * @param	columnList	A list of the column names for the table.
+		 * @param	tableName	The name of the database table.
+		 */
+		WhereClauseSubPanel(SortedSet columnList, Map textColumns,
+								String tableName)
 		{
 			super();
-      _tableName = tableName;
-      _columnCombo = new JComboBox(columnList.toArray());
+			_tableName = tableName;
+			_columnCombo = new JComboBox(columnList.toArray());
+			_textColumns = textColumns;
 			createGUI();
-      Dimension d = getPreferredSize();
 		}
 
-    /** Load existing clause information into the panel.
-     * @param sqlFilterClauses An instance of a class containing SQL Filter information for the current table.
-     *
-     */    
+		/**
+		 * Load existing clause information into the panel.
+		 *
+		 * @param	sqlFilterClauses	An instance of a class containing
+		 * 								SQL Filter information for the current table.
+		 *
+		 */
 		void loadData(SQLFilterClauses sqlFilterClauses)
 		{
-			_whereClauseArea.setText(sqlFilterClauses.get(getClauseIdentifier(), _tableName));
+			_whereClauseArea.setText(
+				sqlFilterClauses.get(getClauseIdentifier(), _tableName));
 		}
 
-    /** Update the current SQuirreL session with any changes to the SQL filter
-     * information.
-     * @param sqlFilterClauses An instance of a class containing SQL Filter information for the current table.
-     *
-     */    
+		/** Update the current SQuirreL session with any changes to the SQL filter
+		 * information.
+		 * @param sqlFilterClauses An instance of a class containing SQL Filter information for the current table.
+		 *
+		 */
 		void applyChanges(SQLFilterClauses sqlFilterClauses)
 		{
-      sqlFilterClauses.put(getClauseIdentifier(), _tableName, _whereClauseArea.getText());
+			sqlFilterClauses.put(
+				getClauseIdentifier(),
+				_tableName,
+				_whereClauseArea.getText());
 		}
-    
-    /** Create the GUI elements for the panel */    
+
+		/**
+		 * Create the GUI elements for the panel.
+		 */
 		private void createGUI()
 		{
 			setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.anchor = gbc.WEST;
-			gbc.fill = gbc.HORIZONTAL;
+			gbc.anchor = GridBagConstraints.WEST;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
 
 			gbc.gridx = 0;
 			gbc.gridy = 0;
 			add(createGeneralPanel(), gbc);
 		}
 
-    /** Create a JPanel with GUI components.
-     * @return Returns a JPanel
-     *
-     */    
+		/**
+		 * Create a JPanel with GUI components.
+		 *
+		 * @return Returns a JPanel
+		 */
 		private JPanel createGeneralPanel()
 		{
 			final JPanel pnl = new JPanel(new GridBagLayout());
 
-      final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.anchor = gbc.WEST;
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.anchor = GridBagConstraints.WEST;
 			gbc.insets = new Insets(4, 4, 4, 4);
 			gbc.weightx = 1.0;
 
-      gbc.fill = gbc.NONE;
+			gbc.fill = GridBagConstraints.NONE;
 			gbc.gridx = 0;
 			gbc.gridy = 0;
-      gbc.gridwidth = 1;
-      JPanel andOrPanel = new JPanel();
-      andOrPanel.setLayout(new BoxLayout(andOrPanel, BoxLayout.Y_AXIS));
-      _andOrLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-      andOrPanel.add(_andOrLabel);
-      _andOrCombo.setAlignmentX(Component.LEFT_ALIGNMENT);
-      andOrPanel.add(_andOrCombo);
-      pnl.add(andOrPanel, gbc);
+			gbc.gridwidth = 1;
+			JPanel andOrPanel = new JPanel();
+			andOrPanel.setLayout(new BoxLayout(andOrPanel, BoxLayout.Y_AXIS));
+			_andOrLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+			andOrPanel.add(_andOrLabel);
+			_andOrCombo.setAlignmentX(Component.LEFT_ALIGNMENT);
+			andOrPanel.add(_andOrCombo);
+			pnl.add(andOrPanel, gbc);
 
-      gbc.gridx++;
-      gbc.gridwidth = 5;
-			gbc.fill = gbc.HORIZONTAL;
-      JPanel columnPanel = new JPanel();
-      columnPanel.setLayout(new BoxLayout(columnPanel, BoxLayout.Y_AXIS));
-      _columnLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-      columnPanel.add(_columnLabel);
-      _columnCombo.setAlignmentX(Component.LEFT_ALIGNMENT);
-      columnPanel.add(_columnCombo);
+			gbc.gridx++;
+			gbc.gridwidth = 5;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
+			JPanel columnPanel = new JPanel();
+			columnPanel.setLayout(new BoxLayout(columnPanel, BoxLayout.Y_AXIS));
+			_columnLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+			columnPanel.add(_columnLabel);
+			_columnCombo.setAlignmentX(Component.LEFT_ALIGNMENT);
+			columnPanel.add(_columnCombo);
 			pnl.add(columnPanel, gbc);
-      
+
 			gbc.gridx += 5;
-      gbc.gridwidth = 1;
-			gbc.fill = gbc.NONE;
-      JPanel operatorPanel = new JPanel();
-      operatorPanel.setLayout(new BoxLayout(operatorPanel, BoxLayout.Y_AXIS));
-      _operatorLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-      operatorPanel.add(_operatorLabel);
-      _operatorCombo.setAlignmentX(Component.LEFT_ALIGNMENT);
-      operatorPanel.add(_operatorCombo);
-      pnl.add(operatorPanel, gbc);
+			gbc.gridwidth = 1;
+			gbc.fill = GridBagConstraints.NONE;
+			JPanel operatorPanel = new JPanel();
+			operatorPanel.setLayout(
+				new BoxLayout(operatorPanel, BoxLayout.Y_AXIS));
+			_operatorLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+			operatorPanel.add(_operatorLabel);
+			_operatorCombo.setAlignmentX(Component.LEFT_ALIGNMENT);
+			operatorPanel.add(_operatorCombo);
+			pnl.add(operatorPanel, gbc);
 
 			gbc.gridx++;
 			gbc.gridwidth = 1;
-      JPanel valuePanel = new JPanel();
-      valuePanel.setLayout(new BoxLayout(valuePanel, BoxLayout.Y_AXIS));
-      _valueLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-      valuePanel.add(_valueLabel);
-      valuePanel.add(Box.createRigidArea(new Dimension(5, 5)));
-      _valueField.setAlignmentX(Component.LEFT_ALIGNMENT);
-      valuePanel.add(_valueField);
-      pnl.add(valuePanel, gbc);
+			JPanel valuePanel = new JPanel();
+			valuePanel.setLayout(new BoxLayout(valuePanel, BoxLayout.Y_AXIS));
+			_valueLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+			valuePanel.add(_valueLabel);
+			valuePanel.add(Box.createRigidArea(new Dimension(5, 5)));
+			_valueField.setAlignmentX(Component.LEFT_ALIGNMENT);
+			valuePanel.add(_valueField);
+			pnl.add(valuePanel, gbc);
 
 			gbc.gridx++;
-      _addTextButton.addActionListener(new ActionListener()
-		  {
-			  public void actionPerformed(ActionEvent evt)
-			  {
-				  addTextToClause();
-			  }
-		  });
-      pnl.add(_addTextButton, gbc);
-      
+			_addTextButton.addActionListener(new ActionListener()
+			{
+				public void actionPerformed(ActionEvent evt)
+				{
+					addTextToClause();
+				}
+			});
+			pnl.add(_addTextButton, gbc);
+
 			gbc.gridy++; // new line
 			gbc.gridx = 0;
-      gbc.gridwidth = 9;
-			gbc.fill = gbc.HORIZONTAL;
-      gbc.ipady = 4;
-      _whereClauseArea.setBorder(BorderFactory.createEtchedBorder());
-      pnl.add(_whereClauseArea, gbc);
+			gbc.gridwidth = 9;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
+			gbc.ipady = 4;
+			_whereClauseArea.setBorder(BorderFactory.createEtchedBorder());
+			pnl.add(_whereClauseArea, gbc);
 
 			return pnl;
-		}
-
-		private static final class RightLabel extends JLabel
-		{
-			RightLabel(String title)
-			{
-				super(title, SwingConstants.RIGHT);
-			}
 		}
 
 		private static final class OperatorTypeCombo extends JComboBox
@@ -316,12 +347,12 @@ public class WhereClausePanel implements ISQLFilterPanel
 				addItem("<");
 				addItem(">=");
 				addItem("<=");
-        addItem(WhereClauseSubPanelI18n.IN);
+				addItem(WhereClauseSubPanelI18n.IN);
 				addItem(WhereClauseSubPanelI18n.LIKE);
 			}
 		}
 
- 		private static final class AndOrCombo extends JComboBox
+		private static final class AndOrCombo extends JComboBox
 		{
 			AndOrCombo()
 			{
@@ -330,44 +361,70 @@ public class WhereClausePanel implements ISQLFilterPanel
 			}
 		}
 
-    /** Combine the information entered in the combo boxes and the text field and add it
-     * to the Where clause information.
-     */    
-    private void addTextToClause() 
-    {
-      String value = (String)_valueField.getText();
-      if ((value != null) && (value.length() > 0))
-      {
-        String andOr = (String)_andOrCombo.getSelectedItem();
-        String column = (String)_columnCombo.getSelectedItem();
-        String operator = (String)_operatorCombo.getSelectedItem();
-         if (_whereClauseArea.getText().length() > 0)
-         {
-           _whereClauseArea.append("\n" + andOr + " ");
-         }
-         _whereClauseArea.append(column + " " + operator + " " + value);
-      }
-    }
-    
-    /** Erase all information for the current filter. */    
-    public void clearFilter()
-    {
-      _whereClauseArea.setText("");
-    }
+		/**
+		 * Combine the information entered in the combo boxes
+		 * and the text field and add it to the Where clause information.
+		 */
+		private void addTextToClause()
+		{
+			String value = (String)_valueField.getText();
+			if ((value != null) && (value.length() > 0))
+			{
+				String andOr = (String)_andOrCombo.getSelectedItem();
+				String column = (String)_columnCombo.getSelectedItem();
+				String operator = (String)_operatorCombo.getSelectedItem();
+
+				// Put the 'AND' or the 'OR' in front of the clause if
+				// there are already values in the text area.
+				if (_whereClauseArea.getText().length() > 0)
+				{
+					_whereClauseArea.append("\n" + andOr + " ");
+				}
+
+				// If the operator is 'IN' and there are no parenthesis
+				// around the value, put them there.
+				if (operator.equals(WhereClauseSubPanelI18n.IN)
+					&& (!value.trim().startsWith("(")))
+				{
+					value = "(" + value + ")";
+				}
+
+				// If the column is a text column, and there aren't single quotes around the value, put them there.
+
+				else if (
+					_textColumns.containsKey(column)
+						&& (!value.trim().startsWith("'")))
+				{
+					value = "'" + value + "'";
+				}
+				_whereClauseArea.append(column + " " + operator + " " + value);
+			}
+		}
+
+		/**
+		 * Erase all information for the current filter.
+		 */
+		public void clearFilter()
+		{
+			_whereClauseArea.setText("");
+		}
 	}
-  
-  /** Erase any information for the appropriate filter. */  
-  public void clearFilter()
-  {
-    _myPanel.clearFilter();
-  }
-  
-  /** Get a value that uniquely identifies this SQL filter clause.
-   * @return Return a String value containing an identifing value.
-   *
-   */  
-  public static String getClauseIdentifier()
-  {
-    return WhereClauseSubPanel.WhereClauseSubPanelI18n.WHERE_CLAUSE;
-  }
+
+	/**
+	 * Erase any information for the appropriate filter.
+	 */
+	public void clearFilter()
+	{
+		_myPanel.clearFilter();
+	}
+
+	/**
+	 * Get a value that uniquely identifies this SQL filter clause.
+	 * 
+	 * @return Return a String value containing an identifing value.
+	 */
+	public static String getClauseIdentifier()
+	{
+		return WhereClauseSubPanel.WhereClauseSubPanelI18n.WHERE_CLAUSE;
+	}
 }

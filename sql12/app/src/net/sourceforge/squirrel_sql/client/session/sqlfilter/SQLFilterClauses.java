@@ -1,11 +1,4 @@
-/*
- * SQLFilterClauses.java
- *
- * Created on June 26, 2003, 6:51 AM
- */
-
 package net.sourceforge.squirrel_sql.client.session.sqlfilter;
-
 /*
  * Copyright (C) 2003 Maury Hammel
  * mjhammel@users.sourceforge.net
@@ -24,53 +17,58 @@ package net.sourceforge.squirrel_sql.client.session.sqlfilter;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
 import java.io.Serializable;
 import java.util.HashMap;
-
-/** This class contains the information used to build the Where and Order By clauses
- * used by the database query triggered by selecting the Contents tab in the
- * Session internal frame.
+/**
+ * This class contains the information used to build the Where and Order By
+ * clauses used by the database query triggered by selecting the Contents tab
+ * in the Session internal frame.
  */
-public class SQLFilterClauses implements Serializable 
+public class SQLFilterClauses implements Serializable
 {
-  
-  /** The container for the SQL filter information */  
-  HashMap _sqlClauseInformation;
-  
-  /** Creates a new instance of SQLFilterClauses */
-  public SQLFilterClauses() 
-  {
-    _sqlClauseInformation = new HashMap();
-  }
-  
-  /** Return the value of the SQL filter information
-   * @param clauseName The name of the clause for which the information is required.
-   * @param tableName The database table name for which the information is required.
-   *
-   * @return A string value containing the requested information
-   *
-   */  
-  public String get(String clauseName, String tableName) {
-    String returnValue;
-    
-    HashMap filterData = (HashMap)_sqlClauseInformation.get(tableName);
-    return (filterData == null) ? null : (String)filterData.get(clauseName);
-  }
-  
-  /** Update (or create) SQL Filter information for a session.
-   * @param clauseName The name of the clause for which the information pertains.
-   * @param tableName The name of the database table for the filter information.
-   *
-   * @param clauseInformation The SQL filter information to be saved.
-   */  
-  public void put(String clauseName, String tableName, String clauseInformation) {
-    HashMap filterData = (HashMap)_sqlClauseInformation.get(tableName);
-    if (filterData == null)
-    {
-      filterData = new HashMap();
-    }
-    filterData.put(clauseName, clauseInformation);
-    _sqlClauseInformation.put(tableName, filterData);
-  }
+	/** The container for the SQL filter information */
+	HashMap _sqlClauseInformation;
+
+	/**
+	 * Creates a new instance of SQLFilterClauses.
+	 */
+	public SQLFilterClauses()
+	{
+		_sqlClauseInformation = new HashMap();
+	}
+
+	/**
+	 * Return the value of the SQL filter information
+	 *
+	 * @param	clauseName	The name of the clause for which the information is
+	 *						required.
+	 * @param	tableName	The database table name for which the information is required.
+	 *
+	 * @return A string value containing the requested information
+	 */
+	public String get(String clauseName, String tableName)
+	{
+		HashMap filterData = (HashMap)_sqlClauseInformation.get(tableName);
+		return (filterData == null) ? null : (String)filterData.get(clauseName);
+	}
+
+	/**
+	 * Update (or create) SQL Filter information for a session.
+	 *
+	 * @param	clauseName	The name of the clause for which the information pertains.
+	 * @param	tableName	The name of the database table for the filter information.
+	 *
+	 * @param clauseInformation The SQL filter information to be saved.
+	 */
+	public void put(String clauseName, String tableName,
+						String clauseInformation)
+	{
+		HashMap filterData = (HashMap)_sqlClauseInformation.get(tableName);
+		if (filterData == null)
+		{
+			filterData = new HashMap();
+		}
+		filterData.put(clauseName, clauseInformation);
+		_sqlClauseInformation.put(tableName, filterData);
+	}
 }
