@@ -3,19 +3,19 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -148,7 +148,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 			_loginTimeout.setColumns(4);
 			JPanel pnl = new JPanel();
 			pnl.setBorder(BorderFactory.createTitledBorder("Appearance"));
-			
+
 			pnl.setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = gbc.HORIZONTAL;
@@ -161,14 +161,14 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 			pnl.add(_showToolTips, gbc);
 			++gbc.gridy;
 			pnl.add(_useScrollableTabbedPanes, gbc);
-			
+
 			return pnl;
 		}
 
 		private JPanel createSQLPanel() {
 			JPanel pnl = new JPanel();
 			pnl.setBorder(BorderFactory.createTitledBorder("SQL"));
-			
+
 			pnl.setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.insets = new Insets(4, 4, 4, 4);
@@ -181,14 +181,14 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 			++gbc.gridx;
 			gbc.weightx = 1.0;
 			pnl.add(_loginTimeout, gbc);
-			
+
 			return pnl;
 		}
 
 		private JPanel createLoggingPanel() {
 			JPanel pnl = new JPanel();
 			pnl.setBorder(BorderFactory.createTitledBorder("Logging"));
-			
+
 			pnl.setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = gbc.HORIZONTAL;
@@ -216,23 +216,23 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 		private JPanel createJDBCDebugPanel() {
 			JPanel pnl = new JPanel();
 			pnl.setBorder(BorderFactory.createTitledBorder("JDBC Debug"));
-			
+
 			pnl.setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = gbc.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
 			gbc.anchor = gbc.WEST;
-	
+
 			gbc.gridx = 0;
 			gbc.gridy = 0;
 			gbc.gridwidth = 2;
 			pnl.add(_debugJdbc, gbc);
-	
+
 			gbc.gridx = 0;
 			++gbc.gridy;
 			gbc.gridwidth = 1;
 			pnl.add(new RightLabel("JDBC Debug File:"), gbc);
-	
+
 			++gbc.gridx;
 //			gbc.weightx = 1;
 			pnl.add(_jdbcDebugLogFileNameLbl, gbc);
@@ -244,7 +244,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 			gbc.gridwidth = 2;
 //			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			pnl.add(new MultipleLineLabel(i18n.JDBC_PERF_WARNING), gbc);
-			
+
 			return pnl;
 		}
 	}
@@ -254,7 +254,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 			super(title, SwingConstants.RIGHT);
 		}
 	}
-	
+
 	private static final class OutputLabel extends JLabel {
 		OutputLabel(String text) {
 			super(text);

@@ -3,19 +3,19 @@ package net.sourceforge.squirrel_sql.client.session.objectstree;
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -45,7 +45,7 @@ public final class TableObjectTypeNode extends ObjectTypeNode {
     }
 
     public void expand() throws BaseSQLException {
-		if (getChildCount() == 0) 
+		if (getChildCount() == 0)
         {
         	getSession().getApplication().getThreadPool().addTask(new TableLoader(addLoadingNode()));
         }
@@ -60,7 +60,7 @@ public final class TableObjectTypeNode extends ObjectTypeNode {
 		if(o instanceof TableObjectTypeNode)
 		{
 			TableObjectTypeNode info = (TableObjectTypeNode)o;
-			
+
 			if( (info._tableTypePattern == null && _tableTypePattern == null) ||
 			 ((info._tableTypePattern != null && _tableTypePattern != null) && info._tableTypePattern.equals(_tableTypePattern)) )
 			{
@@ -75,14 +75,14 @@ public final class TableObjectTypeNode extends ObjectTypeNode {
 	{
 		return new TableLoader(null);
 	}
-	
+
 	protected class TableLoader extends BaseNode.TreeNodesLoader
 	{
 		TableLoader(MutableTreeNode loading)
 		{
 			super(loading);
 		}
-		
+
 		/*
 		 * @see TreeNodesLoader#getNodeList(ISession, SQLConnection)
 		 */
@@ -90,7 +90,7 @@ public final class TableObjectTypeNode extends ObjectTypeNode {
 		{
 			final ArrayList listNodes = new ArrayList();
 			Statement stmt = null;
-			try 
+			try
            {
 				final String catalogId = getParentNode().getCatalogIdentifier();
 				final String schemaId = getParentNode().getSchemaIdentifier();
@@ -101,19 +101,19 @@ public final class TableObjectTypeNode extends ObjectTypeNode {
 				for (int i = 0; i < tables.length; ++i) {
 					listNodes.add(new TableNode(session, model, tables[i], stmt));
 				}
-			} 
+			}
 			catch(BaseSQLException ex)
 			{
 				throw ex;
 			}
-			finally 
+			finally
 			{
-				try 
+				try
 				{
 					if (stmt != null) stmt.close();
 				}
 				catch (SQLException ex) { }
-			} 
+			}
 			return listNodes;
 		}
 	}

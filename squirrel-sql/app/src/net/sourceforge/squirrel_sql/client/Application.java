@@ -3,19 +3,19 @@ package net.sourceforge.squirrel_sql.client;
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -65,7 +65,7 @@ import net.sourceforge.squirrel_sql.client.gui.*;
 class Application implements IApplication {
 	/** Logger for this class. */
 	private static ILogger s_log;
-	
+
 	/** Splash screen used during startup process. */
 	private SplashScreen _splash;
 
@@ -82,7 +82,7 @@ class Application implements IApplication {
 	private DummyAppPlugin _dummyPlugin = new DummyAppPlugin();
 
 	private SquirrelResources _resources;
-	
+
 	/** Thread pool for long running tasks. */
 	private TaskThreadPool _threadPool = new TaskThreadPool();
 
@@ -113,7 +113,7 @@ class Application implements IApplication {
 		if (args.getShowSplashScreen()) {
 			_splash = new SplashScreen(_resources, 9);
 		}
-		
+
 		try {
 			CursorChanger chg = null;
 			if (_splash != null) {
@@ -221,7 +221,7 @@ class Application implements IApplication {
 
 	/**
 	 * Return the thread pool for this app.
-	 * 
+	 *
 	 * @return	the thread pool for this app.
 	 */
 	public TaskThreadPool getThreadPool() {
@@ -234,7 +234,7 @@ class Application implements IApplication {
 
 	/**
 	 * Return the factory object used to create the SQL entry panel.
-	 * 
+	 *
 	 * @return	the factory object used to create the SQL entry panel.
 	 */
 	public ISQLEntryPanelFactory getSQLEntryPanelFactory() {
@@ -243,7 +243,7 @@ class Application implements IApplication {
 
 	/**
 	 * Set the factory object used to create the SQL entry panel.
-	 * 
+	 *
 	 * @param	factory	the factory object used to create the SQL entry panel.
 	 */
 	public void setSQLEntryPanelFactory(ISQLEntryPanelFactory factory) {
@@ -265,7 +265,7 @@ class Application implements IApplication {
 			throw new IllegalStateException("Cannot add items to menus prior to menu being created.");
 		}
 	}
-	
+
 	/**
 	 * If we are running with a splash screen then indicate in the splash
 	 * screen that a new task has commenced.

@@ -3,19 +3,19 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -30,69 +30,69 @@ import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
 
 public interface ISQLDriver extends IHasIdentifier, Comparable {
-    /**
-     * JavaBean property names for this class.
-     */
-    public interface IPropertyNames {
-        String DRIVER_CLASS = "driverClassName";
-        String ID = "identifier";
-        String JARFILE_NAME = "jarFileName";
-        String NAME = "name";
-        String URL = "url";
-        String USES_CLASSPATH = "usesClassPath";
-        String PLUGIN_NAMES = "pluginNames";
-    }
+	/**
+	 * JavaBean property names for this class.
+	 */
+	public interface IPropertyNames {
+		String DRIVER_CLASS = "driverClassName";
+		String ID = "identifier";
+		String JARFILE_NAME = "jarFileName";
+		String NAME = "name";
+		String URL = "url";
+		String USES_CLASSPATH = "usesClassPath";
+		String PLUGIN_NAMES = "pluginNames";
+	}
 
-    /**
-     * Assign data from the passed <CODE>ISQLDriver</CODE> to this one.
-     *
-     * @param   rhs     <CODE>ISQLDriver</CODE> to copy data from.
-     *
-     * @exception   ValidationException
-     *                  Thrown if an error occurs assigning data from
-     *                  <CODE>rhs</CODE>.
-     */
-    void assignFrom(ISQLDriver rhs) throws ValidationException;
+	/**
+	 * Assign data from the passed <CODE>ISQLDriver</CODE> to this one.
+	 *
+	 * @param   rhs	 <CODE>ISQLDriver</CODE> to copy data from.
+	 *
+	 * @exception   ValidationException
+	 *				  Thrown if an error occurs assigning data from
+	 *				  <CODE>rhs</CODE>.
+	 */
+	void assignFrom(ISQLDriver rhs) throws ValidationException;
 
-    /**
-     * Compare this <TT>ISQLDriver</TT> to another object. If the passed object
-     * is a <TT>ISQLDriver</TT>, then the <TT>getName()</TT> functions of the two
-     * <TT>ISQLDriver</TT> objects are used to compare them. Otherwise, it throws a
-     * ClassCastException (as <TT>ISQLDriver</TT> objects are comparable only to
-     * other <TT>ISQLDriver</TT> objects).
-     */
-    public int compareTo(Object rhs);
+	/**
+	 * Compare this <TT>ISQLDriver</TT> to another object. If the passed object
+	 * is a <TT>ISQLDriver</TT>, then the <TT>getName()</TT> functions of the two
+	 * <TT>ISQLDriver</TT> objects are used to compare them. Otherwise, it throws a
+	 * ClassCastException (as <TT>ISQLDriver</TT> objects are comparable only to
+	 * other <TT>ISQLDriver</TT> objects).
+	 */
+	public int compareTo(Object rhs);
 
-    public IIdentifier getIdentifier();
+	public IIdentifier getIdentifier();
 
-    public String getDriverClassName();
+	public String getDriverClassName();
 
-    public void setDriverClassName(String driverClassName) throws ValidationException;
+	public void setDriverClassName(String driverClassName) throws ValidationException;
 
-    public boolean getUsesClassPath();
+	public boolean getUsesClassPath();
 
-    public void setUsesClassPath(boolean data) throws ValidationException;
+	public void setUsesClassPath(boolean data) throws ValidationException;
 
-    public URL getJarFileURL();
+	public URL getJarFileURL();
 
-    public String getJarFileName();
+	public String getJarFileName();
 
-    public void setJarFileName(String value) throws ValidationException;
+	public void setJarFileName(String value) throws ValidationException;
 
-    public String getUrl();
+	public String getUrl();
 
-    public void setUrl(String url) throws ValidationException;
+	public void setUrl(String url) throws ValidationException;
 
-    public String getName();
+	public String getName();
 
-    public void setName(String name) throws ValidationException;
+	public void setName(String name) throws ValidationException;
 
 	public boolean isJDBCDriverClassLoaded();
 	public void setJDBCDriverClassLoaded(boolean cl);
 
-    public StringWrapper[] getPluginNames();
-    public void setPluginNames(StringWrapper[] names) throws ValidationException;
+	public StringWrapper[] getPluginNames();
+	public void setPluginNames(StringWrapper[] names) throws ValidationException;
 
-    void addPropertyChangeListener(PropertyChangeListener listener);
-    void removePropertyChangeListener(PropertyChangeListener listener);
+	void addPropertyChangeListener(PropertyChangeListener listener);
+	void removePropertyChangeListener(PropertyChangeListener listener);
 }

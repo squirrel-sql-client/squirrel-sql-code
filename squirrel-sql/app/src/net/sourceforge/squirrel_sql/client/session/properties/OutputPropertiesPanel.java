@@ -3,19 +3,19 @@ package net.sourceforge.squirrel_sql.client.session.properties;
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Component;
 import java.awt.GridBagConstraints;
@@ -187,7 +187,7 @@ public class OutputPropertiesPanel implements INewSessionPropertiesPanel, ISessi
 		private JPanel createDatabasePanel() {
 			JPanel pnl = new JPanel();
 			pnl.setBorder(BorderFactory.createTitledBorder("Database"));
-			
+
 			pnl.setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = gbc.HORIZONTAL;
@@ -202,14 +202,14 @@ public class OutputPropertiesPanel implements INewSessionPropertiesPanel, ISessi
 			pnl.add(new RightLabel(i18n.DATA_TYPES), gbc);
 			++gbc.gridx;
 			pnl.add(_dataTypeCmb, gbc);
-			
+
 			return pnl;
 		}
 
 		private JPanel createTablePanel() {
 			JPanel pnl = new JPanel();
 			pnl.setBorder(BorderFactory.createTitledBorder("Tables"));
-			
+
 			pnl.setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = gbc.HORIZONTAL;
@@ -242,7 +242,7 @@ public class OutputPropertiesPanel implements INewSessionPropertiesPanel, ISessi
 			pnl.add(new RightLabel("Exported Keys:"), gbc);
 			++gbc.gridx;
 			pnl.add(_expKeysCmb, gbc);
-			
+
 			++gbc.gridx;
 			pnl.add(new RightLabel("Imported Keys:"), gbc);
 			++gbc.gridx;
@@ -282,7 +282,7 @@ public class OutputPropertiesPanel implements INewSessionPropertiesPanel, ISessi
 		private JPanel createProcedurePanel() {
 			JPanel pnl = new JPanel();
 			pnl.setBorder(BorderFactory.createTitledBorder("Procedures"));
-			
+
 			pnl.setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = gbc.HORIZONTAL;
@@ -293,14 +293,14 @@ public class OutputPropertiesPanel implements INewSessionPropertiesPanel, ISessi
 			pnl.add(new RightLabel("Stored Proc Columns:"), gbc);
 			++gbc.gridx;
 			pnl.add(_procColumnsCmb, gbc);
-			
+
 			return pnl;
 		}
 
 		private JPanel createSQLPanel() {
 			JPanel pnl = new JPanel();
 			pnl.setBorder(BorderFactory.createTitledBorder("SQL"));
-			
+
 			pnl.setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = gbc.HORIZONTAL;
@@ -316,7 +316,7 @@ public class OutputPropertiesPanel implements INewSessionPropertiesPanel, ISessi
 			pnl.add(new RightLabel("SQL Meta Data:"), gbc);
 			++gbc.gridx;
 			pnl.add(_sqlMetaDataCmb, gbc);
-			
+
 			return pnl;
 		}
 

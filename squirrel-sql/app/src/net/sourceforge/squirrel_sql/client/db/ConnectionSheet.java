@@ -4,19 +4,19 @@ package net.sourceforge.squirrel_sql.client.db;
  * colbell@users.sourceforge.net
  * jcompagner@j-com.nl
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
@@ -78,7 +78,7 @@ public class ConnectionSheet extends BaseSheet {
 	public interface IConnectionSheetHandler {
 		/**
 		 * User has clicked the OK button to connect to the alias.
-		 * 
+		 *
 		 * @param	connSheet	The connection internal frame.
 		 * @param	user		The user name entered.
 		 * @param	password	The password entered.
@@ -88,7 +88,7 @@ public class ConnectionSheet extends BaseSheet {
 		/**
 		 * User has clicked the Close button. They don't want to
 		 * connect to the alias.
-		 * 
+		 *
 		 * @param	connSheet	The connection internal frame.
 		 */
 		public void performClose(ConnectionSheet connSheet);
@@ -96,7 +96,7 @@ public class ConnectionSheet extends BaseSheet {
 		/**
 		 * User has clicked the Cancel button. They want to cancel
 		 * the curently active attempt to connect to the database.
-		 * 
+		 *
 		 * @param	connSheet	The connection internal frame.
 		 */
 		public void performCancelConnect(ConnectionSheet connSheet);
@@ -106,13 +106,13 @@ public class ConnectionSheet extends BaseSheet {
 
 	/** Application API. */
 	private IApplication _app;
-	
+
 	/** Alias we are going to connect to. */
 	private ISQLAlias _alias;
-	
+
 	/** JDBC driver for <TT>_alias</TT>. */
 	private ISQLDriver _sqlDriver;
-	
+
 	/** <TT>true</TT> means that an attempt is being made to connect to the alias.*/
 	private boolean _connecting;
 
@@ -129,12 +129,12 @@ public class ConnectionSheet extends BaseSheet {
 
 	/**
 	 * Ctor.
-	 * 
+	 *
 	 * @param	app		Application API.
 	 * @param	owner	<TT>Frame</TT> that will own this internal frame.
 	 * @param	alias	<TT>SQLAlias</TT> that we are going to connect to.
 	 * @param	handler	Handler for internal frame actions.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			If <TT>null</TT> <TT>IApplication</TT>, <TT>ISQLAlias</TT>,
 	 * 			or <TT>IConnectionSheetHandler</TT> passed.
@@ -178,17 +178,17 @@ public class ConnectionSheet extends BaseSheet {
 	/**
 	 * Set title of this frame. Ensure that the title label
 	 * matches the frame title.
-	 * 
+	 *
 	 * @param	title	New title text.
 	 */
 	public void setTitle(String title) {
 		super.setTitle(title);
 		_titleLbl.setText(title);
 	}
-	
+
 	/**
 	 * Set the text in the status bar.
-	 * 
+	 *
 	 * @param	text	The text to place in the status bar.
 	 */
 	public void setStatusText(String text) {
@@ -239,7 +239,7 @@ public class ConnectionSheet extends BaseSheet {
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		// This is a tool window.
 		GUIUtils.makeToolWindow(this, true);
-		
+
 		setTitle("Connect to " + _alias.getName());
 
 		_user.setColumns(COLUMN_COUNT);
@@ -248,7 +248,7 @@ public class ConnectionSheet extends BaseSheet {
 		TextFieldActionListener textListener = new TextFieldActionListener();
 		_user.addActionListener(textListener);
 		_password.addActionListener(textListener);
-		
+
 		PropertyPanel dataEntryPnl = new PropertyPanel();
 
 		JLabel lbl = new JLabel(i18n.ALIAS, SwingConstants.RIGHT);
@@ -310,11 +310,11 @@ public class ConnectionSheet extends BaseSheet {
 		contentPane.add(sep);
 
 		gbc.insets = new Insets(0, 0, 0, 0);
-		
+
 		// Next the buttons.
 		gbl.setConstraints(_btnsPnl, gbc);
 		contentPane.add(_btnsPnl);
-		
+
 		// Finally the status bar.
 		gbl.setConstraints(_statusBar, gbc);
 		contentPane.add(_statusBar);
@@ -362,7 +362,7 @@ public class ConnectionSheet extends BaseSheet {
 			connect(true);
 		}
 	}
-	
+
 	/**
 	 * Listener to handle button events in OK/Close panel.
 	 */

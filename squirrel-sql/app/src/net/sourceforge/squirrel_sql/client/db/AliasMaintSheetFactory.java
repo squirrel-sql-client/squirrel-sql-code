@@ -3,19 +3,19 @@ package net.sourceforge.squirrel_sql.client.db;
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.util.HashMap;
 import java.util.Map;
@@ -63,7 +63,7 @@ public class AliasMaintSheetFactory implements AliasMaintSheet.MaintenanceType {
 
 	/**
 	 * Return the single instance of this class.
-	 * 
+	 *
 	 * @return	the single instance of this class.
 	 */
 	public static AliasMaintSheetFactory getInstance() {
@@ -81,11 +81,11 @@ public class AliasMaintSheetFactory implements AliasMaintSheet.MaintenanceType {
 	 * Get a maintenance sheet for the passed alias. If a maintenance sheet already
 	 * exists it will be brought to the front. If one doesn't exist it will be
 	 * created.
-	 * 
+	 *
 	 * @param	alias	The alias that user has requested to modify.
-	 * 
+	 *
 	 * @return	The maintenance sheet for the passed alias.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException	if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
 	 */
 	public synchronized AliasMaintSheet showModifySheet(ISQLAlias alias) {
@@ -98,7 +98,7 @@ public class AliasMaintSheetFactory implements AliasMaintSheet.MaintenanceType {
 			sheet = new AliasMaintSheet(_app, alias, MODIFY);
 			_modifySheets.put(alias.getIdentifier(), sheet);
 			_app.getMainFrame().addInternalFrame(sheet, true, null);
-	
+
 			sheet.addInternalFrameListener(new InternalFrameAdapter() {
 				public void internalFrameClosed(InternalFrameEvent evt) {
 					synchronized( getInstance()) {
@@ -117,13 +117,13 @@ public class AliasMaintSheetFactory implements AliasMaintSheet.MaintenanceType {
 
 	/**
 	 * Create and show a new maintenance sheet to allow the user to create a new alias.
-	 * 
+	 *
 	 * @return	The new maintenance sheet.
 	 */
 	public AliasMaintSheet showCreateSheet() {
-        final DataCache cache = _app.getDataCache();
-        final IdentifierFactory factory = IdentifierFactory.getInstance();
-        final ISQLAlias alias = cache.createAlias(factory.createIdentifier());
+		final DataCache cache = _app.getDataCache();
+		final IdentifierFactory factory = IdentifierFactory.getInstance();
+		final ISQLAlias alias = cache.createAlias(factory.createIdentifier());
 		final AliasMaintSheet sheet = new AliasMaintSheet(_app, alias, NEW);
 		_app.getMainFrame().addInternalFrame(sheet, true, null);
 		positionSheet(sheet);
@@ -133,7 +133,7 @@ public class AliasMaintSheetFactory implements AliasMaintSheet.MaintenanceType {
 	/**
 	 * Create and show a new maintenance sheet that will allow the user to create a
 	 * new alias that is a copy of the passed one.
-	 * 
+	 *
 	 * @return	The new maintenance sheet.
 	 *
 	 * @throws	IllegalArgumentException	if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
@@ -143,14 +143,14 @@ public class AliasMaintSheetFactory implements AliasMaintSheet.MaintenanceType {
 			throw new IllegalArgumentException("ISQLALias == null");
 		}
 
-        final DataCache cache = _app.getDataCache();
-        final IdentifierFactory factory = IdentifierFactory.getInstance();
-        ISQLAlias newAlias = cache.createAlias(factory.createIdentifier());
-        try {
-            newAlias.assignFrom(alias);
-        } catch (ValidationException ex) {
-            s_log.error("Error occured copying the alias", ex);
-        }
+		final DataCache cache = _app.getDataCache();
+		final IdentifierFactory factory = IdentifierFactory.getInstance();
+		ISQLAlias newAlias = cache.createAlias(factory.createIdentifier());
+		try {
+			newAlias.assignFrom(alias);
+		} catch (ValidationException ex) {
+			s_log.error("Error occured copying the alias", ex);
+		}
 		final AliasMaintSheet sheet = new AliasMaintSheet(_app, newAlias, COPY);
 		_app.getMainFrame().addInternalFrame(sheet, true, null);
 		positionSheet(sheet);

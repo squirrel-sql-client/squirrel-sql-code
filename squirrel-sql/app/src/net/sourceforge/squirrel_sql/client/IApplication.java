@@ -3,19 +3,19 @@ package net.sourceforge.squirrel_sql.client;
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.io.File;
 import java.io.IOException;
@@ -60,35 +60,35 @@ public interface IApplication {
 
 	/**
 	 * Return the main frame.
-	 * 
+	 *
 	 * @return	The main frame for the app.
 	 */
 	MainFrame getMainFrame();
 
 	/**
 	 * Return the thread pool for this app.
-	 * 
+	 *
 	 * @return	the thread pool for this app.
 	 */
 	TaskThreadPool getThreadPool();
 
 	/**
 	 * Return the factory object used to create the SQL entry panel.
-	 * 
+	 *
 	 * @return	the factory object used to create the SQL entry panel.
 	 */
 	public ISQLEntryPanelFactory getSQLEntryPanelFactory();
 
 	/**
 	 * Set the factory object used to create the SQL entry panel.
-	 * 
+	 *
 	 * @param	factory	the factory object used to create the SQL entry panel.
 	 */
 	public void setSQLEntryPanelFactory(ISQLEntryPanelFactory factory);
 
 	/**
 	 * Add a hierarchical menu to a menu.
-	 * 
+	 *
 	 * @param	menuId	ID of menu to add to. @see #IMenuIDs
 	 * @param	menu	The menu that will be added.
 	 */
@@ -96,7 +96,7 @@ public interface IApplication {
 
 	/**
 	 * Add an <TT>Action</TT> to a menu.
-	 * 
+	 *
 	 * @param	menuId	ID of menu to add to. @see #IMenuIDs
 	 * @param	action	The action to be added.
 	 */

@@ -3,19 +3,19 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * Copyright (C) 2002 Johan Compagner
  * jcompagner@j-com.nl
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.event.ActionEvent;
 
@@ -28,7 +28,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
- * @version 	$Id: RefreshTreeItemAction.java,v 1.1 2002-03-11 01:34:58 joco01 Exp $
+ * @version 	$Id: RefreshTreeItemAction.java,v 1.2 2002-03-26 12:15:35 colbell Exp $
  * @author		Johan Compagner
  */
 public class RefreshTreeItemAction extends SquirrelAction implements ISessionAction
@@ -37,7 +37,7 @@ public class RefreshTreeItemAction extends SquirrelAction implements ISessionAct
 	private static ILogger s_log = LoggerController.createLogger(RefreshTreeItemAction.class);
 
 	private ISession _session;
-	
+
 	/**
 	 * Constructor for DropTableAction.
 	 * @param app

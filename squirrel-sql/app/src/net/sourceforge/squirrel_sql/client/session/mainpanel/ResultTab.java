@@ -3,19 +3,19 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * Copyright (C) 2001 Johan Compagner
  * jcompagner@j-com.nl
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -145,7 +145,7 @@ public class ResultTab extends JPanel implements IHasIdentifier {
 
 		// Display the result set.
 		_resultSetOutput.show(rsds, null);
-		
+
 		// Display the result set metadata.
 		_metaDataOutput.show(mdds, null); // Why null??
 
@@ -243,16 +243,16 @@ public class ResultTab extends JPanel implements IHasIdentifier {
 	private void propertiesHaveChanged(String propertyName) {
 		final SessionProperties props = _session.getProperties();
 
-		if (propertyName == null || 
-			propertyName.equals(SessionProperties.IPropertyNames.SQL_OUTPUT_RESULTSET_CLASS_NAME)) 
+		if (propertyName == null ||
+			propertyName.equals(SessionProperties.IPropertyNames.SQL_OUTPUT_RESULTSET_CLASS_NAME))
 		{
 			_resultSetOutput = BaseDataSetViewerDestination.getInstance(props.getSqlOutputResultSetClassName());
 			_resultSetSp.setViewportView(_resultSetOutput.getComponent());
 			_resultSetSp.setRowHeader(null);
 		}
 
-		if (propertyName == null || 
-			propertyName.equals(SessionProperties.IPropertyNames.SQL_OUTPUT_META_DATA_CLASS_NAME)) 
+		if (propertyName == null ||
+			propertyName.equals(SessionProperties.IPropertyNames.SQL_OUTPUT_META_DATA_CLASS_NAME))
 		{
 			_metaDataOutput = BaseDataSetViewerDestination.getInstance(props.getSqlOutputMetaDataClassName());
 			_metaDataSp.setViewportView(_metaDataOutput.getComponent());

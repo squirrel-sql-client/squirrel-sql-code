@@ -3,19 +3,19 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -58,7 +58,7 @@ public class FontChooser extends JDialog {
 	private JLabel _previewLbl = new JLabel("The quick brown fox jumped over the lazy dog");
 
 	private Font _font;
-	
+
 	public FontChooser() {
 		this((Frame)null);
 	}
@@ -72,7 +72,7 @@ public class FontChooser extends JDialog {
 		super(owner, i18n.TITLE, true);
 		createUserInterface();
 	}
-	
+
 	public Font showDialog() {
 		return showDialog(null);
 	}
@@ -178,7 +178,7 @@ public class FontChooser extends JDialog {
 		++gbc.gridy;
 		gbc.anchor = GridBagConstraints.CENTER;
 		content.add(createButtonsPanel(), gbc);
-		
+
 		setupPreviewLabel();
 
 		pack();
@@ -192,20 +192,20 @@ public class FontChooser extends JDialog {
 		JButton okBtn = new JButton("OK");
 		okBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-		    	setupFontFromDialog();
-		    	dispose();
+				setupFontFromDialog();
+				dispose();
 			}
 		});
 		JButton cancelBtn = new JButton("Cancel");
 		cancelBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-		    	_font = null;
-		    	dispose();
+				_font = null;
+				dispose();
 			}
 		});
 
 		pnl.add(okBtn);
-		pnl.add(cancelBtn);		
+		pnl.add(cancelBtn);
 
 		GUIUtils.setJButtonSizesTheSame(new JButton[] {okBtn, cancelBtn});
 		getRootPane().setDefaultButton(okBtn);

@@ -3,21 +3,20 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * Copyright (C) 2002 Johan Compagner
  * jcompagner@j-com.nl
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -38,12 +37,12 @@ import java.awt.event.MouseMotionListener;
 import java.net.URL;
 
 /**
- * @version 	$Id: ButtonTableHeader.java,v 1.5 2002-03-17 17:04:31 joco01 Exp $
+ * @version 	$Id: ButtonTableHeader.java,v 1.6 2002-03-26 12:15:34 colbell Exp $
  * @author		Johan Compagner
  */
 public class ButtonTableHeader extends JTableHeader
 {
-	protected boolean _bDragged;	
+	protected boolean _bDragged;
 	protected boolean _bPressed;
 	protected int _iPressed;
 	private static ImageIcon desc;
@@ -74,9 +73,9 @@ public class ButtonTableHeader extends JTableHeader
 		_bPressed = false;
 		_bDragged = false;
 		_iPressed = -1;
-		
+
 		setDefaultRenderer(new ButtonTableRenderer(getFont()));
-		
+
 		HeaderListener hl = new HeaderListener();
 		addMouseListener(hl);
 		addMouseMotionListener(hl);
@@ -105,7 +104,7 @@ public class ButtonTableHeader extends JTableHeader
 			{
 				int column = getTable().convertColumnIndexToModel(_iPressed);
 				TableModel tm = table.getModel();
-	
+
 				if(column > -1 && column < tm.getColumnCount() && tm instanceof SortableTableModel)
 				{
 					((SortableTableModel)tm).sortByColumn(column);
@@ -150,7 +149,7 @@ public class ButtonTableHeader extends JTableHeader
 	{
 		JButton buttonRaised;
 		JButton buttonLowered;
-		
+
 		ButtonTableRenderer(Font font)
 		{
 			buttonRaised = new JButton();
@@ -161,7 +160,7 @@ public class ButtonTableHeader extends JTableHeader
 			buttonLowered.setFont(font);
 			buttonLowered.getModel().setArmed(true);
 			buttonLowered.getModel().setPressed(true);
-			
+
 			buttonLowered.setMinimumSize(new Dimension(50,25));
 			buttonRaised.setMinimumSize(new Dimension(50,25));
 		}
@@ -176,7 +175,7 @@ public class ButtonTableHeader extends JTableHeader
 			int row,
 			int column)
 		{
-			
+
 			if (value == null)
 				value = "";
 			if(_iPressed == column && _bPressed)

@@ -3,19 +3,19 @@ package net.sourceforge.squirrel_sql.fw.xml;
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -28,18 +28,10 @@ import java.io.FileOutputStream;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 
-/*
-import org.jdom.Attribute;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.output.XMLOutputter;
-*/
 import net.n3.nanoxml.*;
 
 public final class XMLBeanWriter {
 
-	//private Document _doc;
 	private IXMLElement _rootElement;
 
 	public XMLBeanWriter() throws XMLException {
@@ -48,7 +40,6 @@ public final class XMLBeanWriter {
 
 	public XMLBeanWriter(Object bean) throws XMLException {
 		super();
-//	  _doc = new Document(new Element(XMLConstants.ROOT_ELEMENT_NAME));
 		_rootElement = new XMLElement(XMLConstants.ROOT_ELEMENT_NAME);
 		if (bean != null) {
 			addToRoot(bean);
@@ -63,7 +54,6 @@ public final class XMLBeanWriter {
 
 	public void addToRoot(Object bean) throws XMLException {
 		try {
-//		  _doc.getRootElement().addChild(createElement(bean, null));
 			_rootElement.addChild(createElement(bean, null));
 		} catch(Exception ex) {
 			throw new XMLException(ex);
@@ -78,7 +68,6 @@ public final class XMLBeanWriter {
 		BufferedOutputStream os = new BufferedOutputStream(
 											new FileOutputStream(file));
 		try {
-//		  new XMLOutputter().output(_rootElement, os);
 			XMLWriter wtr = new XMLWriter(os);
 			wtr.write(_rootElement, true);
 		} finally {
@@ -93,7 +82,6 @@ public final class XMLBeanWriter {
 			if (bean != null) {
 				info = Introspector.getBeanInfo(bean.getClass(), Object.class);
 			}
-//			info = Introspector.getBeanInfo(bean.getClass(), Introspector.USE_ALL_BEANINFO);
 		} catch (IntrospectionException ex) {
 			throw new XMLException(ex);
 		}
@@ -104,7 +92,6 @@ public final class XMLBeanWriter {
 			}
 			PropertyDescriptor[] propDesc = info.getPropertyDescriptors();
 			elem = new XMLElement(name != null ? name : XMLConstants.BEAN_ELEMENT_NAME);
-//		  elem.addAttribute(new Attribute(XMLConstants.CLASS_ATTRIBUTE_NAME, bean.getClass().getName()));
 			elem.setAttribute(XMLConstants.CLASS_ATTRIBUTE_NAME, bean.getClass().getName());
 			for( int i = 0; i < propDesc.length; ++i ) {
 				processProperty(propDesc[i], bean, elem);
@@ -124,11 +111,10 @@ public final class XMLBeanWriter {
 					Object[] props = (Object[])getter.invoke(bean, null);
 					if (props != null) {
 						IXMLElement indexElem = new XMLElement(propName);
-//					  indexElem.addAttribute(new Attribute(XMLConstants.INDEXED, "true"));
 						indexElem.setAttribute(XMLConstants.INDEXED, "true");
 						beanElem.addChild(indexElem);
 						for (int i = 0; i < props.length; ++i) {
-							indexElem.addChild(createElement(props[i], XMLConstants.BEAN_ELEMENT_NAME/*propName*/));
+							indexElem.addChild(createElement(props[i], XMLConstants.BEAN_ELEMENT_NAME));
 						}
 					}
 				} else if (returnType == boolean.class || returnType == int.class

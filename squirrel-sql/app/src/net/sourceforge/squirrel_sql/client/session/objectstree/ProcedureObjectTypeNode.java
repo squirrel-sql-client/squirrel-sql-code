@@ -3,19 +3,19 @@ package net.sourceforge.squirrel_sql.client.session.objectstree;
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.sql.SQLException;
 
@@ -31,34 +31,34 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.objectstree.BaseNode.TreeNodesLoader;
 
 class ProcedureObjectTypeNode extends ObjectTypeNode {
-    /**
-     * This interface defines locale specific strings. This should be
-     * replaced with a property file.
-     */
-    private interface i18n {
-        String PROCEDURE = "PROCEDURE";
-    }
+	/**
+	 * This interface defines locale specific strings. This should be
+	 * replaced with a property file.
+	 */
+	private interface i18n {
+		String PROCEDURE = "PROCEDURE";
+	}
 
-    ProcedureObjectTypeNode(ISession session, ObjectsTreeModel treeModel,
-                                    TableTypesGroupNode parentNode) {
-        super(session, treeModel, parentNode, i18n.PROCEDURE);
-    }
+	ProcedureObjectTypeNode(ISession session, ObjectsTreeModel treeModel,
+									TableTypesGroupNode parentNode) {
+		super(session, treeModel, parentNode, i18n.PROCEDURE);
+	}
 
-    public void expand() {
-		if (getChildCount() == 0) 
-        {
-        	getSession().getApplication().getThreadPool().addTask(new ProcedureObjectLoader(addLoadingNode()));
-        }
+	public void expand() {
+		if (getChildCount() == 0)
+		{
+			getSession().getApplication().getThreadPool().addTask(new ProcedureObjectLoader(addLoadingNode()));
+		}
 		else
 		{
-        	fireExpanded();
-        }
-    }
-    
+			fireExpanded();
+		}
+	}
+
 
 	public boolean equals(Object obj)
    {
-    	return (obj instanceof ProcedureObjectTypeNode);
+		return (obj instanceof ProcedureObjectTypeNode);
    }
 	/*
 	 * @see BaseNode#getTreeNodesLoader()
@@ -74,7 +74,7 @@ class ProcedureObjectTypeNode extends ObjectTypeNode {
 		{
 			super(loading);
 		}
-		
+
 		/*
 		 * @see TreeNodesLoader#getNodeList(ISession, SQLConnection)
 		 */
@@ -84,12 +84,12 @@ class ProcedureObjectTypeNode extends ObjectTypeNode {
 			final ArrayList listNodes = new ArrayList();
 			final String catalogId = getParentNode().getCatalogIdentifier();
 			final String schemaId = getParentNode().getSchemaIdentifier();
-            IProcedureInfo[] procs = null;
-            try {
-                procs = conn.getProcedures(catalogId, schemaId, "%");
-            } catch (BaseSQLException ignore) {
-                // Assume DBMS doesn't support procedures.
-            }
+			IProcedureInfo[] procs = null;
+			try {
+				procs = conn.getProcedures(catalogId, schemaId, "%");
+			} catch (BaseSQLException ignore) {
+				// Assume DBMS doesn't support procedures.
+			}
 
 			if (procs != null)
 			{
@@ -100,6 +100,6 @@ class ProcedureObjectTypeNode extends ObjectTypeNode {
 			}
 			return listNodes;
 		}
-	}    
+	}
 }
 

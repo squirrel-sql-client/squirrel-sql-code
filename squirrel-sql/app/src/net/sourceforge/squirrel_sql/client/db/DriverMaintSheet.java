@@ -3,19 +3,19 @@ package net.sourceforge.squirrel_sql.client.db;
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Container;
 import java.awt.Dimension;
@@ -101,7 +101,7 @@ public class DriverMaintSheet extends BaseSheet {
 	private JLabel _titleLbl = new JLabel();
 
 	/** Control for the <TT>ISQLDriver.IPropertyNames.NAME</TT> property. */
-	private JTextField _driverName = new JTextField(); 
+	private JTextField _driverName = new JTextField();
 
 	/** Control for the <TT>ISQLDriver.IPropertyNames.USES_CLASSPATH</TT> property. */
 	private JCheckBox _usesClassPathChk = new JCheckBox(i18n.LOAD_WHERE);
@@ -126,11 +126,11 @@ public class DriverMaintSheet extends BaseSheet {
 
 	/**
 	 * Ctor.
-	 * 
+	 *
 	 * @param	app			Application API.
 	 * @param	sqlDriver	JDBC driver definition to be maintained.
 	 * @param	maintType	Maintenance type. @see MaintenanceType.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> passed for <TT>app</TT> or <TT>sqlDriver</TT> or
 	 * 			an invalid value passed for <TT>maintType</TT>.
@@ -159,7 +159,7 @@ public class DriverMaintSheet extends BaseSheet {
 	/**
 	 * Set title of this frame. Ensure that the title label
 	 * matches the frame title.
-	 * 
+	 *
 	 * @param	title	New title text.
 	 */
 	public void setTitle(String title) {
@@ -169,7 +169,7 @@ public class DriverMaintSheet extends BaseSheet {
 
 	/**
 	 * Return the driver that is being maintained.
-	 * 
+	 *
 	 * @return	the driver that is being maintained.
 	 */
 	ISQLDriver getSQLDriver() {
@@ -271,8 +271,8 @@ public class DriverMaintSheet extends BaseSheet {
 	private void createUserInterface() {
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-        // This is a tool window.
-        GUIUtils.makeToolWindow(this, true);
+		// This is a tool window.
+		GUIUtils.makeToolWindow(this, true);
 
 		final String title = _maintType == MaintenanceType.MODIFY
 										? (i18n.CHANGE + " " + _sqlDriver.getName())
@@ -333,18 +333,18 @@ public class DriverMaintSheet extends BaseSheet {
 		JButton okBtn = new JButton("OK");
 		okBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				performOk();			
+				performOk();
 			}
 		});
 		JButton closeBtn = new JButton("Close");
 		closeBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				performClose();			
+				performClose();
 			}
 		});
 
 		pnl.add(okBtn);
-		pnl.add(closeBtn);		
+		pnl.add(closeBtn);
 
 		GUIUtils.setJButtonSizesTheSame(new JButton[] {okBtn, closeBtn});
 		getRootPane().setDefaultButton(okBtn);
@@ -357,7 +357,7 @@ public class DriverMaintSheet extends BaseSheet {
 
 		JPanel pnl = new JPanel();
 		pnl.setBorder(BorderFactory.createTitledBorder("Driver"));
-			
+
 		pnl.setLayout(new GridBagLayout());
 		final GridBagConstraints gbc = new GridBagConstraints();
 		gbc.fill = gbc.HORIZONTAL;
@@ -377,7 +377,7 @@ public class DriverMaintSheet extends BaseSheet {
 
 		++gbc.gridy;
 		pnl.add(_url, gbc);
-			
+
 		return pnl;
 	}
 
@@ -434,7 +434,7 @@ public class DriverMaintSheet extends BaseSheet {
 
 		JPanel pnl = new JPanel();
 		pnl.setBorder(BorderFactory.createTitledBorder("Driver Location"));
-			
+
 		pnl.setLayout(new GridBagLayout());
 		final GridBagConstraints gbc = new GridBagConstraints();
 		gbc.fill = gbc.HORIZONTAL;

@@ -3,19 +3,19 @@ package net.sourceforge.squirrel_sql.client.session.properties;
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.util.HashMap;
 import java.util.Map;
@@ -61,7 +61,7 @@ public class SessionPropertiesSheetFactory {
 
 	/**
 	 * Return the single instance of this class.
-	 * 
+	 *
 	 * @return	the single instance of this class.
 	 */
 	public static SessionPropertiesSheetFactory getInstance() {
@@ -79,11 +79,11 @@ public class SessionPropertiesSheetFactory {
 	 * Get a properties sheet for the passed session. If one already
 	 * exists it will be brought to the front. If one doesn't exist it will be
 	 * created.
-	 * 
+	 *
 	 * @param	session		The session that user has request property sheet for.
-	 * 
+	 *
 	 * @return	The maintenance sheet for the passed session.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException	if a <TT>null</TT> <TT>ISession</TT> passed.
 	 */
 	public synchronized SessionPropertiesSheet showSheet(ISession session) {

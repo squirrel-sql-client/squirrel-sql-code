@@ -3,19 +3,19 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class DataSetListModel extends BaseDataSetViewerDestination
-								implements IDataSetModel 
+								implements IDataSetModel
 {
 	/** Event types. */
 	private interface IEventTypes {
@@ -66,7 +66,7 @@ public java.awt.Component getComponent() {
 
 	/**
 	 * Add a row.
-	 * 
+	 *
 	 * @param	row		Array of objects specifying the row data.
 	 */
 	protected void addRow(Object[] row) {
@@ -89,7 +89,7 @@ public java.awt.Component getComponent() {
 
 	/**
 	 * Return number of rows in model.
-	 * 
+	 *
 	 * @return	Number of rows.
 	 */
 	public int getRowCount() {
@@ -98,7 +98,7 @@ public java.awt.Component getComponent() {
 
 	/**
 	 * Return the data value for the specified cell.
-	 * 
+	 *
 	 * @param	rowIndex	The row whose value is being retrieved.
 	 * @param	columnIndex	The column whose value is being retrieved.
 	 *
@@ -110,7 +110,7 @@ public java.awt.Component getComponent() {
 
 	/**
 	 * Set the data value for the specified cell.
-	 * 
+	 *
 	 * @param	value		The new value for the cell.
 	 * @param	rowIndex	The row whose value is being set.
 	 * @param	columnIndex	The column whose value is being set.
@@ -140,7 +140,7 @@ public java.awt.Component getComponent() {
 
 	/**
 	 * Fire a <TT>DataSetModel</TT> event.
-	 * 
+	 *
 	 * @param	eventType	Specifies the event type. @see IEventType.
 	 */
 	protected void fireEvent(int eventType) {

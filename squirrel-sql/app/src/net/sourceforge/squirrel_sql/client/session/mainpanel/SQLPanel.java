@@ -6,19 +6,19 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * Modifications Copyright (C) 2001 Johan Compagner
  * jcompagner@j-com.nl
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -271,7 +271,7 @@ public class SQLPanel extends JPanel {
 
 		closeAllSQLResultFrames();
 	}
-	
+
 	public void replaceSQLEntryPanel(ISQLEntryPanel pnl) {
 		if (pnl == null) {
 			throw new IllegalArgumentException("Null ISQLEntryPanel passed");
@@ -290,14 +290,14 @@ public class SQLPanel extends JPanel {
 		_sqlEntry = pnl;
 
 		_sqlEntry.addCaretListener(_dataEntryCaretListener);
-		
+
 		if(!_sqlEntry.hasOwnUndoableManager())
 		{
 			IApplication app = _session.getApplication();
 			Resources res = app.getResources();
 			UndoAction undo = new UndoAction(app, _undoManager);
 			RedoAction redo = new RedoAction(app, _undoManager);
-			
+
 			_sqlEntry.getJComponent().registerKeyboardAction(undo, res.getKeyStroke(undo), this.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 			_sqlEntry.getJComponent().registerKeyboardAction(redo, res.getKeyStroke(redo), this.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 			_sqlEntry.setUndoActions(undo, redo);
@@ -831,7 +831,7 @@ public class SQLPanel extends JPanel {
 				_hasFocus = true;
 			}
 		}
-		
+
 		void restoreState(final ISQLEntryPanel pnl) {
 			if (_saved && pnl != null) {
 				pnl.setText(_text);

@@ -4,19 +4,19 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * colbell@users.sourceforge.net
  * jcompagner@j-com.nl
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Frame;
 import java.sql.SQLException;
@@ -143,13 +143,13 @@ public class ConnectToAliasCommand implements ICommand {
 		 */
 		public void connected(SQLConnection conn) {
 		}
-	
+
 		/**
 		 * @see CompletionCallback#sessionCreated(ISession)
 		 */
 		public void sessionCreated(ISession session) {
 		}
-			
+
 		/**
 		 * @see CompletionCallback#errorOccured(Throwable)
 		 */
@@ -188,7 +188,7 @@ public class ConnectToAliasCommand implements ICommand {
 	private static class SheetHandler implements IConnectionSheetHandler, Runnable {
 		/** The connection internal frame. */
 		private ConnectionSheet _connSheet;
-		
+
 		/** Application API. */
 		private IApplication _app;
 
@@ -212,12 +212,12 @@ public class ConnectToAliasCommand implements ICommand {
 
 		/**
 		 * Ctor.
-		 * 
+		 *
 		 * @param	app				Application API.
 		 * @param	alias			Database alias to connect to.
 		 * @param	createSession	If <TT>true</TT> a session should be created.
 		 * @param	cmd				Command executing this handler.
-		 * 
+		 *
 		 * @throws	IllegalArgumentException
 		 * 			Thrown if <TT>null</TT>IApplication</TT>, <TT>ISQLAlias</TT>,
 		 * 			or <TT>ICompletionCallback</TT> passed.
@@ -243,7 +243,7 @@ public class ConnectToAliasCommand implements ICommand {
 		/**
 		 * User has clicked the OK button to connect to the alias. Run the connection
 		 * attempt in a separate thread.
-		 * 
+		 *
 		 * @param	connSheet	Connection internal frame.
 		 * @param	user		The user name entered.
 		 * @param	password	The password entered.
@@ -259,7 +259,7 @@ public class ConnectToAliasCommand implements ICommand {
 
 		/**
 		 * User has clicked the Cancel button to cancel this connection attempt.
-		 * 
+		 *
 		 * @param	connSheet	Connection internal frame.
 		 */
 		public void performCancelConnect(ConnectionSheet connSheet) {
@@ -273,7 +273,7 @@ public class ConnectToAliasCommand implements ICommand {
 
 		/**
 		 * User has clicked the Close button to close the internal frame.
-		 * 
+		 *
 		 * @param	connSheet	Connection internal frame.
 		 */
 		public void performClose(ConnectionSheet connSheet) {
@@ -282,7 +282,7 @@ public class ConnectToAliasCommand implements ICommand {
 		/**
 		 * Execute task. Connect to the alias with the information entered
 		 * in the connection internal frame.
-		 */		
+		 */
 		public void run() {
 			SQLConnection conn = null;
 			final ISQLDriver sqlDriver = _app.getDataCache().getDriver(_alias.getDriverIdentifier());

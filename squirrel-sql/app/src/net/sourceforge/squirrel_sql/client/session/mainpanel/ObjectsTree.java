@@ -6,19 +6,19 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * Modifications copyright (C) 2001 Johan Compagner
  * jcompagner@j-com.nl
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
@@ -65,9 +65,9 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 
 	private ISession _session;
 	private ObjectsTreeModel _model;
-	
+
 	private CursorChanger _cursorChg;
-	
+
 	/*
 	 * popupmenu for the actions (also plugins can add actions to this later on?)
 	 */
@@ -89,16 +89,16 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 		setShowsRootHandles(true);
 		setEditable(false);
 		addTreeExpansionListener(new MyExpansionListener());
-		
+
 		// Register so that we can display different tooltips depending
 		// which entry in tree mouse is over.
 		ToolTipManager.sharedInstance().registerComponent(this);
 
 		clearSelection();
 		addSelectionRow(0);
-		
+
 		ActionCollection actions = _session.getApplication().getActionCollection();
-		
+
 		_treeActions = new JPopupMenu();
 		_treeActions.add(new JMenuItem(actions.get(RefreshTreeItemAction.class)));
 		_treeActions.add(new JMenuItem(actions.get(DropTableAction.class)));
@@ -106,8 +106,8 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 		session.getApplication().getPluginManager();
 		_treeActions.add(XXXXX);
 		*/
-		
-		addMouseListener(new MouseAdapter() 
+
+		addMouseListener(new MouseAdapter()
 		{
 				public void mousePressed(MouseEvent evt) {
 					if (evt.isPopupTrigger()) {
@@ -122,7 +122,7 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 			});
 		}
 
-	void refresh() throws BaseSQLException 
+	void refresh() throws BaseSQLException
 	{
 		TreePath[] paths = getSelectionPaths();
 		List l = _model.refresh();
@@ -174,7 +174,7 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 	 * Return an array of <TT>IDatabaseObjectInfo</TT> objects representing all
 	 * the objects selected in the objects tree. This array is sorted by the
 	 * simple name of the database object.
-	 * 
+	 *
 	 * @return	array of <TT>IDatabaseObjectInfo</TT> objects.
 	 */
 	IDatabaseObjectInfo[] getSelectedDatabaseObjects() {
@@ -199,19 +199,19 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 		public void treeExpanded(TreeExpansionEvent evt) {
 			DefaultMutableTreeNode node =
 				(DefaultMutableTreeNode)evt.getPath().getLastPathComponent();
-			if (node instanceof BaseNode) 
+			if (node instanceof BaseNode)
 			{
 				BaseNode bNode= (BaseNode)node;
 				bNode.addBaseNodeExpandListener(ObjectsTree.this);
 				_cursorChg.show();
-				try 
+				try
 				{
 					bNode.expand();
-				} catch (BaseSQLException ex) 
+				} catch (BaseSQLException ex)
 				{
 					// Can't happen anymore?? Because (some) are threaded now.
 					ObjectsTree.this._session.getMessageHandler().showMessage(ex);
-				} 
+				}
 			}
 		}
 

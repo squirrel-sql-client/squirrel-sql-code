@@ -3,19 +3,19 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Component;
 import java.awt.Font;
@@ -33,7 +33,7 @@ import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 //??RENAME to DataSetViewerTextDestination
 
-public class DataSetViewerTextPanel extends BaseDataSetViewerDestination 
+public class DataSetViewerTextPanel extends BaseDataSetViewerDestination
 {
 	private final static int COLUMN_PADDING = 2;
 	private MyJTextArea _outText = new MyJTextArea();
@@ -66,7 +66,7 @@ public class DataSetViewerTextPanel extends BaseDataSetViewerDestination
 		}
 	}
 
-	protected void addRow(Object[] row) 
+	protected void addRow(Object[] row)
 	{
 		_rowCount++;
 		ColumnDisplayDefinition[] colDefs = getColumnDefinitions();
@@ -89,7 +89,7 @@ public class DataSetViewerTextPanel extends BaseDataSetViewerDestination
 
 	/**
 	 * Get the component for this viewer.
-	 * 
+	 *
 	 * @return	The component for this viewer.
 	 */
 	public Component getComponent() {
@@ -137,7 +137,7 @@ public class DataSetViewerTextPanel extends BaseDataSetViewerDestination
 
    	private static final class MyJTextArea extends JTextArea {
 		private TextPopupMenu _textPopupMenu;
-		
+
 		MyJTextArea() {
 			super();
 			createUserInterface();
@@ -147,10 +147,10 @@ public class DataSetViewerTextPanel extends BaseDataSetViewerDestination
 			setEditable(false);
 			setLineWrap(false);
 			setFont(new Font("Monospaced", Font.PLAIN, 12));
-	
+
 			_textPopupMenu = new TextPopupMenu();
 			_textPopupMenu.setTextComponent(this);
-	
+
 			addMouseListener(new MouseAdapter() {
 				public void mousePressed(MouseEvent evt) {
 					if (evt.isPopupTrigger()) {

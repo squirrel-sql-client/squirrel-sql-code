@@ -3,19 +3,19 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -66,7 +66,7 @@ public class OkClosePanel extends JPanel {
 
 	/**
 	 * Enable/disable the Close/Cancel button.
-	 * 
+	 *
 	 * @param	enable	<TT>true</TT> to enable else <TT>false</TT> to disable.
 	 */
 	public void enableCloseButton(boolean enable) {
@@ -88,7 +88,7 @@ public class OkClosePanel extends JPanel {
 	 * <EM>after</EM> you add this panel to a dialog/frame, not
 	 * before otherwise you will get an <TT>IllegalStateException</TT>
 	 * exception.
-	 * 
+	 *
 	 * @param	IllegalStateException
 	 * 			Thrown if <TT>null</TT> <TT>JRootPane</TT>. I.E. component
 	 * 			hasn't been added to a frame, dialog etc.

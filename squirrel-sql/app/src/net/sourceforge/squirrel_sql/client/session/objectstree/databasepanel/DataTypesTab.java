@@ -3,40 +3,25 @@ package net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel;
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-//import java.awt.BorderLayout;
 import java.awt.Component;
 import java.sql.ResultSet;
-//import java.sql.SQLException;
-//import java.sql.Statement;
-
-//import javax.swing.JScrollPane;
-
-//import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-//import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
-//import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewerDestination;
-//import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
-///import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
-//import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
-//import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-//import net.sourceforge.squirrel_sql.fw.util.Logger;
 
 import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-//import net.sourceforge.squirrel_sql.client.session.objectstree.procedurepanel.BaseProcedurePanelTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.ResultSetPanel;
 
 /**

@@ -3,19 +3,19 @@ package net.sourceforge.squirrel_sql.client.db;
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.util.HashMap;
 import java.util.Map;
@@ -63,7 +63,7 @@ public class DriverMaintSheetFactory implements DriverMaintSheet.MaintenanceType
 
 	/**
 	 * Return the single instance of this class.
-	 * 
+	 *
 	 * @return	the single instance of this class.
 	 */
 	public static DriverMaintSheetFactory getInstance() {
@@ -81,11 +81,11 @@ public class DriverMaintSheetFactory implements DriverMaintSheet.MaintenanceType
 	 * Get a maintenance sheet for the passed driver. If a maintenance sheet already
 	 * exists it will be brought to the front. If one doesn't exist it will be
 	 * created.
-	 * 
+	 *
 	 * @param	driver	The driver that user has requested to modify.
-	 * 
+	 *
 	 * @return	The maintenance sheet for the passed driver.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException	if a <TT>null</TT> <TT>ISQLDriver</TT> passed.
 	 */
 	public synchronized DriverMaintSheet showModifySheet(ISQLDriver driver) {
@@ -98,7 +98,7 @@ public class DriverMaintSheetFactory implements DriverMaintSheet.MaintenanceType
 			sheet = new DriverMaintSheet(_app, driver, MODIFY);
 			_modifySheets.put(driver.getIdentifier(), sheet);
 			_app.getMainFrame().addInternalFrame(sheet, true, null);
-	
+
 			sheet.addInternalFrameListener(new InternalFrameAdapter() {
 				public void internalFrameClosed(InternalFrameEvent evt) {
 					synchronized( getInstance()) {
@@ -117,13 +117,13 @@ public class DriverMaintSheetFactory implements DriverMaintSheet.MaintenanceType
 
 	/**
 	 * Create and show a new maintenance sheet to allow the user to create a new driver.
-	 * 
+	 *
 	 * @return	The new maintenance sheet.
 	 */
 	public DriverMaintSheet showCreateSheet() {
-        final DataCache cache = _app.getDataCache();
-        final IdentifierFactory factory = IdentifierFactory.getInstance();
-        final ISQLDriver driver = cache.createDriver(factory.createIdentifier());
+		final DataCache cache = _app.getDataCache();
+		final IdentifierFactory factory = IdentifierFactory.getInstance();
+		final ISQLDriver driver = cache.createDriver(factory.createIdentifier());
 		final DriverMaintSheet sheet = new DriverMaintSheet(_app, driver, NEW);
 		_app.getMainFrame().addInternalFrame(sheet, true, null);
 		positionSheet(sheet);
@@ -133,7 +133,7 @@ public class DriverMaintSheetFactory implements DriverMaintSheet.MaintenanceType
 	/**
 	 * Create and show a new maintenance sheet that will allow the user to create a
 	 * new driver that is a copy of the passed one.
-	 * 
+	 *
 	 * @return	The new maintenance sheet.
 	 *
 	 * @throws	IllegalArgumentException	if a <TT>null</TT> <TT>ISQLDriver</TT> passed.
@@ -143,14 +143,14 @@ public class DriverMaintSheetFactory implements DriverMaintSheet.MaintenanceType
 			throw new IllegalArgumentException("ISQLDriver == null");
 		}
 
-        final DataCache cache = _app.getDataCache();
-        final IdentifierFactory factory = IdentifierFactory.getInstance();
-        ISQLDriver newDriver = cache.createDriver(factory.createIdentifier());
-        try {
-            newDriver.assignFrom(driver);
-        } catch (ValidationException ex) {
-            s_log.error("Error occured copying the driver", ex);
-        }
+		final DataCache cache = _app.getDataCache();
+		final IdentifierFactory factory = IdentifierFactory.getInstance();
+		ISQLDriver newDriver = cache.createDriver(factory.createIdentifier());
+		try {
+			newDriver.assignFrom(driver);
+		} catch (ValidationException ex) {
+			s_log.error("Error occured copying the driver", ex);
+		}
 		final DriverMaintSheet sheet = new DriverMaintSheet(_app, newDriver, COPY);
 		_app.getMainFrame().addInternalFrame(sheet, true, null);
 		positionSheet(sheet);

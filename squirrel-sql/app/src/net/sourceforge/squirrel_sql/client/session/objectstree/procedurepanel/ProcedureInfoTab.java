@@ -3,19 +3,19 @@ package net.sourceforge.squirrel_sql.client.session.objectstree.procedurepanel;
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Component;
 
@@ -43,11 +43,11 @@ public class ProcedureInfoTab extends BaseProcedurePanelTab {
 	private interface i18n {
 		String TITLE = "Info";
 		String HINT = "Info";
-        String NAME = "Procedure Name:";
-        String CATALOG = "Catalogue:";
-        String SCHEMA = "Schema:";
-        String TYPE = "Type:";
-        String REMARKS = "Remarks:";
+		String NAME = "Procedure Name:";
+		String CATALOG = "Catalogue:";
+		String SCHEMA = "Schema:";
+		String TYPE = "Type:";
+		String REMARKS = "Remarks:";
 	}
 
 	/** Logger for this class. */
@@ -136,14 +136,14 @@ public class ProcedureInfoTab extends BaseProcedurePanelTab {
 			_typeLbl.setText("" );
 			_remarksLbl.setText("" );
 		}
-		
-		void load(final ISession session, final IProcedureInfo pi) 
+
+		void load(final ISession session, final IProcedureInfo pi)
 		{
 			Runnable run = new Runnable()
 			{
 				public void run()
 				{
-				
+
 					try {
 						// Lazily create the user interface.
 						if (!_fullyCreated) {
@@ -164,16 +164,16 @@ public class ProcedureInfoTab extends BaseProcedurePanelTab {
 		}
 
 		private void createUserInterface() {
-	        add(new JLabel(i18n.NAME, SwingConstants.RIGHT), _nameLbl);
-	        add(new JLabel(i18n.CATALOG, SwingConstants.RIGHT), _catalogLbl);
-	        add(new JLabel(i18n.SCHEMA, SwingConstants.RIGHT), _schemaLbl);
-	        add(new JLabel(i18n.TYPE, SwingConstants.RIGHT), _typeLbl);
-	        add(new JLabel(i18n.REMARKS, SwingConstants.RIGHT), _remarksLbl);
+			add(new JLabel(i18n.NAME, SwingConstants.RIGHT), _nameLbl);
+			add(new JLabel(i18n.CATALOG, SwingConstants.RIGHT), _catalogLbl);
+			add(new JLabel(i18n.SCHEMA, SwingConstants.RIGHT), _schemaLbl);
+			add(new JLabel(i18n.TYPE, SwingConstants.RIGHT), _typeLbl);
+			add(new JLabel(i18n.REMARKS, SwingConstants.RIGHT), _remarksLbl);
 		}
 	}
 
-    private String getString(String str) {
-        return str != null ? str : "";
-    }
+	private String getString(String str) {
+		return str != null ? str : "";
+	}
 }
 

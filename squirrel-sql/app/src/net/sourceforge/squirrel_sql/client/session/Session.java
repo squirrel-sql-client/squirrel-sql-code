@@ -6,19 +6,19 @@ package net.sourceforge.squirrel_sql.client.session;
  * Modifications copyright (C) 2001 Johan Compagner
  * jcompagner@j-com.nl
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Component;
 import java.sql.SQLException;
@@ -114,7 +114,7 @@ class Session implements ISession {
 		_props.assignFrom(_app.getSquirrelPreferences().getSessionProperties());
 
 		final IPlugin plugin = getApplication().getDummyAppPlugin();
-		
+
 		//?? This crap should be done better.
 		putPluginObject(plugin, ISessionKeys.DATABASE_DETAIL_PANEL_KEY, new DatabasePanel(this));
 		putPluginObject(plugin, ISessionKeys.PROCEDURE_DETAIL_PANEL_KEY, new ProcedurePanel(this));
@@ -262,7 +262,7 @@ class Session implements ISession {
 	/**
 	 * Return the object that handles the SQL entry
 	 * component.
-	 * 
+	 *
 	 * @return	<TT>ISQLEntryPanel</TT> object.
 	 */
 	public ISQLEntryPanel getSQLEntryPanel() {
@@ -379,7 +379,7 @@ class Session implements ISession {
 
 	/**
 	 * Add a listener for events in this sessions result tabs.
-	 * 
+	 *
 	 * @param	lis		The listener.
 	 */
 	public void addResultTabListener(IResultTabListener lis) {
@@ -391,7 +391,7 @@ class Session implements ISession {
 
 	/**
 	 * Remove a listener for events in this sessions result tabs.
-	 * 
+	 *
 	 * @param	lis		The listener.
 	 */
 	public void removeResultTabListener(IResultTabListener lis) {

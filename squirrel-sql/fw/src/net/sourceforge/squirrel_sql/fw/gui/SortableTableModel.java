@@ -6,21 +6,20 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * Modifications copyright (C) 2002 Colin Bell
  * colbell@users.sourceforge.net
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
@@ -38,7 +37,7 @@ public class SortableTableModel extends AbstractTableModel
 {
 //	protected Object[][] _data;
 //	protected int _iSize;
-	
+
 //	protected String[] _columns;
 //	protected Class[] _cls;
 
@@ -59,7 +58,7 @@ public class SortableTableModel extends AbstractTableModel
 	{
 		return _actualModel;
 	}
-	
+
 	/**
 	 * Contains the indexes within <TT>_actualModel</TT> after sorting. I.E.
 	 * if after sorting <TT>_actualModel[1]</TT> should be the first line and
@@ -117,12 +116,12 @@ public class SortableTableModel extends AbstractTableModel
 //		_iSize = 0;
 //		fireTableStructureChanged();
 //	}
-	
+
 //	public void addRow(Object[] row)
 //	{
 		// Check length must be equal or greater then columns length (can have hidden rows)
 //		if(row.length < _columns.length) throw new IllegalArgumentException("Number of row length must be equal or greater then the columns");
-		
+
 //		try
 //		{
 //			_data[_iSize] = row;
@@ -135,10 +134,10 @@ public class SortableTableModel extends AbstractTableModel
 //			addRow(row);
 //		}
 //	}
-	
+
 	/**
 	 * Return the number of rows in this table.
-	 * 
+	 *
 	 * @return	Number of rows in this table.
 	 */
 	public int getRowCount() {
@@ -147,7 +146,7 @@ public class SortableTableModel extends AbstractTableModel
 
 	/**
 	 * Return the number of columns in this table.
-	 * 
+	 *
 	 * @return	Number of columns in this table.
 	 */
 	public int getColumnCount() {
@@ -159,7 +158,7 @@ public class SortableTableModel extends AbstractTableModel
 	 *
 	 * @param	row		Row to return data for.
 	 * @param	col		Column to return data for.
-	 * 
+	 *
 	 * @return	value at the specified row/column.
 	 */
 	public Object getValueAt(int row, int col) {
@@ -172,7 +171,7 @@ public class SortableTableModel extends AbstractTableModel
 	 * @param	value	Value to place in cell.
 	 * @param	row		Row to return data for.
 	 * @param	col		Column to return data for.
-	 * 
+	 *
 	 * @return	value at the specified row/column.
 	 */
 	public void setValueAt(Object value, int row, int col) {
@@ -203,15 +202,15 @@ public class SortableTableModel extends AbstractTableModel
 		boolean b = true;
 		if(column == _iColumn)
 		{
-			b = !_bAscending;	
+			b = !_bAscending;
 		}
 		sortByColumn(column, b);
 		return b;
 	}
-	
+
 	/**
 	 * Sorts the table by the specified column.
-	 * 
+	 *
 	 * @param	column		column to sort by
 	 * @param	ascending	sort ascending if <TT>true</TT> else descending.
 	 */
@@ -226,17 +225,17 @@ public class SortableTableModel extends AbstractTableModel
 		Arrays.sort(_indexes, comparator);
 		fireTableDataChanged();
 	}
-	
+
 	class TableModelComparator implements Comparator
 	{
 		private int _iColumn;
 		private int _iAscending;
-		
+
 		public TableModelComparator(int iColumn)
 		{
 			this(iColumn,true);
 		}
-		
+
 		public TableModelComparator(int iColumn, boolean ascending)
 		{
 			_iColumn = iColumn;
@@ -257,10 +256,10 @@ public class SortableTableModel extends AbstractTableModel
 		{
 			Integer i1 = (Integer)o1;
 			Integer i2 = (Integer)o2;
-			
+
 			Comparable c1 = ((Comparable)_actualModel.getValueAt(i1.intValue(),_iColumn));
 			Object c2 = _actualModel.getValueAt(i2.intValue(),_iColumn);
-			
+
 			if(c1 == null && c2 == null) return 0;
 			if(c1 == null) return 1;
 			if(c2 == null) return -1;
