@@ -48,6 +48,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
+import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.MemoryComboBox;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
@@ -609,7 +610,10 @@ class SQLPanel extends JPanel {
 		}
 
 		if (propName == null || propName.equals(SessionProperties.IPropertyNames.FONT_INFO)) {
-			_sqlEntry.setFont(props.getFontInfo().createFont());
+			FontInfo fi = props.getFontInfo();
+			if (fi != null) {
+				_sqlEntry.setFont(fi.createFont());
+			}
 		}
 
 	}
