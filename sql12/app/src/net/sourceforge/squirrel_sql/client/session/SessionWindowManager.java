@@ -29,6 +29,7 @@ import javax.swing.event.InternalFrameEvent;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionPropertiesSheet;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterSheet;
+import net.sourceforge.squirrel_sql.client.session.properties.EditWhereColsSheet;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -58,12 +59,16 @@ public class SessionWindowManager
 	private final Map _sessionPropertySheets = new HashMap();
 
 	private final Map _sqlFilterSheets = new HashMap();
+	private final Map _editWhereColsSheets = new HashMap();
 
 	/** Listens to session properties dialogs waiting for them to close. */
 	private final PropertiesSheetListener _sessionPropertiesDialogListener = new PropertiesSheetListener();
 
 	/** Listens to SQL filter dialogs waiting for them to close. */
 	private final SQLFilterDialogListener _sqlFilterDialogListener = new SQLFilterDialogListener();
+
+	/** Listens to SQL filter dialogs waiting for them to close. */
+	private final EditWhereColsDialogListener _editWhereColsDialogListener = new EditWhereColsDialogListener();
 
 	/** Listenys to Session internal frames waiting for them to close. */
 	private final SessionInternalFrameListener _sessionInternalFrameListener = new SessionInternalFrameListener();
@@ -224,6 +229,45 @@ public class SessionWindowManager
 	}
 
 	/**
+	 * Get a EditWhereCols sheet for the passed session. If one already exists it
+	 * will be brought to the front. If one doesn't exist it will be created.
+	 *
+	 * @param	session		The session for which the user has requested the sheet.
+	 * @param	objectInfo	An instance of a class containing information about
+	 * 						the database metadata.
+	 *
+	 * @return	The maintenance sheet for the passed session.
+	 */
+	public synchronized EditWhereColsSheet showEditWhereColsDialog(ISession session,
+											IDatabaseObjectInfo objectInfo)
+	{
+		if (session == null)
+		{
+			throw new IllegalArgumentException("ISession == null");
+		}
+		if (objectInfo == null)
+		{
+			throw new IllegalArgumentException("IDatabaseObjectInfo == null");
+		}
+
+		EditWhereColsSheet editWhereColsSheet = getEditWhereColsSheet(session, objectInfo);
+		if (editWhereColsSheet == null)
+		{
+			editWhereColsSheet = new EditWhereColsSheet(session, objectInfo);
+			Map map = getAllEditWhereColsSheets(session);
+			map.put(objectInfo.getQualifiedName(), editWhereColsSheet);
+			_app.getMainFrame().addInternalFrame(editWhereColsSheet, true, null);
+			editWhereColsSheet.addInternalFrameListener(_editWhereColsDialogListener);
+			positionSheet(editWhereColsSheet);
+		}
+
+		editWhereColsSheet.moveToFront();
+		editWhereColsSheet.setVisible(true);
+		return editWhereColsSheet;
+	}
+
+
+	/**
 	 * Close all sessions.
 	 */
 	public synchronized void closeAllSessions()
@@ -279,6 +323,23 @@ public class SessionWindowManager
 		}
 		return map;
 	}
+	
+	private EditWhereColsSheet getEditWhereColsSheet(ISession session, IDatabaseObjectInfo objectInfo)
+	{
+		Map map = getAllEditWhereColsSheets(session);
+		return (EditWhereColsSheet)map.get(objectInfo.getQualifiedName());
+	}
+
+	private Map getAllEditWhereColsSheets(ISession session)
+	{
+		Map map = (Map)_editWhereColsSheets.get(session.getIdentifier());
+		if (map == null)
+		{
+			map = new HashMap();
+			_editWhereColsSheets.put(session.getIdentifier(), map);
+		}
+		return map;
+	}
 
 	private void positionSheet(JInternalFrame jif)
 	{
@@ -320,6 +381,20 @@ public class SessionWindowManager
 			}
 		}
 	}
+	
+	private synchronized void editWhereColsDialogClosed(EditWhereColsSheet sfs)
+	{
+		if (sfs != null)
+		{
+			sfs.removeInternalFrameListener(_editWhereColsDialogListener);
+			Map map = getAllEditWhereColsSheets(sfs.getSession());
+			String key = sfs.getDatabaseObjectInfo().getQualifiedName();
+			if (map.remove(key) == null)
+			{
+				s_log.error("Unable to find EditWhereColsSheet for " + key);
+			}
+		}
+	}
 
 	private synchronized void sessionInternalFrameClosed(SessionInternalFrame sif)
 	{
@@ -353,6 +428,15 @@ public class SessionWindowManager
 		{
 			SQLFilterSheet sfs = (SQLFilterSheet)evt.getInternalFrame();
 			SessionWindowManager.this.sqlFilterDialogClosed(sfs);
+		}
+	}
+	
+	private final class EditWhereColsDialogListener extends InternalFrameAdapter
+	{
+		public void internalFrameClosed(InternalFrameEvent evt)
+		{
+			EditWhereColsSheet sfs = (EditWhereColsSheet)evt.getInternalFrame();
+			SessionWindowManager.this.editWhereColsDialogClosed(sfs);
 		}
 	}
 
