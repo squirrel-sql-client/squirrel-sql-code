@@ -96,7 +96,7 @@ public class SQLExecuterTask implements Runnable {
 						}
 					} // if
 					else {
-						showMessage(_session, _stmt.getUpdateCount() + " Rows Updated");
+						_session.getMessageHandler().showMessage(_stmt.getUpdateCount() + " Rows Updated");
 					}
 				}
 				//
@@ -106,9 +106,7 @@ public class SQLExecuterTask implements Runnable {
 					_sqlPanel.removeCancelPanel(_cancelPanel);
 				//				}
 				final long finish = System.currentTimeMillis();
-				showMessage(
-					_session,
-					"Elapsed time for query(milliseconds) : " + (finish - start));
+				_session.getMessageHandler().showMessage("Elapsed time for query(milliseconds) : " + (finish - start));
 				//  i18n
 //			} catch (Throwable ex) {
 //				showMessage(_session, ex);
@@ -123,7 +121,7 @@ public class SQLExecuterTask implements Runnable {
 				}
 			}
 		} catch (Throwable ex) {
-			showMessage(_session, ex);
+			_session.getMessageHandler().showMessage(ex);
 		} finally {
 			if (_bStopExecution || !bCancelPanelRemoved) {
 				_sqlPanel.removeCancelPanel(_cancelPanel);
@@ -151,19 +149,4 @@ public class SQLExecuterTask implements Runnable {
 		}
 	}
 
-	private void showMessage(final ISession session, final Throwable th) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				session.getMessageHandler().showMessage(th);
-			}
-		});
 	}
-
-	private void showMessage(final ISession session, final String sMessage) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				session.getMessageHandler().showMessage(sMessage);
-			}
-		});
-	}
-}
