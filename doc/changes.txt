@@ -14,6 +14,8 @@ Enhancements
 
 Bug Fixes
 --------
+- The title from the wrong column was used in the popup window for a columns
+  data if the columns in the table had been resequenced (Joseph Boyd).
 - Allow for SQLException thrown by HSQLDB 1.7.1 on ResultSetmetaData.isSigned.
 - If the columns in a table were resequenced and then the data was copied to
   the clipboard then the column headings in the clipboard were in the wrong

@@ -99,7 +99,7 @@ public class CellDataPopup
 			if (comp instanceof BaseMDIParentFrame)
 			{
 				TextAreaInternalFrame taif = 
-					new TextAreaInternalFrame(table.getModel().getColumnName(col), (String)obj);
+					new TextAreaInternalFrame(table.getColumnName(col), (String)obj);
 				((BaseMDIParentFrame)comp).addInternalFrame(taif, false);
 				taif.setLayer(JLayeredPane.POPUP_LAYER);
 				taif.pack();
@@ -110,11 +110,11 @@ public class CellDataPopup
 				TextAreaDialog tad = null;
 				if (comp instanceof Dialog)
 				{
-					tad = new TextAreaDialog((Dialog)comp, table.getModel().getColumnName(col), (String)obj);
+					tad = new TextAreaDialog((Dialog)comp, table.getColumnName(col), (String)obj);
 				}
 				else if (comp instanceof Frame)
 				{
-					tad = new TextAreaDialog((Frame)comp, table.getModel().getColumnName(col), (String)obj);
+					tad = new TextAreaDialog((Frame)comp, table.getColumnName(col), (String)obj);
 				}			
 				else
 				{
