@@ -284,16 +284,8 @@ public class DataTypeBoolean
 				// This only applies to Popup editing since these chars are
 				// not passed to this level by the in-cell editor.
 				if (c == KeyEvent.VK_TAB || c == KeyEvent.VK_ENTER) {
-					int cIndex = text.indexOf(c);
-					String newText = null;
-					if (cIndex == 0)
-						newText = text.substring(1);
-					else if (cIndex == text.length()-1)
-						newText = text.substring(0, text.length()-1);
-					else
-						newText = text.substring(0, cIndex) + text.substring(cIndex+1);
-
-					((IRestorableTextComponent)_theComponent).updateText(newText);
+					// remove all instances of the offending char
+					((IRestorableTextComponent)_theComponent).updateText( text.replaceAll(""+c, ""));
 					_theComponent.getToolkit().beep();
 					e.consume();
 				}
