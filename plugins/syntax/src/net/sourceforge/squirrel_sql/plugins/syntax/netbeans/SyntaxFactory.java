@@ -10,6 +10,18 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 
+/**
+ * This class is used in the SQLKit.createSyntax() method.
+ * In this method the right SQLSyntax object initialized
+ * with the right session must be returned because
+ * usually different sessions have different key words, tables, ...
+ *
+ * The only key we are given in SQLKit.createSyntax() is the document
+ * of the JEditorPane of the session. This class provides the mapping
+ * of document to session. This mapping is initialized through the
+ * calls of putEditorPane() and putDocument() in the constructor of
+ * NetbeansSQLEditorPane.
+ */
 public class SyntaxFactory
 {
    private Hashtable _sessionByDocument = new Hashtable();
