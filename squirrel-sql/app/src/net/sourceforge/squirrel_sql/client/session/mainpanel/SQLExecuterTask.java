@@ -178,74 +178,74 @@ public class SQLExecuterTask implements Runnable
 		throws SQLException, DataSetException
 	{
 		long executionStart = System.currentTimeMillis();
+		long executionEnd = 0;
 		long outputStart = 0;
+		long outputEnd = 0;
 
 		++_currentQueryIndex;
 
-		try
+		_cancelPanel.setSQL(querySql);
+		_cancelPanel.setStatusLabel("Executing SQL...");
+		boolean rc = _stmt.execute(querySql);
+		executionEnd = System.currentTimeMillis();
+		if (rc)
 		{
-			_cancelPanel.setSQL(querySql);
-			_cancelPanel.setStatusLabel("Executing SQL...");
-			if (_stmt.execute(querySql))
+			outputStart = System.currentTimeMillis();
+			if (_stopExecution)
 			{
-				if (_stopExecution)
+				return false;
+			}
+			_sqlPanel.addSQLToHistory(querySql);
+			ResultSet rs = _stmt.getResultSet();
+			if (rs != null)
+			{
+				try
 				{
-					return false;
-				}
-				outputStart = System.currentTimeMillis();
-				_sqlPanel.addSQLToHistory(querySql);
-				ResultSet rs = _stmt.getResultSet();
-				if (rs != null)
-				{
+					_cancelPanel.setStatusLabel("Building output...");
+					ResultSetDataSet rsds = new ResultSetDataSet();
+					SessionProperties props = _session.getProperties();
+					rsds.setLargeResultSetObjectInfo(props.getLargeResultSetObjectInfo());
+					rsds.setResultSet(rs);
+					ResultSetMetaDataDataSet rsmdds = new ResultSetMetaDataDataSet(rs);
+					_sqlPanel.addResultsTab(querySql, rsds, rsmdds, _cancelPanel);
+					_cancelPanelRemoved = true;
 					try
 					{
-						_cancelPanel.setStatusLabel("Building output...");
-						ResultSetDataSet rsds = new ResultSetDataSet();
-						SessionProperties props = _session.getProperties();
-						rsds.setLargeResultSetObjectInfo(props.getLargeResultSetObjectInfo());
-						rsds.setResultSet(rs);
-						ResultSetMetaDataDataSet rsmdds = new ResultSetMetaDataDataSet(rs);
-						_sqlPanel.addResultsTab(querySql, rsds, rsmdds, _cancelPanel);
-						_cancelPanelRemoved = true;
-						try
-						{
-							_session.getMessageHandler().showMessage(
-								rs.getWarnings());
-						}
-						catch (Exception e)
-						{
-							s_log.error("Can't get warnings ", e);
-						}
+						_session.getMessageHandler().showMessage(
+							rs.getWarnings());
 					}
-					finally
+					catch (Exception e)
 					{
-						rs.close();
+							s_log.error("Can't get warnings ", e);
 					}
 				}
+				finally
+				{
+					rs.close();
+				}
 			}
-			else
-			{
-				_sqlPanel.addSQLToHistory(querySql);
-				_session.getMessageHandler().showMessage(
-					_stmt.getUpdateCount() + " Rows Updated");
-			}
+			outputEnd = System.currentTimeMillis();
 		}
-		finally
+		else
 		{
-			final NumberFormat nbrFmt = NumberFormat.getNumberInstance();
-			final long finish = System.currentTimeMillis();
-			StringBuffer buf = new StringBuffer();
-			buf.append("Query ").append(nbrFmt.format(_currentQueryIndex))
-				.append(" elapsed time(seconds) - Total: ")
-				.append(nbrFmt.format((finish - executionStart) / 1000.0))
-				.append(", SQL query time: ")
-				.append(nbrFmt.format((outputStart - executionStart) / 1000.0))
-				.append(", Building output time: ")
-				.append(nbrFmt.format((finish - outputStart) / 1000.0));
-			_session.getMessageHandler().showMessage(buf.toString());
-			//  i18n
+			_sqlPanel.addSQLToHistory(querySql);
+			_session.getMessageHandler().showMessage(
+				_stmt.getUpdateCount() + " Rows Updated");
 		}
 
+		//  i18n
+		final NumberFormat nbrFmt = NumberFormat.getNumberInstance();
+		double executionLength = (executionEnd - executionStart) / 1000.0;
+		double outputLength = (outputEnd - outputStart) / 1000.0;
+		StringBuffer buf = new StringBuffer();
+		buf.append("Query ").append(nbrFmt.format(_currentQueryIndex))
+			.append(" elapsed time (seconds) - Total: ")
+			.append(nbrFmt.format(executionLength + outputLength))
+			.append(", SQL query time: ")
+			.append(nbrFmt.format(executionLength))
+			.append(", Building output time: ")
+			.append(nbrFmt.format(outputLength));
+		_session.getMessageHandler().showMessage(buf.toString());
 		return true;
 	}
 
