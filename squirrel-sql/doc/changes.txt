@@ -3,6 +3,9 @@ Change Log
 
 1.1 continuation
 ================
+- View SQL data entry caret line/column in status bar
+- Removed control characters from SQL Result tab headings.
+- The characters -- at the beginning of a line of SQL will turn it into a comment.
 - Properties windows are now modeless.
 - Driver and Alias maintenance windows are now modeless.
 - Aliaes and Drivers tool window now resized when Look and Feel changed (if required).
