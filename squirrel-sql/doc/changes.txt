@@ -3,7 +3,10 @@ Change Log
 
 1.1 continuation
 ================
-- SQL execution now in its own thread so that the user interface is
+- Connection window is now modeless.
+- SQL execution and object tree expansion now runs in thread so that the
+  user interface is still responsive (Johan Compagner).
+- Node expansion is now in its own thread so that the user interface is
   still responsive (Johan Compagner).
 - Row count is now available on the Info tab for a table.
 - Meta data is available for SQL execution.
