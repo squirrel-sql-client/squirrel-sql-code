@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
 /*
- * Copyright (C) 2002-2003 Colin Bell
+ * Copyright (C) 2002-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -113,6 +113,8 @@ public class ObjectTreePanel extends JPanel
 	/** Listens to changes in each of the tabbed folders. */
 	private TabbedPaneListener _tabPnlListener;
 
+	private ObjectTreeSelectionListener _objTreeSelLis = null;
+
 	/**
 	 * Collection of <TT>IObjectPanelTab</TT> objects to be displayed for all
 	 * nodes in the object tree.
@@ -219,8 +221,10 @@ public class ObjectTreePanel extends JPanel
 			//setupTabbedPane((ObjectTreeTabbedPane)it.next());
 			ObjectTreeTabbedPane ottp = (ObjectTreeTabbedPane) it.next();
 			ottp.getTabbedPane().addChangeListener(_tabPnlListener);
-
 		}
+
+		_objTreeSelLis = new ObjectTreeSelectionListener();
+		_tree.addTreeSelectionListener(_objTreeSelLis);
 	}
 
 	public void removeNotify()
@@ -240,6 +244,11 @@ public class ObjectTreePanel extends JPanel
 			pane.getTabbedPane().removeChangeListener(_tabPnlListener);
 		}
 		_tabPnlListener = null;
+		if (_objTreeSelLis != null)
+		{
+			_tree.removeTreeSelectionListener(_objTreeSelLis);
+			_objTreeSelLis = null;
+		}
 	}
 
 	/**
@@ -701,7 +710,9 @@ public class ObjectTreePanel extends JPanel
 		add(_splitPane, BorderLayout.CENTER);
 		_splitPane.setDividerLocation(200);
 
-		_tree.addTreeSelectionListener(new ObjectTreeSelectionListener());
+//		_tree.addTreeSelectionListener(new ObjectTreeSelectionListener());
+//		_objTreeSelLis = new ObjectTreeSelectionListener();
+//		_tree.addTreeSelectionListener(_objTreeSelLis);
 
 		_tree.setSelectionRow(0);
 	}

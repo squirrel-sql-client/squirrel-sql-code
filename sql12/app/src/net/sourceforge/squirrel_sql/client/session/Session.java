@@ -54,14 +54,14 @@ import net.sourceforge.squirrel_sql.client.session.event.ISessionListener;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
+import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
+import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterClauses;
-import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsProcessor;
-import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 /**
  * Think of a session as being the users view of the database. IE it includes
- * the database connetion and the UI.
+ * the database connection and the UI.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
@@ -78,9 +78,6 @@ class Session implements ISession
 	/** Descriptive title for session. */
 	private String _title = "";
 
-	/** Original title */
-	private String _originalTitle = "";
-
 	/**
 	 * The session index is used to uniquely identify sessions that
 	 * are for the same alias.
@@ -88,6 +85,8 @@ class Session implements ISession
 	private int _sessionIndex = 1;
 
 	private SessionSheet _sessionSheet;
+
+	private boolean _sessionCreated = false;
 
 	/** The <TT>IIdentifier</TT> that uniquely identifies this object. */
 	private IIdentifier _id = IdentifierFactory.getInstance().createIdentifier();
@@ -143,6 +142,8 @@ class Session implements ISession
 	private List _statusBarToBeAdded = new ArrayList();
 	private ParserEventsProcessor _parserEventsProcessor;
 
+	private SQLConnectionListener _connLis = null;
+
 	/**
 	 * Create a new session.
 	 *
@@ -152,11 +153,13 @@ class Session implements ISession
 	 * @param	conn		Connection to database.
 	 * @param	user		User name connected with.
 	 * @param	password	Password for <TT>user</TT>
+	 * @param	index		Used to uniquely identify sessions for the
+	 *						same alias.
 	 *
 	 * @throws IllegalArgumentException if any parameter is null.
 	 */
 	public Session(IApplication app, ISQLDriver driver, ISQLAlias alias,
-					SQLConnection conn, String user, String password)
+					SQLConnection conn, String user, String password, int index)
 	{
 		super();
 		if (app == null)
@@ -182,9 +185,9 @@ class Session implements ISession
 		_conn = conn;
 		_user = user;
 		_password = password;
+		_sessionIndex = index;
 
-		_title = createTitle();
-		_originalTitle = _title;
+		setupTitle();
 
 		_props = (SessionProperties)_app.getSquirrelPreferences().getSessionProperties().clone();
 		_sqlFilterClauses = new SQLFilterClauses();
@@ -196,6 +199,9 @@ class Session implements ISession
 
 		_parserEventsProcessor = new ParserEventsProcessor(this);
 
+		_connLis = new SQLConnectionListener();
+		_conn.addPropertyChangeListener(_connLis);
+
 		// Start loading table/column info about the current database.
 		_app.getThreadPool().addTask(new Runnable()
 		{
@@ -204,6 +210,8 @@ class Session implements ISession
 				loadTableInfo();
 			}
 		});
+
+		_sessionCreated = true;
 	}
 
 	/**
@@ -220,9 +228,13 @@ class Session implements ISession
 		{
 			s_log.debug("Closing session: " + _id);
 
+			_conn.removePropertyChangeListener(_connLis);
+			_connLis = null;
+
 			try
 			{
 				_parserEventsProcessor.endProcessing();
+				_parserEventsProcessor = null;
 			}
 			catch(Exception e)
 			{
@@ -661,6 +673,29 @@ class Session implements ISession
 		return _title;
 	}
 
+ 	/**
+	 * Fire a &quot;session title changed&quot; event.
+	 */
+	protected void fireSessionTitleChangedEvent()
+	{
+		Object[] listeners = _listenerList.getListenerList();
+		// Process the listeners last to first, notifying
+		// those that are interested in this event.
+		SessionEvent evt = null;
+		for (int i = listeners.length - 2; i >= 0; i-=2 )
+		{
+			if (listeners[i] == ISessionListener.class)
+			{
+				// Lazily create the event.
+				if (evt == null)
+				{
+					evt = new SessionEvent(this);
+				}
+				((ISessionListener)listeners[i + 1]).sessionTitleChanged(evt);
+			}
+		}
+	}
+
 	/**
 	 * Fire a &quot;session closed&quot; event.
 	 */
@@ -700,18 +735,18 @@ class Session implements ISession
 	 *
 	 * @param	idx		Session index
 	 */
-	void setSessionIndex(int idx)
-	{
-		_sessionIndex = idx;
-		if (idx > 1)
-		{
-			_title = _originalTitle + " (" + _sessionIndex + ")";
-		}
-		else
-		{
-			_title = _originalTitle;
-		}
-	}
+//	void setSessionIndex(int idx)
+//	{
+//		_sessionIndex = idx;
+//		if (idx > 1)
+//		{
+//			_title = _originalTitle + " (" + _sessionIndex + ")";
+//		}
+//		else
+//		{
+//			_title = _originalTitle;
+//		}
+//	}
 
 	/**
 	 * Load table information about the current database.
@@ -721,17 +756,17 @@ class Session implements ISession
 		_defaultSchemaInfo.load(getSQLConnection());
 	}
 
-	private String createTitle()
+	private void setupTitle()
 	{
-		String user = null;
-		try
-		{
-			user = getSQLConnection().getSQLMetaData().getUserName();
-		}
-		catch (SQLException ex)
-		{
-			s_log.error("Error occured retrieving user name from Connection", ex);
-		}
+//		String user = null;
+//		try
+//		{
+//			user = getSQLConnection().getSQLMetaData().getUserName();
+//		}
+//		catch (SQLException ex)
+//		{
+//			s_log.error("Error occured retrieving user name from Connection", ex);
+//		}
 
 		String catalog = null;
 		try
@@ -752,7 +787,8 @@ class Session implements ISession
 		}
 
 		String title = null;
-		if (user != null && user.length() > 0)
+		String user = _user != null ? _user : "";
+		if (user.length() > 0)
 		{
 			String[] args = new String[3];
 			args[0] = getAlias().getName();
@@ -768,11 +804,33 @@ class Session implements ISession
 			title = s_stringMgr.getString("Session.title0", args);
 		}
 
-		return title.toString();
+		if (_sessionIndex > 1)
+		{
+			title += " (" + _sessionIndex + ")";
+		}
+
+		_title = title;
+
+		if (_sessionCreated)
+		{
+			fireSessionTitleChangedEvent();
+		}
 	}
 
 	public IParserEventsProcessor getParserEventsProcessor()
 	{
 		return _parserEventsProcessor;
+	}
+
+	private class SQLConnectionListener implements PropertyChangeListener
+	{
+		public void propertyChange(PropertyChangeEvent evt)
+		{
+			final String propName = evt.getPropertyName();
+			if (propName == null || propName == SQLConnection.IPropertyNames.CATALOG)
+			{
+				setupTitle();
+			}
+		}
 	}
 }

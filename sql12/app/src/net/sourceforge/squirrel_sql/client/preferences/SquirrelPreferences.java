@@ -48,6 +48,7 @@ public class SquirrelPreferences implements Serializable
 	{
 		String ACTION_KEYS = "actionKeys";
 		String ALIASES_SELECTED_INDEX = "aliasesSelectdIndex";
+		String CONFIRM_SESSION_CLOSE = "confirmSessionClose";
 		String DRIVERS_SELECTED_INDEX = "driversSelectdIndex";
  		String FIRST_RUN = "firstRun";
 		String JDBC_DEBUG_TYPE = "jdbcDebugtype";
@@ -142,6 +143,9 @@ public class SquirrelPreferences implements Serializable
 
  	/** Is this the first time SQuirreL has been run? */
  	private boolean _firstRun = true;
+
+	/** Confirm closing sessions */
+ 	private boolean _confirmSessionClose = true;
 
 	/**
 	 * Objects stored by plugins. Each element of this collection is a <TT>Map</TT>
@@ -544,6 +548,29 @@ public class SquirrelPreferences implements Serializable
  											oldValue, _firstRun);
  		}
  	}
+ 	/**
+ 	 * Should user confirm whether sessions should be closed.
+ 	 *
+ 	 * @return	<tt>true</tt> if user should have to confirm session close
+ 	 *			else <tt>false</tt>.
+ 	 */
+ 	public boolean getConfirmSessionClose()
+ 	{
+ 		return _confirmSessionClose;
+ 	}
+
+ 	public synchronized void setConfirmSessionClose(boolean data)
+ 	{
+ 		if (data != _confirmSessionClose)
+ 		{
+ 			final boolean oldValue = _confirmSessionClose;
+ 			_confirmSessionClose = data;
+ 			getPropertyChangeReporter().firePropertyChange(
+ 										IPropertyNames.CONFIRM_SESSION_CLOSE,
+ 										oldValue, _confirmSessionClose);
+ 		}
+ 	}
+
 
 	/*
 	public synchronized PluginObjectWrapper[] getPluginObjects() {
