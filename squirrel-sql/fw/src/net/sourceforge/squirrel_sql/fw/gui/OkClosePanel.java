@@ -102,6 +102,14 @@ public class OkClosePanel extends JPanel {
 		root.setDefaultButton(_okBtn);
 	}
 
+	public JButton getCloseButton() {
+		return _closeBtn;
+	}
+
+	public JButton getOKButton() {
+		return _okBtn;
+	}
+
 	private void fireButtonPressed(JButton btn) {
 		// Guaranteed to be non-null.
 		Object[] listeners = _listenerList.getListenerList();
