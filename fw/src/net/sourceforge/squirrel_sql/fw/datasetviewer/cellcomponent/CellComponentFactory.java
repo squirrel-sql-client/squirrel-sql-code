@@ -536,15 +536,10 @@ public class CellComponentFactory {
 					break;
 
 				case Types.BINARY:
-					//??
-					break;
-
 				case Types.VARBINARY:
-					//??
-					break;
-
 				case Types.LONGVARBINARY:
-					//??
+					// set up for Binary types
+					dataTypeComponent = new DataTypeBinary(table, colDef);
 					break;
 
 				case Types.BLOB:
