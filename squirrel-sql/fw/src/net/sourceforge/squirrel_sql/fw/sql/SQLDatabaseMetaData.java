@@ -508,15 +508,18 @@ public class SQLDatabaseMetaData
 	 */
 	public String[] getTableTypes() throws SQLException
 	{
-		DatabaseMetaData md = getJDBCMetaData();
+		final DatabaseMetaData md = getJDBCMetaData();
 
 		// Use a set rather than a list as some combinations of MS SQL and the
 		// JDBC/ODBC return multiple copies of each table type.
 		final Set tableTypes = new TreeSet();
-		ResultSet rs = md.getTableTypes();
-		while (rs.next())
+		final ResultSet rs = md.getTableTypes();
+		if (rs != null)
 		{
-			tableTypes.add(rs.getString(1).trim());
+			while (rs.next())
+			{
+				tableTypes.add(rs.getString(1).trim());
+			}
 		}
 
 		final String dbProductName = getDatabaseProductName();
