@@ -96,6 +96,19 @@ public abstract class DefaultPlugin implements IPlugin
 	}
 
 	/**
+	 * Returns the name of the licence file for the plugin. This should
+	 * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
+	 * directory.
+	 *
+	 * @return	the licence file name or <TT>null</TT> if plugin doesn't have
+	 * 			a change log.
+	 */
+	public String getLicenceFileName()
+	{
+		return null;
+	}
+
+	/**
 	 * Return the current application API.
 	 *
 	 * @return	The current application API.

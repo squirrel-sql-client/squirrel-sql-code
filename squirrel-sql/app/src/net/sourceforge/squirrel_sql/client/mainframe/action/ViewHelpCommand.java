@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
-/*
+
+
+/* TODO: Delete this class - no longer required.
  * Copyright (C) 2002 Colin Bell
  * colbell@users.sourceforge.net
  *
@@ -18,20 +20,13 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.io.File;
-import java.io.IOException;
 
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
-import javax.swing.event.InternalFrameListener;
-
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.HtmlViewerSheet;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 /**
  * This <CODE>ICommand</CODE> displays the Help window.
@@ -43,12 +38,6 @@ public class ViewHelpCommand implements ICommand
 	/** Logger for this class. */
 	private static ILogger s_log =
 		LoggerController.createLogger(ViewHelpCommand.class);
-
-	/** Help window. */
-//	private static HtmlViewerSheet s_sheet = null;
-
-	/** Listenr for the Help window. */
-//	private static InternalFrameListener s_lis = new MyInternalFrameListener();
 
 	/** Application API. */
 	private IApplication _app;
@@ -78,26 +67,10 @@ public class ViewHelpCommand implements ICommand
 	{
 		try
 		{
-//			synchronized (getClass())
-//			{
-//				if (s_sheet == null)
-//				{
-//					File file = new ApplicationFiles().getQuickStartGuideFile();
-//					s_sheet = new HtmlViewerSheet("SQuirreL SQL Client - Help",
-//													file.toURL());
-//					s_sheet.addInternalFrameListener(s_lis);
-//					_app.getMainFrame().addInternalFrame(s_sheet, true, null);
-//					s_sheet.setSize(600, 400);
-//					GUIUtils.centerWithinDesktop(s_sheet);
-//				}
-//				s_sheet.setVisible(true);
-//				s_sheet.toFront();
-//			}
 			File file = new ApplicationFiles().getQuickStartGuideFile();
-			ICommand cmd = new ViewFileCommand(_app, "", file);
+			ICommand cmd = new ViewFileCommand(_app, file);
 			cmd.execute();
 		}
-//		catch (IOException ex)
 		catch (BaseException ex)
 		{
 			final String msg = "Error occured reading quickstart file";
@@ -106,24 +79,4 @@ public class ViewHelpCommand implements ICommand
 		}
 	}
 
-//	private static final class MyInternalFrameListener
-//		extends InternalFrameAdapter
-//	{
-//		/**
-//		 * Help frame has been closed so allow it to be garbage collected.
-//		 */
-//		public void internalFrameClosed(InternalFrameEvent evt)
-//		{
-//			super.internalFrameClosed(evt);
-//			synchronized (ViewHelpCommand.class)
-//			{
-//				if (s_sheet != null)
-//				{
-//					s_sheet.removeInternalFrameListener(this);
-//					s_sheet = null;
-//				}
-//			}
-//		}
-//
-//	}
 }

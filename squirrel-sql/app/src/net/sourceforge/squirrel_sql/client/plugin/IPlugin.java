@@ -102,6 +102,16 @@ public interface IPlugin
 	String getChangeLogFileName();
 
 	/**
+	 * Returns the name of the licence file for the plugin. This should
+	 * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
+	 * directory.
+	 *
+	 * @return	the licence file name or <TT>null</TT> if plugin doesn't have
+	 * 			a change log.
+	 */
+	String getLicenceFileName();
+
+	/**
 	 * Create panels for the Global Preferences dialog.
 	 *
 	 * @return	Array of <TT>IGlobalPreferencesPanel</TT> objects. Return

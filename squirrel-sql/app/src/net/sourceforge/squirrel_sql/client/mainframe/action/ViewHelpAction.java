@@ -18,9 +18,13 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.event.ActionEvent;
+import java.io.File;
+
+import net.sourceforge.squirrel_sql.fw.util.BaseException;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 
 /**
  * This <CODE>Action</CODE> displays the Squirrel Help Window.
@@ -29,6 +33,8 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
  */
 public class ViewHelpAction extends SquirrelAction
 {
+	private File _file;
+
 	/**
 	 * Ctor.
 	 * 
@@ -36,8 +42,24 @@ public class ViewHelpAction extends SquirrelAction
 	 */
 	public ViewHelpAction(IApplication app)
 	{
+		this(app, null);
+	}
+
+	/**
+	 * Ctor.
+	 * 
+	 * @param	app		Application API.
+	 * @param	file	Help file.
+	 */
+	public ViewHelpAction(IApplication app, File file)
+	{
 		super(app);
+		_file = file;
 		app.getResources().setupAction(this);
+		if (_file == null)
+		{
+			_file = new ApplicationFiles().getQuickStartGuideFile();
+		}
 	}
 
 	/**
@@ -45,6 +67,13 @@ public class ViewHelpAction extends SquirrelAction
 	 */
 	public void actionPerformed(ActionEvent evt)
 	{
-		new ViewHelpCommand(getApplication()).execute();
+		try
+		{
+			new ViewFileCommand(getApplication(), _file).execute();
+		}
+		catch (BaseException ex)
+		{
+			getApplication().showErrorDialog("Error viewing change log", ex);
+		}
 	}
 }

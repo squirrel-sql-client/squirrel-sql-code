@@ -22,6 +22,8 @@ import java.io.File;
 
 import javax.swing.Action;
 
+import net.sourceforge.squirrel_sql.fw.util.BaseException;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 
@@ -32,24 +34,19 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
  */
 public class ViewChangeLogAction extends SquirrelAction
 {
-	private String _title;
 	private File _file;
 
 	/**
 	 * Ctor.
 	 * 
 	 * @param	app		Application API.
-	 * @param	title	Title for action.
 	 * @param	file	Change log file.
 	 */
-	public ViewChangeLogAction(IApplication app, String title, File file)
+	public ViewChangeLogAction(IApplication app, File file)
 	{
 		super(app);
-		_title = title;
 		_file = file;
-
 		app.getResources().setupAction(this);
-		putValue(Action.NAME, title);
 	}
 
 	/**
@@ -57,6 +54,13 @@ public class ViewChangeLogAction extends SquirrelAction
 	 */
 	public void actionPerformed(ActionEvent evt)
 	{
-//		new ViewFileCommand(getApplication(), "Change Log: " + _title, _file).execute();
+		try
+		{
+			new ViewFileCommand(getApplication(), _file).execute();
+		}
+		catch (BaseException ex)
+		{
+			getApplication().showErrorDialog("Error viewing change log", ex);
+		}
 	}
 }

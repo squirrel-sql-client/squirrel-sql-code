@@ -46,30 +46,22 @@ public class ViewFileCommand implements ICommand
 	private static ILogger s_log =
 		LoggerController.createLogger(ViewFileCommand.class);
 
-	/** Help window. */
-//	private static HtmlViewerSheet s_sheet = null;
-
-	/** Listenr for the Help window. */
-//	private static InternalFrameListener s_lis = new MyInternalFrameListener();
-
 	/** Application API. */
 	private IApplication _app;
 
-	private String _title;
 	private File _file;
 
 	/**
 	 * Ctor.
 	 *
 	 * @param	app		Application API.
-	 * @param	title	Title for window.
 	 * @param	file	File to be displayed.
 	 *
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT>,
 	 * 			or <TT>File</TT> passed.
 	 */
-	public ViewFileCommand(IApplication app, String title, File file)
+	public ViewFileCommand(IApplication app, File file)
 	{
 		super();
 		if (app == null)
@@ -81,7 +73,6 @@ public class ViewFileCommand implements ICommand
 			throw new IllegalArgumentException("Null File passed");
 		}
 		_app = app;
-		_title = title != null ? title : "";
 		_file = file;
 	}
 
@@ -105,26 +96,4 @@ public class ViewFileCommand implements ICommand
 			throw new BaseException(ex);
 		}
 	}
-
-//	private static final class MyInternalFrameListener
-//		extends InternalFrameAdapter
-//	{
-//		/**
-//		 * Help frame has been closed so allow it to be garbage collected.
-//		 */
-//		public void internalFrameClosed(InternalFrameEvent evt)
-//		{
-//			super.internalFrameClosed(evt);
-//			synchronized (ViewHelpCommand.class)
-//			{
-//				if (s_sheet != null)
-//				{
-//					s_sheet.removeInternalFrameListener(this);
-//					s_sheet = null;
-//				}
-//			}
-//		}
-//
-//	}
-
 }

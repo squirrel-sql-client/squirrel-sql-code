@@ -36,6 +36,9 @@ public class SquirrelResources extends Resources {
 		String FILE = "file";
 		String HELP = "help";
 		String PLUGINS = "plugins";
+		String PLUGIN_CHANGE_LOG = "pluginChangeLog";
+		String PLUGIN_HELP = "pluginHelp";
+		String PLUGIN_LICENCE = "pluginLicence";
 		String SESSION = "session";
 		String WINDOWS = "windows";
 	}

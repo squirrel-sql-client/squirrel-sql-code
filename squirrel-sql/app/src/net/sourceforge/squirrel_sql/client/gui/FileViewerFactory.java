@@ -108,7 +108,7 @@ public class FileViewerFactory
 	private synchronized void removeViewer(HtmlViewerSheet viewer)
 	{
 		viewer.removeInternalFrameListener(_lis);
-		_sheets.remove(viewer.getURL());
+		_sheets.remove(viewer.getURL().toString());
 	}
 
 	private final class MyInternalFrameListener extends InternalFrameAdapter

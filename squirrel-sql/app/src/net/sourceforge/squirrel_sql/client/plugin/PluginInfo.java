@@ -17,6 +17,8 @@ package net.sourceforge.squirrel_sql.client.plugin;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+ 
+ // TODO: This should implement IPlugin or IPlugin should extend this.
 public class PluginInfo
 {
 	private String _pluginClassName;
@@ -113,6 +115,45 @@ public class PluginInfo
 	public String getVersion()
 	{
 		return _plugin.getVersion();
+	}
+
+	/**
+	 * Returns the name of the Help file for the plugin. This should
+	 * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
+	 * directory.
+	 *
+	 * @return	the Help file name or <TT>null</TT> if plugin doesn't have
+	 * 			a help file.
+	 */
+	public String getHelpFileName()
+	{
+		return _plugin.getHelpFileName();
+	}
+
+	/**
+	 * Returns the name of the change log for the plugin. This should
+	 * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
+	 * directory.
+	 *
+	 * @return	the changelog file name or <TT>null</TT> if plugin doesn't have
+	 * 			a change log.
+	 */
+	public String getChangeLogFileName()
+	{
+		return _plugin.getChangeLogFileName();
+	}
+
+	/**
+	 * Returns the name of the licence file for the plugin. This should
+	 * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
+	 * directory.
+	 *
+	 * @return	the licence file name or <TT>null</TT> if plugin doesn't have
+	 * 			a licence file.
+	 */
+	public String getLicenceFileName()
+	{
+		return _plugin.getLicenceFileName();
 	}
 
 	/**
