@@ -6,6 +6,8 @@ SQuirreL SQL Client Change Log
 
 Bug Fixes
 ---------
+- Allow for DB2 not returning all possible schema names.
+- Make sure popup dialogs aren't positioned off screen.
 - The data displayed within the Contents tab was lost when a session sheet was
   deactivated and then activated.
 - Use default Look and Feel for the installer as the Kunststoff Look and Feel
