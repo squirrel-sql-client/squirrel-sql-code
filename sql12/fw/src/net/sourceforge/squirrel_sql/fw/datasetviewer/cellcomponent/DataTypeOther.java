@@ -27,7 +27,9 @@ import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
+import javax.swing.BorderFactory;
 import javax.swing.text.JTextComponent;
+import javax.swing.JCheckBox;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
@@ -37,6 +39,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
+import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 
 /**
  * @author gwg
@@ -93,6 +96,26 @@ public class DataTypeOther
 	//?? for this data type.
 	private DefaultColumnRenderer _renderer = DefaultColumnRenderer.getInstance();	
 
+
+	/**
+	 * Name of this class, which is needed because the class name is needed
+	 * by the static method getControlPanel, so we cannot use something
+	 * like getClass() to find this name.
+	 */
+	private static final String thisClassName =
+		"net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeOther";
+
+	/*
+	 * Properties settable by the user
+	 */
+	 // flag for whether we have already loaded the properties or not
+	 private static boolean propertiesAlreadyLoaded = false;
+	 
+		 
+	/** Read the contents of Other from Result sets when first loading the tables. */
+	private static boolean _readSQLOther = false;
+	
+
 	/**
 	 * Constructor - save the data needed by this data type.
 	 */
@@ -100,6 +123,34 @@ public class DataTypeOther
 		_table = table;
 		_colDef = colDef;
 		_isNullable = colDef.isNullable();
+
+		loadProperties();
+	}
+	
+	/** Internal function to get the user-settable properties from the DTProperties,
+	 * if they exist, and to ensure that defaults are set if the properties have
+	 * not yet been created.
+	 * <P>
+	 * This method may be called from different places depending on whether
+	 * an instance of this class is created before the user brings up the Session
+	 * Properties window.  In either case, the data is static and is set only
+	 * the first time we are called.
+	 */
+	private static void loadProperties() {
+		
+		//set the property values
+		// Note: this may have already been done by another instance of
+		// this DataType created to handle a different column.
+		if (propertiesAlreadyLoaded == false) {
+			// get parameters previously set by user, or set default values
+			_readSQLOther = false;	// set to the default
+			String readSQLOtherString = DTProperties.get(
+				thisClassName, "readSQLOther");
+			if (readSQLOtherString != null && readSQLOtherString.equals("true"))
+				_readSQLOther = true;
+
+			propertiesAlreadyLoaded = true;
+		}
 	}
 	
 	/**
@@ -279,7 +330,7 @@ public class DataTypeOther
 
 			
 		String data = null;
-		if (largeObjInfo.getReadSQLOther())
+		if (_readSQLOther)
 		{
 			// Running getObject on a java class attempts
 			// to load the class in memory which we don't want.
@@ -429,5 +480,94 @@ public class DataTypeOther
 	 	throws IOException 	 {	
 	 	
 		throw new IOException("Can not export data type OTHER");
-	 }		 
+	 }	
+	 
+
+	/*
+	 * Property change control panel
+	 */	  
+	 
+	 /**
+	  * Generate a JPanel containing controls that allow the user
+	  * to adjust the properties for this DataType.
+	  * All properties are static accross all instances of this DataType. 
+	  * However, the class may choose to apply the information differentially,
+	  * such as keeping a list (also entered by the user) of table/column names
+	  * for which certain properties should be used.
+	  * <P>
+	  * This is called ONLY if there is at least one property entered into the DTProperties
+	  * for this class.
+	  * <P>
+	  * Since this method is called by reflection on the Method object derived from this class,
+	  * it does not need to be included in the Interface.
+	  * It would be nice to include this in the Interface for consistancy, documentation, etc,
+	  * but the Interface does not seem to like static methods.
+	  */
+	 public static OkJPanel getControlPanel() {
+	 	
+		/*
+		 * If you add this method to one of the standard DataTypes in the
+		 * fw/datasetviewer/cellcomponent directory, you must also add the name
+		 * of that DataType class to the list in CellComponentFactory, method
+		 * getControlPanels, variable named initialClassNameList.
+		 * If the class is being registered with the factory using registerDataType,
+		 * then you should not include the class name in the list (it will be found
+		 * automatically), but if the DataType is part of the case statement in the
+		 * factory method getDataTypeObject, then it does need to be explicitly listed
+		 * in the getControlPanels method also.
+		 */
+		 
+		 // if this panel is called before any instances of the class have been
+		 // created, we need to load the properties from the DTProperties.
+		 loadProperties();
+		 
+		return new SQLOtherOkJPanel();
+	 }
+	 
+	 
+	 
+	 /**
+	  * Inner class that extends OkJPanel so that we can call the ok()
+	  * method to save the data when the user is happy with it.
+	  */
+	 private static class SQLOtherOkJPanel extends OkJPanel {
+		/*
+		 * GUI components - need to be here because they need to be
+		 * accessible from the event handlers to alter each other's state.
+		 */
+		// check box for whether to read contents during table load or not
+		private JCheckBox _showSQLOtherChk = new JCheckBox(
+			"Read contents when table is first loaded and display as string");
+
+
+		public SQLOtherOkJPanel() {
+		 	 
+			/* set up the controls */
+			// checkbox for read/not-read on table load
+			_showSQLOtherChk.setSelected(_readSQLOther);
+
+			/*
+			 * Create the panel and add the GUI items to it
+			 */
+ 		
+			setBorder(BorderFactory.createTitledBorder("SQL Other   (SQL type 1111)"));
+
+			add(_showSQLOtherChk);
+
+		} // end of constructor for inner class
+	 
+	 
+		/**
+		 * User has clicked OK in the surrounding JPanel,
+		 * so save the current state of all variables
+		 */
+		public void ok() {
+			// get the values from the controls and set them in the static properties
+			_readSQLOther = _showSQLOtherChk.isSelected();
+			DTProperties.put(
+				thisClassName,
+				"readSQLOther", Boolean.toString(_readSQLOther));
+		}
+	 
+	 } // end of inner class
 }
