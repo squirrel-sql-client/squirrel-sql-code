@@ -18,7 +18,7 @@
  *
  * created by cse, 07.10.2002 11:57:54
  *
- * @version $Id: ParserThread.java,v 1.1 2004-04-04 10:36:31 colbell Exp $
+ * @version $Id: ParserThread.java,v 1.2 2004-08-25 07:38:22 gerdwagner Exp $
  */
 package net.sourceforge.squirrel_sql.client.session.parser.kernel;
 
@@ -89,11 +89,18 @@ public class ParserThread extends Thread
 		_errorDetected = true;
 		int errPos = getPos(line, column);
 		_lastErrEnd = getTokenEnd(errPos);
-      _nextStatBegin = perdicNexttStatementBegin(errPos);
-		_workingErrorInfos.add(new ErrorInfo(message, _lastParserRunOffset + errPos, _lastParserRunOffset + _lastErrEnd));
+      _nextStatBegin = predictNextStatementBegin(errPos);
+
+      int beginPos = _lastParserRunOffset + errPos;
+      int endPos = _lastParserRunOffset + _lastErrEnd;
+
+      if(beginPos < endPos)
+      {
+         _workingErrorInfos.add(new ErrorInfo(message, _lastParserRunOffset + errPos-1 , _lastParserRunOffset + _lastErrEnd-1));
+      }
 	}
 
-   private int perdicNexttStatementBegin(int errPos)
+   private int predictNextStatementBegin(int errPos)
    {
       int ret = errPos;
       while(   _workingString.length() > ret && false == startsWithBeginKeyWord(ret) )
