@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.parser;
 
 import java.sql.SQLException;
+import java.sql.DatabaseMetaData;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
@@ -14,38 +15,35 @@ public class SQLSchemaImpl implements SQLSchema
 {
    private ISession _session;
    private Hashtable _tableCache = new Hashtable();
+   private DatabaseMetaData _dmd;
 
    SQLSchemaImpl(ISession session)
 	{
-      _session = session;
-	}
-
-	public SQLSchema.Table getTable(String catalog, String schema, String name)
-	{
       try
       {
-         String[] tableNames = _session.getSchemaInfo().getTables();
-
-         for (int i = 0; i < tableNames.length; i++)
-         {
-            if(tableNames[i].equalsIgnoreCase(name))
-            {
-               String key = getKey(catalog, schema, name);
-               SQLSchema.Table ret = (SQLSchema.Table) _tableCache.get(key);
-               if(null == ret)
-               {
-                  ret = new SQLSchema.Table(catalog, schema, tableNames[i], _session.getSQLConnection().getConnection().getMetaData());
-                  _tableCache.put(key, ret);
-               }
-               return ret;
-            }
-         }
-         return null;
+         _session = session;
+         _dmd = _session.getSQLConnection().getConnection().getMetaData();
       }
       catch (SQLException e)
       {
          throw new BaseRuntimeException(e);
       }
+   }
+
+	public SQLSchema.Table getTable(String catalog, String schema, String name)
+	{
+      if(_session.getSchemaInfo().isTable(name))
+      {
+         String key = getKey(catalog, schema, name);
+         SQLSchema.Table ret = (SQLSchema.Table) _tableCache.get(key);
+         if(null == ret)
+         {
+            ret = new SQLSchema.Table(catalog, schema, name, _dmd);
+            _tableCache.put(key, ret);
+         }
+         return ret;
+      }
+      return null;
    }
 
    private String getKey(String catalog, String schema, String name)

@@ -1,20 +1,18 @@
 package net.sourceforge.squirrel_sql.client.session.parser;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Vector;
-
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
-
-import net.sourceforge.squirrel_sql.fw.util.BaseRuntimeException;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.ParserThread;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.ParsingFinishedListener;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
+import net.sourceforge.squirrel_sql.fw.util.BaseRuntimeException;
 
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.Vector;
 
 public class ParserEventsProcessor implements IParserEventsProcessor
 {
@@ -34,12 +32,14 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 				onTimerStart();
 			}
 		};
-		_parserTimer = new Timer(300, al);
+
+
+		_parserTimer = new Timer(500, al);
 		_parserTimer.start();
 	}
 
 
-	private void onParserExitedOnException(final Throwable e)
+   private void onParserExitedOnException(final Throwable e)
 	{
 		SwingUtilities.invokeLater(new Runnable()
 		{
@@ -110,7 +110,17 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 
 		_parserThread = new ParserThread(new SQLSchemaImpl(_session));
 
+      _session.getSQLEntryPanel().getTextComponent().addKeyListener(new KeyAdapter()
+      {
+         public void keyTyped(KeyEvent e)
+         {
+            onKeyTyped(e);
+         }
+      });
 
+      // No more automatic restarts because
+      // key events will restart the parser from now on.
+      _parserTimer.setRepeats(false);
 
 		_parserThread.setParsingFinishedListener(new ParsingFinishedListener()
 		{
@@ -125,5 +135,15 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 			}
 		});
 	}
+
+   private void onKeyTyped(KeyEvent e)
+   {
+      if(false == e.isActionKey())
+      {
+         _parserTimer.restart();
+      }
+   }
+
+
 
 }
