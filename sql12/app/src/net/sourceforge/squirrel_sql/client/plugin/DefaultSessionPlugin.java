@@ -25,7 +25,7 @@ public abstract class DefaultSessionPlugin extends DefaultPlugin
 {
 	/**
 	 * A new session has been created. At this point the
-	 * <TT>SessionSheet</TT> does not exist for the new session.
+	 * <TT>SessionPanel</TT> does not exist for the new session.
 	 *
 	 * @param	session	 The new session.
 	 *

@@ -31,6 +31,8 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.session.MainPanel;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
@@ -119,7 +121,7 @@ public interface ISession extends IHasIdentifier
 	 *
 	 * @param	sheet	Sheet for this session.
 	 */
-	void setSessionSheet(SessionSheet child);
+	void setSessionSheet(SessionPanel child);
 
 	/**
 	 * Reconnect to the database.
@@ -133,7 +135,7 @@ public interface ISession extends IHasIdentifier
 	void setMessageHandler(IMessageHandler handler);
 	IMessageHandler getMessageHandler();
 
-	SessionSheet getSessionSheet();
+	SessionPanel getSessionSheet();
 
 // JASON:
 //	SQLFilterClauses getSQLFilterClauses();

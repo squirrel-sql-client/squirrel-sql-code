@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.session;
+package net.sourceforge.squirrel_sql.client.gui.session;
 /*
  * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
@@ -30,7 +30,11 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.session.ISQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public class SessionInternalFrame extends BaseSessionInternalFrame
 					implements ISQLInternalFrame, IObjectTreeInternalFrame
@@ -38,7 +42,7 @@ public class SessionInternalFrame extends BaseSessionInternalFrame
 	/** Application API. */
 	private final IApplication _app;
 
-	private SessionSheet _sessionPanel;
+	private SessionPanel _sessionPanel;
 
 	public SessionInternalFrame(ISession session)
 	{
@@ -48,7 +52,7 @@ public class SessionInternalFrame extends BaseSessionInternalFrame
 		createGUI(session);
 	}
 
-	public SessionSheet getSessionPanel()
+	public SessionPanel getSessionPanel()
 	{
 		return _sessionPanel;
 	}
@@ -127,7 +131,7 @@ public class SessionInternalFrame extends BaseSessionInternalFrame
 			}
 		});
 
-		_sessionPanel = new SessionSheet(session);
+		_sessionPanel = new SessionPanel(session);
 		setContentPane(_sessionPanel);
 		validate();
 	}
