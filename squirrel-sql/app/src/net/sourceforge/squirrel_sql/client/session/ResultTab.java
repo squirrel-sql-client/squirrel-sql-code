@@ -44,6 +44,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -60,6 +61,9 @@ public class ResultTab extends JPanel implements IHasIdentifier {
 
 	/** Current session. */
 	private ISession _session;
+
+	/** SQL that generated this tab. */
+	private String _sql;
 
 	/** Viewer to display the SQL results. */
 	private DataSetViewer _resultSetViewer = new DataSetViewer();
@@ -135,7 +139,8 @@ public class ResultTab extends JPanel implements IHasIdentifier {
 	 * @param	sql	SQL script that generated <TT>IDataSet</TT>.
 	 */
 	public void showResults(ResultSetDataSet rsds, ResultSetMetaDataDataSet mdds, String sql) throws DataSetException {
-		_currentSqlLbl.setText(sql);
+		_sql = sql;
+		_currentSqlLbl.setText(Utilities.cleanString(sql));
 
 		// Display the result set.
 		_resultSetViewer.setDestination(_resultSetModel);
@@ -153,6 +158,7 @@ public class ResultTab extends JPanel implements IHasIdentifier {
 			_metaDataOutput.clear();
 		}
 		_resultSetModel.clear();
+		_sql = "";
 		_currentSqlLbl.setText("");
 	}
 
@@ -162,7 +168,16 @@ public class ResultTab extends JPanel implements IHasIdentifier {
 	 * @return  Current SQL script.
 	 */
 	public String getSqlString() {
-		return _currentSqlLbl.getText();
+		return _sql;
+	}
+
+	/**
+	 * Return the current SQL script with control characters removed.
+	 *
+	 * @return  Current SQL script.
+	 */
+	public String getViewableSqlString() {
+		return Utilities.cleanString(_sql);
 	}
 
 	/**

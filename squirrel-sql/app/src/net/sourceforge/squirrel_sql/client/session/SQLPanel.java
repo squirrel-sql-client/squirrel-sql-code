@@ -515,7 +515,7 @@ class SQLPanel extends JPanel {
 	}
 
 	private void addResultsTab(ResultTab tab) {
-		_tabbedResultsPanel.addTab(tab.getTitle(), null, tab, tab.getSqlString());
+		_tabbedResultsPanel.addTab(tab.getTitle(), null, tab, tab.getViewableSqlString());
 	}
 
 	private String modifyIndividualScript(String sql) {

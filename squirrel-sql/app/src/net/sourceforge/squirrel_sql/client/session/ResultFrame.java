@@ -98,6 +98,6 @@ public class ResultFrame extends JInternalFrame {
 		}
 
 		SessionSheet sheet = session.getSessionSheet();
-		return sheet.getTitle() + " - " + tab.getSqlString();
+		return sheet.getTitle() + " - " + tab.getViewableSqlString();
 	}
 }

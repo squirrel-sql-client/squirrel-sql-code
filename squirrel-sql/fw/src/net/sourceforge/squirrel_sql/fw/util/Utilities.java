@@ -41,13 +41,13 @@ public class Utilities {
 	/**
 	 * Print the current stack trace to <TT>ps</TT>.
 	 *
-	 * @param   ps  The <TT>PrintStream</TT> to print stack trace to.
+	 * @param	ps	The <TT>PrintStream</TT> to print stack trace to.
 	 *
-	 * @throws  IllegalArgumentException	If a null <TT>ps</TT> passed.
+	 * @throws	IllegalArgumentException	If a null <TT>ps</TT> passed.
 	 */
-	public static void printStackTrace(PrintStream ps) throws IllegalArgumentException {
+	public static void printStackTrace(PrintStream ps) {
 		if (ps == null) {
-			throw new IllegalArgumentException("null PrintStream passed.");
+			throw new IllegalArgumentException("PrintStream == null");
 		}
 
 		try {
@@ -62,9 +62,9 @@ public class Utilities {
 	 *
 	 * @param   th  The exception to retrieve stack trace for.
 	 */
-	public static String getStackTrace(Throwable th) throws IllegalArgumentException {
+	public static String getStackTrace(Throwable th) {
 		if (th == null) {
-			throw new IllegalArgumentException("null exception passed.");
+			throw new IllegalArgumentException("Throwable == null");
 		}
 
 		StringWriter sw = new StringWriter();
@@ -88,13 +88,13 @@ public class Utilities {
 	 * Change the passed class name to its corresponding file name. E.G.
 	 * change &quot;Utilities&quot; to &quot;Utilities.class&quot;.
 	 *
-	 * @param   name	Class name to be changed.
+	 * @param	name	Class name to be changed.
 	 *
-	 * @throws  IllegalArgumentException	If a null <TT>name</TT> passed.
+	 * @throws	IllegalArgumentException	If a null <TT>name</TT> passed.
 	 */
-	public static String changeClassNameToFileName(String name) throws IllegalArgumentException {
+	public static String changeClassNameToFileName(String name) {
 		if (name == null) {
-			throw new IllegalArgumentException("null Class Name passed.");
+			throw new IllegalArgumentException("Class Name == null");
 		}
 		return name.replace('.', '/').concat(".class");
 	}
@@ -103,14 +103,14 @@ public class Utilities {
 	 * Change the passed file name to its corresponding class name. E.G.
 	 * change &quot;Utilities.class&quot; to &quot;Utilities&quot;.
 	 *
-	 * @param   name	Class name to be changed. If this does not represent
-	 *				  a Java class then <TT>null</TT> is returned.
+	 * @param	name	Class name to be changed. If this does not represent
+	 *					a Java class then <TT>null</TT> is returned.
 	 *
 	 * @throws  IllegalArgumentException	If a null <TT>name</TT> passed.
 	 */
-	public static String changeFileNameToClassName(String name) throws IllegalArgumentException {
+	public static String changeFileNameToClassName(String name) {
 		if (name == null) {
-			throw new IllegalArgumentException("null File Name passed.");
+			throw new IllegalArgumentException("File Name == null");
 		}
 		String className = null;
 		if (name.toLowerCase().endsWith(".class")) {
@@ -126,11 +126,14 @@ public class Utilities {
 	 * single spaces. If a <TT>null</TT> string passed return an empty
 	 * string.
 	 *
-	 * @param   str	 String to be cleaned.
+	 * @param	str	String to be cleaned.
 	 *
-	 * @return  Cleaned string.
+	 * @return	Cleaned string.
 	 */
 	public static String cleanString(String str) {
+		if (str == null) {
+			return EMPTY_STRING;
+		}
 		String newStr = str.replace('\n', ' ');
 		newStr = newStr.replace('\r', ' ');
 		newStr = newStr.replace('\t', ' ');
@@ -140,22 +143,21 @@ public class Utilities {
 	/**
 	 * Return the suffix of the passed file name.
 	 *
-	 * @param   fileName	 File name to retrieve suffix for.
+	 * @param	fileName	File name to retrieve suffix for.
 	 *
-	 * @return  Suffix for <TT>fileName</TT> or an empty string
+	 * @return	Suffix for <TT>fileName</TT> or an empty string
 	 * 			if unable to get the suffix.
 	 * 
 	 * @throws	IllegalArgumentException	if <TT>null</TT> file name passed.
 	 */
-	public static String getFileNameSuffix(String fileName)
-			throws IllegalArgumentException {
+	public static String getFileNameSuffix(String fileName) {
 		if (fileName == null) {
-			throw new IllegalArgumentException("Null file name passed");
+			throw new IllegalArgumentException("file name == nu;;");
 		}
 		int pos = fileName.lastIndexOf('.');
 		if (pos > 0 && pos < fileName.length() - 1) {
 			return fileName.substring(pos + 1);
 		}
-		return "";
+		return EMPTY_STRING;
 	}
 }
