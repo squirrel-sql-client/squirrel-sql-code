@@ -11,6 +11,10 @@ Enhancements
 - Main window toolbar is now floatable.
 - Using icons from the Eclipse (www.eclipse.org) project.
 
+Bug Fixes
+---------
+- Fixed metadata problems with the JDBC/ODBC bridge.
+
 
 1.1beta4
 ========
