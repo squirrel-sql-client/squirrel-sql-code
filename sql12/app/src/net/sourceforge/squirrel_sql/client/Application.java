@@ -217,6 +217,11 @@ class Application implements IApplication
 	{
 		_pluginManager.unloadPlugins();
 
+		int idx = _mainFrame.getAliasesToolWindow().getSelectedIndex();
+		_prefs.setAliasesSelectedIndex(idx);
+		idx = _mainFrame.getDriversToolWindow().getSelectedIndex();
+		_prefs.setDriversSelectedIndex(idx);
+
 		_prefs.save();
 
 		FileViewerFactory.getInstance().closeAllViewers();

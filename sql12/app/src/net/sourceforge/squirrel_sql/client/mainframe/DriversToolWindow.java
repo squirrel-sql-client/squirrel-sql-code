@@ -84,6 +84,16 @@ public class DriversToolWindow extends BaseToolWindow
 		});
 	}
 
+	/**
+	 * Retrieve the index of the currently selected driver.
+	 *
+	 * @return	index of currently selected driver.
+	 */
+	public int getSelectedIndex()
+	{
+		return _uiFactory._driversList.getSelectedIndex();
+	}
+
 	private static final class UserInterfaceFactory
 		implements BaseToolWindow.IUserInterfaceFactory
 	{

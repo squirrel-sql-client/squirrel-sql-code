@@ -62,8 +62,7 @@ public class AliasesToolWindow extends BaseToolWindow
 		// the list.
 		_uiFactory.enableDisableActions();
 
-		_app.getSquirrelPreferences()
-			.addPropertyChangeListener(new PropertyChangeListener()
+		_app.getSquirrelPreferences().addPropertyChangeListener(new PropertyChangeListener()
 		{
 			public void propertyChange(PropertyChangeEvent evt)
 			{
@@ -84,6 +83,16 @@ public class AliasesToolWindow extends BaseToolWindow
 				}
 			}
 		});
+	}
+
+	/**
+	 * Retrieve the index of the currently selected alias.
+	 *
+	 * @return	index of currently selected alias.
+	 */
+	public int getSelectedIndex()
+	{
+		return _uiFactory._aliasesList.getSelectedIndex();
 	}
 
 	private static final class UserInterfaceFactory

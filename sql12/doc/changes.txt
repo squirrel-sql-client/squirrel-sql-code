@@ -6,7 +6,8 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
-
+- Remember the selected alias and driver
+  between restarts.
 - Added SQL execution statistics to the
   Info tab on the SQL output panel.
 - Better positioning of the Column Details

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -31,23 +31,25 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-
 /**
  * This is a <CODE>JList</CODE> that dispays all the <CODE>ISQLDriver</CODE>
  * objects.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class DriversList extends JList {
+public class DriversList extends JList
+{
 	/** Application API. */
 	private IApplication _app;
 
 	/** Model for this component. */
 	private DriversListModel _model;
 
-	public DriversList(IApplication app) throws IllegalArgumentException {
+	public DriversList(IApplication app) throws IllegalArgumentException 
+	{
 		super();
-		if (app == null) {
+		if (app == null) 
+		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
 		_app = app;
@@ -59,32 +61,48 @@ public class DriversList extends JList {
 		SquirrelResources res = _app.getResources();
 		setCellRenderer(new DriverListCellRenderer(res.getIcon("list.driver.found"),res.getIcon("list.driver.notfound")));
 
-		// Select first item in list.
-		if (_model.getSize() > 0) {
+		final int idx = app.getSquirrelPreferences().getDriversSelectedIndex();
+		final int size = getModel().getSize();
+		if (idx > -1 && idx < size)
+		{
+			setSelectedIndex(idx);
+		}
+		else
+		{
 			setSelectedIndex(0);
 		}
 
-		_model.addListDataListener(new ListDataListener() {
-			public void contentsChanged(ListDataEvent evt) {
+		_model.addListDataListener(new ListDataListener()
+		{
+			public void contentsChanged(ListDataEvent evt)
+			{
 			}
-			public void intervalAdded(ListDataEvent evt) {
+			public void intervalAdded(ListDataEvent evt)
+			{
 				final int idx = evt.getIndex0();
-				SwingUtilities.invokeLater(new Runnable() {
+				SwingUtilities.invokeLater(new Runnable()
+				{
 					public void run() {
 						clearSelection();
 						setSelectedIndex(idx);
 					}
 				});
 			}
-			public void intervalRemoved(ListDataEvent evt) {
+			public void intervalRemoved(ListDataEvent evt)
+			{
 				final int idx = evt.getIndex0();
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
+				SwingUtilities.invokeLater(new Runnable()
+				{
+					public void run()
+					{
 						clearSelection();
 						int size = getModel().getSize();
-						if  (idx < size) {
+						if  (idx < size)
+						{
 							setSelectedIndex(idx);
-						} else if (size > 0) {
+						}
+						else if (size > 0)
+						{
 							setSelectedIndex(size - 1);
 						}
 					}
@@ -96,7 +114,8 @@ public class DriversList extends JList {
 	/**
 	 * Component has been added to its parent.
 	 */
-	public void addNotify() {
+	public void addNotify()
+	{
 		super.addNotify();
 		// Register so that we can display different tooltips depending
 		// which entry in list mouse is over.
@@ -106,23 +125,26 @@ public class DriversList extends JList {
 	/**
 	 * Component has been removed from its parent.
 	 */
-	public void removeNotify() {
+	public void removeNotify()
+	{
+		super.removeNotify();
 		// Don't need tooltips any more.
 		ToolTipManager.sharedInstance().unregisterComponent(this);
-		super.removeNotify();
 	}
 
 	/**
 	 * Return the <CODE>DriversListModel</CODE> that controls this list.
 	 */
-	public DriversListModel getTypedModel() {
+	public DriversListModel getTypedModel()
+	{
 		return _model;
 	}
 
 	/**
 	 * Return the <CODE>ISQLDriver</CODE> that is currently selected.
 	 */
-	public ISQLDriver getSelectedDriver() {
+	public ISQLDriver getSelectedDriver()
+	{
 		return (ISQLDriver)getSelectedValue();
 	}
 
@@ -132,12 +154,16 @@ public class DriversList extends JList {
 	 *
 	 * @param   event   Used to determine the current mouse position.
 	 */
-	public String getToolTipText(MouseEvent evt) {
+	public String getToolTipText(MouseEvent evt)
+	{
 		String tip = null;
 		final int idx = locationToIndex(evt.getPoint());
-		if (idx != -1) {
+		if (idx != -1)
+		{
 			tip = ((ISQLDriver)getModel().getElementAt(idx)).getName();
-		} else {
+		}
+		else
+		{
 			tip = getToolTipText();
 		}
 		return tip;
@@ -147,9 +173,9 @@ public class DriversList extends JList {
 	 * Return the tooltip used for this component if the mouse isn't over
 	 * an entry in the list.
 	 */
-	public String getToolTipText() {
+	public String getToolTipText()
+	{
 		return "List of database drivers that can be used to configure an alias"; //i18n
 	}
-
 }
 

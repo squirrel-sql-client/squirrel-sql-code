@@ -59,9 +59,9 @@ public class MainFrame extends BaseMDIParentFrame
 	{
 	}
 
-	private ILogger s_log = LoggerController.createLogger(MainFrame.class);
+	private final ILogger s_log = LoggerController.createLogger(MainFrame.class);
 
-	private IApplication _app;
+	private final IApplication _app;
 
 	private AliasesToolWindow _aliasesToolWindow;
 	private DriversToolWindow _driversToolWindow;
