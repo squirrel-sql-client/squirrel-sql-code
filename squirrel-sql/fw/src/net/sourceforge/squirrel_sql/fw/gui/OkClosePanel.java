@@ -22,6 +22,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
 import javax.swing.event.EventListenerList;
 
 public class OkClosePanel extends JPanel {
@@ -82,10 +83,22 @@ public class OkClosePanel extends JPanel {
 	}
 
 	/**
-	 * Make the OK button the default.
+	 * Make the OK button the default. This should be called
+	 * <EM>after</EM> you add this panel to a dialog/frame, not
+	 * before otherwise you will get an <TT>IllegalStateException</TT>
+	 * exception.
+	 * 
+	 * @param	IllegalStateException
+	 * 			Thrown if <TT>null</TT> <TT>JRootPane</TT>. I.E. component
+	 * 			hasn't been added to a frame, dialog etc.
 	 */
-	public synchronized void makeOKButtonDefault() {
-		getRootPane().setDefaultButton(_okBtn);
+	public synchronized void makeOKButtonDefault()
+			throws IllegalStateException {
+		JRootPane root = getRootPane();
+		if (root == null) {
+			throw new IllegalStateException("Null RootPane so cannot set default button");
+		}
+		root.setDefaultButton(_okBtn);
 	}
 
 	private void fireButtonPressed(JButton btn) {
