@@ -3,6 +3,7 @@ SQL Validator Change Log
 
 0.12
 ====
+- Make confirmation dialog resizeable.
 - Cleaned up the preference panels.
 - Updated for SQuirrel SQL Client 1.1beta7.
 
