@@ -81,7 +81,7 @@ class ObjectTreeAPI implements IObjectTreeAPI
 	}
 
 	/**
-	 * Register an expander for the specified object tree node type.
+	 * Add an expander for the specified object tree node type.
 	 * 
 	 * @param	dboType		Database object type.
 	 * @param	expander	Expander called to add children to a parent node.
@@ -90,7 +90,7 @@ class ObjectTreeAPI implements IObjectTreeAPI
 	 * 			Thrown if a <TT>null</TT> <TT>DatabaseObjectType</TT> or
 	 * 			<TT>INodeExpander</TT> thrown.
 	 */
-	public synchronized void registerExpander(DatabaseObjectType dboType,
+	public synchronized void addExpander(DatabaseObjectType dboType,
 													INodeExpander expander)
 	{
 		if (dboType == null)
@@ -101,12 +101,11 @@ class ObjectTreeAPI implements IObjectTreeAPI
 		{
 			throw new IllegalArgumentException("INodeExpander == null");
 		}
-		_session.getSessionSheet().getObjectTreePanel().registerExpander(
-											dboType, expander);
+		_session.getSessionSheet().getObjectTreePanel().addExpander(dboType, expander);
 	}
 
 	/**
-	 * Register a tab to be displayed in the detail panel for the passed
+	 * Add a tab to be displayed in the detail panel for the passed
 	 * object tree node type.
 	 * 
 	 * @param	dboType		Database object type.
@@ -116,7 +115,7 @@ class ObjectTreeAPI implements IObjectTreeAPI
 	 * 			Thrown when a <TT>null</TT> <TT>DatabaseObjectType</TT> or
 	 * 			<TT>IObjectPanelTab</TT> passed.
 	 */
-	public void registerDetailTab(DatabaseObjectType dboType,
+	public void addDetailTab(DatabaseObjectType dboType,
 									IObjectPanelTab tab)
 	{
 		if (dboType == null)
@@ -127,9 +126,7 @@ class ObjectTreeAPI implements IObjectTreeAPI
 		{
 			throw new IllegalArgumentException("IObjectPanelTab == null");
 		}
-		_session.getSessionSheet().getObjectTreePanel().registerDetailTab(
-			dboType,
-			tab);
+		_session.getSessionSheet().getObjectTreePanel().addDetailTab(dboType, tab);
 	}
 
 	/**

@@ -54,7 +54,7 @@ public interface IObjectTreeAPI
 	DatabaseObjectType UDT_TYPE_DBO = DatabaseObjectType.createNewDatabaseObjectType();
 
 	/**
-	 * Register an expander for the specified object tree node type.
+	 * Add an expander for the specified object tree node type.
 	 * 
 	 * @param	dboType		Database object type.
 	 * @param	expander	Expander called to add children to a parent node.
@@ -63,10 +63,10 @@ public interface IObjectTreeAPI
 	 * 			Thrown if a <TT>null</TT> <TT>DatabaseObjectType</TT> or
 	 * 			<TT>INodeExpander</TT> thrown.
 	 */
-	void registerExpander(DatabaseObjectType dboType, INodeExpander expander);
+	void addExpander(DatabaseObjectType dboType, INodeExpander expander);
 
 	/**
-	 * Register a tab to be displayed in the detail panel for the passed
+	 * Add a tab to be displayed in the detail panel for the passed
 	 * database object type.
 	 * 
 	 * @param	dboType		Database object type.
@@ -76,7 +76,7 @@ public interface IObjectTreeAPI
 	 * 			Thrown when a <TT>null</TT> <TT>DatabaseObjectType</TT> or
 	 *			<TT>IObjectPanelTab</TT> passed.
 	 */
-	void registerDetailTab(DatabaseObjectType dboType, IObjectPanelTab tab);
+	void addDetailTab(DatabaseObjectType dboType, IObjectPanelTab tab);
 
 	/**
 	 * Add a listener to the object tree for structure changes. I.E nodes

@@ -78,16 +78,16 @@ public class ObjectTreeModel extends DefaultTreeModel
 
 		// Standard expanders.
 		final INodeExpander expander = new DatabaseExpander(session);
-		registerExpander(DatabaseObjectType.DATABASE, expander);
-		registerExpander(DatabaseObjectType.CATALOG, expander);
-		registerExpander(DatabaseObjectType.SCHEMA, expander);
-		registerExpander(IObjectTreeAPI.TABLE_TYPE_DBO, new TableTypeExpander());
-		registerExpander(IObjectTreeAPI.PROC_TYPE_DBO, new ProcedureTypeExpander());
-		registerExpander(IObjectTreeAPI.UDT_TYPE_DBO, new UDTTypeExpander());
+		addExpander(DatabaseObjectType.DATABASE, expander);
+		addExpander(DatabaseObjectType.CATALOG, expander);
+		addExpander(DatabaseObjectType.SCHEMA, expander);
+		addExpander(IObjectTreeAPI.TABLE_TYPE_DBO, new TableTypeExpander());
+		addExpander(IObjectTreeAPI.PROC_TYPE_DBO, new ProcedureTypeExpander());
+		addExpander(IObjectTreeAPI.UDT_TYPE_DBO, new UDTTypeExpander());
 	}
 
 	/**
-	 * Register an expander for the specified database object type in the
+	 * Add an expander for the specified database object type in the
 	 * object tree.
 	 * 
 	 * @param	dboType		Database object type.
@@ -97,7 +97,7 @@ public class ObjectTreeModel extends DefaultTreeModel
 	 * 			Thrown if a <TT>null</TT> <TT>INodeExpander</TT> or
 	 * 			<TT>ObjectTreeNodeType</TT> passed.
 	 */
-	public synchronized void registerExpander(DatabaseObjectType dboType,
+	public synchronized void addExpander(DatabaseObjectType dboType,
 												INodeExpander expander)
 	{
 		if (dboType == null)

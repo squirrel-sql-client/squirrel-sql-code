@@ -119,42 +119,42 @@ public class ObjectTreePanel extends JPanel
 		createUserInterface();
 
 		// Register tabs to appear for all nodes in the object tree.
-//		registerDetailTab(new DatabaseObjectInfoTab());
+//		addDetailTab(new DatabaseObjectInfoTab());
 
 		// Register tabs to display in the details panel for database nodes.
-		registerDetailTab(DatabaseObjectType.DATABASE, new MetaDataTab());
-		registerDetailTab(DatabaseObjectType.DATABASE, new TableTypesTab());
-		registerDetailTab(DatabaseObjectType.DATABASE, new DataTypesTab());
-		registerDetailTab(DatabaseObjectType.DATABASE, new NumericFunctionsTab());
-		registerDetailTab(DatabaseObjectType.DATABASE, new StringFunctionsTab());
-		registerDetailTab(DatabaseObjectType.DATABASE, new SystemFunctionsTab());
-		registerDetailTab(DatabaseObjectType.DATABASE, new DateTimeFunctionsTab());
-		registerDetailTab(DatabaseObjectType.DATABASE, new KeywordsTab());
+		addDetailTab(DatabaseObjectType.DATABASE, new MetaDataTab());
+		addDetailTab(DatabaseObjectType.DATABASE, new TableTypesTab());
+		addDetailTab(DatabaseObjectType.DATABASE, new DataTypesTab());
+		addDetailTab(DatabaseObjectType.DATABASE, new NumericFunctionsTab());
+		addDetailTab(DatabaseObjectType.DATABASE, new StringFunctionsTab());
+		addDetailTab(DatabaseObjectType.DATABASE, new SystemFunctionsTab());
+		addDetailTab(DatabaseObjectType.DATABASE, new DateTimeFunctionsTab());
+		addDetailTab(DatabaseObjectType.DATABASE, new KeywordsTab());
 
 		// Register tabs to display in the details panel for table nodes.
-		registerDetailTab(DatabaseObjectType.TABLE, new TableInfoTab());
-		registerDetailTab(DatabaseObjectType.TABLE, new ContentsTab());
-		registerDetailTab(DatabaseObjectType.TABLE, new ColumnsTab());
-		registerDetailTab(DatabaseObjectType.TABLE, new PrimaryKeyTab());
-		registerDetailTab(DatabaseObjectType.TABLE, new ExportedKeysTab());
-		registerDetailTab(DatabaseObjectType.TABLE, new ImportedKeysTab());
-		registerDetailTab(DatabaseObjectType.TABLE, new IndexesTab());
-		registerDetailTab(DatabaseObjectType.TABLE, new TablePriviligesTab());
-		registerDetailTab(DatabaseObjectType.TABLE, new ColumnPriviligesTab());
-		registerDetailTab(DatabaseObjectType.TABLE, new RowIDTab());
-		registerDetailTab(DatabaseObjectType.TABLE, new VersionColumnsTab());
+		addDetailTab(DatabaseObjectType.TABLE, new TableInfoTab());
+		addDetailTab(DatabaseObjectType.TABLE, new ContentsTab());
+		addDetailTab(DatabaseObjectType.TABLE, new ColumnsTab());
+		addDetailTab(DatabaseObjectType.TABLE, new PrimaryKeyTab());
+		addDetailTab(DatabaseObjectType.TABLE, new ExportedKeysTab());
+		addDetailTab(DatabaseObjectType.TABLE, new ImportedKeysTab());
+		addDetailTab(DatabaseObjectType.TABLE, new IndexesTab());
+		addDetailTab(DatabaseObjectType.TABLE, new TablePriviligesTab());
+		addDetailTab(DatabaseObjectType.TABLE, new ColumnPriviligesTab());
+		addDetailTab(DatabaseObjectType.TABLE, new RowIDTab());
+		addDetailTab(DatabaseObjectType.TABLE, new VersionColumnsTab());
 
 		// Register tabs to display in the details panel for procedure nodes.
-		registerDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureInfoTab());
-		registerDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureColumnsTab());
+		addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureInfoTab());
+		addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureColumnsTab());
 
 		// Register tabs to display in the details panel for UDT nodes.
 		// TODO: get rid of this once all nodes have a DatabaseObjectInfoTab tab.
-		registerDetailTab(DatabaseObjectType.UDT, new DatabaseObjectInfoTab());
+		addDetailTab(DatabaseObjectType.UDT, new DatabaseObjectInfoTab());
 	}
 
 	/**
-	 * Register an expander for the specified database object type.
+	 * Add an expander for the specified database object type.
 	 * 
 	 * @param	dboType		Database object type.
 	 * @param	expander	Expander called to add children to a parent node.
@@ -163,7 +163,7 @@ public class ObjectTreePanel extends JPanel
 	 * 			Thrown if a <TT>null</TT> <TT>DatabaseObjectType</TT>
 	 * 			or <TT>INodeExpander</TT> passed.
 	 */
-	public void registerExpander(DatabaseObjectType dboType, INodeExpander expander)
+	public void addExpander(DatabaseObjectType dboType, INodeExpander expander)
 	{
 		if (dboType == null)
 		{
@@ -173,11 +173,11 @@ public class ObjectTreePanel extends JPanel
 		{
 			throw new IllegalArgumentException("Null INodeExpander passed");
 		}
-		_tree.getTypedModel().registerExpander(dboType, expander);
+		_tree.getTypedModel().addExpander(dboType, expander);
 	}
 
 	/**
-	 * Register a tab to be displayed in the detail panel for all nodes
+	 * Add a tab to be displayed in the detail panel for all nodes
 	 * in the object tree.
 	 * 
 	 * @param	tab			Tab to be displayed.
@@ -185,7 +185,7 @@ public class ObjectTreePanel extends JPanel
 	 * @throws	IllegalArgumentException
 	 * 			Thrown when a <TT>null</TT> <TT>IObjectPanelTab</TT> passed.
 	 */
-	public void registerDetailTab(IObjectPanelTab tab)
+	public void addDetailTab(IObjectPanelTab tab)
 	{
 		if (tab == null)
 		{
@@ -202,7 +202,7 @@ public class ObjectTreePanel extends JPanel
 	}
 
 	/**
-	 * Register a tab to be displayed in the detail panel for the passed
+	 * Add a tab to be displayed in the detail panel for the passed
 	 * database object type type.
 	 * 
 	 * @param	dboType		Database Object type.
@@ -212,7 +212,7 @@ public class ObjectTreePanel extends JPanel
 	 * 			Thrown when a <TT>null</TT> <TT>DatabaseObjectType</TT> or
 	 * 			<TT>IObjectPanelTab</TT> passed.
 	 */
-	public void registerDetailTab(DatabaseObjectType dboType, IObjectPanelTab tab)
+	public void addDetailTab(DatabaseObjectType dboType, IObjectPanelTab tab)
 	{
 		if (dboType == null)
 		{
