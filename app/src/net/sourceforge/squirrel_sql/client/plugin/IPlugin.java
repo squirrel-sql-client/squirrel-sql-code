@@ -25,6 +25,11 @@ import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
 /**
  * Base interface for all plugins.
+ * <P>
+ * Plugins for specific DBMSs may need to create and register DataType handlers
+ * for non-standard data types defined by that DBMS.
+ * Instructions on this can be found in
+ * fw/src/net/sourceforge/squirrel_sql/fw/datasetviewer/cellcomponent/CellComponentFactory.java.
  */
 public interface IPlugin
 {
