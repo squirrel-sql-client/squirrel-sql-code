@@ -18,6 +18,9 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.event.*;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -28,6 +31,8 @@ import java.io.IOException;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.JTable;
+import javax.swing.JCheckBox;
+import javax.swing.BorderFactory;
 import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
 import java.sql.PreparedStatement;
@@ -36,6 +41,7 @@ import java.sql.ResultSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
+import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 
 
 /**
@@ -89,6 +95,29 @@ public class DataTypeString
 	//?? for this data type.
 	private DefaultColumnRenderer _renderer = DefaultColumnRenderer.getInstance();	
 
+
+	/**
+	 * Name of this class, which is needed because the class name is needed
+	 * by the static method getControlPanel, so we cannot use something
+	 * like getClass() to find this name.
+	 */
+	private static final String thisClassName =
+		"net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeString";
+
+	/*
+	 * Properties settable by the user
+	 */
+	// flag for whether we have already loaded the properties or not
+	private static boolean propertiesAlreadyLoaded = false;
+
+	/**
+	 * If <tt>true</tt> then show newlines as "\n" for the in-cell display,
+	 * otherwise do not display newlines in the in-cell display
+	 * (i.e. they are thrown out by JTextField when it loads the text document behind the cell).
+	 */
+	private static boolean _makeNewlinesVisibleInCell = true;
+
+
 	/**
 	 * Constructor - save the data needed by this data type.
 	 */
@@ -97,6 +126,31 @@ public class DataTypeString
 		_colDef = colDef;
 		_isNullable = colDef.isNullable();
 		_columnSize = colDef.getColumnSize();
+		
+		loadProperties();
+	}
+	
+	
+	/** Internal function to get the user-settable properties from the DTProperties,
+	 * if they exist, and to ensure that defaults are set if the properties have
+	 * not yet been created.
+	 * <P>
+	 * This method may be called from different places depending on whether
+	 * an instance of this class is created before the user brings up the Session
+	 * Properties window.  In either case, the data is static and is set only
+	 * the first time we are called.
+	 */
+	private static void loadProperties() {
+		
+		if (propertiesAlreadyLoaded == false) {
+			// get parameters previously set by user, or set default values
+			_makeNewlinesVisibleInCell = true;	// set to the default
+			String makeNewlinesVisibleString = DTProperties.get(thisClassName, "makeNewlinesVisibleInCell");
+			if (makeNewlinesVisibleString != null && makeNewlinesVisibleString.equals("false"))
+				_makeNewlinesVisibleInCell = false;
+			
+			propertiesAlreadyLoaded = true;
+		}
 	}
 	
 	/**
@@ -124,7 +178,10 @@ public class DataTypeString
 	 * Render a value into text for this DataType.
 	 */
 	public String renderObject(Object value) {
-		return (String)_renderer.renderObject(value);
+		String text = (String)_renderer.renderObject(value);
+		if (_makeNewlinesVisibleInCell)
+			text = text.replaceAll("\n", "/\\n");
+		return text;
 	}
 	
 	/**
@@ -231,8 +288,11 @@ public class DataTypeString
 		_textComponent = new RestorableJTextArea();
 	
 		// value is a simple string representation of the data,
-		// the same one used in the Text and in-cell operations.
-		((RestorableJTextArea)_textComponent).setText(renderObject(value));
+		// but NOT the same one used in the Text and in-cell operations.
+		// The in-cell version may replace newline chars with "\n" while this version
+		// does not.  In other respects it is the same as the in-cell version because both
+		// use the _renderer object to do the rendering.
+		((RestorableJTextArea)_textComponent).setText((String)_renderer.renderObject(value));
 		
 		// special handling of operations while editing this data type
 		((RestorableJTextArea)_textComponent).addKeyListener(new KeyTextHandler());
@@ -514,5 +574,110 @@ public class DataTypeString
 	 	outWriter.write(text);
 		outWriter.flush();
 		outWriter.close();
-	 }		 
+	 }	
+
+
+	/*
+	 * Property change control panel
+	 */	  
+	 
+	 /**
+	  * Generate a JPanel containing controls that allow the user
+	  * to adjust the properties for this DataType.
+	  * All properties are static accross all instances of this DataType. 
+	  * However, the class may choose to apply the information differentially,
+	  * such as keeping a list (also entered by the user) of table/column names
+	  * for which certain properties should be used.
+	  * <P>
+	  * This is called ONLY if there is at least one property entered into the DTProperties
+	  * for this class.
+	  * <P>
+	  * Since this method is called by reflection on the Method object derived from this class,
+	  * it does not need to be included in the Interface.
+	  * It would be nice to include this in the Interface for consistancy, documentation, etc,
+	  * but the Interface does not seem to like static methods.
+	  */
+	 public static OkJPanel getControlPanel() {
+	 	
+		/*
+		 * If you add this method to one of the standard DataTypes in the
+		 * fw/datasetviewer/cellcomponent directory, you must also add the name
+		 * of that DataType class to the list in CellComponentFactory, method
+		 * getControlPanels, variable named initialClassNameList.
+		 * If the class is being registered with the factory using registerDataType,
+		 * then you should not include the class name in the list (it will be found
+		 * automatically), but if the DataType is part of the case statement in the
+		 * factory method getDataTypeObject, then it does need to be explicitly listed
+		 * in the getControlPanels method also.
+		 */
+		 
+		 // if this panel is called before any instances of the class have been
+		 // created, we need to load the properties from the DTProperties.
+		 loadProperties();
+		 
+		return new ClobOkJPanel();
+	 }
+	 
+	 
+	 
+	 /**
+	  * Inner class that extends OkJPanel so that we can call the ok()
+	  * method to save the data when the user is happy with it.
+	  */
+	 private static class ClobOkJPanel extends OkJPanel {
+		/*
+		 * GUI components - need to be here because they need to be
+		 * accessible from the event handlers to alter each other's state.
+		 */
+		
+		// check box for whether to show newlines as "\n" for in-cell display
+		private JCheckBox _makeNewlinesVisibleInCellChk =
+			new JCheckBox("Show newlines as \\n within cells");
+	   
+
+		public ClobOkJPanel() {
+		 	 
+			/* set up the controls */
+			
+			// checkbox for displaying newlines as \n in-cell
+			_makeNewlinesVisibleInCellChk.setSelected(_makeNewlinesVisibleInCell);
+
+	 	
+
+			/*
+			 * Create the panel and add the GUI items to it
+			  */
+	 	  
+			setLayout(new GridBagLayout());
+	 	
+			setBorder(BorderFactory.createTitledBorder(
+				"CHAR, VARCHAR, LONGVARCHAR   (SQL types 1, 12, -1)"));
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = GridBagConstraints.HORIZONTAL;
+			gbc.insets = new Insets(4, 4, 4, 4);
+			gbc.anchor = GridBagConstraints.WEST;
+
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
+			add(_makeNewlinesVisibleInCellChk, gbc);
+
+		} // end of constructor for inner class
+	 
+	 
+		/**
+		  * User has clicked OK in the surrounding JPanel,
+		 * so save the current state of all variables
+		  */
+		public void ok() {
+			// get the values from the controls and set them in the static properties
+			_makeNewlinesVisibleInCell = _makeNewlinesVisibleInCellChk.isSelected();
+			DTProperties.put(
+				thisClassName,
+				"makeNewlinesVisibleInCell", Boolean.toString(_makeNewlinesVisibleInCell));
+		}
+	 
+	 } // end of inner class
+	 
 }
