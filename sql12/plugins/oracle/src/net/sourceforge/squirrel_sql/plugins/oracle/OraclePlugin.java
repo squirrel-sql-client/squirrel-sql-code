@@ -33,6 +33,7 @@ import net.sourceforge.squirrel_sql.plugins.oracle.dboutput.NewDBOutputWorksheet
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.DatabaseExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.InstanceParentExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.PackageExpander;
+import net.sourceforge.squirrel_sql.plugins.oracle.expander.ProcedureExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.SchemaExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.SessionParentExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.TableExpander;
@@ -187,6 +188,19 @@ public class OraclePlugin extends DefaultSessionPlugin
 		{
 		super.unload();
 	}
+        
+        /**
+         * Return a node expander for the object tree for a particular default node type.
+         * <p/> A plugin could return non null here if they wish to override the default node
+         * expander bahaviour. Most plugins should return null here.
+         */
+        public INodeExpander getDefaultNodeExpander(ISession session, DatabaseObjectType type) {
+          if ((type == IObjectTreeAPI.PROC_TYPE_DBO) && (isOracle(session))) {
+            return new ProcedureExpander();
+          }
+          return null;
+        }
+        
 
 	private boolean isOracle(ISession session)
 	{
