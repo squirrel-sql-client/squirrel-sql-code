@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.oracle.dboutput;
 /*
- * Copyright (C) 2001-2003 Colin Bell
- * colbell@users.sourceforge.net
+ * Copyright (C) 2001-2003 Jason Height
+ * jmheight@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,7 +23,6 @@ import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 
 public class GetDBOutputAction extends SquirrelAction
