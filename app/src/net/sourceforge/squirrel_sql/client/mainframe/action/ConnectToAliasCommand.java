@@ -39,8 +39,8 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.db.ConnectionSheet;
 import net.sourceforge.squirrel_sql.client.db.ConnectionSheet.IConnectionSheetHandler;
 import net.sourceforge.squirrel_sql.client.session.IClientSession;
+import net.sourceforge.squirrel_sql.client.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
-import net.sourceforge.squirrel_sql.client.session.SessionSheet;
 /**
  * This <CODE>ICommand</CODE> allows the user to connect to
  * an <TT>ISQLAlias</TT>.
@@ -444,8 +444,8 @@ public class ConnectToAliasCommand implements ICommand
 			try
 			{
 				app.getPluginManager().sessionCreated(_session);
-				final SessionSheet child = new SessionSheet(_session);
-				_session.setSessionSheet(child);
+				final SessionInternalFrame child = app.getSessionWindowManager().createInternalFrame(_session);
+				_session.setSessionSheet(child.getSessionPanel());
 				app.getPluginManager().sessionStarted(_session);
 				app.getMainFrame().addInternalFrame(child, true, null);
 

@@ -33,6 +33,7 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
+import net.sourceforge.squirrel_sql.client.session.SessionWindowManager;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
 /**
  * Defines the API to do callbacks on the application.
@@ -57,6 +58,13 @@ public interface IApplication
 	 * @return	the plugin manager responsible for this applications plugins.
 	 */
 	PluginManager getPluginManager();
+
+	/**
+	 * Return the manager responsible for session windows.
+	 *
+	 * @return	the manager responsible for session windows.
+	 */
+	SessionWindowManager getSessionWindowManager();
 
 	ActionCollection getActionCollection();
 

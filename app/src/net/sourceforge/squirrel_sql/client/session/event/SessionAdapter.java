@@ -24,8 +24,16 @@ package net.sourceforge.squirrel_sql.client.session.event;
 /**
  * An adapter for <TT>ISessionListener</TT>.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SessionAdapter implements ISessionListener
 {
+	/**
+	 * The session has been closed.
+	 *
+	 * @param	evt		The event that has just occured.
+	 */
+	public void sessionClosed(SessionEvent evt)
+	{
+	}
 }

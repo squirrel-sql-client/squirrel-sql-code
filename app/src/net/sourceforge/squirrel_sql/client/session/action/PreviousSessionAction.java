@@ -19,19 +19,19 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import java.awt.event.ActionEvent;
 
+import javax.swing.JInternalFrame;
+
 import net.sourceforge.squirrel_sql.fw.gui.action.SelectInternalFrameCommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.IClientSession;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SessionManager;
-import net.sourceforge.squirrel_sql.client.session.SessionSheet;
 /**
  * This action will bring the window for the <EM>previous</EM> session
  * to the front.
  *
- * @author  Gerd Wagner
+ * @author Gerd Wagner
  */
 public class PreviousSessionAction extends SquirrelAction
 									implements IClientSessionAction
@@ -52,10 +52,10 @@ public class PreviousSessionAction extends SquirrelAction
 	{
 		if (_session != null)
 		{
-			SessionManager sm = getApplication().getSessionManager();
-			ISession nextSession = sm.getPreviousSession(_session);
-			SessionSheet ss = nextSession.getSessionSheet();
-			new SelectInternalFrameCommand(ss).execute();
+			final IApplication app = getApplication();
+			final ISession prevSession = app.getSessionManager().getPreviousSession(_session);
+			final JInternalFrame sif = app.getSessionWindowManager().getInternalFrame(prevSession);
+			new SelectInternalFrameCommand(sif).execute();
 		}
 	}
 }

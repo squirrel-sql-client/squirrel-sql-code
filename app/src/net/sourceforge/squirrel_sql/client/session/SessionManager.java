@@ -18,8 +18,11 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
@@ -39,7 +42,10 @@ public class SessionManager
 		LoggerController.createLogger(SessionManager.class);
 
 	/** Linked list of sessions. */
-	private LinkedList _sessionsList = new LinkedList();
+	private final LinkedList _sessionsList = new LinkedList();
+
+	/** Map of sessions keyed by session ID. */
+	private final Map _sessionsById = new HashMap();
 
 	/**
 	 * Default ctor.
@@ -87,6 +93,7 @@ public class SessionManager
 
 		IClientSession sess = new Session(app, driver, alias, conn, user, password);
 		_sessionsList.addLast(sess);
+		_sessionsById.put(sess.getIdentifier(), sess);
 
 		return sess;
 	}
@@ -133,12 +140,17 @@ public class SessionManager
 
 		if (!session.isClosed())
 		{
-			boolean removed = _sessionsList.remove(session);
-			if (!removed)
+			if (!_sessionsList.remove(session))
 			{
 				s_log.error("SessionManager.closeSession()-> Session " +
 						session.getIdentifier() +
 						" not found in _sessionsList when trying to remove it.");
+			}
+			if (_sessionsById.remove(session.getIdentifier()) == null)
+			{
+				s_log.error("SessionManager.closeSession()-> Session " +
+						session.getIdentifier() +
+						" not found in _sessionsById when trying to remove it.");
 			}
 		}
 
@@ -219,5 +231,18 @@ public class SessionManager
 		}
 		s_log.error("SessionManager.getPreviousSession()-> List empty so returning passed session");
 		return session;
+	}
+
+	/**
+	 * Retrieve the session for the passed identifier.
+	 * 
+	 * @param	sessionID	ID of session we are trying to retrieve.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>IIdentifier</TT> passed.
+	 */
+	public ISession getSession(IIdentifier sessionID)
+	{
+		return (ISession)_sessionsById.get(sessionID);		
 	}
 }

@@ -203,9 +203,14 @@ public class SQLFilterSheet extends BaseSheet
 	 *
 	 * @return	A reference to the current SQuirreL session
 	 */
-	ISession getSession()
+	public ISession getSession()
 	{
 		return _session;
+	}
+
+	public IDatabaseObjectInfo getDatabaseObjectInfo()
+	{
+		return _objectInfo;
 	}
 
 	/**

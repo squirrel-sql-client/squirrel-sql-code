@@ -18,10 +18,12 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 /**
@@ -35,8 +37,14 @@ public abstract class BaseObjectTab implements IObjectTab
 	private static final ILogger s_log =
 		LoggerController.createLogger(BaseObjectTab.class);
 
+	/** Application API. */
+	private IApplication _app;
+
 	/** Current session. */
-	private ISession _session;
+//	private ISession _session;
+
+	/** ID of the session for this window. */
+	private IIdentifier _sessionId;
 
 	/** Defines the object that info is to be displayed for. */
 	private IDatabaseObjectInfo _dbObjInfo;
@@ -61,7 +69,9 @@ public abstract class BaseObjectTab implements IObjectTab
 		{
 			throw new IllegalArgumentException("Null ISession passed");
 		}
-		_session = session;
+		_app = session.getApplication();
+//		_session = session;
+		_sessionId = session.getIdentifier();
 	}
 
 	/**
@@ -71,7 +81,8 @@ public abstract class BaseObjectTab implements IObjectTab
 	 */
 	public final ISession getSession()
 	{
-		return _session;
+//		return _session;
+		return _app.getSessionManager().getSession(_sessionId);
 	}
 
 	/**

@@ -45,6 +45,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.mainframe.action.OpenConnectionCommand;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.event.ISessionListener;
+import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
@@ -182,7 +183,7 @@ class Session implements IClientSession
 	 * 			will still be closed even though the connection may not have
 	 *			been.
 	 */
-	public synchronized void close() throws SQLException
+	public void close() throws SQLException
 	{
 		if (!_closed)
 		{
@@ -193,12 +194,22 @@ class Session implements IClientSession
 			}
 			finally
 			{
+				
+				
+
 				// This is set here as SessionSheet.dispose() will attempt
 				// to close the session.
 				_closed = true;
+
+
+				fireSessionClosedEvent();
+
+				// Remove all listeners.
+				_listenerList = null;
+
 				if (_sessionSheet != null)
 				{
-					_sessionSheet.dispose();
+					_sessionSheet.sessionHasClosed();
 					_sessionSheet = null;
 				}
 			}
@@ -568,6 +579,29 @@ class Session implements IClientSession
 	public SQLFilterClauses getSQLFilterClauses()
 	{
 		return _sqlFilterClauses;
+	}
+
+	/**
+	 * Fire a &quot;session closed&quot; event.
+	 */
+	protected void fireSessionClosedEvent()
+	{
+		Object[] listeners = _listenerList.getListenerList();
+		// Process the listeners last to first, notifying
+		// those that are interested in this event.
+		SessionEvent evt = null;
+		for (int i = listeners.length - 2; i >= 0; i-=2 )
+		{
+			if (listeners[i] == ISessionListener.class)
+			{
+				// Lazily create the event.
+				if (evt == null)
+				{
+					evt = new SessionEvent(this);
+				}
+				((ISessionListener)listeners[i + 1]).sessionClosed(evt);
+			}
+		}
 	}
 
 	/**

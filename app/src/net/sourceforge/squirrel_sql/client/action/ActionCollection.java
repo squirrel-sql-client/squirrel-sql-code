@@ -47,7 +47,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.TileVerticalAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewHelpAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewLogsAction;
 import net.sourceforge.squirrel_sql.client.session.IClientSession;
-import net.sourceforge.squirrel_sql.client.session.SessionSheet;
+import net.sourceforge.squirrel_sql.client.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsAction;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultWindowsAction;
 import net.sourceforge.squirrel_sql.client.session.action.CloseSessionAction;
@@ -231,7 +231,20 @@ public final class ActionCollection
 	 */
 	public void internalFrameDeactivated(JInternalFrame frame)
 	{
-		internalFrameActivated(null);
+//		internalFrameActivated(null);
+		IClientSession session = null;
+		for (Iterator it = actions(); it.hasNext();)
+		{
+			final Action act = (Action) it.next();
+			if (act instanceof ISessionAction)
+			{
+				((ISessionAction)act).setSession(session);
+			}
+			if (act instanceof IClientSessionAction)
+			{
+				((IClientSessionAction)act).setClientSession(session);
+			}
+		}
 	}
 
 	/**
@@ -243,9 +256,9 @@ public final class ActionCollection
 	public synchronized void internalFrameActivated(JInternalFrame frame)
 	{
 		IClientSession session = null;
-		if (frame instanceof SessionSheet)
+		if (frame instanceof SessionInternalFrame)
 		{
-			session = ((SessionSheet)frame).getSession();
+			session = ((SessionInternalFrame)frame).getSession();
 		}
 		for (Iterator it = actions(); it.hasNext();)
 		{
