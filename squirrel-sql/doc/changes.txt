@@ -3,6 +3,7 @@ Change Log
 
 1.1 continuation
 ================
+- New "Info" tab on SQL query results.
 - No longer try to load blob fields from SQL Result set.
 - New API for adding tabs to the main panel tab.
 - View SQL data entry caret line/column in status bar
