@@ -19,16 +19,35 @@ package net.sourceforge.squirrel_sql.client.util;
  */
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.UidIdentifier;
-
-public class IdentifierFactory {
-
+/**
+ * This class is a factory that generates unique identifiers for various
+ * classes within SQuirreL. All identifiers created are instances of
+ * <TT>net.sourceforge.squirrel_sql.fw.id.UidIdentifier</TT>.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
+public class IdentifierFactory
+{
+	/** The single instance of this class. */
 	private static final IdentifierFactory s_instance = new IdentifierFactory();
 
-	public static IdentifierFactory getInstance() {
+	/**
+	 * Retrieve the singleton instance of this class.
+	 * 
+	 * @return	The singleton instance of this class.
+	 */
+	public static IdentifierFactory getInstance()
+	{
 		return s_instance;
 	}
 
-	public IIdentifier createIdentifier() {
+	/**
+	 * Create a new identifier.
+	 * 
+	 * @return	The new identifier.
+	 */
+	public IIdentifier createIdentifier()
+	{
 		return new UidIdentifier();
 	}
 }

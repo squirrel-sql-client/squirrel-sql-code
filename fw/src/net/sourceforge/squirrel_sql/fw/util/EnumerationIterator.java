@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.util;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,14 +19,14 @@ package net.sourceforge.squirrel_sql.fw.util;
  */
 import java.util.Enumeration;
 import java.util.Iterator;
-
 /**
  * An <TT>EnumerationIterator</TT> object will allow you to treat
  * an <TT>Enumeration</TT> as an <TT>Iterator</TT>.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class EnumerationIterator implements Iterator {
+public class EnumerationIterator implements Iterator
+{
 	/** <TT>Enumeration</TT> that this <TT>Iterator</TT> is built over. */
 	private Enumeration _en;
 
@@ -37,7 +37,8 @@ public class EnumerationIterator implements Iterator {
 	 *				over. If <TT>null</TT> pretends it was an empty
 	 *				<TT>Enumeration</TT> passed.
 	 */
-	public EnumerationIterator(Enumeration en) throws IllegalArgumentException {
+	public EnumerationIterator(Enumeration en)
+	{
 		super();
 		_en = en != null ? en : new EmptyEnumeration();
 	}
@@ -47,7 +48,8 @@ public class EnumerationIterator implements Iterator {
 	 *
 	 * @return	<TT>true</TT> if the <TT>Iterator</TT> has more elements.
 	 */
-	public boolean hasNext() {
+	public boolean hasNext()
+	{
 		return _en.hasMoreElements();
 	}
 
@@ -59,7 +61,8 @@ public class EnumerationIterator implements Iterator {
 	 * @throws	<TT>NoSuchElementException</TT>
 	 *			iteration has no more elements.
 	 */
-	public Object next() {
+	public Object next()
+	{
 		return _en.nextElement();
 	}
 
@@ -70,7 +73,8 @@ public class EnumerationIterator implements Iterator {
 	 * @throws	<TT>UnsupportedOperationException</TT>
 	 *			This is an unsupported operation.
 	 */
-	public void remove() {
+	public void remove()
+	{
 		throw new UnsupportedOperationException("remove()");
 	}
 }

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.util;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,31 +19,34 @@ package net.sourceforge.squirrel_sql.fw.util;
  */
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
 /**
  * This represents an iterator that is over an empty container.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class EmptyIterator implements Iterator {
+public class EmptyIterator implements Iterator
+{
 	/**
 	 * Returns <CODE>false</CODE> as container is empty.
 	 */
-	public boolean hasNext() {
+	public boolean hasNext()
+	{
 		return false;
 	}
 
 	/**
 	 * Throws <CODE>NoSuchElementException</CODE> as container is empty.
 	 */
-	public Object next() {
+	public Object next()
+	{
 		throw new NoSuchElementException();
 	}
 
 	/**
 	 * Throws <CODE>IllegalStateException</CODE> as container is empty.
 	 */
-	public void remove() {
+	public void remove()
+	{
 		throw new IllegalStateException();
 	}
 }

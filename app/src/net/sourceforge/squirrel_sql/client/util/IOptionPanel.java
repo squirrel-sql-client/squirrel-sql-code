@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.util;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -18,12 +18,37 @@ package net.sourceforge.squirrel_sql.client.util;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Component;
-
-public interface IOptionPanel {
+/**
+ * This interface speicifes the behaviour expected of an option panel.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
+public interface IOptionPanel
+{
+	/**
+	 * User has clicked OK or otherwise indicated that their changes
+	 * should be saved.
+	 */
 	void applyChanges();
 
+	/**
+	 * Retrieve the title for this option panel.
+	 * 
+	 * @return	Panel's title.
+	 */
 	String getTitle();
+
+	/**
+	 * Retrieve the hint to be used for a tooltip for this option panel.
+	 * 
+	 * @return	Panel's hint.
+	 */
 	String getHint();
 
+	/**
+	 * Retrieve the actual component to display as the option panel.
+	 * 
+	 * @return		The component.
+	 */
 	Component getPanelComponent();
 }

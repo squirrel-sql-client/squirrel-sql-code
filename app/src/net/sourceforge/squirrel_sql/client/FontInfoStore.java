@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -25,9 +25,10 @@ import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 /**
  * A store of <TT>FontInfo</TT> objects.
  */
-public class FontInfoStore {
+public class FontInfoStore
+{
 	/** Default one. */
-	private FontInfo _defaultFontInfo = new FontInfo();
+	private final FontInfo _defaultFontInfo = new FontInfo();
 
 	/** For statusbars. */
 	private FontInfo _statusBarFontInfo;
@@ -35,7 +36,8 @@ public class FontInfoStore {
 	/**
 	 * Default ctor.
 	 */
-	public FontInfoStore() {
+	public FontInfoStore()
+	{
 		Font font = (((Font)UIManager.get("Label.font")).deriveFont(10.0f));
 		_statusBarFontInfo = new FontInfo(font);
 	}
@@ -45,7 +47,8 @@ public class FontInfoStore {
 	 * 
 	 * @return	Returns FontInfo for statusbars
 	 */
-	public FontInfo getStatusBarFontInfo() {
+	public FontInfo getStatusBarFontInfo()
+	{
 		return _statusBarFontInfo != null ? _statusBarFontInfo : _defaultFontInfo;
 	}
 
@@ -54,7 +57,8 @@ public class FontInfoStore {
 	 * 
 	 * @param fi	The new FontInfo for status bars
 	 */
-	public void setStatusBarFontInfo(FontInfo fi) {
+	public void setStatusBarFontInfo(FontInfo fi)
+	{
 		_statusBarFontInfo = fi;
 	}
 }

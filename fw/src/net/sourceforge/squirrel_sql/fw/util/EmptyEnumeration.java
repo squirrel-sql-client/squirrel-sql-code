@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.util;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,24 +19,26 @@ package net.sourceforge.squirrel_sql.fw.util;
  */
 import java.util.Enumeration;
 import java.util.NoSuchElementException;
-
 /**
  * This represents an enumeration that is over an empty container.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class EmptyEnumeration implements Enumeration {
+public class EmptyEnumeration implements Enumeration
+{
 	/**
 	 * Returns <CODE>false</CODE> as container is empty.
 	 */
-	public boolean hasMoreElements() {
+	public boolean hasMoreElements()
+	{
 		return false;
 	}
 
 	/**
 	 * Throws <CODE>NoSuchElementException</CODE> as container is empty.
 	 */
-	public Object nextElement() {
+	public Object nextElement()
+	{
 		throw new NoSuchElementException();
 	}
 }
