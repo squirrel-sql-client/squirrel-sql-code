@@ -511,8 +511,11 @@ public class ContentsTab extends BaseTableTab
 	 * Link from fw to check on whether there are any unusual conditions
 	 * in the current data that the user needs to be aware of before updating.
 	 */
-	public String getWarningOnCurrentData(Object[] values, ColumnDisplayDefinition[] colDefs,
-											int col, Object oldValue)
+	public String getWarningOnCurrentData(
+		Object[] values, 
+		ColumnDisplayDefinition[] colDefs,
+		int col,
+		Object oldValue)
 	{
 		String whereClause = getWhereClause(values, colDefs, col, oldValue);
 
@@ -568,7 +571,11 @@ public class ContentsTab extends BaseTableTab
 	 * Link from fw to check on whether there are any unusual conditions
 	 * that will occur after the update has been done.
 	 */
-	public String getWarningOnProjectedUpdate(Object[] values, ColumnDisplayDefinition[] colDefs, int col, Object newValue)
+	public String getWarningOnProjectedUpdate(
+		Object[] values,
+		ColumnDisplayDefinition[] colDefs,
+		int col,
+		Object newValue)
 	{
 
 		String whereClause = getWhereClause(values, colDefs, col, newValue);
@@ -639,9 +646,91 @@ public class ContentsTab extends BaseTableTab
 	}
 
 	/**
+	 * Re-read the value for a single cell in the table, if possible.
+	 * If there is a problem, the message has a non-zero length when this returns.
+	 */
+	public Object reReadDatum(
+		Object[] values,
+		ColumnDisplayDefinition[] colDefs,
+		int col,
+		StringBuffer message) {
+			
+		// get WHERE clause
+		// The -1 says to ignore the last arg and use the contents of the values array
+		// for the column that we care about.  However, since the data in
+		// that column has been limited, when getWhereClause calls that
+		// DataType with that value, the DataType will see that the data has
+		// been limited and therefore cannnot be used in the WHERE clause.
+		// In some cases it may be possible for the DataType to use the
+		// partial data, such as "matches <data>*", but that may not be
+		// standard accross all Databases and thus may be risky.
+		String whereClause = getWhereClause(values, colDefs, -1, null);
+
+		final ISession session = getSession();
+		final SQLConnection conn = session.getSQLConnection();
+		
+		Object wholeDatum = null;
+
+		try
+		{
+			final Statement stmt = conn.createStatement();
+			final ITableInfo ti = getTableInfo();
+			final String queryString =
+				"SELECT " + colDefs[col].getLabel() +" FROM "+ti.getQualifiedName() +
+				whereClause;
+
+			try
+			{
+				ResultSet rs = stmt.executeQuery(queryString);
+				
+				// There should be one row in the data, so try to move to it
+				if (rs.next() == false) {
+					// no first row, so we cannot retrieve the data
+					throw new SQLException(
+						"Could not find any row in DB matching current row in table");
+				}
+				
+				// we have at least one row, so try to retrieve the object
+				// Do Not limit the read of this data
+				wholeDatum = CellComponentFactory.readResultSet(colDefs[col], rs, 1, false);
+
+				//  There should not be more than one row in the DB that matches
+				// the table, and if there is we cannot determine which one to read,
+				// so check that there are no more
+				if (rs.next() == true) {
+					// multiple rows - not good
+					wholeDatum = null;
+					throw new SQLException(
+						"Muliple rows in DB match current row in table - cannot re-read data.");
+				}				
+			}
+			finally
+			{
+				stmt.close();
+			}
+		}
+		catch (Exception ex)
+		{
+			message.append(
+				"There was a problem reported while re-reading the DB.  The DB message was:\n"+
+				ex.getMessage());
+			
+			// It would be nice to tell the user what happened, but if we try to
+			// put up a dialog box at this point, we run into trouble in some
+			// cases where the field continually tries to re-read after the dialog
+			// closes (because it is being re-painted).
+		}
+
+
+		// return the whole contents of this column in the DB
+		return wholeDatum; 
+	};
+
+	/**
 	 * link from fw to this for updating data
 	 */
-	public String updateTableComponent(Object[] values,
+	public String updateTableComponent(
+		Object[] values,
 		ColumnDisplayDefinition[] colDefs,
 		int col,
 		Object oldValue,

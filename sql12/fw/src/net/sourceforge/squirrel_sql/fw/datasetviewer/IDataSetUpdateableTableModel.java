@@ -32,19 +32,39 @@ public interface IDataSetUpdateableTableModel extends IDataSetUpdateableModel
 	 * Get warning message about unusual conditions, if any, in the current data
 	 * that the user needs to be aware of before proceeding.
 	 */
-	public String getWarningOnCurrentData(Object[] values, ColumnDisplayDefinition[] colDefs, int col, Object oldValue);
+	public String getWarningOnCurrentData(Object[] values,
+		ColumnDisplayDefinition[] colDefs,
+		int col,
+		Object oldValue);
 	
 	/**
 	 * Get warning message about unusual conditions, if any, that will occur
 	 * if we proceed with the update as expected.
 	 */
-	public String getWarningOnProjectedUpdate(Object[] values, ColumnDisplayDefinition[] colDefs, int col, Object newValue);
-	
+	public String getWarningOnProjectedUpdate(
+		Object[] values,
+		ColumnDisplayDefinition[] colDefs,
+		int col,
+		Object newValue);
+
+	/**
+	 * Re-read the value for a single cell in the table, if possible.
+	 * If there is a problem, the message has a non-zero length when this returns.
+	 */
+	public Object reReadDatum(
+		Object[] values,
+		ColumnDisplayDefinition[] colDefs,
+		int col,
+		StringBuffer message);
+		
 	/**
 	 * Update the data underlying the table.
 	 */
-	public String updateTableComponent(Object[] values, ColumnDisplayDefinition[] colDefs,
-		int col, Object oldValue, Object newValue);
+	public String updateTableComponent(Object[] values,
+		ColumnDisplayDefinition[] colDefs,
+		int col,
+		Object oldValue,
+		Object newValue);
 	
 	/**
 	 * Get the column number containing the rowID for this table, if any.

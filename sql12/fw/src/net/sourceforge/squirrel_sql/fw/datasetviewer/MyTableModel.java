@@ -47,6 +47,30 @@ public final class MyTableModel extends AbstractTableModel
 	 */
 	public boolean isCellEditable(int row, int col)
 	{
+		// DataTypes may limit the initial data read from the DB, e.g. to minimize the
+		// time needed for the initial load of the table.
+		// To edit the contents of a cell, we require that the entire contents of the data
+		// element be present in the cell before editing.
+		// Therefore we ask the DataType if we need to re-read the data contents
+		// without limiting it, and do that read if needed.  If there is a problem during the
+		// read (e.g. we cannot identify exactly one row in the DB matching the
+		// current row in the table), then the cell is not editable.
+		// The reverse is not true - if we succeed in reading the data, there may still
+		// be other reasons why we cannot edit it, so we need to check for it being editable
+		// after the read
+		if ( _creator.needToReRead(col, getValueAt(row, col))) {
+			StringBuffer message = new StringBuffer();
+			Object newValue = _creator.reReadDatum((Object[])_data.get(row), col, message);
+			if (message.length() > 0) {
+				// there was a problem with the read
+				// It would be nice to report this to the user, but if we try we get in trouble
+				// in some cases where the data is continually re-read after the dialog
+				// goes away (because the cell is being re-painted).
+				return false;	// cell is not editable
+			}
+			((Object[])_data.get(row))[col] = newValue;
+		}	
+		
 		return _creator.isColumnEditable(col, getValueAt(row, col));
 	}
 

@@ -67,6 +67,16 @@ public interface IDataTypeComponent
 	public boolean isEditableInCell(Object originalValue);
 
 	/**
+	 * See if a value in a column has been limited in some way and
+	 * needs to be re-read before being used for editing.
+	 * For read-only tables this may actually return true since we want
+	 * to be able to view the entire contents of the cell even if it was not
+	 * completely loaded during the initial table setup.
+	 */
+	public boolean needToReRead(Object originalValue);
+
+
+	/**
 	 * Get the JTextField component for this data type to be used in a CellEditor.
 	 * The value of the text field is set by the JTable mechanism using
 	 * the same mechanism as the renderer.  The Assumption here is that
@@ -142,7 +152,7 @@ public interface IDataTypeComponent
 	  * On input from the DB, read the data from the ResultSet into the appropriate
 	  * type of object to be stored in the table cell.
 	  */
-	public Object readResultSet(ResultSet rs, int index)
+	public Object readResultSet(ResultSet rs, int index, boolean limitDataRead)
 		throws java.sql.SQLException;
 
 	/**

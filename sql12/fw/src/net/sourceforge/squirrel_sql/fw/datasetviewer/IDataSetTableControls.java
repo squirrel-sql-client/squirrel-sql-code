@@ -50,6 +50,21 @@ public interface IDataSetTableControls
 	public boolean isColumnEditable(int col, Object originalValue);
 	
 	/**
+	 * See if a value in a column has been limited in some way and
+	 * needs to be re-read before being used for editing.
+	 * For read-only tables this may actually return true since we want
+	 * to be able to view the entire contents of the cell even if it was not
+	 * completely loaded during the initial table setup.
+	 */
+	public boolean needToReRead(int col, Object originalValue);
+	
+	/**
+	 * Re-read the contents of this cell from the database.
+	 * If there is a problem, the message will have a non-zero length after return.
+	 */
+	public Object reReadDatum(Object[] values, int col, StringBuffer message);
+	
+	/**
 	 * Set up the CellEditors for the various types of data.
 	 */
 	public void setCellEditors(JTable table);
@@ -58,7 +73,11 @@ public interface IDataSetTableControls
 	 * Call the object that represents the underlaying data model
 	 * to change the actual data (e.g. in a database).
 	 */
-	public boolean changeUnderlyingValueAt(int rowIndex, int columnIndex, Object newValue, Object oldValue);
+	public boolean changeUnderlyingValueAt(
+		int rowIndex,
+		int columnIndex,
+		Object newValue,
+		Object oldValue);
 	
 	/**
 	 * Delete a set of rows from the table.

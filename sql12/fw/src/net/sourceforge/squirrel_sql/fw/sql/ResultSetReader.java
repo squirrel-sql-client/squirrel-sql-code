@@ -504,7 +504,7 @@ public class ResultSetReader
 
 					default:
 						row[i] = CellComponentFactory.readResultSet(
-								colDefs[i], _rs, idx);
+								colDefs[i], _rs, idx, true);
 
 						break;
 
