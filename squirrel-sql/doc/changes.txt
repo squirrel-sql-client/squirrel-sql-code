@@ -6,6 +6,8 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Run View Logs in a thread.
+- Doubleclick in the memory status panel will now run garbage collection.
 - Add Mckoi and Think SQL drivers to the default drivers.
 - Add menu item allowing reconnection to the database.
 - Add a "Row Count" tab to the Tables tabbed folder.
