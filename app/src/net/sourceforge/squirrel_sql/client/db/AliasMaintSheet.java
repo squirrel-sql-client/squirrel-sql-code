@@ -435,7 +435,7 @@ public class AliasMaintSheet extends BaseSheet
 			{
 				showDriverPropertiesDialog();
 			}
-			
+
 		});
 
 		_useDriverPropsChk.addActionListener(new ActionListener()
@@ -444,7 +444,7 @@ public class AliasMaintSheet extends BaseSheet
 			{
 				_driverPropsBtn.setEnabled(_useDriverPropsChk.isSelected());
 			}
-			
+
 		});
 
 		final JPanel pnl = new JPanel(new GridBagLayout());
@@ -662,7 +662,7 @@ public class AliasMaintSheet extends BaseSheet
 			}
 			catch (Throwable th)
 			{
-				String msg = "Error closing Connection"; 
+				String msg = "Error closing Connection";
 				s_log.error(msg, th);
 				_app.showErrorDialog(msg + ": " + th.toString());
 			}
@@ -694,4 +694,3 @@ public class AliasMaintSheet extends BaseSheet
 		}
 	}
 }
-

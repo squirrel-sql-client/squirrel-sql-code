@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.db;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -20,23 +20,29 @@ package net.sourceforge.squirrel_sql.client.db;
 import java.sql.DatabaseMetaData;
 import java.sql.Types;
 
-// ?? move to fw
+// TODO: move to fw
 // i18n
 public class Utils {
 
-	private Utils() {
+	private Utils() 
+	{
+		super();
 	}
 
-	public static String getNullableDescription(int type) {
-		switch (type) {
+	public static String getNullableDescription(int type)
+	{
+		switch (type)
+		{
 			case DatabaseMetaData.typeNoNulls: return "No";
 			case DatabaseMetaData.typeNullable: return "Yes";
 			default: return "Unknown";
 		}
 	}
 
-	public static String getSearchableDescription(int type) {
-		switch (type) {
+	public static String getSearchableDescription(int type)
+	{
+		switch (type)
+		{
 			case DatabaseMetaData.typePredNone: return "No";
 			case DatabaseMetaData.typePredChar: return "Only WHERE LIKE";
 			case DatabaseMetaData.typePredBasic: return "Not WHERE LIKE";
@@ -45,8 +51,10 @@ public class Utils {
 		}
 	}
 
-	public static String getSqlTypeName(int type) {
-		switch (type) {
+	public static String getSqlTypeName(int type)
+	{
+		switch (type)
+		{
 			case Types.ARRAY: return "ARRAY";
 			case Types.BIGINT: return "BIGINT";
 			case Types.BIT: return "BIT";

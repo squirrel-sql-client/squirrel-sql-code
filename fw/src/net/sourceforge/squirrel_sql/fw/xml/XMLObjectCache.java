@@ -34,7 +34,7 @@ import net.sourceforge.squirrel_sql.fw.util.ObjectCache;
  *
  * It is implemented using <CODE>ObjectCache</CODE>.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class XMLObjectCache implements IObjectCache
 {
@@ -52,11 +52,11 @@ public class XMLObjectCache implements IObjectCache
 	/**
 	 * Retrieve a stored object.
 	 *
-	 * @param   objClass	The class of the object to be retrieved.
-	 * @param   id			The <CODE>IIdentifier</CODE> that identifies
+	 * @param	objClass	The class of the object to be retrieved.
+	 * @param	id			The <CODE>IIdentifier</CODE> that identifies
 	 *						the object to be retrieved.
 	 *
-	 * @return  The <CODE>IHasIdentifier</CODE> retrieved or <CODE>null</CODE>
+	 * @return	The <CODE>IHasIdentifier</CODE> retrieved or <CODE>null</CODE>
 	 *			if no object exists for <CODE>id</CODE>.
 	 */
 	public IHasIdentifier get(Class objClass, IIdentifier id)
@@ -81,8 +81,8 @@ public class XMLObjectCache implements IObjectCache
 	/**
 	 * Remove an object.
 	 *
-	 * @param   objClass	Class of object to be removed.
-	 * @param   id			Identifier for object to be removed.
+	 * @param	objClass	Class of object to be removed.
+	 * @param	id			Identifier for object to be removed.
 	 */
 	public void remove(Class objClass, IIdentifier id)
 	{
@@ -93,7 +93,7 @@ public class XMLObjectCache implements IObjectCache
 	 * Return an array of <CODE>Class</CODE objects that represent all the
 	 * different types of objects stored.
 	 *
-	 * @return  Class[] of all classes stored.
+	 * @return	Class[] of all classes stored.
 	 */
 	public Class[] getAllClasses()
 	{
@@ -104,9 +104,9 @@ public class XMLObjectCache implements IObjectCache
 	 * Return an <CODE>Iterator</CODE> of all objects stored for the
 	 * passed class.
 	 *
-	 * @param   objClass	Class to return objects for.
+	 * @param	objClass	Class to return objects for.
 	 *
-	 * @return  <CODE>Iterator</CODE> over all objects.
+	 * @return	<CODE>Iterator</CODE> over all objects.
 	 */
 	public Iterator getAllForClass(Class objClass)
 	{
@@ -116,10 +116,10 @@ public class XMLObjectCache implements IObjectCache
 	/**
 	 * Adds a listener for changes to the cache entry for the passed class.
 	 *
-	 * @param   lis			a IObjectCacheChangeListener that will be notified
+	 * @param	lis			an IObjectCacheChangeListener that will be notified
 	 *						when objects are added and removed from this cache
 	 *						entry.
-	 * @param   objClass	The class of objects whose cache we want to listen
+	 * @param	objClass	The class of objects whose cache we want to listen
 	 *						to.
 	 */
 	public void addChangesListener(IObjectCacheChangeListener lis, Class objClass)
@@ -130,10 +130,10 @@ public class XMLObjectCache implements IObjectCache
 	/**
 	 * Removes a listener for changes to the cache entry for the passed class.
 	 *
-	 * @param   lis			a IObjectCacheChangeListener that will be notified
+	 * @param	lis			an IObjectCacheChangeListener that will be notified
 	 *						when objects are added and removed from this cache
 	 *						entry.
-	 * @param   objClass	The class of objects whose cache we want to listen
+	 * @param	objClass	The class of objects whose cache we want to listen
 	 *						to.
 	 */
 	public void removeChangesListener(IObjectCacheChangeListener lis,
@@ -169,13 +169,13 @@ public class XMLObjectCache implements IObjectCache
 	 * @param	xmlFileName	Name of XML file to load from.
 	 * @param	cl			Class loader to use for object creation.
 	 *
-	 * @exception   FileNotFoundException
+	 * @exception	FileNotFoundException
 	 *				Thrown if file not found.
 	 *
-	 * @exception   XMLException
+	 * @exception	XMLException
 	 *				Thrown if an XML error occurs.
 	 *
-	 * @exception   DuplicateObjectException
+	 * @exception	DuplicateObjectException
 	 *				Thrown if two objects of the same class
 	 *				and with the same identifier are added to the cache.
 	 */
@@ -223,7 +223,7 @@ public class XMLObjectCache implements IObjectCache
 	 * @param	ignoreDuplicates	If <tt>true</TT> don't throw a
 	 * 								<TT>DuplicateObjectException</TT> but rather
 	 * 								ignore the attempt to add a duplicate, in
-	 *								this there will be only one object added to
+	 *								this case there will be only one object added to
 	 *								the cache.
 	 *
 	 * @exception	XMLException
@@ -263,12 +263,12 @@ public class XMLObjectCache implements IObjectCache
 	/**
 	 * Save all objects in this cache to an XML document.
 	 *
-	 * @param   xmlFileName	 Name of XML file to save to.
+	 * @param	xmlFileName	 Name of XML file to save to.
 	 *
-	 * @exception   IOException
+	 * @exception	IOException
 	 *				Thrown if an IO error occurs.
 	 *
-	 * @exception   XMLException
+	 * @exception	XMLException
 	 *				Thrown if an XML error occurs.
 	 */
 	public synchronized void save(String xmlFilename)
@@ -290,13 +290,13 @@ public class XMLObjectCache implements IObjectCache
 	/**
 	 * Save all objects of type <CODE>objClass</CODE> to an XML document.
 	 *
-	 * @param   xmlFileName	 Name of XML file to save to.
-	 * @param   objClass		Class of objects to be saved.
+	 * @param	xmlFileName	 Name of XML file to save to.
+	 * @param	objClass		Class of objects to be saved.
 	 *
-	 * @exception   IOException
+	 * @exception	IOException
 	 *				Thrown if an IO error occurs.
 	 *
-	 * @exception   XMLException
+	 * @exception	XMLException
 	 *				Thrown if an XML error occurs.
 	 */
 	public synchronized void saveAllForClass(

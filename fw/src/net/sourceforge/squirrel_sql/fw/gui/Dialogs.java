@@ -29,7 +29,7 @@ import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 /**
  * This class provides some methods for using standard JDK dialogs.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class Dialogs
 {
@@ -56,11 +56,11 @@ public class Dialogs
 		{
 			chooser.setAccessory(accessory);
 		}
-		
+
 		for (;;)
 		{
 			outFile = null;
-			if (chooser.showSaveDialog(parentFrame) == chooser.APPROVE_OPTION)
+			if (chooser.showSaveDialog(parentFrame) == JFileChooser.APPROVE_OPTION)
 			{
 				outFile = chooser.getSelectedFile();
 				if (canSaveToFile(parentFrame, outFile))
@@ -123,5 +123,4 @@ public class Dialogs
 		outFile.delete();
 		return true;
 	}
-
 }

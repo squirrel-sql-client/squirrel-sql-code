@@ -479,7 +479,7 @@ public class HelpViewerWindow extends JFrame
 					pw.println(buf.toString());
 					for (int i = 0, limit = _docTitles.size(); i < limit; ++i)
 					{
-						final String docTitle = (String)_docTitles.get(i);
+//						final String docTitle = (String)_docTitles.get(i);
 						final URL docUrl = (URL)_docURLs.get(i);
 						buf = new StringBuffer(50);
 						buf.append("<A HREF=\"")

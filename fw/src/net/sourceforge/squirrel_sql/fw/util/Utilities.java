@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.util;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -25,12 +25,10 @@ import java.text.NumberFormat;
 /**
  * General purpose utilities functions.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class Utilities
 {
-	private static final String EMPTY_STRING = "";
-
 	/**
 	 * Ctor. <TT>private</TT> as all methods are static.
 	 */
@@ -66,7 +64,7 @@ public class Utilities
 	/**
 	 * Return the stack trace from the passed exception as a string
 	 *
-	 * @param   th  The exception to retrieve stack trace for.
+	 * @param	th	The exception to retrieve stack trace for.
 	 */
 	public static String getStackTrace(Throwable th)
 	{
@@ -125,7 +123,7 @@ public class Utilities
 	 * @param	name	Class name to be changed. If this does not represent
 	 *					a Java class then <TT>null</TT> is returned.
 	 *
-	 * @throws  IllegalArgumentException	If a null <TT>name</TT> passed.
+	 * @throws IllegalArgumentException	If a null <TT>name</TT> passed.
 	 */
 	public static String changeFileNameToClassName(String name)
 	{
@@ -147,13 +145,13 @@ public class Utilities
 	 * Clean the passed string. Replace whitespace characters with a single
 	 * space. If a <TT>null</TT> string passed return an empty string. E.G.
 	 * replace
-	 * 
+	 *
 	 * [pre]
 	 * \t\tselect\t* from\t\ttab01
 	 * [/pre]
-	 * 
+	 *
 	 * with
-	 * 
+	 *
 	 * [pre]
 	 *  select * from tab01
 	 * [/pre]
@@ -228,7 +226,7 @@ public class Utilities
 		{
 			return fileName.substring(pos + 1);
 		}
-		return EMPTY_STRING;
+		return "";
 	}
 
 

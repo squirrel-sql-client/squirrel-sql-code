@@ -51,12 +51,12 @@ public abstract class TileInternalFramesAction extends BaseAction implements IHa
 	/**
 	 * <CODE>rows</CODE>, the number of rows of opened tiled windows.
 	 */
-	private int _rows = 0;
+//	private int _rows = 0;
 
 	/**
 	 * <CODE>cols</CODE>, the number of cols of opened tiled windows.
 	 */
-	private int _cols = 0;
+//	private int _cols = 0;
 
 	/**
 	 * Default constructor.

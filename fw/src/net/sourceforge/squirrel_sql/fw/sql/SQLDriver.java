@@ -30,7 +30,7 @@ import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
  * This represents a JDBC driver.
  * This class is a <CODE>JavaBean</CODE>.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 {
@@ -74,7 +74,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 	/**
 	 * Ctor specifying the identifier.
 	 *
-	 * @param   id  Uniquely identifies this object.
+	 * @param	id	Uniquely identifies this object.
 	 */
 	public SQLDriver(IIdentifier id)
 	{
@@ -98,11 +98,11 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 	 * Assign data from the passed <CODE>ISQLDriver</CODE> to this one. This
 	 * does <B>not</B> copy the identifier.
 	 *
-	 * @param   rhs	 <CODE>ISQLDriver</CODE> to copy data from.
+	 * @param	rhs	 <CODE>ISQLDriver</CODE> to copy data from.
 	 *
-	 * @exception   ValidationException
-	 *				  Thrown if an error occurs assigning data from
-	 *				  <CODE>rhs</CODE>.
+	 * @exception	ValidationException
+	 *				Thrown if an error occurs assigning data from
+	 *				<CODE>rhs</CODE>.
 	 */
 	public synchronized void assignFrom(ISQLDriver rhs)
 		throws ValidationException
@@ -171,7 +171,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 	 */
 	public int compareTo(Object rhs)
 	{
-		return _name.compareTo(((ISQLDriver) rhs).getName());
+		return _name.compareTo(((ISQLDriver)rhs).getName());
 	}
 
 	public void addPropertyChangeListener(PropertyChangeListener listener)
@@ -330,7 +330,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 	public void setJDBCDriverClassLoaded(boolean cl)
 	{
 		_jdbcDriverClassLoaded = cl;
-		//??
+		//TODO: Decide whether this should be a bound property or not.
 		//		getPropertyChangeReporter().firePropertyChange(ISQLDriver.IPropertyNames.NAME, _name, _name);
 	}
 

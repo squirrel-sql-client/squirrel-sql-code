@@ -230,7 +230,7 @@ public class FontChooser extends JDialog
 
 		gbc.anchor = GridBagConstraints.WEST;
 		gbc.insets = new Insets(2, 2, 2, 2);
-		gbc.fill = gbc.HORIZONTAL;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
 
 		gbc.gridx = gbc.gridy = 0;
 		content.add(new JLabel("Font"), gbc);
@@ -264,12 +264,12 @@ public class FontChooser extends JDialog
 		gbc.gridx = 0;
 		++gbc.gridy;
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.fill = gbc.BOTH;
+		gbc.fill = GridBagConstraints.BOTH;
 		gbc.anchor = GridBagConstraints.CENTER;
 		content.add(createPreviewPanel(), gbc);
 
 		++gbc.gridy;
-		gbc.fill = gbc.HORIZONTAL;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
 		content.add(createButtonsPanel(), gbc);
 
 		pack();
@@ -308,7 +308,7 @@ public class FontChooser extends JDialog
 		{
 			public void actionPerformed(ActionEvent evt)
 			{
-				_font = null;
+				FontChooser.this._font = null;
 				dispose();
 			}
 		});

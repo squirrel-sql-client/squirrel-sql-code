@@ -29,13 +29,11 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-//import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
-//import net.sourceforge.squirrel_sql.fw.gui.CharField;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
@@ -125,28 +123,16 @@ public class FormatSessionPropertiesPanel
 		interface i18n
 		{
 			String ALL_OTHER = "All Other Data Types";
-//			String AUTO_COMMIT = "Auto Commit SQL";
 			String BINARY = "Binary";
 			String BLOB = "Blob";
 			String CLOB = "Clob";
-//			String COMMIT_ON_CLOSE = "Commit On Closing Session";
 			String HINT = "Specify formatting options";
 			String NBR_BYTES = "Number of bytes to read:";
 			String NBR_CHARS = "Number of chars to read:";
-//			String LIMIT_ROWS_CONTENTS = "Contents - Limit rows";
-//			String LIMIT_ROWS_SQL = "SQL results - Limit rows";
 			String LONGVARBINARY = "LongVarBinary";
 			String SQL_OTHER = "SQL Other";
-//			String SHARE_SQL_HISTORY = "Share SQL History";
-//			String SHOW_ROW_COUNT = "Show Row Count for Tables (can slow application)";
-//			String SOL_COMENT = "Start of Line Comment";
-//			String TABLE = "Table";
-//			String TEXT = "Text";
-//			String STATEMENT_SEPARATOR = "Statement Separator:";
 			String TITLE = "Format";
-//			String SQL_HISTORY = "SQL History";
 			String VARBINARY = "VarBinary";
-//			String LIMIT_SQL_HISTORY_COMBO_SIZE = "Limit SQL History Combo Size";
 		}
 
 		private JCheckBox _showBinaryChk = new JCheckBox(i18n.BINARY);
@@ -266,7 +252,7 @@ public class FormatSessionPropertiesPanel
 			pnl.setBorder(BorderFactory.createTitledBorder("Show String Data for Columns of these Data Types"));
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = GridBagConstraints.HORIZONTAL;
-			gbc.insets = new Insets(0, 4, 0, 4);
+			gbc.insets = new Insets(4, 4, 4, 4);
 			gbc.anchor = GridBagConstraints.WEST;
 
 			gbc.gridx = 0;

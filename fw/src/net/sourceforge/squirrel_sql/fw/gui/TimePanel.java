@@ -33,7 +33,7 @@ import javax.swing.border.Border;
  * A timer to update the time is started when the component
  * is added to its parent and stopped when removed from its parent.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class TimePanel extends JLabel implements ActionListener
 {
@@ -76,7 +76,7 @@ public class TimePanel extends JLabel implements ActionListener
 
 	/**
 	 * Update component with the current time.
-	 * 
+	 *
 	 * @param	evt		The current event.
 	 */
 	public void actionPerformed(ActionEvent evt)
@@ -86,7 +86,7 @@ public class TimePanel extends JLabel implements ActionListener
 
 	/**
 	 * Return the preferred size of this component.
-	 * 
+	 *
 	 * @return	the preferred size of this component.
 	 */
 	public Dimension getPreferredSize()

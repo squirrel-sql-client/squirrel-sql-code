@@ -41,7 +41,7 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
  * has a suffix of jpg, jpeg, gif or png this class will attempt to render
  * it as an image, else it will render it as text.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ChooserPreviewer extends JComponent
 {

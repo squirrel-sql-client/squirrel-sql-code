@@ -165,8 +165,9 @@ java net.sourceforge.squirrel_sql.client.Main -useNativeLAF
 <A NAME="howtoconnect"><H2>How to Connect to a Database</H2></A>
 
 There are two pieces of information you need to supply to connect to a
-database; the driver and the alias. The driver specifies the JDBC
-driver to use and the alias specifies the connection parameters.
+database; the driver definition and the alias. The driver definition
+specifies the JDBC driver to use and the alias specifies the connection
+parameters.
 
 <A NAME="the_driver"><H3>The Driver</H3></A>
 
@@ -179,11 +180,10 @@ ALT="Drivers List Window"></P>
 
 <P>The
 <IMG ALIGN="CENTER" SRC="images/ok_st_obj.gif" BORDER="0" ALT="Blue Tick">
-icon next to a driver indicates that it has been successfully loaded while
-the
-<IMG ALIGN="CENTER" SRC="images/error_st_obj.gif" BORDER="0" ALT="Cross">
-icon indicates that the JDBC driver could not be loaded and so cannot be
-used to connect to a database.</P>
+icon next to a driver definition indicates that it has been successfully
+loaded while the <IMG ALIGN="CENTER" SRC="images/error_st_obj.gif"
+BORDER="0" ALT="Cross"> icon indicates that the JDBC driver could not be
+loaded and so cannot be used to connect to a database.</P>
 
 <P>All of the default driver definitions assume that the JDBC driver
 classes are in the current class path or in your JRE extensions
@@ -208,7 +208,8 @@ the database driver definition and is the text shown in the Drivers
 List window.</P>
 
 <P>The <EM>Example URL</EM> shows an example URL for this driver. This
-can be found in the documentation that comes with the driver.</P>
+can be found in the documentation that comes with the driver. This is
+only an example URL, the actual URL is defined in the alias.</P>
 
 <P>The entries in the <EM>Java Class path</EM> tab show the
 directories and jars in the current class path. If you click on a jar
@@ -925,11 +926,10 @@ display a dialog box showing the plugins currently installed.</P>
 	the Drivers list and displays it as a new driver in the driver maintenance
 	dialog
 
-	<DT><B>Install Default Drivers</B>
-	<DD>Copies entries from the default JDBC drivers that ships with SQuirreL
-	to the Drivers List. If the driver is already in the list then the default
-	one will not be copied.
-</DL>
+	<DT><B>Install Default Driver Definitions</B>
+	<DD>Copies entries from the default JDBC driver definitions that ships with
+	SQuirreL to the Drivers List. If the driver definition is already in the
+	list then the default one will not be copied.  </DL>
 
 <A NAME="aliases_menu"><H3>Aliases Menu</H3></A>
 

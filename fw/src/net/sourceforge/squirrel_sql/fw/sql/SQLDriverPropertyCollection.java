@@ -26,7 +26,7 @@ import java.util.TreeMap;
 /**
  * A collection of <TT>SQLDriverDriverProperty</TT> objects.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SQLDriverPropertyCollection
 {
@@ -41,7 +41,7 @@ public class SQLDriverPropertyCollection
 	/** Collection of <TT></TT> objects keyed by the object name. */
 	private final Map _objectsIndexMap = new TreeMap();
 
-	/** Array of  <TT>SQLDriverProperty</TT> objects. */
+	/** Array of <TT>SQLDriverProperty</TT> objects. */
 	private final List _objectsList = new ArrayList();
 
 	/**
@@ -63,7 +63,7 @@ public class SQLDriverPropertyCollection
 
 	/**
 	 * Retrieve the number of elements in this collection.
-	 * 
+	 *
 	 * @return	the number of elements in this collection.
 	 */
 	public int size()
@@ -84,13 +84,13 @@ public class SQLDriverPropertyCollection
 					props.put(sdp.getName(), value);
 				}
 			}
-		} 
+		}
 	}
 
 	/**
 	 * Retrieve an array of the <TT>SQLDriverProperty</TT> objects contained
 	 * in this collection.
-	 * 
+	 *
 	 * @return	an array of the <TT>SQLDriverProperty</TT> objects contained
 	 *			in this collection.
 	 */
@@ -132,7 +132,7 @@ public class SQLDriverPropertyCollection
 			SQLDriverProperty sdp = (SQLDriverProperty)_objectsIndexMap.get(infoAr[i].name);
 			if (sdp == null)
 			{
-				sdp = new SQLDriverProperty(infoAr[i]); 
+				sdp = new SQLDriverProperty(infoAr[i]);
 				_objectsIndexMap.put(sdp.getName(), sdp);
 				_objectsList.add(sdp);
 			}

@@ -114,12 +114,12 @@ public class OpenConnectionCommand implements ICommand
 
 	/**
 	 * Retrieve the newly opened connection.
-	 * 
+	 *
 	 * @return	The <TT>SQLConnection</T>.
 	 */
 	public SQLConnection getSQLConnection()
 	{
 		return _conn;
 	}
-	
+
 }

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.util;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -20,7 +20,7 @@ package net.sourceforge.squirrel_sql.fw.util;
 /**
  * Proxy server settings.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ProxySettings implements Cloneable
 {
@@ -64,7 +64,7 @@ public class ProxySettings implements Cloneable
 		}
 		catch(CloneNotSupportedException ex)
 		{
-			throw new InternalError(ex.getMessage());   // Impossible.
+			throw new InternalError(ex.getMessage()); // Impossible.
 		}
 	}
 

@@ -27,7 +27,7 @@ import javax.swing.border.BevelBorder;
 /**
  * This is a statusbar component with a text control for messages.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class StatusBar extends JPanel
 {
@@ -54,9 +54,9 @@ public class StatusBar extends JPanel
 
 	/**
 	 * Set the font for controls in this statusbar.
-	 * 
+	 *
 	 * @param	font	The font to use.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 *			Thrown if <TT>null</TT> <TT>Font</TT> passed.
 	 */
@@ -76,7 +76,7 @@ public class StatusBar extends JPanel
 
 	/**
 	 * Set the text to display in the message label.
-	 * 
+	 *
 	 * @param	text	Text to display in the message label.
 	 */
 	public synchronized void setText(String text)

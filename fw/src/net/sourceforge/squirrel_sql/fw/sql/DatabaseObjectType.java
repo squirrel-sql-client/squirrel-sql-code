@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.sql;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -21,10 +21,10 @@ import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
 /**
- * 
+ *
  * Defines the different types of database objects.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class DatabaseObjectType implements IHasIdentifier
 {
@@ -93,7 +93,7 @@ public class DatabaseObjectType implements IHasIdentifier
 
 	/**
 	 * Return the object that uniquely identifies this object.
-	 * 
+	 *
 	 * @return	Unique ID.
 	 */
 	public IIdentifier getIdentifier()
