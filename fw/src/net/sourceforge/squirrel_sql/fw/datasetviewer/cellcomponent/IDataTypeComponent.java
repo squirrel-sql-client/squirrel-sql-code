@@ -35,11 +35,23 @@ public interface IDataTypeComponent
 	 * Convert the given object into its printable String value.
 	 */
 	public String renderObject(Object object);
+	
+	/**
+	 * Returns true if data type may be edited within a table cell,
+	 * false if not.
+	 */
+	public boolean isEditableInCell();
 
 	/**
 	 * Get the JTextField component for this data type to be used in a CellEditor.
 	 */
 	public JTextField getJTextField();
+	
+	/**
+	 * Returns true if data type may be edited in the popup,
+	 * false if not.
+	 */
+	public boolean isEditableInPopup();
 	
 	/**
 	 * Get the JTextArea component for this data type to be used in the CellPopupDialog.
