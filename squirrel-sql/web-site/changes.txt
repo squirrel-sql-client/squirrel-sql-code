@@ -1,12 +1,101 @@
 Change Log
 ==========
 
-Warning: In 1.0beta3 the layout of the XML files that store the drivers
-         and aliases were changed. Your old files will be stored in your user
-         preferences directory (E.G. \winnt\profiles\user_name\.squirrel-sql)
-         under the names drivers.xml and db_aliases.xml. The new files are
-         SQLDrivers.xml and SQLAliases.xml.
 
+1.1beta2
+========
+
+Bug Fixes
+------------
+- Windows batch file now allows for spaces in the classpath (Bruno Haas).
+- Windows batch file now passes the -classic flag  to the VM to stop
+  plugins looking for files in the "Colin Bell" or "Johan Compagner"
+  directories instead of the plugins private directory.
+- "Torn off" SQL results windows are now closed when the session is
+  closed.
+- Unix shell script now has correct line terminators.
+- QueryTokenizer improperly parsed strings with quotes on multiple lines
+  and caused SQLException (Todd Larsen).
+- Application Settings dialog now has a more sensible width under JDK1.4.
+- If no alises defined then the Alises dropdown has a sensible width
+  under JDK1.4.
+- If Aliases dropdown is empty when adding the first one to it then make
+  the new one the selected one.
+- When adding aliases/drivers then select the newly added one in the list.
+- When deleting aliases/drivers then ensure that another one selected
+  in the list.
+- longvarchars will now be displayed instead of <null> (Johan Compagner)
+- JDBC drivers reloaded when they have been modified through the
+  maintenance window.
+- Keeping the state when refreshing the tree works now (Johan Compagner)
+
+Enhancements
+------------
+- Now showing all columns in meta data displays.
+- Drop table menu item on the ObjectTree (Johan Compagner)
+- Full column data can be displayed in a popup window if you double click on
+  it (Johan Compagner)
+- If selected String are longer then 50 chars then 45 chars + "......" 
+  will be displayed. (Johan Compagner)
+- If only one cell selected in table when pressing copy then no header 
+  will be appended. (Johan Compagner)
+- Icon shown for drivers that are loaded or not (Johan Compagner/Henner Zeller) 
+- TableSorting by clicking column headers (Johan Compagner)
+- Escape now cancels Connection Dialog.
+
+Other
+-----
+- Licence for the client application changed from GPL to LGPL.
+- JDK1.4 specific code now called through reflection so application
+  can be compiled using JDK1.3.
+
+
+1.1beta1
+========
+- Plugin architecture added.
+- Now under JDK1.4 have option to scroll tabbed pane tabs
+  rather than wrap them.
+- Look and Feel functionality moved to a plugin.
+- The results of queries can be displayed in multiple tabs and these tabs
+  can be "torn off" (Johan Compagner).
+- Can now enter execute multiple SQL statements (Johan Compagner).
+- The message panel is now resizable (Johan Compagner).
+- New "Info" tab on SQL query results.
+- No longer try to load blob fields from SQL Result set.
+- View SQL data entry caret line/column in status bar
+- Removed control characters from SQL Result tab headings.
+- The characters -- at the beginning of a line of SQL will turn it into a comment.
+- Properties windows are now modeless.
+- Driver and Alias maintenance windows are now modeless.
+- Aliaes and Drivers tool window now resized when Look and Feel changed (if required).
+- Now displaying SQL Error Code and State when an SQL error occurs.
+- Can now select the Font for the SQL entry area.
+- New "Show Native SQL" item in Session menu.
+- "New Session" options moved from Global Prefernces dialog to new Session Properties dialog.
+- New options on the session menu - Close all result tabs and close all Result windows.
+- New option on the Windows menu - Close all sessions.
+- Bring aliases/driver window to front if action requested.
+- New application argument -noplugins which will run SQuirreL without
+  any plugins being loaded.
+- Undo/redo support now added to the SQL entry area (Johan Compagner).
+- Copying SQL results now includes the column headings (Johan Compagner).
+- New "Copy as HTML" option for SQL results (Johan Compagner).
+- Bug fixed in About Box where the thread that updates the memory status
+  continued updating when the About Box was not being displayed.
+- Dialogs have been cleaned up.
+- Apache log4j is used for the logging subsystem.
+- JDBC debug can be specified in the global preferences.
+- New application argument allows you to override the user settings
+  directory. E.G. -settingsdir=c:\my-squirrel-settings
+- Stored proc column information now available.
+- Connection window is now modeless.
+- SQL execution and object tree expansion now run in a separate thread so
+  that the user interface is still responsive (Johan Compagner).
+- Row count is now available on the Info tab for a table.
+- Meta data is available for the results of SQL execution.
+- Replaced the JDOM library with NanoXML.
+
+  
 1.0 final2
 ===============================
 
