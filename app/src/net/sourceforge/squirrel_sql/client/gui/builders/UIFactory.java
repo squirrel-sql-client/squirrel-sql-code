@@ -18,12 +18,13 @@ package net.sourceforge.squirrel_sql.client.gui.builders;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import javax.swing.JTabbedPane;
+import javax.swing.event.EventListenerList;
 
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 /**
  * This singleton factory creates UI objects.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class UIFactory
 {
@@ -34,8 +35,13 @@ public class UIFactory
 	private SquirrelPreferences _prefs;
 
 	/**
+	 * Collection of listeners for events in this object.
+	 */
+	private final EventListenerList _listenerList = new EventListenerList();
+
+	/**
 	 * Retrieve the single instance of this class.
-	 * 
+	 *
 	 * @return	the single instance of this class.
 	 */
 	public static UIFactory getInstance()
@@ -50,12 +56,12 @@ public class UIFactory
 
 	/**
 	 * Initialize the single instance of this class.
-	 * 
+	 *
 	 * @param	prefs	Application preferences.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>SquirrelPreferences</TT> passed.
-	 * 
+	 *
 	 * @throws	IllegalStateException
 	 * 			Thrown if initialization has already been done.
 	 */
@@ -69,7 +75,7 @@ public class UIFactory
 	}
 
 	/**
-	 * Default ctot. private as class is a singleton.
+	 * Default ctor. private as class is a singleton.
 	 */
 	private UIFactory(SquirrelPreferences prefs)
 	{
@@ -83,7 +89,7 @@ public class UIFactory
 
 	/**
 	 * Create a tabbed pane with a tab placement of <TT>JTabbedPane.TOP</TT>.
-	 * 
+	 *
 	 * @erturn	The new tabbed pane.
 	 */
 	public JTabbedPane createTabbedPane()
@@ -93,16 +99,62 @@ public class UIFactory
 
 	/**
 	 * Create a tabbed pane specifying the tab placement.
-	 * 
+	 *
 	 * @param	Tab Placement. See <TT>JTabbedPane</TT> javadoc for more
 	 *			information.
-	 * 
+	 *
 	 * @erturn	The new tabbed pane.
 	 */
 	public JTabbedPane createTabbedPane(int tabPlacement)
 	{
 		final JTabbedPane pnl = new SquirrelTabbedPane(_prefs);
 		pnl.setTabPlacement(tabPlacement);
+		fireTabbedPaneCreated(pnl);
+
 		return pnl;
+	}
+
+	/**
+	 * Adds a listener to this object.
+	 *
+	 * @param	lis		Listener to be added.
+	 */
+	public void addListener(IUIFactoryListener lis)
+	{
+		_listenerList.add(IUIFactoryListener.class, lis);
+	}
+
+	/**
+	 * Removes a listener from this object.
+	 *
+	 * @param	lis	Listener to be removed.
+	 */
+	public void removeListener(IUIFactoryListener lis)
+	{
+		_listenerList.remove(IUIFactoryListener.class, lis);
+	}
+
+	/**
+	 * Fire a "tabbed pane created" event to all listeners.
+	 */
+	private void fireTabbedPaneCreated(JTabbedPane tabPnl)
+	{
+		// Guaranteed to be non-null.
+		Object[] listeners = _listenerList.getListenerList();
+		// Process the listeners last to first, notifying
+		// those that are interested in this event.
+		UIFactoryComponentCreatedEvent evt = null;
+		for (int i = listeners.length - 2; i >= 0; i-=2 )
+		{
+			if (listeners[i] == IUIFactoryListener.class)
+			{
+				// Lazily create the event.
+				if (evt == null)
+				{
+					evt = new UIFactoryComponentCreatedEvent(this, tabPnl);
+				}
+				((IUIFactoryListener)listeners[i + 1]).tabbedPaneCreated(evt);
+			}
+		}
 	}
 }
