@@ -1,6 +1,31 @@
 Look and Feel Plugin Change Log
 ===============================
 
+0.23
+====
+
+Enhancements
+------------
+- Improved plugin startup time.
+- Skin Look and Feel updated to 1.2.3.
+- Now supports themes for the Metal Look and Feel.
+- Plastic Look and Feel added.
+
+Bug Fixes
+---------
+- If a themepack/skin hasn't been specified then
+  default to the first one in the dropdown in the
+  preferences dialog.
+- Only change the current Look and Feel when
+  a new Look and Feel is actually selected in
+  the preferences dialog.
+
+Other
+-----
+- Display the licences for all the supplied Look and Feel
+  implementations in the Licence menu option.
+
+
 0.22
 ====
 

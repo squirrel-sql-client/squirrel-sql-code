@@ -71,11 +71,10 @@ public class InstallDefaultDriversAction extends SquirrelAction
 			catch (PropertyVetoException ignore)
 			{
 			}
-			final DataCache cache = app.getDataCache();
 			final URL url = app.getResources().getDefaultDriversUrl();
 			try
 			{
-				new InstallDefaultDriversCommand(cache, url).execute();
+				new InstallDefaultDriversCommand(app, url).execute();
 			}
 			catch (BaseException ex)
 			{

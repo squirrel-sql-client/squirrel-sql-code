@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -217,14 +217,12 @@ public class AliasesToolWindow extends BaseToolWindow
 		private void createToolBar()
 		{
 			_tb = new ToolBar();
-			_tb.setBorder(BorderFactory.createEtchedBorder());
 			_tb.setUseRolloverButtons(true);
 			_tb.setFloatable(false);
 
 			final JLabel lbl = new JLabel(getWindowTitle(), SwingConstants.CENTER);
-			lbl.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
+			lbl.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
 			_tb.add(lbl, 0);
-			_tb.add(new ToolBar.Separator(), 1);
 
 			_tb.add(_connectToAliasAction);
 			_tb.addSeparator();

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.laf;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -32,6 +32,7 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
+import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 /**
@@ -51,6 +52,9 @@ public class LAFPlugin extends DefaultPlugin
 	/** Name of file to store user prefs in. */
 	static final String USER_PREFS_FILE_NAME = "LAFPreferences.xml";
 
+	/** Resources for this plugin. */
+	private LAFPluginResources _resources;
+
 	/** Plugin preferences. */
 	private LAFPreferences _lafPrefs;
 
@@ -62,6 +66,9 @@ public class LAFPlugin extends DefaultPlugin
 
 	/** Folder to store user settings in. */
 	private File _userSettingsFolder;
+
+	/** Folder to store extra LAFs supplied by the user. */
+	private File _userExtraLAFFolder;
 
 	/** Cache of settings for the plugin. */
 	private final XMLObjectCache _settingsCache = new XMLObjectCache();
@@ -142,7 +149,7 @@ public class LAFPlugin extends DefaultPlugin
 	 */
 	public String getLicenceFileName()
 	{
-		return "laf-plugin-licence.txt";
+		return "licences.html";
 	}
 
 	/**
@@ -153,6 +160,9 @@ public class LAFPlugin extends DefaultPlugin
 	public synchronized void load(IApplication app) throws PluginException
 	{
 		super.load(app);
+
+		// Load resources.
+		_resources = new LAFPluginResources(this);
 
 		// Folder within plugins folder that belongs to this
 		// plugin.
@@ -182,6 +192,12 @@ public class LAFPlugin extends DefaultPlugin
 		{
 			throw new PluginException(ex);
 		}
+
+		// Folder to contain extra LAFs supplied by the user.
+		_userExtraLAFFolder = new File(_userSettingsFolder, ILAFConstants.USER_EXTRA_LAFS_FOLDER); 
+
+		// Create empty required files in user settings directory.
+		createEmptyRequiredUserFiles();
 
 		// Load plugin preferences.
 		loadPrefs();
@@ -242,6 +258,18 @@ public class LAFPlugin extends DefaultPlugin
 	}
 
 	/**
+	 * Retrieve the directory that contains the extra LAFs supplied
+	 * by the user.
+	 * 
+	 * @return	folder as <TT>File</TT> that contains the extra LAFs supplied
+	 * 			by the user.
+	 */
+	File getUsersExtraLAFFolder()
+	{
+		return _userExtraLAFFolder;
+	}
+
+	/**
 	 * Get the preferences info object for this plugin.
 	 *
 	 * @return	The preferences info object for this plugin.
@@ -249,6 +277,16 @@ public class LAFPlugin extends DefaultPlugin
 	LAFPreferences getLAFPreferences()
 	{
 		return _lafPrefs;
+	}
+
+	/**
+	 * Retrieve plugins resources.
+	 * 
+	 * @return	Plugins resources.
+	 */
+	PluginResources getResources()
+	{
+		return _resources;
 	}
 
 	XMLObjectCache getSettingsCache()
@@ -384,5 +422,20 @@ public class LAFPlugin extends DefaultPlugin
 		throws IOException, XMLException
 	{
 		_settingsCache.save(prefsFile.getPath());
+	}
+
+	private void createEmptyRequiredUserFiles()
+	{
+		_userExtraLAFFolder.mkdirs();
+
+		File file = new File(_userExtraLAFFolder, ILAFConstants.USER_EXTRA_LAFS_PROPS_FILE);
+		try
+		{
+			file.createNewFile();
+		}
+		catch (IOException ex)
+		{
+			s_log.error("Error creating file " + file.getAbsolutePath(), ex);
+		}
 	}
 }

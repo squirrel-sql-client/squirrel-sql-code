@@ -60,6 +60,7 @@ class DriversListModel extends SortedListModel
 
 	public void setShowLoadedDriversOnly(boolean show)
 	{
+System.out.println("New: " + show + " - " + " Old: " + _showLoadedDriversOnly);
 		if (show != _showLoadedDriversOnly)
 		{
 			_showLoadedDriversOnly = show;

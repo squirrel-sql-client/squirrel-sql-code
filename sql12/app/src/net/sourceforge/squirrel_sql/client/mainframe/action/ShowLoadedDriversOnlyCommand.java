@@ -33,7 +33,15 @@ public class ShowLoadedDriversOnlyCommand implements ICommand
 	private final IApplication _app;
 
 	/**
-	 * Ctor.
+	 * If <TT>null</TT> then flip showing/hiding the drivers
+	 * else if <TT>Boolean.TRUE</TT> then show the drivers
+	 * else hide them.
+	 */
+	private Boolean _show;
+
+	/**
+	 * Ctor. When created using this the command will flip 
+	 * whether loaded drivers are shown or hidden.
 	 * 
 	 * @param	app		Application API.
 	 * 
@@ -42,12 +50,45 @@ public class ShowLoadedDriversOnlyCommand implements ICommand
 	 */
 	public ShowLoadedDriversOnlyCommand(IApplication app)
 	{
+		this(app, null);
+	}
+
+	/**
+	 * Ctor specifying whether whether loaded drivers 
+	 * should be shown or hidden.
+	 * 
+	 * @param	app		Application API.
+	 * @param	show	If <TT>true</TT> show the drivers.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if null IApplication passed.
+	 */
+	public ShowLoadedDriversOnlyCommand(IApplication app, boolean show)
+	{
+		this(app, Boolean.valueOf(show));
+	}
+
+	/**
+	 * Ctor specifying whether whether loaded drivers 
+	 * should be shown or hidden.
+	 * 
+	 * @param	app		Application API.
+	 * @param	show	If <TT>null</TT> then flip showing
+	 * 					the drivers, <TT>Boolean.TRUE</TT> show the drivers
+	 * 					else hide the drivers.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if null IApplication passed.
+	 */
+	private ShowLoadedDriversOnlyCommand(IApplication app, Boolean show)
+	{
 		super();
 		if (app == null)
 		{
 			throw new IllegalArgumentException("IApplication == null");
 		}
 		_app = app;
+		_show = show;
 	}
 
 	/**
@@ -56,6 +97,15 @@ public class ShowLoadedDriversOnlyCommand implements ICommand
 	public void execute()
 	{
 		SquirrelPreferences prefs = _app.getSquirrelPreferences();
-		prefs.setShowLoadedDriversOnly(!prefs.getShowLoadedDriversOnly());
+		if (_show == null)
+		{
+			prefs.setShowLoadedDriversOnly(!prefs.getShowLoadedDriversOnly());
+		}
+		else
+		{
+System.out.println("before: " + prefs.getShowLoadedDriversOnly());
+			prefs.setShowLoadedDriversOnly(_show.booleanValue());
+System.out.println("after:  " + prefs.getShowLoadedDriversOnly());
+		}
 	}
 }

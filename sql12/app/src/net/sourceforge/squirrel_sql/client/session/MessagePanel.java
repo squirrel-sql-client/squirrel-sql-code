@@ -27,8 +27,11 @@ import java.sql.SQLWarning;
 
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
+import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -242,9 +245,7 @@ class MessagePanel extends JTextArea implements IMessageHandler
 		public MessagePanelPopupMenu()
 		{
 			super();
-
-			// Substitute our "Clear" action
-			setItemAction(IOptionTypes.CLEAR, new MessagePanelClearAction());
+			add(new ClearAction());
 		}
 
 		/**
@@ -252,11 +253,23 @@ class MessagePanel extends JTextArea implements IMessageHandler
 		 * colour (to get rid of error msg colour) as well as clearing
 		 * the text.
 		 */
-		private class MessagePanelClearAction extends ClearAction
+		private class ClearAction extends BaseAction
 		{
+			protected ClearAction()
+			{
+				super("Clear");
+			}
 			public void actionPerformed(ActionEvent evt)
 			{
-				super.actionPerformed(evt);
+				try
+				{
+					Document doc = MessagePanel.this.getDocument();
+					doc.remove(0, doc.getLength());
+				}
+				catch (BadLocationException ex)
+				{
+					s_log.error(ex);
+				}
 				MessagePanel.this.setBackground(Color.white);
 			}
 		}

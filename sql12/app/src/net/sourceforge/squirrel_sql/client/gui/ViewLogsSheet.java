@@ -319,7 +319,6 @@ public class ViewLogsSheet extends BaseSheet
 	private ToolBar createToolBar()
 	{
 		final ToolBar tb = new ToolBar();
-		tb.setBorder(BorderFactory.createEtchedBorder());
 		tb.setUseRolloverButtons(true);
 		tb.setFloatable(false);
 

@@ -66,8 +66,8 @@ public class LAFPreferencesTab implements IGlobalPreferencesPanel
 	/**
 	 * Ctor.
 	 *
-	 * @param   plugin			The LAF plugin.
-	 * @param   lafRegister		Look and Feel register.
+	 * @param	plugin			The LAF plugin.
+	 * @param	lafRegister		Look and Feel register.
 	 *
 	 * @throws	IllegalArgumentException
 	 *			if <TT>LAFPlugin</TT>, or <TT>LAFRegister</TT> is <TT>null</TT>.
@@ -91,9 +91,9 @@ public class LAFPreferencesTab implements IGlobalPreferencesPanel
 	/**
 	 * Load panel with data from plugin preferences.
 	 *
-	 * @param   app	 Application API.
+	 * @param	app	Application API.
 	 *
-	 * @throws  IllegalArgumentException
+	 * @throws	IllegalArgumentException
 	 *			if <TT>IApplication</TT> is <TT>null</TT>.
 	 */
 	public void initialize(IApplication app)
@@ -161,8 +161,9 @@ public class LAFPreferencesTab implements IGlobalPreferencesPanel
 		interface LAFPreferencesPanelI18n
 		{
 			String LOOK_AND_FEEL = "Look and Feel:";
-			String LAF_WARNING =
-				"Note: Controls may not be drawn correctly after changes in this panel until the application is restarted.";
+			String LAF_WARNING = "Note: Controls may not be drawn correctly " +
+									"after changes in this panel until the " +
+									"application is restarted.";
 			String TAB_TITLE = "L & F";
 			String TAB_HINT = "Look and Feel settings";
 			String LAF_LOC = "L & F jars:";
@@ -225,14 +226,15 @@ public class LAFPreferencesTab implements IGlobalPreferencesPanel
 		{
 			_prefs.setLookAndFeelClassName(_lafCmb.getSelectedLookAndFeel().getClassName());
 
+			boolean forceChange = false;
 			if (_curLAFConfigComp != null)
 			{
-				_curLAFConfigComp.applyChanges();
+				forceChange = _curLAFConfigComp.applyChanges();
 			}
 
 			try
 			{
-				_lafRegister.setLookAndFeel();
+				_lafRegister.setLookAndFeel(forceChange);
 			}
 			catch (Exception ex)
 			{
@@ -243,8 +245,8 @@ public class LAFPreferencesTab implements IGlobalPreferencesPanel
 		private void createUserInterface()
 		{
 			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.anchor = gbc.WEST;
-			gbc.fill = gbc.HORIZONTAL;
+			gbc.anchor = GridBagConstraints.WEST;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
 
 			gbc.gridx = 0;
@@ -253,7 +255,7 @@ public class LAFPreferencesTab implements IGlobalPreferencesPanel
 
 			++gbc.gridy;
 			gbc.gridx = 0;
-			gbc.gridwidth = gbc.REMAINDER;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			add(new MultipleLineLabel(LAFPreferencesPanelI18n.LAF_WARNING), gbc);
 		}
 
@@ -261,11 +263,12 @@ public class LAFPreferencesTab implements IGlobalPreferencesPanel
 		{
 			_lafPnl = new JPanel(new GridBagLayout());
 			_lafPnl.setBorder(BorderFactory.createTitledBorder("Look and Feel"));
+
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.weightx = 1;
-			gbc.fill = gbc.HORIZONTAL;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
-			gbc.anchor = gbc.WEST;
+			gbc.anchor = GridBagConstraints.WEST;
 
 			gbc.gridx = 0;
 			gbc.gridy = 0;
@@ -306,11 +309,11 @@ public class LAFPreferencesTab implements IGlobalPreferencesPanel
 						{
 							_curLAFConfigComp.loadPreferencesPanel();
 							final GridBagConstraints gbc = new GridBagConstraints();
-							gbc.fill = gbc.HORIZONTAL;
+							gbc.fill = GridBagConstraints.HORIZONTAL;
 							gbc.insets = new Insets(4, 4, 4, 4);
 							gbc.gridx = 0;
-							gbc.gridy = gbc.RELATIVE;
-							gbc.gridwidth = gbc.REMAINDER;
+							gbc.gridy = GridBagConstraints.RELATIVE;
+							gbc.gridwidth = GridBagConstraints.REMAINDER;
 							_lafPnl.add(_curLAFConfigComp, gbc);
 						}
 					}

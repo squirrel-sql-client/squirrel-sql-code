@@ -238,9 +238,9 @@
 <!--		<antcall target="build_plugin">
 			<param name="p_internal_name" value="favs"/>
 		</antcall>-->
-		<antcall target="build_plugin">
+	<!--	<antcall target="build_plugin">
 			<param name="p_internal_name" value="jedit"/>
-		</antcall>
+		</antcall> -->
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="laf"/>
 		</antcall>

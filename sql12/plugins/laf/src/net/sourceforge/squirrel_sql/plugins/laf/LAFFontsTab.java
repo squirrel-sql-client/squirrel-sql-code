@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.laf;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -45,9 +45,11 @@ import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-class LAFFontsTab implements IGlobalPreferencesPanel {
+class LAFFontsTab implements IGlobalPreferencesPanel
+{
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(LAFFontsTab.class);
+	private static final ILogger s_log =
+		LoggerController.createLogger(LAFFontsTab.class);
 
 	/** The plugin. */
 	private LAFPlugin _plugin;
@@ -67,18 +69,21 @@ class LAFFontsTab implements IGlobalPreferencesPanel {
 	/**
 	 * Ctor.
 	 *
-	 * @param   plugin			The LAF plugin.
-	 * @param   lafRegister		Look and Feel register.
+	 * @param	plugin			The LAF plugin.
+	 * @param	lafRegister		Look and Feel register.
 	 *
 	 * @throws	IllegalArgumentException
 	 *			if <TT>LAFPlugin</TT>, or <TT>LAFRegister</TT> is <TT>null</TT>.
 	 */
-	public LAFFontsTab(LAFPlugin plugin, LAFRegister lafRegister) {
+	public LAFFontsTab(LAFPlugin plugin, LAFRegister lafRegister)
+	{
 		super();
-		if (plugin == null) {
+		if (plugin == null)
+		{
 			throw new IllegalArgumentException("Null LAFPlugin passed");
 		}
-		if (lafRegister == null) {
+		if (lafRegister == null)
+		{
 			throw new IllegalArgumentException("Null LAFRegister passed");
 		}
 		_plugin = plugin;
@@ -89,17 +94,19 @@ class LAFFontsTab implements IGlobalPreferencesPanel {
 	/**
 	 * Load panel with data from plugin preferences.
 	 *
-	 * @param   app	 Application API.
+	 * @param	app		Application API.
 	 *
-	 * @throws  IllegalArgumentException
+	 * @throws	IllegalArgumentException
 	 *			if <TT>IApplication</TT> is <TT>null</TT>.
 	 */
-	public void initialize(IApplication app) {
-		if (app == null) {
+	public void initialize(IApplication app)
+	{
+		if (app == null)
+		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
 		_app = app;
-		((FontSelectionPanel)getPanelComponent()).loadData();
+		((FontSelectionPanel) getPanelComponent()).loadData();
 	}
 
 	/**
@@ -107,8 +114,10 @@ class LAFFontsTab implements IGlobalPreferencesPanel {
 	 *
 	 * @return  the component to be displayed in the Preferences dialog.
 	 */
-	public synchronized Component getPanelComponent() {
-		if (_myPanel == null) {
+	public synchronized Component getPanelComponent()
+	{
+		if (_myPanel == null)
+		{
 			_myPanel = new FontSelectionPanel(_plugin, _lafRegister);
 		}
 		return _myPanel;
@@ -118,7 +127,8 @@ class LAFFontsTab implements IGlobalPreferencesPanel {
 	 * User has pressed OK or Apply in the dialog so save data from
 	 * panel.
 	 */
-	public void applyChanges() {
+	public void applyChanges()
+	{
 		_myPanel.applyChanges();
 	}
 
@@ -127,7 +137,8 @@ class LAFFontsTab implements IGlobalPreferencesPanel {
 	 *
 	 * @return  the title for this panel.
 	 */
-	public String getTitle() {
+	public String getTitle()
+	{
 		return FontSelectionPanel.i18n.TAB_TITLE;
 	}
 
@@ -136,20 +147,24 @@ class LAFFontsTab implements IGlobalPreferencesPanel {
 	 *
 	 * @return  the hint for this panel.
 	 */
-	public String getHint() {
+	public String getHint()
+	{
 		return FontSelectionPanel.i18n.TAB_HINT;
 	}
 
 	/**
 	 * "Fonts" panel to be displayed in the preferences dialog.
 	 */
-	private static final class FontSelectionPanel extends JPanel {
+	private static final class FontSelectionPanel extends JPanel
+	{
 		/**
 		 * This interface defines locale specific strings. This should be
 		 * replaced with a property file.
 		 */
-		interface i18n {
-			String LAF_WARNING = "Note: Changes may not take effect until the application is restarted.";
+		interface i18n
+		{
+			String LAF_WARNING =
+				"Note: Changes may not take effect until the application is restarted.";
 			String TAB_TITLE = "Fonts";
 			String TAB_HINT = "Fonts";
 		}
@@ -181,7 +196,8 @@ class LAFFontsTab implements IGlobalPreferencesPanel {
 
 		private LAFPreferences _prefs;
 
-		FontSelectionPanel(LAFPlugin plugin, LAFRegister lafRegister) {
+		FontSelectionPanel(LAFPlugin plugin, LAFRegister lafRegister)
+		{
 			super();
 			_plugin = plugin;
 			_lafRegister = lafRegister;
@@ -189,10 +205,12 @@ class LAFFontsTab implements IGlobalPreferencesPanel {
 			createUserInterface();
 		}
 
-		void loadData() {
+		void loadData()
+		{
 			_menuFontEnabledChk.setSelected(_prefs.isMenuFontEnabled());
 			_staticFontEnabledChk.setSelected(_prefs.isStaticFontEnabled());
-			_statusBarFontEnabledChk.setSelected(_prefs.isStatusBarFontEnabled());
+			_statusBarFontEnabledChk.setSelected(
+				_prefs.isStatusBarFontEnabled());
 			_otherFontEnabledChk.setSelected(_prefs.isOtherFontEnabled());
 
 			FontInfo fi = _prefs.getMenuFontInfo();
@@ -210,7 +228,8 @@ class LAFFontsTab implements IGlobalPreferencesPanel {
 			_otherFontBtn.setEnabled(_prefs.isOtherFontEnabled());
 		}
 
-		void applyChanges() {
+		void applyChanges()
+		{
 			_prefs.setMenuFontInfo(_menuFontBtn.getFontInfo());
 			_prefs.setStaticFontInfo(_staticFontBtn.getFontInfo());
 			_prefs.setStatusBarFontInfo(_statusBarFontBtn.getFontInfo());
@@ -218,38 +237,48 @@ class LAFFontsTab implements IGlobalPreferencesPanel {
 
 			_prefs.setMenuFontEnabled(_menuFontEnabledChk.isSelected());
 			_prefs.setStaticFontEnabled(_staticFontEnabledChk.isSelected());
-			_prefs.setStatusBarFontEnabled(_statusBarFontEnabledChk.isSelected());
+			_prefs.setStatusBarFontEnabled(
+				_statusBarFontEnabledChk.isSelected());
 			_prefs.setOtherFontEnabled(_otherFontEnabledChk.isSelected());
 
-			try {
+			try
+			{
 				_lafRegister.updateApplicationFonts();
-				_lafRegister.updateAllFrames();
+				//_lafRegister.updateAllFrames();
 
-			} catch (Exception ex) {
+			}
+			catch (Exception ex)
+			{
 				s_log.error("Error updating fonts", ex);
 			}
 		}
 
-		private void createUserInterface() {
+		private void createUserInterface()
+		{
 			setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.anchor = gbc.WEST;
-			gbc.fill = gbc.HORIZONTAL;
+			gbc.anchor = GridBagConstraints.WEST;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
 			gbc.gridx = 0;
 			gbc.gridy = 0;
 			add(createFontsPanel(), gbc);
 
 			++gbc.gridy;
-			gbc.gridwidth = gbc.REMAINDER;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			add(new MultipleLineLabel(i18n.LAF_WARNING), gbc);
 		}
 
-		private JPanel createFontsPanel() {
-			_menuFontBtn = new FontButton("Menus", _menuFontLbl, _prefs.getMenuFontInfo());
-			_staticFontBtn = new FontButton("Static Text", _staticFontLbl, _prefs.getStaticFontInfo());
-			_statusBarFontBtn = new FontButton("Status Bars", _statusBarFontLbl, _prefs.getStatusBarFontInfo());
-			_otherFontBtn = new FontButton("Other", _otherFontLbl, _prefs.getOtherFontInfo());
+		private JPanel createFontsPanel()
+		{
+			_menuFontBtn =
+				new FontButton("Menus", _menuFontLbl, _prefs.getMenuFontInfo());
+			_staticFontBtn =
+				new FontButton("Static Text", _staticFontLbl, _prefs.getStaticFontInfo());
+			_statusBarFontBtn =
+				new FontButton("Status Bars", _statusBarFontLbl, _prefs.getStatusBarFontInfo());
+			_otherFontBtn =
+				new FontButton("Other", _otherFontLbl, _prefs.getOtherFontInfo());
 
 			FontButtonListener lis = new FontButtonListener();
 			_menuFontBtn.addActionListener(lis);
@@ -257,23 +286,33 @@ class LAFFontsTab implements IGlobalPreferencesPanel {
 			_statusBarFontBtn.addActionListener(lis);
 			_otherFontBtn.addActionListener(lis);
 
-			_menuFontEnabledChk.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent evt) {
+			_menuFontEnabledChk.addActionListener(new ActionListener()
+			{
+				public void actionPerformed(ActionEvent evt)
+				{
 					_menuFontBtn.setEnabled(_menuFontEnabledChk.isSelected());
 				}
 			});
-			_staticFontEnabledChk.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent evt) {
-					_staticFontBtn.setEnabled(_staticFontEnabledChk.isSelected());
+			_staticFontEnabledChk.addActionListener(new ActionListener()
+			{
+				public void actionPerformed(ActionEvent evt)
+				{
+					_staticFontBtn.setEnabled(
+						_staticFontEnabledChk.isSelected());
 				}
 			});
-			_statusBarFontEnabledChk.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent evt) {
-					_statusBarFontBtn.setEnabled(_statusBarFontEnabledChk.isSelected());
+			_statusBarFontEnabledChk.addActionListener(new ActionListener()
+			{
+				public void actionPerformed(ActionEvent evt)
+				{
+					_statusBarFontBtn.setEnabled(
+						_statusBarFontEnabledChk.isSelected());
 				}
 			});
-			_otherFontEnabledChk.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent evt) {
+			_otherFontEnabledChk.addActionListener(new ActionListener()
+			{
+				public void actionPerformed(ActionEvent evt)
+				{
 					_otherFontBtn.setEnabled(_otherFontEnabledChk.isSelected());
 				}
 			});
@@ -282,7 +321,7 @@ class LAFFontsTab implements IGlobalPreferencesPanel {
 			pnl.setBorder(BorderFactory.createTitledBorder("Fonts"));
 			pnl.setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.fill = gbc.HORIZONTAL;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
 
 			gbc.gridx = 0;
@@ -313,7 +352,7 @@ class LAFFontsTab implements IGlobalPreferencesPanel {
 
 			++gbc.gridx;
 			gbc.gridy = 0;
-			gbc.fill = gbc.HORIZONTAL;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.weightx = 1.0;
 			pnl.add(_menuFontLbl, gbc);
 
@@ -329,52 +368,66 @@ class LAFFontsTab implements IGlobalPreferencesPanel {
 			return pnl;
 		}
 
-		private static final class FontButton extends JButton {
+		private static final class FontButton extends JButton
+		{
 			private FontInfo _fi;
 			private JLabel _lbl;
 			private Font _font;
 			private boolean _dirty;
 
-			FontButton(String text, JLabel lbl, FontInfo fi) {
+			FontButton(String text, JLabel lbl, FontInfo fi)
+			{
 				super(text);
 				_lbl = lbl;
 				_fi = fi;
 			}
-			
-			FontInfo getFontInfo() {
+
+			FontInfo getFontInfo()
+			{
 				return _fi;
 			}
-			
-			Font getSelectedFont() {
+
+			Font getSelectedFont()
+			{
 				return _font;
 			}
-			
-			void setSelectedFont(Font font) {
+
+			void setSelectedFont(Font font)
+			{
 				_font = font;
-				if (_fi == null) {
+				if (_fi == null)
+				{
 					_fi = new FontInfo(font);
-				} else {
+				}
+				else
+				{
 					_fi.setFont(font);
 				}
 				_dirty = true;
 			}
-			
-			boolean isDirty() {
+
+			boolean isDirty()
+			{
 				return _dirty;
 			}
 		}
 
-		private static final class FontButtonListener implements ActionListener {
-			public void actionPerformed(ActionEvent evt) {
-				if (evt.getSource() instanceof FontButton) {
-					FontButton btn = (FontButton)evt.getSource();
+		private static final class FontButtonListener implements ActionListener
+		{
+			public void actionPerformed(ActionEvent evt)
+			{
+				if (evt.getSource() instanceof FontButton)
+				{
+					FontButton btn = (FontButton) evt.getSource();
 					FontInfo fi = btn.getFontInfo();
 					Font font = null;
-					if (fi != null) {
+					if (fi != null)
+					{
 						font = fi.createFont();
 					}
 					font = new FontChooser().showDialog(font);
-					if (font != null) {
+					if (font != null)
+					{
 						btn.setSelectedFont(font);
 						btn._lbl.setText(new FontInfo(font).toString());
 					}
@@ -383,4 +436,3 @@ class LAFFontsTab implements IGlobalPreferencesPanel {
 		}
 	}
 }
-

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -23,6 +23,7 @@ import java.net.URL;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.db.DataCache;
 /**
  * This <CODE>ICommand</CODE> allows the user to install the defautl drivers.
@@ -31,8 +32,8 @@ import net.sourceforge.squirrel_sql.client.db.DataCache;
  */
 public class InstallDefaultDriversCommand implements ICommand
 {
-	/** Cache containing the drivers. */
-	private final DataCache _cache;
+	/** Application API. */
+	private final IApplication _app;
 
 	/** URL to load drivers from. */
 	private final URL _url;
@@ -40,35 +41,42 @@ public class InstallDefaultDriversCommand implements ICommand
 	/**
 	 * Ctor.
 	 * 
-	 * @param	cache	Cache containing the drivers.
+	 * @param	app		Application API.
 	 * @param	url		URL to load drivers from.
 	 * 
 	 * @throws	IllegalArgumentException	Thrown if <TT>null</TT>
-	 *										<TT>DataCache</TT> passed.
+	 *										<TT>IApplication</TT> passed.
 	 * @throws	IllegalArgumentException	Thrown if <TT>null</TT>
 	 *										<TT>URL</TT> passed.
 	 */
-	public InstallDefaultDriversCommand(DataCache cache, URL url)
+	public InstallDefaultDriversCommand(IApplication app, URL url)
 	{
 		super();
-		if (cache == null)
+		if (app == null)
 		{
-			throw new IllegalArgumentException("DataCache == null");
+			throw new IllegalArgumentException("IApplication == null");
 		}
 		if (url == null)
 		{
 			throw new IllegalArgumentException("URL == null");
 		}
 
-		_cache = cache;
+		_app = app;
 		_url = url;
 	}
 
+	/**
+	 * Load the default drivers into the cache and then
+	 * make sure that the drivers list is showing all
+	 * drivers.
+	 */
 	public void execute() throws BaseException
 	{
 		try
 		{
-			_cache.loadDefaultDrivers(_url);
+			final DataCache cache = _app.getDataCache();
+			cache.loadDefaultDrivers(_url);
+			new ShowLoadedDriversOnlyCommand(_app, true).execute();
 		}
 		catch (IOException ex)
 		{

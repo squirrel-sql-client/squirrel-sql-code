@@ -79,11 +79,11 @@ public class MainFrame extends BaseMDIParentFrame
 	/**
 	 * Ctor.
 	 *
-	 * @param   app	 Application API.
+	 * @param	app	 Application API.
 	 *
-	 * @throws  IllegalArgumentException
-	 *			  Thrown if <TT>null</TT> <TT>IApplication</TT>
-	 *			  passed.
+	 * @throws	IllegalArgumentException
+	 *			Thrown if <TT>null</TT> <TT>IApplication</TT>
+	 *			passed.
 	 */
 	public MainFrame(IApplication app)
 	{
@@ -107,7 +107,8 @@ public class MainFrame extends BaseMDIParentFrame
 		});
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-		SwingUtilities.invokeLater(new Runnable() {
+		SwingUtilities.invokeLater(new Runnable()
+		{
 			public void run()
 			{
 				ScrollableDesktopPane comp = (ScrollableDesktopPane)getDesktopPane();
@@ -119,13 +120,10 @@ public class MainFrame extends BaseMDIParentFrame
 
 	public void dispose()
 	{
-//		if (closeAllNonToolWindows())
-//		{
-			closeAllToolWindows();
-			_app.shutdown();
-			super.dispose();
-			System.exit(0);
-//		}
+		closeAllToolWindows();
+		_app.shutdown();
+		super.dispose();
+		System.exit(0);
 	}
 
 	//??Why
