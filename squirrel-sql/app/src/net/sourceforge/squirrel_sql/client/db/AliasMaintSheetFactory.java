@@ -38,9 +38,9 @@ import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class AliasMaintDialogFactory implements AliasMaintDialog.MaintenanceType {
+public class AliasMaintSheetFactory implements AliasMaintSheet.MaintenanceType {
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(AliasMaintDialogFactory.class);
+	private static ILogger s_log = LoggerController.createLogger(AliasMaintSheetFactory.class);
 
 	/** Application API. */
 	private IApplication _app;
@@ -52,12 +52,12 @@ public class AliasMaintDialogFactory implements AliasMaintDialog.MaintenanceType
 	private Map _modifySheets = new HashMap();
 
 	/** Singleton instance of this class. */
-	private static AliasMaintDialogFactory s_instance = new AliasMaintDialogFactory();
+	private static AliasMaintSheetFactory s_instance = new AliasMaintSheetFactory();
 
 	/**
 	 * ctor. Private as cass is a singleton.
 	 */
-	private AliasMaintDialogFactory() {
+	private AliasMaintSheetFactory() {
 		super();
 	}
 
@@ -66,7 +66,7 @@ public class AliasMaintDialogFactory implements AliasMaintDialog.MaintenanceType
 	 * 
 	 * @return	the single instance of this class.
 	 */
-	public static AliasMaintDialogFactory getInstance() {
+	public static AliasMaintSheetFactory getInstance() {
 		return s_instance;
 	}
 
@@ -88,21 +88,21 @@ public class AliasMaintDialogFactory implements AliasMaintDialog.MaintenanceType
 	 * 
 	 * @throws	IllegalArgumentException	if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
 	 */
-	public synchronized AliasMaintDialog showModifySheet(ISQLAlias alias) {
+	public synchronized AliasMaintSheet showModifySheet(ISQLAlias alias) {
 		if (alias == null) {
 			throw new IllegalArgumentException("ISQLALias == null");
 		}
 
-		AliasMaintDialog sheet = get(alias);
+		AliasMaintSheet sheet = get(alias);
 		if (sheet == null) {
-			sheet = new AliasMaintDialog(_app, alias, MODIFY);
+			sheet = new AliasMaintSheet(_app, alias, MODIFY);
 			_modifySheets.put(alias.getIdentifier(), sheet);
 			_app.getMainFrame().addInternalFrame(sheet, true, null);
 	
 			sheet.addInternalFrameListener(new InternalFrameAdapter() {
 				public void internalFrameClosed(InternalFrameEvent evt) {
 					synchronized( getInstance()) {
-						AliasMaintDialog frame = (AliasMaintDialog)evt.getInternalFrame();
+						AliasMaintSheet frame = (AliasMaintSheet)evt.getInternalFrame();
 						_modifySheets.remove(frame.getSQLAlias().getIdentifier());
 					}
 				}
@@ -120,11 +120,11 @@ public class AliasMaintDialogFactory implements AliasMaintDialog.MaintenanceType
 	 * 
 	 * @return	The new maintenance sheet.
 	 */
-	public AliasMaintDialog showCreateSheet() {
+	public AliasMaintSheet showCreateSheet() {
         final DataCache cache = _app.getDataCache();
         final IdentifierFactory factory = IdentifierFactory.getInstance();
         final ISQLAlias alias = cache.createAlias(factory.createIdentifier());
-		final AliasMaintDialog sheet = new AliasMaintDialog(_app, alias, NEW);
+		final AliasMaintSheet sheet = new AliasMaintSheet(_app, alias, NEW);
 		_app.getMainFrame().addInternalFrame(sheet, true, null);
 		positionSheet(sheet);
 		return sheet;
@@ -138,7 +138,7 @@ public class AliasMaintDialogFactory implements AliasMaintDialog.MaintenanceType
 	 *
 	 * @throws	IllegalArgumentException	if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
 	 */
-	public AliasMaintDialog showCopySheet(ISQLAlias alias) {
+	public AliasMaintSheet showCopySheet(ISQLAlias alias) {
 		if (alias == null) {
 			throw new IllegalArgumentException("ISQLALias == null");
 		}
@@ -151,17 +151,17 @@ public class AliasMaintDialogFactory implements AliasMaintDialog.MaintenanceType
         } catch (ValidationException ex) {
             s_log.error("Error occured copying the alias", ex);
         }
-		final AliasMaintDialog sheet = new AliasMaintDialog(_app, newAlias, COPY);
+		final AliasMaintSheet sheet = new AliasMaintSheet(_app, newAlias, COPY);
 		_app.getMainFrame().addInternalFrame(sheet, true, null);
 		positionSheet(sheet);
 		return sheet;
 	}
 
-	private AliasMaintDialog get(ISQLAlias alias) {
-		return (AliasMaintDialog)_modifySheets.get(alias.getIdentifier());
+	private AliasMaintSheet get(ISQLAlias alias) {
+		return (AliasMaintSheet)_modifySheets.get(alias.getIdentifier());
 	}
 
-	private void positionSheet(AliasMaintDialog sheet) {
+	private void positionSheet(AliasMaintSheet sheet) {
 		GUIUtils.centerWithinDesktop(sheet);
 		sheet.setVisible(true);
 		sheet.moveToFront();

@@ -17,7 +17,7 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import net.sourceforge.squirrel_sql.client.db.DriverMaintDialogFactory;
+import net.sourceforge.squirrel_sql.client.db.DriverMaintSheetFactory;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
@@ -52,6 +52,6 @@ public class ModifyDriverCommand implements ICommand {
 	 * Display a dialog allowing user to maintain the <TT>ISQLDriver</TT>.
 	 */
 	public void execute() {
-		DriverMaintDialogFactory.getInstance().showModifySheet(_driver);
+		DriverMaintSheetFactory.getInstance().showModifySheet(_driver);
 	}
 }

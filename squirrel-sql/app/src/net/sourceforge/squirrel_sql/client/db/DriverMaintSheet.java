@@ -61,7 +61,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class DriverMaintDialog extends /*JDialog*/JInternalFrame {
+public class DriverMaintSheet extends JInternalFrame {
 	/** Different types of maintenance that can be done. */
 	public interface MaintenanceType {
 		int NEW = 1;
@@ -70,7 +70,9 @@ public class DriverMaintDialog extends /*JDialog*/JInternalFrame {
 	}
 
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(DriverMaintDialog.class);
+	private static ILogger s_log = LoggerController.createLogger(DriverMaintSheet.class);
+
+	private static final int COLUMN_COUNT = 25;
 
 	/**
 	 * This interface defines locale specific strings. This should be
@@ -79,7 +81,7 @@ public class DriverMaintDialog extends /*JDialog*/JInternalFrame {
 	private interface i18n {
 		String ADD = "Add Driver";
 		String CHANGE = "Change Driver";
-		String DRIVER = "Driver Class Name:";
+		String DRIVER = "Class Name:";
 		String JAR_FILE = "JAR File:";
 		String LOAD_WHERE = "Load from CLASSPATH:";
 		String NAME = "Name:";
@@ -133,7 +135,7 @@ public class DriverMaintDialog extends /*JDialog*/JInternalFrame {
 	 * 			Thrown if <TT>null</TT> passed for <TT>app</TT> or <TT>sqlDriver</TT> or
 	 * 			an invalid value passed for <TT>maintType</TT>.
 	 */
-	DriverMaintDialog(IApplication app, ISQLDriver sqlDriver, int maintType) {
+	DriverMaintSheet(IApplication app, ISQLDriver sqlDriver, int maintType) {
 		super();
 		if (app == null) {
 			throw new IllegalArgumentException("Null IApplication passed");
@@ -151,6 +153,7 @@ public class DriverMaintDialog extends /*JDialog*/JInternalFrame {
 
 		createUserInterface();
 		loadData();
+		pack();
 	}
 
 	/**
@@ -276,6 +279,10 @@ public class DriverMaintDialog extends /*JDialog*/JInternalFrame {
 										: i18n.ADD;
 		setTitle(title);
 
+		_driverName.setColumns(COLUMN_COUNT);
+		_url.setColumns(COLUMN_COUNT);
+		_jarFileName.setColumns(COLUMN_COUNT);
+
 		// This seems to be necessary to get background colours
 		// correct. Without it labels added to the content pane
 		// have a dark background while those added to a JPanel
@@ -318,8 +325,6 @@ public class DriverMaintDialog extends /*JDialog*/JInternalFrame {
 
 		++gbc.gridy;
 		contentPane.add(createButtonsPanel(), gbc);
-
-		pack();
 	}
 
 	private JPanel createButtonsPanel() {

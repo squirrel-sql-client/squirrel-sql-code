@@ -17,10 +17,8 @@ package net.sourceforge.squirrel_sql.client.db;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-//?? Rename to ALiasMaintSheet.
-
 import java.awt.BorderLayout;
-import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -65,7 +63,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasComman
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 
-public class AliasMaintDialog extends JInternalFrame {
+public class AliasMaintSheet extends JInternalFrame {
 	/**
 	 * Maintenance types.
 	 */
@@ -74,6 +72,8 @@ public class AliasMaintDialog extends JInternalFrame {
 		int MODIFY = 2;
 		int COPY = 3;
 	}
+
+	private static final int COLUMN_COUNT = 25;
 
 	/**
 	 * This interface defines locale specific strings. This should be
@@ -89,7 +89,7 @@ public class AliasMaintDialog extends JInternalFrame {
 	}
 
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(AliasMaintDialog.class);
+	private static ILogger s_log = LoggerController.createLogger(AliasMaintSheet.class);
 
 	/** Application API. */
 	private IApplication _app;
@@ -129,7 +129,7 @@ public class AliasMaintDialog extends JInternalFrame {
 	 * 			Thrown if <TT>null</TT> passed for <TT>app</TT> or <TT>ISQLAlias</TT> or
 	 * 			an invalid value passed for <TT>maintType</TT>.
 	 */
-	AliasMaintDialog(IApplication app, ISQLAlias sqlAlias, int maintType) {
+	AliasMaintSheet(IApplication app, ISQLAlias sqlAlias, int maintType) {
 		super();
 		if (app == null) {
 			throw new IllegalArgumentException("IApplication == null");
@@ -147,6 +147,7 @@ public class AliasMaintDialog extends JInternalFrame {
 
 		createUserInterface();
 		loadData();
+		pack();
 	}
 
 	/**
@@ -219,7 +220,7 @@ public class AliasMaintDialog extends JInternalFrame {
 	}
 
 	private void showNewDriverDialog() {
-		DriverMaintDialogFactory.getInstance().showCreateSheet();
+		DriverMaintSheetFactory.getInstance().showCreateSheet();
 	}
 
 	private void createUserInterface() {
@@ -232,6 +233,10 @@ public class AliasMaintDialog extends JInternalFrame {
 										? (i18n.CHANGE + " " + _sqlAlias.getName())
 										: i18n.ADD;
 		setTitle(title);
+
+		_aliasName.setColumns(COLUMN_COUNT);
+		_url.setColumns(COLUMN_COUNT);
+		_userName.setColumns(COLUMN_COUNT);
 
 		// This seems to be necessary to get background colours
 		// correct. Without it labels added to the content pane
@@ -303,8 +308,6 @@ public class AliasMaintDialog extends JInternalFrame {
 		++gbc.gridy;
 		contentPane.add(createButtonsPanel(), gbc);
 
-		pack();
-
 		_app.getDataCache().addDriversListener(new ObjectCacheChangeListener() {
 		    public void objectAdded(ObjectCacheChangeEvent evt) {
 		    	_drivers.addItem(evt.getObject());
@@ -372,7 +375,7 @@ public class AliasMaintDialog extends JInternalFrame {
 		DriversCombo() {
 			super();
 			List list = new ArrayList();
-			for (Iterator it = AliasMaintDialog.this._app.getDataCache().drivers(); it.hasNext();) {
+			for (Iterator it = AliasMaintSheet.this._app.getDataCache().drivers(); it.hasNext();) {
 				ISQLDriver sqlDriver = ((ISQLDriver)it.next());
 				_map.put(sqlDriver.getIdentifier(), sqlDriver);
 				list.add(sqlDriver);
@@ -407,7 +410,7 @@ public class AliasMaintDialog extends JInternalFrame {
 				s_log.error("Error closing Connection", th);
 				new ErrorDialog(/*AliasMaintDialog.this*/_app.getMainFrame(), "Error closing opened connection: " + th.toString()).show();
 			}
-			Dialogs.showOk(AliasMaintDialog.this, "Connection successful");
+			Dialogs.showOk(AliasMaintSheet.this, "Connection successful");
 		}
 		/**
 		 * @see CompletionCallback#sessionCreated(ISession)
