@@ -3,6 +3,8 @@ package net.sourceforge.squirrel_sql.client;
  * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
+ * Modifications Copyright (C) 2003-2004 Jason Height
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -23,6 +25,7 @@ import javax.swing.JMenu;
 
 import net.sourceforge.squirrel_sql.fw.sql.DataCache;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
+import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
@@ -76,6 +79,14 @@ public interface IApplication
 	SquirrelPreferences getSquirrelPreferences();
 
 	SquirrelResources getResources();
+
+
+	/**
+	 * Retrieves the message handler for the application.
+	 *
+	 * @return	Application level message handler.
+	 */
+	IMessageHandler getMessageHandler();
 
 	/**
 	 * Return an array of all the sessions currently active.

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session;
 /*
- * Copyright (C) 2002-2003 Colin Bell and Johan Compagner
+ * Copyright (C) 2002-2004 Colin Bell and Johan Compagner
  * colbell@users.sourceforge.net
  * jcompagner@j-com.nl
  *
@@ -25,6 +25,8 @@ import javax.swing.JMenuItem;
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
+import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
 /**
  * This interface defines the API through which plugins can work with the SQL
  * panel.
@@ -33,6 +35,10 @@ import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
  */
 public interface ISQLPanelAPI
 {
+	public void addExecutor(ISQLResultExecuter exec);
+
+	public void removeExecutor(ISQLResultExecuter exec);
+
 	/**
 	 * Add a listener listening for SQL Execution.
 	 *
@@ -88,11 +94,28 @@ public interface ISQLPanelAPI
 	public void removeSQLPanelListener(ISQLPanelListener lis);
 
 	/**
+	 * Add a listener for events in this sql panel executer tabs.
+	 *
+	 * @param	lis		The listener.
+	 */
+	public void addExecuterTabListener(ISQLResultExecuterTabListener lis);
+
+	/**
+	 * Remove a listener for events in this sql panel executer tabs.
+	 *
+	 * @param	lis		The listener.
+	 */
+	public void removeExecuterTabListener(ISQLResultExecuterTabListener lis);
+
+	/**
 	 * Replace the SQL entry area with the passed one.
 	 *
 	 * @param	pnl	New SQL entry area.
 	 */
 	void installSQLEntryPanel(ISQLEntryPanel pnl);
+
+	// TODO: Do we need this?
+	ISQLEntryPanel getSQLEntryPanel();
 
 	/**
 	 * Return the entire contents of the SQL entry area.
@@ -205,15 +228,10 @@ public interface ISQLPanelAPI
 	 */
 	void executeCurrentSQL();
 
-	/**
-	 * Commit the current SQL transaction.
+ 	/**
+ 	 * Executes the individual SQL statements in order.
 	 */
-	void commit();
-
-	/**
-	 * Rollback the current SQL transaction.
-	 */
-	void rollback();
+	void executeAllSQL();
 
 	/**
 	 * Close all the SQL result tabs.
@@ -258,5 +276,7 @@ public interface ISQLPanelAPI
 	 * @param	action	The action to be added.
 	 */
 	JMenuItem addToSQLEntryAreaMenu(Action action);
+
+	ISession getSession();
 }
 

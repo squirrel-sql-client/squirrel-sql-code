@@ -65,7 +65,12 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
-public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
+/**
+ * JASON: Superseeded by import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask
+ * DELETEME:
+ * @deprecated
+ */
+class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 {
 	/**
 	 * We need to save the name of the SessionProperties display class at the time
@@ -113,7 +118,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 	 * as events which can be listened for. Also need to remove all UI code
 	 * from this class.
 	 */
-	private SQLPanel _sqlPanel;
+	private SQLResultExecuterPanel _sqlPanel;
 
 	/** Current session. */
 	private ISession _session;
@@ -138,7 +143,8 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 	 */
 	private final List _results = Collections.synchronizedList(new ArrayList());
 
-	public SQLExecuterTask(SQLPanel sqlPanel, ISession session, String sql)
+	public SQLExecuterTask(SQLResultExecuterPanel sqlPanel, ISession session,
+							String sql)
 	{
 		super();
 		_sqlPanel = sqlPanel;

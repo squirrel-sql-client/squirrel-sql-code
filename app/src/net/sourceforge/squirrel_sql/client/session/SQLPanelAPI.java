@@ -1,8 +1,10 @@
 package net.sourceforge.squirrel_sql.client.session;
 /*
- * Copyright (C) 2002-2003 Colin Bell and Johan Compagner
+ * Copyright (C) 2002-2004 Colin Bell and Johan Compagner
  * colbell@users.sourceforge.net
  * jcompagner@j-com.nl
+ *
+ * Modifications Copyright (C) 2003-2004 Jason Height
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,7 +30,10 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
+import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 /**
  * This class is the API through which plugins can work with the SQL Panel.
  *
@@ -40,34 +45,44 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(MainPanel.class);
 
-	/** Session containing the SQL Panel. */
-	private ISession _session;
+	/** The SQL Panel. */
+	private SQLPanel _panel;
 
 	/**
-	 * Ctor specifying the session.
+	 * Ctor specifying the panel.
 	 *
-	 * @param	session	<TT>ISession</TT> containing the SQL Panel.
+	 * @param	panel	<TT>SQLPanel</TT> is the SQL Panel.
 	 *
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if <T>null</TT> <TT>ISession</TT> passed.
+	 * 			Thrown if <T>null</TT> <TT>SQLPanel</TT> passed.
 	 */
-	SQLPanelAPI(ISession session)
+	public SQLPanelAPI(SQLPanel panel)
 	{
 		super();
-		if (session == null)
+		if (panel == null)
 		{
-			throw new IllegalArgumentException("ISession == null");
+			throw new IllegalArgumentException("SQLPanel == null");
 		}
-		_session = session;
+		_panel = panel;
+	}
+
+	public void addExecutor(ISQLResultExecuter exec)
+	{
+		_panel.addExecutor(exec);
+	}
+
+	public void removeExecutor(ISQLResultExecuter exec)
+	{
+		_panel.removeExecutor(exec);
 	}
 
 	/**
 	 * Add a listener listening for SQL Execution.
 	 *
-	 * @param	lis	 Listener
+	 * @param	lis		Listener to add
 	 *
 	 * @throws	IllegalArgumentException
-	 *			If a null <TT>ISQLExecutionListener</TT> passed.
+	 *			Thrown if a null <TT>ISQLExecutionListener</TT> passed.
 	 */
 	public synchronized void addSQLExecutionListener(ISQLExecutionListener lis)
 	{
@@ -75,7 +90,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 		{
 			throw new IllegalArgumentException("null ISQLExecutionListener passed");
 		}
-		_session.getSessionSheet().getSQLPanel().addSQLExecutionListener(lis);
+		_panel.addSQLExecutionListener(lis);
 	}
 
 	/**
@@ -92,7 +107,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 		{
 			throw new IllegalArgumentException("null ISQLExecutionListener passed");
 		}
-		_session.getSessionSheet().getSQLPanel().removeSQLExecutionListener(lis);
+		_panel.removeSQLExecutionListener(lis);
 	}
 
 	/**
@@ -100,13 +115,14 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 *
 	 * @param	lis		The listener.
 	 */
+// JASON: Do we need these?
 	public synchronized void addResultTabListener(IResultTabListener lis)
 	{
-		if (lis == null)
-		{
-			throw new IllegalArgumentException("null IResultTabListener passed");
-		}
-		_session.getSessionSheet().getSQLPanel().addResultTabListener(lis);
+//		if (lis == null)
+//		{
+//			throw new IllegalArgumentException("null IResultTabListener passed");
+//		}
+//		_session.getSessionSheet().getSQLPanel().addResultTabListener(lis);
 	}
 
 	/**
@@ -114,47 +130,82 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 *
 	 * @param	lis		The listener.
 	 */
+//	 JASON: Do we need these?
 	public synchronized void removeResultTabListener(IResultTabListener lis)
+	{
+//		if (lis == null)
+//		{
+//			throw new IllegalArgumentException("null IResultTabListener passed");
+//		}
+//		_session.getSessionSheet().getSQLPanel().removeResultTabListener(lis);
+	}
+
+	/**
+	 * Add a listener for events in this sql panel executer tabs.
+	 *
+	 * @param	lis		The listener.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if a null <TT>ISQLResultExecuterTabListener</TT> passed.
+	 */
+	public void addExecuterTabListener(ISQLResultExecuterTabListener lis)
 	{
 		if (lis == null)
 		{
-			throw new IllegalArgumentException("null IResultTabListener passed");
+			throw new IllegalArgumentException("ISQLResultExecuterTabListener == null");
 		}
-		_session.getSessionSheet().getSQLPanel().removeResultTabListener(lis);
+		_panel.addExecuterTabListener(lis);
+	}
+
+	/**
+	 * Remove a listener for events from this sql panel executer tabs.
+	 *
+	 * @param	lis		The listener.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if a null <TT>ISQLResultExecuterTabListener</TT> passed.
+	 */
+	public void removeExecuterTabListener(ISQLResultExecuterTabListener lis)
+	{
+		if (lis == null)
+		{
+			throw new IllegalArgumentException("ISQLResultExecuterTabListener == null");
+		}
+		_panel.removeExecuterTabListener(lis);
 	}
 
 	/**
 	 * Add a listener for events in this SQL Panel.
 	 *
-	 * @param	lis	 Listener
+	 * @param	lis		Listener to add
 	 *
 	 * @throws	IllegalArgumentException
-	 *			If a null <TT>ISQLPanelListener</TT> passed.
+	 *			Thrown if a null <TT>ISQLPanelListener</TT> passed.
 	 */
 	public synchronized void addSQLPanelListener(ISQLPanelListener lis)
 	{
 		if (lis == null)
 		{
-			throw new IllegalArgumentException("null ISQLPanelListener passed");
+			throw new IllegalArgumentException("ISQLPanelListener == null");
 		}
-		_session.getSessionSheet().getSQLPanel().addSQLPanelListener(lis);
+		_panel.addSQLPanelListener(lis);
 	}
 
 	/**
 	 * Remove a listener.
 	 *
-	 * @param	lis	Listener
+	 * @param	lis		Listener to remove
 	 *
 	 * @throws	IllegalArgumentException
-	 *			If a null <TT>ISQLPanelListener</TT> passed.
+	 *			Thrown if a null <TT>ISQLPanelListener</TT> passed.
 	 */
 	public synchronized void removeSQLPanelListener(ISQLPanelListener lis)
 	{
 		if (lis == null)
 		{
-			throw new IllegalArgumentException("null ISQLPanelListener passed");
+			throw new IllegalArgumentException("ISQLPanelListener == null");
 		}
-		_session.getSessionSheet().getSQLPanel().removeSQLPanelListener(lis);
+		_panel.removeSQLPanelListener(lis);
 	}
 
 	/**
@@ -164,7 +215,12 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 */
 	public synchronized void installSQLEntryPanel(ISQLEntryPanel pnl)
 	{
-		_session.getSessionSheet().installSQLEntryPanel(pnl);
+		_panel.installSQLEntryPanel(pnl);
+	}
+
+	public ISQLEntryPanel getSQLEntryPanel()
+	{
+		return _panel.getSQLEntryPanel();
 	}
 
 	/**
@@ -174,7 +230,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 */
 	public synchronized String getEntireSQLScript()
 	{
-		return _session.getSessionSheet().getSQLEntryPanel().getText();
+		return _panel.getSQLEntryPanel().getText();
 	}
 
 	/**
@@ -184,7 +240,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 */
 	public String getSelectedSQLScript()
 	{
-		return _session.getSessionSheet().getSQLEntryPanel().getSelectedText();
+		return _panel.getSQLEntryPanel().getSelectedText();
 	}
 
 	/**
@@ -194,7 +250,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 */
 	public synchronized String getSQLScriptToBeExecuted()
 	{
-		return _session.getSessionSheet().getSQLEntryPanel().getSQLToBeExecuted();
+		return _panel.getSQLEntryPanel().getSQLToBeExecuted();
 	}
 
 	/**
@@ -205,7 +261,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 */
 	public synchronized void appendSQLScript(String sqlScript)
 	{
-		_session.getSessionSheet().getSQLEntryPanel().appendText(sqlScript);
+		_panel.getSQLEntryPanel().appendText(sqlScript);
 	}
 
 	/**
@@ -218,7 +274,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 */
 	public synchronized void appendSQLScript(String sqlScript, boolean select)
 	{
-		_session.getSessionSheet().getSQLEntryPanel().appendText(sqlScript, select);
+		_panel.getSQLEntryPanel().appendText(sqlScript, select);
 	}
 
 	/**
@@ -229,7 +285,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 */
 	public synchronized void setEntireSQLScript(String sqlScript)
 	{
-		_session.getSessionSheet().getSQLEntryPanel().setText(sqlScript);
+		_panel.getSQLEntryPanel().setText(sqlScript);
 	}
 
 	/**
@@ -242,7 +298,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 */
 	public synchronized void setEntireSQLScript(String sqlScript, boolean select)
 	{
-		_session.getSessionSheet().getSQLEntryPanel().setText(sqlScript, select);
+		_panel.getSQLEntryPanel().setText(sqlScript, select);
 	}
 
 	/**
@@ -259,7 +315,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 		{
 			sqlScript = "";
 		}
-		ISQLEntryPanel pnl = _session.getSessionSheet().getSQLEntryPanel();
+		final ISQLEntryPanel pnl = _panel.getSQLEntryPanel();
 		int selStart = -1;
 		if (select)
 		{
@@ -294,7 +350,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 */
 	public synchronized int getSQLScriptSelectionStart()
 	{
-		return _session.getSessionSheet().getSQLEntryPanel().getSelectionStart();
+		return _panel.getSQLEntryPanel().getSelectionStart();
 	}
 
 	/**
@@ -305,7 +361,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 */
 	public synchronized int getSQLScriptSelectionEnd()
 	{
-		return _session.getSessionSheet().getSQLEntryPanel().getSelectionEnd();
+		return _panel.getSQLEntryPanel().getSelectionEnd();
 	}
 
 	/**
@@ -316,7 +372,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 */
 	public synchronized void setSQLScriptSelectionStart(int start)
 	{
-		_session.getSessionSheet().getSQLEntryPanel().setSelectionStart(start);
+		_panel.getSQLEntryPanel().setSelectionStart(start);
 	}
 
 	/**
@@ -327,7 +383,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 */
 	public synchronized void setSQLScriptSelectionEnd(int end)
 	{
-		_session.getSessionSheet().getSQLEntryPanel().setSelectionEnd(end);
+		_panel.getSQLEntryPanel().setSelectionEnd(end);
 	}
 
 	/**
@@ -336,7 +392,19 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 */
 	public void executeCurrentSQL()
 	{
-		_session.getSessionSheet().getSQLPanel().executeCurrentSQL();
+		_panel.runCurrentExecuter();
+	}
+
+	/**
+	 * Executes all the SQL script(s) in the SQL Panel.
+	 * Not <TT>synchronized</TT> as multiple SQL statements
+	 * can be executed simultaneously.
+	 */
+	public void executeAllSQL()
+	{
+//		_session.getSessionSheet().getSQLPanel().executeSQL(sql);
+		// JASON: To be implemented
+		_panel.getSession().getMessageHandler().showMessage("JASON: To Be Implemented");
 	}
 
 	/**
@@ -347,41 +415,8 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 */
 	public void executeSQL(String sql)
 	{
-		_session.getSessionSheet().getSQLPanel().executeSQL(sql);
-	}
-
-	/**
-	 * Commit the current SQL transaction.
-	 */
-	public synchronized void commit()
-	{
-		try
-		{
-			_session.getSQLConnection().commit();
-			final String msg = s_stringMgr.getString("SQLPanelAPI.commit");
-			_session.getMessageHandler().showMessage(msg);
-		}
-		catch (Throwable ex)
-		{
-			_session.getMessageHandler().showErrorMessage(ex);
-		}
-	}
-
-	/**
-	 * Rollback the current SQL transaction.
-	 */
-	public synchronized void rollback()
-	{
-		try
-		{
-			_session.getSQLConnection().rollback();
-			final String msg = s_stringMgr.getString("SQLPanelAPI.rollback");
-			_session.getMessageHandler().showMessage(msg);
-		}
-		catch (Exception ex)
-		{
-			_session.getMessageHandler().showErrorMessage(ex);
-		}
+		//JASON: Remove??
+		//_session.getSessionSheet().getSQLPanel().executeSQL(sql);
 	}
 
 	/**
@@ -389,7 +424,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 */
 	public synchronized void closeAllSQLResultTabs()
 	{
-		_session.getSessionSheet().getSQLPanel().closeAllSQLResultTabs();
+		_panel.getSQLExecPanel().closeAllSQLResultTabs();
 	}
 
 	/**
@@ -397,7 +432,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 */
 	public synchronized void closeAllSQLResultFrames()
 	{
-		_session.getSessionSheet().getSQLPanel().closeAllSQLResultFrames();
+		_panel.getSQLExecPanel().closeAllSQLResultFrames();
 	}
 
 	/**
@@ -405,7 +440,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 */
 	public synchronized void gotoNextResultsTab()
 	{
-		_session.getSessionSheet().getSQLPanel().gotoNextResultsTab();
+		_panel.getSQLExecPanel().gotoNextResultsTab();
 	}
 
 	/**
@@ -413,7 +448,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 */
 	public synchronized void gotoPreviousResultsTab()
 	{
-		_session.getSessionSheet().getSQLPanel().gotoPreviousResultsTab();
+		_panel.getSQLExecPanel().gotoPreviousResultsTab();
 	}
 
 	/**
@@ -431,12 +466,13 @@ public class SQLPanelAPI implements ISQLPanelAPI
 			throw new IllegalArgumentException("sql == null");
 		}
 
-		SQLHistoryItem shi = new SQLHistoryItem(sql);
-		if (_session.getProperties().getSQLShareHistory())
+		final SQLHistoryItem shi = new SQLHistoryItem(sql);
+		final ISession session = _panel.getSession();
+		if (session.getProperties().getSQLShareHistory())
 		{
-			_session.getApplication().getSQLHistory().add(shi);
+			session.getApplication().getSQLHistory().add(shi);
 		}
-		_session.getSessionSheet().getSQLPanel().addSQLToHistory(shi);
+		_panel.addSQLToHistory(shi);
 	}
 
 	/**
@@ -453,7 +489,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 		{
 			throw new IllegalArgumentException("Menu == null");
 		}
-		_session.getSessionSheet().getSQLPanel().addToSQLEntryAreaMenu(menu);
+		_panel.addToSQLEntryAreaMenu(menu);
 	}
 
 	/**
@@ -472,6 +508,12 @@ public class SQLPanelAPI implements ISQLPanelAPI
 		{
 			throw new IllegalArgumentException("Action == null");
 		}
-		return _session.getSessionSheet().getSQLPanel().addToSQLEntryAreaMenu(action);
+		return _panel.addToSQLEntryAreaMenu(action);
+	}
+
+	/** JASON: Remove once deprecated interface removed*/
+	public ISession getSession()
+	{
+		return _panel.getSession();
 	}
 }

@@ -7,6 +7,8 @@ package net.sourceforge.squirrel_sql.client;
  * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
+ * Modifications Copyright (C) 2003-2004 Jason Height
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -48,6 +50,7 @@ import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.sql.DataCache;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
+import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.ProxyHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -100,7 +103,7 @@ class Application implements IApplication
 	private ActionCollection _actions;
 
 	/** Applications main frame. */
-	private MainFrame _mainFrame;
+//	private MainFrame _mainFrame;
 
 	/** Object to manage plugins. */
 	private PluginManager _pluginManager;
@@ -113,10 +116,10 @@ class Application implements IApplication
 	private final TaskThreadPool _threadPool = new TaskThreadPool();
 
 	/** This object manages the open sessions.*/
-	private final SessionManager _sessionManager = new SessionManager();
+	private SessionManager _sessionManager;
 
-	/** This object manages the windows for sessions.*/
-	private SessionWindowManager _sessionWindowManager;
+	/** This object manages the windows for this application.*/
+	private SessionWindowManager _windowManager;
 
 	private LoggerController _loggerFactory;
 
@@ -166,7 +169,7 @@ class Application implements IApplication
 		SplashScreen splash = null;
 		if (args.getShowSplashScreen())
 		{
-			splash = new SplashScreen(_resources, 12);
+			splash = new SplashScreen(_resources, 15);
 		}
 
 		try
@@ -206,21 +209,24 @@ class Application implements IApplication
 	{
 		s_log.info(s_stringMgr.getString("Application.shutdown",
 									Calendar.getInstance().getTime()));
+// JASON: Put back in.
+//		if (!_windowManager.closeAllSessions())
+//		{
+//			s_log.info(s_stringMgr.getString("Application.shutdownCancelled",
+//					Calendar.getInstance().getTime()));
+//			return false;
+//		}
+		_sessionManager.closeAllSessions();
 
-		if (!_sessionWindowManager.closeAllSessions())
-		{
-			s_log.info(s_stringMgr.getString("Application.shutdownCancelled",
-					Calendar.getInstance().getTime()));
-			return false;
-		}
 
 		_pluginManager.unloadPlugins();
 
 		// Remember the currently selected entries in the
 		// aliases and drivers windows,
-		int idx = _mainFrame.getAliasesToolWindow().getSelectedIndex();
+		final MainFrame mf = _windowManager.getMainFrame();
+		int idx = mf.getAliasesToolWindow().getSelectedIndex();
 		_prefs.setAliasesSelectedIndex(idx);
-		idx = _mainFrame.getDriversToolWindow().getSelectedIndex();
+		idx = mf.getDriversToolWindow().getSelectedIndex();
 		_prefs.setDriversSelectedIndex(idx);
 
 		// No longer the first run of SQuirrel.
@@ -307,7 +313,7 @@ class Application implements IApplication
 	 */
 	public SessionWindowManager getSessionWindowManager()
 	{
-		return _sessionWindowManager;
+		return _windowManager;
 	}
 
 	public ActionCollection getActionCollection()
@@ -335,6 +341,11 @@ class Application implements IApplication
 		return _resources;
 	}
 
+	public IMessageHandler getMessageHandler()
+	{
+		return getMainFrame().getMessagePanel();
+	}
+
 	public SquirrelPreferences getSquirrelPreferences()
 	{
 		return _prefs;
@@ -342,7 +353,8 @@ class Application implements IApplication
 
 	public MainFrame getMainFrame()
 	{
-		return _mainFrame;
+//		return _mainFrame;
+		return _windowManager.getMainFrame();
 	}
 
 	/**
@@ -444,9 +456,10 @@ class Application implements IApplication
 
 	public synchronized void addToMenu(int menuId, JMenu menu)
 	{
-		if (_mainFrame != null)
+		final MainFrame mf = getMainFrame();
+		if (mf != null)
 		{
-			_mainFrame.addToMenu(menuId, menu);
+			mf.addToMenu(menuId, menu);
 		}
 		else
 		{
@@ -456,9 +469,10 @@ class Application implements IApplication
 
 	public synchronized void addToMenu(int menuId, Action action)
 	{
-		if (_mainFrame != null)
+		final MainFrame mf = getMainFrame();
+		if (mf != null)
 		{
-			_mainFrame.addToMenu(menuId, action);
+			mf.addToMenu(menuId, action);
 		}
 		else
 		{
@@ -473,9 +487,10 @@ class Application implements IApplication
 	 */
 	public void addToStatusBar(JComponent comp)
 	{
-		if (_mainFrame != null)
+		final MainFrame mf = getMainFrame();
+		if (mf != null)
 		{
-			_mainFrame.addToStatusBar(comp);
+			mf.addToStatusBar(comp);
 		}
 		else
 		{
@@ -490,9 +505,10 @@ class Application implements IApplication
 	 */
 	public void removeFromStatusBar(JComponent comp)
 	{
-		if (_mainFrame != null)
+		final MainFrame mf = getMainFrame();
+		if (mf != null)
 		{
-			_mainFrame.removeFromStatusBar(comp);
+			mf.removeFromStatusBar(comp);
 		}
 		else
 		{
@@ -518,12 +534,10 @@ class Application implements IApplication
 			throw new IllegalArgumentException("ApplicationArguments == null");
 		}
 
-		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.uifactoryinit"));
-		AliasMaintSheetFactory.initialize(this);
-		DriverMaintSheetFactory.initialize(this);
-//		SessionPropertiesSheetFactory.initialize(this);
-//		SQLFilterSheetFactory.initialize(this);
-		_sessionWindowManager = new SessionWindowManager(this);
+		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.createSessionManager"));
+//		AliasMaintSheetFactory.initialize(this);
+//		DriverMaintSheetFactory.initialize(this);
+		_sessionManager = new SessionManager(this);
 
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadingprefs"));
 		_prefs = SquirrelPreferences.load();
@@ -538,6 +552,8 @@ class Application implements IApplication
 			});
 
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.uifactoryinit"));
+		AliasMaintSheetFactory.initialize(this);
+		DriverMaintSheetFactory.initialize(this);
 		UIFactory.initialize(_prefs);
 
 		final boolean loadPlugins = args.getLoadPlugins();
@@ -571,8 +587,10 @@ class Application implements IApplication
 								appFiles.getDatabaseAliasesFile(),
 								_resources.getDefaultDriversUrl(), null);
 
-		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.createmainwindow"));
-		_mainFrame = new MainFrame(this);
+		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.createWindowManager"));
+		_windowManager = new SessionWindowManager(this);
+
+//		_mainFrame = new MainFrame(this);
 
 		indicateNewStartupTask(splash, loadPlugins ? "Initializing plugins..." : "No Plugins are to be loaded...");
 		if (loadPlugins)
@@ -585,10 +603,9 @@ class Application implements IApplication
 				long load = pli.getLoadTime();
 				long init = pli.getInitializeTime();
 				s_log.info("Plugin " + (pli.getInternalName())
-						+ " created in " + created
-						+ " ms, loaded in " + load
-						+ " ms, initialized in " + init
-						+ " ms, total " + (created + load + init) + " ms.");
+						+ " created in " + created + " ms, loaded in " + load
+						+ " ms, initialized in " + init + " ms, total "
+						+ (created + load + init) + " ms.");
 			}
 		}
 
@@ -605,8 +622,9 @@ class Application implements IApplication
 		loadDTProperties();
 
 		indicateNewStartupTask(splash, "Showing main window...");
-		_mainFrame.setVisible(true);
-		_mainFrame.toFront();	// Required on Linux
+		_windowManager.moveToFront(_windowManager.getMainFrame());
+//		_mainFrame.setVisible(true);
+//		_mainFrame.toFront();	// Required on Linux
 
 		new ConnectToStartupAliasesCommand(this).execute();
 
@@ -947,3 +965,40 @@ class Application implements IApplication
 		}
 	}
 }
+// After ActionCollection was instantiated
+// JASON: Should this be doen within either SessionManager or
+// SessionWindowmanager?
+//_sessionManager.addSessionListener(new SessionAdapter()
+//{
+	// JASON: Should be sessionDeactivated ??
+//	public void sessionClosing(SessionEvent evt)
+//	{
+//		for (Iterator it = getActionCollection().actions();
+//				it.hasNext();)
+//		{
+//			final Action act = (Action) it.next();
+//			if (act instanceof ISessionAction)
+//			{
+//				((ISessionAction)act).setSession(null);
+//			}
+//		}
+//	}
+//	public void sessionConnected(SessionEvent evt)
+//	{
+//		// Add the message handler to the session
+//		evt.getSession().setMessageHandler(getMessageHandler());
+//	}
+//	public void sessionActivated(SessionEvent evt)
+//	{
+//		//Allocate the current session to the actions
+//		for (Iterator it = getActionCollection().actions();
+//				it.hasNext();)
+//		{
+//			final Action act = (Action) it.next();
+//			if (act instanceof ISessionAction)
+//			{
+//				((ISessionAction)act).setSession(evt.getSession());
+//			}
+//		}
+//	}
+//});

@@ -17,32 +17,32 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.util.Calendar;
-import java.util.Date;
 /**
+ * JASON: Delete this as superseeded by version in net.sourceforge.squirrel_sql.client.session
  * Information about an executed query.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @deprecated
  */
 public class SQLExecutionInfo
 {
-	/** Query index. */
-	private int _idx;
-
-	/** Execution start time. */
-	private Date _sqlExecutionStart;
-
-	/** Results processing start time. */
-	private Date _resultsProcessingStart;
-
-	/** Results processing end time. */
-	private Date _resultsProcessingEnd;
-
-	/** SQL script executed. */
-	private String _sql;
-
-	/** Number of rows query limited to. */
-	private final int _maxRows;
+//	/** Query index. */
+//	private int _idx;
+//
+//	/** Execution start time. */
+//	private Date _sqlExecutionStart;
+//
+//	/** Results processing start time. */
+//	private Date _resultsProcessingStart;
+//
+//	/** Results processing end time. */
+//	private Date _resultsProcessingEnd;
+//
+//	/** SQL script executed. */
+//	private String _sql;
+//
+//	/** Number of rows query limited to. */
+//	private final int _maxRows;
 
 	/**
 	 * Default ctor. Defaults SQL execution start time to the current time.
@@ -94,129 +94,129 @@ public class SQLExecutionInfo
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> sql passed.
 	 */
-	public SQLExecutionInfo(int idx, String sql, int maxRows)
-	{
-		super();
-		if (sql == null)
-		{
-			throw new IllegalArgumentException("SQL script == null");
-		}
-		_idx = idx;
-		_sql = sql;
-		_maxRows = maxRows;
-		_sqlExecutionStart = Calendar.getInstance().getTime();
-	}
-
-	/**
-	 * Flag that the SQL execution is complete.
-	 */
-	public void sqlExecutionComplete()
-	{
-		_resultsProcessingStart = Calendar.getInstance().getTime();
-	}
-
-	/**
-	 * Flag that the results processing is complete.
-	 */
-	public void resultsProcessingComplete()
-	{
-		_resultsProcessingEnd = Calendar.getInstance().getTime();
-	}
-
-	/**
-	 * Retrieve the query index.
-	 *
-	 * @return	Query index.
-	 */
-	public int getQueryIndex()
-	{
-		return _idx;
-	}
-
-	/**
-	 * Retrieve the SQL script executed.
-	 *
-	 * @return	SQL script executed.
-	 */
-	public String getSQL()
-	{
-		return _sql;
-	}
-
-	/**
-	 * Retrieve the SQL Execution start time.
-	 *
-	 * @return	SQL execution start time.
-	 */
-	public Date getSQLExecutionStartTime()
-	{
-		return _sqlExecutionStart;
-	}
-
-	/**
-	 * Set the SQL Execution start time.
-	 *
-	 * @param	value	SQL execution start time.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> <TT>Date</TT> passed.
-	 */
-	public void setSQLExecutionStartTime(Date value)
-	{
-		if (value == null)
-		{
-			throw new IllegalArgumentException("SQL Execution start time == null");
-		}
-		_sqlExecutionStart = value;
-	}
-
-	/**
-	 * Retrieve the elapsed time time in milliseconds for the SQL execution.
-	 *
-	 * @return		SQL execution elapsed time in millis.
-	 */
-	public long getSQLExecutionElapsedMillis()
-	{
-		long results = 0;
-		if (_resultsProcessingStart != null)
-		{
-			results = _resultsProcessingStart.getTime() - _sqlExecutionStart.getTime();
-		}
-		return results;
-	}
-
-	/**
-	 * Retrieve the elapsed time time in milliseconds for the results processing.
-	 *
-	 * @return		Results processing elapsed time in millis.
-	 */
-	public long getResultsProcessingElapsedMillis()
-	{
-		long results = 0;
-		if (_resultsProcessingEnd != null && _resultsProcessingStart != null)
-		{
-			results = (_resultsProcessingEnd.getTime() - _resultsProcessingStart.getTime());
-		}
-		return results;
-	}
-
-	/**
-	 * Retrieve the total elapsed time time in milliseconds.
-	 *
-	 * @return	Total elapsed time in millis.
-	 */
-	public long getTotalElapsedMillis()
-	{
-		return getSQLExecutionElapsedMillis() + getResultsProcessingElapsedMillis();
-	}
-
-	/**
-	 * Retrieve number of rows query limited to. Zero means unlimited.
-	 *
-	 * @return	number of rows query limited to.
-	 */
-	public int getMaxRows()
-	{
-		return _maxRows;
-	}
+//	public SQLExecutionInfo(int idx, String sql, int maxRows)
+//	{
+//		super();
+//		if (sql == null)
+//		{
+//			throw new IllegalArgumentException("SQL script == null");
+//		}
+//		_idx = idx;
+//		_sql = sql;
+//		_maxRows = maxRows;
+//		_sqlExecutionStart = Calendar.getInstance().getTime();
+//	}
+//
+//	/**
+//	 * Flag that the SQL execution is complete.
+//	 */
+//	public void sqlExecutionComplete()
+//	{
+//		_resultsProcessingStart = Calendar.getInstance().getTime();
+//	}
+//
+//	/**
+//	 * Flag that the results processing is complete.
+//	 */
+//	public void resultsProcessingComplete()
+//	{
+//		_resultsProcessingEnd = Calendar.getInstance().getTime();
+//	}
+//
+//	/**
+//	 * Retrieve the query index.
+//	 *
+//	 * @return	Query index.
+//	 */
+//	public int getQueryIndex()
+//	{
+//		return _idx;
+//	}
+//
+//	/**
+//	 * Retrieve the SQL script executed.
+//	 *
+//	 * @return	SQL script executed.
+//	 */
+//	public String getSQL()
+//	{
+//		return _sql;
+//	}
+//
+//	/**
+//	 * Retrieve the SQL Execution start time.
+//	 *
+//	 * @return	SQL execution start time.
+//	 */
+//	public Date getSQLExecutionStartTime()
+//	{
+//		return _sqlExecutionStart;
+//	}
+//
+//	/**
+//	 * Set the SQL Execution start time.
+//	 *
+//	 * @param	value	SQL execution start time.
+//	 *
+//	 * @throws	IllegalArgumentException
+//	 * 			Thrown if <TT>null</TT> <TT>Date</TT> passed.
+//	 */
+//	public void setSQLExecutionStartTime(Date value)
+//	{
+//		if (value == null)
+//		{
+//			throw new IllegalArgumentException("SQL Execution start time == null");
+//		}
+//		_sqlExecutionStart = value;
+//	}
+//
+//	/**
+//	 * Retrieve the elapsed time time in milliseconds for the SQL execution.
+//	 *
+//	 * @return		SQL execution elapsed time in millis.
+//	 */
+//	public long getSQLExecutionElapsedMillis()
+//	{
+//		long results = 0;
+//		if (_resultsProcessingStart != null)
+//		{
+//			results = _resultsProcessingStart.getTime() - _sqlExecutionStart.getTime();
+//		}
+//		return results;
+//	}
+//
+//	/**
+//	 * Retrieve the elapsed time time in milliseconds for the results processing.
+//	 *
+//	 * @return		Results processing elapsed time in millis.
+//	 */
+//	public long getResultsProcessingElapsedMillis()
+//	{
+//		long results = 0;
+//		if (_resultsProcessingEnd != null && _resultsProcessingStart != null)
+//		{
+//			results = (_resultsProcessingEnd.getTime() - _resultsProcessingStart.getTime());
+//		}
+//		return results;
+//	}
+//
+//	/**
+//	 * Retrieve the total elapsed time time in milliseconds.
+//	 *
+//	 * @return	Total elapsed time in millis.
+//	 */
+//	public long getTotalElapsedMillis()
+//	{
+//		return getSQLExecutionElapsedMillis() + getResultsProcessingElapsedMillis();
+//	}
+//
+//	/**
+//	 * Retrieve number of rows query limited to. Zero means unlimited.
+//	 *
+//	 * @return	number of rows query limited to.
+//	 */
+//	public int getMaxRows()
+//	{
+//		return _maxRows;
+//	}
 }

@@ -4,7 +4,7 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  */
 
 /*
- * Copyright (C) 2002-2003 Colin Bell
+ * Copyright (C) 2002-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -52,7 +52,6 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.DumpSessionCommand;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
-
 /**
  * This <CODE>ICommand</CODE> will dump the status of the application.
  *
@@ -183,8 +182,9 @@ public class DumpApplicationCommand implements ICommand
 			}
 
 			// Dump sessions.
-			ISession[] sessions = _app.getSessionManager().getActiveSessions();
-			DumpSessionCommand sessionCmd = new DumpSessionCommand();
+//			ISession[] sessions = _app.getSessionManager().getActiveSessions();
+			final ISession[] sessions = _app.getSessionManager().getConnectedSessions();
+			final DumpSessionCommand sessionCmd = new DumpSessionCommand();
 			for (int i = 0; i < sessions.length; ++i)
 			{
 				try

@@ -1,7 +1,9 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
+ *
+ * Modifications Copyright (C) 2003-2004 Jason Height
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,7 +24,6 @@ import java.awt.Component;
 import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-
 public class SQLTab extends BaseMainPanelTab
 {
 	/**
@@ -89,7 +90,8 @@ public class SQLTab extends BaseMainPanelTab
 	 */
 	public synchronized void refreshComponent()
 	{
-		getSQLPanel().selected();
+		// JASON: Do we need this?
+//		getSQLPanel().selected();
 	}
 
 	/**

@@ -3,6 +3,8 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * Copyright (C) 2001-2004 Johan Compagner
  * jcompagner@j-com.nl
  *
+ * Modifications Copyright (C) 2003-2004 Jason Height
+ *
  * Modifications copyright (C) 2004 Colin Bell
  * colbell@users.sourceforge.net
  *
@@ -50,10 +52,12 @@ import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
 public class ResultTab extends JPanel implements IHasIdentifier
@@ -82,8 +86,8 @@ public class ResultTab extends JPanel implements IHasIdentifier
 	/** Tabbed pane containing the SQL results the the results meta data. */
 	private JTabbedPane _tp;
 
-	/** <TT>SQLPanel</TT> that this tab is showing results for. */
-	private SQLPanel _sqlPanel;
+	/** <TT>SQLExecuterPanel</TT> that this tab is showing results for. */
+	private SQLResultExecuterPanel _sqlPanel;
 
 	/** Label shows the current SQL script. */
 	private JLabel _currentSqlLbl = new JLabel();
@@ -101,16 +105,17 @@ public class ResultTab extends JPanel implements IHasIdentifier
 	 * Ctor.
 	 *
 	 * @param	session		Current session.
-	 * @param	sqlPanel	<TT>SQLPanel</TT> that this tab is showing
-	 *						results for.
+	 * @param	sqlPanel	<TT>SQLResultExecuterPanel</TT> that this tab is
+	 *						showing results for.
 	 * @param	id			Unique ID for this object.
 	 *
 	 * @thrown	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ISession</TT>,
-	 *			<<TT>SQLPanel</TT> or <TT>IIdentifier</TT> passed.
+	 *			<<TT>SQLResultExecuterPanel</TT> or <TT>IIdentifier</TT> passed.
 	 */
-	public ResultTab(ISession session, SQLPanel sqlPanel, IIdentifier id,
-		SQLExecutionInfo exInfo, IDataSetUpdateableTableModel creator)
+	public ResultTab(ISession session, SQLResultExecuterPanel sqlPanel,
+						IIdentifier id, SQLExecutionInfo exInfo,
+						IDataSetUpdateableTableModel creator)
 		throws IllegalArgumentException
 	{
 		super();

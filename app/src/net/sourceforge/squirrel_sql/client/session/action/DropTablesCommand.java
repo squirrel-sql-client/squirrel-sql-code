@@ -1,7 +1,9 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 /*
- * Copyright (C) 2002 Johan Compagner
+ * Copyright (C) 2002-2004 Johan Compagner
  * jcompagner@j-com.nl
+ *
+ * Modifications Copyright (C) 2003-2004 Jason Height
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,9 +24,11 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
+import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 /**
- * @version 	$Id: DropTablesCommand.java,v 1.4 2003-12-01 12:03:32 colbell Exp $
+ * @version 	$Id: DropTablesCommand.java,v 1.5 2004-08-16 07:07:42 colbell Exp $
  * @author		Johan Compagner
  */
 public class DropTablesCommand implements ICommand
@@ -82,6 +86,12 @@ public class DropTablesCommand implements ICommand
 				.append('\n');
 		}
 		final IPlugin plugin = _session.getApplication().getDummyAppPlugin();
-		_session.getSQLPanelAPI(plugin).executeSQL(buf.toString());
+
+		// Execute the sql synchronously
+		SQLExecuterTask executer = new SQLExecuterTask(_session, buf.toString(),
+									new DefaultSQLExecuterHandler(_session));
+		executer.run();
+		// Use this to run asynch
+		// _session.getApplication().getThreadPool().addTask(executer);
 	}
 }

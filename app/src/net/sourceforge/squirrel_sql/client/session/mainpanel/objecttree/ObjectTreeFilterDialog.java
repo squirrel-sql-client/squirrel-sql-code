@@ -1,7 +1,9 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
 /*
- * Copyright (C) 2003 Colin Bell
+ * Copyright (C) 2003-2004 Colin Bell
  * colbell@users.sourceforge.net
+ *
+ * Modifications Copyright (C) 2003-2004 Jason Height
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,7 +25,7 @@ import javax.swing.JDialog;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 /**
  * This dialog allows filtering of the onjects displayed in the object tree.
  *
@@ -31,16 +33,16 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  */
 public class ObjectTreeFilterDialog extends JDialog
 {
-	public ObjectTreeFilterDialog(IApplication app, ISession session)
+	public ObjectTreeFilterDialog(IApplication app, IObjectTreeAPI tree)
 	{
 		super(app.getMainFrame(), "Filtering", true);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		createGUI(app, session);
+		createGUI(app, tree);
 	}
 
-	private void createGUI(IApplication app, ISession session)
+	private void createGUI(IApplication app, IObjectTreeAPI tree)
 	{
-		final ObjectTreeFilterPanel contentPane = new ObjectTreeFilterPanel(session);
+		final ObjectTreeFilterPanel contentPane = new ObjectTreeFilterPanel(tree);
 		setContentPane(contentPane);
 		contentPane.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 

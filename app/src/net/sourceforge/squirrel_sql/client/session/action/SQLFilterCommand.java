@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 /*
- * Copyright (C) 2003 Maury Hammel
+ * Copyright (C) 2003-2004 Maury Hammel
  * mjhammel@users.sourceforge.net
  *
  * Adapted from SessionPropertiesCommand.java by Colin Bell.
@@ -22,43 +22,48 @@ package net.sourceforge.squirrel_sql.client.session.action;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionWindowManager;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ContentsTab;
 /**
  * This <CODE>ICommand</CODE> displays a dialog box that allows the user to
  * enter a 'where' clause or an 'order by' clause used when getting data via
  * the 'Contents' tab.
  *
  * @author <A HREF="mailto:mjhammel@users.sourceforge.net">Maury Hammel</A>
+ *
+ * TODO: Change name to ContentsTabFilterCommand
  */
 public class SQLFilterCommand implements ICommand
 {
-	/** The session for which the SQL filter will be displayed/maintained. */
-	private final ISession _session;
-	/** A variable to contain a reference to the list of database objects and
-	 * information about them.
-	 */
+	/** The object tree containing the object tto be filtered. */
+	private final IObjectTreeAPI _objectTree;
+
+	/** The object we are filtering. */
 	private final IDatabaseObjectInfo _objectInfo;
 
-	/** Creates a new instance of SQLFilterCommand
-	* @param session A variable to contain a reference to the current SQuirreL session instance.
-	*
-	* @param objectInfo A variable to contain a reference to the list of data objects and information
-	* aobut them.
-	*
-	*/
-	public SQLFilterCommand(ISession session, IDatabaseObjectInfo objectInfo)
+	/**
+	 * Creates a new instance of SQLFilterCommand.
+	 *
+	 * @param	objectTree	The object tree containing the table we are
+	 *						filtering
+	 * @param	objectInfo	The table to be filtered.
+	 */
+	public SQLFilterCommand(IObjectTreeAPI objectTree,
+								IDatabaseObjectInfo objectInfo)
 	{
 		super();
-		if (session == null)
-		{
-			throw new IllegalArgumentException("Null ISession passed");
-		}
 		if (objectInfo == null)
 		{
 			throw new IllegalArgumentException("Null IDatabaseObjectInfo passed");
 		}
-		_session = session;
+		if (objectTree == null)
+		{
+			throw new IllegalArgumentException("Null IObjectTreeAPI passed");
+		}
+		_objectTree = objectTree;
 		_objectInfo = objectInfo;
 	}
 
@@ -67,11 +72,12 @@ public class SQLFilterCommand implements ICommand
 	 */
 	public void execute()
 	{
-		if (_session != null)
+		if (_objectTree != null)
 		{
-			SessionWindowManager winMgr =
-				_session.getApplication().getSessionWindowManager();
-			winMgr.showSQLFilterDialog(_session, _objectInfo);
+			final ISession session = _objectTree.getSession();
+			final IApplication app = session.getApplication();
+			final SessionWindowManager winMgr = app.getSessionWindowManager();
+			winMgr.showSQLFilterDialog( _objectTree, _objectInfo);
 		}
 	}
 }

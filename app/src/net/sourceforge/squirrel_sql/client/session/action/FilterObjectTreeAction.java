@@ -1,7 +1,9 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 /*
- * Copyright (C) 2003 Colin Bell
+ * Copyright (C) 2003-2004 Colin Bell
  * colbell@users.sourceforge.net
+ *
+ * Modifications Copyright (C) 2003-2004 Jason Height
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,12 +21,13 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeFilterDialog;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeFilterDialog;
 /**
  * This <CODE>Action</CODE> allows the user to filter the objects displayed
  * in the object tree.
@@ -32,14 +35,14 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class FilterObjectTreeAction extends SquirrelAction
-									implements ISessionAction
+									implements IObjectTreeAction
 {
 	/** Logger for this class. */
 	private static ILogger s_log =
 		LoggerController.createLogger(FilterObjectTreeAction.class);
 
-	/** Current session. */
-	private ISession _session;
+	/** Object Tree that we want to filter. */
+	private IObjectTreeAPI _tree;
 
 	/**
 	 * Ctor.
@@ -52,13 +55,13 @@ public class FilterObjectTreeAction extends SquirrelAction
 	}
 
 	/**
-	 * Set the current session.
+	 * Set the Object Tree that we want to filter.
 	 *
-	 * @param	session		The current session.
+	 * @param	tree	Object tree that we want to filter.
 	 */
-	public void setSession(ISession session)
+	public void setObjectTree(IObjectTreeAPI tree)
 	{
-		_session = session;
+		_tree = tree;
 	}
 
 	/**
@@ -71,13 +74,13 @@ public class FilterObjectTreeAction extends SquirrelAction
 		IApplication app = getApplication();
 		try
 		{
-			// TODO: This doesn;t sdo anything
-			new ObjectTreeFilterDialog(app, _session).show();
+			// TODO: This doesn't do anything
+			new ObjectTreeFilterDialog(app, _tree).show();
 		}
 		catch (Throwable ex)
 		{
 			final String msg = "Error occured filtering the object tree";
-			_session.getMessageHandler().showErrorMessage(msg + ": " + ex);
+			_tree.getSession().getMessageHandler().showErrorMessage(msg + ": " + ex);
 			s_log.error(msg, ex);
 		}
 	}

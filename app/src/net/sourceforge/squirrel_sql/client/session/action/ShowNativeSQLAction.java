@@ -3,6 +3,8 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
+ * Modifications Copyright (C) 2003-2004 Jason Height
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -23,7 +25,7 @@ import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 /**
  * This <CODE>Action</CODE> will convert the current SQL into native
  * format and append it to the SQL entry area.
@@ -31,10 +33,9 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ShowNativeSQLAction extends SquirrelAction
-									implements ISessionAction
+									implements ISQLPanelAction
 {
-	/** Current session. */
-	private ISession _session;
+	private ISQLPanelAPI _panel;
 
 	/**
 	 * Ctor.
@@ -46,14 +47,9 @@ public class ShowNativeSQLAction extends SquirrelAction
 		super(app);
 	}
 
-	/**
-	 * Set the current session.
-	 *
-	 * @param	session	The current session.
-	 */
-	public void setSession(ISession session)
+	public void setSQLPanel(ISQLPanelAPI panel)
 	{
-		_session = session;
+		_panel = panel;
 	}
 
 	/**
@@ -68,7 +64,7 @@ public class ShowNativeSQLAction extends SquirrelAction
 		cursorChg.show();
 		try
 		{
-			new ShowNativeSQLCommand(_session).execute();
+			new ShowNativeSQLCommand(_panel).execute();
 		}
 		finally
 		{

@@ -3,6 +3,8 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * Copyright (C) 2003 Colin Bell
  * colbell@users.sourceforge.net
  *
+ * Modifications Copyright (C) 2003-2004 Jason Height
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -19,8 +21,7 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
-import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 /**
  * This <CODE>ICommand</CODE> refreshes the object tree.
  *
@@ -28,26 +29,26 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  */
 public class GotoNextResultsTabCommand implements ICommand
 {
-	/** The current session. */
-	private final ISession _session;
+	/** The current panel. */
+	private final ISQLPanelAPI _panel;
 
 	/**
 	 * Ctor.
 	 *
-	 * @param	session		The session we want to display the next results tab
-	 *						for.
+	 * @param	panel	The SQL Panel we want to display the next results
+	 *					tab for.
 	 *
 	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
+	 *			Thrown if a <TT>null</TT> <TT>ISQLPanelAPI</TT> passed.
 	 */
-	public GotoNextResultsTabCommand(ISession session)
+	public GotoNextResultsTabCommand(ISQLPanelAPI panel)
 	{
 		super();
-		if (session == null)
+		if (panel == null)
 		{
-			throw new IllegalArgumentException("ISession == null");
+			throw new IllegalArgumentException("ISQLPanelAPI == null");
 		}
-		_session = session;
+		_panel = panel;
 	}
 
 	/**
@@ -55,7 +56,6 @@ public class GotoNextResultsTabCommand implements ICommand
 	 */
 	public void execute()
 	{
-		IPlugin plugin = _session.getApplication().getDummyAppPlugin();
-		_session.getSQLPanelAPI(plugin).gotoNextResultsTab();
+		_panel.gotoNextResultsTab();
 	}
 }

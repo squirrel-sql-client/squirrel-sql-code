@@ -3,8 +3,10 @@ package net.sourceforge.squirrel_sql.client.session;
  * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
- * Modifications copyright (C) 2001 Johan Compagner
+ * Modifications copyright (C) 2001-2004 Johan Compagner
  * jcompagner@j-com.nl
+ *
+ * Modifications Copyright (C) 2003-2004 Jason Height
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,7 +34,6 @@ import java.util.Map;
 
 import javax.swing.Action;
 import javax.swing.JComponent;
-import javax.swing.event.EventListenerList;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
@@ -50,14 +51,11 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.mainframe.action.OpenConnectionCommand;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.session.event.ISessionListener;
-import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterClauses;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 /**
  * Think of a session as being the users view of the database. IE it includes
@@ -109,7 +107,7 @@ class Session implements ISession
 	/** Properties for this session. */
 	private SessionProperties _props;
 
-	private SQLFilterClauses _sqlFilterClauses;
+//	private SQLFilterClauses _sqlFilterClauses;
 
 	/**
 	 * Objects stored in session. Each entry is a <TT>Map</TT>
@@ -120,12 +118,6 @@ class Session implements ISession
 
 	private IMessageHandler _msgHandler = NullMessageHandler.getInstance();
 
-	/** API for the object tree. */
-	private final IObjectTreeAPI _objectTreeAPI;
-
-	/** API object for the SQL panel. */
-	private final ISQLPanelAPI _sqlPanelAPI;
-
 	/** Xref info about the current connection. */
 	private final SchemaInfo _defaultSchemaInfo = new SchemaInfo();
 
@@ -133,11 +125,6 @@ class Session implements ISession
 
 	/** Set to <TT>true</TT> once session closed. */
 	private boolean _closed;
-
-	/**
-	 * Collection of listeners to this object tree.
-	 */
-	private EventListenerList _listenerList = new EventListenerList();
 
 	private List _statusBarToBeAdded = new ArrayList();
 	private ParserEventsProcessor _parserEventsProcessor;
@@ -190,12 +177,7 @@ class Session implements ISession
 		setupTitle();
 
 		_props = (SessionProperties)_app.getSquirrelPreferences().getSessionProperties().clone();
-		_sqlFilterClauses = new SQLFilterClauses();
-
-		// Create the API objects that give access to various
-		// areas of the session.
-		_objectTreeAPI = new ObjectTreeAPI(this);
-		_sqlPanelAPI = new SQLPanelAPI(this);
+//		_sqlFilterClauses = new SQLFilterClauses();
 
 		_parserEventsProcessor = new ParserEventsProcessor(this);
 
@@ -251,11 +233,6 @@ class Session implements ISession
 				// to close the session.
 				_closed = true;
 
-				fireSessionClosedEvent();
-
-				// Remove all listeners.
-				_listenerList = null;
-
 				if (_sessionSheet != null)
 				{
 					_sessionSheet.sessionHasClosed();
@@ -267,9 +244,45 @@ class Session implements ISession
 	}
 
 	/**
+	 * Commit the current SQL transaction.
+	 */
+	public synchronized void commit()
+	{
+		try
+		{
+			getSQLConnection().commit();
+			// JASON: Wrong class name in key
+			final String msg = s_stringMgr.getString("SQLPanelAPI.commit");
+			getMessageHandler().showMessage(msg);
+		}
+		catch (Throwable ex)
+		{
+			getMessageHandler().showErrorMessage(ex);
+		}
+	}
+
+	/**
+	 * Rollback the current SQL transaction.
+	 */
+	public synchronized void rollback()
+	{
+		try
+		{
+			getSQLConnection().rollback();
+			// JASON: Wrong class name in key
+			final String msg = s_stringMgr.getString("SQLPanelAPI.rollback");
+			getMessageHandler().showMessage(msg);
+		}
+		catch (Exception ex)
+		{
+			getMessageHandler().showErrorMessage(ex);
+		}
+	}
+
+	/**
 	 * Return the unique identifier for this session.
 	 *
-	 * @return	the unique identifier for this session.
+	 * @return the unique identifier for this session.
 	 */
 	public IIdentifier getIdentifier()
 	{
@@ -279,7 +292,7 @@ class Session implements ISession
 	/**
 	 * Retrieve whether this session has been closed.
 	 *
-	 * @return	<TT>true</TT> if session closed else <TT>false</TT>.
+	 * @return <TT>true</TT> if session closed else <TT>false</TT>.
 	 */
 	public boolean isClosed()
 	{
@@ -347,44 +360,6 @@ class Session implements ISession
 		return ret;
 	}
 
-	/**
-	 * Return the API for the Object Tree.
-	 *
-	 * @param	plugin	Plugin requesting the API.
-	 *
-	 * @return	the API object for the Object Tree.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if null IPlugin passed.
-	 */
-	public IObjectTreeAPI getObjectTreeAPI(IPlugin plugin)
-	{
-		if (plugin == null)
-		{
-			throw new IllegalArgumentException("IPlugin == null");
-		}
-		return _objectTreeAPI;
-	}
-
-	/**
-	 * Return the API object for the SQL panel.
-	 *
-	 * @param	plugin	Plugin requesting the API.
-	 *
-	 * @return	the API object for the SQL panel.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if null IPlugin passed.
-	 */
-	public ISQLPanelAPI getSQLPanelAPI(IPlugin plugin)
-	{
-		if (plugin == null)
-		{
-			throw new IllegalArgumentException("IPlugin == null");
-		}
-		return _sqlPanelAPI;
-	}
-
 	public synchronized Object getPluginObject(IPlugin plugin, String key)
 	{
 		if (plugin == null)
@@ -402,32 +377,6 @@ class Session implements ISession
 			_pluginObjects.put(plugin.getInternalName(), map);
 		}
 		return map.get(key);
-	}
-
-	/**
-	 * Add a listener to this session
-	 *
-	 * @param	lis		The listener to add.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> listener passed.
-	 */
-	public void addSessionListener(ISessionListener lis)
-	{
-		_listenerList.add(ISessionListener.class, lis);
-	}
-
-	/**
-	 * Remove a listener from this session
-	 *
-	 * @param	lis		The listener to remove.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> listener passed.
-	 */
-	public void removeSessionListener(ISessionListener lis)
-	{
-		_listenerList.remove(ISessionListener.class, lis);
 	}
 
 	/**
@@ -557,7 +506,9 @@ class Session implements ISession
 			}
 			final String msg = s_stringMgr.getString("Session.reconn", _alias.getName());
 			_msgHandler.showMessage(msg);
-			getObjectTreeAPI(_app.getDummyAppPlugin()).refreshTree();
+			// JASON: need to have listeners attached to the tree
+			// to refresh when re-connected
+			//getObjectTreeAPI(_app.getDummyAppPlugin()).refreshTree();
 		}
 		catch (SQLException ex)
 		{
@@ -658,10 +609,10 @@ class Session implements ISession
 		}
 	}
 
-	public SQLFilterClauses getSQLFilterClauses()
-	{
-		return _sqlFilterClauses;
-	}
+//	public SQLFilterClauses getSQLFilterClauses()
+//	{
+//		return _sqlFilterClauses;
+//	}
 
 	/**
 	 * Retrieve the descriptive title of this session.
@@ -673,80 +624,34 @@ class Session implements ISession
 		return _title;
 	}
 
+	public String toString()
+	{
+		return getTitle();
+	}
+
  	/**
 	 * Fire a &quot;session title changed&quot; event.
+	 * JASON: How do we handle this?
 	 */
 	protected void fireSessionTitleChangedEvent()
 	{
-		Object[] listeners = _listenerList.getListenerList();
-		// Process the listeners last to first, notifying
-		// those that are interested in this event.
-		SessionEvent evt = null;
-		for (int i = listeners.length - 2; i >= 0; i-=2 )
-		{
-			if (listeners[i] == ISessionListener.class)
-			{
-				// Lazily create the event.
-				if (evt == null)
-				{
-					evt = new SessionEvent(this);
-				}
-				((ISessionListener)listeners[i + 1]).sessionTitleChanged(evt);
-			}
-		}
-	}
-
-	/**
-	 * Fire a &quot;session closed&quot; event.
-	 */
-	protected void fireSessionClosedEvent()
-	{
-		Object[] listeners = _listenerList.getListenerList();
-		// Process the listeners last to first, notifying
-		// those that are interested in this event.
-		SessionEvent evt = null;
-		for (int i = listeners.length - 2; i >= 0; i-=2 )
-		{
-			if (listeners[i] == ISessionListener.class)
-			{
-				// Lazily create the event.
-				if (evt == null)
-				{
-					evt = new SessionEvent(this);
-				}
-				((ISessionListener)listeners[i + 1]).sessionClosed(evt);
-			}
-		}
-	}
-
-	/**
-	 * Set the descriptive title for this session.
-	 *
-	 * @param	title	The descriptive title for this session.
-	 */
-//	void setTitle(String value)
-//	{
-//		_title = value != null ? value : "";
-//	}
-
-	/**
-	 * The session index is used to uniquely identify sessions that
-	 * are for the same alias.
-	 *
-	 * @param	idx		Session index
-	 */
-//	void setSessionIndex(int idx)
-//	{
-//		_sessionIndex = idx;
-//		if (idx > 1)
+//		Object[] listeners = _listenerList.getListenerList();
+//		// Process the listeners last to first, notifying
+//		// those that are interested in this event.
+//		SessionEvent evt = null;
+//		for (int i = listeners.length - 2; i >= 0; i-=2 )
 //		{
-//			_title = _originalTitle + " (" + _sessionIndex + ")";
+//			if (listeners[i] == ISessionListener.class)
+//			{
+//				// Lazily create the event.
+//				if (evt == null)
+//				{
+//					evt = new SessionEvent(this);
+//				}
+//				((ISessionListener)listeners[i + 1]).sessionTitleChanged(evt);
+//			}
 //		}
-//		else
-//		{
-//			_title = _originalTitle;
-//		}
-//	}
+	}
 
 	/**
 	 * Load table information about the current database.

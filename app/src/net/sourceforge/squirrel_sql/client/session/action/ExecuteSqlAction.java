@@ -3,6 +3,8 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
+ * Modifications Copyright (C) 2003-2004 Jason Height
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -19,36 +21,38 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 
-public class ExecuteSqlAction extends SquirrelAction implements ISessionAction
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+/**
+ * Executes sql from an ISQLPanelAPI.
+ *
+ */
+public class ExecuteSqlAction extends SquirrelAction implements ISQLPanelAction
 {
-	private ISession _session;
+	private ISQLPanelAPI _panel;
 
 	public ExecuteSqlAction(IApplication app)
 	{
 		super(app);
 	}
 
-	public void setSession(ISession session)
+	public void setSQLPanel(ISQLPanelAPI panel)
 	{
-		_session = session;
+		_panel = panel;
 	}
 
 	public void actionPerformed(ActionEvent evt)
 	{
-		if (_session != null)
+		if (_panel != null)
 		{
-			CursorChanger cursorChg = new CursorChanger(_session.getApplication().getMainFrame());
+			CursorChanger cursorChg = new CursorChanger(getApplication().getMainFrame());
 			cursorChg.show();
 			try
 			{
-				IPlugin plugin = _session.getApplication().getDummyAppPlugin();
-				_session.getSQLPanelAPI(plugin).executeCurrentSQL();
+				_panel.executeCurrentSQL();
 			}
 			finally
 			{

@@ -1,7 +1,9 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 /*
- * Copyright (C) 2002-2003 Johan Compagner
+ * Copyright (C) 2002-2004 Johan Compagner
  * jcompagner@j-com.nl
+ *
+ * Modifications Copyright (C) 2003-2004 Jason Height
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,16 +26,14 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 /**
- * @version 	$Id: DropSelectedTablesAction.java,v 1.6 2003-12-01 12:02:13 colbell Exp $
+ * @version 	$Id: DropSelectedTablesAction.java,v 1.7 2004-08-16 07:07:42 colbell Exp $
  * @author		Johan Compagner
  */
 public class DropSelectedTablesAction extends SquirrelAction
-										implements ISessionAction
+										implements IObjectTreeAction
 {
 	/** Title for confirmation dialog. */
 	private static final String TITLE = "Dropping table(s)";
@@ -41,8 +41,8 @@ public class DropSelectedTablesAction extends SquirrelAction
 	/** Message for confirmation dialog. */
 	private static final String MSG = "Are you sure?";
 
-	/** Current session. */
-	private ISession _session;
+	/** API for the current tree. */
+	private IObjectTreeAPI _tree;
 
 	/**
 	 * @param	app	Application API.
@@ -52,9 +52,14 @@ public class DropSelectedTablesAction extends SquirrelAction
 		super(app);
 	}
 
-	public void setSession(ISession session)
+	/**
+	 * Set the current object tree API.
+	 *
+	 * @param	tree	Current ObjectTree
+	 */
+	public void setObjectTree(IObjectTreeAPI tree)
 	{
-		_session = session;
+		_tree = tree;
 	}
 
 	/**
@@ -62,18 +67,17 @@ public class DropSelectedTablesAction extends SquirrelAction
 	 */
 	public void actionPerformed(ActionEvent e)
 	{
-		if (_session != null)
+		if (_tree != null)
 		{
-			IPlugin plugin = _session.getApplication().getDummyAppPlugin();
-			IObjectTreeAPI treeAPI = _session.getObjectTreeAPI(plugin);
-			IDatabaseObjectInfo[] tables = treeAPI.getSelectedDatabaseObjects();
-			ObjectTreeNode[] nodes = treeAPI.getSelectedNodes();
+			IDatabaseObjectInfo[] tables = _tree.getSelectedDatabaseObjects();
+			ObjectTreeNode[] nodes = _tree.getSelectedNodes();
 			if (tables.length > 0)
 			{
-				if (Dialogs.showYesNo(_session.getSessionSheet(), MSG, TITLE))
+				// JASON: Ideally this should center on the tree rather than the main panel
+				if (Dialogs.showYesNo(getApplication().getMainFrame(), MSG, TITLE))
 				{
-					new DropTablesCommand(_session, tables).execute();
-					treeAPI.removeNodes(nodes);
+					new DropTablesCommand(_tree.getSession(), tables).execute();
+					_tree.removeNodes(nodes);
 				}
 			}
 		}

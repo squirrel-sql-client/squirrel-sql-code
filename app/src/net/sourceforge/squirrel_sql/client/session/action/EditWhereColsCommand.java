@@ -1,7 +1,8 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 /*
+ * Copyright (C) 2003-2004 Maury Hammel
  *
- * Adapted from EditWhereColsCommand.java by Maury Hammel
+ * Modifications Copyright (C) 2003-2004 Jason Height
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,57 +21,62 @@ package net.sourceforge.squirrel_sql.client.session.action;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.SessionWindowManager;
 /**
  * This <CODE>ICommand</CODE> displays a dialog box that allows the user to
  * enter a 'where' clause or an 'order by' clause used when getting data via
  * the 'Contents' tab.
  *
+ * Adapted from EditWhereColsCommand.java by Maury Hammel
+ *
  * @author <A HREF="mailto:mjhammel@users.sourceforge.net">Maury Hammel</A>
  */
 public class EditWhereColsCommand implements ICommand
 {
-	/** The session identifying the table for us to limit the columns. */
-	private final ISession _session;
+	/** Application API. */
+	final IApplication _app;
+
+	/** The object treeidentifying the table for us to limit the columns. */
+	private final IObjectTreeAPI _tree;
 	
-	/** A variable to contain a reference to the list of database objects and
+	/**
+	 * A variable to contain a reference to the list of database objects and
 	 * information about them.
 	 */
 	private final IDatabaseObjectInfo _objectInfo;
 
-	/** Creates a new instance of SQLFilterCommand
-	* @param session A variable to contain a reference to the current SQuirreL session instance.
-	*
-	* @param objectInfo A variable to contain a reference to the list of data objects and information
-	* aobut them.
-	*
-	*/
-	public EditWhereColsCommand(ISession session, IDatabaseObjectInfo objectInfo)
+	public EditWhereColsCommand(IApplication app, IObjectTreeAPI tree,
+								IDatabaseObjectInfo objectInfo)
 	{
 		super();
-		if (session == null)
+		if (app == null)
 		{
-			throw new IllegalArgumentException("Null ISession passed");
+			throw new IllegalArgumentException("IApplication == null");
+		}
+		if (tree == null)
+		{
+			throw new IllegalArgumentException("IObjectTreeAPI == null");
 		}
 		if (objectInfo == null)
 		{
-			throw new IllegalArgumentException("Null IDatabaseObjectInfo passed");
+			throw new IllegalArgumentException("IDatabaseObjectInfo == null");
 		}
-		_session = session;
+		_app = app;
+		_tree = tree;
 		_objectInfo = objectInfo;
 	}
 
 	/**
-	 * Display the SQL Filter dialog.
+	 * Display thedialog.
 	 */
 	public void execute()
 	{
-		if (_session != null)
+		if (_tree != null)
 		{
-			SessionWindowManager winMgr =
-				_session.getApplication().getSessionWindowManager();
-			winMgr.showEditWhereColsDialog(_session, _objectInfo);
+			final SessionWindowManager winMgr = _app.getSessionWindowManager();
+			winMgr.showEditWhereColsDialog(_tree, _objectInfo);
 		}
 	}
 }

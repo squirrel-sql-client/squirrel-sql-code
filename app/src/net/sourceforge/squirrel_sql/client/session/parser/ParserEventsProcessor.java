@@ -1,22 +1,19 @@
 package net.sourceforge.squirrel_sql.client.session.parser;
 
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
-import net.sourceforge.squirrel_sql.client.session.SchemaInfo;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.parser.kernel.ParserThread;
-import net.sourceforge.squirrel_sql.client.session.parser.kernel.ParsingFinishedListener;
-import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
-import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
-import net.sourceforge.squirrel_sql.client.session.parser.kernel.completions.ErrorListener;
-
-import javax.swing.*;
-
-import net.sourceforge.squirrel_sql.fw.util.BaseRuntimeException;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
-import java.text.StringCharacterIterator;
+
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+
+import net.sourceforge.squirrel_sql.fw.util.BaseRuntimeException;
+
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.ParserThread;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.ParsingFinishedListener;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
 
 
 public class ParserEventsProcessor implements IParserEventsProcessor

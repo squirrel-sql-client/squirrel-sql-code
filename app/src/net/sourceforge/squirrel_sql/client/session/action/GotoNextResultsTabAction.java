@@ -3,6 +3,8 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * Copyright (C) 2003 Colin Bell
  * colbell@users.sourceforge.net
  *
+ * Modifications Copyright (C) 2003-2004 Jason Height
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -19,12 +21,13 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 /**
  * This <TT>Action</TT> will display the next results tab for the
  * current session.
@@ -32,14 +35,14 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class GotoNextResultsTabAction extends SquirrelAction
-									implements ISessionAction
+										implements ISQLPanelAction
 {
 	/** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(GotoNextResultsTabAction.class);
 
-	/** Current session. */
-	private ISession _session;
+	/** Current panel. */
+	private ISQLPanelAPI _panel;
 
 	/** Command that will be executed by this action. */
 	private ICommand _cmd;
@@ -54,14 +57,9 @@ public class GotoNextResultsTabAction extends SquirrelAction
 		super(app);
 	}
 
-	/**
-	 * A new session has been activated.
-	 *
-	 * @param	session	The new session.
-	 */
-	public void setSession(ISession session)
+	public void setSQLPanel(ISQLPanelAPI panel)
 	{
-		_session = session;
+		_panel = panel;
 		_cmd = null;
 	}
 
@@ -72,11 +70,11 @@ public class GotoNextResultsTabAction extends SquirrelAction
 	 */
 	public synchronized void actionPerformed(ActionEvent evt)
 	{
-		if (_session != null)
+		if (_panel != null)
 		{
 			if (_cmd == null)
 			{
-				_cmd = new GotoNextResultsTabCommand(_session);
+				_cmd = new GotoNextResultsTabCommand(_panel);
 			}
 			try
 			{
@@ -85,7 +83,7 @@ public class GotoNextResultsTabAction extends SquirrelAction
 			catch (Throwable ex)
 			{
 				final String msg = "Error occured seting current results tab";
-				_session.getMessageHandler().showErrorMessage(msg + ": " + ex);
+				_panel.getSession().getMessageHandler().showErrorMessage(msg + ": " + ex);
 				s_log.error(msg, ex);
 			}
 		}

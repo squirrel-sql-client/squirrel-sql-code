@@ -1,7 +1,9 @@
 package net.sourceforge.squirrel_sql.client.session.event;
 /*
- * Copyright (C) 2003 Colin Bell
+ * Copyright (C) 2003-2004 Colin Bell
  * colbell@users.sourceforge.net
+ *
+ * Modifications Copyright (C) 2003-2004 Jason Height
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,6 +21,7 @@ package net.sourceforge.squirrel_sql.client.session.event;
  */
 import java.util.EventObject;
 
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 /**
@@ -53,6 +56,16 @@ public class SQLPanelEvent extends EventObject
 	public ISession getSession()
 	{
 		return _session;
+	}
+
+	/**
+	 * Retrieve the SQL panel that thsi event is associated with.
+	 *
+	 * @return	The SQL panel this event is associated with.
+	 */
+	public ISQLPanelAPI getSQLPanel()
+	{
+		return ((SQLPanel)getSource()).getSQLPanelAPI();
 	}
 
 	private static SQLPanel checkParams(ISession session, SQLPanel source)

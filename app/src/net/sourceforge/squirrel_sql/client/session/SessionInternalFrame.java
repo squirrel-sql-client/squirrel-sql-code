@@ -3,6 +3,8 @@ package net.sourceforge.squirrel_sql.client.session;
  * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
+ * Modifications Copyright (C) 2003-2004 Jason Height
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -30,11 +32,9 @@ import javax.swing.event.InternalFrameEvent;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
-import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
-import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 
-public class SessionInternalFrame extends BaseSheet
+public class SessionInternalFrame extends BaseSessionSheet
+					implements ISQLInternalFrame, IObjectTreeInternalFrame
 {
 	/** Application API. */
 	private final IApplication _app;
@@ -44,33 +44,35 @@ public class SessionInternalFrame extends BaseSheet
 
 	private SessionSheet _sessionPanel;
 
-	private MySessionListener _sessionLis;
+	// JASON: Put back in
+//	private MySessionListener _sessionLis;
 
 	SessionInternalFrame(ISession session)
 	{
-		super(session.getTitle(), true, true, true, true);
+		super(session, session.getTitle(), true, true, true, true);
 		_app = session.getApplication();
 		_sessionId = session.getIdentifier();
 		setVisible(false);
 		createGUI(session);
 
-		_sessionLis = new MySessionListener();
-		session.addSessionListener(_sessionLis);
-	}
-
-	public ISession getSession()
-	{
-		final SessionManager mgr = _app.getSessionManager();
-		if (_sessionId != null)
-		{
-			return mgr.getSession(_sessionId);
-		}
-		return null;
+// JASON: Put back in
+//		_sessionLis = new MySessionListener();
+//		session.addSessionListener(_sessionLis);
 	}
 
 	public SessionSheet getSessionPanel()
 	{
 		return _sessionPanel;
+	}
+
+	public ISQLPanelAPI getSQLPanelAPI()
+	{
+		return _sessionPanel.getSQLPaneAPI();
+	}
+
+	public IObjectTreeAPI getObjectTreeAPI()
+	{
+		return _sessionPanel.getObjectTreePanel();
 	}
 
 	public void setSelected(boolean selected)
@@ -132,7 +134,7 @@ public class SessionInternalFrame extends BaseSheet
 				final ISession session = getSession();
 				if (session != null)
 				{
-					_app.getSessionWindowManager().closeSession(session);
+					_app.getSessionManager().closeSession(session);
 				}
 			}
 		});
@@ -142,17 +144,18 @@ public class SessionInternalFrame extends BaseSheet
 		validate();
 	}
 
-	private class MySessionListener extends SessionAdapter
-	{
-		public void sessionClosed(SessionEvent evt)
-		{
-			evt.getSession().removeSessionListener(_sessionLis);
-			_sessionLis = null;
-		}
-
-		public void sessionTitleChanged(SessionEvent evt)
-		{
-			setTitle(evt.getSession().getTitle());
-		}
-	}
+	// JASON: Put back in
+//	private class MySessionListener extends SessionAdapter
+//	{
+//		public void sessionClosed(SessionEvent evt)
+//		{
+//			evt.getSession().removeSessionListener(_sessionLis);
+//			_sessionLis = null;
+//		}
+//
+//		public void sessionTitleChanged(SessionEvent evt)
+//		{
+//			setTitle(evt.getSession().getTitle());
+//		}
+//	}
 }

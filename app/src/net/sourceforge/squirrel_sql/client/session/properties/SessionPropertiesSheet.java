@@ -17,11 +17,11 @@ package net.sourceforge.squirrel_sql.client.session.properties;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -38,12 +38,12 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.plugin.SessionPluginInfo;
+import net.sourceforge.squirrel_sql.client.session.BaseSessionSheet;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
-public class SessionPropertiesSheet extends BaseSheet
+public class SessionPropertiesSheet extends BaseSessionSheet
 {
 	/**
 	 * This interface defines locale specific strings. This should be
@@ -58,7 +58,6 @@ public class SessionPropertiesSheet extends BaseSheet
 	private static final ILogger s_log =
 		LoggerController.createLogger(SessionPropertiesSheet.class);
 
-	private ISession _session;
 	private List _panels = new ArrayList();
 
 	/** Frame title. */
@@ -66,12 +65,7 @@ public class SessionPropertiesSheet extends BaseSheet
 
 	public SessionPropertiesSheet(ISession session)
 	{
-		super(i18n.TITLE, true);
-		if (session == null)
-		{
-			throw new IllegalArgumentException("Null ISession passed");
-		}
-		_session = session;
+		super(session, i18n.TITLE, true);
 		createGUI();
 	}
 
@@ -90,7 +84,7 @@ public class SessionPropertiesSheet extends BaseSheet
 					{
 						start = System.currentTimeMillis();
 					}
-					pnl.initialize(_session.getApplication(), _session);
+					pnl.initialize(getSession().getApplication(), getSession());
 					if (isDebug)
 					{
 						s_log.debug("Panel " + pnl.getTitle() + " initialized in "
@@ -115,11 +109,6 @@ public class SessionPropertiesSheet extends BaseSheet
 	{
 		super.setTitle(newTitle);
 		_titleLbl.setText(newTitle);
-	}
-
-	public ISession getSession()
-	{
-		return _session;
 	}
 
 	private void performClose()
@@ -167,7 +156,7 @@ public class SessionPropertiesSheet extends BaseSheet
 		// This is a tool window.
 		GUIUtils.makeToolWindow(this, true);
 
-		final IApplication app = _session.getApplication();
+		final IApplication app = getSession().getApplication();
 
 		// Property panels for SQuirreL.
 		_panels.add(new GeneralSessionPropertiesPanel());
@@ -175,14 +164,13 @@ public class SessionPropertiesSheet extends BaseSheet
 		_panels.add(new SessionSQLPropertiesPanel(app));
 
 		// Go thru all plugins attached to this session asking for panels.
-		SessionPluginInfo[] plugins = app.getPluginManager().getPluginInformation(_session);
+		SessionPluginInfo[] plugins = app.getPluginManager().getPluginInformation(getSession());
 		for (int i = 0; i < plugins.length; ++i)
 		{
 			SessionPluginInfo spi = plugins[i];
 			if (spi.isLoaded())
 			{
-				ISessionPropertiesPanel[] pnls =
-					spi.getSessionPlugin().getSessionPropertiesPanels(_session);
+				ISessionPropertiesPanel[] pnls = spi.getSessionPlugin().getSessionPropertiesPanels(getSession());
 				if (pnls != null && pnls.length > 0)
 				{
 					for (int pnlIdx = 0; pnlIdx < pnls.length; ++pnlIdx)

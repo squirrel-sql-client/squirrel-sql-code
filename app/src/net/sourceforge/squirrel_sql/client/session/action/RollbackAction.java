@@ -1,7 +1,9 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
+ *
+ * Modifications Copyright (C) 2003-2004 Jason Height
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,11 +21,12 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import java.awt.event.ActionEvent;
 
+import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 
 public class RollbackAction extends SquirrelAction implements ISessionAction
 {
@@ -48,7 +51,7 @@ public class RollbackAction extends SquirrelAction implements ISessionAction
 			try
 			{
 				IPlugin plugin = _session.getApplication().getDummyAppPlugin();
-				_session.getSQLPanelAPI(plugin).rollback();
+				_session.rollback();
 			}
 			finally
 			{

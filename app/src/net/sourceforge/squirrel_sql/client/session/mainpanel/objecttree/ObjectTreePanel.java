@@ -3,6 +3,8 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  * Copyright (C) 2002-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
+ * Modifications Copyright (C) 2003-2004 Jason Height
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -47,6 +49,7 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
@@ -74,16 +77,21 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.tab
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.TablePriviligesTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.VersionColumnsTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterClauses;
+import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 /**
  * This is the panel for the Object Tree tab.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ObjectTreePanel extends JPanel
+public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 {
 	/** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(ObjectTreePanel.class);
+
+	/** The <TT>IIdentifier</TT> that uniquely identifies this object. */
+	private IIdentifier _id = IdentifierFactory.getInstance().createIdentifier();
 
 	/** Current session. */
 	private ISession _session;
@@ -114,6 +122,8 @@ public class ObjectTreePanel extends JPanel
 	private TabbedPaneListener _tabPnlListener;
 
 	private ObjectTreeSelectionListener _objTreeSelLis = null;
+
+	private SQLFilterClauses _sqlFilterClauses = new SQLFilterClauses();
 
 	/**
 	 * Collection of <TT>IObjectPanelTab</TT> objects to be displayed for all
@@ -206,6 +216,16 @@ public class ObjectTreePanel extends JPanel
 
 		// Register tabs to display in the details panel for UDT nodes.
 		addDetailTab(DatabaseObjectType.UDT, new DatabaseObjectInfoTab());
+	}
+
+	/**
+	 * Return the unique identifier for this object.
+	 *
+	 * @return the unique identifier for this object.
+	 */
+	public IIdentifier getIdentifier()
+	{
+		return _id;
 	}
 
 	public void addNotify()
@@ -412,7 +432,7 @@ public class ObjectTreePanel extends JPanel
 	 * 			Thrown if a <TT>null</passed> <TT>DatabaseObjectType</TT>
 	 * 			or <TT>Action</TT> passed.
 	 */
-	public void addToObjectTreePopup(DatabaseObjectType dboType, Action action)
+	public void addToPopup(DatabaseObjectType dboType, Action action)
 	{
 		if (dboType == null)
 		{
@@ -434,7 +454,7 @@ public class ObjectTreePanel extends JPanel
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> passed.
 	 */
-	public void addToObjectTreePopup(Action action)
+	public void addToPopup(Action action)
 	{
 		if (action == null)
 		{
@@ -454,7 +474,7 @@ public class ObjectTreePanel extends JPanel
 	 * 			Thrown if a <TT>null</TT> <TT>DatabaseObjectType</TT> or
 	 * 			<TT>JMenu</TT> thrown.
 	 */
-	public void addToObjectTreePopup(DatabaseObjectType dboType, JMenu menu)
+	public void addToPopup(DatabaseObjectType dboType, JMenu menu)
 	{
 		if (dboType == null)
 		{
@@ -475,8 +495,7 @@ public class ObjectTreePanel extends JPanel
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>JMenu</TT> thrown.
 	 */
-	public void addToObjectTreePopup(JMenu menu)
-	{
+	public void addToPopup(JMenu menu)	{
 		if (menu == null)
 		{
 			throw new IllegalArgumentException("JMenu == null");
@@ -485,9 +504,24 @@ public class ObjectTreePanel extends JPanel
 	}
 
 	/**
+	 * Create a new <TT>DatabaseObjectType</TT>
+	 *
+	 * @return a new <TT>DatabaseObjectType</TT>
+	 */
+	public DatabaseObjectType createNewDatabaseObjectType(String name)
+	{
+		return DatabaseObjectType.createNewDatabaseObjectType(name);
+	}
+
+	public ISession getSession()
+	{
+		return _session;
+	}
+
+	/**
 	 * Return an array of the currently selected nodes.
 	 *
-	 * @return	array of <TT>ObjectTreeNode</TT> objects.
+	 * @return array of <TT>ObjectTreeNode</TT> objects.
 	 */
 	public ObjectTreeNode[] getSelectedNodes()
 	{

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 /*
- * Copyright (C) 2003 Colin Bell
+ * Copyright (C) 2003-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -51,9 +51,10 @@ public class NextSessionAction extends SquirrelAction
 	{
 		if (_session != null)
 		{
+// JASON: TODO
 			final IApplication app = getApplication();
 			final ISession nextSession = app.getSessionManager().getNextSession(_session);
-			final JInternalFrame sif = app.getSessionWindowManager().getInternalFrame(nextSession);
+			final JInternalFrame sif = app.getSessionWindowManager().getMainInternalFrame(nextSession);
 			new SelectInternalFrameCommand(sif).execute();
 		}
 	}

@@ -19,11 +19,12 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 /**
  * This <CODE>Action</CODE> will copy the simple object names of all objects
  * currently in the object tree and place on the system clipboard.
@@ -31,15 +32,15 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class CopySimpleObjectNameAction
-	extends SquirrelAction
-	implements ISessionAction, CopyObjectNameCommand.ICopyTypes
+				extends SquirrelAction
+				implements IObjectTreeAction, CopyObjectNameCommand.ICopyTypes
 {
 	/** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(CopySimpleObjectNameAction.class);
 
-	/** Current session. */
-	private ISession _session;
+	/** API for the current tree. */
+	private IObjectTreeAPI _tree;
 
 	/**
 	 * Ctor.
@@ -52,13 +53,13 @@ public class CopySimpleObjectNameAction
 	}
 
 	/**
-	 * Set the current session.
+	 * Set the current object tree API.
 	 *
-	 * @param	session		The current session.
+	 * @param	tree	Current ObjectTree
 	 */
-	public void setSession(ISession session)
+	public void setObjectTree(IObjectTreeAPI tree)
 	{
-		_session = session;
+		_tree = tree;
 	}
 
 	/**
@@ -68,16 +69,16 @@ public class CopySimpleObjectNameAction
 	 */
 	public void actionPerformed(ActionEvent evt)
 	{
-		if (_session != null)
+		if (_tree != null)
 		{
 			try
 			{
-				new CopyObjectNameCommand(_session, SIMPLE_NAME).execute();
+				new CopyObjectNameCommand(_tree, SIMPLE_NAME).execute();
 			}
 			catch (Throwable ex)
 			{
 				final String msg = "Error occured copying object names";
-				_session.getMessageHandler().showErrorMessage(msg + ": " + ex);
+				_tree.getSession().getMessageHandler().showErrorMessage(msg + ": " + ex);
 				s_log.error(msg, ex);
 			}
 		}

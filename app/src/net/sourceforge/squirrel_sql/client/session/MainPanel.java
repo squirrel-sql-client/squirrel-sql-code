@@ -1,7 +1,9 @@
 package net.sourceforge.squirrel_sql.client.session;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
+ *
+ * Modifications Copyright (C) 2003-2004 Jason Height
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -66,6 +68,7 @@ class MainPanel extends JPanel
 		int OBJECT_TREE_TAB = 0;
 		int SQL_TAB = 1;
 	}
+
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(MainPanel.class);
@@ -114,7 +117,7 @@ class MainPanel extends JPanel
 		addMainPanelTab(new SQLTab(_session));
 
 		add(_tabPnl, BorderLayout.CENTER);
-	
+
 		propertiesHaveChanged(null);
 
 		// Refresh the currently selected tab.
@@ -250,7 +253,10 @@ class MainPanel extends JPanel
 
 
 
-
+/** JASON: Remove this method.
+	*  @deprecated remove this method. Superceeded by listeners attached
+	*  to SQLInternalFrame
+	*/
 	void updateState()
 	{
 		final ActionCollection actions = _session.getApplication().getActionCollection();
@@ -339,7 +345,7 @@ class MainPanel extends JPanel
 
 	/**
 	 * Retrieve the tabbed pane for this component.
-	 * 
+	 *
 	 * @return	The tabbed pane.
 	 */
 	JTabbedPane getTabbedPane()

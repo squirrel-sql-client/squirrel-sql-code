@@ -1,7 +1,9 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 /*
- * Copyright (C) 2002-2003 Colin Bell
+ * Copyright (C) 2002-2004 Colin Bell
  * colbell@users.sourceforge.net
+ *
+ * Modifications Copyright (C) 2003-2004 Jason Height
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,28 +21,26 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 /**
  * This <CODE>Action</CODE> will set the default catalog for the session.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SetDefaultCatalogAction extends SquirrelAction
-									implements ISessionAction
+										implements IObjectTreeAction
 {
 	/** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(SetDefaultCatalogAction.class);
 
-	/** Current session. */
-	private ISession _session;
+	private IObjectTreeAPI _tree;
 
 	/**
 	 * Ctor.
@@ -53,13 +53,13 @@ public class SetDefaultCatalogAction extends SquirrelAction
 	}
 
 	/**
-	 * Set the current session.
+	 * Set the current object tree.
 	 *
-	 * @param	session	The current session.
+	 * @param	tree	The current object tree.
 	 */
-	public void setSession(ISession session)
+	public void setObjectTree(IObjectTreeAPI tree)
 	{
-		_session = session;
+		_tree = tree;
 	}
 
 	/**
@@ -69,25 +69,23 @@ public class SetDefaultCatalogAction extends SquirrelAction
 	 */
 	public void actionPerformed(ActionEvent evt)
 	{
-		final IPlugin plugin = _session.getApplication().getDummyAppPlugin();
-		final IObjectTreeAPI treeAPI = _session.getObjectTreeAPI(plugin);
-		IDatabaseObjectInfo[] catalogs = treeAPI.getSelectedDatabaseObjects();
+		IDatabaseObjectInfo[] catalogs = _tree.getSelectedDatabaseObjects();
 		if (catalogs.length == 1)
 		{
 			String catalog = catalogs[0].getSimpleName();
 			try
 			{
-				new SetDefaultCatalogCommand(_session, catalog).execute();
+				new SetDefaultCatalogCommand(_tree.getSession(), catalog).execute();
 			}
 			catch (Throwable th)
 			{
-				_session.getMessageHandler().showErrorMessage(th);
+				_tree.getSession().getMessageHandler().showErrorMessage(th);
 				s_log.error("Error occured setting session catalog to " + catalog, th);
 			}
 		}
 		else
 		{
-			_session.getApplication().showErrorDialog("Must select a single catalog");
+			_tree.getSession().getApplication().showErrorDialog("Must select a single catalog");
 		}
 
 //		IApplication app = getApplication();

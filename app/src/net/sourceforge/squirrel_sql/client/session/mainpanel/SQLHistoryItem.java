@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 /*
- * Copyright (C) 2003 Colin Bell
+ * Copyright (C) 2003-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,7 +19,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  */
 import java.io.Serializable;
 
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 /**
  * This JavaBean is the object stored in The <TT>SQLHistoryComboBox</TT>. It
  * represents an SQL query.
@@ -137,6 +137,6 @@ public class SQLHistoryItem implements Serializable, Cloneable
 		}
 
 		_sql = sql.trim();
-		_shortSql = Utilities.cleanString(sql);
+		_shortSql = StringUtilities.cleanString(sql);
 	}
 }
