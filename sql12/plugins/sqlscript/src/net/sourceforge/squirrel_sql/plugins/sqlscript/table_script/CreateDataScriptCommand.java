@@ -52,15 +52,17 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
     * Current plugin.
     */
    private final SQLScriptPlugin _plugin;
+   private boolean _templateScriptOnly;
 
    /**
     * Ctor specifying the current session.
     */
-   public CreateDataScriptCommand(ISession session, SQLScriptPlugin plugin)
+   public CreateDataScriptCommand(ISession session, SQLScriptPlugin plugin, boolean templateScriptOnly)
    {
       super();
       _session = session;
       _plugin = plugin;
+      _templateScriptOnly = templateScriptOnly;
    }
 
    protected void showAbortFrame()
@@ -173,7 +175,12 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
          typeAndName[i - 1][0] = metaData.getColumnTypeName(i).toUpperCase();
          typeAndName[i - 1][1] = metaData.getColumnName(i);
       }
-      while (srcResult.next())
+
+      // Just a helper to make the fromResultSet ? ... below
+      // look nicer.
+      boolean fromResultSet = !_templateScriptOnly;
+
+      while (srcResult.next() || _templateScriptOnly)
       {
          if (_bStop) break;
          sbRows.append("insert into ");
@@ -200,7 +207,7 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
                || sColumnTypeName.equals("SHORT")
                || sColumnTypeName.equals("FLOAT"))
             {
-               Object value = srcResult.getObject(i + 1);
+               Object value = fromResultSet ? srcResult.getObject(i + 1) : "0" + getNullableComment(metaData, i+1);
                sbValues.append(value);
             }
             else if (sColumnTypeName.equals("DATE")
@@ -211,15 +218,15 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
                java.util.Date timestamp = null;
                if (sColumnTypeName.equals("DATE"))
                {
-                  timestamp = srcResult.getDate(i + 1);
+                  timestamp = fromResultSet ? srcResult.getDate(i + 1): new java.util.Date();
                }
                else if (sColumnTypeName.equals("TIME"))
                {
-                  timestamp = srcResult.getTime(i + 1);
+                  timestamp = fromResultSet ? srcResult.getTime(i + 1): new java.util.Date();
                }
                else if (sColumnTypeName.equals("TIMESTAMP"))
                {
-                  timestamp = srcResult.getTimestamp(i + 1);
+                  timestamp = fromResultSet ? srcResult.getTimestamp(i + 1): new java.util.Date();
                }
 
 
@@ -236,6 +243,7 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
                      String esc = "{d '" + prefixNulls(calendar.get(Calendar.YEAR), 4) + "-" +
                         prefixNulls(calendar.get(Calendar.MONTH) + 1, 2) + "-" +
                         prefixNulls(calendar.get(Calendar.DAY_OF_MONTH), 2) + "'}";
+                     esc = fromResultSet ? esc : esc + getNullableComment(metaData, i+1);
                      sbValues.append(esc);
                   }
                   else if (sColumnTypeName.equals("TIME"))
@@ -243,6 +251,7 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
                      String esc = "{t '" + prefixNulls(calendar.get(Calendar.HOUR_OF_DAY), 2) + ":" +
                         prefixNulls(calendar.get(Calendar.MINUTE), 2) + ":" +
                         prefixNulls(calendar.get(Calendar.SECOND), 2) + "'}";
+                     esc = fromResultSet ? esc : esc + getNullableComment(metaData, i+1);
                      sbValues.append(esc);
                   }
                   else if (sColumnTypeName.equals("TIMESTAMP"))
@@ -253,6 +262,7 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
                         prefixNulls(calendar.get(Calendar.HOUR_OF_DAY), 2) + ":" +
                         prefixNulls(calendar.get(Calendar.MINUTE), 2) + ":" +
                         prefixNulls(calendar.get(Calendar.SECOND), 2) + "'}";
+                     esc = fromResultSet ? esc : esc + getNullableComment(metaData, i+1);
                      sbValues.append(esc);
                   }
 
@@ -260,7 +270,7 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
             }
             else if (sColumnTypeName.equals("BIT"))
             {
-               boolean iBoolean = srcResult.getBoolean(i + 1);
+               boolean iBoolean = fromResultSet ? srcResult.getBoolean(i + 1) : false;
                if (iBoolean)
                {
                   sbValues.append(1);
@@ -269,10 +279,15 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
                {
                   sbValues.append(0);
                }
+
+               if(false == fromResultSet)
+               {
+                  sbValues.append(getNullableComment(metaData, i+1));
+               }
             }
             else
             {
-               String sResult = srcResult.getString(i + 1);
+               String sResult = fromResultSet ? srcResult.getString(i + 1) : "s";
                if (sResult == null)
                {
                   sbValues.append("null");
@@ -321,6 +336,11 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
                   sbValues.append("\'");
                   sbValues.append(sResult);
                   sbValues.append("\'");
+
+                  if(false == fromResultSet)
+                  {
+                     sbValues.append(getNullableComment(metaData, i+1));
+                  }
                }
             }
             sbValues.append(",");
@@ -334,6 +354,23 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
          sbValues.append(")").append(getStatementSeparator()).append("\n");
          sbRows.append(")");
          sbRows.append(sbValues.toString());
+
+         if(_templateScriptOnly)
+         {
+            break;
+         }
+      }
+   }
+
+   private String getNullableComment(ResultSetMetaData metaData, int colIndex) throws SQLException
+   {
+      if(ResultSetMetaData.columnNoNulls == metaData.isNullable(colIndex))
+      {
+         return " /*not nullable*/";
+      }
+      else
+      {
+         return "";
       }
    }
 
