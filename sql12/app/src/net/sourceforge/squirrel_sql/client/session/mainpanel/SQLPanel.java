@@ -521,6 +521,27 @@ public class SQLPanel extends JPanel
 		}
 	}
 
+	protected String fireSQLToBeExecutedEvent(String sql)
+	{
+		// Guaranteed to be non-null.
+		Object[] listeners = _listeners.getListenerList();
+		// Process the listeners last to first, notifying
+		// those that are interested in this event.
+		ResultTabEvent evt = null;
+		for (int i = listeners.length - 2; i >= 0; i -= 2)
+		{
+			if (listeners[i] == ISQLExecutionListener.class)
+			{
+				sql = ((ISQLExecutionListener)listeners[i + 1]).statementExecuting(sql);
+				if (sql == null)
+				{
+					break;
+				}
+			}
+		}
+		return sql;
+	}
+
 	void setCancelPanel(final JPanel panel)
 	{
 		SwingUtilities.invokeLater(new Runnable()

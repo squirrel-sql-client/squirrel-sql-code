@@ -133,9 +133,13 @@ public class SQLExecuterTask implements Runnable
 					String querySql = (String)queryStrings.remove(0);
 					if (querySql != null)
 					{
-						if (!processQuery(querySql))
+						querySql = _sqlPanel.fireSQLToBeExecutedEvent(querySql);
+						if (querySql != null)
 						{
-							break;
+							if (!processQuery(querySql))
+							{
+								break;
+							}
 						}
 					}
 				}
