@@ -16,14 +16,10 @@ package net.sourceforge.squirrel_sql.plugins.mysql.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
-
 import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 /**
  * DropDatabaseCommand.java
@@ -34,10 +30,6 @@ import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
  */
 public class DropDatabaseCommand implements ICommand
 {
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(DropDatabaseCommand.class);
-
 	/** Current session. */
 	private ISession _session;
 

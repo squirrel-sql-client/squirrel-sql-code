@@ -17,15 +17,11 @@ package net.sourceforge.squirrel_sql.plugins.mysql.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-
 import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 /**
  * This abstract command is a MySQL command that takes a table
@@ -35,10 +31,6 @@ import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
  */
 abstract class AbstractMultipleSQLCommand implements ICommand
 {
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(AbstractMultipleSQLCommand.class);
-
 	/** Current session. */
 	private ISession _session;
 
@@ -49,7 +41,7 @@ abstract class AbstractMultipleSQLCommand implements ICommand
 	 * Ctor specifying the current session.
 	 *
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>ISession</TT>,
+	 * 			Thrown if a?<TT>null</TT> <TT>ISession</TT>,
 	 * 			<TT>Resources</TT> or <TT>MysqlPlugin</TT> passed.
 	 */
 	public AbstractMultipleSQLCommand(ISession session, MysqlPlugin plugin)

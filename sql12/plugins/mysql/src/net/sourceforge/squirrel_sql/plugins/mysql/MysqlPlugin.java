@@ -38,6 +38,7 @@ import net.sourceforge.squirrel_sql.plugins.mysql.action.DropDatabaseAction;
 import net.sourceforge.squirrel_sql.plugins.mysql.action.ExplainSelectTableAction;
 import net.sourceforge.squirrel_sql.plugins.mysql.action.ExplainTableAction;
 import net.sourceforge.squirrel_sql.plugins.mysql.action.OptimizeTableAction;
+import net.sourceforge.squirrel_sql.plugins.mysql.action.RenameTableAction;
 import net.sourceforge.squirrel_sql.plugins.mysql.expander.SessionExpander;
 import net.sourceforge.squirrel_sql.plugins.mysql.expander.UserParentExpander;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.DatabaseStatusTab;
@@ -194,6 +195,7 @@ public class MysqlPlugin extends DefaultSessionPlugin
 		coll.add(new ExplainSelectTableAction(app, _resources, this));
 		coll.add(new ExplainTableAction(app, _resources, this));
 		coll.add(new OptimizeTableAction(app, _resources, this));
+		coll.add(new RenameTableAction(app, _resources, this));
 
 		coll.add(new CreateDatabaseAction(app, _resources, this));
 		coll.add(new DropDatabaseAction(app, _resources, this));
@@ -300,6 +302,7 @@ public class MysqlPlugin extends DefaultSessionPlugin
 
 		_resources.addToMenu(coll.get(AlterTableAction.class), mysqlMenu);
 		_resources.addToMenu(coll.get(CopyTableAction.class), mysqlMenu);
+		_resources.addToMenu(coll.get(RenameTableAction.class), mysqlMenu);
 
 		return mysqlMenu;
 	}
