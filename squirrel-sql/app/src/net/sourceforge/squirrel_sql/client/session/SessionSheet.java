@@ -100,8 +100,6 @@ public class SessionSheet extends JInternalFrame {
 
 	private ISession _session;
 
-	private MyPropertiesListener _propsListener = new MyPropertiesListener();
-
 	private JTabbedPane _tabPane = new JTabbedPane();
 	private SQLPanel _sqlPnl;
 	private ObjectsPanel _objectsPnl;
@@ -119,7 +117,11 @@ public class SessionSheet extends JInternalFrame {
 
 		propertiesHaveChanged(null);
 
-		session.getProperties().addPropertyChangeListener(_propsListener);
+		session.getProperties().addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent evt) {
+				propertiesHaveChanged(evt.getPropertyName());
+			}
+		});
 	}
 
 	/**
@@ -134,15 +136,7 @@ public class SessionSheet extends JInternalFrame {
 	public boolean hasConnection() {
 		return _session.getSQLConnection() != null;
 	}
-	/*
-		public void commit() {
-			_sqlPnl.commit();
-		}
 
-		public void rollback() {
-			_sqlPnl.rollback();
-		}
-	*/
 	public ISession getSession() {
 		return _session;
 	}
@@ -267,7 +261,7 @@ public class SessionSheet extends JInternalFrame {
 	}
 
 	private static String createTitle(ISession session) {
-		StringBuffer title = new StringBuffer("Session: ");
+		StringBuffer title = new StringBuffer();//"Session: ");
 		title.append(session.getAlias().getName());
 		String user = null;
 		try {
@@ -311,7 +305,11 @@ public class SessionSheet extends JInternalFrame {
 		_tabPane.addTab(i18n.OBJ_TAB_TITLE, null, _objectsPnl, i18n.OBJ_TAB_DESC);
 		_tabPane.addTab(i18n.SQL_TAB_TITLE, null, _sqlPnl, i18n.SQL_TAB_DESC);
 
-		_tabPane.addChangeListener(new MyTabsListener());
+		_tabPane.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent evt) {
+				updateState();
+			}
+		});
 
 		Container content = getContentPane();
 		content.setLayout(new BorderLayout());
@@ -370,33 +368,4 @@ public class SessionSheet extends JInternalFrame {
 			actions.get(RollbackAction.class).setEnabled(false);
 		}
 	}
-
-	private class MyPropertiesListener implements PropertyChangeListener {
-		public void propertyChange(PropertyChangeEvent evt) {
-			SessionSheet.this.propertiesHaveChanged(evt.getPropertyName());
-		}
-	}
-
-	private class MyTabsListener implements ChangeListener {
-		public void stateChanged(ChangeEvent evt) {
-			updateState();
-		}
-	}
-
-	private static MouseListener s_dummyMouseAdapter = new MouseAdapter() {
-		private void cancelEvent(MouseEvent evt) {
-			Component pane = (Component) evt.getSource();
-			pane.setVisible(true);
-			pane.requestFocus();
-		}
-		public void mouseClicked(MouseEvent evt) {
-			cancelEvent(evt);
-		}
-		public void mousePressed(MouseEvent evt) {
-			cancelEvent(evt);
-		}
-		public void mouseReleased(MouseEvent evt) {
-			cancelEvent(evt);
-		}
-	};
 }

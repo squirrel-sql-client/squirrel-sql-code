@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.util;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -22,13 +22,13 @@ import net.sourceforge.squirrel_sql.fw.id.UidIdentifier;
 
 public class IdentifierFactory {
 
-    private static final IdentifierFactory s_instance = new IdentifierFactory();
+	private static final IdentifierFactory s_instance = new IdentifierFactory();
 
-    public static IdentifierFactory getInstance() {
-        return s_instance;
-    }
+	public static IdentifierFactory getInstance() {
+		return s_instance;
+	}
 
-    public IIdentifier createIdentifier() {
-        return new UidIdentifier();
-    }
+	public IIdentifier createIdentifier() {
+		return new UidIdentifier();
+	}
 }
