@@ -161,8 +161,16 @@ public abstract class Resources {
 	}
 
 	private Icon privateGetIcon(String iconName) {
-		if (iconName != null && iconName.length() > 0) {
-			return new ImageIcon(getClass().getResource(_imagePath + iconName));
+		if (iconName != null && iconName.length() > 0) 
+		{
+			try
+			{
+				return new ImageIcon(getClass().getResource(_imagePath + iconName));
+			} catch(Exception e)
+			{
+				// TODO: Should logger being used?
+				System.err.println("can't load image: " + iconName);
+			}
 		}
 		return null;
 	}
