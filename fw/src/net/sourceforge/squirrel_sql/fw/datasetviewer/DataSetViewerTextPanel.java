@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  */
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
@@ -26,6 +27,8 @@ import java.util.Arrays;
 import javax.swing.JTextArea;
 
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
+import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
+import net.sourceforge.squirrel_sql.fw.gui.action.MakeEditableCommand;
 //??RENAME to DataSetViewerTextDestination
 
 public class DataSetViewerTextPanel extends BaseDataSetViewerDestination
@@ -150,7 +153,7 @@ public class DataSetViewerTextPanel extends BaseDataSetViewerDestination
 		return output.toString();
 	}
 
-	private static final class MyJTextArea extends JTextArea
+	private final class MyJTextArea extends JTextArea
 	{
 		private TextPopupMenu _textPopupMenu;
 
@@ -170,9 +173,7 @@ public class DataSetViewerTextPanel extends BaseDataSetViewerDestination
 			setLineWrap(false);
 			setFont(new Font("Monospaced", Font.PLAIN, 12));
 
-			// TODO: Col - Fix this when package refactoring done. Tell
-			// Glenn that cannot edit from text mode until refactoring done.
-			_textPopupMenu = new TextPopupMenu();	//allowUpdate, updateableObject);
+			_textPopupMenu = new MyJTextAreaPopupMenu(allowUpdate, updateableObject);
 			_textPopupMenu.setTextComponent(this);
 
 			addMouseListener(new MouseAdapter()
@@ -198,6 +199,46 @@ public class DataSetViewerTextPanel extends BaseDataSetViewerDestination
 		void displayPopupMenu(MouseEvent evt)
 		{
 			_textPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+		}
+	}
+
+	private static class MyJTextAreaPopupMenu extends TextPopupMenu
+	{
+		private MakeEditableAction _makeEditable = new MakeEditableAction();
+
+		// The following pointer is needed to allow the "Make Editable button
+		// to tell the application to set up an editable display panel
+		private IDataSetUpdateableModel _updateableModel = null;
+
+		MyJTextAreaPopupMenu(boolean allowUpdate, 
+					IDataSetUpdateableModel updateableObject)
+		{
+			super();
+			// save the pointer needed to enable editing of data on-demand
+			_updateableModel = updateableObject;
+
+			if (allowUpdate)
+			{
+				addSeparator();
+				add(_makeEditable);
+				addSeparator();
+			}
+		}
+
+		private class MakeEditableAction extends BaseAction
+		{
+			MakeEditableAction()
+			{
+				super("Make Editable");
+			}
+
+			public void actionPerformed(ActionEvent evt)
+			{
+				if (_updateableModel != null)
+				{
+					new MakeEditableCommand(_updateableModel).execute();
+				}
+			}
 		}
 	}
 

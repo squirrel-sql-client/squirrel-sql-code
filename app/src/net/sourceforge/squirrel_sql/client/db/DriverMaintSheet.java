@@ -245,9 +245,9 @@ public class DriverMaintSheet extends BaseSheet
 			}
 			dispose();
 		}
-		catch (Exception ex)
+		catch (Throwable th)
 		{
-			displayErrorMessage(ex);
+			displayErrorMessage(th);
 		}
 	}
 
@@ -270,16 +270,15 @@ public class DriverMaintSheet extends BaseSheet
 	 * <TT>SwingUtilities.invokeLater()</TT> because this may be called
 	 * before the main dialog is displayed.
 	 *
-	 * @param	ex	The <TT>Exception</TT> containing the error
-	 *				message.
+	 * @param	th	The exception containing the error message.
 	 */
-	private void displayErrorMessage(final Exception ex)
+	private void displayErrorMessage(final Throwable th)
 	{
 		SwingUtilities.invokeLater(new Runnable()
 		{
 			public void run()
 			{
-				_app.showErrorDialog(ex);
+				_app.showErrorDialog(th);
 			}
 		});
 	}

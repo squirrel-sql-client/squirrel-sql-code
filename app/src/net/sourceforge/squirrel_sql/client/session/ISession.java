@@ -112,6 +112,11 @@ public interface ISession extends IHasIdentifier
 	SessionSheet getSessionSheet();
 
 	/**
+	 * Retrieve the schema information object for this session.
+	 */
+	SchemaInfo getSchemaInfo();
+
+	/**
 	 * Select a tab in the main tabbed pane.
 	 *
 	 * @param	tabIndex	The tab to select. @see #IMainTabIndexes

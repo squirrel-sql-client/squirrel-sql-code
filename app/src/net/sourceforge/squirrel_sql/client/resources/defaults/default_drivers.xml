@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <Beans>
+    <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+        <driverClassName>org.firebirdsql.jdbc.FBDriver</driverClassName>
+        <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+            <string>-28</string>
+        </identifier>
+        <jarFileNames Indexed="true"/>
+        <name>Firebird JayBird</name>
+        <url>jdbc:firebirdsql:[//host[:port]/]&lt;database&gt;</url>
+    </Bean>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
 		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">

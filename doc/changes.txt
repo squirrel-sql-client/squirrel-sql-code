@@ -6,6 +6,7 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Add Firebird Jaybird to the list of default drivers.
 - Allow for bug in Opta2000 driver which limits the number of rows
   modified by an UPDATE statement to that specified by setMaxRows()
   (Gerd Wagner).
@@ -66,6 +67,7 @@ Enhancements
 
 Bug Fixes
 ---------
+- Show all errors in the driver maintenance dialog.
 - Fix to be able to display data in PostgreSQL UDT columns.
 - Fix for single character separator at end of line/document
 - Fix NullPointer exception when updating caret position in statusbar.
