@@ -6,6 +6,13 @@ SQuirreL SQL Client Change Log
 
 Bug Fixes
 ---------
+- The data displayed within the Contents tab was lost when a session sheet was
+  deactivated and then activated.
+- Use default Look and Feel for the installer as the Kunststoff Look and Feel
+  didn't display correctly on OSX.
+- On Linux the $JAVA_HOME variable in the squirrel-sql.sh script was replaced
+  with the actual value during the install which caused problems if a new
+  version of Java was later installed. 
 - Fix ClassCastException thrown by the parser (Gerd Wagner).
 - Fix Bug #981490 OutOfMemoryException partly caused by the parser (Gerd Wagner).
 

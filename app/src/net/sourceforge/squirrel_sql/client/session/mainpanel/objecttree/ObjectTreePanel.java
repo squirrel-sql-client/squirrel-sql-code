@@ -216,7 +216,10 @@ public class ObjectTreePanel extends JPanel
 		Iterator it = _tabbedPanes.values().iterator();
 		while (it.hasNext())
 		{
-			setupTabbedPane((ObjectTreeTabbedPane)it.next());
+			//setupTabbedPane((ObjectTreeTabbedPane)it.next());
+			ObjectTreeTabbedPane ottp = (ObjectTreeTabbedPane) it.next();
+			ottp.getTabbedPane().addChangeListener(_tabPnlListener);
+
 		}
 	}
 
