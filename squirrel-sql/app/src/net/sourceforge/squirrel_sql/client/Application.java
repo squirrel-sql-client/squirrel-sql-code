@@ -70,9 +70,6 @@ class Application implements IApplication
 	/** Logger for this class. */
 	private static ILogger s_log;
 
-	/** Splash screen used during startup process. */
-	//private SplashScreen _splash;
-
 	private SquirrelPreferences _prefs;
 	private SQLDriverManager _driverMgr;
 	private DataCache _cache;
