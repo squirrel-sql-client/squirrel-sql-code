@@ -202,7 +202,10 @@ public class DataTypeBigDecimal
 		// Do the conversion into the object in a safe manner
 		try {
 			BigDecimal obj = new BigDecimal(value);
-			if (obj.scale() > _scale) {
+			// Some DBs give a negative number when they do not have a value for
+			// the scale.  Assume that if the _scale is 0 or positive that the DB really
+			// means for that to be the scale, but if it is negative then we do not check.
+			if (_scale >= 0 && obj.scale() > _scale) {
 				messageBuffer.append("Scale Exceeded: Number of digits to right of decimal place ("+
 					obj.scale()+")\nis greater than allowed in column ("+_scale+").");
 				return null;
