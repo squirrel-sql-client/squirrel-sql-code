@@ -58,6 +58,7 @@ public class ParserThread extends Thread
         start();
     }
 
+    private static int count = 0;
     public void run()
     {
         while(buffer != null) {
@@ -67,9 +68,9 @@ public class ParserThread extends Thread
             Parser parser = new Parser(scanner);
             parser.rootSchema = handler;
             handler.statements = parser.statements;
-            System.out.println("begin parse");
+            System.out.println("begin parse "+(++count));
             parser.parse();
-            System.out.println("end parse");
+            System.out.println("end parse "+count);
         }
     }
 
@@ -81,7 +82,16 @@ public class ParserThread extends Thread
     {
         IncrementalBuffer oldBuffer = this.buffer;
         this.buffer = new IncrementalBuffer(chars);
-        this.buffer.append = true;
+        oldBuffer.eof();
+    }
+
+    /**
+     * terminate the parser
+     */
+    public void end()
+    {
+        IncrementalBuffer oldBuffer = this.buffer;
+        this.buffer = null;
         oldBuffer.eof();
     }
 
@@ -104,7 +114,7 @@ public class ParserThread extends Thread
     {
         private CharacterIterator chars;
         private char current;
-        private boolean atEnd, append;
+        private boolean atEnd;
 
         IncrementalBuffer(CharacterIterator chars)
         {
@@ -124,15 +134,9 @@ public class ParserThread extends Thread
             }
             else {
                 if(current == CharacterIterator.DONE) {
-                    if(append) {
-                        append = false;
-                        return ' ';
-                    }
                     if(chars != null) {
                         synchronized(chars) {
-                            //System.out.println(">chars.notify");
-                            chars.notify(); //tell the UI that we're done
-                            //System.out.println("chars.notify>");
+                            chars.notify(); //tell the UI that this buffer is through
                         }
                     }
                     try {
@@ -147,7 +151,7 @@ public class ParserThread extends Thread
                 }
                 else {
                     char prev = current;
-                    //System.out.print(prev);
+                    System.out.print(prev);
                     current = chars.next();
                     return prev;
                 }
@@ -182,9 +186,7 @@ public class ParserThread extends Thread
             if(chars != null && current != CharacterIterator.DONE) {
                 synchronized(chars) {
                     try {
-                        //System.out.println(">chars.wait");
                         chars.wait();
-                        //System.out.println("chars.wait>");
                     }
                     catch (InterruptedException e) {}
                 }

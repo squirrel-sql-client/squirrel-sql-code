@@ -185,16 +185,6 @@ public interface SQLSchema
     }
 
     /**
-     * validate a table, optionally defining an alias
-     * @param catalog catalog name (otional)
-     * @param schema schema name (optional)
-     * @param name table name (required)
-     * @param alias alias (optional)
-     * @return true if the table is valid, and the alias has been registered (if required)
-     */
-    boolean setTable(String catalog, String schema, String name, String alias);
-
-    /**
      * lookup a table descriptor which exactly matches the parameters
      * @param catalog optional
      * @param schema optional

@@ -60,6 +60,7 @@ public class SQLColumn extends SQLCompletion
         this.alias = alias;
         this.afterSeparatorPos = pos+alias.length()+1;
         setEndPosition(afterSeparatorPos);
+        System.out.println("setAlias: s="+startPosition+" e="+endPosition);
     }
 
     public void setAlias(String alias)

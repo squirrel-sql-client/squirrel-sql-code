@@ -26,7 +26,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import net.sourceforge.jcomplete.completions.SQLStatement;
-import net.sourceforge.jcomplete.completions.SQLColumn;
 import net.sourceforge.jcomplete.Completion;
 import net.sourceforge.jcomplete.CompletionHandler;
 import net.sourceforge.jcomplete.util.ParserThread;
@@ -110,13 +109,6 @@ public class SQLCompletionHandler implements CompletionHandler, SQLSchema
         if(c != completion)
             c.updateWith(completion);
         return c;
-    }
-
-    public boolean setTable(String catalog, String schema, String name, String alias)
-    {
-        SQLSchema.Table table =
-              (SQLSchema.Table)tables.get(SQLSchema.Table.createCompositeName(catalog, schema, name));
-        return table != null;
     }
 
     public List getTables(String catalog, String schema, String name)

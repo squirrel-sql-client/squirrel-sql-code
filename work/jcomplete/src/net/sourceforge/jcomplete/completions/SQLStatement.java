@@ -87,13 +87,20 @@ public class SQLStatement extends SQLCompletion implements SQLSchema
 
     public boolean setTable(SQLTable table)
     {
-        System.out.println("setTable");
         return setTable(table.catalog, table.schema, table.name, table.alias);
     }
 
+    /**
+     * take note of table usage, validating it against the underlying schema.
+     * @param catalog catalog name (otional)
+     * @param schema schema name (optional)
+     * @param name table name (required)
+     * @param alias alias (unused)
+     * @return true if the table is valid
+     */
     public boolean setTable(String catalog, String schema, String name, String alias)
     {
-        return sqlSchema.setTable(catalog, schema, name, alias);
+        return sqlSchema.getTable(catalog, schema, name) != null;
     }
 
     public Table getTable(String catalog, String schema, String name)
