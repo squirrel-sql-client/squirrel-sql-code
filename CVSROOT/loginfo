@@ -27,10 +27,10 @@
 
 
 # Synmail setup for squirrel-project (setup 11/21/2001)
-CVSROOT $CVSROOT/CVSROOT/syncmail %{sVv} colbelloz@bigpond.com
-CVSROOT $CVSROOT/CVSROOT/syncmail %{sVv} patrick@lacson.org
+#CVSROOT $CVSROOT/CVSROOT/syncmail %{sVv} colbelloz@bigpond.com
+#CVSROOT $CVSROOT/CVSROOT/syncmail %{sVv} patrick@lacson.org
 
-DEFAULT $CVSROOT/CVSROOT/syncmail %{sVv} squirrel-sql-commits@lists.sourceforge.net 
+#DEFAULT $CVSROOT/CVSROOT/syncmail %{sVv} squirrel-sql-commits@lists.sourceforge.net 
 
-squirrel/ /syncmail %{sVv} squirrel-sql-commits@lists.sourceforge.net
+squirrel/ $CVSROOT/syncmail %{sVv} squirrel-sql-commits@lists.sourceforge.net
 squirrel-sql/ $CVSROOT/syncmail %{sVv} squirrel-sql-commits@lists.sourceforge.net
