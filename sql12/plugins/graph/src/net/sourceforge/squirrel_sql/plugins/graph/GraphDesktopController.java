@@ -2,6 +2,9 @@ package net.sourceforge.squirrel_sql.plugins.graph;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ZoomerXmlBean;
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.FormatXmlBean;
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.GraphControllerXmlBean;
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.PrintXmlBean;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,14 +27,16 @@ public class GraphDesktopController
    private JCheckBoxMenuItem _mnuZoomPrint;
    private GraphDesktopListener _listener;
    private ISession _session;
+   private GraphPlugin _plugin;
    private ZoomPrintController _zoomPrintController;
    private JPanel _graphPanel;
 
 
-   public GraphDesktopController(GraphDesktopListener listener, ISession session)
+   public GraphDesktopController(GraphDesktopListener listener, ISession session, GraphPlugin plugin)
    {
       _listener = listener;
       _session = session;
+      _plugin = plugin;
       _desktopPane = new GraphDesktopPane();
       _desktopPane.setBackground(Color.white);
 
@@ -71,12 +76,51 @@ public class GraphDesktopController
 
    }
 
-   void initZoomer(ZoomerXmlBean zoomerXmlBean)
+   void initZoomer(ZoomerXmlBean zoomerXmlBean, PrintXmlBean printXmlBean)
    {
-      _zoomPrintController = new ZoomPrintController(zoomerXmlBean);
+      EdgesListener edgesListener = new EdgesListener()
+      {
+         public void edgesGraphComponentChanged(EdgesGraphComponent edgesGraphComponent, boolean put)
+         {
+            onEdgesGraphComponentChanged(edgesGraphComponent, put);
+         }
+      };
+
+      PageCountCallBack pccb = new PageCountCallBack()
+      {
+         public int getPageCountHorizontal(double pageWidthInPixel)
+         {
+            return roundPageCount(_desktopPane.getRequiredSize().width / pageWidthInPixel);
+         }
+
+         public int getPageCountVertical(double pageHeightInPixel)
+         {
+            return roundPageCount(_desktopPane.getRequiredSize().height / pageHeightInPixel);
+         }
+      };
+
+      _zoomPrintController = new ZoomPrintController(zoomerXmlBean, printXmlBean, edgesListener, _desktopPane, _session, _plugin, pccb);
       _graphPanel.add(_zoomPrintController.getPanel(), BorderLayout.SOUTH);
       _mnuZoomPrint.setSelected(_zoomPrintController.getZoomer().isEnabled());
       onZoomPrint();
+   }
+
+   private int roundPageCount(double d)
+   {
+      return 0 < d - (int)d ? (int)(d+1) : (int)d;
+   }
+
+   private void onEdgesGraphComponentChanged(EdgesGraphComponent edgesGraphComponent, boolean put)
+   {
+      if(put)
+      {
+         _desktopPane.putGraphComponents(new GraphComponent[]{edgesGraphComponent});
+      }
+      else
+      {
+         _desktopPane.removeGraphComponents(new GraphComponent[]{edgesGraphComponent});
+      }
+      _desktopPane.repaint();
    }
 
    private void createPopUp()
@@ -178,7 +222,6 @@ public class GraphDesktopController
     * It's called put because it adds unique, like a Hashtable.
     */
    public void putConstraintViews(ConstraintView[] constraintViews)
-
    {
       _desktopPane.putGraphComponents(constraintViews);
 
@@ -298,10 +341,15 @@ public class GraphDesktopController
 
       for (int i = 0; i < graphComponents.size(); i++)
       {
-         ConstraintView constraintView = (ConstraintView) graphComponents.elementAt(i);
-         if(constraintView.hitMe(e))
+         GraphComponent graphComponent = (GraphComponent) graphComponents.elementAt(i);
+
+         if(graphComponent instanceof ConstraintView)
          {
-            return constraintView;
+            ConstraintView constraintView = (ConstraintView) graphComponents.elementAt(i);
+            if(constraintView.hitMe(e))
+            {
+               return constraintView;
+            }
          }
       }
       return null;
@@ -341,5 +389,15 @@ public class GraphDesktopController
    public Zoomer getZoomer()
    {
       return _zoomPrintController.getZoomer();
+   }
+
+   public ZoomPrintController getZoomPrintController()
+   {
+      return _zoomPrintController;
+   }
+
+   public void sessionEnding()
+   {
+      _zoomPrintController.sessionEnding();
    }
 }

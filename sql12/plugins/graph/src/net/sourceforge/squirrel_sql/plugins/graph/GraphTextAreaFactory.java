@@ -9,13 +9,13 @@ public class GraphTextAreaFactory
    private ColumnTextArea _txtColumns;
    private ZoomableColumnTextArea _txtZoomColumns;
 
-   public GraphTextAreaFactory(TableToolTipProvider toolTipProvider, Zoomer zoomer)
+   public GraphTextAreaFactory(TableToolTipProvider toolTipProvider, Zoomer zoomer, Font zoomColumsFont)
    {
       _txtColumns = new ColumnTextArea(toolTipProvider);
       _txtColumns.setEditable(false);
       _txtColumns.setBackground(new Color(255,255,204));
 
-      _txtZoomColumns = new ZoomableColumnTextArea(toolTipProvider, zoomer);
+      _txtZoomColumns = new ZoomableColumnTextArea(toolTipProvider, zoomer, zoomColumsFont);
       _txtZoomColumns.setBackground(new Color(255,255,204));
    }
 

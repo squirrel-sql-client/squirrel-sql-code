@@ -1,6 +1,12 @@
 Graph plugin
 ===========================
 
+- Graph plugin prints
+
+
 0.01
 ====
 - Initial release
+
+
+
