@@ -25,13 +25,22 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
  */
 public interface IObjectTypes
 {
-	DatabaseObjectType PACKAGE_GRP = DatabaseObjectType.createNewDatabaseObjectType();
-	DatabaseObjectType CONSUMER_GROUP_GRP = DatabaseObjectType.createNewDatabaseObjectType();
-	DatabaseObjectType FUNCTION_GRP = DatabaseObjectType.createNewDatabaseObjectType();
-	DatabaseObjectType INDEX_GRP = DatabaseObjectType.createNewDatabaseObjectType();
-	DatabaseObjectType LOB_GRP = DatabaseObjectType.createNewDatabaseObjectType();
-	DatabaseObjectType SEQUENCE_GRP = DatabaseObjectType.createNewDatabaseObjectType();
-	DatabaseObjectType TYPE_GRP = DatabaseObjectType.createNewDatabaseObjectType();
+	DatabaseObjectType CONSUMER_GROUP_PARENT = DatabaseObjectType.createNewDatabaseObjectType();
+	DatabaseObjectType FUNCTION_PARENT = DatabaseObjectType.createNewDatabaseObjectType();
+	DatabaseObjectType INDEX_PARENT = DatabaseObjectType.createNewDatabaseObjectType();
+	DatabaseObjectType INSTANCE_PARENT = DatabaseObjectType.createNewDatabaseObjectType();
+	DatabaseObjectType LOB_PARENT = DatabaseObjectType.createNewDatabaseObjectType();
+	DatabaseObjectType PACKAGE_PARENT = DatabaseObjectType.createNewDatabaseObjectType();
+	DatabaseObjectType SEQUENCE_PARENT = DatabaseObjectType.createNewDatabaseObjectType();
+	DatabaseObjectType SESSION_PARENT = DatabaseObjectType.createNewDatabaseObjectType();
+	DatabaseObjectType TRIGGER_PARENT = DatabaseObjectType.createNewDatabaseObjectType();
+	DatabaseObjectType TYPE_PARENT = DatabaseObjectType.createNewDatabaseObjectType();
+	DatabaseObjectType USER_PARENT = DatabaseObjectType.createNewDatabaseObjectType();
 
+	DatabaseObjectType CONSUMER_GROUP = DatabaseObjectType.createNewDatabaseObjectType();
+	DatabaseObjectType INSTANCE = DatabaseObjectType.createNewDatabaseObjectType();
+	DatabaseObjectType LOB = DatabaseObjectType.createNewDatabaseObjectType();
 	DatabaseObjectType PACKAGE = DatabaseObjectType.createNewDatabaseObjectType();
+	DatabaseObjectType SESSION = DatabaseObjectType.createNewDatabaseObjectType();
+	DatabaseObjectType TYPE = DatabaseObjectType.createNewDatabaseObjectType();
 }

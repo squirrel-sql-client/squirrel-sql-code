@@ -27,12 +27,16 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import net.sourceforge.squirrel_sql.plugins.oracle.expander.*;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.*;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 /**
  * Oracle plugin class.
  *
@@ -51,12 +55,6 @@ public class OraclePlugin extends DefaultSessionPlugin
 
 	/** Package Group Database object type. */
 	private DatabaseObjectType _packageGroupType;
-
-	/**
-	 * Collection of <TT>SessionInfo</TT> objects keyed by
-	 * ISession.getIdentifier().
-	 */
-//	private Map _sessions = new HashMap();
 
 	/**
 	 * Return the internal name of this plugin.
@@ -96,6 +94,30 @@ public class OraclePlugin extends DefaultSessionPlugin
 	public String getAuthor()
 	{
 		return "Colin Bell";
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getChangeLogFileName()
+	 */
+	public String getChangeLogFileName()
+	{
+		return "changes.txt";
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getHelpFileName()
+	 */
+	public String getHelpFileName()
+	{
+		return "readme.html";
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getLicenceFileName()
+	 */
+	public String getLicenceFileName()
+	{
+		return "licence.txt";
 	}
 
 	/**
@@ -157,9 +179,39 @@ public class OraclePlugin extends DefaultSessionPlugin
 			if (isOracle)
 			{
 				_treeAPI = session.getObjectTreeAPI(this);
+
+				// Tabs to add to the database node.
+				_treeAPI.addDetailTab(DatabaseObjectType.DATABASE, new OptionsTab());
+
+				_treeAPI.addDetailTab(IObjectTypes.CONSUMER_GROUP, new DatabaseObjectInfoTab());
+				_treeAPI.addDetailTab(DatabaseObjectType.FUNCTION, new DatabaseObjectInfoTab());
+				_treeAPI.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
+				_treeAPI.addDetailTab(IObjectTypes.LOB, new DatabaseObjectInfoTab());
+				_treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
+				_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
+				_treeAPI.addDetailTab(IObjectTypes.TRIGGER_PARENT, new DatabaseObjectInfoTab());
+				_treeAPI.addDetailTab(IObjectTypes.TYPE, new DatabaseObjectInfoTab());
+
+				// Expanders.
+				_treeAPI.addExpander(DatabaseObjectType.DATABASE, new DatabaseExpander());
 				_treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander(this));
+				_treeAPI.addExpander(DatabaseObjectType.TABLE, new TableExpander(this));
 				_treeAPI.addExpander(IObjectTypes.PACKAGE, new PackageExpander());
-				_treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureSourceTab());
+				_treeAPI.addExpander(IObjectTypes.USER_PARENT, new UserParentExpander(this));
+				_treeAPI.addExpander(IObjectTypes.SESSION_PARENT, new SessionParentExpander(this));
+				_treeAPI.addExpander(IObjectTypes.INSTANCE_PARENT, new InstanceParentExpander(this));
+				_treeAPI.addExpander(IObjectTypes.TRIGGER_PARENT, new TriggerParentExpander(this));
+
+				_treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, new ObjectSourceTab("PROCEDURE", "Show stored procedure source"));
+				_treeAPI.addDetailTab(DatabaseObjectType.FUNCTION, new ObjectSourceTab("FUNCTION", "Show function source"));
+				_treeAPI.addDetailTab(IObjectTypes.INSTANCE, new InstanceDetailsTab());
+				_treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new SequenceDetailsTab());
+				_treeAPI.addDetailTab(IObjectTypes.SESSION, new SessionDetailsTab());
+				_treeAPI.addDetailTab(IObjectTypes.SESSION, new SessionStatisticsTab());
+				_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
+				_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab("Show trigger source"));
+				_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerColumnInfoTab());
+				_treeAPI.addDetailTab(DatabaseObjectType.USER, new UserDetailsTab());
 			}
 		}
 		return isOracle;
