@@ -12,13 +12,15 @@ Enhancements
 
 Bug Fixes
 ---------
+- Fix NullPointerException when starting an Oracle 8.1.7.4 session (Gerd
+  Wagner).
 - Fix bug under Linux where sometimes the SQL history combobox would fill the
   entire window (Gerd Wagner).
 - Fix for multiple result set handling under the Cache DBMS from Intersystems
   (Gerd Wagner).
 - Fixed incorrect handling of the "log-config-file" argument (Kevin Gilpin)
-- Tables with many columns should now allow editing by using the
-  "Limit cell edit WHERE clause size" session tool.
+- Tables with many columns should now allow editing by using the "Limit cell
+  edit WHERE clause size" session tool.
 
 
 1.2beta5
