@@ -1,5 +1,15 @@
 SQuirreL SQL Client Change Log
 ==============================
+  
+1.1final1
+========
+
+Bug Fixes
+---------
+- Fix for error when displaying catalogs/schemas when
+  using jTDS 4 and above.
+- Fix column privileges for MySQL.
+
 
 1.1final
 ========
