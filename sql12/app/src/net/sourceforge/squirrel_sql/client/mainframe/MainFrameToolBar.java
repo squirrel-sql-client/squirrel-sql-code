@@ -59,7 +59,7 @@ class MainFrameToolBar extends ToolBar
 
 	/**
 	 * ctor.
-	 * 
+	 *
 	 * @param	app		Application API
 	 *
 	 * @throws	IllegalArgumentException
@@ -114,13 +114,13 @@ class MainFrameToolBar extends ToolBar
 	private static class AliasesDropDown extends JComboBox
 											implements ActionListener
 	{
-		final private IApplication _app;
+		final private IApplication _myApp;
 
 		AliasesDropDown(IApplication app)
 		{
 			super();
-			_app = app;
-			final AliasesDropDownModel model = new AliasesDropDownModel(_app);
+			_myApp = app;
+			final AliasesDropDownModel model = new AliasesDropDownModel(app);
 			setModel(model);
 
 			// Under JDK1.4 the first item in a JComboBox
@@ -140,13 +140,13 @@ class MainFrameToolBar extends ToolBar
 			addActionListener(this);
 			setMaximumSize(getPreferredSize());
 
-			_app.getDataCache().addAliasesListener(new MyAliasesListener(model, this));
+			app.getDataCache().addAliasesListener(new MyAliasesListener(model, this));
 		}
 
 		/**
 		 * An alias has been selected in the list so attempt to connect to it.
 		 *
-		 * @param   evt	 Describes the event that has just occured.
+		 * @param	evt	 Describes the event that has just occured.
 		 */
 		public void actionPerformed(ActionEvent evt)
 		{
@@ -155,7 +155,7 @@ class MainFrameToolBar extends ToolBar
 				Object obj = getSelectedItem();
 				if (obj instanceof ISQLAlias)
 				{
-					new ConnectToAliasCommand(_app, (ISQLAlias)obj).execute();
+					new ConnectToAliasCommand(_myApp, (ISQLAlias)obj).execute();
 				}
 			}
 			finally
@@ -173,7 +173,7 @@ class MainFrameToolBar extends ToolBar
 	 */
 	private static class AliasesDropDownModel extends SortedComboBoxModel
 	{
-		private IApplication _app;
+		private IApplication _myApp;
 
 		/**
 		 * Default ctor. Listen to the <TT>DataCache</TT> object for additions
@@ -182,7 +182,7 @@ class MainFrameToolBar extends ToolBar
 		public AliasesDropDownModel(IApplication app)
 		{
 			super();
-			_app = app;
+			_myApp = app;
 			load();
 			//_app.getDataCache().addAliasesListener(new MyAliasesListener(this));
 		}
@@ -192,7 +192,7 @@ class MainFrameToolBar extends ToolBar
 		 */
 		private void load()
 		{
-			Iterator it = _app.getDataCache().aliases();
+			Iterator it = _myApp.getDataCache().aliases();
 			while (it.hasNext())
 			{
 				addAlias((ISQLAlias) it.next());
@@ -202,7 +202,7 @@ class MainFrameToolBar extends ToolBar
 		/**
 		 * Add an <TT>ISQLAlias</TT> to this model.
 		 *
-		 * @param   alias   <TT>ISQLAlias</TT> to be added.
+		 * @param	alias	<TT>ISQLAlias</TT> to be added.
 		 */
 		private void addAlias(ISQLAlias alias)
 		{
@@ -212,7 +212,7 @@ class MainFrameToolBar extends ToolBar
 		/**
 		 * Remove an <TT>ISQLAlias</TT> from this model.
 		 *
-		 * @param   alias   <TT>ISQLAlias</TT> to be removed.
+		 * @param	alias	<TT>ISQLAlias</TT> to be removed.
 		 */
 		private void removeAlias(ISQLAlias alias)
 		{
