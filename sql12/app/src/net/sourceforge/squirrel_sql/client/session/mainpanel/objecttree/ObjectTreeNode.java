@@ -22,9 +22,11 @@ import java.util.List;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
  * This is a node in the object tree.
@@ -34,7 +36,13 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 public class ObjectTreeNode extends DefaultMutableTreeNode
 {
 	/** Current session. */
-	private final ISession _session;
+//	private final ISession _session;
+
+	/** Application API. */
+	private final IApplication _app;
+
+	/** ID of the session for this window. */
+	private final IIdentifier _sessionId;
 
 	/** Describes the database object represented by this node. */
 	private final IDatabaseObjectInfo _dboInfo;
@@ -66,7 +74,9 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 		{
 			throw new IllegalArgumentException("IDatabaseObjectInfo == null");
 		}
-		_session = session;
+//		_session = session;
+		_app = session.getApplication();
+		_sessionId = session.getIdentifier();
 		_dboInfo = dboInfo;
 	}
 
@@ -77,7 +87,7 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 	 */
 	public ISession getSession()
 	{
-		return _session;
+		return _app.getSessionManager().getSession(_sessionId);
 	}
 
 	/**

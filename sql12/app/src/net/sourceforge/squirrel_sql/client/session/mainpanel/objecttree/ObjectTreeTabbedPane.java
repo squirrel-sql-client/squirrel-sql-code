@@ -23,10 +23,12 @@ import java.util.List;
 
 import javax.swing.JTabbedPane;
 
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
@@ -51,8 +53,14 @@ class ObjectTreeTabbedPane
 	/** The tabbed pane. */
 	private final JTabbedPane _tabPnl = UIFactory.getInstance().createTabbedPane();
 
+	/** Application API. */
+	private final IApplication _app;
+
+	/** ID of the session for this window. */
+	private final IIdentifier _sessionId;
+
 	/** Current session. */
-	private ISession _session;
+//	private ISession _session;
 
 	/**
 	 * Collection of <TT>IObjectTab</TT> objects displayed in
@@ -69,7 +77,9 @@ class ObjectTreeTabbedPane
 			throw new IllegalArgumentException("ISession == null");
 		}
 
-		_session = session;
+//		_session = session;
+		_sessionId = session.getIdentifier();
+		_app = session.getApplication();
 
 		_tabPnl.putClientProperty(IClientPropertiesKeys.TABBED_PANE_OBJ, this);
 	}
@@ -100,7 +110,7 @@ class ObjectTreeTabbedPane
 		{
 			throw new IllegalArgumentException("Null IObjectTab passed");
 		}
-		tab.setSession(_session);
+		tab.setSession(_app.getSessionManager().getSession(_sessionId));
 		final String title = tab.getTitle();
 		_tabs.add(tab);
 		_tabPnl.addTab(title, null, tab.getComponent(), tab.getHint());

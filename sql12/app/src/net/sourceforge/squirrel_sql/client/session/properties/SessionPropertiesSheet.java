@@ -63,7 +63,7 @@ public class SessionPropertiesSheet extends BaseSheet
 	/** Frame title. */
 	private JLabel _titleLbl = new JLabel();
 
-	SessionPropertiesSheet(ISession session)
+	public SessionPropertiesSheet(ISession session)
 	{
 		super(i18n.TITLE, true);
 		if (session == null)
@@ -116,14 +116,14 @@ public class SessionPropertiesSheet extends BaseSheet
 		_titleLbl.setText(title);
 	}
 
+	public ISession getSession()
+	{
+		return _session;
+	}
+
 	private void performClose()
 	{
 		dispose();
-	}
-
-	ISession getSession()
-	{
-		return _session;
 	}
 
 	/**
@@ -160,7 +160,8 @@ public class SessionPropertiesSheet extends BaseSheet
 	{
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-		setTitle(getTitle() + ": " + _session.getSessionSheet().getTitle());
+// TODO: Setup title correctly.
+//		setTitle(getTitle() + ": " + _session.getSessionSheet().getTitle());
 
 		// This is a tool window.
 		GUIUtils.makeToolWindow(this, true);

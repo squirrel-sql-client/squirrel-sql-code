@@ -23,7 +23,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
  * This class is an event fired for session events.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SessionEvent extends EventObject
 {
@@ -34,7 +34,7 @@ public class SessionEvent extends EventObject
 	 * Ctor.
 	 *
 	 * @param	source	The <CODE>ISession</CODE> that change has happened to.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT>ISession/TT> passed.
 	 */

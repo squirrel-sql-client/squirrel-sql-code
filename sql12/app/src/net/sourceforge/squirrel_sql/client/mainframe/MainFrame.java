@@ -53,7 +53,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.ViewAliasesAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewDriversAction;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.client.session.SessionSheet;
+import net.sourceforge.squirrel_sql.client.session.SessionInternalFrame;
 
 public class MainFrame extends BaseMDIParentFrame
 {
@@ -466,10 +466,10 @@ public class MainFrame extends BaseMDIParentFrame
 			super.activateFrame(f);
 			_activeInternalFrame = f;
 			_app.getActionCollection().internalFrameActivated(f);
-			if (f instanceof SessionSheet)
+			if (f instanceof SessionInternalFrame)
 			{
 				getSessionMenu().setEnabled(true);
-				((SessionSheet) f).updateState();
+				((SessionInternalFrame)f).getSessionPanel().updateState();
 			}
 		}
 		public void deactivateFrame(JInternalFrame f)
@@ -477,9 +477,9 @@ public class MainFrame extends BaseMDIParentFrame
 			super.deactivateFrame(f);
 			_activeInternalFrame = null;
 			_app.getActionCollection().internalFrameDeactivated(f);
-			if (f instanceof SessionSheet)
+			if (f instanceof SessionInternalFrame)
 			{
-				((SessionSheet)f).updateState();
+				((SessionInternalFrame)f).getSessionPanel().updateState();
 				getSessionMenu().setEnabled(false);
 			}
 		}

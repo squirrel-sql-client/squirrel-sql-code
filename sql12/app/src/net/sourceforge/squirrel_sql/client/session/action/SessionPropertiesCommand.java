@@ -20,13 +20,13 @@ package net.sourceforge.squirrel_sql.client.session.action;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionPropertiesSheetFactory;
-
+import net.sourceforge.squirrel_sql.client.session.SessionWindowManager;
+//import net.sourceforge.squirrel_sql.client.session.properties.SessionPropertiesSheetFactory;
 /**
  * This <CODE>ICommand</CODE> displays a session properties dialog box
  * and allows the user to modify the properties.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SessionPropertiesCommand implements ICommand
 {
@@ -56,6 +56,10 @@ public class SessionPropertiesCommand implements ICommand
 	 */
 	public void execute()
 	{
-		SessionPropertiesSheetFactory.getInstance().showSheet(_session);
+		if (_session != null)
+		{
+			SessionWindowManager winMgr = _session.getApplication().getSessionWindowManager();
+			winMgr.showSessionPropertiesDialog(_session);
+		}
 	}
 }

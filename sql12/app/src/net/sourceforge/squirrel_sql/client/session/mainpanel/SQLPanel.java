@@ -74,7 +74,7 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SessionSheet;
+import net.sourceforge.squirrel_sql.client.session.SessionWindowManager;
 import net.sourceforge.squirrel_sql.client.session.action.RedoAction;
 import net.sourceforge.squirrel_sql.client.session.action.UndoAction;
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
@@ -1062,8 +1062,8 @@ public class SQLPanel extends JPanel
 				// between sessions we only want to update the sql entry area
 				// if this is actually the combox box that a new item has been
 				// selected in.
-				SessionSheet ss = _session.getSessionSheet();
-				if (ss.isSelected())
+				SessionWindowManager winMgr = _session.getApplication().getSessionWindowManager();
+				if (winMgr.getInternalFrame(_session).isSelected())
 				{
 					copySelectedItemToEntryArea();
 				}

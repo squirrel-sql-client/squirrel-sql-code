@@ -21,19 +21,20 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 
 import javax.swing.JButton;
+import javax.swing.JInternalFrame;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SessionSheet;
+import net.sourceforge.squirrel_sql.client.session.SessionWindowManager;
 import net.sourceforge.squirrel_sql.client.session.action.ReturnResultTabAction;
 
 /**
  * Torn off frame that contains SQL results.
  *
- * @author  <A HREF="mailto:jcompagner@j-com.nl">Johan Compagner</A>
+ * @author <A HREF="mailto:jcompagner@j-com.nl">Johan Compagner</A>
  * Copyright (C) 2001-2002
  *
  */
@@ -43,7 +44,7 @@ public class ResultFrame extends BaseSheet
 	private static ILogger s_log = LoggerController.createLogger(ResultFrame.class);
 
 	/** Current session. */
-	private ISession _session;
+//	private ISession _session;
 
 	/** SQL Results. */
 	private ResultTab _tab;
@@ -61,7 +62,7 @@ public class ResultFrame extends BaseSheet
 	public ResultFrame(ISession session, ResultTab tab)
 	{
 		super(getFrameTitle(session, tab), true, true, true, true);
-		_session = session;
+//		_session = session;
 		_tab = tab;
 
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -108,7 +109,8 @@ public class ResultFrame extends BaseSheet
 			throw new IllegalArgumentException("Null ISession passed");
 		}
 
-		SessionSheet sheet = session.getSessionSheet();
-		return sheet.getTitle() + " - " + tab.getViewableSqlString();
+		SessionWindowManager wmgr = session.getApplication().getSessionWindowManager();
+		JInternalFrame sif = wmgr.getInternalFrame(session);
+		return sif.getTitle() + " - " + tab.getViewableSqlString();
 	}
 }

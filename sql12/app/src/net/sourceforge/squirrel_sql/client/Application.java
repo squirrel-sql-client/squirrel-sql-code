@@ -63,9 +63,8 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
+import net.sourceforge.squirrel_sql.client.session.SessionWindowManager;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionPropertiesSheetFactory;
-import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterSheetFactory;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 /**
  * Defines the API to do callbacks on the application.
@@ -98,6 +97,9 @@ class Application implements IApplication
 
 	/** This object manages the open sessions.*/
 	private final SessionManager _sessionManager = new SessionManager();
+
+	/** This object manages the windows for sessions.*/
+	private SessionWindowManager _sessionWindowManager;
 
 	private LoggerController _loggerFactory;
 
@@ -237,6 +239,16 @@ class Application implements IApplication
 	public PluginManager getPluginManager()
 	{
 		return _pluginManager;
+	}
+
+	/**
+	 * Return the manager responsible for session windows.
+	 *
+	 * @return	the manager responsible for session windows.
+	 */
+	public SessionWindowManager getSessionWindowManager()
+	{
+		return _sessionWindowManager;
 	}
 
 	public ActionCollection getActionCollection()
@@ -450,8 +462,9 @@ class Application implements IApplication
 		indicateNewStartupTask(splash, "Initializing UI factories...");
 		AliasMaintSheetFactory.initialize(this);
 		DriverMaintSheetFactory.initialize(this);
-		SessionPropertiesSheetFactory.initialize(this);
-		SQLFilterSheetFactory.initialize(this);
+//		SessionPropertiesSheetFactory.initialize(this);
+//		SQLFilterSheetFactory.initialize(this);
+		_sessionWindowManager = new SessionWindowManager(this);
 
 		indicateNewStartupTask(splash, "Loading preferences...");
 		_prefs = SquirrelPreferences.load();

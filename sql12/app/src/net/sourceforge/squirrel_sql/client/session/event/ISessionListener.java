@@ -21,8 +21,14 @@ import java.util.EventListener;
 /**
  * This interface defines a listener to the session.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public interface ISessionListener extends EventListener
 {
+	/**
+	 * The session has been closed.
+	 *
+	 * @param	evt		The event that has just occured.
+	 */
+	void sessionClosed(SessionEvent evt);
 }

@@ -18,27 +18,19 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Container;
 import java.awt.Font;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyVetoException;
 import java.sql.SQLException;
 
-import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
@@ -46,6 +38,7 @@ import javax.swing.tree.TreePath;
 import net.sourceforge.squirrel_sql.fw.gui.SQLCatalogsComboBox;
 import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -53,7 +46,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
 import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeAction;
@@ -69,14 +61,20 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTr
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
-public class SessionSheet extends BaseSheet
+public class SessionSheet extends JPanel
 {
 	/** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(SessionSheet.class);
 
+	/** Application API. */
+	private final IApplication _app;
+
 	/** Session for this window. */
-	private IClientSession _session;
+//	private IClientSession _session;
+
+	/** ID of the session for this window. */
+	private IIdentifier _sessionId;
 
 	/** Listener to the sessions properties. */
 	private PropertyChangeListener _propsListener;
@@ -94,11 +92,16 @@ public class SessionSheet extends BaseSheet
 
 	public SessionSheet(IClientSession session)
 	{
-		super(createTitle(session), true, true, true, true);
-		_session = session;
-		setVisible(false);
-		createUserInterface();
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		super(new BorderLayout());
+
+		if (session == null)
+		{
+			throw new IllegalArgumentException("IClientSession == null");
+		}
+
+		_app = session.getApplication();
+		_sessionId = session.getIdentifier();
+		createGUI(session);
 		propertiesHaveChanged(null);
 
 		_propsListener = new PropertyChangeListener()
@@ -109,32 +112,6 @@ public class SessionSheet extends BaseSheet
 			}
 		};
 		session.getProperties().addPropertyChangeListener(_propsListener);
-	}
-
-	/**
-	 * Dispose of this window.
-	 */
-	public void dispose()
-	{
-		final IApplication app = _session.getApplication();
-		if (_propsListener != null)
-		{
-			_session.getProperties().removePropertyChangeListener(_propsListener);
-			_propsListener = null;
-		}
-		_mainTabPane.sessionClosing(_session);
-		try
-		{
-			app.getSessionManager().closeSession(_session);
-		}
-		catch (SQLException ex)
-		{
-			final String msg = "Error closing session";
-			app.showErrorDialog(msg, ex);
-			s_log.error(msg, ex);
-		}
-		_session.setSessionSheet(null);
-		super.dispose();
 	}
 
 	public void setVisible(boolean value)
@@ -148,43 +125,56 @@ public class SessionSheet extends BaseSheet
 
 			// Done this late so that plugins have time to register expanders
 			// with the object tree prior to it being built.
-			_session.getObjectTreeAPI(_session.getApplication().getDummyAppPlugin()).refreshTree();
-		}
-	}
-
-	public void setSelected(boolean selected)
-			throws PropertyVetoException
-	{
-		super.setSelected(selected);
-
-		// Without this when using alt left/right to move
-		// between sessions the focus is left in the SQL
-		// entry area of the previous session.
-		if (selected)
-		{
-			SwingUtilities.invokeLater(new Runnable()
-			{
-				public void run()
-				{
-					getSQLEntryPanel().requestFocus();
-				}
-			});
+			getSession().getObjectTreeAPI(_app.getDummyAppPlugin()).refreshTree();
 		}
 	}
 
 	public boolean hasConnection()
 	{
-		return _session.getSQLConnection() != null;
+		return getSession().getSQLConnection() != null;
 	}
 
+	/**
+	 * Retrieve the session attached to this window.
+	 *
+	 * @return	the session attached to this window.
+	 */
 	public IClientSession getSession()
 	{
-		return _session;
+		return (IClientSession)_app.getSessionManager().getSession(_sessionId);
 	}
 
 	public void updateState()
 	{
 		_mainTabPane.updateState();
+	}
+
+	void sessionHasClosed()
+	{
+		final IClientSession session = getSession();
+		if (session != null)
+		{
+			if (_propsListener != null)
+			{
+				session.getProperties().removePropertyChangeListener(_propsListener);
+				_propsListener = null;
+			}
+			_mainTabPane.sessionClosing(session);
+//			try
+//			{
+//				_app.getSessionManager().closeSession(session);
+//			}
+//			catch (SQLException ex)
+//			{
+//				final String msg = "Error closing session";
+//				_app.showErrorDialog(msg, ex);
+//				s_log.error(msg, ex);
+//			}
+
+//			session.setSessionSheet(null);
+
+			_sessionId = null;
+		}
 	}
 
 	void installSQLEntryPanel(ISQLEntryPanel pnl)
@@ -205,7 +195,7 @@ public class SessionSheet extends BaseSheet
 	{
 		try
 		{
-			_session.closeSQLConnection();
+			getSession().closeSQLConnection();
 		}
 		catch (SQLException ex)
 		{
@@ -291,39 +281,20 @@ public class SessionSheet extends BaseSheet
 		_statusBar.remove(comp);
 	}
 
-	private static String createTitle(IClientSession session)
-	{
-		StringBuffer title = new StringBuffer();
-		title.append(session.getAlias().getName());
-		String user = null;
-		try
-		{
-			user = session.getSQLConnection().getSQLMetaData().getUserName();
-		}
-		catch (SQLException ex)
-		{
-			s_log.error("Error occured retrieving user name from Connection", ex);
-		}
-		if (user != null && user.length() > 0)
-		{
-			title.append(" as ").append(user); // i18n
-		}
-		return title.toString();
-	}
-
 	private void showError(Exception ex)
 	{
-		_session.getApplication().showErrorDialog(ex);
+		_app.showErrorDialog(ex);
 	}
 
 	private void propertiesHaveChanged(String propertyName)
 	{
-		SessionProperties props = _session.getProperties();
+		final IClientSession session = getSession();
+		final SessionProperties props = session.getProperties();
 		if (propertyName == null
 			|| propertyName.equals(
 				SessionProperties.IPropertyNames.COMMIT_ON_CLOSING_CONNECTION))
 		{
-			_session.getSQLConnection().setCommitOnClose(
+			session.getSQLConnection().setCommitOnClose(
 				props.getCommitOnClosingConnection());
 		}
 		if (propertyName == null
@@ -337,15 +308,15 @@ public class SessionSheet extends BaseSheet
 				{
 					if (_toolBar == null)
 					{
-						_toolBar = new MyToolBar(_session);
-						getContentPane().add(_toolBar, BorderLayout.NORTH);
+						_toolBar = new MyToolBar(session);
+						add(_toolBar, BorderLayout.NORTH);
 					}
 				}
 				else
 				{
 					if (_toolBar != null)
 					{
-						getContentPane().remove(_toolBar);
+						remove(_toolBar);
 						_toolBar = null;
 					}
 				}
@@ -362,57 +333,26 @@ public class SessionSheet extends BaseSheet
 		}
 	}
 
-	private void createUserInterface()
+	private void createGUI(ISession session)
 	{
-		setVisible(false);
+//		setVisible(false);
 //		SessionProperties props = _session.getProperties();
-		final IApplication app = _session.getApplication();
-		Icon icon = app.getResources().getIcon(getClass(), "frameIcon"); //i18n
-		if (icon != null)
-		{
-			setFrameIcon(icon);
-		}
+		final IApplication app = session.getApplication();
 
-		_mainTabPane = new MainPanel(_session);
-		Container content = getContentPane();
-		content.setLayout(new BorderLayout());
+		_mainTabPane = new MainPanel(session);
 
 		MessagePanel msgPnl = new MessagePanel(app);
-		_session.setMessageHandler(msgPnl);
+		session.setMessageHandler(msgPnl);
 		msgPnl.setEditable(false);
 		_msgSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		_msgSplit.setOneTouchExpandable(true);
 		_msgSplit.add(_mainTabPane, JSplitPane.LEFT);
 		_msgSplit.add(new JScrollPane(msgPnl), JSplitPane.RIGHT);
-		content.add(_msgSplit, BorderLayout.CENTER);
+		add(_msgSplit, BorderLayout.CENTER);
 
-		// This is to fix a problem with the JDK (up to version 1.3)
-		// where focus events were not generated correctly. The sympton
-		// is being unable to key into the text entry field unless you click
-		// elsewhere after focus is gained by the internal frame.
-		// See bug ID 4309079 on the JavaSoft bug parade (plus others).
-		addInternalFrameListener(new InternalFrameAdapter()
-		{
-			public void internalFrameActivated(InternalFrameEvent evt)
-			{
-				Window window = SwingUtilities.windowForComponent(
-										SessionSheet.this.getSQLPanel());
-				Component focusOwner = (window != null)
-											? window.getFocusOwner() : null;
-				if (focusOwner != null)
-				{
-					FocusEvent lost = new FocusEvent(focusOwner, FocusEvent.FOCUS_LOST);
-					FocusEvent gained = new FocusEvent(focusOwner, FocusEvent.FOCUS_GAINED);
-					window.dispatchEvent(lost);
-					window.dispatchEvent(gained);
-					window.dispatchEvent(lost);
-					focusOwner.requestFocus();
-				}
-			}
-		});
 		Font fn = app.getFontInfoStore().getStatusBarFontInfo().createFont();
 		_statusBar.setFont(fn);
-		content.add(_statusBar, BorderLayout.SOUTH);
+		add(_statusBar, BorderLayout.SOUTH);
 
 		getObjectTreePanel().addTreeSelectionListener(new ObjectTreeSelectionListener());
 
@@ -464,7 +404,7 @@ public class SessionSheet extends BaseSheet
 			// in toolbar.
 			try
 			{
-				SQLConnection conn = _session.getSQLConnection();
+				SQLConnection conn = getSession().getSQLConnection();
 				if (conn.getSQLMetaData().supportsCatalogs())
 				{
 					_catalogsCmb = new SQLCatalogsComboBox();
@@ -505,7 +445,7 @@ public class SessionSheet extends BaseSheet
 		{
 			try
 			{
-				SQLConnection conn = _session.getSQLConnection();
+				SQLConnection conn = getSession().getSQLConnection();
 				try
 				{
 					_buildingListOfCatalogs = true;
@@ -538,11 +478,11 @@ public class SessionSheet extends BaseSheet
 					{
 						try
 						{
-							_session.getSQLConnection().setCatalog(catalog);
+							getSession().getSQLConnection().setCatalog(catalog);
 						}
 						catch (SQLException ex)
 						{
-							_session.getMessageHandler().showErrorMessage(ex);
+							getSession().getMessageHandler().showErrorMessage(ex);
 							SessionSheet.this.setupCatalogsCombo();
 						}
 					}
@@ -571,7 +511,7 @@ public class SessionSheet extends BaseSheet
 				{
 					if (_cmb != null)
 					{
-						final SQLConnection conn = _session.getSQLConnection();
+						final SQLConnection conn = getSession().getSQLConnection();
 						try
 						{
 							if (!Utilities.areStringsEqual(conn.getCatalog(),
@@ -582,7 +522,7 @@ public class SessionSheet extends BaseSheet
 						}
 						catch (SQLException ex)
 						{
-							_session.getMessageHandler().showErrorMessage(ex);
+							getSession().getMessageHandler().showErrorMessage(ex);
 						}
 					}
 				}
