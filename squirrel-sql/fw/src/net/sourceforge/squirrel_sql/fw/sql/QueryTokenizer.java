@@ -17,6 +17,8 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.util.StringTokenizer;
+
 public class QueryTokenizer
 {
 	private final char _querySepChar;
@@ -50,7 +52,7 @@ public class QueryTokenizer
 
 		if(sql != null)
 		{
-			_sQuerys = sql.trim();
+			_sQuerys = prepareSQL(sql);
 			_sNextQuery = parse();
 		}
 		else
@@ -116,7 +118,24 @@ public class QueryTokenizer
 		return replaceLineFeeds(sNextQuery);
 	}
 
-	public String replaceLineFeeds(String sql)
+	private String prepareSQL(String sql)
+	{
+		StringBuffer results = new StringBuffer(1024);
+
+		for (StringTokenizer tok = new StringTokenizer(sql.trim(), "\n", false);
+				tok.hasMoreTokens();)
+		{
+			String line = tok.nextToken();
+			if (!line.startsWith(_solComment))
+			{
+				results.append(line).append('\n');
+			}
+		}
+
+		return results.toString();
+	}
+
+	private String replaceLineFeeds(String sql)
 	{
 		StringBuffer sbReturn = new StringBuffer();
 		int iPrev = 0;
