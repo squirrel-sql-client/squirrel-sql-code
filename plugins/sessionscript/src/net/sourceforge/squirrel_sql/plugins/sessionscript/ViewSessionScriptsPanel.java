@@ -3,19 +3,19 @@ package net.sourceforge.squirrel_sql.plugins.sessionscript;
  * Copyright (C) 2002 Colin Bell
  * colbell@users.sourceforge.net
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -127,21 +127,21 @@ public class ViewSessionScriptsPanel extends JPanel
 
 		setLayout(new GridBagLayout());
 		final GridBagConstraints gbc = new GridBagConstraints();
-		gbc.anchor = gbc.NORTHWEST;
+		gbc.anchor = GridBagConstraints.NORTHWEST;
 		gbc.weightx = 1.0;
 		gbc.insets = new Insets(4, 4, 4, 4);
 
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		gbc.fill = gbc.HORIZONTAL;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
 		add(_aliasesCmb, gbc);
 
-		gbc.fill = gbc.BOTH;
+		gbc.fill = GridBagConstraints.BOTH;
 		gbc.weighty = 1.0;
 		++gbc.gridy;
 		add(new JScrollPane(_sqlEntry), gbc);
 
-		gbc.fill = gbc.HORIZONTAL;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.weightx = 0;
 		gbc.weighty = 0;
 		++gbc.gridx;
