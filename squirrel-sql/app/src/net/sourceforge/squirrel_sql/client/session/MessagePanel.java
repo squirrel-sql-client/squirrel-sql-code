@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.DataTruncation;
@@ -51,6 +52,11 @@ class MessagePanel extends JTextArea implements IMessageHandler
 
 	/** Popup menu for this component. */
 	private TextPopupMenu _popupMenu = new TextPopupMenu();
+
+    /**
+     * Memorize if a error occured and foreground color was changed.
+	 */
+    private boolean _errOccured = false;
 
 	MessagePanel(IApplication app)
 	{
@@ -92,9 +98,27 @@ class MessagePanel extends JTextArea implements IMessageHandler
 	 */
 	public void addLine(String line)
 	{
-		append("\n");
+		//  If line starts with one of the keywords, change back or foreground color,
+		if (line.startsWith("Data Tr")
+			|| line.startsWith("Error: ")
+			|| line.startsWith("Warning"))
+		{
+			setBackground(Color.RED);
+			_errOccured = true;
+		}
+		//  else reset the back or foreground color.
+		else if (_errOccured)
+		{
+			setBackground(Color.WHITE);
+			_errOccured = false;
+		}
+
+		final int len = getDocument().getLength();
+		if (len > 0)
+		{
+			append("\n");
+		}
 		append(line);
-		int len = getDocument().getLength();
 		select(len, len);
 	}
 
@@ -102,11 +126,11 @@ class MessagePanel extends JTextArea implements IMessageHandler
 	{
 		if (th != null)
 		{
-			// Thread safe support for every call to this method:
-			SwingUtilities.invokeLater(new Runnable()
-			{
-				public void run()
-				{
+			// Thread safe support for every call to this method.
+//			SwingUtilities.invokeLater(new Runnable()
+//			{
+//				public void run()
+//				{
 					if (th instanceof DataTruncation)
 					{
 						DataTruncation ex = (DataTruncation) th;
@@ -120,18 +144,23 @@ class MessagePanel extends JTextArea implements IMessageHandler
 							.append(" bytes long and ")
 							.append(ex.getTransferSize())
 							.append(" bytes were transferred.");
-						showMessage(buf.toString());
+						privateShowMessage(buf.toString());
 					}
 					else if (th instanceof SQLWarning)
 					{
 						SQLWarning ex = (SQLWarning) th;
 						while (ex != null)
 						{
-							showMessage("Warning:   " + ex.getMessage());
-							showMessage("SQLState:  " + ex.getSQLState());
-							showMessage("ErrorCode: " + ex.getErrorCode());
-							s_log.debug("Error", th);
+                            StringBuffer buf = new StringBuffer();
+                            buf.append("Warning:   ")
+                                .append(ex.getMessage())
+                                .append("\nSQLState:  ")
+                                .append(ex.getSQLState())
+                                .append("\nErrorCode: ")
+                                .append(ex.getErrorCode());
+							s_log.debug("Warning shown in MessagePanel", th);
 							ex = ex.getNextWarning();
+                            privateShowMessage(buf.toString());
 						}
 					}
 					else if (th instanceof SQLException)
@@ -139,24 +168,46 @@ class MessagePanel extends JTextArea implements IMessageHandler
 						SQLException ex = (SQLException) th;
 						while (ex != null)
 						{
-							showMessage("Error:     " + ex.getMessage());
-							showMessage("SQLState:  " + ex.getSQLState());
-							showMessage("ErrorCode: " + ex.getErrorCode());
+                            StringBuffer buf = new StringBuffer();
+                            buf.append("Error:     ")
+                                .append(ex.getMessage())
+                                .append("\nSQLState:  ")
+                                .append(ex.getSQLState())
+                                .append("\nErrorCode: ")
+                                .append(ex.getErrorCode());
 							s_log.debug("Error", th);
 							ex = ex.getNextException();
+                            privateShowMessage(buf.toString());
 						}
 					}
 					else
 					{
-						showMessage(th.toString());
+						privateShowMessage("Error: " + th.toString());
 						s_log.debug("Error shown in MessagePanel", th);
 					}
-				}
-			});
+//				}
+//			});
 		}
 	}
 
 	public void showMessage(final String msg)
+	{
+		privateShowMessage(msg);
+//		if (msg == null)
+//		{
+//			throw new IllegalArgumentException("null Message");
+//		}
+//		// Thread safe support for every call to this method:
+//		SwingUtilities.invokeLater(new Runnable()
+//		{
+//			public void run()
+//			{
+//				addLine(msg);
+//			}
+//		});
+	}
+
+	private void privateShowMessage(final String msg)
 	{
 		if (msg == null)
 		{
