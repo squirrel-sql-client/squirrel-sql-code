@@ -26,17 +26,23 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import javax.swing.Action;
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
+
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.action.SelectInternalFrameAction;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.session.BaseSessionSheet;
@@ -80,6 +86,12 @@ public class WindowManager
 //	private static final StringManager s_stringMgr =
 //		StringManagerFactory.getStringManager(WindowManager.class);
 
+	/**
+	 * Key to client property stored in internal frame that udentifies the
+	 * internal frame.
+	 */
+	private static final String MENU = WindowManager.class.getName() + ".menu";
+
 	/** Application API. */
 	private final IApplication _app;
 
@@ -94,7 +106,7 @@ public class WindowManager
 
 	private final SessionWindowListener _windowListener = new SessionWindowListener();
 
-	private int _lastSessionIdx = 1;
+//	private int _lastSessionIdx = 1;
 
 	// JASON: Mow that multiple object trees exist storing the edit
 	// where by objectInfo within session won't work. It needs to be objectinfo
@@ -131,7 +143,7 @@ public class WindowManager
 	/**
 	 * Retrieve applications main frame.
 	 *
-	 * @return	Applciations main frame.
+	 * @return	Applications main frame.
 	 */
 	public MainFrame getMainFrame()
 	{
@@ -181,21 +193,26 @@ public class WindowManager
 	public synchronized void registerSessionSheet(BaseSessionSheet sheet)
 	{
 		s_log.debug("Registering " + sheet.getClass().getName() + " in WindowManager");
-//		sheet.setTitle(createTitleForChild(sheet));
 		final IIdentifier sessionIdentifier = sheet.getSession().getIdentifier();
+
+		// Store ptr to newly open window in list of windows per session.
 		List windowList = (List)_sessionWindows.get(sessionIdentifier);
 		if (windowList == null)
 		{
 			windowList = new ArrayList();
 			_sessionWindows.put(sessionIdentifier, windowList);
 		}
+		windowList.add(sheet);
 
+		// For all windows (other than the first one opened) for a session
+		// add a number on the end of the title to differentiate them in
+		// menus etc.
 		final int idx = windowList.size();
-		if ( idx > 0)
+		if ( idx > 1)
 		{
 			sheet.setTitle(sheet.getTitle() + " (" + idx + ")");
 		}
-		windowList.add(sheet);
+
 		sheet.addInternalFrameListener(_windowListener);
 	}
 
@@ -414,7 +431,6 @@ public class WindowManager
 			throw new IllegalArgumentException("IDatabaseObjectInfo == null");
 		}
 
-//		final ISession session = objectTree.getSession();
 		SQLFilterSheet sqlFilterSheet = getSQLFilterSheet(objectTree, objectInfo);
 		if (sqlFilterSheet == null)
 		{
@@ -472,54 +488,6 @@ public class WindowManager
 		return editWhereColsSheet;
 	}
 
-
-	/**
-	 * Close all sessions.
-	 */
-//	public synchronized boolean closeAllSessions()
-//	{
-//		SessionInternalFrame[] ar = new SessionInternalFrame[_internalFrames.size()];
-//		_internalFrames.values().toArray(ar);
-//		for (int i = 0; i < ar.length; ++i)
-//		{
-//			final ISession session = getSession(ar[i]);
-//			if (session != null)
-//			{
-//				if (!closeSession(session))
-//				{
-//					return false;
-//				}
-//			}
-//		}
-//		return true;
-//	}
-
-	/**
-	 * Close the passed session.
-	 *
-	 * @param	session		Session to be closed.
-	 *
-	 * @throws	IllegalArgumentException
-	 *			Thrown if ISession is passed as null.
-	 *
-	 * @returns <tt>true</tt> if the session was closed.
-	 */
-//	public synchronized boolean closeSession(ISession session)
-//	{
-//		if (session == null)
-//		{
-//			throw new IllegalArgumentException("ISession == null");
-//		}
-//
-//		if (confirmClose(session))
-//		{
-////			getInternalFrame(session).dispose();
-//			privateCloseSession(session);
-//			return true;
-//		}
-//		return false;
-//	}
-
 	public void moveToFront(Window win)
 	{
 		if (win != null)
@@ -545,18 +513,6 @@ public class WindowManager
 			}
 		}
 	}
-
-//	private boolean confirmClose(ISession session)
-//	{
-//		if (!_app.getSquirrelPreferences().getConfirmSessionClose())
-//		{
-//			return true;
-//		}
-//
-//		final String msg = s_stringMgr.getString("WindowManager.confirmClose",
-//							session.getTitle());
-//		return Dialogs.showYesNo(_app.getMainFrame(), msg);
-//	}
 
 	private SessionPropertiesSheet getSessionPropertiesDialog(ISession session)
 	{
@@ -635,27 +591,6 @@ public class WindowManager
 //		return map;
 //	}
 
-//	private String createTitleForChild(BaseSessionSheet child)
-//	{
-//		// TODO: Remove instanceof
-//		if (child instanceof SessionInternalFrame)
-//		{
-//			return child.getTitle();// + " (" + _lastSessionIdx++ + ")";
-//		}
-//
-//		if (child instanceof SQLInternalFrame)
-//		{
-//			return child.getTitle();// + " (" + _lastSessionIdx++ + ")";
-//		}
-//
-//		if (child instanceof ObjectTreeInternalFrame)
-//		{
-//			return child.getTitle();// + " (" + _lastSessionIdx++ + ")";
-//		}
-//
-//		return "???????????????";// TODO:
-//	}
-
 	private void positionSheet(JInternalFrame jif)
 	{
 		GUIUtils.centerWithinDesktop(jif);
@@ -702,41 +637,81 @@ public class WindowManager
 
 	private final class SessionWindowListener implements InternalFrameListener
 	{
-		public void internalFrameOpened(InternalFrameEvent e)
+		public void internalFrameOpened(InternalFrameEvent evt)
 		{
-			refireSessionSheetOpened(e);
+			final JInternalFrame jif = evt.getInternalFrame();
+
+			// JASON: Make menu smarter. When second window for the same
+			// session is added create a hierarchical menu for all windows
+			// for the session.
+
+			// Add an item to the Windows menu for this window and
+			// store the menu item back in the internal frame.
+			final JMenu menu = getMainFrame().getWindowsMenu();
+			final Action action = new SelectInternalFrameAction(jif);
+			final JMenuItem menuItem = menu.add(action);
+			jif.putClientProperty(MENU, menuItem);
+
+			// Enable/Disable actions that require open session frames.
+			JInternalFrame[] frames = GUIUtils.getOpenNonToolWindows(getMainFrame().getDesktopPane().getAllFrames());
+			_app.getActionCollection().internalFrameOpenedOrClosed(frames.length);
+
+			refireSessionSheetOpened(evt);
 		}
 
-		public void internalFrameClosing(InternalFrameEvent e)
+		public void internalFrameClosing(InternalFrameEvent evt)
 		{
-			refireSessionSheetClosing(e);
+			refireSessionSheetClosing(evt);
 		}
 
-		public void internalFrameClosed(InternalFrameEvent e)
+		public void internalFrameClosed(InternalFrameEvent evt)
 		{
-			//Only remove the frame if the entire session is not closing
+			final JInternalFrame jif = evt.getInternalFrame();
+
+			// Only remove the frame if the entire session is not closing
 			if (!_sessionClosing)
 			{
 				// Find the internal Frame in the list of internal frames
 				// and remove it.
-				BaseSessionSheet sessionSheet = (BaseSessionSheet)e.getInternalFrame();
-				List sessionSheets = (List)_sessionWindows.get(sessionSheet.getSession().getIdentifier());
-				if (sessionSheets != null)
+				if (jif instanceof BaseSessionSheet)
 				{
-					for (Iterator sheetItr = sessionSheets.iterator();
-							sheetItr.hasNext();)
+					final BaseSessionSheet sessionJIF = (BaseSessionSheet)jif;
+					final IIdentifier sessionID = sessionJIF.getSession().getIdentifier();
+					List sessionSheets = (List)_sessionWindows.get(sessionID);
+					if (sessionSheets != null)
 					{
-						Object sheet = sheetItr.next();
-						if (sheet == sessionSheet)
+						for (Iterator sheetItr = sessionSheets.iterator();
+								sheetItr.hasNext();)
 						{
-							sheetItr.remove();
-							WindowManager.this.selectFrontWindow();
-							break;
+							Object sheet = sheetItr.next();
+							if (sheet == sessionJIF)
+							{
+								sheetItr.remove();
+								WindowManager.this.selectFrontWindow();
+								break;
+							}
 						}
 					}
 				}
 			}
-			refireSessionSheetClosed(e);
+
+			// Remove menu item from Windows menu that relates to this
+			// internal frame.
+			final JMenuItem menuItem = (JMenuItem)jif.getClientProperty(MENU);
+			if (menuItem != null)
+			{
+				final JMenu menu = getMainFrame().getWindowsMenu();
+				if (menu != null)
+				{
+					menu.remove(menuItem);
+				}
+			}
+
+			// Enable/Disable actions that require open session frames.
+			JInternalFrame[] frames = GUIUtils.getOpenNonToolWindows(getMainFrame().getDesktopPane().getAllFrames());
+			_app.getActionCollection().internalFrameOpenedOrClosed(frames.length);
+
+			refireSessionSheetClosed(evt);
 		}
 
 		public void internalFrameIconified(InternalFrameEvent e)
@@ -808,6 +783,9 @@ public class WindowManager
 					moveToFront(sif);
 				}
 			}
+
+			// Make sure that the session menu is enabled.
+			getMainFrame().getSessionMenu().setEnabled(true);
 		}
 
 		/**
@@ -817,6 +795,8 @@ public class WindowManager
 		 */
 		public void sessionClosing(SessionEvent evt)
 		{
+			getMainFrame().getSessionMenu().setEnabled(false);
+
 			// Clear session info from all actions.
 			for (Iterator it = _app.getActionCollection().actions();
 					it.hasNext();)
