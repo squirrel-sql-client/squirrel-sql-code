@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -32,6 +32,16 @@ public class ToolBar extends JToolBar
 {
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(ToolBar.class);
+
+	public ToolBar()
+	{
+		super();
+	}
+
+	public ToolBar(int orientation)
+	{
+		super(orientation);
+	}
 
 	public JButton add(Action action)
 	{
@@ -83,10 +93,10 @@ public class ToolBar extends JToolBar
 
 	/**
 	 * Retrieve an icon from the passed action for the specified key.
-	 * 
+	 *
 	 * @param	action		Action to retrieve icon from.
 	 * @param	key			Key that specified the icon.
-	 * 
+	 *
 	 * @return	The requested Icon or null.
 	 */
 	protected Icon getIconFromAction(Action action, String key)
