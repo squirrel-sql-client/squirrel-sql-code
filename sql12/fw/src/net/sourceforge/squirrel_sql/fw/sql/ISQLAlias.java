@@ -36,10 +36,13 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable
 	 */
 	public interface IPropertyNames
 	{
+		String AUTO_LOGON = "autoLogon";
 		String DRIVER = "driverIdentifier";
 		String DRIVER_PROPERTIES = "driverProperties";
 		String ID = "identifier";
 		String NAME = "name";
+		String PASSWORD = "password";
+		String PASSWORD_SAVED = "passwordSaved";
 		String URL = "url";
 		String USE_DRIVER_PROPERTIES = "useDriverProperties";
 		String USER_NAME = "userName";
@@ -76,6 +79,57 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable
 
 	String getUserName();
 	void setUserName(String userName) throws ValidationException;
+
+	/**
+	 * Retrieve the saved password.
+	 * 
+	 * @return		The saved password.
+	 */
+	String getPassword();
+
+	/**
+	 * Has a password been saved in this alias?
+	 * 
+	 * @return	<TT>true</TT> if a password has been saved
+	 * 			else <TT>false</TT>.
+	 */
+	boolean isPasswordSaved();
+
+	/**
+	 * Set the password for this alias.
+	 * 
+	 * @param	password	The new password.
+	 * 
+	 * @throws	ValidationException
+	 * 			TODO: What conditions?
+	 */
+	void setPassword(String password) throws ValidationException;
+
+	/**
+	 * Set whether a password has been saved for his alias.
+	 * 
+	 * @param	passwordSaved	<TT>true</TT> if password saved else <TT>false</TT>.
+	 * 
+	 * @throws	ValidationException
+	 * 			TODO: What conditions?
+	 */
+	void setPasswordSaved(boolean passwordSaved) throws ValidationException;
+
+	/**
+	 * Should this alias be logged on automatically.
+	 * 
+	 * @return	<TT>true</TT> is this alias should be logged on automatically
+	 * 			else <TT>false</TT>.
+	 */
+	boolean isAutoLogon();
+
+	/**
+	 * Set whether this alias should be logged on automatically.
+	 * 
+	 * @param	value	<TT>true</TT> if alias should be autologged on
+	 * 					else <TT>false</TT..
+	 */
+	void setAutoLogon(boolean value);
 
 	boolean getUseDriverProperties();
 	void setUseDriverProperties(boolean value) throws ValidationException;

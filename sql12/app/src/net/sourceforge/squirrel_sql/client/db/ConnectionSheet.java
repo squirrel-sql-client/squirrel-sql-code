@@ -131,7 +131,6 @@ public class ConnectionSheet extends BaseSheet
 	 * Ctor.
 	 *
 	 * @param	app		Application API.
-	 * @param	owner	<TT>Frame</TT> that will own this internal frame.
 	 * @param	alias	<TT>SQLAlias</TT> that we are going to connect to.
 	 * @param	handler	Handler for internal frame actions.
 	 *
@@ -139,8 +138,8 @@ public class ConnectionSheet extends BaseSheet
 	 * 			If <TT>null</TT> <TT>IApplication</TT>, <TT>ISQLAlias</TT>,
 	 * 			or <TT>IConnectionSheetHandler</TT> passed.
 	 */
-	public ConnectionSheet(IApplication app, /*Frame owner,*/
-	ISQLAlias alias, IConnectionSheetHandler handler)
+	public ConnectionSheet(IApplication app, ISQLAlias alias,
+							IConnectionSheetHandler handler)
 	{
 		super("", true);
 		if (app == null)
@@ -202,6 +201,27 @@ public class ConnectionSheet extends BaseSheet
 	}
 
 	/**
+	 * If the alias specifies autologon then connect after the Dialog is visible.
+	 * 
+	 * @param	b	If <TT>true</TT> dialog is to be made visible.
+	 */
+	public void setVisible(boolean visible)
+	{
+		super.setVisible(visible);
+
+		if (visible && _alias.isAutoLogon())
+		{
+			SwingUtilities.invokeLater(new Runnable()
+			{
+				public void run()
+				{
+					connect(true);
+				}
+			});
+		}
+	}
+
+	/**
 	 * Set the text in the status bar.
 	 *
 	 * @param	text	The text to place in the status bar.
@@ -217,11 +237,15 @@ public class ConnectionSheet extends BaseSheet
 	private void loadData()
 	{
 		final String userName = _alias.getUserName();
+		final String password = _alias.getPassword();
 		_aliasName.setText(_alias.getName());
 		_driverName.setText(_sqlDriver.getName());
 		_url.setText(_alias.getUrl());
 		_user.setText(userName);
-		_password.setText("");
+		if (_alias.isPasswordSaved())
+		{
+			_password.setText(password);
+		}
 
 		// This is mainly for long URLs that cannot be fully
 		// displayed in the label.
@@ -362,7 +386,14 @@ public class ConnectionSheet extends BaseSheet
 					{
 						public void run()
 						{
-							_password.requestFocus();
+							if(_alias.isPasswordSaved())
+							{
+								_btnsPnl.getOKButton().requestFocus();
+							}
+							else
+							{
+	 							_password.requestFocus();
+							}
 							ConnectionSheet.this.removeInternalFrameListener(_this);
 						}
 					});
