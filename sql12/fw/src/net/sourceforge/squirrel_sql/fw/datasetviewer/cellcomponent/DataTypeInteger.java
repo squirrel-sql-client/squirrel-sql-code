@@ -105,6 +105,13 @@ public class DataTypeInteger
 	}
 	
 	/**
+	 * This Data Type can be edited in a table cell.
+	 */
+	public boolean isEditableInCell() {
+		return true;	
+	}
+	
+	/**
 	 * Return a JTextField usable in a CellEditor.
 	 */
 	public JTextField getJTextField() {
@@ -137,6 +144,13 @@ public class DataTypeInteger
 		return (JTextField)_textComponent;
 	}
 
+	/**
+	 * Returns true if data type may be edited in the popup,
+	 * false if not.
+	 */
+	public boolean isEditableInPopup() {
+		return true;
+	}
 
 	/*
 	 * Return a JTextArea usable in the CellPopupDialog.
