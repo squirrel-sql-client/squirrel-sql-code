@@ -760,7 +760,7 @@ public class CellComponentFactory {
 					break;
 
 				case Types.BLOB:
-					//??
+					dataTypeComponent = new DataTypeBlob(table, colDef);
 					break;
 
 				case Types.CLOB:
