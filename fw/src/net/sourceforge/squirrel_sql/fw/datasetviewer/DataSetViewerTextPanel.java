@@ -29,6 +29,7 @@ import javax.swing.JTextArea;
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.gui.action.MakeEditableCommand;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 //??RENAME to DataSetViewerTextDestination
 
 public class DataSetViewerTextPanel extends BaseDataSetViewerDestination
@@ -83,8 +84,8 @@ public class DataSetViewerTextPanel extends BaseDataSetViewerDestination
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < row.length; ++i)
 		{
-			Object obj = getColumnRenderer(i).renderObject(row[i], i);
-			buf.append(format(obj.toString(), colDefs[i].getDisplayWidth(), ' '));
+			String cellValue = CellComponentFactory.renderObject(row[i], colDefs[i]);
+			buf.append(format(cellValue, colDefs[i].getDisplayWidth(), ' '));
 		}
 		addLine(buf.toString());
 	}

@@ -49,23 +49,35 @@ import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+
 /**
  * Generate a popup window to display and manipulate the
  * complete contents of a cell.
  */
 public class CellDataPopup
 {
+	/* description of the column - needed to select appropriate component for editing.
+	 * This is a bit dicy in that the field is static only because it is needed in a
+	 * static function, not because it should be the same for all instances of the
+	 * dialog.  Fortunately, this does not seem to be a problem because it seems to be
+	 * first set and then used only during the initial creation of each dialog, so each
+	 * call to create a dialog gets the correct definition for that call.
+	 */
+	static ColumnDisplayDefinition _colDef;
+	
 	/**
 	 * function to create the popup display when called from JTable
 	 */
-	public static void showDialog(JTable table, MouseEvent evt)
+	public static void showDialog(JTable table, ColumnDisplayDefinition colDef, MouseEvent evt)
 	{
+		_colDef = colDef;
 		CellDataPopup popup = new CellDataPopup();
 		popup.createAndShowDialog(table, evt);
 	}
 
 	private void createAndShowDialog(JTable table, MouseEvent evt)
-		{
+		{		
 			ILogger s_log = LoggerController.createLogger(CellDataPopup.class);
 
 			Point pt = evt.getPoint();
@@ -195,8 +207,16 @@ public class CellDataPopup
 		ColumnDataPopupPanel(String cellContents)
 		{
 			super(new BorderLayout());
-			_ta = new JTextArea(cellContents);
+//			_ta = new JTextArea(cellContents);
+
+
+			_ta = CellComponentFactory.getJTextArea(_colDef);
+			_ta.setText(cellContents);
+
+//??_ta.setEditable(true);
+//??_ta.setBackground(Color.YELLOW);	// tell user it is editable
 			_ta.setEditable(false);
+
 			_ta.setLineWrap(true);
 			add(new JScrollPane(_ta), BorderLayout.CENTER);
 

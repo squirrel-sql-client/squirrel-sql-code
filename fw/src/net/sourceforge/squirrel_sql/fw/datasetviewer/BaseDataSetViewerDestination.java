@@ -17,9 +17,14 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+ 
+import javax.swing.DefaultCellEditor;	//???
+
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.*;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 /**
  * This provides base behaviour for implemtations of <TT>IDataSetViewerDestination</TT>.
  *
@@ -37,10 +42,12 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 	/** Column definitions. */
 	protected ColumnDisplayDefinition[] _colDefs = new ColumnDisplayDefinition[0];
 
-	/** Column renderers. */
-	private IColumnRenderer[] _columnRenderers = new IColumnRenderer[0];
-
-	private IDataSetUpdateableModel _updateableModelReference = null;	
+	/** reference to the object generating the data being displayed */
+	private IDataSetUpdateableModel _updateableModelReference = null;
+	
+	/** reference to DefaultCellEditor currently in operation, if any */
+	protected DefaultCellEditor currentCellEditor = null;
+	
 	
 	/**
 	 * Some types of DataSetViewers require extra initialization to set up
@@ -112,6 +119,15 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 	public synchronized void show(IDataSet ds, IMessageHandler msgHandler)
 		throws DataSetException
 	{
+
+		// We are displaying a new dataset, so if there was
+		// a cell editor in operation, tell it to cancel.
+		//???? How does this impact popup display?
+		if (currentCellEditor != null) {
+			currentCellEditor.cancelCellEditing();
+			currentCellEditor = null;
+		}
+
 		if (ds == null)
 		{
 			throw new IllegalArgumentException("IDataSet == null");
@@ -128,32 +144,6 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 		moveToTop();
 	}
 
-	/**
-	 * Get the column renderer for the specified column.
-	 * 
-	 * @param	columnIdx	Column we want a renderer for.
-	 * 
-	 * @return	the column renderer.
-	 */
-	public IColumnRenderer getColumnRenderer(int columnIdx)
-	{
-		if (columnIdx >= 0 && columnIdx < _columnRenderers.length)
-		{
-			return _columnRenderers[columnIdx];
-		}
-		return DefaultColumnRenderer.getInstance();
-	}
-
-	/**
-	 * Set the column renderers for this viewer.
-	 * 
-	 * @param	renderers	the new column renderer. If <TT>null</TT> then the
-	 *						default renderer should be used.
-	 */
-	public void setColumnRenderers(IColumnRenderer[] renderers)
-	{
-		_columnRenderers = renderers != null ? renderers : new IColumnRenderer[0];
-	}
 
 	protected void addRow(IDataSet ds, int columnCount) throws DataSetException
 	{

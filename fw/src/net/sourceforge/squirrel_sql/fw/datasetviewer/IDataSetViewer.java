@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  */
 import java.awt.Component;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.*;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 public interface IDataSetViewer
@@ -83,23 +84,6 @@ public interface IDataSetViewer
 	 * @return	The component for this viewer.
 	 */
 	Component getComponent();
-
-	/**
-	 * Get the column renderers for the specified column.
-	 * 
-	 * @param	columnIdx	Column we want a renderer for.
-	 *
-	 * @return	the column renderer.
-	 */
-	IColumnRenderer getColumnRenderer(int columnIdx);
-
-	/**
-	 * Set the column renderers for this viewer.
-	 * 
-	 * @param	renderer	the new column renderers. If <TT>null</TT> then the
-	 *						default renderer should be used.
-	 */
-	void setColumnRenderers(IColumnRenderer[] renderers);
 	
 	/**
 	 * Get the reference to the updateable model object that represents the
