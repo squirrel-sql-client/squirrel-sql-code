@@ -163,6 +163,12 @@ public class ConnectionSheet extends BaseSheet
 		// Driver associated with the passed alias.
 		_sqlDriver = _app.getDataCache().getDriver(_alias.getDriverIdentifier());
 
+		if (_sqlDriver == null)
+		{
+			throw new IllegalStateException("Unable to find SQLDriver for " +
+												_alias.getName());
+		}
+
 		createUserInterface();
 		loadData();
 	}

@@ -44,21 +44,20 @@ public class DriverListCellRenderer extends DefaultListCellRenderer
 		FAIL_ICON = fail;
 	}
 
-	public Component getListCellRendererComponent(
-		JList list,
-		Object value,
-		int index,
-		boolean isSelected,
-		boolean cellHasFocus)
+	public Component getListCellRendererComponent(JList list, Object value,
+													int index, boolean isSelected,
+													boolean cellHasFocus)
 	{
-		super.getListCellRendererComponent(
-			list,
-			value,
-			index,
-			isSelected,
-			cellHasFocus);
-		ISQLDriver drv = (ISQLDriver) value;
-		setIcon((drv.isJDBCDriverClassLoaded()) ? OK_ICON : FAIL_ICON);
+		super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+		final ISQLDriver drv = (ISQLDriver)value;
+		if (drv == null || !drv.isJDBCDriverClassLoaded())
+		{
+			setIcon(FAIL_ICON);
+		}
+		else
+		{
+			setIcon(OK_ICON);
+		}
 		return this;
 	}
 }

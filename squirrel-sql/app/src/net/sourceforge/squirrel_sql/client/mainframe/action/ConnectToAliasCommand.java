@@ -38,7 +38,6 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.db.ConnectionSheet;
 import net.sourceforge.squirrel_sql.client.db.ConnectionSheet.IConnectionSheetHandler;
 import net.sourceforge.squirrel_sql.client.session.IClientSession;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionFactory;
 import net.sourceforge.squirrel_sql.client.session.SessionSheet;
 
@@ -129,13 +128,20 @@ public class ConnectToAliasCommand implements ICommand
 	 */
 	public void execute()
 	{
-		SheetHandler hdl = new SheetHandler(_app, _sqlAlias, _createSession, _callback);
-		ConnectionSheet sheet = new ConnectionSheet(_app, /*_frame,*/
-		_sqlAlias, hdl);
-		_app.getMainFrame().addInternalFrame(sheet, true, null);
-		GUIUtils.centerWithinDesktop(sheet);
-		sheet.moveToFront();
-		sheet.setVisible(true);
+		try
+		{
+			SheetHandler hdl = new SheetHandler(_app, _sqlAlias, _createSession, _callback);
+			ConnectionSheet sheet = new ConnectionSheet(_app, /*_frame,*/
+			_sqlAlias, hdl);
+			_app.getMainFrame().addInternalFrame(sheet, true, null);
+			GUIUtils.centerWithinDesktop(sheet);
+			sheet.moveToFront();
+			sheet.setVisible(true);
+		}
+		catch (Exception ex)
+		{
+			_app.showErrorDialog(ex);
+		}
 	}
 
 	public static class ClientCallback implements ICompletionCallback
