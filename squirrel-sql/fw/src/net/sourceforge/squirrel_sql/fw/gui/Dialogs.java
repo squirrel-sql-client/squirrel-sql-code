@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -21,23 +21,35 @@ import java.awt.Component;
 
 import javax.swing.JOptionPane;
 
-public class Dialogs {
+/**
+ * This class provides some metods for using standard JDK dialogs.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
+public class Dialogs
+{
 
-	public static void showNotYetImplemented(Component owner) {
-		JOptionPane.showMessageDialog(
-						owner, "This function has not yet been implemented",
-						"", JOptionPane.INFORMATION_MESSAGE);
+	public static void showNotYetImplemented(Component owner)
+	{
+		JOptionPane.showMessageDialog(owner,
+			"This function has not yet been implemented", "",
+			JOptionPane.INFORMATION_MESSAGE);
 	}
 
-	public static boolean showYesNo(Component owner, String msg) {
-		int rc = JOptionPane.showConfirmDialog(owner, msg, "",
-													JOptionPane.YES_NO_OPTION);
+	public static boolean showYesNo(Component owner, String msg)
+	{
+		return showYesNo(owner, msg, "");
+	}
+
+	public static boolean showYesNo(Component owner, String msg, String title)
+	{
+		int rc = JOptionPane.showConfirmDialog(owner, msg, title,
+												JOptionPane.YES_NO_OPTION);
 		return rc == JOptionPane.YES_OPTION;
 	}
 
-	public static void showOk(Component owner, String msg) {
-		JOptionPane.showMessageDialog(
-						owner, msg,
-						"", JOptionPane.INFORMATION_MESSAGE );
+	public static void showOk(Component owner, String msg)
+	{
+		JOptionPane.showMessageDialog(owner, msg, "", JOptionPane.INFORMATION_MESSAGE);
 	}
 }
