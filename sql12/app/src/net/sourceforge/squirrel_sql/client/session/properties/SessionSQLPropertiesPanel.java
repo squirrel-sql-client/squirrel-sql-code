@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.properties;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -103,12 +103,12 @@ public class SessionSQLPropertiesPanel
 
 	public String getTitle()
 	{
-		return SQLPropertiesPanel.SQLPropertiesPanelI18n.SQL;
+		return SQLPropertiesPanel.i18n.SQL;
 	}
 
 	public String getHint()
 	{
-		return SQLPropertiesPanel.SQLPropertiesPanelI18n.SQL;
+		return SQLPropertiesPanel.i18n.SQL;
 	}
 
 	public void applyChanges()
@@ -122,7 +122,7 @@ public class SessionSQLPropertiesPanel
 		 * This interface defines locale specific strings. This should be
 		 * replaced with a property file.
 		 */
-		interface SQLPropertiesPanelI18n
+		interface i18n
 		{
 			String ALL_OTHER = "All Other Data Types";
 			String AUTO_COMMIT = "Auto Commit SQL";
@@ -135,7 +135,7 @@ public class SessionSQLPropertiesPanel
 //			String NBR_ROWS_CONTENTS = "Number of rows:";
 //			String NBR_ROWS_SQL = "Number of rows:";
 			String LIMIT_ROWS_CONTENTS = "Contents - Limit rows";
-			String LIMIT_ROWS_SQL = "SQL - Limit rows";
+			String LIMIT_ROWS_SQL = "SQL results - Limit rows";
 			String LONGVARBINARY = "LongVarBinary";
 			String SQL_OTHER = "SQL Other";
 			String SHOW_ROW_COUNT = "Show Row Count for Tables (can slow application)";
@@ -144,25 +144,27 @@ public class SessionSQLPropertiesPanel
 			String TEXT = "Text";
 			String STATEMENT_SEPARATOR = "Statement Separator:";
 			String SQL = "SQL";
+			String SQL_HISTORY = "SQL History";
 			String VARBINARY = "VarBinary";
+			String LIMIT_SQL_HISTORY_COMBO_SIZE = "Limit SQL History Combo Size";
 		}
 
-		private JCheckBox _autoCommitChk = new JCheckBox(SQLPropertiesPanelI18n.AUTO_COMMIT);
-		private JCheckBox _commitOnClose = new JCheckBox(SQLPropertiesPanelI18n.COMMIT_ON_CLOSE);
+		private JCheckBox _autoCommitChk = new JCheckBox(i18n.AUTO_COMMIT);
+		private JCheckBox _commitOnClose = new JCheckBox(i18n.COMMIT_ON_CLOSE);
 		private IntegerField _contentsNbrRowsToShowField = new IntegerField(5);
-		private JCheckBox _contentsLimitRowsChk = new JCheckBox(SQLPropertiesPanelI18n.LIMIT_ROWS_CONTENTS);
-		private JCheckBox _showRowCountChk = new JCheckBox(SQLPropertiesPanelI18n.SHOW_ROW_COUNT);
+		private JCheckBox _contentsLimitRowsChk = new JCheckBox(i18n.LIMIT_ROWS_CONTENTS);
+		private JCheckBox _showRowCountChk = new JCheckBox(i18n.SHOW_ROW_COUNT);
 		private IntegerField _sqlNbrRowsToShowField = new IntegerField(5);
-		private JCheckBox _sqlLimitRowsChk = new JCheckBox(SQLPropertiesPanelI18n.LIMIT_ROWS_SQL);
+		private JCheckBox _sqlLimitRowsChk = new JCheckBox(i18n.LIMIT_ROWS_SQL);
 		private CharField _stmtSepCharField = new CharField(' ');
 		private JTextField _solCommentField = new JTextField(2);
 
-		private JCheckBox _showBinaryChk = new JCheckBox(SQLPropertiesPanelI18n.BINARY);
-		private JCheckBox _showVarBinaryChk = new JCheckBox(SQLPropertiesPanelI18n.VARBINARY);
-		private JCheckBox _showLongVarBinaryChk = new JCheckBox(SQLPropertiesPanelI18n.LONGVARBINARY);
+		private JCheckBox _showBinaryChk = new JCheckBox(i18n.BINARY);
+		private JCheckBox _showVarBinaryChk = new JCheckBox(i18n.VARBINARY);
+		private JCheckBox _showLongVarBinaryChk = new JCheckBox(i18n.LONGVARBINARY);
 
-		private JCheckBox _showBlobChk = new JCheckBox(SQLPropertiesPanelI18n.BLOB);
-		private JCheckBox _showClobChk = new JCheckBox(SQLPropertiesPanelI18n.CLOB);
+		private JCheckBox _showBlobChk = new JCheckBox(i18n.BLOB);
+		private JCheckBox _showClobChk = new JCheckBox(i18n.CLOB);
 
 		private final ReadTypeCombo _blobTypeDrop = new ReadTypeCombo();
 		private final ReadTypeCombo _clobTypeDrop = new ReadTypeCombo();
@@ -170,9 +172,12 @@ public class SessionSQLPropertiesPanel
 		private IntegerField _showBlobSizeField = new IntegerField(5);
 		private IntegerField _showClobSizeField = new IntegerField(5);
 
-		private JCheckBox _showSQLOtherChk = new JCheckBox(SQLPropertiesPanelI18n.SQL_OTHER);
+		private JCheckBox _showSQLOtherChk = new JCheckBox(i18n.SQL_OTHER);
 
-		private JCheckBox _showAllOtherChk = new JCheckBox(SQLPropertiesPanelI18n.ALL_OTHER);
+		private JCheckBox _showAllOtherChk = new JCheckBox(i18n.ALL_OTHER);
+
+		private JCheckBox _limitSQLHistoryComboSizeChk = new JCheckBox(i18n.LIMIT_SQL_HISTORY_COMBO_SIZE);
+		private IntegerField _limitSQLHistoryComboSizeField = new IntegerField(5);
 
 		/**
 		 * This object will update the status of the GUI controls as the user
@@ -197,6 +202,9 @@ public class SessionSQLPropertiesPanel
 			_showRowCountChk.setSelected(props.getShowRowCount());
 			_stmtSepCharField.setChar(props.getSQLStatementSeparatorChar());
 			_solCommentField.setText(props.getStartOfLineComment());
+
+			_limitSQLHistoryComboSizeChk.setSelected(props.getLimitSQLEntryHistorySize());
+			_limitSQLHistoryComboSizeField.setInt(props.getSQLEntryHistorySize());
 
 			LargeResultSetObjectInfo largeObjInfo = props.getLargeResultSetObjectInfo();
 			_showBinaryChk.setSelected(largeObjInfo.getReadBinary());
@@ -232,6 +240,9 @@ public class SessionSQLPropertiesPanel
 			props.setShowRowCount(_showRowCountChk.isSelected());
 			props.setSQLStatementSeparatorChar(_stmtSepCharField.getChar());
 			props.setStartOfLineComment(_solCommentField.getText());
+
+			props.setLimitSQLEntryHistorySize(_limitSQLHistoryComboSizeChk.isSelected());
+			props.setSQLEntryHistorySize(_limitSQLHistoryComboSizeField.getInt());
 
 			LargeResultSetObjectInfo largeObjInfo = props.getLargeResultSetObjectInfo();
 			largeObjInfo.setReadBinary(_showBinaryChk.isSelected());
@@ -283,6 +294,9 @@ public class SessionSQLPropertiesPanel
 			gbc.gridx = 0;
 			gbc.gridy = 0;
 			add(createSQLPanel(app), gbc);
+
+			++gbc.gridy;
+			add(createSQLHistoryPanel(), gbc);
 
 			++gbc.gridy;
 			add(createDataTypesPanel(), gbc);
@@ -344,13 +358,33 @@ public class SessionSQLPropertiesPanel
 			++gbc.gridy; // new line
 			gbc.gridx = 0;
 			gbc.gridwidth = 1;
-			pnl.add(new JLabel(SQLPropertiesPanelI18n.STATEMENT_SEPARATOR), gbc);
+			pnl.add(new JLabel(i18n.STATEMENT_SEPARATOR), gbc);
 			++gbc.gridx;
 			pnl.add(_stmtSepCharField, gbc);
 			++gbc.gridx;
-			pnl.add(new RightLabel(SQLPropertiesPanelI18n.SOL_COMENT), gbc);
+			pnl.add(new RightLabel(i18n.SOL_COMENT), gbc);
 			++gbc.gridx;
 			pnl.add(_solCommentField, gbc);
+
+			return pnl;
+		}
+
+		private JPanel createSQLHistoryPanel()
+		{
+			JPanel pnl = new JPanel(new GridBagLayout());
+			pnl.setBorder(BorderFactory.createTitledBorder(i18n.SQL_HISTORY));
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = gbc.HORIZONTAL;
+			gbc.insets = new Insets(0, 4, 0, 4);
+			gbc.anchor = gbc.WEST;
+
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			//gbc.gridwidth = 2;
+			pnl.add(_limitSQLHistoryComboSizeChk, gbc);
+			
+			++gbc.gridx;
+			pnl.add(_limitSQLHistoryComboSizeField, gbc);
 
 			return pnl;
 		}
@@ -447,7 +481,6 @@ public class SessionSQLPropertiesPanel
 				addItem("all");
 			}
 		}
-
 
 		/**
 		 * This class will update the status of the GUI controls as the user

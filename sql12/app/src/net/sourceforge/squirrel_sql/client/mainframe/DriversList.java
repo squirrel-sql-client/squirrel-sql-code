@@ -19,6 +19,8 @@ package net.sourceforge.squirrel_sql.client.mainframe;
  */
 import java.awt.BorderLayout;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
@@ -30,6 +32,7 @@ import javax.swing.event.ListDataListener;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 /**
  * This is a <CODE>JList</CODE> that dispays all the <CODE>ISQLDriver</CODE>
@@ -45,6 +48,14 @@ public class DriversList extends JList
 	/** Model for this component. */
 	private DriversListModel _model;
 
+	/**
+	 * Ctor specifying Application API object.
+	 * 
+	 * @param	app		Application API.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>IApplication</TT> passed.
+	 */
 	public DriversList(IApplication app) throws IllegalArgumentException 
 	{
 		super();
@@ -61,6 +72,8 @@ public class DriversList extends JList
 		SquirrelResources res = _app.getResources();
 		setCellRenderer(new DriverListCellRenderer(res.getIcon("list.driver.found"),res.getIcon("list.driver.notfound")));
 
+		propertiesChanged(null);
+
 		final int idx = app.getSquirrelPreferences().getDriversSelectedIndex();
 		final int size = getModel().getSize();
 		if (idx > -1 && idx < size)
@@ -71,6 +84,15 @@ public class DriversList extends JList
 		{
 			setSelectedIndex(0);
 		}
+
+		_app.getSquirrelPreferences().addPropertyChangeListener(new PropertyChangeListener()
+		{
+			public void propertyChange(PropertyChangeEvent evt)
+			{
+				final String propName = evt != null ? evt.getPropertyName() : null;
+				propertiesChanged(propName);
+			}
+		});
 
 		_model.addListDataListener(new ListDataListener()
 		{
@@ -176,6 +198,22 @@ public class DriversList extends JList
 	public String getToolTipText()
 	{
 		return "List of database drivers that can be used to configure an alias"; //i18n
+	}
+
+	/**
+	 * Application properties have changed so update this object.
+	 * 
+	 * @param	propName	Name of property that has changed or <TT>null</TT>
+	 * 						if multiple properties have changed.
+	 */
+	private void propertiesChanged(String propName)
+	{
+		if (propName == null
+			|| propName.equals(SquirrelPreferences.IPropertyNames.SHOW_LOADED_DRIVERS_ONLY))
+		{
+			boolean show = _app.getSquirrelPreferences().getShowLoadedDriversOnly();
+			_model.setShowLoadedDriversOnly(show);
+		}
 	}
 }
 

@@ -48,6 +48,7 @@ import net.sourceforge.squirrel_sql.client.gui.FileViewerFactory;
 import net.sourceforge.squirrel_sql.client.gui.SplashScreen;
 import net.sourceforge.squirrel_sql.client.gui.laf.AllBluesBoldMetalTheme;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToStartupAliasesCommand;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
@@ -138,7 +139,7 @@ class Application implements IApplication
 		SplashScreen splash = null;
 		if (args.getShowSplashScreen())
 		{
-			splash = new SplashScreen(_resources, 10);
+			splash = new SplashScreen(_resources, 11);
 		}
 
 		try
@@ -465,6 +466,9 @@ class Application implements IApplication
 
 		indicateNewStartupTask(splash, "Showing main window...");
 		_mainFrame.setVisible(true);
+
+		indicateNewStartupTask(splash, "Connecting to startup aliases...");
+		new ConnectToStartupAliasesCommand(this).execute();
 	}
 
 	/**

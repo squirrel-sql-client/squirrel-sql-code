@@ -36,6 +36,12 @@ class DriversListModel extends SortedListModel
 	private IApplication _app;
 
 	/**
+	 * Specify whether only JDBC drivers that can be loaded should be loaded
+	 * into this model.
+	 */
+	private boolean _showLoadedDriversOnly;
+
+	/**
 	 * Load drivers from the <CODE>DataCache</CODE>.
 	 *
 	 * @param   app	 Application API.
@@ -52,11 +58,21 @@ class DriversListModel extends SortedListModel
 		_app.getDataCache().addDriversListener(new MyDriversListener());
 	}
 
+	public void setShowLoadedDriversOnly(boolean show)
+	{
+		if (show != _showLoadedDriversOnly)
+		{
+			_showLoadedDriversOnly = show;
+			load();
+		}
+	}
+
 	/**
 	 * Load from <CODE>DataCache</CODE>.
 	 */
 	private void load()
 	{
+		clear();
 		Iterator it = _app.getDataCache().drivers();
 		while (it.hasNext())
 		{
@@ -71,7 +87,10 @@ class DriversListModel extends SortedListModel
 	 */
 	private void addDriver(ISQLDriver driver)
 	{
-		addElement(driver);
+		if (!_showLoadedDriversOnly || driver.isJDBCDriverClassLoaded())
+		{
+			addElement(driver);
+		}
 	}
 
 	/**

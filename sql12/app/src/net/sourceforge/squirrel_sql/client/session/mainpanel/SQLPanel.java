@@ -25,6 +25,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,6 +45,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.EventListenerList;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 import javax.swing.undo.UndoManager;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
@@ -51,7 +54,6 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
-import net.sourceforge.squirrel_sql.fw.gui.MemoryComboBox;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
@@ -81,12 +83,12 @@ public class SQLPanel extends JPanel
 	/** Current session. */
 	private ISession _session;
 
-	private MemoryComboBox _sqlCombo = new MemoryComboBox();
+	private SQLHistoryComboBox _sqlCombo = new SQLHistoryComboBox();
 	private ISQLEntryPanel _sqlEntry;
 	private JCheckBox _limitRowsChk = new JCheckBox("Limit rows: ");
 	private IntegerField _nbrRows = new IntegerField();
 
-	private SqlComboItemListener _sqlComboItemListener = new SqlComboItemListener();
+	private SqlComboListener _sqlComboListener = new SqlComboListener();
 	private MyPropertiesListener _propsListener;
 
 	/** Each tab is a <TT>ResultTab</TT> showing the results of a query. */
@@ -585,14 +587,14 @@ public class SQLPanel extends JPanel
 
 	void addSQLToHistory(String sql)
 	{
-		_sqlComboItemListener.stopListening();
+		_sqlComboListener.stopListening();
 		try
 		{
 			_sqlCombo.addItem(new SqlComboItem(sql));
 		}
 		finally
 		{
-			_sqlComboItemListener.startListening();
+			_sqlComboListener.startListening();
 		}
 	}
 
@@ -809,7 +811,7 @@ public class SQLPanel extends JPanel
 
 		add(_splitPane, BorderLayout.CENTER);
 
-		_sqlCombo.addActionListener(_sqlComboItemListener);
+		_sqlCombo.addActionListener(_sqlComboListener);
 		_limitRowsChk.addChangeListener(new LimitRowsCheckBoxListener());
 		_nbrRows.getDocument().addDocumentListener(new LimitRowsTextBoxListener());
 
@@ -846,7 +848,7 @@ public class SQLPanel extends JPanel
 		}
 	}
 
-	private class SqlComboItemListener implements ActionListener
+	private class SqlComboListener implements ActionListener
 	{
 		private boolean _listening = true;
 
@@ -874,7 +876,7 @@ public class SQLPanel extends JPanel
 		}
 	}
 
-	private static class SqlComboItem
+	private static class SqlComboItem implements Serializable
 	{
 		private String _sql;
 		private String _firstLine;

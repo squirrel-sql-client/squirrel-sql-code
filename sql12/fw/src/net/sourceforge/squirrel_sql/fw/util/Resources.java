@@ -25,6 +25,7 @@ import java.util.ResourceBundle;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -125,34 +126,20 @@ public abstract class Resources
 		return item;
 	}
 
+	public JCheckBoxMenuItem addToMenuAsCheckBoxMenuItem(Action action, JMenu menu)
+		throws MissingResourceException
+	{
+		final JCheckBoxMenuItem item = new JCheckBoxMenuItem(action);
+		menu.add(item);
+		configureMenuItem(action, item);
+		return item;
+	}
+
 	public JMenuItem addToMenu(Action action, JMenu menu)
 		throws MissingResourceException
 	{
-		JMenuItem item = menu.add(action);
-		final String fullKey = Keys.MENU_ITEM + "." + action.getClass().getName();
-
-		if (action.getValue(Action.MNEMONIC_KEY) == null)
-		{
-			String mn = getResourceString(fullKey, MenuItemProperties.MNEMONIC);
-			if (mn.length() > 0)
-			{
-				item.setMnemonic(mn.charAt(0));
-			}
-		}
-
-		if (action.getValue(Action.ACCELERATOR_KEY) == null)
-		{
-			String accel = getResourceString(fullKey, MenuItemProperties.ACCELERATOR);
-			if (accel.length() > 0)
-			{
-				item.setAccelerator(KeyStroke.getKeyStroke(accel));
-			}
-		}
-
-		item.setToolTipText((String) action.getValue(Action.SHORT_DESCRIPTION));
-
-		item.setIcon(null);
-
+		final JMenuItem item = menu.add(action);
+		configureMenuItem(action, item);
 		return item;
 	}
 
@@ -264,6 +251,34 @@ public abstract class Resources
 	public String getString(String key)
 	{
 		return _bundle.getString(key);
+	}
+
+	public void configureMenuItem(Action action, JMenuItem item)
+		throws MissingResourceException
+	{
+		final String fullKey = Keys.MENU_ITEM + "." + action.getClass().getName();
+
+		if (action.getValue(Action.MNEMONIC_KEY) == null)
+		{
+			String mn = getResourceString(fullKey, MenuItemProperties.MNEMONIC);
+			if (mn.length() > 0)
+			{
+				item.setMnemonic(mn.charAt(0));
+			}
+		}
+
+		if (action.getValue(Action.ACCELERATOR_KEY) == null)
+		{
+			String accel = getResourceString(fullKey, MenuItemProperties.ACCELERATOR);
+			if (accel.length() > 0)
+			{
+				item.setAccelerator(KeyStroke.getKeyStroke(accel));
+			}
+		}
+
+		item.setToolTipText((String) action.getValue(Action.SHORT_DESCRIPTION));
+
+		item.setIcon(null);
 	}
 
 	protected ResourceBundle getBundle()

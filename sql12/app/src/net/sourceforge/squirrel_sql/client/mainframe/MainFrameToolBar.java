@@ -273,7 +273,7 @@ class MainFrameToolBar extends ToolBar
 			Object obj = evt.getObject();
 			if (obj instanceof ISQLAlias)
 			{
-				_model.removeAlias((ISQLAlias) obj);
+				_model.removeAlias((ISQLAlias)obj);
 			}
 		}
 	}

@@ -18,46 +18,48 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.event.ActionEvent;
-import java.io.File;
-
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 /**
- * This <CODE>Action</CODE> displays the Squirrel Change Log Window.
+ * This <CODE>Action</CODE> will show/hide drivers in the Drivers List
+ * that cannot be loaded.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ViewChangeLogAction extends SquirrelAction
+public class ShowLoadedDriversOnlyAction extends SquirrelAction
 {
-	private File _file;
-
 	/**
 	 * Ctor.
-	 * 
-	 * @param	app		Application API.
-	 * @param	file	Change log file.
+	 *
+	 * @param   app	 Application API.
+	 *
+	 * @throws  IllegalArgumentException
+	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> passed.
 	 */
-	public ViewChangeLogAction(IApplication app, File file)
+	public ShowLoadedDriversOnlyAction(IApplication app)
 	{
 		super(app);
-		_file = file;
-		app.getResources().setupAction(this);
+		if (app == null)
+		{
+			throw new IllegalArgumentException("Null IApplication passed");
+		}
 	}
 
 	/**
-	 * Display the Change Log window.
+	 * Perform this action.
+	 *
+	 * @param   evt	 The current event.
 	 */
 	public void actionPerformed(ActionEvent evt)
 	{
 		try
 		{
-			new ViewFileCommand(getApplication(), _file).execute();
+			new ShowLoadedDriversOnlyCommand(getApplication()).execute();
 		}
-		catch (BaseException ex)
+		catch (Exception ex)
 		{
-			getApplication().showErrorDialog("Error viewing change log", ex);
+			getApplication().showErrorDialog("Error", ex);
 		}
 	}
 }

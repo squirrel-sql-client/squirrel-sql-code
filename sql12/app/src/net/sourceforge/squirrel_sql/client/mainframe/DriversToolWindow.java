@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,13 +17,13 @@ package net.sourceforge.squirrel_sql.client.mainframe;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.SwingConstants;
-
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
@@ -38,10 +38,17 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.DeleteDriverAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.InstallDefaultDriversAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyDriverAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyDriverCommand;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ShowLoadedDriversOnlyAction;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
-
+/**
+ * This windows displays a list of JDBC drivers and allows the user
+ * to maintain their details, add new ones etc.
+ *
+ * @author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
 public class DriversToolWindow extends BaseToolWindow
 {
+	/** Application API. */
 	private IApplication _app;
 
 	/** User Interface facory. */
@@ -54,7 +61,7 @@ public class DriversToolWindow extends BaseToolWindow
 	{
 		super(app, new UserInterfaceFactory(app));
 		_app = app;
-		_uiFactory = (UserInterfaceFactory) getUserInterfaceFactory();
+		_uiFactory = (UserInterfaceFactory)getUserInterfaceFactory();
 		_uiFactory.setDriversToolWindow(this);
 
 		// Enable/disable actions depending on whether an item is selected in
@@ -66,20 +73,7 @@ public class DriversToolWindow extends BaseToolWindow
 			public void propertyChange(PropertyChangeEvent evt)
 			{
 				final String propName = evt != null ? evt.getPropertyName() : null;
-				if (propName == null
-					|| propName.equals(SquirrelPreferences.IPropertyNames.SHOW_DRIVERS_TOOL_BAR))
-				{
-					boolean show = _app.getSquirrelPreferences().getShowDriversToolBar();
-					if (show)
-					{
-						_uiFactory.createToolBar();
-					}
-					else
-					{
-						_uiFactory._tb = null;
-					}
-					setToolBar(_uiFactory.getToolBar());
-				}
+				_uiFactory.propertiesChanged(propName);
 			}
 		});
 	}
@@ -94,7 +88,7 @@ public class DriversToolWindow extends BaseToolWindow
 		return _uiFactory._driversList.getSelectedIndex();
 	}
 
-	private static final class UserInterfaceFactory
+	private final static class UserInterfaceFactory
 		implements BaseToolWindow.IUserInterfaceFactory
 	{
 		private IApplication _app;
@@ -115,10 +109,10 @@ public class DriversToolWindow extends BaseToolWindow
 
 			preloadActions(app);
 
-			if (_app.getSquirrelPreferences().getShowDriversToolBar())
-			{
-				createToolBar();
-			}
+//			if (_app.getSquirrelPreferences().getShowDriversToolBar())
+//			{
+//				createToolBar();
+//			}
 
 			_pm.add(_createDriverAction);
 			_pm.addSeparator();
@@ -161,7 +155,8 @@ public class DriversToolWindow extends BaseToolWindow
 		}
 
 		/**
-		 * Enable/disable actions depending on whether an item is selected in list.
+		 * Enable/disable actions depending on whether an item is selected
+		 * in list.
 		 */
 		public void enableDisableActions()
 		{
@@ -188,6 +183,25 @@ public class DriversToolWindow extends BaseToolWindow
 		void setDriversToolWindow(DriversToolWindow tw)
 		{
 			_tw = tw;
+			propertiesChanged(null);
+		}
+
+		public void propertiesChanged(String propName)
+		{
+			if (propName == null ||
+				propName.equals(SquirrelPreferences.IPropertyNames.SHOW_DRIVERS_TOOL_BAR))
+			{
+				boolean show = _app.getSquirrelPreferences().getShowDriversToolBar();
+				if (show)
+				{
+					createToolBar();
+				}
+				else
+				{
+					_tb = null;
+				}
+				_tw.setToolBar(getToolBar());
+			}
 		}
 
 		private void preloadActions(IApplication app)
@@ -201,12 +215,14 @@ public class DriversToolWindow extends BaseToolWindow
 
 		private void createToolBar()
 		{
+			final ActionCollection actions = _app.getActionCollection();
+
 			_tb = new ToolBar();
 			_tb.setBorder(BorderFactory.createEtchedBorder());
 			_tb.setUseRolloverButtons(true);
 			_tb.setFloatable(false);
 
-			final JLabel lbl = new JLabel(getWindowTitle(), SwingConstants.CENTER);
+			final JLabel lbl = new JLabel(getWindowTitle(), SwingConstants.LEFT);
 			lbl.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
 			_tb.add(lbl, 0);
 			_tb.add(new ToolBar.Separator(), 1);
@@ -216,8 +232,9 @@ public class DriversToolWindow extends BaseToolWindow
 			_tb.add(_copyDriverAction);
 			_tb.add(_deleteDriverAction);
 			_tb.add(new ToolBar.Separator(), 1);
-			_tb.add(_app.getActionCollection().get(InstallDefaultDriversAction.class));
+			_tb.add(actions.get(InstallDefaultDriversAction.class));
+			_tb.add(new ToolBar.Separator(), 1);
+			_tb.add(actions.get(ShowLoadedDriversOnlyAction.class));
 		}
 	}
-
 }

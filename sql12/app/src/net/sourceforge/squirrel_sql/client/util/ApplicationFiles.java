@@ -146,6 +146,14 @@ public class ApplicationFiles
 		return new File(_userSettingsDir + File.separator +
 							"squirrel-sql-jdbcdebug.log");
 	}
+ 	
+ 	/**
+ 	 * @return serialized Vector containing history of SQL queries executed
+ 	 */
+ 	public File getUserSQLHistoryFile()
+ 	{
+ 		return new File(_userSettingsDir + File.separator + "sqlhistory.ser");
+ 	}
 
 	/**
 	 * @return directory that contains plugin specific user settings

@@ -23,9 +23,13 @@ import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.IClientSession;
-
+/**
+ * This <CODE>Action</CODE> allows the user to commit the current SQL
+ * transaction.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
 public class CommitAction extends SquirrelAction implements IClientSessionAction
 {
 	private IClientSession _session;
@@ -48,8 +52,7 @@ public class CommitAction extends SquirrelAction implements IClientSessionAction
 			cursorChg.show();
 			try
 			{
-				IPlugin plugin = _session.getApplication().getDummyAppPlugin();
-				_session.getSQLPanelAPI(plugin).commit();
+				new CommitCommand(_session).execute();
 			}
 			finally
 			{

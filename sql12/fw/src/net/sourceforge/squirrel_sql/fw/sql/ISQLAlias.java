@@ -37,6 +37,7 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable
 	public interface IPropertyNames
 	{
 		String AUTO_LOGON = "autoLogon";
+		String CONNECT_AT_STARTUP = "connectAtStartup";
 		String DRIVER = "driverIdentifier";
 		String DRIVER_PROPERTIES = "driverProperties";
 		String ID = "identifier";
@@ -118,7 +119,7 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable
 	/**
 	 * Should this alias be logged on automatically.
 	 * 
-	 * @return	<TT>true</TT> is this alias should be logged on automatically
+	 * @return	<TT>true</TT> if this alias should be logged on automatically
 	 * 			else <TT>false</TT>.
 	 */
 	boolean isAutoLogon();
@@ -130,6 +131,22 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable
 	 * 					else <TT>false</TT..
 	 */
 	void setAutoLogon(boolean value);
+
+	/**
+	 * Should this alias be connected when the application is started up.
+	 * 
+	 * @return	<TT>true</TT> if this alias should be connected when the
+	 *			application is started up.
+	 */
+	boolean isConnectAtStartup();
+
+	/**
+	 * Set whether alias should be connected when the application is started up.
+	 * 
+	 * @param	value	<TT>true</TT> if alias should be connected when the
+	 *					application is started up.
+	 */
+	void setConnectAtStartup(boolean value);
 
 	boolean getUseDriverProperties();
 	void setUseDriverProperties(boolean value) throws ValidationException;

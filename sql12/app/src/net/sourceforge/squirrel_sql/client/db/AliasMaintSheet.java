@@ -106,6 +106,7 @@ public class AliasMaintSheet extends BaseSheet
 		String ADD = "Add Alias";
 		String AUTO_LOGON_CHK = "Auto logon";
 		String CHANGE = "Change Alias";
+		String CONNECT_AT_STARTUP = "Connect at Startup";
 		String DRIVER = "Driver:";
 		String NAME = "Name:";
 		String SAVE_PASSWORD = "Save password:";
@@ -157,6 +158,9 @@ public class AliasMaintSheet extends BaseSheet
 	/** Autologon checkbox. */
 	private final JCheckBox _autoLogonChk = new JCheckBox(i18n.AUTO_LOGON_CHK);
 
+	/** Connect at startup checkbox. */
+	private final JCheckBox _connectAtStartupChk = new JCheckBox(i18n.CONNECT_AT_STARTUP);
+
 	/** If checked use the extended driver properties. */
 	private final JCheckBox _useDriverPropsChk = new JCheckBox("Use Driver Properties");
 
@@ -174,8 +178,9 @@ public class AliasMaintSheet extends BaseSheet
 	 * @param	maintType	The maintenance type.
 	 *
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> passed for <TT>app</TT> or <TT>ISQLAlias</TT> or
-	 * 			an invalid value passed for <TT>maintType</TT>.
+	 * 			Thrown if <TT>null</TT> passed for <TT>app</TT> or
+	 * 			<TT>ISQLAlias</TT> or an invalid value passed for
+	 *			<TT>maintType</TT>.
 	 */
 	AliasMaintSheet(IApplication app, ISQLAlias sqlAlias, int maintType)
 	{
@@ -262,6 +267,7 @@ public class AliasMaintSheet extends BaseSheet
 		}
 
 		_autoLogonChk.setSelected(_sqlAlias.isAutoLogon());
+		_connectAtStartupChk.setSelected(_sqlAlias.isConnectAtStartup());
 		_useDriverPropsChk.setSelected(_sqlAlias.getUseDriverProperties());
 
 		if (_maintType != IMaintenanceType.NEW)
@@ -329,6 +335,7 @@ public class AliasMaintSheet extends BaseSheet
 		alias.setPasswordSaved(_savePasswordChk.isSelected());
 
 		alias.setAutoLogon(_autoLogonChk.isSelected());
+		alias.setConnectAtStartup(_connectAtStartupChk.isSelected());
 		alias.setUseDriverProperties(_useDriverPropsChk.isSelected());
 		alias.setDriverProperties(_sqlDriverProps);
 	}
@@ -379,6 +386,9 @@ public class AliasMaintSheet extends BaseSheet
 		}
 	}
 
+	/**
+	 * Create user interface for this sheet.
+	 */
 	private void createUserInterface()
 	{
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -386,10 +396,9 @@ public class AliasMaintSheet extends BaseSheet
 		// This is a tool window.
 		GUIUtils.makeToolWindow(this, true);
 
-		final String title =
-			_maintType == IMaintenanceType.MODIFY
-				? (i18n.CHANGE + " " + _sqlAlias.getName())
-				: i18n.ADD;
+		final String title = _maintType == IMaintenanceType.MODIFY
+							? (i18n.CHANGE + " " + _sqlAlias.getName())
+							: i18n.ADD;
 		setTitle(title);
 
 		_aliasName.setColumns(COLUMN_COUNT);
@@ -536,12 +545,16 @@ public class AliasMaintSheet extends BaseSheet
 		++gbc.gridy;
 		pnl.add(_autoLogonChk, gbc);
 
+		++gbc.gridx;
+		pnl.add(_connectAtStartupChk, gbc);
+
 		JPanel propsPnl = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 		propsPnl.add(_useDriverPropsChk);
 		propsPnl.add(_driverPropsBtn);
 
 		gbc.gridwidth = gbc.REMAINDER;
-		++gbc.gridx;
+		++gbc.gridy;
+		gbc.gridx = 0;
 		pnl.add(propsPnl, gbc);
 
 		gbc.gridx = 0;
@@ -585,7 +598,7 @@ public class AliasMaintSheet extends BaseSheet
 					applyFromDialog(testAlias);
 					ConnectToAliasCommand cmd = new ConnectToAliasCommand(_app,
 											_app.getMainFrame(), testAlias, false,
-											new ConnectionCallBack(_app));
+											new ConnectionCallBack(_app, testAlias));
 					cmd.execute();
 				}
 				catch (ValidationException ex)
@@ -668,9 +681,9 @@ public class AliasMaintSheet extends BaseSheet
 	private final class ConnectionCallBack
 		extends ConnectToAliasCommand.ClientCallback
 	{
-		private ConnectionCallBack(IApplication app)
+		private ConnectionCallBack(IApplication app, ISQLAlias alias)
 		{
-			super(app);
+			super(app, alias);
 		}
 
 		/**
@@ -684,9 +697,9 @@ public class AliasMaintSheet extends BaseSheet
 			}
 			catch (Throwable th)
 			{
-				s_log.error("Error closing Connection", th);
-				_app.showErrorDialog(
-					"Error closing opened connection: " + th.toString());
+				String msg = "Error closing Connection"; 
+				s_log.error(msg, th);
+				_app.showErrorDialog(msg + ": " + th.toString());
 			}
 			Dialogs.showOk(AliasMaintSheet.this, "Connection successful");
 		}
