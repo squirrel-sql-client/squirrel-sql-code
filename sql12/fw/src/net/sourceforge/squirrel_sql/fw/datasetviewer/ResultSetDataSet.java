@@ -56,10 +56,23 @@ public class ResultSetDataSet implements IDataSet
  		setResultSet(rs, null, null, false);
 	}
 
+	/**
+	 * Form used by Tabs other than ContentsTab
+	 */
 	public void setResultSet(ResultSet rs, LargeResultSetObjectInfo largeObjInfo)
 		throws DataSetException
 	{
  		setResultSet(rs, largeObjInfo, null, false);
+	}
+	
+	/**
+	 * Form used by ContentsTab
+	 */
+	public void setContentsTabResultSet(ResultSet rs, LargeResultSetObjectInfo largeObjInfo)
+		throws DataSetException
+	{
+//??		setResultSet(rs, largeObjInfo, null, false);
+setResultSet(rs, largeObjInfo, null, false, true);
 	}
 
 	public void setResultSet(ResultSet rs, int[] columnIndices)
@@ -68,8 +81,41 @@ public class ResultSetDataSet implements IDataSet
  		setResultSet(rs, null, columnIndices, false);
 	}
 
+
+	/**
+	 * External method to read the contents of a ResultSet that is used by
+	 * all Tab classes except ContentsTab.  This tunrs all the data into strings
+	 * for simplicity of operation.
+	 */
 	public void setResultSet(ResultSet rs, LargeResultSetObjectInfo largeObjInfo,
  				 int[] columnIndices, boolean computeWidths)
+ 			throws DataSetException
+	{
+		setResultSet(rs, largeObjInfo, columnIndices, computeWidths, false);
+	}
+
+	/**
+	 * External method to read the contents of a ResultSet that is used by
+	 * ContentsTab.  It reads the data into internal objects of the type
+	 * needed to hold the data (e.g. byte[], Blob, etc) rather than turning
+	 * everything into strings.  This allows appropriate editing to be done
+	 * on the object values as controled by the DataType objects.
+	 */
+/****
+ * 	public void setContentsTabResultSet(ResultSet rs, LargeResultSetObjectInfo largeObjInfo,
+ 				 int[] columnIndices, boolean computeWidths)
+ 			throws DataSetException
+	{
+		setResultSet(rs, largeObjInfo, columnIndices, computeWidths, true);
+	}
+****/
+
+	/**
+	 * Internal method to read the contents of a ResultSet that is used by
+	 * all Tab classes
+	 */
+	private void setResultSet(ResultSet rs, LargeResultSetObjectInfo largeObjInfo,
+ 				 int[] columnIndices, boolean computeWidths, boolean isContentsTab)
  			throws DataSetException
 	{
 		reset();
@@ -103,8 +149,17 @@ public class ResultSetDataSet implements IDataSet
  				// Read the entire row, since some drivers complain if columns are read out of sequence
  				ResultSetReader rdr = new ResultSetReader(rs, largeObjInfo, null);
 				Object[] row = null;
-				while ((row = rdr.readRow()) != null)
-				{
+//				while ((row = rdr.readRow()) != null)
+//				{
+while (true) {
+	if (isContentsTab)
+		row = rdr.readRow(colDefs);
+	else
+		row = rdr.readRow();
+		
+	if (row == null)
+		break;
+		
 					if (_cancel)
 					{
 						return;
