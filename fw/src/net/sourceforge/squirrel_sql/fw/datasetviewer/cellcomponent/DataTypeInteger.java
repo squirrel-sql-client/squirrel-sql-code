@@ -248,6 +248,16 @@ public class DataTypeInteger
 					_theComponent.getToolkit().beep();
 					e.consume();
 				}
+												
+				// tabs and newlines get put into the text before this check,
+				// so remove them
+				// This only applies to Popup editing since these chars are
+				// not passed to this level by the in-cell editor.
+				if (c == KeyEvent.VK_TAB || c == KeyEvent.VK_ENTER) {
+					((IRestorableTextComponent)_theComponent).updateText(text.substring(0, text.length()-1));
+					_theComponent.getToolkit().beep();
+					e.consume();
+				}
 
 				if (c == '-' && ! (text.equals("<null>") || text.length() == 0)) {
 					// user entered '-' at a bad place
