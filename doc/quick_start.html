@@ -788,6 +788,10 @@ determine how to display the column.</P>
 
 	<DT><B>java.sql.Types.CHAR, java.sql.Types.VARCHAR, java.sql.Types.LONGVARCHAR</B>
 	<DD>The column data is displayed as a string.
+	Note that if the data includes a newline character,
+	that particular data item cannot be edited in the cell within the table,
+	but if you double-click on the cell to get the Popup window, you
+	will be able to edit the data there.
 
 	<DT><B>java.sql.Types.BINARY, java.sql.Types.VARBINARY, java.sql.Types.LONGVARBINARY</B>
 	<DD>
@@ -801,13 +805,26 @@ determine how to display the column.</P>
 	<DD>If the <A HREF="#session_props_sql_data_types">session property</A>
 	says to retrieve blobs then the column data is displayed as bytes. Note
 	that the <A HREF="#session_props_sql_data_types">session property</A> can
-	specify the number of bytes of the blob to read in.
+	specify the number of bytes of the blob to read in during the initial
+	setup of the ContentsTab table.  If you do not specify a limit, the
+	default operation is to not read in any data and to display "<Blob>"
+	in the column.  Clicking on an individual cell causes the entire BLOB data to
+	be read and displayed at that time.
+
+	Note: BLOB fields may be very large, and this can cause the
+	Popup window to take some time to start up (e.g. 30 sec. for a BLOB
+	containing a relatively small sized photo).
 
 	<DT><B>java.sql.Types.CLOB</B>
 	<DD>If the <A HREF="#session_props_sql_data_types">session property</A>
 	says to retrieve clobs then the column data is displayed as a string. Note
 	that the <A HREF="#session_props_sql_data_types">session property</A> can
-	specify the number of characters of the clob to read in.
+	specify the number of characters of the clob to read in during the initial
+        setup of the ContentsTab table.  If you do not specify a limit, the
+        default operation is to not read in any data and to display "<Clob>"
+        in the column.  Clicking on an individual cell causes the entire CLOB data to
+        be read and displayed at that time.
+
 
 	<DT><B>java.sql.Types.OTHER</B>
 	<DD>If the <A HREF="#session_props_sql_data_types">session property</A>
