@@ -31,7 +31,11 @@ import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
  */
 public class JeditPreferences implements Serializable, Cloneable {
 	public interface IPropertyNames {
+		String BLINK_CARET = "blinkCaret";
 		String BLOCK_CARET_ENABLED = "blockCaretEnabled";
+		String BRACKET_HIGHLIGHTING = "bracketHighlighting";
+		String CURRENT_LINE_HIGHLIGHTING = "currentLineHighlighting";
+		String EOL_MARKERS = "eolMarkers";
 		String USE_JEDIT_CONTROL = "useJeditControl";
 		String KEYWORD1_COLOR = "keyword1Color";
 		String KEYWORD2_COLOR = "keyword2Color";
@@ -41,9 +45,23 @@ public class JeditPreferences implements Serializable, Cloneable {
 	/** Object to handle property change events. */
 	private PropertyChangeReporter _propChgReporter = new PropertyChangeReporter(this);
 
+	/** If <TT>true</TT> use the jEdit text control else use the standard Java control. */
 	private boolean _useJeditTextControl = true;
 
+	/** If <TT>true</TT> use the block caret. */
 	private boolean _blockCaretEnabled = false;
+
+	/** If <TT>true</TT> caret should blink. */
+	private boolean _blinkCaret = true;
+
+	/** If <TT>true</TT> show EOL markers. */
+	private boolean _showEndOfLineMarkers = false;
+
+	/** If <TT>true</TT> show matching brackets. */
+	private boolean _bracketHighlighting = true;
+
+	/** If <TT>true</TT> the current line should be highlighted. */
+	private boolean _currentLineHighlighting = true;
 
 	private int _keyword1RGB = Color.black.getRGB();
 	private int _keyword2RGB = Color.magenta.getRGB();
@@ -78,6 +96,19 @@ public class JeditPreferences implements Serializable, Cloneable {
 		}
 	}
 
+	public boolean getBracketHighlighting() {
+		return _bracketHighlighting;
+	}
+
+	public void setBracketHighlighting(boolean data) {
+		if (_bracketHighlighting != data) {
+			final boolean oldValue = _bracketHighlighting;
+			_bracketHighlighting = data;
+			_propChgReporter.firePropertyChange(IPropertyNames.BRACKET_HIGHLIGHTING,
+								oldValue, _bracketHighlighting);
+		}
+	}
+
 	public boolean isBlockCaretEnabled() {
 		return _blockCaretEnabled;
 	}
@@ -90,6 +121,46 @@ public class JeditPreferences implements Serializable, Cloneable {
 								oldValue, _blockCaretEnabled);
 		}
 	}
+
+	public boolean getEolMarkers() {
+		return _showEndOfLineMarkers;
+	}
+
+	public void setEolMarkers(boolean data) {
+		if (_showEndOfLineMarkers != data) {
+			final boolean oldValue = _showEndOfLineMarkers;
+			_showEndOfLineMarkers = data;
+			_propChgReporter.firePropertyChange(IPropertyNames.EOL_MARKERS,
+								oldValue, _showEndOfLineMarkers);
+		}
+	}
+
+	public boolean getCurrentLineHighlighting() {
+		return _currentLineHighlighting;
+	}
+
+	public void setCurrentLineHighlighting(boolean data) {
+		if (_currentLineHighlighting != data) {
+			final boolean oldValue = _currentLineHighlighting;
+			_currentLineHighlighting = data;
+			_propChgReporter.firePropertyChange(IPropertyNames.CURRENT_LINE_HIGHLIGHTING,
+								oldValue, _currentLineHighlighting);
+		}
+	}
+
+	public boolean getBlinkCaret() {
+		return _blinkCaret;
+	}
+
+	public void setBlinkCaret(boolean data) {
+		if (_blinkCaret != data) {
+			final boolean oldValue = _blinkCaret;
+			_blinkCaret = data;
+			_propChgReporter.firePropertyChange(IPropertyNames.BLINK_CARET,
+								oldValue, _blinkCaret);
+		}
+	}
+
 
 	public int getKeyword1RGB() {
 		return _keyword1RGB;

@@ -173,7 +173,11 @@ public class JeditPreferencesPanel implements IGlobalPreferencesPanel, ISessionP
 			String TAB_TITLE = "jEdit";
 			String TAB_HINT = "jEdit text control usage";
 			String ACTIVE = "Use jEdit text control";
-			String BLOCK_CARET = "Use Block Caret";
+			String BLINK_CARET = "Blink Caret";
+			String BLOCK_CARET = "Block Caret";
+			String BRACKET_HIGHLIGHTING = "Highlight matching brackets";
+			String EOL_MARKERS = "End of line markers";
+			String HIGHLIGHT_CURRENT_LINE = "Highlight current line";
 		}
 
 		private JeditPlugin _plugin;
@@ -182,7 +186,11 @@ public class JeditPreferencesPanel implements IGlobalPreferencesPanel, ISessionP
 		private JeditPreferences _prefs;
 		
 		private JCheckBox _activeChk = new JCheckBox(i18n.ACTIVE);
+		private JCheckBox _eolMarkersChk = new JCheckBox(i18n.EOL_MARKERS);
 		private JCheckBox _blockCaretEnabledChk = new JCheckBox(i18n.BLOCK_CARET);
+		private JCheckBox _bracketHighlighting = new JCheckBox(i18n.BRACKET_HIGHLIGHTING);
+		private JCheckBox _currentLineHighlighting = new JCheckBox(i18n.HIGHLIGHT_CURRENT_LINE);
+		private JCheckBox _blinkCaretChk = new JCheckBox(i18n.BLINK_CARET);
 		private JLabel _keywordColorLbl1;
 		private JLabel _keywordColorLbl2;
 		private JLabel _keywordColorLbl3;
@@ -203,7 +211,11 @@ public class JeditPreferencesPanel implements IGlobalPreferencesPanel, ISessionP
 			_prefs = prefs;
 			
 			_activeChk.setSelected(_prefs.getUseJeditTextControl());
+			_eolMarkersChk.setSelected(_prefs.getEolMarkers());
 			_blockCaretEnabledChk.setSelected(_prefs.isBlockCaretEnabled());
+			_bracketHighlighting.setSelected(_prefs.getBracketHighlighting());
+			_currentLineHighlighting.setSelected(_prefs.getCurrentLineHighlighting());
+			_blinkCaretChk.setSelected(_prefs.getBlinkCaret());
 			_keywordColorLbl1.setBackground(new Color(_prefs.getKeyword1RGB()));
 			_keywordColorLbl2.setBackground(new Color(_prefs.getKeyword2RGB()));
 			_keywordColorLbl3.setBackground(new Color(_prefs.getKeyword3RGB()));
@@ -211,8 +223,12 @@ public class JeditPreferencesPanel implements IGlobalPreferencesPanel, ISessionP
 
 		void applyChanges() {
 			_prefs.setUseJeditTextControl(_activeChk.isSelected());
+			_prefs.setEolMarkers(_eolMarkersChk.isSelected());
 			_prefs.setBlockCaretEnabled(_blockCaretEnabledChk.isSelected());
+			_prefs.setBracketHighlighting(_bracketHighlighting.isSelected());
+			_prefs.setCurrentLineHighlighting(_currentLineHighlighting.isSelected());
 			_prefs.setKeyword1RGB(_keywordColorLbl1.getBackground().getRGB());
+			_prefs.setBlinkCaret(_blinkCaretChk.isSelected());
 			_prefs.setKeyword2RGB(_keywordColorLbl2.getBackground().getRGB());
 			_prefs.setKeyword3RGB(_keywordColorLbl3.getBackground().getRGB());
 		}
@@ -238,7 +254,11 @@ public class JeditPreferencesPanel implements IGlobalPreferencesPanel, ISessionP
 					_keywordColorBtn1.setEnabled(useJeditControl);
 					_keywordColorBtn2.setEnabled(useJeditControl);
 					_keywordColorBtn3.setEnabled(useJeditControl);
+					_eolMarkersChk.setEnabled(useJeditControl);
 					_blockCaretEnabledChk.setEnabled(useJeditControl);
+					_bracketHighlighting.setEnabled(useJeditControl);
+					_currentLineHighlighting.setEnabled(useJeditControl);
+					_blinkCaretChk.setEnabled(useJeditControl);
 				}
 			});
 
@@ -249,7 +269,19 @@ public class JeditPreferencesPanel implements IGlobalPreferencesPanel, ISessionP
 			add(_activeChk, gbc);
 
 			++gbc.gridy;
+			add(_eolMarkersChk, gbc);
+
+			++gbc.gridy;
+			add(_blinkCaretChk, gbc);
+
+			++gbc.gridy;
 			add(_blockCaretEnabledChk, gbc);
+
+			++gbc.gridy;
+			add(_currentLineHighlighting, gbc);
+
+			++gbc.gridy;
+			add(_bracketHighlighting, gbc);
 
 			++gbc.gridy;
 			add(_keywordColorBtn1, gbc);

@@ -225,9 +225,11 @@ class JeditSQLEntryPanel implements ISQLEntryPanel {
 		styles[Token.KEYWORD2] = new SyntaxStyle(new Color(prefs.getKeyword2RGB()), false, true);
 		styles[Token.KEYWORD3] = new SyntaxStyle(new Color(prefs.getKeyword3RGB()), false, true);
 		painter.setStyles(styles);
-		s_log.debug("before painter.isBlockCaretEnabled(): " + painter.isBlockCaretEnabled());
+		painter.setEOLMarkersPainted(prefs.getEolMarkers());
 		painter.setBlockCaretEnabled(prefs.isBlockCaretEnabled());
-		s_log.debug("after painter.isBlockCaretEnabled(): " + painter.isBlockCaretEnabled());
+		painter.setBracketHighlightEnabled(prefs.getBracketHighlighting());
+		painter.setLineHighlightEnabled(prefs.getCurrentLineHighlighting());
+		comp.setCaretBlinkEnabled(prefs.getBlinkCaret());
 	}
 
 	/*
@@ -287,10 +289,7 @@ class JeditSQLEntryPanel implements ISQLEntryPanel {
 			}
 
 			if (propName == null ||
-					propName.equals(JeditPreferences.IPropertyNames.KEYWORD1_COLOR) ||
-					propName.equals(JeditPreferences.IPropertyNames.KEYWORD2_COLOR) ||
-					propName.equals(JeditPreferences.IPropertyNames.KEYWORD3_COLOR) ||
-					propName.equals(JeditPreferences.IPropertyNames.BLOCK_CARET_ENABLED)) {
+					!propName.equals(JeditPreferences.IPropertyNames.USE_JEDIT_CONTROL)) {
 				if (_prefs.getUseJeditTextControl()) {
 					JeditSQLEntryPanel pnl = (JeditSQLEntryPanel)_session.getPluginObject(_plugin, JeditConstants.ISessionKeys.JEDIT_SQL_ENTRY_CONTROL);
 					if (pnl != null) {

@@ -18,7 +18,7 @@ import java.awt.*;
  * The text area repaint manager. It performs double buffering and paints
  * lines of text.
  * @author Slava Pestov
- * @version $Id: TextAreaPainter.java,v 1.1 2001-12-14 11:01:40 colbell Exp $
+ * @version $Id: TextAreaPainter.java,v 1.2 2002-01-03 12:23:42 colbell Exp $
  */
 public class TextAreaPainter extends JComponent implements TabExpander
 {
@@ -686,7 +686,8 @@ public class TextAreaPainter extends JComponent implements TabExpander
 			}
 			else
 			{
-				gfx.drawRect(caretX,y,caretWidth - 1,height - 1);
+//				gfx.drawRect(caretX,y,caretWidth - 1,height - 1);
+				gfx.drawRect(caretX,y,caretWidth == 1 ? 1 : caretWidth - 1,height - 1);
 			}
 		}
 	}

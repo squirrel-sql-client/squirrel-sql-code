@@ -37,23 +37,23 @@ class JeditTextAreaDefaults extends TextAreaDefaults {
 		editable = true;
 
 		caretVisible = true;
-		caretBlinks = true;
+//		caretBlinks = true;
 		electricScroll = 3;
 
-		cols = 1;
+		cols = 0;
 		rows = 1;
 
 		styles = SyntaxUtilities.getDefaultSyntaxStyles();
 
-		blockCaret = true;
+//		blockCaret = true;
 		caretColor = Color.red;
 		selectionColor = new Color(0xccccff);
 		lineHighlightColor = new Color(0xe0e0e0);
-		lineHighlight = true;
+//		lineHighlight = true;
 		bracketHighlightColor = Color.black;
-		bracketHighlight = true;
+//		bracketHighlight = true;
 		eolMarkerColor = new Color(0x009999);
-		eolMarkers = false;
+//		eolMarkers = false;
 		paintInvalid = false;
 
 		updateFromPreferences(prefs);
@@ -66,6 +66,11 @@ class JeditTextAreaDefaults extends TextAreaDefaults {
 		styles[Token.KEYWORD1] = new SyntaxStyle(new Color(prefs.getKeyword1RGB()), false, true);
 		styles[Token.KEYWORD2] = new SyntaxStyle(new Color(prefs.getKeyword2RGB()), false, true);
 		styles[Token.KEYWORD3] = new SyntaxStyle(new Color(prefs.getKeyword3RGB()), false, true);
+		blockCaret = prefs.isBlockCaretEnabled();
+		eolMarkers = prefs.getEolMarkers();
+		bracketHighlight = prefs.getBracketHighlighting();
+		lineHighlight = prefs.getCurrentLineHighlighting();
+		caretBlinks = prefs.getBlinkCaret();
 	}
 }
 
