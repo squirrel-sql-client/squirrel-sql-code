@@ -45,6 +45,10 @@ Enhancements
   the Popup (Glenn Griffin).
 - Data containing newlines now shows the newlines explicitly in the in-cell
   view, i.e. as "\n" (Glenn Griffin).
+- User may select specific columns to use in the WHERE clause when editing
+  a specific table.
+- A new row can be inserted into an empty table using the Contents tab
+  by using the right mouse button on the (empty) panel.
 
 Bug Fixes
 ---------
@@ -57,6 +61,8 @@ Bug Fixes
 - Strings (VARCHAR and CLOB) fields containing newlines would loose those
   newlines if edited within the cell.  In-cell editing of that data is now
   blocked (Glenn Griffin).
+- SQL problem with WHERE clause being too long (table has too many columns)
+  fixed by allowing user to select specific columns to use in WHERE.
 
 Other
 -----
