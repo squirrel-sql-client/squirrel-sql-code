@@ -22,7 +22,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.sql.DriverManager;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.ProxySettings;
@@ -35,6 +40,7 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
 import net.sourceforge.squirrel_sql.client.action.ActionKeys;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrameWindowState;
+import net.sourceforge.squirrel_sql.client.plugin.PluginStatus;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 /**
@@ -56,6 +62,7 @@ public class SquirrelPreferences implements Serializable
 		String MAIN_FRAME_STATE = "mainFrameWindowState";
 		String MAXIMIMIZE_SESSION_SHEET_ON_OPEN = "maximizeSessionSheetOnOpen";
 		String PLUGIN_OBJECTS = "pluginObjects";
+		String PLUGIN_STATUSES = "pluginStatuses";
 		String PROXY = "proxyPerferences";
 		String SCROLLABLE_TABBED_PANES = "useScrollableTabbedPanes";
 		String SESSION_PROPERTIES = "sessionProperties";
@@ -146,6 +153,9 @@ public class SquirrelPreferences implements Serializable
 
 	/** Confirm closing sessions */
  	private boolean _confirmSessionClose = true;
+
+	/** Collection of <TT>PluginStatus</tt> objects. */
+	private final ArrayList _pluginStatusInfoColl = new ArrayList();
 
 	/**
 	 * Objects stored by plugins. Each element of this collection is a <TT>Map</TT>
@@ -416,6 +426,43 @@ public class SquirrelPreferences implements Serializable
 		_actionsKeys[idx] = value;
 		getPropertyChangeReporter().firePropertyChange(IPropertyNames.ACTION_KEYS,
 											oldValue, _actionsKeys);
+	}
+
+	public synchronized PluginStatus[] getPluginStatuses()
+	{
+		final PluginStatus[] ar = new PluginStatus[_pluginStatusInfoColl.size()];
+		return (PluginStatus[])_pluginStatusInfoColl.toArray(ar);
+	}
+
+	public PluginStatus getPluginStatus(int idx)
+	{
+		return (PluginStatus)_pluginStatusInfoColl.get(idx);
+	}
+
+	// TODO: Only set if changed? May not be practical.
+	public synchronized void setPluginStatuses(PluginStatus[] data)
+	{
+		if (data == null)
+		{
+			data = new PluginStatus[0];
+		}
+
+		PluginStatus[] oldValue = new PluginStatus[_pluginStatusInfoColl.size()];
+		oldValue = (PluginStatus[])_pluginStatusInfoColl.toArray(oldValue);
+		_pluginStatusInfoColl.clear();
+		_pluginStatusInfoColl.addAll(Arrays.asList(data));
+		getPropertyChangeReporter().firePropertyChange(IPropertyNames.PLUGIN_STATUSES,
+											oldValue, data);
+	}
+
+	// TODO: Only set if changed? May not be practical.
+	public synchronized void setPluginStatus(int idx, PluginStatus value)
+	{
+		_pluginStatusInfoColl.ensureCapacity(idx + 1);
+		final PluginStatus oldValue = (PluginStatus)_pluginStatusInfoColl.get(idx);;
+		_pluginStatusInfoColl.set(idx, value);
+		getPropertyChangeReporter().firePropertyChange(IPropertyNames.PLUGIN_STATUSES,
+											oldValue, value);
 	}
 
 	/**

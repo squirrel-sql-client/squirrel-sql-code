@@ -89,9 +89,9 @@ public class PluginManager
 	private final Map _pluginLoadInfoColl = new HashMap();
 
 	/**
-	 * Ctor. Loads plugins from the plugins directory.
+	 * Ctor.
 	 *
-	 * @param	app	Application API.
+	 * @param	app		Application API.
 	 *
 	 * @throws	IllegalArgumentException.
 	 * 			Thrown if <TT>null</TT> <TT>IApplication</TT> passed.
@@ -288,6 +288,16 @@ public class PluginManager
 		return _pluginsClassLoader.getURLs();
 	}
 
+	public PluginStatus[] getPluginStatuses()
+	{
+		return _app.getSquirrelPreferences().getPluginStatuses();
+	}
+
+	public synchronized void setPluginStatuses(PluginStatus[] values)
+	{
+		_app.getSquirrelPreferences().setPluginStatuses(values);
+	}
+
 	/**
 	 * TODO: Clean this mess up!!!!
 	 * Load plugins. Load all plugin jars into class loader.
@@ -298,6 +308,14 @@ public class PluginManager
 		File dir = new ApplicationFiles().getPluginsDirectory();
 		if (dir.isDirectory())
 		{
+			final Map pluginStatuses = new HashMap();
+			{
+				final PluginStatus[]ar = getPluginStatuses();
+				for (int i = 0; i < ar.length; ++i)
+				{
+					pluginStatuses.put(ar[i].getInternalName(), ar[i]);
+				}
+			}
 			File[] files = dir.listFiles();
 			for (int i = 0; i < files.length; ++i)
 			{
@@ -315,31 +333,37 @@ public class PluginManager
 							}
 							else
 							{
-								pluginUrls.add(file.toURL());
-
-								// See if plugin has any jars in lib dir.
-								final String pluginDirName = Utilities.removeFileNameSuffix(file.getAbsolutePath());
-								final File libDir = new File(pluginDirName, "lib");
-								if (libDir.exists() && libDir.isDirectory())
+								final String fullFilePath = file.getAbsolutePath();
+								final String internalName = Utilities.removeFileNameSuffix(file.getName());
+								final PluginStatus ps = (PluginStatus)pluginStatuses.get(internalName);
+								if (ps == null || ps.isLoadAtStartup())
 								{
-									File[] libDirFiles = libDir.listFiles();
-									for (int j = 0; j < libDirFiles.length; ++j)
+									pluginUrls.add(file.toURL());
+
+									// See if plugin has any jars in lib dir.
+									final String pluginDirName = Utilities.removeFileNameSuffix(fullFilePath);
+									final File libDir = new File(pluginDirName, "lib");
+									if (libDir.exists() && libDir.isDirectory())
 									{
-										if (libDirFiles[j].isFile())
+										File[] libDirFiles = libDir.listFiles();
+										for (int j = 0; j < libDirFiles.length; ++j)
 										{
-											final String fn = libDirFiles[j].getAbsolutePath();
-											if (fn.toLowerCase().endsWith(".zip") ||
-													fn.toLowerCase().endsWith(".jar"))
+											if (libDirFiles[j].isFile())
 											{
-												try
+												final String fn = libDirFiles[j].getAbsolutePath();
+												if (fn.toLowerCase().endsWith(".zip") ||
+														fn.toLowerCase().endsWith(".jar"))
 												{
-													pluginUrls.add(libDirFiles[j].toURL());
-												}
-												catch (IOException ex)
-												{
-													String msg = s_stringMgr.getString("PluginManager.error.loadlib", fn);
-													s_log.error(msg, ex);
-													_app.showErrorDialog(msg, ex);
+													try
+													{
+														pluginUrls.add(libDirFiles[j].toURL());
+													}
+													catch (IOException ex)
+													{
+														String msg = s_stringMgr.getString("PluginManager.error.loadlib", fn);
+														s_log.error(msg, ex);
+														_app.showErrorDialog(msg, ex);
+													}
 												}
 											}
 										}
