@@ -38,7 +38,7 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
 		super();
 		if (s_dscrs == null)
 		{
-			s_dscrs = new PropertyDescriptor[20];
+			s_dscrs = new PropertyDescriptor[21];
 			s_dscrs[0] = new PropertyDescriptor(SESSION_PROPERTIES, CLS,
 									"getSessionProperties", "setSessionProperties");
 			s_dscrs[1] = new PropertyDescriptor(MAIN_FRAME_STATE, CLS,
@@ -80,6 +80,9 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
 								"isFirstRun", "setFirstRun");
  			s_dscrs[19] = new PropertyDescriptor(CONFIRM_SESSION_CLOSE, CLS,
 					"getConfirmSessionClose", "setConfirmSessionClose");
+			s_dscrs[20] = new IndexedPropertyDescriptor(PLUGIN_STATUSES, CLS,
+								"getPluginStatuses", "setPluginStatuses",
+								"getPluginStatus", "setPluginStatus");
 		}
 	}
 

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.plugin;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -18,12 +18,10 @@ package net.sourceforge.squirrel_sql.client.plugin;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -31,12 +29,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
@@ -51,18 +47,28 @@ public class PluginSummaryDialog extends JFrame
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(PluginSummaryDialog.class);
 
+	private final IApplication _app;
+
+	private PluginSummaryTable _pluginPnl;
+
 	public PluginSummaryDialog(IApplication app, Frame owner)
 		throws DataSetException
 	{
 		super(s_stringMgr.getString("PluginSummaryDialog.title"));
-		createGUI(app);
+		_app = app;
+		createGUI();
 	}
 
-	private void createGUI(IApplication app) throws DataSetException
+	private void saveSettings()
+	{
+		_app.getPluginManager().setPluginStatuses(_pluginPnl.getPluginStatus());
+	}
+
+	private void createGUI() throws DataSetException
 	{
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-		final SquirrelResources rsrc = app.getResources();
+		final SquirrelResources rsrc = _app.getResources();
 		final ImageIcon icon = rsrc.getIcon(SquirrelResources.IImageNames.PLUGINS);
 		if (icon != null)
 		{
@@ -80,13 +86,25 @@ public class PluginSummaryDialog extends JFrame
 		contentPane.add(pluginLoc, BorderLayout.NORTH);
 
 		// Table of loaded plugins in centre of dialog.
-		final PluginInfo[] pluginInfo = app.getPluginManager().getPluginInformation();
-		final Component pluginPnl = new PluginSummaryPanel(pluginInfo).getComponent();
-		contentPane.add(new JScrollPane(pluginPnl), BorderLayout.CENTER);
+		final PluginManager pmgr = _app.getPluginManager();
+		final PluginInfo[] pluginInfo = pmgr.getPluginInformation();
+		final PluginStatus[] pluginStatus = pmgr.getPluginStatuses();
+		_pluginPnl = new PluginSummaryTable(pluginInfo, pluginStatus);
+		contentPane.add(new JScrollPane(_pluginPnl), BorderLayout.CENTER);
 
-		// Ok button at bottom of dialog.
-		JPanel btnsPnl = new JPanel();
-		JButton closeBtn = new JButton(s_stringMgr.getString("PluginSummaryDialog.close"));
+		final JPanel btnsPnl = new JPanel();
+//TODO: Enable once load works for plugins.
+//		final JButton okBtn = new JButton(s_stringMgr.getString("PluginSummaryDialog.ok"));
+//		okBtn.addActionListener(new ActionListener()
+//		{
+//			public void actionPerformed(ActionEvent evt)
+//			{
+//				saveSettings();
+//				dispose();
+//			}
+//		});
+//		btnsPnl.add(okBtn);
+		final JButton closeBtn = new JButton(s_stringMgr.getString("PluginSummaryDialog.close"));
 		closeBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
@@ -96,8 +114,6 @@ public class PluginSummaryDialog extends JFrame
 		});
 		btnsPnl.add(closeBtn);
 		contentPane.add(btnsPnl, BorderLayout.SOUTH);
-
-		getRootPane().setDefaultButton(closeBtn);
 
 		pack();
 		GUIUtils.centerWithinParent(this);

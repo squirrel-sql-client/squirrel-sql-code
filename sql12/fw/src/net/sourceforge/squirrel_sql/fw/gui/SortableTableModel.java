@@ -73,6 +73,7 @@ public class SortableTableModel extends AbstractTableModel
 		{
 			_actualModel.addTableModelListener(_actualModelLis);
 		}
+		tableChanged();
 	}
 
 	/**
@@ -232,6 +233,15 @@ public class SortableTableModel extends AbstractTableModel
 		return _bAscending;
 	}
 
+	private void tableChanged()
+	{
+		_indexes = new Integer[getRowCount()];
+		for (int i = 0; i < _indexes.length; ++i)
+		{
+			_indexes[i] = new Integer(i);
+		}
+	}
+
 	class TableModelComparator implements Comparator
 	{
 		private int _iColumn;
@@ -316,11 +326,7 @@ public class SortableTableModel extends AbstractTableModel
 	{
 		public void tableChanged(TableModelEvent evt)
 		{
-			_indexes = new Integer[getRowCount()];
-			for (int i = 0; i < _indexes.length; ++i)
-			{
-				_indexes[i] = new Integer(i);
-			}
+			SortableTableModel.this.tableChanged();
 		}
 	}
 }
