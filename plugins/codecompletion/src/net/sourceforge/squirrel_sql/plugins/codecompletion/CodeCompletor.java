@@ -52,7 +52,9 @@ public class CodeCompletor
 		KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false),
 		KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0, false),
 		KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0, false),
-		KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0, false)
+		KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0, false),
+		KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, 0, false),
+		KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, 0, false)
 	};
 
 
@@ -139,6 +141,36 @@ public class CodeCompletor
 				_completionList.ensureIndexIsVisible(newSelIx);
 			}
 		}
+      else if(e.getKeyCode() == KeyEvent.VK_PAGE_UP)
+      {
+         if(0 < _completionList.getSelectedIndex() - MAX_ITEMS_IN_COMPLETION_LIST)
+         {
+            int newSelIx = _completionList.getSelectedIndex() - MAX_ITEMS_IN_COMPLETION_LIST;
+            _completionList.setSelectionInterval(newSelIx, newSelIx);
+            _completionList.ensureIndexIsVisible(newSelIx);
+         }
+         else
+         {
+            _completionList.setSelectionInterval(0, 0);
+            _completionList.ensureIndexIsVisible(0);
+         }
+      }
+      else if(e.getKeyCode() == KeyEvent.VK_PAGE_DOWN)
+      {
+         if(_completionList.getSelectedIndex() + MAX_ITEMS_IN_COMPLETION_LIST < _completionList.getModel().getSize())
+         {
+            int newSelIx = _completionList.getSelectedIndex() + MAX_ITEMS_IN_COMPLETION_LIST;
+            _completionList.setSelectionInterval(newSelIx, newSelIx);
+            _completionList.ensureIndexIsVisible(newSelIx);
+         }
+         else
+         {
+            int lastIndex = _completionList.getModel().getSize() - 1;
+            _completionList.setSelectionInterval(lastIndex, lastIndex);
+            _completionList.ensureIndexIsVisible(lastIndex);
+         }
+
+      }
 		else
 		{
 			_currBegining += e.getKeyChar();
