@@ -758,6 +758,9 @@ determine how to display the column.</P>
 	<DT><B>java.sql.Types.TIMESTAMP</B>
 	<DD>A <EM>java.sql.TimeStamp</EM> object is retrieved from the result set
 	and displayed in <EM>yyyy-mm-dd hh:mm:ss.fffffffff</EM> format.
+	WARNING: When updating any column in a row  containing TIMESTAMP fields,
+	the MySQL DBMS will automatically set the first TIMESTAMP field in the row
+	to the current time.  This is a "feature" of MySQL, and not a bug in SQuirreL.
 
 	<DT><B>java.sql.Types.BIGINT</B>
 	<DD>If the retrieved column type is a <EM>java.lang.Long</EM> or a
