@@ -27,17 +27,14 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
-import net.sourceforge.squirrel_sql.client.plugin.PluginException;
-import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-
+import net.sourceforge.squirrel_sql.plugins.mysql.action.AlterTableAction;
 import net.sourceforge.squirrel_sql.plugins.mysql.action.AnalyzeTableAction;
 import net.sourceforge.squirrel_sql.plugins.mysql.action.CheckTableAction;
+import net.sourceforge.squirrel_sql.plugins.mysql.action.CopyTableAction;
+import net.sourceforge.squirrel_sql.plugins.mysql.action.CreateDatabaseAction;
 import net.sourceforge.squirrel_sql.plugins.mysql.action.CreateMysqlTableScriptAction;
+import net.sourceforge.squirrel_sql.plugins.mysql.action.CreateTableAction;
+import net.sourceforge.squirrel_sql.plugins.mysql.action.DropDatabaseAction;
 import net.sourceforge.squirrel_sql.plugins.mysql.action.ExplainSelectTableAction;
 import net.sourceforge.squirrel_sql.plugins.mysql.action.ExplainTableAction;
 import net.sourceforge.squirrel_sql.plugins.mysql.action.OptimizeTableAction;
@@ -50,6 +47,14 @@ import net.sourceforge.squirrel_sql.plugins.mysql.tab.ShowLogsTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.ShowVariablesTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.TableStatusTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.UserGrantsTab;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
+import net.sourceforge.squirrel_sql.client.plugin.PluginException;
+import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
  * MySQL plugin class.
  *
@@ -68,6 +73,9 @@ public class MysqlPlugin extends DefaultSessionPlugin
 
 	/** API for the Obejct Tree. */
 	private IObjectTreeAPI _treeAPI;
+
+	/** MySQL menu. */
+	private JMenu _mySQLMenu;
 
 	/**
 	 * Return the internal name of this plugin.
@@ -96,7 +104,7 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	 */
 	public String getVersion()
 	{
-		return "0.20";
+		return "0.25";
 	}
 
 	/**
@@ -182,7 +190,14 @@ public class MysqlPlugin extends DefaultSessionPlugin
 		coll.add(new ExplainTableAction(app, _resources, this));
 		coll.add(new OptimizeTableAction(app, _resources, this));
 
-		app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, createMysqlMenu());
+		coll.add(new CreateDatabaseAction(app, _resources, this));
+		coll.add(new DropDatabaseAction(app, _resources, this));
+		coll.add(new AlterTableAction(app, _resources, this));
+		coll.add(new CreateTableAction(app, _resources, this));
+		coll.add(new CopyTableAction(app, _resources, this));
+
+		_mySQLMenu = createFullMysqlMenu();
+		app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, _mySQLMenu);
 	}
 
 	/**
@@ -212,7 +227,6 @@ public class MysqlPlugin extends DefaultSessionPlugin
 			{
 				_treeAPI = session.getObjectTreeAPI(this);
 				final ActionCollection coll = getApplication().getActionCollection();
-				_treeAPI.addToPopup(DatabaseObjectType.TABLE, createMysqlMenu());
 
 				// Show users in the object tee.
 				_treeAPI.addExpander(DatabaseObjectType.SESSION, new SessionExpander());
@@ -230,22 +244,33 @@ public class MysqlPlugin extends DefaultSessionPlugin
 
 				// Tabs to add to the user node.
 				_treeAPI.addDetailTab(DatabaseObjectType.USER, new UserGrantsTab());
+
+				// Options in popup menu.
+				_treeAPI.addToPopup(coll.get(CreateDatabaseAction.class));
+
+				_treeAPI.addToPopup(DatabaseObjectType.SESSION, coll.get(CreateTableAction.class));
+				_treeAPI.addToPopup(DatabaseObjectType.CATALOG, coll.get(CreateTableAction.class));
+				_treeAPI.addToPopup(DatabaseObjectType.CATALOG, coll.get(DropDatabaseAction.class));
+
+				_treeAPI.addToPopup(DatabaseObjectType.TABLE, createMysqlTableMenu());
 			}
 		}
 		return isMysql;
 	}
 
 	/**
-	 * Create menu containing actions relevant for the object tree.
+	 * Create menu containing actions relevant for table nodes in the object
+	 * tree.
 	 *
 	 * @return	The menu object.
 	 */
-	private JMenu createMysqlMenu()
+	private JMenu createMysqlTableMenu()
 	{
 		final IApplication app = getApplication();
 		final ActionCollection coll = app.getActionCollection();
 
 		final JMenu mysqlMenu = _resources.createMenu(MysqlResources.IMenuResourceKeys.MYSQL);
+
 		_resources.addToMenu(coll.get(CreateMysqlTableScriptAction.class), mysqlMenu);
 
 		_resources.addToMenu(coll.get(AnalyzeTableAction.class), mysqlMenu);
@@ -261,7 +286,42 @@ public class MysqlPlugin extends DefaultSessionPlugin
 		_resources.addToMenu(coll.get(CheckTableAction.QuickCheckTableAction.class), checkTableMenu);
 		mysqlMenu.add(checkTableMenu);
 
-		app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, mysqlMenu);
+		_resources.addToMenu(coll.get(AlterTableAction.class), mysqlMenu);
+		_resources.addToMenu(coll.get(CopyTableAction.class), mysqlMenu);
+
+		return mysqlMenu;
+	}
+
+	/**
+	 * Create menu containing all MYSQL actions.
+	 *
+	 * @return	The menu object.
+	 */
+	private JMenu createFullMysqlMenu()
+	{
+		final IApplication app = getApplication();
+		final ActionCollection coll = app.getActionCollection();
+
+		final JMenu mysqlMenu = _resources.createMenu(MysqlResources.IMenuResourceKeys.MYSQL);
+
+		_resources.addToMenu(coll.get(CreateDatabaseAction.class), mysqlMenu);
+//		_resources.addToMenu(coll.get(DropDatabaseAction.class), mysqlMenu);
+
+		_resources.addToMenu(coll.get(CreateMysqlTableScriptAction.class), mysqlMenu);
+		_resources.addToMenu(coll.get(CreateTableAction.class), mysqlMenu);
+
+		_resources.addToMenu(coll.get(AnalyzeTableAction.class), mysqlMenu);
+		_resources.addToMenu(coll.get(ExplainTableAction.class), mysqlMenu);
+		_resources.addToMenu(coll.get(ExplainSelectTableAction.class), mysqlMenu);
+		_resources.addToMenu(coll.get(OptimizeTableAction.class), mysqlMenu);
+
+		final JMenu checkTableMenu = _resources.createMenu(MysqlResources.IMenuResourceKeys.CHECK_TABLE);
+		_resources.addToMenu(coll.get(CheckTableAction.ChangedCheckTableAction.class), checkTableMenu);
+		_resources.addToMenu(coll.get(CheckTableAction.ExtendedCheckTableAction.class), checkTableMenu);
+		_resources.addToMenu(coll.get(CheckTableAction.FastCheckTableAction.class), checkTableMenu);
+		_resources.addToMenu(coll.get(CheckTableAction.MediumCheckTableAction.class), checkTableMenu);
+		_resources.addToMenu(coll.get(CheckTableAction.QuickCheckTableAction.class), checkTableMenu);
+		mysqlMenu.add(checkTableMenu);
 
 		return mysqlMenu;
 	}
