@@ -300,7 +300,8 @@ public class DataTypeBigDecimal
 				// This only applies to Popup editing since these chars are
 				// not passed to this level by the in-cell editor.
 				if (c == KeyEvent.VK_TAB || c == KeyEvent.VK_ENTER) {
-					((IRestorableTextComponent)_theComponent).updateText(text.substring(0, text.length()-1));
+					// remove all instances of the offending char
+					((IRestorableTextComponent)_theComponent).updateText( text.replaceAll(""+c, ""));
 					_theComponent.getToolkit().beep();
 					e.consume();
 				}
