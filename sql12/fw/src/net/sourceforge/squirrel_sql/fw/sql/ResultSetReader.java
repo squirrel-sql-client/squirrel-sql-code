@@ -255,6 +255,10 @@ public class ResultSetReader
 					case Types.SMALLINT:
 					case Types.TINYINT:
 						row[i] = _rs.getObject(idx);
+						if (_rs.wasNull())
+						{
+							row[i] = null;
+						}
 						if (row[i] != null
 							&& !(row[i] instanceof Integer))
 						{
@@ -279,6 +283,10 @@ public class ResultSetReader
 					case -9:
 					case -8:
 						row[i] = _rs.getString(idx);
+						if (_rs.wasNull())
+						{
+							row[i] = null;
+						}
 						break;
 
 					case Types.BINARY:

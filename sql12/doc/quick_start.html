@@ -2,39 +2,45 @@
 
 <HEAD>
 	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-8859-1">
-    <TITLE>SQuirreL SQL Client Help</TITLE>
+	<TITLE>SQuirreL SQL Client Help</TITLE>
 	<LINK REL="stylesheet" TYPE="text/css" href="style.css" title="SQuirreL SQL Client Stylesheet">
 </HEAD>
 
 <BODY>
 
 <TABLE>
-    <TR>
-        <TD WIDTH="310">
+	<TR>
+		<TD WIDTH="310">
 			<IMG SRC="images/logo_1.jpg" WIDTH="302" HEIGHT="99" BORDER="0" ALT="SQuirreL SQL Client Logo">
-        </TD>
-        <TD ALIGN="left">
-            <H1>SQL Client Help File</H1>
-        </TD>
-    </TR>
+		</TD>
+		<TD ALIGN="left">
+			<H1>SQL Client Help File</H1>
+		</TD>
+	</TR>
 </TABLE>
 
 <TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
-    <TR><TD><B>Contents</B></TD></TR>
-    <TR><TD><A HREF="#introduction">Introduction</A></TD></TR>
+	<TR><TD><B>Contents</B></TD></TR>
+	<TR><TD><A HREF="#introduction">Introduction</A></TD></TR>
 	<TR><TD><A HREF="#installation">Installation</A></TD></TR>
 	<TR><TD><A HREF="#cmd_line_options">Command Line Options</A></TD></TR>
-    <TR><TD><A HREF="#howtoconnect">How to Connect to a Database</A></TD></TR>
-    <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#the_driver">The Driver</A></TD></TR>
-    <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#the_alias">The Alias</A></TD></TR>
-    <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#connecting">Connecting</A></TD></TR>
-    <TR><TD><A HREF="#executing">Executing SQL</A></TD></TR>
-    <TR><TD><A HREF="#data_types">Data Types</A></TD></TR>
-    <TR><TD><A HREF="#global_prefs">Global Preferences</A></TD></TR>
-    <TR><TD><A HREF="#session_props">New Session and Session Properties</A></TD></TR>
-    <TR><TD><A HREF="#plugins">Plugins</A></TD></TR>
-    <TR><TD><A HREF="#logs">Logs</A></TD></TR>
-    <TR><TD><A HREF="#menus">Menus</A></TD></TR>
+	<TR><TD><A HREF="#howtoconnect">How to Connect to a Database</A></TD></TR>
+	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#the_driver">The Driver</A></TD></TR>
+	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#the_alias">The Alias</A></TD></TR>
+	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#connecting">Connecting</A></TD></TR>
+	<TR><TD><A HREF="#executing">Executing SQL</A></TD></TR>
+	<TR><TD><A HREF="#editingdata">Editing Data in the Contents Tab</A></TD></TR>
+	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#enablingediting">Enabling Editing</A></TD></TR>
+	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#howtoedit">How To Edit</A></TD></TR>
+	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#Limitations">Limitations</A></TD></TR>
+	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#summary_of_how_it_works">Summary of How it works (and why you may care)</A></TD></TR>
+	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#quirks">Quirks, Oddities and Known Bugs and work-arounds</A></TD></TR>
+	<TR><TD><A HREF="#data_types">Data Types</A></TD></TR>
+	<TR><TD><A HREF="#global_prefs">Global Preferences</A></TD></TR>
+	<TR><TD><A HREF="#session_props">New Session and Session Properties</A></TD></TR>
+	<TR><TD><A HREF="#plugins">Plugins</A></TD></TR>
+	<TR><TD><A HREF="#logs">Logs</A></TD></TR>
+	<TR><TD><A HREF="#menus">Menus</A></TD></TR>
 	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#file_menu">File Menu</A></TD></TR>
 	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#drivers_menu">Drivers Menu</A></TD></TR>
 	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#aliases_menu">Aliases Menu</A></TD></TR>
@@ -136,7 +142,7 @@ java net.sourceforge.squirrel_sql.client.Main -loggingConfigFile=c:\config.prope
 
 <P>The application directory is specified by the <TT>squirrelHome</TT>
 argument. This tells SQuirreL where to look for plugins etc. This should
-be the directory that you installed SQuirreL into.  E.G.</P>
+be the directory that you installed SQuirreL into. E.G.</P>
 
 <PRE>
 java net.sourceforge.squirrel_sql.client.Main -squirrelHome=$SQUIRREL_SQL_HOME
@@ -239,7 +245,7 @@ any changes.</P>
 <P>Now you need to create an alias to your database.</P>
 
 <P>Display the Aliases List window (<EM>View Aliases</EM>
-option on the <EM>Windows</EM> menu).  When you run SQuirreL
+option on the <EM>Windows</EM> menu). When you run SQuirreL
 for the first time this window will be empty.</P>
 
 <P ALIGN="CENTER"><IMG SRC="images/aliases_tool_window_1.png" BORDER="0"
@@ -279,7 +285,7 @@ any changes.</P>
 <A NAME="connecting"><H3>Connecting</H3></A>
 
 <P>The new alias should now appear in the <EM>Connect To</EM>
-dropdown.  Select it in the dropdown and enter your user name and
+dropdown. Select it in the dropdown and enter your user name and
 password in the connection dialog, press <EM>OK</EM> and you should be
 connected.</P>
 
@@ -347,6 +353,235 @@ results from the tabbed folder and display it in its own window.</P>
 
 <P ALIGN="CENTER"><IMG SRC="images/sql_2.png" BORDER="0"
 			ALT="&quot;Torn off&quot; query results"></P>
+
+<A NAME="editingdata"><h2>Editing Data in the Contents Tab</h2></A>
+
+<P>SQuirreL allows you to easily change the data in a table. Data may
+be changed just by typing the new values when you are viewing the table
+in the Contents tab under the Objects view.</P>
+
+<A NAME="enablingediting"><h3>Enabling Editing</h3></A>
+
+<P>When initially set up, the Contents Tab may be set in a read-only
+mode. This is a safety precaution. Once a table is made editable, any
+change that you make is made immediately in the database. While
+extremely convenient, this is dangerous. With this capability enabled,
+it becomes very easy to accidentally destroy data, violate come
+consistancy checks, mis-direct references between tables, etc. On the
+other hand, the author of this feature runs with editing always enabled.
+It is simpler that way, but has the potential for disaster. <b>You have
+	been warned!</b></P>
+
+<P>You can set SQuirreL so that tables are editable all the time, or you
+can enable editing on a specific table as you are working on it. Either
+option may be set as your default mode of operation, and either option
+may be selected for use on a specific table.</P>
+
+<P>Editing may only be done in the Object view, not on the results of
+manually entered SQL queries run under the SQL view. At this time the
+only data that may be edited is the Contents tab of individual
+tables.</P>
+
+<a name="Setting_the_Editing_Mode"><h4>Setting the Editing Mode</h4></a>
+
+<P>To set the default format for the Contents Tab for new sessions take
+the <em>New Session Properties</em> option from the <em>File</em> and
+click on the <EM>General</EM> tab. The <b>Table Contents</b> dropdown
+list gives three options for the format of the Comtemts Tab:</P>
+
+<dl>
+	<dt>Table</dt>
+	<dd>The data in the Contents tab is a read-only table. You may click in
+	any cell or tab through the table and any accidental typing you do will
+	be ignored and not change the database. To enable editing on this table,
+	click on the right mouse button and select the <b>Make Editable</b>
+	option. This makes that table <i>and only that table</i> editable.</dd>
+</dl>
+
+<dl>
+	<dt>Text</dt>
+	<dd>The data in the Contents tab is shown as simple formatted text and
+	is read-only. To enable editing on this table, &nbsp;click on the right mouse
+	button and select the <b>Make Editable</b> option. &nbsp;This makes the table
+	<i>and only that table</i> editable</dd>
+</dl>
+
+<dl>
+	<dt>Editable Table</dt>
+	<dd>The data in the Contents tab is an editable table. Changes
+	made to the data in this view are made to the database.</dd>
+</dl>
+
+<P>After you have connected with a database, you may change the default
+model for the data in the Contents tab by the <em>Session
+	Properties</em> option from the <em>Session</em> and clicking on the
+<EM>General</EM> tab and changing the selection for <em>Table
+	Contents</em>.</P>
+
+<A name="howtoedit"><h3>How To Edit</h3><A>
+		
+<P>Here is how to edit data in the table:</P>
+
+<ol>
+	<li>Connect to the database.</li>
+
+	<li>Select a table in the object tree and select the
+		<EM>Contents</EM> tab to view the data.</li>
+
+	<li>Make sure the table is editable. &nbsp;See <a
+		href="#Setting_the_Editing_Mode">Setting the Editing
+		Mode</a> above.</li>
+
+	<li>Select the cell that you want to edit. &nbsp;This may be done
+		either by using the keyboard (tab and enter keys) to move around the
+		table to reach the cell, or you may click on the cell with the
+		mouse. &nbsp;Note that if a cell cannot be edited (see <a
+			href="#Limitations">Limitations</a>) you may select the cell,
+		but you will not be allowed to edit the data.</li>
+
+	<li>Change the data in the cell to look the way that you want it
+		to. &nbsp;Editing is done in the usual way by typing characters,
+		using delete to erase, and using the mouse to select a point to
+		insert or characters to delete. &nbsp;There are a couple of
+		specialized features that are described later in this
+		section.</li>
+
+	<li>When the data in the cell looks the way you want,
+		leave the cell by pressing the tab key, the enter key, or
+		clicking on another cell with the mouse. &nbsp;This
+		causes the data in that cell to be updated in the DB.</li>
+
+</ol>
+
+<P>If the data in the cell gets really messed up and you are confused
+about what is going on, press the <ESC> key. If that doesn't work then
+close the database connection without leaving the cell (&lt;ctrl&gt;W).
+This will abort the operation and avoid changing the DB.</P>
+
+<P>If the cell contains a NULL value, that is shown as the string
+"&lt;null&gt;".  &nbsp;To change that to a non-null value, just type the
+new data. &nbsp;When you enter the first character of the data, the
+"&lt;null&gt;" will be replaced by that character.</P>
+
+<P>To change the value of a nullable cell to NULL, just delete all of the
+data  in that cell. &nbsp;When you delete the last character, the contents
+of the  cell will be set to "&lt;null&gt;".</P>
+
+<P>If a cell is not nullable, deleting the last character in the cell will
+leave the cell blank. &nbsp;You may then enter new data for the cell.</P>
+
+<P>To restore the cell to its original value, delete all of the data in the
+ cell, then press the delete key one more time. &nbsp;This will cause the
+cell to be reset to its original value. &nbsp;For cells that allow nulls,
+continually pressing the delete key causes a cycle:</P>
+
+<P>&nbsp;&nbsp;&nbsp; original data -&gt;&nbsp; delete data -&gt; &nbsp;&lt;null&gt;
+-&gt; original data</P>
+
+<P>and for cells that do not allow nulls:</P>
+  
+<P>&nbsp;&nbsp;&nbsp; original data -&gt; delete data -&gt; blank cell -&gt;
+original data</P>
+ 
+<P>Thus, if you mess up the contents of a cell, just press the delete key
+until you see the original data reappear.</P>
+
+<P>When leaving the cell, if the cell data is identical to the original contents
+of the cell, the DB will not be updated.</P>
+
+<h3><a name="Limitations"></a>Limitations</h3>
+
+<P>Editing only works for JDBC types of INTEGER, SMALLINT, TINYINT,
+CHAR, VARCHAR,  LONGCHAR and JDBC codes -8 and -9.  It has not been
+tested with TINYINT,  LONGCHAR or types -8 and -9.  Other types will be
+included in the future.</P>
+
+<P>Some attempt has been made to validate user input for each of the
+types.  For example, INTEGER fields allow only digits and '-' as input.
+However, not all of the necessary information is supplied by all DBMSs,
+so we cannot do a complete validation of user input in all cases.  For
+example, we cannot check that a value  entered for a SMALLINT field
+will fit into a SMALLINT column in this DBMS.  The "validation of last
+resort" is done when we try to do an update on the DB.  The DBMS either
+succeeds or it fails, and if there is an error we display that message
+to the user with the information that the DB has not been updated.</P>
+
+<P>VARCHAR fields cannot include tab or newline. &nbsp;VARCHAR fields
+that may be set to null cannot be set to the string value&nbsp;
+"&lt;null&gt; " without  the quotes.  VARCHAR fields in the database may
+include those values as long  as you do not try to edit them.</P>
+
+<P>If you have the "Show String Data" function disabled for any data
+type (e.g.  the table shows "&lt;BINARY&gt;" rather than the actual
+data), you may not be able to make changes in tables using that data
+type. &nbsp;This has not been tested, so we don't know if it will work
+or not.</P>
+
+<P>The pop-up window that is created when you double-click on a cell is
+not editable.  We hope to make it editable in the future.</P>
+
+<A NAME="summary_of_how_it_works"><h3>Summary of How it works (and why
+		you may care)</h3></A>
+
+<P>The DB updates are based on the assumption that the list of DB column names
+and their values for the current row are unique, or if they are not unique,
+that all of the rows with those values are to be updated in the DB. For
+example, if you have a database with columns a, b, and c, and in a particular
+row you have the values</P>
+
+<PRE>
+&nbsp;&nbsp;&nbsp; a=34 &nbsp;b='your name' &nbsp;c=55
+</PRE>
+
+<P>and you change column c to be 66, then SQuirreL does the following:</P>
+
+<ol>
+	<li>Query the DB for how many rows contain a=34, b='your name', and
+	c=55. &nbsp;If there are more than one, then the update will affect all
+	of those rows, so SQuirreL asks if you want to do that before
+	continuing.</li>
+
+	<li>Query the DB for how many rows contain a=34, b='your
+	name' and c=66. &nbsp;If there are any existing rows with
+	those values, changing the current row to c=66 will make
+	the current row identical to the existing row(s), so
+	SQuirreL asks if you want to do that before
+	continuing.</li>
+
+	<li>Create and execute the following:</li>
+</ol>
+
+<PRE>
+update &lt;table&gt; set c=66 where
+&nbsp;&nbsp;&nbsp;&nbsp;a=34 and b='your name' and c=55
+</PRE>
+
+<P>To help distinguish rows that are similar to each other, any DBMS that provides
+a pseudo-column to uniquely identify each row (such as Oracle's ROWID) has
+that pseudo-column included in all querys.</P>
+
+<P>The problem with this is that some columns cannot be handled in this
+way, most notably BLOBs and CLOBs. &nbsp;Thus, if your table contains
+BLOB or CLOB columns, SQuirreL may think that rows are identical because
+all of the non-BLOB/CLOB fields are identical, but the rows are actually
+not the same because the contents of the BLOB/CLOB fields differ.
+&nbsp;This could lead to "erroneous" warning messages.</P>
+
+<A NAME="quirks"><h3>Quirks, Oddities and Known Bugs and
+		work-arounds</h3></A>
+
+<ul>
+
+	<li>After error or warning messages, the focus is lost.  You
+	will need to click on a cell in order to continue editing.</li>
+
+	<li>When using the enter key to leave a cell, you must press
+	it two times. &nbsp;The first time causes the data to be updated in the
+	DB,  but leave you back in the same cell. &nbsp;Pressing enter again moves
+	to the cell below the current one.<br>
+	</li>
+
+</ul>
 
 <A NAME="data_types"><H2>Data Types</H2></A>
 

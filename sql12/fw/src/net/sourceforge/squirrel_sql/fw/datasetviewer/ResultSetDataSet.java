@@ -194,11 +194,31 @@ public class ResultSetDataSet implements IDataSet
 		for (int i = 0; i < _columnCount; ++i)
 		{
 			int idx = columnIndices != null ? columnIndices[i] : i + 1;
+
+			// save various info about the column for use in user input validation
+			// when editing table contents.
+			// Note that the columnDisplaySize is included two times, where the first
+			// entry may be adjusted for actual display while the second entry is the
+			// size expected by the DB.
+			// The isNullable() method returns three values that we convert into two
+			// by saying that if it is not known whether or not a column allows nulls,
+			// we will allow the user to enter nulls and any problems will be caught
+			// when they try to save the data to the DB
+			boolean isNullable = true;
+			if (md.isNullable(idx) == md.columnNoNulls)
+				isNullable = false;
+
 			columnDefs[i] =
  					new ColumnDisplayDefinition(
  					computeWidths ? colWidths[i] : md.getColumnDisplaySize(idx),
  					md.getColumnLabel(idx),
- 					md.getColumnType(idx));
+ 					md.getColumnType(idx),
+ 					isNullable,
+ 					md.getColumnDisplaySize(idx),
+ 					md.getPrecision(idx),
+ 					md.getScale(idx),
+ 					md.isSigned(idx),
+ 					md.isCurrency(idx));
 		}
 		return columnDefs;
 	}

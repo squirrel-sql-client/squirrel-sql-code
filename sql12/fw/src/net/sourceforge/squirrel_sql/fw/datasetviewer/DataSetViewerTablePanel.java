@@ -33,6 +33,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.DefaultCellEditor;	//?? May not be needed??
 import javax.swing.JDialog;
 import javax.swing.JInternalFrame;
 import javax.swing.JLayeredPane;
@@ -45,6 +46,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.TableCellEditor;	//?? May not be needed??
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
@@ -270,6 +272,32 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 			_creator.setCellEditors(this);
 		}
 
+		// JTable is inconsistant with passing events such as key strokes
+		// into the components of CellEditors depending on whether you enter
+		// the cell with a tab or by clicking the mouse on it.  In one case
+		// JTable passes key events in, and in the other case it handles them
+		// itself in a pseudo-edit mode.  This makes it difficult to grab key
+		// strokes to do our own special behavior (e.g. null handling).
+		// There are several solutions proposed on the internet,but this way
+		// seems to be the easiest.  Whenever the JTable goes into edit mode on
+		// a cell, we force all events to go to that cell by having it get the
+		// focus.  The cell component is our own special class that implements
+		// the necessary behavior.
+		// Note that the special component classes use AWT event handling for
+		// processing key strokes.  There are recommendations that say that mixing
+		// AWT and Swing event processing is not recommended.  However, there is a
+		// document at the Sun Java site that recommends processing key presses in
+		// this way, so it should work.
+		public boolean editCellAt(int row, int col) {
+			boolean result = super.editCellAt(row, col);
+			DefaultCellEditor ed = (DefaultCellEditor)super.getCellEditor(row, col);
+			if (ed != null)
+				ed.getComponent().requestFocus();
+			return result;
+		}
+
+
+
 		public void setColumnDefinitions(ColumnDisplayDefinition[] colDefs)
 		{
 			TableColumnModel tcm = createColumnModel(colDefs);
@@ -293,121 +321,121 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 			_tablePopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
 		}
 
-		private void showTextAreaDialog(MouseEvent evt)
-		{
-			Point pt = evt.getPoint();
-			int row = rowAtPoint(pt);
-			int col = columnAtPoint(pt);
-
-			Component comp = SwingUtilities.getRoot(this);
-			Object obj = _comp.getValueAt(row, col);
-			if (obj != null)
-			{
-				obj = obj.toString();
-			}
-			else
-			{
-				obj = "";
-			}
-
-			Component newComp = null;
-			if (comp instanceof BaseMDIParentFrame)
-			{
-				TextAreaInternalFrame taif = new TextAreaInternalFrame(_typedModel.getColumnName(col), (String)obj);
-				((BaseMDIParentFrame)comp).addInternalFrame(taif, false);
-				taif.setLayer(JLayeredPane.POPUP_LAYER);
-				taif.pack();
-				newComp = taif;
-			}
-			else
-			{
-				TextAreaDialog tad = null;
-				if (comp instanceof Dialog)
-				{
-					tad = new TextAreaDialog((Dialog)comp, _typedModel.getColumnName(col), (String)obj);
-				}
-				else if (comp instanceof Frame)
-				{
-					tad = new TextAreaDialog((Frame)comp, _typedModel.getColumnName(col), (String)obj);
-				}			
-				else
-				{
-					s_log.error("Creating TextAreaDialog for invalid parent of: " + comp.getClass().getName());
-					return;
-				}	
-				tad.pack();
-				newComp = tad;
-			}
-
-			Dimension dim = newComp.getSize();
-			boolean dimChanged = false;
-			if (dim.width < 250)
-			{
-				dim.width = 250;
-				dimChanged = true;
-			}
-			if (dim.height < 100)
-			{
-				dim.height = 100;
-				dimChanged = true;
-			}
-			if (dim.width > 500)
-			{
-				dim.width = 500;
-				dimChanged = true;
-			}
-			if (dim.height > 400)
-			{
-				dim.height = 400;
-				dimChanged = true;
-			}
-			if (dimChanged)
-			{
-				newComp.setSize(dim);
-			}
-			if (comp instanceof BaseMDIParentFrame)
-			{
-				pt = SwingUtilities.convertPoint((Component) evt.getSource(), pt, comp);
-				pt.y -= dim.height;
-			}
-			else
-			{
-				// getRoot() doesn't appear to return the deepest Window, but the first one. 
-				// If you have a dialog owned by a window you get the dialog, not the window.
-				Component parent = SwingUtilities.windowForComponent(comp);
-				while ((parent != null) && !(parent instanceof BaseMDIParentFrame) && !(parent.equals(comp)))
-				{
-					comp = parent;
-					parent = SwingUtilities.windowForComponent(comp);
-				}
-				comp = (parent != null) ? parent : comp;
-				pt = SwingUtilities.convertPoint((Component) evt.getSource(), pt, comp);
-			}
-			
-			// Determine the position to place the new internal frame. Ensure that the right end
-			// of the internal frame doesn't exend past the right end the parent frame.	Use a fudge
-			// factor as the dim.width doesn't appear to get the final width of the internal frame
-			// (e.g. where pt.x + dim.width == parentBounds.width, the new internal frame still extends
-			// past the right end of the parent frame).
-			int fudgeFactor = 100;
-			Rectangle parentBounds = comp.getBounds();
-			if (parentBounds.width <= (dim.width + fudgeFactor))
-			{
-				dim.width = parentBounds.width - fudgeFactor;
-				pt.x = fudgeFactor / 2;
-				newComp.setSize(dim);
-			}
-			else 
-			{
-				if ((pt.x + dim.width + fudgeFactor) > (parentBounds.width))
-				{
-					pt.x -= (pt.x + dim.width + fudgeFactor) - parentBounds.width;
-				}
-			}
-			newComp.setLocation(pt);
-			newComp.setVisible(true);
-		}
-
+//		private void showTextAreaDialog(MouseEvent evt)
+//		{
+//			Point pt = evt.getPoint();
+//			int row = rowAtPoint(pt);
+//			int col = columnAtPoint(pt);
+//
+//			Component comp = SwingUtilities.getRoot(this);
+//			Object obj = _comp.getValueAt(row, col);
+//			if (obj != null)
+//			{
+//				obj = obj.toString();
+//			}
+//			else
+//			{
+//				obj = "";
+//			}
+//
+//			Component newComp = null;
+//			if (comp instanceof BaseMDIParentFrame)
+//			{
+//				TextAreaInternalFrame taif = new TextAreaInternalFrame(_typedModel.getColumnName(col), (String)obj);
+//				((BaseMDIParentFrame)comp).addInternalFrame(taif, false);
+//				taif.setLayer(JLayeredPane.POPUP_LAYER);
+//				taif.pack();
+//				newComp = taif;
+//			}
+//			else
+//			{
+//				TextAreaDialog tad = null;
+//				if (comp instanceof Dialog)
+//				{
+//					tad = new TextAreaDialog((Dialog)comp, _typedModel.getColumnName(col), (String)obj);
+//				}
+//				else if (comp instanceof Frame)
+//				{
+//					tad = new TextAreaDialog((Frame)comp, _typedModel.getColumnName(col), (String)obj);
+//				}			
+//				else
+//				{
+//					s_log.error("Creating TextAreaDialog for invalid parent of: " + comp.getClass().getName());
+//					return;
+//				}	
+//				tad.pack();
+//				newComp = tad;
+//			}
+//
+//			Dimension dim = newComp.getSize();
+//			boolean dimChanged = false;
+//			if (dim.width < 250)
+//			{
+//				dim.width = 250;
+//				dimChanged = true;
+//			}
+//			if (dim.height < 100)
+//			{
+//				dim.height = 100;
+//				dimChanged = true;
+//			}
+//			if (dim.width > 500)
+//			{
+//				dim.width = 500;
+//				dimChanged = true;
+//			}
+//			if (dim.height > 400)
+//			{
+//				dim.height = 400;
+//				dimChanged = true;
+//			}
+//			if (dimChanged)
+//			{
+//				newComp.setSize(dim);
+//			}
+//			if (comp instanceof BaseMDIParentFrame)
+//			{
+//				pt = SwingUtilities.convertPoint((Component) evt.getSource(), pt, comp);
+//				pt.y -= dim.height;
+//			}
+//			else
+//			{
+//				// getRoot() doesn't appear to return the deepest Window, but the first one. 
+//				// If you have a dialog owned by a window you get the dialog, not the window.
+//				Component parent = SwingUtilities.windowForComponent(comp);
+//				while ((parent != null) && !(parent instanceof BaseMDIParentFrame) && !(parent.equals(comp)))
+//				{
+//					comp = parent;
+//					parent = SwingUtilities.windowForComponent(comp);
+//				}
+//				comp = (parent != null) ? parent : comp;
+//				pt = SwingUtilities.convertPoint((Component) evt.getSource(), pt, comp);
+//			}
+//			
+//			// Determine the position to place the new internal frame. Ensure that the right end
+//			// of the internal frame doesn't exend past the right end the parent frame.	Use a fudge
+//			// factor as the dim.width doesn't appear to get the final width of the internal frame
+//			// (e.g. where pt.x + dim.width == parentBounds.width, the new internal frame still extends
+//			// past the right end of the parent frame).
+//			int fudgeFactor = 100;
+//			Rectangle parentBounds = comp.getBounds();
+//			if (parentBounds.width <= (dim.width + fudgeFactor))
+//			{
+//				dim.width = parentBounds.width - fudgeFactor;
+//				pt.x = fudgeFactor / 2;
+//				newComp.setSize(dim);
+//			}
+//			else 
+//			{
+//				if ((pt.x + dim.width + fudgeFactor) > (parentBounds.width))
+//				{
+//					pt.x -= (pt.x + dim.width + fudgeFactor) - parentBounds.width;
+//				}
+//			}
+//			newComp.setLocation(pt);
+//			newComp.setVisible(true);
+//		}
+//
 		private TableColumnModel createColumnModel(ColumnDisplayDefinition[] colDefs)
 		{
 			CellRenderer[] renderers = new CellRenderer[colDefs.length];
@@ -437,7 +465,6 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		private void createGUI(boolean allowUpdate, 
 			IDataSetUpdateableModel updateableObject)
 		{
-//			setLayout(new BorderLayout());
 			setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 			setRowSelectionAllowed(false);
 			setColumnSelectionAllowed(false);
@@ -462,7 +489,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 					}
 					else if (evt.getClickCount() == 2)
 					{
-						MyJTable.this.showTextAreaDialog(evt);
+						CellDataPopup.showDialog(MyJTable.this, evt);
 					}
 				}
 				public void mouseReleased(MouseEvent evt)
@@ -477,104 +504,104 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		}
 	}
 
-	class TextAreaInternalFrame extends JInternalFrame
-	{
-		public TextAreaInternalFrame(String column, String text)
-		{
-			super("Value of column " + column, true, true, true, true);
-			setContentPane(new ColumnDataPopupPanel(text));
-		}
-	}
+//	class TextAreaInternalFrame extends JInternalFrame
+//	{
+//		public TextAreaInternalFrame(String column, String text)
+//		{
+//			super("Value of column " + column, true, true, true, true);
+//			setContentPane(new ColumnDataPopupPanel(text));
+//		}
+//	}
 
-	class TextAreaDialog extends JDialog
-	{
-		public TextAreaDialog(Dialog owner, String column, String text)
-		{
-			super(owner, "Value of column " + column, false);
-			setContentPane(new ColumnDataPopupPanel(text));
-		}
-
-		public TextAreaDialog(Frame owner, String column, String text)
-		{
-			super(owner, "Value of column " + column, false);
-			setContentPane(new ColumnDataPopupPanel(text));
-		}
-	}
+//	class TextAreaDialog extends JDialog
+//	{
+//		public TextAreaDialog(Dialog owner, String column, String text)
+//		{
+//			super(owner, "Value of column " + column, false);
+//			setContentPane(new ColumnDataPopupPanel(text));
+//		}
+//
+//		public TextAreaDialog(Frame owner, String column, String text)
+//		{
+//			super(owner, "Value of column " + column, false);
+//			setContentPane(new ColumnDataPopupPanel(text));
+//		}
+//	}
 
 	/**
 	 * This class is the panel shown when doubleclicking in a column cell.
 	 */
-	private static class ColumnDataPopupPanel extends JPanel
-	{
-		private final TextPopupMenu _popupMenu = new TextPopupMenu();
-		private final JTextArea _ta;
-		private MouseAdapter _lis;
-
-		ColumnDataPopupPanel(String cellContents)
-		{
-			super(new BorderLayout());
-			_ta = new JTextArea(cellContents);
-			_ta.setEditable(false);
-			_ta.setLineWrap(true);
-			add(new JScrollPane(_ta), BorderLayout.CENTER);
-
-			_popupMenu.add(new WrapAction());
-			_popupMenu.setTextComponent(_ta);
-		}
-
-		public void addNotify()
-		{
-			super.addNotify();
-			if (_lis == null)
-			{
-				_lis = new MouseAdapter()
-				{
-					public void mousePressed(MouseEvent evt)
-					{
-						if (evt.isPopupTrigger())
-						{
-							_popupMenu.show(evt);
-						}
-					}
-					public void mouseReleased(MouseEvent evt)
-					{
-						if (evt.isPopupTrigger())
-						{
-							_popupMenu.show(evt);
-						}
-					}
-				};
-				_ta.addMouseListener(_lis);
-			}
-		}
-
-		public void removeNotify()
-		{
-			super.removeNotify();
-			if (_lis != null)
-			{
-				_ta.removeMouseListener(_lis);
-				_lis = null;
-			}
-		}
-
-		private class WrapAction extends BaseAction
-		{
-			WrapAction()
-			{
-				super("Word Wrap");
-			}
-
-			public void actionPerformed(ActionEvent evt)
-			{
-				if (_ta != null)
-				{
-					_ta.setLineWrap(!_ta.getLineWrap());
-				}
-			}
-		}
-
-	}
+//	private static class ColumnDataPopupPanel extends JPanel
+//	{
+//		private final TextPopupMenu _popupMenu = new TextPopupMenu();
+//		private final JTextArea _ta;
+//		private MouseAdapter _lis;
+//
+//		ColumnDataPopupPanel(String cellContents)
+//		{
+//			super(new BorderLayout());
+//			_ta = new JTextArea(cellContents);
+//			_ta.setEditable(false);
+//			_ta.setLineWrap(true);
+//			add(new JScrollPane(_ta), BorderLayout.CENTER);
+//
+//			_popupMenu.add(new WrapAction());
+//			_popupMenu.setTextComponent(_ta);
+//		}
+//
+//		public void addNotify()
+//		{
+//			super.addNotify();
+//			if (_lis == null)
+//			{
+//				_lis = new MouseAdapter()
+//				{
+//					public void mousePressed(MouseEvent evt)
+//					{
+//						if (evt.isPopupTrigger())
+//						{
+//							_popupMenu.show(evt);
+//						}
+//					}
+//					public void mouseReleased(MouseEvent evt)
+//					{
+//						if (evt.isPopupTrigger())
+//						{
+//							_popupMenu.show(evt);
+//						}
+//					}
+//				};
+//				_ta.addMouseListener(_lis);
+//			}
+//		}
+//
+//		public void removeNotify()
+//		{
+//			super.removeNotify();
+//			if (_lis != null)
+//			{
+//				_ta.removeMouseListener(_lis);
+//				_lis = null;
+//			}
+//		}
+//
+//		private class WrapAction extends BaseAction
+//		{
+//			WrapAction()
+//			{
+//				super("Word Wrap");
+//			}
+//
+//			public void actionPerformed(ActionEvent evt)
+//			{
+//				if (_ta != null)
+//				{
+//					_ta.setLineWrap(!_ta.getLineWrap());
+//				}
+//			}
+//		}
+//
+//	}
 
 	private final class CellRenderer extends DefaultTableCellRenderer
 	{
