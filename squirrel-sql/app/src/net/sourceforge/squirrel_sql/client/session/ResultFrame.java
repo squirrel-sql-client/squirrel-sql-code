@@ -73,7 +73,6 @@ public class ResultFrame extends JInternalFrame {
 	 * Close this window.
 	 */
 	public void dispose() {
-		s_log.debug("ResultFrame.dispose()", new Exception("Stack trace"));
 		if (_tab != null) {
 			_tab.closeTab();
 			_tab = null;
