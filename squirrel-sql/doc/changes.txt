@@ -6,6 +6,10 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Added "Install Default Drivers" menu option which will
+  copy driver definitions from the default drivers file to
+  the drivers list.
+- Add SAPDB and PointBase to default drivers.
 - Add HSQL to list of default drivers (Glenn Griffin).
 - Cleanup example URLs for many of the default drivers (Glenn Griffin).
 - Add toolbar to HTML Viewer with back, forward and close buttons.
@@ -29,6 +33,7 @@ Enhancements
 
 Bug Fixes
 ---------
+- Improve error handling when loading drivers and aliases.
 - Incorrect error message was displayed in View Help
   command (Glenn Griffin).
 - Fix Nullpointer exception in HTML viewer under JDK1.3.

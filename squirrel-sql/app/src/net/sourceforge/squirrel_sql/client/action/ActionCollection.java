@@ -39,6 +39,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.DisplayPluginSummary
 import net.sourceforge.squirrel_sql.client.mainframe.action.DumpApplicationAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ExitAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.GlobalPreferencesAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.InstallDefaultDriversAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.MaximizeAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.NewSessionPropertiesAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileAction;
@@ -390,6 +391,7 @@ public final class ActionCollection
 		add(new ExecuteSqlAction(_app));
 		add(new ExitAction(_app));
 		add(new GlobalPreferencesAction(_app));
+		add(new InstallDefaultDriversAction(_app));
 		add(new MaximizeAction(_app));
 		add(new NewSessionPropertiesAction(_app));
 		add(new ReconnectAction(_app));

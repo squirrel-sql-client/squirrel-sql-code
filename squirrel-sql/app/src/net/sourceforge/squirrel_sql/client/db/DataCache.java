@@ -267,30 +267,42 @@ public class DataCache
 	{
 		final ApplicationFiles appFiles = new ApplicationFiles();
 		final File driversFile = appFiles.getDatabaseDriversFile();
+		final URL dftDriversURL = rsrc.getDefaultDriversUrl();
 		try
 		{
-			_cache.load(driversFile.getPath());
-			if (!drivers().hasNext())
+			try
 			{
-				loadDefaultDrivers(rsrc, msgHandler);
+				_cache.load(driversFile.getPath());
+				if (!drivers().hasNext())
+				{
+					loadDefaultDrivers(dftDriversURL);
+				}
+				else
+				{
+					fixupDrivers();
+				}
 			}
-			else
+			catch (FileNotFoundException ex)
 			{
-				fixupDrivers();
+				loadDefaultDrivers(dftDriversURL); // first time user has run pgm.
+			}
+			catch (Exception ex)
+			{
+				String msg = "Error loading driver file: " + driversFile.getPath()
+								+ ". Default drivers loaded instead.";
+				s_log.error(msg, ex);
+				msgHandler.showErrorMessage(msg);
+				msgHandler.showErrorMessage(ex);
+				loadDefaultDrivers(dftDriversURL);
 			}
 		}
-		catch (FileNotFoundException ex)
+		catch (XMLException ex)
 		{
-			loadDefaultDrivers(rsrc, msgHandler); // first time user has run pgm.
+			s_log.error("Error loading drivers", ex);
 		}
-		catch (Exception ex)
+		catch (IOException ex)
 		{
-			String msg = "Error loading driver file: " + driversFile.getPath()
-							+ ". Default drivers loaded instead.";
-			s_log.error(msg, ex);
-			msgHandler.showErrorMessage(msg);
-			msgHandler.showErrorMessage(ex);
-			loadDefaultDrivers(rsrc, msgHandler);
+			s_log.error("Error loading drivers", ex);
 		}
 
 		registerDrivers(msgHandler);
@@ -306,29 +318,35 @@ public class DataCache
 		return new SQLDriver(id);
 	}
 
-	private void loadDefaultDrivers(SquirrelResources rsrc, IMessageHandler msgHandler)
+	public void loadDefaultDrivers(URL url) throws IOException, XMLException
 	{
-		final URL url = rsrc.getDefaultDriversUrl();
-		try
-		{
+//		final URL url = rsrc.getDefaultDriversUrl();
+//		try
+//		{
 			InputStreamReader isr = new InputStreamReader(url.openStream());
 			try
 			{
-				_cache.load(isr);
+				_cache.load(isr, null, true);
+			}
+			catch (DuplicateObjectException ex)
+			{
+				// If this happens then this is a programming error as we said
+				// in the above call to ingore these errors.
+				s_log.error("Received an unexpected DuplicateObjectException", ex);
 			}
 			finally
 			{
 				isr.close();
 			}
-		}
-		catch (Exception ex)
-		{
-			String msg = "Error loading default driver file: " +
-							url != null ? url.toExternalForm() : "";
-			s_log.error(msg, ex);
-			msgHandler.showErrorMessage(msg);
-			msgHandler.showErrorMessage(ex);
-		}
+//		}
+//		catch (Exception ex)
+//		{
+//			String msg = "Error loading default driver file: " +
+//							url != null ? url.toExternalForm() : "";
+//			s_log.error(msg, ex);
+//			msgHandler.showErrorMessage(msg);
+//			msgHandler.showErrorMessage(ex);
+//		}
 	}
 
 	private void registerDrivers(IMessageHandler msgHandler)

@@ -35,6 +35,7 @@ import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CopyDriverAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CreateDriverAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.DeleteDriverAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.InstallDefaultDriversAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyDriverAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyDriverCommand;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
@@ -115,6 +116,7 @@ public class DriversToolWindow extends BaseToolWindow
 			_pm.add(_copyDriverAction);
 			_pm.addSeparator();
 			_pm.add(_deleteDriverAction);
+			_pm.addSeparator();
 		}
 
 		public ToolBar getToolBar()
@@ -203,6 +205,8 @@ public class DriversToolWindow extends BaseToolWindow
 			_tb.add(_modifyDriverAction);
 			_tb.add(_copyDriverAction);
 			_tb.add(_deleteDriverAction);
+			_tb.add(new ToolBar.Separator(), 1);
+			_tb.add(_app.getActionCollection().get(InstallDefaultDriversAction.class));
 		}
 	}
 

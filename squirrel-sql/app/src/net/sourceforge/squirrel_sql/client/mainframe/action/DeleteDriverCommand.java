@@ -34,14 +34,18 @@ import net.sourceforge.squirrel_sql.client.db.DataCache;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class DeleteDriverCommand implements ICommand {
+public class DeleteDriverCommand implements ICommand
+{
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
-	private interface i18n {
-		String MSG_CONFIRM = "Are you sure to want to delete the driver \"{0}\"?";
-		String USED = "The driver \"{0}\" is used by one or more aliases and cannot be deleted.";
+	private interface i18n
+	{
+		String MSG_CONFIRM =
+			"Are you sure to want to delete the driver \"{0}\"?";
+		String USED =
+			"The driver \"{0}\" is used by one or more aliases and cannot be deleted.";
 	}
 
 	/** Application API. */
@@ -64,13 +68,18 @@ public class DeleteDriverCommand implements ICommand {
 	 *			Thrown if a <TT>null</TT> <TT>ISQLDriver</TT> or
 	 *			<TT>IApplication</TT> passed.
 	 */
-	public DeleteDriverCommand(IApplication app, Frame frame,
-								ISQLDriver sqlDriver) {
+	public DeleteDriverCommand(
+		IApplication app,
+		Frame frame,
+		ISQLDriver sqlDriver)
+	{
 		super();
-		if (sqlDriver == null) {
+		if (sqlDriver == null)
+		{
 			throw new IllegalArgumentException("Null ISQLDriver passed");
 		}
-		if (app == null) {
+		if (app == null)
+		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
 
@@ -82,16 +91,21 @@ public class DeleteDriverCommand implements ICommand {
 	/**
 	 * Delete the current <TT>ISQLDriver</TT> after confirmation.
 	 */
-	public void execute() {
-		Object[] args = {_sqlDriver.getName()};
+	public void execute()
+	{
+		Object[] args = { _sqlDriver.getName()};
 		final DataCache cache = _app.getDataCache();
 		Iterator it = cache.getAliasesForDriver(_sqlDriver);
-		if (it.hasNext()) {
+		if (it.hasNext())
+		{
 			String msg = MessageFormat.format(i18n.USED, args);
 			Dialogs.showOk(_frame, msg);
-		} else {
+		}
+		else
+		{
 			String msg = MessageFormat.format(i18n.MSG_CONFIRM, args);
-			if (Dialogs.showYesNo(_frame, msg)) {
+			if (Dialogs.showYesNo(_frame, msg))
+			{
 				cache.removeDriver(_sqlDriver);
 			}
 		}

@@ -118,7 +118,7 @@ public class AliasesToolWindow extends BaseToolWindow {
 			_pm.add(_copyAliasAction);
 			_pm.addSeparator();
 			_pm.add(_deleteAliasAction);
-
+			_pm.addSeparator();
 		}
 
 		public ToolBar getToolBar() {

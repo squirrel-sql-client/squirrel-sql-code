@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.xml;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,21 +17,16 @@ package net.sourceforge.squirrel_sql.fw.xml;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Iterator;
-import java.util.Map.Entry;
 
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.util.IObjectCache;
 import net.sourceforge.squirrel_sql.fw.util.ObjectCache;
-import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeEvent;
 import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeListener;
 
 /**
@@ -42,15 +37,16 @@ import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeListener;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class XMLObjectCache implements IObjectCache {
-
+public class XMLObjectCache implements IObjectCache
+{
 	/** Cache of stored objects. */
 	private ObjectCache _cache = new ObjectCache();
 
 	/**
 	 * Default ctor.
 	 */
-	public XMLObjectCache() {
+	public XMLObjectCache()
+	{
 		super();
 	}
 
@@ -64,20 +60,22 @@ public class XMLObjectCache implements IObjectCache {
 	 * @return  The <CODE>IHasIdentifier</CODE> retrieved or <CODE>null</CODE>
 	 *			if no object exists for <CODE>id</CODE>.
 	 */
-	public IHasIdentifier get(Class objClass, IIdentifier id) {
-		return (IHasIdentifier)_cache.get(objClass, id);
+	public IHasIdentifier get(Class objClass, IIdentifier id)
+	{
+		return (IHasIdentifier) _cache.get(objClass, id);
 	}
 
 	/**
 	 * Store an object.
 	 *
-	 * @param   obj	 Object to be stored.
+	 * @param	obj	Object to be stored.
 	 *
-	 * @exception   DuplicateObjectException
+	 * @exception	DuplicateObjectException
 	 *				Thrown if an object of the same class as <CODE>obj</CODE>
 	 *				and with the same identifier is already in the cache.
 	 */
-	public void add(IHasIdentifier obj) throws DuplicateObjectException {
+	public void add(IHasIdentifier obj) throws DuplicateObjectException
+	{
 		_cache.add(obj);
 	}
 
@@ -87,7 +85,8 @@ public class XMLObjectCache implements IObjectCache {
 	 * @param   objClass	Class of object to be removed.
 	 * @param   id			Identifier for object to be removed.
 	 */
-	public void remove(Class objClass, IIdentifier id) {
+	public void remove(Class objClass, IIdentifier id)
+	{
 		_cache.remove(objClass, id);
 	}
 
@@ -97,7 +96,8 @@ public class XMLObjectCache implements IObjectCache {
 	 *
 	 * @return  Class[] of all classes stored.
 	 */
-	public Class[] getAllClasses() {
+	public Class[] getAllClasses()
+	{
 		return _cache.getAllClasses();
 	}
 
@@ -109,7 +109,8 @@ public class XMLObjectCache implements IObjectCache {
 	 *
 	 * @return  <CODE>Iterator</CODE> over all objects.
 	 */
-	public Iterator getAllForClass(Class objClass) {
+	public Iterator getAllForClass(Class objClass)
+	{
 		return _cache.getAllForClass(objClass);
 	}
 
@@ -122,7 +123,8 @@ public class XMLObjectCache implements IObjectCache {
 	 * @param   objClass	The class of objects whose cache we want to listen
 	 *						to.
 	 */
-	public void addChangesListener(ObjectCacheChangeListener lis, Class objClass) {
+	public void addChangesListener(ObjectCacheChangeListener lis, Class objClass)
+	{
 		_cache.addChangesListener(lis, objClass);
 	}
 
@@ -135,35 +137,38 @@ public class XMLObjectCache implements IObjectCache {
 	 * @param   objClass	The class of objects whose cache we want to listen
 	 *						to.
 	 */
-	public void removeChangesListener(ObjectCacheChangeListener lis, Class objClass) {
+	public void removeChangesListener(ObjectCacheChangeListener lis,
+										Class objClass)
+	{
 		_cache.removeChangesListener(lis, objClass);
 	}
 
 	/**
 	 * Load from an XML document.
 	 *
-	 * @param   xmlFileName	 Name of XML file to load from.
+	 * @param	xmlFileName	Name of XML file to load from.
 	 *
-	 * @exception   FileNotFoundException
+	 * @exception	FileNotFoundException
 	 *				Thrown if file not found.
 	 *
-	 * @exception   XMLException
+	 * @exception	XMLException
 	 *				Thrown if an XML error occurs.
 	 *
-	 * @exception   DuplicateObjectException
+	 * @exception	DuplicateObjectException
 	 *				Thrown if two objects of the same class
 	 *				and with the same identifier are added to the cache.
 	 */
 	public void load(String xmlFileName)
-			throws FileNotFoundException, XMLException, DuplicateObjectException {
+		throws FileNotFoundException, XMLException, DuplicateObjectException
+	{
 		load(xmlFileName, null);
 	}
 
 	/**
-	 * Load from an XML document.
+	 * Load from an XML document but don't ignore duplicate objects.
 	 *
-	 * @param   xmlFileName		Name of XML file to load from.
-	 * @param   cl				Class loader to use for object creation.
+	 * @param	xmlFileName	Name of XML file to load from.
+	 * @param	cl			Class loader to use for object creation.
 	 *
 	 * @exception   FileNotFoundException
 	 *				Thrown if file not found.
@@ -176,58 +181,83 @@ public class XMLObjectCache implements IObjectCache {
 	 *				and with the same identifier are added to the cache.
 	 */
 	public void load(String xmlFileName, ClassLoader cl)
-			throws FileNotFoundException, XMLException, DuplicateObjectException {
+		throws FileNotFoundException, XMLException, DuplicateObjectException
+	{
 		XMLBeanReader rdr = new XMLBeanReader();
 		rdr.load(xmlFileName, cl);
-		for (Iterator it = rdr.iterator(); it.hasNext();) {
+		for (Iterator it = rdr.iterator(); it.hasNext();)
+		{
 			final Object obj = it.next();
-			if (!(obj instanceof IHasIdentifier)) {
-				throw new XMLException("Trying to load object that doesn't implement IHasIdentifier"); //i18n
+			if (!(obj instanceof IHasIdentifier))
+			{
+				throw new XMLException("Trying to load object that doesn't implement IHasIdentifier");
+				//i18n
 			}
-			add((IHasIdentifier)obj);
+			add((IHasIdentifier) obj);
 		}
 	}
 
 	/**
-	 * Load from a reader over an XML document.
+	 * Load from a reader over an XML document. Use the system classloader and
+	 * don't ignore duplicate objects.
 	 *
-	 * @param   rdr	 Reader over the XML document.
+	 * @param	rdr	Reader over the XML document.
 	 *
-	 * @exception   XMLException
+	 * @exception	XMLException
 	 *				Thrown if an XML error occurs.
 	 *
-	 * @exception   DuplicateObjectException
+	 * @exception	DuplicateObjectException
 	 *				Thrown if two objects of the same class
 	 *				and with the same identifier are added to the cache.
 	 */
-	public void load(Reader rdr)
-			throws XMLException, DuplicateObjectException {
-		load(rdr, null);
+	public void load(Reader rdr) throws XMLException, DuplicateObjectException
+	{
+		load(rdr, null, false);
 	}
 
 	/**
 	 * Load from a reader over an XML document.
 	 *
-	 * @param   rdr	Reader over the XML document.
-	 * @param   cl	Class loader to use for object creation.
+	 * @param	rdr					Reader over the XML document.
+	 * @param	cl					Class loader to use for object creation. Pass
+	 * 								<TT>null</TT> to use the system classloader.
+	 * @param	ignoreDuplicates	If <tt>true</TT> don't throw a
+	 * 								<TT>DuplicateObjectException</TT> but rather
+	 * 								ignore the attempt to add a duplicate, in
+	 *								this there will be only one object added to
+	 *								the cache.
 	 *
-	 * @exception   XMLException
+	 * @exception	XMLException
 	 *				Thrown if an XML error occurs.
 	 *
-	 * @exception   DuplicateObjectException
+	 * @exception	DuplicateObjectException
 	 *				Thrown if two objects of the same class
 	 *				and with the same identifier are added to the cache.
 	 */
-	public void load(Reader rdr, ClassLoader cl)
-			throws XMLException, DuplicateObjectException {
+	public void load(Reader rdr, ClassLoader cl, boolean ignoreDuplicates)
+		throws XMLException, DuplicateObjectException
+	{
 		XMLBeanReader xmlRdr = new XMLBeanReader();
 		xmlRdr.load(rdr, cl);
-		for (Iterator it = xmlRdr.iterator(); it.hasNext();) {
+		for (Iterator it = xmlRdr.iterator(); it.hasNext();)
+		{
 			final Object obj = it.next();
-			if (!(obj instanceof IHasIdentifier)) {
-				throw new XMLException("Trying to load object that doesn't implement IHasIdentifier"); //i18n
+			if (!(obj instanceof IHasIdentifier))
+			{
+				throw new XMLException("Trying to load object that doesn't implement IHasIdentifier");
+				//i18n
 			}
-			add((IHasIdentifier)obj);
+			try
+			{
+				add((IHasIdentifier) obj);
+			}
+			catch (DuplicateObjectException ex)
+			{
+				if (!ignoreDuplicates)
+				{
+					throw ex;
+				}
+			}
 		}
 	}
 
@@ -243,11 +273,15 @@ public class XMLObjectCache implements IObjectCache {
 	 *				Thrown if an XML error occurs.
 	 */
 	public synchronized void save(String xmlFilename)
-			throws IOException, XMLException {
+		throws IOException, XMLException
+	{
 		XMLBeanWriter wtr = new XMLBeanWriter();
 		Class[] classes = _cache.getAllClasses();
-		for (int i = 0; i < classes.length; ++i) {
-			for(Iterator it = _cache.getAllForClass(classes[i]); it.hasNext();) {
+		for (int i = 0; i < classes.length; ++i)
+		{
+			for (Iterator it = _cache.getAllForClass(classes[i]);
+					it.hasNext();)
+			{
 				wtr.addToRoot(it.next());
 			}
 		}
@@ -266,10 +300,14 @@ public class XMLObjectCache implements IObjectCache {
 	 * @exception   XMLException
 	 *				Thrown if an XML error occurs.
 	 */
-	public synchronized void saveAllForClass(String xmlFilename, Class objClass)
-			throws IOException, XMLException {
+	public synchronized void saveAllForClass(
+		String xmlFilename,
+		Class objClass)
+		throws IOException, XMLException
+	{
 		XMLBeanWriter wtr = new XMLBeanWriter();
-		for(Iterator it = _cache.getAllForClass(objClass); it.hasNext();) {
+		for (Iterator it = _cache.getAllForClass(objClass); it.hasNext();)
+		{
 			wtr.addToRoot(it.next());
 		}
 		wtr.save(xmlFilename);

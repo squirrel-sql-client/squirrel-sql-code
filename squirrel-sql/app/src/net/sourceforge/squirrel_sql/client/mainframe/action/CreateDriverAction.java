@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -20,24 +20,23 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyVetoException;
 
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.mainframe.DriversToolWindow;
-
 /**
  * This <CODE>Action</CODE> allows the user to create a new <TT>ISQLDriver</TT>.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class CreateDriverAction extends SquirrelAction {
+public class CreateDriverAction extends SquirrelAction
+{
 	/**
 	 * Ctor.
 	 *
 	 * @param   app	 Application API.
 	 */
-	public CreateDriverAction(IApplication app) {
+	public CreateDriverAction(IApplication app)
+	{
 		super(app);
 	}
 
@@ -46,13 +45,17 @@ public class CreateDriverAction extends SquirrelAction {
 	 *
 	 * @param   evt	 The current event.
 	 */
-	public void actionPerformed(ActionEvent evt) {
+	public void actionPerformed(ActionEvent evt)
+	{
 		IApplication app = getApplication();
 		DriversToolWindow tw = app.getMainFrame().getDriversToolWindow();
 		tw.moveToFront();
-		try {
+		try
+		{
 			tw.setSelected(true);
-		} catch (PropertyVetoException ignore) {
+		}
+		catch (PropertyVetoException ignore)
+		{
 		}
 		new CreateDriverCommand().execute();
 	}
