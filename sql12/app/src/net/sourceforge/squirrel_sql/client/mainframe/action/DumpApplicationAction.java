@@ -21,6 +21,9 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.io.File;
 
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
@@ -37,6 +40,12 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
  */
 public class DumpApplicationAction extends SquirrelAction
 {
+	private interface i18n
+	{
+		String WARN = "<HTML><BODY><B>Warning:</B> Plain<BR>text passwords<BR>" +
+						"may be saved<BR>in this file.</BODY></HTML>";
+	}
+
 	/** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(DumpApplicationAction.class);
@@ -62,7 +71,9 @@ public class DumpApplicationAction extends SquirrelAction
 		final Frame parentFrame = getParentFrame(evt);
 		final FileExtensionFilter[] filters = new FileExtensionFilter[1];
 		filters[0] = new FileExtensionFilter("Text files", new String[] { ".txt" });
-		final File outFile = Dialogs.selectFileForWriting(parentFrame, filters);
+		final JLabel lbl = new JLabel(i18n.WARN);
+		lbl.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+		final File outFile = Dialogs.selectFileForWriting(parentFrame, filters, lbl);
 		if (outFile != null)
 		{
 			ListMessageHandler msgHandler = new ListMessageHandler();
