@@ -17,11 +17,8 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.Calendar;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
@@ -196,16 +193,55 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
                     || sColumnTypeName.equals("TIME")
                     || sColumnTypeName.equals("TIMESTAMP"))
                 {
-                    Date date = srcResult.getDate(i+1);
-                    if(date == null)
+                   Calendar calendar = Calendar.getInstance();
+                   java.util.Date timestamp = null;
+                   if(sColumnTypeName.equals("DATE"))
+                   {
+                      timestamp = srcResult.getDate(i+1);
+                   }
+                   else if(sColumnTypeName.equals("TIME"))
+                   {
+                      timestamp = srcResult.getTime(i+1);
+                   }
+                   else if(sColumnTypeName.equals("TIMESTAMP"))
+                   {
+                      timestamp = srcResult.getTimestamp(i+1);
+                   }
+
+
+                    if(timestamp == null)
                     {
                         sbValues.append("null");
                     }
                     else
                     {
-                        sbValues.append("\'");
-                        sbValues.append(date);
-                        sbValues.append("\'");
+                       calendar.setTime(timestamp);
+
+                        if(sColumnTypeName.equals("DATE"))
+                        {
+                           String esc = "{d '" + prefixNulls(calendar.get(Calendar.YEAR), 4) + "-" +
+                                                 prefixNulls(calendar.get(Calendar.MONTH) + 1, 2) + "-" +
+                                                 prefixNulls(calendar.get(Calendar.DAY_OF_MONTH), 2) + "'}";
+                           sbValues.append(esc);
+                        }
+                       else if(sColumnTypeName.equals("TIME"))
+                       {
+                          String esc = "{t '" + prefixNulls(calendar.get(Calendar.HOUR_OF_DAY), 2) + ":" +
+                                                prefixNulls(calendar.get(Calendar.MINUTE), 2) + ":" +
+                                                prefixNulls(calendar.get(Calendar.SECOND), 2) + "'}";
+                          sbValues.append(esc);
+                       }
+                       else if(sColumnTypeName.equals("TIMESTAMP"))
+                       {
+                          String esc = "{ts '" + prefixNulls(calendar.get(Calendar.YEAR), 4) + "-" +
+                                                 prefixNulls(calendar.get(Calendar.MONTH) + 1, 2) + "-" +
+                                                 prefixNulls(calendar.get(Calendar.DAY_OF_MONTH), 2) + " " +
+                                                 prefixNulls(calendar.get(Calendar.HOUR_OF_DAY), 2) + ":" +
+                                                 prefixNulls(calendar.get(Calendar.MINUTE), 2) + ":" +
+                                                 prefixNulls(calendar.get(Calendar.SECOND), 2) + "'}";
+                          sbValues.append(esc);
+                       }
+
                     }
                 }
                 else if (sColumnTypeName.equals("BIT"))
@@ -286,6 +322,19 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
             sbRows.append(sbValues.toString());
         }
     }
+
+   private String prefixNulls(int toPrefix, int digitCount)
+   {
+      String ret = "" + toPrefix;
+
+      while(ret.length() < digitCount)
+      {
+         ret = 0 + ret;
+      }
+
+      return ret;
+   }
+
 
    private String getStatementSeparator()
    {
