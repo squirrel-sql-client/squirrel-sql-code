@@ -23,6 +23,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.ResultSetReader;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
@@ -40,7 +41,7 @@ public class ResultSetDataSet implements IDataSet
 
 	private int _columnCount;
 	private DataSetDefinition _dataSetDefinition;
-	private ArrayList _alData;
+	private List _alData;
 
 //	private LargeResultSetObjectInfo _largeObjInfo = new LargeResultSetObjectInfo();
 

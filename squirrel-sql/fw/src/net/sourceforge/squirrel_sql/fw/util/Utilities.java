@@ -17,12 +17,11 @@ package net.sourceforge.squirrel_sql.fw.util;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-
+import java.text.NumberFormat;
 /**
  * General purpose utilities functions.
  *
@@ -211,5 +210,31 @@ public class Utilities
 			return fileName.substring(0, pos);
 		}
 		return fileName;
+	}
+
+	public static String formatSize(long longSize)
+	{
+		return formatSize(longSize, -1);
+	}
+
+	public static String formatSize(long longSize, int decimalPos)
+	{
+		NumberFormat fmt = NumberFormat.getNumberInstance();
+		if (decimalPos >= 0)
+		{
+			fmt.setMaximumFractionDigits(decimalPos);
+		}
+		final double size = longSize;
+		double val = size / (1024 * 1024);
+		if (val > 1)
+		{
+			return fmt.format(val).concat(" MB");
+		}
+		val = size / 1024;
+		if (val > 10)
+		{
+			return fmt.format(val).concat(" KB");
+		}
+		return fmt.format(val).concat(" bytes");
 	}
 }

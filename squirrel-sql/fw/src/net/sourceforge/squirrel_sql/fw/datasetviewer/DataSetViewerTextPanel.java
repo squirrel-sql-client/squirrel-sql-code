@@ -74,9 +74,8 @@ public class DataSetViewerTextPanel extends BaseDataSetViewerDestination
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < row.length; ++i)
 		{
-			Object obj = getColumnRenderer().renderObject(row[i]);
-			buf.append(
-				format(obj.toString(), colDefs[i].getDisplayWidth(), ' '));
+			Object obj = getColumnRenderer(i).renderObject(row[i], i);
+			buf.append(format(obj.toString(), colDefs[i].getDisplayWidth(), ' '));
 		}
 		addLine(buf.toString());
 	}

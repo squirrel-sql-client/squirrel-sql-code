@@ -24,6 +24,7 @@ import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -39,13 +40,13 @@ public class SQLDriverManager
 	 * Collection of instances of <TT>java.sql.Driver</TT> objects keyed
 	 * by the <TT>SQLDriver.getIdentifier()</TT>.
 	 */
-	private HashMap _driverInfo = new HashMap();
+	private Map _driverInfo = new HashMap();
 
 	/**
 	 * Collection of the <TT>SQLDriverClassLoader</TT> class loaders used for
 	 * each driver. keyed by <TT>SQLDriver.getIdentifier()</TT>.
 	 */
-	private HashMap _classLoaders = new HashMap();
+	private Map _classLoaders = new HashMap();
 
 	private MyDriverListener _myDriverListener = new MyDriverListener();
 

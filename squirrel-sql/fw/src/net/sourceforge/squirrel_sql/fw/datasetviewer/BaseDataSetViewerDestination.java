@@ -37,8 +37,8 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 	/** Column definitions. */
 	protected ColumnDisplayDefinition[] _colDefs = new ColumnDisplayDefinition[0];
 
-	/** Column renderer. */
-	private IColumnRenderer _columnRenderer = new DefaultColumnRenderer();	
+	/** Column renderers. */
+	private IColumnRenderer[] _columnRenderers = new IColumnRenderer[0];	
 
 	/**
 	 * Specify the column definitions to use.
@@ -100,24 +100,30 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 	}
 
 	/**
-	 * Get the column renderer for this viewer.
+	 * Get the column renderer for the specified column.
 	 * 
-	 * @return	the colun renderer.
+	 * @param	columnIdx	Column we want a renderer for.
+	 * 
+	 * @return	the column renderer.
 	 */
-	public IColumnRenderer getColumnRenderer()
+	public IColumnRenderer getColumnRenderer(int columnIdx)
 	{
-		return _columnRenderer;
+		if (columnIdx >= 0 && columnIdx < _columnRenderers.length)
+		{
+			return _columnRenderers[columnIdx];
+		}
+		return DefaultColumnRenderer.getInstance();
 	}
 
 	/**
-	 * Set the column renderer for this viewer.
+	 * Set the column renderers for this viewer.
 	 * 
-	 * @param	renderer	the new column renderer. If <TT>null</TT> then the
+	 * @param	renderers	the new column renderer. If <TT>null</TT> then the
 	 *						default renderer should be used.
 	 */
-	public void setColumnRenderer(IColumnRenderer renderer)
+	public void setColumnRenderers(IColumnRenderer[] renderers)
 	{
-		_columnRenderer = renderer != null ? renderer : new DefaultColumnRenderer();
+		_columnRenderers = renderers != null ? renderers : new IColumnRenderer[0];
 	}
 
 	protected void addRow(IDataSet ds, int columnCount) throws DataSetException

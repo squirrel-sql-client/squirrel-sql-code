@@ -19,7 +19,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  */
 
 /**
- * A renderer for a DataSet viewer takes and object and returns a form
+ * A renderer for a DataSet viewer takes and object and returns it in a form
  * that can be displayed.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
@@ -30,9 +30,10 @@ public interface IColumnRenderer
 	 * 
 	 * Return the rendered version the passed object.
 	 * 
-	 * @param	obj	Object to eb rendered.
+	 * @param	obj	Object to be rendered.
+	 * @param	idx	The column number being rendered.
 	 * 
 	 * @return	The rendered object.
 	 */
-	Object renderObject(Object obj);
+	Object renderObject(Object obj, int idx);
 }

@@ -31,7 +31,7 @@ public class PropertyPanel extends JPanel {
 	private final GridBagLayout _layout = new GridBagLayout();
 	private boolean _singleColumn = true;
 	private int _nbrComponents;
-	private int _lastX;
+//	private int _lastX;
 	private int _lastY;
 
 	public PropertyPanel() {

@@ -203,7 +203,7 @@ public class XMLBeanReader
 			final String value = propElem.getContent();
 			if (isIndexedElement(propElem))
 			{
-				Object[] data = loadIndexedProperty(bean, propDescr, propElem);
+				Object[] data = loadIndexedProperty(bean, propElem);
 				try
 				{
 					Object obj = Array.newInstance(arrayType, data.length);
@@ -334,10 +334,7 @@ public class XMLBeanReader
 		}
 	}
 
-	private Object[] loadIndexedProperty(
-		Object bean,
-		PropertyDescriptor propDescr,
-		IXMLElement beanElement)
+	private Object[] loadIndexedProperty(Object bean, IXMLElement beanElement)
 		throws XMLException
 	{
 		final List beans = new ArrayList();

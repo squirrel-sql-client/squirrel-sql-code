@@ -54,7 +54,7 @@ public class ResultSetMetaDataDataSet implements IDataSet
 	 * Data. Each element is an array of String objects representing a column from
 	 * the result set metadata.
 	 */
-	private ArrayList _data = new ArrayList();
+	private List _data = new ArrayList();
 
 	/**
 	 * Collection of method names that are considered to the
@@ -107,7 +107,7 @@ public class ResultSetMetaDataDataSet implements IDataSet
 	public synchronized void setResultSetMetaData(ResultSetMetaData md)
 		throws DataSetException
 	{
-		_dsDef = new DataSetDefinition(createColumnDefinitions(md));
+		_dsDef = new DataSetDefinition(createColumnDefinitions());
 		load(md);
 	}
 
@@ -140,7 +140,7 @@ public class ResultSetMetaDataDataSet implements IDataSet
 		return _row[columnIndex];
 	}
 
-	private ColumnDisplayDefinition[] createColumnDefinitions(ResultSetMetaData md)
+	private ColumnDisplayDefinition[] createColumnDefinitions()
 	{
 		final Method[] methods = ResultSetMetaData.class.getMethods();
 		_propertyMethodIndicators = new boolean[methods.length];

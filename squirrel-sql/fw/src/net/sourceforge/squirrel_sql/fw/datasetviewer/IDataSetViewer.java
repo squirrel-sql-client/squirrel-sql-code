@@ -80,17 +80,19 @@ public interface IDataSetViewer
 	Component getComponent();
 
 	/**
-	 * Get the column renderer for this viewer.
+	 * Get the column renderers for the specified column.
 	 * 
+	 * @param	columnIdx	Column we want a renderer for.
+	 *
 	 * @return	the column renderer.
 	 */
-	IColumnRenderer getColumnRenderer();
+	IColumnRenderer getColumnRenderer(int columnIdx);
 
 	/**
-	 * Set the column renderer for this viewer.
+	 * Set the column renderers for this viewer.
 	 * 
-	 * @param	renderer	the new column renderer. If <TT>null</TT> then the
+	 * @param	renderer	the new column renderers. If <TT>null</TT> then the
 	 *						default renderer should be used.
 	 */
-	void setColumnRenderer(IColumnRenderer renderer);
+	void setColumnRenderers(IColumnRenderer[] renderers);
 }

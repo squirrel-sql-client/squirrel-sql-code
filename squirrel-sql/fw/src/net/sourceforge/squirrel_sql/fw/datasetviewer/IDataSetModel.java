@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -24,7 +24,8 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public interface IDataSetModel extends IDataSetViewer {
+public interface IDataSetModel extends IDataSetViewer
+{
 	/**
 	 * Get the column definitions.
 	 *
@@ -76,4 +77,3 @@ public interface IDataSetModel extends IDataSetViewer {
 	 */
 	void removeListener(IDataSetModelListener lis);
 }
-

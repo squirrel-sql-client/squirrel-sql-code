@@ -41,9 +41,9 @@ public class JavabeanDataSet implements IDataSet
 	private int _iCurrent = -1;
 	private Object[] _currentRow;
 
-	private ArrayList _data;
+	private List _data;
 
-	private int _columnCount;
+//	private int _columnCount;
 	private DataSetDefinition _dataSetDefinition;
 
 	public JavabeanDataSet()

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.event.EventListenerList;
-import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 /**
  * This is a <TT>IDataSetViewerDestination</TT> that doesn't
@@ -33,15 +32,17 @@ public class DataSetListModel extends BaseDataSetViewerDestination
 								implements IDataSetModel
 {
 	/** Event types. */
-	private interface IEventTypes {
+	private interface IEventTypes
+	{
 		int ALL_ROWS_ADDED = 1;
 		int MOVE_TO_TOP = 2;
 	}
 
-//??GETRIDOFTHIS
-public java.awt.Component getComponent() {
-	return null;
-}
+	//??GETRIDOFTHIS
+	public java.awt.Component getComponent()
+	{
+		return null;
+	}
 	/**
 	 * Data. Each element is an array of objects. Each object is
 	 * the data for a column.
@@ -49,10 +50,10 @@ public java.awt.Component getComponent() {
 	private List _data = new ArrayList();
 
 	/** Column headings. */
-//	private ColumnDisplayDefinition[] _hdgs = new ColumnDisplayDefinition[0];
+	//	private ColumnDisplayDefinition[] _hdgs = new ColumnDisplayDefinition[0];
 
 	/** If <TT>true</TT> column headings should be shown. */
-//	private boolean _showHeadings;
+	//	private boolean _showHeadings;
 
 	/** Listeners for this object. */
 	private EventListenerList _listenerList = new EventListenerList();
@@ -60,7 +61,8 @@ public java.awt.Component getComponent() {
 	/**
 	 * Clear the data.
 	 */
-	public void clear() {
+	public void clear()
+	{
 		_data.clear();
 	}
 
@@ -69,21 +71,24 @@ public java.awt.Component getComponent() {
 	 *
 	 * @param	row		Array of objects specifying the row data.
 	 */
-	protected void addRow(Object[] row) {
+	protected void addRow(Object[] row)
+	{
 		_data.add(row);
 	}
 
 	/**
 	 * Called once all rows have been added..
 	 */
-	protected void allRowsAdded() {
+	protected void allRowsAdded()
+	{
 		fireEvent(IEventTypes.ALL_ROWS_ADDED);
 	}
 
 	/**
 	 * Indicates that the output display should scroll to the top.
 	 */
-	public void moveToTop() {
+	public void moveToTop()
+	{
 		fireEvent(IEventTypes.MOVE_TO_TOP);
 	}
 
@@ -92,7 +97,8 @@ public java.awt.Component getComponent() {
 	 *
 	 * @return	Number of rows.
 	 */
-	public int getRowCount() {
+	public int getRowCount()
+	{
 		return _data.size();
 	}
 
@@ -104,8 +110,9 @@ public java.awt.Component getComponent() {
 	 *
 	 * @return	the data value for the specified cell.
 	 */
-	public Object getValueAt(int rowIndex, int columnIndex) {
-		return ((Object[])_data.get(rowIndex))[columnIndex];
+	public Object getValueAt(int rowIndex, int columnIndex)
+	{
+		return ((Object[]) _data.get(rowIndex))[columnIndex];
 	}
 
 	/**
@@ -115,8 +122,9 @@ public java.awt.Component getComponent() {
 	 * @param	rowIndex	The row whose value is being set.
 	 * @param	columnIndex	The column whose value is being set.
 	 */
-	public void setValueAt(Object value, int rowIndex, int columnIndex) {
-		((Object[])_data.get(rowIndex))[columnIndex] = value;
+	public void setValueAt(Object value, int rowIndex, int columnIndex)
+	{
+		((Object[]) _data.get(rowIndex))[columnIndex] = value;
 	}
 
 	/**
@@ -125,7 +133,8 @@ public java.awt.Component getComponent() {
 	 * @param	lis		<TT>DataSetModelListener</TT> that will be
 	 *					notified when events occur in this model.
 	 */
-	public synchronized void addListener(IDataSetModelListener lis) {
+	public synchronized void addListener(IDataSetModelListener lis)
+	{
 		_listenerList.add(IDataSetModelListener.class, lis);
 	}
 
@@ -134,7 +143,8 @@ public java.awt.Component getComponent() {
 	 *
 	 * @param	lis		<TT>DataSetModelListener</TT> to be removed.
 	 */
-	public synchronized void removeListener(IDataSetModelListener lis) {
+	public synchronized void removeListener(IDataSetModelListener lis)
+	{
 		_listenerList.remove(IDataSetModelListener.class, lis);
 	}
 
@@ -143,35 +153,44 @@ public java.awt.Component getComponent() {
 	 *
 	 * @param	eventType	Specifies the event type. @see IEventType.
 	 */
-	protected void fireEvent(int eventType) {
+	protected void fireEvent(int eventType)
+	{
 		// Guaranteed to be non-null.
 		Object[] listeners = _listenerList.getListenerList();
 		// Process the listeners last to first, notifying
 		// those that are interested in this event.
 		DataSetModelEvent evt = null;
-		for (int i = listeners.length - 2; i >= 0; i-=2 ) {
-			if (listeners[i] == IDataSetModelListener.class) {
+		for (int i = listeners.length - 2; i >= 0; i -= 2)
+		{
+			if (listeners[i] == IDataSetModelListener.class)
+			{
 				// Lazily create the event:
-				if (evt == null) {
+				if (evt == null)
+				{
 					evt = new DataSetModelEvent(this);
 				}
-				IDataSetModelListener lis = (IDataSetModelListener)listeners[i + 1];
-				switch (eventType) {
-					case IEventTypes.ALL_ROWS_ADDED: {
-						lis.allRowsAdded(evt);
-						break;
-					}
-					case IEventTypes.MOVE_TO_TOP: {
-						lis.moveToTop(evt);
-						break;
-					}
-					default: {
-						throw new IllegalArgumentException("Invalid eventTypes passed: " + eventType);
-					}
+				IDataSetModelListener lis =
+					(IDataSetModelListener) listeners[i + 1];
+				switch (eventType)
+				{
+					case IEventTypes.ALL_ROWS_ADDED :
+						{
+							lis.allRowsAdded(evt);
+							break;
+						}
+					case IEventTypes.MOVE_TO_TOP :
+						{
+							lis.moveToTop(evt);
+							break;
+						}
+					default :
+						{
+							throw new IllegalArgumentException(
+								"Invalid eventTypes passed: " + eventType);
+						}
 				}
 			}
 		}
 	}
 
 }
-

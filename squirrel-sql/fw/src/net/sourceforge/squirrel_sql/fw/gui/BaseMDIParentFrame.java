@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.Action;
 import javax.swing.JDesktopPane;
@@ -35,7 +36,7 @@ public class BaseMDIParentFrame extends JFrame
 
 	private JDesktopPane _desktop;
 	private IInternalFramePositioner _internalFramePositioner;
-	private HashMap _children = new HashMap();
+	private Map _children = new HashMap();
 
 	private MyInternalFrameListener _childListener = new MyInternalFrameListener();
 

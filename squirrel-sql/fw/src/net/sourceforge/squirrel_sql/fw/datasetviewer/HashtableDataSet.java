@@ -33,7 +33,7 @@ public class HashtableDataSet implements IDataSet
 	}
 
 	private Hashtable _src;
-	private final int _columnCount = 2;
+//	private final int _columnCount = 2;
 	private DataSetDefinition _dsDef;
 	private final static String[] s_hdgs =
 		new String[] {

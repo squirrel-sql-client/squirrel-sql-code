@@ -38,7 +38,7 @@ import javax.swing.event.EventListenerList;
  */
 public class ObjectCache implements IObjectCache {
 	/** This collection stores <CODE>CacheEntry</CODE> objects. */
-	private HashMap _entries = new HashMap();
+	private Map _entries = new HashMap();
 
 	/**
 	 * Default constructor.

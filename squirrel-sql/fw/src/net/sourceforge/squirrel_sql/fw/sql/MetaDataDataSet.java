@@ -25,6 +25,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetDefinition;
@@ -36,7 +38,7 @@ import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
 public class MetaDataDataSet implements IDataSet
 {
 
-	private final static HashMap s_ignoreMethods = new HashMap();
+	private final static Map s_ignoreMethods = new HashMap();
 	static {
 		s_ignoreMethods.put("getCatalogs", null);
 		s_ignoreMethods.put("getConnection", null);
@@ -74,7 +76,7 @@ public class MetaDataDataSet implements IDataSet
 	 * Data. Each element represents a row of the table and is made up of
 	 * an array of strings. Each string is an element in the row.
 	 */
-	private ArrayList _data = new ArrayList();
+	private List _data = new ArrayList();
 
 	public MetaDataDataSet(DatabaseMetaData md) throws DataSetException
 	{

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -18,36 +18,41 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import javax.swing.JTable;
-import javax.swing.table.TableColumn;
 
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 
-public class BeanPropertyTable extends JTable {
+public class BeanPropertyTable extends JTable
+{
 
 	private BeanPropertyTableModel _model;
 
-	private Object _bean;
+	//	private Object _bean;
 
-	public BeanPropertyTable() throws BaseException {
+	public BeanPropertyTable() throws BaseException
+	{
 		this(null);
 	}
 
-	public BeanPropertyTable(Object bean) throws BaseException {
+	public BeanPropertyTable(Object bean) throws BaseException
+	{
 		super(new BeanPropertyTableModel());
-		_model = (BeanPropertyTableModel)getModel();
+		_model = (BeanPropertyTableModel) getModel();
 		_model.setBean(bean);
 		getTableHeader().setResizingAllowed(true);
 	}
 
-	public void refresh() throws BaseException {
+	public void refresh() throws BaseException
+	{
 		_model.refresh();
 	}
 
-	public void setBean(Object bean) throws BaseException {
+	public void setBean(Object bean) throws BaseException
+	{
 		_model.setBean(bean);
 	}
 
-	public void setModel(BeanPropertyTableModel model) throws BaseException {
+	public void setModel(BeanPropertyTableModel model) throws BaseException
+	{
 		super.setModel(model);
 		_model = model;
 		refresh();

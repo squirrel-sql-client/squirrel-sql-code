@@ -36,7 +36,7 @@ public class TablePopupMenu extends BasePopupMenu {
 	private CopyAction _copy = new CopyAction();
 	private CopyHtmlAction _copyHtml = new CopyHtmlAction();
 	private PasteAction _paste = new PasteAction();
-	private ClearAction _clear = new ClearAction();
+//	private ClearAction _clear = new ClearAction();
 	private SelectAllAction _select = new SelectAllAction();
 
 	public TablePopupMenu() {

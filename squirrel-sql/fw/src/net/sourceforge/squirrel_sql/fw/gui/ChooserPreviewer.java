@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.fw.gui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Point;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -34,10 +33,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
-
 /**
  * This is a decorator class that can be used in a <TT>JFileChooser</TT>
  * to preview the contents of a text or image file. If the file name
@@ -46,7 +43,8 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ChooserPreviewer extends JComponent {
+public class ChooserPreviewer extends JComponent
+{
 	/** Default number of bytes to read from file for preview. */
 	private int DFT_BYTES_TO_READ = 2048;
 
@@ -72,7 +70,7 @@ public class ChooserPreviewer extends JComponent {
 	private JFileChooser _chooser;
 
 	/** <TT>Point(0, 0)</TT>. */
-	private static Point TOP_LEFT = new Point(0, 0);
+	//	private static Point TOP_LEFT = new Point(0, 0);
 
 	/**
 	 * Listener listening to <TT>JFileChooser</TT> for a change
@@ -83,7 +81,8 @@ public class ChooserPreviewer extends JComponent {
 	/**
 	 * Ctor.
 	 */
-	public ChooserPreviewer() {
+	public ChooserPreviewer()
+	{
 		super();
 		createUserInterface();
 	}
@@ -92,19 +91,23 @@ public class ChooserPreviewer extends JComponent {
 	 * This accessory is being added to a chooser. Add a listener
 	 * to the chooser for when the selected file changes.
 	 */
-	public void addNotify() {
+	public void addNotify()
+	{
 		super.addNotify();
 		cleanup();
 		Component parent = getParent();
-		while (parent != null) {
-			if (parent instanceof JFileChooser) {
-				_chooser = (JFileChooser)parent;
+		while (parent != null)
+		{
+			if (parent instanceof JFileChooser)
+			{
+				_chooser = (JFileChooser) parent;
 				break;
 			}
 			parent = parent.getParent();
 		}
 
-		if (_chooser != null) {
+		if (_chooser != null)
+		{
 			_propChangeListener = new ChooserListener();
 			_chooser.addPropertyChangeListener(_propChangeListener);
 		}
@@ -114,34 +117,46 @@ public class ChooserPreviewer extends JComponent {
 	 * This accessory is being removed from a chooser. Remove
 	 * the listener from the chooser.
 	 */
-	public void removeNotify() {
+	public void removeNotify()
+	{
 		cleanup();
 		super.removeNotify();
 	}
 
-	protected void cleanup() {
-		if (_chooser != null && _propChangeListener != null) {
+	protected void cleanup()
+	{
+		if (_chooser != null && _propChangeListener != null)
+		{
 			_chooser.removePropertyChangeListener(_propChangeListener);
 		}
 		_propChangeListener = null;
 		_chooser = null;
 	}
 
-	protected void fileChanged() {
+	protected void fileChanged()
+	{
 		Component componentToUse = _emptyPnl;
 
 		File file = _chooser.getSelectedFile();
-		if (file != null && file.isFile() && file.canRead()) {
-			String suffix = Utilities.getFileNameSuffix(file.getPath()).toLowerCase();
-			if (suffix.equals("gif") || suffix.equals("jpg") ||
-					suffix.equals("jpeg") || suffix.equals("png")) {
+		if (file != null && file.isFile() && file.canRead())
+		{
+			String suffix =
+				Utilities.getFileNameSuffix(file.getPath()).toLowerCase();
+			if (suffix.equals("gif")
+				|| suffix.equals("jpg")
+				|| suffix.equals("jpeg")
+				|| suffix.equals("png"))
+			{
 				componentToUse = readImageFile(file);
-			} else {
+			}
+			else
+			{
 				componentToUse = readTextFile(file);
 			}
 		}
 
-		if (componentToUse != _currentComponent) {
+		if (componentToUse != _currentComponent)
+		{
 			_currentComponentSp.setViewportView(componentToUse);
 			_currentComponent = componentToUse;
 		}
@@ -155,7 +170,8 @@ public class ChooserPreviewer extends JComponent {
 	 *
 	 * @return	The image component.
 	 */
-	protected Component readImageFile(File file) {
+	protected Component readImageFile(File file)
+	{
 		ImageIcon icon = new ImageIcon(file.getPath());
 		_imageComponent.setIcon(icon);
 		return _imageComponent;
@@ -170,21 +186,30 @@ public class ChooserPreviewer extends JComponent {
 	 *
 	 * @return	The text component
 	 */
-	protected Component readTextFile(File file) {
+	protected Component readTextFile(File file)
+	{
 		StringBuffer buf = new StringBuffer();
-		if (file != null && file.isFile() && file.canRead()) {
-			try {
+		if (file != null && file.isFile() && file.canRead())
+		{
+			try
+			{
 				FileReader rdr = new FileReader(file);
-				try {
+				try
+				{
 					char[] data = new char[DFT_BYTES_TO_READ];
 					int count = rdr.read(data, 0, data.length);
-					if (count != -1) {
+					if (count != -1)
+					{
 						buf.append(data, 0, count);
 					}
-				} finally {
+				}
+				finally
+				{
 					rdr.close();
 				}
-			} catch (IOException ex) {
+			}
+			catch (IOException ex)
+			{
 				buf = new StringBuffer("Error occured reading file: ");
 				buf.append(ex.toString());
 			}
@@ -194,7 +219,8 @@ public class ChooserPreviewer extends JComponent {
 		return _textComponent;
 	}
 
-	private void createUserInterface() {
+	private void createUserInterface()
+	{
 		_textComponent.setEditable(false);
 		setLayout(new BorderLayout());
 		_currentComponentSp = new JScrollPane(_textComponent);
@@ -202,13 +228,17 @@ public class ChooserPreviewer extends JComponent {
 		setPreferredSize(new Dimension(250, 0));
 	}
 
-	private class ChooserListener implements PropertyChangeListener {
-		public void propertyChange(PropertyChangeEvent evt) {
-			if (evt.getPropertyName().equals(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY)) {
+	private class ChooserListener implements PropertyChangeListener
+	{
+		public void propertyChange(PropertyChangeEvent evt)
+		{
+			if (evt
+				.getPropertyName()
+				.equals(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY))
+			{
 				ChooserPreviewer.this.fileChanged();
 			}
 		}
 	}
 
 }
-

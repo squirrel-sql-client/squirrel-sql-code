@@ -25,18 +25,37 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  */
 public class DefaultColumnRenderer implements IColumnRenderer
 {
+	/** Singleton instance of this class. */
+	private static final DefaultColumnRenderer s_instance = new DefaultColumnRenderer();
+
 	/**
-	 * 
+	 * Default ctor.
+	 */
+	protected DefaultColumnRenderer()
+	{
+		super();
+	}
+
+	/**
+	 * Retrieve the singleton instance of this class.
+	 */
+	public static DefaultColumnRenderer getInstance()
+	{
+		return s_instance;
+	}
+
+	/**
 	 * Return the rendered version of the passed object. If the passed object
 	 * is not <TT>null</TT> then <TT>toString() is called on it else
 	 * "<null>" is returned.
 	 * 
 	 * 
 	 * @param	obj	Object to be rendered.
+	 * @param	idx	The column number being rendered.
 	 * 
 	 * @return	The rendered object.
 	 */
-	public Object renderObject(Object obj)
+	public Object renderObject(Object obj, int idx)
 	{
 		if (obj != null)
 		{

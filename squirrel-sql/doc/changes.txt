@@ -1,15 +1,22 @@
 SQuirreL SQL Client Change Log
 ==============================
 
-1.1beta7
-========
+1.1rc1
+======
 
 Enhancements
 ------------
+- Add Proxy settings to Application Preferences.
+- Add file sizes into SQuirreL Logs dropdown.
+- Sort the driver names in dropdown box in a
+  case-insensitive manner.
+- Make all windows resizeable.
+- Add Refresh button to HTLM Viewer toolbar.
+- Add FAQ to the Help menu.
 - Added "Install Default Drivers" menu option which will
   copy driver definitions from the default drivers file to
   the drivers list.
-- Add SAPDB and PointBase to default drivers.
+- Add SAPDB, DB2 and PointBase to default drivers.
 - Add HSQL to list of default drivers (Glenn Griffin).
 - Cleanup example URLs for many of the default drivers (Glenn Griffin).
 - Add toolbar to HTML Viewer with back, forward and close buttons.
@@ -19,7 +26,6 @@ Enhancements
 - Treat Types.OTHER columns as strings when displaying data.
 - Add plugins location to plugin summary dialog.
 - Add plugins location to application dump.
-- Cleanup component borders.
 - Create Windows shortcut in installer.
 - Make shell script executable in installer.
 - Add icons for program shortcuts (Greg Mackness).
@@ -33,6 +39,10 @@ Enhancements
 
 Bug Fixes
 ---------
+- Position focus to the text area when first displaying
+  the HTML viewer window.
+- Stop driver maintenance window from resizing when jars
+  added/removed.
 - Improve error handling when loading drivers and aliases.
 - Incorrect error message was displayed in View Help
   command (Glenn Griffin).
@@ -113,9 +123,6 @@ Enhancements
 - Display more information about the executing query on the
   execution panel.
 - Split query execution times into "sql execution" and "building
-
-Enhancements
-------------
 - Add handling of blob, clob, binary, varbinary and longvarbinary
   columns.
 - Allow for some combinations of the JDBC/ODBC bridge and MSSQL

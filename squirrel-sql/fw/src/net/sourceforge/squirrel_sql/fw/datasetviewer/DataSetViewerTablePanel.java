@@ -307,7 +307,11 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 
 		private TableColumnModel createColumnModel(ColumnDisplayDefinition[] colDefs)
 		{
-			CellRenderer renderer = new CellRenderer();
+			CellRenderer[] renderers = new CellRenderer[colDefs.length];
+			for (int i = 0; i < colDefs.length; ++i)
+			{
+				renderers[i] = new CellRenderer(i);
+			}
 
 			//_colDefs = hdgs;
 			TableColumnModel cm = new DefaultTableColumnModel();
@@ -319,7 +323,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 				{
 					colWidth = MAX_COLUMN_WIDTH * _multiplier;
 				}
-				TableColumn col = new TableColumn(i, colWidth, renderer, null);
+				TableColumn col = new TableColumn(i, colWidth, renderers[i], null);
 				col.setHeaderValue(colDef.getLabel());
 				cm.addColumn(col);
 			}
@@ -407,9 +411,17 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 
 	private final class CellRenderer extends DefaultTableCellRenderer
 	{
+		private final int _idx;
+
+		CellRenderer(int idx)
+		{
+			super();
+			_idx = idx;
+		}
+
 		public void setValue(Object value)
 		{
-			super.setValue(getColumnRenderer().renderObject(value));
+			super.setValue(getColumnRenderer(_idx).renderObject(value, _idx));
 		}
 	}
 }
