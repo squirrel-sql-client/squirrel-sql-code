@@ -6,6 +6,8 @@ Change Log
 
 Enhancements
 ------------
+- Nullable, Searchable and boolean columns in Data Types display
+  now show meaningful text.
 - The squirrel-sql.jar file is now executable.
 - Function and keyword lists moved out of the main metadata tab and
   placed in their own tabs (David MacLean).
