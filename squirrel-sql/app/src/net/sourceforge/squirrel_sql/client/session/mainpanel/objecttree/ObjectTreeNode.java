@@ -33,15 +33,37 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 	/** Current session. */
 	private ISession _session;
 
-	boolean _canHaveChildren;
+	/** <TT>true</TT> if node can have children. */
+	boolean _allowsChildren;
 
+	/**
+	 * Ctor that assumes node can have children.
+	 * 
+	 * @param	session		Current session.
+	 * @param	nodeType	The type of node this is. @see INodeTypes.
+	 * @param	userObject	Object to store in node. Can be <TT>null</TT>.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>ISession</TT> passed.
+	 */
 	public ObjectTreeNode(ISession session, int nodeType, Object userObject)
 	{
 		this(session, nodeType, userObject, true);
 	}
 
+	/**
+	 * Ctor.
+	 * 
+	 * @param	session		Current session.
+	 * @param	nodeType	The type of node this is. @see INodeTypes.
+	 * @param	userObject	Obejct to store in node. Can be <TT>null</TT>.
+	 * @param	allowsChildren	<TT>true</TT> if node can have children.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>ISession</TT> passed.
+	 */
 	public ObjectTreeNode(ISession session, int nodeType, Object userObject,
-							boolean canHaveChildren)
+							boolean allowsChildren)
 	{
 		super(userObject);
 		if (session == null)
@@ -50,19 +72,7 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 		}
 		_nodeType = nodeType;
 		_session = session;
-		_canHaveChildren = canHaveChildren;
-	}
-
-	/**
-	 * Return <TT>false</TT> to indicate that this node can have
-	 * children.
-	 * 
-	 * @return	<TT>false</TT> to indicate that this node can have
-	 *			children.
-	 */
-	public boolean isLeaf()
-	{
-		return !_canHaveChildren;
+		_allowsChildren = allowsChildren;
 	}
 
 	/**
@@ -84,4 +94,15 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 	{
 		return _session;
 	}
+
+	/**
+	 * Return <TT>true</TT> to indicate that this node can have children.
+	 * 
+	 * @return	<TT>true</TT> to indicate that this node can have children.
+	 */
+	public boolean getAllowsChildren()
+	{
+		return _allowsChildren;
+	}
+
 }

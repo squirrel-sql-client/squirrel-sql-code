@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
+import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -43,7 +44,7 @@ public class ObjectTreeModel extends DefaultTreeModel {
 	 * 			Thrown if <TT>null</TT> <TT>ISession</TT> passed.
 	 */
 	public ObjectTreeModel(ISession session) {
-		super(createRootNode(session));
+		super(createRootNode(session), true);
 //		_treeLoadedListeners = new ArrayList();
 //		setSession(session);
 	}
@@ -65,7 +66,7 @@ public class ObjectTreeModel extends DefaultTreeModel {
 
 	private static final class RootNode extends ObjectTreeNode {
 		RootNode(ISession session) {
-			super(session, INodeTypes.DATABASE,getNodeText(session));
+			super(session, IDatabaseObjectTypes.DATABASE, getNodeText(session));
 		}
 
 		private static final String getNodeText(ISession session) {

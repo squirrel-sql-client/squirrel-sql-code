@@ -35,7 +35,7 @@ public class TableInfo extends DatabaseObjectInfo implements ITableInfo {
 
 	TableInfo(ResultSet rs, SQLConnection conn) throws SQLException {
 		super(rs.getString(1), rs.getString(2), rs.getString(3),
-				conn);
+				IDatabaseObjectTypes.TABLE, conn);
 		_type = rs.getString(4);
 		_remarks = rs.getString(5);
 		_childList = null;

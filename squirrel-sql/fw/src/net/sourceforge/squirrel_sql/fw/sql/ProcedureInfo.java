@@ -43,7 +43,7 @@ public class ProcedureInfo extends DatabaseObjectInfo implements IProcedureInfo 
 
 	public ProcedureInfo(ResultSet rs, SQLConnection conn) throws SQLException {
 		super(rs.getString(1), rs.getString(2), rs.getString(3),
-				conn);
+				IDatabaseObjectTypes.PROCEDURE, conn);
 		_remarks = rs.getString(7);
 		_type = rs.getInt(8);
 	}

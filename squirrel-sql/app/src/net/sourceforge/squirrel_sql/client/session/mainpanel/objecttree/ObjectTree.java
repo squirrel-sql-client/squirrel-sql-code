@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  */
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import java.awt.event.MouseEvent;
@@ -57,6 +58,7 @@ public class ObjectTree extends JTree {
 //		((BaseNode)_model.getRoot()).addBaseNodeExpandListener(this);
 //		_model.addTreeLoadedListener(this);
 //		_model.fillTree();
+		setShowsRootHandles(true);
 		setModel(_model);
 		setSelectionRow(0);
 	}

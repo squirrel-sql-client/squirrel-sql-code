@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.objectstree;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -32,128 +32,170 @@ import net.sourceforge.squirrel_sql.fw.sql.NoConnectionException;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
-public final class TableNode extends DatabaseObjectNode implements ITableInfo {
+public final class TableNode extends DatabaseObjectNode implements ITableInfo
+{
 	private final ITableInfo _tableInfo;
 	private final TableNode[] _children;
 
 	public TableNode(ISession session, ObjectsTreeModel treeModel,
 						ITableInfo tableInfo, Statement rowCountStmt)
-			throws BaseSQLException, NoConnectionException {
+		throws BaseSQLException, NoConnectionException
+	{
 		super(session, treeModel, tableInfo);
-		if (tableInfo == null) {
+		if (tableInfo == null)
+		{
 			throw new IllegalArgumentException("Null ITableInfo passed");
 		}
 		_tableInfo = tableInfo;
 		setUserObject(getDisplayText(rowCountStmt));
 		ITableInfo[] infoChildren = tableInfo.getChildTables();
-		if (infoChildren != null) {
-			_children = new TableNode [ infoChildren.length ];
-			for (int i=0; i < _children.length; ++i) {
-				_children[i] = new TableNode(session, treeModel, infoChildren[i], rowCountStmt);
+		if (infoChildren != null)
+		{
+			_children = new TableNode[infoChildren.length];
+			for (int i = 0; i < _children.length; ++i)
+			{
+				_children[i] =
+					new TableNode(
+						session,
+						treeModel,
+						infoChildren[i],
+						rowCountStmt);
 			}
-		} else {
+		}
+		else
+		{
 			_children = null;
 		}
 	}
 
-	public String getCatalogName() {
+	public String getCatalogName()
+	{
 		return _tableInfo.getCatalogName();
 	}
 
-	public String getSchemaName() {
+	public String getSchemaName()
+	{
 		return _tableInfo.getSchemaName();
 	}
 
-	public String getSimpleName() {
+	public String getSimpleName()
+	{
 		return _tableInfo.getSimpleName();
 	}
 
-	public String getQualifiedName() {
+	public String getQualifiedName()
+	{
 		return _tableInfo.getQualifiedName();
 	}
 
-	public String getType() {
+	public String getType()
+	{
 		return _tableInfo.getType();
 	}
 
-	public String getRemarks() {
+	public String getRemarks()
+	{
 		return _tableInfo.getRemarks();
 	}
 
-	public ITableInfo[] getChildTables() {
+	public ITableInfo[] getChildTables()
+	{
 		return _tableInfo.getChildTables();
 	}
 
-	public Enumeration children() {
-		return new Enumeration() {
+	public Enumeration children()
+	{
+		return new Enumeration()
+		{
 			int pos = 0;
-			public boolean hasMoreElements() {
+			public boolean hasMoreElements()
+			{
 				return (_children != null && _children.length < pos);
 			}
-			public Object nextElement() {
+			public Object nextElement()
+			{
 				return _children[pos++];
 			}
 		};
 	}
 
-	public boolean getAllowsChildren() {
+	public boolean getAllowsChildren()
+	{
 		return true;
 	}
 
-	public TreeNode getChildAt(int i) {
+	public TreeNode getChildAt(int i)
+	{
 		return _children[i];
 	}
 
-	public int getChildCount() {
+	public int getChildCount()
+	{
 		return (_children == null) ? 0 : _children.length;
 	}
 
-	public JComponent getDetailsPanel() {
+	public JComponent getDetailsPanel()
+	{
 		final ISession session = getSession();
 		final IPlugin plugin = session.getApplication().getDummyAppPlugin();
 		TablePanel pnl =
-			(TablePanel) session.getPluginObject(plugin, ISession.ISessionKeys.TABLE_DETAIL_PANEL_KEY);
-//	  if (pnl == null) {
-//		  pnl = new TablePanel(session);
-//		  session.putPluginObject(plugin, ISession.ISessionKeys.TABLE_DETAIL_PANEL_KEY, pnl);
-//	  }
+			(TablePanel) session.getPluginObject(
+				plugin,
+				ISession.ISessionKeys.TABLE_DETAIL_PANEL_KEY);
+		//	  if (pnl == null) {
+		//		  pnl = new TablePanel(session);
+		//		  session.putPluginObject(plugin, ISession.ISessionKeys.TABLE_DETAIL_PANEL_KEY, pnl);
+		//	  }
 		pnl.setTableInfo(this);
 		return pnl;
 	}
 
-	public boolean isLeaf() {
+	public boolean isLeaf()
+	{
 		return _children == null;
 	}
 
-	private String getDisplayText(Statement rowCountStmt) {
-		if (rowCountStmt != null) {
-			try {
+	private String getDisplayText(Statement rowCountStmt)
+	{
+		if (rowCountStmt != null)
+		{
+			try
+			{
 				ResultSet rs =
 					rowCountStmt.executeQuery(
-						"select count(*) from " + _tableInfo.getQualifiedName());
-				try {
+						"select count(*) from "
+							+ _tableInfo.getQualifiedName());
+				try
+				{
 					long nbrRows = 0;
-					if (rs.next()) {
+					if (rs.next())
+					{
 						nbrRows = rs.getLong(1);
 					}
 					return _tableInfo.getSimpleName() + " (" + nbrRows + ")";
-				} finally {
+				}
+				finally
+				{
 					rs.close();
 				}
-			} catch (SQLException ex) {
+			}
+			catch (SQLException ex)
+			{
 				return _tableInfo.getSimpleName();
 			}
-		} else {
+		}
+		else
+		{
 			return _tableInfo.getSimpleName();
 		}
 	}
 
-	 public boolean equals(Object obj)
-	 {
-	 	if(obj instanceof TableNode)
-	 	{
-	 		return ((TableNode)obj)._tableInfo.equals(_tableInfo);
-	 	}
-	 	return false;
-	 }
+	public boolean equals(Object obj)
+	{
+		if (obj instanceof TableNode)
+		{
+			return ((TableNode) obj)._tableInfo.equals(_tableInfo);
+		}
+		return false;
+	}
 }

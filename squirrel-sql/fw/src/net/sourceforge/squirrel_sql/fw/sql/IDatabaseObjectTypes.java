@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
+package net.sourceforge.squirrel_sql.fw.sql;
 /*
  * Copyright (C) 2002 Colin Bell
  * colbell@users.sourceforge.net
@@ -17,12 +17,20 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-public interface INodeExpander
+/**
+ * 
+ * Defines the different types of database objects.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
+public interface IDatabaseObjectTypes
 {
-	/**
-	 * Expand the passed node.
-	 * 
-	 * @param	node	Node to be expanded.
-	 */
-	void expand(ObjectTreeNode node);
+	int GENERIC_LEAF = 0;
+	int GENERIC_FOLDER = 1;
+	int DATABASE = 2;
+	int SCHEMA = 3;
+	int CATALOG = 4;
+	int TABLE = 5;
+	int PROCEDURE = 6;
+	int UDT = 7;
 }

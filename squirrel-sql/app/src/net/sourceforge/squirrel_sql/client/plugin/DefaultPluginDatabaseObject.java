@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.plugin;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -18,13 +18,17 @@ package net.sourceforge.squirrel_sql.client.plugin;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectTypes;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
-
-public abstract class DefaultPluginDatabaseObject extends DatabaseObjectInfo implements IPluginDatabaseObject {
+public abstract class DefaultPluginDatabaseObject
+	extends DatabaseObjectInfo
+	implements IPluginDatabaseObject
+{
 	public DefaultPluginDatabaseObject(String catalog, String schema,
-								String simpleName, SQLConnection conn) {
-		super(catalog, schema, simpleName, conn);
+										String simpleName, SQLConnection conn)
+	{
+		super(catalog, schema, simpleName, IDatabaseObjectTypes.GENERIC_LEAF,
+					conn);
 	}
 }
