@@ -38,6 +38,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
@@ -224,6 +226,7 @@ public class ContentsTab extends BaseTableTab
 	{
 		final ISession session = getSession();
 		final SQLConnection conn = session.getSQLConnection();
+		final SQLDatabaseMetaData md = conn.getSQLMetaData();
 		final SQLFilterClauses sqlFilterClauses = session.getSQLFilterClauses();
 
 		try
@@ -278,24 +281,15 @@ public class ContentsTab extends BaseTableTab
 
 				try
 				{
-					ResultSet rowIdentifierRS = conn.getSQLMetaData().getBestRowIdentifier(ti);
-					try
+					BestRowIdentifier[] rowIDs = md.getBestRowIdentifier(ti);
+					for (int i = 0; i < rowIDs.length; ++i)
 					{
-						while (rowIdentifierRS.next())
+						short pseudo = rowIDs[i].getPseudoColumn();
+						if (pseudo == DatabaseMetaData.bestRowPseudo)
 						{
-							// according to spec, col 8 is indicator of pseudo/not-pseudo
-							// and col 2 is name of rowid column
-							short pseudo = rowIdentifierRS.getShort(8);
-							if (pseudo == DatabaseMetaData.bestRowPseudo)
-							{
-								pseudoColumn = " ," + rowIdentifierRS.getString(2);
-								break;
-							}
+							pseudoColumn = " ," + rowIDs[i].getColumnName();
+							break;
 						}
-					}
-					finally
-					{
-						rowIdentifierRS.close();
 					}
 				}
 
@@ -319,7 +313,7 @@ public class ContentsTab extends BaseTableTab
 				//
 				if (pseudoColumn.length() == 0)
 				{
-					String dbName = conn.getSQLMetaData().getDatabaseProductName().toUpperCase();
+					String dbName = md.getDatabaseProductName().toUpperCase();
 					if (dbName.equals("POSTGRESQL"))
 					{
 						pseudoColumn = ", oid";
@@ -423,7 +417,7 @@ public class ContentsTab extends BaseTableTab
 				// DBMSs, while it is correct for those DBMSs in the getColumns() info.  Therefore,
 				// we collect the collumn nullability information from getColumns() and pass that
 				// info to the ResultSet to override what it got from the ResultSetMetaData.
-				final ResultSet columnRS = conn.getSQLMetaData().getColumns(getTableInfo());
+				final ResultSet columnRS = md.getColumns(getTableInfo());
 				try
 				{
 					final ColumnDisplayDefinition[] colDefs = rsds.getDataSetDefinition().getColumnDefinitions();

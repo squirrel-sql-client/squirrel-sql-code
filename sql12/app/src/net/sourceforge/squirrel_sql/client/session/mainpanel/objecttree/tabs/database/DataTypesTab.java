@@ -74,14 +74,7 @@ public class DataTypesTab extends BaseDataSetTab
 		try
 		{
 			ResultSet rs = session.getSQLConnection().getSQLMetaData().getTypeInfo();
-//			try
-//			{
-				return new DatabaseTypesDataSet(rs);
-//			}
-//			finally
-//			{
-//				rs.close();
-//			}
+			return new DatabaseTypesDataSet(rs);
 		}
 		catch (SQLException ex)
 		{
