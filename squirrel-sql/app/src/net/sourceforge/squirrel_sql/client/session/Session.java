@@ -84,6 +84,9 @@ class Session implements IClientSession
 	/** API for the object tree. */
 	private final IObjectTreeAPI _objectTreeAPI;
 
+	/** API object for the SQL panel. */
+	private final ISQLPanelAPI _sqlPanelAPI;
+
 	/**
 	 * Create a new session.
 	 *
@@ -123,9 +126,10 @@ class Session implements IClientSession
 //		_props.assignFrom(_app.getSquirrelPreferences().getSessionProperties());
 		_props = (SessionProperties)_app.getSquirrelPreferences().getSessionProperties().clone();
 
-		// Create the API objectst that give access to various
+		// Create the API objects that give access to various
 		// areas of the session.
 		_objectTreeAPI = new ObjectTreeAPI(this);
+		_sqlPanelAPI = new SQLPanelAPI(this);
 
 		final IPlugin plugin = getApplication().getDummyAppPlugin();
 
@@ -208,6 +212,16 @@ class Session implements IClientSession
 	}
 
 	/**
+	 * Return the API object for the SQL panel.
+	 * 
+	 * @return	the API object for the SQL panel.
+	 */
+	public ISQLPanelAPI getSQLPanelAPI()
+	{
+		return _sqlPanelAPI;
+	}
+
+	/**
 	 * Return an array of <TT>IDatabaseObjectInfo</TT> objects representing all
 	 * the objects selected in the objects tree.
 	 *
@@ -282,46 +296,6 @@ class Session implements IClientSession
 	public void closeAllSQLResultFrames()
 	{
 		_sessionSheet.getSQLPanel().closeAllSQLResultFrames();
-	}
-
-	public String getEntireSQLScript()
-	{
-		return _sessionSheet.getSQLEntryPanel().getText();
-	}
-
-	public String getSQLScriptToBeExecuted()
-	{
-		return _sessionSheet.getSQLEntryPanel().getSQLToBeExecuted();
-	}
-
-	public void setEntireSQLScript(String sqlScript)
-	{
-		_sessionSheet.getSQLEntryPanel().setText(sqlScript);
-	}
-
-	public void appendSQLScript(String sqlScript)
-	{
-		_sessionSheet.getSQLEntryPanel().appendText(sqlScript);
-	}
-
-	public int getSQLScriptSelectionStart()
-	{
-		return _sessionSheet.getSQLEntryPanel().getSelectionStart();
-	}
-
-	public int getSQLScriptSelectionEnd()
-	{
-		return _sessionSheet.getSQLEntryPanel().getSelectionEnd();
-	}
-
-	public void setSQLScriptSelectionStart(int start)
-	{
-		_sessionSheet.getSQLEntryPanel().setSelectionStart(start);
-	}
-
-	public void setSQLScriptSelectionEnd(int start)
-	{
-		_sessionSheet.getSQLEntryPanel().setSelectionEnd(start);
 	}
 
 	/**

@@ -98,21 +98,22 @@ public interface ISession extends IHasIdentifier {
 	IMessageHandler getMessageHandler();
 
 	/**
-	 * Return the API for the Object Tree.
+	 * Return the API object for the Object Tree.
+	 * 
+	 * @return	the API object for the Object Tree.
 	 */
 	IObjectTreeAPI getObjectTreeAPI();
+
+	/**
+	 * Return the API object for the SQL panel.
+	 * 
+	 * @return	the API object for the SQL panel.
+	 */
+	ISQLPanelAPI getSQLPanelAPI();
 
 	void closeAllSQLResultTabs();
 	void closeAllSQLResultFrames();
 
-	String getEntireSQLScript();
-	String getSQLScriptToBeExecuted();
-	void setEntireSQLScript(String sqlScript);
-	void appendSQLScript(String sqlScript);
-	int getSQLScriptSelectionStart();
-	int getSQLScriptSelectionEnd();
-	void setSQLScriptSelectionStart(int start);
-	void setSQLScriptSelectionEnd(int start);
 	void executeSQL(String sql);
 
 	/**

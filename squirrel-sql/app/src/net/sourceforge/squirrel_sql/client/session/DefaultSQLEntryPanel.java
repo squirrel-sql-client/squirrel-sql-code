@@ -34,6 +34,7 @@ import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import sun.security.action.GetLongAction;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
@@ -129,20 +130,68 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	}
 
 	/**
-	 * @see ISQLEntryPanel#setText(String)
+	 * Replace the contents of the SQL entry area with the passed
+	 * SQL script without selecting it.
+	 * 
+	 * @param	sqlScript	The script to be placed in the SQL entry area..
 	 */
-	public void setText(String text)
+	public void setText(String sqlScript)
 	{
-		_comp.setText(text);
+		setText(sqlScript, false);
 	}
 
 	/**
-	 * @see ISQLEntryPanel#appendText(String)
+	 * Replace the contents of the SQL entry area with the passed
+	 * SQL script and specify whether to select it.
+	 * 
+	 * @param	sqlScript	The script to be placed in the SQL entry area..
+	 * @param	select		If <TT>true</TT> then select the passed script
+	 * 						in the sql entry area.
 	 */
-	public void appendText(String text)
+	public void setText(String sqlScript, boolean select)
 	{
-		_comp.append(text);
+		_comp.setText(sqlScript);
+		if (select)
+		{
+			setSelectionStart(0);
+			setSelectionEnd(getText().length());
+		}
 	}
+
+	/**
+	 * Append the passed SQL script to the SQL entry area but don't select
+	 * it.
+	 * 
+	 * @param	sqlScript	The script to be appended.
+	 */
+	public void appendText(String sqlScript)
+	{
+		appendText(sqlScript, false);
+	}
+
+	/**
+	 * Append the passed SQL script to the SQL entry area and specify
+	 * whether it should be selected.
+	 * 
+	 * @param	sqlScript	The script to be appended.
+	 * @param	select		If <TT>true</TT> then select the passed script
+	 * 						in the sql entry area.
+	 */
+	public void appendText(String sqlScript, boolean select)
+	{
+		int start = 0;
+		if (select)
+		{
+			start = getText().length();
+		}
+		_comp.append(sqlScript);
+		if (select)
+		{
+			setSelectionStart(start + 1);
+			setSelectionEnd(getText().length());
+		}
+	}
+
 	/**
 	 * @see ISQLEntryPanel#getCaretPosition()
 	 */

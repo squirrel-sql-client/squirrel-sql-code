@@ -17,15 +17,13 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Frame;
 import java.sql.Connection;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.ResultFrame;
 
 /**
  * This command will convert the current SQL into native
@@ -33,7 +31,8 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.ResultFrame;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ShowNativeSQLCommand implements ICommand {
+public class ShowNativeSQLCommand implements ICommand
+{
 	/** Current session. */
 	private final ISession _session;
 
@@ -45,26 +44,31 @@ public class ShowNativeSQLCommand implements ICommand {
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
 	 */
-	public ShowNativeSQLCommand(ISession session) {
+	public ShowNativeSQLCommand(ISession session)
+	{
 		super();
-		if (session == null) {
+		if (session == null)
+		{
 			throw new IllegalArgumentException("Null ISession passed");
 		}
 
 		_session = session;
 	}
 
-	public void execute() {
+	public void execute()
+	{
 		Connection conn = _session.getSQLConnection().getConnection();
-		try {
-			String sql = conn.nativeSQL(_session.getSQLScriptToBeExecuted());
-			if (sql.length() > 0) {
-				int start = _session.getEntireSQLScript().length();
-				_session.appendSQLScript("\n" + sql);
-				_session.setSQLScriptSelectionStart(start + 1);
-				_session.setSQLScriptSelectionEnd(_session.getEntireSQLScript().length());
+		try
+		{
+			ISQLPanelAPI api = _session.getSQLPanelAPI();
+			String sql = conn.nativeSQL(api.getSQLScriptToBeExecuted());
+			if (sql.length() > 0)
+			{
+				api.appendSQLScript("\n" + sql, true);
 			}
-		} catch (SQLException ex) {
+		}
+		catch (SQLException ex)
+		{
 			_session.getMessageHandler().showMessage(ex);
 		}
 	}

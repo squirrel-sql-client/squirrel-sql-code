@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 /**
@@ -171,7 +172,8 @@ public class SessionScriptPlugin extends DefaultSessionPlugin
 			if (sql != null && sql.length() > 0)
 			{
 				rc = true;
-				session.setEntireSQLScript(sql);
+				ISQLPanelAPI api = session.getSQLPanelAPI();
+				api.setEntireSQLScript(sql);
 				session.executeCurrentSQL();
 			}
 		}

@@ -1,7 +1,8 @@
 package net.sourceforge.squirrel_sql.client.session;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002 Colin Bell and Johan Compagner
  * colbell@users.sourceforge.net
+ * jcompagner@j-com.nl
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

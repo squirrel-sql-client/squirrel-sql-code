@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -25,13 +25,49 @@ import javax.swing.JComponent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
 
-public interface ISQLEntryPanel {
+public interface ISQLEntryPanel
+{
 	JComponent getJComponent();
 
 	String getText();
 	String getSelectedText();
-	void setText(String text);
+
+	/**
+	 * Replace the contents of the SQL entry area with the passed
+	 * SQL script without selecting it.
+	 * 
+	 * @param	sqlScript	The script to be placed in the SQL entry area..
+	 */
+	void setText(String sqlScript);
+
+	/**
+	 * Replace the contents of the SQL entry area with the passed
+	 * SQL script and specify whether to select it.
+	 * 
+	 * @param	sqlScript	The script to be placed in the SQL entry area..
+	 * @param	select		If <TT>true</TT> then select the passed script
+	 * 						in the sql entry area.
+	 */
+	void setText(String sqlScript, boolean select);
+
+	/**
+	 * Append the passed SQL script to the SQL entry area but don't select
+	 * it.
+	 * 
+	 * @param	sqlScript	The script to be appended.
+	 */
 	void appendText(String text);
+
+	/**
+	 * Append the passed SQL script to the SQL entry area and specify
+	 * whether it should be selected.
+	 * 
+	 * @param	sqlScript	The script to be appended.
+	 * @param	select		If <TT>true</TT> then select the passed script
+	 * 						in the sql entry area.
+	 */
+	void appendText(String sqlScript, boolean select);
+
 	String getSQLToBeExecuted();
 
 	int getSelectionStart();
@@ -72,4 +108,3 @@ public interface ISQLEntryPanel {
 	void addCaretListener(CaretListener lis);
 	void removeCaretListener(CaretListener lis);
 }
-
