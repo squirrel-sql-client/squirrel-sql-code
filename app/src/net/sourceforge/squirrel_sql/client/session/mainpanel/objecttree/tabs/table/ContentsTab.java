@@ -172,8 +172,12 @@ public class ContentsTab extends BaseTableTab
 							// mouse button and the event was not classified as the PopupTrigger.
 							// It is unknown why that occured, but we needed to add the second
 							// test (button3&&clickcount=1) to resolve that issue.
-							if (evt.isPopupTrigger() || (evt.getButton()==3 && evt.getClickCount() == 1))
+// TODO: Put back in when JDK1.4 is minimum supported version.
+//							if (evt.isPopupTrigger() || (evt.getButton()==3 && evt.getClickCount() == 1))
+							if (evt.isPopupTrigger() || (((evt.getModifiers() & MouseEvent.BUTTON3_MASK) != 0) && evt.getClickCount() == 1))
+							{
 								new ContentsTabPopupMenu(viewer).show(evt);
+							}
 						}
 					});
 				}
