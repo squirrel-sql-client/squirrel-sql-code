@@ -20,7 +20,7 @@ package net.sourceforge.squirrel_sql.fw.gui;
 import java.util.StringTokenizer;
 
 import javax.swing.JTextArea;
-import javax.swing.UIManager;
+import javax.swing.LookAndFeel;
 
 public class MultipleLineLabel extends JTextArea {
 	
@@ -30,10 +30,17 @@ public class MultipleLineLabel extends JTextArea {
 
 	public MultipleLineLabel(String title) {
 		super();
-		setEnabled(false);
-		setOpaque(false);
-		setFont(UIManager.getFont("Label.font"));
-		setDisabledTextColor(UIManager.getColor("Label.foreground"));
 		setText(title);
+	}
+
+	public void updateUI() {
+		super.updateUI();
+		setEditable(false);
+		setLineWrap(true);
+		setWrapStyleWord(true);
+		LookAndFeel.installBorder(this, "Label.border");
+		LookAndFeel.installColorsAndFont(this, "Label.background",
+											"Label.foreground",
+											"Label.font");
 	}
 }
