@@ -39,7 +39,6 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewerDestination;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
-//import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel;
 import net.sourceforge.squirrel_sql.fw.util.Logger;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 
@@ -49,7 +48,6 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 public class ResultTab extends JPanel {
 	/** Current session. */
 	private ISession _session;
-//  private JScrollPane _outputSp;
 
 	/** Viewer to display the SQL results. */
 	private DataSetViewer _resultSetViewer = new DataSetViewer();
@@ -64,10 +62,10 @@ public class ResultTab extends JPanel {
 	private IDataSetViewerDestination _metaDataOutput;
 
 	/** Scroll pane for <TT>_resultSetOutput</TT>. */
-	private JScrollPane _resultSetSp = new JScrollPane();;
+	private JScrollPane _resultSetSp = new JScrollPane();
 
 	/** Scroll pane for <TT>_metaDataOutput</TT>. */
-	private JScrollPane _metaDataSp = new JScrollPane();;
+	private JScrollPane _metaDataSp = new JScrollPane();
 
 	/** Tabbed pane containing the SQL results the the results meta data. */
 	private JTabbedPane _tp = new JTabbedPane(JTabbedPane.BOTTOM);
@@ -210,35 +208,52 @@ public class ResultTab extends JPanel {
 	}
 
 	private void propertiesHaveChanged(String propertyName) {
-			final SessionProperties props = _session.getProperties();
-			if (propertyName == null || propertyName.equals(
-					SessionProperties.IPropertyNames.SQL_OUTPUT_CLASS_NAME)) {
-				final IDataSetViewerDestination previous = _resultSetOutput;
-				try {
-					Class destClass = Class.forName(props.getSqlOutputClassName());
-					if (IDataSetViewerDestination.class.isAssignableFrom(destClass) &&
-							Component.class.isAssignableFrom(destClass)) {
-						_resultSetOutput = (IDataSetViewerDestination)destClass.newInstance();
-					}
-
-				} catch (Exception ex) {
-					_session.getApplication().getLogger().showMessage(Logger.ILogTypes.ERROR, ex.getMessage());
+		final SessionProperties props = _session.getProperties();
+		final Logger logger = _session.getApplication().getLogger();
+	
+		if (propertyName == null || propertyName.equals(
+				SessionProperties.IPropertyNames.SQL_OUTPUT_CLASS_NAME)) {
+			final IDataSetViewerDestination previous = _resultSetOutput;
+			try {
+				Class destClass = Class.forName(props.getSqlOutputClassName());
+				if (IDataSetViewerDestination.class.isAssignableFrom(destClass) &&
+						Component.class.isAssignableFrom(destClass)) {
+					_resultSetOutput = (IDataSetViewerDestination)destClass.newInstance();
 				}
-				if (_resultSetOutput == null) {
-					_resultSetOutput = new DataSetViewerTablePanel();
-				}
-				_resultSetViewer.setDestination(_resultSetOutput);
-				_resultSetSp.setRowHeader(null);
-				_resultSetSp.setViewportView((Component)_resultSetOutput);
 
-
-				_metaDataOutput = new DataSetViewerTablePanel(); //??
-				_metaDataViewer.setDestination(_metaDataOutput);
-				_metaDataSp.setRowHeader(null);
-				_metaDataSp.setViewportView((Component)_metaDataOutput);
+			} catch (Exception ex) {
+				logger.showMessage(Logger.ILogTypes.ERROR, ex.getMessage());
 			}
+			if (_resultSetOutput == null) {
+				_resultSetOutput = new DataSetViewerTablePanel();
+			}
+			_resultSetViewer.setDestination(_resultSetOutput);
+			_resultSetSp.setRowHeader(null);
+			_resultSetSp.setViewportView((Component)_resultSetOutput);
 		}
 
+		if (propertyName == null || propertyName.equals(
+				SessionProperties.IPropertyNames.SQL_OUTPUT_META_DATA_CLASS_NAME)) {
+			final IDataSetViewerDestination previous = _metaDataOutput;
+			try {
+				Class destClass = Class.forName(props.getSqlOutputMetaDataClassName());
+				if (IDataSetViewerDestination.class.isAssignableFrom(destClass) &&
+						Component.class.isAssignableFrom(destClass)) {
+					_metaDataOutput = (IDataSetViewerDestination)destClass.newInstance();
+				}
+
+			} catch (Exception ex) {
+				logger.showMessage(Logger.ILogTypes.ERROR, ex.getMessage());
+			}
+			if (_metaDataOutput == null) {
+				_metaDataOutput = new DataSetViewerTablePanel();
+			}
+			_metaDataViewer.setDestination(_metaDataOutput);
+			_metaDataSp.setRowHeader(null);
+			_metaDataSp.setViewportView((Component)_metaDataOutput);
+		}
+
+	}
 
 	private void createUserInterface() {
 //	final Resources rsrc = _session.getApplication().getResources();

@@ -23,7 +23,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-//import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
@@ -45,67 +44,67 @@ import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.Resul
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ProcedureColumnsTab extends net.sourceforge.squirrel_sql.client.session.objectstree.procedurepanel.BaseProcedurePanelTab {
-    /**
-     * This interface defines locale specific strings. This should be
-     * replaced with a property file.
-     */
-    private interface i18n {
-        String TITLE = "Columns";
-        String HINT = "Show columns for procedure";
-    }
+	/**
+	 * This interface defines locale specific strings. This should be
+	 * replaced with a property file.
+	 */
+	private interface i18n {
+		String TITLE = "Columns";
+		String HINT = "Show columns for procedure";
+	}
 
-    /** Component to be displayed. */
-    private ResultSetPanel _comp;
+	/** Component to be displayed. */
+	private ResultSetPanel _comp;
 
-    /**
-     * Return the title for the tab.
-     *
-     * @return    The title for the tab.
-     */
-    public String getTitle() {
-        return i18n.TITLE;
-    }
+	/**
+	 * Return the title for the tab.
+	 *
+	 * @return	The title for the tab.
+	 */
+	public String getTitle() {
+		return i18n.TITLE;
+	}
 
-    /**
-     * Return the hint for the tab.
-     *
-     * @return    The hint for the tab.
-     */
-    public String getHint() {
-        return i18n.HINT;
-    }
+	/**
+	 * Return the hint for the tab.
+	 *
+	 * @return	The hint for the tab.
+	 */
+	public String getHint() {
+		return i18n.HINT;
+	}
 
-    /**
-     * Return the component to be displayed in the panel.
-     *
-     * @return    The component to be displayed in the panel.
-     */
-    public synchronized Component getComponent() {
-        if (_comp == null) {
-            _comp = new ResultSetPanel();
-        }
-        return _comp;
-    }
+	/**
+	 * Return the component to be displayed in the panel.
+	 *
+	 * @return	The component to be displayed in the panel.
+	 */
+	public synchronized Component getComponent() {
+		if (_comp == null) {
+			_comp = new ResultSetPanel();
+		}
+		return _comp;
+	}
 
-    /**
-     * Refresh the component displaying the <TT>IProcedureInfo</TT> object.
-     */
-    public synchronized void refreshComponent() throws IllegalStateException {
-        ISession session = getSession();
-        if (session == null) {
-            throw new IllegalStateException("Null ISession");
-        }
-        IProcedureInfo pi = getProcedureInfo();
-        if ( pi == null) {
-            throw new IllegalStateException("Null IProcedureInfo");
-        }
-        String destClassName = null;//?? session.getProperties().getColumnsOutputClassName();
-        try {
-            ResultSet rs = session.getSQLConnection().getProcedureColumns(pi);
-            ((ResultSetPanel)getComponent()).load(session, rs, null /*new int[] {4,5,6,7,9,10,11,12,13,14,15,16,17,18}*/, destClassName);
-        } catch (Exception ex) {
-            session.getMessageHandler().showMessage(ex);
-        }
-    }
+	/**
+	 * Refresh the component displaying the <TT>IProcedureInfo</TT> object.
+	 */
+	public synchronized void refreshComponent() throws IllegalStateException {
+		ISession session = getSession();
+		if (session == null) {
+			throw new IllegalStateException("Null ISession");
+		}
+		IProcedureInfo pi = getProcedureInfo();
+		if ( pi == null) {
+			throw new IllegalStateException("Null IProcedureInfo");
+		}
+		String destClassName = session.getProperties().getProcedureColumnsOutputClassName();
+		try {
+			ResultSet rs = session.getSQLConnection().getProcedureColumns(pi);
+			((ResultSetPanel)getComponent()).load(session, rs, null, destClassName);
+		} catch (Exception ex) {
+			session.getMessageHandler().showMessage(ex);
+		}
+	}
 }
 
