@@ -21,10 +21,8 @@ import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.action.CascadeInternalFramesAction;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 
 /**
  * This <CODE>Action</CODE> cascades the internal frames.
