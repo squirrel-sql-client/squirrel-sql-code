@@ -8,6 +8,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.plugins.userscript.UserScriptPlugin;
+import net.sourceforge.squirrel_sql.plugins.userscript.FrameWorkAcessor;
 
 import javax.swing.*;
 import java.io.File;
@@ -45,7 +46,9 @@ public class UserScriptAdmin
 
 
 						GenericScriptPopupAction actDbObject = new GenericScriptPopupAction(props.getScripts()[i], this, TARGET_TYPE_DB_OBJECT);
-						IObjectTreeAPI api = m_session.getObjectTreeAPI(m_plugin);
+
+                  //IObjectTreeAPI api = m_session.getObjectTreeAPI(m_plugin);
+                  IObjectTreeAPI api = FrameWorkAcessor.getObjectTreeAPI(m_session, m_plugin);
 
 						api.addToPopup(DatabaseObjectType.TABLE, actDbObject);
 						api.addToPopup(DatabaseObjectType.PROCEDURE, actDbObject);
@@ -53,7 +56,8 @@ public class UserScriptAdmin
 
 						GenericScriptPopupAction actSql = new GenericScriptPopupAction(props.getScripts()[i], this, TARGET_TYPE_SQL);
 
-						m_session.getSQLPanelAPI(m_plugin).addToSQLEntryAreaMenu(actSql);
+						//m_session.getSQLPanelAPI(m_plugin).addToSQLEntryAreaMenu(actSql);
+						FrameWorkAcessor.getSQLPanelAPI(m_session, m_plugin).addToSQLEntryAreaMenu(actSql);
 					}
 				}
 			}
@@ -132,8 +136,10 @@ public class UserScriptAdmin
 	{
 		if(targetType == TARGET_TYPE_DB_OBJECT)
 		{
-			IObjectTreeAPI api = m_session.getObjectTreeAPI(m_plugin);
-			IDatabaseObjectInfo[] dbObjs = api.getSelectedDatabaseObjects();
+			//IObjectTreeAPI api = m_session.getObjectTreeAPI(m_plugin);
+			IObjectTreeAPI api = FrameWorkAcessor.getObjectTreeAPI(m_session, m_plugin);
+
+         IDatabaseObjectInfo[] dbObjs = api.getSelectedDatabaseObjects();
 
 			ScriptTargetCollection targets = new ScriptTargetCollection();
 			for (int i = 0; i < dbObjs.length; i++)
@@ -166,8 +172,11 @@ public class UserScriptAdmin
 		else // targetType == TARGET_TYPE_SQL
 		{
 			ScriptTargetCollection targets = new ScriptTargetCollection();
-			String sql = m_session.getSQLPanelAPI(m_plugin).getSQLScriptToBeExecuted();
-			targets.add(new ScriptTarget(sql, ScriptTarget.DB_OBJECT_TYPE_SQL_STATEMENT));
+
+         //String sql = m_session.getSQLPanelAPI(m_plugin).getSQLScriptToBeExecuted();
+         String sql = FrameWorkAcessor.getSQLPanelAPI(m_session, m_plugin).getSQLScriptToBeExecuted();
+
+         targets.add(new ScriptTarget(sql, ScriptTarget.DB_OBJECT_TYPE_SQL_STATEMENT));
 			return targets;
 		}
 	}
@@ -202,7 +211,8 @@ public class UserScriptAdmin
 
 	public void executeScript(JFrame ownerFrame, Script script, ScriptTargetCollection targets)
 	{
-		ScriptEnvironment env = new ScriptEnvironment(m_session.getSQLPanelAPI(m_plugin), ownerFrame);
+		//ScriptEnvironment env = new ScriptEnvironment(m_session.getSQLPanelAPI(m_plugin), ownerFrame);
+		ScriptEnvironment env = new ScriptEnvironment(FrameWorkAcessor.getSQLPanelAPI(m_session, m_plugin), ownerFrame);
 
 		try
 		{
