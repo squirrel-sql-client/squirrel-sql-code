@@ -78,7 +78,10 @@ class DriverPropertiesTableModel extends AbstractTableModel
 			case IColumnIndexes.NAME:
 				return _props[row].name;
 			case IColumnIndexes.REQUIRED:
-				return Boolean.valueOf(_props[row].required);
+			
+				// Use valueof when min supported JDK is 1.4
+				//return Boolean.valueOf(_props[row].required);
+				return new Boolean(_props[row].required);
 			case IColumnIndexes.VALUE:
 				return _props[row].value;
 			case IColumnIndexes.DESCRIPTION:
