@@ -17,76 +17,82 @@ package net.sourceforge.squirrel_sql.plugins.laf;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.lang.reflect.Method;
 import java.util.Iterator;
 
 import javax.swing.LookAndFeel;
+import javax.swing.plaf.metal.DefaultMetalTheme;
+import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.MetalTheme;
 
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
 /**
- * Behaviour for the jGoodies Plastic Look and Feel.
+ * Behaviour for the jGoodies Plastic Look and Feel. It also takes
+ * responsibility for the metal Look and Feel.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-class PlasticLookAndFeelController extends AbstractPlasticController
+class MetalLookAndFeelController extends AbstractPlasticController
 {
 	/** Logger for this class. */
 	private static ILogger s_log =
-		LoggerController.createLogger(PlasticLookAndFeelController.class);
+		LoggerController.createLogger(MetalLookAndFeelController.class);
 
-	/**
-	 * Look and Feel class names that this controller is responsible for.
-	 */
-	static final String[] LAF_CLASS_NAMES = new String[]
-	{
-		"com.jgoodies.plaf.plastic.PlasticLookAndFeel",
-		"com.jgoodies.plaf.plastic.Plastic3DLookAndFeel",
-		"com.jgoodies.plaf.plastic.PlasticXPLookAndFeel",
-	};
-
-	/** Name of package that contains Plastic Themes. */
-	private static final String THEME_PACKAGE = "com.jgoodies.plaf.plastic.theme";
-
-	/** Base class for all Plastic themes. */
-	private static final String THEME_BASE_CLASS = "com.jgoodies.plaf.plastic.PlasticTheme";
+	static final String METAL_LAF_CLASS_NAME = MetalLookAndFeel.class.getName();
 
 	/** Preferences for this LAF. */
-	private PlasticThemePreferences _prefs;
+	private MetalThemePreferences _prefs;
+
+	private MetalTheme _defaultMetalTheme;
 
 	/**
 	 * Ctor specifying the Look and Feel plugin and register.
 	 * 
-	 * @param	plugin	The plugin that this controller is a part of.
+	 * @param	plugin		The plugin that this controller is a part of.
 	 * @param	lafRegister	LAF register.
 	 */
-	PlasticLookAndFeelController(LAFPlugin plugin,
+	MetalLookAndFeelController(LAFPlugin plugin,
 								LAFRegister lafRegister)
 	{
 		super(plugin, lafRegister);
 
+		_defaultMetalTheme = new DefaultMetalTheme();
+
 		XMLObjectCache cache = plugin.getSettingsCache();
-		Iterator it = cache.getAllForClass(PlasticThemePreferences.class);
+		Iterator it = cache.getAllForClass(MetalThemePreferences.class);
 		if (it.hasNext())
 		{
-			_prefs = (PlasticThemePreferences)it.next();
+			_prefs = (MetalThemePreferences)it.next();
 		}
 		else
 		{
-			_prefs = new PlasticThemePreferences();
+			_prefs = new MetalThemePreferences();
 			try
 			{
 				cache.add(_prefs);
 			}
 			catch (DuplicateObjectException ex)
 			{
-				s_log.error("PlasticThemePreferences object already in XMLObjectCache", ex);
+				s_log.error("MetalThemePreferences object already in XMLObjectCache", ex);
 			}
 		}
+	}
+	
+	/**
+	 * Retrieve extra themes for this Look and Feel.
+	 * 
+	 * @return	The default metal theme. 
+	 */
+	MetalTheme[] getExtraThemes()
+	{
+		return new MetalTheme[] {_defaultMetalTheme};
+	}
+
+	void installCurrentTheme(LookAndFeel laf, MetalTheme theme)
+	{
+		MetalLookAndFeel.setCurrentTheme(theme);
 	}
 
 	/**
@@ -109,47 +115,14 @@ class PlasticLookAndFeelController extends AbstractPlasticController
 		_prefs.setThemeName(name);
 	}
 
-	void installCurrentTheme(LookAndFeel laf, MetalTheme theme)
-		throws BaseException
-	{
-		try
-		{
-			ClassLoader cl = getLAFRegister().getLookAndFeelClassLoader();
-			Class themeBaseClass;
-			try
-			{
-				themeBaseClass = cl.loadClass(THEME_BASE_CLASS);
-			}
-			catch (Throwable th)
-			{
-				s_log.error("Error loading theme base class " + THEME_BASE_CLASS, th);
-				throw new BaseException(th);
-			}
-
-			// Ensure that this is a Plastic Theme.
-			if (!themeBaseClass.isAssignableFrom(theme.getClass()))
-			{
-				throw new BaseException("NonPlastic Theme passed in");
-			}
-
-			Method method = laf.getClass().getMethod("setMyCurrentTheme",
-												new Class[] { themeBaseClass });
-			Object[] parms = new Object[] { theme };
-			method.invoke(laf, parms);
-		}
-		catch (Throwable th)
-		{
-			throw new BaseException(th);
-		}
-	}
 
 	/**
-	 * Preferences for the Plastic LAFs. Subclassed purely to give it a
+	 * Preferences for the Metal LAF. Subclassed purely to give it a
 	 * different data type when stored in the plugin preferences so that it
 	 * doesn't get mixed up with preferences for other subclasses of
 	 * AbstractPlasticController
 	 */
-	public static final class PlasticThemePreferences
+	public static final class MetalThemePreferences
 		extends AbstractPlasticController.ThemePreferences
 	{
 	}

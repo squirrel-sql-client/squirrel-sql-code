@@ -26,6 +26,11 @@ import javax.swing.LookAndFeel;
 public interface ILookAndFeelController
 {
 	/**
+	 * Initialization.
+	 */
+	void initialize();
+
+	/**
 	 * This Look and Feel is about to be installed.
 	 */
 	void aboutToBeInstalled(LAFRegister lafRegister, LookAndFeel laf);
