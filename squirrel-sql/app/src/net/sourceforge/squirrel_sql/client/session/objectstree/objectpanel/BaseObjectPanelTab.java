@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel;
  */
 import java.awt.Component;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -80,11 +81,14 @@ public abstract class BaseObjectPanelTab implements IObjectPanelTab {
 	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> or
 	 *			<TT>IDatabaseObjectInfo</TT> object is stored here.
 	 */
-	public synchronized void select() throws IllegalStateException {
-		if (!_hasBeenDisplayed)
-		{
+	public synchronized void select() {
+		if (!_hasBeenDisplayed) {
 			s_log.debug("Refreshing " + getTitle() + " table tab.");
-			refreshComponent();
+			try {
+				refreshComponent();
+			} catch (DataSetException ex) {
+				getSession().getMessageHandler().showMessage(ex);
+			}
 			_hasBeenDisplayed = true;
 		}
 	}
@@ -92,10 +96,7 @@ public abstract class BaseObjectPanelTab implements IObjectPanelTab {
 	/**
 	 * Refresh the component displaying the <TT>IDatabaseObjectInfo</TT> object.
 	 */
-	protected abstract void refreshComponent();
-
-
-
+	protected abstract void refreshComponent() throws DataSetException;
 
 	/**
 	 * Set the <TT>IDatabaseObjectInfo</TT> object that specifies the object that

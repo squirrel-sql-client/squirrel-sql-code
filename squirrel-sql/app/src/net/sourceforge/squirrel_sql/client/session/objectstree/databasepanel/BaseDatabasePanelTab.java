@@ -17,8 +17,16 @@ package net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.BaseObjectPanelTab;
+import java.awt.Component;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.BaseObjectPanelTab;
 /**
  * Base class for tabs to the added to <TT>DatabasePanel</TT>. If you are
  * writing a class for a tab to be added to <TT>DatabasePanel</TT> you don't
@@ -28,4 +36,42 @@ import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.BaseO
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public abstract class BaseDatabasePanelTab extends BaseObjectPanelTab implements IDatabasePanelTab {
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(BaseDatabasePanelTab.class);
+
+	/** Destination to display data in. */
+	private IDataSetViewer _viewer;
+
+	/** Component to be displayed. */
+	private DatabasePanelTabComponent _comp;
+
+	/**
+	 * @see BaseObjectPanelTab#refreshComponent()
+	 */
+	protected void refreshComponent() throws DataSetException {
+		_comp.load(createDataSet(getSession()));
+	}
+
+	protected abstract IDataSet createDataSet(ISession session) throws DataSetException;
+
+	protected abstract IDataSetViewer createViewer(ISession session);
+
+	/**
+	 * @see IObjectPanelTab#getComponent()
+	 */
+	public synchronized Component getComponent() {
+		if (_comp == null) {
+			ISession session = getSession();
+			_comp = new DatabasePanelTabComponent(session, createViewer(session));
+		}
+		return _comp;
+	}
+	/**
+	 * @see IObjectPanelTab#clear()
+	 */
+	public void clear() {
+		if (_comp != null) {
+			_comp.clear();
+		}
+	}
 }

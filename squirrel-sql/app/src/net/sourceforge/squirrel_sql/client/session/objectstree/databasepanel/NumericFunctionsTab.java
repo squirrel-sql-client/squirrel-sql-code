@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,29 +19,26 @@ package net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel;
  */
 import net.sourceforge.squirrel_sql.fw.datasetviewer.BaseDataSetViewerDestination;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DatabaseTypesDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.ResultSetPanel;
 
-/**
- * This tab shows the data types in the database.
- *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
- */
-public class DataTypesTab extends BaseDatabasePanelTab {
+public class NumericFunctionsTab extends BaseDatabasePanelTab {
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
 	private interface i18n {
-		String TITLE = "Data Types";
-		String HINT = "Show all the data types available in DBMS";
+		String TITLE = "Numeric Functions";
+		String HINT = "Show all the numeric functions available in DBMS";
 	}
+
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(NumericFunctionsTab.class);
 
 	/**
 	 * Return the title for the tab.
@@ -63,15 +60,14 @@ public class DataTypesTab extends BaseDatabasePanelTab {
 
 	protected IDataSet createDataSet(ISession session) throws DataSetException {
 		try {
-//			return new ResultSetDataSet(session.getSQLConnection().getTypeInfo());
-			return new DatabaseTypesDataSet(session.getSQLConnection().getTypeInfo());
+			return session.getSQLConnection().createNumericFunctionsDataSet(session.getMessageHandler());
 		} catch (BaseSQLException ex) {
 			throw new DataSetException(ex);
 		}
 	}
 
 	protected IDataSetViewer createViewer(ISession session) {
-		String destClassName = session.getProperties().getDataTypesOutputClassName();
+		String destClassName = session.getProperties().getMetaDataOutputClassName();
 		return BaseDataSetViewerDestination.getInstance(destClassName);
 	}
 }

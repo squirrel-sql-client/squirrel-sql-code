@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.IObjectPanelTab;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 
 /**
  * This interface defines the behaviour for a tab in <TT>DatabasePanel</TT>, the

@@ -17,31 +17,14 @@ package net.sourceforge.squirrel_sql.client.session.objectstree;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -49,8 +32,13 @@ import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.DataTypesTab;
+import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.DateTimeFunctionsTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.IDatabasePanelTab;
+import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.KeywordsTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.MetaDataTab;
+import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.NumericFunctionsTab;
+import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.StringFunctionsTab;
+import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.SystemFunctionsTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
 public class DatabasePanel extends SquirrelTabbedPane {
@@ -83,7 +71,7 @@ public class DatabasePanel extends SquirrelTabbedPane {
 		_session = session;
 
 		createUserInterface();
-		propertiesHaveChanged(null);
+
 		// Refresh the currently selected tab.
 		((IDatabasePanelTab)_tabs.get(getSelectedIndex())).select();
 	}
@@ -129,6 +117,11 @@ public class DatabasePanel extends SquirrelTabbedPane {
 	private void createUserInterface() {
 		addDatabasePanelTab(new MetaDataTab());
 		addDatabasePanelTab(new DataTypesTab());
+		addDatabasePanelTab(new NumericFunctionsTab());
+		addDatabasePanelTab(new StringFunctionsTab());
+		addDatabasePanelTab(new SystemFunctionsTab());
+		addDatabasePanelTab(new DateTimeFunctionsTab());
+		addDatabasePanelTab(new KeywordsTab());
 
 		_propsListener = new MyPropertiesListener();
 		_session.getProperties().addPropertyChangeListener(_propsListener);

@@ -17,24 +17,15 @@ package net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.sql.ResultSet;
-
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-
-import javax.swing.SwingUtilities;
-
 import net.sourceforge.squirrel_sql.fw.datasetviewer.BaseDataSetViewerDestination;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
+import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.ResultSetPanel;
 
 /**
  * This tab shows the meta data in the database.
@@ -54,9 +45,6 @@ public class MetaDataTab extends BaseDatabasePanelTab {
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(MetaDataTab.class);
 
-	/** Component to be displayed. */
-	private MyComponent _comp;
-
 	/**
 	 * Return the title for the tab.
 	 *
@@ -75,92 +63,16 @@ public class MetaDataTab extends BaseDatabasePanelTab {
 		return i18n.HINT;
 	}
 
-	/**
-	 * Return the component to be displayed in the panel.
-	 *
-	 * @return	The component to be displayed in the panel.
-	 */
-	public synchronized Component getComponent() {
-		if (_comp == null) {
-			_comp = new MyComponent();
-		}
-		return _comp;
-	}
-
-	/**
-	 * Refresh the component displaying the data types.
-	 */
-	public synchronized void refreshComponent() throws IllegalStateException {
-		ISession session = getSession();
-		if (session == null) {
-			throw new IllegalStateException("Null ISession");
-		}
-		((MyComponent)getComponent()).load(session);
-	}
-
-	/**
-	 * @see BaseObjectPanelTab#clear()
-	 */
-	public void clear()
-	{
-		if(((MyComponent)getComponent())._viewer != null)
-		{
-			((MyComponent)getComponent())._viewer.clear();
+	protected IDataSet createDataSet(ISession session) throws DataSetException {
+		try {
+			return session.getSQLConnection().createMetaDataDataSet(session.getMessageHandler());
+		} catch (BaseSQLException ex) {
+			throw new DataSetException(ex);
 		}
 	}
 
-	/**
-	 * Component for this tab.
-	 */
-	private class MyComponent extends JPanel {
-		private boolean _fullyCreated = false;
-		private IDataSet _ds;
-		private IDataSetViewer _viewer;
-
-		MyComponent() {
-			super(new BorderLayout());
-		}
-
-		void load(ISession session) {
-			try {
-				// Lazily create the user interface.
-				if (!_fullyCreated) {
-					createUserInterface();
-					_fullyCreated = true;
-				}
-				_ds = session.getSQLConnection().createMetaDataDataSet(session.getMessageHandler());
-				Runnable run = new Runnable()
-				{
-					public void run()
-					{
-						try
-						{
-							_viewer.show(_ds);
-						} catch(DataSetException dse)
-						{
-							s_log.error("Error", dse);
-						}
-					}
-				};
-				SwingUtilities.invokeLater(run);
-			} catch (Exception ex) {
-				s_log.error("Error", ex);
-			}
-		}
-
-		private void createUserInterface() throws DataSetException {
-			ISession session = getSession();
-
-			String destClassName = session.getProperties().getMetaDataOutputClassName();
-			_viewer = BaseDataSetViewerDestination.getInstance(destClassName);
-			Runnable run = new Runnable()
-			{
-				public void run()
-				{
-					add(new JScrollPane(_viewer.getComponent()), BorderLayout.CENTER);
-				}
-			};
-			SwingUtilities.invokeLater(run);
-		}
+	protected IDataSetViewer createViewer(ISession session) {
+		String destClassName = session.getProperties().getMetaDataOutputClassName();
+		return BaseDataSetViewerDestination.getInstance(destClassName);
 	}
 }
