@@ -251,6 +251,10 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 		act = new ReplaceAction(getApplication(), _resources, this);
 		coll.add(act);
 		_resources.addToMenu(act, menu);
+
+      act = new EscapeDateAction(getApplication(), _resources);
+      coll.add(act);
+      _resources.addToMenu(act, menu);
 	}
 
 	private void setupSQLEntryArea(ISession session)
@@ -261,6 +265,7 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 		api.addToSQLEntryAreaMenu(actions.get(RemoveQuotesAction.class));
 		api.addToSQLEntryAreaMenu(actions.get(ConvertToStringBufferAction.class));
 		api.addToSQLEntryAreaMenu(actions.get(FormatSQLAction.class));
+      api.addToSQLEntryAreaMenu(actions.get(EscapeDateAction.class));
 	}
 
 	private class SQLPanelListener extends SQLPanelAdapter
