@@ -1,5 +1,5 @@
-Change Log
-==========
+jEdit Text Area Plugin Change Log
+=================================
 
 0.16
 ====
