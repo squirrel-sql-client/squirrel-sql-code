@@ -19,7 +19,11 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  */
  
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Collections;
+import java.util.Arrays;
+//import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
 
 /**
  * @author gwg
@@ -29,10 +33,9 @@ import java.util.Iterator;
  * on application startup/shutdown.
  * 
  * There should be only one mapping from table+column to import/export info
- * for the entire application, so this is a singleton class.  For ease of operation
- * we provide static access to that singleton for the fw functions.  However,
- * the app functions need to be able to treat this as a real object
- * when saving and loading to/from files.
+ * for the entire application, so this is a singleton class.
+ * To access the table, other classes must call
+ * CellImportExportInfoSaver.getInstance() to get the singleton instance to use.
  * 
  * The loading of this from the file is particularly finicky since it involves
  * the XMLBean Reader class creating an empty instance of the class and loading
@@ -51,11 +54,19 @@ public class CellImportExportInfoSaver {
 	private HashMap map = new HashMap();
 	
 	/**
+	 * The list of commands that user has previously entered
+	 */
+	private ArrayList cmdList = new ArrayList();
+	
+	/**
 	 * the singleton instance of this class.
 	 */
 	private static CellImportExportInfoSaver instance = null;
 	
-	// This should be used only by the XMLBean creator when loading from file
+	/**
+	 * Null Constructor:
+	 *  This should be used only by the XMLBean creator when loading from file.
+	 */
 	public CellImportExportInfoSaver() {};
 
 	/**
@@ -82,32 +93,51 @@ public class CellImportExportInfoSaver {
 	/**
 	 * Used by fw to save user input for export/import on column.
 	 */
-	static public void save(String tableColumnName,
+	public void save(String tableColumnName,
 		String fileName,
 		String command) {
-			
-		// make sure there is an instance
-		if (instance == null)
-			instance = new CellImportExportInfoSaver();
 		
 		// If the table+column already has a data object in the map,
 		// then remove it.
-		instance.map.remove(tableColumnName);
+		map.remove(tableColumnName);
 		
 		CellImportExportInfo infoObject =
 			new CellImportExportInfo(tableColumnName, fileName, command);
 		
-		instance.map.put(tableColumnName, infoObject);
+		map.put(tableColumnName, infoObject);
+		
+		if (command != null && command.length() > 0) {
+			cmdList.add(command);
+			Collections.sort(cmdList);
+		}
+			
 	}
 	
 	/**
 	 * Used by fw to find entries user previously entered for this column.
 	 */
-	static public CellImportExportInfo get(String tableColumnName) {
+	public CellImportExportInfo get(String tableColumnName) {
+		return (CellImportExportInfo)map.get(tableColumnName);
+	}
+	
+	/**
+	 * Used by fw to get the list of all commands this user has associated
+	 * with columns.
+	 */
+	public String[] getCmdList() {
+		String[] data = new String[cmdList.size()];
+		return (String[])cmdList.toArray(data);
+	}
+	
+	/**
+	 * Used by fw to delete an entry or to make sure entry does not
+	 * exist in table, e.g. because it has been reset to defaults.
+	 */
+	static public void remove(String tableColumnName) {
 		// make sure there is an instance
 		if (instance == null)
 			instance = new CellImportExportInfoSaver();	// better safe than sorry!
-		return (CellImportExportInfo)instance.map.get(tableColumnName);
+		instance.map.remove(tableColumnName);
 	}
 	
 	/**
@@ -118,14 +148,25 @@ public class CellImportExportInfoSaver {
 	}
 	
 	/**
-	 * Method called by reflection in the XMLBean loading of data from
+	 * Method called by reflection in the XMLBean loading of
+	 * CellImportExportInfo data from
 	 * the files during application startup.
 	 */
 	public synchronized void setData(CellImportExportInfo[] data)
 	{
 		for (int i = 0; i < data.length; i++) {
-			map.put(data[i].getTableColumnName(), data[i]);
+			map.put(data[i].getTableColumnName(), data[i]);	
 		}
+	}
+
+	/**
+	 * Method called by reflection in the XMLBean loading of command list
+	 * data from the files during application startup.
+	 */
+	public synchronized void setCmdList(String[] data)
+	{
+		cmdList = new ArrayList(Arrays.asList(data));
+		Collections.sort(cmdList);
 	}
 
 
