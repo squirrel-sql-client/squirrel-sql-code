@@ -28,19 +28,6 @@ package net.sourceforge.squirrel_sql.client.session.event;
  */
 public class SQLExecutionAdapter implements ISQLExecutionListener {
     /**
-     * Called prior to the entire script being executed. If you modify the
-     * script remember to return it so that the caller knows about the
-     * modifications.
-     *
-     * @param   sql     The SQL to be executed.
-     *
-     * @return  The SQL to be executed.
-     */
-    public String entireScriptExecuting(String sql) {
-        return sql;
-    }
-
-    /**
      * Called prior to an individual statement being executed. If you modify the
      * script remember to return it so that the caller knows about the
      * modifications.
@@ -49,7 +36,7 @@ public class SQLExecutionAdapter implements ISQLExecutionListener {
      *
      * @return  The SQL to be executed.
      */
-    public String individualStatementExecuting(String sql){
+    public String statementExecuting(String sql){
         return sql;
     }
 }
