@@ -107,9 +107,6 @@ public class DatabasePanel extends SquirrelTabbedPane {
 		if (propName == null ||
 				propName.equals(SessionProperties.IPropertyNames.META_DATA_OUTPUT_CLASS_NAME)) {
 			addDatabasePanelTab(new MetaDataTab());
-		}
-		if (propName == null ||
-				propName.equals(SessionProperties.IPropertyNames.DATA_TYPES_OUTPUT_CLASS_NAME)) {
 			addDatabasePanelTab(new DataTypesTab());
 		}
 	}
