@@ -31,6 +31,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
@@ -59,6 +60,16 @@ class ObjectsPanel extends JPanel {
     void refreshTree() throws BaseSQLException {
         _tree.refresh();
     }
+
+	/**
+	 * Return an array of <TT>IDatabaseObjectInfo</TT> objects representing all
+	 * the objects selected in the objects tree.
+	 * 
+	 * @return	array of <TT>IDatabaseObjectInfo</TT> objects.
+	 */
+	public IDatabaseObjectInfo[] getSelectedDatabaseObjects() {
+		return _tree.getSelectedDatabaseObjects();
+	}
 
     private void createUserInterface(ISession session) {
         setLayout(new BorderLayout());

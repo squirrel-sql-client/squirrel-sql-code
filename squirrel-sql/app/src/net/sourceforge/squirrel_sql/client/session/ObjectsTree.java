@@ -3,6 +3,9 @@ package net.sourceforge.squirrel_sql.client.session;
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net
  *
+ * Modifications copyright (C) 2001 Johan Compagner
+ * jcompagner@j-com.nl
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -19,9 +22,12 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 import java.awt.BorderLayout;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JTree;
@@ -36,7 +42,9 @@ import javax.swing.event.TreeExpansionListener;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectSimpleNameInfoComparator;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -47,6 +55,8 @@ import net.sourceforge.squirrel_sql.client.session.objectstree.ObjectsTreeModel;
 class ObjectsTree extends JTree {
     private ISession _session;
     private ObjectsTreeModel _model;
+
+	private static DatabaseObjectSimpleNameInfoComparator s_comparator = new DatabaseObjectSimpleNameInfoComparator();
 
     ObjectsTree(ISession session) {
         super();
@@ -89,6 +99,27 @@ class ObjectsTree extends JTree {
         }
         return tip;
     }
+
+	/**
+	 * Return an array of <TT>IDatabaseObjectInfo</TT> objects representing all
+	 * the objects selected in the objects tree. This array is sorted by the
+	 * simple name of the database object.
+	 * 
+	 * @return	array of <TT>IDatabaseObjectInfo</TT> objects.
+	 */
+	IDatabaseObjectInfo[] getSelectedDatabaseObjects() {
+		TreePath[] paths = this.getSelectionPaths();
+		List list = new ArrayList();
+		for (int i = 0; i < paths.length; i++) {
+			Object o = paths[i].getLastPathComponent();
+			if (o instanceof IDatabaseObjectInfo) {
+				list.add(o);
+			}
+		}
+		IDatabaseObjectInfo[] objInfo = (IDatabaseObjectInfo[])list.toArray(new IDatabaseObjectInfo[list.size()]);
+		Arrays.sort(objInfo, s_comparator);
+		return objInfo;
+	}
 
     private final class MyExpansionListener implements TreeExpansionListener {
         MyExpansionListener() {
