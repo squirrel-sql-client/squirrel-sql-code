@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnectionState;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
@@ -319,6 +320,19 @@ class Session implements IClientSession
 	 */
 	public void reconnect()
 	{
+		SQLConnectionState connState = null;
+		if (_conn != null)
+		{
+			connState = new SQLConnectionState();
+			try
+			{
+				connState.saveState(_conn, _msgHandler);
+			}
+			catch (SQLException ex)
+			{
+				s_log.error("Unexpected SQLException", ex);
+			}
+		}
 		final OpenConnectionCommand cmd =
 			new OpenConnectionCommand(_app, _alias, _user, _password);
 		try
@@ -336,10 +350,18 @@ class Session implements IClientSession
 		{
 			cmd.execute();
 			_conn = cmd.getSQLConnection();
+			if (connState != null)
+			{
+				connState.restoreState(_conn, _msgHandler);
+			}
+			getObjectTreeAPI(_app.getDummyAppPlugin()).refreshTree();
+		}
+		catch (SQLException ex)
+		{
+			_msgHandler.showErrorMessage(ex);
 		}
 		catch (BaseException ex)
 		{
-			//TODO: Error
 			_msgHandler.showErrorMessage(ex);
 		}
 	}

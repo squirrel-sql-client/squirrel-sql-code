@@ -62,7 +62,6 @@ public class ReconnectAction extends SquirrelAction implements IClientSessionAct
 		if(Dialogs.showYesNo(app.getMainFrame(), i18n.MSG))
 		{
 			_session.reconnect();
-			_session.getObjectTreeAPI(app.getDummyAppPlugin()).refreshTree();
 		}
 	}
 }
