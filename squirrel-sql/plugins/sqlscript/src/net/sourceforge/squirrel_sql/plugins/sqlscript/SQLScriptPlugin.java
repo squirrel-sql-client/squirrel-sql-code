@@ -94,7 +94,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 	 * @return  the current version of this plugin.
 	 */
 	public String getVersion() {
-		return "0.1";
+		return "0.20";
 	}
 
 	/**
@@ -104,6 +104,45 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 	 */
 	public String getAuthor() {
 		return "Johan Compagner";
+	}
+
+	/**
+	 * Returns the name of the change log for the plugin. This should
+	 * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
+	 * directory.
+	 *
+	 * @return	the changelog file name or <TT>null</TT> if plugin doesn't have
+	 * 			a change log.
+	 */
+	public String getChangeLogFileName()
+	{
+		return "changes.txt";
+	}
+
+	/**
+	 * Returns the name of the Help file for the plugin. This should
+	 * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
+	 * directory.
+	 *
+	 * @return	the Help file name or <TT>null</TT> if plugin doesn't have
+	 * 			a help file.
+	 */
+	public String getHelpFileName()
+	{
+		return "readme.txt";
+	}
+
+	/**
+	 * Returns the name of the Licence file for the plugin. This should
+	 * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
+	 * directory.
+	 *
+	 * @return	the Licence file name or <TT>null</TT> if plugin doesn't have
+	 * 			a licence file.
+	 */
+	public String getLicenceFileName()
+	{
+		return "licence.txt";
 	}
 
 	/**
