@@ -5,14 +5,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.StringTokenizer;
 
-//import javax.swing.text.Segment;
-
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.KeywordMap;
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.SQLTokenMarker;
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.Token;
 
 public class JeditSQLTokenMarker extends SQLTokenMarker {
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(JeditSQLTokenMarker.class);
+
 	private KeywordMap _keywords = new KeywordMap(true);
 
 	// Keyword 1 = keywords
@@ -32,7 +36,7 @@ public class JeditSQLTokenMarker extends SQLTokenMarker {
 			addDataTypes(dmd, keywords);
 			addFunctions(dmd, keywords);
 		} catch (Exception ex) {
-			System.out.println(ex.toString());
+			s_log.error("Error occured creating keyword map", ex);
 		}
 		return keywords;
 	}
@@ -79,7 +83,7 @@ public class JeditSQLTokenMarker extends SQLTokenMarker {
 		try {
 			buf.append(dmd.getSQLKeywords());
 		} catch (SQLException ex) {
-			System.out.println(ex.toString());
+			s_log.error("Error", ex);
 		}
 		StringTokenizer strtok = new StringTokenizer(buf.toString(), ",");
 		while (strtok.hasMoreTokens()) {
@@ -89,19 +93,19 @@ public class JeditSQLTokenMarker extends SQLTokenMarker {
 		try {
 			addSingleKeyword(dmd.getCatalogTerm(), keywords);
 		} catch (SQLException ex) {
-			System.out.println(ex.toString());
+			s_log.error("Error", ex);
 		}
 
 		try {
 			addSingleKeyword(dmd.getSchemaTerm(), keywords);
 		} catch (SQLException ex) {
-			System.out.println(ex.toString());
+			s_log.error("Error", ex);
 		}
 
 		try {
 			addSingleKeyword(dmd.getProcedureTerm(), keywords);
 		} catch (SQLException ex) {
-			System.out.println(ex.toString());
+			s_log.error("Error", ex);
 		}
 	}
 
@@ -135,7 +139,7 @@ public class JeditSQLTokenMarker extends SQLTokenMarker {
 				rs.close();
 			}
 		} catch (SQLException ex) {
-			System.out.println(ex.toString());
+			s_log.error("Error", ex);
 		}
 	}
 
@@ -144,19 +148,19 @@ public class JeditSQLTokenMarker extends SQLTokenMarker {
 		try {
 			buf.append(dmd.getNumericFunctions());
 		} catch (SQLException ex) {
-			System.out.println(ex.toString());
+			s_log.error("Error", ex);
 		}
 		buf.append(",");
 		try {
 			buf.append(dmd.getStringFunctions());
 		} catch (SQLException ex) {
-			System.out.println(ex.toString());
+			s_log.error("Error", ex);
 		}
 		buf.append(",");
 		try {
 			buf.append(dmd.getTimeDateFunctions());
 		} catch (SQLException ex) {
-			System.out.println(ex.toString());
+			s_log.error("Error", ex);
 		}
 
 		StringTokenizer strtok = new StringTokenizer(buf.toString(), ",");

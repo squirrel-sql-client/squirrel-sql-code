@@ -26,6 +26,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class ResultSetMetaDataDataSet implements IDataSet {
 	private interface i18n {
@@ -34,6 +36,9 @@ public class ResultSetMetaDataDataSet implements IDataSet {
 		String NULL = "<null>";
 		String VALUE_COLUMN = "Value";
 	}
+
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(ResultSetMetaDataDataSet.class);
 
 	private DataSetDefinition _dsDef;
 	private boolean[] _propertyMethodIndicators;
@@ -103,30 +108,30 @@ public class ResultSetMetaDataDataSet implements IDataSet {
 	}
 
 	private void load(ResultSetMetaData md) {
-try {
-		final Method[] methods = ResultSetMetaData.class.getMethods();
-		final ArrayList line = new ArrayList();
-		for (int metaIdx = 1, metaLimit = md.getColumnCount() + 1;
-				metaIdx < metaLimit; ++metaIdx) {
-			Object[] methodParms = new Object[] {
-				new Integer(metaIdx),
-			};
-			line.clear();
-			line.ensureCapacity(methods.length);
-			for (int methodIdx = 0; methodIdx < methods.length; ++methodIdx) {
-				if (_propertyMethodIndicators[methodIdx]) {
-					Object obj = executeGetter(md, methods[methodIdx], methodParms);
-					line.add(obj != null ? obj.toString() : i18n.NULL);
+		try {
+			final Method[] methods = ResultSetMetaData.class.getMethods();
+			final ArrayList line = new ArrayList();
+			for (int metaIdx = 1, metaLimit = md.getColumnCount() + 1;
+					metaIdx < metaLimit; ++metaIdx) {
+				Object[] methodParms = new Object[] {
+					new Integer(metaIdx),
+				};
+				line.clear();
+				line.ensureCapacity(methods.length);
+				for (int methodIdx = 0; methodIdx < methods.length; ++methodIdx) {
+					if (_propertyMethodIndicators[methodIdx]) {
+						Object obj = executeGetter(md, methods[methodIdx], methodParms);
+						line.add(obj != null ? obj.toString() : i18n.NULL);
+					}
 				}
+				_data.add(line.toArray(new String[line.size()]));
 			}
-			_data.add(line.toArray(new String[line.size()]));
+	
+			_rowsIter = _data.iterator();
+		} catch (Throwable th) {
+			//??Alert the user.
+			s_log.error("Error occured processing result set", th);
 		}
-
-		_rowsIter = _data.iterator();
-} catch (Throwable th) {
-th.printStackTrace(System.out);
-//?? Put in proper error handling.
-}
 	}
 
 	/**

@@ -26,6 +26,9 @@ import java.awt.event.MouseListener;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 
@@ -36,6 +39,9 @@ import net.sourceforge.squirrel_sql.plugins.jedit.textarea.TextAreaPainter;
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.Token;
 
 class JeditSQLEntryPanel implements ISQLEntryPanel {
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(JeditSQLEntryPanel.class);
+
 	/** Text component. */
 	private JEditTextArea _jeditTextArea;
 
@@ -89,7 +95,7 @@ class JeditSQLEntryPanel implements ISQLEntryPanel {
 		try {
 			doc.insertString(doc.getLength(), text, null);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			s_log.error("Error appending text to text area", ex);
 		}
 	}
 

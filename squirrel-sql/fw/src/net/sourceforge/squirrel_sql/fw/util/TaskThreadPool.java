@@ -107,8 +107,9 @@ public class TaskThreadPool {
 			return null;
 		}
 
+		//??Show to user
 		public void showMessage(Throwable th) {
-			th.printStackTrace(System.out);	//??Show to user
+			s_log.error("Error", th);
 		}
 	}
 }

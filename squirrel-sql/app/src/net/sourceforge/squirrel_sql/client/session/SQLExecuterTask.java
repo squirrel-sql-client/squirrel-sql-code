@@ -35,10 +35,16 @@ import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
 public class SQLExecuterTask implements Runnable {
+
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(SQLExecuterTask.class);
+
 	private SQLPanel _sqlPanel;
 	private ISession _session;
 	private String _sql;
@@ -140,7 +146,7 @@ public class SQLExecuterTask implements Runnable {
 					_stmt.cancel();
 				}
 			} catch (Throwable th) {
-				th.printStackTrace();
+				s_log.error("Error occured cancelling SQL", th);
 			}
 		}
 	}
