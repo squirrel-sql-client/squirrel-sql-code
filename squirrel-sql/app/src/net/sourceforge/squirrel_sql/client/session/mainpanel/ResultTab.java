@@ -19,18 +19,22 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  */
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import java.util.Date;
 import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingConstants;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetListModel;
@@ -42,6 +46,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetModelConverter;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewerDestination;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
@@ -96,6 +101,9 @@ public class ResultTab extends JPanel implements IHasIdentifier {
 	/** Label shows the current SQL script. */
 	private JLabel _currentSqlLbl = new JLabel();
 
+	/** Panel showing the query information. */
+	private QueryInfoPanel _queryInfoPanel = new QueryInfoPanel();
+
 	private MyPropertiesListener _propsListener = new MyPropertiesListener();
 
 	/**
@@ -149,6 +157,9 @@ public class ResultTab extends JPanel implements IHasIdentifier {
 		
 		// Display the result set metadata.
 		_metaDataViewer.show(mdds, null); // Why null??
+
+		// And the query info.
+		_queryInfoPanel.load(rsds, sql, _resultSetModel.getRowCount());
 	}
 
 	/**
@@ -347,6 +358,7 @@ public class ResultTab extends JPanel implements IHasIdentifier {
 
 		_tp.addTab("Results", _resultSetSp);
 		_tp.addTab("MetaData", _metaDataSp);
+		_tp.addTab("Info", new JScrollPane(_queryInfoPanel));
 	}
 
 	private final class TabButton extends JButton {
@@ -385,7 +397,56 @@ public class ResultTab extends JPanel implements IHasIdentifier {
 	public IIdentifier getIdentifier() {
 		return _id;
 	}
+	private static class QueryInfoPanel extends JPanel {
+		private MultipleLineLabel _queryLbl = new MultipleLineLabel();
+		private JLabel _rowCountLbl = new JLabel();
+		private JLabel _executedLbl = new JLabel();
 
+		QueryInfoPanel() {
+			super();
+			createUserInterface();
+		}
+
+		void load(ResultSetDataSet rsds, String sql, int rowCount) {
+			_queryLbl.setText(sql);
+			_rowCountLbl.setText("" + rowCount);
+			_executedLbl.setText(new Date().toString());
+		}
+
+		private void createUserInterface() {
+			setLayout(new GridBagLayout());
+			GridBagConstraints gbc = new GridBagConstraints();
+
+			gbc.anchor = GridBagConstraints.NORTHWEST;
+			gbc.gridwidth = 1;
+			gbc.weightx = 0;
+
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			gbc.insets = new Insets(5, 10, 5, 10);
+			gbc.fill = GridBagConstraints.HORIZONTAL;
+			add(new JLabel("Executed:", SwingConstants.RIGHT), gbc);
+
+			++gbc.gridy;
+			add(new JLabel("Row Count:", SwingConstants.RIGHT), gbc);
+
+			++gbc.gridy;
+			add(new JLabel("SQL:", SwingConstants.RIGHT), gbc);
+
+			gbc.gridwidth = gbc.REMAINDER;
+			gbc.weightx = 1;
+			gbc.gridx = 1;
+
+			gbc.gridy = 0;
+			add(_executedLbl, gbc);
+
+			++gbc.gridy;
+			add(_rowCountLbl, gbc);
+
+			++gbc.gridy;
+			add(_queryLbl, gbc);
+		}
+	}
 }
 
 
