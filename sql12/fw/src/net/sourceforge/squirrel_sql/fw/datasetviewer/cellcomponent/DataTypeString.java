@@ -97,7 +97,12 @@ public class DataTypeString
 	public String getClassName() {
 		return "java.lang.String";
 	}
-	
+
+	/*
+	 * First we have the cell-related and Text-table operations.
+	 */
+	 
+	 	
 	/**
 	 * Render a value into text for this DataType.
 	 */
@@ -109,7 +114,8 @@ public class DataTypeString
 	 * This Data Type can be edited in a table cell.
 	 */
 	public boolean isEditableInCell() {
-		return true;	
+		return true;
+	
 	}
 		
 	/**
@@ -144,7 +150,27 @@ public class DataTypeString
 
 		return (JTextField)_textComponent;
 	}
+	
+	/**
+	 * Implement the interface for validating and converting to Integer object.
+	 * Null is a valid successful return, so errors are indicated only by
+	 * existance or not of a message in the messageBuffer.
+	 */
+	public Object validateAndConvert(String value, StringBuffer messageBuffer) {
+		// handle null, which is shown as the special string "<null>"
+		if (value.equals("<null>"))
+			return null;
 
+		// Do the conversion into the object in a safe manner
+		return value;	// Special case: the input is exactly the output
+	}
+	
+	
+	/*
+	 * Now define the Popup-related operations.
+	 */
+
+	
 	/**
 	 * Returns true if data type may be edited in the popup,
 	 * false if not.
@@ -159,7 +185,8 @@ public class DataTypeString
 	 public JTextArea getJTextArea(Object value) {
 		_textComponent = new RestorableJTextArea();
 	
-		// value is a simple string representation of the integer
+		// value is a simple string representation of the integer,
+		// the same one used in the Text and in-cell operations.
 		((RestorableJTextArea)_textComponent).setText(renderObject(value));
 		
 		// special handling of operations while editing Integers
@@ -169,19 +196,16 @@ public class DataTypeString
 	 }
 
 	/**
-	 * Implement the interface for validating and converting to Integer object.
-	 * Null is a valid successful return, so errors are indicated only by
-	 * existance or not of a message in the messageBuffer.
+	 * Validating and converting in Popup is identical to cell-related operation.
 	 */
-	public Object validateAndConvert(String value, StringBuffer messageBuffer) {
-		// handle null, which is shown as the special string "<null>"
-		if (value.equals("<null>"))
-			return null;
-
-		// Do the conversion into the object in a safe manner
-		return value;	// Special case: the input is exactly the output
+	public Object validateAndConvertInPopup(String value, StringBuffer messageBuffer) {
+		return validateAndConvert(value, messageBuffer);
 	}
 
+
+	/*
+	 * The following is used by both in-cell and Popup operations.
+	 */
 
 	
 	/*

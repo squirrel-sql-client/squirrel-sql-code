@@ -59,6 +59,10 @@ public class CellComponentFactory {
 			return "java.lang.Object";
 	}
 	
+	/*
+	 * Operations for Text and in-cell work
+	 */
+	
 	/**
 	 * Render value of object as a string for text output.
 	 * Used by Text version of table.
@@ -70,7 +74,7 @@ public class CellComponentFactory {
 		if (dataTypeObject != null)
 			return dataTypeObject.renderObject(value);
 		
-		// default behaveior: toString
+		// default behavior: toString
 		return value.toString();
 	}
 	
@@ -148,8 +152,39 @@ public class CellComponentFactory {
 		ed.setClickCountToStart(1);
 		return ed;
 	}
+	
+	/**
+	 * Call the validate and convert method in the appropriate
+	 * DataType object.
+	 */
+	 public static Object validateAndConvert(
+	 	ColumnDisplayDefinition colDef,
+	 	String inputValue,
+	 	StringBuffer messageBuffer) {
 
+		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
 
+		if (dataTypeObject != null) {
+			// we have an appropriate data type object
+			return dataTypeObject.validateAndConvert(inputValue, messageBuffer);
+		}
+
+	 	// No appropriate DataType for this column, so do the best
+	 	// we can with what we know.
+	 	//
+	 	// THIS MAY NOT BE THE BEST BEHAVIOR HERE!!!!!!!
+	 		
+	 	// Default Operation
+	 	if (inputValue.equals("<null>"))
+	 		return null;
+	 	else return inputValue;
+	}
+	
+
+	/*
+	 * Operations for Popup work.
+	 */
+	
 	/**
 	 * Return true if the data type for the column may be edited
 	 * in the popup, false if not.
@@ -189,7 +224,7 @@ public class CellComponentFactory {
 		// returns true, then we would have executed the return statement above.
 		// Assume that the value can be represented as a string.
 		RestorableJTextArea textArea = new RestorableJTextArea();
-		textArea.setText((String)value);
+		textArea.setText(value.toString());
 		return textArea;
 	}
 	
@@ -197,7 +232,7 @@ public class CellComponentFactory {
 	 * Call the validate and convert method in the appropriate
 	 * DataType object.
 	 */
-	 public static Object validateAndConvert(
+	 public static Object validateAndConvertInPopup(
 	 	ColumnDisplayDefinition colDef,
 	 	String inputValue,
 	 	StringBuffer messageBuffer) {
@@ -206,7 +241,7 @@ public class CellComponentFactory {
 
 		if (dataTypeObject != null) {
 			// we have an appropriate data type object
-			return dataTypeObject.validateAndConvert(inputValue, messageBuffer);
+			return dataTypeObject.validateAndConvertInPopup(inputValue, messageBuffer);
 		}
 
 	 	// No appropriate DataType for this column, so do the best
@@ -220,6 +255,10 @@ public class CellComponentFactory {
 	 	else return inputValue;
 	}
 
+
+	/*
+	 * Internal method used for both cell and popup work.
+	 */
 
 	/* Identify the type of data in the cell and get an instance
 	 * of the appropriate DataType object to work with it.

@@ -49,6 +49,7 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellEditor;	//?? May not be needed??
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import javax.swing.JOptionPane;
 
 //??import javax.swing.event.TableModelListener;
 //??import javax.swing.event.TableModelEvent;
@@ -160,6 +161,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		private ColumnDisplayDefinition[] _colDefs = new ColumnDisplayDefinition[0];
 		private IDataSetTableControls _creator = null;
 
+
 		MyTableModel(IDataSetTableControls creator)
 		{
 			super();
@@ -239,10 +241,10 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		 * If the creator succeeds in changing the underlying data,
 		 * then update the JTable as well.
 		 */
-		public void setValueAt(Object aValue, int row, int col) {
-			if ( _creator.changeUnderlyingValueAt(row, col, aValue, getValueAt(row, col)))
+		public void setValueAt(Object newValue, int row, int col) {
+			if ( _creator.changeUnderlyingValueAt(row, col, newValue, getValueAt(row, col)))
 			{
-				((Object[])_data.get(row))[col] = aValue;
+				((Object[])_data.get(row))[col] = newValue;
 			}
 		}
 	}
@@ -316,6 +318,43 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 			TableCellEditor cellEditor = super.getCellEditor(row, col);
 			currentCellEditor = (DefaultCellEditor)cellEditor;
 			return cellEditor;
+		}
+		
+		/*
+		 * When user leaves a cell after editing it, the contents of
+		 * that cell need to be converted from a string into an
+		 * object of the appropriate type before updating the table.
+		 */
+		 public void setValueAt(Object newValueString, int row, int col) {
+		 	StringBuffer messageBuffer = new StringBuffer();
+		 	ColumnDisplayDefinition colDef = getColumnDefinitions()[col];
+		 	Object newValueObject = CellComponentFactory.validateAndConvert(
+		 		colDef, (String)newValueString, messageBuffer);
+		 	if (messageBuffer.length() > 0) {
+		 		// display error message and do not update the table
+				messageBuffer.insert(0,
+					"The given text cannot be converted into the internal object.\n"+
+					"The database has not been changed.\n"+
+					"The conversion error was:\n");
+				JOptionPane.showMessageDialog(this,
+					messageBuffer,
+					"Conversion Error",
+					JOptionPane.ERROR_MESSAGE);
+		 	}
+		 	else {
+		 		// data converted ok, so update the table
+		 		super.setValueAt(newValueObject, row, col);
+		 	}
+		 }
+
+
+		/*
+		 * When the user finishes editing in the Popup window and wants
+		 * to update the database, the data has already been converted
+		 * into an Object of the appropriate type.
+		 */
+		public void setConvertedValueAt(Object newValue, int row, int col) {
+			super.setValueAt(newValue, row, col);
 		}
 
 		public void setColumnDefinitions(ColumnDisplayDefinition[] colDefs)
