@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders;
 /*
- * Copyright (C) 2002 Colin Bell and Johan Compagner
+ * Copyright (C) 2002-2003 Colin Bell and Johan Compagner
  * colbell@users.sourceforge.net
  * jcompagner@j-com.nl
  *
@@ -117,27 +117,39 @@ public class DatabaseExpander implements INodeExpander
 
 		if (parentDbinfo.getDatabaseObjectType() == DatabaseObjectType.SESSION)
 		{
+			// If a driver says it supports schemas/catalogs but doesn't
+			// provide schema/catalog nodes, try to get other nodes.
+			List addedChildren = new ArrayList();
 			if (supportsCatalogs)
 			{
-				childNodes.addAll(createCatalogNodes(session, md));
+				addedChildren = createCatalogNodes(session, md);
+				childNodes.addAll(addedChildren);
 			}
-			else if (supportsSchemas)
+//			else if (supportsSchemas)
+			if (addedChildren.size() == 0 && supportsSchemas)
 			{
-				childNodes.addAll(createSchemaNodes(session, md, null));
+				addedChildren = createSchemaNodes(session, md, null);
+				childNodes.addAll(addedChildren);
 			}
-			else
+//			else
+			if (addedChildren.size() == 0)
 			{
 				childNodes.addAll(createObjectTypeNodes(session, null, null));
 			}
 		}
 		else if (parentDbinfo.getDatabaseObjectType() == DatabaseObjectType.CATALOG)
 		{
+			// If a driver says it supports schemas but doesn't
+			// provide schema nodes, try to get other nodes.
 			final String catalogName = parentDbinfo.getSimpleName();
+			List addedChildren = new ArrayList();
 			if (supportsSchemas)
 			{
-				childNodes.addAll(createSchemaNodes(session, md, catalogName));
+				addedChildren = createSchemaNodes(session, md, catalogName);
+				childNodes.addAll(addedChildren);
 			}
-			else
+			//else
+			if (addedChildren.size() == 0)
 			{
 				childNodes.addAll(createObjectTypeNodes(session, catalogName, null));
 			}
