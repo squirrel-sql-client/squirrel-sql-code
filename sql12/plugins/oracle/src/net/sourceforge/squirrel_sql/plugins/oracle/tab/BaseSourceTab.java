@@ -102,6 +102,9 @@ abstract class BaseSourceTab extends BaseObjectTab
 		{
 			_comp = new BaseSourcePanel();
 			_scroller = new JScrollPane(_comp);
+
+                        LineNumber lineNumber = new LineNumber( _comp );
+                        _scroller.setRowHeaderView( lineNumber );                        
 		}
 		return _scroller;
 	}
