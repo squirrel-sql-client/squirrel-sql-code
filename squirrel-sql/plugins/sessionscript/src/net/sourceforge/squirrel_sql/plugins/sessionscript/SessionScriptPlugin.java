@@ -62,7 +62,7 @@ public class SessionScriptPlugin extends DefaultSessionPlugin {
 	private File _userSettingsFolder;
 
 	/** Cache of session scripts. */
-	private SessionScriptCache _cache;
+	private AliasScriptCollectionCache _cache;
 
 //	private PluginResources _resources;
 
@@ -149,7 +149,7 @@ public class SessionScriptPlugin extends DefaultSessionPlugin {
 //		createMenu();
 
 		try {
-			_cache = new SessionScriptCache(this);
+			_cache = new AliasScriptCollectionCache(this);
 		} catch (IOException ex) {
 			throw new PluginException(ex);
 		}
@@ -179,9 +179,18 @@ public class SessionScriptPlugin extends DefaultSessionPlugin {
 	 *			applicable to passed session.
 	 */
     public boolean sessionStarted(ISession session) {
-        session.addMainTab(new MainTab(this));
+        session.addMainTab(new MainTab(this, session));
         return true;
     }
+
+	/**
+	 * Return the scripts cache.
+	 * 
+	 * @return	The scripts cache.
+	 */
+	AliasScriptCollectionCache getScriptsCache() {
+		return _cache;
+	}
 
 	/**
 	 * Load from preferences file.

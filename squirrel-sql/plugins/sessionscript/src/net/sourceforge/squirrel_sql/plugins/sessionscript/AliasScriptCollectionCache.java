@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -29,14 +30,14 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 
-import net.sourceforge.squirrel_sql.plugins.sessionscript.SessionScriptPlugin;
-
 /**
  * XML cache of SQL scripts.
+ * 
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SessionScriptCache {
+public class AliasScriptCollectionCache {
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(SessionScriptCache.class);
+	private static ILogger s_log = LoggerController.createLogger(AliasScriptCollectionCache.class);
 
 	/** Current plugin. */
 	private SessionScriptPlugin _plugin;
@@ -55,7 +56,7 @@ public class SessionScriptCache {
 	 * @throws	IllegalArgumentException
 	 *			Thrown if <TT>null</TT> <TT>SQLScriptPlugin</TT> passed.
 	 */
-	public SessionScriptCache(SessionScriptPlugin plugin) throws IOException {
+	public AliasScriptCollectionCache(SessionScriptPlugin plugin) throws IOException {
 		super();
 		if (plugin == null) {
 			throw new IllegalArgumentException("Null SessionScriptPlugin passed");
@@ -68,29 +69,51 @@ public class SessionScriptCache {
 	}
 
 	/**
+	 * Return the <TT>AliasScriptCollection</TT> for the passed <TT>ISQLAlias</TT>.
+	 * 
+	 * @param	alias	<TT>SQLALias</TT> to retrieve collection of scripts for.
+	 * 
+	 * @thropws	IllegalArgumentException	Thrown if null<TT>ISQLAlias</TT> passed.
+	 * 
+	 * @throws	InternalError	Thrown if we try to add a collection for an alias
+	 * 							and one already exists. Programming error.
+	 */
+	public synchronized AliasScriptCollection get(ISQLAlias alias) {
+		if (alias == null) {
+			throw new IllegalArgumentException("ISQLALias == null");
+		}
+
+		AliasScriptCollection coll = (AliasScriptCollection)_cache.get(AliasScriptCollection.class, alias.getIdentifier());
+		if (coll == null) {
+			coll = new AliasScriptCollection(alias);
+			try {
+				_cache.add(coll);
+			} catch (DuplicateObjectException ex) {
+				// This should never happen as we check above for the duplicate.
+				throw new InternalError(ex.getMessage());
+			}
+		}
+		return coll;
+	}
+
+	/**
 	 * Load scripts from XML document.
 	 */
-	public void load() {
+	public synchronized void load() {
 		try {
 			_cache.load(_scriptsFileName, getClass().getClassLoader());
 		} catch (FileNotFoundException ignore) { // first time user has run pgm.
 		} catch (XMLException ex) {
-			s_log.error("Error loading aliases file: " + _scriptsFileName, ex);
+			s_log.error("Error loading scripts file: " + _scriptsFileName, ex);
 		} catch (DuplicateObjectException ex) {
-			s_log.error("Error loading aliases file: " + _scriptsFileName, ex);
+			s_log.error("Error loading scripts file: " + _scriptsFileName, ex);
 		}
-// Create dummy script for testing purposes.
-//		try {
-//SessionScript ss = new SessionScript();
-//ss.setScript("set dateformat(\"*DMY\")");
-//_cache.add(ss);
-//		} catch(Exception ignore) {}
 	}
 
 	/**
 	 * Save scripts.
 	 */
-	public void save() {
+	public synchronized void save() {
 		try {
 			_cache.save(_scriptsFileName);
 		} catch (IOException ex) {

@@ -26,40 +26,51 @@ import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 
 /**
  * An SQL script run when a session is started.
+ * 
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SessionScript implements Cloneable, Serializable, IHasIdentifier {
+public class AliasScript implements Serializable, IHasIdentifier {
 	/** The <TT>IIdentifier</TT> that uniquely identifies this object. */
 	private IIdentifier _id;
 	
-	/** The script. */
-	private String _script;
+	/** The SQL. */
+	private String _sql;
 
 	/** Sequence number of the script. */
 	private int _sequenceNbr;
-	
+
 	/**
 	 * Identifier of the <TT>SQLAlias</TT> that this script is
 	 * associated with.
 	 */
-	private IIdentifier _sqlAliasId;
+//	private IIdentifier _sqlAliasId;
 	
 	/**
-	 * Ctor.
+	 * Default ctor.
 	 */
-	public SessionScript() {
+	public AliasScript() {
 		super();
 		_id = IdentifierFactory.getInstance().createIdentifier();
+	}
+	
+	/**
+	 * Ctor specifying the sql.
+	 */
+	public AliasScript(String sql) {
+		super();
+		_id = IdentifierFactory.getInstance().createIdentifier();
+		_sql = sql;
 	}
 
 	/**
 	 * Returns <TT>true</TT> if this objects is equal to the passed one. Two
-	 * <TT>SessionScript</TT> objects are considered equal if they have the same
+	 * <TT>AliasScript</TT> objects are considered equal if they have the same
 	 * identifier.
 	 */
 	public boolean equals(Object rhs) {
 		boolean rc = false;
 		if (rhs != null && rhs.getClass().equals(getClass())) {
-			rc = ((SessionScript)rhs).getIdentifier().equals(getIdentifier());
+			rc = ((AliasScript)rhs).getIdentifier().equals(getIdentifier());
 		}
 		return rc;
 	}
@@ -69,6 +80,15 @@ public class SessionScript implements Cloneable, Serializable, IHasIdentifier {
 	 */
 	public int hashCode() {
 		return getIdentifier().hashCode();
+	}
+
+	/**
+	 * Return the SQL as a string representaion of this object.
+	 * 
+	 * @return	The SQL as a string representation of this object.
+	 */
+	public String toString() {
+		return _sql != null ? _sql : "";
 	}
 
 	/**
@@ -85,17 +105,17 @@ public class SessionScript implements Cloneable, Serializable, IHasIdentifier {
 	}
 	
 	/**
-	 * Return the script to be run.
+	 * Return the SQL to be run.
 	 * 
-	 * @return	the script to be run.
+	 * @return	the SQL to be run.
 	 */
-	public String getScript() {
-		return _script;
+	public String getSQL() {
+		return _sql;
 	}
 
-	public IIdentifier getSQLAliasId() {
-		return _sqlAliasId;
-	}
+//	public IIdentifier getSQLAliasId() {
+//		return _sqlAliasId;
+//	}
 
 	/**
 	 * Set the identifier that uniquely identifies this object.
@@ -107,20 +127,20 @@ public class SessionScript implements Cloneable, Serializable, IHasIdentifier {
 	}
 	
 	/**
-	 * Set the script to be run.
+	 * Set the SQL to be run.
 	 * 
-	 * @param	value	The script.
+	 * @param	value	The SQL.
 	 */
-	public void setScript(String value) {
-		_script = value;
+	public void setSQL(String value) {
+		_sql = value;
 	}
 	
 	public void setSequenceNumber(int value) {
 		_sequenceNbr = value;
 	}
 
-	public void setSQLAliasId(IIdentifier value) {
-		_sqlAliasId = value;
-	}
+	//public void setSQLAliasId(IIdentifier value) {
+//		_sqlAliasId = value;
+//	}
 }
 

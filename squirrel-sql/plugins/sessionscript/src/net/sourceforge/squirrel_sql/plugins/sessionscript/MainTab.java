@@ -19,17 +19,22 @@ package net.sourceforge.squirrel_sql.plugins.sessionscript;
  */
 import java.awt.Component;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.BaseMainPanelTab;
 
 class MainTab extends BaseMainPanelTab {
 	private SessionScriptPlugin _plugin;
 
+	/** Current session. */
+	private ISession _session;
+
 	/** Panel for main tabbed pane. */
 	private MainTabPanel _mainTabPnl;
 
-	MainTab(SessionScriptPlugin plugin) {
+	MainTab(SessionScriptPlugin plugin, ISession session) {
 		super();
 		_plugin = plugin;
+		_session = session;
 	}
 
 	/**
@@ -58,7 +63,7 @@ class MainTab extends BaseMainPanelTab {
 	 */
 	public synchronized Component getComponent() {
 		if (_mainTabPnl == null) {
-			_mainTabPnl = new MainTabPanel(_plugin);
+			_mainTabPnl = new MainTabPanel(_plugin, _session);
 		}
 		return _mainTabPnl;
 	}
