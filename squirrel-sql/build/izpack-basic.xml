@@ -27,6 +27,7 @@
 	<packs>
 		<pack required="yes" name="Base">
 			<description>SQL Client</description>
+			<file targetdir="$INSTALL_PATH" src="..\squirrel-sql-dist\squirrel-sql-1.1beta1\core\dist\plugins"/>
 			<file targetdir="$INSTALL_PATH" src="..\squirrel-sql-dist\squirrel-sql-1.1beta1\core\dist\lib"/>
 			<file targetdir="$INSTALL_PATH" src="..\squirrel-sql-dist\squirrel-sql-1.1beta1\core\dist\doc"/>
 			<file targetdir="$INSTALL_PATH" src="..\squirrel-sql-dist\squirrel-sql-1.1beta1\core\dist\squirrel-sql.bat"/>

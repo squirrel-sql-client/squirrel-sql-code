@@ -83,6 +83,7 @@
 		<mkdir dir="${core_dist_lib_dir}"/>
 		<mkdir dir="${core_dist_doc_dir}"/>
 		<mkdir dir="${core_dist_dir}/src"/>
+		<mkdir dir="${core_dist_dir}/plugins"/>
 	</target>
 
 	<!--
@@ -182,6 +183,10 @@
 				<exclude name="**/*.marks"/>
 			</fileset>
 		</copy>
+
+		<echo message="Unzip your plugins here" 
+			file="${core_dist_dir}/plugins/readme.txt">
+		</echo>
 	</target>
 
 	<!--
@@ -299,6 +304,17 @@
 				<include name="**/*.*"/>
 			</fileset>
 		</zip>
+
+		<tar tarfile="${dist_dir}/${p_internal_name}.tar">
+			<tarfileset dir="${lcl_this_plugin_dist_dir}/dist">
+				<include name="**/*.*"/>
+			</tarfileset>
+		</tar>
+		<gzip zipfile="${dist_dir}/${p_internal_name}.tar.gz"
+			src="${dist_dir}/${p_internal_name}.tar">
+		</gzip>
+		<delete file="${dist_dir}/${p_internal_name}.tar"/>
+		
 	</target>
 
 </project>
