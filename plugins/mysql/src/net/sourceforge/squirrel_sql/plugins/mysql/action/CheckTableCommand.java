@@ -17,11 +17,7 @@ package net.sourceforge.squirrel_sql.plugins.mysql.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
-
 import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 /**
  * This command will run a &quot;CHECK TABLE&quot; over the
@@ -31,10 +27,6 @@ import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
  */
 class CheckTableCommand extends AbstractTableListCommand
 {
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(CheckTableCommand.class);
-
 	/** Type of check to run on the tables @see ICheckTypes. */
 	private int _checkType;
 
@@ -42,7 +34,7 @@ class CheckTableCommand extends AbstractTableListCommand
 	 * Ctor.
 	 *
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>ISession</TT>,
+	 * 			Thrown if a?<TT>null</TT> <TT>ISession</TT>,
 	 * 			<TT>Resources</TT> or <TT>MysqlPlugin</TT> passed.
 	 */
 	public CheckTableCommand(ISession session, MysqlPlugin plugin, int checkType)

@@ -19,8 +19,6 @@ package net.sourceforge.squirrel_sql.plugins.mysql.tab;
  */
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
  * This tab will display the results of an "SHOW INDEXES" command over
  * the currently selected tables.
@@ -29,10 +27,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class ShowIndexesTab extends BaseSQLTab
 {
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(ShowIndexesTab.class);
-
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(ShowIndexesTab.class);

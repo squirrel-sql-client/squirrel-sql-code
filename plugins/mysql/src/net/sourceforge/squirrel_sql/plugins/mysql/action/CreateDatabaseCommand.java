@@ -18,14 +18,10 @@ package net.sourceforge.squirrel_sql.plugins.mysql.action;
  */
 import javax.swing.JOptionPane;
 
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-
+import net.sourceforge.squirrel_sql.fw.util.BaseException;
+import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 /*
  * CreateDatabaseCommand.java
@@ -36,10 +32,6 @@ import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
  */
 public class CreateDatabaseCommand implements ICommand
 {
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(CreateDatabaseCommand.class);
-
 	/** Current session. */
 	private ISession _session;
 

@@ -17,8 +17,6 @@ package net.sourceforge.squirrel_sql.plugins.mysql.tab;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
  * This tab will display information about MySQL logs.
  *
@@ -35,10 +33,6 @@ public class ShowLogsTab extends BaseSQLTab
 		String TITLE = "MySQL Logs";
 		String HINT = "(MySQL) Show Logs";
 	}
-
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(ShowLogsTab.class);
 
 	public ShowLogsTab()
 	{

@@ -17,41 +17,44 @@ package net.sourceforge.squirrel_sql.plugins.mysql.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Component;
-import java.sql.SQLException;
-
 import javax.swing.JComboBox;
-import javax.swing.JList;
-import javax.swing.plaf.basic.BasicComboBoxRenderer;
-
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 /**
+ * TODO: Get rid of this class.
  * This combobox contains all the columns in an SQL table.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ColumnsComboBox extends JComboBox
 {
-	public ColumnsComboBox(SQLConnection conn, ITableInfo ti)
-		throws SQLException
+	private ColumnsComboBox()
 	{
-		super(conn.getSQLMetaData().getColumnInfo(ti));
-		setRenderer(new CellRenderer());
+		super();
 	}
 
-	/**
-	 * This renderer uses the unqualified column name as the text to display
-	 * in the combo.
-	 */
-	private static final class CellRenderer extends BasicComboBoxRenderer
-	{
-		public Component getListCellRendererComponent(JList list, Object value,
-						int index, boolean isSelected, boolean cellHasFocus)
-		{
-			setText(((TableColumnInfo)value).getColumnName());
-			return this;
-		}
-	}
+//	public ColumnsComboBox(SQLConnection conn, ITableInfo ti)
+//		throws SQLException
+//	{
+//		super(conn.getSQLMetaData().getColumnInfo(ti));
+//		setRenderer(new CellRenderer());
+//	}
+//
+//	/**
+//	 * This renderer uses the unqualified column name as the text to display
+//	 * in the combo.
+//	 */
+//	private static final class CellRenderer extends BasicComboBoxRenderer
+//	{
+//		CellRenderer()
+//		{
+//			super();
+//			setOpaque(true);
+//		}
+//
+//		public Component getListCellRendererComponent(JList list, Object value,
+//						int index, boolean isSelected, boolean cellHasFocus)
+//		{
+//			setText(((TableColumnInfo)value).getColumnName());
+//			return this;
+//		}
+//	}
 }
