@@ -139,6 +139,7 @@ public class DataSetModelJTableModel extends AbstractTableModel {
 	public void setValueAt(Object value, int rowIndex, int columnIndex) {
 		validate();
 		_model.setValueAt(value, rowIndex, columnIndex);
+		fireTableCellUpdated(rowIndex, columnIndex);
 	}
 
 	/**
