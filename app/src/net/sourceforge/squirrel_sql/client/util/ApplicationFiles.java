@@ -116,6 +116,14 @@ public class ApplicationFiles
 	{
 		return new File(_userSettingsDir + File.separator + "prefs.xml");
 	}
+	
+	/**
+	 * @return file that contains the selections user chose for Cell import/export.
+	 */
+	public File getCellImportExportSelectionsFile()
+	{
+		return new File(_userSettingsDir + File.separator + "cellImportExport.xml");
+	}
 
 	/**
 	 * @return file to log execution information to.
