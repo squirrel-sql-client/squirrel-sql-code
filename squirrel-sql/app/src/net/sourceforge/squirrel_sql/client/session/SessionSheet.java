@@ -60,6 +60,7 @@ public class SessionSheet extends BaseSheet {
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(SessionSheet.class);
 
+	/** Session for this window. */
 	private ISession _session;
 
 	/** Listener to the sessions properties. */
@@ -236,8 +237,7 @@ public class SessionSheet extends BaseSheet {
 
 	private void createUserInterface() {
 		setVisible(false);
-		Icon icon = _session.getApplication().getResources().getIcon(getClass(), "frameIcon");
-		//i18n
+		Icon icon = _session.getApplication().getResources().getIcon(getClass(), "frameIcon"); //i18n
 		if (icon != null) {
 			setFrameIcon(icon);
 		}
