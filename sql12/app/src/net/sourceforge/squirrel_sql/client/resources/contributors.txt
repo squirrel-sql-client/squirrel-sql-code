@@ -8,6 +8,7 @@ Henner Zeller
 Jeehad Jebeile
 Johan Compagner
 John Munsch
+Johnathan James
 Karsten Lentzsch
 Ken Arway
 Mike Daughton
