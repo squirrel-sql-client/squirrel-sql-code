@@ -68,15 +68,18 @@ public class ObjectsTreeModel extends DefaultTreeModel {
 
 	public ObjectsTreeModel(ISession session) {
 		super(new DefaultMutableTreeNode());
-		_session = session;
-
 		_treeLoadedListeners = new ArrayList();
+		setSession(session);
+	}
+
+	private void setSession(ISession session) {
+		_session = session;
 		DatabaseNode rootNode = new DatabaseNode(session, this);
 /*i18n*/rootNode.add(new DefaultMutableTreeNode("Loading..."));
 		setRoot(rootNode);
 		reload();
 	}
-	
+
 	public void addTreeLoadedListener(TreeLoadedListener listener)
 	{
 		if(listener != null && !_treeLoadedListeners.contains(listener))
@@ -97,9 +100,9 @@ public class ObjectsTreeModel extends DefaultTreeModel {
 		{
 			((TreeLoadedListener)_treeLoadedListeners.get(i)).treeLoaded();
 		}
-	}	
-	public void fillTree()
-	{
+	}
+
+	public void fillTree() {
 		_session.getApplication().getThreadPool().addTask(new ObjectsTreeLoader());
 	}
 
