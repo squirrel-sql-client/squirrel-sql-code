@@ -36,11 +36,13 @@ public abstract class AbstractJoin extends CodeCompletionFunction
 
          if(3 > st.countTokens())
          {
+            _session.getMessageHandler().showMessage("function needs at least two arguments");
             return null;
          }
 
-         if(false == functionSting.endsWith(","))
+         if(false == functionSting.trim().endsWith(","))
          {
+            _session.getMessageHandler().showMessage("function must end with ','");
             return null;
          }
 
@@ -52,6 +54,7 @@ public abstract class AbstractJoin extends CodeCompletionFunction
             String table = st.nextToken().trim();
             if(false == _session.getSchemaInfo().isTable(table))
             {
+               _session.getMessageHandler().showMessage("unknown table " + table);
                return null;
             }
             tables.add(table);

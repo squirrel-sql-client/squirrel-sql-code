@@ -190,7 +190,10 @@ public class CodeCompletionInfoCollection
 
 		for (int i = 0; i < aliasInfos.length; i++)
 		{
-			_aliasCompletionInfos.add(new CodeCompletionTableAliasInfo(aliasInfos[i]));
+         if(false == aliasInfos[i].aliasName.startsWith("#"))
+         {
+			   _aliasCompletionInfos.add(new CodeCompletionTableAliasInfo(aliasInfos[i]));
+         }
 		}
 	}
 
