@@ -20,16 +20,23 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
@@ -42,14 +49,29 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 public class SQLExecuterTask implements Runnable
 {
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(SQLExecuterTask.class);
+	private static ILogger s_log =
+		LoggerController.createLogger(SQLExecuterTask.class);
 
+	/**
+	 * The <TT>SQLPanel</TT> that requested the execution. TODO: at some stage
+	 * we need to abstract out the callbacks to this panel and have them handled
+	 * as events which can be listened for. Also need to remove all UI code
+	 * from this class.
+	 */
 	private SQLPanel _sqlPanel;
+
+	/** Current session. */
 	private ISession _session;
+
+	/** SQL passed in to be executed. */
 	private String _sql;
-	private JPanel _cancelPanel = new CancelPanel();
+	private CancelPanel _cancelPanel = new CancelPanel();
 	private Statement _stmt;
-	private boolean _bStopExecution = false;
+	private boolean _stopExecution = false;
+
+	private int _currentQueryIndex = 0;
+	
+	private boolean _cancelPanelRemoved = false;
 
 	public SQLExecuterTask(SQLPanel sqlPanel, ISession session, String sql)
 	{
@@ -62,10 +84,9 @@ public class SQLExecuterTask implements Runnable
 	public void run()
 	{
 		_sqlPanel.setCancelPanel(_cancelPanel);
-		boolean bCancelPanelRemoved = false;
+		_cancelPanelRemoved = false;
 		try
 		{
-			final long start = System.currentTimeMillis();
 			SessionProperties props = _session.getProperties();
 			_stmt = _session.getSQLConnection().createStatement();
 			try
@@ -81,67 +102,47 @@ public class SQLExecuterTask implements Runnable
 						s_log.error("Can't Set MaxRows", e);
 					}
 				}
-				QueryTokenizer qt = new QueryTokenizer(_sql, props.getSQLStatementSeparatorChar());
-				while (qt.hasQuery() && !_bStopExecution)
+
+				// Retrieve all the statements to execute.
+				QueryTokenizer qt = new QueryTokenizer(_sql,
+										props.getSQLStatementSeparatorChar());
+				List queryStrings = new ArrayList();
+				while (qt.hasQuery())
 				{
-					if (bCancelPanelRemoved)
+					final String querySql = qt.nextQuery();
+					// ignore commented lines.
+					if (!querySql.startsWith("--"))
+					{
+						queryStrings.add(querySql);
+					}
+				}
+
+				_cancelPanel.setQueryCount(queryStrings.size());
+				_currentQueryIndex = 0;
+
+				// Process each individual query.
+				while (!queryStrings.isEmpty())
+				{
+					if (_cancelPanelRemoved)
 					{
 						_sqlPanel.setCancelPanel(_cancelPanel);
-						bCancelPanelRemoved = false;
+						_cancelPanelRemoved = false;
 					}
-					final String sToken = qt.nextQuery();
-					if (!sToken.startsWith("--"))
+
+					String querySql = (String)queryStrings.remove(0);
+					if (querySql != null)
 					{
-						if (_stmt.execute(sToken))
+						if (!processQuery(querySql))
 						{
-							if (_bStopExecution)
-							{
-								break;
-							}
-							_sqlPanel.addSQLToHistory(sToken);
-							ResultSet rs = _stmt.getResultSet();
-							if (rs != null)
-							{
-								try
-								{
-									ResultSetDataSet rsds = new ResultSetDataSet();
-									rsds.setLargeResultSetObjectInfo(props.getLargeResultSetObjectInfo());
-									rsds.setResultSet(rs);
-									ResultSetMetaDataDataSet rsmdds = new ResultSetMetaDataDataSet(rs);
-									_sqlPanel.addResultsTab(sToken, rsds, rsmdds,
-															_cancelPanel);
-									bCancelPanelRemoved = true;
-									try
-									{
-										_session.getMessageHandler().showMessage(rs.getWarnings());
-									}
-									catch (Exception e)
-									{
-										s_log.error("Can't get warnings ", e);
-									}
-								}
-								finally
-								{
-									rs.close();
-								}
-							}
-						}
-						else
-						{
-							_sqlPanel.addSQLToHistory(sToken);
-							_session.getMessageHandler().showMessage(_stmt.getUpdateCount() + " Rows Updated");
+							break;
 						}
 					}
 				}
 
-				if (_bStopExecution || !bCancelPanelRemoved)
+				if (_stopExecution || !_cancelPanelRemoved)
 				{
 					_sqlPanel.removeCancelPanel(_cancelPanel);
 				}
-				final long finish = System.currentTimeMillis();
-				_session.getMessageHandler().showMessage(
-					"Elapsed time for query(milliseconds) : " + (finish - start));
-				//  i18n
 			}
 			finally
 			{
@@ -166,26 +167,156 @@ public class SQLExecuterTask implements Runnable
 		}
 		finally
 		{
-			if (_bStopExecution || !bCancelPanelRemoved)
+			if (_stopExecution || !_cancelPanelRemoved)
 			{
 				_sqlPanel.removeCancelPanel(_cancelPanel);
 			}
 		}
 	}
 
+	private boolean processQuery(String querySql)
+		throws SQLException, DataSetException
+	{
+		long executionStart = System.currentTimeMillis();
+		long outputStart = 0;
+
+		++_currentQueryIndex;
+
+		try
+		{
+			_cancelPanel.setSQL(querySql);
+			_cancelPanel.setStatusLabel("Executing SQL...");
+			if (_stmt.execute(querySql))
+			{
+				if (_stopExecution)
+				{
+					return false;
+				}
+				outputStart = System.currentTimeMillis();
+				_sqlPanel.addSQLToHistory(querySql);
+				ResultSet rs = _stmt.getResultSet();
+				if (rs != null)
+				{
+					try
+					{
+						_cancelPanel.setStatusLabel("Building output...");
+						ResultSetDataSet rsds = new ResultSetDataSet();
+						SessionProperties props = _session.getProperties();
+						rsds.setLargeResultSetObjectInfo(props.getLargeResultSetObjectInfo());
+						rsds.setResultSet(rs);
+						ResultSetMetaDataDataSet rsmdds = new ResultSetMetaDataDataSet(rs);
+						_sqlPanel.addResultsTab(querySql, rsds, rsmdds, _cancelPanel);
+						_cancelPanelRemoved = true;
+						try
+						{
+							_session.getMessageHandler().showMessage(
+								rs.getWarnings());
+						}
+						catch (Exception e)
+						{
+							s_log.error("Can't get warnings ", e);
+						}
+					}
+					finally
+					{
+						rs.close();
+					}
+				}
+			}
+			else
+			{
+				_sqlPanel.addSQLToHistory(querySql);
+				_session.getMessageHandler().showMessage(
+					_stmt.getUpdateCount() + " Rows Updated");
+			}
+		}
+		finally
+		{
+			final NumberFormat nbrFmt = NumberFormat.getNumberInstance();
+			final long finish = System.currentTimeMillis();
+			StringBuffer buf = new StringBuffer();
+			buf.append("Query ").append(nbrFmt.format(_currentQueryIndex))
+				.append(" elapsed time(seconds) - Total: ")
+				.append(nbrFmt.format((finish - executionStart) / 1000.0))
+				.append(", SQL query time: ")
+				.append(nbrFmt.format((outputStart - executionStart) / 1000.0))
+				.append(", Building output time: ")
+				.append(nbrFmt.format((finish - outputStart) / 1000.0));
+			_session.getMessageHandler().showMessage(buf.toString());
+			//  i18n
+		}
+
+		return true;
+	}
+
 	private final class CancelPanel extends JPanel implements ActionListener
 	{
+		private JLabel _sqlLbl = new JLabel();
+		private JLabel _currentStatusLbl = new JLabel();
+
+		/** Total number of queries that will be executed. */
+		private int _queryCount;
+
+		/** Number of the query currently being executed (starts from 1). */
+		private int _currentQueryIndex = 0;
+
 		private CancelPanel()
 		{
-			setLayout(new FlowLayout());
-			JButton button = new JButton("Cancel");
-			button.addActionListener(this);
-			add(button);
+			super(new GridBagLayout());
+
+			JButton cancelBtn = new JButton("Cancel");
+			cancelBtn.addActionListener(this);
+
+			GridBagConstraints gbc = new GridBagConstraints();
+
+			gbc.anchor = GridBagConstraints.WEST;
+			gbc.insets = new Insets(5, 10, 5, 10);
+
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			add(new JLabel("SQL:"), gbc);
+
+			gbc.weightx = 1;
+			++gbc.gridx;
+			add(_sqlLbl, gbc);
+
+			gbc.weightx = 0;
+			gbc.gridx = 0;
+			++gbc.gridy;
+			add(new JLabel("Status:"), gbc);
+
+			++gbc.gridx;
+			add(_currentStatusLbl, gbc);
+
+			gbc.gridx = 0;
+			++gbc.gridy;
+			gbc.fill = GridBagConstraints.NONE;
+			add(cancelBtn, gbc);
+		}
+
+		public void setSQL(String sql)
+		{
+			++_currentQueryIndex;
+			StringBuffer buf = new StringBuffer();
+			buf.append(String.valueOf(_currentQueryIndex)).append(" of ")
+				.append(String.valueOf(_queryCount)).append(" - ").append(sql);
+			_sqlLbl.setText(buf.toString());
+		}
+
+		public void setStatusLabel(String text)
+		{
+			_currentStatusLbl.setText(text);
+		}
+
+		public void setQueryCount(int value)
+		{
+			_queryCount = value;
+			_currentQueryIndex = 0;
 		}
 
 		public void actionPerformed(ActionEvent event)
 		{
-			_bStopExecution = true;
+			_stopExecution = true;
 			try
 			{
 				if (_stmt != null)
