@@ -82,7 +82,7 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin {
      * @return  the plugin version.
      */
     public String getVersion() {
-	return "0.42";
+	return "0.43";
     }
     
     /**
@@ -127,8 +127,21 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin {
      * @return	the license file name.
      */
 	public String getLicenceFileName() {
-	return "license.txt";
+	return "licence.txt";
     }
+
+	/**
+	 * Returns the name of the change log for the plugin. This should
+	 * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
+	 * directory.
+	 *
+	 * @return	the changelog file name or <TT>null</TT> if plugin doesn't have
+	 * 			a change log.
+	 */
+	public String getChangeLogFileName()
+	{
+		return "changes.txt";
+	}
 
     /**
      * Return the plugin resources. Used by other classes.

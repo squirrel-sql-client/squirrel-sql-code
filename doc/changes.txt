@@ -1,6 +1,21 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+1.2beta6
+========
+
+Enhancements
+------------
+- User may identify specific columns to use in WHERE clause when editing
+  cells in table by using the "Limit cell edit WHERE clause size" entry in
+  the Session menu.
+
+Bug Fixes
+---------
+- Tables with many columns should now allow editing by useing the
+  "Limit cell edit WHERE clause size" session tool.
+
+
 1.2beta5
 ========
 
@@ -22,18 +37,14 @@ Enhancements
 - You can now specify whether to load result set metadata when executing an SQL
   (Keith Mashinter).
 - You can Import/Export cell data to/from files and operate on that data with
-  external commands (e.g. VI, etc).
-  (Glenn Griffin)
+  external commands (e.g. VI, etc) (Glenn Griffin)
 - BLOBs and CLOBs are now fully editable, as are all of the most common SQL
-  types.
+  types (Glenn Griffin).
 - Data that can be edited only in the Popup (ie. not in the cell) is now shown
   with a Cyan background to tell the user that it can be edited, but only in
-  the Popup.
+  the Popup (Glenn Griffin).
 - Data containing newlines now shows the newlines explicitly in the in-cell
-  view, i.e. as "\n".
-- User may identify specific columns to use in WHERE clause when editing
-  cells in table by using the "Limit cell edit WHERE clause size" entry in
-  the Session menu.
+  view, i.e. as "\n" (Glenn Griffin).
 
 Bug Fixes
 ---------
@@ -45,9 +56,7 @@ Bug Fixes
 - Do a better job of handling MS SQL server catalog names that contain periods.
 - Strings (VARCHAR and CLOB) fields containing newlines would loose those
   newlines if edited within the cell.  In-cell editing of that data is now
-  blocked.
-- Tables with many columns should now allow editing by useing the
-  "Limit cell edit WHERE clause size" session tool.
+  blocked (Glenn Griffin).
 
 Other
 -----

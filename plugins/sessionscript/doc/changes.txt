@@ -1,14 +1,18 @@
 Change Log
 ==========
 
+0.14
+====
+- Updated for SQuirrel SQL Client 1.2beta5.
+
+
 0.13
 ====
-
 - Updated for SQuirrel SQL Client 1.2beta4.
+
 
 0.12
 ====
-
 - Updated for SQuirrel SQL Client 1.1rc1.
 
 

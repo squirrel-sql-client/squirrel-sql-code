@@ -282,6 +282,11 @@
 -->
 <!--
 		<antcall target="build_plugin">
+			<param name="p_internal_name" value="sqlbookmark"/>
+		</antcall>
+-->
+<!--
+		<antcall target="build_plugin">
 			<param name="p_internal_name" value="sqlscript"/>
 		</antcall>
 -->
