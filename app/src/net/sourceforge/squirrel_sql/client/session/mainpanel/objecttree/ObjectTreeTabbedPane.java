@@ -17,17 +17,11 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.ContainerAdapter;
-import java.awt.event.ContainerEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JTabbedPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -36,15 +30,20 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 /**
  * This is the tabbed panel displayed when a node is selected in the
  * object tree.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ObjectTreeTabbedPane
+class ObjectTreeTabbedPane
 {
+	/** Keys to client properties stored in the component. */
+	interface IClientPropertiesKeys
+	{
+		String TABBED_PANE_OBJ = ObjectTreeTabbedPane.class.getName() + "/TabPaneObj";
+	}
+
 	/** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(ObjectTreeTabbedPane.class);
@@ -54,9 +53,6 @@ public class ObjectTreeTabbedPane
 
 	/** Current session. */
 	private ISession _session;
-
-	/** Listens to changes in session properties. */
-	private SessionPropertiesListener _propsListener;
 
 	/**
 	 * Collection of <TT>IObjectTab</TT> objects displayed in
@@ -74,16 +70,16 @@ public class ObjectTreeTabbedPane
 		}
 
 		_session = session;
-		CreateGUI();
-		propertiesHaveChanged(null);
+
+		_tabPnl.putClientProperty(IClientPropertiesKeys.TABBED_PANE_OBJ, this);
 	}
 
 	/**
-	 * Retrieve the tabbed pan for this component.
+	 * Retrieve the tabbed pane for this component.
 	 *
 	 * @return	The tabbed pane.
 	 */
-	public JTabbedPane getTabbedPane()
+	JTabbedPane getTabbedPane()
 	{
 		return _tabPnl;
 	}
@@ -126,7 +122,7 @@ public class ObjectTreeTabbedPane
 		}
 	}
 
-	public void setDatabaseObjectInfo(IDatabaseObjectInfo dboInfo)
+	void setDatabaseObjectInfo(IDatabaseObjectInfo dboInfo)
 	{
 		Iterator it = _tabs.iterator();
 		while (it.hasNext())
@@ -136,57 +132,11 @@ public class ObjectTreeTabbedPane
 		}
 	}
 
-	private void CreateGUI()
-	{
-		_tabPnl.addContainerListener(new ContainerAdapter()
-		{
-			public void componentAdded(ContainerEvent evt)
-			{
-				_propsListener = new SessionPropertiesListener();
-				_session.getProperties().addPropertyChangeListener(_propsListener);
-
-				final int idx = _tabPnl.getSelectedIndex();
-				if (idx != -1)
-				{
-					((IObjectTab)_tabs.get(idx)).select();
-				}
-			}
-			public void componentRemoved(ContainerEvent evt)
-			{
-				if (_propsListener != null)
-				{
-					_session.getProperties().removePropertyChangeListener(_propsListener);
-					_propsListener = null;
-				}
-			}
-		});
-
-		_tabPnl.addChangeListener(new TabbedPaneListener());
-	}
-
-	private void propertiesHaveChanged(String propName)
-	{
-		final SessionProperties props = _session.getProperties();
-
-		if (propName == null
-			|| propName.equals(SessionProperties.IPropertyNames.META_DATA_OUTPUT_CLASS_NAME)
-			|| propName.equals(SessionProperties.IPropertyNames.TABLE_CONTENTS_OUTPUT_CLASS_NAME)
-			|| propName.equals(SessionProperties.IPropertyNames.SQL_RESULTS_OUTPUT_CLASS_NAME))
-		{
-			rebuild();
-		}
-		if (propName == null
-			|| propName.equals(SessionProperties.IPropertyNames.OBJECT_TAB_PLACEMENT))
-		{
-			_tabPnl.setTabPlacement(props.getObjectTabPlacement());
-		}
-	}
-
 	/**
 	 * Rebuild the tabs. This usually means that some kind of configuration
 	 * data has changed (I.E. the output type has changed from text to table).
 	 */
-	private synchronized void rebuild()
+	synchronized void rebuild()
 	{
 		final int curTabIdx = _tabPnl.getSelectedIndex();
 		final List oldTabs = new ArrayList();
@@ -203,28 +153,6 @@ public class ObjectTreeTabbedPane
 		if (curTabIdx >= 0 && curTabIdx < _tabPnl.getTabCount())
 		{
 			_tabPnl.setSelectedIndex(curTabIdx);
-		}
-	}
-
-	/**
-	 * When a different tab is selected then refresh the newly selected tab.
-	 */
-	private class TabbedPaneListener implements ChangeListener
-	{
-		public void stateChanged(ChangeEvent evt)
-		{
-			selectCurrentTab();
-		}
-	}
-
-	/**
-	 * Listen for changes in session properties.
-	 */
-	private class SessionPropertiesListener implements PropertyChangeListener
-	{
-		public void propertyChange(PropertyChangeEvent evt)
-		{
-			propertiesHaveChanged(evt.getPropertyName());
 		}
 	}
 }

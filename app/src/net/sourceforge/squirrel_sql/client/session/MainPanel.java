@@ -17,14 +17,14 @@ package net.sourceforge.squirrel_sql.client.session;
 * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.ContainerAdapter;
-import java.awt.event.ContainerEvent;
+import java.awt.BorderLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -54,7 +54,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class MainPanel
+class MainPanel extends JPanel
 {
 	/**
 	 * IDs of tabs.
@@ -77,6 +77,9 @@ public class MainPanel
 	/** Listener to the sessions properties. */
 	private PropertyChangeListener _propsListener;
 
+	/** Listener for changes to the tabbed panel. */
+	private ChangeListener _tabPnlListener;
+
 	/**
 	 * Collection of <TT>IMainPanelTab</TT> objects displayed in
 	 * this tabbed panel.
@@ -91,9 +94,9 @@ public class MainPanel
 	 * @throws	IllegalArgumentException	If a <TT>null</TT>
 											<TT>ISession</TT> passed.
 	 */
-	public MainPanel(ISession session)
+	MainPanel(ISession session)
 	{
-		super();
+		super(new BorderLayout());
 
 		if (session == null)
 		{
@@ -101,7 +104,11 @@ public class MainPanel
 		}
 
 		_session = session;
-		createGUI();
+
+		addMainPanelTab(new ObjectTreeTab());
+		addMainPanelTab(new SQLTab(_session));
+
+		add(_tabPnl, BorderLayout.CENTER);
 
 		propertiesHaveChanged(null);
 
@@ -109,14 +116,47 @@ public class MainPanel
 		((IMainPanelTab)_tabs.get(getTabbedPane().getSelectedIndex())).select();
 	}
 
-	/**
-	 * Retrieve the tabbed pan for this component.
-	 * 
-	 * @return	The tabbed pane.
-	 */
-	public JTabbedPane getTabbedPane()
+	public void addNotify()
 	{
-		return _tabPnl;
+		super.addNotify();
+
+		if (_propsListener == null)
+		{
+			_propsListener = new PropertyChangeListener()
+			{
+				public void propertyChange(PropertyChangeEvent evt)
+				{
+					propertiesHaveChanged(evt.getPropertyName());
+				}
+			};
+			_session.getProperties().addPropertyChangeListener(_propsListener);
+		}
+
+		_tabPnlListener = new ChangeListener()
+		{
+			public void stateChanged(ChangeEvent evt)
+			{
+				performStateChanged();
+			}
+		};
+		_tabPnl.addChangeListener(_tabPnlListener);
+	}
+
+	public void removeNotify()
+	{
+		super.removeNotify();
+
+		if (_propsListener != null)
+		{
+			_session.getProperties().removePropertyChangeListener(_propsListener);
+			_propsListener = null;
+		}
+
+		if (_tabPnlListener != null)
+		{
+			_tabPnl.removeChangeListener(_tabPnlListener);
+			_tabPnlListener = null;
+		}
 	}
 
 	/**
@@ -214,52 +254,6 @@ public class MainPanel
 		}
 	}
 
-	/**
-	 * Create the GUI.
-	 */
-	private void createGUI()
-	{
-		//TODO: uncomment this when we no longer support JDK1.3
-		//setFocusable(false);
-
-		addMainPanelTab(new ObjectTreeTab());
-		addMainPanelTab(new SQLTab(_session));
-
-		_tabPnl.addContainerListener(new ContainerAdapter()
-		{
-			public void componentAdded(ContainerEvent evt)
-			{
-				if (_propsListener == null)
-				{
-					_propsListener = new PropertyChangeListener()
-					{
-						public void propertyChange(PropertyChangeEvent evt)
-						{
-							propertiesHaveChanged(evt.getPropertyName());
-						}
-					};
-					_session.getProperties().addPropertyChangeListener(_propsListener);
-				}
-			}
-			public void componentRemoved(ContainerEvent evt)
-			{
-				if (_propsListener != null)
-				{
-					_session.getProperties().removePropertyChangeListener(_propsListener);
-					_propsListener = null;
-				}
-			}
-		});
-
-		_tabPnl.addChangeListener(new ChangeListener()
-		{
-			public void stateChanged(ChangeEvent evt)
-			{
-				performStateChanged();
-			}
-		});
-	}
-
 	private void performStateChanged()
 	{
 		updateState();
@@ -279,14 +273,24 @@ public class MainPanel
 		return session.getApplication().getSquirrelPreferences();
 	}
 
-	public ObjectTreePanel getObjectTreePanel()
+	ObjectTreePanel getObjectTreePanel()
 	{
 		ObjectTreeTab tab = (ObjectTreeTab)_tabs.get(ITabIndexes.OBJECT_TREE_TAB);
 		return (ObjectTreePanel)tab.getComponent();
 	}
 
-	public SQLPanel getSQLPanel()
+	SQLPanel getSQLPanel()
 	{
 		return ((SQLTab)_tabs.get(ITabIndexes.SQL_TAB)).getSQLPanel();
+	}
+
+	/**
+	 * Retrieve the tabbed pane for this component.
+	 *
+	 * @return	The tabbed pane.
+	 */
+	JTabbedPane getTabbedPane()
+	{
+		return _tabPnl;
 	}
 }
