@@ -45,8 +45,19 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextField;
 
+// for printing...
+ 
+import java.awt.print.Printable;
+import java.awt.Graphics;
+import java.awt.print.PageFormat;
+import java.awt.print.PrinterException;
+import java.awt.Graphics2D;
+import java.awt.Color;
+import javax.swing.table.JTableHeader;
+import java.awt.Font;
+
 public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
-										implements IDataSetTableControls
+				implements IDataSetTableControls, Printable
 {
 	private ILogger s_log = LoggerController.createLogger(DataSetViewerTablePanel.class);
 
@@ -473,4 +484,188 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 	 * Initiate operations to insert a new row into the table.
 	 */
 	public void insertRow() {}	// cannot insert row into read-only table
+	
+	
+
+	//
+	// Begin code related to printing
+	//
+
+                                                                                
+	//
+	// variables used in printing
+	//
+	JTableHeader tableHeader;
+	int [] subTableSplit = null;
+	boolean pageinfoCalculated=false;
+	int totalNumPages=0;
+	int prevPageIndex = 0;
+	int subPageIndex = 0;
+	int subTableSplitSize = 0;
+	double tableHeightOnFullPage, headerHeight;
+	double pageWidth, pageHeight;
+	int fontHeight, fontDesent;
+	double tableHeight, rowHeight;
+	double scale = 8.0/12.0;        // default is 12 point, so define font relative to that
+
+
+	/**
+	 * Print the table contents.
+	 * This was copied from a tutorial paper on the Sun Java site:
+	 * paper: http://developer.java.sun.com/developer/onlineTraining/Programming/JDCBook/advprint.html
+	 * code: http://developer.java.sun.com/developer/onlineTraining/Programming/JDCBook/Code/SalesReport.java
+	 */
+	public int print(Graphics g, PageFormat pageFormat, int pageIndex)
+			throws PrinterException {
+
+		Graphics2D g2=(Graphics2D)g;
+		
+		// reset each time we start a new print
+		if (pageIndex==0)
+			pageinfoCalculated = false;
+		
+		if(!pageinfoCalculated) {
+			getPageInfo(g, pageFormat);
+		}
+ 
+		g2.setColor(Color.black);
+		if(pageIndex>=totalNumPages) {
+			return NO_SUCH_PAGE;
+		}
+		if (prevPageIndex != pageIndex) {
+			subPageIndex++;
+			if( subPageIndex == subTableSplitSize -1) {
+					subPageIndex=0;
+			}
+		}
+ 
+		g2.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
+ 
+		int rowIndex = pageIndex/ (subTableSplitSize -1);
+         
+		printTablePart(g2, pageFormat, rowIndex, subPageIndex);
+		prevPageIndex= pageIndex;
+ 
+		return Printable.PAGE_EXISTS;
+	}
+ 
+ 
+	/**
+	 * Part of print code coped from Sun
+	 */
+	public void getPageInfo(Graphics g, PageFormat pageFormat) {
+ 
+		subTableSplit = null;
+		subTableSplitSize = 0;
+		subPageIndex = 0;
+		prevPageIndex = 0;
+ 
+		fontHeight=(int)(g.getFontMetrics().getHeight() * scale);
+		fontDesent=(int)(g.getFontMetrics().getDescent() * scale);
+ 
+		tableHeader = _comp.getTableHeader();
+		double headerWidth = tableHeader.getWidth() * scale;
+		headerHeight = tableHeader.getHeight() +_comp.getRowMargin() * scale;
+ 
+		pageHeight = pageFormat.getImageableHeight();
+		pageWidth =  pageFormat.getImageableWidth();
+ 
+//		double tableWidth =_comp.getColumnModel().getTotalColumnWidth() * scale;
+		tableHeight = _comp.getHeight() * scale;
+		rowHeight = _comp.getRowHeight() + _comp.getRowMargin() * scale;
+ 
+		tableHeightOnFullPage = (int)(pageHeight - headerHeight - fontHeight*2);
+		tableHeightOnFullPage = tableHeightOnFullPage/rowHeight * rowHeight;
+ 
+		TableColumnModel tableColumnModel = tableHeader.getColumnModel();
+		int columns = tableColumnModel.getColumnCount();
+		int columnMargin = (int)(tableColumnModel.getColumnMargin() * scale);
+ 
+		int [] temp = new int[columns];
+		int columnIndex = 0;
+		temp[0] = 0;
+		int columnWidth;
+		int length = 0;
+		subTableSplitSize = 0;
+		while ( columnIndex < columns ) {
+ 
+			columnWidth = (int)(tableColumnModel.getColumn(columnIndex).getWidth() * scale);
+ 
+			if ( length + columnWidth + columnMargin > pageWidth ) {
+				temp[subTableSplitSize+1] = temp[subTableSplitSize] + length;
+				length = columnWidth;
+				subTableSplitSize++;
+			}
+			else {
+				length += columnWidth + columnMargin;
+			}
+			columnIndex++;
+		} //while
+ 
+		if ( length > 0 )  {  // if are more columns left, part page
+		   temp[subTableSplitSize+1] = temp[subTableSplitSize] + length;
+		   subTableSplitSize++;
+		}
+ 
+		subTableSplitSize++;
+		subTableSplit = new int[subTableSplitSize];
+		for ( int i=0; i < subTableSplitSize; i++ ) {
+			subTableSplit[i]= temp[i];
+		}
+		totalNumPages = (int)(tableHeight/tableHeightOnFullPage);
+		if ( tableHeight%tableHeightOnFullPage >= rowHeight ) { // at least 1 more row left
+			totalNumPages++;
+		}
+ 
+		totalNumPages *= (subTableSplitSize-1);
+		pageinfoCalculated = true;
+	}
+ 
+	/**
+	 * Part of print code coped from Sun
+	 */
+	public void printTablePart(Graphics2D g2, PageFormat pageFormat, int rowIndex, int columnIndex) {
+ 
+		String pageNumber = "Page: "+(rowIndex+1);
+		if ( subTableSplitSize > 1 ) {
+			pageNumber += "-" + (columnIndex+1);
+		}
+ 
+		int pageLeft = subTableSplit[columnIndex];
+		int pageRight = subTableSplit[columnIndex + 1];
+ 
+		int pageWidth =  pageRight-pageLeft;
+ 
+ 
+		// page number message (in smaller type)
+		g2.setFont(new Font(g2.getFont().getName(), g2.getFont().getStyle(), 8));
+		g2.drawString(pageNumber,  pageWidth/2-35, (int)(pageHeight - fontHeight));
+ 
+		double clipHeight = Math.min(tableHeightOnFullPage, tableHeight - rowIndex*tableHeightOnFullPage);
+ 
+		g2.translate(-subTableSplit[columnIndex], 0);
+		g2.setClip(pageLeft ,0, pageWidth, (int)headerHeight);
+ 
+		g2.scale(scale, scale);
+		tableHeader.paint(g2);   // draw the header on every page
+		g2.scale(1/scale, 1/scale);
+		g2.translate(0, headerHeight);
+		g2.translate(0,  -tableHeightOnFullPage*rowIndex);
+ 
+		// cut table image and draw on the page
+ 
+		g2.setClip(pageLeft, (int)tableHeightOnFullPage*rowIndex, pageWidth, (int)clipHeight);
+		g2.scale(scale, scale);
+		_comp.paint(g2);
+		g2.scale(1/scale, 1/scale);
+ 
+		double pageTop =  tableHeightOnFullPage*rowIndex - headerHeight;
+		double pageBottom = pageTop +  clipHeight + headerHeight;
+		g2.drawRect(pageLeft, (int)pageTop, pageWidth, (int)(clipHeight+ headerHeight));
+	}
+	
+	//
+	// End of code related to printing
+	//
+	
 }
