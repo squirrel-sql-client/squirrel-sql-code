@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.client.plugin;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
 
 /**
@@ -60,6 +61,17 @@ public interface ISessionPlugin extends IPlugin {
 	 *			any panels in the Session Properties Dialog.
 	 */
 	ISessionPropertiesPanel[] getSessionPropertiesPanels(ISession session);
+
+	/**
+	 * Create panels for the Main Tabbed Pane.
+	 *
+	 * @param	session		The current session.
+	 *
+	 * @return	Array of <TT>IMainPanelTab</TT> objects. Return
+	 *			empty array of <TT>null</TT> if this plugin doesn't require
+	 *			any panels in the Main Tabbed Pane.
+	 */
+	//IMainPanelTab[] getMainTabbedPanePanels(ISession session);
 
 	/**
 	 * Let app know what extra types of objects in object tree that
