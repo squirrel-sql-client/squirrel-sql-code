@@ -137,7 +137,7 @@ public class DataTypeFloat
 	/**
 	 * This Data Type can be edited in a table cell.
 	 */
-	public boolean isEditableInCell() {
+	public boolean isEditableInCell(Object originalValue) {
 		return true;	
 	}
 	
@@ -179,7 +179,7 @@ public class DataTypeFloat
 	 * Null is a valid successful return, so errors are indicated only by
 	 * existance or not of a message in the messageBuffer.
 	 */
-	public Object validateAndConvert(String value, StringBuffer messageBuffer) {
+	public Object validateAndConvert(String value, Object originalValue, StringBuffer messageBuffer) {
 		// handle null, which is shown as the special string "<null>"
 		if (value.equals("<null>") || value.equals(""))
 			return null;
@@ -205,7 +205,7 @@ public class DataTypeFloat
 	 * Returns true if data type may be edited in the popup,
 	 * false if not.
 	 */
-	public boolean isEditableInPopup() {
+	public boolean isEditableInPopup(Object originalValue) {
 		return true;
 	}
 
@@ -229,8 +229,8 @@ public class DataTypeFloat
 	/**
 	 * Validating and converting in Popup is identical to cell-related operation.
 	 */
-	public Object validateAndConvertInPopup(String value, StringBuffer messageBuffer) {
-		return validateAndConvert(value, messageBuffer);
+	public Object validateAndConvertInPopup(String value, Object originalValue, StringBuffer messageBuffer) {
+		return validateAndConvert(value, originalValue, messageBuffer);
 	}
 
 	/*
@@ -449,7 +449,7 @@ public class DataTypeFloat
 	 	// test that the string is valid by converting it into an
 	 	// object of this data type
 	 	StringBuffer messageBuffer = new StringBuffer();
-	 	validateAndConvertInPopup(fileText, messageBuffer);
+	 	validateAndConvertInPopup(fileText, null, messageBuffer);
 	 	if (messageBuffer.length() > 0) {
 	 		// convert number conversion issue into IO issue for consistancy
 	 		throw new IOException(
@@ -489,7 +489,7 @@ public class DataTypeFloat
 	 	
 	 	// check that the text is a valid representation
 	 	StringBuffer messageBuffer = new StringBuffer();
-	 	validateAndConvertInPopup(text, messageBuffer);
+	 	validateAndConvertInPopup(text, null, messageBuffer);
 	 	if (messageBuffer.length() > 0) {
 	 		// there was an error in the conversion
 	 		throw new IOException(new String(messageBuffer));
