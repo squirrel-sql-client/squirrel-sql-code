@@ -619,7 +619,5 @@ public class AliasMaintSheet extends BaseSheet
 			s_log.error("Test Button has created a session, this is a programming error");
 		}
 	}
-
-
 }
 
