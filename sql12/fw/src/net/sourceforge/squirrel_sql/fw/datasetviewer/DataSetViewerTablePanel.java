@@ -179,7 +179,13 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 			
 			// just in case table is editable, call creator to set up cell editors
 			_creator.setCellEditors(this);
-			setSurrendersFocusOnKeystroke(true);
+			
+			/*
+			 * TODO: When 1.4 is the earliest version supported, add the following line:
+			*		setSurrendersFocusOnKeystroke(true);
+			* This should help handle some problems with navigation using tab & return
+			* to move through cells.
+			*/
 		}
 		
 		public IDataSetTableControls getCreator() {
