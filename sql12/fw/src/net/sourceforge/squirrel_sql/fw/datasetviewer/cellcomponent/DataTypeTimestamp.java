@@ -17,47 +17,43 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.*;
-import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
-
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.IOException;
-
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
-import javax.swing.JComboBox;
-import javax.swing.JCheckBox;
-import javax.swing.ButtonGroup;
-import javax.swing.JRadioButton;
-import javax.swing.ButtonModel;
-import javax.swing.JLabel;
-
-import javax.swing.SwingUtilities;
-import javax.swing.text.JTextComponent;
-import javax.swing.BorderFactory;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-
+import java.text.DateFormat;
 import java.util.Date;
 
-import java.text.DateFormat;
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.ButtonModel;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JRadioButton;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.text.JTextComponent;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
-
-
 /**
  * @author gwg
  *
@@ -72,7 +68,7 @@ import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
  * The class also contains
  * <UL>
  * <LI> a function to compare two display values
- * to see if they are equal.  This is needed because the display format
+ * to see if they are equal. This is needed because the display format
  * may not be the same as the internal format, and all internal object
  * types may not provide an appropriate equals() function.
  * <LI> a function to return a printable text form of the cell contents,
@@ -81,7 +77,7 @@ import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
  * <P>
  * The components returned from this class extend RestorableJTextField
  * and RestorableJTextArea for use in editing table cells that
- * contain values of this data type.  It provides the special behavior for null
+ * contain values of this data type. It provides the special behavior for null
  * handling and resetting the cell to the original value.
  */
 
@@ -166,7 +162,7 @@ public class DataTypeTimestamp
 	 * <P>
 	 * This method may be called from different places depending on whether
 	 * an instance of this class is created before the user brings up the Session
-	 * Properties window.  In either case, the data is static and is set only
+	 * Properties window. In either case, the data is static and is set only
 	 * the first time we are called.
 	 */
 	private static void loadProperties() {
@@ -388,7 +384,7 @@ public class DataTypeTimestamp
 				char c = e.getKeyChar();
 
 				// as a coding convenience, create a reference to the text component
-				// that is typecast to JTextComponent.  this is not essential, as we
+				// that is typecast to JTextComponent. this is not essential, as we
 				// could typecast every reference, but this makes the code cleaner
 				JTextComponent _theComponent = (JTextComponent)DataTypeTimestamp.this._textComponent;
 				String text = _theComponent.getText();
@@ -448,8 +444,8 @@ public class DataTypeTimestamp
 					//
 					// if the field is not allowed to have nulls, we need to let the
 					// user erase the entire contents of the field so that they can enter
-					// a brand-new value from scratch.  While the empty field is not a legal
-					// value, we cannot avoid allowing it.  This is the normal editing behavior,
+					// a brand-new value from scratch. While the empty field is not a legal
+					// value, we cannot avoid allowing it. This is the normal editing behavior,
 					// so we do not need to add anything special here except for the cyclic
 					// re-entering of the original data if user hits delete when field is empty
 					if (text.length() == 0 &&
@@ -463,16 +459,17 @@ public class DataTypeTimestamp
 		}
 
 
-	/*
-	 * DataBase-related functions
-	 */
+	 /*
+	  * DataBase-related functions
+	  */
 
 	 /**
 	  * On input from the DB, read the data from the ResultSet into the appropriate
 	  * type of object to be stored in the table cell.
 	  */
 	public Object readResultSet(ResultSet rs, int index, boolean limitDataRead)
-		throws java.sql.SQLException {
+		throws java.sql.SQLException
+{
 
 		Timestamp data = rs.getTimestamp(index);
 		if (rs.wasNull())
