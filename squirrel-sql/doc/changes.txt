@@ -3,6 +3,13 @@ Change Log
 
 1.1 continuation
 ================
+- Undo/redo support now added to the SQL entry area (Johan Compagner).
+- Copying SQL results now includes the column headings (Johan Compagner).
+- New "Copy as HTML" option for SQL results (Johan Compagner).
+- Torn off SQL results windows can now be returned into the tabbed folder.
+- Torn off SQL Results windows now appear in the Windows menu.
+- Bug fixed in About Box where the thread that updates the memory status
+  continued updating when the About Box was not being displayed.
 - Dialogs have been cleaned up.
 - Apache log4j is used for the logging subsystem.
 - JDBC debug can be specified in the global preferences.
