@@ -38,17 +38,21 @@ import javax.swing.tree.TreePath;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.CatalogsTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.ConnectionStatusTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.DataTypesTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.KeywordsTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.MetaDataTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.NumericFunctionsTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.SchemasTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.StringFunctionsTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.SystemFunctionsTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.TableTypesTab;
@@ -128,6 +132,33 @@ public class ObjectTreePanel extends JPanel
 		// Register tabs to display in the details panel for database nodes.
 		addDetailTab(DatabaseObjectType.SESSION, new MetaDataTab());
 		addDetailTab(DatabaseObjectType.SESSION, new ConnectionStatusTab());
+
+		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
+
+		try
+		{
+			if (md.supportsCatalogs())
+			{
+				addDetailTab(DatabaseObjectType.SESSION, new CatalogsTab());
+			}
+		}
+		catch (Throwable th)
+		{
+			s_log.error("Error in supportsCatalogs()", th);
+		}
+
+		try
+		{
+			if (md.supportsSchemas())
+			{
+				addDetailTab(DatabaseObjectType.SESSION, new SchemasTab());
+			}
+		}
+		catch (Throwable th)
+		{
+			s_log.error("Error in supportsCatalogs()", th);
+		}
+
 		addDetailTab(DatabaseObjectType.SESSION, new TableTypesTab());
 		addDetailTab(DatabaseObjectType.SESSION, new DataTypesTab());
 		addDetailTab(DatabaseObjectType.SESSION, new NumericFunctionsTab());
