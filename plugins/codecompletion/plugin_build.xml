@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-    This is an Apache Ant build file to build the edit extras plugin
+    This is an Apache Ant build file to build the code completion plugin
     for distribution.
 -->
 <project name="plugin-codecompletion" default="build" basedir=".">
@@ -13,9 +13,9 @@
         <property name="optimize" value="off"/>
         <property name="deprecation" value="on"/>
 
-        <property name="p_plugin.work_dir" value="/home/gerd/work/java/squirrel1_2/squirrel-sql-dist/squirrel-sql-1.2beta4/codecompletion"/>
-        <property name="p_plugin.core_libs_dir" value="/home/gerd/work/java/squirrel1_2/squirrel-sql-dist/squirrel-sql-1.2beta4/core/dist/lib"/>
-        <property name="p_plugin.dist_dir" value="/home/gerd/work/java/squirrel1_2/squirrel-sql-dist/squirrel-sql-1.2beta4/core/dist/plugins"/>
+        <property name="p_plugin.work_dir" value="/home/gerd/work/java/squirrel1_2/squirrel-sql-dist/squirrel-sql-1.2beta5/codecompletion"/>
+        <property name="p_plugin.core_libs_dir" value="/home/gerd/work/java/squirrel1_2/squirrel-sql-dist/squirrel-sql-1.2beta5/core/dist/lib"/>
+        <property name="p_plugin.dist_dir" value="/home/gerd/work/java/squirrel1_2/squirrel-sql-dist/squirrel-sql-1.2beta5/core/dist/plugins"/>
 
 
         <echo message="---------------- ${internal_name} ${version} ----------------"/>

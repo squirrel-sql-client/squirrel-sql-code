@@ -5,3 +5,7 @@ SQL Entry Area Enhancements
 0.10
 ====
 - Initial release
+- completes on table and view aliases
+- completes on schemas and catalogs
+
+

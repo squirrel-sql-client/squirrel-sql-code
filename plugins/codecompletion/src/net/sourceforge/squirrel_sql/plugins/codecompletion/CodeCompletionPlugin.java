@@ -37,10 +37,7 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 	private final static ILogger
 			s_log = LoggerController.createLogger(CodeCompletionPlugin.class);
 
-	private interface IMenuResourceKeys 
-	{
-		String MENU = "editextras";
-	}
+
 
 	/** Name of file to store user prefs in. */
 	static final String USER_PREFS_FILE_NAME = "prefs.xml";
@@ -77,6 +74,17 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 	{
 		return "0.10";
 	}
+
+
+   /**
+    * Returns a comma separated list of other contributors.
+    *
+    * @return      Contributors names.
+    */
+   public String getContributors()
+   {
+      return "Christian Sell";
+   }
 
 	/**
 	 * Returns the authors name.
