@@ -37,8 +37,6 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-import net.sourceforge.squirrel_sql.fw.util.*;
-
 
 public class SQLExecuterTask implements Runnable {
 	private SQLPanel _sqlPanel;
@@ -56,9 +54,9 @@ public class SQLExecuterTask implements Runnable {
 	}
 
 	public void run() {
+		_sqlPanel.setCancelPanel(_cancelPanel);
+		boolean bCancelPanelRemoved = false;
 		try {
-			_sqlPanel.setCancelPanel(_cancelPanel);
-			boolean bCancelPanelRemoved = false;
 			final long start = System.currentTimeMillis();
 			SessionProperties props = _session.getProperties();
 			_stmt = _session.getSQLConnection().createStatement();
@@ -106,13 +104,12 @@ public class SQLExecuterTask implements Runnable {
 					_session,
 					"Elapsed time for query(milliseconds) : " + (finish - start));
 				//  i18n
-			} catch (Throwable ex) {
-				showMessage(_session, ex);
+//			} catch (Throwable ex) {
+//				showMessage(_session, ex);
 			} finally {
-				if (_bStopExecution || !bCancelPanelRemoved) {
-
-					_sqlPanel.removeCancelPanel(_cancelPanel);
-				}
+				//if (_bStopExecution || !bCancelPanelRemoved) {
+		//			_sqlPanel.removeCancelPanel(_cancelPanel);
+				//}
 				try {
 					_stmt.close();
 				} finally {
@@ -121,6 +118,10 @@ public class SQLExecuterTask implements Runnable {
 			}
 		} catch (Throwable ex) {
 			showMessage(_session, ex);
+		} finally {
+			if (_bStopExecution || !bCancelPanelRemoved) {
+				_sqlPanel.removeCancelPanel(_cancelPanel);
+			}
 		}
 	}
 
