@@ -111,10 +111,14 @@ public class TablePopupMenu extends BasePopupMenu
 		_table = table;
 
 // Cut and Paste need to be worked on, so for now do not include them
+// Also, the copy operations do not seem to work right - we may need special
+//    versions for the cellEditor menu.
 //		add(_cut);
 		add(_copy);
 		add(_copyHtml);
 //		add(_paste);
+		addSeparator();
+		add(_select);
 		addSeparator();
 		add(_insertRow);
 		add(_deleteRows);
