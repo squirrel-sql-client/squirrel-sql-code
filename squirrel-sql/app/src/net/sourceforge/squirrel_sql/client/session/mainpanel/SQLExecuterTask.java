@@ -104,11 +104,12 @@ public class SQLExecuterTask implements Runnable
 							{
 								try
 								{
-									_sqlPanel.addResultsTab(
-										sToken,
-										new ResultSetDataSet(rs),
-										new ResultSetMetaDataDataSet(rs),
-										_cancelPanel);
+									ResultSetDataSet rsds = new ResultSetDataSet();
+									rsds.setLargeResultSetObjectInfo(props.getLargeResultSetObjectInfo());
+									rsds.setResultSet(rs);
+									ResultSetMetaDataDataSet rsmdds = new ResultSetMetaDataDataSet(rs);
+									_sqlPanel.addResultsTab(sToken, rsds, rsmdds,
+															_cancelPanel);
 									bCancelPanelRemoved = true;
 									try
 									{

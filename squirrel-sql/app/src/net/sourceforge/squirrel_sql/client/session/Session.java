@@ -67,7 +67,7 @@ class Session implements ISession
 	private ISQLAlias _alias;
 
 	/** Properties for this session. */
-	private SessionProperties _props = new SessionProperties();
+	private SessionProperties _props;// = new SessionProperties();
 
 	/**
 	 * Objects stored in session. Each entry is a <TT>Map</TT>
@@ -114,7 +114,8 @@ class Session implements ISession
 		_alias = alias;
 		_conn = conn;
 
-		_props.assignFrom(_app.getSquirrelPreferences().getSessionProperties());
+//		_props.assignFrom(_app.getSquirrelPreferences().getSessionProperties());
+		_props = (SessionProperties)_app.getSquirrelPreferences().getSessionProperties().clone();
 
 		final IPlugin plugin = getApplication().getDummyAppPlugin();
 

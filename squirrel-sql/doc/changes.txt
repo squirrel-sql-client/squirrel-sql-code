@@ -6,6 +6,8 @@ Change Log
 
 Enhancements
 ------------
+- Add handling of blob, clob, binary, varbinary and longvarbinary
+  columns.
 - Allow for some combinations of the JDBC/ODBC bridge and MSSQL
   that give duplicate table types from the database metadata.
 - Add "Close Session" option to Session menu.
@@ -24,6 +26,11 @@ Enhancements
 
 Bug Fixes
 ---------
+- Fix bug where changing "autocommit" during a session wasn't
+  recognized.
+- Limit rows checkbox wasn't updated when session properties
+  changed.
+- Fix incorrect row count in Info tab for a table.
 - Add error handling to result set metadata displays.
 - Don't show closed property dialogs in Windows menu.
 - Directory list combo boxes now only show required file types.

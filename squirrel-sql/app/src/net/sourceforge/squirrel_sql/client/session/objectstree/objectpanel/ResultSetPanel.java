@@ -34,6 +34,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
 public class ResultSetPanel extends JScrollPane {
 	/** Logger for this class. */
@@ -53,6 +54,8 @@ public class ResultSetPanel extends JScrollPane {
 				_fullyCreated = true;
 			}
 			final ResultSetDataSet ds = new ResultSetDataSet();
+			SessionProperties props = session.getProperties();
+			ds.setLargeResultSetObjectInfo(props.getLargeResultSetObjectInfo());
 			ds.setResultSet(rs, cols);
 			Runnable run = new Runnable()
 			{

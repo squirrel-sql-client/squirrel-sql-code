@@ -17,7 +17,10 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.io.Reader;
 import java.math.BigDecimal;
+import java.sql.Blob;
+import java.sql.Clob;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -42,7 +45,7 @@ public class ResultSetDataSet implements IDataSet
 	private DataSetDefinition _dataSetDefinition;
 	private ArrayList _alData;
 
-	private boolean _readBlobs = false;
+	private LargeResultSetObjectInfo _largeObjInfo = new LargeResultSetObjectInfo();
 
 	public ResultSetDataSet() throws DataSetException
 	{
@@ -61,9 +64,9 @@ public class ResultSetDataSet implements IDataSet
 		setResultSet(rs, columnIndices);
 	}
 
-	public void setReadBlobs(boolean value)
+	public void setLargeResultSetObjectInfo(LargeResultSetObjectInfo value)
 	{
-		_readBlobs = value;
+		_largeObjInfo = value != null ? value : new LargeResultSetObjectInfo();
 	}
 
 	public void setResultSet(ResultSet rs) throws DataSetException
@@ -86,11 +89,11 @@ public class ResultSetDataSet implements IDataSet
 		{
 			try
 			{
+				final char[] work = new char[100];
 				ResultSetMetaData md = rs.getMetaData();
-				_columnCount =
-					columnIndices != null
-						? columnIndices.length
-						: md.getColumnCount();
+				_columnCount = columnIndices != null
+								? columnIndices.length
+								: md.getColumnCount();
 				ColumnDisplayDefinition[] colDefs = createColumnDefinitions(md, columnIndices);
 				_dataSetDefinition = new DataSetDefinition(colDefs);
 				while (rs.next())
@@ -157,36 +160,28 @@ public class ResultSetDataSet implements IDataSet
 										}
 									}
 									break;
-/*
-								case Types.DECIMAL :
-								case Types.DOUBLE :
-								case Types.FLOAT :
-								case Types.NUMERIC :
-								case Types.REAL :
+
+								case Types.DOUBLE:
+								case Types.FLOAT:
+								case Types.REAL:
 									row[i] = rs.getObject(idx);
 									if (row[i] != null
 										&& !(row[i] instanceof Double))
 									{
 										if (row[i] instanceof Number)
 										{
-											row[i] =
-												new Double(
-													((Number) row[i])
-														.doubleValue());
+											Number nbr = (Number)row[i];
+											row[i] = new Double(nbr.doubleValue());
 										}
 										else
 										{
-											row[i] =
-												new Double(row[i].toString());
+											row[i] = new Double(row[i].toString());
 										}
 									}
 									break;
-*/
+
 								case Types.DECIMAL:
-								case Types.DOUBLE:
-								case Types.FLOAT:
 								case Types.NUMERIC:
-								case Types.REAL:
 									row[i] = rs.getObject(idx);
 									if (row[i] != null
 										&& !(row[i] instanceof BigDecimal))
@@ -203,9 +198,9 @@ public class ResultSetDataSet implements IDataSet
 									}
 									break;
 
-								case Types.INTEGER :
-								case Types.SMALLINT :
-								case Types.TINYINT :
+								case Types.INTEGER:
+								case Types.SMALLINT:
+								case Types.TINYINT:
 									row[i] = rs.getObject(idx);
 									if (row[i] != null
 										&& !(row[i] instanceof Integer))
@@ -231,14 +226,86 @@ public class ResultSetDataSet implements IDataSet
 									row[i] = rs.getString(idx);
 									break;
 
-								case Types.BLOB:
-									if (_readBlobs)
+								case Types.BINARY:
+									if (_largeObjInfo.getReadBinary())
 									{
 										row[i] = rs.getString(idx);
 									}
 									else
 									{
+										row[i] = "<Binary>";
+									}
+									break;
+
+								case Types.VARBINARY:
+									if (_largeObjInfo.getReadVarBinary())
+									{
+										row[i] = rs.getString(idx);
+									}
+									else
+									{
+										row[i] = "<VarBinary>";
+									}
+									break;
+
+								case Types.LONGVARBINARY:
+									if (_largeObjInfo.getReadLongVarBinary())
+									{
+										row[i] = rs.getString(idx);
+									}
+									else
+									{
+										row[i] = "<LongVarBinary>";
+									}
+									break;
+
+								case Types.BLOB:
+									if (_largeObjInfo.getReadBlobs())
+									{
+										row[i] = null;
+										Blob blob = rs.getBlob(idx);
+										if (blob != null)
+										{
+											int len = (int)blob.length();
+											if (len > 0)
+											{
+												int bytesToRead = _largeObjInfo.getReadBlobsSize();
+												if (bytesToRead > len)
+												{
+													bytesToRead = len;
+												}
+												row[i] = new String(blob.getBytes(1, bytesToRead));
+											}
+										}
+									}
+									else
+									{
 										row[i] = "<Blob>";
+									}
+									break;
+
+								case Types.CLOB:
+									if (_largeObjInfo.getReadClobs())
+									{
+										row[i] = null;
+										Clob clob = rs.getClob(idx);
+										if (clob != null)
+										{
+											int len = (int)clob.length();
+											if (len > 0)
+											{
+												int charsToRead = _largeObjInfo.getReadClobsSize();
+												if (charsToRead > len)
+												{
+													charsToRead = len;
+												}
+												row[i] = clob.getSubString(1, charsToRead);
+											}
+										}
+									}
+									else
+									{
+										row[i] = "<Clob>";
 									}
 									break;
 

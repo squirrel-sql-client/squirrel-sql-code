@@ -36,6 +36,7 @@ import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
 import net.sourceforge.squirrel_sql.fw.gui.CharField;
 import net.sourceforge.squirrel_sql.fw.gui.FontChooser;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
@@ -111,17 +112,23 @@ public class SessionSQLPropertiesPanel
 		interface SQLPropertiesPanelI18n
 		{
 			String AUTO_COMMIT = "Auto Commit SQL";
+			String BINARY = "Binary";
 			String BLOB = "Blob";
+			String CLOB = "Clob";
 			String COMMIT_ON_CLOSE = "Commit On Closing Session";
+			String NBR_BYTES = "Number of bytes to read:";
+			String NBR_CHARS = "Number of chars to read:";
 			String NBR_ROWS_CONTENTS = "Number of rows:";
 			String NBR_ROWS_SQL = "Number of rows:";
 			String LIMIT_ROWS_CONTENTS = "Contents - Limit rows";
 			String LIMIT_ROWS_SQL = "SQL - Limit rows";
+			String LONGVARBINARY = "LongVarBinary";
 			String SHOW_ROW_COUNT = "Show Row Count for Tables (can slow application)";
 			String TABLE = "Table";
 			String TEXT = "Text";
 			String STATEMENT_SEPARATOR = "Statement Separator:";
 			String SQL = "SQL";
+			String VARBINARY = "VarBinary";
 		}
 
 		private JCheckBox _autoCommitChk = new JCheckBox(SQLPropertiesPanelI18n.AUTO_COMMIT);
@@ -133,7 +140,15 @@ public class SessionSQLPropertiesPanel
 		private JCheckBox _sqlLimitRows = new JCheckBox(SQLPropertiesPanelI18n.LIMIT_ROWS_SQL);
 		private CharField _stmtSepChar = new CharField();
 
+		private JCheckBox _showBinaryChk = new JCheckBox(SQLPropertiesPanelI18n.BINARY);
+		private JCheckBox _showVarBinaryChk = new JCheckBox(SQLPropertiesPanelI18n.VARBINARY);
+		private JCheckBox _showLongVarBinaryChk = new JCheckBox(SQLPropertiesPanelI18n.LONGVARBINARY);
+
 		private JCheckBox _showBlobChk = new JCheckBox(SQLPropertiesPanelI18n.BLOB);
+		private JCheckBox _showClobChk = new JCheckBox(SQLPropertiesPanelI18n.CLOB);
+
+		private IntegerField _showBlobSize = new IntegerField();
+		private IntegerField _showClobSize = new IntegerField();
 
 		/** Label displaying the selected font. */
 		private JLabel _fontLbl = new JLabel();
@@ -158,7 +173,17 @@ public class SessionSQLPropertiesPanel
 			_showRowCount.setSelected(props.getShowRowCount());
 			_stmtSepChar.setChar(props.getSQLStatementSeparatorChar());
 
-			_showBlobChk.setSelected(props.getSQLReadBlobs());
+			LargeResultSetObjectInfo largeObjInfo = props.getLargeResultSetObjectInfo();
+			_showBinaryChk.setSelected(largeObjInfo.getReadBinary());
+			_showVarBinaryChk.setSelected(largeObjInfo.getReadVarBinary());
+			_showLongVarBinaryChk.setSelected(largeObjInfo.getReadLongVarBinary());
+			_showBlobChk.setSelected(largeObjInfo.getReadBlobs());
+			_showClobChk.setSelected(largeObjInfo.getReadClobs());
+			_showBlobSize.setInt(largeObjInfo.getReadBlobsSize());
+			_showClobSize.setInt(largeObjInfo.getReadClobsSize());
+
+			_showBlobSize.setEnabled(_showBlobChk.isSelected());
+			_showClobSize.setEnabled(_showClobChk.isSelected());
 
 			FontInfo fi = props.getFontInfo();
 			if (fi == null)
@@ -180,7 +205,14 @@ public class SessionSQLPropertiesPanel
 			props.setShowRowCount(_showRowCount.isSelected());
 			props.setSQLStatementSeparatorChar(_stmtSepChar.getChar());
 
-			props.setSQLReadBlobs(_showBlobChk.isSelected());
+			LargeResultSetObjectInfo largeObjInfo = props.getLargeResultSetObjectInfo();
+			largeObjInfo.setReadBinary(_showBinaryChk.isSelected());
+			largeObjInfo.setReadVarBinary(_showVarBinaryChk.isSelected());
+			largeObjInfo.setReadLongVarBinary(_showLongVarBinaryChk.isSelected());
+			largeObjInfo.setReadBlobs(_showBlobChk.isSelected());
+			largeObjInfo.setReadClobs(_showClobChk.isSelected());
+			largeObjInfo.setReadBlobsSize(_showBlobSize.getInt());
+			largeObjInfo.setReadClobsSize(_showClobSize.getInt());
 
 			props.setFontInfo(_fontBtn.getFontInfo());
 		}
@@ -210,7 +242,7 @@ public class SessionSQLPropertiesPanel
 			pnl.setBorder(BorderFactory.createTitledBorder("SQL"));
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = gbc.HORIZONTAL;
-			gbc.insets = new Insets(4, 4, 4, 4);
+			gbc.insets = new Insets(0, 4, 0, 4);
 			gbc.anchor = gbc.WEST;
 
 			_autoCommitChk.addChangeListener(new ChangeListener()
@@ -280,16 +312,53 @@ public class SessionSQLPropertiesPanel
 
 		private JPanel createDataTypesPanel()
 		{
+			_showBlobSize.setColumns(5);
+			_showClobSize.setColumns(5);
+
+			_showBlobChk.addActionListener(new DataTypeCheckBoxListener(_showBlobSize));
+			_showClobChk.addActionListener(new DataTypeCheckBoxListener(_showClobSize));
+
 			JPanel pnl = new JPanel(new GridBagLayout());
-			pnl.setBorder(BorderFactory.createTitledBorder("Show Data Types"));
+			pnl.setBorder(BorderFactory.createTitledBorder("Show String Data for Columns of these Data Types"));
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = gbc.HORIZONTAL;
-			gbc.insets = new Insets(4, 4, 4, 4);
+			gbc.insets = new Insets(0, 4, 0, 4);
 			gbc.anchor = gbc.WEST;
 
+			gbc.gridwidth = 1;
 			gbc.gridx = 0;
 			gbc.gridy = 0;
+			gbc.weightx = 1;
+			pnl.add(_showBinaryChk, gbc);
+
+			++gbc.gridx;
+			gbc.weightx = 0;
+			gbc.gridwidth = 2;
+			pnl.add(_showVarBinaryChk, gbc);
+
+			++gbc.gridy;
+			gbc.gridx = 0;
+			gbc.gridwidth = 1;
+			pnl.add(_showLongVarBinaryChk, gbc);
+
+			++gbc.gridy;
 			pnl.add(_showBlobChk, gbc);
+
+			++gbc.gridx;
+			pnl.add(new RightLabel(SQLPropertiesPanelI18n.NBR_BYTES), gbc);
+
+			++gbc.gridx;
+			pnl.add(_showBlobSize, gbc);
+
+			gbc.gridx = 0;
+			++gbc.gridy;
+			pnl.add(_showClobChk, gbc);
+
+			++gbc.gridx;
+			pnl.add(new RightLabel(SQLPropertiesPanelI18n.NBR_CHARS), gbc);
+
+			++gbc.gridx;
+			pnl.add(_showClobSize, gbc);
 
 			return pnl;
 		}
@@ -301,7 +370,7 @@ public class SessionSQLPropertiesPanel
 			pnl.setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = gbc.HORIZONTAL;
-			gbc.insets = new Insets(4, 4, 4, 4);
+			gbc.insets = new Insets(0, 4, 0, 4);
 
 			_fontBtn.addActionListener(new FontButtonListener());
 
@@ -357,6 +426,25 @@ public class SessionSQLPropertiesPanel
 				else
 				{
 					_fi.setFont(font);
+				}
+			}
+		}
+
+		private static final class DataTypeCheckBoxListener implements ActionListener
+		{
+			private IntegerField _field;
+
+			DataTypeCheckBoxListener(IntegerField field)
+			{
+				super();
+				_field = field;
+			}
+
+			public void actionPerformed(ActionEvent evt)
+			{
+				if (evt.getSource() instanceof JCheckBox)
+				{
+					_field.setEnabled(((JCheckBox)evt.getSource()).isSelected());
 				}
 			}
 		}

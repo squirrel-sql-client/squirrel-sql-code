@@ -20,10 +20,11 @@ package net.sourceforge.squirrel_sql.client.session.properties;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 
-public class SessionProperties implements Serializable
+public class SessionProperties implements Cloneable, Serializable
 {
 	public interface IDataSetDestinations
 	{
@@ -40,12 +41,12 @@ public class SessionProperties implements Serializable
 		String CONTENTS_LIMIT_ROWS = "contentsLimitRows";
 		String CONTENTS_NBR_ROWS_TO_SHOW = "contentsNbrOfRowsToShow";
 		String FONT_INFO = "fontInfo";
+		String LARGE_RESULT_SET_OBJECT_INFO = "largeResultSetObjectInfo";
 		String META_DATA_OUTPUT_CLASS_NAME = "metaDataOutputClassName";
 		String SHOW_ROW_COUNT = "showRowCount";
 		String SHOW_TOOL_BAR = "showToolBar";
 		String SQL_LIMIT_ROWS = "sqlLimitRows";
 		String SQL_NBR_ROWS_TO_SHOW = "sqlNbrOfRowsToShow";
-		String SQL_READ_BLOBS = "sqlReadBlobs";
 		String SQL_RESULTS_OUTPUT_CLASS_NAME= "sqlResultsOutputClassName";
 		String SQL_STATEMENT_SEPARATOR = "sqlStatementSeparator";
 	}
@@ -85,14 +86,39 @@ public class SessionProperties implements Serializable
 	/** Font information for the jEdit text area. */
 	private FontInfo _fi;
 
-	/** Read blobs from Result sets. */
-	private boolean _sqlReadBlobs = false;
+	private LargeResultSetObjectInfo _largeObjectInfo = new LargeResultSetObjectInfo();
 
 	public SessionProperties()
 	{
 		super();
 	}
 
+	/**
+	 * Return a copy of this object.
+	 */
+	public Object clone()
+	{
+		try
+		{
+			SessionProperties props = (SessionProperties)super.clone();
+			if (_fi != null)
+			{
+				props.setFontInfo((FontInfo)_fi.clone());
+			}
+			if (_largeObjectInfo!= null)
+			{
+				props.setLargeResultSetObjectInfo((LargeResultSetObjectInfo)_largeObjectInfo.clone());
+			}
+
+			return props;
+		}
+		catch (CloneNotSupportedException ex)
+		{
+			throw new InternalError(ex.getMessage());   // Impossible.
+		}
+	}
+
+/*
 	public void assignFrom(SessionProperties rhs)
 	{
 		setAutoCommit(rhs.getAutoCommit());
@@ -100,15 +126,15 @@ public class SessionProperties implements Serializable
 		setContentsLimitRows(rhs.getContentsLimitRows());
 		setContentsNbrRowsToShow(rhs.getContentsNbrRowsToShow());
 		setFontInfo(rhs.getFontInfo());
+		setLargeResultSetObjectInfo(rhs.getLargeResultSetObjectInfo());
 		setMetaDataOutputClassName(rhs.getMetaDataOutputClassName());
 		setShowRowCount(rhs.getShowRowCount());
 		setShowToolBar(rhs.getShowToolBar());
 		setSQLLimitRows(rhs.getSQLLimitRows());
 		setSQLNbrRowsToShow(rhs.getSQLNbrRowsToShow());
-		setSQLReadBlobs(rhs.getSQLReadBlobs());
 		setSQLStatementSeparatorChar(rhs.getSQLStatementSeparatorChar());
 	}
-
+*/
 	public void addPropertyChangeListener(PropertyChangeListener listener)
 	{
 		_propChgReporter.addPropertyChangeListener(listener);
@@ -328,24 +354,6 @@ public class SessionProperties implements Serializable
 			_showRowCount);
 	}
 
-	public boolean getSQLReadBlobs()
-	{
-		return _sqlReadBlobs;
-	}
-
-	public void setSQLReadBlobs(boolean value)
-	{
-		if (_sqlReadBlobs != value)
-		{
-			final boolean oldValue = _sqlReadBlobs;
-			_sqlReadBlobs = value;
-			_propChgReporter.firePropertyChange(
-				IPropertyNames.SQL_READ_BLOBS,
-				oldValue,
-				_sqlReadBlobs);
-		}
-	}
-
 	public FontInfo getFontInfo()
 	{
 		return _fi;
@@ -359,5 +367,21 @@ public class SessionProperties implements Serializable
 			_fi = data;
 			_propChgReporter.firePropertyChange(IPropertyNames.FONT_INFO, oldValue, _fi);
 		}
+	}
+
+	public LargeResultSetObjectInfo getLargeResultSetObjectInfo()
+	{
+		return _largeObjectInfo;
+	}
+
+	public void setLargeResultSetObjectInfo(LargeResultSetObjectInfo data)
+	{
+		//if (_largeObjectInfo == null || !_largeObjectInfo.equals(data))
+		//{
+			final LargeResultSetObjectInfo oldValue = _largeObjectInfo;
+			_largeObjectInfo = data;
+			_propChgReporter.firePropertyChange(IPropertyNames.LARGE_RESULT_SET_OBJECT_INFO,
+													oldValue, _largeObjectInfo);
+		//}
 	}
 }

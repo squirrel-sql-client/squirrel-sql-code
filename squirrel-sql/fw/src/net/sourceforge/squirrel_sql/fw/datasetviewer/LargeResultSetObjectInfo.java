@@ -1,0 +1,209 @@
+package net.sourceforge.squirrel_sql.fw.datasetviewer;
+/*
+ * Copyright (C) 2001-2002 Colin Bell
+ * colbell@users.sourceforge.net
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+import java.io.Serializable;
+
+import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
+
+public class LargeResultSetObjectInfo implements Cloneable, Serializable
+{
+	public interface IPropertyNames
+	{
+		String READ_BINARY = "readBinary";
+		String READ_VARBINARY = "readVarBinary";
+		String READ_LONGVARBINARY = "readLongVarBinary";
+		String READ_BLOBS = "readBlobs";
+		String READ_BLOBS_SIZE = "readBlobsSize";
+		String READ_CLOBS = "readClobs";
+		String READ_CLOBS_SIZE = "readClobsSize";
+	}
+
+	private static int LARGE_COLUMN_DEFAULT_READ_LENGTH = 255;
+
+	/** Object to handle property change events. */
+	private PropertyChangeReporter _propChgReporter = new PropertyChangeReporter(this);
+
+	/** Read binary from Result sets. */
+	private boolean _readBinary = false;
+
+	/** Read varbinary from Result sets. */
+	private boolean _readVarBinary = false;
+
+	/** Read longvarbinary from Result sets. */
+	private boolean _readLongVarBinary = false;
+
+	/** Read blobs from Result sets. */
+	private boolean _readBlobs = false;
+
+	/**
+	 * If <TT>_readBlobs</TT> is <TT>true</TT> this specifies the number of
+	 * characters to read.
+	 */
+	private int _readBlobsSize = LARGE_COLUMN_DEFAULT_READ_LENGTH;
+
+	/** Read clobs from Result sets. */
+	private boolean _readClobs = false;
+
+	/**
+	 * If <TT>_readClobs</TT> is <TT>true</TT> this specifies the number of
+	 * characters to read.
+	 */
+	private int _readClobsSize = LARGE_COLUMN_DEFAULT_READ_LENGTH;
+
+	/**
+	 * Return a copy of this object.
+	 */
+	public Object clone()
+	{
+		try
+		{
+			return super.clone();
+		}
+		catch (CloneNotSupportedException ex)
+		{
+			throw new InternalError(ex.getMessage());   // Impossible.
+		}
+	}
+
+	public boolean getReadBinary()
+	{
+		return _readBinary;
+	}
+
+	public void setReadBinary(boolean value)
+	{
+		if (_readBinary != value)
+		{
+			final boolean oldValue = _readBinary;
+			_readBinary = value;
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.READ_BINARY,
+				oldValue,
+				_readBinary);
+		}
+	}
+
+	public boolean getReadVarBinary()
+	{
+		return _readVarBinary;
+	}
+
+	public void setReadVarBinary(boolean value)
+	{
+		if (_readVarBinary != value)
+		{
+			final boolean oldValue = _readVarBinary;
+			_readVarBinary = value;
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.READ_VARBINARY,
+				oldValue,
+				_readVarBinary);
+		}
+	}
+
+	public boolean getReadLongVarBinary()
+	{
+		return _readLongVarBinary;
+	}
+
+	public void setReadLongVarBinary(boolean value)
+	{
+		if (_readLongVarBinary != value)
+		{
+			final boolean oldValue = _readLongVarBinary;
+			_readLongVarBinary = value;
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.READ_LONGVARBINARY,
+				oldValue,
+				_readLongVarBinary);
+		}
+	}
+
+	public boolean getReadBlobs()
+	{
+		return _readBlobs;
+	}
+
+	public void setReadBlobs(boolean value)
+	{
+		if (_readBlobs != value)
+		{
+			final boolean oldValue = _readBlobs;
+			_readBlobs = value;
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.READ_BLOBS,
+				oldValue,
+				_readBlobs);
+		}
+	}
+
+	public int getReadBlobsSize()
+	{
+		return _readBlobsSize;
+	}
+
+	public void setReadBlobsSize(int value)
+	{
+		if (_readBlobsSize != value)
+		{
+			final int oldValue = _readBlobsSize;
+			_readBlobsSize = value;
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.READ_BLOBS_SIZE,
+				oldValue,
+				_readBlobsSize);
+		}
+	}
+
+	public boolean getReadClobs()
+	{
+		return _readClobs;
+	}
+
+	public void setReadClobs(boolean value)
+	{
+		if (_readClobs != value)
+		{
+			final boolean oldValue = _readClobs;
+			_readClobs = value;
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.READ_CLOBS,
+				oldValue,
+				_readClobs);
+		}
+	}
+
+	public int getReadClobsSize()
+	{
+		return _readClobsSize;
+	}
+
+	public void setReadClobsSize(int value)
+	{
+		if (_readClobsSize != value)
+		{
+			final int oldValue = _readClobsSize;
+			_readClobsSize = value;
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.READ_CLOBS_SIZE,
+				oldValue,
+				_readClobsSize);
+		}
+	}
+}

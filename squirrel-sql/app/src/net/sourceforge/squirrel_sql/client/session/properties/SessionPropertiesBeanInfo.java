@@ -112,10 +112,10 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 					"setSQLResultsOutputClassName");
 			s_dscrs[i++] =
 				new PropertyDescriptor(
-					SessionProperties.IPropertyNames.SQL_READ_BLOBS,
+					SessionProperties.IPropertyNames.LARGE_RESULT_SET_OBJECT_INFO,
 					cls,
-					"getSQLReadBlobs",
-					"setSQLReadBlobs");
+					"getLargeResultSetObjectInfo",
+					"setLargeResultSetObjectInfo");
 		}
 	}
 
