@@ -24,6 +24,13 @@ package net.sourceforge.squirrel_sql.client;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class Main {
+	/**
+	 * Default ctor. private as class should never be instantiated.
+	 */
+	private Main() {
+		super();
+	}
+
     /**
      * Application entry point.
      *
