@@ -248,7 +248,16 @@ public class SQLConnection
 		final String oldValue = conn.getCatalog();
 		if (!Utilities.areStringsEqual(oldValue, catalogName))
 		{
-			conn.setCatalog(catalogName);
+			try
+			{
+				conn.setCatalog(catalogName);
+			}
+			catch (SQLException ex)
+			{
+				// MS SQL Server throws an exception if the catalog name
+				// contains a period without it being quoted.
+				conn.setCatalog(quote(catalogName));
+			}
 			getPropertyChangeReporter().firePropertyChange(IPropertyNames.CATALOG,
 												oldValue, catalogName);
 		}
@@ -301,5 +310,26 @@ public class SQLConnection
 			_propChgReporter = new PropertyChangeReporter(this); 
 		}
 		return _propChgReporter;
+	}
+	
+	private String quote(String str)
+	{
+		String identifierQuoteString = "";
+		try
+		{
+			identifierQuoteString = getSQLMetaData().getIdentifierQuoteString();
+		}
+		catch (SQLException ex)
+		{
+			s_log.debug(
+				"DBMS doesn't supportDatabasemetaData.getIdentifierQuoteString",
+				ex);
+		}
+		if (identifierQuoteString != null
+				&& !identifierQuoteString.equals(" "))
+		{
+			return identifierQuoteString + str + identifierQuoteString;
+		}
+		return str;
 	}
 }
