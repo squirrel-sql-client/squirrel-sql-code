@@ -786,4 +786,17 @@ public class GenerateSqlDialog extends JDialog {
         this.show();
         return _wasCompleted;
     }
+    
+    public void preselectObjects(IDatabaseObjectInfo[] objs) {
+        /* this works because all the IDatabaseObjectInfo objects come from the same source, so
+         * their references are equal. */
+        
+        DatabaseObjectInfoTableModel fromModel = (DatabaseObjectInfoTableModel) _availableTable.getModel();
+        DatabaseObjectInfoTableModel toModel = (DatabaseObjectInfoTableModel) _selectedTable.getModel();
+        
+        for (int i = 0; i < objs.length; i++) {
+            if (fromModel.removeElement(objs[i]))
+                toModel.addElement(objs[i]);
+        }
+    }
 }
