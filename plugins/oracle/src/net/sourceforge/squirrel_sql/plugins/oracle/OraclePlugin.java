@@ -209,7 +209,7 @@ public class OraclePlugin extends DefaultSessionPlugin
             _newDBOutputWorksheet.setEnabled(enable);
             _newInvalidObjectsWorksheet.setEnabled(enable);
             _newSessionInfoWorksheet.setEnabled(enable);
-            //jmh tbd _newSGATraceWorksheet.setEnabled(enable);
+            _newSGATraceWorksheet.setEnabled(enable);
           }
         }
 

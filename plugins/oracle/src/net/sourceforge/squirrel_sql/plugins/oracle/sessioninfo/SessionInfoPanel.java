@@ -35,19 +35,25 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
+import net.sourceforge.squirrel_sql.plugins.oracle.common.AutoWidthResizeTable;
+
 public class SessionInfoPanel extends JPanel
 {
 	/** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(SessionInfoPanel.class);
 
+//JMH Remove the current sql text. Create a tabbed pane for session details (including sql text)
         private static final String sessionInfoSQL = "SELECT sess.Sid, "+
             "     sess.serial#, "+
+            "     NVL(sess.username, bgproc.name), "+
             "     sess.schemaname, "+
             "     sess.status, "+
             "     sess.server, "+
             "     sess.osuser, "+
             "     sess.machine, "+
+            "     sess.terminal, "+
             "     sess.program, "+
+            "     sess.process, "+
             "     sess.type, "+
             "     sess.module, "+
             "     sess.action, "+
@@ -59,28 +65,32 @@ public class SessionInfoPanel extends JPanel
             "     sess_io.consistent_changes, "+
             "     sess_stat.value*10, "+
             "     sess.last_call_et, "+
-            "     sess.process, "+
             "     d.sql_text, "+
             "     sess.sql_address || ':' || sql_hash_value, "+
-            "     sess.prev_sql_addr || ':' || prev_hash_value "+
+            "     sess.prev_sql_addr || ':' || prev_hash_value, "+
+            "     sess.logon_time "+
             "FROM v$session sess, "+
+            "     v$bgprocess bgproc,"+
             "     v$sess_io sess_io, "+
             "     v$sesstat sess_stat, "+
             "     v$sql d "+
             "WHERE sess.sid = sess_io.sid ( + ) "+
             "  AND sess.sid = sess_stat.sid ( + ) "+
+            "  AND sess.paddr = bgproc.paddr ( + ) "+
             "  AND ( sess_stat.statistic# = 12 OR sess_stat.statistic# IS NULL ) "+
             "  AND sess.sql_address = d.address ( + ) "+
             "  AND sess.sql_hash_value = d.hash_value ( + ) "+
             "  AND ( d.child_number = 0 OR d.child_number IS NULL ) "+
             "ORDER BY sess.sid ";
-
-
+//JMH: For additional performance we could utilise the fixed_table_sequence column
+//from the session, to investigate which rows need to be updated on a refresh
+//See V$SESSION doco for more info.
 
 	/** Current session. */
 	private ISession _session;
 
-        private JTable _sessionInfo;
+        private AutoWidthResizeTable _sessionInfo;
+        private boolean hasResized = false;
         private Timer _refreshTimer = new Timer(true);
 
         private boolean _autoRefresh = false;
@@ -152,12 +162,15 @@ public class SessionInfoPanel extends JPanel
           DefaultTableModel tm = new DefaultTableModel();
           tm.addColumn("Sid");
           tm.addColumn("Serial #");
+          tm.addColumn("Session Name");
           tm.addColumn("Schema");
           tm.addColumn("Status");
           tm.addColumn("Server");
           tm.addColumn("OS user");
           tm.addColumn("Machine");
+          tm.addColumn("Terminal");
           tm.addColumn("Program");
+          tm.addColumn("Process");
           tm.addColumn("Type");
           tm.addColumn("Module");
           tm.addColumn("Action");
@@ -169,10 +182,10 @@ public class SessionInfoPanel extends JPanel
           tm.addColumn("Consistent Changes");
           tm.addColumn("CPU time (ms)");
           tm.addColumn("Last SQL");
-          tm.addColumn("Process");
           tm.addColumn("Current SQL Statement");
           tm.addColumn("SQL Address");
           tm.addColumn("Prev SQL Address");
+          tm.addColumn("Logon Time");
           return tm;
         }
 
@@ -190,36 +203,44 @@ public class SessionInfoPanel extends JPanel
               while (rs.next()) {
                 String sid = rs.getString(1);
                 String serNum = rs.getString(2);
-                String schema = rs.getString(3);
-                String status = rs.getString(4);
-                String server = rs.getString(5);
-                String OSusr = rs.getString(6);
-                String machine = rs.getString(7);
-                String program = rs.getString(8);
-                String type = rs.getString(9);
-                String module = rs.getString(10);
-                String action = rs.getString(11);
-                String clientInfo = rs.getString(12);
-                String blockGets = rs.getString(13);
-                String consistentGets = rs.getString(14);
-                String physReads = rs.getString(15);
-                String blockChanges = rs.getString(16);
-                String consistentChanges = rs.getString(17);
-                String CPUtime = rs.getString(18);
-                String lastSQL = rs.getString(19);
-                String process = rs.getString(20);
-                String currSQL = rs.getString(21);
-                String SQLaddr = rs.getString(22);
-                String prevSQLaddr = rs.getString(23);
+                String sessionName = rs.getString(3);
+                String schema = rs.getString(4);
+                String status = rs.getString(5);
+                String server = rs.getString(6);
+                String OSusr = rs.getString(7);
+                String machine = rs.getString(8);
+                String terminal = rs.getString(9);
+                String program = rs.getString(10);
+                String process = rs.getString(11);
+                String type = rs.getString(12);
+                String module = rs.getString(13);
+                String action = rs.getString(14);
+                String clientInfo = rs.getString(15);
+                String blockGets = rs.getString(16);
+                String consistentGets = rs.getString(17);
+                String physReads = rs.getString(18);
+                String blockChanges = rs.getString(19);
+                String consistentChanges = rs.getString(20);
+                String CPUtime = rs.getString(21);
+                String lastSQL = rs.getString(22);
+                String currSQL = rs.getString(23);
+                String SQLaddr = rs.getString(24);
+                String prevSQLaddr = rs.getString(25);
+                String logonTime = rs.getString(26);
 
                 //Should probably create my own table model but i am being a bit slack.
-                tm.addRow(new Object[] {sid, serNum, schema, status, server,
-                                        OSusr, machine, program, type, module,
+                tm.addRow(new Object[] {sid, serNum, sessionName, schema, status, server,
+                                        OSusr, machine, terminal, program, process, type, module,
                                         action, clientInfo, blockGets, consistentGets,
                                         physReads, blockChanges, consistentChanges, CPUtime,
-                                        lastSQL, process, currSQL, SQLaddr, prevSQLaddr});
+                                        lastSQL, currSQL, SQLaddr, prevSQLaddr, logonTime});
               }
               _sessionInfo.setModel(tm);
+              if (!hasResized) {
+                //Only resize once.
+                hasResized = true;
+                _sessionInfo.resizeColumnWidth();
+              }
             }
           } catch (SQLException ex) {
             _session.getMessageHandler().showErrorMessage(ex);
@@ -230,10 +251,9 @@ public class SessionInfoPanel extends JPanel
 	{
             final IApplication app = _session.getApplication();
             setLayout(new BorderLayout());
-            _sessionInfo = new JTable();
+            _sessionInfo = new AutoWidthResizeTable(new DefaultTableModel());
             _sessionInfo.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
             add(new JScrollPane(_sessionInfo));
             populateSessionInfo();
 	}
-
 }
