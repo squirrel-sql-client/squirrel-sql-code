@@ -117,7 +117,7 @@ public class CodeReformator
 		{
 			if(TRY_SPLIT_LINE_LEN < pieces[i].length())
 			{
-         	String[] splitPieces = trySplit(pieces[i], 0);
+         	String[] splitPieces = trySplit(pieces[i], 0, TRY_SPLIT_LINE_LEN);
 				piecesBuf.addAll(Arrays.asList(splitPieces));
 			}
 			else
@@ -128,7 +128,7 @@ public class CodeReformator
 		return (String[])piecesBuf.toArray(new String[0]);
 	}
 
-	private String[] doInsertSpecial(String[] pieces)
+   private String[] doInsertSpecial(String[] pieces)
 	{
 		int insertBegin = -1;
 		boolean hasValues = false;
@@ -198,7 +198,7 @@ public class CodeReformator
 
 	private Vector reformatInsert(Vector piecesIn)
 	{
-		String[] pieces = (String[])piecesIn.toArray(new String[0]);
+		String[] pieces = splitAsFarAsPossible((String[]) piecesIn.toArray(new String[piecesIn.size()]));
 
 		Vector insertList = new Vector();
 		Vector valuesList = new Vector();
@@ -285,7 +285,17 @@ public class CodeReformator
 		}
 	}
 
-	private String adoptLength(String s1, String s2)
+   private String[] splitAsFarAsPossible(String[] pieces)
+   {
+      Vector ret = new Vector();
+      for (int i = 0; i < pieces.length; i++)
+      {
+         ret.addAll( Arrays.asList(trySplit(pieces[i], 0, 1)));
+      }
+      return (String[]) ret.toArray(new String[ret.size()]);
+   }
+
+   private String adoptLength(String s1, String s2)
 	{
 		int max = Math.max(s1.length(), s2.length());
 
@@ -305,7 +315,7 @@ public class CodeReformator
 		}
 	}
 
-	private String[] trySplit(String piece, int braketDepth)
+	private String[] trySplit(String piece, int braketDepth, int trySplitLineLen)
 	{
 		String trimmedPiece = piece.trim();
 		CodeReformatorKernel dum = new CodeReformatorKernel(_statementSeparator, new PieceMarkerSpec[0], _commentSpecs);
@@ -324,9 +334,9 @@ public class CodeReformator
 
 			for(int i=0; i < splitPieces1.length; ++i)
 			{
-				if(TRY_SPLIT_LINE_LEN < splitPieces1[i].length() + braketDepth * INDENT.length())
+				if(trySplitLineLen < splitPieces1[i].length() + braketDepth * INDENT.length())
 				{
-					String[] splitPieces2 = trySplit(splitPieces1[i], braketDepth);
+					String[] splitPieces2 = trySplit(splitPieces1[i], braketDepth, trySplitLineLen);
 					for(int j=0; j < splitPieces2.length; ++j)
 					{
 						ret.add( splitPieces2[j].trim() );
@@ -371,9 +381,9 @@ public class CodeReformator
 				Vector ret = new Vector();
 				for(int i=0; i < splitPieces1.length; ++i)
 				{
-					if(TRY_SPLIT_LINE_LEN < splitPieces1[i].length() + braketDepth * INDENT.length())
+					if(trySplitLineLen < splitPieces1[i].length() + braketDepth * INDENT.length())
 					{
-						String[] splitPieces2 = trySplit(splitPieces1[i], braketDepth + 1);
+						String[] splitPieces2 = trySplit(splitPieces1[i], braketDepth + 1, trySplitLineLen);
 						for(int j=0; j < splitPieces2.length; ++j)
 						{
 							ret.add(splitPieces2[j]);
