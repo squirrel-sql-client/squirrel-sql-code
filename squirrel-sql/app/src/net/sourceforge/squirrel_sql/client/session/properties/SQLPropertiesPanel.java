@@ -210,8 +210,10 @@ public class SQLPropertiesPanel
 			gbc.insets = new Insets(2, 0, 2, 4);
 			++gbc.gridx;
 			gbc.gridy = 0;
+			gbc.gridwidth = 2;
 			add(_commitOnClose, gbc);
 			++gbc.gridy;
+			gbc.gridwidth = 1;
 			++gbc.gridy;
 			add(new RightLabel(i18n.NBR_ROWS_CONTENTS), gbc);
 			++gbc.gridy;
@@ -220,7 +222,7 @@ public class SQLPropertiesPanel
 			add(new RightLabel(i18n.STATEMENT_SEPARATOR), gbc);
 
 			gbc.insets = new Insets(2, 0, 2, 1);
-			gbc.gridx = 4;
+			++gbc.gridx;
 			gbc.gridy = 0;
 			++gbc.gridy;
 			++gbc.gridy;
@@ -230,7 +232,7 @@ public class SQLPropertiesPanel
 			++gbc.gridy;
 			add(_stmtSepChar, gbc);
 
-			gbc.gridx = 5;
+			++gbc.gridx;
 			gbc.gridy = 3;
 			add(new JLabel(warnIcon), gbc);
 			++gbc.gridy;
@@ -268,5 +270,4 @@ public class SQLPropertiesPanel
 		}
 
 	}
-
 }
