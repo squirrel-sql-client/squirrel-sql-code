@@ -29,6 +29,7 @@ import javax.swing.JMenu;
 import javax.swing.ToolTipManager;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
+import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -212,6 +213,34 @@ class Application implements IApplication {
 
 	public MainFrame getMainFrame() {
 		return _mainFrame;
+	}
+
+	/**
+	 * Display an error message dialog.
+	 * 
+	 * @param	msg		The error msg.
+	 */
+	public void showErrorDialog(String msg) {
+		new ErrorDialog(getMainFrame(), msg).show();
+	}
+
+	/**
+	 * Display an error message dialog.
+	 * 
+	 * @param	th		The Throwable that caused the error
+	 */
+	public void showErrorDialog(Throwable th) {
+		new ErrorDialog(getMainFrame(), th).show();
+	}
+
+	/**
+	 * Display an error message dialog.
+	 * 
+	 * @param	msg		The error msg.
+	 * @param	th		The Throwable that caused the error
+	 */
+	public void showErrorDialog(String msg, Throwable th) {
+		new ErrorDialog(getMainFrame(), msg, th).show();
 	}
 
 	/**

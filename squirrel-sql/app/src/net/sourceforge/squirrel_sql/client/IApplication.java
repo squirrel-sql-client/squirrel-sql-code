@@ -55,6 +55,28 @@ public interface IApplication {
 	SquirrelResources getResources();
 
 	/**
+	 * Display an error message dialog.
+	 * 
+	 * @param	msg		The error msg.
+	 */
+	void showErrorDialog(String msg);
+
+	/**
+	 * Display an error message dialog.
+	 * 
+	 * @param	th		The Throwable that caused the error
+	 */
+	void showErrorDialog(Throwable th);
+
+	/**
+	 * Display an error message dialog.
+	 * 
+	 * @param	msg		The error msg.
+	 * @param	th		The Throwable that caused the error
+	 */
+	void showErrorDialog(String msg, Throwable th);
+
+	/**
 	 * Return the main frame.
 	 *
 	 * @return	The main frame for the app.
