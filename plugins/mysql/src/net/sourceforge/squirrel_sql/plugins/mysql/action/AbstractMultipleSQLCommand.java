@@ -28,8 +28,8 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 
 import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 /**
- * This abstract command is a MySQL command that takes a comma separated list
- * of tables as a parameter.
+ * This abstract command is a MySQL command that takes a table
+ * as a parameter.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
