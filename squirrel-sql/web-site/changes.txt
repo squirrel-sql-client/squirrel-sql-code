@@ -1,6 +1,29 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+1.1final
+========
+
+Enhancements
+------------
+- Allow retrieval of all data types from SQL
+  results.
+- Allow for JDBC drivers that return null
+  for DatabaseMetaData.getTableTypes().
+
+Bug Fixes
+---------
+- Fix bug where the "Start of Line Comment"
+  characters weren't recognized when executing
+  multiple SQL statements.
+- When the "ResultSet Output Type" is changed
+  for a session don't attempt to change the output
+  type for existing ResultSet output panels in
+  that session.
+- When "New Session" settings are changed don't
+  change settings for existing sessions.
+
+
 1.1rc2
 ======
 
