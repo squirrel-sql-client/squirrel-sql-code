@@ -141,6 +141,14 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 	}
 
 	/**
+	 * @return	Comma separated list of contributors.
+	 */
+	public String getContributors()
+	{
+		return "John Murga";
+	}
+
+	/**
 	 * Create preferences panel for the Global Preferences dialog.
 	 *
 	 * @return  Preferences panel.
