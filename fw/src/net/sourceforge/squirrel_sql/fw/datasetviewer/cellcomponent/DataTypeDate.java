@@ -131,7 +131,7 @@ public class DataTypeDate
 	 
 	 // The DateFormat object to use for all locale-dependent formatting.
 	 // This is reset each time the user changes the previous settings.
-	 private static DateFormat dateFormat = DateFormat.getInstance();
+	 private static DateFormat dateFormat = DateFormat.getDateInstance(localeFormat);
 	
 	
 
