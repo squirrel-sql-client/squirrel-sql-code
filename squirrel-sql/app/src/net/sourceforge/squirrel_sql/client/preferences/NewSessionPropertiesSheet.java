@@ -97,6 +97,15 @@ public class NewSessionPropertiesSheet extends BaseSheet
 		s_instance.setVisible(true);
 	}
 
+	public void dispose()
+	{
+		synchronized (getClass())
+		{
+			s_instance = null;
+		}
+		super.dispose();
+	}
+
 	public void setVisible(boolean show)
 	{
 		if (show)
@@ -145,7 +154,7 @@ public class NewSessionPropertiesSheet extends BaseSheet
 
 	private void performClose()
 	{
-		setVisible(false);
+		dispose();
 	}
 
 	/**
@@ -174,12 +183,12 @@ public class NewSessionPropertiesSheet extends BaseSheet
 			}
 		}
 
-		setVisible(false);
+		dispose();
 	}
 
 	private void createUserInterface()
 	{
-		setDefaultCloseOperation(HIDE_ON_CLOSE);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
 		// This is a tool window.
 		GUIUtils.makeToolWindow(this, true);
