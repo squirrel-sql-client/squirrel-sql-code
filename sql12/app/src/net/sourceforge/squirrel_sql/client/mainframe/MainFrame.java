@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -24,10 +24,11 @@ import java.awt.Event;
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
-
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultDesktopManager;
@@ -38,14 +39,12 @@ import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-
 import net.sourceforge.squirrel_sql.fw.gui.BaseMDIParentFrame;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.ScrollableDesktopPane;
 import net.sourceforge.squirrel_sql.fw.gui.WindowState;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
@@ -111,7 +110,6 @@ public class MainFrame extends BaseMDIParentFrame
 				}
 			}
 		});
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
 		SwingUtilities.invokeLater(new Runnable()
 		{
@@ -126,10 +124,12 @@ public class MainFrame extends BaseMDIParentFrame
 
 	public void dispose()
 	{
-		_app.shutdown();
-		closeAllToolWindows();
-		super.dispose();
-		System.exit(0);
+		if (_app.shutdown())
+		{
+			closeAllToolWindows();
+			super.dispose();
+			System.exit(0);
+		}
 	}
 
 	// TODO: Why?
@@ -355,6 +355,7 @@ public class MainFrame extends BaseMDIParentFrame
 	private void createUserInterface()
 	{
 		setVisible(false);
+		setDefaultCloseOperation(MainFrame.DO_NOTHING_ON_CLOSE);
 
 		final SquirrelResources rsrc = _app.getResources();
 
@@ -399,6 +400,14 @@ public class MainFrame extends BaseMDIParentFrame
 				"repaint");
 
 		validate();
+
+		addWindowListener(new WindowAdapter()
+		{
+			public void windowClosing(WindowEvent evt)
+			{
+				dispose();
+			}
+		});
 	}
 
 	private void preLoadActions()

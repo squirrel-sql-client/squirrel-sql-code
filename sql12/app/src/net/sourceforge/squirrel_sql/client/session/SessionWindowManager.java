@@ -30,9 +30,12 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionPropertiesSheet;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterSheet;
 import net.sourceforge.squirrel_sql.client.session.properties.EditWhereColsSheet;
+import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
@@ -45,6 +48,10 @@ public class SessionWindowManager
 	/** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(SessionManager.class);
+
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(SessionWindowManager.class);
 
 	/** Application API. */
 	private final IApplication _app;
@@ -270,7 +277,7 @@ public class SessionWindowManager
 	/**
 	 * Close all sessions.
 	 */
-	public synchronized void closeAllSessions()
+	public synchronized boolean closeAllSessions()
 	{
 		SessionInternalFrame[] ar = new SessionInternalFrame[_internalFrames.size()];
 		_internalFrames.values().toArray(ar);
@@ -279,9 +286,13 @@ public class SessionWindowManager
 			final ISession session = getSession(ar[i]);
 			if (session != null)
 			{
-				closeSession(session);
+				if (!closeSession(session))
+				{
+					return false;
+				}
 			}
 		}
+		return true;
 	}
 
 	/**
@@ -291,15 +302,28 @@ public class SessionWindowManager
 	 *
 	 * @throws	IllegalArgumentException
 	 *			Thrown if ISession is passed as null.
+	 *
+	 * @returns	<tt>true</tt> if the session was closed.
 	 */
-	public synchronized void closeSession(ISession session)
+	public synchronized boolean closeSession(ISession session)
 	{
 		if (session == null)
 		{
 			throw new IllegalArgumentException("ISession == null");
 		}
 
-		getInternalFrame(session).dispose();
+		if (confirmClose(session))
+		{
+			getInternalFrame(session).dispose();
+			return true;
+		}
+		return false;
+	}
+
+	private boolean confirmClose(ISession session)
+	{
+		final String msg = s_stringMgr.getString("SessionWindowManager.confirmClose", session.getTitle());
+		return Dialogs.showYesNo(_app.getMainFrame(), msg);
 	}
 
 	private SessionPropertiesSheet getSessionPropertiesDialog(ISession session)
@@ -323,7 +347,7 @@ public class SessionWindowManager
 		}
 		return map;
 	}
-	
+
 	private EditWhereColsSheet getEditWhereColsSheet(ISession session, IDatabaseObjectInfo objectInfo)
 	{
 		Map map = getAllEditWhereColsSheets(session);
@@ -381,7 +405,7 @@ public class SessionWindowManager
 			}
 		}
 	}
-	
+
 	private synchronized void editWhereColsDialogClosed(EditWhereColsSheet sfs)
 	{
 		if (sfs != null)
@@ -430,7 +454,7 @@ public class SessionWindowManager
 			SessionWindowManager.this.sqlFilterDialogClosed(sfs);
 		}
 	}
-	
+
 	private final class EditWhereColsDialogListener extends InternalFrameAdapter
 	{
 		public void internalFrameClosed(InternalFrameEvent evt)

@@ -6,6 +6,8 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Prompt for confirmation before closing a session.
+- Display the catalog in the session title.
 - Display a welcome screen the first time SQuirreL is run.
 - When sorting columns in a table use a non-case sensitive but locale aware
   method.
