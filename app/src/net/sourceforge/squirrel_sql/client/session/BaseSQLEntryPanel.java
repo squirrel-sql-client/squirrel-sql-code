@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,28 +17,42 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-public abstract class BaseSQLEntryPanel implements ISQLEntryPanel {
+public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
+{
+	//protected final static String LINE_SEPARATOR = System.getProperty("line.separator");
+	protected final static String LINE_SEPARATOR = "\n";
 
-	public String getSQLToBeExecuted() {
+	protected final static String SQL_STMT_SEP = LINE_SEPARATOR + LINE_SEPARATOR; 
+
+	public String getSQLToBeExecuted()
+	{
 		String sql = getSelectedText();
-		if(sql == null || sql.trim().length() == 0) {
+		if (sql == null || sql.trim().length() == 0)
+		{
 			sql = getText();
 
 			int iStartIndex = 0;
 			int iEndIndex = sql.length();
 
-			int iCaretPos = getCaretPosition();
+			int iCaretPos = getCaretPosition() - 1;
+			if (iCaretPos < 0)
+			{
+				iCaretPos = 0;
+			}
 
-			int iIndex = sql.lastIndexOf("\n\n",iCaretPos);
-			if(iIndex >0) iStartIndex = iIndex;
-			iIndex = sql.indexOf("\n\n",iCaretPos);
-			if(iIndex >0) iEndIndex = iIndex;
+			int iIndex = sql.lastIndexOf(SQL_STMT_SEP, iCaretPos);
+			if (iIndex > 0)
+			{
+				iStartIndex = iIndex;
+			}
+			iIndex = sql.indexOf(SQL_STMT_SEP, iCaretPos);
+			if (iIndex > 0)
+			{
+				iEndIndex = iIndex;
+			}
 
 			sql = sql.substring(iStartIndex, iEndIndex).trim();
 		}
 		return sql != null ? sql : "";
 	}
-
-
 }
-

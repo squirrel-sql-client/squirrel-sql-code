@@ -73,7 +73,7 @@ public class OsterSQLEntryPanel extends BaseSQLEntryPanel
 
 		_app = session.getApplication();
 
-		_textArea = new MyTextArea(session, prefs, this);
+		_textArea = new OsterTextControl(session, prefs);
 		_textPopupMenu = new SessionTextEditPopupMenu(session);
 	}
 
@@ -169,10 +169,10 @@ public class OsterSQLEntryPanel extends BaseSQLEntryPanel
 
 		try
 		{
-			if (!getText().endsWith("\n") && !sqlScript.startsWith("\n"))
-			{
-				doc.insertString(doc.getLength(), "\n", null);
-			}
+//			if (!getText().endsWith("\n") && !sqlScript.startsWith("\n"))
+//			{
+//				doc.insertString(doc.getLength(), "\n", null);
+//			}
 
 			int start = 0;
 
@@ -420,31 +420,6 @@ public class OsterSQLEntryPanel extends BaseSQLEntryPanel
 		_textArea.removeCaretListener(lis);
 	}
 
-	private static class MyTextArea extends OsterTextControl
-	{
-		private ISession _session;
-		private OsterSQLEntryPanel _pnl;
-
-		private MyTextArea(ISession session, SyntaxPreferences prefs,
-							OsterSQLEntryPanel pnl)
-		{
-			super(session, prefs);
-			_session = session;
-			_pnl = pnl;
-		}
-
-		public void addNotify()
-		{
-			super.addNotify();
-			_pnl.addMouseListener(_pnl._sqlEntryMouseListener);
-		}
-
-		public void removeNotify()
-		{
-			super.removeNotify();
-			_pnl.removeMouseListener(_pnl._sqlEntryMouseListener);
-		}
-	}
 
 	private final class MyMouseListener extends MouseAdapter
 	{
