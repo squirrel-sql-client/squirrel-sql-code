@@ -21,23 +21,29 @@ import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.session.IClientSession;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
-public class CloseSessionAction extends SquirrelAction implements ISessionAction {
-	private ISession _session;
+public class CloseSessionAction extends SquirrelAction
+									implements IClientSessionAction
+{
+	private IClientSession _session;
 
-	public CloseSessionAction(IApplication app) {
+	public CloseSessionAction(IApplication app)
+	{
 		super(app);
 	}
 
-	public void setSession(ISession session) {
+	public void setClientSession(IClientSession session)
+	{
 		_session = session;
 	}
 
-	public void actionPerformed(ActionEvent evt) {
-		if (_session != null) {
+	public void actionPerformed(ActionEvent evt)
+	{
+		if (_session != null)
+		{
 			new CloseSessionCommand(_session).execute();
 		}
 	}
 }
-

@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
+import net.sourceforge.squirrel_sql.client.plugin.api.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
@@ -40,7 +41,8 @@ import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.ITable
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
 /**
- * The current session.
+ * The current session. This is a "subset" of the real session which can be
+ * used by plugins.
  */
 public interface ISession extends IHasIdentifier {
 	/**
@@ -55,18 +57,6 @@ public interface ISession extends IHasIdentifier {
 
 	public interface IMainPanelTabIndexes extends MainPanel.ITabIndexes {
 	}
-
-	/**
-	 * Close this session.
-	 */
-	void close();
-
-	/**
-	 * Close the current connection to the database.
-	 *
-	 * @throws	SQLException  if an SQL error occurs.
-	 */
-	void closeSQLConnection() throws SQLException;
 
 	/**
 	 * Return the Application API object.

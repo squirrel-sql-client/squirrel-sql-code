@@ -1,6 +1,6 @@
-package net.sourceforge.squirrel_sql.client.session.action;
+package net.sourceforge.squirrel_sql.client.session;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,32 +17,21 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.ActionEvent;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.IClientSession;
-
-public class SessionPropertiesAction extends SquirrelAction
-										implements IClientSessionAction
+import java.sql.SQLException;
+/**
+ * The current session.
+ */
+public interface IClientSession extends ISession
 {
-	private IClientSession _session;
+	/**
+	 * Close this session.
+	 */
+	void close();
 
-	public SessionPropertiesAction(IApplication app)
-	{
-		super(app);
-	}
-
-	public void setClientSession(IClientSession session)
-	{
-		_session = session;
-	}
-
-	public void actionPerformed(ActionEvent evt)
-	{
-		if (_session != null)
-		{
-			new SessionPropertiesCommand(_session).execute();
-		}
-	}
+	/**
+	 * Close the current connection to the database.
+	 *
+	 * @throws	SQLException  if an SQL error occurs.
+	 */
+	void closeSQLConnection() throws SQLException;
 }

@@ -23,6 +23,7 @@ import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.session.IClientSession;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 /**
@@ -31,25 +32,29 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ShowNativeSQLAction extends SquirrelAction implements ISessionAction {
+public class ShowNativeSQLAction extends SquirrelAction
+									implements IClientSessionAction
+{
 	/** Current session. */
-	private ISession _session;
+	private IClientSession _session;
 
 	/**
 	 * Ctor.
 	 *
 	 * @param	app		Application API.
 	 */
-	public ShowNativeSQLAction(IApplication app) {
+	public ShowNativeSQLAction(IApplication app)
+	{
 		super(app);
 	}
 
 	/**
 	 * Set the current session.
 	 *
-	 * @param	session		The current session.
+	 * @param	session	The current session.
 	 */
-	public void setSession(ISession session) {
+	public void setClientSession(IClientSession session)
+	{
 		_session = session;
 	}
 
@@ -58,13 +63,17 @@ public class ShowNativeSQLAction extends SquirrelAction implements ISessionActio
 	 *
 	 * @param	evt	The current event.
 	 */
-	public void actionPerformed(ActionEvent evt) {
+	public void actionPerformed(ActionEvent evt)
+	{
 		IApplication app = getApplication();
 		CursorChanger cursorChg = new CursorChanger(app.getMainFrame());
 		cursorChg.show();
-		try {
+		try
+		{
 			new ShowNativeSQLCommand(_session).execute();
-		} finally {
+		}
+		finally
+		{
 			cursorChg.restore();
 		}
 	}

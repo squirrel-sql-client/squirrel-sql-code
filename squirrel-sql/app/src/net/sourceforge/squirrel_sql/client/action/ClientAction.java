@@ -1,6 +1,6 @@
-package net.sourceforge.squirrel_sql.client.session.action;
+package net.sourceforge.squirrel_sql.client.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,43 +17,20 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.ActionEvent;
-
-import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
+import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.IClientSession;
 
-public class RollbackAction extends SquirrelAction implements IClientSessionAction
+public abstract class ClientAction extends SquirrelAction
 {
-	private IClientSession _session;
-
-	public RollbackAction(IApplication app)
+	protected ClientAction(IApplication app)
 	{
 		super(app);
 	}
 
-	public void setClientSession(IClientSession session)
+	protected ClientAction(IApplication app, Resources rsrc)
 	{
-		_session = session;
+		super(app, rsrc);
 	}
 
-	public void actionPerformed(ActionEvent evt)
-	{
-		if (_session != null)
-		{
-			CursorChanger cursorChg =
-				new CursorChanger(getApplication().getMainFrame());
-			cursorChg.show();
-			try
-			{
-				_session.rollback();
-			}
-			finally
-			{
-				cursorChg.restore();
-			}
-		}
-	}
 }

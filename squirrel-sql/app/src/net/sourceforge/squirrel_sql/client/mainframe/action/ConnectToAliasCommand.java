@@ -37,7 +37,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.db.ConnectionSheet;
 import net.sourceforge.squirrel_sql.client.db.ConnectionSheet.IConnectionSheetHandler;
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.IClientSession;
 import net.sourceforge.squirrel_sql.client.session.SessionFactory;
 import net.sourceforge.squirrel_sql.client.session.SessionSheet;
 
@@ -47,15 +47,18 @@ import net.sourceforge.squirrel_sql.client.session.SessionSheet;
  *
  * @author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ConnectToAliasCommand implements ICommand {
-	public interface ICompletionCallback {
+public class ConnectToAliasCommand implements ICommand
+{
+	public interface ICompletionCallback
+	{
 		void connected(SQLConnection conn);
-		void sessionCreated(ISession session);
+		void sessionCreated(IClientSession session);
 		void errorOccured(Throwable th);
 	}
 
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(ConnectToAliasCommand.class);
+	private static ILogger s_log =
+		LoggerController.createLogger(ConnectToAliasCommand.class);
 
 	/** Application API. */
 	private IApplication _app;
@@ -82,7 +85,9 @@ public class ConnectToAliasCommand implements ICommand {
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> or <TT>ISQLAlias</TT> passed.
 	 */
-	public ConnectToAliasCommand(IApplication app, Frame frame, ISQLAlias sqlAlias) {
+	public ConnectToAliasCommand(IApplication app, Frame frame,
+									ISQLAlias sqlAlias)
+	{
 		this(app, frame, sqlAlias, true, null);
 	}
 
@@ -100,12 +105,15 @@ public class ConnectToAliasCommand implements ICommand {
 	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> or <TT>ISQLAlias</TT> passed.
 	 */
 	public ConnectToAliasCommand(IApplication app, Frame frame, ISQLAlias sqlAlias,
-									boolean createSession, ICompletionCallback callback) {
+						boolean createSession, ICompletionCallback callback)
+	{
 		super();
-		if (app == null) {
+		if (app == null)
+		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
-		if (sqlAlias == null) {
+		if (sqlAlias == null)
+		{
 			throw new IllegalArgumentException("Null ISQLAlias passed");
 		}
 		_app = app;
@@ -118,21 +126,25 @@ public class ConnectToAliasCommand implements ICommand {
 	/**
 	 * Display connection internal frame.
 	 */
-	public void execute() {
+	public void execute()
+	{
 		SheetHandler hdl = new SheetHandler(_app, _sqlAlias, _createSession, _callback);
-		ConnectionSheet sheet = new ConnectionSheet(_app, /*_frame,*/ _sqlAlias, hdl);
+		ConnectionSheet sheet = new ConnectionSheet(_app, /*_frame,*/
+		_sqlAlias, hdl);
 		_app.getMainFrame().addInternalFrame(sheet, true, null);
 		GUIUtils.centerWithinDesktop(sheet);
 		sheet.moveToFront();
 		sheet.setVisible(true);
 	}
 
-
-	public static class ClientCallback implements ICompletionCallback {
+	public static class ClientCallback implements ICompletionCallback
+	{
 		private IApplication _app;
-		public ClientCallback(IApplication app) {
+		public ClientCallback(IApplication app)
+		{
 			super();
-			if (app == null) {
+			if (app == null)
+			{
 				throw new IllegalArgumentException("IApplication == null");
 			}
 			_app = app;
@@ -141,44 +153,59 @@ public class ConnectToAliasCommand implements ICommand {
 		/**
 		 * @see CompletionCallback#connected(SQLConnection)
 		 */
-		public void connected(SQLConnection conn) {
+		public void connected(SQLConnection conn)
+		{
 		}
 
 		/**
 		 * @see CompletionCallback#sessionCreated(ISession)
 		 */
-		public void sessionCreated(ISession session) {
+		public void sessionCreated(IClientSession session)
+		{
 		}
 
 		/**
 		 * @see CompletionCallback#errorOccured(Throwable)
 		 */
-		public void errorOccured(Throwable th) {
-			if (th instanceof BaseSQLException) {
+		public void errorOccured(Throwable th)
+		{
+			if (th instanceof BaseSQLException)
+			{
 				String msg = "Unable to open SQL Connection";
 				showErrorDialog(msg, th);
-			} else if (th instanceof ClassNotFoundException) {
+			}
+			else if (th instanceof ClassNotFoundException)
+			{
 				String msg = "JDBC Driver class not found";
 				showErrorDialog(msg, th);
-			} else if (th instanceof NoClassDefFoundError) {
+			}
+			else if (th instanceof NoClassDefFoundError)
+			{
 				String msg = "JDBC Driver class not found";
 				s_log.error("JDBC Driver class not found", th);
 				showErrorDialog(msg, th);
-			} else {
+			}
+			else
+			{
 				String msg = "Unexpected Error occured attempting to open an SQL connection.";
 				s_log.error(msg, th);
 				showErrorDialog(msg, th);
 			}
 		}
 
-		protected IApplication getApplication() {
+		protected IApplication getApplication()
+		{
 			return _app;
 		}
 
-		protected void showErrorDialog(final String msg, final Throwable th) {
-			synchronized (this) {
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
+		protected void showErrorDialog(final String msg, final Throwable th)
+		{
+			synchronized (this)
+			{
+				SwingUtilities.invokeLater(new Runnable()
+				{
+					public void run()
+					{
 						new ErrorDialog(_app.getMainFrame(), msg, th).show();
 					}
 				});
@@ -189,7 +216,8 @@ public class ConnectToAliasCommand implements ICommand {
 	/**
 	 * Handler used for connection internal frame actions.
 	 */
-	private static class SheetHandler implements IConnectionSheetHandler, Runnable {
+	private static class SheetHandler implements IConnectionSheetHandler, Runnable
+	{
 		/** The connection internal frame. */
 		private ConnectionSheet _connSheet;
 
@@ -227,15 +255,19 @@ public class ConnectToAliasCommand implements ICommand {
 		 * 			or <TT>ICompletionCallback</TT> passed.
 		 */
 		private SheetHandler(IApplication app, ISQLAlias alias, boolean createSession,
-								ICompletionCallback callback) {
+									ICompletionCallback callback)
+		{
 			super();
-			if (app == null) {
+			if (app == null)
+			{
 				throw new IllegalArgumentException("IApplication == null");
 			}
-			if (alias == null) {
+			if (alias == null)
+			{
 				throw new IllegalArgumentException("ISQLAlias == null");
 			}
-			if (alias == null) {
+			if (alias == null)
+			{
 				throw new IllegalArgumentException("ICompletionCallback == null");
 			}
 			_app = app;
@@ -253,7 +285,8 @@ public class ConnectToAliasCommand implements ICommand {
 		 * @param	password	The password entered.
 		 */
 		public void performOK(ConnectionSheet connSheet, String user,
-								String password) {
+								String password)
+		{
 			_stopConnection = false;
 			_connSheet = connSheet;
 			_user = user;
@@ -266,11 +299,13 @@ public class ConnectToAliasCommand implements ICommand {
 		 *
 		 * @param	connSheet	Connection internal frame.
 		 */
-		public void performCancelConnect(ConnectionSheet connSheet) {
+		public void performCancelConnect(ConnectionSheet connSheet)
+		{
 			// if blocked that means that it doesn't help anymore
-			// Or an error dialog is shown or de connection is made
+			// Or an error dialog is shown or the connection is made
 			// and the SessionFrame is being constructed/shown.
-			synchronized (this) {
+			synchronized (this)
+			{
 				_stopConnection = true;
 			}
 		}
@@ -280,59 +315,85 @@ public class ConnectToAliasCommand implements ICommand {
 		 *
 		 * @param	connSheet	Connection internal frame.
 		 */
-		public void performClose(ConnectionSheet connSheet) {
+		public void performClose(ConnectionSheet connSheet)
+		{
 		}
 
 		/**
 		 * Execute task. Connect to the alias with the information entered
 		 * in the connection internal frame.
 		 */
-		public void run() {
+		public void run()
+		{
 			SQLConnection conn = null;
-			final ISQLDriver sqlDriver = _app.getDataCache().getDriver(_alias.getDriverIdentifier());
-			try {
+			final ISQLDriver sqlDriver =
+				_app.getDataCache().getDriver(_alias.getDriverIdentifier());
+			try
+			{
 				SQLDriverManager mgr = _app.getSQLDriverManager();
 				conn = mgr.getConnection(sqlDriver, _alias, _user, _password);
-				synchronized (this) {
-					if (_stopConnection) {
-						if (conn != null) {
+				synchronized (this)
+				{
+					if (_stopConnection)
+					{
+						if (conn != null)
+						{
 							closeConnection(conn);
 							conn = null;
 						}
-					} else {
+					}
+					else
+					{
 						// After this it can't be stopped anymore!
 						_callback.connected(conn);
-						if (_createSession) {
-							final ISession session = SessionFactory.createSession(_app, sqlDriver, _alias, conn);
+						if (_createSession)
+						{
+							final IClientSession session = SessionFactory.createSession(
+												_app, sqlDriver, _alias, conn);
 							_callback.sessionCreated(session);
-							SwingUtilities.invokeLater(new Runnable() {
-								public void run() {
+							SwingUtilities.invokeLater(new Runnable()
+							{
+								public void run()
+								{
 									IApplication app = session.getApplication();
-									app.getPluginManager().sessionCreated(session);
-									final SessionSheet child = new SessionSheet(session);
+									app.getPluginManager().sessionCreated(
+										session);
+									final SessionSheet child =
+										new SessionSheet(session);
 									session.setSessionSheet(child);
-									app.getPluginManager().sessionStarted(session);
-									app.getMainFrame().addInternalFrame(child, true, null);
+									app.getPluginManager().sessionStarted(
+																		session);
+									app.getMainFrame().addInternalFrame(child,
+														true, null);
 									child.setVisible(true);
 									_connSheet.executed(true);
 								}
 							});
-						} else {
+						}
+						else
+						{
 							_connSheet.executed(true);
 						}
 					}
 				}
-			} catch (Throwable ex) {
+			}
+			catch (Throwable ex)
+			{
 				_connSheet.executed(false);
 				_callback.errorOccured(ex);
 			}
 		}
 
-		private void closeConnection(SQLConnection conn) {
-			if (conn != null) {
-				try {
+		private void closeConnection(SQLConnection conn)
+		{
+			if (conn != null)
+			{
+				try
+				{
 					conn.close();
-				} catch (SQLException ex) {
+				}
+				catch (SQLException ex)
+				{
 					s_log.error("Error occured closing Connection", ex);
 				}
 			}

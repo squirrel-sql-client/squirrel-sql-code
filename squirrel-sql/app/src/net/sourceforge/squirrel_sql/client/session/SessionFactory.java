@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -28,36 +28,44 @@ import net.sourceforge.squirrel_sql.client.IApplication;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SessionFactory {
+public class SessionFactory
+{
 	/**
 	 * Private ctor as all access is through static methods.
 	 */
-	private SessionFactory() {
+	private SessionFactory()
+	{
 		super();
 	}
 
 	/**
 	 * Create a new session.
 	 *
-	 * @param   app		Application API.
-	 * @param   driver  JDBC driver for session.
-	 * @param   alias   Defines URL to database.
+	 * @param   app	Application API.
+	 * @param   driver	JDBC driver for session.
+	 * @param   alias	Defines URL to database.
 	 * @param   conn	Connection to database.
 	 *
 	 * @throws IllegalArgumentException if any parameter is null.
 	 */
-	public static ISession createSession(IApplication app, ISQLDriver driver, ISQLAlias alias,
-											SQLConnection conn) {
-		if (app == null) {
+	public static IClientSession createSession(IApplication app,
+									ISQLDriver driver, ISQLAlias alias,
+									SQLConnection conn)
+	{
+		if (app == null)
+		{
 			throw new IllegalArgumentException("null IApplication passed");
 		}
-		if (driver == null) {
+		if (driver == null)
+		{
 			throw new IllegalArgumentException("null ISQLDriver passed");
 		}
-		if (alias == null) {
+		if (alias == null)
+		{
 			throw new IllegalArgumentException("null ISQLAlias passed");
 		}
-		if (conn == null) {
+		if (conn == null)
+		{
 			throw new IllegalArgumentException("null SQLConnection passed");
 		}
 		return new Session(app, driver, alias, conn);

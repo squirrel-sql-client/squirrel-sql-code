@@ -23,31 +23,37 @@ import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.IClientSession;
 
-public class CommitAction extends SquirrelAction implements ISessionAction {
+public class CommitAction extends SquirrelAction implements IClientSessionAction
+{
+	private IClientSession _session;
 
-	private ISession _session;
-
-	public CommitAction(IApplication app) {
+	public CommitAction(IApplication app)
+	{
 		super(app);
 	}
 
-	public void setSession(ISession session) {
+	public void setClientSession(IClientSession session)
+	{
 		_session = session;
 	}
 
-	public void actionPerformed(ActionEvent evt) {
-		if (_session != null) {
-			CursorChanger cursorChg = new CursorChanger(getApplication().getMainFrame());
+	public void actionPerformed(ActionEvent evt)
+	{
+		if (_session != null)
+		{
+			CursorChanger cursorChg =
+				new CursorChanger(getApplication().getMainFrame());
 			cursorChg.show();
-			try {
+			try
+			{
 				_session.commit();
-			} finally {
+			}
+			finally
+			{
 				cursorChg.restore();
 			}
 		}
 	}
 }
-

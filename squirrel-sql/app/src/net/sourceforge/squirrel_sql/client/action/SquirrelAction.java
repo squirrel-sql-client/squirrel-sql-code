@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -22,30 +22,33 @@ import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 
-public abstract class SquirrelAction extends BaseAction {
+public abstract class SquirrelAction extends BaseAction
+{
 	private IApplication _app;
 
 	protected SquirrelAction(IApplication app)
-			throws IllegalArgumentException {
+	{
 		this(app, app.getResources());
 	}
 
 	protected SquirrelAction(IApplication app, Resources rsrc)
-			throws IllegalArgumentException {
+	{
 		super();
-		if (app == null) {
+		if (app == null)
+		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
-		if (rsrc == null) {
+		if (rsrc == null)
+		{
 			throw new IllegalArgumentException("No Resources object in IApplication");
 		}
-
 
 		_app = app;
 		rsrc.setupAction(this);
 	}
 
-	protected IApplication getApplication() {
+	protected IApplication getApplication()
+	{
 		return _app;
 	}
 }

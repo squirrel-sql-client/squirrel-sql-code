@@ -47,7 +47,7 @@ import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.ITable
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 
-class Session implements ISession
+class Session implements IClientSession
 {
 	private SessionSheet _sessionSheet;
 

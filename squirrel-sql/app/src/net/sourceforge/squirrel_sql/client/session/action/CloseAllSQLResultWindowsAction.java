@@ -23,6 +23,7 @@ import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.session.IClientSession;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 /**
@@ -31,16 +32,19 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class CloseAllSQLResultWindowsAction extends SquirrelAction implements ISessionAction {
+public class CloseAllSQLResultWindowsAction extends SquirrelAction
+												implements IClientSessionAction
+{
 	/** Current session. */
-	private ISession _session;
+	private IClientSession _session;
 
 	/**
 	 * Ctor.
 	 *
 	 * @param	app		Application API.
 	 */
-	public CloseAllSQLResultWindowsAction(IApplication app) {
+	public CloseAllSQLResultWindowsAction(IApplication app)
+	{
 		super(app);
 	}
 
@@ -49,7 +53,8 @@ public class CloseAllSQLResultWindowsAction extends SquirrelAction implements IS
 	 *
 	 * @param	session		The current session.
 	 */
-	public void setSession(ISession session) {
+	public void setClientSession(IClientSession session)
+	{
 		_session = session;
 	}
 
@@ -58,13 +63,17 @@ public class CloseAllSQLResultWindowsAction extends SquirrelAction implements IS
 	 *
 	 * @param	evt	The current event.
 	 */
-	public void actionPerformed(ActionEvent evt) {
+	public void actionPerformed(ActionEvent evt)
+	{
 		IApplication app = getApplication();
 		CursorChanger cursorChg = new CursorChanger(app.getMainFrame());
 		cursorChg.show();
-		try {
+		try
+		{
 			new CloseAllSQLResultWindowsCommand(_session).execute();
-		} finally {
+		}
+		finally
+		{
 			cursorChg.restore();
 		}
 	}

@@ -42,7 +42,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.NewSessionProperties
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewHelpAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewLogsAction;
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.IClientSession;
 import net.sourceforge.squirrel_sql.client.session.SessionSheet;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsAction;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultWindowsAction;
@@ -50,6 +50,7 @@ import net.sourceforge.squirrel_sql.client.session.action.CloseSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
 import net.sourceforge.squirrel_sql.client.session.action.DropTableAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.IClientSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeItemAction;
@@ -212,17 +213,21 @@ public final class ActionCollection
 	 */
 	public synchronized void internalFrameActivated(JInternalFrame frame)
 	{
-		ISession session = null;
+		IClientSession session = null;
 		if (frame instanceof SessionSheet)
 		{
-			session = ((SessionSheet) frame).getSession();
+			session = ((SessionSheet)frame).getSession();
 		}
 		for (Iterator it = actions(); it.hasNext();)
 		{
 			final Action act = (Action) it.next();
 			if (act instanceof ISessionAction)
 			{
-				((ISessionAction) act).setSession(session);
+				((ISessionAction)act).setSession(session);
+			}
+			if (act instanceof IClientSessionAction)
+			{
+				((IClientSessionAction)act).setClientSession(session);
 			}
 		}
 	}

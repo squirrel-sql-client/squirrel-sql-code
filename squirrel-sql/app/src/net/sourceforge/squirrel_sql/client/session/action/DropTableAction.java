@@ -24,6 +24,7 @@ import javax.swing.JOptionPane;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.session.IClientSession;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
@@ -35,10 +36,10 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
- * @version 	$Id: DropTableAction.java,v 1.4 2002-07-25 10:24:54 colbell Exp $
+ * @version 	$Id: DropTableAction.java,v 1.5 2002-08-02 21:36:05 colbell Exp $
  * @author		Johan Compagner
  */
-public class DropTableAction extends SquirrelAction implements ISessionAction
+public class DropTableAction extends SquirrelAction implements IClientSessionAction
 {
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(DropTableAction.class);
@@ -50,7 +51,7 @@ public class DropTableAction extends SquirrelAction implements ISessionAction
 	private static final String MSG = "Are you sure?";
 
 	/** Current session. */
-	private ISession _session;
+	private IClientSession _session;
 
 	/**
 	 * @param	app	Application API.
@@ -70,7 +71,6 @@ public class DropTableAction extends SquirrelAction implements ISessionAction
 		IDatabaseObjectInfo[] selected = _session.getSelectedDatabaseObjects();
 		if (selected != null && selected.length > 0)
 		{
-//			int option = JOptionPane.showInternalConfirmDialog(_session.getSessionSheet(),"Are you sure?","Dropping table(s)",JOptionPane.YES_NO_OPTION);
 			boolean ok = Dialogs.showYesNo(_session.getSessionSheet(), MSG, TITLE);
 			if (ok)
 			{
@@ -93,36 +93,11 @@ public class DropTableAction extends SquirrelAction implements ISessionAction
 					_session.getMessageHandler().showMessage(msg + ex.toString());
 					s_log.error(msg, ex);
 				}
-/*
- 				try
-				{
-					SQLConnection connection = _session.getSQLConnection();
-					Statement statement = connection.createStatement();
-					try {
-						for (int i = 0; i < selected.length; i++)
-						{
-							String name = selected[i].getQualifiedName();
-							_session.getMessageHandler().showMessage("dropping table " + name);
-							statement.executeUpdate("drop table " + name);
-						}
-					} finally {
-						statement.close();
-					}
-					_session.getSessionSheet().refreshTree();
-				} catch(Exception ex)
-				{
-					_session.getMessageHandler().showMessage("dropping table(s) failed: " + ex.getMessage());
-					s_log.error("Dropping table(s) failed",ex);
-				}
-*/
 			}
 		}
 	}
 
-	/*
-	 * @see ISessionAction#setSession(ISession)
-	 */
-	public void setSession(ISession session)
+	public void setClientSession(IClientSession session)
 	{
 		_session = session;
 	}

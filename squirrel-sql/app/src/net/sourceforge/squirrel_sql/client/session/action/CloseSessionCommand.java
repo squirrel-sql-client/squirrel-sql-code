@@ -19,7 +19,7 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.IClientSession;
 /**
  * This <CODE>ICommand</CODE> closes the specified session.
  *
@@ -28,7 +28,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 public class CloseSessionCommand implements ICommand
 {
 	/** Session to be closed. */
-	private ISession _session;
+	private IClientSession _session;
 
 	/**
 	 * Ctor.
@@ -38,9 +38,11 @@ public class CloseSessionCommand implements ICommand
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
 	 */
-	public CloseSessionCommand(ISession session) {
+	public CloseSessionCommand(IClientSession session)
+	{
 		super();
-		if (session == null) {
+		if (session == null)
+		{
 			throw new IllegalArgumentException("Null ISession passed");
 		}
 		_session = session;
@@ -49,9 +51,8 @@ public class CloseSessionCommand implements ICommand
 	/**
 	 * Display the Dialog
 	 */
-	public void execute() {
+	public void execute()
+	{
 		_session.close();
 	}
 }
-
-
