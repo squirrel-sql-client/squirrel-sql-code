@@ -95,12 +95,12 @@ public class RowDataInputFrame extends JInternalFrame
 		rowHeaderPanel.setLayout(new BorderLayout());
 		JTextArea r1 = new JTextArea("Data", 1, 10);
 		r1.setBackground(Color.lightGray);
-		r1.setBorder(BorderFactory.createLineBorder(Color.black);
+		r1.setBorder(BorderFactory.createLineBorder(Color.black));
 		r1.setEditable(false);
 		rowHeaderPanel.add(r1, BorderLayout.NORTH);
 		JTextArea r2 = new JTextArea("\nColumn\nDescription\n", 4, 10);
 		r2.setBackground(Color.lightGray);
-		r2.setBorder(BorderFactory.createLineBorder(Color.black);
+		r2.setBorder(BorderFactory.createLineBorder(Color.black));
 		r2.setEditable(false);
 		rowHeaderPanel.add(r2, BorderLayout.CENTER);
 		scrollPane.setRowHeaderView(rowHeaderPanel);
