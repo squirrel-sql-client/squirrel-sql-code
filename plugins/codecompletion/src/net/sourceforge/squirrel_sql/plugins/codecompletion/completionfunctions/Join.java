@@ -51,6 +51,11 @@ public class Join extends AbstractJoin
       ExtendedColumnInfo[] extCols1 = _session.getSchemaInfo().getExtendedColumnInfos(table1);
       ExtendedColumnInfo[] extCols2 = _session.getSchemaInfo().getExtendedColumnInfos(table2);
 
+      if(null == fkName)
+      {
+         return "INNER JOIN ";
+      }
+
       Vector colBufs = (Vector) colBuffersByFkName.get(fkName);
 
       for (int i = 0; i < colBufs.size(); i++)
