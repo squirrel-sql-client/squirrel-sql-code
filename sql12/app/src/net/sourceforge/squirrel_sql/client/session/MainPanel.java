@@ -32,6 +32,8 @@ import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.GotoNextResultsTabAction;
+import net.sourceforge.squirrel_sql.client.session.action.GotoPreviousResultsTabAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
 import net.sourceforge.squirrel_sql.client.session.action.ShowNativeSQLAction;
@@ -40,7 +42,11 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.ObjectTreeTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
-
+/**
+ * This tabbed panel is the main panel within the session window.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
 public class MainPanel extends SquirrelTabbedPane
 {
 	/**
@@ -122,6 +128,8 @@ public class MainPanel extends SquirrelTabbedPane
 		if (getSelectedIndex() == ITabIndexes.SQL_TAB)
 		{
 			actions.get(ExecuteSqlAction.class).setEnabled(true);
+			actions.get(GotoNextResultsTabAction.class).setEnabled(true);
+			actions.get(GotoPreviousResultsTabAction.class).setEnabled(true);
 			actions.get(ShowNativeSQLAction.class).setEnabled(true);
 			boolean isAutoCommit = _session.getProperties().getAutoCommit();
 			actions.get(CommitAction.class).setEnabled(!isAutoCommit);
@@ -131,18 +139,33 @@ public class MainPanel extends SquirrelTabbedPane
 		else
 		{
 			actions.get(ExecuteSqlAction.class).setEnabled(false);
+			actions.get(GotoNextResultsTabAction.class).setEnabled(false);
+			actions.get(GotoPreviousResultsTabAction.class).setEnabled(false);
 			actions.get(ShowNativeSQLAction.class).setEnabled(false);
 			actions.get(CommitAction.class).setEnabled(false);
 			actions.get(RollbackAction.class).setEnabled(false);
 			actions.get(RefreshObjectTreeAction.class).setEnabled(true);		}
 	}
 
+	/**
+	 * The passed session is closing so tell each tab.
+	 * 
+	 * @param	session		Session being closed.
+	 */
 	void sessionClosing(ISession session)
 	{
-		// TODO: ALlow for (and report) errors that occur in the plugins.
 		for (Iterator it = _tabs.iterator(); it.hasNext();)
 		{
-			((IMainPanelTab)it.next()).sessionClosing(session);
+			try
+			{
+				((IMainPanelTab)it.next()).sessionClosing(session);
+			}
+			catch (Throwable th)
+			{
+				String msg = "Error closing session";
+				_session.getApplication().showErrorDialog(msg, th);
+				s_log.error(msg, th);
+			}
 		}
 	}
 

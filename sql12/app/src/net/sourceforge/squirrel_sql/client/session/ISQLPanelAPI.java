@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session;
 /*
- * Copyright (C) 2002 Colin Bell and Johan Compagner
+ * Copyright (C) 2002-2003 Colin Bell and Johan Compagner
  * colbell@users.sourceforge.net
  * jcompagner@j-com.nl
  *
@@ -175,4 +175,14 @@ public interface ISQLPanelAPI
 	 * Close all the "torn off" SQL result frames.
 	 */
 	void closeAllSQLResultFrames();
+
+	/**
+	 * Display the next tab in the SQL results.
+	 */
+	void gotoNextResultsTab();
+
+	/**
+	 * Display the previous tab in the SQL results.
+	 */
+	void gotoPreviousResultsTab();
 }

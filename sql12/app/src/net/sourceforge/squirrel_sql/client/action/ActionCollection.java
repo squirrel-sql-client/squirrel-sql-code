@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.action;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -55,6 +55,8 @@ import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
 import net.sourceforge.squirrel_sql.client.session.action.DropSelectedTablesAction;
 import net.sourceforge.squirrel_sql.client.session.action.DumpSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.GotoNextResultsTabAction;
+import net.sourceforge.squirrel_sql.client.session.action.GotoPreviousResultsTabAction;
 import net.sourceforge.squirrel_sql.client.session.action.IClientSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.ReconnectAction;
@@ -64,7 +66,6 @@ import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
 import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
 import net.sourceforge.squirrel_sql.client.session.action.SetDefaultCatalogAction;
 import net.sourceforge.squirrel_sql.client.session.action.ShowNativeSQLAction;
-
 /**
  * This class represents a collection of <TT>Action</CODE> objects for the
  * application.
@@ -389,6 +390,8 @@ public final class ActionCollection
 		add(new ExecuteSqlAction(_app));
 		add(new ExitAction(_app));
 		add(new GlobalPreferencesAction(_app));
+		add(new GotoNextResultsTabAction(_app));
+		add(new GotoPreviousResultsTabAction(_app));
 		add(new InstallDefaultDriversAction(_app));
 		add(new MaximizeAction(_app));
 		add(new NewSessionPropertiesAction(_app));

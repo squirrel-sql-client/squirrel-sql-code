@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session;
 /*
- * Copyright (C) 2002 Colin Bell and Johan Compagner
+ * Copyright (C) 2002-2003 Colin Bell and Johan Compagner
  * colbell@users.sourceforge.net
  * jcompagner@j-com.nl
  *
@@ -21,7 +21,7 @@ package net.sourceforge.squirrel_sql.client.session;
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 /**
- *  * This class is the API through which plugins can work with the SQL Panel.
+ * This class is the API through which plugins can work with the SQL Panel.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
@@ -288,6 +288,22 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	public synchronized void closeAllSQLResultFrames()
 	{
 		_session.getSessionSheet().getSQLPanel().closeAllSQLResultFrames();
+	}
+
+	/**
+	 * Display the next tab in the SQL results.
+	 */
+	public synchronized void gotoNextResultsTab()
+	{
+		_session.getSessionSheet().getSQLPanel().gotoNextResultsTab();
+	}
+
+	/**
+	 * Display the previous tab in the SQL results.
+	 */
+	public synchronized void gotoPreviousResultsTab()
+	{
+		_session.getSessionSheet().getSQLPanel().gotoPreviousResultsTab();
 	}
 
 }

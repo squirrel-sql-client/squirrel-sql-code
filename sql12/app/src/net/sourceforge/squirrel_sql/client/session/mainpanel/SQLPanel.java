@@ -329,13 +329,11 @@ public class SQLPanel extends JPanel
 			RedoAction redo = new RedoAction(app, _undoManager);
 
 			_sqlEntry.getJComponent().registerKeyboardAction(
-				undo,
-				res.getKeyStroke(undo),
-				this.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+							undo, res.getKeyStroke(undo),
+							this.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 			_sqlEntry.getJComponent().registerKeyboardAction(
-				redo,
-				res.getKeyStroke(redo),
-				this.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+							redo, res.getKeyStroke(redo),
+							this.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 			_sqlEntry.setUndoActions(undo, redo);
 
 			_sqlEntry.addUndoableEditListener(_undoManager);
@@ -433,7 +431,40 @@ public class SQLPanel extends JPanel
 			_splitPane.setDividerLocation(0.2d);
 			_hasBeenVisible = true;
 		}
+	}
 
+	/**
+	 * Display the next tab in the SQL results.
+	 */
+	public void gotoNextResultsTab()
+	{
+		final int tabCount = _tabbedResultsPanel.getTabCount();
+		if (tabCount > 1)
+		{
+			int nextTabIdx = _tabbedResultsPanel.getSelectedIndex() + 1;
+			if (nextTabIdx >= tabCount)
+			{
+				nextTabIdx = 0;
+			}
+			_tabbedResultsPanel.setSelectedIndex(nextTabIdx);
+		}
+	}
+
+	/**
+	 * Display the previous tab in the SQL results.
+	 */
+	public void gotoPreviousResultsTab()
+	{
+		final int tabCount = _tabbedResultsPanel.getTabCount();
+		if (tabCount > 1)
+		{
+			int prevTabIdx = _tabbedResultsPanel.getSelectedIndex() - 1;
+			if (prevTabIdx < 0)
+			{
+				prevTabIdx = tabCount - 1;
+			}
+			_tabbedResultsPanel.setSelectedIndex(prevTabIdx);
+		}
 	}
 
 	protected void fireTabAddedEvent(ResultTab tab)
