@@ -230,17 +230,19 @@ public final class ActionCollection {
 	private void preloadActions() {
 		add(new AboutAction(_app));
 		add(new CascadeAction(_app));
+		add(new CloseAllSessionsAction(_app));
+		add(new CloseAllSQLResultTabsAction(_app));
+		add(new CloseAllSQLResultWindowsAction(_app));
 		add(new CommitAction(_app));
 		add(new DisplayPluginSummaryAction(_app));
 		add(new ExecuteSqlAction(_app));
 		add(new ExitAction(_app));
 		add(new GlobalPreferencesAction(_app));
 		add(new MaximizeAction(_app));
+		add(new NewSessionPropertiesAction(_app));
 		add(new RefreshTreeAction(_app));
 		add(new RollbackAction(_app));
 		add(new SessionPropertiesAction(_app));
 		add(new TileAction(_app));
-		add(new CloseAllSessionsAction(_app));
-
 	}
 }

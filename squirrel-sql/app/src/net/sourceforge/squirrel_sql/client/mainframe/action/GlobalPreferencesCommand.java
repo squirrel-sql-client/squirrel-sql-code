@@ -17,18 +17,42 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.event.ActionEvent;
+import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesDialog;
 
-public class GlobalPreferencesAction extends SquirrelAction {
+/**
+ * This <CODE>ICommand</CODE> displays the Global Preferences dialog..
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
+public class GlobalPreferencesCommand {
+	/** Application API. */
+	private IApplication _app;
 
-	public GlobalPreferencesAction(IApplication app) {
-		super(app);
+	/**
+	 * Ctor.
+	 *
+	 * @param	app		Application API.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> passed.
+	 */
+	public GlobalPreferencesCommand(IApplication app) {
+		super();
+		if (app == null) {
+			throw new IllegalArgumentException("Null IApplication passed");
+		}
+		_app = app;
 	}
 
-	public void actionPerformed(ActionEvent evt) {
-		new GlobalPreferencesCommand(getApplication()).execute();
+	/**
+	 * Display the Dialog
+	 */
+	public void execute() {
+		GlobalPreferencesDialog.showDialog(_app);
 	}
 }
+
+

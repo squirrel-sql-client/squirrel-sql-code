@@ -200,7 +200,6 @@ public class MainFrame extends BaseMDIParentFrame {
 
 	synchronized public boolean closeAllNonToolWindows() {
 		JInternalFrame[] frames = GUIUtils.getOpenNonToolWindows(getDesktopPane().getAllFrames());
-		s_log.debug("" + frames.length + " non-tool windows to be closed");
 		for (int i = 0; i < frames.length; ++i) {
 			frames[i].dispose();
 		}
@@ -209,7 +208,6 @@ public class MainFrame extends BaseMDIParentFrame {
 
 	private void closeAllToolWindows() {
 		JInternalFrame[] frames = GUIUtils.getOpenToolWindows(getDesktopPane().getAllFrames());
-		s_log.debug("" + frames.length + " tool windows to be closed");
 		for (int i = 0; i < frames.length; ++i) {
 			frames[i].dispose();
 		}
