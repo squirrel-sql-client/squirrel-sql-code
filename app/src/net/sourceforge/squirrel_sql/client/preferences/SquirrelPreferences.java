@@ -189,6 +189,7 @@ public class SquirrelPreferences implements Serializable
 		return _mainFrameState;
 	}
 
+	// TODO: Only set if changed
 	public synchronized void setMainFrameWindowState(MainFrameWindowState data)
 	{
 		final MainFrameWindowState oldValue = _mainFrameState;
@@ -204,10 +205,13 @@ public class SquirrelPreferences implements Serializable
 
 	public synchronized void setShowContentsWhenDragging(boolean data)
 	{
-		final boolean oldValue = _showContentsWhenDragging;
-		_showContentsWhenDragging = data;
-		getPropertyChangeReporter().firePropertyChange(IPropertyNames.SHOW_CONTENTS_WHEN_DRAGGING,
-											oldValue, _showContentsWhenDragging);
+		if (data != _showContentsWhenDragging)
+		{
+			final boolean oldValue = _showContentsWhenDragging;
+			_showContentsWhenDragging = data;
+			getPropertyChangeReporter().firePropertyChange(IPropertyNames.SHOW_CONTENTS_WHEN_DRAGGING,
+												oldValue, _showContentsWhenDragging);
+		}
 	}
 
 	public boolean getShowMainStatusBar()
@@ -217,10 +221,13 @@ public class SquirrelPreferences implements Serializable
 
 	public synchronized void setShowMainStatusBar(boolean data)
 	{
-		final boolean oldValue = _showMainStatusBar;
-		_showMainStatusBar = data;
-		getPropertyChangeReporter().firePropertyChange(IPropertyNames.SHOW_MAIN_STATUS_BAR,
+		if (data != _showMainStatusBar)
+		{
+			final boolean oldValue = _showMainStatusBar;
+			_showMainStatusBar = data;
+			getPropertyChangeReporter().firePropertyChange(IPropertyNames.SHOW_MAIN_STATUS_BAR,
 											oldValue, _showMainStatusBar);
+		}
 	}
 
 	public boolean getShowMainToolBar()
@@ -230,10 +237,13 @@ public class SquirrelPreferences implements Serializable
 
 	public synchronized void setShowMainToolBar(boolean data)
 	{
-		final boolean oldValue = _showMainToolBar;
-		_showMainToolBar = data;
-		getPropertyChangeReporter().firePropertyChange(IPropertyNames.SHOW_MAIN_TOOL_BAR,
-											oldValue, _showMainToolBar);
+		if (data != _showMainToolBar)
+		{
+			final boolean oldValue = _showMainToolBar;
+			_showMainToolBar = data;
+			getPropertyChangeReporter().firePropertyChange(IPropertyNames.SHOW_MAIN_TOOL_BAR,
+												oldValue, _showMainToolBar);
+		}
 	}
 
 	public boolean getShowAliasesToolBar()
@@ -243,10 +253,13 @@ public class SquirrelPreferences implements Serializable
 
 	public synchronized void setShowAliasesToolBar(boolean data)
 	{
-		final boolean oldValue = _showAliasesToolBar;
-		_showAliasesToolBar = data;
-		getPropertyChangeReporter().firePropertyChange(IPropertyNames.SHOW_ALIASES_TOOL_BAR,
-											oldValue, _showAliasesToolBar);
+		if (data != _showAliasesToolBar)
+		{
+			final boolean oldValue = _showAliasesToolBar;
+			_showAliasesToolBar = data;
+			getPropertyChangeReporter().firePropertyChange(IPropertyNames.SHOW_ALIASES_TOOL_BAR,
+												oldValue, _showAliasesToolBar);
+		}
 	}
 
 	public boolean getShowDriversToolBar()
@@ -256,10 +269,13 @@ public class SquirrelPreferences implements Serializable
 
 	public synchronized void setShowDriversToolBar(boolean data)
 	{
-		final boolean oldValue = _showDriversToolBar;
-		_showDriversToolBar = data;
-		getPropertyChangeReporter().firePropertyChange(IPropertyNames.SHOW_DRIVERS_TOOL_BAR,
-											oldValue, _showDriversToolBar);
+		if (data != _showDriversToolBar)
+		{
+			final boolean oldValue = _showDriversToolBar;
+			_showDriversToolBar = data;
+			getPropertyChangeReporter().firePropertyChange(IPropertyNames.SHOW_DRIVERS_TOOL_BAR,
+												oldValue, _showDriversToolBar);
+		}
 	}
 
 	public boolean getShowColoriconsInToolbar()
@@ -269,10 +285,13 @@ public class SquirrelPreferences implements Serializable
 
 	public synchronized void setShowColoriconsInToolbar(boolean data)
 	{
-		final boolean oldValue = _showColorIconsInToolbars;
-		_showColorIconsInToolbars = data;
-		getPropertyChangeReporter().firePropertyChange(IPropertyNames.SHOW_COLOR_ICONS_IN_TOOLBAR,
-											oldValue, _showColorIconsInToolbars);
+		if (data != _showColorIconsInToolbars)
+		{
+			final boolean oldValue = _showColorIconsInToolbars;
+			_showColorIconsInToolbars = data;
+			getPropertyChangeReporter().firePropertyChange(IPropertyNames.SHOW_COLOR_ICONS_IN_TOOLBAR,
+												oldValue, _showColorIconsInToolbars);
+		}
 	}
 
 	public int getLoginTimeout()
@@ -282,10 +301,13 @@ public class SquirrelPreferences implements Serializable
 
 	public synchronized void setLoginTimeout(int data)
 	{
-		final int oldValue = _loginTimeout;
-		_loginTimeout = data;
-		getPropertyChangeReporter().firePropertyChange(IPropertyNames.LOGIN_TIMEOUT,
-											oldValue, _loginTimeout);
+		if (data != _loginTimeout)
+		{
+			final int oldValue = _loginTimeout;
+			_loginTimeout = data;
+			getPropertyChangeReporter().firePropertyChange(IPropertyNames.LOGIN_TIMEOUT,
+												oldValue, _loginTimeout);
+		}
 	}
 
 	public int getJdbcDebugType()
@@ -300,11 +322,13 @@ public class SquirrelPreferences implements Serializable
 			throw new IllegalArgumentException("Invalid setDebugJdbcToStream of :" + data);
 		}
 
-		final int oldValue = _jdbcDebugType;
-		_jdbcDebugType = data;
-		getPropertyChangeReporter().firePropertyChange(
-				IPropertyNames.JDBC_DEBUG_TYPE, oldValue,
-				_jdbcDebugType);
+		if (data != _jdbcDebugType)
+		{
+			final int oldValue = _jdbcDebugType;
+			_jdbcDebugType = data;
+			getPropertyChangeReporter().firePropertyChange(
+					IPropertyNames.JDBC_DEBUG_TYPE, oldValue, _jdbcDebugType);
+		}
 	}
 
 	public boolean getShowToolTips()
@@ -314,10 +338,14 @@ public class SquirrelPreferences implements Serializable
 
 	public synchronized void setShowToolTips(boolean data)
 	{
-		final boolean oldValue = _showToolTips;
-		_showToolTips = data;
-		getPropertyChangeReporter().firePropertyChange(IPropertyNames.SHOW_TOOLTIPS,
+		if (data != _showToolTips)
+		{
+			final boolean oldValue = _showToolTips;
+			_showToolTips = data;
+			getPropertyChangeReporter().firePropertyChange(
+												IPropertyNames.SHOW_TOOLTIPS,
 												oldValue, _showToolTips);
+		}
 	}
 
 	public boolean useScrollableTabbedPanes()
@@ -327,10 +355,14 @@ public class SquirrelPreferences implements Serializable
 
 	public synchronized void setUseScrollableTabbedPanes(boolean data)
 	{
-		final boolean oldValue = _useScrollableTabbedPanes;
-		_useScrollableTabbedPanes = data;
-		getPropertyChangeReporter().firePropertyChange(IPropertyNames.SCROLLABLE_TABBED_PANES,
-											oldValue, _useScrollableTabbedPanes);
+		if (data != _useScrollableTabbedPanes)
+		{
+			final boolean oldValue = _useScrollableTabbedPanes;
+			_useScrollableTabbedPanes = data;
+			getPropertyChangeReporter().firePropertyChange(
+										IPropertyNames.SCROLLABLE_TABBED_PANES,
+										oldValue, _useScrollableTabbedPanes);
+		}
 	}
 
 	public boolean getMaximizeSessionSheetOnOpen()
@@ -340,10 +372,14 @@ public class SquirrelPreferences implements Serializable
 
 	public synchronized void setMaximizeSessionSheetOnOpen(boolean data)
 	{
-		final boolean oldValue = _maxSessionSheetOnOpen;
-		_maxSessionSheetOnOpen= data;
-		getPropertyChangeReporter().firePropertyChange(IPropertyNames.MAXIMIMIZE_SESSION_SHEET_ON_OPEN,
-											oldValue, _maxSessionSheetOnOpen);
+		if (data != _maxSessionSheetOnOpen)
+		{
+			final boolean oldValue = _maxSessionSheetOnOpen;
+			_maxSessionSheetOnOpen= data;
+			getPropertyChangeReporter().firePropertyChange(
+							IPropertyNames.MAXIMIMIZE_SESSION_SHEET_ON_OPEN,
+							oldValue, _maxSessionSheetOnOpen);
+		}
 	}
 
 	public ActionKeys[] getActionKeys()
@@ -356,6 +392,7 @@ public class SquirrelPreferences implements Serializable
 		return _actionsKeys[idx];
 	}
 
+	// TODO: Only set if changed? May not be practical.
 	public synchronized void setActionKeys(ActionKeys[] data)
 	{
 		final ActionKeys[] oldValue = _actionsKeys;
@@ -364,7 +401,9 @@ public class SquirrelPreferences implements Serializable
 											oldValue, _actionsKeys);
 	}
 
-	public void setActionKeys(int idx, ActionKeys value) {
+	// TODO: Only set if changed? May not be practical.
+	public void setActionKeys(int idx, ActionKeys value)
+	{
 		final ActionKeys[] oldValue = _actionsKeys;
 		_actionsKeys[idx] = value;
 		getPropertyChangeReporter().firePropertyChange(IPropertyNames.ACTION_KEYS,
@@ -382,6 +421,7 @@ public class SquirrelPreferences implements Serializable
 		return (ProxySettings)_proxySettings.clone();
 	}
 
+	// TODO: Only set if changed
 	public synchronized void setProxySettings(ProxySettings data)
 	{
 		if (data == null)
@@ -413,10 +453,14 @@ public class SquirrelPreferences implements Serializable
 	 */
 	public synchronized void setAliasesSelectedIndex(int idx)
 	{
-		final int oldValue = _aliasesSelectedIndex;
-		_aliasesSelectedIndex = idx;
-		getPropertyChangeReporter().firePropertyChange(IPropertyNames.ALIASES_SELECTED_INDEX,
-											oldValue, _aliasesSelectedIndex);
+		if (idx != _aliasesSelectedIndex)
+		{
+			final int oldValue = _aliasesSelectedIndex;
+			_aliasesSelectedIndex = idx;
+			getPropertyChangeReporter().firePropertyChange(
+										IPropertyNames.ALIASES_SELECTED_INDEX,
+										oldValue, _aliasesSelectedIndex);
+		}
 	}
 
 	/**
@@ -438,10 +482,14 @@ public class SquirrelPreferences implements Serializable
 	 */
 	public synchronized void setDriversSelectedIndex(int idx)
 	{
-		final int oldValue = _driversSelectedIndex;
-		_driversSelectedIndex = idx;
-		getPropertyChangeReporter().firePropertyChange(IPropertyNames.DRIVERS_SELECTED_INDEX,
-											oldValue, _driversSelectedIndex);
+		if (idx != _driversSelectedIndex)
+		{
+			final int oldValue = _driversSelectedIndex;
+			_driversSelectedIndex = idx;
+			getPropertyChangeReporter().firePropertyChange(
+										IPropertyNames.DRIVERS_SELECTED_INDEX,
+										oldValue, _driversSelectedIndex);
+		}
 	}
 
 	/**
@@ -461,10 +509,14 @@ public class SquirrelPreferences implements Serializable
 	 */
 	public synchronized void setShowLoadedDriversOnly(boolean data)
 	{
-		final boolean oldValue = _showLoadedDriversOnly;
-		_showLoadedDriversOnly = data;
-		getPropertyChangeReporter().firePropertyChange(IPropertyNames.SHOW_LOADED_DRIVERS_ONLY,
-											oldValue, _showLoadedDriversOnly);
+		if (data != _showLoadedDriversOnly)
+		{
+			final boolean oldValue = _showLoadedDriversOnly;
+			_showLoadedDriversOnly = data;
+			getPropertyChangeReporter().firePropertyChange(
+										IPropertyNames.SHOW_LOADED_DRIVERS_ONLY,
+										oldValue, _showLoadedDriversOnly);
+		}
 	}
 
 	/*
@@ -588,7 +640,7 @@ public class SquirrelPreferences implements Serializable
 	 */
 	public void doJdbcDebugToStream()
 	{
-		_jdbcDebugType = IJdbcDebugTypes.TO_STREAM;
+		setJdbcDebugType(IJdbcDebugTypes.TO_STREAM);
 	}
 
 	/**
@@ -596,7 +648,7 @@ public class SquirrelPreferences implements Serializable
 	 */
 	public void doJdbcDebugToWriter()
 	{
-		_jdbcDebugType = IJdbcDebugTypes.TO_WRITER;
+		setJdbcDebugType(IJdbcDebugTypes.TO_WRITER);
 	}
 
 	/**
@@ -604,7 +656,7 @@ public class SquirrelPreferences implements Serializable
 	 */
 	public void dontDoJdbcDebug()
 	{
-		_jdbcDebugType = IJdbcDebugTypes.NONE;
+		setJdbcDebugType(IJdbcDebugTypes.NONE);
 	}
 
 	public static SquirrelPreferences load()
