@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client.session.objectstree;
  */
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -98,6 +99,83 @@ public class BaseNode extends DefaultMutableTreeNode {
     {
     	fireExpanded();
     }
+    
+    public List refresh()
+    {
+    	if(children != null && children.size() > 0)
+    	{
+			TreeNodesLoader loader = getTreeNodesLoader();
+			if(loader != null)
+			{
+	    		Vector childTmp = (Vector)children.clone();
+	    		children.clear();
+	    		ObjectsTreeModel model = getTreeModel();
+//	    		model.removeNodeFromParent()
+				
+				loadNode(this,loader);
+				List l = checkChildren(childTmp,children);
+				model.fireTreeLoaded();
+				model.nodeStructureChanged(this);
+				return l;
+			}
+    	}
+    	return null;
+    }
+    
+    private static List checkChildren(Vector oldChilds, Vector newChilds)
+    {
+    	ArrayList al = new ArrayList();
+		if(oldChilds != null && newChilds != null && newChilds.size() > 0)
+		{
+			for(int i=0;i<oldChilds.size();i++)
+			{
+				Object o = oldChilds.get(i);
+				if(o instanceof BaseNode)
+				{
+					BaseNode node = (BaseNode)o;
+					if(node.children != null && node.children.size() > 0)
+					{
+						int index = newChilds.indexOf(node);
+						if(index != -1)
+						{
+							BaseNode current = (BaseNode)newChilds.get(index);
+							al.add(current);
+							loadNode(current,current.getTreeNodesLoader());
+							al.addAll(checkChildren(node.children,current.children));
+						}
+					}
+				}
+			}
+		}   
+		return al; 	
+    }
+    
+    private static void loadNode(BaseNode node, TreeNodesLoader loader)
+    {
+    	if(loader == null || node == null) return;
+		ISession session = node.getSession();
+		ObjectsTreeModel model = node.getTreeModel();
+		SQLConnection conn = session.getSQLConnection();
+		
+		try
+		{
+			List nodes = loader.getNodeList(session, conn,model);
+			for(int i=0;i<nodes.size();i++)
+			{
+				model.insertNodeInto((MutableTreeNode)nodes.get(i), node, node.getChildCount());
+			}
+		} catch(Exception e)
+		{
+			s_log.error("error refreshing children",e);
+		}
+    }
+    /*
+     * should be overriden 
+     */
+    protected TreeNodesLoader getTreeNodesLoader()
+    {
+    	return null;
+    }
 
     public JComponent getDetailsPanel() {
         return s_emptyPnl;
@@ -123,13 +201,28 @@ public class BaseNode extends DefaultMutableTreeNode {
         	return dmtn;
 	}
     
+    /**
+     * Default implementation of equals 
+     * It's equals of given object instanceof BaseNode and userobject is the same.
+     */
+    public boolean equals(Object o)
+    {
+    	if(o instanceof BaseNode)
+    	{
+    		Object o1 = getUserObject();
+    		Object o2 = ((BaseNode)o).getUserObject();
+    		return ( (o1 == null && o2 == null) ||
+    					((o1 != null && o2 != null) && o1.equals(o2)) );
+    	}
+    	return false;
+    }
+
 	protected abstract class TreeNodesLoader implements Runnable
 	{
 		private MutableTreeNode _loading;
 
 		TreeNodesLoader(MutableTreeNode loading)
 		{
-			if(loading == null) throw new IllegalArgumentException("loading node is null");
 			_loading = loading;
 		}
 		
@@ -147,7 +240,7 @@ public class BaseNode extends DefaultMutableTreeNode {
 					{
 						// Maybe this shouldn't be adding nodes one by one but just setting
 						// the childarray at onces, Then only one fire in the model has to be processed.
-						model.removeNodeFromParent(_loading);
+						if(_loading != null) model.removeNodeFromParent(_loading);
 						for (int i=0;i<nodes.size();i++)
 						{
 							model.insertNodeInto((MutableTreeNode)nodes.get(i), BaseNode.this, getChildCount());

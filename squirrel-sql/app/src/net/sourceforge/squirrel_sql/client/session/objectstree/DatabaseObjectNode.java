@@ -55,4 +55,14 @@ public class DatabaseObjectNode extends BaseNode implements IDatabaseObjectInfo 
         }
         return objInfo.getSimpleName();
     }
+    
+    public boolean equals(Object obj)
+    {
+    	if(obj instanceof DatabaseObjectNode)
+    	{
+    		return ((DatabaseObjectNode)obj)._objInfo.equals(_objInfo);
+    	}
+    	return false;
+    }
+    	
 }
