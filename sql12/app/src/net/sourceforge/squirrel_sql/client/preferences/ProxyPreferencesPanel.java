@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.preferences;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -28,6 +28,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
@@ -116,7 +117,7 @@ class ProxyPreferencesPanel implements IGlobalPreferencesPanel
 		private JTextField _httpProxyPort = new JTextField();
 		private JTextField _httpNonProxyHosts = new JTextField();
 		private JTextField _httpProxyUser = new JTextField();
-		private JTextField _httpProxyPassword = new JTextField();
+		private JPasswordField _httpProxyPassword = new JPasswordField();
 		private JCheckBox _socksUseProxyChk = new JCheckBox(i18n.USE_SOCKS_PROXY);
 		private JTextField _socksProxyServer = new JTextField();
 		private JTextField _socksProxyPort = new JTextField();
@@ -154,7 +155,9 @@ class ProxyPreferencesPanel implements IGlobalPreferencesPanel
 			proxySettings.setHttpProxyPort(_httpProxyPort.getText());
 			proxySettings.setHttpNonProxyHosts(_httpNonProxyHosts.getText());
 			proxySettings.setHttpProxyUser(_httpProxyUser.getText());
-			proxySettings.setHttpProxyPassword(_httpProxyPassword.getText());
+
+			String password = new String(_httpProxyPassword.getPassword());
+			proxySettings.setHttpProxyPassword(password);
 
 			proxySettings.setSocksUseProxy(_socksUseProxyChk.isSelected());
 			proxySettings.setSocksProxyServer(_socksProxyServer.getText());

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.sql;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -30,7 +30,13 @@ import java.util.Properties;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
+/**
+ * This class replaces the standard Java class <TT>java.ql.DriverManager</TT>.
+ * The main reason for replacing it is that <TT>java.ql.DriverManager</TT>
+ * won't handle JDBC driver classes that were loaded by a custom classloader.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
 public class SQLDriverManager
 {
 	private static final ILogger s_log =

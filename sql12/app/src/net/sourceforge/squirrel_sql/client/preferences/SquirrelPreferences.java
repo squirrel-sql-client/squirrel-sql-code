@@ -318,7 +318,7 @@ public class SquirrelPreferences implements Serializable
 	}
 
 	/**
-	 * Retrieve the proxy settings. Noet that this method returns a clone
+	 * Retrieve the proxy settings. Note that this method returns a clone
 	 * of the actual proxy settings used.
 	 * 
 	 * @return	<TT>ProxySettings</TT> object.

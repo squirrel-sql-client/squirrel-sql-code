@@ -118,4 +118,15 @@ public class BaseException extends Exception
 		}
 		return rtn;
 	}
+
+	/**
+	 * Retrieve the exception that this one is wrapped around. This can be
+	 * <TT>null</TT>.
+	 * 
+	 * @return	The wrapped exception or <TT>null</TT>.
+	 */
+	public Throwable getWrappedThrowable()
+	{
+		return _wrapee;
+	}
 }

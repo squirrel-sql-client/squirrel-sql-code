@@ -6,6 +6,7 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Show chained SQL exceptions in error dialog.
 - Add "Copy" menu options to the popup menu in
   the object tree.
 - Add the MySQL driver to the default list of
@@ -52,6 +53,8 @@ Enhancements
 
 Bug Fixes
 ---------
+- Hided password contents on Proxy settings
+  panel.
 - Put correct default port in the MM MySQL
   driver (Dennis Lundberg).
 - Allow for drivers that return null for getTableTypes().
@@ -67,7 +70,7 @@ Bug Fixes
   
 Other
 -----
-- Cleanup handling of the SQL evtry area.
+- Cleanup handling of the SQL entry area.
 - No longer print error message in the log
   if a JDBC driver isn't available.
 
