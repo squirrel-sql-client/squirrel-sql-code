@@ -46,7 +46,6 @@ import javax.swing.event.EventListenerList;
 import javax.swing.undo.UndoManager;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
@@ -92,8 +91,6 @@ public class SQLPanel extends JPanel {
 
 	private SqlComboItemListener _sqlComboItemListener = new SqlComboItemListener();
 	private MyPropertiesListener _propsListener;
-
-	private DataSetViewer _viewer = new DataSetViewer();
 
 	/** Each tab is a <TT>ResultTab</TT> showing the results of a query. */
 	private SquirrelTabbedPane _tabbedResultsPanel;

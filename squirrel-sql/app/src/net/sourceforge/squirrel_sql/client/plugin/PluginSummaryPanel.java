@@ -21,27 +21,23 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfoArrayDataSet;
 
-public class PluginSummaryPanel extends DataSetViewerTablePanel {
-private DataSetViewerTablePanel _table;
+public class PluginSummaryPanel extends DataSetViewerTablePanel 
+{
 
-public PluginSummaryPanel(PluginInfo[] pluginInfo)
+	public PluginSummaryPanel(PluginInfo[] pluginInfo)
 			throws DataSetException, IllegalArgumentException {
 		super();
 		if (pluginInfo == null) {
 			throw new IllegalArgumentException("Null Pluginnfo[] passed");
 		}
 
-//		_table = new DataSetViewerTablePanel();
-		DataSetViewer viewer = new DataSetViewer(this);
-		viewer.show(new PluginInfoArrayDataSet(pluginInfo));
+		show(new PluginInfoArrayDataSet(pluginInfo));
 
-//		add(new JScrollPane(_table));
 	}
 }
 

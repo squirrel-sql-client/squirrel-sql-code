@@ -34,19 +34,19 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.SwingConstants;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.BaseDataSetViewerDestination;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetListModel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetModelJTableModel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetModel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetModelConverter;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewerDestination;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
+import net.sourceforge.squirrel_sql.fw.gui.ButtonTableHeader;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
+import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
@@ -72,20 +72,11 @@ public class ResultTab extends JPanel implements IHasIdentifier {
 	/** SQL that generated this tab. */
 	private String _sql;
 
-	/** Viewer to display the SQL results. */
-	private DataSetViewer _resultSetViewer = new DataSetViewer();
-
-	/** Viewer to display the SQL results metadata. */
-	private DataSetViewer _metaDataViewer = new DataSetViewer();
-
-	/** Data model for the SQL results. */
-	private IDataSetModel _resultSetModel = new DataSetListModel();//?? Use a factory.
-
 	/** Panel displaying the SQL results. */
-	private Component _resultSetOutput;
+	private IDataSetViewer _resultSetOutput;
 
 	/** Panel displaying the SQL results meta data. */
-	private IDataSetViewerDestination _metaDataOutput;
+	private IDataSetViewer _metaDataOutput;
 
 	/** Scroll pane for <TT>_resultSetOutput</TT>. */
 	private JScrollPane _resultSetSp = new JScrollPane();
@@ -153,14 +144,13 @@ public class ResultTab extends JPanel implements IHasIdentifier {
 		_currentSqlLbl.setText(Utilities.cleanString(sql));
 
 		// Display the result set.
-		_resultSetViewer.setDestination(_resultSetModel);
-		_resultSetViewer.show(rsds);
+		_resultSetOutput.show(rsds, null);
 		
 		// Display the result set metadata.
-		_metaDataViewer.show(mdds, null); // Why null??
+		_metaDataOutput.show(mdds, null); // Why null??
 
 		// And the query info.
-		_queryInfoPanel.load(rsds, sql, _resultSetModel.getRowCount());
+		_queryInfoPanel.load(rsds, sql, _metaDataOutput.getRowCount());
 	}
 
 	/**
@@ -170,7 +160,10 @@ public class ResultTab extends JPanel implements IHasIdentifier {
 		if (_metaDataOutput != null) {
 			_metaDataOutput.clear();
 		}
-		_resultSetModel.clear();
+		if (_resultSetOutput != null)
+		{
+			_resultSetOutput.clear();
+		}
 		_sql = "";
 		_currentSqlLbl.setText("");
 	}
@@ -202,17 +195,6 @@ public class ResultTab extends JPanel implements IHasIdentifier {
 			return title;
 		}
 		return title.substring(0, 15);
-	}
-
-	/**
-	 * Return the data model for the results of the executed
-	 * SQL statement.
-	 * 
-	 * @return	the data model for the results of the executed
-	 * 			SQL statement.
-	 */
-	public IDataSetModel getResultSetDataModel() {
-		return _resultSetModel;
 	}
 
 	private class MyPropertiesListener implements PropertyChangeListener {
@@ -260,84 +242,21 @@ public class ResultTab extends JPanel implements IHasIdentifier {
 
 	private void propertiesHaveChanged(String propertyName) {
 		final SessionProperties props = _session.getProperties();
-/*
-		if (propertyName == null || propertyName.equals(
-				SessionProperties.IPropertyNames.SQL_OUTPUT_CLASS_NAME)) {
-//			final IDataSetViewerDestination previous = _resultSetOutput;
-			try {
-				Class destClass = Class.forName(props.getSqlOutputClassName());
-				if (IDataSetViewerDestination.class.isAssignableFrom(destClass) &&
-						Component.class.isAssignableFrom(destClass)) {
-					_resultSetOutput = (IDataSetViewerDestination)destClass.newInstance();
-				}
 
-			} catch (Exception ex) {
-				logger.showMessage(Logger.ILogTypes.ERROR, ex.getMessage());
-			}
-			if (_resultSetOutput == null) {
-				_resultSetOutput = new DataSetViewerTablePanel();
-			}
-			_resultSetViewer.setDestination(_resultSetOutput);
+		if (propertyName == null || 
+			propertyName.equals(SessionProperties.IPropertyNames.SQL_OUTPUT_RESULTSET_CLASS_NAME)) 
+		{
+			_resultSetOutput = BaseDataSetViewerDestination.getInstance(props.getSqlOutputResultSetClassName());
+			_resultSetSp.setViewportView(_resultSetOutput.getComponent());
 			_resultSetSp.setRowHeader(null);
-			_resultSetSp.setViewportView((Component)_resultSetOutput);
-		}
-*/
-		if (propertyName == null || propertyName.equals(
-				SessionProperties.IPropertyNames.SQL_OUTPUT_CONVERTER_CLASS_NAME)) {
-			IDataSetViewerDestination dest = null;
-//			try {
-//				Class convClass = Class.forName(props.getSqlOutputConverterClassName());
-//				if (IDataSetModelConverter.class.isAssignableFrom(convClass)) {
-//					conv = (IDataSetModelConverter)convClass.newInstance();
-//				}
-//			} catch (Exception ex) {
-//				logger.showMessage(Logger.ILogTypes.ERROR, ex.getMessage());
-//			}
-			try {
-				dest = _resultSetViewer.setDestination(props.getSqlOutputConverterClassName());
-			} catch (Exception ex) {
-				s_log.error("Error", ex);
-			}
-			IDataSetModelConverter conv = null;
-			if (dest == null || !IDataSetModelConverter.class.isAssignableFrom(dest.getClass())) {
-				conv = new DataSetModelJTableModel();
-			} else {
-				conv = (IDataSetModelConverter)dest;
-			}
-			conv.setDataSetModel(_resultSetModel);
-			_resultSetOutput = conv.getComponent();
-			_resultSetViewer.setDestination(_resultSetModel);
-			_resultSetSp.setRowHeader(null);
-			_resultSetSp.setViewportView(_resultSetOutput);
 		}
 
-
-		if (propertyName == null || propertyName.equals(
-				SessionProperties.IPropertyNames.SQL_OUTPUT_META_DATA_CLASS_NAME)) {
-/*
-			try {
-				Class destClass = Class.forName(props.getSqlOutputMetaDataClassName());
-				if (IDataSetViewerDestination.class.isAssignableFrom(destClass) &&
-						Component.class.isAssignableFrom(destClass)) {
-					_metaDataOutput = (IDataSetViewerDestination)destClass.newInstance();
-				}
-
-			} catch (Exception ex) {
-				logger.showMessage(Logger.ILogTypes.ERROR, ex.getMessage());
-			}
-			if (_metaDataOutput == null) {
-				_metaDataOutput = new DataSetViewerTablePanel();
-			}
-*/
-			try {
-				_metaDataViewer.setDestination(props.getSqlOutputMetaDataClassName());
-			} catch (Exception ex) {
-				s_log.error("error", ex);
-				_metaDataOutput = new DataSetViewerTablePanel();
-			}
-//			_metaDataViewer.setDestination(_metaDataOutput);
+		if (propertyName == null || 
+			propertyName.equals(SessionProperties.IPropertyNames.SQL_OUTPUT_META_DATA_CLASS_NAME)) 
+		{
+			_metaDataOutput = BaseDataSetViewerDestination.getInstance(props.getSqlOutputMetaDataClassName());
+			_metaDataSp.setViewportView(_metaDataOutput.getComponent());
 			_metaDataSp.setRowHeader(null);
-			_metaDataSp.setViewportView(_metaDataViewer.getDestinationComponent());
 		}
 
 	}

@@ -24,10 +24,11 @@ import java.sql.SQLException;
 import javax.swing.JScrollPane;
 
 import javax.swing.SwingUtilities;
+
+import net.sourceforge.squirrel_sql.fw.datasetviewer.BaseDataSetViewerDestination;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewerDestination;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -39,7 +40,7 @@ public class ResultSetPanel extends JScrollPane {
 	private static ILogger s_log = LoggerController.createLogger(ResultSetPanel.class);
 
 	private boolean _fullyCreated = false;
-	private DataSetViewer _viewer;
+	private IDataSetViewer _viewer;
 
 	public void load(final ISession session, final ResultSet rs, final int[] cols,
 						final String destClassName) 
@@ -80,19 +81,18 @@ public class ResultSetPanel extends JScrollPane {
 	{
 		if(_viewer != null)
 		{
-			_viewer.clearDestination();
+			_viewer.clear();
 		}
 	}
 	private void createUserInterface(ISession session, String destClassName) 
 		throws DataSetException
 	{
-		_viewer = new DataSetViewer();
-		_viewer.setDestination(destClassName);
+		_viewer = BaseDataSetViewerDestination.getInstance(destClassName);
 		Runnable run = new Runnable()
 		{
 			public void run()
 			{
-				setViewportView(_viewer.getDestinationComponent());
+				setViewportView(_viewer.getComponent());
 			}
 		};
 		SwingUtilities.invokeLater(run);

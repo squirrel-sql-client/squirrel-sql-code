@@ -47,7 +47,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.HashtableDataSet;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -291,9 +290,8 @@ public class AboutBoxDialog extends JDialog {
 			super();
 			setLayout(new BorderLayout());
 			DataSetViewerTablePanel propsPnl = new DataSetViewerTablePanel();
-			DataSetViewer viewer = new DataSetViewer(propsPnl);
 			try {
-				viewer.show(new HashtableDataSet(System.getProperties()));
+				propsPnl.show(new HashtableDataSet(System.getProperties()));
 			} catch (DataSetException ex) {
 				s_log.error("Error occured displaying System Properties", ex);
 			}
