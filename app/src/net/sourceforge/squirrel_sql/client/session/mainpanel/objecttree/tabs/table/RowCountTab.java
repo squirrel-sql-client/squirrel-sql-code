@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -75,9 +75,16 @@ public class RowCountTab extends BaseTableTab
 			{
 				final ResultSet rs = stmt.executeQuery("select count(*) from "
 												+ getTableInfo().getQualifiedName());
-				final ResultSetDataSet rsds = new ResultSetDataSet();
-				rsds.setResultSet(rs, getSession().getProperties().getLargeResultSetObjectInfo());
-				return rsds;
+				try
+				{
+					final ResultSetDataSet rsds = new ResultSetDataSet();
+					rsds.setResultSet(rs, getSession().getProperties().getLargeResultSetObjectInfo());
+					return rsds;
+				}
+				finally
+				{
+					rs.close();
+				}
 			}
 			finally
 			{

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -105,9 +105,18 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 		show(ds, null);
 	}
 
+	/**
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>IDataSet</TT> passed.
+	 */
 	public synchronized void show(IDataSet ds, IMessageHandler msgHandler)
 		throws DataSetException
 	{
+		if (ds == null)
+		{
+			throw new IllegalArgumentException("IDataSet == null");
+		}
+
 		clear();
 		setColumnDefinitions(ds.getDataSetDefinition().getColumnDefinitions());
 		final int colCount = ds.getColumnCount();

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -70,9 +70,16 @@ public class IndexesTab extends BaseTableTab
 		try
 		{
 			final ResultSet rs = conn.getSQLMetaData().getIndexInfo(getTableInfo());
-			final ResultSetDataSet rsds = new ResultSetDataSet();
- 			rsds.setResultSet(rs, getSession().getProperties().getLargeResultSetObjectInfo(), new int[] {5, 6, 8, 9, 10, 4, 7, 11, 12, 13 }, true);
-			return rsds;
+			try
+			{
+				final ResultSetDataSet rsds = new ResultSetDataSet();
+	 			rsds.setResultSet(rs, getSession().getProperties().getLargeResultSetObjectInfo(), new int[] {5, 6, 8, 9, 10, 4, 7, 11, 12, 13 }, true);
+				return rsds;
+			}
+			finally
+			{
+				rs.close();
+			}
 		}
 		catch (SQLException ex)
 		{

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -70,9 +70,16 @@ public class RowIDTab extends BaseTableTab
 		try
 		{
 			final ResultSet rs = conn.getSQLMetaData().getBestRowIdentifier(getTableInfo());
-			final ResultSetDataSet rsds = new ResultSetDataSet();
-			rsds.setResultSet(rs, getSession().getProperties().getLargeResultSetObjectInfo());
-			return rsds;
+			try
+			{
+				final ResultSetDataSet rsds = new ResultSetDataSet();
+				rsds.setResultSet(rs, getSession().getProperties().getLargeResultSetObjectInfo());
+				return rsds;
+			}
+			finally
+			{
+				rs.close();
+			}
 		}
 		catch (SQLException ex)
 		{

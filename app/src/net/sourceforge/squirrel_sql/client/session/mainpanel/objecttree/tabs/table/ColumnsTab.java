@@ -70,9 +70,16 @@ public class ColumnsTab extends BaseTableTab
 		try
 		{
 			final ResultSet rs = conn.getSQLMetaData().getColumns(getTableInfo());
-			final ResultSetDataSet rsds = new ResultSetDataSet();
- 			rsds.setResultSet(rs, getSession().getProperties().getLargeResultSetObjectInfo(), new int[] { 4, 6, 7, 9, 18, 13, 12, 5, 8, 10, 11, 14, 15, 16, 17 }, true);
-			return rsds;
+			try
+			{
+				final ResultSetDataSet rsds = new ResultSetDataSet();
+ 				rsds.setResultSet(rs, getSession().getProperties().getLargeResultSetObjectInfo(), new int[] { 4, 6, 7, 9, 18, 13, 12, 5, 8, 10, 11, 14, 15, 16, 17 }, true);
+				return rsds;
+			}
+			finally
+			{
+				rs.close();
+			}
 		}
 		catch (SQLException ex)
 		{

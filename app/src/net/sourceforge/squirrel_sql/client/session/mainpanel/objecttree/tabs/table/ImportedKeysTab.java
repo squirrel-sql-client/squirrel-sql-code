@@ -17,12 +17,12 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.ta
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.JavabeanArrayDataSet;
-import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 /**
@@ -73,8 +73,17 @@ public class ImportedKeysTab extends BaseTableTab
 		try
 		{
 			final ITableInfo ti = getTableInfo();
-			final ForeignKeyInfo[] fki = conn.getSQLMetaData().getImportedKeysInfo(ti);
-			return new JavabeanArrayDataSet(fki);
+			final ResultSet rs = conn.getSQLMetaData().getExportedKeys(ti);
+			try
+			{
+				final ResultSetDataSet rsds = new ResultSetDataSet();
+ 				rsds.setResultSet(rs, getSession().getProperties().getLargeResultSetObjectInfo(), new int[] { 1,2,3,4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}, true);
+				return rsds;
+			}
+			finally
+			{
+				rs.close();
+			}
 		}
 		catch (SQLException ex)
 		{
