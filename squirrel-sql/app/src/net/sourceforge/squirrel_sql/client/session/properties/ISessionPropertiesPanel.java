@@ -20,6 +20,6 @@ package net.sourceforge.squirrel_sql.client.session.properties;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.util.IOptionPanel;
 
-public interface ISessionSheetPropertiesPanel extends IOptionPanel {
-    void initialize(IApplication app, SessionSheetProperties props);
+public interface ISessionPropertiesPanel extends IOptionPanel {
+    void initialize(IApplication app, SessionProperties props);
 }
