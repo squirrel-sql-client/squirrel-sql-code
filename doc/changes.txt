@@ -9,6 +9,9 @@ Enhancements
 
 Bug Fixes
 ---------
+- If the columns in a table were resequenced and then the data was copied to
+  the clipboard then the column headings in the clipboard were in the wrong
+  order (Joseph Boyd).
 - Entries in the catalogs dropdown are now sorted.
 
 

@@ -14,6 +14,9 @@
 					<li><a href="#faq1">SQuirreL doesn't work with JDK1.2</a></li>
 					<li><a href="#faq2">I get a &quot;Segmentation fault&quot; on Linux</a></li>
 					<li><a href="#faq3">I get a &quot;Login has timed out&quot; error with Microsoft SQL Server</a></li>
+					<li><a href="#faq3_1">I get a &quot;Can't start a cloned
+						connection while in manual transaction mode&quot; error
+						with Microsoft SQL Server</a></li>
 					<li><a href="#faq4">I don't see an object tree with PostgreSQL</a></li>
 					<li><a href="#faq5">I get a &quot;NullPointerException&quot; at <TT>BaseSQLEntryPanel.java:23</TT></a></li>
 				</ul>
@@ -123,6 +126,16 @@
 			error when trying to connect. Go to the General Tab in the Global Preferences dialog and
 			change the SQL Login Timeout to 0.</p>
 			
+			<p><A HREF="#top">Top</A><HR SIZE=1></HR></p>
+
+			<h1 class="question"><A NAME="faq3_1">I get a &quot;Can't start a
+					cloned connection while in manual transaction mode&quot;
+					error with Microsoft SQL Server</A></h1> <p
+			class="answer">When connecting to Microsoft SQL Server with
+			auto-commit off or changing auto-commit to false for an existing
+			connection you may get this error. To stop it from occuring enable
+			the 'selectmethod=cursor' driver property in the alias.</p>
+
 			<p><A HREF="#top">Top</A><HR SIZE=1></HR></P>
 
 			<h1 class="question"><A NAME="faq4">I don't see an object tree with PostgreSQL</A></h1>
