@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.db;
+package net.sourceforge.squirrel_sql.client.gui.db;
 /*
  * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
@@ -77,11 +77,11 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 /**
- * This dialog allows the maintenance of an database alias.
+ * This internal frame allows the maintenance of an database alias.
  *
  * @author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class AliasMaintSheet extends BaseInternalFrame
+public class AliasInternalFrame extends BaseInternalFrame
 {
 	/**
 	 * Maintenance types.
@@ -99,14 +99,14 @@ public class AliasMaintSheet extends BaseInternalFrame
 	}
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(AliasMaintSheet.class);
+		StringManagerFactory.getStringManager(AliasInternalFrame.class);
 
 	/** Number of characters to show in text fields. */
 	private static final int COLUMN_COUNT = 25;
 
 	/** Logger for this class. */
 	private static final ILogger s_log =
-		LoggerController.createLogger(AliasMaintSheet.class);
+		LoggerController.createLogger(AliasInternalFrame.class);
 
 	/** Application API. */
 	private final IApplication _app;
@@ -142,16 +142,16 @@ public class AliasMaintSheet extends BaseInternalFrame
 	private final JPasswordField _password = new JPasswordField();
 
 	/** Autologon checkbox. */
-	private final JCheckBox _autoLogonChk = new JCheckBox(s_stringMgr.getString("AliasMaintSheet.autologon"));
+	private final JCheckBox _autoLogonChk = new JCheckBox(s_stringMgr.getString("AliasInternalFrame.autologon"));
 
 	/** Connect at startup checkbox. */
-	private final JCheckBox _connectAtStartupChk = new JCheckBox(s_stringMgr.getString("AliasMaintSheet.connectatstartup"));
+	private final JCheckBox _connectAtStartupChk = new JCheckBox(s_stringMgr.getString("AliasInternalFrame.connectatstartup"));
 
 	/** If checked use the extended driver properties. */
-	private final JCheckBox _useDriverPropsChk = new JCheckBox(s_stringMgr.getString("AliasMaintSheet.userdriverprops"));
+	private final JCheckBox _useDriverPropsChk = new JCheckBox(s_stringMgr.getString("AliasInternalFrame.userdriverprops"));
 
 	/** Button that brings up the driver properties dialog. */
-	private final JButton _driverPropsBtn = new JButton(s_stringMgr.getString("AliasMaintSheet.props"));
+	private final JButton _driverPropsBtn = new JButton(s_stringMgr.getString("AliasInternalFrame.props"));
 
 	/** Collection of the driver properties. */
 	private SQLDriverPropertyCollection _sqlDriverProps;
@@ -168,7 +168,7 @@ public class AliasMaintSheet extends BaseInternalFrame
 	 * 			<TT>ISQLAlias</TT> or an invalid value passed for
 	 *			<TT>maintType</TT>.
 	 */
-	AliasMaintSheet(IApplication app, ISQLAlias sqlAlias, int maintType)
+	AliasInternalFrame(IApplication app, ISQLAlias sqlAlias, int maintType)
 	{
 		super("", true);
 		if (app == null)
@@ -298,7 +298,7 @@ public class AliasMaintSheet extends BaseInternalFrame
 		ISQLDriver driver = _drivers.getSelectedDriver();
 		if (driver == null)
 		{
-			throw new ValidationException(s_stringMgr.getString("AliasMaintSheet.error.nodriver"));
+			throw new ValidationException(s_stringMgr.getString("AliasInternalFrame.error.nodriver"));
 		}
 		alias.setName(_aliasName.getText().trim());
 		alias.setDriverIdentifier(_drivers.getSelectedDriver().getIdentifier());
@@ -317,7 +317,7 @@ public class AliasMaintSheet extends BaseInternalFrame
 
 	private void showNewDriverDialog()
 	{
-		DriverMaintSheetFactory.getInstance().showCreateSheet();
+		_app.getWindowManager().showNewDriverInternalFrame();
 	}
 
 	private void showDriverPropertiesDialog()
@@ -328,13 +328,13 @@ public class AliasMaintSheet extends BaseInternalFrame
 			final ISQLDriver driver = _drivers.getSelectedDriver();
 			if (driver == null)
 			{
-				throw new BaseException(s_stringMgr.getString("AliasMaintSheet.error.noprops"));
+				throw new BaseException(s_stringMgr.getString("AliasInternalFrame.error.noprops"));
 			}
 			final SQLDriverManager mgr = _app.getSQLDriverManager();
 			final Driver jdbcDriver = mgr.getJDBCDriver(driver.getIdentifier());
 			if (jdbcDriver == null)
 			{
-				throw new BaseException(s_stringMgr.getString("AliasMaintSheet.error.cannotloaddriver"));
+				throw new BaseException(s_stringMgr.getString("AliasInternalFrame.error.cannotloaddriver"));
 			}
 
 			DriverPropertyInfo[] infoAr = jdbcDriver.getPropertyInfo(_url.getText(), new Properties());
@@ -357,15 +357,15 @@ public class AliasMaintSheet extends BaseInternalFrame
 		// This is a tool window.
 		GUIUtils.makeToolWindow(this, true);
 
-		String winTitle;
+		String winTitle; 
 		if (_maintType == IMaintenanceType.MODIFY)
 		{
-			winTitle = s_stringMgr.getString("AliasMaintSheet.changealias",
+			winTitle = s_stringMgr.getString("AliasInternalFrame.changealias",
 											_sqlAlias.getName());
 		}
 		else
 		{
-			winTitle = s_stringMgr.getString("AliasMaintSheet.addalias");
+			winTitle = s_stringMgr.getString("AliasInternalFrame.addalias");
 		}
 		setTitle(winTitle);
 
@@ -452,7 +452,7 @@ public class AliasMaintSheet extends BaseInternalFrame
 
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		pnl.add(new JLabel(s_stringMgr.getString("AliasMaintSheet.name"), SwingConstants.RIGHT), gbc);
+		pnl.add(new JLabel(s_stringMgr.getString("AliasInternalFrame.name"), SwingConstants.RIGHT), gbc);
 
 		++gbc.gridx;
 		pnl.add(_aliasName, gbc);
@@ -463,7 +463,7 @@ public class AliasMaintSheet extends BaseInternalFrame
 		final Box driverPnl = Box.createHorizontalBox();
 		driverPnl.add(_drivers);
 		driverPnl.add(Box.createHorizontalStrut(5));
-		JButton newDriverBtn = new JButton(s_stringMgr.getString("AliasMaintSheet.new"));
+		JButton newDriverBtn = new JButton(s_stringMgr.getString("AliasInternalFrame.new"));
 		newDriverBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
@@ -475,28 +475,28 @@ public class AliasMaintSheet extends BaseInternalFrame
 
 		gbc.gridx = 0;
 		++gbc.gridy;
-		pnl.add(new JLabel(s_stringMgr.getString("AliasMaintSheet.driver"), SwingConstants.RIGHT), gbc);
+		pnl.add(new JLabel(s_stringMgr.getString("AliasInternalFrame.driver"), SwingConstants.RIGHT), gbc);
 
 		++gbc.gridx;
 		pnl.add(driverPnl, gbc);
 
 		gbc.gridx = 0;
 		++gbc.gridy;
-		pnl.add(new JLabel(s_stringMgr.getString("AliasMaintSheet.url"), SwingConstants.RIGHT), gbc);
+		pnl.add(new JLabel(s_stringMgr.getString("AliasInternalFrame.url"), SwingConstants.RIGHT), gbc);
 
 		++gbc.gridx;
 		pnl.add(_url, gbc);
 
 		gbc.gridx = 0;
 		++gbc.gridy;
-		pnl.add(new JLabel(s_stringMgr.getString("AliasMaintSheet.username"), SwingConstants.RIGHT), gbc);
+		pnl.add(new JLabel(s_stringMgr.getString("AliasInternalFrame.username"), SwingConstants.RIGHT), gbc);
 
 		++gbc.gridx;
 		pnl.add(_userName, gbc);
 
 		gbc.gridx = 0;
 		++gbc.gridy;
-		pnl.add(new JLabel(s_stringMgr.getString("AliasMaintSheet.password"), SwingConstants.RIGHT), gbc);
+		pnl.add(new JLabel(s_stringMgr.getString("AliasInternalFrame.password"), SwingConstants.RIGHT), gbc);
 
 		++gbc.gridx;
 		pnl.add(_password, gbc);
@@ -519,7 +519,7 @@ public class AliasMaintSheet extends BaseInternalFrame
 
 		gbc.gridx = 0;
 		++gbc.gridy;
-		pnl.add(new JLabel(s_stringMgr.getString("AliasMaintSheet.cleartext")), gbc);
+		pnl.add(new JLabel(s_stringMgr.getString("AliasInternalFrame.cleartext")), gbc);
 
 		return pnl;
 	}
@@ -528,7 +528,7 @@ public class AliasMaintSheet extends BaseInternalFrame
 	{
 		JPanel pnl = new JPanel();
 
-		JButton okBtn = new JButton(s_stringMgr.getString("AliasMaintSheet.ok"));
+		JButton okBtn = new JButton(s_stringMgr.getString("AliasInternalFrame.ok"));
 		okBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
@@ -536,7 +536,7 @@ public class AliasMaintSheet extends BaseInternalFrame
 				performOk();
 			}
 		});
-		JButton closeBtn = new JButton(s_stringMgr.getString("AliasMaintSheet.close"));
+		JButton closeBtn = new JButton(s_stringMgr.getString("AliasInternalFrame.close"));
 		closeBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
@@ -545,7 +545,7 @@ public class AliasMaintSheet extends BaseInternalFrame
 			}
 		});
 
-		JButton testBtn = new JButton(s_stringMgr.getString("AliasMaintSheet.test"));
+		JButton testBtn = new JButton(s_stringMgr.getString("AliasInternalFrame.test"));
 		testBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
@@ -604,7 +604,7 @@ public class AliasMaintSheet extends BaseInternalFrame
 			setRenderer(new DriverListCellRenderer(res.getIcon("list.driver.found"),
 											res.getIcon("list.driver.notfound")));
 			List list = new ArrayList();
-			for (Iterator it = AliasMaintSheet.this._app.getDataCache().drivers();
+			for (Iterator it = AliasInternalFrame.this._app.getDataCache().drivers();
 					it.hasNext();)
 			{
 				ISQLDriver sqlDriver = ((ISQLDriver) it.next());
@@ -657,11 +657,11 @@ public class AliasMaintSheet extends BaseInternalFrame
 			}
 			catch (Throwable th)
 			{
-				String msg = s_stringMgr.getString("AliasMaintSheet.error.errorclosingconn");
+				String msg = s_stringMgr.getString("AliasInternalFrame.error.errorclosingconn");
 				s_log.error(msg, th);
 				_app.showErrorDialog(msg + ": " + th.toString());
 			}
-			Dialogs.showOk(AliasMaintSheet.this, s_stringMgr.getString("AliasMaintSheet.connsuccess"));
+			Dialogs.showOk(AliasInternalFrame.this, s_stringMgr.getString("AliasInternalFrame.connsuccess"));
 		}
 
 		/**

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -72,8 +72,8 @@ public class CopyDriverAction extends SquirrelAction
 	 */
 	public void actionPerformed(ActionEvent evt)
 	{
-		IApplication app = getApplication();
-		DriversToolWindow tw = app.getMainFrame().getDriversToolWindow();
+		final IApplication app = getApplication();
+		final DriversToolWindow tw = app.getMainFrame().getDriversToolWindow();
 		tw.moveToFront();
 		try
 		{
@@ -86,7 +86,7 @@ public class CopyDriverAction extends SquirrelAction
 		ISQLDriver driver = _drivers.getSelectedDriver();
 		if (driver != null)
 		{
-			new CopyDriverCommand(driver).execute();
+			new CopyDriverCommand(app, driver).execute();
 		}
 	}
 }

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -85,7 +85,7 @@ public class CopyAliasAction extends SquirrelAction
 		ISQLAlias alias = _aliases.getSelectedAlias();
 		if (alias != null)
 		{
-			new CopyAliasCommand(alias).execute();
+			new CopyAliasCommand(getApplication(), alias).execute();
 		}
 	}
 }

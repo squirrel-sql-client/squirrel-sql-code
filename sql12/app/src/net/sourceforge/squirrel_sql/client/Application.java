@@ -61,8 +61,6 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.db.AliasMaintSheetFactory;
-import net.sourceforge.squirrel_sql.client.db.DriverMaintSheetFactory;
 import net.sourceforge.squirrel_sql.client.gui.FileViewerFactory;
 import net.sourceforge.squirrel_sql.client.gui.SplashScreen;
 import net.sourceforge.squirrel_sql.client.gui.WindowManager;
@@ -552,8 +550,8 @@ class Application implements IApplication
 			});
 
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.uifactoryinit"));
-		AliasMaintSheetFactory.initialize(this);
-		DriverMaintSheetFactory.initialize(this);
+//		AliasMaintSheetFactory.initialize(this);
+//		DriverMaintSheetFactory.initialize(this);
 		UIFactory.initialize(_prefs);
 
 		final boolean loadPlugins = args.getLoadPlugins();

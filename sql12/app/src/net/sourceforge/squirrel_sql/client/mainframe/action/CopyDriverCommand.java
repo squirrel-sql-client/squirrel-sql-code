@@ -20,7 +20,7 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
-import net.sourceforge.squirrel_sql.client.db.DriverMaintSheetFactory;
+import net.sourceforge.squirrel_sql.client.IApplication;
 /**
  * This <CODE>ICommand</CODE> allows the user to copy an existing
  * <TT>ISQLDriver</TT> to a new one and then maintain the new one.
@@ -29,31 +29,40 @@ import net.sourceforge.squirrel_sql.client.db.DriverMaintSheetFactory;
  */
 public class CopyDriverCommand implements ICommand
 {
+	/** Application API. */
+	private final IApplication _app;
+
 	/** <TT>ISQLDriver</TT> to be copied. */
 	private final ISQLDriver _sqlDriver;
 
 	/**
 	 * Ctor.
 	 *
+	 * @param	app			Application API.
 	 * @param	sqlDriver	<TT>ISQLDriver</TT> to be copied.
 	 *
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ISQLDriver</TT> passed.
 	 */
-	public CopyDriverCommand(ISQLDriver sqlDriver)
+	public CopyDriverCommand(IApplication app, ISQLDriver sqlDriver)
 		throws IllegalArgumentException
 	{
 		super();
+		if (app == null)
+		{
+			throw new IllegalArgumentException("IApplication == null");
+		}
 		if (sqlDriver == null)
 		{
-			throw new IllegalArgumentException("Null ISQLDriver passed");
+			throw new IllegalArgumentException("ISQLDriver == null");
 		}
 
+		_app = app;
 		_sqlDriver = sqlDriver;
 	}
 
 	public void execute()
 	{
-		DriverMaintSheetFactory.getInstance().showCopySheet(_sqlDriver);
+		_app.getWindowManager().showCopyDriverInternalFrame(_sqlDriver);
 	}
 }

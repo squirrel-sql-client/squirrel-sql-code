@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -28,7 +28,6 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.mainframe.AliasesList;
 import net.sourceforge.squirrel_sql.client.mainframe.AliasesToolWindow;
-
 /**
  * This <CODE>Action</CODE> allows the user to maintain an <TT>ISQLAlias</TT>.
  *
@@ -87,7 +86,7 @@ public class ModifyAliasAction extends SquirrelAction
 		final ISQLAlias alias = _aliases.getSelectedAlias();
 		if (alias != null)
 		{
-			new ModifyAliasCommand(alias).execute();
+			new ModifyAliasCommand(getApplication(), alias).execute();
 		}
 	}
 }
