@@ -485,36 +485,6 @@ public class ResultSetReader
 							row[i] = s_stringMgr.getString("ResultSetReader.blob");
 						}
 						break;
-
-					case Types.CLOB:
-						if (_largeObjInfo.getReadClobs())
-						{
-							row[i] = null;
-							Clob clob = _rs.getClob(idx);
-							if (clob != null)
-							{
-								int len = (int)clob.length();
-								if (len > 0)
-								{
-									int charsToRead = len;
-									if (!_largeObjInfo.getReadCompleteClobs())
-									{
-										charsToRead = _largeObjInfo.getReadClobsSize();
-									}
-									if (charsToRead > len)
-									{
-										charsToRead = len;
-									}
-									row[i] = clob.getSubString(1, charsToRead);
-								}
-							}
-						}
-						else
-						{
-							row[i] = s_stringMgr.getString("ResultSetReader.clob");
-						}
-						break;
-						
 						
 						
 
@@ -556,6 +526,8 @@ public class ResultSetReader
 					case Types.BINARY:
 					case Types.VARBINARY:
 					case Types.LONGVARBINARY:
+					
+					case Types.CLOB:
 					
 					
 					case Types.OTHER:
