@@ -3,11 +3,14 @@ Change Log
 
 1.1 continuation
 ================
+- Dialogs have been cleaned up.
+- Apache log4j is used for the logging subsystem.
+- JDBC debug can be specified in the global preferences.
 - New application argument allows you to override the user settings
   directory. E.G. -settingsdir=c:\my-squirrel-settings
 - Stored proc column information now available.
 - Connection window is now modeless.
-- SQL execution and object tree expansion now runs in a separate thread so
+- SQL execution and object tree expansion now run in a separate thread so
   that the user interface is still responsive (Johan Compagner).
 - Row count is now available on the Info tab for a table.
 - Meta data is available for the results of SQL execution.
