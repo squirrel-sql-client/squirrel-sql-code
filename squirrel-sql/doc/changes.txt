@@ -6,6 +6,7 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Errors are now displayed in the sessions message panel in red (Victor Ott).
 - Rewrite of the object tree code.
 - Show both schemas and catalogs in the object tree for databases that
   support both.
@@ -32,6 +33,7 @@ Bug Fixes
 
 Plugin API
 ----------
+- Add ability to load jars in a plugins lib directory.
 - Move APIs from ISession to their own classes.
 - Add API to add nodes to the object tree.
 - Add API to add tabs to the object tree details panel.
