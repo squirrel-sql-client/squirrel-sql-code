@@ -34,11 +34,12 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 /**
+ * TODO: Move all code other than for window creation up to AliasWindowManager
  * Factory to handle creation of maintenance sheets for SQL Driver objects.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class DriverWindowFactory implements AliasInternalFrame.IMaintenanceType
+class DriverWindowFactory implements AliasInternalFrame.IMaintenanceType
 {
 	/** Logger for this class. */
 	private static ILogger s_log =
@@ -48,13 +49,19 @@ public class DriverWindowFactory implements AliasInternalFrame.IMaintenanceType
 	private IApplication _app;
 
 	/**
-	 * Collection of <TT>DriverMaintDialog</TT> that are currently visible modifying
-	 * an existing driver. Keyed by <TT>ISQLDriver.getIdentifier()</TT>.
+	 * Collection of <TT>DriverMaintDialog</TT> that are currently visible
+	 * modifying an existing driver. Keyed by
+	 * <TT>ISQLDriver.getIdentifier()</TT>.
 	 */
 	private final Map _modifySheets = new HashMap();
 
 	/**
 	 * ctor.
+	 *
+	 * @param	app		Application API.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if <tt>null</tt> <tt>IApplication</tt> passed.
 	 */
 	public DriverWindowFactory(IApplication app)
 	{
@@ -68,9 +75,8 @@ public class DriverWindowFactory implements AliasInternalFrame.IMaintenanceType
 	}
 
 	/**
-	 * Get a maintenance sheet for the passed driver. If a maintenance sheet already
-	 * exists it will be brought to the front. If one doesn't exist it will be
-	 * created.
+	 * Get a maintenance sheet for the passed driver. If one
+	 * already exists it will be returned, otherwise one will be created.
 	 *
 	 * @param	driver	The driver that user has requested to modify.
 	 *
@@ -78,7 +84,7 @@ public class DriverWindowFactory implements AliasInternalFrame.IMaintenanceType
 	 *
 	 * @throws	IllegalArgumentException	if a <TT>null</TT> <TT>ISQLDriver</TT> passed.
 	 */
-	public synchronized DriverInternalFrame showModifySheet(ISQLDriver driver)
+	public synchronized DriverInternalFrame getModifySheet(ISQLDriver driver)
 	{
 		if (driver == null)
 		{
@@ -114,7 +120,7 @@ public class DriverWindowFactory implements AliasInternalFrame.IMaintenanceType
 	 *
 	 * @return	The new maintenance sheet.
 	 */
-	public DriverInternalFrame showCreateSheet()
+	public DriverInternalFrame getCreateSheet()
 	{
 		final DataCache cache = _app.getDataCache();
 		final IIdentifierFactory factory = IdentifierFactory.getInstance();
