@@ -78,7 +78,6 @@ public class ImportedKeysTab extends BaseTableTab
 			{
 				final ResultSetDataSet rsds = new ResultSetDataSet();
  				rsds.setResultSet(rs, null, true);
-// 				rsds.setResultSet(rs, getSession().getProperties().getLargeResultSetObjectInfo(), new int[] { 1,2,3,4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}, true);
 				return rsds;
 			}
 			finally

@@ -26,7 +26,6 @@ import javax.swing.SwingConstants;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerEditableTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
@@ -167,7 +166,6 @@ public class SessionProperties implements Cloneable, Serializable
 	 */
 	private int _objectTabPlacement = SwingConstants.TOP;
 
-	private LargeResultSetObjectInfo _largeObjectInfo = new LargeResultSetObjectInfo();
 
 	/**
 	 * Placement of tabs displayed for SQL execution.
@@ -207,10 +205,7 @@ public class SessionProperties implements Cloneable, Serializable
 			{
 				props.setFontInfo((FontInfo)_fi.clone());
 			}
-			if (_largeObjectInfo != null)
-			{
-				props.setLargeResultSetObjectInfo((LargeResultSetObjectInfo)_largeObjectInfo.clone());
-			}
+
 
 			return props;
 		}
@@ -593,19 +588,6 @@ public class SessionProperties implements Cloneable, Serializable
 		}
 	}
 
-	public LargeResultSetObjectInfo getLargeResultSetObjectInfo()
-	{
-		return _largeObjectInfo;
-	}
-
-	public void setLargeResultSetObjectInfo(LargeResultSetObjectInfo data)
-	{
-		final LargeResultSetObjectInfo oldValue = _largeObjectInfo;
-		_largeObjectInfo = data;
-		getPropertyChangeReporter().firePropertyChange(
-			IPropertyNames.LARGE_RESULT_SET_OBJECT_INFO,
-			oldValue, _largeObjectInfo);
-	}
 
 	public boolean getLimitSQLEntryHistorySize()
 	{

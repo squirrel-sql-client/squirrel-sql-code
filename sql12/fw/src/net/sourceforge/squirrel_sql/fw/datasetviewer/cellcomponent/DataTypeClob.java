@@ -221,7 +221,7 @@ public class DataTypeClob
 	 * normal table operations.
 	 * It is called only when the user enters the cell, either to examine
 	 * or to edit the data.
-	 * The user may have set the LargeResultSetObjectInfo parameters to
+	 * The user may have set the DataType properties to
 	 * minimize the data read during the initial table load (to speed it up),
 	 * but when they enter this cell we would like to show them the entire
 	 * contents of the CLOB.
