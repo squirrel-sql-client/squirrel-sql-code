@@ -83,7 +83,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 	 */
 	public String getVersion()
 	{
-		return "0.10";
+		return "0.11";
 	}
 
 	/**
@@ -181,7 +181,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 				_treeAPI = session.getObjectTreeAPI(this);
 
 				// Tabs to add to the database node.
-				_treeAPI.addDetailTab(DatabaseObjectType.DATABASE, new OptionsTab());
+				_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new OptionsTab());
 
 				_treeAPI.addDetailTab(IObjectTypes.CONSUMER_GROUP, new DatabaseObjectInfoTab());
 				_treeAPI.addDetailTab(DatabaseObjectType.FUNCTION, new DatabaseObjectInfoTab());
@@ -193,7 +193,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 				_treeAPI.addDetailTab(IObjectTypes.TYPE, new DatabaseObjectInfoTab());
 
 				// Expanders.
-				_treeAPI.addExpander(DatabaseObjectType.DATABASE, new DatabaseExpander());
+				_treeAPI.addExpander(DatabaseObjectType.SESSION, new DatabaseExpander());
 				_treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander(this));
 				_treeAPI.addExpander(DatabaseObjectType.TABLE, new TableExpander(this));
 				_treeAPI.addExpander(IObjectTypes.PACKAGE, new PackageExpander());
@@ -223,7 +223,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 		String dbms = null;
 		try
 		{
-			dbms = session.getSQLConnection().getMetaData().getDatabaseProductName();
+			dbms = session.getSQLConnection().getSQLMetaData().getDatabaseProductName();
 		}
 		catch (SQLException ex)
 		{
