@@ -348,8 +348,6 @@ public class SquirrelPreferences implements Serializable {
         try {
             XMLBeanWriter wtr = new XMLBeanWriter(this);
             wtr.save(ApplicationFiles.USER_PREFS_FILE_NAME);
-        } catch (FileNotFoundException ex) {
-            // ?? Report to user. could be readonly etc.
         } catch(Exception ex) {
             Logger logger = _app.getLogger();
             logger.showMessage(Logger.ILogTypes.ERROR, "Error occured writing to preferences file: "
