@@ -56,6 +56,7 @@ import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
+import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
 import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
@@ -189,7 +190,11 @@ public class SessionSheet extends BaseSheet
 		_mainTabPane.getSQLPanel().installSQLEntryPanel(pnl);
 	}
 
-	ObjectTreePanel getObjectTreePanel()
+	/*
+	 * TODO: This should not be public. Check all usages of it
+	 * and put appropriate methods in an API object.
+	 */
+	public ObjectTreePanel getObjectTreePanel()
 	{
 		return _mainTabPane.getObjectTreePanel();
 	}
@@ -468,6 +473,9 @@ public class SessionSheet extends BaseSheet
 			actions.get(ExecuteSqlAction.class).setEnabled(false);
 			actions.get(CommitAction.class).setEnabled(false);
 			actions.get(RollbackAction.class).setEnabled(false);
+			addSeparator();
+			add(actions.get(SQLFilterAction.class));
+			actions.get(SQLFilterAction.class).setEnabled(false);
 		}
 
 		private void setupCatalogsCombo()

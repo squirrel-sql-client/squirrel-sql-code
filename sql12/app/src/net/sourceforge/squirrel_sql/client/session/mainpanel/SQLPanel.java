@@ -1014,8 +1014,8 @@ public class SQLPanel extends JPanel
 						{
 							_sqlEntry.appendText("\n\n");
 						}
-						_sqlEntry.appendText(item.getSQL());
-						_sqlEntry.setCaretPosition(_sqlEntry.getText().length());
+						_sqlEntry.appendText(item.getSQL(), true);
+//						_sqlEntry.setCaretPosition(_sqlEntry.getText().length() - 1);
 						_sqlEntry.requestFocus();
 					}
 				}

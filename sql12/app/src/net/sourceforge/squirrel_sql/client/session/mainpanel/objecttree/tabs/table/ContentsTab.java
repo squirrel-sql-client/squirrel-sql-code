@@ -35,6 +35,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.client.session.sqlfilter.OrderByClausePanel;
+import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterClauses;
+import net.sourceforge.squirrel_sql.client.session.sqlfilter.WhereClausePanel;
 /**
  * This is the tab showing the contents (data) of the table.
  *
@@ -43,6 +46,8 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 public class ContentsTab extends BaseTableTab
 	implements IDataSetUpdateableTableModel
 {
+	public static String TITLE = i18n.TITLE;
+
 	/**
 	 * Name of the table that this tab displayed last time it was loaded.
 	 * This is needed to prevent an on-demand edit operation from turning
@@ -113,6 +118,7 @@ public class ContentsTab extends BaseTableTab
 	{
 		final ISession session = getSession();
 		final SQLConnection conn = session.getSQLConnection();
+		final SQLFilterClauses sqlFilterClauses = session.getSQLFilterClauses();
 
 		try
 		{
@@ -235,6 +241,18 @@ public class ContentsTab extends BaseTableTab
 						.append(" from ")
 						.append(ti.getQualifiedName())
 						.append(" tbl");
+
+					String clause = sqlFilterClauses.get(WhereClausePanel.getClauseIdentifier(), ti.getQualifiedName());
+					if ((clause != null) && (clause.length() > 0))
+					{
+					  buf.append(" where ").append(clause);
+					}
+					clause = sqlFilterClauses.get(OrderByClausePanel.getClauseIdentifier(), ti.getQualifiedName());
+					if ((clause != null) && (clause.length() > 0))
+					{
+					  buf.append(" order by ").append(clause);
+					}
+
 					rs = stmt.executeQuery(buf.toString());
 				}
 				catch (SQLException ex)
@@ -263,6 +281,18 @@ public class ContentsTab extends BaseTableTab
 						.append(" from ")
 						.append(ti.getQualifiedName())
 						.append(" tbl");
+
+					String clause = sqlFilterClauses.get(WhereClausePanel.getClauseIdentifier(), ti.getQualifiedName());
+					if ((clause != null) && (clause.length() > 0))
+					{
+					  buf.append(" where ").append(clause);
+					}
+					clause = sqlFilterClauses.get(OrderByClausePanel.getClauseIdentifier(), ti.getQualifiedName());
+					if ((clause != null) && (clause.length() > 0))
+					{
+					  buf.append(" order by ").append(clause);
+					}
+
 					rs = stmt.executeQuery(buf.toString());
 				}
 

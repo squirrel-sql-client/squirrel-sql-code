@@ -206,6 +206,8 @@ public class OsterSQLEntryPanel extends BaseSQLEntryPanel
 
 	public void setCaretPosition(int value)
 	{
+System.out.println(value);
+System.out.println(getText().length());
 		_textArea.setCaretPosition(value);
 	}
 

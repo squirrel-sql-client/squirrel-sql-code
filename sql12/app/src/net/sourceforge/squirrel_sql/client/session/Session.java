@@ -42,7 +42,9 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.OpenConnectionComman
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.event.ISessionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterClauses;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 /**
  * Think of a session as being the users view of the database. IE it includes
@@ -78,6 +80,8 @@ class Session implements IClientSession
 
 	/** Properties for this session. */
 	private SessionProperties _props;
+
+	private SQLFilterClauses _sqlFilterClauses;
 
 	/**
 	 * Objects stored in session. Each entry is a <TT>Map</TT>
@@ -147,6 +151,7 @@ class Session implements IClientSession
 		_password = password;
 
 		_props = (SessionProperties)_app.getSquirrelPreferences().getSessionProperties().clone();
+		_sqlFilterClauses = new SQLFilterClauses();
 
 		// Create the API objects that give access to various
 		// areas of the session.
@@ -393,6 +398,11 @@ class Session implements IClientSession
 		return _sessionSheet.getSQLEntryPanel();
 	}
 
+	public ObjectTreePanel getObjectTreePanel()
+	{
+		return _sessionSheet.getObjectTreePanel();
+	}
+
 	public synchronized void closeSQLConnection() throws SQLException
 	{
 		if (_conn != null)
@@ -505,6 +515,11 @@ class Session implements IClientSession
 	public void addMainTab(IMainPanelTab tab)
 	{
 		_sessionSheet.addMainTab(tab);
+	}
+
+	public SQLFilterClauses getSQLFilterClauses()
+	{
+		return _sqlFilterClauses;
 	}
 
 	/**
