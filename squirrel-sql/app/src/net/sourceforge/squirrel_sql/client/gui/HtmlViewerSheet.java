@@ -22,6 +22,9 @@ import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -111,7 +114,8 @@ public class HtmlViewerSheet extends BaseSheet
 		cursorChg.show();
 		try
 		{
-			_contentsTxt.setText("");
+// Causes NPE in JDK 1.3.1
+//			_contentsTxt.setText("");
 			try
 			{
 				_contentsTxt.setPage(url);
@@ -120,11 +124,12 @@ public class HtmlViewerSheet extends BaseSheet
 			}
 			catch (IOException ex)
 			{
-				final String msg = "Error occured reading from reader";
+				final String msg = "Error occured reading from URL";
 				s_log.error(msg, ex);
 				throw(ex);
 			}
-		} finally {
+		} finally
+		{
 			cursorChg.restore();
 		}
 	}

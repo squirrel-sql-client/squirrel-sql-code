@@ -26,7 +26,6 @@ import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -66,7 +65,7 @@ public class ViewLogsSheet extends BaseSheet
 	}
 
 	/** Logger for this class. */
-	private static ILogger s_log =
+	private static final ILogger s_log =
 		LoggerController.createLogger(ViewLogsSheet.class);
 
 	/** Singleton instance of this class. */
