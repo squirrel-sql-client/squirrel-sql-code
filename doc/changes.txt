@@ -6,6 +6,8 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Add "Get Last SQL" button to SQL entry area.
+- Show tooltip in sql history combo when combo collapsed.
 - You can now filter the schemas displayed in the object tree (Keith
   Mashinter).
 - Show the position of the caret from the SQL entry area caret in a new label
@@ -16,6 +18,7 @@ Enhancements
 
 Bug Fixes
 --------
+- Fixed NullPointerException thrown by the Syntax plugin.
 - The title from the wrong column was used in the popup window for a columns
   data if the columns in the table had been resequenced (Joseph Boyd).
 - Allow for SQLException thrown by HSQLDB 1.7.1 on ResultSetmetaData.isSigned.
@@ -26,9 +29,12 @@ Bug Fixes
 
 Other
 -----
+- Add StringManager class to allow strings to be stored in property
+  files rather than hardcoded. Once this is used throughout the
+  application it will mean that SQuirreL can be internationalized.
 - Add jGoodies Forms library for building GUIs.
 - Use Apache CLI library for processing command line arguments.
-- New method in SQL execution listener &quot;allStatementsExecuting&quot;.
+- New method in SQL execution listener 'allStatementsExecuting'.
 - New API allowing plugins to add/remove items from the status bars.
 
 
