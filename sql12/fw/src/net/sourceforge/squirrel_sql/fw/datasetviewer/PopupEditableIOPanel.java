@@ -80,7 +80,7 @@ public class PopupEditableIOPanel extends JPanel
 		
 		if (isEditable) {
 			_ta.setEditable(true);
-			_ta.setBackground(Color.YELLOW);	// tell user it is editable
+			_ta.setBackground(Color.yellow);	// tell user it is editable
 		}
 		else {
 			_ta.setEditable(false);
