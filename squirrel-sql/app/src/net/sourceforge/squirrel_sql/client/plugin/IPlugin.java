@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.plugin;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -20,8 +20,6 @@ package net.sourceforge.squirrel_sql.client.plugin;
 import java.io.File;
 import java.io.IOException;
 
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
@@ -29,7 +27,8 @@ import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPane
 /**
  * Base interface for all plugins.
  */
-public interface IPlugin {
+public interface IPlugin
+{
 	/**
 	 * Called on application startup before application started up.
 	 *
@@ -83,6 +82,26 @@ public interface IPlugin {
 	String getVersion();
 
 	/**
+	 * Returns the name of the Help file for the plugin. This should
+	 * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
+	 * directory.
+	 *
+	 * @return	the Help file name or <TT>null</TT> if plugin doesn't have
+	 * 			a help file.
+	 */
+	String getHelpFileName();
+
+	/**
+	 * Returns the name of the change log for the plugin. This should
+	 * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
+	 * directory.
+	 *
+	 * @return	the changelog file name or <TT>null</TT> if plugin doesn't have
+	 * 			a change log.
+	 */
+	String getChangeLogFileName();
+
+	/**
 	 * Create panels for the Global Preferences dialog.
 	 *
 	 * @return	Array of <TT>IGlobalPreferencesPanel</TT> objects. Return
@@ -116,8 +135,7 @@ public interface IPlugin {
 	 * @throws	IOException
 	 * 			An error occured retrieving/creating the folder.
 	 */
-	File getPluginAppSettingsFolder()
-		throws IOException, IllegalStateException;
+	File getPluginAppSettingsFolder() throws IOException, IllegalStateException;
 
 	/**
 	 * Return the folder with the users home directory
@@ -135,7 +153,5 @@ public interface IPlugin {
 	 * @throws	IOException
 	 * 			An error occured retrieving/creating the folder.
 	 */
-	File getPluginUserSettingsFolder()
-			throws IllegalStateException, IOException;
+	File getPluginUserSettingsFolder() throws IllegalStateException, IOException;
 }
-

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.plugin;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -18,7 +18,6 @@ package net.sourceforge.squirrel_sql.client.plugin;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
@@ -27,7 +26,8 @@ import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 
-public abstract class DefaultPlugin implements IPlugin {
+public abstract class DefaultPlugin implements IPlugin
+{
 	/** Current application API. */
 	private IApplication _app;
 
@@ -36,8 +36,10 @@ public abstract class DefaultPlugin implements IPlugin {
 	 *
 	 * @param   app	 Application API.
 	 */
-	public void load(IApplication app) throws PluginException {
-		if (app == null) {
+	public void load(IApplication app) throws PluginException
+	{
+		if (app == null)
+		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
 		_app = app;
@@ -46,13 +48,15 @@ public abstract class DefaultPlugin implements IPlugin {
 	/**
 	 * Called on application startup after application started.
 	 */
-	public void initialize() throws PluginException {
+	public void initialize() throws PluginException
+	{
 	}
 
 	/**
 	 * Called when app shutdown.
 	 */
-	public void unload() {
+	public void unload()
+	{
 	}
 
 	/**
@@ -60,8 +64,35 @@ public abstract class DefaultPlugin implements IPlugin {
 	 *
 	 * @return  the home page for this plugin.
 	 */
-	public String getWebSite() {
+	public String getWebSite()
+	{
 		return Version.getWebSite();
+	}
+
+	/**
+	 * Returns the name of the Help file for the plugin. This should
+	 * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
+	 * directory.
+	 *
+	 * @return	the Help file name or <TT>null</TT> if plugin doesn't have
+	 * 			a help file.
+	 */
+	public String getHelpFileName()
+	{
+		return null;
+	}
+
+	/**
+	 * Returns the name of the change log for the plugin. This should
+	 * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
+	 * directory.
+	 *
+	 * @return	the changelog file name or <TT>null</TT> if plugin doesn't have
+	 * 			a change log.
+	 */
+	public String getChangeLogFileName()
+	{
+		return null;
 	}
 
 	/**
@@ -69,7 +100,8 @@ public abstract class DefaultPlugin implements IPlugin {
 	 *
 	 * @return	The current application API.
 	 */
-	public final IApplication getApplication() {
+	public final IApplication getApplication()
+	{
 		return _app;
 	}
 
@@ -90,20 +122,28 @@ public abstract class DefaultPlugin implements IPlugin {
 	 * 			An error occured retrieving/creating the folder.
 	 */
 	public synchronized File getPluginAppSettingsFolder()
-			throws IllegalStateException, IOException {
+		throws IllegalStateException, IOException
+	{
 		final String internalName = getInternalName();
-		if (internalName == null || internalName.trim().length() == 0) {
+		if (internalName == null || internalName.trim().length() == 0)
+		{
 			throw new IllegalStateException("IPlugin doesn't have a valid internal name");
 		}
-		final String name = ApplicationFiles.SQUIRREL_PLUGINS_FOLDER +
-							File.separator + internalName + File.separator;
+		final String name =
+			ApplicationFiles.SQUIRREL_PLUGINS_FOLDER
+				+ File.separator
+				+ internalName
+				+ File.separator;
 		final File file = new File(name);
-		if (!file.exists()) {
+		if (!file.exists())
+		{
 			file.mkdirs();
 		}
 
-		if (!file.isDirectory()) {
-			throw new IOException("Cannot create directory as a file of the same name already exists: " + name);
+		if (!file.isDirectory())
+		{
+			throw new IOException(
+				"Cannot create directory as a file of the same name already exists: " + name);
 		}
 
 		return file;
@@ -126,20 +166,28 @@ public abstract class DefaultPlugin implements IPlugin {
 	 * 			An error occured retrieving/creating the folder.
 	 */
 	public synchronized File getPluginUserSettingsFolder()
-			throws IllegalStateException, IOException {
+		throws IllegalStateException, IOException
+	{
 		final String internalName = getInternalName();
-		if (internalName == null || internalName.trim().length() == 0) {
+		if (internalName == null || internalName.trim().length() == 0)
+		{
 			throw new IllegalStateException("IPlugin doesn't have a valid internal name");
 		}
-		String name = new ApplicationFiles().getPluginsUserSettingsDirectory() +
-						File.separator + internalName + File.separator;
+		String name =
+			new ApplicationFiles().getPluginsUserSettingsDirectory()
+				+ File.separator
+				+ internalName
+				+ File.separator;
 		File file = new File(name);
-		if (!file.exists()) {
+		if (!file.exists())
+		{
 			file.mkdirs();
 		}
 
-		if (!file.isDirectory()) {
-			throw new IOException("Cannot create directory as a file of the same name already exists: " + name);
+		if (!file.isDirectory())
+		{
+			throw new IOException(
+				"Cannot create directory as a file of the same name already exists: " + name);
 		}
 
 		return file;
@@ -151,7 +199,8 @@ public abstract class DefaultPlugin implements IPlugin {
 	 * @return	<TT>null</TT> to indicate that this plugin doesn't require
 	 *			any panels in the Global Preferences Dialog.
 	 */
-	public IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
+	public IGlobalPreferencesPanel[] getGlobalPreferencePanels()
+	{
 		return null;
 	}
 
@@ -161,7 +210,8 @@ public abstract class DefaultPlugin implements IPlugin {
 	 * @return	<TT>null</TT>to indicate that this plugin doesn't require
 	 *			any panels in the New Session Properties Dialog.
 	 */
-	public INewSessionPropertiesPanel[] getNewSessionPropertiesPanels() {
+	public INewSessionPropertiesPanel[] getNewSessionPropertiesPanels()
+	{
 		return null;
 	}
 }

@@ -45,6 +45,9 @@ public class HtmlViewerSheet extends BaseSheet
 	/** Logger for this class. */
 	private static ILogger s_log =
 		LoggerController.createLogger(HtmlViewerSheet.class);
+
+	/** URL being displayed. */
+	private URL _url;
 	
 	/** Text area containing the HTML. */
 	private JEditorPane _contentsTxt = new JEditorPane();
@@ -71,6 +74,8 @@ public class HtmlViewerSheet extends BaseSheet
 			throw new IllegalArgumentException("URL == null");
 		}
 
+		_url = url;
+
 		CursorChanger cursorChg = new CursorChanger(this);
 		cursorChg.show();
 		try
@@ -89,6 +94,16 @@ public class HtmlViewerSheet extends BaseSheet
 		} finally {
 			cursorChg.restore();
 		}
+	}
+
+	/**
+	 * Return the URL being displayed.
+	 * 
+	 * @return	URL being displayed.
+	 */
+	public URL getURL()
+	{
+		return _url;
 	}
 
 	/**

@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  */
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
@@ -31,6 +32,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.FileViewerFactory;
 import net.sourceforge.squirrel_sql.client.gui.HtmlViewerSheet;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 /**
@@ -38,11 +40,11 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ViewHelpCommand implements ICommand
+public class ViewFileCommand implements ICommand
 {
 	/** Logger for this class. */
 	private static ILogger s_log =
-		LoggerController.createLogger(ViewHelpCommand.class);
+		LoggerController.createLogger(ViewFileCommand.class);
 
 	/** Help window. */
 //	private static HtmlViewerSheet s_sheet = null;
@@ -53,56 +55,54 @@ public class ViewHelpCommand implements ICommand
 	/** Application API. */
 	private IApplication _app;
 
+	private String _title;
+	private File _file;
+
 	/**
 	 * Ctor.
 	 *
 	 * @param	app		Application API.
+	 * @param	title	Title for window.
+	 * @param	file	File to be displayed.
 	 *
 	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> passed.
+	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT>,
+	 * 			or <TT>File</TT> passed.
 	 */
-	public ViewHelpCommand(IApplication app)
+	public ViewFileCommand(IApplication app, String title, File file)
 	{
 		super();
 		if (app == null)
 		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
+		if (file == null)
+		{
+			throw new IllegalArgumentException("Null File passed");
+		}
 		_app = app;
+		_title = title != null ? title : "";
+		_file = file;
 	}
 
 	/**
 	 * Display the Dialog
 	 */
-	public void execute()
+	public void execute() throws BaseException
 	{
 		try
 		{
-//			synchronized (getClass())
-//			{
-//				if (s_sheet == null)
-//				{
-//					File file = new ApplicationFiles().getQuickStartGuideFile();
-//					s_sheet = new HtmlViewerSheet("SQuirreL SQL Client - Help",
-//													file.toURL());
-//					s_sheet.addInternalFrameListener(s_lis);
-//					_app.getMainFrame().addInternalFrame(s_sheet, true, null);
-//					s_sheet.setSize(600, 400);
-//					GUIUtils.centerWithinDesktop(s_sheet);
-//				}
-//				s_sheet.setVisible(true);
-//				s_sheet.toFront();
-//			}
-			File file = new ApplicationFiles().getQuickStartGuideFile();
-			ICommand cmd = new ViewFileCommand(_app, "", file);
-			cmd.execute();
+			URL url = _file.toURL();
+			FileViewerFactory factory = FileViewerFactory.getInstance();
+			HtmlViewerSheet viewer = factory.getViewer(_app.getMainFrame(), url);
+			viewer.setVisible(true);
+			viewer.toFront();
 		}
-//		catch (IOException ex)
-		catch (BaseException ex)
+		catch (IOException ex)
 		{
-			final String msg = "Error occured reading quickstart file";
+			final String msg = "Error occured reading file: " + _file.getAbsolutePath();
 			s_log.error(msg, ex);
-			_app.showErrorDialog(msg, ex);
+			throw new BaseException(ex);
 		}
 	}
 
@@ -126,4 +126,5 @@ public class ViewHelpCommand implements ICommand
 //		}
 //
 //	}
+
 }
