@@ -1,6 +1,6 @@
-package net.sourceforge.squirrel_sql.plugins.mysql;
+package net.sourceforge.squirrel_sql.plugins.mysql.tab;
 /*
- * Copyright (C) 2003 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,39 +19,34 @@ package net.sourceforge.squirrel_sql.plugins.mysql;
  */
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
- * This command will run a &quot;OPTIMIZE TABLE&quot; over the
- * currently selected tables.
+ * This tab will display the database processes.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-class OptimizeTableCommand extends AbstractTableListCommand
+public class ProcessesTab extends BaseSQLTab
 {
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(OptimizeTableCommand.class);
-
 	/**
-	 * Ctor.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>ISession</TT>,
-	 * 			<TT>Resources</TT> or <TT>MysqlPlugin</TT> passed.
+	 * This interface defines locale specific strings. This should be
+	 * replaced with a property file.
 	 */
-	public OptimizeTableCommand(ISession session, MysqlPlugin plugin)
+	private interface i18n
 	{
-		super(session, plugin);
+		String TITLE = "MySQL Processes";
+		String HINT = "(MySQL) Display database processes";
 	}
 
-	/**
-	 * Retrieve the MySQL command to run.
-	 *
-	 * @return	the MySQL command to run.
-	 */
-	protected String getMySQLCommand()
+	/** Logger for this class. */
+	private final static ILogger s_log =
+		LoggerController.createLogger(ProcessesTab.class);
+
+	public ProcessesTab()
 	{
-		return "optimize table";
+		super(i18n.TITLE, i18n.HINT);
+	}
+
+	protected String getSQL()
+	{
+		return "show full processlist";
 	}
 }

@@ -1,6 +1,6 @@
-package net.sourceforge.squirrel_sql.plugins.mysql;
+package net.sourceforge.squirrel_sql.plugins.mysql.tab;
 /*
- * Copyright (C) 2002-2003 Colin Bell
+ * Copyright (C) 2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -20,11 +20,11 @@ package net.sourceforge.squirrel_sql.plugins.mysql;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
- * This tab will display the database status.
+ * This tab will display information about MySQL logs.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class DatabaseStatusTab extends BaseSQLTab
+public class ShowLogsTab extends BaseSQLTab
 {
 	/**
 	 * This interface defines locale specific strings. This should be
@@ -32,21 +32,21 @@ public class DatabaseStatusTab extends BaseSQLTab
 	 */
 	private interface i18n
 	{
-		String TITLE = "MySQL Status";
-		String HINT = "(MySQL) Display database status";
+		String TITLE = "MySQL Logs";
+		String HINT = "(MySQL) Show Logs";
 	}
 
 	/** Logger for this class. */
 	private final static ILogger s_log =
-		LoggerController.createLogger(DatabaseStatusTab.class);
+		LoggerController.createLogger(ShowLogsTab.class);
 
-	public DatabaseStatusTab()
+	public ShowLogsTab()
 	{
 		super(i18n.TITLE, i18n.HINT);
 	}
 
 	protected String getSQL()
 	{
-		return "show status";
+		return "show logs";
 	}
 }

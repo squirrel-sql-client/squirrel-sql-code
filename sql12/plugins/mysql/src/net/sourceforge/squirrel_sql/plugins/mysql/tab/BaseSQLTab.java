@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.mysql;
+package net.sourceforge.squirrel_sql.plugins.mysql.tab;
 /*
  * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net

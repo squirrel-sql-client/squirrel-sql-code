@@ -1,6 +1,6 @@
-package net.sourceforge.squirrel_sql.plugins.mysql;
+package net.sourceforge.squirrel_sql.plugins.mysql.tab;
 /*
- * Copyright (C) 2002-2003 Colin Bell
+ * Copyright (C) 2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -20,11 +20,11 @@ package net.sourceforge.squirrel_sql.plugins.mysql;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
- * This tab will display the database processes.
+ * This tab will display the results of an "SHOW TABLE STATUS" command for a database.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ProcessesTab extends BaseSQLTab
+public class TableStatusTab extends BaseSQLTab
 {
 	/**
 	 * This interface defines locale specific strings. This should be
@@ -32,21 +32,22 @@ public class ProcessesTab extends BaseSQLTab
 	 */
 	private interface i18n
 	{
-		String TITLE = "MySQL Processes";
-		String HINT = "(MySQL) Display database processes";
+		String TITLE = "MySQL Table Status";
+		String HINT = "(MySQL) Table Status";
 	}
 
 	/** Logger for this class. */
 	private final static ILogger s_log =
-		LoggerController.createLogger(ProcessesTab.class);
+		LoggerController.createLogger(TableStatusTab.class);
 
-	public ProcessesTab()
+	public TableStatusTab()
 	{
 		super(i18n.TITLE, i18n.HINT);
 	}
 
 	protected String getSQL()
 	{
-		return "show full processlist";
+		final String db = getDatabaseObjectInfo().getQualifiedName();
+		return "show table status from " + db;
 	}
 }

@@ -1,6 +1,6 @@
-package net.sourceforge.squirrel_sql.plugins.mysql;
+package net.sourceforge.squirrel_sql.plugins.mysql.tab;
 /*
- * Copyright (C) 2003 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -20,11 +20,11 @@ package net.sourceforge.squirrel_sql.plugins.mysql;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
- * This tab will display the results of an "Analyze table" command.
+ * This tab will display the database processes.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class AnalyzeTableTab extends BaseSQLTab
+public class ShowVariablesTab extends BaseSQLTab
 {
 	/**
 	 * This interface defines locale specific strings. This should be
@@ -32,23 +32,21 @@ public class AnalyzeTableTab extends BaseSQLTab
 	 */
 	private interface i18n
 	{
-		String TITLE = "MySQL) Analyze";
-		String HINT = "(MySQL) Analyze table";
+		String TITLE = "MySQL Variables";
+		String HINT = "(MySQL) Show Variables";
 	}
 
 	/** Logger for this class. */
 	private final static ILogger s_log =
-		LoggerController.createLogger(AnalyzeTableTab.class);
+		LoggerController.createLogger(ShowVariablesTab.class);
 
-	public AnalyzeTableTab()
+	public ShowVariablesTab()
 	{
 		super(i18n.TITLE, i18n.HINT);
 	}
 
 	protected String getSQL()
 	{
-		final String table = getDatabaseObjectInfo().getQualifiedName();
-		return "analyze table " + table;
+		return "show variables";
 	}
 }
-
