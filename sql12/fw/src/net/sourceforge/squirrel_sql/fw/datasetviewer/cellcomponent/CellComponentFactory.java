@@ -487,7 +487,7 @@ public class CellComponentFactory {
 
 		if (dataTypeObject != null) {
 			// we have an appropriate data type object
-			return dataTypeObject.readResultSet(rs, index, largeObjInfo);
+			return dataTypeObject.readResultSet(rs, index);
 		}
 
 		//?? Best guess: read object?
