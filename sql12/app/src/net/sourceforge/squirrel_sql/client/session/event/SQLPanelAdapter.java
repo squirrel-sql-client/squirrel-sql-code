@@ -31,6 +31,7 @@ public class SQLPanelAdapter implements ISQLPanelListener
 	 * @param evt	Object describing this event.
 	 */
 	public void sqlEntryAreaInstalled(SQLPanelEvent evt)
-{
-}
+	{
+		// Empty body.
+	}
 }

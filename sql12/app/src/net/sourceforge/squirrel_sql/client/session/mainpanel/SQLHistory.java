@@ -31,6 +31,7 @@ public class SQLHistory
 
 	public SQLHistory()
 	{
+		super();
 	}
 
 	public synchronized SQLHistoryItem[] getData()

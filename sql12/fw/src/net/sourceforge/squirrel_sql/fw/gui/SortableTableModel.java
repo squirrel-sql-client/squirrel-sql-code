@@ -28,14 +28,8 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 public class SortableTableModel extends AbstractTableModel
 {
-	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(SortableTableModel.class);
-
 	private MyTableModelListener _actualModelLis = new MyTableModelListener();
 
 	/** Column currently being sorted by. -1 means unsorted. */

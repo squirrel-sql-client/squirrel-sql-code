@@ -27,6 +27,7 @@ public class SystemProperties
 {
 	private SystemProperties()
 	{
+		super();
 	}
 
 	public static Properties get()

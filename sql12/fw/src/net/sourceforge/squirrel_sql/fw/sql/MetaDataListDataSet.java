@@ -24,10 +24,8 @@ import java.util.StringTokenizer;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
-import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
@@ -49,18 +47,15 @@ public class MetaDataListDataSet implements IDataSet
 	private Iterator _rowIter;
 	private List _row = new ArrayList();
 	private String _rowElem;
-	private IMessageHandler _msgHandler;
 
-	public MetaDataListDataSet(String functionList) throws DataSetException
+	public MetaDataListDataSet(String functionList)
 	{
 		this(functionList, null);
 	}
 
 	public MetaDataListDataSet(String functionList, IMessageHandler msgHandler)
-		throws DataSetException
 	{
 		super();
-		_msgHandler = msgHandler != null ? msgHandler : NullMessageHandler.getInstance();
 		_dsDef = new DataSetDefinition(createColumnDefinitions());
 		load(functionList);
 	}
@@ -70,13 +65,12 @@ public class MetaDataListDataSet implements IDataSet
 		return s_hdgs.length;
 	}
 
-	public DataSetDefinition getDataSetDefinition() throws DataSetException
+	public DataSetDefinition getDataSetDefinition()
 	{
 		return _dsDef;
 	}
 
 	public synchronized boolean next(IMessageHandler msgHandler)
-		throws DataSetException
 	{
 		if (_rowIter.hasNext())
 		{
@@ -86,7 +80,7 @@ public class MetaDataListDataSet implements IDataSet
 		return false;
 	}
 
-	public synchronized Object get(int columnIndex) throws DataSetException
+	public synchronized Object get(int columnIndex)
 	{
 		if (columnIndex == 0)
 		{

@@ -36,12 +36,15 @@ import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.FontChooser;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
  * This panel allows the user to tailor SQL settings for a session.
  *
@@ -50,6 +53,10 @@ import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 public class SessionSQLPropertiesPanel
 	implements INewSessionPropertiesPanel, ISessionPropertiesPanel
 {
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(SessionSQLPropertiesPanel.class);
+
 	/** Application API. */
 	private final IApplication _app;
 
@@ -104,12 +111,12 @@ public class SessionSQLPropertiesPanel
 
 	public String getTitle()
 	{
-		return SQLPropertiesPanel.i18n.SQL;
+		return s_stringMgr.getString("SessionSQLPropertiesPanel.sql");
 	}
 
 	public String getHint()
 	{
-		return SQLPropertiesPanel.i18n.SQL;
+		return getTitle();
 	}
 
 	public void applyChanges()
@@ -119,29 +126,11 @@ public class SessionSQLPropertiesPanel
 
 	private static final class SQLPropertiesPanel extends JPanel
 	{
-		/**
-		 * This interface defines locale specific strings. This should be
-		 * replaced with a property file.
-		 */
-		interface i18n
-		{
-			String ABORT_ON_ERROR = "Abort On Error";
-			String AUTO_COMMIT = "Auto Commit SQL";
-			String COMMIT_ON_CLOSE = "Commit On Closing Session";
-			String LIMIT_ROWS_SQL = "SQL results - Limit rows";
-			String SHARE_SQL_HISTORY = "Share SQL History";
-			String SOL_COMENT = "Start of Line Comment";
-			String STATEMENT_SEPARATOR = "Statement Separator:";
-			String SQL = "SQL";
-			String SQL_HISTORY = "SQL History";
-			String LIMIT_SQL_HISTORY_COMBO_SIZE = "Limit SQL History Combo Size";
-		}
-
-		private JCheckBox _abortOnErrorChk = new JCheckBox(i18n.ABORT_ON_ERROR);
-		private JCheckBox _autoCommitChk = new JCheckBox(i18n.AUTO_COMMIT);
-		private JCheckBox _commitOnClose = new JCheckBox(i18n.COMMIT_ON_CLOSE);
+		private JCheckBox _abortOnErrorChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.abortonerror"));
+		private JCheckBox _autoCommitChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.autocommit"));
+		private JCheckBox _commitOnClose = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.commitonclose"));
 		private IntegerField _sqlNbrRowsToShowField = new IntegerField(5);
-		private JCheckBox _sqlLimitRowsChk = new JCheckBox(i18n.LIMIT_ROWS_SQL);
+		private JCheckBox _sqlLimitRowsChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.limitrows"));
 		private JTextField _stmtSepField = new JTextField(5);
 		private JTextField _solCommentField = new JTextField(2);
 
@@ -149,11 +138,12 @@ public class SessionSQLPropertiesPanel
 		private JLabel _fontLbl = new JLabel();
 
 		/** Button to select font. */
-		private FontButton _fontBtn = new FontButton("Font", _fontLbl);
+		private FontButton _fontBtn = new FontButton(s_stringMgr.getString("SessionSQLPropertiesPanel.font"), _fontLbl);
 
-		private JCheckBox _shareSQLHistoryChk = new JCheckBox(i18n.SHARE_SQL_HISTORY);
-		private JCheckBox _limitSQLHistoryComboSizeChk = new JCheckBox(i18n.LIMIT_SQL_HISTORY_COMBO_SIZE);
+		private JCheckBox _shareSQLHistoryChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.sharesqlhistory"));
+		private JCheckBox _limitSQLHistoryComboSizeChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.limitsqlhistorysize"));
 		private IntegerField _limitSQLHistoryComboSizeField = new IntegerField(5);
+		private JCheckBox _showResultsMetaChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.showresultsmd"));
 
 		/**
 		 * This object will update the status of the GUI controls as the user
@@ -180,6 +170,7 @@ public class SessionSQLPropertiesPanel
 			_shareSQLHistoryChk.setSelected(props.getSQLShareHistory());
 			_limitSQLHistoryComboSizeChk.setSelected(props.getLimitSQLEntryHistorySize());
 			_limitSQLHistoryComboSizeField.setInt(props.getSQLEntryHistorySize());
+			_showResultsMetaChk.setSelected(props.getShowResultsMetaData());
 
 			FontInfo fi = props.getFontInfo();
 			if (fi == null)
@@ -207,6 +198,8 @@ public class SessionSQLPropertiesPanel
 			props.setSQLShareHistory(_shareSQLHistoryChk.isSelected());
 			props.setLimitSQLEntryHistorySize(_limitSQLHistoryComboSizeChk.isSelected());
 			props.setSQLEntryHistorySize(_limitSQLHistoryComboSizeField.getInt());
+
+			props.setShowResultsMetaData(_showResultsMetaChk.isSelected());
 		}
 
 		private void updateControlStatus()
@@ -245,7 +238,7 @@ public class SessionSQLPropertiesPanel
 		private JPanel createSQLPanel()
 		{
 			final JPanel pnl = new JPanel(new GridBagLayout());
-			pnl.setBorder(BorderFactory.createTitledBorder("SQL"));
+			pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("SessionSQLPropertiesPanel.sql")));
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
@@ -268,6 +261,11 @@ public class SessionSQLPropertiesPanel
 
 			++gbc.gridy; // new line
 			gbc.gridx = 0;
+			gbc.gridwidth = 3;
+			pnl.add(_showResultsMetaChk, gbc);
+
+			++gbc.gridy; // new line
+			gbc.gridx = 0;
 			gbc.gridwidth = 2;
 			pnl.add(_sqlLimitRowsChk, gbc);
 			gbc.gridwidth = 1;
@@ -275,7 +273,7 @@ public class SessionSQLPropertiesPanel
 			pnl.add(_sqlNbrRowsToShowField, gbc);
 			++gbc.gridx;
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
-			pnl.add(new JLabel("rows"), gbc);
+			pnl.add(new JLabel(s_stringMgr.getString("SessionSQLPropertiesPanel.rows")), gbc);
 
 			++gbc.gridy; // new line
 			gbc.gridx = 0;
@@ -285,11 +283,11 @@ public class SessionSQLPropertiesPanel
 			++gbc.gridy; // new line
 			gbc.gridx = 0;
 			gbc.gridwidth = 1;
-			pnl.add(new JLabel(i18n.STATEMENT_SEPARATOR), gbc);
+			pnl.add(new JLabel(s_stringMgr.getString("SessionSQLPropertiesPanel.stmtsep")), gbc);
 			++gbc.gridx;
 			pnl.add(_stmtSepField, gbc);
 			++gbc.gridx;
-			pnl.add(new RightLabel(i18n.SOL_COMENT), gbc);
+			pnl.add(new RightLabel(s_stringMgr.getString("SessionSQLPropertiesPanel.solcomment")), gbc);
 			++gbc.gridx;
 			pnl.add(_solCommentField, gbc);
 
@@ -298,7 +296,7 @@ public class SessionSQLPropertiesPanel
 		private JPanel createFontPanel()
 		{
 			JPanel pnl = new JPanel();
-			pnl.setBorder(BorderFactory.createTitledBorder("SQL Entry Area"));
+			pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("SessionSQLPropertiesPanel.sqlentryarea")));
 			pnl.setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -323,7 +321,7 @@ public class SessionSQLPropertiesPanel
 			_limitSQLHistoryComboSizeChk.addChangeListener(_controlMediator);
 
 			JPanel pnl = new JPanel(new GridBagLayout());
-			pnl.setBorder(BorderFactory.createTitledBorder(i18n.SQL_HISTORY));
+			pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("SessionSQLPropertiesPanel.sqlhistory")));
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);

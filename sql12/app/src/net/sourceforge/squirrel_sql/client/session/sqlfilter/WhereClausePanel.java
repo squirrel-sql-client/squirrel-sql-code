@@ -367,7 +367,7 @@ public class WhereClausePanel implements ISQLFilterPanel
 		 */
 		private void addTextToClause()
 		{
-			String value = (String)_valueField.getText();
+			String value = _valueField.getText();
 			if ((value != null) && (value.length() > 0))
 			{
 				String andOr = (String)_andOrCombo.getSelectedItem();
@@ -420,7 +420,7 @@ public class WhereClausePanel implements ISQLFilterPanel
 
 	/**
 	 * Get a value that uniquely identifies this SQL filter clause.
-	 * 
+	 *
 	 * @return Return a String value containing an identifing value.
 	 */
 	public static String getClauseIdentifier()

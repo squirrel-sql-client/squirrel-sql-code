@@ -30,6 +30,7 @@ public class SQLDriverBeanInfo extends SimpleBeanInfo
 {
 	private interface IPropertyNames extends ISQLDriver.IPropertyNames
 	{
+		// Empty body.
 	}
 
 	private final static Class CLAZZ = SQLDriver.class;

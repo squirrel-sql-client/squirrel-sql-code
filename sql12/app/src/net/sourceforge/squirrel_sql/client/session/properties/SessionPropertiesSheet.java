@@ -198,11 +198,11 @@ public class SessionPropertiesSheet extends BaseSheet
 		for (Iterator it = _panels.iterator(); it.hasNext();)
 		{
 			ISessionPropertiesPanel pnl = (ISessionPropertiesPanel) it.next();
-			String title = pnl.getTitle();
+			String pnlTitle = pnl.getTitle();
 			String hint = pnl.getHint();
 			final JScrollPane sp = new JScrollPane(pnl.getPanelComponent());
 			sp.setBorder(BorderFactory.createEmptyBorder());
-			tabPane.addTab(title, null, sp, hint);
+			tabPane.addTab(pnlTitle, null, sp, hint);
 		}
 
 		final JPanel contentPane = new JPanel(new GridBagLayout());

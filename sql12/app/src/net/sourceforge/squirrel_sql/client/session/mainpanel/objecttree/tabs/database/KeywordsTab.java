@@ -23,15 +23,13 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ObjectArrayDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseDataSetTab;
 /**
  * This is the tab displaying the non-standard SQL keywords in the database.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class KeywordsTab extends BaseDataSetTab
 {
@@ -44,10 +42,6 @@ public class KeywordsTab extends BaseDataSetTab
 		String TITLE = "Keywords";
 		String HINT = "Show all the non-standard Keywords available in DBMS";
 	}
-
-	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(KeywordsTab.class);
 
 	/**
 	 * Return the title for the tab.

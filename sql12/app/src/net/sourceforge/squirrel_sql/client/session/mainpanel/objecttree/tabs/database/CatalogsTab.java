@@ -23,15 +23,13 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ObjectArrayDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseDataSetTab;
 /**
  * This is the tab displaying the Catalogs in the database.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class CatalogsTab extends BaseDataSetTab
 {
@@ -44,10 +42,6 @@ public class CatalogsTab extends BaseDataSetTab
 		String TITLE = "Catalogs";
 		String HINT = "Show all the catalogs";
 	}
-
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(CatalogsTab.class);
 
 	/**
 	 * Return the title for the tab.

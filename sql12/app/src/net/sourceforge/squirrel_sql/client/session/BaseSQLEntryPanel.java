@@ -19,7 +19,6 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
 {
-	//protected final static String LINE_SEPARATOR = System.getProperty("line.separator");
 	protected final static String LINE_SEPARATOR = "\n";
 
 	protected final static String SQL_STMT_SEP = LINE_SEPARATOR + LINE_SEPARATOR; 

@@ -317,19 +317,25 @@ public class ContentsTab extends BaseTableTab
 				// we collect the collumn nullability information from getColumns() and pass that
 				// info to the ResultSet to override what it got from the ResultSetMetaData.
 				final ResultSet columnRS = conn.getSQLMetaData().getColumns(getTableInfo());
-				final ColumnDisplayDefinition[] colDefs = rsds.getDataSetDefinition().getColumnDefinitions();
-
-				// get the nullability information and pass it into the ResultSet
-				// Unfortunately, not all DBMSs provide the column number in object 17 as stated in the
-				// SQL documentation, so we have to guess that the result set is in column order
-				int columnNumber = 0;
-				while (columnRS.next()) {
-					boolean isNullable = true;
-					if (columnRS.getInt(11) == DatabaseMetaData.columnNoNulls)
-						isNullable = false;
-					colDefs[columnNumber++].setIsNullable(isNullable);
+				try
+				{
+					final ColumnDisplayDefinition[] colDefs = rsds.getDataSetDefinition().getColumnDefinitions();
+	
+					// get the nullability information and pass it into the ResultSet
+					// Unfortunately, not all DBMSs provide the column number in object 17 as stated in the
+					// SQL documentation, so we have to guess that the result set is in column order
+					int columnNumber = 0;
+					while (columnRS.next()) {
+						boolean isNullable = true;
+						if (columnRS.getInt(11) == DatabaseMetaData.columnNoNulls)
+							isNullable = false;
+						colDefs[columnNumber++].setIsNullable(isNullable);
+					}
 				}
-
+				finally
+				{
+					columnRS.close();
+				}
 
 				//?? remember which column is the rowID (if any) so we can
 				//?? prevent editing on it

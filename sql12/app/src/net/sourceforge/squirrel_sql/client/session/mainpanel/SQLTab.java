@@ -21,9 +21,6 @@ import java.awt.Component;
 
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public class SQLTab extends BaseMainPanelTab
@@ -37,9 +34,7 @@ public class SQLTab extends BaseMainPanelTab
 		String TAB_TITLE = "SQL";
 		String TAB_DESC = "Execute SQL statements";
 	}
-	/** Logger for this class. */
-	private final static ILogger s_log =
-						LoggerController.createLogger(SQLTab.class);
+
 
 	/** Component to be displayed. */
 	private SQLPanel _comp;

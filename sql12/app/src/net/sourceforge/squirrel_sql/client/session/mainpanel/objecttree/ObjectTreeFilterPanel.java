@@ -28,10 +28,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import net.sourceforge.squirrel_sql.client.gui.builders.DefaultFormBuilder;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
@@ -52,10 +49,6 @@ public class ObjectTreeFilterPanel extends JPanel
 		String SHOW_ROW_COUNT = "Show Row Count for Tables (can slow application)";
 		String OBJECT_TREE = "Object Tree";
 	}
-
-	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(ObjectTreeFilterPanel.class);
 
 	private final ISession _session;
 

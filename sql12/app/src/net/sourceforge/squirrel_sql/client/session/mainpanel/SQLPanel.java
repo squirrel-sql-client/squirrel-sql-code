@@ -358,6 +358,7 @@ public class SQLPanel extends JPanel
 
 	void selected()
 	{
+		// Empty body.
 	}
 
 	/**
@@ -846,26 +847,26 @@ public class SQLPanel extends JPanel
 		_tabbedResultsPanel.addTab(tab.getTitle(), null, tab, tab.getViewableSqlString());
 	}
 
-	private String modifyIndividualScript(String sql)
-	{
-		// Guaranteed to be non-null.
-		Object[] listeners = _listeners.getListenerList();
-		// Process the listeners last to first, notifying
-		// those that are interested in this event.
-		for (int i = listeners.length - 2; i >= 0; i -= 2)
-		{
-			if (listeners[i] == ISQLExecutionListener.class)
-			{
-				sql = ((ISQLExecutionListener) listeners[i]).statementExecuting(sql);
-				if (sql == null)
-				{
-					break;
-				}
-			}
-		}
-
-		return sql;
-	}
+//	private String modifyIndividualScript(String sql)
+//	{
+//		// Guaranteed to be non-null.
+//		Object[] listeners = _listeners.getListenerList();
+//		// Process the listeners last to first, notifying
+//		// those that are interested in this event.
+//		for (int i = listeners.length - 2; i >= 0; i -= 2)
+//		{
+//			if (listeners[i] == ISQLExecutionListener.class)
+//			{
+//				sql = ((ISQLExecutionListener) listeners[i]).statementExecuting(sql);
+//				if (sql == null)
+//				{
+//					break;
+//				}
+//			}
+//		}
+//
+//		return sql;
+//	}
 
 	private void appendSQL(String sql)
 	{

@@ -52,6 +52,7 @@ public class SelectInternalFrameCommand implements ICommand
 		}
 		catch (PropertyVetoException ignore)
 		{
+			// Ignore.
 		}
 	}
 }

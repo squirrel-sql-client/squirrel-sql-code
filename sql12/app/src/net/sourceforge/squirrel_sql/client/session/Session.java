@@ -38,6 +38,8 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnectionState;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -62,6 +64,10 @@ class Session implements ISession
 	/** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(Session.class);
+
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(Session.class);
 
 	/** Descriptive title for session. */
 	private String _title = "";
@@ -128,7 +134,6 @@ class Session implements ISession
 	 * @param	conn		Connection to database.
 	 * @param	user		User name connected with.
 	 * @param	password	Password for <TT>user</TT>
-	 * @param	openedSeq	The sequence that this session was opened.
 	 *
 	 * @throws IllegalArgumentException if any parameter is null.
 	 */
@@ -462,7 +467,7 @@ class Session implements ISession
 		}
 		catch (SQLException ex)
 		{
-			final String msg = "Error occured closing connection";
+			final String msg = s_stringMgr.getString("Session.error.connclose");
 			s_log.error(msg, ex);
 			_msgHandler.showErrorMessage(msg);
 			_msgHandler.showErrorMessage(ex);
@@ -475,7 +480,8 @@ class Session implements ISession
 			{
 				connState.restoreState(_conn, _msgHandler);
 			}
-			_msgHandler.showMessage("Reconnected to " + _alias.getName());
+			final String msg = s_stringMgr.getString("Session.reconn", _alias.getName());
+			_msgHandler.showMessage(msg);
 			getObjectTreeAPI(_app.getDummyAppPlugin()).refreshTree();
 		}
 		catch (SQLException ex)
@@ -633,6 +639,7 @@ class Session implements ISession
 		_schemaInfo.load(getSQLConnection());
 	}
 
+	// TODO: i18n
 	private String createTitle()
 	{
 		final StringBuffer title = new StringBuffer();

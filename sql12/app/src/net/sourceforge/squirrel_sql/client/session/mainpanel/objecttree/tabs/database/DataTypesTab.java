@@ -23,15 +23,13 @@ import java.sql.SQLException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DatabaseTypesDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseDataSetTab;
 /**
  * This is the tab displaying the data types in the database.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class DataTypesTab extends BaseDataSetTab
 {
@@ -44,10 +42,6 @@ public class DataTypesTab extends BaseDataSetTab
 		String TITLE = "Data Types";
 		String HINT = "Show all the data types available in DBMS";
 	}
-
-	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(DataTypesTab.class);
 
 	/**
 	 * Return the title for the tab.

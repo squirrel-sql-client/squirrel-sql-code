@@ -19,27 +19,22 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import java.awt.event.ActionEvent;
 
+import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
-import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
- * @version 	$Id: DropSelectedTablesAction.java,v 1.5 2003-09-13 22:50:29 colbell Exp $
+ * @version 	$Id: DropSelectedTablesAction.java,v 1.6 2003-12-01 12:02:13 colbell Exp $
  * @author		Johan Compagner
  */
 public class DropSelectedTablesAction extends SquirrelAction
 										implements ISessionAction
 {
-	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(DropSelectedTablesAction.class);
-
 	/** Title for confirmation dialog. */
 	private static final String TITLE = "Dropping table(s)";
 

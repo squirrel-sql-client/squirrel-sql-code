@@ -17,7 +17,6 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.SQLException;
 
 public class DataTypeInfo extends DatabaseObjectInfo
 {
@@ -44,7 +43,6 @@ public class DataTypeInfo extends DatabaseObjectInfo
 					boolean autoIncrement, String localTypeName,
 					int minScale, int maxScale, int numPrecRadix,
 					SQLDatabaseMetaData md)
-	throws SQLException
 	{
 		super(null, null, typeName, DatabaseObjectType.DATATYPE, md);
 		_dataType = dataType;

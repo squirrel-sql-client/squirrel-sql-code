@@ -23,22 +23,17 @@ import java.awt.event.ActionEvent;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
- * @version 	$Id: DropTableAction.java,v 1.4 2003-09-13 22:50:29 colbell Exp $
+ * @version 	$Id: DropTableAction.java,v 1.5 2003-12-01 12:02:13 colbell Exp $
  * @author		Johan Compagner
  */
 public class DropTableAction extends SquirrelAction implements ISessionAction
 {
-	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(DropTableAction.class);
-
 	/** Title for confirmation dialog. */
-	private static final String TITLE = "Dropping table(s)";
+//	private static final String TITLE = "Dropping table(s)";
 
 	/** Message for confirmation dialog. */
-	private static final String MSG = "Are you sure?";
+//	private static final String MSG = "Are you sure?";
 
 	/** Current session. */
 	private ISession _session;

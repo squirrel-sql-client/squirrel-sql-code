@@ -39,9 +39,15 @@ import net.n3.nanoxml.StdXMLReader;
 import net.n3.nanoxml.XMLParserFactory;
 
 import net.sourceforge.squirrel_sql.fw.util.EnumerationIterator;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class XMLBeanReader
 {
+	/** Logger for this class. */
+	private static final ILogger s_log =
+		LoggerController.createLogger(XMLBeanReader.class);
+
 	private String[][] _fixStrings = new String[][]
 	{
 		{
@@ -105,8 +111,9 @@ public class XMLBeanReader
 			{
 				frdr.close();
 			}
-			catch (IOException ignore)
+			catch (IOException ex)
 			{
+				s_log.error("Error closing FileReader", ex);
 			}
 		}
 	}

@@ -18,7 +18,6 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Driver;
@@ -38,7 +37,7 @@ public class SQLDriverClassLoader extends MyURLClassLoader
 		super(url);
 	}
 
-	public Class[] getDriverClasses(ILogger logger) throws IOException
+	public Class[] getDriverClasses(ILogger logger)
 	{
 		return getAssignableClasses(Driver.class, logger);
 	}

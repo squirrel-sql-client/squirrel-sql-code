@@ -67,7 +67,7 @@ public class XMLObjectCache implements IObjectCache
 	 */
 	public IHasIdentifier get(Class objClass, IIdentifier id)
 	{
-		return (IHasIdentifier) _cache.get(objClass, id);
+		return _cache.get(objClass, id);
 	}
 
 	/**

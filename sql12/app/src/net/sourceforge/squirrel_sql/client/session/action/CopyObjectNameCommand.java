@@ -23,8 +23,6 @@ import java.awt.datatransfer.StringSelection;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
@@ -37,10 +35,6 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  */
 public class CopyObjectNameCommand implements ICommand
 {
-	/** Logger for this class. */
-	private final ILogger s_log =
-		LoggerController.createLogger(CopyObjectNameCommand.class);
-
 	/** Type of copy to do. */
 	public interface ICopyTypes
 	{

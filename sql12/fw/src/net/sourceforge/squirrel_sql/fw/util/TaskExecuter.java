@@ -31,7 +31,7 @@ package net.sourceforge.squirrel_sql.fw.util;
 class TaskExecuter implements Runnable
 {
 	private boolean _bStopThread = false;
-	private boolean _bStopExecution = false;
+//	private boolean _bStopExecution = false;
 	private ITaskThreadPoolCallback _callback;
 
 	TaskExecuter(ITaskThreadPoolCallback callback)
@@ -55,7 +55,7 @@ class TaskExecuter implements Runnable
 				_callback.incrementFreeThreadCount();
 				while (!_bStopThread)
 				{
-					_bStopExecution = false;
+//					_bStopExecution = false;
 					task = _callback.nextTask();
 					if (task != null)
 					{
@@ -70,6 +70,7 @@ class TaskExecuter implements Runnable
 						}
 						catch (InterruptedException ignore)
 						{
+							// Ignore
 						}
 					}
 				}

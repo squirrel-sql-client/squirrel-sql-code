@@ -61,7 +61,6 @@ public class GeneralSessionPropertiesPanel
 		String TEXT = "Text";
 	}
 
-	private IApplication _app;
 	private SessionProperties _props;
 
 	private MyPanel _myPanel = new MyPanel();
@@ -77,7 +76,6 @@ public class GeneralSessionPropertiesPanel
 		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
-		_app = app;
 		_props = app.getSquirrelPreferences().getSessionProperties();
 
 		_myPanel.loadData(_props);
@@ -95,7 +93,6 @@ public class GeneralSessionPropertiesPanel
 			throw new IllegalArgumentException("Null ISession passed");
 		}
 
-		_app = app;
 		_props = session.getProperties();
 
 		_myPanel.loadData(_props);

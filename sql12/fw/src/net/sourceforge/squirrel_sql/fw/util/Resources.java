@@ -200,6 +200,7 @@ public abstract class Resources
 			}
 			catch (MissingResourceException ignore)
 			{
+				// Ignore
 			}
 		}
 
@@ -210,6 +211,7 @@ public abstract class Resources
 		}
 		catch (MissingResourceException ignore)
 		{
+			// Ignore
 		}
 
 		try
@@ -219,6 +221,7 @@ public abstract class Resources
 		}
 		catch (MissingResourceException ignore)
 		{
+			// Ignore
 		}
 	}
 

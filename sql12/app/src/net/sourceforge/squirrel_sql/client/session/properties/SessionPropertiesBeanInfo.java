@@ -32,6 +32,7 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 
 	private interface IPropNames extends SessionProperties.IPropertyNames
 	{
+		// Empty body.
 	}
 
 	public SessionPropertiesBeanInfo() throws IntrospectionException
@@ -39,7 +40,7 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 		super();
 		if (s_dscrs == null)
 		{
-			s_dscrs = new PropertyDescriptor[24];
+			s_dscrs = new PropertyDescriptor[26];
 			s_dscrs[0] = new PropertyDescriptor(IPropNames.AUTO_COMMIT,
 									CLAZZ, "getAutoCommit", "setAutoCommit");
 			s_dscrs[1] = new PropertyDescriptor(IPropNames.COMMIT_ON_CLOSING_CONNECTION,
@@ -88,6 +89,10 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 									CLAZZ, "getAbortOnError", "setAbortOnError");
 			s_dscrs[23] = new PropertyDescriptor(IPropNames.SCHEMA_PREFIX_LIST,
 									CLAZZ, "getSchemaPrefixList", "setSchemaPrefixList");
+			s_dscrs[24] = new PropertyDescriptor(IPropNames.LOAD_SCHEMAS_CATALOGS,
+									CLAZZ, "getLoadSchemasCatalogs", "setLoadSchemasCatalogs");		
+			s_dscrs[25] = new PropertyDescriptor(IPropNames.SHOW_RESULTS_META_DATA,
+									CLAZZ, "getShowResultsMetaData", "setShowResultsMetaData");		
 		}
 	}
 

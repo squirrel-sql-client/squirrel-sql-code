@@ -31,6 +31,7 @@ public class ObjectTreeAdapter implements IObjectTreeListener
 	 */
 	public void objectTreeCleared(ObjectTreeListenerEvent evt)
 	{
+		// Empty body.
 	}
 
 	/**
@@ -40,5 +41,6 @@ public class ObjectTreeAdapter implements IObjectTreeListener
 	 */
 	public void objectTreeRefreshed(ObjectTreeListenerEvent evt)
 	{
+		// Empty body.
 	}
 }

@@ -21,7 +21,6 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-
 /**
  * This <CODE>ICommand</CODE> closes all the SQL Results tabs
  * for the specified session.

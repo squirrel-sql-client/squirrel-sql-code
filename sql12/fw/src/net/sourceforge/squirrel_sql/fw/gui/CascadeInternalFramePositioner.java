@@ -66,6 +66,7 @@ public class CascadeInternalFramePositioner implements IInternalFramePositioner
 				}
 				catch (PropertyVetoException ignore)
 				{
+					// Ignore.
 				}
 			}
 			else if (child.isMaximum())
@@ -76,6 +77,7 @@ public class CascadeInternalFramePositioner implements IInternalFramePositioner
 				}
 				catch (PropertyVetoException ignore)
 				{
+					// Ignore.
 				}
 			}
 			child.setBounds(_x, _y, child.getWidth(), child.getHeight());

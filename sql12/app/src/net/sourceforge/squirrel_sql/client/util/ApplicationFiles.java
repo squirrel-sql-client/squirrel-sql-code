@@ -36,9 +36,6 @@ public class ApplicationFiles
 	/** Name of folder that contains Squirrel app. */
 	private final String _squirrelHomeDir;
 
-	/** Name of folder that contains Squirrel libraries. */
-	private final String _squirrelLibrariesDir;
-
 	/** Name of folder that contains plugins. */
 	private String _squirrelPluginsDir;
 
@@ -56,7 +53,6 @@ public class ApplicationFiles
 		final String homeDir = args.getSquirrelHomeDirectory();
 		_squirrelHomeDir = homeDir != null ? homeDir : System.getProperty(IJavaPropertyNames.USER_DIR);
 		_squirrelPluginsDir = _squirrelHomeDir + File.separator + "plugins";
-		_squirrelLibrariesDir = _squirrelHomeDir + File.separator + "lib";
 		_documentationDir = _squirrelHomeDir + File.separator + "doc";
 
 		_userSettingsDir = args.getUserSettingsDirectoryOverride();
@@ -146,7 +142,7 @@ public class ApplicationFiles
 		return new File(_userSettingsDir + File.separator +
 							"squirrel-sql-jdbcdebug.log");
 	}
- 
+
  	/**
  	 * @return serialized Vector containing history of SQL queries executed
  	 */

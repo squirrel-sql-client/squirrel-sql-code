@@ -29,8 +29,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.Log4jLoggerFactory;
 
 public class SquirrelLoggerFactory extends Log4jLoggerFactory
 {
-	private static ILogger s_log = null;
-
 	public SquirrelLoggerFactory() throws IllegalArgumentException
 	{
 		super(false);

@@ -62,6 +62,7 @@ public abstract class BaseMainPanelTab implements IMainPanelTab
 	 */
 	public void sessionClosing(ISession session)
 	{
+		// Empty method.
 	}
 
 	/**

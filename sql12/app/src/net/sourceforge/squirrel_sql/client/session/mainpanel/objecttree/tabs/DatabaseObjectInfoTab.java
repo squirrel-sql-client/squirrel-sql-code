@@ -20,12 +20,10 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.JavabeanDataSet;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
  * This is the tab displaying information about a database object.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class DatabaseObjectInfoTab extends BaseDataSetTab
 {
@@ -38,10 +36,6 @@ public class DatabaseObjectInfoTab extends BaseDataSetTab
 		String TITLE = "Info";
 		String HINT = "Basic information";
 	}
-
-	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(DatabaseObjectInfoTab.class);
 
 	/**
 	 * Return the title for the tab.

@@ -24,7 +24,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -380,7 +379,7 @@ public class DumpSessionCommand implements ICommand
 	}
 
 	private File createGeneralConnectionDumpFile(SQLConnection conn)
-		throws IOException, SQLException
+		throws IOException
 	{
 		Connection myConn = conn.getConnection();
 	

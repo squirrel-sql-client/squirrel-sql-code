@@ -116,8 +116,8 @@ public class SessionManager
 		// then append a sequential number to the session title.
 		if (count.intValue() > 1 )
 		{
-			String title = sess.getTitle();
-			sess.setTitle(sess.getTitle() + " (" + count.intValue() + ")");
+			final String title = sess.getTitle();
+			sess.setTitle(title + " (" + count.intValue() + ")");
 		}
 
 		return sess;

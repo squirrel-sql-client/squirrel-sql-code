@@ -40,6 +40,7 @@ public interface ISession extends IHasIdentifier
 {
 	public interface IMainPanelTabIndexes extends MainPanel.ITabIndexes
 	{
+		// Empty body.
 	}
 
 	/**
