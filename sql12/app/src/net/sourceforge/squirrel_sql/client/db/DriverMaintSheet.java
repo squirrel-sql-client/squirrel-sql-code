@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.db;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -62,7 +63,7 @@ import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
 /**
  * This dialog allows maintenance of a JDBC driver definition.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class DriverMaintSheet extends BaseSheet
 {
@@ -75,10 +76,13 @@ public class DriverMaintSheet extends BaseSheet
 	}
 
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(DriverMaintSheet.class);
+	private static final ILogger s_log = LoggerController.createLogger(DriverMaintSheet.class);
 
-	/** Number of caracters to display in D/E fields. */
+	/** Number of characters to display in D/E fields. */
 	private static final int COLUMN_COUNT = 25;
+
+	/** Width to make listboxes. */
+	private static final int LIST_WIDTH = 400;
 
 	/**
 	 * This interface defines locale specific strings. This should be
@@ -94,31 +98,31 @@ public class DriverMaintSheet extends BaseSheet
 	}
 
 	/** Application API. */
-	private IApplication _app;
+	private final IApplication _app;
 
 	/** JDBC driver being maintained. */
-	private ISQLDriver _sqlDriver;
+	private final ISQLDriver _sqlDriver;
 
 	/** Type of maintenance being done. @see MaintenanceType. */
-	private int _maintType;
+	private final int _maintType;
 
 	/** Frame title. */
-	private JLabel _titleLbl = new JLabel();
+	private final JLabel _titleLbl = new JLabel();
 
 	/** Control for the <TT>ISQLDriver.IPropertyNames.NAME</TT> property. */
-	private JTextField _driverName = new JTextField();
+	private final JTextField _driverName = new JTextField();
 
 	/** Control for the <TT>ISQLDriver.IPropertyNames.DRIVER_CLASS</TT> property. */
-	private JComboBox _driverClassCmb = new JComboBox();
+	private final JComboBox _driverClassCmb = new JComboBox();
 
 	/** Control for the <TT>ISQLDriver.IPropertyNames.URL</TT> property. */
-	private JTextField _url = new JTextField();
+	private final JTextField _url = new JTextField();
 
 	/** Listbox containing the Java class path. */
-	private FileListBox _javaClassPathList = new FileListBox();
+	private final FileListBox _javaClassPathList = new FileListBox();
 
 	/** Listbox containing the extra class path. */
-	private FileListBox _extraClassPathList = new FileListBox(new DefaultFileListBoxModel());
+	private final FileListBox _extraClassPathList = new FileListBox(new DefaultFileListBoxModel());
 
 	/** Button to list drivers in a jar within the Java Class path list. */
 	private ListDriversButton _javaClasspathListDriversBtn;
@@ -266,8 +270,8 @@ public class DriverMaintSheet extends BaseSheet
 	 * <TT>SwingUtilities.invokeLater()</TT> because this may be called
 	 * before the main dialog is displayed.
 	 *
-	 * @param   ex	  The <TT>Exception</TT> containing the error
-	 *				  message.
+	 * @param	ex	The <TT>Exception</TT> containing the error
+	 *				message.
 	 */
 	private void displayErrorMessage(final Exception ex)
 	{
@@ -296,8 +300,8 @@ public class DriverMaintSheet extends BaseSheet
 		_driverName.setColumns(COLUMN_COUNT);
 		_url.setColumns(COLUMN_COUNT);
 
-		// Reset the background the the current Look and Feel uses for
-		// internal frames.
+		// Reset the background to the colour that the current Look
+		// and Feel uses for internal frames.
 		Container contentPane = getContentPane();
 		Color color = UIManager.getDefaults().getColor("Panel.background");
 		if (color != null)
@@ -460,8 +464,13 @@ public class DriverMaintSheet extends BaseSheet
 		gbc.gridheight = GridBagConstraints.REMAINDER;
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.weightx = 1.0;
-		pnl.add(new JScrollPane(_javaClassPathList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-									JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS), gbc);
+		JScrollPane sp = new JScrollPane(_javaClassPathList,
+									JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+									JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		final Dimension dm = sp.getPreferredSize();
+		dm.width = LIST_WIDTH; // Required otherwise it gets too wide.
+		sp.setPreferredSize(dm);
+		pnl.add(sp, gbc);
 
 		++gbc.gridx;
 		gbc.gridheight = 1;
@@ -551,8 +560,13 @@ public class DriverMaintSheet extends BaseSheet
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.fill = GridBagConstraints.BOTH;
-		pnl.add(new JScrollPane(_extraClassPathList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-									JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS), gbc);
+		JScrollPane sp = new JScrollPane(_extraClassPathList,
+									JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+									JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		final Dimension dm = sp.getPreferredSize();
+		dm.width = LIST_WIDTH; // Required otherwise it gets too wide.
+		sp.setPreferredSize(dm);
+		pnl.add(sp, gbc);
 		
 		gbc.gridheight = 1;
 		gbc.weightx = 0.0;

@@ -99,6 +99,11 @@ reported with any other JDK on Linux.</P>
 
 <A NAME="cmd_line_options"><H2>Command Line Options</H2></A>
 
+<P>The behaviour of SQuirreL can be changed by passing various arguments to
+it.</P>
+
+<P>TODO: Specify default behaviour</P>
+
 <P>The command line option <TT>-nosplash</TT> can be passed to the
 main class in order to start SQuirreL without the splash screen
 appearing. E.G.</P>
@@ -116,21 +121,21 @@ java net.sourceforge.squirrel_sql.client.Main -noplugins
 </PRE>
 
 <P>The user settings directory can be overridden by the
-<TT>-settingsdir</TT> option. E.G.</P>
+<TT>-settingsDir</TT> option. E.G.</P>
 
 <PRE>
-java net.sourceforge.squirrel_sql.client.Main -settingsdir=c:\my-squirrel-settings
+java net.sourceforge.squirrel_sql.client.Main -settingsDir=c:\my-squirrel-settings
 </PRE>
 
 <P>The configuration file for <EM>log4j</EM>&nbsp; is specified by the
-<TT>loggingConfigFile</TT> option. E.G.</P>
+<TT>loggingConfigFile</TT> argument. E.G.</P>
 
 <PRE>
 java net.sourceforge.squirrel_sql.client.Main -loggingConfigFile=c:\config.properties
 </PRE>
 
 <P>The application directory is specified by the <TT>squirrelHome</TT>
-option. This tells SQuirreL where to look for plugins etc. This should
+argument. This tells SQuirreL where to look for plugins etc. This should
 be the directory that you installed SQuirreL into.  E.G.</P>
 
 <PRE>
@@ -138,10 +143,17 @@ java net.sourceforge.squirrel_sql.client.Main -squirrelHome=$SQUIRREL_SQL_HOME
 </PRE>
 
 <P>To return to the standard theme for the metal Look and Feel pass
-the <TT>-usedefaultmetaltheme</TT> option. E.G.</P>
+the <TT>-usedefaultmetaltheme</TT> argument. E.G.</P>
 
 <PRE>
 java net.sourceforge.squirrel_sql.client.Main -usedefaultmetaltheme
+</PRE>
+
+<P>To use the native Look and Feel rather than the Java one pass the
+<TT>-useNativeLAF</TT> argument. E.G.</P>
+
+<PRE>
+java net.sourceforge.squirrel_sql.client.Main -useNativeLAF
 </PRE>
 
 <A NAME="howtoconnect"><H2>How to Connect to a Database</H2></A>

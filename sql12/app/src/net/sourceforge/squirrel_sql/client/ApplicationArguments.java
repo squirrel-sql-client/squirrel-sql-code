@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -18,14 +18,13 @@ package net.sourceforge.squirrel_sql.client;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.util.StringTokenizer;
-
 /**
  * Application arguments.
  *
  * <B>Note:</B> <EM>This class <B>cannot</B> use the logging package as this
  * class is used to initialize the logging package.</EM>
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ApplicationArguments
 {
@@ -56,10 +55,13 @@ public class ApplicationArguments
 	/** If <TT>true</TT> use default metal theme rther than the SQuirreL theme. */
 	private boolean _userDefaultMetalTheme = false;
 
+	/** If <TT>true</TT> use native LAF rather than Metal. */
+	private boolean _useNativeLAF = false;
+
 	/**
 	 * Ctor specifying arguments from command line.
 	 *
-	 * @param   args	Arguments passed on command line.
+	 * @param	args	Arguments passed on command line.
 	 */
 	private ApplicationArguments(String[] args)
 	{
@@ -90,11 +92,11 @@ public class ApplicationArguments
 			{
 				_squirrelHome = value;
 			}
-			else if (parm.equalsIgnoreCase("-settingsdir"))
+			else if (parm.equalsIgnoreCase("-settingsDir"))
 			{
 				_userSettingsDir = value;
 			}
-			else if (parm.equalsIgnoreCase("-loggingconfigfile"))
+			else if (parm.equalsIgnoreCase("-loggingConfigFile"))
 			{
 				_loggingConfigFile = value;
 			}
@@ -102,9 +104,13 @@ public class ApplicationArguments
 			{
 				_loadPlugins = false;
 			}
-			else if (parm.equalsIgnoreCase("-usedefaultmetaltheme"))
+			else if (parm.equalsIgnoreCase("-useDefaultMetalTheme"))
 			{
 				_userDefaultMetalTheme = true;
+			}
+			else if (parm.equalsIgnoreCase("-useNativeLAF"))
+			{
+				_useNativeLAF = true;
 			}
 		}
 	}
@@ -112,7 +118,7 @@ public class ApplicationArguments
 	/**
 	 * Initialize application arguments.
 	 *
-	 * @param   args	Arguments passed on command line.
+	 * @param	args	Arguments passed on command line.
 	 */
 	public synchronized static void initialize(String[] args)
 	{
@@ -145,7 +151,7 @@ public class ApplicationArguments
 	}
 
 	/**
-	 *  @return The raw arguments passed on the command line.
+	 * @return The raw arguments passed on the command line.
 	 */
 	public String[] getRawArguments()
 	{
@@ -153,7 +159,7 @@ public class ApplicationArguments
 	}
 
 	/**
-	 *  @return	override for the user settings directory. Will be
+	 * @return	override for the user settings directory. Will be
 	 * 				<TT>null</TT> if not overridden.
 	 */
 	public String getSquirrelHomeDirectory()
@@ -162,7 +168,7 @@ public class ApplicationArguments
 	}
 
 	/**
-	 *  @return The name of the directory that Squirrel is installed into.
+	 * @return The name of the directory that Squirrel is installed into.
 	 */
 	public String getUserSettingsDirectoryOverride()
 	{
@@ -170,7 +176,7 @@ public class ApplicationArguments
 	}
 
 	/**
-	 *  @return <TT>true</TT> if splashscreen should be shown.
+	 * @return <TT>true</TT> if splashscreen should be shown.
 	 */
 	public boolean getShowSplashScreen()
 	{
@@ -178,7 +184,7 @@ public class ApplicationArguments
 	}
 
 	/**
-	 *  @return	the logging configuration file name. Will be
+	 * @return	the logging configuration file name. Will be
 	 * 			<TT>null</TT> if not passed.
 	 */
 	public String getLoggingConfigFileName()
@@ -187,7 +193,7 @@ public class ApplicationArguments
 	}
 
 	/**
-	 *  @return	<TT>true</TT> if the plugins should be loaded.
+	 * @return	<TT>true</TT> if the plugins should be loaded.
 	 */
 	public boolean getLoadPlugins()
 	{
@@ -195,7 +201,7 @@ public class ApplicationArguments
 	}
 
 	/**
-	 *  @return		<TT>true</TT> if the default metal theme should be used
+	 * @return		<TT>true</TT> if the default metal theme should be used
 	 *				rather than the SQuirreL metal theme.
 	 */
 	public boolean useDefaultMetalTheme()
@@ -203,4 +209,14 @@ public class ApplicationArguments
 		return _userDefaultMetalTheme;
 	}
 
+	/**
+	 * Retrieve whether to use the native Look and Feel.
+	 *
+	 * @return		<TT>true</TT> to use the native LAF.
+	 */
+	public boolean useNativeLAF()
+	{
+		return _useNativeLAF;
+	}
 }
+

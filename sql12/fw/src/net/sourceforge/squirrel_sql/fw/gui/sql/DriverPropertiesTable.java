@@ -22,6 +22,7 @@ import java.sql.DriverPropertyInfo;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -86,6 +87,10 @@ class DriverPropertiesTable extends JTable
 
 	private final class ValueCellEditor extends DefaultCellEditor
 	{
+		private final JTextField _textEditor = new JTextField();
+		private final JComboBox _comboEditor = new JComboBox();
+		private JComponent _currentEditor;
+
 		ValueCellEditor()
 		{
 			super(new JTextField());
@@ -106,14 +111,32 @@ class DriverPropertiesTable extends JTable
 			DriverPropertyInfo prop = sdp.getDriverPropertyInfo();
 			if (prop.choices != null && prop.choices.length > 0)
 			{
-				final JComboBox cmb = new JComboBox(prop.choices);
+				_comboEditor.removeAllItems();
+				for (int i = 0; i < prop.choices.length; ++i)
+				{
+					_comboEditor.addItem(prop.choices[i]);
+				}
 				if (sdp.getValue() != null)
 				{
-					cmb.setSelectedItem(sdp.getValue());
+					_comboEditor.setSelectedItem(sdp.getValue());
 				}
-				return cmb;
+				_currentEditor = _comboEditor;
 			}
-			return super.getTableCellEditorComponent(table, value, isSelected, row, col);
+			else
+			{
+				_textEditor.setText(sdp.getValue());
+				_currentEditor = _textEditor;
+			}
+			return _currentEditor;
+		}
+    
+		public Object getCellEditorValue()
+		{
+			if (_currentEditor == _comboEditor)
+			{
+				return _comboEditor.getSelectedItem();
+			}
+			return _textEditor.getText();
 		}
 	}
 }

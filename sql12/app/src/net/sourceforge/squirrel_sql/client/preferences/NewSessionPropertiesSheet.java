@@ -39,6 +39,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
 import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
+import net.sourceforge.squirrel_sql.client.session.properties.FormatSessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.session.properties.GeneralSessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionSQLPropertiesPanel;
 
@@ -119,12 +120,8 @@ public class NewSessionPropertiesSheet extends BaseSheet
 					pnl.initialize(_app);
 					if (isDebug)
 					{
-						s_log.debug(
-							"Panel "
-								+ pnl.getTitle()
-								+ " initialized in "
-								+ (System.currentTimeMillis() - start)
-								+ "ms");
+						s_log.debug("Panel " + pnl.getTitle() + " initialized in "
+								+ (System.currentTimeMillis() - start) + "ms");
 					}
 				}
 				pack();
@@ -169,12 +166,8 @@ public class NewSessionPropertiesSheet extends BaseSheet
 			pnl.applyChanges();
 			if (isDebug)
 			{
-				s_log.debug(
-					"Panel "
-						+ pnl.getTitle()
-						+ " applied changes in "
-						+ (System.currentTimeMillis() - start)
-						+ "ms");
+				s_log.debug("Panel " + pnl.getTitle() + " applied changes in "
+						+ (System.currentTimeMillis() - start) + "ms");
 			}
 		}
 
@@ -191,6 +184,7 @@ public class NewSessionPropertiesSheet extends BaseSheet
 		// Add panels for core Squirrel functionality.
 		_panels.add(new GeneralSessionPropertiesPanel());
 		_panels.add(new SessionSQLPropertiesPanel(_app));
+		_panels.add(new FormatSessionPropertiesPanel(_app));
 
 		// Go thru all loaded plugins asking for panels.
 		PluginInfo[] plugins = _app.getPluginManager().getPluginInformation();

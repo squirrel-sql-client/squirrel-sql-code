@@ -19,6 +19,8 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  */
 import java.awt.Component;
 
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -104,6 +106,21 @@ public class SQLTab extends BaseMainPanelTab
 		{
 			_comp.sessionClosing();
 		}
+	}
+
+	/**
+	 * This tab has been selected. Set focus to the SQL entry area.
+	 */
+	public synchronized void select()
+	{
+		super.select();
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				_comp.getSQLEntryPanel().requestFocus();
+			}
+		});
 	}
 
 	public SQLPanel getSQLPanel()

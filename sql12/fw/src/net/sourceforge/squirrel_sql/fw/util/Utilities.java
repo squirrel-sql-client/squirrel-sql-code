@@ -144,9 +144,19 @@ public class Utilities
 	}
 
 	/**
-	 * Clean the passed string. Replace new line characters and tabs with
-	 * single spaces. If a <TT>null</TT> string passed return an empty
-	 * string.
+	 * Clean the passed string. Replace whitespace characters with a single
+	 * space. If a <TT>null</TT> string passed return an empty string. E.G.
+	 * replace
+	 * 
+	 * [pre]
+	 * \t\tselect\t* from\t\ttab01
+	 * [/pre]
+	 * 
+	 * with
+	 * 
+	 * [pre]
+	 *  select * from tab01
+	 * [/pre]
 	 *
 	 * @param	str	String to be cleaned.
 	 *
@@ -154,14 +164,29 @@ public class Utilities
 	 */
 	public static String cleanString(String str)
 	{
-		if (str == null)
+		StringBuffer buf = new StringBuffer(str.length());
+		char lastCh = ' ';
+
+		for (int i = 0, limit = str.length(); i < limit; ++i)
 		{
-			return EMPTY_STRING;
+			char ch = str.charAt(i);
+
+			if (Character.isWhitespace(ch))
+			{
+				if (!Character.isWhitespace(lastCh))
+				{
+					buf.append(' ');
+				}
+			}
+			else
+			{
+				buf.append(ch);
+			}
+			
+			lastCh = ch;
 		}
-		String newStr = str.replace('\n', ' ');
-		newStr = newStr.replace('\r', ' ');
-		newStr = newStr.replace('\t', ' ');
-		return newStr;
+
+		return buf.toString();
 	}
 
 	/**

@@ -18,6 +18,8 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.io.Serializable;
+
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 /**
  * This JavaBean is the object stored in The <TT>SQLHistoryComboBox</TT>. It
  * represents an SQL query.
@@ -29,8 +31,11 @@ public class SQLHistoryItem implements Serializable, Cloneable
 	/** The SQL. */
 	private String _sql;
 
-	/** The first line of the SQL. Appropriate for displaying in a combobox. */
-	private String _firstLine;
+	/**
+	 * Cleaned up vesion of the SQL. Appropriate for displaying in
+	 * a combobox.
+	 */
+	private String _shortSql;
 
 	/**
 	 * Default ctor.
@@ -96,14 +101,14 @@ public class SQLHistoryItem implements Serializable, Cloneable
 	}
 
 	/**
-	 * Retrieve a string representation of this object. The first line of the
-	 * SQL is used.
+	 * Retrieve a string representation of this object. A cleaned up version
+	 * of the SQL is used.
 	 * 
 	 * @return	A string representation of this object.
 	 */
 	public String toString()
 	{
-		return _firstLine;
+		return _shortSql;
 	}
 
 	/**
@@ -126,23 +131,12 @@ public class SQLHistoryItem implements Serializable, Cloneable
 	 */
 	public void setSQL(String sql)
 	{
-		_sql = sql.trim();
-		_firstLine = getFirstLine(sql);
-	}
+		if (sql == null)
+		{
+			throw new IllegalArgumentException("sql == null");
+		}
 
-	private String getFirstLine(String sql)
-	{
-		int idx1 = sql.indexOf('\n');
-		int idx2 = sql.indexOf('\r');
-		if (idx1 == -1)
-		{
-			idx1 = idx2;
-		}
-		if (idx2 != -1 && idx2 < idx1)
-		{
-			idx1 = idx2;
-		}
-		sql = idx1 == -1 ? sql : sql.substring(0, idx1);
-		return sql.replace('\t', ' ');
+		_sql = sql.trim();
+		_shortSql = Utilities.cleanString(sql);
 	}
 }

@@ -18,15 +18,15 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.IClientSession;
-
 /**
- * @version 	$Id: DropTablesCommand.java,v 1.1.1.1 2002-11-17 09:00:53 colbell Exp $
+ * @version 	$Id: DropTablesCommand.java,v 1.2 2003-05-18 12:30:14 colbell Exp $
  * @author		Johan Compagner
  */
 public class DropTablesCommand implements ICommand
@@ -72,16 +72,22 @@ public class DropTablesCommand implements ICommand
 	 */
 	public void execute()
 	{
-		final char sepChar = _session.getProperties().getSQLStatementSeparatorChar();
-		StringBuffer buf = new StringBuffer();
+		final String sqlSep = _session.getProperties().getSQLStatementSeparator();
+		final StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < _tables.length; i++)
 		{
-			buf.append("drop table ")
-				.append(_tables[i].getQualifiedName())
-				.append(sepChar)
+			final ITableInfo ti = (ITableInfo)_tables[i];
+			//buf.append("drop table ")
+			buf.append("drop ")
+				.append(ti.getType())
+				.append(" ")
+				.append(ti.getQualifiedName())
+				.append(" ")
+				.append(sqlSep)
+				.append(" ")
 				.append('\n');
 		}
-		IPlugin plugin = _session.getApplication().getDummyAppPlugin();
+		final IPlugin plugin = _session.getApplication().getDummyAppPlugin();
 		_session.getSQLPanelAPI(plugin).executeSQL(buf.toString());
 	}
 }

@@ -264,7 +264,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 			// the background model is updateable AND we are not already editing
 			if (updateableObject != null && ! creator.isTableEditable())
 				allowUpdate = true;
-			createUserInterface(allowUpdate, updateableObject);
+			createGUI(allowUpdate, updateableObject);
 			
 			// just in case table is editable, call creator to set up cell editors
 			_creator.setCellEditors(this);
@@ -434,10 +434,10 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 			return cm;
 		}
 
-		private void createUserInterface(boolean allowUpdate, 
+		private void createGUI(boolean allowUpdate, 
 			IDataSetUpdateableModel updateableObject)
 		{
-			setLayout(new BorderLayout());
+//			setLayout(new BorderLayout());
 			setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 			setRowSelectionAllowed(false);
 			setColumnSelectionAllowed(false);

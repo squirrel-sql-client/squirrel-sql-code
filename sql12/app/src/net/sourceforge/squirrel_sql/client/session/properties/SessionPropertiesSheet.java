@@ -83,7 +83,7 @@ public class SessionPropertiesSheet extends BaseSheet
 				long start = 0;
 				for (Iterator it = _panels.iterator(); it.hasNext();)
 				{
-					ISessionPropertiesPanel pnl = (ISessionPropertiesPanel) it.next();
+					ISessionPropertiesPanel pnl = (ISessionPropertiesPanel)it.next();
 					if (isDebug)
 					{
 						start = System.currentTimeMillis();
@@ -91,12 +91,8 @@ public class SessionPropertiesSheet extends BaseSheet
 					pnl.initialize(_session.getApplication(), _session);
 					if (isDebug)
 					{
-						s_log.debug(
-							"Panel "
-								+ pnl.getTitle()
-								+ " initialized in "
-								+ (System.currentTimeMillis() - start)
-								+ "ms");
+						s_log.debug("Panel " + pnl.getTitle() + " initialized in "
+								+ (System.currentTimeMillis() - start) + "ms");
 					}
 				}
 				pack();
@@ -139,7 +135,7 @@ public class SessionPropertiesSheet extends BaseSheet
 		long start = 0;
 		for (Iterator it = _panels.iterator(); it.hasNext();)
 		{
-			ISessionPropertiesPanel pnl = (ISessionPropertiesPanel) it.next();
+			ISessionPropertiesPanel pnl = (ISessionPropertiesPanel)it.next();
 			if (isDebug)
 			{
 				start = System.currentTimeMillis();
@@ -170,12 +166,13 @@ public class SessionPropertiesSheet extends BaseSheet
 
 		final IApplication app = _session.getApplication();
 
+		// Property panels for SQuirreL.
 		_panels.add(new GeneralSessionPropertiesPanel());
 		_panels.add(new SessionSQLPropertiesPanel(app));
+		_panels.add(new FormatSessionPropertiesPanel(app));
 
 		// Go thru all plugins attached to this session asking for panels.
-		SessionPluginInfo[] plugins =
-			app.getPluginManager().getPluginInformation(_session);
+		SessionPluginInfo[] plugins = app.getPluginManager().getPluginInformation(_session);
 		for (int i = 0; i < plugins.length; ++i)
 		{
 			SessionPluginInfo spi = plugins[i];
@@ -260,3 +257,4 @@ public class SessionPropertiesSheet extends BaseSheet
 		return pnl;
 	}
 }
+

@@ -54,6 +54,7 @@ import net.sourceforge.squirrel_sql.client.gui.laf.AllBluesBoldMetalTheme;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToStartupAliasesCommand;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
+import net.sourceforge.squirrel_sql.client.plugin.PluginLoadInfo;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
@@ -66,7 +67,7 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 /**
  * Defines the API to do callbacks on the application.
  *
- *@author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ *@author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  *@author	Lynn Pye
  */
 class Application implements IApplication
@@ -127,19 +128,8 @@ class Application implements IApplication
 
 		final ApplicationArguments args = ApplicationArguments.getInstance();
 
-		// Load default LAF info.
-		if (!args.useDefaultMetalTheme())
-		{
-			MetalLookAndFeel.setCurrentTheme(new AllBluesBoldMetalTheme());
-		}
-		try
-		{
-			UIManager.setLookAndFeel(MetalLookAndFeel.class.getName());
-		}
-		catch (Exception th)
-		{
-			s_log.error("Error setting LAF", th);
-		}
+		// Setup the applications Look and Feel.
+		setupLookAndFeel(args);
 
 // TODO: Make properties file Application.properties so we can use class
 // name to generate properties file name.
@@ -294,8 +284,7 @@ class Application implements IApplication
 	/**
 	 * Display an error message dialog.
 	 *
-	 *
-	 *@param  msg The error msg.
+	 * @param	msg		The error msg.
 	 */
 	public void showErrorDialog(String msg)
 	{
@@ -305,8 +294,7 @@ class Application implements IApplication
 	/**
 	 * Display an error message dialog.
 	 *
-	 *
-	 *@param  th The Throwable that caused the error
+	 * @param	th	The Throwable that caused the error
 	 */
 	public void showErrorDialog(Throwable th)
 	{
@@ -316,9 +304,8 @@ class Application implements IApplication
 	/**
 	 * Display an error message dialog.
 	 *
-	 *
-	 *@param  msg The error msg.
-	 *@param  th The Throwable that caused the error
+	 * @param	msg The error msg.
+	 * @param	th	The Throwable that caused the error
 	 */
 	public void showErrorDialog(String msg, Throwable th)
 	{
@@ -329,7 +316,7 @@ class Application implements IApplication
 	 * Return the collection of <TT>FontInfo </TT> objects for this app.
 	 *
 	 *
-	 *@return  the collection of <TT>FontInfo </TT> objects for this app.
+	 *@return	the collection of <TT>FontInfo </TT> objects for this app.
 	 */
 	public FontInfoStore getFontInfoStore()
 	{
@@ -339,7 +326,7 @@ class Application implements IApplication
 	/**
 	 * Return the thread pool for this app.
 	 *
-	 *@return  the thread pool for this app.
+	 * @return	the thread pool for this app.
 	 */
 	public TaskThreadPool getThreadPool()
 	{
@@ -354,7 +341,7 @@ class Application implements IApplication
 	/**
 	 * Return the factory object used to create the SQL entry panel.
 	 *
-	 *@return  the factory object used to create the SQL entry panel.
+	 * @return	the factory object used to create the SQL entry panel.
 	 */
 	public ISQLEntryPanelFactory getSQLEntryPanelFactory()
 	{
@@ -364,7 +351,7 @@ class Application implements IApplication
 	/**
 	 * Set the factory object used to create the SQL entry panel.
 	 *
-	 *@param  factory the factory object used to create the SQL entry panel.
+	 * @param	factory the factory object used to create the SQL entry panel.
 	 */
 	public void setSQLEntryPanelFactory(ISQLEntryPanelFactory factory)
 	{
@@ -380,25 +367,6 @@ class Application implements IApplication
 	{
 		return _sqlHistory;
 	}
-
-	/**
-	 * Return an array of all the sessions currently active.
-	 * 
-	 * @return	array of all active sessions.
-	 */
-//	public synchronized ISession[] getActiveSessions()
-//	{
-//		final JInternalFrame[] frames = GUIUtils.getOpenNonToolWindows(_mainFrame.getDesktopPane().getAllFrames());
-//		final List sessions = new ArrayList();
-//		for (int i = 0; i < frames.length; ++i)
-//		{
-//			if (frames[i] instanceof SessionSheet)
-//			{
-//				sessions.add(((SessionSheet)frames[i]).getSession());
-//			}
-//		}
-//		return (ISession[])sessions.toArray(new ISession[sessions.size()]);
-//	}
 
 	public synchronized void addToMenu(int menuId, JMenu menu)
 	{
@@ -483,8 +451,23 @@ class Application implements IApplication
 		indicateNewStartupTask(splash, "Creating main window...");
 		_mainFrame = new MainFrame(this);
 
-		indicateNewStartupTask(splash, "Initializing plugins...");
-		_pluginManager.initializePlugins();
+		indicateNewStartupTask(splash, loadPlugins ? "Initializing plugins..." : "No Plugins are to be loaded...");
+		if (loadPlugins)
+		{
+			_pluginManager.initializePlugins();
+			for (Iterator it = _pluginManager.getPluginLoadInfoIterator(); it.hasNext();)
+			{
+				PluginLoadInfo pli = (PluginLoadInfo)it.next();
+				long created = pli.getCreationTime();
+				long load = pli.getLoadTime();
+				long init = pli.getInitializeTime();
+				s_log.info("Plugin " + (pli.getInternalName())
+						+ " created in " + created
+						+ " ms, loaded in " + load
+						+ " ms, initialized in " + init
+						+ " ms, total " + (created + load + init) + " ms.");
+			}
+		}
 
 		indicateNewStartupTask(splash, "Loading SQL history...");
 		loadSQLHistory();
@@ -603,6 +586,30 @@ class Application implements IApplication
 		catch (Exception ex)
 		{
 			s_log.error("Unable to write SQL queries to persistant storage.", ex);
+		}
+	}
+
+	/**
+	 * Setup applications Look and Feel.
+	 */
+	private void setupLookAndFeel(ApplicationArguments args)
+	{
+		String lafClassName = args.useNativeLAF()
+					? UIManager.getSystemLookAndFeelClassName()
+					: MetalLookAndFeel.class.getName();
+
+		if (!args.useDefaultMetalTheme())
+		{
+			MetalLookAndFeel.setCurrentTheme(new AllBluesBoldMetalTheme());
+		}
+
+		try
+		{
+			UIManager.setLookAndFeel(lafClassName);
+		}
+		catch (Exception ex)
+		{
+			s_log.error("Error setting LAF", ex);
 		}
 	}
 }

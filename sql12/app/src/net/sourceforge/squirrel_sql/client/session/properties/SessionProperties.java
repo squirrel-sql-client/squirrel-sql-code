@@ -20,6 +20,8 @@ package net.sourceforge.squirrel_sql.client.session.properties;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 
+import javax.swing.SwingConstants;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerEditableTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel;
@@ -49,16 +51,21 @@ public class SessionProperties implements Cloneable, Serializable
 		String FONT_INFO = "fontInfo";
 		String LARGE_RESULT_SET_OBJECT_INFO = "largeResultSetObjectInfo";
 		String LIMIT_SQL_ENTRY_HISTORY_SIZE = "limitSqlEntryHistorySize";
+		String MAIN_TAB_PLACEMENT = "mainTabPlacement";
 		String META_DATA_OUTPUT_CLASS_NAME = "metaDataOutputClassName";
+		String OBJECT_TAB_PLACEMENT = "objectTabPlacement";
 		String SQL_ENTRY_HISTORY_SIZE = "sqlEntryHistorySize";
 		String SHOW_ROW_COUNT = "showRowCount";
 		String SHOW_TOOL_BAR = "showToolBar";
 		String SQL_SHARE_HISTORY = "sqlShareHistory";
+		String SQL_EXECUTION_TAB_PLACEMENT = "sqlExecutionTabPlacement";
+		String SQL_RESULTS_TAB_PLACEMENT = "sqlResultsTabPlacement";
 		String SQL_LIMIT_ROWS = "sqlLimitRows";
 		String SQL_NBR_ROWS_TO_SHOW = "sqlNbrOfRowsToShow";
 		String SQL_RESULTS_OUTPUT_CLASS_NAME = "sqlResultsOutputClassName";
 		String SQL_START_OF_LINE_COMMENT = "sqlStartOfLineComment";
-		String SQL_STATEMENT_SEPARATOR = "sqlStatementSeparator";
+		String SQL_STATEMENT_SEPARATOR_STRING = "sqlStatementSeparatorString";
+		String TABLE_CONTENTS_OUTPUT_CLASS_NAME = "tableContentsOutputClassName";
 	}
 
 	/** Object to handle property change events. */
@@ -78,8 +85,14 @@ public class SessionProperties implements Cloneable, Serializable
 	private boolean _contentsLimitRows = true;
 	private boolean _sqlLimitRows = true;
 
-	// store the names of the display classes to use for the different types of output
+	/** Name of class to use for metadata output.  */
 	private String _metaDataOutputClassName = IDataSetDestinations.READ_ONLY_TABLE;
+
+	/** Name of class to use for SQL results output.  */
+	private String _sqlOutputMetaDataClassName = IDataSetDestinations.READ_ONLY_TABLE;
+
+	/** Name of class to use for table contsnts output.  */
+	private String _tableContentsClassName = IDataSetDestinations.READ_ONLY_TABLE;
 
 	/**
 	 * The display class for the SQL results may be either editable or read-only.
@@ -97,14 +110,13 @@ public class SessionProperties implements Cloneable, Serializable
 	/** <TT>true</TT> if toolbar should be shown. */
 	private boolean _showToolbar = true;
 
-	private String _sqlOutputMetaDataClassName = IDataSetDestinations.READ_ONLY_TABLE;
-
-	private char _sqlStmtSepChar = ';';
+	/** Used to separate SQL multiple statements. */
+	private String _sqlStmtSep = ";";
 
 	/** Used to indicate a &quot;Start Of Line&quot; comment in SQL. */
 	private String _solComment = "--";
 
-	/** Font information for the jEdit text area. */
+	/** Font information for the SQL entry area. */
 	private FontInfo _fi;
 
 	/** Should the number of SQL statements to save in execution history be limited?. */
@@ -121,8 +133,32 @@ public class SessionProperties implements Cloneable, Serializable
 	 */
 	private int _sqlEntryHistorySize = 100;
 
+	/** Placement of main tabs. See javax.swing.SwingConstants for valid values. */
+	private int _mainTabPlacement = SwingConstants.TOP;
+
+	/** 
+	 * Placement of tabs displayed when an object selected in the object
+	 * tree. See javax.swing.SwingConstants for valid values.
+	 */
+	private int _objectTabPlacement = SwingConstants.TOP;
+
 	private LargeResultSetObjectInfo _largeObjectInfo = new LargeResultSetObjectInfo();
 
+	/** 
+	 * Placement of tabs displayed for SQL execution.
+	 * See javax.swing.SwingConstants for valid values.
+	 */
+	private int _sqlExecutionTabPlacement = SwingConstants.TOP;
+
+	/** 
+	 * Placement of tabs displayed for SQL execution results.
+	 * See javax.swing.SwingConstants for valid values.
+	 */
+	private int _sqlResultsTabPlacement = SwingConstants.BOTTOM;
+
+	/**
+	 * Default ctor.
+	 */
 	public SessionProperties()
 	{
 		super();
@@ -170,6 +206,20 @@ public class SessionProperties implements Cloneable, Serializable
 		return IDataSetDestinations.EDITABLE_TABLE;
 	}
 
+	/**
+	 * Get the name of the read-only form of the user-selected preference,
+	 * which may be TEXT or READ_ONLY_TABLE.  The user may have selected
+	 * EDITABLE_TABLE, but the caller wants to get the read-only version
+	 * (because it does not know how to handle and changes the user makes,
+	 * e.g. because the data represents a multi-table join).
+	 */
+	public String getReadOnlySQLResultsOutputClassName()
+	{
+		if (_sqlResultsOutputClassName.equals(IDataSetDestinations.EDITABLE_TABLE))
+			return IDataSetDestinations.READ_ONLY_TABLE;
+		return _sqlResultsOutputClassName;
+	} 
+
 	public void addPropertyChangeListener(PropertyChangeListener listener)
 	{
 		getPropertyChangeReporter().addPropertyChangeListener(listener);
@@ -197,8 +247,28 @@ public class SessionProperties implements Cloneable, Serializable
 			_metaDataOutputClassName = value;
 			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.META_DATA_OUTPUT_CLASS_NAME,
-				oldValue,
-				_metaDataOutputClassName);
+				oldValue, _metaDataOutputClassName);
+		}
+	}
+
+	public String getTableContentsOutputClassName()
+	{
+		return _tableContentsClassName;
+	}
+
+	public void setTableContentsOutputClassName(String value)
+	{
+		if (value == null)
+		{
+			value = "";
+		}
+		if (!_tableContentsClassName.equals(value))
+		{
+			final String oldValue = _tableContentsClassName;
+			_tableContentsClassName= value;
+			getPropertyChangeReporter().firePropertyChange(
+				IPropertyNames.TABLE_CONTENTS_OUTPUT_CLASS_NAME,
+				oldValue, _tableContentsClassName);
 		}
 	}
 
@@ -211,20 +281,6 @@ public class SessionProperties implements Cloneable, Serializable
 	{
 		return _sqlResultsOutputClassName;
 	}
-
-	/**
-	 * Get the name of the read-only form of the user-selected preference,
-	 * which may be TEXT or READ_ONLY_TABLE.  The user may have selected
-	 * EDITABLE_TABLE, but the caller wants to get the read-only version
-	 * (because it does not know how to handle and changes the user makes,
-	 * e.g. because the data represents a multi-table join).
-	 */
-	public String getReadOnlySQLResultsOutputClassName()
-	{
-		if (_sqlResultsOutputClassName.equals(IDataSetDestinations.EDITABLE_TABLE))
-			return IDataSetDestinations.READ_ONLY_TABLE;
-		return _sqlResultsOutputClassName;
-	} 
 
 	/**
 	 * Set the type of output display to user selection, which may be
@@ -244,18 +300,17 @@ public class SessionProperties implements Cloneable, Serializable
 			_sqlResultsOutputClassName = value;
 			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.SQL_RESULTS_OUTPUT_CLASS_NAME,
-				oldValue,
-				_sqlResultsOutputClassName);
+				oldValue, _sqlResultsOutputClassName);
 		}
 	}
 
 	/**
 	 * Force a re-build of the GUI when a user makes a table
 	 * temporarily editable.  The situation is that the current
-	 * SessionProperties _sqlResultsOutputClassName is a read-only
+	 * SessionProperties _tableContentsClassName is a read-only
 	 * class (either table or text) and the user has requested that
 	 * the information be made editable.
-	 * This can only be requested in the ContentsTab (not ResultsTab),
+	 * This can only be requested in the ContentsTab
 	 * and only when the sqlResults is read-only.
 	 * We make the table editable by:
 	 *      - setting the underlying data model (e.g. ContentsTab) so that it
@@ -266,23 +321,23 @@ public class SessionProperties implements Cloneable, Serializable
 	 * listeners to update the GUI.  This is done by pretending that the
 	 * SessionPropertied have just changed from being EDITABLE_TABLE to
 	 * some read-only class.  (We know that the current value of the
-	 * sqlResultsOutputClassName is a read-only class.)
+	 * _tableContentsClassName is a read-only class.)
 	 *
 	 * This is not a very nice way to cause the interface to be updated,
 	 * but it was the simplest one that I could find.  GWG 10/30/02
 	 *
 	 * CB TODO: (Move this elsewhere).
 	 */
-	public void forceSQLOutputClassNameChange()
+	public void forceTableContentsOutputClassNameChange()
 	{
 		// We need the old value and the new value to be different, or the
 		// listeners will ignore our property change request (and not rebuild
-		// the GUI).  We know that the current SQL output class is a read-only one
+		// the GUI).  We know that the current output class is a read-only one
 		// because this function is only called when the user requests that a
 		// single table be made editable.
-		final String oldValue = _sqlResultsOutputClassName;
+		final String oldValue = _tableContentsClassName;
 		getPropertyChangeReporter().firePropertyChange(
-			IPropertyNames.SQL_RESULTS_OUTPUT_CLASS_NAME,
+			IPropertyNames.TABLE_CONTENTS_OUTPUT_CLASS_NAME,
 			IDataSetDestinations.EDITABLE_TABLE,
 			oldValue);
 	}
@@ -299,8 +354,7 @@ public class SessionProperties implements Cloneable, Serializable
 			_autoCommit = value;
 			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.AUTO_COMMIT,
-				!_autoCommit,
-				_autoCommit);
+				!_autoCommit, _autoCommit);
 		}
 	}
 
@@ -316,8 +370,7 @@ public class SessionProperties implements Cloneable, Serializable
 			_showToolbar = value;
 			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.SHOW_TOOL_BAR,
-				!_showToolbar,
-				_showToolbar);
+				!_showToolbar, _showToolbar);
 		}
 	}
 
@@ -334,8 +387,7 @@ public class SessionProperties implements Cloneable, Serializable
 			_contentsNbrRowsToShow = value;
 			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.CONTENTS_NBR_ROWS_TO_SHOW,
-				oldValue,
-				_contentsNbrRowsToShow);
+				oldValue, _contentsNbrRowsToShow);
 		}
 	}
 
@@ -352,8 +404,7 @@ public class SessionProperties implements Cloneable, Serializable
 			_sqlNbrRowsToShow = value;
 			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.SQL_NBR_ROWS_TO_SHOW,
-				oldValue,
-				_sqlNbrRowsToShow);
+				oldValue, _sqlNbrRowsToShow);
 		}
 	}
 
@@ -370,8 +421,7 @@ public class SessionProperties implements Cloneable, Serializable
 			_contentsLimitRows = value;
 			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.CONTENTS_LIMIT_ROWS,
-				oldValue,
-				_contentsLimitRows);
+				oldValue, _contentsLimitRows);
 		}
 	}
 
@@ -388,26 +438,37 @@ public class SessionProperties implements Cloneable, Serializable
 			_sqlLimitRows = value;
 			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.SQL_LIMIT_ROWS,
-				oldValue,
-				_sqlLimitRows);
+				oldValue, _sqlLimitRows);
 		}
 	}
 
-	public char getSQLStatementSeparatorChar()
+
+	/**
+	 * Retrieve the string used to separate multiple SQL statements. Possible
+	 * examples are ";" or "GO";
+	 * 
+	 * @return		String used to separate SQL statements.
+	 */
+	public String getSQLStatementSeparator()
 	{
-		return _sqlStmtSepChar;
+		return _sqlStmtSep;
 	}
 
-	public void setSQLStatementSeparatorChar(char value)
+	/**
+	 * Set the string used to separate multiple SQL statements. Possible
+	 * examples are ";" or "GO";
+	 * 
+	 * @param	value	Separator string.
+	 */
+	public void setSQLStatementSeparator(String value)
 	{
-		if (_sqlStmtSepChar != value)
+		if (!_sqlStmtSep.equals(value))
 		{
-			final char oldValue = _sqlStmtSepChar;
-			_sqlStmtSepChar = value;
+			final String oldValue = _sqlStmtSep;
+			_sqlStmtSep = value;
 			getPropertyChangeReporter().firePropertyChange(
-				IPropertyNames.SQL_STATEMENT_SEPARATOR,
-				oldValue,
-				_sqlStmtSepChar);
+				IPropertyNames.SQL_STATEMENT_SEPARATOR_STRING,
+				oldValue, _sqlStmtSep);
 		}
 	}
 
@@ -422,8 +483,7 @@ public class SessionProperties implements Cloneable, Serializable
 		_commitOnClosingConnection = data;
 		getPropertyChangeReporter().firePropertyChange(
 			IPropertyNames.COMMIT_ON_CLOSING_CONNECTION,
-			oldValue,
-			_commitOnClosingConnection);
+			oldValue, _commitOnClosingConnection);
 	}
 
 	/**
@@ -448,8 +508,7 @@ public class SessionProperties implements Cloneable, Serializable
 		_showRowCount = data;
 		getPropertyChangeReporter().firePropertyChange(
 			IPropertyNames.SHOW_ROW_COUNT,
-			oldValue,
-			_showRowCount);
+			oldValue, _showRowCount);
 	}
 
 	/**
@@ -469,8 +528,7 @@ public class SessionProperties implements Cloneable, Serializable
 		_solComment = data;
 		getPropertyChangeReporter().firePropertyChange(
 			IPropertyNames.SQL_START_OF_LINE_COMMENT,
-			oldValue,
-			_solComment);
+			oldValue, _solComment);
 	}
 
 	public FontInfo getFontInfo()
@@ -485,9 +543,7 @@ public class SessionProperties implements Cloneable, Serializable
 			final FontInfo oldValue = _fi;
 			_fi = data;
 			getPropertyChangeReporter().firePropertyChange(
-				IPropertyNames.FONT_INFO,
-				oldValue,
-				_fi);
+				IPropertyNames.FONT_INFO, oldValue, _fi);
 		}
 	}
 
@@ -553,6 +609,74 @@ public class SessionProperties implements Cloneable, Serializable
 		getPropertyChangeReporter().firePropertyChange(
 			IPropertyNames.SQL_ENTRY_HISTORY_SIZE,
 			oldValue, _sqlEntryHistorySize);
+	}
+
+	public int getMainTabPlacement()
+	{
+		return _mainTabPlacement;
+	}
+
+	public void setMainTabPlacement(int value)
+	{
+		if (_mainTabPlacement != value)
+		{
+			final int oldValue = _mainTabPlacement;
+			_mainTabPlacement = value;
+			getPropertyChangeReporter().firePropertyChange(
+				IPropertyNames.MAIN_TAB_PLACEMENT,
+				oldValue, _mainTabPlacement);
+		}
+	}
+
+	public int getObjectTabPlacement()
+	{
+		return _objectTabPlacement;
+	}
+
+	public void setObjectTabPlacement(int value)
+	{
+		if (_objectTabPlacement != value)
+		{
+			final int oldValue = _objectTabPlacement;
+			_objectTabPlacement = value;
+			getPropertyChangeReporter().firePropertyChange(
+				IPropertyNames.OBJECT_TAB_PLACEMENT,
+				oldValue, _objectTabPlacement);
+		}
+	}
+
+	public int getSQLExecutionTabPlacement()
+	{
+		return _sqlExecutionTabPlacement;
+	}
+
+	public void setSQLExecutionTabPlacement(int value)
+	{
+		if (_sqlExecutionTabPlacement != value)
+		{
+			final int oldValue = _sqlExecutionTabPlacement;
+			_sqlExecutionTabPlacement = value;
+			getPropertyChangeReporter().firePropertyChange(
+				IPropertyNames.SQL_EXECUTION_TAB_PLACEMENT,
+				oldValue, _sqlExecutionTabPlacement);
+		}
+	}
+
+	public int getSQLResultsTabPlacement()
+	{
+		return _sqlResultsTabPlacement;
+	}
+
+	public void setSQLResultsTabPlacement(int value)
+	{
+		if (_sqlExecutionTabPlacement != value)
+		{
+			final int oldValue = _sqlResultsTabPlacement;
+			_sqlResultsTabPlacement = value;
+			getPropertyChangeReporter().firePropertyChange(
+				IPropertyNames.SQL_RESULTS_TAB_PLACEMENT,
+				oldValue, _sqlResultsTabPlacement);
+		}
 	}
 
 	private synchronized PropertyChangeReporter getPropertyChangeReporter()

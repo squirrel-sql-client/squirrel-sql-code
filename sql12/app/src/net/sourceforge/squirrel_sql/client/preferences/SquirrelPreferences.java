@@ -50,6 +50,7 @@ public class SquirrelPreferences implements Serializable
 		String DRIVERS_SELECTED_INDEX = "driversSelectdIndex";
 		String LOGIN_TIMEOUT = "loginTimeout";
 		String MAIN_FRAME_STATE = "mainFrameWindowState";
+		String MAXIMIMIZE_SESSION_SHEET_ON_OPEN = "maximizeSessionSheetOnOpen";
 		String PLUGIN_OBJECTS = "pluginObjects";
 		String PROXY = "proxyPerferences";
 		String SCROLLABLE_TABBED_PANES = "useScrollableTabbedPanes";
@@ -99,6 +100,9 @@ public class SquirrelPreferences implements Serializable
 
 	/** Show toolbar in the drivers window. */
 	private boolean _showDriversToolBar = true;
+
+	/** Maximize session sheet on open. */
+	private boolean _maxSessionSheetOnOpen = false;
 
 	/** Show toolbar in the aliases window. */
 	private boolean _showAliasesToolBar = true;
@@ -290,6 +294,19 @@ public class SquirrelPreferences implements Serializable
 		_useScrollableTabbedPanes = data;
 		getPropertyChangeReporter().firePropertyChange(IPropertyNames.SCROLLABLE_TABBED_PANES,
 											oldValue, _useScrollableTabbedPanes);
+	}
+
+	public boolean getMaximizeSessionSheetOnOpen()
+	{
+		return _maxSessionSheetOnOpen;
+	}
+
+	public synchronized void setMaximizeSessionSheetOnOpen(boolean data)
+	{
+		final boolean oldValue = _maxSessionSheetOnOpen;
+		_maxSessionSheetOnOpen= data;
+		getPropertyChangeReporter().firePropertyChange(IPropertyNames.MAXIMIMIZE_SESSION_SHEET_ON_OPEN,
+											oldValue, _maxSessionSheetOnOpen);
 	}
 
 	public ActionKeys[] getActionKeys()

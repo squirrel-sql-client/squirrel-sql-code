@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.plugin;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -21,7 +21,7 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.beans.SimpleBeanInfo;
 /**
- * This is the <CODE>BeanInfo</CODE> class for <CODE>Folder</CODE>.
+ * This is the <CODE>BeanInfo</CODE> class for <CODE>PluginInfo</CODE>.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
@@ -39,7 +39,7 @@ public final class PluginInfoBeanInfo extends SimpleBeanInfo
 		if (s_descr == null)
 		{
 			final Class CLAZZ = PluginInfo.class;
-			s_descr = new PropertyDescriptor[9];
+			s_descr = new PropertyDescriptor[8];
 
 			s_descr[0] = new PropertyDescriptor(IPropNames.PLUGIN_CLASS_NAME, CLAZZ,
 												"getPluginClassName", null);

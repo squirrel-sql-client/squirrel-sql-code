@@ -22,6 +22,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
+import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -36,12 +37,12 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 /**
  * This preferences panel allows maintenance of SQL preferences.
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 {
 	/** Logger for this class. */
-	private static ILogger s_log =
+	private static final ILogger s_log =
 		LoggerController.createLogger(SQLPreferencesPanel.class);
 
 	/** Panel to be displayed in preferences dialog. */
@@ -143,40 +144,72 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 
 		private void createUserInterface()
 		{
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = GridBagConstraints.HORIZONTAL;
+			gbc.insets = new Insets(4, 4, 4, 4);
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			gbc.weightx = 1;
+			add(createGeneralPanel(), gbc);
+			++gbc.gridy;
+			add(createDebugPanel(), gbc);
+		}
+
+		private JPanel createGeneralPanel()
+		{
+			JPanel pnl = new JPanel(new GridBagLayout());
+			pnl.setBorder(BorderFactory.createTitledBorder("General"));
+
 			_loginTimeout.setColumns(4);
 
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.anchor = GridBagConstraints.WEST;
 			gbc.fill = GridBagConstraints.NONE;
 			gbc.insets = new Insets(4, 4, 4, 4);
-			gbc.weightx = 0;
 
 			gbc.gridx = 0;
 			gbc.gridy = 0;
-			add(new JLabel(SQLPrefsPanelI18n.LOGIN_TIMEOUT), gbc);
+			pnl.add(new JLabel(SQLPrefsPanelI18n.LOGIN_TIMEOUT), gbc);
 
 			++gbc.gridx;
-			add(_loginTimeout, gbc);
+			pnl.add(_loginTimeout, gbc);
 
 			++gbc.gridx;
-			add(new JLabel("Zero means unlimited"), gbc);
+			gbc.weightx = 1;
+			pnl.add(new JLabel("Zero means unlimited"), gbc);
 
+			return pnl;
+		}
+
+		private JPanel createDebugPanel()
+		{
+			JPanel pnl = new JPanel(new GridBagLayout());
+			pnl.setBorder(BorderFactory.createTitledBorder("Debug"));
+
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.anchor = GridBagConstraints.WEST;
+			gbc.insets = new Insets(4, 4, 4, 4);
+
+			gbc.gridx = 0;
+			gbc.gridy = 0;
 			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.gridx = 0;
 			++gbc.gridy;
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
-			add(_debugJdbc, gbc);
+			pnl.add(_debugJdbc, gbc);
 
 			gbc.gridx = 0;
 			++gbc.gridy;
 			gbc.gridwidth = 1;
-			add(new JLabel("JDBC Debug File:", SwingConstants.RIGHT), gbc);
+			pnl.add(new JLabel("JDBC Debug File:", SwingConstants.RIGHT), gbc);
 
 			++gbc.gridx;
 			gbc.weightx = 1;
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
-			add(_jdbcDebugLogFileNameLbl, gbc);
-		}
+			pnl.add(_jdbcDebugLogFileNameLbl, gbc);
 
+			return pnl;
+		}
 	}
 }
+

@@ -39,7 +39,7 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 		super();
 		if (s_dscrs == null)
 		{
-			s_dscrs = new PropertyDescriptor[17];
+			s_dscrs = new PropertyDescriptor[22];
 			s_dscrs[0] = new PropertyDescriptor(IPropNames.AUTO_COMMIT,
 									CLAZZ, "getAutoCommit", "setAutoCommit");
 			s_dscrs[1] = new PropertyDescriptor(IPropNames.COMMIT_ON_CLOSING_CONNECTION,
@@ -60,8 +60,8 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 									CLAZZ, "getSQLLimitRows", "setSQLLimitRows");
 			s_dscrs[9] = new PropertyDescriptor(IPropNames.SQL_NBR_ROWS_TO_SHOW,
 									CLAZZ, "getSQLNbrRowsToShow", "setSQLNbrRowsToShow");
-			s_dscrs[10] = new PropertyDescriptor(IPropNames.SQL_STATEMENT_SEPARATOR,
-									CLAZZ, "getSQLStatementSeparatorChar", "setSQLStatementSeparatorChar");
+			s_dscrs[10] = new PropertyDescriptor(IPropNames.SQL_STATEMENT_SEPARATOR_STRING,
+									CLAZZ, "getSQLStatementSeparator", "setSQLStatementSeparator");
 			s_dscrs[11] = new PropertyDescriptor(IPropNames.SQL_RESULTS_OUTPUT_CLASS_NAME,
 									CLAZZ, "getSQLResultsOutputClassName", "setSQLResultsOutputClassName");
 			s_dscrs[12] = new PropertyDescriptor(IPropNames.LARGE_RESULT_SET_OBJECT_INFO,
@@ -74,6 +74,16 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 									CLAZZ, "getSQLEntryHistorySize", "setSQLEntryHistorySize");
 			s_dscrs[16] = new PropertyDescriptor(IPropNames.SQL_SHARE_HISTORY,
 									CLAZZ, "getSQLShareHistory", "setSQLShareHistory");
+			s_dscrs[17] = new PropertyDescriptor(IPropNames.MAIN_TAB_PLACEMENT,
+									CLAZZ, "getMainTabPlacement", "setMainTabPlacement");
+			s_dscrs[18] = new PropertyDescriptor(IPropNames.OBJECT_TAB_PLACEMENT,
+									CLAZZ, "getObjectTabPlacement", "setObjectTabPlacement");
+			s_dscrs[19] = new PropertyDescriptor(IPropNames.SQL_EXECUTION_TAB_PLACEMENT,
+									CLAZZ, "getSQLExecutionTabPlacement", "setSQLExecutionTabPlacement");
+			s_dscrs[20] = new PropertyDescriptor(IPropNames.SQL_RESULTS_TAB_PLACEMENT,
+									CLAZZ, "getSQLResultsTabPlacement", "setSQLResultsTabPlacement");
+			s_dscrs[21] = new PropertyDescriptor(IPropNames.TABLE_CONTENTS_OUTPUT_CLASS_NAME,
+									CLAZZ, "getTableContentsOutputClassName", "setTableContentsOutputClassName");
 		}
 	}
 

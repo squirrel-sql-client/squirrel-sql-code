@@ -42,6 +42,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -113,7 +114,8 @@ public class SQLExecuterTask implements Runnable
 
 				// Retrieve all the statements to execute.
 				final QueryTokenizer qt = new QueryTokenizer(_sql,
-										props.getSQLStatementSeparatorChar(),
+//										props.getSQLStatementSeparatorChar(),
+										props.getSQLStatementSeparator(),
 										props.getStartOfLineComment());
 				final List queryStrings = new ArrayList();
 				while (qt.hasQuery())
@@ -191,12 +193,13 @@ public class SQLExecuterTask implements Runnable
 	{
 		++_currentQueryIndex;
 
-		_cancelPanel.setSQL(querySql);
+		_cancelPanel.setSQL(Utilities.cleanString(querySql));
 		_cancelPanel.setStatusLabel("Executing SQL...");
 
 		final SQLExecutionInfo exInfo = new SQLExecutionInfo(_currentQueryIndex, querySql);
 		boolean rc = _stmt.execute(querySql);
 		exInfo.sqlExecutionComplete();
+
 		if (rc)
 		{
 			if (_stopExecution)

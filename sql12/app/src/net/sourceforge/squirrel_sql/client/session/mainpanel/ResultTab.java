@@ -24,6 +24,8 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
 
 import javax.swing.Action;
@@ -91,6 +93,9 @@ public class ResultTab extends JPanel implements IHasIdentifier
 	/** Panel showing the query information. */
 	private QueryInfoPanel _queryInfoPanel = new QueryInfoPanel();
 
+	/** Listener to the sessions properties. */
+	private PropertyChangeListener _propsListener;
+
 	/**
 	 * Ctor.
 	 *
@@ -124,7 +129,40 @@ public class ResultTab extends JPanel implements IHasIdentifier
 		_sqlPanel = sqlPanel;
 		_id = id;
 
-		createUserInterface();
+		createGUI();
+		propertiesHaveChanged(null);
+	}
+
+	/**
+	 * Panel is being added to its parent. Setup any required listeners.
+	 */
+	public void addNotify()
+	{
+		super.addNotify();
+		if (_propsListener == null)
+		{
+			_propsListener = new PropertyChangeListener()
+			{
+				public void propertyChange(PropertyChangeEvent evt)
+				{
+					propertiesHaveChanged(evt.getPropertyName());
+				}
+			};
+			_session.getProperties().addPropertyChangeListener(_propsListener);
+		}
+	}
+
+	/**
+	 * Panel is being removed from its parent. Remove any required listeners.
+	 */
+	public void removeNotify()
+	{
+		super.removeNotify();
+		if (_propsListener != null)
+		{
+			_session.getProperties().removePropertyChangeListener(_propsListener);
+			_propsListener = null;
+		}
 	}
 
 	/**
@@ -231,10 +269,6 @@ public class ResultTab extends JPanel implements IHasIdentifier
 		_sqlPanel.returnToTabbedPane(this);
 	}
 
-	/**
-	 * Insert the method's description here.
-	 * Creation date: (20-10-2001 1:23:16)
-	 */
 	private void createWindow()
 	{
 		_sqlPanel.createWindow(this);
@@ -245,7 +279,23 @@ public class ResultTab extends JPanel implements IHasIdentifier
 		return _tp;
 	}
 
-	private void createUserInterface()
+	/**
+	 * Session properties have changed so update GUI if required.
+	 *
+	 * @param	propertyName	Name of property that has changed.
+	 */
+	private void propertiesHaveChanged(String propertyName)
+	{
+		SessionProperties props = _session.getProperties();
+		if (propertyName == null
+			|| propertyName.equals(
+				SessionProperties.IPropertyNames.SQL_RESULTS_TAB_PLACEMENT))
+		{
+			_tp.setTabPlacement(props.getSQLResultsTabPlacement());
+		}
+	}
+
+	private void createGUI()
 	{
 		//	final Resources rsrc = _session.getApplication().getResources();
 		setLayout(new BorderLayout());
@@ -342,7 +392,7 @@ public class ResultTab extends JPanel implements IHasIdentifier
 		QueryInfoPanel()
 		{
 			super();
-			createUserInterface();
+			createGUI();
 		}
 
 		void load(ResultSetDataSet rsds, int rowCount,
@@ -369,7 +419,7 @@ public class ResultTab extends JPanel implements IHasIdentifier
 			return buf.toString();
 		}
 
-		private void createUserInterface()
+		private void createGUI()
 		{
 			setLayout(new GridBagLayout());
 			GridBagConstraints gbc = new GridBagConstraints();

@@ -131,8 +131,7 @@ public class ConnectToAliasCommand implements ICommand
 		try
 		{
 			SheetHandler hdl = new SheetHandler(_app, _sqlAlias, _createSession, _callback);
-			ConnectionSheet sheet = new ConnectionSheet(_app, /*_frame,*/
-			_sqlAlias, hdl);
+			ConnectionSheet sheet = new ConnectionSheet(_app, _sqlAlias, hdl);
 			_app.getMainFrame().addInternalFrame(sheet, true, null);
 			GUIUtils.centerWithinDesktop(sheet);
 			sheet.moveToFront();
@@ -359,9 +358,6 @@ public class ConnectToAliasCommand implements ICommand
 			final IIdentifier driverID = _alias.getDriverIdentifier();
 			final ISQLDriver sqlDriver = _app.getDataCache().getDriver(driverID);
 
-//			final Thread curThread = Thread.currentThread();
-//			final SQLDriverManager mgr = _app.getSQLDriverManager();
-
 			try
 			{
 				OpenConnectionCommand cmd = new OpenConnectionCommand(_app,
@@ -434,7 +430,7 @@ public class ConnectToAliasCommand implements ICommand
 	{
 		private final IClientSession _session;
 		private final ConnectionSheet _connSheet;
-	
+
 		Runner(IClientSession session, ConnectionSheet connSheet)
 		{
 			super();
