@@ -30,184 +30,197 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
+/**
+ * This is a statusbar component with a text control for messages and
+ * optionally the current time.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
 public class StatusBar extends JPanel {
-    /**
-     * This interface defines locale specific strings. This should be
-     * replaced with a property file.
-     */
-    private interface i18n {
-    }
+	/**
+	 * This interface defines locale specific strings. This should be
+	 * replaced with a property file.
+	 */
+	private interface i18n {
+	}
 
-    private boolean _showClock;
-    private String _msgWhenEmpty = " ";
+	/** If <TT>true</TT> the current time should be shown. */
+	private boolean _showClock;
 
-    private JLabel _textLbl = new MyLabel();
-    private JLabel _clockLbl;
+	/**
+	 * Message to display if there is no msg to display. Defaults to a
+	 * blank string.
+	 */
+	private String _msgWhenEmpty = " ";
 
-    //private Thread _clockThread;
-    private ClockTask _clockTask;
+	private JLabel _textLbl = new MyLabel();
+	private JLabel _clockLbl;
 
-    public StatusBar() {
-        this(false);
-    }
+	private ClockTask _clockTask;
 
-    public StatusBar(boolean showClock) {
-        super();
-        createUserInterface(showClock);
-    }
+	public StatusBar() {
+		this(false);
+	}
 
-    public void showClock(boolean value) {
-        if (value != _showClock) {
-            if (value) {
-                _clockLbl = new MyLabel();
-                add(_clockLbl, new ClockConstraints());
-                startClockThread();
-            } else {
-                stopClockThread();
-            }
-            _showClock = value;
-        }
-    }
+	public StatusBar(boolean showClock) {
+		super();
+		createUserInterface(showClock);
+	}
 
-    public boolean isClockShowing() {
-        return _showClock;
-    }
+	public void showClock(boolean value) {
+		if (value != _showClock) {
+			if (value) {
+				_clockLbl = new MyLabel();
+				add(_clockLbl, new ClockConstraints());
+				startClockThread();
+			} else {
+				stopClockThread();
+			}
+			_showClock = value;
+		}
+	}
 
-    public void setText(String text) {
-        String myText = null;
-        if (text != null) {
-            myText = text.trim();
-        }
-        if (myText != null && myText.length() > 0) {
-            _textLbl.setText(myText);
-        } else {
-            clearText();
-        }
-    }
+	public boolean isClockShowing() {
+		return _showClock;
+	}
 
-    public void clearText() {
-        _textLbl.setText(_msgWhenEmpty);
-    }
+	public void setText(String text) {
+		String myText = null;
+		if (text != null) {
+			myText = text.trim();
+		}
+		if (myText != null && myText.length() > 0) {
+			_textLbl.setText(myText);
+		} else {
+			clearText();
+		}
+	}
 
-    public void setTextWhenEmpty(String value) {
-        final boolean wasEmpty = _textLbl.getText().equals(_msgWhenEmpty);
-        if (value != null && value.length() > 0) {
-            _msgWhenEmpty = value;
-        } else {
-            _msgWhenEmpty = " ";
-        }
-        if (wasEmpty) {
-            clearText();
-        }
-    }
+	public void clearText() {
+		_textLbl.setText(_msgWhenEmpty);
+	}
 
-    private void createUserInterface(boolean showClock) {
-        setLayout(new GridBagLayout());
-        add(_textLbl, new TextConstraints());
-        showClock(showClock);
-        clearText();
-    }
+	public void setTextWhenEmpty(String value) {
+		final boolean wasEmpty = _textLbl.getText().equals(_msgWhenEmpty);
+		if (value != null && value.length() > 0) {
+			_msgWhenEmpty = value;
+		} else {
+			_msgWhenEmpty = " ";
+		}
+		if (wasEmpty) {
+			clearText();
+		}
+	}
 
-    private synchronized void startClockThread() {
-        if (_clockTask == null) {
-            _clockTask = new ClockTask(this);
-            new Thread(_clockTask).start();
-        }
-    }
+	private void createUserInterface(boolean showClock) {
+		setLayout(new GridBagLayout());
+		add(_textLbl, new TextConstraints());
+		showClock(showClock);
+		clearText();
+	}
 
-    private synchronized void stopClockThread() {
-        _clockTask.stop();
-        _clockTask = null;
-    }
+	private synchronized void startClockThread() {
+		if (_clockTask == null) {
+			_clockTask = new ClockTask(this);
+			new Thread(_clockTask).start();
+		}
+	}
 
-    private synchronized void setTime(Date time) {
-        DateFormat fmt = DateFormat.getTimeInstance(DateFormat.LONG);
-        _clockLbl.setText(fmt.format(time));
-    }
+	private synchronized void stopClockThread() {
+		_clockTask.stop();
+		_clockTask = null;
+	}
 
-    private static class ClockTask implements Runnable {
-        private boolean _stop;
-        private StatusBar _bar;
+	private synchronized void setTime(Date time) {
+		DateFormat fmt = DateFormat.getTimeInstance(DateFormat.LONG);
+		_clockLbl.setText(fmt.format(time));
+	}
 
-        ClockTask(StatusBar bar) {
-            super();
-            _bar = bar;
-        }
+	private static class ClockTask implements Runnable {
+		private boolean _stop;
+		private StatusBar _bar;
 
-        synchronized void stop() {
-            _stop = true;
-        }
+		ClockTask(StatusBar bar) {
+			super();
+			_bar = bar;
+		}
 
-        public void run() {
-            for(;;) {
-                try {
-                    Thread.currentThread().sleep(1000); // 1 second
-                } catch(InterruptedException ex) {
-                    return;
-                }
-                if (_stop) {
-                    try {
-                        SwingUtilities.invokeAndWait(new Runnable() {
-                            public void run() {
-                                _bar.remove(_bar._clockLbl);
-                                _bar._clockLbl = null;
-                                _bar.validate();
-                            }
-                        });
-                        Thread.yield();
-                    } catch(Exception ignore) {
-                    }
-                    break;
-                }
-                try {
-                    SwingUtilities.invokeAndWait(new Runnable() {
-                        public void run() {
-                            _bar.setTime(Calendar.getInstance().getTime());
-                        }
-                    });
-                    Thread.yield();
-                } catch(Exception ignore) {
-                }
-                break;
-            }
-        }
-    }
+		synchronized void stop() {
+			_stop = true;
+		}
 
-    private static class MyLabel extends JLabel {
-        MyLabel() {
-            super();
-            setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-        }
-    }
+		public void run() {
+			for(;;) {
+				try {
+					Thread.currentThread().sleep(1000); // 1 second
+				} catch(InterruptedException ex) {
+					return;
+				}
+				if (_stop) {
+					try {
+						SwingUtilities.invokeAndWait(new Runnable() {
+							public void run() {
+								_bar.remove(_bar._clockLbl);
+								_bar._clockLbl = null;
+								_bar.validate();
+							}
+						});
+						Thread.yield();
+					} catch(Exception ignore) {
+					}
+					break;
+				}
+				try {
+					SwingUtilities.invokeAndWait(new Runnable() {
+						public void run() {
+							_bar.setTime(Calendar.getInstance().getTime());
+						}
+					});
+					Thread.yield();
+				} catch(Exception ignore) {
+				}
+				break;
+			}
+		}
+	}
 
-    private static abstract class BaseConstraints extends GridBagConstraints {
-        BaseConstraints() {
-            super();
-            insets = new Insets(1, 1, 1, 1);
-            anchor = GridBagConstraints.WEST;
-            gridheight = 1;
-            gridwidth = 1;
-            gridy = 0;
-            weighty = 0.0;
-        }
-    }
+	private static class MyLabel extends JLabel {
+		MyLabel() {
+			super();
+			setBorder(BorderFactory.createCompoundBorder(
+						BorderFactory.createBevelBorder(BevelBorder.LOWERED),
+						BorderFactory.createEmptyBorder(2, 4, 2, 4)));
+		}
+	}
 
-    private static final class TextConstraints extends BaseConstraints {
-        TextConstraints() {
-            super();
-            gridx = 0;
-            fill = GridBagConstraints.HORIZONTAL;
-            weightx = 1.0;
-        }
-    }
+	private static abstract class BaseConstraints extends GridBagConstraints {
+		BaseConstraints() {
+			super();
+			insets = new Insets(1, 1, 1, 1);
+			anchor = GridBagConstraints.WEST;
+			gridheight = 1;
+			gridwidth = 1;
+			gridy = 0;
+			weighty = 0.0;
+		}
+	}
 
-    private static final class ClockConstraints extends BaseConstraints {
-        ClockConstraints() {
-            super();
-            gridx = 1;
-            fill = GridBagConstraints.NONE;
-            weightx = 0.0;
-        }
-    }
+	private static final class TextConstraints extends BaseConstraints {
+		TextConstraints() {
+			super();
+			gridx = 0;
+			fill = GridBagConstraints.HORIZONTAL;
+			weightx = 1.0;
+		}
+	}
+
+	private static final class ClockConstraints extends BaseConstraints {
+		ClockConstraints() {
+			super();
+			gridx = 1;
+			fill = GridBagConstraints.NONE;
+			weightx = 0.0;
+		}
+	}
 
 }
