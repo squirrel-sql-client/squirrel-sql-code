@@ -46,7 +46,11 @@ import javax.swing.text.StyleConstants;
 import com.Ostermiller.Syntax.Lexer.Lexer;
 import com.Ostermiller.Syntax.Lexer.SQLLexer;
 import com.Ostermiller.Syntax.Lexer.Token;
-
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
+import net.sourceforge.squirrel_sql.client.session.SchemaInfo;
+import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsAdapter;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -59,7 +63,16 @@ import net.sourceforge.squirrel_sql.plugins.syntax.IConstants;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxStyle;
 
-class OsterTextControl extends JTextPane
+import javax.swing.*;
+import javax.swing.plaf.ComponentUI;
+import javax.swing.text.*;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.*;
+
+public class OsterTextControl extends JTextPane
 {
 	/** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(OsterTextControl.class);
@@ -108,6 +121,7 @@ class OsterTextControl extends JTextPane
 	private final SyntaxPreferences _syntaxPrefs;
 
 	private Vector _sqlTokenListeners = new Vector();
+	private Vector _currentErrorInfos = new Vector();
 
 	OsterTextControl(ISession session, SyntaxPreferences prefs)
 	{
@@ -132,7 +146,43 @@ class OsterTextControl extends JTextPane
 		// set it's initial coloring style.
 		initDocument();
 
+      setToolTipText("Just to make getToolTiptext() to be called");
+
 		updateFromPreferences();
+
+		session.getParserEventsProcessor().addParserEventsListener(new ParserEventsAdapter()
+		{
+			public void errorsFound(ErrorInfo[] errorInfos)
+			{
+				onErrorsFound(errorInfos);
+			}
+		});
+	}
+
+	private void onErrorsFound(ErrorInfo[] errorInfos)
+	{
+		if(_currentErrorInfos.size() == errorInfos.length)
+		{
+			boolean errorsChanged = false;
+			for (int i = 0; i < errorInfos.length; i++)
+			{
+				if(false == errorInfos[i].equals(_currentErrorInfos.get(i)))
+				{
+					errorsChanged = true;
+					break;
+				}
+			}
+
+			if(false == errorsChanged)
+			{
+				return;
+			}
+
+		}
+
+		_currentErrorInfos.clear();
+		_currentErrorInfos.addAll(Arrays.asList(errorInfos));
+		colorAll();
 	}
 
 	// This stops the text control from line wrapping.
@@ -213,7 +263,7 @@ class OsterTextControl extends JTextPane
 	 */
 	public void colorAll()
 	{
-		color(0, document.getLength());
+		color(0, document.getLength(), false);
 	}
 
 	/**
@@ -226,9 +276,9 @@ class OsterTextControl extends JTextPane
 	 * @param adjustment	amount of text inserted or removed
 	 *						at the starting point.
 	 */
-	public void color(int position, int adjustment)
+	public void color(int position, int adjustment, boolean fireTableOrViewFoundEvent)
 	{
-		colorer.color(position, adjustment);
+		colorer.color(position, adjustment, fireTableOrViewFoundEvent);
 	}
 
 	/**
@@ -466,10 +516,13 @@ class OsterTextControl extends JTextPane
 		{
 			public int position;
 			public int adjustment;
-			public RecolorEvent(int position, int adjustment)
+         private boolean fireTableOrViewFoundEvent;
+
+         public RecolorEvent(int position, int adjustment, boolean fireTableOrViewFoundEvent)
 			{
 				this.position = position;
 				this.adjustment = adjustment;
+            this.fireTableOrViewFoundEvent = fireTableOrViewFoundEvent;
 			}
 		}
 
@@ -503,7 +556,7 @@ class OsterTextControl extends JTextPane
 		 * section of the document. It will process this as a FIFO.
 		 * This method should be done inside a doclock.
 		 */
-		public void color(int position, int adjustment)
+		public void color(int position, int adjustment, boolean fireTableOrViewFoundEvent)
 		{
 			// figure out if this adjustment effects the current run.
 			// if it does, then adjust the place in the document
@@ -521,7 +574,7 @@ class OsterTextControl extends JTextPane
 			}
 			synchronized (lock)
 			{
-				v.add(new RecolorEvent(position, adjustment));
+				v.add(new RecolorEvent(position, adjustment, fireTableOrViewFoundEvent));
 				if (asleep)
 				{
 					this.interrupt();
@@ -538,6 +591,7 @@ class OsterTextControl extends JTextPane
 		{
 			int position = -1;
 			int adjustment = 0;
+         boolean fireTableOrViewFoundEvent = true;
 			// if we just finish, we can't go to sleep until we
 			// ensure there is nothing else for us to do.
 			// use try again to keep track of this.
@@ -552,12 +606,15 @@ class OsterTextControl extends JTextPane
 						v.removeElementAt(0);
 						position = re.position;
 						adjustment = re.adjustment;
+                  fireTableOrViewFoundEvent = re.fireTableOrViewFoundEvent;
 					}
 					else
 					{
 						tryAgain = false;
 						position = -1;
 						adjustment = 0;
+                  fireTableOrViewFoundEvent = false;
+
 					}
 				}
 				if (position != -1)
@@ -666,7 +723,10 @@ class OsterTextControl extends JTextPane
 										if (si.isTable(data))
 										{
 											type = IConstants.IStyleNames.TABLE;
+                                 if(fireTableOrViewFoundEvent)
+                                 {
 											fireTableOrViewFound(t.getContents());
+										}
 										}
 										else if (si.isColumn(data))
 										{
@@ -682,7 +742,12 @@ class OsterTextControl extends JTextPane
 										}
 									}
 
-									document.setCharacterAttributes(
+//									document.setCharacterAttributes(
+//										t.getCharBegin() + change,
+//										t.getCharEnd() - t.getCharBegin(),
+//										getMyStyle(type), true);
+
+                           setCharacterAttributes(
 										t.getCharBegin() + change,
 										t.getCharEnd() - t.getCharBegin(),
 										getMyStyle(type), true);
@@ -788,6 +853,31 @@ class OsterTextControl extends JTextPane
 				asleep = true;
 				if (!tryAgain)
 				{
+               synchronized (doclock)
+               {
+                  ////////////////////////////////////////////////////////////
+                  // If all coloring is done, we color errors
+                  ErrorInfo[] errInfoClone = (ErrorInfo[]) _currentErrorInfos.toArray(new ErrorInfo[0]);
+                  for (int i = 0; i < errInfoClone.length; i++)
+                  {
+                     int begin = errInfoClone[i].beginPos - 1;
+                     int len = errInfoClone[i].endPos - errInfoClone[i].beginPos;
+                     if(0 < len)
+                     {
+//                        document.setCharacterAttributes(begin,
+//                                                        len + 1,
+//                                                        getMyStyle(IConstants.IStyleNames.ERROR),
+//                                                        true);
+                        setCharacterAttributes(begin,
+                                               len + 1,
+                                               getMyStyle(IConstants.IStyleNames.ERROR),
+                                               true);
+                     }
+                  }
+                  //
+                  /////////////////////////////////////////////////////////
+               }
+
 					try
 					{
 						sleep(0xffffff);
@@ -800,6 +890,24 @@ class OsterTextControl extends JTextPane
 				asleep = false;
 			}
 		}
+
+
+      private void setCharacterAttributes(final int offset, final int length, final AttributeSet s, final boolean replace)
+      {
+         SwingUtilities.invokeLater(new Runnable()
+         {
+            public void run()
+            {
+               // Though in API-Doc they say setCharacterAttributes() is thread save we
+               // received observed java.lang.Errors  from Swing as well as dead locks.
+               // That's why we do changes synchron now.
+               document.setCharacterAttributes(offset, length, s, replace);
+            }
+         });
+      }
+
+
+
 	}
 
 	public void addSQLTokenListener(SQLTokenListener l)
@@ -826,6 +934,24 @@ class OsterTextControl extends JTextPane
 		}
 	}
 
+   public String getToolTipText(MouseEvent event)
+   {
+      int pos = viewToModel(event.getPoint());
+
+      for (int i = 0; i < _currentErrorInfos.size(); i++)
+      {
+         ErrorInfo errInfo = (ErrorInfo) _currentErrorInfos.elementAt(i);
+
+         if(errInfo.beginPos-1 <= pos && pos <= errInfo.endPos)
+         {
+            return errInfo.message;
+         }
+      }
+
+      return null;
+   }
+
+
 	/**
 	 * Just like a DefaultStyledDocument but intercepts inserts and
 	 * removes to color them.
@@ -844,7 +970,7 @@ class OsterTextControl extends JTextPane
 //			synchronized (doclock)
 //			{
 				super.insertString(offs, str, a);
-				color(offs, str.length());
+				color(offs, str.length(), true);
 				documentReader.update(offs, str.length());
 //			}
 		}
@@ -854,7 +980,7 @@ class OsterTextControl extends JTextPane
 //			synchronized (doclock)
 //			{
 				super.remove(offs, len);
-				color(offs, -len);
+				color(offs, -len, true);
 				documentReader.update(offs, -len);
 //			}
 		}
