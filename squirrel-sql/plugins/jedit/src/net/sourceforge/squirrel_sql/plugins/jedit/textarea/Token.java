@@ -16,7 +16,7 @@ package net.sourceforge.squirrel_sql.plugins.jedit.textarea;
  * token in the text, and a pointer to the next token in the list.
  *
  * @author Slava Pestov
- * @version $Id: Token.java,v 1.1 2001-12-14 11:01:40 colbell Exp $
+ * @version $Id: Token.java,v 1.2 2002-01-26 00:16:35 joco01 Exp $
  */
 public class Token
 {
@@ -75,6 +75,7 @@ public class Token
 	 */
 	public static final byte KEYWORD3 = 8;
 
+
 	/**
 	 * Operator token id. This can be used to mark an
 	 * operator. (eg, SQL mode marks +, -, etc with this
@@ -90,9 +91,20 @@ public class Token
 	public static final byte INVALID = 10;
 
 	/**
+	 * Table token id. This is being used to mark a tablename. 
+	 */
+	public static final byte TABLE = 11;
+
+	/**
+	 * Colomn token id. This is being used to mark a tablename. 
+	 */
+	public static final byte COLOMN = 12;
+
+	/**
 	 * The total number of defined token ids.
 	 */
-	public static final byte ID_COUNT = 11;
+	public static final byte ID_COUNT = 13;
+
 
 	/**
 	 * The first id that can be used for internal state
@@ -111,6 +123,7 @@ public class Token
 	 * marks the end of the token list.
 	 */
 	public static final byte END = 127;
+
 
 	/**
 	 * The length of this token.
