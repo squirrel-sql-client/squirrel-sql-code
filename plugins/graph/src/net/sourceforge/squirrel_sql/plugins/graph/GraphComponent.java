@@ -5,4 +5,6 @@ import java.awt.*;
 public interface GraphComponent
 {
    void paint(Graphics g);
+
+   Dimension getRequiredSize();
 }

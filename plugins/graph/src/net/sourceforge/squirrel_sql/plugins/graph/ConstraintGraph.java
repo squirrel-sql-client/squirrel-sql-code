@@ -163,6 +163,16 @@ public class ConstraintGraph
 
    public void moveLastHitFoldingPointTo(Point point)
    {
+      if(point.x < 0)
+      {
+         point.x = 0;
+      }
+      if(point.y < 0)
+      {
+         point.y = 0;
+      }
+
+
       _foldingPoints.indexOf(_hitFoldingPoint);
       _foldingPoints.set(_foldingPoints.indexOf(_hitFoldingPoint), point);
       _hitFoldingPoint = point;
