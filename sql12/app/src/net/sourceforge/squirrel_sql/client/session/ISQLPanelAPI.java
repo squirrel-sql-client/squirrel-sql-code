@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
+import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
 /**
  * This interface defines the API through which plugins can work with the SQL
  * panel.
@@ -63,11 +64,45 @@ public interface ISQLPanelAPI
 	void removeResultTabListener(IResultTabListener lis);
 
 	/**
+	 * Add a listener for events in this SQL Panel.
+	 *
+	 * @param   lis	 Listener
+	 *
+	 * @throws	IllegalArgumentException
+	 *			If a null <TT>ISQLPanelListener</TT> passed.
+	 */
+	void addSQLPanelListener(ISQLPanelListener lis);
+
+	/**
+	 * Remove a listener.
+	 *
+	 * @param	lis	Listener
+	 *
+	 * @throws	IllegalArgumentException
+	 *			If a null <TT>ISQLPanelListener</TT> passed.
+	 */
+	public void removeSQLPanelListener(ISQLPanelListener lis);
+
+	/**
+	 * Replace the SQL entry area with the passed one.
+	 * 
+	 * @param	pnl	New SQL entry area.
+	 */
+	void installSQLEntryPanel(ISQLEntryPanel pnl);
+
+	/**
 	 * Return the entire contents of the SQL entry area.
 	 * 
 	 * @return	the entire contents of the SQL entry area.
 	 */
 	String getEntireSQLScript();
+
+	/**
+	 * Return the selected contents of the SQL entry area.
+	 * 
+	 * @return	the selected contents of the SQL entry area.
+	 */
+	String getSelectedSQLScript();
 
 	/**
 	 * Return the SQL script to be executed.
@@ -106,11 +141,21 @@ public interface ISQLPanelAPI
 	 * Replace the contents of the SQL entry area with the passed
 	 * SQL script and specify whether to select it.
 	 * 
-	 * @param	sqlScript	The script to be placed in the SQL entry area..
+	 * @param	sqlScript	The script to be placed in the SQL entry area.
 	 * @param	select		If <TT>true</TT> then select the passed script
 	 * 						in the sql entry area.
 	 */
 	void setEntireSQLScript(String sqlScript, boolean select);
+
+	/**
+	 * Replace the currently selected text in the SQL entry area
+	 * with the passed text.
+	 * 
+	 * @param	sqlScript	The script to be placed in the SQL entry area.
+	 * @param	select		If <TT>true</TT> then select the passed script
+	 * 						in the sql entry area.
+	 */
+	void replaceSelectedSQLScript(String sqlScript, boolean select);
 
 	/**
 	 * Return the offset into the SQL entry area where the current select

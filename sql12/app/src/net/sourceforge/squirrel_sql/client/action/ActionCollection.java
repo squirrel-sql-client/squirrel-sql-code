@@ -44,7 +44,6 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.ShowLoadedDriversOnl
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileHorizontalAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileVerticalAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ViewFAQAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewHelpAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewLogsAction;
 import net.sourceforge.squirrel_sql.client.session.IClientSession;
@@ -114,8 +113,9 @@ public final class ActionCollection
 	}
 
 	/**
-	 * Add an <TT>Action</TT> to this collection. Any
-	 * <TT>ISessionAction</TT> actions will be disabled when added.
+	 * Add an <TT>Action</TT> to this collection. Normally <TT>get</TT> will
+	 * do this &quot;on demand&quot; but this function can be used when
+	 * there is no default ctor for the <TT>Action</TT>.
 	 *
 	 * @param	action	<TT>Action</TT> to be added.
 	 *
@@ -149,16 +149,6 @@ public final class ActionCollection
 			throw new IllegalArgumentException("null Action Class passed.");
 		}
 
-//		Action action = (Action)_actionColl.get(actionClass);
-//		if (action == null)
-//		{
-//			s_log.error(
-//				"Action "
-//					+ actionClass.getName()
-//					+ " not found in ActionCollection. Will attempt to create it");
-////			action = createAction(actionClass);
-//		}
-//		return action;
 		return get(actionClass.getName());
 	}
 
@@ -317,30 +307,6 @@ public final class ActionCollection
 	 * Create a new instance of <TT>actionCassName</TT> and store in this
 	 * collection.
 	 *
-	 * @param	actionClass	The <TT>Class</TT> of the <TT>Action</TT>
-	 *						required. Because the instance is created
-	 *						using <TT>newInstance()</TT> this <TT>Class</TT>
-	 *						must have a default ctor.
-	 */
-//	private Action createAction(Class actionClass)
-//	{
-//		Action action = null;
-//		try
-//		{
-//			action = (Action) actionClass.newInstance();
-//			_actionColl.put(actionClass, action);
-//		}
-//		catch (Exception ex)
-//		{
-//			s_log.error("Error occured creating Action: " + actionClass.getName(), ex);
-//		}
-//		return action;
-//	}
-
-	/**
-	 * Create a new instance of <TT>actionCassName</TT> and store in this
-	 * collection.
-	 *
 	 * @param	actionClass	The name of the <TT>Class</TT> of the <TT>Action</TT>
 	 *						required. Because the instance is created
 	 *						using <TT>newInstance()</TT> this <TT>Class</TT>
@@ -414,7 +380,6 @@ public final class ActionCollection
 		add(new TileAction(_app));
 		add(new TileHorizontalAction(_app));
 		add(new TileVerticalAction(_app));
-		add(new ViewFAQAction(_app));
 		add(new ViewHelpAction(_app));
 		add(new ViewLogsAction(_app));
 	}

@@ -33,7 +33,7 @@ public class SquirrelResources extends Resources
 		String ALIASES = "aliases";
 		String CLOSE_ALL_SQL_RESULTS = "close_all_sql_results";
 		String DRIVERS = "drivers";
-		//	  String EDIT = "edit";
+//		String EDIT = "edit";
 		String FILE = "file";
 		String HELP = "help";
 		String PLUGINS = "plugins";
@@ -48,8 +48,13 @@ public class SquirrelResources extends Resources
 	{
 		String APPLICATION_ICON = "AppIcon";
 		String EMPTY16 = "Empty16";
+		String HELP_TOPIC = "HelpTopic";
+		String HELP_TOC_CLOSED = "HelpTocClosed";
+		String HELP_TOC_OPEN = "HelpTocOpen";
 		String PERFORMANCE_WARNING = "PerformanceWarning";
+		String PLUGINS = "Plugins";
 		String SPLASH_SCREEN = "SplashScreen";
+		String VIEW = "View";
 	}
 
 	public SquirrelResources(String rsrcBundleBaseName)

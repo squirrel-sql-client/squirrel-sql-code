@@ -24,6 +24,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.event.EventListenerList;
+
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
@@ -38,6 +40,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.mainframe.action.OpenConnectionCommand;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
+import net.sourceforge.squirrel_sql.client.session.event.ISessionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
@@ -80,8 +83,6 @@ class Session implements IClientSession
 
 	private IMessageHandler _msgHandler = NullMessageHandler.getInstance();
 
-	//private int _openedSequence;
-
 	/** API for the object tree. */
 	private final IObjectTreeAPI _objectTreeAPI;
 
@@ -90,6 +91,11 @@ class Session implements IClientSession
 
 	/** Set to <TT>true</TT> once session closed. */
 	private boolean _closed;
+
+	/**
+	 * Collection of listeners to this object tree.
+	 */
+	private EventListenerList _listenerList = new EventListenerList();
 
 	/**
 	 * Create a new session.
@@ -290,6 +296,32 @@ class Session implements IClientSession
 		return map.get(key);
 	}
 
+	/**
+	 * Add a listener to this session
+	 * 
+	 * @param	lis		The listener to add.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> listener passed.
+	 */
+	public void addSessionListener(ISessionListener lis)
+	{
+		_listenerList.add(ISessionListener.class, lis);
+	}
+
+	/**
+	 * Remove a listener from this session
+	 * 
+	 * @param	lis		The listener to remove.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> listener passed.
+	 */
+	public void removeSessionListener(ISessionListener lis)
+	{
+		_listenerList.remove(ISessionListener.class, lis);
+	}
+
 	public synchronized Object putPluginObject(IPlugin plugin, String key,
 												Object value)
 	{
@@ -392,6 +424,7 @@ class Session implements IClientSession
 			{
 				connState.restoreState(_conn, _msgHandler);
 			}
+			_msgHandler.showMessage("Reconnected to " + _alias.getName());
 			getObjectTreeAPI(_app.getDummyAppPlugin()).refreshTree();
 		}
 		catch (SQLException ex)

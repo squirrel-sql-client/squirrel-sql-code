@@ -24,16 +24,22 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -43,7 +49,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 /**
- * This windows shows the SQuirreL Help files.
+ * This window shows the SQuirreL Help files.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
@@ -55,7 +61,10 @@ public class HelpViewerWindow extends JFrame
 	 */
 	private interface i18n
 	{
+		String CHANGE_LOGS = "Change Logs";
+		String FAQ = "FAQ";
 		String HELP = "Help";
+		String LICENCES = "Licences";
 		String SQUIRREL = "SQuirreL";
 		String TITLE = "SQuirreL SQL Client Help";
 	}
@@ -67,11 +76,17 @@ public class HelpViewerWindow extends JFrame
 	/** Application API. */
 	private final IApplication _app;
 
+	/** Tree containing a node for each help document. */
+	private JTree _tree;
+
 	/** Panel that displays the help document. */
 	private HtmlViewerPanel _detailPnl;
 
 	/** Home URL. */
 	private URL _homeURL;
+
+	/** Collection of the nodes in the tree keyed by the URL.toString(). */
+	private final Map _nodes = new HashMap();
 
 	/**
 	 * Ctor.
@@ -94,20 +109,44 @@ public class HelpViewerWindow extends JFrame
 	}
 
 	/**
-	 * Set the Help Document displayed to that defined by the passed URL.
+	 * Set the Document displayed to that defined by the passed URL.
 	 * 
 	 * @param	url		URL of document to be displayed. 
 	 */
-	private void setSelectedHelpDocument(URL url)
+	private void setSelectedDocument(URL url)
 	{
 		try
 		{
-			_detailPnl.setURL(url);
+//			_detailPnl.setURL(url);
+			_detailPnl.gotoURL(url);
 		}
 		catch (IOException ex)
 		{
-			s_log.error(ex);
+			s_log.error("Error displaying document", ex);
 			//TODO: Display in a statusbar
+		}
+	}
+
+	private void selectTreeNodeForURL(URL url)
+	{
+		// Strip local part of URL.
+		String key = url.toString();
+		final int idx = key.lastIndexOf('#'); 
+		if ( idx > -1)
+		{
+			key = key.substring(0, idx);
+		}
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode)_nodes.get(key);
+		if (node != null)
+		{
+			DefaultTreeModel model = (DefaultTreeModel)_tree.getModel();
+			TreePath path = new TreePath(model.getPathToRoot(node));
+			if (path != null)
+			{
+				_tree.expandPath(path);
+				_tree.scrollPathToVisible(path);
+				_tree.setSelectionPath(path);
+			}
 		}
 	}
 
@@ -118,7 +157,7 @@ public class HelpViewerWindow extends JFrame
 	{
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		final SquirrelResources rsrc = _app.getResources();
-		final ImageIcon icon = rsrc.getIcon(SquirrelResources.IImageNames.APPLICATION_ICON);
+		final ImageIcon icon = rsrc.getIcon(SquirrelResources.IImageNames.VIEW);
 		if (icon != null)
 		{
 			setIconImage(icon.getImage());
@@ -126,28 +165,46 @@ public class HelpViewerWindow extends JFrame
 
 		Container contentPane = getContentPane();
 		contentPane.setLayout(new BorderLayout());
-//		contentPane.add(createToolBar(), BorderLayout.NORTH);
 
 		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		splitPane.setBorder(BorderFactory.createEmptyBorder());
 		splitPane.setOneTouchExpandable(true);
 		splitPane.setContinuousLayout(true);
 		splitPane.add(createContentsTree(), JSplitPane.LEFT);
 		splitPane.add(createDetailsPanel(), JSplitPane.RIGHT);
 		contentPane.add(splitPane, BorderLayout.CENTER);
+		splitPane.setDividerLocation(200);
+
+		contentPane.add(new HtmlViewerPanelToolBar(_app, _detailPnl), BorderLayout.NORTH);
 
 		pack();
-		splitPane.setDividerLocation(200);
-//		SwingUtilities.invokeLater(new Runnable()
-//		{
-//			public void run()
-//			{
-//				_contentsTxt.requestFocus();
-//			}
-//		});
+
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				_detailPnl.setHomeURL(_homeURL);
+				_tree.expandRow(0);
+				_tree.expandRow(1);
+				_tree.setSelectionRow(2);
+				_tree.setRootVisible(false);
+			}
+		});
+
+		_detailPnl.addListener(new IHtmlViewerPanelListener()
+		{
+			public void currentURLHasChanged(HtmlViewerPanelListenerEvent evt)
+			{
+				selectTreeNodeForURL(evt.getHtmlViewerPanel().getURL());
+			}
+			public void homeURLHasChanged(HtmlViewerPanelListenerEvent evt)
+			{
+			}
+		});
 	}
 
 	/**
-	 * Create a tree each node being a link to a Help document.
+	 * Create a tree each node being a link to a document.
 	 * 
 	 * @return	The contents tree.
 	 */
@@ -155,18 +212,34 @@ public class HelpViewerWindow extends JFrame
 	{
 		final ApplicationFiles appFiles = new ApplicationFiles();
 		final FolderNode root = new FolderNode(i18n.HELP);
-		final JTree tree = new JTree(new DefaultTreeModel(root));
-		tree.setShowsRootHandles(true);
-//		tree.setRootVisible(false);
-		tree.addTreeSelectionListener(new ObjectTreeSelectionListener());
+		_tree = new JTree(new DefaultTreeModel(root));
+		_tree.setShowsRootHandles(true);
+		_tree.addTreeSelectionListener(new ObjectTreeSelectionListener());
 
-		// Add SQuirreL help to the tree.
+		// Renderer for tree.
+		DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
+		SquirrelResources rsrc = _app.getResources();
+		renderer.setLeafIcon(rsrc.getIcon(SquirrelResources.IImageNames.HELP_TOPIC));
+		renderer.setOpenIcon(rsrc.getIcon(SquirrelResources.IImageNames.HELP_TOC_OPEN));
+		renderer.setClosedIcon(rsrc.getIcon(SquirrelResources.IImageNames.HELP_TOC_CLOSED));
+		_tree.setCellRenderer(renderer);
+
+		// Add Help, Licence and Change Log nodes to the tree.
+		final FolderNode helpRoot = new FolderNode(i18n.HELP);
+		root.add(helpRoot);
+		final FolderNode licenceRoot = new FolderNode(i18n.LICENCES);
+		root.add(licenceRoot);
+		final FolderNode changeLogRoot = new FolderNode(i18n.CHANGE_LOGS);
+		root.add(changeLogRoot);
+
+		// Add SQuirreL help to the Help node.
 		File file = appFiles.getQuickStartGuideFile();
 		try
 		{
 			DocumentNode docNode = new DocumentNode(i18n.SQUIRREL, file);
-			root.add(docNode);
+			helpRoot.add(docNode);
 			_homeURL = docNode.getURL();
+			_nodes.put(_homeURL.toString(), docNode);
 		}
 		catch (MalformedURLException ex)
 		{
@@ -176,7 +249,7 @@ public class HelpViewerWindow extends JFrame
 			s_log.error(msg.toString(), ex);
 		}
 
-		// Add plugin help documents.
+		// Add plugin help, licence and change log documents to the tree.
 		PluginInfo[] pi = _app.getPluginManager().getPluginInformation();
 		for (int i = 0; i < pi.length; ++i)
 		{
@@ -185,22 +258,84 @@ public class HelpViewerWindow extends JFrame
 				final File dir = pi[i].getPlugin().getPluginAppSettingsFolder();
 				final String title = pi[i].getDescriptiveName();
 
-				String fn = pi[i].getHelpFileName();
-				if (fn != null && fn.length() > 0)
+				// Help document.
+				try
 				{
-					DocumentNode dn = new DocumentNode(title, new File(dir, fn));
-					root.add(dn);
+					final String fn = pi[i].getHelpFileName();
+					if (fn != null && fn.length() > 0)
+					{
+						DocumentNode dn = new DocumentNode(title, new File(dir, fn));
+						helpRoot.add(dn);
+						_nodes.put(dn.getURL().toString(), dn);
+					}
+				}
+				catch (IOException ex)
+				{
+					s_log.error("Error generating Help entry for plugin"
+										+ pi[i].getDescriptiveName(), ex);
+				}
+	
+				// Licence document.
+				try
+				{
+					final String fn = pi[i].getLicenceFileName();
+					if (fn != null && fn.length() > 0)
+					{
+						DocumentNode dn = new DocumentNode(title, new File(dir, fn));
+						licenceRoot.add(dn);
+						_nodes.put(dn.getURL().toString(), dn);
+					}
+				}
+				catch (IOException ex)
+				{
+					s_log.error("Error generating Licence entry for plugin"
+										+ pi[i].getDescriptiveName(), ex);
+				}
+	
+				try
+				{
+					// Change log.
+					final String fn = pi[i].getChangeLogFileName();
+					if (fn != null && fn.length() > 0)
+					{
+						DocumentNode dn = new DocumentNode(title, new File(dir, fn));
+						changeLogRoot.add(dn);
+						_nodes.put(dn.getURL().toString(), dn);
+					}
+				}
+				catch (IOException ex)
+				{
+					s_log.error("Error generating Change Log entry for plugin"
+										+ pi[i].getDescriptiveName(), ex);
 				}
 			}
 			catch (IOException ex)
 			{
-				s_log.error("Error generating Help entry for plugin"
+				s_log.error("Error retrieving app settings folder for plugin"
 									+ pi[i].getDescriptiveName(), ex);
 			}
 		}
 
-		JScrollPane sp = new JScrollPane(tree);
-		tree.setPreferredSize(new Dimension(200, 200));
+		// FAQ.
+		file = appFiles.getFAQFile();
+		try
+		{
+			DocumentNode dn = new DocumentNode(i18n.FAQ, file);
+			root.add(dn);
+			_nodes.put(dn.getURL().toString(), dn);
+		}
+		catch (MalformedURLException ex)
+		{
+			StringBuffer msg = new StringBuffer();
+			msg.append("Error retrieving FAQ URL for ")
+				.append(file.getAbsolutePath());
+			s_log.error(msg.toString(), ex);
+		}
+
+
+		JScrollPane sp = new JScrollPane(_tree);
+		_tree.setPreferredSize(new Dimension(200, 200));
+
 		return sp;
 	}
 
@@ -208,11 +343,11 @@ public class HelpViewerWindow extends JFrame
 	{
 		try
 		{
-			_detailPnl = new HtmlViewerPanel(_app, _homeURL);
+			_detailPnl = new HtmlViewerPanel(_app, null);
 		}
 		catch (IOException ex)
 		{
-			s_log.error(ex);
+			s_log.error("Error creating details panel for Help display", ex);
 		}
 		return _detailPnl;
 	}
@@ -229,8 +364,7 @@ public class HelpViewerWindow extends JFrame
 	{
 		private final URL _url;
 	
-		DocumentNode(String title, File file)
-				throws MalformedURLException
+		DocumentNode(String title, File file) throws MalformedURLException
 		{
 			super(title, false);
 			_url = file.toURL();
@@ -254,7 +388,7 @@ public class HelpViewerWindow extends JFrame
 			Object lastComp = evt.getNewLeadSelectionPath().getLastPathComponent();
 			if (lastComp instanceof DocumentNode)
 			{
-				setSelectedHelpDocument(((DocumentNode)lastComp).getURL());
+				setSelectedDocument(((DocumentNode)lastComp).getURL());
 			}
 		}
 	}

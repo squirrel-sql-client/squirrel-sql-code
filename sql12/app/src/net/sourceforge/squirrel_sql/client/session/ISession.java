@@ -25,6 +25,7 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
+import net.sourceforge.squirrel_sql.client.session.event.ISessionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
@@ -109,16 +110,6 @@ public interface ISession extends IHasIdentifier
 	 */
 	ISQLPanelAPI getSQLPanelAPI(IPlugin plugin);
 
-	/**
-	 * Get the opened sequence for this session.
-	 * 
-	 * @return	The opened sequence for this session.
-	 * 
-	 * TODO: This should not be a attribute of the session
-	 * but instead should be stored externally. We need a sessiion manager.
-	 */
-//	int getOpenedSequence();
-
 	SessionSheet getSessionSheet();
 
 	/**
@@ -140,4 +131,24 @@ public interface ISession extends IHasIdentifier
 	 *			Thrown if a <TT>null</TT> <TT>IMainPanelTab</TT> passed.
 	 */
 	void addMainTab(IMainPanelTab tab);
+
+	/**
+	 * Add a listener to this session
+	 * 
+	 * @param	lis		The listener to add.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> listener passed.
+	 */
+	public void addSessionListener(ISessionListener lis);
+
+	/**
+	 * Remove a listener from this session
+	 * 
+	 * @param	lis		The listener to remove.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> listener passed.
+	 */
+	public void removeSessionListener(ISessionListener lis);
 }

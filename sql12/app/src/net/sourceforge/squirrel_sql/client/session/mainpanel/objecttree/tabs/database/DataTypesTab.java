@@ -74,18 +74,20 @@ public class DataTypesTab extends BaseDataSetTab
 	 */
 	protected IDataSet createDataSet() throws DataSetException
 	{
+		// Dont need to close the ResultSet as DatabaseTypesDataSet
+		// will do so when its finished with it.
 		final ISession session = getSession();
 		try
 		{
 			ResultSet rs = session.getSQLConnection().getSQLMetaData().getTypeInfo();
-			try
-			{
+//			try
+//			{
 				return new DatabaseTypesDataSet(rs);
-			}
-			finally
-			{
-				rs.close();
-			}
+//			}
+//			finally
+//			{
+//				rs.close();
+//			}
 		}
 		catch (SQLException ex)
 		{

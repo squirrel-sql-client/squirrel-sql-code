@@ -20,8 +20,6 @@ package net.sourceforge.squirrel_sql.client.mainframe;
 import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.io.IOException;
 
 import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
@@ -60,13 +58,9 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.TileAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileHorizontalAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileVerticalAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewAliasesAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ViewChangeLogAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewDriversAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ViewFAQAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewHelpAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ViewLicenceAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewLogsAction;
-import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsAction;
@@ -395,56 +389,6 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, ViewHelpAction.class, menu);
 
 		ApplicationFiles appFiles = new ApplicationFiles();
-		Action action = new ViewFAQAction(_app);
-		menu.add(action);
-		action = new ViewChangeLogAction(_app, appFiles.getChangeLogFile());
-		menu.add(action);
-		action = new ViewLicenceAction(_app, appFiles.getLicenceFile());
-		menu.add(action);
-
-		// Add plugin change logs and licences to menu.
-		JMenu pluginChangeLog = rsrc.createMenu(
-						SquirrelResources.IMenuResourceKeys.PLUGIN_CHANGE_LOG);
-		JMenu pluginLicence = rsrc.createMenu(
-						SquirrelResources.IMenuResourceKeys.PLUGIN_LICENCE);
-		PluginInfo[] pi = _app.getPluginManager().getPluginInformation();
-		for (int i = 0; i < pi.length; ++i)
-		{
-			try
-			{
-				final File dir = pi[i].getPlugin().getPluginAppSettingsFolder();
-				final String title = pi[i].getDescriptiveName();
-
-				String fn = pi[i].getChangeLogFileName();
-				if (fn != null)
-				{
-					action = new ViewChangeLogAction(_app,new File(dir, fn));
-					action.putValue(Action.NAME, title);
-					pluginChangeLog.add(action);
-				}
-
-				fn = pi[i].getLicenceFileName();
-				if (fn != null)
-				{
-					action = new ViewLicenceAction(_app, new File(dir, fn));
-					action.putValue(Action.NAME, title);
-					pluginLicence.add(action);
-				}
-			}
-			catch (IOException ex)
-			{
-				s_log.error("Error creating menu item for plugin"
-									+ pi[i].getDescriptiveName(), ex);
-			}
-		}
-		if (pluginChangeLog.getMenuComponentCount() > 0)
-		{
-			menu.add(pluginChangeLog);
-		}
-		if (pluginLicence.getMenuComponentCount() > 0)
-		{
-			menu.add(pluginLicence);
-		}
 
 		menu.addSeparator();
 		addToMenu(rsrc, AboutAction.class, menu);

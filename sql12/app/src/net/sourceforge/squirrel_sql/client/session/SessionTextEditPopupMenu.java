@@ -37,9 +37,9 @@ public class SessionTextEditPopupMenu extends TextPopupMenu
 	private final ISession _session;
 
 	private MakeEditableAction _makeEditable = new MakeEditableAction();
-	private InQuotesAction _inQuotes = new InQuotesAction();
-	private InSbAppendAction _inSbAppend = new InSbAppendAction();
-	private RemoveQuotesAction _removeQuotes = new RemoveQuotesAction();
+//	private InQuotesAction _inQuotes = new InQuotesAction();
+//	private InSbAppendAction _inSbAppend = new InSbAppendAction();
+//	private RemoveQuotesAction _removeQuotes = new RemoveQuotesAction();
 //	private ReformatCodeAction _reformatCode = new ReformatCodeAction();
 
 	// The following pointer is needed to allow the "Make Editable button
@@ -101,9 +101,9 @@ public class SessionTextEditPopupMenu extends TextPopupMenu
 			add(_makeEditable);
 			addSeparator();
 		}
-		add(_inQuotes);
-		add(_inSbAppend);
-		add(_removeQuotes);
+//		add(_inQuotes);
+//		add(_inSbAppend);
+//		add(_removeQuotes);
 	}
 
 	private void performeRemoveQuotesAction()             

@@ -19,7 +19,6 @@ package net.sourceforge.squirrel_sql.client.gui;
  */
 import java.awt.BorderLayout;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -32,6 +31,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.event.EventListenerList;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLDocument;
@@ -39,13 +39,10 @@ import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
-import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 /**
  * This panel shows the contents of a HTML file.
  *
@@ -59,9 +56,6 @@ public class HtmlViewerPanel extends JPanel
 
 	/** Application API. */
 	private final IApplication _app;
-
-	/** Toolbar for window. */
-	private ToolBar _toolBar;
 	
 	/** Text area containing the HTML. */
 	private final JEditorPane _contentsTxt = new JEditorPane();
@@ -82,6 +76,11 @@ public class HtmlViewerPanel extends JPanel
 	private int _historyIndex = -1;
 
 	/**
+	 * Collection of listeners for events in this object.
+	 */
+	private EventListenerList _listenerList = new EventListenerList();
+
+	/**
 	 * Ctor.
 	 * 
 	 * @param	app	Application API.
@@ -96,8 +95,104 @@ public class HtmlViewerPanel extends JPanel
 		}
 		_app = app;
 		createGUI();
-		_homeURL = url;
+		setHomeURL(url);
 		setURL(url);
+	}
+
+	/**
+	 * Retrieve the current URL.
+	 * 
+	 * @return	The current URL.
+	 */
+	public URL getURL()
+	{
+		return _currentURL;
+	}
+
+	/**
+	 * Retrieve the home URL.
+	 * 
+	 * @return	The home URL.
+	 */
+	public URL getHomeURL()
+	{
+		return _homeURL;
+	}
+
+	/**
+	 * Specify the URL that is to the consider the &quot;Home&quot; URL. THis
+	 * does <EM>not</EM> change the current URL for this viewer.
+	 * 
+	 * @param	homeURL		The new home URL.
+	 */
+	public void setHomeURL(URL homeURL)
+	{
+		_homeURL = homeURL;
+		fireHomeURLChanged();
+	}
+
+	/**
+	 * Adds a listener to this object.
+	 *
+	 * @param	lis		Listener to be added.
+	 */
+	public void addListener(IHtmlViewerPanelListener lis)
+	{
+		_listenerList.add(IHtmlViewerPanelListener.class, lis);
+	}
+
+	/**
+	 * Removes a listener from this object.
+	 *
+	 * @param	lis	Listener to be removed.
+	 */
+	void removeListener(IHtmlViewerPanelListener lis)
+	{
+		_listenerList.remove(IHtmlViewerPanelListener.class, lis);
+	}
+
+	public synchronized void gotoURL(URL url) throws IOException
+	{
+		ListIterator it = _history.listIterator(_historyIndex + 1);
+		while (it.hasNext())
+		{
+			it.next();
+			it.remove();
+		}
+		_history.add(url);
+		_historyIndex = _history.size() - 1;
+		_contentsTxt.setPage(url);
+		_currentURL = url;
+		fireURLChanged();
+	}
+
+	public synchronized void goBack()
+	{
+		if (_historyIndex > 0 && _historyIndex < _history.size())
+		{
+			displayURL((URL)_history.get(--_historyIndex));
+		}
+	}
+
+	public synchronized void goForward()
+	{
+		if (_historyIndex > -1 && _historyIndex < _history.size() - 1)
+		{
+			displayURL((URL)_history.get(++_historyIndex));
+		}
+	}
+
+	public synchronized void goHome()
+	{
+		_historyIndex = 0;
+		displayURL(_homeURL);
+	}
+
+	public void refreshPage()
+	{
+		final Point pos = _contentsScrollPane.getViewport().getViewPosition();
+		displayURL(_currentURL);
+		_contentsScrollPane.getViewport().setViewPosition(pos);
 	}
 
 	/**
@@ -108,7 +203,7 @@ public class HtmlViewerPanel extends JPanel
 	 * @throws	IOException
 	 * 			Thrown if error when displaying URL.
 	 */
-	public synchronized void setURL(URL url) throws IOException
+	private synchronized void setURL(URL url) throws IOException
 	{
 		if (url != null)
 		{
@@ -129,29 +224,12 @@ public class HtmlViewerPanel extends JPanel
 		}
 	}
 
-	public void goBack()
-	{
-		if (_historyIndex > 0 && _historyIndex < _history.size())
-		{
-			displayURL((URL)_history.get(--_historyIndex));
-		}
-	}
-
-	public void goForward()
-	{
-		if (_historyIndex > -1 && _historyIndex < _history.size() - 1)
-		{
-			displayURL((URL)_history.get(++_historyIndex));
-		}
-	}
-
-	public void refreshPage()
-	{
-		final Point pos = _contentsScrollPane.getViewport().getViewPosition();
-		displayURL(_currentURL);
-		_contentsScrollPane.getViewport().setViewPosition(pos);
-	}
-
+	/**
+	 * Display the passed URL. This method does not affect the URL history, it
+	 * merely displays the URL.
+	 * 
+	 * @param	url	The URL to display.
+	 */
 	private void displayURL(URL url)
 	{
 		if (url != null)
@@ -160,10 +238,59 @@ public class HtmlViewerPanel extends JPanel
 			{
 				_contentsTxt.setPage(url);
 				_currentURL = url;
+				fireURLChanged();
 			}
 			catch (Exception ex)
 			{
-				s_log.error(ex);
+				s_log.error("Error displaying URL", ex);
+			}
+		}
+	}
+
+	/**
+	 * Fire a "URL changed" event to all listeners.
+	 */
+	private void fireURLChanged()
+	{
+		// Guaranteed to be non-null.
+		Object[] listeners = _listenerList.getListenerList();
+		// Process the listeners last to first, notifying
+		// those that are interested in this event.
+		HtmlViewerPanelListenerEvent evt = null;
+		for (int i = listeners.length - 2; i >= 0; i-=2 )
+		{
+			if (listeners[i] == IHtmlViewerPanelListener.class)
+			{
+				// Lazily create the event.
+				if (evt == null)
+				{
+					evt = new HtmlViewerPanelListenerEvent(this);
+				}
+				((IHtmlViewerPanelListener)listeners[i + 1]).currentURLHasChanged(evt);
+			}
+		}
+	}
+
+	/**
+	 * Fire a "Home URL changed" event to all listeners.
+	 */
+	private void fireHomeURLChanged()
+	{
+		// Guaranteed to be non-null.
+		Object[] listeners = _listenerList.getListenerList();
+		// Process the listeners last to first, notifying
+		// those that are interested in this event.
+		HtmlViewerPanelListenerEvent evt = null;
+		for (int i = listeners.length - 2; i >= 0; i-=2 )
+		{
+			if (listeners[i] == IHtmlViewerPanelListener.class)
+			{
+				// Lazily create the event.
+				if (evt == null)
+				{
+					evt = new HtmlViewerPanelListenerEvent(this);
+				}
+				((IHtmlViewerPanelListener)listeners[i + 1]).homeURLHasChanged(evt);
 			}
 		}
 	}
@@ -174,21 +301,7 @@ public class HtmlViewerPanel extends JPanel
 	private void createGUI()
 	{
 		setLayout(new BorderLayout());
-		add(createToolBar(), BorderLayout.NORTH);
 		add(createMainPanel(), BorderLayout.CENTER);
-		final SquirrelResources rsrc = _app.getResources();
-	}
-
-	private ToolBar createToolBar()
-	{
-		_toolBar = new ToolBar();
-		_toolBar.setUseRolloverButtons(true);
-		_toolBar.setFloatable(false);
-		_toolBar.add(new HomeAction(_app));
-		_toolBar.add(new BackAction(_app));
-		_toolBar.add(new ForwardAction(_app));
-		_toolBar.add(new RefreshAction(_app));
-		return _toolBar;
 	}
 
 	/**
@@ -245,101 +358,15 @@ public class HtmlViewerPanel extends JPanel
 					{
 						try
 						{
-							final URL url = e.getURL();
-							ListIterator it = _history.listIterator(_historyIndex + 1);
-							while (it.hasNext())
-							{
-								it.next();
-								it.remove();
-							}
-							_history.add(url);
-							_historyIndex = _history.size() - 1;
-							_contentsTxt.setPage(url);
-							_currentURL = url;
+							gotoURL(e.getURL());
 						}
 						catch (IOException ex)
 						{
-							s_log.error(ex);
+							s_log.error("Error processing hyperlink", ex);
 						}
 					}
 				}
 			}
 		};
 	}
-
-	private final class BackAction extends SquirrelAction
-	{
-		public BackAction(IApplication app)
-		{
-			super(app);
-			if (app == null)
-			{
-				throw new IllegalArgumentException("Null IApplication passed");
-			}
-		}
-
-		public void actionPerformed(ActionEvent evt)
-		{
-			goBack();
-		}
-	}
-
-	private final class ForwardAction extends SquirrelAction
-	{
-		public ForwardAction(IApplication app)
-		{
-			super(app);
-			if (app == null)
-			{
-				throw new IllegalArgumentException("Null IApplication passed");
-			}
-		}
-
-		public void actionPerformed(ActionEvent evt)
-		{
-			goForward();
-		}
-	}
-
-	private final class RefreshAction extends SquirrelAction
-	{
-		public RefreshAction(IApplication app)
-		{
-			super(app);
-			if (app == null)
-			{
-				throw new IllegalArgumentException("Null IApplication passed");
-			}
-		}
-
-		public void actionPerformed(ActionEvent evt)
-		{
-			refreshPage();
-		}
-	}
-
-	private final class HomeAction extends SquirrelAction
-	{
-		public HomeAction(IApplication app)
-		{
-			super(app);
-			if (app == null)
-			{
-				throw new IllegalArgumentException("Null IApplication passed");
-			}
-		}
-
-		public void actionPerformed(ActionEvent evt)
-		{
-			try
-			{
-				setURL(_homeURL);
-			}
-			catch (IOException ex)
-			{
-				s_log.error("Error reading URL", ex);
-			}
-		}
-	}
-
 }
