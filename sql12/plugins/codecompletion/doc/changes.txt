@@ -8,4 +8,6 @@ SQL Entry Area Enhancements
 - completes on table and view aliases
 - completes on schemas and catalogs
 
+- completes on stored procedures
+
 
