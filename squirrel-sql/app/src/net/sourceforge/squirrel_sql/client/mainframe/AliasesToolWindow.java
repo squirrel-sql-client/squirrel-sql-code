@@ -39,126 +39,126 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.DeleteAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyAliasAction;
 
 public class AliasesToolWindow extends BaseToolWindow {
-    private IApplication _app;
+	private IApplication _app;
 
-    /** User Interface facory. */
-    private UserInterfaceFactory _uiFactory;
+	/** User Interface facory. */
+	private UserInterfaceFactory _uiFactory;
 
-    /**
-     * Default ctor.
-     */
-    public AliasesToolWindow(IApplication app) {
-        super(app, new UserInterfaceFactory(app));
-        _app = app;
-        _uiFactory = (UserInterfaceFactory)getUserInterfaceFactory();
-        _uiFactory.setAliasesToolWindow(this);
+	/**
+	 * Default ctor.
+	 */
+	public AliasesToolWindow(IApplication app) {
+		super(app, new UserInterfaceFactory(app));
+		_app = app;
+		_uiFactory = (UserInterfaceFactory)getUserInterfaceFactory();
+		_uiFactory.setAliasesToolWindow(this);
 
-        // Enable/disable actions depending on whether an item is selected in
-        // the list.
-        _uiFactory.enableDisableActions();
-    }
+		// Enable/disable actions depending on whether an item is selected in
+		// the list.
+		_uiFactory.enableDisableActions();
+	}
 
-    private static final class UserInterfaceFactory implements BaseToolWindow.IUserInterfaceFactory {
-        private IApplication _app;
-        private AliasesList _aliasesList;
-        private ToolBar _tb = new ToolBar();
-        private BasePopupMenu _pm = new BasePopupMenu();
-        private AliasesToolWindow _tw;
-        private ConnectToAliasAction _connectToAliasAction;
-        private CopyAliasAction _copyAliasAction;
-        private CreateAliasAction _createAliasAction;
-        private DeleteAliasAction _deleteAliasAction;
-        private ModifyAliasAction _modifyAliasAction;
+	private static final class UserInterfaceFactory implements BaseToolWindow.IUserInterfaceFactory {
+		private IApplication _app;
+		private AliasesList _aliasesList;
+		private ToolBar _tb = new ToolBar();
+		private BasePopupMenu _pm = new BasePopupMenu();
+		private AliasesToolWindow _tw;
+		private ConnectToAliasAction _connectToAliasAction;
+		private CopyAliasAction _copyAliasAction;
+		private CreateAliasAction _createAliasAction;
+		private DeleteAliasAction _deleteAliasAction;
+		private ModifyAliasAction _modifyAliasAction;
 
-        UserInterfaceFactory(IApplication app) throws IllegalArgumentException {
-            super();
-            if (app == null) {
-                throw new IllegalArgumentException("Null IApplication passed");
-            }
-            _app = app;
-            _aliasesList = new AliasesList(app);
+		UserInterfaceFactory(IApplication app) throws IllegalArgumentException {
+			super();
+			if (app == null) {
+				throw new IllegalArgumentException("Null IApplication passed");
+			}
+			_app = app;
+			_aliasesList = new AliasesList(app);
 
-            preloadActions();
+			preloadActions();
 
-            _tb.setBorder(BorderFactory.createEtchedBorder());
-            _tb.setUseRolloverButtons(true);
-            _tb.setFloatable(false);
-            _tb.add(_connectToAliasAction);
-            _tb.addSeparator();
-            _tb.add(_createAliasAction);
-            _tb.add(_modifyAliasAction);
-            _tb.add(_copyAliasAction);
-            _tb.add(_deleteAliasAction);
+			_tb.setBorder(BorderFactory.createEtchedBorder());
+			_tb.setUseRolloverButtons(true);
+			_tb.setFloatable(false);
+			_tb.add(_connectToAliasAction);
+			_tb.addSeparator();
+			_tb.add(_createAliasAction);
+			_tb.add(_modifyAliasAction);
+			_tb.add(_copyAliasAction);
+			_tb.add(_deleteAliasAction);
 
-            _pm.add(_connectToAliasAction);
-            _pm.addSeparator();
-            _pm.add(_createAliasAction);
-            _pm.addSeparator();
-            _pm.add(_modifyAliasAction);
-            _pm.add(_copyAliasAction);
-            _pm.addSeparator();
-            _pm.add(_deleteAliasAction);
-        }
+			_pm.add(_connectToAliasAction);
+			_pm.addSeparator();
+			_pm.add(_createAliasAction);
+			_pm.addSeparator();
+			_pm.add(_modifyAliasAction);
+			_pm.add(_copyAliasAction);
+			_pm.addSeparator();
+			_pm.add(_deleteAliasAction);
+		}
 
-        public ToolBar getToolBar() {
-            return _tb;
-        }
+		public ToolBar getToolBar() {
+			return _tb;
+		}
 
-        public BasePopupMenu getPopupMenu() {
-            return _pm;
-        }
+		public BasePopupMenu getPopupMenu() {
+			return _pm;
+		}
 
-        public JList getList() {
-            return _aliasesList;
-        }
+		public JList getList() {
+			return _aliasesList;
+		}
 
-        public String getWindowTitle() {
-            return "Aliases"; // i18n
-        }
+		public String getWindowTitle() {
+			return "Aliases"; // i18n
+		}
 
-        public ICommand getDoubleClickCommand() {
-            ICommand cmd = null;
-            ISQLAlias alias = _aliasesList.getSelectedAlias();
-            if (alias != null) {
-                cmd = new ConnectToAliasCommand(_app, GUIUtils.getOwningFrame(_tw), alias);
-            }
-            return cmd;
-        }
+		public ICommand getDoubleClickCommand() {
+			ICommand cmd = null;
+			ISQLAlias alias = _aliasesList.getSelectedAlias();
+			if (alias != null) {
+				cmd = new ConnectToAliasCommand(_app, GUIUtils.getOwningFrame(_tw), alias);
+			}
+			return cmd;
+		}
 
-        /**
-         * Enable/disable actions depending on whether an item is selected in list.
-         */
-        public void enableDisableActions() {
-            boolean enable = false;
-            try {
-                enable = _aliasesList.getSelectedAlias() != null;
-            } catch (Exception ignore) {
-                // Getting an error in the JDK.
-                // Exception occurred during event dispatching:
-                // java.lang.ArrayIndexOutOfBoundsException: 0 >= 0
-                // at java.util.Vector.elementAt(Vector.java:417)
-                // at javax.swing.DefaultListModel.getElementAt(DefaultListModel.java:70)
-                // at javax.swing.JList.getSelectedValue(JList.java:1397)
-                // at net.sourceforge.squirrel_sql.mainframe.AliasesList.getSelectedAlias(AliasesList.java:77)
-            }
-            _connectToAliasAction.setEnabled(enable);
-            _copyAliasAction.setEnabled(enable);
-            _deleteAliasAction.setEnabled(enable);
-            _modifyAliasAction.setEnabled(enable);
-        }
+		/**
+		 * Enable/disable actions depending on whether an item is selected in list.
+		 */
+		public void enableDisableActions() {
+			boolean enable = false;
+			try {
+				enable = _aliasesList.getSelectedAlias() != null;
+			} catch (Exception ignore) {
+				// Getting an error in the JDK.
+				// Exception occurred during event dispatching:
+				// java.lang.ArrayIndexOutOfBoundsException: 0 >= 0
+				// at java.util.Vector.elementAt(Vector.java:417)
+				// at javax.swing.DefaultListModel.getElementAt(DefaultListModel.java:70)
+				// at javax.swing.JList.getSelectedValue(JList.java:1397)
+				// at net.sourceforge.squirrel_sql.mainframe.AliasesList.getSelectedAlias(AliasesList.java:77)
+			}
+			_connectToAliasAction.setEnabled(enable);
+			_copyAliasAction.setEnabled(enable);
+			_deleteAliasAction.setEnabled(enable);
+			_modifyAliasAction.setEnabled(enable);
+		}
 
-        void setAliasesToolWindow(AliasesToolWindow tw) {
-            _tw = tw;
-        }
+		void setAliasesToolWindow(AliasesToolWindow tw) {
+			_tw = tw;
+		}
 
-        private void preloadActions() {
-            ActionCollection actions = _app.getActionCollection();
-            actions.add(_modifyAliasAction = new ModifyAliasAction(_app, _aliasesList));
-            actions.add(_deleteAliasAction = new DeleteAliasAction(_app, _aliasesList));
-            actions.add(_copyAliasAction = new CopyAliasAction(_app, _aliasesList));
-            actions.add(_connectToAliasAction = new ConnectToAliasAction(_app, _aliasesList));
-            actions.add(_createAliasAction = new CreateAliasAction(_app));
-        }
-    }
+		private void preloadActions() {
+			ActionCollection actions = _app.getActionCollection();
+			actions.add(_modifyAliasAction = new ModifyAliasAction(_app, _aliasesList));
+			actions.add(_deleteAliasAction = new DeleteAliasAction(_app, _aliasesList));
+			actions.add(_copyAliasAction = new CopyAliasAction(_app, _aliasesList));
+			actions.add(_connectToAliasAction = new ConnectToAliasAction(_app, _aliasesList));
+			actions.add(_createAliasAction = new CreateAliasAction(_app));
+		}
+	}
 
 }

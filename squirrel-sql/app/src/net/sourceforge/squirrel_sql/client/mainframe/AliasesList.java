@@ -25,6 +25,7 @@ import javax.swing.JList;
 import javax.swing.ListSelectionModel;
 import javax.swing.ToolTipManager;
 
+import net.sourceforge.squirrel_sql.fw.gui.ModifiedDefaultListCellRenderer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
@@ -36,69 +37,71 @@ import net.sourceforge.squirrel_sql.client.IApplication;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class AliasesList extends JList {
-    /** Application API. */
-    private final IApplication _app;
+	/** Application API. */
+	private final IApplication _app;
 
-    /** Model for this component. */
-    private final AliasesListModel _model;
+	/** Model for this component. */
+	private final AliasesListModel _model;
 
-    public AliasesList(IApplication app) throws IllegalArgumentException {
-        super();
-        if (app == null) {
-            throw new IllegalArgumentException("Null IApplication passed");
-        }
-        _app = app;
-        _model = new AliasesListModel(_app);
-        setModel(_model);
-        setLayout(new BorderLayout());
-        getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	public AliasesList(IApplication app) {
+		super();
+		if (app == null) {
+			throw new IllegalArgumentException("Null IApplication passed");
+		}
+		_app = app;
+		_model = new AliasesListModel(_app);
+		setModel(_model);
+		setLayout(new BorderLayout());
+		getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        // Register so that we can display different tooltips depending
-        // which entry in list mouse is over.
-        ToolTipManager.sharedInstance().registerComponent(this);
+		setCellRenderer(new ModifiedDefaultListCellRenderer());
 
-        // Select first item in list.
-        if (getModel().getSize() > 0) {
-            setSelectedIndex(0);
-        }
-    }
+		// Register so that we can display different tooltips depending
+		// which entry in list mouse is over.
+		ToolTipManager.sharedInstance().registerComponent(this);
 
-    /**
-     * Return the <TT>AliasesListModel</TT> that controls this list.
-     */
-    public AliasesListModel getTypedModel() {
-        return _model;
-    }
+		// Select first item in list.
+		if (getModel().getSize() > 0) {
+			setSelectedIndex(0);
+		}
+	}
 
-    /**
-     * Return the <TT>ISQLAlias</TT> that is currently selected.
-     */
-    public ISQLAlias getSelectedAlias() {
-        return (ISQLAlias)getSelectedValue();
-    }
+	/**
+	 * Return the <TT>AliasesListModel</TT> that controls this list.
+	 */
+	public AliasesListModel getTypedModel() {
+		return _model;
+	}
 
-    /**
-     * Return the description for the alias that the mouse is currently
-     * over as the tooltip text.
-     *
-     * @param   event   Used to determine the current mouse position.
-     */
-    public String getToolTipText(MouseEvent evt) {
-        String tip = null;
-        final int idx = locationToIndex(evt.getPoint());
-        if (idx != -1) {
-            tip = ((ISQLAlias)getModel().getElementAt(idx)).getName();
-        } else {
-            tip = getToolTipText();
-        }
-        return tip;
-    }
+	/**
+	 * Return the <TT>ISQLAlias</TT> that is currently selected.
+	 */
+	public ISQLAlias getSelectedAlias() {
+		return (ISQLAlias)getSelectedValue();
+	}
 
-    /**
-     * Return the tooltip used for this component if the mouse isn't over
-     * an entry in the list.
-     */
-    public String getToolTipText() {
-        return "List of database aliases that can be connected to"; // i18n
-    }
+	/**
+	 * Return the description for the alias that the mouse is currently
+	 * over as the tooltip text.
+	 *
+	 * @param   event   Used to determine the current mouse position.
+	 */
+	public String getToolTipText(MouseEvent evt) {
+		String tip = null;
+		final int idx = locationToIndex(evt.getPoint());
+		if (idx != -1) {
+			tip = ((ISQLAlias)getModel().getElementAt(idx)).getName();
+		} else {
+			tip = getToolTipText();
+		}
+		return tip;
+	}
+
+	/**
+	 * Return the tooltip used for this component if the mouse isn't over
+	 * an entry in the list.
+	 */
+	public String getToolTipText() {
+		return "List of database aliases that can be connected to"; // i18n
+	}
 }
