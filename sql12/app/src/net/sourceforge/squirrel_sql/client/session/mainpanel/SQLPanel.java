@@ -32,10 +32,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -77,7 +79,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 /**
  * This is the panel where SQL scripts can be entered and executed.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SQLPanel extends JPanel
 {
@@ -176,7 +178,7 @@ public class SQLPanel extends JPanel
 	/**
 	 * Add a listener listening for SQL Execution.
 	 *
-	 * @param   lis	 Listener
+	 * @param	lis	 Listener
 	 *
 	 * @throws	IllegalArgumentException
 	 *			If a null <TT>ISQLExecutionListener</TT> passed.
@@ -210,7 +212,7 @@ public class SQLPanel extends JPanel
 	/**
 	 * Add a listener to this panel.
 	 *
-	 * @param   lis	 Listener
+	 * @param	lis	 Listener
 	 *
 	 * @throws	IllegalArgumentException
 	 *			If a null <TT>ISQLPanelListener</TT> passed.
@@ -541,6 +543,59 @@ public class SQLPanel extends JPanel
 		}
 	}
 
+	public void addSQLToHistory(SQLHistoryItem sql)
+	{
+		if (sql == null)
+		{
+			throw new IllegalArgumentException("SQLHistoryItem == null");
+		}
+
+		_sqlComboListener.stopListening();
+		try
+		{
+			_sqlCombo.insertItemAt(sql, _sqlCombo.getItemCount());
+			_sqlCombo.setSelectedIndex(_sqlCombo.getItemCount() - 1);
+		}
+		finally
+		{
+			_sqlComboListener.startListening();
+		}
+	}
+
+	/**
+	 * Add a hierarchical menu to the SQL Entry Area popup menu.
+	 *
+	 * @param	menu	The menu that will be added.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>Menu</TT> passed.
+	 */
+	public void addToSQLEntryAreaMenu(JMenu menu)
+	{
+		if (menu == null)
+		{
+			throw new IllegalArgumentException("Menu == null");
+		}
+		getSQLEntryPanel().addToSQLEntryAreaMenu(menu);
+	}
+
+	/**
+	 * Add an <TT>Action</TT> to the SQL Entry Area popup menu.
+	 *
+	 * @param	action	The action to be added.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>Action</TT> passed.
+	 */
+	public void addToSQLEntryAreaMenu(Action action)
+	{
+		if (action == null)
+		{
+			throw new IllegalArgumentException("Action == null");
+		}
+		getSQLEntryPanel().addToSQLEntryAreaMenu(action);
+	}
+
 	protected void fireSQLEntryAreaInstalled()
 	{
 		// Guaranteed to be non-null.
@@ -676,26 +731,6 @@ public class SQLPanel extends JPanel
 				_tabbedResultsPanel.setSelectedComponent(panel);
 			}
 		});
-	}
-
-	public void addSQLToHistory(SQLHistoryItem sql)
-	{
-		if (sql == null)
-		{
-			throw new IllegalArgumentException("SQLHistoryItem == null");
-		}
-
-		_sqlComboListener.stopListening();
-		try
-		{
-//			_sqlCombo.addItem(sql);
-			_sqlCombo.insertItemAt(sql, _sqlCombo.getItemCount());
-			_sqlCombo.setSelectedIndex(_sqlCombo.getItemCount() - 1);
-		}
-		finally
-		{
-			_sqlComboListener.startListening();
-		}
 	}
 
 	void addResultsTab(SQLExecutionInfo exInfo, ResultSetDataSet rsds,
