@@ -42,7 +42,6 @@ import javax.swing.SwingConstants;
 
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.OkClosePanel;
 import net.sourceforge.squirrel_sql.fw.gui.OkClosePanelEvent;
 import net.sourceforge.squirrel_sql.fw.gui.IOkClosePanelListener;
 import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
