@@ -1,7 +1,7 @@
 <installation version="1.0">
 	<info>
 		<appname>SQuirreL SQL Client</appname>
-		<appversion>1.2beta4</appversion>
+		<appversion>1.2beta5</appversion>
 		<authors>
 			<author email="colbell@users.sourceforge.net" name="Colin Bell"/>
 		</authors>
@@ -15,7 +15,7 @@
 	</locale>
 
 	<resources>
-		<res	src="../../squirrel-sql-dist/squirrel-sql-1.2beta4/core/dist/doc/licences/squirrel_licence.txt"
+		<res	src="../../squirrel-sql-dist/squirrel-sql-1.2beta5/core/dist/doc/licences/squirrel_licence.txt"
 				id="LicencePanel.licence"/>
 		<res	src="installer-readme.html"
 				id="HTMLInfoPanel.info"/>
@@ -40,33 +40,33 @@
 		<pack name="Base" required="yes">
 			<description>SQL Client</description>
 			<file	targetdir="$INSTALL_PATH"
-					src="../../squirrel-sql-dist/squirrel-sql-1.2beta4/core/dist/plugins"/>
+					src="../../squirrel-sql-dist/squirrel-sql-1.2beta5/core/dist/plugins"/>
 			<file	targetdir="$INSTALL_PATH"
-					src="../../squirrel-sql-dist/squirrel-sql-1.2beta4/core/dist/doc"/>
+					src="../../squirrel-sql-dist/squirrel-sql-1.2beta5/core/dist/doc"/>
 			<file	targetdir="$INSTALL_PATH/doc"
 					src="../../sql12/web-site/faq.html"/>
 			<file	targetdir="$INSTALL_PATH"
-					src="../../squirrel-sql-dist/squirrel-sql-1.2beta4/core/dist/icons"/>
+					src="../../squirrel-sql-dist/squirrel-sql-1.2beta5/core/dist/icons"/>
 			<file	targetdir="$INSTALL_PATH"
-					src="../../squirrel-sql-dist/squirrel-sql-1.2beta4/core/dist/squirrel-sql.bat"/>
+					src="../../squirrel-sql-dist/squirrel-sql-1.2beta5/core/dist/squirrel-sql.bat"/>
 			<file	targetdir="$INSTALL_PATH"
-					src="../../squirrel-sql-dist/squirrel-sql-1.2beta4/core/dist/addpath.bat"/>
+					src="../../squirrel-sql-dist/squirrel-sql-1.2beta5/core/dist/addpath.bat"/>
 			<file	targetdir="$INSTALL_PATH"
-					src="../../squirrel-sql-dist/squirrel-sql-1.2beta4/core/dist/squirrel-sql.sh"/>
+					src="../../squirrel-sql-dist/squirrel-sql-1.2beta5/core/dist/squirrel-sql.sh"/>
 			<file	targetdir="$INSTALL_PATH"
-					src="../../squirrel-sql-dist/squirrel-sql-1.2beta4/core/dist/log4j.properties"/>
+					src="../../squirrel-sql-dist/squirrel-sql-1.2beta5/core/dist/log4j.properties"/>
 			<file	targetdir="$INSTALL_PATH"
-					src="../../squirrel-sql-dist/squirrel-sql-1.2beta4/core/dist/lib/squirrel-sql.jar"/>
+					src="../../squirrel-sql-dist/squirrel-sql-1.2beta5/core/dist/lib/squirrel-sql.jar"/>
 			<file	targetdir="$INSTALL_PATH/lib"
-					src="../../squirrel-sql-dist/squirrel-sql-1.2beta4/core/dist/lib/fw.jar"/>
+					src="../../squirrel-sql-dist/squirrel-sql-1.2beta5/core/dist/lib/fw.jar"/>
 			<file	targetdir="$INSTALL_PATH/lib"
-					src="../../squirrel-sql-dist/squirrel-sql-1.2beta4/core/dist/lib/log4j.jar"/>
+					src="../../squirrel-sql-dist/squirrel-sql-1.2beta5/core/dist/lib/log4j.jar"/>
 			<file	targetdir="$INSTALL_PATH/lib"
-					src="../../squirrel-sql-dist/squirrel-sql-1.2beta4/core/dist/lib/nanoxml-2.1.jar"/>
+					src="../../squirrel-sql-dist/squirrel-sql-1.2beta5/core/dist/lib/nanoxml-2.1.jar"/>
 			<file	targetdir="$INSTALL_PATH/lib"
-				src="../../squirrel-sql-dist/squirrel-sql-1.2beta4/core/dist/lib/commons-cli.jar"/>
+				src="../../squirrel-sql-dist/squirrel-sql-1.2beta5/core/dist/lib/commons-cli.jar"/>
 			<file	targetdir="$INSTALL_PATH/lib"
-				src="../../squirrel-sql-dist/squirrel-sql-1.2beta4/core/dist/lib/forms.jar"/>
+				src="../../squirrel-sql-dist/squirrel-sql-1.2beta5/core/dist/lib/forms.jar"/>
 
 			<parsable targetfile="$INSTALL_PATH/squirrel-sql.bat"/>
 			<parsable targetfile="$INSTALL_PATH/squirrel-sql.sh"/>

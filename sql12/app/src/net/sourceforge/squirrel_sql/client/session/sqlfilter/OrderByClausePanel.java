@@ -33,6 +33,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 /**
  * This panel allows the user to change the where clause for a Contents tab query.
@@ -159,7 +160,7 @@ public class OrderByClausePanel implements ISQLFilterPanel
 		 */
 		private JButton _addButton = new JButton(OrderByClausePanelI18n.ADD);
 		/** A text area used to contain all of the information for the Order By clause. */
-		private JTextArea _orderClauseArea = new JTextArea(4, 40);
+		private JTextArea _orderClauseArea = new JTextArea(10, 40);
 		/** The name of the database table the Where clause applies to. */
 		private String _tableName;
 
@@ -262,7 +263,10 @@ public class OrderByClausePanel implements ISQLFilterPanel
 			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.ipady = 4;
 			_orderClauseArea.setBorder(BorderFactory.createEtchedBorder());
-			pnl.add(_orderClauseArea, gbc);
+			_orderClauseArea.setLineWrap(true);
+			JScrollPane sp = new JScrollPane(_orderClauseArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+												JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			pnl.add(sp, gbc);
 
 			return pnl;
 		}
