@@ -56,5 +56,11 @@ public interface IDataSetUpdateableModel
 	 * into editing mode, and this function is how the framework tells the application
 	 * to go into editing mode.
 	 */
-	public void forceEditMode();
+	public void forceEditMode(boolean mode);
+	
+	/**
+	 * The fw gui may need to query the application on whether it is in "forced edit" mode
+	 * or not.
+	 */
+	public boolean editModeIsForced();
 }
