@@ -2,6 +2,28 @@
 
 <Beans>
     <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+        <driverClassName>com.mckoi.JDBCDriver</driverClassName>
+        <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+            <string>-15</string>
+        </identifier>
+        <jarFileName/>
+        <jarFileNames Indexed="true"/>
+        <name>Mckoi</name>
+        <url>jdbc:mckoi://&lt;host&gt;[:9157][/schema]/</url>
+    </Bean>
+
+    <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+        <driverClassName>uk.co.thinksql.ThinkSQLDriver</driverClassName>
+        <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+            <string>-14</string>
+        </identifier>
+        <jarFileName/>
+        <jarFileNames Indexed="true"/>
+        <name>ThinkSQL</name>
+        <url>jdbc:thinksql://&lt;server&gt;:&lt;9075&gt;</url>
+    </Bean>
+
+    <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
         <driverClassName>org.axiondb.jdbc.AxionDriver</driverClassName>
         <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
             <string>-13</string>
