@@ -1,5 +1,51 @@
-Change Log
-==========
+SQuirreL SQL Client Change Log
+==============================
+
+1.1beta6
+========
+
+Enhancements
+------------
+- Run View Logs in a thread.
+- Doubleclick in the memory status panel will now run garbage collection.
+- Add Mckoi and Think SQL drivers to the default drivers.
+- Add menu item allowing reconnection to the database.
+- Add a "Row Count" tab to the Tables tabbed folder.
+- Add a "Status" tab to the database node in the object tree.
+- Can now select directories as well as jars in the extra class path tab
+  in driver maintenance.
+- Errors are now displayed in the sessions message panel in red (Victor Ott).
+- Rewrite of the object tree code.
+- Show both schemas and catalogs in the object tree for databases that
+  support both.
+- Added "Help", "Change Log" and "Licence" options to Help menu for SQuirreL
+  and for plugins.
+- Documentation updated.
+- Allow for errors in ResultSet.getBoolean() implementation.
+- Axion and Mimer added to default drivers
+- Added "Dump Application" and "Dump Session" options to menus to aid in
+  debugging issues with different drivers and databases.
+
+Bug Fixes
+---------
+- Fix bug where closing the "New Session" properties dialog would make the
+  object tree tabbed panel change back to the first tab.
+- Fix "too tall" About Box under the first beta of JDK1.4.1
+- When output type (text or table) is changed all existing panels are now updated.
+- Expand first level of object tree for JDBC/ODBC bridge when session
+  first started.
+- Handle sorting by different data types in tables.
+- Fix XMLBeanWriter to transparently handle arrays of strings.
+- Fix error handling in data types display.
+
+Plugin API
+----------
+- Add ability to load jars in a plugins lib directory.
+- Move APIs from ISession to their own classes.
+- Add API to add nodes to the object tree.
+- Add API to add tabs to the object tree details panel.
+- Add API to add options to the object tree popup menu.
+
 
 1.1beta5
 ========
@@ -11,10 +57,9 @@ Enhancements
 - Display more information about the executing query on the
   execution panel.
 - Split query execution times into "sql execution" and "building
-  output" times.
-- When executing multiple sql statements show elapsed time
-  for each individual statement.
-- Add "Table Types" tab to the database metadata display.
+
+Enhancements
+------------
 - Add handling of blob, clob, binary, varbinary and longvarbinary
   columns.
 - Allow for some combinations of the JDBC/ODBC bridge and MSSQL
@@ -22,8 +67,8 @@ Enhancements
 - Add "Close Session" option to Session menu.
 - Add "View Logs" item to the Windows menu.
 - Set maximum allowed width for the Window menu.
-- Added Sunopsis XML JDBC driver and Microsoft MSSQL JDBC
-  driver (Ken Arway) to default drivers.
+- Added Sunopsis XML JDBC driver and Microsoft MSSQL JDBC driver (Ken Arway)
+  to default drivers.
 - Display session name in Session Properties Dialog to
   differentiate it from another sessions dialog.
 - Log any error other than an SQL error to the logger
@@ -35,9 +80,6 @@ Enhancements
 
 Bug Fixes
 ---------
-- "Refresh" option in the popup menu for the object tree now works. 
-- Ensure a sessions message panel is tall enough to display all
-  three lines of an SQL error when first displayed.
 - Fix bug where changing "autocommit" during a session wasn't
   recognized.
 - Limit rows checkbox wasn't updated when session properties
