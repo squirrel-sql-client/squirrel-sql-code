@@ -259,6 +259,7 @@ public class CellComponentFactory {
 					label.setText(label.getText().replaceAll("\n", "/\\n"));
 				}
 
+
 				// if text cannot be edited in the cell but can be edited in
 				//				the popup, show that by changing the text colors.
 				if (_dataTypeObject != null &&
@@ -269,10 +270,15 @@ public class CellComponentFactory {
 				   setBackground(Color.CYAN);
 			   }
 			   else {
-				   // since the previous entry might have changed the color,
-				   // we need to reset the color back to default value for table cells.
-					setBackground(table.getBackground());
-			   }				
+					// since the previous entry might have changed the color,
+					// we need to reset the color back to default value for table cells,
+					// taking into account whether the cell is selected or not.
+					if (isSelected)
+						setBackground(table.getSelectionBackground());
+					else
+						setBackground(table.getBackground());
+			   }	
+	
 
 				return label;	  	
 		 }
