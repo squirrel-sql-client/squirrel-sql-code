@@ -185,8 +185,8 @@ public class ObjectTreePanel extends JPanel
 		addDetailTab(DatabaseObjectType.SCHEMA, new DatabaseObjectInfoTab());
 
 		// Register tabs to display in the details panel for table nodes.
-		addDetailTab(DatabaseObjectType.TABLE, new ContentsTab());
 		addDetailTab(DatabaseObjectType.TABLE, new DatabaseObjectInfoTab());
+		addDetailTab(DatabaseObjectType.TABLE, new ContentsTab());
 		addDetailTab(DatabaseObjectType.TABLE, new RowCountTab());
 		addDetailTab(DatabaseObjectType.TABLE, new ColumnsTab());
 		addDetailTab(DatabaseObjectType.TABLE, new PrimaryKeyTab());
