@@ -44,6 +44,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
@@ -70,6 +72,12 @@ public class AboutBoxDialog extends JDialog {
 
 	/** Singleton instance of this class. */
 	private static AboutBoxDialog s_instance;
+
+	/** The tabbed panel. */
+	private JTabbedPane _tabPnl = new JTabbedPane();
+
+	/** System panel. */
+	private SystemPanel _systemPnl;
 
 	/**
 	 * This interface defines locale specific strings. This should be
@@ -105,15 +113,6 @@ public class AboutBoxDialog extends JDialog {
 	}
 
 	private void createUserInterface(IApplication app) {
-		addWindowListener(new WindowAdapter() {
-			public void windowActivated(WindowEvent evt) {
-				s_log.debug("windowActivated");
-			}
-			public void windowDeactivated(WindowEvent evt) {
-				s_log.debug("windowdeActivated");
-			}
-		});
-
 		final JPanel contentPane = new JPanel(new BorderLayout());
 		setContentPane(contentPane);
 		contentPane.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
@@ -121,12 +120,12 @@ public class AboutBoxDialog extends JDialog {
 		final boolean isDebug = s_log.isDebugEnabled();
 		long start = 0;
 
-		JTabbedPane tabPnl = new JTabbedPane();
+		_tabPnl = new JTabbedPane();
 
 		if (isDebug) {
 			start = System.currentTimeMillis();
 		}
-		tabPnl.add("About", new AboutPanel(app));  // i18n
+		_tabPnl.add("About", new AboutPanel(app));  // i18n
 		if (isDebug) {
 			s_log.debug("AboutPanel created in "
 						+ (System.currentTimeMillis() - start) + "ms");
@@ -135,7 +134,7 @@ public class AboutBoxDialog extends JDialog {
 		if (isDebug) {
 			start = System.currentTimeMillis();
 		}
-		tabPnl.add("Credits", new CreditsPanel(app));  // i18n
+		_tabPnl.add("Credits", new CreditsPanel(app));  // i18n
 		if (isDebug) {
 			s_log.debug("CreditsPanel created in "
 						+ (System.currentTimeMillis() - start) + "ms");
@@ -144,13 +143,25 @@ public class AboutBoxDialog extends JDialog {
 		if (isDebug) {
 			start = System.currentTimeMillis();
 		}
-		tabPnl.add("System", new SystemPanel(app)); // i18n
+		_systemPnl = new SystemPanel(app);
+		_tabPnl.add("System", _systemPnl); // i18n
 		if (isDebug) {
 			s_log.debug("SystemPanel created in "
 						+ (System.currentTimeMillis() - start) + "ms");
 		}
 
-		contentPane.add(tabPnl, BorderLayout.CENTER);
+		_tabPnl.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent evt) {
+				String title = _tabPnl.getTitleAt(_tabPnl.getSelectedIndex());
+				if (title.equals("System")) {
+					_systemPnl._memoryPnl.startThread();
+				} else {
+					_systemPnl._memoryPnl.stopThread();
+				}
+			}
+		});
+
+		contentPane.add(_tabPnl, BorderLayout.CENTER);
 
 		// Ok button at bottom of dialog.
 		JPanel btnsPnl = new JPanel();
@@ -168,6 +179,21 @@ public class AboutBoxDialog extends JDialog {
 		Dimension ps = contentPane.getPreferredSize();
 		ps.width = 400;
 		contentPane.setPreferredSize(ps);
+
+		addWindowListener(new WindowAdapter() {
+			public void windowActivated(WindowEvent evt) {
+				String title = _tabPnl.getTitleAt(_tabPnl.getSelectedIndex());
+				if (title.equals("System")) {
+					_systemPnl._memoryPnl.startThread();
+				}
+			}
+			public void windowDeactivated(WindowEvent evt) {
+				String title = _tabPnl.getTitleAt(_tabPnl.getSelectedIndex());
+				if (title.equals("System")) {
+					_systemPnl._memoryPnl.stopThread();
+				}
+			}
+		});
 
 		pack();
 		GUIUtils.centerWithinParent(this);
@@ -260,6 +286,8 @@ public class AboutBoxDialog extends JDialog {
 	}
 
 	private static final class SystemPanel extends JPanel {
+		MemoryPanel _memoryPnl;
+
 		SystemPanel(IApplication app) {
 			super();
 			setLayout(new BorderLayout());
@@ -271,8 +299,9 @@ public class AboutBoxDialog extends JDialog {
 				s_log.error("Error occured displaying System Properties", ex);
 			}
 
+			_memoryPnl = new MemoryPanel();
 			add(new JScrollPane(propsPnl.getComponent()), BorderLayout.CENTER);
-			add(new MemoryPanel(), BorderLayout.SOUTH);
+			add(_memoryPnl, BorderLayout.SOUTH);
 
 			setPreferredSize(new Dimension(400, 400));
 		}
@@ -298,13 +327,24 @@ public class AboutBoxDialog extends JDialog {
 				}
 			});
 			add(gcBtn, new JLabel(""));
-
-			_thread = new Thread(new MemoryTimer());
-			_thread.start();
 		}
 
 		public void removeNotify() {
+			stopThread();
+			super.removeNotify();
+		}
+
+		synchronized void startThread() {
+			if (_thread == null) {
+				s_log.debug("Starting memory thread");
+				_thread = new Thread(new MemoryTimer());
+				_thread.start();
+			}
+		}
+
+		synchronized void stopThread() {
 			if (_thread != null) {
+				s_log.debug("Ending memory thread");
 				_killThread = true;
 				try {
 					_thread.join();
@@ -313,7 +353,6 @@ public class AboutBoxDialog extends JDialog {
 				_thread = null;
 				_killThread = false;
 			}
-			super.removeNotify();
 		}
 
 		private final class MemoryTimer implements Runnable {
@@ -337,7 +376,6 @@ public class AboutBoxDialog extends JDialog {
 					_totalMemoryLbl.setText(formatSize(totalMemory));
 					_usedMemoryLbl.setText(formatSize(usedMemory));
 					_freeMemoryLbl.setText(formatSize(freeMemory));
-					s_log.debug("Memory timer thread executed");
 					try {
 						Thread.sleep(1000);
 					} catch (InterruptedException ex) {
