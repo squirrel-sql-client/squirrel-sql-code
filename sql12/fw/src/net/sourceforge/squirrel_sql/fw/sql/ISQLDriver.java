@@ -40,7 +40,8 @@ public interface ISQLDriver extends IHasIdentifier, Comparable
 	}
 
 	/**
-	 * Assign data from the passed <CODE>ISQLDriver</CODE> to this one.
+	 * Assign data from the passed <CODE>ISQLDriver</CODE> to this one. This
+	 * does <B>not</B> copy the identifier.
 	 *
 	 * @param	rhs	<CODE>ISQLDriver</CODE> to copy data from.
 	 *

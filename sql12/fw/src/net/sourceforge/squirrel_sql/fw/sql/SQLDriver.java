@@ -26,7 +26,12 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
-
+/**
+ * This represents a JDBC driver.
+ * This class is a <CODE>JavaBean</CODE>.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
 public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 {
 	/**
@@ -64,8 +69,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 	private boolean _jdbcDriverClassLoaded;
 
 	/** Object to handle property change events. */
-	private PropertyChangeReporter _propChgReporter =
-		new PropertyChangeReporter(this);
+	private transient PropertyChangeReporter _propChgReporter;
 
 	/**
 	 * Ctor specifying the identifier.
@@ -91,7 +95,8 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 	}
 
 	/**
-	 * Assign data from the passed <CODE>ISQLDriver</CODE> to this one.
+	 * Assign data from the passed <CODE>ISQLDriver</CODE> to this one. This
+	 * does <B>not</B> copy the identifier.
 	 *
 	 * @param   rhs	 <CODE>ISQLDriver</CODE> to copy data from.
 	 *
@@ -147,7 +152,9 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 	{
 		try
 		{
-			return super.clone();
+			final SQLDriver driver = (SQLDriver)super.clone();
+			driver._propChgReporter = null;
+			return driver;
 		}
 		catch (CloneNotSupportedException ex)
 		{
@@ -169,17 +176,17 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 
 	public void addPropertyChangeListener(PropertyChangeListener listener)
 	{
-		_propChgReporter.addPropertyChangeListener(listener);
+		getPropertyChangeReporter().addPropertyChangeListener(listener);
 	}
 
 	public void removePropertyChangeListener(PropertyChangeListener listener)
 	{
-		_propChgReporter.removePropertyChangeListener(listener);
+		getPropertyChangeReporter().removePropertyChangeListener(listener);
 	}
 
 	public void setReportPropertyChanges(boolean report)
 	{
-		_propChgReporter.setNotify(report);
+		getPropertyChangeReporter().setNotify(report);
 	}
 
 	public IIdentifier getIdentifier()
@@ -209,7 +216,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 		{
 			final String oldValue = _driverClassName;
 			_driverClassName = data;
-			_propChgReporter.firePropertyChange(
+			getPropertyChangeReporter().firePropertyChange(
 				ISQLDriver.IPropertyNames.DRIVER_CLASS,
 				oldValue,
 				_driverClassName);
@@ -234,7 +241,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 		{
 			final String oldValue = _jarFileName;
 			_jarFileName = value;
-			_propChgReporter.firePropertyChange(
+			getPropertyChangeReporter().firePropertyChange(
 				ISQLDriver.IPropertyNames.JARFILE_NAME,
 				oldValue,
 				_jarFileName);
@@ -264,7 +271,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 			_jarFileNamesList.add(values[i]);
 		}
 
-		_propChgReporter.firePropertyChange(
+		getPropertyChangeReporter().firePropertyChange(
 			ISQLDriver.IPropertyNames.JARFILE_NAMES,
 			oldValue,
 			values);
@@ -285,7 +292,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 		{
 			final String oldValue = _url;
 			_url = data;
-			_propChgReporter.firePropertyChange(
+			getPropertyChangeReporter().firePropertyChange(
 				ISQLDriver.IPropertyNames.URL,
 				oldValue,
 				_url);
@@ -308,7 +315,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 		{
 			final String oldValue = _name;
 			_name = data;
-			_propChgReporter.firePropertyChange(
+			getPropertyChangeReporter().firePropertyChange(
 				ISQLDriver.IPropertyNames.NAME,
 				oldValue,
 				_name);
@@ -324,7 +331,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 	{
 		_jdbcDriverClassLoaded = cl;
 		//??
-		//		_propChgReporter.firePropertyChange(ISQLDriver.IPropertyNames.NAME, _name, _name);
+		//		getPropertyChangeReporter().firePropertyChange(ISQLDriver.IPropertyNames.NAME, _name, _name);
 	}
 
 	public synchronized StringWrapper[] getJarFileNameWrappers()
@@ -364,5 +371,14 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 	private String getString(String data)
 	{
 		return data != null ? data.trim() : "";
+	}
+
+	private synchronized PropertyChangeReporter getPropertyChangeReporter()
+	{
+		if (_propChgReporter == null)
+		{
+			_propChgReporter = new PropertyChangeReporter(this);
+		}
+		return _propChgReporter;
 	}
 }
