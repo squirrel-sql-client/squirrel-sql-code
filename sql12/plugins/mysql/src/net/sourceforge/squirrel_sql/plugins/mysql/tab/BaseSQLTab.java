@@ -31,8 +31,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.MapDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+//import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+//import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseObjectTab;
@@ -52,8 +52,8 @@ abstract class BaseSQLTab extends BaseObjectTab
 	private DataSetScrollingPanel _comp;
 
 	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(BaseSQLTab.class);
+//	private final static ILogger s_log =
+//		LoggerController.createLogger(BaseSQLTab.class);
 
 	public BaseSQLTab(String title, String hint)
 	{

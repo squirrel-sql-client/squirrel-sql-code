@@ -19,8 +19,8 @@ package net.sourceforge.squirrel_sql.plugins.mysql.tab;
  */
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+//import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+//import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
  * This tab will display information about the replication master logs.
  *
@@ -29,8 +29,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 public class ShowMasterLogsTab extends BaseSQLTab
 {
 	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(ShowMasterLogsTab.class);
+//	private final static ILogger s_log =
+//		LoggerController.createLogger(ShowMasterLogsTab.class);
 
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =

@@ -33,8 +33,8 @@ import com.jgoodies.forms.factories.Borders;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+//import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+//import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -48,8 +48,8 @@ import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 public class AlterTableDialog extends JDialog
 {
 	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(AlterTableDialog.class);
+//	private final static ILogger s_log =
+//		LoggerController.createLogger(AlterTableDialog.class);
 
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =

@@ -25,8 +25,8 @@ import javax.swing.ListSelectionModel;
 
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+//import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+//import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
@@ -60,12 +60,12 @@ public class CopyTableCommand implements ICommand
 	private String SQLQuery = "";
 	private boolean isStructure = true;
 	private DefaultListModel listModel;
-	private Object[] fields;
+//	private Object[] fields;
 	private boolean isAllFields = true;
 
 	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(CopyTableCommand.class);
+//	private final static ILogger s_log =
+//		LoggerController.createLogger(CopyTableCommand.class);
 
 	/** Current session. */
 	private ISession _session;

@@ -24,8 +24,8 @@ import java.util.List;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+//import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+//import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
@@ -40,8 +40,8 @@ import net.sourceforge.squirrel_sql.plugins.mysql.IObjectTypes;
 public class SessionExpander implements INodeExpander
 {
 	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(SessionExpander.class);
+//	private static ILogger s_log =
+//		LoggerController.createLogger(SessionExpander.class);
 
 	/**
 	 * Create the child nodes for the passed parent node and return them. Note

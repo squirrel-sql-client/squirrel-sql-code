@@ -1,7 +1,7 @@
 MySQL Plugin Change Log
 =======================
 
-0.21
+0.30
 ====
 - Added "Columns" and "Indexes" tabs to table nodes.
 - Added "Master Status", "Master Logs", and "Slave Status" tabs to
