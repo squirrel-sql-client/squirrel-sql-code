@@ -157,7 +157,7 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
 		interface i18n {
 			String LOOK_AND_FEEL = "Look and Feel:";
 			String THEME_PACK = "Theme Pack:";
-			String LAF_WARNING = "Note: Controls may not be drawn correctly after changes in this panel until the application is restarted.";
+			String LAF_WARNING = "Note: Controls may not be drawn correctly after changes in\nthis panel until the application is restarted.";
 			String TAB_TITLE = "L & F";
 			String TAB_HINT = "Look and Feel settings";
 			String LAF_LOC = "Look and Feel jars folder:";
@@ -448,7 +448,7 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
 					font = new FontChooser().showDialog(font);
 					if (font != null) {
 						btn.setSelectedFont(font);
-						btn._lbl.setText(fi != null ? fi.toString() : "");
+						btn._lbl.setText(new FontInfo(font).toString());
 					}
 				}
 			}
