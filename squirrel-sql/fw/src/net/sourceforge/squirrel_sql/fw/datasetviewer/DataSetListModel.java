@@ -150,8 +150,8 @@ public java.awt.Component getComponent() {
 	 * @param	lis		<TT>DataSetModelListener</TT> that will be
 	 *					notified when events occur in this model.
 	 */
-	public synchronized void addListener(DataSetModelListener lis) {
-		_listenerList.add(DataSetModelListener.class, lis);
+	public synchronized void addListener(IDataSetModelListener lis) {
+		_listenerList.add(IDataSetModelListener.class, lis);
 	}
 
 	/**
@@ -159,8 +159,8 @@ public java.awt.Component getComponent() {
 	 *
 	 * @param	lis		<TT>DataSetModelListener</TT> to be removed.
 	 */
-	public synchronized void removeListener(DataSetModelListener lis) {
-		_listenerList.remove(DataSetModelListener.class, lis);
+	public synchronized void removeListener(IDataSetModelListener lis) {
+		_listenerList.remove(IDataSetModelListener.class, lis);
 	}
 
 	/**
@@ -175,12 +175,12 @@ public java.awt.Component getComponent() {
 		// those that are interested in this event.
 		DataSetModelEvent evt = null;
 		for (int i = listeners.length - 2; i >= 0; i-=2 ) {
-			if (listeners[i] == DataSetModelListener.class) {
+			if (listeners[i] == IDataSetModelListener.class) {
 				// Lazily create the event:
 				if (evt == null) {
 					evt = new DataSetModelEvent(this);
 				}
-				DataSetModelListener lis = (DataSetModelListener)listeners[i + 1];
+				IDataSetModelListener lis = (IDataSetModelListener)listeners[i + 1];
 				switch (eventType) {
 					case IEventTypes.ALL_ROWS_ADDED: {
 						lis.allRowsAdded(evt);

@@ -192,7 +192,7 @@ public class DataSetModelJTableModel extends AbstractTableModel
 		}
 	}
 
-	private class MyDataModelListener implements DataSetModelListener {
+	private class MyDataModelListener implements IDataSetModelListener {
 		/**
 		 * @see DataSetModelListener#allRowsAdded(DataSetModelEvent)
 		 */

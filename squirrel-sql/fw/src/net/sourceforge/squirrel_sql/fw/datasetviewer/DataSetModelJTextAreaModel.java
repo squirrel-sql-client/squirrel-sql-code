@@ -115,7 +115,7 @@ public class DataSetModelJTextAreaModel extends PlainDocument
 		}
 */
 	}
-	private class MyDataModelListener implements DataSetModelListener {
+	private class MyDataModelListener implements IDataSetModelListener {
 		/**
 		 * @see DataSetModelListener#allRowsAdded(DataSetModelEvent)
 		 */

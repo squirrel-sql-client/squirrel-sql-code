@@ -67,13 +67,13 @@ public interface IDataSetModel extends IDataSetViewerDestination {
 	 * @param	lis		<TT>DataSetModelListener</TT> that will be
 	 *					notified when events occur in this model.
 	 */
-	void addListener(DataSetModelListener lis);
+	void addListener(IDataSetModelListener lis);
 
 	/**
 	 * Removes an event listener fromthis model.
 	 *
 	 * @param	lis		<TT>DataSetModelListener</TT> to be removed.
 	 */
-	void removeListener(DataSetModelListener lis);
+	void removeListener(IDataSetModelListener lis);
 }
 
