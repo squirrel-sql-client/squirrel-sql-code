@@ -27,34 +27,34 @@
     <packs>
         <pack required="yes" name="Base">
             <description>SQL Client</description>
-            <file targetdir="$INSTALL_PATH" src="..\..\squirrel-sql-dist\squirrel-sql-1.1alpha1\core\dist\lib"/>
+            <file targetdir="$INSTALL_PATH" src="..\squirrel-sql-dist\squirrel-sql-1.1alpha1\core\dist\lib"/>
             <file targetdir="$INSTALL_PATH" src="doc"/>
-            <file targetdir="$INSTALL_PATH" src="..\..\squirrel-sql-dist\squirrel-sql-1.1alpha1\core\dist\squirrel-sql.bat"/>
-            <file targetdir="$INSTALL_PATH" src="..\..\squirrel-sql-dist\squirrel-sql-1.1alpha1\core\dist\squirrel-sql.sh"/>
+            <file targetdir="$INSTALL_PATH" src="..\squirrel-sql-dist\squirrel-sql-1.1alpha1\core\dist\squirrel-sql.bat"/>
+            <file targetdir="$INSTALL_PATH" src="..\squirrel-sql-dist\squirrel-sql-1.1alpha1\core\dist\squirrel-sql.sh"/>
         </pack>
         <pack required="no" name="Base Source">
             <description>SQL Client source</description>
-            <file targetdir="$INSTALL_PATH" src="..\..\squirrel-sql-dist\squirrel-sql-1.1alpha1\core\dist\src"/>
+            <file targetdir="$INSTALL_PATH" src="..\squirrel-sql-dist\squirrel-sql-1.1alpha1\core\dist\src"/>
         </pack>
         <pack required="no" name="Plugin - Look and Feel">
             <description>Allows the Look and Feel of the application to be changed.</description>
-            <file targetdir="$INSTALL_PATH/plugins" src="..\..\squirrel-sql-dist\squirrel-sql-1.1alpha1\plugins\laf\dist\laf.jar"/>
-            <file targetdir="$INSTALL_PATH/plugins" src="..\..\squirrel-sql-dist\squirrel-sql-1.1alpha1\plugins\laf\dist\laf\"/>
+            <file targetdir="$INSTALL_PATH/plugins" src="..\squirrel-sql-dist\squirrel-sql-1.1alpha1\plugins\laf\dist\laf.jar"/>
+            <file targetdir="$INSTALL_PATH/plugins" src="..\squirrel-sql-dist\squirrel-sql-1.1alpha1\plugins\laf\dist\laf\"/>
         </pack>
         <pack required="no" name="Plugin - SQL Scripts">
             <description>Load/save of SQL scripts etc.</description>
-            <file targetdir="$INSTALL_PATH/plugins" src="..\..\squirrel-sql-dist\squirrel-sql-1.1alpha1\plugins\sqlscript\dist\sqlscript.jar"/>
-            <file targetdir="$INSTALL_PATH/plugins" src="..\..\squirrel-sql-dist\squirrel-sql-1.1alpha1\plugins\sqlscript\dist\sqlscript\"/>
+            <file targetdir="$INSTALL_PATH/plugins" src="..\squirrel-sql-dist\squirrel-sql-1.1alpha1\plugins\sqlscript\dist\sqlscript.jar"/>
+            <file targetdir="$INSTALL_PATH/plugins" src="..\squirrel-sql-dist\squirrel-sql-1.1alpha1\plugins\sqlscript\dist\sqlscript\"/>
         </pack>
         <pack required="no" name="Plugin - Saved Queries">
             <description>Allows queries to be saved and restored.</description>
-            <file targetdir="$INSTALL_PATH/plugins" src="..\..\squirrel-sql-dist\squirrel-sql-1.1alpha1\plugins\favs\dist\favs.jar"/>
-            <file targetdir="$INSTALL_PATH/plugins" src="..\..\squirrel-sql-dist\squirrel-sql-1.1alpha1\plugins\favs\dist\favs\"/>
+            <file targetdir="$INSTALL_PATH/plugins" src="..\squirrel-sql-dist\squirrel-sql-1.1alpha1\plugins\favs\dist\favs.jar"/>
+            <file targetdir="$INSTALL_PATH/plugins" src="..\squirrel-sql-dist\squirrel-sql-1.1alpha1\plugins\favs\dist\favs\"/>
         </pack>
         <pack required="no" name="Plugin - Database Information">
             <description>Database Information.</description>
-            <file targetdir="$INSTALL_PATH/plugins" src="..\..\squirrel-sql-dist\squirrel-sql-1.1alpha1\plugins\dbinfo\dist\dbinfo.jar"/>
-            <file targetdir="$INSTALL_PATH/plugins" src="..\..\squirrel-sql-dist\squirrel-sql-1.1alpha1\plugins\dbinfo\dist\dbinfo\"/>
+            <file targetdir="$INSTALL_PATH/plugins" src="..\squirrel-sql-dist\squirrel-sql-1.1alpha1\plugins\dbinfo\dist\dbinfo.jar"/>
+            <file targetdir="$INSTALL_PATH/plugins" src="..\squirrel-sql-dist\squirrel-sql-1.1alpha1\plugins\dbinfo\dist\dbinfo\"/>
         </pack>
     </packs>
 </installation>
