@@ -43,6 +43,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.CellEditor;
+import javax.swing.JOptionPane;
 
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
@@ -62,138 +63,132 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponent
  */
 public class CellDataPopup
 {
-	/* description of the column - needed to select appropriate component for editing.
-	 * This is a bit dicy in that the field is static only because it is needed in a
-	 * static function, not because it should be the same for all instances of the
-	 * dialog.  Fortunately, this does not seem to be a problem because it seems to be
-	 * first set and then used only during the initial creation of each dialog, so each
-	 * call to create a dialog gets the correct definition for that call.
-	 */
-	static ColumnDisplayDefinition _colDef;
-	
-	
+		
 	/**
 	 * function to create the popup display when called from JTable
 	 */
 	public static void showDialog(JTable table,
 		ColumnDisplayDefinition colDef,
 		MouseEvent evt)
-	{
-		_colDef = colDef;
+	{;
 		CellDataPopup popup = new CellDataPopup();
-		popup.createAndShowDialog(table, evt);
+		popup.createAndShowDialog(table, evt, colDef);
 	}
 
-	private void createAndShowDialog(JTable table, MouseEvent evt)
-		{		
-			ILogger s_log = LoggerController.createLogger(CellDataPopup.class);
+	private void createAndShowDialog(JTable table, MouseEvent evt,
+		ColumnDisplayDefinition colDef)
+	{	
+				
+		ILogger s_log = LoggerController.createLogger(CellDataPopup.class);
 
-			Point pt = evt.getPoint();
-			int row = table.rowAtPoint(pt);
-			int col = table.columnAtPoint(pt);
+		Point pt = evt.getPoint();
+		int row = table.rowAtPoint(pt);
+		int col = table.columnAtPoint(pt);
 
-			Object obj = table.getValueAt(row, col);
-			if (obj != null)
-			{
-				obj = obj.toString();
-			}
-			else
-			{
-				obj = "";
-			}
-			
-			// since user is now using popup, stop editing
-			// using the in-cell editor, if any
-			CellEditor editor = table.getCellEditor(row, col);
-			if (editor != null)
-				editor.cancelCellEditing();
-			
-			IDataSetTableControls creator =
-				((DataSetViewerTablePanel.MyJTable)table).getCreator();
-
-			Component comp = SwingUtilities.getRoot(table);
-			Component newComp = null;
-
-			// The following only works if SwingUtilities.getRoot(table) returns
-			// and instanceof BaseMDIParentFrame.
-			// If SwingTUilities.getRoot(table) returns and instance of Dialog or
-			// Frame, then other code must be used.
-			TextAreaInternalFrame taif = 
-				new TextAreaInternalFrame(table.getColumnName(col), (String)obj,
-					row, col, creator, table);
-			((BaseMDIParentFrame)comp).addInternalFrame(taif, false);
-			taif.setLayer(JLayeredPane.POPUP_LAYER);
-			taif.pack();
-			newComp = taif;
-
-			Dimension dim = newComp.getSize();
-			boolean dimChanged = false;
-			if (dim.width < 250)
-			{
-				dim.width = 250;
-				dimChanged = true;
-			}
-			if (dim.height < 100)
-			{
-				dim.height = 100;
-				dimChanged = true;
-			}
-			if (dim.width > 500)
-			{
-				dim.width = 500;
-				dimChanged = true;
-			}
-			if (dim.height > 400)
-			{
-				dim.height = 400;
-				dimChanged = true;
-			}
-			if (dimChanged)
-			{
-				newComp.setSize(dim);
-			}
-			if (comp instanceof BaseMDIParentFrame)
-			{
-				pt = SwingUtilities.convertPoint((Component) evt.getSource(), pt, comp);
-				pt.y -= dim.height;
-			}
-			else
-			{
-				// getRoot() doesn't appear to return the deepest Window, but the first one. 
-				// If you have a dialog owned by a window you get the dialog, not the window.
-				Component parent = SwingUtilities.windowForComponent(comp);
-				while ((parent != null) && !(parent instanceof BaseMDIParentFrame) && !(parent.equals(comp)))
-				{
-					comp = parent;
-					parent = SwingUtilities.windowForComponent(comp);
-				}
-				comp = (parent != null) ? parent : comp;
-				pt = SwingUtilities.convertPoint((Component) evt.getSource(), pt, comp);
-			}
-			
-			// Determine the position to place the new internal frame. Ensure that the right end
-			// of the internal frame doesn't exend past the right end the parent frame.	Use a fudge
-			// factor as the dim.width doesn't appear to get the final width of the internal frame
-			// (e.g. where pt.x + dim.width == parentBounds.width, the new internal frame still extends
-			// past the right end of the parent frame).
-			int fudgeFactor = 100;
-			Rectangle parentBounds = comp.getBounds();
-			if (parentBounds.width <= (dim.width + fudgeFactor))
-			{
-				dim.width = parentBounds.width - fudgeFactor;
-				pt.x = fudgeFactor / 2;
-				newComp.setSize(dim);
-			}
-			else 
-			{
-				if ((pt.x + dim.width + fudgeFactor) > (parentBounds.width))
-				{
-					pt.x -= (pt.x + dim.width + fudgeFactor) - parentBounds.width;
-				}
-			}
-			newComp.setLocation(pt);
-			newComp.setVisible(true);
+		Object obj = table.getValueAt(row, col);
+		if (obj != null)
+		{
+			obj = obj.toString();
 		}
+		else
+		{
+			obj = "";
+		}
+			
+		// since user is now using popup, stop editing
+		// using the in-cell editor, if any
+		CellEditor editor = table.getCellEditor(row, col);
+		if (editor != null)
+			editor.cancelCellEditing();
+			
+		IDataSetTableControls creator =
+			((DataSetViewerTablePanel.MyJTable)table).getCreator();
+
+		Component comp = SwingUtilities.getRoot(table);
+		Component newComp = null;
+
+		// The following only works if SwingUtilities.getRoot(table) returns
+		// and instanceof BaseMDIParentFrame.
+		// If SwingTUilities.getRoot(table) returns and instance of Dialog or
+		// Frame, then other code must be used.
+		TextAreaInternalFrame taif = 
+			new TextAreaInternalFrame(table.getColumnName(col), colDef, obj,
+				row, col, creator, table);
+		((BaseMDIParentFrame)comp).addInternalFrame(taif, false);
+		taif.setLayer(JLayeredPane.POPUP_LAYER);
+		taif.pack();
+		newComp = taif;
+
+		Dimension dim = newComp.getSize();
+		boolean dimChanged = false;
+		if (dim.width < 250)
+		{
+			dim.width = 250;
+			dimChanged = true;
+		}
+		if (dim.height < 100)
+		{
+			dim.height = 100;
+			dimChanged = true;
+		}
+		if (dim.width > 500)
+		{
+			dim.width = 500;
+			dimChanged = true;
+		}
+		if (dim.height > 400)
+		{
+			dim.height = 400;
+			dimChanged = true;
+		}
+		if (dimChanged)
+		{
+			newComp.setSize(dim);
+		}
+		if (comp instanceof BaseMDIParentFrame)
+		{
+			pt = SwingUtilities.convertPoint((Component) evt.getSource(), pt, comp);
+			pt.y -= dim.height;
+		}
+		else
+		{
+			// getRoot() doesn't appear to return the deepest Window, but the first one. 
+			// If you have a dialog owned by a window you get the dialog, not the window.
+			Component parent = SwingUtilities.windowForComponent(comp);
+			while ((parent != null) &&
+				!(parent instanceof BaseMDIParentFrame) &&
+				!(parent.equals(comp)))
+			{
+				comp = parent;
+				parent = SwingUtilities.windowForComponent(comp);
+			}
+			comp = (parent != null) ? parent : comp;
+			pt = SwingUtilities.convertPoint((Component) evt.getSource(), pt, comp);
+		}
+			
+		// Determine the position to place the new internal frame. Ensure that the right end
+		// of the internal frame doesn't exend past the right end the parent frame.	Use a
+		// fudge factor as the dim.width doesn't appear to get the final width of the internal
+		// frame (e.g. where pt.x + dim.width == parentBounds.width, the new internal frame
+		// still extends past the right end of the parent frame).
+		int fudgeFactor = 100;
+		Rectangle parentBounds = comp.getBounds();
+		if (parentBounds.width <= (dim.width + fudgeFactor))
+		{
+			dim.width = parentBounds.width - fudgeFactor;
+			pt.x = fudgeFactor / 2;
+			newComp.setSize(dim);
+		}
+		else 
+		{
+			if ((pt.x + dim.width + fudgeFactor) > (parentBounds.width))
+			{
+				pt.x -= (pt.x + dim.width + fudgeFactor) - parentBounds.width;
+			}
+		}
+		newComp.setLocation(pt);
+		newComp.setVisible(true);
+	}
 
 
 	//
@@ -209,21 +204,22 @@ public class CellDataPopup
 		private int _col;
 		private JTable _table;
 
-		ColumnDataPopupPanel(String cellContents, boolean tableIsEditable)
+		ColumnDataPopupPanel(Object cellContents,
+			ColumnDisplayDefinition colDef,
+			boolean tableIsEditable)
 		{
 			super(new BorderLayout());
 
-			_ta = CellComponentFactory.getJTextArea(_colDef);
-			_ta.setText(cellContents);
+			_ta = CellComponentFactory.getJTextArea(colDef, cellContents);
 
-			if (tableIsEditable && CellComponentFactory.isEditableInPopup(_colDef)) {
+			if (tableIsEditable && CellComponentFactory.isEditableInPopup(colDef)) {
 				// data is editable in popup
 				_ta.setEditable(true);
 				_ta.setBackground(Color.YELLOW);	// tell user it is editable
 				
 				// Since data is editable, we need to add control panel
 				// to manage user requests for DB update, file IO, etc.
-				JPanel editingControls = createPopupEditingControls(_ta);
+				JPanel editingControls = createPopupEditingControls(_ta, colDef);
 				add(editingControls, BorderLayout.SOUTH);
 			}
 			else {
@@ -241,7 +237,11 @@ public class CellDataPopup
 		/**
 		 * Set up user controls for editing.
 		 */
-		private JPanel createPopupEditingControls(JTextArea _ta) {
+		private JPanel createPopupEditingControls(JTextArea _ta,
+			ColumnDisplayDefinition colDef) {
+				
+			final ColumnDisplayDefinition _colDef = colDef;
+				
 			JPanel panel = new JPanel(new BorderLayout());
 			
 			// create update/cancel controls using default layout
@@ -251,9 +251,34 @@ public class CellDataPopup
 			JButton updateButton = new JButton("Update DB");
 			updateButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent event) {
-					_table.setValueAt(ColumnDataPopupPanel.this._ta.getText(), _row, _col);
-					ColumnDataPopupPanel.this._parentFrame.setVisible(false);
-					ColumnDataPopupPanel.this._parentFrame.dispose();
+
+					// try to convert the text in the popup into a valid
+					// instance of type of data object being held in the table cell
+					StringBuffer messageBuffer = new StringBuffer();
+					Object newValue =
+						CellComponentFactory.validateAndConvert(
+							_colDef,
+							ColumnDataPopupPanel.this._ta.getText(),
+							messageBuffer);
+					if (messageBuffer.length() > 0) {
+						// handle an error in conversion of text to object
+						messageBuffer.insert(0,
+							"The given text cannot be converted into the internal object.\n"+
+							"Please change the data or cancel editing.\n"+
+							"The conversion error was:\n");
+						JOptionPane.showMessageDialog(ColumnDataPopupPanel.this,
+							messageBuffer,
+							"Conversion Error",
+							JOptionPane.ERROR_MESSAGE);
+						ColumnDataPopupPanel.this._ta.requestFocus();
+
+					}
+					else {
+						// no problem in conversion - proceed with update
+						_table.setValueAt(newValue, _row, _col);
+						ColumnDataPopupPanel.this._parentFrame.setVisible(false);
+						ColumnDataPopupPanel.this._parentFrame.dispose();
+					}
 				}
 			});
 			
@@ -346,12 +371,13 @@ public class CellDataPopup
 	// root type is Dialog or Frame, then other code must be used.
 	class TextAreaInternalFrame extends JInternalFrame
 	{
-		public TextAreaInternalFrame(String column, String text, int row, int col,
-			 IDataSetTableControls creator, JTable table)
+		public TextAreaInternalFrame(String columnName, ColumnDisplayDefinition colDef,
+			Object value, int row, int col,
+			IDataSetTableControls creator, JTable table)
 		{
-			super("Value of column " + column, true, true, true, true);
+			super("Value of column " + columnName, true, true, true, true);
 			ColumnDataPopupPanel popup =
-				new ColumnDataPopupPanel(text, creator.isTableEditable());
+				new ColumnDataPopupPanel(value, colDef, creator.isTableEditable());
 			popup.setUserActionInfo(this, row, col, table);
 			setContentPane(popup);
 		}
