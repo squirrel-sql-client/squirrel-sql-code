@@ -908,7 +908,7 @@ public class PopupEditableIOPanel extends JPanel
 		// if the data is not binary, then there is no need for conversion.
 		// if the data is Hex with ASCII not shown as chars, then no conversion needed.
 		if (radixList == null ||
-			(radixList.getSelectedItem().equals("Hex") && showAscii.isSelected()) ) {
+			(radixList.getSelectedItem().equals("Hex") && ! showAscii.isSelected()) ) {
 			// no need for conversion
 			return _ta.getText();
 		}
