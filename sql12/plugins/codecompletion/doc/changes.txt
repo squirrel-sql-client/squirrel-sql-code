@@ -1,0 +1,7 @@
+SQL Entry Area Enhancements
+===========================
+
+
+0.10
+====
+- Initial release
