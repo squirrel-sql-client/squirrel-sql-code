@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
 import org.netbeans.editor.LocaleSupport;
 import org.netbeans.editor.StatusBar;
+import org.netbeans.editor.Syntax;
 
 import javax.swing.text.Document;
 import java.util.Hashtable;
@@ -54,9 +55,18 @@ public class SyntaxFactory
    }
 
 
-   public SQLSyntax getSyntax(Document doc)
+   public Syntax getSyntax(Document doc)
    {
       ISession sess = (ISession) _sessionByDocument.get(doc);
+
+      if(null == sess)
+      {
+         // Once and again the Netbeans editor calls createSyntax() after
+         // sessionEnding() was called. Then sess is null and the code below 
+         // would break.
+         return new Syntax();
+      }
+
 
       NetbeansSQLEditorPane editor = (NetbeansSQLEditorPane) _editorPaneBySessionID.get(sess.getIdentifier());
 
