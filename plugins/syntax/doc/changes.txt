@@ -1,7 +1,9 @@
 Syntax Highlighting Plugin Change Log
 =====================================
 
-Fixed bug #981490 
+coloring of columns and bug fixes
+Fixed bug #981490
+
 
 
 0.12
