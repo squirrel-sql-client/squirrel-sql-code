@@ -28,26 +28,28 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.net.URL;
 
 /**
- * @version 	$Id: ButtonTableHeader.java,v 1.2 2002-03-12 21:03:57 joco01 Exp $
+ * @version 	$Id: ButtonTableHeader.java,v 1.3 2002-03-13 19:39:24 joco01 Exp $
  * @author		Johan Compagner
  */
 public class ButtonTableHeader extends JTableHeader
 {
+	protected boolean _bDragged;	
 	protected boolean _bPressed;
 	protected int _iPressed;
 	private static ImageIcon desc;
 	private static ImageIcon asc;
 
 	protected ImageIcon current;
-	
 	static
 	{
 		// HARDWIRED path names!! Should be in Resource/Settings file??
@@ -70,12 +72,17 @@ public class ButtonTableHeader extends JTableHeader
 	{
 		super();
 		_bPressed = false;
+		_bDragged = false;
 		_iPressed = -1;
+		
 		setDefaultRenderer(new ButtonTableRenderer(getFont()));
-		addMouseListener(new HeaderListener());
+		
+		HeaderListener hl = new HeaderListener();
+		addMouseListener(hl);
+		addMouseMotionListener(hl);
 	}
 
-	class HeaderListener extends MouseAdapter
+	class HeaderListener extends MouseAdapter implements MouseMotionListener
 	{
 		/*
 		 * @see MouseListener#mousePressed(MouseEvent)
@@ -93,22 +100,42 @@ public class ButtonTableHeader extends JTableHeader
 		public void mouseReleased(MouseEvent e)
 		{
 			_bPressed = false;
-			int column = columnAtPoint(e.getPoint());
-			TableModel tm = table.getModel();
-
-			if(column > -1 && column < tm.getColumnCount() && tm instanceof SortableTableModel)
+			if(!_bDragged)
 			{
-				((SortableTableModel)tm).sortByColumn(column);
-				if(((SortableTableModel)tm)._bAscending)
+				int column = columnAtPoint(e.getPoint());
+				TableModel tm = table.getModel();
+	
+				if(column > -1 && column < tm.getColumnCount() && tm instanceof SortableTableModel)
 				{
-					current = asc;
+					((SortableTableModel)tm).sortByColumn(column);
+					if(((SortableTableModel)tm)._bAscending)
+					{
+						current = asc;
+					}
+					else
+					{
+						current = desc;
+					}
 				}
-				else
-				{
-					current = desc;
-				}
+				repaint();
 			}
-			repaint();
+			_bDragged = false;
+		}
+
+		/*
+		 * @see MouseMotionListener#mouseDragged(MouseEvent)
+		 */
+		public void mouseDragged(MouseEvent e)
+		{
+			_bDragged = true;
+		}
+
+		/*
+		 * @see MouseMotionListener#mouseMoved(MouseEvent)
+		 */
+		public void mouseMoved(MouseEvent e)
+		{
+			_bDragged = false;
 		}
 
 	}
@@ -127,6 +154,9 @@ public class ButtonTableHeader extends JTableHeader
 			buttonLowered.setFont(font);
 			buttonLowered.getModel().setArmed(true);
 			buttonLowered.getModel().setPressed(true);
+			
+			buttonLowered.setMinimumSize(new Dimension(50,25));
+			buttonRaised.setMinimumSize(new Dimension(50,25));
 		}
 		/*
 		 * @see TableCellRenderer#getTableCellRendererComponent(JTable, Object, boolean, boolean, int, int)
