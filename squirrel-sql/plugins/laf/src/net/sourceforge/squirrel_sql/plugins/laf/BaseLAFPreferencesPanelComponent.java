@@ -17,38 +17,39 @@ package net.sourceforge.squirrel_sql.plugins.laf;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import javax.swing.LookAndFeel;
+import java.awt.LayoutManager;
+
+import javax.swing.JPanel;
 /**
- * Behaviour of a look and feel that has no special behaviour.
+ * Base class for any LAF Controller component to be placed in the
+ * Look And Feel Preferences panel.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class DefaultLookAndFeelController implements ILookAndFeelController
+abstract class BaseLAFPreferencesPanelComponent extends JPanel
 {
+	BaseLAFPreferencesPanelComponent()
+	{
+		super();
+	}
+
+	BaseLAFPreferencesPanelComponent(LayoutManager lmgr)
+	{
+		super(lmgr);
+	}
+
 	/**
-	 * This Look and Feel is about to be installed.
+	 * Called when this Look and Feel is specified in the preferences panel.
 	 */
-	public void aboutToBeInstalled(LAFRegister lafRegister, LookAndFeel laf)
+	public void loadPreferencesPanel()
 	{
 	}
 
 	/**
-	 * This Look and Feel has just been installed.
+	 * Called when this Look and Feel is specified in the preferences panel
+	 * and save is requested.
 	 */
-	public void hasBeenInstalled(LAFRegister lafRegister, LookAndFeel laf)
+	public void applyChanges()
 	{
 	}
-
-	/**
-	 * Assume that Look and Feel implementations don't require extra
-	 * configuration so return <TT>null</TT>.
-	 * 
-	 * @return		<TT>null</TT>
-	 */
-	public BaseLAFPreferencesPanelComponent getPreferencesComponent()
-	{
-		return null;
-	}
-
 }
-

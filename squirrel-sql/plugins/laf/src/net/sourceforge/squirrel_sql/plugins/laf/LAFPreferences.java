@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.laf;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -22,6 +22,8 @@ import java.io.Serializable;
 import javax.swing.UIManager;
 
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
+import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 
 /**
  * This JavaBean class represents the user specific
@@ -29,9 +31,12 @@ import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class LAFPreferences implements Cloneable, Serializable {
+public class LAFPreferences implements Cloneable, Serializable, IHasIdentifier
+{
+	/** The <CODE>IIdentifier</CODE> that uniquely identifies this object. */
+	private IIdentifier _id;
+
 	private String _lafClassName;
-	private String _skinThemePackName;
 
 	private FontInfo _fiMenu;
 	private FontInfo _fiStatic;
@@ -43,120 +48,173 @@ public class LAFPreferences implements Cloneable, Serializable {
 	private boolean _fiStatusBarEnabled;
 	private boolean _fiOtherEnabled;
 
-	public LAFPreferences() {
+	public LAFPreferences()
+	{
 		super();
 		_lafClassName = UIManager.getCrossPlatformLookAndFeelClassName();
-		_skinThemePackName = "";
+	}
+
+	public LAFPreferences(IIdentifier id)
+	{
+		this();
+		_id = id;
 	}
 
 	/**
 	 * Return a copy of this object.
 	 */
-	public Object clone() {
-		try {
+	public Object clone()
+	{
+		try
+		{
 			return super.clone();
-		} catch(CloneNotSupportedException ex) {
-			throw new InternalError(ex.getMessage());   // Impossible.
+		}
+		catch (CloneNotSupportedException ex)
+		{
+			throw new InternalError(ex.getMessage()); // Impossible.
 		}
 	}
 
-	public boolean equals(Object rhs) {
+	/**
+	 * Two preferences objects are considered equal if their preference
+	 * attribues are the same.
+	 */
+	public boolean equals(Object rhs)
+	{
 		boolean rc = false;
-		if (rhs != null && rhs.getClass().equals(getClass())) {
-			LAFPreferences obj = (LAFPreferences)rhs;
-			if (_fiMenuEnabled == obj._fiMenuEnabled &&
-					_fiStaticEnabled == obj._fiStaticEnabled &&
-					_fiStatusBarEnabled == obj._fiStatusBarEnabled &&
-					_fiOtherEnabled == obj._fiOtherEnabled &&
-					_fiOther.equals(obj._fiOther) &&
-					_fiStatic.equals(obj._fiStatic) &&
-					_fiMenu.equals(obj._fiMenu) &&
-					_fiStatusBar.equals(obj._fiStatusBar) &&
-					_skinThemePackName.equals(obj._skinThemePackName) &&
-					_lafClassName.equals(obj._lafClassName)) {
+		if (rhs != null && rhs.getClass().equals(getClass()))
+		{
+			LAFPreferences obj = (LAFPreferences) rhs;
+			if (_fiMenuEnabled == obj._fiMenuEnabled
+				&& _fiStaticEnabled == obj._fiStaticEnabled
+				&& _fiStatusBarEnabled == obj._fiStatusBarEnabled
+				&& _fiOtherEnabled == obj._fiOtherEnabled
+				&& _fiOther.equals(obj._fiOther)
+				&& _fiStatic.equals(obj._fiStatic)
+				&& _fiMenu.equals(obj._fiMenu)
+				&& _fiStatusBar.equals(obj._fiStatusBar)
+				&& _lafClassName.equals(obj._lafClassName))
+			{
 				rc = true;
 			}
 		}
 		return rc;
 	}
 
-	public String getLookAndFeelClassName() {
+	public String getLookAndFeelClassName()
+	{
 		return _lafClassName;
 	}
 
-	public void setLookAndFeelClassName(String data) {
+	public void setLookAndFeelClassName(String data)
+	{
 		_lafClassName = data;
 	}
 
-	public String getSkinThemePackName() {
-		return _skinThemePackName;
-	}
-
-	public void setSkinThemePackName(String data) {
-		_skinThemePackName = data;
-	}
-
-	public FontInfo getMenuFontInfo() {
+	public FontInfo getMenuFontInfo()
+	{
 		return _fiMenu;
 	}
 
-	public void setMenuFontInfo(FontInfo data) {
+	public void setMenuFontInfo(FontInfo data)
+	{
 		_fiMenu = data;
 	}
 
-	public FontInfo getStaticFontInfo() {
+	public FontInfo getStaticFontInfo()
+	{
 		return _fiStatic;
 	}
 
-	public void setStaticFontInfo(FontInfo data) {
+	public void setStaticFontInfo(FontInfo data)
+	{
 		_fiStatic = data;
 	}
 
-	public FontInfo getStatusBarFontInfo() {
+	public FontInfo getStatusBarFontInfo()
+	{
 		return _fiStatusBar;
 	}
 
-	public void setStatusBarFontInfo(FontInfo data) {
+	public void setStatusBarFontInfo(FontInfo data)
+	{
 		_fiStatusBar = data;
 	}
 
-	public FontInfo getOtherFontInfo() {
+	public FontInfo getOtherFontInfo()
+	{
 		return _fiOther;
 	}
 
-	public void setOtherFontInfo(FontInfo data) {
+	public void setOtherFontInfo(FontInfo data)
+	{
 		_fiOther = data;
 	}
 
-	public boolean isMenuFontEnabled() {
+	public boolean isMenuFontEnabled()
+	{
 		return _fiMenuEnabled;
 	}
 
-	public void setMenuFontEnabled(boolean data) {
+	public void setMenuFontEnabled(boolean data)
+	{
 		_fiMenuEnabled = data;
 	}
 
-	public boolean isStaticFontEnabled() {
+	public boolean isStaticFontEnabled()
+	{
 		return _fiStaticEnabled;
 	}
 
-	public void setStaticFontEnabled(boolean data) {
+	public void setStaticFontEnabled(boolean data)
+	{
 		_fiStaticEnabled = data;
 	}
 
-	public boolean isStatusBarFontEnabled() {
+	public boolean isStatusBarFontEnabled()
+	{
 		return _fiStatusBarEnabled;
 	}
 
-	public void setStatusBarFontEnabled(boolean data) {
+	public void setStatusBarFontEnabled(boolean data)
+	{
 		_fiStatusBarEnabled = data;
 	}
 
-	public boolean isOtherFontEnabled() {
+	public boolean isOtherFontEnabled()
+	{
 		return _fiOtherEnabled;
 	}
 
-	public void setOtherFontEnabled(boolean data) {
+	public void setOtherFontEnabled(boolean data)
+	{
 		_fiOtherEnabled = data;
 	}
+
+	/**
+	 * @see IHasIdentifier#getIdentifier()
+	 */
+	public IIdentifier getIdentifier()
+	{
+		return null;
+	}
+
+	/**
+	 * Gets the _id.
+	 * @return Returns a IIdentifier
+	 */
+	public IIdentifier getId()
+	{
+		return _id;
+	}
+
+	/**
+	 * Sets the _id.
+	 * @param _id The _id to set
+	 */
+	public void setId(IIdentifier _id)
+	{
+		this._id = _id;
+	}
+
 }

@@ -22,7 +22,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
@@ -43,7 +45,8 @@ import net.sourceforge.squirrel_sql.client.IApplication;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-class LAFRegister implements LAFConstants {
+class LAFRegister
+{
 	private final static int FONT_KEYS_ARRAY_OTHER = 0;
 	private final static int FONT_KEYS_ARRAY_MENU = 1;
 	private final static int FONT_KEYS_ARRAY_STATIC = 2;
@@ -84,7 +87,7 @@ class LAFRegister implements LAFConstants {
 			"RadioButtonMenuItem.acceleratorFont",
 			"RadioButtonMenuItem.font",
 		},
-		
+
 		// Static text
 		{
 			"Button.font",
@@ -106,16 +109,25 @@ class LAFRegister implements LAFConstants {
 	private IApplication _app;
 
 	/** Look and Feel plugin. */
-	LAFPlugin _plugin;
+	private LAFPlugin _plugin;
 
 	/** Classloader for Look and Feel classes. */
 	private MyURLClassLoader _lafClassLoader;
 
-	/** Name of the Skin Look and Feel. */
-	private String _skinLookAndFeelName = "";
+	/**
+	 * Collection of <TT>ILookAndFeelController</TT> objects keyed by
+	 * the Look and Feel class name.
+	 */
+	private Map _lafControllers = new HashMap();
+
+	/**
+	 * Default LAF controller. Used if a specialised one isn't available for
+     * the LAF in _lafControllers.
+     */
+	private ILookAndFeelController _dftLAFController = new DefaultLookAndFeelController();
 
 	/** <UI defaults prior to us modifying them. */
-	UIDefaults _origUIDefaults;
+	private UIDefaults _origUIDefaults;
 
 	/**
 	 * Ctor. Load all Look and Feels from the Look and Feel folder. Set the
@@ -127,13 +139,15 @@ class LAFRegister implements LAFConstants {
 	 * @throws	IllegalArgumentException
 	 *			If <TT>IApplication</TT>, or <TT>LAFPlugin</TT> are <TT>null</TT>.
 	 */
-	LAFRegister(IApplication app, LAFPlugin plugin)
-		throws IllegalArgumentException {
+	LAFRegister(IApplication app, LAFPlugin plugin) throws IllegalArgumentException
+	{
 		super();
-		if (app == null) {
+		if (app == null)
+		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
-		if (plugin == null) {
+		if (plugin == null)
+		{
 			throw new IllegalArgumentException("Null LAFPlugin passed");
 		}
 
@@ -141,33 +155,49 @@ class LAFRegister implements LAFConstants {
 		_plugin = plugin;
 
 		// Save the current UI defaults.
-		_origUIDefaults = (UIDefaults)UIManager.getDefaults().clone();
+		_origUIDefaults = (UIDefaults) UIManager.getDefaults().clone();
 
 		installLookAndFeels();
 
-		try {
-			updateApplicationFonts();
-		} catch (Throwable ex) {
-			s_log.error("Error", ex);
+		try
+		{
+			_lafControllers.put(SkinLookAndFeelController.SKINNABLE_LAF_CLASS_NAME, new SkinLookAndFeelController(plugin));
 		}
-		try {
+		catch (IOException ex)
+		{
+			s_log.error("Error storing SkinLookAndFeelController", ex);
+		}
+		try
+		{
+			_lafControllers.put(OyoahaLookAndFeelController.OA_LAF_CLASS_NAME, new OyoahaLookAndFeelController(plugin));
+		}
+		catch (IOException ex)
+		{
+			s_log.error("Error storing OyoahaLookAndFeelController", ex);
+		}
+
+		try
+		{
 			setLookAndFeel();
-		} catch (Throwable ex) {
-			s_log.error("Error", ex);
+		}
+		catch (Throwable ex)
+		{
+			s_log.error("Error setting Look and Feel", ex);
+		}
+
+		try
+		{
+			updateApplicationFonts();
+		}
+		catch (Throwable ex)
+		{
+			s_log.error("Error updating application fonts", ex);
 		}
 	}
 
-	LAFPlugin getPlugin() {
+	LAFPlugin getPlugin()
+	{
 		return _plugin;
-	}
-
-	/**
-	 * Return the name of the Skin Look and Feel.
-	 *
-	 * @return	name of the Skin Look and Feel.
-	 */
-	String getSkinnableLookAndFeelName() {
-		return _skinLookAndFeelName;
 	}
 
 	/**
@@ -175,95 +205,146 @@ class LAFRegister implements LAFConstants {
 	 * 
 	 * @return	the ClassLoader used to load the look and feels.
 	 */
-	ClassLoader getLookAndFeelClassLoader() {
+	ClassLoader getLookAndFeelClassLoader()
+	{
 		return _lafClassLoader;
 	}
 
 	/**
-	 * Create a Look and Feel Controller for the passed L&F class name.
+	 * Get a Look and Feel Controller for the passed L&F class name.
 	 * 
 	 * @param	lafClassName	Look and Feel class name to get controller for.
 	 * 
 	 * @return	L&F Controller.
+	 * 
+	 * @throws	IllegalArgumentException	Thrown if <TT>null</TT>
+	 * 										<TT>lafClassName</TT> passed.
 	 */
-	ILookAndFeelController createLookAndFeelController(String lafClassName) {
-		if (lafClassName.equals(SKINNABLE_LAF_CLASS_NAME)) {
-			return new SkinLookAndFeelController();
+	ILookAndFeelController getLookAndFeelController(String lafClassName)
+	{
+		if (lafClassName == null)
+		{
+			throw new IllegalArgumentException("lafClassName == null");
 		}
-		return new DefaultLookAndFeelController();
+
+		ILookAndFeelController ctrl = (ILookAndFeelController)_lafControllers.get(lafClassName);
+		if (ctrl == null)
+		{
+			ctrl = _dftLAFController;
+		}
+		return ctrl;
 	}
 
 	/**
 	 * Set the font that the application uses for statusbars.
 	 */
-	void updateStatusBarFont() {
-		if (_plugin.getLAFPreferences().isStatusBarFontEnabled()) {
-			_app.getFontInfoStore().setStatusBarFontInfo(_plugin.getLAFPreferences().getStatusBarFontInfo());
+	void updateStatusBarFont()
+	{
+		if (_plugin.getLAFPreferences().isStatusBarFontEnabled())
+		{
+			_app.getFontInfoStore().setStatusBarFontInfo(
+				_plugin.getLAFPreferences().getStatusBarFontInfo());
 		}
 	}
 
 	/**
 	 * Set the current Look and Feel to that specified in the app preferences.
 	 */
-	void setLookAndFeel() throws ClassNotFoundException, IllegalAccessException,
-								InstantiationException, UnsupportedLookAndFeelException {
+	void setLookAndFeel()
+		throws
+			ClassNotFoundException,
+			IllegalAccessException,
+			InstantiationException,
+			UnsupportedLookAndFeelException
+	{
 		final LAFPreferences prefs = _plugin.getLAFPreferences();
 		final String lafClassName = prefs.getLookAndFeelClassName();
 
-		ILookAndFeelController lafCont = createLookAndFeelController(lafClassName);
-		lafCont.aboutToBeInstalled(this);
-
-		// Set Look and Feel.
-		if (_lafClassLoader != null) {
-			Class cls = Class.forName(lafClassName, true, _lafClassLoader);
-			UIManager.setLookAndFeel((LookAndFeel) cls.newInstance());
-			UIManager.getLookAndFeelDefaults().put("ClassLoader", _lafClassLoader);
-		} else {
-			Class cls = Class.forName(lafClassName);
-			UIManager.setLookAndFeel((LookAndFeel)cls.newInstance());
+		// Get Look and Feel class object.
+		Class lafClass = null;
+		if (_lafClassLoader != null)
+		{
+			lafClass = Class.forName(lafClassName, true, _lafClassLoader);
+		}
+		else
+		{
+			lafClass = Class.forName(lafClassName);
 		}
 
-		lafCont.hasBeenInstalled(this);
+		// Get the Look and Feel object.
+		final LookAndFeel laf = (LookAndFeel)lafClass.newInstance();
+
+		ILookAndFeelController lafCont = getLookAndFeelController(lafClassName);
+		lafCont.aboutToBeInstalled(this, laf);
+
+		// Set Look and Feel.
+		if (_lafClassLoader != null)
+		{
+			UIManager.setLookAndFeel(laf);
+			UIManager.getLookAndFeelDefaults().put("ClassLoader", _lafClassLoader);
+		}
+		else
+		{
+			UIManager.setLookAndFeel(laf);
+		}
+
+		lafCont.hasBeenInstalled(this, laf);
 	}
 
 	/**
 	 * Update the applications fonts.
 	 */
-	void updateApplicationFonts() {
+	void updateApplicationFonts()
+	{
 		final LAFPreferences prefs = _plugin.getLAFPreferences();
 
 		FontInfo fi = prefs.getMenuFontInfo();
 		String[] keys = FONT_KEYS[FONT_KEYS_ARRAY_MENU];
-		for (int i = 0; i < keys.length; ++i) {
-			if (prefs.isMenuFontEnabled()) {
-				if (fi != null) {
+		for (int i = 0; i < keys.length; ++i)
+		{
+			if (prefs.isMenuFontEnabled())
+			{
+				if (fi != null)
+				{
 					UIManager.put(keys[i], fi.createFont());
 				}
-			} else {
+			}
+			else
+			{
 				UIManager.put(keys[i], _origUIDefaults.getFont(keys[i]));
 			}
 		}
 
 		fi = prefs.getStaticFontInfo();
 		keys = FONT_KEYS[FONT_KEYS_ARRAY_STATIC];
-		for (int i = 0; i < keys.length; ++i) {
-			if (prefs.isStaticFontEnabled()) {
-				if (fi != null) {
+		for (int i = 0; i < keys.length; ++i)
+		{
+			if (prefs.isStaticFontEnabled())
+			{
+				if (fi != null)
+				{
 					UIManager.put(keys[i], fi.createFont());
 				}
-			} else {
+			}
+			else
+			{
 				UIManager.put(keys[i], _origUIDefaults.getFont(keys[i]));
 			}
 		}
 
 		fi = prefs.getOtherFontInfo();
 		keys = FONT_KEYS[FONT_KEYS_ARRAY_OTHER];
-		for (int i = 0; i < keys.length; ++i) {
-			if (prefs.isOtherFontEnabled()) {
-				if (fi != null) {
+		for (int i = 0; i < keys.length; ++i)
+		{
+			if (prefs.isOtherFontEnabled())
+			{
+				if (fi != null)
+				{
 					UIManager.put(keys[i], fi.createFont());
 				}
-			} else {
+			}
+			else
+			{
 				UIManager.put(keys[i], _origUIDefaults.getFont(keys[i]));
 			}
 		}
@@ -272,10 +353,13 @@ class LAFRegister implements LAFConstants {
 	/**
 	 * Update all open frames for the new Look and Feel info.
 	 */
-	void updateAllFrames() {
+	void updateAllFrames()
+	{
 		Frame[] frames = Frame.getFrames();
-		if (frames != null) {
-			for (int i = 0; i < frames.length; ++i) {
+		if (frames != null)
+		{
+			for (int i = 0; i < frames.length; ++i)
+			{
 				SwingUtilities.updateComponentTreeUI(frames[i]);
 				frames[i].pack();
 			}
@@ -285,21 +369,28 @@ class LAFRegister implements LAFConstants {
 	/**
 	 * Install Look and Feels from their jars.
 	 */
-	private void installLookAndFeels() {
+	private void installLookAndFeels()
+	{
 		// Retrieve URLs of all the Look and Feel jars and store in lafUrls.
 		List lafUrls = new ArrayList();
 		File dir = _plugin.getLookAndFeelFolder();
-		if (dir.isDirectory()) {
+		if (dir.isDirectory())
+		{
 			File[] files = dir.listFiles();
-			for (int i = 0; i < files.length; ++i) {
+			for (int i = 0; i < files.length; ++i)
+			{
 				File jarFile = files[i];
 				String jarFileName = jarFile.getAbsolutePath();
 				if (jarFile.isFile()
 					&& (jarFileName.toLowerCase().endsWith(".zip")
-						|| jarFileName.toLowerCase().endsWith(".jar"))) {
-					try {
+						|| jarFileName.toLowerCase().endsWith(".jar")))
+				{
+					try
+					{
 						lafUrls.add(jarFile.toURL());
-					} catch (IOException ex) {
+					}
+					catch (IOException ex)
+					{
 						s_log.error("Error occured reading Look and Feel jar: " + jarFileName, ex);
 					}
 				}
@@ -308,30 +399,32 @@ class LAFRegister implements LAFConstants {
 
 		// Create a ClassLoader for all the LAF jars. Install all Look and Feels
 		// into the UIManager.
-		try {
-			_lafClassLoader =
-				new MyURLClassLoader((URL[]) lafUrls.toArray(new URL[lafUrls.size()]));
-			Class[] lafClasses =
-				_lafClassLoader.getAssignableClasses(LookAndFeel.class, s_log);
+		try
+		{
+			_lafClassLoader = new MyURLClassLoader((URL[]) lafUrls.toArray(new URL[lafUrls.size()]));
+			Class[] lafClasses = _lafClassLoader.getAssignableClasses(LookAndFeel.class, s_log);
 			List lafNames = new ArrayList();
-			for (int i = 0; i < lafClasses.length; ++i) {
+			for (int i = 0; i < lafClasses.length; ++i)
+			{
 				Class lafClass = lafClasses[i];
-				try {
+				try
+				{
 					LookAndFeel laf = (LookAndFeel) lafClass.newInstance();
-					if (laf.isSupportedLookAndFeel()) {
+					if (laf.isSupportedLookAndFeel())
+					{
 						LookAndFeelInfo info = new LookAndFeelInfo(laf.getName(), lafClass.getName());
 						UIManager.installLookAndFeel(info);
 						lafNames.add(lafClass.getName());
-						if (lafClass.getName().equals(this.SKINNABLE_LAF_CLASS_NAME)) {
-							_skinLookAndFeelName = laf.getName();
-						}
 					}
-				} catch (Throwable th) {
-					s_log.error("Error occured loading Look and Feel: " +
-								lafClass.getName(), th);
+				}
+				catch (Throwable th)
+				{
+					s_log.error("Error occured loading Look and Feel: " + lafClass.getName(), th);
 				}
 			}
-		} catch (Throwable th) {
+		}
+		catch (Throwable th)
+		{
 			s_log.error("Error occured trying to load Look and Feel classes", th);
 		}
 

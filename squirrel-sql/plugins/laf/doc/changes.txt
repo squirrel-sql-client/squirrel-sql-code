@@ -1,6 +1,17 @@
 Change Log
 ==========
 
+0.21
+====
+
+Enhancements
+------------
+- Metouia Look and Feel added.
+- Can now select themes for the OYOAHA Look and Feel.
+- Only show Skin Look and Feel configuration controls in the
+  preferences panel if the Skin Look and Feel is selected.
+
+
 0.12
 ====
 

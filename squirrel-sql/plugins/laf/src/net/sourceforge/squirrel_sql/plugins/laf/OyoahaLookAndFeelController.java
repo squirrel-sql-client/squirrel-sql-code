@@ -41,56 +41,53 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
 
 /**
- * Behaviour for the Skin Look and Feel.
+ * Behaviour for the Oyoaha Look and Feel.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SkinLookAndFeelController extends DefaultLookAndFeelController
+public class OyoahaLookAndFeelController extends DefaultLookAndFeelController
 {
 	/** Logger for this class. */
 	private static ILogger s_log =
-		LoggerController.createLogger(SkinLookAndFeelController.class);
+		LoggerController.createLogger(OyoahaLookAndFeelController.class);
 
-	/** Class name of the Skin Look and Feel. */
-	public static final String SKINNABLE_LAF_CLASS_NAME =
-		"com.l2fprod.gui.plaf.skin.SkinLookAndFeel";
-
-	/** Class name of the Skin class. */
-	public static final String SKIN_CLASS_NAME = "com.l2fprod.gui.plaf.skin.Skin";
+	/** Class name of the Oyoaha Look and Feel. */
+	public static final String OA_LAF_CLASS_NAME =
+		"com.oyoaha.swing.plaf.oyoaha.OyoahaLookAndFeel";
 
 	/** Preferences for this LAF. */
-	private SkinPreferences _prefs;
+	private OyoahaPreferences _prefs;
 
 	/**
 	 * Ctor specifying the Look and Feel plugin.
 	 * 
 	 * @param	plugin	The plugin that this controller is a part of.
 	 */
-	SkinLookAndFeelController(LAFPlugin plugin) throws IOException
+	OyoahaLookAndFeelController(LAFPlugin plugin) throws IOException
 	{
 		super();
 
 		XMLObjectCache cache = plugin.getSettingsCache();
-		Iterator it = cache.getAllForClass(SkinPreferences.class);
+		Iterator it = cache.getAllForClass(OyoahaPreferences.class);
 		if (it.hasNext())
 		{
-			_prefs = (SkinPreferences)it.next();
+			_prefs = (OyoahaPreferences)it.next();
 		}
 		else
 		{
-			_prefs = new SkinPreferences();
+			_prefs = new OyoahaPreferences();
 			try
 			{
 				cache.add(_prefs);
 			}
 			catch (DuplicateObjectException ex)
 			{
-				s_log.error("SkinPreferences object already in XMLObjectCache", ex);
+				s_log.error("OyoahaPreferences object already in XMLObjectCache", ex);
 			}
 		}
 
 		// Folder that stores themepacks for this LAF.
-		File themePackDir = new File(plugin.getPluginAppSettingsFolder(), "skinlf-theme-packs");
+		File themePackDir = new File(plugin.getPluginAppSettingsFolder(), "oyoaha-theme-packs");
 		_prefs.setThemePackDirectory(themePackDir.getAbsolutePath());
 		if (!themePackDir.exists())
 		{
@@ -112,21 +109,14 @@ public class SkinLookAndFeelController extends DefaultLookAndFeelController
 				if (themePackFile.exists())
 				{
 					ClassLoader cl = lafRegister.getLookAndFeelClassLoader();
-					Class skinLafClass = cl.loadClass(SKINNABLE_LAF_CLASS_NAME);
-					Class skinClass = cl.loadClass(SKIN_CLASS_NAME);
-
-					Method loadThemePack = skinLafClass.getMethod("loadThemePack", new Class[] { String.class });
-					Method setSkin = skinLafClass.getMethod("setSkin", new Class[] { skinClass });
-
-					Object[] parms = new Object[] {
-						dir + "/" + name
-					};
-					Object skin = loadThemePack.invoke(skinLafClass, parms);
-					setSkin.invoke(skinLafClass, new Object[] { skin });
+					Class oyLafClass = cl.loadClass(OA_LAF_CLASS_NAME);
+					Method setTheme = oyLafClass.getMethod("setOyoahaTheme", new Class[] {File.class});
+					Object[] parms = new Object[] { themePackFile };
+					setTheme.invoke(laf, parms);
 				}
 			}
 		} catch (Throwable th) {
-			s_log.error("Error loading a Skinnable Look and Feel", th);
+			s_log.error("Error loading an Oyoaha theme", th);
 		}
 
 	}
@@ -143,25 +133,25 @@ public class SkinLookAndFeelController extends DefaultLookAndFeelController
 	 */
 	public BaseLAFPreferencesPanelComponent getPreferencesComponent()
 	{
-		return new SkinPrefsPanel(this);
+		return new OyoahaPrefsPanel(this);
 	}
 
-	private static final class SkinPrefsPanel extends BaseLAFPreferencesPanelComponent
+	private static final class OyoahaPrefsPanel extends BaseLAFPreferencesPanelComponent
 	{
 		/**
 		 * This interface defines locale specific strings. This should be
 		 * replaced with a property file.
 		 */
-		interface SkinPrefsPanelI18n
+		interface OyoahaPrefsPanelI18n
 		{
 			String THEME_PACK = "Theme Pack:";
 			String THEMEPACK_LOC = "Theme Pack Directory:";
 		}
 
-		private SkinLookAndFeelController _ctrl;
+		private OyoahaLookAndFeelController _ctrl;
 		private DirectoryListComboBox _themePackCmb = new DirectoryListComboBox();
 
-		SkinPrefsPanel(SkinLookAndFeelController ctrl)
+		OyoahaPrefsPanel(OyoahaLookAndFeelController ctrl)
 		{
 			super(new GridBagLayout());
 			_ctrl = ctrl;
@@ -177,14 +167,14 @@ public class SkinLookAndFeelController extends DefaultLookAndFeelController
 
 			gbc.gridx = 0;
 			gbc.gridy = 0;
-			add(new JLabel(SkinPrefsPanelI18n.THEME_PACK, SwingConstants.RIGHT), gbc);
+			add(new JLabel(OyoahaPrefsPanelI18n.THEME_PACK, SwingConstants.RIGHT), gbc);
 
 			++gbc.gridx;
 			add(_themePackCmb, gbc);
 
 			gbc.gridx = 0;
 			++gbc.gridy;
-			add(new JLabel(SkinPrefsPanelI18n.THEMEPACK_LOC, SwingConstants.RIGHT), gbc);
+			add(new JLabel(OyoahaPrefsPanelI18n.THEMEPACK_LOC, SwingConstants.RIGHT), gbc);
 
 			++gbc.gridx;
 			final String themePackDir = _ctrl._prefs.getThemePackDirectory();
@@ -198,7 +188,7 @@ public class SkinLookAndFeelController extends DefaultLookAndFeelController
 		{
 			super.loadPreferencesPanel();
 			final String themePackDir = _ctrl._prefs.getThemePackDirectory();
-			final FileExtensionFilter filter = new FileExtensionFilter("JAR/Zip files", new String[] { ".jar", ".zip" });
+			final FileExtensionFilter filter = new FileExtensionFilter("OTM files", new String[] {".otm"});
 			_themePackCmb.load(new File(themePackDir), filter);
 			_themePackCmb.setSelectedItem(_ctrl._prefs.getThemePackName());
 		}
@@ -213,7 +203,7 @@ public class SkinLookAndFeelController extends DefaultLookAndFeelController
 		}
 	}
 
-	public static final class SkinPreferences implements IHasIdentifier
+	public static final class OyoahaPreferences implements IHasIdentifier
 	{
 		private String _themePackDir;
 		private String _themePackName;
