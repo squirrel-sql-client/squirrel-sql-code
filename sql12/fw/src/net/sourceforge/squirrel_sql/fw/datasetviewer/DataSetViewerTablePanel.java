@@ -23,7 +23,7 @@ import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
+import java.awt.event.KeyEvent;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
@@ -43,6 +43,7 @@ import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextField;
 
 public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 										implements IDataSetTableControls
@@ -135,100 +136,10 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		return _typedModel.getRowCount();
 	}
 
-//??	protected final static class MyTableModel extends AbstractTableModel
-//??	{
-//??		private List _data = new ArrayList();
-//??		private ColumnDisplayDefinition[] _colDefs = new ColumnDisplayDefinition[0];
-//??		private IDataSetTableControls _creator = null;
-//??
-//??
-//??		MyTableModel(IDataSetTableControls creator)
-//??		{
-//??			super();
-//??			_creator = creator;
-//??		}
-//??
-//??		/**
-//??		 * Determine whether the cell is editable by asking the creator whether
-//??		 * the table is editable or not
-//??		 */
-//??		public boolean isCellEditable(int row, int col)
-//??		{
-//??			return _creator.isColumnEditable(col, getValueAt(row, col));
-//??		}
-//??
-//??		public Object getValueAt(int row, int col)
-//??		{
-//??			return ((Object[])_data.get(row))[col];
-//??		}
-//??
-//??		public int getRowCount()
-//??		{
-//??			return _data.size();
-//??		}
-//??
-//??		public int getColumnCount()
-//??		{
-//??			return _colDefs != null ? _colDefs.length : 0;
-//??		}
-//??
-//??		public String getColumnName(int col)
-//??		{
-//??			return _colDefs != null ? _colDefs[col].getLabel() : super.getColumnName(col);
-//??		}
-//??
-//??		public Class getColumnClass(int col)
-//??		{
-//??			try
-//??			{
-//??				// if no columns defined, return a generic class
-//??				// to avoid anything throwing an exception.
-//??				if (_colDefs == null)
-//??				{
-//??					return Object.class;
-//??				}
-//??			
-//??				return Class.forName(_colDefs[col].getClassName());
-//??			}
-//??			catch (Exception e)
-//??			{
-//??				return null;
-//??			}
-//??		}
-//??
-//??		void setHeadings(ColumnDisplayDefinition[] hdgs)
-//??		{
-//??			_colDefs = hdgs;
-//??		}
-//??
-//??		public void addRow(Object[] row)
-//??		{
-//??			_data.add(row);
-//??		}
-//??
-//??		void clear()
-//??		{
-//??			_data.clear();
-//??		}
-//??
-//??		public void allRowsAdded()
-//??		{
-//??			fireTableStructureChanged();
-//??		}
-//??
-//??		/**
-//??		 * Let creator handle saving the data, if anything is to be done with it.
-//??		 * If the creator succeeds in changing the underlying data,
-//??		 * then update the JTable as well.
-//??		 */
-//??		public void setValueAt(Object newValue, int row, int col) {
-//??			if ( _creator.changeUnderlyingValueAt(row, col, newValue, getValueAt(row, col)))
-//??			{
-//??				((Object[])_data.get(row))[col] = newValue;
-//??			}
-//??		}
-//??	}
 
+	/*
+	 * The JTable used for displaying all DB ResultSet info.
+	 */
 	protected final class MyJTable extends JTable
 	{
 		private final int _multiplier;
@@ -257,12 +168,18 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 			
 			// just in case table is editable, call creator to set up cell editors
 			_creator.setCellEditors(this);
+			setSurrendersFocusOnKeystroke(true);
 		}
 		
 		public IDataSetTableControls getCreator() {
 			return _creator;
 		}
 
+/***********************************************************
+ * I used to think that the following function was needed, but the problem does not
+ * seem to occur now.  Also, I have added "setSurrendersFocusOnKeystroke(true)
+ * in the constructor, so that should take care of the issue for which this function was
+ * created.  I am leaving the code commented out for a little while in case someone sees a problem.
 		// JTable is inconsistant with passing events such as key strokes
 		// into the components of CellEditors depending on whether you enter
 		// the cell with a tab or by clicking the mouse on it.  In one case
@@ -279,6 +196,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		// AWT and Swing event processing is not recommended.  However, there is a
 		// document at the Sun Java site that recommends processing key presses in
 		// this way, so it should work.
+
 		public boolean editCellAt(int row, int col) {
 			boolean result = super.editCellAt(row, col);
 			DefaultCellEditor ed = (DefaultCellEditor)super.getCellEditor(row, col);
@@ -286,6 +204,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 				ed.getComponent().requestFocus();
 			return result;
 		}
+************************/
 
 		/*
 		 * override the JTable method so that whenever something asks for
@@ -299,6 +218,68 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 			currentCellEditor = (DefaultCellEditor)cellEditor;
 			return cellEditor;
 		}
+		
+		
+		/**
+		 * There are two special cases where we need to override the default behavior
+		 * when we begin cell editing.  For some reason, when you use the keyboard to
+		 * enter a cell (tab, enter, arrow keys, etc), the first character that you type
+		 * after entering the field is NOT passed through the KeyListener mechanism
+		 * where we have the special handling in the DataTypes.  Instead, it is passed
+		 * through the KeyMap and Action mechanism, and the default Action on the
+		 * JTextField is to add the character to the end of the existing text, or if it is delete
+		 * to delete the last character of the existing text.  In most cases, this is ok, but
+		 * there are three special cases of which we only handle two here:
+		 * 	- If the data field currently contains "<null>" and the user types a character,
+		 * 	  we want that character to replace the string "<null>", which represents the
+		 * 	  null value.  In this case we process the event normally, which usually adds
+		 * 	  the char to the end of the string, then remove the char afterwards.
+		 * 	  We take this approach rather than just immediately replacing the "<null>"
+		 * 	  with the char because there are some chars that should not be put into
+		 * 	  the editable text, such as control-characters.
+		 * 	- If the data field contains "<null>" and the user types a delete, we do not
+		 * 	  want to delete the last character from the string "<null>" since that string
+		 * 	  represents the null value.  In this case we simply ignore the user input.
+		 * 	- Whether or not the field initially contains null, we do not run the input validation
+		 * 	  function for the DataType on the input character.  This means that the user
+		 * 	  can type an illegal character into the field.  For example, after entering an
+		 * 	  Integer field by typing a tab, the user can enter a letter (e.g. "a") into that
+		 * 	  field.  The normal keyListener processing prevents that, but we cannot
+		 * 	  call it from this point.  (More accurately, I cannot figure out how to do it
+		 * 	  easilly.)  Thus the user may enter one character of invalid data into the field.
+		 * 	  This is not too serious a problem, however, because the normal validation
+		 * 	  is still done when the user leaves the field and it SQuirreL tries to convert
+		 * 	  the text into an object of the correct type, so errors of this nature will still
+		 * 	  be caught.  They just won't be prevented.
+		 */
+		public void processKeyEvent(KeyEvent e) {
+			
+				// handle special case of delete with <null> contents
+				if (e.getKeyChar() == '\b' && getEditorComponent() != null &&
+						((RestorableJTextField)getEditorComponent()).getText().equals("<null>") ) {
+						//ignore the user input
+						return;
+				}
+
+				// generally for KEY_TYPED this means add the typed char to the end of the text,
+				// but there are some things (e.g. control chars) that are ignored, so let the
+				// normal processing do its thing
+				super.processKeyEvent(e);
+                
+				// now check to see if the original contents were <null>
+				// and we have actually added the input char to the end of it                                                              
+				if (getEditorComponent() != null) {
+						if (e.getID() == KeyEvent.KEY_TYPED && ((RestorableJTextField)getEditorComponent()).getText().length() == 7) {
+								// check that we did not just add a char to a <null>
+								if (((RestorableJTextField)getEditorComponent()).getText().equals("<null>"+e.getKeyChar())) {
+										// replace the null with just the char
+										((RestorableJTextField)getEditorComponent()).updateText(""+e.getKeyChar());
+								}
+						}
+				}
+
+		}
+	
 		
 		/*
 		 * When user leaves a cell after editing it, the contents of
