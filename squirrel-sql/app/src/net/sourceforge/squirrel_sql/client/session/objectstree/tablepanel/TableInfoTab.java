@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,13 +19,18 @@ package net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel;
  */
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-
 import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.BaseDataSetViewerDestination;
@@ -33,6 +38,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfoDataSet;
+import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -43,12 +49,14 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class TableInfoTab extends BaseTablePanelTab {
+public class TableInfoTab extends BaseTablePanelTab
+{
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
-	private interface i18n {
+	private interface TableInfoi18n
+	{
 		String TITLE = "Info";
 		String HINT = "Basic information";
 	}
@@ -57,15 +65,16 @@ public class TableInfoTab extends BaseTablePanelTab {
 	private static ILogger s_log = LoggerController.createLogger(TableInfoTab.class);
 
 	/** Component to be displayed. */
-	private MyComponent _comp;
+	private TableInfoComponent _comp;
 
 	/**
 	 * Return the title for the tab.
 	 *
 	 * @return	The title for the tab.
 	 */
-	public String getTitle() {
-		return i18n.TITLE;
+	public String getTitle()
+	{
+		return TableInfoi18n.TITLE;
 	}
 
 	/**
@@ -73,8 +82,9 @@ public class TableInfoTab extends BaseTablePanelTab {
 	 *
 	 * @return	The hint for the tab.
 	 */
-	public String getHint() {
-		return i18n.HINT;
+	public String getHint()
+	{
+		return TableInfoi18n.HINT;
 	}
 
 	/**
@@ -82,9 +92,11 @@ public class TableInfoTab extends BaseTablePanelTab {
 	 *
 	 * @return	The component to be displayed in the panel.
 	 */
-	public synchronized Component getComponent() {
-		if (_comp == null) {
-			_comp = new MyComponent();
+	public synchronized Component getComponent()
+	{
+		if (_comp == null)
+		{
+			_comp = new TableInfoComponent();
 		}
 		return _comp;
 	}
@@ -94,99 +106,122 @@ public class TableInfoTab extends BaseTablePanelTab {
 	 */
 	public void clear()
 	{
-		((MyComponent)getComponent()).clear();
+		((TableInfoComponent) getComponent()).clear();
 	}
 
 	/**
 	 * Refresh the component displaying the <TT>ITableInfo</TT> object.
 	 */
-	public synchronized void refreshComponent() throws IllegalStateException {
+	public synchronized void refreshComponent() throws IllegalStateException
+	{
 		ISession session = getSession();
-		if (session == null) {
+		if (session == null)
+		{
 			throw new IllegalStateException("Null ISession");
 		}
 		ITableInfo ti = getTableInfo();
-		if ( ti == null) {
+		if (ti == null)
+		{
 			throw new IllegalStateException("Null ITableInfo");
 		}
-		((MyComponent)getComponent()).load(session, ti);
+		((TableInfoComponent) getComponent()).load(session, ti);
 	}
 
 	/**
 	 * Component for this tab.
 	 */
-	private class MyComponent extends JPanel {
+	private class TableInfoComponent extends JPanel
+	{
 		private boolean _fullyCreated = false;
 		private JLabel _rowCount = new JLabel("");
+		private RowCountButton _rowCountBtn;
 		private TableInfoDataSet _ds;
 		private IDataSetViewer _viewer;
 
-		MyComponent() {
+		TableInfoComponent()
+		{
 			super(new BorderLayout());
 		}
 
 		void clear()
 		{
-			if(_rowCount != null) _rowCount.setText("");
-			if(_viewer != null) _viewer.clear();
+			if (_rowCount != null)
+				_rowCount.setText("");
+			if (_viewer != null)
+				_viewer.clear();
 		}
-		void load(ISession session, final ITableInfo ti) {
-			try {
+
+		void load(final ISession session, final ITableInfo ti)
+		{
+			try
+			{
 				// Lazily create the user interface.
-				if (!_fullyCreated) {
+				if (!_fullyCreated)
+				{
 					createUserInterface();
 					_fullyCreated = true;
 				}
 
-				final long nbrRows;
-				// Row count.
-				Statement stmt = session.getSQLConnection().createStatement();
-				try {
-					ResultSet rs = stmt.executeQuery(
-							"select count(*) from " + ti.getQualifiedName());
-					if (rs.next()) {
-						nbrRows = rs.getLong(1);
-					}
-					else
-					{
-						nbrRows = 0;
-					}
-				} finally {
-					stmt.close();
-				}
+				_rowCountBtn.setTableInfo(ti);
 
-				// Table information viewer.
-				Runnable run = new Runnable()
+				SwingUtilities.invokeLater(new Runnable()
 				{
 					public void run()
 					{
-						_rowCount.setText("" + nbrRows);
+						if (session.getProperties().getShowRowCount())
+						{
+							new UpdateRowCountCommand(session, ti, _rowCount).execute();
+						}
+						else
+						{
+							_rowCount.setText("<Unknown>");
+						}
+
 						_ds.setTableInfo(ti);
 						try
 						{
 							_viewer.show(_ds);
-						} catch(DataSetException dse)
+						}
+						catch (DataSetException dse)
 						{
-							_rowCount.setText("<error>");
 							s_log.error("Error", dse);
 						}
 					}
-				};
-				SwingUtilities.invokeLater(run);
-
-			} catch (Exception ex) {
+				});			}
+			catch (Exception ex)
+			{
 				_rowCount.setText("<error>");
 				s_log.error("Error", ex);
 			}
 		}
 
-		private void createUserInterface() throws DataSetException {
-			ISession session = getSession();
+		private void setRowCountText(String nbrRows)
+		{
+			_rowCount.setText("" + nbrRows);
+		}
+
+		private void createUserInterface() throws DataSetException
+		{
+			final ISession session = getSession();
+			_rowCountBtn = new RowCountButton(session);
 
 			// Panel displays the row count for the table.
-			final JPanel pnl = new JPanel();
-			pnl.add(new JLabel("Row count:"));
-			pnl.add(_rowCount);
+			final JPanel pnl = new JPanel(new GridBagLayout());
+			GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = GridBagConstraints.HORIZONTAL;
+			gbc.insets = new Insets(2, 2, 2, 2);
+			gbc.weightx = 0;
+
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			pnl.add(_rowCountBtn, gbc);
+
+			++gbc.gridx;
+			pnl.add(new JLabel("Row count:"), gbc);
+
+			++gbc.gridx;
+			gbc.weightx = 1.0;
+			pnl.add(_rowCount, gbc);
 
 			// Panel displays table info.
 			String destClassName = session.getProperties().getTableOutputClassName();
@@ -202,6 +237,80 @@ public class TableInfoTab extends BaseTablePanelTab {
 			};
 			SwingUtilities.invokeLater(run);
 		}
+
+		private final class RowCountButton extends JButton
+												implements ActionListener
+		{
+			private ISession _session;
+			private ITableInfo _ti;
+	
+			RowCountButton(ISession session)
+			{
+				super("Refresh Row Count");
+				_session = session;
+				addActionListener(this);
+			}
+	
+			void setTableInfo(ITableInfo ti)
+			{
+				_ti = ti;
+			}
+	
+			public void actionPerformed(ActionEvent evt)
+			{
+				new UpdateRowCountCommand(_session, _ti, TableInfoComponent.this._rowCount).execute();
+			}
+		}
+	
+	}
+
+	private static final class UpdateRowCountCommand implements ICommand
+	{
+		private ISession _session;
+		private ITableInfo _ti;
+		private JLabel _rowCountLabel;
+		
+		UpdateRowCountCommand(ISession session, ITableInfo ti, JLabel rowCountLabel)
+		{
+			super();
+			_session = session;
+			_ti = ti;
+			_rowCountLabel = rowCountLabel;
+		}
+
+		public void execute()
+		{
+			String nbrRows = "<Unknown>";
+			if (_ti != null)
+			{
+				try
+				{
+					Statement stmt = _session.getSQLConnection().createStatement();
+					try
+					{
+						ResultSet rs = stmt.executeQuery("select count(*) from " + _ti.getQualifiedName());
+						if (rs.next())
+						{
+							nbrRows = String.valueOf(rs.getLong(1));
+						}
+						else
+						{
+							nbrRows = "0";
+						}
+					}
+					finally
+					{
+						stmt.close();
+					}
+				}
+				catch (Exception ex)
+				{
+					nbrRows = "<error>";
+					s_log.error("Error retrieving row count for table", ex);
+				}
+			}
+
+			_rowCountLabel.setText(nbrRows);
+		}
 	}
 }
-
