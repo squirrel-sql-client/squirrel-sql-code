@@ -12,7 +12,7 @@ set TMP_CP="%SQUIRREL_SQL_HOME%\squirrel-sql.jar"
 dir /b "%SQUIRREL_SQL_HOME%\lib\*.*" > temp.tmp
 FOR /F %%I IN (temp.tmp) DO CALL "%SQUIRREL_SQL_HOME%\addpath.bat" "%SQUIRREL_SQL_HOME%\lib\%%I"
 
-SET TMP_CP=%TMP_CP%;%CLASSPATH%
+SET TMP_CP=%TMP_CP%;"%CLASSPATH%"
 SET TMP_PARMS=-loggingConfigFile="%SQUIRREL_SQL_HOME%\log4j.properties" -squirrelHome="%SQUIRREL_SQL_HOME%"
 
 @rem Run with a command window.
