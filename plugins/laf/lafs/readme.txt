@@ -1,2 +1,2 @@
 This directory contains the standard Look and Feels
-supplied with SQuirreL.
+supplied with the Look and Feel plugin.

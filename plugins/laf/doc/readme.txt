@@ -7,7 +7,7 @@ ships with the following Look and Feel implementations:
 Kunststoff 2.0.1 - http://www.incors.org
 Metouia 1.0beta - http://mlf.sourceforge.net
 Oyoaha 3.0rc1 - http://www.oyoaha.com
-Plastic 1.0.9 - http://www.jgoodies.com
+jGoodies Looks 1.1.2 - http://www.jgoodies.com
 Skin 1.2.2 - http://www.l2fprod.com
 
 The L & F tab in the Global Preferences Dialog will allow you to select
@@ -16,7 +16,7 @@ Look and Feel if it supports configuration.
 
 The Fonts tab in the Global Preferences Dialog will allow you to specify
 the fonts used for various controls in SQuirreL. If you are using one of
-the Plastic Look and Feels it is suggested that you don't specify
+the jGoodies Look and Feels it is suggested that you don't specify
 fonts on the Fonts Preferences Tab as these Look and Feels do a good job
 of specifying default fonts.
 
