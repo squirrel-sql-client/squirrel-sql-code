@@ -22,14 +22,11 @@ import java.text.MessageFormat;
 import java.util.Iterator;
 
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
-import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.db.DriverMaintDialog;
 import net.sourceforge.squirrel_sql.client.db.DataCache;
-import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 
 /**
  * This <CODE>ICommand</CODE> allows the user to delete an existing
@@ -38,65 +35,65 @@ import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class DeleteDriverCommand implements ICommand {
-    /**
-     * This interface defines locale specific strings. This should be
-     * replaced with a property file.
-     */
-    private interface i18n {
-        String MSG_CONFIRM = "Are you sure to want to delete the driver \"{0}\"?";
-        String USED = "The driver \"{0}\" is used by one or more aliases and cannot be deleted.";
-    }
+	/**
+	 * This interface defines locale specific strings. This should be
+	 * replaced with a property file.
+	 */
+	private interface i18n {
+		String MSG_CONFIRM = "Are you sure to want to delete the driver \"{0}\"?";
+		String USED = "The driver \"{0}\" is used by one or more aliases and cannot be deleted.";
+	}
 
-    /** Application API. */
-    private final IApplication _app;
+	/** Application API. */
+	private final IApplication _app;
 
-    /** Owner of the maintenance dialog. */
-    private Frame _frame;
+	/** Owner of the maintenance dialog. */
+	private Frame _frame;
 
-    /** <TT>ISQLDriver</TT> to be deleted. */
-    private ISQLDriver _sqlDriver;
+	/** <TT>ISQLDriver</TT> to be deleted. */
+	private ISQLDriver _sqlDriver;
 
-    /**
-     * Ctor.
-     *
-     * @param   app         Application API.
-     * @param   frame       Owning <TT>Frame</TT>.
-     * @param   sqlDriver    <ISQLDriver</TT> to be deleted.
-     *
-     * @throws  IllegalArgumentException
-     *              Thrown if a <TT>null</TT> <TT>ISQLDriver</TT> or
-     *              <TT>IApplication</TT> passed.
-     */
-    public DeleteDriverCommand(IApplication app, Frame frame, ISQLDriver sqlDriver)
-            throws IllegalArgumentException {
-        super();
-        if (sqlDriver == null) {
-            throw new IllegalArgumentException("Null ISQLDriver passed");
-        }
-        if (app == null) {
-            throw new IllegalArgumentException("Null IApplication passed");
-        }
+	/**
+	 * Ctor.
+	 *
+	 * @param	app			Application API.
+	 * @param	frame		Owning <TT>Frame</TT>.
+	 * @param	sqlDriver	<ISQLDriver</TT> to be deleted.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if a <TT>null</TT> <TT>ISQLDriver</TT> or
+	 *			<TT>IApplication</TT> passed.
+	 */
+	public DeleteDriverCommand(IApplication app, Frame frame,
+								ISQLDriver sqlDriver) {
+		super();
+		if (sqlDriver == null) {
+			throw new IllegalArgumentException("Null ISQLDriver passed");
+		}
+		if (app == null) {
+			throw new IllegalArgumentException("Null IApplication passed");
+		}
 
-        _app = app;
-        _frame = frame;
-        _sqlDriver = sqlDriver;
-    }
+		_app = app;
+		_frame = frame;
+		_sqlDriver = sqlDriver;
+	}
 
-    /**
-     * Delete the current <TT>ISQLDriver</TT> after confirmation.
-     */
-    public void execute() {
-        Object[] args = {_sqlDriver.getName()};
-        final DataCache cache = _app.getDataCache();
-        Iterator it = cache.getAliasesForDriver(_sqlDriver);
-        if (it.hasNext()) {
-            String msg = MessageFormat.format(i18n.USED, args);
-            Dialogs.showOk(_frame, msg);
-        } else {
-            String msg = MessageFormat.format(i18n.MSG_CONFIRM, args);
-            if (Dialogs.showYesNo(_frame, msg)) {
-                cache.removeDriver(_sqlDriver);
-            }
-        }
-    }
+	/**
+	 * Delete the current <TT>ISQLDriver</TT> after confirmation.
+	 */
+	public void execute() {
+		Object[] args = {_sqlDriver.getName()};
+		final DataCache cache = _app.getDataCache();
+		Iterator it = cache.getAliasesForDriver(_sqlDriver);
+		if (it.hasNext()) {
+			String msg = MessageFormat.format(i18n.USED, args);
+			Dialogs.showOk(_frame, msg);
+		} else {
+			String msg = MessageFormat.format(i18n.MSG_CONFIRM, args);
+			if (Dialogs.showYesNo(_frame, msg)) {
+				cache.removeDriver(_sqlDriver);
+			}
+		}
+	}
 }

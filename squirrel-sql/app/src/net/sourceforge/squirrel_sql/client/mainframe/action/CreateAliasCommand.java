@@ -20,7 +20,7 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.db.AliasMaintDialogFactory;
+import net.sourceforge.squirrel_sql.client.db.AliasMaintSheetFactory;
 
 /**
  * This <CODE>ICommand</CODE> allows the user to create a new <TT>ISQLAlias</TT>.
@@ -36,6 +36,6 @@ public class CreateAliasCommand implements ICommand {
 	}
 
 	public void execute() {
-		AliasMaintDialogFactory.getInstance().showCreateSheet();
+		AliasMaintSheetFactory.getInstance().showCreateSheet();
 	}
 }

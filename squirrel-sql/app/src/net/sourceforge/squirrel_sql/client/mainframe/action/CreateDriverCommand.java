@@ -20,7 +20,7 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
-import net.sourceforge.squirrel_sql.client.db.DriverMaintDialogFactory;
+import net.sourceforge.squirrel_sql.client.db.DriverMaintSheetFactory;
 
 /**
  * This <CODE>ICommand</CODE> allows the user to create a new <TT>ISQLDriver</TT>.
@@ -36,6 +36,6 @@ public class CreateDriverCommand implements ICommand {
 	}
 
 	public void execute() {
-		DriverMaintDialogFactory.getInstance().showCreateSheet();
+		DriverMaintSheetFactory.getInstance().showCreateSheet();
 	}
 }

@@ -22,7 +22,7 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import net.sourceforge.squirrel_sql.client.db.DriverMaintDialogFactory;
+import net.sourceforge.squirrel_sql.client.db.DriverMaintSheetFactory;
 
 /**
  * This <CODE>ICommand</CODE> allows the user to copy an existing
@@ -56,6 +56,6 @@ public class CopyDriverCommand implements ICommand {
 	}
 
 	public void execute() {
-		DriverMaintDialogFactory.getInstance().showCopySheet(_sqlDriver);
+		DriverMaintSheetFactory.getInstance().showCopySheet(_sqlDriver);
 	}
 }

@@ -22,7 +22,7 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import net.sourceforge.squirrel_sql.client.db.AliasMaintDialogFactory;
+import net.sourceforge.squirrel_sql.client.db.AliasMaintSheetFactory;
 
 /**
  * This <CODE>ICommand</CODE> allows the user to copy an existing
@@ -55,6 +55,6 @@ public class CopyAliasCommand implements ICommand {
 	}
 
 	public void execute() {
-		AliasMaintDialogFactory.getInstance().showCopySheet(_sqlAlias);
+		AliasMaintSheetFactory.getInstance().showCopySheet(_sqlAlias);
 	}
 }
