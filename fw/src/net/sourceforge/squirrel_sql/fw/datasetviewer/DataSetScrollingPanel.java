@@ -127,4 +127,12 @@ public class DataSetScrollingPanel extends JScrollPane
 			}
 		}
 	}
+	
+	/**
+	 * Get the viewer being used in this panel.
+	 */
+	public IDataSetViewer getViewer()
+	{
+		return _viewer;
+	}
 }
