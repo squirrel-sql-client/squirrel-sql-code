@@ -598,6 +598,7 @@ public class DriverMaintSheet extends BaseSheet
 			{
 				_chooser = new JFileChooser();
 				_chooser.setMultiSelectionEnabled(true);
+				_chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 				_chooser.addChoosableFileFilter(
 						new FileExtensionFilter("JAR files", new String[] { ".jar", ".zip" }));
 			}
