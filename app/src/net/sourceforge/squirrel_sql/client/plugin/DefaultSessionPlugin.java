@@ -1,7 +1,9 @@
 package net.sourceforge.squirrel_sql.client.plugin;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
+ *
+ * Modifications Copyright (c) 2004 Jason Height.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,7 +19,10 @@ package net.sourceforge.squirrel_sql.client.plugin;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
 
 public abstract class DefaultSessionPlugin extends DefaultPlugin
@@ -80,4 +85,15 @@ public abstract class DefaultSessionPlugin extends DefaultPlugin
 	{
 		return null;
 	}
+
+	/**
+	* Return a node expander for the object tree for a particular default node type.
+	* A plugin could return non null here if they wish to override the default node
+	* expander bahaviour. Most plugins should return null here.
+	*/
+	public INodeExpander getDefaultNodeExpander(ISession session, DatabaseObjectType type)
+	{
+		return null;
+	}
+
 }
