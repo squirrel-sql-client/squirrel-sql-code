@@ -42,23 +42,27 @@ public class StylesList extends JList
 	public interface IStylesListIndices
 	{
 		int COMMENTS = 0;
-		int ERRORS = 1;
-		int IDENTIFIERS = 2;
-		int LITERALS = 3;
-		int OPERATORS = 4;
-		int RESERVED_WORDS = 5;
-		int SEPARATORS = 6;
-		int WHITE_SPACE = 7;
+		int DATA_TYPES = 1;
+		int ERRORS = 2;
+		int FUNCTIONS = 3;
+		int IDENTIFIERS = 4;
+		int LITERALS = 5;
+		int OPERATORS = 6;
+		int RESERVED_WORDS = 7;
+		int SEPARATORS = 8;
+		int WHITE_SPACE = 9;
 
-		int LIST_SIZE = 8;
+		int LIST_SIZE = 10;
 	}
 
-// TODO: ypes, columns, tables, functions, 
+// TODO: columns, tables 
 	/** Titles for each style in the styles list. */
 	private final static String[] s_styleTitles = new String[]
 	{
 		"Comments",
+		"Data Types",
 		"Errors",
+		"Functions",
 		"Identifiers",
 		"Literals",
 		"Operators",
@@ -82,7 +86,9 @@ public class StylesList extends JList
 		removeAll();
 
 		_styles[IStylesListIndices.COMMENTS] = new SyntaxStyle(prefs.getCommentStyle());
+		_styles[IStylesListIndices.DATA_TYPES] = new SyntaxStyle(prefs.getDataTypeStyle());
 		_styles[IStylesListIndices.ERRORS] = new SyntaxStyle(prefs.getErrorStyle());
+		_styles[IStylesListIndices.FUNCTIONS] = new SyntaxStyle(prefs.getFunctionStyle());
 		_styles[IStylesListIndices.IDENTIFIERS] = new SyntaxStyle(prefs.getIdentifierStyle());
 		_styles[IStylesListIndices.LITERALS] = new SyntaxStyle(prefs.getLiteralStyle());
 		_styles[IStylesListIndices.OPERATORS] = new SyntaxStyle(prefs.getOperatorStyle());
