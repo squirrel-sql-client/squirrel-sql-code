@@ -214,6 +214,14 @@ public class ResultSetDataSet implements IDataSet
 			boolean isNullable = true;
 			if (md.isNullable(idx) == md.columnNoNulls)
 				isNullable = false;
+			
+			int precis;
+			try {
+				precis = md.getPrecision(idx);
+			}
+			catch (NumberFormatException ignore) {
+				precis = Integer.MAX_VALUE;	// Oracle throws this ex on BLOB data types
+			}
 
 			columnDefs[i] =
  					new ColumnDisplayDefinition(
@@ -222,7 +230,7 @@ public class ResultSetDataSet implements IDataSet
  					md.getColumnType(idx),
  					isNullable,
  					md.getColumnDisplaySize(idx),
- 					md.getPrecision(idx),
+ 					precis,
  					md.getScale(idx),
  					md.isSigned(idx),
  					md.isCurrency(idx));
