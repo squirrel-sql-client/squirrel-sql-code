@@ -32,6 +32,7 @@ Bug Fixes
 
 Other
 -----
+- Move DataCache class to fw classes.
 - Add StringManager class to allow strings to be stored in property
   files rather than hardcoded. Once this is used throughout the
   application it will mean that SQuirreL can be internationalized.
