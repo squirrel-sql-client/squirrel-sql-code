@@ -51,8 +51,7 @@ public class ReturnResultTabCommand implements ICommand {
 	 * 			<TT>ResultFrame</TT> passed.
 	 */
 	public ReturnResultTabCommand(Frame frame, ISession session,
-									ResultFrame resultFrame)
-			throws IllegalArgumentException {
+									ResultFrame resultFrame) {
 		super();
 		if (session == null) {
 			throw new IllegalArgumentException("Null ISession passed");
