@@ -54,4 +54,18 @@ public class DefaultPluginDatabaseObjectType implements IPluginDatabaseObjectTyp
     public IPluginDatabaseObjectPanelWrapper createPanel() {
         return null;
     }
+    
+    /**
+     * SHOULD be overridden by Plugin
+     */
+    public boolean equals(Object obj)
+    {
+    	if(obj instanceof DefaultPluginDatabaseObjectType)
+    	{
+    		String sName = ((DefaultPluginDatabaseObjectType)obj)._name;
+    		return ( (sName == null && _name == null) ||
+    				((sName != null && _name != null) && sName.equals(_name)) );
+    	}
+    	return false;
+    }
 }
