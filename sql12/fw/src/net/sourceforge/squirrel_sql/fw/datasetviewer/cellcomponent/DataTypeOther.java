@@ -19,16 +19,12 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  */
 import java.awt.event.*;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.IOException;
 
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
-import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
