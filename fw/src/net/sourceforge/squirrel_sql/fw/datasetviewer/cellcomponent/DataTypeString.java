@@ -593,7 +593,7 @@ public class DataTypeString
 			// Since being truncated is the same as needing to re-read,
 			// only use this in the WHERE clause if we do not need to re-read
 			if ( ! needToReRead(value))		
-				return _colDef.getLabel() + "='" + value.toString() + "'";
+				return _colDef.getLabel() + "='" + escapeLine(value.toString()) + "'";
 			else return "";	// value is truncated, so do not use in WHERE clause
 		}
 	}
@@ -629,7 +629,7 @@ public class DataTypeString
 			if (mbuf.length() == 0)
 				return newObject;
 		}
-		
+	
 		// no default in DB.  If nullable, use null.
 		if (_isNullable)
 			return null;
@@ -638,6 +638,29 @@ public class DataTypeString
 		return "";
 	}
 	
+	/**
+	 * When strings are used in the WHERE clause, any single quote characters must be
+	 * "escaped" so that they are not confused with the "end of string"
+	 * single quote used by SQL.  The escape sequence is that a single quote
+	 * is represented by two single quotes in a row.
+	 */
+	static public String escapeLine(String s) {
+		String retvalue = s;
+		if (s.indexOf ("'") != -1 ) {
+			StringBuffer hold = new StringBuffer();
+			char c;
+			for(int i=0; i < s.length(); i++ ) {
+				if ((c=s.charAt(i)) == '\'' ) {
+					hold.append ("''");
+				}
+				else {
+					hold.append(c);
+				}
+			}
+			retvalue = hold.toString();
+		}
+		return retvalue;
+	}
 	
 	/*
 	 * File IO related functions
