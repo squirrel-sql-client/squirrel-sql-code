@@ -41,7 +41,6 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import net.sourceforge.squirrel_sql.plugins.sqlscript.session_script.SessionScriptCache;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptAction;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptOfCurrentSQLAction;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTableScriptAction;
@@ -65,9 +64,6 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 
 	/** Folder to store user settings in. */
 	private File _userSettingsFolder;
-
-	/** Cache of session scripts. */
-	private SessionScriptCache _cache;
 
 	private PluginResources _resources;
 
@@ -104,7 +100,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 	 * @return  the authors name.
 	 */
 	public String getAuthor() {
-		return "Johan Compagner, Colin Bell";
+		return "Johan Compagner";
 	}
 
 	/**
@@ -155,14 +151,6 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 		coll.add(new CreateDataScriptAction(app, _resources));
 		coll.add(new CreateDataScriptOfCurrentSQLAction(app, _resources));
 		createMenu();
-
-		try {
-			_cache = new SessionScriptCache(this);
-		} catch (IOException ex) {
-			throw new PluginException(ex);
-		}
-		_cache.load();
-
 	}
 
 	/**
@@ -170,9 +158,6 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 	 */
 	public void unload() {
 		savePrefs();
-		if (_cache != null) {
-			_cache.save();
-		}
 		super.unload();
 	}
 
