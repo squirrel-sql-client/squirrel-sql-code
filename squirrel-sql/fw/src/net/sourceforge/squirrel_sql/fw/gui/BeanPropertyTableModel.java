@@ -106,7 +106,7 @@ public class BeanPropertyTableModel extends DefaultTableModel {
             throws InvocationTargetException, IllegalAccessException {
         final Vector line = new Vector();
         line.add(propName);
-        line.add(executeGetter(_bean, getter));
+        line.add(executeGetter(bean, getter));
         return line;
     }
 

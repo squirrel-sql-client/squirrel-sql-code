@@ -273,7 +273,6 @@ public class AboutBoxDialog extends JDialog {
 			setLayout(new BorderLayout());
 			setBackground(new Color(SquirrelResources.S_SPLASH_IMAGE_BACKGROUND));
 			Icon icon = app.getResources().getIcon(SquirrelResources.IImageNames.SPLASH_SCREEN);
-			JLabel iconLbl = new JLabel(icon);
 			add(BorderLayout.CENTER, new JLabel(icon));
 			JTextArea ta = new JTextArea();
 			ta.setEditable(false);
@@ -389,7 +388,6 @@ public class AboutBoxDialog extends JDialog {
 
 			// i18n
 			private String formatSize(long nbrBytes) {
-				StringBuffer buf = new StringBuffer();
 				double size = nbrBytes;
 				double val = size / MB_VALUE;
 				if (val > 1) {
