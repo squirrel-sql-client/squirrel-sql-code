@@ -100,12 +100,7 @@ public class ResultSetDataSet implements IDataSet {
 							case Types.CHAR:
 							case Types.VARCHAR:
 							case Types.LONGVARCHAR:
-								String s = rs.getString(idx);
-								if(s != null && s.length() > 50)
-								{
-									s = s.substring(0,45) + ".......";
-								}
-								row[i] = s;
+								row[i] = rs.getString(idx);
 								break;
 							default:
 								row[i] = "<Unknown>";
@@ -145,7 +140,9 @@ public class ResultSetDataSet implements IDataSet {
 
 	private ColumnDisplayDefinition[] createColumnDefinitions(ResultSetMetaData md,
 														int[] columnIndices)
-			throws SQLException {
+			throws SQLException 
+	{
+		// TODO?? ColumnDisplayDefinition should also have the Type (String, Date, Double,Integer,Boolean)
 		ColumnDisplayDefinition[] columnDefs = new ColumnDisplayDefinition[_columnCount];
 		for (int i = 0; i < _columnCount; ++i) {
 			int idx = columnIndices != null ? columnIndices[i] : i + 1;
