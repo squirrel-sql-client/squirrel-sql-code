@@ -124,21 +124,16 @@ public class FormatSessionPropertiesPanel
 		interface i18n
 		{
 			String ALL_OTHER = "All Other Data Types";
-			String BINARY = "Binary";
 			String BLOB = "Blob";
 			String CLOB = "Clob";
 			String HINT = "Specify formatting options";
 			String NBR_BYTES = "Number of bytes to read:";
 			String NBR_CHARS = "Number of chars to read:";
-			String LONGVARBINARY = "LongVarBinary";
 			String SQL_OTHER = "SQL Other";
 			String TITLE = "Format";
-			String VARBINARY = "VarBinary";
+			String BLOB_WARNING = "Some DBMSs implement BLOB/CLOB fields as other Data Types.\nThe following works only for Data Types 2004(BLOB) and 2005(CLOB).";
+			String OTHER_TYPE_WARNING = "The following Data Types are not the same in all DBMSs and\nmay cause exceptions if interpreted as Strings.";
 		}
-
-		private JCheckBox _showBinaryChk = new JCheckBox(i18n.BINARY);
-		private JCheckBox _showVarBinaryChk = new JCheckBox(i18n.VARBINARY);
-		private JCheckBox _showLongVarBinaryChk = new JCheckBox(i18n.LONGVARBINARY);
 
 		private JCheckBox _showBlobChk = new JCheckBox(i18n.BLOB);
 		private JCheckBox _showClobChk = new JCheckBox(i18n.CLOB);
@@ -258,13 +253,14 @@ public class FormatSessionPropertiesPanel
 			++gbc.gridy;	// leave a blank line to separate text from header
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
 
-			JTextArea text1 = new JTextArea("Some DBMSs implement BLOB/CLOB fields as other Data Types.\nThe following works only for Data Types 2004(BLOB) and 2005(CLOB).");
+			JTextArea text1 = new JTextArea(i18n.BLOB_WARNING);
 			text1.setEditable(false);
 			pnl.add(text1, gbc);
 
 
 			gbc.gridwidth = 1;
 			++gbc.gridy;
+			gbc.gridx = 0;
 			pnl.add(_showBlobChk, gbc);
 
 			++gbc.gridx;
@@ -303,7 +299,7 @@ public class FormatSessionPropertiesPanel
 			++gbc.gridy;
 			gbc.gridx = 0;
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
-			JTextArea text2 = new JTextArea("The following Data Types are not the same in all DBMSs and\nmay cause exceptions if interpreted as Strings.");
+			JTextArea text2 = new JTextArea(i18n.OTHER_TYPE_WARNING);
 			text2.setEditable(false);
 			pnl.add(text2, gbc);
 						
