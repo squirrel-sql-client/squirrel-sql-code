@@ -113,35 +113,18 @@ public class CellDataPopup
 
 			Component comp = SwingUtilities.getRoot(table);
 			Component newComp = null;
-			if (comp instanceof BaseMDIParentFrame)
-			{
-				TextAreaInternalFrame taif = 
-					new TextAreaInternalFrame(table.getColumnName(col), (String)obj,
-						row, col, creator, table);
-				((BaseMDIParentFrame)comp).addInternalFrame(taif, false);
-				taif.setLayer(JLayeredPane.POPUP_LAYER);
-				taif.pack();
-				newComp = taif;
-			}
-//??			else
-//??			{
-//??				TextAreaDialog tad = null;
-//??				if (comp instanceof Dialog)
-//??				{
-//??					tad = new TextAreaDialog((Dialog)comp, table.getColumnName(col), (String)obj);
-//??				}
-//??				else if (comp instanceof Frame)
-//??				{
-//??					tad = new TextAreaDialog((Frame)comp, table.getColumnName(col), (String)obj);
-//??				}			
-//??				else
-//??				{
-//??					s_log.error("Creating TextAreaDialog for invalid parent of: " + comp.getClass().getName());
-//??					return;
-//??				}	
-//??				tad.pack();
-//??				newComp = tad;
-//??			}
+
+			// The following only works if SwingUtilities.getRoot(table) returns
+			// and instanceof BaseMDIParentFrame.
+			// If SwingTUilities.getRoot(table) returns and instance of Dialog or
+			// Frame, then other code must be used.
+			TextAreaInternalFrame taif = 
+				new TextAreaInternalFrame(table.getColumnName(col), (String)obj,
+					row, col, creator, table);
+			((BaseMDIParentFrame)comp).addInternalFrame(taif, false);
+			taif.setLayer(JLayeredPane.POPUP_LAYER);
+			taif.pack();
+			newComp = taif;
 
 			Dimension dim = newComp.getSize();
 			boolean dimChanged = false;
@@ -359,6 +342,8 @@ public class CellDataPopup
 	}
 
 
+	// The following is only useable for a root type of InternalFrame.  If the
+	// root type is Dialog or Frame, then other code must be used.
 	class TextAreaInternalFrame extends JInternalFrame
 	{
 		public TextAreaInternalFrame(String column, String text, int row, int col,
@@ -371,22 +356,5 @@ public class CellDataPopup
 			setContentPane(popup);
 		}
 	}
-
-//??	class TextAreaDialog extends JDialog
-//??	{
-//??		public TextAreaDialog(Dialog owner, String column, String text)
-//??		{
-//??			super(owner, "Value of column " + column, false);
-//??			ColumnDataPopupPanel popup = new ColumnDataPopupPanel(text);
-//??			setContentPane(popup);
-//??		}
-//??
-//??		public TextAreaDialog(Frame owner, String column, String text)
-//??		{
-//??			super(owner, "Value of column " + column, false);
-//??			ColumnDataPopupPanel popup = new ColumnDataPopupPanel(text);
-//??			setContentPane(popup);
-//??		}
-//??	}
 
 }
