@@ -17,112 +17,188 @@ package net.sourceforge.squirrel_sql.client.session.objectstree;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.tree.MutableTreeNode;
+
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 
 import net.sourceforge.squirrel_sql.client.plugin.IPluginDatabaseObjectType;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
-public class TableTypesGroupNode extends BaseNode {
-    private interface i18n {
-        String NO_CATALOG = "No Catalog";   // i18n or Replace with md.getCatalogueTerm.
-    }
+public class TableTypesGroupNode extends BaseNode
+{
+	private interface i18n
+	{
+		String NO_CATALOG = "No Catalog"; // i18n or Replace with md.getCatalogueTerm.
+	}
 
-    private String _catalogName;
-    private String _schemaName;
-    private String _catalogIdentifier;
-    private String _schemaIdentifier;
+	private String _catalogName;
+	private String _schemaName;
+	private String _catalogIdentifier;
+	private String _schemaIdentifier;
 
-    TableTypesGroupNode(ISession session, ObjectsTreeModel treeModel,
-                        String catalogName, String catalogIdentifier,
-                        String schemaName, String schemaIdentifier) {
-        super(session, treeModel, generateName(catalogName, schemaName));
-        _catalogIdentifier = catalogIdentifier;
-        _schemaIdentifier = schemaIdentifier;
-        _catalogName = catalogName;
-        _schemaName = schemaName;
-        String[] tableTypes = treeModel.getTableTypes();
-        for (int i = 0; i < tableTypes.length; ++i) {
-            String tableType = tableTypes[i];
-            add(new TableObjectTypeNode(session, treeModel, this, tableType, tableType));
-        }
+	TableTypesGroupNode(
+		ISession session,
+		ObjectsTreeModel treeModel,
+		String catalogName,
+		String catalogIdentifier,
+		String schemaName,
+		String schemaIdentifier)
+	{
+		super(session, treeModel, generateName(catalogName, schemaName));
+		_catalogIdentifier = catalogIdentifier;
+		_schemaIdentifier = schemaIdentifier;
+		_catalogName = catalogName;
+		_schemaName = schemaName;
+	}
 
-        add(new UDTObjectTypeNode(session, treeModel, this));
+	String getCatalogName()
+	{
+		return _catalogName;
+	}
 
-        try {
-            if (session.getSQLConnection().supportsStoredProcedures()) {
-                add(new ProcedureObjectTypeNode(getSession(), getTreeModel(), this));
-            }
-        } catch (BaseSQLException ignore) {
-            // Any probs just assume that db doesn't supports procs.
-        }
+	String getCatalogIdentifier()
+	{
+		return _catalogIdentifier;
+	}
 
-        // Load object types from plugins.
-        PluginManager mgr = getSession().getApplication().getPluginManager();
-        IPluginDatabaseObjectType[] types = mgr.getDatabaseObjectTypes(session);
-        for (int i = 0; i < types.length; ++i) {
-            add(new PluginGroupNode(session, treeModel, this, types[i]));
-        }
-    }
+	String getSchemaName()
+	{
+		return _schemaName;
+	}
 
-    String getCatalogName() {
-        return _catalogName;
-    }
+	String getSchemaIdentifier()
+	{
+		return _schemaIdentifier;
+	}
 
-    String getCatalogIdentifier() {
-        return _catalogIdentifier;
-    }
-
-    String getSchemaName() {
-        return _schemaName;
-    }
-
-    String getSchemaIdentifier() {
-        return _schemaIdentifier;
-    }
-
-    private static String generateName(String catalogName, String schemaName) {
-        StringBuffer buf = new StringBuffer();
-        if (catalogName != null) {
-            buf.append(catalogName);
-            if (schemaName != null) {
-                buf.append(".");
-            }
-        }
-        if (schemaName != null) {
-            buf.append(schemaName);
-        }
-        if (buf.length() == 0) {
-            buf.append(i18n.NO_CATALOG);
-        }
-        return buf.toString();
-    }
-
-    public boolean isLeaf() {
-        return false;
-    }
-
-    public boolean equals(Object obj)
-    {
-    	if(obj instanceof TableTypesGroupNode)
-    	{
-    		TableTypesGroupNode info = (TableTypesGroupNode)obj;
-			if( (info._catalogIdentifier == null && _catalogIdentifier == null) ||
-			 ((info._catalogIdentifier != null && _catalogIdentifier != null) && info._catalogIdentifier.equals(_catalogIdentifier)) )
+	private static String generateName(String catalogName, String schemaName)
+	{
+		StringBuffer buf = new StringBuffer();
+		if (catalogName != null)
+		{
+			buf.append(catalogName);
+			if (schemaName != null)
 			{
-				if( (info._catalogName == null && _catalogName == null) ||
-				 ((info._catalogName != null && _catalogName != null) && info._catalogName.equals(_catalogName)) )
+				buf.append(".");
+			}
+		}
+		if (schemaName != null)
+		{
+			buf.append(schemaName);
+		}
+		if (buf.length() == 0)
+		{
+			buf.append(i18n.NO_CATALOG);
+		}
+		return buf.toString();
+	}
+
+	public void expand() throws BaseSQLException 
+	{
+		if(getChildCount() == 0)
+		{
+			getSession().getApplication().getThreadPool().addTask(
+				new TableTypesTreeLoader(addLoadingNode()));
+		}
+		super.expand();
+	}
+
+	protected TreeNodesLoader getTreeNodesLoader()
+	{
+		return new TableTypesTreeLoader(null);
+	}
+	
+	public boolean isLeaf()
+	{
+		return false;
+	}
+
+	public boolean equals(Object obj)
+	{
+		if (obj instanceof TableTypesGroupNode)
+		{
+			TableTypesGroupNode info = (TableTypesGroupNode) obj;
+			if ((info._catalogIdentifier == null && _catalogIdentifier == null)
+				|| ((info._catalogIdentifier != null && _catalogIdentifier != null)
+					&& info._catalogIdentifier.equals(_catalogIdentifier)))
+			{
+				if ((info._catalogName == null && _catalogName == null)
+					|| ((info._catalogName != null && _catalogName != null)
+						&& info._catalogName.equals(_catalogName)))
 				{
-					if( (info._schemaIdentifier == null && _schemaIdentifier == null) ||
-					 ((info._schemaIdentifier != null && _schemaIdentifier != null) && info._schemaIdentifier.equals(_schemaIdentifier)) )
+					if ((info._schemaIdentifier == null && _schemaIdentifier == null)
+						|| ((info._schemaIdentifier != null && _schemaIdentifier != null)
+							&& info._schemaIdentifier.equals(_schemaIdentifier)))
 					{
-						return ( (info._schemaName == null && _schemaName == null) ||
-						 ((info._schemaName != null && _schemaName != null) && info._schemaName.equals(_schemaName)) );
+						return (
+							(info._schemaName == null && _schemaName == null)
+								|| ((info._schemaName != null && _schemaName != null)
+									&& info._schemaName.equals(_schemaName)));
 					}
 				}
 			}
-    	}
-    	return false;
-    }
+		}
+		return false;
+	}
 
+	protected class TableTypesTreeLoader extends BaseNode.TreeNodesLoader
+	{
+		/**
+		 * Constructor for ObjectsTreeLoader.
+		 * @param loading
+		 */
+		TableTypesTreeLoader(MutableTreeNode loading)
+		{
+			super(loading);
+		}
+
+		/*
+		 * @see TreeNodesLoader#getNodeList(ISession, SQLConnection, ObjectsTreeModel)
+		 */
+		public List getNodeList(
+			final ISession session,
+			final SQLConnection conn,
+			final ObjectsTreeModel treeModel)
+			throws BaseSQLException
+		{
+			final ArrayList tableTypeList = new ArrayList();
+			if (conn != null)
+			{
+				String[] tableTypes = treeModel.getTableTypes();
+				for (int i = 0; i < tableTypes.length; ++i)
+				{
+					String tableType = tableTypes[i];
+					tableTypeList.add(new TableObjectTypeNode(session, treeModel, TableTypesGroupNode.this, tableType, tableType));
+				}
+		
+				tableTypeList.add(new UDTObjectTypeNode(session, treeModel, TableTypesGroupNode.this));
+		
+				try
+				{
+					if (session.getSQLConnection().supportsStoredProcedures())
+					{
+						tableTypeList.add(new ProcedureObjectTypeNode(getSession(), getTreeModel(), TableTypesGroupNode.this));
+					}
+				}
+				catch (BaseSQLException ignore)
+				{
+					// Any probs just assume that db doesn't supports procs.
+				}
+		
+				// Load object types from plugins.
+				PluginManager mgr = getSession().getApplication().getPluginManager();
+				IPluginDatabaseObjectType[] types = mgr.getDatabaseObjectTypes(session);
+				for (int i = 0; i < types.length; ++i)
+				{
+					tableTypeList.add(new PluginGroupNode(session, treeModel, TableTypesGroupNode.this, types[i]));
+				}
+				}
+				return tableTypeList;
+		}
+	}
 }
