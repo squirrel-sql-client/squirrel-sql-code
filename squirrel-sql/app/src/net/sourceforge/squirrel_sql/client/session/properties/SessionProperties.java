@@ -54,7 +54,6 @@ public class SessionProperties implements Serializable {
 //		String SQL_OUTPUT_CLASS_NAME = "sqlOutputClassName";
 		String SQL_OUTPUT_CONVERTER_CLASS_NAME = "sqlOutputConverterClassName";
 		String SQL_OUTPUT_META_DATA_CLASS_NAME = "sqlOutputMetaDataClassName";
-		String SQL_REUSE_OUTPUT_TABS ="sqlReuseTabs";
 		String SQL_STATEMENT_SEPARATOR="sqlStatementSeparator";
 		String TABLE_OUTPUT_CLASS_NAME = "tableOutputClassName";
 		String VERSIONS_OUTPUT_CLASS_NAME = "versionsOutputClassName";
@@ -66,9 +65,6 @@ public class SessionProperties implements Serializable {
 	private boolean _autoCommit = true;
 	private int _contentsNbrRowsToShow = 100;
 	private int _sqlNbrRowsToShow = 100;
-
-	/** If <TT>true</TT> then reuse existing SQL output tabs. */
-	private boolean _sqlReuseOutputTabs = false;
 
 	/**
 	 * If <CODE>true</CODE> then issue a commit when closing a connection
@@ -135,7 +131,6 @@ public class SessionProperties implements Serializable {
 		setRowIdOutputClassName(rhs.getRowIdOutputClassName());
 		setShowRowCount(rhs.getShowRowCount());
 		setSqlLimitRows(rhs.getSqlLimitRows());
-		setSqlReuseOutputTabs(rhs.getSqlReuseOutputTabs());
 		setSqlNbrRowsToShow(rhs.getSqlNbrRowsToShow());
 //		setSqlOutputClassName(rhs.getSqlOutputClassName());
 		setSqlOutputConverterClassName(rhs.getSqlOutputConverterClassName());
@@ -516,27 +511,6 @@ public class SessionProperties implements Serializable {
 			_propChgReporter.firePropertyChange(IPropertyNames.SQL_STATEMENT_SEPARATOR,
 								oldValue, _sqlStmtSepChar);
 		}
-	}
-
-	/**
-	 * Return whether results of each SQL script should be shown in a new tab.
-	 *
-	 * @return  <TT>true</TT> if results of each SQL script should be shown in a new tab.
-	 */
-	public boolean getSqlReuseOutputTabs() {
-		return _sqlReuseOutputTabs;
-	}
-
-	/**
-	 * Set whether results of each SQL script should reuse tabs on output.
-	 *
-	 * @param   data	<TT>true</TT> if results of each SQL script should reuse tabs on output.
-	 */
-	public void setSqlReuseOutputTabs(boolean data) {
-		final boolean oldValue = _sqlReuseOutputTabs;
-		_sqlReuseOutputTabs = data;
-		_propChgReporter.firePropertyChange(IPropertyNames.SQL_REUSE_OUTPUT_TABS,
-								oldValue, _sqlReuseOutputTabs);
 	}
 
 	public boolean getCommitOnClosingConnection() {

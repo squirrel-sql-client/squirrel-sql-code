@@ -34,7 +34,7 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo {
 	public SessionPropertiesBeanInfo() throws IntrospectionException {
 		super();
 		if (s_dscrs == null) {
-			s_dscrs = new PropertyDescriptor[25];
+			s_dscrs = new PropertyDescriptor[24];
 			int i = 0;
 			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.AUTO_COMMIT, cls,
 				"getAutoCommit", "setAutoCommit");
@@ -72,8 +72,6 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo {
 				"getShowRowCount", "setShowRowCount");
 			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.SQL_LIMIT_ROWS, cls,
 				"getSqlLimitRows", "setSqlLimitRows");
-			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.SQL_REUSE_OUTPUT_TABS, cls,
-				"getSqlReuseOutputTabs", "setSqlReuseOutputTabs");
 			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.SQL_NBR_ROWS_TO_SHOW, cls,
 				"getSqlNbrRowsToShow", "setSqlNbrRowsToShow");
 			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.SQL_OUTPUT_CONVERTER_CLASS_NAME, cls,
