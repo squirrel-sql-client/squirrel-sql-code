@@ -51,7 +51,7 @@ public class ApplicationArguments
 	 */
 	private interface IOptions
 	{
-		String[] HELP = { "help", null, "Display Help and exit"};
+		String[] HELP = { "h", "help", "Display Help and exit"};
 		String[] SQUIRREL_HOME = { "home", "squirrel-home",
 									"SQuirreL home directory"};
 		String[] LOG_FILE = { "l", "log-config-file",
@@ -63,7 +63,7 @@ public class ApplicationArguments
 		String[] NO_PLUGINS = {"nop", "no-plugins", "Don't load plugins"};
 		String[] NO_SPLASH = { "nos", "no-splash", "Don't display splash screen"};
 		String[] USER_SETTINGS_DIR = { "userdir", "user-settings-dir",
-								"SQuirreL settings directory"};
+								"User settings directory"};
 	}
 
 	/** Only instance of this class. */

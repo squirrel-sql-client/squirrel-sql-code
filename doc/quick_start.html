@@ -117,59 +117,29 @@ reported with any other JDK on Linux.</P>
 <P>The behaviour of SQuirreL can be changed by passing various arguments to
 it.</P>
 
-<P>TODO: Specify default behaviour</P>
-
-<P>The command line option <TT>-nosplash</TT> can be passed to the
-main class in order to start SQuirreL without the splash screen
-appearing. E.G.</P>
-
 <PRE>
-java net.sourceforge.squirrel_sql.client.Main -nosplash
-</PRE>
+squirrel-sql.sh [options]
+or
+squirrel-sql.bat [options]
 
-<P>The command line option <TT>-noplugins</TT> can be passed to the
-main class in order to start SQuirreL without loading any of the
-plugins.</P>
+Options:
+ -userdir,--user-settings-dir &lt;userdir&gt;   User settings directory
+ -l,--log-config-file &lt;config-file&gt;       Logging configuration file
+ -home,--squirrel-home &lt;home&gt;             SQuirreL home directory
+ -n,--native-laf                          Use native look and feel
+ -nop,--no-plugins                        Don't load plugins
+ -nos,--no-splash                         Don't display splash screen
+ -m,--use-default-metal-theme             Use default metal theme
+ -h,--help                                Display Help and exit
+</pre>
 
-<PRE>
-java net.sourceforge.squirrel_sql.client.Main -noplugins
-</PRE>
+<P><TT>-userdir</TT> specifies where SQuirreL stores its <em>per-user</em>
+settings such as application preferences etc. This defaults to
+<tt>&lt;home&gt;/squirrel-sql</tt>.</P>
 
-<P>The user settings directory can be overridden by the
-<TT>-settingsDir</TT> option. E.G.</P>
-
-<PRE>
-java net.sourceforge.squirrel_sql.client.Main -settingsDir=c:\my-squirrel-settings
-</PRE>
-
-<P>The configuration file for <EM>log4j</EM> is specified by the
-<TT>loggingConfigFile</TT> argument. E.G.</P>
-
-<PRE>
-java net.sourceforge.squirrel_sql.client.Main -loggingConfigFile=c:\config.properties
-</PRE>
-
-<P>The application directory is specified by the <TT>squirrelHome</TT>
-argument. This tells SQuirreL where to look for plugins etc. This should
-be the directory that you installed SQuirreL into. E.G.</P>
-
-<PRE>
-java net.sourceforge.squirrel_sql.client.Main -squirrelHome=$SQUIRREL_SQL_HOME
-</PRE>
-
-<P>To return to the standard theme for the metal Look and Feel pass
-the <TT>-usedefaultmetaltheme</TT> argument. E.G.</P>
-
-<PRE>
-java net.sourceforge.squirrel_sql.client.Main -usedefaultmetaltheme
-</PRE>
-
-<P>To use the native Look and Feel rather than the Java one pass the
-<TT>-useNativeLAF</TT> argument. E.G.</P>
-
-<PRE>
-java net.sourceforge.squirrel_sql.client.Main -useNativeLAF
-</PRE>
+<P><TT>-home</TT> specifies the directory that SQuirreL was installed into. It
+is setup during the installation process. You should never need to change this
+argument.</P>
 
 <A NAME="howtoconnect"><H2>How to Connect to a Database</H2></A>
 
