@@ -32,40 +32,41 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSummaryDialog;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class DisplayPluginSummaryCommand {
-    /** Application API. */
-    private IApplication _app;
+	/** Application API. */
+	private IApplication _app;
 
-    /** Owner of the About Box. */
-    private Frame _frame;
+	/** Owner of the dialog. */
+	private Frame _frame;
 
-    /**
-     * Ctor.
-     *
-     * @param   app     Application API.
-     * @param   frame   Owning <TT>Frame</TT>.
-     *
-     * @throws  IllegalArgumentException
-     *              Thrown if a <TT>null</TT> <TT>IApplication</TT> passed.
-     */
-    public DisplayPluginSummaryCommand(IApplication app, Frame frame) {
-        super();
-        if (app == null) {
-            throw new IllegalArgumentException("Null IApplication passed");
-        }
-        _app = app;
-        _frame = frame;
-    }
+	/**
+	 * Ctor.
+	 *
+	 * @param	app		Application API.
+	 * @param	frame	Owning <TT>Frame</TT>.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> passed.
+	 */
+	public DisplayPluginSummaryCommand(IApplication app, Frame frame) {
+		super();
+		if (app == null) {
+			throw new IllegalArgumentException("Null IApplication passed");
+		}
+		_app = app;
+		_frame = frame;
+	}
 
-    /**
-     * Display the Dialog
-     */
-    public void execute() {
-        try {
-            new PluginSummaryDialog(_app, _frame).show();
-        } catch (DataSetException ex) {
-            new ErrorDialog(_frame, ex).show();
-        }
-    }
+	/**
+	 * Display the Dialog
+	 */
+	public void execute() {
+		try {
+			new PluginSummaryDialog(_app, _frame).show();
+		} catch (DataSetException ex) {
+			new ErrorDialog(_frame, ex).show();
+		}
+	}
 
 }
+
 
