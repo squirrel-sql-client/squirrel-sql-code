@@ -1,7 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe;
 /*
- * Copyright (C) 2001 Colin Bell
- * colbell@users.sourceforge.net
+ * Copyright (C) 2001 Henner Zeller
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,24 +16,26 @@ package net.sourceforge.squirrel_sql.client.mainframe;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Color;
 import java.awt.Component;
+
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JList;
+
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 
 /**
- * A cell renderer, that shows Drivers that could not be loaded in red,
- * and thpse that could be loaded in green..
+ * A cell renderer, that shows Drivers that could not be loaded with
+ * one icon and those can could be loaded with another icon.
  *
  * @author  Henner Zeller
  */
-public class DriverListCellRenderer extends DefaultListCellRenderer {
-	/** Color for drivers that could be loaded. */
+public class DriverListCellRenderer extends DefaultListCellRenderer
+{
+	/** Icon for drivers that could be loaded. */
 	private Icon OK_ICON;
 
-	/** Color for drivers that could not be loaded. */
+	/** Icon for drivers that could not be loaded. */
 	private Icon FAIL_ICON;
 
 	public DriverListCellRenderer(Icon ok, Icon fail)
@@ -43,15 +44,21 @@ public class DriverListCellRenderer extends DefaultListCellRenderer {
 		FAIL_ICON = fail;
 	}
 
-	public Component getListCellRendererComponent(JList list,
-												Object value,
-												int index,
-												boolean isSelected,
-												boolean cellHasFocus) {
-		super.getListCellRendererComponent(list, value,  index, isSelected,
-											cellHasFocus);
-		ISQLDriver drv = (ISQLDriver)value;
-		setIcon((drv.isJDBCDriverClassLoaded()) ? OK_ICON: FAIL_ICON);
+	public Component getListCellRendererComponent(
+		JList list,
+		Object value,
+		int index,
+		boolean isSelected,
+		boolean cellHasFocus)
+	{
+		super.getListCellRendererComponent(
+			list,
+			value,
+			index,
+			isSelected,
+			cellHasFocus);
+		ISQLDriver drv = (ISQLDriver) value;
+		setIcon((drv.isJDBCDriverClassLoaded()) ? OK_ICON : FAIL_ICON);
 		return this;
 	}
 }
