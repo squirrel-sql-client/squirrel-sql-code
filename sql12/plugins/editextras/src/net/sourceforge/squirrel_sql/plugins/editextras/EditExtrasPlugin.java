@@ -94,7 +94,7 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 	 */
 	public String getVersion()
 	{
-		return "0.10";
+		return "0.11";
 	}
 
 	/**
