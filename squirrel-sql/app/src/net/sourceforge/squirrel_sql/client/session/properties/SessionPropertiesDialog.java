@@ -46,8 +46,6 @@ public class SessionPropertiesDialog extends JDialog {
 	 */
 	private interface i18n {
 		String TITLE = "Session Properties";
-		String OUTPUT = "Output";
-		String SQL = "SQL";
 	}
 
 	/** Logger for this class. */
@@ -95,8 +93,8 @@ public class SessionPropertiesDialog extends JDialog {
 		final IApplication app = _session.getApplication();
 		final SessionProperties props = _session.getProperties();
 
-		_panels.add(new SQLPropertiesPanel(app, i18n.SQL, i18n.SQL));
-		_panels.add(new OutputPropertiesPanel(i18n.OUTPUT, i18n.OUTPUT));
+		_panels.add(new SQLPropertiesPanel(app));
+		_panels.add(new OutputPropertiesPanel());
 
 		final Container contentPane = getContentPane();
 		contentPane.setLayout(new BorderLayout());
