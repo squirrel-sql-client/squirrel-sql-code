@@ -17,20 +17,17 @@ package net.sourceforge.squirrel_sql.plugins.oracle.expander;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import net.sourceforge.squirrel_sql.plugins.oracle.IObjectTypes;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
-
-import net.sourceforge.squirrel_sql.plugins.oracle.IObjectTypes;
 /**
  * This class add new child nodes to the Database node.
  *
@@ -39,8 +36,8 @@ import net.sourceforge.squirrel_sql.plugins.oracle.IObjectTypes;
 public class DatabaseExpander implements INodeExpander
 {
 	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(DatabaseExpander.class);
+//	private static ILogger s_log =
+//		LoggerController.createLogger(DatabaseExpander.class);
 
 	/**
 	 * Create the child nodes for the passed parent node and return them. Note
@@ -54,7 +51,6 @@ public class DatabaseExpander implements INodeExpander
 	 *			nodes for the passed node.
 	 */
 	public List createChildren(ISession session, ObjectTreeNode parentNode)
-		throws SQLException
 	{
 		final List childNodes = new ArrayList();
 		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();

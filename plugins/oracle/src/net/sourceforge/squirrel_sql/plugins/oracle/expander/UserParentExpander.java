@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.oracle.expander;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -28,8 +28,7 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 import net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -50,11 +49,8 @@ public class UserParentExpander implements INodeExpander
 			" external_name from user_users order by username";
 
 	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(UserParentExpander.class);
-
-	/** The plugin. */
-	private final OraclePlugin _plugin;
+//	private static final ILogger s_log =
+//		LoggerController.createLogger(UserParentExpander.class);
 
 	/**
 	 * Ctor.
@@ -69,8 +65,6 @@ public class UserParentExpander implements INodeExpander
 		{
 			throw new IllegalArgumentException("OraclePlugin == null");
 		}
-
-		_plugin = plugin;
 	}
 
 	/**
