@@ -88,6 +88,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * for which you want to create a handler.
  * <LI>
  * Create a handler for that type of data.
+ * The handler must implement the IDataTypeComponet interface.
  * The files whose names start with "DataType..."
  * in the package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent
  * (i.e. the same place as this file)
@@ -312,6 +313,21 @@ public class CellComponentFactory {
 	 	if (inputValue.equals("<null>"))
 	 		return null;
 	 	else return inputValue;
+	}
+	
+	/**
+	 * Return the flag from the component saying
+	 * whether to do editing in the special binary editing panel
+	 * or the component will handle all text input.
+	 */
+	public static boolean useBinaryEditingPanel(ColumnDisplayDefinition colDef) {
+		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
+
+		if (dataTypeObject != null) {
+			// we have an appropriate data type object
+			return dataTypeObject.useBinaryEditingPanel();
+		}
+		return false;	// no object, so do not assume binary editing will work
 	}
 	
 
