@@ -156,8 +156,11 @@ public class DataTypeString
 	/*
 	 * Return a JTextArea usable in the CellPopupDialog.
 	 */
-	 public JTextArea getJTextArea() {
+	 public JTextArea getJTextArea(Object value) {
 		_textComponent = new RestorableJTextArea();
+	
+		// value is a simple string representation of the integer
+		((RestorableJTextArea)_textComponent).setText(renderObject(value));
 		
 		// special handling of operations while editing Integers
 		((RestorableJTextArea)_textComponent).addKeyListener(new KeyTextHandler());
