@@ -890,7 +890,7 @@ public class ContentsTab extends BaseTableTab
 				Statement stmt = conn.createStatement();
 
 				ResultSet rs = stmt.executeQuery("SELECT count(*) FROM " +
-					getTableInfo().getSimpleName()+whereClause);
+					getTableInfo().getQualifiedName()+whereClause);
 
 				rs.next();
 				if (rs.getInt(1) != 1) {
@@ -932,7 +932,7 @@ public class ContentsTab extends BaseTableTab
 				Statement stmt = conn.createStatement();
 
 				stmt.executeUpdate("DELETE FROM " +
-					getTableInfo().getSimpleName()+whereClause);
+					getTableInfo().getQualifiedName()+whereClause);
 			}
 			catch (Exception e) {
 				// some kind of problem - tell user
