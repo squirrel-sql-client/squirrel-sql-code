@@ -22,15 +22,10 @@ import java.awt.Component;
 import java.awt.Point;
 import java.awt.Dimension;
 import java.awt.Rectangle;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JLayeredPane;

@@ -18,9 +18,8 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
  
-import javax.swing.DefaultCellEditor;	//???
+import javax.swing.DefaultCellEditor;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.*;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;

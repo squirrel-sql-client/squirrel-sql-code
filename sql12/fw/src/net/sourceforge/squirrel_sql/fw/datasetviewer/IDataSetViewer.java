@@ -19,7 +19,6 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  */
 import java.awt.Component;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.*;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 public interface IDataSetViewer

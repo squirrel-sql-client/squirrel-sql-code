@@ -37,21 +37,16 @@ import javax.swing.JTextArea;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JOptionPane;
 import javax.swing.BorderFactory;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
-import net.sourceforge.squirrel_sql.fw.gui.ButtonTableHeader;
 
 /**
  * @author gwg
