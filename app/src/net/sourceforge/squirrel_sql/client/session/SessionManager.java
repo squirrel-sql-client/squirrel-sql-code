@@ -98,9 +98,6 @@ public class SessionManager
 			throw new IllegalArgumentException("null SQLConnection passed");
 		}
 
-		Session sess = new Session(app, driver, alias, conn, user, password);
-		_sessionsList.addLast(sess);
-		_sessionsById.put(sess.getIdentifier(), sess);
 		Integer count = (Integer)_sessionsOpenedCountByAliasId.get(alias.getIdentifier());
 		if (count == null)
 		{
@@ -110,9 +107,12 @@ public class SessionManager
 		{
 			count = new Integer(count.intValue() + 1);
 		}
-		_sessionsOpenedCountByAliasId.put(alias.getIdentifier(), count);
 
-		sess.setSessionIndex(count.intValue());
+		Session sess = new Session(app, driver, alias, conn, user, password,
+									count.intValue());
+		_sessionsList.addLast(sess);
+		_sessionsById.put(sess.getIdentifier(), sess);
+		_sessionsOpenedCountByAliasId.put(alias.getIdentifier(), count);
 
 		return sess;
 	}

@@ -31,6 +31,8 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
+import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
+import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 
 public class SessionInternalFrame extends BaseSheet
 {
@@ -42,6 +44,8 @@ public class SessionInternalFrame extends BaseSheet
 
 	private SessionSheet _sessionPanel;
 
+	private MySessionListener _sessionLis;
+
 	SessionInternalFrame(ISession session)
 	{
 		super(session.getTitle(), true, true, true, true);
@@ -49,6 +53,9 @@ public class SessionInternalFrame extends BaseSheet
 		_sessionId = session.getIdentifier();
 		setVisible(false);
 		createGUI(session);
+
+		_sessionLis = new MySessionListener();
+		session.addSessionListener(_sessionLis);
 	}
 
 	public ISession getSession()
@@ -133,5 +140,19 @@ public class SessionInternalFrame extends BaseSheet
 		_sessionPanel = new SessionSheet(session);
 		setContentPane(_sessionPanel);
 		validate();
+	}
+
+	private class MySessionListener extends SessionAdapter
+	{
+		public void sessionClosed(SessionEvent evt)
+		{
+			evt.getSession().removeSessionListener(_sessionLis);
+			_sessionLis = null;
+		}
+
+		public void sessionTitleChanged(SessionEvent evt)
+		{
+			setTitle(evt.getSession().getTitle());
+		}
 	}
 }

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.event;
 /*
- * Copyright (C) 2003 Colin Bell
+ * Copyright (C) 2003-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -25,6 +25,13 @@ import java.util.EventListener;
  */
 public interface ISessionListener extends EventListener
 {
+ 	/**
+	 * The session title has changed
+	 *
+	 * @param	evt		The event that has just occured.
+	 */
+	void sessionTitleChanged(SessionEvent evt);
+
 	/**
 	 * The session has been closed.
 	 *

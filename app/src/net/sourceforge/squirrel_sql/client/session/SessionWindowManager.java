@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session;
 /*
- * Copyright (C) 2003 Colin Bell
+ * Copyright (C) 2003-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -26,10 +26,6 @@ import javax.swing.JInternalFrame;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionPropertiesSheet;
-import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterSheet;
-import net.sourceforge.squirrel_sql.client.session.properties.EditWhereColsSheet;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -38,6 +34,11 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.session.properties.EditWhereColsSheet;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionPropertiesSheet;
+import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterSheet;
 /**
  * This class manages the windows for sessions.
  *
@@ -77,9 +78,6 @@ public class SessionWindowManager
 	/** Listens to SQL filter dialogs waiting for them to close. */
 	private final EditWhereColsDialogListener _editWhereColsDialogListener = new EditWhereColsDialogListener();
 
-	/** Listenys to Session internal frames waiting for them to close. */
-	private final SessionInternalFrameListener _sessionInternalFrameListener = new SessionInternalFrameListener();
-
 	/**
 	 * Ctor.
 	 *
@@ -116,7 +114,6 @@ public class SessionWindowManager
 
 		SessionInternalFrame sif = new SessionInternalFrame(session);
 		_internalFrames.put(session.getIdentifier(), sif);
-		sif.addInternalFrameListener(_sessionInternalFrameListener);
 
 		return sif;
 	}
@@ -314,7 +311,8 @@ public class SessionWindowManager
 
 		if (confirmClose(session))
 		{
-			getInternalFrame(session).dispose();
+//			getInternalFrame(session).dispose();
+			privateCloseSession(session);
 			return true;
 		}
 		return false;
@@ -322,7 +320,13 @@ public class SessionWindowManager
 
 	private boolean confirmClose(ISession session)
 	{
-		final String msg = s_stringMgr.getString("SessionWindowManager.confirmClose", session.getTitle());
+		if (!_app.getSquirrelPreferences().getConfirmSessionClose())
+		{
+			return true;
+		}
+
+		final String msg = s_stringMgr.getString("SessionWindowManager.confirmClose",
+							session.getTitle());
 		return Dialogs.showYesNo(_app.getMainFrame(), msg);
 	}
 
@@ -374,6 +378,10 @@ public class SessionWindowManager
 
 	private synchronized void privateCloseSession(ISession session)
 	{
+		final JInternalFrame jif = getInternalFrame(session);
+
+		_internalFrames.remove(session.getIdentifier());
+
 		Map map = getAllSQLFilterSheets(session);
 		for (Iterator it = map.values().iterator(); it.hasNext();)
 		{
@@ -390,6 +398,8 @@ public class SessionWindowManager
 		{
 			s_log.error("SQL error closing session", ex);
 		}
+
+		jif.dispose();
 	}
 
 	private synchronized void sqlFilterDialogClosed(SQLFilterSheet sfs)
@@ -418,14 +428,6 @@ public class SessionWindowManager
 				s_log.error("Unable to find EditWhereColsSheet for " + key);
 			}
 		}
-	}
-
-	private synchronized void sessionInternalFrameClosed(SessionInternalFrame sif)
-	{
-		ISession session = getSession(sif);
-		_internalFrames.remove(session.getIdentifier());
-		sif.removeInternalFrameListener(_sessionInternalFrameListener);
-		privateCloseSession(session);
 	}
 
 	private synchronized void sessionPropertiesDialogClosed(SessionPropertiesSheet sps)
@@ -461,15 +463,6 @@ public class SessionWindowManager
 		{
 			EditWhereColsSheet sfs = (EditWhereColsSheet)evt.getInternalFrame();
 			SessionWindowManager.this.editWhereColsDialogClosed(sfs);
-		}
-	}
-
-	private final class SessionInternalFrameListener extends InternalFrameAdapter
-	{
-		public void internalFrameClosed(InternalFrameEvent evt)
-		{
-			SessionInternalFrame sif = (SessionInternalFrame)evt.getInternalFrame();
-			SessionWindowManager.this.sessionInternalFrameClosed(sif);
 		}
 	}
 }

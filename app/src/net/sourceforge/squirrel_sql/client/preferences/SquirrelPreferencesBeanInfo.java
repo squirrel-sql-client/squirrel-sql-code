@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.preferences;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -38,7 +38,7 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
 		super();
 		if (s_dscrs == null)
 		{
-			s_dscrs = new PropertyDescriptor[19];
+			s_dscrs = new PropertyDescriptor[20];
 			s_dscrs[0] = new PropertyDescriptor(SESSION_PROPERTIES, CLS,
 									"getSessionProperties", "setSessionProperties");
 			s_dscrs[1] = new PropertyDescriptor(MAIN_FRAME_STATE, CLS,
@@ -78,6 +78,8 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
 								"getShowColoriconsInToolbar", "setShowColoriconsInToolbar");
  			s_dscrs[18] = new PropertyDescriptor(FIRST_RUN, CLS,
 								"isFirstRun", "setFirstRun");
+ 			s_dscrs[19] = new PropertyDescriptor(CONFIRM_SESSION_CLOSE, CLS,
+					"getConfirmSessionClose", "setConfirmSessionClose");
 		}
 	}
 

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.sql;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -276,7 +276,14 @@ public class SQLConnection
 	 */
 	public void addPropertyChangeListener(PropertyChangeListener listener)
 	{
-		getPropertyChangeReporter().addPropertyChangeListener(listener);
+		if (listener != null)
+		{
+			getPropertyChangeReporter().addPropertyChangeListener(listener);
+		}
+		else
+		{
+			s_log.debug("Attempted to add a null PropertyChangeListener");
+		}
 	}
 
 	/**
@@ -286,7 +293,14 @@ public class SQLConnection
 	 */
 	public void removePropertyChangeListener(PropertyChangeListener listener)
 	{
-		getPropertyChangeReporter().removePropertyChangeListener(listener);
+		if (listener != null)
+		{
+			getPropertyChangeReporter().removePropertyChangeListener(listener);
+		}
+		else
+		{
+			s_log.debug("Attempted to remove a null PropertyChangeListener");
+		}
 	}
 
 	protected void validateConnection() throws SQLException

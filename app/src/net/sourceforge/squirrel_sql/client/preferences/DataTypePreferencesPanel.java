@@ -21,18 +21,15 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Dimension;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import javax.swing.JScrollPane;
 
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
  * This panel allows the user to tailor DataType-specific settings for a session.
@@ -40,8 +37,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  * @author gwg
  */
-public class DataTypePreferencesPanel
-	implements  IGlobalPreferencesPanel
+public class DataTypePreferencesPanel implements  IGlobalPreferencesPanel
 {
 
 	/** The actual GUI panel that allows user to do the maintenance. */

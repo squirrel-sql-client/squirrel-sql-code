@@ -97,6 +97,8 @@ public class SessionSheet extends JPanel
 
 	private boolean _buildingListOfCatalogs = false;
 
+	private ObjectTreeSelectionListener _objTreeSelectionLis = null;
+
 	public SessionSheet(ISession session)
 	{
 		super(new BorderLayout());
@@ -162,6 +164,12 @@ public class SessionSheet extends JPanel
 
 	void sessionHasClosed()
 	{
+		if (_objTreeSelectionLis != null)
+		{
+			getObjectTreePanel().removeTreeSelectionListener(_objTreeSelectionLis);
+			_objTreeSelectionLis = null;
+		}
+
 		final ISession session = getSession();
 		if (session != null)
 		{
@@ -395,7 +403,8 @@ public class SessionSheet extends JPanel
 		_statusBar.setFont(fn);
 		add(_statusBar, BorderLayout.SOUTH);
 
-		getObjectTreePanel().addTreeSelectionListener(new ObjectTreeSelectionListener());
+		_objTreeSelectionLis = new ObjectTreeSelectionListener();
+		getObjectTreePanel().addTreeSelectionListener(_objTreeSelectionLis);
 
 		validate();
 	}

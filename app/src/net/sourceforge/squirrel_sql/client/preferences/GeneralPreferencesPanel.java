@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.preferences;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -28,12 +28,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import net.sourceforge.squirrel_sql.client.ApplicationArguments;
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import net.sourceforge.squirrel_sql.client.ApplicationArguments;
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 
 class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 {
@@ -108,6 +109,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 		// Must have at least 1 blank otherwise width gets set to zero.
 		private JLabel _logConfigFileNameLbl = new OutputLabel(" ");
 		// Must have at least 1 blank otherwise width gets set to zero.
+		private JCheckBox _confirmSessionCloseChk = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.confirmSessionClose"));
 
 		MyPanel()
 		{
@@ -134,6 +136,8 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			_logConfigFileNameLbl.setText(
 				configFile != null	? configFile
 									: s_stringMgr.getString("GeneralPreferencesPanel.unspecified"));
+
+			_confirmSessionCloseChk.setSelected(prefs.getConfirmSessionClose());
 		}
 
 		void applyChanges(SquirrelPreferences prefs)
@@ -147,6 +151,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			prefs.setShowDriversToolBar(_showDriversToolBar.isSelected());
 			prefs.setMaximizeSessionSheetOnOpen(_maximimizeSessionSheet.isSelected());
 			prefs.setShowColoriconsInToolbar(_showColoriconsInToolbar.isSelected());
+			prefs.setConfirmSessionClose(_confirmSessionCloseChk.isSelected());
 		}
 
 		private void createUserInterface()
@@ -159,13 +164,16 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			gbc.weightx = 1;
 			add(createAppearancePanel(), gbc);
 			++gbc.gridy;
+			add(createGeneralPanel(), gbc);
+			++gbc.gridy;
 			add(createLoggingPanel(), gbc);
 		}
 
 		private JPanel createAppearancePanel()
 		{
-			JPanel pnl = new JPanel(new GridBagLayout());
+			final JPanel pnl = new JPanel(new GridBagLayout());
 			pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("GeneralPreferencesPanel.appearance")));
+			pnl.setLayout(new GridBagLayout());
 
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -193,10 +201,28 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 
 			return pnl;
 		}
+		private JPanel createGeneralPanel()
+		{
+			final JPanel pnl = new JPanel();
+			pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString(
+											"GeneralPreferencesPanel.general")));
+			pnl.setLayout(new GridBagLayout());
+
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = GridBagConstraints.HORIZONTAL;
+			gbc.insets = new Insets(2, 4, 2, 4);
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			gbc.weightx = 1;
+			pnl.add(_confirmSessionCloseChk, gbc);
+
+			return pnl;
+		}
+
 
 		private JPanel createLoggingPanel()
 		{
-			JPanel pnl = new JPanel();
+			final JPanel pnl = new JPanel();
 			pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("GeneralPreferencesPanel.logging")));
 
 			pnl.setLayout(new GridBagLayout());
