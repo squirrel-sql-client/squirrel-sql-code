@@ -245,5 +245,7 @@ public final class ActionCollection {
 		add(new SessionPropertiesAction(_app));
 		add(new ShowNativeSQLAction(_app));
 		add(new TileAction(_app));
+		add(new DropTableAction(_app));
+		add(new RefreshTreeItemAction(_app));
 	}
 }
