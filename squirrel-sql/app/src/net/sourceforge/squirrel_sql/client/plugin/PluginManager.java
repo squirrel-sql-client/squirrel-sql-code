@@ -305,7 +305,6 @@ public class PluginManager
 				try
 				{
 					loadPlugin(clazz);
-					throw new IOException("Rupert");
 				}
 				catch (Throwable th)
 				{
