@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.gui;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -46,19 +47,19 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
+import net.sourceforge.squirrel_sql.fw.util.BaseException;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
  * This window shows the SQuirreL Help files.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class HelpViewerWindow extends JFrame
 {
@@ -89,6 +90,9 @@ public class HelpViewerWindow extends JFrame
 	/** Panel that displays the help document. */
 	private HtmlViewerPanel _detailPnl;
 
+	/** Statusbar at bottom of window. */
+	private StatusBar _statusBar = new StatusBar();
+
 	/** Home URL. */
 	private URL _homeURL;
 
@@ -97,9 +101,9 @@ public class HelpViewerWindow extends JFrame
 
 	/**
 	 * Ctor.
-	 * 
+	 *
 	 * @param	app	Application API.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>IApplication</TT> passed.
 	 */
@@ -124,19 +128,20 @@ public class HelpViewerWindow extends JFrame
 
 	/**
 	 * Set the Document displayed to that defined by the passed URL.
-	 * 
-	 * @param	url		URL of document to be displayed. 
+	 *
+	 * @param	url		URL of document to be displayed.
 	 */
 	private void setSelectedDocument(URL url)
 	{
 		try
 		{
 			_detailPnl.gotoURL(url);
+			_statusBar.setText("Page loaded.");
 		}
 		catch (IOException ex)
 		{
 			s_log.error("Error displaying document", ex);
-			//TODO: Display in a statusbar
+			_statusBar.setText(ex.toString());
 		}
 	}
 
@@ -144,7 +149,7 @@ public class HelpViewerWindow extends JFrame
 	{
 		// Strip local part of URL.
 		String key = url.toString();
-		final int idx = key.lastIndexOf('#'); 
+		final int idx = key.lastIndexOf('#');
 		if ( idx > -1)
 		{
 			key = key.substring(0, idx);
@@ -190,6 +195,10 @@ public class HelpViewerWindow extends JFrame
 
 		contentPane.add(new HtmlViewerPanelToolBar(_app, _detailPnl), BorderLayout.NORTH);
 
+		Font fn = _app.getFontInfoStore().getStatusBarFontInfo().createFont();
+		_statusBar.setFont(fn);
+		contentPane.add(_statusBar, BorderLayout.SOUTH);
+
 		pack();
 
 		SwingUtilities.invokeLater(new Runnable()
@@ -218,7 +227,7 @@ public class HelpViewerWindow extends JFrame
 
 	/**
 	 * Create a tree each node being a link to a document.
-	 * 
+	 *
 	 * @return	The contents tree.
 	 */
 	private JScrollPane createContentsTree() throws IOException
@@ -461,7 +470,7 @@ public class HelpViewerWindow extends JFrame
 					}
 					_docTitles.add(docTitle);
 					_docURLs.add(docURL);
-				} 
+				}
 			}
 		}
 
@@ -498,8 +507,9 @@ public class HelpViewerWindow extends JFrame
 			}
 			catch (IOException ex)
 			{
-				s_log.error("Error generating Contents file", ex);
-				// TODO: Display error for user
+				String msg = "Error generating Contents file";
+				s_log.error(msg, ex);
+				_statusBar.setText(msg);
 			}
 		}
 	}
