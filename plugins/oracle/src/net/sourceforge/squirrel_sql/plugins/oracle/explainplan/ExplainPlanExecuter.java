@@ -118,18 +118,18 @@ public class ExplainPlanExecuter
   public ISession getSession() {
     return _session;
   }
-  
+
   private void expandEntireTree(final JTree tree, final TreePath parentPath) {
     TreeNode parent = (TreeNode)parentPath.getLastPathComponent();
     int size = parent.getChildCount();
     for (int i=0;i<size;i++) {
-      TreeNode child = parent.getChildAt(i);      
+      TreeNode child = parent.getChildAt(i);
       TreePath p = parentPath.pathByAddingChild(child);
       tree.expandPath(p);
       expandEntireTree(tree, p);
     }
   }
-  
+
   protected JTreeTable createTreeTable(TreeTableModel model) {
     JTreeTable treeTable = new JTreeTable(model);
     treeTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -146,7 +146,7 @@ public class ExplainPlanExecuter
       TreePath p = new TreePath(root);
       expandEntireTree(treeTableTree, p);
     }
-    return treeTable;    
+    return treeTable;
   }
 
   public void execute(ISQLEntryPanel sqlPanel) {
@@ -169,25 +169,6 @@ public class ExplainPlanExecuter
         try {
           explainPlan = getSession().getSQLConnection().createStatement();
           explainPlan.execute(explainSql);
-
-//          String extractPlanResults = "select id,"+
-//                                      "  parent_id,"+
-//                                      "  level,"+
-//                                      "  position,"+
-//                                      "  object_instance,"+
-//                                      "  rpad(' ',2*level) || operation || ' ' ||"+
-//                                      "  decode(optimizer,null,null, '(' || lower(optimizer) || ') ')  ||"+
-//                                      "  object_type || ' ' || object_owner || ' ' || object_name || ' ' ||"+
-//                                      "  decode(options,null,null,'('||lower(options)||') ') || "+
-//                                      "  decode(search_columns, null,null, '(Columns ' || search_columns || ' ')  ||"+
-//                                      "  other_tag || ' ' || decode(partition_id,null,null, 'Pt id: ' || partition_id || ' ' )  ||"+
-//                                      "  decode(partition_start,null,null,'Pt Range: ' || partition_start || ' - ' || partition_stop || ' ') ||"+
-//                                      "  decode(cost,null,null, 'Cost (' || cost || ',' || cardinality || ',' || bytes || ')') "+
-//                                      "from "+getPlanTableName()+" "+
-//                                      "connect by "+
-//                                      "prior id = parent_id and statement_id = ? "+
-//                                      "start with id = 0 and statement_id = ? ";
-//                                      //"order by id";
 
           String extractPlanResults = "select " +
               "   id," +
@@ -528,7 +509,7 @@ public class ExplainPlanExecuter
           this.other_tag = other_tag;
           this.distribution = distribution;
         }
-        
+
         public int getID() {
           return id;
         }
@@ -537,17 +518,17 @@ public class ExplainPlanExecuter
         public TreeNode getParent() {
           return parent;
         }
-        
+
         public Enumeration children() {
           if (children == null)
             children = new ArrayList();
           return Collections.enumeration(children);
         }
-        
+
         public boolean getAllowsChildren() {
           return true;
         }
-        
+
         public int getIndex(TreeNode node) {
           if (children == null)
             return -1;
@@ -691,7 +672,7 @@ public class ExplainPlanExecuter
     ExplainPlanModel.ExplainRow child3 = new ExplainPlanModel.ExplainRow(child2, 2, "child 3", null, null, "Child 2", null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     ExplainPlanModel.ExplainRow child4 = new ExplainPlanModel.ExplainRow(child3, 4, "child 4", null, null, "Child 4", null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     ExplainPlanModel.ExplainRow child5 = new ExplainPlanModel.ExplainRow(child2, 5, "child 5", null, null, "Child 5", null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-    
+
     root.addChild(child);
     root.addChild(child2);
     child2.addChild(child3);
