@@ -28,6 +28,10 @@ import javax.swing.BorderFactory;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -43,7 +47,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 public class HtmlViewerSheet extends BaseSheet
 {
 	/** Logger for this class. */
-	private static ILogger s_log =
+	private final static ILogger s_log =
 		LoggerController.createLogger(HtmlViewerSheet.class);
 
 	/** URL being displayed. */
@@ -152,8 +156,36 @@ public class HtmlViewerSheet extends BaseSheet
 
 		final JPanel pnl = new JPanel(new BorderLayout());
 		_contentsTxt.setBorder(BorderFactory.createEmptyBorder(0, 1, 0, 0));
+		_contentsTxt.addHyperlinkListener(createHyperLinkListener());
 		pnl.add(new JScrollPane(_contentsTxt), BorderLayout.CENTER);
 
 		return pnl;
 	}
-}
+
+	public HyperlinkListener createHyperLinkListener()
+	{
+		return new HyperlinkListener()
+		{
+			public void hyperlinkUpdate(HyperlinkEvent e)
+			{
+				if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
+				{
+					if (e instanceof HTMLFrameHyperlinkEvent)
+					{
+						((HTMLDocument)_contentsTxt.getDocument()).processHTMLFrameHyperlinkEvent((HTMLFrameHyperlinkEvent)e);
+					}
+					else
+					{
+						try
+						{
+							_contentsTxt.setPage(e.getURL());
+						}
+						catch (IOException ioe)
+						{
+							s_log.error(ioe);
+						}
+					}
+				}
+			}
+		};
+	}}
