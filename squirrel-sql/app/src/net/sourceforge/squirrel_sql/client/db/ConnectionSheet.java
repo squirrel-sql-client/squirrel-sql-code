@@ -40,7 +40,7 @@ import javax.swing.event.InternalFrameListener;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.OkClosePanel;
 import net.sourceforge.squirrel_sql.fw.gui.OkClosePanelEvent;
-import net.sourceforge.squirrel_sql.fw.gui.OkClosePanelListener;
+import net.sourceforge.squirrel_sql.fw.gui.IOkClosePanelListener;
 import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
 import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
@@ -342,7 +342,7 @@ public class ConnectionSheet extends JInternalFrame {
 	/**
 	 * Listener to handle button events in OK/Close panel.
 	 */
-	private final class MyOkClosePanelListener implements OkClosePanelListener {
+	private final class MyOkClosePanelListener implements IOkClosePanelListener {
 		public void okPressed(OkClosePanelEvent evt) {
 			ConnectionSheet.this.connect(true);
 		}
