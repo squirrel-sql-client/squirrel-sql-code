@@ -841,22 +841,22 @@ class OsterTextControl extends JTextPane
 		public void insertString(int offs, String str, AttributeSet a)
 			throws BadLocationException
 		{
-			synchronized (doclock)
-			{
+//			synchronized (doclock)
+//			{
 				super.insertString(offs, str, a);
 				color(offs, str.length());
 				documentReader.update(offs, str.length());
-			}
+//			}
 		}
 
 		public void remove(int offs, int len) throws BadLocationException
 		{
-			synchronized (doclock)
-			{
+//			synchronized (doclock)
+//			{
 				super.remove(offs, len);
 				color(offs, -len);
 				documentReader.update(offs, -len);
-			}
+//			}
 		}
 	}
 
