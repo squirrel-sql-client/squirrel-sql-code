@@ -5,7 +5,7 @@ Change Log
 ========
 
 Bug Fixes
-----------
+---------
 - Correctly size the java Classpath listbox.
 - Indicate whether driver can be loaded whenever the driver classpath is changed
 - Add missing batch file (addpath.bat) to distribution.
