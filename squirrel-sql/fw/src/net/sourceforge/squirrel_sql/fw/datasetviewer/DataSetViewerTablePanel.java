@@ -247,7 +247,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 			getTableHeader().setReorderingAllowed(true);
 			setAutoCreateColumnsFromModel(false);
 			setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			_bth = new ButtonTableHeader(null);
+			_bth = new ButtonTableHeader();
 			setTableHeader(_bth);
 
 			_tablePopupMenu = new TablePopupMenu();

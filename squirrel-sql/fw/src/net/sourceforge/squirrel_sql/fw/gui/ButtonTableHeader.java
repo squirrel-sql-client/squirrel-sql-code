@@ -18,6 +18,8 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.table.JTableHeader;
@@ -27,25 +29,47 @@ import javax.swing.table.TableModel;
 
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.URL;
 
 /**
- * @version 	1.0
- * @author
+ * @version 	$Id: ButtonTableHeader.java,v 1.2 2002-03-12 21:03:57 joco01 Exp $
+ * @author		Johan Compagner
  */
 public class ButtonTableHeader extends JTableHeader
 {
+	protected boolean _bPressed;
 	protected int _iPressed;
+	private static ImageIcon desc;
+	private static ImageIcon asc;
 
+	protected ImageIcon current;
+	
+	static
+	{
+		// HARDWIRED path names!! Should be in Resource/Settings file??
+		try
+		{
+			URL url = ClassLoader.getSystemResource("net/sourceforge/squirrel_sql/fw/gui/image/stock_down_arrow.png");
+			desc = new ImageIcon(url);
+		} catch(Exception e){}
+		try
+		{
+			URL url = ClassLoader.getSystemResource("net/sourceforge/squirrel_sql/fw/gui/image/stock_up_arrow.png");
+			asc = new ImageIcon(url);
+		} catch(Exception e){}
+	}
 	/**
 	 * Constructor for ButtonTableHeader.
 	 * @param cm
 	 */
-	public ButtonTableHeader(TableColumnModel cm)
+	public ButtonTableHeader()
 	{
-		super(cm);
+		super();
+		_bPressed = false;
 		_iPressed = -1;
 		setDefaultRenderer(new ButtonTableRenderer(getFont()));
 		addMouseListener(new HeaderListener());
@@ -58,6 +82,7 @@ public class ButtonTableHeader extends JTableHeader
 		 */
 		public void mousePressed(MouseEvent e)
 		{
+			_bPressed = true;
 			_iPressed = columnAtPoint(e.getPoint());
 			repaint();
 		}
@@ -67,13 +92,21 @@ public class ButtonTableHeader extends JTableHeader
 		*/
 		public void mouseReleased(MouseEvent e)
 		{
-			_iPressed = -1;
+			_bPressed = false;
 			int column = columnAtPoint(e.getPoint());
 			TableModel tm = table.getModel();
 
 			if(column > -1 && column < tm.getColumnCount() && tm instanceof SortableTableModel)
 			{
 				((SortableTableModel)tm).sortByColumn(column);
+				if(((SortableTableModel)tm)._bAscending)
+				{
+					current = asc;
+				}
+				else
+				{
+					current = desc;
+				}
 			}
 			repaint();
 		}
@@ -83,7 +116,7 @@ public class ButtonTableHeader extends JTableHeader
 	{
 		JButton buttonRaised;
 		JButton buttonLowered;
-
+		
 		ButtonTableRenderer(Font font)
 		{
 			buttonRaised = new JButton();
@@ -108,14 +141,17 @@ public class ButtonTableHeader extends JTableHeader
 		{
 			if (value == null)
 				value = "";
-			if(_iPressed == column)
+			if(_iPressed == column && _bPressed)
 			{
 				buttonLowered.setText(value.toString());
+				if(current != null) buttonLowered.setIcon(current);
 				return buttonLowered;
 			}
 			else
 			{
 				buttonRaised.setText(value.toString());
+				if(current != null && column == _iPressed) buttonRaised.setIcon(current);
+				else buttonRaised.setIcon(null);
 				return buttonRaised;
 			}
 		}
