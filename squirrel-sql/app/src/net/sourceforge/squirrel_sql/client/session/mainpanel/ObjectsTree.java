@@ -125,6 +125,7 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 
 	void refresh() throws BaseSQLException 
 	{
+//		ise
 		List l = _model.refresh();
 		if(l != null)
 		{
@@ -137,6 +138,8 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 				expandPath(path);
 			}
 		}
+		_cursorChg.restore();
+		
 	}
 	/*
 	 * @see BaseNodeExpandedListener#nodeExpanded(BaseNode)
