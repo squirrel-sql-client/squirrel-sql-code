@@ -72,6 +72,8 @@ abstract class BaseToolWindow extends JInternalFrame {
 
 	private boolean _hasBeenBuilt;
 
+	private boolean _hasBeenSized = false;
+
 	public BaseToolWindow(IApplication app, IUserInterfaceFactory uiFactory)
 			throws IllegalArgumentException {
 		super();
@@ -85,6 +87,14 @@ abstract class BaseToolWindow extends JInternalFrame {
 		_uiFactory = uiFactory;
 
 		createUserInterface();
+	}
+
+	public void updateUI() {
+		super.updateUI();
+		if (_hasBeenBuilt) {
+			_hasBeenSized = false;
+			privateResize();
+		}
 	}
 
 	protected IUserInterfaceFactory getUserInterfaceFactory() {
@@ -102,8 +112,19 @@ abstract class BaseToolWindow extends JInternalFrame {
 			if (_popupMenu == null) {
 				_popupMenu = _uiFactory.getPopupMenu();
 			}
-//		  _popupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
 			_popupMenu.show(evt);
+		}
+	}
+
+	private void privateResize() {
+		if (!_hasBeenSized) {
+			_hasBeenSized = true;
+			Dimension windowSize = getSize();
+			int rqdWidth = _toolBar.getPreferredSize().width  + 15;
+			if (rqdWidth > windowSize.width) {
+				windowSize.width = rqdWidth;
+				setSize(windowSize);
+			}
 		}
 	}
 
@@ -192,30 +213,18 @@ abstract class BaseToolWindow extends JInternalFrame {
 		// JDK1.3.
 		addInternalFrameListener(new InternalFrameAdapter() {
 			private boolean _hasBeenActivated = false;
-			private boolean _hasBeenSized = false;
 			public void internalFrameActivated(InternalFrameEvent evt) {
 				if (!_hasBeenActivated) {
 					_hasBeenActivated = true;
-					reSize();
+					privateResize();
 				}
 				list.requestFocus();
 			}
 
 			public void internalFrameOpened(InternalFrameEvent evt) {
-				reSize();
+				privateResize();
 			}
 
-			private void reSize() {
-				if (!_hasBeenSized) {
-					_hasBeenSized = true;
-					Dimension windowSize = BaseToolWindow.this.getSize();
-					int rqdWidth = _toolBar.getPreferredSize().width  + 15;
-					if (rqdWidth > windowSize.width) {
-						windowSize.width = rqdWidth;
-						BaseToolWindow.this.setSize(windowSize);
-					}
-				}
-			}
 		});
 
 		validate();
