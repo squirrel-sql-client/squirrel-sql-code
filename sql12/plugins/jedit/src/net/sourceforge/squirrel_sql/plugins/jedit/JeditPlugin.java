@@ -40,8 +40,6 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionSheet;
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
 
-import net.sourceforge.squirrel_sql.plugins.jedit.textarea.TextAreaDefaults;
-
 /**
  * The jEdit plugin class. This plugin replaces the standard SQL entry text area
  * with the jEdit edia area.
@@ -98,7 +96,7 @@ public class JeditPlugin extends DefaultSessionPlugin
 	 */
 	public String getVersion()
 	{
-		return "0.17";
+		return "0.20";
 	}
 
 	/**
@@ -157,8 +155,7 @@ public class JeditPlugin extends DefaultSessionPlugin
 	{
 		super.initialize();
 
-		_resources =
-			new PluginResources("net.sourceforge.squirrel_sql.plugins.jedit.jedit", this);
+		_resources = new PluginResources("net.sourceforge.squirrel_sql.plugins.jedit.jedit", this);
 
 		// Folder to store user settings.
 		try
@@ -172,8 +169,6 @@ public class JeditPlugin extends DefaultSessionPlugin
 
 		// Load plugin preferences.
 		loadPrefs();
-		TextAreaDefaults dfts = TextAreaDefaults.getDefaults();
-		dfts.inputHandler = new JeditInputHandler();
 
 		// Install the jEdit factory for creating SQL entry text controls.
 		ISQLEntryPanelFactory originalFactory = getApplication().getSQLEntryPanelFactory();
@@ -201,7 +196,7 @@ public class JeditPlugin extends DefaultSessionPlugin
 		JeditPreferences prefs = null;
 		try
 		{
-			prefs = (JeditPreferences) _newSessionPrefs.clone();
+			prefs = (JeditPreferences)_newSessionPrefs.clone();
 		}
 		catch (CloneNotSupportedException ex)
 		{
@@ -243,10 +238,8 @@ public class JeditPlugin extends DefaultSessionPlugin
 	 */
 	public ISessionPropertiesPanel[] getSessionPropertiesPanels(ISession session)
 	{
-		JeditPreferences sessionPrefs =
-			(JeditPreferences) session.getPluginObject(
-				this,
-				JeditConstants.ISessionKeys.PREFS);
+		JeditPreferences sessionPrefs = (JeditPreferences) session.getPluginObject(
+										this, JeditConstants.ISessionKeys.PREFS);
 		return new ISessionPropertiesPanel[] { new JeditPreferencesPanel(sessionPrefs)};
 	}
 
@@ -270,7 +263,7 @@ public class JeditPlugin extends DefaultSessionPlugin
 			XMLBeanReader doc = new XMLBeanReader();
 			doc.load(
 				new File(_userSettingsFolder, JeditConstants.USER_PREFS_FILE_NAME),
-				getClass().getClassLoader());
+							getClass().getClassLoader());
 			Iterator it = doc.iterator();
 			if (it.hasNext())
 			{
@@ -283,10 +276,9 @@ public class JeditPlugin extends DefaultSessionPlugin
 		}
 		catch (Exception ex)
 		{
-			s_log.error(
-				"Error occured reading from preferences file: "
-					+ JeditConstants.USER_PREFS_FILE_NAME,
-				ex);
+			final String msg = "Error occured reading from preferences file: "
+								+ JeditConstants.USER_PREFS_FILE_NAME;
+			s_log.error(msg, ex);
 		}
 		if (_newSessionPrefs == null)
 		{
@@ -306,10 +298,9 @@ public class JeditPlugin extends DefaultSessionPlugin
 		}
 		catch (Exception ex)
 		{
-			s_log.error(
-				"Error occured writing to preferences file: "
-					+ JeditConstants.USER_PREFS_FILE_NAME,
-				ex);
+			final String msg = "Error occured writing to preferences file: "
+								+ JeditConstants.USER_PREFS_FILE_NAME;
+			s_log.error(msg, ex);
 		}
 	}
 
@@ -358,7 +349,7 @@ public class JeditPlugin extends DefaultSessionPlugin
 							JeditConstants.ISessionKeys.JEDIT_SQL_ENTRY_CONTROL);
 					if (pnl != null)
 					{
-						pnl.updateFromPreferences(_prefs);
+						pnl.updateFromPreferences();
 					}
 				}
 			}

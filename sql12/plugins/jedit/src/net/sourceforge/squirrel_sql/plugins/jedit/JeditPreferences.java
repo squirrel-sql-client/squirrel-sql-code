@@ -52,8 +52,7 @@ public class JeditPreferences implements Serializable, Cloneable
 	}
 
 	/** Object to handle property change events. */
-	private PropertyChangeReporter _propChgReporter =
-										new PropertyChangeReporter(this);
+	private transient PropertyChangeReporter _propChgReporter;
 
 	/** If <TT>true</TT> use the jEdit text control else use the standard Java control. */
 	private boolean _useJeditTextControl = true;
@@ -76,11 +75,11 @@ public class JeditPreferences implements Serializable, Cloneable
 	private int _keyword1RGB = Color.black.getRGB();
 	private int _keyword2RGB = Color.magenta.getRGB();
 	private int _keyword3RGB = Color.red.getRGB();
-	private int _tableRGB = Color.green.getRGB();
+	private int _tableRGB = Color.cyan.getRGB();
 	private int _columnRGB = Color.blue.getRGB();
 	private int _caretRGB = Color.red.getRGB();
 	private int _selectionRGB = 0xccccff;
-	private int _lineHighlightRGB = 0xccccff;
+	private int _lineHighlightRGB = Color.lightGray.getRGB();
 	private int _eolMarkerRGB = 0x009999;
 	private int _bracketHighlightColor = Color.black.getRGB();
 
@@ -91,17 +90,26 @@ public class JeditPreferences implements Serializable, Cloneable
 
 	public Object clone() throws CloneNotSupportedException
 	{
-		return super.clone();
+		try
+		{
+			JeditPreferences prefs = (JeditPreferences)super.clone();
+			prefs._propChgReporter = null;
+			return prefs;
+		}
+		catch (CloneNotSupportedException ex)
+		{
+			throw new InternalError(ex.getMessage()); // Impossible.
+		}
 	}
 
 	public void addPropertyChangeListener(PropertyChangeListener listener)
 	{
-		_propChgReporter.addPropertyChangeListener(listener);
+		getPropertyChangeReporter().addPropertyChangeListener(listener);
 	}
 
 	public void removePropertyChangeListener(PropertyChangeListener listener)
 	{
-		_propChgReporter.removePropertyChangeListener(listener);
+		getPropertyChangeReporter().removePropertyChangeListener(listener);
 	}
 
 	public boolean getUseJeditTextControl()
@@ -115,7 +123,7 @@ public class JeditPreferences implements Serializable, Cloneable
 		{
 			final boolean oldValue = _useJeditTextControl;
 			_useJeditTextControl = data;
-			_propChgReporter.firePropertyChange(
+			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.USE_JEDIT_CONTROL,
 				oldValue,
 				_useJeditTextControl);
@@ -133,7 +141,7 @@ public class JeditPreferences implements Serializable, Cloneable
 		{
 			final boolean oldValue = _bracketHighlighting;
 			_bracketHighlighting = data;
-			_propChgReporter.firePropertyChange(
+			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.BRACKET_HIGHLIGHTING,
 				oldValue,
 				_bracketHighlighting);
@@ -151,7 +159,7 @@ public class JeditPreferences implements Serializable, Cloneable
 		{
 			final boolean oldValue = _blockCaretEnabled;
 			_blockCaretEnabled = data;
-			_propChgReporter.firePropertyChange(
+			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.BLOCK_CARET_ENABLED,
 				oldValue,
 				_blockCaretEnabled);
@@ -169,7 +177,7 @@ public class JeditPreferences implements Serializable, Cloneable
 		{
 			final boolean oldValue = _showEndOfLineMarkers;
 			_showEndOfLineMarkers = data;
-			_propChgReporter.firePropertyChange(
+			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.EOL_MARKERS,
 				oldValue,
 				_showEndOfLineMarkers);
@@ -187,7 +195,7 @@ public class JeditPreferences implements Serializable, Cloneable
 		{
 			final boolean oldValue = _currentLineHighlighting;
 			_currentLineHighlighting = data;
-			_propChgReporter.firePropertyChange(
+			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.CURRENT_LINE_HIGHLIGHTING,
 				oldValue,
 				_currentLineHighlighting);
@@ -205,7 +213,7 @@ public class JeditPreferences implements Serializable, Cloneable
 		{
 			final boolean oldValue = _blinkCaret;
 			_blinkCaret = data;
-			_propChgReporter.firePropertyChange(
+			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.BLINK_CARET,
 				oldValue,
 				_blinkCaret);
@@ -223,7 +231,7 @@ public class JeditPreferences implements Serializable, Cloneable
 		{
 			final int oldValue = _keyword1RGB;
 			_keyword1RGB = data;
-			_propChgReporter.firePropertyChange(
+			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.KEYWORD1_COLOR,
 				oldValue,
 				_keyword1RGB);
@@ -241,7 +249,7 @@ public class JeditPreferences implements Serializable, Cloneable
 		{
 			final int oldValue = _keyword2RGB;
 			_keyword2RGB = data;
-			_propChgReporter.firePropertyChange(
+			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.KEYWORD2_COLOR,
 				oldValue,
 				_keyword2RGB);
@@ -259,7 +267,7 @@ public class JeditPreferences implements Serializable, Cloneable
 		{
 			final int oldValue = _keyword3RGB;
 			_keyword3RGB = data;
-			_propChgReporter.firePropertyChange(
+			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.KEYWORD3_COLOR,
 				oldValue,
 				_keyword3RGB);
@@ -277,7 +285,7 @@ public class JeditPreferences implements Serializable, Cloneable
 		{
 			final int oldValue = _tableRGB;
 			_tableRGB = data;
-			_propChgReporter.firePropertyChange(
+			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.TABLE_COLOR,
 				oldValue,
 				_tableRGB);
@@ -295,7 +303,7 @@ public class JeditPreferences implements Serializable, Cloneable
 		{
 			final int oldValue = _columnRGB;
 			_columnRGB = data;
-			_propChgReporter.firePropertyChange(
+			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.COLUMN_COLOR,
 				oldValue,
 				_columnRGB);
@@ -313,7 +321,7 @@ public class JeditPreferences implements Serializable, Cloneable
 		{
 			final int oldValue = _caretRGB;
 			_caretRGB = data;
-			_propChgReporter.firePropertyChange(
+			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.CARET_COLOR,
 				oldValue,
 				_caretRGB);
@@ -331,7 +339,7 @@ public class JeditPreferences implements Serializable, Cloneable
 		{
 			final int oldValue = _selectionRGB;
 			_selectionRGB = data;
-			_propChgReporter.firePropertyChange(
+			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.SELECTION_COLOR,
 				oldValue,
 				_selectionRGB);
@@ -349,7 +357,7 @@ public class JeditPreferences implements Serializable, Cloneable
 		{
 			final int oldValue = _lineHighlightRGB;
 			_lineHighlightRGB = data;
-			_propChgReporter.firePropertyChange(
+			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.LINE_HIGHLIGHT_COLOR,
 				oldValue,
 				_lineHighlightRGB);
@@ -367,7 +375,7 @@ public class JeditPreferences implements Serializable, Cloneable
 		{
 			final int oldValue = _eolMarkerRGB;
 			_eolMarkerRGB = data;
-			_propChgReporter.firePropertyChange(
+			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.EOL_MARKER_COLOR,
 				oldValue,
 				_eolMarkerRGB);
@@ -385,10 +393,19 @@ public class JeditPreferences implements Serializable, Cloneable
 		{
 			final int oldValue = _bracketHighlightColor;
 			_bracketHighlightColor = data;
-			_propChgReporter.firePropertyChange(
+			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.BRACKET_HIGHLIGHT_COLOR,
 				oldValue,
 				_bracketHighlightColor);
 		}
+	}
+
+	private synchronized PropertyChangeReporter getPropertyChangeReporter()
+	{
+		if (_propChgReporter == null)
+		{
+			_propChgReporter = new PropertyChangeReporter(this);
+		}
+		return _propChgReporter;
 	}
 }

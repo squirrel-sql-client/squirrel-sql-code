@@ -43,7 +43,6 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
-
 /**
  * New Session and Current Session preferences panel for this plugin.
  *
@@ -53,14 +52,14 @@ public class JeditPreferencesPanel
 	implements INewSessionPropertiesPanel, ISessionPropertiesPanel
 {
 	/** Logger for this class. */
-	private static ILogger s_log =
+	private final static ILogger s_log =
 		LoggerController.createLogger(JeditPreferencesPanel.class);
 
 	/** Plugin preferences object. */
-	private JeditPreferences _prefs;
+	private final JeditPreferences _prefs;
 
 	/** Component to display in the preferences dialog. */
-	private MyPanel _myPanel;
+	private final MyPanel _myPanel;
 
 	/**
 	 * Ctor.

@@ -27,19 +27,21 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 
-import net.sourceforge.squirrel_sql.plugins.jedit.textarea.JEditTextArea;
-
-class JeditSQLEntryPanelFactory implements ISQLEntryPanelFactory {
+public class JeditSQLEntryPanelFactory implements ISQLEntryPanelFactory
+{
 	private JeditPlugin _plugin;
 
 	/** The original Squirrel SQL CLient factory for creating SQL entry panels. */
 	private ISQLEntryPanelFactory _originalFactory;
 
-	JeditSQLEntryPanelFactory(JeditPlugin plugin, ISQLEntryPanelFactory originalFactory) {
-		if (plugin == null) {
+	JeditSQLEntryPanelFactory(JeditPlugin plugin, ISQLEntryPanelFactory originalFactory)
+	{
+		if (plugin == null)
+		{
 			throw new IllegalArgumentException("Null JeditPlugin passed");
 		}
-		if (originalFactory == null) {
+		if (originalFactory == null)
+		{
 			throw new IllegalArgumentException("Null originalFactory passed");
 		}
 
@@ -51,22 +53,50 @@ class JeditSQLEntryPanelFactory implements ISQLEntryPanelFactory {
 	 * @see ISQLEntryPanelFactory#createSQLEntryPanel()
 	 */
 	public ISQLEntryPanel createSQLEntryPanel(ISession session)
-			throws IllegalArgumentException{
-		if (session == null) {
+		throws IllegalArgumentException
+	{
+		if (session == null)
+		{
 			throw new IllegalArgumentException("Null ISession passed");
 		}
 
-		JeditPreferences prefs = (JeditPreferences)session.getPluginObject(_plugin, JeditConstants.ISessionKeys.PREFS);
-		if (prefs.getUseJeditTextControl()) {
-			JeditSQLEntryPanel pnl = (JeditSQLEntryPanel)session.getPluginObject(_plugin, JeditConstants.ISessionKeys.JEDIT_SQL_ENTRY_CONTROL);
-			if (pnl == null) {
+		final JeditPreferences prefs = getPreferences(session);
+		if (prefs.getUseJeditTextControl())
+		{
+			JeditSQLEntryPanel pnl = getPanel(session);
+			if (pnl == null)
+			{
 				pnl = new JeditSQLEntryPanel(session, _plugin, prefs);
-//				final JEditTextArea ta = pnl.getTypedComponent();
-				session.putPluginObject(_plugin, JeditConstants.ISessionKeys.JEDIT_SQL_ENTRY_CONTROL, pnl);
+				savePanel(session, pnl);
 			}
 			return pnl;
 		}
-		session.removePluginObject(_plugin, JeditConstants.ISessionKeys.JEDIT_SQL_ENTRY_CONTROL);
+		removePanel(session);
+
 		return _originalFactory.createSQLEntryPanel(session);
+	}
+
+	private JeditPreferences getPreferences(ISession session)
+	{
+		 return (JeditPreferences)session.getPluginObject(
+									_plugin, JeditConstants.ISessionKeys.PREFS);
+	}
+
+	private JeditSQLEntryPanel getPanel(ISession session)
+	{
+		return(JeditSQLEntryPanel) session.getPluginObject(
+				_plugin, JeditConstants.ISessionKeys.JEDIT_SQL_ENTRY_CONTROL);
+	}
+
+	private void savePanel(ISession session, JeditSQLEntryPanel pnl)
+	{
+		session.putPluginObject(_plugin,
+				JeditConstants.ISessionKeys.JEDIT_SQL_ENTRY_CONTROL, pnl);
+	}
+
+	private void removePanel(ISession session)
+	{
+		session.removePluginObject(_plugin,
+						JeditConstants.ISessionKeys.JEDIT_SQL_ENTRY_CONTROL);
 	}
 }
