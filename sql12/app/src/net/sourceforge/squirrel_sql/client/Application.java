@@ -494,7 +494,7 @@ class Application implements IApplication
 				}
 			});
 
-		indicateNewStartupTask(splash, "Initializing UI factories...");
+		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.uifactoryinit"));
 		UIFactory.initialize(_prefs);
 
 		final boolean loadPlugins = args.getLoadPlugins();
@@ -512,20 +512,20 @@ class Application implements IApplication
 			_pluginManager.loadPlugins();
 		}
 
-		indicateNewStartupTask(splash, "Loading actions...");
+		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadingactions"));
 		_actions = new ActionCollection(this);
 
-		indicateNewStartupTask(splash, "Loading user specified accelerators and mnemonics...");
+		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadinguseracc"));
 		_actions.loadActionKeys(_prefs.getActionKeys());
 
-		indicateNewStartupTask(splash, "Creating JDBC driver manager...");
+		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.createjdbcmgr"));
 		_driverMgr = new SQLDriverManager();
 
 		// TODO: pass in a message handler so user gets error msgs.
-		indicateNewStartupTask(splash, "Loading JDBC driver and alias information...");
+		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadingjdbc"));
 		_cache = new DataCache(_driverMgr, _resources.getDefaultDriversUrl(), null);
 
-		indicateNewStartupTask(splash, "Creating main window...");
+		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.createmainwindow"));
 		_mainFrame = new MainFrame(this);
 
 		indicateNewStartupTask(splash, loadPlugins ? "Initializing plugins..." : "No Plugins are to be loaded...");
