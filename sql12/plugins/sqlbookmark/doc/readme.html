@@ -1,0 +1,66 @@
+<HTML>
+<HEAD>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<B>SQLBookmark 0.42</B> - Joe Mocker
+
+<P>
+SQLBookmark allows you to "bookmark" commonly used SQL code for easy point 
+and click reuse. Whatever you type in the SQL Edit buffer can be easily 
+bookmarked by clicking Session->Bookmarks->Add Bookmark.
+</P>
+
+<P>
+Bookmarks are then accessed through that same Session->Bookmarks menu.
+</P>
+
+<P>
+Additionally, bookmarks can be administered through "Bookmarks" tab of the 
+Global Preferences dialog.
+</P>
+
+<P>
+Bookmarked SQL strings can have replaceable parameters. At the time the 
+bookmark is loaded, the user is asked to enter values for any of the 
+parameters. Parameters are defined in the SQL with a special syntax.
+There are three formats:
+</P>
+<BLOCKQUOTE>
+<TABLE BORDER="0" WIDTH="100%">
+<TR>
+<TD VALIGN="TOP">${prompt[, tip]}</TD>
+<TD>simple anonymous parameter</TD>
+</TR>
+<TR>
+<TD VALIGN="TOP"><NOBR>${id=name, prompt[, tip]}</NOBR></TD>
+<TD>named parameter, allows it to be reused elsewhere</TD>
+</TR>
+<TR>
+<TD VALIGN="TOP">${ref=name}</TD>
+<TD>use the value of an already named parameter.</TD>
+</TR>
+</TABLE>
+</BLOCKQUOTE>
+
+where
+
+<BLOCKQUOTE>
+<TABLE BORDER="0" WIDTH="100%">
+<TR>
+<TD>prompt</TD>
+<TD>is the string to display in the popup prompt</TD>
+</TR>
+<TR>
+<TD>tip</TD>
+<TD>is the optional tooltip to display on the popup prompt</TD>
+</TR>
+<TR>
+<TD>name</TD>
+<TD>is the "variable" name of the parameter.</TD>
+</TR>
+</TABLE>
+</BLOCKQUOTE>
+
+</HTML>
+
+
