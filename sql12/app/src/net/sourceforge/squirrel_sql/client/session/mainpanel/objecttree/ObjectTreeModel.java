@@ -19,9 +19,12 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.tree.DefaultTreeModel;
 
@@ -41,7 +44,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expander
 /**
  * This is the model for the object tree.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ObjectTreeModel extends DefaultTreeModel
 {
@@ -59,11 +62,13 @@ public class ObjectTreeModel extends DefaultTreeModel
 	 */
 	private Map _expanders = new HashMap();
 
+	private final Set _objectTypes = new TreeSet(new DatabaseObjectTypeComparator());
+
 	/**
 	 * ctor specifying session.
-	 * 
+	 *
 	 * @param	session	Current session.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>ISession</TT> passed.
 	 */
@@ -89,10 +94,10 @@ public class ObjectTreeModel extends DefaultTreeModel
 	/**
 	 * Add an expander for the specified database object type in the
 	 * object tree.
-	 * 
+	 *
 	 * @param	dboType		Database object type.
 	 * @param	expander	Expander called to add children to a parent node.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>INodeExpander</TT> or
 	 * 			<TT>ObjectTreeNodeType</TT> passed.
@@ -109,15 +114,16 @@ public class ObjectTreeModel extends DefaultTreeModel
 			throw new IllegalArgumentException("Null INodeExpander passed");
 		}
 		getExpandersList(dboType).add(expander);
+		addKnownDatabaseObjectType(dboType);
 	}
 
 	/**
 	 * Return an array of the node expanders for the passed database object type.
-	 * 
+	 *
 	 * @param	dboType		Database object type.
 
 	 * @return	an array of the node expanders for the passed database object type.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if null ObjectTreeNodeType passed.
 	 */
@@ -132,8 +138,25 @@ public class ObjectTreeModel extends DefaultTreeModel
 	}
 
 	/**
+	 * Retrieve details about all object types that can be in this
+	 * tree.
+	 *
+	 * @return	DatabaseObjectType[]	Array of object type info objects.
+	 */
+	public synchronized DatabaseObjectType[] getDatabaseObjectTypes()
+	{
+		DatabaseObjectType[] ar = new DatabaseObjectType[_objectTypes.size()];
+		return (DatabaseObjectType[])_objectTypes.toArray(ar);
+	}
+
+	synchronized void addKnownDatabaseObjectType(DatabaseObjectType dboType)
+	{
+		_objectTypes.add(dboType);
+	}
+
+	/**
 	 * Return the root node.
-	 * 
+	 *
 	 * @return	the root node.
 	 */
 	ObjectTreeNode getRootObjectTreeNode()
@@ -144,7 +167,7 @@ public class ObjectTreeModel extends DefaultTreeModel
 	/**
 	 * Get the collection of expanders for the passed node type. If one
 	 * doesn't exist then create an empty one.
-	 * 
+	 *
 	 * @param	dboType		Database object type.
 	 */
 	private List getExpandersList(DatabaseObjectType dboType)
@@ -165,7 +188,7 @@ public class ObjectTreeModel extends DefaultTreeModel
 
 	/**
 	 * Create the root node for this tree.
-	 * 
+	 *
 	 * @param	session		Current session.
 	 *
 	 * @throws	IllegalArgumentException
@@ -192,6 +215,15 @@ public class ObjectTreeModel extends DefaultTreeModel
 			return new DatabaseObjectInfo(null, null, session.getAlias().getName(),
 											DatabaseObjectType.SESSION,
 											session.getSQLConnection().getSQLMetaData());
+		}
+	}
+
+	private static final class DatabaseObjectTypeComparator implements Comparator
+	{
+		public int compare(Object o1, Object o2)
+		{
+			return ((DatabaseObjectType)o1).getName()
+				.compareToIgnoreCase(((DatabaseObjectType)o2).getName());
 		}
 	}
 }

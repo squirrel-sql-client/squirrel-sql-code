@@ -494,6 +494,17 @@ public class ObjectTreePanel extends JPanel
 	}
 
 	/**
+	 * Retrieve details about all object types that can be in this
+	 * tree.
+	 *
+	 * @return	DatabaseObjectType[]	Array of object type info objects.
+	 */
+	public DatabaseObjectType[] getDatabaseObjectTypes()
+	{
+		return _tree.getTypedModel().getDatabaseObjectTypes();
+	}
+
+	/**
 	 * Refresh object tree.
 	 */
 	public void refreshTree()
@@ -533,6 +544,16 @@ public class ObjectTreePanel extends JPanel
 	public IObjectTab getTabbedPaneIfSelected(DatabaseObjectType dbObjectType, String title)
 	{
 		return getTabbedPane(dbObjectType).getTabIfSelected(title);
+	}
+
+	/**
+	 * Add a known database object type to the object tree.
+	 *
+	 * @param	dboType		The new database object type.
+	 */
+	public void addKnownDatabaseObjectType(DatabaseObjectType dboType)
+	{
+		_tree.getTypedModel().addKnownDatabaseObjectType(dboType);
 	}
 
 	/**
@@ -672,7 +693,7 @@ public class ObjectTreePanel extends JPanel
 //		sp.setBorder(BorderFactory.createEmptyBorder());
 //		sp.setViewportView(_tree);
 //		sp.setPreferredSize(new Dimension(200, 200));
-		
+
 		_splitPane.add(new LeftPanel(), JSplitPane.LEFT);
 		add(_splitPane, BorderLayout.CENTER);
 		_splitPane.setDividerLocation(200);
