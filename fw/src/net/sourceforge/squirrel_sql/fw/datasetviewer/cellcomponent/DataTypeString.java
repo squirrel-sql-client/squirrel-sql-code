@@ -38,11 +38,12 @@ import java.sql.ResultSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
 
 /**
  * @author gwg
  *
- * This class provides the display components for handling Integer data types,
+ * This class provides the display components for handling String data types,
  * specifically SQL types CHAR, VARCHAR, and LONGVARCHAR.
  * The display components are for:
  * <UL>
@@ -62,7 +63,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComp
  * <P>
  * The components returned from this class extend RestorableJTextField
  * and RestorableJTextArea for use in editing table cells that
- * contain String values.  It provides the special behavior for null
+ * contain values of this data type.  It provides the special behavior for null
  * handling and resetting the cell to the original value.
  */
 public class DataTypeString
@@ -142,7 +143,7 @@ public class DataTypeString
 	public JTextField getJTextField() {
 		_textComponent = new RestorableJTextField();
 		
-		// special handling of operations while editing Integers
+		// special handling of operations while editing this data type
 		((RestorableJTextField)_textComponent).addKeyListener(new KeyTextHandler());
 				
 		//
@@ -170,7 +171,7 @@ public class DataTypeString
 	}
 	
 	/**
-	 * Implement the interface for validating and converting to Integer object.
+	 * Implement the interface for validating and converting to internal object.
 	 * Null is a valid successful return, so errors are indicated only by
 	 * existance or not of a message in the messageBuffer.
 	 */
@@ -203,11 +204,11 @@ public class DataTypeString
 	 public JTextArea getJTextArea(Object value) {
 		_textComponent = new RestorableJTextArea();
 	
-		// value is a simple string representation of the integer,
+		// value is a simple string representation of the data,
 		// the same one used in the Text and in-cell operations.
 		((RestorableJTextArea)_textComponent).setText(renderObject(value));
 		
-		// special handling of operations while editing Integers
+		// special handling of operations while editing this data type
 		((RestorableJTextArea)_textComponent).addKeyListener(new KeyTextHandler());
 		
 		return (RestorableJTextArea)_textComponent;
@@ -322,7 +323,8 @@ public class DataTypeString
 	  * On input from the DB, read the data from the ResultSet into the appropriate
 	  * type of object to be stored in the table cell.
 	  */
-	public Object readResultSet(ResultSet rs, int index)
+	public Object readResultSet(ResultSet rs, int index,
+		LargeResultSetObjectInfo largeObjInfo)
 		throws java.sql.SQLException {
 		
 		String data = rs.getString(index);

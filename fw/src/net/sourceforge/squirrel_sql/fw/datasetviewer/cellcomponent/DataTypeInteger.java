@@ -37,6 +37,7 @@ import java.sql.ResultSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 //??import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
 
 /**
  * @author gwg
@@ -61,7 +62,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
  * <P>
  * The components returned from this class extend RestorableJTextField
  * and RestorableJTextArea for use in editing table cells that
- * contain Integer values.  It provides the special behavior for null
+ * contain values of this data type.  It provides the special behavior for null
  * handling and resetting the cell to the original value.
  */
 
@@ -144,7 +145,7 @@ public class DataTypeInteger
 	public JTextField getJTextField() {
 		_textComponent = new RestorableJTextField();
 		
-		// special handling of operations while editing Integers
+		// special handling of operations while editing this data type
 		((RestorableJTextField)_textComponent).addKeyListener(new KeyTextHandler());
 				
 		//
@@ -172,7 +173,7 @@ public class DataTypeInteger
 	}
 
 	/**
-	 * Implement the interface for validating and converting to Integer object.
+	 * Implement the interface for validating and converting to internal object.
 	 * Null is a valid successful return, so errors are indicated only by
 	 * existance or not of a message in the messageBuffer.
 	 */
@@ -213,11 +214,11 @@ public class DataTypeInteger
 	 public JTextArea getJTextArea(Object value) {
 		_textComponent = new RestorableJTextArea();
 		
-		// value is a simple string representation of the integer,
+		// value is a simple string representation of the data,
 		// the same one used in Text and in-cell operations.
 		((RestorableJTextArea)_textComponent).setText(renderObject(value));
 		
-		// special handling of operations while editing Integers
+		// special handling of operations while editing this data type
 		((RestorableJTextArea)_textComponent).addKeyListener(new KeyTextHandler());
 		
 		return (RestorableJTextArea)_textComponent;
@@ -260,13 +261,16 @@ public class DataTypeInteger
 				// This only applies to Popup editing since these chars are
 				// not passed to this level by the in-cell editor.
 				if (c == KeyEvent.VK_TAB || c == KeyEvent.VK_ENTER) {
-					((IRestorableTextComponent)_theComponent).updateText(text.substring(0, text.length()-1));
-					_theComponent.getToolkit().beep();
-					e.consume();
-				}
+					int cIndex = text.indexOf(c);
+					String newText = null;
+					if (cIndex == 0)
+						newText = text.substring(1);
+					else if (cIndex == text.length()-1)
+						newText = text.substring(0, text.length()-1);
+					else
+						newText = text.substring(0, cIndex) + text.substring(cIndex+1);
 
-				if (c == '-' && ! (text.equals("<null>") || text.length() == 0)) {
-					// user entered '-' at a bad place
+					((IRestorableTextComponent)_theComponent).updateText(newText);
 					_theComponent.getToolkit().beep();
 					e.consume();
 				}
@@ -349,7 +353,8 @@ public class DataTypeInteger
 	  * On input from the DB, read the data from the ResultSet into the appropriate
 	  * type of object to be stored in the table cell.
 	  */
-	public Object readResultSet(ResultSet rs, int index)
+	public Object readResultSet(ResultSet rs, int index,
+		LargeResultSetObjectInfo largeObjInfo)
 		throws java.sql.SQLException {
 		
 		int data = rs.getInt(index);
@@ -421,7 +426,7 @@ public class DataTypeInteger
 	  * 
 	  * <P>
 	  * File is assumed to be and ASCII string of digits
-	  * representing an integer value.
+	  * representing a value of this data type.
 	  */
 	public String importObject(FileInputStream inStream)
 	 	throws IOException {
@@ -449,21 +454,19 @@ public class DataTypeInteger
 	 		fileText = new String(charBuf, 0, count-1);
 	 	else fileText = new String(charBuf);
 	 	
-	 	// test that the string correctly represents an integer
-	 	// by convertng it into one
-	 	Integer testInteger;
-	 	try {
-	 		testInteger = Integer.valueOf(fileText);
-	 	}
-	 	catch (Exception e) {
+	 	// test that the string is valid by converting it into an
+	 	// object of this data type
+	 	StringBuffer messageBuffer = new StringBuffer();
+	 	validateAndConvertInPopup(fileText, messageBuffer);
+	 	if (messageBuffer.length() > 0) {
 	 		// convert number conversion issue into IO issue for consistancy
 	 		throw new IOException(
-	 			"Failed to convert text into integer.  Text was:\n"+
-	 			fileText);
+	 			"Text does not represent data of type "+getClassName()+
+	 			".  Text was:\n"+fileText);
 	 	}
 	 	
 	 	// return the text from the file since it does
-	 	// represent a valid integer value
+	 	// represent a valid data value
 	 	return fileText;
 	}
 
@@ -485,7 +488,7 @@ public class DataTypeInteger
 	  * 
 	  * <P>
 	  * File is assumed to be and ASCII string of digits
-	  * representing an integer value.
+	  * representing a value of this data type.
 	  */
 	 public void exportObject(FileOutputStream outStream, String text)
 	 	throws IOException {
@@ -500,7 +503,7 @@ public class DataTypeInteger
 	 		throw new IOException(new String(messageBuffer));
 	 	}
 	 	
-	 	// for integer, just send the text to the output file
+	 	// just send the text to the output file
 		outWriter.write(text);
 		outWriter.flush();
 		outWriter.close();
