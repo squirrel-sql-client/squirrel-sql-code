@@ -5,6 +5,12 @@
 </HEAD>
 
 <BODY>
+<H2>To Do</H2>
+
+<UL>
+	<LI>New screen dumps</LI>
+	<LI>New menu items</LI>
+</UL>
 
 <H2>Introduction</H2>
 
@@ -12,36 +18,52 @@
 
 <H2>New Tabs</H2>
 
-<P>The session node in the object tree has two new tabs added. The
-&quot;Status&quot; tab display status information about the MySQL server.</P>
+<P>The session node in the object tree has four new tabs added.</P>
+
+<P>The &quot;MySQL Status&quot; tab display status information about the MySQL
+server. This tab requires you to have sufficient authority to run the <TT>show
+status</TT> command against the server.</P>
 
 <P ALIGN="CENTER"><IMG SRC="images/status.png" BORDER="0"
-			ALT="Status Tab"></P>
+			ALT="MySQL Status Tab"></P>
 
-<P>And the &quot;Processes&quot; tab shows the current processes attached
-to the server.</P>
+<P>The &quot;MySQL Processes&quot; tab shows the current processes attached to
+the server. This tab requires you to have sufficient authority to run the
+<TT>show full processlist</TT> command against the server.</P>
 
 <P ALIGN="CENTER"><IMG SRC="images/processes.png" BORDER="0"
-			ALT="Processes Tab"></P>
+			ALT="MySQL Processes Tab"></P>
 
-<P>To display the information in these tabs successfully you need to have
-sufficient authority to run the <TT>show status</TT> and
-<TT>show full processlist</TT> commands against the server.</P>
+<P>The &quot;MySQL Variables&quot; tab shows the values of some MySQL system
+variables. This tab requires you to have sufficient authority to run the
+<TT>show variables</TT> command against the server.</P>
 
-<P>The Catalog nodes in the object tree have a new &quot;Open Tables&quot;
-tab. To display this tab successfully you need to have the rights to
-run <TT>show open tables</TT> against the catalog.</P>
+<P ALIGN="CENTER"><IMG SRC="images/TODO:" BORDER="0"
+			ALT="MySQL Variables Tab"></P>
 
-<P ALIGN="CENTER"><IMG SRC="images/open-tables.png" BORDER="0"
-			ALT="Open Tables Tab"></P>
+<P>The &quot;MySQL Logs&quot; tab shows information about the current MySQL log
+files. This tab requires you to have sufficient authority to run the <TT>show
+logs</TT> command against the server.</P>
 
-<P>The Table nodes in the object tree have a new &quot;Analyze&quot;
-tab. Displaying this tab runs the &quot;analyze table&quot; command
-against the selected table.</P>
+<P ALIGN="CENTER"><IMG SRC="images/TODO:" BORDER="0"
+			ALT="MySQL Logs Tab"></P>
 
-<!-- TODO: Need image -->
-<P ALIGN="CENTER"><IMG SRC="images/analyze_table.png" BORDER="0"
-			ALT="Analyze Tab"></P>
+<P>The Catalog nodes in the object tree have two new tabs.</P>
+
+<P>The &quot;MySQL Open Tables&quot; tab. shows a list of the currently opened
+tables in the catalog. To display this tab successfully you need to have the
+rights to run <TT>show open tables</TT> against the catalog.</P>
+
+<P ALIGN="CENTER"><IMG SRC="images/open-tables.png" BORDER="0" ALT="Open Tables
+Tab"></P>
+
+<P>The &quot;MySQL Table Status&quot; tab shows status information for the
+tables in the currently selected catalog. To display this tab successfully you
+need to have the rights to run <TT>show table status</TT> against the
+catalog.</P>
+
+<P ALIGN="CENTER"><IMG SRC="images/TODO.png" BORDER="0"
+ALT="MySQL Table Status Tab"></P>
 
 <H2>New Menu Options</H2>
 

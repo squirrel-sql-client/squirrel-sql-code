@@ -14,7 +14,7 @@
 		<property name="deprecation" value="on"/>
 
 		<echo message="---------------- ${internal_name} ${version} ----------------"/>
-		
+
 		<property environment="env"/>
 	</target>
 	<!--
@@ -25,7 +25,7 @@
 	-->
 	<target name="build" depends="init">
 		<property name="obj_dir" value="${p_plugin.work_dir}/obj"/>
-		
+
 		<mkdir dir="${obj_dir}"/>
 
 		<javac	srcdir="src"
@@ -55,10 +55,10 @@
 				<include name="**/*.*"/>
 			</fileset>
 		</jar>
-		
+
 		<copy todir="${p_plugin.dist_dir}/${internal_name}" >
 			<fileset dir="doc" >
-				<include name="*.*"/>
+				<include name="**/*.*"/>
 			</fileset>
 		</copy>
 
@@ -71,4 +71,3 @@
 	</target>
 
 </project>
-
