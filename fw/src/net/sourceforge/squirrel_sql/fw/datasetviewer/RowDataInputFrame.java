@@ -29,14 +29,17 @@ import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Point;
+import java.awt.Dimension;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JButton;
+import javax.swing.JTextArea;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JOptionPane;
+import javax.swing.BorderFactory;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
@@ -85,8 +88,26 @@ public class RowDataInputFrame extends JInternalFrame
 		
 		// create the JTable for input and put in the top of window
 		table = new RowDataJTable(colDefs, initialValues);
+		// tell scrollpane to use table size with the height adjusted to leave
+		// room for the scrollbar at the bottom if needed
+		Dimension tableDim = table.getPreferredSize();
+		tableDim.setSize(tableDim.getWidth(), tableDim.getHeight() + 15);
+		table.setPreferredScrollableViewportSize(tableDim);
 		JScrollPane scrollPane = new JScrollPane(table);
-		scrollPane.setSize(800, 150);
+
+		// add row headers to help user understand what the second row is
+		JPanel rowHeaderPanel = new JPanel();
+		rowHeaderPanel.setLayout(new BorderLayout());
+		JTextArea r1 = new JTextArea("Data", 1, 10);
+		r1.setBackground(Color.LIGHT_GRAY);
+		r1.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		rowHeaderPanel.add(r1, BorderLayout.NORTH);
+		JTextArea r2 = new JTextArea("\nField\nDescription\n", 4, 10);
+		r2.setBackground(Color.LIGHT_GRAY);
+		r2.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		rowHeaderPanel.add(r2, BorderLayout.CENTER);
+		scrollPane.setRowHeaderView(rowHeaderPanel);
+
 		pane.add(scrollPane, BorderLayout.NORTH);
 		
 		// create the buttons for input done and cancel
@@ -185,13 +206,10 @@ public class RowDataInputFrame extends JInternalFrame
 
 			setColumnModel(cm);
 			
-			// set up column headers
-			ButtonTableHeader _bth = new ButtonTableHeader();
-			_bth.setTable(this);
-			setTableHeader(_bth);
-			
 			_colDefs = colDefs;
 			
+			// the second row contains a multi-line description,
+			// so make that row high enough to display it
 			setRowHeight(1, 60);
 
 			setRowSelectionAllowed(false);
@@ -253,9 +271,6 @@ public class RowDataInputFrame extends JInternalFrame
 			// for entries past the first one, use the default renderer
 			return new RowDataDescriptionRenderer();
 		}
-
-// Set up to allow popup editor window
-//????
 
 		// set up to validate data when user finishes editing
 		public void setValueAt(Object newValueString, int row, int col) {
@@ -322,7 +337,7 @@ public class RowDataInputFrame extends JInternalFrame
 			Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 
 				JTextArea ta = new JTextArea((String)value, 4, 20);
-				ta.setBackground(Color.CYAN);
+				ta.setBackground(Color.LIGHT_GRAY);
 				return ta;
 			}
 	}
