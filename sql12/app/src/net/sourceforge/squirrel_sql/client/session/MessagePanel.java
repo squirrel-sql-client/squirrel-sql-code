@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Color;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.DataTruncation;
@@ -25,6 +26,7 @@ import java.sql.SQLException;
 import java.sql.SQLWarning;
 
 import javax.swing.JTextArea;
+import javax.swing.MenuElement;
 import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -51,7 +53,7 @@ class MessagePanel extends JTextArea implements IMessageHandler
 	private final IApplication _app;
 
 	/** Popup menu for this component. */
-	private TextPopupMenu _popupMenu = new TextPopupMenu();
+	private TextPopupMenu _popupMenu = new MessagePanelPopupMenu();
 
     /**
      * Memorize if a error occured and foreground color was changed.
@@ -227,21 +229,6 @@ class MessagePanel extends JTextArea implements IMessageHandler
 	 */
 	private void addLine(String line)
 	{
-		//  If line starts with one of the keywords, change back or foreground color,
-//		if (line.startsWith("Data Tr")
-//			|| line.startsWith("Error: ")
-//			|| line.startsWith("Warning"))
-//		{
-//			setBackground(Color.RED);
-//			_errOccured = true;
-//		}
-//		//  else reset the back or foreground color.
-//		else if (_errOccured)
-//		{
-//			setBackground(Color.WHITE);
-//			_errOccured = false;
-//		}
-
 		if (getDocument().getLength() > 0)
 		{
 			append("\n");
@@ -249,5 +236,33 @@ class MessagePanel extends JTextArea implements IMessageHandler
 		append(line);
 		final int len = getDocument().getLength();
 		select(len, len);
+	}
+
+	/**
+	 * Popup menu for this message panel.
+	 */
+	private class MessagePanelPopupMenu extends TextPopupMenu
+	{
+		public MessagePanelPopupMenu()
+		{
+			super();
+
+			// Substitute our "Clear" action
+			setItemAction(IOptionTypes.CLEAR, new MessagePanelClearAction());
+		}
+
+		/**
+		 * Class handles clearing the message area. Resets the background
+		 * colour (to get rid of error msg colour) as well as clearing
+		 * the text.
+		 */
+		private class MessagePanelClearAction extends ClearAction
+		{
+			public void actionPerformed(ActionEvent evt)
+			{
+				super.actionPerformed(evt);
+				MessagePanel.this.setBackground(Color.white);
+			}
+		}
 	}
 }
