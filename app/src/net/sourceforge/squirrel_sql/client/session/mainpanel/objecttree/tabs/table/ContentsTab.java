@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -534,7 +535,11 @@ public class ContentsTab extends BaseTableTab
 		// on the data type, and whether it is NULL or not.
 		String setClause = getSetClause(colDefs, col, newValue);
 
-		// we do not know how to set some fields, so...
+		// we do not know how to set some fields,
+		// but we should never see this because the changeUnderlyingValueAt method
+		// in DataSetViewerEditableTablePanel checks for this condition and
+		// does not call this (general, text-based) update method if the
+		// DataType does not support it.
 		if (setClause == null)
 			return "The '" + colDefs[col].getLabel() + "' column is a type that Squirrel does not know how to set";
 
@@ -595,9 +600,6 @@ public class ContentsTab extends BaseTableTab
 		StringBuffer whereClause = new StringBuffer("");
 
 		for (int i=0; i< colDefs.length; i++) {
-			// do different things depending on data type
-
-			String clause = null;
 
 			// for the column that is being changed, use the value
 			// passed in by the caller (which may be either the
@@ -610,101 +612,9 @@ public class ContentsTab extends BaseTableTab
 			if (value != null && value.toString().equals("<null>"))
 				value = null;
 
-			String columnLabel = colDefs[i].getLabel();
+			// do different things depending on data type
+			String clause = CellComponentFactory.getWhereClauseValue(colDefs[i], value);	
 
-			switch (colDefs[i].getSqlType())
-			{
-				case Types.NULL:	// should never happen
-					//??
-					break;
-
-				// TODO: When JDK1.4 is the earliest JDK supported
-				// by Squirrel then remove the hardcoding of the
-				// boolean data type.
-				case Types.BIT:
-				case 16:
-//				case Types.BOOLEAN:
-					//??
-					break;
-
-				case Types.TIME :
-					//??
-					break;
-
-				case Types.DATE :
-					//??
-					break;
-
-				case Types.TIMESTAMP :
-					//??
-					break;
-
-				case Types.BIGINT :
-					//??
-					break;
-
-				case Types.DOUBLE:
-				case Types.FLOAT:
-				case Types.REAL:
-					//??
-					break;
-
-				case Types.DECIMAL:
-				case Types.NUMERIC:
-					//??
-					break;
-
-				case Types.INTEGER:
-				case Types.SMALLINT:
-				case Types.TINYINT:
-					if (value == null || value.toString() == null || value.toString().length() == 0)
-						clause = columnLabel + " IS NULL";
-					else clause = columnLabel + "=" + value.toString();
-					break;
-
-				// TODO: Hard coded -. JDBC/ODBC bridge JDK1.4
-				// brings back -9 for nvarchar columns in
-				// MS SQL Server tables.
-				// -8 is ROWID in Oracle.
-				case Types.CHAR:
-				case Types.VARCHAR:
-				case Types.LONGVARCHAR:
-				case -9:
-				case -8:
-					if (value == null || value.toString() == null )
-						clause = columnLabel + " IS NULL";
-					else
-						clause = columnLabel + "='" + value.toString() + "'";
-					break;
-
-				case Types.BINARY:
-					//??
-					break;
-
-				case Types.VARBINARY:
-					//??
-					break;
-
-				case Types.LONGVARBINARY:
-					//??
-					break;
-
-				case Types.BLOB:
-					//??
-					break;
-
-				case Types.CLOB:
-					//??
-					break;
-
-				case Types.OTHER:
-					//??
-					break;
-
-				default:	// should never happen
-					//??
-					break;
-			}
 
 			if (clause != null)
 				if (whereClause.length() == 0)
@@ -735,107 +645,10 @@ public class ContentsTab extends BaseTableTab
 		Object colValue)
 	{
 
-		String clause = null;
+		String clause = CellComponentFactory.getSetClauseValue(colDefs[col], colValue);
 
-		String columnLabel = colDefs[col].getLabel();
-
-		switch (colDefs[col].getSqlType())
-		{
-			case Types.NULL:	// should never happen
-				//??
-				break;
-
-			// TODO: When JDK1.4 is the earliest JDK supported
-			// by Squirrel then remove the hardcoding of the
-			// boolean data type.
-			case Types.BIT:
-			case 16:
-//			case Types.BOOLEAN:
-				//??
-				break;
-
-			case Types.TIME :
-				//??
-				break;
-
-			case Types.DATE :
-				//??
-				break;
-
-			case Types.TIMESTAMP :
-				//??
-				break;
-
-			case Types.BIGINT :
-				//??
-				break;
-
-			case Types.DOUBLE:
-			case Types.FLOAT:
-			case Types.REAL:
-				//??
-				break;
-
-			case Types.DECIMAL:
-			case Types.NUMERIC:
-				//??
-				break;
-
-			case Types.INTEGER:
-			case Types.SMALLINT:
-			case Types.TINYINT:
-				if (colValue == null || colValue.toString() == null || colValue.toString().length() == 0)
-					clause = columnLabel + "=null ";
-				else clause = columnLabel + "=" + colValue.toString();
-				break;
-
-
-			// TODO: Hard coded -. JDBC/ODBC bridge JDK1.4
-			// brings back -9 for nvarchar columns in
-			// MS SQL Server tables.
-			// -8 is ROWID in Oracle.
-			case Types.CHAR:
-			case Types.VARCHAR:
-			case Types.LONGVARCHAR:
-			case -9:
-			case -8:
-				if (colValue == null || colValue.toString() == null )
-					clause = columnLabel + "=null ";
-				else
-					clause = columnLabel + "='" + colValue.toString() + "'";
-				break;
-
-			case Types.BINARY:
-				//??
-				break;
-
-			case Types.VARBINARY:
-				//??
-				break;
-
-			case Types.LONGVARBINARY:
-				//??
-				break;
-
-			case Types.BLOB:
-				//??
-				break;
-
-			case Types.CLOB:
-				//??
-				break;
-
-			case Types.OTHER:
-				//??
-				break;
-
-			default:	// should never happen
-				//??
-				break;
-		}
-
-		// insert the "WHERE" at the front if there is anything in the clause
-		if (clause.length() == 0)
+		// if column cannot be used in SET clause, return null
+		if (clause == null || clause.length() == 0)
 			return null;
 
 		return " SET " + clause;
