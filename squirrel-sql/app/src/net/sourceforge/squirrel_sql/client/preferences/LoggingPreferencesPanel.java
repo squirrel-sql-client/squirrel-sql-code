@@ -27,6 +27,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 
@@ -73,7 +75,7 @@ class LoggingPreferencesPanel implements IGlobalPreferencesPanel {
 			String DEBUG_JDBC = "JDBC Debug";
 			String TAB_HINT = "Logging and Debug settings";
 			String TAB_TITLE = "Logging/Debug";
-			String PERF_WARNING = "<HTML>Note: Turning on debug options will have performance implications.</HTML>";
+			String PERF_WARNING = "Note: Turning on debug options will have\nperformance implications.";
 		}
 
 		/** Application API. */
@@ -136,7 +138,7 @@ class LoggingPreferencesPanel implements IGlobalPreferencesPanel {
 			gbc.gridx = 0;
 			gbc.gridy = gbc.RELATIVE;
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
-			add(new JLabel(i18n.PERF_WARNING), gbc);
+			add(new MultipleLineLabel(i18n.PERF_WARNING), gbc);
 		}
 	}
 	

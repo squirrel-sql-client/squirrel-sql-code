@@ -34,6 +34,7 @@ import javax.swing.event.ChangeListener;
 
 import net.sourceforge.squirrel_sql.fw.gui.CharField;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
@@ -125,7 +126,7 @@ public class SQLPropertiesPanel
 			String TABLE = "Table";
 			String TEXT = "Text";
 			String STATEMENT_SEPARATOR = "Statement Separator:";
-			String PERF_WARNING = "<HTML><BR>Note: Settings marked with an hourglass will<BR>have performance implications.</HTML>";
+			String PERF_WARNING = "Note: Settings marked with an hourglass will have\nperformance implications.";
 			String SQL = "SQL";
 		}
 
@@ -259,7 +260,7 @@ public class SQLPropertiesPanel
 			gbc.gridx = 0;
 			gbc.gridy = gbc.RELATIVE;
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
-			add(new JLabel(i18n.PERF_WARNING), gbc);
+			add(new MultipleLineLabel(i18n.PERF_WARNING), gbc);
 		}
 
 		private class LimitRowsCheckBoxListener implements ChangeListener {

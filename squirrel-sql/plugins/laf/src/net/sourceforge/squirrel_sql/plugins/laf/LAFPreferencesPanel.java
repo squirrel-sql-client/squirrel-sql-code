@@ -42,7 +42,7 @@ import javax.swing.UIManager;
 import net.sourceforge.squirrel_sql.fw.gui.FontChooser;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.gui.LookAndFeelComboBox;
-import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
@@ -157,8 +157,7 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
 		interface i18n {
 			String LOOK_AND_FEEL = "Look and Feel:";
 			String THEME_PACK = "Theme Pack:";
-			String LAF_WARNING_1 = "Note: Controls may not be drawn correctly after changes";
-			String LAF_WARNING_2 = "in this panel until the application is restarted.";
+			String LAF_WARNING = "Note: Controls may not be drawn correctly after changes\nin this panel until the application is restarted.";
 			String TAB_TITLE = "L & F";
 			String TAB_HINT = "Look and Feel settings";
 			String LAF_LOC = "Look and Feel jars folder:";
@@ -167,7 +166,7 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
 		private LookAndFeelComboBox _lafCmb = new LookAndFeelComboBox();
 		private ThemePackComboBox _themePackCmb;
 
-		/** Button to elect font for menus. */
+		/** Button to select font for menus. */
 		private FontButton _menuFontBtn;
 		private FontButton _staticFontBtn;
 		private FontButton _otherFontBtn;
@@ -262,10 +261,7 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
 			++gbc.gridy;
 			gbc.gridx = 0;
 			gbc.gridwidth = gbc.REMAINDER;
-			add(new OutputLabel(i18n.LAF_WARNING_1), gbc);
-
-			++gbc.gridy;
-			add(new OutputLabel(i18n.LAF_WARNING_2), gbc);
+			add(new MultipleLineLabel(i18n.LAF_WARNING), gbc);
 		}
 
 		private JPanel createLookAndFeelPanel() {
