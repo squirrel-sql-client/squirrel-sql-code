@@ -7,6 +7,7 @@ Change Log
 
 Bug Fixes
 ------------
+- Windows batch file now allows for spaces in the classpath (Bruno Haas).
 - Windows batch file now passes the -classic flag  to the VM to stop
   plugins looking for files in the "Colin Bell" or "Johan Compagner"
   directories instead of the plugins private directory.
@@ -23,9 +24,9 @@ Bug Fixes
 - When adding aliases/drivers then select the newly added one in the list.
 - When deleting aliases/drivers then ensure that another one selected
   in the list.
-- longvarchars will also be displayed now instead of <null> (Johan Compagner)
-- JDBC drivers reloaded when they have been modified
-  through the maintenance window.
+- longvarchars will now be displayed instead of <null> (Johan Compagner)
+- JDBC drivers reloaded when they have been modified through the
+  maintenance window.
 - Keeping the state when refreshing the tree works now (Johan Compagner)
 
 Enhancements
