@@ -28,7 +28,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetModelJTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel;
 
@@ -122,7 +121,7 @@ public class OutputPropertiesPanel implements INewSessionPropertiesPanel, ISessi
 		private OutputTypeCombo _rowIdPriviligesCmb = new OutputTypeCombo();
 		private OutputTypeCombo _versionsCmb = new OutputTypeCombo();
 		private OutputTypeCombo _procColumnsCmb = new OutputTypeCombo();
-		private OutputConverterCombo _sqlCmb = new OutputConverterCombo();
+		private OutputTypeCombo _sqlCmb = new OutputTypeCombo();
 		private OutputTypeCombo _sqlMetaDataCmb = new OutputTypeCombo();
 
 		MyPanel() {
@@ -145,7 +144,7 @@ public class OutputPropertiesPanel implements INewSessionPropertiesPanel, ISessi
 			_rowIdPriviligesCmb.selectClassName(props.getRowIdOutputClassName());
 			_versionsCmb.selectClassName(props.getVersionsOutputClassName());
 			_procColumnsCmb.selectClassName(props.getProcedureColumnsOutputClassName());
-			_sqlCmb.selectClassName(props.getSqlOutputConverterClassName());
+			_sqlCmb.selectClassName(props.getSqlOutputResultSetClassName());
 			_sqlMetaDataCmb.selectClassName(props.getSqlOutputMetaDataClassName());
 		}
 
@@ -164,7 +163,7 @@ public class OutputPropertiesPanel implements INewSessionPropertiesPanel, ISessi
 			props.setRowIdOutputClassName(_rowIdPriviligesCmb.getSelectedClassName());
 			props.setVersionsOutputClassName(_versionsCmb.getSelectedClassName());
 			props.setProcedureColumnsOutputClassName(_procColumnsCmb.getSelectedClassName());
-			props.setSqlOutputConverterClassName(_sqlCmb.getSelectedClassName());
+			props.setSqlOutputResultSetClassName(_sqlCmb.getSelectedClassName());
 			props.setSqlOutputMetaDataClassName(_sqlMetaDataCmb.getSelectedClassName());
 		}
 
@@ -324,7 +323,7 @@ public class OutputPropertiesPanel implements INewSessionPropertiesPanel, ISessi
 		private final static class OutputType {
 			static final OutputType TEXT = new OutputType(i18n.TEXT, DataSetViewerTextPanel.class.getName());
 			static final OutputType TABLE = new OutputType(i18n.TABLE, DataSetViewerTablePanel.class.getName());
-			static final OutputType TABLE_CONVERTER = new OutputType(i18n.TABLE, DataSetModelJTableModel.class.getName());
+//			static final OutputType TABLE_CONVERTER = new OutputType(i18n.TABLE, DataSetModelJTableModel.class.getName());
 			private final String _name;
 			private final String _className;
 
@@ -368,25 +367,5 @@ public class OutputPropertiesPanel implements INewSessionPropertiesPanel, ISessi
 				super(title, SwingConstants.RIGHT);
 			}
 		}
-
-		private static final class OutputConverterCombo extends JComboBox {
-			OutputConverterCombo() {
-				super();
-				addItem(OutputType.TABLE_CONVERTER);
-			}
-
-			void selectClassName(String className) {
-				if (className.equals(DataSetModelJTableModel.class.getName())) {
-					setSelectedItem(OutputType.TABLE_CONVERTER);
-				} else {
-					//setSelectedItem(OutputType.TEXT);
-				}
-			}
-
-			String getSelectedClassName() {
-				return ((OutputType)getSelectedItem()).getPanelClassName();
-			}
-		}
-
 	}
 }

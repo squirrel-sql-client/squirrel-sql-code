@@ -76,8 +76,8 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo {
 				"getSqlLimitRows", "setSqlLimitRows");
 			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.SQL_NBR_ROWS_TO_SHOW, cls,
 				"getSqlNbrRowsToShow", "setSqlNbrRowsToShow");
-			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.SQL_OUTPUT_CONVERTER_CLASS_NAME, cls,
-				"getSqlOutputConverterClassName", "setSqlOutputConverterClassName");
+			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.SQL_OUTPUT_RESULTSET_CLASS_NAME, cls,
+				"getSqlOutputResultSetClassName", "setSqlOutputResultSetClassName");
 			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.SQL_OUTPUT_META_DATA_CLASS_NAME, cls,
 				"getSqlOutputMetaDataClassName", "setSqlOutputMetaDataClassName");
 			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.SQL_STATEMENT_SEPARATOR, cls,
