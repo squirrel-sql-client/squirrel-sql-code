@@ -271,7 +271,7 @@ public class CellComponentFactory {
 					_dataTypeObject.isEditableInPopup(value) == true) {
 					// Use a CYAN background to indicate that the cell is
 					// editable in the popup
-				   setBackground(Color.CYAN);
+				   setBackground(Color.cyan);
 			   }
 			   else {
 					// since the previous entry might have changed the color,
