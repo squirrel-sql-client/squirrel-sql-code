@@ -23,6 +23,12 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
+/**
+ * This implementation of <TT>IDataSet</TT> is used to display
+ * a <TT>ITableInfo</TT> object.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
 public class TableInfoDataSet implements IDataSet {
     /**
      * This interface defines locale specific strings. This should be
@@ -46,28 +52,39 @@ public class TableInfoDataSet implements IDataSet {
         String UNKNOWN = "<Unknown>";
     }
 
-    private final static String[] s_hdgs = new String[] {
-        i18n.ColumnHeadings.PROPERTY,
-        i18n.ColumnHeadings.VALUE,
-    };
+    private final static String EMPTY_STRING = "";
+
+    private final static String[] s_hdgs =
+        new String[] { i18n.ColumnHeadings.PROPERTY, i18n.ColumnHeadings.VALUE, };
 
     private DataSetDefinition _dsDef;
 
     private int _curRow = -1;
 
-    private String[][] _data = new String[][] {
-        {i18n.RowHeadings.NAME, null},
-        {i18n.RowHeadings.QUALIFIED_NAME, null},
-        {i18n.RowHeadings.CATALOG, null},
-        {i18n.RowHeadings.SCHEMA, null},
-        {i18n.RowHeadings.TYPE, null},
-        {i18n.RowHeadings.REMARKS, null},
-    };
+    private String[][] _data = new String[][] { { i18n.RowHeadings.NAME, null }, {
+            i18n.RowHeadings.QUALIFIED_NAME, null }, {
+            i18n.RowHeadings.CATALOG, null }, {
+            i18n.RowHeadings.SCHEMA, null }, {
+            i18n.RowHeadings.TYPE, null }, {
+            i18n.RowHeadings.REMARKS, null }, };
 
-    public TableInfoDataSet(ITableInfo ti) throws DataSetException {
+    /**
+     * Default ctor.
+     */
+    public TableInfoDataSet() throws DataSetException {
+        this(null);
+    }
+
+    /**
+     * Ctor specifying the <TT>ITableInfo</TT> to be displayed.
+     *
+     * @param   ti  The <TT>ITableInfo</TT> to be displayed.
+     */
+    public TableInfoDataSet(ITableInfo ti)
+        throws DataSetException {
         super();
         _dsDef = new DataSetDefinition(createColumnDefinitions());
-        load(ti);
+        setTableInfo(ti);
     }
 
     public final int getColumnCount() {
@@ -76,6 +93,16 @@ public class TableInfoDataSet implements IDataSet {
 
     public DataSetDefinition getDataSetDefinition() {
         return _dsDef;
+    }
+
+    public synchronized void setTableInfo(ITableInfo ti) {
+        if (ti != null) {
+            load(ti);
+        } else {
+            for (int i = 0; i < _data.length; ++i) {
+                _data[i][1] = EMPTY_STRING;
+            }
+        }
     }
 
     public synchronized boolean next(IMessageHandler msgHandler) {
@@ -110,3 +137,4 @@ public class TableInfoDataSet implements IDataSet {
         _curRow = -1;
     }
 }
+
