@@ -187,11 +187,6 @@ public class ErrorDialog extends JDialog
 				GUIUtils.centerWithinParent(ErrorDialog.this);
 			}
 		});
-//		SwingUtilities.invokeLater(new Runnable() {
-//			public void run() {
-//				scroller.getViewport().setViewPosition(new Point(0,0));
-//			}
-//		});
 	}
 
 	private static Color getTextAreaBackgroundColor()
@@ -209,6 +204,7 @@ public class ErrorDialog extends JDialog
 			super();
 			setText(msg);
 			setBackground(ErrorDialog.this.getTextAreaBackgroundColor());
+			setRows(3);
 			Dimension dim = getPreferredSize();
 			dim.width = PREFERRED_WIDTH;
 			setPreferredSize(dim);
@@ -227,6 +223,7 @@ public class ErrorDialog extends JDialog
 			if (th != null)
 			{
 				setText(Utilities.getStackTrace(th));
+				setRows(10);
 			}
 		}
 	}
