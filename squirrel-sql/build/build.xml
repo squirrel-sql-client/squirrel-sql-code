@@ -183,16 +183,19 @@
     -->
     <target name="compile_plugins" depends="compile_app">
         <antcall target="build_plugin">
-            <param name="p_internal_name" value="laf"/>
+            <param name="p_internal_name" value="dataimport"/>
         </antcall>
         <antcall target="build_plugin">
-            <param name="p_internal_name" value="sqlscript"/>
+            <param name="p_internal_name" value="dbinfo"/>
         </antcall>
         <antcall target="build_plugin">
             <param name="p_internal_name" value="favs"/>
         </antcall>
         <antcall target="build_plugin">
-            <param name="p_internal_name" value="dbinfo"/>
+            <param name="p_internal_name" value="laf"/>
+        </antcall>
+        <antcall target="build_plugin">
+            <param name="p_internal_name" value="sqlscript"/>
         </antcall>
     </target>
 
