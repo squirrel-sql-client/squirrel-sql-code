@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+0.15
+====
+
+Bug Fixes
+---------
+- Syntax highlighting now works if token ends with a ';'.
+
 
 0.11
 ====
