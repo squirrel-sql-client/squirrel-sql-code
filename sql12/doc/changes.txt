@@ -23,6 +23,11 @@ Bug Fixes
   the columns had been resequenced by dragging
   (Johnathan James).
   
+Other
+-----
+- No longer print error message in the log
+  if a JDBC driver isn't available.
+
 
 1.1final1
 ========

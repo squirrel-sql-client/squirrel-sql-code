@@ -79,51 +79,13 @@ public class DataCache
 		{
 			throw new IllegalArgumentException("Null SQLDriverManager passed");
 		}
-//		if (app.getSQLDriverManager() == null)
-//		{
-//			throw new IllegalStateException("No SQLDriverManager in IApplication");
-//		}
 
 		_driverMgr = driverMgr;
 
-		IMessageHandler myMsgHandler =
-			msgHandler != null ? msgHandler : NullMessageHandler.getInstance();
+		final IMessageHandler myMsgHandler = msgHandler != null ? msgHandler : NullMessageHandler.getInstance();
 		loadDrivers(rsrc, myMsgHandler);
 		loadAliases(myMsgHandler);
 	}
-
-	/**
-	 * Save cached objects. JDBC drivers are saved to
-	 * <CODE>ApplicationFiles.getUserDriversFileName()</CODE> and aliases are
-	 * saved to <CODE>ApplicationFiles.getUserAliasesFileName()</CODE>.
-	 */
-//	public void save()
-//	{
-//		final ApplicationFiles appFiles = new ApplicationFiles();
-//		final File driversFile = appFiles.getDatabaseDriversFile();
-//		try
-//		{
-//			saveDrivers(driversFile);
-//		}
-//		catch (Exception ex)
-//		{
-//			String msg = "Error occured saving drivers to " + driversFile.getPath();
-//			s_log.error(msg, ex);
-//			_app.showErrorDialog(msg, ex);
-//		}
-//
-//		final File aliasesFile = appFiles.getDatabaseAliasesFile();
-//		try
-//		{
-//			saveAliases(aliasesFile);
-//		}
-//		catch (Exception ex)
-//		{
-//			String msg = "Error occured saving aliases to " + aliasesFile.getPath();
-//			s_log.error(msg, ex);
-//			_app.showErrorDialog(msg, ex);
-//		}
-//	}
 
 	/**
 	 * Save JDBC drivers to the passed file as XML.
@@ -189,16 +151,7 @@ public class DataCache
 	public void removeDriver(ISQLDriver sqlDriver)
 	{
 		_cache.remove(SQL_DRIVER_IMPL, sqlDriver.getIdentifier());
-//		try
-//		{
-			_driverMgr.unregisterSQLDriver(sqlDriver);
-//		}
-//		catch (Exception ex)
-//		{
-//			String msg = "Error occured removing driver from cache";
-//			s_log.error(msg, ex);
-//			_app.showErrorDialog(msg, ex);
-//		}
+		_driverMgr.unregisterSQLDriver(sqlDriver);
 	}
 
 	public Iterator drivers()
@@ -320,33 +273,21 @@ public class DataCache
 
 	public void loadDefaultDrivers(URL url) throws IOException, XMLException
 	{
-//		final URL url = rsrc.getDefaultDriversUrl();
-//		try
-//		{
-			InputStreamReader isr = new InputStreamReader(url.openStream());
-			try
-			{
-				_cache.load(isr, null, true);
-			}
-			catch (DuplicateObjectException ex)
-			{
-				// If this happens then this is a programming error as we said
-				// in the above call to ingore these errors.
-				s_log.error("Received an unexpected DuplicateObjectException", ex);
-			}
-			finally
-			{
-				isr.close();
-			}
-//		}
-//		catch (Exception ex)
-//		{
-//			String msg = "Error loading default driver file: " +
-//							url != null ? url.toExternalForm() : "";
-//			s_log.error(msg, ex);
-//			msgHandler.showErrorMessage(msg);
-//			msgHandler.showErrorMessage(ex);
-//		}
+		InputStreamReader isr = new InputStreamReader(url.openStream());
+		try
+		{
+			_cache.load(isr, null, true);
+		}
+		catch (DuplicateObjectException ex)
+		{
+			// If this happens then this is a programming error as we said
+			// in the above call to ingore these errors.
+			s_log.error("Received an unexpected DuplicateObjectException", ex);
+		}
+		finally
+		{
+			isr.close();
+		}
 	}
 
 	private void registerDrivers(IMessageHandler msgHandler)
@@ -359,13 +300,8 @@ public class DataCache
 			{
 				driverMgr.registerSQLDriver(sqlDriver);
 			}
-			catch (ClassNotFoundException ex)
+			catch (ClassNotFoundException ignore)
 			{
-				s_log.warn(
-					"Could not find JDBC driver class for "
-						+ sqlDriver.getName()
-						+ ": "
-						+ sqlDriver.getDriverClassName());
 			}
 			catch (Throwable th)
 			{
