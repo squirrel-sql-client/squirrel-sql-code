@@ -40,9 +40,14 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.CreateAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.DeleteAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyAliasAction;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
-
+/**
+ * This window shows all the database aliases defined in the system.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
 public class AliasesToolWindow extends BaseToolWindow
 {
+	/** Application API. */
 	private IApplication _app;
 
 	/** User Interface facory. */
@@ -229,5 +234,4 @@ public class AliasesToolWindow extends BaseToolWindow
 			_tb.add(_deleteAliasAction);
 		}
 	}
-
 }

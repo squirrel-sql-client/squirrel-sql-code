@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui.sql;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,30 +17,31 @@ package net.sourceforge.squirrel_sql.fw.gui.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.Driver;
 import java.sql.SQLException;
+import java.util.EventObject;
 
-import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-
+import net.sourceforge.squirrel_sql.fw.gui.sql.event.IDriverPropertiesPanelListener;
+/**
+ * This dialog allows the user to review and maintain
+ * the properties for a JDBC driver.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
 public class DriverPropertiesDialog extends JDialog
 {
-	private final Driver _driver;
-	private final String _url;
+	private DriverPropertiesPanel _propsPnl;
+	private IDriverPropertiesPanelListener _propsPnlLis;
 
 	public DriverPropertiesDialog(Dialog owner, Driver driver, String url)
 		throws SQLException
 	{
-		super(owner);
+		super(owner, "Driver Properties");
 		if (driver == null)
 		{
 			throw new IllegalArgumentException("Driver == null");
@@ -50,15 +51,13 @@ public class DriverPropertiesDialog extends JDialog
 			throw new IllegalArgumentException("url == null");
 		}
 
-		_driver = driver;
-		_url = url;
-		createUserInterface();
+		createUserInterface(driver, url);
 	}
 
 	public DriverPropertiesDialog(Frame owner, Driver driver, String url)
 		throws SQLException
 	{
-		super(owner);
+		super(owner, "Driver Properties");
 		if (driver == null)
 		{
 			throw new IllegalArgumentException("Driver == null");
@@ -68,52 +67,29 @@ public class DriverPropertiesDialog extends JDialog
 			throw new IllegalArgumentException("url == null");
 		}
 
-		_driver = driver;
-		_url = url;
-		createUserInterface();
+		createUserInterface(driver, url);
 	}
 
-	private void createUserInterface() throws SQLException
+	public void dispose()
 	{
-		final JPanel pnl = new JPanel(new BorderLayout());
-		setContentPane(pnl);
-		DriverPropertiesTable tbl = new DriverPropertiesTable(_driver, _url);
-		pnl.add(new JScrollPane(tbl), BorderLayout.CENTER);
-		pnl.add(createButtonsPanel(), BorderLayout.SOUTH);
+		if (_propsPnlLis != null)
+		{
+			_propsPnl.removeListener(_propsPnlLis);
+			_propsPnlLis = null;
+		}
+		super.dispose();
+	}
+
+	private void createUserInterface(Driver driver, String url)
+		throws SQLException
+	{
+		_propsPnl = new DriverPropertiesPanel(driver, url);
+		_propsPnlLis = new PropertiesPanelListener();
+		_propsPnl.addListener(_propsPnlLis);
+		setContentPane(_propsPnl);
 		pack();
 		GUIUtils.centerWithinParent(this);
 		setResizable(true);
-	}
-
-	private JPanel createButtonsPanel()
-	{
-		final JPanel pnl = new JPanel();
-
-		final JButton okBtn = new JButton("OK");
-		okBtn.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent evt)
-			{
-				performOk();
-			}
-		});
-
-		final JButton closeBtn = new JButton("Close");
-		closeBtn.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent evt)
-			{
-				performClose();
-			}
-		});
-
-		pnl.add(okBtn);
-		pnl.add(closeBtn);
-
-		GUIUtils.setJButtonSizesTheSame(new JButton[] {okBtn, closeBtn});
-		getRootPane().setDefaultButton(okBtn);
-
-		return pnl;
 	}
 
 	private void performClose()
@@ -125,5 +101,27 @@ public class DriverPropertiesDialog extends JDialog
 	{
 	}
 
+	private final class PropertiesPanelListener implements IDriverPropertiesPanelListener
+	{
+		/**
+		 * The OK button was pressed.
+		 *
+		 * @param	evt		Describes this event.
+		 */
+		public void okPressed(EventObject evt)
+		{
+			performOk();
+		}
+
+		/**
+		 * The Close button was pressed.
+		 *
+		 * @param	evt		Describes this event.
+		 */
+		public void closePressed(EventObject evt)
+		{
+			performClose();
+		}
+	}
 }
 

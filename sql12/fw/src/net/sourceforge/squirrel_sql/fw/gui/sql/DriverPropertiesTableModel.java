@@ -72,11 +72,6 @@ public class DriverPropertiesTableModel extends AbstractTableModel
 		return 4;
 	}
 
-//		public String getColumnName(int col)
-//		{
-//			return _colDefs != null ? _colDefs[col].getLabel() : super.getColumnName(col);
-//		}
-
 	public final void load(Driver driver, String url)
 		throws SQLException
 	{

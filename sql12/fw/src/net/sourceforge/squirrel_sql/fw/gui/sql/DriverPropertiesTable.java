@@ -50,27 +50,6 @@ public class DriverPropertiesTable extends JTable
 		super(new DriverPropertiesTableModel(driver, url));
 		init();
 	}
-//    
-//		public TableCellEditor getCellEditor(int row, int col)
-//		{
-//			if (col != 2)
-//			{
-//				return super.getCellEditor(row, col);
-//			}
-//
-//			DriverPropertyInfo prop = getTypedModel().getDriverPropertyInfo()[row];
-//			if (prop.choices != null && prop.choices.length > 0)
-//			{
-//				final JComboBox cmb = new JComboBox(prop.choices);
-//				if (prop.value != null)
-//				{
-//					cmb.setSelectedItem(prop.value);
-//				}
-//				return new DefaultCellEditor(cmb);
-//			}
-//
-//			return super.getCellEditor(row, col);
-//		}
 
 	public DriverPropertiesTableModel getTypedModel()
 	{
@@ -142,21 +121,5 @@ public class DriverPropertiesTable extends JTable
 			return super.getTableCellEditorComponent(table, value, isSelected, row, col);
 		}
 	}
-
-//		private final class CellRenderer extends DefaultTableCellRenderer
-//		{
-//			private final int _idx;
-//	
-//			CellRenderer(int idx)
-//			{
-//				super();
-//				_idx = idx;
-//			}
-//	
-//			public void setValue(Object value)
-//			{
-//				super.setValue(getColumnRenderer(_idx).renderObject(value, _idx));
-//			}
-//		}
 }
 
