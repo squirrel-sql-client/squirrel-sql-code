@@ -126,6 +126,7 @@ final class MainFrameMenuBar extends JMenuBar {
         return _sessionMenu;
     }
 
+
     void addToMenu(int menuId, JMenu menu) throws IllegalArgumentException {
         if (menu == null) {
             throw new IllegalArgumentException("Null JMenu passed");
@@ -140,7 +141,7 @@ final class MainFrameMenuBar extends JMenuBar {
                 break;
             }
             default: {
-                // How do we want to hanle this??
+                throw new IllegalArgumentException("Invalid menuId passed: " + menuId);
             }
         }
     }
@@ -159,7 +160,7 @@ final class MainFrameMenuBar extends JMenuBar {
                 break;
             }
             default: {
-                // How do we want to hanle this??
+                throw new IllegalArgumentException("Invalid menuId passed: " + menuId);
             }
         }
     }
