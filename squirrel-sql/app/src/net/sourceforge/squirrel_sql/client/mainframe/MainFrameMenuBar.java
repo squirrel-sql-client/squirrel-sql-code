@@ -19,7 +19,6 @@ package net.sourceforge.squirrel_sql.client.mainframe;
  */
 import javax.swing.Action;
 import javax.swing.JDesktopPane;
-import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
