@@ -61,7 +61,14 @@ public interface IDataSetUpdateableTableModel extends IDataSetUpdateableModel
 	 * so they are either all done or all not done.
 	 */
 	public String deleteRows(Object[][] rowData, ColumnDisplayDefinition[] colDefs);
-	
+
+
+	/**
+	 * Let fw get at the default values for the columns in the table
+	 * for use in creating a new row to insert.
+	 */
+	public String[] getDefaultValues(ColumnDisplayDefinition[] colDefs);
+		
 	/**
 	 * Insert a row into the DB.
 	 * If the insert succeeds this returns a null string.
