@@ -1,12 +1,25 @@
 SQuirreL SQL Client Change Log
 ==============================
 
-1.1final
-========
+1.1rc2
+======
 
 Enhancements
 ------------
+- Allow for some drivers that don't return 'guest'
+  as a schema for Microsoft SQL and Sybase.
+- Catalogs and Schemas tabs added to the session
+  node.
+- Catalogs and schemas added to session dump.
 - Drivers and Aliases windows can now be closed.
+
+Bug Fixes
+---------
+- Allow for spaces in %CLASSPATH% in
+  squirrel-sql.bat (again).
+- Save and restore current catalog, transaction
+  isolation and auto-commit settings when
+  executing the Session/Reconnect commmand.
 
 
 1.1rc1
