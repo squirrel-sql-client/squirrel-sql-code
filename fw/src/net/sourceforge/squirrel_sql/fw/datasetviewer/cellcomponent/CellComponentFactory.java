@@ -9,7 +9,12 @@ import javax.swing.JTextArea;
 import java.sql.Types;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+
 import java.awt.Color;
+ 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import java.util.HashMap;
 
@@ -296,7 +301,7 @@ public class CellComponentFactory {
 
 		if (dataTypeObject != null) {
 			// we have an appropriate data type object
-			return dataTypeObject.readResultSet(colDef, rs, index);
+			return dataTypeObject.readResultSet(rs, index);
 		}
 
 		//?? Best guess: read object?
@@ -323,7 +328,7 @@ public class CellComponentFactory {
 
 		if (dataTypeObject != null) {
 			// we have an appropriate data type object
-			return dataTypeObject.getWhereClauseValue(colDef, value);
+			return dataTypeObject.getWhereClauseValue(value);
 		}
 		
 		// if no object for this data type, then cannot use value in where clause
@@ -348,10 +353,78 @@ public class CellComponentFactory {
 		// called in that case.
 		if (dataTypeObject != null) {
 			// we have an appropriate data type object
-			dataTypeObject.setPreparedStatementValue(colDef, pstmt, value);
+			dataTypeObject.setPreparedStatementValue(pstmt, value);
 		}
 	}
+	
+	
+	/*
+	 * File IO related functions
+	 */
+	 
+	 
+	 /**
+	  * Say whether or not object can be exported to and imported from
+	  * a file.  We put both export and import together in one test
+	  * on the assumption that all conversions can be done both ways.
+	  */
+	 public static boolean canDoFileIO(ColumnDisplayDefinition colDef) {
 
+		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
+		
+		// if no DataType object, then there is nothing to handle File IO,
+		// so cannot do it
+		if (dataTypeObject == null)
+			return false;
+
+		// let DataType object speak for itself
+		return dataTypeObject.canDoFileIO();
+	 }
+	 
+	 /**
+	  * Read a file and construct a valid object from its contents.
+	  * Errors are returned by throwing an IOException containing the
+	  * cause of the problem as its message.
+	  */
+	 public static String importObject(ColumnDisplayDefinition colDef,
+	 	FileInputStream inStream)
+	 	throws IOException {
+
+		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
+		
+		// if no DataType object, then there is nothing to handle File IO,
+		// so cannot do it
+		if (dataTypeObject == null)
+			throw new IOException(
+				"No internal Data Type class for this column's SQL type");
+
+		// let DataType object speak for itself
+		return dataTypeObject.importObject(inStream);	 		
+	 }
+
+	 
+	 /**
+	  * Given a text string from the Popup, validate that it makes sense
+	  * for the given DataType, then write it out to a file in the
+	  * appropriate format.
+	  * Errors are returned by throwing an IOException containing the
+	  * cause of the problem as its message.
+	  */
+	 public static void exportObject(ColumnDisplayDefinition colDef,
+	 	FileOutputStream outStream, String text)
+	 	throws IOException {
+
+		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
+		
+		// if no DataType object, then there is nothing to handle File IO,
+		// so cannot do it
+		if (dataTypeObject == null)
+			throw new IOException(
+				"No internal Data Type class for this column's SQL type");
+
+		// let DataType object speak for itself
+		dataTypeObject.exportObject(outStream, text);	 		
+	 }
 
 
 
