@@ -319,7 +319,12 @@ public class CellComponentFactory {
 	 */
 	public static boolean needToReRead(ColumnDisplayDefinition colDef, Object originalValue) {
 		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
-		return dataTypeObject.needToReRead(originalValue);
+		
+		if (dataTypeObject != null)
+			return dataTypeObject.needToReRead(originalValue);
+		
+		// default - if we do not know the data type, then we cannot re-read it
+		return false;
 	};
 	
 	/**
