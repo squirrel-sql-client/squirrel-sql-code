@@ -55,6 +55,7 @@ import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -450,7 +451,7 @@ public class HelpViewerWindow extends JFrame
 				if (docURL != null)
 				{
 					String docTitle = dn.toString();
-					if (Utilities.isStringEmpty(docTitle))
+					if (StringUtilities.isEmpty(docTitle))
 					{
 						docTitle = docURL.toExternalForm();
 					}

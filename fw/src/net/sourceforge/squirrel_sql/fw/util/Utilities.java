@@ -22,8 +22,6 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -166,53 +164,28 @@ public class Utilities
 	 * select * from tab01
 	 * [/pre]
 	 *
+	 * @deprecated	Use <tt>StringUtilities.cleanString(String)</tt> instead.
+	 *
 	 * @param	str	String to be cleaned.
 	 *
 	 * @return	Cleaned string.
 	 */
 	public static String cleanString(String str)
 	{
-		StringBuffer buf = new StringBuffer(str.length());
-		char lastCh = ' ';
-
-		for (int i = 0, limit = str.length(); i < limit; ++i)
-		{
-			char ch = str.charAt(i);
-
-			if (Character.isWhitespace(ch))
-			{
-				if (!Character.isWhitespace(lastCh))
-				{
-					buf.append(' ');
-				}
-			}
-			else
-			{
-				buf.append(ch);
-			}
-
-			lastCh = ch;
-		}
-
-		return buf.toString();
+		return StringUtilities.cleanString(str);
 	}
 
 	/**
 	 * Return whether the 2 passed strings are equal. This function
 	 * allows for <TT>null</TT> strings. If <TT>s1</TT> and <TT>s1</TT> are
 	 * both <TT>null</TT> they are considered equal.
+	 *
+	 * @deprecated	Use <tt>StringUtilities.areStringsEqual(String, String)</tt>
+	 *				instead.
 	 */
 	public static boolean areStringsEqual(String s1, String s2)
 	{
-		if (s1 == null && s2 == null)
-		{
-			return true;
-		}
-		if (s1 != null)
-		{
-			return s1.equals(s2);
-		}
-		return s2.equals(s1);
+		return StringUtilities.areStringsEqual(s1, s2);
 	}
 
 	/**
@@ -263,9 +236,18 @@ public class Utilities
 		return fileName;
 	}
 
+	/**
+	 * Return <tt>true</tt> if the passed string is <tt>null</tt> or empty.
+	 *
+	 * @deprecated	Use <tt>StringUtilities.isEmpty(String)</tt> instead.
+	 *
+	 * @param	str		String to be tested.
+	 *
+	 * @return	<tt>true</tt> if the passed string is <tt>null</tt> or empty.
+	 */
 	public static boolean isStringEmpty(String str)
 	{
-		return str == null || str.length() == 0;
+		return StringUtilities.isEmpty(str);
 	}
 
 	public static String formatSize(long longSize)
@@ -299,6 +281,9 @@ public class Utilities
 	 * Split a string based on the given delimiter, but don't remove
 	 * empty elements.
 	 *
+	 * @deprecated	Use <tt>StringUtilities.split(String, char)</tt>
+	 *				instead.
+	 *
 	 * @param	str			The string to be split.
 	 * @param	delimiter	Split string based on this delimiter.
 	 *
@@ -306,12 +291,15 @@ public class Utilities
 	 */
 	public static String[] splitString(String str, char delimiter)
 	{
-		return splitString(str, delimiter, false);
+		return StringUtilities.split(str, delimiter);
 	}
 
 	/**
 	 * Split a string based on the given delimiter, optionally removing
 	 * empty elements.
+	 *
+	 * @deprecated	Use <tt>StringUtilities.split(String, char, boolean)</tt>
+	 *				instead.
 	 *
 	 * @param	str			The string to be split.
 	 * @param	delimiter	Split string based on this delimiter.
@@ -319,28 +307,9 @@ public class Utilities
 	 *
 	 * @return	Array of split strings. Guaranteeded to be not null.
 	 */
-	public static String[] splitString(String str, char delimiter, boolean removeEmpty)
+	public static String[] splitString(String str, char delimiter,
+									   	boolean removeEmpty)
 	{
-		// Return empty list if source string is empty.
-		final int len = (str == null) ? 0 : str.length();
-		if (len == 0)
-		{
-			return new String[0];
-		}
-
-		final List result = new ArrayList();
-		String elem = null;
-		int i = 0, j = 0;
-		while (j != -1 && j < len)
-		{
-			j = str.indexOf(delimiter,i);
-			elem = (j != -1) ? str.substring(i, j) : str.substring(i);
-			i = j + 1;
-			if (!removeEmpty || !(elem == null || elem.length() == 0))
-			{
-				result.add(elem);
-			}
-		}
-		return (String[])result.toArray(new String[result.size()]);
+		return StringUtilities.split(str, delimiter, removeEmpty);
 	}
 }

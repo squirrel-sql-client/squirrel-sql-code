@@ -15,6 +15,8 @@ Enhancements
 
 Bug Fixes
 ---------
+- Fix manifest file so the the squirrel-sql.jar file is again executable (Denis
+  Lundberg).
 - Fix resource strings (Dennis Lundberg).
 - Do a better job of handling MS SQL server catalog names that contain periods.
 

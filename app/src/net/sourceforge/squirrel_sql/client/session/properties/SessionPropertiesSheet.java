@@ -108,12 +108,12 @@ public class SessionPropertiesSheet extends BaseSheet
 	 * Set title of this frame. Ensure that the title label
 	 * matches the frame title.
 	 *
-	 * @param	title	New title text.
+	 * @param	newTitle	New title text.
 	 */
-	public void setTitle(String title)
+	public void setTitle(String newTitle)
 	{
-		super.setTitle(title);
-		_titleLbl.setText(title);
+		super.setTitle(newTitle);
+		_titleLbl.setText(newTitle);
 	}
 
 	public ISession getSession()
