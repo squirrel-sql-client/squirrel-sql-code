@@ -90,10 +90,6 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 		setEditable(false);
 		addTreeExpansionListener(new MyExpansionListener());
 
-		// Register so that we can display different tooltips depending
-		// which entry in tree mouse is over.
-		ToolTipManager.sharedInstance().registerComponent(this);
-
 		clearSelection();
 		addSelectionRow(0);
 
@@ -121,6 +117,25 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 				}
 			});
 		}
+
+	/**
+	 * Component has been added to its parent.
+	 */
+	public void addNotify() {
+		super.addNotify();
+		// Register so that we can display different tooltips depending
+		// which entry in list mouse is over.
+		ToolTipManager.sharedInstance().registerComponent(this);
+	}
+
+	/**
+	 * Component has been removed from its parent.
+	 */
+	public void removeNotify() {
+		// Don't need tooltips any more.
+		ToolTipManager.sharedInstance().unregisterComponent(this);
+		super.removeNotify();
+	}
 
 	void refresh() throws BaseSQLException
 	{

@@ -94,11 +94,13 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 			String DEBUG_JDBC = "JDBC Debug (can slow application)";
 			String LOGIN_TIMEOUT = "Login Timeout (Seconds):";
 			String SHOW_CONTENTS = "Show Window Contents While Dragging";
+			String SHOW_MAIN_STATUS_BAR = "Show Main Status Bar";
 			String SHOW_TOOLTIPS = "Show Tooltips";
 			String TAB_HINT = "General";
 			String TAB_TITLE = "General";
 		}
 
+		private JCheckBox _showMainStatusBar = new JCheckBox(i18n.SHOW_MAIN_STATUS_BAR);
 		private JCheckBox _showContents = new JCheckBox(i18n.SHOW_CONTENTS);
 		private JCheckBox _showToolTips = new JCheckBox(i18n.SHOW_TOOLTIPS);
 		private JCheckBox _useScrollableTabbedPanes = new JCheckBox("Use Scrollable Tabbed Panes (JDK1.4 and above)");
@@ -116,6 +118,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 			_showContents.setSelected(prefs.getShowContentsWhenDragging());
 			_showToolTips.setSelected(prefs.getShowToolTips());
 			_useScrollableTabbedPanes.setSelected(prefs.useScrollableTabbedPanes());
+			_showMainStatusBar.setSelected(prefs.getShowMainStatusBar());
 
 			_executionLogFileNameLbl.setText(appFiles.getExecutionLogFile().getPath());
 
@@ -127,6 +130,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 			prefs.setShowContentsWhenDragging(_showContents.isSelected());
 			prefs.setShowToolTips(_showToolTips.isSelected());
 			prefs.setUseScrollableTabbedPanes(_useScrollableTabbedPanes.isSelected());
+			prefs.setShowMainStatusBar(_showMainStatusBar.isSelected());
 		}
 
 		private void createUserInterface() {
@@ -157,6 +161,8 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 			pnl.add(_showToolTips, gbc);
 			++gbc.gridy;
 			pnl.add(_useScrollableTabbedPanes, gbc);
+			++gbc.gridy;
+			pnl.add(_showMainStatusBar, gbc);
 
 			return pnl;
 		}

@@ -30,5 +30,19 @@ public class ObjectTree extends JTree {
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(ObjectTree.class);
 
+	/** Model for this tree. */
+	private ObjectTreeModel _model;
+
+	/**
+	 * Default ctor.
+	 */
+	ObjectTree() {
+		super();
+		_model = new ObjectTreeModel();
+//		((BaseNode)_model.getRoot()).addBaseNodeExpandListener(this);
+//		_model.addTreeLoadedListener(this);
+//		_model.fillTree();
+		setModel(_model);
+	}
 }
 

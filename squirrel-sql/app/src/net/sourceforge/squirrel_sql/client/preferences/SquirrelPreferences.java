@@ -54,6 +54,7 @@ public class SquirrelPreferences implements Serializable {
 		String MAIN_FRAME_STATE = "mainFrameWindowState";
 		String PLUGIN_OBJECTS = "pluginObjects";
 		String SHOW_CONTENTS_WHEN_DRAGGING = "showContentsWhenDragging";
+		String SHOW_MAIN_STATUS_BAR = "showMainStatusBar";
 		String SHOW_TOOLTIPS = "showToolTips";
 		String SCROLLABLE_TABBED_PANES = "useScrollableTabbedPanes";
 	}
@@ -87,6 +88,9 @@ public class SquirrelPreferences implements Serializable {
 	/** Use scrollabel tabbed panes. JDK 1.4 and above only. */
 	private boolean _useScrollableTabbedPanes;
 
+	/** Show main statusbar. */
+	private boolean _showMainStatusBar = true;
+
 	/**
 	 * Objects stored by plugins. Each element of this collection is a <TT>Map</TT>
 	 * keyed by the plugin's internal name and containing all objects for that
@@ -118,6 +122,7 @@ public class SquirrelPreferences implements Serializable {
 		setShowContentsWhenDragging(rhs.getShowContentsWhenDragging());
 		setLoginTimeout(rhs.getLoginTimeout());
 		setDebugJdbc(rhs.getDebugJdbc());
+		setShowMainStatusBar(rhs.getShowMainStatusBar());
 		setShowToolTips(rhs.getShowToolTips());
 //		setPluginObjects(rhs.getPluginObjects());
 		setUseScrollableTabbedPanes(rhs.useScrollableTabbedPanes());
@@ -184,6 +189,17 @@ public class SquirrelPreferences implements Serializable {
 		_showContentsWhenDragging = data;
 		_propChgReporter.firePropertyChange(IPropertyNames.SHOW_CONTENTS_WHEN_DRAGGING,
 								oldValue, _showContentsWhenDragging);
+	}
+
+	public boolean getShowMainStatusBar() {
+		return _showMainStatusBar;
+	}
+
+	public synchronized void setShowMainStatusBar(boolean data) {
+		final boolean oldValue = _showMainStatusBar;
+		_showMainStatusBar = data;
+		_propChgReporter.firePropertyChange(IPropertyNames.SHOW_MAIN_STATUS_BAR,
+								oldValue, _showMainStatusBar);
 	}
 
 	public int getLoginTimeout() {

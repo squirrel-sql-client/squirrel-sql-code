@@ -36,6 +36,7 @@ import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
 import net.sourceforge.squirrel_sql.client.session.action.ShowNativeSQLAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.ObjectTreeTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ObjectsPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ObjectsTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
@@ -151,6 +152,7 @@ public class MainPanel extends SquirrelTabbedPane {
 	private void createUserInterface() {
 		addMainPanelTab(new ObjectsTab(_session));
 		addMainPanelTab(new SQLTab(_session));
+		addMainPanelTab(new ObjectTreeTab());
 
 		_propsListener = new MyPropertiesListener();
 		_session.getProperties().addPropertyChangeListener(_propsListener);

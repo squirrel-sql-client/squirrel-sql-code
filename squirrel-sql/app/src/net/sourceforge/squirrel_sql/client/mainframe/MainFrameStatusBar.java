@@ -17,41 +17,40 @@ package net.sourceforge.squirrel_sql.client.mainframe;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.text.DateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
+
+import net.sourceforge.squirrel_sql.fw.gui.MemoryPanel;
+import net.sourceforge.squirrel_sql.fw.gui.TimePanel;
 /**
  * Statusbar component for the main frame.
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class MainFrameStatusBar extends JPanel {
 	/** If <TT>true</TT> the current time should be shown. */
-	private boolean _showClock;
+//	private boolean _showClock;
 
 	/** Label showing the message in the statusbar. */
-	private JLabel _textLbl = new MessageLabel();
+	private JLabel _textLbl = new JLabel();
 
-	/** Label showing the time. */
-	private JLabel _clockLbl;
+	/** Panel displaying memory status. */
+	private MemoryPanel _mp;
 
-	/** Font for controls. */
-	private Font _font;
-
-	/** This is the task that updates the time every second. */
-	private ClockTask _clockTask;
-
-	/** Used to format the displayed date. */
-	private DateFormat _fmt = DateFormat.getTimeInstance(DateFormat.LONG);
+	/** Panel displaying the current time. */
+	private TimePanel _tp;
 
 	/**
 	 * Ctor specifying whether time should be displayed.
@@ -59,7 +58,7 @@ public class MainFrameStatusBar extends JPanel {
 	 * @param	showClock	If <TT>true</TT> time should be displayed.
 	 */
 	public MainFrameStatusBar(boolean showClock) {
-		super();
+		super(new GridBagLayout());
 		createUserInterface(showClock);
 	}
 
@@ -75,13 +74,7 @@ public class MainFrameStatusBar extends JPanel {
 			throw new IllegalArgumentException("Font == null");
 		}
 		super.setFont(font);
-		_font = font;
-		if (_textLbl != null) {
-			_textLbl.setFont(font);
-		}
-		if (_clockLbl != null) {
-			_clockLbl.setFont(font);
-		}
+		updateContainerFont(this, font);
 	}
  
 	/**
@@ -90,25 +83,26 @@ public class MainFrameStatusBar extends JPanel {
 	 * @param	value	If <TT>true</TT> time should be displayed.
 	 */
 	public synchronized void showClock(boolean value) {
-		if (value != _showClock) {
-			if (value) {
-				_clockLbl = new MessageLabel();
-				_clockLbl.setFont(_font);
+//		if (value != _showClock) {
+//			if (value) {
+//				_clockLbl = new MessageLabel();
+//				_clockLbl.setFont(_font);
 
-				add(_clockLbl, new ClockConstraints());
-				startClockThread();
-			} else {
-				stopClockThread();
-			}
-			_showClock = value;
-		}
+//				add(_clockLbl, new ClockConstraints());
+//				startClockThread();
+//			} else {
+//				stopClockThread();
+//			}
+//			_showClock = value;
+//		}
 	}
 
 	/**
 	 * @return	<TT>true</TT> if clock is showing else <TT>false</TT>.
 	 */
 	public boolean isClockShowing() {
-		return _showClock;
+		return false;
+//		return _showClock;
 	}
 
 	/**
@@ -133,113 +127,55 @@ public class MainFrameStatusBar extends JPanel {
 	}
 
 	private void createUserInterface(boolean showClock) {
-		_textLbl.setFont(_font);
-		setLayout(new GridBagLayout());
-		add(_textLbl, new TextConstraints());
-		showClock(showClock);
 		clearText();
+
+		GridBagConstraints gbc = new GridBagConstraints();
+
+		gbc.anchor = gbc.WEST;
+		gbc.weightx = 1.0;
+		gbc.fill = gbc.HORIZONTAL;
+		gbc.gridy = 0;
+
+		_textLbl.setBorder(createComponentBorder());
+		gbc.gridx = 0;
+		add(_textLbl, gbc);
+
+		_mp = new MemoryPanel();
+		_mp.setBorder(createComponentBorder());
+		gbc.weightx = 0.0;
+		gbc.anchor = gbc.CENTER;
+		++gbc.gridx;
+		add(_mp, gbc);
+
+		_tp = new TimePanel();
+		_tp.setBorder(createComponentBorder());
+		++gbc.gridx;
+		add(_tp, gbc);
+
 	}
 
 	private synchronized void startClockThread() {
-		if (_clockTask == null) {
-			_clockTask = new ClockTask(this);
-			new Thread(_clockTask).start();
-		}
 	}
 
 	private synchronized void stopClockThread() {
-		_clockTask.stop();
-		_clockTask = null;
 	}
 
 	private synchronized void setTime(Date time) {
-		DateFormat fmt = DateFormat.getTimeInstance(DateFormat.LONG);
-		_clockLbl.setText(fmt.format(time));
 	}
 
-	private static class ClockTask implements Runnable {
-		private boolean _stop;
-		private MainFrameStatusBar _bar;
+	public static Border createComponentBorder() {
+		return BorderFactory.createCompoundBorder(
+				BorderFactory.createBevelBorder(BevelBorder.LOWERED),
+				BorderFactory.createEmptyBorder(0, 4, 0, 4));
+	}
 
-		ClockTask(MainFrameStatusBar bar) {
-			super();
-			_bar = bar;
-		}
-
-		synchronized void stop() {
-			_stop = true;
-		}
-
-		public void run() {
-			for(;;) {
-				try {
-					Thread.currentThread().sleep(1000); // 1 second
-				} catch(InterruptedException ex) {
-					return;
-				}
-				if (_stop) {
-					try {
-						SwingUtilities.invokeAndWait(new Runnable() {
-							public void run() {
-								_bar.remove(_bar._clockLbl);
-								_bar._clockLbl = null;
-								_bar.validate();
-							}
-						});
-						Thread.yield();
-					} catch(Exception ignore) {
-					}
-					break;
-				}
-				try {
-					SwingUtilities.invokeAndWait(new Runnable() {
-						public void run() {
-							_bar.setTime(Calendar.getInstance().getTime());
-						}
-					});
-					Thread.yield();
-				} catch(Exception ignore) {
-				}
+	private static void updateContainerFont(Container cont, Font font) {
+		Component[] comps = cont.getComponents();
+		for (int i = 0; i < comps.length; ++i) {
+			comps[i].setFont(font);
+			if (comps[i] instanceof Container) {
+				updateContainerFont((Container)comps[i], font);
 			}
-		}
-	}
-
-	private static class MessageLabel extends JLabel {
-		MessageLabel() {
-			super();
-			setBorder(BorderFactory.createCompoundBorder(
-						BorderFactory.createBevelBorder(BevelBorder.LOWERED),
-						BorderFactory.createEmptyBorder(0, 4, 0, 4)));
-		}
-	}
-
-	private static abstract class BaseConstraints extends GridBagConstraints {
-		BaseConstraints() {
-			super();
-			insets = new Insets(1, 1, 1, 1);
-			anchor = GridBagConstraints.WEST;
-			gridheight = 1;
-			gridwidth = 1;
-			gridy = 0;
-			weighty = 0.0;
-		}
-	}
-
-	private static final class TextConstraints extends BaseConstraints {
-		TextConstraints() {
-			super();
-			gridx = 0;
-			fill = GridBagConstraints.HORIZONTAL;
-			weightx = 1.0;
-		}
-	}
-
-	private static final class ClockConstraints extends BaseConstraints {
-		ClockConstraints() {
-			super();
-			gridx = 1;
-			fill = GridBagConstraints.NONE;
-			weightx = 0.0;
 		}
 	}
 

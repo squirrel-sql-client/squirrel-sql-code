@@ -19,7 +19,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  */
 import java.awt.Component;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTree;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 /**
  * This is the tab that contains the object tree.
  *
@@ -43,7 +43,7 @@ public class ObjectTreeTab extends BaseMainPanelTab {
 	}
 
 	/** Component to be displayed. */
-	private ObjectTree _comp;
+	private ObjectTreePanel _comp;
 
 	/**
 	 * @see IMainPanelTab#getTitle()
@@ -72,7 +72,7 @@ public class ObjectTreeTab extends BaseMainPanelTab {
 	 */
 	public synchronized Component getComponent() {
 		if (_comp == null) {
-			_comp = new ObjectTree();
+			_comp = new ObjectTreePanel();
 		}
 		return _comp;
 	}

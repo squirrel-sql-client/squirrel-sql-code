@@ -99,7 +99,9 @@ public class MainFrame extends BaseMDIParentFrame {
 		preferencesHaveChanged(null);   // Initial load of prefs.
 		_app.getSquirrelPreferences().addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
-				preferencesHaveChanged(evt);
+				synchronized (MainFrame.this) {
+					preferencesHaveChanged(evt);
+				}
 			}
 		});
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -184,9 +186,9 @@ public class MainFrame extends BaseMDIParentFrame {
 	 * 
 	 * @return	the statusbar.
 	 */
-	public MainFrameStatusBar getStatusBar() {
-		return _statusBar;
-	}
+//	public MainFrameStatusBar getStatusBar() {
+//		return _statusBar;
+//	}
 
 	public void addToMenu(int menuId, JMenu menu) {
 		if (menu == null) {
@@ -212,6 +214,19 @@ public class MainFrame extends BaseMDIParentFrame {
 				getDesktopPane().putClientProperty("JDesktopPane.dragMode",  null);
 			} else {
 				getDesktopPane().putClientProperty("JDesktopPane.dragMode",  "outline");
+			}
+		}
+
+		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.SHOW_MAIN_STATUS_BAR)) {
+			final boolean show = prefs.getShowMainStatusBar();
+			if (!show && _statusBar != null) {
+				getContentPane().remove(_statusBar);
+				_statusBar = null;
+			} else if (show && _statusBar == null) {
+				_statusBar = new MainFrameStatusBar(true);
+				Font fn = _app.getFontInfoStore().getStatusBarFontInfo().createFont();
+				_statusBar.setFont(fn);
+				getContentPane().add(_statusBar, BorderLayout.SOUTH);
 			}
 		}
 	}
@@ -249,10 +264,10 @@ public class MainFrame extends BaseMDIParentFrame {
 								ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		content.add(sp, BorderLayout.CENTER);
 
-		_statusBar = new MainFrameStatusBar(true);
-		Font fn = _app.getFontInfoStore().getStatusBarFontInfo().createFont();
-		_statusBar.setFont(fn);
-		content.add(_statusBar, BorderLayout.SOUTH);
+//		_statusBar = new MainFrameStatusBar(true);
+//		Font fn = _app.getFontInfoStore().getStatusBarFontInfo().createFont();
+//		_statusBar.setFont(fn);
+//		content.add(_statusBar, BorderLayout.SOUTH);
 
 		setJMenuBar(new MainFrameMenuBar(_app, getDesktopPane(), _app.getActionCollection()));
 

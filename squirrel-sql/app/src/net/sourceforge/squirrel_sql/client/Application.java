@@ -17,35 +17,28 @@ package net.sourceforge.squirrel_sql.client;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Font;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.sql.DriverManager;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.ToolTipManager;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
-import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.Log4jLogger;
-import net.sourceforge.squirrel_sql.fw.util.Pair;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.db.AliasMaintSheetFactory;
 import net.sourceforge.squirrel_sql.client.db.DataCache;
 import net.sourceforge.squirrel_sql.client.db.DriverMaintSheetFactory;
+import net.sourceforge.squirrel_sql.client.gui.SplashScreen;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
@@ -55,7 +48,6 @@ import net.sourceforge.squirrel_sql.client.session.DefaultSQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionPropertiesSheetFactory;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
-import net.sourceforge.squirrel_sql.client.gui.SplashScreen;
 
 /**
  * Defines the API to do callbacks on the application.
@@ -95,7 +87,7 @@ class Application implements IApplication {
 	private PrintStream _jdbcDebugOutput;
 
 	/** Contains info about fonts for squirrel. */
-	private FontInfoStore _fontInfoStore = new AppFontInfoStore();
+	private FontInfoStore _fontInfoStore = new FontInfoStore();
 
 	/**
 	 * ctor.
@@ -317,22 +309,6 @@ class Application implements IApplication {
 
 		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.LOGIN_TIMEOUT)) {
 			DriverManager.setLoginTimeout(_prefs.getLoginTimeout());
-		}
-	}
-
-	/**
-	 * Stores font information for application.
-	 */
-	private final class AppFontInfoStore extends FontInfoStore {
-		/**
-		 * Sets the FontInfo for status bars.
-		 * 
-		 * @param fi	The new FontInfo for status bars
-		 */
-		public void setStatusBarFontInfo(FontInfo fi) {
-			super.setStatusBarFontInfo(fi);
-			fi = getStatusBarFontInfo(); // may be chgd by superclass.
-			Application.this.getMainFrame().getStatusBar().setFont(fi.createFont());
 		}
 	}
 }

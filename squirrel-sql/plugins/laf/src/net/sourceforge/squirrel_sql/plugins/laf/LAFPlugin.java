@@ -136,13 +136,8 @@ public class LAFPlugin extends DefaultPlugin {
 
 		// Create the Look and Feel register.
 		_lafRegister = new LAFRegister(app, this);
-	}
 
-	/**
-	 * Plugin initialization. Main frame has now been created so we can
-	 * set the font for its status bar.
-	 */
-	public void initialize() {
+		// Update font used for status bars.
 		_lafRegister.updateStatusBarFont();
 	}
 
