@@ -85,11 +85,41 @@ public class PluginManager {
 	}
 
 	/**
+	 * A new session has been created. At this point the
+	 * <TT>SessionSheet</TT> does not exist for the new session.
+	 *
+	 * @param   session	 The new session.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> ISession</TT> passed.
+	 */
+	public synchronized void sessionCreated(ISession session) {
+		if (session == null) {
+			throw new IllegalArgumentException("Null ISession passed");
+		}
+		for (Iterator it = _sessionPlugins.iterator(); it.hasNext();) {
+			SessionPluginInfo spi = (SessionPluginInfo)it.next();
+			try {
+				spi.getSessionPlugin().sessionCreated(session);
+			} catch (Throwable th) {
+				s_log.error("Error occured in IPlugin.sessionCreated() for "
+							+ spi.getPlugin().getDescriptiveName(), th);
+			}
+		}
+	}
+
+	/**
 	 * A new session is starting.
 	 *
 	 * @param   session	 The new session.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> ISession</TT> passed.
 	 */
 	public synchronized void sessionStarted(ISession session) {
+		if (session == null) {
+			throw new IllegalArgumentException("Null ISession passed");
+		}
 		List plugins = new ArrayList();
 		_activeSessions.put(session.getIdentifier(), plugins);
 		for (Iterator it = _sessionPlugins.iterator(); it.hasNext();) {
@@ -109,8 +139,14 @@ public class PluginManager {
 	 * A session is ending.
 	 *
 	 * @param   session	 The session ending.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> ISession</TT> passed.
 	 */
 	public synchronized void sessionEnding(ISession session) {
+		if (session == null) {
+			throw new IllegalArgumentException("Null ISession passed");
+		}
 		List plugins = (List)_activeSessions.remove(session.getIdentifier());
 		if (plugins != null) {
 			for (Iterator it = plugins.iterator(); it.hasNext();) {

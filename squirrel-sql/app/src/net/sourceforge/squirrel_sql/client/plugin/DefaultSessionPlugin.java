@@ -23,6 +23,18 @@ import net.sourceforge.squirrel_sql.client.session.properties.ISessionProperties
 
 public abstract class DefaultSessionPlugin extends DefaultPlugin implements ISessionPlugin {
 	/**
+	 * A new session has been created. At this point the
+	 * <TT>SessionSheet</TT> does not exist for the new session.
+	 *
+	 * @param   session	 The new session.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> ISession</TT> passed.
+	 */
+	public void sessionCreated(ISession session) {
+	}
+
+	/**
 	 * Called when a session started.
 	 *
 	 * @param	session	The session that is starting.

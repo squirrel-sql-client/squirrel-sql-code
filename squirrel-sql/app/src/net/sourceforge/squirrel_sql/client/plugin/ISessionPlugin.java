@@ -24,36 +24,47 @@ import net.sourceforge.squirrel_sql.client.session.properties.ISessionProperties
  * Base interface for all plugins associated with a session.
  */
 public interface ISessionPlugin extends IPlugin {
-    /**
-     * Called when a session started.
-     *
-     * @param   session     The session that is starting.
-     *
-     * @return  <TT>true</TT> if plugin is applicable to passed
-     *          session else <TT>false</TT>.
-     */
-    boolean sessionStarted(ISession session);
+	/**
+	 * A new session has been created. At this point the
+	 * <TT>SessionSheet</TT> does not exist for the new session.
+	 *
+	 * @param   session	 The new session.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> ISession</TT> passed.
+	 */
+	void sessionCreated(ISession session);
 
-    /**
-     * Called when a session shutdown.
-     */
-    void sessionEnding(ISession session);
+	/**
+	 * Called when a session started.
+	 *
+	 * @param	session	The session that is starting.
+	 *
+	 * @return	<TT>true</TT> if plugin is applicable to passed
+	 *			session else <TT>false</TT>.
+	 */
+	boolean sessionStarted(ISession session);
 
-    /**
-     * Create panels for the Session Properties dialog.
-     *
+	/**
+	 * Called when a session shutdown.
+	 */
+	void sessionEnding(ISession session);
+
+	/**
+	 * Create panels for the Session Properties dialog.
+	 *
 	 * @param	session	The session that will be displayed in the properties dialog.
-     *
-     * @return  Array of <TT>ISessionPropertiesPanel</TT> objects. Return
-     *          empty array of <TT>null</TT> if this plugin doesn't require
-     *          any panels in the Session Properties Dialog.
-     */
-    ISessionPropertiesPanel[] getSessionPropertiesPanels(ISession session);
+	 *
+	 * @return	Array of <TT>ISessionPropertiesPanel</TT> objects. Return
+	 *			empty array of <TT>null</TT> if this plugin doesn't require
+	 *			any panels in the Session Properties Dialog.
+	 */
+	ISessionPropertiesPanel[] getSessionPropertiesPanels(ISession session);
 
-    /**
-     * Let app know what extra types of objects in object tree that
-     * plugin can handle.
-     */
-    IPluginDatabaseObjectType[] getObjectTypes(ISession session);
+	/**
+	 * Let app know what extra types of objects in object tree that
+	 * plugin can handle.
+	 */
+	IPluginDatabaseObjectType[] getObjectTypes(ISession session);
 }
 
