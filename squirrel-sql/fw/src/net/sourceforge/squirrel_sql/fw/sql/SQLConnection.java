@@ -122,6 +122,20 @@ public class SQLConnection
 		return _autoCommitOnClose;
 	}
 
+	public int getTransactionIsolation()
+		throws SQLException
+	{
+		validateConnection();
+		return _conn.getTransactionIsolation();
+	}
+
+	public void setTransactionIsolation(int value)
+		throws SQLException
+	{
+		validateConnection();
+		_conn.setTransactionIsolation(value);
+	}
+
 	public void setCommitOnClose(boolean value)
 	{
 		_autoCommitOnClose = value;

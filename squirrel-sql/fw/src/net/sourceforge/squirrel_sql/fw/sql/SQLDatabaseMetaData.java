@@ -225,14 +225,28 @@ public class SQLDatabaseMetaData
 	 */
 	public String[] getSchemas() throws SQLException
 	{
+		boolean hasGuest = false;
+		final String dbProductName = getDatabaseProductName();
+		final boolean isMSSQLorSYBASE = dbProductName.equals("Microsoft SQL Server") ||
+											dbProductName.equals("SQL Server");
 		final ArrayList list = new ArrayList();
 		final ResultSetReader rdr = new ResultSetReader(getJDBCMetaData().getSchemas());
 		Object[] row = null;
 		while ((row = rdr.readRow()) != null)
 		{
+			if (isMSSQLorSYBASE && row[0].equals("guest"))
+			{
+				hasGuest = true;
+			}
 			list.add(row[0]);
 		}
 
+		// Some drivers for both MS SQL and Sybase don't return guest as
+		// a schema name.
+		if (isMSSQLorSYBASE && !hasGuest)
+		{
+			list.add("guest");
+		}
 		return (String[])list.toArray(new String[list.size()]);
 	}
 
