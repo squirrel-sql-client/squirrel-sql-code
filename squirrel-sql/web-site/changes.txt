@@ -1,6 +1,38 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+1.1rc2
+======
+
+Enhancements
+------------
+- Add default catalog selection to popup menu
+- Add plugin class path to application dump.
+- Allow for some drivers that don't return 'guest'
+  as a schema for Microsoft SQL and Sybase.
+- Catalogs and Schemas tabs added to the session
+  node.
+- Catalogs and schemas added to session dump.
+- Drivers and Aliases windows can now be closed.
+
+Bug Fixes
+---------
+- Fix shell script to work with Cygwin.
+- Fix NullPointerException when changing output
+  type for result sets in New Session Properties
+  dialog.
+- Fix Copy cmd in tables so that if only a single
+  column selected it doesn't put all the rows on one
+  line.
+- Make tree node refresh work.
+- Fix line wrapping in multiple line labels.
+- Allow for spaces in %CLASSPATH% in
+  squirrel-sql.bat (again).
+- Save and restore current catalog, transaction
+  isolation and auto-commit settings when
+  executing the Session/Reconnect commmand.
+
+
 1.1rc1
 ======
 

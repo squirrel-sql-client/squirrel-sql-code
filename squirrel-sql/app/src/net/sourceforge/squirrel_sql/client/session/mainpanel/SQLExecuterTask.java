@@ -206,7 +206,18 @@ public class SQLExecuterTask implements Runnable
 					ResultSetDataSet rsds = new ResultSetDataSet();
 					SessionProperties props = _session.getProperties();
 					rsds.setResultSet(rs, props.getLargeResultSetObjectInfo());
-					ResultSetMetaDataDataSet rsmdds = new ResultSetMetaDataDataSet(rs);
+
+					ResultSetMetaDataDataSet rsmdds = null;
+					try
+					{
+						rsmdds = new ResultSetMetaDataDataSet(rs);
+					}
+					catch (DataSetException ex)
+					{
+						s_log.error("Cant retrieve metadata for ResultSet", ex);
+						_session.getMessageHandler().showMessage(ex);
+					}
+
 					_sqlPanel.addResultsTab(querySql, rsds, rsmdds, _cancelPanel);
 					_cancelPanelRemoved = true;
 					try

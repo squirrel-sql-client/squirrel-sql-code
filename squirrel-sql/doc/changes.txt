@@ -1,6 +1,24 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+1.1final
+========
+
+Enhancements
+------------
+- Allow for JDBC drivers that return null
+  for DatabaseMetaData.getTableTypes().
+
+Bug Fixes
+---------
+- When the "ResultSet Output Type" is changed
+  for a session don't attempt to change the output
+  type for existing ResultSet output panels in
+  that session.
+- When "New Session" settings are changed don't
+  change settings for existing sessions.
+
+
 1.1rc2
 ======
 

@@ -20,6 +20,8 @@ package net.sourceforge.squirrel_sql.client.session.properties;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
@@ -28,10 +30,8 @@ public class SessionProperties implements Cloneable, Serializable
 {
 	public interface IDataSetDestinations
 	{
-		String TEXT =
-			net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel.class.getName();
-		String TABLE =
-			net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel.class.getName();
+		String TEXT = DataSetViewerTextPanel.class.getName();
+		String TABLE = DataSetViewerTablePanel.class.getName();
 	}
 
 	public interface IPropertyNames
@@ -47,13 +47,13 @@ public class SessionProperties implements Cloneable, Serializable
 		String SHOW_TOOL_BAR = "showToolBar";
 		String SQL_LIMIT_ROWS = "sqlLimitRows";
 		String SQL_NBR_ROWS_TO_SHOW = "sqlNbrOfRowsToShow";
-		String SQL_RESULTS_OUTPUT_CLASS_NAME= "sqlResultsOutputClassName";
+		String SQL_RESULTS_OUTPUT_CLASS_NAME = "sqlResultsOutputClassName";
 		String SQL_START_OF_LINE_COMMENT = "sqlStartOfLineComment";
 		String SQL_STATEMENT_SEPARATOR = "sqlStatementSeparator";
 	}
 
 	/** Object to handle property change events. */
-	private PropertyChangeReporter _propChgReporter = new PropertyChangeReporter(this);
+	private transient PropertyChangeReporter _propChgReporter;
 
 	private boolean _autoCommit = true;
 	private int _contentsNbrRowsToShow = 100;
@@ -90,7 +90,8 @@ public class SessionProperties implements Cloneable, Serializable
 	/** Font information for the jEdit text area. */
 	private FontInfo _fi;
 
-	private LargeResultSetObjectInfo _largeObjectInfo = new LargeResultSetObjectInfo();
+	private LargeResultSetObjectInfo _largeObjectInfo =
+		new LargeResultSetObjectInfo();
 
 	public SessionProperties()
 	{
@@ -104,32 +105,34 @@ public class SessionProperties implements Cloneable, Serializable
 	{
 		try
 		{
-			SessionProperties props = (SessionProperties)super.clone();
+			SessionProperties props = (SessionProperties) super.clone();
+			props._propChgReporter = null;
 			if (_fi != null)
 			{
-				props.setFontInfo((FontInfo)_fi.clone());
+				props.setFontInfo((FontInfo) _fi.clone());
 			}
-			if (_largeObjectInfo!= null)
+			if (_largeObjectInfo != null)
 			{
-				props.setLargeResultSetObjectInfo((LargeResultSetObjectInfo)_largeObjectInfo.clone());
+				props.setLargeResultSetObjectInfo(
+					(LargeResultSetObjectInfo) _largeObjectInfo.clone());
 			}
 
 			return props;
 		}
 		catch (CloneNotSupportedException ex)
 		{
-			throw new InternalError(ex.getMessage());   // Impossible.
+			throw new InternalError(ex.getMessage()); // Impossible.
 		}
 	}
 
 	public void addPropertyChangeListener(PropertyChangeListener listener)
 	{
-		_propChgReporter.addPropertyChangeListener(listener);
+		getPropertyChangeReporter().addPropertyChangeListener(listener);
 	}
 
 	public void removePropertyChangeListener(PropertyChangeListener listener)
 	{
-		_propChgReporter.removePropertyChangeListener(listener);
+		getPropertyChangeReporter().removePropertyChangeListener(listener);
 	}
 
 	public String getMetaDataOutputClassName()
@@ -147,7 +150,7 @@ public class SessionProperties implements Cloneable, Serializable
 		{
 			final String oldValue = _metaDataOutputClassName;
 			_metaDataOutputClassName = value;
-			_propChgReporter.firePropertyChange(
+			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.META_DATA_OUTPUT_CLASS_NAME,
 				oldValue,
 				_metaDataOutputClassName);
@@ -169,7 +172,7 @@ public class SessionProperties implements Cloneable, Serializable
 		{
 			final String oldValue = _sqlResultsOutputClassName;
 			_sqlResultsOutputClassName = value;
-			_propChgReporter.firePropertyChange(
+			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.SQL_RESULTS_OUTPUT_CLASS_NAME,
 				oldValue,
 				_sqlResultsOutputClassName);
@@ -186,7 +189,7 @@ public class SessionProperties implements Cloneable, Serializable
 		if (_autoCommit != value)
 		{
 			_autoCommit = value;
-			_propChgReporter.firePropertyChange(
+			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.AUTO_COMMIT,
 				!_autoCommit,
 				_autoCommit);
@@ -203,7 +206,7 @@ public class SessionProperties implements Cloneable, Serializable
 		if (_showToolbar != value)
 		{
 			_showToolbar = value;
-			_propChgReporter.firePropertyChange(
+			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.SHOW_TOOL_BAR,
 				!_showToolbar,
 				_showToolbar);
@@ -221,7 +224,7 @@ public class SessionProperties implements Cloneable, Serializable
 		{
 			final int oldValue = _contentsNbrRowsToShow;
 			_contentsNbrRowsToShow = value;
-			_propChgReporter.firePropertyChange(
+			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.CONTENTS_NBR_ROWS_TO_SHOW,
 				oldValue,
 				_contentsNbrRowsToShow);
@@ -239,7 +242,7 @@ public class SessionProperties implements Cloneable, Serializable
 		{
 			final int oldValue = _sqlNbrRowsToShow;
 			_sqlNbrRowsToShow = value;
-			_propChgReporter.firePropertyChange(
+			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.SQL_NBR_ROWS_TO_SHOW,
 				oldValue,
 				_sqlNbrRowsToShow);
@@ -257,7 +260,7 @@ public class SessionProperties implements Cloneable, Serializable
 		{
 			final boolean oldValue = _contentsLimitRows;
 			_contentsLimitRows = value;
-			_propChgReporter.firePropertyChange(
+			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.CONTENTS_LIMIT_ROWS,
 				oldValue,
 				_contentsLimitRows);
@@ -275,7 +278,7 @@ public class SessionProperties implements Cloneable, Serializable
 		{
 			final boolean oldValue = _sqlLimitRows;
 			_sqlLimitRows = value;
-			_propChgReporter.firePropertyChange(
+			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.SQL_LIMIT_ROWS,
 				oldValue,
 				_sqlLimitRows);
@@ -293,7 +296,7 @@ public class SessionProperties implements Cloneable, Serializable
 		{
 			final char oldValue = _sqlStmtSepChar;
 			_sqlStmtSepChar = value;
-			_propChgReporter.firePropertyChange(
+			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.SQL_STATEMENT_SEPARATOR,
 				oldValue,
 				_sqlStmtSepChar);
@@ -309,7 +312,7 @@ public class SessionProperties implements Cloneable, Serializable
 	{
 		final boolean oldValue = _commitOnClosingConnection;
 		_commitOnClosingConnection = data;
-		_propChgReporter.firePropertyChange(
+		getPropertyChangeReporter().firePropertyChange(
 			IPropertyNames.COMMIT_ON_CLOSING_CONNECTION,
 			oldValue,
 			_commitOnClosingConnection);
@@ -335,7 +338,7 @@ public class SessionProperties implements Cloneable, Serializable
 	{
 		final boolean oldValue = _showRowCount;
 		_showRowCount = data;
-		_propChgReporter.firePropertyChange(
+		getPropertyChangeReporter().firePropertyChange(
 			IPropertyNames.SHOW_ROW_COUNT,
 			oldValue,
 			_showRowCount);
@@ -356,8 +359,10 @@ public class SessionProperties implements Cloneable, Serializable
 	{
 		final String oldValue = _solComment;
 		_solComment = data;
-		_propChgReporter.firePropertyChange(IPropertyNames.SQL_START_OF_LINE_COMMENT,
-												oldValue, _solComment);
+		getPropertyChangeReporter().firePropertyChange(
+			IPropertyNames.SQL_START_OF_LINE_COMMENT,
+			oldValue,
+			_solComment);
 	}
 
 	public FontInfo getFontInfo()
@@ -371,7 +376,10 @@ public class SessionProperties implements Cloneable, Serializable
 		{
 			final FontInfo oldValue = _fi;
 			_fi = data;
-			_propChgReporter.firePropertyChange(IPropertyNames.FONT_INFO, oldValue, _fi);
+			getPropertyChangeReporter().firePropertyChange(
+				IPropertyNames.FONT_INFO,
+				oldValue,
+				_fi);
 		}
 	}
 
@@ -382,12 +390,20 @@ public class SessionProperties implements Cloneable, Serializable
 
 	public void setLargeResultSetObjectInfo(LargeResultSetObjectInfo data)
 	{
-		//if (_largeObjectInfo == null || !_largeObjectInfo.equals(data))
-		//{
-			final LargeResultSetObjectInfo oldValue = _largeObjectInfo;
-			_largeObjectInfo = data;
-			_propChgReporter.firePropertyChange(IPropertyNames.LARGE_RESULT_SET_OBJECT_INFO,
-													oldValue, _largeObjectInfo);
-		//}
+		final LargeResultSetObjectInfo oldValue = _largeObjectInfo;
+		_largeObjectInfo = data;
+		getPropertyChangeReporter().firePropertyChange(
+			IPropertyNames.LARGE_RESULT_SET_OBJECT_INFO,
+			oldValue,
+			_largeObjectInfo);
+	}
+
+	private synchronized PropertyChangeReporter getPropertyChangeReporter()
+	{
+		if (_propChgReporter == null)
+		{
+			_propChgReporter = new PropertyChangeReporter(this);
+		}
+		return _propChgReporter;
 	}
 }

@@ -68,9 +68,6 @@ public class MainPanel extends SquirrelTabbedPane
 	 */
 	private List _tabs = new ArrayList();
 
-	/** Listens to changes in session properties. */
-	private MyPropertiesListener _propsListener;
-
 	/**
 	 * ctor specifying the current session.
 	 *
@@ -86,9 +83,9 @@ public class MainPanel extends SquirrelTabbedPane
 		_session = session;
 
 		createUserInterface();
-		propertiesHaveChanged(null);
+
 		// Refresh the currently selected tab.
-		 ((IMainPanelTab) _tabs.get(getSelectedIndex())).select();
+		((IMainPanelTab)_tabs.get(getSelectedIndex())).select();
 	}
 
 	/**
@@ -125,8 +122,7 @@ public class MainPanel extends SquirrelTabbedPane
 
 	void updateState()
 	{
-		ActionCollection actions =
-			_session.getApplication().getActionCollection();
+		final ActionCollection actions = _session.getApplication().getActionCollection();
 		if (getSelectedIndex() == ITabIndexes.SQL_TAB)
 		{
 			actions.get(ExecuteSqlAction.class).setEnabled(true);
@@ -150,20 +146,8 @@ public class MainPanel extends SquirrelTabbedPane
 		// TODO: ALlow for (and report) errors that occur in the plugins.
 		for (Iterator it = _tabs.iterator(); it.hasNext();)
 		{
-			((IMainPanelTab) it.next()).sessionClosing(session);
+			((IMainPanelTab)it.next()).sessionClosing(session);
 		}
-	}
-
-	private void propertiesHaveChanged(String propName)
-	{
-		//		if (propName == null ||
-		//				propName.equals(SessionProperties.IPropertyNames.META_DATA_OUTPUT_CLASS_NAME)) {
-		//			addDatabasePanelTab(new MetaDataTab());
-		//		}
-		//		if (propName == null ||
-		//				propName.equals(SessionProperties.IPropertyNames.DATA_TYPES_OUTPUT_CLASS_NAME)) {
-		//			addDatabasePanelTab(new DataTypesTab());
-		//		}
 	}
 
 	private void createUserInterface()
@@ -173,9 +157,6 @@ public class MainPanel extends SquirrelTabbedPane
 
 		addMainPanelTab(new ObjectTreeTab());
 		addMainPanelTab(new SQLTab(_session));
-
-		_propsListener = new MyPropertiesListener();
-		_session.getProperties().addPropertyChangeListener(_propsListener);
 
 		addChangeListener(new ChangeListener()
 		{
@@ -198,14 +179,6 @@ public class MainPanel extends SquirrelTabbedPane
 			throw new IllegalArgumentException("ISession == null");
 		}
 		return session.getApplication().getSquirrelPreferences();
-	}
-
-	private class MyPropertiesListener implements PropertyChangeListener
-	{
-		public void propertyChange(PropertyChangeEvent evt)
-		{
-			MainPanel.this.propertiesHaveChanged(evt.getPropertyName());
-		}
 	}
 
 	public ObjectTreePanel getObjectTreePanel()

@@ -24,8 +24,6 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Date;
 
 import javax.swing.Action;
@@ -93,8 +91,6 @@ public class ResultTab extends JPanel implements IHasIdentifier
 	/** Panel showing the query information. */
 	private QueryInfoPanel _queryInfoPanel = new QueryInfoPanel();
 
-	private MyPropertiesListener _propsListener = new MyPropertiesListener();
-
 	/**
 	 * Ctor.
 	 *
@@ -129,9 +125,6 @@ public class ResultTab extends JPanel implements IHasIdentifier
 		_id = id;
 
 		createUserInterface();
-
-		_session.getProperties().addPropertyChangeListener(_propsListener);
-		propertiesHaveChanged(null);
 	}
 
 	/**
@@ -151,7 +144,14 @@ public class ResultTab extends JPanel implements IHasIdentifier
 		_resultSetOutput.show(rsds, null);
 
 		// Display the result set metadata.
-		_metaDataOutput.show(mdds, null); // Why null??
+		if (mdds != null)
+		{
+			_metaDataOutput.show(mdds, null); // Why null??
+		}
+		else
+		{
+			_metaDataOutput.clear();
+		}
 
 		// And the query info.
 		_queryInfoPanel.load(rsds, sql, _resultSetOutput.getRowCount());
@@ -207,29 +207,6 @@ public class ResultTab extends JPanel implements IHasIdentifier
 		return title.substring(0, 15);
 	}
 
-	private class MyPropertiesListener implements PropertyChangeListener
-	{
-		private boolean _listening = true;
-
-		void stopListening()
-		{
-			_listening = false;
-		}
-
-		void startListening()
-		{
-			_listening = true;
-		}
-
-		public void propertyChange(PropertyChangeEvent evt)
-		{
-			if (_listening)
-			{
-				propertiesHaveChanged(evt.getPropertyName());
-			}
-		}
-	}
-
 	/**
 	 * Close this tab.
 	 */
@@ -259,33 +236,6 @@ public class ResultTab extends JPanel implements IHasIdentifier
 		return _tp;
 	}
 
-	private void propertiesHaveChanged(String propertyName)
-	{
-		final SessionProperties props = _session.getProperties();
-
-		if (propertyName == null
-			|| propertyName.equals(SessionProperties.IPropertyNames.SQL_RESULTS_OUTPUT_CLASS_NAME))
-		{
-			_resultSetOutput =
-				BaseDataSetViewerDestination.getInstance(
-					props.getSQLResultsOutputClassName());
-			_resultSetSp.setViewportView(_resultSetOutput.getComponent());
-			_resultSetSp.setRowHeader(null);
-		}
-
-		if (propertyName == null
-			|| propertyName.equals(
-				SessionProperties.IPropertyNames.META_DATA_OUTPUT_CLASS_NAME))
-		{
-			_metaDataOutput =
-				BaseDataSetViewerDestination.getInstance(
-					props.getMetaDataOutputClassName());
-			_metaDataSp.setViewportView(_metaDataOutput.getComponent());
-			_metaDataSp.setRowHeader(null);
-		}
-
-	}
-
 	private void createUserInterface()
 	{
 		//	final Resources rsrc = _session.getApplication().getResources();
@@ -313,6 +263,16 @@ public class ResultTab extends JPanel implements IHasIdentifier
 		final JScrollPane sp = new JScrollPane(_queryInfoPanel);
 		sp.setBorder(BorderFactory.createEmptyBorder());
 		_tp.addTab("Info", sp);
+
+		final SessionProperties props = _session.getProperties();
+
+		_resultSetOutput = BaseDataSetViewerDestination.getInstance(props.getSQLResultsOutputClassName());
+		_resultSetSp.setViewportView(_resultSetOutput.getComponent());
+		_resultSetSp.setRowHeader(null);
+
+		_metaDataOutput = BaseDataSetViewerDestination.getInstance(props.getMetaDataOutputClassName());
+		_metaDataSp.setViewportView(_metaDataOutput.getComponent());
+		_metaDataSp.setRowHeader(null);
 	}
 
 	private final class TabButton extends JButton

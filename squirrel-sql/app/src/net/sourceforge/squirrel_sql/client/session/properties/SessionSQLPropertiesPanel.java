@@ -123,6 +123,7 @@ public class SessionSQLPropertiesPanel
 			String LIMIT_ROWS_CONTENTS = "Contents - Limit rows";
 			String LIMIT_ROWS_SQL = "SQL - Limit rows";
 			String LONGVARBINARY = "LongVarBinary";
+			String OTHER = "Other";
 			String SHOW_ROW_COUNT = "Show Row Count for Tables (can slow application)";
 			String SOL_COMENT = "Start of Line Comment";
 			String TABLE = "Table";
@@ -154,6 +155,8 @@ public class SessionSQLPropertiesPanel
 
 		private IntegerField _showBlobSizeField = new IntegerField(5);
 		private IntegerField _showClobSizeField = new IntegerField(5);
+
+		private JCheckBox _showOtherChk = new JCheckBox(SQLPropertiesPanelI18n.OTHER);
 
 		/** Label displaying the selected font. */
 		private JLabel _fontLbl = new JLabel();
@@ -202,6 +205,8 @@ public class SessionSQLPropertiesPanel
 												? ReadTypeCombo.READ_ALL_IDX
 												: ReadTypeCombo.READ_PARTIAL_IDX);
 
+			_showOtherChk.setSelected(largeObjInfo.getReadOther());
+
 			FontInfo fi = props.getFontInfo();
 			if (fi == null)
 			{
@@ -239,6 +244,8 @@ public class SessionSQLPropertiesPanel
 			largeObjInfo.setReadClobs(_showClobChk.isSelected());
 			largeObjInfo.setReadCompleteClobs(
 				_clobTypeDrop.getSelectedIndex() == ReadTypeCombo.READ_ALL_IDX);
+
+			largeObjInfo.setReadOther(_showOtherChk.isSelected());
 
 			props.setFontInfo(_fontBtn.getFontInfo());
 		}
@@ -342,59 +349,6 @@ public class SessionSQLPropertiesPanel
 			return pnl;
 		}
 
-//		private JPanel createDataTypesPanel()
-//		{
-//			_showBlobSize.setColumns(5);
-//			_showClobSize.setColumns(5);
-//
-//			_showBlobChk.addActionListener(_controlMediator);
-//			_showClobChk.addActionListener(_controlMediator);
-//
-//			JPanel pnl = new JPanel(new GridBagLayout());
-//			pnl.setBorder(BorderFactory.createTitledBorder("Show String Data for Columns of these Data Types"));
-//			final GridBagConstraints gbc = new GridBagConstraints();
-//			gbc.fill = gbc.HORIZONTAL;
-//			gbc.insets = new Insets(0, 4, 0, 4);
-//			gbc.anchor = gbc.WEST;
-//
-//			gbc.gridwidth = 1;
-//			gbc.gridx = 0;
-//			gbc.gridy = 0;
-//			gbc.weightx = 1;
-//			pnl.add(_showBinaryChk, gbc);
-//
-//			++gbc.gridx;
-//			gbc.weightx = 0;
-//			gbc.gridwidth = 2;
-//			pnl.add(_showVarBinaryChk, gbc);
-//
-//			++gbc.gridy;
-//			gbc.gridx = 0;
-//			gbc.gridwidth = 1;
-//			pnl.add(_showLongVarBinaryChk, gbc);
-//
-//			++gbc.gridy;
-//			pnl.add(_showBlobChk, gbc);
-//
-//			++gbc.gridx;
-//			pnl.add(new RightLabel(SQLPropertiesPanelI18n.NBR_BYTES), gbc);
-//
-//			++gbc.gridx;
-//			pnl.add(_showBlobSize, gbc);
-//
-//			gbc.gridx = 0;
-//			++gbc.gridy;
-//			pnl.add(_showClobChk, gbc);
-//
-//			++gbc.gridx;
-//			pnl.add(new RightLabel(SQLPropertiesPanelI18n.NBR_CHARS), gbc);
-//
-//			++gbc.gridx;
-//			pnl.add(_showClobSize, gbc);
-//
-//			return pnl;
-//		}
-
 		private JPanel createDataTypesPanel()
 		{
 			_showBlobSizeField.setColumns(5);
@@ -427,6 +381,9 @@ public class SessionSQLPropertiesPanel
 
 			++gbc.gridy;
 			pnl.add(_showClobChk, gbc);
+
+			++gbc.gridy;
+			pnl.add(_showOtherChk, gbc);
 
 			++gbc.gridx;
 			gbc.gridy = 2;

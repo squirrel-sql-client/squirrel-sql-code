@@ -34,6 +34,7 @@ public class LargeResultSetObjectInfo implements Cloneable, Serializable
 		String READ_CLOBS = "readClobs";
 		String READ_CLOBS_COMPLETE = "readCompleteClobs";
 		String READ_CLOBS_SIZE = "readClobsSize";
+		String READ_OTHER = "readOther";
 	}
 
 	private static int LARGE_COLUMN_DEFAULT_READ_LENGTH = 255;
@@ -79,6 +80,12 @@ public class LargeResultSetObjectInfo implements Cloneable, Serializable
 	 * is <tt>false</TT> then this specifies the number of characters to read.
 	 */
 	private int _readClobsSize = LARGE_COLUMN_DEFAULT_READ_LENGTH;
+
+	/**
+	 * If <TT>_readOther</TT> is <TT>true</TT> then read in all other data
+	 * types as objects.
+	 */
+	private boolean _readOther = false;
 
 	/**
 	 * Return a copy of this object.
@@ -254,6 +261,23 @@ public class LargeResultSetObjectInfo implements Cloneable, Serializable
 				IPropertyNames.READ_CLOBS_SIZE,
 				oldValue,
 				_readClobsSize);
+		}
+	}
+
+	public boolean getReadOther()
+	{
+		return _readOther;
+	}
+
+	public void setReadOther(boolean value)
+	{
+		if (_readOther != value)
+		{
+			final boolean oldValue = _readOther;
+			_readOther = value;
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.READ_OTHER,
+				oldValue, _readOther);
 		}
 	}
 }
