@@ -461,11 +461,19 @@ class Session implements ISession
 	 */
 	public ISQLEntryPanel getSQLEntryPanel()
 	{
+		if (null == _sessionSheet)
+		{
+			return null;
+		}
 		return _sessionSheet.getSQLEntryPanel();
 	}
 
 	public ObjectTreePanel getObjectTreePanel()
 	{
+		if (null == _sessionSheet)
+		{
+			return null;
+		}
 		return _sessionSheet.getObjectTreePanel();
 	}
 
