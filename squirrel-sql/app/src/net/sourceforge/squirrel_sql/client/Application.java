@@ -95,7 +95,7 @@ class Application implements IApplication {
 	private PrintStream _jdbcDebugOutput;
 
 	/** Contains info about fonts for squirrel. */
-	private FontInfoStore _fontInfoStore = new FontInfoStore();
+	private FontInfoStore _fontInfoStore = new AppFontInfoStore();
 
 	/**
 	 * ctor.
@@ -317,6 +317,22 @@ class Application implements IApplication {
 
 		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.LOGIN_TIMEOUT)) {
 			DriverManager.setLoginTimeout(_prefs.getLoginTimeout());
+		}
+	}
+
+	/**
+	 * Stores font information for application.
+	 */
+	private final class AppFontInfoStore extends FontInfoStore {
+		/**
+		 * Sets the FontInfo for status bars.
+		 * 
+		 * @param fi	The new FontInfo for status bars
+		 */
+		public void setStatusBarFontInfo(FontInfo fi) {
+			super.setStatusBarFontInfo(fi);
+			fi = getStatusBarFontInfo(); // may be chgd by superclass.
+			Application.this.getMainFrame().getStatusBar().setFont(fi.createFont());
 		}
 	}
 }
