@@ -567,7 +567,9 @@ public class ContentsTab extends BaseTableTab
 			try
 			{
 				// have the DataType object fill in the appropriate kind of value
-				CellComponentFactory.setPreparedStatementValue(colDefs[col], pstmt, newValue);
+				// into the first (and only) variable position in the prepared stmt
+				CellComponentFactory.setPreparedStatementValue(
+					colDefs[col], pstmt, newValue, 1);
 				count = pstmt.executeUpdate();
 			}
 			finally
@@ -821,14 +823,125 @@ public class ContentsTab extends BaseTableTab
 	
 	
 	/**
+	 * Let fw get the list of default values for the columns
+	 * to be used when creating a new row
+	 */
+	public String[] getDefaultValues(ColumnDisplayDefinition[] colDefs) {
+		// we return something valid even if there is a DB error
+		String[] defaultValues = new String[colDefs.length];		
+		
+		final ITableInfo ti = getTableInfo();
+		final ISession session = getSession();
+		final SQLConnection conn = session.getSQLConnection();
+		DatabaseMetaData dmd = null;
+		try
+		{
+			dmd = conn.getSQLMetaData().getJDBCMetaData();
+			ResultSet rs =
+				dmd.getColumns(ti.getCatalogName(), ti.getSchemaName(),
+					ti.getSimpleName(), "");
+			
+			// read the DB MetaData info and fill in the value, if any
+			// Note that the ResultSet info and the colDefs should be
+			// in the same order, but we cannot guarantee that.
+			int expectedColDefIndex = 0;
+			while (rs.next()) {
+				// get the column name
+				String colName = rs.getString(4);
+				
+				// get the default value
+				String defValue = rs.getString(13);
+				
+				// if value was null, we do not need to do
+				// anything else with this column.
+				// Also assume that a value of "" is equivilent to null
+				if (defValue != null &&  defValue.length() > 0) {
+					// find the entry in colDefs matching this column
+					if (colDefs[expectedColDefIndex].getLabel().equals(colName)) {
+						// DB cols are in same order as colDefs
+						defaultValues[expectedColDefIndex] = defValue;
+					}
+					else {
+						// colDefs not in same order as DB, so search for
+						// matching colDef entry
+						// Note: linear search here will NORMALLY be not too bad
+						// because most tables do not have huge numbers of columns.
+						for (int i=0; i<colDefs.length; i++) {
+							if (colDefs[i].getLabel().equals(colName)) {
+								defaultValues[i] = defValue;
+								break;
+							}
+						}
+					}
+				}
+				
+				// assuming that the columns in table match colDefs,
+				// bump the index to point to the next colDef entry
+				expectedColDefIndex++;
+			}
+		}
+		catch (Exception ex)
+		{
+			s_log.error("Error retrieving default column values", ex);
+		}
+		
+		return defaultValues;
+	}
+	
+	
+	/**
 	 * Insert a row into the DB.
 	 * If the insert succeeds this returns a null string.
 	 */
 	public String insertRow(Object[] values, ColumnDisplayDefinition[] colDefs) {
 		
-//??????? insert data into DB. - use prepared statement
-System.out.println("in DB call");
-		
+		final ISession session = getSession();
+		final SQLConnection conn = session.getSQLConnection();
+
+		int count = -1;
+
+		try
+		{
+			final ITableInfo ti = getTableInfo();
+			
+			// start the string for use in the prepared statment
+			StringBuffer buf = new StringBuffer(
+				"INSERT INTO " + ti.getQualifiedName() + " VALUES (");
+			
+			// add a variable position for each of the columns
+			for (int i=0; i<colDefs.length; i++)
+				buf.append(" ?,");
+			
+			// replace the last "," with ")"
+			buf.setCharAt(buf.length()-1, ')');
+			
+			final PreparedStatement pstmt = conn.prepareStatement(buf.toString());
+
+			try
+			{
+				// have the DataType object fill in the appropriate kind of value
+				// into the appropriate variable position in the prepared stmt
+				for (int i=0; i<colDefs.length; i++) {
+					CellComponentFactory.setPreparedStatementValue(
+						colDefs[i], pstmt, values[i], i+1);
+				}
+				count = pstmt.executeUpdate();
+			}
+			finally
+			{
+				pstmt.close();
+			}
+		}
+		catch (SQLException ex)
+		{
+			return "Exception seen during check on DB.  Exception was:\n"+
+				ex.getMessage() +
+				"\nInsert was probably not completed correctly.  DB may be corrupted!";
+		}
+
+		if (count != 1)
+			return "Unknown problem during update.\nNo count of inserted rows was returned.\nDatabase may be corrupted!";
+			
 		// insert succeeded
 		return null;
 	}
