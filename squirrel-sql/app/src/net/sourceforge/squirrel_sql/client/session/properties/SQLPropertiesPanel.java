@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.properties;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -37,31 +37,26 @@ import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
+import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public class SQLPropertiesPanel
-		implements IGlobalPreferencesPanel, ISessionPropertiesPanel {
+		implements INewSessionPropertiesPanel, ISessionPropertiesPanel {
 
-	private String _title;
-	private String _hint;
 	private IApplication _app;
 	private SessionProperties _props;
 
 	private MyPanel _myPanel;
 
-	public SQLPropertiesPanel(IApplication app, String title,
-								String hint)
+	public SQLPropertiesPanel(IApplication app)
 			throws IllegalArgumentException {
 		super();
 		if (app == null) {
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
 		_app = app;
-		_title = title != null ? title : MyPanel.i18n.SQL;
-		_hint = hint != null ? hint : MyPanel.i18n.SQL;
 		_myPanel = new MyPanel(app);
 	}
 
@@ -84,11 +79,11 @@ public class SQLPropertiesPanel
 	}
 
 	public String getTitle() {
-		return _title;
+		return MyPanel.i18n.SQL;
 	}
 
 	public String getHint() {
-		return _hint;
+		return MyPanel.i18n.SQL;
 	}
 
 	public void applyChanges() {
@@ -107,7 +102,6 @@ public class SQLPropertiesPanel
 			String NBR_ROWS_SQL = "Number of rows:";
 			String LIMIT_ROWS_CONTENTS = "Contents - Limit rows";
 			String LIMIT_ROWS_SQL = "SQL - Limit rows";
-			String MULTIPLE_TABS_SQL = "SQL - Reuse Output Tabs";
 			String SHOW_ROW_COUNT = "Show Row Count for Tables";
 			String TABLE = "Table";
 			String TEXT = "Text";
@@ -123,7 +117,6 @@ public class SQLPropertiesPanel
 		private JCheckBox _showRowCount = new JCheckBox(i18n.SHOW_ROW_COUNT);
 		private IntegerField _sqlNbrRowsToShowField = new IntegerField();
 		private JCheckBox _sqlLimitRows = new JCheckBox(i18n.LIMIT_ROWS_SQL);
-		private JCheckBox _sqlMultipleTabs = new JCheckBox(i18n.MULTIPLE_TABS_SQL);
 		private CharField _stmtSepChar = new CharField();
 
 		MyPanel(IApplication app) {
@@ -138,7 +131,6 @@ public class SQLPropertiesPanel
 			_contentsLimitRowsChk.setSelected(props.getContentsLimitRows());
 			_sqlNbrRowsToShowField.setInt(props.getSqlNbrRowsToShow());
 			_sqlLimitRows.setSelected(props.getSqlLimitRows());
-			_sqlMultipleTabs.setSelected(props.getSqlReuseOutputTabs());
 			_showRowCount.setSelected(props.getShowRowCount());
 			_stmtSepChar.setChar(props.getSqlStatementSeparatorChar());
 		}
@@ -150,7 +142,6 @@ public class SQLPropertiesPanel
 			props.setContentsLimitRows(_contentsLimitRowsChk.isSelected());
 			props.setSqlNbrRowsToShow(_sqlNbrRowsToShowField.getInt());
 			props.setSqlLimitRows(_sqlLimitRows.isSelected());
-			props.setSqlReuseOutputTabs(_sqlMultipleTabs.isSelected());
 			props.setShowRowCount(_showRowCount.isSelected());
 			props.setSqlStatementSeparatorChar(_stmtSepChar.getChar());
 		}
@@ -158,7 +149,7 @@ public class SQLPropertiesPanel
 		private void createUserInterface(IApplication app) {
 			setLayout(new GridBagLayout());
 
-			final Icon warnIcon = app.getResources().getIcon(SquirrelResources.ImageNames.PERFORMANCE_WARNING);
+			final Icon warnIcon = app.getResources().getIcon(SquirrelResources.IImageNames.PERFORMANCE_WARNING);
 
 			_autoCommitChk.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent evt) {
@@ -195,8 +186,6 @@ public class SQLPropertiesPanel
 			add(_contentsLimitRowsChk, gbc);
 			++gbc.gridy;
 			add(_sqlLimitRows, gbc);
-			++gbc.gridy;
-			add(_sqlMultipleTabs, gbc);
 
 			gbc.insets = new Insets(2, 0, 2, 4);
 			++gbc.gridx;
@@ -233,7 +222,7 @@ public class SQLPropertiesPanel
 			add(_stmtSepChar, gbc);
 
 			++gbc.gridx;
-			gbc.gridy = 3;
+			gbc.gridy = 2;
 			add(new JLabel(warnIcon), gbc);
 			++gbc.gridy;
 			add(new JLabel(warnIcon), gbc);
