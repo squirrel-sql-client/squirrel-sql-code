@@ -31,7 +31,6 @@ import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
-import net.sourceforge.squirrel_sql.fw.util.beanwrapper.URLWrapper;
 
 public class SQLDriver implements ISQLDriver, Cloneable, Serializable {
 	/**
