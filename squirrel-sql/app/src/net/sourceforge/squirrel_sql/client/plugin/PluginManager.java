@@ -327,7 +327,6 @@ public class PluginManager
 	 */
 	public void initializePlugins()
 	{
-		final boolean debug = s_log.isDebugEnabled();
 		for (Iterator it = _loadedPlugins.values().iterator(); it.hasNext();)
 		{
 			IPlugin plugin = (IPlugin) it.next();
