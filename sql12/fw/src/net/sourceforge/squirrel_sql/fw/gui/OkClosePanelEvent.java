@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -18,15 +18,15 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.util.EventObject;
-
 /**
  * Event associated with the <TT>OkClosePanelListener</TT>.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class OkClosePanelEvent extends EventObject {
-
-	OkClosePanelEvent(OkClosePanel source) {
+public class OkClosePanelEvent extends EventObject
+{
+	OkClosePanelEvent(OkClosePanel source)
+	{
 		super(source);
 	}
 }
