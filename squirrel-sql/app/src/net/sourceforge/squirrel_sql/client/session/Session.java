@@ -89,11 +89,8 @@ class Session implements ISession {
 	 *
 	 * @throws IllegalArgumentException if any parameter is null.
 	 */
-	public Session(
-		IApplication app,
-		ISQLDriver driver,
-		ISQLAlias alias,
-		SQLConnection conn) {
+	public Session(IApplication app, ISQLDriver driver, ISQLAlias alias,
+					SQLConnection conn) {
 		super();
 		if (app == null) {
 			throw new IllegalArgumentException("null IApplication passed");
@@ -211,23 +208,61 @@ class Session implements ISession {
 		}
 	}
 
+	public void closeAllSQLResultTabs() {
+		_sessionSheet.getSQLPanel().closeAllSQLResultTabs();
+	}
+
+	public void closeAllSQLResultFrames() {
+		_sessionSheet.getSQLPanel().closeAllSQLResultFrames();
+	}
+
 	public String getEntireSQLScript() {
-		return _sessionSheet.getEntireSQLScript();
+		return _sessionSheet.getSQLEntryPanel().getText();
 	}
 
 	public String getSQLScriptToBeExecuted() {
-		return _sessionSheet.getSQLScriptToBeExecuted();
+		return _sessionSheet.getSQLEntryPanel().getSQLToBeExecuted();
 	}
 
 	public void setEntireSQLScript(String sqlScript) {
-		_sessionSheet.setEntireSQLScript(sqlScript);
+		_sessionSheet.getSQLEntryPanel().setText(sqlScript);
 	}
 
 	public void appendSQLScript(String sqlScript) {
-		_sessionSheet.appendSQLScript(sqlScript);
+		_sessionSheet.getSQLEntryPanel().appendText(sqlScript);
 	}
 
-	public void closeSQLConnection() throws SQLException {
+	public int getSQLScriptSelectionStart() {
+		return _sessionSheet.getSQLEntryPanel().getSelectionStart();
+	}
+
+	public int getSQLScriptSelectionEnd() {
+		return _sessionSheet.getSQLEntryPanel().getSelectionEnd();
+	}
+
+	public void setSQLScriptSelectionStart(int start) {
+		_sessionSheet.getSQLEntryPanel().setSelectionStart(start);
+	}
+
+	public void setSQLScriptSelectionEnd(int start) {
+		_sessionSheet.getSQLEntryPanel().setSelectionEnd(start);
+	}
+
+//	public SQLPanel getSQLPanel() {
+//		return _sessionSheet.getSQLPanel();
+//	}
+
+	/**
+	 * Return the object that handles the SQL entry
+	 * component.
+	 * 
+	 * @return	<TT>ISQLEntryPanel</TT> object.
+	 */
+	public ISQLEntryPanel getSQLEntryPanel() {
+		return _sessionSheet.getSQLEntryPanel();
+	}
+
+	public synchronized void closeSQLConnection() throws SQLException {
 		if (_conn != null) {
 			try {
 				_conn.close();
@@ -278,7 +313,7 @@ class Session implements ISession {
 	 * Execute the current SQL.
 	 */
 	public void executeCurrentSQL() {
-		_sessionSheet.executeCurrentSQL();
+		_sessionSheet.getSQLPanel().executeCurrentSQL();
 	}
 
 	/**
@@ -304,6 +339,7 @@ class Session implements ISession {
 			getMessageHandler().showMessage(ex);
 		}
 	}
+
 	/**
 	 * Add a listener listening for SQL Execution.
 	 *

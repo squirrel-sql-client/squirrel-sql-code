@@ -52,6 +52,6 @@ public class CloseAllSQLResultTabsCommand implements ICommand {
 	}
 
 	public void execute() {
-		_session.getSessionSheet().closeAllSQLResultTabs();
+		_session.closeAllSQLResultTabs();
 	}
 }

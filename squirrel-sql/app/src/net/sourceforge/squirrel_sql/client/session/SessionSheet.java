@@ -181,16 +181,16 @@ public class SessionSheet extends JInternalFrame {
 	/**
 	 * Close all the Results frames.
 	 */
-	public void closeAllSQLResultFrames() {
-		_sqlPnl.closeAllSQLResultFrames();
-	}
+//	public void closeAllSQLResultFrames() {
+//		_sqlPnl.closeAllSQLResultFrames();
+//	}
 
 	/**
 	 * Close all the Results tabs.
 	 */
-	public void closeAllSQLResultTabs() {
-		_sqlPnl.closeAllSQLResultTabs();
-	}
+//	public void closeAllSQLResultTabs() {
+//		_sqlPnl.closeAllSQLResultTabs();
+//	}
 
 	ObjectsPanel getObjectPanel() {
 		return _objectsPnl;
@@ -270,29 +270,33 @@ public class SessionSheet extends JInternalFrame {
 		_tabPane.addTab(title, icon, comp, tip);
 	}
 
-	String getEntireSQLScript() {
-		return _sqlPnl.getEntireSQLScript();
-	}
+//	String getEntireSQLScript() {
+//		return _sqlPnl.getEntireSQLScript();
+//	}
 
-	String getSQLScriptToBeExecuted() {
-		return _sqlPnl.getSQLScriptToBeExecuted();
-	}
+//	String getSQLScriptToBeExecuted() {
+//		return _sqlPnl.getSQLScriptToBeExecuted();
+//	}
 
-	void setEntireSQLScript(String sqlScript) {
-		_sqlPnl.setEntireSQLScript(sqlScript);
-	}
+//	void setEntireSQLScript(String sqlScript) {
+//		_sqlPnl.setEntireSQLScript(sqlScript);
+//	}
 
-	void appendSQLScript(String sqlScript) {
-		_sqlPnl.appendSQLScript(sqlScript);
-	}
+//	void appendSQLScript(String sqlScript) {
+//		_sqlPnl.appendSQLScript(sqlScript);
+//	}
 
 	SQLPanel getSQLPanel() {
 		return _sqlPnl;
 	}
 
-	void executeCurrentSQL() {
-		_sqlPnl.executeCurrentSQL();
+	ISQLEntryPanel getSQLEntryPanel() {
+		return _sqlPnl.getSQLEntryPanel();
 	}
+
+//	void executeCurrentSQL() {
+//		_sqlPnl.executeCurrentSQL();
+//	}
 
 	private static String createTitle(ISession session) {
 		StringBuffer title = new StringBuffer();//"Session: ");

@@ -110,10 +110,26 @@ public interface ISession extends IHasIdentifier {
 	void setMessageHandler(IMessageHandler handler);
 	IMessageHandler getMessageHandler();
 
+	void closeAllSQLResultTabs();
+	void closeAllSQLResultFrames();
+
 	String getEntireSQLScript();
 	String getSQLScriptToBeExecuted();
 	void setEntireSQLScript(String sqlScript);
 	void appendSQLScript(String sqlScript);
+	int getSQLScriptSelectionStart();
+	int getSQLScriptSelectionEnd();
+	void setSQLScriptSelectionStart(int start);
+	void setSQLScriptSelectionEnd(int start);
+//	SQLPanel getSQLPanel();
+
+	/**
+	 * Return the object that handles the SQL entry
+	 * component.
+	 * 
+	 * @return	<TT>ISQLEntryPanel</TT> object.
+	 */
+//	ISQLEntryPanel getSQLEntryPanel();
 
 	/**
 	 * Return an array of <TT>IDatabaseObjectInfo</TT> objects representing all

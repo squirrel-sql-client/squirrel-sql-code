@@ -52,6 +52,6 @@ public class CloseAllSQLResultWindowsCommand implements ICommand {
 	}
 
 	public void execute() {
-		_session.getSessionSheet().closeAllSQLResultFrames();
+		_session.closeAllSQLResultFrames();
 	}
 }

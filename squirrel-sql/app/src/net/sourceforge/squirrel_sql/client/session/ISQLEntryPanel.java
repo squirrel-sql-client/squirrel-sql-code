@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.client.session;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import java.awt.Font;
 import java.awt.event.MouseListener;
 
 import javax.swing.Action;
@@ -28,6 +29,9 @@ public interface ISQLEntryPanel {
 	
 	String getText();
 	String getSelectedText();
+	void setText(String text);
+	void appendText(String text);
+	String getSQLToBeExecuted();
 
 	int getSelectionStart();
 	void setSelectionStart(int pos);
@@ -41,10 +45,8 @@ public interface ISQLEntryPanel {
 	boolean hasFocus();
 	void requestFocus();
 
+	void setFont(Font font);
 	void setTabSize(int tabSize);
-
-	void setText(String text);
-	void appendText(String text);
 	
 	void addMouseListener(MouseListener lis);
 	void removeMouseListener(MouseListener lis);
