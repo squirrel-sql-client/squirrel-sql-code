@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.client;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.Font;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -33,6 +34,7 @@ import javax.swing.JMenu;
 import javax.swing.ToolTipManager;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
+import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -54,8 +56,6 @@ import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionPropertiesSheetFactory;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.client.gui.SplashScreen;
-import net.sourceforge.squirrel_sql.client.gui.*;
-
 
 /**
  * Defines the API to do callbacks on the application.
@@ -94,6 +94,9 @@ class Application implements IApplication {
 	/** Output stream for JDBC debug logging. */
 	private PrintStream _jdbcDebugOutput;
 
+	/** Contains info about fonts for squirrel. */
+	private FontInfoStore _fontInfoStore = new FontInfoStore();
+
 	/**
 	 * ctor.
 	 *
@@ -126,7 +129,7 @@ class Application implements IApplication {
 				DriverMaintSheetFactory.initialize(this);
 				SessionPropertiesSheetFactory.initialize(this);
 
-				indicateNewStartupTask(loadPlugins ? "Loading plugins..." : "No Plugins to be loaded...");
+				indicateNewStartupTask(loadPlugins ? "Loading plugins..." : "No Plugins are to be loaded...");
 				_pluginManager = new PluginManager(this);
 				if (loadPlugins) {
 					_pluginManager.loadPlugins();
@@ -217,6 +220,15 @@ class Application implements IApplication {
 
 	public MainFrame getMainFrame() {
 		return _mainFrame;
+	}
+
+	/**
+	 * Return the collection of <TT>FontInfo </TT> objects for this app.
+	 * 
+	 * @return	the collection of <TT>FontInfo </TT> objects for this app.
+	 */
+	public FontInfoStore getFontInfoStore() {
+		return _fontInfoStore;
 	}
 
 	/**

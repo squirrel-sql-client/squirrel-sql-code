@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,14 +17,13 @@ package net.sourceforge.squirrel_sql.client;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.io.File;
-import java.io.IOException;
+import java.awt.Font;
 
 import javax.swing.Action;
 import javax.swing.JMenu;
 
-import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
+import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.db.DataCache;
@@ -33,13 +32,10 @@ import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.client.session.DefaultSQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
-import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 
 /**
- * Defines the API to do callbacks on the application. I'm not sure
- * about this one.
+ * Defines the API to do callbacks on the application.
  */
 public interface IApplication {
 	public interface IMenuIDs extends MainFrame.IMenuIDs {
@@ -71,6 +67,13 @@ public interface IApplication {
 	 * @return	the thread pool for this app.
 	 */
 	TaskThreadPool getThreadPool();
+
+	/**
+	 * Return the collection of <TT>FontInfo </TT> objects for this app.
+	 * 
+	 * @return	the collection of <TT>FontInfo </TT> objects for this app.
+	 */
+	FontInfoStore getFontInfoStore();
 
 	/**
 	 * Return the factory object used to create the SQL entry panel.
