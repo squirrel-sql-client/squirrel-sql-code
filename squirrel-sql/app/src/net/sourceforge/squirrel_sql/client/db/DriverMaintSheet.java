@@ -18,7 +18,6 @@ package net.sourceforge.squirrel_sql.client.db;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -41,13 +40,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
-import javax.swing.plaf.TabbedPaneUI;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.squirrel_sql.fw.gui.ClassPathListBox;
+import net.sourceforge.squirrel_sql.fw.gui.DefaultFileListBoxModel;
+import net.sourceforge.squirrel_sql.fw.gui.FileListBox;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.IFileListBoxModel;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverClassLoader;
@@ -76,6 +76,7 @@ public class DriverMaintSheet extends BaseSheet
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(DriverMaintSheet.class);
 
+	/** Number of caracters to display in D/E fields. */
 	private static final int COLUMN_COUNT = 25;
 
 	/**
@@ -87,8 +88,8 @@ public class DriverMaintSheet extends BaseSheet
 		String ADD = "Add Driver";
 		String CHANGE = "Change Driver";
 		String DRIVER = "Class Name:";
-		String JAR_FILE = "JAR File:";
-		String LOAD_WHERE = "Load from CLASSPATH:";
+		//String JAR_FILE = "JAR File:";
+//		String LOAD_WHERE = "Load from CLASSPATH:";
 		String NAME = "Name:";
 		String URL = "Example URL:";
 	}
@@ -112,7 +113,7 @@ public class DriverMaintSheet extends BaseSheet
 //	private JCheckBox _usesClassPathChk = new JCheckBox(DriverMaintSheetI18n.LOAD_WHERE);
 
 	/** Control for the <TT>ISQLDriver.IPropertyNames.JARFILE_NAME</TT> property. */
-	private JTextField _jarFileName = new JTextField();
+	//private JTextField _jarFileName = new JTextField();
 
 	/** Control for the <TT>ISQLDriver.IPropertyNames.DRIVER_CLASS</TT> property. */
 	private JComboBox _driverClassCmb = new JComboBox();
@@ -121,19 +122,19 @@ public class DriverMaintSheet extends BaseSheet
 	private JTextField _url = new JTextField();
 
 	/** Button allows searching for a JDBC jar file. */
-	private JButton _searchBtn = new JButton("...");
+	//private JButton _searchBtn = new JButton("...");
 
 	/** Listbox containing the Java class path. */
-	private ClassPathListBox _javaClassPathList = new ClassPathListBox();
+	private FileListBox _javaClassPathList = new FileListBox();
 
 	/** Listbox containing the extra class path. */
-	private ExtraClassPathListBox _extraClassPathList = new ExtraClassPathListBox();
+	private FileListBox _extraClassPathList = new FileListBox(new DefaultFileListBoxModel());
 
 	/**
 	 * Used for comparison purposes to see if the selected JDBC driver
 	 * jar file has been changed.
 	 */
-	private String _currentJarFileText = "";
+	//private String _currentJarFileText = "";
 
 	/**
 	 * Ctor.
@@ -201,9 +202,17 @@ public class DriverMaintSheet extends BaseSheet
 	{
 		_driverName.setText(_sqlDriver.getName());
 //		_usesClassPathChk.setSelected(_sqlDriver.getUsesClassPath());
-		setJarFileName(_sqlDriver.getJarFileName());
+//		setJarFileName(_sqlDriver.getJarFileName());
 		_driverClassCmb.setSelectedItem(_sqlDriver.getDriverClassName());
 		_url.setText(_sqlDriver.getUrl());
+
+		_extraClassPathList.removeAll();
+		String[] fileNames = _sqlDriver.getJarFileNames();
+		IFileListBoxModel model = _extraClassPathList.getTypedModel();
+		for (int i = 0; i < fileNames.length; ++i)
+		{
+			model.addFile(new File(fileNames[i]));
+		}
 	}
 
 	/**
@@ -242,9 +251,13 @@ public class DriverMaintSheet extends BaseSheet
 	{
 		_sqlDriver.setName(_driverName.getText().trim());
 //		_sqlDriver.setUsesClassPath(_usesClassPathChk.isSelected());
-		_sqlDriver.setJarFileName(_jarFileName.getText().trim());
-		_sqlDriver.setUsesClassPath(_jarFileName.getText().trim().length() == 0);
-		_sqlDriver.setDriverClassName(((String) _driverClassCmb.getSelectedItem()).trim());
+		//_sqlDriver.setJarFileName(_jarFileName.getText().trim());
+		_sqlDriver.setJarFileNames(_extraClassPathList.getTypedModel().getFileNames());
+//		_sqlDriver.setUsesClassPath(_jarFileName.getText().trim().length() == 0);
+
+		String driverClassName = (String)_driverClassCmb.getSelectedItem();
+		_sqlDriver.setDriverClassName(driverClassName != null ? driverClassName.trim() : null);
+
 		_sqlDriver.setUrl(_url.getText().trim());
 	}
 
@@ -252,49 +265,46 @@ public class DriverMaintSheet extends BaseSheet
 	 * Retrieve the class names of all JDBC drivers in the currently specified
 	 * jar file into the Drivers combo box.
 	 */
-	private void loadDriversCombo()
-	{
-		_driverClassCmb.removeAllItems();
-//		if (!_usesClassPathChk.isSelected())
+//	private void loadDriversCombo()
+//	{
+//		_driverClassCmb.removeAllItems();
+//		try
 //		{
-			try
-			{
-				String fileName = _jarFileName.getText().trim();
-				if (fileName.length() > 0)
-				{
-					File file = new File(fileName);
-					SQLDriverClassLoader cl = new SQLDriverClassLoader(file.toURL());
-					Class[] classes = cl.getDriverClasses(s_log);
-					for (int i = 0; i < classes.length; ++i)
-					{
-						_driverClassCmb.addItem(classes[i].getName());
-					}
-				}
-				else
-				{
-					_driverClassCmb.removeAll();
-				}
-			}
-			catch (MalformedURLException ex)
-			{
-				displayErrorMessage(ex);
-			}
-			catch (IOException ex)
-			{
-				displayErrorMessage(ex);
-			}
+//			String fileName = _jarFileName.getText().trim();
+//			if (fileName.length() > 0)
+//			{
+//				File file = new File(fileName);
+//				SQLDriverClassLoader cl = new SQLDriverClassLoader(file.toURL());
+//				Class[] classes = cl.getDriverClasses(s_log);
+//				for (int i = 0; i < classes.length; ++i)
+//				{
+//					_driverClassCmb.addItem(classes[i].getName());
+//				}
+//			}
+//			else
+//			{
+//				_driverClassCmb.removeAll();
+//			}
 //		}
-	}
+//		catch (MalformedURLException ex)
+//		{
+//			displayErrorMessage(ex);
+//		}
+//		catch (IOException ex)
+//		{
+//			displayErrorMessage(ex);
+//		}
+//	}
 
-	private void setJarFileName(String fileName)
-	{
-		if (fileName != null && !_currentJarFileText.equals(fileName))
-		{
-			_jarFileName.setText(fileName);
-			loadDriversCombo();
-			_currentJarFileText = fileName;
-		}
-	}
+	//private void setJarFileName(String fileName)
+	//{
+	//	if (fileName != null && !_currentJarFileText.equals(fileName))
+	//	{
+	//		_jarFileName.setText(fileName);
+	//		loadDriversCombo();
+	//		_currentJarFileText = fileName;
+	//	}
+	//}
 
 	/**
 	 * Display an error msg in a dialog. Uses
@@ -330,7 +340,7 @@ public class DriverMaintSheet extends BaseSheet
 
 		_driverName.setColumns(COLUMN_COUNT);
 		_url.setColumns(COLUMN_COUNT);
-		_jarFileName.setColumns(COLUMN_COUNT);
+		//_jarFileName.setColumns(COLUMN_COUNT);
 
 		// This seems to be necessary to get background colours
 		// correct. Without it labels added to the content pane
@@ -364,20 +374,13 @@ public class DriverMaintSheet extends BaseSheet
 
 		++gbc.gridy;
 		contentPane.add(createDriverPanel(), gbc);
-//		++gbc.gridy;
-//		contentPane.add(createJavaClassPathPanel(), gbc);
-//		++gbc.gridy;
-//		contentPane.add(createExtraClassPathPanel(), gbc);
 
 		JTabbedPane tabPnl = new JTabbedPane();
 		tabPnl.addTab("Java Class Path", createJavaClassPathPanel());
 		tabPnl.addTab("Extra Class Path", createExtraClassPathPanel());
 
-//		++gbc.gridy;
-//		contentPane.add(tabPnl, gbc);
-
-
-
+		++gbc.gridy;
+		contentPane.add(tabPnl, gbc);
 
 		++gbc.gridy;
 		contentPane.add(createLocationPanel(), gbc);
@@ -464,8 +467,8 @@ public class DriverMaintSheet extends BaseSheet
 		//ps.width = ps.height;
 		//_searchBtn.setPreferredSize(ps);
 
-		_searchBtn.setVerticalTextPosition(_searchBtn.CENTER);
-		_searchBtn.setHorizontalTextPosition(_searchBtn.CENTER);
+		//_searchBtn.setVerticalTextPosition(_searchBtn.CENTER);
+		//_searchBtn.setHorizontalTextPosition(_searchBtn.CENTER);
 
 		// If the Uses Class Path check box is selected then the user cannot
 		// enter the name of a jar file.
@@ -481,70 +484,69 @@ public class DriverMaintSheet extends BaseSheet
 
 		// Clicking on the search button displays a FileChooser allowing user
 		// to select a JAR file containing a JDBC driver.
-		_searchBtn.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent evt)
-			{
-				JFileChooser chooser = new JFileChooser(_jarFileName.getText().trim());
-				chooser.addChoosableFileFilter(
-					new FileExtensionFilter("JAR files", new String[] { ".jar", ".zip" }));
-				int returnVal = chooser.showOpenDialog(getParent());
-				if (returnVal == JFileChooser.APPROVE_OPTION)
-				{
-					File selFile = chooser.getSelectedFile();
-					if (selFile != null)
-					{
-						setJarFileName(selFile.getAbsolutePath());
-					}
-				}
-			}
-		});
+//		_searchBtn.addActionListener(new ActionListener()
+//		{
+//			public void actionPerformed(ActionEvent evt)
+//			{
+//				JFileChooser chooser = new JFileChooser(_jarFileName.getText().trim());
+//				chooser.addChoosableFileFilter(
+//					new FileExtensionFilter("JAR files", new String[] { ".jar", ".zip" }));
+//				int returnVal = chooser.showOpenDialog(getParent());
+//				if (returnVal == JFileChooser.APPROVE_OPTION)
+//				{
+//					File selFile = chooser.getSelectedFile();
+//					if (selFile != null)
+//					{
+//						setJarFileName(selFile.getAbsolutePath());
+//					}
+//				}
+//			}
+//		});
 
 		// When focus is lost from the jar file name text box then we need to load
 		// information about the specified jar file.
-		_jarFileName.addFocusListener(new FocusListener()
-		{
-			public void focusGained(FocusEvent evt)
-			{
-			}
-			public void focusLost(FocusEvent evt)
-			{
-				setJarFileName(_jarFileName.getText().trim());
-			}
-		});
+//		_jarFileName.addFocusListener(new FocusListener()
+//		{
+//			public void focusGained(FocusEvent evt)
+//			{
+//			}
+//			public void focusLost(FocusEvent evt)
+//			{
+//				setJarFileName(_jarFileName.getText().trim());
+//			}
+//		});
 
-		JPanel pnl = new JPanel();
+		JPanel pnl = new JPanel(new GridBagLayout());
 		pnl.setBorder(BorderFactory.createTitledBorder("Driver Location"));
 
-		pnl.setLayout(new GridBagLayout());
 		final GridBagConstraints gbc = new GridBagConstraints();
 		gbc.fill = gbc.HORIZONTAL;
 		gbc.insets = new Insets(4, 4, 4, 4);
 
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		pnl.add(new JLabel(DriverMaintSheetI18n.JAR_FILE, SwingConstants.RIGHT), gbc);
+		//pnl.add(new JLabel(DriverMaintSheetI18n.JAR_FILE, SwingConstants.RIGHT), gbc);
 
-		++gbc.gridy;
-		pnl.add(new JLabel(DriverMaintSheetI18n.DRIVER, SwingConstants.RIGHT), gbc);
+		//++gbc.gridy;
+		//pnl.add(new JLabel(DriverMaintSheetI18n.DRIVER, SwingConstants.RIGHT), gbc);
 
-		gbc.weightx = 1.0;
-		gbc.gridy = 0;
-		++gbc.gridx;
+		//gbc.weightx = 1.0;
+		//gbc.gridy = 0;
+		//++gbc.gridx;
 //		pnl.add(_usesClassPathChk, gbc);
 
 //		++gbc.gridy;
-		pnl.add(_jarFileName, gbc);
+		//pnl.add(_jarFileName, gbc);
 
-		++gbc.gridy;
-		gbc.gridwidth = 2;
-		pnl.add(_driverClassCmb, gbc);
+		//++gbc.gridy;
+		//gbc.gridwidth = 2;
+		pnl.add(_driverClassCmb);//, gbc);
 
-		gbc.weightx = 0;
-		gbc.gridwidth = 1;
-		gbc.gridy = 0;
-		++gbc.gridx;
-		pnl.add(_searchBtn, gbc);
+		//gbc.weightx = 0;
+		//gbc.gridwidth = 1;
+		//gbc.gridy = 0;
+		//++gbc.gridx;
+		//pnl.add(_searchBtn, gbc);
 
 		return pnl;
 	}
@@ -556,7 +558,8 @@ public class DriverMaintSheet extends BaseSheet
 	 */
 	private JPanel createJavaClassPathPanel()
 	{
-		if (_javaClassPathList.getModel().getSize() > 0)
+		IFileListBoxModel model = _javaClassPathList.getTypedModel();
+		if (model.getSize() > 0)
 		{
 			_javaClassPathList.setSelectedIndex(0);
 		}
@@ -579,7 +582,7 @@ public class DriverMaintSheet extends BaseSheet
 		++gbc.gridx;
 		gbc.gridheight = 1;
 		gbc.fill = gbc.HORIZONTAL;
-		pnl.add(new JButton("List Drivers"), gbc);
+		pnl.add(new ListDriversButton(_javaClassPathList), gbc);
 
 		return pnl;
 	}
@@ -603,10 +606,10 @@ public class DriverMaintSheet extends BaseSheet
 				synchronized (_extraClassPathList) {
 					int idx = _extraClassPathList.getSelectedIndex();
 					if (idx > 0) {
-						DefaultListModel model = (DefaultListModel)_extraClassPathList.getModel();
-						Object obj = model.remove(idx);
+						IFileListBoxModel model = _extraClassPathList.getTypedModel();
+						File file = model.removeFile(idx);
 						--idx;
-						model.insertElementAt(obj, idx);
+						model.insertFileAt(file, idx);
 						_extraClassPathList.setSelectedIndex(idx);
 					}
 				}
@@ -618,11 +621,11 @@ public class DriverMaintSheet extends BaseSheet
 			public void actionPerformed(ActionEvent evt) {
 				synchronized (_extraClassPathList) {
 					int idx = _extraClassPathList.getSelectedIndex();
-						DefaultListModel model = (DefaultListModel)_extraClassPathList.getModel();
+					IFileListBoxModel model = _extraClassPathList.getTypedModel();
 					if (idx > -1 && idx < (model.getSize() - 1)) {
-						Object obj = model.remove(idx);
+						File file = model.removeFile(idx);
 						++idx;
-						model.insertElementAt(obj, idx);
+						model.insertFileAt(file, idx);
 						_extraClassPathList.setSelectedIndex(idx);
 					}
 				}
@@ -641,8 +644,8 @@ public class DriverMaintSheet extends BaseSheet
 					File selFile = chooser.getSelectedFile();
 					if (selFile != null)
 					{
-						DefaultListModel model = (DefaultListModel)_extraClassPathList.getModel();
-						model.addElement(selFile);
+						IFileListBoxModel model = _extraClassPathList.getTypedModel();
+						model.addFile(selFile);
 						_extraClassPathList.setSelectedIndex(model.getSize() - 1);
 					}
 				}
@@ -655,8 +658,8 @@ public class DriverMaintSheet extends BaseSheet
 				int idx = _extraClassPathList.getSelectedIndex();
 				if (idx != -1)
 				{
-					DefaultListModel model = (DefaultListModel)_extraClassPathList.getModel();
-					model.remove(idx);
+					IFileListBoxModel model = _extraClassPathList.getTypedModel();
+					model.removeFile(idx);
 					final int size = model.getSize();
 					if (idx < size) {
 						_extraClassPathList.setSelectedIndex(idx);
@@ -710,7 +713,7 @@ public class DriverMaintSheet extends BaseSheet
 		gbc.insets = new Insets(4, 4, 4, 4);
 
 		++gbc.gridy;
-		pnl.add(new JButton("List Drivers"), gbc);
+		pnl.add(new ListDriversButton(_extraClassPathList), gbc);
 
 		return pnl;
 	}
@@ -718,11 +721,57 @@ public class DriverMaintSheet extends BaseSheet
 	/**
 	 * Listbox that contains the "extra" class path for the driver.
 	 */
-	private final class ExtraClassPathListBox extends JList
+//	private final class ExtraClassPathListBox extends ClassPathListBox
+//	{
+//		ExtraClassPathListBox()
+//		{
+//			super(new ExtraClassPathListBoxModel());
+//		}
+//
+//		ExtraClassPathListBoxModel getTypedModel()
+//		{
+//			return (ExtraClassPathListBoxModel)getModel();
+//		}
+//	}
+
+
+	private final class ListDriversButton extends JButton implements ActionListener
 	{
-		ExtraClassPathListBox()
+		private FileListBox _listBox;
+	
+		ListDriversButton(FileListBox listBox)
 		{
-			super(new DefaultListModel());
+			super("List Drivers");
+			_listBox = listBox;
+			addActionListener(this);
 		}
+
+		public void actionPerformed(ActionEvent e)
+		{
+			_driverClassCmb.removeAll();
+			File file = _listBox.getSelectedFile();
+			if (file != null)
+			{
+				try
+				{
+					SQLDriverClassLoader cl = new SQLDriverClassLoader(file.toURL());
+					Class[] classes = cl.getDriverClasses(s_log);
+					for (int i = 0; i < classes.length; ++i)
+					{
+						_driverClassCmb.addItem(classes[i].getName());
+					}
+				}
+				catch (MalformedURLException ex)
+				{
+					displayErrorMessage(ex);
+				}
+				catch (IOException ex)
+				{
+					displayErrorMessage(ex);
+				}
+			}
+			_driverClassCmb.setSelectedIndex(0);
+		}
+
 	}
 }

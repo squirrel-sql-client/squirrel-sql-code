@@ -20,11 +20,13 @@ package net.sourceforge.squirrel_sql.client.db;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLAlias;
@@ -32,6 +34,7 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeListener;
+import net.sourceforge.squirrel_sql.fw.util.beanwrapper.URLWrapper;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
@@ -44,7 +47,8 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class DataCache {
+public class DataCache
+{
 	private final static Class SQL_ALIAS_IMPL = SQLAlias.class;
 	private final static Class SQL_DRIVER_IMPL = SQLDriver.class;
 
@@ -70,12 +74,15 @@ public class DataCache {
 	 *			Thrown if no <TT>SQLDriverManager</TT>
 	 *			exists in IApplication.
 	 */
-	public DataCache(IApplication app) throws IllegalArgumentException {
+	public DataCache(IApplication app) throws IllegalArgumentException
+	{
 		super();
-		if (app == null) {
+		if (app == null)
+		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
-		if (app.getSQLDriverManager() == null) {
+		if (app.getSQLDriverManager() == null)
+		{
 			throw new IllegalStateException("No SQLDriverManager in IApplication");
 		}
 
@@ -90,19 +97,26 @@ public class DataCache {
 	 * <CODE>ApplicationFiles.getUserDriversFileName()</CODE> and aliases are
 	 * saved to <CODE>ApplicationFiles.getUserAliasesFileName()</CODE>.
 	 */
-	public void save() {
+	public void save()
+	{
 		final ApplicationFiles appFiles = new ApplicationFiles();
 		final File driversFile = appFiles.getDatabaseDriversFile();
-		try {
+		try
+		{
 			_cache.saveAllForClass(driversFile.getPath(), SQL_DRIVER_IMPL);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex)
+		{
 			s_log.error("Error occured saving drivers to " + driversFile.getPath(), ex);
 		}
 
 		final File aliasesFile = appFiles.getDatabaseAliasesFile();
-		try {
+		try
+		{
 			_cache.saveAllForClass(aliasesFile.getPath(), SQL_ALIAS_IMPL);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex)
+		{
 			s_log.error("Error occured saving aliases to " + aliasesFile.getPath(), ex);
 		}
 	}
@@ -110,138 +124,229 @@ public class DataCache {
 	/**
 	 * Return the <TT>ISQLDriver</TT> for the passed identifier.
 	 */
-	public ISQLDriver getDriver(IIdentifier id) {
-		return (ISQLDriver)_cache.get(SQL_DRIVER_IMPL, id);
+	public ISQLDriver getDriver(IIdentifier id)
+	{
+		return (ISQLDriver) _cache.get(SQL_DRIVER_IMPL, id);
 	}
 
-	public void addDriver(ISQLDriver sqlDriver) throws ClassNotFoundException,
-			IllegalAccessException, InstantiationException, DuplicateObjectException {
+	public void addDriver(ISQLDriver sqlDriver)
+		throws ClassNotFoundException, IllegalAccessException,
+				InstantiationException, DuplicateObjectException,
+				MalformedURLException
+	{
 		_app.getSQLDriverManager().registerSQLDriver(sqlDriver);
 		_cache.add(sqlDriver);
 	}
 
-	public void removeDriver(ISQLDriver sqlDriver) {
+	public void removeDriver(ISQLDriver sqlDriver)
+	{
 		_cache.remove(SQL_DRIVER_IMPL, sqlDriver.getIdentifier());
-		try {
+		try
+		{
 			_app.getSQLDriverManager().unregisterSQLDriver(sqlDriver);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex)
+		{
 			s_log.error("Error occured removing driver from cache", ex);
 		}
 	}
 
-	public Iterator drivers() {
+	public Iterator drivers()
+	{
 		return _cache.getAllForClass(SQL_DRIVER_IMPL);
 	}
 
-	public void addDriversListener(ObjectCacheChangeListener lis) {
+	public void addDriversListener(ObjectCacheChangeListener lis)
+	{
 		_cache.addChangesListener(lis, SQL_DRIVER_IMPL);
 	}
 
-	public void removeDriversListener(ObjectCacheChangeListener lis) {
+	public void removeDriversListener(ObjectCacheChangeListener lis)
+	{
 		_cache.removeChangesListener(lis, SQL_DRIVER_IMPL);
 	}
 
-	public ISQLAlias getAlias(IIdentifier id) {
-		return (ISQLAlias)_cache.get(SQL_ALIAS_IMPL, id);
+	public ISQLAlias getAlias(IIdentifier id)
+	{
+		return (ISQLAlias) _cache.get(SQL_ALIAS_IMPL, id);
 	}
 
-	public Iterator aliases() {
+	public Iterator aliases()
+	{
 		return _cache.getAllForClass(SQL_ALIAS_IMPL);
 	}
 
-	public void addAlias(ISQLAlias alias) throws DuplicateObjectException {
+	public void addAlias(ISQLAlias alias) throws DuplicateObjectException
+	{
 		_cache.add(alias);
 	}
 
-	public void removeAlias(ISQLAlias alias) {
+	public void removeAlias(ISQLAlias alias)
+	{
 		_cache.remove(SQL_ALIAS_IMPL, alias.getIdentifier());
 	}
 
-	public Iterator getAliasesForDriver(ISQLDriver driver) {
+	public Iterator getAliasesForDriver(ISQLDriver driver)
+	{
 		ArrayList data = new ArrayList();
-		for (Iterator it = aliases(); it.hasNext();) {
-			ISQLAlias alias = (ISQLAlias)it.next();
-			if (driver.equals(getDriver(alias.getDriverIdentifier()))) {
+		for (Iterator it = aliases(); it.hasNext();)
+		{
+			ISQLAlias alias = (ISQLAlias) it.next();
+			if (driver.equals(getDriver(alias.getDriverIdentifier())))
+			{
 				data.add(alias);
 			}
 		}
 		return data.iterator();
 	}
 
-	public void addAliasesListener(ObjectCacheChangeListener lis) {
+	public void addAliasesListener(ObjectCacheChangeListener lis)
+	{
 		_cache.addChangesListener(lis, SQL_ALIAS_IMPL);
 	}
 
-	public void removeAliasesListener(ObjectCacheChangeListener lis) {
+	public void removeAliasesListener(ObjectCacheChangeListener lis)
+	{
 		_cache.removeChangesListener(lis, SQL_ALIAS_IMPL);
 	}
 
 	/**
 	 * Load <TT>IISqlDriver</TT> objects from XML file.
 	 */
-	private void loadDrivers() {
+	private void loadDrivers()
+	{
 		final ApplicationFiles appFiles = new ApplicationFiles();
 		final File driversFile = appFiles.getDatabaseDriversFile();
-		try {
+		try
+		{
 			_cache.load(driversFile.getPath());
-			if (!drivers().hasNext()) {
+			if (!drivers().hasNext())
+			{
 				loadDefaultDrivers();
 			}
-		} catch (FileNotFoundException ex) {
-			loadDefaultDrivers();// first time user has run pgm.
-		} catch (Exception ex) {
-			s_log.error("Error loading driver file: " + driversFile.getPath()
-						+ ". Default drivers loaded instead.", ex);
+			else
+			{
+				fixupDrivers();
+			}
+		}
+		catch (FileNotFoundException ex)
+		{
+			loadDefaultDrivers(); // first time user has run pgm.
+		}
+		catch (Exception ex)
+		{
+			s_log.error(
+				"Error loading driver file: "
+					+ driversFile.getPath()
+					+ ". Default drivers loaded instead.",
+				ex);
 			loadDefaultDrivers();
 		}
 
 		registerDrivers();
 	}
 
-	public ISQLAlias createAlias(IIdentifier id) {
+	public ISQLAlias createAlias(IIdentifier id)
+	{
 		return new SQLAlias(id);
 	}
 
-	public ISQLDriver createDriver(IIdentifier id) {
+	public ISQLDriver createDriver(IIdentifier id)
+	{
 		return new SQLDriver(id);
 	}
 
-	private void loadDefaultDrivers() {
+	private void loadDefaultDrivers()
+	{
 		final URL url = _app.getResources().getDefaultDriversUrl();
-		try {
+		try
+		{
 			InputStreamReader isr = new InputStreamReader(url.openStream());
-			try {
+			try
+			{
 				_cache.load(isr);
-			} finally {
+			}
+			finally
+			{
 				isr.close();
 			}
-		} catch (Exception ex) {
-			s_log.error("Error loading default driver file: " + url != null ? url.toExternalForm() : "", ex);
+		}
+		catch (Exception ex)
+		{
+			s_log.error(
+				"Error loading default driver file: " + url != null ? url.toExternalForm() : "",
+				ex);
 		}
 	}
 
-	private void registerDrivers() {
+	private void registerDrivers()
+	{
 		SQLDriverManager driverMgr = _app.getSQLDriverManager();
-		for (Iterator it = drivers(); it.hasNext();) {
-			ISQLDriver sqlDriver = (ISQLDriver)it.next();
-			try {
+		for (Iterator it = drivers(); it.hasNext();)
+		{
+			ISQLDriver sqlDriver = (ISQLDriver) it.next();
+			try
+			{
 				driverMgr.registerSQLDriver(sqlDriver);
-			} catch (ClassNotFoundException ex) {
-				s_log.warn("Could not find JDBC driver class for " + sqlDriver.getName() + ": " + sqlDriver.getDriverClassName());
-			} catch (Throwable th) {
+			}
+			catch (ClassNotFoundException ex)
+			{
+				s_log.warn(
+					"Could not find JDBC driver class for "
+						+ sqlDriver.getName()
+						+ ": "
+						+ sqlDriver.getDriverClassName());
+			}
+			catch (Throwable th)
+			{
 				s_log.error("Unable to register JDCB driver " + sqlDriver.getName(), th);
 			}
 		}
 	}
 
-	private void loadAliases() {
+	private void loadAliases()
+	{
 		final ApplicationFiles appFiles = new ApplicationFiles();
 		final File aliasesFile = appFiles.getDatabaseAliasesFile();
-		try {
+		try
+		{
 			_cache.load(aliasesFile.getPath());
-		} catch (FileNotFoundException ignore) { // first time user has run pgm.
-		} catch (Exception ex) {
+		}
+		catch (FileNotFoundException ignore)
+		{ // first time user has run pgm.
+		}
+		catch (Exception ex)
+		{
 			s_log.error("Error loading aliases file: " + aliasesFile.getPath(), ex);
+		}
+	}
+
+	/**
+	 * In 1.1beta? the jar file for a driver was changed from only one allowed
+	 * to multiple one allowed. This method changes the driver from the old
+	 * version to the new one.
+	 */
+	private void fixupDrivers()
+	{
+		for (Iterator it = drivers(); it.hasNext();)
+		{
+			ISQLDriver driver = (ISQLDriver)it.next();
+			String[] fileNames = driver.getJarFileNames();
+			if (fileNames == null || fileNames.length == 0)
+			{
+				String fileName = driver.getJarFileName();
+				if (fileName != null && fileName.length() > 0)
+				{
+					driver.setJarFileNames(new String[] {fileName});
+					try
+					{
+						driver.setJarFileName(null);
+					}
+					catch (ValidationException ignore)
+					{
+					}
+				}
+			}
 		}
 	}
 }
