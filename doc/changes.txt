@@ -14,6 +14,8 @@ Enhancements
 
 Bug Fixes
 ---------
+- Fixed bug where inserting/updating and deleting rows in the SQL tab would
+  loop (Gerd Wagner).
 - Fixed bug where setting the statement separator to an empty string then
   wouldn't allow you to change it to anything else (Gerd Wagner).
 - Fixed bug where minimized session windows weren't restored correctly (Gerd
