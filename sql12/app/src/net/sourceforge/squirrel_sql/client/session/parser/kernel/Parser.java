@@ -1132,7 +1132,10 @@ public class Parser
 
 	private final void QualifiedTable()
 	{
-		SQLSelectStatement statement = (SQLSelectStatement) getContext();
+      // Fix for Bug #982127
+		//SQLSelectStatement statement = (SQLSelectStatement) getContext();
+      SQLStatement statement = (SQLStatement) getContext();
+
 		SQLTable table = new SQLTable(statement, t.pos);
 		statement.addTable(table);
 		boolean wasSet = false;
