@@ -739,5 +739,34 @@ public class MssqlIntrospector {
         String[] parts = objectName.split(";");
         return parts[0];
     }
+    
+    public static String formatDataType(String dataType, short dataLength, int dataPrec, int dataScale) {
+        StringBuffer buf = new StringBuffer();
+        
+        if (dataType.endsWith("char")) {
+            buf.append(dataType);
+            buf.append("(");
+            buf.append(dataLength);
+            buf.append(")");
+        }
+        else if (dataType.equals("float")) {
+            buf.append(dataType);
+            buf.append("(");
+            buf.append(dataPrec);
+            buf.append(")");
+        }
+        else if (dataType.equals("decimal") || dataType.equals("numeric")) {
+            buf.append(dataType);
+            buf.append("(");
+            buf.append(dataPrec);
+            buf.append(",");
+            buf.append(dataScale);
+            buf.append(")");
+        }
+        else
+            buf.append(dataType);
+        
+        return buf.toString();
+    }
   
 }
