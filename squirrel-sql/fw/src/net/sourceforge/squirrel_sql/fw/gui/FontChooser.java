@@ -175,30 +175,42 @@ public class FontChooser extends JDialog {
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
 		content.add(_previewLbl, gbc);
 
-		OkClosePanel btnPnl = new OkClosePanel();
-		btnPnl.addListener(new IOkClosePanelListener() {
-		    public void okPressed(OkClosePanelEvent evt) {
-		    	setupFontFromDialog();
-		    	dispose();
-		    }
-		    public void closePressed(OkClosePanelEvent evt) {
-		    	_font = null;
-		    	dispose();
-		    }
-		    public void cancelPressed(OkClosePanelEvent evt) {
-		    	_font = null;
-		    	dispose();
-		    }
-		});
 		++gbc.gridy;
 		gbc.anchor = GridBagConstraints.CENTER;
-		content.add(btnPnl, gbc);
+		content.add(createButtonsPanel(), gbc);
 		
 		setupPreviewLabel();
 
 		pack();
 		GUIUtils.centerWithinParent(this);
 		setResizable(false);
+	}
+
+	private JPanel createButtonsPanel() {
+		JPanel pnl = new JPanel();
+
+		JButton okBtn = new JButton("OK");
+		okBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+		    	setupFontFromDialog();
+		    	dispose();
+			}
+		});
+		JButton cancelBtn = new JButton("Cancel");
+		cancelBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+		    	_font = null;
+		    	dispose();
+			}
+		});
+
+		pnl.add(okBtn);
+		pnl.add(cancelBtn);		
+
+		GUIUtils.setJButtonSizesTheSame(new JButton[] {okBtn, cancelBtn});
+		getRootPane().setDefaultButton(okBtn);
+
+		return pnl;
 	}
 
 	private void setupPreviewLabel() {
