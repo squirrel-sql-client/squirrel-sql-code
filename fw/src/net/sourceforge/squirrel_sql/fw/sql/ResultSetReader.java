@@ -452,43 +452,9 @@ public class ResultSetReader
 				{
 					case Types.NULL:
 						row[i] = null;
-						break;
-
-
-
-// the following are not yet converted to new DataType mechanism
-					case Types.BLOB:
-						if (_largeObjInfo.getReadBlobs())
-						{
-							row[i] = null;
-							Blob blob = _rs.getBlob(idx);
-							if (blob != null)
-							{
-								int len = (int)blob.length();
-								if (len > 0)
-								{
-									int bytesToRead = len;
-									if (!_largeObjInfo.getReadCompleteBlobs())
-									{
-										bytesToRead = _largeObjInfo.getReadBlobsSize();
-									}
-									if (bytesToRead > len)
-									{
-										bytesToRead = len;
-									}
-									row[i] = new String(blob.getBytes(1, bytesToRead));
-								}
-							}
-						}
-						else
-						{
-							row[i] = s_stringMgr.getString("ResultSetReader.blob");
-						}
-						break;
-						
-						
-
-// all of the following have been converted to use the new DataType object reader
+						break;					
+					
+					// all of the following have been converted to use the DataType objects
 					// TODO: When JDK1.4 is the earliest JDK supported
 					// by Squirrel then remove the hardcoding of the
 					// boolean data type.
@@ -528,12 +494,13 @@ public class ResultSetReader
 					case Types.LONGVARBINARY:
 					
 					case Types.CLOB:
-					
-					
+					case Types.BLOB:
+									
 					case Types.OTHER:
 
 					default:
-row[i] = CellComponentFactory.readResultSet(colDefs[i], _rs, idx, _largeObjInfo);
+						row[i] = CellComponentFactory.readResultSet(
+								colDefs[i], _rs, idx, _largeObjInfo);
 
 						break;
 
