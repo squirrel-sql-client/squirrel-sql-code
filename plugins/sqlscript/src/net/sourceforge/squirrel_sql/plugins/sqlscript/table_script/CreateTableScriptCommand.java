@@ -25,6 +25,7 @@ import java.sql.SQLException;
 import java.sql.DatabaseMetaData;
 import java.util.Vector;
 import java.util.Hashtable;
+import java.util.Collections;
 
 import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
@@ -141,7 +142,7 @@ public class CreateTableScriptCommand implements ICommand
                   }
 
                   String sColumnName = rsColumns.getString(4);
-                  sbScript.append("\n\t");
+                  sbScript.append("\n   ");
                   sbScript.append(sColumnName);
                   sbScript.append(" ");
                   //						int iType = rsColumns.getInt()
@@ -188,7 +189,7 @@ public class CreateTableScriptCommand implements ICommand
 
                if (pks.size() > 1)
                {
-                  sbScript.append("\n\tCONSTRAINT ");
+                  sbScript.append("\n   CONSTRAINT ");
                   sbScript.append(sTable);
                   sbScript.append("_PK PRIMARY KEY (");
                   for (int i = 0; i < pks.size(); i++)
@@ -264,8 +265,20 @@ public class CreateTableScriptCommand implements ICommand
       StringBuffer sbToAppend = new StringBuffer();
       DatabaseMetaData metaData = _session.getSQLConnection().getConnection().getMetaData();
       ResultSet indexInfo = metaData.getIndexInfo(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName(), false, false);
+      ResultSet primaryKeys = metaData.getPrimaryKeys(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName());
+
+      Vector pkCols = new Vector();
+      while(primaryKeys.next())
+      {
+         pkCols.add(new IndexColInfo(primaryKeys.getString("COLUMN_NAME")));
+      }
+      primaryKeys.close();
+
+      Collections.sort(pkCols, IndexColInfo.NAME_COMPARATOR);
 
       Hashtable buf = new Hashtable();
+
+      boolean unique = false;
       while(indexInfo.next())
       {
          String ixName = indexInfo.getString("INDEX_NAME");
@@ -275,28 +288,40 @@ public class CreateTableScriptCommand implements ICommand
             continue;
          }
 
+         unique = !indexInfo.getBoolean("NON_UNIQUE");
+
          IndexInfo ixi = (IndexInfo) buf.get(ixName);
 
          if(null == ixi)
          {
-            Vector cols = new Vector();
+            Vector ixCols = new Vector();
             String table = indexInfo.getString("TABLE_NAME");
-            cols.add(indexInfo.getString("COLUMN_NAME"));
-            buf.put(ixName, new IndexInfo(table, ixName, cols));
+            ixCols.add(new IndexColInfo(indexInfo.getString("COLUMN_NAME"), indexInfo.getInt("ORDINAL_POSITION")));
+            buf.put(ixName, new IndexInfo(table, ixName, ixCols));
          }
          else
          {
-            ixi.cols.add(indexInfo.getString("COLUMN_NAME"));
-
+            ixi.cols.add(new IndexColInfo(indexInfo.getString("COLUMN_NAME"), indexInfo.getInt("ORDINAL_POSITION")));
          }
       }
       indexInfo.close();
       IndexInfo[] ixs = (IndexInfo[]) buf.values().toArray(new IndexInfo[buf.size()]);
       for (int i = 0; i < ixs.length; i++)
       {
+         Collections.sort(ixs[i].cols, IndexColInfo.NAME_COMPARATOR);
 
-         sbToAppend.append("CREATE INDEX " + ixs[i].ixName + " ON " + ixs[i].table);
+         if(pkCols.equals(ixs[i].cols))
+         {
+            // Serveral DBs automatically create an index for primary key fields
+            // and return this index in getIndexInfo(). We remove this index from the script
+            // because it would break the script with an index already exists error.
+            continue;
+         }
 
+         Collections.sort(ixs[i].cols, IndexColInfo.ORDINAL_POSITION_COMPARATOR);
+
+
+         sbToAppend.append("CREATE" + (unique ? " UNIQUE ": " ") + "INDEX " + ixs[i].ixName + " ON " + ixs[i].table);
 
          if(ixs[i].cols.size() == 1)
          {
