@@ -47,6 +47,7 @@ public class SquirrelResources extends Resources
 	public interface IImageNames
 	{
 		String APPLICATION_ICON = "AppIcon";
+		String COPY_SELECTED = "CopySelected";
 		String EMPTY16 = "Empty16";
 		String HELP_TOPIC = "HelpTopic";
 		String HELP_TOC_CLOSED = "HelpTocClosed";
