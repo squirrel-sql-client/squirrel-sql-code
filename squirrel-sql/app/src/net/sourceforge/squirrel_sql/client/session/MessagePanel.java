@@ -19,8 +19,10 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.DataTruncation;
 import java.sql.SQLException;
 
+import java.sql.SQLWarning;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
@@ -88,27 +90,45 @@ class MessagePanel extends JTextArea implements IMessageHandler {
 	}
 
 	public void showMessage(final Throwable th) {
-		if (th == null) {
-			throw new IllegalArgumentException("null Throwable");
-		}
-		// Thread safe support for every call to this method:
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				if (th instanceof SQLException) {
-					SQLException ex = (SQLException)th;
-					while (ex != null) {
-						showMessage("Error:     " + ex.getMessage());
-						showMessage("SQLState:  " + ex.getSQLState());
-						showMessage("ErrorCode: " + ex.getErrorCode());
+		if (th != null) {
+			// Thread safe support for every call to this method:
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					if (th instanceof DataTruncation) {
+						DataTruncation ex = (DataTruncation)th;
+						StringBuffer buf = new StringBuffer();
+						buf.append("Data Truncation error occured on")
+							.append(ex.getRead() ? " a read " : " a write ")
+							.append(" of column ").append(ex.getIndex())
+							.append("Data was ").append(ex.getDataSize())
+							.append(" bytes long and ").append(ex.getTransferSize())
+							.append(" bytes were transferred.");
+						showMessage(buf.toString());
+					} else if (th instanceof SQLWarning) {
+						SQLWarning ex = (SQLWarning)th;
+						while (ex != null) {
+							showMessage("Warning:   " + ex.getMessage());
+							showMessage("SQLState:  " + ex.getSQLState());
+							showMessage("ErrorCode: " + ex.getErrorCode());
+							s_log.debug("Error", th);
+							ex = ex.getNextWarning();
+						}
+					} else if (th instanceof SQLException) {
+						SQLException ex = (SQLException)th;
+						while (ex != null) {
+							showMessage("Error:     " + ex.getMessage());
+							showMessage("SQLState:  " + ex.getSQLState());
+							showMessage("ErrorCode: " + ex.getErrorCode());
+							s_log.debug("Error", th);
+							ex = ex.getNextException();
+						}
+					} else {
+						showMessage(th.toString());
 						s_log.debug("Error", th);
-						ex = ex.getNextException();
 					}
-				} else {
-					showMessage(th.toString());
-					s_log.debug("Error", th);
 				}
-			}
-		});
+			});
+		}
 	}
 
 	public void showMessage(final String msg) {
