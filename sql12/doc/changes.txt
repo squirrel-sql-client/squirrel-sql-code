@@ -18,6 +18,8 @@ Enhancements
 
 Bug Fixes
 ---------
+- Fix for error when displaying catalogs/schemas when
+  using jTDS 4 and above.
 - Fix column privileges for MySQL.
 
 
