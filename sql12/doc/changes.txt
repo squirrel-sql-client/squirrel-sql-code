@@ -26,6 +26,11 @@ Bug Fixes
 - Fix ClassCastException thrown by the parser (Gerd Wagner).
 - Fix Bug #981490 OutOfMemoryException partly caused by the parser (Gerd Wagner).
 
+Other
+-----
+- Allow for JDBC drivers that return null for Driver.getPropertyInfo(...)
+  instead of an empty array.
+
 
 1.2beta6
 ========
