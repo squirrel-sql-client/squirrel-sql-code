@@ -104,6 +104,7 @@ class Application implements IApplication {
 
 		_resources = new SquirrelResources("net.sourceforge.squirrel_sql.client.resources.squirrel");
 		final ApplicationArguments args = ApplicationArguments.getInstance();
+		final boolean loadPlugins = args.getLoadPlugins();
 		if (args.getShowSplashScreen()) {
 			_splash = new SplashScreen(_resources, 8);
 		}
@@ -115,9 +116,11 @@ class Application implements IApplication {
 				chg.show();
 			}
 			try {
-				indicateNewStartupTask("Loading plugins...");
+				indicateNewStartupTask(loadPlugins ? "Loading plugins..." : "No Plugins to be loaded...");
 				_pluginManager = new PluginManager(this);
-				_pluginManager.loadPlugins();
+				if (loadPlugins) {
+					_pluginManager.loadPlugins();
+				}
 
 				indicateNewStartupTask("Loading preferences...");
 				_prefs = new SquirrelPreferences();

@@ -38,12 +38,16 @@ public class ApplicationArguments {
 	private boolean _showSplashScreen = true;
 
 	/**
-	 * If not <TT>null</TT> then is an override for the users .squirrel-sql settings directory.
+	 * If not <TT>null</TT> then is an override for the users .squirrel-sql
+	 * settings directory.
 	 */
 	private String _userSettingsDir = null;
 
 	/** Path for logging configuration file */
 	private String _loggingConfigFile = null;
+
+	/** If <TT>true</TT> plugins are to be loaded. */
+	private boolean _loadPlugins = true;
 
 	/**
 	 * Ctor specifying arguments from command line. 
@@ -71,6 +75,8 @@ public class ApplicationArguments {
 				_userSettingsDir = value;
 			} else if (parm.equalsIgnoreCase("-loggingconfigfile")) {
 				_loggingConfigFile = value;
+			} else if (parm.equalsIgnoreCase("-noplugins")) {
+				_loadPlugins = false;
 			}
 		}
 	}
@@ -122,5 +128,12 @@ public class ApplicationArguments {
 	 */
 	public String getLoggingConfigFileName() {
 		return _loggingConfigFile;
+	}
+
+	/**
+	 *  @return	<TT>true</TT> if the plugins should be loaded.
+	 */
+	public boolean getLoadPlugins() {
+		return _loadPlugins;
 	}
 }
