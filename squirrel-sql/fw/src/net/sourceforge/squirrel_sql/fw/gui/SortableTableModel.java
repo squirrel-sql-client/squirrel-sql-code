@@ -257,7 +257,14 @@ public class SortableTableModel extends AbstractTableModel
 		{
 			Integer i1 = (Integer)o1;
 			Integer i2 = (Integer)o2;
-			return ((Comparable)_actualModel.getValueAt(i1.intValue(),_iColumn)).compareTo(_actualModel.getValueAt(i2.intValue(),_iColumn))*_iAscending;
+			
+			Comparable c1 = ((Comparable)_actualModel.getValueAt(i1.intValue(),_iColumn));
+			Object c2 = _actualModel.getValueAt(i2.intValue(),_iColumn);
+			
+			if(c1 == null && c2 == null) return 0;
+			if(c1 == null) return 1;
+			if(c2 == null) return -1;
+			return c1.compareTo(c2)*_iAscending;
 		}
 
 	}
