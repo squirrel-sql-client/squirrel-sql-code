@@ -26,8 +26,8 @@ import javax.swing.JScrollPane;
 
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+//import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+//import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
@@ -70,13 +70,13 @@ public class CreateTableCommand extends JDialog implements ICommand
 	private javax.swing.JTextField tfFieldName;
 	private javax.swing.JTextField tfTableName;
 	private javax.swing.JDialog jd;
-	private DBUtils dbUtils;
+//	private DBUtils dbUtils;
 	protected String SQLCommandRoot = "CREATE TABLE ";
 	protected String SQLCommand = "";
 
 	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(CreateMysqlTableScriptCommand.class);
+//	private final static ILogger s_log =
+//		LoggerController.createLogger(CreateMysqlTableScriptCommand.class);
 
 	/** Current session. */
 	private ISession _session;

@@ -38,8 +38,8 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+//import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+//import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.gui.builders.DefaultFormBuilder;
 import net.sourceforge.squirrel_sql.client.gui.controls.ColumnsComboBox;
@@ -54,8 +54,8 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 class AlterColumnsPanelBuilder
 {
 	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(AlterColumnsPanelBuilder.class);
+//	private final static ILogger s_log =
+//		LoggerController.createLogger(AlterColumnsPanelBuilder.class);
 
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =

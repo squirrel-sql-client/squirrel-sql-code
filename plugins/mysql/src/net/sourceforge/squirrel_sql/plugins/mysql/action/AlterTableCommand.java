@@ -23,8 +23,8 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.WrappedSQLException;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+//import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+//import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
@@ -63,9 +63,9 @@ public class AlterTableCommand implements ICommand
 //	protected String SQLCommand = "";
 	// End of variables declaration
 
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(AlterTableCommand.class);
+//	/** Logger for this class. */
+//	private final static ILogger s_log =
+//		LoggerController.createLogger(AlterTableCommand.class);
 
 	/** Current session. */
 	private ISession _session;

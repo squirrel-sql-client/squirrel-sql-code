@@ -17,8 +17,8 @@ package net.sourceforge.squirrel_sql.plugins.mysql.tab;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+//import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+//import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
  * This tab will display open tables in the database.
  *
@@ -37,8 +37,8 @@ public class OpenTablesTab extends BaseSQLTab
 	}
 
 	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(OpenTablesTab.class);
+//	private final static ILogger s_log =
+//		LoggerController.createLogger(OpenTablesTab.class);
 
 	public OpenTablesTab()
 	{

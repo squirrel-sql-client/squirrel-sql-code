@@ -28,8 +28,8 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+//import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+//import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
@@ -48,8 +48,8 @@ public class UserParentExpander implements INodeExpander
 	private static final String SQL = "select concat(user, '@', host) from mysql.user";
 
 	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(UserParentExpander.class);
+//	private static final ILogger s_log =
+//		LoggerController.createLogger(UserParentExpander.class);
 
 	/** The plugin. */
 	private final MysqlPlugin _plugin;
