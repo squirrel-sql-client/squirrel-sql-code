@@ -28,24 +28,34 @@ import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 
 class JeditSQLEntryPanelFactory implements ISQLEntryPanelFactory {
 	private JeditPlugin _plugin;
-	private JeditPreferences _prefs;
+	private JeditPreferences _globalPrefs;
 
-	JeditSQLEntryPanelFactory(JeditPlugin plugin, JeditPreferences prefs) throws IllegalArgumentException {
+	JeditSQLEntryPanelFactory(JeditPlugin plugin, JeditPreferences globalPrefs)
+			throws IllegalArgumentException {
 		if (plugin == null) {
 			throw new IllegalArgumentException("Null JeditPlugin passed");
 		}
-		if (prefs == null) {
+		if (globalPrefs == null) {
 			throw new IllegalArgumentException("Null JeditPreferences passed");
 		}
+
 		_plugin = plugin;
-		_prefs = prefs;
+		_globalPrefs = globalPrefs;
 	}
 
 	/**
 	 * @see ISQLEntryPanelFactory#createSQLEntryPanel()
 	 */
-	public ISQLEntryPanel createSQLEntryPanel(ISession session) {
-		final JeditSQLEntryPanel pnl = new JeditSQLEntryPanel(session, _prefs);
+	public ISQLEntryPanel createSQLEntryPanel(ISession session)
+			throws IllegalArgumentException{
+		if (session == null) {
+			throw new IllegalArgumentException("Null ISession passed");
+		}
+		JeditPreferences prefs = (JeditPreferences)session.getPluginObject(_plugin, JeditConstants.ISessionKeys.PREFS);
+		if (prefs == null) {
+			prefs = _globalPrefs;
+		}
+		final JeditSQLEntryPanel pnl = new JeditSQLEntryPanel(session, _plugin, prefs);
 		final JEditTextArea ta = pnl.getTypedComponent();
 		session.putPluginObject(_plugin, JeditConstants.ISessionKeys.JEDIT_SQL_ENTRY_CONTROL, pnl);
 		return pnl;

@@ -31,6 +31,7 @@ import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
  */
 public class JeditPreferences implements Serializable, Cloneable {
 	public interface IPropertyNames {
+		String BLOCK_CARET_ENABLED = "blockCaretEnabled";
 		String USE_JEDIT_CONTROL = "useJeditControl";
 		String KEYWORD1_COLOR = "keyword1Color";
 		String KEYWORD2_COLOR = "keyword2Color";
@@ -41,6 +42,8 @@ public class JeditPreferences implements Serializable, Cloneable {
 	private PropertyChangeReporter _propChgReporter = new PropertyChangeReporter(this);
 
 	private boolean _useJeditTextControl = true;
+
+	private boolean _blockCaretEnabled = false;
 
 	private int _keyword1RGB = Color.black.getRGB();
 	private int _keyword2RGB = Color.magenta.getRGB();
@@ -72,6 +75,19 @@ public class JeditPreferences implements Serializable, Cloneable {
 			_useJeditTextControl = data;
 			_propChgReporter.firePropertyChange(IPropertyNames.USE_JEDIT_CONTROL,
 								oldValue, _useJeditTextControl);
+		}
+	}
+
+	public boolean isBlockCaretEnabled() {
+		return _blockCaretEnabled;
+	}
+
+	public void setBlockCaretEnabled(boolean data) {
+		if (_blockCaretEnabled != data) {
+			final boolean oldValue = _blockCaretEnabled;
+			_blockCaretEnabled = data;
+			_propChgReporter.firePropertyChange(IPropertyNames.BLOCK_CARET_ENABLED,
+								oldValue, _blockCaretEnabled);
 		}
 	}
 

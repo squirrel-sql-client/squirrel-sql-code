@@ -45,6 +45,7 @@ class JeditTextAreaDefaults extends TextAreaDefaults {
 
 		styles = SyntaxUtilities.getDefaultSyntaxStyles();
 
+		blockCaret = true;
 		caretColor = Color.red;
 		selectionColor = new Color(0xccccff);
 		lineHighlightColor = new Color(0xe0e0e0);
@@ -52,8 +53,8 @@ class JeditTextAreaDefaults extends TextAreaDefaults {
 		bracketHighlightColor = Color.black;
 		bracketHighlight = true;
 		eolMarkerColor = new Color(0x009999);
-		eolMarkers = true;
-		paintInvalid = true;
+		eolMarkers = false;
+		paintInvalid = false;
 
 		updateFromPreferences(prefs);
 	}

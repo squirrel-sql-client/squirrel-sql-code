@@ -22,6 +22,8 @@ import java.awt.Component;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.MouseListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.JPanel;
 import javax.swing.UIManager;
@@ -32,6 +34,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
+import net.sourceforge.squirrel_sql.client.session.SessionSheet;
 
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.JEditTextArea;
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.SyntaxDocument;
@@ -46,17 +50,48 @@ class JeditSQLEntryPanel implements ISQLEntryPanel {
 	/** Text component. */
 	private JEditTextArea _jeditTextArea;
 
-	JeditSQLEntryPanel(ISession session, JeditPreferences prefs) {
+	/** Jedit preferences for the current session. */
+	private JeditPreferences _prefs;
+
+	/** Listener for the session preferences. */
+	private SessionPreferencesListener _sessionPrefsListener;
+
+	JeditSQLEntryPanel(ISession session, JeditPlugin plugin, JeditPreferences prefs) {
 		super();
+		if (session == null) {
+			throw new IllegalArgumentException("Null ISession passed");
+		}
+		if (plugin == null) {
+			throw new IllegalArgumentException("Null JeditPlugin passed");
+		}
 		if (prefs == null) {
 			throw new IllegalArgumentException("Null JeditPreferences passed");
 		}
 
-		_jeditTextArea = new JEditTextArea(new JeditTextAreaDefaults(prefs));
+
+		try {
+			_prefs = (JeditPreferences)prefs.clone();
+			session.putPluginObject(plugin, JeditConstants.ISessionKeys.PREFS, _prefs);
+		} catch (CloneNotSupportedException ex) {
+			throw new InternalError("CloneNotSupportedException for JeditPreferences");
+		}
+
+		_jeditTextArea = new JEditTextArea(new JeditTextAreaDefaults(_prefs));
 		_jeditTextArea.setTokenMarker(new JeditSQLTokenMarker(session.getSQLConnection()));
 		Font font = (Font)UIManager.get("TextArea.font");
 		if (font != null) {
 			_jeditTextArea.getPainter().setFont(font);
+		}
+
+		_sessionPrefsListener = new SessionPreferencesListener(plugin, session, _prefs);
+		_prefs.addPropertyChangeListener(_sessionPrefsListener);
+	}
+
+	// Need to call this at the appropriate time??
+	public void cleanup() {
+		if (_sessionPrefsListener != null) {
+			_prefs.removePropertyChangeListener(_sessionPrefsListener);
+			_sessionPrefsListener = null;
 		}
 	}
 
@@ -178,7 +213,7 @@ class JeditSQLEntryPanel implements ISQLEntryPanel {
 		return _jeditTextArea;
 	}
 
-	void updateFromPreferences(JeditPreferences prefs)
+	private void updateFromPreferences(JeditPreferences prefs)
 			throws IllegalArgumentException {
 		if (prefs == null) {
 			throw new IllegalArgumentException("Null JEditPreferences passed");
@@ -190,6 +225,9 @@ class JeditSQLEntryPanel implements ISQLEntryPanel {
 		styles[Token.KEYWORD2] = new SyntaxStyle(new Color(prefs.getKeyword2RGB()), false, true);
 		styles[Token.KEYWORD3] = new SyntaxStyle(new Color(prefs.getKeyword3RGB()), false, true);
 		painter.setStyles(styles);
+		s_log.debug("before painter.isBlockCaretEnabled(): " + painter.isBlockCaretEnabled());
+		painter.setBlockCaretEnabled(prefs.isBlockCaretEnabled());
+		s_log.debug("after painter.isBlockCaretEnabled(): " + painter.isBlockCaretEnabled());
 	}
 
 	/*
@@ -216,5 +254,51 @@ class JeditSQLEntryPanel implements ISQLEntryPanel {
 		_jeditTextArea.getDocument().removeUndoableEditListener(listener);
 	}
 
+	private static final class SessionPreferencesListener implements PropertyChangeListener {
+		private JeditPlugin _plugin;
+		private ISession _session;
+		private JeditPreferences _prefs;
+		private boolean _usingJeditControl;		
+		SessionPreferencesListener(JeditPlugin plugin, ISession session, JeditPreferences prefs) {
+			super();
+			_plugin = plugin;
+			_session = session;
+			_prefs = prefs;
+		}
+
+		public void propertyChange(PropertyChangeEvent evt) {
+			final String propName = evt.getPropertyName();
+
+			if (propName == null || propName.equals(
+					JeditPreferences.IPropertyNames.USE_JEDIT_CONTROL)) {
+				ISQLEntryPanelFactory factory = null;
+				if (_prefs.getUseJeditTextControl()) {
+					factory = _plugin.getJeditFactory();
+				} else {
+					factory = _plugin.getOriginalFactory();
+					_session.putPluginObject(_plugin, JeditConstants.ISessionKeys.JEDIT_SQL_ENTRY_CONTROL, null);
+				}
+				synchronized (_session) {
+					SessionSheet sheet = _session.getSessionSheet();
+					if (sheet != null) {
+						sheet.replaceSQLEntryPanel(factory.createSQLEntryPanel(_session));
+					}
+				}
+			}
+
+			if (propName == null ||
+					propName.equals(JeditPreferences.IPropertyNames.KEYWORD1_COLOR) ||
+					propName.equals(JeditPreferences.IPropertyNames.KEYWORD2_COLOR) ||
+					propName.equals(JeditPreferences.IPropertyNames.KEYWORD3_COLOR) ||
+					propName.equals(JeditPreferences.IPropertyNames.BLOCK_CARET_ENABLED)) {
+				if (_prefs.getUseJeditTextControl()) {
+					JeditSQLEntryPanel pnl = (JeditSQLEntryPanel)_session.getPluginObject(_plugin, JeditConstants.ISessionKeys.JEDIT_SQL_ENTRY_CONTROL);
+					if (pnl != null) {
+						pnl.updateFromPreferences(_prefs);
+					}
+				}
+			}
+		}
+	}
 }
 

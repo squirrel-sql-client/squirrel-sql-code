@@ -173,6 +173,7 @@ public class JeditPreferencesPanel implements IGlobalPreferencesPanel, ISessionP
 			String TAB_TITLE = "jEdit";
 			String TAB_HINT = "jEdit text control usage";
 			String ACTIVE = "Use jEdit text control";
+			String BLOCK_CARET = "Use Block Caret";
 		}
 
 		private JeditPlugin _plugin;
@@ -181,6 +182,7 @@ public class JeditPreferencesPanel implements IGlobalPreferencesPanel, ISessionP
 		private JeditPreferences _prefs;
 		
 		private JCheckBox _activeChk = new JCheckBox(i18n.ACTIVE);
+		private JCheckBox _blockCaretEnabledChk = new JCheckBox(i18n.BLOCK_CARET);
 		private JLabel _keywordColorLbl1;
 		private JLabel _keywordColorLbl2;
 		private JLabel _keywordColorLbl3;
@@ -201,6 +203,7 @@ public class JeditPreferencesPanel implements IGlobalPreferencesPanel, ISessionP
 			_prefs = prefs;
 			
 			_activeChk.setSelected(_prefs.getUseJeditTextControl());
+			_blockCaretEnabledChk.setSelected(_prefs.isBlockCaretEnabled());
 			_keywordColorLbl1.setBackground(new Color(_prefs.getKeyword1RGB()));
 			_keywordColorLbl2.setBackground(new Color(_prefs.getKeyword2RGB()));
 			_keywordColorLbl3.setBackground(new Color(_prefs.getKeyword3RGB()));
@@ -208,6 +211,7 @@ public class JeditPreferencesPanel implements IGlobalPreferencesPanel, ISessionP
 
 		void applyChanges() {
 			_prefs.setUseJeditTextControl(_activeChk.isSelected());
+			_prefs.setBlockCaretEnabled(_blockCaretEnabledChk.isSelected());
 			_prefs.setKeyword1RGB(_keywordColorLbl1.getBackground().getRGB());
 			_prefs.setKeyword2RGB(_keywordColorLbl2.getBackground().getRGB());
 			_prefs.setKeyword3RGB(_keywordColorLbl3.getBackground().getRGB());
@@ -234,6 +238,7 @@ public class JeditPreferencesPanel implements IGlobalPreferencesPanel, ISessionP
 					_keywordColorBtn1.setEnabled(useJeditControl);
 					_keywordColorBtn2.setEnabled(useJeditControl);
 					_keywordColorBtn3.setEnabled(useJeditControl);
+					_blockCaretEnabledChk.setEnabled(useJeditControl);
 				}
 			});
 
@@ -243,7 +248,9 @@ public class JeditPreferencesPanel implements IGlobalPreferencesPanel, ISessionP
 			gbc.gridx = gbc.gridy = 0;
 			add(_activeChk, gbc);
 
-			gbc.gridx = 0;
+			++gbc.gridy;
+			add(_blockCaretEnabledChk, gbc);
+
 			++gbc.gridy;
 			add(_keywordColorBtn1, gbc);
 			++gbc.gridx;
