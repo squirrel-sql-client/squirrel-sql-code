@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client.db;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Container;
@@ -322,6 +323,8 @@ public class ConnectionSheet extends BaseSheet {
 		contentPane.add(_btnsPnl);
 
 		// Finally the status bar.
+		Font fn = _app.getFontInfoStore().getStatusBarFontInfo().createFont();
+		_statusBar.setFont(fn);
 		gbl.setConstraints(_statusBar, gbc);
 		contentPane.add(_statusBar);
 
