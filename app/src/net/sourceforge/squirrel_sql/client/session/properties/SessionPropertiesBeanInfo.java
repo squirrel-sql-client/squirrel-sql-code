@@ -65,8 +65,6 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 									CLAZZ, "getSQLStatementSeparator", "setSQLStatementSeparator");
 			s_dscrs[11] = new PropertyDescriptor(IPropNames.SQL_RESULTS_OUTPUT_CLASS_NAME,
 									CLAZZ, "getSQLResultsOutputClassName", "setSQLResultsOutputClassName");
-//??			s_dscrs[12] = new PropertyDescriptor(IPropNames.LARGE_RESULT_SET_OBJECT_INFO,
-//??									CLAZZ, "getLargeResultSetObjectInfo", "setLargeResultSetObjectInfo");
 			s_dscrs[12] = new PropertyDescriptor(IPropNames.SQL_START_OF_LINE_COMMENT,
 									CLAZZ, "getStartOfLineComment", "setStartOfLineComment");
 			s_dscrs[13] = new PropertyDescriptor(IPropNames.LIMIT_SQL_ENTRY_HISTORY_SIZE,
