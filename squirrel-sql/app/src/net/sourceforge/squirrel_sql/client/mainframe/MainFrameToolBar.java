@@ -18,7 +18,6 @@ package net.sourceforge.squirrel_sql.client.mainframe;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
@@ -36,12 +35,12 @@ import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeListener;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.db.DataCache;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CascadeAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ExitAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.GlobalPreferencesAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.MaximizeAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
+import net.sourceforge.squirrel_sql.client.mainframe.action.NewSessionPropertiesAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileAction;
 
 /**
@@ -49,29 +48,35 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.TileAction;
  *
  * @author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-class MainFrameToolBar extends ToolBar {
+class MainFrameToolBar extends ToolBar
+{
 	/** Application API. */
 	private IApplication _app;
 
 	/**
-	 * ctor specifying the <TT>ActionCollection</TT> object that stores the
-	 * actions for the application.
+	 * ctor.
+	 * 
+	 * @param	app		Application API
+	 * @param	frame	Application main frame
 	 *
 	 * @throws	IllegalArgumentException
 	 *			<TT>null</TT> <TT>IApplication</TT> or <TT>MainFrame</TT>
 	 *			passed.
 	 */
-	MainFrameToolBar(IApplication app, MainFrame frame) {
+	MainFrameToolBar(IApplication app, MainFrame frame)
+	{
 		super();
-		if (app == null) {
+		if (app == null)
+		{
 			throw new IllegalArgumentException("null IApplication passed.");
 		}
-		if (frame == null) {
+		if (frame == null)
+		{
 			throw new IllegalArgumentException("null MainFrame passed.");
 		}
 		_app = app;
 		setUseRolloverButtons(true);
-		setFloatable(false);
+		setFloatable(true);
 
 		ActionCollection actions = _app.getActionCollection();
 		JLabel lbl = new JLabel(" Connect to: ");
@@ -82,12 +87,13 @@ class MainFrameToolBar extends ToolBar {
 		add(drop);
 		addSeparator();
 		add(actions.get(GlobalPreferencesAction.class));
+		add(actions.get(NewSessionPropertiesAction.class));
 		addSeparator();
 		add(actions.get(TileAction.class));
 		add(actions.get(CascadeAction.class));
 		add(actions.get(MaximizeAction.class));
-		addSeparator();
-		add(actions.get(ExitAction.class));
+//		addSeparator();
+//		add(actions.get(ExitAction.class));
 	}
 
 	/**
@@ -96,7 +102,8 @@ class MainFrameToolBar extends ToolBar {
 	 *
 	 * @param	action	<TT>Action</TT> to be added.
 	 */
-	private void addAction(Action action) {
+	private void addAction(Action action)
+	{
 		JButton btn = add(action);
 		btn.setAlignmentY(0.5f);
 	}
@@ -105,11 +112,15 @@ class MainFrameToolBar extends ToolBar {
 	 * Dropdown holding all the current <TT>ISQLAlias</TT> objects. When one is
 	 * selected the user will be prompted to connect to it.
 	 */
-	private static class AliasesDropDown extends JComboBox implements ActionListener {
+	private static class AliasesDropDown
+		extends JComboBox
+		implements ActionListener
+	{
 		private IApplication _app;
 		private MainFrame _mainFrame;
 
-		AliasesDropDown(IApplication app, MainFrame mainFrame) {
+		AliasesDropDown(IApplication app, MainFrame mainFrame)
+		{
 			super();
 			_app = app;
 			_mainFrame = mainFrame;
@@ -118,9 +129,12 @@ class MainFrameToolBar extends ToolBar {
 
 			// Under JDK1.4 the first item in a JComboBox
 			// is no longer automatically selected.
-			if (getModel().getSize() > 0) {
+			if (getModel().getSize() > 0)
+			{
 				setSelectedIndex(0);
-			} else {
+			}
+			else
+			{
 				// Under JDK1.4 an empty JComboBox has an almost zero width.
 				Dimension dm = getPreferredSize();
 				dm.width = 100;
@@ -137,14 +151,20 @@ class MainFrameToolBar extends ToolBar {
 		 *
 		 * @param   evt	 Describes the event that has just occured.
 		 */
-		public void actionPerformed(ActionEvent evt) {
-			try {
+		public void actionPerformed(ActionEvent evt)
+		{
+			try
+			{
 				Object obj = getSelectedItem();
-				if (obj instanceof ISQLAlias) {
-					new ConnectToAliasCommand(_app, _mainFrame, (ISQLAlias)obj).execute();
+				if (obj instanceof ISQLAlias)
+				{
+					new ConnectToAliasCommand(_app, _mainFrame, (ISQLAlias) obj).execute();
 				}
-			} finally {
-				if (getModel().getSize() > 0) {
+			}
+			finally
+			{
+				if (getModel().getSize() > 0)
+				{
 					setSelectedIndex(0);
 				}
 			}
@@ -154,27 +174,31 @@ class MainFrameToolBar extends ToolBar {
 	/**
 	 * Data model for AliasesDropDown.
 	 */
-	private static class AliasesDropDownModel extends SortedComboBoxModel {
+	private static class AliasesDropDownModel extends SortedComboBoxModel
+	{
 		private IApplication _app;
 
 		/**
 		 * Default ctor. Listen to the <TT>DataCache</TT> object for additions
 		 * and removals of aliases from the cache.
 		 */
-		public AliasesDropDownModel(IApplication app) {
+		public AliasesDropDownModel(IApplication app)
+		{
 			super();
 			_app = app;
 			load();
-//			_app.getDataCache().addAliasesListener(new MyAliasesListener(this));
+			//			_app.getDataCache().addAliasesListener(new MyAliasesListener(this));
 		}
 
 		/**
 		 * Load from <TT>DataCache</TT>.
 		 */
-		private void load() {
+		private void load()
+		{
 			Iterator it = _app.getDataCache().aliases();
-			while (it.hasNext()) {
-				addAlias((ISQLAlias)it.next());
+			while (it.hasNext())
+			{
+				addAlias((ISQLAlias) it.next());
 			}
 		}
 
@@ -183,7 +207,8 @@ class MainFrameToolBar extends ToolBar {
 		 *
 		 * @param   alias   <TT>ISQLAlias</TT> to be added.
 		 */
-		private void addAlias(ISQLAlias alias) {
+		private void addAlias(ISQLAlias alias)
+		{
 			addElement(alias);
 		}
 
@@ -192,7 +217,8 @@ class MainFrameToolBar extends ToolBar {
 		 *
 		 * @param   alias   <TT>ISQLAlias</TT> to be removed.
 		 */
-		private void removeAlias(ISQLAlias alias) {
+		private void removeAlias(ISQLAlias alias)
+		{
 			removeElement(alias);
 		}
 	}
@@ -201,7 +227,8 @@ class MainFrameToolBar extends ToolBar {
 	 * Listener to changes in <TT>ObjectCache</TT>. As aliases are
 	 * added to/removed from <TT>DataCache</TT> this model is updated.
 	 */
-	private static class MyAliasesListener implements ObjectCacheChangeListener {
+	private static class MyAliasesListener implements ObjectCacheChangeListener
+	{
 		/** Model that is listening. */
 		private AliasesDropDownModel _model;
 
@@ -211,7 +238,8 @@ class MainFrameToolBar extends ToolBar {
 		/**
 		 * Ctor specifying the model and control that is listening.
 		 */
-		MyAliasesListener(AliasesDropDownModel model, AliasesDropDown control) {
+		MyAliasesListener(AliasesDropDownModel model, AliasesDropDown control)
+		{
 			super();
 			_model = model;
 			_control = control;
@@ -222,12 +250,15 @@ class MainFrameToolBar extends ToolBar {
 		 *
 		 * @param	evt	Describes the event in the cache.
 		 */
-		public void objectAdded(ObjectCacheChangeEvent evt) {
+		public void objectAdded(ObjectCacheChangeEvent evt)
+		{
 			Object obj = evt.getObject();
-			if (obj instanceof ISQLAlias) {
-				_model.addAlias((ISQLAlias)obj);
+			if (obj instanceof ISQLAlias)
+			{
+				_model.addAlias((ISQLAlias) obj);
 			}
-			if (_control.getItemCount() == 1) {
+			if (_control.getItemCount() == 1)
+			{
 				_control.setSelectedIndex(0);
 			}
 		}
@@ -237,10 +268,12 @@ class MainFrameToolBar extends ToolBar {
 		 *
 		 * @param	evt	Describes the event in the cache.
 		 */
-		public void objectRemoved(ObjectCacheChangeEvent evt) {
+		public void objectRemoved(ObjectCacheChangeEvent evt)
+		{
 			Object obj = evt.getObject();
-			if (obj instanceof ISQLAlias) {
-				_model.removeAlias((ISQLAlias)obj);
+			if (obj instanceof ISQLAlias)
+			{
+				_model.removeAlias((ISQLAlias) obj);
 			}
 		}
 	}
