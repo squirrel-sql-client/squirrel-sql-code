@@ -26,7 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -43,6 +45,7 @@ public class SchemaInfo
 	private final List _catalogs = new ArrayList();
 	private final List _schemas = new ArrayList();
 	private final List _extendedtableInfos = new ArrayList();
+	private IProcedureInfo[] _procInfos = new IProcedureInfo[0];
 
 	/** Logger for this class. */
 	private static final ILogger s_log =
@@ -84,10 +87,12 @@ public class SchemaInfo
 		_loading = true;
 		try
 		{
+			final SQLDatabaseMetaData sqlDmd = conn.getSQLMetaData();
+
 			DatabaseMetaData dmd = null;
 			try
 			{
-				dmd = conn.getSQLMetaData().getJDBCMetaData();
+				dmd = sqlDmd.getJDBCMetaData();
 			}
 			catch (Exception ex)
 			{
@@ -157,6 +162,17 @@ public class SchemaInfo
 			{
 				s_log.error("Error loading tables", ex);
 			}
+
+			try
+			{
+				s_log.debug("Loading stored procedures");
+				loadStoredProcedures(sqlDmd, catalogName, schemaName);
+				s_log.debug("stored procedures loaded");
+			}
+			catch (Exception ex)
+			{
+				s_log.error("Error loading tables", ex);
+			}
 		}
 		finally
 		{
@@ -165,14 +181,35 @@ public class SchemaInfo
 		}
 	}
 
-	private void loadCatalogs(DatabaseMetaData dmd)
+	private void loadStoredProcedures(SQLDatabaseMetaData dmd, String catalogName,
+										String schemaName)
 	{
 		try
 		{
-			ResultSet res = dmd.getCatalogs();
-			while(res.next())
+			_procInfos = dmd.getProcedures(catalogName, schemaName, "%");
+		}
+		catch (Throwable th)
+		{
+			s_log.error("failed to load stroed procedures", th);
+		}
+
+	}
+
+   private void loadCatalogs(DatabaseMetaData dmd)
+	{
+		try
+		{
+			final ResultSet rs = dmd.getCatalogs();
+			try
 			{
-				_catalogs.add(res.getString("TABLE_CAT"));
+				while(rs.next())
+				{
+					_catalogs.add(rs.getString("TABLE_CAT"));
+				}
+			}
+			finally
+			{
+				rs.close();
 			}
 		}
 		catch (Throwable th)
@@ -185,10 +222,17 @@ public class SchemaInfo
 	{
 		try
 		{
-			ResultSet res = dmd.getSchemas();
-			while(res.next())
+			final ResultSet rs = dmd.getSchemas();
+			try
 			{
-				_schemas.add(res.getString("TABLE_SCHEM"));
+				while(rs.next())
+				{
+					_schemas.add(rs.getString("TABLE_SCHEM"));
+				}
+			}
+			finally
+			{
+				rs.close();
 			}
 		}
 		catch (Throwable th)
@@ -596,6 +640,11 @@ public class SchemaInfo
 	public ExtendedTableInfo[] getExtendedTableInfos()
 	{
 		return (ExtendedTableInfo[]) _extendedtableInfos.toArray(new ExtendedTableInfo[_extendedtableInfos.size()]);
+	}
+
+	public IProcedureInfo[] getStoredProceduresInfos()
+	{
+		return _procInfos;
 	}
 
 	public boolean isLoaded()
