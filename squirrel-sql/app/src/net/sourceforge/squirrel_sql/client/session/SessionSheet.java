@@ -344,8 +344,7 @@ public class SessionSheet extends BaseSheet
 		MessagePanel msgPnl = new MessagePanel(app);
 		_session.setMessageHandler(msgPnl);
 		msgPnl.setEditable(false);
-		msgPnl.setRows(4);
-
+//		msgPnl.setRows(4);
 		_msgSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		_msgSplit.setOneTouchExpandable(true);
 		_msgSplit.add(_mainTabPane, JSplitPane.LEFT);
