@@ -16,6 +16,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -78,11 +79,75 @@ public class DatabaseTypesDataSet implements IDataSet {
 				for (int i = 0; i < _columnCount; ++i) {
 					int idx = _columnIndices != null ? _columnIndices[i] : i + 1;
 					try {
-						_row[i] = _rs.getString(idx);
-						if (idx == 2) {
-							// DATA_TYPE column of result set.
-							_row[i] = _row[i] + " [" +
+						switch (idx) {
+							case 2:
+								// DATA_TYPE column of result set.
+								_row[i] = _rs.getString(idx) + " [" +
 										JDBCTypeMapper.getJdbcTypeName(_rs.getInt(idx)) + "]";
+								break;
+
+							case 7:
+								// NULLABLE column of result set.
+								short nullable = _rs.getShort(idx);
+								switch (nullable) {
+									case DatabaseMetaData.typeNoNulls: {
+										_row[i] = "false";
+										break;
+									}
+									case DatabaseMetaData.typeNullable: {
+										_row[i] = "true";
+										break;
+									}
+									case DatabaseMetaData.typeNullableUnknown: {
+										_row[i] = "unknown";
+										break;
+									}
+									default: {
+										_row[i] = nullable + "[error]";
+										break;
+									}
+								}
+								break;
+
+							case 8:
+							case 10:
+							case 11:
+							case 12:
+								// boolean columns
+								_row[i] = _rs.getBoolean(idx) ? "true" : "false";
+								break;
+
+							case 9:
+								// SEARCHABLE column of result set.
+								short searchable = _rs.getShort(idx);
+								switch (searchable) {
+									case DatabaseMetaData.typePredNone: {
+										_row[i] = "no support";
+										break;
+									}
+									case DatabaseMetaData.typePredChar: {
+										_row[i] = "only supports 'WHERE...like'";
+										break;
+									}
+									case DatabaseMetaData.typePredBasic: {
+										_row[i] = "supports all except 'WHERE...LIKE'";
+										break;
+									}
+									case DatabaseMetaData.typeSearchable: {
+										_row[i] = "supports all WHERE";
+										break;
+									}
+									default: {
+										_row[i] = searchable + "[error]";
+										break;
+									}
+								}
+								break;
+
+							default:
+								_row[i] = _rs.getString(idx);
+								break;
+
 						}
 					} catch (SQLException ex) {
 						if (msgHandler != null) {
