@@ -1,6 +1,14 @@
 MySQL Plugin Change Log
 =======================
 
+0.15
+====
+
+- Updated for SQuirrel SQL Client 1.2beta1.
+- Added "Analyze Table" tab to table nodes.
+- Added "Check Table" and "Optimize Table" menu options.
+
+
 0.11
 ====
 

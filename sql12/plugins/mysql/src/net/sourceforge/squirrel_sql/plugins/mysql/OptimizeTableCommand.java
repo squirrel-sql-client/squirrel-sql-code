@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.mysql;
 /*
- * Copyright (C) 2002-2003 Colin Bell
+ * Copyright (C) 2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,35 +19,39 @@ package net.sourceforge.squirrel_sql.plugins.mysql;
  */
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
- * This tab will display open tables in the database.
+ * This command will run a &quot;OPTIMIZE TABLE&quot; over the
+ * currently selected tables.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class OpenTablesTab extends BaseSQLTab
+class OptimizeTableCommand extends AbstractTableListCommand
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
-	{
-		String TITLE = "(MySQL) Open tables";
-		String HINT = "(MySQL) Display open tables";
-	}
-
 	/** Logger for this class. */
 	private final static ILogger s_log =
-		LoggerController.createLogger(OpenTablesTab.class);
+		LoggerController.createLogger(OptimizeTableCommand.class);
 
-	public OpenTablesTab()
+	/**
+	 * Ctor.
+	 *
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> <TT>ISession</TT>,
+	 * 			<TT>Resources</TT> or <TT>MysqlPlugin</TT> passed.
+	 */
+	public OptimizeTableCommand(ISession session, MysqlPlugin plugin)
 	{
-		super(i18n.TITLE, i18n.HINT);
+		super(session, plugin);
 	}
 
-	protected String getSQL()
+	/**
+	 * Retrieve the MySQL command to run.
+	 *
+	 * @return	the MySQL command to run.
+	 */
+	protected String getMySQLCommand()
 	{
-		final String catalog = getDatabaseObjectInfo().getSimpleName();
-		return "show open tables from " + catalog;
+		return "optimize table";
 	}
 }
