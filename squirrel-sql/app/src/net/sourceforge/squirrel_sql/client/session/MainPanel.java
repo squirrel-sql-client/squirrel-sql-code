@@ -28,6 +28,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.plugin.SessionPluginInfo;
 import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeAction;
@@ -64,9 +65,6 @@ public class MainPanel extends JTabbedPane {
 
 	/** Listens to changes in session properties. */
 	private MyPropertiesListener _propsListener;
-
-	private ObjectsTab _objectsTab;
-	private SQLTab _sqlTab;
 
 	/**
 	 * ctor specifying the current session.
@@ -153,11 +151,8 @@ public class MainPanel extends JTabbedPane {
 	}
 
 	private void createUserInterface() {
-		_objectsTab = new ObjectsTab(_session);
-		_sqlTab = new SQLTab(_session);
-
-		addMainPanelTab(_objectsTab);
-		addMainPanelTab(_sqlTab);
+		addMainPanelTab(new ObjectsTab(_session));
+		addMainPanelTab(new SQLTab(_session));
 
 		_propsListener = new MyPropertiesListener();
 		_session.getProperties().addPropertyChangeListener(_propsListener);
@@ -180,11 +175,11 @@ public class MainPanel extends JTabbedPane {
 	}
 
 	public ObjectsPanel getObjectsPanel() {
-		return _objectsTab.getObjectsPanel();
+		return ((ObjectsTab)_tabs.get(ITabIndexes.OBJECT_TREE_TAB)).getObjectsPanel();
 	}
 
 	public SQLPanel getSQLPanel() {
-		return _sqlTab.getSQLPanel();
+		return ((SQLTab)_tabs.get(ITabIndexes.SQL_TAB)).getSQLPanel();
 	}
 }
 
