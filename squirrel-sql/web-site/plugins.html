@@ -197,15 +197,30 @@
 					<td colspan="2"><p><em>Requirements:</em> SQuirreL SQL Client 1.1rc1+ and JDK1.3+</p></td>
 				</tr>
 				<tr>
-					<td colspan="2"><p>
-						This plugin will validate your SQL against the ISO SQL
-						standard. It does this by connecting to a Web Service
-						provided by Mimer SQL. The SQL that is validated is stored
+					<td colspan="2"><p> This plugin will validate your
+						SQL against the ISO SQL standard. It does this
+						by connecting to a Web Service provided by Mimer
+						SQL. The SQL that is validated is stored
 						anonymously to be used by the ISO SQL Standards
 						committee.</p>
 
 						<p>For more information on the web service click
-						<A HREF="http://sqlvalidator.mimer.com">here</A>.</p>
+						<A
+							HREF="http://sqlvalidator.mimer.com">here</A>.</p>
+
+						<p><EM>Note</EM> If you use this plugin with JDK
+						1.3 you will need a JAXP 1.1 XML compliant
+						parser such as <A
+							HREF="http://xml.apache.org/dist/xerces-j/">xml-xerces</A>
+						or the <A
+							HREF="http://java.sun.com/xml/jaxp/index.html">
+							JAXP 1.1 reference implementation</A>. Copy
+						the jar files from your XML parser to the
+						directory
+						&lt;squirrel-sql&gt;/plugins/sqlval/lib. For
+						xml-xerces this should be xerces.jar and for
+						JAXP 1.1 reference implementation this should be
+						crimson.jar and jaxp.jar.</p>
 					</td>
 				</tr>
 			</table>
