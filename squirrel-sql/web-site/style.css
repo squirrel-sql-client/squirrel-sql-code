@@ -1,8 +1,11 @@
 /* general body style */
 body							{ background: #ADB0C4	}
-a									{ text-decoration: none	}
-a:link						{ color: #555A7D }
-a:visited					{ color: #555A7D }								
+
+a:link						{ color: #555A7D;
+								font-decoration: underline;}
+a:visited					{ color: #555A7D;
+								font-decoration: underline;}
+
 h1							 	{ text-align: Left; 
 										font-size: 10pt; 
 										font-family: Arial; 
