@@ -47,179 +47,178 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.TileAction;
 /**
  * Toolbar for <CODE>MainFrame</CODE>.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 class MainFrameToolBar extends ToolBar {
-    private IApplication _app;
+	private IApplication _app;
 
-    /**
-     * ctor specifying the <TT>ActionCollection</TT> object that stores the
-     * actions for the application.
-     *
-     * @throws  IllegalArgumentException
-     *              <TT>null</TT> <TT>IApplication</TT> or <TT>MainFrame</TT>
-     *              passed.
-     */
-    MainFrameToolBar(IApplication app, MainFrame frame)
-            throws IllegalArgumentException {
-        super();
-        if (app == null) {
-            throw new IllegalArgumentException("null IApplication passed.");
-        }
-        if (frame == null) {
-            throw new IllegalArgumentException("null MainFrame passed.");
-        }
-        _app = app;
-        setUseRolloverButtons(true);
-        setFloatable(false);
+	/**
+	 * ctor specifying the <TT>ActionCollection</TT> object that stores the
+	 * actions for the application.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			<TT>null</TT> <TT>IApplication</TT> or <TT>MainFrame</TT>
+	 *			passed.
+	 */
+	MainFrameToolBar(IApplication app, MainFrame frame)
+			throws IllegalArgumentException {
+		super();
+		if (app == null) {
+			throw new IllegalArgumentException("null IApplication passed.");
+		}
+		if (frame == null) {
+			throw new IllegalArgumentException("null MainFrame passed.");
+		}
+		_app = app;
+		setUseRolloverButtons(true);
+		setFloatable(false);
 
-        ActionCollection actions = _app.getActionCollection();
-//      add(actions.get(OpenAliasAction.class));
-//      addSeparator();
-        //addSeparator();
-        JLabel lbl = new JLabel(" Connect to: ");
-        lbl.setAlignmentY(0.5f);
-        add(lbl);
-        //addSeparator();
-        AliasesDropDown drop = new AliasesDropDown(frame);
-        drop.setAlignmentY(0.5f);
-        add(drop);
-        addSeparator();
-        add(actions.get(GlobalPreferencesAction.class));
-        addSeparator();
-        add(actions.get(TileAction.class));
-        add(actions.get(CascadeAction.class));
-        add(actions.get(MaximizeAction.class));
-        addSeparator();
-        add(actions.get(ExitAction.class));
-    }
+		ActionCollection actions = _app.getActionCollection();
+		JLabel lbl = new JLabel(" Connect to: ");
+		lbl.setAlignmentY(0.5f);
+		add(lbl);
+		AliasesDropDown drop = new AliasesDropDown(frame);
+		drop.setAlignmentY(0.5f);
+		add(drop);
+		addSeparator();
+		add(actions.get(GlobalPreferencesAction.class));
+		addSeparator();
+		add(actions.get(TileAction.class));
+		add(actions.get(CascadeAction.class));
+		add(actions.get(MaximizeAction.class));
+		addSeparator();
+		add(actions.get(ExitAction.class));
+	}
 
-    /**
-     * Add an action to the toolbar. Centre it vertically so that
-     * it lines up with the dropdown.
-     *
-     * @param    action     <TT>Action</TT> to be added.
-     */
-    private void addAction(Action action) {
-        JButton btn = add(action);
-        btn.setAlignmentY(0.5f);
-    }
+	/**
+	 * Add an action to the toolbar. Centre it vertically so that
+	 * it lines up with the dropdown.
+	 *
+	 * @param	action	<TT>Action</TT> to be added.
+	 */
+	private void addAction(Action action) {
+		JButton btn = add(action);
+		btn.setAlignmentY(0.5f);
+	}
 
-    /**
-     * Dropdown holding all the current <TT>ISQLAlias</TT> objects. When one is
-     * selected the user will be prompted to connect to it.
-     */
-    private class AliasesDropDown extends JComboBox implements ActionListener {
-        private MainFrame _mainFrame;
+	/**
+	 * Dropdown holding all the current <TT>ISQLAlias</TT> objects. When one is
+	 * selected the user will be prompted to connect to it.
+	 */
+	private class AliasesDropDown extends JComboBox implements ActionListener {
+		private MainFrame _mainFrame;
 
-        AliasesDropDown(MainFrame mainFrame) {
-            super();
-            _mainFrame = mainFrame;
-            setModel(new AliasesDropDownModel());
-//            addItem(" Connect To...");
-//            setSelectedIndex(0);
-            addActionListener(this);
-            setMaximumSize(getPreferredSize());
-        }
+		AliasesDropDown(MainFrame mainFrame) {
+			super();
+			_mainFrame = mainFrame;
+			setModel(new AliasesDropDownModel());
+			if (getModel().getSize() > 0) {
+				setSelectedIndex(0);
+			}
+			addActionListener(this);
+			setMaximumSize(getPreferredSize());
+		}
 
-        /**
-         * An alias has been selected in the list so attempt to connect to it.
-         *
-         * @param   evt     Describes the event that has just occured.
-         */
-        public void actionPerformed(ActionEvent evt) {
-            try {
-                Object obj = getSelectedItem();
-                if (obj instanceof ISQLAlias) {
-                    new ConnectToAliasCommand(_app, _mainFrame, (ISQLAlias)obj).execute();
-                }
-            } finally {
-                setSelectedIndex(0);
-            }
-        }
-    }
+		/**
+		 * An alias has been selected in the list so attempt to connect to it.
+		 *
+		 * @param   evt	 Describes the event that has just occured.
+		 */
+		public void actionPerformed(ActionEvent evt) {
+			try {
+				Object obj = getSelectedItem();
+				if (obj instanceof ISQLAlias) {
+					new ConnectToAliasCommand(_app, _mainFrame, (ISQLAlias)obj).execute();
+				}
+			} finally {
+				if (getModel().getSize() > 0) {
+					setSelectedIndex(0);
+				}
+			}
+		}
+	}
 
-    /**
-     * Data model for AliasesDropDown.
-     */
-    private class AliasesDropDownModel extends SortedComboBoxModel {
-        /**
-         * Default ctor. Listen to the <TT>DataCache</TT> object for additions
-         * and removals of aliases from the cache.
-         */
-        public AliasesDropDownModel() {
-            super();
-            load();
-            _app.getDataCache().addAliasesListener(new MyAliasesListener(this));
-        }
+	/**
+	 * Data model for AliasesDropDown.
+	 */
+	private class AliasesDropDownModel extends SortedComboBoxModel {
+		/**
+		 * Default ctor. Listen to the <TT>DataCache</TT> object for additions
+		 * and removals of aliases from the cache.
+		 */
+		public AliasesDropDownModel() {
+			super();
+			load();
+			_app.getDataCache().addAliasesListener(new MyAliasesListener(this));
+		}
 
-        /**
-         * Load from <TT>DataCache</TT>.
-         */
-        private void load() {
-            Iterator it = _app.getDataCache().aliases();
-            while (it.hasNext()) {
-                addAlias((ISQLAlias)it.next());
-            }
-        }
+		/**
+		 * Load from <TT>DataCache</TT>.
+		 */
+		private void load() {
+			Iterator it = _app.getDataCache().aliases();
+			while (it.hasNext()) {
+				addAlias((ISQLAlias)it.next());
+			}
+		}
 
-        /**
-         * Add an <TT>ISQLAlias</TT> to this model.
-         *
-         * @param   alias   <TT>ISQLAlias</TT> to be added.
-         */
-        private void addAlias(ISQLAlias alias) {
-            addElement(alias);
-        }
+		/**
+		 * Add an <TT>ISQLAlias</TT> to this model.
+		 *
+		 * @param   alias   <TT>ISQLAlias</TT> to be added.
+		 */
+		private void addAlias(ISQLAlias alias) {
+			addElement(alias);
+		}
 
-        /**
-         * Remove an <TT>ISQLAlias</TT> from this model.
-         *
-         * @param   alias   <TT>ISQLAlias</TT> to be removed.
-         */
-        private void removeAlias(ISQLAlias alias) {
-            removeElement(alias);
-        }
-    }
+		/**
+		 * Remove an <TT>ISQLAlias</TT> from this model.
+		 *
+		 * @param   alias   <TT>ISQLAlias</TT> to be removed.
+		 */
+		private void removeAlias(ISQLAlias alias) {
+			removeElement(alias);
+		}
+	}
 
-    /**
-     * Listener to changes in <TT>ObjectCache</TT>. As aliases are
-     * added to/removed from <TT>DataCache</TT> this model is updated.
-     */
-    private static class MyAliasesListener implements ObjectCacheChangeListener {
-        /** Model that is listening. */
-        private AliasesDropDownModel _model;
+	/**
+	 * Listener to changes in <TT>ObjectCache</TT>. As aliases are
+	 * added to/removed from <TT>DataCache</TT> this model is updated.
+	 */
+	private static class MyAliasesListener implements ObjectCacheChangeListener {
+		/** Model that is listening. */
+		private AliasesDropDownModel _model;
 
-        /**
-         * Ctor specifying the model that is listening.
-         */
-        MyAliasesListener(AliasesDropDownModel model) {
-            super();
-            _model = model;
-        }
+		/**
+		 * Ctor specifying the model that is listening.
+		 */
+		MyAliasesListener(AliasesDropDownModel model) {
+			super();
+			_model = model;
+		}
 
-        /**
-         * An alias has been added to the cache.
-         *
-         * @param   evt     Describes the event in the cache.
-         */
-        public void objectAdded(ObjectCacheChangeEvent evt) {
-            Object obj = evt.getObject();
-            if (obj instanceof ISQLAlias) {
-                _model.addAlias((ISQLAlias)obj);
-            }
-        }
+		/**
+		 * An alias has been added to the cache.
+		 *
+		 * @param	evt	Describes the event in the cache.
+		 */
+		public void objectAdded(ObjectCacheChangeEvent evt) {
+			Object obj = evt.getObject();
+			if (obj instanceof ISQLAlias) {
+				_model.addAlias((ISQLAlias)obj);
+			}
+		}
 
-        /**
-         * An alias has been removed from the cache.
-         *
-         * @param   evt     Describes the event in the cache.
-         */
-        public void objectRemoved(ObjectCacheChangeEvent evt) {
-            Object obj = evt.getObject();
-            if (obj instanceof ISQLAlias) {
-                _model.removeAlias((ISQLAlias)obj);
-            }
-        }
-    }
+		/**
+		 * An alias has been removed from the cache.
+		 *
+		 * @param	evt	Describes the event in the cache.
+		 */
+		public void objectRemoved(ObjectCacheChangeEvent evt) {
+			Object obj = evt.getObject();
+			if (obj instanceof ISQLAlias) {
+				_model.removeAlias((ISQLAlias)obj);
+			}
+		}
+	}
 }
