@@ -13,9 +13,9 @@
         <property name="optimize" value="off"/>
         <property name="deprecation" value="on"/>
 
-        <property name="p_plugin.work_dir" value="/home/gerd/work/java/squirrel1_2/squirrel-sql-dist/squirrel-sql-1.2beta5/userscript"/>
-        <property name="p_plugin.core_libs_dir" value="/home/gerd/work/java/squirrel1_2/squirrel-sql-dist/squirrel-sql-1.2beta5/core/dist/lib"/>
-        <property name="p_plugin.dist_dir" value="/home/gerd/work/java/squirrel1_2/squirrel-sql-dist/squirrel-sql-1.2beta5/core/dist/plugins"/>
+        <property name="p_plugin.work_dir" value="/home/gerd/work/java/squirrel1_2/squirrel-sql-dist/squirrel-sql-1.2beta6/userscript"/>
+        <property name="p_plugin.core_libs_dir" value="/home/gerd/work/java/squirrel1_2/squirrel-sql-dist/squirrel-sql-1.2beta6/core/dist/lib"/>
+        <property name="p_plugin.dist_dir" value="/home/gerd/work/java/squirrel1_2/squirrel-sql-dist/squirrel-sql-1.2beta6/core/dist/plugins"/>
 
 
         <echo message="---------------- ${internal_name} ${version} ----------------"/>
