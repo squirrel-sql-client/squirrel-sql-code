@@ -31,6 +31,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -39,7 +40,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
-import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
+import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 /**
  * This sheet allows the user to maintain global preferences.
@@ -268,8 +269,7 @@ public class GlobalPreferencesSheet extends BaseSheet
 		}
 
 		// Add all panels to the tabbed pane.
-		SquirrelTabbedPane tabPane =
-			new SquirrelTabbedPane(_app.getSquirrelPreferences());
+		JTabbedPane tabPane = UIFactory.getInstance().createTabbedPane();
 		for (Iterator it = _panels.iterator(); it.hasNext();)
 		{
 			IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel) it.next();

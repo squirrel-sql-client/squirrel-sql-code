@@ -35,6 +35,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
@@ -222,14 +223,15 @@ public class SessionSheet extends BaseSheet
 	 */
 	public void selectMainTab(int tabIndex)
 	{
-		if (tabIndex >= _mainTabPane.getTabCount())
+		final JTabbedPane tabPnl = _mainTabPane.getTabbedPane();
+		if (tabIndex >= tabPnl.getTabCount())
 		{
 			throw new IllegalArgumentException("" + tabIndex
 					+ " is not a valid index into the main tabbed pane.");
 		}
-		if (_mainTabPane.getSelectedIndex() != tabIndex)
+		if (tabPnl.getSelectedIndex() != tabIndex)
 		{
-			_mainTabPane.setSelectedIndex(tabIndex);
+			tabPnl.setSelectedIndex(tabIndex);
 		}
 	}
 
@@ -380,7 +382,7 @@ public class SessionSheet extends BaseSheet
 		msgPnl.setEditable(false);
 		_msgSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		_msgSplit.setOneTouchExpandable(true);
-		_msgSplit.add(_mainTabPane, JSplitPane.LEFT);
+		_msgSplit.add(_mainTabPane.getTabbedPane(), JSplitPane.LEFT);
 		_msgSplit.add(new JScrollPane(msgPnl), JSplitPane.RIGHT);
 		content.add(_msgSplit, BorderLayout.CENTER);
 

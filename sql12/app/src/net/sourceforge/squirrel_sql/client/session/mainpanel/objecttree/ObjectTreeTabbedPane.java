@@ -17,12 +17,15 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.event.ContainerAdapter;
+import java.awt.event.ContainerEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -30,7 +33,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
+import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
@@ -38,13 +41,16 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
  * This is the tabbed panel displayed when a node is selected in the
  * object tree.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ObjectTreeTabbedPane extends SquirrelTabbedPane
+public class ObjectTreeTabbedPane
 {
 	/** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(ObjectTreeTabbedPane.class);
+
+	/** The tabbed pane. */
+	private final JTabbedPane _tabPnl = UIFactory.getInstance().createTabbedPane();
 
 	/** Current session. */
 	private ISession _session;
@@ -60,7 +66,12 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 
 	ObjectTreeTabbedPane(ISession session)
 	{
-		super(session.getApplication().getSquirrelPreferences());
+		super();
+
+		if (session == null)
+		{
+			throw new IllegalArgumentException("ISession == null");
+		}
 
 		_session = session;
 		CreateGUI();
@@ -68,44 +79,23 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 	}
 
 	/**
-	 * Component has been added to its parent. Refresh the currently selected
-	 * tab.
+	 * Retrieve the tabbed pan for this component.
+	 *
+	 * @return	The tabbed pane.
 	 */
-	public void addNotify()
+	public JTabbedPane getTabbedPane()
 	{
-		super.addNotify();
-
-		_propsListener = new SessionPropertiesListener();
-		_session.getProperties().addPropertyChangeListener(_propsListener);
-
-		final int idx = getSelectedIndex();
-		if (idx != -1)
-		{
-			((IObjectTab)_tabs.get(idx)).select();
-		}
+		return _tabPnl;
 	}
 
-	/**
-	 * Component has been removed from its parent. get rid of all listeners.
-	 */
-	public void removeNotify()
-	{
-		super.removeNotify();
-		if (_propsListener != null)
-		{
-			_session.getProperties().removePropertyChangeListener(_propsListener);
-			_propsListener = null;
-		}
-	}
-	
 	IObjectTab getTabIfSelected(String title)
 	{
-	  IObjectTab tab = (IObjectTab)_tabs.get(getSelectedIndex());
-	  if ((tab != null) && (tab.getTitle().equals(title)))
-	  {
-	    return tab;
-	  }
-	  return null;
+		IObjectTab tab = (IObjectTab)_tabs.get(_tabPnl.getSelectedIndex());
+		if ((tab != null) && (tab.getTitle().equals(title)))
+		{
+			return tab;
+		}
+		return null;
 	}
 
 	void addObjectPanelTab(IObjectTab tab)
@@ -117,14 +107,14 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 		tab.setSession(_session);
 		final String title = tab.getTitle();
 		_tabs.add(tab);
-		addTab(title, null, tab.getComponent(), tab.getHint());
+		_tabPnl.addTab(title, null, tab.getComponent(), tab.getHint());
 	}
 
 	void selectCurrentTab()
 	{
-		if (getParent() != null)
+		if (_tabPnl.getParent() != null)
 		{
-			int idx = getSelectedIndex();
+			int idx = _tabPnl.getSelectedIndex();
 			if (idx != -1)
 			{
 				IObjectTab tab = (IObjectTab)_tabs.get(idx);
@@ -148,7 +138,30 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 
 	private void CreateGUI()
 	{
-		addChangeListener(new TabbedPaneListener());
+		_tabPnl.addContainerListener(new ContainerAdapter()
+		{
+			public void componentAdded(ContainerEvent evt)
+			{
+				_propsListener = new SessionPropertiesListener();
+				_session.getProperties().addPropertyChangeListener(_propsListener);
+
+				final int idx = _tabPnl.getSelectedIndex();
+				if (idx != -1)
+				{
+					((IObjectTab)_tabs.get(idx)).select();
+				}
+			}
+			public void componentRemoved(ContainerEvent evt)
+			{
+				if (_propsListener != null)
+				{
+					_session.getProperties().removePropertyChangeListener(_propsListener);
+					_propsListener = null;
+				}
+			}
+		});
+
+		_tabPnl.addChangeListener(new TabbedPaneListener());
 	}
 
 	private void propertiesHaveChanged(String propName)
@@ -165,7 +178,7 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 		if (propName == null
 			|| propName.equals(SessionProperties.IPropertyNames.OBJECT_TAB_PLACEMENT))
 		{
-			setTabPlacement(props.getObjectTabPlacement());
+			_tabPnl.setTabPlacement(props.getObjectTabPlacement());
 		}
 	}
 
@@ -175,10 +188,10 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 	 */
 	private synchronized void rebuild()
 	{
-		final int curTabIdx = getSelectedIndex();
+		final int curTabIdx = _tabPnl.getSelectedIndex();
 		final List oldTabs = new ArrayList();
 		oldTabs.addAll(_tabs);
-		removeAll();
+		_tabPnl.removeAll();
 		_tabs.clear();
 		Iterator it = oldTabs.iterator();
 		while (it.hasNext())
@@ -187,9 +200,9 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 			tab.rebuild();
 			addObjectPanelTab(tab);
 		}
-		if (curTabIdx >= 0 && curTabIdx < getTabCount())
+		if (curTabIdx >= 0 && curTabIdx < _tabPnl.getTabCount())
 		{
-			setSelectedIndex(curTabIdx);
+			_tabPnl.setSelectedIndex(curTabIdx);
 		}
 	}
 

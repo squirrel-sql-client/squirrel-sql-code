@@ -45,6 +45,7 @@ import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.event.CaretEvent;
@@ -70,7 +71,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
+import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionSheet;
@@ -115,7 +116,7 @@ public class SQLPanel extends JPanel
 	private MyPropertiesListener _propsListener;
 
 	/** Each tab is a <TT>ResultTab</TT> showing the results of a query. */
-	private SquirrelTabbedPane _tabbedResultsPanel;
+	private JTabbedPane _tabbedResultsPanel;
 
 	/**
 	 * Collection of <TT>ResultTabInfo</TT> objects for all
@@ -962,7 +963,7 @@ public class SQLPanel extends JPanel
 			}
 		}
 
-		_tabbedResultsPanel = new SquirrelTabbedPane(app.getSquirrelPreferences());
+		_tabbedResultsPanel = UIFactory.getInstance().createTabbedPane();
 
 		setLayout(new BorderLayout());
 
