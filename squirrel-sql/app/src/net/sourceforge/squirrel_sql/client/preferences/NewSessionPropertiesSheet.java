@@ -17,17 +17,22 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Frame;
+//import java.awt.BorderLayout;
+//import java.awt.Container;
+//import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JDialog;
+//import javax.swing.JDialog;
+import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
@@ -41,7 +46,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.OutputPropertiesPa
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.properties.SQLPropertiesPanel;
 
-public class NewSessionPropertiesDialog extends JDialog {
+public class NewSessionPropertiesSheet extends JInternalFrame {
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
@@ -51,10 +56,13 @@ public class NewSessionPropertiesDialog extends JDialog {
 	}
 
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(NewSessionPropertiesDialog.class);
+	private static ILogger s_log = LoggerController.createLogger(NewSessionPropertiesSheet.class);
 
 	/** Singleton instance of this class. */
-	private static NewSessionPropertiesDialog s_instance;
+	private static NewSessionPropertiesSheet s_instance;
+
+	/** Frame title. */
+	private JLabel _titleLbl = new JLabel();
 
 	private IApplication _app;
 	private List _panels = new ArrayList();
@@ -64,11 +72,11 @@ public class NewSessionPropertiesDialog extends JDialog {
 	 */
 	private SessionProperties _sessionProperties;
 
-	private NewSessionPropertiesDialog(IApplication app)
+	private NewSessionPropertiesSheet(IApplication app)
 			throws IllegalArgumentException {
-		super(getFrame(app), i18n.TITLE);
+		super(i18n.TITLE);
 		_app = app;
-		setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		createUserInterface();
 	}
 
@@ -80,34 +88,51 @@ public class NewSessionPropertiesDialog extends JDialog {
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>IApplication</TT> object passed.
 	 */
-	public static synchronized void showDialog(IApplication app)
+	public static synchronized void showSheet(IApplication app)
 			throws IllegalArgumentException {
 		if (s_instance == null) {
-			s_instance = new NewSessionPropertiesDialog(app);
+			s_instance = new NewSessionPropertiesSheet(app);
+			app.getMainFrame().addInternalFrame(s_instance, true, null);
 		}
 		s_instance.setVisible(true);
 	}
 
 	public void setVisible(boolean show) {
 		if (show) {
-			final boolean isDebug = s_log.isDebugEnabled();
-			long start = 0;
-			for (Iterator it = _panels.iterator(); it.hasNext();) {
-				INewSessionPropertiesPanel pnl = (INewSessionPropertiesPanel)it.next();
-				if (isDebug) {
-					start = System.currentTimeMillis();
+			if (!isVisible()) {
+				final boolean isDebug = s_log.isDebugEnabled();
+				long start = 0;
+				for (Iterator it = _panels.iterator(); it.hasNext();) {
+					INewSessionPropertiesPanel pnl = (INewSessionPropertiesPanel)it.next();
+					if (isDebug) {
+						start = System.currentTimeMillis();
+					}
+					pnl.initialize(_app);
+					if (isDebug) {
+						s_log.debug("Panel " + pnl.getTitle() + " initialized in "
+									+ (System.currentTimeMillis() - start) + "ms");
+					}
 				}
-				pnl.initialize(_app);
-				if (isDebug) {
-					s_log.debug("Panel " + pnl.getTitle() + " initialized in "
-								+ (System.currentTimeMillis() - start) + "ms");
-				}
+				pack();
+				GUIUtils.centerWithinDesktop(this);
 			}
+			moveToFront();
 		}
 		super.setVisible(show);
 	}
 
-	private void performCancel() {
+	/**
+	 * Set title of this frame. Ensure that the title label
+	 * matches the frame title.
+	 * 
+	 * @param	title	New title text.
+	 */
+	public void setTitle(String title) {
+		super.setTitle(title);
+		_titleLbl.setText(title);
+	}
+
+	private void performClose() {
 		setVisible(false);
 	}
 
@@ -133,6 +158,11 @@ public class NewSessionPropertiesDialog extends JDialog {
 	}
 
 	private void createUserInterface() {
+		setDefaultCloseOperation(HIDE_ON_CLOSE);
+
+        // This is a tool window.
+        GUIUtils.makeToolWindow(this, true);
+
 		// Add panels for core Squirrel functionality.
 		_panels.add(new SQLPropertiesPanel(_app));
 		_panels.add(new OutputPropertiesPanel());
@@ -160,16 +190,21 @@ public class NewSessionPropertiesDialog extends JDialog {
 			tabPane.addTab(title, null, pnl.getPanelComponent(), hint);
 		}
 
-		final Container contentPane = getContentPane();
-		contentPane.setLayout(new BorderLayout());
+		final JPanel contentPane = new JPanel(new GridBagLayout());
+		contentPane.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+		setContentPane(contentPane);
 
-		contentPane.add(tabPane, BorderLayout.NORTH);
-		contentPane.add(createButtonsPanel(), BorderLayout.CENTER);
+		GridBagConstraints gbc = new GridBagConstraints();
 
-		pack();
-		GUIUtils.centerWithinParent(this);
-		setResizable(false);
-		setModal(true);
+		gbc.gridwidth = 1;
+
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		contentPane.add(_titleLbl, gbc);
+		++gbc.gridy;
+		contentPane.add(tabPane, gbc);
+		++gbc.gridy;
+		contentPane.add(createButtonsPanel(), gbc);
 	}
 
 	private JPanel createButtonsPanel() {
@@ -181,27 +216,27 @@ public class NewSessionPropertiesDialog extends JDialog {
 				performOk();			
 			}
 		});
-		JButton cancelBtn = new JButton("Cancel");
-		cancelBtn.addActionListener(new ActionListener() {
+		JButton closeBtn = new JButton("Close");
+		closeBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				performCancel();			
+				performClose();			
 			}
 		});
 
 		pnl.add(okBtn);
-		pnl.add(cancelBtn);		
+		pnl.add(closeBtn);		
 
-		GUIUtils.setJButtonSizesTheSame(new JButton[] {okBtn, cancelBtn});
+		GUIUtils.setJButtonSizesTheSame(new JButton[] {okBtn, closeBtn});
 		getRootPane().setDefaultButton(okBtn);
 
 		return pnl;
 	}
 
-	private static Frame getFrame(IApplication app)
+/*	private static Frame getFrame(IApplication app)
 			throws IllegalArgumentException {
 		if (app == null) {
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
 		return app.getMainFrame();
-	}
+	}*/
 }

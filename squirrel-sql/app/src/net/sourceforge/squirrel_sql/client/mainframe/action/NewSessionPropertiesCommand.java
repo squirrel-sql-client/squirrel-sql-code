@@ -20,7 +20,7 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.preferences.NewSessionPropertiesDialog;
+import net.sourceforge.squirrel_sql.client.preferences.NewSessionPropertiesSheet;
 
 /**
  * This <CODE>ICommand</CODE> displays the New Session Properties dialog..
@@ -51,7 +51,7 @@ public class NewSessionPropertiesCommand {
 	 * Display the Dialog
 	 */
 	public void execute() {
-		NewSessionPropertiesDialog.showDialog(_app);
+		NewSessionPropertiesSheet.showSheet(_app);
 	}
 }
 
