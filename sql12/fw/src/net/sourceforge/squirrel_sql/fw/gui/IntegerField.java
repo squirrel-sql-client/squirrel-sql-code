@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -24,7 +24,6 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
-
 /**
  * This class is a <CODE>TextField</CODE> that only allows integer
  * values to be entered into it.
@@ -51,6 +50,11 @@ public class IntegerField extends JTextField
 		super(cols);
 	}
 
+	/**
+	 * Retrieve the contents of this field as an <TT>int</TT>.
+	 * 
+	 * @return	the contents of this field as an <TT>int</TT>.
+	 */
 	public int getInt()
 	{
 		final String text = getText();
@@ -61,19 +65,32 @@ public class IntegerField extends JTextField
 		return Integer.parseInt(text);
 	}
 
+	/**
+	 * Set the contents of this field to the passed <TT>int</TT>.
+	 * 
+	 * @param	value	The new value for this field.
+	 */
 	public void setInt(int value)
 	{
 		setText(String.valueOf(value));
 	}
 
+	/**
+	 * Create a new document model for this control that only accepts
+	 * integral values.
+	 * 
+	 * @return	The new document model.
+	 */
 	protected Document createDefaultModel()
 	{
 		return new IntegerDocument();
 	}
 
+	/**
+	 * This document only allows integral values to be added to it.
+	 */
 	static class IntegerDocument extends PlainDocument
 	{
-
 		public void insertString(int offs, String str, AttributeSet a)
 			throws BadLocationException
 		{

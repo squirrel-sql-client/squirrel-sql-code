@@ -25,19 +25,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.CaretEvent;
@@ -60,7 +60,6 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
@@ -72,7 +71,6 @@ import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ResultTabEvent;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 /**
  * This is the panel where SQL scripts can be entered and executed.
  *
@@ -96,6 +94,8 @@ public class SQLPanel extends JPanel
 	private ISQLEntryPanel _sqlEntry;
 	private JCheckBox _limitRowsChk = new JCheckBox("Limit rows: ");
 	private IntegerField _nbrRows = new IntegerField();
+
+	private JScrollPane _sqlEntryScroller;
 
 	private SqlComboListener _sqlComboListener = new SqlComboListener();
 	private MyPropertiesListener _propsListener;
@@ -323,9 +323,26 @@ public class SQLPanel extends JPanel
 		{
 			_sqlEntry.removeUndoableEditListener(_undoManager);
 			_sqlEntry.removeCaretListener(_dataEntryCaretListener);
-			_splitPane.remove(_sqlEntry.getJComponent());
+			if (_sqlEntryScroller != null)
+			{
+				_splitPane.remove(_sqlEntryScroller);
+				_sqlEntryScroller = null;
+			}
+			else
+			{
+				_splitPane.remove(_sqlEntry.getTextComponent());
+			}
 		}
-		_splitPane.add(pnl.getJComponent(), JSplitPane.LEFT);
+		if (!pnl.getDoesTextComponentHaveScroller())
+		{
+			_sqlEntryScroller = new JScrollPane(pnl.getTextComponent());
+			_sqlEntryScroller.setBorder(BorderFactory.createEmptyBorder());
+			_splitPane.add(_sqlEntryScroller);
+		}
+		else
+		{
+			_splitPane.add(pnl.getTextComponent(), JSplitPane.LEFT);
+		}
 		_splitPane.setDividerLocation(pos);
 		state.restoreState(pnl);
 		_sqlEntry = pnl;
@@ -339,11 +356,10 @@ public class SQLPanel extends JPanel
 			UndoAction undo = new UndoAction(app, _undoManager);
 			RedoAction redo = new RedoAction(app, _undoManager);
 
-			_sqlEntry.getJComponent().registerKeyboardAction(
-							undo, res.getKeyStroke(undo),
+			JComponent comp = _sqlEntry.getTextComponent();
+			comp.registerKeyboardAction(undo, res.getKeyStroke(undo),
 							WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-			_sqlEntry.getJComponent().registerKeyboardAction(
-							redo, res.getKeyStroke(redo),
+			comp.registerKeyboardAction(redo, res.getKeyStroke(redo),
 							WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 			_sqlEntry.setUndoActions(undo, redo);
 
@@ -861,7 +877,7 @@ public class SQLPanel extends JPanel
 		{
 			public void run()
 			{
-				_sqlEntry.getJComponent().requestFocus();
+				_sqlEntry.getTextComponent().requestFocus();
 			}
 		});
 	}

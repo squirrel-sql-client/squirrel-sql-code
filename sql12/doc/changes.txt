@@ -6,6 +6,11 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Add "Copy" menu options to the popup menu in
+  the object tree.
+- Add the MySQL driver to the default list of
+  drivers. Update the jTDS URL for the latest
+  version of jTDS (Dennis Lundberg).
 - Added quote/unquote items to popup menu in the
   SQL entry area (Gerd Wagner).
 - You can now specify an Alias to connect when
@@ -47,6 +52,8 @@ Enhancements
 
 Bug Fixes
 ---------
+- Put correct default port in the MM MySQL
+  driver (Dennis Lundberg).
 - Allow for drivers that return null for getTableTypes().
 - Clear data in output tabs before writing. This
   stops the problem of seeing data related to the
@@ -60,6 +67,7 @@ Bug Fixes
   
 Other
 -----
+- Cleanup handling of the SQL evtry area.
 - No longer print error message in the log
   if a JDBC driver isn't available.
 

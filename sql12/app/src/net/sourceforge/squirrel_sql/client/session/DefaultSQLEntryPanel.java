@@ -24,7 +24,6 @@ import java.awt.event.MouseListener;
 
 import javax.swing.Action;
 import javax.swing.JComponent;
-import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
@@ -49,9 +48,6 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	/** Text area control. */
 	private MyTextArea _comp;
 
-	/** Scroll pane for text control. */
-	private JScrollPane _scroller;
-
 	/** Popup menu for this component. */
 	private SessionTextEditPopupMenu _textPopupMenu;
 
@@ -69,7 +65,30 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 		_session = session;
 		_textPopupMenu = new SessionTextEditPopupMenu(session);
 		_comp = new MyTextArea(session, this);
-		_scroller = new JScrollPane(_comp);
+	}
+
+	/**
+	 * Retrieve the text area component. Normally this would be a subclass
+	 * of <TT>javax.swing.text.JTextComponent</TT> but a plugin may use a
+	 * class otehr than a Swing text control.
+	 * 
+	 * @return	The text area component.
+	 */
+	public JComponent getTextComponent()
+	{
+		return _comp;
+	}
+
+	/**
+	 * If the component returned by <TT>getTextComponent</TT> contains
+	 * its own scroll bars return <TT>true</TT> other wise this component
+	 * will be wrapped in the scroll pane when added to the SQL panel.
+	 * 
+	 * @return	<TT>true</TT> if text component already handles scrolling.
+	 */
+	public boolean getDoesTextComponentHaveScroller()
+	{
+		return false;
 	}
 
 	public void addUndoableEditListener(UndoableEditListener lis)
@@ -99,17 +118,6 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 		final IApplication app = _session.getApplication();
 		app.getResources().addToPopupMenu(undo, _textPopupMenu);
 		app.getResources().addToPopupMenu(redo, _textPopupMenu);
-	}
-
-	/**
-	 * Return the text area control. In this case a <TT>JScrollPane</TT> wrapped
-	 * around an instance of <TT>JTextArea</TT>.
-	 *
-	 * @return	an instance of <TT>JScrollPane</TT>.
-	 */
-	public JComponent getJComponent()
-	{
-		return _scroller;
 	}
 
 	/**

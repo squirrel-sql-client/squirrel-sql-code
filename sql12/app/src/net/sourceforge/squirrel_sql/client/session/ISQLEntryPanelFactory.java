@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,7 +19,8 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
-public interface ISQLEntryPanelFactory {
+public interface ISQLEntryPanelFactory
+{
 	ISQLEntryPanel createSQLEntryPanel(ISession session);
 }
 

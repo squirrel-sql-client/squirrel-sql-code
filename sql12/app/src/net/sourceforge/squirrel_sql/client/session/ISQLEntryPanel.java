@@ -27,7 +27,23 @@ import javax.swing.event.UndoableEditListener;
 
 public interface ISQLEntryPanel
 {
-	JComponent getJComponent();
+	/**
+	 * Retrieve the text area component. Normally this would be a subclass
+	 * of <TT>javax.swing.text.JTextComponent</TT> but a plugin may use a
+	 * class other than a Swing text control.
+	 * 
+	 * @return	The text area component.
+	 */
+	JComponent getTextComponent();
+
+	/**
+	 * If the component returned by <TT>getTextComponent</TT> contains
+	 * its own scroll bars return <TT>true</TT> other wise this component
+	 * will be wrapped in the scroll pane when added to the SQL panel.
+	 * 
+	 * @return	<TT>true</TT> if text component already handles scrolling.
+	 */
+	boolean getDoesTextComponentHaveScroller();
 
 	String getText();
 	String getSelectedText();
