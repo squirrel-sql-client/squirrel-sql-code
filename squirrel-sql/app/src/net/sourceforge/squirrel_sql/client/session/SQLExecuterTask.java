@@ -79,24 +79,25 @@ public class SQLExecuterTask implements Runnable {
 						bCancelPanelRemoved = false;
 					}
 					final String sToken = qt.nextQuery();
-					if (_stmt.execute(sToken)) {
-						if (_bStopExecution) {
-							break;
-						}
-						ResultSet rs = _stmt.getResultSet();
-						if (rs != null) {
-							try {
-								_sqlPanel.addResultsTab(sToken, new ResultSetDataSet(rs),
-														new ResultSetMetaDataDataSet(rs),
-														_cancelPanel);
-								bCancelPanelRemoved = true;
-							} finally {
-								rs.close();
+					if (!sToken.startsWith("--")) {
+						if (_stmt.execute(sToken)) {
+							if (_bStopExecution) {
+								break;
 							}
+							ResultSet rs = _stmt.getResultSet();
+							if (rs != null) {
+								try {
+									_sqlPanel.addResultsTab(sToken, new ResultSetDataSet(rs),
+															new ResultSetMetaDataDataSet(rs),
+															_cancelPanel);
+									bCancelPanelRemoved = true;
+								} finally {
+									rs.close();
+								}
+							}
+						} else {
+							_session.getMessageHandler().showMessage(_stmt.getUpdateCount() + " Rows Updated");
 						}
-					} // if
-					else {
-						_session.getMessageHandler().showMessage(_stmt.getUpdateCount() + " Rows Updated");
 					}
 				}
 				//
