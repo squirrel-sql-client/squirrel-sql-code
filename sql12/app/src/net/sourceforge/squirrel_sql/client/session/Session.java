@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * Modifications copyright (C) 2001 Johan Compagner
@@ -20,6 +20,8 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -75,6 +77,15 @@ class Session implements ISession
 
 	/** Descriptive title for session. */
 	private String _title = "";
+
+	/** Original title */
+	private String _originalTitle = "";
+
+	/**
+	 * The session index is used to uniquely identify sessions that
+	 * are for the same alias.
+	 */
+	private int _sessionIndex = 1;
 
 	private SessionSheet _sessionSheet;
 
@@ -173,6 +184,7 @@ class Session implements ISession
 		_password = password;
 
 		_title = createTitle();
+		_originalTitle = _title;
 
 		_props = (SessionProperties)_app.getSquirrelPreferences().getSessionProperties().clone();
 		_sqlFilterClauses = new SQLFilterClauses();
@@ -415,7 +427,7 @@ class Session implements ISession
 	{
 		_sessionSheet.addToToolbar(action);
 	}
-	
+
 	public synchronized Object putPluginObject(IPlugin plugin, String key,
 												Object value)
 	{
@@ -677,9 +689,28 @@ class Session implements ISession
 	 *
 	 * @param	title	The descriptive title for this session.
 	 */
-	void setTitle(String value)
+//	void setTitle(String value)
+//	{
+//		_title = value != null ? value : "";
+//	}
+
+	/**
+	 * The session index is used to uniquely identify sessions that
+	 * are for the same alias.
+	 *
+	 * @param	idx		Session index
+	 */
+	void setSessionIndex(int idx)
 	{
-		_title = value != null ? value : "";
+		_sessionIndex = idx;
+		if (idx > 1)
+		{
+			_title = _originalTitle + " (" + _sessionIndex + ")";
+		}
+		else
+		{
+			_title = _originalTitle;
+		}
 	}
 
 	/**
@@ -690,11 +721,8 @@ class Session implements ISession
 		_defaultSchemaInfo.load(getSQLConnection());
 	}
 
-	// TODO: i18n
 	private String createTitle()
 	{
-		final StringBuffer title = new StringBuffer();
-		title.append(getAlias().getName());
 		String user = null;
 		try
 		{
@@ -704,10 +732,42 @@ class Session implements ISession
 		{
 			s_log.error("Error occured retrieving user name from Connection", ex);
 		}
+
+		String catalog = null;
+		try
+		{
+			catalog = getSQLConnection().getCatalog();
+		}
+		catch (SQLException ex)
+		{
+			s_log.error("Error occured retrieving current catalog from Connection", ex);
+		}
+		if (catalog == null)
+		{
+			catalog = "";
+		}
+		else
+		{
+			catalog = "(" + catalog + ")";
+		}
+
+		String title = null;
 		if (user != null && user.length() > 0)
 		{
-			title.append(" as ").append(user); // i18n
+			String[] args = new String[3];
+			args[0] = getAlias().getName();
+			args[1] = catalog;
+			args[2] = user;
+			title = s_stringMgr.getString("Session.title1", args);
 		}
+		else
+		{
+			String[] args = new String[2];
+			args[0] = getAlias().getName();
+			args[1] = catalog;
+			title = s_stringMgr.getString("Session.title0", args);
+		}
+
 		return title.toString();
 	}
 

@@ -69,6 +69,7 @@ public class ViewHelpCommand implements ICommand
 			}
 		}
 		s_window.setVisible(true);
+		s_window.toFront();	// Required on Linux.
 	}
 
 }

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session;
 /*
- * Copyright (C) 2003 Colin Bell
+ * Copyright (C) 2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -112,13 +112,7 @@ public class SessionManager
 		}
 		_sessionsOpenedCountByAliasId.put(alias.getIdentifier(), count);
 
-		// If there is more than one session that has been opened for this alias
-		// then append a sequential number to the session title.
-		if (count.intValue() > 1 )
-		{
-			final String title = sess.getTitle();
-			sess.setTitle(title + " (" + count.intValue() + ")");
-		}
+		sess.setSessionIndex(count.intValue());
 
 		return sess;
 	}
