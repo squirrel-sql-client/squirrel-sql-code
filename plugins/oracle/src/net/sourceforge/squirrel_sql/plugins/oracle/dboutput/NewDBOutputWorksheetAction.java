@@ -20,6 +20,8 @@ package net.sourceforge.squirrel_sql.plugins.oracle.dboutput;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingUtilities;
 
+import net.sourceforge.squirrel_sql.fw.util.Resources;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 
@@ -32,6 +34,8 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  * @author  <A HREF="mailto:jmheight@users.sourceforge.net">Jason Height</A>
  */
 public class NewDBOutputWorksheetAction extends SquirrelAction {
+    private Resources _resources;
+
 	/**
 	 * Ctor.
 	 *
@@ -40,8 +44,10 @@ public class NewDBOutputWorksheetAction extends SquirrelAction {
 	 * @throws  IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> passed.
 	 */
-	public NewDBOutputWorksheetAction(IApplication app) {
-		super(app);
+	public NewDBOutputWorksheetAction(IApplication app, Resources rsrc) {
+		super(app, rsrc);
+                _resources = rsrc;
+
 		if (app == null) {
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
@@ -58,7 +64,7 @@ public class NewDBOutputWorksheetAction extends SquirrelAction {
             throw new IllegalArgumentException("This method should not be called with a null activeSession");
 
 
-          final DBOutputInternalFrame sif = new DBOutputInternalFrame(activeSession);
+          final DBOutputInternalFrame sif = new DBOutputInternalFrame(activeSession, _resources);
           getApplication().getMainFrame().addInternalFrame(sif, true, null);
 
           // If we don't invokeLater here no Short-Cut-Key is sent
