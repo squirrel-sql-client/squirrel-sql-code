@@ -53,6 +53,7 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.sql.DriverPropertiesDialog;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
+import net.sourceforge.squirrel_sql.fw.sql.DataCache;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
@@ -62,6 +63,8 @@ import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
 import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeEvent;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -93,28 +96,12 @@ public class AliasMaintSheet extends BaseSheet
 		/** A new alias is being created as a copy of an existing one. */
 		int COPY = 3;
 	}
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(AliasMaintSheet.class);
 
 	/** Number of characters to show in text fields. */
 	private static final int COLUMN_COUNT = 25;
-
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
-	{
-		String ADD = "Add Alias";
-		String AUTO_LOGON_CHK = "Auto logon";
-		String CHANGE = "Change Alias";
-		String CONNECT_AT_STARTUP = "Connect at Startup";
-		String DRIVER = "Driver:";
-		String NAME = "Name:";
-		String PASSWORD = "Password:";
-		String SAVE_PASSWORD = "Save password:";
-		String URL = "URL:";
-		String USER_NAME = "User Name:";
-		String WARNING = "Warning - Passwords are saved in clear text";
-	}
 
 	/** Logger for this class. */
 	private static final ILogger s_log =
@@ -154,16 +141,16 @@ public class AliasMaintSheet extends BaseSheet
 	private final JPasswordField _password = new JPasswordField();
 
 	/** Autologon checkbox. */
-	private final JCheckBox _autoLogonChk = new JCheckBox(i18n.AUTO_LOGON_CHK);
+	private final JCheckBox _autoLogonChk = new JCheckBox(s_stringMgr.getString("AliasMaintSheet.autologon"));
 
 	/** Connect at startup checkbox. */
-	private final JCheckBox _connectAtStartupChk = new JCheckBox(i18n.CONNECT_AT_STARTUP);
+	private final JCheckBox _connectAtStartupChk = new JCheckBox(s_stringMgr.getString("AliasMaintSheet.connectatstartup"));
 
 	/** If checked use the extended driver properties. */
-	private final JCheckBox _useDriverPropsChk = new JCheckBox("Use Driver Properties");
+	private final JCheckBox _useDriverPropsChk = new JCheckBox(s_stringMgr.getString("AliasMaintSheet.userdriverprops"));
 
 	/** Button that brings up the driver properties dialog. */
-	private final JButton _driverPropsBtn = new JButton("Properties");
+	private final JButton _driverPropsBtn = new JButton(s_stringMgr.getString("AliasMaintSheet.props"));
 
 	/** Collection of the driver properties. */
 	private SQLDriverPropertyCollection _sqlDriverProps;
@@ -310,7 +297,7 @@ public class AliasMaintSheet extends BaseSheet
 		ISQLDriver driver = _drivers.getSelectedDriver();
 		if (driver == null)
 		{
-			throw new ValidationException("Must select driver"); //i18n
+			throw new ValidationException(s_stringMgr.getString("AliasMaintSheet.error.nodriver"));
 		}
 		alias.setName(_aliasName.getText().trim());
 		alias.setDriverIdentifier(_drivers.getSelectedDriver().getIdentifier());
@@ -340,13 +327,13 @@ public class AliasMaintSheet extends BaseSheet
 			final ISQLDriver driver = _drivers.getSelectedDriver();
 			if (driver == null)
 			{
-				throw new BaseException("Cannot determine driver properties as no driver selected.");
+				throw new BaseException(s_stringMgr.getString("AliasMaintSheet.error.noprops"));
 			}
 			final SQLDriverManager mgr = _app.getSQLDriverManager();
 			final Driver jdbcDriver = mgr.getJDBCDriver(driver.getIdentifier());
 			if (jdbcDriver == null)
 			{
-				throw new BaseException("Cannot determine driver properties as the driver cannot be loaded.");
+				throw new BaseException(s_stringMgr.getString("AliasMaintSheet.error.cannotloaddriver"));
 			}
 
 			DriverPropertyInfo[] infoAr = jdbcDriver.getPropertyInfo(_url.getText(), new Properties());
@@ -370,8 +357,8 @@ public class AliasMaintSheet extends BaseSheet
 		GUIUtils.makeToolWindow(this, true);
 
 		final String title = _maintType == IMaintenanceType.MODIFY
-							? (i18n.CHANGE + " " + _sqlAlias.getName())
-							: i18n.ADD;
+							? s_stringMgr.getString("AliasMaintSheet.changealias", _sqlAlias.getName())
+							: s_stringMgr.getString("AliasMaintSheet.addalias");
 		setTitle(title);
 
 		_aliasName.setColumns(COLUMN_COUNT);
@@ -457,7 +444,7 @@ public class AliasMaintSheet extends BaseSheet
 
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		pnl.add(new JLabel(i18n.NAME, SwingConstants.RIGHT), gbc);
+		pnl.add(new JLabel(s_stringMgr.getString("AliasMaintSheet.name"), SwingConstants.RIGHT), gbc);
 
 		++gbc.gridx;
 		pnl.add(_aliasName, gbc);
@@ -468,7 +455,7 @@ public class AliasMaintSheet extends BaseSheet
 		final Box driverPnl = Box.createHorizontalBox();
 		driverPnl.add(_drivers);
 		driverPnl.add(Box.createHorizontalStrut(5));
-		JButton newDriverBtn = new JButton("New");
+		JButton newDriverBtn = new JButton(s_stringMgr.getString("AliasMaintSheet.new"));
 		newDriverBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
@@ -480,28 +467,28 @@ public class AliasMaintSheet extends BaseSheet
 
 		gbc.gridx = 0;
 		++gbc.gridy;
-		pnl.add(new JLabel(i18n.DRIVER, SwingConstants.RIGHT), gbc);
+		pnl.add(new JLabel(s_stringMgr.getString("AliasMaintSheet.driver"), SwingConstants.RIGHT), gbc);
 
 		++gbc.gridx;
 		pnl.add(driverPnl, gbc);
 
 		gbc.gridx = 0;
 		++gbc.gridy;
-		pnl.add(new JLabel(i18n.URL, SwingConstants.RIGHT), gbc);
+		pnl.add(new JLabel(s_stringMgr.getString("AliasMaintSheet.url"), SwingConstants.RIGHT), gbc);
 
 		++gbc.gridx;
 		pnl.add(_url, gbc);
 
 		gbc.gridx = 0;
 		++gbc.gridy;
-		pnl.add(new JLabel(i18n.USER_NAME, SwingConstants.RIGHT), gbc);
+		pnl.add(new JLabel(s_stringMgr.getString("AliasMaintSheet.username"), SwingConstants.RIGHT), gbc);
 
 		++gbc.gridx;
 		pnl.add(_userName, gbc);
 
 		gbc.gridx = 0;
 		++gbc.gridy;
-		pnl.add(new JLabel(i18n.PASSWORD, SwingConstants.RIGHT), gbc);
+		pnl.add(new JLabel(s_stringMgr.getString("AliasMaintSheet.password"), SwingConstants.RIGHT), gbc);
 
 		++gbc.gridx;
 		pnl.add(_password, gbc);
@@ -524,7 +511,7 @@ public class AliasMaintSheet extends BaseSheet
 
 		gbc.gridx = 0;
 		++gbc.gridy;
-		pnl.add(new JLabel(i18n.WARNING), gbc);
+		pnl.add(new JLabel(s_stringMgr.getString("AliasMaintSheet.cleartext")), gbc);
 
 		return pnl;
 	}
@@ -533,7 +520,7 @@ public class AliasMaintSheet extends BaseSheet
 	{
 		JPanel pnl = new JPanel();
 
-		JButton okBtn = new JButton("OK");
+		JButton okBtn = new JButton(s_stringMgr.getString("AliasMaintSheet.ok"));
 		okBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
@@ -541,7 +528,7 @@ public class AliasMaintSheet extends BaseSheet
 				performOk();
 			}
 		});
-		JButton closeBtn = new JButton("Close");
+		JButton closeBtn = new JButton(s_stringMgr.getString("AliasMaintSheet.close"));
 		closeBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
@@ -550,7 +537,7 @@ public class AliasMaintSheet extends BaseSheet
 			}
 		});
 
-		JButton testBtn = new JButton("Test");
+		JButton testBtn = new JButton(s_stringMgr.getString("AliasMaintSheet.test"));
 		testBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
@@ -662,11 +649,11 @@ public class AliasMaintSheet extends BaseSheet
 			}
 			catch (Throwable th)
 			{
-				String msg = "Error closing Connection";
+				String msg = s_stringMgr.getString("AliasMaintSheet.error.errorclosingconn");
 				s_log.error(msg, th);
 				_app.showErrorDialog(msg + ": " + th.toString());
 			}
-			Dialogs.showOk(AliasMaintSheet.this, "Connection successful");
+			Dialogs.showOk(AliasMaintSheet.this, s_stringMgr.getString("AliasMaintSheet.connsuccess"));
 		}
 
 		/**

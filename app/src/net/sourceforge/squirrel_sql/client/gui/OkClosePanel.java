@@ -27,37 +27,33 @@ import javax.swing.event.EventListenerList;
 
 import com.jgoodies.forms.factories.ButtonBarFactory;
 
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 public class OkClosePanel extends JPanel
 {
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(OkClosePanel.class);
+
 	private boolean _executingMode;
 
 	/** Listeners for this object. */
 	private EventListenerList _listenerList = new EventListenerList();
 
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
-	{
-		String CANCEL = "Cancel";
-		String CLOSE = "Close";
-		String OK = "OK";
-	}
-
 	private JButton _okBtn;
-	private JButton _closeBtn = new JButton(i18n.CLOSE);
+	private JButton _closeBtn = new JButton(s_stringMgr.getString("OkClosePanel.close"));
 
 	public OkClosePanel()
 	{
 		super();
-		createGUI(i18n.OK);
+		createGUI(s_stringMgr.getString("OkClosePanel.ok"));
 	}
 
 	public OkClosePanel(String okButtonText)
 	{
 		super();
-		createGUI(okButtonText != null ? okButtonText : i18n.OK);
+		createGUI(okButtonText != null ? okButtonText : s_stringMgr.getString("OkClosePanel.ok"));
 	}
 
 	/**
@@ -70,7 +66,7 @@ public class OkClosePanel extends JPanel
 		{
 			_executingMode = executingMode;
 			_okBtn.setEnabled(!executingMode);
-			_closeBtn.setText(executingMode ? i18n.CANCEL : i18n.CLOSE);
+			_closeBtn.setText(executingMode ? s_stringMgr.getString("OkClosePanel.cancel") : s_stringMgr.getString("OkClosePanel.close"));
 			if (!executingMode)
 			{
 				_closeBtn.setEnabled(true);

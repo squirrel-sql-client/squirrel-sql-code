@@ -21,20 +21,20 @@ import java.util.EventListener;
 /**
  * This interface defines a listener to listen to a HTML Viewer Panel.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public interface IHtmlViewerPanelListener extends EventListener
 {
 	/**
 	 * URL has changed.
-	 * 
+	 *
 	 * @param	evt	event object.
 	 */
 	void currentURLHasChanged(HtmlViewerPanelListenerEvent evt);
 
 	/**
 	 * Home URL has changed.
-	 * 
+	 *
 	 * @param	evt	event object.
 	 */
 	void homeURLHasChanged(HtmlViewerPanelListenerEvent evt);

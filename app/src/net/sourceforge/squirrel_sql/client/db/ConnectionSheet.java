@@ -53,6 +53,8 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -68,22 +70,6 @@ import net.sourceforge.squirrel_sql.client.gui.OkClosePanelEvent;
  */
 public class ConnectionSheet extends BaseSheet
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface ConnectionSheetI18n
-	{
-		String ALIAS = "Alias:";
-		String CANCELLING = "Cancelling connection attempt...";
-		String CONNECT = "Connect";
-		String CONNECTING = "Connecting...";
-		String DRIVER = "Driver:";
-		String PASSWORD = "Password:";
-		String URL = "URL:";
-		String USER = "User:";
-	}
-
 	/** Handler called for internal frame actions. */
 	public interface IConnectionSheetHandler
 	{
@@ -115,6 +101,10 @@ public class ConnectionSheet extends BaseSheet
 		public void performCancelConnect(ConnectionSheet connSheet);
 	}
 
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ConnectionSheet.class);
+
 	/** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(ConnectionSheet.class);
@@ -140,15 +130,15 @@ public class ConnectionSheet extends BaseSheet
 	private JLabel _url = new JLabel();
 	private JTextField _user = new JTextField();
 	private JTextField _password = new JPasswordField();
-	private OkClosePanel _btnsPnl = new OkClosePanel("Connect");
+	private OkClosePanel _btnsPnl = new OkClosePanel(s_stringMgr.getString("ConnectionSheet.connect"));
 
 	private boolean _driverPropertiesLoaded = false;
 
 	/** If checked use the extended driver properties. */
-	private final JCheckBox _useDriverPropsChk = new JCheckBox("Use Driver Properties");
+	private final JCheckBox _useDriverPropsChk = new JCheckBox(s_stringMgr.getString("ConnectionSheet.userdriverprops"));
 
 	/** Button that brings up the driver properties dialog. */
-	private final JButton _driverPropsBtn = new JButton("Properties...");
+	private final JButton _driverPropsBtn = new JButton(s_stringMgr.getString("ConnectionSheet.props"));
 
 	private StatusBar _statusBar = new StatusBar();
 
@@ -184,13 +174,11 @@ public class ConnectionSheet extends BaseSheet
 		_alias = alias;
 		_handler = handler;
 
-		// Driver associated with the passed alias.
 		_sqlDriver = _app.getDataCache().getDriver(_alias.getDriverIdentifier());
-
 		if (_sqlDriver == null)
 		{
-			throw new IllegalStateException("Unable to find SQLDriver for " +
-												_alias.getName());
+			throw new IllegalStateException(s_stringMgr.getString("ConnectionSheet.error.nodriver",
+												_alias.getName()));
 		}
 
 		createGUI();
@@ -217,7 +205,7 @@ public class ConnectionSheet extends BaseSheet
 	/**
 	 * If the alias specifies autologon then connect after the Dialog is visible.
 	 *
-	 * @param	b	If <TT>true</TT> dialog is to be made visible.
+	 * @param	visible		If <TT>true</TT> dialog is to be made visible.
 	 */
 	public void setVisible(boolean visible)
 	{
@@ -307,7 +295,7 @@ public class ConnectionSheet extends BaseSheet
 		{
 			_connecting = true;
 			_btnsPnl.setExecuting(true);
-			setStatusText(ConnectionSheetI18n.CONNECTING);
+			setStatusText(s_stringMgr.getString("ConnectionSheet.connecting"));
 			_user.setEnabled(false);
 			_password.setEnabled(false);
 			if (!_useDriverPropsChk.isSelected())
@@ -323,7 +311,7 @@ public class ConnectionSheet extends BaseSheet
 		if (_connecting)
 		{
 			// abort first..
-			setStatusText(ConnectionSheetI18n.CANCELLING);
+			setStatusText(s_stringMgr.getString("ConnectionSheet.cancelling"));
 			_btnsPnl.enableCloseButton(false);
 			_handler.performCancelConnect(this);
 			_connecting = false;
@@ -336,7 +324,7 @@ public class ConnectionSheet extends BaseSheet
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		GUIUtils.makeToolWindow(this, true);
 
-		final String title = "Connect to: " + _alias.getName();
+		final String title = s_stringMgr.getString("ConnectionSheet.title", _alias.getName());
 		setTitle(title);
 
 		JPanel content = new JPanel(new BorderLayout());
@@ -344,6 +332,7 @@ public class ConnectionSheet extends BaseSheet
 		content.add(_statusBar, BorderLayout.SOUTH);
 		setContentPane(content);
 
+// TODO:
 //		_btnsPnl.makeOKButtonDefault();
 	}
 
@@ -382,23 +371,23 @@ public class ConnectionSheet extends BaseSheet
 		builder.addSeparator(title, cc.xywh(1, y, 3, 1));
 
 		y += 2;
-		builder.addLabel(ConnectionSheetI18n.ALIAS, cc.xy(1, y));
+		builder.addLabel(s_stringMgr.getString("ConnectionSheet.alias"), cc.xy(1, y));
 		builder.add(_aliasName, cc.xywh(3, y, 1, 1));
 
 		y += 2;
-		builder.addLabel(ConnectionSheetI18n.DRIVER, cc.xy(1, y));
+		builder.addLabel(s_stringMgr.getString("ConnectionSheet.driver"), cc.xy(1, y));
 		builder.add(_driverName, cc.xywh(3, y, 1, 1));
 
 		y += 2;
-		builder.addLabel(ConnectionSheetI18n.URL, cc.xy(1, y));
+		builder.addLabel(s_stringMgr.getString("ConnectionSheet.url"), cc.xy(1, y));
 		builder.add(_url, cc.xywh(3, y, 1, 1));
 
 		y += 2;
-		builder.addLabel(ConnectionSheetI18n.USER, cc.xy(1, y));
+		builder.addLabel(s_stringMgr.getString("ConnectionSheet.user"), cc.xy(1, y));
 		builder.add(_user, cc.xywh(3, y, 1, 1));
 
 		y += 2;
-		builder.addLabel(ConnectionSheetI18n.PASSWORD, cc.xy(1, y));
+		builder.addLabel(s_stringMgr.getString("ConnectionSheet.password"), cc.xy(1, y));
 		builder.add(_password, cc.xywh(3, y, 1, 1));
 
 		y += 2;
@@ -408,7 +397,7 @@ public class ConnectionSheet extends BaseSheet
 		builder.add(propsPnl, cc.xywh(1, y, 3, 1));
 
 		y += 2;
-		builder.addLabel("Warning - Caps lock may interfere with passwords",
+		builder.addLabel(s_stringMgr.getString("ConnectionSheet.warningcapslock"),
 							cc.xywh(1, y, 3, 1));
 
 		y += 2;
@@ -483,7 +472,7 @@ public class ConnectionSheet extends BaseSheet
 					final Driver jdbcDriver = mgr.getJDBCDriver(_sqlDriver.getIdentifier());
 					if (jdbcDriver == null)
 					{
-						throw new BaseException("Cannot determine driver properties as the driver cannot be loaded.");
+						throw new BaseException(s_stringMgr.getString("ConnectionSheet.error.cannotloaddriver"));
 					}
 
 					_props = _alias.getDriverProperties();
@@ -493,7 +482,7 @@ public class ConnectionSheet extends BaseSheet
 				}
 				catch (Exception ex)
 				{
-					String msg = "Error loading Driver Properties";
+					String msg = s_stringMgr.getString("ConnectionSheet.error.driverprops");
 					s_log.error(msg, ex);
 					_app.showErrorDialog(msg, ex);
 				}

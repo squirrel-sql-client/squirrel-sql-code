@@ -57,7 +57,7 @@ public class ColumnsComboBox extends JComboBox
 	{
 		return (TableColumnInfo)getSelectedItem();
 	}
- 
+
 	private static TableColumnInfo[] getData(SQLConnection conn, ITableInfo ti)
 		throws SQLException
 	{
@@ -82,6 +82,7 @@ public class ColumnsComboBox extends JComboBox
 		public Component getListCellRendererComponent(JList list, Object value,
 						int index, boolean isSelected, boolean cellHasFocus)
 		{
+			setOpaque(true);
 			setText(((TableColumnInfo)value).getColumnName());
 			return this;
 		}

@@ -30,6 +30,8 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
@@ -47,6 +49,10 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
  */
 public class AliasesToolWindow extends BaseToolWindow
 {
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(AliasesToolWindow.class);
+
 	/** Application API. */
 	private IApplication _app;
 
@@ -159,7 +165,7 @@ public class AliasesToolWindow extends BaseToolWindow
 
 		public String getWindowTitle()
 		{
-			return "Aliases"; // i18n
+			return s_stringMgr.getString("AliasesToolWindow.windowtitle");
 		}
 
 		public ICommand getDoubleClickCommand()

@@ -33,7 +33,7 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 /**
  * This sheet shows the contents of a HTML file.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class HtmlViewerSheet extends JFrame
 {
@@ -47,12 +47,12 @@ public class HtmlViewerSheet extends JFrame
 	/** Original URL (home). */
 	private URL _documentURL;
 
-  	public HtmlViewerSheet(IApplication app, String title) throws IOException
+ 	public HtmlViewerSheet(IApplication app, String title) throws IOException
 	{
 		this(app, title, null);
 	}
 
-  	public HtmlViewerSheet(IApplication app, String title, URL url)
+ 	public HtmlViewerSheet(IApplication app, String title, URL url)
 		throws IOException
 	{
 		super(title);//, true, true, true, true);
@@ -67,7 +67,7 @@ public class HtmlViewerSheet extends JFrame
 
 	/**
 	 * Return the URL being displayed.
-	 * 
+	 *
 	 * @return	URL being displayed.
 	 */
 	public URL getURL()
@@ -93,4 +93,4 @@ public class HtmlViewerSheet extends JFrame
 		pack();
 	}
 }
-	
+

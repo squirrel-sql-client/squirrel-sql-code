@@ -121,7 +121,7 @@ abstract class BaseToolWindow extends BaseSheet
 	 * Process a mouse press event in this list. If this event is a trigger
 	 * for a popup menu then display the popup menu.
 	 *
-	 * @param   evt	 The mouse event being processed.
+	 * @param	evt	 The mouse event being processed.
 	 */
 	private void mousePress(MouseEvent evt)
 	{

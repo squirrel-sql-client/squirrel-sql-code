@@ -29,7 +29,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.AliasesToolWindow;
 /**
  * This <CODE>Action</CODE> allows the user to connect to an alias.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ConnectToAliasAction extends SquirrelAction
 {

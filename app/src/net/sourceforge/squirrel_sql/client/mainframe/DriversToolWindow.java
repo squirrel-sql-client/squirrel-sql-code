@@ -31,6 +31,8 @@ import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
@@ -50,6 +52,10 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
  */
 public class DriversToolWindow extends BaseToolWindow
 {
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(DriversToolWindow.class);
+
 	/** Application API. */
 	private IApplication _app;
 
@@ -137,7 +143,7 @@ public class DriversToolWindow extends BaseToolWindow
 
 		public String getWindowTitle()
 		{
-			return "Drivers"; // i18n
+			return s_stringMgr.getString("DriversToolWindow.windowtitle");
 		}
 
 		public ICommand getDoubleClickCommand()

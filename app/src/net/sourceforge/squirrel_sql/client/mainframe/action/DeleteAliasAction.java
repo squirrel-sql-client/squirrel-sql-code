@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -26,13 +26,13 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.mainframe.AliasesList;
 import net.sourceforge.squirrel_sql.client.mainframe.AliasesToolWindow;
-
 /**
  * This <CODE>Action</CODE> allows the user to delete an <TT>ISQLAlias</TT>.
  *
  * @author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class DeleteAliasAction extends SquirrelAction {
+public class DeleteAliasAction extends SquirrelAction
+{
 	/**
 	 * List of all the users aliases.
 	 */
@@ -47,9 +47,11 @@ public class DeleteAliasAction extends SquirrelAction {
 	 * @throws	IllegalArgumentException
 	 *			thrown if a <TT>null</TT> <TT>AliasesList</TT> passed.
 	 */
-	public DeleteAliasAction(IApplication app, AliasesList list) {
+	public DeleteAliasAction(IApplication app, AliasesList list)
+	{
 		super(app);
-		if (list == null) {
+		if (list == null)
+		{
 			throw new IllegalArgumentException("Null AliasesList passed");
 		}
 		_aliases = list;
@@ -60,16 +62,21 @@ public class DeleteAliasAction extends SquirrelAction {
 	 *
 	 * @param   evt	 The current event.
 	 */
-	public void actionPerformed(ActionEvent evt) {
+	public void actionPerformed(ActionEvent evt)
+	{
 		IApplication app = getApplication();
 		AliasesToolWindow tw = app.getMainFrame().getAliasesToolWindow();
 		tw.moveToFront();
-		try {
+		try
+		{
 			tw.setSelected(true);
-		} catch (PropertyVetoException ignore) {
+		}
+		catch (PropertyVetoException ignore)
+		{
 		}
 		ISQLAlias alias = _aliases.getSelectedAlias();
-		if (alias != null) {
+		if (alias != null)
+		{
 			new DeleteAliasCommand(app, getParentFrame(evt), alias).execute();
 		}
 	}

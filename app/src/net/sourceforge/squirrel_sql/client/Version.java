@@ -17,14 +17,20 @@ package net.sourceforge.squirrel_sql.client;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * Application version information.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class Version
 {
-	private static final String APP_NAME = "SQuirreL SQL Client";
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(Version.class);
+
+	private static final String APP_NAME = s_stringMgr.getString("Version.appname");
 	private static final int MAJOR_VERSION = 1;
 	private static final int MINOR_VERSION = 2;
 	//private static final String TYPE = "alpha";
@@ -33,9 +39,9 @@ public class Version
 	//private static final String TYPE = "final";
 	private static final int RELEASE = 4;
 
-	private static final String COPYRIGHT = "Copyright (c) 2001 - 2003 Colin Bell and others";
+	private static final String COPYRIGHT = s_stringMgr.getString("Version.copyright");
 
-	private static final String WEB_SITE = "http://squirrel-sql.sourceforge.net/";
+	private static final String WEB_SITE = s_stringMgr.getString("Version.website");
 
 	public static String getApplicationName()
 	{

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -18,28 +18,25 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Frame;
-import java.text.MessageFormat;
 
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-
 /**
  * This <CODE>ICommand</CODE> allows the user to delete an existing
  * <TT>ISQLAlias</TT>.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class DeleteAliasCommand implements ICommand {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n {
-		String MSG_CONFIRM = "Are you sure to want to delete the alias \"{0}\"?";
-	}
+public class DeleteAliasCommand implements ICommand
+{
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(DeleteAliasCommand.class);
 
 	/** Application API. */
 	private final IApplication _app;
@@ -62,12 +59,15 @@ public class DeleteAliasCommand implements ICommand {
 	 *			<TT>IApplication</TT> passed.
 	 */
 	public DeleteAliasCommand(IApplication app, Frame frame,
-								ISQLAlias sqlAlias) {
+								ISQLAlias sqlAlias)
+	{
 		super();
-		if (app == null) {
+		if (app == null)
+		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
-		if (sqlAlias == null) {
+		if (sqlAlias == null)
+		{
 			throw new IllegalArgumentException("Null ISQLAlias passed");
 		}
 
@@ -79,10 +79,10 @@ public class DeleteAliasCommand implements ICommand {
 	/**
 	 * Delete the current <TT>ISQLAlias</TT> after confirmation.
 	 */
-	public void execute() {
-		Object[] args = {_sqlAlias.getName()};
-		String msg = MessageFormat.format(i18n.MSG_CONFIRM, args);
-		if (Dialogs.showYesNo(_frame, msg)) {
+	public void execute()
+	{
+		if (Dialogs.showYesNo(_frame, s_stringMgr.getString("DeleteAliasCommand.confirm", _sqlAlias.getName())))
+		{
 			_app.getDataCache().removeAlias(_sqlAlias);
 		}
 	}

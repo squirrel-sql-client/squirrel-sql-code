@@ -23,11 +23,10 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSummaryDialog;
-
 /**
  * This <CODE>ICommand</CODE> displays the Plugin Summary dialog..
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class DisplayPluginSummaryCommand
 {

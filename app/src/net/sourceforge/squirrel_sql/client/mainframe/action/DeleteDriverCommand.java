@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -18,35 +18,27 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Frame;
-import java.text.MessageFormat;
 import java.util.Iterator;
 
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
+import net.sourceforge.squirrel_sql.fw.sql.DataCache;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.db.DataCache;
-
 /**
  * This <CODE>ICommand</CODE> allows the user to delete an existing
  * <TT>ISQLDriver</TT>.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class DeleteDriverCommand implements ICommand
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
-	{
-		String MSG_CONFIRM =
-			"Are you sure to want to delete the driver \"{0}\"?";
-		String USED =
-			"The driver \"{0}\" is used by one or more aliases and cannot be deleted.";
-	}
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(DeleteDriverCommand.class);
 
 	/** Application API. */
 	private final IApplication _app;
@@ -68,10 +60,8 @@ public class DeleteDriverCommand implements ICommand
 	 *			Thrown if a <TT>null</TT> <TT>ISQLDriver</TT> or
 	 *			<TT>IApplication</TT> passed.
 	 */
-	public DeleteDriverCommand(
-		IApplication app,
-		Frame frame,
-		ISQLDriver sqlDriver)
+	public DeleteDriverCommand(IApplication app, Frame frame,
+								ISQLDriver sqlDriver)
 	{
 		super();
 		if (sqlDriver == null)
@@ -93,18 +83,16 @@ public class DeleteDriverCommand implements ICommand
 	 */
 	public void execute()
 	{
-		Object[] args = { _sqlDriver.getName()};
+		final Object[] args = {_sqlDriver.getName()};
 		final DataCache cache = _app.getDataCache();
 		Iterator it = cache.getAliasesForDriver(_sqlDriver);
 		if (it.hasNext())
 		{
-			String msg = MessageFormat.format(i18n.USED, args);
-			Dialogs.showOk(_frame, msg);
+			Dialogs.showOk(_frame, s_stringMgr.getString("DeleteDriverCommand.used", args));
 		}
 		else
 		{
-			String msg = MessageFormat.format(i18n.MSG_CONFIRM, args);
-			if (Dialogs.showYesNo(_frame, msg))
+			if (Dialogs.showYesNo(_frame, s_stringMgr.getString("DeleteDriverCommand.comfirm", args)))
 			{
 				cache.removeDriver(_sqlDriver);
 			}

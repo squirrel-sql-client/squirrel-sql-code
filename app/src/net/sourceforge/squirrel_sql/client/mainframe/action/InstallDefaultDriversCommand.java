@@ -20,11 +20,11 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
 import java.io.IOException;
 import java.net.URL;
 
+import net.sourceforge.squirrel_sql.fw.sql.DataCache;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.db.DataCache;
 /**
  * This <CODE>ICommand</CODE> allows the user to install the defautl drivers.
  *
@@ -40,10 +40,10 @@ public class InstallDefaultDriversCommand implements ICommand
 
 	/**
 	 * Ctor.
-	 * 
+	 *
 	 * @param	app		Application API.
 	 * @param	url		URL to load drivers from.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException	Thrown if <TT>null</TT>
 	 *										<TT>IApplication</TT> passed.
 	 * @throws	IllegalArgumentException	Thrown if <TT>null</TT>

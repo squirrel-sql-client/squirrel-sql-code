@@ -53,6 +53,8 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -63,23 +65,13 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class HelpViewerWindow extends JFrame
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
-	{
-		String CHANGE_LOGS = "Change Logs";
-		String FAQ = "FAQ";
-		String HELP = "Help";
-		String LICENCES = "Licences";
-		String SQUIRREL = "SQuirreL";
-		String TITLE = "SQuirreL SQL Client Help";
-	}
-
 	/** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(HelpViewerWindow.class);
+
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(HelpViewerWindow.class);
 
 	/** Application API. */
 	private final IApplication _app;
@@ -110,7 +102,7 @@ public class HelpViewerWindow extends JFrame
 	public HelpViewerWindow(IApplication app)
 		throws IllegalArgumentException, BaseException
 	{
-		super(i18n.TITLE);
+		super(s_stringMgr.getString("HelpViewerWindow.title"));
 		if (app == null)
 		{
 			throw new IllegalArgumentException("IApplication == null");
@@ -136,7 +128,7 @@ public class HelpViewerWindow extends JFrame
 		try
 		{
 			_detailPnl.gotoURL(url);
-			_statusBar.setText("Page loaded.");
+			_statusBar.setText(s_stringMgr.getString("HelpViewerWindow.pageloaded"));
 		}
 		catch (IOException ex)
 		{
@@ -233,7 +225,7 @@ public class HelpViewerWindow extends JFrame
 	private JScrollPane createContentsTree() throws IOException
 	{
 		final ApplicationFiles appFiles = new ApplicationFiles();
-		final FolderNode root = new FolderNode(i18n.HELP);
+		final FolderNode root = new FolderNode(s_stringMgr.getString("HelpViewerWindow.help"));
 		_tree = new JTree(new DefaultTreeModel(root));
 		_tree.setShowsRootHandles(true);
 		_tree.addTreeSelectionListener(new ObjectTreeSelectionListener());
@@ -247,13 +239,13 @@ public class HelpViewerWindow extends JFrame
 		_tree.setCellRenderer(renderer);
 
 		// Add Help, Licence and Change Log nodes to the tree.
-		final FolderNode helpRoot = new FolderNode(i18n.HELP);
+		final FolderNode helpRoot = new FolderNode(s_stringMgr.getString("HelpViewerWindow.help"));
 		root.add(helpRoot);
 		_nodes.put(helpRoot.getURL().toString(), helpRoot);
-		final FolderNode licenceRoot = new FolderNode(i18n.LICENCES);
+		final FolderNode licenceRoot = new FolderNode(s_stringMgr.getString("HelpViewerWindow.licences"));
 		root.add(licenceRoot);
 		_nodes.put(licenceRoot.getURL().toString(), licenceRoot);
-		final FolderNode changeLogRoot = new FolderNode(i18n.CHANGE_LOGS);
+		final FolderNode changeLogRoot = new FolderNode(s_stringMgr.getString("HelpViewerWindow.changelogs"));
 		root.add(changeLogRoot);
 		_nodes.put(changeLogRoot.getURL().toString(), changeLogRoot);
 
@@ -261,7 +253,7 @@ public class HelpViewerWindow extends JFrame
 		File file = appFiles.getQuickStartGuideFile();
 		try
 		{
-			DocumentNode dn = new DocumentNode(i18n.SQUIRREL, file);
+			DocumentNode dn = new DocumentNode(s_stringMgr.getString("HelpViewerWindow.squirrel"), file);
 			helpRoot.add(dn);
 			_homeURL = dn.getURL();
 			_nodes.put(_homeURL.toString(), dn);
@@ -278,7 +270,7 @@ public class HelpViewerWindow extends JFrame
 		file = appFiles.getLicenceFile();
 		try
 		{
-			DocumentNode dn = new DocumentNode(i18n.SQUIRREL, file);
+			DocumentNode dn = new DocumentNode(s_stringMgr.getString("HelpViewerWindow.squirrel"), file);
 			licenceRoot.add(dn);
 			_nodes.put(dn.getURL(), dn);
 		}
@@ -294,7 +286,7 @@ public class HelpViewerWindow extends JFrame
 		file = appFiles.getChangeLogFile();
 		try
 		{
-			DocumentNode dn = new DocumentNode(i18n.SQUIRREL, file);
+			DocumentNode dn = new DocumentNode(s_stringMgr.getString("HelpViewerWindow.squirrel"), file);
 			changeLogRoot.add(dn);
 			_nodes.put(dn.getURL(), dn);
 		}
@@ -377,7 +369,7 @@ public class HelpViewerWindow extends JFrame
 		file = appFiles.getFAQFile();
 		try
 		{
-			DocumentNode dn = new DocumentNode(i18n.FAQ, file);
+			DocumentNode dn = new DocumentNode(s_stringMgr.getString("HelpViewerWindow.faq"), file);
 			root.add(dn);
 			_nodes.put(dn.getURL().toString(), dn);
 		}
@@ -507,7 +499,7 @@ public class HelpViewerWindow extends JFrame
 			}
 			catch (IOException ex)
 			{
-				String msg = "Error generating Contents file";
+				String msg = s_stringMgr.getString("HelpViewerWindow.error.congen");
 				s_log.error(msg, ex);
 				_statusBar.setText(msg);
 			}

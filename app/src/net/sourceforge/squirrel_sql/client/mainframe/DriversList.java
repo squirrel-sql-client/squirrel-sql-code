@@ -38,7 +38,7 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
  * This is a <CODE>JList</CODE> that dispays all the <CODE>ISQLDriver</CODE>
  * objects.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class DriversList extends JList
 {
@@ -50,16 +50,16 @@ public class DriversList extends JList
 
 	/**
 	 * Ctor specifying Application API object.
-	 * 
+	 *
 	 * @param	app		Application API.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>IApplication</TT> passed.
 	 */
-	public DriversList(IApplication app) throws IllegalArgumentException 
+	public DriversList(IApplication app) throws IllegalArgumentException
 	{
 		super();
-		if (app == null) 
+		if (app == null)
 		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
@@ -119,7 +119,7 @@ public class DriversList extends JList
 					{
 						clearSelection();
 						int size = getModel().getSize();
-						if  (idx < size)
+						if (idx < size)
 						{
 							setSelectedIndex(idx);
 						}
@@ -174,7 +174,7 @@ public class DriversList extends JList
 	 * Return the description for the driver that the mouse is currently
 	 * over as the tooltip text.
 	 *
-	 * @param   event   Used to determine the current mouse position.
+	 * @param	event	Used to determine the current mouse position.
 	 */
 	public String getToolTipText(MouseEvent evt)
 	{
@@ -202,7 +202,7 @@ public class DriversList extends JList
 
 	/**
 	 * Application properties have changed so update this object.
-	 * 
+	 *
 	 * @param	propName	Name of property that has changed or <TT>null</TT>
 	 * 						if multiple properties have changed.
 	 */

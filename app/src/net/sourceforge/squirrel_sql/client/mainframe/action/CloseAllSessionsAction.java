@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -23,20 +23,21 @@ import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-
 /**
  * This <CODE>Action</CODE> allows the user to close all currently
  * open sessions.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class CloseAllSessionsAction extends SquirrelAction {
+public class CloseAllSessionsAction extends SquirrelAction
+{
 	/**
 	 * Ctor.
 	 *
 	 * @param	app		Application API.
 	 */
-	public CloseAllSessionsAction(IApplication app) {
+	public CloseAllSessionsAction(IApplication app)
+	{
 		super(app);
 	}
 
@@ -45,13 +46,17 @@ public class CloseAllSessionsAction extends SquirrelAction {
 	 *
 	 * @param	evt	The current event.
 	 */
-	public void actionPerformed(ActionEvent evt) {
+	public void actionPerformed(ActionEvent evt)
+	{
 		IApplication app = getApplication();
 		CursorChanger cursorChg = new CursorChanger(app.getMainFrame());
 		cursorChg.show();
-		try {
+		try
+		{
 			new CloseAllSessionsCommand(app).execute();
-		} finally {
+		}
+		finally
+		{
 			cursorChg.restore();
 		}
 	}

@@ -30,7 +30,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.DriversToolWindow;
 /**
  * This <CODE>Action</CODE> allows the user to delete a <TT>ISQLDriver</TT>.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class DeleteDriverAction extends SquirrelAction
 {
@@ -42,10 +42,10 @@ public class DeleteDriverAction extends SquirrelAction
 	/**
 	 * Ctor specifying the list of drivers.
 	 *
-	 * @param   app		Application API.
-	 * @param   list	List of <TT>ISQLDriver</TT> objects.
+	 * @param	app		Application API.
+	 * @param	list	List of <TT>ISQLDriver</TT> objects.
 	 *
-	 * @throws  IllegalArgumentException
+	 * @throws	IllegalArgumentException
 	 *			thrown if a <TT>null</TT> <TT>DriversList</TT> passed.
 	 */
 	public DeleteDriverAction(IApplication app, DriversList list)
@@ -61,7 +61,7 @@ public class DeleteDriverAction extends SquirrelAction
 	/**
 	 * Perform this action. Use the <TT>DeleteDriverCommand</TT>.
 	 *
-	 * @param   evt	 The current event.
+	 * @param	evt	 The current event.
 	 */
 	public void actionPerformed(ActionEvent evt)
 	{

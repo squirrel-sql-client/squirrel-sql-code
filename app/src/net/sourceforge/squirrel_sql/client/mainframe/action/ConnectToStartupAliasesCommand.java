@@ -1,15 +1,4 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.db.DataCache;
-
 /*
  * Copyright (C) 2001-2003 Colin Bell and Johan Compagner
  * colbell@users.sourceforge.net
@@ -29,6 +18,15 @@ import net.sourceforge.squirrel_sql.client.db.DataCache;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import net.sourceforge.squirrel_sql.fw.sql.DataCache;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.fw.util.ICommand;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
 /**
  * This <CODE>ICommand</CODE> connects to all aliases specified as "connect
  * at startup.
@@ -42,16 +40,16 @@ public class ConnectToStartupAliasesCommand implements ICommand
 
 	/**
 	 * Ctor.
-	 * 
+	 *
 	 * @param	app		Application API
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>IApplication</TT> passed.
 	 */
 	public ConnectToStartupAliasesCommand(IApplication app)
 	{
 		super();
-		if (app ==  null)
+		if (app == null)
 		{
 			throw new IllegalArgumentException("IApplication == null");
 		}
@@ -65,8 +63,7 @@ public class ConnectToStartupAliasesCommand implements ICommand
 		final DataCache cache = _app.getDataCache();
 		synchronized (cache)
 		{
-			final Iterator it = cache.aliases();
-			while (it.hasNext())
+			for (Iterator it = cache.aliases(); it.hasNext();)
 			{
 				ISQLAlias alias = (ISQLAlias)it.next();
 				if (alias.isConnectAtStartup())

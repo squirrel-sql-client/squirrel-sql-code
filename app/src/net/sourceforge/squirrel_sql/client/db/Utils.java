@@ -18,13 +18,18 @@ package net.sourceforge.squirrel_sql.client.db;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.sql.DatabaseMetaData;
-import java.sql.Types;
 
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 // TODO: move to fw
 // i18n
-public class Utils {
+public class Utils
+{
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(Utils.class);
 
-	private Utils() 
+	private Utils()
 	{
 		super();
 	}
@@ -33,9 +38,12 @@ public class Utils {
 	{
 		switch (type)
 		{
-			case DatabaseMetaData.typeNoNulls: return "No";
-			case DatabaseMetaData.typeNullable: return "Yes";
-			default: return "Unknown";
+			case DatabaseMetaData.typeNoNulls :
+				return s_stringMgr.getString("Utils.no");
+			case DatabaseMetaData.typeNullable :
+				return s_stringMgr.getString("Utils.yes");
+			default :
+				return s_stringMgr.getString("Utils.unknown");
 		}
 	}
 
@@ -43,12 +51,16 @@ public class Utils {
 	{
 		switch (type)
 		{
-			case DatabaseMetaData.typePredNone: return "No";
-			case DatabaseMetaData.typePredChar: return "Only WHERE LIKE";
-			case DatabaseMetaData.typePredBasic: return "Not WHERE LIKE";
-			case DatabaseMetaData.typeSearchable: return "Yes";
-			default: return "" + type + " Unknown";
+			case DatabaseMetaData.typePredNone :
+				return s_stringMgr.getString("Utils.no");
+			case DatabaseMetaData.typePredChar :
+				return s_stringMgr.getString("Utils.onlywherelike");
+			case DatabaseMetaData.typePredBasic :
+				return s_stringMgr.getString("Utils.notwherelike");
+			case DatabaseMetaData.typeSearchable :
+				return s_stringMgr.getString("Utils.yes");
+			default :
+				return s_stringMgr.getString("Utils.unknown", new Integer(type));
 		}
 	}
-
 }

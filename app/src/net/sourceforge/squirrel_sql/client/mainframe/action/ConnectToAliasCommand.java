@@ -32,6 +32,8 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.sql.WrappedSQLException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -55,6 +57,10 @@ public class ConnectToAliasCommand implements ICommand
 		void sessionCreated(ISession session);
 		void errorOccured(Throwable th);
 	}
+
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ConnectToAliasCommand.class);
 
 	/** Logger for this class. */
 	private static final ILogger s_log =
@@ -192,25 +198,25 @@ public class ConnectToAliasCommand implements ICommand
 				String msg = th.getMessage();
 				if (msg == null || msg.length() == 0)
 				{
-					msg = "Unable to open SQL Connection";
+					msg = s_stringMgr.getString("ConnectToAliasCommand.error.cantopen");
 				}
 				msg = _sqlAlias.getName() + ": " + msg;
 				showErrorDialog(msg, th);
 			}
 			else if (th instanceof ClassNotFoundException)
 			{
-				String msg = _sqlAlias.getName() + ": JDBC Driver class not found";
+				String msg = s_stringMgr.getString("ConnectToAliasCommand.error.driver", _sqlAlias.getName());
 				showErrorDialog(msg, th);
 			}
 			else if (th instanceof NoClassDefFoundError)
 			{
-				String msg = _sqlAlias.getName() + ": JDBC Driver class not found";
+				String msg = s_stringMgr.getString("ConnectToAliasCommand.error.driver", _sqlAlias.getName());
 				s_log.error(msg, th);
 				showErrorDialog(msg, th);
 			}
 			else
 			{
-				String msg = _sqlAlias.getName() + ": Unexpected Error occured attempting to open an SQL connection.";
+				String msg = s_stringMgr.getString("ConnectToAliasCommand.error.unexpected", _sqlAlias.getName());
 				s_log.debug(th.getClass().getName());
 				s_log.error(msg, th);
 				showErrorDialog(msg, th);
@@ -464,7 +470,7 @@ public class ConnectToAliasCommand implements ICommand
 			}
 			catch (Throwable th)
 			{
-				app.showErrorDialog("Error opening session", th);
+				app.showErrorDialog(s_stringMgr.getString("ConnectToAliasCommand.error.opensession"), th);
 			}
 		}
 	}

@@ -1,5 +1,9 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
+ * TODO: i18n
+ */
+
+/*
  * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
