@@ -21,11 +21,8 @@ import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
-import net.sourceforge.squirrel_sql.fw.persist.IValidatable;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
-
 /**
  * This represents a Database alias which is a description of the means
  * required to connect to a JDBC complient database.<P>
@@ -33,17 +30,20 @@ import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable {
+public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
+{
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
-	private interface i18n {
+	private interface i18n
+	{
 		String ERR_BLANK_NAME = "Name cannot be blank.";
 		String ERR_BLANK_DRIVER = "JDBC Driver cannot be blank.";
 		String ERR_BLANK_URL = "JDBC URL cannot be blank.";
 	}
-	/** The <CODE>IIdentifier</CODE> that uniquely identifies this object. */
+
+	/** The <CODE>IIdentifier</CODE> that uniquely identifies this object. */
 	private IIdentifier _id;
 
 	/** The name of this alias. */
@@ -62,9 +62,11 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable 
 	private String _userName;
 
 	/** Object to handle property change events. */
-	private PropertyChangeReporter _propChgReporter = new PropertyChangeReporter(this);
+	private final PropertyChangeReporter _propChgReporter =
+		new PropertyChangeReporter(this);
 
-	public SQLAlias() {
+	public SQLAlias()
+	{
 		super();
 	}
 
@@ -73,8 +75,8 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable 
 	 *
 	 * @param   id  Uniquely identifies this object.
 	 */
-	public SQLAlias(IIdentifier id) {
-//	  this(id, "", null, "", "");
+	public SQLAlias(IIdentifier id)
+	{
 		super();
 		_id = id;
 		_name = "";
@@ -82,26 +84,9 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable 
 		_url = "";
 		_userName = "";
 	}
-	/**
-	 * Ctor specifying this objects attributes.
-	 *
-	 * @param   id			  Uniquely identifies this object.
-	 * @param   name			The name of this alias.
-	 * @param   driverId		The ID of the <CODE>ISQLDriver</CODE>.
-	 * @param   url			 The URL to the database.
-	 * @param   userName		User name for connection.
-	 */
-/*  public SQLAlias(IIdentifier id, String name, IIdentifier driverId, String url,
-					String userName) {
-		super();
-		_id = id;
-		_name = getString(name);
-		_driverId = driverId;
-		_url = getString(url);
-		_userName = getString(userName);
-	}
-*/
+
 	/**
+	 * TODO: Replace with clone().
 	 * Assign data from the passed <CODE>ISQLAlias</CODE> to this one.
 	 *
 	 * @param   rhs	 <CODE>ISQLAlias</CODE> to copy data from.
@@ -111,7 +96,8 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable 
 	 *				  <CODE>rhs</CODE>.
 	 */
 	public synchronized void assignFrom(ISQLAlias rhs)
-			throws ValidationException {
+		throws ValidationException
+	{
 		setName(rhs.getName());
 		setDriverIdentifier(rhs.getDriverIdentifier());
 		setUrl(rhs.getUrl());
@@ -123,9 +109,11 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable 
 	 * <TT>ISQLAlias</TT> objects are considered equal if they have the same
 	 * identifier.
 	 */
-	public boolean equals(Object rhs) {
+	public boolean equals(Object rhs)
+	{
 		boolean rc = false;
-		if (rhs != null && rhs.getClass().equals(getClass())) {
+		if (rhs != null && rhs.getClass().equals(getClass()))
+		{
 			rc = ((ISQLAlias)rhs).getIdentifier().equals(getIdentifier());
 		}
 		return rc;
@@ -134,25 +122,31 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable 
 	/**
 	 * Return a clone of this object.
 	 */
-	public Object clone() {
-		try {
+	public Object clone()
+	{
+		try
+		{
 			return super.clone();
-		} catch(CloneNotSupportedException ex) {
-			throw new InternalError(ex.getMessage());   // Impossible.
+		}
+		catch (CloneNotSupportedException ex)
+		{
+			throw new InternalError(ex.getMessage()); // Impossible.
 		}
 	}
 
 	/**
 	 * Returns a hash code value for this object.
 	 */
-	public synchronized int hashCode() {
+	public synchronized int hashCode()
+	{
 		return getIdentifier().hashCode();
 	}
 
 	/**
 	 * Returns the name of this <TT>ISQLAlias</TT>.
 	 */
-	public String toString() {
+	public String toString()
+	{
 		return getName();
 	}
 
@@ -163,15 +157,18 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable 
 	 * ClassCastException (as <TT>SQLAlias</TT> objects are comparable only to
 	 * other <TT>SQLAlias</TT> objects).
 	 */
-	public int compareTo(Object rhs) {
+	public int compareTo(Object rhs)
+	{
 		return _name.compareTo(((ISQLAlias)rhs).getName());
 	}
 
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
+	public void addPropertyChangeListener(PropertyChangeListener listener)
+	{
 		_propChgReporter.addPropertyChangeListener(listener);
 	}
 
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
+	public void removePropertyChangeListener(PropertyChangeListener listener)
+	{
 		_propChgReporter.removePropertyChangeListener(listener);
 	}
 
@@ -179,86 +176,103 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable 
 	 * Returns <CODE>true</CODE> if this object is valid.<P>
 	 * Implementation for <CODE>IPersistable</CODE>.
 	 */
-	public synchronized boolean isValid() {
-		return _name.length() > 0 && _driverId != null &&
-				_url.length() > 0;
+	public synchronized boolean isValid()
+	{
+		return _name.length() > 0 && _driverId != null && _url.length() > 0;
 	}
 
-	public IIdentifier getIdentifier() {
+	public IIdentifier getIdentifier()
+	{
 		return _id;
 	}
 
-	public String getName() {
+	public String getName()
+	{
 		return _name;
 	}
 
-	public IIdentifier getDriverIdentifier() {
+	public IIdentifier getDriverIdentifier()
+	{
 		return _driverId;
 	}
 
-	public String getUrl() {
+	public String getUrl()
+	{
 		return _url;
 	}
 
-	public String getUserName() {
+	public String getUserName()
+	{
 		return _userName;
 	}
 
-	public void setIdentifier(IIdentifier id) {
+	public void setIdentifier(IIdentifier id)
+	{
 		_id = id;
 	}
 
-	public void setName(String name)
-			throws ValidationException {
+	public void setName(String name) throws ValidationException
+	{
 		String data = getString(name);
-		if (data.length() == 0) {
+		if (data.length() == 0)
+		{
 			throw new ValidationException(i18n.ERR_BLANK_NAME);
 		}
-		if (_name != data) {
+		if (_name != data)
+		{
 			final String oldValue = _name;
 			_name = data;
-			_propChgReporter.firePropertyChange(ISQLAlias.IPropertyNames.NAME, oldValue, _name);
+			_propChgReporter.firePropertyChange(ISQLAlias.IPropertyNames.NAME,
+												oldValue, _name);
 		}
 	}
 
 	public void setDriverIdentifier(IIdentifier data)
-			throws ValidationException {
-		if (data == null) {
+		throws ValidationException
+	{
+		if (data == null)
+		{
 			throw new ValidationException(i18n.ERR_BLANK_DRIVER);
 		}
-		if (_driverId != data) {
+		if (_driverId != data)
+		{
 			final IIdentifier oldValue = _driverId;
 			_driverId = data;
-			_propChgReporter.firePropertyChange(ISQLAlias.IPropertyNames.DRIVER, oldValue, _driverId);
+			_propChgReporter.firePropertyChange(ISQLAlias.IPropertyNames.DRIVER,
+												oldValue, _driverId);
 		}
 	}
 
-	public void setUrl(String url)
-			throws ValidationException {
+	public void setUrl(String url) throws ValidationException
+	{
 		String data = getString(url);
-		if (data.length() == 0) {
+		if (data.length() == 0)
+		{
 			throw new ValidationException(i18n.ERR_BLANK_URL);
 		}
-		if (_url != data) {
+		if (_url != data)
+		{
 			final String oldValue = _url;
 			_url = data;
-			_propChgReporter.firePropertyChange(ISQLAlias.IPropertyNames.URL, oldValue, _url);
+			_propChgReporter.firePropertyChange(ISQLAlias.IPropertyNames.URL,
+													oldValue, _url);
 		}
 	}
 
-	public void setUserName(String userName)
-			throws ValidationException {
+	public void setUserName(String userName) throws ValidationException
+	{
 		String data = getString(userName);
-		if (_userName != data) {
+		if (_userName != data)
+		{
 			final String oldValue = _userName;
 			_userName = data;
-			_propChgReporter.firePropertyChange(ISQLAlias.IPropertyNames.USER_NAME, oldValue,
-													_userName);
+			_propChgReporter.firePropertyChange(ISQLAlias.IPropertyNames.USER_NAME,
+												oldValue, _userName);
 		}
 	}
 
-	private String getString(String data) {
+	private String getString(String data)
+	{
 		return data != null ? data.trim() : "";
 	}
 }
-

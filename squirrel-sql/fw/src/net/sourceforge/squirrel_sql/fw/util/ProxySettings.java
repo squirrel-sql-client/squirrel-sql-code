@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.util;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -39,6 +39,11 @@ public class ProxySettings implements Cloneable
 	/** Password for HTTP Proxy server. */
 	private String _httpProxyPassword;
 
+	/**
+	 * List of hosts (separated by a '|') that we don't use a HTTP proxy for.
+	 */
+	private String _httpNonProxyHosts;
+
 	/** If <TT>true</TT> use a SOCKS proxy server. */
 	private boolean _socksUseProxy;
 
@@ -68,7 +73,7 @@ public class ProxySettings implements Cloneable
 		return _httpUseProxy;
 	}
 
-	public synchronized void setHttpUseProxy(boolean data)
+	public void setHttpUseProxy(boolean data)
 	{
 		_httpUseProxy = data;
 	}
@@ -78,9 +83,8 @@ public class ProxySettings implements Cloneable
 		return _httpProxyServer;
 	}
 
-	public synchronized void setHttpProxyServer(String data)
+	public void setHttpProxyServer(String data)
 	{
-		final String oldValue = _httpProxyServer;
 		_httpProxyServer = data;
 	}
 
@@ -89,9 +93,8 @@ public class ProxySettings implements Cloneable
 		return _httpProxyPort;
 	}
 
-	public synchronized void setHttpProxyPort(String data)
+	public void setHttpProxyPort(String data)
 	{
-		final String oldValue = _httpProxyPort;
 		_httpProxyPort = data;
 	}
 
@@ -100,9 +103,8 @@ public class ProxySettings implements Cloneable
 		return _httpProxyUser;
 	}
 
-	public synchronized void setHttpProxyUser(String data)
+	public void setHttpProxyUser(String data)
 	{
-		final String oldValue = _httpProxyUser;
 		_httpProxyUser = data;
 	}
 
@@ -111,10 +113,19 @@ public class ProxySettings implements Cloneable
 		return _httpProxyPassword;
 	}
 
-	public synchronized void setHttpProxyPassword(String data)
+	public void setHttpProxyPassword(String data)
 	{
-		final String oldValue = _httpProxyPassword;
 		_httpProxyPassword = data;
+	}
+
+	public String getHttpNonProxyHosts()
+	{
+		return _httpNonProxyHosts;
+	}
+
+	public void setHttpNonProxyHosts(String data)
+	{
+		_httpNonProxyHosts = data;
 	}
 
 	public boolean getSocksUseProxy()
@@ -122,9 +133,8 @@ public class ProxySettings implements Cloneable
 		return _socksUseProxy;
 	}
 
-	public synchronized void setSocksUseProxy(boolean data)
+	public void setSocksUseProxy(boolean data)
 	{
-		final boolean oldValue = _socksUseProxy;
 		_socksUseProxy = data;
 	}
 
@@ -133,9 +143,8 @@ public class ProxySettings implements Cloneable
 		return _socksProxyServer;
 	}
 
-	public synchronized void setSocksProxyServer(String data)
+	public void setSocksProxyServer(String data)
 	{
-		final String oldValue = _socksProxyServer;
 		_socksProxyServer = data;
 	}
 
@@ -144,9 +153,8 @@ public class ProxySettings implements Cloneable
 		return _socksProxyPort;
 	}
 
-	public synchronized void setSocksProxyPort(String data)
+	public void setSocksProxyPort(String data)
 	{
-		final String oldValue = _socksProxyPort;
 		_socksProxyPort = data;
 	}
 }
