@@ -12,14 +12,15 @@
 <H3>Contents</H3>
 
 <TABLE>
-    <TR><TD COLSPAN="2"><A HREF="#internalname">The Internal Name</A></TD></TR>
-    <TR><TD COLSPAN="2"><A HREF="#packagename">What Package can I put my Plugin into?</A></TD></TR>
+    <TR><TD COLSPAN="2"><A HREF="#introduction">Introduction</A></TD></TR>
     <TR><TD COLSPAN="2"><A HREF="#licence">What Licence should I Use?</A></TD></TR>
     <TR><TD COLSPAN="2"><A HREF="#internalname">The Internal Name</A></TD></TR>
+    <TR><TD COLSPAN="2"><A HREF="#packagename">What Package can I put my Plugin into?</A></TD></TR>
     <TR><TD COLSPAN="2"><A HREF="#files">Files and Directories</A></TD></TR>
     <TR><TD COLSPAN="2"><A HREF="#loading">How Plugins are Loaded</A></TD></TR>
     <TR><TD COLSPAN="2"><A HREF="#pluginclasses">Plugin Classes</A></TD></TR>
     <TR><TD COLSPAN="2"><A HREF="#api">Plugin API</A></TD></TR>
+    <TR><TD>&nbsp;&nbsp;</TD><TD><A HREF="#logging">Logging</A></TD></TR>
     <TR><TD>&nbsp;&nbsp;</TD><TD><A HREF="#loadinglibraries">Loading Libraries</A></TD></TR>
     <TR><TD>&nbsp;&nbsp;</TD><TD><A HREF="#loadingrsrc">Loading Resources</A></TD></TR>
     <TR><TD>&nbsp;&nbsp;</TD><TD><A HREF="#addmenuitems">Adding Menu Items</A></TD></TR>
@@ -43,16 +44,6 @@ rebuild the SQuirreL application itself.
 <P>This document (like the plugin API itself) is in a very early stage and is lagging
 behind the plugin API. Its suggested that you check the existing plugins in CVS to
 see how they use the API.
-
-<A NAME="packagename"><H3>What Package can I put my Plugin into?</H3></A>
-
-If you already have a domain name that you use for naming java packages
-and you'd like to use that then by all means do so. If you don't have a domain
-name then as a convienience the package
-<TT>net.sourceforge.squirrel_sql.plugins.&lt;internal_name&gt;</TT> is available. Using
-this package name does <EM>not</EM> in any way imply ownership of your code. This resides
-with you under the conditions of the licence that you have selected for your
-plugin.
 
 <A NAME="licence"><H3>What Licence should I Use?</H3></A>
 
@@ -87,13 +78,25 @@ implementing the <TT>IPlugin.getInternalName()</TT> method. As the
 internal name is used to name files and directories it should
 only consist of characters valid on the different platforms that SQuirreL
 can run on. As well the character &quot;-&quot; is reserved for internal
-use.</P>
+use. The internal name &quot;app&quot; is reserved for the use of
+the core SQuirrel code.</P>
+
+<A NAME="packagename"><H3>What Package can I put my Plugin into?</H3></A>
+
+If you already have a domain name that you use for naming java packages
+and you'd like to use that then by all means do so. If you don't have a domain
+name then as a convienience the package
+<TT>net.sourceforge.squirrel_sql.plugins.&lt;internal_name&gt;</TT> is
+available. Using this package name does <EM>not</EM> in any way imply my
+ownership of your code. This resides with you under the conditions of the
+licence that you have selected for your plugin.
 
 <P>As an example the internal name for the <EM>Look and Feel</EM> plugin
 is <TT>laf</TT>.</P>
 
 <P>To reserve an internal name just email a request to the SQuirreL
-developers mailing list (details at http://lists.sourceforge.net/lists/listinfo/squirrel-sql-develop)
+developers mailing list (details at
+http://lists.sourceforge.net/lists/listinfo/squirrel-sql-develop)
 specifying the internal name that you'd like and a quick description of your plugin.</P>
 
 <A NAME="files"><H3>Files and Directories</H3></A>
@@ -106,8 +109,8 @@ named <TT>laf.jar</TT>. No other files should be placed within the
 <TT>&lt;squirrel_app&gt;/plugins</TT> directory.
 
 <P>The directory <TT>&lt;squirrel_app&gt;/plugins/&lt;internal_name&gt;</TT>
-is reserved for the exclusive use of the plugin. All other files required
-by the plugin should be placed in here.</P>
+is reserved for the exclusive use of the plugin. All non-user specific
+other files required by the plugin should be placed in here.</P>
 
 <P>The directory <TT>&lt;user_home&gt;/.squirrel-sql/plugins/&lt;internal_name&gt;</TT>
 is also reserved for the exclusive use of the plugin. All &quot;per-user&quot;
@@ -116,16 +119,15 @@ files should be placed in here.</P>
 <A NAME="loading"><H3>How Plugins are Loaded</H3></A>
 
 Plugins are loaded very early in the SQuirreL startup process. Once the
-application logger has been created (<TT>IApplication.getLogger())</TT> the
+application logging factory has been created the
 plugins are loaded. All jars in the <TT>&lt;squirrel_app&gt;/plugins</TT>
 directory are loaded by the same custom class loader. The jars are searched
 for all classes that implement the <TT>IPlugin</TT> interface. Then
-<TT>newInstance</TT> is used
-to create an instance of each of these plugin classes. Once created the
-<TT>IPlugin.load()</TT> method is called. Because most of the SQuirreL
-environment hasn't yet been setup try not to use the plugin constuctor and
-<TT>load()</TT>method to do initialisation. Instead use the <TT>IPlugin.initialize()</TT>
-method.
+<TT>newInstance</TT> is used to create an instance of each of these plugin
+classes. Once created the <TT>IPlugin.load()</TT> method is called. Because
+most of the SQuirreL environment hasn't yet been setup try not to use the
+plugin constuctor and <TT>load()</TT>method to do initialisation. Instead
+use the <TT>IPlugin.initialize()</TT> method.
 
 <P><TT>IPlugin.initialize()</TT> is called as the last part of the
 SQuirreL startup prior to showing the main window. This is where initialization
@@ -158,6 +160,55 @@ the session level API. From within a descendent of <TT>BasePlugin</TT> you
 can call <TT>getApplication()</TT> to get the <TT>IApplication</TT> object
 and descendents of <TT>BaseSessionPlugin</TT> will have <TT>ISession</TT>
 passed on requests.</P>
+
+<A NAME="logging"><H4>Logging</H4></A>
+
+Logging is done via the <A HREF="http://jakarta.apache.org/log4j/">log4j</A>
+API from the <A HREF="http://www.apache.org">Apache Foundation</A>.
+
+<P>The configuration file for logging is passed in via the
+<TT>-loggingConfigFile</TT> application argument. E.G.
+<TT>-loggingConfigFile=log4j.properties</TT>. The standard configuration file
+specifies the appender <TT>SquirrelAppender</TT> which writes out to the
+text file <TT>&lt;user-home&gt;\squirrel-sql\squirrel-sql.log</TT></P>
+
+<P>To use logging in your classes you need to import the logging
+classes:</P>
+
+<PRE>
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+</PRE>
+
+<P>Create a static logging object:</P>
+
+<PRE>
+private static ILogger s_log = LoggerController.createLogger(&lt;your-class&gt;.class);
+</PRE>
+
+<P>And then you can use the logger:</P>
+
+<PRE>
+s_log.error("Error occured loading Look and Feel: " + lafClassName, ex);
+</PRE>
+
+<P>Giving the output:</P>
+
+<PRE>
+12468 [main] ERROR net.sourceforge.squirrel_sql.plugins.laf.LAFRegister  - Error occured loading Look and Feel: com.l2fprod.gui.plaf.skin.LinuxLookAndFeel
+com.l2fprod.gui.plaf.skin.impl.gtk.GtkSkinNotFoundException
+	at com.l2fprod.gui.plaf.skin.impl.gtk.GtkSkin.getDefaultSkinLocation(GtkSkin.java)
+	at com.l2fprod.gui.plaf.skin.LinuxLookAndFeel.<init>(LinuxLookAndFeel.java)
+	at java.lang.Class.newInstance0(Native Method)
+	at java.lang.Class.newInstance(Class.java:254)
+	at net.sourceforge.squirrel_sql.plugins.laf.LAFRegister.installLookAndFeels(LAFRegister.java:289)
+	at net.sourceforge.squirrel_sql.plugins.laf.LAFRegister.<init>(LAFRegister.java:147)
+	at net.sourceforge.squirrel_sql.plugins.laf.LAFPlugin.load(LAFPlugin.java:140)
+	at net.sourceforge.squirrel_sql.client.plugin.PluginManager.loadPlugin(PluginManager.java:243)
+	at net.sourceforge.squirrel_sql.client.plugin.PluginManager.loadPlugins(PluginManager.java:206)
+	at net.sourceforge.squirrel_sql.client.Application.startup(Application.java:122)
+	at net.sourceforge.squirrel_sql.client.Main.main(Main.java:41)
+</PRE>
 
 <A NAME="loadinglibraries"><H4>Loading Libraries</H4></A>
 
@@ -230,13 +281,13 @@ will be called and the statement will not be executed.</P>
 
 <P>This would be useful for macro expansion etc.</P>
 
-<A NAME="xml"><H3>XML</H3></A>
+<A NAME="xml"><H4>XML</H4></A>
 
 SQuirreL now comes with the XML parser <A HREF="http://NanoXML.sourceforge.net/">NanoXML</A>.
 Previously it came with <A HREF="http://www.jdom.org/">JDOM</A> but as I was using
 almost none of the available functionality I replaced it with with a smaller one.
 
-<A NAME="loadsavesettings"><H3>Loading and Saving Settings</H3></A>
+<A NAME="loadsavesettings"><H4>Loading and Saving Settings</H4></A>
 
 The package <TT>net.sourceforge.squirrel_sql.fw.xml</TT> contains classes
 that will take a javabean and turn it into XML and load a javabean
@@ -259,7 +310,7 @@ information.:</P>
         &lt;usesClassPath&gt;true&lt;/usesClassPath&gt;
     &lt;/Bean&gt;
 &lt;/Beans&gt;
-</PRE> 
+</PRE>
 
 <P>The following example shows how two javabeans can be
 saved to an XML file.</P>
@@ -303,9 +354,9 @@ some examples.</P>
 <P>Array properties are handled but currently not for builtin types nor
 <TT>String</TT> objects. For these you need to use a wrapper class.</P>
 
-<A NAME="objectcaches"><H3>Object Caches</H3></A>
+<A NAME="objectcaches"><H4>Object Caches</H4></A>
 
-<A NAME="addtab"><H3>Adding a Tab to the Main, Table or Procedure Tabbed Panel</H3></A>
+<A NAME="addtab"><H4>Adding a Tab to the Main, Table or Procedure Tabbed Panel</H4></A>
 
 To add a tab to the main tabbed panel (the one containing the &quot;Objects&quot; and
 &quot;SQL&quot; tabs) use the <TT>ISession.addMainTab(String title, Icon icon,
@@ -351,16 +402,16 @@ you create.</P>
 <TT>getSession()</TT>, and <TT>getTableInfo()/getProcedureInfo()</TT>.
 They also provide the method <TT>refreshComponent</TT> which will be called
 the first time a tab is displayed for a table or procedure and is
-the appropriate place to load the information to be displayed.</P> 
+the appropriate place to load the information to be displayed.</P>
 
-<A NAME="sqloutputmodel"><H3>SQL Results Data Model</H3></A>
+<A NAME="sqloutputmodel"><H4>SQL Results Data Model</H4></A>
 
 A data model <TT>net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetModel</TT>
 is available for the SQL results. You can get it from <TT>ResultTab::getResultSetDataModel()</TT>
 In the near future it will be added to the
-content tab for the tables as well. 
+content tab for the tables as well.
 
-<A NAME="sqlresultsapi"><H3>SQL Results Tab API</H3></A>
+<A NAME="sqlresultsapi"><H4>SQL Results Tab API</H4></A>
 
 An API in ISession allows a plugin to listen to events in the Result Tabs.
 

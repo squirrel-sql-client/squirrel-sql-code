@@ -3,6 +3,9 @@ Change Log
 
 1.1 continuation
 ================
+- New option on the Windows menu - Close all sessions.
+- Torn off result tabs are now closed if there session sheet is closed.
+- Bring aliases/driver window to front if action requested.
 - More configuration options for the jEdit plugin.
 - New application argument -noplugins which will run SQuirreL without
   any plugins being loaded.
