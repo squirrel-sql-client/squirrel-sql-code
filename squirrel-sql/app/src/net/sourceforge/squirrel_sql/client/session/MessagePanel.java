@@ -17,25 +17,26 @@ package net.sourceforge.squirrel_sql.client.session;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.Component;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.SQLException;
 
-import javax.swing.JMenuItem;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
-import javax.swing.text.BadLocationException;
 
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
-import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 
-public class MessagePanel extends JTextArea implements IMessageHandler {
+/**
+ * This is the message panel at the bottom of the session sheet.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
+class MessagePanel extends JTextArea implements IMessageHandler {
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(MessagePanel.class);
 
@@ -45,7 +46,7 @@ public class MessagePanel extends JTextArea implements IMessageHandler {
 	/** Popup menu for this component. */
 	private TextPopupMenu _popupMenu = new TextPopupMenu();
 
-	public MessagePanel(IApplication app) throws IllegalArgumentException {
+	MessagePanel(IApplication app) {
 		super();
 		if (app == null) {
 			throw new IllegalArgumentException("Null IApplication passed");
@@ -58,10 +59,14 @@ public class MessagePanel extends JTextArea implements IMessageHandler {
 		// Add mouse listener for displaying popup menu.
 		addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
-				MessagePanel.this.mousePressed(evt);
+				if (evt.isPopupTrigger()) {
+					_popupMenu.show(evt);
+				}
 			}
 			public void mouseReleased(MouseEvent evt) {
-				MessagePanel.this.mouseReleased(evt);
+				if (evt.isPopupTrigger()) {
+					_popupMenu.show(evt);
+				}
 			}
 		});
 	}
@@ -82,66 +87,39 @@ public class MessagePanel extends JTextArea implements IMessageHandler {
 		select(len, len);
 	}
 
-	/**
-	 * Process a mouse press event in this list. If this event is a trigger
-	 * for a popup menu then display the popup menu.
-	 *
-	 * @param	evt	The mouse event being processed.
-	 */
-	public void mousePressed(MouseEvent evt) {
-		if (evt.isPopupTrigger()) {
-			displayPopupMenu(evt);
-		}
-	}
-
-	/**
-	 * Process a mouse released event in this list. If this event is a trigger
-	 * for a popup menu then display the popup menu.
-	 *
-	 * @param	evt	The mouse event being processed.
-	 */
-	public void mouseReleased(MouseEvent evt) {
-		if (evt.isPopupTrigger()) {
-			displayPopupMenu(evt);
-		}
-	}
-
-	/**
-	 * Display the popup menu for this component.
-	 */
-	private void displayPopupMenu(MouseEvent evt) {
-		_popupMenu.show(evt);
-		//_popupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
-	}
-
-	public void showMessage(final Throwable th) throws IllegalArgumentException {
+	public void showMessage(final Throwable th) {
 		if (th == null) {
 			throw new IllegalArgumentException("null Throwable");
 		}
-		// Thread save support for every call to this method:
-		Runnable run = new Runnable()
-		{
-			public void run()
-			{
-				showMessage(th.toString());
-				s_log.error("Error", th);
+		// Thread safe support for every call to this method:
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				if (th instanceof SQLException) {
+					SQLException ex = (SQLException)th;
+			        while (ex != null) {
+			            showMessage("Error:     " + ex.getMessage());
+			            showMessage("SQLState:  " + ex.getSQLState());
+			            showMessage("ErrorCode: " + ex.getErrorCode());
+						s_log.debug("Error", th);
+			            ex = ex.getNextException();
+			        }
+				} else {
+					showMessage(th.toString());
+					s_log.debug("Error", th);
+				}
 			}
-		};
-		SwingUtilities.invokeLater(run);
+		});
 	}
 
-	public void showMessage(final String msg) throws IllegalArgumentException {
+	public void showMessage(final String msg) {
 		if (msg == null) {
 			throw new IllegalArgumentException("null Message");
 		}
-		// Thread save support for every call to this method:
-		Runnable run = new Runnable()
-		{
-			public void run()
-			{
+		// Thread safe support for every call to this method:
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
 				addLine(msg);
 			}
-		};
-		SwingUtilities.invokeLater(run);
+		});
 	}
 }
