@@ -120,6 +120,7 @@ abstract class BaseToolWindow extends JInternalFrame {
                 lbl.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
                 _toolBar.add(lbl, 0);
                 _toolBar.add(new JToolBar.Separator(), 1);
+                setTitle(title);
             }
             content.add(_toolBar, BorderLayout.NORTH);
         }
