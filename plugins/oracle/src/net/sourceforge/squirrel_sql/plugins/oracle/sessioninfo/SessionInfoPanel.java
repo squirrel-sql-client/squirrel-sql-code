@@ -239,7 +239,7 @@ public class SessionInfoPanel extends JPanel
               if (!hasResized) {
                 //Only resize once.
                 hasResized = true;
-                _sessionInfo.resizeColumnWidth();
+                _sessionInfo.resizeColumnWidth(300);
               }
             }
           } catch (SQLException ex) {

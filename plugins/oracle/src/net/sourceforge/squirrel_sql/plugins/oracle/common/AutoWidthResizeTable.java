@@ -26,6 +26,11 @@ import javax.swing.table.TableColumnModel;
 
 public class AutoWidthResizeTable extends JTable
 {
+  
+  public AutoWidthResizeTable() {
+    super();
+  }
+  
   public AutoWidthResizeTable(TableModel model) {
     super(model);
   }

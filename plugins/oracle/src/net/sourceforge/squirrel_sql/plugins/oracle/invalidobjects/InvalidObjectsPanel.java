@@ -34,6 +34,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
+import net.sourceforge.squirrel_sql.plugins.oracle.common.AutoWidthResizeTable;
+
 public class InvalidObjectsPanel extends JPanel
 {
 	/** Logger for this class. */
@@ -42,7 +44,8 @@ public class InvalidObjectsPanel extends JPanel
 	/** Current session. */
 	private ISession _session;
 
-        private JTable _invalidObjects;
+        private AutoWidthResizeTable _invalidObjects;
+        private boolean hasResized = false;
 
 
         private static final String invalidObjectSQL = "SELECT owner, "+
@@ -92,6 +95,11 @@ public class InvalidObjectsPanel extends JPanel
                 tm.addRow(new Object[] {owner, object_name, object_type});
               }
               _invalidObjects.setModel(tm);
+              if (!hasResized) {
+                //Only resize once.
+                hasResized = true;
+                _invalidObjects.resizeColumnWidth(300);
+              }              
             }
           } catch (SQLException ex) {
             _session.getMessageHandler().showErrorMessage(ex);
@@ -102,7 +110,7 @@ public class InvalidObjectsPanel extends JPanel
 	{
             final IApplication app = _session.getApplication();
             setLayout(new BorderLayout());
-            _invalidObjects = new JTable();
+            _invalidObjects = new AutoWidthResizeTable();
             _invalidObjects.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
             add(new JScrollPane(_invalidObjects));
 
