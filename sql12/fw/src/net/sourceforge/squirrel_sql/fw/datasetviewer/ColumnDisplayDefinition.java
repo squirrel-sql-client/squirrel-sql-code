@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
 import java.sql.ResultSetMetaData;
 import java.sql.Types;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
 
 /**
  * This defines the display information for a column.
@@ -44,6 +45,17 @@ public class ColumnDisplayDefinition
 	 * what operations to apply during cell editing.
 	 */
 	private int _sqlType;
+	
+	/**
+	 * The name of the data type as know to the DBMS.
+	 * This is used to identify a sub-type when multiple data types
+	 * have been defined using the same SQL type code.
+	 * This may occur when a DBMS defines several DBMS-specific types
+	 * using SQL type OTHER (1111).
+	 * The only time this is used is when a plugin has registered a
+	 * handler for the data type.
+	 */
+	private String _sqlTypeName;
 	
 	/**
 	 * A boolean indicating whether this field is nullable/may-be-nullable vs. known
@@ -90,7 +102,7 @@ public class ColumnDisplayDefinition
 	public ColumnDisplayDefinition(int displayWidth, String label)
 	{
 		super();
-		init(displayWidth, null, label, Types.NULL, true, 0, 0, 0, true, false);
+		init(displayWidth, null, label, Types.NULL, null, true, 0, 0, 0, true, false);
 	}
 
 	/**
@@ -101,12 +113,12 @@ public class ColumnDisplayDefinition
 	 * @param	className		Name of the class for the type of data in the column.
 	 */
 	public ColumnDisplayDefinition(int displayWidth, String fullTableColumnName,
-				String label, int sqlType,
+				String label, int sqlType, String sqlTypeName,
 				boolean isNullable, int columnSize, int precision, int scale,
 				boolean isSigned, boolean isCurrency) {
 		super();
-		init(displayWidth, fullTableColumnName, label, sqlType, isNullable,
-			columnSize, precision, scale,
+		init(displayWidth, fullTableColumnName, label, sqlType, sqlTypeName,
+			isNullable, columnSize, precision, scale,
 			isSigned, isCurrency);
 	}
 
@@ -148,6 +160,16 @@ public class ColumnDisplayDefinition
 	public int getSqlType()
 	{
 		return _sqlType;
+	}
+
+	/**
+	 * Return the column data type name.
+	 *
+	 * @return	The DBMS-specific name of the type of data in the column.
+	 */
+	public String getSqlTypeName()
+	{
+		return _sqlTypeName;
 	}
 
 	/**
@@ -219,6 +241,7 @@ public class ColumnDisplayDefinition
 		return CellComponentFactory.getClassName(this);
 	}
 
+
 	/**
 	 * Private initializer method for ctors. If the display width
 	 * is less than the width of the heading then make the display
@@ -228,7 +251,8 @@ public class ColumnDisplayDefinition
 	 * @param	label			Column heading.
 	 * @param	sqlType			Type of data (from java.sql.Types).
 	 */
-	private void init(int displayWidth, String fullTableColumnName, String label, int sqlType,
+	private void init(int displayWidth, String fullTableColumnName, String label,
+		int sqlType, String sqlTypeName,
 		boolean isNullable, int columnSize, int precision, int scale,
 		boolean isSigned, boolean isCurrency)
 	{
@@ -244,6 +268,7 @@ public class ColumnDisplayDefinition
 		_fullTableColumnName = fullTableColumnName;
 		_label = label;
 		_sqlType = sqlType;
+		_sqlTypeName = sqlTypeName;
 		_isNullable = isNullable;
 		_columnSize = columnSize;
 		_precision = precision;

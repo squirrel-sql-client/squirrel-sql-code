@@ -280,6 +280,7 @@ public class ResultSetDataSet implements IDataSet
 					fullTableName+":"+md.getColumnLabel(idx),
  					md.getColumnLabel(idx),
  					md.getColumnType(idx),
+ 					md.getColumnTypeName(idx),
  					isNullable,
  					md.getColumnDisplaySize(idx),
  					precis,
