@@ -104,7 +104,7 @@ class SQLPanel extends JPanel {
     private boolean _hasBeenVisible = false;
     private JSplitPane _splitPane;
 
-    private ArrayList _sqlExecutionListeners = new ArrayList(); 
+    private ArrayList _sqlExecutionListeners = new ArrayList();
     /**
      * Ctor.
      *
@@ -134,7 +134,7 @@ class SQLPanel extends JPanel {
      *              If a null <TT>ISQLExecutionListener</TT> passed.
      */
     public synchronized void addSQLExecutionListener(ISQLExecutionListener lis)
-            throws IllegalArgumentException {
+        throws IllegalArgumentException {
         if (lis == null) {
             throw new IllegalArgumentException("null ISQLExecutionListener passed");
         }
@@ -150,7 +150,7 @@ class SQLPanel extends JPanel {
      *              If a null <TT>ISQLExecutionListener</TT> passed.
      */
     public synchronized void removeSQLExecutionListener(ISQLExecutionListener lis)
-            throws IllegalArgumentException {
+        throws IllegalArgumentException {
         if (lis == null) {
             throw new IllegalArgumentException("null ISQLExecutionListener passed");
         }
@@ -184,16 +184,16 @@ class SQLPanel extends JPanel {
     /**
      * Commit the current SQL transaction.
      */
-//    public void commit() {
-//        _session.commit();
-//    }
+    //    public void commit() {
+    //        _session.commit();
+    //    }
 
     /**
      * Rollback the current SQL transaction.
      */
-//    public void rollback() {
-//        _session.rollBack();
-//    }
+    //    public void rollback() {
+    //        _session.rollBack();
+    //    }
 
     /**
      * Execute the current SQL.
@@ -208,19 +208,21 @@ class SQLPanel extends JPanel {
 
                 int iCaretPos = _sqlEntry.getCaretPosition();
 
-                int iIndex = sql.lastIndexOf("\n\n",iCaretPos);
-                if(iIndex >0) iStartIndex = iIndex;
-                iIndex = sql.indexOf("\n\n",iCaretPos);
-                if(iIndex >0) iEndIndex = iIndex;
+                int iIndex = sql.lastIndexOf("\n\n", iCaretPos);
+                if (iIndex > 0)
+                    iStartIndex = iIndex;
+                iIndex = sql.indexOf("\n\n", iCaretPos);
+                if (iIndex > 0)
+                    iEndIndex = iIndex;
 
                 sql = sql.substring(iStartIndex, iEndIndex).trim();
 
-/*              if(sql == null || sql.trim().equals(""))
-                {
-                    appendStatus(getLabel("message.nothingtoexecute"));
-                    return;
-                }
-*/
+                /*              if(sql == null || sql.trim().equals(""))
+                                {
+                                    appendStatus(getLabel("message.nothingtoexecute"));
+                                    return;
+                                }
+                */
             }
 
             final long start = System.currentTimeMillis();
@@ -237,60 +239,62 @@ class SQLPanel extends JPanel {
                     _tabbedResultsPanel.removeAll();
                 }
 
-                // Allow plugins the opportunity to modify the entire
-                // SQL script prior to it being executed.
-                sql = modifyEntireScript(sql);
-                
-                QueryTokenizer qt = new QueryTokenizer(sql, props.getSqlStatementSeparatorChar());
+                QueryTokenizer qt =
+                    new QueryTokenizer(sql, props.getSqlStatementSeparatorChar());
                 while (qt.hasQuery()) {
-                    String qrySql = qt.nextQuery();
+                    String origQrySql = qt.nextQuery();
 
                     // Allow plugins the opportunity to modify this
                     // SQL statement prior to it being executed.
-                    qrySql = modifyIndividualScript(qrySql);
+                    String qrySqlToExecute = modifyIndividualScript(origQrySql);
 
-                    _sqlComboItemListener.stopListening();
-                    try {
-                        _sqlCombo.addItem(new SqlComboItem(qrySql));
-                    } finally {
-                        _sqlComboItemListener.startListening();
-                    }
+                    if (qrySqlToExecute != null) {
 
-                    if (stmt.execute(qrySql)) {
-                        ResultSet rs = stmt.getResultSet();
-                        if (rs != null) {
-                            try {
-                                ResultTab tab = null;
-                                    if (_availableTabs.size() > 0) {
-                                        tab = (ResultTab)_availableTabs.remove(0);
-                                    }
-                                if (tab == null) {
-                                    tab = new ResultTab(_session,this);
-                                    _usedTabs.add(tab);
-                                }
-                                qrySql = Utilities.cleanString(qrySql);
-                                tab.show(new ResultSetDataSet(rs),qrySql);
-                                String sTitle = qrySql;
-                                if (sTitle.length() > 10) {
-                                    sTitle = sTitle.substring(0,15);
-                                }
-                                if (_tabbedResultsPanel.indexOfComponent(tab) == -1) {
-                                    _tabbedResultsPanel.addTab(sTitle, null, tab, qrySql);
-                                } else {
-                                    tab.setName(sTitle);
-                                }
-                                _tabbedResultsPanel.setSelectedComponent(tab);
-                            } finally {
-                                rs.close();
-                            }
+                        _sqlComboItemListener.stopListening();
+                        try {
+                            _sqlCombo.addItem(new SqlComboItem(origQrySql));
+                        } finally {
+                            _sqlComboItemListener.startListening();
                         }
-                    } else {
-                        _session.getMessageHandler().showMessage(stmt.getUpdateCount() + " Rows Updated");
+
+                        if (stmt.execute(qrySqlToExecute)) {
+                            ResultSet rs = stmt.getResultSet();
+                            if (rs != null) {
+                                try {
+                                    ResultTab tab = null;
+                                    if (_availableTabs.size() > 0) {
+                                        tab = (ResultTab) _availableTabs.remove(0);
+                                    }
+                                    if (tab == null) {
+                                        tab = new ResultTab(_session, this);
+                                        _usedTabs.add(tab);
+                                    }
+                                    origQrySql = Utilities.cleanString(origQrySql);
+                                    tab.show(new ResultSetDataSet(rs), origQrySql);
+                                    String sTitle = origQrySql;
+                                    if (sTitle.length() > 10) {
+                                        sTitle = sTitle.substring(0, 15);
+                                    }
+                                    if (_tabbedResultsPanel.indexOfComponent(tab) == -1) {
+                                        _tabbedResultsPanel.addTab(sTitle, null, tab, origQrySql);
+                                    } else {
+                                        tab.setName(sTitle);
+                                    }
+                                    _tabbedResultsPanel.setSelectedComponent(tab);
+                                } finally {
+                                    rs.close();
+                                }
+                            }
+                        } else {
+                            _session.getMessageHandler().showMessage(
+                                stmt.getUpdateCount() + " Rows Updated");
+                        }
                     }
                 }
-
                 final long finish = System.currentTimeMillis();
-                _session.getMessageHandler().showMessage("Elapsed time for query (milliseconds): " + (finish - start)); //  i18n
+                _session.getMessageHandler().showMessage(
+                    "Elapsed time for query (milliseconds): " + (finish - start));
+                //  i18n
             } finally {
                 stmt.close();
             }
@@ -334,7 +338,14 @@ class SQLPanel extends JPanel {
         _tabbedResultsPanel.remove(tab);
         ResultFrame frame = new ResultFrame(tab);
         frame.setDefaultCloseOperation(ResultFrame.DISPOSE_ON_CLOSE);
-        net.sourceforge.squirrel_sql.client.mainframe.MainFrame.getInstance().addInternalFrame(frame);
+        net
+            .sourceforge
+            .squirrel_sql
+            .client
+            .mainframe
+            .MainFrame
+            .getInstance()
+            .addInternalFrame(frame);
         frame.setVisible(true);
         frame.pack();
         frame.toFront();
@@ -358,74 +369,64 @@ class SQLPanel extends JPanel {
         _sqlEntry.setText(sqlScript);
     }
 
-    private String modifyEntireScript(String sql) {
-        List list = null;
-        synchronized (this) {
-            list = (ArrayList)_sqlExecutionListeners.clone();
-        }
-        
-        for (int i = 0; i < list.size(); ++i) {
-            sql = ((ISQLExecutionListener)list.get(i)).entireScriptExecuting(sql);
-        }
-        
-        return sql;
-    }
-
     private String modifyIndividualScript(String sql) {
         List list = null;
         synchronized (this) {
-            list = (ArrayList)_sqlExecutionListeners.clone();
+            list = (ArrayList) _sqlExecutionListeners.clone();
         }
-        
+
         for (int i = 0; i < list.size(); ++i) {
-            sql = ((ISQLExecutionListener)list.get(i)).individualStatementExecuting(sql);
+            sql = ((ISQLExecutionListener) list.get(i)).statementExecuting(sql);
+            if (sql == null) {
+                break;
+            }
         }
-        
+
         return sql;
     }
-    
+
     private void propertiesHaveChanged(String propertyName) {
         final SessionProperties props = _session.getProperties();
-/*
-        if (propertyName == null || propertyName.equals(
-                SessionProperties.IPropertyNames.SQL_OUTPUT_CLASS_NAME)) {
-            final IDataSetViewerDestination previous = _output;
-            try {
-                Class destClass = Class.forName(props.getSqlOutputClassName());
-                if (IDataSetViewerDestination.class.isAssignableFrom(destClass) &&
-                        Component.class.isAssignableFrom(destClass)) {
-                    _output = (IDataSetViewerDestination)destClass.newInstance();
+        /*
+                if (propertyName == null || propertyName.equals(
+                        SessionProperties.IPropertyNames.SQL_OUTPUT_CLASS_NAME)) {
+                    final IDataSetViewerDestination previous = _output;
+                    try {
+                        Class destClass = Class.forName(props.getSqlOutputClassName());
+                        if (IDataSetViewerDestination.class.isAssignableFrom(destClass) &&
+                                Component.class.isAssignableFrom(destClass)) {
+                            _output = (IDataSetViewerDestination)destClass.newInstance();
+                        }
+        
+                    } catch (Exception ex) {
+                        _session.getApplication().getLogger().showMessage(Logger.ILogTypes.ERROR, ex.getMessage());
+                    }
+                    if (_output == null) {
+                        _output = new DataSetViewerTextPanel();
+                    }
+                    _viewer.setDestination(_output);
+                    _outputSp.setRowHeader(null);
+                    _outputSp.setViewportView((Component)_output);
                 }
+        */
+        //      if (propertyName == null || propertyName.equals(
+        //              SessionProperties.IPropertyNames.SQL_REUSE_OUTPUT_TABS)) {
+        //          if (props.getSqlReuseOutputTabs()) {
+        //              for (int i = _tabbedResultsPanel.getTabCount() - 1;
+        //                      i > 0; --i) {
+        //                  _tabbedResultsPanel.remove(i);
+        //              }
+        //              _availableTabs.clear();
+        //              if (_usedTabs.size() > 0) {
+        //                  Object tab = _usedTabs.get(0);
+        //                  _usedTabs.clear();
+        //                  _usedTabs.add(tab);
+        //              }
+        //          }
+        //      }
 
-            } catch (Exception ex) {
-                _session.getApplication().getLogger().showMessage(Logger.ILogTypes.ERROR, ex.getMessage());
-            }
-            if (_output == null) {
-                _output = new DataSetViewerTextPanel();
-            }
-            _viewer.setDestination(_output);
-            _outputSp.setRowHeader(null);
-            _outputSp.setViewportView((Component)_output);
-        }
-*/
-//      if (propertyName == null || propertyName.equals(
-//              SessionProperties.IPropertyNames.SQL_REUSE_OUTPUT_TABS)) {
-//          if (props.getSqlReuseOutputTabs()) {
-//              for (int i = _tabbedResultsPanel.getTabCount() - 1;
-//                      i > 0; --i) {
-//                  _tabbedResultsPanel.remove(i);
-//              }
-//              _availableTabs.clear();
-//              if (_usedTabs.size() > 0) {
-//                  Object tab = _usedTabs.get(0);
-//                  _usedTabs.clear();
-//                  _usedTabs.add(tab);
-//              }
-//          }
-//      }
-
-        if (propertyName == null || propertyName.equals(
-                        SessionProperties.IPropertyNames.AUTO_COMMIT)) {
+        if (propertyName == null
+            || propertyName.equals(SessionProperties.IPropertyNames.AUTO_COMMIT)) {
             final SQLConnection conn = _session.getSQLConnection();
             if (conn != null) {
                 boolean auto = true;
@@ -444,11 +445,13 @@ class SQLPanel extends JPanel {
             }
         }
 
-        if (propertyName == null || propertyName.equals(SessionProperties.IPropertyNames.SQL_LIMIT_ROWS)) {
+        if (propertyName == null
+            || propertyName.equals(SessionProperties.IPropertyNames.SQL_LIMIT_ROWS)) {
             _limitRowsChk.setSelected(props.getSqlLimitRows());
         }
 
-        if (propertyName == null || propertyName.equals(SessionProperties.IPropertyNames.SQL_NBR_ROWS_TO_SHOW)) {
+        if (propertyName == null
+            || propertyName.equals(SessionProperties.IPropertyNames.SQL_NBR_ROWS_TO_SHOW)) {
             _nbrRows.setInt(props.getSqlNbrRowsToShow());
         }
     }
@@ -511,7 +514,7 @@ class SQLPanel extends JPanel {
         private void displayPopupMenu(MouseEvent evt) {
             Object src = evt.getSource();
             if (src instanceof JTextComponent) {
-                _textPopupMenu.setTextComponent((JTextComponent)src);
+                _textPopupMenu.setTextComponent((JTextComponent) src);
                 _textPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
             }
         }
@@ -548,11 +551,11 @@ class SQLPanel extends JPanel {
 
         public void actionPerformed(ActionEvent evt) {
             if (_listening) {
-                SqlComboItem item = (SqlComboItem)_sqlCombo.getSelectedItem();
+                SqlComboItem item = (SqlComboItem) _sqlCombo.getSelectedItem();
                 if (item != null) {
-//                  _sqlEntry.setText(item.getText());
+                    //                  _sqlEntry.setText(item.getText());
                     _sqlEntry.append("\n\n" + item.getText());
-                    _sqlEntry.setCaretPosition(_sqlEntry.getText().length()-1);
+                    _sqlEntry.setCaretPosition(_sqlEntry.getText().length() - 1);
                 }
             }
         }
@@ -573,7 +576,7 @@ class SQLPanel extends JPanel {
             if (this == rhs) {
                 rc = true;
             } else if (rhs != null && rhs.getClass().equals(getClass())) {
-                rc = ((SqlComboItem)rhs).getText().equals(getText());
+                rc = ((SqlComboItem) rhs).getText().equals(getText());
             }
             return rc;
         }
@@ -606,7 +609,7 @@ class SQLPanel extends JPanel {
                 _propsListener.stopListening();
             }
             try {
-                final boolean limitRows = ((JCheckBox)evt.getSource()).isSelected();
+                final boolean limitRows = ((JCheckBox) evt.getSource()).isSelected();
                 _nbrRows.setEnabled(limitRows);
                 _session.getProperties().setSqlLimitRows(limitRows);
             } finally {
