@@ -17,17 +17,19 @@ package net.sourceforge.squirrel_sql.client.session.properties;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JDialog;
+import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
@@ -39,7 +41,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.SessionPluginInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
-public class SessionPropertiesDialog extends JDialog {
+public class SessionPropertiesSheet extends JInternalFrame {
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
@@ -49,13 +51,16 @@ public class SessionPropertiesDialog extends JDialog {
 	}
 
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(SessionPropertiesDialog.class);
+	private static ILogger s_log = LoggerController.createLogger(SessionPropertiesSheet.class);
 
 	private ISession _session;
 	private List _panels = new ArrayList();
 
-	public SessionPropertiesDialog(Frame frame, ISession session) {
-		super(frame, i18n.TITLE);
+	/** Frame title. */
+	private JLabel _titleLbl = new JLabel();
+
+	SessionPropertiesSheet(ISession session) {
+		super(i18n.TITLE);
 		if (session == null) {
 			throw new IllegalArgumentException("Null ISession passed");
 		}
@@ -63,8 +68,47 @@ public class SessionPropertiesDialog extends JDialog {
 		createUserInterface();
 	}
 
-	private void performCancel() {
+	public synchronized void setVisible(boolean show) {
+		if (show) {
+			if (!isVisible()) {
+				final boolean isDebug = s_log.isDebugEnabled();
+				long start = 0;
+				for (Iterator it = _panels.iterator(); it.hasNext();) {
+					ISessionPropertiesPanel pnl = (ISessionPropertiesPanel)it.next();
+					if (isDebug) {
+						start = System.currentTimeMillis();
+					}
+					pnl.initialize(_session.getApplication(), _session);
+					if (isDebug) {
+						s_log.debug("Panel " + pnl.getTitle() + " initialized in "
+									+ (System.currentTimeMillis() - start) + "ms");
+					}
+				}
+				pack();
+				GUIUtils.centerWithinDesktop(this);
+			}
+			moveToFront();
+		}
+		super.setVisible(show);
+	}
+
+	/**
+	 * Set title of this frame. Ensure that the title label
+	 * matches the frame title.
+	 * 
+	 * @param	title	New title text.
+	 */
+	public void setTitle(String title) {
+		super.setTitle(title);
+		_titleLbl.setText(title);
+	}
+
+	private void performClose() {
 		setVisible(false);
+	}
+
+	ISession getSession() {
+		return _session;
 	}
 
 	/**
@@ -86,17 +130,19 @@ public class SessionPropertiesDialog extends JDialog {
 			}
 		}
 
-		dispose();
+		setVisible(false);
 	}
 
 	private void createUserInterface() {
+		setDefaultCloseOperation(HIDE_ON_CLOSE);
+
+        // This is a tool window.
+        GUIUtils.makeToolWindow(this, true);
+
 		final IApplication app = _session.getApplication();
 
 		_panels.add(new SQLPropertiesPanel(app));
 		_panels.add(new OutputPropertiesPanel());
-
-		final Container contentPane = getContentPane();
-		contentPane.setLayout(new BorderLayout());
 
 		// Go thru all plugins attached to this session asking for panels.
 		SessionPluginInfo[] plugins = app.getPluginManager().getPluginInformation(_session);
@@ -112,24 +158,31 @@ public class SessionPropertiesDialog extends JDialog {
 			}
 		}
 
-		// Initialize all panels and add them to the dialog.
+		// Add all panels to the tabbed panel.
 		JTabbedPane tabPane = new JTabbedPane();
 		for (Iterator it = _panels.iterator(); it.hasNext();) {
 			ISessionPropertiesPanel pnl = (ISessionPropertiesPanel)it.next();
-			pnl.initialize(_session.getApplication(), _session);
 			String title = pnl.getTitle();
 			String hint = pnl.getHint();
 			tabPane.addTab(title, null, pnl.getPanelComponent(), hint);
 		}
 
-		contentPane.add(tabPane, BorderLayout.NORTH);
-		contentPane.add(createButtonsPanel(), BorderLayout.CENTER);
+		final JPanel contentPane = new JPanel(new GridBagLayout());
+		contentPane.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+		setContentPane(contentPane);
 
-		setResizable(false);
-		setModal(true);
-		pack();
+		GridBagConstraints gbc = new GridBagConstraints();
 
-		GUIUtils.centerWithinParent(this);
+		gbc.gridwidth = 1;
+
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+
+		contentPane.add(_titleLbl, gbc);
+		++gbc.gridy;
+		contentPane.add(tabPane, gbc);
+		++gbc.gridy;
+		contentPane.add(createButtonsPanel(), gbc);
 	}
 
 	private JPanel createButtonsPanel() {
@@ -141,17 +194,17 @@ public class SessionPropertiesDialog extends JDialog {
 				performOk();			
 			}
 		});
-		JButton cancelBtn = new JButton("Cancel");
-		cancelBtn.addActionListener(new ActionListener() {
+		JButton closeBtn = new JButton("Close");
+		closeBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				performCancel();			
+				performClose();			
 			}
 		});
 
 		pnl.add(okBtn);
-		pnl.add(cancelBtn);		
+		pnl.add(closeBtn);		
 
-		GUIUtils.setJButtonSizesTheSame(new JButton[] {okBtn, cancelBtn});
+		GUIUtils.setJButtonSizesTheSame(new JButton[] {okBtn, closeBtn});
 		getRootPane().setDefaultButton(okBtn);
 
 		return pnl;

@@ -17,50 +17,41 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.Frame;
-
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionPropertiesDialog;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionPropertiesSheetFactory;
 
 /**
- * This <CODE>ICommand</CODE> displays a sesion properties dialog box
+ * This <CODE>ICommand</CODE> displays a session properties dialog box
  * and allows the user to modify the properties.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SessionPropertiesCommand implements ICommand {
-    /** Parent frame. */
-    private final Frame _frame;
+	/** The session whose properties are to be displayed/maintained. */
+	private final ISession _session;
 
-    /** The session whose properties are to be displayed/maintained. */
-    private final ISession _session;
+	/**
+	 * Ctor.
+	 *
+	 * @param	session The session whose properties are to be displayed/maintained.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
+	 */
+	public SessionPropertiesCommand(ISession session) {
+		super();
+		if (session == null) {
+			throw new IllegalArgumentException("Null ISession passed");
+		}
+		_session = session;
+	}
 
-    /**
-     * Ctor.
-     *
-     * @param   frame   Parent Frame.
-     * @param   session The session whose properties are to be displayed/maintained.
-     *
-     * @throws  IllegalArgumentException
-     *              Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
-     */
-    public SessionPropertiesCommand(Frame frame, ISession session)
-            throws IllegalArgumentException {
-        super();
-        if (session == null) {
-            throw new IllegalArgumentException("Null ISession passed");
-        }
-        _frame = frame;
-        _session = session;
-    }
-
-    /**
-     * Display the properties dialog.
-     */
-    public void execute() {
-        //SessionPropertiesDialog.display(_props);
-        new SessionPropertiesDialog(_frame, _session).setVisible(true);
-    }
+	/**
+	 * Display the properties dialog.
+	 */
+	public void execute() {
+		SessionPropertiesSheetFactory.getInstance().showSheet(_session);
+	}
 }

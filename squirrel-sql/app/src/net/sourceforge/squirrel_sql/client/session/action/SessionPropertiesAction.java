@@ -25,18 +25,18 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public class SessionPropertiesAction extends SquirrelAction implements ISessionAction {
 
-    private ISession _session;
+	private ISession _session;
 
-    public SessionPropertiesAction(IApplication app) {
-        super(app);
-    }
+	public SessionPropertiesAction(IApplication app) {
+		super(app);
+	}
 
-    public void setSession(ISession session) {
-        _session = session;
-    }
-    public void actionPerformed(ActionEvent evt) {
-        if (_session != null) {
-            new SessionPropertiesCommand(this.getParentFrame(evt), _session).execute();
-        }
-    }
+	public void setSession(ISession session) {
+		_session = session;
+	}
+	public void actionPerformed(ActionEvent evt) {
+		if (_session != null) {
+			new SessionPropertiesCommand( _session).execute();
+		}
+	}
 }
