@@ -102,4 +102,27 @@ public class TableTypesGroupNode extends BaseNode {
         return false;
     }
 
+    public boolean equals(Object obj)
+    {
+    	if(obj instanceof TableTypesGroupNode)
+    	{
+    		TableTypesGroupNode info = (TableTypesGroupNode)obj;
+			if( (info._catalogIdentifier == null && _catalogIdentifier == null) ||
+			 ((info._catalogIdentifier != null && _catalogIdentifier != null) && info._catalogIdentifier.equals(_catalogIdentifier)) )
+			{
+				if( (info._catalogName == null && _catalogName == null) ||
+				 ((info._catalogName != null && _catalogName != null) && info._catalogName.equals(_catalogName)) )
+				{
+					if( (info._schemaIdentifier == null && _schemaIdentifier == null) ||
+					 ((info._schemaIdentifier != null && _schemaIdentifier != null) && info._schemaIdentifier.equals(_schemaIdentifier)) )
+					{
+						return ( (info._schemaName == null && _schemaName == null) ||
+						 ((info._schemaName != null && _schemaName != null) && info._schemaName.equals(_schemaName)) );
+					}
+				}
+			}
+    	}
+    	return false;
+    }
+
 }

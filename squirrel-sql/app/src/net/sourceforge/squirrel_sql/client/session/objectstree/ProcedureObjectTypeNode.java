@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.objectstree.BaseNode.TreeNodesLoader;
 
 class ProcedureObjectTypeNode extends ObjectTypeNode {
     /**
@@ -54,6 +55,19 @@ class ProcedureObjectTypeNode extends ObjectTypeNode {
         }
     }
     
+
+	public boolean equals(Object obj)
+   {
+    	return (obj instanceof ProcedureObjectTypeNode);
+   }
+	/*
+	 * @see BaseNode#getTreeNodesLoader()
+	 */
+	protected TreeNodesLoader getTreeNodesLoader()
+	{
+		return new ProcedureObjectLoader(null);
+	}
+
 	protected class ProcedureObjectLoader extends BaseNode.TreeNodesLoader
 	{
 		ProcedureObjectLoader(MutableTreeNode loading)

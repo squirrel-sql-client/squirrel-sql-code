@@ -55,6 +55,27 @@ public final class TableObjectTypeNode extends ObjectTypeNode {
         }
     }
 
+	public boolean equals(Object o)
+	{
+		if(o instanceof TableObjectTypeNode)
+		{
+			TableObjectTypeNode info = (TableObjectTypeNode)o;
+			
+			if( (info._tableTypePattern == null && _tableTypePattern == null) ||
+			 ((info._tableTypePattern != null && _tableTypePattern != null) && info._tableTypePattern.equals(_tableTypePattern)) )
+			{
+				return ( (info._text == null && _text == null) ||
+				 ((info._text != null && _text != null) && info._text.equals(_text)) );
+			}
+		}
+		return false;
+	}
+
+	protected TreeNodesLoader getTreeNodesLoader()
+	{
+		return new TableLoader(null);
+	}
+	
 	protected class TableLoader extends BaseNode.TreeNodesLoader
 	{
 		TableLoader(MutableTreeNode loading)

@@ -30,6 +30,7 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.client.plugin.IPluginDatabaseObject;
 import net.sourceforge.squirrel_sql.client.plugin.IPluginDatabaseObjectType;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.objectstree.BaseNode.TreeNodesLoader;
 
 public class PluginGroupNode extends ObjectTypeNode {
     private IPluginDatabaseObjectType _dbObjType;
@@ -52,6 +53,16 @@ public class PluginGroupNode extends ObjectTypeNode {
         	fireExpanded();
         }
     }
+    
+	/*
+	 * @see BaseNode#getTreeNodesLoader()
+	 */
+	protected TreeNodesLoader getTreeNodesLoader()
+	{
+		return new PluginGroupLoader(null);
+	}
+
+    
 	protected class PluginGroupLoader extends BaseNode.TreeNodesLoader
 	{
 		PluginGroupLoader(MutableTreeNode loading)
@@ -99,4 +110,14 @@ public class PluginGroupNode extends ObjectTypeNode {
 			return listNodes;
 		}
 	}    
+	
+	public boolean equals(Object obj)
+	{
+		if(obj instanceof PluginGroupNode)
+		{
+			return ((PluginGroupNode)obj)._dbObjType.equals(_dbObjType);
+		}
+		return false;
+	}
+	
 }

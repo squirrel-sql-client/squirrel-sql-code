@@ -57,6 +57,16 @@ public final class UDTObjectTypeNode extends ObjectTypeNode {
 			}
 
 		}
+		
+		public boolean equals(Object o)
+		{
+			return o instanceof UDTObjectTypeNode;
+		}
+    
+	protected TreeNodesLoader getTreeNodesLoader()
+	{
+		return new UDTObjectLoader(null);
+	}
     
 	protected class UDTObjectLoader extends BaseNode.TreeNodesLoader
 	{

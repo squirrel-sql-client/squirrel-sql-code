@@ -106,4 +106,13 @@ public final class TableNode extends DatabaseObjectNode implements ITableInfo {
             return _tableInfo.getSimpleName();
         }
     }
+
+	 public boolean equals(Object obj)
+	 {
+	 	if(obj instanceof TableNode)
+	 	{
+	 		return ((TableNode)obj)._tableInfo.equals(_tableInfo);
+	 	}
+	 	return false;
+	 }
 }

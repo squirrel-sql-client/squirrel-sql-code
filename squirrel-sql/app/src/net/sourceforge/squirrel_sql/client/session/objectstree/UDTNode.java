@@ -86,4 +86,16 @@ public class UDTNode extends BaseNode implements IUDTInfo {
         return udtInfo.getSimpleName();
     }
 
+	/*
+	 * @see Object#equals(Object)
+	 */
+	public boolean equals(Object obj)
+	{
+		if(obj instanceof UDTNode)
+		{
+			return ((UDTNode)obj)._udtInfo.equals(_udtInfo);
+		}
+		return false;
+	}
+
 }

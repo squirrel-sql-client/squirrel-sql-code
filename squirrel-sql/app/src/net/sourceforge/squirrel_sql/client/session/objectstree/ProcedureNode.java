@@ -85,4 +85,15 @@ public class ProcedureNode extends BaseNode implements IProcedureInfo {
 		}
 		return procInfo.getSimpleName();
 	}
+	
+	public boolean equals(Object obj)
+	{
+		if(obj instanceof ProcedureNode)
+		{
+			return ((ProcedureNode)obj)._procInfo.equals(_procInfo);
+		}
+		return false;
+	}
+
+	
 }
