@@ -6,16 +6,22 @@ Change Log
 
 Enhancements
 ------------
-- Now shows catalogs in object tree for MySQL.
+- Now shows catalogs in object tree for more DBMS's.
 - Can now select the current catalog via a dropdown for those DBMS's
   that support catalogs.
+- Now shows table hierarchies if the JDBC driver supports them (Henner Zeller).
+
+Bug Fixes
+---------
+- Use correct background color in Splash Screen and About Box to match
+  the graphic.
 
 
 1.1beta2
 ========
 
 Bug Fixes
-------------
+---------
 - Windows batch file now allows for spaces in the classpath (Bruno Haas).
 - Windows batch file now passes the -classic flag  to the VM to stop
   plugins looking for files in the "Colin Bell" or "Johan Compagner"
@@ -44,8 +50,6 @@ Enhancements
 - Drop table menu item on the ObjectTree (Johan Compagner)
 - Full column data can be displayed in a popup window if you double click on
   it (Johan Compagner)
-- If selected String are longer then 50 chars then 45 chars + "......" 
-  will be displayed. (Johan Compagner)
 - If only one cell selected in table when pressing copy then no header 
   will be appended. (Johan Compagner)
 - Icon shown for drivers that are loaded or not (Johan Compagner/Henner Zeller) 
