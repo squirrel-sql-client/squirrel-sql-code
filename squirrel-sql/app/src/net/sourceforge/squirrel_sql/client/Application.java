@@ -102,8 +102,8 @@ class Application implements IApplication {
 		LoggerController.registerLoggerFactory(new SquirrelLoggerFactory());
 		s_log = LoggerController.createLogger(getClass());
 
-		_resources = new SquirrelResources("net.sourceforge.squirrel_sql.client.resources.squirrel");
 		final ApplicationArguments args = ApplicationArguments.getInstance();
+		_resources = new SquirrelResources("net.sourceforge.squirrel_sql.client.resources.squirrel");
 		final boolean loadPlugins = args.getLoadPlugins();
 		if (args.getShowSplashScreen()) {
 			_splash = new SplashScreen(_resources, 8);
