@@ -195,6 +195,24 @@ public class DataTypeBinary
 		}
 	}
 
+	/**
+	 * If true, this tells the PopupEditableIOPanel to use the
+	 * binary editing panel rather than a pure text panel.
+	 * The binary editing panel assumes the data is an array of bytes,
+	 * converts it into text form, allows the user to change how that
+	 * data is displayed (e.g. Hex, Decimal, etc.), and converts
+	 * the data back from text to bytes when the user editing is completed.
+	 * If this returns false, this DataType class must
+	 * convert the internal data into a text string that
+	 * can be displayed (and edited, if allowed) in a TextField
+	 * or TextArea, and must handle all
+	 * user key strokes related to editing of that data.
+	 */
+	public boolean useBinaryEditingPanel() {
+		return true;
+	}
+	 
+
 	/*
 	 * Now the functions for the Popup-related operations.
 	 */
