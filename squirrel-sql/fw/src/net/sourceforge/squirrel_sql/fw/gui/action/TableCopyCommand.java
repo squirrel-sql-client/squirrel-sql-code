@@ -47,13 +47,16 @@ public class TableCopyCommand implements ICommand {
         if (selRows.length != 0 && selCols.length != 0) {
 			TableModel model = _table.getModel();
             StringBuffer buf = new StringBuffer();
-			for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx) {
-				buf.append(model.getColumnName(selCols[colIdx]));
-				if (colIdx < nbrSelCols - 1) {
-					buf.append('\t');
+            if(nbrSelCols > 1 && nbrSelRows > 1)
+            {
+				for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx) {
+					buf.append(model.getColumnName(selCols[colIdx]));
+					if (colIdx < nbrSelCols - 1) {
+						buf.append('\t');
+					}
 				}
-			}
-			buf.append('\n');
+				buf.append('\n');
+            }
             for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx) {
                 for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx) {
                     Object cellObj = _table.getValueAt(selRows[rowIdx], selCols[colIdx]);
@@ -62,7 +65,10 @@ public class TableCopyCommand implements ICommand {
                         buf.append('\t');
                     }
                 }
-                buf.append('\n');
+                if(nbrSelCols > 1 && nbrSelRows > 1)
+            	{
+                	buf.append('\n');
+            	}
             }
             StringSelection ss = new StringSelection(buf.toString());
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
