@@ -24,7 +24,6 @@ import java.awt.event.MouseListener;
 
 import javax.swing.Action;
 import javax.swing.JComponent;
-import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.event.CaretListener;
@@ -33,17 +32,17 @@ import javax.swing.text.BadLocationException;
 
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
-public class DefaultSQLEntryPanel extends BaseSQLEntryPanel {
+public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
+{
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(DefaultSQLEntryPanel.class);
+	private static ILogger s_log =
+		LoggerController.createLogger(DefaultSQLEntryPanel.class);
 
 	/** Application API. */
 	private IApplication _app;
@@ -60,9 +59,11 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel {
 	/** Listener for displaying the popup menu. */
 	private MouseListener _sqlEntryMouseListener = new MyMouseListener();
 
-	public DefaultSQLEntryPanel(IApplication app) {
+	public DefaultSQLEntryPanel(IApplication app)
+	{
 		super();
-		if (app == null) {
+		if (app == null)
+		{
 			throw new IllegalArgumentException("IApplication == null");
 		}
 
@@ -71,12 +72,14 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel {
 		_scroller = new JScrollPane(_comp);
 	}
 
-	public void addUndoableEditListener(UndoableEditListener lis) {
+	public void addUndoableEditListener(UndoableEditListener lis)
+	{
 		_comp.getDocument().addUndoableEditListener(lis);
 
 	}
 
-	public void removeUndoableEditListener(UndoableEditListener lis) {
+	public void removeUndoableEditListener(UndoableEditListener lis)
+	{
 		_comp.getDocument().removeUndoableEditListener(lis);
 	}
 
@@ -91,7 +94,8 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel {
 	/**
 	 * @see ISQLEntryPanel#setUndoActions(Action, Action)
 	 */
-	public void setUndoActions(Action undo, Action redo) {
+	public void setUndoActions(Action undo, Action redo)
+	{
 		_textPopupMenu.addSeparator();
 		_app.getResources().addToPopupMenu(undo, _textPopupMenu);
 		_app.getResources().addToPopupMenu(redo, _textPopupMenu);
@@ -103,93 +107,112 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel {
 	 *
 	 * @return	an instance of <TT>JScrollPane</TT>.
 	 */
-	public JComponent getJComponent() {
+	public JComponent getJComponent()
+	{
 		return _scroller;
 	}
 
 	/**
 	 * @see ISQLEntryPanel#getText()
 	 */
-	public String getText() {
+	public String getText()
+	{
 		return _comp.getText();
 	}
 
 	/**
 	 * @see ISQLEntryPanel#getSelectedText()
 	 */
-	public String getSelectedText() {
+	public String getSelectedText()
+	{
 		return _comp.getSelectedText();
 	}
 
 	/**
 	 * @see ISQLEntryPanel#setText(String)
 	 */
-	public void setText(String text) {
+	public void setText(String text)
+	{
 		_comp.setText(text);
 	}
 
 	/**
 	 * @see ISQLEntryPanel#appendText(String)
 	 */
-	public void appendText(String text) {
+	public void appendText(String text)
+	{
 		_comp.append(text);
 	}
 	/**
 	 * @see ISQLEntryPanel#getCaretPosition()
 	 */
-	public int getCaretPosition() {
+	public int getCaretPosition()
+	{
 		return _comp.getCaretPosition();
 	}
 
 	/**
 	 * @see ISQLEntryPanel#setTabSize(int)
 	 */
-	public void setTabSize(int tabSize) {
+	public void setTabSize(int tabSize)
+	{
 		_comp.setTabSize(tabSize);
 	}
 
-	public void setFont(Font font) {
+	public void setFont(Font font)
+	{
 		_comp.setFont(font);
 	}
 
 	/**
 	 * @see ISQLEntryPanel#addMouseListener(MouseListener)
 	 */
-	public void addMouseListener(MouseListener lis) {
+	public void addMouseListener(MouseListener lis)
+	{
 		_comp.addMouseListener(lis);
 	}
 
 	/**
 	 * @see ISQLEntryPanel#removeListener(MouseListener)
 	 */
-	public void removeMouseListener(MouseListener lis) {
+	public void removeMouseListener(MouseListener lis)
+	{
 		_comp.removeMouseListener(lis);
 	}
 
 	/**
 	 * @see ISQLEntryPanel#setCaretPosition(int)
 	 */
-	public void setCaretPosition(int pos) {
+	public void setCaretPosition(int pos)
+	{
 		_comp.setCaretPosition(pos);
 	}
 
 	/*
 	 * @see ISQLEntryPanel#getCaretLineNumber()
 	 */
-	public int getCaretLineNumber() {
-		try {
+	public int getCaretLineNumber()
+	{
+		try
+		{
 			return _comp.getLineOfOffset(_comp.getCaretPosition());
-		} catch (BadLocationException ex) {
+		}
+		catch (BadLocationException ex)
+		{
 			return 0;
 		}
 	}
 
-	public int getCaretLinePosition() {
+	public int getCaretLinePosition()
+	{
 		int caretPos = _comp.getCaretPosition();
 		int caretLineOffset = caretPos;
-		try {
+		try
+		{
 			caretLineOffset = _comp.getLineStartOffset(getCaretLineNumber());
-		} catch (BadLocationException ignore) {
+		}
+		catch (BadLocationException ignore)
+		{
 		}
 		return caretPos - caretLineOffset;
 	}
@@ -197,97 +220,116 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel {
 	/**
 	 * @see ISQLEntryPanel#getSelectionStart()
 	 */
-	public int getSelectionStart() {
+	public int getSelectionStart()
+	{
 		return _comp.getSelectionStart();
 	}
 
 	/**
 	 * @see ISQLEntryPanel#setSelectionStart(int)
 	 */
-	public void setSelectionStart(int pos) {
+	public void setSelectionStart(int pos)
+	{
 		_comp.setSelectionStart(pos);
 	}
 
 	/**
 	 * @see ISQLEntryPanel#getSelectionEnd()
 	 */
-	public int getSelectionEnd() {
+	public int getSelectionEnd()
+	{
 		return _comp.getSelectionEnd();
 	}
 
 	/**
 	 * @see ISQLEntryPanel#setSelectionEnd(int)
 	 */
-	public void setSelectionEnd(int pos) {
+	public void setSelectionEnd(int pos)
+	{
 		_comp.setSelectionEnd(pos);
 	}
 
 	/**
 	 * @see ISQLEntryPanel#hasFocus()
 	 */
-	public boolean hasFocus() {
+	public boolean hasFocus()
+	{
 		return _comp.hasFocus();
 	}
 
 	/**
 	 * @see ISQLEntryPanel#requestFocus()
 	 */
-	public void requestFocus() {
+	public void requestFocus()
+	{
 		_comp.requestFocus();
 	}
 
 	/*
 	 * @see ISQLEntryPanel#addCaretListener(CaretListener)
 	 */
-	public void addCaretListener(CaretListener lis) {
+	public void addCaretListener(CaretListener lis)
+	{
 		_comp.addCaretListener(lis);
 	}
 
 	/*
 	 * @see ISQLEntryPanel#removeCaretListener(CaretListener)
 	 */
-	public void removeCaretListener(CaretListener lis) {
+	public void removeCaretListener(CaretListener lis)
+	{
 		_comp.removeCaretListener(lis);
 	}
 
-	private final class MyMouseListener extends MouseAdapter {
-		public void mousePressed(MouseEvent evt) {
-			if (evt.isPopupTrigger()) {
+	private final class MyMouseListener extends MouseAdapter
+	{
+		public void mousePressed(MouseEvent evt)
+		{
+			if (evt.isPopupTrigger())
+			{
 				displayPopupMenu(evt);
 			}
 		}
-		public void mouseReleased(MouseEvent evt) {
-			if (evt.isPopupTrigger()) {
+		public void mouseReleased(MouseEvent evt)
+		{
+			if (evt.isPopupTrigger())
+			{
 				displayPopupMenu(evt);
 			}
 		}
-		private void displayPopupMenu(MouseEvent evt) {
+		private void displayPopupMenu(MouseEvent evt)
+		{
 			_textPopupMenu.setTextComponent(_comp);
 			_textPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
 		}
 	}
 
-	private static class MyTextArea extends JTextArea {
+	private static class MyTextArea extends JTextArea
+	{
 		private IApplication _app;
 		private DefaultSQLEntryPanel _pnl;
 
-		private MyTextArea(IApplication app, DefaultSQLEntryPanel pnl) {
+		private MyTextArea(IApplication app, DefaultSQLEntryPanel pnl)
+		{
 			super();
 			_app = app;
 			_pnl = pnl;
 			SessionProperties props = app.getSquirrelPreferences().getSessionProperties();
 			FontInfo fi = props.getFontInfo();
-			if (fi != null) {
+			if (fi != null)
+			{
 				this.setFont(props.getFontInfo().createFont());
 			}
 		}
 
-		public void addNotify() {
+		public void addNotify()
+		{
 			super.addNotify();
 			_pnl.addMouseListener(_pnl._sqlEntryMouseListener);
 		}
 
-		public void removeNotify() {
+		public void removeNotify()
+		{
 			_pnl.removeMouseListener(_pnl._sqlEntryMouseListener);
 			super.removeNotify();
 		}
