@@ -152,6 +152,7 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 	 */
 	private synchronized void rebuild()
 	{
+		final int curTabIdx = getSelectedIndex();
 		final List oldTabs = new ArrayList();
 		oldTabs.addAll(_tabs);
 		removeAll();
@@ -161,11 +162,11 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 		{
 			final IObjectPanelTab tab = (IObjectPanelTab)it.next();
 			tab.rebuild();
-//			if (tab instanceof BaseDatabasePanelTab)
-//			{
-//				((BaseDatabasePanelTab)tab).rebuild();
-//			}
 			addObjectPanelTab(tab);
+		}
+		if (curTabIdx >= 0 && curTabIdx < getTabCount())
+		{
+			setSelectedIndex(curTabIdx);
 		}
 	}
 
