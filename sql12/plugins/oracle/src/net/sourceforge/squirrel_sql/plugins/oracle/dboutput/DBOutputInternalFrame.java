@@ -31,6 +31,7 @@ import javax.swing.event.InternalFrameEvent;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
+import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
@@ -49,26 +50,29 @@ public class DBOutputInternalFrame extends BaseSessionInternalFrame
         /** Toolbar for window. */
         private DBOutputToolBar _toolBar;
 
-        public DBOutputInternalFrame(ISession session)
+        private Resources _resources;
+
+        public DBOutputInternalFrame(ISession session, Resources resources)
         {
                 super(session, session.getTitle(), true, true, true, true);
                 _app = session.getApplication();
+                _resources = resources;
                 _sessionId = session.getIdentifier();
                 setVisible(false);
                 createGUI(session);
-                addInternalFrameListener(new DBOutputActionEnabler());
         }
 
         public DBOutputPanel getDBOutputPanel()
         {
                 return _dbOutputPanel;
         }
-        
+
         private void createGUI(ISession session)
         {
                 setVisible(false);
-                final IApplication app = session.getApplication();
-                Icon icon = app.getResources().getIcon(getClass(), "frameIcon"); //i18n
+
+
+                Icon icon = _resources.getIcon(getClass(), "frameIcon"); //i18n
                 if (icon != null)
                 {
                         setFrameIcon(icon);
@@ -97,38 +101,16 @@ public class DBOutputInternalFrame extends BaseSessionInternalFrame
                   IApplication app = session.getApplication();
                         setUseRolloverButtons(true);
                         setFloatable(false);
-                        add(new GetDBOutputAction(app, _dbOutputPanel));
+                        add(new GetDBOutputAction(app, _resources, _dbOutputPanel));
                         /*
                         ActionCollection actions = .getActionCollection();
-                        
+
                         add(actions.get(GetDBOutputAction.class));
-                        
+
                         add(actions.get(ExecuteAllSqlAction.class));
                         addSeparator();
                         add(actions.get(SQLFilterAction.class));
                         actions.get(SQLFilterAction.class).setEnabled(true);*/
                 }
-        }
-
-        private class DBOutputActionEnabler extends InternalFrameAdapter {
-          public void internalFrameActivated(InternalFrameEvent evt) {
-            /*final ActionCollection actions = _app.getActionCollection();
-            actions.get(ExecuteSqlAction.class).setEnabled(true);
-            actions.get(GotoNextResultsTabAction.class).setEnabled(true);
-            actions.get(GotoPreviousResultsTabAction.class).setEnabled(true);
-            actions.get(ShowNativeSQLAction.class).setEnabled(true);
-            actions.get(SQLFilterAction.class).setEnabled(false);*/
-          }
-
-          public void internalFrameDeactivated(InternalFrameEvent evt) {
-            /*final ActionCollection actions = getSession().getApplication().getActionCollection();
-            actions.get(ExecuteSqlAction.class).setEnabled(false);
-            actions.get(ExecuteAllSqlAction.class).setEnabled(false);
-            actions.get(GotoNextResultsTabAction.class).setEnabled(false);
-            actions.get(GotoPreviousResultsTabAction.class).setEnabled(false);
-            actions.get(ShowNativeSQLAction.class).setEnabled(false);
-            actions.get(SQLFilterAction.class).setEnabled(false);*/
-          }
-
         }
 }

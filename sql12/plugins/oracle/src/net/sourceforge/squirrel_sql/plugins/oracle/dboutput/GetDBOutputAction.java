@@ -19,6 +19,8 @@ package net.sourceforge.squirrel_sql.plugins.oracle.dboutput;
  */
 import java.awt.event.ActionEvent;
 
+import net.sourceforge.squirrel_sql.fw.util.Resources;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -26,29 +28,25 @@ import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 
 public class GetDBOutputAction extends SquirrelAction
 {
-	private ISession _session;
         private DBOutputPanel _panel;
 
-	public GetDBOutputAction(IApplication app, DBOutputPanel panel)
+	public GetDBOutputAction(IApplication app, Resources resources, DBOutputPanel panel)
 	{
-		super(app);
+		super(app, resources);
                 _panel = panel;
 	}
 
 	public void actionPerformed(ActionEvent evt)
 	{
-		if (_session != null)
-		{
-			CursorChanger cursorChg = new CursorChanger(getApplication().getMainFrame());
-			cursorChg.show();
-			try
-			{
-				_panel.populateDBOutput();
-			}
-			finally
-			{
-				cursorChg.restore();
-			}
-		}
+                CursorChanger cursorChg = new CursorChanger(getApplication().getMainFrame());
+                cursorChg.show();
+                try
+                {
+                        _panel.populateDBOutput();
+                }
+                finally
+                {
+                        cursorChg.restore();
+                }
 	}
 }

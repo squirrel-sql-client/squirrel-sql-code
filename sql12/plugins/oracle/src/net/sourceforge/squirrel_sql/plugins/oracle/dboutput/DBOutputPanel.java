@@ -100,13 +100,13 @@ public class DBOutputPanel extends JPanel
 
 	/** Current session. */
 	private ISession _session;
-        
+
         private JTextArea _textArea;
         private Timer _refreshTimer = new Timer(true);
-        
+
         private boolean _autoRefresh = false;
         private int _refreshPeriod = 10;
-        
+
         public class RefreshTimerTask extends TimerTask {
           public void run() {
             populateDBOutput();
@@ -132,7 +132,7 @@ public class DBOutputPanel extends JPanel
         public ISession getSession() {
           return _session;
         }
-        
+
         private void resetTimer() {
           _refreshTimer.cancel();
           _refreshTimer = new Timer(true);
@@ -140,26 +140,26 @@ public class DBOutputPanel extends JPanel
             _refreshTimer.scheduleAtFixedRate(new RefreshTimerTask(), _refreshPeriod * 1000, _refreshPeriod * 1000);
           }
         }
-        
+
         public void setAutoRefresh(boolean enable) {
           if (enable != _autoRefresh) {
             resetTimer();
           }
         }
-        
+
         public boolean getAutoRefesh() {
           return _autoRefresh;
         }
-        
+
         public void setAutoRefreshPeriod(int seconds) {
           _refreshPeriod = seconds;
           resetTimer();
         }
-        
+
         public int getAutoRefreshPeriod() {
           return _refreshPeriod;
         }
-        
+
         public synchronized void populateDBOutput() {
           try {
             final StringBuffer buf = new StringBuffer();
@@ -167,7 +167,7 @@ public class DBOutputPanel extends JPanel
             //oracle specific ones, the dbms_output.get_line is used rather than
             //the dbms_output.getlines. The disadvantage is there are more trips
             //to the server to return multiple lines.
-            CallableStatement c = _session.getSQLConnection().getConnection().prepareCall("{call dbms_output.getline(?, ?)}");
+            CallableStatement c = _session.getSQLConnection().getConnection().prepareCall("{call dbms_output.get_line(?, ?)}");
             c.registerOutParameter(1, java.sql.Types.VARCHAR);
             c.registerOutParameter(2, java.sql.Types.INTEGER);
             //Get 10 lines at a time.
@@ -175,11 +175,17 @@ public class DBOutputPanel extends JPanel
             while (status == 0) {
               c.execute();
               status = c.getInt(2);
-              if (status == 0)
-                buf.append(c.getString(1));            
+              System.out.println("Status: "+status);
+              if (status == 0) {
+                String str = c.getString(1);
+                if (str == null)
+                  buf.append("\n");
+                else buf.append(str);
+              }
             }
             if (buf.length() > 0) {
               final JTextArea store = _textArea;
+              System.out.println("text: "+buf.toString());
               SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
                   store.append(buf.toString());

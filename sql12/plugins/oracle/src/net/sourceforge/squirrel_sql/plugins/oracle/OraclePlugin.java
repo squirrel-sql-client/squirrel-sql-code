@@ -22,12 +22,14 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISQLInternalFrame;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import net.sourceforge.squirrel_sql.plugins.oracle.dboutput.NewDBOutputWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.DatabaseExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.InstanceParentExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.PackageExpander;
@@ -53,6 +55,8 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
+import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
@@ -66,6 +70,10 @@ public class OraclePlugin extends DefaultSessionPlugin
 {
 	/** Logger for this class. */
 	private final static ILogger s_log = LoggerController.createLogger(OraclePlugin.class);
+
+       private PluginResources _resources;
+
+       private NewDBOutputWorksheetAction _newDBOutputWorksheet;
 
 	/**
 	 * Return the internal name of this plugin.
@@ -136,7 +144,19 @@ public class OraclePlugin extends DefaultSessionPlugin
                 super.initialize();
 
                 final IApplication app = getApplication();
+
+                _resources = new OracleResources(
+                        "net.sourceforge.squirrel_sql.plugins.oracle.oracle",
+                        this);
+
                 app.getWindowManager().addSessionSheetListener(new OraclePluginFactory());
+
+                //Add the actions to the action bar.
+                _newDBOutputWorksheet = new NewDBOutputWorksheetAction(app, _resources);
+                _newDBOutputWorksheet.setEnabled(false);
+                app.getMainFrame().addToActionBar(_newDBOutputWorksheet);
+
+                app.getSessionManager().addSessionListener(new OraclePluginSessionListener());
 	}
 
 	/**
@@ -162,6 +182,14 @@ public class OraclePlugin extends DefaultSessionPlugin
 		return dbms != null && dbms.toLowerCase().startsWith(ORACLE);
 	}
 
+        public class OraclePluginSessionListener extends SessionAdapter {
+          public void sessionActivated(SessionEvent evt) {
+            final ISession session = evt.getSession();
+
+            _newDBOutputWorksheet.setEnabled(isOracle(session));
+          }
+        }
+
         /** This class listens to new frames as they are opened and adds
          *  object from this plugins.
          */
@@ -172,7 +200,7 @@ public class OraclePlugin extends DefaultSessionPlugin
               ISession session = panel.getSession();
               if (isOracle(session))
                 panel.addExecutor(new ExplainPlanExecuter(session, panel));
-            } 
+            }
             if (e.getInternalFrame() instanceof IObjectTreeInternalFrame) {
               IObjectTreeAPI objTree = ((IObjectTreeInternalFrame)e.getInternalFrame()).getObjectTreeAPI();
               ISession session = objTree.getSession();
