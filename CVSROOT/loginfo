@@ -31,3 +31,6 @@ CVSROOT $CVSROOT/CVSROOT/syncmail %{sVv} colbelloz@bigpond.com
 CVSROOT $CVSROOT/CVSROOT/syncmail %{sVv} patrick@lacson.org
 
 DEFAULT $CVSROOT/CVSROOT/syncmail %{sVv} squirrel-sql-commits@lists.sourceforge.net 
+
+squirrel/ $CVSROOT/CVSROOT/syncmail %{sVv} squirrel-sql-commits@lists.sourceforge.net
+squirrel-sql/ $CVSROOT/CVSROOT/syncmail %{sVv} squirrel-sql-commits@lists.sourceforge.net
