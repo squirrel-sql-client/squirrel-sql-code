@@ -17,8 +17,10 @@ package net.sourceforge.squirrel_sql.client;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -41,6 +43,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.action.ActionKeys;
 import net.sourceforge.squirrel_sql.client.db.AliasMaintSheetFactory;
 import net.sourceforge.squirrel_sql.client.db.DataCache;
 import net.sourceforge.squirrel_sql.client.db.DriverMaintSheetFactory;
@@ -125,7 +128,7 @@ class Application implements IApplication
 		final boolean loadPlugins = args.getLoadPlugins();
 		if (args.getShowSplashScreen())
 		{
-			_splash = new SplashScreen(_resources, 9);
+			_splash = new SplashScreen(_resources, 10);
 		}
 
 		try
@@ -151,9 +154,7 @@ class Application implements IApplication
 				}
 
 				indicateNewStartupTask("Loading preferences...");
-				_prefs = new SquirrelPreferences();
-				_prefs.setApplication(this);
-				_prefs.load();
+				_prefs = SquirrelPreferences.load();
 				preferencesHaveChanged(null);
 				_prefs.addPropertyChangeListener(
 					new PropertyChangeListener()
@@ -167,17 +168,37 @@ class Application implements IApplication
 				indicateNewStartupTask("Loading actions...");
 				_actions = new ActionCollection(this);
 
+				indicateNewStartupTask("Loading user specified accelerators and mnemonics...");
+				_actions.loadActionKeys(_prefs.getActionKeys());
+
 				indicateNewStartupTask("Creating JDBC driver manager...");
 				_driverMgr = new SQLDriverManager();
 
+				// TODO: pass in a message handler so user gets error msgs.
 				indicateNewStartupTask("Loading JDBC driver and alias information...");
-				_cache = new DataCache(this);
+				_cache = new DataCache(_driverMgr, _resources, null);
 
 				indicateNewStartupTask("Creating main window...");
 				_mainFrame = new MainFrame(this);
 
 				indicateNewStartupTask("Initializing plugins...");
 				_pluginManager.initializePlugins();
+
+//Action act =
+//	_actions.get("net.sourceforge.squirrel_sql.client.mainframe.action.ExitAction");
+//ActionKeys ak =
+//	new ActionKeys(
+//		"net.sourceforge.squirrel_sql.client.mainframe.action.ExitAction",
+//		null,
+//			KeyEvent.VK_T);
+//_prefs.setActionKeys(new ActionKeys[] {ak});
+				
+
+
+
+
+
+
 
 				indicateNewStartupTask("Showing main window...");
 				_mainFrame.setVisible(true);
@@ -205,7 +226,28 @@ class Application implements IApplication
 	{
 		_pluginManager.unloadPlugins();
 		_prefs.save();
-		_cache.save();
+
+		final ApplicationFiles appFiles = new ApplicationFiles();
+
+		try
+		{
+			final File file = appFiles.getDatabaseDriversFile();
+			_cache.saveDrivers(file);
+		}
+		catch (Throwable th)
+		{
+			showErrorDialog("Error occured saving Driver Definitions", th);
+		}
+
+		try
+		{
+			final File file = appFiles.getDatabaseAliasesFile();
+			_cache.saveAliases(file);
+		}
+		catch (Throwable th)
+		{
+			showErrorDialog("Error occured saving Alias Definitions", th);
+		}
 
 		if (_jdbcDebugOutput != null)
 		{

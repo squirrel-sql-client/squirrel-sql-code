@@ -31,6 +31,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
@@ -124,6 +125,7 @@ public class SessionSQLPropertiesPanel
 			String LIMIT_ROWS_SQL = "SQL - Limit rows";
 			String LONGVARBINARY = "LongVarBinary";
 			String SHOW_ROW_COUNT = "Show Row Count for Tables (can slow application)";
+			String SOL_COMENT = "Start of Line Comment";
 			String TABLE = "Table";
 			String TEXT = "Text";
 			String STATEMENT_SEPARATOR = "Statement Separator:";
@@ -139,6 +141,7 @@ public class SessionSQLPropertiesPanel
 		private IntegerField _sqlNbrRowsToShowField = new IntegerField(5);
 		private JCheckBox _sqlLimitRows = new JCheckBox(SQLPropertiesPanelI18n.LIMIT_ROWS_SQL);
 		private CharField _stmtSepChar = new CharField(' ');
+		private JTextField _solCommentField = new JTextField(2);
 
 		private JCheckBox _showBinaryChk = new JCheckBox(SQLPropertiesPanelI18n.BINARY);
 		private JCheckBox _showVarBinaryChk = new JCheckBox(SQLPropertiesPanelI18n.VARBINARY);
@@ -172,6 +175,7 @@ public class SessionSQLPropertiesPanel
 			_sqlLimitRows.setSelected(props.getSQLLimitRows());
 			_showRowCount.setSelected(props.getShowRowCount());
 			_stmtSepChar.setChar(props.getSQLStatementSeparatorChar());
+			_solCommentField.setText(props.getStartOfLineComment());
 
 			LargeResultSetObjectInfo largeObjInfo = props.getLargeResultSetObjectInfo();
 			_showBinaryChk.setSelected(largeObjInfo.getReadBinary());
@@ -204,6 +208,7 @@ public class SessionSQLPropertiesPanel
 			props.setSQLLimitRows(_sqlLimitRows.isSelected());
 			props.setShowRowCount(_showRowCount.isSelected());
 			props.setSQLStatementSeparatorChar(_stmtSepChar.getChar());
+			props.setStartOfLineComment(_solCommentField.getText());
 
 			LargeResultSetObjectInfo largeObjInfo = props.getLargeResultSetObjectInfo();
 			largeObjInfo.setReadBinary(_showBinaryChk.isSelected());
@@ -297,6 +302,8 @@ public class SessionSQLPropertiesPanel
 			pnl.add(new RightLabel(SQLPropertiesPanelI18n.NBR_ROWS_SQL), gbc);
 			++gbc.gridy;
 			pnl.add(new RightLabel(SQLPropertiesPanelI18n.STATEMENT_SEPARATOR), gbc);
+			++gbc.gridy;
+			pnl.add(new RightLabel(SQLPropertiesPanelI18n.SOL_COMENT), gbc);
 
 			++gbc.gridx;
 			gbc.gridy = 0;
@@ -308,6 +315,8 @@ public class SessionSQLPropertiesPanel
 			pnl.add(_sqlNbrRowsToShowField, gbc);
 			++gbc.gridy;
 			pnl.add(_stmtSepChar, gbc);
+			++gbc.gridy;
+			pnl.add(_solCommentField, gbc);
 
 			return pnl;
 		}

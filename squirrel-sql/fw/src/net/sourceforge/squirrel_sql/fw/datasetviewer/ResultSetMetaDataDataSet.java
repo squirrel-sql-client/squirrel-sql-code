@@ -22,8 +22,10 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -53,6 +55,36 @@ public class ResultSetMetaDataDataSet implements IDataSet
 	 * the result set metadata.
 	 */
 	private ArrayList _data = new ArrayList();
+
+	/**
+	 * Collection of method names that are considered to the
+	 * &quot;properties&quot; of the <TT>ResultSetMetaData</TT> class.
+	 */
+	private static final Map s_propNames = new HashMap();
+
+	static
+	{
+		s_propNames.put("getCatalogName", null);
+		s_propNames.put("getColumnClassName", null);
+		s_propNames.put("getColumnDisplaySize", null);
+		s_propNames.put("getColumnLabel", null);
+		s_propNames.put("getColumnName", null);
+		s_propNames.put("getColumnType", null);
+		s_propNames.put("getColumnTypeName", null);
+		s_propNames.put("getPrecision", null);
+		s_propNames.put("getScale", null);
+		s_propNames.put("getSchemaName", null);
+		s_propNames.put("getTableName", null);
+		s_propNames.put("isAutoIncrement", null);
+		s_propNames.put("isCaseSensitive", null);
+		s_propNames.put("isCurrency", null);
+		s_propNames.put("isDefinitelyWritable", null);
+		s_propNames.put("isNullable", null);
+		s_propNames.put("isReadOnly", null);
+		s_propNames.put("isSearchable", null);
+		s_propNames.put("isSigned", null);
+		s_propNames.put("isWritable", null);
+	}
 
 	public ResultSetMetaDataDataSet() throws DataSetException
 	{
@@ -181,9 +213,10 @@ public class ResultSetMetaDataDataSet implements IDataSet
 	 */
 	protected boolean isPropertyMethod(Method method)
 	{
-		return method.getParameterTypes().length == 1
-			&& method.getParameterTypes()[0] == int.class
-			&& method.getReturnType() != Void.TYPE;
+		return s_propNames.containsKey(method.getName());
+//		return method.getParameterTypes().length == 1
+//			&& method.getParameterTypes()[0] == int.class
+//			&& method.getReturnType() != Void.TYPE;
 	}
 
 	protected Object executeGetter(Object bean, Method getter, Object[] parms)

@@ -20,8 +20,6 @@ package net.sourceforge.squirrel_sql.plugins.mysql;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -34,8 +32,6 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 /**
  * MySQL plugin class.
  *
@@ -129,6 +125,29 @@ public class MysqlPlugin extends DefaultSessionPlugin
 		_resources = new MysqlResources(getClass().getName(), this);
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getChangeLogFileName()
+	 */
+	public String getChangeLogFileName()
+	{
+		return "changes.txt";
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getHelpFileName()
+	 */
+	public String getHelpFileName()
+	{
+		return "readme.html";
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getLicenceFileName()
+	 */
+	public String getLicenceFileName()
+	{
+		return "licence.txt";
+	}
 
 	/**
 	 * Initialize this plugin.

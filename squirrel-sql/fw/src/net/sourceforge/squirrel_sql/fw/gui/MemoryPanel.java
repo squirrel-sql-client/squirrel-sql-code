@@ -22,9 +22,12 @@ import java.awt.FontMetrics;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 
 import javax.swing.JLabel;
+import javax.swing.JPopupMenu;
 import javax.swing.Timer;
 import javax.swing.ToolTipManager;
 import javax.swing.border.Border;
@@ -35,7 +38,8 @@ import javax.swing.border.Border;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class MemoryPanel extends JLabel implements ActionListener {
+public class MemoryPanel extends JLabel
+{
 	/** Timer that updates memory status. */
 	private Timer _timer;
 
@@ -45,27 +49,31 @@ public class MemoryPanel extends JLabel implements ActionListener {
 	/**
 	 * Default ctor.
 	 */
-	public MemoryPanel() {
+	public MemoryPanel()
+	{
 		super("", JLabel.CENTER);
 	}
 
 	/**
 	 * Add component to its parent. Start the timer for auto-update.
 	 */
-	public void addNotify() {
+	public void addNotify()
+	{
 		super.addNotify();
 		updateMemoryStatus();
 		ToolTipManager.sharedInstance().registerComponent(this);
-		_timer = new Timer(2000, this);
+		_timer = new Timer(2000, new TimerListener());
 		_timer.start();
 	}
 
 	/**
 	 * Remove component from its parent. Stop the timer.
 	 */
-	public void removeNotify() {
+	public void removeNotify()
+	{
 		ToolTipManager.sharedInstance().unregisterComponent(this);
-		if (_timer != null) {
+		if (_timer != null)
+		{
 			_timer.stop();
 			_timer = null;
 		}
@@ -73,28 +81,23 @@ public class MemoryPanel extends JLabel implements ActionListener {
 	}
 
 	/**
-	 * Update component with the current memory status.
-	 * 
-	 * @param	evt		The current event.
-	 */
-	public void actionPerformed(ActionEvent evt) {
-		updateMemoryStatus();
-	}
-
-	/**
 	 * Return tooltip for this component.
 	 * 
 	 * @return	tooltip for this component.
 	 */
-	public String getToolTipText() {
+	public String getToolTipText()
+	{
 		final Runtime rt = Runtime.getRuntime();
 		final long totalMemory = rt.totalMemory() / 1024;
 		final long freeMemory = rt.freeMemory() / 1024;
 		final long usedMemory = totalMemory - freeMemory;
 		StringBuffer buf = new StringBuffer();
-		buf.append(usedMemory).append("KB used from ")
-			.append(totalMemory).append("KB total leaving ")
-			.append(freeMemory).append(" KB free");
+		buf.append(usedMemory)
+			.append("KB used from ")
+			.append(totalMemory)
+			.append("KB total leaving ")
+			.append(freeMemory)
+			.append(" KB free");
 		return buf.toString();
 	}
 
@@ -103,19 +106,23 @@ public class MemoryPanel extends JLabel implements ActionListener {
 	 * 
 	 * @return	the preferred size of this component.
 	 */
-	public Dimension getPreferredSize() {
+	public Dimension getPreferredSize()
+	{
 		Dimension dim = super.getPreferredSize();
 		FontMetrics fm = getFontMetrics(getFont());
 		dim.width = fm.stringWidth("99.9MB/99.9MB");
 		Border border = getBorder();
-		if (border != null) {
+		if (border != null)
+		{
 			Insets ins = border.getBorderInsets(this);
-			if (ins != null) {
+			if (ins != null)
+			{
 				dim.width += (ins.left + ins.right);
 			}
 		}
 		Insets ins = getInsets();
-		if (ins != null) {
+		if (ins != null)
+		{
 			dim.width += (ins.left + ins.right);
 		}
 		return dim;
@@ -126,14 +133,15 @@ public class MemoryPanel extends JLabel implements ActionListener {
 	 * 
 	 * @param	evt		The current event.
 	 */
-	private void updateMemoryStatus() {
+	private void updateMemoryStatus()
+	{
 		final Runtime rt = Runtime.getRuntime();
-		final long totalMemory = rt.totalMemory();// / (1024 * 1024);
-		final long freeMemory = rt.freeMemory();// / (1024 * 1024);
+		final long totalMemory = rt.totalMemory(); // / (1024 * 1024);
+		final long freeMemory = rt.freeMemory(); // / (1024 * 1024);
 		final long usedMemory = totalMemory - freeMemory;
 		StringBuffer buf = new StringBuffer();
-		buf.append(formatSize(usedMemory)).append("/")
-			.append(formatSize(totalMemory));
+		buf.append(formatSize(usedMemory)).append("/").append(
+			formatSize(totalMemory));
 		setText(buf.toString());
 	}
 
@@ -144,10 +152,21 @@ public class MemoryPanel extends JLabel implements ActionListener {
 	 * 
 	 * @return	the formatted version of <TT>nbrBytes</TT>.
 	 */
-	private String formatSize(long nbrBytes) {
+	private String formatSize(long nbrBytes)
+	{
 		double size = nbrBytes;
 		double val = size / (1024 * 1024);
 		return _fmt.format(val).concat("MB");
 	}
 
+	/**
+	 * Update component with the current memory status.
+	 */
+	private class TimerListener implements ActionListener
+	{
+		public void actionPerformed(ActionEvent evt)
+		{
+			updateMemoryStatus();
+		}
+	}
 }

@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.beans.IndexedPropertyDescriptor;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.beans.SimpleBeanInfo;
@@ -39,7 +40,7 @@ public class SquirrelPreferencesBeanInfo
 		super();
 		if (s_dscrs == null)
 		{
-			s_dscrs = new PropertyDescriptor[11];
+			s_dscrs = new PropertyDescriptor[12];
 			int idx = 0;
 			s_dscrs[idx++] =
 				new PropertyDescriptor(
@@ -94,6 +95,10 @@ public class SquirrelPreferencesBeanInfo
 					CLS,
 					"useScrollableTabbedPanes",
 					"setUseScrollableTabbedPanes");
+			s_dscrs[idx++] = new IndexedPropertyDescriptor(ACTION_KEYS, CLS,
+								"getActionKeys", "setActionKeys",
+								"getActionKeys", "setActionKeys");
+
 		}
 	}
 

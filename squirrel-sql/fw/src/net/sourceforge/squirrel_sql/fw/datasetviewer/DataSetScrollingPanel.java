@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  */
 import java.sql.ResultSet;
 
+import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
@@ -64,6 +65,7 @@ public class DataSetScrollingPanel extends JScrollPane
 	private void createUserInterface(String destClassName)
 		throws DataSetException
 	{
+		setBorder(BorderFactory.createEmptyBorder());
 		_viewer = BaseDataSetViewerDestination.getInstance(destClassName);
 		Runnable run = new Runnable()
 		{

@@ -90,6 +90,9 @@ public class ViewLogsSheet extends BaseSheet
 	/** If <TT>true</TT> user is closing this window. */
 	private boolean _closing = false;
 
+	/** If <TT>true</TT> log is being refreshed. */
+	private boolean _refreshing = false;
+
 	/**
 	 * Ctor specifying the application API.
 	 *
@@ -134,7 +137,7 @@ public class ViewLogsSheet extends BaseSheet
 			s_instance.setVisible(true); 
 		}
 		s_instance.moveToFront();
-		if (!wasVisible)
+		if (!wasVisible && !s_instance._refreshing)
 		{
 			s_instance.startRefreshingLog();
 		}
@@ -163,17 +166,21 @@ public class ViewLogsSheet extends BaseSheet
 	/**
 	 * Start a thread to refrsh the log.
 	 */
-	private void startRefreshingLog()
+	private synchronized void startRefreshingLog()
 	{
-        _app.getThreadPool().addTask(new Refresher());
+		if (!_refreshing)
+		{
+        	_app.getThreadPool().addTask(new Refresher());
+		}
 	}
 
 	/**
 	 * Refresh the log.
 	 */
-	private synchronized void refreshLog()
+	private void refreshLog()
 	{
 		_refreshBtn.setEnabled(false);
+		_logDirCmb.setEnabled(false);
 		CursorChanger cursorChg = new CursorChanger(this);
 		cursorChg.show();
 		try
@@ -288,6 +295,8 @@ public class ViewLogsSheet extends BaseSheet
 		finally
 		{
 			_refreshBtn.setEnabled(true);
+			_logDirCmb.setEnabled(true);
+			_refreshing = false;
 			cursorChg.restore();
 		}
 	}
@@ -417,7 +426,7 @@ public class ViewLogsSheet extends BaseSheet
 	{
 		public void run()
 		{
-			refreshLog();
+			ViewLogsSheet.this.refreshLog();
 		}
 	}
 }

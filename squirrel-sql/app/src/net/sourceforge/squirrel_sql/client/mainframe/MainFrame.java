@@ -27,7 +27,10 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
 
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultDesktopManager;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
@@ -47,6 +50,7 @@ import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewAliasesAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewDriversAction;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.SessionSheet;
 
 public class MainFrame extends BaseMDIParentFrame
@@ -303,6 +307,8 @@ public class MainFrame extends BaseMDIParentFrame
 	{
 		setVisible(false);
 
+		final SquirrelResources rsrc = _app.getResources();
+
 		getDesktopPane().setDesktopManager(new MyDesktopManager());
 
 		final Container content = getContentPane();
@@ -313,11 +319,10 @@ public class MainFrame extends BaseMDIParentFrame
 		preLoadActions();
 		content.setLayout(new BorderLayout());
 //		content.add(new MainFrameToolBar(_app, this), BorderLayout.NORTH);
-		JScrollPane sp =
-			new JScrollPane(
-				getDesktopPane(),
-				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		final JScrollPane sp = new JScrollPane(getDesktopPane());
+//				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+//				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		sp.setBorder(BorderFactory.createEmptyBorder());
 		content.add(sp, BorderLayout.CENTER);
 
 		//		_statusBar = new MainFrameStatusBar(true);
@@ -328,6 +333,16 @@ public class MainFrame extends BaseMDIParentFrame
 		setJMenuBar(new MainFrameMenuBar(_app, getDesktopPane(), _app.getActionCollection()));
 
 		setupFromPreferences();
+
+		final ImageIcon icon = rsrc.getIcon(SquirrelResources.IImageNames.APPLICATION_ICON);
+		if (icon != null)
+		{
+			setIconImage(icon.getImage());
+		}
+		else
+		{
+			s_log.error("Missing icon for mainframe");
+		}
 
 		validate();
 	}

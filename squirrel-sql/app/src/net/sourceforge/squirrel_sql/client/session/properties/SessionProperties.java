@@ -48,6 +48,7 @@ public class SessionProperties implements Cloneable, Serializable
 		String SQL_LIMIT_ROWS = "sqlLimitRows";
 		String SQL_NBR_ROWS_TO_SHOW = "sqlNbrOfRowsToShow";
 		String SQL_RESULTS_OUTPUT_CLASS_NAME= "sqlResultsOutputClassName";
+		String SQL_START_OF_LINE_COMMENT = "sqlStartOfLineComment";
 		String SQL_STATEMENT_SEPARATOR = "sqlStatementSeparator";
 	}
 
@@ -82,6 +83,9 @@ public class SessionProperties implements Cloneable, Serializable
 	private String _sqlOutputMetaDataClassName = IDataSetDestinations.TABLE;
 
 	private char _sqlStmtSepChar = ';';
+
+	/** Used to indicate a &quot;Start Of Line&quot; comment in SQL. */
+	private String _solComment = "--";
 
 	/** Font information for the jEdit text area. */
 	private FontInfo _fi;
@@ -118,23 +122,6 @@ public class SessionProperties implements Cloneable, Serializable
 		}
 	}
 
-/*
-	public void assignFrom(SessionProperties rhs)
-	{
-		setAutoCommit(rhs.getAutoCommit());
-		setCommitOnClosingConnection(rhs.getCommitOnClosingConnection());
-		setContentsLimitRows(rhs.getContentsLimitRows());
-		setContentsNbrRowsToShow(rhs.getContentsNbrRowsToShow());
-		setFontInfo(rhs.getFontInfo());
-		setLargeResultSetObjectInfo(rhs.getLargeResultSetObjectInfo());
-		setMetaDataOutputClassName(rhs.getMetaDataOutputClassName());
-		setShowRowCount(rhs.getShowRowCount());
-		setShowToolBar(rhs.getShowToolBar());
-		setSQLLimitRows(rhs.getSQLLimitRows());
-		setSQLNbrRowsToShow(rhs.getSQLNbrRowsToShow());
-		setSQLStatementSeparatorChar(rhs.getSQLStatementSeparatorChar());
-	}
-*/
 	public void addPropertyChangeListener(PropertyChangeListener listener)
 	{
 		_propChgReporter.addPropertyChangeListener(listener);
@@ -352,6 +339,25 @@ public class SessionProperties implements Cloneable, Serializable
 			IPropertyNames.SHOW_ROW_COUNT,
 			oldValue,
 			_showRowCount);
+	}
+
+	/**
+	 * Return the string used to represent a Start of Line Comment in SQL.
+	 */
+	public String getStartOfLineComment()
+	{
+		return _solComment;
+	}
+
+	/**
+	 * Set the string used to represent a Start of Line Comment in SQL.
+	 */
+	public synchronized void setStartOfLineComment(String data)
+	{
+		final String oldValue = _solComment;
+		_solComment = data;
+		_propChgReporter.firePropertyChange(IPropertyNames.SQL_START_OF_LINE_COMMENT,
+												oldValue, _solComment);
 	}
 
 	public FontInfo getFontInfo()

@@ -99,19 +99,25 @@ public abstract class Resources
 	public JMenuItem addToPopupMenu(Action action, JPopupMenu menu)
 		throws MissingResourceException
 	{
-		JMenuItem item = menu.add(action);
 		final String fullKey = Keys.MENU_ITEM + "." + getClassName(action.getClass());
+		final JMenuItem item = menu.add(action);
 
-		String mn = getResourceString(fullKey, MenuItemProperties.MNEMONIC);
-		if (mn.length() > 0)
+		if (action.getValue(Action.MNEMONIC_KEY) == null)
 		{
-			item.setMnemonic(mn.charAt(0));
+			String mn = getResourceString(fullKey, MenuItemProperties.MNEMONIC);
+			if (mn.length() > 0)
+			{
+				item.setMnemonic(mn.charAt(0));
+			}
 		}
 
-		String accel = getResourceString(fullKey, MenuItemProperties.ACCELERATOR);
-		if (accel.length() > 0)
+		if (action.getValue(Action.ACCELERATOR_KEY) == null)
 		{
-			item.setAccelerator(KeyStroke.getKeyStroke(accel));
+			String accel = getResourceString(fullKey, MenuItemProperties.ACCELERATOR);
+			if (accel.length() > 0)
+			{
+				item.setAccelerator(KeyStroke.getKeyStroke(accel));
+			}
 		}
 
 		item.setToolTipText((String) action.getValue(Action.SHORT_DESCRIPTION));
@@ -125,16 +131,22 @@ public abstract class Resources
 		JMenuItem item = menu.add(action);
 		final String fullKey = Keys.MENU_ITEM + "." + getClassName(action.getClass());
 
-		String mn = getResourceString(fullKey, MenuItemProperties.MNEMONIC);
-		if (mn.length() > 0)
+		if (action.getValue(Action.MNEMONIC_KEY) == null)
 		{
-			item.setMnemonic(mn.charAt(0));
+			String mn = getResourceString(fullKey, MenuItemProperties.MNEMONIC);
+			if (mn.length() > 0)
+			{
+				item.setMnemonic(mn.charAt(0));
+			}
 		}
 
-		String accel = getResourceString(fullKey, MenuItemProperties.ACCELERATOR);
-		if (accel.length() > 0)
+		if (action.getValue(Action.ACCELERATOR_KEY) == null)
 		{
-			item.setAccelerator(KeyStroke.getKeyStroke(accel));
+			String accel = getResourceString(fullKey, MenuItemProperties.ACCELERATOR);
+			if (accel.length() > 0)
+			{
+				item.setAccelerator(KeyStroke.getKeyStroke(accel));
+			}
 		}
 
 		item.setToolTipText((String) action.getValue(Action.SHORT_DESCRIPTION));
@@ -205,17 +217,17 @@ public abstract class Resources
 		}
 	}
 
-	public Icon getIcon(String keyName)
+	public ImageIcon getIcon(String keyName)
 	{
 		return getIcon(keyName, "image");
 	}
 
-	public Icon getIcon(Class objClass, String propName)
+	public ImageIcon getIcon(Class objClass, String propName)
 	{
 		return getIcon(getClassName(objClass), propName);
 	}
 
-	public Icon getIcon(String keyName, String propName)
+	public ImageIcon getIcon(String keyName, String propName)
 	{
 		if (keyName == null)
 		{
@@ -226,7 +238,7 @@ public abstract class Resources
 			throw new IllegalArgumentException("propName == null");
 		}
 
-		Icon icon = null;
+		ImageIcon icon = null;
 
 		String rsrcName = getResourceString(keyName, propName);
 
@@ -257,7 +269,7 @@ public abstract class Resources
 		return _bundle;
 	}
 
-	private Icon privateGetIcon(String iconName)
+	private ImageIcon privateGetIcon(String iconName)
 	{
 		if (iconName != null && iconName.length() > 0)
 		{
@@ -280,11 +292,11 @@ public abstract class Resources
 	{
 		// Retrieve class name of the passed Action minus the package name.
 		String className = objClass.getName();
-		int pos = className.lastIndexOf(".");
-		if (pos != -1)
-		{
-			className = className.substring(pos + 1);
-		}
+//		int pos = className.lastIndexOf(".");
+//		if (pos != -1)
+//		{
+//			className = className.substring(pos + 1);
+//		}
 		return className;
 	}
 

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.preferences;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -30,7 +30,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.ActionKeys;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrameWindowState;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
@@ -39,6 +39,7 @@ public class SquirrelPreferences implements Serializable
 {
 	public interface IPropertyNames
 	{
+		String ACTION_KEYS = "actionKeys";
 		String SESSION_PROPERTIES = "sessionProperties";
 		String LOGIN_TIMEOUT = "loginTimeout";
 		String DEBUG_JDBC = "debugJdbc";
@@ -54,14 +55,13 @@ public class SquirrelPreferences implements Serializable
 	}
 
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(SquirrelPreferences.class);
-
-	/** Application API. */
-	private transient IApplication _app;
+	private final static ILogger s_log =
+		LoggerController.createLogger(SquirrelPreferences.class);
 
 	/** Bounds of the main frame. */
 	private MainFrameWindowState _mainFrameState = new MainFrameWindowState();
 
+	/** Properties for new sessions. */
 	private SessionProperties _sessionProps = new SessionProperties();
 
 	/**
@@ -94,6 +94,9 @@ public class SquirrelPreferences implements Serializable
 	/** Show toolbar in the aliases window. */
 	private boolean _showAliasesToolBar = true;
 
+	/** Accelerators and mnemonics for actions. */
+	private ActionKeys[] _actionsKeys = new ActionKeys[0];
+
 	/**
 	 * Objects stored by plugins. Each element of this collection is a <TT>Map</TT>
 	 * keyed by the plugin's internal name and containing all objects for that
@@ -102,7 +105,7 @@ public class SquirrelPreferences implements Serializable
 	//private Map _allPluginObjects = new HashMap();
 
 	/** Object to handle property change events. */
-	private PropertyChangeReporter _propChgReporter = new PropertyChangeReporter(this);
+	private transient PropertyChangeReporter _propChgReporter;
 
 	/**
 	 * Default ctor.
@@ -110,66 +113,17 @@ public class SquirrelPreferences implements Serializable
 	public SquirrelPreferences()
 	{
 		super();
-	}
-
-	/**
-	 * Assign contents of the passed prefernces object to this one.
-	 */
-	public void assignFrom(SquirrelPreferences rhs)
-	{
-		try
-		{
-			setApplication(rhs.getApplication());
-		}
-		catch (IllegalArgumentException ignore)
-		{
-			// When loading from prefs file this will be null.
-		}
-		setSessionProperties(rhs.getSessionProperties());
-		setMainFrameWindowState(rhs.getMainFrameWindowState());
-		setShowContentsWhenDragging(rhs.getShowContentsWhenDragging());
-		setLoginTimeout(rhs.getLoginTimeout());
-		setDebugJdbc(rhs.getDebugJdbc());
-		setShowMainStatusBar(rhs.getShowMainStatusBar());
-		setShowMainToolBar(rhs.getShowMainToolBar());
-		setShowAliasesToolBar(rhs.getShowAliasesToolBar());
-		setShowDriversToolBar(rhs.getShowDriversToolBar());
-		setShowToolTips(rhs.getShowToolTips());
-		//		setPluginObjects(rhs.getPluginObjects());
-		setUseScrollableTabbedPanes(rhs.useScrollableTabbedPanes());
-	}
-
-	/**
-	 * Set Application API to use.
-	 *
-	 * @param   app	 Application API.
-	 *
-	 * @throws  IllegalArgumentException
-	 *			  Thrown if <TT>null</TT> <TT>IApplication</TT> passed.
-	 */
-	public void setApplication(IApplication app) throws IllegalArgumentException
-	{
-		if (app == null)
-		{
-			throw new IllegalArgumentException("Null IApplication passed");
-		}
-
-		_app = app;
-	}
-
-	public IApplication getApplication()
-	{
-		return _app;
+		loadDefaults();
 	}
 
 	public void addPropertyChangeListener(PropertyChangeListener listener)
 	{
-		_propChgReporter.addPropertyChangeListener(listener);
+		getPropertyChangeReporter().addPropertyChangeListener(listener);
 	}
 
 	public void removePropertyChangeListener(PropertyChangeListener listener)
 	{
-		_propChgReporter.removePropertyChangeListener(listener);
+		getPropertyChangeReporter().removePropertyChangeListener(listener);
 	}
 
 	public SessionProperties getSessionProperties()
@@ -183,7 +137,7 @@ public class SquirrelPreferences implements Serializable
 		{
 			final SessionProperties oldValue = _sessionProps;
 			_sessionProps = data;
-			_propChgReporter.firePropertyChange(IPropertyNames.SESSION_PROPERTIES,
+			getPropertyChangeReporter().firePropertyChange(IPropertyNames.SESSION_PROPERTIES,
 												oldValue, _sessionProps);
 		}
 	}
@@ -197,7 +151,7 @@ public class SquirrelPreferences implements Serializable
 	{
 		final MainFrameWindowState oldValue = _mainFrameState;
 		_mainFrameState = data;
-		_propChgReporter.firePropertyChange(IPropertyNames.MAIN_FRAME_STATE,
+		getPropertyChangeReporter().firePropertyChange(IPropertyNames.MAIN_FRAME_STATE,
 											oldValue, _mainFrameState);
 	}
 
@@ -210,7 +164,7 @@ public class SquirrelPreferences implements Serializable
 	{
 		final boolean oldValue = _showContentsWhenDragging;
 		_showContentsWhenDragging = data;
-		_propChgReporter.firePropertyChange(IPropertyNames.SHOW_CONTENTS_WHEN_DRAGGING,
+		getPropertyChangeReporter().firePropertyChange(IPropertyNames.SHOW_CONTENTS_WHEN_DRAGGING,
 											oldValue, _showContentsWhenDragging);
 	}
 
@@ -223,7 +177,7 @@ public class SquirrelPreferences implements Serializable
 	{
 		final boolean oldValue = _showMainStatusBar;
 		_showMainStatusBar = data;
-		_propChgReporter.firePropertyChange(IPropertyNames.SHOW_MAIN_STATUS_BAR,
+		getPropertyChangeReporter().firePropertyChange(IPropertyNames.SHOW_MAIN_STATUS_BAR,
 											oldValue, _showMainStatusBar);
 	}
 
@@ -236,7 +190,7 @@ public class SquirrelPreferences implements Serializable
 	{
 		final boolean oldValue = _showMainToolBar;
 		_showMainToolBar = data;
-		_propChgReporter.firePropertyChange(IPropertyNames.SHOW_MAIN_TOOL_BAR,
+		getPropertyChangeReporter().firePropertyChange(IPropertyNames.SHOW_MAIN_TOOL_BAR,
 											oldValue, _showMainToolBar);
 	}
 
@@ -249,7 +203,7 @@ public class SquirrelPreferences implements Serializable
 	{
 		final boolean oldValue = _showAliasesToolBar;
 		_showAliasesToolBar = data;
-		_propChgReporter.firePropertyChange(IPropertyNames.SHOW_ALIASES_TOOL_BAR,
+		getPropertyChangeReporter().firePropertyChange(IPropertyNames.SHOW_ALIASES_TOOL_BAR,
 											oldValue, _showAliasesToolBar);
 	}
 
@@ -262,7 +216,7 @@ public class SquirrelPreferences implements Serializable
 	{
 		final boolean oldValue = _showDriversToolBar;
 		_showDriversToolBar = data;
-		_propChgReporter.firePropertyChange(IPropertyNames.SHOW_DRIVERS_TOOL_BAR,
+		getPropertyChangeReporter().firePropertyChange(IPropertyNames.SHOW_DRIVERS_TOOL_BAR,
 											oldValue, _showDriversToolBar);
 	}
 
@@ -275,7 +229,7 @@ public class SquirrelPreferences implements Serializable
 	{
 		final int oldValue = _loginTimeout;
 		_loginTimeout = data;
-		_propChgReporter.firePropertyChange(IPropertyNames.LOGIN_TIMEOUT,
+		getPropertyChangeReporter().firePropertyChange(IPropertyNames.LOGIN_TIMEOUT,
 											oldValue, _loginTimeout);
 	}
 
@@ -288,7 +242,7 @@ public class SquirrelPreferences implements Serializable
 	{
 		final boolean oldValue = _debugJdbc;
 		_debugJdbc = data;
-		_propChgReporter.firePropertyChange(IPropertyNames.DEBUG_JDBC, oldValue, _debugJdbc);
+		getPropertyChangeReporter().firePropertyChange(IPropertyNames.DEBUG_JDBC, oldValue, _debugJdbc);
 	}
 
 	public boolean getShowToolTips()
@@ -300,7 +254,7 @@ public class SquirrelPreferences implements Serializable
 	{
 		final boolean oldValue = _showToolTips;
 		_showToolTips = data;
-		_propChgReporter.firePropertyChange(IPropertyNames.SHOW_TOOLTIPS,
+		getPropertyChangeReporter().firePropertyChange(IPropertyNames.SHOW_TOOLTIPS,
 												oldValue, _showToolTips);
 	}
 
@@ -313,9 +267,35 @@ public class SquirrelPreferences implements Serializable
 	{
 		final boolean oldValue = _useScrollableTabbedPanes;
 		_useScrollableTabbedPanes = data;
-		_propChgReporter.firePropertyChange(IPropertyNames.SCROLLABLE_TABBED_PANES,
+		getPropertyChangeReporter().firePropertyChange(IPropertyNames.SCROLLABLE_TABBED_PANES,
 											oldValue, _useScrollableTabbedPanes);
 	}
+
+	public ActionKeys[] getActionKeys()
+	{
+		return _actionsKeys;
+	}
+
+	public ActionKeys getActionKeys(int idx)
+	{
+		return _actionsKeys[idx];
+	}
+
+	public synchronized void setActionKeys(ActionKeys[] data)
+	{
+		final ActionKeys[] oldValue = _actionsKeys;
+		_actionsKeys = data != null ? data : new ActionKeys[0];
+		getPropertyChangeReporter().firePropertyChange(IPropertyNames.ACTION_KEYS,
+											oldValue, _actionsKeys);
+	}
+
+	public void setActionKeys(int idx, ActionKeys value) {
+		final ActionKeys[] oldValue = _actionsKeys;
+		_actionsKeys[idx] = value;
+		getPropertyChangeReporter().firePropertyChange(IPropertyNames.ACTION_KEYS,
+											oldValue, _actionsKeys);
+	}
+
 	/*
 	public synchronized PluginObjectWrapper[] getPluginObjects() {
 		//	  return (Folder[])_subFolders.toArray(new Folder[_subFolders.size()]);
@@ -409,7 +389,7 @@ public class SquirrelPreferences implements Serializable
 		}
 	*/
 
-	public void load()
+	public static SquirrelPreferences load()
 	{
 		File prefsFile = new ApplicationFiles().getUserPreferencesFile();
 		try
@@ -419,7 +399,8 @@ public class SquirrelPreferences implements Serializable
 			Iterator it = doc.iterator();
 			if (it.hasNext())
 			{
-				assignFrom((SquirrelPreferences)it.next());
+				return (SquirrelPreferences)it.next();
+
 			}
 		}
 		catch (FileNotFoundException ignore)
@@ -431,7 +412,7 @@ public class SquirrelPreferences implements Serializable
 			s_log.error("Error occured reading from preferences file: " + prefsFile.getPath(), ex);
 			//i18n
 		}
-		loadDefaults();
+		return new SquirrelPreferences();
 	}
 
 	/**
@@ -458,6 +439,15 @@ public class SquirrelPreferences implements Serializable
 		{
 			_loginTimeout = DriverManager.getLoginTimeout();
 		}
+	}
+
+	private synchronized PropertyChangeReporter getPropertyChangeReporter()
+	{
+		if (_propChgReporter == null)
+		{
+			_propChgReporter = new PropertyChangeReporter(this); 
+		}
+		return _propChgReporter;
 	}
 
 	/*

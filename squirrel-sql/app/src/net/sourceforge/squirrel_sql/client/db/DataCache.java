@@ -34,13 +34,15 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
+import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeListener;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 
 /**
@@ -54,43 +56,40 @@ public class DataCache
 	private final static Class SQL_DRIVER_IMPL = SQLDriver.class;
 
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(DataCache.class);
+	private static final ILogger s_log = LoggerController.createLogger(DataCache.class);
 
-	/** Application API. */
-	private IApplication _app;
+	/** Driver manager. */
+	private final SQLDriverManager _driverMgr;
 
 	/** Cache that contains data. */
-	private XMLObjectCache _cache = new XMLObjectCache();
+	private final XMLObjectCache _cache = new XMLObjectCache();
 
 	/**
 	 * Ctor. Loads drivers and aliases from the XML document.
-	 *
-	 * @param	app	Application API.
-	 *
-	 * @throws	IllegalArgumentException
-	 *			Thrown if <TT>null</TT> <TT>IApplication</TT>
-	 *			passed.
 	 *
 	 * @throws	IllegalStateException
 	 *			Thrown if no <TT>SQLDriverManager</TT>
 	 *			exists in IApplication.
 	 */
-	public DataCache(IApplication app) throws IllegalArgumentException
+	public DataCache(SQLDriverManager driverMgr, SquirrelResources rsrc,
+						IMessageHandler msgHandler)
 	{
 		super();
-		if (app == null)
+		if (driverMgr == null)
 		{
-			throw new IllegalArgumentException("Null IApplication passed");
+			throw new IllegalArgumentException("Null SQLDriverManager passed");
 		}
-		if (app.getSQLDriverManager() == null)
-		{
-			throw new IllegalStateException("No SQLDriverManager in IApplication");
-		}
+//		if (app.getSQLDriverManager() == null)
+//		{
+//			throw new IllegalStateException("No SQLDriverManager in IApplication");
+//		}
 
-		_app = app;
+		_driverMgr = driverMgr;
 
-		loadDrivers();
-		loadAliases();
+		IMessageHandler myMsgHandler =
+			msgHandler != null ? msgHandler : NullMessageHandler.getInstance();
+		loadDrivers(rsrc, myMsgHandler);
+		loadAliases(myMsgHandler);
 	}
 
 	/**
@@ -98,33 +97,33 @@ public class DataCache
 	 * <CODE>ApplicationFiles.getUserDriversFileName()</CODE> and aliases are
 	 * saved to <CODE>ApplicationFiles.getUserAliasesFileName()</CODE>.
 	 */
-	public void save()
-	{
-		final ApplicationFiles appFiles = new ApplicationFiles();
-		final File driversFile = appFiles.getDatabaseDriversFile();
-		try
-		{
-			saveDrivers(driversFile);
-		}
-		catch (Exception ex)
-		{
-			String msg = "Error occured saving drivers to " + driversFile.getPath();
-			s_log.error(msg, ex);
-			_app.showErrorDialog(msg, ex);
-		}
-
-		final File aliasesFile = appFiles.getDatabaseAliasesFile();
-		try
-		{
-			saveAliases(aliasesFile);
-		}
-		catch (Exception ex)
-		{
-			String msg = "Error occured saving aliases to " + aliasesFile.getPath();
-			s_log.error(msg, ex);
-			_app.showErrorDialog(msg, ex);
-		}
-	}
+//	public void save()
+//	{
+//		final ApplicationFiles appFiles = new ApplicationFiles();
+//		final File driversFile = appFiles.getDatabaseDriversFile();
+//		try
+//		{
+//			saveDrivers(driversFile);
+//		}
+//		catch (Exception ex)
+//		{
+//			String msg = "Error occured saving drivers to " + driversFile.getPath();
+//			s_log.error(msg, ex);
+//			_app.showErrorDialog(msg, ex);
+//		}
+//
+//		final File aliasesFile = appFiles.getDatabaseAliasesFile();
+//		try
+//		{
+//			saveAliases(aliasesFile);
+//		}
+//		catch (Exception ex)
+//		{
+//			String msg = "Error occured saving aliases to " + aliasesFile.getPath();
+//			s_log.error(msg, ex);
+//			_app.showErrorDialog(msg, ex);
+//		}
+//	}
 
 	/**
 	 * Save JDBC drivers to the passed file as XML.
@@ -183,23 +182,23 @@ public class DataCache
 				InstantiationException, DuplicateObjectException,
 				MalformedURLException
 	{
-		_app.getSQLDriverManager().registerSQLDriver(sqlDriver);
+		_driverMgr.registerSQLDriver(sqlDriver);
 		_cache.add(sqlDriver);
 	}
 
 	public void removeDriver(ISQLDriver sqlDriver)
 	{
 		_cache.remove(SQL_DRIVER_IMPL, sqlDriver.getIdentifier());
-		try
-		{
-			_app.getSQLDriverManager().unregisterSQLDriver(sqlDriver);
-		}
-		catch (Exception ex)
-		{
-			String msg = "Error occured removing driver from cache";
-			s_log.error(msg, ex);
-			_app.showErrorDialog(msg, ex);
-		}
+//		try
+//		{
+			_driverMgr.unregisterSQLDriver(sqlDriver);
+//		}
+//		catch (Exception ex)
+//		{
+//			String msg = "Error occured removing driver from cache";
+//			s_log.error(msg, ex);
+//			_app.showErrorDialog(msg, ex);
+//		}
 	}
 
 	public Iterator drivers()
@@ -264,7 +263,7 @@ public class DataCache
 	/**
 	 * Load <TT>IISqlDriver</TT> objects from XML file.
 	 */
-	private void loadDrivers()
+	private void loadDrivers(SquirrelResources rsrc, IMessageHandler msgHandler)
 	{
 		final ApplicationFiles appFiles = new ApplicationFiles();
 		final File driversFile = appFiles.getDatabaseDriversFile();
@@ -273,7 +272,7 @@ public class DataCache
 			_cache.load(driversFile.getPath());
 			if (!drivers().hasNext())
 			{
-				loadDefaultDrivers();
+				loadDefaultDrivers(rsrc, msgHandler);
 			}
 			else
 			{
@@ -282,18 +281,19 @@ public class DataCache
 		}
 		catch (FileNotFoundException ex)
 		{
-			loadDefaultDrivers(); // first time user has run pgm.
+			loadDefaultDrivers(rsrc, msgHandler); // first time user has run pgm.
 		}
 		catch (Exception ex)
 		{
 			String msg = "Error loading driver file: " + driversFile.getPath()
 							+ ". Default drivers loaded instead.";
 			s_log.error(msg, ex);
-			_app.showErrorDialog(msg, ex);
-			loadDefaultDrivers();
+			msgHandler.showErrorMessage(msg);
+			msgHandler.showErrorMessage(ex);
+			loadDefaultDrivers(rsrc, msgHandler);
 		}
 
-		registerDrivers();
+		registerDrivers(msgHandler);
 	}
 
 	public ISQLAlias createAlias(IIdentifier id)
@@ -306,9 +306,9 @@ public class DataCache
 		return new SQLDriver(id);
 	}
 
-	private void loadDefaultDrivers()
+	private void loadDefaultDrivers(SquirrelResources rsrc, IMessageHandler msgHandler)
 	{
-		final URL url = _app.getResources().getDefaultDriversUrl();
+		final URL url = rsrc.getDefaultDriversUrl();
 		try
 		{
 			InputStreamReader isr = new InputStreamReader(url.openStream());
@@ -326,13 +326,14 @@ public class DataCache
 			String msg = "Error loading default driver file: " +
 							url != null ? url.toExternalForm() : "";
 			s_log.error(msg, ex);
-			_app.showErrorDialog(msg, ex);
+			msgHandler.showErrorMessage(msg);
+			msgHandler.showErrorMessage(ex);
 		}
 	}
 
-	private void registerDrivers()
+	private void registerDrivers(IMessageHandler msgHandler)
 	{
-		SQLDriverManager driverMgr = _app.getSQLDriverManager();
+		SQLDriverManager driverMgr = _driverMgr;
 		for (Iterator it = drivers(); it.hasNext();)
 		{
 			ISQLDriver sqlDriver = (ISQLDriver) it.next();
@@ -352,12 +353,13 @@ public class DataCache
 			{
 				String msg = "Unable to register JDCB driver " + sqlDriver.getName();
 				s_log.error(msg, th);
-				_app.showErrorDialog(msg, th);
+				msgHandler.showErrorMessage(msg);
+				msgHandler.showErrorMessage(th);
 			}
 		}
 	}
 
-	private void loadAliases()
+	private void loadAliases(IMessageHandler msgHandler)
 	{
 		final ApplicationFiles appFiles = new ApplicationFiles();
 		final File aliasesFile = appFiles.getDatabaseAliasesFile();
@@ -372,13 +374,14 @@ public class DataCache
 		{
 			String msg = "Error loading aliases file: " + aliasesFile.getPath();
 			s_log.error(msg, ex);
-			_app.showErrorDialog(msg, ex);
+			msgHandler.showErrorMessage(msg);
+			msgHandler.showErrorMessage(ex);
 		}
 	}
 
 	/**
 	 * In 1.1beta? the jar file for a driver was changed from only one allowed
-	 * to multiple one allowed. This method changes the driver from the old
+	 * to multiple ones allowed. This method changes the driver from the old
 	 * version to the new one.
 	 */
 	private void fixupDrivers()

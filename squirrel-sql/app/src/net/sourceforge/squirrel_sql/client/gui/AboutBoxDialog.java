@@ -232,6 +232,8 @@ public class AboutBoxDialog extends JDialog
 		{
 			super();
 
+			setBorder(BorderFactory.createEmptyBorder());
+
 			final JEditorPane credits = new JEditorPane();
 			credits.setEditable(false);
 			credits.setContentType("text/html");

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -453,7 +454,8 @@ public class ObjectTreePanel extends JPanel
 
 		_splitPane.setOneTouchExpandable(true);
 		_splitPane.setContinuousLayout(true);
-		JScrollPane sp = new JScrollPane();
+		final JScrollPane sp = new JScrollPane();
+		sp.setBorder(BorderFactory.createEmptyBorder());
 		sp.setViewportView(_tree);
 		sp.setPreferredSize(new Dimension(200, 200));
 		_splitPane.add(sp, JSplitPane.LEFT);

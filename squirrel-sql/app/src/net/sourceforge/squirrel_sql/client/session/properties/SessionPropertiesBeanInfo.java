@@ -36,7 +36,7 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 		super();
 		if (s_dscrs == null)
 		{
-			s_dscrs = new PropertyDescriptor[13];
+			s_dscrs = new PropertyDescriptor[14];
 			int i = 0;
 			s_dscrs[i++] =
 				new PropertyDescriptor(
@@ -116,6 +116,12 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 					cls,
 					"getLargeResultSetObjectInfo",
 					"setLargeResultSetObjectInfo");
+			s_dscrs[i++] =
+				new PropertyDescriptor(
+					SessionProperties.IPropertyNames.SQL_START_OF_LINE_COMMENT,
+					cls,
+					"getStartOfLineComment",
+					"setStartOfLineComment");
 		}
 	}
 

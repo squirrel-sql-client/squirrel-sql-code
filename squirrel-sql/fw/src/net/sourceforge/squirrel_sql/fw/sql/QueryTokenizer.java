@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.sql;
 /*
- * Copyright (C) 2001 Johan Compagner
+ * Copyright (C) 2001-2002 Johan Compagner
  * jcompagner@j-com.nl
  *
  * This library is free software; you can redistribute it and/or
@@ -19,16 +19,22 @@ package net.sourceforge.squirrel_sql.fw.sql;
  */
 public class QueryTokenizer
 {
-	private char _querySepChar;
+	private final char _querySepChar;
 
-	protected String _sQuerys;
+	private String _sQuerys;
 
-	protected String _sNextQuery;
+	private String _sNextQuery;
+
+	/**
+	 * These characters at the beginning of an SQL statement indicate that it
+     * is a comment.
+	 */
+	private String _solComment;
 
 	/**
 	 * QueryTokenizer constructor comment.
 	 */
-	public QueryTokenizer(String sql, char querySepChar)
+	public QueryTokenizer(String sql, char querySepChar, String solComment)
 	{
 		super();
 		_querySepChar = querySepChar;
@@ -40,6 +46,14 @@ public class QueryTokenizer
 		else
 		{
 			_sQuerys = "";
+		}
+		if (solComment != null && solComment.trim().length() > 0)
+		{ 
+			_solComment = solComment;
+		}
+		else
+		{
+			_solComment = null;
 		}
 	}
 
@@ -83,11 +97,19 @@ public class QueryTokenizer
 			{
 				String sNextQuery = _sQuerys;
 				_sQuerys = "";
+				if (_solComment != null && sNextQuery.startsWith(_solComment))
+				{
+					return parse();
+				}
 				return replaceLineFeeds(sNextQuery);
 			}
 		}
 		String sNextQuery = _sQuerys.substring(0,iIndex1);
 		_sQuerys = _sQuerys.substring(iIndex1+1).trim();
+		if (_solComment != null && sNextQuery.startsWith(_solComment))
+		{
+			return parse();
+		}
 		return replaceLineFeeds(sNextQuery);
 	}
 

@@ -105,16 +105,17 @@ public class SQLExecuterTask implements Runnable
 
 				// Retrieve all the statements to execute.
 				QueryTokenizer qt = new QueryTokenizer(_sql,
-										props.getSQLStatementSeparatorChar());
+										props.getSQLStatementSeparatorChar(),
+										props.getStartOfLineComment());
 				List queryStrings = new ArrayList();
 				while (qt.hasQuery())
 				{
 					final String querySql = qt.nextQuery();
 					// ignore commented lines.
-					if (!querySql.startsWith("--"))
-					{
+//					if (!querySql.startsWith("--"))
+//					{
 						queryStrings.add(querySql);
-					}
+//					}
 				}
 
 				_cancelPanel.setQueryCount(queryStrings.size());

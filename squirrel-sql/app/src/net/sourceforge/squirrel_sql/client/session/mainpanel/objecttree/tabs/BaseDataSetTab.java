@@ -37,6 +37,11 @@ public abstract class BaseDataSetTab extends BaseObjectPanelTab
 	/** Component to display in tab. */
 	private DataSetScrollingPanel _comp;
 
+	public BaseDataSetTab()
+	{
+		super();
+	}
+
 	/**
 	 * Return the component to be displayed in the panel.
 	 *
