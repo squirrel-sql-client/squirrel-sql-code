@@ -15,7 +15,7 @@
         <property name="name" value="squirrel-sql"/>
         <property name="version" value="1.1alpha1"/>
 
-        <property name="dist_dir" value="${basedir}/dist/${name}-${version}"/>
+        <property name="dist_dir" value="${basedir}/../squirrel-sql-dist/${name}-${version}"/>
         <property name="core_dist_dir" value="${dist_dir}/core/dist"/>
         <property name="core_work_dir" value="${dist_dir}/core/work"/>
         <property name="core_obj_dir" value="${core_work_dir}/obj"/>
