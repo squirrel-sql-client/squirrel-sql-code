@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.preferences;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -49,6 +49,7 @@ public class SquirrelPreferences implements Serializable
 		String ACTION_KEYS = "actionKeys";
 		String ALIASES_SELECTED_INDEX = "aliasesSelectdIndex";
 		String DRIVERS_SELECTED_INDEX = "driversSelectdIndex";
+ 		String FIRST_RUN = "firstRun";
 		String JDBC_DEBUG_TYPE = "jdbcDebugtype";
 		String LOGIN_TIMEOUT = "loginTimeout";
 		String MAIN_FRAME_STATE = "mainFrameWindowState";
@@ -138,6 +139,9 @@ public class SquirrelPreferences implements Serializable
 
 	/** Show loaded drivers only in the Drivers window. */
 	private boolean _showLoadedDriversOnly;
+
+ 	/** Is this the first time SQuirreL has been run? */
+ 	private boolean _firstRun = true;
 
 	/**
 	 * Objects stored by plugins. Each element of this collection is a <TT>Map</TT>
@@ -518,6 +522,28 @@ public class SquirrelPreferences implements Serializable
 										oldValue, _showLoadedDriversOnly);
 		}
 	}
+
+ 	/**
+ 	 * Is this the first time SQuirreL has been run?
+ 	 *
+ 	 * @return	<tt>true</tt> if this is the first time SQuirreL has been run
+ 	 *			else <tt>false</tt>.
+ 	 */
+ 	public boolean isFirstRun()
+ 	{
+ 		return _firstRun;
+ 	}
+
+ 	public synchronized void setFirstRun(boolean data)
+ 	{
+ 		if (data != _firstRun)
+ 		{
+ 			final boolean oldValue = _firstRun;
+ 			_firstRun = data;
+ 			getPropertyChangeReporter().firePropertyChange(IPropertyNames.FIRST_RUN,
+ 											oldValue, _firstRun);
+ 		}
+ 	}
 
 	/*
 	public synchronized PluginObjectWrapper[] getPluginObjects() {

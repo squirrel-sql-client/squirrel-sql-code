@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.util;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -43,10 +43,10 @@ public class ApplicationFiles
 
 	/** Documentation folder. */
 	private String _documentationDir;
-	
+
 	/** Flag for cleaning up execution log files on app entry. **/
 	private static boolean needExecutionLogCleanup = true;
-	
+
 	/** Flag for cleaning up debug log files on app entry. **/
 	private static boolean needDebugLogCleanup = true;
 
@@ -132,7 +132,7 @@ public class ApplicationFiles
 	{
 		return new File(_userSettingsDir + File.separator + "cellImportExport.xml");
 	}
-	
+
 	/**
 	 * @return file that contains the selections user chose
 	 * for DataType-specific properties.
@@ -141,7 +141,7 @@ public class ApplicationFiles
 	{
 		return new File(_userSettingsDir + File.separator + "DTproperties.xml");
 	}
-	
+
 	/**
 	 * @return file that contains the selections user chose for specific columns to use
 	 * in the WHERE clause when editing a cell in a DB table.
@@ -158,7 +158,7 @@ public class ApplicationFiles
 	{
 		final String dirPath = _userSettingsDir + File.separator + "logs";
 		final String logBaseName = "squirrel-sql.log";
-		
+
 		if (needExecutionLogCleanup) {
 			// first time through this method in program, so go cleanup
 			// old log files
@@ -175,7 +175,7 @@ public class ApplicationFiles
 	{
 		final String dirPath = _userSettingsDir + File.separator + "logs";
 		final String logBaseName = "jdbcdebug.log";
-		
+
 		if (needDebugLogCleanup) {
 			// first time through this method in program, so go cleanup
 			// old log files
@@ -240,7 +240,15 @@ public class ApplicationFiles
 	{
 		return new File(_documentationDir + File.separator + "licences/squirrel_licence.txt");
 	}
-	
+
+ 	/**
+ 	 * @return the Welcome document..
+ 	 */
+ 	public File getWelcomeFile()
+ 	{
+ 		return new File(_documentationDir + File.separator + "welcome.html");
+ 	}
+
 	/**
 	 * Internal method to remove old files such as log files.
 	 * The dirPath is the path name of the directory containing the files.
@@ -251,10 +259,10 @@ public class ApplicationFiles
 	 * older files are alphabetically before newer files.
 	 */
 	private void deleteOldFiles(String dirPath, String fileBase) {
-		
+
 		// the number of files to keep is arbitrarilly set here
 		final int numberToKeep = 3;
-		
+
 		// define filter to select only names using the fileBase
 		class OldFileNameFilter implements FilenameFilter {
 			String fBase;
@@ -267,24 +275,24 @@ public class ApplicationFiles
 				return false;
 			}
 		}
-		
+
 		// get the directory
 		File dir = new File(dirPath);
-		
+
 		// create filename filter and attach to directory
 		OldFileNameFilter fileFilter = new OldFileNameFilter(fileBase);
-		
+
 		// get list of files using that base name
 		String fileNames[] = dir.list(fileFilter);
 		if (fileNames == null || fileNames.length <= numberToKeep)
 			return;	// not too many old files
-		
+
 		// we do not expect a lot of files in this directory,
 		// so just do things linearly
-		
+
 		// sort the list
 		Arrays.sort(fileNames);
-		
+
 		// If the file using the base name with no extention exists,
 		// it is first.  The other files are in order from oldest to newest.
 		// The set of files to delete is slightly different depending on
@@ -297,7 +305,7 @@ public class ApplicationFiles
 			startIndex = 1;
 			endIndex++;
 		}
-		
+
 		for (int i = startIndex; i < endIndex; i++) {
 			// delete the old file
 			File oldFile = new File(dirPath + File.separator + fileNames[i]);
