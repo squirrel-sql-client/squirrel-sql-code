@@ -1,5 +1,8 @@
 Change Log
 ==========
+- Toolbar buttons for saving and loading scripts
+- Read statement deliniter from preferences
+- Numeric columns scripted with the right decim
 
 0.22
 ====
