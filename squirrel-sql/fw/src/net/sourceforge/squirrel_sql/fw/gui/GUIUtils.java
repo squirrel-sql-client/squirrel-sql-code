@@ -49,8 +49,7 @@ public class GUIUtils {
 	 *
 	 * @throws IllegalArgumentException	 If <TT>wind</TT> is <TT>null</TT>.
 	 */
-	public static void centerWithinParent(Window wind)
-			throws IllegalArgumentException {
+	public static void centerWithinParent(Window wind) {
 		if (wind == null) {
 			throw new IllegalArgumentException("null Window passed");
 		}
@@ -70,8 +69,7 @@ public class GUIUtils {
 	 *
 	 * @throws IllegalArgumentException	 If <TT>frame</TT> is <TT>null</TT>.
 	 */
-	public static void centerWithinDesktop(JInternalFrame frame)
-			throws IllegalArgumentException {
+	public static void centerWithinDesktop(JInternalFrame frame) {
 		if (frame == null) {
 			throw new IllegalArgumentException("null JInternalFrame passed");
 		}
@@ -88,8 +86,7 @@ public class GUIUtils {
 	 *
 	 * @throws IllegalArgumentException	 If <TT>wind</TT> is <TT>null</TT>.
 	 */
-	public static void centerWithinScreen(Window wind)
-			throws IllegalArgumentException {
+	public static void centerWithinScreen(Window wind) {
 		if (wind == null) {
 			throw new IllegalArgumentException("null Window passed");
 		}
@@ -112,8 +109,7 @@ public class GUIUtils {
 	 *
 	 * @throws IllegalArgumentException	 If <TT>wind</TT> is <TT>null</TT>.
 	 */
-	public static Frame getOwningFrame(Component comp)
-			throws IllegalArgumentException {
+	public static Frame getOwningFrame(Component comp) {
 		if (comp == null) {
 			throw new IllegalArgumentException("null Component passed");
 		}
@@ -132,12 +128,10 @@ public class GUIUtils {
 	 *
 	 * @throws IllegalArgumentException	 If <TT>frame</TT> is <TT>null</TT>.
 	 */
-	public static boolean isToolWindow(JInternalFrame frame)
-			throws IllegalArgumentException {
+	public static boolean isToolWindow(JInternalFrame frame) {
 		if (frame == null) {
 			throw new IllegalArgumentException("null JInternalFrame passed");
 		}
-
 
 		Object obj = frame.getClientProperty("JInternalFrame.isPalette");
 		return obj != null && obj == Boolean.TRUE;
@@ -146,13 +140,10 @@ public class GUIUtils {
 	/**
 	 * Make the passed internal frame a Tool Window.
 	 */
-	public static void makeToolWindow(JInternalFrame frame, boolean isToolWindow)
-			throws IllegalArgumentException {
+	public static void makeToolWindow(JInternalFrame frame, boolean isToolWindow) {
 		if (frame == null) {
 			throw new IllegalArgumentException("null JInternalFrame passed");
 		}
-
-
 		frame.putClientProperty("JInternalFrame.isPalette", isToolWindow ? Boolean.TRUE : Boolean.FALSE);
 	}
 
@@ -164,8 +155,7 @@ public class GUIUtils {
 	 *
 	 * @throws IllegalArgumentException	 If <TT>btns</TT> is <TT>null</TT>.
 	 */
-	public static void setJButtonSizesTheSame(JButton[] btns)
-			throws IllegalArgumentException {
+	public static void setJButtonSizesTheSame(JButton[] btns) {
 		if (btns == null) {
 			throw new IllegalArgumentException("null JButton[] passed");
 		}
@@ -195,12 +185,31 @@ public class GUIUtils {
 
 	/**
 	 * Return an array containing all <TT>JInternalFrame</TT> objects
-	 * that were passed in <TT>frames</TT> that are not tool windows.
+	 * that were passed in <TT>frames</TT> that are tool windows.
 	 *
 	 * @param   frames	  <TT>JInternalFrame</TT> objects to be checked.
 	 */
-	public static JInternalFrame[] getOpenNonToolWindows(JInternalFrame[] frames)
-			throws IllegalArgumentException {
+	public static JInternalFrame[] getOpenToolWindows(JInternalFrame[] frames) {
+		if (frames == null) {
+			throw new IllegalArgumentException("null JInternalFrame[] passed");
+		}
+		List framesList = new ArrayList();
+		for (int i = 0; i < frames.length; ++i) {
+			JInternalFrame fr = frames[i];
+			if (isToolWindow(fr) && !fr.isClosed()) {
+				framesList.add(frames[i]);
+			}
+		}
+		return (JInternalFrame[])framesList.toArray(new JInternalFrame[framesList.size()]);
+	}
+
+	/**
+	 * Return an array containing all <TT>JInternalFrame</TT> objects
+	 * that were passed in <TT>frames</TT> that are <EM>not</EM> tool windows.
+	 *
+	 * @param   frames	  <TT>JInternalFrame</TT> objects to be checked.
+	 */
+	public static JInternalFrame[] getOpenNonToolWindows(JInternalFrame[] frames) {
 		if (frames == null) {
 			throw new IllegalArgumentException("null JInternalFrame[] passed");
 		}
@@ -214,7 +223,7 @@ public class GUIUtils {
 		return (JInternalFrame[])framesList.toArray(new JInternalFrame[framesList.size()]);
 	}
 
-	public static boolean isWithinParent(Component wind) throws IllegalArgumentException {
+	public static boolean isWithinParent(Component wind) {
 		if (wind == null) {
 			throw new IllegalArgumentException("Null Component passed");
 		}
@@ -241,20 +250,18 @@ public class GUIUtils {
 	 *
 	 * @param   wind	The Window to be centered.
 	 * @param   rect	The rectangle (in screen coords) to center
-	 *				  <CODE>wind</CODE> within.
+	 *					<CODE>wind</CODE> within.
 	 *
 	 * @throws IllegalArgumentException
 	 *	  If <TT>Window</TT> or <TT>Rectangle</TT> is <TT>null</TT>.
 	 */
-	private static void center(Component wind, Rectangle rect)
-			throws IllegalArgumentException {
+	private static void center(Component wind, Rectangle rect) {
 		if (wind == null || rect == null) {
 			throw new IllegalArgumentException("null Window or Rectangle passed");
 		}
 		Dimension windSize = wind.getSize();
-		Dimension parentSize = new Dimension(rect.width, rect.height);
-		int x = ((parentSize.width - windSize.width) / 2) + rect.x;
-		int y = ((parentSize.height - windSize.height) / 2) + rect.y;
+		int x = ((rect.width - windSize.width) / 2) + rect.x;
+		int y = ((rect.height - windSize.height) / 2) + rect.y;
 		wind.setLocation(x, y);
 	}
 }
