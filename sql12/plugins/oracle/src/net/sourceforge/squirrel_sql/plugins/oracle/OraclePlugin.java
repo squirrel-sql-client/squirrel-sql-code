@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.oracle;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,20 +17,11 @@ package net.sourceforge.squirrel_sql.plugins.oracle;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.io.File;
-import java.io.IOException;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
-import net.sourceforge.squirrel_sql.client.plugin.PluginException;
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.DatabaseExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.InstanceParentExpander;
@@ -50,6 +41,11 @@ import net.sourceforge.squirrel_sql.plugins.oracle.tab.TriggerColumnInfoTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.TriggerDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.TriggerSourceTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.UserDetailsTab;
+
+import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 /**
  * Oracle plugin class.
  *
@@ -59,9 +55,6 @@ public class OraclePlugin extends DefaultSessionPlugin
 {
 	/** Logger for this class. */
 	private final static ILogger s_log = LoggerController.createLogger(OraclePlugin.class);
-
-	/** Folder to store user settings in. */
-	private File _userSettingsFolder;
 
 	/** API for the Obejct Tree. */
 	private IObjectTreeAPI _treeAPI;
@@ -128,26 +121,6 @@ public class OraclePlugin extends DefaultSessionPlugin
 	public String getLicenceFileName()
 	{
 		return "licence.txt";
-	}
-
-	/**
-	 * Load this plugin.
-	 *
-	 * @param	app	 Application API.
-	 */
-	public synchronized void load(IApplication app) throws PluginException
-	{
-		super.load(app);
-
-		// Folder to store user settings.
-		try
-		{
-			_userSettingsFolder = getPluginUserSettingsFolder();
-		}
-		catch (IOException ex)
-		{
-			throw new PluginException(ex);
-		}
 	}
 
 	/**

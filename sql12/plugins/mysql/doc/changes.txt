@@ -3,6 +3,8 @@ MySQL Plugin Change Log
 
 0.30
 ====
+- Added "Delete Database" menu item (Arun Kapilan.P).
+- Added "Create Database" menu item (Arun Kapilan.P).
 - Added "Columns" and "Indexes" tabs to table nodes.
 - Added "Master Status", "Master Logs", and "Slave Status" tabs to
   database nodes.

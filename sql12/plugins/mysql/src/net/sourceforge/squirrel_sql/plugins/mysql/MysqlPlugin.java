@@ -17,8 +17,6 @@ package net.sourceforge.squirrel_sql.plugins.mysql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.io.File;
-import java.io.IOException;
 import java.sql.SQLException;
 
 import javax.swing.JMenu;
@@ -33,7 +31,7 @@ import net.sourceforge.squirrel_sql.plugins.mysql.action.CheckTableAction;
 import net.sourceforge.squirrel_sql.plugins.mysql.action.CopyTableAction;
 import net.sourceforge.squirrel_sql.plugins.mysql.action.CreateDatabaseAction;
 import net.sourceforge.squirrel_sql.plugins.mysql.action.CreateMysqlTableScriptAction;
-import net.sourceforge.squirrel_sql.plugins.mysql.action.CreateTableAction;
+//import net.sourceforge.squirrel_sql.plugins.mysql.action.CreateTableAction;
 import net.sourceforge.squirrel_sql.plugins.mysql.action.DropDatabaseAction;
 import net.sourceforge.squirrel_sql.plugins.mysql.action.ExplainSelectTableAction;
 import net.sourceforge.squirrel_sql.plugins.mysql.action.ExplainTableAction;
@@ -72,7 +70,7 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	private final static ILogger s_log = LoggerController.createLogger(MysqlPlugin.class);
 
 	/** Folder to store user settings in. */
-	private File _userSettingsFolder;
+//	private File _userSettingsFolder;
 
 	/** Plugin resources. */
 	private PluginResources _resources;
@@ -110,7 +108,7 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	 */
 	public String getVersion()
 	{
-		return "0.21";
+		return "0.12";
 	}
 
 	/**
@@ -133,14 +131,14 @@ public class MysqlPlugin extends DefaultSessionPlugin
 		super.load(app);
 
 		// Folder to store user settings.
-		try
-		{
-			_userSettingsFolder = getPluginUserSettingsFolder();
-		}
-		catch (IOException ex)
-		{
-			throw new PluginException(ex);
-		}
+//		try
+//		{
+//			_userSettingsFolder = getPluginUserSettingsFolder();
+//		}
+//		catch (IOException ex)
+//		{
+//			throw new PluginException(ex);
+//		}
 
 		_resources = new MysqlResources(getClass().getName(), this);
 	}
@@ -200,7 +198,7 @@ public class MysqlPlugin extends DefaultSessionPlugin
 		coll.add(new CreateDatabaseAction(app, _resources, this));
 		coll.add(new DropDatabaseAction(app, _resources, this));
 		coll.add(new AlterTableAction(app, _resources, this));
-		coll.add(new CreateTableAction(app, _resources, this));
+//		coll.add(new CreateTableAction(app, _resources, this));
 		coll.add(new CopyTableAction(app, _resources, this));
 
 		_mySQLMenu = createFullMysqlMenu();
@@ -262,8 +260,8 @@ public class MysqlPlugin extends DefaultSessionPlugin
 				// Options in popup menu.
 				_treeAPI.addToPopup(coll.get(CreateDatabaseAction.class));
 
-				_treeAPI.addToPopup(DatabaseObjectType.SESSION, coll.get(CreateTableAction.class));
-				_treeAPI.addToPopup(DatabaseObjectType.CATALOG, coll.get(CreateTableAction.class));
+//				_treeAPI.addToPopup(DatabaseObjectType.SESSION, coll.get(CreateTableAction.class));
+//				_treeAPI.addToPopup(DatabaseObjectType.CATALOG, coll.get(CreateTableAction.class));
 				_treeAPI.addToPopup(DatabaseObjectType.CATALOG, coll.get(DropDatabaseAction.class));
 
 				_treeAPI.addToPopup(DatabaseObjectType.TABLE, createMysqlTableMenu());
@@ -323,7 +321,7 @@ public class MysqlPlugin extends DefaultSessionPlugin
 //		_resources.addToMenu(coll.get(DropDatabaseAction.class), mysqlMenu);
 
 		_resources.addToMenu(coll.get(CreateMysqlTableScriptAction.class), mysqlMenu);
-		_resources.addToMenu(coll.get(CreateTableAction.class), mysqlMenu);
+//		_resources.addToMenu(coll.get(CreateTableAction.class), mysqlMenu);
 
 		_resources.addToMenu(coll.get(AnalyzeTableAction.class), mysqlMenu);
 		_resources.addToMenu(coll.get(ExplainTableAction.class), mysqlMenu);
