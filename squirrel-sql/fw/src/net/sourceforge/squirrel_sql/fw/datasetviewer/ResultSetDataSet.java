@@ -25,13 +25,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class ResultSetDataSet implements IDataSet {
+	private ILogger s_log = LoggerController.createLogger(ResultSetDataSet.class);
 
 	// These 2 should be handled with an Iterator!!!
 	private int _iCurrent = -1;
 	private Object[] _currentRow;
-	
+
 	private int[] _columnIndices;
 	private int _columnCount;
 	private DataSetDefinition _dataSetDefinition;
@@ -62,7 +65,7 @@ public class ResultSetDataSet implements IDataSet {
 		_columnIndices = columnIndices;
 		_iCurrent = -1;
 		_alData = new ArrayList();
-		
+
 		if (rs != null) {
 			try {
 				ResultSetMetaData md = rs.getMetaData();
@@ -73,52 +76,56 @@ public class ResultSetDataSet implements IDataSet {
 					for (int i = 0; i < _columnCount; ++i) {
 						int idx = _columnIndices != null ? _columnIndices[i] : i + 1;
 //						row[i] = rs.getString(idx);
-						switch (md.getColumnType(idx)) {
-							case Types.NULL:
-								row[i] = null;
-								break;
-							case Types.BIT:
-								row[i] = new Boolean(rs.getBoolean(idx));
-								break;
-							case Types.TIME:
-								row[i] = rs.getTime(idx);
-								break;
-							case Types.DATE:
-								row[i] = rs.getDate(idx);
-								break;
-							case Types.TIMESTAMP:
-								row[i] = rs.getTimestamp(idx);
-								break;
-							case Types.BIGINT:
-								// TODO: Fix this - CB
-								// Oracle throws an Invalid Column Type exception on getLong().
-								//row[i] = new Long(rs.getLong(idx));
-								row[i] = rs.getString(idx);
-								break;
-							case Types.DECIMAL:
-							case Types.DOUBLE:
-							case Types.FLOAT:
-							case Types.NUMERIC:
-							case Types.REAL:
-								row[i] = new Double(rs.getDouble(idx));
-								break;
-							case Types.INTEGER:
-							case Types.SMALLINT:
-							case Types.TINYINT:
-								row[i] = new Integer(rs.getInt(idx));
-								break;
-							case Types.CHAR:
-							case Types.VARCHAR:
-							case Types.LONGVARCHAR:
-								row[i] = rs.getString(idx);
-								break;
-							default:
-								row[i] = "<Unknown>";
+						try {
+							switch (md.getColumnType(idx)) {
+								case Types.NULL:
+									row[i] = null;
+									break;
+								case Types.BIT:
+									row[i] = new Boolean(rs.getBoolean(idx));
+									break;
+								case Types.TIME:
+									row[i] = rs.getTime(idx);
+									break;
+								case Types.DATE:
+									row[i] = rs.getDate(idx);
+									break;
+								case Types.TIMESTAMP:
+									row[i] = rs.getTimestamp(idx);
+									break;
+								case Types.BIGINT:
+									row[i] = new Long(rs.getLong(idx));
+									break;
+								case Types.DECIMAL:
+								case Types.DOUBLE:
+								case Types.FLOAT:
+								case Types.NUMERIC:
+								case Types.REAL:
+									row[i] = new Double(rs.getDouble(idx));
+									break;
+								case Types.INTEGER:
+								case Types.SMALLINT:
+								case Types.TINYINT:
+									row[i] = new Integer(rs.getInt(idx));
+									break;
+								case Types.CHAR:
+								case Types.VARCHAR:
+								case Types.LONGVARCHAR:
+									row[i] = rs.getString(idx);
+									break;
+								default:
+									row[i] = "<Unknown>";
+							}
+						} catch (SQLException ex) {
+							row[i] = "<Error>";
+							s_log.error("Error reading column data", ex);
 						}
+
 					}
 					_alData.add(row);
 				}
 			} catch (SQLException ex) {
+				s_log.error("Error reading ResultSet", ex);
 				throw new DataSetException(ex);
 			}
 		}
@@ -132,7 +139,7 @@ public class ResultSetDataSet implements IDataSet {
 		return _dataSetDefinition;
 	}
 
-	public synchronized boolean next(IMessageHandler msgHandler) throws DataSetException 
+	public synchronized boolean next(IMessageHandler msgHandler) throws DataSetException
 	{
 		// This should be handled with an Iterator!!!
 		if(++_iCurrent < _alData.size())
@@ -143,14 +150,14 @@ public class ResultSetDataSet implements IDataSet {
 		return false;
 	}
 
-	public Object get(int columnIndex) 
+	public Object get(int columnIndex)
 	{
 		return _currentRow[columnIndex];
 	}
 
 	private ColumnDisplayDefinition[] createColumnDefinitions(ResultSetMetaData md,
 														int[] columnIndices)
-			throws SQLException 
+			throws SQLException
 	{
 		// TODO?? ColumnDisplayDefinition should also have the Type (String, Date, Double,Integer,Boolean)
 		ColumnDisplayDefinition[] columnDefs = new ColumnDisplayDefinition[_columnCount];
