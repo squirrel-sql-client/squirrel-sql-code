@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -22,30 +22,37 @@ import java.util.Vector;
 import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
 
-public class MemoryComboBox extends JComboBox {
+public class MemoryComboBox extends JComboBox
+{
 	public static int NO_MAX = -1;
 
 	private int _maxMemoryCount = NO_MAX;
 
-	public MemoryComboBox() {
+	public MemoryComboBox()
+	{
 		this(NO_MAX);
 	}
 
-	public MemoryComboBox(int maxMemoryCount) {
+	public MemoryComboBox(int maxMemoryCount)
+	{
 		super();
 		setMaxMemoryCount(maxMemoryCount);
 	}
 
-	public void setMaxMemoryCount(int value) {
+	public void setMaxMemoryCount(int value)
+	{
 		_maxMemoryCount = (value > NO_MAX) ? value : NO_MAX;
 	}
 
-	public void addItem(Object item) {
-		if (item != null) {
+	public void addItem(Object item)
+	{
+		if (item != null)
+		{
 			removeItem(item);
 			insertItemAt(item, 0);
 			setSelectedIndex(0);
-			if (_maxMemoryCount > NO_MAX && getItemCount() > _maxMemoryCount) {
+			if (_maxMemoryCount > NO_MAX && getItemCount() > _maxMemoryCount)
+			{
 				removeItemAt(getItemCount() - 1);
 			}
 		}

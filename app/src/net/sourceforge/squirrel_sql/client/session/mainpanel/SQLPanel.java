@@ -68,7 +68,6 @@ import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ResultTabEvent;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-
 /**
  * This is the panel where SQL scripts can be entered and executed.
  *
@@ -77,7 +76,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 public class SQLPanel extends JPanel
 {
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(SQLPanel.class);
+	private static final ILogger s_log = LoggerController.createLogger(SQLPanel.class);
 
 	/** Current session. */
 	private ISession _session;
@@ -557,8 +556,14 @@ public class SQLPanel extends JPanel
 	void addSQLToHistory(String sql)
 	{
 		_sqlComboItemListener.stopListening();
-		_sqlCombo.addItem(new SqlComboItem(sql));
-		_sqlComboItemListener.startListening();
+		try
+		{
+			_sqlCombo.addItem(new SqlComboItem(sql));
+		}
+		finally
+		{
+			_sqlComboItemListener.startListening();
+		}
 	}
 
 	void addResultsTab(SQLExecutionInfo exInfo, ResultSetDataSet rsds,
@@ -705,6 +710,7 @@ public class SQLPanel extends JPanel
 				}
 			}
 		}
+
 		if (propName == null || propName.equals(SessionProperties.IPropertyNames.SQL_LIMIT_ROWS))
 		{
 			_limitRowsChk.setSelected(props.getSQLLimitRows());
@@ -725,6 +731,18 @@ public class SQLPanel extends JPanel
 			}
 		}
 
+		if (propName == null || propName.equals(SessionProperties.IPropertyNames.SQL_ENTRY_HISTORY_SIZE)
+							|| propName.equals(SessionProperties.IPropertyNames.LIMIT_SQL_ENTRY_HISTORY_SIZE))
+		{
+			if (props.getLimitSQLEntryHistorySize())
+			{
+				_sqlCombo.setMaxMemoryCount(props.getSQLEntryHistorySize());
+			}
+			else
+			{
+				_sqlCombo.setMaxMemoryCount(_sqlCombo.NO_MAX);
+			}
+		}
 	}
 
 	private void createUserInterface()
@@ -760,8 +778,6 @@ public class SQLPanel extends JPanel
 		_splitPane.add(_tabbedResultsPanel, JSplitPane.RIGHT);
 
 		add(_splitPane, BorderLayout.CENTER);
-
-//		propertiesHaveChanged(null);
 
 		_sqlCombo.addActionListener(_sqlComboItemListener);
 		_limitRowsChk.addChangeListener(new LimitRowsCheckBoxListener());
@@ -818,7 +834,7 @@ public class SQLPanel extends JPanel
 		{
 			if (_listening)
 			{
-				SqlComboItem item = (SqlComboItem) _sqlCombo.getSelectedItem();
+				SqlComboItem item = (SqlComboItem)_sqlCombo.getSelectedItem();
 				if (item != null)
 				{
 					_sqlEntry.appendText("\n\n" + item.getText());
@@ -849,7 +865,7 @@ public class SQLPanel extends JPanel
 			}
 			else if (rhs != null && rhs.getClass().equals(getClass()))
 			{
-				rc = ((SqlComboItem) rhs).getText().equals(getText());
+				rc = ((SqlComboItem)rhs).getText().equals(getText());
 			}
 			return rc;
 		}
@@ -891,7 +907,7 @@ public class SQLPanel extends JPanel
 			}
 			try
 			{
-				final boolean limitRows = ((JCheckBox) evt.getSource()).isSelected();
+				final boolean limitRows = ((JCheckBox)evt.getSource()).isSelected();
 				_nbrRows.setEnabled(limitRows);
 				_session.getProperties().setSQLLimitRows(limitRows);
 			}
