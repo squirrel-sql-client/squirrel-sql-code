@@ -145,6 +145,21 @@ public class SortableTableModel extends AbstractTableModel
 	{
 		return _actualModel.getColumnClass(col);
 	}
+	
+	/**
+	 * The actual model may or may not be editable, so return
+	 * the value returned by the model when asked if this
+	 * cell is editable.
+	 *
+	 * @param	row		Row to return data for.
+	 * @param	col		Column to return data for.
+	 *
+	 * @return	value returned by actual model
+	 */ 
+	public boolean isCellEditable(int row, int col)
+	{
+		return _actualModel.isCellEditable(row,col);
+	}
 
 	/**
 	 * Sorts the column specified in a mode depending if the that column
