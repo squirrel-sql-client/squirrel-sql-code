@@ -27,5 +27,29 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  */
 public interface IDataSetUpdateableTableModel extends IDataSetUpdateableModel
 {
-	public boolean updateTableComponent(int row, int col, Object newValue, Object oldValue);
+	/**
+	 * Get warning message about unusual conditions, if any, in the current data
+	 * that the user needs to be aware of before proceeding.
+	 */
+	public String getWarningOnCurrentData(Object[] values, ColumnDisplayDefinition[] colDefs, int col, Object oldValue);
+	
+	/**
+	 * Get warning message about unusual conditions, if any, that will occur
+	 * if we proceed with the update as expected.
+	 */
+	public String getWarningOnProjectedUpdate(Object[] values, ColumnDisplayDefinition[] colDefs, int col, Object newValue);
+	
+	/**
+	 * Update the data underlying the table.
+	 */
+	public String updateTableComponent(Object[] values, ColumnDisplayDefinition[] colDefs,
+		int col, Object oldValue, Object newValue);
+	
+	/**
+	 * Get the column number containing the rowID for this table, if any.
+	 * If there is no rowID in this table (e.g. because the DB does not
+	 * support the rowID concept), then this will be -1.
+	 * The name of the column might be something other than "rowID", e.g. "oid".
+	 */
+	public int getRowidCol();
 }

@@ -17,6 +17,8 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.ta
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.sql.DatabaseMetaData;
+import java.sql.Types;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -25,6 +27,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -62,6 +65,12 @@ public class ContentsTab extends BaseTableTab
 	 * when the SessionProperties says to use read-only mode.
 	 */
 	boolean editModeForced = false;
+	
+	/**
+	 * Remember which column contains the rowID; if no rowID, this is -1
+	 * which does not match any legal column index.
+	 */
+	int _rowIDcol = -1;
 
 	/**
 	 * This interface defines locale specific strings. This should be
@@ -146,10 +155,54 @@ public class ContentsTab extends BaseTableTab
 					props.forceSQLOutputClassNameChange();
 				}
 
-				final ResultSet rs = stmt.executeQuery("select * from "
+				/**
+				 * If the table has a pseudo-column that is the best unique
+				 * identifier for the rows (like Oracle's rowid), then we
+				 * want to include that field in the query so that it will
+				 * be available if the user wants to edit the data later.
+				 */
+				String pseudoColumn = "";
+
+				//??????????????????????????????????
+				//??  The following has not been tested because I cannot find a free db on Linux
+				//??  that has a getBestRowIdentifier that provides this info.  GWG
+				//??????????????????????????????????
+				ResultSet rowIdentifierRS = conn.getSQLMetaData().getBestRowIdentifier(ti);
+				while (rowIdentifierRS.next()) {
+					// according to spec, col 8 is indicator of pseudo/not-pseudo
+					// and col 2 is name of rowid column
+					short pseudo = rowIdentifierRS.getShort(8);
+					if (pseudo == DatabaseMetaData.bestRowPseudo) {
+						pseudoColumn = " ," + rowIdentifierRS.getString(2);
+						break;
+					}
+				}
+
+				//
+				// KLUDGE!!!!!!
+				//
+				// For some DBs (e.g. PostgreSQL) there is actually a pseudo-column
+				// providing the rowId, but the getBestRowIdentifier function is not
+				// implemented.  This kludge hardcodes the knowledge that specific
+				// DBs use a specific pseudo-column.
+				//
+				if (pseudoColumn.length() == 0) {
+					String dbName = conn.getSQLMetaData().getDatabaseProductName().toUpperCase();
+					if (dbName.equals("POSTGRESQL")) {
+						pseudoColumn = ", oid";
+					}
+				}
+
+				final ResultSet rs = stmt.executeQuery("select *" + pseudoColumn+ " from "
 													+ ti.getQualifiedName());
 				final ResultSetDataSet rsds = new ResultSetDataSet();
 				rsds.setResultSet(rs, props.getLargeResultSetObjectInfo());
+				
+				//?? remember which column is the rowID (if any) so we can
+				//?? prevent editing on it
+				if (pseudoColumn.length() > 0)
+					_rowIDcol = rsds.getColumnCount() - 1;
+
 				return rsds;
 			}
 			finally
@@ -206,17 +259,453 @@ public class ContentsTab extends BaseTableTab
 	}
 	
 	/**
-	 * link from fw to this for updating data
+	 * Link from fw to check on whether there are any unusual coniditions
+	 * in the current data that the user needs to be aware of before updating.
 	 */
-	public boolean updateTableComponent(int row, int col, Object newValue, Object oldValue)
+	public String getWarningOnCurrentData(Object[] values, ColumnDisplayDefinition[] colDefs, int col, Object oldValue)
+	{
+		String whereClause = getWhereClause(values, colDefs, col, oldValue);
+		
+		// It is possible for a table to contain only columns of types that
+		// we cannot process or do selects on, so check for that.
+		// Since this check is on the structure of the table rather than the contents,
+		// we only need to do it once (ie: it is not needed in getWarningOnProjectedUpdate)
+		if (whereClause.length() == 0)
+			return "The table has no columns that can be SELECTed on.\nAll rows will be updated.\nDo you wish to proceed?";
+
+		final ISession session = getSession();
+		final SQLConnection conn = session.getSQLConnection();
+
+		int count = -1;	// start with illegal number of rows matching query
+		
+		try
+		{
+			final Statement stmt = conn.createStatement();
+			try
+			{
+				final ITableInfo ti = getTableInfo();
+				final ResultSet rs = stmt.executeQuery("select count(*) from "
+									+ ti.getQualifiedName() + whereClause);
+				rs.next();
+				count = rs.getInt(1);
+			}
+			finally
+			{
+				stmt.close();
+			}
+		}
+		catch (SQLException ex)
+		{
+			return "Exception seen during check on DB.  Exception was:\n"+
+				ex.getMessage() +
+				"\nUpdate is probably not safe to do.\nDo you wish to proceed?";
+		}
+
+		if (count == -1)
+			return "Unknown error during check on DB.  Update is probably not safe.\nDo you wish to proceed?";
+
+		if (count == 0)
+			return "This row in the Database has been changed since you refreshed the data.\nNo rows will be updated by this operation.\nDo you wish to proceed?";
+			
+		if (count > 1)
+			return "This operation will update " + count + " identical rows.\nDo you wish to proceed?";
+
+		// no problems found, so do not return a warning message.
+		return null;	// nothing for user to worry about
+	}
+	
+	/**
+	 * Link from fw to check on whether there are any unusual conditions
+	 * that will occur after the update has been done.
+	 */
+	public String getWarningOnProjectedUpdate(Object[] values, ColumnDisplayDefinition[] colDefs, int col, Object newValue)
 	{
 
-//?????????????????????????????????????????????????????????????????
-//
-// This is where we do the actual DB update
-//
-//????????????????????????????????????????????????????????????????????
+		String whereClause = getWhereClause(values, colDefs, col, newValue);
 
-		return true;
+		final ISession session = getSession();
+		final SQLConnection conn = session.getSQLConnection();
+
+		int count = -1;	// start with illegal number of rows matching query
+		
+		try
+		{
+			final Statement stmt = conn.createStatement();
+			try
+			{
+				final ITableInfo ti = getTableInfo();
+				final ResultSet rs = stmt.executeQuery("select count(*) from "
+									+ ti.getQualifiedName() + whereClause);
+				rs.next();
+				count = rs.getInt(1);
+			}
+			finally
+			{
+				stmt.close();
+			}
+		}
+		catch (SQLException ex)
+		{
+			return "Exception seen during check on DB.  Exception was:\n"+
+				ex.getMessage() +
+				"\nUpdate is probably not safe to do.\nDo you wish to proceed?";
+		}
+
+		if (count == -1)
+			return "Unknown error during check on DB.  Update is probably not safe.\nDo you wish to proceed?";
+
+		// Since a BLOB or CLOB cannot be used in a WHERE clause, an update to one of those
+		// fields will look like we are replacing one row with an identical row (because
+		// we can only "see" the fields that we know how to do WHEREs on).  Therefore,
+		// when we are updating a BLOB/CLOB, there should be exactly one row that matches
+		// all of our other fields, and when we are not updating a BLOB/CLOB, there should be
+		// no rows that exactly match our criteria (we hope).
+//??
+//?? Open Issue:
+//??	Are there other data types that should be included in this list?
+//??
+
+//?? Also, this code has not been tested properly (I don't have BLOBs or CLOBs set up yet
+		if (colDefs[col].getSqlType() == Types.BLOB ||
+			colDefs[col].getSqlType() == Types.CLOB ) {
+				if (count > 1)
+					return "This operation will result in " + count +" identical rows.\nDo you wish to proceed?";
+		}
+		else {
+			// the field being updated is one whose contents
+			//should be visible in the WHERE clause	
+			if (count > 0)
+				return "This operation will result in " + count + " identical rows.\nDo you wish to proceed?";
+		}
+
+		// no problems found, so do not return a warning message.
+		return null;	// nothing for user to worry about
+
+	}
+	
+	/**
+	 * link from fw to this for updating data
+	 */
+	public String updateTableComponent(Object[] values,
+		ColumnDisplayDefinition[] colDefs,
+		int col,
+		Object oldValue,
+		Object newValue)
+	{
+		// get WHERE clause using original value
+		String whereClause = getWhereClause(values, colDefs, col, oldValue);
+		
+		// The format of the SET part of the UPDATE statement varies depending
+		// on the data type, and whether it is NULL or not.
+		String setClause = getSetClause(colDefs, col, newValue);
+		
+		// we do not know how to set some fields, so...
+		if (setClause == null)
+			return "The '" + colDefs[col].getLabel() + "' column is a type that Squirrel does not know how to set";
+
+		final ISession session = getSession();
+		final SQLConnection conn = session.getSQLConnection();
+
+		int count = -1;
+		
+		try
+		{
+			final Statement stmt = conn.createStatement();
+			try
+			{
+				final ITableInfo ti = getTableInfo();
+				String updateCommand = "UPDATE " + ti.getQualifiedName() + setClause + whereClause;
+				count = stmt.executeUpdate(updateCommand);					
+			}
+			finally
+			{
+				stmt.close();
+			}
+		}
+		catch (SQLException ex)
+		{
+			return "Exception seen during check on DB.  Exception was:\n"+
+				ex.getMessage() +
+				"\nUpdate was probably not completed correctly.  DB may be corrupted!";
+		}
+
+		if (count == -1)
+			return "Unknown problem during update.\nNo count of updated rows was returned.\nDatabase may be corrupted!";
+
+		if (count == 0)
+			return "No rows updated.";
+
+		// everything seems to have worked ok
+		return null;
+	}
+	
+	/**
+	 * Let fw get the rowIDcol
+	 */
+	public int getRowidCol()
+	{
+		return _rowIDcol;
+	}
+	
+	/**
+	 * helper function to create a WHERE clause to search the DB for matching rows.
+	 */
+	private String getWhereClause(
+		Object[] values,
+		ColumnDisplayDefinition[] colDefs,
+		int col,
+		Object colValue)
+	{
+		
+		StringBuffer whereClause = new StringBuffer("");
+		
+		for (int i=0; i< colDefs.length; i++) {
+			// do different things depending on data type
+			
+			String clause = null;
+
+			// for the column that is being changed, use the value
+			// passed in by the caller (which may be either the
+			// current value or the new replacement value)
+			Object value = values[i];
+			if (i == col)
+				value = colValue;
+			
+			String columnLabel = colDefs[i].getLabel();
+
+			switch (colDefs[i].getSqlType())
+			{
+				case Types.NULL:	// should never happen
+					//??
+					break;
+
+					
+				// TODO: When JDK1.4 is the earliest JDK supported
+				// by Squirrel then remove the hardcoding of the
+				// boolean data type.
+				case Types.BIT:
+				case 16:
+//				case Types.BOOLEAN:
+					//??
+					break;
+
+				case Types.TIME :
+					//??
+					break;
+
+				case Types.DATE :
+					//??
+					break;
+
+				case Types.TIMESTAMP :
+					//??
+					break;
+
+				case Types.BIGINT :
+					//??
+					break;
+
+				case Types.DOUBLE:
+				case Types.FLOAT:
+				case Types.REAL:
+					//??
+					break;
+
+				case Types.DECIMAL:
+				case Types.NUMERIC:
+					//??
+					break;
+
+				case Types.INTEGER:
+				case Types.SMALLINT:
+				case Types.TINYINT:
+					if (value == null || value.toString() == null || value.toString().length() == 0)
+						clause = columnLabel + " IS NULL";
+					clause = columnLabel + "=" + value.toString();
+					break;
+
+
+				// TODO: Hard coded -. JDBC/ODBC bridge JDK1.4
+				// brings back -9 for nvarchar columns in
+				// MS SQL Server tables.
+				// -8 is ROWID in Oracle.
+				case Types.CHAR:
+				case Types.VARCHAR:
+				case Types.LONGVARCHAR:
+				case -9:
+				case -8:
+					if (value == null || value.toString() == null )
+						clause = columnLabel + " IS NULL";
+					else
+						clause = columnLabel + "='" + value.toString() + "'";
+					break;
+
+				case Types.BINARY:
+					//??
+					break;
+
+				case Types.VARBINARY:
+					//??
+					break;
+
+				case Types.LONGVARBINARY:
+					//??
+					break;
+
+				case Types.BLOB:
+					//??
+					break;
+
+				case Types.CLOB:
+					//??
+					break;
+
+				case Types.OTHER:
+					//??
+					break;
+
+				default:	// should never happen
+					//??
+					break;
+			}
+
+			if (clause != null)
+				if (whereClause.length() == 0)
+				{
+					whereClause.append(clause);
+				}
+				else
+				{
+					whereClause.append(" AND ");
+					whereClause.append(clause);
+				}
+		}
+		
+		// insert the "WHERE" at the front if there is anything in the clause
+		if (whereClause.length() == 0)
+			return "";
+
+		whereClause.insert(0, " WHERE ");
+		return whereClause.toString();
+	}
+
+
+
+	/**
+	 * helper function to create a SET clause to update the cell in the DB.
+	 */
+	private String getSetClause(
+		ColumnDisplayDefinition[] colDefs,
+		int col,
+		Object colValue)
+	{
+
+		String clause = null;
+		
+		String columnLabel = colDefs[col].getLabel();
+
+		switch (colDefs[col].getSqlType())
+		{
+			case Types.NULL:	// should never happen
+				//??
+				break;
+
+					
+			// TODO: When JDK1.4 is the earliest JDK supported
+			// by Squirrel then remove the hardcoding of the
+			// boolean data type.
+			case Types.BIT:
+			case 16:
+//			case Types.BOOLEAN:
+				//??
+				break;
+
+			case Types.TIME :
+				//??
+				break;
+
+			case Types.DATE :
+				//??
+				break;
+
+			case Types.TIMESTAMP :
+				//??
+				break;
+
+			case Types.BIGINT :
+				//??
+				break;
+
+			case Types.DOUBLE:
+			case Types.FLOAT:
+			case Types.REAL:
+				//??
+				break;
+
+			case Types.DECIMAL:
+			case Types.NUMERIC:
+				//??
+				break;
+
+			case Types.INTEGER:
+			case Types.SMALLINT:
+			case Types.TINYINT:
+//????? check somehow whether column is nullable? or is this handled by cell editor?
+				if (colValue == null || colValue.toString() == null || colValue.toString().length() == 0)
+					clause = columnLabel + " TO NULL ";
+				else clause = columnLabel + "=" + colValue.toString();
+				break;
+
+
+			// TODO: Hard coded -. JDBC/ODBC bridge JDK1.4
+			// brings back -9 for nvarchar columns in
+			// MS SQL Server tables.
+			// -8 is ROWID in Oracle.
+			case Types.CHAR:
+			case Types.VARCHAR:
+			case Types.LONGVARCHAR:
+			case -9:
+			case -8:
+				if (colValue == null || colValue.toString() == null )
+					clause = columnLabel + " TO NULL ";
+				else
+					clause = columnLabel + "='" + colValue.toString() + "'";
+				break;
+
+			case Types.BINARY:
+				//??
+				break;
+
+			case Types.VARBINARY:
+				//??
+				break;
+
+			case Types.LONGVARBINARY:
+				//??
+				break;
+
+			case Types.BLOB:
+				//??
+				break;
+
+			case Types.CLOB:
+				//??
+				break;
+
+			case Types.OTHER:
+				//??
+				break;
+
+			default:	// should never happen
+				//??
+				break;
+		}
+
+		
+		// insert the "WHERE" at the front if there is anything in the clause
+		if (clause.length() == 0)
+			return null;
+
+		return " SET " + clause;
 	}
 }

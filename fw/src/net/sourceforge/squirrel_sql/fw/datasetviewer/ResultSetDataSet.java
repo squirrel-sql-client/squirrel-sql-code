@@ -196,7 +196,8 @@ public class ResultSetDataSet implements IDataSet
 			columnDefs[i] =
  					new ColumnDisplayDefinition(
  					computeWidths ? colWidths[i] : md.getColumnDisplaySize(idx),
-					md.getColumnLabel(idx));
+ 					md.getColumnLabel(idx),
+ 					md.getColumnType(idx));
 		}
 		return columnDefs;
 	}

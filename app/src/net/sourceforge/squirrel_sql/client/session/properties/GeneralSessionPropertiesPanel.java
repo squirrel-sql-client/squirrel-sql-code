@@ -59,13 +59,9 @@ public class GeneralSessionPropertiesPanel
 		String HINT = "General settings for the current session";
 		String SHOW_TOOLBAR = "Show toolbar";
 
-//		String TABLE = "Table";
-//		String EDITABLE_TABLE = "Editable Table (Objects View only)";
-//		String TEXT = "Text";
-				
-		String TABLE = "Table (Object View editable through right mouse button)";
-		String EDITABLE_TABLE = "Editable Table (Objects View only)";
-		String TEXT = "Text (Object View editable through right mouse button)";
+		String TABLE = "Table    (Object View editable through right mouse button)";
+		String EDITABLE_TABLE = "Editable Table    (Objects View only)";
+		String TEXT = "Text    (Object View editable through right mouse button)";
 	}
 
 	private IApplication _app;

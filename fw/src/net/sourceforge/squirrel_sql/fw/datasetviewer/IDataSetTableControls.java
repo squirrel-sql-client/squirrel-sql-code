@@ -37,12 +37,16 @@ import javax.swing.JTable;
 public interface IDataSetTableControls
 {
 	/**
-	 * Tell the table that it is editable.  This is called from within
-	 * MyTable.isCellEditable().  We do not bother to distinguish between
-	 * editable and non-editable cells within the same table since all cells
-	 * are supposed to be either editable or not editable.
+	 * Tell the table that it is editable.  At this level we just want to know
+	 * whether the table as a whole may be edited, so we do not distinguish
+	 * between different columns in the table.
 	 */
 	public boolean isTableEditable();
+
+	/**
+	 * See if a particular column is editable.
+	 */
+	public boolean isColumnEditable(int col);
 	
 	/**
 	 * Set up the CellEditors for the various types of data.
