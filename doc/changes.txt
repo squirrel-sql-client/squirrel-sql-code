@@ -13,20 +13,22 @@ Enhancements
   the Session menu (Glenn Griffin).
 - All tables may be printed.  Use right mouse click, "print".  Large tables
   are automatically split across multiple pages both horizontally and
-  vertically.
+  vertically (Glenn Griffin).
 - The "Session Properties"->"Format" screen has been moved to "Global
   Preferences"->"Data Type Controls", and many new controls have been added
-  to adjust how specific data types are used or displayed.  Examples:
-    - Some DBs do not allow LONGVARCHAR to be used in the WHERE clause,
-      so this may now be disabled
-    - Dates, Times and Timestamps may be displayed and entered in a
-      user-selected format
-    - Strings containing newlines may display the newlines as "\n" or
-      not show them as selected by the user.
+  to adjust how specific data types are used or displayed. (Glenn Griffin)
+  Examples:
+	- Some DBs do not allow LONGVARCHAR to be used in the WHERE clause, so this
+	  may now be disabled
+	- Dates, Times and Timestamps may be displayed and entered in a
+	  user-selected format
+	- Strings containing newlines may display the newlines as "\n" or not show
+	  them as selected by the user.
     
 
 Bug Fixes
 ---------
+- Close metadata result sets once they are no longer required.
 - Fixed bug where inserting/updating and deleting rows in the SQL tab would
   loop (Gerd Wagner).
 - Fixed bug where setting the statement separator to an empty string then
