@@ -20,7 +20,7 @@ import javax.swing.text.Segment;
  * SQL token marker.
  *
  * @author mike dillon
- * @version $Id: SQLTokenMarker.java,v 1.2 2002-12-21 00:34:18 colbell Exp $
+ * @version $Id: SQLTokenMarker.java,v 1.3 2003-06-10 11:25:03 colbell Exp $
  */
 public class SQLTokenMarker extends TokenMarker
 {
@@ -39,6 +39,11 @@ public class SQLTokenMarker extends TokenMarker
 	private char literalChar = 0;
 
 	// public members
+	/**
+	 * Replacement for Constructor.
+	 * Call before you do anything else.
+	 * This might look ugly here but is extremly nice to derived classes as JEditSqlTokenMarker
+	 */
 	public SQLTokenMarker(KeywordMap k)
 	{
 		this(k, false);

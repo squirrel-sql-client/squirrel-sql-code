@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.jedit;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -23,9 +23,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.Action;
-import javax.swing.BorderFactory;
 import javax.swing.JComponent;
-import javax.swing.JScrollPane;
+import javax.swing.JMenu;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.Document;
@@ -34,7 +33,6 @@ import javax.swing.text.PlainDocument;
 import org.gjt.sp.jedit.syntax.JEditTextArea;
 import org.gjt.sp.jedit.syntax.SyntaxDocument;
 
-import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -42,6 +40,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.BaseSQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SessionTextEditPopupMenu;
 
 public class JeditSQLEntryPanel extends BaseSQLEntryPanel
 {
@@ -54,11 +53,8 @@ public class JeditSQLEntryPanel extends BaseSQLEntryPanel
 	/** Text component. */
 	private MyTextArea _textArea;
 
-	/** Scroller wrapped around the text component. */
-	private JScrollPane _scroller;
-
 	/** Popup menu for this component. */
-	private TextPopupMenu _textPopupMenu = new TextPopupMenu();
+	private SessionTextEditPopupMenu _textPopupMenu;
 
 	/** Listener for displaying the popup menu. */
 	private MouseListener _sqlEntryMouseListener = new MyMouseListener();
@@ -86,16 +82,27 @@ public class JeditSQLEntryPanel extends BaseSQLEntryPanel
 		_app = session.getApplication();
 
 		_textArea = new MyTextArea(session.getSQLConnection(), prefs);
-		_scroller = new JScrollPane(_textArea);
-		_scroller.setBorder(BorderFactory.createEmptyBorder());
+		_textPopupMenu = new SessionTextEditPopupMenu(session);
 	}
 
 	/**
-	 * @see ISQLEntryPanel#getJComponent()
+	 * @see ISQLEntryPanel#gettextComponent()
 	 */
-	public JComponent getJComponent()
+	public JComponent getTextComponent()
 	{
-		return _scroller;
+		return _textArea;
+	}
+
+	/**
+	 * If the component returned by <TT>getTextComponent</TT> contains
+	 * its own scroll bars return <TT>true</TT> other wise this component
+	 * will be wrapped in the scroll pane when added to the SQL panel.
+	 * 
+	 * @return	<TT>true</TT> if text component already handles scrolling.
+	 */
+	public boolean getDoesTextComponentHaveScroller()
+	{
+		return false;
 	}
 
 	/**
@@ -252,6 +259,17 @@ public class JeditSQLEntryPanel extends BaseSQLEntryPanel
 	}
 
 	/**
+	 * Replace the currently selected text in the SQL entry area
+	 * with the passed text.
+	 * 
+	 * @param	sqlScript	The script to be placed in the SQL entry area.
+	 */
+	public void replaceSelection(String sqlScript)
+	{
+		_textArea.replaceSelection(sqlScript);
+	}
+
+	/**
 	 * @see ISQLEntryPanel#hasFocus()
 	 */
 	public boolean hasFocus()
@@ -265,6 +283,42 @@ public class JeditSQLEntryPanel extends BaseSQLEntryPanel
 	public void requestFocus()
 	{
 		_textArea.requestFocus();
+	}
+
+	/**
+	 * Add a hierarchical menu to the SQL Entry Area popup menu.
+	 *
+	 * @param	menu	The menu that will be added.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>Menu</TT> passed.
+	 */
+	public void addToSQLEntryAreaMenu(JMenu menu)
+	{
+		if (menu == null)
+		{
+			throw new IllegalArgumentException("Menu == null");
+		}
+
+		_textPopupMenu.add(menu);
+	}
+
+	/**
+	 * Add an <TT>Action</TT> to the SQL Entry Area popup menu.
+	 *
+	 * @param	action	The action to be added.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>Action</TT> passed.
+	 */
+	public void addToSQLEntryAreaMenu(Action action)
+	{
+		if (action == null)
+		{
+			throw new IllegalArgumentException("Action == null");
+		}
+
+		_textPopupMenu.add(action);
 	}
 
 	/**
@@ -320,6 +374,7 @@ public class JeditSQLEntryPanel extends BaseSQLEntryPanel
 		_textPopupMenu.addSeparator();
 		_app.getResources().addToPopupMenu(undo, _textPopupMenu);
 		_app.getResources().addToPopupMenu(redo, _textPopupMenu);
+		_textPopupMenu.addSeparator();
 	}
 
 	/**

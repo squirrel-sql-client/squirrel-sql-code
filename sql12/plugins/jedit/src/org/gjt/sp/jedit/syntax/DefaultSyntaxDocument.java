@@ -31,7 +31,7 @@ import javax.swing.text.Segment;
 * care of inserting and deleting lines from the token marker's state.
 *
 * @author Slava Pestov
-* @version $Id: DefaultSyntaxDocument.java,v 1.4 2003-03-05 10:27:54 colbell Exp $
+* @version $Id: DefaultSyntaxDocument.java,v 1.5 2003-06-10 11:25:04 colbell Exp $
 *
 * @see org.gjt.sp.jedit.syntax.SyntaxDocument
 */
@@ -212,6 +212,9 @@ public class DefaultSyntaxDocument extends PlainDocument
 /*
 * ChangeLog:
 * $Log: not supported by cvs2svn $
+* Revision 1.4  2003/03/05 10:27:54  colbell
+* Cleanup
+*
 * Revision 1.2  2002/12/21 00:34:18  colbell
 * Add syntax styles
 *
