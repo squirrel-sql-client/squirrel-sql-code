@@ -14,6 +14,9 @@ Enhancements
   in status bar.
 - Added a statusbar to the Help Viewer.
 - New session property "Abort On Error".
+- Data in the Popup (from double-clicking a cell in ContentsTab) is now editable.
+- Data in individual cells may be imported, exported, or operated on by an
+  external program from the Popup window (double-click on cell in ContentsTab).
 
 
 Bug Fixes
