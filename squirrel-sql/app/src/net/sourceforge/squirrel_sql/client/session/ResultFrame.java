@@ -18,28 +18,27 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.awt.Container;
+import java.awt.BorderLayout;
 
-public class ResultFrame extends javax.swing.JInternalFrame
-{
+import javax.swing.JInternalFrame;
+
+public class ResultFrame extends JInternalFrame {
+	private ISession _session;
     private ResultTab _tab;
 
-    /**
-     * JInternalResultFrame constructor comment.
-     */
-    public ResultFrame(ResultTab tab)
-    {
+    public ResultFrame(ISession session, ResultTab tab) {
         super(tab.getSqlString(),true,true,true,true);
+        _session = session;
         _tab = tab;
         Container cont = getContentPane();
-        cont.setLayout(new java.awt.BorderLayout());
-        cont.add(tab.getOutputComponent(), java.awt.BorderLayout.CENTER);
+        cont.setLayout(new BorderLayout());
+        cont.add(tab.getOutputComponent(), BorderLayout.CENTER);
     }
 
     /**
      * Close this window.
      */
-    public void dispose()
-    {
+    public void dispose() {
         _tab.closeTab();
         super.dispose();
     }
