@@ -209,14 +209,17 @@ class ObjectTree extends JTree
 	{
 		final TreePath[] selectedPaths = getSelectionPaths();
 		final Map selectedPathNames = new HashMap();
-		for (int i = 0; i < selectedPaths.length; ++i)
+		if (selectedPaths != null)
 		{
-			selectedPathNames.put(selectedPaths[i].toString(), null);
+			for (int i = 0; i < selectedPaths.length; ++i)
+			{
+				selectedPathNames.put(selectedPaths[i].toString(), null);
+			}
+	
+			ObjectTreeNode root = _model.getRootObjectTreeNode();
+			root.removeAllChildren();
+			startExpandingTree(root, false, selectedPathNames);
 		}
-
-		ObjectTreeNode root = _model.getRootObjectTreeNode();
-		root.removeAllChildren();
-		startExpandingTree(root, false, selectedPathNames);
 	}
 
 	/**
