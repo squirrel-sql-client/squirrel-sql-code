@@ -119,7 +119,8 @@ public class SQLDriverManager
 			//			if (propName != null && propName.equals(ISQLDriver.IPropertyNames.DRIVER_CLASS)) {
 			if (propName == null
 				|| propName.equals(ISQLDriver.IPropertyNames.DRIVER_CLASS)
-				|| propName.equals(ISQLDriver.IPropertyNames.JARFILE_NAME))
+//				|| propName.equals(ISQLDriver.IPropertyNames.JARFILE_NAME))
+				|| propName.equals(ISQLDriver.IPropertyNames.JARFILE_NAMES))
 			{ // ||
 				//propName.equals(ISQLDriver.IPropertyNames.USES_CLASSPATH)) {
 				Object obj = evt.getSource();

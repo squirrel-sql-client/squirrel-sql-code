@@ -260,16 +260,25 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable {
 
 	public synchronized void setJarFileNames(String[] values)
 	{
+		String[] oldValue =
+			(String[]) _jarFileNamesList.toArray(new String[_jarFileNamesList.size()]);
 		_jarFileNamesList.clear();
-		if (values != null)
-		{
-			for (int i = 0; i < values.length; ++i)
-			{
-				_jarFileNamesList.add(values[i]);
-			}
-		}
-	}
 
+		if (values == null)
+		{
+			values = new String[0];
+		}
+
+		for (int i = 0; i < values.length; ++i)
+		{
+			_jarFileNamesList.add(values[i]);
+		}
+
+		_propChgReporter.firePropertyChange(
+			ISQLDriver.IPropertyNames.JARFILE_NAMES,
+			oldValue,
+			values);
+	}
 	public String getUrl() {
 		return _url;
 	}
