@@ -29,7 +29,8 @@ import javax.swing.JInternalFrame;
 public class ScrollableDesktopPane extends JDesktopPane {
 // make serializable safe ??
 	private MyComponentListener _listener = new MyComponentListener();
-	/**
+
+	/**
 	 * Default ctor.
 	 */
 	public ScrollableDesktopPane() {
@@ -64,7 +65,7 @@ public class ScrollableDesktopPane extends JDesktopPane {
 	 *
 	 * @return  <TT>Dimension</TT> required size.
 	 */
-	protected Dimension getRequiredSize() {
+	public Dimension getRequiredSize() {
 		JInternalFrame [] frames = getAllFrames();
 		int maxX = 0;
 		int maxY = 0;
