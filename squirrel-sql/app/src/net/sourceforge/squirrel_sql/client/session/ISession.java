@@ -33,12 +33,22 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
+import net.sourceforge.squirrel_sql.client.session.objectstree.TableNode;
+import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.ITablePanelTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
 /**
  * The current session.
  */
 public interface ISession extends IHasIdentifier {
+    /**
+     * Keys to objects stored in session.
+     */
+    public interface ISessionKeys {
+        String TABLE_DETAIL_PANEL_KEY = TableNode.class.getName() + "_DETAIL_PANEL_KEY";
+    }
+
+
     /**
      * IDs of tabs in the main tabbed pane.
      */
@@ -47,8 +57,8 @@ public interface ISession extends IHasIdentifier {
 
     /**
      * Close the current connection to the database.
-     * 
-     * @throws	SQLException	if an SQL error occurs.
+     *
+     * @throws    SQLException  if an SQL error occurs.
      */
     void closeSQLConnection() throws SQLException;
 
@@ -99,8 +109,8 @@ public interface ISession extends IHasIdentifier {
     /**
      * Return an array of <TT>IDatabaseObjectInfo</TT> objects representing all
      * the objects selected in the objects tree.
-     * 
-     * @return	array of <TT>IDatabaseObjectInfo</TT> objects.
+     *
+     * @return    array of <TT>IDatabaseObjectInfo</TT> objects.
      */
     IDatabaseObjectInfo[] getSelectedDatabaseObjects();
 
@@ -131,11 +141,11 @@ public interface ISession extends IHasIdentifier {
 
     /**
      * Select a tab in the main tabbed pane.
-     * 
-     * @param	tabIndex	The tab to select. @see #IMainTabIndexes
-     * 
-     * @throws	IllegalArgumentException
-     * 			Thrown if an invalid <TT>tabIndex</TT> passed.
+     *
+     * @param    tabIndex   The tab to select. @see #IMainTabIndexes
+     *
+     * @throws    IllegalArgumentException
+     *          Thrown if an invalid <TT>tabIndex</TT> passed.
      */
     void selectMainTab(int tabIndex) throws IllegalArgumentException;
 
@@ -153,18 +163,31 @@ public interface ISession extends IHasIdentifier {
      * Rollback the current SQL transaction.
      */
     void rollback();
-    
+
     /**
      * Add a tab to the main tabbed panel.
-     * 
-     * title	The title to display in the tab.
-     * icon		The icon to display in the tab. If <TT>null</TT> then no icon displayed.
-     * comp		The component to be shown when the tab is active.
-     * tip		The tooltip to be displayed for the tab. Can be <TT>null</TT>.
-     * 
-     * @throws	IllegalArgumentException
-     * 			If <TT>title</TT> or <TT>comp</TT> is <TT>null</TT>.
+     *
+     * title    The title to display in the tab.
+     * icon     The icon to display in the tab. If <TT>null</TT> then no icon displayed.
+     * comp     The component to be shown when the tab is active.
+     * tip      The tooltip to be displayed for the tab. Can be <TT>null</TT>.
+     *
+     * @throws  IllegalArgumentException
+     *          If <TT>title</TT> or <TT>comp</TT> is <TT>null</TT>.
      */
-	void addMainTab(String title, Icon icon, Component comp, String tip)
-			throws IllegalArgumentException;
+    void addMainTab(String title, Icon icon, Component comp, String tip)
+            throws IllegalArgumentException;
+
+    /**
+     * Add a tab to the panel shown when a table selected in the
+     * object tree. If a tab with this title already exists it is
+     * removed from the tabbed pane and the passed tab inserted in its
+     * place. New tabs are inserted at the end.
+     *
+     * @param   tab     The tab to be added.
+     *
+     * @throws  IllegalArgumentException
+     *          Thrown if a <TT>null</TT> <TT>ITablePanelTab</TT> passed.
+     */
+    void addTablePanelTab(ITablePanelTab tab) throws IllegalArgumentException;
 }

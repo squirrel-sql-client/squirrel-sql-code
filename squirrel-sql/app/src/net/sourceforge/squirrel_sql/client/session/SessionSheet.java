@@ -59,6 +59,7 @@ import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
+import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
@@ -67,6 +68,7 @@ import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
 import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.client.session.objectstree.TablePanel;
 
 public class SessionSheet extends JInternalFrame {
     /**
@@ -78,7 +80,7 @@ public class SessionSheet extends JInternalFrame {
         String SQL_TAB_DESC = "Execute SQL statements";
         String OBJ_TAB_TITLE = "Objects";
         String OBJ_TAB_DESC = "Show database objects";
-	    String IMPORT_TAB_TITLE = "Import Data";
+        String IMPORT_TAB_TITLE = "Import Data";
         String IMPORT_TAB_DESC = "Import csv files into database";
     }
 
@@ -129,7 +131,7 @@ public class SessionSheet extends JInternalFrame {
         public void commit() {
             _sqlPnl.commit();
         }
-    
+
         public void rollback() {
             _sqlPnl.rollback();
         }
@@ -163,6 +165,11 @@ public class SessionSheet extends JInternalFrame {
         return _objectsPnl;
     }
 
+    TablePanel getTablePanel() {
+        final IPlugin plugin = _session.getApplication().getDummyAppPlugin();
+        return (TablePanel)_session.getPluginObject(plugin, ISession.ISessionKeys.TABLE_DETAIL_PANEL_KEY);
+    }
+
     void closeConnection() {
         try {
             _session.closeSQLConnection();
@@ -183,11 +190,11 @@ public class SessionSheet extends JInternalFrame {
 
     /**
      * Select a tab in the main tabbed pane.
-     * 
-     * @param	tabIndex	The tab to select. @see #IMainTabIndexes
-     * 
-     * @throws	IllegalArgumentException
-     * 			Thrown if an invalid <TT>tabIndex</TT> passed.
+     *
+     * @param    tabIndex   The tab to select. @see #IMainTabIndexes
+     *
+     * @throws  llegalArgumentException
+     *          Thrown if an invalid <TT>tabIndex</TT> passed.
      */
     public void selectMainTab(int tabIndex) throws IllegalArgumentException {
         if (tabIndex >= _tabPane.getTabCount()) {
@@ -202,25 +209,25 @@ public class SessionSheet extends JInternalFrame {
 
     /**
      * Add a tab to the main tabbed panel.
-     * 
-     * title	The title to display in the tab.
-     * icon		The icon to display in the tab. If <TT>null</TT> then no icon displayed.
-     * comp		The component to be shown when the tab is active.
-     * tip		The tooltip to be displayed for the tab. Can be <TT>null</TT>.
      *
-     * @throws	IllegalArgumentException
-     * 			If <TT>title</TT> or <TT>comp</TT> is <TT>null</TT>.
+     * title    The title to display in the tab.
+     * icon     The icon to display in the tab. If <TT>null</TT> then no icon displayed.
+     * comp     The component to be shown when the tab is active.
+     * tip      The tooltip to be displayed for the tab. Can be <TT>null</TT>.
+     *
+     * @throws  IllegalArgumentException
+     *          If <TT>title</TT> or <TT>comp</TT> is <TT>null</TT>.
      */
-	public void addMainTab(String title, Icon icon, Component comp, String tip)
-			throws IllegalArgumentException {
-		if (title == null) {
-			throw new IllegalArgumentException("Null title passed");
-		}
-		if (comp == null) {
-			throw new IllegalArgumentException("Null Component passed");
-		}
-		_tabPane.addTab(title, icon, comp, tip);
-	}
+    public void addMainTab(String title, Icon icon, Component comp, String tip)
+            throws IllegalArgumentException {
+        if (title == null) {
+            throw new IllegalArgumentException("Null title passed");
+        }
+        if (comp == null) {
+            throw new IllegalArgumentException("Null Component passed");
+        }
+        _tabPane.addTab(title, icon, comp, tip);
+    }
 
     String getSQLScript() {
         return _sqlPnl.getSQLScript();

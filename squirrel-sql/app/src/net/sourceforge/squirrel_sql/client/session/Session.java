@@ -39,6 +39,8 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
+import net.sourceforge.squirrel_sql.client.session.objectstree.TablePanel;
+import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.ITablePanelTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 
@@ -107,6 +109,9 @@ class Session implements ISession {
         _conn = conn;
 
         _props.assignFrom(_app.getSquirrelPreferences().getSessionProperties());
+
+        final IPlugin plugin = getApplication().getDummyAppPlugin();
+        putPluginObject(plugin, ISessionKeys.TABLE_DETAIL_PANEL_KEY, new TablePanel(this));
     }
 
     public IIdentifier getIdentifier() {
@@ -145,8 +150,8 @@ class Session implements ISession {
     /**
      * Return an array of <TT>IDatabaseObjectInfo</TT> objects representing all
      * the objects selected in the objects tree.
-     * 
-     * @return	array of <TT>IDatabaseObjectInfo</TT> objects.
+     *
+     * @return    array of <TT>IDatabaseObjectInfo</TT> objects.
      */
     public IDatabaseObjectInfo[] getSelectedDatabaseObjects() {
         return _sessionSheet.getObjectPanel().getSelectedDatabaseObjects();
@@ -221,6 +226,7 @@ class Session implements ISession {
 
     public void setSessionSheet(SessionSheet child) {
         _sessionSheet = child;
+
     }
 
     public SessionSheet getSessionSheet() {
@@ -229,11 +235,11 @@ class Session implements ISession {
 
     /**
      * Select a tab in the main tabbed pane.
-     * 
-     * @param	tabIndex	The tab to select. @see ISession.IMainTabIndexes
-     * 
-     * @throws	IllegalArgumentException
-     * 			Thrown if an invalid <TT>tabId</TT> passed.
+     *
+     * @param    tabIndex   The tab to select. @see ISession.IMainTabIndexes
+     *
+     * @throws    IllegalArgumentException
+     *          Thrown if an invalid <TT>tabId</TT> passed.
      */
     public void selectMainTab(int tabIndex) throws IllegalArgumentException {
         _sessionSheet.selectMainTab(tabIndex);
@@ -303,18 +309,36 @@ class Session implements ISession {
 
     /**
      * Add a tab to the main tabbed panel.
-     * 
-     * title	The title to display in the tab.
-     * icon		The icon to display in the tab. If <TT>null</TT> then no icon displayed.
-     * comp		The component to be shown when the tab is active.
-     * tip		The tooltip to be displayed for the tab. Can be <TT>null</TT>.
-     * 
-     * @throws	IllegalArgumentException
-     * 			If <TT>title</TT> or <TT>comp</TT> is <TT>null</TT>.
+     *
+     * title    The title to display in the tab.
+     * icon     The icon to display in the tab. If <TT>null</TT> then no icon displayed.
+     * comp     The component to be shown when the tab is active.
+     * tip      The tooltip to be displayed for the tab. Can be <TT>null</TT>.
+     *
+     * @throws    IllegalArgumentException
+     *          If <TT>title</TT> or <TT>comp</TT> is <TT>null</TT>.
      */
-	public void addMainTab(String title, Icon icon, Component comp, String tip)
-			throws IllegalArgumentException {
-		_sessionSheet.addMainTab(title, icon, comp, tip);
-	}
+    public void addMainTab(String title, Icon icon, Component comp, String tip)
+            throws IllegalArgumentException {
+        _sessionSheet.addMainTab(title, icon, comp, tip);
+    }
+
+    /**
+     * Add a tab to the panel shown when a table selected in the
+     * object tree. If a tab with this title already exists it is
+     * removed from the tabbed pane and the passed tab inserted in its
+     * place. New tabs are inserted at the end.
+     *
+     * @param   tab     The tab to be added.
+     *
+     * @throws  IllegalArgumentException
+     *          Thrown if a <TT>null</TT> <TT>ITablePanelTab</TT> passed.
+     */
+    public void addTablePanelTab(ITablePanelTab tab) throws IllegalArgumentException {
+        if (tab == null) {
+            throw new IllegalArgumentException("Null ITablePanelTab passed");
+        }
+        _sessionSheet.getTablePanel().addTablePanelTab(tab);
+    }
 }
 
