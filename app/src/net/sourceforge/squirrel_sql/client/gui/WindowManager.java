@@ -26,20 +26,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.Action;
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
-
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.session.BaseSessionSheet;
@@ -96,6 +93,8 @@ public class WindowManager
 	private final Map _sessionWindows = new HashMap();
 
 	private final SessionWindowListener _windowListener = new SessionWindowListener();
+
+	private int _lastSessionIdx = 1;
 
 	// JASON: Mow that multiple object trees exist storing the edit
 	// where by objectInfo within session won't work. It needs to be objectinfo
@@ -181,12 +180,20 @@ public class WindowManager
 	 */
 	public synchronized void registerSessionSheet(BaseSessionSheet sheet)
 	{
+		s_log.debug("Registering " + sheet.getClass().getName() + " in WindowManager");
+//		sheet.setTitle(createTitleForChild(sheet));
 		final IIdentifier sessionIdentifier = sheet.getSession().getIdentifier();
 		List windowList = (List)_sessionWindows.get(sessionIdentifier);
 		if (windowList == null)
 		{
 			windowList = new ArrayList();
 			_sessionWindows.put(sessionIdentifier, windowList);
+		}
+
+		final int idx = windowList.size();
+		if ( idx > 0)
+		{
+			sheet.setTitle(sheet.getTitle() + " (" + idx + ")");
 		}
 		windowList.add(sheet);
 		sheet.addInternalFrameListener(_windowListener);
@@ -628,6 +635,27 @@ public class WindowManager
 //		return map;
 //	}
 
+//	private String createTitleForChild(BaseSessionSheet child)
+//	{
+//		// TODO: Remove instanceof
+//		if (child instanceof SessionInternalFrame)
+//		{
+//			return child.getTitle();// + " (" + _lastSessionIdx++ + ")";
+//		}
+//
+//		if (child instanceof SQLInternalFrame)
+//		{
+//			return child.getTitle();// + " (" + _lastSessionIdx++ + ")";
+//		}
+//
+//		if (child instanceof ObjectTreeInternalFrame)
+//		{
+//			return child.getTitle();// + " (" + _lastSessionIdx++ + ")";
+//		}
+//
+//		return "???????????????";// TODO:
+//	}
+
 	private void positionSheet(JInternalFrame jif)
 	{
 		GUIUtils.centerWithinDesktop(jif);
@@ -834,4 +862,5 @@ public class WindowManager
 			_sessionWindows.remove(sessionId);
 		}
 	}
+
 }

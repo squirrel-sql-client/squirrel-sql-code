@@ -31,10 +31,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-
 import javax.swing.Action;
 import javax.swing.JComponent;
-
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
@@ -47,7 +45,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.mainframe.action.OpenConnectionCommand;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
@@ -56,7 +53,6 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTr
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 /**
  * Think of a session as being the users view of the database. IE it includes
  * the database connection and the UI.
@@ -73,21 +69,16 @@ class Session implements ISession
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(Session.class);
 
+	/** Factory used to generate unique IDs for sessions.
 	/** Descriptive title for session. */
 	private String _title = "";
-
-	/**
-	 * The session index is used to uniquely identify sessions that
-	 * are for the same alias.
-	 */
-	private int _sessionIndex = 1;
 
 	private SessionSheet _sessionSheet;
 
 	private boolean _sessionCreated = false;
 
 	/** The <TT>IIdentifier</TT> that uniquely identifies this object. */
-	private IIdentifier _id = IdentifierFactory.getInstance().createIdentifier();
+	private final IIdentifier _id;
 
 	/** Application API. */
 	private IApplication _app;
@@ -140,13 +131,13 @@ class Session implements ISession
 	 * @param	conn		Connection to database.
 	 * @param	user		User name connected with.
 	 * @param	password	Password for <TT>user</TT>
-	 * @param	index		Used to uniquely identify sessions for the
-	 *						same alias.
+	 * @param	sessionId	ID that uniquely identifies this session.
 	 *
 	 * @throws IllegalArgumentException if any parameter is null.
 	 */
 	public Session(IApplication app, ISQLDriver driver, ISQLAlias alias,
-					SQLConnection conn, String user, String password, int index)
+					SQLConnection conn, String user, String password,
+					IIdentifier sessionId)
 	{
 		super();
 		if (app == null)
@@ -165,6 +156,10 @@ class Session implements ISession
 		{
 			throw new IllegalArgumentException("null SQLConnection passed");
 		}
+		if (sessionId == null)
+		{
+			throw new IllegalArgumentException("sessionId == null");
+		}
 
 		_app = app;
 		_driver = driver;
@@ -172,7 +167,7 @@ class Session implements ISession
 		_conn = conn;
 		_user = user;
 		_password = password;
-		_sessionIndex = index;
+		_id = sessionId;
 
 		setupTitle();
 
@@ -709,12 +704,7 @@ class Session implements ISession
 			title = s_stringMgr.getString("Session.title0", args);
 		}
 
-		if (_sessionIndex > 1)
-		{
-			title += " (" + _sessionIndex + ")";
-		}
-
-		_title = title;
+		_title = _id + " - " + title;
 
 		if (_sessionCreated)
 		{
