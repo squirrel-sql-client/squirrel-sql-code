@@ -16,14 +16,6 @@ package net.sourceforge.squirrel_sql.plugins.editextras;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.util.Hashtable;
-
-import javax.swing.Action;
-import javax.swing.JMenu;
-
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
@@ -34,12 +26,12 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
 import net.sourceforge.squirrel_sql.client.session.event.SQLPanelAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.editextras.searchandreplace.*;
 
-import net.sourceforge.squirrel_sql.plugins.editextras.searchandreplace.FindAction;
-import net.sourceforge.squirrel_sql.plugins.editextras.searchandreplace.FindSelectedAction;
-import net.sourceforge.squirrel_sql.plugins.editextras.searchandreplace.RepeatLastFindAction;
-import net.sourceforge.squirrel_sql.plugins.editextras.searchandreplace.ReplaceAction;
-import net.sourceforge.squirrel_sql.plugins.editextras.searchandreplace.SearchAndReplaceKernel;
+import javax.swing.*;
+import java.util.Hashtable;
 /**
  * The plugin class.
  *
@@ -170,6 +162,12 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 	{
 		if (super.sessionStarted(session))
 		{
+
+         ActionCollection coll = getApplication().getActionCollection();
+
+         session.addToToolbar(coll.get(FindAction.class));
+         session.addToToolbar(coll.get(ReplaceAction.class));
+
 			//session.getSQLPanelAPI(this).addSQLPanelListener(_lis);
 			FrameWorkAcessor.getSQLPanelAPI(session, this).addSQLPanelListener(_lis);
 
