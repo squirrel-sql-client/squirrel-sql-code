@@ -59,6 +59,9 @@ public class GeneralSessionPropertiesPanel
 		String TABLE = "Table";
 		String EDITABLE_TABLE = "Editable Table";
 		String TEXT = "Text";
+		
+		String DATA_TYPE1 = "Properties for the individual Data Types may be set in the";
+		String DATA_TYPE2 = "'General Preferences' window under the 'Data Type Controls' tab.";
 	}
 
 	private SessionProperties _props;
@@ -237,6 +240,13 @@ public class GeneralSessionPropertiesPanel
 
 			++gbc.gridy;
 			add(createOutputPanel(), gbc);
+
+++gbc.gridy;
+add(new JLabel(""), gbc);
+++gbc.gridy;
+add(new JLabel(GeneralSessionPropertiesPanelI18n.DATA_TYPE1), gbc);
+++gbc.gridy;
+add(new JLabel(GeneralSessionPropertiesPanelI18n.DATA_TYPE2), gbc);
 		}
 
 		private JPanel createAppearancePanel()
