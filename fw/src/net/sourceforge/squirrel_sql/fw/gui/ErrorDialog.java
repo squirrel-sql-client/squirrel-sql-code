@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -27,8 +27,10 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -46,9 +48,9 @@ public class ErrorDialog extends JDialog
 	{
 		String ERROR = "Error";
 		String CLOSE = "Close";
-		String UNKNOWN_ERROR = "Unknown error";
 		String MORE = "More";
-		String LESS = "Less";
+		String STACK_TRACE = "Stack Trace";
+		String UNKNOWN_ERROR = "Unknown error";
 	}
 
 	/** Preferred width of the message area. TODO: remove magic number*/
@@ -57,17 +59,26 @@ public class ErrorDialog extends JDialog
 	/** Close button. */
 	private JButton _closeBtn;
 
-	/** Handler for Close button. */
-	private ActionListener _closeHandler = new CloseButtonHandler();
+	/** Display stack trace button. */
+	private JButton _stackTraceBtn;
 
-	/** More button. */
+	/** Display more errors. */
 	private JButton _moreBtn;
-
-	/** Handler for More button. */
-	private ActionListener _moreHandler = null;
 
 	/** Panel to display the stack trace in. */
 	private JScrollPane _stackTraceScroller;
+
+	/** Panel to display more errors in. */
+	private JScrollPane _moreErrorsScroller;
+
+	/** Handler for Stack Trace button. */
+	private ActionListener _stackTraceHandler = new StackTraceButtonHandler();
+
+	/** Handler for Close button. */
+	private ActionListener _closeHandler = new CloseButtonHandler();
+
+	/** Handler for More button. */
+	private ActionListener _moreHandler = new MoreButtonHandler();
 
 	public ErrorDialog(Throwable th)
 	{
@@ -113,6 +124,10 @@ public class ErrorDialog extends JDialog
 		{
 			_closeBtn.removeActionListener(_closeHandler);
 		}
+		if (_stackTraceBtn != null && _stackTraceHandler != null)
+		{
+			_stackTraceBtn.removeActionListener(_stackTraceHandler);
+		}
 		if (_moreBtn != null && _moreHandler != null)
 		{
 			_moreBtn.removeActionListener(_moreHandler);
@@ -121,7 +136,7 @@ public class ErrorDialog extends JDialog
 	}
 
 	/**
-	 * Create user intnerface.
+	 * Create user interface.
 	 * 
 	 * @param	msg		Message to be displayed. Can be null.
 	 * @param	th		Exception to be shown. Can be null.
@@ -144,22 +159,11 @@ public class ErrorDialog extends JDialog
 			msg = ErrorDialog_i18n.UNKNOWN_ERROR;
 		}
 
-		// Message panel.
-		MessagePanel msgPnl = new MessagePanel(msg);
-
 		_stackTraceScroller = new JScrollPane(new StackTracePanel(th));
 		_stackTraceScroller.setVisible(false);
 
-		JPanel btnsPnl = new JPanel();
-		if (th != null)
-		{
-			_moreBtn = new JButton(ErrorDialog_i18n.MORE);
-			btnsPnl.add(_moreBtn);
-			_moreBtn.addActionListener(new MoreButtonHandler());
-		}
-		_closeBtn = new JButton(ErrorDialog_i18n.CLOSE);
-		_closeBtn.addActionListener(new CloseButtonHandler());
-		btnsPnl.add(_closeBtn);
+		_moreErrorsScroller = new JScrollPane(new MoreErrorsPanel(th));
+		_moreErrorsScroller.setVisible(false);
 
 		Container content = getContentPane();
 		content.setLayout(new GridBagLayout());
@@ -168,24 +172,78 @@ public class ErrorDialog extends JDialog
 		gbc.insets = new Insets(4, 4, 4, 4);
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		gbc.weightx = 1;
-		content.add(new JScrollPane(msgPnl), gbc);
+		content.add(createMessagePanel(msg, th), gbc);
 		++gbc.gridy;
-		content.add(btnsPnl, gbc);
+		content.add(createButtonsPanel(th), gbc);
 		++gbc.gridy;
 		content.add(_stackTraceScroller, gbc);
+		++gbc.gridy;
+		content.add(_moreErrorsScroller, gbc);
 
 		getRootPane().setDefaultButton(_closeBtn);
 		setResizable(false);
 
-		//SwingUtilities.invokeLater(new Runnable()
-		//{
-		//	public void run()
-		//	{
-				pack();
-				GUIUtils.centerWithinParent(ErrorDialog.this);
-		//	}
-		//});
+		pack();
+		GUIUtils.centerWithinParent(ErrorDialog.this);
+	}
+
+	/**
+	 * Create the message panel.
+	 * 
+	 * @param	msg		The message to be displayed.
+	 * @param	th		The exception to be displayed.
+	 * 
+	 * @return	The newly created message panel.
+	 */
+	private JComponent createMessagePanel(String msg, Throwable th)
+	{
+		if (msg == null || msg.length() == 0)
+		{
+			if (th != null)
+			{
+				msg = th.getMessage();
+				if (msg == null || msg.length() == 0)
+				{
+					msg = th.toString();
+				}
+			}
+		}
+		if (msg == null || msg.length() == 0)
+		{
+			msg = ErrorDialog_i18n.UNKNOWN_ERROR;
+		}
+		JScrollPane sp = new JScrollPane(new MessagePanel(msg));
+		Dimension dim = sp.getPreferredSize();
+		dim.width = PREFERRED_WIDTH;
+		sp.setPreferredSize(dim);
+
+		return sp;
+	}
+
+	/**
+	 * Create the buttons panel.
+	 * 
+	 * @param	th		The exception.
+	 * 
+	 * @return	The newly created buttons panel.
+	 */
+	private JPanel createButtonsPanel(Throwable th)
+	{
+		JPanel btnsPnl = new JPanel();
+		if (th != null)
+		{
+			_stackTraceBtn = new JButton(ErrorDialog_i18n.STACK_TRACE);
+			_stackTraceBtn.addActionListener(_stackTraceHandler);
+			btnsPnl.add(_stackTraceBtn);
+			_moreBtn = new JButton(ErrorDialog_i18n.MORE);
+			_moreBtn.addActionListener(_moreHandler);
+			btnsPnl.add(_moreBtn);
+		}
+		_closeBtn = new JButton(ErrorDialog_i18n.CLOSE);
+		_closeBtn.addActionListener(_closeHandler);
+		btnsPnl.add(_closeBtn);
+
+		return btnsPnl;
 	}
 
 	private static Color getTextAreaBackgroundColor()
@@ -203,10 +261,10 @@ public class ErrorDialog extends JDialog
 			super();
 			setText(msg);
 			setBackground(ErrorDialog.this.getTextAreaBackgroundColor());
+//			Dimension dim = getPreferredSize();
+//			dim.width = PREFERRED_WIDTH;
+//			setPreferredSize(dim);
 			setRows(3);
-			Dimension dim = getPreferredSize();
-			dim.width = PREFERRED_WIDTH;
-			setPreferredSize(dim);
 		}
 	}
 
@@ -227,6 +285,31 @@ public class ErrorDialog extends JDialog
 		}
 	}
 
+	private final class MoreErrorsPanel extends MultipleLineLabel
+	{
+		MoreErrorsPanel(Throwable th)
+		{
+			super();
+			StringBuffer buf = new StringBuffer();
+			setBackground(ErrorDialog.this.getTextAreaBackgroundColor());
+			if (th instanceof SQLException)
+			{
+				SQLException ex = (SQLException)th;
+				while (ex != null)
+				{
+					String msg = ex.getMessage();
+					if (msg != null && msg.length() > 0)
+					{
+						buf.append(msg).append('\n');
+					}
+					ex = ex.getNextException();
+				}
+			}
+			setText(buf.toString());
+			setRows(10);
+		}
+	}
+
 	/**
 	 * Handler for Close button. Disposes of this dialog.
 	 */
@@ -243,20 +326,41 @@ public class ErrorDialog extends JDialog
 	}
 
 	/**
-	 * Handler for More button. Shows/hides the stack trace.
+	 * Handler for Stack Trace button. Shows/hides the stack trace.
 	 */
-	private final class MoreButtonHandler implements ActionListener
+	private final class StackTraceButtonHandler implements ActionListener
 	{
 		/**
 		 * Show/hide the stack trace.
 		 */
 		public void actionPerformed(ActionEvent evt)
 		{
-			_stackTraceScroller.setVisible(!_stackTraceScroller.isVisible());
-			_moreBtn.setText(
-				_stackTraceScroller.isVisible()
-					? ErrorDialog_i18n.LESS
-					: ErrorDialog_i18n.MORE);
+			boolean currentlyVisible = _stackTraceScroller.isVisible();
+			if (!currentlyVisible)
+			{
+				_moreErrorsScroller.setVisible(false);
+			}
+			_stackTraceScroller.setVisible(!currentlyVisible);
+			ErrorDialog.this.pack();
+		}
+	}
+
+	/**
+	 * Handler for More button. Shows/hides more information about the error..
+	 */
+	private final class MoreButtonHandler implements ActionListener
+	{
+		/**
+		 * Show/hide the extra errors.
+		 */
+		public void actionPerformed(ActionEvent evt)
+		{
+			boolean currentlyVisible = _moreErrorsScroller.isVisible();
+			if (!currentlyVisible)
+			{
+				_stackTraceScroller.setVisible(false);
+			}
+			_moreErrorsScroller.setVisible(!currentlyVisible);
 			ErrorDialog.this.pack();
 		}
 	}

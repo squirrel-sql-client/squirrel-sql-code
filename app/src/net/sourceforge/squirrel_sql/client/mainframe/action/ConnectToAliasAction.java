@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -22,17 +22,17 @@ import java.beans.PropertyVetoException;
 
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.mainframe.AliasesList;
 import net.sourceforge.squirrel_sql.client.mainframe.AliasesToolWindow;
-
 /**
  * This <CODE>Action</CODE> allows the user to connect to an alias.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ConnectToAliasAction extends SquirrelAction {
+public class ConnectToAliasAction extends SquirrelAction
+{
 	/**
 	 * List of all the users aliases.
 	 */
@@ -44,7 +44,8 @@ public class ConnectToAliasAction extends SquirrelAction {
 	 * @param	app		Application API.
 	 * @param	list	List of <TT>ISQLAlias</TT> objects.
 	 */
-	public ConnectToAliasAction(IApplication app, AliasesList list) {
+	public ConnectToAliasAction(IApplication app, AliasesList list)
+	{
 		super(app);
 		_aliases = list;
 	}
@@ -53,18 +54,23 @@ public class ConnectToAliasAction extends SquirrelAction {
 	 * Perform this action. Retrieve the current alias from this list and
 	 * connect to it.
 	 *
-	 * @param	evt	The current event.
+	 * @param	evt		The current event.
 	 */
-	public void actionPerformed(ActionEvent evt) {
+	public void actionPerformed(ActionEvent evt)
+	{
 		IApplication app = getApplication();
 		AliasesToolWindow tw = app.getMainFrame().getAliasesToolWindow();
 		tw.moveToFront();
-		try {
+		try
+		{
 			tw.setSelected(true);
-		} catch (PropertyVetoException ignore) {
+		}
+		catch (PropertyVetoException ignore)
+		{
 		}
 		final ISQLAlias alias = _aliases.getSelectedAlias();
-		if (alias != null) {
+		if (alias != null)
+		{
 			new ConnectToAliasCommand(app, getParentFrame(evt), alias).execute();
 		}
 	}

@@ -18,11 +18,14 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.sql.SQLException;
+
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
+import net.sourceforge.squirrel_sql.fw.sql.WrappedSQLException;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -89,20 +92,20 @@ public class OpenConnectionCommand implements ICommand
 		_conn = null;
 		final IIdentifier driverID = _sqlAlias.getDriverIdentifier();
 		final ISQLDriver sqlDriver = _app.getDataCache().getDriver(driverID);
-
-//		final Thread curThread = Thread.currentThread();
 		final SQLDriverManager mgr = _app.getSQLDriverManager();
-
 		try
 		{
 			_conn = mgr.getConnection(sqlDriver, _sqlAlias, _userName, _password);
+		}
+		catch (SQLException ex)
+		{
+			throw new WrappedSQLException(ex);
 		}
 		catch (Throwable th)
 		{
 			throw new BaseException(th);
 		}
 	}
-
 
 	/**
 	 * Retrieve the newly opened connection.

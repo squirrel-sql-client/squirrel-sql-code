@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.WrappedSQLException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -181,9 +182,19 @@ public class ConnectToAliasCommand implements ICommand
 		 */
 		public void errorOccured(Throwable th)
 		{
+			if (th instanceof WrappedSQLException)
+			{
+				th = ((WrappedSQLException)th).getSQLExeption();
+			}
+
 			if (th instanceof SQLException)
 			{
-				String msg = _sqlAlias.getName() + ": Unable to open SQL Connection";
+				String msg = th.getMessage();
+				if (msg == null || msg.length() == 0)
+				{
+					msg = "Unable to open SQL Connection";
+				}
+				msg = _sqlAlias.getName() + ": " + msg;
 				showErrorDialog(msg, th);
 			}
 			else if (th instanceof ClassNotFoundException)
@@ -200,6 +211,7 @@ public class ConnectToAliasCommand implements ICommand
 			else
 			{
 				String msg = _sqlAlias.getName() + ": Unexpected Error occured attempting to open an SQL connection.";
+				s_log.debug(th.getClass().getName());
 				s_log.error(msg, th);
 				showErrorDialog(msg, th);
 			}

@@ -20,9 +20,11 @@ package net.sourceforge.squirrel_sql.client.mainframe;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
@@ -108,11 +110,6 @@ public class DriversToolWindow extends BaseToolWindow
 			_driversList = new DriversList(app);
 
 			preloadActions(app);
-
-//			if (_app.getSquirrelPreferences().getShowDriversToolBar())
-//			{
-//				createToolBar();
-//			}
 
 			_pm.add(_createDriverAction);
 			_pm.addSeparator();
@@ -234,7 +231,14 @@ public class DriversToolWindow extends BaseToolWindow
 			_tb.add(new ToolBar.Separator(), 1);
 			_tb.add(actions.get(InstallDefaultDriversAction.class));
 			_tb.add(new ToolBar.Separator(), 1);
-			_tb.add(actions.get(ShowLoadedDriversOnlyAction.class));
+//			_tb.add(actions.get(ShowLoadedDriversOnlyAction.class));
+
+			Action act = (Action)actions.get(ShowLoadedDriversOnlyAction.class);
+			JToggleButton btn = new JToggleButton(act);
+			boolean show = _app.getSquirrelPreferences().getShowLoadedDriversOnly();
+			btn.setSelected(show);
+			btn.setText(null);
+			_tb.add(btn);
 		}
 	}
 }
