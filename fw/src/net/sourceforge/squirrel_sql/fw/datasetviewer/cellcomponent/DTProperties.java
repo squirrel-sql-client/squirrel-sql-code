@@ -177,36 +177,5 @@ public class DTProperties {
 		
 		return (String)h.get(propertyName);
 	}
-	
-	/**
-	 * Get the panels containing the controls needed to adjust all of the properties.
-	 * This assumes that the only DataTypes that want to put up control panels
-	 * are the ones that have properties to be adjusted.
-	 * We do not assume that all properties require a panel.
-	 * When this method calls the DataType class to get the panel, the class may return null.
-	 */
-	public static JPanel[] getControlPanels() {
-		ArrayList panelList = new ArrayList();
 		
-		// get a unique set of names of classes with properties
-		Iterator classNames = dataTypes.keySet().iterator();
-		
-		// run through the list getting the panel from each of the named classes
-		while (classNames.hasNext()) {
-			String className = (String)classNames.next();
-			Class[] parameterTypes = new Class[0];
-			try {
-				Method panelMethod =
-					Class.forName(className).getMethod("getControlPanel", parameterTypes);
-					
-				JPanel panel = (JPanel)panelMethod.invoke(null, null);
-				panelList.add(panel);
-			}
-			catch (Exception e) {
-				// assume that errors here are not fatal and ignore them??
-			}
-		}
-		
-		return (JPanel[])panelList.toArray(new JPanel[0]);
-	}
 }
