@@ -504,7 +504,7 @@ public class SQLConnection
 			}
 			catch (Throwable th)
 			{
-				s_log.error(th);
+				s_log.debug("DBMS/Driver doesn't support getSupertables()", th);
 			}
 
 			// store all plain table info we have.
