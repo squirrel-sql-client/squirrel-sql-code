@@ -22,6 +22,7 @@ import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.JTable;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 
 /**
@@ -120,7 +121,9 @@ public interface IDataTypeComponent
 	  * On input from the DB, read the data from the ResultSet into the appropriate
 	  * type of object to be stored in the table cell.
 	  */
-//??????????????????????????????
+	public Object readResultSet(ColumnDisplayDefinition colDef,
+		ResultSet rs, int index)
+		throws java.sql.SQLException;
 
 	/**
 	 * When updating the database, generate a string form of this object value

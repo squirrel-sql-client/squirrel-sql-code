@@ -8,6 +8,7 @@ import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import java.sql.Types;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.awt.Color;
 
 import java.util.HashMap;
@@ -286,7 +287,22 @@ public class CellComponentFactory {
 	  * On input from the DB, read the data from the ResultSet into the appropriate
 	  * type of object to be stored in the table cell.
 	  */
-//??????????????????????????????
+	public static Object readResultSet(ColumnDisplayDefinition colDef,
+		ResultSet rs, int index)
+		throws java.sql.SQLException {
+			
+		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
+
+		if (dataTypeObject != null) {
+			// we have an appropriate data type object
+			return dataTypeObject.readResultSet(colDef, rs, index);
+		}
+
+		//?? Best guess: read object?
+		//?? This is probably the wrong thing to do here, but
+		//?? I don't know what else to try.
+		return rs.getObject(index);
+	}
 
 	/**
 	 * When updating the database, generate a string form of this object value
