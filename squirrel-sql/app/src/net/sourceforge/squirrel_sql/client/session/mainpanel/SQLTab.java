@@ -87,10 +87,11 @@ public class SQLTab extends BaseMainPanelTab {
 
 	/**
 	 * Sesssion is ending.
-	 * Remove all listeners that this component has setup. Close all
-	 * torn off result tab windows.
 	 */
 	public void sessionClosing(ISession session) {
+		if (_comp != null) {
+			_comp.sessionClosing();
+		}
 	}
 
 	public SQLPanel getSQLPanel() {
