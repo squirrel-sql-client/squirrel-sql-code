@@ -37,26 +37,34 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
+import net.sourceforge.squirrel_sql.client.session.properties.OutputPropertiesPanel;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.client.session.properties.SQLPropertiesPanel;
 
-public class GlobalPreferencesDialog extends JDialog {
+public class NewSessionPropertiesDialog extends JDialog {
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
 	private interface i18n {
-		String TITLE = "Global Preferences";
+		String TITLE = "New Session Properties";
 	}
 
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(GlobalPreferencesDialog.class);
+	private static ILogger s_log = LoggerController.createLogger(NewSessionPropertiesDialog.class);
 
 	/** Singleton instance of this class. */
-	private static GlobalPreferencesDialog s_instance;
+	private static NewSessionPropertiesDialog s_instance;
 
 	private IApplication _app;
 	private List _panels = new ArrayList();
 
-	private GlobalPreferencesDialog(IApplication app)
+	/**
+	 * Default properties for new sessions.
+	 */
+	private SessionProperties _sessionProperties;
+
+	private NewSessionPropertiesDialog(IApplication app)
 			throws IllegalArgumentException {
 		super(getFrame(app), i18n.TITLE);
 		_app = app;
@@ -75,7 +83,7 @@ public class GlobalPreferencesDialog extends JDialog {
 	public static synchronized void showDialog(IApplication app)
 			throws IllegalArgumentException {
 		if (s_instance == null) {
-			s_instance = new GlobalPreferencesDialog(app);
+			s_instance = new NewSessionPropertiesDialog(app);
 		}
 		s_instance.setVisible(true);
 	}
@@ -86,7 +94,7 @@ public class GlobalPreferencesDialog extends JDialog {
 			long start = 0;
 			JTabbedPane tabPane = new JTabbedPane();
 			for (Iterator it = _panels.iterator(); it.hasNext();) {
-				IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel)it.next();
+				INewSessionPropertiesPanel pnl = (INewSessionPropertiesPanel)it.next();
 				if (isDebug) {
 					start = System.currentTimeMillis();
 				}
@@ -114,7 +122,7 @@ public class GlobalPreferencesDialog extends JDialog {
 			if (isDebug) {
 				start = System.currentTimeMillis();
 			}
-			IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel)it.next();
+			INewSessionPropertiesPanel pnl = (INewSessionPropertiesPanel)it.next();
 			pnl.applyChanges();
 			if (isDebug) {
 				s_log.debug("Panel " + pnl.getTitle() + " applied changes in "
@@ -127,16 +135,18 @@ public class GlobalPreferencesDialog extends JDialog {
 
 	private void createUserInterface() {
 		final SquirrelPreferences prefs = _app.getSquirrelPreferences();
+		final SessionProperties props = prefs.getSessionProperties();
 
 		// Add panels for core Squirrel functionality.
-		_panels.add(new GeneralPreferencesPanel());
+		_panels.add(new SQLPropertiesPanel(_app));
+		_panels.add(new OutputPropertiesPanel());
 
 		// Go thru all loaded plugins asking for panels.
 		PluginInfo[] plugins = _app.getPluginManager().getPluginInformation();
 		for (int plugIdx = 0; plugIdx < plugins.length; ++plugIdx) {
 			PluginInfo pi = plugins[plugIdx];
 			if (pi.isLoaded()) {
-				IGlobalPreferencesPanel[] pnls = pi.getPlugin().getGlobalPreferencePanels();
+				INewSessionPropertiesPanel[] pnls = pi.getPlugin().getNewSessionPropertiesPanels();
 				if (pnls != null && pnls.length > 0) {
 					for (int pnlIdx = 0; pnlIdx < pnls.length; ++pnlIdx) {
 						_panels.add(pnls[pnlIdx]);
@@ -148,7 +158,7 @@ public class GlobalPreferencesDialog extends JDialog {
 		// Add all panels to the tabbed pane.
 		JTabbedPane tabPane = new JTabbedPane();
 		for (Iterator it = _panels.iterator(); it.hasNext();) {
-			IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel)it.next();
+			INewSessionPropertiesPanel pnl = (INewSessionPropertiesPanel)it.next();
 			String title = pnl.getTitle();
 			String hint = pnl.getHint();
 			tabPane.addTab(title, null, pnl.getPanelComponent(), hint);
