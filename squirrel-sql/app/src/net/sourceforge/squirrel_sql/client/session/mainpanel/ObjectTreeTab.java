@@ -36,7 +36,7 @@ public class ObjectTreeTab extends BaseMainPanelTab {
 	}
 
 	/**
-	 * Default Ctor.
+	 * Default ctor.
 	 */
 	public ObjectTreeTab() {
 		super();
@@ -72,7 +72,7 @@ public class ObjectTreeTab extends BaseMainPanelTab {
 	 */
 	public synchronized Component getComponent() {
 		if (_comp == null) {
-			_comp = new ObjectTreePanel();
+			_comp = new ObjectTreePanel(getSession());
 		}
 		return _comp;
 	}

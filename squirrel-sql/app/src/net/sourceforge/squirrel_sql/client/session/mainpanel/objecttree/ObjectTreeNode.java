@@ -17,44 +17,30 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import javax.swing.JTree;
-
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
- * This is the tree showing the structure of objects in the database.
+ * This is a node in the object tree.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ObjectTree extends JTree {
-	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(ObjectTree.class);
+public class ObjectTreeNode extends DefaultMutableTreeNode {
 
-	/** Model for this tree. */
-	private ObjectTreeModel _model;
+	public ObjectTreeNode(ISession session, Object userObject) {
+		super(userObject);
+	}
 
 	/**
-	 * ctor specifying session.
+	 * Return <TT>false</TT> to indicate that this node can have
+	 * children.
 	 * 
-	 * @param	session	Current session.
-	 * 
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> <TT>ISession</TT> passed.
+	 * @return	<TT>false</TT> to indicate that this node can have
+	 *			children.
 	 */
-	ObjectTree(ISession session) {
-		super();
-		if (session == null) {
-			throw new IllegalArgumentException("ISession == null");
-		}
-
-		_model = new ObjectTreeModel(session);
-//		((BaseNode)_model.getRoot()).addBaseNodeExpandListener(this);
-//		_model.addTreeLoadedListener(this);
-//		_model.fillTree();
-		setModel(_model);
-		setSelectionRow(0);
+	public boolean isLeaf() {
+		return false;
 	}
+
 }
 

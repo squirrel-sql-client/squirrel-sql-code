@@ -26,12 +26,16 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
  * This is the panel for the Object Tree tab.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ObjectTreePanel extends JPanel {
+	/** Current session. */
+	private ISession _session;
+
 	/** Tree of objects within the database. */
 	private ObjectTree _tree;
 
@@ -45,10 +49,19 @@ public class ObjectTreePanel extends JPanel {
 	private final JPanel _emptyPnl = new JPanel();
 
 	/**
-	 * ctor.
+	 * ctor specifying the current session.
+	 * 
+	 * @param	session	Current session.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>ISession</TT> passed.
 	 */
-	public ObjectTreePanel() {
+	public ObjectTreePanel(ISession session) {
 		super();
+		if (session == null) {
+			throw new IllegalArgumentException("ISession == null");
+		}
+		_session = session;
 		createUserInterface();
 	}
 
@@ -104,7 +117,7 @@ public class ObjectTreePanel extends JPanel {
 	private void createUserInterface() {
 		setLayout(new BorderLayout());
 
-		_tree = new ObjectTree();
+		_tree = new ObjectTree(_session);
 
 		_splitPane.setOneTouchExpandable(true);
 		_splitPane.setContinuousLayout(true);

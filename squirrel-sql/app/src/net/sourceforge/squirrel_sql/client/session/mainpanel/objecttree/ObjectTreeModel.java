@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
@@ -33,13 +34,42 @@ public class ObjectTreeModel extends DefaultTreeModel {
 	private static ILogger s_log = LoggerController.createLogger(ObjectTreeModel.class);
 
 	/**
-	 * Default ctor.
+	 * ctor specifying session.
+	 * 
+	 * @param	session	Current session.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>ISession</TT> passed.
 	 */
-	public ObjectTreeModel() {
-		super(new DefaultMutableTreeNode());
+	public ObjectTreeModel(ISession session) {
+		super(createRootNode(session));
 //		_treeLoadedListeners = new ArrayList();
 //		setSession(session);
 	}
 
+	/**
+	 * Create the root node for this tree.
+	 * 
+	 * @param	session		Current session.
+	 *
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>ISession</TT> passed.
+	 */
+	private static ObjectTreeNode createRootNode(ISession session) {
+		if (session == null) {
+			throw new IllegalArgumentException("ISession == null");
+		}
+		return new RootNode(session);
+	}
+
+	private static final class RootNode extends ObjectTreeNode {
+		RootNode(ISession session) {
+			super(session, getNodeText(session));
+		}
+
+		private static final String getNodeText(ISession session) {
+			return session.getAlias().getName();
+		}
+	}
 }
 
