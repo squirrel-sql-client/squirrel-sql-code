@@ -1076,9 +1076,11 @@ determine how to display the column.</P>
 	as a string.
 </DL>
 <P>
-The file java.sql.Types defines several codes whose semantics are not understood by SQuirreL:
+The JDBC specification (in file java.sql.Types)
+defines several codes whose semantics are not understood by SQuirreL:
 JAVA_OBJECT, DISTINCT, STRUCT, ARRAY, REF, and DATALINK.
 These are all handled as "Any other type" as described above.
+<P>
 
 
 <A NAME="global_prefs"><H2>Global Preferences</H2></A>
@@ -1122,6 +1124,16 @@ displayed in the Aliases Window.</P>
 <P><B>Show Aliases Tool Bar</B> - If checked then the tool bar will be
 displayed in the Aliases Window.</P>
 
+<P><B>Maximize Session Sheet on Open</B> - If checked then when a session is
+opened it will automatically maximize to the whole space available within
+the Squirrel window.  If not checked, it is opened using a smaller part
+of the space.
+</P>
+
+<P><B>Show Color Icons in Toolbars</B> - If checked then the icons in the
+toolbars are shown in color.  If not checked, the icons are in black-and-white.
+</P>
+
 <H4>General Tab (Logging)</H4>
 
 <P><B>Execution Log File</B> - This (display only) setting tells you the
@@ -1140,10 +1152,24 @@ displayed in a tooltip.</P>For more information see
 <P ALIGN="CENTER"><IMG SRC="images/global_sql.png" BORDER="0"
 			ALT="SQL tab"></P>
 
+<H4>SQL Tab (General)</H4>
+
 <P><B>Login Timeout</B> - Sets the maximum time in seconds that a
 JDBC driver will wait while attempting to connect to the database.</P>
 
-<P><B>JDBC Debug</B> - If checked tells the JDBC drivers to write
+<H4>SQL Tab (Debug)</H4>
+
+<P><B>No Debug</B> - If checked then no debugging information
+is output from Squirrel.</P>
+
+<P><B>JDBC Debug to Output Stream</B> - If checked tells the JDBC drivers
+to write
+debugging information to the JDBC Debug File. Depending on the JDBC
+driver you are using this may generate a lot of output and
+significantly slow down SQuirreL.</P>
+
+<P><B>JDBC Debug to Writer</B> - If checked tells the JDBC drivers
+to write
 debugging information to the JDBC Debug File. Depending on the JDBC
 driver you are using this may generate a lot of output and
 significantly slow down SQuirreL.</P>
@@ -1197,7 +1223,7 @@ Even with only the default Data Type Controls defined,
 there are still two screens of them to describe.
 
 
-<P ALIGN="CENTER"><IMG SRC="images/data_type_controls_1.png" BORDER="0"
+<P ALIGN="CENTER"><IMG SRC="images/global_data_types_1.png" BORDER="0"
 			ALT="Data Type Controls Tab, part 1"></P>
 
 <H4>BLOB (SQL Type 2004)</H4>
@@ -1301,7 +1327,7 @@ attempting to display them as Strings may result in unintelligable
 displays, and may cause exceptions during processing.<P>
 
 
-<P ALIGN="CENTER"><IMG SRC="images/data_type_controls_2.png" BORDER="0"
+<P ALIGN="CENTER"><IMG SRC="images/global_data_types_2.png" BORDER="0"
 			ALT="Data Type Controls Tab, part 1"></P>
 
 <H4>Unknown DataTypes (non-standard SQL type codes)</H4>
@@ -1382,6 +1408,23 @@ session window.</P>
 
 <P><B>Font</B> - The <EM>Font</EM> button allows you to specify the font
 to be used in the SQL entry area.</P>
+
+<H3>Object Tab</H3>
+
+<P ALIGN="CENTER"><IMG SRC="images/session_props_object.png" BORDER="0"
+			ALT="Object tab"></P>
+
+<H4>Appearance Tab (General)</H4>
+
+<P><B>Show Tool Bar</B> - If checked then display a toolbar on the
+session window.</P>
+????
+
+<H4>Output Tab (General)</H4>
+
+<P><B>Meta Data</B> - If checked then display a toolbar on the
+session window.</P>
+????
 
 <H3>SQL Tab</H3>
 
