@@ -53,9 +53,7 @@ public class ObjectTreeModel extends DefaultTreeModel
 	/**
 	 * Collection of <TT>INodeExpander</TT> objects. Each entry is a <TT>List</TT>
 	 * of <TT>INodeExpander</TT> objects. The key to the list is the
-	 * <TT>IDatabaseObjectTypes</TT> entry. I.E. each list contains all the
-	 * expanders for a <TT>ObjectTreeNode</TT> that represents an object of
-	 * a particular <TT>IDatabaseObjectTypes</TT> value.
+	 * node type.
 	 */
 	private Map _expanders = new HashMap();
 
@@ -114,9 +112,13 @@ public class ObjectTreeModel extends DefaultTreeModel
 		return (INodeExpander[])list.toArray(new INodeExpander[list.size()]);
 	}
 
-	private List getExpandersList(int dbObjectType)
+	/**
+	 * Get the collection of expanders for the passed node type. If one
+	 * doesn't exist then create an empty one.
+	 */
+	private List getExpandersList(int nodeType)
 	{
-		Integer key = new Integer(dbObjectType);
+		Integer key = new Integer(nodeType);
 		List list = (List)_expanders.get(key);
 		if (list == null)
 		{

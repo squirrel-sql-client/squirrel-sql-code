@@ -24,6 +24,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.Action;
+
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
@@ -559,22 +561,42 @@ class Session implements IClientSession
 	}
 
 	/**
-	 * Register an expander for the specified database object type in the
-	 * object tree.
+	 * Register an expander for the specified object tree node type.
 	 * 
-	 * @param	dbObjectType	Database object type.
-	 *							@see net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectTypes
-	 * @param	expander		Expander called to add children to a parent node.
+	 * @param	nodeType	Object Tree node type.
+	 *						@see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode.IObjectTreeNodeType
+	 * @param	expander	Expander called to add children to a parent node.
 	 * 
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>INodeExpander</TT> thrown.
 	 */
-	public void registerObjectTreeExpander(int dbObjectType, INodeExpander expander)
+	public void registerObjectTreeExpander(int nodeType, INodeExpander expander)
 	{
 		if (expander == null)
 		{
 			throw new IllegalArgumentException("Null INodeExpander passed");
 		}
-		_sessionSheet.getObjectTreePanel().registerExpander(dbObjectType, expander);
+		_sessionSheet.getObjectTreePanel().registerExpander(nodeType, expander);
 	}
+
+	/**
+	 * Add an item to the popup menu for the specified node type in the object
+	 * tree.
+	 * 
+	 * @param	nodeType	Object Tree node type.
+	 *						@see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode.IObjectTreeNodeType
+	 * @param	action		Action to add to menu.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> thrown.
+	 */
+	public void addToObjectTreePopup(int nodeType, Action action)
+	{
+		if (action == null)
+		{
+			throw new IllegalArgumentException("Null Action passed");
+		}
+		_sessionSheet.getObjectTreePanel().addToObjectTreePopup(nodeType, action);
+	}
+
 }

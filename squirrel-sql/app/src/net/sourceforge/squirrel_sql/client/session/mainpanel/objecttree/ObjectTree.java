@@ -17,12 +17,21 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import javax.swing.Action;
+import javax.swing.JPopupMenu;
 import javax.swing.JTree;
+import javax.swing.MenuElement;
 import javax.swing.ToolTipManager;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
@@ -36,7 +45,11 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectTypes;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.DropTableAction;
+import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeAction;
+import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeItemAction;
 /**
  * This is the tree showing the structure of objects in the database.
  *
@@ -53,6 +66,20 @@ public class ObjectTree extends JTree
 
 	/** Current session. */
 	private ISession _session;
+
+	/**
+	 * Collection of popup menus (<TT>JPopupMenu</TT> instances) for the
+	 * object tree. Keyed by node type.
+	 */
+	private Map _popups = new HashMap();
+
+	/**
+	 * Global popup menu. This contains items that are to be displayed
+	 * in the popup menu no matter what items are selected in the tree.
+	 */
+	private JPopupMenu _globalPopup = new JPopupMenu();
+
+	private List _globalActions = new ArrayList();
 
 	/**
 	 * ctor specifying session.
@@ -81,6 +108,34 @@ public class ObjectTree extends JTree
 		setModel(_model);
 		//expandNode((ObjectTreeNode)_model.getRoot());
 		//setSelectionRow(0);
+
+		// Add actions to the popup menu.
+		ActionCollection actions = session.getApplication().getActionCollection();
+		addToPopup(ObjectTreeNode.IObjectTreeNodeType.TABLE, actions.get(DropTableAction.class));
+
+		// Global menu.
+		addToPopup(actions.get(RefreshTreeAction.class));
+		addToPopup(actions.get(RefreshTreeItemAction.class));
+
+		// Mouse listener used to display popup menu.
+		addMouseListener(new MouseAdapter()
+		{
+			public void mousePressed(MouseEvent evt)
+			{
+				if (evt.isPopupTrigger())
+				{
+					showPopup(evt.getX(), evt.getY());
+				}
+			}
+			public void mouseReleased(MouseEvent evt)
+			{
+				if (evt.isPopupTrigger())
+				{
+					showPopup(evt.getX(), evt.getY());
+				}
+			}
+		});
+
 	}
 
 	/**
@@ -176,6 +231,137 @@ public class ObjectTree extends JTree
 		}
 	}
 
+	/**
+	 * Add an item to the popup menu for the specified node type in the object
+	 * tree.
+	 * 
+	 * @param	nodeType	Object Tree node type.
+	 *						@see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode.IObjectTreeNodeType
+	 * @param	action		Action to add to menu.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> thrown.
+	 */
+	void addToPopup(int nodeType, Action action)
+	{
+		if (action == null)
+		{
+			throw new IllegalArgumentException("Null Action passed");
+		}
+		JPopupMenu pop = getPopup(nodeType, true);
+		pop.add(action);
+	}
+
+	/**
+	 * Add an item to the popup menu for the all nodes.
+	 * 
+	 * @param	action		Action to add to menu.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> thrown.
+	 */
+	void addToPopup(Action action)
+	{
+		if (action == null)
+		{
+			throw new IllegalArgumentException("Null Action passed");
+		}
+		_globalPopup.add(action);
+		_globalActions.add(action);
+
+		for (Iterator it = _popups.values().iterator(); it.hasNext();)
+		{
+			JPopupMenu pop = (JPopupMenu)it.next();
+			pop.add(action);
+		}
+	}
+
+	/**
+	 * Get the popup menu for the passed node type. If one
+	 * doesn't exist then create one if requested to do so.
+	 */
+	private JPopupMenu getPopup(int nodeType, boolean create)
+	{
+		Integer key = new Integer(nodeType);
+		JPopupMenu pop = (JPopupMenu)_popups.get(key);
+		if (pop == null && create)
+		{
+			pop = new JPopupMenu();
+			_popups.put(key, pop);
+			for (Iterator it = _globalActions.iterator(); it.hasNext();)
+			{
+				pop.add((Action)it.next());
+			}
+		}
+		return pop;
+	}
+
+	/**
+	 * Return an array of the currently selected nodes. This array is sorted
+	 * by the simple name of the database object.
+	 *
+	 * @return	array of <TT>IDatabaseObjectInfo</TT> objects.
+	 */
+	private ObjectTreeNode[] getSelectedNodes()
+	{
+		TreePath[] paths = getSelectionPaths();
+		List list = new ArrayList();
+		if (paths != null)
+		{
+			for (int i = 0; i < paths.length; ++i)
+			{
+				Object obj = paths[i].getLastPathComponent();
+				if (obj instanceof ObjectTreeNode)
+				{
+					list.add(obj);
+				}
+			}
+		}
+		ObjectTreeNode[] ar = (ObjectTreeNode[])list.toArray(new ObjectTreeNode[list.size()]);
+		Arrays.sort(ar, new NodeComparator());
+		return ar;
+	}
+
+	/**
+	 * Get the appropriate popup menu for the currently selected nodes
+	 * in the object tree and display it.
+	 * 
+	 * @param	x	X pos to display popup at.
+	 * @param	y	Y pos to display popup at.
+	 */
+	private void showPopup(int x, int y)
+	{
+		ObjectTreeNode[] selObj = getSelectedNodes();
+		if (selObj.length > 0)
+		{
+			// See if all selected nodes are of the same type.
+			boolean sameType = true;
+			final int nodeType = selObj[0].getNodeType();
+			for (int i = 1; i < selObj.length; ++i)
+			{
+				if (selObj[i].getNodeType() != nodeType)
+				{
+					sameType = false;
+					break;
+				}
+			}
+
+			JPopupMenu pop = null; 
+			if (sameType)
+			{
+				pop = getPopup(nodeType, false);
+			}
+			else
+			{
+				pop = _globalPopup;
+			}
+			if (pop != null)
+			{
+				pop.show(this, x, y);
+			}
+		}
+	}
+
 	private final class NodeExpansionListener implements TreeExpansionListener
 	{
 		public void treeExpanded(TreeExpansionEvent evt)
@@ -190,6 +376,18 @@ public class ObjectTree extends JTree
 
 		public void treeCollapsed(TreeExpansionEvent evt)
 		{
+		}
+	}
+
+
+	/**
+	 * This class is used to sort the nodes by their title.
+	 */
+	private static class NodeComparator implements Comparator
+	{
+		public int compare(Object obj1, Object obj2)
+		{
+			return obj1.toString().compareToIgnoreCase(obj2.toString());
 		}
 	}
 

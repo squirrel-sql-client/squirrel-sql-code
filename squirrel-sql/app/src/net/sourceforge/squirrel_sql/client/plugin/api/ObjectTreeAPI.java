@@ -17,6 +17,8 @@ package net.sourceforge.squirrel_sql.client.plugin.api;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import javax.swing.Action;
+
 import net.sourceforge.squirrel_sql.client.session.IClientSession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 /**
@@ -44,7 +46,6 @@ class ObjectTreeAPI implements IObjectTreeAPI
 		{
 			throw new IllegalArgumentException("ISession == null");
 		}
-
 		_session = session;
 	}
 
@@ -60,6 +61,29 @@ class ObjectTreeAPI implements IObjectTreeAPI
 	 */
 	public void registerExpander(int nodeType, INodeExpander expander)
 	{
+		if (expander == null)
+		{
+			throw new IllegalArgumentException("INodeExpander == null");
+		}
 		_session.registerObjectTreeExpander(nodeType, expander);
+	}
+
+	/**
+	 * Add an item to the popup menu for the specified node type.
+	 * 
+	 * @param	nodeType	Object Tree node type.
+	 *						@see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode.IObjectTreeNodeType
+	 * @param	action		Action to add to menu.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> thrown.
+	 */
+	public void addToPopup(int nodeType, Action action)
+	{
+		if (action == null)
+		{
+			throw new IllegalArgumentException("Action == null");
+		}
+		_session.addToObjectTreePopup(nodeType, action);
 	}
 }
