@@ -166,7 +166,7 @@ public class DataTypeDouble
 						(RestorableJTextField)DataTypeDouble.this._textComponent,
 						evt, DataTypeDouble.this._table);
 					CellDataPopup.showDialog(DataTypeDouble.this._table,
-						DataTypeDouble.this._colDef, tableEvt);
+						DataTypeDouble.this._colDef, tableEvt, true);
 				}
 			}
 		});	// end of mouse listener
@@ -397,16 +397,41 @@ public class DataTypeDouble
 	
 	/**
 	 * When updating the database, insert the appropriate datatype into the
-	 * prepared statment at variable position 1.
+	 * prepared statment at the given variable position.
 	 */
-	public void setPreparedStatementValue(PreparedStatement pstmt, Object value)
+	public void setPreparedStatementValue(PreparedStatement pstmt, Object value, int position)
 		throws java.sql.SQLException {
 		if (value == null) {
-			pstmt.setNull(1, _colDef.getSqlType());
+			pstmt.setNull(position, _colDef.getSqlType());
 		}
 		else {
-			pstmt.setDouble(1, ((Double)value).floatValue());
+			pstmt.setDouble(position, ((Double)value).floatValue());
 		}
+	}
+	
+	/**
+	 * Get a default value for the table used to input data for a new row
+	 * to be inserted into the DB.
+	 */
+	public Object getDefaultValue(String dbDefaultValue) {
+		if (dbDefaultValue != null) {
+			// try to use the DB default value
+			StringBuffer mbuf = new StringBuffer();
+			Object newObject = validateAndConvert(dbDefaultValue, null, mbuf);
+			
+			// if there was a problem with converting, then just fall through
+			// and continue as if there was no default given in the DB.
+			// Otherwise, use the converted object
+			if (mbuf.length() == 0)
+				return newObject;
+		}
+		
+		// no default in DB.  If nullable, use null.
+		if (_isNullable)
+			return null;
+		
+		// field is not nullable, so create a reasonable default value
+		return new Double(0);
 	}
 	
 	

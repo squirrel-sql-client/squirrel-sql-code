@@ -196,7 +196,7 @@ public class DataTypeClob
 						(RestorableJTextField)DataTypeClob.this._textComponent,
 						evt, DataTypeClob.this._table);
 					CellDataPopup.showDialog(DataTypeClob.this._table,
-						DataTypeClob.this._colDef, tableEvt);
+						DataTypeClob.this._colDef, tableEvt, true);
 				}
 			}
 		});	// end of mouse listener
@@ -450,12 +450,12 @@ public class DataTypeClob
 	
 	/**
 	 * When updating the database, insert the appropriate datatype into the
-	 * prepared statment at variable position 1.
+	 * prepared statment at the given variable position.
 	 */
-	public void setPreparedStatementValue(PreparedStatement pstmt, Object value)
+	public void setPreparedStatementValue(PreparedStatement pstmt, Object value, int position)
 		throws java.sql.SQLException {
 		if (value == null) {
-			pstmt.setNull(1, _colDef.getSqlType());
+			pstmt.setNull(position, _colDef.getSqlType());
 		}
 		else {
 			// for convenience cast the object to ClobDescriptor
@@ -468,8 +468,35 @@ public class DataTypeClob
 			cdesc.getClob().setString(0, cdesc.getData());
 			
 			// now put the clob back into the DB
-			pstmt.setClob(1, cdesc.getClob());
+			pstmt.setClob(position, cdesc.getClob());
 		}
+	}
+	
+	/**
+	 * Get a default value for the table used to input data for a new row
+	 * to be inserted into the DB.
+	 */
+	public Object getDefaultValue(String dbDefaultValue) {
+		if (dbDefaultValue != null) {
+			// try to use the DB default value
+			StringBuffer mbuf = new StringBuffer();
+			Object newObject = validateAndConvert(dbDefaultValue, null, mbuf);
+			
+			// if there was a problem with converting, then just fall through
+			// and continue as if there was no default given in the DB.
+			// Otherwise, use the converted object
+			if (mbuf.length() == 0)
+				return newObject;
+		}
+		
+		// no default in DB.  If nullable, use null.
+		if (_isNullable)
+			return null;
+		
+		// field is not nullable, so create a reasonable default value
+//????? for CLOB, do not know how to create a default CLOB for insertion.
+//????? Is including a CLOB on an initial insertion possible?
+		return null;
 	}
 	
 	
