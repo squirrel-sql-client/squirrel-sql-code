@@ -1262,6 +1262,30 @@ public class SQLDatabaseMetaData
 	}
 
 	/**
+	 * Retrieve whether this driver supports multiple result sets.
+	 *
+	 * @return	<tt>true</tt> if driver supports multiple result sets
+	 *			else <tt>false</tt>.
+	 *
+	 * @throws	SQLException	Thrown if an SQL error occurs.
+	 */
+   public synchronized boolean supportsMultipleResultSets()
+			throws SQLException
+	{
+		final String key = "supportsMultipleResultSets";
+		Boolean value = (Boolean)_cache.get(key);
+		if (value != null)
+		{
+			return value.booleanValue();
+		}
+
+		value = new Boolean(privateGetJDBCMetaData().supportsMultipleResultSets());
+		_cache.put(key, value);
+
+		return value.booleanValue();
+	}
+
+	/**
 	 * Clear cache of commonly accessed metadata properties.
 	 */
 	public synchronized void clearCache()
