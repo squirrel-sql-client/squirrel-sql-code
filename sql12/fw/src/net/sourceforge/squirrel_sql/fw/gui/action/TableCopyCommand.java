@@ -21,12 +21,15 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 
 import javax.swing.JTable;
-//import javax.swing.table.TableModel;
 
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 public class TableCopyCommand implements ICommand
 {
+	/** Internationalized strings for this class. */
+//	private static final StringManager s_stringMgr =
+//		StringManagerFactory.getStringManager(TableCopyCommand.class);
+
 	private final static String NULL_CELL = "<null>";
 
 	private JTable _table;
@@ -36,7 +39,7 @@ public class TableCopyCommand implements ICommand
 		super();
 		if (table == null)
 		{
-			throw new IllegalArgumentException("Null JTable passed");
+			throw new IllegalArgumentException("JTable == null");
 		}
 		_table = table;
 	}
@@ -49,13 +52,11 @@ public class TableCopyCommand implements ICommand
 		int[] selCols = _table.getSelectedColumns();
 		if (selRows.length != 0 && selCols.length != 0)
 		{
-			//TableModel model = _table.getModel();
 			StringBuffer buf = new StringBuffer();
 			if (nbrSelCols > 1 && nbrSelRows > 1)
 			{
 				for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
 				{
-					//buf.append(model.getColumnName(selCols[colIdx]));
 					buf.append(_table.getColumnName(selCols[colIdx]));
 					if (colIdx < nbrSelCols - 1)
 					{

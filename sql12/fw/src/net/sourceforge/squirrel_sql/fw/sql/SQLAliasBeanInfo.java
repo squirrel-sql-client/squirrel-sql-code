@@ -49,7 +49,6 @@ public class SQLAliasBeanInfo extends SimpleBeanInfo
 			s_desc[5] = new PropertyDescriptor(IPropNames.USE_DRIVER_PROPERTIES, CLAZZ, "getUseDriverProperties", "setUseDriverProperties");
 			s_desc[6] = new PropertyDescriptor(IPropNames.DRIVER_PROPERTIES, CLAZZ, "getDriverProperties", "setDriverProperties");
 			s_desc[7] = new PropertyDescriptor(IPropNames.PASSWORD, CLAZZ, "getPassword", "setPassword");
-//			s_desc[8] = new PropertyDescriptor(IPropNames.PASSWORD_SAVED, CLAZZ, "isPasswordSaved", "setPasswordSaved");
 			s_desc[8] = new PropertyDescriptor(IPropNames.AUTO_LOGON, CLAZZ, "isAutoLogon", "setAutoLogon");
 			s_desc[9] = new PropertyDescriptor(IPropNames.CONNECT_AT_STARTUP, CLAZZ, "isConnectAtStartup", "setConnectAtStartup");
 		}

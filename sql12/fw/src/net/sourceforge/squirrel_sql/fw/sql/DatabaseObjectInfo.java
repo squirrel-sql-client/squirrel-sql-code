@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.sql;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -58,11 +58,11 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo
 		super();
 		if (dboType == null)
 		{
-			throw new IllegalArgumentException("Null DatabaseObjectType passed");
+			throw new IllegalArgumentException("DatabaseObjectType == null");
 		}
 		if (md == null)
 		{
-			throw new IllegalArgumentException("Null SQLDatabaseMetaData passed");
+			throw new IllegalArgumentException("SQLDatabaseMetaData == null");
 		}
 
 		_catalog = catalog;

@@ -27,6 +27,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -43,6 +45,10 @@ public class SQLConnection
 		String AUTO_COMMIT = "autocommit";
 		String CATALOG = "catalog";
 	}
+
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(SQLConnection.class);
 
 	/** Logger for this class. */
 	private final static ILogger s_log =
@@ -307,7 +313,7 @@ public class SQLConnection
 	{
 		if (_conn == null)
 		{
-			throw new SQLException("No connection");
+			throw new SQLException(s_stringMgr.getString("SQLConnection.noConn"));
 		}
 	}
 
