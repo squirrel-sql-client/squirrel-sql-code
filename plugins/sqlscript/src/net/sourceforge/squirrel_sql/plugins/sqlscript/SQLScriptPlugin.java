@@ -219,8 +219,11 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 	 */
 	public boolean sessionStarted(ISession session) {
 		ActionCollection coll = getApplication().getActionCollection();
-		IObjectTreeAPI api = session.getObjectTreeAPI(this);
-		api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTableScriptAction.class));
+
+      //IObjectTreeAPI api = session.getObjectTreeAPI(this);
+      IObjectTreeAPI api = FrameWorkAcessor.getObjectTreeAPI(session, this);
+		
+      api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTableScriptAction.class));
 		api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateDataScriptAction.class));
 
 		session.addToToolbar(coll.get(LoadScriptAction.class));

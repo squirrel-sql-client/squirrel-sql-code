@@ -17,31 +17,14 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-
-import javax.swing.ButtonGroup;
-import javax.swing.ComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
-import javax.swing.MutableComboBoxModel;
-import javax.swing.SwingConstants;
-
-import net.sourceforge.squirrel_sql.fw.gui.LookAndFeelComboBox;
-import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
-import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
-import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * The SQL Script preferences panel for the Global Preferences dialog.
