@@ -1,7 +1,7 @@
 <HTML>
 
 <HEAD>
-    <TITLE>MySQL Plugin</TITLE>
+	<TITLE>MySQL Plugin</TITLE>
 </HEAD>
 
 <BODY>
@@ -35,9 +35,21 @@ run <TT>show open tables</TT> against the catalog.</P>
 <P ALIGN="CENTER"><IMG SRC="images/open-tables.png" BORDER="0"
 			ALT="Open Tables Tab"></P>
 
+<P>The Table nodes in the object tree have a new &quot;Analyze&quot;
+tab. Displaying this tab runs the &quot;analyze table&quot; command
+against the selected table.</P>
+
+<!-- TODO: Need image -->
+<P ALIGN="CENTER"><IMG SRC="images/analyze_table.png" BORDER="0"
+			ALT="Analyze Tab"></P>
+
 <H2>New Menu Options</H2>
 
-<P>A new option &quot;MySQL Create table Script&quot; has been added to the
+<P>The Session menu (and the popup menu in the object tree) has a new
+Hierarchical menu &quot;MySQL&quot; that contains MySQL specific actions. These
+options are:</P>
+
+<P>&quot;MySQL Create table Script&quot; has been added to the
 popup menu for tables in the Object Tree. This will generate a
 &quot;Create Table&quot; script for the selected table(s) and add it
 into the SQL entry area.</P>

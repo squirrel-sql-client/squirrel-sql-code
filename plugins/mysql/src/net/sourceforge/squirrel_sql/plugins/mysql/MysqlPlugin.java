@@ -1,25 +1,27 @@
 package net.sourceforge.squirrel_sql.plugins.mysql;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+
+import javax.swing.JMenu;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -35,7 +37,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
  * MySQL plugin class.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class MysqlPlugin extends DefaultSessionPlugin
 {
@@ -54,7 +56,7 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	/**
 	 * Return the internal name of this plugin.
 	 *
-	 * @return  the internal name of this plugin.
+	 * @return	the internal name of this plugin.
 	 */
 	public String getInternalName()
 	{
@@ -64,7 +66,7 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	/**
 	 * Return the descriptive name of this plugin.
 	 *
-	 * @return  the descriptive name of this plugin.
+	 * @return	the descriptive name of this plugin.
 	 */
 	public String getDescriptiveName()
 	{
@@ -74,17 +76,17 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	/**
 	 * Returns the current version of this plugin.
 	 *
-	 * @return  the current version of this plugin.
+	 * @return	the current version of this plugin.
 	 */
 	public String getVersion()
 	{
-		return "0.11";
+		return "0.15";
 	}
 
 	/**
 	 * Returns the authors name.
 	 *
-	 * @return  the authors name.
+	 * @return	the authors name.
 	 */
 	public String getAuthor()
 	{
@@ -94,23 +96,11 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	/**
 	 * Load this plugin.
 	 *
-	 * @param   app	 Application API.
+	 * @param	app	 Application API.
 	 */
 	public synchronized void load(IApplication app) throws PluginException
 	{
 		super.load(app);
-
-		// Folder within plugins folder that belongs to this
-		// plugin.
-//		File pluginAppFolder = null;
-//		try
-//		{
-//			pluginAppFolder = getPluginAppSettingsFolder();
-//		}
-//		catch (IOException ex)
-//		{
-//			throw new PluginException(ex);
-//		}
 
 		// Folder to store user settings.
 		try
@@ -126,7 +116,9 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getChangeLogFileName()
+	 * Retrieve the name of the change log.
+	 *
+	 * @return	The name of the change log.
 	 */
 	public String getChangeLogFileName()
 	{
@@ -134,7 +126,9 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getHelpFileName()
+	 * Retrieve the name of the help file.
+	 *
+	 * @return	The nane of the help file.
 	 */
 	public String getHelpFileName()
 	{
@@ -142,7 +136,9 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getLicenceFileName()
+	 * Retrieve the name of the licence file.
+	 *
+	 * @return	The nane of the licence file.
 	 */
 	public String getLicenceFileName()
 	{
@@ -157,9 +153,17 @@ public class MysqlPlugin extends DefaultSessionPlugin
 		super.initialize();
 
 		final IApplication app = getApplication();
+		final ActionCollection coll = app.getActionCollection();
 
-		ActionCollection coll = app.getActionCollection();
 		coll.add(new CreateMysqlTableScriptAction(app, _resources, this));
+		coll.add(new CheckTableAction.ChangedCheckTableAction(app, _resources, this));
+		coll.add(new CheckTableAction.ExtendedCheckTableAction(app, _resources, this));
+		coll.add(new CheckTableAction.FastCheckTableAction(app, _resources, this));
+		coll.add(new CheckTableAction.MediumCheckTableAction(app, _resources, this));
+		coll.add(new CheckTableAction.QuickCheckTableAction(app, _resources, this));
+		coll.add(new OptimizeTableAction(app, _resources, this));
+
+		app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, createMysqlMenu());
 	}
 
 	/**
@@ -171,7 +175,8 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	}
 
 	/**
-	 * Session has been started.
+	 * Session has been started. If this is a MySQL session
+	 * then setup MySQL tabs etc.
 	 * 
 	 * @param	session		Session that has started.
 	 * 
@@ -188,7 +193,7 @@ public class MysqlPlugin extends DefaultSessionPlugin
 			{
 				_treeAPI = session.getObjectTreeAPI(this);
 				final ActionCollection coll = getApplication().getActionCollection();
-				_treeAPI.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateMysqlTableScriptAction.class));
+				_treeAPI.addToPopup(DatabaseObjectType.TABLE, createMysqlMenu());
 
 				// Tabs to add to the database node.
 				_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new DatabaseStatusTab());
@@ -196,11 +201,45 @@ public class MysqlPlugin extends DefaultSessionPlugin
 
 				// Tabs to add to the catalog node.
 				_treeAPI.addDetailTab(DatabaseObjectType.CATALOG, new OpenTablesTab());
+
+				// Tabs to add to table nodes.
+				_treeAPI.addDetailTab(DatabaseObjectType.TABLE, new AnalyzeTableTab());
 			}
 		}
 		return isMysql;
 	}
 
+	/**
+	 * Create menu containing actions relevant for the object tree.
+	 *
+	 * @return	The menu object.
+	 */
+	private JMenu createMysqlMenu()
+	{
+		final IApplication app = getApplication();
+		final ActionCollection coll = app.getActionCollection();
+
+		final JMenu menu = _resources.createMenu(MysqlResources.IMenuResourceKeys.MYSQL);
+		_resources.addToMenu(coll.get(CreateMysqlTableScriptAction.class), menu);
+		_resources.addToMenu(coll.get(CheckTableAction.ChangedCheckTableAction.class), menu);
+		_resources.addToMenu(coll.get(CheckTableAction.ExtendedCheckTableAction.class), menu);
+		_resources.addToMenu(coll.get(CheckTableAction.FastCheckTableAction.class), menu);
+		_resources.addToMenu(coll.get(CheckTableAction.MediumCheckTableAction.class), menu);
+		_resources.addToMenu(coll.get(CheckTableAction.QuickCheckTableAction.class), menu);
+		_resources.addToMenu(coll.get(OptimizeTableAction.class), menu);
+
+		app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, menu);
+
+		return menu;
+	}
+
+	/**
+	 * Decide whether the passed session is a MySQL one.
+	 *
+	 * @param	session		Session we are checking.
+	 *
+	 * @return	<TT>true</TT> if <TT>session</TT> is a MySQL one.
+	 */
 	private boolean isMysql(ISession session)
 	{
 		final String MYSQL = "mysql";

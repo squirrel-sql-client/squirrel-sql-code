@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.mysql;
 /*
- * Copyright (C) 2002-2003 Colin Bell
+ * Copyright (C) 2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -20,11 +20,11 @@ package net.sourceforge.squirrel_sql.plugins.mysql;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
- * This tab will display open tables in the database.
+ * This tab will display the results of an "Analyze table" command.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class OpenTablesTab extends BaseSQLTab
+public class AnalyzeTableTab extends BaseSQLTab
 {
 	/**
 	 * This interface defines locale specific strings. This should be
@@ -32,22 +32,23 @@ public class OpenTablesTab extends BaseSQLTab
 	 */
 	private interface i18n
 	{
-		String TITLE = "(MySQL) Open tables";
-		String HINT = "(MySQL) Display open tables";
+		String TITLE = "MySQL) Analyze";
+		String HINT = "(MySQL) Analyze table";
 	}
 
 	/** Logger for this class. */
 	private final static ILogger s_log =
-		LoggerController.createLogger(OpenTablesTab.class);
+		LoggerController.createLogger(AnalyzeTableTab.class);
 
-	public OpenTablesTab()
+	public AnalyzeTableTab()
 	{
 		super(i18n.TITLE, i18n.HINT);
 	}
 
 	protected String getSQL()
 	{
-		final String catalog = getDatabaseObjectInfo().getSimpleName();
-		return "show open tables from " + catalog;
+		final String table = getDatabaseObjectInfo().getQualifiedName();
+		return "analyze table " + table;
 	}
 }
+
