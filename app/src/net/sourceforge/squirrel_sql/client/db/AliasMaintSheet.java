@@ -58,6 +58,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverProperty;
+import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
 import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeEvent;
@@ -81,7 +82,7 @@ public class AliasMaintSheet extends BaseSheet
 	/**
 	 * Maintenance types.
 	 */
-	public interface MaintenanceType
+	public interface IMaintenanceType
 	{
 		/** A new alias is being created. */
 		int NEW = 1;
@@ -125,7 +126,7 @@ public class AliasMaintSheet extends BaseSheet
 
 	/**
 	 * The requested type of maintenace.
-	 * @see MaintenanceType
+	 * @see IMaintenanceType
 	 */
 	private final int _maintType;
 
@@ -175,8 +176,8 @@ public class AliasMaintSheet extends BaseSheet
 		{
 			throw new IllegalArgumentException("ISQLAlias == null");
 		}
-		if (maintType < MaintenanceType.NEW
-			|| maintType > MaintenanceType.COPY)
+		if (maintType < IMaintenanceType.NEW
+			|| maintType > IMaintenanceType.COPY)
 		{
 			final String msg = "Illegal value of " + maintType
 								+ " passed for Maintenance type";
@@ -230,7 +231,7 @@ public class AliasMaintSheet extends BaseSheet
 		_userName.setText(_sqlAlias.getUserName());
 		_useDriverPropsChk.setSelected(_sqlAlias.getUseDriverProperties());
 
-		if (_maintType != MaintenanceType.NEW)
+		if (_maintType != IMaintenanceType.NEW)
 		{
 			_drivers.setSelectedItem(_sqlAlias.getDriverIdentifier());
 			_url.setText(_sqlAlias.getUrl());
@@ -260,8 +261,8 @@ public class AliasMaintSheet extends BaseSheet
 		try
 		{
 			applyFromDialog(_sqlAlias);
-			if (_maintType == MaintenanceType.NEW
-				|| _maintType == MaintenanceType.COPY)
+			if (_maintType == IMaintenanceType.NEW
+				|| _maintType == IMaintenanceType.COPY)
 			{
 				_app.getDataCache().addAlias(_sqlAlias);
 			}
@@ -304,6 +305,10 @@ public class AliasMaintSheet extends BaseSheet
 			final Frame owner = _app.getMainFrame();
 			final SQLDriverManager mgr = _app.getSQLDriverManager();
 			final Driver driver = mgr.getJDBCDriver(_sqlAlias.getDriverIdentifier());
+			if (driver == null)
+			{
+				throw new BaseException("Cannot determine driver properties as the driver cannot be loaded.");
+			}
 			DriverPropertyInfo[] infoAr = DriverPropertiesDialog.showDialog(owner, driver, _url.getText(), _sqlDriverProps);
 			if (infoAr != null)
 			{
@@ -315,9 +320,9 @@ public class AliasMaintSheet extends BaseSheet
 				}
 			}
 		}
-		catch (SQLException ex)
+		catch (Exception ex)
 		{
-			ex.printStackTrace(System.out);
+			_app.showErrorDialog(ex);
 		}
 	}
 
@@ -329,7 +334,7 @@ public class AliasMaintSheet extends BaseSheet
 		GUIUtils.makeToolWindow(this, true);
 
 		final String title =
-			_maintType == MaintenanceType.MODIFY
+			_maintType == IMaintenanceType.MODIFY
 				? (i18n.CHANGE + " " + _sqlAlias.getName())
 				: i18n.ADD;
 		setTitle(title);
@@ -538,6 +543,9 @@ public class AliasMaintSheet extends BaseSheet
 		}
 	}
 
+	/**
+	 * This combobox displays all the JDBC drivers defined in SQuirreL.
+	 */
 	private final class DriversCombo extends JComboBox
 	{
 		private Map _map = new HashMap();

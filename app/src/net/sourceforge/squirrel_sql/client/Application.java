@@ -129,9 +129,9 @@ class Application implements IApplication
 			s_log.error("Error setting LAF", th);
 		}
 
+// TODO: Make properties file Application.properties so we can use class
+// name to generate properties file name.
 		_resources = new SquirrelResources("net.sourceforge.squirrel_sql.client.resources.squirrel");
-
-		final boolean loadPlugins = args.getLoadPlugins();
 
 		SplashScreen splash = null;
 		if (args.getShowSplashScreen())
@@ -149,51 +149,7 @@ class Application implements IApplication
 			}
 			try
 			{
-				indicateNewStartupTask(splash, "Initializing UI factories...");
-				AliasMaintSheetFactory.initialize(this);
-				DriverMaintSheetFactory.initialize(this);
-				SessionPropertiesSheetFactory.initialize(this);
-
-				indicateNewStartupTask(splash, loadPlugins ? "Loading plugins..." : "No Plugins are to be loaded...");
-				_pluginManager = new PluginManager(this);
-				if (loadPlugins)
-				{
-					_pluginManager.loadPlugins();
-				}
-
-				indicateNewStartupTask(splash, "Loading preferences...");
-				_prefs = SquirrelPreferences.load();
-				preferencesHaveChanged(null);
-				_prefs.addPropertyChangeListener(
-					new PropertyChangeListener()
-					{
-						public void propertyChange(PropertyChangeEvent evt)
-						{
-							preferencesHaveChanged(evt);
-						}
-					});
-
-				indicateNewStartupTask(splash, "Loading actions...");
-				_actions = new ActionCollection(this);
-
-				indicateNewStartupTask(splash, "Loading user specified accelerators and mnemonics...");
-				_actions.loadActionKeys(_prefs.getActionKeys());
-
-				indicateNewStartupTask(splash, "Creating JDBC driver manager...");
-				_driverMgr = new SQLDriverManager();
-
-				// TODO: pass in a message handler so user gets error msgs.
-				indicateNewStartupTask(splash, "Loading JDBC driver and alias information...");
-				_cache = new DataCache(_driverMgr, _resources, null);
-
-				indicateNewStartupTask(splash, "Creating main window...");
-				_mainFrame = new MainFrame(this);
-
-				indicateNewStartupTask(splash, "Initializing plugins...");
-				_pluginManager.initializePlugins();
-
-				indicateNewStartupTask(splash, "Showing main window...");
-				_mainFrame.setVisible(true);
+				executeStartupTasks(splash, args);
 			}
 			finally
 			{
@@ -418,6 +374,72 @@ class Application implements IApplication
 		{
 			throw new IllegalStateException("Cannot add items to menus prior to menu being created.");
 		}
+	}
+
+	/**
+	 * Execute the taks required to start SQuirreL. Each of these is displayed
+	 * as a message on the splash screen (if one is being used) in order to let the
+	 * user know what is happening.
+	 * 
+	 * @param	splash		The splash screen (can be null).
+	 * @param	args		Application arguments.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>ApplicationArguments<.TT> is null.
+	 */
+	private void executeStartupTasks(SplashScreen splash, ApplicationArguments args)
+	{
+		if (args == null)
+		{
+			throw new IllegalArgumentException("ApplicationArguments == null");
+		}
+
+		indicateNewStartupTask(splash, "Initializing UI factories...");
+		AliasMaintSheetFactory.initialize(this);
+		DriverMaintSheetFactory.initialize(this);
+		SessionPropertiesSheetFactory.initialize(this);
+
+		final boolean loadPlugins = args.getLoadPlugins();
+		indicateNewStartupTask(splash, loadPlugins ? "Loading plugins..." : "No Plugins are to be loaded...");
+		_pluginManager = new PluginManager(this);
+		if (loadPlugins)
+		{
+			_pluginManager.loadPlugins();
+		}
+
+		indicateNewStartupTask(splash, "Loading preferences...");
+		_prefs = SquirrelPreferences.load();
+		preferencesHaveChanged(null);
+		_prefs.addPropertyChangeListener(
+			new PropertyChangeListener()
+			{
+				public void propertyChange(PropertyChangeEvent evt)
+				{
+					preferencesHaveChanged(evt);
+				}
+			});
+
+		indicateNewStartupTask(splash, "Loading actions...");
+		_actions = new ActionCollection(this);
+
+		indicateNewStartupTask(splash, "Loading user specified accelerators and mnemonics...");
+		_actions.loadActionKeys(_prefs.getActionKeys());
+
+		indicateNewStartupTask(splash, "Creating JDBC driver manager...");
+		_driverMgr = new SQLDriverManager();
+
+		// TODO: pass in a message handler so user gets error msgs.
+		indicateNewStartupTask(splash, "Loading JDBC driver and alias information...");
+		_cache = new DataCache(_driverMgr, _resources.getDefaultDriversUrl(), null);
+
+		indicateNewStartupTask(splash, "Creating main window...");
+		_mainFrame = new MainFrame(this);
+
+		indicateNewStartupTask(splash, "Initializing plugins...");
+		_pluginManager.initializePlugins();
+
+		indicateNewStartupTask(splash, "Showing main window...");
+		_mainFrame.setVisible(true);
 	}
 
 	/**

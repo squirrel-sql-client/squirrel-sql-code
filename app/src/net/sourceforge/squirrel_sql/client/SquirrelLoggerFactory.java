@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -20,15 +20,12 @@ package net.sourceforge.squirrel_sql.client;
 import java.io.IOException;
 import java.util.Calendar;
 
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.Log4jLoggerFactory;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Category;
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.PatternLayout;
 import org.apache.log4j.PropertyConfigurator;
 
-import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.Log4jLoggerFactory;
 
 public class SquirrelLoggerFactory extends Log4jLoggerFactory
 {

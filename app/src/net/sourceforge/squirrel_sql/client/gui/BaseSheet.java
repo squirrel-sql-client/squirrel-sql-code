@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -18,24 +18,21 @@ package net.sourceforge.squirrel_sql.client.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.event.KeyEvent;
-import java.beans.PropertyVetoException;
 
 import javax.swing.JInternalFrame;
-import javax.swing.KeyStroke;
-import javax.swing.text.JTextComponent;
-import javax.swing.text.Keymap;
-
 /**
  * Base functionality for Squirrels internal frames.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class BaseSheet extends JInternalFrame {
+public class BaseSheet extends JInternalFrame
+{
 	/**
 	 * Creates a non-resizable, non-closable, non-maximizable,
 	 * non-iconifiable JInternalFrame with no title.
 	 */
-	public BaseSheet() {
+	public BaseSheet()
+	{
 		super();
 	}
 
@@ -45,7 +42,8 @@ public class BaseSheet extends JInternalFrame {
 	 *
 	 * @param	title	Title for internal frame.
 	 */
-	public BaseSheet(String title) {
+	public BaseSheet(String title)
+	{
 		super(title);
 	}
 
@@ -57,7 +55,8 @@ public class BaseSheet extends JInternalFrame {
 	 * @param	title		Title for internal frame.
 	 * @param	resizable	<TT>true</TT> if frame can be resized.
 	 */
-	public BaseSheet(String title, boolean resizable) {
+	public BaseSheet(String title, boolean resizable)
+	{
 		super(title, resizable);
 	}
 
@@ -70,7 +69,8 @@ public class BaseSheet extends JInternalFrame {
 	 * @param	resizable	<TT>true</TT> if frame can be resized.
 	 * @param	closeable	<TT>true</TT> if frame can be closed.
 	 */
-	public BaseSheet(String title, boolean resizable, boolean closable) {
+	public BaseSheet(String title, boolean resizable, boolean closable)
+	{
 		super(title, resizable, closable);
 	}
 
@@ -83,8 +83,12 @@ public class BaseSheet extends JInternalFrame {
 	 * @param	closeable	<TT>true</TT> if frame can be closed.
 	 * @param	maximizable	<TT>true</TT> if frame can be maximized.
 	 */
-	public BaseSheet(String title, boolean resizable, boolean closable,
-						boolean maximizable) {
+	public BaseSheet(
+		String title,
+		boolean resizable,
+		boolean closable,
+		boolean maximizable)
+	{
 		super(title, resizable, closable, maximizable);
 	}
 
@@ -99,8 +103,13 @@ public class BaseSheet extends JInternalFrame {
 	 * @param	maximizable	<TT>true</TT> if frame can be maximized.
 	 * @param	iconifiable	<TT>true</TT> if frame can be iconified.
 	 */
-	public BaseSheet(String title, boolean resizable, boolean closable,
-						boolean maximizable, boolean iconifiable)  {
+	public BaseSheet(
+		String title,
+		boolean resizable,
+		boolean closable,
+		boolean maximizable,
+		boolean iconifiable)
+	{
 		super(title, resizable, closable, maximizable, iconifiable);
 	}
 
@@ -108,37 +117,38 @@ public class BaseSheet extends JInternalFrame {
 	 *
 	 * Modifed version of code from Slavas View class in jEdit.
 	 */
-	public void processKeyEvent(KeyEvent evt) {
+	public void processKeyEvent(KeyEvent evt)
+	{
 		// Superclass method is protected.
 		super.processKeyEvent(evt);
-/*
- * 		if (isClosed())
-			return;
-
-		// JTextComponents don't consume events...
-		if (getFocusOwner() instanceof JTextComponent) {
-			// fix for the bug where key events in JTextComponents
-			// inside views are also handled by the input handler
-			if (evt.getID() == KeyEvent.KEY_PRESSED) {
-				switch (evt.getKeyCode()) {
-					case KeyEvent.VK_BACK_SPACE :
-					case KeyEvent.VK_TAB :
-					case KeyEvent.VK_ENTER :
+		/*
+		 * 		if (isClosed())
+					return;
+		
+				// JTextComponents don't consume events...
+				if (getFocusOwner() instanceof JTextComponent) {
+					// fix for the bug where key events in JTextComponents
+					// inside views are also handled by the input handler
+					if (evt.getID() == KeyEvent.KEY_PRESSED) {
+						switch (evt.getKeyCode()) {
+							case KeyEvent.VK_BACK_SPACE :
+							case KeyEvent.VK_TAB :
+							case KeyEvent.VK_ENTER :
+								return;
+						}
+					}
+		
+					Keymap keymap = ((JTextComponent) getFocusOwner()).getKeymap();
+					if (keymap.getAction(KeyStroke.getKeyStrokeForEvent(evt)) != null)
 						return;
 				}
-			}
-
-			Keymap keymap = ((JTextComponent) getFocusOwner()).getKeymap();
-			if (keymap.getAction(KeyStroke.getKeyStrokeForEvent(evt)) != null)
-				return;
-		}
-
-		if (evt.isConsumed())
-			return;
-
-		if (!evt.isConsumed())
-			super.processKeyEvent(evt);
-*/
+		
+				if (evt.isConsumed())
+					return;
+		
+				if (!evt.isConsumed())
+					super.processKeyEvent(evt);
+		*/
 	}
 
 }
