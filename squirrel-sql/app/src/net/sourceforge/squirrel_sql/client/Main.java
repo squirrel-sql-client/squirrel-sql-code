@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.client;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import java.lang.reflect.Method;
 
 /**
  * Application entry point.
@@ -44,7 +45,11 @@ public class Main {
 		// inside JInternalFrames.
 		try {
 			if (Class.forName("java.awt.KeyboardFocusManager") != null) {
-				Java14.init();
+				Class clazz = Class.forName("net.sourceforge.squirrel_sql.client.Java14");
+				if (clazz != null) {
+					Method m = clazz.getMethod("init", null);
+					m.invoke(null, null);
+				}
 			}
 		} catch (Throwable ignore) {
 		}
