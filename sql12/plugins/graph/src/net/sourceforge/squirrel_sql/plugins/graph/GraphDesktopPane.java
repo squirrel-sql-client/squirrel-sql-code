@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
-import net.sourceforge.squirrel_sql.fw.gui.ScrollableDesktopPane;
+import net.sourceforge.squirrel_sql.client.gui.ScrollableDesktopPane;
 
 import javax.swing.*;
 import java.awt.*;
