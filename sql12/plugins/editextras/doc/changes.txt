@@ -1,6 +1,7 @@
 SQL Entry Area Enhancements
 ===========================
 
+Added 'Escape Date' to right click menu.
 
 0.13
 ====
