@@ -1,7 +1,9 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
+ *
+ * Modifications Copyright (C) 2003-2004 Jason Height
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,8 +21,7 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
-import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 /**
  * This <CODE>ICommand</CODE> refreshes the object tree.
  *
@@ -28,25 +29,25 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  */
 public class RefreshObjectTreeCommand implements ICommand
 {
-	/** The session whose object tree is to be refreshed. */
-	private final ISession _session;
+	/** The object tree is to be refreshed. */
+	private final IObjectTreeAPI _tree;
 
 	/**
 	 * Ctor.
 	 *
-	 * @param	session		The session whose object tree is to be refreshed.
+	 * @param	tree	The tree that is to be refreshed.
 	 *
 	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
+	 *			Thrown if a <TT>null</TT> <TT>IObjectTreeAPI</TT> passed.
 	 */
-	public RefreshObjectTreeCommand(ISession session)
+	public RefreshObjectTreeCommand(IObjectTreeAPI tree)
 	{
 		super();
-		if (session == null)
+		if (tree == null)
 		{
-			throw new IllegalArgumentException("ISession == null");
+			throw new IllegalArgumentException("IObjectTreeAPI == null");
 		}
-		_session = session;
+		_tree = tree;
 	}
 
 	/**
@@ -54,7 +55,6 @@ public class RefreshObjectTreeCommand implements ICommand
 	 */
 	public void execute()
 	{
-		IPlugin plugin = _session.getApplication().getDummyAppPlugin();
-		_session.getObjectTreeAPI(plugin).refreshTree();
+		_tree.refreshTree();
 	}
 }

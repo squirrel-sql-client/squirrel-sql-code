@@ -3,6 +3,8 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
+ * Modifications Copyright (C) 2003-2004 Jason Height
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -24,10 +26,7 @@ import java.io.Serializable;
 import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.ProxySettings;
@@ -61,11 +60,13 @@ public class SquirrelPreferences implements Serializable
 		String LOGIN_TIMEOUT = "loginTimeout";
 		String MAIN_FRAME_STATE = "mainFrameWindowState";
 		String MAXIMIMIZE_SESSION_SHEET_ON_OPEN = "maximizeSessionSheetOnOpen";
+		String NEW_SESSION_VIEW = "newSessionView";
 		String PLUGIN_OBJECTS = "pluginObjects";
 		String PLUGIN_STATUSES = "pluginStatuses";
 		String PROXY = "proxyPerferences";
 		String SCROLLABLE_TABBED_PANES = "useScrollableTabbedPanes";
 		String SESSION_PROPERTIES = "sessionProperties";
+		String SHOW_ACTION_TOOL_BAR = "showMainActionBar";
 		String SHOW_ALIASES_TOOL_BAR = "showAliasesToolBar";
 		String SHOW_CONTENTS_WHEN_DRAGGING = "showContentsWhenDragging";
 		String SHOW_DRIVERS_TOOL_BAR = "showDriversToolBar";
@@ -109,6 +110,10 @@ public class SquirrelPreferences implements Serializable
 	/** Login timeout (seconds). */
 	private int _loginTimeout = 30;
 
+	/** The View to start when a new session is created. */
+	// JASON: What are its valid values?
+	private String _newSessionView;
+
 	/** Show tooltips for controls. */
 	private boolean _showToolTips = true;
 
@@ -120,6 +125,9 @@ public class SquirrelPreferences implements Serializable
 
 	/** Show main toolbar. */
 	private boolean _showMainToolBar = true;
+
+	/** Show main action toolbar. */
+	private boolean _showActionToolBar = true;
 
 	/** Show toolbar in the drivers window. */
 	private boolean _showDriversToolBar = true;
@@ -184,6 +192,37 @@ public class SquirrelPreferences implements Serializable
 	public void removePropertyChangeListener(PropertyChangeListener listener)
 	{
 		getPropertyChangeReporter().removePropertyChangeListener(listener);
+	}
+
+	public String getNewSessionView()
+	{
+		return _newSessionView;
+	}
+	
+	public synchronized void setNewSessionView(String data)
+	{
+		if (((data == null) && (_newSessionView != null)) || (data != null)
+				&& !data.equals(_newSessionView))
+		{
+			final String oldValue = _newSessionView;
+			_newSessionView = data;
+			getPropertyChangeReporter().firePropertyChange(
+					IPropertyNames.NEW_SESSION_VIEW, oldValue, _newSessionView);
+		}
+	}
+
+	public boolean getShowActionToolBar()
+	{
+		return _showActionToolBar;
+	}
+
+	public synchronized void setShowActionToolBar(boolean data)
+	{
+		final boolean oldValue = _showActionToolBar;
+		_showActionToolBar = data;
+		getPropertyChangeReporter().firePropertyChange(
+							IPropertyNames.SHOW_ACTION_TOOL_BAR, oldValue, 
+							_showActionToolBar);
 	}
 
 	public SessionProperties getSessionProperties()

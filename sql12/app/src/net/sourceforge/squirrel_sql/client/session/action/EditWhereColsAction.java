@@ -1,5 +1,9 @@
 package net.sourceforge.squirrel_sql.client.session.action;
-/**
+/*
+ * Copyright (C) 2003-2004 Maury Hammel
+ *
+ * Modifications Copyright (C) 2003-2004 Jason Height
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -13,13 +17,12 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- * @author gwg
- *
  */
 import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
@@ -29,54 +32,56 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
  *
  * Adapted from SQLFilterAction.java by Maury Hammel.
  */
-public class EditWhereColsAction extends SquirrelAction implements ISessionAction
+public class EditWhereColsAction extends SquirrelAction
+								implements IObjectTreeAction
 {
-	/** The SQuirreL session instance for which this SQL Filter Action applies. */
-	private ISession _session;
+	/** The object tree which this Action applies. */
+	private IObjectTreeAPI _tree;
 
-	/** The SQuirreL application instance. */
-	private IApplication _app;
-
-	/** Creates a new instance of SQLFilterAction
-	* @param app A reference to the SQuirreL application instance
-	*/
+	/**
+	 * Ctor.
+	 *
+	 * @param	app		A reference to the SQuirreL application instance
+	 */
 	public EditWhereColsAction(IApplication app)
 	{
 		super(app);
-		_app = app;
 	}
 
-	/** Sets the _session variable with a reference to the current SQuirrel session
-	 * instance.
-	 * @param session A reference to the current SQuirrel session instance.
+	/**
+	 * Set the Object Tree that we are working with.
+	 *
+	 * @param	tree	Object tree that we want to work with.
 	 */
-	public void setSession(ISession session)
+	public void setObjectTree(IObjectTreeAPI tree)
 	{
-		_session = session;
+		_tree = tree;
 	}
 
-	/** Invoked when an action occurs.
-	* @param e The event that triggered this procedure.
-	*/
-	public void actionPerformed(ActionEvent e)
+	/**
+	 * Perform this action.
+	 *
+	 * @param	evt	The current event.
+	 */
+	public void actionPerformed(ActionEvent evt)
 	{
-		if (_session != null)
+		final IApplication app = getApplication();
+		if (_tree != null)
 		{
-			// Ensure that the proper type of Object is selected in the Object Tree before allowing the SQL Filter to be activated.
-
-			IDatabaseObjectInfo selectedObjects[] =	_session.getObjectTreeAPI(_app.getDummyAppPlugin()).getSelectedDatabaseObjects();
+			// Ensure that the proper type of Object is selected in the Object
+			// Tree.
+			IDatabaseObjectInfo selectedObjects[] =	_tree.getSelectedDatabaseObjects();
 			int objectTotal = selectedObjects.length;
 
 			if ((objectTotal > 0)
 				&& (selectedObjects[0].getDatabaseObjectType()
 					== DatabaseObjectType.TABLE))
 			{
-				CursorChanger cursorChg =
-					new CursorChanger(getApplication().getMainFrame());
+				CursorChanger cursorChg = new CursorChanger(getApplication().getMainFrame());
 				cursorChg.show();
 				try
 				{
-					new EditWhereColsCommand(_session, selectedObjects[0]).execute();
+					new EditWhereColsCommand(app, _tree, selectedObjects[0]).execute();
 				}
 				finally
 				{
@@ -85,7 +90,7 @@ public class EditWhereColsAction extends SquirrelAction implements ISessionActio
 			}
 			else
 			{
-				_session.getMessageHandler().showMessage(
+				_tree.getSession().getMessageHandler().showMessage(
 					"You must have a single table selected to limit the colums used in the Edit WHERE clause");
 			}
 		}

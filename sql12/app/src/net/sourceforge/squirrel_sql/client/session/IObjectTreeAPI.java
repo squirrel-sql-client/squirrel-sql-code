@@ -1,8 +1,10 @@
 package net.sourceforge.squirrel_sql.client.session;
 /*
- * Copyright (C) 2002 Colin Bell and Johan Compagner
+ * Copyright (C) 2002-2004 Colin Bell and Johan Compagner
  * colbell@users.sourceforge.net
  * jcompagner@j-com.nl
+ *
+ * Modifications Copyright (C) 2003-2004 Jason Height
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,6 +25,7 @@ import javax.swing.JMenu;
 import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionListener;
 
+import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
@@ -36,7 +39,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IOb
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public interface IObjectTreeAPI
+public interface IObjectTreeAPI extends IHasIdentifier
 {
 	/**
 	 * Database object type for a "Table Type" node in the object tree. Some examples
@@ -55,6 +58,13 @@ public interface IObjectTreeAPI
 	 * node of this type in the object tree and it says "UDT".
 	 */
 	DatabaseObjectType UDT_TYPE_DBO = DatabaseObjectType.createNewDatabaseObjectType("UDT Type");
+
+	/**
+	 * Retrieves the session of associated with the tree.
+	 *
+	 * @return	Session associated with the tree.
+	 */
+	ISession getSession();
 
 	/**
 	 * Add an expander for the specified object tree node type.
@@ -245,4 +255,6 @@ public interface IObjectTreeAPI
 	 * @param	dboType		The new database object type.
 	 */
 	void addKnownDatabaseObjectType(DatabaseObjectType dboType);
+
+	IObjectTab getTabbedPaneIfSelected(DatabaseObjectType dbObjectType, String title);
 }

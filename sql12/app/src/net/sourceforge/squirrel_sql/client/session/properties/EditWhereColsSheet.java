@@ -1,8 +1,9 @@
 package net.sourceforge.squirrel_sql.client.session.properties;
-
 /**
- * @author gwg
-*
+ * Copyright (C) 2003-2004 Glenn Griffin
+ *
+ * Modifications Copyright (C) 2003-2004 Jason Height
+ *
  * Adapted from SQLFilterSheet.java by Maury Hammel.
  *
  * This library is free software; you can redistribute it and/or
@@ -42,14 +43,14 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
+import net.sourceforge.squirrel_sql.client.session.BaseSessionSheet;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ContentsTab;
 /**
  * Edit Where Cols dialog gui.
  *
  */
-public class EditWhereColsSheet extends BaseSheet
+public class EditWhereColsSheet extends BaseSessionSheet
 {
 	/**
 	 * This interface defines locale specific strings. This should be
@@ -65,9 +66,6 @@ public class EditWhereColsSheet extends BaseSheet
 	private static final ILogger s_log =
 		LoggerController.createLogger(EditWhereColsSheet.class);
 
-	/** A reference to the current SQuirreL session */
-	private ISession _session;
-
 	/** A reference to a class containing information about the database metadata. */
 	private IDatabaseObjectInfo _objectInfo;
 
@@ -76,7 +74,6 @@ public class EditWhereColsSheet extends BaseSheet
 
 	/** A reference to a panel for the EditWhereCols list. */
 	private EditWhereColsPanel _editWhereColsPanel = null;
-
 
 	/**
 	 * Creates a new instance of SQLFilterSheet
@@ -87,16 +84,12 @@ public class EditWhereColsSheet extends BaseSheet
 	 */
 	public EditWhereColsSheet(ISession session, IDatabaseObjectInfo objectInfo)
 	{
-		super(i18n.TITLE, true);
-		if (session == null)
-		{
-			throw new IllegalArgumentException("Null ISession passed");
-		}
+		super(session, i18n.TITLE, true);
 		if (objectInfo == null)
 		{
 			throw new IllegalArgumentException("Null IDatabaseObjectInfo passed");
 		}
-		_session = session;
+
 		_objectInfo = objectInfo;
 		createGUI();
 	}
@@ -123,16 +116,14 @@ public class EditWhereColsSheet extends BaseSheet
 
 				if (isDebug)
 				{
-					s_log.debug(
-						"Panel "
-						+ _editWhereColsPanel.getTitle()
+					s_log.debug("Panel " + _editWhereColsPanel.getTitle()
 						+ " initialized in "
-						+ (System.currentTimeMillis() - start)
-						+ "ms");
+						+ (System.currentTimeMillis() - start) + "ms");
 				}
 
 				pack();
 				/*
+				 * TODO: Work out why
 				 * KLUDGE: For some reason, I am not able to get the sheet to
 				 * size correctly. It always displays with a size that causes
 				 * the sub-panels to have their scrollbars showing. Add a bit
@@ -171,21 +162,11 @@ public class EditWhereColsSheet extends BaseSheet
 		dispose();
 	}
 
-	/**
-	 * Get the current SQuirreL session.
-	 *
-	 * @return	A reference to the current SQuirreL session
-	 */
-	public ISession getSession()
-	{
-		return _session;
-	}
-
 	public IDatabaseObjectInfo getDatabaseObjectInfo()
 	{
 		return _objectInfo;
 	}
-	
+
 	/**
 	 * Reset button pressed.  Reset the data to the way it was when we started
 	 * this round of editing.
@@ -221,26 +202,33 @@ public class EditWhereColsSheet extends BaseSheet
 		// This is a tool window.
 		GUIUtils.makeToolWindow(this, true);
 
+		final ISession session = getSession();
+
 		try
 		{
-			SQLConnection sqlConnection = _session.getSQLConnection();
-			ResultSet rs =
-				sqlConnection.getSQLMetaData().getColumns((ITableInfo)_objectInfo);
-			while (rs.next())
+			final SQLConnection conn = session.getSQLConnection();
+			final ResultSet rs = conn.getSQLMetaData().getColumns((ITableInfo)_objectInfo);
+			try
 			{
-				columnNames.add(rs.getString("COLUMN_NAME"));
+				while (rs.next())
+				{
+					columnNames.add(rs.getString("COLUMN_NAME"));
+				}
+			}
+			finally
+			{
+				rs.close();
 			}
 		}
 		catch (SQLException ex)
 		{
-			_session.getApplication().showErrorDialog(
+			session.getApplication().showErrorDialog(
 				"Unable to get list of columns, " + ex);
 		}
 
 		_editWhereColsPanel =
 			new EditWhereColsPanel(columnNames,  _objectInfo.getQualifiedName(),
-				ContentsTab.getUnambiguousTableName(_session, _objectInfo.getQualifiedName()));
-
+				ContentsTab.getUnambiguousTableName(session, _objectInfo.getQualifiedName()));
 
 		String pnlTitle = _editWhereColsPanel.getTitle();
 		String hint = _editWhereColsPanel.getHint();
@@ -264,12 +252,12 @@ public class EditWhereColsSheet extends BaseSheet
 
 		gbc.fill = GridBagConstraints.NONE;
 		gbc.gridx = GridBagConstraints.REMAINDER;
-		
+
 		// leave a blank line just to make it look a bit nicer
 		gbc.gridx = 0;
 		++gbc.gridy;
 		contentPane.add(new JLabel(" "), gbc);
-		
+
 		gbc.gridx = 0;
 		++gbc.gridy;
 		contentPane.add(
@@ -341,7 +329,4 @@ public class EditWhereColsSheet extends BaseSheet
 
 		return pnl;
 	}
-
-
 }
-

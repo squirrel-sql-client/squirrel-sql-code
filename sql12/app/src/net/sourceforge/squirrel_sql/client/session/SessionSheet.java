@@ -3,6 +3,8 @@ package net.sourceforge.squirrel_sql.client.session;
  * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
+ * Modifications Copyright (C) 2003-2004 Jason Height
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -30,8 +32,6 @@ import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -85,7 +85,7 @@ public class SessionSheet extends JPanel
 	private PropertyChangeListener _propsListener;
 
 	private MainPanel _mainTabPane;
-	private JSplitPane _msgSplit;
+//	private JSplitPane _msgSplit;
 
 	/** Toolbar for window. */
 	private MyToolBar _toolBar;
@@ -133,12 +133,13 @@ public class SessionSheet extends JPanel
 		if (!_hasBeenVisible)
 		{
 			_hasBeenVisible = true;
-			_msgSplit.setDividerLocation(0.9d);
-			_msgSplit.setResizeWeight(1.0);
+//			_msgSplit.setDividerLocation(0.9d);
+//			_msgSplit.setResizeWeight(1.0);
 
 			// Done this late so that plugins have time to register expanders
 			// with the object tree prior to it being built.
-			getSession().getObjectTreeAPI(_app.getDummyAppPlugin()).refreshTree();
+//			getSession().getObjectTreeAPI(_app.getDummyAppPlugin()).refreshTree();
+			_mainTabPane.getObjectTreePanel().refreshTree();
 		}
 	}
 
@@ -281,6 +282,11 @@ public class SessionSheet extends JPanel
 		return _mainTabPane.getSQLPanel();
 	}
 
+	public ISQLPanelAPI getSQLPaneAPI()
+	{
+		return _mainTabPane.getSQLPanel().getSQLPanelAPI();
+	}
+
 	/**
 	 * TODO: This shouldn't be public. Its only been done for the JComplete
 	 * plugin. At some stage this method will be returned to package visibility.
@@ -390,14 +396,15 @@ public class SessionSheet extends JPanel
 
 		_mainTabPane = new MainPanel(session);
 
-		MessagePanel msgPnl = new MessagePanel();
-		session.setMessageHandler(msgPnl);
-		msgPnl.setEditable(false);
-		_msgSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-		_msgSplit.setOneTouchExpandable(true);
-		_msgSplit.add(_mainTabPane, JSplitPane.LEFT);
-		_msgSplit.add(new JScrollPane(msgPnl), JSplitPane.RIGHT);
-		add(_msgSplit, BorderLayout.CENTER);
+//		MessagePanel msgPnl = new MessagePanel();
+//		session.setMessageHandler(msgPnl);
+//		msgPnl.setEditable(false);
+//		_msgSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+//		_msgSplit.setOneTouchExpandable(true);
+//		_msgSplit.add(_mainTabPane, JSplitPane.LEFT);
+//		_msgSplit.add(new JScrollPane(msgPnl), JSplitPane.RIGHT);
+//		add(_msgSplit, BorderLayout.CENTER);
+		add(_mainTabPane, BorderLayout.CENTER);
 
 		Font fn = app.getFontInfoStore().getStatusBarFontInfo().createFont();
 		_statusBar.setFont(fn);

@@ -3,6 +3,8 @@ package net.sourceforge.squirrel_sql.client.mainframe;
  * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
+ * Modifications Copyright (C) 2003-2004 Jason Height
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -37,6 +39,7 @@ import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.fw.gui.BaseMDIParentFrame;
@@ -52,7 +55,10 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.ViewAliasesAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewDriversAction;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.client.session.MessagePanel;
 import net.sourceforge.squirrel_sql.client.session.SessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
+import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 
 public class MainFrame extends BaseMDIParentFrame
 {
@@ -73,13 +79,21 @@ public class MainFrame extends BaseMDIParentFrame
 	/** Toolbar at top of window. */
 	private MainFrameToolBar _toolBar;
 
+	/** ActionBar at right of window. */
+	private MainFrameActionBar _actionBar;
+
 	/** Status bar at bottom of window. */
 	private MainFrameStatusBar _statusBar;
+
+	/** Message panel at bottom of window. */
+	// JASON: Should be part of status bar?
+	private MessagePanel _msgPnl;
 
 	/** If <TT>true</TT> then status bar is visible. */
 	private boolean _statusBarVisible = false;
 
-	private JInternalFrame _activeInternalFrame;
+	// Removed as part of JASON:
+//	private JInternalFrame _activeInternalFrame;
 
 	/**
 	 * Ctor.
@@ -99,6 +113,7 @@ public class MainFrame extends BaseMDIParentFrame
 		}
 		_app = app;
 		createUserInterface();
+		_app.getSessionManager().addSessionListener(new MainFrameSessionListener());
 		preferencesHaveChanged(null); // Initial load of prefs.
 		_app.getSquirrelPreferences().addPropertyChangeListener(new PropertyChangeListener()
 		{
@@ -110,6 +125,8 @@ public class MainFrame extends BaseMDIParentFrame
 				}
 			}
 		});
+
+//		_app.getSessionManager().addSessionListener(new MainFrameSessionListener());
 
 		SwingUtilities.invokeLater(new Runnable()
 		{
@@ -154,7 +171,6 @@ public class MainFrame extends BaseMDIParentFrame
 		// Size non-tool child window.
 		if (!GUIUtils.isToolWindow(child))
 		{
-			getSessionMenu().setEnabled(true);
 			Dimension cs = child.getParent().getSize();
 			// Cast to int required as Dimension::setSize(double,double)
 			// doesn't appear to do anything in JDK1.2.2.
@@ -183,10 +199,6 @@ public class MainFrame extends BaseMDIParentFrame
 		JInternalFrame[] frames =
 			GUIUtils.getOpenNonToolWindows(getDesktopPane().getAllFrames());
 		_app.getActionCollection().internalFrameOpenedOrClosed(frames.length);
-		if (frames.length == 0)
-		{
-			getSessionMenu().setEnabled(false);
-		}
 	}
 
 	/**
@@ -225,10 +237,11 @@ public class MainFrame extends BaseMDIParentFrame
 		return ((MainFrameMenuBar) getJMenuBar()).getWindowsMenu();
 	}
 
-	public JInternalFrame getActiveInternalFrame()
-	{
-		return _activeInternalFrame;
-	}
+	// Removed as part of JASON:
+//	public JInternalFrame getActiveInternalFrame()
+//	{
+//		return _activeInternalFrame;
+//	}
 
 	public void addToMenu(int menuId, JMenu menu)
 	{
@@ -277,6 +290,11 @@ public class MainFrame extends BaseMDIParentFrame
 			throw new IllegalArgumentException("JComponent == null");
 		}
 		_statusBar.remove(comp);
+	}
+
+	public MessagePanel getMessagePanel()
+	{
+		return _msgPnl;
 	}
 
 	private void preferencesHaveChanged(PropertyChangeEvent evt)
@@ -329,6 +347,22 @@ public class MainFrame extends BaseMDIParentFrame
 				getContentPane().add(_toolBar, BorderLayout.NORTH);
 			}
 		}
+
+		if (propName == null
+				|| propName.equals(SquirrelPreferences.IPropertyNames.SHOW_ACTION_TOOL_BAR))
+		{
+			final boolean show = prefs.getShowActionToolBar();
+			if (!show && _actionBar != null)
+			{
+				getContentPane().remove(_actionBar);
+				_actionBar = null;
+			}
+			else if (show && _actionBar == null)
+			{
+				_actionBar = new MainFrameActionBar(_app, this);
+				getContentPane().add(_actionBar, BorderLayout.WEST);
+			}
+		}
 	}
 
 //	synchronized public boolean closeAllNonToolWindows()
@@ -371,7 +405,17 @@ public class MainFrame extends BaseMDIParentFrame
 //		content.add(new MainFrameToolBar(_app, this), BorderLayout.NORTH);
 		final JScrollPane sp = new JScrollPane(getDesktopPane());
 		sp.setBorder(BorderFactory.createEmptyBorder());
-		content.add(sp, BorderLayout.CENTER);
+//		content.add(sp, BorderLayout.CENTER);
+
+		_msgPnl = new MessagePanel();
+		_msgPnl.setEditable(false);
+
+		JSplitPane splitPn = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+		splitPn.add(sp);
+		splitPn.add(new JScrollPane(_msgPnl));
+		splitPn.setResizeWeight(0.9);
+
+		content.add(splitPn, BorderLayout.CENTER);
 
 		_statusBar = new MainFrameStatusBar();
 		final Font fn = _app.getFontInfoStore().getStatusBarFontInfo().createFont();
@@ -485,24 +529,40 @@ public class MainFrame extends BaseMDIParentFrame
 		public void activateFrame(JInternalFrame f)
 		{
 			super.activateFrame(f);
-			_activeInternalFrame = f;
+			// Removed as part of JASON:
+//			_activeInternalFrame = f;
 			_app.getActionCollection().internalFrameActivated(f);
 			if (f instanceof SessionInternalFrame)
 			{
-				getSessionMenu().setEnabled(true);
 				((SessionInternalFrame)f).getSessionPanel().updateState();
 			}
 		}
 		public void deactivateFrame(JInternalFrame f)
 		{
 			super.deactivateFrame(f);
-			_activeInternalFrame = null;
+			// Removed as part of JASON:
+//			_activeInternalFrame = null;
 			_app.getActionCollection().internalFrameDeactivated(f);
 			if (f instanceof SessionInternalFrame)
 			{
 				((SessionInternalFrame)f).getSessionPanel().updateState();
-				getSessionMenu().setEnabled(false);
 			}
+		}
+	}
+
+	/**
+	 * Enables/disables the session menu based on whether there are any active sessions
+	 */
+	private class MainFrameSessionListener extends SessionAdapter
+	{
+		public void sessionActivated(SessionEvent evt)
+		{
+			getSessionMenu().setEnabled(true);
+		}
+
+		public void sessionClosing(SessionEvent evt)
+		{
+			getSessionMenu().setEnabled(false);
 		}
 	}
 }

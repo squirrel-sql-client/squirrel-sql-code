@@ -1,7 +1,9 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
+ *
+ * Modifications Copyright (C) 2003-2004 Jason Height
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,7 +25,7 @@ import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 /**
  * This <CODE>Action</CODE> allows the user to close all the SQL
  * result tabs for the current session.
@@ -31,10 +33,9 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class CloseAllSQLResultTabsAction extends SquirrelAction
-											implements ISessionAction
+											implements ISQLPanelAction
 {
-	/** Current session. */
-	private ISession _session;
+	private ISQLPanelAPI _panel;
 
 	/**
 	 * Ctor.
@@ -46,20 +47,15 @@ public class CloseAllSQLResultTabsAction extends SquirrelAction
 		super(app);
 	}
 
-	/**
-	 * Set the current session.
-	 *
-	 * @param	session		The current session.
-	 */
-	public void setSession(ISession session)
+	public void setSQLPanel(ISQLPanelAPI panel)
 	{
-		_session = session;
+		_panel = panel;
 	}
 
 	/**
 	 * Perform this action. Use the <TT>CloseAllSQLResultTabsCommand</TT>.
-	 *
-	 * @param	evt	The current event.
+	 * 
+	 * @param	evt		The current event.
 	 */
 	public void actionPerformed(ActionEvent evt)
 	{
@@ -68,7 +64,7 @@ public class CloseAllSQLResultTabsAction extends SquirrelAction
 		cursorChg.show();
 		try
 		{
-			new CloseAllSQLResultTabsCommand(_session).execute();
+			new CloseAllSQLResultTabsCommand(_panel).execute();
 		}
 		finally
 		{

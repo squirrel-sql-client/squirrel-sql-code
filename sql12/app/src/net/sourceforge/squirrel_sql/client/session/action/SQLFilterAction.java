@@ -1,5 +1,10 @@
 package net.sourceforge.squirrel_sql.client.session.action;
-/**
+/*
+ * Copyright (C) 2003-2004 Maury Hammel
+ * mjhammel@users.sourceforge.net
+ *
+ * Modifications Copyright (C) 2003-2004 Jason Height
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -18,26 +23,26 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ContentsTab;
 /**
  * SQLFilterAction.java
  *
  * Created on March 22, 2003, 10:55 AM
  *
- * Copyright (C) 2003 Maury Hammel
- * mjhammel@users.sourceforge.net
- *
  * Adapted from SessionPropertiesAction.java by Colin Bell.
+ *
+ * TODO: CHange name to ContentsTabFilterAction
  */
-public class SQLFilterAction extends SquirrelAction implements ISessionAction
+public class SQLFilterAction extends SquirrelAction implements IObjectTreeAction
 {
-	/** The SQuirreL session instance for which this SQL Filter Action applies. */
-	private ISession _session;
+	private IObjectTreeAPI _tree;
 
 	/** The SQuirreL application instance. */
 	private IApplication _app;
@@ -55,42 +60,54 @@ public class SQLFilterAction extends SquirrelAction implements ISessionAction
 	 * instance.
 	 * @param session A reference to the current SQuirrel session instance.
 	 */
-	public void setSession(ISession session)
+	public void setObjectTree(IObjectTreeAPI tree)
 	{
-		_session = session;
+		_tree = tree;
 	}
 
-	/** Invoked when an action occurs.
-	* @param e The event that triggered this procedure.
-	*/
-	public void actionPerformed(ActionEvent e)
+	/**
+	 * Invoked when an action occurs.
+	 *
+	 * @param	evt		The event that triggered this procedure.
+	 */
+	public void actionPerformed(ActionEvent evt)
 	{
-		if (_session != null)
+		if (_tree != null)
 		{
 			// Ensure that the proper type of Object is selected in the Object Tree before allowing the SQL Filter to be activated.
-
-			IDatabaseObjectInfo selectedObjects[] =	_session.getObjectTreeAPI(_app.getDummyAppPlugin()).getSelectedDatabaseObjects();
-			int objectTotal = selectedObjects.length;
+			final IDatabaseObjectInfo selObjs[] =	_tree.getSelectedDatabaseObjects();
+			final int objectTotal = selObjs.length;
 
 			if ((objectTotal > 0)
-				&& (selectedObjects[0].getDatabaseObjectType()
-					== DatabaseObjectType.TABLE))
+				&& (selObjs[0].getDatabaseObjectType() == DatabaseObjectType.TABLE))
 			{
-				CursorChanger cursorChg =
-					new CursorChanger(getApplication().getMainFrame());
-				cursorChg.show();
-				try
-				{
-					new SQLFilterCommand(_session, selectedObjects[0]).execute();
-				}
-				finally
-				{
-					cursorChg.restore();
-				}
+//				ContentsTab cTab =(ContentsTab)_tree.getTabbedPaneIfSelected(
+//												DatabaseObjectType.TABLE,
+//												ContentsTab.TITLE);
+//				if (cTab != null)
+//				{
+					final IApplication app = getApplication();
+		
+					final CursorChanger cursorChg = new CursorChanger(app.getMainFrame());
+					cursorChg.show();
+					try
+					{
+						new SQLFilterCommand(_tree, selObjs[0]).execute();
+					}
+					finally
+					{
+						cursorChg.restore();
+					}
+//				}
+//				else
+//				{
+//					_tree.getSession().getMessageHandler().showMessage(
+//					"You must have the Contents Tab selected to activate the SQL Filter");
+//				}
 			}
 			else
 			{
-				_session.getMessageHandler().showMessage(
+				_tree.getSession().getMessageHandler().showMessage(
 					"You must have a single table or view selected to activate the SQL Filter");
 			}
 		}

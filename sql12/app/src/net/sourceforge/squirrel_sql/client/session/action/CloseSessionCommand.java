@@ -1,7 +1,9 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 /*
- * Copyright (C) 2002-2003 Colin Bell
+ * Copyright (C) 2002-2004 Colin Bell
  * colbell@users.sourceforge.net
+ *
+ * Modifications Copyright (C) 2003-2004 Jason Height
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -53,6 +55,6 @@ public class CloseSessionCommand implements ICommand
 	 */
 	public void execute()
 	{
-		_session.getApplication().getSessionWindowManager().closeSession(_session);
+		_session.getApplication().getSessionManager().closeSession(_session);
 	}
 }

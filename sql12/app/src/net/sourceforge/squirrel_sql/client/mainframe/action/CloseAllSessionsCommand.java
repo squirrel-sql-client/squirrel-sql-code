@@ -55,6 +55,9 @@ public class CloseAllSessionsCommand implements ICommand
 	 */
 	public void execute()
 	{
-		_app.getSessionWindowManager().closeAllSessions();
+		// JASON: Check that we still clean up all session data, and that the
+		// "Do you want to close this session" code still works.
+		//_app.getSessionWindowManager().closeAllSessions();
+		_app.getSessionManager().closeAllSessions();
 	}
 }

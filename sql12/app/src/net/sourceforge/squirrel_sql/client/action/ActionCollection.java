@@ -3,6 +3,8 @@ package net.sourceforge.squirrel_sql.client.action;
  * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
+ * Modifications Copyright (C) 2003-2004 Jason Height
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -25,6 +27,8 @@ import java.util.Map;
 import javax.swing.Action;
 import javax.swing.JInternalFrame;
 import javax.swing.KeyStroke;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -47,6 +51,8 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.TileVerticalAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewHelpAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewLogsAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsAction;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultWindowsAction;
@@ -56,10 +62,15 @@ import net.sourceforge.squirrel_sql.client.session.action.CopyQualifiedObjectNam
 import net.sourceforge.squirrel_sql.client.session.action.CopySimpleObjectNameAction;
 import net.sourceforge.squirrel_sql.client.session.action.DropSelectedTablesAction;
 import net.sourceforge.squirrel_sql.client.session.action.DumpSessionAction;
+import net.sourceforge.squirrel_sql.client.session.action.ExecuteAllSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.GotoNextResultsTabAction;
 import net.sourceforge.squirrel_sql.client.session.action.GotoPreviousResultsTabAction;
+import net.sourceforge.squirrel_sql.client.session.action.IObjectTreeAction;
+import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
+import net.sourceforge.squirrel_sql.client.session.action.NewObjectTreeAction;
+import net.sourceforge.squirrel_sql.client.session.action.NewSQLWorksheetAction;
 import net.sourceforge.squirrel_sql.client.session.action.NextSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.PreviousSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.ReconnectAction;
@@ -226,16 +237,40 @@ public final class ActionCollection
 	 * This function should be called whenever an internal frame is
 	 * deactivated.
 	 *
+	 * JASON: Should this be in Sessionmanager or SessionWindowmanager?
+	 *
 	 * @param	frame	The <TT>JInternalFrame</TT> deactivated.
 	 */
 	public void internalFrameDeactivated(JInternalFrame frame)
 	{
+		final boolean isSQLFrame = (frame instanceof SQLInternalFrame);
+		final boolean isTreeFrame = (frame instanceof ObjectTreeInternalFrame);
+		final boolean isSessionInternalFrame = (frame instanceof SessionInternalFrame);
+
 		for (Iterator it = actions(); it.hasNext();)
 		{
 			final Action act = (Action) it.next();
+
 			if (act instanceof ISessionAction)
 			{
 				((ISessionAction)act).setSession(null);
+			}
+
+			if (isSQLFrame && (act instanceof ISQLPanelAction))
+			{
+				((ISQLPanelAction)act).setSQLPanel(null);
+			}
+			if (isTreeFrame && (act instanceof IObjectTreeAction))
+			{
+				((IObjectTreeAction)act).setObjectTree(null);
+			}
+			if ((isSessionInternalFrame) && (act instanceof ISQLPanelAction))
+			{
+				((ISQLPanelAction)act).setSQLPanel(null);
+			}
+			if ((isSessionInternalFrame) && (act instanceof IObjectTreeAction))
+			{
+				((IObjectTreeAction)act).setObjectTree(null);
 			}
 		}
 	}
@@ -244,21 +279,45 @@ public final class ActionCollection
 	 * This function should be called whenever an internal frame is
 	 * activated.
 	 *
+	 * JASON: Should this be in Sessionmanager or SessionWindowmanager?
+	 *
 	 * @param	frame	The <TT>JInternalFrame</TT> activated.
 	 */
 	public synchronized void internalFrameActivated(JInternalFrame frame)
 	{
+		final boolean isSQLFrame = (frame instanceof SQLInternalFrame);
+		final boolean isTreeFrame = (frame instanceof ObjectTreeInternalFrame);
+		final boolean isSessionInternalFrame = (frame instanceof SessionInternalFrame);
+
 		ISession session = null;
 		if (frame instanceof SessionInternalFrame)
 		{
 			session = ((SessionInternalFrame)frame).getSession();
 		}
+
 		for (Iterator it = actions(); it.hasNext();)
 		{
-			final Action act = (Action) it.next();
+			final Action act = (Action)it.next();
 			if (act instanceof ISessionAction)
 			{
 				((ISessionAction)act).setSession(session);
+			}
+			if (isSQLFrame && (act instanceof ISQLPanelAction))
+			{
+				((ISQLPanelAction)act).setSQLPanel(((SQLInternalFrame)frame).getSQLPanel().getSQLPanelAPI());
+			}
+			if (isTreeFrame && (act instanceof IObjectTreeAction))
+			{
+				((IObjectTreeAction)act).setObjectTree(((ObjectTreeInternalFrame)frame).getObjectTreePanel());
+			}
+
+			if ((isSessionInternalFrame) && (act instanceof ISQLPanelAction))
+			{
+				((ISQLPanelAction)act).setSQLPanel(((SessionInternalFrame)frame).getSessionPanel().getSQLPaneAPI());
+			}
+			if ((isSessionInternalFrame) && (act instanceof IObjectTreeAction))
+			{
+				((IObjectTreeAction)act).setObjectTree(((SessionInternalFrame)frame).getSessionPanel().getObjectTreePanel());
 			}
 		}
 	}
@@ -363,6 +422,7 @@ public final class ActionCollection
 		add(new DropSelectedTablesAction(_app));
 		add(new DumpApplicationAction(_app));
 		add(new DumpSessionAction(_app));
+		add(new ExecuteAllSqlAction(_app));
 		add(new ExecuteSqlAction(_app));
 		add(new ExitAction(_app));
 		add(new GlobalPreferencesAction(_app));
@@ -370,6 +430,8 @@ public final class ActionCollection
 		add(new GotoPreviousResultsTabAction(_app));
 		add(new InstallDefaultDriversAction(_app));
 		add(new MaximizeAction(_app));
+		add(new NewObjectTreeAction(_app));
+		add(new NewSQLWorksheetAction(_app));
 		add(new NewSessionPropertiesAction(_app));
 		add(new NextSessionAction(_app));
 //		add(new FilterObjectTreeAction(_app));
@@ -389,5 +451,23 @@ public final class ActionCollection
 		add(new TileVerticalAction(_app));
 		add(new ViewHelpAction(_app));
 		add(new ViewLogsAction(_app));
+	}
+
+	// JASON: Should this be in Sessionmanager or SessionWindowmanager?
+	public class SessionWindowListener extends InternalFrameAdapter
+	{
+		public void internalFrameActivated(InternalFrameEvent e)
+		{
+			ActionCollection.this.internalFrameActivated(e.getInternalFrame());
+		}
+
+		public void internalFrameDeactivated(InternalFrameEvent e)
+		{
+			ActionCollection.this.internalFrameDeactivated(e.getInternalFrame());
+		}
+
+		public void internalFrameClosed(InternalFrameEvent e)
+		{
+		}
 	}
 }

@@ -3,6 +3,8 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * Copyright (C) 2003 Colin Bell
  * colbell@users.sourceforge.net
  *
+ * Modifications Copyright (C) 2003-2004 Jason Height
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -19,11 +21,12 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 /**
  * This <CODE>Action</CODE> will copy the qualified object names of all objects
  * currently in the object tree and place on the system clipboard.
@@ -32,14 +35,14 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class CopyQualifiedObjectNameAction
 	extends SquirrelAction
-	implements ISessionAction, CopyObjectNameCommand.ICopyTypes
+	implements IObjectTreeAction, CopyObjectNameCommand.ICopyTypes
 {
 	/** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(CopyQualifiedObjectNameAction.class);
 
-	/** Current session. */
-	private ISession _session;
+	/** API for the current tree. */
+	private IObjectTreeAPI _tree;
 
 	/**
 	 * Ctor.
@@ -52,13 +55,13 @@ public class CopyQualifiedObjectNameAction
 	}
 
 	/**
-	 * Set the current session.
+	 * Set the current object tree API.
 	 *
-	 * @param	session		The current session.
+	 * @param	tree	Current ObjectTree
 	 */
-	public void setSession(ISession session)
+	public void setObjectTree(IObjectTreeAPI tree)
 	{
-		_session = session;
+		_tree = tree;
 	}
 
 	/**
@@ -68,16 +71,16 @@ public class CopyQualifiedObjectNameAction
 	 */
 	public void actionPerformed(ActionEvent evt)
 	{
-		if (_session != null)
+		if (_tree != null)
 		{
 			try
 			{
-				new CopyObjectNameCommand(_session, QUALIFIED_NAME).execute();
+				new CopyObjectNameCommand(_tree, QUALIFIED_NAME).execute();
 			}
 			catch (Throwable ex)
 			{
 				final String msg = "Error occured copying object names";
-				_session.getMessageHandler().showErrorMessage(msg + ": " + ex);
+				_tree.getSession().getMessageHandler().showErrorMessage(msg + ": " + ex);
 				s_log.error(msg, ex);
 			}
 		}

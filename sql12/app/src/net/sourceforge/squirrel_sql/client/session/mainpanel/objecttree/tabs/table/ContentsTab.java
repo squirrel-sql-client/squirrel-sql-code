@@ -17,42 +17,41 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.ta
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.PreparedStatement;
-import javax.swing.JOptionPane;
 import java.util.HashMap;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseEvent;
-import java.awt.Component;
 
+import javax.swing.JOptionPane;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetScrollingPanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetScrollingPanel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
-
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.OrderByClausePanel;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterClauses;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.WhereClausePanel;
-import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
 
 /**
  * This is the tab showing the contents (data) of the table.
@@ -98,6 +97,8 @@ public class ContentsTab extends BaseTableTab
 	 * which does not match any legal column index.
 	 */
 	int _rowIDcol = -1;
+	
+	private SQLFilterClauses _sqlFilterClauses = new SQLFilterClauses();
 
 	/**
 	 * This interface defines locale specific strings. This should be
@@ -135,36 +136,29 @@ public class ContentsTab extends BaseTableTab
 	}
 	
 	/**
-	 * This inner class defines a pop-up menu with only one item, "insert", which
-	 * allows the user to add a new row to an empty table.
-	 */
-	class ContentsTabPopupMenu extends TablePopupMenu
-	{
-		public ContentsTabPopupMenu(DataSetViewerTablePanel viewer) {
-			super(viewer.isTableEditable(), ContentsTab.this, viewer);
-			removeAll();	// the normal constructor creates a bunch of entries we do not want
-			add(_insertRow);
-		}
-	}
-	
-	/**
 	 * Override the parent's getComponent method so that we can
 	 * attach a menu to the ContentsTab pane that allows the user
 	 * to insert a new row when the table is empty.
 	 */
-	public Component getComponent(){
+	public Component getComponent()
+	{
 		final Component c = super.getComponent();
 		
-		if (c != null) {
+		if (c != null)
+		{
 			// remove any previously set listeners
 			MouseListener[] oldListeners = c.getMouseListeners();
 			for (int i=0; i< oldListeners.length; i++)
+			{
 				c.removeMouseListener(oldListeners[i]);
+			}
+
 			// If the viewer is a table AND table iseditable, add a listener using the current viewer
-			if (((DataSetScrollingPanel)c).getViewer() instanceof DataSetViewerTablePanel) {
-				final DataSetViewerTablePanel viewer =
-							(DataSetViewerTablePanel)((DataSetScrollingPanel)c).getViewer();
-				if (viewer.isTableEditable()) {
+			if (((DataSetScrollingPanel)c).getViewer() instanceof DataSetViewerTablePanel)
+			{
+				final DataSetViewerTablePanel viewer = (DataSetViewerTablePanel)((DataSetScrollingPanel)c).getViewer();
+				if (viewer.isTableEditable())
+				{
 					c.addMouseListener(new MouseAdapter()
 					{
 						public void mousePressed(MouseEvent evt)
@@ -200,7 +194,12 @@ public class ContentsTab extends BaseTableTab
 	public static String getUnambiguousTableName(ISession session, String name) {
 		return session.getAlias().getUrl()+":"+name;
 	}
-	
+
+	public SQLFilterClauses getSQLFilterClauses()
+	{
+		return _sqlFilterClauses;
+	}
+
 	/**
 	 * Get the full name of this table, creating that name the first time we are called
 	 */
@@ -226,8 +225,7 @@ public class ContentsTab extends BaseTableTab
 	{
 		final ISession session = getSession();
 		final SQLConnection conn = session.getSQLConnection();
-		final SQLDatabaseMetaData md = conn.getSQLMetaData();
-		final SQLFilterClauses sqlFilterClauses = session.getSQLFilterClauses();
+//		final SQLFilterClauses sqlFilterClauses = session.getSQLFilterClauses();
 
 		try
 		{
@@ -335,12 +333,12 @@ public class ContentsTab extends BaseTableTab
 						.append(ti.getQualifiedName())
 						.append(" tbl");
 
-					String clause = sqlFilterClauses.get(WhereClausePanel.getClauseIdentifier(), ti.getQualifiedName());
+					String clause = _sqlFilterClauses.get(WhereClausePanel.getClauseIdentifier(), ti.getQualifiedName());
 					if ((clause != null) && (clause.length() > 0))
 					{
 					  buf.append(" where ").append(clause);
 					}
-					clause = sqlFilterClauses.get(OrderByClausePanel.getClauseIdentifier(), ti.getQualifiedName());
+					clause = _sqlFilterClauses.get(OrderByClausePanel.getClauseIdentifier(), ti.getQualifiedName());
 					if ((clause != null) && (clause.length() > 0))
 					{
 					  buf.append(" order by ").append(clause);
@@ -375,12 +373,12 @@ public class ContentsTab extends BaseTableTab
 						.append(ti.getQualifiedName())
 						.append(" tbl");
 
-					String clause = sqlFilterClauses.get(WhereClausePanel.getClauseIdentifier(), ti.getQualifiedName());
+					String clause = _sqlFilterClauses.get(WhereClausePanel.getClauseIdentifier(), ti.getQualifiedName());
 					if ((clause != null) && (clause.length() > 0))
 					{
 					  buf.append(" where ").append(clause);
 					}
-					clause = sqlFilterClauses.get(OrderByClausePanel.getClauseIdentifier(), ti.getQualifiedName());
+					clause = _sqlFilterClauses.get(OrderByClausePanel.getClauseIdentifier(), ti.getQualifiedName());
 					if ((clause != null) && (clause.length() > 0))
 					{
 					  buf.append(" order by ").append(clause);
@@ -1072,6 +1070,19 @@ public class ContentsTab extends BaseTableTab
 			
 		// insert succeeded
 		return null;
+	}
+	
+	/**
+	 * This inner class defines a pop-up menu with only one item, "insert", which
+	 * allows the user to add a new row to an empty table.
+	 */
+	class ContentsTabPopupMenu extends TablePopupMenu
+	{
+		public ContentsTabPopupMenu(DataSetViewerTablePanel viewer) {
+			super(viewer.isTableEditable(), ContentsTab.this, viewer);
+			removeAll();	// the normal constructor creates a bunch of entries we do not want
+			add(_insertRow);
+		}
 	}
 
 }

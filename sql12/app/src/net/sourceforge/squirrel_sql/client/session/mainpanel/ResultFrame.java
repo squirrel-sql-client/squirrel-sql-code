@@ -1,7 +1,9 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 /*
- * Copyright (C) 2001-2002 Johan Compagner
+ * Copyright (C) 2001-2004 Johan Compagner
  * jcompagner@j-com.nl
+ *
+ * Modifications Copyright (C) 2003-2004 Jason Height
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,30 +23,23 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 
 import javax.swing.JButton;
-import javax.swing.JInternalFrame;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SessionWindowManager;
 import net.sourceforge.squirrel_sql.client.session.action.ReturnResultTabAction;
-
 /**
  * Torn off frame that contains SQL results.
  *
  * @author <A HREF="mailto:jcompagner@j-com.nl">Johan Compagner</A>
- * Copyright (C) 2001-2002
- *
  */
 public class ResultFrame extends BaseSheet
 {
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(ResultFrame.class);
-
-	/** Current session. */
-//	private ISession _session;
 
 	/** SQL Results. */
 	private ResultTab _tab;
@@ -62,15 +57,14 @@ public class ResultFrame extends BaseSheet
 	public ResultFrame(ISession session, ResultTab tab)
 	{
 		super(getFrameTitle(session, tab), true, true, true, true);
-//		_session = session;
 		_tab = tab;
 
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
 		final Container cont = getContentPane();
 		cont.setLayout(new BorderLayout());
-		JButton rtnBtn =
-			new JButton(new ReturnResultTabAction(session.getApplication(), this));
+		final IApplication app = session.getApplication();
+		final JButton rtnBtn = new JButton(new ReturnResultTabAction(app, this));
 		cont.add(rtnBtn, BorderLayout.NORTH);
 		cont.add(tab.getOutputComponent(), BorderLayout.CENTER);
 	}
@@ -109,8 +103,6 @@ public class ResultFrame extends BaseSheet
 			throw new IllegalArgumentException("Null ISession passed");
 		}
 
-		SessionWindowManager wmgr = session.getApplication().getSessionWindowManager();
-		JInternalFrame sif = wmgr.getInternalFrame(session);
-		return sif.getTitle() + " - " + tab.getViewableSqlString();
+		return session.getTitle() + " - " + tab.getViewableSqlString();
 	}
 }

@@ -1,7 +1,9 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
+ *
+ * Modifications Copyright (C) 2003-2004 Jason Height
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,9 +21,7 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
-import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 /**
  * This <CODE>ICommand</CODE> closes all the torn off SQL Results
  * windows for the specified session.
@@ -30,31 +30,29 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  */
 public class CloseAllSQLResultWindowsCommand implements ICommand
 {
-	/** Current session. */
-	private final ISession _session;
+	private final ISQLPanelAPI _api;
 
 	/**
 	 * Ctor.
 	 *
-	 * @param	session		Current session.
+	 * @param	api
 	 *
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
 	 */
-	public CloseAllSQLResultWindowsCommand(ISession session)
+	public CloseAllSQLResultWindowsCommand(ISQLPanelAPI api)
 	{
 		super();
-		if (session == null)
+		if (api == null)
 		{
-			throw new IllegalArgumentException("Null ISession passed");
+			throw new IllegalArgumentException("ISQLPanelAPI == null");
 		}
 
-		_session = session;
+		_api = api;
 	}
 
 	public void execute()
 	{
-		IPlugin plugin = _session.getApplication().getDummyAppPlugin();
-		_session.getSQLPanelAPI(plugin).closeAllSQLResultFrames();
+		_api.closeAllSQLResultFrames();
 	}
 }

@@ -1,7 +1,9 @@
 package net.sourceforge.squirrel_sql.client.session.sqlfilter;
 /*
- * Copyright (C) 2003 Maury Hammel
+ * Copyright (C) 2003-2004 Maury Hammel
  * mjhammel@users.sourceforge.net
+ *
+ * Modifications Copyright (C) 2003-2004 Jason Height
  *
  * Adapted from SessionPropertiesSheet.java by Colin Bell.
  *
@@ -53,16 +55,16 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.BaseSessionSheet;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ContentsTab;
 /**
  * SQLFilter dialog gui.
  *
  * @author <A HREF="mailto:mjhammel@users.sourceforge.net">Maury Hammel</A>
  */
-public class SQLFilterSheet extends BaseSheet
+public class SQLFilterSheet extends BaseSessionSheet
 {
 	/**
 	 * This interface defines locale specific strings. This should be
@@ -78,11 +80,11 @@ public class SQLFilterSheet extends BaseSheet
 	private static final ILogger s_log =
 		LoggerController.createLogger(SQLFilterSheet.class);
 
-	/** A reference to the current SQuirreL session */
-	private ISession _session;
+	/** The object tree we are filtering. */
+	private final IObjectTreeAPI _objectTree;
 
 	/** A reference to a class containing information about the database metadata. */
-	private IDatabaseObjectInfo _objectInfo;
+	private final IDatabaseObjectInfo _objectInfo;
 
 	/** A list of panels that make up this sheet. */
 	private List _panels = new ArrayList();
@@ -105,23 +107,21 @@ public class SQLFilterSheet extends BaseSheet
 	/**
 	 * Creates a new instance of SQLFilterSheet
 	 *
-	 * @param	session		A reference to the current SQuirreL session
-	 * @param	objectInfo	An instance of a class containing database metadata
-	 * 						information.
+	 * @param	objectTree
+	 * @param	objectInfo	The object we are filtering within the object
+	 *						tree.
 	 */
-	public SQLFilterSheet(ISession session, IDatabaseObjectInfo objectInfo)
+	public SQLFilterSheet(IObjectTreeAPI objectTree,
+							IDatabaseObjectInfo objectInfo)
 	{
-		super(i18n.TITLE, true);
-		if (session == null)
-		{
-			throw new IllegalArgumentException("Null ISession passed");
-		}
+		super(objectTree.getSession(), i18n.TITLE, true);
 		if (objectInfo == null)
 		{
-			throw new IllegalArgumentException("Null IDatabaseObjectInfo passed");
+			throw new IllegalArgumentException("IDatabaseObjectInfo == null");
 		}
-		_session = session;
+		_objectTree = objectTree;
 		_objectInfo = objectInfo;
+
 		createGUI();
 	}
 
@@ -133,50 +133,67 @@ public class SQLFilterSheet extends BaseSheet
 	 */
 	public synchronized void setVisible(boolean show)
 	{
+		boolean reallyShow = true;
+
 		if (show)
 		{
 			if (!isVisible())
 			{
-				final boolean isDebug = s_log.isDebugEnabled();
-				long start = 0;
-				for (Iterator it = _panels.iterator(); it.hasNext();)
+				ContentsTab tab =(ContentsTab)_objectTree.getTabbedPaneIfSelected(
+						DatabaseObjectType.TABLE,
+						ContentsTab.TITLE);
+				if (tab == null)
 				{
-					ISQLFilterPanel pnl = (ISQLFilterPanel)it.next();
-					if (isDebug)
-					{
-						start = System.currentTimeMillis();
-					}
-					pnl.initialize(_session.getSQLFilterClauses());
-					if (isDebug)
-					{
-						s_log.debug(
-							"Panel "
-								+ pnl.getTitle()
-								+ " initialized in "
-								+ (System.currentTimeMillis() - start)
-								+ "ms");
-					}
+					reallyShow = false;
+					_objectTree.getSession().getMessageHandler().showMessage(
+						"You must have the Contents Tab selected to activate the SQL Filter");
 				}
-				pack();
-				/*
-				 * KLUDGE: For some reason, I am not able to get the sheet to
-				 * size correctly. It always displays with a size that causes
-				 * the sub-panels to have their scrollbars showing. Add a bit
-				 * of an increase in the size of the panel so the scrollbars
-				 * are not displayed.
-				 */
-				Dimension d = getSize();
-				d.width += 5;
-				d.height += 5;
-				setSize(d);
-				/*
-				 * END-KLUDGE
-				 */
-				GUIUtils.centerWithinDesktop(this);
+				else
+				{
+					final boolean isDebug = s_log.isDebugEnabled();
+					long start = 0;
+					for (Iterator it = _panels.iterator(); it.hasNext();)
+					{
+						ISQLFilterPanel pnl = (ISQLFilterPanel)it.next();
+						if (isDebug)
+						{
+							start = System.currentTimeMillis();
+						}
+	
+						pnl.initialize(tab.getSQLFilterClauses());
+						if (isDebug)
+						{
+							s_log.debug("Panel " + pnl.getTitle()
+									+ " initialized in "
+									+ (System.currentTimeMillis() - start) + "ms");
+						}
+					}
+					pack();
+					/*
+					 * TODO: Find out why
+					 * KLUDGE: For some reason, I am not able to get the sheet to
+					 * size correctly. It always displays with a size that causes
+					 * the sub-panels to have their scrollbars showing. Add a bit
+					 * of an increase in the size of the panel so the scrollbars
+					 * are not displayed.
+					 */
+					Dimension d = getSize();
+					d.width += 5;
+					d.height += 5;
+					setSize(d);
+					/*
+					 * END-KLUDGE
+					 */
+					GUIUtils.centerWithinDesktop(this);
+					moveToFront();
+				}
 			}
-			moveToFront();
 		}
-		super.setVisible(show);
+
+		if (!show || reallyShow)
+		{
+			super.setVisible(show);
+		}
 	}
 
 	/**
@@ -197,19 +214,14 @@ public class SQLFilterSheet extends BaseSheet
 		dispose();
 	}
 
-	/**
-	 * Get the current SQuirreL session.
-	 *
-	 * @return	A reference to the current SQuirreL session
-	 */
-	public ISession getSession()
-	{
-		return _session;
-	}
-
 	public IDatabaseObjectInfo getDatabaseObjectInfo()
 	{
 		return _objectInfo;
+	}
+
+	public IObjectTreeAPI getObjectTree()
+	{
+		return _objectTree;
 	}
 
 	/**
@@ -230,23 +242,22 @@ public class SQLFilterSheet extends BaseSheet
 			pnl.applyChanges();
 			if (isDebug)
 			{
-				s_log.debug(
-					"Panel "
-						+ pnl.getTitle()
-						+ " applied changes in "
-						+ (System.currentTimeMillis() - start)
-						+ "ms");
+				s_log.debug("Panel " + pnl.getTitle() + " applied changes in "
+						+ (System.currentTimeMillis() - start) + "ms");
 			}
 		}
 		try
 		{
-			ContentsTab cTab =
-				(ContentsTab)_session
-					.getSessionSheet()
-					.getObjectTreePanel()
-					.getTabbedPaneIfSelected(
-						DatabaseObjectType.TABLE,
-						ContentsTab.TITLE);
+//			ContentsTab cTab =
+//				(ContentsTab)getSession()
+//					.getSessionSheet()
+//					.getObjectTreePanel()
+//					.getTabbedPaneIfSelected(
+//						DatabaseObjectType.TABLE,
+//						ContentsTab.TITLE);
+			ContentsTab cTab =(ContentsTab)_objectTree.getTabbedPaneIfSelected(
+												DatabaseObjectType.TABLE,
+												ContentsTab.TITLE);
 			if (cTab != null)
 			{
 				cTab.refreshComponent();
@@ -254,7 +265,7 @@ public class SQLFilterSheet extends BaseSheet
 		}
 		catch (DataSetException ex)
 		{
-			_session.getMessageHandler().showErrorMessage(ex);
+			getSession().getMessageHandler().showErrorMessage(ex);
 		}
 
 		dispose();
@@ -276,7 +287,7 @@ public class SQLFilterSheet extends BaseSheet
 
 		try
 		{
-			SQLConnection sqlConnection = _session.getSQLConnection();
+			SQLConnection sqlConnection = getSession().getSQLConnection();
 			ResultSet rs =
 				sqlConnection.getSQLMetaData().getColumns((ITableInfo)_objectInfo);
 			while (rs.next())
@@ -297,7 +308,7 @@ public class SQLFilterSheet extends BaseSheet
 		}
 		catch (SQLException ex)
 		{
-			_session.getApplication().showErrorDialog(
+			getSession().getApplication().showErrorDialog(
 				"Unable to get list of columns, " + ex);
 		}
 

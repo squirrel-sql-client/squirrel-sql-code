@@ -1,7 +1,9 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
 /*
- * Copyright (C) 2003 Colin Bell
+ * Copyright (C) 2003-2004 Colin Bell
  * colbell@users.sourceforge.net
+ *
+ * Modifications Copyright (C) 2003-2004 Jason Height
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,8 +31,7 @@ import javax.swing.SwingConstants;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 
-import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 /**
  * THis panel allows filtering of the objects displayed in the object tree.
  *
@@ -50,19 +51,19 @@ public class ObjectTreeFilterPanel extends JPanel
 		String OBJECT_TREE = "Object Tree";
 	}
 
-	private final ISession _session;
+	private final IObjectTreeAPI _tree;
 
 	private final JTextField _schemaPrefixField = new JTextField(20);
 
-	public ObjectTreeFilterPanel(ISession session)
+	public ObjectTreeFilterPanel(IObjectTreeAPI tree)
 	{
 		super(new GridBagLayout());
-		if (session == null)
+		if (tree == null)
 		{
-			throw new IllegalArgumentException("ISession == null");
+			throw new IllegalArgumentException("IObjectTreeAPI == null");
 		}
 
-		_session = session;
+		_tree = tree;
 
 		createGUI();
 		loadData();
@@ -85,8 +86,7 @@ public class ObjectTreeFilterPanel extends JPanel
 
 	private void createGUI()
 	{
-		final IPlugin plugin = _session.getApplication().getDummyAppPlugin();
-		DatabaseObjectType[] dboTypes = _session.getObjectTreeAPI(plugin).getDatabaseObjectTypes();
+		final DatabaseObjectType[] dboTypes = _tree.getDatabaseObjectTypes();
 		setBorder(BorderFactory.createTitledBorder("Filters"));
 
 		final GridBagConstraints gbc = new GridBagConstraints();

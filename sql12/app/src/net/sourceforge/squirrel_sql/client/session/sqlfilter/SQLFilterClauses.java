@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.sqlfilter;
 /*
- * Copyright (C) 2003 Maury Hammel
+ * Copyright (C) 2003-2004 Maury Hammel
  * mjhammel@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -23,6 +23,7 @@ import java.util.HashMap;
  * This class contains the information used to build the Where and Order By
  * clauses used by the database query triggered by selecting the Contents tab
  * in the Session internal frame.
+ *
  */
 public class SQLFilterClauses implements Serializable
 {

@@ -1,7 +1,9 @@
 package net.sourceforge.squirrel_sql.client.mainframe;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
+ *
+ * Modifications Copyright (C) 2003-2004 Jason Height
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -43,6 +45,12 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.NewSessionProperties
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileHorizontalAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileVerticalAction;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SessionManager;
+import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
+import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
+import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
+import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 /**
  * Toolbar for <CODE>MainFrame</CODE>.
  *
@@ -56,6 +64,9 @@ class MainFrameToolBar extends ToolBar
 
 	/** Application API. */
 	private IApplication _app;
+
+	private CommitAction _sessionCommit;
+	private RollbackAction _sessionRollback;
 
 	/**
 	 * ctor.
@@ -93,13 +104,59 @@ class MainFrameToolBar extends ToolBar
 		add(actions.get(TileVerticalAction.class));
 		add(actions.get(CascadeAction.class));
 		add(actions.get(MaximizeAction.class));
+
+		// JASON: New stuff
+		addSeparator();
+		JLabel lbl2 = new JLabel(" Active Session: ");
+		lbl.setAlignmentY(0.5f);
+		add(lbl2);
+		SessionDropDown session = new SessionDropDown(app);
+		session.setAlignmentY(0.5f);
+		add(session);
+		                                                                   
+		_sessionCommit = new CommitAction(_app);
+		_sessionCommit.setEnabled(false);
+		_sessionRollback = new RollbackAction(_app);
+		_sessionRollback.setEnabled(false);
+		add(_sessionCommit);
+		add(_sessionRollback);
+
+		// Listen for changes to the active session. When active then
+		// enable/disable the actions above
+		_app.getSessionManager().addSessionListener(new SessionAdapter()
+		{
+			private ISession _currentSession;
+			public void sessionClosed(SessionEvent e)
+			{
+				ISession session = e.getSession();
+				if (session == _currentSession)
+				{
+					_currentSession = null;
+					_sessionCommit.setSession(_currentSession);
+					_sessionRollback.setSession(_currentSession);
+					_sessionCommit.setEnabled(false);
+					_sessionRollback.setEnabled(false);
+				}
+			}
+
+			public void sessionActivated(SessionEvent e)
+			{
+				_currentSession = e.getSession();
+				_sessionCommit.setSession(_currentSession);
+				_sessionRollback.setSession(_currentSession);
+				_sessionCommit.setEnabled(true);
+				_sessionRollback.setEnabled(true);
+			}
+		});
+		
 	}
 
 	/**
-	 * Add an action to the toolbar. Centre it vertically so that
-	 * it lines up with the dropdown.
-	 *
-	 * @param	action	<TT>Action</TT> to be added.
+	 * Add an action to the toolbar. Centre it vertically so that it lines up
+	 * with the dropdown.
+	 * 
+	 * @param action
+	 *            <TT>Action</TT> to be added.
 	 */
 //	private void addAction(Action action)
 //	{
@@ -272,6 +329,169 @@ class MainFrameToolBar extends ToolBar
 			{
 				_model.removeAlias((ISQLAlias)obj);
 			}
+		}
+	}
+
+	/**
+	 * Dropdown holding all the current active <TT>ISession</TT> objects.
+	 */
+	private static class SessionDropDown extends JComboBox
+			implements
+				ActionListener
+	{
+		private IApplication _app;
+		private boolean closing = false;
+
+		SessionDropDown(IApplication app)
+		{
+			super();
+			_app = app;
+			final SessionManager sessionManager = _app.getSessionManager();
+			final SessionDropDownModel model = new SessionDropDownModel(
+					sessionManager);
+			setModel(model);
+
+			// Under JDK1.4 the first item in a JComboBox
+			// is no longer automatically selected.
+			if (getModel().getSize() > 0)
+			{
+				setSelectedIndex(0);
+			}
+			else
+			{
+				// Under JDK1.4 an empty JComboBox has an almost zero width.
+				Dimension dm = getPreferredSize();
+				dm.width = 200;
+				setPreferredSize(dm);
+				// Dont enable the session drop down if it is empty
+				setEnabled(false);
+			}
+			addActionListener(this);
+			setMaximumSize(getPreferredSize());
+
+			sessionManager.addSessionListener(new MySessionListener(model, this));
+		}
+
+		/**
+		 * An session has been selected in the list so set it as the active session.
+		 *
+		 * @param	evt	 Describes the event that has just occured.
+		 */
+		public void actionPerformed(ActionEvent evt)
+		{
+			if (!closing)
+			{
+				final Object obj = getSelectedItem();
+				if (obj instanceof ISession)
+				{
+					_app.getSessionManager().setActiveSession((ISession)obj);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Data model for SessionDropDownModel.
+	 */
+	private static class SessionDropDownModel extends SortedComboBoxModel
+	{
+		private SessionManager _sessionManager;
+
+		/**
+		 * Default ctor. Listen to the <TT>ISessioManager</TT> object for additions
+		 * and removals of aliases from the cache.
+		 */
+		public SessionDropDownModel(SessionManager sessionManager)
+		{
+			super();
+			_sessionManager = sessionManager;
+			load();
+		}
+
+		/**
+		 * Load from <TT>DataCache</TT>.
+		 */
+		private void load()
+		{
+			final ISession[] s = _sessionManager.getConnectedSessions();
+			if (s != null)
+			{
+				for (int i = 0; i < s.length; i++)
+				{
+					addSession(s[i]);
+				}
+			}
+		}
+
+		/**
+		 * Add an <TT>ISession</TT> to this model.
+		 *
+		 * @param	session	<TT>ISession</TT> to be added.
+		 */
+		private void addSession(ISession session)
+		{
+			addElement(session);
+		}
+
+		/**
+		 * Remove an <TT>ISession</TT> from this model.
+		 *
+		 * @param	session <TT>ISession</TT> to be removed.
+		 */
+		private void removeSession(ISession session)
+		{
+			removeElement(session);
+		}
+	}
+
+	/**
+	 * Listener to changes in <TT>SessionManager</TT>. As sessions are
+	 * added to/removed from <TT>SessionManager</TT> this model is updated.
+	 */
+	private static class MySessionListener extends SessionAdapter
+	{
+		/** Model that is listening. */
+		private SessionDropDownModel _model;
+
+		/** Control for _model. */
+		SessionDropDown _control;
+
+		/**
+		 * Ctor specifying the model and control that is listening.
+		 */
+		MySessionListener(SessionDropDownModel model, SessionDropDown control)
+		{
+			super();
+			_model = model;
+			_control = control;
+		}
+
+		public void sessionConnected(SessionEvent e)
+		{
+			_model.addSession(e.getSession());
+			_control.setEnabled(true);
+		}
+
+		public void sessionClosing(SessionEvent e)
+		{
+			_control.closing = true;
+			_model.removeSession(e.getSession());
+			if (_model.getSize() == 0)
+				_control.setEnabled(false);
+			_control.closing = false;
+		}
+
+		public void allSessionsClosed()
+		{
+		}
+
+		public void sessionClosed(SessionEvent e)
+		{
+		}
+
+		public void sessionActivated(SessionEvent e)
+		{
+			_control.setSelectedItem(e.getSession());
 		}
 	}
 }

@@ -3,6 +3,8 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * Copyright (C) 2003 Colin Bell
  * colbell@users.sourceforge.net
  *
+ * Modifications Copyright (C) 2003-2004 Jason Height
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -24,9 +26,7 @@ import java.awt.datatransfer.StringSelection;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
-import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
  * This <CODE>Action</CODE> will copy the object names of all objects
  * currently in the object tree and place on the system clipboard.
@@ -42,8 +42,7 @@ public class CopyObjectNameCommand implements ICommand
 		int QUALIFIED_NAME = 1;
 	}
 
-	/** Session to copy from. */
-	private ISession _session;
+	private IObjectTreeAPI _api;
 
 	/** Type of copy to do. @see ICopyTypes */
 	private int _copyType;
@@ -51,25 +50,26 @@ public class CopyObjectNameCommand implements ICommand
 	/**
 	 * Ctor specifying copy type.
 	 *
+	 * @param	api
 	 * @param	copyType	Type of copy to do. @see ICopyTypes.
 	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>ISession</TT> or an invalid
 				<TT>copyType</TT> passed.
 	 */
-	public CopyObjectNameCommand(ISession session, int copyType)
+	public CopyObjectNameCommand(IObjectTreeAPI api, int copyType)
 	{
 		super();
-		if (session == null)
+		if (api == null)
 		{
-			throw new IllegalArgumentException("ISession == null");
+			throw new IllegalArgumentException("IObjectTreeAPI == null");
 		}
 		if (copyType < ICopyTypes.SIMPLE_NAME || copyType > ICopyTypes.QUALIFIED_NAME)
 		{
 			throw new IllegalArgumentException("Invalid copyType of : " + copyType + " passed");
 		}
 
-		_session = session;
+		_api = api;
 		_copyType = copyType;
 	}
 
@@ -79,9 +79,7 @@ public class CopyObjectNameCommand implements ICommand
 	public void execute()
 	{
 		final StringBuffer buf = new StringBuffer(100);
-		final IPlugin dummyPlugin = _session.getApplication().getDummyAppPlugin();
-		final IObjectTreeAPI api = _session.getObjectTreeAPI(dummyPlugin);
-		final IDatabaseObjectInfo[] dbObjs = api.getSelectedDatabaseObjects();
+		final IDatabaseObjectInfo[] dbObjs = _api.getSelectedDatabaseObjects();
 
 		// Get all the selected object names and place in a comma separated list.
 		for (int i = 0; i < dbObjs.length; i++)

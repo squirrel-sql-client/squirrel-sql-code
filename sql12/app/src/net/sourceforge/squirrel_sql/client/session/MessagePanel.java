@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session;
 /*
  * TODO: i18n
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -43,7 +43,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-class MessagePanel extends JTextPane implements IMessageHandler
+public class MessagePanel extends JTextPane implements IMessageHandler
 {
 	/** Logger for this class. */
 	private static final ILogger s_log =
@@ -71,7 +71,7 @@ class MessagePanel extends JTextPane implements IMessageHandler
 	/**
 	 * Default ctor.
 	 */
-	MessagePanel()
+	public MessagePanel()
 	{
 		super();
 
@@ -113,7 +113,7 @@ class MessagePanel extends JTextPane implements IMessageHandler
 	 *
 	 * @param th	The throwable object.
 	 */
-	public void showMessage(final Throwable th)
+	public synchronized void showMessage(final Throwable th)
 	{
 		if (th != null)
 		{
@@ -126,7 +126,7 @@ class MessagePanel extends JTextPane implements IMessageHandler
 	 *
 	 * @param msg	The message to be shown.
 	 */
-	public void showMessage(final String msg)
+	public synchronized void showMessage(final String msg)
 	{
 		if (msg != null)
 		{
@@ -140,7 +140,7 @@ class MessagePanel extends JTextPane implements IMessageHandler
 	 *
 	 * @param	th		Exception.
 	 */
-	public void showErrorMessage(Throwable th)
+	public synchronized void showErrorMessage(final Throwable th)
 	{
 		if (th != null)
 		{
@@ -154,7 +154,7 @@ class MessagePanel extends JTextPane implements IMessageHandler
 	 *
 	 * @param	th		Exception.
 	 */
-	public void showErrorMessage(String msg)
+	public synchronized void showErrorMessage(final String msg)
 	{
 		if (msg != null)
 		{

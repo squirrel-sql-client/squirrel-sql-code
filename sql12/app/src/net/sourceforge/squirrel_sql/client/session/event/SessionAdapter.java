@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.client.session.event;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
 /**
  * An adapter for <TT>ISessionListener</TT>.
  *
@@ -46,5 +45,28 @@ public class SessionAdapter implements ISessionListener
 	public void sessionClosed(SessionEvent evt)
 	{
 		// Empty body.
+	}
+
+	public void allSessionsClosed()
+	{
+		//Empty body
+	}
+
+	/**
+	 * The session is about to close
+	 */
+	public void sessionClosing(SessionEvent evt)
+	{
+		//Empty Bbody
+	}
+
+	public void sessionConnected(SessionEvent evt)
+	{
+		//Empty Body
+	}
+
+	public void sessionActivated(SessionEvent evt)
+	{
+		//Empty Body
 	}
 }

@@ -1,7 +1,9 @@
 package net.sourceforge.squirrel_sql.client.session;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
+ *
+ * Modifications Copyright (C) 2003-2004 Jason Height
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,11 +32,9 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.session.event.ISessionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterClauses;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 /**
  * The current session.
  */
@@ -86,6 +86,17 @@ public interface ISession extends IHasIdentifier
 	 * @return the properties for this session.
 	 */
 	SessionProperties getProperties();
+
+ 	/**
+	 * Commit the current SQL session.
+	 */
+	void commit();
+
+	/**
+	 * Rollback the current SQL session.
+	 */
+	void rollback();
+
 	/**
 	 * Close this session.
 	 *
@@ -122,33 +133,10 @@ public interface ISession extends IHasIdentifier
 	void setMessageHandler(IMessageHandler handler);
 	IMessageHandler getMessageHandler();
 
-	/**
-	 * Return the API object for the Object Tree.
-	 *
-	 * @param	plugin	Plugin requesting the API.
-	 *
-	 * @return	the API object for the Object Tree.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if null IPlugin passed.
-	 */
-	IObjectTreeAPI getObjectTreeAPI(IPlugin plugin);
-
-	/**
-	 * Return the API object for the SQL panel.
-	 *
-	 * @param	plugin	Plugin requesting the API.
-	 *
-	 * @return	the API object for the SQL panel.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if null IPlugin passed.
-	 */
-	ISQLPanelAPI getSQLPanelAPI(IPlugin plugin);
-
 	SessionSheet getSessionSheet();
 
-	SQLFilterClauses getSQLFilterClauses();
+// JASON:
+//	SQLFilterClauses getSQLFilterClauses();
 
 	/**
 	 * Retrieve the schema information object for this session.
@@ -202,7 +190,8 @@ public interface ISession extends IHasIdentifier
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> listener passed.
 	 */
-	void addSessionListener(ISessionListener lis);
+// JASON: Removed as part of patch
+//	void addSessionListener(ISessionListener lis);
 
 	/**
 	 * Remove a listener from this session
@@ -212,7 +201,8 @@ public interface ISession extends IHasIdentifier
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> listener passed.
 	 */
-	void removeSessionListener(ISessionListener lis);
+//	 JASON: Removed as part of patch
+//	void removeSessionListener(ISessionListener lis);
 
 	/**
 	 * Retrieve the descriptive title of this session.

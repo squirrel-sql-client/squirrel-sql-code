@@ -3,6 +3,8 @@ package net.sourceforge.squirrel_sql.client.session.event;
  * Copyright (C) 2003-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
+ * Modifications Copyright (C) 2003-2004 Jason Height
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -33,9 +35,32 @@ public interface ISessionListener extends EventListener
 	void sessionTitleChanged(SessionEvent evt);
 
 	/**
+	 * The session is about to close. Any clean up activities that
+	 * still require the session can be done here.
+	 *
+	 * @param	evt		The event that has just occured.
+	 */
+	void sessionClosing(SessionEvent evt);
+
+	/**
 	 * The session has been closed.
 	 *
 	 * @param	evt		The event that has just occured.
 	 */
 	void sessionClosed(SessionEvent evt);
+
+	/**
+	 * All sessions have been closed.
+	 */
+	public void allSessionsClosed();
+
+	/**
+	 * The session has succesfully connected to the database
+	 */
+	public void sessionConnected(SessionEvent evt);
+
+	/**
+	 * The session has become the currently active session
+	 */
+	public void sessionActivated(SessionEvent evt);
 }

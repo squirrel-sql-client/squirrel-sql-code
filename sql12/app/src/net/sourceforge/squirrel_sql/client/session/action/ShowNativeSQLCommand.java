@@ -1,7 +1,9 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
+ *
+ * Modifications Copyright (C) 2003-2004 Jason Height
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,56 +24,53 @@ import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
-import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-
 /**
  * This command will convert the current SQL into native
  * format and append it to the SQL entry area.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ShowNativeSQLCommand implements ICommand
 {
-	/** Current session. */
-	private final ISession _session;
+	/** Current panel. */
+	private final ISQLPanelAPI _panel;
 
 	/**
 	 * Ctor.
 	 *
-	 * @param	session		Current session.
+	 * @param	panel
 	 *
 	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
+	 *			Thrown if a <TT>null</TT> <TT>ISQLPanelAPI</TT> passed.
 	 */
-	public ShowNativeSQLCommand(ISession session)
+	public ShowNativeSQLCommand(ISQLPanelAPI panel)
 	{
 		super();
-		if (session == null)
+		if (panel == null)
 		{
-			throw new IllegalArgumentException("Null ISession passed");
+			throw new IllegalArgumentException("ISQLPanelAPI == null");
 		}
 
-		_session = session;
+		_panel = panel;
 	}
 
 	public void execute()
 	{
-		Connection conn = _session.getSQLConnection().getConnection();
+		final ISession session = _panel.getSession();
+		final Connection conn = session.getSQLConnection().getConnection();
 		try
 		{
-			IPlugin plugin = _session.getApplication().getDummyAppPlugin();
-			ISQLPanelAPI api = _session.getSQLPanelAPI(plugin);
-			String sql = conn.nativeSQL(api.getSQLScriptToBeExecuted());
+			final String sql = conn.nativeSQL(_panel.getSQLScriptToBeExecuted());
 			if (sql.length() > 0)
 			{
-				api.appendSQLScript("\n" + sql, true);
+				_panel.appendSQLScript("\n" + sql, true);
 			}
 		}
 		catch (SQLException ex)
 		{
-			_session.getMessageHandler().showErrorMessage(ex);
+			session.getMessageHandler().showErrorMessage(ex);
 		}
 	}
 }

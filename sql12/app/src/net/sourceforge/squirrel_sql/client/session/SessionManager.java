@@ -3,6 +3,8 @@ package net.sourceforge.squirrel_sql.client.session;
  * Copyright (C) 2004 Colin Bell
  * colbell@users.sourceforge.net
  *
+ * Modifications Copyright (C) 2003-2004 Jason Height
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -22,14 +24,25 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import javax.swing.event.EventListenerList;
+
+import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
+import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
+import net.sourceforge.squirrel_sql.client.session.event.ISessionListener;
+import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
+import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 /**
  * This class manages sessions.
  *
@@ -40,6 +53,15 @@ public class SessionManager
 	/** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(SessionManager.class);
+
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(SessionManager.class);
+
+	/** Application API. */
+	private final IApplication _app;
+
+	private ISession _activeSession;
 
 	/** Linked list of sessions. */
 	private final LinkedList _sessionsList = new LinkedList();
@@ -54,12 +76,25 @@ public class SessionManager
 	 */
 	private final Map _sessionsOpenedCountByAliasId = new HashMap();
 
+	private EventListenerList listenerList = new EventListenerList();
+
 	/**
-	 * Default ctor.
+	 * Ctor.
+	 *
+	 * @param	app		Application API.
+	 *
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>IApplication</TT> passed.
 	 */
-	public SessionManager()
+	public SessionManager(IApplication app)
 	{
 		super();
+		if (app == null)
+		{
+			throw new IllegalArgumentException("IApplication == null");
+		}
+
+		_app = app;
 	}
 
 	/**
@@ -108,24 +143,46 @@ public class SessionManager
 			count = new Integer(count.intValue() + 1);
 		}
 
-		Session sess = new Session(app, driver, alias, conn, user, password,
-									count.intValue());
+		final Session sess = new Session(app, driver, alias, conn, user,
+											password, count.intValue());
 		_sessionsList.addLast(sess);
 		_sessionsById.put(sess.getIdentifier(), sess);
 		_sessionsOpenedCountByAliasId.put(alias.getIdentifier(), count);
 
+		fireSessionAdded(sess);
+		setActiveSession(sess);
+
 		return sess;
 	}
 
-	/**
-	 * Retrieve an array of all the sessions currently active.
-	 *
-	 * @return	array of all active sessions.
-	 */
-	public synchronized ISession[] getActiveSessions()
+	public void setActiveSession(ISession session)
 	{
-		ISession[] ar = new ISession[_sessionsList.size()];
+		if (session != _activeSession)
+		{
+			_activeSession = session;
+			fireSessionActivated(session);
+		}
+	}
+
+	/**
+	 * Retrieve an array of all the sessions currently connected.
+	 *
+	 * @return array of all connected sessions.
+	 */
+	public synchronized ISession[] getConnectedSessions()
+	{
+		final ISession[] ar = new ISession[_sessionsList.size()];
 		return (ISession[])_sessionsList.toArray(ar);
+	}
+
+	/**
+	 * Retrieve the session that is currently activated within the
+	 * session manager. Any new sql worksheets etc will be created
+	 * against this session
+	 */
+	public synchronized ISession getActiveSession()
+	{
+		return _activeSession;
 	}
 
 	/**
@@ -210,40 +267,231 @@ public class SessionManager
 	 *
 	 * @throws	IllegalArgumentException
 	 *			Thrown if <TT>null</TT>ISession passed.
-	 *
-	 * @throws	SQLException
-	 * 			Thrown if an error closing the SQL connection. The session
-	 * 			will still be closed even though the connection may not have
-	 *			been.
 	 */
-	synchronized void closeSession(ISession session)
-		throws SQLException
+	public synchronized void closeSession(ISession session)
 	{
 		if (session == null)
 		{
 			throw new IllegalArgumentException("ISession == null");
 		}
 
-		if (!session.isClosed())
+		try
 		{
-			final IIdentifier sessionId = session.getIdentifier();
-			if (!_sessionsList.remove(session))
+			if (confirmClose(session))
 			{
-				s_log.error("SessionManager.closeSession()-> Session " +
-						sessionId +
-						" not found in _sessionsList when trying to remove it.");
-			}
-			if (_sessionsById.remove(sessionId) == null)
-			{
-				s_log.error("SessionManager.closeSession()-> Session " +
-						sessionId +
-						" not found in _sessionsById when trying to remove it.");
+				// TODO: Should have session listeners instead of these calls.
+				session.getApplication().getPluginManager().sessionEnding(session);
+	
+				fireSessionClosing(session);
+				session.close();
+				fireSessionClosed(session);
+	
+				final IIdentifier sessionId = session.getIdentifier();
+				if (!_sessionsList.remove(session))
+				{
+					s_log.error("SessionManager.closeSession()-> Session " +
+							sessionId +
+							" not found in _sessionsList when trying to remove it.");
+				}
+				if (_sessionsById.remove(sessionId) == null)
+				{
+					s_log.error("SessionManager.closeSession()-> Session " +
+							sessionId +
+							" not found in _sessionsById when trying to remove it.");
+				}
+				
+				if (_sessionsList.isEmpty())
+				{
+					fireAllSessionsClosed();
+				}
+	
+				// Activate another session since the current
+				// active session has closed.
+				if (session == _activeSession)
+				{
+					// JASON: This isn't right? Next/last?
+		//			ISession nextSession = null;
+					if (!_sessionsList.isEmpty())
+					{
+						setActiveSession((ISession)_sessionsList.getLast());
+					}
+				}
 			}
 		}
+		catch (Throwable ex)
+		{
+			ex.printStackTrace();
+			session.getMessageHandler().showErrorMessage(ex);
+		}
+	}
 
-		// TODO: Should have session listeners instead of these calls.
-		session.getApplication().getPluginManager().sessionEnding(session);
+	/**
+	 * Closes all currently open sessions.
+	 *
+	 * @throws	SQLException
+	 * 			Thrown if an error closing the SQL connection. The session
+	 * 			will still be closed even though the connection may not have
+	 *			been.
+	 */
+	synchronized public void closeAllSessions()
+	{
+		// Get an array since we dont want trouble with the sessionsList when
+		// we remove the sessions from it.
+		final ISession[] sessions = getConnectedSessions();
+		for (int i = sessions.length-1; i >= 0; i--)
+		{
+			closeSession(sessions[i]);
+		}
+	}
 
-		session.close();
+	/**
+	 * Adds a session listener
+	 */
+	public void addSessionListener(ISessionListener l)
+	{
+		listenerList.add(ISessionListener.class, l);
+	}
+
+	/** Removed a session listener */
+	public void removeSessionListener(ISessionListener l)
+	{
+		listenerList.remove(ISessionListener.class, l);
+	}
+
+	/**
+	 * Fired when a session is connected (added) to the session
+	 * manager
+	 */
+	protected void fireSessionAdded(ISession session)
+	{
+		Object[] listeners = listenerList.getListenerList();
+		SessionEvent evt = null;
+		for (int i = listeners.length - 2; i >= 0; i -= 2)
+		{
+			if (listeners[i] == ISessionListener.class)
+			{
+				// Lazily create the event:
+				if (evt == null)
+					evt = new SessionEvent(session);
+				((ISessionListener)listeners[i + 1]).sessionConnected(evt);
+			}
+		}
+	}
+
+	/**
+	 * Fired when a session is closed (removed) from the session manager
+	 */
+	protected void fireSessionClosed(ISession session)
+	{
+		Object[] listeners = listenerList.getListenerList();
+		SessionEvent evt = null;
+		for (int i = listeners.length - 2; i >= 0; i -= 2)
+		{
+			if (listeners[i] == ISessionListener.class)
+			{
+				// Lazily create the event:
+				if (evt == null)
+					evt = new SessionEvent(session);
+				((ISessionListener)listeners[i + 1]).sessionClosed(evt);
+			}
+		}
+	}
+
+	/**
+	 * Fired when a session is about to close from the session manager
+	 */
+	protected void fireSessionClosing(ISession session)
+	{
+		Object[] listeners = listenerList.getListenerList();
+		SessionEvent evt = null;
+		for (int i = listeners.length - 2; i >= 0; i -= 2)
+		{
+			if (listeners[i] == ISessionListener.class)
+			{
+				// Lazily create the event:
+				if (evt == null)
+				{
+					evt = new SessionEvent(session);
+				}
+				((ISessionListener)listeners[i + 1]).sessionClosing(evt);
+			}
+		}
+	}
+
+	/**
+	 * Fired when all the session have been closed (removed) from the
+	 * session manager
+	 */
+	protected void fireAllSessionsClosed()
+	{
+		Object[] listeners = listenerList.getListenerList();
+		for (int i = listeners.length - 2; i >= 0; i -= 2)
+		{
+			if (listeners[i] == ISessionListener.class)
+			{
+				((ISessionListener)listeners[i + 1]).allSessionsClosed();
+			}
+		}
+	}
+
+	/**
+	 * Fired when the active session changed
+	 */
+	protected void fireSessionActivated(ISession session)
+	{
+		Object[] listeners = listenerList.getListenerList();
+		SessionEvent evt = null;
+		for (int i = listeners.length - 2; i >= 0; i -= 2)
+		{
+			if (listeners[i] == ISessionListener.class)
+			{
+				// Lazily create the event:
+				if (evt == null)
+					evt = new SessionEvent(session);
+				((ISessionListener)listeners[i + 1]).sessionActivated(evt);
+			}
+		}
+	}
+
+	/**
+	 * Confirm whether session is to be closed.
+	 *
+	 * @param	session		Session being closed.
+	 *
+	 * @return	<tt>true</tt> if confirmed to close session.	
+	 */
+	private boolean confirmClose(ISession session)
+	{
+		if (!_app.getSquirrelPreferences().getConfirmSessionClose())
+		{
+			return true;
+		}
+
+		final String msg = s_stringMgr.getString("SessionManager.confirmClose",
+							session.getTitle());
+		return Dialogs.showYesNo(_app.getMainFrame(), msg);
+	}
+
+	/**
+	 * This listener enables/disables the default actions attached to
+	 * the session
+	 */
+	private class SessionActionEnabler extends SessionAdapter
+	{
+		public void sessionActivated(SessionEvent evt)
+		{
+			final ISession session = evt.getSession();
+			final boolean isAutoCommit = session.getProperties().getAutoCommit();
+			final ActionCollection actions = session.getApplication().getActionCollection();
+			actions.get(CommitAction.class).setEnabled(!isAutoCommit);
+			actions.get(RollbackAction.class).setEnabled(!isAutoCommit);
+		}
+
+		public void sessionClosing(SessionEvent evt)
+		{
+			final ActionCollection actions = evt.getSession().getApplication().getActionCollection();
+			actions.get(CommitAction.class).setEnabled(false);
+			actions.get(RollbackAction.class).setEnabled(false);
+		}
 	}
 }
