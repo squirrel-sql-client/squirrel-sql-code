@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -21,11 +21,11 @@ import java.awt.Component;
 import java.awt.Frame;
 import java.io.File;
 
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
-
 /**
  * This class provides some methods for using standard JDK dialogs.
  *
@@ -35,6 +35,12 @@ public class Dialogs
 {
 	public static File selectFileForWriting(Frame parentFrame,
 							FileExtensionFilter[] filters)
+	{
+		return selectFileForWriting(parentFrame, filters, null);
+	}
+
+	public static File selectFileForWriting(Frame parentFrame,
+							FileExtensionFilter[] filters, JComponent accessory)
 	{
 		File outFile = null;
 		final JFileChooser chooser = new JFileChooser();
@@ -46,6 +52,11 @@ public class Dialogs
 			}
 		}
 
+		if (accessory != null)
+		{
+			chooser.setAccessory(accessory);
+		}
+		
 		for (;;)
 		{
 			outFile = null;

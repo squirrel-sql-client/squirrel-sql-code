@@ -328,7 +328,7 @@ public class ContentsTab extends BaseTableTab
 	{
 		editModeForced = true;
 		sqlOutputClassNameAtTimeOfForcedEdit = 
-			getSession().getProperties().getSQLResultsOutputClassName();
+			getSession().getProperties().getTableContentsOutputClassName();
 
 		/**
 		 * Tell the GUI to rebuild itself.
@@ -348,7 +348,7 @@ public class ContentsTab extends BaseTableTab
 	{
 		if (editModeForced)
 		{
-			if (getSession().getProperties().getSQLResultsOutputClassName().equals(
+			if (getSession().getProperties().getTableContentsOutputClassName().equals(
 				sqlOutputClassNameAtTimeOfForcedEdit))
 			{
 				return getSession().getProperties().getEditableTableOutputClassName();
@@ -359,7 +359,7 @@ public class ContentsTab extends BaseTableTab
 
 		// if the user selected Editable Table in the Session Properties,
 		// then the display will be an editable table; otherwise the display is read-only
-		return getSession().getProperties().getSQLResultsOutputClassName();
+		return getSession().getProperties().getTableContentsOutputClassName();
 	}
 
 	/**

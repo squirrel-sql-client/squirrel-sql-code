@@ -170,9 +170,6 @@ public class MainPanel extends SquirrelTabbedPane
 			actions.get(GotoNextResultsTabAction.class).setEnabled(true);
 			actions.get(GotoPreviousResultsTabAction.class).setEnabled(true);
 			actions.get(ShowNativeSQLAction.class).setEnabled(true);
-			boolean isAutoCommit = _session.getProperties().getAutoCommit();
-			actions.get(CommitAction.class).setEnabled(!isAutoCommit);
-			actions.get(RollbackAction.class).setEnabled(!isAutoCommit);
 			actions.get(RefreshObjectTreeAction.class).setEnabled(false);
 		}
 		else
@@ -181,10 +178,11 @@ public class MainPanel extends SquirrelTabbedPane
 			actions.get(GotoNextResultsTabAction.class).setEnabled(false);
 			actions.get(GotoPreviousResultsTabAction.class).setEnabled(false);
 			actions.get(ShowNativeSQLAction.class).setEnabled(false);
-			actions.get(CommitAction.class).setEnabled(false);
-			actions.get(RollbackAction.class).setEnabled(false);
 			actions.get(RefreshObjectTreeAction.class).setEnabled(true);
 		}
+		final boolean isAutoCommit = _session.getProperties().getAutoCommit();
+		actions.get(CommitAction.class).setEnabled(!isAutoCommit);
+		actions.get(RollbackAction.class).setEnabled(!isAutoCommit);
 	}
 
 	/**
