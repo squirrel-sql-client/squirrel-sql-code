@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -23,25 +23,31 @@ import javax.swing.JInternalFrame;
 
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
-public class SelectInternalFrameCommand implements ICommand {
+public class SelectInternalFrameCommand implements ICommand
+{
 	private JInternalFrame _child;
 
-	public SelectInternalFrameCommand(JInternalFrame child) {
+	public SelectInternalFrameCommand(JInternalFrame child)
+	{
 		super();
-		if (child == null) {
+		if (child == null)
+		{
 			throw new IllegalArgumentException("Null JInternalFrame passed");
 		}
 		_child = child;
 	}
 
-	public void execute() {
-		try {
-			if (!_child.isSelected()) {
+	public void execute()
+	{
+		try
+		{
+			if (!_child.isSelected())
+			{
 				_child.setSelected(true);
-			} else {
-				_child.moveToBack();
 			}
-		} catch (PropertyVetoException ignore) {
+		}
+		catch (PropertyVetoException ignore)
+		{
 		}
 	}
 }

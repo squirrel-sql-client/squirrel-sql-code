@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -20,64 +20,86 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyVetoException;
 
 import javax.swing.JInternalFrame;
 
-import net.sourceforge.squirrel_sql.fw.gui.action.SelectInternalFrameCommand;
-
-public class SelectInternalFrameAction extends BaseAction
-			implements PropertyChangeListener {
-
+public class SelectInternalFrameAction
+	extends BaseAction
+	implements PropertyChangeListener
+{
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
-	private interface i18n {
+	private interface i18n
+	{
 		String SHORT_DESCRIPTION = "Active window";
 	}
 
 	private static final String FRAME_PTR = "FRAME_PTR";
 
-	public SelectInternalFrameAction(JInternalFrame child) {
+	private static final int MAX_TITLE_LENGTH = 50;
+
+	public SelectInternalFrameAction(JInternalFrame child)
+	{
 		this(child, null);
 	}
 
-	public SelectInternalFrameAction(JInternalFrame child, String title) {
+	public SelectInternalFrameAction(JInternalFrame child, String title)
+	{
 		super(getTitle(child, title));
 		putValue(FRAME_PTR, child);
 		putValue(SHORT_DESCRIPTION, i18n.SHORT_DESCRIPTION);
-		if (title != null && title.length() > 0) {
+		if (title != null && title.length() > 0)
+		{
 			child.addPropertyChangeListener(JInternalFrame.TITLE_PROPERTY, this);
 		}
 	}
 
-	public void actionPerformed(ActionEvent evt) {
+	public void actionPerformed(ActionEvent evt)
+	{
 		JInternalFrame fr = getInternalFrame();
-		if (fr != null) {
+		if (fr != null)
+		{
 			new SelectInternalFrameCommand(fr).execute();
 		}
 	}
 
-	public void propertyChange(PropertyChangeEvent evt) {
+	public void propertyChange(PropertyChangeEvent evt)
+	{
 		putValue(BaseAction.NAME, getInternalFrame().getTitle());
 	}
 
-	private JInternalFrame getInternalFrame() throws IllegalStateException {
-		JInternalFrame fr = (JInternalFrame)getValue(FRAME_PTR);
-		if (fr == null) {
+	private JInternalFrame getInternalFrame() throws IllegalStateException
+	{
+		JInternalFrame fr = (JInternalFrame) getValue(FRAME_PTR);
+		if (fr == null)
+		{
 			throw new IllegalStateException("No JInternalFrame associated with SelectInternalFrameAction");
 		}
 		return fr;
 	}
 
-	private static String getTitle(JInternalFrame child, String title) {
-		if (child == null) {
+	private static String getTitle(JInternalFrame child, String title)
+	{
+		if (child == null)
+		{
 			throw new IllegalArgumentException("null JInternalFrame passed");
 		}
-		if (title != null && title.length() > 0) {
-			return title;
+		String myTitle = title;
+		if (title != null && title.length() > 0)
+		{
+			myTitle = title;
 		}
-		return child.getTitle();
+		else
+		{
+			myTitle = child.getTitle();
+		}
+		if (myTitle.length() > MAX_TITLE_LENGTH)
+		{
+			myTitle = myTitle.substring(0, MAX_TITLE_LENGTH) + "...";
+		}
+		
+		return myTitle;
 	}
 }
