@@ -39,7 +39,7 @@ import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
- * @version 	$Id: ButtonTableHeader.java,v 1.2 2002-12-02 07:48:08 colbell Exp $
+ * @version 	$Id: ButtonTableHeader.java,v 1.3 2004-07-15 11:59:14 colbell Exp $
  * @author		Johan Compagner
  */
 public class ButtonTableHeader extends JTableHeader
@@ -208,7 +208,7 @@ public class ButtonTableHeader extends JTableHeader
 				{
 					((SortableTableModel) tm).sortByColumn(column);
 //					((SortableTableModel) tm).sortByColumn(_pressedColumnIdx);
-					if (((SortableTableModel) tm)._bAscending)
+					if (((SortableTableModel)tm).isSortedAscending())
 					{
 						_currentSortedColumnIcon = s_ascIcon;
 					}
