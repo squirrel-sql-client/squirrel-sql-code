@@ -33,6 +33,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 
 /**
  * Defines the API to do callbacks on the application.
@@ -65,6 +66,13 @@ public interface IApplication {
 	SquirrelPreferences getSquirrelPreferences();
 
 	SquirrelResources getResources();
+
+	/**
+	 * Return an array of all the sessions currently active.
+	 * 
+	 * @return	array of all active sessions.
+	 */
+	ISession[] getActiveSessions();
 
 	/**
 	 * Display an error message dialog.

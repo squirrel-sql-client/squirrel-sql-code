@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.session.action;
+package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
  * Copyright (C) 2002 Colin Bell
  * colbell@users.sourceforge.net
@@ -36,34 +36,20 @@ import net.sourceforge.squirrel_sql.client.session.IClientSession;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class DumpSessionAction extends SquirrelAction
-											implements IClientSessionAction
+public class DumpApplicationAction extends SquirrelAction
 {
 	/** Logger for this class. */
 	private final static ILogger s_log =
-		LoggerController.createLogger(DumpSessionAction.class);
-
-	/** Current session. */
-	private IClientSession _session;
+		LoggerController.createLogger(DumpApplicationAction.class);
 
 	/**
 	 * Ctor.
 	 *
 	 * @param	app		Application API.
 	 */
-	public DumpSessionAction(IApplication app)
+	public DumpApplicationAction(IApplication app)
 	{
 		super(app);
-	}
-
-	/**
-	 * Set the current session.
-	 *
-	 * @param	session		The current session.
-	 */
-	public void setClientSession(IClientSession session)
-	{
-		_session = session;
 	}
 
 	/**
@@ -73,25 +59,26 @@ public class DumpSessionAction extends SquirrelAction
 	 */
 	public void actionPerformed(ActionEvent evt)
 	{
+		final IApplication app = getApplication();
 		final Frame parentFrame = getParentFrame(evt);
-		FileExtensionFilter[] filters = new FileExtensionFilter[1];
+		final FileExtensionFilter[] filters = new FileExtensionFilter[1];
 		filters[0] = new FileExtensionFilter("Text files", new String[] { ".txt" });
-		File outFile = Dialogs.selectFileForWriting(parentFrame, filters);
+		final File outFile = Dialogs.selectFileForWriting(parentFrame, filters);
 		if (outFile != null)
 		{
-			DumpSessionCommand cmd = new DumpSessionCommand(outFile);
-			cmd.setSession(_session);
+			//TODO: Pass error handler.
+			ICommand cmd = new DumpApplicationCommand(app, outFile, null);
 			try
 			{
 				cmd.execute();
-				final String msg = "Session successfuly dumped to: "
+				final String msg = "Application successfuly dumped to: "
 									+ outFile.getAbsolutePath();
-				_session.getMessageHandler().showMessage(msg);
+				app.showErrorDialog(msg);	// TODO: Shouldn't be an error dialog.
 			}
 			catch (Throwable ex)
 			{
-				final String msg = "Error occured dumping session";
-				_session.getMessageHandler().showMessage(msg + ": " + ex);
+				final String msg = "Error occured dumping application";
+				app.showErrorDialog(msg, ex);
 				s_log.error(msg, ex);
 			}
 		}

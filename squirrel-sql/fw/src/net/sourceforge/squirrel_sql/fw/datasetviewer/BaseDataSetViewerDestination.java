@@ -106,8 +106,8 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 		addRow(row);
 	}
 
-	protected abstract void allRowsAdded();
-	protected abstract void addRow(Object[] row);
+	protected abstract void allRowsAdded() throws DataSetException;
+	protected abstract void addRow(Object[] row) throws DataSetException;
 
 	/**
 	 * factory method for getting IDataSetViewer instances

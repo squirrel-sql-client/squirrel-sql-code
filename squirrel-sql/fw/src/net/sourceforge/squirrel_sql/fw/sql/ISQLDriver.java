@@ -18,7 +18,6 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.beans.PropertyChangeListener;
-//import java.net.URL;
 
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -38,8 +37,6 @@ public interface ISQLDriver extends IHasIdentifier, Comparable
 		String JARFILE_NAMES = "jarFileNames";
 		String NAME = "name";
 		String URL = "url";
-		//String USES_CLASSPATH = "usesClassPath";
-		//String PLUGIN_NAMES = "pluginNames";
 	}
 
 	/**
@@ -68,15 +65,6 @@ public interface ISQLDriver extends IHasIdentifier, Comparable
 
 	void setDriverClassName(String driverClassName)
 		throws ValidationException;
-
-	//boolean getUsesClassPath();
-
-	//void setUsesClassPath(boolean data) throws ValidationException;
-
-	/**
-	 * @deprecated	Replaced by getJarFileURLs().
-	 */
-	//URL getJarFileURL();
 
 	/**
 	 * @deprecated	Replaced by getJarFileURLs().
@@ -107,9 +95,6 @@ public interface ISQLDriver extends IHasIdentifier, Comparable
 
 	boolean isJDBCDriverClassLoaded();
 	void setJDBCDriverClassLoaded(boolean cl);
-
-	//StringWrapper[] getPluginNames();
-	//void setPluginNames(StringWrapper[] names) throws ValidationException;
 
 	void addPropertyChangeListener(PropertyChangeListener listener);
 	void removePropertyChangeListener(PropertyChangeListener listener);

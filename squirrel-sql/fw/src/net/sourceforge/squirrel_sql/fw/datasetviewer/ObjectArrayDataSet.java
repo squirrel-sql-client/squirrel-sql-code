@@ -28,6 +28,11 @@ public class ObjectArrayDataSet implements IDataSet
 	private int _curIndex = -1;
 	private int _columnCount;
 
+	public ObjectArrayDataSet(Object[] src) throws DataSetException
+	{
+		this(convert(src));
+	}
+
 	public ObjectArrayDataSet(Object[][] src) throws DataSetException
 	{
 		super();
@@ -88,4 +93,13 @@ public class ObjectArrayDataSet implements IDataSet
 		return columnDefs;
 	}
 
+	private static Object[][] convert(Object[] src)
+	{
+		Object[][] dsInfo = new Object[src.length][1];
+		for (int i = 0; i < src.length; ++i)
+		{
+			dsInfo[i][0] = src[i];
+		}
+		return dsInfo;
+	}
 }

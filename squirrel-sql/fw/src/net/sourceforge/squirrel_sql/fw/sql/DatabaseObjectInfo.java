@@ -38,10 +38,10 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo
 								int dboType, SQLConnection conn)
 	{
 		super();
-		if (simpleName == null)
-		{
-			throw new IllegalArgumentException("Null simpleName passed");
-		}
+//		if (simpleName == null)
+//		{
+//			throw new IllegalArgumentException("Null simpleName passed");
+//		}
 		if (conn == null)
 		{
 			throw new IllegalArgumentException("Null SQLConnection passed");

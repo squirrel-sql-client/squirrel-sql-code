@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -21,20 +21,21 @@ import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 
 /**
- * Action that allows program termination.
+ * Action that terminates this program.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ExitAction extends SquirrelAction {
-
-	public ExitAction(IApplication app) {
+public class ExitAction extends SquirrelAction
+{
+	public ExitAction(IApplication app)
+	{
 		super(app);
 	}
 
-	public void actionPerformed(ActionEvent evt) {
+	public void actionPerformed(ActionEvent evt)
+	{
 		getApplication().getMainFrame().dispose();
 	}
 }

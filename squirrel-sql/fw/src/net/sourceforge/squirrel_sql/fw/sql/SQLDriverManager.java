@@ -26,33 +26,31 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Properties;
 
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class SQLDriverManager
 {
-	private static ILogger s_log =
+	private static final ILogger s_log =
 		LoggerController.createLogger(SQLDriverManager.class);
+
+	/**
+	 * Collection of instances of <TT>java.sql.Driver</TT> objects keyed
+	 * by the <TT>SQLDriver.getIdentifier()</TT>.
+	 */
 	private HashMap _driverInfo = new HashMap();
 
 	private MyDriverListener _myDriverListener = new MyDriverListener();
 
 	public synchronized void registerSQLDriver(ISQLDriver sqlDriver)
-		throws
-			IllegalAccessException,
-			InstantiationException,
-			ClassNotFoundException,
-			MalformedURLException
+		throws IllegalAccessException, InstantiationException,
+					ClassNotFoundException, MalformedURLException
 	{
 		unregisterSQLDriver(sqlDriver);
 		sqlDriver.addPropertyChangeListener(_myDriverListener);
-		Class driverClass = null;
-		//if (sqlDriver.getUsesClassPath()) {
-		//	driverClass = Class.forName(sqlDriver.getDriverClassName());
-		//} else {
-		driverClass =
-			new SQLDriverClassLoader(sqlDriver).loadClass(sqlDriver.getDriverClassName());
-		//}
+		ClassLoader loader = new SQLDriverClassLoader(sqlDriver);
+		Class driverClass = loader.loadClass(sqlDriver.getDriverClassName());
 		_driverInfo.put(sqlDriver.getIdentifier(), driverClass.newInstance());
 		sqlDriver.setJDBCDriverClassLoaded(true);
 	}
@@ -64,17 +62,11 @@ public class SQLDriverManager
 		_driverInfo.remove(sqlDriver.getIdentifier());
 	}
 
-	public synchronized SQLConnection getConnection(
-		ISQLDriver sqlDriver,
-		ISQLAlias alias,
-		String user,
-		String pw)
-		throws
-			ClassNotFoundException,
-			IllegalAccessException,
-			InstantiationException,
-			BaseSQLException,
-			MalformedURLException
+	public synchronized SQLConnection getConnection(ISQLDriver sqlDriver,
+											ISQLAlias alias, String user,
+											String pw)
+		throws ClassNotFoundException, IllegalAccessException,
+			InstantiationException, BaseSQLException, MalformedURLException
 	{
 		Properties props = new Properties();
 		if (user != null)
@@ -86,13 +78,20 @@ public class SQLDriverManager
 			props.put("password", pw);
 		}
 
-		//try {
-		//if (!sqlDriver.getUsesClassPath()) {
 		try
 		{
-			Class driverCls =
-				new SQLDriverClassLoader(sqlDriver).loadClass(sqlDriver.getDriverClassName());
-			Driver driver = (Driver) driverCls.newInstance();
+//			ClassLoader loader = new SQLDriverClassLoader(sqlDriver);
+//			Class driverCls = loader.loadClass(sqlDriver.getDriverClassName());
+//			Driver driver = (Driver)driverCls.newInstance();
+			Driver driver = (Driver)_driverInfo.get(sqlDriver.getIdentifier());
+			if (driver == null)
+			{
+				s_log.debug("Loading driver that wasn't registered: " +
+								sqlDriver.getDriverClassName());
+				ClassLoader loader = new SQLDriverClassLoader(sqlDriver);
+				Class driverCls = loader.loadClass(sqlDriver.getDriverClassName());
+				driver = (Driver)driverCls.newInstance();
+			}
 			Connection jdbcConn = driver.connect(alias.getUrl(), props);
 			if (jdbcConn == null)
 			{
@@ -104,11 +103,26 @@ public class SQLDriverManager
 		{
 			throw new BaseSQLException(ex);
 		}
-		//}
-		//return new SQLConnection(DriverManager.getConnection(alias.getUrl(), user, pw));
-		//} catch (SQLException ex) {
-		//	throw new BaseSQLException(ex);
-		//}
+	}
+
+	/**
+	 * Return the <TT>java.sql.Driver</TT> being used for the passed
+	 * <TT>ISQLDriver.getIdentifier()</TT> or <TT>null</TT> if none found.
+	 * 
+	 * @return	the <TT>java.sql.Driver</TT> being used for the passed
+	 * 			<TT>ISQLDriver.getIdentifier()</TT> or <TT>null if none found.
+	 * 
+	 * @throws	IllegalArgumentException
+	 *			Thrown if <TT>null</TT> IIdentifier</TT> passed.
+	 */
+	public Driver getJDBCDriver(IIdentifier id)
+	{
+		if (id == null)
+		{
+			throw new IllegalArgumentException("IIdentifier == null");
+		}
+
+		return (Driver)_driverInfo.get(id);
 	}
 
 	private final class MyDriverListener implements PropertyChangeListener
@@ -116,13 +130,10 @@ public class SQLDriverManager
 		public void propertyChange(PropertyChangeEvent evt)
 		{
 			final String propName = evt.getPropertyName();
-			//			if (propName != null && propName.equals(ISQLDriver.IPropertyNames.DRIVER_CLASS)) {
 			if (propName == null
 				|| propName.equals(ISQLDriver.IPropertyNames.DRIVER_CLASS)
-//				|| propName.equals(ISQLDriver.IPropertyNames.JARFILE_NAME))
 				|| propName.equals(ISQLDriver.IPropertyNames.JARFILE_NAMES))
-			{ // ||
-				//propName.equals(ISQLDriver.IPropertyNames.USES_CLASSPATH)) {
+			{
 				Object obj = evt.getSource();
 				if (obj instanceof ISQLDriver)
 				{
@@ -134,35 +145,28 @@ public class SQLDriverManager
 					}
 					catch (IllegalAccessException ex)
 					{
-						s_log.error(
-							"Unable to create instance of Class "
-								+ driver.getDriverClassName()
-								+ " for JDCB driver "
-								+ driver.getName(),
-							ex);
+						s_log.error("Unable to create instance of Class "
+										+ driver.getDriverClassName()
+										+ " for JDCB driver "
+										+ driver.getName(), ex);
 					}
 					catch (InstantiationException ex)
 					{
-						s_log.error(
-							"Unable to create instance of Class "
+						s_log.error("Unable to create instance of Class "
 								+ driver.getDriverClassName()
 								+ " for JDCB driver "
-								+ driver.getName(),
-							ex);
+								+ driver.getName(), ex);
 					}
 					catch (MalformedURLException ex)
 					{
-						s_log.error(
-							"Unable to create instance of Class "
+						s_log.error("Unable to create instance of Class "
 								+ driver.getDriverClassName()
 								+ " for JDCB driver "
-								+ driver.getName(),
-							ex);
+								+ driver.getName(), ex);
 					}
 					catch (ClassNotFoundException ex)
 					{
-						s_log.error(
-							"Unable to find Driver Class "
+						s_log.error("Unable to find Driver Class "
 								+ driver.getDriverClassName()
 								+ " for JDCB driver "
 								+ driver.getName());

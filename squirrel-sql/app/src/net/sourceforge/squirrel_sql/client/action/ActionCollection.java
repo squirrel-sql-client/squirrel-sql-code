@@ -24,7 +24,6 @@ import java.util.Map;
 import javax.swing.Action;
 import javax.swing.JInternalFrame;
 
-//import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -35,6 +34,8 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.AboutAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CascadeAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CloseAllSessionsAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.DisplayPluginSummaryAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.DumpApplicationAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.DumpApplicationCommand;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ExitAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.GlobalPreferencesAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.MaximizeAction;
@@ -294,6 +295,7 @@ public final class ActionCollection
 		add(new DisplayPluginSummaryAction(_app));
 		add(new DropSelectedTablesAction(_app));
 		add(new DropTableAction(_app));
+		add(new DumpApplicationAction(_app));
 		add(new DumpSessionAction(_app));
 		add(new ExecuteSqlAction(_app));
 		add(new ExitAction(_app));

@@ -4,6 +4,14 @@ Change Log
 1.1beta6
 ========
 
+Enhancements
+------------
+- Mimer added to default drivers
+- Axion added to default drivers
+- Added "Dump Application" and "Dump Session" options to menus to aid in
+  debugging issues with different drivers and databases.
+- Added "Help" option to Help menu.
+
 Bug Fixes
 ---------
 
@@ -12,10 +20,6 @@ Bug Fixes
 - Secondly the "create data script from SQL" didn't work for "select * from
   tablename" type queries (without a where clause). Which is a shame
   because this would have been a workaround for the other problem... (John Murga)
-
-Enhancements
-------------
-- Added "Help" option to Help menu.
 
 
 1.1beta5

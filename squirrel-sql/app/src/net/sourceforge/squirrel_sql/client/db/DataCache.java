@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client.db;
  */
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -36,6 +37,7 @@ import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeListener;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
@@ -102,7 +104,7 @@ public class DataCache
 		final File driversFile = appFiles.getDatabaseDriversFile();
 		try
 		{
-			_cache.saveAllForClass(driversFile.getPath(), SQL_DRIVER_IMPL);
+			saveDrivers(driversFile);
 		}
 		catch (Exception ex)
 		{
@@ -114,7 +116,7 @@ public class DataCache
 		final File aliasesFile = appFiles.getDatabaseAliasesFile();
 		try
 		{
-			_cache.saveAllForClass(aliasesFile.getPath(), SQL_ALIAS_IMPL);
+			saveAliases(aliasesFile);
 		}
 		catch (Exception ex)
 		{
@@ -122,6 +124,50 @@ public class DataCache
 			s_log.error(msg, ex);
 			_app.showErrorDialog(msg, ex);
 		}
+	}
+
+	/**
+	 * Save JDBC drivers to the passed file as XML.
+	 * 
+	 * @param	file	File to save drivers to.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>File</TT> passed.
+	 * @throws	IOException
+	 * 			Thrown if an I/O error occurs saving.
+	 * @throws	XMLException
+	 * 			Thrown if an error occurs translating drivers to XML.
+	 */
+	public void saveDrivers(File file)
+		throws IOException, XMLException
+	{
+		if (file == null)
+		{
+			throw new IllegalArgumentException("File == null");
+		}
+		_cache.saveAllForClass(file.getPath(), SQL_DRIVER_IMPL);
+	}
+
+	/**
+	 * Save aliases to the passed file as XML.
+	 * 
+	 * @param	file	File to save aliases to.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>File</TT> passed.
+	 * @throws	IOException
+	 * 			Thrown if an I/O error occurs saving.
+	 * @throws	XMLException
+	 * 			Thrown if an error occurs translating aliases to XML.
+	 */
+	public void saveAliases(File file)
+		throws IOException, XMLException
+	{
+		if (file == null)
+		{
+			throw new IllegalArgumentException("File == null");
+		}
+		_cache.saveAllForClass(file.getPath(), SQL_ALIAS_IMPL);
 	}
 
 	/**

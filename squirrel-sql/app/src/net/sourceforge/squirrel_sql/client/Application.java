@@ -23,14 +23,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.sql.DriverManager;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Action;
+import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.ToolTipManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -49,6 +53,8 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SessionSheet;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionPropertiesSheetFactory;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 
@@ -328,6 +334,25 @@ class Application implements IApplication
 	public void setSQLEntryPanelFactory(ISQLEntryPanelFactory factory)
 	{
 		_sqlEntryFactory = factory != null ? factory : new DefaultSQLEntryPanelFactory();
+	}
+
+	/**
+	 * Return an array of all the sessions currently active.
+	 * 
+	 * @return	array of all active sessions.
+	 */
+	public synchronized ISession[] getActiveSessions()
+	{
+		final JInternalFrame[] frames = GUIUtils.getOpenNonToolWindows(_mainFrame.getDesktopPane().getAllFrames());
+		final List sessions = new ArrayList();
+		for (int i = 0; i < frames.length; ++i)
+		{
+			if (frames[i] instanceof SessionSheet)
+			{
+				sessions.add(((SessionSheet)frames[i]).getSession());
+			}
+		}
+		return (ISession[])sessions.toArray(new ISession[sessions.size()]);
 	}
 
 	public synchronized void addToMenu(int menuId, JMenu menu)
