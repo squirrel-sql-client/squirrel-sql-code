@@ -32,48 +32,48 @@ import javax.swing.text.PlainDocument;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class IntegerField extends JTextField {
-    /**
-     * Default ctor.
-     */
-    public IntegerField() {
-        super();
-    }
+	/**
+	 * Default ctor.
+	 */
+	public IntegerField() {
+		super();
+	}
 
-    /**
-     * Ctor specifying the field width.
-     */
-    public IntegerField(int cols) {
-        super(cols);
-    }
+	/**
+	 * Ctor specifying the field width.
+	 */
+	public IntegerField(int cols) {
+		super(cols);
+	}
 
-    public int getInt() {
-        final String text = getText();
-        if (text == null || text.length() == 0) {
-            return 0;
-        }
-        return Integer.parseInt(text);
-    }
+	public int getInt() {
+		final String text = getText();
+		if (text == null || text.length() == 0) {
+			return 0;
+		}
+		return Integer.parseInt(text);
+	}
 
-    public void setInt(int value) {
-        setText("" + value);
-    }
+	public void setInt(int value) {
+		setText("" + value);
+	}
 
-    protected Document createDefaultModel() {
-        return new IntegerDocument();
-    }
+	protected Document createDefaultModel() {
+		return new IntegerDocument();
+	}
 
-    static class IntegerDocument extends PlainDocument {
+	static class IntegerDocument extends PlainDocument {
 
-        public void insertString(int offs, String str, AttributeSet a)
-                throws BadLocationException {
-            if (str != null) {
-                try {
-                    Integer.decode(str);
-                    super.insertString(offs, str, a);
-                } catch (NumberFormatException ex) {
-                    Toolkit.getDefaultToolkit().beep();
-                }
-            }
-        }
-    }
+		public void insertString(int offs, String str, AttributeSet a)
+				throws BadLocationException {
+			if (str != null) {
+				try {
+					Integer.decode(str);
+					super.insertString(offs, str, a);
+				} catch (NumberFormatException ex) {
+					Toolkit.getDefaultToolkit().beep();
+				}
+			}
+		}
+	}
 }

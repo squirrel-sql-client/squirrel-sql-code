@@ -30,114 +30,114 @@ import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyHtmlCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableSelectAllCellsCommand;
 
 public class TablePopupMenu extends BasePopupMenu {
-    private JTable _table;
+	private JTable _table;
 
-    private CutAction _cut = new CutAction();
-    private CopyAction _copy = new CopyAction();
+	private CutAction _cut = new CutAction();
+	private CopyAction _copy = new CopyAction();
 	private CopyHtmlAction _copyHtml = new CopyHtmlAction();
-    private PasteAction _paste = new PasteAction();
-    private ClearAction _clear = new ClearAction();
-    private SelectAllAction _select = new SelectAllAction();
+	private PasteAction _paste = new PasteAction();
+	private ClearAction _clear = new ClearAction();
+	private SelectAllAction _select = new SelectAllAction();
 
-    public TablePopupMenu() {
-        super();
-        //add(_cut);
-        add(_copy);
-        add(_copyHtml);
-        //add(_paste);
-        addSeparator();
-        //add(_clear);
-        //addSeparator();
-        add(_select);
-    }
+	public TablePopupMenu() {
+		super();
+		//add(_cut);
+		add(_copy);
+		add(_copyHtml);
+		//add(_paste);
+		addSeparator();
+		//add(_clear);
+		//addSeparator();
+		add(_select);
+	}
 
-    public void setTable(JTable value) {
-        _table = value;
-    }
+	public void setTable(JTable value) {
+		_table = value;
+	}
 
-    /**
-     * Show the menu.
-     */
-    public void show(Component invoker, int x, int y) {
-        updateActions();
-        super.show(invoker, x, y);
-    }
+	/**
+	 * Show the menu.
+	 */
+	public void show(Component invoker, int x, int y) {
+		updateActions();
+		super.show(invoker, x, y);
+	}
 
-    public void show(MouseEvent evt) {
-        updateActions();
-        super.show(evt);
-    }
+	public void show(MouseEvent evt) {
+		updateActions();
+		super.show(evt);
+	}
 
-    protected void updateActions() {
-        final boolean isEditable = false;
-        _cut.setEnabled(isEditable);
-        _paste.setEnabled(isEditable);
-    }
+	protected void updateActions() {
+		final boolean isEditable = false;
+		_cut.setEnabled(isEditable);
+		_paste.setEnabled(isEditable);
+	}
 
-    private class ClearAction extends BaseAction {
-        ClearAction() {
-            super("Clear");
-        }
+	private class ClearAction extends BaseAction {
+		ClearAction() {
+			super("Clear");
+		}
 
-        public void actionPerformed(ActionEvent evt) {
-            if (_table != null) {
-            }
-        }
-    }
-    private class CutAction extends BaseAction {
-        CutAction() {
-            super("Cut");
-        }
+		public void actionPerformed(ActionEvent evt) {
+			if (_table != null) {
+			}
+		}
+	}
+	private class CutAction extends BaseAction {
+		CutAction() {
+			super("Cut");
+		}
 
-        public void actionPerformed(ActionEvent evt) {
-            if (_table != null) {
-            }
-        }
-    }
+		public void actionPerformed(ActionEvent evt) {
+			if (_table != null) {
+			}
+		}
+	}
 
-    private class CopyAction extends BaseAction {
-        CopyAction() {
-            super("Copy");
-        }
+	private class CopyAction extends BaseAction {
+		CopyAction() {
+			super("Copy");
+		}
 
-        public void actionPerformed(ActionEvent evt) {
-            if (_table != null) {
-                new TableCopyCommand(_table).execute();
-            }
-        }
-    }
+		public void actionPerformed(ActionEvent evt) {
+			if (_table != null) {
+				new TableCopyCommand(_table).execute();
+			}
+		}
+	}
 
-    private class CopyHtmlAction extends BaseAction {
-        CopyHtmlAction() {
-            super("Copy as Html");
-        }
+	private class CopyHtmlAction extends BaseAction {
+		CopyHtmlAction() {
+			super("Copy as Html");
+		}
 
-        public void actionPerformed(ActionEvent evt) {
-            if (_table != null) {
-                new TableCopyHtmlCommand(_table).execute();
-            }
-        }
-    }
-    private class PasteAction extends BaseAction {
-        PasteAction() {
-            super("Paste");
-        }
+		public void actionPerformed(ActionEvent evt) {
+			if (_table != null) {
+				new TableCopyHtmlCommand(_table).execute();
+			}
+		}
+	}
+	private class PasteAction extends BaseAction {
+		PasteAction() {
+			super("Paste");
+		}
 
-        public void actionPerformed(ActionEvent evt) {
-            if (_table != null) {
-            }
-        }
-    }
-    private class SelectAllAction extends BaseAction {
-        SelectAllAction() {
-            super("Select All");
-        }
+		public void actionPerformed(ActionEvent evt) {
+			if (_table != null) {
+			}
+		}
+	}
+	private class SelectAllAction extends BaseAction {
+		SelectAllAction() {
+			super("Select All");
+		}
 
-        public void actionPerformed(ActionEvent evt) {
-            if (_table != null) {
-                new TableSelectAllCellsCommand(_table).execute();
-            }
-        }
-    }
+		public void actionPerformed(ActionEvent evt) {
+			if (_table != null) {
+				new TableSelectAllCellsCommand(_table).execute();
+			}
+		}
+	}
 }
 

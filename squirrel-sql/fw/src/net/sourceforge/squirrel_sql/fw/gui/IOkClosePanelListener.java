@@ -30,19 +30,19 @@ public interface IOkClosePanelListener extends EventListener {
 	 *
 	 * @param	evt		Describes this event.
 	 */
-    void okPressed(OkClosePanelEvent evt);
+	void okPressed(OkClosePanelEvent evt);
 
 	/**
 	 * The Close button was pressed.
 	 *
 	 * @param	evt		Describes this event.
 	 */
-    void closePressed(OkClosePanelEvent evt);
+	void closePressed(OkClosePanelEvent evt);
 
 	/**
 	 * The Cancel button was pressed.
 	 *
 	 * @param	evt		Describes this event.
 	 */
-    void cancelPressed(OkClosePanelEvent evt);
+	void cancelPressed(OkClosePanelEvent evt);
 }

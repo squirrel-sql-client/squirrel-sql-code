@@ -24,24 +24,24 @@ import javax.swing.JInternalFrame;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 public class SelectInternalFrameCommand implements ICommand {
-    private JInternalFrame _child;
+	private JInternalFrame _child;
 
-    public SelectInternalFrameCommand(JInternalFrame child) {
-        super();
-        if (child == null) {
-            throw new IllegalArgumentException("Null JInternalFrame passed");
-        }
-        _child = child;
-    }
+	public SelectInternalFrameCommand(JInternalFrame child) {
+		super();
+		if (child == null) {
+			throw new IllegalArgumentException("Null JInternalFrame passed");
+		}
+		_child = child;
+	}
 
-    public void execute() {
-        try {
-            if (!_child.isSelected()) {
-                _child.setSelected(true);
-            } else {
-                _child.moveToBack();
-            }
-        } catch (PropertyVetoException ignore) {
-        }
-    }
+	public void execute() {
+		try {
+			if (!_child.isSelected()) {
+				_child.setSelected(true);
+			} else {
+				_child.moveToBack();
+			}
+		} catch (PropertyVetoException ignore) {
+		}
+	}
 }

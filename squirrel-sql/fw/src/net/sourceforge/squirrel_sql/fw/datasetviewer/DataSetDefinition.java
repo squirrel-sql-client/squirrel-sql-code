@@ -18,31 +18,31 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 public class DataSetDefinition {
-    /**
-     * The collection of <TT>ColumnDisplayDefinition</TT> objects
-     * for this data set.
-     */
-    private ColumnDisplayDefinition[] _columnDefs;
+	/**
+	 * The collection of <TT>ColumnDisplayDefinition</TT> objects
+	 * for this data set.
+	 */
+	private ColumnDisplayDefinition[] _columnDefs;
 
-    /**
-     * Ctor.
-     *
-     * @param   columnDefs  The <TT>ColumnDisplayDefinition</TT>
-     *                      objects that make up this data set.
-     */
-    public DataSetDefinition(ColumnDisplayDefinition[] columnDefs) {
-        super();
-        _columnDefs = columnDefs != null ? columnDefs : new ColumnDisplayDefinition[0];
-    }
+	/**
+	 * Ctor.
+	 *
+	 * @param   columnDefs	The <TT>ColumnDisplayDefinition</TT>
+	 *						objects that make up this data set.
+	 */
+	public DataSetDefinition(ColumnDisplayDefinition[] columnDefs) {
+		super();
+		_columnDefs = columnDefs != null ? columnDefs : new ColumnDisplayDefinition[0];
+	}
 
-    /**
-     * Return the <TT>ColumnDisplayDefinition</TT> objects
-     * that make up this data set.
-     *
-     * @return  <TT>ColumnDisplayDefinition</TT> objects
-     *          that make up this data set.
-     */
-    public ColumnDisplayDefinition[] getColumnDefinitions() {
-        return _columnDefs;
-    }
+	/**
+	 * Return the <TT>ColumnDisplayDefinition</TT> objects
+	 * that make up this data set.
+	 *
+	 * @return	<TT>ColumnDisplayDefinition</TT> objects
+	 *			that make up this data set.
+	 */
+	public ColumnDisplayDefinition[] getColumnDefinitions() {
+		return _columnDefs;
+	}
 }

@@ -18,5 +18,5 @@ package net.sourceforge.squirrel_sql.fw.id;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 public interface IHasIdentifier {
-    IIdentifier getIdentifier();
+	IIdentifier getIdentifier();
 }

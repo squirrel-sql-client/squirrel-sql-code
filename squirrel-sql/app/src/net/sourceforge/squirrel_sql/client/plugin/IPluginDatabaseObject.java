@@ -22,8 +22,8 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
  * Describes an object in the database.
  */
 public interface IPluginDatabaseObject extends IDatabaseObjectInfo {
-    IPluginDatabaseObjectType getType();
+	IPluginDatabaseObjectType getType();
 
-    // ??Need to tell object to display itself in a panel.
+	// ??Need to tell object to display itself in a panel.
 }
 

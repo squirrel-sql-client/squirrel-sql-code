@@ -156,8 +156,8 @@ public class NewSessionPropertiesSheet extends BaseSheet {
 	private void createUserInterface() {
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 
-        // This is a tool window.
-        GUIUtils.makeToolWindow(this, true);
+		// This is a tool window.
+		GUIUtils.makeToolWindow(this, true);
 
 		// Add panels for core Squirrel functionality.
 		_panels.add(new SQLPropertiesPanel(_app));

@@ -29,51 +29,51 @@ import net.sourceforge.squirrel_sql.fw.xml.IXMLAboutToBeWritten;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class WindowState implements IXMLAboutToBeWritten {
-    private Window _window;
-    private RectangleWrapper _bounds = new RectangleWrapper(new Rectangle(600, 400));
+	private Window _window;
+	private RectangleWrapper _bounds = new RectangleWrapper(new Rectangle(600, 400));
 
-    public interface IPropertyNames {
-        String BOUNDS = "bounds";
-    }
+	public interface IPropertyNames {
+		String BOUNDS = "bounds";
+	}
 
-    /**
-     * Default ctor.
-     */
-    public WindowState() {
-        super();
-    }
+	/**
+	 * Default ctor.
+	 */
+	public WindowState() {
+		super();
+	}
 
-    /**
-     * Ctor storing the state of the passed <CODE>Window</CODE>.
-     */
-    public WindowState(Window window) {
-        super();
-        _window = window;
-    }
+	/**
+	 * Ctor storing the state of the passed <CODE>Window</CODE>.
+	 */
+	public WindowState(Window window) {
+		super();
+		_window = window;
+	}
 
-    /**
-     * This bean is about to be written out to XML so load its values from its
-     * window.
-     */
-    public void aboutToBeWritten() {
-        refresh();
-    }
+	/**
+	 * This bean is about to be written out to XML so load its values from its
+	 * window.
+	 */
+	public void aboutToBeWritten() {
+		refresh();
+	}
 
-    public RectangleWrapper getBounds() {
-        refresh();
-        return _bounds;
-    }
+	public RectangleWrapper getBounds() {
+		refresh();
+		return _bounds;
+	}
 
-    public void setBounds(RectangleWrapper value) {
-        _bounds = value;
-    }
+	public void setBounds(RectangleWrapper value) {
+		_bounds = value;
+	}
 
-    private void refresh() {
-        if (_window != null) {
-            if (_bounds == null) {
-                _bounds = new RectangleWrapper();
-            }
-            _bounds.setFrom(_window.getBounds());
-        }
-    }
+	private void refresh() {
+		if (_window != null) {
+			if (_bounds == null) {
+				_bounds = new RectangleWrapper();
+			}
+			_bounds.setFrom(_window.getBounds());
+		}
+	}
 }

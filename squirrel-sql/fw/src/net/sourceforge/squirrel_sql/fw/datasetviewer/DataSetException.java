@@ -27,21 +27,21 @@ import net.sourceforge.squirrel_sql.fw.util.BaseException;
  */
 public class DataSetException extends BaseException {
 
-    /**
-     * Ctor.
-     *
-     * @param   msg     Message describing the error.
-     */
-    public DataSetException(String msg) {
-        super(msg);
-    }
+	/**
+	 * Ctor.
+	 *
+	 * @param   msg	 Message describing the error.
+	 */
+	public DataSetException(String msg) {
+		super(msg);
+	}
 
-    /**
-     * Ctor. Wraps this exception around another.
-     *
-     * @param   wrapee  The exception that this one is wrapped around.
-     */
-    public DataSetException(Exception wrapee) {
-        super(wrapee);
-    }
+	/**
+	 * Ctor. Wraps this exception around another.
+	 *
+	 * @param   wrapee  The exception that this one is wrapped around.
+	 */
+	public DataSetException(Exception wrapee) {
+		super(wrapee);
+	}
 }

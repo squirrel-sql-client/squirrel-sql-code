@@ -28,31 +28,31 @@ import javax.swing.JToolBar;
  */
 public class ToolBar extends JToolBar {
 
-    public JButton add(Action action) {
-        JButton btn = super.add(action);
-        initialiseButton(action, btn);
-        return btn;
-    }
+	public JButton add(Action action) {
+		JButton btn = super.add(action);
+		initialiseButton(action, btn);
+		return btn;
+	}
 
-    public JButton add(Action action, JButton btn) {
-        super.add(btn);
-        initialiseButton(action, btn);
-        return btn;
-    }
+	public JButton add(Action action, JButton btn) {
+		super.add(btn);
+		initialiseButton(action, btn);
+		return btn;
+	}
 
-    public void setUseRolloverButtons(boolean value) {
-        putClientProperty("JToolBar.isRollover", value ? Boolean.TRUE : Boolean.FALSE);
-    }
+	public void setUseRolloverButtons(boolean value) {
+		putClientProperty("JToolBar.isRollover", value ? Boolean.TRUE : Boolean.FALSE);
+	}
 
-    protected void initialiseButton(Action action, JButton btn) {
-        if (btn != null) {
-            btn.setRequestFocusEnabled(false);
-            btn.setText("");
-            String tt = null;
-            if (action != null) {
-                tt = (String)action.getValue(Action.SHORT_DESCRIPTION);
-            }
-            btn.setToolTipText(tt != null ? tt : "");
-        }
-    }
+	protected void initialiseButton(Action action, JButton btn) {
+		if (btn != null) {
+			btn.setRequestFocusEnabled(false);
+			btn.setText("");
+			String tt = null;
+			if (action != null) {
+				tt = (String)action.getValue(Action.SHORT_DESCRIPTION);
+			}
+			btn.setToolTipText(tt != null ? tt : "");
+		}
+	}
 }

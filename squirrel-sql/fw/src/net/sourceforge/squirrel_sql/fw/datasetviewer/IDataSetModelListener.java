@@ -30,7 +30,7 @@ public interface IDataSetModelListener extends EventListener {
 	 *
 	 * @param	evt		Describes this event.
 	 */
-    void allRowsAdded(DataSetModelEvent evt);
+	void allRowsAdded(DataSetModelEvent evt);
 
 	/**
 	 * Indicates that the output display should scroll to the top.

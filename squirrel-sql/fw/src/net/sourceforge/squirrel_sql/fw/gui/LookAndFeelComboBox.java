@@ -32,72 +32,72 @@ import javax.swing.UIManager.LookAndFeelInfo;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class LookAndFeelComboBox extends JComboBox {
-    /**
-     * <TT>LookAndFeelInfo</TT> objects keyed by the
-     * Look and Feel name.
-     */
-    private Map _lafsByName = new TreeMap();
+	/**
+	 * <TT>LookAndFeelInfo</TT> objects keyed by the
+	 * Look and Feel name.
+	 */
+	private Map _lafsByName = new TreeMap();
 
-    /**
-     * <TT>LookAndFeelInfo</TT> objects keyed by the
-     * Class name of the Look and Feel.
-     */
-    private Map _lafsByClassName = new TreeMap();
+	/**
+	 * <TT>LookAndFeelInfo</TT> objects keyed by the
+	 * Class name of the Look and Feel.
+	 */
+	private Map _lafsByClassName = new TreeMap();
 
-    /**
-     * Default ctor. Select the currently active L & F after
-     * building the combo box.
-     */
-    public LookAndFeelComboBox() {
-        this(null);
-    }
+	/**
+	 * Default ctor. Select the currently active L & F after
+	 * building the combo box.
+	 */
+	public LookAndFeelComboBox() {
+		this(null);
+	}
 
-    public LookAndFeelComboBox(String selectedLafName) {
-        super();
-        generateLookAndFeelInfo();
-        if (selectedLafName == null) {
-            selectedLafName = UIManager.getLookAndFeel().getName();
-        }
-        setSelectedLookAndFeelName(selectedLafName);
-    }
+	public LookAndFeelComboBox(String selectedLafName) {
+		super();
+		generateLookAndFeelInfo();
+		if (selectedLafName == null) {
+			selectedLafName = UIManager.getLookAndFeel().getName();
+		}
+		setSelectedLookAndFeelName(selectedLafName);
+	}
 
-    public LookAndFeelInfo getSelectedLookAndFeel() {
-        return (LookAndFeelInfo)_lafsByName.get((String)getSelectedItem());
-    }
+	public LookAndFeelInfo getSelectedLookAndFeel() {
+		return (LookAndFeelInfo)_lafsByName.get((String)getSelectedItem());
+	}
 
-    public void setSelectedLookAndFeelName(String selectedLafName) {
-        if (selectedLafName != null) {
-            getModel().setSelectedItem(selectedLafName);
-        }
-    }
+	public void setSelectedLookAndFeelName(String selectedLafName) {
+		if (selectedLafName != null) {
+			getModel().setSelectedItem(selectedLafName);
+		}
+	}
 
-    public void setSelectedLookAndFeelClassName(String selectedLafClassName) {
-        if (selectedLafClassName != null) {
-            LookAndFeelInfo info = (LookAndFeelInfo)_lafsByClassName.get(selectedLafClassName);
-            if (info != null) {
-                setSelectedLookAndFeelName(info.getName());
-            }
-        }
-    }
+	public void setSelectedLookAndFeelClassName(String selectedLafClassName) {
+		if (selectedLafClassName != null) {
+			LookAndFeelInfo info = (LookAndFeelInfo)_lafsByClassName.get(selectedLafClassName);
+			if (info != null) {
+				setSelectedLookAndFeelName(info.getName());
+			}
+		}
+	}
 
-    /**
-     * Fill combo with the names of all the Look and Feels in
-     * alpabetical sequence.
-     */
-    private void generateLookAndFeelInfo() {
-        // Put all available "Look and Feel" objects into collections
-        // keyed by LAF name and by the class name.
-        LookAndFeelInfo[] info = UIManager.getInstalledLookAndFeels();
-        _lafsByName = new TreeMap();
-        for (int i = 0; i < info.length; ++i) {
-            _lafsByName.put(info[i].getName(), info[i]);
-            _lafsByClassName.put(info[i].getClassName(), info[i]);
-        }
+	/**
+	 * Fill combo with the names of all the Look and Feels in
+	 * alpabetical sequence.
+	 */
+	private void generateLookAndFeelInfo() {
+		// Put all available "Look and Feel" objects into collections
+		// keyed by LAF name and by the class name.
+		LookAndFeelInfo[] info = UIManager.getInstalledLookAndFeels();
+		_lafsByName = new TreeMap();
+		for (int i = 0; i < info.length; ++i) {
+			_lafsByName.put(info[i].getName(), info[i]);
+			_lafsByClassName.put(info[i].getClassName(), info[i]);
+		}
 
-        // Add the names of all LAF objects to control. By doing thru the Map
-        // these will be sorted.
-        for(Iterator it = _lafsByName.values().iterator(); it.hasNext();) {
-            addItem(((LookAndFeelInfo)it.next()).getName());
-        }
-    }
+		// Add the names of all LAF objects to control. By doing thru the Map
+		// these will be sorted.
+		for(Iterator it = _lafsByName.values().iterator(); it.hasNext();) {
+			addItem(((LookAndFeelInfo)it.next()).getName());
+		}
+	}
 }

@@ -27,40 +27,40 @@ import javax.swing.table.TableModel;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 public class TableCopyHtmlCommand implements ICommand {
-    private final static String NULL_CELL = "<null>";
+	private final static String NULL_CELL = "<null>";
 
-    private JTable _table;
+	private JTable _table;
 
-    public TableCopyHtmlCommand(JTable table) {
-        super();
-        if (table == null) {
-            throw new IllegalArgumentException("Null JTable passed");
-        }
-        _table = table;
-    }
+	public TableCopyHtmlCommand(JTable table) {
+		super();
+		if (table == null) {
+			throw new IllegalArgumentException("Null JTable passed");
+		}
+		_table = table;
+	}
 
-    public void execute() {
-        int nbrSelRows = _table.getSelectedRowCount();
-        int nbrSelCols = _table.getSelectedColumnCount();
-        int[] selRows = _table.getSelectedRows();
-        int[] selCols = _table.getSelectedColumns();
+	public void execute() {
+		int nbrSelRows = _table.getSelectedRowCount();
+		int nbrSelCols = _table.getSelectedColumnCount();
+		int[] selRows = _table.getSelectedRows();
+		int[] selCols = _table.getSelectedColumns();
 		if (selRows.length != 0 && selCols.length != 0)
 		{
 			TableModel model = _table.getModel();
-            StringBuffer buf = new StringBuffer();
-            buf.append("<table border=1><tr BGCOLOR=\"#CCCCFF\">");
+			StringBuffer buf = new StringBuffer();
+			buf.append("<table border=1><tr BGCOLOR=\"#CCCCFF\">");
 			for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx) {
 				buf.append("<th>");
 				buf.append(model.getColumnName(selCols[colIdx]));
 				buf.append("</th>");
 			}
-            buf.append("</tr>\n");
+			buf.append("</tr>\n");
 			for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx)
-            {
-            	buf.append("<tr>");
-                for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx) {
-                    Object cellObj = _table.getValueAt(selRows[rowIdx], selCols[colIdx]);
-                    buf.append("<td>");
+			{
+				buf.append("<tr>");
+				for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx) {
+					Object cellObj = _table.getValueAt(selRows[rowIdx], selCols[colIdx]);
+					buf.append("<td>");
 					if(cellObj == null) buf.append("&nbsp;");
 					else if(cellObj instanceof String)
 					{
@@ -91,13 +91,13 @@ public class TableCopyHtmlCommand implements ICommand {
 						}
 					}
 					else buf.append(cellObj);
-                    buf.append("</td>");
-                }
-                buf.append("</tr>\n");
-            }
-            buf.append("</table>");
-            StringSelection ss = new StringSelection(buf.toString());
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
-        }
-    }
+					buf.append("</td>");
+				}
+				buf.append("</tr>\n");
+			}
+			buf.append("</table>");
+			StringSelection ss = new StringSelection(buf.toString());
+			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
+		}
+	}
 }

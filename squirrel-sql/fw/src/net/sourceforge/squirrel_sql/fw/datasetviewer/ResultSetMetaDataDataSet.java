@@ -146,13 +146,13 @@ public class ResultSetMetaDataDataSet implements IDataSet {
 				method.getReturnType() != Void.TYPE;
 	}
 
-    protected Object executeGetter(Object bean, Method getter, Object[] parms) {
-        try {
-            return getter.invoke(bean, parms);
-        } catch(Throwable th) {
-            return i18n.UNSUPPORTED;
-        }
-    }
+	protected Object executeGetter(Object bean, Method getter, Object[] parms) {
+		try {
+			return getter.invoke(bean, parms);
+		} catch(Throwable th) {
+			return i18n.UNSUPPORTED;
+		}
+	}
 
 	private static ResultSetMetaData getMetaDataFromResultSet(ResultSet rs)
 			throws IllegalArgumentException, DataSetException {

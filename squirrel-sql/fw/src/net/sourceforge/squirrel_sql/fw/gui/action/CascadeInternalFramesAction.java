@@ -35,71 +35,71 @@ import net.sourceforge.squirrel_sql.fw.gui.CascadeInternalFramePositioner;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class CascadeInternalFramesAction extends BaseAction implements IHasJDesktopPane {
-    /**
-     * This interface defines locale specific strings. This should be
-     * replaced with a property file.
-     */
-    private interface i18n {
-        String TITLE = "Cascade";
-    }
+	/**
+	 * This interface defines locale specific strings. This should be
+	 * replaced with a property file.
+	 */
+	private interface i18n {
+		String TITLE = "Cascade";
+	}
 
-    /**
-     * The <CODE>JDesktopPane</CODE> that owns the internal frames to be
-     * cascaded.
-     */
-    private JDesktopPane _desktop;
+	/**
+	 * The <CODE>JDesktopPane</CODE> that owns the internal frames to be
+	 * cascaded.
+	 */
+	private JDesktopPane _desktop;
 
-    /**
-     * Default constructor.
-     */
-    public CascadeInternalFramesAction() {
-        this(null);
-    }
+	/**
+	 * Default constructor.
+	 */
+	public CascadeInternalFramesAction() {
+		this(null);
+	}
 
-    /**
-     * Constructor specifying the <CODE>JDesktopPane</CODE> that owns the
-     * internal frames to be cascaded.
-     *
-     * @param   desktop     the <CODE>JDesktopPane</CODE> that owns the
-     *                      internal frames to be cascaded.
-     */
-    public CascadeInternalFramesAction(JDesktopPane desktop) {
-        super(i18n.TITLE);
-        setJDesktopPane(desktop);
-    }
+	/**
+	 * Constructor specifying the <CODE>JDesktopPane</CODE> that owns the
+	 * internal frames to be cascaded.
+	 *
+	 * @param   desktop	 the <CODE>JDesktopPane</CODE> that owns the
+	 *					  internal frames to be cascaded.
+	 */
+	public CascadeInternalFramesAction(JDesktopPane desktop) {
+		super(i18n.TITLE);
+		setJDesktopPane(desktop);
+	}
 
-    /**
-     * Set the <CODE>JDesktopPane</CODE> that owns the internal frames to be
-     * tiled.
-     *
-     * @param   desktop     the <CODE>JDesktopPane</CODE> that owns the
-     *                      internal frames to be tiled.
-     */
-    public void setJDesktopPane(JDesktopPane value) {
-        _desktop = value;
-    }
+	/**
+	 * Set the <CODE>JDesktopPane</CODE> that owns the internal frames to be
+	 * tiled.
+	 *
+	 * @param   desktop	 the <CODE>JDesktopPane</CODE> that owns the
+	 *					  internal frames to be tiled.
+	 */
+	public void setJDesktopPane(JDesktopPane value) {
+		_desktop = value;
+	}
 
-    /**
-     * Cascade the internal frames.
-     *
-     * @param   evt     Specifies the event being proceessed.
-     */
-    public void actionPerformed(ActionEvent evt) {
-        if (_desktop != null) {
-            Dimension cs = null; // Size to set child windows to.
-            CascadeInternalFramePositioner pos = new CascadeInternalFramePositioner();
-            JInternalFrame[] children = GUIUtils.getOpenNonToolWindows(_desktop.getAllFrames());
-            for (int i = children.length - 1; i >= 0; --i) {
-                JInternalFrame child = children[i];
-                if (cs == null) {
-                    cs = child.getParent().getSize();
-                    // Cast to int required as Dimension::setSize(double,double)
-                    // doesn't appear to do anything in JDK1.2.2.
-                    cs.setSize((int)(cs.width * 0.8d), (int)(cs.height * 0.8d));
-                }
-                child.setSize(cs);
-                pos.positionInternalFrame(child);
-            }
-        }
-    }
+	/**
+	 * Cascade the internal frames.
+	 *
+	 * @param   evt	 Specifies the event being proceessed.
+	 */
+	public void actionPerformed(ActionEvent evt) {
+		if (_desktop != null) {
+			Dimension cs = null; // Size to set child windows to.
+			CascadeInternalFramePositioner pos = new CascadeInternalFramePositioner();
+			JInternalFrame[] children = GUIUtils.getOpenNonToolWindows(_desktop.getAllFrames());
+			for (int i = children.length - 1; i >= 0; --i) {
+				JInternalFrame child = children[i];
+				if (cs == null) {
+					cs = child.getParent().getSize();
+					// Cast to int required as Dimension::setSize(double,double)
+					// doesn't appear to do anything in JDK1.2.2.
+					cs.setSize((int)(cs.width * 0.8d), (int)(cs.height * 0.8d));
+				}
+				child.setSize(cs);
+				pos.positionInternalFrame(child);
+			}
+		}
+	}
 }

@@ -32,57 +32,57 @@ import javax.swing.JPopupMenu;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public abstract class BaseAction extends AbstractAction {
-    protected BaseAction() {
-        super();
-    }
+	protected BaseAction() {
+		super();
+	}
 
-    /**
-     * Ctor specifying the title.
-     *
-     * @param   title   Title for this action.
-     */
-    protected BaseAction(String title) {
-        super(title);
-    }
+	/**
+	 * Ctor specifying the title.
+	 *
+	 * @param   title   Title for this action.
+	 */
+	protected BaseAction(String title) {
+		super(title);
+	}
 
-    /**
-     * Ctor specifying the title and icon.
-     *
-     * @param   title   Title for this action.
-     * @param   icon    Icon for this action.
-     */
-    protected BaseAction(String title, Icon icon) {
-        super(title, icon);
-    }
+	/**
+	 * Ctor specifying the title and icon.
+	 *
+	 * @param   title   Title for this action.
+	 * @param   icon	Icon for this action.
+	 */
+	protected BaseAction(String title, Icon icon) {
+		super(title, icon);
+	}
 
-    /**
-     * Return the <CODE>Frame</CODE> object associated with the passed event.<P>
-     *
-     * @param   evt     <CODE>ActionEvent</CODE> to find frame for.
-     *
-     * @return  <COD>Frame</CODE> or <CODE>null</CODE> if none found.
-     */
-    protected Frame getParentFrame(ActionEvent evt) {
-        Frame parent = null;
-        if (evt != null) {
-            Object src = evt.getSource();
-            if (src instanceof Component) {
-                Component comp = (Component)src;
-                while(comp != null && parent == null) {
-                    if (comp instanceof Frame) {
-                        parent = (Frame)comp;
-                    } else if (comp instanceof JPopupMenu) {
-                        comp = ((JPopupMenu)comp).getInvoker();
-                    } else {
-                        comp = comp.getParent();
-                    }
-                }
-            }
-        }
-        return parent;
-    }
+	/**
+	 * Return the <CODE>Frame</CODE> object associated with the passed event.<P>
+	 *
+	 * @param   evt	 <CODE>ActionEvent</CODE> to find frame for.
+	 *
+	 * @return  <COD>Frame</CODE> or <CODE>null</CODE> if none found.
+	 */
+	protected Frame getParentFrame(ActionEvent evt) {
+		Frame parent = null;
+		if (evt != null) {
+			Object src = evt.getSource();
+			if (src instanceof Component) {
+				Component comp = (Component)src;
+				while(comp != null && parent == null) {
+					if (comp instanceof Frame) {
+						parent = (Frame)comp;
+					} else if (comp instanceof JPopupMenu) {
+						comp = ((JPopupMenu)comp).getInvoker();
+					} else {
+						comp = comp.getParent();
+					}
+				}
+			}
+		}
+		return parent;
+	}
 
-    protected void setIcon(Icon icon) {
-        putValue(Action.SMALL_ICON, icon);
-    }
+	protected void setIcon(Icon icon) {
+		putValue(Action.SMALL_ICON, icon);
+	}
 }

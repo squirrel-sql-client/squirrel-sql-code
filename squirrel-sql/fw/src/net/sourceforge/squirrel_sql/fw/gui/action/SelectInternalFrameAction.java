@@ -28,57 +28,57 @@ import javax.swing.JInternalFrame;
 import net.sourceforge.squirrel_sql.fw.gui.action.SelectInternalFrameCommand;
 
 public class SelectInternalFrameAction extends AbstractAction
-            implements PropertyChangeListener {
+			implements PropertyChangeListener {
 
-    /**
-     * This interface defines locale specific strings. This should be
-     * replaced with a property file.
-     */
-    private interface i18n {
-        String SHORT_DESCRIPTION = "Active window";
-    }
+	/**
+	 * This interface defines locale specific strings. This should be
+	 * replaced with a property file.
+	 */
+	private interface i18n {
+		String SHORT_DESCRIPTION = "Active window";
+	}
 
-    private static final String FRAME_PTR = "FRAME_PTR";
+	private static final String FRAME_PTR = "FRAME_PTR";
 
-    public SelectInternalFrameAction(JInternalFrame child) {
-        this(child, null);
-    }
+	public SelectInternalFrameAction(JInternalFrame child) {
+		this(child, null);
+	}
 
-    public SelectInternalFrameAction(JInternalFrame child, String title) {
-        super(getTitle(child, title));
-        putValue(FRAME_PTR, child);
-        putValue(SHORT_DESCRIPTION, i18n.SHORT_DESCRIPTION);
-        if (title != null && title.length() > 0) {
-            child.addPropertyChangeListener(JInternalFrame.TITLE_PROPERTY, this);
-        }
-    }
+	public SelectInternalFrameAction(JInternalFrame child, String title) {
+		super(getTitle(child, title));
+		putValue(FRAME_PTR, child);
+		putValue(SHORT_DESCRIPTION, i18n.SHORT_DESCRIPTION);
+		if (title != null && title.length() > 0) {
+			child.addPropertyChangeListener(JInternalFrame.TITLE_PROPERTY, this);
+		}
+	}
 
-    public void actionPerformed(ActionEvent evt) {
-        JInternalFrame fr = getInternalFrame();
-        if (fr != null) {
-            new SelectInternalFrameCommand(fr).execute();
-        }
-    }
+	public void actionPerformed(ActionEvent evt) {
+		JInternalFrame fr = getInternalFrame();
+		if (fr != null) {
+			new SelectInternalFrameCommand(fr).execute();
+		}
+	}
 
-    public void propertyChange(PropertyChangeEvent evt) {
-        putValue(AbstractAction.NAME, getInternalFrame().getTitle());
-    }
+	public void propertyChange(PropertyChangeEvent evt) {
+		putValue(AbstractAction.NAME, getInternalFrame().getTitle());
+	}
 
-    private JInternalFrame getInternalFrame() throws IllegalStateException {
-        JInternalFrame fr = (JInternalFrame)getValue(FRAME_PTR);
-        if (fr == null) {
-            throw new IllegalStateException("No JInternalFrame associated with SelectInternalFrameAction");
-        }
-        return fr;
-    }
+	private JInternalFrame getInternalFrame() throws IllegalStateException {
+		JInternalFrame fr = (JInternalFrame)getValue(FRAME_PTR);
+		if (fr == null) {
+			throw new IllegalStateException("No JInternalFrame associated with SelectInternalFrameAction");
+		}
+		return fr;
+	}
 
-    private static String getTitle(JInternalFrame child, String title) {
-        if (child == null) {
-            throw new IllegalArgumentException("null JInternalFrame passed");
-        }
-        if (title != null && title.length() > 0) {
-            return title;
-        }
-        return child.getTitle();
-    }
+	private static String getTitle(JInternalFrame child, String title) {
+		if (child == null) {
+			throw new IllegalArgumentException("null JInternalFrame passed");
+		}
+		if (title != null && title.length() > 0) {
+			return title;
+		}
+		return child.getTitle();
+	}
 }

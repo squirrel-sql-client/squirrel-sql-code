@@ -27,28 +27,28 @@ import javax.swing.table.TableModel;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 public class TableCopyCommand implements ICommand {
-    private final static String NULL_CELL = "<null>";
+	private final static String NULL_CELL = "<null>";
 
-    private JTable _table;
+	private JTable _table;
 
-    public TableCopyCommand(JTable table) {
-        super();
-        if (table == null) {
-            throw new IllegalArgumentException("Null JTable passed");
-        }
-        _table = table;
-    }
+	public TableCopyCommand(JTable table) {
+		super();
+		if (table == null) {
+			throw new IllegalArgumentException("Null JTable passed");
+		}
+		_table = table;
+	}
 
-    public void execute() {
-        int nbrSelRows = _table.getSelectedRowCount();
-        int nbrSelCols = _table.getSelectedColumnCount();
-        int[] selRows = _table.getSelectedRows();
-        int[] selCols = _table.getSelectedColumns();
-        if (selRows.length != 0 && selCols.length != 0) {
+	public void execute() {
+		int nbrSelRows = _table.getSelectedRowCount();
+		int nbrSelCols = _table.getSelectedColumnCount();
+		int[] selRows = _table.getSelectedRows();
+		int[] selCols = _table.getSelectedColumns();
+		if (selRows.length != 0 && selCols.length != 0) {
 			TableModel model = _table.getModel();
-            StringBuffer buf = new StringBuffer();
-            if(nbrSelCols > 1 && nbrSelRows > 1)
-            {
+			StringBuffer buf = new StringBuffer();
+			if(nbrSelCols > 1 && nbrSelRows > 1)
+			{
 				for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx) {
 					buf.append(model.getColumnName(selCols[colIdx]));
 					if (colIdx < nbrSelCols - 1) {
@@ -56,22 +56,22 @@ public class TableCopyCommand implements ICommand {
 					}
 				}
 				buf.append('\n');
-            }
-            for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx) {
-                for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx) {
-                    Object cellObj = _table.getValueAt(selRows[rowIdx], selCols[colIdx]);
-                    buf.append(cellObj != null ? cellObj : NULL_CELL);
-                    if (colIdx < nbrSelCols - 1) {
-                        buf.append('\t');
-                    }
-                }
-                if(nbrSelCols > 1 && nbrSelRows > 1)
-            	{
-                	buf.append('\n');
-            	}
-            }
-            StringSelection ss = new StringSelection(buf.toString());
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
-        }
-    }
+			}
+			for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx) {
+				for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx) {
+					Object cellObj = _table.getValueAt(selRows[rowIdx], selCols[colIdx]);
+					buf.append(cellObj != null ? cellObj : NULL_CELL);
+					if (colIdx < nbrSelCols - 1) {
+						buf.append('\t');
+					}
+				}
+				if(nbrSelCols > 1 && nbrSelRows > 1)
+				{
+					buf.append('\n');
+				}
+			}
+			StringSelection ss = new StringSelection(buf.toString());
+			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
+		}
+	}
 }

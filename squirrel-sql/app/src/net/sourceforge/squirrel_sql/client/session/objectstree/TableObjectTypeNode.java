@@ -33,27 +33,27 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public final class TableObjectTypeNode extends ObjectTypeNode {
-    private final String _text;
-    private final String _tableTypePattern;
+	private final String _text;
+	private final String _tableTypePattern;
 
-    public TableObjectTypeNode(ISession session, ObjectsTreeModel treeModel,
-                                TableTypesGroupNode parent, String text,
-                                String tableTypePattern) {
-        super(session, treeModel, parent, text);
-        _text = text;
-        _tableTypePattern = tableTypePattern;
-    }
+	public TableObjectTypeNode(ISession session, ObjectsTreeModel treeModel,
+								TableTypesGroupNode parent, String text,
+								String tableTypePattern) {
+		super(session, treeModel, parent, text);
+		_text = text;
+		_tableTypePattern = tableTypePattern;
+	}
 
-    public void expand() throws BaseSQLException {
+	public void expand() throws BaseSQLException {
 		if (getChildCount() == 0)
-        {
-        	getSession().getApplication().getThreadPool().addTask(new TableLoader(addLoadingNode()));
-        }
+		{
+			getSession().getApplication().getThreadPool().addTask(new TableLoader(addLoadingNode()));
+		}
 		else
 		{
-        	fireExpanded();
-        }
-    }
+			fireExpanded();
+		}
+	}
 
 	public boolean equals(Object o)
 	{
@@ -91,7 +91,7 @@ public final class TableObjectTypeNode extends ObjectTypeNode {
 			final ArrayList listNodes = new ArrayList();
 			Statement stmt = null;
 			try
-           {
+		   {
 				final String catalogId = getParentNode().getCatalogIdentifier();
 				final String schemaId = getParentNode().getSchemaIdentifier();
 				final ITableInfo[] tables = conn.getTables(catalogId, schemaId, "%", new String[]{_tableTypePattern});

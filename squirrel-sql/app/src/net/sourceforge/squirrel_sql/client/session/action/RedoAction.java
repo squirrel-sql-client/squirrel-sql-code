@@ -34,7 +34,7 @@ public class RedoAction extends SquirrelAction
 		super(app);
 		if(undo == null) throw new IllegalArgumentException("UndoManager == null");
 		_undo = undo;
-    }
+	}
 	/*
 	 * @see ActionListener#actionPerformed(ActionEvent)
 	 */

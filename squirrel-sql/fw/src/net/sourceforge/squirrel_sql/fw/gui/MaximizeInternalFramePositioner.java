@@ -26,17 +26,17 @@ import javax.swing.JInternalFrame;
  */
 public class MaximizeInternalFramePositioner implements IInternalFramePositioner {
 
-    public MaximizeInternalFramePositioner() {
-        super();
-    }
+	public MaximizeInternalFramePositioner() {
+		super();
+	}
 
-    public void positionInternalFrame(JInternalFrame child) {
-        if (child == null) {
-            throw new IllegalArgumentException("null JInternalFrame passed");
-        }
-        try {
-            child.setMaximum(true);
-        } catch (PropertyVetoException ignore) {
-        }
-    }
+	public void positionInternalFrame(JInternalFrame child) {
+		if (child == null) {
+			throw new IllegalArgumentException("null JInternalFrame passed");
+		}
+		try {
+			child.setMaximum(true);
+		} catch (PropertyVetoException ignore) {
+		}
+	}
 }

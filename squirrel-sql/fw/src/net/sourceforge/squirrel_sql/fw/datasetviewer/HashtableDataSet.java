@@ -39,55 +39,55 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.EnumerationIterator;
 
 public class HashtableDataSet implements IDataSet {
-    private interface i18n {
-        String UNSUPPORTED = "<Unsupported>";
-        String NAME_COLUMN = "Key";
-        String VALUE_COLUMN = "Value";
-    }
+	private interface i18n {
+		String UNSUPPORTED = "<Unsupported>";
+		String NAME_COLUMN = "Key";
+		String VALUE_COLUMN = "Value";
+	}
 
-    private Hashtable _src;
-    private final int _columnCount = 2;
-    private DataSetDefinition _dsDef;
-    private final static String[] s_hdgs = new String[] {i18n.NAME_COLUMN, i18n.VALUE_COLUMN};
-    private String[] _curRow = new String[2];
-    private Iterator _rowKeys;
+	private Hashtable _src;
+	private final int _columnCount = 2;
+	private DataSetDefinition _dsDef;
+	private final static String[] s_hdgs = new String[] {i18n.NAME_COLUMN, i18n.VALUE_COLUMN};
+	private String[] _curRow = new String[2];
+	private Iterator _rowKeys;
 
-    public HashtableDataSet(Hashtable src) throws DataSetException {
-        super();
-        _src = src;
-        _dsDef = new DataSetDefinition(createColumnDefinitions());
-        _rowKeys = new EnumerationIterator(_src.keys());
-    }
+	public HashtableDataSet(Hashtable src) throws DataSetException {
+		super();
+		_src = src;
+		_dsDef = new DataSetDefinition(createColumnDefinitions());
+		_rowKeys = new EnumerationIterator(_src.keys());
+	}
 
-    public final int getColumnCount() {
-        return s_hdgs.length;
-    }
+	public final int getColumnCount() {
+		return s_hdgs.length;
+	}
 
-    public DataSetDefinition getDataSetDefinition() {
-        return _dsDef;
-    }
+	public DataSetDefinition getDataSetDefinition() {
+		return _dsDef;
+	}
 
-    public synchronized boolean next(IMessageHandler msgHandler) {
-        _curRow[0] = null;
-        if (_rowKeys.hasNext()) {
-            _curRow[0] = (String)_rowKeys.next();
-        }
-        if (_curRow[0] != null) {
-            _curRow[1] = _src.get(_curRow[0]).toString();
-        }
-        return _curRow[0] != null;
-    }
+	public synchronized boolean next(IMessageHandler msgHandler) {
+		_curRow[0] = null;
+		if (_rowKeys.hasNext()) {
+			_curRow[0] = (String)_rowKeys.next();
+		}
+		if (_curRow[0] != null) {
+			_curRow[1] = _src.get(_curRow[0]).toString();
+		}
+		return _curRow[0] != null;
+	}
 
-    public Object get(int columnIndex) {
-        return _curRow[columnIndex];
-    }
+	public Object get(int columnIndex) {
+		return _curRow[columnIndex];
+	}
 
-    private ColumnDisplayDefinition[] createColumnDefinitions() {
-        final int columnCount = getColumnCount();
-        ColumnDisplayDefinition[] columnDefs = new ColumnDisplayDefinition[columnCount];
-        for (int i = 0; i < columnCount; ++i) {
-            columnDefs[i] = new ColumnDisplayDefinition(100, s_hdgs[i]);
-        }
-        return columnDefs;
-    }
+	private ColumnDisplayDefinition[] createColumnDefinitions() {
+		final int columnCount = getColumnCount();
+		ColumnDisplayDefinition[] columnDefs = new ColumnDisplayDefinition[columnCount];
+		for (int i = 0; i < columnCount; ++i) {
+			columnDefs[i] = new ColumnDisplayDefinition(100, s_hdgs[i]);
+		}
+		return columnDefs;
+	}
 }

@@ -34,64 +34,64 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class MaximizeInternalFramesAction extends BaseAction
-                                            implements IHasJDesktopPane {
+											implements IHasJDesktopPane {
 
-    /**
-     * This interface defines locale specific strings. This should be
-     * replaced with a property file.
-     */
-    private interface i18n {
-        String TITLE = "Maximize";
-    }
+	/**
+	 * This interface defines locale specific strings. This should be
+	 * replaced with a property file.
+	 */
+	private interface i18n {
+		String TITLE = "Maximize";
+	}
 
-    /**
-     * The <CODE>JDesktopPane</CODE> that owns the internal frames to be
-     * cascaded.
-     */
-    private JDesktopPane _desktop;
+	/**
+	 * The <CODE>JDesktopPane</CODE> that owns the internal frames to be
+	 * cascaded.
+	 */
+	private JDesktopPane _desktop;
 
-    /**
-     * Default constructor.
-     */
-    public MaximizeInternalFramesAction() {
-        this(null);
-    }
+	/**
+	 * Default constructor.
+	 */
+	public MaximizeInternalFramesAction() {
+		this(null);
+	}
 
-    /**
-     * Constructor specifying the <CODE>JDesktopPane</CODE> that owns the
-     * internal frames to be maximized.
-     *
-     * @param   desktop     the <CODE>JDesktopPane</CODE> that owns the
-     *                      internal frames to be maximized.
-     */
-    public MaximizeInternalFramesAction(JDesktopPane desktop) {
-        super(i18n.TITLE);
-        setJDesktopPane(desktop);
-    }
+	/**
+	 * Constructor specifying the <CODE>JDesktopPane</CODE> that owns the
+	 * internal frames to be maximized.
+	 *
+	 * @param   desktop	 the <CODE>JDesktopPane</CODE> that owns the
+	 *					  internal frames to be maximized.
+	 */
+	public MaximizeInternalFramesAction(JDesktopPane desktop) {
+		super(i18n.TITLE);
+		setJDesktopPane(desktop);
+	}
 
-    /**
-     * Set the <CODE>JDesktopPane</CODE> that owns the internal frames to be
-     * maximized.
-     *
-     * @param   desktop     the <CODE>JDesktopPane</CODE> that owns the
-     *                      internal frames to be maximized.
-     */
-    public void setJDesktopPane(JDesktopPane value) {
-        _desktop = value;
-    }
+	/**
+	 * Set the <CODE>JDesktopPane</CODE> that owns the internal frames to be
+	 * maximized.
+	 *
+	 * @param   desktop	 the <CODE>JDesktopPane</CODE> that owns the
+	 *					  internal frames to be maximized.
+	 */
+	public void setJDesktopPane(JDesktopPane value) {
+		_desktop = value;
+	}
 
-    /**
-     * Maximize the internal frames.
-     *
-     * @param   evt     Specifies the event being proceessed.
-     */
-    public void actionPerformed(ActionEvent evt) {
-        if (_desktop != null) {
-            MaximizeInternalFramePositioner pos = new MaximizeInternalFramePositioner();
-            JInternalFrame[] children = GUIUtils.getOpenNonToolWindows(_desktop.getAllFrames());
-            for (int i = children.length - 1; i >= 0; --i) {
-                pos.positionInternalFrame(children[i]);
-            }
-        }
-    }
+	/**
+	 * Maximize the internal frames.
+	 *
+	 * @param   evt	 Specifies the event being proceessed.
+	 */
+	public void actionPerformed(ActionEvent evt) {
+		if (_desktop != null) {
+			MaximizeInternalFramePositioner pos = new MaximizeInternalFramePositioner();
+			JInternalFrame[] children = GUIUtils.getOpenNonToolWindows(_desktop.getAllFrames());
+			for (int i = children.length - 1; i >= 0; --i) {
+				pos.positionInternalFrame(children[i]);
+			}
+		}
+	}
 }

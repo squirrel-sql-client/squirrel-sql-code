@@ -27,54 +27,54 @@ import java.sql.SQLException;
  */
 public class ColumnDisplayDefinition {
 
-    /** Number of characters to display. */
-    private int _displayWidth;
+	/** Number of characters to display. */
+	private int _displayWidth;
 
-    /** Column heading. */
-    private String _label;
+	/** Column heading. */
+	private String _label;
 
-    /**
-     * Ctor.
-     *
-     * @param   displayWidth        Number of characters to display.
-     * @param   label               Column heading.
-     */
-    public ColumnDisplayDefinition(int displayWidth, String label) {
-        super();
-        init(displayWidth, label);
-    }
+	/**
+	 * Ctor.
+	 *
+	 * @param   displayWidth		Number of characters to display.
+	 * @param   label			   Column heading.
+	 */
+	public ColumnDisplayDefinition(int displayWidth, String label) {
+		super();
+		init(displayWidth, label);
+	}
 
-    /**
-     * Return the number of characters to display.
-     *
-     * @return  The number of characters to display.
-     */
-    public int getDisplayWidth() {
-        return _displayWidth;
-    }
+	/**
+	 * Return the number of characters to display.
+	 *
+	 * @return  The number of characters to display.
+	 */
+	public int getDisplayWidth() {
+		return _displayWidth;
+	}
 
-    /**
-     * Return the column heading.
-     *
-     * @return  The column heading.
-     */
-    public String getLabel() {
-        return _label;
-    }
+	/**
+	 * Return the column heading.
+	 *
+	 * @return  The column heading.
+	 */
+	public String getLabel() {
+		return _label;
+	}
 
-    /**
-     * Private initializer method for ctors. If the display width
-     * is less than the width of the heading then make the display
-     * width the same as the width of the heading.
-     *
-     * @param   displayWidth        Number of characters to display.
-     * @param   label               Column heading.
-     */
-    private void init(int displayWidth, String label) {
-        _displayWidth = displayWidth;
-        if (_displayWidth < label.length()) {
-            _displayWidth = label.length();
-        }
-        _label = label;
-    }
+	/**
+	 * Private initializer method for ctors. If the display width
+	 * is less than the width of the heading then make the display
+	 * width the same as the width of the heading.
+	 *
+	 * @param   displayWidth		Number of characters to display.
+	 * @param   label			   Column heading.
+	 */
+	private void init(int displayWidth, String label) {
+		_displayWidth = displayWidth;
+		if (_displayWidth < label.length()) {
+			_displayWidth = label.length();
+		}
+		_label = label;
+	}
 }

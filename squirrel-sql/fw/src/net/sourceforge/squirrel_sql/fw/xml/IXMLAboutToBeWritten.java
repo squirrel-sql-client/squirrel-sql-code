@@ -23,5 +23,5 @@ package net.sourceforge.squirrel_sql.fw.xml;
  * prior to being written out as XML.
  */
 public interface IXMLAboutToBeWritten {
-    void aboutToBeWritten();
+	void aboutToBeWritten();
 }

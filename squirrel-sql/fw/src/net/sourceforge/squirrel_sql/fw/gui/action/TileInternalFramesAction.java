@@ -35,107 +35,107 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class TileInternalFramesAction extends BaseAction implements IHasJDesktopPane {
-    /**
-     * This interface defines locale specific strings. This should be
-     * replaced with a property file.
-     */
-    private interface i18n {
-        String TITLE = "Tile";
-    }
+	/**
+	 * This interface defines locale specific strings. This should be
+	 * replaced with a property file.
+	 */
+	private interface i18n {
+		String TITLE = "Tile";
+	}
 
-    /**
-     * The <CODE>JDesktopPane</CODE> that owns the internal frames to be
-     * tiled.
-     */
-    private JDesktopPane _desktop;
+	/**
+	 * The <CODE>JDesktopPane</CODE> that owns the internal frames to be
+	 * tiled.
+	 */
+	private JDesktopPane _desktop;
 
-    /**
-     * Default constructor.
-     */
-    public TileInternalFramesAction() {
-        this(null);
-    }
+	/**
+	 * Default constructor.
+	 */
+	public TileInternalFramesAction() {
+		this(null);
+	}
 
-    /**
-     * Constructor specifying the <CODE>JDesktopPane</CODE> that owns the
-     * internal frames to be tiled.
-     *
-     * @param   desktop     the <CODE>JDesktopPane</CODE> that owns the
-     *                      internal frames to be cascaded.
-     */
-    public TileInternalFramesAction(JDesktopPane desktop) {
-        super(i18n.TITLE);
-        setJDesktopPane(desktop);
-    }
+	/**
+	 * Constructor specifying the <CODE>JDesktopPane</CODE> that owns the
+	 * internal frames to be tiled.
+	 *
+	 * @param   desktop	 the <CODE>JDesktopPane</CODE> that owns the
+	 *					  internal frames to be cascaded.
+	 */
+	public TileInternalFramesAction(JDesktopPane desktop) {
+		super(i18n.TITLE);
+		setJDesktopPane(desktop);
+	}
 
-    /**
-     * Set the <CODE>JDesktopPane</CODE> that owns the internal frames to be
-     * cascaded.
-     *
-     * @param   desktop     the <CODE>JDesktopPane</CODE> that owns the
-     *                      internal frames to be cascaded.
-     */
-    public void setJDesktopPane(JDesktopPane value) {
-        _desktop = value;
-    }
+	/**
+	 * Set the <CODE>JDesktopPane</CODE> that owns the internal frames to be
+	 * cascaded.
+	 *
+	 * @param   desktop	 the <CODE>JDesktopPane</CODE> that owns the
+	 *					  internal frames to be cascaded.
+	 */
+	public void setJDesktopPane(JDesktopPane value) {
+		_desktop = value;
+	}
 
-    /**
-     * Tile the internal frames.
-     *
-     * @param   evt     Specifies the event being proceessed.
-     */
-    public void actionPerformed(ActionEvent evt) {
-        if (_desktop != null) {
-            JInternalFrame[] children = GUIUtils.getOpenNonToolWindows(_desktop.getAllFrames());
-            final int cells = children.length;
-            if (cells > 0) {
-                // Determine size of grid to tile into. e.g 3X3 for 9 cells.
-                int rows = (int)Math.sqrt(cells);
-                int cols = rows;
-                while (rows * cols < cells) {
-                    ++cols;
-                    if (rows * cols < cells) {
-                        ++rows;
-                    }
-                }
+	/**
+	 * Tile the internal frames.
+	 *
+	 * @param   evt	 Specifies the event being proceessed.
+	 */
+	public void actionPerformed(ActionEvent evt) {
+		if (_desktop != null) {
+			JInternalFrame[] children = GUIUtils.getOpenNonToolWindows(_desktop.getAllFrames());
+			final int cells = children.length;
+			if (cells > 0) {
+				// Determine size of grid to tile into. e.g 3X3 for 9 cells.
+				int rows = (int)Math.sqrt(cells);
+				int cols = rows;
+				while (rows * cols < cells) {
+					++cols;
+					if (rows * cols < cells) {
+						++rows;
+					}
+				}
 
 //?? Extract this out into a class like CascadeInternalFramePositioner.
 
-                final Dimension desktopSize = _desktop.getSize();
-                final int width = desktopSize.width / cols;
-                final int height = desktopSize.height / rows;
-                int xPos = 0;
-                int yPos = 0;
+				final Dimension desktopSize = _desktop.getSize();
+				final int width = desktopSize.width / cols;
+				final int height = desktopSize.height / rows;
+				int xPos = 0;
+				int yPos = 0;
 
-//                DesktopManager mgr = _desktop.getDesktopManager();
-                for (int y = 0; y < rows; ++y) {
-                    for (int x = 0; x < cols; ++x) {
-                        final int idx = y + (x * rows);
-                        if (idx >= cells) {
-                            break;
-                        }
-                        JInternalFrame frame = children[idx];
-                        if (!frame.isClosed()) {
-                            if (frame.isIcon()) {
-                                try {
-                                    frame.setIcon(false);
-                                } catch (PropertyVetoException ignore) {
-                                }
-                            } else if (frame.isMaximum()) {
-                                try {
-                                    frame.setMaximum(false);
-                                } catch (PropertyVetoException ignore) {
-                                }
-                            }
+//				DesktopManager mgr = _desktop.getDesktopManager();
+				for (int y = 0; y < rows; ++y) {
+					for (int x = 0; x < cols; ++x) {
+						final int idx = y + (x * rows);
+						if (idx >= cells) {
+							break;
+						}
+						JInternalFrame frame = children[idx];
+						if (!frame.isClosed()) {
+							if (frame.isIcon()) {
+								try {
+									frame.setIcon(false);
+								} catch (PropertyVetoException ignore) {
+								}
+							} else if (frame.isMaximum()) {
+								try {
+									frame.setMaximum(false);
+								} catch (PropertyVetoException ignore) {
+								}
+							}
 
-                            frame.reshape(xPos, yPos, width, height);
-                            xPos += width;
-                        }
-                    }
-                    xPos = 0;
-                    yPos += height;
-                }
-            }
-        }
-    }
+							frame.reshape(xPos, yPos, width, height);
+							xPos += width;
+						}
+					}
+					xPos = 0;
+					yPos += height;
+				}
+			}
+		}
+	}
 }
