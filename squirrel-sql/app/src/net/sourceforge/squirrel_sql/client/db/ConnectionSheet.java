@@ -97,6 +97,8 @@ public class ConnectionSheet extends JInternalFrame {
 		public void performCancelConnect(ConnectionSheet connSheet);
 	}
 
+	private static final int COLUMN_COUNT = 25;
+
 	/** Application API. */
 	private IApplication _app;
 	
@@ -235,6 +237,9 @@ public class ConnectionSheet extends JInternalFrame {
 		
 		setTitle("Connect to " + _alias.getName());
 
+		_user.setColumns(COLUMN_COUNT);
+		_password.setColumns(COLUMN_COUNT);
+
 		PropertyPanel dataEntryPnl = new PropertyPanel();
 
 		JLabel lbl = new JLabel(i18n.ALIAS, SwingConstants.RIGHT);
@@ -259,9 +264,9 @@ public class ConnectionSheet extends JInternalFrame {
 		// in the content pane have a light background under
 		// the java look and feel. Similar effects occur for other
 		// look and feels.
-		setContentPane(new JPanel());
+		final JPanel contentPane = new JPanel();
+		setContentPane(contentPane);
 
-		final Container contentPane = getContentPane();
 		GridBagLayout gbl = new GridBagLayout();
 		GridBagConstraints gbc = new GridBagConstraints();
 		contentPane.setLayout(gbl);
@@ -308,8 +313,6 @@ public class ConnectionSheet extends JInternalFrame {
 		_btnsPnl.addListener(new MyOkClosePanelListener());
 		_btnsPnl.makeOKButtonDefault();
 
-		pack();
-
 		// Set focus to password control if default user name has been setup.
 		addInternalFrameListener(new InternalFrameAdapter() {
 			private InternalFrameAdapter _this;
@@ -326,6 +329,8 @@ public class ConnectionSheet extends JInternalFrame {
 				}
 			}
 		});
+
+		pack();
 	}
 
 	/**

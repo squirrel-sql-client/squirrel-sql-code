@@ -24,6 +24,8 @@ import java.awt.Insets;
 import java.awt.Component;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -46,7 +48,6 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 	private MyPanel _myPanel;
 
 	private IApplication _app;
-
 
 	public GeneralPreferencesPanel() {
 		super();
@@ -82,7 +83,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 		return MyPanel.i18n.TAB_HINT;
 	}
 
-	private static final class MyPanel extends JPanel {
+	private static final class MyPanel extends Box {
 		/**
 		 * This interface defines locale specific strings. This should be
 		 * replaced with a property file.
@@ -106,7 +107,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 		private JLabel _jdbcDebugLogFileNameLbl = new OutputLabel(" ");// Must have at least 1 blank otherwise width gets set to zero.
 
 		MyPanel() {
-			super();
+			super(BoxLayout.Y_AXIS);
 			createUserInterface();
 		}
 
@@ -133,26 +134,14 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 		}
 
 		private void createUserInterface() {
-			_loginTimeout.setColumns(4);
-
-			setLayout(new GridBagLayout());
-			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.anchor = gbc.WEST;
-			gbc.fill = gbc.HORIZONTAL;
-			gbc.insets = new Insets(4, 4, 4, 4);
-
-			gbc.gridx = 0;
-			gbc.gridy = 0;
-			add(createAppearancePanel(), gbc);
-			++gbc.gridy;
-			add(createSQLPanel(), gbc);
-			++gbc.gridy;
-			add(createLoggingPanel(), gbc);
-			++gbc.gridy;
-			add(createJDBCDebugPanel(), gbc);
+			add(createAppearancePanel());
+			add(createSQLPanel());
+			add(createLoggingPanel());
+			add(createJDBCDebugPanel());
 		}
 
 		private JPanel createAppearancePanel() {
+			_loginTimeout.setColumns(4);
 			JPanel pnl = new JPanel();
 			pnl.setBorder(BorderFactory.createTitledBorder("Appearance"));
 			
@@ -162,6 +151,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 			gbc.insets = new Insets(4, 4, 4, 4);
 			gbc.gridx = 0;
 			gbc.gridy = 0;
+			gbc.weightx = 1;
 			pnl.add(_showContents, gbc);
 			++gbc.gridy;
 			pnl.add(_showToolTips, gbc);
@@ -225,6 +215,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = gbc.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
+			gbc.anchor = gbc.WEST;
 	
 			gbc.gridx = 0;
 			gbc.gridy = 0;
@@ -235,8 +226,10 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 			pnl.add(new RightLabel("JDBC Debug File:"), gbc);
 	
 			++gbc.gridx;
+			gbc.weightx = 1;
 			pnl.add(_jdbcDebugLogFileNameLbl, gbc);
 
+			gbc.weightx = 0;
 			gbc.gridx = 0;
 			gbc.gridy = gbc.RELATIVE;
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
