@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -20,60 +20,94 @@ package net.sourceforge.squirrel_sql.fw.gui;
 import java.awt.Rectangle;
 import java.awt.Window;
 
+import javax.swing.JInternalFrame;
+
 import net.sourceforge.squirrel_sql.fw.util.beanwrapper.RectangleWrapper;
 import net.sourceforge.squirrel_sql.fw.xml.IXMLAboutToBeWritten;
 
 /**
- * This bean will store the state of a window object.
+ * This bean will store the state of a window or an internal frame object.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class WindowState implements IXMLAboutToBeWritten {
+public class WindowState implements IXMLAboutToBeWritten
+{
 	private Window _window;
+	private JInternalFrame _internalFrame;
 	private RectangleWrapper _bounds = new RectangleWrapper(new Rectangle(600, 400));
 
-	public interface IPropertyNames {
+	public interface IPropertyNames
+	{
 		String BOUNDS = "bounds";
 	}
 
 	/**
 	 * Default ctor.
 	 */
-	public WindowState() {
+	public WindowState()
+	{
 		super();
 	}
 
 	/**
 	 * Ctor storing the state of the passed <CODE>Window</CODE>.
 	 */
-	public WindowState(Window window) {
+	public WindowState(Window window)
+	{
 		super();
 		_window = window;
+	}
+
+	/**
+	 * Ctor storing the state of the passed <CODE>Window</CODE>.
+	 */
+	public WindowState(JInternalFrame internalFrame)
+	{
+		super();
+		_internalFrame = internalFrame;
 	}
 
 	/**
 	 * This bean is about to be written out to XML so load its values from its
 	 * window.
 	 */
-	public void aboutToBeWritten() {
+	public void aboutToBeWritten()
+	{
 		refresh();
 	}
 
-	public RectangleWrapper getBounds() {
+	public RectangleWrapper getBounds()
+	{
 		refresh();
 		return _bounds;
 	}
 
-	public void setBounds(RectangleWrapper value) {
+	public void setBounds(RectangleWrapper value)
+	{
 		_bounds = value;
+		_window = null;
+		_internalFrame = null;
 	}
 
-	private void refresh() {
-		if (_window != null) {
-			if (_bounds == null) {
+	private void refresh()
+	{
+		Rectangle windRc = null;
+		if (_window != null)
+		{
+			windRc = _window.getBounds();
+		}
+		else if (_internalFrame != null)
+		{
+			windRc = _internalFrame.getBounds();
+		}
+
+		if (windRc != null)
+		{
+			if (_bounds == null)
+			{
 				_bounds = new RectangleWrapper();
 			}
-			_bounds.setFrom(_window.getBounds());
+			_bounds.setFrom(windRc);
 		}
 	}
 }
