@@ -33,23 +33,18 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
+import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
-public class OutputPropertiesPanel implements IGlobalPreferencesPanel, ISessionPropertiesPanel {
-	private String _title;
-	private String _hint;
-
+public class OutputPropertiesPanel implements INewSessionPropertiesPanel, ISessionPropertiesPanel {
 	private IApplication _app;
 	private SessionProperties _props;
 
 	private MyPanel _myPanel = new MyPanel();
 
-	public OutputPropertiesPanel(String title, String hint) {
+	public OutputPropertiesPanel() {
 		super();
-		_title = title != null ? title : MyPanel.i18n.OUTPUT;
-		_hint = hint != null ? hint : MyPanel.i18n.OUTPUT;
 	}
 
 	public void initialize(IApplication app) throws IllegalArgumentException {
@@ -82,11 +77,11 @@ public class OutputPropertiesPanel implements IGlobalPreferencesPanel, ISessionP
 	}
 
 	public String getTitle() {
-		return _title;
+		return MyPanel.i18n.OUTPUT;
 	}
 
 	public String getHint() {
-		return _hint;
+		return MyPanel.i18n.OUTPUT;
 	}
 
 	public void applyChanges() {
