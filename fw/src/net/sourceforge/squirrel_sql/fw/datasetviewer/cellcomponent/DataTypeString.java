@@ -44,6 +44,7 @@ import javax.swing.event.ChangeEvent;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Types;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
@@ -128,6 +129,13 @@ public class DataTypeString
 	 * (i.e. they are thrown out by JTextField when it loads the text document behind the cell).
 	 */
 	private static boolean _makeNewlinesVisibleInCell = true;
+	
+	/**
+	 * If <tt>true</tt> then use the LONGVARCHAR data type in the WHERE clause,
+	 * otherwise do not include it.
+	 * Oracle does not allow that type to be used in a WHERE clause
+	 */
+	private static boolean _useLongInWhere = true;
 
 	/**
 	 * If <tt>true</tt> then limit the size of string data that is read
@@ -187,6 +195,11 @@ public class DataTypeString
 			String makeNewlinesVisibleString = DTProperties.get(thisClassName, "makeNewlinesVisibleInCell");
 			if (makeNewlinesVisibleString != null && makeNewlinesVisibleString.equals("false"))
 				_makeNewlinesVisibleInCell = false;
+			
+			_useLongInWhere = true;	// set to the default
+			String useLongInWhereString = DTProperties.get(thisClassName, "useLongInWhere");
+			if (useLongInWhereString != null && useLongInWhereString.equals("false"))
+				_useLongInWhere = false;
 
 			_limitRead = false;	// set to default
 			String limitReadString = DTProperties.get(thisClassName, "limitRead");
@@ -288,6 +301,10 @@ public class DataTypeString
 	public boolean needToReRead(Object originalValue) {
 		// if we are not limiting anything, return false
 		if (_limitRead == false)
+			return false;
+		
+		// if the value is null, then it was read ok
+		if (originalValue == null)
 			return false;
 		
 		// we are limiting some things.
@@ -531,7 +548,9 @@ public class DataTypeString
 			// if this column is being limited, then truncate the data if needed
 			// (start with a quick check for the data being shorter than the limit,
 			// in which case we don't need to worry about it).
-			if (limitDataRead == true && data.length() >= _limitReadLength) {
+			if (limitDataRead == true && _limitRead == true
+				&& data.length() >= _limitReadLength) {
+					
 				// data is longer than the limit, so we need to do more checking
 				if (_limitReadOnSpecificColumns == false ||
 					(_limitReadOnSpecificColumns == true && 
@@ -560,6 +579,13 @@ public class DataTypeString
 	 * or whatever is appropriate for this column in the database.
 	 */
 	public String getWhereClauseValue(Object value) {
+		// first do special check to see if we should use LONGVARCHAR
+		// in the WHERE clause.
+		// (Oracle does not allow this.)
+		if (_colDef.getSqlType() == Types.LONGVARCHAR &&
+			_useLongInWhere == false)
+			return "";	// this column cannot be used in a WHERE clause
+			
 		if (value == null || value.toString() == null )
 			return _colDef.getLabel() + " IS NULL";
 		else {
@@ -771,6 +797,11 @@ public class DataTypeString
 		private JCheckBox _makeNewlinesVisibleInCellChk =
 			new JCheckBox("Show newlines as \\n within cells");
 		
+		// check box for whether to use LONGVARCHAR in WHERE clause
+		// (Oracle does not allow that type in WHERE clause)
+		private JCheckBox _useLongInWhereChk =
+			new JCheckBox("Allow LONGVARCHAR type to be used in WHERE clause");
+		
 		// check box for whether to do any limiting of the data read during initial table load
 		private JCheckBox _limitReadChk =
 			new JCheckBox("Limit size of strings read during initial table load to max of:");
@@ -794,6 +825,9 @@ public class DataTypeString
 			
 			// checkbox for displaying newlines as \n in-cell
 			_makeNewlinesVisibleInCellChk.setSelected(_makeNewlinesVisibleInCell);
+			
+			// checkbox for using LONG in WHERE clause
+			_useLongInWhereChk.setSelected(_useLongInWhere);
 
 			// checkbox for limit/no-limit on data read during initial table load
 			_limitReadChk.setSelected(_limitRead);
@@ -854,6 +888,11 @@ public class DataTypeString
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			add(_makeNewlinesVisibleInCellChk, gbc);
 			
+			gbc.gridx = 0;
+			gbc.gridy++;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
+			add(_useLongInWhereChk, gbc);
+			
 			gbc.gridy++;
 			gbc.gridx = 0;
 			gbc.gridwidth = 1;
@@ -887,6 +926,10 @@ public class DataTypeString
 			_makeNewlinesVisibleInCell = _makeNewlinesVisibleInCellChk.isSelected();
 			DTProperties.put(thisClassName,
 				"makeNewlinesVisibleInCell", Boolean.toString(_makeNewlinesVisibleInCell));
+			
+			_useLongInWhere = _useLongInWhereChk.isSelected();
+			DTProperties.put(thisClassName,
+				"useLongInWhere", Boolean.toString(_useLongInWhere));
 			
 			_limitRead = _limitReadChk.isSelected();
 			DTProperties.put(thisClassName,
