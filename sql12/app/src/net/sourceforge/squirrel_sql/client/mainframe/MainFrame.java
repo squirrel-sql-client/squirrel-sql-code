@@ -119,13 +119,13 @@ public class MainFrame extends BaseMDIParentFrame
 
 	public void dispose()
 	{
-		if (closeAllNonToolWindows())
-		{
+//		if (closeAllNonToolWindows())
+//		{
 			closeAllToolWindows();
 			_app.shutdown();
 			super.dispose();
 			System.exit(0);
-		}
+//		}
 	}
 
 	//??Why
@@ -289,16 +289,16 @@ public class MainFrame extends BaseMDIParentFrame
 		}
 	}
 
-	synchronized public boolean closeAllNonToolWindows()
-	{
-		JInternalFrame[] frames =
-			GUIUtils.getOpenNonToolWindows(getDesktopPane().getAllFrames());
-		for (int i = 0; i < frames.length; ++i)
-		{
-			frames[i].dispose();
-		}
-		return true;
-	}
+//	synchronized public boolean closeAllNonToolWindows()
+//	{
+//		JInternalFrame[] frames =
+//			GUIUtils.getOpenNonToolWindows(getDesktopPane().getAllFrames());
+//		for (int i = 0; i < frames.length; ++i)
+//		{
+//			frames[i].dispose();
+//		}
+//		return true;
+//	}
 
 	private void closeAllToolWindows()
 	{

@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.BorderLayout;
 import java.awt.Font;
 
 import javax.swing.BorderFactory;
@@ -37,7 +38,7 @@ public class StatusBar extends JPanel
 	private String _msgWhenEmpty = " ";
 
 	/** Label showing the message in the statusbar. */
-	private JLabel _textLbl = new MyLabel();
+	private JLabel _textLbl = new StatusBarLabel();
 
 	/** Font for controls. */
 	private Font _font;
@@ -47,7 +48,7 @@ public class StatusBar extends JPanel
 	 */
 	public StatusBar()
 	{
-		super(new java.awt.BorderLayout());
+		super(new BorderLayout());
 		createUserInterface();
 	}
 
@@ -56,7 +57,8 @@ public class StatusBar extends JPanel
 	 * 
 	 * @param	font	The font to use.
 	 * 
-	 * @throws	IllegalArgumentException	if <TT>null</TT> <TT>Font</TT> passed.
+	 * @throws	IllegalArgumentException
+	 *			Thrown if <TT>null</TT> <TT>Font</TT> passed.
 	 */
 	public synchronized void setFont(Font font)
 	{
@@ -119,43 +121,18 @@ public class StatusBar extends JPanel
 	private void createUserInterface()
 	{
 		_textLbl.setFont(_font);
-		//		setLayout(new GridBagLayout());
-		add(_textLbl, java.awt.BorderLayout.CENTER);
-		//, new TextConstraints());
+		add(_textLbl, BorderLayout.CENTER);
 		clearText();
 	}
 
-	private static class MyLabel extends JLabel
+	private static class StatusBarLabel extends JLabel
 	{
-		MyLabel()
+		StatusBarLabel()
 		{
 			super();
-			setBorder(
-				BorderFactory.createCompoundBorder(
-					BorderFactory.createBevelBorder(BevelBorder.LOWERED),
-					BorderFactory.createEmptyBorder(0, 4, 0, 4)));
+			setBorder(BorderFactory.createCompoundBorder(
+							BorderFactory.createBevelBorder(BevelBorder.LOWERED),
+							BorderFactory.createEmptyBorder(0, 4, 0, 4)));
 		}
 	}
-
-	/*	private static abstract class BaseConstraints extends GridBagConstraints {
-			BaseConstraints() {
-				super();
-				insets = new Insets(1, 1, 1, 1);
-				anchor = GridBagConstraints.WEST;
-				gridheight = 1;
-				gridwidth = 1;
-				gridy = 0;
-				weighty = 0.0;
-			}
-		}
-	
-		private static final class TextConstraints extends BaseConstraints {
-			TextConstraints() {
-				super();
-				gridx = 0;
-				fill = GridBagConstraints.HORIZONTAL;
-				weightx = 1.0;
-			}
-		}
-	*/
 }

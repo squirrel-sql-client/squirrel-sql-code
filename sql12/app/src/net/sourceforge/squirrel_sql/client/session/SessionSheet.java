@@ -102,19 +102,28 @@ public class SessionSheet extends BaseSheet
 	}
 
 	/**
-	 * Close this window.
+	 * Dispose of this window.
 	 */
 	public void dispose()
 	{
+		final IApplication app = _session.getApplication();
 		if (_propsListener != null)
 		{
-			_session.getProperties().removePropertyChangeListener(
-				_propsListener);
+			_session.getProperties().removePropertyChangeListener(_propsListener);
 			_propsListener = null;
 		}
 		_mainTabPane.sessionClosing(_session);
-		_session.getApplication().getPluginManager().sessionEnding(_session);
-		closeConnection();
+		_session.setSessionSheet(null);
+		try
+		{
+			app.getSessionManager().closeSession(_session);
+		}
+		catch (SQLException ex)
+		{
+			final String msg = "Error closing session";
+			app.showErrorDialog(msg, ex);
+			s_log.error(msg, ex);
+		}
 		super.dispose();
 	}
 

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -97,7 +97,7 @@ public class ChooserPreviewer extends JComponent
 		{
 			if (parent instanceof JFileChooser)
 			{
-				_chooser = (JFileChooser) parent;
+				_chooser = (JFileChooser)parent;
 				break;
 			}
 			parent = parent.getParent();
@@ -120,6 +120,9 @@ public class ChooserPreviewer extends JComponent
 		cleanup();
 	}
 
+	/**
+	 * Remove listener from the chooser.
+	 */
 	protected void cleanup()
 	{
 		if (_chooser != null && _propChangeListener != null)
@@ -130,6 +133,10 @@ public class ChooserPreviewer extends JComponent
 		_chooser = null;
 	}
 
+	/**
+	 * The file selected in the <TT>FileChooser</TT> has changed so display
+	 * its contents in this previewer.
+	 */
 	protected void fileChanged()
 	{
 		Component componentToUse = _emptyPnl;
@@ -138,10 +145,8 @@ public class ChooserPreviewer extends JComponent
 		if (file != null && file.isFile() && file.canRead())
 		{
 			String suffix = Utilities.getFileNameSuffix(file.getPath()).toLowerCase();
-			if (suffix.equals("gif")
-				|| suffix.equals("jpg")
-				|| suffix.equals("jpeg")
-				|| suffix.equals("png"))
+			if (suffix.equals("gif") || suffix.equals("jpg")
+				|| suffix.equals("jpeg") || suffix.equals("png"))
 			{
 				componentToUse = readImageFile(file);
 			}
@@ -184,7 +189,7 @@ public class ChooserPreviewer extends JComponent
 	 */
 	protected Component readTextFile(File file)
 	{
-		StringBuffer buf = new StringBuffer();
+		StringBuffer buf = new StringBuffer(DFT_BYTES_TO_READ);
 		if (file != null && file.isFile() && file.canRead())
 		{
 			try
@@ -215,6 +220,9 @@ public class ChooserPreviewer extends JComponent
 		return _textComponent;
 	}
 
+	/**
+	 * Create the User Interface.
+	 */
 	private void createUserInterface()
 	{
 		_textComponent.setEditable(false);
@@ -224,6 +232,10 @@ public class ChooserPreviewer extends JComponent
 		setPreferredSize(new Dimension(250, 0));
 	}
 
+	/**
+	 * Listener to the FileChooser that will preview the seleted file
+	 * as it changes in the chooser.
+	 */
 	private class ChooserListener implements PropertyChangeListener
 	{
 		public void propertyChange(PropertyChangeEvent evt)
@@ -234,5 +246,4 @@ public class ChooserPreviewer extends JComponent
 			}
 		}
 	}
-
 }

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -20,13 +20,13 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-
 /**
  * This <CODE>ICommand</CODE> allows the user to close all open sessions.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class CloseAllSessionsCommand implements ICommand {
+public class CloseAllSessionsCommand implements ICommand
+{
 	/** Application API. */
 	private final IApplication _app;
 
@@ -38,10 +38,13 @@ public class CloseAllSessionsCommand implements ICommand {
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> passed.
 	 */
-	public CloseAllSessionsCommand(IApplication app) throws IllegalArgumentException {
+	public CloseAllSessionsCommand(IApplication app)
+		throws IllegalArgumentException
+	{
 		super();
-		if (app == null) {
-			throw new IllegalArgumentException("Null IApplication passed");
+		if (app == null)
+		{
+			throw new IllegalArgumentException("IApplication == null");
 		}
 
 		_app = app;
@@ -50,7 +53,8 @@ public class CloseAllSessionsCommand implements ICommand {
 	/**
 	 * Close all sessions.
 	 */
-	public void execute() {
-		_app.getMainFrame().closeAllNonToolWindows();
+	public void execute()
+	{
+		_app.getSessionManager().closeAllSessions();
 	}
 }

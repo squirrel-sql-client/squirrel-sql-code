@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -24,11 +24,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.sql.DriverManager;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Calendar;
 
 import javax.swing.Action;
-import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
@@ -36,7 +34,6 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.ProxyHandler;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
@@ -57,8 +54,7 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SessionSheet;
+import net.sourceforge.squirrel_sql.client.session.SessionManager;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionPropertiesSheetFactory;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 /**
@@ -89,6 +85,9 @@ class Application implements IApplication
 	/** Thread pool for long running tasks. */
 	private final TaskThreadPool _threadPool = new TaskThreadPool();
 
+	/** This object manages the open sessions.*/
+	private final SessionManager _sessionManager = new SessionManager();
+
 	private LoggerController _loggerFactory;
 
 	/** Factory used to create SQL entry panels. */
@@ -108,6 +107,9 @@ class Application implements IApplication
 		super();
 	}
 
+	/**
+	 * Application is starting up.
+	 */
 	public void startup()
 	{
 		LoggerController.registerLoggerFactory(new SquirrelLoggerFactory());
@@ -169,10 +171,18 @@ class Application implements IApplication
 
 	}
 
+	/**
+	 * Application is shutting down.
+	 */
 	public void shutdown()
 	{
+		s_log.info("Application shutting down " + Calendar.getInstance().getTime());
+
+		_sessionManager.closeAllSessions();
 		_pluginManager.unloadPlugins();
 
+		// Remember the currently selected entries in the
+		// aliases and drivers windows,
 		int idx = _mainFrame.getAliasesToolWindow().getSelectedIndex();
 		_prefs.setAliasesSelectedIndex(idx);
 		idx = _mainFrame.getDriversToolWindow().getSelectedIndex();
@@ -191,7 +201,9 @@ class Application implements IApplication
 		}
 		catch (Throwable th)
 		{
-			showErrorDialog("Error occured saving Driver Definitions", th);
+			String msg = "Error occured saving Driver Definitions";
+			showErrorDialog(msg, th);
+			s_log.error(msg, th);
 		}
 
 		try
@@ -201,7 +213,9 @@ class Application implements IApplication
 		}
 		catch (Throwable th)
 		{
-			showErrorDialog("Error occured saving Alias Definitions", th);
+			String msg = "Error occured saving Alias Definitions";
+			showErrorDialog(msg, th);
+			s_log.error(msg, th);
 		}
 
 		if (_jdbcDebugOutput != null)
@@ -210,6 +224,7 @@ class Application implements IApplication
 			_jdbcDebugOutput = null;
 		}
 
+		s_log.info("Application shutdown complete " + Calendar.getInstance().getTime());
 		_loggerFactory.shutdown();
 	}
 
@@ -251,6 +266,16 @@ class Application implements IApplication
 	public MainFrame getMainFrame()
 	{
 		return _mainFrame;
+	}
+
+	/**
+	 * Retrieve the object that manages sessions.
+	 * 
+	 * @return	<TT>SessionManager</TT>.
+	 */
+	public SessionManager getSessionManager()
+	{
+		return _sessionManager;
 	}
 
 	/**
@@ -338,19 +363,19 @@ class Application implements IApplication
 	 * 
 	 * @return	array of all active sessions.
 	 */
-	public synchronized ISession[] getActiveSessions()
-	{
-		final JInternalFrame[] frames = GUIUtils.getOpenNonToolWindows(_mainFrame.getDesktopPane().getAllFrames());
-		final List sessions = new ArrayList();
-		for (int i = 0; i < frames.length; ++i)
-		{
-			if (frames[i] instanceof SessionSheet)
-			{
-				sessions.add(((SessionSheet)frames[i]).getSession());
-			}
-		}
-		return (ISession[])sessions.toArray(new ISession[sessions.size()]);
-	}
+//	public synchronized ISession[] getActiveSessions()
+//	{
+//		final JInternalFrame[] frames = GUIUtils.getOpenNonToolWindows(_mainFrame.getDesktopPane().getAllFrames());
+//		final List sessions = new ArrayList();
+//		for (int i = 0; i < frames.length; ++i)
+//		{
+//			if (frames[i] instanceof SessionSheet)
+//			{
+//				sessions.add(((SessionSheet)frames[i]).getSession());
+//			}
+//		}
+//		return (ISession[])sessions.toArray(new ISession[sessions.size()]);
+//	}
 
 	public synchronized void addToMenu(int menuId, JMenu menu)
 	{

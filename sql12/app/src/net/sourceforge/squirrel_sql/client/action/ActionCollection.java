@@ -59,6 +59,8 @@ import net.sourceforge.squirrel_sql.client.session.action.GotoNextResultsTabActi
 import net.sourceforge.squirrel_sql.client.session.action.GotoPreviousResultsTabAction;
 import net.sourceforge.squirrel_sql.client.session.action.IClientSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
+import net.sourceforge.squirrel_sql.client.session.action.NextSessionAction;
+import net.sourceforge.squirrel_sql.client.session.action.PreviousSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.ReconnectAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeItemAction;
@@ -395,6 +397,8 @@ public final class ActionCollection
 		add(new InstallDefaultDriversAction(_app));
 		add(new MaximizeAction(_app));
 		add(new NewSessionPropertiesAction(_app));
+		add(new NextSessionAction(_app));
+		add(new PreviousSessionAction(_app));
 		add(new ReconnectAction(_app));
 		add(new RefreshObjectTreeAction(_app));
 		add(new RefreshObjectTreeItemAction(_app));

@@ -179,7 +179,7 @@ public class DumpApplicationCommand implements ICommand
 			}
 
 			// Dump sessions.
-			ISession[] sessions = _app.getActiveSessions();
+			ISession[] sessions = _app.getSessionManager().getActiveSessions();
 			DumpSessionCommand sessionCmd = new DumpSessionCommand();
 			for (int i = 0; i < sessions.length; ++i)
 			{

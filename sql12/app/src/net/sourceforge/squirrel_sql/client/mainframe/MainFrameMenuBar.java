@@ -72,6 +72,8 @@ import net.sourceforge.squirrel_sql.client.session.action.DumpSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.GotoNextResultsTabAction;
 import net.sourceforge.squirrel_sql.client.session.action.GotoPreviousResultsTabAction;
+import net.sourceforge.squirrel_sql.client.session.action.NextSessionAction;
+import net.sourceforge.squirrel_sql.client.session.action.PreviousSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.ReconnectAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
@@ -287,6 +289,9 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, ReconnectAction.class, menu);
 		addToMenu(rsrc, CloseSessionAction.class, menu);
 		menu.add(createSQLResultsCloseMenu(rsrc));
+		menu.addSeparator();
+		addToMenu(rsrc, PreviousSessionAction.class, menu);
+		addToMenu(rsrc, NextSessionAction.class, menu);
 		menu.addSeparator();
 		menu.setEnabled(false);
 		return menu;

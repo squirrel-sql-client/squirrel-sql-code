@@ -37,9 +37,8 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.db.ConnectionSheet;
 import net.sourceforge.squirrel_sql.client.db.ConnectionSheet.IConnectionSheetHandler;
 import net.sourceforge.squirrel_sql.client.session.IClientSession;
-import net.sourceforge.squirrel_sql.client.session.SessionFactory;
+import net.sourceforge.squirrel_sql.client.session.SessionManager;
 import net.sourceforge.squirrel_sql.client.session.SessionSheet;
-
 /**
  * This <CODE>ICommand</CODE> allows the user to connect to
  * an <TT>ISQLAlias</TT>.
@@ -359,12 +358,7 @@ public class ConnectToAliasCommand implements ICommand
 						_callback.connected(conn);
 						if (_createSession)
 						{
-							final IClientSession session = SessionFactory.createSession(
-												_app, sqlDriver, _alias, conn,
-												_user, _password);
-							_callback.sessionCreated(session);
-							Runner runner = new Runner(session, _connSheet);
-							SwingUtilities.invokeLater(runner);
+							createSession(sqlDriver, conn);
 						}
 						else
 						{
@@ -397,6 +391,17 @@ public class ConnectToAliasCommand implements ICommand
 				}
 			}
 		}
+
+		private IClientSession createSession(ISQLDriver sqlDriver,
+												SQLConnection conn)
+		{
+			SessionManager sm = _app.getSessionManager();
+			final IClientSession session = sm.createSession(_app, sqlDriver,
+												_alias, conn, _user, _password);
+			_callback.sessionCreated(session);
+			SwingUtilities.invokeLater(new Runner(session, _connSheet));
+			return session;
+		}
 	}
 
 	private static final class Runner implements Runnable
@@ -419,7 +424,18 @@ public class ConnectToAliasCommand implements ICommand
 			_session.setSessionSheet(child);
 			app.getPluginManager().sessionStarted(_session);
 			app.getMainFrame().addInternalFrame(child, true, null);
-			child.setVisible(true);
+
+			// If we don't invokeLater here no Short-Cut-Key is sent
+			// to the internal frame
+			// seen under java version "1.4.1_01" and Linux
+			SwingUtilities.invokeLater(new Runnable()
+			{
+				public void run()
+				{
+					child.setVisible(true);
+				}
+			});
+
 			_connSheet.executed(true);
 		}
 	}

@@ -25,8 +25,20 @@ public interface IClientSession extends ISession
 {
 	/**
 	 * Close this session.
+	 * 
+	 * @throws	SQLException
+	 * 			Thrown if an error closing the SQL connection. The session
+	 * 			will still be closed even though the connection may not have
+	 *			been.
 	 */
-	void close();
+	void close() throws SQLException;
+
+	/**
+	 * Retrieve whether this session has been closed.
+	 * 
+	 * @return	<TT>true</TT> if session closed else <TT>false</TT>.
+	 */
+	boolean isClosed();
 
 	/**
 	 * Close the current connection to the database.

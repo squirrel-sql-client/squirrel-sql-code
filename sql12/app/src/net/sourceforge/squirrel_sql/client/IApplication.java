@@ -31,13 +31,14 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-
+import net.sourceforge.squirrel_sql.client.session.SessionManager;
 /**
  * Defines the API to do callbacks on the application.
  */
-public interface IApplication {
-	public interface IMenuIDs extends MainFrame.IMenuIDs {
+public interface IApplication
+{
+	public interface IMenuIDs extends MainFrame.IMenuIDs
+	{
 	}
 
 	/**
@@ -70,7 +71,14 @@ public interface IApplication {
 	 * 
 	 * @return	array of all active sessions.
 	 */
-	ISession[] getActiveSessions();
+	//ISession[] getActiveSessions();
+
+	/**
+	 * Retrieve the object that manages sessions.
+	 * 
+	 * @return	<TT>SessionManager</TT>.
+	 */
+	SessionManager getSessionManager();
 
 	/**
 	 * Display an error message dialog.
