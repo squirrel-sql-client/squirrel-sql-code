@@ -22,6 +22,7 @@ package net.sourceforge.squirrel_sql.plugins.syntax.oster;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.awt.Color;
+import java.awt.Component;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.HashSet;
@@ -33,6 +34,7 @@ import java.util.TreeSet;
 import java.util.Vector;
 
 import javax.swing.JTextPane;
+import javax.swing.plaf.ComponentUI;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -62,6 +64,7 @@ class OsterTextControl extends JTextPane
 
 	/** Current session. */
 	private final ISession _session;
+
 	/**
 	 * A lock for modifying the document, or for
 	 * actions that depend on the document not being
@@ -126,6 +129,18 @@ class OsterTextControl extends JTextPane
 		initDocument();
 
 		updateFromPreferences();
+	}
+
+	//	This stops the text control from line wrapping.
+	public boolean getScrollableTracksViewportWidth()
+	{
+		final Component parent = getParent();
+		final ComponentUI ui = getUI();
+		if (parent != null)
+		{
+			return (ui.getPreferredSize(this).width <= parent.getSize().width);
+		}
+		return true;
 	}
 
 	void updateFromPreferences()
