@@ -632,7 +632,7 @@ public class SQLResultExecuterPanel extends JPanel
 				.getViewableSqlString());
 	}
 
-	/** JMH This is a dead method it isnt called anywhere*/
+	/** JASON: This is a dead method it isnt called anywhere*/
 	private String modifyIndividualScript(String sql)
 	{
 		// Guaranteed to be non-null.
@@ -724,7 +724,7 @@ public class SQLResultExecuterPanel extends JPanel
 
 		public void sqlToBeExecuted(String sql)
 		{
-			//JMH Need to do something about this
+			//JASON: Need to do something about this
 			//_cancelPanel.setQueryCount(queryStrings.size());
 			_cancelPanel.setSQL(StringUtilities.cleanString(sql));
 			_cancelPanel.setStatusLabel("Executing SQL...");

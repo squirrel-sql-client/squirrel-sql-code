@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.session;
+package net.sourceforge.squirrel_sql.client.gui;
 /*
  * Copyright (C) 2003-2004 Colin Bell
  * colbell@users.sourceforge.net
@@ -34,17 +34,19 @@ import javax.swing.event.EventListenerList;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
-import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
+import net.sourceforge.squirrel_sql.client.session.BaseSessionSheet;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
@@ -54,6 +56,7 @@ import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterSheet;
 /**
  * This class manages the windows for the application.
  *
+ * TODO: Correct these notes
  * <p>When a session closes the window manager will ensure that
  * all of the windows for that sesion are closed.
  * <p>Similarily when a window is closed the windows manager will ensure that
@@ -70,15 +73,15 @@ import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterSheet;
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  * @author <A HREF="mailto:jmheight@users.sourceforge.net">Jason Height</A>
  */
-public class SessionWindowManager
+public class WindowManager
 {
 	/** Logger for this class. */
 	private static final ILogger s_log =
-		LoggerController.createLogger(SessionWindowManager.class);
+		LoggerController.createLogger(WindowManager.class);
 
 	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(SessionWindowManager.class);
+//	private static final StringManager s_stringMgr =
+//		StringManagerFactory.getStringManager(WindowManager.class);
 
 	/** Application API. */
 	private final IApplication _app;
@@ -113,7 +116,7 @@ public class SessionWindowManager
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>IApplication</TT> passed.
 	 */
-	public SessionWindowManager(IApplication app)
+	public WindowManager(IApplication app)
 	{
 		super();
 		if (app == null)
@@ -159,7 +162,7 @@ public class SessionWindowManager
 				final Object sheet = it.next();
 				if (sheet instanceof SessionInternalFrame)
 				{
-					final SessionInternalFrame sif = (SessionInternalFrame)sheet; 
+					final SessionInternalFrame sif = (SessionInternalFrame)sheet;
 					if (sif.getSession().equals(session))
 					{
 						return sif;
@@ -173,7 +176,7 @@ public class SessionWindowManager
 	/**
 	 * Registers a sheet that is attached to a session. This sheet will
 	 * be automatically closed when the session is closing.
-	 * <p/><b>There is no need to call this method manually.</b> Any 
+	 * <p/><b>There is no need to call this method manually.</b> Any
 	 * classes that properly extend BaseSessionSheet will be registered.
 	 */
 	public synchronized void registerSessionSheet(BaseSessionSheet sheet)
@@ -316,9 +319,9 @@ public class SessionWindowManager
 
 	/**
 	 * Create a new internal frame for the passed session.
-	 * 
+	 *
 	 * @param	session		Session we are creating internal frame for.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 *			Thrown if ISession is passed as null.
 	 */
@@ -404,7 +407,7 @@ public class SessionWindowManager
 			throw new IllegalArgumentException("IDatabaseObjectInfo == null");
 		}
 
-		final ISession session = objectTree.getSession();
+//		final ISession session = objectTree.getSession();
 		SQLFilterSheet sqlFilterSheet = getSQLFilterSheet(objectTree, objectInfo);
 		if (sqlFilterSheet == null)
 		{
@@ -486,12 +489,12 @@ public class SessionWindowManager
 
 	/**
 	 * Close the passed session.
-	 * 
+	 *
 	 * @param	session		Session to be closed.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 *			Thrown if ISession is passed as null.
-	 * 
+	 *
 	 * @returns <tt>true</tt> if the session was closed.
 	 */
 //	public synchronized boolean closeSession(ISession session)
@@ -536,17 +539,17 @@ public class SessionWindowManager
 		}
 	}
 
-	private boolean confirmClose(ISession session)
-	{
-		if (!_app.getSquirrelPreferences().getConfirmSessionClose())
-		{
-			return true;
-		}
-
-		final String msg = s_stringMgr.getString("SessionWindowManager.confirmClose",
-							session.getTitle());
-		return Dialogs.showYesNo(_app.getMainFrame(), msg);
-	}
+//	private boolean confirmClose(ISession session)
+//	{
+//		if (!_app.getSquirrelPreferences().getConfirmSessionClose())
+//		{
+//			return true;
+//		}
+//
+//		final String msg = s_stringMgr.getString("WindowManager.confirmClose",
+//							session.getTitle());
+//		return Dialogs.showYesNo(_app.getMainFrame(), msg);
+//	}
 
 	private SessionPropertiesSheet getSessionPropertiesDialog(ISession session)
 	{
@@ -575,7 +578,7 @@ public class SessionWindowManager
 				final Object sheet = it.next();
 				if (sheet instanceof SQLFilterSheet)
 				{
-					final SQLFilterSheet sfs = (SQLFilterSheet)sheet; 
+					final SQLFilterSheet sfs = (SQLFilterSheet)sheet;
 					if (sfs.getObjectTree() == tree &&
 							objectInfo.equals(sfs.getDatabaseObjectInfo()))
 					{
@@ -600,7 +603,7 @@ public class SessionWindowManager
 				final Object sheet = it.next();
 				if (sheet instanceof EditWhereColsSheet)
 				{
-					final EditWhereColsSheet sfs = (EditWhereColsSheet)sheet; 
+					final EditWhereColsSheet sfs = (EditWhereColsSheet)sheet;
 //					if (sfs.getObjectTree() == tree &&
 //							objectInfo.equals(sfs.getDatabaseObjectInfo()))
 					if (objectInfo.equals(sfs.getDatabaseObjectInfo()))
@@ -614,9 +617,8 @@ public class SessionWindowManager
 	}
 
 	// JASON: FIX THIS
-	private Map getAllEditWhereColsSheets(IObjectTreeAPI tree)
-	{
-		return null;
+//	private Map getAllEditWhereColsSheets(IObjectTreeAPI tree)
+//	{
 //		Map map = (Map)_editWhereColsSheets.get(tree.getIdentifier());
 //		if (map == null)
 //		{
@@ -624,7 +626,7 @@ public class SessionWindowManager
 //			_editWhereColsSheets.put(session.getIdentifier(), map);
 //		}
 //		return map;
-	}
+//	}
 
 	private void positionSheet(JInternalFrame jif)
 	{
@@ -666,10 +668,10 @@ public class SessionWindowManager
 //		public void internalFrameClosed(InternalFrameEvent evt)
 //		{
 //			EditWhereColsSheet sfs = (EditWhereColsSheet)evt.getInternalFrame();
-//			SessionWindowManager.this.editWhereColsDialogClosed(sfs);
+//			WindowManager.this.editWhereColsDialogClosed(sfs);
 //		}
 //	}
-	
+
 	private final class SessionWindowListener implements InternalFrameListener
 	{
 		public void internalFrameOpened(InternalFrameEvent e)
@@ -700,7 +702,7 @@ public class SessionWindowManager
 						if (sheet == sessionSheet)
 						{
 							sheetItr.remove();
-							SessionWindowManager.this.selectFrontWindow();
+							WindowManager.this.selectFrontWindow();
 							break;
 						}
 					}
@@ -793,7 +795,7 @@ public class SessionWindowManager
 			}
 			_sessionWindows.remove(sessionId);
 
-			selectFrontWindow();			
+			selectFrontWindow();
 
 			_sessionClosing = false;
 		}

@@ -124,7 +124,7 @@ public class BaseSessionSheet extends BaseSheet
 			throw new IllegalArgumentException("Null ISession passed");
 		}
 		_session = session;
-		_session.getApplication().getSessionWindowManager().registerSessionSheet(this);
+		_session.getApplication().getWindowManager().registerSessionSheet(this);
 		addInternalFrameListener(new SheetActivationListener());
 	}
 

@@ -47,7 +47,7 @@ public class SessionInternalFrame extends BaseSessionSheet
 	// JASON: Put back in
 //	private MySessionListener _sessionLis;
 
-	SessionInternalFrame(ISession session)
+	public SessionInternalFrame(ISession session)
 	{
 		super(session, session.getTitle(), true, true, true, true);
 		_app = session.getApplication();

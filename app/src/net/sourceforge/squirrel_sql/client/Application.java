@@ -65,6 +65,7 @@ import net.sourceforge.squirrel_sql.client.db.AliasMaintSheetFactory;
 import net.sourceforge.squirrel_sql.client.db.DriverMaintSheetFactory;
 import net.sourceforge.squirrel_sql.client.gui.FileViewerFactory;
 import net.sourceforge.squirrel_sql.client.gui.SplashScreen;
+import net.sourceforge.squirrel_sql.client.gui.WindowManager;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.gui.laf.AllBluesBoldMetalTheme;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
@@ -78,7 +79,6 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
-import net.sourceforge.squirrel_sql.client.session.SessionWindowManager;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
 import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
@@ -119,7 +119,7 @@ class Application implements IApplication
 	private SessionManager _sessionManager;
 
 	/** This object manages the windows for this application.*/
-	private SessionWindowManager _windowManager;
+	private WindowManager _windowManager;
 
 	private LoggerController _loggerFactory;
 
@@ -307,11 +307,11 @@ class Application implements IApplication
 	}
 
 	/**
-	 * Return the manager responsible for session windows.
+	 * Return the manager responsible for windows.
 	 *
-	 * @return	the manager responsible for session windows.
+	 * @return	the manager responsible for windows.
 	 */
-	public SessionWindowManager getSessionWindowManager()
+	public WindowManager getWindowManager()
 	{
 		return _windowManager;
 	}
@@ -588,7 +588,7 @@ class Application implements IApplication
 								_resources.getDefaultDriversUrl(), null);
 
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.createWindowManager"));
-		_windowManager = new SessionWindowManager(this);
+		_windowManager = new WindowManager(this);
 
 //		_mainFrame = new MainFrame(this);
 
