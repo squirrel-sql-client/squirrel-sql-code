@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.util;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -86,7 +86,7 @@ public abstract class Resources
 
 	public KeyStroke getKeyStroke(Action action)
 	{
-		final String fullKey = Keys.MENU_ITEM + "." + getClassName(action.getClass());
+		final String fullKey = Keys.MENU_ITEM + "." + action.getClass().getName();
 
 		String accel = getResourceString(fullKey, MenuItemProperties.ACCELERATOR);
 		if (accel.length() > 0)
@@ -99,7 +99,7 @@ public abstract class Resources
 	public JMenuItem addToPopupMenu(Action action, JPopupMenu menu)
 		throws MissingResourceException
 	{
-		final String fullKey = Keys.MENU_ITEM + "." + getClassName(action.getClass());
+		final String fullKey = Keys.MENU_ITEM + "." + action.getClass().getName();
 		final JMenuItem item = menu.add(action);
 
 		if (action.getValue(Action.MNEMONIC_KEY) == null)
@@ -129,7 +129,7 @@ public abstract class Resources
 		throws MissingResourceException
 	{
 		JMenuItem item = menu.add(action);
-		final String fullKey = Keys.MENU_ITEM + "." + getClassName(action.getClass());
+		final String fullKey = Keys.MENU_ITEM + "." + action.getClass().getName();
 
 		if (action.getValue(Action.MNEMONIC_KEY) == null)
 		{
@@ -184,7 +184,7 @@ public abstract class Resources
 			throw new IllegalArgumentException("Action == null");
 		}
 
-		final String actionClassName = getClassName(action.getClass());
+		final String actionClassName = action.getClass().getName();
 		final String key = Keys.ACTION + "." + actionClassName;
 		action.putValue(Action.NAME, getResourceString(key, ActionProperties.NAME));
 		action.putValue(Action.SHORT_DESCRIPTION,
@@ -226,7 +226,7 @@ public abstract class Resources
 
 	public ImageIcon getIcon(Class objClass, String propName)
 	{
-		return getIcon(getClassName(objClass), propName);
+		return getIcon(objClass.getName(), propName);
 	}
 
 	public ImageIcon getIcon(String keyName, String propName)
@@ -288,18 +288,6 @@ public abstract class Resources
 		throws MissingResourceException
 	{
 		return _bundle.getString(keyName + "." + propName);
-	}
-
-	public String getClassName(Class objClass)
-	{
-		// Retrieve class name of the passed Action minus the package name.
-		String className = objClass.getName();
-//		int pos = className.lastIndexOf(".");
-//		if (pos != -1)
-//		{
-//			className = className.substring(pos + 1);
-//		}
-		return className;
 	}
 
 	private String getImagePathName(String iconName)
