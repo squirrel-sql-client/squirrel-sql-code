@@ -37,13 +37,12 @@ public class JavabeanDataSet implements IDataSet
 	private String _nameColumnName = "Property Name";
 	private String _valueColumnName = "Value";
 
-	// These 2 should be handled with an Iterator!!!
+	// TODO: These 2 should be handled with an Iterator!!!
 	private int _iCurrent = -1;
 	private Object[] _currentRow;
 
 	private List _data;
 
-//	private int _columnCount;
 	private DataSetDefinition _dataSetDefinition;
 
 	public JavabeanDataSet()
@@ -95,7 +94,12 @@ public class JavabeanDataSet implements IDataSet
 			final Method getter = propDesc[i].getReadMethod();
 			if (propName != null && getter != null)
 			{
-				Object[] line = generateLine(propName, bean, getter);
+                String displayName = propDesc[i].getDisplayName();
+                if (displayName == null)
+                {
+                    displayName = propName;
+                }
+				final Object[] line = generateLine(displayName, bean, getter);
 				if (line != null)
 				{
 					_data.add(line);
@@ -107,9 +111,9 @@ public class JavabeanDataSet implements IDataSet
 	/**
 	 * Generate a line for the passed property.
 	 *
-	 * @param   propName	Name of the property.
-	 * @param   bean		Bean containg the property.
-	 * @param   getter		The "getter" function to retrieve the
+	 * @param	propTitle	Descriptive name for the property.
+	 * @param	bean		Bean containg the property.
+	 * @param	getter		The "getter" function to retrieve the
 	 *						properties value.
 	 *
 	 * @return	An <CODE>Object[]</CODE> containing the cells for the line in
@@ -117,11 +121,11 @@ public class JavabeanDataSet implements IDataSet
 	 *			<CODE>null</CODE> if this property is <B>not</B> to be added
 	 *			to the table.
 	 */
-	protected Object[] generateLine(String propName, Object bean, Method getter)
+	protected Object[] generateLine(String propTitle, Object bean, Method getter)
 		throws InvocationTargetException, IllegalAccessException
 	{
 		final Object[] line = new Object[2];
-		line[0] = propName;
+		line[0] = propTitle;
 		line[1] = executeGetter(bean, getter);
 		return line;
 	}
@@ -145,7 +149,7 @@ public class JavabeanDataSet implements IDataSet
 	public synchronized boolean next(IMessageHandler msgHandler)
 		throws DataSetException
 	{
-		// This should be handled with an Iterator!!!
+		// TODO: This should be handled with an Iterator!!!
 		if (++_iCurrent < _data.size())
 		{
 			_currentRow = (Object[])_data.get(_iCurrent);
@@ -174,6 +178,5 @@ public class JavabeanDataSet implements IDataSet
 
 		ColumnDisplayDefinition[] colDefs = createColumnDefinitions();
 		_dataSetDefinition = new DataSetDefinition(colDefs);
-
 	}
 }
