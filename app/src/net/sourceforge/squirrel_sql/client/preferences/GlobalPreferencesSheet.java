@@ -21,6 +21,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -42,6 +43,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 /**
  * This sheet allows the user to maintain global preferences.
  *
@@ -238,6 +240,7 @@ public class GlobalPreferencesSheet extends BaseSheet
 		_panels.add(new GeneralPreferencesPanel());
 		_panels.add(new SQLPreferencesPanel());
 		_panels.add(new ProxyPreferencesPanel());
+		_panels.add(new DataTypePreferencesPanel());
 
 		// Go thru all loaded plugins asking for panels.
 		PluginInfo[] plugins = _app.getPluginManager().getPluginInformation();
@@ -266,6 +269,7 @@ public class GlobalPreferencesSheet extends BaseSheet
 			String hint = pnl.getHint();
 			final JScrollPane sp = new JScrollPane(pnl.getPanelComponent());
 			sp.setBorder(BorderFactory.createEmptyBorder());
+			sp.setPreferredSize(new Dimension(600, 450));
 			tabPane.addTab(pnlTitle, null, sp/*pnl.getPanelComponent()*/, hint);
 		}
 
