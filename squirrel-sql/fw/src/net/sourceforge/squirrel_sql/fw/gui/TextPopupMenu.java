@@ -29,109 +29,109 @@ import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 
 public class TextPopupMenu extends BasePopupMenu {
-    private JTextComponent _comp;
+	private JTextComponent _comp;
 
-    private CutAction _cut = new CutAction();
-    private CopyAction _copy = new CopyAction();
-    private PasteAction _paste = new PasteAction();
-    private ClearAction _clear = new ClearAction();
-    private SelectAllAction _select = new SelectAllAction();
+	private CutAction _cut = new CutAction();
+	private CopyAction _copy = new CopyAction();
+	private PasteAction _paste = new PasteAction();
+	private ClearAction _clear = new ClearAction();
+	private SelectAllAction _select = new SelectAllAction();
 
-    public TextPopupMenu() {
-        super();
-        add(_cut);
-        add(_copy);
-        add(_paste);
-        addSeparator();
-        add(_clear);
-        addSeparator();
-        add(_select);
-    }
+	public TextPopupMenu() {
+		super();
+		add(_cut);
+		add(_copy);
+		add(_paste);
+		addSeparator();
+		add(_clear);
+		addSeparator();
+		add(_select);
+	}
 
-    public void setTextComponent(JTextComponent value) {
-        _comp = value;
-    }
+	public void setTextComponent(JTextComponent value) {
+		_comp = value;
+	}
 
-    /**
-     * Show the menu.
-     */
-    public void show(Component invoker, int x, int y) {
-        updateActions();
-        super.show(invoker, x, y);
-    }
+	/**
+	 * Show the menu.
+	 */
+	public void show(Component invoker, int x, int y) {
+		updateActions();
+		super.show(invoker, x, y);
+	}
 
-    public void show(MouseEvent evt) {
-        updateActions();
-        super.show(evt);
-    }
+	public void show(MouseEvent evt) {
+		updateActions();
+		super.show(evt);
+	}
 
-    protected void updateActions() {
-        final boolean isEditable = _comp != null && _comp.isEditable();
-        _cut.setEnabled(isEditable);
-        _paste.setEnabled(isEditable);
-    }
+	protected void updateActions() {
+		final boolean isEditable = _comp != null && _comp.isEditable();
+		_cut.setEnabled(isEditable);
+		_paste.setEnabled(isEditable);
+	}
 
-    private class ClearAction extends BaseAction {
-        ClearAction() {
-            super("Clear");
-        }
+	private class ClearAction extends BaseAction {
+		ClearAction() {
+			super("Clear");
+		}
 
-        public void actionPerformed(ActionEvent evt) {
-            if (_comp != null) {
-                try {
-                    Document doc = _comp.getDocument();
-                    doc.remove(0, doc.getLength());
-                } catch (BadLocationException ignore) {
-                }
-            }
-        }
-    }
+		public void actionPerformed(ActionEvent evt) {
+			if (_comp != null) {
+				try {
+					Document doc = _comp.getDocument();
+					doc.remove(0, doc.getLength());
+				} catch (BadLocationException ignore) {
+				}
+			}
+		}
+	}
 
-    private class CutAction extends BaseAction {
-        CutAction() {
-            super("Cut");
-        }
+	private class CutAction extends BaseAction {
+		CutAction() {
+			super("Cut");
+		}
 
-        public void actionPerformed(ActionEvent evt) {
-            if (_comp != null) {
-                _comp.cut();
-            }
-        }
-    }
+		public void actionPerformed(ActionEvent evt) {
+			if (_comp != null) {
+				_comp.cut();
+			}
+		}
+	}
 
-    private class CopyAction extends BaseAction {
-        CopyAction() {
-            super("Copy");
-        }
+	private class CopyAction extends BaseAction {
+		CopyAction() {
+			super("Copy");
+		}
 
-        public void actionPerformed(ActionEvent evt) {
-            if (_comp != null) {
-                _comp.copy();
-            }
-        }
-    }
+		public void actionPerformed(ActionEvent evt) {
+			if (_comp != null) {
+				_comp.copy();
+			}
+		}
+	}
 
-    private class PasteAction extends BaseAction {
-        PasteAction() {
-            super("Paste");
-        }
+	private class PasteAction extends BaseAction {
+		PasteAction() {
+			super("Paste");
+		}
 
-        public void actionPerformed(ActionEvent evt) {
-            if (_comp != null) {
-                _comp.paste();
-            }
-        }
-    }
+		public void actionPerformed(ActionEvent evt) {
+			if (_comp != null) {
+				_comp.paste();
+			}
+		}
+	}
 
-    private class SelectAllAction extends BaseAction {
-        SelectAllAction() {
-            super("Select All");
-        }
+	private class SelectAllAction extends BaseAction {
+		SelectAllAction() {
+			super("Select All");
+		}
 
-        public void actionPerformed(ActionEvent evt) {
-            if (_comp != null) {
-                _comp.selectAll();
-            }
-        }
-    }
+		public void actionPerformed(ActionEvent evt) {
+			if (_comp != null) {
+				_comp.selectAll();
+			}
+		}
+	}
 }
