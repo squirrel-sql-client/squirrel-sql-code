@@ -38,6 +38,8 @@ import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
+import net.sourceforge.squirrel_sql.plugins.sqlscript.session_script.SessionScriptCache;
+
 /**
  * The SQL Script plugin class.
  */
@@ -50,6 +52,9 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 
     /** Folder to store user settings in. */
     private File _userSettingsFolder;
+
+	/** Cache of session scripts. */
+    private SessionScriptCache _cache;
 
     private PluginResources _resources;
 
@@ -86,7 +91,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
      * @return  the authors name.
      */
     public String getAuthor() {
-        return "Johan Compagner";
+        return "Johan Compagner/Colin Bell";
     }
 
     /**
@@ -111,14 +116,14 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
         // Folder within plugins folder that belongs to this
         // plugin.
         try {
-            _pluginAppFolder = pmgr.getPluginAppSettingsFolder(this);
+            _pluginAppFolder = getPluginAppSettingsFolder();
         } catch (IOException ex) {
             throw new PluginException(ex);
         }
 
         // Folder to store user settings.
         try {
-            _userSettingsFolder = pmgr.getPluginUserSettingsFolder(this);
+            _userSettingsFolder = getPluginUserSettingsFolder();
         } catch (IOException ex) {
             throw new PluginException(ex);
         }
@@ -136,38 +141,37 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
         action = new LoadScriptAction(app, _resources, this);
         coll.add(action);
         app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, action);
+
+        try {
+            _cache = new SessionScriptCache(this);
+        } catch (IOException ex) {
+            throw new PluginException(ex);
+        }
+        _cache.load();
+
     }
 
     /**
-     * Application is shutting down so save preferences.
+     * Application is shutting down so save data.
      */
     public void unload() {
         savePrefs();
+        _cache.save();
         super.unload();
     }
 
     /**
-     * Called when a session started. Add actions to the sessions
-     * toolbar.
+     * Called when a session started. See if any startup scripts
+     * defined for this driver/alias and if so execute them.
      *
      * @param   session     The session that is starting.
      *
      * @return  <TT>true</TT> to indicate that this plugin is
-     *          applicable to passed session..
+     *          applicable to passed session.
      */
     public boolean sessionStarted(ISession session) {
         return true;
     }
-
-    /**
-     * Get the preferences info object for this plugin.
-     *
-     * @return  The preferences info object for this plugin.
-     */
-    //LAFPreferences getLAFPreferences() {
-    //  return _lafPrefs;
-    //}
-
 
     /**
      * Load from preferences file.
