@@ -54,7 +54,7 @@ public class SaveScriptCommand implements ICommand {
      *              passed.
      */
     public SaveScriptCommand(Frame frame, ISession session, SQLScriptPlugin plugin)
-            throws IllegalArgumentException {
+        throws IllegalArgumentException {
         super();
         if (session == null) {
             throw new IllegalArgumentException("Null ISession passed");
@@ -73,14 +73,19 @@ public class SaveScriptCommand implements ICommand {
     public void execute() {
         if (_session != null) {
             JFileChooser chooser = new JFileChooser();
-            chooser.addChoosableFileFilter(new FileExtensionFilter("Text files", new String[] {".txt"}));
-            chooser.addChoosableFileFilter(new FileExtensionFilter("SQL files", new String[] {".sql"}));
+            chooser.addChoosableFileFilter(
+                new FileExtensionFilter("Text files", new String[] { ".txt" }));
+            chooser.addChoosableFileFilter(
+                new FileExtensionFilter("SQL files", new String[] { ".sql" }));
 
             SQLScriptPreferences prefs = _plugin.getPreferences();
 
             for (;;) {
                 if (prefs.getOpenInPreviousDirectory()) {
-                    String fileName = (String)_session.getPluginObject(_plugin, ISessionKeys.SAVE_SCRIPT_FILE_PATH_KEY);
+                    String fileName =
+                        (String) _session.getPluginObject(
+                            _plugin,
+                            ISessionKeys.SAVE_SCRIPT_FILE_PATH_KEY);
                     if (fileName != null) {
                         chooser.setSelectedFile(new File(fileName));
                     }
@@ -91,7 +96,8 @@ public class SaveScriptCommand implements ICommand {
                     }
                 }
 
-                if(chooser.showSaveDialog(_frame) == chooser.APPROVE_OPTION) {
+                _session.selectMainTab(ISession.IMainTabIndexes.SQL_TAB);
+                if (chooser.showSaveDialog(_frame) == chooser.APPROVE_OPTION) {
                     if (saveScript(chooser.getSelectedFile())) {
                         break;
                     }
@@ -105,12 +111,19 @@ public class SaveScriptCommand implements ICommand {
     private boolean saveScript(File file) {
         boolean doSave = false;
         if (file.exists()) {
-            doSave = Dialogs.showYesNo(_frame, file.getAbsolutePath() + "\nalready exists. Do you want to replace it?"); //i18n
+            doSave =
+                Dialogs.showYesNo(
+                    _frame,
+                    file.getAbsolutePath() + "\nalready exists. Do you want to replace it?");
+            //i18n
             if (!doSave) {
                 return false;
             }
             if (!file.canWrite()) {
-                Dialogs.showOk(_frame, "File " + file.getAbsolutePath() + "\ncannot be written to."); //i18n
+                Dialogs.showOk(
+                    _frame,
+                    "File " + file.getAbsolutePath() + "\ncannot be written to.");
+                //i18n
                 return false;
             }
             file.delete();
@@ -119,20 +132,24 @@ public class SaveScriptCommand implements ICommand {
         }
 
         if (doSave) {
-            _session.putPluginObject(_plugin, ISessionKeys.SAVE_SCRIPT_FILE_PATH_KEY, file.getAbsolutePath());
+            _session.putPluginObject(
+                _plugin,
+                ISessionKeys.SAVE_SCRIPT_FILE_PATH_KEY,
+                file.getAbsolutePath());
             FileOutputStream fos = null;
             try {
                 fos = new FileOutputStream(file);
                 String sScript = _session.getSQLScript();
                 fos.write(sScript.getBytes());
-                _session.getMessageHandler().showMessage("SQL script saved to " + file.getAbsolutePath());
-            } catch(IOException ex) {
+                _session.getMessageHandler().showMessage(
+                    "SQL script saved to " + file.getAbsolutePath());
+            } catch (IOException ex) {
                 _session.getMessageHandler().showMessage(ex);
             } finally {
                 if (fos != null) {
                     try {
                         fos.close();
-                    } catch(IOException ignore){
+                    } catch (IOException ignore) {
                     }
                 }
             }

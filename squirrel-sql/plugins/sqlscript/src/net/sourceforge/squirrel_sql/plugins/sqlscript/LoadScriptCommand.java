@@ -91,6 +91,7 @@ public class LoadScriptCommand implements ICommand {
                     chooser.setCurrentDirectory(new File(dirName));
                 }
             }
+             _session.selectMainTab(ISession.IMainTabIndexes.SQL_TAB);
             if(chooser.showOpenDialog(_frame) == chooser.APPROVE_OPTION) {
                 loadScript(chooser.getSelectedFile());
             }
