@@ -1366,7 +1366,8 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 	   {
 		   final SQLConnection conn = _session.getSQLConnection();
 		   final SQLDatabaseMetaData md = conn.getSQLMetaData();
-		   final ITableInfo[] tables = md.getTables(null, null, "%", null);
+//		   final ITableInfo[] tables = md.getTables(null, null, "%", null);
+		   final ITableInfo[] tables = md.getAllTables();
 
 			// filter the list of all DB objects looking for things with the given name
 			for (int i = 0; i < tables.length; ++i)
