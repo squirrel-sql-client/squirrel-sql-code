@@ -687,6 +687,7 @@ public class CellComponentFactory {
 			"net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeClob",
 			"net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeOther",
 			"net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeUnknown",
+			"net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeDate",
 			 };
 		
 		// make a single list of all class names that we need to check.
