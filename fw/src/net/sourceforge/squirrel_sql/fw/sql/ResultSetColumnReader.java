@@ -27,14 +27,11 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
 
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 public class ResultSetColumnReader
 {
 	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(ResultSetColumnReader.class);
+//	private final static ILogger s_log =
+//		LoggerController.createLogger(ResultSetColumnReader.class);
 
 	private final static Long LONG_ZERO = new Long(0);
 	private final static Double DOUBLE_ZERO = new Double(0);
@@ -51,7 +48,7 @@ public class ResultSetColumnReader
 
 	public ResultSetColumnReader(ResultSet rs) throws SQLException
 	{
-		this(rs,  null);
+		this(rs, null);
 	}
 
 

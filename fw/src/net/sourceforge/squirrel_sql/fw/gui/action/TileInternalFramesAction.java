@@ -25,38 +25,25 @@ import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * This class will tile all internal frames owned by a
  * <CODE>JDesktopPane</CODE>.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public abstract class TileInternalFramesAction extends BaseAction implements IHasJDesktopPane
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
-	{
-		String TITLE = "Tile";
-	}
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(TileInternalFramesAction.class);
 
 	/**
 	 * The <CODE>JDesktopPane</CODE> that owns the internal frames to be
 	 * tiled.
 	 */
 	private JDesktopPane _desktop;
-
-	/**
-	 * <CODE>rows</CODE>, the number of rows of opened tiled windows.
-	 */
-//	private int _rows = 0;
-
-	/**
-	 * <CODE>cols</CODE>, the number of cols of opened tiled windows.
-	 */
-//	private int _cols = 0;
 
 	/**
 	 * Default constructor.
@@ -70,12 +57,12 @@ public abstract class TileInternalFramesAction extends BaseAction implements IHa
 	 * Constructor specifying the <CODE>JDesktopPane</CODE> that owns the
 	 * internal frames to be tiled.
 	 *
-	 * @param   desktop	 the <CODE>JDesktopPane</CODE> that owns the
-	 *					  internal frames to be cascaded.
+	 * @param	desktop		the <CODE>JDesktopPane</CODE> that owns the
+	 *						internal frames to be cascaded.
 	 */
 	public TileInternalFramesAction(JDesktopPane desktop)
 	{
-		super(i18n.TITLE);
+		super(s_stringMgr.getString("TileInternalFramesAction.title"));
 		setJDesktopPane(desktop);
 	}
 
@@ -83,8 +70,8 @@ public abstract class TileInternalFramesAction extends BaseAction implements IHa
 	 * Set the <CODE>JDesktopPane</CODE> that owns the internal frames to be
 	 * cascaded.
 	 *
-	 * @param   desktop	 the <CODE>JDesktopPane</CODE> that owns the
-	 *					  internal frames to be cascaded.
+	 * @param	desktop		the <CODE>JDesktopPane</CODE> that owns the
+	 *						internal frames to be cascaded.
 	 */
 	public void setJDesktopPane(JDesktopPane value)
 	{
@@ -94,7 +81,7 @@ public abstract class TileInternalFramesAction extends BaseAction implements IHa
 	/**
 	 * Tile the internal frames.
 	 *
-	 * @param   evt	 Specifies the event being proceessed.
+	 * @param	evt	 Specifies the event being proceessed.
 	 */
 	public void actionPerformed(ActionEvent evt)
 	{
@@ -115,7 +102,6 @@ public abstract class TileInternalFramesAction extends BaseAction implements IHa
 				int xPos = 0;
 				int yPos = 0;
 
-//				DesktopManager mgr = _desktop.getDesktopManager();
 				for (int y = 0; y < rows; ++y)
 				{
 					for (int x = 0; x < cols; ++x)
@@ -168,7 +154,7 @@ public abstract class TileInternalFramesAction extends BaseAction implements IHa
 	 * @param	internalFrameCount	Number of internal frames to be rearranged.
 	 */
 	protected abstract RowColumnCount getRowColumnCount(int internalFrameCount);
-	
+
 	public final static class RowColumnCount
 	{
 		protected final int _rowCount;

@@ -1,8 +1,8 @@
 package net.sourceforge.squirrel_sql.fw.sql;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
- * Copyright (C) 2001-2003 Johan Compagner
+ * Copyright (C) 2001-2004 Johan Compagner
  * jcompagner@j-com.nl
  *
  * This library is free software; you can redistribute it and/or
@@ -325,8 +325,8 @@ public class ResultSetReader
 						break;
 
 					case Types.BLOB:
-						//	Since we are reading Meta-data about the DB, we should
-						// never see a BLOB.   If we do, the contents are not interpretable
+						// Since we are reading Meta-data about the DB, we should
+						// never see a BLOB. If we do, the contents are not interpretable
 						// by Squirrel, so just tell the user that it is a BLOB and that it
 						// has data.
 //??						if (_largeObjInfo.getReadBlobs())
@@ -359,7 +359,7 @@ public class ResultSetReader
 
 					case Types.CLOB:
 						// Since we are reading Meta-data about the DB, we should
-						// never see a CLOB.  However, if we do we assume that
+						// never see a CLOB. However, if we do we assume that
 						// it is printable text and that the user wants to see it, so
 						// read in the entire thing.
 //??						if (_largeObjInfo.getReadClobs())
@@ -428,7 +428,7 @@ public class ResultSetReader
 			catch (Throwable th)
 			{
 				_errorOccured = true;
-				row[i] = "<Error>";
+				row[i] = s_stringMgr.getString("ResultSetReader.error");
 				StringBuffer msg = new StringBuffer("Error reading column data");
 				msg.append(", column index = ").append(idx);
 				s_log.error(msg.toString(), th);
@@ -456,8 +456,8 @@ public class ResultSetReader
 				{
 					case Types.NULL:
 						row[i] = null;
-						break;					
-					
+						break;
+
 					// all of the following have been converted to use the DataType objects
 					// TODO: When JDK1.4 is the earliest JDK supported
 					// by Squirrel then remove the hardcoding of the
@@ -473,15 +473,15 @@ public class ResultSetReader
 					case Types.SMALLINT:
 					case Types.TINYINT:
 					case Types.BIGINT :
-					
+
 					case Types.DOUBLE:
 					case Types.FLOAT:
 					case Types.REAL:
-					
+
 					case Types.DATE :
 					case Types.TIME :
 					case Types.TIMESTAMP :
-					
+
 					// TODO: Hard coded -. JDBC/ODBC bridge JDK1.4
 					// brings back -9 for nvarchar columns in
 					// MS SQL Server tables.
@@ -491,15 +491,15 @@ public class ResultSetReader
 					case Types.LONGVARCHAR:
 					case -9:
 					case -8:
-					
+
 					// binary types
 					case Types.BINARY:
 					case Types.VARBINARY:
 					case Types.LONGVARBINARY:
-					
+
 					case Types.CLOB:
 					case Types.BLOB:
-									
+
 					case Types.OTHER:
 
 					default:
@@ -513,7 +513,7 @@ public class ResultSetReader
 			catch (Throwable th)
 			{
 				_errorOccured = true;
-				row[i] = "<Error>";
+				row[i] = s_stringMgr.getString("ResultSetReader.error");
 				StringBuffer msg = new StringBuffer("Error reading column data");
 				msg.append(", column index = ").append(idx);
 				s_log.error(msg.toString(), th);

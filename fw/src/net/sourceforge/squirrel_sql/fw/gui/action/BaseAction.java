@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui.action;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -24,11 +24,10 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
 import javax.swing.JPopupMenu;
-
 /**
- * This is the base class for all <CODE>Action</CODE> classes.
+ * This is the base class for all <TT>Action</TT> classes.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public abstract class BaseAction extends AbstractAction
 {
@@ -50,7 +49,7 @@ public abstract class BaseAction extends AbstractAction
 	/**
 	 * Ctor specifying the title.
 	 *
-	 * @param   title   Title for this action.
+	 * @param	title	Title for this action.
 	 */
 	protected BaseAction(String title)
 	{
@@ -60,8 +59,8 @@ public abstract class BaseAction extends AbstractAction
 	/**
 	 * Ctor specifying the title and icon.
 	 *
-	 * @param   title   Title for this action.
-	 * @param   icon	Icon for this action.
+	 * @param	title	Title for this action.
+	 * @param	icon	Icon for this action.
 	 */
 	protected BaseAction(String title, Icon icon)
 	{
@@ -69,50 +68,30 @@ public abstract class BaseAction extends AbstractAction
 	}
 
 	/**
-	 * Set the default icon for this action.
-	 * 
-	 * @param	icon	The new icon.
-	 */
-	//public void setIcon(Icon icon)
-	//{
-	//	putValue(Action.SMALL_ICON, icon);
-	//}
-
-	/**
-	 * Set the "rollover" icon for this action.
-	 * 
-	 * @param	icon	The new icon.
-	 */
-	//public void setRolloverIcon(Icon icon)
-	//{
-	//	putValue(IBaseActionPropertyNames.ROLLOVER_ICON, icon);
-	//}
-
-	/**
-	 * Return the <CODE>Frame</CODE> object associated with the passed event.<P>
+	 * Return the <TT>Frame</TT> object associated with the passed event.<P>
 	 *
-	 * @param   evt	 <CODE>ActionEvent</CODE> to find frame for.
+	 * @param	evt	 <TT>ActionEvent</TT> to find frame for.
 	 *
-	 * @return  <COD>Frame</CODE> or <CODE>null</CODE> if none found.
+	 * @return	<TT>Frame</TT> or <TT>null</TT> if none found.
 	 */
 	protected Frame getParentFrame(ActionEvent evt)
 	{
 		Frame parent = null;
 		if (evt != null)
 		{
-			Object src = evt.getSource();
+			final Object src = evt.getSource();
 			if (src instanceof Component)
 			{
-				Component comp = (Component) src;
+				Component comp = (Component)src;
 				while (comp != null && parent == null)
 				{
 					if (comp instanceof Frame)
 					{
-						parent = (Frame) comp;
+						parent = (Frame)comp;
 					}
 					else if (comp instanceof JPopupMenu)
 					{
-						comp = ((JPopupMenu) comp).getInvoker();
+						comp = ((JPopupMenu)comp).getInvoker();
 					}
 					else
 					{

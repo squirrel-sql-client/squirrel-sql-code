@@ -37,7 +37,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  * This panel allows the user to review and maintain
  * the properties for a JDBC driver.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class DriverPropertiesPanel extends JPanel
 {
@@ -137,7 +137,7 @@ public class DriverPropertiesPanel extends JPanel
 		pnl.add(_descriptionLbl);
 		pnl.add(new JSeparator());
 		pnl.add(new MultipleLineLabel(i18n.INSTRUCTIONS));
-		
+
 		return pnl;
 	}
 }

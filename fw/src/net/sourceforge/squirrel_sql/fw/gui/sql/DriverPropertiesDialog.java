@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui.sql;
 /*
- * Copyright (C) 2002-2003 Colin Bell
+ * Copyright (C) 2002-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -79,7 +79,7 @@ public class DriverPropertiesDialog extends JDialog
 
 	public DriverPropertiesDialog(Frame owner, SQLDriverPropertyCollection props)
 	{
-		super(owner, "Driver Properties");
+		super(owner, s_stringMgr.getString("DriverPropertiesDialog.title"));
 		if (props == null)
 		{
 			throw new IllegalArgumentException("SQLDriverPropertyCollection == null");

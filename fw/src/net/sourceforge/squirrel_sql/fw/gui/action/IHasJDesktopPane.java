@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,7 +19,8 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
  */
 import javax.swing.JDesktopPane;
 
-public interface IHasJDesktopPane {
+public interface IHasJDesktopPane
+{
 	/**
 	 * Set the <TT>JDesktopPane</TT>.
 	 *

@@ -25,24 +25,21 @@ import javax.swing.JInternalFrame;
 
 import net.sourceforge.squirrel_sql.fw.gui.CascadeInternalFramePositioner;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * This class will cascade all internal frames owned by a
  * <CODE>JDesktopPane</CODE>.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class CascadeInternalFramesAction
 	extends BaseAction
 	implements IHasJDesktopPane
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
-	{
-		String TITLE = "Cascade";
-	}
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(CascadeInternalFramesAction.class);
 
 	/**
 	 * The <CODE>JDesktopPane</CODE> that owns the internal frames to be
@@ -62,12 +59,12 @@ public class CascadeInternalFramesAction
 	 * Constructor specifying the <CODE>JDesktopPane</CODE> that owns the
 	 * internal frames to be cascaded.
 	 *
-	 * @param   desktop	 the <CODE>JDesktopPane</CODE> that owns the
-	 *					  internal frames to be cascaded.
+	 * @param	desktop		the <CODE>JDesktopPane</CODE> that owns the
+	 *						internal frames to be cascaded.
 	 */
 	public CascadeInternalFramesAction(JDesktopPane desktop)
 	{
-		super(i18n.TITLE);
+		super(s_stringMgr.getString("CascadeInternalFramesAction.title"));
 		setJDesktopPane(desktop);
 	}
 
@@ -75,8 +72,8 @@ public class CascadeInternalFramesAction
 	 * Set the <CODE>JDesktopPane</CODE> that owns the internal frames to be
 	 * tiled.
 	 *
-	 * @param   desktop	 the <CODE>JDesktopPane</CODE> that owns the
-	 *					  internal frames to be tiled.
+	 * @param	desktop		the <CODE>JDesktopPane</CODE> that owns the
+	 *						internal frames to be tiled.
 	 */
 	public void setJDesktopPane(JDesktopPane value)
 	{
@@ -86,7 +83,7 @@ public class CascadeInternalFramesAction
 	/**
 	 * Cascade the internal frames.
 	 *
-	 * @param   evt	 Specifies the event being proceessed.
+	 * @param	evt	 Specifies the event being proceessed.
 	 */
 	public void actionPerformed(ActionEvent evt)
 	{

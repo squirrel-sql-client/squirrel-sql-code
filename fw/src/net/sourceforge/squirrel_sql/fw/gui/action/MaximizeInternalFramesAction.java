@@ -24,7 +24,8 @@ import javax.swing.JInternalFrame;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.MaximizeInternalFramePositioner;
-
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * This class will cascade all internal frames owned by a
  * <CODE>JDesktopPane</CODE>.
@@ -35,14 +36,9 @@ public class MaximizeInternalFramesAction
 	extends BaseAction
 	implements IHasJDesktopPane
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
-	{
-		String TITLE = "Maximize";
-	}
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(CascadeInternalFramesAction.class);
 
 	/**
 	 * The <CODE>JDesktopPane</CODE> that owns the internal frames to be
@@ -67,7 +63,7 @@ public class MaximizeInternalFramesAction
 	 */
 	public MaximizeInternalFramesAction(JDesktopPane desktop)
 	{
-		super(i18n.TITLE);
+		super(s_stringMgr.getString("MaximizeInternalFramesAction.title"));
 		setJDesktopPane(desktop);
 	}
 

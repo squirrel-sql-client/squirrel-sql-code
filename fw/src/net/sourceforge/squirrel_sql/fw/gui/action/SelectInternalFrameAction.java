@@ -72,7 +72,7 @@ public class SelectInternalFrameAction extends BaseAction
 	{
 		if (child == null)
 		{
-			throw new IllegalArgumentException("null JInternalFrame passed");
+			throw new IllegalArgumentException("JInternalFrame == null");
 		}
 
 		String myTitle = child.getTitle();

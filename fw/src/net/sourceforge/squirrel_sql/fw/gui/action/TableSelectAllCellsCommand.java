@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui.action;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -30,7 +30,7 @@ public class TableSelectAllCellsCommand implements ICommand
 		super();
 		if (table == null)
 		{
-			throw new IllegalArgumentException("Null JTable passed");
+			throw new IllegalArgumentException("JTable == null");
 		}
 		_table = table;
 	}

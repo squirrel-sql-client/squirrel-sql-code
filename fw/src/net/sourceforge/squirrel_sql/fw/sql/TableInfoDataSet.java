@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.sql;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -34,33 +34,6 @@ public class TableInfoDataSet implements IDataSet
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(TableInfoDataSet.class);
-
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-//	private interface i18n
-//	{
-//		interface ColumnHeadings
-//		{
-//			String PROPERTY = "Property";
-//			String VALUE = "Value";
-//		}
-//
-//		interface RowHeadings
-//		{
-//			String NAME = "Table Name";
-//			String QUALIFIED_NAME = "Qualified Name";
-//			String CATALOG = "Catalogue";
-//			String SCHEMA = "Schema";
-//			String TYPE = "Type";
-//			String REMARKS = "Remarks";
-//		}
-//		String UNSUPPORTED = "<Unsupported>";
-//		String UNKNOWN = "<Unknown>";
-//	}
-
-//	private final static String EMPTY_STRING = "";
 
 	private final static String[] s_hdgs =
 		new String[]

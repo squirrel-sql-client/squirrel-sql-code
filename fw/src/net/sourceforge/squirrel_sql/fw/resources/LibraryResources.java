@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.resources;
 /*
- * Copyright (C) 2002-2003 Colin Bell
+ * Copyright (C) 2002-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -21,7 +21,6 @@ import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 public class LibraryResources extends Resources
 {
-
 	public interface IImageNames
 	{
 		String TABLE_ASCENDING = "table.ascending";
