@@ -132,6 +132,13 @@ public class DataTypeClob
 	 * is <tt>false</TT> then this specifies the number of characters to read.
 	 */
 	private static int _readClobsSize = LARGE_COLUMN_DEFAULT_READ_LENGTH;
+	
+	/**
+	 * If <tt>true</tt> then show newlines as "\n" for the in-cell display,
+	 * otherwise do not display newlines in the in-cell display
+	 * (i.e. they are thrown out by JTextField when it loads the text document behind the cell).
+	 */
+	private static boolean _makeNewlinesVisibleInCell = true;
 
 
 	/**
@@ -173,6 +180,11 @@ public class DataTypeClob
 			String readClobsSizeString = DTProperties.get(thisClassName, "readClobsSize");
 			if (readClobsSizeString != null)
 				_readClobsSize = Integer.parseInt(readClobsSizeString);
+
+			_makeNewlinesVisibleInCell = true;	// set to the default
+			String makeNewlinesVisibleString = DTProperties.get(thisClassName, "makeNewlinesVisibleInCell");
+			if (makeNewlinesVisibleString != null && makeNewlinesVisibleString.equals("false"))
+				_makeNewlinesVisibleInCell = false;
 			
 			propertiesAlreadyLoaded = true;
 		}
@@ -212,7 +224,10 @@ public class DataTypeClob
 	 * Render a value into text for this DataType.
 	 */
 	public String renderObject(Object value) {
-		return (String)_renderer.renderObject(value);
+		String text = (String)_renderer.renderObject(value);
+		if (_makeNewlinesVisibleInCell)
+			text = text.replaceAll("\n", "/\\n");
+		return text;
 	}
 	
 	/**
@@ -359,11 +374,13 @@ public class DataTypeClob
 	 */
 	 public JTextArea getJTextArea(Object value) {
 		_textComponent = new RestorableJTextArea();
-		
-		
+			
 		// value is a simple string representation of the data,
-		// the same one used in Text and in-cell operations.
-		((RestorableJTextArea)_textComponent).setText(renderObject(value));
+		// but NOT the same one used in the Text and in-cell operations.
+		// The in-cell version may replace newline chars with "\n" while this version
+		// does not.  In other respects it is the same as the in-cell version because both
+		// use the _renderer object to do the rendering.
+		((RestorableJTextArea)_textComponent).setText((String)_renderer.renderObject(value));
 		
 		// special handling of operations while editing this data type
 		((RestorableJTextArea)_textComponent).addKeyListener(new KeyTextHandler());
@@ -785,6 +802,10 @@ public class DataTypeClob
 
 		// text field for how many bytes of Blob to read
 		private IntegerField _showClobSizeField = new IntegerField(5);
+		
+		// check box for whether to show newlines as "\n" for in-cell display
+		private JCheckBox _makeNewlinesVisibleInCellChk =
+			new JCheckBox("Show newlines as \\n within cells");
 	   
 
 		public ClobOkJPanel() {
@@ -810,8 +831,12 @@ public class DataTypeClob
 				}
 			});
 
+			// field for size of text to read
 			_showClobSizeField = new IntegerField(5);	
 			_showClobSizeField.setInt(_readClobsSize);
+			
+			// checkbox for displaying newlines as \n in-cell
+			_makeNewlinesVisibleInCellChk.setSelected(_makeNewlinesVisibleInCell);
 
 	 	 
 			// handle cross-connection between fields
@@ -845,6 +870,11 @@ public class DataTypeClob
 
 			++gbc.gridx;
 			add(_showClobSizeField, gbc);
+			
+			++gbc.gridy;
+			gbc.gridx = 0;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
+			add(_makeNewlinesVisibleInCellChk, gbc);
 
 		} // end of constructor for inner class
 	 
@@ -869,6 +899,11 @@ public class DataTypeClob
 			DTProperties.put(
 				thisClassName,
 				"readClobsSize", Integer.toString(_readClobsSize));
+
+			_makeNewlinesVisibleInCell = _makeNewlinesVisibleInCellChk.isSelected();
+			DTProperties.put(
+				thisClassName,
+				"makeNewlinesVisibleInCell", Boolean.toString(_makeNewlinesVisibleInCell));
 		}
 	 
 	 } // end of inner class
