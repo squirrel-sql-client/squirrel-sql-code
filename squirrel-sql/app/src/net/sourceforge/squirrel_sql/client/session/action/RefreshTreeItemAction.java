@@ -19,22 +19,26 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
+import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+
 /**
- * @version 	$Id: RefreshTreeItemAction.java,v 1.2 2002-03-26 12:15:35 colbell Exp $
+ * @version 	$Id: RefreshTreeItemAction.java,v 1.3 2002-07-19 22:44:03 colbell Exp $
  * @author		Johan Compagner
  */
-public class RefreshTreeItemAction extends SquirrelAction implements ISessionAction
+public class RefreshTreeItemAction
+	extends SquirrelAction
+	implements ISessionAction
 {
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(RefreshTreeItemAction.class);
+	private static ILogger s_log =
+		LoggerController.createLogger(RefreshTreeItemAction.class);
 
 	private ISession _session;
 
@@ -43,7 +47,8 @@ public class RefreshTreeItemAction extends SquirrelAction implements ISessionAct
 	 * @param app
 	 * @throws IllegalArgumentException
 	 */
-	public RefreshTreeItemAction(IApplication app) throws IllegalArgumentException
+	public RefreshTreeItemAction(IApplication app)
+		throws IllegalArgumentException
 	{
 		super(app);
 	}
@@ -53,12 +58,24 @@ public class RefreshTreeItemAction extends SquirrelAction implements ISessionAct
 	 */
 	public void actionPerformed(ActionEvent e)
 	{
-		IDatabaseObjectInfo[] selected = _session.getSelectedDatabaseObjects();
-		if(selected != null)
+		if (_session != null)
 		{
-			for (int i = 0; i < selected.length; i++)
+//			CursorChanger cursorChg = new CursorChanger(_session.getApplication().getMainFrame());
+//			cursorChg.show();
+			try
 			{
-//				_session.getSessionSheet().refreshTree();
+				_session.getSessionSheet().refreshSelectedDatabaseObjects();
+			}
+			catch (BaseSQLException ex)
+			{
+				final String msg = "Error occured refreshing the objects tree";
+				s_log.error(msg, ex);
+				_session.getMessageHandler().showMessage(msg);
+				_session.getMessageHandler().showMessage(ex);
+			}
+			finally
+			{
+//				cursorChg.restore();
 			}
 		}
 	}

@@ -26,35 +26,47 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
-public class RefreshTreeAction extends SquirrelAction implements ISessionAction {
+public class RefreshTreeAction extends SquirrelAction implements ISessionAction
+{
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(RefreshTreeAction.class);
+	private static ILogger s_log =
+		LoggerController.createLogger(RefreshTreeAction.class);
 
 	private ISession _session;
 
-	public RefreshTreeAction(IApplication app) {
+	public RefreshTreeAction(IApplication app)
+	{
 		super(app);
 	}
 
-	public void setSession(ISession session) {
+	public void setSession(ISession session)
+	{
 		_session = session;
 	}
 
-	public void actionPerformed(ActionEvent evt) {
-		if (_session != null) {
+	public void actionPerformed(ActionEvent evt)
+	{
+		if (_session != null)
+		{
 			CursorChanger cursorChg = new CursorChanger(_session.getApplication().getMainFrame());
 			cursorChg.show();
-			try {
+			try
+			{
 				_session.getSessionSheet().refreshTree();
-			} catch (BaseSQLException ex) {
-				s_log.error("Error occured refreshing the objects tree", ex);
-			} finally {
+			}
+			catch (BaseSQLException ex)
+			{
+				final String msg = "Error occured refreshing the objects tree";
+				s_log.error(msg, ex);
+				_session.getMessageHandler().showMessage(msg);
+				_session.getMessageHandler().showMessage(ex);
+			}
+			finally
+			{
 				cursorChg.restore();
 			}
 		}
 	}
 }
-

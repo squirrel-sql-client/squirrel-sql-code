@@ -62,6 +62,11 @@ public class ObjectsPanel extends JPanel {
 		_tree.refresh();
 	}
 
+	public void refreshSelectedDatabaseObjects() throws BaseSQLException
+	{
+		_tree.refreshSelectedDatabaseObjects();
+	}
+
 	/**
 	 * Return an array of <TT>IDatabaseObjectInfo</TT> objects representing all
 	 * the objects selected in the objects tree.

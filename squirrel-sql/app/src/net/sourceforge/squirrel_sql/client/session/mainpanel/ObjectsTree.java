@@ -23,7 +23,6 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
 import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -35,17 +34,17 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-import javax.swing.event.TreeExpansionEvent;
-import javax.swing.event.TreeExpansionListener;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectSimpleNameInfoComparator;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.EnumerationIterator;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -59,9 +58,12 @@ import net.sourceforge.squirrel_sql.client.session.objectstree.BaseNodeExpandedL
 import net.sourceforge.squirrel_sql.client.session.objectstree.ObjectsTreeModel;
 import net.sourceforge.squirrel_sql.client.session.objectstree.TreeLoadedListener;
 
-class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedListener {
+class ObjectsTree extends JTree
+					implements BaseNodeExpandedListener, TreeLoadedListener
+{
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(ObjectsTree.class);
+	private static ILogger s_log =
+		LoggerController.createLogger(ObjectsTree.class);
 
 	private ISession _session;
 	private ObjectsTreeModel _model;
@@ -69,19 +71,21 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 	private CursorChanger _cursorChg;
 
 	/*
-	 * popupmenu for the actions (also plugins can add actions to this later on?)
+	 * popupmenu for the actions (TODO: lso plugins can add actions to this later on?)
 	 */
 	private JPopupMenu _treeActions;
 
-	private static DatabaseObjectSimpleNameInfoComparator s_comparator = new DatabaseObjectSimpleNameInfoComparator();
+	private static DatabaseObjectSimpleNameInfoComparator s_comparator =
+		new DatabaseObjectSimpleNameInfoComparator();
 
-	ObjectsTree(ISession session) {
+	ObjectsTree(ISession session)
+	{
 		super();
 		_session = session;
 		_cursorChg = new CursorChanger(this);
 		_cursorChg.show();
 		_model = new ObjectsTreeModel(session);
-		((BaseNode)_model.getRoot()).addBaseNodeExpandListener(this);
+		((BaseNode) _model.getRoot()).addBaseNodeExpandListener(this);
 		_model.addTreeLoadedListener(this);
 		_model.fillTree();
 		setModel(_model);
@@ -93,35 +97,43 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 		clearSelection();
 		addSelectionRow(0);
 
-		ActionCollection actions = _session.getApplication().getActionCollection();
+		ActionCollection actions =
+			_session.getApplication().getActionCollection();
 
 		_treeActions = new JPopupMenu();
-		_treeActions.add(new JMenuItem(actions.get(RefreshTreeItemAction.class)));
+		_treeActions.add(
+			new JMenuItem(actions.get(RefreshTreeItemAction.class)));
 		_treeActions.add(new JMenuItem(actions.get(DropTableAction.class)));
 		/*
+		 * : TODO:
 		session.getApplication().getPluginManager();
 		_treeActions.add(XXXXX);
 		*/
 
 		addMouseListener(new MouseAdapter()
 		{
-				public void mousePressed(MouseEvent evt) {
-					if (evt.isPopupTrigger()) {
-						_treeActions.show(ObjectsTree.this,evt.getX(),evt.getY());
-					}
+			public void mousePressed(MouseEvent evt)
+			{
+				if (evt.isPopupTrigger())
+				{
+					_treeActions.show(ObjectsTree.this, evt.getX(), evt.getY());
 				}
-				public void mouseReleased(MouseEvent evt) {
-					if (evt.isPopupTrigger()) {
-						_treeActions.show(ObjectsTree.this,evt.getX(),evt.getY());
-					}
+			}
+			public void mouseReleased(MouseEvent evt)
+			{
+				if (evt.isPopupTrigger())
+				{
+					_treeActions.show(ObjectsTree.this, evt.getX(), evt.getY());
 				}
-			});
-		}
+			}
+		});
+	}
 
 	/**
 	 * Component has been added to its parent.
 	 */
-	public void addNotify() {
+	public void addNotify()
+	{
 		super.addNotify();
 		// Register so that we can display different tooltips depending
 		// which entry in list mouse is over.
@@ -131,7 +143,8 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 	/**
 	 * Component has been removed from its parent.
 	 */
-	public void removeNotify() {
+	public void removeNotify()
+	{
 		// Don't need tooltips any more.
 		ToolTipManager.sharedInstance().unregisterComponent(this);
 		super.removeNotify();
@@ -141,11 +154,11 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 	{
 		TreePath[] paths = getSelectionPaths();
 		List l = _model.refresh();
-		if(l != null)
+		if (l != null)
 		{
-			for (int i=0;i<l.size();i++)
+			for (int i = 0; i < l.size(); i++)
 			{
-				BaseNode node = (BaseNode)l.get(i);
+				BaseNode node = (BaseNode) l.get(i);
 				node.addBaseNodeExpandListener(this);
 				TreePath path = new TreePath(_model.getPathToRoot(node));
 				expandPath(path);
@@ -154,6 +167,37 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 		setSelectionPaths(paths);
 		_cursorChg.restore();
 	}
+
+	void refreshSelectedDatabaseObjects() throws BaseSQLException
+	{
+		TreePath[] paths = getSelectionPaths();
+		if (paths != null)
+		{
+			for (int i = 0; i < paths.length; i++)
+			{
+				TreePath path = paths[i];
+				Object obj = path.getLastPathComponent();
+				if (obj instanceof BaseNode)
+				{
+					BaseNode node = (BaseNode)obj;
+					List l = _model.refresh(node);
+					if (l != null)
+					{
+						for (int j = 0; j < l.size(); j++)
+						{
+							BaseNode childNode = (BaseNode)l.get(j);
+							childNode.addBaseNodeExpandListener(this);
+							TreePath childPath = new TreePath(_model.getPathToRoot(childNode));
+							expandPath(childPath);
+						}
+					}
+					_model.nodeStructureChanged(node);
+				}
+			}
+			setSelectionPaths(paths);
+		}
+	}
+
 	/*
 	 * @see BaseNodeExpandedListener#nodeExpanded(BaseNode)
 	 */
@@ -161,6 +205,7 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 	{
 		_cursorChg.restore();
 	}
+
 	/*
 	 * @see TreeLoadedListener#treeLoaded()
 	 */
@@ -168,18 +213,23 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 	{
 		_cursorChg.restore();
 	}
+
 	/**
 	 * Return the name of the object that the mouse is currently
 	 * over as the tooltip text.
 	 *
 	 * @param   event   Used to determine the current mouse position.
 	 */
-	public String getToolTipText(MouseEvent evt) {
+	public String getToolTipText(MouseEvent evt)
+	{
 		String tip = null;
 		final TreePath path = getPathForLocation(evt.getX(), evt.getY());
-		if (path != null) {
+		if (path != null)
+		{
 			tip = path.getLastPathComponent().toString();
-		} else {
+		}
+		else
+		{
 			tip = getToolTipText();
 		}
 		return tip;
@@ -192,45 +242,56 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 	 *
 	 * @return	array of <TT>IDatabaseObjectInfo</TT> objects.
 	 */
-	IDatabaseObjectInfo[] getSelectedDatabaseObjects() {
+	IDatabaseObjectInfo[] getSelectedDatabaseObjects()
+	{
 		TreePath[] paths = this.getSelectionPaths();
 		List list = new ArrayList();
-		for (int i = 0; i < paths.length; i++) {
+		for (int i = 0; i < paths.length; i++)
+		{
 			Object o = paths[i].getLastPathComponent();
-			if (o instanceof IDatabaseObjectInfo) {
+			if (o instanceof IDatabaseObjectInfo)
+			{
 				list.add(o);
 			}
 		}
-		IDatabaseObjectInfo[] objInfo = (IDatabaseObjectInfo[])list.toArray(new IDatabaseObjectInfo[list.size()]);
+		IDatabaseObjectInfo[] objInfo =
+			(IDatabaseObjectInfo[]) list.toArray(
+				new IDatabaseObjectInfo[list.size()]);
 		Arrays.sort(objInfo, s_comparator);
 		return objInfo;
 	}
 
-	private final class MyExpansionListener implements TreeExpansionListener {
-		MyExpansionListener() {
+	private final class MyExpansionListener implements TreeExpansionListener
+	{
+		MyExpansionListener()
+		{
 			super();
 		}
 
-		public void treeExpanded(TreeExpansionEvent evt) {
+		public void treeExpanded(TreeExpansionEvent evt)
+		{
 			DefaultMutableTreeNode node =
-				(DefaultMutableTreeNode)evt.getPath().getLastPathComponent();
+				(DefaultMutableTreeNode) evt.getPath().getLastPathComponent();
 			if (node instanceof BaseNode)
 			{
-				BaseNode bNode= (BaseNode)node;
+				BaseNode bNode = (BaseNode) node;
 				bNode.addBaseNodeExpandListener(ObjectsTree.this);
 				_cursorChg.show();
 				try
 				{
 					bNode.expand();
-				} catch (BaseSQLException ex)
+				}
+				catch (BaseSQLException ex)
 				{
 					// Can't happen anymore?? Because (some) are threaded now.
-					ObjectsTree.this._session.getMessageHandler().showMessage(ex);
+					ObjectsTree.this._session.getMessageHandler().showMessage(
+						ex);
 				}
 			}
 		}
 
-		public void treeCollapsed(TreeExpansionEvent evt) {
+		public void treeCollapsed(TreeExpansionEvent evt)
+		{
 		}
 	}
 
@@ -239,9 +300,12 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 	 *
 	 * Make this a public class in the fw packages. ??
 	 */
-	private final static class SavedExpansionState {
+	private final static class DELETE_SavedExpansionState
+	{
 		/** <TT>JTree</TT> that expansion state is being save for. */
 		private JTree _tree;
+
+		private TreeNode _node;
 
 		/**
 		 * Contains information about each expanded node.
@@ -252,6 +316,29 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 		private TreePath _selectionPath;
 
 		/**
+		 * Ctor. Save the current expansion state of the node
+		 * within the tree.
+		 *
+		 * @param   tree	<TT>JTree</TT> to save expansion state of.
+		 * @param   node
+		 *
+		 * @throws  IllegalArgumentException
+		 *			  Thrown if a <TT>null</TT> </TT>JTree</TT> passed.
+		 */
+		DELETE_SavedExpansionState(JTree tree, TreeNode node)
+			throws IllegalArgumentException
+		{
+			super();
+			if (tree == null)
+			{
+				throw new IllegalArgumentException("Null JTree passed");
+			}
+			_tree = tree;
+			_node = node;
+			saveState();
+		}
+
+		/**
 		 * Ctor. Save the current expansion state of the tree.
 		 *
 		 * @param   tree	<TT>JTree</TT> to save expansion state of.
@@ -259,20 +346,25 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 		 * @throws  IllegalArgumentException
 		 *			  Thrown if a <TT>null</TT> </TT>JTree</TT> passed.
 		 */
-		SavedExpansionState(JTree tree) throws IllegalArgumentException {
+		DELETE_SavedExpansionState(JTree tree) throws IllegalArgumentException
+		{
 			super();
-			if (tree == null) {
+			if (tree == null)
+			{
 				throw new IllegalArgumentException("Null JTree passed");
 			}
 			_tree = tree;
+			_node = (TreeNode)_tree.getModel().getRoot();
 			saveState();
 		}
 
-		void restore() {
+		void restore()
+		{
 			final TreeModel model = _tree.getModel();
-			TreeNode root = (TreeNode)model.getRoot();
-			restoreState(model, root, _expanded.entrySet().iterator());
-			if (_selectionPath != null) {
+//			TreeNode root = (TreeNode)model.getRoot();
+			restoreState(model, _node, _expanded.entrySet().iterator());
+			if (_selectionPath != null)
+			{
 				_tree.setSelectionPath(_selectionPath);
 			}
 		}
@@ -280,30 +372,35 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 		/**
 		 * Save the state of the tree.
 		 */
-		private void saveState() {
+		private void saveState()
+		{
 			// Path of the current selection.
 			_selectionPath = _tree.getSelectionPath();
 
 			// Loop through all expanded nodes off the root node.
 			final TreeModel model = _tree.getModel();
-			TreeNode rootNode = (TreeNode)model.getRoot();
+//			TreeNode rootNode = (TreeNode)model.getRoot();
 
-			TreePath rootPath = new TreePath(rootNode);
+			TreePath rootPath = new TreePath(_node);
 			Iterator it = new EnumerationIterator(_tree.getExpandedDescendants(rootPath));
-			if (it != null) {
-				while (it.hasNext()) {
+			if (it != null)
+			{
+				while (it.hasNext())
+				{
 					// Get the list of all the parent nodes that make up
 					// this node and save their names into the _expanded
 					// collection.
-					TreePath tp = (TreePath)it.next();
+					TreePath tp = (TreePath) it.next();
 					Object[] objs = tp.getPath();
 					Map searchMap = _expanded;
 
 					// Loop (ignoring the current node idx 0).
-					for (int i = 1; i < objs.length; ++i) {
+					for (int i = 1; i < objs.length; ++i)
+					{
 						String obj = objs[i].toString();
-						Map children = (Map)searchMap.get(obj);
-						if (children == null) {
+						Map children = (Map) searchMap.get(obj);
+						if (children == null)
+						{
 							children = new HashMap();
 							searchMap.put(obj, children);
 						}
@@ -313,18 +410,26 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 			}
 		}
 
-		private void restoreState(TreeModel model, TreeNode node, Iterator outIt) {
+		private void restoreState(TreeModel model, TreeNode node, Iterator outIt)
+		{
 			_tree.expandPath(new TreePath(node));
 			Map nodes = new HashMap();
-			for (Iterator it = new EnumerationIterator(node.children()); it.hasNext();) {
-				TreeNode childNode = (TreeNode)it.next();
+			for (Iterator it = new EnumerationIterator(node.children());
+				it.hasNext();
+				)
+			{
+				TreeNode childNode = (TreeNode) it.next();
 				nodes.put(childNode.toString(), childNode);
 			}
-			while (outIt.hasNext()) {
-				Map.Entry entry = (Map.Entry)outIt.next();
-				String obj = (String)entry.getKey();
-				Map children = (Map)entry.getValue();
-				restoreState(model, (TreeNode)nodes.get(obj), children.entrySet().iterator());
+			while (outIt.hasNext())
+			{
+				Map.Entry entry = (Map.Entry) outIt.next();
+				String obj = (String) entry.getKey();
+				Map children = (Map) entry.getValue();
+				restoreState(
+					model,
+					(TreeNode) nodes.get(obj),
+					children.entrySet().iterator());
 			}
 		}
 	}

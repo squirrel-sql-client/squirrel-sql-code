@@ -17,41 +17,24 @@ package net.sourceforge.squirrel_sql.client.session.objectstree;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
-import javax.swing.tree.MutableTreeNode;
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
-import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.IUDTInfo;
-import net.sourceforge.squirrel_sql.fw.sql.NoConnectionException;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
-import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.plugin.IPluginDatabaseObject;
-import net.sourceforge.squirrel_sql.client.plugin.IPluginDatabaseObjectType;
-import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 
 public class ObjectsTreeModel extends DefaultTreeModel
 {
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(ObjectsTreeModel.class);
+	private static ILogger s_log =
+		LoggerController.createLogger(ObjectsTreeModel.class);
 
 	private ISession _session;
 	private ArrayList _treeLoadedListeners;
@@ -63,7 +46,8 @@ public class ObjectsTreeModel extends DefaultTreeModel
 	private interface i18n
 	{
 		String DATABASE = "Database";
-		String NO_CATALOG = "No Catalog"; // i18n or Replace with md.getCatalogueTerm.
+		String NO_CATALOG = "No Catalog";
+		// i18n or Replace with md.getCatalogueTerm.
 		String PROCEDURE = "PROCEDURE";
 		String UDT = "UDT";
 	}
@@ -108,14 +92,15 @@ public class ObjectsTreeModel extends DefaultTreeModel
 	public void fillTree()
 	{
 		Object o = getRoot();
-		if(o instanceof BaseNode)
+		if (o instanceof BaseNode)
 		{
 			try
 			{
-				((BaseNode)o).expand();
-			} catch(Exception e)
+				((BaseNode) o).expand();
+			}
+			catch (Exception e)
 			{
-				s_log.error("couldn't expand tree" , e);
+				s_log.error("couldn't expand tree", e);
 			}
 		}
 	}
@@ -127,10 +112,19 @@ public class ObjectsTreeModel extends DefaultTreeModel
 
 	public List refresh() throws BaseSQLException
 	{
-		Object o = getRoot();
-		if (o instanceof BaseNode)
+		return refresh(null);
+	}
+
+	public List refresh(BaseNode node) throws BaseSQLException
+	{
+		Object obj = node;
+		if (obj == null)
 		{
-			return ((BaseNode) o).refresh();
+			obj = getRoot();
+		}
+		if (obj instanceof BaseNode)
+		{
+			return ((BaseNode)obj).refresh();
 		}
 		return null;
 	}

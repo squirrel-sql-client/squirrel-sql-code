@@ -148,6 +148,11 @@ public class SessionSheet extends BaseSheet
 		_mainTabPane.getObjectsPanel().refresh();
 	}
 
+	public void refreshSelectedDatabaseObjects() throws BaseSQLException
+	{
+		_mainTabPane.getObjectsPanel().refreshSelectedDatabaseObjects();
+	}
+
 	public void updateState()
 	{
 		_mainTabPane.updateState();
