@@ -1,6 +1,17 @@
 Change Log
 ==========
 
+1.1beta5
+========
+
+Enhancements
+------------
+- Consolidated the plethora of "meta data" output type settings into a
+  single setting.
+- Main window toolbar is now floatable.
+- Using icons from the Eclipse (www.eclipse.org) project.
+
+
 1.1beta4
 ========
 
