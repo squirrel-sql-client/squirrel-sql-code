@@ -817,6 +817,21 @@ public class SQLDatabaseMetaData
 		return value;
 	}
 
+
+	public synchronized ITableInfo[] getAllTables()
+			throws SQLException
+	{
+		final String key = "getTables";
+		ITableInfo[] value = (ITableInfo[])_cache.get(key);
+		if (value == null)
+		{
+			value = getTables(null, null, "%", null);
+			_cache.put(key, value);
+		}
+		return value;
+	}
+
+
 	/**
 	 * Retrieve information about the tables in the system.
 	 *
