@@ -24,6 +24,12 @@ import java.awt.Point;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.sql.DriverManager;
 
 import javax.swing.Action;
@@ -59,261 +65,269 @@ import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
 
 public class MainFrame extends BaseMDIParentFrame {
-    public interface IMenuIDs extends MainFrameMenuBar.IMenuIDs {
-    }
+	public interface IMenuIDs extends MainFrameMenuBar.IMenuIDs {
+	}
 
 	private ILogger s_log = LoggerController.createLogger(MainFrame.class);
 
-    private IApplication _app;
+	private IApplication _app;
 
-    private AliasesToolWindow _aliasesToolWindow;
-    private DriversToolWindow _driversToolWindow;
+	private AliasesToolWindow _aliasesToolWindow;
+	private DriversToolWindow _driversToolWindow;
 
-    private JInternalFrame _activeInternalFrame;
+	private JInternalFrame _activeInternalFrame;
 
-    /**
-     * Ctor.
-     *
-     * @param   app     Application API.
-     *
-     * @throws  IllegalArgumentException
-     *              Thrown if <TT>null</TT> <TT>IApplication</TT>
-     *              passed.
-     */
-    public MainFrame(IApplication app)
-            throws IllegalArgumentException {
-        super(Version.getVersion(), new ScrollableDesktopPane());
-        if (app == null) {
-            throw new IllegalArgumentException("Null IApplication passed");
-        }
-        _app = app;
-        createUserInterface();
-        preferencesHaveChanged(null);   // Initial load of prefs.
-        _app.getSquirrelPreferences().addPropertyChangeListener(new PreferencesListener());
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-    }
+	/**
+	 * Ctor.
+	 *
+	 * @param   app	 Application API.
+	 *
+	 * @throws  IllegalArgumentException
+	 *			  Thrown if <TT>null</TT> <TT>IApplication</TT>
+	 *			  passed.
+	 */
+	public MainFrame(IApplication app)
+			throws IllegalArgumentException {
+		super(Version.getVersion(), new ScrollableDesktopPane());
+		if (app == null) {
+			throw new IllegalArgumentException("Null IApplication passed");
+		}
+		_app = app;
+		createUserInterface();
+		preferencesHaveChanged(null);   // Initial load of prefs.
+		_app.getSquirrelPreferences().addPropertyChangeListener(new PreferencesListener());
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+	}
 
-    private boolean closeAllChildWindows() {
-        JInternalFrame[] children = getDesktopPane().getAllFrames();
-        for (int i = 0; i < children.length; ++i) {
-            children[i].dispose();
-        }
-        return true;
-    }
+	private boolean closeAllChildWindows() {
+		JInternalFrame[] children = getDesktopPane().getAllFrames();
+		for (int i = 0; i < children.length; ++i) {
+			children[i].dispose();
+		}
+		return true;
+	}
 
-    public void dispose() {
-        if (closeAllChildWindows()) {
-            _app.shutdown();
-            super.dispose();
-            System.exit(0);
-        }
-    }
+	public void dispose() {
+		if (closeAllChildWindows()) {
+			_app.shutdown();
+			super.dispose();
+			System.exit(0);
+		}
+	}
 
-    public void addInternalFrame(JInternalFrame child, boolean addToWindowMenu, Action action) {
-        super.addInternalFrame(child, addToWindowMenu, action);
-        s_log.debug("Adding " + child.getClass().getName() + " to Main Frame");
-        JInternalFrame[] frames = GUIUtils.getOpenNonToolWindows(getDesktopPane().getAllFrames());
-        _app.getActionCollection().internalFrameOpenedOrClosed(frames.length);
+	public void addInternalFrame(JInternalFrame child, boolean addToWindowMenu, Action action) {
+		super.addInternalFrame(child, addToWindowMenu, action);
+		s_log.debug("Adding " + child.getClass().getName() + " to Main Frame");
+		JInternalFrame[] frames = GUIUtils.getOpenNonToolWindows(getDesktopPane().getAllFrames());
+		_app.getActionCollection().internalFrameOpenedOrClosed(frames.length);
 
-        // Size non-tool child window.
-        if (!GUIUtils.isToolWindow(child)) {
-            getSessionMenu().setEnabled(true);
-            Dimension cs = child.getParent().getSize();
-            // Cast to int required as Dimension::setSize(double,double)
-            // doesn't appear to do anything in JDK1.2.2.
-            cs.setSize((int)(cs.width * 0.8d), (int)(cs.height * 0.8d));
-            child.setSize(cs);
-        }
-    }
+		// Size non-tool child window.
+		if (!GUIUtils.isToolWindow(child)) {
+			getSessionMenu().setEnabled(true);
+			Dimension cs = child.getParent().getSize();
+			// Cast to int required as Dimension::setSize(double,double)
+			// doesn't appear to do anything in JDK1.2.2.
+			cs.setSize((int)(cs.width * 0.8d), (int)(cs.height * 0.8d));
+			child.setSize(cs);
+		}
+	}
 
-    public void internalFrameClosed(JInternalFrame child) {
-        super.internalFrameClosed(child);
-        s_log.debug("Removing " + child.getClass().getName() + " from Main Frame");
-        JInternalFrame[] frames = GUIUtils.getOpenNonToolWindows(getDesktopPane().getAllFrames());
-        _app.getActionCollection().internalFrameOpenedOrClosed(frames.length);
-        if (frames.length == 0) {
-            getSessionMenu().setEnabled(false);
-        }
-    }
+	public void internalFrameClosed(JInternalFrame child) {
+		super.internalFrameClosed(child);
+		s_log.debug("Removing " + child.getClass().getName() + " from Main Frame");
+		JInternalFrame[] frames = GUIUtils.getOpenNonToolWindows(getDesktopPane().getAllFrames());
+		_app.getActionCollection().internalFrameOpenedOrClosed(frames.length);
+		if (frames.length == 0) {
+			getSessionMenu().setEnabled(false);
+		}
+	}
 
-    public void addNotify() {
-        super.addNotify();
-        // Now we have a scrolling panel in which all internal frames
-        // reside this is no longer required.
-        /*SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                if (!GUIUtils.isWithinParent(_aliasesToolWindow)) {
-                    _aliasesToolWindow.setLocation(new Point(40, 40));
-                }
-                if (!GUIUtils.isWithinParent(_driversToolWindow)) {
-                    _driversToolWindow.setLocation(new Point(10, 10));
-                }
-            }
-        });*/
-    }
+	public void addNotify() {
+		super.addNotify();
+		// Now we have a scrolling panel in which all internal frames
+		// reside this is no longer required.
+		/*SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				if (!GUIUtils.isWithinParent(_aliasesToolWindow)) {
+					_aliasesToolWindow.setLocation(new Point(40, 40));
+				}
+				if (!GUIUtils.isWithinParent(_driversToolWindow)) {
+					_driversToolWindow.setLocation(new Point(10, 10));
+				}
+			}
+		});*/
+	}
 
-    Point getAliasesWindowLocation() {
-        return _aliasesToolWindow.getLocation();
-    }
+	Point getAliasesWindowLocation() {
+		return _aliasesToolWindow.getLocation();
+	}
 
-    Point getDriversWindowLocation() {
-        return _driversToolWindow.getLocation();
-    }
+	Point getDriversWindowLocation() {
+		return _driversToolWindow.getLocation();
+	}
 
-    private void preferencesHaveChanged(PropertyChangeEvent evt) {
-        String propName = evt != null ? evt.getPropertyName() : null;
+	private void preferencesHaveChanged(PropertyChangeEvent evt) {
+		String propName = evt != null ? evt.getPropertyName() : null;
 
-        final SquirrelPreferences prefs = _app.getSquirrelPreferences();
+		final SquirrelPreferences prefs = _app.getSquirrelPreferences();
 
-        if (propName == null || propName == SquirrelPreferences.IPropertyNames.SHOW_CONTENTS_WHEN_DRAGGING) {
-            if (prefs.getShowContentsWhenDragging()) {
-                getDesktopPane().putClientProperty("JDesktopPane.dragMode",  null);
-            } else {
-                getDesktopPane().putClientProperty("JDesktopPane.dragMode",  "outline");
-            }
-        }
+		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.SHOW_CONTENTS_WHEN_DRAGGING)) {
+			if (prefs.getShowContentsWhenDragging()) {
+				getDesktopPane().putClientProperty("JDesktopPane.dragMode",  null);
+			} else {
+				getDesktopPane().putClientProperty("JDesktopPane.dragMode",  "outline");
+			}
+		}
 
-        if (propName == null || propName == SquirrelPreferences.IPropertyNames.SHOW_TOOLTIPS) {
-            ToolTipManager.sharedInstance().setEnabled(prefs.getShowToolTips());
-        }
+		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.SHOW_TOOLTIPS)) {
+			ToolTipManager.sharedInstance().setEnabled(prefs.getShowToolTips());
+		}
 
-        if (propName == null || propName == SquirrelPreferences.IPropertyNames.DEBUG_JDBC) {
-            if (prefs.getDebugJdbc()) {
-                DriverManager.setLogStream(System.out);
-            } else {
-                DriverManager.setLogStream(null);
-            }
-        }
+		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.DEBUG_JDBC)) {
+			if (prefs.getDebugJdbc()) {
+				try {
+					FileOutputStream fos = new FileOutputStream(_app.getApplicationFiles().getJDBCDebugLogFile());
+					DriverManager.setLogStream(new PrintStream(fos));
+				} catch (IOException ex) {
+					DriverManager.setLogStream(System.out);
+				}
+			} else {
+				DriverManager.setLogWriter(null);
+			}
+		}
 
-        if (propName == null || propName == SquirrelPreferences.IPropertyNames.LOGIN_TIMEOUT) {
-            DriverManager.setLoginTimeout(prefs.getLoginTimeout());
-        }
-    }
+		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.LOGIN_TIMEOUT)) {
+			DriverManager.setLoginTimeout(prefs.getLoginTimeout());
+		}
 
-    public JMenu getSessionMenu() {
-        return ((MainFrameMenuBar)getJMenuBar()).getSessionMenu();
-    }
+		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.LOGGING_LEVEL)) {
+		}
+	}
 
-    public JMenu getWindowsMenu() {
-        return ((MainFrameMenuBar)getJMenuBar()).getWindowsMenu();
-    }
+	public JMenu getSessionMenu() {
+		return ((MainFrameMenuBar)getJMenuBar()).getSessionMenu();
+	}
 
-    public JInternalFrame getActiveInternalFrame() {
-        return _activeInternalFrame;
-    }
+	public JMenu getWindowsMenu() {
+		return ((MainFrameMenuBar)getJMenuBar()).getWindowsMenu();
+	}
 
-    public void addToMenu(int menuId, JMenu menu) {
-        if (menu == null) {
-            throw new IllegalArgumentException("Null JMenu passed");
-        }
-        ((MainFrameMenuBar)getJMenuBar()).addToMenu(menuId, menu);
-    }
+	public JInternalFrame getActiveInternalFrame() {
+		return _activeInternalFrame;
+	}
 
-    public void addToMenu(int menuId, Action action) {
-        if (action == null) {
-            throw new IllegalArgumentException("Null Action passed");
-        }
-        ((MainFrameMenuBar)getJMenuBar()).addToMenu(menuId, action);
-    }
+	public void addToMenu(int menuId, JMenu menu) {
+		if (menu == null) {
+			throw new IllegalArgumentException("Null JMenu passed");
+		}
+		((MainFrameMenuBar)getJMenuBar()).addToMenu(menuId, menu);
+	}
 
-    private void createUserInterface() {
-        setVisible(false);
+	public void addToMenu(int menuId, Action action) {
+		if (action == null) {
+			throw new IllegalArgumentException("Null Action passed");
+		}
+		((MainFrameMenuBar)getJMenuBar()).addToMenu(menuId, action);
+	}
 
-        getDesktopPane().setDesktopManager(new MyDesktopManager());
+	private void createUserInterface() {
+		setVisible(false);
 
-        final Container content = getContentPane();
+		getDesktopPane().setDesktopManager(new MyDesktopManager());
 
-        _aliasesToolWindow = new AliasesToolWindow(_app);
-        _driversToolWindow = new DriversToolWindow(_app);
+		final Container content = getContentPane();
 
-        preLoadActions();
-        content.setLayout(new BorderLayout());
-        content.add(new MainFrameToolBar(_app, this), BorderLayout.NORTH);
-        JScrollPane sp = new JScrollPane(getDesktopPane(),
-                                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        content.add(sp, BorderLayout.CENTER);
+		_aliasesToolWindow = new AliasesToolWindow(_app);
+		_driversToolWindow = new DriversToolWindow(_app);
 
-        setJMenuBar(new MainFrameMenuBar(_app, getDesktopPane(), _app.getActionCollection()));
+		preLoadActions();
+		content.setLayout(new BorderLayout());
+		content.add(new MainFrameToolBar(_app, this), BorderLayout.NORTH);
+		JScrollPane sp = new JScrollPane(getDesktopPane(),
+								ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+								ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		content.add(sp, BorderLayout.CENTER);
 
-        setupFromPreferences();
+		setJMenuBar(new MainFrameMenuBar(_app, getDesktopPane(), _app.getActionCollection()));
 
-        validate();
-    }
+		setupFromPreferences();
 
-    private void preLoadActions() {
-        ActionCollection actions = _app.getActionCollection();
+		validate();
+	}
 
-        if (actions == null) {
-            throw new IllegalStateException("ActionCollection hasn't been created.");
-        }
-        if (_aliasesToolWindow == null) {
-            throw new IllegalStateException("AliasesToolWindow hasn't been created.");
-        }
-        if (_driversToolWindow == null) {
-            throw new IllegalStateException("DriversToolWindow hasn't been created.");
-        }
+	private void preLoadActions() {
+		ActionCollection actions = _app.getActionCollection();
 
-        actions.add(new ViewAliasesAction(_app, _aliasesToolWindow));
-        actions.add(new ViewDriversAction(_app, _driversToolWindow));
-    }
+		if (actions == null) {
+			throw new IllegalStateException("ActionCollection hasn't been created.");
+		}
+		if (_aliasesToolWindow == null) {
+			throw new IllegalStateException("AliasesToolWindow hasn't been created.");
+		}
+		if (_driversToolWindow == null) {
+			throw new IllegalStateException("DriversToolWindow hasn't been created.");
+		}
 
-    private void setupFromPreferences() {
-        final SquirrelPreferences prefs = _app.getSquirrelPreferences();
-        MainFrameWindowState ws = prefs.getMainFrameWindowState();
+		actions.add(new ViewAliasesAction(_app, _aliasesToolWindow));
+		actions.add(new ViewDriversAction(_app, _driversToolWindow));
+	}
 
-        // Position window to where it was when last closed. If this is not
-        // on the screen, move it back on to the screen.
-        setBounds(ws.getBounds().createRectangle());
-        if (!GUIUtils.isWithinParent(this)) {
-            setLocation(new Point(10, 10));
-        }
+	private void setupFromPreferences() {
+		final SquirrelPreferences prefs = _app.getSquirrelPreferences();
+		MainFrameWindowState ws = prefs.getMainFrameWindowState();
 
-        addInternalFrame(_driversToolWindow, false, null);
-        Point pt = ws.getDriversWindowLocation().createPoint();
-        _driversToolWindow.setBounds(pt.x, pt.y, 200, 200);
-        _driversToolWindow.setVisible(true);
-        try {
-            _driversToolWindow.setSelected(true);
-        } catch (PropertyVetoException ignore) {
-        }
+		// Position window to where it was when last closed. If this is not
+		// on the screen, move it back on to the screen.
+		setBounds(ws.getBounds().createRectangle());
+		if (!GUIUtils.isWithinParent(this)) {
+			setLocation(new Point(10, 10));
+		}
 
-        addInternalFrame(_aliasesToolWindow, false, null);
-        pt = ws.getAliasesWindowLocation().createPoint();
-        _aliasesToolWindow.setBounds(pt.x, pt.y, 200, 200);
-        _aliasesToolWindow.setVisible(true);
-        try {
-            _aliasesToolWindow.setSelected(true);
-        } catch (PropertyVetoException ignore) {
-        }
+		addInternalFrame(_driversToolWindow, false, null);
+		Point pt = ws.getDriversWindowLocation().createPoint();
+		_driversToolWindow.setBounds(pt.x, pt.y, 200, 200);
+		_driversToolWindow.setVisible(true);
+		try {
+			_driversToolWindow.setSelected(true);
+		} catch (PropertyVetoException ignore) {
+		}
 
-        prefs.setMainFrameWindowState(new MainFrameWindowState(this));
-    }
+		addInternalFrame(_aliasesToolWindow, false, null);
+		pt = ws.getAliasesWindowLocation().createPoint();
+		_aliasesToolWindow.setBounds(pt.x, pt.y, 200, 200);
+		_aliasesToolWindow.setVisible(true);
+		try {
+			_aliasesToolWindow.setSelected(true);
+		} catch (PropertyVetoException ignore) {
+		}
 
-    private class MyDesktopManager extends DefaultDesktopManager {
-        public void activateFrame(JInternalFrame f) {
-            super.activateFrame(f);
-            _activeInternalFrame = f;
-            _app.getActionCollection().internalFrameActivated(f);
-            if (f instanceof SessionSheet) {
-                getSessionMenu().setEnabled(true);
-                ((SessionSheet)f).updateState();
-            }
-        }
-        public void deactivateFrame(JInternalFrame f) {
-            super.deactivateFrame(f);
-            _activeInternalFrame = null;
-            _app.getActionCollection().internalFrameDeactivated(f);
-            if (f instanceof SessionSheet) {
-                ((SessionSheet)f).updateState();
-                getSessionMenu().setEnabled(false);
-            }
-        }
-    }
+		prefs.setMainFrameWindowState(new MainFrameWindowState(this));
+	}
 
-    private class PreferencesListener implements PropertyChangeListener {
-        public void propertyChange(PropertyChangeEvent evt) {
-            preferencesHaveChanged(evt);
-        }
-    }
+	private class MyDesktopManager extends DefaultDesktopManager {
+		public void activateFrame(JInternalFrame f) {
+			super.activateFrame(f);
+			_activeInternalFrame = f;
+			_app.getActionCollection().internalFrameActivated(f);
+			if (f instanceof SessionSheet) {
+				getSessionMenu().setEnabled(true);
+				((SessionSheet)f).updateState();
+			}
+		}
+		public void deactivateFrame(JInternalFrame f) {
+			super.deactivateFrame(f);
+			_activeInternalFrame = null;
+			_app.getActionCollection().internalFrameDeactivated(f);
+			if (f instanceof SessionSheet) {
+				((SessionSheet)f).updateState();
+				getSessionMenu().setEnabled(false);
+			}
+		}
+	}
+
+	private class PreferencesListener implements PropertyChangeListener {
+		public void propertyChange(PropertyChangeEvent evt) {
+			preferencesHaveChanged(evt);
+		}
+	}
 }

@@ -115,14 +115,14 @@ public class SQLPropertiesPanel
 		 * replaced with a property file.
 		 */
 		interface i18n {
-			String AUTO_COMMIT = "Auto Commit SQL:";
-			String COMMIT_ON_CLOSE = "Commit On Closing Session:";
+			String AUTO_COMMIT = "Auto Commit SQL";
+			String COMMIT_ON_CLOSE = "Commit On Closing Session";
 			String NBR_ROWS_CONTENTS = "Number of rows:";
 			String NBR_ROWS_SQL = "Number of rows:";
-			String LIMIT_ROWS_CONTENTS = "Contents - Limit rows:";
-			String LIMIT_ROWS_SQL = "SQL - Limit rows:";
-			String MULTIPLE_TABS_SQL = "SQL - Reuse Output Tabs:";
-			String SHOW_ROW_COUNT = "Show Row Count for Tables:";
+			String LIMIT_ROWS_CONTENTS = "Contents - Limit rows";
+			String LIMIT_ROWS_SQL = "SQL - Limit rows";
+			String MULTIPLE_TABS_SQL = "SQL - Reuse Output Tabs";
+			String SHOW_ROW_COUNT = "Show Row Count for Tables";
 			String TABLE = "Table";
 			String TEXT = "Text";
 			String STATEMENT_SEPARATOR = "Statement Separator:";
@@ -130,14 +130,14 @@ public class SQLPropertiesPanel
 			String SQL = "SQL";
 		}
 
-		private JCheckBox _autoCommitChk = new JCheckBox();
-		private JCheckBox _commitOnClose = new JCheckBox();
+		private JCheckBox _autoCommitChk = new JCheckBox(i18n.AUTO_COMMIT);
+		private JCheckBox _commitOnClose = new JCheckBox(i18n.COMMIT_ON_CLOSE);
 		private IntegerField _contentsNbrRowsToShowField = new IntegerField();
-		private JCheckBox _contentsLimitRowsChk = new JCheckBox();
-		private JCheckBox _showRowCount = new JCheckBox();
+		private JCheckBox _contentsLimitRowsChk = new JCheckBox(i18n.LIMIT_ROWS_CONTENTS);
+		private JCheckBox _showRowCount = new JCheckBox(i18n.SHOW_ROW_COUNT);
 		private IntegerField _sqlNbrRowsToShowField = new IntegerField();
-		private JCheckBox _sqlLimitRows = new JCheckBox();
-		private JCheckBox _sqlMultipleTabs = new JCheckBox();
+		private JCheckBox _sqlLimitRows = new JCheckBox(i18n.LIMIT_ROWS_SQL);
+		private JCheckBox _sqlMultipleTabs = new JCheckBox(i18n.MULTIPLE_TABS_SQL);
 		private CharField _stmtSepChar = new CharField();
 
 		MyPanel() {
@@ -172,9 +172,24 @@ public class SQLPropertiesPanel
 			setLayout(new GridBagLayout());
 
 			final Icon warnIcon = app.getResources().getIcon(SquirrelResources.ImageNames.PERFORMANCE_WARNING);
-			_autoCommitChk.addChangeListener(new AutoCommitCheckBoxListener());
-			_contentsLimitRowsChk.addChangeListener(new LimitRowsCheckBoxListener(_contentsNbrRowsToShowField));
-			_sqlLimitRows.addChangeListener(new LimitRowsCheckBoxListener(_sqlNbrRowsToShowField));
+
+			_autoCommitChk.addChangeListener(new ChangeListener() {
+				public void stateChanged(ChangeEvent evt) {
+					_commitOnClose.setEnabled(!((JCheckBox)evt.getSource()).isSelected());
+				}
+			});
+
+			_contentsLimitRowsChk.addChangeListener(new ChangeListener() {
+				public void stateChanged(ChangeEvent evt) {
+					_contentsNbrRowsToShowField.setEnabled(_contentsLimitRowsChk.isSelected());
+				}
+			});
+
+			_sqlLimitRows.addChangeListener(new ChangeListener() {
+				public void stateChanged(ChangeEvent evt) {
+					_sqlNbrRowsToShowField.setEnabled(_sqlLimitRows.isSelected());
+				}
+			});
 
 			_contentsNbrRowsToShowField.setColumns(5);
 			_sqlNbrRowsToShowField.setColumns(5);
@@ -183,23 +198,8 @@ public class SQLPropertiesPanel
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = gbc.HORIZONTAL;
 
-			// First column is a set of labels.
-			gbc.insets = new Insets(2, 0, 2, 4);
-			gbc.gridx = 0;
-			gbc.gridy = 0;
-			add(new JLabel(i18n.AUTO_COMMIT), gbc);
-			++gbc.gridy;
-			add(new JLabel(i18n.SHOW_ROW_COUNT), gbc);
-			++gbc.gridy;
-			add(new JLabel(i18n.LIMIT_ROWS_CONTENTS), gbc);
-			++gbc.gridy;
-			add(new JLabel(i18n.LIMIT_ROWS_SQL), gbc);
-			++gbc.gridy;
-			add(new JLabel(i18n.MULTIPLE_TABS_SQL), gbc);
-
-			// Second column is the data entry controls for the labels in first column.
 			gbc.insets = new Insets(2, 0, 2, 1);
-			gbc.gridx = 1;
+			gbc.gridx = 0;
 			gbc.gridy = 0;
 			add(_autoCommitChk, gbc);
 			++gbc.gridy;
@@ -211,10 +211,8 @@ public class SQLPropertiesPanel
 			++gbc.gridy;
 			add(_sqlMultipleTabs, gbc);
 
-			// Third column is the icon specifying "performance implications" for the data entry control
-			// in the second column.
 			gbc.insets = new Insets(2, 0, 2, 4);
-			gbc.gridx = 2;
+			++gbc.gridx;
 			gbc.gridy = 1;
 			add(new JLabel(warnIcon), gbc);
 			++gbc.gridy;
@@ -222,24 +220,21 @@ public class SQLPropertiesPanel
 			++gbc.gridy;
 			add(new JLabel(warnIcon), gbc);
 
-			// Fourth column is a set of labels.
 			gbc.insets = new Insets(2, 0, 2, 4);
-			gbc.gridx = 3;
+			++gbc.gridx;
 			gbc.gridy = 0;
-			add(new JLabel(i18n.COMMIT_ON_CLOSE), gbc);
+			add(_commitOnClose, gbc);
 			++gbc.gridy;
 			++gbc.gridy;
-			add(new JLabel(i18n.NBR_ROWS_CONTENTS), gbc);
+			add(new RightLabel(i18n.NBR_ROWS_CONTENTS), gbc);
 			++gbc.gridy;
-			add(new JLabel(i18n.NBR_ROWS_SQL), gbc);
+			add(new RightLabel(i18n.NBR_ROWS_SQL), gbc);
 			++gbc.gridy;
-			add(new JLabel(i18n.STATEMENT_SEPARATOR), gbc);
+			add(new RightLabel(i18n.STATEMENT_SEPARATOR), gbc);
 
-			// Fifth column is the data entry controls for the labels in fourth column.
 			gbc.insets = new Insets(2, 0, 2, 1);
 			gbc.gridx = 4;
 			gbc.gridy = 0;
-			add(_commitOnClose, gbc);
 			++gbc.gridy;
 			++gbc.gridy;
 			add(_contentsNbrRowsToShowField, gbc);
@@ -248,35 +243,21 @@ public class SQLPropertiesPanel
 			++gbc.gridy;
 			add(_stmtSepChar, gbc);
 
-			// Sixth column is the icon specifying "performance implications" for the data entry control
-			// in the fifth column.
 			gbc.gridx = 5;
 			gbc.gridy = 3;
 			add(new JLabel(warnIcon), gbc);
 			++gbc.gridy;
 			add(new JLabel(warnIcon), gbc);
 
-			// Right at the bottom we put the performance warning.
 			gbc.gridx = 0;
 			gbc.gridy = gbc.RELATIVE;
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			add(new MultipleLineLabel(i18n.PERF_WARNING), gbc);
 		}
 
-		private class LimitRowsCheckBoxListener implements ChangeListener {
-			private IntegerField _field;
-			LimitRowsCheckBoxListener(IntegerField field) {
-				super();
-				_field = field;
-			}
-			public void stateChanged(ChangeEvent evt) {
-				_field.setEnabled(((JCheckBox)evt.getSource()).isSelected());
-			}
-		}
-
-		private class AutoCommitCheckBoxListener implements ChangeListener {
-			public void stateChanged(ChangeEvent evt) {
-				_commitOnClose.setEnabled(!((JCheckBox)evt.getSource()).isSelected());
+		private static final class RightLabel extends JLabel {
+			RightLabel(String title) {
+				super(title, SwingConstants.RIGHT);
 			}
 		}
 

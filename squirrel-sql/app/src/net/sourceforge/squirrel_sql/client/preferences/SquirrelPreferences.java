@@ -51,11 +51,19 @@ public class SquirrelPreferences implements Serializable {
 		String SESSION_PROPERTIES = "sessionProperties";
 		String LOGIN_TIMEOUT = "loginTimeout";
 		String DEBUG_JDBC = "debugJdbc";
+		String LOGGING_LEVEL = "loggingLevel";
 		String MAIN_FRAME_STATE = "mainFrameWindowState";
 		String SHOW_CONTENTS_WHEN_DRAGGING = "showContentsWhenDragging";
 		String SHOW_TOOLTIPS = "showToolTips";
-		String DEBUG_MODE = "debugMode";
 		String PLUGIN_OBJECTS = "pluginObjects";
+	}
+
+	public interface ILoggingLevel {
+		int DEBUG = 0;
+		int INFO = 1;
+		int WARN = 2;
+		int ERROR = 3;
+		int OFF = 4;
 	}
 
 	/** Logger for this class. */
@@ -66,8 +74,6 @@ public class SquirrelPreferences implements Serializable {
 
 	/** Bounds of the main frame. */
 	private MainFrameWindowState _mainFrameState = new MainFrameWindowState();
-
-	private boolean _debugMode = false;
 
 	private SessionProperties _sessionProps = new SessionProperties();
 
@@ -85,6 +91,9 @@ public class SquirrelPreferences implements Serializable {
 
 	/** Show tooltips for controls. */
 	private boolean _showToolTips = true;
+
+	/** Logging level. */
+	private int _logLevel = ILoggingLevel.INFO;
 
 	/**
 	 * Objects stored by plugins. Each element of this collection is a <TT>Map</TT>
@@ -112,14 +121,14 @@ public class SquirrelPreferences implements Serializable {
 		} catch (IllegalArgumentException ignore) {
 			// When loading from prefs file this will be null.
 		}
-		setDebugMode(rhs.isDebugMode());
 		setSessionProperties(rhs.getSessionProperties());
 		setMainFrameWindowState(rhs.getMainFrameWindowState());
 		setShowContentsWhenDragging(rhs.getShowContentsWhenDragging());
 		setLoginTimeout(rhs.getLoginTimeout());
 		setDebugJdbc(rhs.getDebugJdbc());
 		setShowToolTips(rhs.getShowToolTips());
-//	  setPluginObjects(rhs.getPluginObjects());
+		setLoggingLevel(rhs.getLoggingLevel());
+//		setPluginObjects(rhs.getPluginObjects());
 	}
 
 	/**
@@ -151,16 +160,7 @@ public class SquirrelPreferences implements Serializable {
 	}
 
 	public boolean isDebugMode() {
-		return _debugMode;
-	}
-
-	public synchronized void setDebugMode(boolean data) {
-		if (_debugMode != data) {
-			final boolean oldValue = _debugMode;
-			_debugMode = data;
-			_propChgReporter.firePropertyChange(IPropertyNames.DEBUG_MODE,
-								oldValue, _debugMode);
-		}
+		return getLoggingLevel() <= ILoggingLevel.DEBUG;
 	}
 
 	public SessionProperties getSessionProperties() {
@@ -224,12 +224,22 @@ public class SquirrelPreferences implements Serializable {
 		return _showToolTips;
 	}
 
-
 	public synchronized void setShowToolTips(boolean data) {
 		final boolean oldValue = _showToolTips;
 		_showToolTips = data;
 		_propChgReporter.firePropertyChange(IPropertyNames.SHOW_TOOLTIPS,
 								oldValue, _showToolTips);
+	}
+
+	public int getLoggingLevel() {
+		return _logLevel;
+	}
+
+	public synchronized void setLoggingLevel(int data) {
+		final int oldValue = _logLevel;
+		_logLevel = data;
+		_propChgReporter.firePropertyChange(IPropertyNames.LOGGING_LEVEL,
+								oldValue, _logLevel);
 	}
 
 	/*

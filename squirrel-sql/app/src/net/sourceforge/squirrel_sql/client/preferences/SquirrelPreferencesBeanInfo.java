@@ -43,8 +43,8 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo {
             s_dscrs[idx++] = new PropertyDescriptor(SquirrelPreferences.IPropertyNames.SHOW_CONTENTS_WHEN_DRAGGING, cls, "getShowContentsWhenDragging", "setShowContentsWhenDragging");
             s_dscrs[idx++] = new PropertyDescriptor(SquirrelPreferences.IPropertyNames.LOGIN_TIMEOUT, cls, "getLoginTimeout", "setLoginTimeout");
             s_dscrs[idx++] = new PropertyDescriptor(SquirrelPreferences.IPropertyNames.DEBUG_JDBC, cls, "getDebugJdbc", "setDebugJdbc");
-            s_dscrs[idx++] = new PropertyDescriptor(SquirrelPreferences.IPropertyNames.DEBUG_MODE, cls, "isDebugMode", "setDebugMode");
             s_dscrs[idx++] = new PropertyDescriptor(SquirrelPreferences.IPropertyNames.SHOW_TOOLTIPS , cls, "getShowToolTips", "setShowToolTips");
+            s_dscrs[idx++] = new PropertyDescriptor(SquirrelPreferences.IPropertyNames.LOGGING_LEVEL , cls, "getLoggingLevel", "setLoggingLevel");
         }
     }
 

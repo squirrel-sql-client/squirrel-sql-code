@@ -23,9 +23,12 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
+import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 
@@ -71,11 +74,12 @@ class LoggingPreferencesPanel implements IGlobalPreferencesPanel {
 		 * replaced with a property file.
 		 */
 		private interface i18n {
-			String DEBUG = "Debug";
 			String DEBUG_JDBC = "JDBC Debug";
-			String TAB_HINT = "Logging and Debug settings";
-			String TAB_TITLE = "Logging/Debug";
-			String PERF_WARNING = "Note: Turning on debug options will have performance implications.";
+			String LOGGING_LEVEL = "Logging level:";
+			String TAB_HINT = "Logging";
+			String TAB_TITLE = "Logging";
+			String JDBC_PERF_WARNING = "Note: JDBC debug will slow down this application.";
+			String LOG_PERF_WARNING = "Note: The higher the level of logging the slower the application.";
 		}
 
 		/** Application API. */
@@ -83,7 +87,7 @@ class LoggingPreferencesPanel implements IGlobalPreferencesPanel {
 
 		private boolean _initialized = false;
 
-		private JCheckBox _debug = new JCheckBox(i18n.DEBUG);
+		private LoggingLevelCombo _logCmb = new LoggingLevelCombo();
 		private JCheckBox _debugJdbc = new JCheckBox(i18n.DEBUG_JDBC);
 
 		MyPanel(IApplication app) {
@@ -92,17 +96,17 @@ class LoggingPreferencesPanel implements IGlobalPreferencesPanel {
 		}
 
 		void loadData(SquirrelPreferences prefs) {
-			_debug.setSelected(prefs.isDebugMode());
-			_debugJdbc.setSelected(prefs.getDebugJdbc());
 			if (!_initialized) {
 				createUserInterface(prefs);
 				_initialized = true;
 			}
+			_debugJdbc.setSelected(prefs.getDebugJdbc());
+			_logCmb.setSelectedItem(LoggingLevel.get(prefs.getLoggingLevel()));
 		}
 
 		void applyChanges(SquirrelPreferences prefs) {
-			prefs.setDebugMode(_debug.isSelected());
 			prefs.setDebugJdbc(_debugJdbc.isSelected());
+			prefs.setLoggingLevel(_logCmb.getSelectedLoggingLevel().getLevel());
 		}
 
 		private void createUserInterface(SquirrelPreferences prefs) {
@@ -113,32 +117,78 @@ class LoggingPreferencesPanel implements IGlobalPreferencesPanel {
 			gbc.anchor = gbc.WEST;
 			gbc.fill = gbc.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
+
 			gbc.gridx = 0;
 			gbc.gridy = 0;
-			add(_debug, gbc);
-
-			++gbc.gridx;
-			add(new OutputLabel(appFiles.getDebugLogFile().getPath()), gbc);
+			add(createLoggingPanel(appFiles), gbc);
 
 			++gbc.gridy;
+			add(createJDBCDebugPanel(appFiles), gbc);
+		}
+
+		private JPanel createLoggingPanel(ApplicationFiles appFiles) {
+			JPanel pnl = new JPanel();
+			pnl.setBorder(BorderFactory.createTitledBorder("Logging"));
+			
+			pnl.setLayout(new GridBagLayout());
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = gbc.HORIZONTAL;
+			gbc.insets = new Insets(4, 4, 4, 4);
+	
 			gbc.gridx = 0;
-			add(_debugJdbc, gbc);
-
+			gbc.gridy = 0;
+			pnl.add(new RightLabel(i18n.LOGGING_LEVEL), gbc);
+	
 			++gbc.gridx;
-			add(new OutputLabel(appFiles.getJDBCDebugLogFile().getPath()), gbc);
-
+			pnl.add(_logCmb, gbc);
+	
+			gbc.gridx = 0;
 			++gbc.gridy;
-			gbc.gridx = 0;
-			add(new JLabel("Execution Log file:"), gbc);
-
+			pnl.add(new RightLabel("Log File:"), gbc);
+	
 			++gbc.gridx;
-			add(new OutputLabel(appFiles.getExecutionLogFile().getPath()), gbc);
+			pnl.add(new OutputLabel(appFiles.getExecutionLogFile().getPath()), gbc);
 
-			// Right at the bottom we put the performance warning.
 			gbc.gridx = 0;
 			gbc.gridy = gbc.RELATIVE;
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
-			add(new MultipleLineLabel(i18n.PERF_WARNING), gbc);
+			pnl.add(new MultipleLineLabel(i18n.LOG_PERF_WARNING), gbc);
+			
+			return pnl;
+		}
+
+		private JPanel createJDBCDebugPanel(ApplicationFiles appFiles) {
+			JPanel pnl = new JPanel();
+			pnl.setBorder(BorderFactory.createTitledBorder("JDBC Debug"));
+			
+			pnl.setLayout(new GridBagLayout());
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = gbc.HORIZONTAL;
+			gbc.insets = new Insets(4, 4, 4, 4);
+	
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			pnl.add(_debugJdbc, gbc);
+	
+			gbc.gridx = 0;
+			++gbc.gridy;
+			pnl.add(new RightLabel("JDBC Debug File:"), gbc);
+	
+			++gbc.gridx;
+			pnl.add(new OutputLabel(appFiles.getJDBCDebugLogFile().getPath()), gbc);
+
+			gbc.gridx = 0;
+			gbc.gridy = gbc.RELATIVE;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
+			pnl.add(new MultipleLineLabel(i18n.JDBC_PERF_WARNING), gbc);
+			
+			return pnl;
+		}
+	}
+
+	private static final class RightLabel extends JLabel {
+		RightLabel(String title) {
+			super(title, SwingConstants.RIGHT);
 		}
 	}
 	
@@ -149,6 +199,62 @@ class LoggingPreferencesPanel implements IGlobalPreferencesPanel {
 			Dimension ps = getPreferredSize();
 			ps.width = 150;
 			setPreferredSize(ps);
+		}
+	}
+
+	private static final class LoggingLevelCombo extends JComboBox {
+		LoggingLevelCombo() {
+			super();
+			addItem(LoggingLevel.DEBUG);
+			addItem(LoggingLevel.INFO);
+			addItem(LoggingLevel.WARN);
+			addItem(LoggingLevel.ERROR);
+			addItem(LoggingLevel.OFF);
+		}
+
+		LoggingLevel getSelectedLoggingLevel() {
+			return (LoggingLevel)getSelectedItem();	
+		}
+	}
+
+	private static final class LoggingLevel {
+		static final LoggingLevel DEBUG = new LoggingLevel("Debug", SquirrelPreferences.ILoggingLevel.DEBUG);
+		static final LoggingLevel INFO = new LoggingLevel("Informational", SquirrelPreferences.ILoggingLevel.INFO);
+		static final LoggingLevel WARN = new LoggingLevel("Warning", SquirrelPreferences.ILoggingLevel.WARN);
+		static final LoggingLevel ERROR = new LoggingLevel("Error", SquirrelPreferences.ILoggingLevel.ERROR);
+		static final LoggingLevel OFF = new LoggingLevel("Off", SquirrelPreferences.ILoggingLevel.OFF);
+
+		private String _description;
+		private int _level;
+
+		static LoggingLevel get(int level) {
+			switch (level) {
+				case SquirrelPreferences.ILoggingLevel.DEBUG: return DEBUG;
+				case SquirrelPreferences.ILoggingLevel.INFO: return INFO;
+				case SquirrelPreferences.ILoggingLevel.WARN: return WARN;
+				case SquirrelPreferences.ILoggingLevel.ERROR: return ERROR;
+				case SquirrelPreferences.ILoggingLevel.OFF: return OFF;
+				
+				default: return DEBUG;
+			}
+		}
+
+		private LoggingLevel(String description, int level) {
+			super();
+			_description = description;
+			_level = level;
+		}
+
+		public String toString() {
+			return _description;
+		}
+
+		String getDescription() {
+			return _description;
+		}
+
+		int getLevel() {
+			return _level;
 		}
 	}
 }

@@ -286,28 +286,28 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
 
 			gbc.gridx = 0;
 			gbc.gridy = 0;
-			pnl.add(new JLabel(i18n.LOOK_AND_FEEL), gbc);
+			pnl.add(new RightLabel(i18n.LOOK_AND_FEEL), gbc);
 
 			++gbc.gridx;
 			pnl.add(_lafCmb, gbc);
 
 			gbc.gridx = 0;
 			++gbc.gridy;
-			pnl.add(new JLabel(i18n.THEME_PACK), gbc);
+			pnl.add(new RightLabel(i18n.THEME_PACK), gbc);
 
 			++gbc.gridx;
 			pnl.add(_themePackCmb, gbc);
 
 			gbc.gridx = 0;
 			++gbc.gridy;
-			pnl.add(new JLabel(i18n.LAF_LOC), gbc);
+			pnl.add(new RightLabel(i18n.LAF_LOC), gbc);
 
 			++gbc.gridx;
 			pnl.add(new OutputLabel(_plugin.getLookAndFeelFolder().getAbsolutePath()), gbc);
 
 			gbc.gridx = 0;
 			++gbc.gridy;
-			pnl.add(new JLabel(i18n.THEMEPACK_LOC), gbc);
+			pnl.add(new RightLabel(i18n.THEMEPACK_LOC), gbc);
 
 			++gbc.gridx;
 			pnl.add(new OutputLabel(_plugin.getSkinThemePackFolder().getAbsolutePath()), gbc);
@@ -453,16 +453,24 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
 				}
 			}
 		}
+
+		private static final class RightLabel extends JLabel {
+			RightLabel(String title) {
+				super(title, SwingConstants.RIGHT);
+			}
+		}
+
+		private static final class OutputLabel extends JLabel {
+			OutputLabel(String title) {
+				super(title);
+				setToolTipText(title);
+				Dimension ps = getPreferredSize();
+				ps.width = 150;
+				setPreferredSize(ps);
+			}
+		}
+
 	}
 
-	private static final class OutputLabel extends JLabel {
-		OutputLabel(String title) {
-			super(title);
-			setToolTipText(title);
-			Dimension ps = getPreferredSize();
-			ps.width = 150;
-			setPreferredSize(ps);
-		}
-	}
 
 }

@@ -198,13 +198,14 @@ public class OutputPropertiesPanel implements IGlobalPreferencesPanel, ISessionP
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = gbc.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
+
 			gbc.gridx = 0;
 			gbc.gridy = 0;
-			pnl.add(new JLabel(i18n.META_DATA), gbc);
+			pnl.add(new RightLabel(i18n.META_DATA), gbc);
 			++gbc.gridx;
 			pnl.add(_metaDataCmb, gbc);
 			++gbc.gridx;
-			pnl.add(new JLabel(i18n.DATA_TYPES), gbc);
+			pnl.add(new RightLabel(i18n.DATA_TYPES), gbc);
 			++gbc.gridx;
 			pnl.add(_dataTypeCmb, gbc);
 			
@@ -222,62 +223,62 @@ public class OutputPropertiesPanel implements IGlobalPreferencesPanel, ISessionP
 
 			gbc.gridx = 0;
 			gbc.gridy = 0;
-			pnl.add(new JLabel(i18n.TABLE_HDG), gbc);
+			pnl.add(new RightLabel(i18n.TABLE_HDG), gbc);
 			++gbc.gridx;
 			pnl.add(_tableCmb, gbc);
 
 			++gbc.gridx;
-			pnl.add(new JLabel(i18n.CONTENT), gbc);
+			pnl.add(new RightLabel(i18n.CONTENT), gbc);
 			++gbc.gridx;
 			pnl.add(_contentsCmb, gbc);
 
 			gbc.gridx = 0;
 			++gbc.gridy;
-			pnl.add(new JLabel(i18n.COLUMNS), gbc);
+			pnl.add(new RightLabel(i18n.COLUMNS), gbc);
 			++gbc.gridx;
 			pnl.add(_columnsCmb, gbc);
 
 			++gbc.gridx;
-			pnl.add(new JLabel("Primary Keys:"), gbc);
+			pnl.add(new RightLabel("Primary Keys:"), gbc);
 			++gbc.gridx;
 			pnl.add(_primKeysCmb, gbc);
 
 			gbc.gridx = 0;
 			++gbc.gridy;
-			pnl.add(new JLabel("Exported Keys:"), gbc);
+			pnl.add(new RightLabel("Exported Keys:"), gbc);
 			++gbc.gridx;
 			pnl.add(_expKeysCmb, gbc);
 			
 			++gbc.gridx;
-			pnl.add(new JLabel("Imported Keys:"), gbc);
+			pnl.add(new RightLabel("Imported Keys:"), gbc);
 			++gbc.gridx;
 			pnl.add(_impKeysCmb, gbc);
 
 			gbc.gridx = 0;
 			++gbc.gridy;
-			pnl.add(new JLabel("Indexes:"), gbc);
+			pnl.add(new RightLabel("Indexes:"), gbc);
 			++gbc.gridx;
 			pnl.add(_indexesCmb, gbc);
 
 			++gbc.gridx;
-			pnl.add(new JLabel(i18n.PRIVILIGES), gbc);
+			pnl.add(new RightLabel(i18n.PRIVILIGES), gbc);
 			++gbc.gridx;
 			pnl.add(_priviligesCmb, gbc);
 
 			gbc.gridx = 0;
 			++gbc.gridy;
-			pnl.add(new JLabel("Column Priviliges:"), gbc);
+			pnl.add(new RightLabel("Column Priviliges:"), gbc);
 			++gbc.gridx;
 			pnl.add(_columnPriviligesCmb, gbc);
 
 			++gbc.gridx;
-			pnl.add(new JLabel("Row ID:"), gbc);
+			pnl.add(new RightLabel("Row ID:"), gbc);
 			++gbc.gridx;
 			pnl.add(_rowIdPriviligesCmb, gbc);
 
 			gbc.gridx = 0;
 			++gbc.gridy;
-			pnl.add(new JLabel(i18n.VERSIONS), gbc);
+			pnl.add(new RightLabel(i18n.VERSIONS), gbc);
 			++gbc.gridx;
 			pnl.add(_versionsCmb, gbc);
 
@@ -292,9 +293,10 @@ public class OutputPropertiesPanel implements IGlobalPreferencesPanel, ISessionP
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = gbc.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
+
 			gbc.gridx = 0;
 			gbc.gridy = 0;
-			pnl.add(new JLabel("Stored Proc Columns:"), gbc);
+			pnl.add(new RightLabel("Stored Proc Columns:"), gbc);
 			++gbc.gridx;
 			pnl.add(_procColumnsCmb, gbc);
 			
@@ -309,14 +311,15 @@ public class OutputPropertiesPanel implements IGlobalPreferencesPanel, ISessionP
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = gbc.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
+
 			gbc.gridx = 0;
 			gbc.gridy = 0;
-			pnl.add(new JLabel("SQL:"), gbc);
+			pnl.add(new RightLabel("SQL:"), gbc);
 			++gbc.gridx;
 			pnl.add(_sqlCmb, gbc);
 
 			++gbc.gridx;
-			pnl.add(new JLabel("SQL Meta Data:"), gbc);
+			pnl.add(new RightLabel("SQL Meta Data:"), gbc);
 			++gbc.gridx;
 			pnl.add(_sqlMetaDataCmb, gbc);
 			
@@ -362,6 +365,12 @@ public class OutputPropertiesPanel implements IGlobalPreferencesPanel, ISessionP
 
 			String getSelectedClassName() {
 				return ((OutputType)getSelectedItem()).getPanelClassName();
+			}
+		}
+
+		private static final class RightLabel extends JLabel {
+			RightLabel(String title) {
+				super(title, SwingConstants.RIGHT);
 			}
 		}
 
