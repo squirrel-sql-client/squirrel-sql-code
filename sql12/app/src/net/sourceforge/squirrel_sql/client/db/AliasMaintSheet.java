@@ -204,6 +204,9 @@ public class AliasMaintSheet extends BaseSheet
 		pack();
 	}
 
+	/**
+	 * Remove listeners and then dispose of this sheet.
+	 */
 	public void dispose()
 	{
 		if (_driversCacheLis != null)
@@ -236,6 +239,9 @@ public class AliasMaintSheet extends BaseSheet
 		return _sqlAlias;
 	}
 
+	/**
+	 * Load data from the alias into GUI controls.
+	 */
 	private void loadData()
 	{
 		_driverPropsBtn.setEnabled(_sqlAlias.getUseDriverProperties());
@@ -320,6 +326,7 @@ public class AliasMaintSheet extends BaseSheet
 		StringBuffer buf = new StringBuffer();
 		buf.append(_password.getPassword());
 		alias.setPassword(buf.toString());
+		alias.setPasswordSaved(_savePasswordChk.isSelected());
 
 		alias.setAutoLogon(_autoLogonChk.isSelected());
 		alias.setUseDriverProperties(_useDriverPropsChk.isSelected());
@@ -359,25 +366,16 @@ public class AliasMaintSheet extends BaseSheet
 		}
 	}
 
-	private void enablePasswordField(ItemEvent e)
+	private void enablePasswordField(ItemEvent evt)
 	{
-		try
+		if (evt.getStateChange() == ItemEvent.SELECTED)
 		{
-			if (e.getStateChange() == ItemEvent.SELECTED)
-			{
-				_password.setEnabled(true);
-				_sqlAlias.setPasswordSaved(true);
-			}
-			else
-			{
-				_password.setText(null);
-				_password.setEnabled(false);
-				_sqlAlias.setPasswordSaved(false);
-			}
+			_password.setEnabled(true);
 		}
-		catch (ValidationException ex)
+		else
 		{
-			_app.showErrorDialog(ex);
+			_password.setText(null);
+			_password.setEnabled(false);
 		}
 	}
 
@@ -580,20 +578,15 @@ public class AliasMaintSheet extends BaseSheet
 			public void actionPerformed(ActionEvent evt)
 			{
 				final DataCache cache = _app.getDataCache();
-				final IdentifierFactory factory =
-					IdentifierFactory.getInstance();
-				final ISQLAlias testAlias =
-					cache.createAlias(factory.createIdentifier());
+				final IdentifierFactory factory = IdentifierFactory.getInstance();
+				final ISQLAlias testAlias = cache.createAlias(factory.createIdentifier());
 				try
 				{
 					applyFromDialog(testAlias);
-					new ConnectToAliasCommand(
-						_app,
-						_app.getMainFrame(),
-						testAlias,
-						false,
-						new ConnectionCallBack(_app))
-						.execute();
+					ConnectToAliasCommand cmd = new ConnectToAliasCommand(_app,
+											_app.getMainFrame(), testAlias, false,
+											new ConnectionCallBack(_app));
+					cmd.execute();
 				}
 				catch (ValidationException ex)
 				{
