@@ -516,14 +516,14 @@ public class ContentsTab extends BaseTableTab
 		// all of our other fields, and when we are not updating one of these
 		// special types of fields, there should be
 		// no rows that exactly match our criteria (we hope).
-		if (colDefs[col].getSqlType() == Types.BLOB ||
-			colDefs[col].getSqlType() == Types.CLOB ||
-			colDefs[col].getSqlType() == Types.REAL ||
-			colDefs[col].getSqlType() == Types.FLOAT ||
-			colDefs[col].getSqlType() == Types.DOUBLE ||
-			colDefs[col].getSqlType() == Types.BINARY ||
-			colDefs[col].getSqlType() == Types.VARBINARY ||
-			colDefs[col].getSqlType() == Types.LONGVARBINARY ) {
+		//
+		// We determine whether this field is one that cannot be used in the WHERE
+		// clause by checking the value returned for that field to use in the
+		// WHERE clause.  Any field that can be used there will return something
+		// of the form "<fieldName> = <value>", and a field that cannot be
+		// used will return a null or zero-length string.
+		if (CellComponentFactory.getWhereClauseValue(colDefs[col], values[col]) == null ||
+		 	CellComponentFactory.getWhereClauseValue(colDefs[col], values[col]).length() == 0) {
 				if (count > 1)
 					return "This operation will result in " + count +" identical rows.\nDo you wish to proceed?";
 		}
@@ -630,7 +630,7 @@ public class ContentsTab extends BaseTableTab
 			String clause = CellComponentFactory.getWhereClauseValue(colDefs[i], value);	
 
 
-			if (clause != null)
+			if (clause != null && clause.length() > 0)
 				if (whereClause.length() == 0)
 				{
 					whereClause.append(clause);
