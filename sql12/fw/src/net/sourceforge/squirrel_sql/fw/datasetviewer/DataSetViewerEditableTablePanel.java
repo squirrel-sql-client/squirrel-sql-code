@@ -113,48 +113,6 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 	{
 		String message = null;
 
-		//
-		// Special case: When we have to force the string representation of the data in
-		// the JTextField to "<null>", the oldValue may be passed as that string rather
-		// than as the appropriate object.  If so, convert it here.
-		if (oldValue instanceof java.lang.String) {
-			if (oldValue.toString().equals("<null>"))
-				oldValue = null;
-		}
-
-/*	
-		// Validate and Convert the newValue to an object
-		//
-		// This operation is a bit different than the others in this function in that
-		// it is working on the data entered by the user rather than dealing with
-		// the DB.  There are a couple of other places that this could be done,
-		// so doing it here is a matter of style/taste.  It could be done:
-		//	- in the CellEditor Component (e.g. DataTypeInteger) when focus is lost,
-		//		but it is not clear that the sequence of operations will be correct
-		//		and how the value would get passed as an object from the Component
-		//		through to this function
-		//	- in setValueAt() in DataSetViewerTablePanel, but that class does not
-		//		currently know anything about CellEditors and their components, and
-		//		there does not seem to be a good reason to put that knowledge there.
-		// The main reason for including this here is that it is similar to the other
-		// operations here in that it puts up a message to the user if there is a problem,
-		// so that test-and-display mechanism is the same throughout this function.
-		StringBuffer messageBuffer = new StringBuffer();
-
-		Object newValue = CellComponentFactory.validateAndConvert(
-			_colDefs[col], (String)newValueString, messageBuffer);
-		if (messageBuffer.length() > 0) {
-			// there was a problem in the validate/conversion
-			// tell user and do not update data
-			JOptionPane.showMessageDialog(null, 
-				"Error in validation:\n" + messageBuffer.toString() + "\nData not updated",
-				"Error",
-				JOptionPane.ERROR_MESSAGE);
-				
-			return false;
-		}
-*/
-
 		// At this point the user input has been validated and both the
 		// new and old values are objects of the appropriate data type.
 		// Either or both of newValue and oldValue may be null.
@@ -163,6 +121,24 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		// (should never happen - just being safe here)
 		if (getUpdateableModelReference() == null)
 			return false;	// no underlying data, so cannot be changed
+
+
+		// Check to see if data type can be updated by normal SQL
+		// using strings for SET and WHERE clauses.
+		// If not, then dump the whole update problem in the lap
+		// of the DataType object which said that the value was editable.
+		// Since we don't know what that DataType object needs in order
+		// to do the update, give it everything we know about.
+		if (CellComponentFactory.getSetClauseValue(_colDefs[col], newValue) == null) {
+//??? TEMP: since I haven't gotten to any of these non-simple-text data types yet,
+//??? I don't know what would be good parameters for this method.  To reduce the
+//??? re-editing of the interface and existing data types, I'm not implementing it yet.
+//??			return CellComponentFactory.updateNonTextValue(_colDefs[col],
+//??				col, newValue, oldValue, _colDefs,
+//??				getUpdateableModelReference(),getRow(row));
+return false;	//temp: data not updated
+		}
+
 
 		// check to see if new data is same as old data, in which case we
 		// do not update the underlying data.
@@ -186,17 +162,19 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		// the object contents.
 		if (oldValue != null && newValue != null) {
 			//
-			// ASSUME:
-			//	- all editable data has a string representation
-			//	- if the string representations of the old data and the new data
-			//		are not identical, then the data has changed.  This includes
-			//		capitalization, so "A" is not the same as "a".
+			// ASSUMPTION:
+			//	if the data is updatable as a string in a normal SQL SET statement,
+			//	we assume that it is not a complex object, and that therefore the
+			//	representation of the data as shown in the table cell (as opposed to
+			//	the Popup) is sufficient to see any differences between the old
+			//	and the new values.
 			//
 			//?? Note: if we can guarantee that ALL data objects that we deal with
 			//?? such as Integer, String, etc, have an equals() function correctly
 			//?? implemented, then we should use that instead of doing this
 			//?? string-to-string comparison.
-			if (newValue.toString().equals(oldValue.toString()))
+			if (CellComponentFactory.renderObject(oldValue, _colDefs[col]).
+				equals(CellComponentFactory.renderObject(newValue,_colDefs[col])))
 				return true;	// the caller does not need to know that nothing happened
 					
 			// if we reach this point, value has changed, so fall through to next section
@@ -222,7 +200,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		}
 
 		// call the function in the app code that checks for unexpected
-		// conditions in the current DB
+		// conditions in the DB as it will be after doing the update
 		if (getUpdateableModelReference() != null)
 			message = ((IDataSetUpdateableTableModel)getUpdateableModelReference()).
 				getWarningOnProjectedUpdate(getRow(row), _colDefs, col, newValue);
