@@ -32,7 +32,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
- * @version 	$Id: DropTableAction.java,v 1.2 2002-03-26 12:15:35 colbell Exp $
+ * @version 	$Id: DropTableAction.java,v 1.3 2002-04-13 01:30:13 colbell Exp $
  * @author		Johan Compagner
  */
 public class DropTableAction extends SquirrelAction implements ISessionAction
@@ -67,11 +67,15 @@ public class DropTableAction extends SquirrelAction implements ISessionAction
 				{
 					SQLConnection connection = _session.getSQLConnection();
 					Statement statement = connection.createStatement();
-					for (int i = 0; i < selected.length; i++)
-					{
-						String name = selected[i].getSimpleName();
-						_session.getMessageHandler().showMessage("dropping table " + name);
-						statement.executeUpdate("drop table " + name);
+					try {
+						for (int i = 0; i < selected.length; i++)
+						{
+							String name = selected[i].getSimpleName();
+							_session.getMessageHandler().showMessage("dropping table " + name);
+							statement.executeUpdate("drop table " + name);
+						}
+					} finally {
+						statement.close();
 					}
 					_session.getSessionSheet().refreshTree();
 				} catch(Exception ex)
