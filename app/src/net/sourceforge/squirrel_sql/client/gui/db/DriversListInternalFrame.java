@@ -181,7 +181,7 @@ public class DriversListInternalFrame extends BaseListInternalFrame
 				// at java.util.Vector.elementAt(Vector.java:417)
 				// at javax.swing.DefaultListModel.getElementAt(DefaultListModel.java:70)
 				// at javax.swing.JList.getSelectedValue(JList.java:1397)
-				// at net.sourceforge.squirrel_sql.client.mainframe.DriversList.getSelectedDriver(DriversList.java:77)
+				// at net.sourceforge.squirrel_sql.client.gui.mainframe.DriversList.getSelectedDriver(DriversList.java:77)
 			}
 
 			final ActionCollection actions = _app.getActionCollection();

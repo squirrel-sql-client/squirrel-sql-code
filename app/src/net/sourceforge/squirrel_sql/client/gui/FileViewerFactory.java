@@ -26,7 +26,7 @@ import java.util.Map;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
-import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
+import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 /**
  * This factory stores instances of <TT>HtmlViewerSheet</TT> (viewer) objects
  * keyed by the URL of the file they are displaying. When a viewer is requested
