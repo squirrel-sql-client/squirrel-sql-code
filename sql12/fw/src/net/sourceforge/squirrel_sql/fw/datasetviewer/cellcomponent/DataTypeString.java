@@ -22,6 +22,9 @@ import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
+import java.util.HashMap;
+import java.util.Iterator;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
@@ -35,6 +38,10 @@ import javax.swing.JCheckBox;
 import javax.swing.BorderFactory;
 import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
+import javax.swing.JScrollPane;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
@@ -42,6 +49,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
+import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 
 
 /**
@@ -95,6 +103,10 @@ public class DataTypeString
 	//?? for this data type.
 	private DefaultColumnRenderer _renderer = DefaultColumnRenderer.getInstance();	
 
+	/**
+	 * default length of strings when truncated
+	 */
+	private final static int DEFAULT_LIMIT_READ_LENGTH = 100;
 
 	/**
 	 * Name of this class, which is needed because the class name is needed
@@ -117,8 +129,32 @@ public class DataTypeString
 	 */
 	private static boolean _makeNewlinesVisibleInCell = true;
 
-
-//private static int limitReadLength = 3;
+	/**
+	 * If <tt>true</tt> then limit the size of string data that is read
+	 * during the initial table load.
+	 */
+	private static boolean _limitRead = false;
+	
+	/**
+	 * If <tt>_limitRead</tt> is <tt>true</tt> then this is how many characters
+	 * to read during the initial table load.
+	 */
+	private static int _limitReadLength = DEFAULT_LIMIT_READ_LENGTH;
+	
+	/**
+	 * If <tt>_limitRead</tt> is <tt>true</tt> and
+	 * this is <tt>true</tt>, then only columns whose label is listed in
+	 * <tt>_limitReadColumnList</tt> are limited.
+	 */
+	private static boolean _limitReadOnSpecificColumns = false;
+	
+	/**
+	 * If <tt>_limitRead</tt> is <tt>true</tt> and
+	 * <tt>_limitReadOnSpecificColumns is <tt>true</tt>, then only columns whose label is listed here.
+	 * The column names are converted tol ALL CAPS before being put on this list
+	 * so that they will match the label retrieved from _colDef.
+	 */
+	private static HashMap _limitReadColumnNameMap = new HashMap();
 
 
 	/**
@@ -151,7 +187,45 @@ public class DataTypeString
 			String makeNewlinesVisibleString = DTProperties.get(thisClassName, "makeNewlinesVisibleInCell");
 			if (makeNewlinesVisibleString != null && makeNewlinesVisibleString.equals("false"))
 				_makeNewlinesVisibleInCell = false;
+
+			_limitRead = false;	// set to default
+			String limitReadString = DTProperties.get(thisClassName, "limitRead");
+			if (limitReadString != null && limitReadString.equals("true"))
+				_limitRead = true;
 			
+			_limitReadLength = DEFAULT_LIMIT_READ_LENGTH;	// set to default
+			String limitReadLengthString = DTProperties.get(thisClassName, "limitReadLength");
+			if (limitReadLengthString != null)
+				_limitReadLength = Integer.parseInt(limitReadLengthString);
+			
+			_limitReadOnSpecificColumns = false;	// set to default
+			String limitReadOnSpecificColumnsString = DTProperties.get(thisClassName, "limitReadOnSpecificColumns");
+			if (limitReadOnSpecificColumnsString != null && limitReadOnSpecificColumnsString.equals("true"))
+				_limitReadOnSpecificColumns = true;
+			
+			// the list of specific column names is in comma-separated format
+			// with a comma in front of the first entry as well
+			_limitReadColumnNameMap.clear();	// empty the map of old values
+			
+			String nameString = DTProperties.get(thisClassName, "limitReadColumnNames");
+			int start = 0;
+			int end;
+			String name;
+			
+			while (nameString != null && start < nameString.length()) {
+				end = nameString.indexOf(',', start + 1);
+				if (end > -1) {
+					name = nameString.substring(start+1, end);
+					start = end;
+				}
+				else {
+					name = nameString.substring(start+1);
+					start = nameString.length();
+				}
+				
+				_limitReadColumnNameMap.put(name, null);
+			}
+					
 			propertiesAlreadyLoaded = true;
 		}
 	}
@@ -212,12 +286,31 @@ public class DataTypeString
 	 * completely loaded during the initial table setup.
 	 */
 	public boolean needToReRead(Object originalValue) {
-		// this DataType does not limit the data read during the initial load of the table,
-		// so there is no need to re-read the complete data later
-
-//??if (((String)originalValue).length() < limitReadLength)
-	return false;
-//??else return true;
+		// if we are not limiting anything, return false
+		if (_limitRead == false)
+			return false;
+		
+		// we are limiting some things.
+		// if the string we have is less than the limit, then we are ok
+		// and do not need to re-read (because we already have the whole thing).
+		if (((String)originalValue).length() < _limitReadLength)
+			return false;
+			
+		// if the data is longer than the limit, then we have previously
+		// re-read the contents and we do not need to re-read it again
+		if (((String)originalValue).length() > _limitReadLength)
+			return false;
+		
+		// if we are limiting all columns, then we need to re-read
+		// because we do not know if we have all the data or not
+		if (_limitReadOnSpecificColumns == false)
+			return true;
+		
+		// check for the case where we are limiting some columns
+		// but not limiting this particular column
+		if (_limitReadColumnNameMap.containsKey(_colDef.getLabel()))
+			return true;	// column is limited and length == limit, so need to re-read
+		else return false;	// column is not limited, so we have the whole thing
 	}
 		
 	/**
@@ -296,9 +389,11 @@ public class DataTypeString
 	 * false if not.
 	 */
 	public boolean isEditableInPopup(Object originalValue) {
-//??if (((String)originalValue).length() < limitReadLength)
-		return true;
-//??else return false;
+		// The only thing that would prevent us from editing a string in the popup
+		// is if that string has been truncated when read from the DB.
+		// Thus, being able to edit the string is the same as not needing to re-read
+		// the data.
+		return ! needToReRead(originalValue);
 	}
 	
 	/*
@@ -433,9 +528,19 @@ public class DataTypeString
 		if (rs.wasNull())
 			return null;
 		else {
-//??if (limitDataRead == true && (data.length() > limitReadLength)) {
-//??	data = data.substring(0, limitReadLength);
-//??}
+			// if this column is being limited, then truncate the data if needed
+			// (start with a quick check for the data being shorter than the limit,
+			// in which case we don't need to worry about it).
+			if (limitDataRead == true && data.length() >= _limitReadLength) {
+				// data is longer than the limit, so we need to do more checking
+				if (_limitReadOnSpecificColumns == false ||
+					(_limitReadOnSpecificColumns == true && 
+						_limitReadColumnNameMap.containsKey(_colDef.getLabel()))) {
+					// this column is limited, so truncate the data
+					data = data.substring(0, _limitReadLength);
+				}
+
+			}
 			return data;
 
 		}
@@ -458,9 +563,12 @@ public class DataTypeString
 		if (value == null || value.toString() == null )
 			return _colDef.getLabel() + " IS NULL";
 		else {
-//??if (((String)value).length() < limitReadLength)			
-			return _colDef.getLabel() + "='" + value.toString() + "'";
-//??else return "";
+			// We cannot use this data in the WHERE clause if it has been truncated.
+			// Since being truncated is the same as needing to re-read,
+			// only use this in the WHERE clause if we do not need to re-read
+			if ( ! needToReRead(value))		
+				return _colDef.getLabel() + "='" + value.toString() + "'";
+			else return "";	// value is truncated, so do not use in WHERE clause
 		}
 	}
 	
@@ -662,6 +770,22 @@ public class DataTypeString
 		// check box for whether to show newlines as "\n" for in-cell display
 		private JCheckBox _makeNewlinesVisibleInCellChk =
 			new JCheckBox("Show newlines as \\n within cells");
+		
+		// check box for whether to do any limiting of the data read during initial table load
+		private JCheckBox _limitReadChk =
+			new JCheckBox("Limit size of strings read during initial table load to max of:");
+			
+		// check box for whether to show newlines as "\n" for in-cell display
+		private IntegerField _limitReadLengthTextField =
+			new IntegerField(5);
+		
+		// check box for whether to show newlines as "\n" for in-cell display
+		private JCheckBox _limitReadOnSpecificColumnsChk =
+			new JCheckBox("Limit read only on columns with these names:");
+		
+		// check box for whether to show newlines as "\n" for in-cell display
+		private JTextArea _limitReadColumnNameTextArea =
+			new JTextArea(5, 12);
 	   
 
 		public ClobOkJPanel() {
@@ -671,7 +795,45 @@ public class DataTypeString
 			// checkbox for displaying newlines as \n in-cell
 			_makeNewlinesVisibleInCellChk.setSelected(_makeNewlinesVisibleInCell);
 
-	 	
+			// checkbox for limit/no-limit on data read during initial table load
+			_limitReadChk.setSelected(_limitRead);
+			_limitReadChk.addChangeListener(new ChangeListener(){
+				public void stateChanged(ChangeEvent e) {		
+					_limitReadLengthTextField.setEnabled(_limitReadChk.isSelected());
+					_limitReadOnSpecificColumnsChk.setEnabled(_limitReadChk.isSelected());
+					_limitReadColumnNameTextArea.setEnabled(_limitReadChk.isSelected() &&
+						(_limitReadOnSpecificColumnsChk.isSelected()));	
+				}
+			});
+
+
+			// fill in the current limit length
+			_limitReadLengthTextField.setInt(_limitReadLength);
+			
+			// set the flag for whether or not to limit only on specific fields
+			_limitReadOnSpecificColumnsChk.setSelected(_limitReadOnSpecificColumns);
+			_limitReadOnSpecificColumnsChk.addChangeListener(new ChangeListener(){
+				public void stateChanged(ChangeEvent e) {		
+					_limitReadColumnNameTextArea.setEnabled(
+						_limitReadOnSpecificColumnsChk.isSelected());	
+				}
+			});
+			
+			// fill in list of column names to check against
+			Iterator names = _limitReadColumnNameMap.keySet().iterator();
+			StringBuffer namesText = new StringBuffer();
+			while (names.hasNext()) {
+				if (namesText.length() > 0)
+					namesText.append("\n" + names.next());
+				else namesText.append(names.next());
+			}
+			_limitReadColumnNameTextArea.setText(namesText.toString());
+
+			// handle cross-connection between fields
+			_limitReadLengthTextField.setEnabled(_limitReadChk.isSelected());
+			_limitReadOnSpecificColumnsChk.setEnabled(_limitReadChk.isSelected());
+			_limitReadColumnNameTextArea.setEnabled(_limitReadChk.isSelected() &&
+				(_limitReadOnSpecificColumnsChk.isSelected()));;
 
 			/*
 			 * Create the panel and add the GUI items to it
@@ -691,6 +853,27 @@ public class DataTypeString
 
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			add(_makeNewlinesVisibleInCellChk, gbc);
+			
+			gbc.gridy++;
+			gbc.gridx = 0;
+			gbc.gridwidth = 1;
+			add(_limitReadChk, gbc);
+			
+			gbc.gridx++;
+			gbc.gridwidth = 1;
+			add(_limitReadLengthTextField, gbc);
+			
+			gbc.gridy++;
+			gbc.gridx = 0;
+			gbc.gridwidth = 1;
+			add(_limitReadOnSpecificColumnsChk, gbc);
+			
+			gbc.gridx++;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
+			JScrollPane scrollPane = new JScrollPane();
+			scrollPane.setViewportView(_limitReadColumnNameTextArea);
+			add(scrollPane, gbc);
+			
 
 		} // end of constructor for inner class
 	 
@@ -702,10 +885,60 @@ public class DataTypeString
 		public void ok() {
 			// get the values from the controls and set them in the static properties
 			_makeNewlinesVisibleInCell = _makeNewlinesVisibleInCellChk.isSelected();
-			DTProperties.put(
-				thisClassName,
+			DTProperties.put(thisClassName,
 				"makeNewlinesVisibleInCell", Boolean.toString(_makeNewlinesVisibleInCell));
-		}
+			
+			_limitRead = _limitReadChk.isSelected();
+			DTProperties.put(thisClassName,
+				"limitRead", Boolean.toString(_limitRead));
+			
+			_limitReadLength = _limitReadLengthTextField.getInt();
+			DTProperties.put(thisClassName,
+				"limitReadLength", Integer.toString(_limitReadLength));
+			
+			_limitReadOnSpecificColumns = _limitReadOnSpecificColumnsChk.isSelected();
+			DTProperties.put(thisClassName,
+				"limitReadOnSpecificColumns", Boolean.toString(_limitReadOnSpecificColumns));
+			
+			// Handle list of column names
+			
+			// remove old name list from map
+			_limitReadColumnNameMap.clear();
+			// extract column names from text area
+			String columnNameText = _limitReadColumnNameTextArea.getText();			
+
+			int start = 0;
+			int end;
+			String name;
+			String propertyString = "";
+			
+			while (start < columnNameText.length()) {
+				// find the next name in the text
+				end = columnNameText.indexOf('\n', start+1);
+				if (end > -1) {
+					name = columnNameText.substring(start, end);
+					start = end;
+				}
+				else {
+					name = columnNameText.substring(start);
+					start = columnNameText.length();
+				}
+					
+				// cleanup and standardize the name, and add it to the map
+				name = name.trim().toUpperCase();
+				if (name.length() == 0)
+					continue;	// skip blank lines
+					
+				_limitReadColumnNameMap.put(name.trim().toUpperCase(), null);
+				
+				// add name to comma-separated string for saving in properties
+				propertyString += "," + name.trim().toUpperCase();
+			}	// end while
+			
+			DTProperties.put(thisClassName,
+				"limitReadColumnNames", propertyString);
+				
+		}	// end ok
 	 
 	 } // end of inner class
 	 
