@@ -68,20 +68,20 @@ class DriverPropertiesTable extends JTable
 			super();
 			int idx = 0;
 
-			TableColumn tc = new TableColumn(IDX_SPECIFY, 75, null, new SpecifiedCellEditor());
-			tc.setHeaderValue("Specify");
-			addColumn(tc);
-
-			tc = new TableColumn(IDX_NAME);
+			TableColumn tc = new TableColumn(IDX_NAME);
 			tc.setHeaderValue("Name");
-			addColumn(tc);
-
-			tc = new TableColumn(IDX_REQUIRED);
-			tc.setHeaderValue("Required");
 			addColumn(tc);
 
 			tc = new TableColumn(IDX_VALUE, 75, null, new ValueCellEditor());
 			tc.setHeaderValue("Value");
+			addColumn(tc);
+
+			tc = new TableColumn(IDX_SPECIFY);//, 75, null, new SpecifiedCellEditor());
+			tc.setHeaderValue("Specify");
+			addColumn(tc);
+
+			tc = new TableColumn(IDX_REQUIRED);
+			tc.setHeaderValue("Required");
 			addColumn(tc);
 
 			tc = new TableColumn(IDX_DESCRIPTION);
@@ -113,9 +113,9 @@ class DriverPropertiesTable extends JTable
 			if (prop.choices != null && prop.choices.length > 0)
 			{
 				final JComboBox cmb = new JComboBox(prop.choices);
-				if (prop.value != null)
+				if (sdp.getValue() != null)
 				{
-					cmb.setSelectedItem(prop.value);
+					cmb.setSelectedItem(sdp.getValue());
 				}
 				return cmb;
 			}
@@ -123,30 +123,30 @@ class DriverPropertiesTable extends JTable
 		}
 	}
 
-	private final class SpecifiedCellEditor extends DefaultCellEditor
-	{
-		SpecifiedCellEditor()
-		{
-			super(new JTextField());
-			setClickCountToStart(1);
-		}
-
-		public Component getTableCellEditorComponent(JTable table, Object value,
-												boolean isSelected, int row,
-												int col)
-		{
-			if (col != IDX_SPECIFY)
-			{
-				throw new IllegalStateException("Editor used for cell other than specify");
-			}
-
-			SQLDriverPropertyCollection coll = getTypedModel().getSQLDriverProperties();
-			SQLDriverProperty sdp = coll.getDriverProperty(row);
-			DriverPropertyInfo prop = sdp.getDriverPropertyInfo();
-			final JComboBox cmb = new JComboBox(new Object[] {Boolean.TRUE, Boolean.FALSE});
-			cmb.setSelectedItem(sdp != null ? new Boolean(sdp.isSpecified()) : Boolean.FALSE);
-			return cmb;
-		}
-	}
+//	private final class SpecifiedCellEditor extends DefaultCellEditor
+//	{
+//		SpecifiedCellEditor()
+//		{
+//			super(new JTextField());
+//			setClickCountToStart(1);
+//		}
+//
+//		public Component getTableCellEditorComponent(JTable table, Object value,
+//												boolean isSelected, int row,
+//												int col)
+//		{
+//			if (col != IDX_SPECIFY)
+//			{
+//				throw new IllegalStateException("Editor used for cell other than specify");
+//			}
+//
+//			SQLDriverPropertyCollection coll = getTypedModel().getSQLDriverProperties();
+//			SQLDriverProperty sdp = coll.getDriverProperty(row);
+//			DriverPropertyInfo prop = sdp.getDriverPropertyInfo();
+//			final JComboBox cmb = new JComboBox(new Object[] {Boolean.TRUE, Boolean.FALSE});
+//			cmb.setSelectedItem(sdp != null ? new Boolean(sdp.isSpecified()) : Boolean.FALSE);
+//			return cmb;
+//		}
+//	}
 }
 

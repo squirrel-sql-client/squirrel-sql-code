@@ -18,7 +18,7 @@ package net.sourceforge.squirrel_sql.client.db;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+//import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -111,6 +112,7 @@ public class AliasMaintSheet extends BaseSheet
 		String CONNECT_AT_STARTUP = "Connect at Startup";
 		String DRIVER = "Driver:";
 		String NAME = "Name:";
+		String PASSWORD = "Password:";
 		String SAVE_PASSWORD = "Save password:";
 		String URL = "URL:";
 		String USER_NAME = "User Name:";
@@ -152,7 +154,7 @@ public class AliasMaintSheet extends BaseSheet
 	private final JTextField _userName = new JTextField();
 
 	/** Save password checkbox*/
-	private final JCheckBox _savePasswordChk = new JCheckBox(i18n.SAVE_PASSWORD);
+//	private final JCheckBox _savePasswordChk = new JCheckBox(i18n.SAVE_PASSWORD);
 
 	/** Password */
 	private final JPasswordField _password = new JPasswordField();
@@ -255,18 +257,18 @@ public class AliasMaintSheet extends BaseSheet
 		_aliasName.setText(_sqlAlias.getName());
 		_userName.setText(_sqlAlias.getUserName());
 
-		if(_sqlAlias.isPasswordSaved())
-		{
+//		if(_sqlAlias.isPasswordSaved())
+//		{
 			_password.setText(_sqlAlias.getPassword());
-			_password.setEnabled(true);
-			_savePasswordChk.setSelected(true);
-		}
-		else
-		{
-			_password.setText(null);
-			_password.setEnabled(false);
-			_savePasswordChk.setSelected(false);
-		}
+//			_password.setEnabled(true);
+//			_savePasswordChk.setSelected(true);
+//		}
+//		else
+//		{
+//			_password.setText(null);
+//			_password.setEnabled(false);
+//			_savePasswordChk.setSelected(false);
+//		}
 
 		_autoLogonChk.setSelected(_sqlAlias.isAutoLogon());
 		_connectAtStartupChk.setSelected(_sqlAlias.isConnectAtStartup());
@@ -335,7 +337,7 @@ public class AliasMaintSheet extends BaseSheet
 		StringBuffer buf = new StringBuffer();
 		buf.append(_password.getPassword());
 		alias.setPassword(buf.toString());
-		alias.setPasswordSaved(_savePasswordChk.isSelected());
+		//alias.setPasswordSaved(_savePasswordChk.isSelected());
 
 		alias.setAutoLogon(_autoLogonChk.isSelected());
 		alias.setConnectAtStartup(_connectAtStartupChk.isSelected());
@@ -353,14 +355,21 @@ public class AliasMaintSheet extends BaseSheet
 		try
 		{
 			final Frame owner = _app.getMainFrame();
-			final SQLDriverManager mgr = _app.getSQLDriverManager();
-			final Driver driver = mgr.getJDBCDriver(_sqlAlias.getDriverIdentifier());
+			//final SQLDriverManager mgr = _app.getSQLDriverManager();
+			//final Driver driver = mgr.getJDBCDriver(_sqlAlias.getDriverIdentifier());
+			final ISQLDriver driver = _drivers.getSelectedDriver();
 			if (driver == null)
+			{
+				throw new BaseException("Cannot determine driver properties as no driver selected.");
+			}
+			final SQLDriverManager mgr = _app.getSQLDriverManager();
+			final Driver jdbcDriver = mgr.getJDBCDriver(driver.getIdentifier());
+			if (jdbcDriver == null)
 			{
 				throw new BaseException("Cannot determine driver properties as the driver cannot be loaded.");
 			}
 
-			DriverPropertyInfo[] infoAr = driver.getPropertyInfo(_url.getText(), new Properties());
+			DriverPropertyInfo[] infoAr = jdbcDriver.getPropertyInfo(_url.getText(), new Properties());
 			_sqlDriverProps.applyDriverPropertynfo(infoAr);
 			DriverPropertiesDialog.showDialog(owner, _sqlDriverProps);
 		}
@@ -370,18 +379,18 @@ public class AliasMaintSheet extends BaseSheet
 		}
 	}
 
-	private void enablePasswordField(ItemEvent evt)
-	{
-		if (evt.getStateChange() == ItemEvent.SELECTED)
-		{
-			_password.setEnabled(true);
-		}
-		else
-		{
-			_password.setText(null);
-			_password.setEnabled(false);
-		}
-	}
+//	private void enablePasswordField(ItemEvent evt)
+//	{
+//		if (evt.getStateChange() == ItemEvent.SELECTED)
+//		{
+//			_password.setEnabled(true);
+//		}
+//		else
+//		{
+//			_password.setText(null);
+//			_password.setEnabled(false);
+//		}
+//	}
 
 	/**
 	 * Create user interface for this sheet.
@@ -402,15 +411,15 @@ public class AliasMaintSheet extends BaseSheet
 		_url.setColumns(COLUMN_COUNT);
 		_userName.setColumns(COLUMN_COUNT);
 		_password.setColumns(COLUMN_COUNT);
-		_password.setEnabled(false);
+//		_password.setEnabled(false);
 
-		_savePasswordChk.addItemListener(new ItemListener()
-		{
-			public void itemStateChanged(ItemEvent evt)
-			{
-				enablePasswordField(evt);
-			}
-		});
+//		_savePasswordChk.addItemListener(new ItemListener()
+//		{
+//			public void itemStateChanged(ItemEvent evt)
+//			{
+//				enablePasswordField(evt);
+//			}
+//		});
 
 		// This seems to be necessary to get background colours
 		// correct. Without it labels added to the content pane
@@ -533,7 +542,8 @@ public class AliasMaintSheet extends BaseSheet
 
 		gbc.gridx = 0;
 		++gbc.gridy;
-		pnl.add(_savePasswordChk, gbc);
+//		pnl.add(_savePasswordChk, gbc);
+		pnl.add(new JLabel(i18n.PASSWORD, SwingConstants.RIGHT), gbc);
 
 		++gbc.gridx;
 		pnl.add(_password, gbc);
@@ -545,10 +555,10 @@ public class AliasMaintSheet extends BaseSheet
 		++gbc.gridx;
 		pnl.add(_connectAtStartupChk, gbc);
 
-		JPanel propsPnl = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+		final Box propsPnl = Box.createHorizontalBox();
 		propsPnl.add(_useDriverPropsChk);
+		propsPnl.add(Box.createHorizontalStrut(5));
 		propsPnl.add(_driverPropsBtn);
-
 		gbc.gridwidth = gbc.REMAINDER;
 		++gbc.gridy;
 		gbc.gridx = 0;

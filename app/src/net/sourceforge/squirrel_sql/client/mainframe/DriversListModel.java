@@ -58,9 +58,15 @@ class DriversListModel extends SortedListModel
 		_app.getDataCache().addDriversListener(new MyDriversListener());
 	}
 
+	/**
+	 * Specify whether only JDBC drivers that can be loaded
+	 * are displayed.
+	 *
+	 * @param	show	If <TT>true</TT> only show JDBC drivers
+	 * 					that can be loaded.
+	 */
 	public void setShowLoadedDriversOnly(boolean show)
 	{
-System.out.println("New: " + show + " - " + " Old: " + _showLoadedDriversOnly);
 		if (show != _showLoadedDriversOnly)
 		{
 			_showLoadedDriversOnly = show;

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.plugin;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -22,7 +22,11 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
-
+/**
+ * Array dataset showing information about plugins.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
 public class PluginInfoArrayDataSet implements IDataSet
 {
 	private interface PluginInfoArrayDataSetI18n
@@ -60,7 +64,7 @@ public class PluginInfoArrayDataSet implements IDataSet
 		super();
 		if (src == null)
 		{
-			throw new IllegalArgumentException("Null PluginInfo[][] passed");
+			throw new IllegalArgumentException("Null PluginInfo[] passed");
 		}
 		_src = src;
 		_dsDef = new DataSetDefinition(createColumnDefinitions());
@@ -126,12 +130,10 @@ public class PluginInfoArrayDataSet implements IDataSet
 	private ColumnDisplayDefinition[] createColumnDefinitions()
 	{
 		final int columnCount = getColumnCount();
-		ColumnDisplayDefinition[] columnDefs =
-			new ColumnDisplayDefinition[columnCount];
+		ColumnDisplayDefinition[] columnDefs = new ColumnDisplayDefinition[columnCount];
 		for (int i = 0; i < columnCount; ++i)
 		{
-			columnDefs[i] =
-				new ColumnDisplayDefinition(s_hdgWidths[i], s_hdgs[i]);
+			columnDefs[i] = new ColumnDisplayDefinition(s_hdgWidths[i], s_hdgs[i]);
 		}
 		return columnDefs;
 	}

@@ -43,7 +43,7 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable
 		String ID = "identifier";
 		String NAME = "name";
 		String PASSWORD = "password";
-		String PASSWORD_SAVED = "passwordSaved";
+//		String PASSWORD_SAVED = "passwordSaved";
 		String URL = "url";
 		String USE_DRIVER_PROPERTIES = "useDriverProperties";
 		String USER_NAME = "userName";
@@ -94,7 +94,7 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable
 	 * @return	<TT>true</TT> if a password has been saved
 	 * 			else <TT>false</TT>.
 	 */
-	boolean isPasswordSaved();
+	//boolean isPasswordSaved();
 
 	/**
 	 * Set the password for this alias.
@@ -114,7 +114,7 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable
 	 * @throws	ValidationException
 	 * 			TODO: What conditions?
 	 */
-	void setPasswordSaved(boolean passwordSaved) throws ValidationException;
+	//void setPasswordSaved(boolean passwordSaved) throws ValidationException;
 
 	/**
 	 * Should this alias be logged on automatically.

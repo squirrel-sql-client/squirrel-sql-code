@@ -28,10 +28,10 @@ class DriverPropertiesTableModel extends AbstractTableModel
 {
 	interface IColumnIndexes
 	{
-		int IDX_SPECIFY = 0;
-		int IDX_NAME = 1;
-		int IDX_REQUIRED = 2;
-		int IDX_VALUE = 3;
+		int IDX_SPECIFY = 2;
+		int IDX_NAME = 0;
+		int IDX_REQUIRED = 3;
+		int IDX_VALUE = 1;
 		int IDX_DESCRIPTION = 4;
 	}
 
@@ -112,7 +112,8 @@ class DriverPropertiesTableModel extends AbstractTableModel
 			case IColumnIndexes.IDX_NAME:
 				return String.class;
 			case IColumnIndexes.IDX_REQUIRED:
-				return Boolean.class;
+//				return Boolean.class;
+				return Object.class;
 			case IColumnIndexes.IDX_VALUE:
 				return String.class;
 			case IColumnIndexes.IDX_DESCRIPTION:

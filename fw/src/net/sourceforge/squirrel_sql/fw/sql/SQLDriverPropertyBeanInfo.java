@@ -39,9 +39,9 @@ public class SQLDriverPropertyBeanInfo extends SimpleBeanInfo
 			{
 				s_dscrs = new PropertyDescriptor[3];
 				final Class clazz = SQLDriverProperty.class;
-				s_dscrs[0] = new PropertyDescriptor(KEY, clazz, "getKey", "setKey");
+				s_dscrs[0] = new PropertyDescriptor(NAME, clazz, "getName", "setName");
 				s_dscrs[1] = new PropertyDescriptor(VALUE, clazz, "getValue", "setValue");
-				s_dscrs[2] = new PropertyDescriptor(IS_SPECIFIED, clazz, "getIsSpecified", "setIsSpecified");
+				s_dscrs[2] = new PropertyDescriptor(IS_SPECIFIED, clazz, "isSpecified", "setIsSpecified");
 			}
 		}
 	}
