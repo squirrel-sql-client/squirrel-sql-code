@@ -18,16 +18,10 @@ package net.sourceforge.squirrel_sql.plugins.sessionscript;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Iterator;
-
-import javax.swing.Action;
-import javax.swing.JMenu;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
-import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
@@ -35,25 +29,21 @@ import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
-import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
-import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * The plugin class.
  */
-public class SessionScriptPlugin extends DefaultSessionPlugin {
-	private interface IMenuResourceKeys {
+public class SessionScriptPlugin extends DefaultSessionPlugin
+{
+	private interface IMenuResourceKeys
+	{
 		String SCRIPTS = "scripts";
 	}
 
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(SessionScriptPlugin.class);
-
-	/** Plugin preferences. */
-//	private SQLScriptPreferences _prefs;
+	private static ILogger s_log =
+		LoggerController.createLogger(SessionScriptPlugin.class);
 
 	/** The app folder for this plugin. */
 	private File _pluginAppFolder;
@@ -62,16 +52,17 @@ public class SessionScriptPlugin extends DefaultSessionPlugin {
 	private File _userSettingsFolder;
 
 	/** Cache of session scripts. */
-	private AliasScriptCollectionCache _cache;
+	private AliasScriptCache _cache;
 
-//	private PluginResources _resources;
+	private PluginResources _resources;
 
 	/**
 	 * Return the internal name of this plugin.
 	 *
 	 * @return  the internal name of this plugin.
 	 */
-	public String getInternalName() {
+	public String getInternalName()
+	{
 		return "sessionscript";
 	}
 
@@ -80,7 +71,8 @@ public class SessionScriptPlugin extends DefaultSessionPlugin {
 	 *
 	 * @return  the descriptive name of this plugin.
 	 */
-	public String getDescriptiveName() {
+	public String getDescriptiveName()
+	{
 		return "Session Scripts Plugin";
 	}
 
@@ -89,7 +81,8 @@ public class SessionScriptPlugin extends DefaultSessionPlugin {
 	 *
 	 * @return  the current version of this plugin.
 	 */
-	public String getVersion() {
+	public String getVersion()
+	{
 		return "0.1";
 	}
 
@@ -98,24 +91,16 @@ public class SessionScriptPlugin extends DefaultSessionPlugin {
 	 *
 	 * @return  the authors name.
 	 */
-	public String getAuthor() {
+	public String getAuthor()
+	{
 		return "Colin Bell";
-	}
-
-	/**
-	 * Create preferences panel for the Global Preferences dialog.
-	 *
-	 * @return  Preferences panel.
-	 */
-	public IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
-		//return new IGlobalPreferencesPanel[] { new SQLScriptPreferencesPanel(_prefs)};
-		return null;
 	}
 
 	/**
 	 * Initialize this plugin.
 	 */
-	public synchronized void initialize() throws PluginException {
+	public synchronized void initialize() throws PluginException
+	{
 		super.initialize();
 		IApplication app = getApplication();
 
@@ -123,34 +108,40 @@ public class SessionScriptPlugin extends DefaultSessionPlugin {
 
 		// Folder within plugins folder that belongs to this
 		// plugin.
-		try {
+		try
+		{
 			_pluginAppFolder = getPluginAppSettingsFolder();
-		} catch (IOException ex) {
+		}
+		catch (IOException ex)
+		{
 			throw new PluginException(ex);
 		}
 
 		// Folder to store user settings.
-		try {
+		try
+		{
 			_userSettingsFolder = getPluginUserSettingsFolder();
-		} catch (IOException ex) {
+		}
+		catch (IOException ex)
+		{
 			throw new PluginException(ex);
 		}
 
-//		_resources =
-//			new SQLPluginResources(
-//				"net.sourceforge.squirrel_sql.plugins.sessionscript.sessionscript",
-//				this);
-
-		// Load plugin preferences.
-//		loadPrefs();
+		_resources = new SessionScriptResources(
+			"net.sourceforge.squirrel_sql.plugins.sessionscript.sessionscript",
+			this);
 
 		ActionCollection coll = app.getActionCollection();
-//		coll.add(new CreateDataScriptOfCurrentSQLAction(app, _resources));
-//		createMenu();
+		ViewSessionScriptsAction action = new ViewSessionScriptsAction(app, _resources, this);
+		coll.add(action);
+		app.addToMenu(IApplication.IMenuIDs.PLUGINS_MENU, action);
 
-		try {
-			_cache = new AliasScriptCollectionCache(this);
-		} catch (IOException ex) {
+		try
+		{
+			_cache = new AliasScriptCache(this);
+		}
+		catch (IOException ex)
+		{
 			throw new PluginException(ex);
 		}
 		_cache.load();
@@ -160,101 +151,41 @@ public class SessionScriptPlugin extends DefaultSessionPlugin {
 	/**
 	 * Application is shutting down so save data.
 	 */
-	public void unload() {
-//		savePrefs();
-		if (_cache != null) {
+	public void unload()
+	{
+		if (_cache != null)
+		{
 			_cache.save();
 		}
 		super.unload();
 	}
 
-    /**
-	 * Called when a session started. See if any startup scripts
-	 * defined for this driver/alias and if so execute them. Add tab
-	 * to the main tabbed panel.
-	 *
-	 * @param   session	 The session that is starting.
-	 *
-	 * @return	<TT>true</TT> to indicate that this plugin is
-	 *			applicable to passed session.
-	 */
-    public boolean sessionStarted(ISession session) {
-        session.addMainTab(new MainTab(this, session));
-        return true;
-    }
+	public boolean sessionStarted(ISession session)
+	{
+		boolean rc = false;
+
+		AliasScript script = (AliasScript)_cache.get(session.getAlias());
+		if (script != null)
+		{
+			String sql = script.getSQL();
+			if (sql != null && sql.length() > 0)
+			{
+				rc = true;
+				session.setEntireSQLScript(sql);
+				session.executeCurrentSQL();
+			}
+		}
+
+		return rc;
+	}
 
 	/**
 	 * Return the scripts cache.
 	 * 
 	 * @return	The scripts cache.
 	 */
-	AliasScriptCollectionCache getScriptsCache() {
+	AliasScriptCache getScriptsCache()
+	{
 		return _cache;
 	}
-
-	/**
-	 * Load from preferences file.
-	 */
-/*
-	void loadPrefs() {
-		try {
-			XMLBeanReader doc = new XMLBeanReader();
-			doc.load(
-				new File(_userSettingsFolder, SQLScriptConstants.USER_PREFS_FILE_NAME),
-				getClass().getClassLoader());
-			Iterator it = doc.iterator();
-			if (it.hasNext()) {
-				_prefs = (SQLScriptPreferences) it.next();
-			}
-		} catch (FileNotFoundException ignore) {
-			// property file not found for user - first time user ran pgm.
-		} catch (Exception ex) {
-			s_log.error("Error occured reading from preferences file: "
-					+ SQLScriptConstants.USER_PREFS_FILE_NAME, ex);
-		}
-		if (_prefs == null) {
-			_prefs = new SQLScriptPreferences();
-		}
-	}
-*/
-	/**
-	 * Save preferences to disk.
-	 */
-/*
-	synchronized void savePrefs() {
-		if (_prefs != null) {
-			try {
-				XMLBeanWriter wtr = new XMLBeanWriter(_prefs);
-				wtr.save(
-					new File(_userSettingsFolder, SQLScriptConstants.USER_PREFS_FILE_NAME));
-			} catch (Exception ex) {
-				s_log.error("Error occured writing to preferences file: "
-						+ SQLScriptConstants.USER_PREFS_FILE_NAME, ex);
-				//i18n
-			}
-		}
-	}
-*/
-
-/*
-	SQLScriptPreferences getPreferences() {
-		return _prefs;
-	}
-*/
-
-/*
-	private void createMenu() {
-		IApplication app = getApplication();
-		ActionCollection coll = app.getActionCollection();
-
-		JMenu menu = _resources.createMenu(IMenuResourceKeys.SCRIPTS);
-		_resources.addToMenu(coll.get(LoadScriptAction.class), menu);
-		_resources.addToMenu(coll.get(SaveScriptAction.class), menu);
-		_resources.addToMenu(coll.get(CreateDataScriptAction.class), menu);
-		_resources.addToMenu(coll.get(CreateTableScriptAction.class), menu);
-		_resources.addToMenu(coll.get(CreateDataScriptOfCurrentSQLAction.class), menu);
-
-		app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, menu);
-	}
-*/
 }

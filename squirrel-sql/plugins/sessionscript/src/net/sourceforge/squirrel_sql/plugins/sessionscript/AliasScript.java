@@ -19,8 +19,9 @@ package net.sourceforge.squirrel_sql.plugins.sessionscript;
  */
 import java.io.Serializable;
 
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 
@@ -29,37 +30,44 @@ import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
  * 
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class AliasScript implements Serializable, IHasIdentifier {
-	/** The <TT>IIdentifier</TT> that uniquely identifies this object. */
+public class AliasScript implements Serializable, IHasIdentifier
+{
+	/**
+	 * The <TT>IIdentifier</TT> that uniquely identifies this object. This is
+	 * actually the identifier of the <TT>ISQLALias</TT> that this script is
+	 * for.
+	 */
 	private IIdentifier _id;
-	
+
 	/** The SQL. */
 	private String _sql;
 
-	/** Sequence number of the script. */
-	private int _sequenceNbr;
+	/**
+	 * Default ctor. Should only be used by to/from XML code.
+	 */
+	public AliasScript()
+	{
+		super();
+	}
 
 	/**
-	 * Identifier of the <TT>SQLAlias</TT> that this script is
-	 * associated with.
+	 * Ctor specifying the <TT>ISQLAlias</TT>.
+	 * 
+	 * @param	alias	<TT>ISQLAlias</TT> we have creatign this script for.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>ISQLAlias</TT> passed.
 	 */
-//	private IIdentifier _sqlAliasId;
-	
-	/**
-	 * Default ctor.
-	 */
-	public AliasScript() {
+	public AliasScript(ISQLAlias alias)
+	{
 		super();
-		_id = IdentifierFactory.getInstance().createIdentifier();
-	}
-	
-	/**
-	 * Ctor specifying the sql.
-	 */
-	public AliasScript(String sql) {
-		super();
-		_id = IdentifierFactory.getInstance().createIdentifier();
-		_sql = sql;
+
+		if (alias == null)
+		{
+			throw new IllegalArgumentException("ISQLAlias == null");
+		}
+
+		_id = alias.getIdentifier();
 	}
 
 	/**
@@ -67,10 +75,12 @@ public class AliasScript implements Serializable, IHasIdentifier {
 	 * <TT>AliasScript</TT> objects are considered equal if they have the same
 	 * identifier.
 	 */
-	public boolean equals(Object rhs) {
+	public boolean equals(Object rhs)
+	{
 		boolean rc = false;
-		if (rhs != null && rhs.getClass().equals(getClass())) {
-			rc = ((AliasScript)rhs).getIdentifier().equals(getIdentifier());
+		if (rhs != null && rhs.getClass().equals(getClass()))
+		{
+			rc = ((AliasScript) rhs).getIdentifier().equals(getIdentifier());
 		}
 		return rc;
 	}
@@ -78,7 +88,8 @@ public class AliasScript implements Serializable, IHasIdentifier {
 	/**
 	 * Returns a hash code value for this object.
 	 */
-	public int hashCode() {
+	public int hashCode()
+	{
 		return getIdentifier().hashCode();
 	}
 
@@ -87,7 +98,8 @@ public class AliasScript implements Serializable, IHasIdentifier {
 	 * 
 	 * @return	The SQL as a string representation of this object.
 	 */
-	public String toString() {
+	public String toString()
+	{
 		return _sql != null ? _sql : "";
 	}
 
@@ -96,51 +108,39 @@ public class AliasScript implements Serializable, IHasIdentifier {
 	 * 
 	 * @return	the identifier that uniquely identifies this object.
 	 */
-	public IIdentifier getIdentifier() {
+	public IIdentifier getIdentifier()
+	{
 		return _id;
 	}
 
-	public int getSequenceNumber() {
-		return _sequenceNbr;
-	}
-	
 	/**
 	 * Return the SQL to be run.
 	 * 
 	 * @return	the SQL to be run.
 	 */
-	public String getSQL() {
+	public String getSQL()
+	{
 		return _sql;
 	}
 
-//	public IIdentifier getSQLAliasId() {
-//		return _sqlAliasId;
-//	}
-
 	/**
-	 * Set the identifier that uniquely identifies this object.
+	 * Set the identifier that uniquely identifies this object. This should
+	 * be the ID of the <TT>ISQLALais</TT> that this script is for.
 	 * 
 	 * @param	the identifier that uniquely identifies this object.
 	 */
-	public void setIdentifier(IIdentifier id) {
+	public void setIdentifier(IIdentifier id)
+	{
 		_id = id;
 	}
-	
+
 	/**
 	 * Set the SQL to be run.
 	 * 
 	 * @param	value	The SQL.
 	 */
-	public void setSQL(String value) {
+	public void setSQL(String value)
+	{
 		_sql = value;
 	}
-	
-	public void setSequenceNumber(int value) {
-		_sequenceNbr = value;
-	}
-
-	//public void setSQLAliasId(IIdentifier value) {
-//		_sqlAliasId = value;
-//	}
 }
-
