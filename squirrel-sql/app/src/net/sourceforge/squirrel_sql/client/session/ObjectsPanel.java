@@ -38,7 +38,6 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.objectstree.BaseNode;
-//import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
 class ObjectsPanel extends JPanel {
 
@@ -70,6 +69,14 @@ class ObjectsPanel extends JPanel {
 	 */
 	public IDatabaseObjectInfo[] getSelectedDatabaseObjects() {
 		return _tree.getSelectedDatabaseObjects();
+	}
+
+	/**
+	 * Sesssion is ending.
+	 * Remove all listeners that this component has setup. Close all
+	 * torn off result tab windows.
+	 */
+	void sessionEnding() {
 	}
 
 	private void createUserInterface(ISession session) {
