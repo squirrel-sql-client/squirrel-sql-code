@@ -144,6 +144,7 @@ public class FontChooser extends JDialog {
 		content.add(_fontNamesCmb, gbc);
 
 		++gbc.gridx;
+		_fontSizesCmb.setEditable(true);
 		_fontSizesCmb.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				setupPreviewLabel();
