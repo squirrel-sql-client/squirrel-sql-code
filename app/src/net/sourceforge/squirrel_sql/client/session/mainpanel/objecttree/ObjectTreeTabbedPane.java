@@ -89,12 +89,12 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 	 */
 	public void removeNotify()
 	{
+		super.removeNotify();
 		if (_propsListener != null)
 		{
 			_session.getProperties().removePropertyChangeListener(_propsListener);
 			_propsListener = null;
 		}
-		super.removeNotify();
 	}
 
 	void addObjectPanelTab(IObjectTab tab)
