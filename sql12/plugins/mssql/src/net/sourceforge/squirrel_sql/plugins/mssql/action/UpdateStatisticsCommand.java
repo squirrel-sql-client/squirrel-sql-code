@@ -47,8 +47,13 @@ public class UpdateStatisticsCommand implements ICommand {
 		// Get the names of all the selected tables in a comma separated list,
         final StringBuffer cmd = new StringBuffer(512);
 		for (int i = 0; i < dbObjs.length; ++i) {
-            cmd.append("UPDATE STATISTICS " + dbObjs[i].getSimpleName() + " WITH FULLSCAN, ALL");
-            cmd.append(" " + sqlSep + " \n");
+            cmd.append("UPDATE STATISTICS ");
+            cmd.append(dbObjs[i].getCatalogName());
+            cmd.append(".");
+            cmd.append(dbObjs[i].getSchemaName());
+            cmd.append(".");
+            cmd.append(dbObjs[i].getSimpleName());
+            cmd.append(" WITH FULLSCAN, ALL" + sqlSep + "\n");
 		}
 
         if (cmd != null && cmd.length() > 0) {
