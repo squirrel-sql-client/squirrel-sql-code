@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.gui;
+package net.sourceforge.squirrel_sql.client.gui;
 /*
  * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
@@ -25,7 +25,7 @@ import java.awt.event.ComponentListener;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
-// JASON: Move to app tree
+// 
 public class ScrollableDesktopPane extends JDesktopPane
 {
 	// TODO: make serializable safe
