@@ -133,49 +133,49 @@ public class SessionTextEditPopupMenu extends TextPopupMenu
 		}                                                 
 	}                                                     
 
-	private String quoteText(String textToQuote, boolean sbAppend)                                             
-	{                                                                                                          
-		if(null == textToQuote)                                                                                
-		{                                                                                                      
-			throw new IllegalArgumentException("textToQuote can not be null");                                 
-		}                                                                                                      
-                                                                                                           
-		String[] lines = textToQuote.split("\n");                                                              
-                                                                                                           
-		StringBuffer ret = new StringBuffer();                                                                 
-                                                                                                           
-		if(sbAppend)                                                                                           
-		{                                                                                                      
-			ret.append("sb.append(\"").append(   trimRight(lines[0].replaceAll("\"", "\\\\\""))   );           
-		}                                                                                                      
-		else                                                                                                   
-		{                                                                                                      
-			ret.append("\"").append(   trimRight(lines[0].replaceAll("\"", "\\\\\""))   );                     
-		}                                                                                                      
-                                                                                                           
-		for(int i=1; i < lines.length; ++i)                                                                    
-		{                                                                                                      
-			if(sbAppend)                                                                                       
-			{                                                                                                  
-				ret.append(" \"); \nsb.append(\"").append(  trimRight(lines[i].replaceAll("\"", "\\\\\""))  ); 
-			}                                                                                                  
-			else                                                                                               
-			{                                                                                                  
-				ret.append(" \" +\n\"").append(   trimRight(lines[i].replaceAll("\"", "\\\\\""))   );          
-			}                                                                                                  
-		}                                                                                                      
-                                                                                                           
-		if(sbAppend)                                                                                           
-		{                                                                                                      
-			ret.append(" \");");                                                                               
-		}                                                                                                      
-		else                                                                                                   
-		{                                                                                                      
-			ret.append(" \";");                                                                                
-		}                                                                                                      
-                                                                                                           
-		return ret.toString();                                                                                 
-	}                                                                                                          
+//	private String quoteText(String textToQuote, boolean sbAppend)                                             
+//	{                                                                                                          
+//		if(null == textToQuote)                                                                                
+//		{                                                                                                      
+//			throw new IllegalArgumentException("textToQuote can not be null");                                 
+//		}                                                                                                      
+//                                                                                                           
+//		String[] lines = textToQuote.split("\n");                                                              
+//                                                                                                           
+//		StringBuffer ret = new StringBuffer();                                                                 
+//                                                                                                           
+//		if(sbAppend)                                                                                           
+//		{                                                                                                      
+//			ret.append("sb.append(\"").append(   trimRight(lines[0].replaceAll("\"", "\\\\\""))   );           
+//		}                                                                                                      
+//		else                                                                                                   
+//		{                                                                                                      
+//			ret.append("\"").append(   trimRight(lines[0].replaceAll("\"", "\\\\\""))   );                     
+//		}                                                                                                      
+//                                                                                                           
+//		for(int i=1; i < lines.length; ++i)                                                                    
+//		{                                                                                                      
+//			if(sbAppend)                                                                                       
+//			{                                                                                                  
+//				ret.append(" \"); \nsb.append(\"").append(  trimRight(lines[i].replaceAll("\"", "\\\\\""))  ); 
+//			}                                                                                                  
+//			else                                                                                               
+//			{                                                                                                  
+//				ret.append(" \" +\n\"").append(   trimRight(lines[i].replaceAll("\"", "\\\\\""))   );          
+//			}                                                                                                  
+//		}                                                                                                      
+//                                                                                                           
+//		if(sbAppend)                                                                                           
+//		{                                                                                                      
+//			ret.append(" \");");                                                                               
+//		}                                                                                                      
+//		else                                                                                                   
+//		{                                                                                                      
+//			ret.append(" \";");                                                                                
+//		}                                                                                                      
+//                                                                                                           
+//		return ret.toString();                                                                                 
+//	}                                                                                                          
 
 	/**
 	 * textToUnquote is seen as a tokens separated by quotes. All tokens
@@ -224,59 +224,59 @@ public class SessionTextEditPopupMenu extends TextPopupMenu
 		return ret.toString();                                                                     
 	}                                                                                              
 
-	private void performeInSbAppendAction()                                                            
-	{                                                                                                  
-		final JTextComponent comp = getTextComponent();
-		String textToQuote = comp.getSelectedText();                                                  
-		boolean isSelection = true;                                                                    
-		if(null == textToQuote)                                                                        
-		{                                                                                              
-			textToQuote = comp.getText();                                                             
-			isSelection = false;                                                                       
-		}                                                                                              
-		if(null == textToQuote)                                                                        
-		{                                                                                              
-			return;                                                                                    
-		}                                                                                              
-                                                                                                   
-		String quotedText = quoteText(textToQuote, true);                                              
-                                                                                                   
-		if(isSelection)                                                                                
-		{                                                                                              
-			comp.replaceSelection(quotedText);                                                        
-		}                                                                                              
-		else                                                                                           
-		{                                                                                              
-			comp.setText(quotedText);                                                                 
-		}                                                                                              
-	}                                                                                                  
+//	private void performeInSbAppendAction()                                                            
+//	{                                                                                                  
+//		final JTextComponent comp = getTextComponent();
+//		String textToQuote = comp.getSelectedText();                                                  
+//		boolean isSelection = true;                                                                    
+//		if(null == textToQuote)                                                                        
+//		{                                                                                              
+//			textToQuote = comp.getText();                                                             
+//			isSelection = false;                                                                       
+//		}                                                                                              
+//		if(null == textToQuote)                                                                        
+//		{                                                                                              
+//			return;                                                                                    
+//		}                                                                                              
+//                                                                                                   
+//		String quotedText = quoteText(textToQuote, true);                                              
+//                                                                                                   
+//		if(isSelection)                                                                                
+//		{                                                                                              
+//			comp.replaceSelection(quotedText);                                                        
+//		}                                                                                              
+//		else                                                                                           
+//		{                                                                                              
+//			comp.setText(quotedText);                                                                 
+//		}                                                                                              
+//	}                                                                                                  
 
-	private void performeInQuotesAction()                  
-	{                                                      
-		final JTextComponent comp = getTextComponent();
-		String textToQuote = comp.getSelectedText();      
-		boolean isSelection = true;                        
-		if(null == textToQuote)                            
-		{                                                  
-			textToQuote = comp.getText();                 
-			isSelection = false;                           
-		}                                                  
-		if(null == textToQuote)                            
-		{                                                  
-			return;                                        
-		}                                                  
-                                                       
-		String quotedText = quoteText(textToQuote, false); 
-                                                       
-		if(isSelection)                                    
-		{                                                  
-			comp.replaceSelection(quotedText);            
-		}                                                  
-		else                                               
-		{                                                  
-			comp.setText(quotedText);                     
-		}                                                  
-	}                                                      
+//	private void performeInQuotesAction()                  
+//	{                                                      
+//		final JTextComponent comp = getTextComponent();
+//		String textToQuote = comp.getSelectedText();      
+//		boolean isSelection = true;                        
+//		if(null == textToQuote)                            
+//		{                                                  
+//			textToQuote = comp.getText();                 
+//			isSelection = false;                           
+//		}                                                  
+//		if(null == textToQuote)                            
+//		{                                                  
+//			return;                                        
+//		}                                                  
+//                                                       
+//		String quotedText = quoteText(textToQuote, false); 
+//                                                       
+//		if(isSelection)                                    
+//		{                                                  
+//			comp.replaceSelection(quotedText);            
+//		}                                                  
+//		else                                               
+//		{                                                  
+//			comp.setText(quotedText);                     
+//		}                                                  
+//	}                                                      
 
 //	private void preformReformatoCode()
 //	{
@@ -355,44 +355,44 @@ public class SessionTextEditPopupMenu extends TextPopupMenu
 		}
 	}
 
-	private class InQuotesAction extends BaseAction
-	{
-		InQuotesAction()
-		{
-			super("In quotes");
-		}
+//	private class InQuotesAction extends BaseAction
+//	{
+//		InQuotesAction()
+//		{
+//			super("In quotes");
+//		}
+//
+//		public void actionPerformed(ActionEvent evt)
+//		{
+//			performeInQuotesAction();
+//		}
+//	}
 
-		public void actionPerformed(ActionEvent evt)
-		{
-			performeInQuotesAction();
-		}
-	}
-
-	private class InSbAppendAction extends BaseAction
-	{
-		InSbAppendAction()
-		{
-			super("In sb.append()");
-		}
-
-		public void actionPerformed(ActionEvent evt)
-		{
-			performeInSbAppendAction();
-		}
-	}
-
-	private class RemoveQuotesAction extends BaseAction
-	{
-		RemoveQuotesAction()
-		{
-			super("Remove quotes");
-		}
-
-		public void actionPerformed(ActionEvent evt)
-		{
-			performeRemoveQuotesAction();
-		}
-	}
+//	private class InSbAppendAction extends BaseAction
+//	{
+//		InSbAppendAction()
+//		{
+//			super("In sb.append()");
+//		}
+//
+//		public void actionPerformed(ActionEvent evt)
+//		{
+//			performeInSbAppendAction();
+//		}
+//	}
+//
+//	private class RemoveQuotesAction extends BaseAction
+//	{
+//		RemoveQuotesAction()
+//		{
+//			super("Remove quotes");
+//		}
+//
+//		public void actionPerformed(ActionEvent evt)
+//		{
+//			performeRemoveQuotesAction();
+//		}
+//	}
 
 //	private class ReformatCodeAction extends BaseAction
 //	{

@@ -92,9 +92,9 @@ public abstract class BaseObjectTab implements IObjectTab
 				clear();
 				refreshComponent();
 			}
-			catch (DataSetException ex)
+			catch (Throwable th)
 			{
-				getSession().getMessageHandler().showErrorMessage(ex);
+				getSession().getMessageHandler().showErrorMessage(th);
 			}
 			_hasBeenDisplayed = true;
 		}
