@@ -30,7 +30,7 @@ Enhancements
 Bug Fixes
 ---------
 - Fix Nullpointer exception in HTML viewer under JDK1.3.
-- CLOB/BLOB colums weren't handled correctly on metadata and
+- CLOB/BLOB columns weren't handled correctly on metadata and
   Content tabs.
 - The line/column number displayed for the SQL entry area
   now starts from 1,1 not 0,0

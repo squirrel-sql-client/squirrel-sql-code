@@ -1,6 +1,12 @@
 jEdit Text Area Plugin Change Log
 =================================
 
+0.11
+====
+
+- Updated for SQuirrel SQL Client 1.1beta7.
+
+
 0.10
 ====
 
