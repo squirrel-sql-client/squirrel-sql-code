@@ -57,25 +57,23 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
      * Ctor.
      *
      * @param   plugin          The LAF plugin.
-     * @param   skinLafName     Name of the Skin LAF.
+     * @param   lafRegister		Look and Feel register.
      *
      * @throws  IllegalArgumentException
-     *          if LAFPlugin, or skinLafName is <TT>null</TT>.
+     *          if <TT>LAFPlugin</TT>, or <TT>LAFRegister</TT> is <TT>null</TT>.
      */
-    public LAFPreferencesPanel(LAFPlugin plugin, String skinLafName)
-            throws IllegalArgumentException {
+    public LAFPreferencesPanel(LAFPlugin plugin, LAFRegister lafRegister)
+        throws IllegalArgumentException {
         super();
         if (plugin == null) {
             throw new IllegalArgumentException("Null LAFPlugin passed");
         }
-        if (skinLafName == null) {
-            throw new IllegalArgumentException("Null skinLafName passed");
+        if (lafRegister == null) {
+            throw new IllegalArgumentException("Null LAFRegister passed");
         }
-
         _lafPrefs = plugin.getLAFPreferences();
-
         // Create the actual panel that will be displayed in dialog.
-        _myPanel = new MyPanel(plugin, skinLafName);
+        _myPanel = new MyPanel(plugin, lafRegister);
     }
 
     /**
@@ -86,12 +84,11 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
      * @throws  IllegalArgumentException
      *          if <TT>IApplication</TT> is <TT>null</TT>.
      */
-    public void initialize(IApplication app)
-            throws IllegalArgumentException {
+    public void initialize(IApplication app) throws IllegalArgumentException {
         if (app == null) {
             throw new IllegalArgumentException("Null IApplication passed");
         }
-        _app = app;
+        _app = app;
         _myPanel.loadData();
     }
 
@@ -129,7 +126,7 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
     public String getHint() {
         return MyPanel.i18n.TAB_HINT;
     }
-    /**
+    /**
      * Component to be displayed in the preferences dialog.
      */
     private static final class MyPanel extends JPanel {
@@ -140,44 +137,55 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
         interface i18n {
             String LOOK_AND_FEEL = "Look and Feel:";
             String THEME_PACK = "Theme Pack:";
-            String LAF_WARNING = "Note: Changes to this panel will require a\nrestart of Squirrel-SQL to take effect.";
+            //            String LAF_WARNING = "Note: Changes to this panel will require a\nrestart of Squirrel-SQL to take effect.";
             String TAB_TITLE = "L & F";
             String TAB_HINT = "Look and Feel settings";
             String LAF_LOC = "Look and Feel jars folder:";
             String THEMEPACK_LOC = "Theme Pack folder:";
         }
-        private LookAndFeelComboBox _lafCmb = new LookAndFeelComboBox();
+        private LookAndFeelComboBox _lafCmb = new LookAndFeelComboBox();
         private ThemePackComboBox _themePackCmb;
 
         private LAFPlugin _plugin;
-        private String _skinLafName;
+        private LAFRegister _lafRegister;
 
         private LAFPreferences _lafsPrefs;
-
-        MyPanel(LAFPlugin plugin, String skinLafName) {
+        MyPanel(LAFPlugin plugin, LAFRegister lafRegister) {
             super();
             _plugin = plugin;
-            _skinLafName = skinLafName;
+            _lafRegister = lafRegister;
             _lafsPrefs = _plugin.getLAFPreferences();
             createUserInterface();
         }
-        void loadData() {
-//          _themePackCmb.setSelectedItem(_lafsPrefs.getThemePackName());
-//          _themePackCmb.setEnabled(((String)_lafCmb.getSelectedItem()).equals(_skinLafName));
+        void loadData() {
+            final String skinLafName = _lafRegister.getSkinnableLookAndFeelName();
+            //          _themePackCmb.setSelectedItem(_lafsPrefs.getThemePackName());
+            //          _themePackCmb.setEnabled(((String)_lafCmb.getSelectedItem()).equals(_skinLafName));
             if (_themePackCmb.getModel().getSize() == 0) {
                 _themePackCmb.setEnabled(false);
                 ComboBoxModel model = _lafCmb.getModel();
-                if(model instanceof MutableComboBoxModel) {
-                    ((MutableComboBoxModel)model).removeElement(_skinLafName);
+                if (model instanceof MutableComboBoxModel) {
+                    ((MutableComboBoxModel) model).removeElement(skinLafName);
                 }
             } else {
                 _themePackCmb.setSelectedItem(_lafsPrefs.getThemePackName());
-                _themePackCmb.setEnabled(((String)_lafCmb.getSelectedItem()).equals(_skinLafName));
+                if (_themePackCmb.getSelectedIndex() == -1) {
+                    _themePackCmb.setSelectedIndex(0);
+                }
+                _themePackCmb.setEnabled(
+                    ((String) _lafCmb.getSelectedItem()).equals(skinLafName));
             }
         }
-        void applyChanges() {
-            _lafsPrefs.setLookAndFeelClassName(_lafCmb.getSelectedLookAndFeel().getClassName());
-            _lafsPrefs.setThemePackName((String)_themePackCmb.getSelectedItem());
+
+        void applyChanges() {
+            _lafsPrefs.setLookAndFeelClassName(
+                _lafCmb.getSelectedLookAndFeel().getClassName());
+            _lafsPrefs.setThemePackName((String) _themePackCmb.getSelectedItem());
+            try {
+                _lafRegister.setLookAndFeel();
+            } catch (Exception ex) {
+                //?? Need to report this.
+            }
         }
 
         private void createUserInterface() {
@@ -192,7 +200,9 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
             pnl.add(lbl, _themePackCmb);
             _lafCmb.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
-                    _themePackCmb.setEnabled(((String)_lafCmb.getSelectedItem()).equals(_skinLafName));
+                    _themePackCmb.setEnabled(
+                        ((String) _lafCmb.getSelectedItem()).equals(
+                            _lafRegister.getSkinnableLookAndFeelName()));
                 }
             });
 
@@ -204,13 +214,12 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
             add(pnl, BorderLayout.CENTER);
 
             // Warning message in bottom panel.
-            JTextArea ta = new JTextArea(i18n.LAF_WARNING);
-            ta.setBackground(getBackground());
-            ta.setEditable(false);
-            ta.setFont(lbl.getFont());
-            add(ta, BorderLayout.SOUTH);
+            //            JTextArea ta = new JTextArea(i18n.LAF_WARNING);
+            //            ta.setBackground(getBackground());
+            //            ta.setEditable(false);
+            //            ta.setFont(lbl.getFont());
+            //            add(ta, BorderLayout.SOUTH);
         }
-
         private class ThemePackComboBox extends JComboBox {
             ThemePackComboBox(File themePackFolder) {
                 super();
@@ -219,7 +228,9 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
 
             private void loadThemePacks(File themePackFolder) {
                 if (themePackFolder.canRead() && themePackFolder.isDirectory()) {
-                    File[] files = themePackFolder.listFiles(new FileExtensionFilter("JAR files", new String[] {".jar", ".zip"}));
+                    File[] files =
+                        themePackFolder.listFiles(
+                            new FileExtensionFilter("JAR files", new String[] { ".jar", ".zip" }));
                     for (int i = 0; i < files.length; ++i) {
                         addItem(files[i].getName());
                     }
@@ -228,4 +239,3 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
         }
     }
 }
-

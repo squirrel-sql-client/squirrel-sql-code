@@ -152,8 +152,7 @@ public class LAFPlugin extends DefaultPlugin {
      */
     public IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
         return new IGlobalPreferencesPanel[] {
-            new LAFPreferencesPanel(this, _lafRegister.getSkinnableLookAndFeelName())
-        };
+             new LAFPreferencesPanel(this, _lafRegister)};
     }
 
     /**
@@ -198,17 +197,22 @@ public class LAFPlugin extends DefaultPlugin {
     private void loadPrefs() {
         try {
             XMLBeanReader doc = new XMLBeanReader();
-            doc.load(new File(_userSettingsFolder, LAFConstants.USER_PREFS_FILE_NAME), getClass().getClassLoader());
+            doc.load(
+                new File(_userSettingsFolder, LAFConstants.USER_PREFS_FILE_NAME),
+                getClass().getClassLoader());
             Iterator it = doc.iterator();
             if (it.hasNext()) {
-                _lafPrefs = (LAFPreferences)it.next();
+                _lafPrefs = (LAFPreferences) it.next();
             }
-        } catch(FileNotFoundException ignore) {
+        } catch (FileNotFoundException ignore) {
             // property file not found for user - first time user ran pgm.
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             Logger logger = getApplication().getLogger();
-            logger.showMessage(Logger.ILogTypes.ERROR, "Error occured reading from preferences file: "
-                                                + LAFConstants.USER_PREFS_FILE_NAME); //i18n
+            logger.showMessage(
+                Logger.ILogTypes.ERROR,
+                "Error occured reading from preferences file: "
+                    + LAFConstants.USER_PREFS_FILE_NAME);
+            //i18n
             logger.showMessage(Logger.ILogTypes.ERROR, ex);
         }
         if (_lafPrefs == null) {
@@ -223,10 +227,13 @@ public class LAFPlugin extends DefaultPlugin {
         try {
             XMLBeanWriter wtr = new XMLBeanWriter(_lafPrefs);
             wtr.save(new File(_userSettingsFolder, LAFConstants.USER_PREFS_FILE_NAME));
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             Logger logger = getApplication().getLogger();
-            logger.showMessage(Logger.ILogTypes.ERROR, "Error occured writing to preferences file: "
-                                                + LAFConstants.USER_PREFS_FILE_NAME); //i18n
+            logger.showMessage(
+                Logger.ILogTypes.ERROR,
+                "Error occured writing to preferences file: "
+                    + LAFConstants.USER_PREFS_FILE_NAME);
+            //i18n
             logger.showMessage(Logger.ILogTypes.ERROR, ex);
         }
     }
