@@ -59,6 +59,8 @@ public class TableInfoTab extends BaseTablePanelTab
 	{
 		String TITLE = "Info";
 		String HINT = "Basic information";
+		String GET_ROW_COUNT = "Get Row Count";
+		String REFRESH_ROW_COUNT = "Refresh Row Count";
 	}
 
 	/** Logger for this class. */
@@ -133,7 +135,8 @@ public class TableInfoTab extends BaseTablePanelTab
 	private class TableInfoComponent extends JPanel
 	{
 		private boolean _fullyCreated = false;
-		private JLabel _rowCount = new JLabel("");
+		private JLabel _rowCountLbl = new JLabel("");
+		private JLabel _rowCountTitleLbl = new JLabel("Row count:");
 		private RowCountButton _rowCountBtn;
 		private TableInfoDataSet _ds;
 		private IDataSetViewer _viewer;
@@ -145,10 +148,19 @@ public class TableInfoTab extends BaseTablePanelTab
 
 		void clear()
 		{
-			if (_rowCount != null)
-				_rowCount.setText("");
+			if (_rowCountLbl != null)
+			{
+				_rowCountLbl.setText("");
+			}
 			if (_viewer != null)
+			{
 				_viewer.clear();
+			}
+			_rowCountTitleLbl.setVisible(false);
+			if (_rowCountBtn != null)
+			{
+				_rowCountBtn.setText(TableInfoi18n.GET_ROW_COUNT);
+			}
 		}
 
 		void load(final ISession session, final ITableInfo ti)
@@ -170,11 +182,11 @@ public class TableInfoTab extends BaseTablePanelTab
 					{
 						if (session.getProperties().getShowRowCount())
 						{
-							new UpdateRowCountCommand(session, ti, _rowCount).execute();
+							new UpdateRowCountCommand(session, ti).execute();
 						}
 						else
 						{
-							_rowCount.setText("<Unknown>");
+							_rowCountLbl.setText("");
 						}
 
 						_ds.setTableInfo(ti);
@@ -190,20 +202,23 @@ public class TableInfoTab extends BaseTablePanelTab
 				});			}
 			catch (Exception ex)
 			{
-				_rowCount.setText("<error>");
+				_rowCountLbl.setText("<error>");
 				s_log.error("Error", ex);
 			}
 		}
 
 		private void setRowCountText(String nbrRows)
 		{
-			_rowCount.setText("" + nbrRows);
+			_rowCountLbl.setText(nbrRows);
+			_rowCountBtn.setText(TableInfoTab.TableInfoi18n.REFRESH_ROW_COUNT);
+			_rowCountTitleLbl.setVisible(true);
 		}
 
 		private void createUserInterface() throws DataSetException
 		{
 			final ISession session = getSession();
 			_rowCountBtn = new RowCountButton(session);
+			_rowCountTitleLbl.setVisible(false);
 
 			// Panel displays the row count for the table.
 			final JPanel pnl = new JPanel(new GridBagLayout());
@@ -217,11 +232,11 @@ public class TableInfoTab extends BaseTablePanelTab
 			pnl.add(_rowCountBtn, gbc);
 
 			++gbc.gridx;
-			pnl.add(new JLabel("Row count:"), gbc);
+			pnl.add(_rowCountTitleLbl, gbc);
 
 			++gbc.gridx;
 			gbc.weightx = 1.0;
-			pnl.add(_rowCount, gbc);
+			pnl.add(_rowCountLbl, gbc);
 
 			// Panel displays table info.
 			String destClassName = session.getProperties().getTableOutputClassName();
@@ -246,7 +261,7 @@ public class TableInfoTab extends BaseTablePanelTab
 	
 			RowCountButton(ISession session)
 			{
-				super("Refresh Row Count");
+				super(TableInfoi18n.GET_ROW_COUNT);
 				_session = session;
 				addActionListener(this);
 			}
@@ -258,59 +273,55 @@ public class TableInfoTab extends BaseTablePanelTab
 	
 			public void actionPerformed(ActionEvent evt)
 			{
-				new UpdateRowCountCommand(_session, _ti, TableInfoComponent.this._rowCount).execute();
+				new UpdateRowCountCommand(_session, _ti).execute();
 			}
 		}
-	
-	}
 
-	private static final class UpdateRowCountCommand implements ICommand
-	{
-		private ISession _session;
-		private ITableInfo _ti;
-		private JLabel _rowCountLabel;
-		
-		UpdateRowCountCommand(ISession session, ITableInfo ti, JLabel rowCountLabel)
+		private final class UpdateRowCountCommand implements ICommand
 		{
-			super();
-			_session = session;
-			_ti = ti;
-			_rowCountLabel = rowCountLabel;
-		}
-
-		public void execute()
-		{
-			String nbrRows = "<Unknown>";
-			if (_ti != null)
+			private ISession _session;
+			private ITableInfo _ti;
+			
+			UpdateRowCountCommand(ISession session, ITableInfo ti)
 			{
-				try
+				super();
+				_session = session;
+				_ti = ti;
+			}
+	
+			public void execute()
+			{
+				String nbrRows = "<Unknown>";
+				if (_ti != null)
 				{
-					Statement stmt = _session.getSQLConnection().createStatement();
 					try
 					{
-						ResultSet rs = stmt.executeQuery("select count(*) from " + _ti.getQualifiedName());
-						if (rs.next())
+						Statement stmt = _session.getSQLConnection().createStatement();
+						try
 						{
-							nbrRows = String.valueOf(rs.getLong(1));
+							ResultSet rs = stmt.executeQuery("select count(*) from " + _ti.getQualifiedName());
+							if (rs.next())
+							{
+								nbrRows = String.valueOf(rs.getLong(1));
+							}
+							else
+							{
+								nbrRows = "0";
+							}
 						}
-						else
+						finally
 						{
-							nbrRows = "0";
+							stmt.close();
 						}
 					}
-					finally
+					catch (Exception ex)
 					{
-						stmt.close();
+						nbrRows = "<error>";
+						s_log.error("Error retrieving row count for table", ex);
 					}
 				}
-				catch (Exception ex)
-				{
-					nbrRows = "<error>";
-					s_log.error("Error retrieving row count for table", ex);
-				}
+				TableInfoComponent.this.setRowCountText(nbrRows);
 			}
-
-			_rowCountLabel.setText(nbrRows);
 		}
 	}
 }
