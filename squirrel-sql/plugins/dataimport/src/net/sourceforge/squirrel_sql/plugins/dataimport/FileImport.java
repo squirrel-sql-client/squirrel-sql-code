@@ -19,16 +19,14 @@ package net.sourceforge.squirrel_sql.plugins.dataimport;
  */
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.*;
+//import java.beans.*; Caused a compilation error in JDK1.4 (?) because Statement is in both java.sql and java.beans.
 import java.io.*;
 import java.sql.*;
 import java.util.*;
 
-
 import javax.swing.*;
 import javax.swing.filechooser.*;
 import javax.swing.table.*;
-
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
