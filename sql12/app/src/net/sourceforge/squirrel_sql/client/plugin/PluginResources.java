@@ -21,12 +21,9 @@ import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 public class PluginResources extends Resources
 {
-	private IPlugin _plugin;
-
 	public PluginResources(String rsrcBundleBaseName, IPlugin plugin)
 	{
 		super(rsrcBundleBaseName, getClassLoader(plugin));
-		_plugin = plugin;
 	}
 
 	private static ClassLoader getClassLoader(IPlugin plugin)

@@ -40,7 +40,7 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 /**
  * This class represents the application preferences.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SquirrelPreferences implements Serializable
 {
@@ -259,7 +259,7 @@ public class SquirrelPreferences implements Serializable
 	{
 		return _showColorIconsInToolbars;
 	}
-	
+
 	public synchronized void setShowColoriconsInToolbar(boolean data)
 	{
 		final boolean oldValue = _showColorIconsInToolbars;
@@ -267,7 +267,7 @@ public class SquirrelPreferences implements Serializable
 		getPropertyChangeReporter().firePropertyChange(IPropertyNames.SHOW_COLOR_ICONS_IN_TOOLBAR,
 											oldValue, _showColorIconsInToolbars);
 	}
-	
+
 	public int getLoginTimeout()
 	{
 		return _loginTimeout;
@@ -360,7 +360,7 @@ public class SquirrelPreferences implements Serializable
 	/**
 	 * Retrieve the proxy settings. Note that this method returns a clone
 	 * of the actual proxy settings used.
-	 * 
+	 *
 	 * @return	<TT>ProxySettings</TT> object.
 	 */
 	public ProxySettings getProxySettings()
@@ -382,7 +382,7 @@ public class SquirrelPreferences implements Serializable
 
 	/**
 	 * Retrieve the index of the selected alias in the aliases window.
-	 * 
+	 *
 	 * @return	the index of the selected alias in the aliases window
 	 * 			or -1 if none selected.
 	 */
@@ -407,7 +407,7 @@ public class SquirrelPreferences implements Serializable
 
 	/**
 	 * Retrieve the index of the selected driver in the drivers window.
-	 * 
+	 *
 	 * @return	the index of the selected driver in the drivers window
 	 * 			or -1 if none selected.
 	 */
@@ -442,7 +442,7 @@ public class SquirrelPreferences implements Serializable
 	/**
 	 * Set whether only the loaded JDBC drivers are displayed in the
 	 * Drivers window.
-	 * 
+	 *
 	 * @param	data	New value for this property.
 	 */
 	public synchronized void setShowLoadedDriversOnly(boolean data)
@@ -455,7 +455,7 @@ public class SquirrelPreferences implements Serializable
 
 	/*
 	public synchronized PluginObjectWrapper[] getPluginObjects() {
-		//	  return (Folder[])_subFolders.toArray(new Folder[_subFolders.size()]);
+		//	return (Folder[])_subFolders.toArray(new Folder[_subFolders.size()]);
 		int pluginCount = _allPluginObjects.size();
 		PluginObjectWrapper[] wrappers = new PluginObjectWrapper[pluginCount];
 		int wrappersIdx = 0;
@@ -474,13 +474,12 @@ public class SquirrelPreferences implements Serializable
 				keysAr[entriesIdx] = new StringWrapper((String)entry.getKey());
 				objsAr[entriesIdx++] = entry.getValue();
 			}
-	
+
 			pow.setKeys(keysAr);
 			pow.setObjects(objsAr);
 			wrappers[wrappersIdx++] = pow;
 		}
-	
-	
+
 		return wrappers;
 	}
 	*/
@@ -601,7 +600,7 @@ public class SquirrelPreferences implements Serializable
 	{
 		if (_propChgReporter == null)
 		{
-			_propChgReporter = new PropertyChangeReporter(this); 
+			_propChgReporter = new PropertyChangeReporter(this);
 		}
 		return _propChgReporter;
 	}
@@ -611,68 +610,68 @@ public class SquirrelPreferences implements Serializable
 			private String _pluginInternalName;
 			private StringWrapper[] _keys;
 			private Object[] _objects;
-	
+
 			public String getPluginInternalName() {
 				return _pluginInternalName;
 			}
-	
-	
+
+
 			public void setPluginInternalName(String value) {
 				_pluginInternalName = value;
 			}
-	
-	
+
+
 			public Object[] getObjects() {
 				return _objects;
 			}
-	
-	
+
+
 			public Object getObjects(int idx) {
 				return _objects[idx];
 			}
-	
-	
+
+
 			public void setObjects(Object[] value) {
 				_objects = value;
 			}
-	
-	
+
+
 			public void setObjects(int idx, Object value) {
 				_objects[idx] = value;
 			}
-	
-	
+
+
 			public StringWrapper[] getKeys() {
 				return _keys;
 			}
-	
-	
+
+
 			public StringWrapper getKeys(int idx) {
 				return _keys[idx];
 			}
-	
-	
+
+
 			public void setKeys(StringWrapper[] value) {
 				_keys = value;
 			}
-	
-	
+
+
 			public void setKeys(int idx, StringWrapper value) {
 				_keys[idx] = value;
 			}
 		}
-	
-	
+
+
 		public class PluginObjectWrapperBeanInfo extends SimpleBeanInfo {
 			private static final String PLUGIN_INTERNAL_NAME = "pluginInternalName";
 			private static final String KEYS = "keys";
 			private static final String OBJECTS = "objects";
-	
-	
+
+
 			private PropertyDescriptor[] s_dscrs;
-	
+
 			private Class cls = PluginObjectWrapper.class;
-	
+
 			public PluginObjectWrapperBeanInfo() throws IntrospectionException {
 				super();
 				if (s_dscrs == null) {
@@ -683,7 +682,7 @@ public class SquirrelPreferences implements Serializable
 					s_dscrs[idx++] = new IndexedPropertyDescriptor(OBJECTS, cls, "getObjects", "setObjects", "getObjects", "setObjects");
 				}
 			}
-	
+
 			public PropertyDescriptor[] getPropertyDescriptors() {
 				return s_dscrs;
 			}

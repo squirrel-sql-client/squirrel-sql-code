@@ -27,13 +27,14 @@ public abstract class DefaultSessionPlugin extends DefaultPlugin
 	 * A new session has been created. At this point the
 	 * <TT>SessionSheet</TT> does not exist for the new session.
 	 *
-	 * @param   session	 The new session.
+	 * @param	session	 The new session.
 	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> ISession</TT> passed.
 	 */
 	public void sessionCreated(ISession session)
 	{
+		// Empty body.
 	}
 
 	/**
@@ -56,6 +57,7 @@ public abstract class DefaultSessionPlugin extends DefaultPlugin
 	 */
 	public void sessionEnding(ISession session)
 	{
+		// Empty body.
 	}
 
 	/**
@@ -63,7 +65,7 @@ public abstract class DefaultSessionPlugin extends DefaultPlugin
 	 *
 	 * @param	session	The session that will be displayed in the properties dialog.
 	 *
-	 * @return  <TT>null</TT> to indicate that this plugin doesn't use session property panels.
+	 * @return	<TT>null</TT> to indicate that this plugin doesn't use session property panels.
 	 */
 	public ISessionPropertiesPanel[] getSessionPropertiesPanels(ISession session)
 	{
