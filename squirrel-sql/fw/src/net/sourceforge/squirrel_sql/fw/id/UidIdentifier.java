@@ -20,35 +20,35 @@ package net.sourceforge.squirrel_sql.fw.id;
 import java.rmi.server.UID;
 
 public class UidIdentifier implements IIdentifier {
-    public interface IPropertyNames {
-        String STRING = "string";
-    }
+	public interface IPropertyNames {
+		String STRING = "string";
+	}
 
-    private String _id;
+	private String _id;
 
-    public UidIdentifier() {
-        super();
-        _id = new UID().toString();
-    }
+	public UidIdentifier() {
+		super();
+		_id = new UID().toString();
+	}
 
-    public boolean equals(Object rhs) {
-        boolean rc = false;
-        if (rhs != null && rhs.getClass().equals(getClass())) {
-            rc = ((UidIdentifier)rhs).toString().equals(toString());
-        }
-        return rc;
-    }
+	public boolean equals(Object rhs) {
+		boolean rc = false;
+		if (rhs != null && rhs.getClass().equals(getClass())) {
+			rc = ((UidIdentifier)rhs).toString().equals(toString());
+		}
+		return rc;
+	}
 
-    public synchronized int hashCode() {
-        return toString().hashCode();
-    }
+	public synchronized int hashCode() {
+		return toString().hashCode();
+	}
 
-    public String toString() {
-        return _id;
-    }
+	public String toString() {
+		return _id;
+	}
 
-    // Only for restoring from XML etc.
-    public void setString(String value) {
-        _id = value;
-    }
+	// Only for restoring from XML etc.
+	public void setString(String value) {
+		_id = value;
+	}
 }
