@@ -27,6 +27,7 @@ import javax.swing.Action;
 import javax.swing.JMenu;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
+import net.sourceforge.squirrel_sql.fw.gui.GUIExecutionController;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.Debug;
 import net.sourceforge.squirrel_sql.fw.util.Logger;
@@ -71,6 +72,8 @@ class Application implements IApplication {
     private DummyAppPlugin _dummyPlugin = new DummyAppPlugin();
 
     private SquirrelResources _resources;
+    
+    private GUIExecutionController _sqlExecutionController = new GUIExecutionController();
 
     /**
      * ctor.
@@ -188,6 +191,15 @@ class Application implements IApplication {
 
     public MainFrame getMainFrame() {
         return _mainFrame;
+    }
+
+	/**
+	 * Return the threaded controller for controlling SQL execution.
+	 * 
+	 * @return	the threaded controller for controlling SQL execution.
+	 */
+    public GUIExecutionController getSQLController() {
+    	return _sqlExecutionController;
     }
 
     public synchronized void addToMenu(int menuId, JMenu menu) {

@@ -23,6 +23,7 @@ import java.io.IOException;
 import javax.swing.Action;
 import javax.swing.JMenu;
 
+import net.sourceforge.squirrel_sql.fw.gui.GUIExecutionController;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.Logger;
 
@@ -63,6 +64,13 @@ public interface IApplication {
 	 * @return	The main frame for the app.
 	 */
     MainFrame getMainFrame();
+
+	/**
+	 * Return the threaded controller for controlling SQL execution.
+	 * 
+	 * @return	the threaded controller for controlling SQL execution.
+	 */
+    GUIExecutionController getSQLController();
 
 	/**
 	 * Add a hierarchical menu to a menu.
