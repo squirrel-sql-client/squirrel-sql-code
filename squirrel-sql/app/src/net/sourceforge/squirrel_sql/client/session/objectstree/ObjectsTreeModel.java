@@ -131,15 +131,15 @@ public class ObjectsTreeModel extends DefaultTreeModel
 
 	String[] getTableTypes()
 	{
-		try
-		{
-			return getConnection().getTableTypes();
-		}
-		catch (SQLException ignore)
-		{
+//		try
+//		{
+//			return getConnection().getTableTypes();
+//		}
+//		catch (SQLException ignore)
+//		{
 			return new String[] {
 			};
 			// Assume driver doesn't handle getTableTypes().
-		}
+//		}
 	}
 }

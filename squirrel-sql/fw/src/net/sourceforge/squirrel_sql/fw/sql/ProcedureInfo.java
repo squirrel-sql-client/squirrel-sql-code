@@ -18,10 +18,9 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class ProcedureInfo extends DatabaseObjectInfo implements IProcedureInfo
+class ProcedureInfo extends DatabaseObjectInfo implements IProcedureInfo
 {
 	/**
 	 * This interface defines locale specific strings. This should be
@@ -43,7 +42,7 @@ public class ProcedureInfo extends DatabaseObjectInfo implements IProcedureInfo
 	/** Procedure remarks. */
 	private final String _remarks;
 
-	public ProcedureInfo(String catalog, String schema, String simpleName,
+	ProcedureInfo(String catalog, String schema, String simpleName,
 							String remarks, int procType,
 							SQLDatabaseMetaData md) throws SQLException
 	{

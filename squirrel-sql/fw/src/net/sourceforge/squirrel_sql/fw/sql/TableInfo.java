@@ -17,64 +17,75 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-public class TableInfo extends DatabaseObjectInfo implements ITableInfo {
+class TableInfo extends DatabaseObjectInfo implements ITableInfo
+{
 	/** Table Type. */
-	private final String _type;
+	private final String _tableType;
 
 	/** Table remarks. */
 	private final String _remarks;
-	
-	private SortedSet    _childList; // build up datastructure.
-	private ITableInfo[] _childs;    // final cache.
 
-	TableInfo(ResultSet rs, SQLConnection conn) throws SQLException {
-		super(rs.getString(1), rs.getString(2), rs.getString(3),
-				IDatabaseObjectTypes.TABLE, conn);
-		_type = rs.getString(4);
-		_remarks = rs.getString(5);
-		_childList = null;
+	private SortedSet _childList; // build up datastructure.
+	private ITableInfo[] _childs; // final cache.
+
+	TableInfo(String catalog, String schema, String simpleName,
+							String tableType, String remarks,
+							SQLDatabaseMetaData md) throws SQLException
+	{
+		super(catalog, schema, simpleName, IDatabaseObjectTypes.TABLE, md);
+		_remarks = remarks;
+		_tableType = tableType;
 	}
 
-	public String getType() {
-		return _type;
+	// TODO: Rename this to getTableType.
+	public String getType()
+	{
+		return _tableType;
 	}
 
-	public String getRemarks() {
+	public String getRemarks()
+	{
 		return _remarks;
 	}
 
 	public boolean equals(Object obj)
 	{
-		if(super.equals(obj) && obj instanceof TableInfo)
+		if (super.equals(obj) && obj instanceof TableInfo)
 		{
-			TableInfo info = (TableInfo)obj;
-			if( (info._type == null && _type == null) ||
-			 ((info._type != null && _type != null) && info._type.equals(_type)) )
+			TableInfo info = (TableInfo) obj;
+			if ((info._tableType == null && _tableType == null)
+				|| ((info._tableType != null && _tableType != null)
+					&& info._tableType.equals(_tableType)))
 			{
-				return ( (info._remarks == null && _remarks == null) ||
-				 ((info._remarks != null && _remarks != null) && info._remarks.equals(_remarks)) );
+				return (
+					(info._remarks == null && _remarks == null)
+						|| ((info._remarks != null && _remarks != null)
+							&& info._remarks.equals(_remarks)));
 			}
 		}
 		return false;
 	}
 
-	void addChild(ITableInfo tab) {
-		if (_childList == null) {
+	void addChild(ITableInfo tab)
+	{
+		if (_childList == null)
+		{
 			_childList = new TreeSet();
 		}
 		_childList.add(tab);
 	}
 
-	public ITableInfo[] getChildTables() {
-		if (_childs == null && _childList != null) {
-		_childs = (ITableInfo[]) _childList.toArray(new ITableInfo[_childList.size()]);
-		_childList = null;
+	public ITableInfo[] getChildTables()
+	{
+		if (_childs == null && _childList != null)
+		{
+			_childs = (ITableInfo[]) _childList.toArray(
+								new ITableInfo[_childList.size()]);
+			_childList = null;
 		}
 		return _childs;
 	}

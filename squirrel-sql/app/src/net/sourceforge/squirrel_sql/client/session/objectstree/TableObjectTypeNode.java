@@ -89,26 +89,26 @@ public final class TableObjectTypeNode extends ObjectTypeNode {
 		{
 			final ArrayList listNodes = new ArrayList();
 			Statement stmt = null;
-			try
-			{
-				final String catalogId = getParentNode().getCatalogIdentifier();
-				final String schemaId = getParentNode().getSchemaIdentifier();
-				final ITableInfo[] tables = conn.getTables(catalogId, schemaId, "%", new String[]{_tableTypePattern});
-				if (session.getProperties().getShowRowCount()) {
-					stmt = conn.createStatement();
-				}
-				for (int i = 0; i < tables.length; ++i) {
-					listNodes.add(new TableNode(session, model, tables[i], stmt));
-				}
-			}
-			finally
-			{
-				try
-				{
-					if (stmt != null) stmt.close();
-				}
-				catch (SQLException ex) { }
-			}
+//			try
+//			{
+//				final String catalogId = getParentNode().getCatalogIdentifier();
+//				final String schemaId = getParentNode().getSchemaIdentifier();
+//				final ITableInfo[] tables = conn.getTables(catalogId, schemaId, "%", new String[]{_tableTypePattern});
+//				if (session.getProperties().getShowRowCount()) {
+//					stmt = conn.createStatement();
+//				}
+//				for (int i = 0; i < tables.length; ++i) {
+//					listNodes.add(new TableNode(session, model, tables[i], stmt));
+//				}
+//			}
+//			finally
+//			{
+//				try
+//				{
+//					if (stmt != null) stmt.close();
+//				}
+//				catch (SQLException ex) { }
+//			}
 			return listNodes;
 		}
 	}

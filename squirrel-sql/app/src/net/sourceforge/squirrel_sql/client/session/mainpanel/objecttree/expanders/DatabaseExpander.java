@@ -65,7 +65,7 @@ public class DatabaseExpander implements INodeExpander
 		}
 		try
 		{
-			_tableTypes = session.getSQLConnection().getTableTypes();
+			_tableTypes = session.getSQLConnection().getSQLMetaData().getTableTypes();
 		}
 		catch (SQLException ex)
 		{

@@ -87,7 +87,7 @@ public final class UDTObjectTypeNode extends ObjectTypeNode {
 			final String schemaId = getParentNode().getSchemaIdentifier();
 			IUDTInfo[] udts = null;
 			try {
-				udts = conn.getUDTs(catalogId, schemaId, "%", null);
+				udts = conn.getSQLMetaData().getUDTs(catalogId, schemaId, "%", null);
 			} catch (SQLException ignore) {
 				// Assume DBMS doesn't support UDTs.
 			}

@@ -66,7 +66,7 @@ public class TableTypesTab extends BaseDatabasePanelTab
 	{
 		try
 		{
-			return new ObjectArrayDataSet(session.getSQLConnection().getTableTypes());
+			return new ObjectArrayDataSet(session.getSQLConnection().getSQLMetaData().getTableTypes());
 		}
 		catch (SQLException ex)
 		{

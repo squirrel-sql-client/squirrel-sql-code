@@ -35,6 +35,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ObjectArrayDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.MetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -162,7 +163,8 @@ public class DumpSessionCommand implements ICommand
 		List titles = new ArrayList();
 		synchronized (_session)
 		{
-			SQLConnection conn = _session.getSQLConnection();
+			final SQLConnection conn = _session.getSQLConnection();
+			final SQLDatabaseMetaData md = conn.getSQLMetaData();
 
 			// Dump session properties.
 			try
@@ -259,7 +261,7 @@ public class DumpSessionCommand implements ICommand
 			{
 				File tempFile = File.createTempFile(PREFIX, SUFFIX);
 				IDataSetViewer dest = new DataSetViewerTextFileDestination(tempFile);
-				dest.show(new ObjectArrayDataSet(conn.getTableTypes()));
+				dest.show(new ObjectArrayDataSet(md.getTableTypes()));
 				files.add(tempFile);
 				titles.add("Table Types");
 			}

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.objectstree.procedurepanel;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -29,7 +29,10 @@ import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.BaseO
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public abstract class BaseProcedurePanelTab extends BaseObjectPanelTab implements IProcedurePanelTab {
+public abstract class BaseProcedurePanelTab
+	extends BaseObjectPanelTab
+	implements IProcedurePanelTab
+{
 	/**
 	 * Set the <TT>IProcedureInfo</TT> object that specifies the procedure that
 	 * is to have its information displayed.
@@ -37,7 +40,8 @@ public abstract class BaseProcedurePanelTab extends BaseObjectPanelTab implement
 	 * @param	value	<TT>IProcedureInfo</TT> object that specifies the currently
 	 *					selected procedure. This can be <TT>null</TT>.
 	 */
-	public void setProcedureInfo(IProcedureInfo value) {
+	public void setProcedureInfo(IProcedureInfo value)
+	{
 		setDatabaseObjectInfo(value);
 	}
 
@@ -46,8 +50,9 @@ public abstract class BaseProcedurePanelTab extends BaseObjectPanelTab implement
 	 *
 	 * @return	Current <TT>IProcedureInfo</TT> object.
 	 */
-	public final IProcedureInfo getProcedureInfo() {
-		return (IProcedureInfo)getDatabaseObjectInfo();
+	public final IProcedureInfo getProcedureInfo()
+	{
+		return (IProcedureInfo) getDatabaseObjectInfo();
 	}
 
 }

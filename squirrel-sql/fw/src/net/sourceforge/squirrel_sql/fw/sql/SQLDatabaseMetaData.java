@@ -17,12 +17,15 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.lang.reflect.Method;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -74,6 +77,16 @@ public class SQLDatabaseMetaData
 			throw new IllegalArgumentException("SQLDatabaseMetaData == null");
 		}
 		_conn = conn;
+	}
+
+	/**
+	 * Return the name of the current user.
+	 * 
+	 * @return	the current user name.
+	 */
+	public String getUserName() throws SQLException
+	{
+		return getJDBCMetaData().getUserName();
 	}
 
 	/**
@@ -214,7 +227,7 @@ public class SQLDatabaseMetaData
 	public boolean supportsSchemas() throws SQLException
 	{
 		return supportsSchemasInDataManipulation()
-			|| supportsSchemasInTableDefinitions();
+				|| supportsSchemasInTableDefinitions();
 	}
 
 	/**
@@ -415,7 +428,7 @@ public class SQLDatabaseMetaData
 	}
 
 	/**
-	 * Retrive information about the storeed procedures in the system
+	 * Retrive information about the stored procedures in the system
 	 * 
 	 * @param	catalog		The name of the catalog to retrieve procedures
 	 *						for. An empty string will return those without a
@@ -425,9 +438,11 @@ public class SQLDatabaseMetaData
 	 *						for. An empty string will return those without a
 	 * 						schema. <TT>null</TT> means that the schema
 	 * 						will not be used to narrow the search.
+	 * @param	procedureNamepattern	A procedure name pattern; must match the
+	 *									procedure name as it is stored in the
+	 *									database.
 	 * 
 	 * @throws	SQLException	Thrown if an SQL error occurs.
-	 * 
 	 */
 	public IProcedureInfo[] getProcedures(String catalog,
 				String schemaPattern, String procedureNamePattern)
@@ -443,6 +458,193 @@ public class SQLDatabaseMetaData
 										rs.getInt(8), this));
 		}
 		return (IProcedureInfo[])list.toArray(new IProcedureInfo[list.size()]);
+	}
+
+	/**
+	 * Return a string array containing the different types of tables in this
+	 * database. E.G. <TT>"TABLE", "VIEW", "SYSTEM TABLE"</TT>.
+	 * 
+	 * @return	table type names.
+	 * 
+	 * @throws	SQLException	Thrown if an SQL error occurs.
+	 */
+	public String[] getTableTypes() throws SQLException
+	{
+		DatabaseMetaData md = getJDBCMetaData();
+
+		// Use a set rather than a list as some combinations of MS SQL and the
+		// JDBC/ODBC return multiple copies of each table type.
+		final Set tableTypes = new TreeSet();
+		ResultSet rs = md.getTableTypes();
+		while (rs.next())
+		{
+			tableTypes.add(rs.getString(1).trim());
+		}
+
+		final String dbProductName = getDatabaseProductName();
+		final int nbrTableTypes = tableTypes.size();
+
+		// InstantDB (at least version 3.13) only returns "TABLES"
+		// for getTableTypes(). If you try to use this in a call to
+		// DatabaseMetaData.getTables() no tables will be found. For the
+		// moment hard code the types for InstantDB.
+		if (nbrTableTypes == 1 && dbProductName.equals("InstantDB"))
+		{
+			tableTypes.clear();
+			tableTypes.add("TABLE");
+			tableTypes.add("SYSTEM TABLE");
+		}
+
+		// At least one version of PostgreSQL through the ODBC/JDBC
+		// bridge returns an empty result set for the list of table
+		// types. Another version of PostgreSQL returns 6 entries
+		// of "SYSTEM TABLE" (which we have already filtered back to one).
+		else if (dbProductName.equals("PostgreSQL"))
+		{
+			if (nbrTableTypes == 0 || nbrTableTypes == 1)
+			{
+				tableTypes.clear();
+				tableTypes.add("TABLE");
+				tableTypes.add("SYSTEM TABLE");
+				tableTypes.add("VIEW");
+				tableTypes.add("INDEX");
+				tableTypes.add("SYSTEM INDEX");
+				tableTypes.add("SEQUENCE");
+			}
+		}
+
+		return (String[]) tableTypes.toArray(new String[tableTypes.size()]);
+	}
+
+	/**
+	 * Retrieve information about the tables in the system.
+	 * 
+	 * @param	catalog		The name of the catalog to retrieve tables
+	 *						for. An empty string will return those without a
+	 * 						catalog. <TT>null</TT> means that the catalog
+	 * 						will not be used to narrow the search.
+	 * @param	schemaPattern	The name of the schema to retrieve tables
+	 *						for. An empty string will return those without a
+	 * 						schema. <TT>null</TT> means that the schema
+	 * 						will not be used to narrow the search.
+	 * @param	tableNamepattern	A table name pattern; must match the
+	 *								table name as it is stored in the
+	 *								database.
+	 * @param	types		List of table types to include; null returns all types.
+	 * 
+	 * @throws	SQLException	Thrown if an SQL error occurs.
+	 */
+	public ITableInfo[] getTables(String catalog, String schemaPattern,
+									String tableNamePattern, String[] types)
+		throws SQLException
+	{
+		final DatabaseMetaData md = getJDBCMetaData();
+		final String dbDriverName = getDriverName();
+		Set list = new TreeSet();
+
+		if (dbDriverName.equals(DriverNames.FREE_TDS) && schemaPattern == null)
+		{
+			schemaPattern = "dbo";
+		}
+
+		ResultSet tabResult = md.getTables(catalog, schemaPattern,
+											tableNamePattern, types);
+		ResultSet superTabResult = null;
+		Map nameMap = null;
+		try
+		{
+			//				superTabResult = md.getSuperTables(catalog, schemaPattern,
+			//												   tableNamePattern);
+			Class clazz = md.getClass();
+			Class[] p1 = new Class[] {String.class, String.class, String.class};
+			Method method = clazz.getMethod("getSuperTables", p1);
+			if (method != null)
+			{
+				Object[] p2 = new Object[] {catalog, schemaPattern, tableNamePattern};
+				superTabResult = (ResultSet)method.invoke(md, p2);
+			}
+			// create a mapping of names if we have supertable info, since
+			// we need to find the ITableInfo again for re-ordering.
+			if (superTabResult != null && superTabResult.next())
+			{
+				nameMap = new HashMap();
+			}
+		}
+		catch (Throwable th)
+		{
+			s_log.debug("DBMS/Driver doesn't support getSupertables()", th);
+		}
+
+		// store all plain table info we have.
+		while (tabResult.next())
+		{
+			ITableInfo tabInfo = new TableInfo(tabResult.getString(1),
+								tabResult.getString(2), tabResult.getString(3),
+								tabResult.getString(4), tabResult.getString(4),
+								this);
+			if (nameMap != null)
+			{
+				nameMap.put(tabInfo.getSimpleName(), tabInfo);
+			}
+			list.add(tabInfo);
+		}
+
+		// re-order nodes if the tables are stored hierachically
+		if (nameMap != null)
+		{
+			do
+			{
+				String tabName = superTabResult.getString(3);
+				TableInfo tabInfo = (TableInfo) nameMap.get(tabName);
+				if (tabInfo == null)
+					continue;
+				String superTabName = superTabResult.getString(4);
+				if (superTabName == null)
+					continue;
+				TableInfo superInfo = (TableInfo) nameMap.get(superTabName);
+				if (superInfo == null)
+					continue;
+				superInfo.addChild(tabInfo);
+				list.remove(tabInfo); // remove from toplevel.
+			}
+			while (superTabResult.next());
+		}
+		return (ITableInfo[])list.toArray(new ITableInfo[list.size()]);
+	}
+
+	/**
+	 * Retrieve information about the UDTs in the system.
+	 * 
+	 * @param	catalog		The name of the catalog to retrieve UDTs
+	 *						for. An empty string will return those without a
+	 * 						catalog. <TT>null</TT> means that the catalog
+	 * 						will not be used to narrow the search.
+	 * @param	schemaPattern	The name of the schema to retrieve UDTs
+	 *						for. An empty string will return those without a
+	 * 						schema. <TT>null</TT> means that the schema
+	 * 						will not be used to narrow the search.
+	 * @param	typeNamepattern		A type name pattern; must match the
+	 *								type name as it is stored in the
+	 *								database.
+	 * @param	types		List of user-defined types (JAVA_OBJECT, STRUCT, or
+	 *						DISTINCT) to include; null returns all types
+	 * 
+	 * @throws	SQLException	Thrown if an SQL error occurs.
+	 */
+	public IUDTInfo[] getUDTs(String catalog, String schemaPattern,
+								String typeNamePattern, int[] types)
+		throws SQLException
+	{
+		DatabaseMetaData md = getJDBCMetaData();
+		ArrayList list = new ArrayList();
+		ResultSet rs = md.getUDTs(catalog, schemaPattern, typeNamePattern, types);
+		while (rs.next())
+		{
+			list.add(new UDTInfo(rs.getString(1), rs.getString(2), rs.getString(3),
+									rs.getString(4), rs.getString(5),
+									rs.getString(6), this));
+		}
+		return (IUDTInfo[])list.toArray(new IUDTInfo[list.size()]);
 	}
 
 }

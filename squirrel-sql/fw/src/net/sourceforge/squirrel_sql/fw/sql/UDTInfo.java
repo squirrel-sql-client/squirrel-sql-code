@@ -17,10 +17,9 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class UDTInfo extends DatabaseObjectInfo implements IUDTInfo
+class UDTInfo extends DatabaseObjectInfo implements IUDTInfo
 {
 	/** Java class name. */
 	private final String _javaClassName;
@@ -31,13 +30,14 @@ public class UDTInfo extends DatabaseObjectInfo implements IUDTInfo
 	/** UDT remarks. */
 	private final String _remarks;
 
-	UDTInfo(ResultSet rs, SQLConnection conn) throws SQLException
+	UDTInfo(String catalog, String schema, String simpleName, String javaClassName,
+			String dataType, String remarks, SQLDatabaseMetaData md)
+		throws SQLException
 	{
-		super(rs.getString(1), rs.getString(2), rs.getString(3),
-				IDatabaseObjectTypes.UDT, conn);
-		_javaClassName = rs.getString(4);
-		_dataType = rs.getString(5);
-		_remarks = rs.getString(6);
+		super(catalog, schema, simpleName, IDatabaseObjectTypes.UDT, md);
+		_javaClassName = javaClassName;
+		_dataType = dataType;
+		_remarks = remarks;
 	}
 
 	public String getJavaClassName()
