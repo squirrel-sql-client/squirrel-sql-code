@@ -9,6 +9,7 @@ esac
 
 # Squirrel home.
 SQUIRREL_SQL_HOME="$INSTALL_PATH"
+# SQUIRREL_SQL_HOME='$INSTALL_PATH'
 
 # SQuirreL home in Unix format.
 if $cygwin ; then
@@ -35,5 +36,5 @@ else
 	TMP_CP=$TMP_CP:$CLASSPATH
 fi
 
-$JAVA -cp $TMP_CP net.sourceforge.squirrel_sql.client.Main -loggingConfigFile=$SQUIRREL_SQL_HOME/log4j.properties -squirrelHome=$SQUIRREL_SQL_HOME
+$JAVA -cp $TMP_CP net.sourceforge.squirrel_sql.client.Main -loggingConfigFile $SQUIRREL_SQL_HOME/log4j.properties --squirrel-home $SQUIRREL_SQL_HOME
 
