@@ -65,7 +65,13 @@ public class SQLExecuterTask implements Runnable {
 			_stmt = _session.getSQLConnection().createStatement();
 			try {
 				if (props.getSqlLimitRows()) {
-					_stmt.setMaxRows(props.getSqlNbrRowsToShow());
+					try
+					{
+						_stmt.setMaxRows(props.getSqlNbrRowsToShow());
+					} catch(Exception e)
+					{
+						s_log.error("Can't Set MaxRows", e);
+					}
 				}
 				QueryTokenizer qt = new QueryTokenizer(_sql, props.getSqlStatementSeparatorChar());
 				while (qt.hasQuery() && !_bStopExecution) {
@@ -86,7 +92,13 @@ public class SQLExecuterTask implements Runnable {
 															new ResultSetMetaDataDataSet(rs),
 															_cancelPanel);
 									bCancelPanelRemoved = true;
-									_session.getMessageHandler().showMessage(rs.getWarnings());
+									try
+									{
+										_session.getMessageHandler().showMessage(rs.getWarnings());
+									} catch(Exception e)
+									{
+										s_log.error("Can't get warnings ", e);
+									}
 								} finally {
 									rs.close();
 								}
