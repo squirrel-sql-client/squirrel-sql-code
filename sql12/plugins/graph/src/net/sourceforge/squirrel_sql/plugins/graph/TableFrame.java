@@ -24,7 +24,8 @@ public class TableFrame extends JInternalFrame
       _zoomer = zoomer;
 
       scrollPane = new JScrollPane();
-      
+      scrollPane.setBorder(null);
+
       getContentPane().add(scrollPane);
 
       setMaximizable(false);
@@ -42,7 +43,7 @@ public class TableFrame extends JInternalFrame
       _myUI = new MyUI(this);
       setUI(_myUI);
 
-      txtColumsFactory = new GraphTextAreaFactory(toolTipProvider, zoomer, _myUI.getTitlePane().getFont());
+      txtColumsFactory = new GraphTextAreaFactory(toolTipProvider, zoomer);
       scrollPane.setViewportView(txtColumsFactory.getComponent(zoomer.isEnabled()));
       
       if(null != xmlBean)

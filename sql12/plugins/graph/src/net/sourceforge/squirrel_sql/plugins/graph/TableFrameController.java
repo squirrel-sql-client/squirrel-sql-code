@@ -984,7 +984,7 @@ public class TableFrameController
             scrolledHeight = viewRect.height;
          }
 
-         scrolledHeight += + _frame.getTitlePane().getSize().height + 6;
+         scrolledHeight += + _frame.getTitlePane().getSize().height;//  + 6;
 
          buf.put(new Integer(scrolledHeight), new Integer(scrolledHeight));
       }

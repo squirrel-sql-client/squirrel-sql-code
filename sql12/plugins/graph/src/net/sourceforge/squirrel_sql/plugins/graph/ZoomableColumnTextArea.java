@@ -12,13 +12,11 @@ public class ZoomableColumnTextArea extends JPanel
    private ColumnInfo[] _columnInfos;
    private Zoomer _zoomer;
 
-   public ZoomableColumnTextArea(TableToolTipProvider toolTipProvider, Zoomer zoomer, Font zoomColumsFont)
+   public ZoomableColumnTextArea(TableToolTipProvider toolTipProvider, Zoomer zoomer)
    {
       _toolTipProvider = toolTipProvider;
       _zoomer = zoomer;
       setToolTipText("Just to make getToolTiptext() to be called");
-
-      setFont(zoomColumsFont);
    }
 
    public String getToolTipText(MouseEvent event)
@@ -39,11 +37,9 @@ public class ZoomableColumnTextArea extends JPanel
       Graphics2D g2d = (Graphics2D) g;
 
       AffineTransform origTrans = g2d.getTransform();
-      Font origFont = g2d.getFont();
 
       try
       {
-         g2d.setFont(getFont());
          AffineTransform at = new AffineTransform(origTrans);
          at.scale(_zoomer.getZoom(), _zoomer.getZoom());
          g2d.setTransform(at);
@@ -60,8 +56,6 @@ public class ZoomableColumnTextArea extends JPanel
       finally
       {
          g2d.setTransform(origTrans);
-         g2d.setFont(origFont);
-
       }
    }
 
