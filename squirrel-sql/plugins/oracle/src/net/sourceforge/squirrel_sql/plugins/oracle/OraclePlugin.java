@@ -195,7 +195,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 		{
 			s_log.debug("Error in getDatabaseProductName()", ex);
 		}
-		return (dbms != null && dbms.substring(0, ORACLE.length()).equalsIgnoreCase(ORACLE));
+		return dbms != null && dbms.toLowerCase().startsWith(ORACLE);
 	}
 
 	/**
