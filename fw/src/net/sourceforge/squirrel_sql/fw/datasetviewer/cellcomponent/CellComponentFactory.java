@@ -257,16 +257,6 @@ public class CellComponentFactory {
 				  	
 				JLabel label = (JLabel)super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-/**
-				// Newlines are stripped from the text by the underlying document, so before
-				// actually displaying the text, make sure that the user sees that there are newlines
-				// in the text by displaying them as "\n".
-				if (label.getText().indexOf('\n') > -1) {
-					label.setText(label.getText().replaceAll("\n", "/\\n"));
-				}
-**/
-
-
 				// if text cannot be edited in the cell but can be edited in
 				//				the popup, show that by changing the text colors.
 				if (_dataTypeObject != null &&
