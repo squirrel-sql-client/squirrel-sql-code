@@ -131,8 +131,15 @@ public class ObjectTreePanel extends JPanel
 		addDetailTab(DatabaseObjectType.DATABASE, new DateTimeFunctionsTab());
 		addDetailTab(DatabaseObjectType.DATABASE, new KeywordsTab());
 
+		// Register tabs to display in the details panel for catalog nodes.
+		addDetailTab(DatabaseObjectType.CATALOG, new DatabaseObjectInfoTab());
+
+		// Register tabs to display in the details panel for schema nodes.
+		addDetailTab(DatabaseObjectType.SCHEMA, new DatabaseObjectInfoTab());
+
 		// Register tabs to display in the details panel for table nodes.
-		addDetailTab(DatabaseObjectType.TABLE, new TableInfoTab());
+		addDetailTab(DatabaseObjectType.TABLE, new DatabaseObjectInfoTab());
+//		addDetailTab(DatabaseObjectType.TABLE, new TableInfoTab());
 		addDetailTab(DatabaseObjectType.TABLE, new ContentsTab());
 		addDetailTab(DatabaseObjectType.TABLE, new ColumnsTab());
 		addDetailTab(DatabaseObjectType.TABLE, new PrimaryKeyTab());
@@ -145,7 +152,8 @@ public class ObjectTreePanel extends JPanel
 		addDetailTab(DatabaseObjectType.TABLE, new VersionColumnsTab());
 
 		// Register tabs to display in the details panel for procedure nodes.
-		addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureInfoTab());
+//		addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureInfoTab());
+		addDetailTab(DatabaseObjectType.PROCEDURE, new DatabaseObjectInfoTab());
 		addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureColumnsTab());
 
 		// Register tabs to display in the details panel for UDT nodes.

@@ -20,7 +20,7 @@ package net.sourceforge.squirrel_sql.fw.sql;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
-class ProcedureInfo extends DatabaseObjectInfo implements IProcedureInfo
+public class ProcedureInfo extends DatabaseObjectInfo implements IProcedureInfo
 {
 	/**
 	 * This interface defines locale specific strings. This should be

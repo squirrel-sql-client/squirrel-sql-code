@@ -21,7 +21,7 @@ import java.sql.SQLException;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-class TableInfo extends DatabaseObjectInfo implements ITableInfo
+public class TableInfo extends DatabaseObjectInfo implements ITableInfo
 {
 	/** Table Type. */
 	private final String _tableType;

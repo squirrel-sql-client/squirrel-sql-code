@@ -19,7 +19,7 @@ package net.sourceforge.squirrel_sql.fw.sql;
  */
 import java.sql.SQLException;
 
-class UDTInfo extends DatabaseObjectInfo implements IUDTInfo
+public class UDTInfo extends DatabaseObjectInfo implements IUDTInfo
 {
 	/** Java class name. */
 	private final String _javaClassName;
