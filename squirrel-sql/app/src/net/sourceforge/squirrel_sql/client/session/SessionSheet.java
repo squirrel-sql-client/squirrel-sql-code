@@ -104,7 +104,7 @@ public class SessionSheet extends JInternalFrame {
 
 	private boolean _hasBeenVisible = false;
 
-	public SessionSheet(ISession session) throws BaseSQLException {
+	public SessionSheet(ISession session) {
 		super(createTitle(session), true, true, true, true);
 		_session = session;
 		setVisible(false);
