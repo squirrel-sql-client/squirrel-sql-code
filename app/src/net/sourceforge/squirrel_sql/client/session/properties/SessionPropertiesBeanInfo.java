@@ -39,7 +39,7 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 		super();
 		if (s_dscrs == null)
 		{
-			s_dscrs = new PropertyDescriptor[22];
+			s_dscrs = new PropertyDescriptor[23];
 			s_dscrs[0] = new PropertyDescriptor(IPropNames.AUTO_COMMIT,
 									CLAZZ, "getAutoCommit", "setAutoCommit");
 			s_dscrs[1] = new PropertyDescriptor(IPropNames.COMMIT_ON_CLOSING_CONNECTION,
@@ -84,6 +84,8 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 									CLAZZ, "getSQLResultsTabPlacement", "setSQLResultsTabPlacement");
 			s_dscrs[21] = new PropertyDescriptor(IPropNames.TABLE_CONTENTS_OUTPUT_CLASS_NAME,
 									CLAZZ, "getTableContentsOutputClassName", "setTableContentsOutputClassName");
+			s_dscrs[22] = new PropertyDescriptor(IPropNames.ABORT_ON_ERROR,
+									CLAZZ, "getAbortOnError", "setAbortOnError");
 		}
 	}
 

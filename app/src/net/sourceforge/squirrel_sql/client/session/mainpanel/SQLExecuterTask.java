@@ -7,7 +7,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
+ * modify it under the terdims of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
  *
@@ -173,9 +173,28 @@ public class SQLExecuterTask implements Runnable
 									maxRowsHasBeenSet = false;
 								}
 							}
-							if (!processQuery(querySql))
+							try
 							{
-								break;
+								if (!processQuery(querySql))
+								{
+									break;
+								}
+							}
+							catch (SQLException ex)
+							{
+								if (props.getAbortOnError())
+								{
+									throw ex;
+								}
+								displayError(ex);
+							}
+							catch (DataSetException ex)
+							{
+								if (props.getAbortOnError())
+								{
+									throw ex;
+								}
+								displayError(ex);
 							}
 						}
 					}
@@ -198,14 +217,9 @@ public class SQLExecuterTask implements Runnable
 				}
 			}
 		}
-		catch (SQLException ex)
-		{
-			_session.getMessageHandler().showErrorMessage("Error: " + ex);
-		}
 		catch (Throwable ex)
 		{
-			s_log.error("Error occured executing SQL", ex);
-			_session.getMessageHandler().showErrorMessage("Error: " + ex);
+			displayError(ex);
 		}
 		finally
 		{
@@ -362,6 +376,19 @@ public class SQLExecuterTask implements Runnable
 		}
 		catch (Throwable th)
 		{
+		}
+	}
+
+	private void displayError(Throwable th)
+	{
+		if (th instanceof SQLException)
+		{
+			_session.getMessageHandler().showErrorMessage("Error: " + th);
+		}
+		else
+		{
+			s_log.error("Error occured executing SQL", th);
+			_session.getMessageHandler().showErrorMessage("Error: " + th);
 		}
 	}
 

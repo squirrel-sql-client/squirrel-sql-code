@@ -18,31 +18,23 @@ package net.sourceforge.squirrel_sql.client.session.properties;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Component;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
-
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerEditableTablePanel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel;
-import net.sourceforge.squirrel_sql.fw.gui.FontChooser;
-import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerEditableTablePanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel;
 
 public class GeneralSessionPropertiesPanel
 	implements INewSessionPropertiesPanel, ISessionPropertiesPanel
@@ -140,12 +132,6 @@ public class GeneralSessionPropertiesPanel
 		private OutputTypeCombo _sqlResultsCmb = new OutputTypeCombo(false);
 		private OutputTypeCombo _tableContentsCmb = new OutputTypeCombo(true);
 
-		/** Label displaying the selected font. */
-		private JLabel _fontLbl = new JLabel();
-
-		/** Button to select font. */
-		private FontButton _fontBtn = new FontButton("Font", _fontLbl);
-
 		MyPanel()
 		{
 			super(new GridBagLayout());
@@ -219,14 +205,6 @@ public class GeneralSessionPropertiesPanel
 			_metaDataCmb.selectClassName(props.getMetaDataOutputClassName());
 			_sqlResultsCmb.selectClassName(props.getSQLResultsOutputClassName());
 			_tableContentsCmb.selectClassName(props.getTableContentsOutputClassName());
-
-			FontInfo fi = props.getFontInfo();
-			if (fi == null)
-			{
-				fi = new FontInfo(UIManager.getFont("TextArea.font"));
-			}
-			_fontLbl.setText(fi.toString());
-			_fontBtn.setSelectedFont(fi.createFont());
 		}
 
 		void applyChanges(SessionProperties props)
@@ -235,7 +213,6 @@ public class GeneralSessionPropertiesPanel
 			props.setMetaDataOutputClassName(_metaDataCmb.getSelectedClassName());
 			props.setSQLResultsOutputClassName(_sqlResultsCmb.getSelectedClassName());
 			props.setTableContentsOutputClassName(_tableContentsCmb.getSelectedClassName());
-			props.setFontInfo(_fontBtn.getFontInfo());
 
 			TabPlacement tp = (TabPlacement)_mainTabPlacementCmb.getSelectedItem();
 			props.setMainTabPlacement(tp.getValue());
@@ -263,9 +240,6 @@ public class GeneralSessionPropertiesPanel
 
 			++gbc.gridy;
 			add(createOutputPanel(), gbc);
-
-			++gbc.gridy;
-			add(createFontPanel(), gbc);
 		}
 
 		private JPanel createAppearancePanel()
@@ -348,28 +322,6 @@ public class GeneralSessionPropertiesPanel
 
 			return pnl;
 		}
-
-		private JPanel createFontPanel()
-		{
-			JPanel pnl = new JPanel();
-			pnl.setBorder(BorderFactory.createTitledBorder("SQL Entry Area"));
-			pnl.setLayout(new GridBagLayout());
-			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.fill = GridBagConstraints.HORIZONTAL;
-			gbc.insets = new Insets(4, 4, 4, 4);
-
-			_fontBtn.addActionListener(new FontButtonListener());
-
-			gbc.gridx = 0;
-			gbc.gridy = 0;
-			pnl.add(_fontBtn, gbc);
-
-			++gbc.gridx;
-			gbc.weightx = 1.0;
-			pnl.add(_fontLbl, gbc);
-
-			return pnl;
-		}
 	}
 
 	private final static class OutputType
@@ -436,65 +388,6 @@ public class GeneralSessionPropertiesPanel
 		String getSelectedClassName()
 		{
 			return ((OutputType) getSelectedItem()).getPanelClassName();
-		}
-	}
-
-	private static final class FontButton extends JButton
-	{
-		private FontInfo _fi;
-		private JLabel _lbl;
-		private Font _font;
-
-		FontButton(String text, JLabel lbl)
-		{
-			super(text);
-			_lbl = lbl;
-		}
-
-		FontInfo getFontInfo()
-		{
-			return _fi;
-		}
-
-		Font getSelectedFont()
-		{
-			return _font;
-		}
-
-		void setSelectedFont(Font font)
-		{
-			_font = font;
-			if (_fi == null)
-			{
-				_fi = new FontInfo(font);
-			}
-			else
-			{
-				_fi.setFont(font);
-			}
-		}
-	}
-
-	private static final class FontButtonListener implements ActionListener
-	{
-		public void actionPerformed(ActionEvent evt)
-		{
-			if (evt.getSource() instanceof FontButton)
-			{
-				FontButton btn = (FontButton) evt.getSource();
-				FontInfo fi = btn.getFontInfo();
-				Font font = null;
-				if (fi != null)
-				{
-					font = fi.createFont();
-				}
-				font = new FontChooser().showDialog(font);
-				if (font != null)
-				{
-					btn.setSelectedFont(font);
-					btn._lbl.setText(new FontInfo(font).toString());
-				}
-			}
 		}
 	}
 

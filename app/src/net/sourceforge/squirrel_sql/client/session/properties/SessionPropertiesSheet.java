@@ -168,6 +168,7 @@ public class SessionPropertiesSheet extends BaseSheet
 
 		// Property panels for SQuirreL.
 		_panels.add(new GeneralSessionPropertiesPanel());
+		_panels.add(new SessionObjectTreePropertiesPanel(app));
 		_panels.add(new SessionSQLPropertiesPanel(app));
 		_panels.add(new FormatSessionPropertiesPanel(app));
 
