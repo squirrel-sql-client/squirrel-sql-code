@@ -71,6 +71,7 @@ Plugin API
 
 Other
 -----
+- Add build directory to source distribution.
 - Don't display icons in menus.
 - Cleanup ResultSetMetaData handling.
 - Make the installation window resizeable.
