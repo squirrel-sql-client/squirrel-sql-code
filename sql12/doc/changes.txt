@@ -6,6 +6,8 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Better positioning of the Column Details
+  popup (Maury Hammel)
 - Added JavaDoc target to build file (Johnathan
   James).
 - When clearing the message panel the background
