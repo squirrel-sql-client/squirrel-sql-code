@@ -174,9 +174,9 @@ public class MssqlIntrospector {
         rs = stmt.getResultSet();
         
         while (rs.next()) {
-            String name = rs.getString(1);
+            String name = rs.getString(1).trim();
             short id = rs.getShort(2);
-            String filename = rs.getString(3);
+            String filename = rs.getString(3).trim();
             String filegroup = rs.getString(4);
             String size = rs.getString(5);
             String maxSize = rs.getString(6);
@@ -287,9 +287,9 @@ public class MssqlIntrospector {
             }
             
             buf.append("( NAME = ");
-            buf.append(file.getName().trim());
+            buf.append(file.getName());
             buf.append(",\n\tFILENAME = '");
-            buf.append(file.getFilename().trim());
+            buf.append(file.getFilename());
             buf.append("',\n\tSIZE = ");
             buf.append(file.getSize());
             if (!file.getMaxSize().equals("Unlimited")) {
@@ -310,9 +310,9 @@ public class MssqlIntrospector {
             DatabaseFile file = (DatabaseFile) logFiles[i];
             
             buf.append("( NAME = ");
-            buf.append(file.getName().trim());
+            buf.append(file.getName());
             buf.append(",\n\tFILENAME = '");
-            buf.append(file.getFilename().trim());
+            buf.append(file.getFilename());
             buf.append("',\n\tSIZE = ");
             buf.append(file.getSize());
             if (!file.getMaxSize().equals("Unlimited")) {
@@ -452,7 +452,7 @@ public class MssqlIntrospector {
             String owner = rs.getString(1);
             String grantee = rs.getString(3);
             String grantor = rs.getString(4);
-            String protectType = rs.getString(5);
+            String protectType = rs.getString(5).trim();
             String action = rs.getString(6);
             String column = rs.getString(7);
 
@@ -483,17 +483,17 @@ public class MssqlIntrospector {
             [ AS { group | role } ] 
              */
             
-            if (protectType.trim().equals("Grant"))
+            if (protectType.equals("Grant"))
                 buf.append("GRANT ");
-            else if (protectType.trim().equals("Deny"))
+            else if (protectType.equals("Deny"))
                 buf.append("REVOKE ");
             buf.append(action.toUpperCase());
             buf.append(" ON [");
             buf.append(MssqlIntrospector.getFixedVersionedObjectName(oi.getSimpleName()));
             buf.append("] ");
-            if (protectType.trim().equals("Grant"))
+            if (protectType.equals("Grant"))
                 buf.append("TO ");
-            else if (protectType.trim().equals("Deny"))
+            else if (protectType.equals("Deny"))
                 buf.append("FROM ");
             buf.append(grantee);
 
