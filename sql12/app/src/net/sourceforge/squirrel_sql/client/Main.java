@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,7 +17,6 @@ package net.sourceforge.squirrel_sql.client;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.lang.reflect.Method;
 /**
  * Application entry point.
  *
@@ -40,27 +39,6 @@ public class Main
 	 */
 	public static void main(String[] args)
 	{
-		// Fix for the jEdit control under JDK1.4. This cannot be called from
-		// within the jEdit plugin as the keyboard focus initialisation code doesn't
-		// work when run that late in the application startup. The sympton of it being
-		// run too late is tabbing no longer changes focus within components
-		// inside JInternalFrames.
-		try
-		{
-			if (Class.forName("java.awt.KeyboardFocusManager") != null)
-			{
-				Class clazz = Class.forName("net.sourceforge.squirrel_sql.client.Java14");
-				if (clazz != null)
-				{
-					Method m = clazz.getMethod("init", null);
-					m.invoke(null, null);
-				}
-			}
-		}
-		catch (Throwable ignore)
-		{
-		}
-
 		ApplicationArguments.initialize(args);
 		new Application().startup();
 	}
