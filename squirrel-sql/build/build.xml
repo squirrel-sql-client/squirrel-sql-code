@@ -294,7 +294,7 @@
 	No parameters.
 	==================================================================
 	-->
-	<target name="make_dist" depends="jar_source">
+	<target name="make_dist" depends="compile_app,jar_source">
 	</target>
 
 	<!--
