@@ -33,134 +33,136 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.gui.IGUIExecutionTask;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 
-import
-net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
 public class SQLExecuterTask implements IGUIExecutionTask {
-    private SQLPanel _sqlPanel;
-    private ISession _session;
-    private String _sql;
-    private JPanel _cancelPanel = new CancelPanel();
-    private Statement _stmt;
-    private boolean _bStopExecution = false;
+	private SQLPanel _sqlPanel;
+	private ISession _session;
+	private String _sql;
+	private JPanel _cancelPanel = new CancelPanel();
+	private Statement _stmt;
+	private boolean _bStopExecution = false;
 
-    public SQLExecuterTask(SQLPanel sqlPanel, ISession session, String sql) {
-        super();
-        _sqlPanel = sqlPanel;
-        _session = session;
-        _sql = sql;
-    }
+	public SQLExecuterTask(SQLPanel sqlPanel, ISession session, String sql) {
+		super();
+		_sqlPanel = sqlPanel;
+		_session = session;
+		_sql = sql;
+	}
 
-    public void execute() {
-        try {
-            _sqlPanel.setCancelPanel(_cancelPanel);
-            boolean bCancelPanelRemoved = false;
-            final long start = System.currentTimeMillis();
-            SessionProperties props = _session.getProperties();
-            _stmt = _session.getSQLConnection().createStatement();
-            try {
-                if (props.getSqlLimitRows()) {
+	public void execute() {
+		try {
+			_sqlPanel.setCancelPanel(_cancelPanel);
+			boolean bCancelPanelRemoved = false;
+			final long start = System.currentTimeMillis();
+			SessionProperties props = _session.getProperties();
+			_stmt = _session.getSQLConnection().createStatement();
+			try {
+				if (props.getSqlLimitRows()) {
 
-                    _stmt.setMaxRows(props.getSqlNbrRowsToShow());
-                }
-                QueryTokenizer qt =
-                    new QueryTokenizer(_sql, props.getSqlStatementSeparatorChar());
-                while (qt.hasQuery() && !_bStopExecution) {
-                    if (bCancelPanelRemoved) {
+					_stmt.setMaxRows(props.getSqlNbrRowsToShow());
+				}
+				QueryTokenizer qt =
+					new QueryTokenizer(_sql, props.getSqlStatementSeparatorChar());
+				while (qt.hasQuery() && !_bStopExecution) {
+					if (bCancelPanelRemoved) {
 
-                        _sqlPanel.setCancelPanel(_cancelPanel);
-                        bCancelPanelRemoved = false;
-                    }
-                    final String sToken = qt.nextQuery();
-                    if (_stmt.execute(sToken)) {
-                        if (_bStopExecution) {
-                            break;
-                        }
-                        ResultSet rs = _stmt.getResultSet();
-                        if (rs != null) {
-                            try {
+						_sqlPanel.setCancelPanel(_cancelPanel);
+						bCancelPanelRemoved = false;
+					}
+					final String sToken = qt.nextQuery();
+					if (_stmt.execute(sToken)) {
+						if (_bStopExecution) {
+							break;
+						}
+						ResultSet rs = _stmt.getResultSet();
+						if (rs != null) {
+							try {
 
-                                _sqlPanel.addTab(sToken, new ResultSetDataSet(rs), _cancelPanel);
+								_sqlPanel.addResultsTab(sToken, new ResultSetDataSet(rs),
+														new ResultSetMetaDataDataSet(rs),
+														_cancelPanel);
 
-                                bCancelPanelRemoved = true;
-                            } finally {
-                                rs.close();
-                            }
-                        }
-                    } // if
-                    else {
-                        showMessage(_session, _stmt.getUpdateCount() + " Rows Updated");
-                    }
-                }
-                //
-                if (_bStopExecution || !bCancelPanelRemoved)
-                    //				{
-                    //
-                    _sqlPanel.removeCancelPanel(_cancelPanel);
-                //				}
-                final long finish = System.currentTimeMillis();
-                showMessage(
-                    _session,
-                    "Elapsed time for query(milliseconds) : " + (finish - start));
-                    
-                //  i18n
-            } catch (SQLException ex) {
-                showMessage(_session, ex);
-            } finally {
-                if (_bStopExecution || !bCancelPanelRemoved) {
+								bCancelPanelRemoved = true;
+							} finally {
+								rs.close();
+							}
+						}
+					} // if
+					else {
+						showMessage(_session, _stmt.getUpdateCount() + " Rows Updated");
+					}
+				}
+				//
+				if (_bStopExecution || !bCancelPanelRemoved)
+					//				{
+					//
+					_sqlPanel.removeCancelPanel(_cancelPanel);
+				//				}
+				final long finish = System.currentTimeMillis();
+				showMessage(
+					_session,
+					"Elapsed time for query(milliseconds) : " + (finish - start));
+					
+				//  i18n
+			} catch (SQLException ex) {
+				showMessage(_session, ex);
+			} finally {
+				if (_bStopExecution || !bCancelPanelRemoved) {
 
-                    _sqlPanel.removeCancelPanel(_cancelPanel);
-                }
-                try {
-                    _stmt.close();
-                } finally {
-                    _stmt = null;
-                }
-            }
-        } catch (Exception ex) {
-            showMessage(_session, ex);
-        }
-    }
+					_sqlPanel.removeCancelPanel(_cancelPanel);
+				}
+				try {
+					_stmt.close();
+				} finally {
+					_stmt = null;
+				}
+			}
+		} catch (Exception ex) {
+			showMessage(_session, ex);
+		}
+	}
 
-    private final class CancelPanel extends JPanel implements ActionListener {
-        private CancelPanel() {
-            setLayout(new FlowLayout());
-            JButton button = new JButton("Cancel");
-            button.addActionListener(this);
-            add(button);
-        }
+	private final class CancelPanel extends JPanel implements ActionListener {
+		private CancelPanel() {
+			setLayout(new FlowLayout());
+			JButton button = new JButton("Cancel");
+			button.addActionListener(this);
+			add(button);
+		}
 
-        public void actionPerformed(ActionEvent event) {
-            _bStopExecution = true;
-            try {
-                if (_stmt != null) {
-                    _stmt.cancel();
-                    // Maybe just close it??
-                    // _stmt.close();
-                }
-            } catch (Throwable th) {
-                th.printStackTrace();
-            }
-        }
-    }
+		public void actionPerformed(ActionEvent event) {
+			_bStopExecution = true;
+			try {
+				if (_stmt != null) {
+					_stmt.cancel();
+					// Maybe just close it??
+					// _stmt.close();
+				}
+			} catch (Throwable th) {
+				th.printStackTrace();
+			}
+		}
+	}
 
-    private void showMessage(final ISession session, final Exception ex) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                session.getMessageHandler().showMessage(ex);
-            }
-        });
-    }
+	private void showMessage(final ISession session, final Exception ex) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				session.getMessageHandler().showMessage(ex);
+			}
+		});
+	}
 
-    private void showMessage(final ISession session, final String sMessage) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
+	private void showMessage(final ISession session, final String sMessage) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
 
-                session.getMessageHandler().showMessage(sMessage);
-            }
-        });
-    }
+				session.getMessageHandler().showMessage(sMessage);
+			}
+		});
+	}
 }

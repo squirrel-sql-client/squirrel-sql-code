@@ -53,11 +53,11 @@ import javax.swing.text.JTextComponent;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewerDestination;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel;
+//import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.gui.GUIExecutionController;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.MemoryComboBox;
@@ -112,10 +112,10 @@ class SQLPanel extends JPanel {
 	/**
 	 * Ctor.
 	 *
-	 * @param   session	 Current session.
+	 * @param	session	 Current session.
 	 *
-	 * @throws  IllegalArgumentException
-	 *			  Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
+	 * @throws	IllegalArgumentException
+	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
 	 */
 	public SQLPanel(ISession session) {
 		super();
@@ -148,10 +148,10 @@ class SQLPanel extends JPanel {
 	/**
 	 * Remove an SQL execution listener.
 	 *
-	 * @param   lis	 Listener
+	 * @param	lis	Listener
 	 *
-	 * @throws  IllegalArgumentException
-	 *			  If a null <TT>ISQLExecutionListener</TT> passed.
+	 * @throws	IllegalArgumentException
+	 *			If a null <TT>ISQLExecutionListener</TT> passed.
 	 */
 	public synchronized void removeSQLExecutionListener(ISQLExecutionListener lis)
 		throws IllegalArgumentException {
@@ -330,8 +330,8 @@ class SQLPanel extends JPanel {
 	 * all data from the tab, removing it from the tabbed panel
 	 * and adding it to the list of available tabs.
 	 *
-	 * @throws  IllegalArgumentException
-	 *			  Thrown if a <TT>null</TT> <TT>ResultTab</TT> passed.
+	 * @throws	IllegalArgumentException
+	 *			Thrown if a <TT>null</TT> <TT>ResultTab</TT> passed.
 	 */
 	public void closeTab(ResultTab tab) throws IllegalArgumentException {
 		if (tab == null) {
@@ -347,11 +347,11 @@ class SQLPanel extends JPanel {
 	 * display the tab in the internal frame after removing
 	 * it from the tabbed pane.
 	 *
-	 * @param   tab	 <TT>Resulttab</TT> to be displayed in
-	 *				  an internal frame..
+	 * @param	tab	<TT>Resulttab</TT> to be displayed in
+	 *				an internal frame..
 	 *
-	 * @throws  IllegalArgumentException
-	 *			  Thrown if a <TT>null</TT> <TT>ResultTab</TT> passed.
+	 * @throws	IllegalArgumentException
+	 *			Thrown if a <TT>null</TT> <TT>ResultTab</TT> passed.
 	 */
 	public void createWindow(ResultTab tab) throws IllegalArgumentException {
 		if (tab == null) {
@@ -395,7 +395,7 @@ class SQLPanel extends JPanel {
 		});
 	}
 
-	void addTab(final String sToken, IDataSet ds, final JPanel cancelPanel)
+	void addResultsTab(final String sToken, ResultSetDataSet rsds, ResultSetMetaDataDataSet mdds, final JPanel cancelPanel)
 	{
 		final ResultTab tab;
 		final String sTitle;
@@ -412,7 +412,7 @@ class SQLPanel extends JPanel {
 
 		try
 		{
-			tab.show(ds, sToken);
+			tab.showResults(rsds, mdds, sToken);
 
 			javax.swing.SwingUtilities.invokeLater(new Runnable()
 			{

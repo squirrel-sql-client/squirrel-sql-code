@@ -31,13 +31,15 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewerDestination;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel;
-import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
+//import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel;
 import net.sourceforge.squirrel_sql.fw.util.Logger;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 
@@ -45,18 +47,39 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
 public class ResultTab extends JPanel {
+	/** Current session. */
 	private ISession _session;
-	private JScrollPane _outputSp;
-	private IDataSetViewerDestination _output;
-	private DataSetViewer _viewer;
+//  private JScrollPane _outputSp;
+
+	/** Viewer to display the SQL results. */
+	private DataSetViewer _resultSetViewer = new DataSetViewer();
+
+	/** Viewer to display the SQL results metadata. */
+	private DataSetViewer _metaDataViewer = new DataSetViewer();
+
+	/** Panel displaying the SQL results. */
+	private IDataSetViewerDestination _resultSetOutput;
+
+	/** Panel displaying the SQL results meta data. */
+	private IDataSetViewerDestination _metaDataOutput;
+
+	/** Scroll pane for <TT>_resultSetOutput</TT>. */
+	private JScrollPane _resultSetSp = new JScrollPane();;
+
+	/** Scroll pane for <TT>_metaDataOutput</TT>. */
+	private JScrollPane _metaDataSp = new JScrollPane();;
+
+	/** Tabbed pane containing the SQL results the the results meta data. */
+	private JTabbedPane _tp = new JTabbedPane(JTabbedPane.BOTTOM);
 
 	/** <TT>SQLPanel</TT> that this tab is showing results for. */
 	private SQLPanel _sqlPanel;
 
 	/** Label shows the current SQL script. */
-	private JLabel _currentSqlLbl;
+	private JLabel _currentSqlLbl = new JLabel();
 
 	private MyPropertiesListener _propsListener = new MyPropertiesListener();
+//	private MyActionListener _actionListener = new MyActionListener();
 
 	/**
 	 * Ctor.
@@ -91,19 +114,20 @@ public class ResultTab extends JPanel {
 	/**
 	 * Show the results from the passed <TT>IDataSet</TT>.
 	 *
-	 * @param   ds	  <TT>IDataSet</TT> to show results for.
-	 * @param   sql	 SQL script that generated <TT>IDataSet</TT>.
+	 * @param	ds	<TT>IDataSet</TT> to show results for.
+	 * @param	sql	SQL script that generated <TT>IDataSet</TT>.
 	 */
-	public void show(IDataSet ds, String sql) throws DataSetException {
+	public void showResults(ResultSetDataSet rsds, ResultSetMetaDataDataSet mdds, String sql) throws DataSetException {
 		_currentSqlLbl.setText(sql);
-		_viewer.show(ds, _session.getMessageHandler());
+		_resultSetViewer.show(rsds, null); // Why null??
+		_metaDataViewer.show(mdds, null); // Why null??
 	}
 
 	/**
 	 * Clear results and current SQL script.
 	 */
 	public void clear() {
-		_output.clear();
+		_resultSetOutput.clear();
 		_currentSqlLbl.setText("");
 	}
 
@@ -117,63 +141,123 @@ public class ResultTab extends JPanel {
 	}
 
 	private class MyPropertiesListener implements PropertyChangeListener {
+		private boolean _listening = true;
+
+		void stopListening() {
+			_listening = false;
+		}
+
+		void startListening() {
+			_listening = true;
+		}
+
 		public void propertyChange(PropertyChangeEvent evt) {
-			propertiesHaveChanged(evt.getPropertyName());
+			if (_listening) {
+				propertiesHaveChanged(evt.getPropertyName());
+			}
 		}
 	}
 
+/*	private class MyActionListener implements ActionListener
+	{
+		private boolean _listening = true;
+
+		void stopListening() {
+			_listening = false;
+		}
+
+		void startListening() {
+			_listening = true;
+		}
+
+		public void actionPerformed(ActionEvent evt) {
+			if (_listening)
+			{
+				if(evt.getActionCommand().equals("close"))
+				{
+					closeTab();
+				}
+				else
+				{
+					createWindow();
+				}
+			}
+		}
+	}
+*/
+	/**
+	 * Close this tab.
+	 */
 	public void closeTab() {
-		add(_outputSp, BorderLayout.CENTER);
+		//add(_outputSp, BorderLayout.CENTER);
+		add(_tp, BorderLayout.CENTER);
 		_sqlPanel.closeTab(this);
 	}
 
-	public Component getOutputComponent() {
-		return _outputSp;
+	/**
+	 * Insert the method's description here.
+	 * Creation date: (20-10-2001 1:23:16)
+	 */
+	private void createWindow()
+	{
+		_sqlPanel.createWindow(this);
+	}
+
+	public Component getOutputComponent()
+	{
+//	  return _outputSp;
+		return _tp;
 	}
 
 	private void propertiesHaveChanged(String propertyName) {
-		final SessionProperties props = _session.getProperties();
-		if (propertyName == null || propertyName.equals(
-			SessionProperties.IPropertyNames.SQL_OUTPUT_CLASS_NAME)) {
-			final IDataSetViewerDestination previous = _output;
-			try {
-				Class destClass = Class.forName(props.getSqlOutputClassName());
-				if (IDataSetViewerDestination.class.isAssignableFrom(destClass) &&
-					Component.class.isAssignableFrom(destClass)) {
-					_output = (IDataSetViewerDestination)destClass.newInstance();
+			final SessionProperties props = _session.getProperties();
+			if (propertyName == null || propertyName.equals(
+					SessionProperties.IPropertyNames.SQL_OUTPUT_CLASS_NAME)) {
+				final IDataSetViewerDestination previous = _resultSetOutput;
+				try {
+					Class destClass = Class.forName(props.getSqlOutputClassName());
+					if (IDataSetViewerDestination.class.isAssignableFrom(destClass) &&
+							Component.class.isAssignableFrom(destClass)) {
+						_resultSetOutput = (IDataSetViewerDestination)destClass.newInstance();
+					}
+
+				} catch (Exception ex) {
+					_session.getApplication().getLogger().showMessage(Logger.ILogTypes.ERROR, ex.getMessage());
 				}
-			} catch (Exception ex) {
-				_session.getApplication().getLogger().showMessage(Logger.ILogTypes.ERROR, ex.getMessage());
+				if (_resultSetOutput == null) {
+					_resultSetOutput = new DataSetViewerTablePanel();
+				}
+				_resultSetViewer.setDestination(_resultSetOutput);
+				_resultSetSp.setRowHeader(null);
+				_resultSetSp.setViewportView((Component)_resultSetOutput);
+
+
+				_metaDataOutput = new DataSetViewerTablePanel(); //??
+				_metaDataViewer.setDestination(_metaDataOutput);
+				_metaDataSp.setRowHeader(null);
+				_metaDataSp.setViewportView((Component)_metaDataOutput);
 			}
-			if (_output == null) {
-				_output = new DataSetViewerTextPanel();
-			}
-			_viewer.setDestination(_output);
-			_outputSp.setRowHeader(null);
-			_outputSp.setViewportView((Component)_output);
 		}
-	}
+
 
 	private void createUserInterface() {
+//	final Resources rsrc = _session.getApplication().getResources();
 		setLayout(new BorderLayout());
-		_viewer = new DataSetViewer();
-		_currentSqlLbl = new JLabel();
-
-		JButton closeBtn = new TabButton(new CloseAction());
-		JButton createButton = new TabButton(new CreateResultTabFrameAction());
 
 		JPanel panel1 = new JPanel();
 		JPanel panel2 = new JPanel();
 		panel2.setLayout(new GridLayout(1,2,0,0));
-		panel2.add(createButton);
-		panel2.add(closeBtn);
-
+		panel2.add(new TabButton(new CreateResultTabFrameAction()));
+		panel2.add(new TabButton(new CloseAction()));
 		panel1.setLayout(new BorderLayout());
 		panel1.add(panel2,BorderLayout.EAST);
 		panel1.add(_currentSqlLbl,BorderLayout.CENTER);
-		add(panel1, BorderLayout.NORTH);
-		_outputSp = new JScrollPane();
-		add(_outputSp, BorderLayout.CENTER);
+		add(panel1,BorderLayout.NORTH);
+//	  add(_resultsSp, BorderLayout.CENTER);
+		add(_tp, BorderLayout.CENTER);
+
+		_tp.addTab("Results", _resultSetSp);
+		_tp.addTab("MetaData", _metaDataSp);
 	}
 
 	private final class TabButton extends JButton {
@@ -189,10 +273,9 @@ public class ResultTab extends JPanel {
 		CloseAction() {
 			super(_session.getApplication(), _session.getApplication().getResources());
 		}
-		
+
 		public void actionPerformed(ActionEvent evt) {
-			add(_outputSp, BorderLayout.CENTER);
-			_sqlPanel.closeTab(ResultTab.this);
+			closeTab();
 		}
 	}
 
@@ -201,7 +284,7 @@ public class ResultTab extends JPanel {
 		CreateResultTabFrameAction() {
 			super(_session.getApplication(), _session.getApplication().getResources());
 		}
-		
+
 		public void actionPerformed(ActionEvent evt) {
 			_sqlPanel.createWindow(ResultTab.this);
 		}

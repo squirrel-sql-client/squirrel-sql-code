@@ -37,7 +37,6 @@ import javax.swing.event.ChangeListener;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewerDestination;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
@@ -136,7 +135,7 @@ class DatabasePanel extends JTabbedPane {
             _session.getApplication().getLogger().showMessage(Logger.ILogTypes.ERROR, ignore.getMessage());
         }
         if (dest == null) {
-            dest = new DataSetViewerTextPanel();
+            dest = new DataSetViewerTablePanel();
         }
         viewer.setDestination(dest);
         int idx = indexOfTab(title);
