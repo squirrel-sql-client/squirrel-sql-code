@@ -1,15 +1,21 @@
 Change Log
 ==========
 
+1.1 continuation
+================
+- SQL execution now in its own thread so that the user interface is
+  still responsive (Johan Compagner).
+- Row count is now available on the Info tab for a table.
+
+  
 1.1 alpha1
 ===============================
 - Plugin architecture added.
 - Look and Feel functionality moved to a plugin.
-- Thanks to Johan Compagner the results of queries can be displayed in
-  multiple tabs and these tabs can be "torn off".
-- Thanks to Johan Compagner multiple SQL statements can be executed at 
-  the same time.
-- Thanks to Johan Compagner the message panel is now resizable.
+- The results of queries can be displayed in multiple tabs and these tabs
+  can be "torn off" (Johan Compagner).
+- Can now enter execute multiple SQL statements (Johan Compagner).
+- The message panel is now resizable (Johan Compagner).
 - If there are no Skin Look and Feel themepacks then disable
   Themepack dropdown and remove Skin Look and Feel from the
   Look and Feel dropdown.
