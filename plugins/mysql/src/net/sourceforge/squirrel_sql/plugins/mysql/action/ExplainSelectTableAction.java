@@ -19,15 +19,14 @@ package net.sourceforge.squirrel_sql.plugins.mysql.action;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
+
+import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
-
-import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 /**
  * This <TT>Action</TT> will run a &quot;EXPLAIN SELECT * FROM TABLE&quot; over the
  * currently selected tables.
@@ -50,7 +49,7 @@ public class ExplainSelectTableAction extends SquirrelAction implements ISession
 	 * @param	plugin		This plugin.
 	 *
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>IApplication</TT>,
+	 * 			Thrown if a?<TT>null</TT> <TT>IApplication</TT>,
 	 * 			<TT>Resources</TT> or <TT>MysqlPlugin</TT> passed.
 	 */
 	public ExplainSelectTableAction(IApplication app, Resources rsrc,
@@ -81,9 +80,9 @@ public class ExplainSelectTableAction extends SquirrelAction implements ISession
 			{
 				new ExplainSelectTableCommand(_session, _plugin).execute();
 			}
-			catch (BaseException ex)
+			catch (Throwable th)
 			{
-				_session.getMessageHandler().showErrorMessage(ex);
+				_session.getMessageHandler().showErrorMessage(th);
 			}
 		}
 	}

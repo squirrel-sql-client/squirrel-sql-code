@@ -51,8 +51,14 @@ public class CopyTableAction extends SquirrelAction implements ISessionAction
 	{
 		if (_session != null)
 		{
-			new CopyTableCommand(_session, _plugin).execute();
-
+			try
+			{
+				new CopyTableCommand(_session, _plugin).execute();
+			}
+			catch (Throwable th)
+			{
+				_session.getMessageHandler().showErrorMessage(th);
+			}
 		}
 	}
 

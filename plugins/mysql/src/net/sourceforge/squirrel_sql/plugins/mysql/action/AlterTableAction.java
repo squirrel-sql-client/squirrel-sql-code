@@ -18,19 +18,16 @@ package net.sourceforge.squirrel_sql.plugins.mysql.action;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
-
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 /**
  * CreateColumnAction.java
@@ -70,9 +67,9 @@ public class AlterTableAction extends SquirrelAction implements ISessionAction
 // TODO: Refresh
 					new AlterTableCommand(_session, _plugin, (ITableInfo)tables[0]).execute();
 				}
-				catch (BaseException ex)
+				catch (Throwable th)
 				{
-					_session.getMessageHandler().showErrorMessage(ex);
+					_session.getMessageHandler().showErrorMessage(th);
 				}
 			}
 			else

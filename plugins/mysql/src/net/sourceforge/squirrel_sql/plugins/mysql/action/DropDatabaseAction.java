@@ -20,8 +20,9 @@ import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
+
+import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
@@ -30,8 +31,6 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
-
-import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 /**
  * DropDatabaseAction.java
  *
@@ -77,9 +76,9 @@ public class DropDatabaseAction	extends SquirrelAction
 						new DropDatabaseCommand(_session, _plugin, dbs).execute();
 						treeAPI.removeNodes(nodes);
 					}
-					catch (BaseException ex)
+					catch (Throwable th)
 					{
-						_session.getMessageHandler().showErrorMessage(ex);
+						_session.getMessageHandler().showErrorMessage(th);
 					}
 				}
 			}
