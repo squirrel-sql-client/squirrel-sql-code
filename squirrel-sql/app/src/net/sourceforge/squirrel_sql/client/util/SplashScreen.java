@@ -39,56 +39,56 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 
 public class SplashScreen extends JWindow {
 
-    private JProgressBar _progressBar;
+	private JProgressBar _progressBar;
 
-    public SplashScreen(SquirrelResources rsrc, int progressBarSize) throws IllegalArgumentException {
-        super();
-        if (rsrc == null) {
-            throw new IllegalArgumentException("Null Resources passed");
-        }
-        createUserInterface(rsrc, progressBarSize);
-    }
+	public SplashScreen(SquirrelResources rsrc, int progressBarSize) throws IllegalArgumentException {
+		super();
+		if (rsrc == null) {
+			throw new IllegalArgumentException("Null Resources passed");
+		}
+		createUserInterface(rsrc, progressBarSize);
+	}
 
-    private void createUserInterface(SquirrelResources rsrc, int progressBarSize) {
-        JPanel mainPnl = new JPanel(new BorderLayout());
-        _progressBar = new JProgressBar(0, progressBarSize);
-        _progressBar.setStringPainted(true);
-        _progressBar.setString("");
-        _progressBar.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        _progressBar.setBackground(new Color(SquirrelResources.S_SPLASH_IMAGE_BACKGROUND));
-        _progressBar.setForeground(Color.blue);
+	private void createUserInterface(SquirrelResources rsrc, int progressBarSize) {
+		JPanel mainPnl = new JPanel(new BorderLayout());
+		_progressBar = new JProgressBar(0, progressBarSize);
+		_progressBar.setStringPainted(true);
+		_progressBar.setString("");
+		_progressBar.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		_progressBar.setBackground(new Color(SquirrelResources.S_SPLASH_IMAGE_BACKGROUND));
+		_progressBar.setForeground(Color.blue);
 
-        Icon icon = rsrc.getIcon(SquirrelResources.ImageNames.SPLASH_SCREEN);
-        mainPnl.add(BorderLayout.NORTH, new JLabel(icon));
+		Icon icon = rsrc.getIcon(SquirrelResources.ImageNames.SPLASH_SCREEN);
+		mainPnl.add(BorderLayout.NORTH, new JLabel(icon));
 
-        mainPnl.add(BorderLayout.CENTER, _progressBar);
+		mainPnl.add(BorderLayout.CENTER, _progressBar);
 
-        mainPnl.setBorder(BorderFactory.createRaisedBevelBorder());
-        getContentPane().add(mainPnl);
+		mainPnl.setBorder(BorderFactory.createRaisedBevelBorder());
+		getContentPane().add(mainPnl);
 
-        pack();
+		pack();
 
-        GUIUtils.centerWithinDesktop(this);
-        setVisible(true);
-    }
+		GUIUtils.centerWithinScreen(this);
+		setVisible(true);
+	}
 
-    public void indicateNewTask(final String text) {
-        // Using a thread for this gets rid of most of the "white flash".
-        try {
-            SwingUtilities.invokeAndWait(new Runnable() {
-                public void run() {
-                    _progressBar.setString(text);
-                    _progressBar.setValue(_progressBar.getValue() + 1);
-                }
-            });
-            Thread.yield();
-        } catch(Exception ignore) {
-        }
-    }
+	public void indicateNewTask(final String text) {
+		// Using a thread for this gets rid of most of the "white flash".
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				public void run() {
+					_progressBar.setString(text);
+					_progressBar.setValue(_progressBar.getValue() + 1);
+				}
+			});
+			Thread.yield();
+		} catch(Exception ignore) {
+		}
+	}
 
-    private static class MyLabel extends JLabel {
-        MyLabel(String text) {
-            super(text, SwingConstants.CENTER);
-        }
-    }
+	private static class MyLabel extends JLabel {
+		MyLabel(String text) {
+			super(text, SwingConstants.CENTER);
+		}
+	}
 }
