@@ -33,9 +33,9 @@ public class Version {
     //private static final int RELEASE = 7;
     private static final int RELEASE = 4;
 
-    private static final String COPYRIGHT = "Copyright (c) 2001 - 2002 Colin Bell, colbell@users.sourceforge.net";
+    private static final String COPYRIGHT = "Copyright (c) 2001 - 2002 Colin Bell";
 
-    private static final String WEB_SITE = "http://sourceforge.net/projects/squirrel-sql/";
+    private static final String WEB_SITE = "http://squirrel-sql.sourceforge.net/";
 
     public static String getVersion() {
         StringBuffer buf = new StringBuffer();
