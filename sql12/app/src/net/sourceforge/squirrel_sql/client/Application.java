@@ -54,7 +54,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellImportExportInfoSaver;
-
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DTProperties;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.db.AliasMaintSheetFactory;
 import net.sourceforge.squirrel_sql.client.db.DriverMaintSheetFactory;
@@ -273,7 +273,9 @@ class Application implements IApplication
 		
 		// Save options selected for Edit Where Columns
 		saveEditWhereColsInfo();
-
+		
+		// Save options selected for DataType-specific properties
+		saveDTProperties();
 
 		String msg = s_stringMgr.getString("Application.shutdowncomplete",
 										Calendar.getInstance().getTime());
@@ -586,7 +588,10 @@ class Application implements IApplication
 				
 		indicateNewStartupTask(splash, "Loading Edit 'Where' Columns selections...");
 		loadEditWhereColsInfo();
-
+				
+		indicateNewStartupTask(splash, "Loading Data Type Properties...");
+		loadDTProperties();
+		
 		indicateNewStartupTask(splash, "Showing main window...");
 		_mainFrame.setVisible(true);
 
@@ -735,8 +740,8 @@ class Application implements IApplication
 	}
 	
 	/**
-	 * Load the options previously selected by user for import/export of
-	 * data in various Cells.
+	 * Load the options previously selected by user for specific cols to use
+	 * in WHERE clause when editing cells.
 	 */
 	private void loadEditWhereColsInfo()
 	{
@@ -749,7 +754,7 @@ class Application implements IApplication
 			if (it.hasNext())
 			{
 				saverInstance = (EditWhereCols)it.next();
-EditWhereCols x = saverInstance;
+				EditWhereCols x = saverInstance;
 			}
 		}
 		catch (FileNotFoundException ignore)
@@ -762,9 +767,7 @@ EditWhereCols x = saverInstance;
 		}
 		finally
 		{
-			// set the singleton instance of the Saver class to be the
-			// instance just created by the XMLBeanReader
-//????			CellImportExportInfoSaver.setInstance(saverInstance);
+			// nothing needed here??
 		}
 	}
 	
@@ -783,6 +786,56 @@ EditWhereCols x = saverInstance;
 			s_log.error("Unable to write Edit Where Cols options to persistant storage.", ex);
 		}
 	}
+	
+	
+	/**
+	 * Load the options previously selected by user for specific cols to use
+	 * in WHERE clause when editing cells.
+	 */
+	private void loadDTProperties()
+	{
+		DTProperties saverInstance = null;
+		try
+		{
+			XMLBeanReader doc = new XMLBeanReader();
+			doc.load(new ApplicationFiles().getDTPropertiesFile());
+			Iterator it = doc.iterator();
+			if (it.hasNext())
+			{
+				saverInstance = (DTProperties)it.next();
+				DTProperties x = saverInstance;
+			}
+		}
+		catch (FileNotFoundException ignore)
+		{
+			// Cell Import/Export file not found for user - first time user ran pgm.
+		}
+		catch (Exception ex)
+		{
+			s_log.error("Unable to load DataType Properties selections from persistant storage.", ex);
+		}
+		finally
+		{
+			// nothing needed here??
+		}
+	}
+	
+	/**
+	 * Save the options selected by user for Cell Import Export.
+	 */
+	private void saveDTProperties()
+	{
+		try
+		{
+			XMLBeanWriter wtr = new XMLBeanWriter(new DTProperties());
+			wtr.save(new ApplicationFiles().getDTPropertiesFile());
+		}
+		catch (Exception ex)
+		{
+			s_log.error("Unable to write DataType properties to persistant storage.", ex);
+		}
+	}
+
 
 	/**
 	 * Setup applications Look and Feel.
