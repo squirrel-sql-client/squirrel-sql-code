@@ -45,13 +45,15 @@ public class SquirrelPreferences implements Serializable
 	public interface IPropertyNames
 	{
 		String ACTION_KEYS = "actionKeys";
-		String SESSION_PROPERTIES = "sessionProperties";
-		String LOGIN_TIMEOUT = "loginTimeout";
+		String ALIASES_SELECTED_INDEX = "aliasesSelectdIndex";
 		String DEBUG_JDBC = "debugJdbc";
+		String DRIVERS_SELECTED_INDEX = "driversSelectdIndex";
+		String LOGIN_TIMEOUT = "loginTimeout";
 		String MAIN_FRAME_STATE = "mainFrameWindowState";
 		String PLUGIN_OBJECTS = "pluginObjects";
 		String PROXY = "proxyPerferences";
 		String SCROLLABLE_TABBED_PANES = "useScrollableTabbedPanes";
+		String SESSION_PROPERTIES = "sessionProperties";
 		String SHOW_ALIASES_TOOL_BAR = "showAliasesToolBar";
 		String SHOW_CONTENTS_WHEN_DRAGGING = "showContentsWhenDragging";
 		String SHOW_DRIVERS_TOOL_BAR = "showDriversToolBar";
@@ -334,6 +336,55 @@ public class SquirrelPreferences implements Serializable
 											oldValue, _proxySettings);
 	}
 
+	/**
+	 * Retrieve the index of the selected alias in the aliases window.
+	 * 
+	 * @return	the index of the selected alias in the aliases window
+	 * 			or -1 if none selected.
+	 */
+	public int getAliasesSelectedIndex()
+	{
+		return _aliasesSelectedIndex;
+	}
+
+	/**
+	 * Set the index of the selected alias.
+	 *
+	 * @param	idx	the index of the selected alias in the aliases window
+	 * 				or -1 if none selected.
+	 */
+	public synchronized void setAliasesSelectedIndex(int idx)
+	{
+		final int oldValue = _aliasesSelectedIndex;
+		_aliasesSelectedIndex = idx;
+		getPropertyChangeReporter().firePropertyChange(IPropertyNames.ALIASES_SELECTED_INDEX,
+											oldValue, _aliasesSelectedIndex);
+	}
+
+	/**
+	 * Retrieve the index of the selected driver in the drivers window.
+	 * 
+	 * @return	the index of the selected driver in the drivers window
+	 * 			or -1 if none selected.
+	 */
+	public int getDriversSelectedIndex()
+	{
+		return _driversSelectedIndex;
+	}
+
+	/**
+	 * Set the index of the selected driver.
+	 *
+	 * @param	idx	the index of the selected driver in the drivers window
+	 * 				or -1 if none selected.
+	 */
+	public synchronized void setDriversSelectedIndex(int idx)
+	{
+		final int oldValue = _driversSelectedIndex;
+		_driversSelectedIndex = idx;
+		getPropertyChangeReporter().firePropertyChange(IPropertyNames.DRIVERS_SELECTED_INDEX,
+											oldValue, _driversSelectedIndex);
+	}
 	/*
 	public synchronized PluginObjectWrapper[] getPluginObjects() {
 		//	  return (Folder[])_subFolders.toArray(new Folder[_subFolders.size()]);

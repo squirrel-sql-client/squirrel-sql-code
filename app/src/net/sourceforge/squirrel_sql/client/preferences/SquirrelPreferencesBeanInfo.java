@@ -26,8 +26,7 @@ import java.beans.SimpleBeanInfo;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SquirrelPreferencesBeanInfo
-	extends SimpleBeanInfo
+public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
 	implements SquirrelPreferences.IPropertyNames
 {
 	private static PropertyDescriptor[] s_dscrs;
@@ -39,35 +38,38 @@ public class SquirrelPreferencesBeanInfo
 		super();
 		if (s_dscrs == null)
 		{
-			s_dscrs = new PropertyDescriptor[13];
-			int idx = 0;
-			s_dscrs[idx++] = new PropertyDescriptor(SESSION_PROPERTIES, CLS,
+			s_dscrs = new PropertyDescriptor[15];
+			s_dscrs[0] = new PropertyDescriptor(SESSION_PROPERTIES, CLS,
 									"getSessionProperties", "setSessionProperties");
-			s_dscrs[idx++] = new PropertyDescriptor(MAIN_FRAME_STATE, CLS,
+			s_dscrs[1] = new PropertyDescriptor(MAIN_FRAME_STATE, CLS,
 								"getMainFrameWindowState", "setMainFrameWindowState");
-			s_dscrs[idx++] = new PropertyDescriptor(SHOW_CONTENTS_WHEN_DRAGGING, CLS,
+			s_dscrs[2] = new PropertyDescriptor(SHOW_CONTENTS_WHEN_DRAGGING, CLS,
 								"getShowContentsWhenDragging", "setShowContentsWhenDragging");
-			s_dscrs[idx++] = new PropertyDescriptor(LOGIN_TIMEOUT, CLS,
+			s_dscrs[3] = new PropertyDescriptor(LOGIN_TIMEOUT, CLS,
 								"getLoginTimeout", "setLoginTimeout");
-			s_dscrs[idx++] = new PropertyDescriptor(DEBUG_JDBC, CLS,
+			s_dscrs[4] = new PropertyDescriptor(DEBUG_JDBC, CLS,
 									"getDebugJdbc", "setDebugJdbc");
-			s_dscrs[idx++] = new PropertyDescriptor(SHOW_MAIN_STATUS_BAR, CLS,
+			s_dscrs[5] = new PropertyDescriptor(SHOW_MAIN_STATUS_BAR, CLS,
 								"getShowMainStatusBar", "setShowMainStatusBar");
-			s_dscrs[idx++] = new PropertyDescriptor(SHOW_MAIN_TOOL_BAR, CLS,
+			s_dscrs[6] = new PropertyDescriptor(SHOW_MAIN_TOOL_BAR, CLS,
 								"getShowMainToolBar", "setShowMainToolBar");
-			s_dscrs[idx++] = new PropertyDescriptor(SHOW_ALIASES_TOOL_BAR, CLS,
+			s_dscrs[7] = new PropertyDescriptor(SHOW_ALIASES_TOOL_BAR, CLS,
 								"getShowAliasesToolBar", "setShowAliasesToolBar");
-			s_dscrs[idx++] = new PropertyDescriptor(SHOW_DRIVERS_TOOL_BAR, CLS,
+			s_dscrs[8] = new PropertyDescriptor(SHOW_DRIVERS_TOOL_BAR, CLS,
 								"getShowDriversToolBar", "setShowDriversToolBar");
-			s_dscrs[idx++] = new PropertyDescriptor(SHOW_TOOLTIPS, CLS,
+			s_dscrs[9] = new PropertyDescriptor(SHOW_TOOLTIPS, CLS,
 								"getShowToolTips", "setShowToolTips");
-			s_dscrs[idx++] = new PropertyDescriptor(SCROLLABLE_TABBED_PANES, CLS,
+			s_dscrs[10] = new PropertyDescriptor(SCROLLABLE_TABBED_PANES, CLS,
 								"useScrollableTabbedPanes", "setUseScrollableTabbedPanes");
-			s_dscrs[idx++] = new IndexedPropertyDescriptor(ACTION_KEYS, CLS,
+			s_dscrs[11] = new IndexedPropertyDescriptor(ACTION_KEYS, CLS,
 									"getActionKeys", "setActionKeys",
 									"getActionKeys", "setActionKeys");
-			s_dscrs[idx++] = new PropertyDescriptor(PROXY, CLS,
+			s_dscrs[12] = new PropertyDescriptor(PROXY, CLS,
 								"getProxySettings", "setProxySettings");
+			s_dscrs[13] = new PropertyDescriptor(ALIASES_SELECTED_INDEX, CLS,
+								"getAliasesSelectedIndex", "setAliasesSelectedIndex");
+			s_dscrs[14] = new PropertyDescriptor(DRIVERS_SELECTED_INDEX, CLS,
+								"getDriversSelectedIndex", "setDriversSelectedIndex");
 		}
 	}
 
