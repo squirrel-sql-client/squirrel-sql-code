@@ -1,6 +1,10 @@
 MySQL Plugin Change Log
 =======================
 
+0.32
+====
+- Updated for SQuirreL 1.2beta6.
+
 0.31
 ====
 - Updated for SQuirreL 1.2beta5.

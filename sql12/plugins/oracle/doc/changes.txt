@@ -1,6 +1,11 @@
 Oracle Change Log
 =================
 
+0.13
+====
+
+- Updated for SQuirrel SQL Client 1.2beta6.
+
 0.12
 ====
 

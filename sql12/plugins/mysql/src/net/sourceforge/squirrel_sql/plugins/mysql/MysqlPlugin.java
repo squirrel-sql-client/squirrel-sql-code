@@ -108,7 +108,7 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	 */
 	public String getVersion()
 	{
-		return "0.31";
+		return "0.32";
 	}
 
 	/**

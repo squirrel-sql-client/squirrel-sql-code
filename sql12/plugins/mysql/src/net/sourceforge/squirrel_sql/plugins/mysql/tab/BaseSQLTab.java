@@ -28,11 +28,9 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetScrollingPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.MapDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
-//import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-//import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseObjectTab;
@@ -123,8 +121,7 @@ abstract class BaseSQLTab extends BaseObjectTab
 				{
 					final SessionProperties props = session.getProperties();
 					final String destClassName = props.getMetaDataOutputClassName();
-					final LargeResultSetObjectInfo rsoi = props.getLargeResultSetObjectInfo();
-					_comp.load(createDataSetFromResultSet(rs, rsoi), destClassName);
+					_comp.load(createDataSetFromResultSet(rs), destClassName);
 				}
 					finally
 				{
@@ -144,11 +141,11 @@ abstract class BaseSQLTab extends BaseObjectTab
 
 	protected abstract String getSQL() throws SQLException;
 
-	protected IDataSet createDataSetFromResultSet(ResultSet rs,
-				LargeResultSetObjectInfo rsoi) throws DataSetException
+	protected IDataSet createDataSetFromResultSet(ResultSet rs)
+		throws DataSetException
 	{
 		final ResultSetDataSet rsds = new ResultSetDataSet();
-		rsds.setResultSet(rs, rsoi);
+		rsds.setResultSet(rs);
 		if (!_firstRowOnly)
 		{
 			return rsds;
