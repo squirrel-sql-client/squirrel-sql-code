@@ -63,8 +63,7 @@ class FormatSQLCommand implements ICommand
 			  new CommentSpec("--", "\n")
 		  };
 
-		char ch =  _session.getProperties().getSQLStatementSeparatorChar();
-		String statementSep = new String(new char[] {ch});
+		String statementSep = _session.getProperties().getSQLStatementSeparator();
 		
 		CodeReformator cr = new CodeReformator(statementSep, commentSpecs);
 
