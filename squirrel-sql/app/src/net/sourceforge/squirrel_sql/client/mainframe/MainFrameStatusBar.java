@@ -17,20 +17,17 @@ package net.sourceforge.squirrel_sql.client.mainframe;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.util.Date;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 
@@ -40,7 +37,8 @@ import net.sourceforge.squirrel_sql.fw.gui.TimePanel;
  * Statusbar component for the main frame.
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class MainFrameStatusBar extends JPanel {
+public class MainFrameStatusBar extends JPanel
+{
 	/** Label showing the message in the statusbar. */
 	private JLabel _textLbl = new JLabel();
 
@@ -53,7 +51,8 @@ public class MainFrameStatusBar extends JPanel {
 	/**
 	 * Default ctor.
 	 */
-	public MainFrameStatusBar() {
+	public MainFrameStatusBar()
+	{
 		super(new GridBagLayout());
 		createUserInterface();
 	}
@@ -65,8 +64,10 @@ public class MainFrameStatusBar extends JPanel {
 	 * 
 	 * @throws	IllegalArgumentException	if <TT>null</TT> <TT>Font</TT> passed.
 	 */
-	public synchronized void setFont(Font font) {
-		if (font == null) {
+	public synchronized void setFont(Font font)
+	{
+		if (font == null)
+		{
 			throw new IllegalArgumentException("Font == null");
 		}
 		super.setFont(font);
@@ -78,23 +79,30 @@ public class MainFrameStatusBar extends JPanel {
 	 * 
 	 * @param	text	Text to display in the message label.
 	 */
-	public synchronized void setText(String text) {
+	public synchronized void setText(String text)
+	{
 		String myText = null;
-		if (text != null) {
+		if (text != null)
+		{
 			myText = text.trim();
 		}
-		if (myText != null && myText.length() > 0) {
+		if (myText != null && myText.length() > 0)
+		{
 			_textLbl.setText(myText);
-		} else {
+		}
+		else
+		{
 			clearText();
 		}
 	}
 
-	public synchronized void clearText() {
+	public synchronized void clearText()
+	{
 		_textLbl.setText(" ");
 	}
 
-	private void createUserInterface() {
+	private void createUserInterface()
+	{
 		clearText();
 
 		GridBagConstraints gbc = new GridBagConstraints();
@@ -109,6 +117,17 @@ public class MainFrameStatusBar extends JPanel {
 		add(_textLbl, gbc);
 
 		_mp = new MemoryPanel();
+		_mp.addMouseListener(new MouseAdapter()
+		{
+			public void mouseClicked(MouseEvent evt)
+			{
+				if (evt.getClickCount() == 2)
+				{
+					System.gc();
+					setText("Garbage collection requested");
+				}
+			}
+		});
 		_mp.setBorder(createComponentBorder());
 		gbc.weightx = 0.0;
 		gbc.anchor = gbc.CENTER;
@@ -122,22 +141,24 @@ public class MainFrameStatusBar extends JPanel {
 
 	}
 
-	public static Border createComponentBorder() {
+	public static Border createComponentBorder()
+	{
 		return BorderFactory.createCompoundBorder(
-				BorderFactory.createBevelBorder(BevelBorder.LOWERED),
-				BorderFactory.createEmptyBorder(0, 4, 0, 4));
+			BorderFactory.createBevelBorder(BevelBorder.LOWERED),
+			BorderFactory.createEmptyBorder(0, 4, 0, 4));
 	}
 
-	private static void updateContainerFont(Container cont, Font font) {
+	private static void updateContainerFont(Container cont, Font font)
+	{
 		Component[] comps = cont.getComponents();
-		for (int i = 0; i < comps.length; ++i) {
+		for (int i = 0; i < comps.length; ++i)
+		{
 			comps[i].setFont(font);
-			if (comps[i] instanceof Container) {
-				updateContainerFont((Container)comps[i], font);
+			if (comps[i] instanceof Container)
+			{
+				updateContainerFont((Container) comps[i], font);
 			}
 		}
 	}
 
 }
-
-

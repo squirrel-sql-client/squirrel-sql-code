@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -34,6 +35,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
@@ -75,12 +77,18 @@ public class ViewLogsSheet extends BaseSheet
 
 	/** Combo box containing all the log files. */
 	private DirectoryListComboBox _logDirCmb = new DirectoryListComboBox();
-	
+
 	/** Text area containing the log contents. */
 	private JTextArea _logContentsTxt = new JTextArea(20, 50);
 
+	/** Button that refreshes the log contents. */
+	private JButton _refreshBtn;
+
 	/** Directory containing the log files. */
 	private File _logDir;
+
+	/** If <TT>true</TT> user is closing this window. */
+	private boolean _closing = false;
 
 	/**
 	 * Ctor specifying the application API.
@@ -92,7 +100,7 @@ public class ViewLogsSheet extends BaseSheet
 	 */
 	private ViewLogsSheet(IApplication app)
 	{
-		super(i18n.TITLE);
+		super(i18n.TITLE, true);
 		if (app == null)
 		{
 			throw new IllegalArgumentException("IApplication == null");
@@ -119,11 +127,24 @@ public class ViewLogsSheet extends BaseSheet
 			app.getMainFrame().addInternalFrame(s_instance, true, null);
 			GUIUtils.centerWithinDesktop(s_instance);
 		}
-		s_instance.setVisible(true);
+
+		final boolean wasVisible = s_instance.isVisible();
+		if (!wasVisible)
+		{
+			s_instance.setVisible(true); 
+		}
+		s_instance.moveToFront();
+		if (!wasVisible)
+		{
+			s_instance.startRefreshingLog();
+		}
 	}
 
 	public void dispose()
 	{
+		// Stop refresh if it is running.
+		_closing = true;
+
 		synchronized (getClass())
 		{
 			s_instance = null;
@@ -140,26 +161,94 @@ public class ViewLogsSheet extends BaseSheet
 	}
 
 	/**
+	 * Start a thread to refrsh the log.
+	 */
+	private void startRefreshingLog()
+	{
+        _app.getThreadPool().addTask(new Refresher());
+	}
+
+	/**
 	 * Refresh the log.
 	 */
-	synchronized private void refreshLog()
+	private synchronized void refreshLog()
 	{
+		_refreshBtn.setEnabled(false);
 		CursorChanger cursorChg = new CursorChanger(this);
 		cursorChg.show();
-		try {
-			_logContentsTxt.setText("");
-			String log = (String)_logDirCmb.getSelectedItem();
+		try
+		{
+			try
+			{
+				SwingUtilities.invokeAndWait(new Runnable()
+				{
+					public void run()
+					{
+						_logContentsTxt.setText("");
+					}
+				});
+			}
+			catch (Exception ex)
+			{
+				s_log.error(ex);
+			}
+			String log = (String) _logDirCmb.getSelectedItem();
 			if (log != null)
 			{
 				try
 				{
-					File logFile = new File(_logDir, log);
+					final File logFile = new File(_logDir, log);
 					if (logFile.exists() && logFile.canRead())
 					{
-						FileReader rdr = new FileReader(logFile);
+						final BufferedReader rdr = new BufferedReader(new FileReader(logFile));
 						try
 						{
-							_logContentsTxt.read(rdr, logFile.toURL());
+							String line = null;
+							StringBuffer chunk = new StringBuffer(16384);
+							while ((line = rdr.readLine()) != null)
+							{
+								if (_closing)
+								{
+									return;
+								}
+
+								if (chunk.length() > 16000)
+								{
+									final String finalLine = chunk.toString();
+									SwingUtilities.invokeAndWait(new Runnable()
+									{
+										public void run()
+										{
+											if (!_closing)
+											{
+												_logContentsTxt.append(finalLine);
+											}
+										}
+									});
+									chunk = new StringBuffer(16384);
+								}
+								else
+								{
+									chunk.append(line).append('\n');
+								}
+							}
+
+							if (_closing)
+							{
+								return;
+							}
+
+							final String finalLine = chunk.toString();
+							SwingUtilities.invokeAndWait(new Runnable()
+							{
+								public void run()
+								{
+									if (!_closing)
+									{
+										_logContentsTxt.append(finalLine);
+									}
+								}
+							});
 						}
 						finally
 						{
@@ -167,18 +256,22 @@ public class ViewLogsSheet extends BaseSheet
 						}
 					}
 				}
-				catch (IOException ex)
+				catch (Exception ex)
 				{
-					final String msg = "Error occured reading log file";
+					final String msg = "Error occured processing log file";
 					s_log.error(msg, ex);
-					_app.showErrorDialog(msg, ex);
 				}
 			}
 			else
 			{
 				s_log.debug("Null log file name");
 			}
-			
+
+			if (_closing)
+			{
+				return;
+			}
+
 			// Position to the start of the last line in log.
 			try
 			{
@@ -191,7 +284,10 @@ public class ViewLogsSheet extends BaseSheet
 			{
 				s_log.error("Error positioning caret in log text component", ex);
 			}
-		} finally {
+		}
+		finally
+		{
+			_refreshBtn.setEnabled(true);
 			cursorChg.restore();
 		}
 	}
@@ -218,7 +314,8 @@ public class ViewLogsSheet extends BaseSheet
 		tb.setUseRolloverButtons(true);
 		tb.setFloatable(false);
 
-		final JLabel lbl = new JLabel(getTitle() + " are stored in ", SwingConstants.CENTER);
+		final JLabel lbl =
+			new JLabel(getTitle() + " are stored in ", SwingConstants.CENTER);
 		lbl.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
 		tb.add(lbl);
 
@@ -235,14 +332,19 @@ public class ViewLogsSheet extends BaseSheet
 		_logContentsTxt.setEditable(false);
 		final TextPopupMenu pop = new TextPopupMenu();
 		pop.setTextComponent(_logContentsTxt);
-		_logContentsTxt.addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent evt) {
-				if (evt.isPopupTrigger()) {
+		_logContentsTxt.addMouseListener(new MouseAdapter()
+		{
+			public void mousePressed(MouseEvent evt)
+			{
+				if (evt.isPopupTrigger())
+				{
 					pop.show(evt.getComponent(), evt.getX(), evt.getY());
 				}
 			}
-			public void mouseReleased(MouseEvent evt) {
-				if (evt.isPopupTrigger()) {
+			public void mouseReleased(MouseEvent evt)
+			{
+				if (evt.isPopupTrigger())
+				{
 					pop.show(evt.getComponent(), evt.getX(), evt.getY());
 				}
 			}
@@ -251,11 +353,16 @@ public class ViewLogsSheet extends BaseSheet
 		File appLogFile = new ApplicationFiles().getExecutionLogFile();
 		_logDirCmb.load(appLogFile.getParentFile());
 
-		_logDirCmb.addActionListener(new ChangeLogListener());
 		if (_logDirCmb.getModel().getSize() > 0)
 		{
 			_logDirCmb.setSelectedItem(appLogFile.getName());
 		}
+
+		// Done after the set of the selected item above so that we control
+		// when the initial build is done. We want to make sure that under all
+		// versions of the JDK that the window is shown before the (possibly
+		// lengthy) refresh starts.
+		_logDirCmb.addActionListener(new ChangeLogListener());
 
 		final JPanel pnl = new JPanel(new BorderLayout());
 		pnl.add(_logDirCmb, BorderLayout.NORTH);
@@ -272,13 +379,13 @@ public class ViewLogsSheet extends BaseSheet
 	{
 		JPanel pnl = new JPanel();
 
-		JButton refreshBtn = new JButton("Refresh");
-		pnl.add(refreshBtn);
-		refreshBtn.addActionListener(new ActionListener()
+		_refreshBtn = new JButton("Refresh");
+		pnl.add(_refreshBtn);
+		_refreshBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
 			{
-				refreshLog();
+				startRefreshingLog();
 			}
 		});
 
@@ -292,7 +399,7 @@ public class ViewLogsSheet extends BaseSheet
 		});
 		pnl.add(closeBtn);
 
-		GUIUtils.setJButtonSizesTheSame(new JButton[] {closeBtn, refreshBtn});
+		GUIUtils.setJButtonSizesTheSame(new JButton[] {closeBtn, _refreshBtn});
 		getRootPane().setDefaultButton(closeBtn);
 
 		return pnl;
@@ -302,7 +409,15 @@ public class ViewLogsSheet extends BaseSheet
 	{
 		public void actionPerformed(ActionEvent evt)
 		{
-			ViewLogsSheet.this.refreshLog();
+			ViewLogsSheet.this.startRefreshingLog();
+		}
+	}
+
+	private final class Refresher implements Runnable
+	{
+		public void run()
+		{
+			refreshLog();
 		}
 	}
 }
