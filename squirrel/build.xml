@@ -1,0 +1,237 @@
+<?xml version="1.0"?>
+<!DOCTYPE project PUBLIC "-//ANT//DTD project//EN" "file:./etc/dtd/project.dtd" [
+  <!ENTITY buildmagic-init    SYSTEM "file:./etc/buildmagic/init.xml">
+  <!ENTITY buildmagic-common  SYSTEM "file:./etc/buildmagic/common.xml">
+  <!ENTITY project            SYSTEM "file:./project.xml">
+  <!ENTITY local              SYSTEM "file:./local.xml">
+]>
+
+<!--  $Id: build.xml,v 1.1.1.1 2001-11-20 01:53:44 placson Exp $               -->
+<!-- ===================================================================== -->
+<!--                                                                       -->
+<!--  Build file (for use w/Ant & BuildMagic modifications)                -->
+<!--                                                                       -->
+<!-- ===================================================================== -->
+
+<project name="project" default="main" basedir=".">
+
+  <!-- =================================================================== -->
+  <!-- Project Setup                                                       -->
+  <!-- =================================================================== -->
+
+  <!-- Include BuildMagic initialization elements -->
+  &buildmagic-init;
+
+  <!-- Include local and project configuration files -->
+  &local;
+  &project;
+
+  <!-- Finish loading buildmagic support files -->
+  &buildmagic-common;
+
+  <!-- Initialize the build system -->
+  <target name="init" depends="buildmagic_init" 
+	  description="Initialize the build system">
+    <!-- Setup timestamp properties -->
+    <tstamp/>
+
+    <!-- <require property="some.property"/> -->
+  </target>
+
+  <!-- The default target -->
+  <target name="main" depends="most"
+	  description="The default target">
+  </target>
+
+  <!-- Build most everything -->
+  <target name="most" depends="classes"
+	  description="Build 'most' of the system components">
+  </target>
+    
+  <!-- Build everything -->
+  <target name="all" depends="most, doc"
+	  description="Build 'all' of the system components">
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Prepares the build directory                                        -->
+  <!-- =================================================================== -->
+
+  <!-- Prepare for build output -->
+  <target name="prepare" depends="init">
+    <mkdir dir="${output.root}"/>
+    <mkdir dir="${build.root}"/>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Compiles class files                                                -->
+  <!-- =================================================================== -->
+
+  <!-- Compile all class files -->
+  <target name="classes" depends="prepare" description="Compile all class files">
+    <mkdir dir="${build.classes}"/>
+
+    <javac srcdir="${source.main}"
+           destdir="${build.classes}"
+           classpath="${javac.classpath}"
+           includes="**/*.java"
+	   excludes=""
+           optimize="${javac.optimize}"
+	   target="${javac.target}"
+           debug="${javac.debug}"
+	   depend="${javac.depend}"/>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Build Jars                                                          -->
+  <!-- =================================================================== -->
+
+  <!-- Build all jar files -->
+  <target name="jar" depends="classes" description="Build all jar files">
+    <mkdir dir="${build.lib}"/>
+
+    <!-- build a jar containing all classes -->
+    <jar jarfile="${project.jar.filename}" basedir="${build.classes}">
+      <include name="**"/>
+    </jar>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Build documents                                                     -->
+  <!-- =================================================================== -->
+
+  <!-- Create all generated documenation -->
+  <target name="doc" depends="javadoc"
+	  description="Creates all generated documentation">
+    <mkdir dir="${build.doc}"/>
+  </target>
+
+  <target name="prepare-javadoc" depends="prepare">
+    <!-- check if we need to build javadocs -->
+    <uptodate property="javadoc.isuptodate"
+	      targetfile="${build.doc.api}/index.html">
+      <srcfiles dir="${source.main}" includes="**/*.java"/>
+    </uptodate>
+
+    <mkdir dir="${build.doc.api}"/>
+  </target>	      
+
+  <!-- Create the Java API documenation -->
+  <target name="javadoc" depends="prepare-javadoc"
+	  description="Creates the Java API documentation">
+    <mkdir dir="${build.doc.api}"/>
+
+    <javadoc packagenames="${javadoc.packages}"
+             classpath="${javac.classpath}"
+             sourcepath="${source.main}"
+             destdir="${build.doc.api}"
+             author="${javadoc.author}"
+             version="${javadoc.version}"
+             public="${javadoc.public}"
+             package="${javadoc.package}"
+             protected="${javadoc.protected}"
+             private="${javadoc.private}"
+             use="${javadoc.use}"
+	     verbose="${javadoc.verbose}"
+             windowtitle="${javadoc.windowtitle}"
+	     splitindex="${javadoc.splitindex}"
+             doctitle="${javadoc.doctitle}"/>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Build Scripts & Configuration Files                                 -->
+  <!-- =================================================================== -->
+
+  <target name="bin" depends="prepare" description="Generate script files">
+     <mkdir dir="${build.bin}"/>
+
+     <copy todir="${build.bin}" filtering="on">
+       <fileset dir="${source.bin}"/>
+     </copy>
+
+     <!-- minor hack to make .sh & .py scripts executable -->
+     <chmod dir="${build.bin}" perm="+rx" includes="**/*.sh **/*.py"/>
+  </target>
+
+  <target name="etc" depends="bin" description="Generate configuration files">
+     <mkdir dir="${build.etc}"/>
+
+     <copy todir="${build.etc}" filtering="on">
+       <fileset dir="${source.etc}"/>
+     </copy>
+  </target>
+
+  <target name="config" depends="bin, etc"
+	  description="Generates all configuration related files"/>
+
+
+  <!-- =================================================================== -->
+  <!-- Build the distribution                                              -->
+  <!-- =================================================================== -->
+
+  <!-- Build a release distribution -->
+  <target name="release" depends="all"
+	  description="Creates a 'release' of the current system">
+    <mkdir dir="${release.target.root}"/>
+
+    <!-- Copy output to release -->
+    <copy todir="${release.target.root}" filtering="off">
+      <fileset dir="${build.root}">
+	<include name="**"/>
+      </fileset>
+    </copy>
+
+    <!-- Copy static documents to release -->
+    <copy todir="${release.target.doc}" filtering="off">
+      <fileset dir="${project.doc}">
+	<include name="**"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <!-- Build a release distribution archive -->
+  <target name="dist" depends="release"
+	  description="Creates a 'release' distribution archive">
+    <jar jarfile="${release.target.jarfile}" compress="true">
+      <fileset dir="${release.root}" includes="${release.target}/**"/>
+    </jar>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Cleans up generated stuff                                           -->
+  <!-- =================================================================== -->
+
+  <!-- Clean up all build output -->
+  <target name="clean" depends="init">
+    <delete dir="${build.root}"/>
+  </target>
+
+  <!-- Clean up all release output -->
+  <target name="clean-release" depends="init">
+    <delete dir="${release.root}"/>
+  </target>
+
+  <!-- Clean up all release and dist targets -->
+  <target name="clean-dist" depends="clean, clean-release">
+  </target>
+
+  <!-- Clean up only the current release -->
+  <target name="clean-release-target" depends="init">
+    <delete dir="${release.target.root}"/>
+    <delete file="${release.target.jarfile}"/>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Misc fluff                                                          -->
+  <!-- =================================================================== -->
+
+  <!-- ??? -->
+
+</project>

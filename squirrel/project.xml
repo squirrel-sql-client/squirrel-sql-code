@@ -1,0 +1,70 @@
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--  Project configuration.                                                -->
+<!--                                                                        -->
+<!--  Define configuration elements that are used by the build system here. -->
+<!--                                                                        -->
+<!--  $Id: project.xml,v 1.1.1.1 2001-11-20 01:53:44 placson Exp $ -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+
+<!-- ====================================================================== -->
+<!--  Project Setup                                                         -->
+<!-- ====================================================================== -->
+
+<!-- Project name(s) -->
+<property name="project.name" value="myproject"/>
+<property name="project.Name" value="My Project"/>
+
+<!-- Project version(s) -->
+<property name="project.version" value="0.1-alpha"/>
+<property name="project.Version" value="v0.1 Alpha"/>
+
+<!-- This project is based on Java 1.2 -->
+<property name="javac.target" value="1.2"/>
+
+
+<!-- ====================================================================== -->
+<!--  Library Setup                                                         -->
+<!-- ====================================================================== -->
+
+<!-- define library setup properties here -->
+
+
+<!-- ====================================================================== -->
+<!--  Classpath Setup                                                       -->
+<!-- ====================================================================== -->
+
+<!-- define thirdparty classpath properties here -->
+<!--
+<property name="classpath.somelib" type="path" value="/blah/blah/blah"/>
+-->
+
+<!-- The combined thirdparty classpath -->
+<!--
+<property name="classpath.thirdparty" type="path" separator=":">
+  <element value="${classpath.somelib}"/>
+</property>
+-->
+
+
+<!-- ====================================================================== -->
+<!--  Tool Setup                                                            -->
+<!-- ====================================================================== -->
+
+<!-- define properties and such that are required by required tools -->
+
+
+<!-- ====================================================================== -->
+<!--  Task Setup                                                            -->
+<!-- ====================================================================== -->
+
+<!-- the class path that Javac will get -->
+<property name="javac.classpath" type="path" separator=":">
+  <element value="${classpath}"/>
+  <element value="${classpath.local}"/>
+  <element value="${classpath.thirdparty}"/>
+</property>
+
+<!-- Packages to include when generating api documentation -->
+<property name="javadoc.packages" value="org.lacson.*"/>
