@@ -1,6 +1,14 @@
 Look and Feel Plugin Change Log
 ===============================
 
+0.22
+====
+
+Other
+-----
+- Updated for SQuirreL 1.1beta6.
+
+
 0.21
 ====
 
