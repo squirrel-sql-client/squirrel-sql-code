@@ -32,6 +32,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.JTextArea;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
@@ -167,9 +168,6 @@ public class FormatSessionPropertiesPanel
 		void loadData(SessionProperties props)
 		{
 			LargeResultSetObjectInfo largeObjInfo = props.getLargeResultSetObjectInfo();
-			_showBinaryChk.setSelected(largeObjInfo.getReadBinary());
-			_showVarBinaryChk.setSelected(largeObjInfo.getReadVarBinary());
-			_showLongVarBinaryChk.setSelected(largeObjInfo.getReadLongVarBinary());
 
 			_showBlobChk.setSelected(largeObjInfo.getReadBlobs());
 			_showBlobSizeField.setInt(largeObjInfo.getReadBlobsSize());
@@ -192,9 +190,6 @@ public class FormatSessionPropertiesPanel
 		void applyChanges(SessionProperties props)
 		{
 			LargeResultSetObjectInfo largeObjInfo = props.getLargeResultSetObjectInfo();
-			largeObjInfo.setReadBinary(_showBinaryChk.isSelected());
-			largeObjInfo.setReadVarBinary(_showVarBinaryChk.isSelected());
-			largeObjInfo.setReadLongVarBinary(_showLongVarBinaryChk.isSelected());
 
 			largeObjInfo.setReadBlobs(_showBlobChk.isSelected());
 			largeObjInfo.setReadBlobsSize(_showBlobSizeField.getInt());
@@ -249,7 +244,7 @@ public class FormatSessionPropertiesPanel
 			_clobTypeDrop.addActionListener(_controlMediator);
 
 			JPanel pnl = new JPanel(new GridBagLayout());
-			pnl.setBorder(BorderFactory.createTitledBorder("Show String Data for Columns of these Data Types"));
+			pnl.setBorder(BorderFactory.createTitledBorder("Show Data as Strings for Columns of these Data Types"));
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
@@ -257,56 +252,67 @@ public class FormatSessionPropertiesPanel
 
 			gbc.gridx = 0;
 			gbc.gridy = 0;
-			gbc.weightx = 1;
-			pnl.add(_showBinaryChk, gbc);
 
-			++gbc.gridy;
-			gbc.gridwidth = 2;
-			pnl.add(_showLongVarBinaryChk, gbc);
+			pnl.add(new JLabel(""), gbc);
+			
+			++gbc.gridy;	// leave a blank line to separate text from header
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
+
+			JTextArea text1 = new JTextArea("Some DBMSs implement BLOB/CLOB fields as other Data Types.\nThe following works only for Data Types 2004(BLOB) and 2005(CLOB).");
+			text1.setEditable(false);
+			pnl.add(text1, gbc);
+
 
 			gbc.gridwidth = 1;
 			++gbc.gridy;
 			pnl.add(_showBlobChk, gbc);
 
-			++gbc.gridy;
-			pnl.add(_showClobChk, gbc);
+			++gbc.gridx;
+			pnl.add(new RightLabel("Read"), gbc);
 
+			++gbc.gridx;
+			pnl.add(_blobTypeDrop, gbc);
+
+			++gbc.gridx;
+			pnl.add(_showBlobSizeField, gbc);
+			
+			++gbc.gridx;
+			pnl.add(new JLabel("Bytes"), gbc);
+			
+
+			++gbc.gridy;
+			gbc.gridx = 0;
+			pnl.add(_showClobChk, gbc);			
+			
+			++gbc.gridx;
+			pnl.add(new RightLabel("Read"), gbc);
+
+			++gbc.gridx;
+			pnl.add(_clobTypeDrop, gbc);
+
+			++gbc.gridx;
+			pnl.add(_showClobSizeField, gbc);
+
+			++gbc.gridx;
+			pnl.add(new JLabel("Chars"), gbc);
+
+
+			++gbc.gridy;	// leave blank line for visual separation
+			pnl.add(new JLabel(""), gbc);
+			
+			++gbc.gridy;
+			gbc.gridx = 0;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
+			JTextArea text2 = new JTextArea("The following Data Types are not the same in all DBMSs and\nmay cause exceptions if interpreted as Strings.");
+			text2.setEditable(false);
+			pnl.add(text2, gbc);
+						
 			++gbc.gridy;
 			pnl.add(_showAllOtherChk, gbc);
-
-			gbc.gridy = 2;
-			++gbc.gridx;
-			pnl.add(new RightLabel("Read"), gbc);
-
-			++gbc.gridy;
-			pnl.add(new RightLabel("Read"), gbc);
-
-			++gbc.gridx;
-			gbc.gridy = 0;
-			pnl.add(_showVarBinaryChk, gbc);
 
 			++gbc.gridy;
 			pnl.add(_showSQLOtherChk, gbc);
 
-			++gbc.gridy;
-			pnl.add(_blobTypeDrop, gbc);
-
-			++gbc.gridy;
-			pnl.add(_clobTypeDrop, gbc);
-
-			++gbc.gridx;
-			gbc.gridy = 2;
-			pnl.add(_showBlobSizeField, gbc);
-
-			++gbc.gridy;
-			pnl.add(_showClobSizeField, gbc);
-
-			++gbc.gridx;
-			gbc.gridy = 2;
-			pnl.add(new JLabel("Bytes"), gbc);
-
-			++gbc.gridy;
-			pnl.add(new JLabel("Chars"), gbc);
 
 			return pnl;
 		}
