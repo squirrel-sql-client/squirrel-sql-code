@@ -18,11 +18,13 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.awt.event.ActionEvent;
+import java.beans.PropertyVetoException;
 
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.mainframe.DriversToolWindow;
 
 /**
  * This <CODE>Action</CODE> allows the user to create a new <TT>ISQLDriver</TT>.
@@ -46,6 +48,13 @@ public class CreateDriverAction extends SquirrelAction {
      * @param   evt     The current event.
      */
     public void actionPerformed(ActionEvent evt) {
-        new CreateDriverCommand(getApplication(), getParentFrame(evt)).execute();
+		IApplication app = getApplication();
+		DriversToolWindow tw = app.getMainFrame().getDriversToolWindow();
+		tw.moveToFront();
+		try {
+			tw.setSelected(true);
+		} catch (PropertyVetoException ignore) {
+		}
+        new CreateDriverCommand(app, getParentFrame(evt)).execute();
     }
 }

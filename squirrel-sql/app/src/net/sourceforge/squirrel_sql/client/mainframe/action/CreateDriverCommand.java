@@ -30,43 +30,43 @@ import net.sourceforge.squirrel_sql.client.db.DataCache;
 /**
  * This <CODE>ICommand</CODE> allows the user to create a new <TT>ISQLDriver</TT>.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class CreateDriverCommand implements ICommand {
-    /** Application API. */
-    private final IApplication _app;
+	/** Application API. */
+	private final IApplication _app;
 
-    /** Owner of the maintenance dialog. */
-    private Frame _frame;
+	/** Owner of the maintenance dialog. */
+	private Frame _frame;
 
-    /**
-     * Ctor.
-     *
-     * @param   app         Application API.
-     * @param   frame       Owning <TT>Frame</TT>.
-     *
-     * @throws  IllegalArgumentException
-     *              Thrown if a <TT>null</TT> <TT>IApplication</TT> passed.
-     */
-    public CreateDriverCommand(IApplication app, Frame frame) throws IllegalArgumentException {
-        super();
-        if (app == null) {
-            throw new IllegalArgumentException("Null IApplication passed");
-        }
+	/**
+	 * Ctor.
+	 *
+	 * @param	app		Application API.
+	 * @param	frame	Owning <TT>Frame</TT>.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> passed.
+	 */
+	public CreateDriverCommand(IApplication app, Frame frame) {
+		super();
+		if (app == null) {
+			throw new IllegalArgumentException("Null IApplication passed");
+		}
 
-        _app = app;
-        _frame = frame;
-    }
+		_app = app;
+		_frame = frame;
+	}
 
-    /**
-     * Create a new <TT>ISQLDriver</TT> objwect and display a dialog
-     * allowing the user to maintain it.
-     */
-    public void execute() {
-        final DataCache cache = _app.getDataCache();
-        final IdentifierFactory factory = IdentifierFactory.getInstance();
-        final ISQLDriver driver = cache.createDriver(factory.createIdentifier());
-        new DriverMaintDialog(_app, _frame, driver,
-                                    DriverMaintDialog.MaintenanceType.NEW).show();
-    }
+	/**
+	 * Create a new <TT>ISQLDriver</TT> objwect and display a dialog
+	 * allowing the user to maintain it.
+	 */
+	public void execute() {
+		final DataCache cache = _app.getDataCache();
+		final IdentifierFactory factory = IdentifierFactory.getInstance();
+		final ISQLDriver driver = cache.createDriver(factory.createIdentifier());
+		new DriverMaintDialog(_app, _frame, driver,
+									DriverMaintDialog.MaintenanceType.NEW).show();
+	}
 }

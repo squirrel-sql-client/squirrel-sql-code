@@ -18,9 +18,13 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.awt.event.ActionEvent;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
-import net.sourceforge.squirrel_sql.client.IApplication;
+import java.beans.PropertyVetoException;
+
+import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.mainframe.AliasesToolWindow;
 
 /**
  * This <CODE>Action</CODE> allows the user to create a new <TT>ISQLAlias</TT>.
@@ -28,20 +32,28 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class CreateAliasAction extends SquirrelAction {
-    /**
-     * Ctor.
-     *
-     * @param   app     Application API.
-     */
-    public CreateAliasAction(IApplication app) {
-        super(app);
-    }
-    /**
-     * Perform this action. Execute the create alias command.
-     *
-     * @param   evt     The current event.
-     */
-    public void actionPerformed(ActionEvent evt) {
-        new CreateAliasCommand(getApplication(), getParentFrame(evt)).execute();
-    }
+	/**
+	 * Ctor.
+	 *
+	 * @param	app	Application API.
+	 */
+	public CreateAliasAction(IApplication app) {
+		super(app);
+	}
+
+	/**
+	 * Perform this action. Execute the create alias command.
+	 *
+	 * @param	evt	The current event.
+	 */
+	public void actionPerformed(ActionEvent evt) {
+		IApplication app = getApplication();
+		AliasesToolWindow tw = app.getMainFrame().getAliasesToolWindow();
+		tw.moveToFront();
+		try {
+			tw.setSelected(true);
+		} catch (PropertyVetoException ignore) {
+		}
+		new CreateAliasCommand(app, getParentFrame(evt)).execute();
+	}
 }

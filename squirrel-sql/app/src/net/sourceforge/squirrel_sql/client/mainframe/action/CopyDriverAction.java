@@ -18,12 +18,14 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.awt.event.ActionEvent;
+import java.beans.PropertyVetoException;
 
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.mainframe.DriversList;
+import net.sourceforge.squirrel_sql.client.mainframe.DriversToolWindow;
 
 /**
  * This <CODE>Action</CODE> allows the user to copy a <TT>ISQLDriver</TT>
@@ -61,9 +63,16 @@ public class CopyDriverAction extends SquirrelAction {
      * @param   evt     The current event.
      */
     public void actionPerformed(ActionEvent evt) {
+		IApplication app = getApplication();
+		DriversToolWindow tw = app.getMainFrame().getDriversToolWindow();
+		tw.moveToFront();
+		try {
+			tw.setSelected(true);
+		} catch (PropertyVetoException ignore) {
+		}
         ISQLDriver driver = _drivers.getSelectedDriver();
         if (driver != null) {
-            new CopyDriverCommand(getApplication(), getParentFrame(evt), driver).execute();
+            new CopyDriverCommand(app, getParentFrame(evt), driver).execute();
         }
     }
 }

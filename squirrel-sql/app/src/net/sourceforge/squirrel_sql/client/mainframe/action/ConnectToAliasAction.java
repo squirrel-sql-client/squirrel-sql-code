@@ -18,12 +18,14 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.awt.event.ActionEvent;
+import java.beans.PropertyVetoException;
 
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.mainframe.AliasesList;
+import net.sourceforge.squirrel_sql.client.mainframe.AliasesToolWindow;
 
 /**
  * This <CODE>Action</CODE> allows the user to connect to an alias.
@@ -31,32 +33,39 @@ import net.sourceforge.squirrel_sql.client.mainframe.AliasesList;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ConnectToAliasAction extends SquirrelAction {
-    /**
-     * List of all the users aliases.
-     */
-    private AliasesList _aliases;
+	/**
+	 * List of all the users aliases.
+	 */
+	private AliasesList _aliases;
 
-    /**
-     * Ctor specifying the list of aliases.
-     *
-     * @param   app     Application API.
-     * @param   list    List of <TT>ISQLAlias</TT> objects.
-     */
-    public ConnectToAliasAction(IApplication app, AliasesList list) {
-        super(app);
-        _aliases = list;
-    }
+	/**
+	 * Ctor specifying the list of aliases.
+	 *
+	 * @param	app		Application API.
+	 * @param	list	List of <TT>ISQLAlias</TT> objects.
+	 */
+	public ConnectToAliasAction(IApplication app, AliasesList list) {
+		super(app);
+		_aliases = list;
+	}
 
-    /**
-     * Perform this action. Retrieve the current alias from this list and
-     * connect to it.
-     *
-     * @param   evt     The current event.
-     */
-    public void actionPerformed(ActionEvent evt) {
-        final ISQLAlias alias = _aliases.getSelectedAlias();
-        if (alias != null) {
-            new ConnectToAliasCommand(getApplication(), getParentFrame(evt), alias).execute();
-        }
-    }
+	/**
+	 * Perform this action. Retrieve the current alias from this list and
+	 * connect to it.
+	 *
+	 * @param	evt	The current event.
+	 */
+	public void actionPerformed(ActionEvent evt) {
+		IApplication app = getApplication();
+		AliasesToolWindow tw = app.getMainFrame().getAliasesToolWindow();
+		tw.moveToFront();
+		try {
+			tw.setSelected(true);
+		} catch (PropertyVetoException ignore) {
+		}
+		final ISQLAlias alias = _aliases.getSelectedAlias();
+		if (alias != null) {
+			new ConnectToAliasCommand(app, getParentFrame(evt), alias).execute();
+		}
+	}
 }
