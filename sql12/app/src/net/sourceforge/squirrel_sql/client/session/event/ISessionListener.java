@@ -27,13 +27,6 @@ import java.util.EventListener;
  */
 public interface ISessionListener extends EventListener
 {
- 	/**
-	 * The session title has changed
-	 *
-	 * @param	evt		The event that has just occured.
-	 */
-	void sessionTitleChanged(SessionEvent evt);
-
 	/**
 	 * The session is about to close. Any clean up activities that
 	 * still require the session can be done here.

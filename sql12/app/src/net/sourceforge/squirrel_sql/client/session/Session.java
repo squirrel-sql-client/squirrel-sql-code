@@ -624,30 +624,6 @@ class Session implements ISession
 		return getTitle();
 	}
 
- 	/**
-	 * Fire a &quot;session title changed&quot; event.
-	 * JASON: How do we handle this?
-	 */
-	protected void fireSessionTitleChangedEvent()
-	{
-//		Object[] listeners = _listenerList.getListenerList();
-//		// Process the listeners last to first, notifying
-//		// those that are interested in this event.
-//		SessionEvent evt = null;
-//		for (int i = listeners.length - 2; i >= 0; i-=2 )
-//		{
-//			if (listeners[i] == ISessionListener.class)
-//			{
-//				// Lazily create the event.
-//				if (evt == null)
-//				{
-//					evt = new SessionEvent(this);
-//				}
-//				((ISessionListener)listeners[i + 1]).sessionTitleChanged(evt);
-//			}
-//		}
-	}
-
 	/**
 	 * Load table information about the current database.
 	 */
@@ -658,16 +634,6 @@ class Session implements ISession
 
 	private void setupTitle()
 	{
-//		String user = null;
-//		try
-//		{
-//			user = getSQLConnection().getSQLMetaData().getUserName();
-//		}
-//		catch (SQLException ex)
-//		{
-//			s_log.error("Error occured retrieving user name from Connection", ex);
-//		}
-
 		String catalog = null;
 		try
 		{
@@ -705,11 +671,6 @@ class Session implements ISession
 		}
 
 		_title = _id + " - " + title;
-
-		if (_sessionCreated)
-		{
-			fireSessionTitleChangedEvent();
-		}
 	}
 
 	public IParserEventsProcessor getParserEventsProcessor()

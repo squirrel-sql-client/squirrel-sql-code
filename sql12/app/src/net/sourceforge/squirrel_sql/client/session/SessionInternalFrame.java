@@ -39,19 +39,12 @@ public class SessionInternalFrame extends BaseSessionInternalFrame
 
 	private SessionSheet _sessionPanel;
 
-	// JASON: Put back in
-//	private MySessionListener _sessionLis;
-
 	public SessionInternalFrame(ISession session)
 	{
 		super(session, session.getTitle(), true, true, true, true);
 		_app = session.getApplication();
 		setVisible(false);
 		createGUI(session);
-
-// JASON: Put back in
-//		_sessionLis = new MySessionListener();
-//		session.addSessionListener(_sessionLis);
 	}
 
 	public SessionSheet getSessionPanel()
@@ -137,19 +130,4 @@ public class SessionInternalFrame extends BaseSessionInternalFrame
 		setContentPane(_sessionPanel);
 		validate();
 	}
-
-	// JASON: Put back in
-//	private class MySessionListener extends SessionAdapter
-//	{
-//		public void sessionClosed(SessionEvent evt)
-//		{
-//			evt.getSession().removeSessionListener(_sessionLis);
-//			_sessionLis = null;
-//		}
-//
-//		public void sessionTitleChanged(SessionEvent evt)
-//		{
-//			setTitle(evt.getSession().getTitle());
-//		}
-//	}
 }
