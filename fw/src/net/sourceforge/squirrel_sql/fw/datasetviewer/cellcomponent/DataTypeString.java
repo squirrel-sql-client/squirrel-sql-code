@@ -289,4 +289,68 @@ public class DataTypeString
 	}
 
 
+	
+	
+	/*
+	 * DataBase-related functions
+	 */
+	 
+	 /**
+	  * On input from the DB, read the data from the ResultSet into the appropriate
+	  * type of object to be stored in the table cell.
+	  */
+//??????????????????????????????
+
+	/**
+	 * When updating the database, generate a string form of this object value
+	 * that can be used in the WHERE clause to match the value in the database.
+	 * A return value of null means that this column cannot be used in the WHERE
+	 * clause, while a return of "null" (or "is null", etc) means that the column
+	 * can be used in the WHERE clause and the value is actually a null value.
+	 * This function must also include the column label so that its output
+	 * is of the form:
+	 * 	"columnName = value"
+	 * or
+	 * 	"columnName is null"
+	 * or whatever is appropriate for this column in the database.
+	 */
+	public String getWhereClauseValue(ColumnDisplayDefinition colDef, Object value) {
+		if (value == null || value.toString() == null )
+			return colDef.getLabel() + " IS NULL";
+		else
+			return colDef.getLabel() + "='" + value.toString() + "'";
+	}
+	
+	/**
+	 * When updating the database, generate a string form of this object value
+	 * that can be used in the SET clause to update this value in the Database.
+	 * This function must also include the column label so that its output
+	 * is of the form:
+	 * 	"columnName = value"
+	 * or
+	 * 	"columnName is null"
+	 * or whatever is appropriate for this column in the database.
+	 *  
+	 * To indicate that this DataType cannot be updated using the simple text
+	 * SQL statement "UPDATE table SET column=value WHERE...", return null from
+	 * this method.
+	 * 
+	 * Note: This method has two separate uses:
+	 * 	- return the appropriate string to use in an SQL text update statement
+	 * 	- indicate whether or not this DataType may be updated by a simple text statement
+	 * These two separate uses should be equivilent because:
+	 * 	- if a data type can be updated as simple text, then it must be able to
+	 * 		generate the appropriate text for the SET clause
+	 * 	- if a data type cannot be updated as simple text, then the method
+	 * 		changeUnderlyingValueAt will pass the entire updating process to
+	 * 		the DataType object and will not call this method for the purpose
+	 * 		of getting a SET clause string.
+	 */
+	public String getSetClauseValue(ColumnDisplayDefinition colDef, Object value) {
+		if (value == null || value.toString() == null )
+			return colDef.getLabel() + "=null ";
+		else
+			return colDef.getLabel() + "='" + value.toString() + "'";
+	}
+
 }

@@ -256,6 +256,68 @@ public class CellComponentFactory {
 	}
 
 
+	
+	
+	/*
+	 * DataBase-related functions
+	 */
+	 
+	 /**
+	  * On input from the DB, read the data from the ResultSet into the appropriate
+	  * type of object to be stored in the table cell.
+	  */
+//??????????????????????????????
+
+	/**
+	 * When updating the database, generate a string form of this object value
+	 * that can be used in the WHERE clause to match the value in the database.
+	 * A return value of null means that this column cannot be used in the WHERE
+	 * clause, while a return of "null" (or "is null", etc) means that the column
+	 * can be used in the WHERE clause and the value is actually a null value.
+	 * This function must also include the column label so that its output
+	 * is of the form:
+	 * 	"columnName = value"
+	 * or
+	 * 	"columnName is null"
+	 * or whatever is appropriate for this column in the database.
+	 */
+	public static String getWhereClauseValue(ColumnDisplayDefinition colDef, Object value) {
+		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
+
+		if (dataTypeObject != null) {
+			// we have an appropriate data type object
+			return dataTypeObject.getWhereClauseValue(colDef, value);
+		}
+		
+		// if no object for this data type, then cannot use value in where clause
+		return null;
+	}
+	
+	/**
+	 * When updating the database, generate a string form of this object value
+	 * that can be used in the SET clause to update this value in the Database.
+	 * This function must also include the column label so that its output
+	 * is of the form:
+	 * 	"columnName = value"
+	 * or
+	 * 	"columnName is null"
+	 * or whatever is appropriate for this column in the database.
+	 */
+	public static String getSetClauseValue(ColumnDisplayDefinition colDef, Object value) {
+		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
+
+		if (dataTypeObject != null) {
+			// we have an appropriate data type object
+			return dataTypeObject.getSetClauseValue(colDef, value);
+		}
+		
+		// if no object for this data type, then cannot use value in set clause
+		return null;
+	}
+
+
+
+
 	/*
 	 * Internal method used for both cell and popup work.
 	 */
