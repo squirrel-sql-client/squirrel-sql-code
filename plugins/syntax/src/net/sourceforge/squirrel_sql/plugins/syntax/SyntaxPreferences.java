@@ -30,7 +30,7 @@ import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
  */
 public class SyntaxPreferences implements Serializable, Cloneable
 {
-	public interface IPropertyNames
+   public interface IPropertyNames
 	{
 //		String BLINK_CARET = "blinkCaret";
 //		String BLOCK_CARET_ENABLED = "blockCaretEnabled";
@@ -56,14 +56,18 @@ public class SyntaxPreferences implements Serializable, Cloneable
 //		String SHOW_LINE_NBRS = "showLineNumbers";
 		String TABLE_STYLE = "tableStyle";
 		String USE_OSTER_CONTROL = "useOsterControl";
+      String USE_NETBEANS_CONTROL = "useNetbeansControl";
+      String USE_PLAIN_CONTROL = "usePlainControl";;
 		String WHITE_SPACE_STYLE = "whiteSpaceStyle";
-	}
+   }
 
 	/** Object to handle property change events. */
 	private transient PropertyChangeReporter _propChgReporter;
 
 	/** If <TT>true</TT> use the Oster text control else use the standard Java control. */
 	private boolean _useOsterTextControl = true;
+   private boolean _useNetbeansTextControl = false;
+   private boolean _usePlainTextControl = false;
 
 	/** If <TT>true</TT> use the block caret. */
 //	private boolean _blockCaretEnabled = false;
@@ -226,12 +230,40 @@ public class SyntaxPreferences implements Serializable, Cloneable
 	{
 		if (_useOsterTextControl != data)
 		{
-			final boolean oldValue = _useOsterTextControl;
-			_useOsterTextControl = data;
-			getPropertyChangeReporter().firePropertyChange(IPropertyNames.USE_OSTER_CONTROL,
-				oldValue, _useOsterTextControl);
-		}
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.USE_OSTER_CONTROL, _useOsterTextControl, data);
+         _useOsterTextControl = data;
+      }
 	}
+
+
+   public boolean getUseNetbeansTextControl()
+   {
+      return _useNetbeansTextControl;
+   }
+
+   public void setUseNetbeansTextControl(boolean data)
+   {
+      if (_useNetbeansTextControl != data)
+      {
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.USE_NETBEANS_CONTROL, _useNetbeansTextControl, data);
+         _useNetbeansTextControl = data;
+      }
+   }
+
+   public boolean getUsePlainTextControl()
+   {
+      return _usePlainTextControl;
+   }
+
+   public void setUsePlainTextControl(boolean data)
+   {
+      if (_usePlainTextControl != data)
+      {
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.USE_PLAIN_CONTROL, _usePlainTextControl, data);
+         _usePlainTextControl = data;
+      }
+   }
+
 
 //	public boolean getBracketHighlighting()
 //	{
