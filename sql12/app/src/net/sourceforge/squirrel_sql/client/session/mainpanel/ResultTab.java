@@ -24,6 +24,8 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.text.NumberFormat;
+
 import java.util.Date;
 
 import javax.swing.Action;
@@ -64,8 +66,8 @@ public class ResultTab extends JPanel implements IHasIdentifier
 	/** Current session. */
 	private ISession _session;
 
-	/** SQL that generated this tab. */
-	private String _sql;
+	/** SQL Execution information. */
+	private SQLExecutionInfo _exInfo;
 
 	/** Panel displaying the SQL results. */
 	private IDataSetViewer _resultSetOutput;
@@ -130,15 +132,22 @@ public class ResultTab extends JPanel implements IHasIdentifier
 	/**
 	 * Show the results from the passed <TT>IDataSet</TT>.
 	 *
-	 * @param	ds	<TT>IDataSet</TT> to show results for.
-	 * @param	sql	SQL script that generated <TT>IDataSet</TT>.
+	 * @param	rsds	<TT>ResultSetDataSet</TT> to show results for.
+	 * @param	mdds	<TT>ResultSetMetaDataDataSet</TT> for rsds.
+	 * @param	exInfo	Execution info.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <tt>null</tt> <tt>SQLExecutionInfo</tt> passed.
+	 * 
+	 * @throws	DataSetException
+	 * 			Thrown if error occured processing dataset.
 	 */
 	public void showResults(ResultSetDataSet rsds, ResultSetMetaDataDataSet mdds,
-								String sql)
+								SQLExecutionInfo exInfo)
 		throws DataSetException
 	{
-		_sql = sql;
-		_currentSqlLbl.setText(Utilities.cleanString(sql));
+		_exInfo = exInfo;
+		_currentSqlLbl.setText(Utilities.cleanString(exInfo.getSQL()));
 
 		// Display the result set.
 		_resultSetOutput.show(rsds, null);
@@ -153,8 +162,10 @@ public class ResultTab extends JPanel implements IHasIdentifier
 			_metaDataOutput.clear();
 		}
 
+		exInfo.resultsProcessingComplete();
+
 		// And the query info.
-		_queryInfoPanel.load(rsds, sql, _resultSetOutput.getRowCount());
+		_queryInfoPanel.load(rsds, _resultSetOutput.getRowCount(), exInfo);
 	}
 
 	/**
@@ -170,7 +181,7 @@ public class ResultTab extends JPanel implements IHasIdentifier
 		{
 			_resultSetOutput.clear();
 		}
-		_sql = "";
+		_exInfo = null;
 		_currentSqlLbl.setText("");
 	}
 
@@ -181,7 +192,7 @@ public class ResultTab extends JPanel implements IHasIdentifier
 	 */
 	public String getSqlString()
 	{
-		return _sql;
+		return _exInfo != null ? _exInfo.getSQL() : null;
 	}
 
 	/**
@@ -191,7 +202,7 @@ public class ResultTab extends JPanel implements IHasIdentifier
 	 */
 	public String getViewableSqlString()
 	{
-		return Utilities.cleanString(_sql);
+		return Utilities.cleanString(getSqlString());
 	}
 
 	/**
@@ -328,6 +339,7 @@ public class ResultTab extends JPanel implements IHasIdentifier
 		private MultipleLineLabel _queryLbl = new MultipleLineLabel();
 		private JLabel _rowCountLbl = new JLabel();
 		private JLabel _executedLbl = new JLabel();
+		private JLabel _elapsedLbl = new JLabel();
 
 		QueryInfoPanel()
 		{
@@ -335,11 +347,28 @@ public class ResultTab extends JPanel implements IHasIdentifier
 			createUserInterface();
 		}
 
-		void load(ResultSetDataSet rsds, String sql, int rowCount)
+		void load(ResultSetDataSet rsds, int rowCount,
+					SQLExecutionInfo exInfo)
 		{
-			_queryLbl.setText(sql);
-			_rowCountLbl.setText("" + rowCount);
-			_executedLbl.setText(new Date().toString());
+			_queryLbl.setText(Utilities.cleanString(exInfo.getSQL()));
+			_rowCountLbl.setText(String.valueOf(rowCount));
+			_executedLbl.setText(exInfo.getSQLExecutionStartTime().toString());
+			_elapsedLbl.setText(formatElapsedTime(exInfo));
+		}
+
+		private String formatElapsedTime(SQLExecutionInfo exInfo)
+		{
+			final NumberFormat nbrFmt = NumberFormat.getNumberInstance();
+			double executionLength = exInfo.getSQLExecutionElapsedMillis() / 1000.0;
+			double outputLength = exInfo.getResultsProcessingElapsedMillis() / 1000.0;
+			StringBuffer buf = new StringBuffer();
+			buf.append("Total: ")
+				.append(nbrFmt.format(executionLength + outputLength))
+				.append(", SQL query: ")
+				.append(nbrFmt.format(executionLength))
+				.append(", Building output: ")
+				.append(nbrFmt.format(outputLength));
+			return buf.toString();
 		}
 
 		private void createUserInterface()
@@ -363,10 +392,13 @@ public class ResultTab extends JPanel implements IHasIdentifier
 			++gbc.gridy;
 			add(new JLabel("SQL:", SwingConstants.RIGHT), gbc);
 
+			++gbc.gridy;
+			add(new JLabel("Elapsed Time (seconds):", SwingConstants.RIGHT), gbc);
+
 			gbc.gridwidth = gbc.REMAINDER;
 			gbc.weightx = 1;
-			gbc.gridx = 1;
 
+			gbc.gridx = 1;
 			gbc.gridy = 0;
 			add(_executedLbl, gbc);
 
@@ -375,6 +407,9 @@ public class ResultTab extends JPanel implements IHasIdentifier
 
 			++gbc.gridy;
 			add(_queryLbl, gbc);
+
+			++gbc.gridy;
+			add(_elapsedLbl, gbc);
 		}
 	}
 }

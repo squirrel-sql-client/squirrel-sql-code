@@ -561,16 +561,13 @@ public class SQLPanel extends JPanel
 		_sqlComboItemListener.startListening();
 	}
 
-	void addResultsTab(
-		final String sToken,
-		ResultSetDataSet rsds,
-		ResultSetMetaDataDataSet mdds,
-		final JPanel cancelPanel)
+	void addResultsTab(SQLExecutionInfo exInfo, ResultSetDataSet rsds,
+						ResultSetMetaDataDataSet mdds, final JPanel cancelPanel)
 	{
 		final ResultTab tab;
 		if (_availableTabs.size() > 0)
 		{
-			ResultTabInfo ti = (ResultTabInfo) _availableTabs.remove(0);
+			ResultTabInfo ti = (ResultTabInfo)_availableTabs.remove(0);
 			_usedTabs.add(ti);
 			tab = ti._tab;
 			s_log.debug("Using tab " + tab.getIdentifier().toString() + " for results.");
@@ -586,7 +583,7 @@ public class SQLPanel extends JPanel
 
 		try
 		{
-			tab.showResults(rsds, mdds, sToken);
+			tab.showResults(rsds, mdds, exInfo);
 			SwingUtilities.invokeLater(new Runnable()
 			{
 				public void run()
