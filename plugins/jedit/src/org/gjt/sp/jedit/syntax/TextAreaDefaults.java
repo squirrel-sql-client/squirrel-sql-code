@@ -1,4 +1,7 @@
 package org.gjt.sp.jedit.syntax;
+
+import java.awt.Color;
+
 /*
  * TextAreaDefaults.java - Encapsulates default values for various settings
  * Copyright (C) 1999 Slava Pestov
@@ -7,9 +10,8 @@ package org.gjt.sp.jedit.syntax;
  * permitted, in both source and binary form, provided that this notice
  * remains intact in all source distributions of this package.
  */
-
 import javax.swing.JPopupMenu;
-import java.awt.Color;
+
 
 /**
  * Encapsulates default settings for a text area. This can be passed
@@ -21,18 +23,13 @@ public class TextAreaDefaults
 {
 	private static TextAreaDefaults DEFAULTS;
 
-//	public InputHandler inputHandler;
 	public SyntaxDocument document;
-//	public boolean editable;
 
 	public boolean caretVisible;
 	public boolean caretBlinks;
 	public boolean blockCaret;
-//	public int electricScroll;
 
-//	public int cols;
-//	public int rows;
-	public Color[] colors;
+	public SyntaxStyle[] styles;
 	public Color caretColor;
 	public Color selectionColor;
 	public Color lineHighlightColor;
@@ -41,9 +38,8 @@ public class TextAreaDefaults
 	public boolean bracketHighlight;
 	public Color eolMarkerColor;
 	public boolean eolMarkers;
-
-//	public boolean paintInvalid;
-
+	public Color lineNumberColor;
+	
 	public JPopupMenu popup;
 
 	/**
@@ -52,22 +48,16 @@ public class TextAreaDefaults
 	 */
 	public static TextAreaDefaults getDefaults()
 	{
-		if(DEFAULTS == null)
+		if (DEFAULTS == null)
 		{
 			DEFAULTS = new TextAreaDefaults();
 
-//			DEFAULTS.inputHandler = new DefaultInputHandler();
-//			DEFAULTS.inputHandler.addDefaultKeyBindings();
 			DEFAULTS.document = new DefaultSyntaxDocument();
-//			DEFAULTS.editable = true;
 
 			DEFAULTS.caretVisible = true;
 			DEFAULTS.caretBlinks = true;
-//			DEFAULTS.electricScroll = 3;
 
-//			DEFAULTS.cols = 80;
-//			DEFAULTS.rows = 25;
-			DEFAULTS.colors = SyntaxUtilities.getDefaultSyntaxColors();
+			DEFAULTS.styles = SyntaxUtilities.getDefaultSyntaxStyles();
 			DEFAULTS.caretColor = Color.red;
 			DEFAULTS.selectionColor = new Color(0xccccff);
 			DEFAULTS.lineHighlightColor = new Color(204, 204, 204);
@@ -76,7 +66,7 @@ public class TextAreaDefaults
 			DEFAULTS.bracketHighlight = true;
 			DEFAULTS.eolMarkerColor = new Color(0x009999);
 			DEFAULTS.eolMarkers = true;
-//			DEFAULTS.paintInvalid = true;
+			DEFAULTS.lineNumberColor = Color.black;
 		}
 
 		return DEFAULTS;

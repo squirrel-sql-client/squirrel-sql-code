@@ -31,7 +31,7 @@ import java.util.*;
  * should be used instead.
  *
  * @author Slava Pestov
- * @version $Id: SyntaxView.java,v 1.1 2002-12-06 22:50:19 colbell Exp $
+ * @version $Id: SyntaxView.java,v 1.2 2002-12-21 00:34:18 colbell Exp $
  */
 public class SyntaxView extends PlainView
 {
@@ -137,39 +137,39 @@ public class SyntaxView extends PlainView
 		Graphics g, SyntaxDocument document, TokenMarker tokenMarker,
 		Color def, TextAreaDefaults taDefaults)
 	{
-		Color[] colors = document.getColors();
-		Token tokens = tokenMarker.markTokens(line,lineIndex);
-
-		paintHighlight(g, lineIndex, y, taDefaults);
-
-		int offset = 0;
-		for(;;)
-		{
-			byte id = tokens.id;
-			if(id == Token.END)
-				break;
-
-			int length = tokens.length;
-			Color color;
-			if(id == Token.NULL)
-				color = def;
-			else
-				color = colors[id];
-			g.setColor(color == null ? def : color);
-
-			line.count = length;
-			x = Utilities.drawTabbedText(line,x,y,g,this,offset);
-			line.offset += length;
-			offset += length;
-
-			tokens = tokens.next;
-		}
-
-		if (taDefaults.eolMarkers)
-		{
-			g.setColor(taDefaults.eolMarkerColor);
-			g.drawString(".",x,y);
-		}
+//		Color[] colors = document.getColors();
+//		Token tokens = tokenMarker.markTokens(line,lineIndex);
+//
+//		paintHighlight(g, lineIndex, y, taDefaults);
+//
+//		int offset = 0;
+//		for(;;)
+//		{
+//			byte id = tokens.id;
+//			if(id == Token.END)
+//				break;
+//
+//			int length = tokens.length;
+//			Color color;
+//			if(id == Token.NULL)
+//				color = def;
+//			else
+//				color = colors[id];
+//			g.setColor(color == null ? def : color);
+//
+//			line.count = length;
+//			x = Utilities.drawTabbedText(line,x,y,g,this,offset);
+//			line.offset += length;
+//			offset += length;
+//
+//			tokens = tokens.next;
+//		}
+//
+//		if (taDefaults.eolMarkers)
+//		{
+//			g.setColor(taDefaults.eolMarkerColor);
+//			g.drawString(".",x,y);
+//		}
 	}
 
 	/** Stupid hack that repaints from y to the end of the text component */
@@ -249,6 +249,9 @@ public class SyntaxView extends PlainView
 /*
  * ChangeLog:
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2002/12/06 22:50:19  colbell
+ * New jedit syntax control files
+ *
  * Revision 1.1  2000/01/12 03:18:00  bruce
  *
  * Addition of Syntax Colour Highlighting Package to CVS tree.  This is LGPL code used in the Moe Editor to provide syntax highlighting.

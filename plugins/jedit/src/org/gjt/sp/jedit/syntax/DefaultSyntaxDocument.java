@@ -29,7 +29,7 @@ import javax.swing.text.*;
 * care of inserting and deleting lines from the token marker's state.
 *
 * @author Slava Pestov
-* @version $Id: DefaultSyntaxDocument.java,v 1.1 2002-12-06 22:50:19 colbell Exp $
+* @version $Id: DefaultSyntaxDocument.java,v 1.2 2002-12-21 00:34:18 colbell Exp $
 *
 * @see org.gjt.sp.jedit.syntax.SyntaxDocument
 */
@@ -38,23 +38,23 @@ public class DefaultSyntaxDocument extends PlainDocument
 {
 	// protected members
 	protected TokenMarker tokenMarker;
-	protected Color[] colors;
+	protected SyntaxStyle[] styles;
 	protected TextAreaDefaults textAreaDefaults;
 
 	/**
-	 * Creates a new <code>DefaultSyntaxDocument</code> instance.
-	 */
+ * Creates a new <code>DefaultSyntaxDocument</code> instance.
+ */
 	public DefaultSyntaxDocument()
 	{
-		colors = SyntaxUtilities.getDefaultSyntaxColors();
+		styles = SyntaxUtilities.getDefaultSyntaxStyles();
 		addDocumentListener(new DocumentHandler());
 	}
 
 	/**
-	 * Returns the token marker that is to be used to split lines
-	 * of this document up into tokens. May return null if this
-	 * document is not to be colorized.
-	 */
+ * Returns the token marker that is to be used to split lines
+ * of this document up into tokens. May return null if this
+ * document is not to be colorized.
+ */
 	public TokenMarker getTokenMarker()
 	{
 		return tokenMarker;
@@ -71,11 +71,11 @@ public class DefaultSyntaxDocument extends PlainDocument
 	}
 
 	/**
-	 * Sets the token marker that is to be used to split lines of
-	 * this document up into tokens. May throw an exception if
-	 * this is not supported for this type of document.
-	 * @param tm The new token marker
-	 */
+ * Sets the token marker that is to be used to split lines of
+ * this document up into tokens. May throw an exception if
+ * this is not supported for this type of document.
+ * @param tm The new token marker
+ */
 	public void setTokenMarker(TokenMarker tm)
 	{
 		tokenMarker = tm;
@@ -90,42 +90,43 @@ public class DefaultSyntaxDocument extends PlainDocument
 	}
 
 	/**
-	 * Returns the color array that maps token identifiers to
-	 * <code>java.awt.Color</code> objects.
-	 */
-	public Color[] getColors()
+ * Returns the syntax styles used to paint colorized text. Entry <i>n</i>
+ * will be used to paint tokens with id = <i>n</i>.
+ * @see org.gjt.sp.jedit.syntax.Token
+ */
+	public final SyntaxStyle[] getStyles()
 	{
-		return colors;
+		return styles;
 	}
 
 	/**
-	 * Sets the color array that maps token identifiers to
-	 * <code>java.awt.Color</code> ojects. May throw an exception
-	 * if this is not supported for this type of document.
-	 * @param colors The new color list
-	 */
-	public void setColors(Color[] colors)
+ * Sets the syntax styles used to paint colorized text. Entry <i>n</i>
+ * will be used to paint tokens with id = <i>n</i>.
+ * @param styles The syntax styles
+ * @see org.gjt.sp.jedit.syntax.Token
+ */
+	public final void setStyles(SyntaxStyle[] styles)
 	{
-		this.colors = colors;
+		this.styles = styles;
 	}
 
 	/**
-	 * Reparses the document, by passing all lines to the token
-	 * marker. This should be called after the document is first
-	 * loaded.
-	 */
+ * Reparses the document, by passing all lines to the token
+ * marker. This should be called after the document is first
+ * loaded.
+ */
 	public void tokenizeLines()
 	{
 		tokenizeLines(0, getDefaultRootElement().getElementCount());
 	}
 
 	/**
-	 * Reparses the document, by passing the specified lines to the
-	 * token marker. This should be called after a large quantity of
-	 * text is first inserted.
-	 * @param start The first line to parse
-	 * @param len The number of lines, after the first one to parse
-	 */
+ * Reparses the document, by passing the specified lines to the
+ * token marker. This should be called after a large quantity of
+ * text is first inserted.
+ * @param start The first line to parse
+ * @param len The number of lines, after the first one to parse
+ */
 	public void tokenizeLines(int start, int len)
 	{
 		if (tokenMarker == null)
@@ -153,9 +154,9 @@ public class DefaultSyntaxDocument extends PlainDocument
 	}
 
 	/**
-	 * An implementation of <code>DocumentListener</code> that
-	 * inserts and deletes lines from the token marker's state.
-	 */
+ * An implementation of <code>DocumentListener</code> that
+ * inserts and deletes lines from the token marker's state.
+ */
 	public class DocumentHandler implements DocumentListener
 	{
 		public void insertUpdate(DocumentEvent evt)

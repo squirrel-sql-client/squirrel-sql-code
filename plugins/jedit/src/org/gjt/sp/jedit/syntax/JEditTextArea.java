@@ -1,4 +1,5 @@
 package org.gjt.sp.jedit.syntax;
+
 /*
  * JEditTextArea.java - jEdit's text component
  * Copyright (C) 1999 Slava Pestov
@@ -8,6 +9,7 @@ package org.gjt.sp.jedit.syntax;
  * remains intact in all source distributions of this package.
  */
 import java.awt.Component;
+
 import javax.swing.JEditorPane;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
@@ -15,6 +17,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Caret;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
+
 
 public class JEditTextArea extends JEditorPane
 {
@@ -25,7 +28,6 @@ public class JEditTextArea extends JEditorPane
 	public JEditTextArea()
 	{
 		super();
-		setEditorKit(new SyntaxEditorKit());
 	}
 
 	/**
@@ -34,7 +36,7 @@ public class JEditTextArea extends JEditorPane
 	public void addNotify()
 	{
 		super.addNotify();
-		_lis = new MyCaretListener();		
+		_lis = new MyCaretListener();
 		addCaretListener(_lis);
 	}
 
@@ -43,14 +45,14 @@ public class JEditTextArea extends JEditorPane
 	 */
 	public void removeNotify()
 	{
+		super.removeNotify();
+
 		if (_lis != null)
 		{
 			removeCaretListener(_lis);
 			_lis = null;
 		}
-		super.removeNotify();
 	}
-
 
 	/**
 	 * Returns the document this text area is editing.
@@ -75,6 +77,7 @@ public class JEditTextArea extends JEditorPane
 	public final int getSelectionStartLine()
 	{
 		final DefaultSyntaxDocument doc = (DefaultSyntaxDocument)getDocument();
+
 		return doc.getDefaultRootElement().getElementIndex(getSelectionStart());
 	}
 
@@ -84,6 +87,7 @@ public class JEditTextArea extends JEditorPane
 	public final int getSelectionEndLine()
 	{
 		final DefaultSyntaxDocument doc = (DefaultSyntaxDocument)getDocument();
+
 		return doc.getDefaultRootElement().getElementIndex(getSelectionEnd());
 	}
 
@@ -93,6 +97,7 @@ public class JEditTextArea extends JEditorPane
 	public final int getLineOfOffset(int offset)
 	{
 		final DefaultSyntaxDocument doc = (DefaultSyntaxDocument)getDocument();
+
 		return doc.getDefaultRootElement().getElementIndex(offset);
 	}
 
@@ -105,10 +110,15 @@ public class JEditTextArea extends JEditorPane
 	public int getLineStartOffset(int line)
 	{
 		Element lineElement = getDocument().getDefaultRootElement().getElement(line);
-		if(lineElement == null)
+
+		if (lineElement == null)
+		{
 			return -1;
+		}
 		else
+		{
 			return lineElement.getStartOffset();
+		}
 	}
 
 	/**
@@ -128,6 +138,7 @@ public class JEditTextArea extends JEditorPane
 	public final int offsetToX(int line, int offset)
 	{
 		Element elem = getDocument().getDefaultRootElement().getElement(line);
+
 		try
 		{
 			return modelToView(elem.getStartOffset() + offset).x;
@@ -135,6 +146,7 @@ public class JEditTextArea extends JEditorPane
 		catch (BadLocationException ex)
 		{
 			ex.printStackTrace();
+
 			return -1;
 		}
 	}
@@ -147,6 +159,7 @@ public class JEditTextArea extends JEditorPane
 	public final int offsetToY(int line, int offset)
 	{
 		Element elem = getDocument().getDefaultRootElement().getElement(line);
+
 		try
 		{
 			return modelToView(elem.getStartOffset() + offset).y;
@@ -154,6 +167,7 @@ public class JEditTextArea extends JEditorPane
 		catch (BadLocationException ex)
 		{
 			ex.printStackTrace();
+
 			return -1;
 		}
 	}
@@ -167,28 +181,29 @@ public class JEditTextArea extends JEditorPane
 		return _bracketLine;
 	}
 
-
 	protected void updateBracketHighlight(int newCaretPosition)
 	{
-		if(newCaretPosition == 0)
+		if (newCaretPosition == 0)
 		{
 			_bracketPosition = _bracketLine = -1;
+
 			return;
 		}
 
 		try
 		{
-			int offset = TextUtilities.findMatchingBracket(
-				getDocument(),newCaretPosition);
-			if(offset != -1)
+			int offset = TextUtilities.findMatchingBracket(getDocument(),
+					newCaretPosition);
+
+			if (offset != -1)
 			{
 				_bracketLine = getLineOfOffset(offset);
 				_bracketPosition = offset - getLineStartOffset(_bracketLine);
+
 				return;
 			}
-
 		}
-		catch(BadLocationException bl)
+		catch (BadLocationException bl)
 		{
 			bl.printStackTrace();
 		}
@@ -196,18 +211,16 @@ public class JEditTextArea extends JEditorPane
 		_bracketLine = _bracketPosition = -1;
 	}
 
-
 	private final class MyCaretListener implements CaretListener
 	{
 		public void caretUpdate(CaretEvent evt)
 		{
 			updateBracketHighlight(evt.getDot());
-	
+
 			// This is to force the redraw of the current line
 			// so that if Highlight current line is specified then
 			// the highlighting is done.
 			repaint();
 		}
-
 	}
 }

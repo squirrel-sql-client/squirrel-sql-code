@@ -18,8 +18,10 @@
  */
 package org.gjt.sp.jedit.syntax;
 
-import javax.swing.text.Document;
 import java.awt.Color;
+
+import javax.swing.text.Document;
+
 
 /**
  * The interface a document must implement to be colorizable by the
@@ -31,7 +33,7 @@ import java.awt.Color;
  * <code>Token</code> class.<p>
  *
  * @author Slava Pestov
- * @version $Id: SyntaxDocument.java,v 1.1 2002-12-06 22:50:19 colbell Exp $
+ * @version $Id: SyntaxDocument.java,v 1.2 2002-12-21 00:34:18 colbell Exp $
  *
  * @see org.gjt.sp.jedit.syntax.DefaultSyntaxDocument
  * @see org.gjt.sp.jedit.syntax.SyntaxEditorKit
@@ -41,55 +43,56 @@ import java.awt.Color;
 public interface SyntaxDocument extends Document
 {
 	/**
-	 * Returns the token marker that is to be used to split lines
-	 * of this document up into tokens. May return null if this
-	 * document is not to be colorized.
-	 */
+ * Returns the token marker that is to be used to split lines
+ * of this document up into tokens. May return null if this
+ * document is not to be colorized.
+ */
 	public TokenMarker getTokenMarker();
 
 	/**
-	 * Sets the token marker that is to be used to split lines of
-	 * this document up into tokens. May throw an exception if
-	 * this is not supported for this type of document.
-	 * @param tm The new token marker
-	 */
+ * Sets the token marker that is to be used to split lines of
+ * this document up into tokens. May throw an exception if
+ * this is not supported for this type of document.
+ * @param tm The new token marker
+ */
 	public void setTokenMarker(TokenMarker tm);
 
 	/**
-	 * Returns the color array that maps token identifiers to
-	 * <code>java.awt.Color</code> objects. Each index in the
-	 * array is a token type.
-	 */
-	public Color[] getColors();
+ * Returns the syntax styles used to paint colorized text. Entry <i>n</i>
+ * will be used to paint tokens with id = <i>n</i>.
+ * @see org.gjt.sp.jedit.syntax.Token
+ */
+	public SyntaxStyle[] getStyles();
 
 	/**
-	 * Sets the color array that maps token identifiers to
-	 * <code>java.awt.Color</code> ojects. May throw an exception
-	 * if this is not supported for this type of document.
-	 * @param colors The new color list
-	 */
-	public void setColors(Color[] colors);
+ * Sets the syntax styles used to paint colorized text. Entry <i>n</i>
+ * will be used to paint tokens with id = <i>n</i>.
+ * @param styles The syntax styles
+ * @see org.gjt.sp.jedit.syntax.Token
+ */
+	public void setStyles(SyntaxStyle[] styles);
 
 	public void setTextAreaDefaults(TextAreaDefaults dfts);
-	
+
 	public TextAreaDefaults getTextAreaDefaults();
 
 	/**
-	 * Reparses the document, by passing all lines to the token
-	 * marker. This should be called after the document is first
-	 * loaded.
-	 */
+ * Reparses the document, by passing all lines to the token
+ * marker. This should be called after the document is first
+ * loaded.
+ */
 	public void tokenizeLines();
 
 	/**
-	 * Reparses the document, by passing the specified lines to the
-	 * token marker. This should be called after a large quantity of
-	 * text is first inserted.
-	 * @param start The first line to parse
-	 * @param len The number of lines, after the first one to parse
-	 */
+ * Reparses the document, by passing the specified lines to the
+ * token marker. This should be called after a large quantity of
+ * text is first inserted.
+ * @param start The first line to parse
+ * @param len The number of lines, after the first one to parse
+ */
 	public void tokenizeLines(int start, int len);
 }
+
 
 /*
  * ChangeLog:

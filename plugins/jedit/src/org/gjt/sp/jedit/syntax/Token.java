@@ -26,136 +26,136 @@ package org.gjt.sp.jedit.syntax;
  * token in the text, and a pointer to the next token in the list.
  *
  * @author Slava Pestov
- * @version $Id: Token.java,v 1.1 2002-12-06 22:50:19 colbell Exp $
+ * @version $Id: Token.java,v 1.2 2002-12-21 00:34:18 colbell Exp $
  */
 public class Token
 {
 	/**
-	 * Normal text token id. This should be used to mark
-	 * normal text.
-	 */
+	* Normal text token id. This should be used to mark
+	* normal text.
+	*/
 	public static final byte NULL = 0;
 
 	/**
-	 * Comment 1 token id. This can be used to mark a comment.
-	 */
+	* Comment 1 token id. This can be used to mark a comment.
+	*/
 	public static final byte COMMENT1 = 1;
 
 	/**
-	 * Comment 2 token id. This can be used to mark a comment.
-	 */
+	* Comment 2 token id. This can be used to mark a comment.
+	*/
 	public static final byte COMMENT2 = 2;
 
-		/**
-	 * Comment 2 token id. This can be used to mark a comment.
-	 */
+	/**
+	* Comment 2 token id. This can be used to mark a comment.
+	*/
 	public static final byte COMMENT3 = 3;
 
 	/**
-	 * Literal 1 token id. This can be used to mark a string
-	 * literal (eg, C mode uses this to mark "..." literals)
-	 */
+	* Literal 1 token id. This can be used to mark a string
+	* literal (eg, C mode uses this to mark "..." literals)
+	*/
 	public static final byte LITERAL1 = 4;
 
 	/**
-	 * Literal 2 token id. This can be used to mark an object
-	 * literal (eg, Java mode uses this to mark true, false, etc)
-	 */
+	* Literal 2 token id. This can be used to mark an object
+	* literal (eg, Java mode uses this to mark true, false, etc)
+	*/
 	public static final byte LITERAL2 = 5;
 
 	/**
-	 * Label token id. This can be used to mark labels
-	 * (eg, C mode uses this to mark ...: sequences)
-	 */
+	* Label token id. This can be used to mark labels
+	* (eg, C mode uses this to mark ...: sequences)
+	*/
 	public static final byte LABEL = 6;
 
 	/**
-	 * Keyword 1 token id. This can be used to mark a
-	 * keyword. This should be used for general language
-	 * constructs.
-	 */
-	public static final byte KEYWORD1 = 7;
+	* Keyword 1 token id. This can be used to mark a
+	* keyword. This should be used for general language
+	* constructs.
+	*/
+	public static final byte KEYWORD = 7;
 
 	/**
-	 * Keyword 2 token id. This can be used to mark a
-	 * keyword. This should be used for preprocessor
-	 * commands, or variables.
-	 */
-	public static final byte KEYWORD2 = 8;
+	* Keyword 2 token id. This can be used to mark a
+	* keyword. This should be used for preprocessor
+	* commands, or variables.
+	*/
+	public static final byte DATA_TYPE = 8;
 
 	/**
-	 * Keyword 3 token id. This can be used to mark a
-	 * keyword. This should be used for data types.
-	 */
-	public static final byte KEYWORD3 = 9;
+	* Keyword 3 token id. This can be used to mark a
+	* keyword. This should be used for data types.
+	*/
+	public static final byte FUNCTION = 9;
 
 	/**
-	 * Operator token id. This can be used to mark an
-	 * operator. (eg, SQL mode marks +, -, etc with this
-	 * token type)
-	 */
+	* Operator token id. This can be used to mark an
+	* operator. (eg, SQL mode marks +, -, etc with this
+	* token type)
+	*/
 	public static final byte OPERATOR = 10;
 
 	/**
-	 * Invalid token id. This can be used to mark invalid
-	 * or incomplete tokens, so the user can easily spot
-	 * syntax errors.
-	 */
+	* Invalid token id. This can be used to mark invalid
+	* or incomplete tokens, so the user can easily spot
+	* syntax errors.
+	*/
 	public static final byte INVALID = 11;
 
 	/**
-	 * Table token id. This is being used to mark a table name. 
-	 */
+	* Table token id. This is being used to mark a table name. 
+	*/
 	public static final byte TABLE = 12;
 
 	/**
-	 * Column token id. This is being used to mark a column name. 
-	 */
+	* Column token id. This is being used to mark a column name. 
+	*/
 	public static final byte COLUMN = 13;
 
 	/**
-	 * The total number of defined token ids.
-	 */
+	* The total number of defined token ids.
+	*/
 	public static final byte ID_COUNT = 14;
 
 	/**
-	 * The first id that can be used for internal state
-	 * in a token marker.
-	 */
+	* The first id that can be used for internal state
+	* in a token marker.
+	*/
 	public static final byte INTERNAL_FIRST = 100;
 
 	/**
-	 * The last id that can be used for internal state
-	 * in a token marker.
-	 */
+	* The last id that can be used for internal state
+	* in a token marker.
+	*/
 	public static final byte INTERNAL_LAST = 126;
 
 	/**
-	 * The token type, that along with a length of 0
-	 * marks the end of the token list.
-	 */
+	* The token type, that along with a length of 0
+	* marks the end of the token list.
+	*/
 	public static final byte END = 127;
 
 	/**
-	 * The length of this token.
-	 */
+	* The length of this token.
+	*/
 	public int length;
 
 	/**
-	 * The id of this token.
-	 */
+	* The id of this token.
+	*/
 	public byte id;
 
 	/**
-	 * The next token in the linked list.
-	 */
+	* The next token in the linked list.
+	*/
 	public Token next;
 
 	/**
-	 * Creates a new token.
-	 * @param length The length of the token
-	 * @param id The id of the token
-	 */
+	* Creates a new token.
+	* @param length The length of the token
+	* @param id The id of the token
+	*/
 	public Token(int length, byte id)
 	{
 		this.length = length;
@@ -163,8 +163,8 @@ public class Token
 	}
 
 	/**
-	 * Returns a string representation of this token.
-	 */
+	* Returns a string representation of this token.
+	*/
 	public String toString()
 	{
 		return "[id=" + id + ",length=" + length + "]";
