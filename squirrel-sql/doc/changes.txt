@@ -6,6 +6,9 @@ Change Log
 
 Enhancements
 ------------
+- New status bar in main window.
+- SQL settings moved from the General tab in the Global Preferences
+  dialog to its own SQL tab.
 - Nullable, Searchable and boolean columns in Data Types display
   now show meaningful text.
 - The squirrel-sql.jar file is now executable.
