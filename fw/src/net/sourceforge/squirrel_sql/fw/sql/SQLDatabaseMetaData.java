@@ -33,6 +33,7 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -1098,13 +1099,52 @@ public class SQLDatabaseMetaData
 	}
 
 	// TODO: Write a version that returns an array of RowIdentifier objects.
-	public ResultSet getBestRowIdentifier(ITableInfo ti)
+//	public ResultSet getBestRowIdentifier(ITableInfo ti)
+//		throws SQLException
+//	{
+//		return privateGetJDBCMetaData().getBestRowIdentifier(
+//			ti.getCatalogName(), ti.getSchemaName(),
+//			ti.getSimpleName(), DatabaseMetaData.bestRowTransaction,
+//			true);
+//	}
+
+	public BestRowIdentifier[] getBestRowIdentifier(ITableInfo ti)
 		throws SQLException
 	{
-		return privateGetJDBCMetaData().getBestRowIdentifier(
-			ti.getCatalogName(), ti.getSchemaName(),
-			ti.getSimpleName(), DatabaseMetaData.bestRowTransaction,
-			true);
+		final List results = new ArrayList();
+
+		ResultSet rs = privateGetJDBCMetaData().getBestRowIdentifier(
+								ti.getCatalogName(), ti.getSchemaName(),
+								ti.getSimpleName(),
+								DatabaseMetaData.bestRowTransaction, true);
+		if (rs != null)
+		{
+			try
+			{
+				final String catalog = ti.getCatalogName();
+				final String schema = ti.getSchemaName();
+				final String table = ti.getSimpleName();
+
+				final ResultSetColumnReader rdr = new ResultSetColumnReader(rs);
+				while (rdr.next())
+				{
+					final BestRowIdentifier rid = new BestRowIdentifier(catalog,
+								schema, table, rdr.getLong(1).intValue(),
+								rdr.getString(2), rdr.getLong(3).shortValue(),
+								rdr.getString(4), rdr.getLong(5).intValue(),
+								rdr.getLong(7).shortValue(),
+								rdr.getLong(8).shortValue(), this);
+					results.add(rid);
+				}
+			}
+			finally
+			{
+				rs.close();
+			}
+		}
+
+		final BestRowIdentifier[] ar = new BestRowIdentifier[results.size()];
+		return (BestRowIdentifier[])results.toArray(ar);
 	}
 
 	// TODO: Write a version that returns an array of ColumnPrivilige objects.
@@ -1347,6 +1387,11 @@ public class SQLDatabaseMetaData
 	 */
 	private static String[] makeArray(String data)
 	{
+		if (data == null)
+		{
+			data = "";
+		}
+
 		final List list = new ArrayList();
 		final StringTokenizer st = new StringTokenizer(data, ",");
 		while (st.hasMoreTokens())
