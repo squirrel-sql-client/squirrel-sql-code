@@ -1,7 +1,7 @@
 <installation version="1.0">
     <info>
         <appname>Squirrel SQL Client</appname>
-        <appversion>1.0alpha4</appversion>
+        <appversion>1.0alpha5</appversion>
         <authors>
             <author email="colbell@users.sourceforge.net" name="Colin Bell"/>
         </authors>
@@ -27,11 +27,11 @@
     <packs>
         <pack required="yes" name="Base">
             <description>SQL Client</description>
-            <file targetdir="$INSTALL_PATH" src="..\squirrel-sql-dist\squirrel-sql-1.1alpha4\core\dist\lib"/>
+            <file targetdir="$INSTALL_PATH" src="..\squirrel-sql-dist\squirrel-sql-1.1alpha5\core\dist\lib"/>
             <file targetdir="$INSTALL_PATH" src="doc"/>
-            <file targetdir="$INSTALL_PATH" src="..\squirrel-sql-dist\squirrel-sql-1.1alpha4\core\dist\squirrel-sql.bat"/>
-            <file targetdir="$INSTALL_PATH" src="..\squirrel-sql-dist\squirrel-sql-1.1alpha4\core\dist\squirrel-sql.sh"/>
-			<file targetdir="$INSTALL_PATH" src="..\squirrel-sql-dist\squirrel-sql-1.1alpha4\core\dist\log4j.properties"/>
+            <file targetdir="$INSTALL_PATH" src="..\squirrel-sql-dist\squirrel-sql-1.1alpha5\core\dist\squirrel-sql.bat"/>
+            <file targetdir="$INSTALL_PATH" src="..\squirrel-sql-dist\squirrel-sql-1.1alpha5\core\dist\squirrel-sql.sh"/>
+			<file targetdir="$INSTALL_PATH" src="..\squirrel-sql-dist\squirrel-sql-1.1alpha5\core\dist\log4j.properties"/>
         </pack>
     </packs>
 </installation>
