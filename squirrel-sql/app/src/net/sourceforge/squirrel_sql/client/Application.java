@@ -41,9 +41,9 @@ import net.sourceforge.squirrel_sql.fw.util.Pair;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.db.AliasMaintDialogFactory;
+import net.sourceforge.squirrel_sql.client.db.AliasMaintSheetFactory;
 import net.sourceforge.squirrel_sql.client.db.DataCache;
-import net.sourceforge.squirrel_sql.client.db.DriverMaintDialogFactory;
+import net.sourceforge.squirrel_sql.client.db.DriverMaintSheetFactory;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
@@ -51,6 +51,7 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionPropertiesSheetFactory;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.client.util.SplashScreen;
 
@@ -101,9 +102,6 @@ class Application implements IApplication {
 	}
 
 	public void startup() {
-		AliasMaintDialogFactory.initialize(this);
-		DriverMaintDialogFactory.initialize(this);
-
 		LoggerController.registerLoggerFactory(new SquirrelLoggerFactory());
 		s_log = LoggerController.createLogger(getClass());
 
@@ -111,7 +109,7 @@ class Application implements IApplication {
 		_resources = new SquirrelResources("net.sourceforge.squirrel_sql.client.resources.squirrel");
 		final boolean loadPlugins = args.getLoadPlugins();
 		if (args.getShowSplashScreen()) {
-			_splash = new SplashScreen(_resources, 8);
+			_splash = new SplashScreen(_resources, 9);
 		}
 		
 		try {
@@ -121,6 +119,11 @@ class Application implements IApplication {
 				chg.show();
 			}
 			try {
+				indicateNewStartupTask("Initializing UI factories...");
+				AliasMaintSheetFactory.initialize(this);
+				DriverMaintSheetFactory.initialize(this);
+				SessionPropertiesSheetFactory.initialize(this);
+
 				indicateNewStartupTask(loadPlugins ? "Loading plugins..." : "No Plugins to be loaded...");
 				_pluginManager = new PluginManager(this);
 				if (loadPlugins) {
