@@ -25,14 +25,18 @@ public class ExtendedColumnInfo
    private int _columnSize;
    private int _decimalDigits;
    private boolean _nullable;
+   private String _cat;
+   private String _schem;
 
-   public ExtendedColumnInfo(String columnName, String columnType, int columnSize, int decimalDigits, boolean nullable)
+   public ExtendedColumnInfo(String columnName, String columnType, int columnSize, int decimalDigits, boolean nullable, String cat, String schem)
    {
       _columnName = columnName;
       _columnType = columnType;
       _columnSize = columnSize;
       _decimalDigits = decimalDigits;
       _nullable = nullable;
+      _cat = cat;
+      _schem = schem;
    }
 
    public String getColumnName()
@@ -58,6 +62,16 @@ public class ExtendedColumnInfo
    public boolean isNullable()
    {
       return _nullable;
+   }
+
+   public String getCatalog()
+   {
+      return _cat;
+   }
+
+   public String getSchema()
+   {
+      return _schem;
    }
 
 }
