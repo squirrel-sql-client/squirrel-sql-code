@@ -43,6 +43,8 @@ public class SquirrelTabbedPane extends JTabbedPane
 
 	public SquirrelTabbedPane(SquirrelPreferences prefs)
 	{
+		super();
+
 		if (prefs == null)
 		{
 			throw new IllegalArgumentException("SquirrelPreferences == null");
