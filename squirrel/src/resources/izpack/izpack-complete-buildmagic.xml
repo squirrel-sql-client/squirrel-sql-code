@@ -1,6 +1,6 @@
 <!-- ============================================================================ -->
 <!--  IzPack build configuration                                                  -->
-<!--  $Id: izpack-complete-buildmagic.xml,v 1.6 2001-11-21 06:42:10 placson Exp $ -->
+<!--  $Id: izpack-complete-buildmagic.xml,v 1.7 2001-11-21 22:46:48 placson Exp $ -->
 <!-- ============================================================================ -->
 <installation version="1.0">
     <info>
@@ -35,6 +35,8 @@
             <file targetdir="$INSTALL_PATH" src="doc"/>
             <file targetdir="$INSTALL_PATH" src="lib"/>
         </pack>
+
+	<!--
         <pack required="no" name="Base Source">
             <description>SQL Client source</description>
             <file targetdir="$INSTALL_PATH/src" src="../../../src/main/com"/>
@@ -61,5 +63,6 @@
             <description>Database Information.</description>
             <file targetdir="$INSTALL_PATH/plugins" src="plugins/dbinfo.jar"/>
         </pack>
+	-->
     </packs>
 </installation>
