@@ -24,6 +24,7 @@ import java.sql.SQLException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ResultFrame;
 
 /**
@@ -58,7 +59,10 @@ public class ShowNativeSQLCommand implements ICommand {
 		try {
 			String sql = conn.nativeSQL(_session.getSQLScriptToBeExecuted());
 			if (sql.length() > 0) {
+				int start = _session.getEntireSQLScript().length();
 				_session.appendSQLScript("\n" + sql);
+				_session.setSQLScriptSelectionStart(start + 1);
+				_session.setSQLScriptSelectionEnd(_session.getEntireSQLScript().length());
 			}
 		} catch (SQLException ex) {
 			_session.getMessageHandler().showMessage(ex);
