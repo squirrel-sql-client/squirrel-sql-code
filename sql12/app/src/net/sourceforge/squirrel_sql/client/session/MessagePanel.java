@@ -25,10 +25,12 @@ import java.sql.DataTruncation;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 
-import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
@@ -42,7 +44,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-class MessagePanel extends JTextArea implements IMessageHandler
+class MessagePanel extends JTextPane implements IMessageHandler
 {
 	/** Logger for this class. */
 	private static final ILogger s_log =
@@ -52,13 +54,37 @@ class MessagePanel extends JTextArea implements IMessageHandler
 	private final IApplication _app;
 
 	/** Popup menu for this component. */
-	private TextPopupMenu _popupMenu = new MessagePanelPopupMenu();
+	private final TextPopupMenu _popupMenu = new MessagePanelPopupMenu();
 
 	/**
 	 * Memorize if a error occured and foreground color was changed.
 	 */
 	private boolean _errOccured = false;
 
+	/**
+	 * Attribute sets for error and last message.
+	 */
+	private SimpleAttributeSet _saSetLastMessage;
+	private SimpleAttributeSet _saSetLastMessageError;
+	private SimpleAttributeSet _saSetError;
+
+	/**
+	 * Save into these attributes the parameters of the last message being output.
+	 * @todo In the near future: if more than one message shall be remembered, then these variables
+	 * need to be replaced with a dynamic storage (ArrayList or similar).
+	 */
+	private int _lastLength;
+	private String _lastMessage;
+	private SimpleAttributeSet _lastSASet;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param	app		Application API.
+	 *
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>IApplication</T> passed.
+	 */
 	MessagePanel(IApplication app)
 	{
 		super();
@@ -89,25 +115,44 @@ class MessagePanel extends JTextArea implements IMessageHandler
 				}
 			}
 		});
+
+		// Initialize sttribute sets.
+		// Last message, no error.
+		_saSetLastMessage = new SimpleAttributeSet();
+		StyleConstants.setBackground(_saSetLastMessage, Color.GREEN);
+		// Last message, error.
+		_saSetLastMessageError = new SimpleAttributeSet();
+		StyleConstants.setBackground(_saSetLastMessageError, Color.RED);
+		// Message, with error.
+		_saSetError = new SimpleAttributeSet();
+		StyleConstants.setBackground(_saSetError, Color.PINK);
 	}
 
+	/**
+	 * Show an message describing the passed throwable object.
+	 *
+	 * @param th	The throwable object.
+	 */
 	public void showMessage(final Throwable th)
 	{
 		if (th != null)
 		{
-			setBackground(Color.white);
 			_errOccured = false;
-			privateShowMessage(th);
+			privateShowMessage(th, null);
 		}
 	}
 
+	/**
+	 * Show a message.
+	 *
+	 * @param msg	The message to be shown.
+	 */
 	public void showMessage(final String msg)
 	{
 		if (msg != null)
 		{
-			setBackground(Color.white);
 			_errOccured = false;
-			privateShowMessage(msg);
+			privateShowMessage(msg, null);
 		}
 	}
 
@@ -121,9 +166,8 @@ class MessagePanel extends JTextArea implements IMessageHandler
 	{
 		if (th != null)
 		{
-			setBackground(Color.red);
 			_errOccured = true;
-			privateShowMessage(th);
+			privateShowMessage(th, _saSetError);
 		}
 	}
 
@@ -137,13 +181,18 @@ class MessagePanel extends JTextArea implements IMessageHandler
 	{
 		if (msg != null)
 		{
-			setBackground(Color.red);
 			_errOccured = true;
-			privateShowMessage(msg);
+			privateShowMessage(msg, _saSetError);
 		}
 	}
 
-	private void privateShowMessage(final Throwable th)
+	/**
+	 * Private method, the real implementation of the corresponding show*Message methods.
+	 *
+	 * @param th	The throwable whose details shall be displayed.
+	 * @param saSet The SimpleAttributeSet to be used for message output.
+	 */
+	private void privateShowMessage(final Throwable th, SimpleAttributeSet saSet)
 	{
 		if (th != null)
 		{
@@ -160,7 +209,7 @@ class MessagePanel extends JTextArea implements IMessageHandler
 					.append(" bytes long and ")
 					.append(ex.getTransferSize())
 					.append(" bytes were transferred.");
-				privateShowMessage(buf.toString());
+				privateShowMessage(buf.toString(), saSet);
 			}
 			else if (th instanceof SQLWarning)
 			{
@@ -176,7 +225,7 @@ class MessagePanel extends JTextArea implements IMessageHandler
 						.append(ex.getErrorCode());
 					s_log.debug("Warning shown in MessagePanel", th);
 					ex = ex.getNextWarning();
-					privateShowMessage(buf.toString());
+					privateShowMessage(buf.toString(), saSet);
 				}
 			}
 			else if (th instanceof SQLException)
@@ -185,7 +234,7 @@ class MessagePanel extends JTextArea implements IMessageHandler
 				while (ex != null)
 				{
 					StringBuffer buf = new StringBuffer();
-					buf.append("Error:     ")
+					buf.append("Error:	 ")
 						.append(ex.getMessage())
 						.append("\nSQLState:  ")
 						.append(ex.getSQLState())
@@ -193,46 +242,84 @@ class MessagePanel extends JTextArea implements IMessageHandler
 						.append(ex.getErrorCode());
 					s_log.debug("Error", th);
 					ex = ex.getNextException();
-					privateShowMessage(buf.toString());
+					privateShowMessage(buf.toString(), saSet);
 				}
 			}
 			else
 			{
-				privateShowMessage(th.toString());
+				privateShowMessage(th.toString(), saSet);
 				s_log.debug("Exception shown in MessagePanel", th);
 			}
 		}
 	}
 
-	private void privateShowMessage(final String msg)
+	/**
+	 * Private method, the real implementation of the corresponding show*Message methods.
+	 *
+	 * @param msg	The message to be displayed.
+	 * @param saSet	The SimpleAttributeSet to be used for message output.
+	 */
+	private void privateShowMessage(final String msg, final SimpleAttributeSet saSet)
 	{
 		if (msg == null)
 		{
 			throw new IllegalArgumentException("null Message");
 		}
+
 		// Thread safe support for every call to this method:
 		SwingUtilities.invokeLater(new Runnable()
 		{
 			public void run()
 			{
-				addLine(msg);
+				addLine(msg, saSet);
 			}
 		});
+	}
+
+	/**
+	 * Do the real appending of text to the message panel. The last message is always highlighted.
+	 * @todo Highlight not only the last message, but all messages from SQL statements which were run together.
+	 *
+	 * @param string	The String to be appended.
+	 * @param saSet		The SimpleAttributeSet to be used for for the string.
+	 */
+	private void append(String string, SimpleAttributeSet saSet)
+	{
+		Document document = getStyledDocument();
+		try
+		{
+			// Check if document was cleared or if this is the first message being output.
+			if (document.getLength() >= _lastLength && null != _lastMessage)
+			{
+				document.remove(_lastLength, _lastMessage.length());
+				document.insertString(document.getLength(), _lastMessage, _lastSASet);
+			}
+			_lastLength = document.getLength();
+			_lastMessage = string;
+			_lastSASet = saSet;
+			document.insertString(document.getLength(), string,
+				saSet == _saSetError ? _saSetLastMessageError : _saSetLastMessage);
+		}
+		catch (BadLocationException ble)
+		{
+			s_log.error("Error appending text to MessagePanel document.", ble);
+		}
 	}
 
 	/**
 	 * Add the passed line to the end of the messages display. Position
 	 * display so the the newly added line will be displayed.
 	 *
-	 * @param	line	The line to be added.
+	 * @param line		The line to be added.
+	 * @param saSet		The SimpleAttributeSet to be used for for the string.
 	 */
-	private void addLine(String line)
+	private void addLine(String line, SimpleAttributeSet saSet)
 	{
 		if (getDocument().getLength() > 0)
 		{
-			append("\n");
+			append("\n", saSet);
 		}
-		append(line);
+		append(line, saSet);
 		final int len = getDocument().getLength();
 		select(len, len);
 	}
@@ -259,6 +346,7 @@ class MessagePanel extends JTextArea implements IMessageHandler
 			{
 				super("Clear");
 			}
+
 			public void actionPerformed(ActionEvent evt)
 			{
 				try
@@ -270,7 +358,6 @@ class MessagePanel extends JTextArea implements IMessageHandler
 				{
 					s_log.error("Error clearing document", ex);
 				}
-				MessagePanel.this.setBackground(Color.white);
 			}
 		}
 	}

@@ -6,6 +6,8 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Enhanced the highlighting in the message panel (Victor Ott).
+- Can now filter the data on the Contents tab (Maury Hammel).
 - Add Firebird Jaybird to the list of default drivers.
 - Allow for bug in Opta2000 driver which limits the number of rows
   modified by an UPDATE statement to that specified by setMaxRows()
