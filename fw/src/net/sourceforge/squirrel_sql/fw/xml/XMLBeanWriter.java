@@ -102,14 +102,6 @@ public final class XMLBeanWriter
 	private IXMLElement createElement(Object bean, String name)
 		throws XMLException
 	{
-		if (s_log.isDebugEnabled())
-		{
-			StringBuffer buf = new StringBuffer("Creating element ");
-			buf.append(name).append(" in bean type ")
-				.append(bean != null ? bean.getClass().getName() : "null");
-			s_log.debug(buf.toString());
-		}
-
 		IXMLElement elem = null;
 		BeanInfo info = null;
 		try
