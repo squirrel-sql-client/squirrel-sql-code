@@ -1,71 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <Beans>
-    <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
-        <driverClassName>org.hsqldb.jdbcDriver</driverClassName>
-        <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
-            <string>-17</string>
-        </identifier>
-        <jarFileName/>
-        <jarFileNames Indexed="true"/>
-        <name>HSQLDB</name>
-        <url>jdbc:hsqldb:hsql://&lt;server&gt;</url>
-    </Bean>
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<driverClassName>org.hsqldb.jdbcDriver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-17</string>
+		</identifier>
+		<jarFileName/>
+		<jarFileNames Indexed="true"/>
+		<name>HSQLDB</name>
+		<url>jdbc:hsqldb:hsql://&lt;server&gt;</url>
+	</Bean>
 
-    <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
-        <driverClassName>com.internetcds.jdbc.tds.Driver</driverClassName>
-        <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
-            <string>-16</string>
-        </identifier>
-        <jarFileName/>
-        <jarFileNames Indexed="true"/>
-        <name>jTDS</name>
-        <url>jdbc:freetds:sqlserver://&lt;hostname&gt;[:&lt;port&gt;]/&lt;dbname&gt;[;&lt;property&gt;=&lt;value&gt;[;...]]</url>
-    </Bean>
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<driverClassName>com.internetcds.jdbc.tds.Driver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-16</string>
+		</identifier>
+		<jarFileName/>
+		<jarFileNames Indexed="true"/>
+		<name>jTDS</name>
+		<url>jdbc:freetds:sqlserver://&lt;hostname&gt;[:&lt;port&gt;]/&lt;dbname&gt;[;&lt;property&gt;=&lt;value&gt;[;...]]</url>
+	</Bean>
 
-    <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
-        <driverClassName>com.mckoi.JDBCDriver</driverClassName>
-        <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
-            <string>-15</string>
-        </identifier>
-        <jarFileName/>
-        <jarFileNames Indexed="true"/>
-        <name>Mckoi</name>
-        <url>jdbc:mckoi://&lt;host&gt;[:9157][/schema]/</url>
-    </Bean>
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<driverClassName>com.mckoi.JDBCDriver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-15</string>
+		</identifier>
+		<jarFileName/>
+		<jarFileNames Indexed="true"/>
+		<name>Mckoi</name>
+		<url>jdbc:mckoi://&lt;host&gt;[:9157][/schema]/</url>
+	</Bean>
 
-    <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
-        <driverClassName>uk.co.thinksql.ThinkSQLDriver</driverClassName>
-        <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
-            <string>-14</string>
-        </identifier>
-        <jarFileName/>
-        <jarFileNames Indexed="true"/>
-        <name>ThinkSQL</name>
-        <url>jdbc:thinksql://&lt;server&gt;:&lt;9075&gt;</url>
-    </Bean>
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<driverClassName>uk.co.thinksql.ThinkSQLDriver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-14</string>
+		</identifier>
+		<jarFileName/>
+		<jarFileNames Indexed="true"/>
+		<name>ThinkSQL</name>
+		<url>jdbc:thinksql://&lt;server&gt;:&lt;9075&gt;</url>
+	</Bean>
 
-    <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
-        <driverClassName>org.axiondb.jdbc.AxionDriver</driverClassName>
-        <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
-            <string>-13</string>
-        </identifier>
-        <jarFileName/>
-        <jarFileNames Indexed="true"/>
-        <name>Axion</name>
-        <url>jdbc:axiondb:&lt;database-name&gt;&lt;:database-directory&gt;</url>
-    </Bean>
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<driverClassName>org.axiondb.jdbc.AxionDriver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-13</string>
+		</identifier>
+		<jarFileName/>
+		<jarFileNames Indexed="true"/>
+		<name>Axion</name>
+		<url>jdbc:axiondb:&lt;database-name&gt;&lt;:database-directory&gt;</url>
+	</Bean>
 
-    <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
-        <driverClassName>com.mimer.jdbc.Driver</driverClassName>
-        <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
-            <string>-12</string>
-        </identifier>
-        <jarFileName/>
-        <jarFileNames Indexed="true"/>
-        <name>Mimer SQL</name>
-        <url>jdbc:mimer:/&lt;dbname&gt;</url>
-    </Bean>
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<driverClassName>com.mimer.jdbc.Driver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-12</string>
+		</identifier>
+		<jarFileName/>
+		<jarFileNames Indexed="true"/>
+		<name>Mimer SQL</name>
+		<url>jdbc:mimer:/&lt;dbname&gt;</url>
+	</Bean>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
 		<driverClassName>com.microsoft.jdbc.sqlserver.SQLServerDriver</driverClassName>
@@ -111,7 +111,7 @@
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
 		<usesClassPath>true</usesClassPath>
 		<jarFileNames Indexed="true"/>
-		<url>jdbc:postgresql:&lt;//host&gt;:&lt;port&gt;/&lt;database&gt;</url>;
+		<url>jdbc:postgresql:&lt;//host&gt;:&lt;5432&gt;/&lt;database&gt;</url>;
 		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
 			<string>-7</string>
 		</identifier>
