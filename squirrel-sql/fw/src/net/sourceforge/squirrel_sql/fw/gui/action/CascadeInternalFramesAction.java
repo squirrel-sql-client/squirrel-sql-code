@@ -91,14 +91,16 @@ public class CascadeInternalFramesAction extends BaseAction implements IHasJDesk
 			JInternalFrame[] children = GUIUtils.getOpenNonToolWindows(_desktop.getAllFrames());
 			for (int i = children.length - 1; i >= 0; --i) {
 				JInternalFrame child = children[i];
-				if (cs == null) {
+				if (cs == null && child.getParent() != null) {
 					cs = child.getParent().getSize();
 					// Cast to int required as Dimension::setSize(double,double)
 					// doesn't appear to do anything in JDK1.2.2.
 					cs.setSize((int)(cs.width * 0.8d), (int)(cs.height * 0.8d));
 				}
-				child.setSize(cs);
-				pos.positionInternalFrame(child);
+				if (cs != null) {
+					child.setSize(cs);
+					pos.positionInternalFrame(child);
+				}
 			}
 		}
 	}
