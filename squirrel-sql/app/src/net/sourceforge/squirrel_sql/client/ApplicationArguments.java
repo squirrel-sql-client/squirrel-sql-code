@@ -19,9 +19,6 @@ package net.sourceforge.squirrel_sql.client;
  */
 import java.util.StringTokenizer;
 
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 /**
  * Application arguments.
  *
@@ -32,10 +29,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class ApplicationArguments
 {
-	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(ApplicationArguments.class);
-
 	/** Only instance of this class. */
 	private static ApplicationArguments s_instance;
 
@@ -122,7 +115,7 @@ public class ApplicationArguments
 		}
 		else
 		{
-			s_log.debug("ApplicationArguments.initialize() called twice");
+			System.out.println("ApplicationArguments.initialize() called twice");
 		}
 	}
 
