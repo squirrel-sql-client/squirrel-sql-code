@@ -38,7 +38,7 @@ import java.awt.event.MouseMotionListener;
 import java.net.URL;
 
 /**
- * @version 	$Id: ButtonTableHeader.java,v 1.4 2002-03-13 22:24:48 joco01 Exp $
+ * @version 	$Id: ButtonTableHeader.java,v 1.5 2002-03-17 17:04:31 joco01 Exp $
  * @author		Johan Compagner
  */
 public class ButtonTableHeader extends JTableHeader
@@ -91,6 +91,7 @@ public class ButtonTableHeader extends JTableHeader
 		{
 			_bPressed = true;
 			_iPressed = columnAtPoint(e.getPoint());
+			current = null;
 			repaint();
 		}
 
@@ -128,6 +129,12 @@ public class ButtonTableHeader extends JTableHeader
 		public void mouseDragged(MouseEvent e)
 		{
 			_bDragged = true;
+			if(_bPressed)
+			{
+				current = null;
+				_bPressed = false;
+				repaint();
+			}
 		}
 
 		/*
