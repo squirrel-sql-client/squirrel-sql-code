@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.sql;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -30,6 +30,11 @@ public class SQLDriverClassLoader extends MyURLClassLoader
 	public SQLDriverClassLoader(ISQLDriver sqlDriver) throws MalformedURLException
 	{
 		super(createURLs(sqlDriver.getJarFileNames()));
+	}
+
+	public SQLDriverClassLoader(URL[] urls)
+	{
+		super(urls);
 	}
 
 	public SQLDriverClassLoader(URL url)
