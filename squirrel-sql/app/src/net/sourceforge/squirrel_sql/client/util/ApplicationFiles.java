@@ -20,93 +20,127 @@ package net.sourceforge.squirrel_sql.client.util;
 import java.io.File;
 
 import net.sourceforge.squirrel_sql.fw.util.IJavaPropertyNames;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 
-public class ApplicationFiles {
+public class ApplicationFiles
+{
 	/** Name of directory to contain users settings. */
 	private String _userSettingsDir;
 
 	/** Name of folder that contains Squirrel app. */
-	public static final String SQUIRREL_FOLDER = System.getProperty(IJavaPropertyNames.USER_DIR);
+	public static final String SQUIRREL_FOLDER =
+		System.getProperty(IJavaPropertyNames.USER_DIR);
 
 	/** Name of folder that contains Squirrel libraries. */
-	public static final String SQUIRREL_LIB_FOLDER = SQUIRREL_FOLDER + File.separator + "lib";
+	public static final String SQUIRREL_LIB_FOLDER =
+		SQUIRREL_FOLDER + File.separator + "lib";
 
 	/** Name of folder that contains plugins. */
-	public static final String SQUIRREL_PLUGINS_FOLDER = SQUIRREL_FOLDER + File.separator + "plugins";
+	public static final String SQUIRREL_PLUGINS_FOLDER =
+		SQUIRREL_FOLDER + File.separator + "plugins";
 
 	/**
 	 * Ctor.
 	 */
-	public ApplicationFiles() {
+	public ApplicationFiles()
+	{
 		super();
 		ApplicationArguments args = ApplicationArguments.getInstance();
 		_userSettingsDir = args.getUserSettingsDirectoryOverride();
-		if (_userSettingsDir == null) {
-			_userSettingsDir = System.getProperty(IJavaPropertyNames.USER_HOME) +
-									File.separator + ".squirrel-sql";
+		if (_userSettingsDir == null)
+		{
+			_userSettingsDir =
+				System.getProperty(IJavaPropertyNames.USER_HOME)
+					+ File.separator
+					+ ".squirrel-sql";
 		}
-		try {
+		try
+		{
 			new File(_userSettingsDir).mkdirs();
-		} catch (Exception ex) {
-			System.out.println("Error creating user settings directory: " + _userSettingsDir);
+		}
+		catch (Exception ex)
+		{
+			System.out.println(
+				"Error creating user settings directory: " + _userSettingsDir);
+			System.out.println(ex.toString());
+		}
+		try
+		{
+			final File logsDir = getExecutionLogFile().getParentFile();
+			logsDir.mkdirs();
+		}
+		catch (Exception ex)
+		{
+			System.out.println("Error creating logs directory");
 			System.out.println(ex.toString());
 		}
 	}
 
-	public File getUserSettingsDirectory() {
+	public File getUserSettingsDirectory()
+	{
 		return new File(_userSettingsDir);
 	}
 
 	/**
 	 * @return file that contains database aliases.
 	 */
-	public File getDatabaseAliasesFile() {
+	public File getDatabaseAliasesFile()
+	{
 		return new File(_userSettingsDir + File.separator + "SQLAliases.xml");
 	}
 
 	/**
 	 * @return file that contains JDBC driver definitions.
 	 */
-	public File getDatabaseDriversFile() {
+	public File getDatabaseDriversFile()
+	{
 		return new File(_userSettingsDir + File.separator + "SQLDrivers.xml");
 	}
 
 	/**
 	 * @return file that contains JDBC driver definitions.
 	 */
-	public File getUserPreferencesFile() {
+	public File getUserPreferencesFile()
+	{
 		return new File(_userSettingsDir + File.separator + "prefs.xml");
 	}
 
 	/**
 	 * @return file to log execution information to.
 	 */
-	public File getExecutionLogFile() {
-		return new File(_userSettingsDir + File.separator + "squirrel-sql.log");
+	public File getExecutionLogFile()
+	{
+		return new File(
+			_userSettingsDir
+				+ File.separator
+				+ "logs"
+				+ File.separator
+				+ "squirrel-sql.log");
 	}
 
 	/**
 	 * @return file to log debug information to.
 	 */
-	public File getDebugLogFile() {
+	public File getDebugLogFile()
+	{
 		return new File(_userSettingsDir + File.separator + "squirrel-sql-debug.log");
 	}
 
 	/**
 	 * @return file to log JDBC debug information to.
 	 */
-	public File getJDBCDebugLogFile() {
-		return new File(_userSettingsDir + File.separator + "squirrel-sql-jdbcdebug.log");
+	public File getJDBCDebugLogFile()
+	{
+		return new File(
+			_userSettingsDir + File.separator + "squirrel-sql-jdbcdebug.log");
 	}
 
 	/**
 	 * @return directory that contains plugin specific user settings
 	 */
-	public File getPluginsUserSettingsDirectory() {
+	public File getPluginsUserSettingsDirectory()
+	{
 		return new File(_userSettingsDir + File.separator + "plugins");
 	}
 }
