@@ -27,6 +27,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 
 import net.sourceforge.squirrel_sql.fw.util.MyURLClassLoader;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -514,4 +517,49 @@ public class PluginManager
 	{
 		return (PluginLoadInfo)_pluginLoadInfoColl.get(plugin.getInternalName());
 	}
+
+
+   /**
+    * Allows plugins to access each other without imports.
+    *
+    * @param internalNameOfPlugin Is the accessed plugins internal name returned by IPlugin.getInternalName().
+
+    * @param toBindTo Is an interface that is to bind against the object that the accessed plugin returns by its
+    * getExternalService() method.
+    *
+    * @return An Object that may be cast to the toBindTo interface and delegates all calls to the object
+    * returned by the accessed plugin's getExternalService() method. The method signature of the methods
+    * in the toBintTo interface and external service object must be identical.
+    * This method returns null if the plugin can not be found / is not loaded.
+    */
+   public Object bindExternalPluginService(String internalNameOfPlugin, Class toBindTo)
+   {
+      IPlugin plugin = (IPlugin) _loadedPlugins.get(internalNameOfPlugin);
+
+      if(null == plugin)
+      {
+         return null;
+      }
+
+
+      final Object obj = plugin.getExternalService();
+
+      if(null == obj)
+      {
+         throw new RuntimeException("The plugin " + internalNameOfPlugin + " doesn't provide any external service.");
+      }
+
+      InvocationHandler ih = new InvocationHandler()
+      {
+         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
+         {
+            Method m = obj.getClass().getMethod(method.getName(), method.getParameterTypes());
+            return m.invoke(obj, args);
+         }
+      };
+
+      return Proxy.newProxyInstance(_pluginsClassLoader, new Class[]{toBindTo}, ih);
+   }
+
+
 }

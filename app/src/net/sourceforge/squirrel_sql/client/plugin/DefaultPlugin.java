@@ -249,4 +249,15 @@ public abstract class DefaultPlugin implements IPlugin
 	{
 		return null;
 	}
+
+   /**
+    * By default a plugin provieds no external services
+    * @return
+    */
+   public Object getExternalService()
+   {
+      return null;
+   }
+   
+
 }
