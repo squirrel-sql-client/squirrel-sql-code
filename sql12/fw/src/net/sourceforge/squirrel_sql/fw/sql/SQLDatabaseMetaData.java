@@ -47,6 +47,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * metadata entries matching the search pattern are returned. If a search pattern
  * argument is set to null, that argument's criterion will be dropped from the
  * search.&quot;
+ * e
+ * <P>Some data can be cached on the first retrieval in order to speed up
+ * subsequent retrievals. To clear this cache call <TT>clearCache()</TT>.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
@@ -851,21 +854,21 @@ public class SQLDatabaseMetaData
 	}
 
 	// TODO: Write a version that returns an array of data objects.
-//	public ResultSet getExportedKeys(ITableInfo ti)
-//		throws SQLException
-//	{
-//		return privateGetJDBCMetaData().getExportedKeys(
-//			ti.getCatalogName(), ti.getSchemaName(),
-//			ti.getSimpleName());
-//	}
-//
-//	public ResultSet getImportedKeys(ITableInfo ti)
-//		throws SQLException
-//	{
-//		return privateGetJDBCMetaData().getImportedKeys(
-//			ti.getCatalogName(), ti.getSchemaName(),
-//			ti.getSimpleName());
-//	}
+	public ResultSet getExportedKeys(ITableInfo ti)
+		throws SQLException
+	{
+		return privateGetJDBCMetaData().getExportedKeys(
+			ti.getCatalogName(), ti.getSchemaName(),
+			ti.getSimpleName());
+	}
+
+	public ResultSet getImportedKeys(ITableInfo ti)
+		throws SQLException
+	{
+		return privateGetJDBCMetaData().getImportedKeys(
+			ti.getCatalogName(), ti.getSchemaName(),
+			ti.getSimpleName());
+	}
 
 	public ForeignKeyInfo[] getImportedKeysInfo(ITableInfo ti)
 		throws SQLException
