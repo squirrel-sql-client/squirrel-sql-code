@@ -47,6 +47,8 @@ abstract class BaseSourceTab extends BaseObjectTab
 	/** Hint to display for tab. */
 	private final String _hint;
 
+        private String _title;
+
 	/** Component to display in tab. */
 	private BaseSourcePanel _comp;
 
@@ -61,8 +63,14 @@ abstract class BaseSourceTab extends BaseObjectTab
 	{
 		super();
 		_hint = hint != null ? hint : i18n.TITLE;
+                _title = i18n.TITLE;
 
 	}
+
+        public BaseSourceTab(String title, String hint) {
+          this(hint);
+          _title = title != null ? title : i18n.TITLE;
+        }
 
 	/**
 	 * Return the title for the tab.
@@ -71,7 +79,7 @@ abstract class BaseSourceTab extends BaseObjectTab
 	 */
 	public String getTitle()
 	{
-		return i18n.TITLE;
+		return _title;
 	}
 
 	/**

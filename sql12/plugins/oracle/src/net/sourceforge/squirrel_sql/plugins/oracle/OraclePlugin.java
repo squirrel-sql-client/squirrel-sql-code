@@ -42,6 +42,8 @@ import net.sourceforge.squirrel_sql.plugins.oracle.explainplan.ExplainPlanExecut
 import net.sourceforge.squirrel_sql.plugins.oracle.invalidobjects.NewInvalidObjectsWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.sessioninfo.NewSessionInfoWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.SGAtrace.NewSGATraceWorksheetAction;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.IndexColumnInfoTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.IndexDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.InstanceDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.ObjectSourceTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.OptionsTab;
@@ -232,6 +234,8 @@ public class OraclePlugin extends DefaultSessionPlugin
                 objTree.addDetailTab(IObjectTypes.CONSUMER_GROUP, new DatabaseObjectInfoTab());
                 objTree.addDetailTab(DatabaseObjectType.FUNCTION, new DatabaseObjectInfoTab());
                 objTree.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
+                objTree.addDetailTab(DatabaseObjectType.INDEX, new IndexColumnInfoTab());
+                objTree.addDetailTab(DatabaseObjectType.INDEX, new IndexDetailsTab());
                 objTree.addDetailTab(IObjectTypes.LOB, new DatabaseObjectInfoTab());
                 objTree.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
                 objTree.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
@@ -250,6 +254,10 @@ public class OraclePlugin extends DefaultSessionPlugin
 
                 objTree.addDetailTab(DatabaseObjectType.PROCEDURE, new ObjectSourceTab("PROCEDURE", "Show stored procedure source"));
                 objTree.addDetailTab(DatabaseObjectType.FUNCTION, new ObjectSourceTab("FUNCTION", "Show function source"));
+                objTree.addDetailTab(IObjectTypes.PACKAGE, new ObjectSourceTab("PACKAGE", "Specification", "Show package specification"));
+                objTree.addDetailTab(IObjectTypes.PACKAGE, new ObjectSourceTab("PACKAGE BODY", "Body", "Show package body"));
+                objTree.addDetailTab(IObjectTypes.TYPE, new ObjectSourceTab("TYPE", "Specification", "Show type specification"));
+                objTree.addDetailTab(IObjectTypes.TYPE, new ObjectSourceTab("TYPE BODY", "Body", "Show type body"));
                 objTree.addDetailTab(IObjectTypes.INSTANCE, new InstanceDetailsTab());
                 objTree.addDetailTab(DatabaseObjectType.SEQUENCE, new SequenceDetailsTab());
                 objTree.addDetailTab(IObjectTypes.SESSION, new SessionDetailsTab());
