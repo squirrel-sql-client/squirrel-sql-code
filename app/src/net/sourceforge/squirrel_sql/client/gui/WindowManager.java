@@ -689,7 +689,7 @@ public class WindowManager
 			//Only remove the frame if the entire session is not closing
 			if (!_sessionClosing)
 			{
-				//Find the internal Frame in the list of internal frames
+				// Find the internal Frame in the list of internal frames
 				// and remove it.
 				BaseSessionSheet sessionSheet = (BaseSessionSheet)e.getInternalFrame();
 				List sessionSheets = (List)_sessionWindows.get(sessionSheet.getSession().getIdentifier());
@@ -751,14 +751,33 @@ public class WindowManager
 		 */
 		public void sessionActivated(SessionEvent evt)
 		{
+			final ISession newSession = evt.getSession();
+
 			// Allocate the current session to the actions.
 			for (Iterator it = _app.getActionCollection().actions();
 					it.hasNext();)
 			{
-				final Action act = (Action) it.next();
+				final Action act = (Action)it.next();
 				if (act instanceof ISessionAction)
 				{
-					((ISessionAction)act).setSession(evt.getSession());
+					((ISessionAction)act).setSession(newSession);
+				}
+			}
+
+			// If the active window isn't for the currently selected session
+			// then select the main window for the session.
+			ISession currSession = null;
+			JInternalFrame sif = getMainFrame().getDesktopPane().getSelectedFrame();
+			if (sif instanceof BaseSessionSheet)
+			{
+				currSession = ((BaseSessionSheet)sif).getSession();
+			}
+			if (currSession != newSession)
+			{
+				sif = getMainInternalFrame(newSession);
+				if (sif != null)
+				{
+					moveToFront(sif);
 				}
 			}
 		}

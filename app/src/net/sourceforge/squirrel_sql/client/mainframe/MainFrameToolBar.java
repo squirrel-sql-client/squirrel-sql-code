@@ -82,14 +82,14 @@ class MainFrameToolBar extends ToolBar
 		super();
 		if (app == null)
 		{
-			throw new IllegalArgumentException("null IApplication passed.");
+			throw new IllegalArgumentException("IApplication == null");
 		}
 		_app = app;
 		setUseRolloverButtons(true);
 		setFloatable(true);
 
 		ActionCollection actions = _app.getActionCollection();
-		JLabel lbl = new JLabel(s_stringMgr.getString("MainFrameToolBar.connectto"));
+		JLabel lbl = new JLabel(s_stringMgr.getString("MainFrameToolBar.connectTo"));
 		lbl.setAlignmentY(0.5f);
 		add(lbl);
 		AliasesDropDown drop = new AliasesDropDown(app);
@@ -107,13 +107,13 @@ class MainFrameToolBar extends ToolBar
 
 		// JASON: New stuff
 		addSeparator();
-		JLabel lbl2 = new JLabel(" Active Session: ");
+		JLabel lbl2 = new JLabel(" " + s_stringMgr.getString("MainFrameToolBar.activeSession") + " ");
 		lbl.setAlignmentY(0.5f);
 		add(lbl2);
 		SessionDropDown session = new SessionDropDown(app);
 		session.setAlignmentY(0.5f);
 		add(session);
-		                                                                   
+
 		_sessionCommit = new CommitAction(_app);
 		_sessionCommit.setEnabled(false);
 		_sessionRollback = new RollbackAction(_app);
@@ -148,15 +148,13 @@ class MainFrameToolBar extends ToolBar
 				_sessionRollback.setEnabled(true);
 			}
 		});
-		
 	}
 
 	/**
 	 * Add an action to the toolbar. Centre it vertically so that it lines up
 	 * with the dropdown.
-	 * 
-	 * @param action
-	 *            <TT>Action</TT> to be added.
+	 *
+	 * @param	action	<TT>Action</TT> to be added.
 	 */
 //	private void addAction(Action action)
 //	{
@@ -336,8 +334,7 @@ class MainFrameToolBar extends ToolBar
 	 * Dropdown holding all the current active <TT>ISession</TT> objects.
 	 */
 	private static class SessionDropDown extends JComboBox
-			implements
-				ActionListener
+										implements ActionListener
 	{
 		private IApplication _app;
 		private boolean closing = false;
@@ -348,7 +345,7 @@ class MainFrameToolBar extends ToolBar
 			_app = app;
 			final SessionManager sessionManager = _app.getSessionManager();
 			final SessionDropDownModel model = new SessionDropDownModel(
-					sessionManager);
+															sessionManager);
 			setModel(model);
 
 			// Under JDK1.4 the first item in a JComboBox
