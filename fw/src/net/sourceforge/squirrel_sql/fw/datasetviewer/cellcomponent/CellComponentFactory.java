@@ -160,16 +160,17 @@ public class CellComponentFactory {
 		IDataTypeComponent dataTypeObject = getDataTypeObject(table, colDef);
 		
 		JTextField textField;
+		String editableText;
 		
 		// Default behavior if no data type found is to use a restorable text field
-		// with no other special behavior.
+		// with no other special behavior and hope the object has a toString().
 		if (dataTypeObject != null)
 			textField = dataTypeObject.getJTextField();
 		else textField = new RestorableJTextField();
 		
 		textField.setBackground(Color.yellow);
-		ed = new DefaultCellEditor(textField);
 
+		ed = new CellEditorUsingRenderer(textField, dataTypeObject);
 		ed.setClickCountToStart(1);
 		return ed;
 	}
