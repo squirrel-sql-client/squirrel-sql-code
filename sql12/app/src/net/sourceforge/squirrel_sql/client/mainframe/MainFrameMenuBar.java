@@ -76,9 +76,9 @@ import net.sourceforge.squirrel_sql.client.session.action.PreviousSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.ReconnectAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
+import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
 import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
 import net.sourceforge.squirrel_sql.client.session.action.ShowNativeSQLAction;
-import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
 /**
  * Menu bar for <CODE>MainFrame</CODE>.
  *
