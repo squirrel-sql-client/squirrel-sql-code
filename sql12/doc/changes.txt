@@ -16,6 +16,12 @@ Enhancements
 Bug Fixes
 ---------
 - Fix resource strings (Dennis Lundberg).
+- Do a better job of handling MS SQL server catalog names that contain periods.
+
+Other
+-----
+- Don't default to displaying the Contents Tab for a table. This can cause
+  performance issues when looking at SQL Views (Gerd Wagner).
 
 
 1.2beta4
