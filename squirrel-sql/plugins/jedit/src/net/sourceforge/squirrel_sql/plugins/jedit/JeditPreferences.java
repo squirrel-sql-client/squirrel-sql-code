@@ -1,0 +1,117 @@
+package net.sourceforge.squirrel_sql.plugins.jedit;
+/*
+ * Copyright (C) 2001 Colin Bell
+ * colbell@users.sourceforge.net
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+import java.awt.Color;
+import java.beans.PropertyChangeListener;
+import java.io.Serializable;
+
+import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
+
+/**
+ * This JavaBean class represents the user specific
+ * preferences for this plugin.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
+public class JeditPreferences implements Serializable, Cloneable {
+	public interface IPropertyNames {
+		String USE_JEDIT_CONTROL = "useJeditControl";
+		String KEYWORD1_COLOR = "keyword1Color";
+		String KEYWORD2_COLOR = "keyword2Color";
+		String KEYWORD3_COLOR = "keyword3Color";
+	}
+
+	/** Object to handle property change events. */
+	private PropertyChangeReporter _propChgReporter = new PropertyChangeReporter(this);
+
+	private boolean _useJeditTextControl = true;
+
+	private int _keyword1RGB = Color.black.getRGB();
+	private int _keyword2RGB = Color.magenta.getRGB();
+	private int _keyword3RGB = Color.red.getRGB();
+	
+	public JeditPreferences() {
+		super();
+	}
+
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
+
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		_propChgReporter.addPropertyChangeListener(listener);
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		_propChgReporter.removePropertyChangeListener(listener);
+	}
+
+	public boolean getUseJeditTextControl() {
+		return _useJeditTextControl;
+	}
+
+	public void setUseJeditTextControl(boolean data) {
+		if (_useJeditTextControl != data) {
+			final boolean oldValue = _useJeditTextControl;
+			_useJeditTextControl = data;
+			_propChgReporter.firePropertyChange(IPropertyNames.USE_JEDIT_CONTROL,
+								oldValue, _useJeditTextControl);
+		}
+	}
+
+	public int getKeyword1RGB() {
+		return _keyword1RGB;
+	}
+
+	public void setKeyword1RGB(int data) {
+		if (_keyword1RGB != data) {
+			final int oldValue = _keyword1RGB;
+			_keyword1RGB = data;
+			_propChgReporter.firePropertyChange(IPropertyNames.KEYWORD1_COLOR,
+								oldValue, _keyword1RGB);
+		}
+	}
+
+	public int getKeyword2RGB() {
+		return _keyword2RGB;
+	}
+
+	public void setKeyword2RGB(int data) {
+		if (_keyword2RGB != data) {
+			final int oldValue = _keyword2RGB;
+			_keyword2RGB = data;
+			_propChgReporter.firePropertyChange(IPropertyNames.KEYWORD2_COLOR,
+								oldValue, _keyword2RGB);
+		}
+	}
+
+	public int getKeyword3RGB() {
+		return _keyword3RGB;
+	}
+
+
+	public void setKeyword3RGB(int data) {
+		if (_keyword3RGB != data) {
+			final int oldValue = _keyword3RGB;
+			_keyword3RGB = data;
+			_propChgReporter.firePropertyChange(IPropertyNames.KEYWORD3_COLOR,
+								oldValue, _keyword3RGB);
+		}
+	}
+}
