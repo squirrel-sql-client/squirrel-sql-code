@@ -63,13 +63,14 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
+import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
 /**
+ * TODO: Rename to DriverMaintInternalFrame
  * This dialog allows maintenance of a JDBC driver definition.
  *
  * @author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class DriverMaintSheet extends BaseSheet
+public class DriverMaintSheet extends BaseInternalFrame
 {
 	/** Different types of maintenance that can be done. */
 	public interface MaintenanceType

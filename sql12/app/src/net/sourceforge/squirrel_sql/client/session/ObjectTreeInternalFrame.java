@@ -56,7 +56,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTr
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 
 /* Object Tree frame class*/
-public class ObjectTreeInternalFrame extends BaseSessionSheet
+public class ObjectTreeInternalFrame extends BaseSessionInternalFrame
 										implements IObjectTreeInternalFrame
 {
 	/** Application API. */

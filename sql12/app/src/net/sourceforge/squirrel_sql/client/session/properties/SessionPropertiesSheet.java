@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.properties;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -40,10 +40,11 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.plugin.SessionPluginInfo;
-import net.sourceforge.squirrel_sql.client.session.BaseSessionSheet;
+import net.sourceforge.squirrel_sql.client.session.BaseSessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
-public class SessionPropertiesSheet extends BaseSessionSheet
+// JASON: Rename to SessionPropertiesInternalFrame
+public class SessionPropertiesSheet extends BaseSessionInternalFrame
 {
 	/**
 	 * This interface defines locale specific strings. This should be

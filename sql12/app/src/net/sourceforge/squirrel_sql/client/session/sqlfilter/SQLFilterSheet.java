@@ -56,15 +56,16 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
-import net.sourceforge.squirrel_sql.client.session.BaseSessionSheet;
+import net.sourceforge.squirrel_sql.client.session.BaseSessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ContentsTab;
 /**
  * SQLFilter dialog gui.
+ * JASON: Rename to SQLFilterInternalFrame
  *
  * @author <A HREF="mailto:mjhammel@users.sourceforge.net">Maury Hammel</A>
  */
-public class SQLFilterSheet extends BaseSessionSheet
+public class SQLFilterSheet extends BaseSessionInternalFrame
 {
 	/**
 	 * This interface defines locale specific strings. This should be

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.db;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -70,7 +70,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
+import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
 import net.sourceforge.squirrel_sql.client.mainframe.DriverListCellRenderer;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
@@ -81,7 +81,7 @@ import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
  *
  * @author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class AliasMaintSheet extends BaseSheet
+public class AliasMaintSheet extends BaseInternalFrame
 {
 	/**
 	 * Maintenance types.
@@ -357,7 +357,7 @@ public class AliasMaintSheet extends BaseSheet
 		// This is a tool window.
 		GUIUtils.makeToolWindow(this, true);
 
-		String winTitle; 
+		String winTitle;
 		if (_maintType == IMaintenanceType.MODIFY)
 		{
 			winTitle = s_stringMgr.getString("AliasMaintSheet.changealias",

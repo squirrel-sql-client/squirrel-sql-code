@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui;
 /*
- * Copyright (C) 2002-2003 Colin Bell
+ * Copyright (C) 2002-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -55,7 +55,7 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ViewLogsSheet extends BaseSheet
+public class ViewLogsSheet extends BaseInternalFrame
 {
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =

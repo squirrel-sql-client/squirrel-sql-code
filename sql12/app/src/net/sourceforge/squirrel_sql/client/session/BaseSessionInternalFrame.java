@@ -20,16 +20,14 @@ package net.sourceforge.squirrel_sql.client.session;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
-import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
+import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
 /**
  * Base functionality for Squirrels internal frames that are attached directly
  * to a session.
  *
- * TODO: Rename to BaseSessionInternalFrame
- *
  * @author <A HREF="mailto:jmheight@users.sourceforge.net">Jason Height</A>
  */
-public class BaseSessionSheet extends BaseSheet
+public class BaseSessionInternalFrame extends BaseInternalFrame
 {
 	private ISession _session;
 
@@ -37,7 +35,7 @@ public class BaseSessionSheet extends BaseSheet
 	 * Creates a non-resizable, non-closable, non-maximizable,
 	 * non-iconifiable JInternalFrame with no title.
 	 */
-	public BaseSessionSheet(ISession session)
+	public BaseSessionInternalFrame(ISession session)
 	{
 		super();
 		setupSheet(session);
@@ -49,7 +47,7 @@ public class BaseSessionSheet extends BaseSheet
 	 *
 	 * @param	title	Title for internal frame.
 	 */
-	public BaseSessionSheet(ISession session, String title)
+	public BaseSessionInternalFrame(ISession session, String title)
 	{
 		super(title);
 		setupSheet(session);
@@ -63,7 +61,8 @@ public class BaseSessionSheet extends BaseSheet
 	 * @param	title		Title for internal frame.
 	 * @param	resizable	<TT>true</TT> if frame can be resized.
 	 */
-	public BaseSessionSheet(ISession session, String title, boolean resizable)
+	public BaseSessionInternalFrame(ISession session, String title,
+									boolean resizable)
 	{
 		super(title, resizable);
 		setupSheet(session);
@@ -78,8 +77,8 @@ public class BaseSessionSheet extends BaseSheet
 	 * @param	resizable	<TT>true</TT> if frame can be resized.
 	 * @param	closeable	<TT>true</TT> if frame can be closed.
 	 */
-	public BaseSessionSheet(ISession session, String title, boolean resizable,
-		boolean closable)
+	public BaseSessionInternalFrame(ISession session, String title,
+								boolean resizable, boolean closable)
 	{
 		super(title, resizable, closable);
 		setupSheet(session);
@@ -94,8 +93,9 @@ public class BaseSessionSheet extends BaseSheet
 	 * @param	closeable	<TT>true</TT> if frame can be closed.
 	 * @param	maximizable	<TT>true</TT> if frame can be maximized.
 	 */
-	public BaseSessionSheet(ISession session, String title, boolean resizable,
-			boolean closable, boolean maximizable)
+	public BaseSessionInternalFrame(ISession session, String title,
+							boolean resizable, boolean closable,
+							boolean maximizable)
 	{
 		super(title, resizable, closable, maximizable);
 		setupSheet(session);
@@ -112,8 +112,9 @@ public class BaseSessionSheet extends BaseSheet
 	 * @param	maximizable	<TT>true</TT> if frame can be maximized.
 	 * @param	iconifiable	<TT>true</TT> if frame can be iconified.
 	 */
-	public BaseSessionSheet(ISession session, String title, boolean resizable,
-			boolean closable, boolean maximizable, boolean iconifiable)
+	public BaseSessionInternalFrame(ISession session, String title,
+							boolean resizable, boolean closable,
+							boolean maximizable, boolean iconifiable)
 	{
 		super(title, resizable, closable, maximizable, iconifiable);
 		setupSheet(session);
