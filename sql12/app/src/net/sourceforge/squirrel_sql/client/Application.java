@@ -453,14 +453,6 @@ class Application implements IApplication
 		SessionPropertiesSheetFactory.initialize(this);
 		SQLFilterSheetFactory.initialize(this);
 
-		final boolean loadPlugins = args.getLoadPlugins();
-		indicateNewStartupTask(splash, loadPlugins ? "Loading plugins..." : "No Plugins are to be loaded...");
-		_pluginManager = new PluginManager(this);
-		if (loadPlugins)
-		{
-			_pluginManager.loadPlugins();
-		}
-
 		indicateNewStartupTask(splash, "Loading preferences...");
 		_prefs = SquirrelPreferences.load();
 		preferencesHaveChanged(null);
@@ -475,6 +467,14 @@ class Application implements IApplication
 
 		indicateNewStartupTask(splash, "Initializing UI factories...");
 		UIFactory.initialize(_prefs);
+
+		final boolean loadPlugins = args.getLoadPlugins();
+		indicateNewStartupTask(splash, loadPlugins ? "Loading plugins..." : "No Plugins are to be loaded...");
+		_pluginManager = new PluginManager(this);
+		if (loadPlugins)
+		{
+			_pluginManager.loadPlugins();
+		}
 
 		indicateNewStartupTask(splash, "Loading actions...");
 		_actions = new ActionCollection(this);

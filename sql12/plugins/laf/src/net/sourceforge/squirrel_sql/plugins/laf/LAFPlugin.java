@@ -22,6 +22,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
 
+import javax.swing.JTabbedPane;
+import javax.swing.UIManager;
+
+import com.jgoodies.plaf.Options;
+
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -30,6 +35,9 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
+import net.sourceforge.squirrel_sql.client.gui.builders.UIFactoryAdapter;
+import net.sourceforge.squirrel_sql.client.gui.builders.UIFactoryComponentCreatedEvent;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
@@ -202,8 +210,15 @@ public class LAFPlugin extends DefaultPlugin
 		// Load plugin preferences.
 		loadPrefs();
 
+		// Setup preferences to make jGoodies LAF look better.
+		UIManager.put(Options.USE_SYSTEM_FONTS_APP_KEY, Boolean.TRUE);
+		UIManager.put(Options.USE_NARROW_BUTTONS_KEY, Boolean.TRUE);
+
 		// Create the Look and Feel register.
 		_lafRegister = new LAFRegister(app, this);
+
+		// Listen for GUI components being created.
+		UIFactory.getInstance().addListener(new UIFactoryListener());
 
 		// Update font used for status bars.
 		_lafRegister.updateStatusBarFont();
@@ -436,6 +451,21 @@ public class LAFPlugin extends DefaultPlugin
 		catch (IOException ex)
 		{
 			s_log.error("Error creating file " + file.getAbsolutePath(), ex);
+		}
+	}
+
+	private class UIFactoryListener extends UIFactoryAdapter
+	{
+		/**
+		 * A tabbed panel object has been created.
+		 * 
+		 * @param	evt	event object.
+		 */
+		public void tabbedPaneCreated(UIFactoryComponentCreatedEvent evt)
+		{
+			final JTabbedPane pnl = (JTabbedPane)evt.getComponent();
+			pnl.putClientProperty(Options.NO_CONTENT_BORDER_KEY, Boolean.TRUE);
+//			pnl.putClientProperty(Options.EMBEDDED_TABS_KEY, Boolean.TRUE);
 		}
 	}
 }
