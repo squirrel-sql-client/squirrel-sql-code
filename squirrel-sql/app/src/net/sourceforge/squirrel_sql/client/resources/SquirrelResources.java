@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.resources;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -27,7 +27,19 @@ public class SquirrelResources extends Resources {
 
 	private final String _defaultsPath;
 
-	public interface ImageNames {
+    public interface IMenuResourceKeys {
+        String ALIASES = "aliases";
+        String CLOSE_ALL_SQL_RESULTS = "close_all_sql_results";
+        String DRIVERS = "drivers";
+//      String EDIT = "edit";
+        String FILE = "file";
+        String HELP = "help";
+        String PLUGINS = "plugins";
+        String SESSION = "session";
+        String WINDOWS = "windows";
+    }
+
+	public interface IImageNames {
 		String PERFORMANCE_WARNING = "PerformanceWarning";
 		String SPLASH_SCREEN = "SplashScreen";
 	}
