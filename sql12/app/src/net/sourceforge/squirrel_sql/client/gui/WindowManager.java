@@ -32,6 +32,7 @@ import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.RepaintManager;
 import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.InternalFrameEvent;
@@ -63,6 +64,7 @@ import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.util.ThreadCheckingRepaintManager;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CopyAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CopyDriverAction;
@@ -168,6 +170,11 @@ public class WindowManager
 		if (app == null)
 		{
 			throw new IllegalArgumentException("IApplication == null");
+		}
+
+		if (s_log.isDebugEnabled())
+		{
+			RepaintManager.setCurrentManager(new ThreadCheckingRepaintManager());
 		}
 
 		_app = app;
