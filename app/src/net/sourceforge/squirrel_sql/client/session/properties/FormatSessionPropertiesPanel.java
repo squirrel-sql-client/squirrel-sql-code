@@ -21,10 +21,12 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Dimension;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.JScrollPane;
 
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
@@ -137,6 +139,7 @@ public class FormatSessionPropertiesPanel
 
 		private void createGUI(IApplication app)
 		{
+
 			setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.anchor = GridBagConstraints.WEST;
@@ -145,7 +148,11 @@ public class FormatSessionPropertiesPanel
 
 			gbc.gridx = 0;
 			gbc.gridy = 0;
-			add(createDataTypesPanel(), gbc);
+
+			JScrollPane sp = new JScrollPane(createDataTypesPanel());
+			sp.setPreferredSize(new Dimension(550, 450));
+			add(sp, gbc);
+
 		}
 
 		private JPanel createDataTypesPanel()
