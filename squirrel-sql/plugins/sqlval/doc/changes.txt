@@ -1,0 +1,7 @@
+SQL Validator Change Log
+========================
+
+0.11
+====
+
+- Initial release.

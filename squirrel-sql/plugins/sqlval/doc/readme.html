@@ -1,0 +1,50 @@
+<HTML>
+
+<HEAD>
+    <TITLE>SQL Validator Plugin</TITLE>
+</HEAD>
+
+<BODY>
+
+<H2>Introduction</H2>
+
+<P>This plugin will validate your SQL against the ISO SQL standard. It
+does this by using a Web Service provided by Mimer SQL. The SQL that is
+validated is stored anonymously to be used by the ISO SQL Standards
+committee.</P>
+
+<P>For more information
+on the web service consult http://sqlvalidator.mimer.com</P>
+
+<H2>New Global Preferences Tab</H2>
+
+<P>The Global Preferences dialog has a new &quot;SQL Validator&quot; tab.
+This specifies the information to send to the Web Service. You can either
+logon anonymously or use a user name and password that have been supplied
+to you by Mimer SQL.</P>
+
+<P>You can choose whether to send client details to the Web Service. If the
+&quot;Anonymous Client&quot; checkbox is unchecked then the Client and
+Version details shown will be sent to the Web Service along with your
+validation request otherwise &quot;N/A&quot; will be sent for these
+fields.</P>
+
+<P>The &quot;Show Confirmation Dialog&quot; checkbox, if checked, will display
+a confirmation dialog prior to sending the validation request to the web
+service.</P>
+
+<H2>New Menu Items</H2>
+
+<P>A &quot;Validate SQL&quot; item has been added to the &quot;Session&quot;
+menu. When selected this will attempt to validate the current SQL in the
+SQL entry area. If &quot;Show Confirmation Dialog&quot; was specified in the
+&quot;SQL Validator&quot tab in the Global Preferences dialog then a
+confirmation dialog will be shown otherwise the validation request will be
+sent to the web service.</P>
+
+<P>Results are shown in the message area at the bottom of the session window.</P>
+
+</BODY>
+
+</HTML>
+
