@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,42 +17,94 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Component;
-
 import javax.swing.Action;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JToolBar;
 
+import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ToolBar extends JToolBar {
+public class ToolBar extends JToolBar
+{
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(ToolBar.class);
 
-	public JButton add(Action action) {
+	public JButton add(Action action)
+	{
 		JButton btn = super.add(action);
 		initialiseButton(action, btn);
 		return btn;
 	}
 
-	public JButton add(Action action, JButton btn) {
+	public JButton add(Action action, JButton btn)
+	{
 		super.add(btn);
 		initialiseButton(action, btn);
 		return btn;
 	}
 
-	public void setUseRolloverButtons(boolean value) {
+	public void setUseRolloverButtons(boolean value)
+	{
 		putClientProperty("JToolBar.isRollover", value ? Boolean.TRUE : Boolean.FALSE);
 	}
 
-	protected void initialiseButton(Action action, JButton btn) {
-		if (btn != null) {
+	protected void initialiseButton(Action action, JButton btn)
+	{
+		if (btn != null)
+		{
 			btn.setRequestFocusEnabled(false);
 			btn.setText("");
 			String tt = null;
-			if (action != null) {
-				tt = (String)action.getValue(Action.SHORT_DESCRIPTION);
+			if (action != null)
+			{
+				tt = (String) action.getValue(Action.SHORT_DESCRIPTION);
 			}
 			btn.setToolTipText(tt != null ? tt : "");
+			if (action != null)
+			{
+				Icon icon = getIconFromAction(action, BaseAction.IBaseActionPropertyNames.ROLLOVER_ICON);
+				if (icon != null)
+				{
+					btn.setRolloverIcon(icon);
+					btn.setRolloverSelectedIcon(icon);
+				}
+				icon = getIconFromAction(action, BaseAction.IBaseActionPropertyNames.DISABLED_ICON);
+				if (icon != null)
+				{
+					btn.setDisabledIcon(icon);
+				}
+			}
 		}
+	}
+
+	/**
+	 * Retrieve an icon from the passed action for the specified key.
+	 * 
+	 * @param	action		Action to retrieve icon from.
+	 * @param	key			Key that specified the icon.
+	 * 
+	 * @return	The requested Icon or null.
+	 */
+	protected Icon getIconFromAction(Action action, String key)
+	{
+		Object obj = action.getValue(BaseAction.IBaseActionPropertyNames.ROLLOVER_ICON);
+		if (obj != null)
+		{
+			if (obj instanceof Icon)
+			{
+				return (Icon)obj;
+			}
+			StringBuffer msg = new StringBuffer();
+			msg.append("Non icon object of type ").append(obj.getClass().getName())
+				.append(" was stored in an Action of type ")
+				.append(action.getClass().getName())
+				.append(" using the key ").append(key).append(".");
+			s_log.error(msg.toString());
+		}
+		return null;
 	}
 }
