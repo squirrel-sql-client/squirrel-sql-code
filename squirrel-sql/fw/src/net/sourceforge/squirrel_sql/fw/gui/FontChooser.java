@@ -32,6 +32,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -52,10 +53,12 @@ public class FontChooser extends JDialog {
 	private static int[] FONT_STYLES = {Font.PLAIN, Font.BOLD, Font.ITALIC};
 	private JComboBox _fontNamesCmb;
 	private JComboBox _fontSizesCmb = new JComboBox(new String[]{"8", "9", "10", "12", "14"});
-	private JComboBox _fontStylesCmb = new JComboBox(new String[]{"Plain", "Bold", "Italic"});
+	private JCheckBox _boldChk = new JCheckBox("Bold");
+	private JCheckBox _italicChk = new JCheckBox("Italic");
+//	private JComboBox _fontStylesCmb = new JComboBox(new String[]{"Plain", "Bold", "Italic"});
 	private JLabel _previewLbl = new JLabel("The quick brown fox jumped over the lazy dog");
 
-	private Font _font = null;
+	private Font _font;
 	private boolean _fontSelected;
 	
 	public FontChooser() {
@@ -78,13 +81,15 @@ public class FontChooser extends JDialog {
 
 	public boolean showDialog(Font font) {
 		if (font != null) {
-			_fontNamesCmb.setSelectedItem(font.getFamily());
+			_fontNamesCmb.setSelectedItem(font.getName());
 			_fontSizesCmb.setSelectedItem("" + font.getSize());
-//			_fontStyles.
+			_boldChk.setSelected(font.isBold());
+			_italicChk.setSelected(font.isItalic());
 		} else {
 			_fontNamesCmb.setSelectedIndex(0);
 			_fontSizesCmb.setSelectedIndex(0);
-			_fontStylesCmb.setSelectedIndex(0);
+			_boldChk.setSelected(false);
+			_italicChk.setSelected(false);
 		}
 		show();
 		return _fontSelected;
@@ -95,14 +100,24 @@ public class FontChooser extends JDialog {
 	}
 
 	protected void setupFontFromDialog() {
-		String fontName = (String)_fontNamesCmb.getSelectedItem();
-		int fontSize = 12;
+		String name = (String)_fontNamesCmb.getSelectedItem();
+		int size = 12;
 		try {
-			fontSize = Integer.parseInt((String)_fontSizesCmb.getSelectedItem());
+			size = Integer.parseInt((String)_fontSizesCmb.getSelectedItem());
 		} catch (Exception ignore) {
 		}
-		int fontStyle = FONT_STYLES[_fontStylesCmb.getSelectedIndex()];
-		_font = new Font(fontName, fontStyle, fontSize);
+		int style = 0;
+		if (_boldChk.isSelected() || _italicChk.isSelected()) {
+			if (_boldChk.isSelected()) {
+				style |= Font.BOLD;
+			}
+			if (_italicChk.isSelected()) {
+				style |= Font.ITALIC;
+			}
+		} else {
+			style = Font.PLAIN;
+		}
+		_font = new Font(name, style, size);
 	}
 
 	private void createUserInterface() {
@@ -144,13 +159,28 @@ public class FontChooser extends JDialog {
 		});
 		content.add(_fontSizesCmb, gbc);
 
+//		++gbc.gridx;
+//		_fontStylesCmb.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent evt) {
+//				setupPreviewLabel();
+//			}
+//		});
+//		content.add(_fontStylesCmb, gbc);
+
 		++gbc.gridx;
-		_fontStylesCmb.addActionListener(new ActionListener() {
+		_boldChk.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				setupPreviewLabel();
 			}
 		});
-		content.add(_fontStylesCmb, gbc);
+		content.add(_boldChk, gbc);
+		++gbc.gridy;
+		_italicChk.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				setupPreviewLabel();
+			}
+		});
+		content.add(_italicChk, gbc);
 
 		Dimension prefSize = _previewLbl.getPreferredSize();
 		prefSize.height = 50;
