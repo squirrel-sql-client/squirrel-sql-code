@@ -63,6 +63,9 @@ class Session implements ISession
 	private static final ILogger s_log =
 		LoggerController.createLogger(Session.class);
 
+	/** Descriptive title for session. */
+	private String _title = "";
+
 	private SessionSheet _sessionSheet;
 
 	/** The <TT>IIdentifier</TT> that uniquely identifies this object. */
@@ -156,6 +159,8 @@ class Session implements ISession
 		_conn = conn;
 		_user = user;
 		_password = password;
+
+		_title = createTitle();
 
 		_props = (SessionProperties)_app.getSquirrelPreferences().getSessionProperties().clone();
 		_sqlFilterClauses = new SQLFilterClauses();
@@ -578,6 +583,16 @@ class Session implements ISession
 	}
 
 	/**
+	 * Retrieve the descriptive title of this session.
+	 *
+	 * @return		The descriptive title of this session.
+	 */
+	public String getTitle()
+	{
+		return _title;
+	}
+
+	/**
 	 * Fire a &quot;session closed&quot; event.
 	 */
 	protected void fireSessionClosedEvent()
@@ -601,10 +616,40 @@ class Session implements ISession
 	}
 
 	/**
+	 * Set the descriptive title for this session.
+	 *
+	 * @param	title	The descriptive title for this session.
+	 */
+	void setTitle(String value)
+	{
+		_title = value != null ? value : "";
+	}
+
+	/**
 	 * Load table information about the current database.
 	 */
 	private void loadTableInfo()
 	{
 		_schemaInfo.load(getSQLConnection());
+	}
+
+	private String createTitle()
+	{
+		final StringBuffer title = new StringBuffer();
+		title.append(getAlias().getName());
+		String user = null;
+		try
+		{
+			user = getSQLConnection().getSQLMetaData().getUserName();
+		}
+		catch (SQLException ex)
+		{
+			s_log.error("Error occured retrieving user name from Connection", ex);
+		}
+		if (user != null && user.length() > 0)
+		{
+			title.append(" as ").append(user); // i18n
+		}
+		return title.toString();
 	}
 }

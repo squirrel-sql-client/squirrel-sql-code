@@ -23,7 +23,7 @@ import java.util.Map;
  * This class manages instances of <TT>StringManager</TT> objects. It keeps a
  * cache of them, one for each package.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class StringManagerFactory
 {
@@ -56,7 +56,7 @@ public class StringManagerFactory
 		StringManager mgr = (StringManager)s_mgrs.get(key);
 		if (mgr == null)
 		{
-			mgr = new StringManager(key);
+			mgr = new StringManager(key, clazz.getClassLoader());
 			s_mgrs.put(key, mgr);
 		}
 		return mgr;

@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.fw.util;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.text.MessageFormat;
+import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -42,11 +43,13 @@ public class StringManager
 	 * from the package directory.
 	 *
 	 * @param	packageName	Name of package
+	 * @param	classLoader	Class loader to use
 	 */
-	StringManager(String packageName)
+	StringManager(String packageName, ClassLoader loader)
 	{
 		super();
-		_rsrcBundle = ResourceBundle.getBundle(packageName + ".I18NStrings");
+		_rsrcBundle = ResourceBundle.getBundle(packageName + ".I18NStrings",
+						Locale.getDefault(), loader);
 	}
 
 	/**

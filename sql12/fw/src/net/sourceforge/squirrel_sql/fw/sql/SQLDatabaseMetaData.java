@@ -39,7 +39,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
  * This class represents the metadata for a database. It is essentially
  * a wrapper around <TT>java.sql.DatabaseMetaData</TT>.
- * 
+ *
  * <P>From the JavaDoc for <TT>java.sql.DatabaseMetaData</TT>. &quot;Some
  * methods take arguments that are String patterns. These arguments all
  * have names such as fooPattern. Within a pattern String, "%" means match any
@@ -51,7 +51,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * <P>Some data can be cached on the first retrieval in order to speed up
  * subsequent retrievals. To clear this cache call <TT>clearCache()</TT>.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SQLDatabaseMetaData
 {
@@ -89,9 +89,9 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * ctor specifying the connection that we are retrieving metadata for.
-	 * 
+	 *
 	 * @param	conn	Connection to database.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if null SQLConnection passed.
 	 */
@@ -111,7 +111,7 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Return the name of the current user.
-	 * 
+	 *
 	 * @return	the current user name.
 	 */
 	public synchronized String getUserName() throws SQLException
@@ -128,9 +128,9 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Return the database product name for this connection.
-	 * 
+	 *
 	 * @return	the database product name for this connection.
-	 * 
+	 *
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
 	public synchronized String getDatabaseProductName()
@@ -148,9 +148,9 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Return the database product version for this connection.
-	 * 
+	 *
 	 * @return	database product version
-	 * 
+	 *
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
 	public synchronized String getDatabaseProductVersion()
@@ -168,9 +168,9 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Return the JDBC driver name for this connection.
-	 * 
+	 *
 	 * @return	the JDBC driver name for this connection.
-	 * 
+	 *
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
 	public synchronized String getDriverName() throws SQLException
@@ -187,9 +187,9 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Return the JDBC version of this driver.
-	 * 
+	 *
 	 * @return	the JDBC version of the driver.
-	 * 
+	 *
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
 	public synchronized int getJDBCVersion() throws SQLException
@@ -220,9 +220,9 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Return the string used to quote characters in thuis DBMS.
-	 * 
+	 *
 	 * @return	quote string.
-	 * 
+	 *
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
 	public synchronized String getIdentifierQuoteString() throws SQLException
@@ -249,9 +249,9 @@ public class SQLDatabaseMetaData
 	/**
 	 * Return a string array containing the names of all the schemas in the
 	 * database.
-	 * 
+	 *
 	 * @return	String[] of the names of the schemas in the database.
-	 * 
+	 *
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
 	public synchronized String[] getSchemas() throws SQLException
@@ -303,9 +303,9 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Retrieves whether this database supports schemas at all.
-	 * 
+	 *
 	 * @return	<TT>true</TT> if database supports schemas.
-	 * 
+	 *
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
 	public boolean supportsSchemas() throws SQLException
@@ -317,10 +317,10 @@ public class SQLDatabaseMetaData
 	/**
 	 * Retrieves whether a schema name can be used in a data manipulation
 	 * statement.
-	 * 
+	 *
 	 * @return	<TT>true</TT> if a schema name can be used in a data
 	 *			manipulation statement.
-	 * 
+	 *
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
 	public synchronized boolean supportsSchemasInDataManipulation()
@@ -354,10 +354,10 @@ public class SQLDatabaseMetaData
 	/**
 	 * Retrieves whether a schema name can be used in a table definition
 	 * statement.
-	 * 
+	 *
 	 * @return	<TT>true</TT> if a schema name can be used in a table
 	 *			definition statement.
-	 * 
+	 *
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
 	public synchronized boolean supportsSchemasInTableDefinitions()
@@ -390,9 +390,9 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Retrieves whether this DBMS supports stored procedures.
-	 * 
+	 *
 	 * @return	<TT>true</TT> if DBMS supports stored procedures.
-	 * 
+	 *
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
 	public synchronized boolean supportsStoredProcedures() throws SQLException
@@ -422,9 +422,9 @@ public class SQLDatabaseMetaData
 	/**
 	 * Return a string array containing the names of all the catalogs in the
 	 * database.
-	 * 
+	 *
 	 * @return	String[] of the names of the catalogs in the database.
-	 * 
+	 *
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
 	public synchronized String[] getCatalogs() throws SQLException
@@ -461,9 +461,9 @@ public class SQLDatabaseMetaData
 	/**
 	 * Retrieves the String that this database uses as the separator between a
 	 * catalog and table name.
-	 * 
+	 *
 	 * @return	The separator character.
-	 * 
+	 *
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
 	public synchronized String getCatalogSeparator() throws SQLException
@@ -483,9 +483,9 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Retrieves whether this database supports catalogs at all.
-	 * 
+	 *
 	 * @return	<TT>true</TT> fi database supports catalogs.
-	 * 
+	 *
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
 	public boolean supportsCatalogs() throws SQLException
@@ -498,10 +498,10 @@ public class SQLDatabaseMetaData
 	/**
 	 * Retrieves whether a catalog name can be used in a table definition
 	 * statement.
-	 * 
+	 *
 	 * @return	<TT>true</TT> if a catalog name can be used in a table
 	 *			definition statement.
-	 * 
+	 *
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
 	public synchronized boolean supportsCatalogsInTableDefinitions() throws SQLException
@@ -534,10 +534,10 @@ public class SQLDatabaseMetaData
 	/**
 	 * Retrieves whether a catalog name can be used in a data manipulation
 	 * statement.
-	 * 
+	 *
 	 * @return	<TT>true</TT> if a catalog name can be used in a data
 	 *			manipulation statement.
-	 * 
+	 *
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
 	public synchronized boolean supportsCatalogsInDataManipulation() throws SQLException
@@ -568,10 +568,10 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Retrieves whether a catalog name can be used in a procedure call.
-	 * 
+	 *
 	 * @return	<TT>true</TT> if a catalog name can be used in a procedure
 	 *			call.
-	 * 
+	 *
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
 	public synchronized boolean supportsCatalogsInProcedureCalls() throws SQLException
@@ -602,9 +602,9 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Return the <TT>DatabaseMetaData</TT> object for this connection.
-	 * 
+	 *
 	 * @return	The <TT>DatabaseMetaData</TT> object for this connection.
-	 * 
+	 *
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
 	public synchronized DatabaseMetaData getJDBCMetaData() throws SQLException
@@ -613,8 +613,64 @@ public class SQLDatabaseMetaData
 	}
 
 	/**
+	 * @deprecated	Replaced by getDataTypes
+	 */
+	public ResultSet getTypeInfo() throws SQLException
+	{
+		return privateGetJDBCMetaData().getTypeInfo();
+	}
+
+	/**
+	 * Retrieve information about the data types in the database.
+	 *
+	 * @throws	SQLException	Thrown if an SQL error occurs.
+	 */
+	public DataTypeInfo[] getDataTypes()
+		throws SQLException
+	{
+		final DatabaseMetaData md = privateGetJDBCMetaData();
+		final ArrayList list = new ArrayList();
+		final ResultSet rs = md.getTypeInfo();
+		try
+		{
+			ResultSetColumnReader rdr = new ResultSetColumnReader(rs);
+			while (rdr.next())
+			{
+				final String typeName = rdr.getString(1);
+				final int dataType = rdr.getLong(2).intValue();
+				final int precis = rdr.getLong(3).intValue();
+				final String literalPrefix = rdr.getString(4);
+				final String literalSuffix = rdr.getString(5);
+				final String createParams = rdr.getString(6);
+				final int nullable = rdr.getLong(7).intValue();
+				final boolean caseSens = rdr.getBoolean(8).booleanValue();
+				final int searchable = rdr.getLong(9).intValue();
+				final boolean unsigned = rdr.getBoolean(10).booleanValue();
+				final boolean canBeMoney = rdr.getBoolean(11).booleanValue();
+				final boolean canBeAutoInc = rdr.getBoolean(12).booleanValue();
+				final String localTypeName = rdr.getString(13);
+				final int min = rdr.getLong(14).intValue();
+				final int max = rdr.getLong(15).intValue();
+				final int radix = rdr.getLong(18).intValue();
+				list.add(new DataTypeInfo(typeName, dataType, precis,
+										literalPrefix, literalSuffix,
+										createParams, nullable, caseSens,
+										searchable, unsigned, canBeMoney,
+										canBeAutoInc, localTypeName,
+										min, max, radix,
+										this));
+			}
+		}
+		finally
+		{
+			rs.close();
+		}
+		return (DataTypeInfo[])list.toArray(new DataTypeInfo[list.size()]);
+	}
+
+	/**
 	 * Retrieve information about the stored procedures in the system
-	 * 
+	 *
 	 * @param	catalog		The name of the catalog to retrieve procedures
 	 *						for. An empty string will return those without a
 	 * 						catalog. <TT>null</TT> means that the catalog
@@ -626,7 +682,7 @@ public class SQLDatabaseMetaData
 	 * @param	procedureNamepattern	A procedure name pattern; must match the
 	 *									procedure name as it is stored in the
 	 *									database.
-	 * 
+	 *
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
 	public IProcedureInfo[] getProcedures(String catalog,
@@ -658,9 +714,9 @@ public class SQLDatabaseMetaData
 	/**
 	 * Return a string array containing the different types of tables in this
 	 * database. E.G. <TT>"TABLE", "VIEW", "SYSTEM TABLE"</TT>.
-	 * 
+	 *
 	 * @return	table type names.
-	 * 
+	 *
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
 	public synchronized String[] getTableTypes() throws SQLException
@@ -732,7 +788,7 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Retrieve information about the tables in the system.
-	 * 
+	 *
 	 * @param	catalog		The name of the catalog to retrieve tables
 	 *						for. An empty string will return those without a
 	 * 						catalog. <TT>null</TT> means that the catalog
@@ -745,7 +801,7 @@ public class SQLDatabaseMetaData
 	 *								table name as it is stored in the
 	 *								database.
 	 * @param	types		List of table types to include; null returns all types.
-	 * 
+	 *
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
 	public ITableInfo[] getTables(String catalog, String schemaPattern,
@@ -770,7 +826,7 @@ public class SQLDatabaseMetaData
 			{
 				//TODO: remove reflection once we only support JDK1.4
 				//superTabResult = md.getSuperTables(catalog, schemaPattern,
-				//									   tableNamePattern);
+				//									tableNamePattern);
 				Class clazz = md.getClass();
 				Class[] p1 = new Class[] {String.class, String.class, String.class};
 				Method method = clazz.getMethod("getSuperTables", p1);
@@ -797,7 +853,7 @@ public class SQLDatabaseMetaData
 			{
 				s_log.debug("DBMS/Driver doesn't support getSupertables()", th);
 			}
-	
+
 			// store all plain table info we have.
 			while (tabResult.next())
 			{
@@ -847,7 +903,7 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Retrieve information about the UDTs in the system.
-	 * 
+	 *
 	 * @param	catalog		The name of the catalog to retrieve UDTs
 	 *						for. An empty string will return those without a
 	 * 						catalog. <TT>null</TT> means that the catalog
@@ -861,7 +917,7 @@ public class SQLDatabaseMetaData
 	 *								database.
 	 * @param	types		List of user-defined types (JAVA_OBJECT, STRUCT, or
 	 *						DISTINCT) to include; null returns all types
-	 * 
+	 *
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
 	public IUDTInfo[] getUDTs(String catalog, String schemaPattern,
@@ -893,7 +949,7 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Retrieve the names of the Numeric Functions that this DBMS supports.
-	 * 
+	 *
 	 * @return	String[] of function names.
 	 */
 	public synchronized String[] getNumericFunctions() throws SQLException
@@ -912,7 +968,7 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Retrieve the names of the String Functions that this DBMS supports.
-	 * 
+	 *
 	 * @return	String[] of function names.
 	 */
 	public synchronized String[] getStringFunctions() throws SQLException
@@ -931,7 +987,7 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Retrieve the names of the System Functions that this DBMS supports.
-	 * 
+	 *
 	 * @return	String[] of function names.
 	 */
 	public synchronized String[] getSystemFunctions() throws SQLException
@@ -950,7 +1006,7 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Retrieve the names of the Date/Time Functions that this DBMS supports.
-	 * 
+	 *
 	 * @return	String[] of function names.
 	 */
 	public synchronized String[] getTimeDateFunctions() throws SQLException
@@ -969,7 +1025,7 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Retrieve the names of the non-standard keywords that this DBMS supports.
-	 * 
+	 *
 	 * @return	String[] of keywords.
 	 */
 	public synchronized String[] getSQLKeywords() throws SQLException
@@ -1063,7 +1119,7 @@ public class SQLDatabaseMetaData
 					keys.put(key, fki);
 					columns.put(key, new ArrayList());
 				}
-	
+
 				ForeignKeyColumnInfo fkiCol = new ForeignKeyColumnInfo(rdr.getString(8),
 														rdr.getString(8),
 														rdr.getLong(9).intValue());
@@ -1087,10 +1143,10 @@ public class SQLDatabaseMetaData
 			fki.setForeignKeyColumnInfo(fkiCol);
 			results[idx++] = fki;
 		}
-		
+
 		return results;
 	}
-	
+
 	private String createForeignKeyInfoKey(ForeignKeyInfo fki)
 	{
 		StringBuffer buf = new StringBuffer();
@@ -1140,13 +1196,6 @@ public class SQLDatabaseMetaData
 		return privateGetJDBCMetaData().getTablePrivileges(ti.getCatalogName(),
 													ti.getSchemaName(),
 													ti.getSimpleName());
-	}
-
-
-	// TODO: Write a version that returns an array of data objects.
-	public ResultSet getTypeInfo() throws SQLException
-	{
-		return privateGetJDBCMetaData().getTypeInfo();
 	}
 
 	// TODO: Write a version that returns an array of data objects.
@@ -1202,16 +1251,16 @@ public class SQLDatabaseMetaData
 	 * for UPDATEs, DELETEs etc. instead of just SELECTs. If this method returns
 	 * <TT>false</TT> then setMaxRows should only be applied to statements
 	 * that are running SELECTs.
-	 * 
+	 *
 	 * @return	<TT>true</TT> if this driver correctly implements setMaxRows().
-	 * 
+	 *
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
 	public boolean correctlySupportsSetMaxRows() throws SQLException
 	{
 		return !IDriverNames.OPTA2000.equals(getDriverName());
 	}
-	
+
 	/**
 	 * Clear cache of commonly accessed metadata properties.
 	 */
@@ -1223,9 +1272,9 @@ public class SQLDatabaseMetaData
 	/**
 	 * Make a String array of the passed string. Commas separate the elements
 	 * in the input string. The array is sorted.
-	 * 
+	 *
 	 * @param	data	Data to be split into the array.
-	 * 
+	 *
 	 * @return	data as an array.
 	 */
 	private static String[] makeArray(String data)
@@ -1243,9 +1292,9 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Return the <TT>DatabaseMetaData</TT> object for this connection.
-	 * 
+	 *
 	 * @return	The <TT>DatabaseMetaData</TT> object for this connection.
-	 * 
+	 *
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
 	private DatabaseMetaData privateGetJDBCMetaData() throws SQLException
