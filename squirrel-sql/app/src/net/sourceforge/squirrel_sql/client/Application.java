@@ -35,6 +35,7 @@ import javax.swing.Action;
 import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
@@ -126,6 +127,14 @@ class Application implements IApplication
 		if (!args.useDefaultMetalTheme())
 		{
 			MetalLookAndFeel.setCurrentTheme(new AllBluesBoldMetalTheme());
+			try
+			{
+				UIManager.setLookAndFeel(MetalLookAndFeel.class.getName());
+			}
+			catch (Exception ex)
+			{
+				s_log.error("Error setting Metal LAF", ex);
+			}
 		}
 
 		_resources = new SquirrelResources("net.sourceforge.squirrel_sql.client.resources.squirrel");
