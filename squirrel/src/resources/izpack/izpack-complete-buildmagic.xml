@@ -1,7 +1,7 @@
-<!-- =========================================================== -->
-<!--  IzPack build configuration                                 -->
-<!--  Version: $Id: izpack-complete-buildmagic.xml,v 1.4 2001-11-20 22:18:18 placson Exp $                -->
-<!-- =========================================================== -->
+<!-- ============================================================================ -->
+<!--  IzPack build configuration                                                  -->
+<!--  $Id: izpack-complete-buildmagic.xml,v 1.5 2001-11-20 22:58:35 placson Exp $ -->
+<!-- ============================================================================ -->
 <installation version="1.0">
     <info>
         <appname>Squirrel SQL Client</appname>
