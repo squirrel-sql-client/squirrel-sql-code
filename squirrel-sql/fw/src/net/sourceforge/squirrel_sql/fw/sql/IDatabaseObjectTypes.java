@@ -33,7 +33,7 @@ public interface IDatabaseObjectTypes
 	int TABLE = 5;
 	int PROCEDURE = 6;
 	int UDT = 7;
-	int ORACLE_PACKAGE = 8;
+	int PACKAGE = 8;
 
 	/**
 	 * This isn't an object type but rather is a guarantee that no value in this

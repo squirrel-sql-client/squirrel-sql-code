@@ -79,8 +79,8 @@ public class ObjectTree extends JTree
 
 		setShowsRootHandles(true);
 		setModel(_model);
-		expandNode((ObjectTreeNode) _model.getRoot());
-		setSelectionRow(0);
+		//expandNode((ObjectTreeNode)_model.getRoot());
+		//setSelectionRow(0);
 	}
 
 	/**
@@ -144,8 +144,7 @@ public class ObjectTree extends JTree
 
 		//parentNode.addBaseNodeExpandListener(ObjectsTree.this);
 		//INodeExpander[] expanders = parentNode.getExpanders();
-
-		// If node hasn't already neen expanded.
+		// If node hasn't already been expanded.
 		if (parentNode.getChildCount() == 0)
 		{
 			// Add together the standard expanders for this node type and any

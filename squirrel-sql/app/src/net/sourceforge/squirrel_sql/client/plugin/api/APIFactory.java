@@ -40,6 +40,16 @@ public class APIFactory
 	}
 
 	/**
+	 * Return the single instance of this class.
+	 * 
+	 * @return	the single instance of this class.
+	 */
+	public static APIFactory getInstance()
+	{
+		return s_instance;
+	}
+
+	/**
 	 * Return the API for the Object Tree.
 	 * 
 	 * @param	session		The sesion containing the object tree.

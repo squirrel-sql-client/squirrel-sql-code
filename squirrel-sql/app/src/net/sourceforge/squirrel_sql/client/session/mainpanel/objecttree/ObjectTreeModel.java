@@ -77,9 +77,9 @@ public class ObjectTreeModel extends DefaultTreeModel
 		registerExpander(ObjectTreeNode.IObjectTreeNodeType.DATABASE, expander);
 		registerExpander(ObjectTreeNode.IObjectTreeNodeType.CATALOG, expander);
 		registerExpander(ObjectTreeNode.IObjectTreeNodeType.SCHEMA, expander);
-		registerExpander(ObjectTreeNode.IObjectTreeNodeType.TABLE_TYPE_NODE, new TableTypeExpander(session));
-		registerExpander(ObjectTreeNode.IObjectTreeNodeType.UDT, new UDTTypeExpander(session));
-		registerExpander(ObjectTreeNode.IObjectTreeNodeType.PROCEDURE, new ProcedureTypeExpander(session));
+		registerExpander(ObjectTreeNode.IObjectTreeNodeType.TABLE_TYPE_NODE, new TableTypeExpander());
+		registerExpander(ObjectTreeNode.IObjectTreeNodeType.UDT, new UDTTypeExpander());
+		registerExpander(ObjectTreeNode.IObjectTreeNodeType.PROCEDURE_TYPE_NODE, new ProcedureTypeExpander());
 	}
 
 	/**

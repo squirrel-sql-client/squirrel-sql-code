@@ -47,23 +47,6 @@ public class TableTypeExpander implements INodeExpander
 		LoggerController.createLogger(TableTypeExpander.class);
 
 	/**
-	 * Ctor.
-	 * 
-	 * @param	session	Current session.
-	 * 
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> <TT>ISession</TT> passed.
-	 */
-	public TableTypeExpander(ISession session)
-	{
-		super();
-		if (session == null)
-		{
-			throw new IllegalArgumentException("ISession == null");
-		}
-	}
-
-	/**
 	 * Create the child nodes for the passed parent node and return them. Note
 	 * that this method should <B>not</B> actually add the child nodes to the
 	 * parent node as this is taken care of in the caller.

@@ -218,7 +218,7 @@ public class MainPanel extends SquirrelTabbedPane
 
 	public ObjectTreePanel getObjectTreePanel()
 	{
-		ObjectTreeTab tab = (ObjectTreeTab)_tabs.get(ITabIndexes.OBJECT_TREE_TAB);
+		ObjectTreeTab tab = (ObjectTreeTab)_tabs.get(ITabIndexes.NEW_OBJECT_TREE_TAB);
 		return (ObjectTreePanel)tab.getComponent();
 	}
 
