@@ -1,6 +1,15 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+1.2beta7
+========
+
+Bug Fixes
+---------
+- Fix ClassCastException thrown by the parser (Gerd Wagner).
+
+
+
 1.2beta6
 ========
 
