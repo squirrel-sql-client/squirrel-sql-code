@@ -1,0 +1,7 @@
+Mac OS Plugin Change Log
+===============================
+
+0.1
+===
+- Initial release
+  Overrides About menu to put on Apple menu
