@@ -7,12 +7,12 @@ import javax.swing.undo.UndoManager;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 
-public class RedoAction extends SquirrelAction
+public class UndoAction extends SquirrelAction
 {
 
 	private UndoManager _undo;
 	
-	public RedoAction(IApplication app, UndoManager undo) 
+	public UndoAction(IApplication app, UndoManager undo) 
 	{
 		super(app);
 		if(undo == null) throw new IllegalArgumentException("UndoManager == null");
@@ -23,7 +23,7 @@ public class RedoAction extends SquirrelAction
 	 */
 	public void actionPerformed(ActionEvent e)
 	{
-		if(_undo.canRedo()) _undo.redo();
+		if(_undo.canUndo()) _undo.undo();
 	}
 
 }
