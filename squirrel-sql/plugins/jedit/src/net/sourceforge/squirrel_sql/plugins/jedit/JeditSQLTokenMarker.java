@@ -14,33 +14,6 @@ import net.sourceforge.squirrel_sql.plugins.jedit.textarea.SQLTokenMarker;
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.Token;
 
 public class JeditSQLTokenMarker extends SQLTokenMarker {
-	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(JeditSQLTokenMarker.class);
-
-	private KeywordMap _keywords = new KeywordMap(true);
-
-	// Keyword 1 = keywords
-	// Keyword 2 = data types
-	// Keyword 3 = functions.
-	
-	public JeditSQLTokenMarker(SQLConnection conn) {
-		super(createKeywordMap(conn), false);
-		_keywords = SQUIRREL_getKeywordMap();
-	}
-
-	private static KeywordMap createKeywordMap(SQLConnection conn) {
-		KeywordMap keywords = new KeywordMap(true);
-		try {
-			final DatabaseMetaData dmd = conn.getMetaData();
-			addKeywords(dmd, keywords);
-			addDataTypes(dmd, keywords);
-			addFunctions(dmd, keywords);
-		} catch (Throwable ex) {
-			s_log.error("Error occured creating keyword map", ex);
-		}
-		return keywords;
-	}
-
 	private static void addKeywords(DatabaseMetaData dmd, KeywordMap keywords) {
 		keywords.add("ALL", Token.KEYWORD1);
 		keywords.add("ALTER", Token.KEYWORD1);
@@ -78,7 +51,6 @@ public class JeditSQLTokenMarker extends SQLTokenMarker {
 		keywords.add("UNIQUE", Token.KEYWORD1);
 		keywords.add("UNION", Token.KEYWORD1);
 		keywords.add("UPDATE", Token.KEYWORD1);
-
 		StringBuffer buf = new StringBuffer();
 		try {
 			buf.append(dmd.getSQLKeywords());
@@ -89,23 +61,69 @@ public class JeditSQLTokenMarker extends SQLTokenMarker {
 		while (strtok.hasMoreTokens()) {
 			keywords.add(strtok.nextToken().trim(), Token.KEYWORD1);
 		}
-
 		try {
 			addSingleKeyword(dmd.getCatalogTerm(), keywords);
 		} catch (Throwable ex) {
 			s_log.error("Error", ex);
 		}
-
 		try {
 			addSingleKeyword(dmd.getSchemaTerm(), keywords);
 		} catch (Throwable ex) {
 			s_log.error("Error", ex);
 		}
-
 		try {
 			addSingleKeyword(dmd.getProcedureTerm(), keywords);
 		} catch (Throwable ex) {
 			s_log.error("Error", ex);
+		}
+	}
+
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(JeditSQLTokenMarker.class);
+
+	private KeywordMap _keywords = new KeywordMap(true);
+
+	// Keyword 1 = keywords
+	// Keyword 2 = data types
+	// Keyword 3 = functions.
+	
+	public JeditSQLTokenMarker(SQLConnection conn) {
+		super(createKeywordMap(conn), false);
+		_keywords = SQUIRREL_getKeywordMap();
+		try
+		{
+			_dmd  = conn.getMetaData();
+		} catch(Exception e){}
+	}
+
+	private static KeywordMap createKeywordMap(SQLConnection conn) {
+		KeywordMap keywords = new KeywordMap(true);
+		try {
+			final DatabaseMetaData dmd = conn.getMetaData();
+			addKeywords(dmd, keywords);
+			addDataTypes(dmd, keywords);
+			addFunctions(dmd, keywords);
+			
+			// should be optional for LARGE databases??
+			addTableNames(dmd, keywords);
+		} catch (Throwable ex) {
+			s_log.error("Error occured creating keyword map", ex);
+		}
+		return keywords;
+	}
+
+	private static void addTableNames(DatabaseMetaData dmd, KeywordMap keywords) {
+		try
+		{
+			ResultSet rs = dmd.getTables(null,null,null,new String[]{"TABLE"});
+			while(rs.next())
+			{
+				keywords.add(rs.getString(3), Token.TABLE);
+			}
+			rs.close();
+		} catch(Exception e)
+		{
+			s_log.debug("failed to load table names into the keywordmap",e);
 		}
 	}
 
