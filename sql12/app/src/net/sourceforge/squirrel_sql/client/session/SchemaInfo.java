@@ -311,6 +311,30 @@ public class SchemaInfo
 	}
 
    /**
+    * This method returns the case sensitive name of a table as it is stored
+    * in the database.
+    * The case sensitive name is needed for example if you want to retrieve
+    * a table's meta data. Quote from the API doc of DataBaseMetaData.getTables():
+    * Parameters:
+    * ...
+    * tableNamePattern - a table name pattern; must match the table name as it is stored in the database
+    *
+    *
+    * @param data The tables name in arbitrary case.
+    * @return the table name as it is stored in the database
+    */
+   public String getCaseSensitiveTableName(String data)
+   {
+      if (!_loading && data != null)
+      {
+         String ucData = data.toUpperCase();
+         return (String) _tables.get(ucData);
+      }
+      return null;
+   }
+
+
+   /**
 	 * Retrieve whether the passed string is a column.
 	 *
 	 * @param	keyword		String to check.
