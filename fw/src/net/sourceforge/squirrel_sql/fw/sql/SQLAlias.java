@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.sql;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -101,9 +101,9 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 	 *
 	 * @param   rhs	 <CODE>ISQLAlias</CODE> to copy data from.
 	 *
-	 * @exception   ValidationException
-	 *				  Thrown if an error occurs assigning data from
-	 *				  <CODE>rhs</CODE>.
+	 * @exception	ValidationException
+	 *				Thrown if an error occurs assigning data from
+	 *				<CODE>rhs</CODE>.
 	 */
 	public synchronized void assignFrom(ISQLAlias rhs)
 		throws ValidationException
@@ -303,6 +303,11 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 		}
 	}
 
+	/**
+	 * Retrieve a copy of the SQL driver properties.
+	 *
+	 * @return	a copy of the SQL driver properties.
+	 */
 	public synchronized SQLDriverProperty[] getDriverProperties()
 	{
 		SQLDriverProperty[] props = new SQLDriverProperty[_driverProps.size()];

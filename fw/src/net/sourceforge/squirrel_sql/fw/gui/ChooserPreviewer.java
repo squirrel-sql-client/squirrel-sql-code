@@ -61,16 +61,13 @@ public class ChooserPreviewer extends JComponent
 	private final JLabel _imageComponent = new JLabel();
 
 	/** Component currently being displayed in the preview area. */
-	Component _currentComponent;
+	private Component _currentComponent;
 
 	/** Scrollpane for <TT>_currentComponent</TT>. */
 	private JScrollPane _currentComponentSp;
 
 	/** <TT>JFileChooser</TT> that this accessory belongs to. */
 	private JFileChooser _chooser;
-
-	/** <TT>Point(0, 0)</TT>. */
-	//	private static Point TOP_LEFT = new Point(0, 0);
 
 	/**
 	 * Listener listening to <TT>JFileChooser</TT> for a change
@@ -79,7 +76,7 @@ public class ChooserPreviewer extends JComponent
 	private ChooserListener _propChangeListener;
 
 	/**
-	 * Ctor.
+	 * Default ctor.
 	 */
 	public ChooserPreviewer()
 	{
@@ -119,8 +116,8 @@ public class ChooserPreviewer extends JComponent
 	 */
 	public void removeNotify()
 	{
-		cleanup();
 		super.removeNotify();
+		cleanup();
 	}
 
 	protected void cleanup()
@@ -140,8 +137,7 @@ public class ChooserPreviewer extends JComponent
 		File file = _chooser.getSelectedFile();
 		if (file != null && file.isFile() && file.canRead())
 		{
-			String suffix =
-				Utilities.getFileNameSuffix(file.getPath()).toLowerCase();
+			String suffix = Utilities.getFileNameSuffix(file.getPath()).toLowerCase();
 			if (suffix.equals("gif")
 				|| suffix.equals("jpg")
 				|| suffix.equals("jpeg")
@@ -172,7 +168,7 @@ public class ChooserPreviewer extends JComponent
 	 */
 	protected Component readImageFile(File file)
 	{
-		ImageIcon icon = new ImageIcon(file.getPath());
+		final ImageIcon icon = new ImageIcon(file.getPath());
 		_imageComponent.setIcon(icon);
 		return _imageComponent;
 	}
@@ -232,9 +228,7 @@ public class ChooserPreviewer extends JComponent
 	{
 		public void propertyChange(PropertyChangeEvent evt)
 		{
-			if (evt
-				.getPropertyName()
-				.equals(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY))
+			if (evt.getPropertyName().equals(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY))
 			{
 				ChooserPreviewer.this.fileChanged();
 			}

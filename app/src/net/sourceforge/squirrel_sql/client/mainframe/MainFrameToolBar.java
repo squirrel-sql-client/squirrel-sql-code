@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -30,8 +30,8 @@ import javax.swing.JLabel;
 import net.sourceforge.squirrel_sql.fw.gui.SortedComboBoxModel;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
 import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeEvent;
-import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeListener;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
@@ -44,7 +44,6 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.NewSessionProperties
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileHorizontalAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileVerticalAction;
-
 /**
  * Toolbar for <CODE>MainFrame</CODE>.
  *
@@ -231,7 +230,7 @@ class MainFrameToolBar extends ToolBar
 	 * Listener to changes in <TT>ObjectCache</TT>. As aliases are
 	 * added to/removed from <TT>DataCache</TT> this model is updated.
 	 */
-	private static class MyAliasesListener implements ObjectCacheChangeListener
+	private static class MyAliasesListener implements IObjectCacheChangeListener
 	{
 		/** Model that is listening. */
 		private AliasesDropDownModel _model;

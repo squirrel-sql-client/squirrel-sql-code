@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.xml;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -26,9 +26,8 @@ import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.util.IObjectCache;
+import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
 import net.sourceforge.squirrel_sql.fw.util.ObjectCache;
-import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeListener;
-
 /**
  * This class is a cache of objects that can be read from/written to an XML
  * document. All objects stored must implement <CODE>IHasIdentifier</CODE>.<P>
@@ -117,13 +116,13 @@ public class XMLObjectCache implements IObjectCache
 	/**
 	 * Adds a listener for changes to the cache entry for the passed class.
 	 *
-	 * @param   lis			a ObjectCacheChangeListener that will be notified
+	 * @param   lis			a IObjectCacheChangeListener that will be notified
 	 *						when objects are added and removed from this cache
 	 *						entry.
 	 * @param   objClass	The class of objects whose cache we want to listen
 	 *						to.
 	 */
-	public void addChangesListener(ObjectCacheChangeListener lis, Class objClass)
+	public void addChangesListener(IObjectCacheChangeListener lis, Class objClass)
 	{
 		_cache.addChangesListener(lis, objClass);
 	}
@@ -131,13 +130,13 @@ public class XMLObjectCache implements IObjectCache
 	/**
 	 * Removes a listener for changes to the cache entry for the passed class.
 	 *
-	 * @param   lis			a ObjectCacheChangeListener that will be notified
+	 * @param   lis			a IObjectCacheChangeListener that will be notified
 	 *						when objects are added and removed from this cache
 	 *						entry.
 	 * @param   objClass	The class of objects whose cache we want to listen
 	 *						to.
 	 */
-	public void removeChangesListener(ObjectCacheChangeListener lis,
+	public void removeChangesListener(IObjectCacheChangeListener lis,
 										Class objClass)
 	{
 		_cache.removeChangesListener(lis, objClass);

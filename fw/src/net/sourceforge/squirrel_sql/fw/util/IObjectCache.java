@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.util;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -21,13 +21,13 @@ import java.util.Iterator;
 
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-
 /**
  * This interface defines a the behaviour of an object cache.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public interface IObjectCache {
+public interface IObjectCache
+{
 	/**
 	 * Retrieve a stored object.
 	 *
@@ -80,22 +80,22 @@ public interface IObjectCache {
 	/**
 	 * Adds a listener for changes to the cache entry for the passed class.
 	 *
-	 * @param   lis			a ObjectCacheChangeListener that will be notified
+	 * @param   lis			a IObjectCacheChangeListener that will be notified
 	 *						when objects are added or removed from this cache
 	 *						entry.
 	 * @param   objClass	The class of objects whose cache we want to listen
 	 *						to.
 	 */
-	void addChangesListener(ObjectCacheChangeListener lis, Class objClass);
+	void addChangesListener(IObjectCacheChangeListener lis, Class objClass);
 
 	/**
 	 * Removes a listener for changes to the cache entry for the passed class.
 	 *
-	 * @param   lis			a ObjectCacheChangeListener that will be notified
+	 * @param   lis			a IObjectCacheChangeListener that will be notified
 	 *						when objects are added or removed from this cache
 	 *						entry.
 	 * @param   objClass	The class of objects whose cache we want to listen
 	 *						to.
 	 */
-	void removeChangesListener(ObjectCacheChangeListener lis, Class objClass);
+	void removeChangesListener(IObjectCacheChangeListener lis, Class objClass);
 }
