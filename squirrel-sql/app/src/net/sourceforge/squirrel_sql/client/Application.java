@@ -46,6 +46,7 @@ import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.db.AliasMaintSheetFactory;
 import net.sourceforge.squirrel_sql.client.db.DataCache;
 import net.sourceforge.squirrel_sql.client.db.DriverMaintSheetFactory;
+import net.sourceforge.squirrel_sql.client.gui.FileViewerFactory;
 import net.sourceforge.squirrel_sql.client.gui.SplashScreen;
 import net.sourceforge.squirrel_sql.client.gui.laf.AllBluesBoldMetalTheme;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
@@ -59,7 +60,6 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionSheet;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionPropertiesSheetFactory;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
-
 /**
  * Defines the API to do callbacks on the application.
  *
@@ -71,7 +71,7 @@ class Application implements IApplication
 	private static ILogger s_log;
 
 	/** Splash screen used during startup process. */
-	private SplashScreen _splash;
+	//private SplashScreen _splash;
 
 	private SquirrelPreferences _prefs;
 	private SQLDriverManager _driverMgr;
@@ -84,12 +84,12 @@ class Application implements IApplication
 	/** Object to manage plugins. */
 	private PluginManager _pluginManager;
 
-	private DummyAppPlugin _dummyPlugin = new DummyAppPlugin();
+	private final DummyAppPlugin _dummyPlugin = new DummyAppPlugin();
 
 	private SquirrelResources _resources;
 
 	/** Thread pool for long running tasks. */
-	private TaskThreadPool _threadPool = new TaskThreadPool();
+	private final TaskThreadPool _threadPool = new TaskThreadPool();
 
 	private LoggerController _loggerFactory;
 
@@ -100,7 +100,7 @@ class Application implements IApplication
 	private PrintStream _jdbcDebugOutput;
 
 	/** Contains info about fonts for squirrel. */
-	private FontInfoStore _fontInfoStore = new FontInfoStore();
+	private final FontInfoStore _fontInfoStore = new FontInfoStore();
 
 	/**
 	 * ctor.
@@ -124,35 +124,38 @@ class Application implements IApplication
 		}
 
 		_resources = new SquirrelResources("net.sourceforge.squirrel_sql.client.resources.squirrel");
+
 		final boolean loadPlugins = args.getLoadPlugins();
+
+		SplashScreen splash = null;
 		if (args.getShowSplashScreen())
 		{
-			_splash = new SplashScreen(_resources, 10);
+			splash = new SplashScreen(_resources, 10);
 		}
 
 		try
 		{
 			CursorChanger chg = null;
-			if (_splash != null)
+			if (splash != null)
 			{
-				chg = new CursorChanger(_splash);
+				chg = new CursorChanger(splash);
 				chg.show();
 			}
 			try
 			{
-				indicateNewStartupTask("Initializing UI factories...");
+				indicateNewStartupTask(splash, "Initializing UI factories...");
 				AliasMaintSheetFactory.initialize(this);
 				DriverMaintSheetFactory.initialize(this);
 				SessionPropertiesSheetFactory.initialize(this);
 
-				indicateNewStartupTask(loadPlugins ? "Loading plugins..." : "No Plugins are to be loaded...");
+				indicateNewStartupTask(splash, loadPlugins ? "Loading plugins..." : "No Plugins are to be loaded...");
 				_pluginManager = new PluginManager(this);
 				if (loadPlugins)
 				{
 					_pluginManager.loadPlugins();
 				}
 
-				indicateNewStartupTask("Loading preferences...");
+				indicateNewStartupTask(splash, "Loading preferences...");
 				_prefs = SquirrelPreferences.load();
 				preferencesHaveChanged(null);
 				_prefs.addPropertyChangeListener(
@@ -164,26 +167,26 @@ class Application implements IApplication
 						}
 					});
 
-				indicateNewStartupTask("Loading actions...");
+				indicateNewStartupTask(splash, "Loading actions...");
 				_actions = new ActionCollection(this);
 
-				indicateNewStartupTask("Loading user specified accelerators and mnemonics...");
+				indicateNewStartupTask(splash, "Loading user specified accelerators and mnemonics...");
 				_actions.loadActionKeys(_prefs.getActionKeys());
 
-				indicateNewStartupTask("Creating JDBC driver manager...");
+				indicateNewStartupTask(splash, "Creating JDBC driver manager...");
 				_driverMgr = new SQLDriverManager();
 
 				// TODO: pass in a message handler so user gets error msgs.
-				indicateNewStartupTask("Loading JDBC driver and alias information...");
+				indicateNewStartupTask(splash, "Loading JDBC driver and alias information...");
 				_cache = new DataCache(_driverMgr, _resources, null);
 
-				indicateNewStartupTask("Creating main window...");
+				indicateNewStartupTask(splash, "Creating main window...");
 				_mainFrame = new MainFrame(this);
 
-				indicateNewStartupTask("Initializing plugins...");
+				indicateNewStartupTask(splash, "Initializing plugins...");
 				_pluginManager.initializePlugins();
 
-				indicateNewStartupTask("Showing main window...");
+				indicateNewStartupTask(splash, "Showing main window...");
 				_mainFrame.setVisible(true);
 			}
 			finally
@@ -196,11 +199,10 @@ class Application implements IApplication
 		}
 		finally
 		{
-			if (_splash != null)
+			if (splash != null)
 			{
-				_splash.dispose();
+				splash.dispose();
 			}
-			_splash = null;
 		}
 
 	}
@@ -208,7 +210,10 @@ class Application implements IApplication
 	public void shutdown()
 	{
 		_pluginManager.unloadPlugins();
+
 		_prefs.save();
+
+		FileViewerFactory.getInstance().closeAllViewers();
 
 		final ApplicationFiles appFiles = new ApplicationFiles();
 
@@ -408,13 +413,15 @@ class Application implements IApplication
 	 * If we are running with a splash screen then indicate in the splash
 	 * screen that a new task has commenced.
 	 *
-	 *@param  taskDescription Description of new task.
+	 * @param	splash			Splash screen.
+	 * @param	taskDescription	Description of new task.
 	 */
-	private void indicateNewStartupTask(String taskDescription)
+	private void indicateNewStartupTask(SplashScreen splash,
+										String taskDescription)
 	{
-		if (_splash != null)
+		if (splash != null)
 		{
-			_splash.indicateNewTask(taskDescription);
+			splash.indicateNewTask(taskDescription);
 		}
 	}
 
