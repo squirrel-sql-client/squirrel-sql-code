@@ -30,6 +30,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 
+import net.sourceforge.squirrel_sql.fw.sql.SQLDriverProperty;
+
 class DriverPropertiesTable extends JTable
 {
 	DriverPropertiesTable()
@@ -47,7 +49,14 @@ class DriverPropertiesTable extends JTable
 	DriverPropertiesTable(Driver driver, String url)
 		throws SQLException
 	{
-		super(new DriverPropertiesTableModel(driver, url));
+		this(driver, url, null);
+	}
+
+	DriverPropertiesTable(Driver driver, String url,
+							SQLDriverProperty[] override)
+		throws SQLException
+	{
+		super(new DriverPropertiesTableModel(driver, url, override));
 		init();
 	}
 

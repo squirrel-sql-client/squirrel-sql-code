@@ -113,6 +113,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 		setUrl(rhs.getUrl());
 		setUserName(rhs.getUserName());
 		setUseDriverProperties(rhs.getUseDriverProperties());
+		setDriverProperties(rhs.getDriverProperties());
 	}
 
 	/**
@@ -139,6 +140,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 		{
 			final SQLAlias alias = (SQLAlias)super.clone();
 			alias._propChgReporter = null;
+			alias.setDriverProperties(getDriverProperties());
 			return alias;
 		}
 		catch (CloneNotSupportedException ex)
@@ -304,7 +306,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 	}
 
 	/**
-	 * Retrieve a copy of the SQL driver properties.
+	 * Retrieve a clone of the SQL driver properties.
 	 *
 	 * @return	a copy of the SQL driver properties.
 	 */
