@@ -14,13 +14,13 @@ public class FrameWorkAcessor
 {
    public static ISQLPanelAPI getSQLPanelAPI(ISession session, SQLScriptPlugin plugin)
    {
-      //	_session.getSQLPanelAPI(_plugin)
-      return session.getSessionSheet().getSQLPaneAPI();
+      return session.getSQLPanelAPI(plugin);
+      //return session.getSessionSheet().getSQLPaneAPI();
    }
 
    public static IObjectTreeAPI getObjectTreeAPI(ISession session, SQLScriptPlugin sqlScriptPlugin)
    {
-      //IObjectTreeAPI api = session.getObjectTreeAPI(this);
-      return session.getSessionSheet().getObjectTreePanel();
+      return session.getObjectTreeAPI(sqlScriptPlugin);
+      //return session.getSessionSheet().getObjectTreePanel();
    }
 }
