@@ -101,10 +101,12 @@ public class RowDataInputFrame extends JInternalFrame
 		JTextArea r1 = new JTextArea("Data", 1, 10);
 		r1.setBackground(Color.LIGHT_GRAY);
 		r1.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		r1.setEditable(false);
 		rowHeaderPanel.add(r1, BorderLayout.NORTH);
-		JTextArea r2 = new JTextArea("\nField\nDescription\n", 4, 10);
+		JTextArea r2 = new JTextArea("\nColumn\nDescription\n", 4, 10);
 		r2.setBackground(Color.LIGHT_GRAY);
 		r2.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		r2.setEditable(false);
 		rowHeaderPanel.add(r2, BorderLayout.CENTER);
 		scrollPane.setRowHeaderView(rowHeaderPanel);
 
@@ -151,6 +153,14 @@ public class RowDataInputFrame extends JInternalFrame
 		// user said to insert, so collect all the data from the
 		// JTable and send it to the DataSetViewer for insertion
 		// into DB and on-screen tables
+
+		// first make sure that user's last input has been included
+		// (It is too easy for user to enter data and forget to click
+		// on another field to force it to be set.)
+		if (table.isEditing()) {
+			int col = table.getEditingColumn();
+			table.getCellEditor(0, col).stopCellEditing();
+		}
 		
 		Object[] rowData = new Object[table.getModel().getColumnCount()];
 		for (int i=0; i< table.getModel().getColumnCount(); i++) {
@@ -208,6 +218,13 @@ public class RowDataInputFrame extends JInternalFrame
 			
 			_colDefs = colDefs;
 			
+			// set up cell editors on first row
+			for (int i=0; i< colDefs.length; i++) {
+				cm.getColumn(i).setCellEditor(
+					CellComponentFactory.getInCellEditor(this, _colDefs[i]));
+			}
+		
+			
 			// the second row contains a multi-line description,
 			// so make that row high enough to display it
 			setRowHeight(1, 60);
@@ -223,7 +240,7 @@ public class RowDataInputFrame extends JInternalFrame
 //?? Future: may want to create TablePopupMenu to allow cut/copy/paste operations
 		
 			// add mouse listener for Popup
-			addMouseListener(new MouseAdapter()
+			MouseAdapter m = new MouseAdapter()
 			{
 				public void mousePressed(MouseEvent evt)
 				{
@@ -250,7 +267,8 @@ public class RowDataInputFrame extends JInternalFrame
 						//RowDataJTable.this.displayPopupMenu(evt);
 					}
 				}
-			});
+			};
+			addMouseListener(m);
 		}
 		
 		public boolean isCellEditable(int row, int col) {
@@ -259,11 +277,11 @@ public class RowDataInputFrame extends JInternalFrame
 			return CellComponentFactory.isEditableInCell(_colDefs[row], getValueAt(row,col));
 		}
 			
-		// set up editors and renderers
-		public TableCellEditor getCellEditor(int row, int column) {
-			// assume this is only called for the first row in the table
-			return CellComponentFactory.getInCellEditor(this, _colDefs[column]);
-		}
+//		// set up editors and renderers
+//		public TableCellEditor getCellEditor(int row, int column) {
+//			// assume this is only called for the first row in the table
+//			return CellComponentFactory.getInCellEditor(this, _colDefs[column]);
+//		}
 			
 		public TableCellRenderer getCellRenderer(int row, int column) {
 			if (row == 0)
@@ -272,8 +290,24 @@ public class RowDataInputFrame extends JInternalFrame
 			return new RowDataDescriptionRenderer();
 		}
 
-		// set up to validate data when user finishes editing
-		public void setValueAt(Object newValueString, int row, int col) {
+		/*
+		 * When user leaves a cell after editing it, the contents of
+		 * that cell need to be converted from a string into an
+		 * object of the appropriate type before updating the table.
+		 * However, when the call comes from the Popup window, the data
+		 * has already been converted and validated.
+		 * We assume that a String being passed in here is a value from
+		 * a text field that needs to be converted to an object, and
+		 * a non-string object has already been validated and converted.
+		 */
+		 public void setValueAt(Object newValueString, int row, int col) {
+		 	if (! (newValueString instanceof java.lang.String)) {
+		 		// data is an object - assume already validated
+		 		super.setValueAt(newValueString, row, col);
+		 		return;
+		 	}
+		 	
+		 	// data is a String, so we need to convert to real object
 		 	StringBuffer messageBuffer = new StringBuffer();
 		 	ColumnDisplayDefinition colDef = _colDefs[col];
 		 	Object newValueObject = CellComponentFactory.validateAndConvert(

@@ -324,8 +324,20 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		 * When user leaves a cell after editing it, the contents of
 		 * that cell need to be converted from a string into an
 		 * object of the appropriate type before updating the table.
+		 * However, when the call comes from the Popup window, the data
+		 * has already been converted and validated.
+		 * We assume that a String being passed in here is a value from
+		 * a text field that needs to be converted to an object, and
+		 * a non-string object has already been validated and converted.
 		 */
 		 public void setValueAt(Object newValueString, int row, int col) {
+		 	if (! (newValueString instanceof java.lang.String)) {
+		 		// data is an object - assume already validated
+		 		super.setValueAt(newValueString, row, col);
+		 		return;
+		 	}
+		 	
+		 	// data is a String, so we need to convert to real object
 		 	StringBuffer messageBuffer = new StringBuffer();
 		 	ColumnDisplayDefinition colDef = getColumnDefinitions()[col];
 		 	Object newValueObject = CellComponentFactory.validateAndConvert(
@@ -347,15 +359,6 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		 	}
 		 }
 
-
-		/*
-		 * When the user finishes editing in the Popup window and wants
-		 * to update the database, the data has already been converted
-		 * into an Object of the appropriate type.
-		 */
-		public void setConvertedValueAt(Object newValue, int row, int col) {
-			super.setValueAt(newValue, row, col);
-		}
 
 		public void setColumnDefinitions(ColumnDisplayDefinition[] colDefs)
 		{
