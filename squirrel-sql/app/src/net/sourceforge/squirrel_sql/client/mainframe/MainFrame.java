@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.mainframe;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Point;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -43,6 +44,7 @@ import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.fw.gui.BaseMDIParentFrame;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.ScrollableDesktopPane;
+import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -71,6 +73,9 @@ public class MainFrame extends BaseMDIParentFrame {
 
 	private AliasesToolWindow _aliasesToolWindow;
 	private DriversToolWindow _driversToolWindow;
+
+	/** Status bar at bottom of window. */
+	private StatusBar _statusBar = new StatusBar(true);
 
 	private JInternalFrame _activeInternalFrame;
 
@@ -107,6 +112,9 @@ public class MainFrame extends BaseMDIParentFrame {
 			super.dispose();
 			System.exit(0);
 		}
+	}
+
+	public void pack() {
 	}
 
 	public void addInternalFrame(JInternalFrame child, boolean addToWindowMenu, Action action) {
@@ -230,6 +238,10 @@ public class MainFrame extends BaseMDIParentFrame {
 								ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
 								ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		content.add(sp, BorderLayout.CENTER);
+
+		Font fn = _app.getFontInfoStore().getStatusBarFontInfo().createFont();
+		_statusBar.setFont(fn);
+		content.add(_statusBar, BorderLayout.SOUTH);
 
 		setJMenuBar(new MainFrameMenuBar(_app, getDesktopPane(), _app.getActionCollection()));
 
