@@ -182,20 +182,23 @@ public class SQLExecuterTask implements Runnable
 	private boolean processQuery(String querySql)
 		throws SQLException, DataSetException
 	{
-		long executionStart = System.currentTimeMillis();
-		long executionEnd = 0;
-		long outputStart = 0;
-		long outputEnd = 0;
+//		long executionStart = System.currentTimeMillis();
+//		long executionEnd = 0;
+//		long outputStart = 0;
+//		long outputEnd = 0;
 
 		++_currentQueryIndex;
 
 		_cancelPanel.setSQL(querySql);
 		_cancelPanel.setStatusLabel("Executing SQL...");
+
+		final SQLExecutionInfo exInfo = new SQLExecutionInfo(_currentQueryIndex, querySql);
 		boolean rc = _stmt.execute(querySql);
-		executionEnd = System.currentTimeMillis();
+		exInfo.sqlExecutionComplete();
+//		executionEnd = System.currentTimeMillis();
 		if (rc)
 		{
-			outputStart = System.currentTimeMillis();
+//			outputStart = System.currentTimeMillis();
 			if (_stopExecution)
 			{
 				return false;
@@ -222,7 +225,7 @@ public class SQLExecuterTask implements Runnable
 						_session.getMessageHandler().showMessage(ex);
 					}
 
-					_sqlPanel.addResultsTab(querySql, rsds, rsmdds, _cancelPanel);
+					_sqlPanel.addResultsTab(exInfo, rsds, rsmdds, _cancelPanel);
 					_cancelPanelRemoved = true;
 					try
 					{
@@ -239,7 +242,8 @@ public class SQLExecuterTask implements Runnable
 					rs.close();
 				}
 			}
-			outputEnd = System.currentTimeMillis();
+//			outputEnd = System.currentTimeMillis();
+//			exInfo.resultsProcessingComplete();
 		}
 		else
 		{
@@ -250,8 +254,8 @@ public class SQLExecuterTask implements Runnable
 
 		//  i18n
 		final NumberFormat nbrFmt = NumberFormat.getNumberInstance();
-		double executionLength = (executionEnd - executionStart) / 1000.0;
-		double outputLength = (outputEnd - outputStart) / 1000.0;
+		double executionLength = exInfo.getSQLExecutionElapsedMillis() / 1000.0;
+		double outputLength = exInfo.getResultsProcessingElapsedMillis() / 1000.0;
 		StringBuffer buf = new StringBuffer();
 		buf.append("Query ").append(nbrFmt.format(_currentQueryIndex))
 			.append(" elapsed time (seconds) - Total: ")
