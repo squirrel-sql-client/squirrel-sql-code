@@ -35,7 +35,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 
-//?????
 import net.sourceforge.squirrel_sql.fw.datasetviewer.MyTableModel;
 
 public class TablePopupMenu extends BasePopupMenu
@@ -114,10 +113,10 @@ public class TablePopupMenu extends BasePopupMenu
 // Also, the copy operations do not seem to work right - we may need special
 //    versions for the cellEditor menu.
 //		add(_cut);
-		add(_copy);
-		add(_copyHtml);
+//		add(_copy);
+//		add(_copyHtml);
 //		add(_paste);
-		addSeparator();
+//		addSeparator();
 		add(_select);
 		addSeparator();
 		add(_insertRow);
