@@ -654,4 +654,9 @@ public class ConstraintView implements GraphComponent
       _constraintViewListeners.remove(constraintViewListener);
       _constraintViewListeners.add(constraintViewListener);
    }
+
+   public void setData(ConstraintData constraintData)
+   {
+      _constraintData = constraintData;
+   }
 }

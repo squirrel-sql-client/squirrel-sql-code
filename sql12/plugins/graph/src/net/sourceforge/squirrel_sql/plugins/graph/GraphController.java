@@ -52,6 +52,11 @@ public class GraphController
             removeGraph();
          }
 
+         public void refreshAllTablesRequested()
+         {
+            refreshAllTables();
+         }
+
       };
 
       _desktopController = new GraphDesktopController(_graphDesktopListener, _session, _plugin);
@@ -106,6 +111,15 @@ public class GraphController
          {
             addTableIntern(null, null, tableFrameControllerXmls[i]);
          }
+      }
+   }
+
+   private void refreshAllTables()
+   {
+      for (int i = 0; i < _openTableFrameCtrls.size(); i++)
+      {
+         TableFrameController tableFrameController = (TableFrameController) _openTableFrameCtrls.elementAt(i);
+         tableFrameController.refresh();
       }
    }
 

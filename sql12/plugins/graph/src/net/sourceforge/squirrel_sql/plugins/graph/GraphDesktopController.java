@@ -23,6 +23,7 @@ public class GraphDesktopController
    private JMenuItem _mnuSaveGraph;
    private JMenuItem _mnuRenameGraph;
    private JMenuItem _mnuRemoveGraph;
+   private JMenuItem _mnuRefreshAllTables;
    private JCheckBoxMenuItem _mnuShowConstraintNames;
    private JCheckBoxMenuItem _mnuZoomPrint;
    private GraphDesktopListener _listener;
@@ -137,6 +138,16 @@ public class GraphDesktopController
          }
       });
 
+
+      _mnuRefreshAllTables = new JMenuItem("Refresh all tables");
+      _mnuRefreshAllTables.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onRefreshAllTables();
+         }
+      });
+
       _mnuShowConstraintNames = new JCheckBoxMenuItem("Show constraint names");
       _mnuShowConstraintNames.addActionListener(new ActionListener()
       {
@@ -158,8 +169,16 @@ public class GraphDesktopController
       _popUp.add(_mnuSaveGraph);
       _popUp.add(_mnuRenameGraph);
       _popUp.add(_mnuRemoveGraph);
+      _popUp.add(new JSeparator());
+      _popUp.add(_mnuRefreshAllTables);
+      _popUp.add(new JSeparator());
       _popUp.add(_mnuShowConstraintNames);
       _popUp.add(_mnuZoomPrint);
+   }
+
+   private void onRefreshAllTables()
+   {
+      _listener.refreshAllTablesRequested();
    }
 
    private void onZoomPrint()
@@ -208,13 +227,16 @@ public class GraphDesktopController
       _desktopPane.putGraphComponents(constraintViews);
    }
 
-   public void removeConstraintViews(ConstraintView[] constraintViews)
+   public void removeConstraintViews(ConstraintView[] constraintViews, boolean keepFoldingPoints)
    {
       _desktopPane.removeGraphComponents(constraintViews);
 
-      for (int i = 0; i < constraintViews.length; i++)
+      if(false == keepFoldingPoints)
       {
-         constraintViews[i].removeAllFoldingPoints();
+         for (int i = 0; i < constraintViews.length; i++)
+         {
+            constraintViews[i].removeAllFoldingPoints();
+         }
       }
    }
 
