@@ -4,7 +4,7 @@
 <!--                                                                        -->
 <!--  Define configuration elements that are used by the build system here. -->
 <!--                                                                        -->
-<!--  $Id: project.xml,v 1.4 2001-11-20 07:53:57 placson Exp $ -->
+<!--  $Id: project.xml,v 1.5 2001-11-20 18:00:41 placson Exp $ -->
 <!--                                                                        -->
 <!-- ====================================================================== -->
 
@@ -58,6 +58,20 @@
 
 <!-- define properties and such that are required by required tools -->
 
+<property name="squirrel.plugins.root" 
+          value="${basedir}/output/build/classes/net/sourceforge/squirrel_sql/plugins" />
+
+<!-- dbinfo plugin -->
+<property name="dbinfo.plugin" value="${squirrel.plugins.root}/dbinfo" />
+
+<!-- laf plugin -->
+<property name="laf.plugin" value="${squirrel.plugins.root}/laf" />
+
+<!-- savedqueries plugin -->
+<property name="savedqueries.plugin" value="${squirrel.plugins.root}/savedqueries" />
+
+<!-- sqlscript plugin -->
+<property name="sqlscript.plugin" value="${squirrel.plugins.root}/sqlscript" />
 
 <!-- ====================================================================== -->
 <!--  Task Setup                                                            -->
