@@ -4,7 +4,7 @@
 
 <HEAD>
 	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-8859-1">
-	<TITLE>SQuirreL SQL Client</TITLE>
+	<TITLE>SQuirreL SQL Client Plugins</TITLE>
 	<LINK REL="stylesheet" TYPE="text/css" href="style.css" title="SQuirreL SQL Client Stylesheet">
 	<META NAME="description" CONTENT="SQuirreL SQL is an open-source Java SQL Client program for any JDBC compliant database">
 	<META NAME="keywords" CONTENT="squirrel-sql, squirrel sql, sql, java, database, open source, open-source">
@@ -23,7 +23,7 @@
 				<IMG SRC="images/logo1.jpg" WIDTH="302" HEIGHT="99" BORDER="0" ALT="SQuirreL SQL Client Logo">
 			</TD>
 			<TD ALIGN="left">
-				<H1>SQL Client Home</H1>
+				<H1>SQL Client Plugins</H1>
 			</TD>
 		</TR>
 		<TR>
@@ -79,45 +79,13 @@ border="0" width="96" height="36">
 			</TD>
 
 			<TD>
-				<H2>Latest News</H2>
-
-				<P>4 Feb 2002 - First beta of 1.1 has been released.
-                <A HREF="http://sourceforge.net/forum/forum.php?forum_id=149663">More</A>
-                information.
-
 				<H2>Overview</H2>
 
-				<P>SQuirreL SQL Client is a graphical Java program that will allow
-				you to view the structure of a JDBC compliant database, browse the
-				data in tables, issue SQL commands etc. It is free software, and
-				you are welcome to redistribute it under the terms of the
-				<A HREF="http://www.gnu.org/licenses/licenses.html#GPL">GNU General Public License</A>.
-
-				<P>The first beta version of 1.1 has just been released.
-				The <A HREF = "changes.txt">change log</A> gives the history
-				so far.
-
-                <P>If you have any queries or issues about SQuirreL please post
-                them to the <A HREF="mailto:squirrel-sql-users@lists.sourceforge.net">
-                Users Mailing list</A>.
-
-				<H2>Requirements</H2>
-
-				<P>SQuirreL SQL Client 1.0 requires JDK1.2 to work but prefers
-				JDK 1.3 but SQuirreL SQL Client 1.1 requires JDK1.3. 
+				<P>A plugin is an application written in Java that runs within SQuirreL. This
+				allows developers to enhance the functionality of SQuirreL without having to
+				rebuild the SQuirreL application itself.</P>
 
 				<H2>Installation</H2>
-				<P>The SQuirreL SQL Client is installed with the IzPack Java
-				installer. Download the file
-				<TT>squirrel-sql-&lt;version&gt;-install.jar</TT> and execute
-				it with the command:
-
-<PRE>
-java -jar squirrel-sql-&lt;version&gt;-install.jar
-</PRE>
-
-				<P>For Windows the file squirrel-sql.bat will run the application. For Unix
-				the file is squirrel-sql.sh.
 
 				<P>To install plugins (SQuirreL SQL Client 1.1 only) you need
 				to download the appropriate .zip or .tar.gz file and unpack
@@ -125,43 +93,96 @@ java -jar squirrel-sql-&lt;version&gt;-install.jar
 				application making sure that you "use folder names". The
 				source for each plugin is supplied with it.
 
-				<H2>Downloads</H2>
+				<H2>Existing Plugins</H2>
+				
+				<TABLE WIDTH="100%" BORDER="1" CELLPADDING="4" CELLSPACING="1">
+					<TR>
+						<TD><A HREF="http://sourceforge.net/project/showfiles.php?group_id=28383">jEdit</A> by
+							<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A> and Johan Compagner</TD>
+						<TD>Version 0.1 released 04 Feb 2002</TD>
+					</TR>
+					<TR>
+						<TD COLSPAN="4">Requirements: SQuirreL SQL Client 1.1beta1+ and JDK1.3+</TD>
+					</TR>
+					<TR>
+						<TD COLSPAN="4">
+							This plugin replaces the standard Java text area control with one from the
+							<A HREF="www.jedit.org">jEdit</A> text editor. Additional features include syntax
+							highlighting, bracket matching and much more.
+						</TD>
+					</TR>
+				</TABLE>
 
-				<P>The project is hosted at <A HREF="http://sourceforge.net/projects/squirrel-sql/">SourceForge</A>
-				with downloadable source and executable files <A HREF="http://sourceforge.net/project/showfiles.php?group_id=28383">here</A>.
+				<TABLE WIDTH="100%" BORDER="1" CELLPADDING="4" CELLSPACING="1">
+					<TR>
+						<TD><A HREF="http://sourceforge.net/project/showfiles.php?group_id=28383">Look and Feel</A> by
+							<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A></TD>
+						<TD>Version 0.1 released 04 Feb 2002</TD>
+					</TR>
+					<TR>
+						<TD COLSPAN="4">Requirements: SQuirreL SQL Client 1.1beta1+ and JDK1.3+</TD>
+					</TR>
+					<TR>
+						<TD COLSPAN="4">
+							This plugin allows you to select a Look and Feel other than the default Java one. It also
+							allows you to specify the fonts to use for the different GUI elements. It ships
+							with both the  Kunststoff and SkinLF Look and Feels.
+						</TD>
+					</TR>
+				</TABLE>
 
+				<TABLE WIDTH="100%" BORDER="1" CELLPADDING="4" CELLSPACING="1">
+					<TR>
+						<TD><A HREF="http://sourceforge.net/project/showfiles.php?group_id=28383">SQL Scripts</A> by
+							Johan Compagner</TD>
+						<TD>Version 0.1 released 04 Feb 2002</TD>
+					</TR>
+					<TR>
+						<TD COLSPAN="4">Requirements: SQuirreL SQL Client 1.1beta1+ and JDK1.3+</TD>
+					</TR>
+					<TR>
+						<TD COLSPAN="4">
+							The SQL Scripts plugin allows you to save and restore SQL scripts from a text file.
+							It will also allow you to create CREATE TABLE and INSERT scripts for existing
+							tables in your database.
+						</TD>
+					</TR>
+				</TABLE>
+
+				<H2>Plugins Under Development</H2>
+
+				<TABLE WIDTH="100%" BORDER="1" CELLPADDING="4" CELLSPACING="1">
+					<TR>
+						<TD WIDTH="20%">Data Import by Like Gao</TD>
+					</TR>
+					<TR>
+						<TD COLSPAN="2">
+							The Data Import plugin will allow you to import data into existing and new tables
+							in a variety of formats. The first format will be CSV.
+						</TD>
+					</TR>
+				</TABLE>
+
+				<TABLE WIDTH="100%" BORDER="1" CELLPADDING="4" CELLSPACING="1">
+					<TR>
+						<TD WIDTH="20%">Session Startup by <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A></TD>
+					</TR>
+					<TR>
+						<TD COLSPAN="2">
+							This plugin will allow you to specify one or more SQL statements to be executed
+							when a session is first started.
+						</TD>
+					</TR>
+				</TABLE>
+				
 				<HR>
 
+  <p>
     <a href="http://validator.w3.org/check/referer"><img border="0"
         src="http://www.w3.org/Icons/valid-html401"
         alt="Valid HTML 4.01!" height="31" width="88"></a>
-  
-<a target="_top" href="http://t.extreme-dm.com/?login=colbell">
-<img name=im src="http://t1.extreme-dm.com/i.gif" height=38
-border=0 width=41 alt=""></a><script language="javascript" type="text/javascript"><!--
-an=navigator.appName;d=document;function
-pr(){d.write("<img src=\"http://t0.extreme-dm.com",
-"/0.gif?tag=colbell&j=y&srw="+srw+"&srb="+srb+"&",
-"rs="+r+"&l="+escape(d.referrer)+"\" height=1 ",
-"width=1>");}srb="na";srw="na";//-->
-</script><script language="javascript1.2" type="text/javascript"><!--
-s=screen;srw=s.width;an!="Netscape"?
-srb=s.colorDepth:srb=s.pixelDepth;//-->
-</script><script language="javascript" type="text/javascript"><!--
-r=41;d.images?r=d.im.width:z=0;pr();//-->
-</script><noscript><img height=1 width=1 alt="" 
-src="http://t0.extreme-dm.com/0.gif?tag=colbell&amp;j=n"></noscript>
+  </p>
 
-
-<script language="javascript" type="text/javascript"
-src="http://ss.webring.com/navbar?f=j;y=colbelloz;u=10027361">
-</script><noscript><center>
-<table bgcolor=gray cellspacing=0 border=2><tr>
-<td><table cellpadding=2 cellspacing=0 border=0><tr><td align=center>
-<font face=arial size=-1>This site is a member of WebRing. 
-<br>To browse visit <a href="http://ss.webring.com/navbar?f=l;y=colbelloz;u=10027361">
-Here</a>.</font></td></tr></table></td></tr></table>
-</center></noscript>
 			</TD>
 		</TR>
 	</TABLE>
