@@ -50,6 +50,9 @@ public class SQLConnection
 	private Connection _conn;
 	private DatabaseMetaData _md;
 
+	/** MetaData for this connection. */
+	private SQLDatabaseMetaData _metaData;
+
 	private String _dbProductName;
 	private String _dbDriverName;
 
@@ -225,6 +228,20 @@ public class SQLConnection
 		}
 	}
 
+	/**
+	 * Retrieve the metadata for this connection.
+	 * 
+	 * @return	The <TT>SQLMetaData</TT> object.
+	 */
+	public synchronized SQLDatabaseMetaData getSQLMetaData()
+	{
+		if (_metaData == null)
+		{
+			_metaData = new SQLDatabaseMetaData(this);
+		}
+		return _metaData;
+	}
+
 	public ResultSet getBestRowIdentifier(ITableInfo ti)
 		throws NoConnectionException, BaseSQLException
 	{
@@ -254,37 +271,37 @@ public class SQLConnection
 		}
 	}
 
-	public String[] getCatalogs() throws NoConnectionException, BaseSQLException
-	{
-		DatabaseMetaData md = getMetaData();
-		ArrayList list = new ArrayList();
-		try
-		{
-			ResultSet rs = md.getCatalogs();
-			while (rs.next())
-			{
-				list.add(rs.getString(1));
-			}
-			return (String[]) list.toArray(new String[list.size()]);
-		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
-	}
-
-	public String getCatalogSeparator()
-		throws NoConnectionException, BaseSQLException
-	{
-		try
-		{
-			return getMetaData().getCatalogSeparator();
-		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
-	}
+//	public String[] getCatalogs() throws NoConnectionException, BaseSQLException
+//	{
+//		DatabaseMetaData md = getMetaData();
+//		ArrayList list = new ArrayList();
+//		try
+//		{
+//			ResultSet rs = md.getCatalogs();
+//			while (rs.next())
+//			{
+//				list.add(rs.getString(1));
+//			}
+//			return (String[]) list.toArray(new String[list.size()]);
+//		}
+//		catch (SQLException ex)
+//		{
+//			throw new BaseSQLException(ex);
+//		}
+//	}
+//
+//	public String getCatalogSeparator()
+//		throws NoConnectionException, BaseSQLException
+//	{
+//		try
+//		{
+//			return getMetaData().getCatalogSeparator();
+//		}
+//		catch (SQLException ex)
+//		{
+//			throw new BaseSQLException(ex);
+//		}
+//	}
 
 	public ResultSet getColumnPrivileges(ITableInfo ti)
 		throws NoConnectionException, BaseSQLException
@@ -674,64 +691,62 @@ public class SQLConnection
 		}
 	}
 
-	public boolean supportsCatalogs()
-		throws NoConnectionException, BaseSQLException
-	{
-		return supportsCatalogsInTableDefinitions()
-			|| supportsCatalogsInDataManipulation()
-			|| supportsCatalogsInProcedureCalls();
-	}
-
-	public boolean supportsCatalogsInTableDefinitions()
-		throws NoConnectionException, BaseSQLException
-	{
-		try
-		{
-			return getMetaData().supportsCatalogsInTableDefinitions();
-		}
-		catch (SQLException ex)
-		{
-			if (_dbDriverName.equals(DriverNames.FREE_TDS))
-			{
-				return true;
-			}
-			throw new BaseSQLException(ex);
-		}
-	}
-
-	public boolean supportsCatalogsInDataManipulation()
-		throws NoConnectionException, BaseSQLException
-	{
-		try
-		{
-			return getMetaData().supportsCatalogsInDataManipulation();
-		}
-		catch (SQLException ex)
-		{
-			if (_dbDriverName.equals(DriverNames.FREE_TDS))
-			{
-				return true;
-			}
-			throw new BaseSQLException(ex);
-		}
-	}
-
-	public boolean supportsCatalogsInProcedureCalls()
-		throws NoConnectionException, BaseSQLException
-	{
-		try
-		{
-			return getMetaData().supportsCatalogsInProcedureCalls();
-		}
-		catch (SQLException ex)
-		{
-			if (_dbDriverName.equals(DriverNames.FREE_TDS))
-			{
-				return true;
-			}
-			throw new BaseSQLException(ex);
-		}
-	}
+//	public boolean supportsCatalogs() throws SQLException
+//	{
+//		return supportsCatalogsInTableDefinitions()
+//			|| supportsCatalogsInDataManipulation()
+//			|| supportsCatalogsInProcedureCalls();
+//	}
+//
+//	public boolean supportsCatalogsInTableDefinitions() throws SQLException
+//	{
+//		try
+//		{
+//			return getMetaData().supportsCatalogsInTableDefinitions();
+//		}
+//		catch (SQLException ex)
+//		{
+//			if (_dbDriverName.equals(DriverNames.FREE_TDS))
+//			{
+//				return true;
+//			}
+//			throw ex;
+//		}
+//	}
+//
+//	public boolean supportsCatalogsInDataManipulation()
+//		throws NoConnectionException, BaseSQLException
+//	{
+//		try
+//		{
+//			return getMetaData().supportsCatalogsInDataManipulation();
+//		}
+//		catch (SQLException ex)
+//		{
+//			if (_dbDriverName.equals(DriverNames.FREE_TDS))
+//			{
+//				return true;
+//			}
+//			throw new BaseSQLException(ex);
+//		}
+//	}
+//
+//	public boolean supportsCatalogsInProcedureCalls()
+//		throws NoConnectionException, BaseSQLException
+//	{
+//		try
+//		{
+//			return getMetaData().supportsCatalogsInProcedureCalls();
+//		}
+//		catch (SQLException ex)
+//		{
+//			if (_dbDriverName.equals(DriverNames.FREE_TDS))
+//			{
+//				return true;
+//			}
+//			throw new BaseSQLException(ex);
+//		}
+//	}
 
 	public boolean supportsSchemas() throws NoConnectionException, BaseSQLException
 	{

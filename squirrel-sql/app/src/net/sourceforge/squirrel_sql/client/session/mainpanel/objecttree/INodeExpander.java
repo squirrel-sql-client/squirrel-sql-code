@@ -23,7 +23,7 @@ import java.util.List;
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-//?? Rename to IObjectTreeNodeExpander
+//TODO: Rename to IObjectTreeNodeExpander
 public interface INodeExpander
 {
 	/**

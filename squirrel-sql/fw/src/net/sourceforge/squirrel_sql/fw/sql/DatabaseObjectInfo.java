@@ -1,4 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.sql;
+
+import java.sql.SQLException;
+
 /*
  * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
@@ -90,30 +93,31 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo
 		String identifierQuoteString = null;
 		boolean supportsSchemasInDataManipulation = false;
 		boolean supportsCatalogsInDataManipulation = false;
+
+		SQLDatabaseMetaData md = conn.getSQLMetaData();
+
 		try
 		{
-			supportsSchemasInDataManipulation =
-				conn.supportsSchemasInDataManipulation();
+			supportsSchemasInDataManipulation = conn.supportsSchemasInDataManipulation();
 		}
-		catch (BaseSQLException ex)
+		catch (BaseSQLException ignore)
 		{
 		}
 		try
 		{
-			supportsCatalogsInDataManipulation =
-				conn.supportsCatalogsInDataManipulation();
+			supportsCatalogsInDataManipulation = md.supportsCatalogsInDataManipulation();
 		}
-		catch (BaseSQLException ex)
+		catch (SQLException ignore)
 		{
 		}
 		try
 		{
 			if (supportsCatalogsInDataManipulation)
 			{
-				catSep = conn.getCatalogSeparator();
+				catSep = md.getCatalogSeparator();
 			}
 		}
-		catch (BaseSQLException ex)
+		catch (SQLException ignore)
 		{
 		}
 		try
@@ -125,7 +129,7 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo
 				identifierQuoteString = null;
 			}
 		}
-		catch (BaseSQLException ex)
+		catch (BaseSQLException ignore)
 		{
 		}
 

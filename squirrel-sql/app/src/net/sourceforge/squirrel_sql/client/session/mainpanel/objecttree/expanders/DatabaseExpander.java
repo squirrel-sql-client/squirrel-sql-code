@@ -27,6 +27,7 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectTypes;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -90,13 +91,14 @@ public class DatabaseExpander implements INodeExpander
 	{
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
 		final SQLConnection conn = session.getSQLConnection();
+		final SQLDatabaseMetaData md = conn.getSQLMetaData();
 
 		boolean supportsCatalogs = false;
 		try
 		{
-			supportsCatalogs = conn.supportsCatalogs();
+			supportsCatalogs = md.supportsCatalogs();
 		}
-		catch (BaseSQLException ex)
+		catch (SQLException ex)
 		{
 			s_log.debug("DBMS doesn't support 'supportsCatalogs()", ex);
 		}
@@ -117,11 +119,11 @@ public class DatabaseExpander implements INodeExpander
 		{
 			if (supportsCatalogs)
 			{
-				childNodes.addAll(createCatalogNodes(session));
+				childNodes.addAll(createCatalogNodes(session, conn, md));
 			}
 			else if (supportsSchemas)
 			{
-				childNodes.addAll(createSchemaNodes(session, null));
+				childNodes.addAll(createSchemaNodes(session, conn, null));
 			}
 			else
 			{
@@ -133,7 +135,7 @@ public class DatabaseExpander implements INodeExpander
 			final String catalogName = parentDbinfo.getSimpleName();
 			if (supportsSchemas)
 			{
-				childNodes.addAll(createSchemaNodes(session, catalogName));
+				childNodes.addAll(createSchemaNodes(session, conn, catalogName));
 			}
 			else
 			{
@@ -150,12 +152,12 @@ public class DatabaseExpander implements INodeExpander
 		return childNodes;
 	}
 
-	private List createCatalogNodes(ISession session)
-		throws BaseSQLException
+	private List createCatalogNodes(ISession session, SQLConnection conn,
+										SQLDatabaseMetaData md)
+		throws SQLException
 	{
 		final List childNodes = new ArrayList();
-		final SQLConnection conn = session.getSQLConnection();
-		final String[] catalogs = conn.getCatalogs();
+		final String[] catalogs = md.getCatalogs();
 		for (int i = 0; i < catalogs.length; ++i)
 		{
 			IDatabaseObjectInfo dbo = new DatabaseObjectInfo(null, null,
@@ -167,11 +169,11 @@ public class DatabaseExpander implements INodeExpander
 		return childNodes;
 	}
 
-	private List createSchemaNodes(ISession session, String catalogName)
+	private List createSchemaNodes(ISession session, SQLConnection conn,
+										String catalogName)
 		throws BaseSQLException
 	{
 		final List childNodes = new ArrayList();
-		final SQLConnection conn = session.getSQLConnection();
 		final String[] schemas = conn.getSchemas();
 		for (int i = 0; i < schemas.length; ++i)
 		{

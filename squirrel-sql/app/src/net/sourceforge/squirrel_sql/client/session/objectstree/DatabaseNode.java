@@ -22,6 +22,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,19 +119,12 @@ public class DatabaseNode extends BaseNode
 			final ArrayList tableTypeList = new ArrayList();
 			if (conn != null)
 			{
-				// Load object types from plugins.
-				//			  PluginManager mgr = _session.getApplication().getPluginManager();
-				//			  IPluginDatabaseObjectType[] types = mgr.getDatabaseObjectTypes(_session);
-				//			  for (int i = 0; i < types.length; ++i) {
-				//				  root.add(new BaseNode(_session, this, types[i]));
-				//			  }
-
 				boolean supportsCatalogs = false;
 				try
 				{
-					supportsCatalogs = conn.supportsCatalogs();
+					supportsCatalogs = conn.getSQLMetaData().supportsCatalogs();
 				}
-				catch (BaseSQLException ex)
+				catch (SQLException ex)
 				{
 				}
 
@@ -144,12 +138,19 @@ public class DatabaseNode extends BaseNode
 				}
 				if (supportsCatalogs)
 				{
-					final String[] catalogs = conn.getCatalogs();
-					for (int i = 0; i < catalogs.length; ++i)
+					try
 					{
-						final String catalogName = catalogs[i];
-						tableTypeList.add(
-							new TableTypesGroupNode(session, model, catalogName, catalogName, null, null));
+						final String[] catalogs = conn.getSQLMetaData().getCatalogs();
+						for (int i = 0; i < catalogs.length; ++i)
+						{
+							final String catalogName = catalogs[i];
+							tableTypeList.add(
+								new TableTypesGroupNode(session, model, catalogName, catalogName, null, null));
+						}
+					}
+					catch (SQLException ex)
+					{
+						throw new BaseSQLException(ex);
 					}
 				}
 				else if (supportsSchemas)

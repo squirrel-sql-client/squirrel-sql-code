@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -25,6 +26,7 @@ import javax.swing.JComboBox;
 
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 
 /**
  * This <TT>JComboBox</TT> will display all the catalogs
@@ -32,11 +34,13 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SQLCatalogsComboBox extends JComboBox {
+public class SQLCatalogsComboBox extends JComboBox
+{
 	/**
 	 * Default ctor. Builds an empty combo box.
 	 */
-	public SQLCatalogsComboBox() {
+	public SQLCatalogsComboBox()
+	{
 		super();
 	}
 
@@ -50,23 +54,30 @@ public class SQLCatalogsComboBox extends JComboBox {
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>SQLConnection</TT> passed.
 	 * 
-	 * @throws	BaseSQLException
+	 * @throws	SQLException
 	 * 			Thrown if an SQL exception occurs.
 	 */
-	public void setConnection(SQLConnection conn) throws BaseSQLException {
-		if (conn == null) {
+	public void setConnection(SQLConnection conn) throws SQLException
+	{
+		if (conn == null)
+		{
 			throw new IllegalArgumentException("SQLConnection == null");
 		}
 
 		super.removeAllItems();
-		if (conn.supportsCatalogs()) {
-			String[] catalogs = conn.getCatalogs();
-			if (catalogs != null) {
+		SQLDatabaseMetaData md = conn.getSQLMetaData();
+		if (md.supportsCatalogs())
+		{
+			String[] catalogs = md.getCatalogs();
+			if (catalogs != null)
+			{
 				Map map = new HashMap();
-				for (int i = 0; i < catalogs.length; ++i) {
+				for (int i = 0; i < catalogs.length; ++i)
+				{
 					map.put(catalogs[i], catalogs[i]);
 				}
-				for(Iterator it = map.values().iterator(); it.hasNext();) {
+				for (Iterator it = map.values().iterator(); it.hasNext();)
+				{
 					addItem(it.next());
 				}
 			}
@@ -75,12 +86,15 @@ public class SQLCatalogsComboBox extends JComboBox {
 		setMaximumSize(getPreferredSize());
 	}
 
-	public String getSelectedCatalog() {
-		return (String)getSelectedItem();
+	public String getSelectedCatalog()
+	{
+		return (String) getSelectedItem();
 	}
 
-	public void setSelectedCatalog(String selectedCatalog) {
-		if (selectedCatalog != null) {
+	public void setSelectedCatalog(String selectedCatalog)
+	{
+		if (selectedCatalog != null)
+		{
 			getModel().setSelectedItem(selectedCatalog);
 		}
 	}
