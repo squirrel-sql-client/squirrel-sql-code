@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.sqlval;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  * 
  * This library is free software; you can redistribute it and/or
@@ -22,12 +22,6 @@ import java.io.Serializable;
 public class WebServicePreferences implements Cloneable, Serializable
 {
 	static final String UNSUPPORTED = "Unsupported";
-
-	/**
-	 * If <TT>true</TT> then show confirmation dialog whenever validation
-	 * requested.
-	 */
-//	private boolean _showConfirmationDialog = true;
 
 	/** If <TT>true</TT> use anonymous logon. */
 	private boolean _useAnonymousLogon = true;
@@ -66,25 +60,6 @@ public class WebServicePreferences implements Cloneable, Serializable
 			throw new InternalError(ex.getMessage()); // Impossible.
 		}
 	}
-
-	/**
-	 * If <TT>true</TT> then show confirmation dialog whenever validation
-	 * requested.
-	 */
-//	public boolean getShowConfirmationDialog()
-//	{
-//		return _showConfirmationDialog;
-//	}
-
-	/**
-	 * Specify whether to show confirmation dialog.
-	 *
-	 * @param	value	<TT>true</TT> if confirmation dialog is to be shown.
-	 */
-//	public void setShowConfirmationDialog(boolean value)
-//	{
-//		_showConfirmationDialog = value;
-//	}
 
 	/**
 	 * If <TT>true</TT> use anonymous logon to the web service.
@@ -211,3 +186,4 @@ public class WebServicePreferences implements Cloneable, Serializable
 		_clientVersion = value;
 	}
 }
+

@@ -1,21 +1,21 @@
 package net.sourceforge.squirrel_sql.plugins.sqlval;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
@@ -70,9 +70,6 @@ class AppPreferencesPanel extends JPanel
 	/** Client version. */
 	private OutputLabel _clientVersionLbl = new OutputLabel(" ");
 
-	/** Show confirmation dialog checkbox. */
-//	private JCheckBox _showConfirmationDialogChk = new JCheckBox("Show confirmation dialog");
-
 	AppPreferencesPanel(WebServicePreferences prefs)
 	{
 		super(new GridBagLayout());
@@ -95,7 +92,6 @@ class AppPreferencesPanel extends JPanel
 		_anonClientChk.setSelected(_prefs.getUseAnonymousClient());
 		_clientNameLbl.setText(_prefs.getClientName());
 		_clientVersionLbl.setText(_prefs.getClientVersion());
-//		_showConfirmationDialogChk.setSelected(_prefs.getShowConfirmationDialog());
 
 		setControlState();
 	}
@@ -111,7 +107,6 @@ class AppPreferencesPanel extends JPanel
 		_prefs.setUseAnonymousClient(_anonClientChk.isSelected());
 		_prefs.setClientName(_clientNameLbl.getText());
 		_prefs.setClientVersion(_clientVersionLbl.getText());
-//		_prefs.setShowConfirmationDialog(_showConfirmationDialogChk.isSelected());
 	}
 
 	/**
@@ -155,9 +150,6 @@ class AppPreferencesPanel extends JPanel
 
 		++gbc.gridy;
 		add(createClientPanel(), gbc);
-//
-//		++gbc.gridy;
-//		add(createGeneralPanel(), gbc);
 	}
 
 	/**
@@ -189,7 +181,7 @@ class AppPreferencesPanel extends JPanel
 	{
 		_userNameText.setColumns(15);
 		_passwordText.setColumns(15);
-	
+
 		JPanel pnl = new JPanel();
 		pnl.setBorder(BorderFactory.createTitledBorder("Log on as"));
 
@@ -213,7 +205,7 @@ class AppPreferencesPanel extends JPanel
 
 		++gbc.gridy;
 		pnl.add(new JLabel("Password:", JLabel.RIGHT), gbc);
-		
+
 		gbc.fill = gbc.NONE;
 		++gbc.gridx;
 		gbc.gridy = 0;
@@ -266,23 +258,6 @@ class AppPreferencesPanel extends JPanel
 		return pnl;
 	}
 
-//	private JPanel createGeneralPanel(/*WebServicePreferences prefs*/)
-//	{
-//		JPanel pnl = new JPanel();
-//		pnl.setBorder(BorderFactory.createTitledBorder("General"));
-//
-//		pnl.setLayout(new GridBagLayout());
-//		final GridBagConstraints gbc = new GridBagConstraints();
-//		gbc.insets = new Insets(0, 0, 0, 0);
-//		gbc.anchor = gbc.WEST;
-//
-//		gbc.gridx = 0;
-//		gbc.gridy = 0;
-//		pnl.add(_showConfirmationDialogChk, gbc);
-//
-//		return pnl;
-//	}
-
 	/**
 	 * Listener for the "Anonymous Logon" checkbox. This keeps the
 	 * user and password fields enabled/disabled appropriately.
@@ -293,6 +268,6 @@ class AppPreferencesPanel extends JPanel
 		{
 			setAnonymousUserControlState(_anonLogonChk.isSelected());
 		}
-
 	}
 }
+

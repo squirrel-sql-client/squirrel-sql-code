@@ -1,6 +1,12 @@
 SQL Validator Change Log
 ========================
 
+0.13
+====
+- Updated for SQuirreL 1.2
+- Added validation option to the SQL entry area popup menu.
+
+
 0.12
 ====
 - Add Connect and Disconnet options to the menus system.

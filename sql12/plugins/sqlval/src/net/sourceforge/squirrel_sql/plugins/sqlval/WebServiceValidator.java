@@ -1,10 +1,10 @@
 package net.sourceforge.squirrel_sql.plugins.sqlval;
 /*
- * Copyright (C) 2002 Colin Bell and Olof Edlund
+ * Copyright (C) 2002-2003 Colin Bell and Olof Edlund
  * colbell@users.sourceforge.net
  *
  * This code is based on the example web service client code originally written
- * by  Olof Edlund.
+ * by Olof Edlund.
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -85,7 +85,7 @@ public class WebServiceValidator
 
 		//The SQL statement to be validated against the standard
 		l_call.addParameter("a_sqlStatement", XMLType.XSD_STRING, ParameterMode.IN);
-		
+
 		//The format of the result. This must be "text" or "html".
 		//Hopefully some type of XML format will be available as well
 		l_call.addParameter("a_resultType", XMLType.XSD_STRING, ParameterMode.IN);
@@ -116,3 +116,4 @@ public class WebServiceValidator
 		return (ValidatorResult)l_call.invoke(parms);
 	}
 }
+

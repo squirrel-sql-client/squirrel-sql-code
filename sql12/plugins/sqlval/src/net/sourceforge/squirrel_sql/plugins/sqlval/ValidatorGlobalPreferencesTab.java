@@ -1,21 +1,21 @@
 package net.sourceforge.squirrel_sql.plugins.sqlval;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Component;
 import java.awt.GridBagConstraints;
@@ -49,7 +49,7 @@ public class ValidatorGlobalPreferencesTab implements IGlobalPreferencesPanel
 	/**
 	 * Ctor.
 	 *
-	 * @param   prefs	Plugin preferences
+	 * @param	prefs	Plugin preferences
 	 *
 	 * @throws	IllegalArgumentException
 	 *			if <TT>LAFPlugin</TT>, or <TT>LAFRegister</TT> is <TT>null</TT>.
@@ -67,9 +67,9 @@ public class ValidatorGlobalPreferencesTab implements IGlobalPreferencesPanel
 	/**
 	 * Load panel with data from plugin preferences.
 	 *
-	 * @param   app	 Application API.
+	 * @param	app	 Application API.
 	 *
-	 * @throws  IllegalArgumentException
+	 * @throws	IllegalArgumentException
 	 *			if <TT>IApplication</TT> is <TT>null</TT>.
 	 */
 	public void initialize(IApplication app)
@@ -85,7 +85,7 @@ public class ValidatorGlobalPreferencesTab implements IGlobalPreferencesPanel
 	/**
 	 * Return the component to be displayed in the Preferences dialog.
 	 *
-	 * @return  the component to be displayed in the Preferences dialog.
+	 * @return	the component to be displayed in the Preferences dialog.
 	 */
 	public synchronized Component getPanelComponent()
 	{
@@ -108,7 +108,7 @@ public class ValidatorGlobalPreferencesTab implements IGlobalPreferencesPanel
 	/**
 	 * Return the title for this panel.
 	 *
-	 * @return  the title for this panel.
+	 * @return	the title for this panel.
 	 */
 	public String getTitle()
 	{
@@ -118,7 +118,7 @@ public class ValidatorGlobalPreferencesTab implements IGlobalPreferencesPanel
 	/**
 	 * Return the hint for this panel.
 	 *
-	 * @return  the hint for this panel.
+	 * @return	the hint for this panel.
 	 */
 	public String getHint()
 	{
@@ -131,9 +131,6 @@ public class ValidatorGlobalPreferencesTab implements IGlobalPreferencesPanel
 
 		private final WebServicePreferences _prefs;
 
-		/** Show confirmation dialog checkbox. */
-//		private JCheckBox _showConfirmationDialogChk = new JCheckBox("Show confirmation dialog");
-
 		PrefsPanel(WebServicePreferences prefs)
 		{
 			super(new GridBagLayout());
@@ -144,13 +141,11 @@ public class ValidatorGlobalPreferencesTab implements IGlobalPreferencesPanel
 		private void loadData()
 		{
 			_appPrefsPnl.loadData();
-//			_showConfirmationDialogChk.setSelected(_prefs.getShowConfirmationDialog());
 		}
 
 		private void save()
 		{
 			_appPrefsPnl.save();
-//			_prefs.setShowConfirmationDialog(_showConfirmationDialogChk.isSelected());
 		}
 
 		private void createGUI(WebServicePreferences prefs)
@@ -158,7 +153,7 @@ public class ValidatorGlobalPreferencesTab implements IGlobalPreferencesPanel
 			_appPrefsPnl = new AppPreferencesPanel(prefs);
 
 			setBorder(BorderFactory.createEmptyBorder());
-	
+
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = gbc.HORIZONTAL;
 			gbc.insets = new Insets(1, 1, 1, 1);
@@ -166,28 +161,7 @@ public class ValidatorGlobalPreferencesTab implements IGlobalPreferencesPanel
 			gbc.gridy = 0;
 			gbc.weightx = 1;
 			add(_appPrefsPnl, gbc);
-	
-//			++gbc.gridy;
-//			gbc.insets = new Insets(1, 4, 1, 4);
-//			add(createPanel(prefs), gbc);
 		}
-
-//		private JPanel createPanel(WebServicePreferences prefs)
-//		{
-//			JPanel pnl = new JPanel();
-//			pnl.setBorder(BorderFactory.createTitledBorder("General"));
-//	
-//			pnl.setLayout(new GridBagLayout());
-//			final GridBagConstraints gbc = new GridBagConstraints();
-////			gbc.fill = gbc.HORIZONTAL;
-//			gbc.insets = new Insets(0, 0, 0, 0);
-//			gbc.anchor = gbc.WEST;
-//
-//			gbc.gridx = 0;
-//			gbc.gridy = 0;
-//			pnl.add(_showConfirmationDialogChk, gbc);
-//	
-//			return pnl;
-//		}
 	}
 }
+
