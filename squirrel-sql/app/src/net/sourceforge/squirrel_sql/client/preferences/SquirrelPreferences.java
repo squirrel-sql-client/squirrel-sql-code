@@ -36,6 +36,7 @@ import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggingLevel;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
@@ -56,14 +57,6 @@ public class SquirrelPreferences implements Serializable {
 		String SHOW_CONTENTS_WHEN_DRAGGING = "showContentsWhenDragging";
 		String SHOW_TOOLTIPS = "showToolTips";
 		String PLUGIN_OBJECTS = "pluginObjects";
-	}
-
-	public interface ILoggingLevel {
-		int DEBUG = 0;
-		int INFO = 1;
-		int WARN = 2;
-		int ERROR = 3;
-		int OFF = 4;
 	}
 
 	/** Logger for this class. */
@@ -93,7 +86,7 @@ public class SquirrelPreferences implements Serializable {
 	private boolean _showToolTips = true;
 
 	/** Logging level. */
-	private int _logLevel = ILoggingLevel.INFO;
+	private int _logLevel = LoggingLevel.INFO.getLevel();
 
 	/**
 	 * Objects stored by plugins. Each element of this collection is a <TT>Map</TT>
@@ -160,7 +153,7 @@ public class SquirrelPreferences implements Serializable {
 	}
 
 	public boolean isDebugMode() {
-		return getLoggingLevel() <= ILoggingLevel.DEBUG;
+		return getLoggingLevel() == LoggingLevel.DEBUG.getLevel();
 	}
 
 	public SessionProperties getSessionProperties() {

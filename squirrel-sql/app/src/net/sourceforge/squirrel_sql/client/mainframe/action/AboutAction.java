@@ -42,12 +42,13 @@ public class AboutAction extends SquirrelAction {
             throw new IllegalArgumentException("Null IApplication passed");
         }
     }
-    /**
+
+    /**
      * Display the about box.
      *
      * @param   evt     The event being processed.
      */
     public void actionPerformed(ActionEvent evt) {
-        new AboutCommand(getApplication(), getParentFrame(evt)).execute();
+        new AboutCommand(getApplication()).execute();
     }
 }

@@ -24,13 +24,10 @@ import java.awt.Point;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.sql.DriverManager;
 
 import javax.swing.Action;
 import javax.swing.DefaultDesktopManager;
@@ -42,13 +39,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.ToolTipManager;
 
 import net.sourceforge.squirrel_sql.fw.gui.BaseMDIParentFrame;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.ScrollableDesktopPane;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggingLevel;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Version;
@@ -95,7 +92,11 @@ public class MainFrame extends BaseMDIParentFrame {
 		_app = app;
 		createUserInterface();
 		preferencesHaveChanged(null);   // Initial load of prefs.
-		_app.getSquirrelPreferences().addPropertyChangeListener(new PreferencesListener());
+		_app.getSquirrelPreferences().addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent evt) {
+				preferencesHaveChanged(evt);
+			}
+		});
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
 
@@ -121,9 +122,10 @@ public class MainFrame extends BaseMDIParentFrame {
 		JInternalFrame[] frames = GUIUtils.getOpenNonToolWindows(getDesktopPane().getAllFrames());
 		_app.getActionCollection().internalFrameOpenedOrClosed(frames.length);
 
+		getSessionMenu().setEnabled(true);
+
 		// Size non-tool child window.
 		if (!GUIUtils.isToolWindow(child)) {
-			getSessionMenu().setEnabled(true);
 			Dimension cs = child.getParent().getSize();
 			// Cast to int required as Dimension::setSize(double,double)
 			// doesn't appear to do anything in JDK1.2.2.
@@ -140,22 +142,6 @@ public class MainFrame extends BaseMDIParentFrame {
 		if (frames.length == 0) {
 			getSessionMenu().setEnabled(false);
 		}
-	}
-
-	public void addNotify() {
-		super.addNotify();
-		// Now we have a scrolling panel in which all internal frames
-		// reside this is no longer required.
-		/*SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				if (!GUIUtils.isWithinParent(_aliasesToolWindow)) {
-					_aliasesToolWindow.setLocation(new Point(40, 40));
-				}
-				if (!GUIUtils.isWithinParent(_driversToolWindow)) {
-					_driversToolWindow.setLocation(new Point(10, 10));
-				}
-			}
-		});*/
 	}
 
 	Point getAliasesWindowLocation() {
@@ -177,30 +163,6 @@ public class MainFrame extends BaseMDIParentFrame {
 			} else {
 				getDesktopPane().putClientProperty("JDesktopPane.dragMode",  "outline");
 			}
-		}
-
-		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.SHOW_TOOLTIPS)) {
-			ToolTipManager.sharedInstance().setEnabled(prefs.getShowToolTips());
-		}
-
-		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.DEBUG_JDBC)) {
-			if (prefs.getDebugJdbc()) {
-				try {
-					FileOutputStream fos = new FileOutputStream(_app.getApplicationFiles().getJDBCDebugLogFile());
-					DriverManager.setLogStream(new PrintStream(fos));
-				} catch (IOException ex) {
-					DriverManager.setLogStream(System.out);
-				}
-			} else {
-				DriverManager.setLogWriter(null);
-			}
-		}
-
-		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.LOGIN_TIMEOUT)) {
-			DriverManager.setLoginTimeout(prefs.getLoginTimeout());
-		}
-
-		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.LOGGING_LEVEL)) {
 		}
 	}
 
@@ -322,12 +284,6 @@ public class MainFrame extends BaseMDIParentFrame {
 				((SessionSheet)f).updateState();
 				getSessionMenu().setEnabled(false);
 			}
-		}
-	}
-
-	private class PreferencesListener implements PropertyChangeListener {
-		public void propertyChange(PropertyChangeEvent evt) {
-			preferencesHaveChanged(evt);
 		}
 	}
 }

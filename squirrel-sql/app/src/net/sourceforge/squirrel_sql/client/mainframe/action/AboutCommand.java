@@ -42,24 +42,22 @@ public class AboutCommand implements ICommand {
      * Ctor.
      *
      * @param   app     Application API.
-     * @param   frame   Owning <TT>Frame</TT>.
      *
      * @throws  IllegalArgumentException
      *              Thrown if a <TT>null</TT> <TT>IApplication</TT> passed.
      */
-    public AboutCommand(IApplication app, Frame frame) {
+    public AboutCommand(IApplication app) {
         super();
         if (app == null) {
             throw new IllegalArgumentException("Null IApplication passed");
         }
         _app = app;
-        _frame = frame;
     }
 
     /**
-     * Display the ABout Box.
+     * Display the About Box.
      */
     public void execute() {
-        new AboutBoxDialog(_app, _frame).show();
+        AboutBoxDialog.showAboutBox(_app);
     }
 }
