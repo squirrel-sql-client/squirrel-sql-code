@@ -367,6 +367,23 @@ public final class ActionCollection
 	}
 
 	/**
+	 * Specify the current session for actions.
+	 *
+	 * @param	session		The current session. Can be <tt>null</tt>.
+	 */
+	public synchronized void setCurrentSession(ISession session)
+	{
+		for (Iterator it = actions(); it.hasNext();)
+		{
+			final Action act = (Action)it.next();
+			if (act instanceof ISessionAction)
+			{
+				((ISessionAction)act).setSession(session);
+			}
+		}
+	}
+
+	/**
 	 * Create a new instance of <TT>actionCassName</TT> and store in this
 	 * collection.
 	 *

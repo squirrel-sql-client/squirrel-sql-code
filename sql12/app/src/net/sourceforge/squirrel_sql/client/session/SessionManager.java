@@ -332,16 +332,36 @@ public class SessionManager
 
 	/**
 	 * Adds a session listener
+	 *
+	 * @param	lis		The listener to add.
 	 */
-	public void addSessionListener(ISessionListener l)
+	public void addSessionListener(ISessionListener lis)
 	{
-		listenerList.add(ISessionListener.class, l);
+		if (lis != null)
+		{
+			listenerList.add(ISessionListener.class, lis);
+		}
+		else
+		{
+			s_log.error("Attempted to add null listener: SessionManager.addSessionListener");
+		}
 	}
 
-	/** Removed a session listener */
-	public void removeSessionListener(ISessionListener l)
+	/**
+	 * Removes a session listener
+	 *
+	 * @param	lis		The listener to remove.
+	 */
+	public void removeSessionListener(ISessionListener lis)
 	{
-		listenerList.remove(ISessionListener.class, l);
+		if (lis != null)
+		{
+			listenerList.remove(ISessionListener.class, lis);
+		}
+		else
+		{
+			s_log.error("Attempted to remove null listener: SessionManager.addSessionListener");
+		}
 	}
 
 	/**

@@ -24,6 +24,7 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.DataCache;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
@@ -135,7 +136,7 @@ public class DriverMaintSheetFactory
 	public DriverMaintSheet showCreateSheet()
 	{
 		final DataCache cache = _app.getDataCache();
-		final IdentifierFactory factory = IdentifierFactory.getInstance();
+		final IIdentifierFactory factory = IdentifierFactory.getInstance();
 		final ISQLDriver driver =
 			cache.createDriver(factory.createIdentifier());
 		final DriverMaintSheet sheet = new DriverMaintSheet(_app, driver, NEW);
@@ -160,7 +161,7 @@ public class DriverMaintSheetFactory
 		}
 
 		final DataCache cache = _app.getDataCache();
-		final IdentifierFactory factory = IdentifierFactory.getInstance();
+		final IIdentifierFactory factory = IdentifierFactory.getInstance();
 		ISQLDriver newDriver = cache.createDriver(factory.createIdentifier());
 		try
 		{
