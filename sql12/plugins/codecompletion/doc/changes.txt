@@ -1,6 +1,8 @@
 SQL Entry Area Enhancements
 ===========================
 
+- added join generation functions 
+
 0.20
 ====
 - completes on stored procedures
