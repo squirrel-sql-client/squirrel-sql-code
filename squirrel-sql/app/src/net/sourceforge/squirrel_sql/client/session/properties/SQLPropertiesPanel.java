@@ -275,7 +275,7 @@ public class SQLPropertiesPanel
 
 		private JPanel createFontPanel() {
 			JPanel pnl = new JPanel();
-			pnl.setBorder(BorderFactory.createTitledBorder("Font"));
+			pnl.setBorder(BorderFactory.createTitledBorder("SQL Entry Area"));
 			pnl.setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = gbc.HORIZONTAL;
