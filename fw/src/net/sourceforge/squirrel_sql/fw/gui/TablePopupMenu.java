@@ -62,7 +62,7 @@ public class TablePopupMenu extends BasePopupMenu
 	//	private ClearAction _clear = new ClearAction();
 	private MakeEditableAction _makeEditable = new MakeEditableAction();
 	private DeleteRowsAction _deleteRows = new DeleteRowsAction();
-	private InsertRowAction _insertRow = new InsertRowAction();
+	protected InsertRowAction _insertRow = new InsertRowAction();
 	private SelectAllAction _select = new SelectAllAction();
 
 	// The following pointer is needed to allow the "Make Editable button
