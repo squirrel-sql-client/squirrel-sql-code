@@ -185,7 +185,10 @@ public class OsterTextControl extends JTextPane
 
 		_currentErrorInfos.clear();
 		_currentErrorInfos.addAll(Arrays.asList(errorInfos));
-		colorAll();
+      int beg = Math.max(0, getCaretPosition() - 5);
+      int len = Math.min(10, getDocument().getLength() - getCaretPosition());
+
+      color(beg, len, false);
 	}
 
 	// This stops the text control from line wrapping.
@@ -532,7 +535,7 @@ public class OsterTextControl extends JTextPane
 		/**
 		 * Vector that stores the communication between the two threads.
 		 */
-		private volatile Vector v = new Vector();
+		private volatile Vector recolorEventQueue = new Vector();
 
 		/**
 		 * The amount of change that has occurred before the place in the
@@ -577,7 +580,7 @@ public class OsterTextControl extends JTextPane
 			}
 			synchronized (lock)
 			{
-				v.add(new RecolorEvent(position, adjustment, fireTableOrViewFoundEvent));
+				recolorEventQueue.add(new RecolorEvent(position, adjustment, fireTableOrViewFoundEvent));
 				if (asleep)
 				{
 					this.interrupt();
@@ -603,10 +606,10 @@ public class OsterTextControl extends JTextPane
 			{ // forever
 				synchronized (lock)
 				{
-					if (v.size() > 0)
+					if (recolorEventQueue.size() > 0)
 					{
-						RecolorEvent re = (RecolorEvent) (v.elementAt(0));
-						v.removeElementAt(0);
+						RecolorEvent re = (RecolorEvent) (recolorEventQueue.elementAt(0));
+						recolorEventQueue.removeElementAt(0);
 						position = re.position;
 						adjustment = re.adjustment;
                   fireTableOrViewFoundEvent = re.fireTableOrViewFoundEvent;
