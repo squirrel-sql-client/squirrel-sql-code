@@ -18,7 +18,7 @@ import java.awt.*;
  * The text area repaint manager. It performs double buffering and paints
  * lines of text.
  * @author Slava Pestov
- * @version $Id: TextAreaPainter.java,v 1.2 2002-01-03 12:23:42 colbell Exp $
+ * @version $Id: TextAreaPainter.java,v 1.3 2002-02-01 11:14:50 colbell Exp $
  */
 public class TextAreaPainter extends JComponent implements TabExpander
 {
@@ -473,7 +473,7 @@ public class TextAreaPainter extends JComponent implements TabExpander
 
 	// protected members
 	protected JEditTextArea textArea;
-	
+
 	protected SyntaxStyle[] styles;
 	protected Color caretColor;
 	protected Color selectionColor;
@@ -488,7 +488,7 @@ public class TextAreaPainter extends JComponent implements TabExpander
 	protected boolean eolMarkers;
 	protected int cols;
 	protected int rows;
-	
+
 	protected int tabSize;
 	protected FontMetrics fm;
 
@@ -668,7 +668,7 @@ public class TextAreaPainter extends JComponent implements TabExpander
 	{
 		if(textArea.isCaretVisible())
 		{
-			int offset = textArea.getCaretPosition() 
+			int offset = textArea.getCaretPosition()
 				- textArea.getLineStartOffset(line);
 			int caretX = textArea._offsetToX(line,offset);
 			int caretWidth = ((blockCaret ||
@@ -676,7 +676,7 @@ public class TextAreaPainter extends JComponent implements TabExpander
 				fm.charWidth('w') : 1);
 			y += fm.getLeading() + fm.getMaxDescent();
 			int height = fm.getHeight();
-			
+
 			gfx.setColor(caretColor);
 
 			if(textArea.isOverwriteEnabled())
@@ -684,10 +684,14 @@ public class TextAreaPainter extends JComponent implements TabExpander
 				gfx.fillRect(caretX,y + height - 1,
 					caretWidth,1);
 			}
+			else if (blockCaret)
+			{
+				gfx.drawRect(caretX,y,caretWidth - 1,height - 1);
+			}
 			else
 			{
 //				gfx.drawRect(caretX,y,caretWidth - 1,height - 1);
-				gfx.drawRect(caretX,y,caretWidth == 1 ? 1 : caretWidth - 1,height - 1);
+				gfx.drawLine(caretX,y,caretX,y + height - 1);
 			}
 		}
 	}
