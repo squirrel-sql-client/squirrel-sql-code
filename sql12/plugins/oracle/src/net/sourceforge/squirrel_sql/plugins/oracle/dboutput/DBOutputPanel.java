@@ -18,80 +18,23 @@ package net.sourceforge.squirrel_sql.plugins.oracle.dboutput;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FontMetrics;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.sql.Array;
 import java.sql.SQLException;
 import java.sql.CallableStatement;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
-import javax.swing.border.Border;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.EventListenerList;
-import javax.swing.undo.UndoManager;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
-import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
-import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
-import net.sourceforge.squirrel_sql.fw.gui.MemoryComboBox;
-import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.SQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.RedoAction;
-import net.sourceforge.squirrel_sql.client.session.action.UndoAction;
-import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
-import net.sourceforge.squirrel_sql.client.session.event.SQLResultExecuterTabEvent;
-import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
-import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
-import net.sourceforge.squirrel_sql.client.session.event.ResultTabEvent;
-import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter.ISQLResultExecuterFactory;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
 public class DBOutputPanel extends JPanel
 {
@@ -126,7 +69,17 @@ public class DBOutputPanel extends JPanel
 		super();
 		_session = session;
 		createGUI();
+                initDBOutput();
 	}
+
+        protected void initDBOutput() {
+          try {
+            CallableStatement c = _session.getSQLConnection().getConnection().prepareCall("{call dbms_output.enable()}");
+            c.execute();
+          } catch (SQLException ex) {
+            _session.getMessageHandler().showErrorMessage(ex);
+          }
+        }
 
         /** Current session. */
         public ISession getSession() {
@@ -134,15 +87,22 @@ public class DBOutputPanel extends JPanel
         }
 
         private void resetTimer() {
-          _refreshTimer.cancel();
-          _refreshTimer = new Timer(true);
+          if (_refreshTimer != null) {
+            _refreshTimer.cancel();
+            //Nil out the timer so that it can be gc'd
+            _refreshTimer = null;
+          }
           if (_autoRefresh && (_refreshPeriod > 0)) {
-            _refreshTimer.scheduleAtFixedRate(new RefreshTimerTask(), _refreshPeriod * 1000, _refreshPeriod * 1000);
+            _refreshTimer = new Timer(true);
+            _refreshTimer.scheduleAtFixedRate(new RefreshTimerTask(),
+                                              _refreshPeriod * 1000,
+                                              _refreshPeriod * 1000);
           }
         }
 
         public void setAutoRefresh(boolean enable) {
           if (enable != _autoRefresh) {
+            _autoRefresh = enable;
             resetTimer();
           }
         }
@@ -152,12 +112,24 @@ public class DBOutputPanel extends JPanel
         }
 
         public void setAutoRefreshPeriod(int seconds) {
-          _refreshPeriod = seconds;
-          resetTimer();
+          if (_refreshPeriod != seconds) {
+            _refreshPeriod = seconds;
+            resetTimer();
+          }
         }
 
         public int getAutoRefreshPeriod() {
           return _refreshPeriod;
+        }
+
+        public void clearOutput() {
+          Document doc =  _textArea.getDocument();
+          int length = doc.getLength();
+          try {
+            doc.remove(0, length);
+          } catch (BadLocationException ex) {
+            //Silently ignore, what could we do anyway?
+          }
         }
 
         public synchronized void populateDBOutput() {
@@ -175,17 +147,15 @@ public class DBOutputPanel extends JPanel
             while (status == 0) {
               c.execute();
               status = c.getInt(2);
-              System.out.println("Status: "+status);
               if (status == 0) {
                 String str = c.getString(1);
-                if (str == null)
-                  buf.append("\n");
-                else buf.append(str);
+                if (str != null)
+                  buf.append(str);
+                buf.append("\n");
               }
             }
             if (buf.length() > 0) {
               final JTextArea store = _textArea;
-              System.out.println("text: "+buf.toString());
               SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
                   store.append(buf.toString());
@@ -203,7 +173,9 @@ public class DBOutputPanel extends JPanel
             setLayout(new BorderLayout());
             _textArea = new JTextArea();
             _textArea.setEditable(false);
-            add(new JScrollPane(_textArea));
+            add(new JScrollPane(_textArea,
+                                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
 	}
 
 }

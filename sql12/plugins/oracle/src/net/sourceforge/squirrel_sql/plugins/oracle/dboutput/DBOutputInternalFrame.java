@@ -17,15 +17,19 @@ package net.sourceforge.squirrel_sql.plugins.oracle.dboutput;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Component;
-import java.awt.Window;
-import java.awt.event.FocusEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.BorderLayout;
-import java.beans.PropertyVetoException;
+
 
 import javax.swing.Icon;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
@@ -34,7 +38,6 @@ import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
 
@@ -71,6 +74,13 @@ public class DBOutputInternalFrame extends BaseSessionInternalFrame
         {
                 setVisible(false);
 
+                addInternalFrameListener(new InternalFrameAdapter() {
+                  public void internalFrameClosing(InternalFrameEvent e) {
+                    //Turn off auto refresh when we are shutting down.
+                    _dbOutputPanel.setAutoRefresh(false);
+                  }
+                });
+
 
                 Icon icon = _resources.getIcon(getClass(), "frameIcon"); //i18n
                 if (icon != null)
@@ -98,19 +108,32 @@ public class DBOutputInternalFrame extends BaseSessionInternalFrame
 
                 private void createGUI(ISession session)
                 {
-                  IApplication app = session.getApplication();
+                        IApplication app = session.getApplication();
                         setUseRolloverButtons(true);
                         setFloatable(false);
                         add(new GetDBOutputAction(app, _resources, _dbOutputPanel));
-                        /*
-                        ActionCollection actions = .getActionCollection();
+                        add(new ClearDBOutputAction(app, _resources, _dbOutputPanel));
 
-                        add(actions.get(GetDBOutputAction.class));
 
-                        add(actions.get(ExecuteAllSqlAction.class));
-                        addSeparator();
-                        add(actions.get(SQLFilterAction.class));
-                        actions.get(SQLFilterAction.class).setEnabled(true);*/
+                        //Create checkbox for enabling auto refresh
+                        final JCheckBox autoRefresh = new JCheckBox("Enable auto refresh", false);
+                        autoRefresh.addActionListener(new ActionListener() {
+                          public void actionPerformed(ActionEvent e) {
+                            _dbOutputPanel.setAutoRefresh(autoRefresh.isSelected());
+                          }
+                        });
+                        add(autoRefresh);
+
+                        //Create spinner for update period
+                        final SpinnerNumberModel model = new SpinnerNumberModel(10, 1, 60, 5);
+                        final JSpinner refreshRate = new JSpinner(model);
+                        refreshRate.addChangeListener(new ChangeListener() {
+                          public void stateChanged(ChangeEvent e) {
+                            _dbOutputPanel.setAutoRefreshPeriod(model.getNumber().intValue());
+                          }
+                        });
+                        add(refreshRate);
+                        add(new JLabel("(seconds)"));
                 }
         }
 }
