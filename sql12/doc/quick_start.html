@@ -547,10 +547,21 @@ you will need to bring up the Popup window to know whether the data can be edite
 then edit the text in the text window.
 Editing uses the same mechanism as the in-cell editing
 where repeatedly typeing the backspace key eventually restores the original data in the window.
-One difference from the in-cell editing is that you may enter newline and tab characters
+One difference from the in-cell editing is that,
+depending on the data type being displayed,
+you may enter newline and tab characters
 into strings when in the Popup.
 When you are done editing, click on the "Update DB" button to put the changed data into the Database.
 The "Cancel" button closes the Popup without changing the Database.
+
+<P>
+For Binary data types, the data may be changed from the default Hex representation
+into Decimal, Octal or Binary formats.
+You may also choose to view bytes of data that correspond to printable ASCII characters
+as the character rather than in their numeric form.
+This may be useful if the file contains strings,
+in which case you could see "ContentsTab.java" instead of
+"43 6f 6e 74 65 6e 74 73 54 61 62 2e 6a 61 76 61".
 
 <P>The Popup window provides line-wrap and word-wrap functions.
 These are accessed in the menu brought up by right-clicking in the text area.
