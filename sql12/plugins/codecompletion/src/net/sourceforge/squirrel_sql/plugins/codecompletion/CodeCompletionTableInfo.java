@@ -17,12 +17,10 @@
  */
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
-import net.sourceforge.squirrel_sql.plugins.codecompletion.CodeCompletionColumnInfo;
-import net.sourceforge.squirrel_sql.plugins.codecompletion.CodeCompletionInfo;
+import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
+import net.sourceforge.squirrel_sql.client.session.SchemaInfo;
 
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
-import java.sql.ResultSet;
 import java.util.Vector;
 
 public class CodeCompletionTableInfo extends CodeCompletionInfo
@@ -43,25 +41,25 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
       return _tableName;
    }
 
-   public CodeCompletionInfo[] getColumns(DatabaseMetaData jdbcMetaData, String catalog, String schema, String colNamePattern)
+   public CodeCompletionInfo[] getColumns(SchemaInfo schemaInfo, String colNamePattern)
       throws SQLException
    {
       if(null == _colInfos)
       {
-         Vector infos = new Vector();
-         ResultSet res = jdbcMetaData.getColumns(catalog, schema, _tableName, "%");
-         while(res.next())
+         ExtendedColumnInfo[] schnemColInfos = schemaInfo.getExtendedColumnInfos(_tableName);
+
+         _colInfos = new CodeCompletionColumnInfo[schnemColInfos.length];
+         for (int i = 0; i < schnemColInfos.length; i++)
          {
-            String columnName = res.getString("COLUMN_NAME");
-            String columnType = res.getString("TYPE_NAME");
-            int columnSize = res.getInt("COLUMN_SIZE");
-            int decimalDigits = res.getInt("DECIMAL_DIGITS");
-            boolean nullable = "YES".equals(res.getString("IS_NULLABLE"));
+            String columnName = schnemColInfos[i].getColumnName();
+            String columnType = schnemColInfos[i].getColumnType();
+            int columnSize = schnemColInfos[i].getColumnSize();
+            int decimalDigits = schnemColInfos[i].getDecimalDigits();
+            boolean nullable = schnemColInfos[i].isNullable();
             CodeCompletionColumnInfo buf = new CodeCompletionColumnInfo(columnName, columnType, columnSize, decimalDigits, nullable);
-            infos.add(buf);
+            _colInfos[i] = buf;
+
          }
-         res.close();
-         _colInfos = (CodeCompletionColumnInfo[])infos.toArray(new CodeCompletionColumnInfo[0]);
       }
 
       String upperCaseColNamePattern = colNamePattern.toUpperCase().trim();

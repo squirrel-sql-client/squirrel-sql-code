@@ -17,6 +17,8 @@
  */
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
+import net.sourceforge.squirrel_sql.client.session.SchemaInfo;
+
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
@@ -77,7 +79,7 @@ public abstract class CodeCompletionInfo implements Comparable
    /**
     * Default implementation
     */
-   public CodeCompletionInfo[] getColumns(DatabaseMetaData jdbcMetaData, String catalog, String schema, String colNamePattern) throws SQLException
+   public CodeCompletionInfo[] getColumns(SchemaInfo schemaInfo, String colNamePattern) throws SQLException
    {
       return new CodeCompletionInfo[0];
    }
