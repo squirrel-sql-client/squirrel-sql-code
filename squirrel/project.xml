@@ -4,7 +4,7 @@
 <!--                                                                        -->
 <!--  Define configuration elements that are used by the build system here. -->
 <!--                                                                        -->
-<!--  $Id: project.xml,v 1.1.1.1 2001-11-20 01:53:44 placson Exp $ -->
+<!--  $Id: project.xml,v 1.2 2001-11-20 02:11:09 placson Exp $ -->
 <!--                                                                        -->
 <!-- ====================================================================== -->
 
@@ -36,16 +36,13 @@
 <!-- ====================================================================== -->
 
 <!-- define thirdparty classpath properties here -->
-<!--
-<property name="classpath.somelib" type="path" value="/blah/blah/blah"/>
--->
+
+<property name="classpath.nanoxml" type="path" value="${basedir}/thirdparty/n3/lib/nanoxml-2.1.jar"/>
 
 <!-- The combined thirdparty classpath -->
-<!--
 <property name="classpath.thirdparty" type="path" separator=":">
-  <element value="${classpath.somelib}"/>
+  <element value="${classpath.nanoxml}" />
 </property>
--->
 
 
 <!-- ====================================================================== -->
@@ -67,4 +64,4 @@
 </property>
 
 <!-- Packages to include when generating api documentation -->
-<property name="javadoc.packages" value="org.lacson.*"/>
+<property name="javadoc.packages" value="net.sourceforge.*"/>
