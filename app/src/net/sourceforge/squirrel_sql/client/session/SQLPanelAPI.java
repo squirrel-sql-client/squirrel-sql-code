@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 /**
  * This class is the API through which plugins can work with the SQL Panel.
  *
@@ -304,6 +305,26 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	public synchronized void gotoPreviousResultsTab()
 	{
 		_session.getSessionSheet().getSQLPanel().gotoPreviousResultsTab();
+	}
+
+	/**
+	 * The passed SQL should be added to the SQL history.
+	 *  
+	 * @param	sql		SQL to be added to history.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>sql</TT> passed.
+	 */
+	public synchronized void addSQLToHistory(String sql)
+	{
+		if (sql == null)
+		{
+			throw new IllegalArgumentException("sql == null");
+		}
+
+		SQLHistoryItem shi = new SQLHistoryItem(sql); 
+		_session.getApplication().getSQLHistory().add(shi);
+		_session.getSessionSheet().getSQLPanel().addSQLToHistory(shi);
 	}
 
 }

@@ -72,7 +72,8 @@ public abstract class BaseDataSetTab extends BaseObjectTab
 					{
 						modelReference = ((IDataSetUpdateableModel)this);
 					}
-				} catch (Exception ignore)
+				}
+				catch (Exception ignore)
 				{
 					// any errors here result in an un-editable table, which
 					// should be no problem

@@ -32,6 +32,7 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
 /**
  * Defines the API to do callbacks on the application.
  */
@@ -129,6 +130,13 @@ public interface IApplication
 	 * @return	the factory object used to create the SQL entry panel.
 	 */
 	ISQLEntryPanelFactory getSQLEntryPanelFactory();
+
+	/**
+	 * Retrieve the application level SQL History object.
+	 * 
+	 * @return		the application level SQL History object.
+	 */
+	SQLHistory getSQLHistory();
 
 	/**
 	 * Set the factory object used to create the SQL entry panel.

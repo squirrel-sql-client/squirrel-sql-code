@@ -191,7 +191,8 @@ public class SQLExecuterTask implements Runnable
 			{
 				return false;
 			}
-			_sqlPanel.addSQLToHistory(querySql);
+			//_sqlPanel.addSQLToHistory(querySql);
+			_session.getSQLPanelAPI(_session.getApplication().getDummyAppPlugin()).addSQLToHistory(querySql);
 			ResultSet rs = _stmt.getResultSet();
 			if (rs != null)
 			{
@@ -249,7 +250,8 @@ public class SQLExecuterTask implements Runnable
 		}
 		else
 		{
-			_sqlPanel.addSQLToHistory(querySql);
+			//_sqlPanel.addSQLToHistory(querySql);
+			_session.getSQLPanelAPI(_session.getApplication().getDummyAppPlugin()).addSQLToHistory(querySql);
 			_session.getMessageHandler().showMessage(
 				_stmt.getUpdateCount() + " Rows Updated");
 		}

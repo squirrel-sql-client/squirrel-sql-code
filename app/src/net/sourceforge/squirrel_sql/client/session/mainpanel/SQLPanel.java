@@ -25,13 +25,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.Serializable;
+import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.swing.Box;
 import javax.swing.JCheckBox;
@@ -45,8 +47,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.EventListenerList;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
 import javax.swing.undo.UndoManager;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
@@ -54,11 +54,13 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
+import net.sourceforge.squirrel_sql.fw.gui.MemoryComboBox;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
@@ -70,6 +72,7 @@ import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ResultTabEvent;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 /**
  * This is the panel where SQL scripts can be entered and executed.
  *
@@ -80,10 +83,16 @@ public class SQLPanel extends JPanel
 	/** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(SQLPanel.class);
 
+	/**
+	 * Shared model for the SQL history combo. This is used by those sessions
+	 * that don't want to keep a separate SQL history.
+	 */
+	private static SQLHistoryComboBoxModel s_sqlHistoryModel;
+
 	/** Current session. */
 	private ISession _session;
 
-	private SQLHistoryComboBox _sqlCombo = new SQLHistoryComboBox();
+	private SQLHistoryComboBox _sqlCombo;
 	private ISQLEntryPanel _sqlEntry;
 	private JCheckBox _limitRowsChk = new JCheckBox("Limit rows: ");
 	private IntegerField _nbrRows = new IntegerField();
@@ -332,10 +341,10 @@ public class SQLPanel extends JPanel
 
 			_sqlEntry.getJComponent().registerKeyboardAction(
 							undo, res.getKeyStroke(undo),
-							this.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+							WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 			_sqlEntry.getJComponent().registerKeyboardAction(
 							redo, res.getKeyStroke(redo),
-							this.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+							WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 			_sqlEntry.setUndoActions(undo, redo);
 
 			_sqlEntry.addUndoableEditListener(_undoManager);
@@ -585,12 +594,17 @@ public class SQLPanel extends JPanel
 		});
 	}
 
-	void addSQLToHistory(String sql)
+	public void addSQLToHistory(SQLHistoryItem sql)
 	{
+		if (sql == null)
+		{
+			throw new IllegalArgumentException("SQLHistoryItem == null");
+		}
+
 		_sqlComboListener.stopListening();
 		try
 		{
-			_sqlCombo.addItem(new SqlComboItem(sql));
+			_sqlCombo.addItem(sql);
 		}
 		finally
 		{
@@ -678,6 +692,23 @@ public class SQLPanel extends JPanel
 	private void propertiesHaveChanged(String propName)
 	{
 		final SessionProperties props = _session.getProperties();
+		if (propName == null || propName.equals(
+				SessionProperties.IPropertyNames.SQL_SHARE_HISTORY))
+		{
+			boolean usingSharedModel = _sqlCombo.getModel() == s_sqlHistoryModel;
+			boolean shouldUseSharedModel = props.getSQLShareHistory();
+			if (usingSharedModel != shouldUseSharedModel)
+			{
+				if (shouldUseSharedModel)
+				{
+					_sqlCombo.setModel(s_sqlHistoryModel);
+				}
+				else
+				{
+					_sqlCombo.setModel(new SQLHistoryComboBoxModel());
+				}
+			}
+		}
 		/*
 				if (propertyName == null || propertyName.equals(
 						SessionProperties.IPropertyNames.SQL_OUTPUT_CLASS_NAME)) {
@@ -772,7 +803,7 @@ public class SQLPanel extends JPanel
 			}
 			else
 			{
-				_sqlCombo.setMaxMemoryCount(_sqlCombo.NO_MAX);
+				_sqlCombo.setMaxMemoryCount(MemoryComboBox.NO_MAX);
 			}
 		}
 	}
@@ -780,15 +811,25 @@ public class SQLPanel extends JPanel
 	private void createUserInterface()
 	{
 		final IApplication app = _session.getApplication();
+		synchronized (getClass())
+		{
+			if (s_sqlHistoryModel == null)
+			{
+				final SQLHistory sqlHistory = app.getSQLHistory();
+				s_sqlHistoryModel = new SQLHistoryComboBoxModel(sqlHistory.getData()); 
+			}
+		}
 
 		_tabbedResultsPanel = new SquirrelTabbedPane(app.getSquirrelPreferences());
 
 		setLayout(new BorderLayout());
 
-		_sqlEntry = app.getSQLEntryPanelFactory().createSQLEntryPanel(_session);
+		//_sqlEntry = app.getSQLEntryPanelFactory().createSQLEntryPanel(_session);
 
 		_nbrRows.setColumns(8);
 
+		_sqlCombo = new SQLHistoryComboBox();
+		_sqlCombo.setModel(s_sqlHistoryModel);
 		_sqlCombo.setEditable(false);
 		{
 			JPanel pnl = new JPanel();
@@ -866,68 +907,72 @@ public class SQLPanel extends JPanel
 		{
 			if (_listening)
 			{
-				SqlComboItem item = (SqlComboItem)_sqlCombo.getSelectedItem();
+				SQLHistoryItem item = (SQLHistoryItem)_sqlCombo.getSelectedItem();
 				if (item != null)
 				{
-					_sqlEntry.appendText("\n\n" + item.getText());
+					if (_sqlEntry.getText().length() > 0)
+					{
+						_sqlEntry.appendText("\n\n");
+					}
+					_sqlEntry.appendText(item.getSQL());
 					_sqlEntry.setCaretPosition(_sqlEntry.getText().length() - 1);
 				}
 			}
 		}
 	}
 
-	private static class SqlComboItem implements Serializable
-	{
-		private String _sql;
-		private String _firstLine;
-
-		SqlComboItem(String sql)
-		{
-			super();
-			_sql = sql.trim();
-			_firstLine = getFirstLine(sql);
-		}
-
-		public boolean equals(Object rhs)
-		{
-			boolean rc = false;
-			if (this == rhs)
-			{
-				rc = true;
-			}
-			else if (rhs != null && rhs.getClass().equals(getClass()))
-			{
-				rc = ((SqlComboItem)rhs).getText().equals(getText());
-			}
-			return rc;
-		}
-
-		public String toString()
-		{
-			return _firstLine;
-		}
-
-		String getText()
-		{
-			return _sql;
-		}
-
-		private String getFirstLine(String sql)
-		{
-			int idx1 = sql.indexOf('\n');
-			int idx2 = sql.indexOf('\r');
-			if (idx1 == -1)
-			{
-				idx1 = idx2;
-			}
-			if (idx2 != -1 && idx2 < idx1)
-			{
-				idx1 = idx2;
-			}
-			sql = idx1 == -1 ? sql : sql.substring(0, idx1);
-			return sql.replace('\t', ' ');
-		}
-	}
+//	private static class SqlComboItem implements Serializable
+//	{
+//		private String _sql;
+//		private String _firstLine;
+//
+//		SqlComboItem(String sql)
+//		{
+//			super();
+//			_sql = sql.trim();
+//			_firstLine = getFirstLine(sql);
+//		}
+//
+//		public boolean equals(Object rhs)
+//		{
+//			boolean rc = false;
+//			if (this == rhs)
+//			{
+//				rc = true;
+//			}
+//			else if (rhs != null && rhs.getClass().equals(getClass()))
+//			{
+//				rc = ((SqlComboItem)rhs).getText().equals(getText());
+//			}
+//			return rc;
+//		}
+//
+//		public String toString()
+//		{
+//			return _firstLine;
+//		}
+//
+//		String getText()
+//		{
+//			return _sql;
+//		}
+//
+//		private String getFirstLine(String sql)
+//		{
+//			int idx1 = sql.indexOf('\n');
+//			int idx2 = sql.indexOf('\r');
+//			if (idx1 == -1)
+//			{
+//				idx1 = idx2;
+//			}
+//			if (idx2 != -1 && idx2 < idx1)
+//			{
+//				idx1 = idx2;
+//			}
+//			sql = idx1 == -1 ? sql : sql.substring(0, idx1);
+//			return sql.replace('\t', ' ');
+//		}
+//	}
 
 	private class LimitRowsCheckBoxListener implements ChangeListener
 	{

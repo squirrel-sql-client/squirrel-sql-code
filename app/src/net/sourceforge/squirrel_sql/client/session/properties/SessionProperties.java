@@ -53,6 +53,7 @@ public class SessionProperties implements Cloneable, Serializable
 		String SQL_ENTRY_HISTORY_SIZE = "sqlEntryHistorySize";
 		String SHOW_ROW_COUNT = "showRowCount";
 		String SHOW_TOOL_BAR = "showToolBar";
+		String SQL_SHARE_HISTORY = "sqlShareHistory";
 		String SQL_LIMIT_ROWS = "sqlLimitRows";
 		String SQL_NBR_ROWS_TO_SHOW = "sqlNbrOfRowsToShow";
 		String SQL_RESULTS_OUTPUT_CLASS_NAME = "sqlResultsOutputClassName";
@@ -108,6 +109,11 @@ public class SessionProperties implements Cloneable, Serializable
 
 	/** Should the number of SQL statements to save in execution history be limited?. */
 	private boolean _limitSqlEntryHistorySize = false;
+
+	/**
+	 * Does this session share its SQL History with other sessions?
+	 */
+	private boolean _sqlShareHistory = true;
 
 	/**
 	 * Number of SQL statements to save in execution history. Only applicable
@@ -510,6 +516,29 @@ public class SessionProperties implements Cloneable, Serializable
 		_limitSqlEntryHistorySize = data;
 		getPropertyChangeReporter().firePropertyChange(IPropertyNames.LIMIT_SQL_ENTRY_HISTORY_SIZE,
 									oldValue, _limitSqlEntryHistorySize);
+	}
+
+	/**
+	 * Does this session share its SQL History with other sessions?
+	 * 
+	 * @return	<TT>true</TT> if this session shares its history.
+	 */
+	public boolean getSQLShareHistory()
+	{
+		return _sqlShareHistory;
+	}
+
+	/**
+	 * Set whether this session shares its SQL History with other sessions.
+	 * 
+	 * @param	data	<TT>true</TT> if this session shares its history.
+	 */
+	public void setSQLShareHistory(boolean data)
+	{
+		final boolean oldValue = _sqlShareHistory;
+		_sqlShareHistory = data;
+		getPropertyChangeReporter().firePropertyChange(IPropertyNames.SQL_SHARE_HISTORY,
+										oldValue, _sqlShareHistory);
 	}
 
 	public int getSQLEntryHistorySize()

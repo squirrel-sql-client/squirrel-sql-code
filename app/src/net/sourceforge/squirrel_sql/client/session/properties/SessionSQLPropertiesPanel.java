@@ -50,13 +50,13 @@ public class SessionSQLPropertiesPanel
 	implements INewSessionPropertiesPanel, ISessionPropertiesPanel
 {
 	/** Application API. */
-	private IApplication _app;
+	private final IApplication _app;
+
+	/** The actual GUI panel that allows user to do the maintenance. */
+	private final SQLPropertiesPanel _myPanel;
 
 	/** Session properties object being maintained. */
 	private SessionProperties _props;
-
-	/** The actual GUI panel that allows user to do the maintenance. */
-	private SQLPropertiesPanel _myPanel;
 
 	/**
 	 * ctor specifying the Application API.
@@ -81,7 +81,7 @@ public class SessionSQLPropertiesPanel
 
 	public void initialize(IApplication app)
 	{
-		_props = app.getSquirrelPreferences().getSessionProperties();
+		_props = _app.getSquirrelPreferences().getSessionProperties();
 		_myPanel.loadData(_props);
 	}
 
@@ -132,12 +132,11 @@ public class SessionSQLPropertiesPanel
 			String COMMIT_ON_CLOSE = "Commit On Closing Session";
 			String NBR_BYTES = "Number of bytes to read:";
 			String NBR_CHARS = "Number of chars to read:";
-//			String NBR_ROWS_CONTENTS = "Number of rows:";
-//			String NBR_ROWS_SQL = "Number of rows:";
 			String LIMIT_ROWS_CONTENTS = "Contents - Limit rows";
 			String LIMIT_ROWS_SQL = "SQL results - Limit rows";
 			String LONGVARBINARY = "LongVarBinary";
 			String SQL_OTHER = "SQL Other";
+			String SHARE_SQL_HISTORY = "Share SQL History";
 			String SHOW_ROW_COUNT = "Show Row Count for Tables (can slow application)";
 			String SOL_COMENT = "Start of Line Comment";
 			String TABLE = "Table";
@@ -176,6 +175,7 @@ public class SessionSQLPropertiesPanel
 
 		private JCheckBox _showAllOtherChk = new JCheckBox(i18n.ALL_OTHER);
 
+		private JCheckBox _shareSQLHistoryChk = new JCheckBox(i18n.SHARE_SQL_HISTORY);
 		private JCheckBox _limitSQLHistoryComboSizeChk = new JCheckBox(i18n.LIMIT_SQL_HISTORY_COMBO_SIZE);
 		private IntegerField _limitSQLHistoryComboSizeField = new IntegerField(5);
 
@@ -203,6 +203,7 @@ public class SessionSQLPropertiesPanel
 			_stmtSepCharField.setChar(props.getSQLStatementSeparatorChar());
 			_solCommentField.setText(props.getStartOfLineComment());
 
+			_shareSQLHistoryChk.setSelected(props.getSQLShareHistory());
 			_limitSQLHistoryComboSizeChk.setSelected(props.getLimitSQLEntryHistorySize());
 			_limitSQLHistoryComboSizeField.setInt(props.getSQLEntryHistorySize());
 
@@ -241,6 +242,7 @@ public class SessionSQLPropertiesPanel
 			props.setSQLStatementSeparatorChar(_stmtSepCharField.getChar());
 			props.setStartOfLineComment(_solCommentField.getText());
 
+			props.setSQLShareHistory(_shareSQLHistoryChk.isSelected());
 			props.setLimitSQLEntryHistorySize(_limitSQLHistoryComboSizeChk.isSelected());
 			props.setSQLEntryHistorySize(_limitSQLHistoryComboSizeField.getInt());
 
@@ -281,14 +283,21 @@ public class SessionSQLPropertiesPanel
 				_clobTypeDrop.getSelectedIndex() == ReadTypeCombo.READ_PARTIAL_IDX;
 			_showClobSizeField.setEnabled(showClobs && showPartialClobs);
 			_clobTypeDrop.setEnabled(showClobs);
+
+			// If this session doesn't share SQL history with other sessions
+			// then disable the controls that relate to SQL History.
+			final boolean shareSQLHistory = _shareSQLHistoryChk.isSelected();
+			_limitSQLHistoryComboSizeChk.setEnabled(!shareSQLHistory);
+			_limitSQLHistoryComboSizeField.setEnabled(!shareSQLHistory &&
+								_limitSQLHistoryComboSizeChk.isSelected());						
 		}
 
 		private void createGUI(IApplication app)
 		{
 			setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.anchor = gbc.WEST;
-			gbc.fill = gbc.HORIZONTAL;
+			gbc.anchor = GridBagConstraints.WEST;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
 
 			gbc.gridx = 0;
@@ -307,9 +316,9 @@ public class SessionSQLPropertiesPanel
 			final JPanel pnl = new JPanel(new GridBagLayout());
 			pnl.setBorder(BorderFactory.createTitledBorder("SQL"));
 			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.fill = gbc.HORIZONTAL;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(0, 4, 0, 4);
-			gbc.anchor = gbc.CENTER;
+			gbc.anchor = GridBagConstraints.CENTER;
 
 			_autoCommitChk.addChangeListener(_controlMediator);
 			_contentsLimitRowsChk.addChangeListener(_controlMediator);
@@ -325,12 +334,12 @@ public class SessionSQLPropertiesPanel
 			pnl.add(_autoCommitChk, gbc);
 
 			gbc.gridx+=2;
-			gbc.gridwidth = gbc.REMAINDER;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			pnl.add(_commitOnClose, gbc);
 
 			++gbc.gridy; // new line
 			gbc.gridx = 0;
-			gbc.gridwidth = gbc.REMAINDER;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			pnl.add(_showRowCountChk, gbc);
 
 			++gbc.gridy; // new line
@@ -341,7 +350,7 @@ public class SessionSQLPropertiesPanel
 			gbc.gridx+=2;
 			pnl.add(_contentsNbrRowsToShowField, gbc);
 			++gbc.gridx;
-			gbc.gridwidth = gbc.REMAINDER;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			pnl.add(new JLabel("rows"), gbc);
 
 			++gbc.gridy; // new line
@@ -352,7 +361,7 @@ public class SessionSQLPropertiesPanel
 			gbc.gridx+=2;
 			pnl.add(_sqlNbrRowsToShowField, gbc);
 			++gbc.gridx;
-			gbc.gridwidth = gbc.REMAINDER;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			pnl.add(new JLabel("rows"), gbc);
 
 			++gbc.gridy; // new line
@@ -371,16 +380,21 @@ public class SessionSQLPropertiesPanel
 
 		private JPanel createSQLHistoryPanel()
 		{
+			_shareSQLHistoryChk.addChangeListener(_controlMediator);
+			_limitSQLHistoryComboSizeChk.addChangeListener(_controlMediator);
+
 			JPanel pnl = new JPanel(new GridBagLayout());
 			pnl.setBorder(BorderFactory.createTitledBorder(i18n.SQL_HISTORY));
 			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.fill = gbc.HORIZONTAL;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(0, 4, 0, 4);
-			gbc.anchor = gbc.WEST;
+			gbc.anchor = GridBagConstraints.WEST;
 
 			gbc.gridx = 0;
 			gbc.gridy = 0;
-			//gbc.gridwidth = 2;
+			pnl.add(_shareSQLHistoryChk, gbc);
+
+			++gbc.gridy;
 			pnl.add(_limitSQLHistoryComboSizeChk, gbc);
 			
 			++gbc.gridx;
@@ -402,9 +416,9 @@ public class SessionSQLPropertiesPanel
 			JPanel pnl = new JPanel(new GridBagLayout());
 			pnl.setBorder(BorderFactory.createTitledBorder("Show String Data for Columns of these Data Types"));
 			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.fill = gbc.HORIZONTAL;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(0, 4, 0, 4);
-			gbc.anchor = gbc.WEST;
+			gbc.anchor = GridBagConstraints.WEST;
 
 			gbc.gridx = 0;
 			gbc.gridy = 0;

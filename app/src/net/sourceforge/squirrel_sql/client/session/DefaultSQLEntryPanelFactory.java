@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -18,13 +18,30 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.client.session.ISession;
-
-public class DefaultSQLEntryPanelFactory implements ISQLEntryPanelFactory {
+/**
+ * A factory that creates <TT>DefaultSQLEntrypanel</TT> objects.
+ * 
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
+public class DefaultSQLEntryPanelFactory implements ISQLEntryPanelFactory
+{
 	/**
-	 * @see ISQLEntryPanelFactory#createSQLEntryPanel()
+	 * Create a new <TT>DefaultSQLEntrypanel</TT>.
+	 * 
+	 * @param	session	The session that an SQL entry is to be created for.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>ISession</TT> passed.
+	 * 
 	 */
-	public ISQLEntryPanel createSQLEntryPanel(ISession session) {
-		return new DefaultSQLEntryPanel(session.getApplication());
+	public ISQLEntryPanel createSQLEntryPanel(ISession session)
+	{
+		if (session == null)
+		{
+			throw new IllegalArgumentException("ISession == null");
+		}
+
+		return new DefaultSQLEntryPanel(session);
 	}
 }
 

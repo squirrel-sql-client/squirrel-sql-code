@@ -152,7 +152,7 @@ public class ApplicationFiles
  	 */
  	public File getUserSQLHistoryFile()
  	{
- 		return new File(_userSettingsDir + File.separator + "sqlhistory.ser");
+ 		return new File(_userSettingsDir + File.separator + "sql_history.xml");
  	}
 
 	/**

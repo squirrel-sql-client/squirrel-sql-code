@@ -89,6 +89,7 @@ public abstract class BaseObjectTab implements IObjectTab
 			s_log.debug("Refreshing " + getTitle() + " table tab.");
 			try
 			{
+				clear();
 				refreshComponent();
 			}
 			catch (DataSetException ex)

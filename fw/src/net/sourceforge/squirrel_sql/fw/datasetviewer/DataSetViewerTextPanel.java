@@ -170,7 +170,9 @@ public class DataSetViewerTextPanel extends BaseDataSetViewerDestination
 			setLineWrap(false);
 			setFont(new Font("Monospaced", Font.PLAIN, 12));
 
-			_textPopupMenu = new TextPopupMenu(allowUpdate, updateableObject);
+			// TODO: Col - Fix this when package refactoring done. Tell
+			// Glenn that cannot edit from text mode until refactoring done.
+			_textPopupMenu = new TextPopupMenu();	//allowUpdate, updateableObject);
 			_textPopupMenu.setTextComponent(this);
 
 			addMouseListener(new MouseAdapter()

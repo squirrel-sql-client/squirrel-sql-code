@@ -17,13 +17,6 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.Vector;
-
 import javax.swing.DefaultComboBoxModel;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -31,11 +24,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
  * This class provides a model for a MemoryComboBox object allowing it to
  * save/restore its data from disk.
- *
- * TODO: Check if we have an issue with moving between JDKs (e.g. 1.3 to 1.4)
- * and serialization.May change it to save/retore to XML.
- * 
- * TODO: Don't save each time an element added to model etc, instead save at end.
+ * TODO: Delete this class
  * 
  * @author Lynn Pye
  */
@@ -46,7 +35,17 @@ public class SQLHistoryComboBoxModel extends DefaultComboBoxModel
 		LoggerController.createLogger(SQLHistoryComboBoxModel.class);
 
 	/** The file to save/restore data to. */
-	private File _file;
+//	private File _file;
+
+	public SQLHistoryComboBoxModel()
+	{
+		super();
+	}
+
+	public SQLHistoryComboBoxModel(Object[] data)
+	{
+		super(data);
+	}
 
 	/**
 	 * Ctor specifying File to save/restore from.
@@ -56,104 +55,126 @@ public class SQLHistoryComboBoxModel extends DefaultComboBoxModel
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>File</TT> passed.
 	 */
-	public SQLHistoryComboBoxModel(File file)
-	{
-		super(loadDataFromStorage(file));
-		_file = file;
-	}
+//	public SQLHistoryComboBoxModel(File file)
+//	{
+//		super(loadDataFromStorage(file));
+//		_file = file;
+//	}
 
-	public void addElement(Object anObject)
-	{
-		super.addElement(anObject);
-		writeDataToStorage();
-	}
+//	public void addElement(Object anObject)
+//	{
+//		super.addElement(anObject);
+//		writeDataToStorage();
+//	}
+//
+//	public void insertElementAt(Object anObject, int index)
+//	{
+//		super.insertElementAt(anObject, index);
+//		writeDataToStorage();
+//	}
+//
+//	public void removeAllElements()
+//	{
+//		super.removeAllElements();
+//		writeDataToStorage();
+//	}
+//
+//	public void removeElement(Object anObject)
+//	{
+//		super.removeElement(anObject);
+//		writeDataToStorage();
+//	}
+//
+//	public void removeElementAt(int index)
+//	{
+//		super.removeElementAt(index);
+//		writeDataToStorage();
+//	}
 
-	public void insertElementAt(Object anObject, int index)
-	{
-		super.insertElementAt(anObject, index);
-		writeDataToStorage();
-	}
-
-	public void removeAllElements()
-	{
-		super.removeAllElements();
-		writeDataToStorage();
-	}
-
-	public void removeElement(Object anObject)
-	{
-		super.removeElement(anObject);
-		writeDataToStorage();
-	}
-
-	public void removeElementAt(int index)
-	{
-		super.removeElementAt(index);
-		writeDataToStorage();
-	}
-
-	private synchronized void writeDataToStorage()
-	{
-		Vector v = new Vector(0);
-		int sz = getSize();
-		for (int i = 0; i < sz; ++i)
-		{
-			v.add(getElementAt(i));
-		}
-		// now write the Vector out...serialization anyone?
-		try
-		{
-			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(_file));
-			try
-			{
-				oos.writeObject(v);
-				oos.flush();
-			}
-			finally
-			{
-				oos.close();
-			}
-		}
-		catch (Exception e)
-		{
-			s_log.error("Unable to write SQL queries to persistant storage.", e);
-		}
-	}
+//	private synchronized void writeDataToStorage()
+//	{
+//		// Get the history into an array.
+//		final int historySize = getSize();
+//		final List history = new ArrayList(historySize);
+//		for (int i = 0; i < historySize; ++i)
+//		{
+//			history.add(getElementAt(i));
+//		}
+//		SQLHistoryComboBoxItem[] data = new SQLHistoryComboBoxItem[historySize];
+//		data = (SQLHistoryComboBoxItem[])history.toArray(data);
+//
+//		// Wrap a JavaBean around the array and save it.
+//		final SQLHistoryArrayBean bean = new SQLHistoryArrayBean();
+//		bean.setData(data);
+//		try
+//		{
+//			XMLBeanWriter wtr = new XMLBeanWriter(bean);
+//			wtr.save(_file);
+//		}
+//		catch (Exception ex)
+//		{
+//			s_log.error("Unable to write SQL queries to persistant storage.", ex);
+//		}
+//	}
 
 	/**
-	 * Read Vector from the pased file and return it.
+	 * Load SQL history from the passed file and return it in a Vector.
 	 * 
-	 * @param	file	File containing vector of data.
+	 * @param	file	File containing SQL history.
 	 * 
-	 * @return	Vector read from passed file.
+	 * @return		Vector containing SQL history. 
 	 * 
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>File</TT> passed.
 	 */
-	private static Vector loadDataFromStorage(File file)
-	{
-		if (file == null)
-		{
-			throw new IllegalArgumentException("File == null");
-		}
-		Vector v = new Vector(0);
-		try
-		{
-			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
-			try
-			{
-				v = (Vector)ois.readObject();
-			}
-			finally
-			{
-				ois.close();
-			}
-		}
-		catch (Exception e)
-		{
-			s_log.error("Unable to load SQL queries from persistant storage.", e);
-		}
-		return v;
-	}
+//	private static Vector loadDataFromStorage(File file)
+//	{
+//		if (file == null)
+//		{
+//			throw new IllegalArgumentException("File == null");
+//		}
+//
+//		try
+//		{
+//			XMLBeanReader doc = new XMLBeanReader();
+//			doc.load(file);
+//			Iterator it = doc.iterator();
+//			if (it.hasNext())
+//			{
+//				SQLHistoryArrayBean bean = (SQLHistoryArrayBean)it.next();
+//				SQLHistoryComboBoxItem[] data = bean.getData();
+//				return new Vector(Arrays.asList(data));
+//
+//			}
+//		}
+//		catch (FileNotFoundException ignore)
+//		{
+//			// History file not found for user - first time user ran pgm.
+//		}
+//		catch (Exception ex)
+//		{
+//			s_log.error("Unable to load SQL queries from persistant storage.", ex);
+//		}
+//
+//		return new Vector(0);
+//	}
 
+//	public static class SQLHistoryArrayBean
+//	{
+//		private SQLHistoryComboBoxItem[] _data = new SQLHistoryComboBoxItem[0];
+//
+//		public SQLHistoryArrayBean()
+//		{
+//		}
+//
+//		public SQLHistoryComboBoxItem[] getData()
+//		{
+//			return _data;
+//		}
+//
+//		public void setData(SQLHistoryComboBoxItem[] data)
+//		{
+//			_data = data;
+//		}
+//	}
 }

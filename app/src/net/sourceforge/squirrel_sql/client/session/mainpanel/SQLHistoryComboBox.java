@@ -21,10 +21,10 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.fw.gui.MemoryComboBox;
-
-import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 /**
- * This combobox shows the history of SQL statments executed.
+ * This combobox holds the history of SQL statments executed.
+ * 
+ * TODO: Delete this class
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
@@ -34,19 +34,18 @@ public class SQLHistoryComboBox extends MemoryComboBox
 	 * Singleton model shared by all instances of this class so that all
 	 * sessions can share the same history.
 	 */
-	private static SQLHistoryComboBoxModel s_model;
+//	private static SQLHistoryComboBoxModel s_model;
 
-	
 	public SQLHistoryComboBox()
 	{
 		super();
-		synchronized (this.getClass())
-		{
-			if (s_model == null)
-			{
-				s_model = new SQLHistoryComboBoxModel(new ApplicationFiles().getUserSQLHistoryFile());
-			}
-			setModel(s_model);
-		}
+//		synchronized (this.getClass())
+//		{
+//			if (s_model == null)
+//			{
+//				s_model = new SQLHistoryComboBoxModel(/*new ApplicationFiles().getUserSQLHistoryFile()*/);
+//			}
+//			setModel(s_model);
+//		}
 	}
 }
