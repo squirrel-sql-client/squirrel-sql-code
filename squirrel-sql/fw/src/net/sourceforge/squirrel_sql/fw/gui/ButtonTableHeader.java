@@ -38,7 +38,7 @@ import java.awt.event.MouseMotionListener;
 import java.net.URL;
 
 /**
- * @version 	$Id: ButtonTableHeader.java,v 1.3 2002-03-13 19:39:24 joco01 Exp $
+ * @version 	$Id: ButtonTableHeader.java,v 1.4 2002-03-13 22:24:48 joco01 Exp $
  * @author		Johan Compagner
  */
 public class ButtonTableHeader extends JTableHeader
@@ -102,7 +102,7 @@ public class ButtonTableHeader extends JTableHeader
 			_bPressed = false;
 			if(!_bDragged)
 			{
-				int column = columnAtPoint(e.getPoint());
+				int column = getTable().convertColumnIndexToModel(_iPressed);
 				TableModel tm = table.getModel();
 	
 				if(column > -1 && column < tm.getColumnCount() && tm instanceof SortableTableModel)
@@ -169,6 +169,7 @@ public class ButtonTableHeader extends JTableHeader
 			int row,
 			int column)
 		{
+			
 			if (value == null)
 				value = "";
 			if(_iPressed == column && _bPressed)
