@@ -185,17 +185,17 @@ public class TableTypesGroupNode extends BaseNode
 
 				tableTypeList.add(new UDTObjectTypeNode(session, treeModel, TableTypesGroupNode.this));
 
-				try
-				{
-					if (session.getSQLConnection().supportsStoredProcedures())
-					{
-						tableTypeList.add(new ProcedureObjectTypeNode(getSession(), getTreeModel(), TableTypesGroupNode.this));
-					}
-				}
-				catch (SQLException ignore)
-				{
-					// Any probs just assume that db doesn't supports procs.
-				}
+//				try
+//				{
+//					if (session.getSQLConnection().supportsStoredProcedures())
+//					{
+//						tableTypeList.add(new ProcedureObjectTypeNode(getSession(), getTreeModel(), TableTypesGroupNode.this));
+//					}
+//				}
+//				catch (SQLException ignore)
+//				{
+//					// Any probs just assume that db doesn't supports procs.
+//				}
 
 				// Load object types from plugins.
 				PluginManager mgr = getSession().getApplication().getPluginManager();

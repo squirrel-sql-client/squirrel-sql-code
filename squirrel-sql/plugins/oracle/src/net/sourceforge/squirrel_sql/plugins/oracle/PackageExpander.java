@@ -17,17 +17,14 @@ package net.sourceforge.squirrel_sql.plugins.oracle;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectTypes;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -61,7 +58,8 @@ public class PackageExpander implements INodeExpander
 		throws SQLException
 	{
 		final List childNodes = new ArrayList();
-		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
+		final IDatabaseObjectInfo parentDbinfo =
+			parentNode.getDatabaseObjectInfo();
 		final SQLConnection conn = session.getSQLConnection();
 		final String catalogName = parentDbinfo.getCatalogName();
 		final String schemaName = parentDbinfo.getSchemaName();
@@ -73,12 +71,15 @@ public class PackageExpander implements INodeExpander
 	private List createProcedureNodes(ISession session, String catalogName,
 										String schemaName)
 	{
-		final SQLConnection conn = session.getSQLConnection();
+		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
 		final List childNodes = new ArrayList();
 		IProcedureInfo[] procs = null;
-		try {
-			procs = conn.getProcedures(catalogName, schemaName, "%");
-		} catch (SQLException ignore) {
+		try
+		{
+			procs = md.getProcedures(catalogName, schemaName, "%");
+		}
+		catch (SQLException ignore)
+		{
 			// Assume DBMS doesn't support procedures.
 			procs = new IProcedureInfo[0];
 		}

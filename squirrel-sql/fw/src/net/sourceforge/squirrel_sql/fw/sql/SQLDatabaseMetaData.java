@@ -27,7 +27,16 @@ import java.util.Map;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
- * This class represents the metadata for a database.
+ * This class represents the metadata for a database. It is essentially
+ * a wrapper around <TT>java.sql.DatabaseMetaData</TT>.
+ * 
+ * <P>. From the JavaDoc for <TT>java.sql.DatabaseMetaData</TT>. &quot;Some
+ * methods take arguments that are String patterns. These arguments all
+ * have names such as fooPattern. Within a pattern String, "%" means match any
+ * substring of 0 or more characters, and "_" means match any one character. Only
+ * metadata entries matching the search pattern are returned. If a search pattern
+ * argument is set to null, that argument's criterion will be dropped from the
+ * search.&quot;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
@@ -141,10 +150,137 @@ public class SQLDatabaseMetaData
 		{
 			DatabaseMetaData md = getJDBCMetaData();
 			int vers = (md.getJDBCMajorVersion() * 100) + md.getJDBCMinorVersion();
-			_common.put(key, new Integer(vers));
+			value = new Integer(vers);
+			_common.put(key, value);
 		}
 		return value.intValue();
 	}
+
+	/**
+	 * Return the string used to quote characters in thuis DBMS.
+	 * 
+	 * @return	quote string.
+	 * 
+	 * @throws	SQLException	Thrown if an SQL error occurs.
+	 */
+	public synchronized String getIdentifierQuoteString() throws SQLException
+	{
+		final String key = "getIdentifierQuoteString";
+		String value = (String)_common.get(key);
+		if (value == null)
+		{
+			final String driverName = getDriverName();
+			if (driverName.equals(DriverNames.FREE_TDS)
+				|| driverName.equals(DriverNames.JCONNECT))
+			{
+				value = "";
+			}
+			else
+			{
+				value = getJDBCMetaData().getIdentifierQuoteString();
+			}
+			_common.put(key, value);
+		}
+		return value;
+	}
+
+	/**
+	 * Return a string array containing the names of all the schemas in the
+	 * database.
+	 * 
+	 * @return	String[] of the names of the schemas in the database.
+	 * 
+	 * @throws	SQLException	Thrown if an SQL error occurs.
+	 */
+	public String[] getSchemas() throws SQLException
+	{
+		DatabaseMetaData md = getJDBCMetaData();
+		ArrayList list = new ArrayList();
+		ResultSet rs = md.getSchemas();
+		while (rs.next())
+		{
+			list.add(rs.getString(1));
+		}
+		return (String[])list.toArray(new String[list.size()]);
+	}
+
+	/**
+	 * Retrieves whether this database supports schemas at all.
+	 * 
+	 * @return	<TT>true</TT> if database supports schemas.
+	 * 
+	 * @throws	SQLException	Thrown if an SQL error occurs.
+	 */
+	public boolean supportsSchemas() throws SQLException
+	{
+		return supportsSchemasInDataManipulation()
+			|| supportsSchemasInTableDefinitions();
+	}
+
+	/**
+	 * Retrieves whether a schema name can be used in a data manipulation
+	 * statement.
+	 * 
+	 * @return	<TT>true</TT> if a schema name can be used in a data
+	 *			manipulation statement.
+	 * 
+	 * @throws	SQLException	Thrown if an SQL error occurs.
+	 */
+	public boolean supportsSchemasInDataManipulation()
+		throws SQLException
+	{
+		try
+		{
+			return getJDBCMetaData().supportsSchemasInDataManipulation();
+		}
+		catch (SQLException ex)
+		{
+			if (getDriverName().equals(DriverNames.FREE_TDS))
+			{
+				return true;
+			}
+			throw ex;
+		}
+	}
+
+	/**
+	 * Retrieves whether a schema name can be used in a table definition
+	 * statement.
+	 * 
+	 * @return	<TT>true</TT> if a schema name can be used in a table
+	 *			definition statement.
+	 * 
+	 * @throws	SQLException	Thrown if an SQL error occurs.
+	 */
+	public boolean supportsSchemasInTableDefinitions()
+		throws SQLException
+	{
+		try
+		{
+			return getJDBCMetaData().supportsSchemasInTableDefinitions();
+		}
+		catch (SQLException ex)
+		{
+			if (getDriverName().equals(DriverNames.FREE_TDS))
+			{
+				return true;
+			}
+			throw ex;
+		}
+	}
+
+	/**
+	 * Retrieves whether this DBMS supports stored procedures.
+	 * 
+	 * @return	<TT>true</TT> if DBMS supports stored procedures.
+	 * 
+	 * @throws	SQLException	Thrown if an SQL error occurs.
+	 */
+	public boolean supportsStoredProcedures() throws SQLException
+	{
+		return getJDBCMetaData().supportsStoredProcedures();
+	}
+
 	/**
 	 * Return a string array containing the names of all the catalogs in the
 	 * database.
@@ -267,7 +403,7 @@ public class SQLDatabaseMetaData
 	}
 
 	/**
-	 * Return the <TT>DatabaseMetaData</TT> object for this ocnnection.
+	 * Return the <TT>DatabaseMetaData</TT> object for this connection.
 	 * 
 	 * @return	The <TT>DatabaseMetaData</TT> object for this connection.
 	 * 
@@ -277,4 +413,36 @@ public class SQLDatabaseMetaData
 	{
 		return _conn.getConnection().getMetaData();
 	}
+
+	/**
+	 * Retrive information about the storeed procedures in the system
+	 * 
+	 * @param	catalog		The name of the catalog to retrieve procedures
+	 *						for. An empty string will return those without a
+	 * 						catalog. <TT>null</TT> means that the catalog
+	 * 						will not be used to narrow the search.
+	 * @param	schemaPattern	The name of the schema to retrieve procedures
+	 *						for. An empty string will return those without a
+	 * 						schema. <TT>null</TT> means that the schema
+	 * 						will not be used to narrow the search.
+	 * 
+	 * @throws	SQLException	Thrown if an SQL error occurs.
+	 * 
+	 */
+	public IProcedureInfo[] getProcedures(String catalog,
+				String schemaPattern, String procedureNamePattern)
+		throws SQLException
+	{
+		DatabaseMetaData md = getJDBCMetaData();
+		ArrayList list = new ArrayList();
+		ResultSet rs = md.getProcedures(catalog, schemaPattern, procedureNamePattern);
+		while (rs.next())
+		{
+			list.add(new ProcedureInfo(rs.getString(1), rs.getString(2),
+										rs.getString(3), rs.getString(7),
+										rs.getInt(8), this));
+		}
+		return (IProcedureInfo[])list.toArray(new IProcedureInfo[list.size()]);
+	}
+
 }

@@ -25,6 +25,7 @@ import java.util.List;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -68,10 +69,10 @@ public class ProcedureTypeExpander implements INodeExpander
 										String schemaName)
 		throws SQLException
 	{
-		final SQLConnection conn = session.getSQLConnection();
+		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
 		final List childNodes = new ArrayList();
 		IProcedureInfo[] procs = null;
-		procs = conn.getProcedures(catalogName, schemaName, "%");
+		procs = md.getProcedures(catalogName, schemaName, "%");
 		for (int i = 0; i < procs.length; ++i)
 		{
 			ObjectTreeNode child = new ObjectTreeNode(session, procs[i]);

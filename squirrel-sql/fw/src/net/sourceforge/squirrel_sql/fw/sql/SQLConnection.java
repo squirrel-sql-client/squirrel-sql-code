@@ -230,17 +230,6 @@ public class SQLConnection
 			ti.getSimpleName());
 	}
 
-	public String getIdentifierQuoteString()
-		throws SQLException
-	{
-		if (_dbDriverName.equals(DriverNames.FREE_TDS)
-			|| _dbDriverName.equals(DriverNames.JCONNECT))
-		{
-			return "";
-		}
-		return getMetaData().getIdentifierQuoteString();
-	}
-
 	public ResultSet getImportedKeys(ITableInfo ti)
 		throws SQLException
 	{
@@ -265,19 +254,19 @@ public class SQLConnection
 			ti.getSimpleName());
 	}
 
-	public IProcedureInfo[] getProcedures(String catalog,
-				String schemaPattern, String procedureNamePattern)
-		throws SQLException
-	{
-		DatabaseMetaData md = getMetaData();
-		ArrayList list = new ArrayList();
-		ResultSet rs = md.getProcedures(catalog, schemaPattern, procedureNamePattern);
-		while (rs.next())
-		{
-			list.add(new ProcedureInfo(rs, this));
-		}
-		return (IProcedureInfo[]) list.toArray(new IProcedureInfo[list.size()]);
-	}
+//	public IProcedureInfo[] getProcedures(String catalog,
+//				String schemaPattern, String procedureNamePattern)
+//		throws SQLException
+//	{
+//		DatabaseMetaData md = getMetaData();
+//		ArrayList list = new ArrayList();
+//		ResultSet rs = md.getProcedures(catalog, schemaPattern, procedureNamePattern);
+//		while (rs.next())
+//		{
+//			list.add(new ProcedureInfo(rs, this));
+//		}
+//		return (IProcedureInfo[]) list.toArray(new IProcedureInfo[list.size()]);
+//	}
 
 	public ResultSet getProcedureColumns(IProcedureInfo ti)
 		throws SQLException
@@ -288,17 +277,17 @@ public class SQLConnection
 													"%");
 	}
 
-	public String[] getSchemas() throws SQLException
-	{
-		DatabaseMetaData md = getMetaData();
-		ArrayList list = new ArrayList();
-		ResultSet rs = md.getSchemas();
-		while (rs.next())
-		{
-			list.add(rs.getString(1));
-		}
-		return (String[]) list.toArray(new String[list.size()]);
-	}
+//	public String[] getSchemas() throws SQLException
+//	{
+//		DatabaseMetaData md = getMetaData();
+//		ArrayList list = new ArrayList();
+//		ResultSet rs = md.getSchemas();
+//		while (rs.next())
+//		{
+//			list.add(rs.getString(1));
+//		}
+//		return (String[]) list.toArray(new String[list.size()]);
+//	}
 
 	public ResultSet getTablePrivileges(ITableInfo ti)
 		throws SQLException
@@ -447,6 +436,12 @@ public class SQLConnection
 		return (IUDTInfo[]) list.toArray(new IUDTInfo[list.size()]);
 	}
 
+	public SQLWarning getWarnings() throws SQLException
+	{
+		validateConnection();
+		return _conn.getWarnings();
+	}
+
 	public String getUserName() throws SQLException
 	{
 		return getMetaData().getUserName();
@@ -465,58 +460,6 @@ public class SQLConnection
 	{
 		validateConnection();
 		getConnection().setCatalog(catalogName);
-	}
-
-	public boolean supportsSchemas() throws SQLException
-	{
-		return supportsSchemasInDataManipulation()
-			|| supportsSchemasInTableDefinitions();
-	}
-
-	public boolean supportsSchemasInDataManipulation()
-		throws SQLException
-	{
-		try
-		{
-			return getMetaData().supportsSchemasInDataManipulation();
-		}
-		catch (SQLException ex)
-		{
-			if (_dbDriverName.equals(DriverNames.FREE_TDS))
-			{
-				return true;
-			}
-			throw ex;
-		}
-	}
-
-	public boolean supportsSchemasInTableDefinitions()
-		throws SQLException
-	{
-		try
-		{
-			return getMetaData().supportsSchemasInTableDefinitions();
-		}
-		catch (SQLException ex)
-		{
-			if (_dbDriverName.equals(DriverNames.FREE_TDS))
-			{
-				return true;
-			}
-			throw ex;
-		}
-	}
-
-	public boolean supportsStoredProcedures()
-		throws SQLException
-	{
-		return getMetaData().supportsStoredProcedures();
-	}
-
-	public SQLWarning getWarnings() throws SQLException
-	{
-		validateConnection();
-		return _conn.getWarnings();
 	}
 
 	public MetaDataDataSet createMetaDataDataSet(IMessageHandler msgHandler)

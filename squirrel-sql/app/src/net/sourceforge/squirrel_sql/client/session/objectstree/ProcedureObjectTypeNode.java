@@ -92,14 +92,14 @@ class ProcedureObjectTypeNode extends ObjectTypeNode
 			final String catalogId = getParentNode().getCatalogIdentifier();
 			final String schemaId = getParentNode().getSchemaIdentifier();
 			IProcedureInfo[] procs = null;
-			try
-			{
-				procs = conn.getProcedures(catalogId, schemaId, "%");
-			}
-			catch (SQLException ignore)
-			{
-				// Assume DBMS doesn't support procedures.
-			}
+//			try
+//			{
+//				procs = conn.getProcedures(catalogId, schemaId, "%");
+//			}
+//			catch (SQLException ignore)
+//			{
+//				// Assume DBMS doesn't support procedures.
+//			}
 
 			if (procs != null)
 			{

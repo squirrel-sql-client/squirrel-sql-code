@@ -127,13 +127,13 @@ public class DatabaseNode extends BaseNode
 				}
 
 				boolean supportsSchemas = false;
-				try
-				{
-					supportsSchemas = conn.supportsSchemas();
-				}
-				catch (SQLException ex)
-				{
-				}
+//				try
+//				{
+//					supportsSchemas = conn.supportsSchemas();
+//				}
+//				catch (SQLException ex)
+//				{
+//				}
 				if (supportsCatalogs)
 				{
 					final String[] catalogs = conn.getSQLMetaData().getCatalogs();
@@ -146,13 +146,13 @@ public class DatabaseNode extends BaseNode
 				}
 				else if (supportsSchemas)
 				{
-					final String[] schemas = conn.getSchemas();
-					for (int i = 0; i < schemas.length; ++i)
-					{
-						final String schemaName = schemas[i];
-						tableTypeList.add(
-							new TableTypesGroupNode(session, model, null, null, schemaName, schemaName));
-					}
+//					final String[] schemas = conn.getSchemas();
+//					for (int i = 0; i < schemas.length; ++i)
+//					{
+//						final String schemaName = schemas[i];
+//						tableTypeList.add(
+//							new TableTypesGroupNode(session, model, null, null, schemaName, schemaName));
+//					}
 				}
 				else
 				{

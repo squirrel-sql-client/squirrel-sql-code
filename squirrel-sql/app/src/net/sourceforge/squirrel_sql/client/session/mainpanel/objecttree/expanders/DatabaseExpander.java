@@ -105,7 +105,7 @@ public class DatabaseExpander implements INodeExpander
 		boolean supportsSchemas = false;
 		try
 		{
-			supportsSchemas = conn.supportsSchemas();
+			supportsSchemas = md.supportsSchemas();
 		}
 		catch (SQLException ex)
 		{
@@ -122,7 +122,7 @@ public class DatabaseExpander implements INodeExpander
 			}
 			else if (supportsSchemas)
 			{
-				childNodes.addAll(createSchemaNodes(session, conn, null));
+				childNodes.addAll(createSchemaNodes(session, md, null));
 			}
 			else
 			{
@@ -134,7 +134,7 @@ public class DatabaseExpander implements INodeExpander
 			final String catalogName = parentDbinfo.getSimpleName();
 			if (supportsSchemas)
 			{
-				childNodes.addAll(createSchemaNodes(session, conn, catalogName));
+				childNodes.addAll(createSchemaNodes(session, md, catalogName));
 			}
 			else
 			{
@@ -168,18 +168,17 @@ public class DatabaseExpander implements INodeExpander
 		return childNodes;
 	}
 
-	private List createSchemaNodes(ISession session, SQLConnection conn,
+	private List createSchemaNodes(ISession session, SQLDatabaseMetaData md,
 										String catalogName)
 		throws SQLException
 	{
 		final List childNodes = new ArrayList();
-		final String[] schemas = conn.getSchemas();
+		final String[] schemas = md.getSchemas();
 		for (int i = 0; i < schemas.length; ++i)
 		{
 			IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName, null,
 											schemas[i],
-											IDatabaseObjectTypes.SCHEMA,
-											conn);
+											IDatabaseObjectTypes.SCHEMA, md);
 			childNodes.add(new ObjectTreeNode(session, dbo));
 		}
 		return childNodes;
@@ -189,6 +188,7 @@ public class DatabaseExpander implements INodeExpander
 											String schemaName)
 	{
 		final SQLConnection conn = session.getSQLConnection();
+		final SQLDatabaseMetaData md = conn.getSQLMetaData();
 		final List list = new ArrayList();
 
 		// Add table types to list.
@@ -233,7 +233,7 @@ public class DatabaseExpander implements INodeExpander
 		boolean supportsStoredProcs = false;
 		try
 		{
-			supportsStoredProcs = conn.supportsStoredProcedures();
+			supportsStoredProcs = md.supportsStoredProcedures();
 		}
 		catch (SQLException ex)
 		{

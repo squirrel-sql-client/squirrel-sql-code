@@ -21,12 +21,14 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class ProcedureInfo extends DatabaseObjectInfo implements IProcedureInfo {
+public class ProcedureInfo extends DatabaseObjectInfo implements IProcedureInfo
+{
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
-	private interface i18n {
+	private interface i18n
+	{
 		String DATABASE = "Database";
 		//String NO_CATALOG = "No Catalog"; // i18n or Replace with md.getCatalogueTerm.
 		String MAY_RETURN = "May return a result";
@@ -36,52 +38,60 @@ public class ProcedureInfo extends DatabaseObjectInfo implements IProcedureInfo 
 	}
 
 	/** Procedure Type. */
-	private final int _type;
+	private final int _procType;
 
 	/** Procedure remarks. */
 	private final String _remarks;
 
-	public ProcedureInfo(ResultSet rs, SQLConnection conn) throws SQLException {
-		super(rs.getString(1), rs.getString(2), rs.getString(3),
-				IDatabaseObjectTypes.PROCEDURE, conn);
-		_remarks = rs.getString(7);
-		_type = rs.getInt(8);
+	public ProcedureInfo(String catalog, String schema, String simpleName,
+							String remarks, int procType,
+							SQLDatabaseMetaData md) throws SQLException
+	{
+		super(catalog, schema, simpleName, IDatabaseObjectTypes.PROCEDURE, md);
+		_remarks = remarks;
+		_procType = procType;
 	}
 
-	public int getType() {
-			return _type;
+//TODO: Rename to getProcedureType().
+	public int getType()
+	{
+		return _procType;
 	}
 
-	public String getRemarks() {
+	public String getRemarks()
+	{
 		return _remarks;
 	}
 
-	public String getTypeDescription() {
-		switch (_type) {
-			case DatabaseMetaData.procedureNoResult:
+//TODO: Rename to getProcedureTypeDescription().
+	public String getTypeDescription()
+	{
+		switch (_procType)
+		{
+			case DatabaseMetaData.procedureNoResult :
 				return i18n.DOESNT_RETURN;
-			case DatabaseMetaData.procedureReturnsResult:
+			case DatabaseMetaData.procedureReturnsResult :
 				return i18n.DOES_RETURN;
-			case DatabaseMetaData.procedureResultUnknown:
+			case DatabaseMetaData.procedureResultUnknown :
 				return i18n.MAY_RETURN;
-			default:
+			default :
 				return i18n.UNKNOWN;
 		}
 	}
 
 	public boolean equals(Object obj)
 	{
-		if(super.equals(obj) && obj instanceof ProcedureInfo)
+		if (super.equals(obj) && obj instanceof ProcedureInfo)
 		{
-			ProcedureInfo info = (ProcedureInfo)obj;
-			if( (info._remarks == null && _remarks == null) ||
-			 ((info._remarks != null && _remarks != null) && info._remarks.equals(_remarks)) )
+			ProcedureInfo info = (ProcedureInfo) obj;
+			if ((info._remarks == null && _remarks == null)
+				|| ((info._remarks != null && _remarks != null)
+					&& info._remarks.equals(_remarks)))
 			{
-				return info._type == _type;
+				return info._procType == _procType;
 			}
 		}
 		return false;
 	}
-
 
 }

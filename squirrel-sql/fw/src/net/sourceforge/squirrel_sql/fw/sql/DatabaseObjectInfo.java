@@ -36,14 +36,11 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo
 	/** Object type. @see IDatabaseObjectType.*/
 	private int _dboType = IDatabaseObjectTypes.GENERIC_LEAF;
 
+	// TODO: Delete this ctor.
 	public DatabaseObjectInfo(String catalog, String schema, String simpleName,
 								int dboType, SQLConnection conn)
 	{
 		super();
-//		if (simpleName == null)
-//		{
-//			throw new IllegalArgumentException("Null simpleName passed");
-//		}
 		if (conn == null)
 		{
 			throw new IllegalArgumentException("Null SQLConnection passed");
@@ -53,6 +50,22 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo
 		_schema = schema;
 		_simpleName = simpleName;
 		_qualifiedName = generateQualifiedName(conn);
+		_dboType = dboType;
+	}
+
+	public DatabaseObjectInfo(String catalog, String schema, String simpleName,
+								int dboType, SQLDatabaseMetaData md)
+	{
+		super();
+		if (md == null)
+		{
+			throw new IllegalArgumentException("Null SQLDatabaseMetaData passed");
+		}
+
+		_catalog = catalog;
+		_schema = schema;
+		_simpleName = simpleName;
+		_qualifiedName = generateQualifiedName(md);
 		_dboType = dboType;
 	}
 
@@ -88,16 +101,19 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo
 
 	protected String generateQualifiedName(SQLConnection conn)
 	{
+		return generateQualifiedName(conn.getSQLMetaData());
+	}
+
+	protected String generateQualifiedName(SQLDatabaseMetaData md)
+	{
 		String catSep = null;
 		String identifierQuoteString = null;
 		boolean supportsSchemasInDataManipulation = false;
 		boolean supportsCatalogsInDataManipulation = false;
 
-		SQLDatabaseMetaData md = conn.getSQLMetaData();
-
 		try
 		{
-			supportsSchemasInDataManipulation = conn.supportsSchemasInDataManipulation();
+			supportsSchemasInDataManipulation = md.supportsSchemasInDataManipulation();
 		}
 		catch (SQLException ignore)
 		{
@@ -121,7 +137,7 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo
 		}
 		try
 		{
-			identifierQuoteString = conn.getIdentifierQuoteString();
+			identifierQuoteString = md.getIdentifierQuoteString();
 			if (identifierQuoteString != null
 				&& identifierQuoteString.equals(" "))
 			{
