@@ -66,16 +66,12 @@ public class ProcedureTypeExpander implements INodeExpander
 
 	private List createProcedureNodes(ISession session, String catalogName,
 										String schemaName)
+		throws BaseSQLException
 	{
 		final SQLConnection conn = session.getSQLConnection();
 		final List childNodes = new ArrayList();
 		IProcedureInfo[] procs = null;
-		try {
-			procs = conn.getProcedures(catalogName, schemaName, "%");
-		} catch (BaseSQLException ignore) {
-			// Assume DBMS doesn't support procedures.
-			procs = new IProcedureInfo[0];
-		}
+		procs = conn.getProcedures(catalogName, schemaName, "%");
 		for (int i = 0; i < procs.length; ++i)
 		{
 			ObjectTreeNode child = new ObjectTreeNode(session, procs[i]);

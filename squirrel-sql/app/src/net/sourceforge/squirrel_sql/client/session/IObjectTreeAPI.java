@@ -25,6 +25,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
+import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.IObjectPanelTab;
 /**
  * This interface defines the API through which plugins can work with the object
  * tree.
@@ -44,6 +45,18 @@ public interface IObjectTreeAPI
 	 * 			Thrown if a <TT>null</TT> <TT>INodeExpander</TT> thrown.
 	 */
 	void registerExpander(int nodeType, INodeExpander expander);
+
+	/**
+	 * Register a tab to be displayed in the detail panel for the passed
+	 * object tree node type.
+	 * 
+	 * @param	nodeType	Node type.
+	 * @param	tab			Tab to be displayed.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown when a <TT>null</TT> <TT>IObjectPanelTab</TT> passed.
+	 */
+	void registerDetailTab(int nodeType, IObjectPanelTab tab);
 
 	/**
 	 * Add a listener to the object tree for structure changes. I.E nodes

@@ -80,6 +80,9 @@ public class ObjectTree extends JTree
 
 	private final List _globalActions = new ArrayList();
 
+	/** This is a dummy node type that will <B>never</B> be in the object tree. */
+	private final int _dummyNodeType;
+
 	/**
 	 * ctor specifying session.
 	 * 
@@ -96,6 +99,9 @@ public class ObjectTree extends JTree
 			throw new IllegalArgumentException("ISession == null");
 		}
 		_session = session;
+
+		_dummyNodeType = _session.getObjectTreeAPI().getNextAvailableNodeype();
+
 		_model = new ObjectTreeModel(session);
 		//		((BaseNode)_model.getRoot()).addBaseNodeExpandListener(this);
 		//		_model.addTreeLoadedListener(this);
@@ -106,7 +112,7 @@ public class ObjectTree extends JTree
 		setShowsRootHandles(true);
 		setModel(_model);
 
-		refresh();
+//		refresh();
 
 		// Add actions to the popup menu.
 		ActionCollection actions = session.getApplication().getActionCollection();
@@ -476,15 +482,7 @@ public class ObjectTree extends JTree
 					}
 				}
 			}
-			catch (SQLException ex)
-			{
-				final String msg = "Error expanding: " + _parentNode.toString();
-				s_log.error(msg, ex);
-				_session.getMessageHandler().showMessage(
-					msg + ": " + ex.toString());
-
-			}
-			catch (BaseSQLException ex)
+			catch (Throwable ex)
 			{
 				final String msg = "Error expanding: " + _parentNode.toString();
 				s_log.error(msg, ex);
@@ -514,6 +512,8 @@ public class ObjectTree extends JTree
 		{
 			for (int i = 0; i < _expanders.length; ++i)
 			{
+				boolean nodeTypeAllowsChildren = false;
+				int lastNodeType = _dummyNodeType;
 				List list = _expanders[i].createChildren(_session, _parentNode);
 				Iterator it = list.iterator();
 				while (it.hasNext())
@@ -521,8 +521,29 @@ public class ObjectTree extends JTree
 					Object nextObj = it.next();
 					if (nextObj instanceof ObjectTreeNode)
 					{
-						ObjectTreeNode nextNode = (ObjectTreeNode)nextObj;
-						_parentNode.add(nextNode);
+						ObjectTreeNode childNode = (ObjectTreeNode)nextObj;
+						if (childNode.getExpanders().length >0)
+						{
+							childNode.setAllowsChildren(true);
+						}
+						else
+						{
+							int childNodeType = childNode.getNodeType();
+							if (childNodeType != lastNodeType)
+							{
+								lastNodeType = childNodeType;
+								if (_model.getExpanders(childNodeType).length > 0)
+								{
+									nodeTypeAllowsChildren = true;
+								}
+								else
+								{
+									nodeTypeAllowsChildren = false;
+								}
+							}
+							childNode.setAllowsChildren(nodeTypeAllowsChildren);
+						}
+						_parentNode.add(childNode);
 					}
 				}
 			}

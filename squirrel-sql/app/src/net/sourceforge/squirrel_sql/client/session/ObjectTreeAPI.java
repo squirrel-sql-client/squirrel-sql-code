@@ -25,6 +25,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
+import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.IObjectPanelTab;
 /**
  * This class is the API through which plugins can work with the object tree.
  *
@@ -73,6 +74,25 @@ class ObjectTreeAPI implements IObjectTreeAPI
 			throw new IllegalArgumentException("INodeExpander == null");
 		}
 		_session.getSessionSheet().getObjectTreePanel().registerExpander(nodeType, expander);
+	}
+
+	/**
+	 * Register a tab to be displayed in the detail panel for the passed
+	 * object tree node type.
+	 * 
+	 * @param	nodeType	Node type.
+	 * @param	tab			Tab to be displayed.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown when a <TT>null</TT> <TT>IObjectPanelTab</TT> passed.
+	 */
+	public void registerDetailTab(int nodeType, IObjectPanelTab tab)
+	{
+		if (tab == null)
+		{
+			throw new IllegalArgumentException("IObjectPanelTab == null");
+		}
+		_session.getSessionSheet().getObjectTreePanel().registerDetailTab(nodeType, tab);
 	}
 
 	/**

@@ -18,18 +18,11 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expande
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectTypes;
-import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IUDTInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -70,16 +63,11 @@ public class UDTTypeExpander implements INodeExpander
 		final String catalogName = parentDbinfo.getCatalogName();
 		final String schemaName = parentDbinfo.getSchemaName();
 		IUDTInfo[] udts = null;
-		try {
-			udts = conn.getUDTs(catalogName, schemaName, "%", null);
-		} catch (BaseSQLException ignore) {
-			// Assume DBMS doesn't support procedures.
-		}
+		udts = conn.getUDTs(catalogName, schemaName, "%", null);
 
 		for (int i = 0; i < udts.length; ++i)
 		{
 			ObjectTreeNode child = new ObjectTreeNode(session, udts[i]);
-//				child.setExpander(this);
 			childNodes.add(child);
 		}
 

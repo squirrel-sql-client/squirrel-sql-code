@@ -22,7 +22,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -147,6 +146,10 @@ public class ObjectTreePanel extends JPanel
 		// Register tabs to display in the details panel for procedure nodes.
 		registerDetailTab(IObjectTreeNodeType.PROCEDURE, new ProcedureInfoTab());
 		registerDetailTab(IObjectTreeNodeType.PROCEDURE, new ProcedureColumnsTab());
+
+		// Register tabs to display in the details panel for UDT nodes.
+		// TODO: get rid of this once all nodes have a DatabaseObjectInfoTab tab.
+		registerDetailTab(IObjectTreeNodeType.UDT, new DatabaseObjectInfoTab());
 	}
 
 	/**

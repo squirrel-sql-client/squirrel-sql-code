@@ -54,10 +54,8 @@ public class ApplicationFiles
 		_userSettingsDir = args.getUserSettingsDirectoryOverride();
 		if (_userSettingsDir == null)
 		{
-			_userSettingsDir =
-				System.getProperty(IJavaPropertyNames.USER_HOME)
-					+ File.separator
-					+ ".squirrel-sql";
+			_userSettingsDir = System.getProperty(IJavaPropertyNames.USER_HOME)
+											+ File.separator + ".squirrel-sql";
 		}
 		try
 		{
@@ -115,12 +113,8 @@ public class ApplicationFiles
 	 */
 	public File getExecutionLogFile()
 	{
-		return new File(
-			_userSettingsDir
-				+ File.separator
-				+ "logs"
-				+ File.separator
-				+ "squirrel-sql.log");
+		return new File(_userSettingsDir + File.separator + "logs"
+							+ File.separator + "squirrel-sql.log");
 	}
 
 	/**
@@ -136,8 +130,8 @@ public class ApplicationFiles
 	 */
 	public File getJDBCDebugLogFile()
 	{
-		return new File(
-			_userSettingsDir + File.separator + "squirrel-sql-jdbcdebug.log");
+		return new File(_userSettingsDir + File.separator +
+							"squirrel-sql-jdbcdebug.log");
 	}
 
 	/**
@@ -154,5 +148,21 @@ public class ApplicationFiles
 	public File getQuickStartGuideFile()
 	{
 		return new File(DOCUMENTATION_FOLDER + File.separator + "quick_start.html");
+	}
+
+	/**
+	 * @return the changelog.
+	 */
+	public File getChangeLogFile()
+	{
+		return new File(DOCUMENTATION_FOLDER + File.separator + "changes.txt");
+	}
+
+	/**
+	 * @return the licence file.
+	 */
+	public File getLicenceFile()
+	{
+		return new File(DOCUMENTATION_FOLDER + File.separator + "licences/squirrel_licence.txt");
 	}
 }

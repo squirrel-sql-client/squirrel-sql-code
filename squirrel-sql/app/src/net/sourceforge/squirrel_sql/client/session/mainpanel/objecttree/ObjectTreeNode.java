@@ -54,6 +54,9 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 	/** Describes the database object represented by this node. */
 	private IDatabaseObjectInfo _dbinfo;
 
+	/** If <TT>true</TT> node can be expanded. */
+	private boolean _allowsChildren = true;
+
 	/** Collection of <TT>INodeExpander</TT> objects for this node. */
 	private List _expanders = new ArrayList();
 
@@ -119,15 +122,13 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 	}
 
 	/**
-	 * Returns <TT>true</TT> if this node can have children. If there are
-	 * expanders for this node then <TT>true</TT> is returned.
+	 * Returns <TT>true</TT> if this node can have children.
 	 * 
 	 * @return	<TT>true</TT> if this node can have children.
 	 */
 	public boolean getAllowsChildren()
 	{
-		return true;
-//		return _expanders.size() != 0;
+		return _allowsChildren;
 	}
 
 	/**
@@ -158,6 +159,17 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 		}
 
 		_expanders.add(value);
+	}
+
+	/**
+	 * Specify whether this node can have children.
+	 * 
+	 * @param	value	<TT>true</TT> if this node can have children.
+	 */
+	public void setAllowsChildren(boolean value)
+	{
+		super.setAllowsChildren(value);
+		_allowsChildren = value;
 	}
 
 	private static String getNodeTitle(IDatabaseObjectInfo dbinfo)
