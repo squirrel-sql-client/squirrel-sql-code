@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.preferences;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -30,6 +30,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
+import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -41,10 +42,15 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(GeneralPreferencesPanel.class);
 
+	/** Panel to be displayed in preferences dialog. */
 	private MyPanel _myPanel;
 
+	/** Application API. */
 	private IApplication _app;
 
+	/**
+	 * Default ctor.
+	 */
 	public GeneralPreferencesPanel() {
 		super();
 	}
@@ -79,7 +85,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 		return MyPanel.i18n.TAB_HINT;
 	}
 
-	private static final class MyPanel extends JPanel { // Box {
+	private static final class MyPanel extends JPanel {
 		/**
 		 * This interface defines locale specific strings. This should be
 		 * replaced with a property file.
@@ -96,11 +102,8 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 		private JCheckBox _showContents = new JCheckBox(i18n.SHOW_CONTENTS);
 		private JCheckBox _showToolTips = new JCheckBox(i18n.SHOW_TOOLTIPS);
 		private JCheckBox _useScrollableTabbedPanes = new JCheckBox("Use Scrollable Tabbed Panes (JDK1.4 and above)");
-		private IntegerField _loginTimeout = new IntegerField();
 		private JLabel _executionLogFileNameLbl = new OutputLabel(" ");// Must have at least 1 blank otherwise width gets set to zero.
 		private JLabel _logConfigFileNameLbl = new OutputLabel(" ");// Must have at least 1 blank otherwise width gets set to zero.
-		private JCheckBox _debugJdbc = new JCheckBox(i18n.DEBUG_JDBC);
-		private JLabel _jdbcDebugLogFileNameLbl = new OutputLabel(" ");// Must have at least 1 blank otherwise width gets set to zero.
 
 		MyPanel() {
 			super(new GridBagLayout());
@@ -114,22 +117,16 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 			_showToolTips.setSelected(prefs.getShowToolTips());
 			_useScrollableTabbedPanes.setSelected(prefs.useScrollableTabbedPanes());
 
-			_loginTimeout.setInt(prefs.getLoginTimeout());
 			_executionLogFileNameLbl.setText(appFiles.getExecutionLogFile().getPath());
 
 			String configFile = ApplicationArguments.getInstance().getLoggingConfigFileName();
 			_logConfigFileNameLbl.setText(configFile != null ? configFile : "<unspecified>");//i18n.
-
-			_debugJdbc.setSelected(prefs.getDebugJdbc());
-			_jdbcDebugLogFileNameLbl.setText(appFiles.getJDBCDebugLogFile().getPath());
 		}
 
 		void applyChanges(SquirrelPreferences prefs) {
 			prefs.setShowContentsWhenDragging(_showContents.isSelected());
 			prefs.setShowToolTips(_showToolTips.isSelected());
 			prefs.setUseScrollableTabbedPanes(_useScrollableTabbedPanes.isSelected());
-			prefs.setLoginTimeout(_loginTimeout.getInt());
-			prefs.setDebugJdbc(_debugJdbc.isSelected());
 		}
 
 		private void createUserInterface() {
@@ -141,15 +138,10 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 			gbc.weightx = 1;
 			add(createAppearancePanel(), gbc);
 			++gbc.gridy;
-			add(createSQLPanel(), gbc);
-			++gbc.gridy;
 			add(createLoggingPanel(), gbc);
-			++gbc.gridy;
-			add(createJDBCDebugPanel(), gbc);
 		}
 
 		private JPanel createAppearancePanel() {
-			_loginTimeout.setColumns(4);
 			JPanel pnl = new JPanel();
 			pnl.setBorder(BorderFactory.createTitledBorder("Appearance"));
 
@@ -169,30 +161,6 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 			return pnl;
 		}
 
-		private JPanel createSQLPanel() {
-			JPanel pnl = new JPanel();
-			pnl.setBorder(BorderFactory.createTitledBorder("SQL"));
-
-			pnl.setLayout(new GridBagLayout());
-			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.insets = new Insets(4, 4, 4, 4);
-			gbc.anchor = gbc.WEST;
-
-			gbc.gridx = 0;
-			gbc.gridy = 0;
-			pnl.add(new JLabel(i18n.LOGIN_TIMEOUT), gbc);
-
-			++gbc.gridx;
-			gbc.weightx = 1.0;
-			pnl.add(_loginTimeout, gbc);
-
-			++gbc.gridx;
-			gbc.weightx = 0.0;
-			pnl.add(new JLabel("Zero means unlimited"), gbc);
-
-			return pnl;
-		}
-
 		private JPanel createLoggingPanel() {
 			JPanel pnl = new JPanel();
 			pnl.setBorder(BorderFactory.createTitledBorder("Logging"));
@@ -204,10 +172,10 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 
 			gbc.gridx = 0;
 			gbc.gridy = 0;
-			pnl.add(new RightLabel("Execution Log File:"), gbc);
+			pnl.add(new JLabel("Execution Log File:", SwingConstants.RIGHT), gbc);
 
 			++gbc.gridy;
-			pnl.add(new RightLabel("Configuration File:"), gbc);
+			pnl.add(new JLabel("Configuration File:", SwingConstants.RIGHT), gbc);
 
 			gbc.weightx = 1.0;
 
@@ -219,53 +187,6 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 			pnl.add(_logConfigFileNameLbl, gbc);
 
 			return pnl;
-		}
-
-		private JPanel createJDBCDebugPanel() {
-			JPanel pnl = new JPanel();
-			pnl.setBorder(BorderFactory.createTitledBorder("JDBC Debug"));
-
-			pnl.setLayout(new GridBagLayout());
-			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.fill = gbc.HORIZONTAL;
-			gbc.insets = new Insets(4, 4, 4, 4);
-			gbc.anchor = gbc.WEST;
-
-			gbc.gridx = 0;
-			gbc.gridy = 0;
-			gbc.gridwidth = 2;
-			pnl.add(_debugJdbc, gbc);
-
-			gbc.gridx = 0;
-			++gbc.gridy;
-			gbc.gridwidth = 1;
-			pnl.add(new RightLabel("JDBC Debug File:"), gbc);
-
-			++gbc.gridx;
-			gbc.weightx = 1;
-			pnl.add(_jdbcDebugLogFileNameLbl, gbc);
-
-			return pnl;
-		}
-	}
-
-	private static final class RightLabel extends JLabel {
-		RightLabel(String title) {
-			super(title, SwingConstants.RIGHT);
-		}
-	}
-
-	private static final class OutputLabel extends JLabel {
-		OutputLabel(String text) {
-			super(text);
-			setToolTipText(text);
-			Dimension ps = getPreferredSize();
-			ps.width = 150;
-			setPreferredSize(ps);
-		}
-		public void setText(String text) {
-			super.setText(text);
-			setToolTipText(text);
 		}
 	}
 }
