@@ -29,6 +29,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import java.awt.Component;
 
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
@@ -173,9 +174,9 @@ public class ContentsTab extends BaseTableTab
 				}
 			}
 		}
+
 		return c;
-	}
-	
+	}	
 	
 	/**
 	 * return the name of the table that is unambiguous across DB accesses,
@@ -676,9 +677,11 @@ public class ContentsTab extends BaseTableTab
 		}
 		catch (SQLException ex)
 		{
-			return "Exception seen during check on DB.  Exception was:\n"+
+			return "There was a problem reported during the update.  The DB message was:\n"+
 				ex.getMessage() +
-				"\nUpdate was probably not completed correctly.  DB may be corrupted!";
+				"\nThis may or may not be serious depending on the above message."+
+				"\nThe data was probably not changed in the database."+
+				"\nYou may need to refresh the table to get an accurate view of the current data.";
 		}
 
 		if (count == -1)
