@@ -78,6 +78,8 @@ public class SessionSheet extends JInternalFrame {
         String SQL_TAB_DESC = "Execute SQL statements";
         String OBJ_TAB_TITLE = "Objects";
         String OBJ_TAB_DESC = "Show database objects";
+	    String IMPORT_TAB_TITLE = "Import Data";
+        String IMPORT_TAB_DESC = "Import csv files into database";
     }
 
     /**
@@ -109,8 +111,6 @@ public class SessionSheet extends JInternalFrame {
         propertiesHaveChanged(null);
 
         session.getProperties().addPropertyChangeListener(_propsListener);
-
-        _session.getApplication().getPluginManager().sessionStarted(session);
     }
 
     /**
@@ -199,6 +199,28 @@ public class SessionSheet extends JInternalFrame {
             _tabPane.setSelectedIndex(tabIndex);
         }
     }
+
+    /**
+     * Add a tab to the main tabbed panel.
+     * 
+     * title	The title to display in the tab.
+     * icon		The icon to display in the tab. If <TT>null</TT> then no icon displayed.
+     * comp		The component to be shown when the tab is active.
+     * tip		The tooltip to be displayed for the tab. Can be <TT>null</TT>.
+     *
+     * @throws	IllegalArgumentException
+     * 			If <TT>title</TT> or <TT>comp</TT> is <TT>null</TT>.
+     */
+	public void addMainTab(String title, Icon icon, Component comp, String tip)
+			throws IllegalArgumentException {
+		if (title == null) {
+			throw new IllegalArgumentException("Null title passed");
+		}
+		if (comp == null) {
+			throw new IllegalArgumentException("Null Component passed");
+		}
+		_tabPane.addTab(title, icon, comp, tip);
+	}
 
     String getSQLScript() {
         return _sqlPnl.getSQLScript();
