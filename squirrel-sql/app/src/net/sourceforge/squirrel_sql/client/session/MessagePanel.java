@@ -113,12 +113,12 @@ class MessagePanel extends JTextArea implements IMessageHandler
 			_errOccured = false;
 		}
 
-		final int len = getDocument().getLength();
-		if (len > 0)
+		if (getDocument().getLength() > 0)
 		{
 			append("\n");
 		}
 		append(line);
+		final int len = getDocument().getLength();
 		select(len, len);
 	}
 

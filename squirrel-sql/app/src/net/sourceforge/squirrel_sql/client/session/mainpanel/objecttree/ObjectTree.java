@@ -603,7 +603,7 @@ class ObjectTree extends JTree
 			}
 			catch (Throwable ex)
 			{
-				final String msg = "Error expanding: " + _parentNode.toString();
+				final String msg = "Error: " + _parentNode.toString();
 				s_log.error(msg, ex);
 				_session.getMessageHandler().showMessage(msg + ": " + ex.toString());
 			}
