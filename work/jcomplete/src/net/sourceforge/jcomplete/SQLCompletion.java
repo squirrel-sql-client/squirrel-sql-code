@@ -50,30 +50,50 @@ public abstract class SQLCompletion implements Completion
         return position >= startPosition && position <= endPosition ? this : null;
     }
 
-    public int getInsertPosition()
-    {
-        return endPosition;
-    }
-
     public void setEndPosition(int offset)
     {
         this.endPosition = offset;
     }
 
     /**
-     * @return the completion text, provided it is available
+     * @return the completion text
+     * @throws UnsupportedOperationException
      */
-    public String getText()
+    public String getText(int position)
     {
-        throw new UnsupportedOperationException("completion text not available");
+        throw new UnsupportedOperationException("completion not available");
     }
 
-    public boolean hasInsertPosition()
+    /**
+     * @return the completion text, provided it is available
+     * @throws UnsupportedOperationException
+     */
+    public String getText(int position, String options)
+    {
+        throw new UnsupportedOperationException("completion not available");
+    }
+
+    public boolean hasTextPosition()
     {
         return startPosition != NO_POSITION && endPosition != NO_POSITION;
     }
 
     public boolean isRepeatable()
+    {
+        return false;
+    }
+
+    public int getLength()
+    {
+        return endPosition - startPosition + 1;
+    }
+
+    public int getStart()
+    {
+        return startPosition;
+    }
+
+    public boolean mustReplace(int position)
     {
         return false;
     }

@@ -40,15 +40,15 @@ public class SQLStatement extends SQLCompletion implements SQLSchema
     }
 
     /**
-     * @param offset the position at which the completion should be inserted
+     * @param position the position at which the completion should be inserted
      * @return the available completion
      */
-    public SQLCompletion getCompletion(int offset)
+    public SQLCompletion getCompletion(int position)
     {
-        if(super.getCompletion(offset) != null) {
+        if(super.getCompletion(position) != null) {
             Iterator it = getChildren();
             while(it.hasNext()) {
-                SQLCompletion c = ((SQLCompletion)it.next()).getCompletion(offset);
+                SQLCompletion c = ((SQLCompletion)it.next()).getCompletion(position);
                 if(c != null) return c;
             }
         }
@@ -107,5 +107,9 @@ public class SQLStatement extends SQLCompletion implements SQLSchema
     public Table getTableForAlias(String alias)
     {
         return sqlSchema.getTableForAlias(alias);
+    }
+
+    public void takeTables(SQLStatement statement)
+    {
     }
 }

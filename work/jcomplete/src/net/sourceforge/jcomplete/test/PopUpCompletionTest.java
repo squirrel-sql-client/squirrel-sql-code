@@ -54,7 +54,7 @@ public class PopUpCompletionTest extends JFrame
         s_TestTables.put(t.getCompositeName(), t);
 
         t = new SQLSchema.Table("TABLE3");
-        t.addColumns(new String[]{"column311", "column312"});
+        t.addColumns(new String[]{"column311", "column312", "column321", "column322"});
         s_TestTables.put(t.getCompositeName(), t);
 
         t = new SQLSchema.Table("TABLE4");

@@ -22,6 +22,8 @@ package net.sourceforge.jcomplete.ui;
 
 import java.util.Iterator;
 
+import net.sourceforge.jcomplete.Completion;
+
 /**
  * interface for communication between different completion UIs (dialog, popup list)
  * and the completion adaptor
@@ -30,14 +32,15 @@ public interface CompletionListener
 {
     public abstract class Event implements Iterator
     {
-        public Object source;
-        public Event(Object source)
+        public Completion completion;
+        public Event(Completion completion)
         {
-            this.source = source;
+            this.completion = completion;
         }
         public abstract boolean needsSeparator();
     }
+    void completionAborted();
     void completionRequested(Event event);
-    void completionRequested(Object[] selectedOptions);
+    void completionRequested(Completion sourceCompletion, Object[] selectedOptions);
 }
 

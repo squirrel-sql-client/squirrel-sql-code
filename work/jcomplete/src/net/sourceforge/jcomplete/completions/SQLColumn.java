@@ -28,15 +28,12 @@ import net.sourceforge.jcomplete.SQLSchema;
  */
 public class SQLColumn extends SQLCompletion
 {
-    public static final String TABLE = "TABLE";
-    public static final String[] PROPERTIES = {TABLE};
-
-    private SQLSchema.Table table;
     private String column;
     private String alias;
 
     private boolean isRepeatable = true;
     private SQLStatement statement;
+    private int afterSeparatorPos = NO_POSITION;
 
     public SQLColumn(SQLStatement statement,  int start)
     {
@@ -60,8 +57,8 @@ public class SQLColumn extends SQLCompletion
     public void setAlias(String alias, int pos)
     {
         this.alias = alias;
-        this.table = statement.getTableForAlias(alias);
-        setEndPosition(pos+1);
+        this.afterSeparatorPos = pos+alias.length()+1;
+        setEndPosition(afterSeparatorPos);
     }
 
     public void setAlias(String alias)
@@ -77,7 +74,7 @@ public class SQLColumn extends SQLCompletion
     public void setColumn(String name, int pos)
     {
         column = name;
-        setEndPosition(pos);
+        setEndPosition(pos+name.length()-1);
     }
 
     public void setColumn(String column)
@@ -92,12 +89,12 @@ public class SQLColumn extends SQLCompletion
 
     public SQLSchema.Table getTable()
     {
-        return table;
+        return alias != null ? statement.getTableForAlias(alias) : null;
     }
 
-    public boolean hasTable()
+    public boolean hasTable(int position)
     {
-        return table != null;
+        return position >= afterSeparatorPos && position <= endPosition && getTable() != null;
     }
 
     public boolean hasAlias()
@@ -112,15 +109,9 @@ public class SQLColumn extends SQLCompletion
 
     public String getText()
     {
-        String text;
-        if(alias != null)
-            text = alias+"."+column;
-        else if(table != null)
-            text = table+"."+column;
-        else
-            text = column;
+        String text = alias != null ? alias+"."+column : column;
 
-        if(hasInsertPosition()) {
+        if(hasTextPosition()) {
             int oldDataPos = endPosition - startPosition;
             return text.substring(oldDataPos, text.length());
         } else {
@@ -128,17 +119,49 @@ public class SQLColumn extends SQLCompletion
         }
     }
 
-    public String[] getCompletions()
+    public String getText(int position)
     {
-        //try to handle alias as alias
+        return getText(position, column);
+    }
+
+    public String getText(int position, String option)
+    {
+        if(position == endPosition) {
+            return option;
+        }
+        else if(mustReplace(position) || isOther(position)) {
+            return alias != null ? alias+"."+option : option;
+        }
+        else {
+            String text = alias != null ? alias+"."+option : option;
+            int oldDataPos = endPosition - position;
+            return text.substring(oldDataPos, text.length());
+        }
+    }
+
+    private boolean isOther(int position)
+    {
+        return position < startPosition || position > endPosition;
+    }
+
+    public String[] getCompletions(int position)
+    {
+        //try to treat alias as alias
         SQLSchema.Table table = getStatement().getTableForAlias(alias);
 
         //it could also be a table name
         if(table == null)
             table = getStatement().getTable(null, null, alias);
 
-        if(table != null)
-              return table.getColumns(column);
+        if(table != null) {
+            String col = null;
+            if(position > afterSeparatorPos && column != null) {
+                col = position <= endPosition ? column.substring(0, position-afterSeparatorPos) : column;
+            }
+            String[] result = table.getColumns(col);
+            return (col != null && result.length == 1 && result[0].length() == col.length()) ?
+                EMPTY_RESULT : result;  //no need to return if completion is identical
+        }
         else
             return EMPTY_RESULT;
     }
@@ -151,5 +174,10 @@ public class SQLColumn extends SQLCompletion
     public boolean isRepeatable()
     {
         return isRepeatable;
+    }
+
+    public boolean mustReplace(int position)
+    {
+        return column != null && position >= startPosition && position <= endPosition;
     }
 }

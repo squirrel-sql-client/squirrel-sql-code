@@ -20,18 +20,15 @@
  */
 package net.sourceforge.jcomplete;
 
-import java.text.CharacterIterator;
 import java.util.*;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import net.sourceforge.jcomplete.parser.Scanner;
-import net.sourceforge.jcomplete.parser.Parser;
-import net.sourceforge.jcomplete.parser.ErrorStream;
 import net.sourceforge.jcomplete.completions.SQLStatement;
 import net.sourceforge.jcomplete.Completion;
 import net.sourceforge.jcomplete.CompletionHandler;
+import net.sourceforge.jcomplete.util.ParserThread;
 
 /**
  * a completion handler which drives the SQL parser and offers SQL
@@ -39,36 +36,28 @@ import net.sourceforge.jcomplete.CompletionHandler;
  */
 public class SQLCompletionHandler implements CompletionHandler, SQLSchema
 {
-    public static final String PARSER_THREAD_NM = "SQLParserThread";
+    public  List statements;
 
-    private Map aliasMap = new HashMap();
     private Map tables = new HashMap();
-
-    private List statements;
-    private Errors errors;
-    private IncrementalBuffer scannerBuffer;
+    private TextProvider textProvider;
     private ParserThread parserThread;
     private DatabaseMetaData dbData;
 
-    public SQLCompletionHandler(CompletionHandler.ErrorListener errorListener, DatabaseMetaData metaData)
+    public SQLCompletionHandler(
+          CompletionHandler.ErrorListener errorListener,
+          DatabaseMetaData metaData)
     {
-        dbData = metaData;
+        this.dbData = metaData;
         loadMetaData();
-        errors = new Errors(errorListener);
+        this.parserThread = new ParserThread(this, errorListener);
     }
 
-    public SQLCompletionHandler(CompletionHandler.ErrorListener errorListener, Map tableMap)
+    public SQLCompletionHandler(
+          CompletionHandler.ErrorListener errorListener,
+          Map tableMap)
     {
-        tables = tableMap;
-        errors = new Errors(errorListener);
-    }
-
-    /**
-     * @return INCR_FWD, because the parser only supports forward incrementation
-     */
-    public int getIncrementType()
-    {
-        return INCR_FWD;
+        this.tables = tableMap;
+        this.parserThread = new ParserThread(this, errorListener);
     }
 
     public Completion getCompletion(int offset)
@@ -77,21 +66,11 @@ public class SQLCompletionHandler implements CompletionHandler, SQLSchema
         while(it.hasNext()) {
             SQLStatement stmt = (SQLStatement)it.next();
             Completion result = stmt.getCompletion(offset);
-            if(result != null) return result;
+            if(result != null) {
+                return result;
+            }
         }
         return null;
-    }
-
-    /**
-     * Begin parsing the underlying text. This will spawn a separate parsing thread,
-     * which must be terminated by calling the {@link #end} method.
-     * @param chars initial characters, or <em>null</em>
-     */
-    public void begin(CharacterIterator chars)
-    {
-        scannerBuffer = new IncrementalBuffer(chars);
-        parserThread = new ParserThread(scannerBuffer);
-        parserThread.start();
     }
 
     /**
@@ -102,24 +81,33 @@ public class SQLCompletionHandler implements CompletionHandler, SQLSchema
         parserThread.reset(null);
     }
 
-    public void invalidate(CharacterIterator iterator, boolean forward)
+    public void begin(TextProvider textProvider, int length)
     {
-        //backward changes: revert parser
-        if(forward == false) {
-            scannerBuffer = new IncrementalBuffer(iterator);
-            parserThread.reset(scannerBuffer);
+        this.textProvider = textProvider;
+        parserThread.start(textProvider.getChars(0));
+    }
+
+    public void textInserted(int offset, int length)
+    {
+        int endPos = offset + length - 1;
+        if(textProvider.atEnd(endPos)) {
+            parserThread.accept(textProvider.getChars(offset));
         }
-        else
-            scannerBuffer.notify(iterator);
+        else {
+            parserThread.reset(textProvider.getChars(0));
+        }
+    }
+
+    public void textRemoved(int offset, int length)
+    {
+        parserThread.reset(textProvider.getChars(0));
     }
 
     public boolean setTable(String catalog, String schema, String name, String alias)
     {
-        SQLSchema.Table table = (SQLSchema.Table)tables.get(SQLSchema.Table.createCompositeName(catalog, schema, name));
-        if(table == null) return false;
-        if(alias != null)
-            aliasMap.put(alias, table.clone(alias));
-        return true;
+        SQLSchema.Table table =
+              (SQLSchema.Table)tables.get(SQLSchema.Table.createCompositeName(catalog, schema, name));
+        return table != null;
     }
 
     public List getTables(String catalog, String schema, String name)
@@ -136,7 +124,7 @@ public class SQLCompletionHandler implements CompletionHandler, SQLSchema
 
     public SQLSchema.Table getTableForAlias(String alias)
     {
-        return (SQLSchema.Table)aliasMap.get(alias);
+        return null;
     }
 
     public SQLSchema.Table getTable(String catalog, String schema, String name)
@@ -167,157 +155,6 @@ public class SQLCompletionHandler implements CompletionHandler, SQLSchema
         catch(SQLException e) {}
         finally {
             try {rs.close();} catch(SQLException e){}
-        }
-    }
-
-    private class ParserThread extends Thread
-    {
-        private IncrementalBuffer buffer;
-
-        public ParserThread(IncrementalBuffer buffer)
-        {
-            super(PARSER_THREAD_NM);
-            this.buffer = buffer;
-        }
-
-        public void run()
-        {
-            while(buffer != null) {
-                System.out.println("begin parse");
-
-                SQLCompletionHandler.this.errors.reset();
-                Scanner scanner = new Scanner(buffer, SQLCompletionHandler.this.errors);
-
-                Parser parser = new Parser(scanner);
-                parser.rootSchema = SQLCompletionHandler.this;
-                SQLCompletionHandler.this.statements = parser.statements;
-                parser.parse();
-
-                System.out.println("end parse");
-            }
-        }
-
-        public void reset(IncrementalBuffer buffer)
-        {
-            IncrementalBuffer oldBuffer = this.buffer;
-            this.buffer = buffer;
-            oldBuffer.eof();
-        }
-    }
-
-    /**
-     * error stream which simply saves the error codes and line info
-     * circularily in an array of fixed size
-     */
-    private class Errors extends ErrorStream
-    {
-        private int [][] errorStore;
-        private int count;
-        private CompletionHandler.ErrorListener listener;
-
-        public Errors(CompletionHandler.ErrorListener listener)
-        {
-            this.listener = listener;
-            errorStore = new int [5][3];
-        }
-
-        protected void ParsErr(int n, int line, int col)
-        {
-            errorStore[count][0] = n;
-            errorStore[count][1] = line;
-            errorStore[count][2] = col;
-            count = (count + 1) % 5;
-            if(listener != null)
-                super.ParsErr(n, line, col);
-        }
-
-        protected void SemErr(int n, int line, int col)
-        {
-            errorStore[count][0] = n;
-            errorStore[count][1] = line;
-            errorStore[count][2] = col;
-            count = (count + 1) % 5;
-            if(listener != null) {
-                switch (n) {
-                    case 0:
-                        StoreError(n, line, col, "EOF expected"); break;
-                    default:
-                        super.SemErr(n, line, col);
-                }
-            }
-        }
-
-        protected void StoreError(int n, int line, int col, String s)
-        {
-            if(listener != null)
-                listener.errorDetected(s, line, col);
-        }
-
-        public void reset()
-        {
-            errorStore = new int [5][3];
-        }
-    }
-
-    /**
-     * This is a Scanner.Buffer implementation which blocks until character data is
-     * available. The {@link #read} method is invoked from the background parsing thread.
-     * The parsing thread can be terimated by calling the {@link #eof} method on this object
-     */
-    private static class IncrementalBuffer extends Scanner.Buffer
-    {
-        private CharacterIterator chars;
-        private char current;
-        private boolean atEnd;
-
-        IncrementalBuffer(CharacterIterator chars)
-        {
-            this.atEnd = false;
-            this.chars = chars;
-            this.current = chars != null ? chars.first() : CharacterIterator.DONE;
-        }
-
-        protected synchronized char read()
-        {
-            if(atEnd) {
-                return eof;
-            }
-            else {
-                if(current == CharacterIterator.DONE) {
-                    try {
-                        wait();
-                    }
-                    catch (InterruptedException e) {
-                    }
-                }
-                if(atEnd) {
-                    current = eof;
-                    return eof;
-                }
-                else {
-                    char prev = current;
-                    current = chars.next();
-                    return prev;
-                }
-            }
-        }
-
-        synchronized void eof()
-        {
-            atEnd = true;
-            notify();
-        }
-
-        synchronized void notify(CharacterIterator iterator)
-        {
-            this.chars = iterator;
-            this.current = chars != null ? chars.first() : CharacterIterator.DONE;
-            notify();
-        }
-
-        int getBeginIndex()
-        {
-            return chars != null ? chars.getBeginIndex() : 0;
         }
     }
 }

@@ -22,7 +22,6 @@ package net.sourceforge.jcomplete.completions;
 
 import java.util.List;
 import java.util.Collections;
-import java.util.Comparator;
 
 import net.sourceforge.jcomplete.SQLCompletion;
 import net.sourceforge.jcomplete.SQLSchema;
@@ -52,9 +51,11 @@ public class SQLTable extends SQLCompletion
         return statement;
     }
 
-    public SQLSchema.Table[] getCompletions()
+    public SQLSchema.Table[] getCompletions(int position)
     {
-        List tables = getStatement().getTables(catalog, schema, name);
+        String tb = (position >= startPosition && position <= endPosition) ?
+              name.substring(0, position - startPosition) : name;
+        List tables = getStatement().getTables(catalog, schema, tb);
         Collections.sort(tables);
         return (SQLSchema.Table[])tables.toArray(new SQLSchema.Table[tables.size()]);
     }
@@ -66,5 +67,15 @@ public class SQLTable extends SQLCompletion
     public boolean isRepeatable()
     {
         return true;
+    }
+
+    public boolean mustReplace(int position)
+    {
+        return name != null && position >= startPosition && position <= endPosition;
+    }
+
+    public String getText(int position, String option)
+    {
+        return option;
     }
 }

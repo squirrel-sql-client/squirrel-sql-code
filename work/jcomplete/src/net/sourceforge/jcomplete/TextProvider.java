@@ -16,33 +16,19 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * created by cse, 13.09.2002 22:39:46
+ * created by cse, 08.10.2002 03:35:12
  */
 package net.sourceforge.jcomplete;
 
-import java.text.CharacterIterator;
-
-import net.sourceforge.jcomplete.Completion;
+import javax.swing.text.Segment;
 
 /**
- * the completion handler maintains the infrastructure to supply completion
- * suggestions upon request from the UI
+ * interface that provides access to the text being parsed
  */
-public interface CompletionHandler
+public interface TextProvider 
 {
-    public interface ErrorListener
-    {
-        void errorDetected(String message, int line, int column);
-    }
+    public Segment getChars(int offset);
+    public Segment getChars(int offset, int length);
 
-    /**
-     * return a completion object which wraps available completion options
-     * @param textOffset the offset into the parsed text at which completion is requested
-     * @return the completion available at the given text position
-     */
-    Completion getCompletion(int textOffset);
-
-    void begin(TextProvider provider, int length);
-    void textInserted(int offset, int length);
-    void textRemoved(int offset, int length);
+    boolean atEnd(int endPos);
 }

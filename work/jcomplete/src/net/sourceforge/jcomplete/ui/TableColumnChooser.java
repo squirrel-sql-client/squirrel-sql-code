@@ -59,20 +59,28 @@ public class TableColumnChooser extends JDialog
         this.completor = completor;
         this.sqlColumn = sqlColumn;
 
-        final List tables = sqlColumn.getStatement().getTables(null, null, null);
+        String existingAlias = sqlColumn.getAlias();
+        String existingColumn = sqlColumn.getColumn();
+        if(existingAlias != null || existingColumn != null)
+            existingCompleted = false;
+
+        //remove conflicting aliases
+        List tables = sqlColumn.getStatement().getTables(null, null, null);
+        if(existingAlias != null) {
+            for(Iterator it=tables.iterator(); it.hasNext();) {
+                SQLSchema.Table tb = (SQLSchema.Table)it.next();
+                if(tb.hasAlias()) it.remove();
+            }
+        }
+        //record predefined aliases
         for(Iterator it=tables.iterator(); it.hasNext();) {
             SQLSchema.Table table = (SQLSchema.Table)it.next();
             if(table.alias != null)
                 assignedTables.put(table, table.alias);
         }
         Collections.sort(tables);
+
         initComponents(tables);
-
-        String existingAlias = sqlColumn.getAlias();
-        String existingColumn = sqlColumn.getColumn();
-
-        if(existingAlias != null || existingColumn != null)
-            existingCompleted = false;
         if(existingAlias != null) {
             aliasField.setText(existingAlias);
             aliasField.setEnabled(false);
@@ -239,7 +247,7 @@ public class TableColumnChooser extends JDialog
             sqlColumn.getStatement().setTable(table.catalog, table.schema, table.name, alias);
         }
 
-        CompletionListener.Event event = new CompletionListener.Event(this)
+        CompletionListener.Event event = new CompletionListener.Event(sqlColumn)
         {
             int index = 0;
 
@@ -268,6 +276,12 @@ public class TableColumnChooser extends JDialog
             }
         };
         completor.completionRequested(event);
+
+        if(event.completion != sqlColumn) {
+            SQLColumn newColumn = (SQLColumn)event.completion;
+            newColumn.getStatement().takeTables(sqlColumn.getStatement());
+            sqlColumn = (SQLColumn)event.completion;
+        }
         setExistingCompleted();
 
         if(sqlColumn.isRepeatable() == false)

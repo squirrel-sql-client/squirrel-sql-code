@@ -143,6 +143,7 @@ FromTableList =
         
 QualifiedTable          (.  SQLTable table = new SQLTable(getParent(), t.pos);
                             getParent().addChild(table);
+                            boolean wasSet = false;
                         .)
     =
     ident               (.  if(t.val.equals("."))
@@ -153,10 +154,14 @@ QualifiedTable          (.  SQLTable table = new SQLTable(getParent(), t.pos);
     [ "." ident         (.  table.name = token.str; .)
     ] 
     [
-    ["AS"] Alias        (. table.alias = token.str; .)
-    ]
-                        (.  if(getParent().setTable(table) == false)
-                                SemError(0);
+    ["AS"]              (.  table.alias = t.str;
+                            wasSet = true;
+                            if(getParent().setTable(table) == false)
+                                SemError(10);
+                        .)
+    Alias
+    ]                   (.  if(!wasSet && getParent().setTable(table) == false)
+                                SemError(10);
                         .)
     .
 
@@ -226,14 +231,14 @@ ColumnList =
 ColumnName              (.  SQLColumn column = new SQLColumn(getParent(), t.pos);
                             getParent().addChild(column);
                             if(scanner.ch == '.')
-                                column.setAlias(t.str, scanner.pos);
+                                column.setAlias(t.str, t.pos);
                             else
-                                column.setColumn(t.str, scanner.pos);
+                                column.setColumn(t.str, t.pos);
                         .)
     =
     ident
     [ "."
-    (ident              (.  column.setColumn(token.str, t.pos); .)
+    (ident              (.  column.setColumn(token.str, token.pos); .)
     | "*"
     )]
     .

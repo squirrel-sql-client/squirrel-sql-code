@@ -73,7 +73,7 @@ public abstract class CompletionAdapter extends KeyAdapter implements Completion
      */
     protected abstract void showCompletionUI(Completion completion);
 
-    protected boolean showPopupList(Object[] options, boolean multiple)
+    protected boolean showPopupList(Completion completion, Object[] options, boolean multiple)
     {
         if(m_popupManager == null)
             m_popupManager = new PopupManager(m_textComponent);
@@ -84,7 +84,7 @@ public abstract class CompletionAdapter extends KeyAdapter implements Completion
         try {
             Rectangle rect = m_textComponent.modelToView(dot);
             m_popupManager.install(m_popup, rect, PopupManager.BelowPreferred);
-            m_popup.show(options);
+            m_popup.show(completion, options);
         }
         catch (BadLocationException e) {}
         return true;
@@ -96,17 +96,22 @@ public abstract class CompletionAdapter extends KeyAdapter implements Completion
      * these objects are inserted after the caret position, separated by comma.
      * @param selectedOptions
      */
-    public void completionRequested(Object[] selectedOptions)
+    public void completionRequested(Completion completion, Object[] selectedOptions)
     {
         try {
             // insert the text
             Document doc = m_textComponent.getDocument();
             boolean needsSeparator = false;
 
+            if(completion.mustReplace(m_textComponent.getCaretPosition())) {
+                doc.remove(completion.getStart(), completion.getLength());
+            }
             for(int i=0; i<selectedOptions.length; i++) {
                 if(needsSeparator)
                     doc.insertString(m_textComponent.getCaretPosition(), ", ", null);
-                doc.insertString(m_textComponent.getCaretPosition(), selectedOptions[i].toString(), null);
+                String text = completion.getText(
+                      m_textComponent.getCaretPosition(), selectedOptions[i].toString());
+                doc.insertString(m_textComponent.getCaretPosition(), text, null);
                 needsSeparator = true;
             }
             m_textComponent.requestFocus();
@@ -127,19 +132,26 @@ public abstract class CompletionAdapter extends KeyAdapter implements Completion
             // insert the text
             Document doc = m_textComponent.getDocument();
 
+            if(event.completion.mustReplace(m_textComponent.getCaretPosition())) {
+                doc.remove(event.completion.getStart(), event.completion.getLength());
+            }
             while(event.hasNext()) {
                 if(event.needsSeparator())
                     doc.insertString(m_textComponent.getCaretPosition(), ", ", null);
 
                 Completion comp = (Completion)event.next();
-                int position = comp.hasInsertPosition() ?
-                      comp.getInsertPosition() : m_textComponent.getCaretPosition();
-                String text = comp.getText();
-                doc.insertString(position, text, null);
+                String text = comp.getText(m_textComponent.getCaretPosition());
+                doc.insertString(m_textComponent.getCaretPosition(), text, null);
             }
+            event.completion = m_completionHandler.getCompletion(event.completion.getStart());
         }
         catch (BadLocationException e1) {
             System.out.println(e1.getMessage());
         }
+    }
+
+    public void completionAborted()
+    {
+        m_textComponent.requestFocus();
     }
 }

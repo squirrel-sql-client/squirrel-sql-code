@@ -765,6 +765,7 @@ public List statements = new ArrayList();
 	private final void QualifiedTable() {
 		SQLTable table = new SQLTable(getParent(), t.pos);
 		getParent().addChild(table);
+		boolean wasSet = false;
 		
 		Expect(1);
 		if(t.val.equals("."))
@@ -781,11 +782,15 @@ public List statements = new ArrayList();
 			if (t.kind == 20) {
 				Get();
 			}
+			table.alias = t.str;
+			wasSet = true;
+			if(getParent().setTable(table) == false)
+			    SemError(10);
+			
 			Alias();
-			table.alias = token.str;
 		}
-		if(getParent().setTable(table) == false)
-		    SemError(0);
+		if(!wasSet && getParent().setTable(table) == false)
+		    SemError(10);
 		
 	}
 
@@ -892,16 +897,16 @@ public List statements = new ArrayList();
 		SQLColumn column = new SQLColumn(getParent(), t.pos);
 		getParent().addChild(column);
 		if(scanner.ch == '.')
-		    column.setAlias(t.str, scanner.pos);
+		    column.setAlias(t.str, t.pos);
 		else
-		    column.setColumn(t.str, scanner.pos);
+		    column.setColumn(t.str, t.pos);
 		
 		Expect(1);
 		if (t.kind == 19) {
 			Get();
 			if (t.kind == 1) {
 				Get();
-				column.setColumn(token.str, t.pos);
+				column.setColumn(token.str, token.pos);
 			} else if (t.kind == 36) {
 				Get();
 			} else Error(136);

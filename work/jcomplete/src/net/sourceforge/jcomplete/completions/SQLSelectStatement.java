@@ -87,6 +87,7 @@ public class SQLSelectStatement extends SQLStatement
 
     public boolean setTable(String catalog, String schema, String name, String alias)
     {
+        System.out.println("setTable: "+alias+"."+name);
         Table table = sqlSchema.getTable(catalog, schema, name);
         if(table == null) return false;
         if(alias != null)
@@ -126,5 +127,11 @@ public class SQLSelectStatement extends SQLStatement
             return col;
         }
         return null;
+    }
+
+    public void takeTables(SQLStatement statement)
+    {
+        SQLSelectStatement other = (SQLSelectStatement)statement;
+        aliasMap.putAll(other.aliasMap);
     }
 }

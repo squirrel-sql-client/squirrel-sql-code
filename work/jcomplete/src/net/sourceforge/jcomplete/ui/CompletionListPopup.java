@@ -24,6 +24,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
+import net.sourceforge.jcomplete.Completion;
 
 /**
  * a popup window with a scrollable list
@@ -33,7 +34,8 @@ public class CompletionListPopup extends JPanel
     private JList list;
     private JScrollPane scroller;
     private CompletionListener completor;
-    private Dimension size; //cached size to avoid recalculation
+    private Completion completion;
+    private Dimension size;                 //cached size to avoid recalculation
 
     public CompletionListPopup(CompletionListener completor, boolean multiple)
     {
@@ -62,10 +64,13 @@ public class CompletionListPopup extends JPanel
             {
                 if(e.getKeyCode() == KeyEvent.VK_ENTER) {
                     closeWindow();
-                    completor.completionRequested(list.getSelectedValues());
+                    completor.completionRequested(completion, list.getSelectedValues());
                 }
-                else if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
+                else if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                     closeWindow();
+                    e.consume();
+                    completor.completionAborted();
+                }
             }
         });
         list.addMouseListener(new MouseAdapter() {
@@ -73,7 +78,7 @@ public class CompletionListPopup extends JPanel
             {
                 if(e.getClickCount() == 2) {
                     closeWindow();
-                    completor.completionRequested(list.getSelectedValues());
+                    completor.completionRequested(completion, list.getSelectedValues());
                 }
             }
         });
@@ -81,6 +86,7 @@ public class CompletionListPopup extends JPanel
             public void focusLost(FocusEvent e)
             {
                 closeWindow();
+                completor.completionAborted();
             }
         });
         scroller = new JScrollPane();
@@ -121,8 +127,9 @@ public class CompletionListPopup extends JPanel
         super.setSize(Math.min(width, size.width), Math.min(height, size.height));
     }
 
-    public void show(Object[] options)
+    public void show(Completion completion, Object[] options)
     {
+        this.completion = completion;
         list.setListData(options);
         list.setSelectedIndex(0);
         setVisible(true);

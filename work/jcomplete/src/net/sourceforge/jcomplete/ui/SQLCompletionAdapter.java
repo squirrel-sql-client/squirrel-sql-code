@@ -48,12 +48,12 @@ public class SQLCompletionAdapter extends CompletionAdapter
     {
         if(completion instanceof SQLColumn) {
             SQLColumn column = (SQLColumn)completion;
-            if(column.hasTable()) {
-                String[] cols = column.getCompletions();
+            if(column.hasTable(m_textComponent.getCaretPosition())) {
+                String[] cols = column.getCompletions(m_textComponent.getCaretPosition());
                 if(cols.length > 1)
-                    showPopupList(cols, column.isRepeatable());
+                    showPopupList(column, cols, column.isRepeatable());
                 else if(cols.length == 1)
-                    completionRequested(cols);
+                    completionRequested(column, cols);
             }
             else {
                 showTableColumnDialog(column);
@@ -61,11 +61,11 @@ public class SQLCompletionAdapter extends CompletionAdapter
         }
         else if(completion instanceof SQLTable) {
             SQLTable table = (SQLTable)completion;
-            SQLSchema.Table[] tables = table.getCompletions();
+            SQLSchema.Table[] tables = table.getCompletions(m_textComponent.getCaretPosition());
             if(tables.length > 1)
-                showPopupList(tables, table.isRepeatable());
+                showPopupList(table, tables, table.isRepeatable());
             else if(tables.length == 1)
-                completionRequested(tables);
+                completionRequested(table, tables);
         }
     }
 

@@ -28,27 +28,45 @@ public interface Completion
     public static final int NO_POSITION = -1;
 
     /**
+     * return completion text if the completion is fully defined
+     * @param position the caret position at which the text should be inserted
      * @return return the completion text to be inserted into the underlying document
      */
-    String getText();
+    String getText(int position);
+
+    /**
+     * return completion text which is defined from this object and the derived option
+     * @param position the caret position at which the text should be inserted
+     * @param option an option string, which was earlier derived from this object
+     * @return return the completion text to be inserted into the underlying document
+     */
+    String getText(int position, String option);
 
     /**
      * @return whether this completion is assigned to a specific position within the
      * underlying document
-     * @see #getInsertPosition
      */
-    boolean hasInsertPosition();
-
-    /**
-     * @return the specific insert position this completion is assigned to. {@link #NO_POSITION}
-     * if this completion is not assigned to a specific position
-     * @see #hasInsertPosition
-     */
-    int getInsertPosition();
+    boolean hasTextPosition();
 
     /**
      * @return whether this completion can be used to generate lists of items, e.g. columns
      * in a SQL select clause
      */
     boolean isRepeatable();
+
+    /**
+     * @return the length of the text currently occupied by this completion
+     */
+    int getLength();
+
+    /**
+     * @return the starting text position
+     */
+    int getStart();
+
+    /**
+     * @param position the position at which the status should be determined
+     * @return whether the text between the start position and <em>position</em> must be replaced
+     */
+    boolean mustReplace(int position);
 }

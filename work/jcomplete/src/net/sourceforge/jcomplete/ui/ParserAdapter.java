@@ -26,43 +26,35 @@ import javax.swing.text.Document;
 import javax.swing.text.Segment;
 import javax.swing.text.BadLocationException;
 import net.sourceforge.jcomplete.CompletionHandler;
+import net.sourceforge.jcomplete.TextProvider;
 
 /**
- * This class mediates between the document and the parser by implementing the
+ * This class mediates between the document and the parser through the
  * DocumentListener interface
  */
-public class ParserAdapter implements DocumentListener
+public class ParserAdapter implements DocumentListener, TextProvider
 {
     private CompletionHandler m_handler;
-    private int m_lastPosition;
+    private Document m_document;
 
     public ParserAdapter(CompletionHandler handler, Document document)
     {
         m_handler = handler;
-        m_lastPosition = -1;
-        if(document.getLength() > 0) {
-            Segment seg = new Segment();
-            //seg.setPartialReturn(true); 1.4 only
-            try {
-                document.getText(0, document.getLength(), seg);
-                m_handler.begin(seg);
-            }
-            catch (BadLocationException e) {
-                throw new RuntimeException(e.getMessage());
-            }
-        }
-        else
-            m_handler.begin(null);
+        m_document = document;
+
+        m_handler.begin(this, document.getLength());
     }
 
     public void insertUpdate(DocumentEvent e)
     {
-        updateParser(e, e.getOffset());
+        m_handler.textInserted(e.getOffset(), e.getLength());
+        //updateParser(e, e.getOffset());
     }
 
     public void removeUpdate(DocumentEvent e)
     {
-        updateParser(e, e.getOffset()-1);
+        m_handler.textRemoved(e.getOffset(), e.getLength());
+        //updateParser(e, e.getOffset()-1);
     }
 
     public void changedUpdate(DocumentEvent e)
@@ -70,29 +62,28 @@ public class ParserAdapter implements DocumentListener
         //attribute change. We are not interested in these
     }
 
-    protected void updateParser(DocumentEvent e, int offset)
+    public Segment getChars(int offset, int length)
     {
-        boolean forward = offset > m_lastPosition;
-        m_lastPosition = offset;
-
-        boolean doIncrement = forward ?
-              (m_handler.getIncrementType() & CompletionHandler.INCR_FWD) > 0:
-              (m_handler.getIncrementType() & CompletionHandler.INCR_BACK) > 0;
-
         Segment seg = new Segment();
-        //seg.setPartialReturn(true); 1.4 only
-        Document doc = e.getDocument();
-        try {
-            if(doIncrement) {
-                doc.getText(offset, doc.getLength()-offset, seg);
+        if(length > 0) {
+            try {
+                m_document.getText(offset, length, seg);
+                return seg;
             }
-            else {
-                doc.getText(0, doc.getLength(), seg);
+            catch (BadLocationException e) {
+                throw new RuntimeException(e.getMessage());
             }
         }
-        catch (BadLocationException e1) {
-            throw new RuntimeException(e1.getMessage());
-        }
-        m_handler.invalidate(seg, forward);
+        return seg;
+    }
+
+    public Segment getChars(int offset)
+    {
+        return getChars(offset, m_document.getLength()-offset);
+    }
+
+    public boolean atEnd(int offset)
+    {
+        return offset == m_document.getLength() - 1;
     }
 }
