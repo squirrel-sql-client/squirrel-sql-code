@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.id;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -49,7 +49,7 @@ public class IntegerIdentifier implements IIdentifier
 
 	public String toString()
 	{
-		return "" + _id;
+		return Integer.toString(_id);
 	}
 
 	// Only for restoring from XML etc.

@@ -27,7 +27,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
@@ -246,7 +246,7 @@ public class SQLConnection
 		validateConnection();
 		final Connection conn = getConnection();
 		final String oldValue = conn.getCatalog();
-		if (!Utilities.areStringsEqual(oldValue, catalogName))
+		if (!StringUtilities.areStringsEqual(oldValue, catalogName))
 		{
 			try
 			{
