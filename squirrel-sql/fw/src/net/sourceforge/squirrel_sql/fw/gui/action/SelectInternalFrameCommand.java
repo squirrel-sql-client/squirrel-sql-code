@@ -43,6 +43,10 @@ public class SelectInternalFrameCommand implements ICommand
 		{
 			if (!_child.isSelected())
 			{
+				if (!_child.isVisible())
+				{
+					_child.setVisible(true);
+				}
 				_child.setSelected(true);
 			}
 		}
