@@ -74,6 +74,9 @@ public class ResultSetDataSet implements IDataSet {
 						int idx = _columnIndices != null ? _columnIndices[i] : i + 1;
 //						row[i] = rs.getString(idx);
 						switch (md.getColumnType(idx)) {
+							case Types.NULL:
+								row[i] = null;
+								break;
 							case Types.BIT:
 								row[i] = new Boolean(rs.getBoolean(idx));
 								break;
