@@ -87,7 +87,7 @@ public class SessionSheet extends BaseSheet {
 
 	private MainPanel _mainTabPane;
 	private JSplitPane _msgSplit;
-	private MyStatusBar _statusBar = new MyStatusBar();
+	private StatusBar _statusBar = new StatusBar(true);
 	
 	private boolean _hasBeenVisible;
 
@@ -119,6 +119,7 @@ public class SessionSheet extends BaseSheet {
 		_mainTabPane.sessionClosing(_session);
 		_session.getApplication().getPluginManager().sessionEnding(_session);
 		closeConnection();
+		_statusBar.showClock(false);
 		super.dispose();
 	}
 
@@ -297,7 +298,6 @@ public class SessionSheet extends BaseSheet {
 				}
 			}
 		});
-
 		content.add(_statusBar, BorderLayout.SOUTH);
 
 		validate();
@@ -321,8 +321,5 @@ public class SessionSheet extends BaseSheet {
 			actions.get(CommitAction.class).setEnabled(false);
 			actions.get(RollbackAction.class).setEnabled(false);
 		}
-	}
-
-	private class MyStatusBar extends StatusBar {
 	}
 }
