@@ -6,6 +6,7 @@ Change Log
 
 Enhancements
 ------------
+- The squirrel-sql.jar file is now executable.
 - Function and keyword lists moved out of the main metadata tab and
   placed in their own tabs (David MacLean).
 - The DATA_TYPE column in the metadata tab now has a descriptive entry
