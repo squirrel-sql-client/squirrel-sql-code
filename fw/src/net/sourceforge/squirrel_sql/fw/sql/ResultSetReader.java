@@ -30,6 +30,8 @@ import java.sql.Types;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 
 public class ResultSetReader
 {
@@ -129,6 +131,36 @@ public class ResultSetReader
 	}
 
 	/**
+	 * Read the next row from the <TT>ResultSet</TT> for use in the ContentTab.
+	 * This is different from readRow() in that data is put into the Object array
+	 * in a form controlled by the DataType objects, and may be used for editing
+	 * the data and updating the DB.  If no more rows then
+	 * <TT>null</TT> will be returned, otherwise an <TT>Object[]</TT> will be
+	 * returned where each element of the array is an object representing
+	 * the contents of the column. These objects could be of type <TT>String</TT>,
+	 * <TT>BigDecimal</TT> etc.
+	 * 
+	 * <P>If an error occurs calling <TT>next()</TT> on the <TT>ResultSet</TT>
+	 * then an <TT>SQLException will be thrown, however if an error occurs
+	 * retrieving the data for a column an error msg will be placed in that
+	 * element of the array, but no exception will be thrown. To see if an
+	 * error occured retrieving column data you can call
+	 * <TT>getColumnErrorInPreviousRow</TT> after the call to <TT>readRow()</TT>.
+	 * 
+	 * @throws	SQLException	Error occured on <TT>ResultSet.next()</TT>.
+	 */
+	public Object[] readRow(ColumnDisplayDefinition colDefs[]) throws SQLException
+	{
+		_errorOccured = false;
+		if (_rs.next())
+		{
+			return doContentTabRead(colDefs);
+		}
+		return null;
+	}
+	
+	
+	/**
 	 * Retrieve whether an error occured reading a column in the previous row.
 	 * 
 	 * @return	<TT>true</TT> if error occured.
@@ -138,6 +170,10 @@ public class ResultSetReader
 		return _errorOccured;
 	}
 
+	/**
+	 * Method used to read data for all Tabs except the ContentsTab, where
+	 * the data is used only for reading.
+	 */
 	private Object[] doRead()
 	{
 		Object[] row = new Object[_columnCount];
@@ -287,6 +323,245 @@ public class ResultSetReader
 						{
 							row[i] = null;
 						}
+						break;
+
+					case Types.BINARY:
+					case Types.VARBINARY:
+					case Types.LONGVARBINARY:
+						row[i] = _rs.getString(idx);
+						break;
+
+					case Types.BLOB:
+						if (_largeObjInfo.getReadBlobs())
+						{
+							row[i] = null;
+							Blob blob = _rs.getBlob(idx);
+							if (blob != null)
+							{
+								int len = (int)blob.length();
+								if (len > 0)
+								{
+									int bytesToRead = len;
+									if (!_largeObjInfo.getReadCompleteBlobs())
+									{
+										bytesToRead = _largeObjInfo.getReadBlobsSize();
+									}
+									if (bytesToRead > len)
+									{
+										bytesToRead = len;
+									}
+									row[i] = new String(blob.getBytes(1, bytesToRead));
+								}
+							}
+						}
+						else
+						{
+							row[i] = "<Blob>";
+						}
+						break;
+
+					case Types.CLOB:
+						if (_largeObjInfo.getReadClobs())
+						{
+							row[i] = null;
+							Clob clob = _rs.getClob(idx);
+							if (clob != null)
+							{
+								int len = (int)clob.length();
+								if (len > 0)
+								{
+									int charsToRead = len;
+									if (!_largeObjInfo.getReadCompleteClobs())
+									{
+										charsToRead = _largeObjInfo.getReadClobsSize();
+									}
+									if (charsToRead > len)
+									{
+										charsToRead = len;
+									}
+									row[i] = clob.getSubString(1, charsToRead);
+								}
+							}
+						}
+						else
+						{
+							row[i] = "<Clob>";
+						}
+						break;
+
+					case Types.OTHER:
+						if (_largeObjInfo.getReadSQLOther())
+						{
+							// Running getObject on a java class attempts
+							// to load the class in memory which we don't want.
+							// getString() just gets the value without loading
+							// the class (at least under PostgreSQL).
+							//row[i] = _rs.getObject(idx);
+							row[i] = _rs.getString(idx);
+						}
+						else
+						{
+							row[i] = "<Other>";
+						}
+						break;
+
+					default:
+						if (_largeObjInfo.getReadAllOther())
+						{
+							row[i] = _rs.getObject(idx);
+						}
+						else
+						{
+							row[i] = "<Unknown(" + columnType + ")>";
+						}
+				}
+			}
+			catch (Throwable th)
+			{
+				_errorOccured = true;
+				row[i] = "<Error>";
+				StringBuffer msg = new StringBuffer("Error reading column data");
+				msg.append(", column index = ").append(idx);
+				s_log.error(msg.toString(), th);
+			}
+		}
+
+		return row;
+	}
+	
+
+	/**
+	 * Method used to read data for the ContentsTab, where
+	 * the data is used for both reading and editing.
+	 */
+	private Object[] doContentTabRead(ColumnDisplayDefinition colDefs[])
+	{
+		Object[] row = new Object[_columnCount];
+		for (int i = 0; i < _columnCount; ++i)
+		{
+			int idx = _columnIndices != null ? _columnIndices[i] : i + 1;
+			try
+			{
+				final int columnType = _rsmd.getColumnType(idx);
+				//final String columnClassName = _rsmd.getColumnClassName(idx);
+				switch (columnType)
+				{
+					case Types.NULL:
+						row[i] = null;
+						break;
+					
+					// TODO: When JDK1.4 is the earliest JDK supported
+					// by Squirrel then remove the hardcoding of the
+					// boolean data type.
+					case Types.BIT:
+					case 16:
+//					case Types.BOOLEAN:
+						row[i] = _rs.getObject(idx);
+						if (row[i] != null
+							&& !(row[i] instanceof Boolean))
+						{
+							if (row[i] instanceof Number)
+							{
+								if (((Number) row[i]).intValue() == 0)
+								{
+									row[i] = Boolean.FALSE;
+								}
+								else
+								{
+									row[i] = Boolean.TRUE;
+								}
+							}
+							else
+							{
+								row[i] = Boolean.valueOf(row[i].toString());
+							}
+						}
+						break;
+
+					case Types.TIME :
+						row[i] = _rs.getTime(idx);
+						break;
+
+					case Types.DATE :
+//						row[i] = _rs.getDate(idx);
+						// Use getObject(int) rather than getDate(int) as
+						// Oracle stores a TimeStamp in Date columns rather
+						// than a Date object.
+						row[i] = _rs.getObject(idx);
+						break;
+
+					case Types.TIMESTAMP :
+						row[i] = _rs.getTimestamp(idx);
+						break;
+
+					case Types.BIGINT :
+						row[i] = _rs.getObject(idx);
+						if (row[i] != null
+							&& !(row[i] instanceof Long))
+						{
+							if (row[i] instanceof Number)
+							{
+								row[i] = new Long(((Number)row[i]).longValue());
+							}
+							else
+							{
+								row[i] = new Long(row[i].toString());
+							}
+						}
+						break;
+
+					case Types.DOUBLE:
+					case Types.FLOAT:
+					case Types.REAL:
+						row[i] = _rs.getObject(idx);
+						if (row[i] != null
+							&& !(row[i] instanceof Double))
+						{
+							if (row[i] instanceof Number)
+							{
+								Number nbr = (Number)row[i];
+								row[i] = new Double(nbr.doubleValue());
+							}
+							else
+							{
+								row[i] = new Double(row[i].toString());
+							}
+						}
+						break;
+
+					case Types.DECIMAL:
+					case Types.NUMERIC:
+						row[i] = _rs.getObject(idx);
+						if (row[i] != null
+							&& !(row[i] instanceof BigDecimal))
+						{
+							if (row[i] instanceof Number)
+							{
+								Number nbr = (Number)row[i];
+								row[i] = new BigDecimal(nbr.doubleValue());
+							}
+							else
+							{
+								row[i] = new BigDecimal(row[i].toString());
+							}
+						}
+						break;
+
+// all of the following have been converted to use the new DataType object reader
+					case Types.INTEGER:
+					case Types.SMALLINT:
+					case Types.TINYINT:
+						// TODO: Hard coded -. JDBC/ODBC bridge JDK1.4
+						// brings back -9 for nvarchar columns in
+						// MS SQL Server tables.
+						// -8 is ROWID in Oracle.
+					case Types.CHAR:
+					case Types.VARCHAR:
+					case Types.LONGVARCHAR:
+					case -9:
+					case -8:
+row[i] = CellComponentFactory.readResultSet(colDefs[i], _rs, idx);
+
 						break;
 
 					case Types.BINARY:
