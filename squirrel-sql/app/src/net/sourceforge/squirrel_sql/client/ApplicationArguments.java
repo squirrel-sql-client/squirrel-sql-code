@@ -17,34 +17,71 @@ package net.sourceforge.squirrel_sql.client;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import java.util.StringTokenizer;
 
 /**
  * Application arguments.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-class ApplicationArguments {
-    /** <TT>true</TT> if splashscreen should be shown. */
-    private boolean _showSplashScreen = true;
+public class ApplicationArguments {
+	/** &quot;Raw&quot; arguments straight from the command line. */
+	private String[] _rawArgs;
 
-    /**
-     * Ctor specifying arguments from command line. 
-     *
-     * @param   args    Arguments passed on command line.
-     */
-    ApplicationArguments(String[] args) {
-        super();
-        for (int i = 0; i < args.length; ++i) {
-            if (args[i].equalsIgnoreCase("-nosplash")) {
-                _showSplashScreen = false;
-            }
-        }
-    }
+	/** <TT>true</TT> if splashscreen should be shown. */
+	private boolean _showSplashScreen = true;
 
-    /**
-     *  @return <TT>true</TT> if splashscreen should be shown.
-     */
-    boolean getShowSplashScreen() {
-        return _showSplashScreen;
-    }
+	/**
+	 * If not <TT>null</TT> then is an override for the users .squirrel-sql settings directory.
+	 */
+	private String _userSettingsDir = null;
+
+	/**
+	 * Ctor specifying arguments from command line. 
+	 *
+	 * @param   args	Arguments passed on command line.
+	 */
+	public ApplicationArguments(String[] args) {
+		super();
+		_rawArgs = args;
+		for (int i = 0; i < args.length; ++i) {
+			StringTokenizer strTok = new StringTokenizer(args[i], "=");
+			String parm = null;
+			String value = null;
+			while (strTok.hasMoreTokens()) {
+				String token = strTok.nextToken();
+				if (parm == null) {
+					parm = token;
+				} else {
+					value = token;
+				}
+			}
+			if (parm.equalsIgnoreCase("-nosplash")) {
+				_showSplashScreen = false;
+			} else if (parm.equalsIgnoreCase("-settingsdir")) {
+				_userSettingsDir = value;
+			}
+		}
+	}
+
+	/**
+	 *  @return The raw arguments passed on the command line.
+	 */
+	public String[] getRawArguments() {
+		return _rawArgs;
+	}
+
+	/**
+	 *  @return <TT>true</TT> if splashscreen should be shown.
+	 */
+	public String getUserSettingsDirectoryOverride() {
+		return _userSettingsDir;
+	}
+
+	/**
+	 *  @return override for the user settings directory. Can be <TT>null</TT>.
+	 */
+	public boolean getShowSplashScreen() {
+		return _showSplashScreen;
+	}
 }
