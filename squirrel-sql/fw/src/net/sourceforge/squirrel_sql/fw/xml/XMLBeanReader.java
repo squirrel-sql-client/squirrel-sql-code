@@ -241,7 +241,6 @@ public class XMLBeanReader {
 	private Object[] loadIndexedProperty(Object bean, PropertyDescriptor propDescr,
 										IXMLElement beanElement) throws XMLException {
 		final List beans = new ArrayList();
-		final String propName = beanElement.getName();
 		final List children = beanElement.getChildren();
 		for (Iterator it = children.iterator(); it.hasNext();) {
 			beans.add(loadBean((IXMLElement)it.next()));

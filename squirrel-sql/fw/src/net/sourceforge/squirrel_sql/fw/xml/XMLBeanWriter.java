@@ -119,7 +119,6 @@ public final class XMLBeanWriter {
 		if (getter != null) {
 			try {
 				final String propName = propDescr.getName();
-				String data = null;
 				Class returnType = getter.getReturnType();
 				if (returnType.isArray()) {
 					Object[] props = (Object[])getter.invoke(bean, null);
