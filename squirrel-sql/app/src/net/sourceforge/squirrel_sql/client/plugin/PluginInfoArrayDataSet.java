@@ -23,11 +23,10 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
-import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
-
-public class PluginInfoArrayDataSet implements IDataSet {
-	private interface i18n {
+public class PluginInfoArrayDataSet implements IDataSet
+{
+	private interface PluginInfoArrayDataSetI18n
+	{
 		String NAME = "Name";
 		String AUTHOR = "Author";
 		String LOADED = "Loaded";
@@ -36,62 +35,83 @@ public class PluginInfoArrayDataSet implements IDataSet {
 		String TRUE = "true";
 		String FALSE = "false";
 	}
-	private PluginInfo[] _src;
+
+	private PluginInfo[] _src;
 	private DataSetDefinition _dsDef;
 
-	private final static String[] s_hdgs = new String[] {
-		i18n.NAME, i18n.LOADED, i18n.VERSION, i18n.AUTHOR};
+	private final static String[] s_hdgs =
+		new String[] { PluginInfoArrayDataSetI18n.NAME, PluginInfoArrayDataSetI18n.LOADED, PluginInfoArrayDataSetI18n.VERSION, PluginInfoArrayDataSetI18n.AUTHOR };
+
+	private final static int[] s_hdgWidths = new int[] { 30, 10, 10, 30 };
 
 	private PluginInfo _curRow;
 	private int _curIndex = -1;
 
 	public PluginInfoArrayDataSet(PluginInfo[] src)
-			throws DataSetException, IllegalArgumentException {
+		throws DataSetException, IllegalArgumentException
+	{
 		super();
-		if (src == null) {
+		if (src == null)
+		{
 			throw new IllegalArgumentException("Null PluginInfo[][] passed");
 		}
 		_src = src;
 		_dsDef = new DataSetDefinition(createColumnDefinitions());
 	}
-	public final int getColumnCount() {
+
+	public final int getColumnCount()
+	{
 		return s_hdgs.length;
 	}
 
-	public DataSetDefinition getDataSetDefinition() {
+	public DataSetDefinition getDataSetDefinition()
+	{
 		return _dsDef;
 	}
 
-	public synchronized boolean next(IMessageHandler msgHandler) {
+	public synchronized boolean next(IMessageHandler msgHandler)
+	{
 		_curRow = null;
-		if (_src.length > (_curIndex + 1)) {
+		if (_src.length > (_curIndex + 1))
+		{
 			_curRow = _src[++_curIndex];
 			return true;
 		}
 		return false;
 	}
 
-	public synchronized Object get(int columnIndex) {
-		if (_curRow == null) {
+	public synchronized Object get(int columnIndex)
+	{
+		if (_curRow == null)
+		{
 			throw new IllegalStateException("PluginInfoArrayDataSet.get() called but all rows read");
 		}
 
 		IPlugin plugin = _curRow.getPlugin();
-		switch (columnIndex) {
-			case 0: return plugin != null ? plugin.getDescriptiveName() : i18n.UNKNOWN;
-			case 1: return _curRow.isLoaded() ? i18n.TRUE : i18n.FALSE;
-			case 2: return plugin != null ? plugin.getVersion() : i18n.UNKNOWN;
-			case 3: return plugin != null ? plugin.getAuthor() : i18n.UNKNOWN;
-			default: throw new IndexOutOfBoundsException("" + columnIndex);
+
+		switch (columnIndex)
+		{
+			case 0 :
+				return plugin != null ? plugin.getDescriptiveName() : PluginInfoArrayDataSetI18n.UNKNOWN;
+			case 1 :
+				return _curRow.isLoaded() ? PluginInfoArrayDataSetI18n.TRUE : PluginInfoArrayDataSetI18n.FALSE;
+			case 2 :
+				return plugin != null ? plugin.getVersion() : PluginInfoArrayDataSetI18n.UNKNOWN;
+			case 3 :
+				return plugin != null ? plugin.getAuthor() : PluginInfoArrayDataSetI18n.UNKNOWN;
+			default :
+				throw new IndexOutOfBoundsException("" + columnIndex);
 		}
 	}
-	private ColumnDisplayDefinition[] createColumnDefinitions() {
+
+	private ColumnDisplayDefinition[] createColumnDefinitions()
+	{
 		final int columnCount = getColumnCount();
 		ColumnDisplayDefinition[] columnDefs = new ColumnDisplayDefinition[columnCount];
-		for (int i = 0; i < columnCount; ++i) {
-			columnDefs[i] = new ColumnDisplayDefinition(50, s_hdgs[i]);
+		for (int i = 0; i < columnCount; ++i)
+		{
+			columnDefs[i] = new ColumnDisplayDefinition(s_hdgWidths[i], s_hdgs[i]);
 		}
 		return columnDefs;
 	}
 }
-
