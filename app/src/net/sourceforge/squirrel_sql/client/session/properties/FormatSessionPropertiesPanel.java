@@ -123,15 +123,15 @@ public class FormatSessionPropertiesPanel
 		 */
 		interface i18n
 		{
-			String ALL_OTHER = "All Other Data Types";
+			String ALL_OTHER = "Display Unknown, non-standard or un-handled Data Types as String";
 			String BLOB = "Blob";
 			String CLOB = "Clob";
 			String HINT = "Specify formatting options";
 			String NBR_BYTES = "Number of bytes to read:";
 			String NBR_CHARS = "Number of chars to read:";
-			String SQL_OTHER = "SQL Other";
+			String SQL_OTHER = "Display SQL Other (Data Type 1111) as String";
 			String TITLE = "Format";
-			String BLOB_WARNING = "Some DBMSs implement BLOB/CLOB fields as other Data Types.\nThe following works only for Data Types 2004(BLOB) and 2005(CLOB).";
+			String BLOB_WARNING = "Some DBMSs implement BLOB/CLOB fields as other Data Types\nsuch as BINARY and VARCHAR.\nThe following works only for Data Types 2004(BLOB) and 2005(CLOB).";
 			String OTHER_TYPE_WARNING = "The following Data Types are not the same in all DBMSs and\nmay cause exceptions if interpreted as Strings.";
 		}
 
@@ -302,13 +302,12 @@ public class FormatSessionPropertiesPanel
 			JTextArea text2 = new JTextArea(i18n.OTHER_TYPE_WARNING);
 			text2.setEditable(false);
 			pnl.add(text2, gbc);
+			
+			++gbc.gridy;
+			pnl.add(_showSQLOtherChk, gbc);
 						
 			++gbc.gridy;
 			pnl.add(_showAllOtherChk, gbc);
-
-			++gbc.gridy;
-			pnl.add(_showSQLOtherChk, gbc);
-
 
 			return pnl;
 		}
