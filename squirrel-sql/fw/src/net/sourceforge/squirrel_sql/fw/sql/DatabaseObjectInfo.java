@@ -148,6 +148,11 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo {
 		}
 		return false;
 	}
+
+	public int compareTo(Object o) {
+		DatabaseObjectInfo other = (DatabaseObjectInfo) o;
+		return _qualifiedName.compareTo(other._qualifiedName);
+	}
 }
 
 

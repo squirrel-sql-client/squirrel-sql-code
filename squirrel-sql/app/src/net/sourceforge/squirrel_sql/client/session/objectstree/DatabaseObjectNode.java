@@ -24,10 +24,9 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public class DatabaseObjectNode extends BaseNode implements IDatabaseObjectInfo {
-	private IDatabaseObjectInfo _objInfo;
+	private final IDatabaseObjectInfo _objInfo;
 
-	public DatabaseObjectNode(ISession session, ObjectsTreeModel treeModel, IDatabaseObjectInfo objInfo)
-			throws IllegalArgumentException {
+	public DatabaseObjectNode(ISession session, ObjectsTreeModel treeModel, IDatabaseObjectInfo objInfo) {
 		super(session, treeModel, getNodeText(objInfo));
 		_objInfo = objInfo;
 	}
@@ -48,21 +47,23 @@ public class DatabaseObjectNode extends BaseNode implements IDatabaseObjectInfo 
 		return _objInfo.getQualifiedName();
 	}
 
-	private static String getNodeText(IDatabaseObjectInfo objInfo)
-			throws IllegalArgumentException {
+	private static String getNodeText(IDatabaseObjectInfo objInfo) {
 		if (objInfo == null) {
 			throw new IllegalArgumentException("Null IDatabaseObjectInfo passed");
 		}
 		return objInfo.getSimpleName();
 	}
 
-	public boolean equals(Object obj)
-	{
-		if(obj instanceof DatabaseObjectNode)
-		{
+	public boolean equals(Object obj) {
+		if(obj instanceof DatabaseObjectNode) {
 			return ((DatabaseObjectNode)obj)._objInfo.equals(_objInfo);
 		}
 		return false;
 	}
+
+	public int compareTo(Object o) {
+		DatabaseObjectNode other = (DatabaseObjectNode) o;	
+		return _objInfo.compareTo(other._objInfo);
+     }
 
 }

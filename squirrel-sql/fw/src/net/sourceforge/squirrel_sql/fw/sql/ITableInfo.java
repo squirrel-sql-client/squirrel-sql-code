@@ -20,4 +20,5 @@ package net.sourceforge.squirrel_sql.fw.sql;
 public interface ITableInfo extends IDatabaseObjectInfo {
 	String getType();
 	String getRemarks();
+	ITableInfo[] getChildTables();
 }

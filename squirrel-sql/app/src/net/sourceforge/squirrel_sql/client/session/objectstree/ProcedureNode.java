@@ -26,10 +26,10 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public class ProcedureNode extends BaseNode implements IProcedureInfo {
 
-	private IProcedureInfo _procInfo;
+	private final IProcedureInfo _procInfo;
 
 	public ProcedureNode(ISession session, ObjectsTreeModel treeModel,
-							IProcedureInfo procInfo) throws IllegalArgumentException {
+							IProcedureInfo procInfo) {
 		super(session, treeModel, getNodeText(procInfo));
 		_procInfo = procInfo;
 	}
@@ -95,5 +95,9 @@ public class ProcedureNode extends BaseNode implements IProcedureInfo {
 		return false;
 	}
 
+	public int compareTo(Object o) {
+		ProcedureNode other = (ProcedureNode) o;
+		return _procInfo.compareTo(other._procInfo);
+    }
 
 }

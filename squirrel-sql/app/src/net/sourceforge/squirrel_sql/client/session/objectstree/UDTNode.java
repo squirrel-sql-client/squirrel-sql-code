@@ -30,7 +30,7 @@ public class UDTNode extends BaseNode implements IUDTInfo {
 		String DETAIL_PANEL_KEY = UDTNode.class.getName() + "_DETAIL_PANEL_KEY";
 	}
 
-	private IUDTInfo _udtInfo;
+	private final IUDTInfo _udtInfo;
 
 	public UDTNode(ISession session, ObjectsTreeModel treeModel, IUDTInfo udtInfo)
 			throws IllegalArgumentException {
@@ -98,4 +98,8 @@ public class UDTNode extends BaseNode implements IUDTInfo {
 		return false;
 	}
 
+	public int compareTo(Object o) {
+		UDTNode other = (UDTNode) o;
+		return _udtInfo.compareTo(other._udtInfo);
+	}
 }

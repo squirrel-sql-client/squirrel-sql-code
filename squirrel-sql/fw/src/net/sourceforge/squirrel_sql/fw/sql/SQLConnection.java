@@ -17,15 +17,19 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
@@ -145,7 +149,6 @@ public class SQLConnection {
 			throw new BaseSQLException(ex);
 		}
 	}
-
 
 	public boolean getCommitOnClose() {
 		return _autoCommitOnClose;
@@ -358,16 +361,59 @@ public class SQLConnection {
 									String tableNamePattern, String[] types)
 			throws NoConnectionException, BaseSQLException {
 		DatabaseMetaData md = getMetaData();
-		ArrayList list = new ArrayList();
+		Set list = new TreeSet();
 		try {
 			if (_dbDriverName.equals(DriverNames.FREE_TDS) && schemaPattern == null) {
 				schemaPattern = "dbo";
 			}
 
-			ResultSet rs = md.getTables(catalog, schemaPattern, tableNamePattern,
-											types);
-			while (rs.next()) {
-				list.add(new TableInfo(rs, this));
+			ResultSet tabResult = md.getTables(catalog, schemaPattern, tableNamePattern,
+											   types);
+			ResultSet superTabResult = null;
+			Map nameMap = null;
+			try {
+//				superTabResult = md.getSuperTables(catalog, schemaPattern,
+//												   tableNamePattern);
+				Class clazz = md.getClass();
+				Method method = clazz.getMethod("getSuperTables",
+					new Class[] { String.class, String.class, String.class });
+				s_log.error("method != null: " + (method != null));
+				if (method != null) {
+					superTabResult = (ResultSet)method.invoke(md,
+						new Object[] {catalog, schemaPattern, tableNamePattern});
+				}
+				// create a mapping of names if we have supertable info, since
+				// we need to find the ITableInfo again for re-ordering.
+				if (superTabResult != null && superTabResult.next()) {
+					nameMap = new HashMap();
+				}
+			} catch (Throwable th) {
+				s_log.error(th);
+			}
+
+			// store all plain table info we have.
+			while (tabResult.next()) {
+				ITableInfo tabInfo = new TableInfo(tabResult, this);
+				if (nameMap != null) {
+					nameMap.put(tabInfo.getSimpleName(), tabInfo);
+				}
+				list.add(tabInfo);
+			}
+
+			// re-order nodes if the tables are stored hierachically
+			if (nameMap != null) {
+				do {
+					String tabName = superTabResult.getString(3);
+					TableInfo tabInfo = (TableInfo) nameMap.get(tabName);
+					if (tabInfo == null) continue;
+					String superTabName = superTabResult.getString(4);
+					if (superTabName == null) continue;
+					TableInfo superInfo = (TableInfo) nameMap.get(superTabName);
+					if (superInfo == null) continue;
+					superInfo.addChild(tabInfo);
+					list.remove(tabInfo); // remove from toplevel.
+				}
+				while (superTabResult.next());
 			}
 			return (ITableInfo[])list.toArray(new ITableInfo[list.size()]);
 		} catch (SQLException ex) {

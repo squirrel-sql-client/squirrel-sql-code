@@ -20,8 +20,10 @@ package net.sourceforge.squirrel_sql.client.session.objectstree;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Enumeration;
 
 import javax.swing.JComponent;
+import javax.swing.tree.TreeNode;
 
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -31,20 +33,27 @@ import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public final class TableNode extends DatabaseObjectNode implements ITableInfo {
-	private ITableInfo _tableInfo;
+	private final ITableInfo _tableInfo;
+	private final TableNode[] _children;
 
-	public TableNode(
-		ISession session,
-		ObjectsTreeModel treeModel,
-		ITableInfo tableInfo,
-		Statement rowCountStmt)
-		throws IllegalArgumentException, BaseSQLException, NoConnectionException {
+	public TableNode(ISession session, ObjectsTreeModel treeModel,
+						ITableInfo tableInfo, Statement rowCountStmt)
+			throws BaseSQLException, NoConnectionException {
 		super(session, treeModel, tableInfo);
 		if (tableInfo == null) {
 			throw new IllegalArgumentException("Null ITableInfo passed");
 		}
 		_tableInfo = tableInfo;
 		setUserObject(getDisplayText(rowCountStmt));
+		ITableInfo[] infoChildren = tableInfo.getChildTables();
+		if (infoChildren != null) {
+			_children = new TableNode [ infoChildren.length ];
+			for (int i=0; i < _children.length; ++i) {
+				_children[i] = new TableNode(session, treeModel, infoChildren[i], rowCountStmt);
+			}
+		} else {
+			_children = null;
+		}
 	}
 
 	public String getCatalogName() {
@@ -71,6 +80,34 @@ public final class TableNode extends DatabaseObjectNode implements ITableInfo {
 		return _tableInfo.getRemarks();
 	}
 
+	public ITableInfo[] getChildTables() {
+		return _tableInfo.getChildTables();
+	}
+
+	public Enumeration children() {
+		return new Enumeration() {
+			int pos = 0;
+			public boolean hasMoreElements() {
+				return (_children != null && _children.length < pos);
+			}
+			public Object nextElement() {
+				return _children[pos++];
+			}
+		};
+	}
+
+	public boolean getAllowsChildren() {
+		return true;
+	}
+
+	public TreeNode getChildAt(int i) {
+		return _children[i];
+	}
+
+	public int getChildCount() {
+		return (_children == null) ? 0 : _children.length;
+	}
+
 	public JComponent getDetailsPanel() {
 		final ISession session = getSession();
 		final IPlugin plugin = session.getApplication().getDummyAppPlugin();
@@ -85,7 +122,7 @@ public final class TableNode extends DatabaseObjectNode implements ITableInfo {
 	}
 
 	public boolean isLeaf() {
-		return true;
+		return _children == null;
 	}
 
 	private String getDisplayText(Statement rowCountStmt) {

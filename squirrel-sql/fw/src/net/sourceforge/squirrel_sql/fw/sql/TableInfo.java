@@ -20,6 +20,8 @@ package net.sourceforge.squirrel_sql.fw.sql;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class TableInfo extends DatabaseObjectInfo implements ITableInfo {
 	/** Table Type. */
@@ -27,24 +29,20 @@ public class TableInfo extends DatabaseObjectInfo implements ITableInfo {
 
 	/** Table remarks. */
 	private final String _remarks;
-
-	/** Catalogue separator. */
-//  private String _catSep;
-
-	/** Identifier quote string. */
-//  private String _identifierQuoteString;
-
-//  private String _qualifiedName;
+	
+	private SortedSet    _childList; // build up datastructure.
+	private ITableInfo[] _childs;    // final cache.
 
 	TableInfo(ResultSet rs, SQLConnection conn) throws SQLException {
 		super(rs.getString(1), rs.getString(2), rs.getString(3),
 				conn);
 		_type = rs.getString(4);
 		_remarks = rs.getString(5);
+		_childList = null;
 	}
 
 	public String getType() {
-			return _type;
+		return _type;
 	}
 
 	public String getRemarks() {
@@ -64,5 +62,20 @@ public class TableInfo extends DatabaseObjectInfo implements ITableInfo {
 			}
 		}
 		return false;
+	}
+
+	void addChild(ITableInfo tab) {
+		if (_childList == null) {
+			_childList = new TreeSet();
+		}
+		_childList.add(tab);
+	}
+
+	public ITableInfo[] getChildTables() {
+		if (_childs == null && _childList != null) {
+		_childs = (ITableInfo[]) _childList.toArray(new ITableInfo[_childList.size()]);
+		_childList = null;
+		}
+		return _childs;
 	}
 }
