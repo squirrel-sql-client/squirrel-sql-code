@@ -6,8 +6,12 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.ImageInputStreamImpl;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.net.URL;
 
 
 public class TableFrame extends JInternalFrame
@@ -162,7 +166,8 @@ public class TableFrame extends JInternalFrame
       protected void installDefaults()
       {
          super.installDefaults();
-
+         URL resource = TableFrame.class.getResource("/net/sourceforge/squirrel_sql/plugins/graph/images/win_bigclose-rollover.gif");
+         closeIcon = new ImageIcon(resource);
          selectedTextColor = Color.black;
          notSelectedTextColor = Color.black;
          setFont(new Font(getFont().getFontName(), Font.BOLD, getFont().getSize()));
