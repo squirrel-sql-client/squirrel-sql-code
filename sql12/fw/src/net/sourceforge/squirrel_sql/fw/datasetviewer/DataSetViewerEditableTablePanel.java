@@ -67,7 +67,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 	 * based on whether the class associated with that column is known
 	 * or not known, where "not known" is signaled by Object.class.
 	 */
-	public boolean isColumnEditable(int col)
+	public boolean isColumnEditable(int col, Object originalValue)
 	{
 		if (_colDefs == null)
 			return false;	// cannot edit something that we do not know anything about
@@ -76,7 +76,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		if ( ((IDataSetUpdateableTableModel)getUpdateableModel()).getRowidCol() == col)
 			return false;
 
-		return CellComponentFactory.isEditableInCell(_colDefs[col]);
+		return CellComponentFactory.isEditableInCell(_colDefs[col], originalValue);
 	}
 	
 	/**
