@@ -170,10 +170,17 @@ public class TableTypesGroupNode extends BaseNode
 			if (conn != null)
 			{
 				String[] tableTypes = treeModel.getTableTypes();
-				for (int i = 0; i < tableTypes.length; ++i)
+				if(tableTypes.length == 0)
 				{
-					String tableType = tableTypes[i];
-					tableTypeList.add(new TableObjectTypeNode(session, treeModel, TableTypesGroupNode.this, tableType, tableType));
+						tableTypeList.add(new TableObjectTypeNode(session, treeModel, TableTypesGroupNode.this, "TABLE", "TABLE"));
+				}
+				else
+				{
+					for (int i = 0; i < tableTypes.length; ++i)
+					{
+						String tableType = tableTypes[i];
+						tableTypeList.add(new TableObjectTypeNode(session, treeModel, TableTypesGroupNode.this, tableType, tableType));
+					}
 				}
 
 				tableTypeList.add(new UDTObjectTypeNode(session, treeModel, TableTypesGroupNode.this));
