@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.squirrel_sql.fw.util.MyURLClassLoader;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -264,6 +265,7 @@ public class PluginManager
 	}
 
 	/**
+	 * TODO: Clean this mess up!!!!
 	 * Load plugins. Load all plugin jars into class loader.
 	 */
 	public void loadPlugins()
@@ -272,28 +274,67 @@ public class PluginManager
 		File dir = new File(ApplicationFiles.SQUIRREL_PLUGINS_FOLDER);
 		if (dir.isDirectory())
 		{
-			String[] files = dir.list();
+			File[] files = dir.listFiles();
 			for (int i = 0; i < files.length; ++i)
 			{
-				String fileName = files[i];
-				if (fileName.toLowerCase().endsWith(".zip") || fileName.toLowerCase().endsWith(".jar"))
+				final File file = files[i];
+				if (file.isFile())
 				{
-					String jarFileName = ApplicationFiles.SQUIRREL_PLUGINS_FOLDER + File.separator + fileName;
-					try
+					final String fileName = file.getAbsolutePath();
+					if (fileName.toLowerCase().endsWith(".zip") || fileName.toLowerCase().endsWith(".jar"))
 					{
-						pluginUrls.add(new File(jarFileName).toURL());
-					}
-					catch (IOException ex)
-					{
-						String msg = "Unable to load plugin jar: " + jarFileName;
-						s_log.error(msg, ex);
-						_app.showErrorDialog(msg, ex);
+						try
+						{
+							pluginUrls.add(file.toURL());
+							
+							// See if plugin has any jars in lib dir.
+							final String pluginDirName = Utilities.removeFileNameSuffix(file.getAbsolutePath());
+							final File libDir = new File(pluginDirName, "lib");
+							if (libDir.exists() && libDir.isDirectory())
+							{
+								File[] libDirFiles = libDir.listFiles();
+								for (int j = 0; j < libDirFiles.length; ++j)
+								{
+									if (libDirFiles[j].isFile())
+									{
+										final String fn = libDirFiles[j].getAbsolutePath();
+										if (fn.toLowerCase().endsWith(".zip") ||
+												fn.toLowerCase().endsWith(".jar"))
+										{
+											try
+											{
+												pluginUrls.add(libDirFiles[j].toURL());
+											}
+											catch (IOException ex)
+											{
+												String msg = "Unable to load plugin library file: " + fn;
+												s_log.error(msg, ex);
+												_app.showErrorDialog(msg, ex);
+											}
+										}
+									}
+								}
+							}
+						}
+						catch (IOException ex)
+						{
+							String msg = "Unable to load plugin jar: " + fileName;
+							s_log.error(msg, ex);
+							_app.showErrorDialog(msg, ex);
+						}
 					}
 				}
 			}
 		}
 
 		URL[] urls = (URL[]) pluginUrls.toArray(new URL[pluginUrls.size()]);
+		if (s_log.isDebugEnabled())
+		{
+			for (int i = 0; i < urls.length; ++i)
+			{
+				s_log.debug("Plugin class loader URL[" + i + "] = " + urls[i]);
+			}
+		}
 		_pluginsClassLoader = new MyURLClassLoader(urls);
 
 		try

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.util;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,24 +17,26 @@ package net.sourceforge.squirrel_sql.fw.util;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Iterator;
 
 /**
  * General purpose utilities functions.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class Utilities {
+public class Utilities
+{
 	private static final String EMPTY_STRING = "";
 
 	/**
 	 * Ctor. <TT>private</TT> as all methods are static.
 	 */
-	private Utilities() {
+	private Utilities()
+	{
 		super();
 	}
 
@@ -45,14 +47,19 @@ public class Utilities {
 	 *
 	 * @throws	IllegalArgumentException	If a null <TT>ps</TT> passed.
 	 */
-	public static void printStackTrace(PrintStream ps) {
-		if (ps == null) {
+	public static void printStackTrace(PrintStream ps)
+	{
+		if (ps == null)
+		{
 			throw new IllegalArgumentException("PrintStream == null");
 		}
 
-		try {
+		try
+		{
 			throw new Exception();
-		} catch (Exception ex) {
+		}
+		catch (Exception ex)
+		{
 			ps.println(getStackTrace(ex));
 		}
 	}
@@ -62,24 +69,35 @@ public class Utilities {
 	 *
 	 * @param   th  The exception to retrieve stack trace for.
 	 */
-	public static String getStackTrace(Throwable th) {
-		if (th == null) {
+	public static String getStackTrace(Throwable th)
+	{
+		if (th == null)
+		{
 			throw new IllegalArgumentException("Throwable == null");
 		}
 
 		StringWriter sw = new StringWriter();
-		try {
+		try
+		{
 			PrintWriter pw = new PrintWriter(sw);
-			try {
+			try
+			{
 				th.printStackTrace(pw);
 				return sw.toString();
-			} finally {
+			}
+			finally
+			{
 				pw.close();
 			}
-		} finally {
-			try {
+		}
+		finally
+		{
+			try
+			{
 				sw.close();
-			} catch (IOException ignore) {
+			}
+			catch (IOException ignore)
+			{
 			}
 		}
 	}
@@ -92,8 +110,10 @@ public class Utilities {
 	 *
 	 * @throws	IllegalArgumentException	If a null <TT>name</TT> passed.
 	 */
-	public static String changeClassNameToFileName(String name) {
-		if (name == null) {
+	public static String changeClassNameToFileName(String name)
+	{
+		if (name == null)
+		{
 			throw new IllegalArgumentException("Class Name == null");
 		}
 		return name.replace('.', '/').concat(".class");
@@ -108,12 +128,15 @@ public class Utilities {
 	 *
 	 * @throws  IllegalArgumentException	If a null <TT>name</TT> passed.
 	 */
-	public static String changeFileNameToClassName(String name) {
-		if (name == null) {
+	public static String changeFileNameToClassName(String name)
+	{
+		if (name == null)
+		{
 			throw new IllegalArgumentException("File Name == null");
 		}
 		String className = null;
-		if (name.toLowerCase().endsWith(".class")) {
+		if (name.toLowerCase().endsWith(".class"))
+		{
 			className = name.replace('/', '.');
 			className = className.replace('\\', '.');
 			className = className.substring(0, className.length() - 6);
@@ -130,8 +153,10 @@ public class Utilities {
 	 *
 	 * @return	Cleaned string.
 	 */
-	public static String cleanString(String str) {
-		if (str == null) {
+	public static String cleanString(String str)
+	{
+		if (str == null)
+		{
 			return EMPTY_STRING;
 		}
 		String newStr = str.replace('\n', ' ');
@@ -150,14 +175,41 @@ public class Utilities {
 	 *
 	 * @throws	IllegalArgumentException	if <TT>null</TT> file name passed.
 	 */
-	public static String getFileNameSuffix(String fileName) {
-		if (fileName == null) {
-			throw new IllegalArgumentException("file name == nu;;");
+	public static String getFileNameSuffix(String fileName)
+	{
+		if (fileName == null)
+		{
+			throw new IllegalArgumentException("file name == null");
 		}
 		int pos = fileName.lastIndexOf('.');
-		if (pos > 0 && pos < fileName.length() - 1) {
+		if (pos > 0 && pos < fileName.length() - 1)
+		{
 			return fileName.substring(pos + 1);
 		}
 		return EMPTY_STRING;
+	}
+
+
+	/**
+	 * Remove the suffix from the passed file name.
+	 *
+	 * @param	fileName	File name to remove suffix from.
+	 *
+	 * @return	<TT>fileName</TT> without a suffix.
+	 *
+	 * @throws	IllegalArgumentException	if <TT>null</TT> file name passed.
+	 */
+	public static String removeFileNameSuffix(String fileName)
+	{
+		if (fileName == null)
+		{
+			throw new IllegalArgumentException("file name == null");
+		}
+		int pos = fileName.lastIndexOf('.');
+		if (pos > 0 && pos < fileName.length() - 1)
+		{
+			return fileName.substring(0, pos);
+		}
+		return fileName;
 	}
 }
