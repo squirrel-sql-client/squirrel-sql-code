@@ -164,7 +164,6 @@ class LAFRegister
 
 		installLookAndFeels();
 		installLookAndFeelControllers(plugin);
-
 		try
 		{
 			setLookAndFeel(true);
@@ -173,7 +172,6 @@ class LAFRegister
 		{
 			s_log.error("Error setting Look and Feel", ex);
 		}
-
 		try
 		{
 			updateApplicationFonts();
@@ -369,7 +367,6 @@ class LAFRegister
 		// Map of JAR file URLs containing LAFs keyed by the LAF class name.
 		final Map lafs = loadInstallProperties();
 
-
 		// Retrieve URLs of all the Look and Feel jars and store in lafUrls.
 		final List lafUrls = new ArrayList();
 		for (Iterator it = lafs.values().iterator(); it.hasNext();)
@@ -420,18 +417,18 @@ class LAFRegister
 		{
 			_lafControllers.put(SkinLookAndFeelController.SKINNABLE_LAF_CLASS_NAME, new SkinLookAndFeelController(plugin));
 		}
-		catch (IOException ex)
+		catch (Throwable ex)
 		{
-			s_log.error("Error storing SkinLookAndFeelController", ex);
+			s_log.error("Error installing SkinLookAndFeelController", ex);
 		}
 
 		try
 		{
 			_lafControllers.put(OyoahaLookAndFeelController.OA_LAF_CLASS_NAME, new OyoahaLookAndFeelController(plugin));
 		}
-		catch (IOException ex)
+		catch (Throwable ex)
 		{
-			s_log.error("Error storing OyoahaLookAndFeelController", ex);
+			s_log.error("Error installing OyoahaLookAndFeelController", ex);
 		}
 
 		try
@@ -443,9 +440,25 @@ class LAFRegister
 				_lafControllers.put(ar[i], ctrl);
 			}
 		}
-		catch (IOException ex)
+		catch (Throwable ex)
 		{
-			s_log.error("Error storing PlasticLookAndFeelController", ex);
+			s_log.error("Error installing PlasticLookAndFeelController", ex);
+		}
+
+		try
+		{
+			MetalLookAndFeelController ctrl = new MetalLookAndFeelController(plugin, this);
+			_lafControllers.put(MetalLookAndFeelController.METAL_LAF_CLASS_NAME, ctrl);
+		}
+		catch (Throwable ex)
+		{
+			s_log.error("Error installing PlasticLookAndFeelController", ex);
+		}
+
+		// Initialize all the LAF controllers.
+		for (Iterator it = _lafControllers.values().iterator(); it.hasNext();)
+		{
+			((ILookAndFeelController)it.next()).initialize();
 		}
 	}
 
