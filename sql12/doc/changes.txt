@@ -6,7 +6,11 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
-- Display warnings issued by SQL statements in the message panel.
+- Allow for bug in Opta2000 driver which limits the number of rows
+  modified by an UPDATE statement to that specified by setMaxRows()
+  (Gerd Wagner).
+- Display warnings issued by SQL connections and statements in the
+  message panel.
 - Can now specify session sheets to be opened maximized.
 - Show as much as possible of the SQL statement in the SQL history
   dropdown and show it all in the tooltip.

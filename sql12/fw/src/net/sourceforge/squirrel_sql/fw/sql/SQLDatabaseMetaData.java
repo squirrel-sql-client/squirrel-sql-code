@@ -63,12 +63,14 @@ public class SQLDatabaseMetaData
 	{
 		String FREE_TDS = "InternetCDS Type 4 JDBC driver for MS SQLServer";
 		String JCONNECT = "jConnect (TM) for JDBC (TM)";
+		String OPTA2000 = "i-net OPTA 2000";
 	}
 
 	private interface IDBMSProductNames
 	{
 		String MYSQL = "mysql";
 		String MICROSOFT_SQL = "Microsoft SQL Server";
+		String POSTGRESQL = "PostgreSQL";
 		String SYBASE = "Sybase SQL Server";
 		String SYBASE_OLD = "SQL Server";
 	}
@@ -405,7 +407,16 @@ public class SQLDatabaseMetaData
 			return value.booleanValue();
 		}
 
-		value = new Boolean(privateGetJDBCMetaData().supportsStoredProcedures());
+		// PostgreSQL (at least 7.3.2) returns false for
+		// supportsStoredProcedures() even though it does support them.
+		if (getDatabaseProductName().equals(IDBMSProductNames.POSTGRESQL))
+		{
+			value = Boolean.TRUE;
+		}
+		else
+		{
+			value = new Boolean(privateGetJDBCMetaData().supportsStoredProcedures());
+		}
 		_cache.put(key, value);
 
 		return value.booleanValue();
@@ -599,7 +610,7 @@ public class SQLDatabaseMetaData
 	 * 
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
-	public DatabaseMetaData getJDBCMetaData() throws SQLException
+	public synchronized DatabaseMetaData getJDBCMetaData() throws SQLException
 	{
 		return privateGetJDBCMetaData();
 	}
@@ -1188,6 +1199,22 @@ public class SQLDatabaseMetaData
 									new TableColumnInfo[columns.size()]);
 	}
 
+	/**
+	 * Retrieve whether this driver correctly handles Statement.setMaxRows(int).
+	 * Some drivers such as version 5.02 of the Opta2000 driver use setMaxRows
+	 * for UPDATEs, DELETEs etc. instead of just SELECTs. If this method returns
+	 * <TT>false</TT> then setMaxRows should only be applied to statements
+	 * that are running SELECTs.
+	 * 
+	 * @return	<TT>true</TT> if this driver correctly implements setMaxRows().
+	 * 
+	 * @throws	SQLException	Thrown if an SQL error occurs.
+	 */
+	public boolean correctlySupportsSetMaxRows() throws SQLException
+	{
+		return !IDriverNames.OPTA2000.equals(getDriverName());
+	}
+	
 	/**
 	 * Clear cache of commonly accessed metadata properties.
 	 */
