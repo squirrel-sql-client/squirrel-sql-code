@@ -270,7 +270,7 @@ public class RowDataInputFrame extends JInternalFrame
 		public boolean isCellEditable(int row, int col) {
 			if (row > 0)
 				return false;	// only the first row (containing data) is editable
-			return CellComponentFactory.isEditableInCell(_colDefs[row], getValueAt(row,col));
+			return CellComponentFactory.isEditableInCell(_colDefs[col], getValueAt(row,col));
 		}
 			
 //		// set up editors and renderers
