@@ -80,10 +80,11 @@ public class DatabaseTypesDataSet implements IDataSet {
 					int idx = _columnIndices != null ? _columnIndices[i] : i + 1;
 					try {
 						switch (idx) {
+
 							case 2:
 								// DATA_TYPE column of result set.
-								_row[i] = _rs.getString(idx) + " [" +
-										JDBCTypeMapper.getJdbcTypeName(_rs.getInt(idx)) + "]";
+								int data = _rs.getInt(idx);
+								_row[i] = String.valueOf(data) + " [" + JDBCTypeMapper.getJdbcTypeName(data) + "]";
 								break;
 
 							case 7:

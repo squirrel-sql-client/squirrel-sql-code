@@ -75,13 +75,13 @@ public class ResultSetDataSet implements IDataSet {
 					Object[] row = new Object[_columnCount];
 					for (int i = 0; i < _columnCount; ++i) {
 						int idx = _columnIndices != null ? _columnIndices[i] : i + 1;
-						row[i] = rs.getObject(idx);
 						try {
 							switch (md.getColumnType(idx)) {
 								case Types.NULL:
 									row[i] = null;
 									break;
 								case Types.BIT:
+									row[i] = rs.getObject(idx);
 									if(row[i] != null && !(row[i] instanceof Boolean))
 									{
 										if(row[i] instanceof Number)
@@ -111,6 +111,7 @@ public class ResultSetDataSet implements IDataSet {
 									row[i] = rs.getTimestamp(idx);
 									break;
 								case Types.BIGINT:
+									row[i] = rs.getObject(idx);
 									if(row[i] != null && !(row[i] instanceof Long))
 									{
 										if(row[i] instanceof Number)
@@ -128,6 +129,7 @@ public class ResultSetDataSet implements IDataSet {
 								case Types.FLOAT:
 								case Types.NUMERIC:
 								case Types.REAL:
+									row[i] = rs.getObject(idx);
 									if(row[i] != null && !(row[i] instanceof Double))
 									{
 										if(row[i] instanceof Number)
@@ -143,6 +145,7 @@ public class ResultSetDataSet implements IDataSet {
 								case Types.INTEGER:
 								case Types.SMALLINT:
 								case Types.TINYINT:
+									row[i] = rs.getObject(idx);
 									if(row[i] != null && !(row[i] instanceof Integer))
 									{
 										if(row[i] instanceof Number)
@@ -155,9 +158,14 @@ public class ResultSetDataSet implements IDataSet {
 										}
 									}
 									break;
+
+								// ?? Hard coded -. JDBC/ODBC bridge JDK1.4
+								// brings back -9 for nvarchar columns in
+								// MS SQL Server tables.
 								case Types.CHAR:
 								case Types.VARCHAR:
 								case Types.LONGVARCHAR:
+								case -9:
 									row[i] = rs.getString(idx);
 									break;
 								default:
