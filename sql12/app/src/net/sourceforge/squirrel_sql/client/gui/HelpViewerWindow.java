@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui;
 /*
- * Copyright (C) 2003 Colin Bell
+ * Copyright (C) 2003-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -200,8 +200,15 @@ public class HelpViewerWindow extends JFrame
 			{
 				_detailPnl.setHomeURL(_homeURL);
 				_tree.expandRow(0);
-				_tree.expandRow(1);
-				_tree.setSelectionRow(2);
+ 				_tree.expandRow(2);
+ 				if (_app.getSquirrelPreferences().isFirstRun())
+ 				{
+ 					_tree.setSelectionRow(1);
+ 				}
+ 				else
+ 				{
+ 					_tree.setSelectionRow(3);
+ 				}
 				_tree.setRootVisible(false);
 			}
 		});
@@ -240,6 +247,22 @@ public class HelpViewerWindow extends JFrame
 		renderer.setClosedIcon(rsrc.getIcon(SquirrelResources.IImageNames.HELP_TOC_CLOSED));
 		_tree.setCellRenderer(renderer);
 
+ 		// First put the Welcome to SQuirreL node.
+ 		File file = appFiles.getWelcomeFile();
+ 		try
+ 		{
+ 			DocumentNode dn = new DocumentNode(s_stringMgr.getString("HelpViewerWindow.welcome"), file);
+ 			root.add(dn);
+ 			_nodes.put(dn.getURL().toString(), dn);
+ 		}
+ 		catch (MalformedURLException ex)
+ 		{
+ 			StringBuffer msg = new StringBuffer();
+ 			msg.append("Error retrieving Welcome file URL for ")
+ 				.append(file.getAbsolutePath());
+ 			s_log.error(msg.toString(), ex);
+ 		}
+
 		// Add Help, Licence and Change Log nodes to the tree.
 		final FolderNode helpRoot = new FolderNode(s_stringMgr.getString("HelpViewerWindow.help"));
 		root.add(helpRoot);
@@ -252,7 +275,7 @@ public class HelpViewerWindow extends JFrame
 		_nodes.put(changeLogRoot.getURL().toString(), changeLogRoot);
 
 		// Add SQuirreL help to the Help node.
-		File file = appFiles.getQuickStartGuideFile();
+		file = appFiles.getQuickStartGuideFile();
 		try
 		{
 			DocumentNode dn = new DocumentNode(s_stringMgr.getString("HelpViewerWindow.squirrel"), file);

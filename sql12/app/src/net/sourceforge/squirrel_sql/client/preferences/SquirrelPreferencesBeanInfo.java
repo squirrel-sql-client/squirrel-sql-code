@@ -38,7 +38,7 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
 		super();
 		if (s_dscrs == null)
 		{
-			s_dscrs = new PropertyDescriptor[18];
+			s_dscrs = new PropertyDescriptor[19];
 			s_dscrs[0] = new PropertyDescriptor(SESSION_PROPERTIES, CLS,
 									"getSessionProperties", "setSessionProperties");
 			s_dscrs[1] = new PropertyDescriptor(MAIN_FRAME_STATE, CLS,
@@ -76,6 +76,8 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
 								"getMaximizeSessionSheetOnOpen", "setMaximizeSessionSheetOnOpen");
 			s_dscrs[17] = new PropertyDescriptor(SHOW_COLOR_ICONS_IN_TOOLBAR, CLS,
 								"getShowColoriconsInToolbar", "setShowColoriconsInToolbar");
+ 			s_dscrs[18] = new PropertyDescriptor(FIRST_RUN, CLS,
+								"isFirstRun", "setFirstRun");
 		}
 	}
 

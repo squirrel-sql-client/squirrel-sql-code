@@ -41,10 +41,13 @@ import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.CellImportExportInfoSaver;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DTProperties;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.sql.DataCache;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
+import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ProxyHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -53,8 +56,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.CellImportExportInfoSaver;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DTProperties;
+
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.db.AliasMaintSheetFactory;
 import net.sourceforge.squirrel_sql.client.db.DriverMaintSheetFactory;
@@ -64,6 +66,7 @@ import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.gui.laf.AllBluesBoldMetalTheme;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToStartupAliasesCommand;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ViewHelpCommand;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginLoadInfo;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
@@ -74,8 +77,8 @@ import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
 import net.sourceforge.squirrel_sql.client.session.SessionWindowManager;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
-import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
+import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 /**
  * Defines the API to do callbacks on the application.
  *
@@ -213,6 +216,9 @@ class Application implements IApplication
 		_prefs.setAliasesSelectedIndex(idx);
 		idx = _mainFrame.getDriversToolWindow().getSelectedIndex();
 		_prefs.setDriversSelectedIndex(idx);
+
+ 		// No longer the first run of SQuirrel.
+ 		_prefs.setFirstRun(false);
 
 		_prefs.save();
 
@@ -592,8 +598,21 @@ class Application implements IApplication
 
 		indicateNewStartupTask(splash, "Showing main window...");
 		_mainFrame.setVisible(true);
+ 		_mainFrame.toFront();	// Required on Linux
 
 		new ConnectToStartupAliasesCommand(this).execute();
+
+ 		if (_prefs.isFirstRun())
+ 		{
+ 			try
+ 			{
+ 				new ViewHelpCommand(this).execute();
+ 			}
+ 			catch (BaseException ex)
+ 			{
+ 				s_log.error("Error showing help window", ex);
+ 			}
+ 		}
 	}
 
 	/**
