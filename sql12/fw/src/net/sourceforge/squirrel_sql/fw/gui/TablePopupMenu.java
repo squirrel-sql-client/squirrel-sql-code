@@ -99,7 +99,7 @@ public class TablePopupMenu extends BasePopupMenu
 	 * Constructor used when creating menu for use in cell editor.
 	 */
 	public TablePopupMenu(IDataSetUpdateableModel updateableModel,
-			DataSetViewerTablePanel viewer)
+			DataSetViewerTablePanel viewer, JTable table)
 	{
 		super();
 		// save the pointer needed to enable editing of data on-demand
@@ -107,6 +107,8 @@ public class TablePopupMenu extends BasePopupMenu
 		
 		// save the pointer needed for insert and delete operations
 		_viewer = viewer;
+		
+		_table = table;
 
 // Cut and Paste need to be worked on, so for now do not include them
 //		add(_cut);
