@@ -299,7 +299,7 @@ public class ColumnDisplayDefinition
 		_sqlType = sqlType;
 		_isNullable = isNullable;
 		_columnSize = columnSize;
-		_precision = _precision;
+		_precision = precision;
 		_scale = scale;
 		_isSigned = isSigned;
 		_isCurrency = isCurrency;

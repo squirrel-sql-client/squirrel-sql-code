@@ -93,6 +93,13 @@ public class ResultSetDataSet implements IDataSet
 				ResultSetMetaData md = rs.getMetaData();
  				_columnCount = columnIndices != null ? columnIndices.length : md.getColumnCount();
 
+				// Done before actually reading the data from the ResultSet. If done after
+				// reading the data from the ResultSet Oracle throws a NullPointerException
+				// when processing ResultSetMetaData methods for the ResultSet returned for
+				// DatabasemetaData.getExportedKeys.
+				ColumnDisplayDefinition[] colDefs = createColumnDefinitions(md, columnIndices, computeWidths);
+				_dataSetDefinition = new DataSetDefinition(colDefs);
+
  				// Read the entire row, since some drivers complain if columns are read out of sequence
  				ResultSetReader rdr = new ResultSetReader(rs, largeObjInfo, null);
 				Object[] row = null;
@@ -123,8 +130,8 @@ public class ResultSetDataSet implements IDataSet
 					_alData.add(row);
 				}
  
- 				ColumnDisplayDefinition[] colDefs = createColumnDefinitions(md, columnIndices, computeWidths);
- 				_dataSetDefinition = new DataSetDefinition(colDefs);
+// 				ColumnDisplayDefinition[] colDefs = createColumnDefinitions(md, columnIndices, computeWidths);
+// 				_dataSetDefinition = new DataSetDefinition(colDefs);
 			}
 			catch (SQLException ex)
 			{
