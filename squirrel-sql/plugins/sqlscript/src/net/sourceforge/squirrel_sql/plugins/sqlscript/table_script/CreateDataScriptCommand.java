@@ -141,6 +141,6 @@ public class CreateDataScriptCommand implements ICommand {
             _session.getMessageHandler().showMessage(e);
         }
         _session.setEntireSQLScript(sbRows.toString());
-        _session.selectMainTab(ISession.IMainTabIndexes.SQL_TAB);
+        _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
     }
 }

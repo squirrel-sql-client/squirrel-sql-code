@@ -140,6 +140,6 @@ public class CreateTableScriptCommand implements ICommand {
             _session.getMessageHandler().showMessage(e);
         }
         _session.setEntireSQLScript(sbScript.toString());
-        _session.selectMainTab(ISession.IMainTabIndexes.SQL_TAB);
+        _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
     }
 }

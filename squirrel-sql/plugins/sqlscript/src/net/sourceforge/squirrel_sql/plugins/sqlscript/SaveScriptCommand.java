@@ -96,7 +96,7 @@ public class SaveScriptCommand implements ICommand {
                     }
                 }
 
-                _session.selectMainTab(ISession.IMainTabIndexes.SQL_TAB);
+                _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
                 if (chooser.showSaveDialog(_frame) == chooser.APPROVE_OPTION) {
                     if (saveScript(chooser.getSelectedFile())) {
                         break;
