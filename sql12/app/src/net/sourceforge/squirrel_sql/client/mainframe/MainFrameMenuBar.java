@@ -311,7 +311,6 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, CommitAction.class, menu);
 		addToMenu(rsrc, RollbackAction.class, menu);
 		addToMenu(rsrc, SQLFilterAction.class, menu);
-		addToMenu(rsrc, EditWhereColsAction.class, menu);
 		menu.addSeparator();
 		addToMenu(rsrc, GotoPreviousResultsTabAction.class, menu);
 		addToMenu(rsrc, GotoNextResultsTabAction.class, menu);
@@ -324,6 +323,8 @@ final class MainFrameMenuBar extends JMenuBar
 		menu.addSeparator();
 		addToMenu(rsrc, PreviousSessionAction.class, menu);
 		addToMenu(rsrc, NextSessionAction.class, menu);
+		menu.addSeparator();
+		addToMenu(rsrc, EditWhereColsAction.class, menu);
 		menu.addSeparator();
 		menu.setEnabled(false);
 		return menu;
