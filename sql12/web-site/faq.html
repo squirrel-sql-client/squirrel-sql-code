@@ -24,6 +24,10 @@
 						cannot declare another cursor." when I connect and
 						nothing is listed under the schema name in the Object
 						Tree.</TT></a></li>
+					<li><a href="#faq7">Informix reports "The specified table
+						(schema.table) is not in the database" when trying to
+						view the contents of a table in the current schema.
+						</TT></a></li>
 				</ul>
 			</p>
 		</td>
@@ -164,6 +168,15 @@
 						Tree</A></h1>
 			<p class="answer">Right-click on the schema in the explorer and select refresh, objects should appear as normal.</p>
 			<p><A HREF="#top">Top</A></P>
+
+			<h1 class="question"><A NAME="faq7">Informix reports "The specified
+				table (schema.table) is not in the database" when trying to
+				view the contents of a table in the current schema</A></h1>
+			<p class="answer">This is a bug in earlier versions of the Informix JDBC
+						driver and is known to be fixed in version 9.4 of
+						Informix and version 2.21 of the Informix JDBC driver.</p>
+			<p><A HREF="#top">Top</A></P>
+
 		</td>
 		<td class="body_right_border">&nbsp;</td>
 	</tr>
