@@ -22,8 +22,8 @@ import java.util.Arrays;
 import java.util.List;
 /**
  * This class represents SQL history.
- * 
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ *
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SQLHistory
 {
@@ -61,7 +61,13 @@ public class SQLHistory
 		{
 			throw new IllegalArgumentException("SQLHistoryItem == null");
 		}
-		_history.remove(obj);
+
+		// Make sure no duplicates are kept in history.
+		while (_history.remove(obj))
+		{
+			// Empty body.
+		}
+
 		_history.add(obj);
 	}
 }

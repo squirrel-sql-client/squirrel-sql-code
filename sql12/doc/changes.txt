@@ -1,6 +1,23 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+1.2beta3
+========
+
+Enhancements
+------------
+- Contents tab has been made the default when first displaying table in
+  Object view (Glenn Griffin).
+
+Bug Fixes
+---------
+- Fix for selecting which SQL gets executed. When the cursor is on a line in
+  the SQL entry that contains at least part of aan SQL statement then only that
+  SQL statment should be executed.
+- Don't save duplicates in SQL history.
+- Only load SQL history once.
+
+
 1.2beta2
 ========
 
@@ -14,8 +31,6 @@ Enhancements
   Hammel).
 - New application setting allows you to specify whether the coloured icons are
   shown in toolbars (Bai Yuhong).
-- Contents tab has been made the default when first displaying table in
-  Object view.
 
 Bug Fixes
 ---------
@@ -109,7 +124,7 @@ Bug Fixes
 - Fix bug where sorting by clicking in the column header for a table
   wouldn't work correctly when the columns had been resequenced by
   dragging (Johnathan James).
-  
+
 Other
 -----
 - Use smaller icons to indicate sort sequence in tables.
@@ -447,9 +462,9 @@ Enhancements
 - Drop table menu item on the ObjectTree (Johan Compagner)
 - Full column data can be displayed in a popup window if you double click on
   it (Johan Compagner)
-- If only one cell selected in table when pressing copy then no header 
+- If only one cell selected in table when pressing copy then no header
   will be appended. (Johan Compagner)
-- Icon shown for drivers that are loaded or not (Johan Compagner/Henner Zeller) 
+- Icon shown for drivers that are loaded or not (Johan Compagner/Henner Zeller)
 - TableSorting by clicking column headers (Johan Compagner)
 - Escape now cancels Connection Dialog.
 
@@ -505,7 +520,7 @@ Other
 - Meta data is available for the results of SQL execution.
 - Replaced the JDOM library with NanoXML.
 
-  
+
 1.0 final2
 ===============================
 
@@ -529,12 +544,12 @@ Bug Fixes
 ------------
 - Handle gracefully the errors caused by JDBC drivers that require a more
   recent version of the JDK than the one that Squirrel SQL is being run on.
-- Popup menus are now correctly positioned under JDK1.2 
+- Popup menus are now correctly positioned under JDK1.2
 
 Enhancements
 ------------
 - I'm now using the IzPack Java installer from
-  http://www.izforge.com/izpack 
+  http://www.izforge.com/izpack
 - Thanks to Greg Mackness, Squirrel SQL now has a decent splash screen.
 
 
@@ -566,7 +581,7 @@ Bug Fixes
 ------------
 - New sessions didn't take into account the "SQL Limit Rows"
   setting from the "New Session" Application Settings tab. It
-  always defaulted to true. 
+  always defaulted to true.
 - The hourglass cursor was shown after the main window was created.
 - If the preferences positioned the main window (or aliases/drivers
   tool windows) to a position on the screen only visible under a
@@ -606,7 +621,7 @@ Bug Fixes
 ------------
 - If a connection failed to open the error wasn't always displayed.
 - If an image couldn't be found for an Action the application wouldn't load.
-- Changing the class name of a driver wouldn't always take effect until 
+- Changing the class name of a driver wouldn't always take effect until
   Squirrel-SQL was restarted.
 - The session properties dialog is now correctly positioned on screen.
 - The Class Loader used for the JDBC drivers wasn't searching for classes
@@ -669,7 +684,7 @@ Changes
 - Added MMMySQL JDBC Driver to default drivers file.
 - Row type output (such as the metadata or the SQL results panels) now
   defaults to a JTable instead of the text output.
-- Doubleclicking in drivers listbox will maintain the currently selected driver. 
+- Doubleclicking in drivers listbox will maintain the currently selected driver.
 - Doubleclicking in aliases listbox will open the currently selected alias.
 - Added Commit and Rollback menu and toolbar options.
 

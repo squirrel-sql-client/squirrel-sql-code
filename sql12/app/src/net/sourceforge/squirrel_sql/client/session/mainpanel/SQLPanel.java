@@ -64,6 +64,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -85,6 +86,9 @@ public class SQLPanel extends JPanel
 {
 	/** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(SQLPanel.class);
+
+//	private final static String LINE_SEPARATOR = System.getProperty("line.separator");
+	private final static String LINE_SEPARATOR = "\n";
 
 	/**
 	 * Set to <TT>true</TT> once SQL history has been loaded from the file
@@ -287,7 +291,7 @@ public class SQLPanel extends JPanel
 		String sql = getSQLEntryPanel().getSQLToBeExecuted();
 		if (sql != null && sql.length() > 0)
 		{
-			executeSQL(getSQLEntryPanel().getSQLToBeExecuted());
+			executeSQL(sql);
 		}
 		else
 		{
@@ -563,10 +567,20 @@ public class SQLPanel extends JPanel
 		_sqlComboListener.stopListening();
 		try
 		{
-			_sqlCombo.removeItem(sql);
-			final int size = _sqlCombo.getItemCount();
-			_sqlCombo.insertItemAt(sql, size);
-			_sqlCombo.setSelectedIndex(size);
+//			_sqlCombo.removeItem(sql);
+//			final int size = _sqlCombo.getItemCount();
+//			_sqlCombo.insertItemAt(sql, size);
+//			_sqlCombo.setSelectedIndex(size);
+			int beforeSize = 0;
+			int afterSize = _sqlCombo.getItemCount();
+			do
+			{
+				beforeSize = afterSize;
+				_sqlCombo.removeItem(sql);
+				afterSize = _sqlCombo.getItemCount();
+			} while (beforeSize != afterSize);
+			_sqlCombo.insertItemAt(sql, afterSize);
+			_sqlCombo.setSelectedIndex(afterSize);
 		}
 		finally
 		{
@@ -822,6 +836,16 @@ public class SQLPanel extends JPanel
 		return sql;
 	}
 
+	private void appendSQL(String sql)
+	{
+		if (_sqlEntry.getText().length() > 0)
+		{
+			_sqlEntry.appendText(LINE_SEPARATOR + LINE_SEPARATOR);
+		}
+		_sqlEntry.appendText(sql, true);
+		_sqlEntry.requestFocus();
+	}
+
 	private void propertiesHaveChanged(String propName)
 	{
 		final SessionProperties props = _session.getProperties();
@@ -907,6 +931,7 @@ public class SQLPanel extends JPanel
 			{
 				final SQLHistory sqlHistory = app.getSQLHistory();
 				SQLHistoryComboBoxModel.initializeSharedInstance(sqlHistory.getData());
+				s_loadedSQLHistory = true;
 			}
 		}
 
@@ -925,14 +950,20 @@ public class SQLPanel extends JPanel
 		}
 
 		{
+//			final SquirrelResources rsrc = app.getResources();
+//			final Action act = new GetLastSQLAction(app, rsrc);
+//			final ToolBar tb = new ToolBar();
+//			tb.add(act);
 			JPanel pnl = new JPanel();
 			pnl.setLayout(new BorderLayout());
+//			pnl.add(tb, BorderLayout.WEST);
 			pnl.add(_sqlCombo, BorderLayout.CENTER);
+
 			Box box = Box.createHorizontalBox();
 			box.add(Box.createHorizontalStrut(10));
-			box.add(_limitRowsChk, BorderLayout.EAST);
+			box.add(_limitRowsChk);
 			box.add(Box.createHorizontalStrut(5));
-			box.add(_nbrRows, BorderLayout.EAST);
+			box.add(_nbrRows);
 			pnl.add(box, BorderLayout.EAST);
 			add(pnl, BorderLayout.NORTH);
 		}
@@ -1007,18 +1038,23 @@ public class SQLPanel extends JPanel
 				SessionSheet ss = _session.getSessionSheet();
 				if (ss.isSelected())
 				{
-					SQLHistoryItem item = (SQLHistoryItem)_sqlCombo.getSelectedItem();
-					if (item != null)
-					{
-						if (_sqlEntry.getText().length() > 0)
-						{
-							_sqlEntry.appendText("\n\n");
-						}
-						_sqlEntry.appendText(item.getSQL(), true);
-//						_sqlEntry.setCaretPosition(_sqlEntry.getText().length() - 1);
-						_sqlEntry.requestFocus();
-					}
+					copySelectedItemToEntryArea();
 				}
+			}
+		}
+
+		private void copySelectedItemToEntryArea()
+		{
+			SQLHistoryItem item = (SQLHistoryItem)_sqlCombo.getSelectedItem();
+			if (item != null)
+			{
+				appendSQL(item.getSQL());
+//				if (_sqlEntry.getText().length() > 0)
+//				{
+//					_sqlEntry.appendText("\n\n");
+//				}
+//				_sqlEntry.appendText(item.getSQL(), true);
+//				_sqlEntry.requestFocus();
 			}
 		}
 	}
@@ -1158,6 +1194,24 @@ public class SQLPanel extends JPanel
 			if (ss != null)
 			{
 				ss.setStatusBarMessage(msg.toString());
+			}
+		}
+	}
+
+	private final class GetLastSQLAction extends SquirrelAction
+	{
+		GetLastSQLAction(IApplication app, Resources rsrc)
+		{
+			super(app, rsrc);
+		}
+		
+		public void actionPerformed(ActionEvent evt)
+		{
+			int idx = _sqlCombo.getItemCount() - 1;
+			if (idx > -1)
+			{
+				final SQLHistoryItem hi = (SQLHistoryItem)_sqlCombo.getItemAt(idx);
+				appendSQL(hi.getSQL());
 			}
 		}
 	}

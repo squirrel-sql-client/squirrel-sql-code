@@ -96,7 +96,7 @@ public class SyntaxPugin extends DefaultSessionPlugin
 	 */
 	public String getVersion()
 	{
-		return "0.10";
+		return "0.11";
 	}
 
 	/**
@@ -326,7 +326,6 @@ public class SyntaxPugin extends DefaultSessionPlugin
 		private SyntaxPugin _plugin;
 		private ISession _session;
 		private SyntaxPreferences _prefs;
-		private boolean _usingOsterControl;
 
 		SessionPreferencesListener(SyntaxPugin plugin, ISession session,
 			SyntaxPreferences prefs)

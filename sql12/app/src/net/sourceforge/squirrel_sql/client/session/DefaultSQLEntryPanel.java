@@ -188,22 +188,17 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void appendText(String sqlScript, boolean select)
 	{
-		if (getText().length() > 0 && !getText().endsWith("\n")
-				&& !sqlScript.startsWith("\n"))
-		{
-			_comp.append("\n");
-		}
-		int start = 0;
-		if (select)
-		{
-			start = getText().length();
-		}
+//		if (getText().length() > 0 && !getText().endsWith("\n")
+//				&& !sqlScript.startsWith("\n"))
+//		{
+//			_comp.append("\n");
+//		}
+		final int start = select ? getText().length() : 0;
 		_comp.append(sqlScript);
 		if (select)
 		{
 			setSelectionEnd(getText().length());
 			setSelectionStart(start);
-			_comp.setCaretPosition(start);
 		}
 	}
 

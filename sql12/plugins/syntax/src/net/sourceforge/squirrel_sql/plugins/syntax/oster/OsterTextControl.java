@@ -23,6 +23,7 @@ package net.sourceforge.squirrel_sql.plugins.syntax.oster;
  */
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.HashSet;
@@ -38,7 +39,9 @@ import javax.swing.plaf.ComponentUI;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.EditorKit;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
@@ -60,8 +63,7 @@ import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxStyle;
 class OsterTextControl extends JTextPane
 {
 	/** Logger for this class. */
-	private static final ILogger s_log =
-			LoggerController.createLogger(OsterTextControl.class);
+	private static final ILogger s_log = LoggerController.createLogger(OsterTextControl.class);
 
 	/** Current session. */
 	private final ISession _session;
@@ -132,11 +134,12 @@ class OsterTextControl extends JTextPane
 		updateFromPreferences();
 	}
 
-	//	This stops the text control from line wrapping.
+	// This stops the text control from line wrapping.
 	public boolean getScrollableTracksViewportWidth()
 	{
 		final Component parent = getParent();
 		final ComponentUI ui = getUI();
+
 		if (parent != null)
 		{
 			return (ui.getPreferredSize(this).width <= parent.getSize().width);
@@ -803,6 +806,12 @@ class OsterTextControl extends JTextPane
 	 */
 	private class HighLightedDocument extends DefaultStyledDocument
 	{
+		public HighLightedDocument()
+		{
+			super();
+			putProperty(DefaultEditorKit.EndOfLineStringProperty, "\n");
+		}
+
 		public void insertString(int offs, String str, AttributeSet a)
 			throws BadLocationException
 		{
