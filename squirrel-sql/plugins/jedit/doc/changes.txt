@@ -8,6 +8,10 @@ Bug Fixes
 ---------
 - "TRIGGER" is now recognized as an SQL keyword.
 
+Other
+-----
+- Updated for changes in SQuirreL 1.1beta7
+
 
 0.16
 ====

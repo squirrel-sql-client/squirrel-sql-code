@@ -178,15 +178,15 @@ public class SQLConnection
 	}
 
 //todo: get rid of this method.
-	public synchronized DatabaseMetaData getMetaData() throws SQLException
-	{
-		validateConnection();
-		if (_md == null)
-		{
-			_md = getConnection().getMetaData();
-		}
-		return _md;
-	}
+//	public synchronized DatabaseMetaData getMetaData() throws SQLException
+//	{
+//		validateConnection();
+//		if (_md == null)
+//		{
+//			_md = getConnection().getMetaData();
+//		}
+//		return _md;
+//	}
 
 	public Connection getConnection()
 	{
@@ -218,98 +218,5 @@ public class SQLConnection
 		{
 			throw new SQLException("No connection");
 		}
-	}
-
-
-/////////////////////////////////////////////////////////////////////
-// TODO: to be moved to metadata class///////////////////////////////
-/////////////////////////////////////////////////////////////////////
-	public ResultSet getBestRowIdentifier(ITableInfo ti)
-		throws SQLException
-	{
-		return getMetaData().getBestRowIdentifier(
-			ti.getCatalogName(), ti.getSchemaName(),
-			ti.getSimpleName(), DatabaseMetaData.bestRowSession,
-			true);
-	}
-
-	public ResultSet getColumnPrivileges(ITableInfo ti)
-		throws SQLException
-	{
-		return getMetaData().getColumnPrivileges(ti.getCatalogName(),
-													ti.getSchemaName(),
-													ti.getSimpleName(),
-													null);
-	}
-
-	public ResultSet getColumns(ITableInfo ti)
-		throws SQLException
-	{
-		return getMetaData().getColumns(ti.getCatalogName(),
-											ti.getSchemaName(),
-											ti.getSimpleName(), "%");
-	}
-
-	public ResultSet getExportedKeys(ITableInfo ti)
-		throws SQLException
-	{
-		return getMetaData().getExportedKeys(
-			ti.getCatalogName(), ti.getSchemaName(),
-			ti.getSimpleName());
-	}
-
-	public ResultSet getImportedKeys(ITableInfo ti)
-		throws SQLException
-	{
-		return getMetaData().getImportedKeys(
-			ti.getCatalogName(), ti.getSchemaName(),
-			ti.getSimpleName());
-	}
-
-	public ResultSet getIndexInfo(ITableInfo ti)
-		throws SQLException
-	{
-		return getMetaData().getIndexInfo(
-			ti.getCatalogName(), ti.getSchemaName(),
-			ti.getSimpleName(), false, true);
-	}
-
-	public ResultSet getPrimaryKeys(ITableInfo ti)
-		throws SQLException
-	{
-		return getMetaData().getPrimaryKeys(
-			ti.getCatalogName(), ti.getSchemaName(),
-			ti.getSimpleName());
-	}
-
-	public ResultSet getProcedureColumns(IProcedureInfo ti)
-		throws SQLException
-	{
-		return getMetaData().getProcedureColumns(ti.getCatalogName(),
-													ti.getSchemaName(),
-													ti.getSimpleName(),
-													"%");
-	}
-
-	public ResultSet getTablePrivileges(ITableInfo ti)
-		throws SQLException
-	{
-		return getMetaData().getTablePrivileges(ti.getCatalogName(),
-													ti.getSchemaName(),
-													ti.getSimpleName());
-	}
-
-
-	public ResultSet getTypeInfo() throws SQLException
-	{
-		return getMetaData().getTypeInfo();
-	}
-
-	public ResultSet getVersionColumns(ITableInfo ti)
-		throws SQLException
-	{
-		return getMetaData().getVersionColumns(ti.getCatalogName(),
-												ti.getSchemaName(),
-												ti.getSimpleName());
 	}
 }

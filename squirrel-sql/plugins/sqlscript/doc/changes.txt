@@ -1,6 +1,14 @@
 Change Log
 ==========
 
+0.21
+====
+
+Other
+-----
+- Updated for changes in SQuirreL 1.1beta7
+
+
 0.20
 ====
 

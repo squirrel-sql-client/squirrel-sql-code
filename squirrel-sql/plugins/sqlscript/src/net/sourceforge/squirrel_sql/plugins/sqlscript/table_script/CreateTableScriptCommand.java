@@ -72,7 +72,7 @@ public class CreateTableScriptCommand implements ICommand {
                         sbScript.append("\n(");
 
                         Vector pks = new Vector();
-                        ResultSet rsPks = conn.getPrimaryKeys(ti);
+                        ResultSet rsPks = conn.getSQLMetaData().getPrimaryKeys(ti);
                         //					String sPkName = "";
                         while (rsPks.next()) {
                             //						sPkName = rsPks.getString(6);
@@ -82,7 +82,7 @@ public class CreateTableScriptCommand implements ICommand {
                             pks.set(iKeySeq, rsPks.getString(4));
                         }
                         rsPks.close();
-                        ResultSet rsColumns = conn.getColumns(ti);
+                        ResultSet rsColumns = conn.getSQLMetaData().getColumns(ti);
                         while (rsColumns.next()) {
                             String sColumnName = rsColumns.getString(4);
                             sbScript.append("\n\t");

@@ -440,7 +440,7 @@ public class SQLDatabaseMetaData
 	 * 
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
-	private DatabaseMetaData getJDBCMetaData() throws SQLException
+	public DatabaseMetaData getJDBCMetaData() throws SQLException
 	{
 		return _conn.getConnection().getMetaData();
 	}
@@ -727,6 +727,106 @@ public class SQLDatabaseMetaData
 	public String[] getSQLKeywords() throws SQLException
 	{
 		return makeArray(getJDBCMetaData().getSQLKeywords());
+	}
+
+	// TODO: Write a version that returns an array of RowIdentifier objects.
+	public ResultSet getBestRowIdentifier(ITableInfo ti)
+		throws SQLException
+	{
+		return getJDBCMetaData().getBestRowIdentifier(
+			ti.getCatalogName(), ti.getSchemaName(),
+			ti.getSimpleName(), DatabaseMetaData.bestRowSession,
+			true);
+	}
+
+	// TODO: Write a version that returns an array of ColumnPrivilige objects.
+	public ResultSet getColumnPrivileges(ITableInfo ti)
+		throws SQLException
+	{
+		return getJDBCMetaData().getColumnPrivileges(ti.getCatalogName(),
+													ti.getSchemaName(),
+													ti.getSimpleName(),
+													null);
+	}
+
+	// TODO: Write a version that returns an array of data objects.
+	public ResultSet getExportedKeys(ITableInfo ti)
+		throws SQLException
+	{
+		return getJDBCMetaData().getExportedKeys(
+			ti.getCatalogName(), ti.getSchemaName(),
+			ti.getSimpleName());
+	}
+
+	// TODO: Write a version that returns an array of data objects.
+	public ResultSet getImportedKeys(ITableInfo ti)
+		throws SQLException
+	{
+		return getJDBCMetaData().getImportedKeys(
+			ti.getCatalogName(), ti.getSchemaName(),
+			ti.getSimpleName());
+	}
+
+	// TODO: Write a version that returns an array of data objects.
+	public ResultSet getIndexInfo(ITableInfo ti)
+		throws SQLException
+	{
+		return getJDBCMetaData().getIndexInfo(
+			ti.getCatalogName(), ti.getSchemaName(),
+			ti.getSimpleName(), false, true);
+	}
+
+	// TODO: Write a version that returns an array of data objects.
+	public ResultSet getPrimaryKeys(ITableInfo ti)
+		throws SQLException
+	{
+		return getJDBCMetaData().getPrimaryKeys(
+			ti.getCatalogName(), ti.getSchemaName(),
+			ti.getSimpleName());
+	}
+
+	// TODO: Write a version that returns an array of data objects.
+	public ResultSet getProcedureColumns(IProcedureInfo ti)
+		throws SQLException
+	{
+		return getJDBCMetaData().getProcedureColumns(ti.getCatalogName(),
+													ti.getSchemaName(),
+													ti.getSimpleName(),
+													"%");
+	}
+
+	// TODO: Write a version that returns an array of data objects.
+	public ResultSet getTablePrivileges(ITableInfo ti)
+		throws SQLException
+	{
+		return getJDBCMetaData().getTablePrivileges(ti.getCatalogName(),
+													ti.getSchemaName(),
+													ti.getSimpleName());
+	}
+
+
+	// TODO: Write a version that returns an array of data objects.
+	public ResultSet getTypeInfo() throws SQLException
+	{
+		return getJDBCMetaData().getTypeInfo();
+	}
+
+	// TODO: Write a version that returns an array of data objects.
+	public ResultSet getVersionColumns(ITableInfo ti)
+		throws SQLException
+	{
+		return getJDBCMetaData().getVersionColumns(ti.getCatalogName(),
+												ti.getSchemaName(),
+												ti.getSimpleName());
+	}
+
+	// TODO: Write a version that returns an array of data objects.
+	public ResultSet getColumns(ITableInfo ti)
+		throws SQLException
+	{
+		return getJDBCMetaData().getColumns(ti.getCatalogName(),
+											ti.getSchemaName(),
+											ti.getSimpleName(), "%");
 	}
 
 	private static String[] makeArray(String data)

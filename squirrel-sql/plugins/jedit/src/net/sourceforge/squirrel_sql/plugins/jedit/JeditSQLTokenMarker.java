@@ -47,7 +47,7 @@ public class JeditSQLTokenMarker extends SQLTokenMarker
 		_keywords = SQUIRREL_getKeywordMap();
 		try
 		{
-			_dmd = conn.getMetaData();
+			_dmd = conn.getSQLMetaData().getJDBCMetaData();
 		}
 		catch (Exception ex)
 		{
@@ -60,7 +60,7 @@ public class JeditSQLTokenMarker extends SQLTokenMarker
 		KeywordMap keywords = new KeywordMap(true);
 		try
 		{
-			final DatabaseMetaData dmd = conn.getMetaData();
+			final DatabaseMetaData dmd = conn.getSQLMetaData().getJDBCMetaData();
 			addKeywords(dmd, keywords);
 			addDataTypes(dmd, keywords);
 			addFunctions(dmd, keywords);
