@@ -2,7 +2,7 @@
 <!--                                                                       -->
 <!--  BuildMagic Common Elements                                           -->
 <!--                                                                       -->
-<!--  $Id: common.xml,v 1.1.1.1 2001-11-20 01:53:44 placson Exp $             -->
+<!--  $Id: common.xml,v 1.2 2001-11-21 06:42:10 placson Exp $             -->
 <!--                                                                       -->
 <!--   This file contains common defaults for a project.                   -->
 <!--                                                                       -->
@@ -46,6 +46,7 @@
 <property name="source.etc" type="path" value="${source.root}/etc"/>
 <property name="source.bin" type="path" value="${source.root}/bin"/>
 <property name="source.test" type="path" value="${source.root}/test"/>
+<property name="source.resources" type="path" value="${source.root}/resources"/>
 
 <!-- Output sub-directories macros -->
 <property name="build.root" type="path" value="${output.root}/build"/>

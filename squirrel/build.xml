@@ -6,7 +6,7 @@
   <!ENTITY local              SYSTEM "file:./local.xml">
 ]>
 
-<!--  $Id: build.xml,v 1.8 2001-11-20 22:44:37 placson Exp $               -->
+<!--  $Id: build.xml,v 1.9 2001-11-21 06:42:10 placson Exp $               -->
 <!-- ===================================================================== -->
 <!--                                                                       -->
 <!--  Build file (for use w/Ant & BuildMagic modifications)                -->
@@ -183,6 +183,7 @@
   <!-- Builds the individual plugin jars -->
   <target name="plugins" depends="classes">
     <mkdir dir="${release.target.root}/plugins" />
+    <mkdir dir="${release.target.root}/plugins/laf" />
 
     <jar jarfile="${release.target.root}/plugins/dbinfo.jar" basedir="${dbinfo.plugin}">
       <include name="**"/>
@@ -191,6 +192,17 @@
     <jar jarfile="${release.target.root}/plugins/laf.jar" basedir="${laf.plugin}">
       <include name="**"/>
     </jar>
+
+    <!-- copy skins directory and files -->
+    <copy todir="${release.target.root}/plugins/laf" filtering="off">
+      <fileset dir="${source.resources}/plugins/laf/files">
+        <exclude name="CVS/**" />
+      </fileset>
+
+      <fileset dir="${source.resources}/plugins/laf/lib">
+        <include name="*.jar" />
+      </fileset>
+    </copy>
 
     <jar jarfile="${release.target.root}/plugins/savedqueries.jar" basedir="${savedqueries.plugin}">
       <include name="**"/>
