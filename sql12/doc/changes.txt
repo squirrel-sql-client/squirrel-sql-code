@@ -14,6 +14,9 @@ Enhancements
   (Keith Mashinter).
 - You can now specify whether to load result set metadata when executing an SQL
   (Keith Mashinter).
+- You can Import/Export cell data to/from files and operate on that data with
+  external commands (e.g. VI, etc).
+  (Glenn Griffin)
 
 Bug Fixes
 ---------
