@@ -686,16 +686,17 @@ public class CellComponentFactory {
 		 * be local to this directory.
 		 */
 		String [] initialClassNameList = {
-			"net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeBlob",
-			"net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeClob",
-			"net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeString",
-			"net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeOther",
-			"net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeUnknown",
-			"net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeDate",
-			"net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeTime",
-			"net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeTimestamp",			
+			net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeBlob.class.getName(),
+			net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeClob.class.getName(),
+			net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeString.class.getName(),
+			net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeOther.class.getName(),
+			net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeUnknown.class.getName(),
+			net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeDate.class.getName(),
+			net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeTime.class.getName(),
+			net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeTimestamp.class.getName(),			
 			 };
-		
+
+
 		// make a single list of all class names that we need to check.
 		// Start with the names of known, standard classes that provide Control Panels
 		ArrayList classNameList = new ArrayList(Arrays.asList(initialClassNameList));
