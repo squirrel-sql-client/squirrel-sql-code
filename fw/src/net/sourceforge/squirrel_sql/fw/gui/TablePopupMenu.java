@@ -21,7 +21,6 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 
-import javax.swing.Action;
 import javax.swing.JMenuItem;
 import javax.swing.JTable;
 
@@ -29,13 +28,13 @@ import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyHtmlCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.MakeEditableCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.UndoMakeEditableCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableSelectAllCellsCommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.MyTableModel;
 
 public class TablePopupMenu extends BasePopupMenu
 {
@@ -61,6 +60,7 @@ public class TablePopupMenu extends BasePopupMenu
 	private PasteAction _paste = new PasteAction();
 	//	private ClearAction _clear = new ClearAction();
 	private MakeEditableAction _makeEditable = new MakeEditableAction();
+	private UndoMakeEditableAction _undoMakeEditable = new UndoMakeEditableAction();
 	private DeleteRowsAction _deleteRows = new DeleteRowsAction();
 	protected InsertRowAction _insertRow = new InsertRowAction();
 	private SelectAllAction _select = new SelectAllAction();
@@ -91,7 +91,29 @@ public class TablePopupMenu extends BasePopupMenu
 		// save the pointer needed for insert and delete operations
 		_viewer = viewer;
 
-		addMenuItems(allowEditing);
+		// add the menu items to the menu
+		_menuItems[IOptionTypes.COPY] = add(_copy);
+		_menuItems[IOptionTypes.COPY_HTML] = add(_copyHtml);
+		if (allowEditing)
+		{
+			addSeparator();
+			add(_makeEditable);
+		}
+//		if  ( ! allowEditing )
+		if (updateableModel != null && updateableModel.editModeIsForced())
+		{
+			add(_undoMakeEditable);
+		}
+		addSeparator();
+		_menuItems[IOptionTypes.SELECT_ALL] = add(_select);
+
+		// add entries for insert and delete rows
+		// only if table is updateable and already editable (ie. allowEditing is false)
+		if (_updateableModel != null && allowEditing==false) {
+			addSeparator();
+			add(_insertRow);
+			add(_deleteRows);
+		}
 	}
 	
 	/**
@@ -169,26 +191,6 @@ public class TablePopupMenu extends BasePopupMenu
 		_paste.setEnabled(isEditable);
 	}
 
-	private void addMenuItems(boolean allowEditing)
-	{
-		_menuItems[IOptionTypes.COPY] = add(_copy);
-		_menuItems[IOptionTypes.COPY_HTML] = add(_copyHtml);
-		if (allowEditing)
-		{
-			addSeparator();
-			add(_makeEditable);
-		}
-		addSeparator();
-		_menuItems[IOptionTypes.SELECT_ALL] = add(_select);
-
-		// add entries for insert and delete rows
-		// only if table is updateable and already editable (ie. allowEditing is false)
-		if (_updateableModel != null && allowEditing==false) {
-			addSeparator();
-			add(_insertRow);
-			add(_deleteRows);
-		}
-	}
 
 //	private class ClearAction extends BaseAction
 //	{
@@ -283,6 +285,22 @@ public class TablePopupMenu extends BasePopupMenu
 		}
 	}
 	
+
+	private class UndoMakeEditableAction extends BaseAction
+	{
+		UndoMakeEditableAction()
+		{
+			super(s_stringMgr.getString("TablePopupMenu.undomakeeditable"));
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			if (_updateableModel != null)
+			{
+				new UndoMakeEditableCommand(_updateableModel).execute();
+			}
+		}
+	}
 	private class DeleteRowsAction extends BaseAction
 	{
 		DeleteRowsAction()
