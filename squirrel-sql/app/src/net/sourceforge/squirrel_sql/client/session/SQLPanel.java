@@ -106,7 +106,7 @@ class SQLPanel extends JPanel {
 	/**
 	 * Pool of <TT>ResultTabInfo</TT> objects currently being used.
 	 */
-	private List _usedTabs = new ArrayList();
+	private ArrayList _usedTabs = new ArrayList();
 
 	private boolean _hasBeenVisible = false;
 	private JSplitPane _splitPane;
@@ -227,7 +227,8 @@ class SQLPanel extends JPanel {
 	 * Close all the Results frames.
 	 */
 	public synchronized void closeAllSQLResultFrames() {
-		for (Iterator it = _usedTabs.iterator(); it.hasNext();) {
+		List tabs = (List)_usedTabs.clone();
+		for (Iterator it = tabs.iterator(); it.hasNext();) {
 			ResultTabInfo ti = (ResultTabInfo)it.next();
 			if (ti._resultFrame != null) {
 				ti._resultFrame.dispose();
@@ -240,7 +241,8 @@ class SQLPanel extends JPanel {
 	 * Close all the Results tabs.
 	 */
 	public synchronized void closeAllSQLResultTabs() {
-		for (Iterator it = _usedTabs.iterator(); it.hasNext();) {
+		List tabs = (List)_usedTabs.clone();
+		for (Iterator it = tabs.iterator(); it.hasNext();) {
 			ResultTabInfo ti = (ResultTabInfo)it.next();
 			if (ti._resultFrame == null) {
 				closeTab(ti._tab);
@@ -288,7 +290,7 @@ class SQLPanel extends JPanel {
 			_sqlEntry.getJComponent().registerKeyboardAction(undo, res.getKeyStroke(undo), this.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 			_sqlEntry.getJComponent().registerKeyboardAction(redo, res.getKeyStroke(redo), this.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 			_sqlEntry.setUndoActions(undo, redo);
-			
+
 			_sqlEntry.addUndoableEditListener(_undoManager);
 		}
 	}
