@@ -1,5 +1,5 @@
 package net.sourceforge.squirrel_sql.client.plugin;
-/*
+/* TODO: Delete this class
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net
  *
