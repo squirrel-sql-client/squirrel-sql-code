@@ -10,14 +10,22 @@
 package net.sourceforge.squirrel_sql.plugins.jedit.textarea;
 import javax.swing.text.Segment;
 
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.util.HashMap;
+
 /**
  * SQL token marker.
  *
  * @author mike dillon
- * @version $Id: SQLTokenMarker.java,v 1.1 2001-12-14 11:01:40 colbell Exp $
+ * @version $Id: SQLTokenMarker.java,v 1.2 2002-01-26 00:15:01 joco01 Exp $
  */
 public class SQLTokenMarker extends TokenMarker
 {
+	protected DatabaseMetaData _dmd;
+	
+	private HashMap _hmTableColumns = new HashMap();
+	
 	private int offset, lastOffset, lastKeyword, length;
 
 	// public members
@@ -193,13 +201,37 @@ loop:
 	private void searchBack(Segment line, int pos, boolean padNull)
 	{
 		int len = pos - lastKeyword;
-		byte id = keywords.lookup(line,lastKeyword,len);
-		if(id != Token.NULL)
+		KeywordMap.Keyword keyword = keywords.lookup(line,lastKeyword,len);
+		if(keyword != null)
 		{
 			if(lastKeyword != lastOffset)
 				addToken(lastKeyword - lastOffset,Token.NULL);
-			addToken(len,id);
+			addToken(len,keyword.id);
 			lastOffset = pos;
+			System.out.println("Token added: " + keyword);
+			if(_dmd != null && keyword.id == Token.TABLE)
+			{
+				if(!_hmTableColumns.containsKey(keyword.keyword))
+				{
+					ResultSet rs = null;
+					try
+					{
+						rs = _dmd.getColumns(null,null,new String(keyword.keyword),null);
+						while(rs.next())
+						{
+							keywords.add(rs.getString(4),Token.COLOMN);
+						}
+					} catch(Exception e){} 
+					finally
+					{
+						_hmTableColumns.put(keyword.keyword,"");
+						try
+						{
+							rs.close();
+						} catch(Exception e){}
+					}
+				}
+			}
 		}
 		lastKeyword = pos + 1;
 		if (padNull && lastOffset < pos)
