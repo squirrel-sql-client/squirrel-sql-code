@@ -4,6 +4,10 @@ Syntax Highlighting Plugin Change Log
 0.12
 ====
 
+Enhancements
+------------
+- Show parsing errors in tooltips (Gerd Wagner).
+
 Bug Fixes
 ---------
 - Fixed potential thread deadlock (Gerd Wagner).
@@ -20,7 +24,7 @@ Enhancements
 Bug Fixes
 ---------
 - Fix for selecting which SQL gets executed. When the cursor is on a line in
-  the SQL entry that contains at least part of aan SQL statement then only that
+  the SQL entry that contains at least part of an SQL statement then only that
   SQL statment should be executed.
 
 
