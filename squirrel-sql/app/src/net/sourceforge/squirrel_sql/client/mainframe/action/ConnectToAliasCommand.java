@@ -22,25 +22,25 @@ import java.awt.Frame;
 import java.sql.SQLException;
 
 import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.Logger;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionFactory;
 import net.sourceforge.squirrel_sql.client.session.SessionSheet;
-import net.sourceforge.squirrel_sql.client.db.ConnectionDialog;
-import net.sourceforge.squirrel_sql.client.db.ConnectionDialog.IConnectionDialogHandler;
+import net.sourceforge.squirrel_sql.client.db.ConnectionSheet;
+import net.sourceforge.squirrel_sql.client.db.ConnectionSheet.IConnectionSheetHandler;
 import net.sourceforge.squirrel_sql.client.db.DataCache;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
-import net.sourceforge.squirrel_sql.fw.util.Logger;
-import net.sourceforge.squirrel_sql.fw.util.*;
-
 
 /**
  * This <CODE>ICommand</CODE> allows the user to connect to
@@ -52,7 +52,7 @@ public class ConnectToAliasCommand implements ICommand {
 	/** Application API. */
 	private IApplication _app;
 
-	/** Owner of the connection dialog. */
+	/** Owner of the connection internal frame. */
 	private Frame _frame;
 
 	/** The <TT>ISQLAlias</TT> to connect to. */
@@ -62,7 +62,7 @@ public class ConnectToAliasCommand implements ICommand {
 	 * Ctor.
 	 *
 	 * @param	app		The <TT>IApplication</TT> that defines app API.
-	 * @param	frame	Owner of the connection dialog.
+	 * @param	frame	Owner of the connection internal frame.
 	 * @param	alias	The <TT>ISQLAlias</TT> to connect to.
 	 *
 	 * @throws	IllegalArgumentException
@@ -83,20 +83,21 @@ public class ConnectToAliasCommand implements ICommand {
 	}
 
 	/**
-	 * Display connection dialog.
+	 * Display connection internal frame.
 	 */
 	public void execute() {
-		ConnectionDialog dlog = new ConnectionDialog(_app, _frame, _sqlAlias,
-											new DialogHandler(_app, _sqlAlias));
-		dlog.setVisible(true);
+		ConnectionSheet sheet = new ConnectionSheet(_app, _frame, _sqlAlias,
+											new SheetHandler(_app, _sqlAlias));
+		_app.getMainFrame().addInternalFrame(sheet, true, null);
+		sheet.setVisible(true);
 	}
 
 	/**
-	 * Handler used for connection dialog actions.
+	 * Handler used for connection internal frame actions.
 	 */
-	private static class DialogHandler implements IConnectionDialogHandler, Runnable {
-		/** The connection dialog. */
-		private ConnectionDialog _connDlog;
+	private static class SheetHandler implements IConnectionSheetHandler, Runnable {
+		/** The connection internal frame. */
+		private ConnectionSheet _connSheet;
 		
 		/** Application API. */
 		private IApplication _app;
@@ -123,7 +124,7 @@ public class ConnectToAliasCommand implements ICommand {
 		 * 			Thrown if <TT>null</TT>IApplication</TT>, or <TT>ISQLAlias</TT>
 		 *			passed.
 		 */
-		DialogHandler(IApplication app, ISQLAlias alias)
+		SheetHandler(IApplication app, ISQLAlias alias)
 				throws IllegalArgumentException {
 			super();
 			if (app == null) {
@@ -140,14 +141,14 @@ public class ConnectToAliasCommand implements ICommand {
 		 * User has clicked the OK button to connect to the alias. Run the connection
 		 * attempt in a separate thread.
 		 * 
-		 * @param	connDlog	Connection dialog.
+		 * @param	connSheet	Connection internal frame.
 		 * @param	user		The user name entered.
 		 * @param	password	The password entered.
 		 */
-		public void performOK(ConnectionDialog connDlog, String user,
+		public void performOK(ConnectionSheet connSheet, String user,
 								String password) {
 			_stopConnection = false;
-			_connDlog = connDlog;
+			_connSheet = connSheet;
 			_user = user;
 			_password = password;
 
@@ -157,9 +158,9 @@ public class ConnectToAliasCommand implements ICommand {
 		/**
 		 * User has clicked the Cancel button to cancel this connection attempt.
 		 * 
-		 * @param	connDlog	Connection dialog.
+		 * @param	connSheet	Connection internal frame.
 		 */
-		public void performCancelConnect(ConnectionDialog connDlog) {
+		public void performCancelConnect(ConnectionSheet connSheet) {
 			// if blocked that means that it doesn't help anymore
 			// Or an error dialog is shown or de connection is made
 			// and the SessionFrame is being constructed/shown.
@@ -169,16 +170,16 @@ public class ConnectToAliasCommand implements ICommand {
 		}
 
 		/**
-		 * User has clicked the Close button to close the dialog.
+		 * User has clicked the Close button to close the internal frame.
 		 * 
-		 * @param	connDlog	Connection dialog.
+		 * @param	connSheet	Connection internal frame.
 		 */
-		public void performClose(ConnectionDialog connDlog) {
+		public void performClose(ConnectionSheet connSheet) {
 		}
 
 		/**
 		 * Execute task. Connect to the alias with the information entered
-		 * in the connection dialog.
+		 * in the connection internal frame.
 		 */		
 		public void run() {
 			SQLConnection conn = null;
@@ -199,10 +200,11 @@ public class ConnectToAliasCommand implements ICommand {
 							public void run() {
 								final SessionSheet child = new SessionSheet(session);
 								session.setSessionSheet(child);
-								session.getApplication().getPluginManager().sessionStarted(session);
-								MainFrame.getInstance().addInternalFrame(child);
+								IApplication app = session.getApplication();
+								app.getPluginManager().sessionStarted(session);
+								app.getMainFrame().addInternalFrame(child, true, null);
 								child.setVisible(true);
-								_connDlog.executed(true);
+								_connSheet.executed(true);
 							}
 						});
 					}
@@ -227,8 +229,8 @@ public class ConnectToAliasCommand implements ICommand {
 				//if(!_stopConnection) {
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
-							new ErrorDialog(_connDlog, msg).show();
-							_connDlog.executed(false);
+							new ErrorDialog(_app.getMainFrame(), msg).show();
+							_connSheet.executed(false);
 						}
 					});
 				//}
@@ -240,8 +242,8 @@ public class ConnectToAliasCommand implements ICommand {
 				//if(!_stopConnection) {
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
-							new ErrorDialog(_connDlog, th).show();
-							_connDlog.executed(false);
+							new ErrorDialog(_app.getMainFrame(), th).show();
+							_connSheet.executed(false);
 						}
 					});
 				//}
