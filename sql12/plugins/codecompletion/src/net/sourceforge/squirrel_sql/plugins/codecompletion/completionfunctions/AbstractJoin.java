@@ -118,7 +118,8 @@ public abstract class AbstractJoin extends CodeCompletionFunction
 
             if(0 == conditionByFkName.size())
             {
-               twoTableCompletions.add("INNER JOIN " + tables.get(i) + " ON " + tables.get(i-1) + ". = " + tables.get(i) + ".\n");
+               String joinClause = getJoinClause(null, (String)tables.get(i-1), (String)tables.get(i), colBuffersByFkName);
+               twoTableCompletions.add(joinClause + tables.get(i) + " ON " + tables.get(i-1) + ". = " + tables.get(i) + ".\n");
             }
 
 
