@@ -176,6 +176,21 @@ public class DataTypeTime
 
 		// Do the conversion into the object in a safe manner
 		try {
+			// allow the user to enter just the hour or just hour and minute
+			// and assume the un-entered values are 0
+			int firstColon = value.indexOf(":");
+			if (firstColon == -1) {
+				// user just entered the hour, so append min & sec
+				value = value + ":0:0";
+			}
+			else {
+				// user entered hour an min. See if they also entered secs
+				if (value.indexOf(":", firstColon + 1) == -1) {
+					// user did not enter seconds
+					value = value + ":0";
+				}
+			}
+				
 			Object obj = Time.valueOf(value);
 			return obj;
 		}
