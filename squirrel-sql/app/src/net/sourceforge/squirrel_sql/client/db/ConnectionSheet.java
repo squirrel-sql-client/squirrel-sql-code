@@ -19,44 +19,42 @@ package net.sourceforge.squirrel_sql.client.db;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.awt.BorderLayout;
-import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Container;
-import java.awt.Cursor;
 import java.awt.Frame;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.Insets;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
+import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.Border;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
+import javax.swing.event.InternalFrameListener;
 
-import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.OkClosePanel;
 import net.sourceforge.squirrel_sql.fw.gui.OkClosePanelEvent;
 import net.sourceforge.squirrel_sql.fw.gui.OkClosePanelListener;
 import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
-import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
+import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+import net.sourceforge.squirrel_sql.fw.util.Debug;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 
 /**
- * This dialog allows the user to connect to an alias.
+ * This internal frame allows the user to connect to an alias.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ConnectionDialog extends JDialog {
+public class ConnectionSheet extends JInternalFrame {
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
@@ -72,36 +70,41 @@ public class ConnectionDialog extends JDialog {
 		String USER = "User:";
 	}
 
-	/** Handler called for dialog actions. */
-	public interface IConnectionDialogHandler {
+	/** Handler called for internal frame actions. */
+	public interface IConnectionSheetHandler {
 		/**
 		 * User has clicked the OK button to connect to the alias.
 		 * 
-		 * @param	connDlog	The connection dialog.
+		 * @param	connSheet	The connection internal frame.
 		 * @param	user		The user name entered.
 		 * @param	password	The password entered.
 		 */
-		public void performOK(ConnectionDialog connDlog, String user, String password);
+		public void performOK(ConnectionSheet connSheet, String user, String password);
 
 		/**
 		 * User has clicked the Close button. They don't want to
 		 * connect to the alias.
 		 * 
-		 * @param	connDlog	The connection dialog.
+		 * @param	connSheet	The connection internal frame.
 		 */
-		public void performClose(ConnectionDialog connDlog);
+		public void performClose(ConnectionSheet connSheet);
 
 		/**
 		 * User has clicked the Cancel button. They want to cancel
 		 * the curently active attempt to connect to the database.
 		 * 
-		 * @param	connDlog	The connection dialog.
+		 * @param	connSheet	The connection internal frame.
 		 */
-		public void performCancelConnect(ConnectionDialog connDlog);
+		public void performCancelConnect(ConnectionSheet connSheet);
 	}
 
+	/** Application API. */
 	private IApplication _app;
+	
+	/** Alias we are going to connect to. */
 	private ISQLAlias _alias;
+	
+	/** JDBC driver for <TT>_alias</TT>. */
 	private ISQLDriver _sqlDriver;
 	
 	/** <TT>true</TT> means that an attempt is being made to connect to the alias.*/
@@ -110,31 +113,32 @@ public class ConnectionDialog extends JDialog {
 	/** Set to <TT>true</TT> once <TT>dispose</TT> has been called. */
 	private boolean _disposed;
 
-	private IConnectionDialogHandler _handler;
+	private IConnectionSheetHandler _handler;
 
-	private OkClosePanel _btnsPnl;
-
+	private JLabel _titleLbl = new JLabel();
 	private JLabel _aliasName = new JLabel();
 	private JLabel _driverName = new JLabel();
 	private JLabel _url = new JLabel();
 	private JTextField _user = new JTextField();
 	private JTextField _password = new JPasswordField();
+	private OkClosePanel _btnsPnl = new OkClosePanel();
+	private StatusBar _statusBar = new StatusBar();
 
 	/**
 	 * Ctor.
 	 * 
 	 * @param	app		Application API.
-	 * @param	owner	<TT>Frame</TT> that will own this dialog.
+	 * @param	owner	<TT>Frame</TT> that will own this internal frame.
 	 * @param	alias	<TT>SQLAlias</TT> that we are going to connect to.
-	 * @param	handler	Handler for dialog actions.
+	 * @param	handler	Handler for internal frame actions.
 	 * 
 	 * @throws	IllegalArgumentException
 	 * 			If <TT>null</TT> <TT>IApplication</TT>, <TT>ISQLAlias</TT>,
-	 * 			or <TT>IConnectionDialogHandler</TT> passed.
+	 * 			or <TT>IConnectionSheetHandler</TT> passed.
 	 */
-	public ConnectionDialog(IApplication app, Frame owner, ISQLAlias alias,
-								IConnectionDialogHandler handler) {
-		super(owner, i18n.CONNECT, false);
+	public ConnectionSheet(IApplication app, Frame owner, ISQLAlias alias,
+								IConnectionSheetHandler handler) {
+		super();
 		if (app == null) {
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
@@ -142,7 +146,7 @@ public class ConnectionDialog extends JDialog {
 			throw new IllegalArgumentException("Null ISQLAlias passed");
 		}
 		if (handler == null) {
-			throw new IllegalArgumentException("Null IConnectionDialogHandler passed");
+			throw new IllegalArgumentException("Null IConnectionSheetHandler passed");
 		}
 
 		_app = app;
@@ -168,11 +172,31 @@ public class ConnectionDialog extends JDialog {
 		if (connected) {
 			dispose();
 		} else {
-			setTitle(i18n.CONNECT);
+			setStatusText(null);
 			_user.setEnabled(true);
 			_password.setEnabled(true);
 			_btnsPnl.setExecuting(false);
 		}
+	}
+
+	/**
+	 * Set title of this frame. Ensure that the title label
+	 * matches the frame title.
+	 * 
+	 * @param	title	New title text.
+	 */
+	public void setTitle(String title) {
+		super.setTitle(title);
+		_titleLbl.setText(title);
+	}
+	
+	/**
+	 * Set the text in the status bar.
+	 * 
+	 * @param	text	The text to place in the status bar.
+	 */
+	public void setStatusText(String text) {
+		_statusBar.setText(text);
 	}
 
 	/**
@@ -185,13 +209,19 @@ public class ConnectionDialog extends JDialog {
 		_url.setText(_alias.getUrl());
 		_user.setText(userName);
 		_password.setText("");
+
+		// This is mainly for long URLs that cannot be fully
+		// displayed in the label.
+		_aliasName.setToolTipText(_aliasName.getText());
+		_driverName.setToolTipText(_driverName.getText());
+		_url.setToolTipText(_url.getText());
 	}
 
 	private void connect(boolean connecting) {
 		if (!_connecting) {
 			_connecting = true;
 			_btnsPnl.setExecuting(true);
-			setTitle(i18n.CONNECTING);
+			setStatusText(i18n.CONNECTING);
 			_user.setEnabled(false);
 			_password.setEnabled(false);
 			_handler.performOK(this, _user.getText(), _password.getText());
@@ -201,7 +231,7 @@ public class ConnectionDialog extends JDialog {
 	private void cancelConnect() {
 		if(_connecting) {
 			// abort first..
-			setTitle(i18n.CANCELLING);
+			setStatusText(i18n.CANCELLING);
 			_btnsPnl.enableCloseButton(false);
 			_handler.performCancelConnect(this);
 			_connecting = false;
@@ -210,7 +240,12 @@ public class ConnectionDialog extends JDialog {
 	}
 
 	private void createUserInterface() {
-		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        // This is a tool window.
+        GUIUtils.makeToolWindow(this, true);
+        
+        setTitle("Connect to " + _alias.getName());
+
 		PropertyPanel dataEntryPnl = new PropertyPanel();
 
 		JLabel lbl = new JLabel(i18n.ALIAS, SwingConstants.RIGHT);
@@ -229,31 +264,74 @@ public class ConnectionDialog extends JDialog {
 		lbl = new JLabel(i18n.PASSWORD, SwingConstants.RIGHT);
 		dataEntryPnl.add(lbl, _password);
 
-		// Ok and Close buttons at bottom of dialog.
-		_btnsPnl = new OkClosePanel();
-		_btnsPnl.addListener(new MyOkClosePanelListener());
+		// This seems to be necessary to get background colours
+		// correct. Without it labels added to the content pane
+		// have a dark background while those added to a JPanel
+		// in the content pane have a light background under
+		// the java look and feel. Similar effects occur for other
+		// look and feels.
+		setContentPane(new JPanel());
 
 		final Container contentPane = getContentPane();
-		contentPane.setLayout(new BorderLayout());
-		contentPane.add(dataEntryPnl, BorderLayout.CENTER);
-		contentPane.add(_btnsPnl, BorderLayout.SOUTH);
+		GridBagLayout gbl = new GridBagLayout();
+		GridBagConstraints gbc = new GridBagConstraints();
+		contentPane.setLayout(gbl);
 
+		gbc.anchor = GridBagConstraints.NORTHWEST;
+		gbc.gridwidth = GridBagConstraints.REMAINDER;
+		gbc.weightx = gbc.weighty = 1;
+
+		// Title label at top.
+		gbc.insets = new Insets(5, 10, 5, 10);
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbl.setConstraints(_titleLbl, gbc);
+		contentPane.add(_titleLbl);
+
+		// Separated by a line.
+		gbc.insets = new Insets(0, 10, 5, 10);
+		JSeparator sep = new JSeparator();
+		gbl.setConstraints(sep, gbc);
+		contentPane.add(sep);
+
+		// Next is the data entry panel. Let it take up any excess space.
+		//gbc.fill = GridBagConstraints.NONE;
+		gbc.insets = new Insets(0, 10, 0, 10);
+		gbl.setConstraints(dataEntryPnl, gbc);
+		contentPane.add(dataEntryPnl);
+
+		// Separated by a line.
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		sep = new JSeparator();
+		gbc.insets = new Insets(5, 10, 5, 10);
+		gbl.setConstraints(sep, gbc);
+		contentPane.add(sep);
+
+		gbc.insets = new Insets(0, 0, 0, 0);
+		
+		// Next the buttons.
+		gbl.setConstraints(_btnsPnl, gbc);
+		contentPane.add(_btnsPnl);
+		
+		// Finally the status bar.
+		gbl.setConstraints(_statusBar, gbc);
+		contentPane.add(_statusBar);
+
+		_btnsPnl.addListener(new MyOkClosePanelListener());
 		_btnsPnl.makeOKButtonDefault();
+
 		pack();
-		GUIUtils.centerWithinParent(this);
-		setResizable(false);
 
 		// Set focus to password control if default user name has been setup.
-		addWindowListener(new WindowAdapter() {
-			private WindowAdapter _this;
-			public void windowActivated(WindowEvent evt) {
+		addInternalFrameListener(new InternalFrameAdapter() {
+			private InternalFrameAdapter _this;
+			public void internalFrameActivated(InternalFrameEvent evt) {
 				_this = this;
 				final String userName = _user.getText();
 				if (userName != null && userName.length() > 0) {
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
 							_password.requestFocus();
-							ConnectionDialog.this.removeWindowListener(_this);
+							ConnectionSheet.this.removeInternalFrameListener(_this);
 						}
 					});
 				}
@@ -266,15 +344,15 @@ public class ConnectionDialog extends JDialog {
 	 */
 	private final class MyOkClosePanelListener implements OkClosePanelListener {
 		public void okPressed(OkClosePanelEvent evt) {
-			ConnectionDialog.this.connect(true);
+			ConnectionSheet.this.connect(true);
 		}
 
 		public void closePressed(OkClosePanelEvent evt) {
-			ConnectionDialog.this.dispose();
+			ConnectionSheet.this.dispose();
 		}
 
 		public void cancelPressed(OkClosePanelEvent evt) {
-			ConnectionDialog.this.cancelConnect();
+			ConnectionSheet.this.cancelConnect();
 		}
 	}
 }
