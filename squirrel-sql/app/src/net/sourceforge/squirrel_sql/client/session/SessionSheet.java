@@ -125,8 +125,8 @@ public class SessionSheet extends BaseSheet {
 	public void setVisible(boolean value) {
 		super.setVisible(value);
 		if (!_hasBeenVisible && value == true) {
-			_msgSplit.setDividerLocation(0.9d);
 			_hasBeenVisible = true;
+			_msgSplit.setDividerLocation(0.9d);
 		}
 	}
 
@@ -144,43 +144,11 @@ public class SessionSheet extends BaseSheet {
 
 	public void updateState() {
 		_mainTabPane.updateState();
-/*
-		ActionCollection actions = _session.getApplication().getActionCollection();
-		final String tabTitle = _mainTabPane.getTitleAt(_mainTabPane.getSelectedIndex());
-		if (tabTitle.equals(i18n.SQL_TAB_TITLE)) {
-			actions.get(ExecuteSqlAction.class).setEnabled(true);
-			actions.get(ShowNativeSQLAction.class).setEnabled(true);
-			boolean isAutoCommit = _session.getProperties().getAutoCommit();
-			actions.get(CommitAction.class).setEnabled(!isAutoCommit);
-			actions.get(RollbackAction.class).setEnabled(!isAutoCommit);
-			actions.get(RefreshTreeAction.class).setEnabled(false);
-		} else {
-			actions.get(ExecuteSqlAction.class).setEnabled(false);
-			actions.get(ShowNativeSQLAction.class).setEnabled(false);
-			actions.get(CommitAction.class).setEnabled(false);
-			actions.get(RollbackAction.class).setEnabled(false);
-			actions.get(RefreshTreeAction.class).setEnabled(true);
-		}
-*/
 	}
 
 	public void replaceSQLEntryPanel(ISQLEntryPanel pnl) {
 		_mainTabPane.getSQLPanel().replaceSQLEntryPanel(pnl);
 	}
-
-	/**
-	 * Close all the Results frames.
-	 */
-//	public void closeAllSQLResultFrames() {
-//		_sqlPnl.closeAllSQLResultFrames();
-//	}
-
-	/**
-	 * Close all the Results tabs.
-	 */
-//	public void closeAllSQLResultTabs() {
-//		_sqlPnl.closeAllSQLResultTabs();
-//	}
 
 	ObjectsPanel getObjectPanel() {
 		return _mainTabPane.getObjectsPanel();
@@ -231,13 +199,10 @@ public class SessionSheet extends BaseSheet {
 	/**
 	 * Add a tab to the main tabbed panel.
 	 *
-	 * title	The title to display in the tab.
-	 * icon	 The icon to display in the tab. If <TT>null</TT> then no icon displayed.
-	 * comp	 The component to be shown when the tab is active.
-	 * tip	  The tooltip to be displayed for the tab. Can be <TT>null</TT>.
+	 * tab	Describes the tab to be added.
 	 *
-	 * @throws  IllegalArgumentException
-	 *		  If <TT>title</TT> or <TT>comp</TT> is <TT>null</TT>.
+	 * @throws	IllegalArgumentException
+	 *			If <TT>tab</TT> is <TT>null</TT>.
 	 */
 	public void addMainTab(IMainPanelTab tab) {
 		if (tab == null) {
@@ -297,18 +262,6 @@ public class SessionSheet extends BaseSheet {
 		}
 
 		_mainTabPane = new MainPanel(_session);
-
-//		_sqlPnl = new SQLPanel(_session);
-		//_objectsPnl = new ObjectsPanel(_session);
-
-//		_mainTabPane.addTab(i18n.OBJ_TAB_TITLE, null, _objectsPnl, i18n.OBJ_TAB_DESC);
-//		_mainTabPane.addTab(i18n.SQL_TAB_TITLE, null, _sqlPnl, i18n.SQL_TAB_DESC);
-
-//		_mainTabPane.addChangeListener(new ChangeListener() {
-//			public void stateChanged(ChangeEvent evt) {
-//				updateState();
-//			}
-//		});
 
 		Container content = getContentPane();
 		content.setLayout(new BorderLayout());
