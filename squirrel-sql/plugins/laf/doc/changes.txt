@@ -11,6 +11,10 @@ Enhancements
 - Only show Skin Look and Feel configuration controls in the
   preferences panel if the Skin Look and Feel is selected.
 
+Bug Fixes
+---------
+- Add missing Gradient theme file for the Oyoaha L&F.
+
 
 0.12
 ====
