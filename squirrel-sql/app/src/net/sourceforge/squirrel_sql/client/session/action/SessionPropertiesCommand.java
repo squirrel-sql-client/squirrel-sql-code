@@ -22,7 +22,7 @@ import java.awt.Frame;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionSheetPropertiesDialog;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionPropertiesDialog;
 
 /**
  * This <CODE>ICommand</CODE> displays a sesion properties dialog box
@@ -30,7 +30,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionSheetProper
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SessionSheetPropertiesCommand implements ICommand {
+public class SessionPropertiesCommand implements ICommand {
     /** Parent frame. */
     private final Frame _frame;
 
@@ -46,7 +46,7 @@ public class SessionSheetPropertiesCommand implements ICommand {
      * @throws  IllegalArgumentException
      *              Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
      */
-    public SessionSheetPropertiesCommand(Frame frame, ISession session)
+    public SessionPropertiesCommand(Frame frame, ISession session)
             throws IllegalArgumentException {
         super();
         if (session == null) {
@@ -60,7 +60,7 @@ public class SessionSheetPropertiesCommand implements ICommand {
      * Display the properties dialog.
      */
     public void execute() {
-        //SessionSheetPropertiesDialog.display(_props);
-        new SessionSheetPropertiesDialog(_frame, _session).setVisible(true);
+        //SessionPropertiesDialog.display(_props);
+        new SessionPropertiesDialog(_frame, _session).setVisible(true);
     }
 }
