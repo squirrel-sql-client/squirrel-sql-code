@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.plugins.laf;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -39,6 +40,7 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
 import net.sourceforge.squirrel_sql.fw.gui.FontChooser;
+import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.gui.LookAndFeelComboBox;
 import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
@@ -155,7 +157,8 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
 		interface i18n {
 			String LOOK_AND_FEEL = "Look and Feel:";
 			String THEME_PACK = "Theme Pack:";
-			String LAF_WARNING = "<HTML>Note: Controls may not be drawn correctly after changes<BR>in this panel until the application is restarted.</HTML>";
+			String LAF_WARNING_1 = "Note: Controls may not be drawn correctly after changes";
+			String LAF_WARNING_2 = "in this panel until the application is restarted.";
 			String TAB_TITLE = "L & F";
 			String TAB_HINT = "Look and Feel settings";
 			String LAF_LOC = "Look and Feel jars folder:";
@@ -259,7 +262,10 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
 			++gbc.gridy;
 			gbc.gridx = 0;
 			gbc.gridwidth = gbc.REMAINDER;
-			add(new JLabel(i18n.LAF_WARNING), gbc);
+			add(new OutputLabel(i18n.LAF_WARNING_1), gbc);
+
+			++gbc.gridy;
+			add(new OutputLabel(i18n.LAF_WARNING_2), gbc);
 		}
 
 		private JPanel createLookAndFeelPanel() {
@@ -301,14 +307,14 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
 			pnl.add(new JLabel(i18n.LAF_LOC), gbc);
 
 			++gbc.gridx;
-			pnl.add(new JLabel(_plugin.getLookAndFeelFolder().getAbsolutePath()), gbc);
+			pnl.add(new OutputLabel(_plugin.getLookAndFeelFolder().getAbsolutePath()), gbc);
 
 			gbc.gridx = 0;
 			++gbc.gridy;
 			pnl.add(new JLabel(i18n.THEMEPACK_LOC), gbc);
 
 			++gbc.gridx;
-			pnl.add(new JLabel(_plugin.getSkinThemePackFolder().getAbsolutePath()), gbc);
+			pnl.add(new OutputLabel(_plugin.getSkinThemePackFolder().getAbsolutePath()), gbc);
 			
 			return pnl;
 		}
@@ -452,6 +458,15 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
 			}
 		}
 	}
-	
-	
+
+	private static final class OutputLabel extends JLabel {
+		OutputLabel(String title) {
+			super(title);
+			setToolTipText(title);
+			Dimension ps = getPreferredSize();
+			ps.width = 150;
+			setPreferredSize(ps);
+		}
+	}
+
 }

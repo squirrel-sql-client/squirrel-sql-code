@@ -55,11 +55,9 @@ public class FontChooser extends JDialog {
 	private JComboBox _fontSizesCmb = new JComboBox(new String[]{"8", "9", "10", "12", "14"});
 	private JCheckBox _boldChk = new JCheckBox("Bold");
 	private JCheckBox _italicChk = new JCheckBox("Italic");
-//	private JComboBox _fontStylesCmb = new JComboBox(new String[]{"Plain", "Bold", "Italic"});
 	private JLabel _previewLbl = new JLabel("The quick brown fox jumped over the lazy dog");
 
 	private Font _font;
-//	private boolean _fontSelected;
 	
 	public FontChooser() {
 		this((Frame)null);
@@ -101,24 +99,17 @@ public class FontChooser extends JDialog {
 	}
 
 	protected void setupFontFromDialog() {
-		String name = (String)_fontNamesCmb.getSelectedItem();
 		int size = 12;
 		try {
 			size = Integer.parseInt((String)_fontSizesCmb.getSelectedItem());
 		} catch (Exception ignore) {
 		}
-		int style = 0;
-		if (_boldChk.isSelected() || _italicChk.isSelected()) {
-			if (_boldChk.isSelected()) {
-				style |= Font.BOLD;
-			}
-			if (_italicChk.isSelected()) {
-				style |= Font.ITALIC;
-			}
-		} else {
-			style = Font.PLAIN;
-		}
-		_font = new Font(name, style, size);
+		FontInfo fi = new FontInfo();
+		fi.setFamily((String)_fontNamesCmb.getSelectedItem());
+		fi.setSize(size);
+		fi.setIsBold(_boldChk.isSelected());
+		fi.setIsItalic(_italicChk.isSelected());
+		_font = fi.createFont();
 	}
 
 	private void createUserInterface() {
@@ -159,14 +150,6 @@ public class FontChooser extends JDialog {
 			}
 		});
 		content.add(_fontSizesCmb, gbc);
-
-//		++gbc.gridx;
-//		_fontStylesCmb.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent evt) {
-//				setupPreviewLabel();
-//			}
-//		});
-//		content.add(_fontStylesCmb, gbc);
 
 		++gbc.gridx;
 		_boldChk.addActionListener(new ActionListener() {
@@ -212,24 +195,6 @@ public class FontChooser extends JDialog {
 		
 		setupPreviewLabel();
 
-/*
-		JPanel btnsPnl = new JPanel();
-		//		btnsPnl.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-		JButton okBtn = new JButton(i18n.OK);
-		okBtn.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent evt)
-			{
-				dispose();
-			}
-		});
-		btnsPnl.add(okBtn);
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(mainPnl, BorderLayout.CENTER);
-		getContentPane().add(btnsPnl, BorderLayout.SOUTH);
-		getRootPane().setDefaultButton(okBtn);
-		//setSize(iDialogWidth, iDialogHeight);
-*/
 		pack();
 		GUIUtils.centerWithinParent(this);
 		setResizable(false);

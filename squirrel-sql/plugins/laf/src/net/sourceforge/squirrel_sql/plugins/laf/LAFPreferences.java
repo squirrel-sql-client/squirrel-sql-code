@@ -21,6 +21,8 @@ import java.io.Serializable;
 
 import javax.swing.UIManager;
 
+import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
+
 /**
  * This JavaBean class represents the user specific
  * preferences for this plugin.

@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.laf;
+package net.sourceforge.squirrel_sql.fw.gui;
 /*
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net
