@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.plugin.api;
+package net.sourceforge.squirrel_sql.client.session;
 /*
  * Copyright (C) 2002 Colin Bell
  * colbell@users.sourceforge.net
@@ -19,8 +19,11 @@ package net.sourceforge.squirrel_sql.client.plugin.api;
  */
 import javax.swing.Action;
 
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+
 import net.sourceforge.squirrel_sql.client.session.IClientSession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 /**
  * This class is the API through which plugins can work with the object tree.
  *
@@ -65,7 +68,7 @@ class ObjectTreeAPI implements IObjectTreeAPI
 		{
 			throw new IllegalArgumentException("INodeExpander == null");
 		}
-		_session.registerObjectTreeExpander(nodeType, expander);
+		_session.getSessionSheet().getObjectTreePanel().registerExpander(nodeType, expander);
 	}
 
 	/**
@@ -84,6 +87,53 @@ class ObjectTreeAPI implements IObjectTreeAPI
 		{
 			throw new IllegalArgumentException("Action == null");
 		}
-		_session.addToObjectTreePopup(nodeType, action);
+		_session.getSessionSheet().getObjectTreePanel().addToObjectTreePopup(nodeType, action);
+	}
+
+	/**
+	 * Add an item to the popup menu for all node types.
+	 * 
+	 * @param	action		Action to add to menu.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> thrown.
+	 */
+	public void addToPopup(Action action)
+	{
+		if (action == null)
+		{
+			throw new IllegalArgumentException("Action == null");
+		}
+		_session.getSessionSheet().getObjectTreePanel().addToObjectTreePopup(action);
+	}
+
+	/**
+	 * Return an array of the selected nodes in the tree. This is guaranteed
+	 * to be non-null.
+	 * 
+	 * @return	Array of nodes in the tree.
+	 */
+	public ObjectTreeNode[] getSelectedNodes()
+	{
+		return _session.getSessionSheet().getObjectTreePanel().getSelectedNodes();
+	}
+
+	/**
+	 * Return an array of the currently selected database
+	 * objects. This is guaranteed to be non-null.
+	 *
+	 * @return	array of <TT>ObjectTreeNode</TT> objects.
+	 */
+	public IDatabaseObjectInfo[] getSelectedDatabaseObjects()
+	{
+		return _session.getSessionSheet().getObjectTreePanel().getSelectedDatabaseObjects();
+	}
+
+	/**
+	 * Refresh the object tree.
+	 */
+	public void refresh()
+	{
+		//TODO: Write me
 	}
 }

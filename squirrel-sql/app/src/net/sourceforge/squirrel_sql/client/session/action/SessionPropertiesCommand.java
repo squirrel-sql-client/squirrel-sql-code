@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -28,7 +28,8 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionPropertiesS
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SessionPropertiesCommand implements ICommand {
+public class SessionPropertiesCommand implements ICommand
+{
 	/** The session whose properties are to be displayed/maintained. */
 	private final ISession _session;
 
@@ -40,9 +41,11 @@ public class SessionPropertiesCommand implements ICommand {
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
 	 */
-	public SessionPropertiesCommand(ISession session) {
+	public SessionPropertiesCommand(ISession session)
+	{
 		super();
-		if (session == null) {
+		if (session == null)
+		{
 			throw new IllegalArgumentException("Null ISession passed");
 		}
 		_session = session;
@@ -51,7 +54,8 @@ public class SessionPropertiesCommand implements ICommand {
 	/**
 	 * Display the properties dialog.
 	 */
-	public void execute() {
+	public void execute()
+	{
 		SessionPropertiesSheetFactory.getInstance().showSheet(_session);
 	}
 }

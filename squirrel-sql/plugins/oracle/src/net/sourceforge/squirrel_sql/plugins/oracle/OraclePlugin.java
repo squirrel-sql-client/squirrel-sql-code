@@ -29,8 +29,7 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
-import net.sourceforge.squirrel_sql.client.plugin.api.APIFactory;
-import net.sourceforge.squirrel_sql.client.plugin.api.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 /**
@@ -41,7 +40,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTr
 public class OraclePlugin extends DefaultSessionPlugin
 {
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(OraclePlugin.class);
+	private final static ILogger s_log = LoggerController.createLogger(OraclePlugin.class);
 
 	/** Name of file to store user prefs in. */
 //	static final String USER_PREFS_FILE_NAME = "OraclePreferences.xml";
@@ -51,6 +50,9 @@ public class OraclePlugin extends DefaultSessionPlugin
 
 	/** Folder to store user settings in. */
 	private File _userSettingsFolder;
+
+	/** API for the Obejct Tree. */
+	private IObjectTreeAPI _treeAPI;
 
 	/**
 	 * Return the internal name of this plugin.
@@ -169,9 +171,9 @@ public class OraclePlugin extends DefaultSessionPlugin
 			isOracle = isOracle(session);
 			if (isOracle)
 			{
-				IObjectTreeAPI api = APIFactory.getInstance().getObjectTreeAPI(session);
-				api.registerExpander(ObjectTreeNode.IObjectTreeNodeType.SCHEMA, new SchemaExpander());
-				api.registerExpander(ObjectTreeNode.IObjectTreeNodeType.PACKAGE, new PackageExpander());
+				_treeAPI = session.getObjectTreeAPI();
+				_treeAPI.registerExpander(ObjectTreeNode.IObjectTreeNodeType.SCHEMA, new SchemaExpander());
+				_treeAPI.registerExpander(ObjectTreeNode.IObjectTreeNodeType.PACKAGE, new PackageExpander());
 			}
 		}
 		return isOracle;

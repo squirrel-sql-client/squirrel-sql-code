@@ -17,38 +17,44 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.ActionEvent;
+import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.ResultFrame;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionPropertiesSheetFactory;
 
-public class ReturnResultTabAction extends SquirrelAction
+/**
+ * This <CODE>ICommand</CODE> refreshes the object tree.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
+public class RefreshObjectTreeCommand implements ICommand
 {
-	/** Frame to be returned. */
-	private ResultFrame _resultFrame;
+	/** The session whose object tree is to be refreshed. */
+	private final ISession _session;
 
 	/**
 	 * Ctor.
 	 *
-	 * @param	app			Application API.
-	 * @param	resultFrame	Results frame to be returned.
+	 * @param	session		The session whose object tree is to be refreshed.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
 	 */
-	public ReturnResultTabAction(IApplication app, ResultFrame resultFrame)
-		throws IllegalArgumentException
+	public RefreshObjectTreeCommand(ISession session)
 	{
-		super(app);
-		if (resultFrame == null)
+		super();
+		if (session == null)
 		{
-			throw new IllegalArgumentException("Null ResultFrame passed");
+			throw new IllegalArgumentException("ISession == null");
 		}
-
-		_resultFrame = resultFrame;
+		_session = session;
 	}
 
-	public void actionPerformed(ActionEvent evt)
+	/**
+	 * Refresh tree.
+	 */
+	public void execute()
 	{
-		new ReturnResultTabCommand(_resultFrame).execute();
+		_session.getObjectTreeAPI().refresh();
 	}
-
 }

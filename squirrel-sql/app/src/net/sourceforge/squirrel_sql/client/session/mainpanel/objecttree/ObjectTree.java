@@ -31,7 +31,6 @@ import java.util.Map;
 import javax.swing.Action;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
-import javax.swing.MenuElement;
 import javax.swing.ToolTipManager;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
@@ -47,8 +46,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.DropTableAction;
-import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeAction;
+import net.sourceforge.squirrel_sql.client.session.action.DropSelectedTablesAction;
+import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeItemAction;
 /**
  * This is the tree showing the structure of objects in the database.
@@ -58,28 +57,28 @@ import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeItemAction;
 public class ObjectTree extends JTree
 {
 	/** Logger for this class. */
-	private static ILogger s_log =
+	private static final ILogger s_log =
 		LoggerController.createLogger(ObjectTree.class);
 
 	/** Model for this tree. */
-	private ObjectTreeModel _model;
+	private final ObjectTreeModel _model;
 
 	/** Current session. */
-	private ISession _session;
+	private final ISession _session;
 
 	/**
 	 * Collection of popup menus (<TT>JPopupMenu</TT> instances) for the
 	 * object tree. Keyed by node type.
 	 */
-	private Map _popups = new HashMap();
+	private final Map _popups = new HashMap();
 
 	/**
 	 * Global popup menu. This contains items that are to be displayed
 	 * in the popup menu no matter what items are selected in the tree.
 	 */
-	private JPopupMenu _globalPopup = new JPopupMenu();
+	private final JPopupMenu _globalPopup = new JPopupMenu();
 
-	private List _globalActions = new ArrayList();
+	private final List _globalActions = new ArrayList();
 
 	/**
 	 * ctor specifying session.
@@ -106,15 +105,15 @@ public class ObjectTree extends JTree
 
 		setShowsRootHandles(true);
 		setModel(_model);
-		//expandNode((ObjectTreeNode)_model.getRoot());
-		//setSelectionRow(0);
+		expandNode((ObjectTreeNode)_model.getRoot());
+		setSelectionRow(0);
 
 		// Add actions to the popup menu.
 		ActionCollection actions = session.getApplication().getActionCollection();
-		addToPopup(ObjectTreeNode.IObjectTreeNodeType.TABLE, actions.get(DropTableAction.class));
+		addToPopup(ObjectTreeNode.IObjectTreeNodeType.TABLE, actions.get(DropSelectedTablesAction.class));
 
 		// Global menu.
-		addToPopup(actions.get(RefreshTreeAction.class));
+		addToPopup(actions.get(RefreshObjectTreeAction.class));
 		addToPopup(actions.get(RefreshTreeItemAction.class));
 
 		// Mouse listener used to display popup menu.
@@ -189,6 +188,7 @@ public class ObjectTree extends JTree
 	{
 		return _model;
 	}
+
 
 	public void expandNode(ObjectTreeNode parentNode)
 	{
@@ -300,9 +300,9 @@ public class ObjectTree extends JTree
 	 * Return an array of the currently selected nodes. This array is sorted
 	 * by the simple name of the database object.
 	 *
-	 * @return	array of <TT>IDatabaseObjectInfo</TT> objects.
+	 * @return	array of <TT>ObjectTreeNode</TT> objects.
 	 */
-	private ObjectTreeNode[] getSelectedNodes()
+	ObjectTreeNode[] getSelectedNodes()
 	{
 		TreePath[] paths = getSelectionPaths();
 		List list = new ArrayList();
@@ -320,6 +320,23 @@ public class ObjectTree extends JTree
 		ObjectTreeNode[] ar = (ObjectTreeNode[])list.toArray(new ObjectTreeNode[list.size()]);
 		Arrays.sort(ar, new NodeComparator());
 		return ar;
+	}
+
+	/**
+	 * Return an array of the currently selected database
+	 * objects.
+	 *
+	 * @return	array of <TT>ObjectTreeNode</TT> objects.
+	 */
+	IDatabaseObjectInfo[] getSelectedDatabaseObjects()
+	{
+		ObjectTreeNode[] nodes = getSelectedNodes();
+		IDatabaseObjectInfo[] dbObjects = new IDatabaseObjectInfo[nodes.length];
+		for (int i = 0; i < nodes.length; ++i)
+		{
+			dbObjects[i] = nodes[i].getDatabaseObjectInfo();
+		}
+		return dbObjects;
 	}
 
 	/**

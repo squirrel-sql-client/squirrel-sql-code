@@ -25,6 +25,7 @@ import java.util.Map;
 
 import javax.swing.tree.DefaultTreeModel;
 
+import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectTypes;
@@ -150,7 +151,6 @@ public class ObjectTreeModel extends DefaultTreeModel
 		RootNode(ISession session)
 		{
 			super(session, createDbo(session));
-			//addExpander(new DatabaseExpander(session));
 		}
 
 		private static final IDatabaseObjectInfo createDbo(ISession session)

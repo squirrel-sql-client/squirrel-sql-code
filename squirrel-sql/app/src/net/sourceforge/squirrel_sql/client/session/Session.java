@@ -70,16 +70,19 @@ class Session implements IClientSession
 	private ISQLAlias _alias;
 
 	/** Properties for this session. */
-	private SessionProperties _props;// = new SessionProperties();
+	private SessionProperties _props;
 
 	/**
 	 * Objects stored in session. Each entry is a <TT>Map</TT>
 	 * keyed by <TT>IPlugin.getInternalName()</TT>. Each <TT>Map</TT>
 	 * contains the objects saved for the plugin.
 	 */
-	private Map _pluginObjects = new HashMap();
+	private final Map _pluginObjects = new HashMap();
 
 	private IMessageHandler _msgHandler = NullMessageHandler.getInstance();
+
+	/** API for the object tree. */
+	private final IObjectTreeAPI _objectTreeAPI;
 
 	/**
 	 * Create a new session.
@@ -119,6 +122,10 @@ class Session implements IClientSession
 
 //		_props.assignFrom(_app.getSquirrelPreferences().getSessionProperties());
 		_props = (SessionProperties)_app.getSquirrelPreferences().getSessionProperties().clone();
+
+		// Create the API objectst that give access to various
+		// areas of the session.
+		_objectTreeAPI = new ObjectTreeAPI(this);
 
 		final IPlugin plugin = getApplication().getDummyAppPlugin();
 
@@ -190,6 +197,14 @@ class Session implements IClientSession
 	public SessionProperties getProperties()
 	{
 		return _props;
+	}
+
+	/**
+	 * Return the API for the Object Tree.
+	 */
+	public IObjectTreeAPI getObjectTreeAPI()
+	{
+		return _objectTreeAPI;
 	}
 
 	/**
@@ -558,45 +573,6 @@ class Session implements IClientSession
 			throw new IllegalArgumentException("Null IProcedurePanelTab passed");
 		}
 		_sessionSheet.getProcedurePanel().addProcedurePanelTab(tab);
-	}
-
-	/**
-	 * Register an expander for the specified object tree node type.
-	 * 
-	 * @param	nodeType	Object Tree node type.
-	 *						@see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode.IObjectTreeNodeType
-	 * @param	expander	Expander called to add children to a parent node.
-	 * 
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>INodeExpander</TT> thrown.
-	 */
-	public void registerObjectTreeExpander(int nodeType, INodeExpander expander)
-	{
-		if (expander == null)
-		{
-			throw new IllegalArgumentException("Null INodeExpander passed");
-		}
-		_sessionSheet.getObjectTreePanel().registerExpander(nodeType, expander);
-	}
-
-	/**
-	 * Add an item to the popup menu for the specified node type in the object
-	 * tree.
-	 * 
-	 * @param	nodeType	Object Tree node type.
-	 *						@see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode.IObjectTreeNodeType
-	 * @param	action		Action to add to menu.
-	 * 
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> thrown.
-	 */
-	public void addToObjectTreePopup(int nodeType, Action action)
-	{
-		if (action == null)
-		{
-			throw new IllegalArgumentException("Null Action passed");
-		}
-		_sessionSheet.getObjectTreePanel().addToObjectTreePopup(nodeType, action);
 	}
 
 }

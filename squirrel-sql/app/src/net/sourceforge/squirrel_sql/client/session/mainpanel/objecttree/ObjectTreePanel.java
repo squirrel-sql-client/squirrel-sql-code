@@ -28,6 +28,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.tree.TreePath;
 
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
  * This is the panel for the Object Tree tab.
@@ -108,6 +110,45 @@ public class ObjectTreePanel extends JPanel
 			throw new IllegalArgumentException("Null Action passed");
 		}
 		_tree.addToPopup(nodeType, action);
+	}
+
+	/**
+	 * Add an item to the popup menu for all node types in the object
+	 * tree.
+	 * 
+	 * @param	action		Action to add to menu.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> thrown.
+	 */
+	public void addToObjectTreePopup(Action action)
+	{
+		if (action == null)
+		{
+			throw new IllegalArgumentException("Null Action passed");
+		}
+		_tree.addToPopup(action);
+	}
+
+	/**
+	 * Return an array of the currently selected nodes.
+	 *
+	 * @return	array of <TT>ObjectTreeNode</TT> objects.
+	 */
+	public ObjectTreeNode[] getSelectedNodes()
+	{
+		return _tree.getSelectedNodes();
+	}
+
+	/**
+	 * Return an array of the currently selected database
+	 * objects. This is guaranteed to be non-null.
+	 *
+	 * @return	array of <TT>ObjectTreeNode</TT> objects.
+	 */
+	public IDatabaseObjectInfo[] getSelectedDatabaseObjects()
+	{
+		return _tree.getSelectedDatabaseObjects();
 	}
 
 	/**

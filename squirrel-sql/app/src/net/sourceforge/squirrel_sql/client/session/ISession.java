@@ -17,8 +17,6 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.SQLException;
-
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
@@ -28,7 +26,6 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.plugin.api.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
@@ -100,6 +97,11 @@ public interface ISession extends IHasIdentifier {
 	void setMessageHandler(IMessageHandler handler);
 	IMessageHandler getMessageHandler();
 
+	/**
+	 * Return the API for the Object Tree.
+	 */
+	IObjectTreeAPI getObjectTreeAPI();
+
 	void closeAllSQLResultTabs();
 	void closeAllSQLResultFrames();
 
@@ -121,7 +123,6 @@ public interface ISession extends IHasIdentifier {
 	 */
 	IDatabaseObjectInfo[] getSelectedDatabaseObjects();
 
-	void setSessionSheet(SessionSheet child);
 	SessionSheet getSessionSheet();
 
 	/**

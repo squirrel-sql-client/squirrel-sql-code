@@ -37,7 +37,8 @@ import net.sourceforge.squirrel_sql.client.session.action.ReturnResultTabAction;
  * Copyright (C) 2001-2002
  *
  */
-public class ResultFrame extends BaseSheet {
+public class ResultFrame extends BaseSheet
+{
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(ResultFrame.class);
 
@@ -58,7 +59,7 @@ public class ResultFrame extends BaseSheet {
 	 *			<TT>ResultTab</TT> passed.
 	 */
 	public ResultFrame(ISession session, ResultTab tab)
-			throws IllegalArgumentException {
+	{
 		super(getFrameTitle(session, tab), true, true, true, true);
 		_session = session;
 		_tab = tab;
@@ -67,7 +68,8 @@ public class ResultFrame extends BaseSheet {
 
 		final Container cont = getContentPane();
 		cont.setLayout(new BorderLayout());
-		JButton rtnBtn = new JButton(new ReturnResultTabAction(session.getApplication(), session, this));
+		JButton rtnBtn =
+			new JButton(new ReturnResultTabAction(session.getApplication(), this));
 		cont.add(rtnBtn, BorderLayout.NORTH);
 		cont.add(tab.getOutputComponent(), BorderLayout.CENTER);
 	}
@@ -75,15 +77,18 @@ public class ResultFrame extends BaseSheet {
 	/**
 	 * Close this window.
 	 */
-	public void dispose() {
-		if (_tab != null) {
+	public void dispose()
+	{
+		if (_tab != null)
+		{
 			_tab.closeTab();
 			_tab = null;
 		}
 		super.dispose();
 	}
 
-	public void returnToTabbedPane() {
+	public void returnToTabbedPane()
+	{
 		s_log.debug("ResultFrame.returnToTabbedPane()");
 		getContentPane().remove(_tab.getOutputComponent());
 		_tab.returnToTabbedPane();
@@ -92,11 +97,14 @@ public class ResultFrame extends BaseSheet {
 	}
 
 	private static String getFrameTitle(ISession session, ResultTab tab)
-			throws IllegalArgumentException {
-		if (tab == null) {
+		throws IllegalArgumentException
+	{
+		if (tab == null)
+		{
 			throw new IllegalArgumentException("Null ResultTab passed");
 		}
-		if (session == null) {
+		if (session == null)
+		{
 			throw new IllegalArgumentException("Null ISession passed");
 		}
 

@@ -40,27 +40,9 @@ public interface IClientSession extends ISession
 	void closeSQLConnection() throws SQLException;
 
 	/**
-	 * Register an expander for the specified object tree node type.
+	 * Set the session sheet for this session.
 	 * 
-	 * @param	nodeType	Object Tree node type.
-	 *						@see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode.IObjectTreeNodeType
-	 * @param	expander	Expander called to add children to a parent node.
-	 * 
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>INodeExpander</TT> thrown.
+	 * @param	sheet	Sheet for this session.
 	 */
-	public void registerObjectTreeExpander(int nodeType, INodeExpander expander);
-
-	/**
-	 * Add an item to the popup menu for the specified node type in the object
-	 * tree.
-	 * 
-	 * @param	nodeType	Object Tree node type.
-	 *						@see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode.IObjectTreeNodeType
-	 * @param	action		Action to add to menu.
-	 * 
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> thrown.
-	 */
-	public void addToObjectTreePopup(int nodeType, Action action);
+	void setSessionSheet(SessionSheet child);
 }

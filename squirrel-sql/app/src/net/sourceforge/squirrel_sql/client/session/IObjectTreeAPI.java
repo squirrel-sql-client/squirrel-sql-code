@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.plugin.api;
+package net.sourceforge.squirrel_sql.client.session;
 /*
  * Copyright (C) 2002 Colin Bell and Johan Compagner
  * colbell@users.sourceforge.net
@@ -20,7 +20,10 @@ package net.sourceforge.squirrel_sql.client.plugin.api;
  */
 import javax.swing.Action;
 
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 /**
  * This interface defines the API through which plugins can work with the object
  * tree.
@@ -51,5 +54,36 @@ public interface IObjectTreeAPI
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> thrown.
 	 */
-	public void addToPopup(int nodeType, Action action);
+	void addToPopup(int nodeType, Action action);
+
+	/**
+	 * Add an item to the popup menu for all node types.
+	 * 
+	 * @param	action		Action to add to menu.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> thrown.
+	 */
+	void addToPopup(Action action);
+
+	/**
+	 * Return an array of the selected nodes in the tree. This is guaranteed
+	 * to be non-null.
+	 * 
+	 * @return	Array of nodes in the tree.
+	 */
+	ObjectTreeNode[] getSelectedNodes();
+
+	/**
+	 * Return an array of the currently selected database
+	 * objects. This is guaranteed to be non-null.
+	 *
+	 * @return	array of <TT>ObjectTreeNode</TT> objects.
+	 */
+	IDatabaseObjectInfo[] getSelectedDatabaseObjects();
+
+	/**
+	 * Refresh the object tree.
+	 */
+	void refresh();
 }
