@@ -15,6 +15,7 @@ import java.awt.Color;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 
 import java.util.HashMap;
 
@@ -22,6 +23,9 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DefaultColumn
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 
 /**
  * @author gwg
@@ -45,8 +49,19 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
  */
 public class CellComponentFactory {
 
-	/* map of existing DataType objects for each column */
+	/* map of existing DataType objects for each column.
+	 * The key is the ColumnDisplayDefinition object, and the value
+	 * is the DataTypeObject for that column's data type.
+	 */
 	static HashMap _colDataTypeObjects = new HashMap();
+	
+	/* map of DBMS-specific registered data handlers.
+	 * The key is a string of the form:
+	 *   <SQL type as a string>:<SQL type name>
+	 * and the value is the fully-qualified name of the class
+	 * for the DataTypeObject for that type.
+	 */
+	 static HashMap _registeredDataTypes = new HashMap();
 
 	/* The current JTable that we are working with.
 	 * This is used only to see when the user moves
@@ -54,6 +69,9 @@ public class CellComponentFactory {
 	 * the HashMap of DataTypeObjects.
 	 */
 	static JTable _table = null;
+	
+	/* logging mechanism for errors */
+	static private ILogger s_log = LoggerController.createLogger(CellComponentFactory.class);
 	
 	/**
 	 * Return the name of the Java class that is used to represent
@@ -432,6 +450,37 @@ public class CellComponentFactory {
 		// let DataType object speak for itself
 		dataTypeObject.exportObject(outStream, text);	 		
 	 }
+	
+	
+	/*
+	 * Method for registering a DataTypeObject handler for a non-standard
+	 * SQL type (or overridding a standard handler).
+	 */
+	 public static void registerDataType(
+	 	String dataTypeObjectName, int sqlType, String sqlTypeName)
+	 	throws ClassNotFoundException
+	 {
+	 	String typeName = Integer.toString(sqlType) + ":" + sqlTypeName;
+	 	
+	 	// check that the named class exists and has the right constructor available
+	 	
+	 	try {
+	 		// create an instance of the class for the handler object
+			Class handlerClass = Class.forName(dataTypeObjectName);
+				
+			// get the constructor for the object that uses the two class types
+			// that we will use when creating the instance in getDataTypeObject
+			Class[] constClasses =
+				{new JTable().getClass(), new ColumnDisplayDefinition(0,"").getClass()};
+			Constructor handlerConst = handlerClass.getConstructor(constClasses);
+				
+			// if we get here without any problem then we are ok
+	 		_registeredDataTypes.put(typeName, dataTypeObjectName);
+	 	}
+	 	catch (Exception e) {
+	 		throw new ClassNotFoundException("Could not locate class "+dataTypeObjectName);
+	 	}
+	 }
 
 
 
@@ -463,8 +512,8 @@ public class CellComponentFactory {
 	 * or does an operation requireing a static method call (e.g. validateAndConvert).
 	 */
 	private static IDataTypeComponent getDataTypeObject(
-		JTable table,ColumnDisplayDefinition colDef) {
-			
+		JTable table, ColumnDisplayDefinition colDef) {
+		
 
 		// keep a hash table of the column objects
 		// so we can reuse them.
@@ -475,12 +524,48 @@ public class CellComponentFactory {
 		}
 		if (_colDataTypeObjects.containsKey(colDef))
 			return (IDataTypeComponent)_colDataTypeObjects.get(colDef);
+		
 
 		// we have not already created a DataType object for this column
 		// so do that now and save it
 		IDataTypeComponent dataTypeComponent = null;
-			
-		switch (colDef.getSqlType())
+		
+		// look to see if this column's data type has a plugin-supplied
+		// DataTypeObject handler.
+		if (_registeredDataTypes.size() > 0) {
+			// there is at least one registered handler
+			String typeName = Integer.toString(colDef.getSqlType()) + ":" + colDef.getSqlTypeName();
+			if (_registeredDataTypes.containsKey(typeName)) {
+				String handlerClassName = (String)_registeredDataTypes.get(typeName);
+				
+				// We really should not run into any problems here because
+				// we checked when the handler was registered that the class
+				// exists and has an appropriate constructor.
+				try {
+					// create an instance of the class for the handler object
+					Class handlerClass = Class.forName(handlerClassName);
+				
+					// get the constructor for the object (the table may be null)
+					Class[] constClasses =
+						{Class.forName("java.swing.JTable"), colDef.getClass()};
+					Constructor handlerConst = handlerClass.getConstructor(constClasses);
+				
+					// create an instance
+					Object[] args = {table, colDef};
+					dataTypeComponent = (IDataTypeComponent)handlerConst.newInstance(args);
+				}
+				catch (Exception e) {
+					// since all errors are reported to the plugin during
+					// application startup, just continue here.
+					s_log.warn("Could not find handler class named "+handlerClassName, e);
+				}
+			}
+		}
+
+		// Use the standard SQL type code to get the right handler
+		// for this data type.
+		if (dataTypeComponent == null) {	
+			switch (colDef.getSqlType())
 			{
 				case Types.NULL:	// should never happen
 					//??
@@ -577,6 +662,7 @@ public class CellComponentFactory {
 					dataTypeComponent = new DataTypeUnknown(table, colDef);
 
 			}
+		}
 
 		// remember this DataType object so we can reuse it
 		_colDataTypeObjects.put(colDef, dataTypeComponent);
