@@ -1,6 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.syntax;
 
-import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
