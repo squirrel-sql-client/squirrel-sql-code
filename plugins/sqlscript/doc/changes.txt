@@ -1,5 +1,7 @@
 Change Log
 ==========
+
+- Bug #779866 Create table on JDBC-ODBC Bridge: Works a bit better now. But the driver is to bad to really work.
 - Toolbar buttons for saving and loading scripts
 - Read statement deliniter from preferences
 - Numeric columns scripted with the right decim

@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
  */
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.SQLException;
 import java.util.Vector;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -62,7 +63,13 @@ public class CreateTableScriptCommand implements ICommand {
 				IObjectTreeAPI api = _session.getObjectTreeAPI(_plugin);
                 IDatabaseObjectInfo[] dbObjs = api.getSelectedDatabaseObjects();
 
-                for (int k = 0; k < dbObjs.length; k++) {
+               boolean isJdbcOdbc = conn.getSQLMetaData().getJDBCMetaData().getURL().startsWith("jdbc:odbc:");
+               if(isJdbcOdbc)
+               {
+                  _session.getMessageHandler().showErrorMessage("JDBC-ODBC Bridge doesn't provide necessary meta data. Script will be incomplete");
+               }
+
+               for (int k = 0; k < dbObjs.length; k++) {
                     if (dbObjs[k] instanceof ITableInfo) {
                         ITableInfo ti = (ITableInfo) dbObjs[k];
 
@@ -72,23 +79,31 @@ public class CreateTableScriptCommand implements ICommand {
                         sbScript.append("\n(");
 
                         Vector pks = new Vector();
-                        ResultSet rsPks = conn.getSQLMetaData().getPrimaryKeys(ti);
-                        //					String sPkName = "";
-                        while (rsPks.next()) {
-                            //						sPkName = rsPks.getString(6);
-                            int iKeySeq = rsPks.getInt(5) - 1;
-                            if (pks.size() <= iKeySeq)
-                                pks.setSize(iKeySeq + 1);
-                            pks.set(iKeySeq, rsPks.getString(4));
-                        }
-                        rsPks.close();
+                       if(false == isJdbcOdbc)
+                       {
+                          ResultSet rsPks = null;
+                             rsPks = conn.getSQLMetaData().getPrimaryKeys(ti);
+                             //					String sPkName = "";
+                             while (rsPks.next()) {
+                                 //						sPkName = rsPks.getString(6);
+                                 int iKeySeq = rsPks.getInt(5) - 1;
+                                 if (pks.size() <= iKeySeq)
+                                     pks.setSize(iKeySeq + 1);
+                                 pks.set(iKeySeq, rsPks.getString(4));
+                             }
+                          rsPks.close();
+                       }
                         ResultSet rsColumns = conn.getSQLMetaData().getColumns(ti);
                         while (rsColumns.next()) {
 
-                            int decimalDigits = rsColumns.getInt(9);
-                            String decimalDigitsString = 0 == decimalDigits ? "" : "," + decimalDigits;
+                            String decimalDigitsString = "";
+                           if (false == isJdbcOdbc)
+                           {
+                              int decimalDigits = rsColumns.getInt(9);
+                              decimalDigitsString = 0 == decimalDigits ? "" : "," + decimalDigits;
+                           }
 
-                            String sColumnName = rsColumns.getString(4);
+                           String sColumnName = rsColumns.getString(4);
                             sbScript.append("\n\t");
                             sbScript.append(sColumnName);
                             sbScript.append(" ");
@@ -155,6 +170,7 @@ public class CreateTableScriptCommand implements ICommand {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             _session.getMessageHandler().showErrorMessage(e);
         }
 //        _session.setEntireSQLScript(sbScript.toString());
