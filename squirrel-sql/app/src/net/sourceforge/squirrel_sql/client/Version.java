@@ -24,7 +24,7 @@ package net.sourceforge.squirrel_sql.client;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class Version {
-    private static final String APP_NAME = "Squirrel SQL Client";
+    private static final String APP_NAME = "SQuirreL SQL Client";
     private static final int MAJOR_VERSION = 1;
     private static final int MINOR_VERSION = 1;
     private static final String TYPE = "alpha";
