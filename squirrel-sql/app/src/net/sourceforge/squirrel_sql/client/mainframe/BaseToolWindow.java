@@ -45,9 +45,11 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
 
-abstract class BaseToolWindow extends BaseSheet {
+abstract class BaseToolWindow extends BaseSheet
+{
 
-	protected interface IUserInterfaceFactory {
+	protected interface IUserInterfaceFactory
+	{
 		ToolBar getToolBar();
 		BasePopupMenu getPopupMenu();
 		JList getList();
@@ -75,12 +77,14 @@ abstract class BaseToolWindow extends BaseSheet {
 	private boolean _hasBeenSized = false;
 
 	public BaseToolWindow(IApplication app, IUserInterfaceFactory uiFactory)
-			throws IllegalArgumentException {
+	{
 		super("", true);
-		if (app == null) {
+		if (app == null)
+		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
-		if (uiFactory == null) {
+		if (uiFactory == null)
+		{
 			throw new IllegalArgumentException("Null IUserInterfaceFactory passed");
 		}
 		_app = app;
@@ -89,16 +93,33 @@ abstract class BaseToolWindow extends BaseSheet {
 		createUserInterface();
 	}
 
-	public void updateUI() {
+	public void updateUI()
+	{
 		super.updateUI();
-		if (_hasBeenBuilt) {
+		if (_hasBeenBuilt)
+		{
 			_hasBeenSized = false;
 			privateResize();
 		}
 	}
 
-	protected IUserInterfaceFactory getUserInterfaceFactory() {
+	protected IUserInterfaceFactory getUserInterfaceFactory()
+	{
 		return _uiFactory;
+	}
+
+	protected void setToolBar(ToolBar tb)
+	{
+		final Container content = getContentPane();
+		if (_toolBar != null)
+		{
+			content.remove(_toolBar);
+		}
+		if (tb != null)
+		{
+			content.add(tb, BorderLayout.NORTH);
+		}
+		_toolBar = tb;
 	}
 
 	/**
@@ -107,28 +128,38 @@ abstract class BaseToolWindow extends BaseSheet {
 	 *
 	 * @param   evt	 The mouse event being processed.
 	 */
-	private void mousePress(MouseEvent evt) {
-		if (evt.isPopupTrigger()) {
-			if (_popupMenu == null) {
+	private void mousePress(MouseEvent evt)
+	{
+		if (evt.isPopupTrigger())
+		{
+			if (_popupMenu == null)
+			{
 				_popupMenu = _uiFactory.getPopupMenu();
 			}
 			_popupMenu.show(evt);
 		}
 	}
 
-	private void privateResize() {
-		if (!_hasBeenSized) {
-			_hasBeenSized = true;
-			Dimension windowSize = getSize();
-			int rqdWidth = _toolBar.getPreferredSize().width  + 15;
-			if (rqdWidth > windowSize.width) {
-				windowSize.width = rqdWidth;
-				setSize(windowSize);
+	private void privateResize()
+	{
+		if (!_hasBeenSized)
+		{
+			if (_toolBar != null)
+			{
+				_hasBeenSized = true;
+				Dimension windowSize = getSize();
+				int rqdWidth = _toolBar.getPreferredSize().width + 15;
+				if (rqdWidth > windowSize.width)
+				{
+					windowSize.width = rqdWidth;
+					setSize(windowSize);
+				}
 			}
 		}
 	}
 
-	private void createUserInterface() {
+	private void createUserInterface()
+	{
 		// This is a tool window.
 		GUIUtils.makeToolWindow(this, true);
 
@@ -136,19 +167,27 @@ abstract class BaseToolWindow extends BaseSheet {
 		final Container content = getContentPane();
 		content.setLayout(new BorderLayout());
 
-		// Put title and toolbar at top of window.
-		_toolBar = _uiFactory.getToolBar();
-		if (_toolBar != null) {
-			String title = _uiFactory.getWindowTitle();
-			if (title != null) {
-				final JLabel lbl = new JLabel(title, SwingConstants.CENTER);
-				lbl.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
-				_toolBar.add(lbl, 0);
-				_toolBar.add(new JToolBar.Separator(), 1);
-				setTitle(title);
-			}
-			content.add(_toolBar, BorderLayout.NORTH);
+		String title = _uiFactory.getWindowTitle();
+		if (title != null)
+		{
+			setTitle(title);
 		}
+
+		// Put toolbar at top of window.
+		setToolBar(_uiFactory.getToolBar());
+//		if (_toolBar != null)
+//		{
+//			String title = _uiFactory.getWindowTitle();
+//			if (title != null)
+//			{
+//				final JLabel lbl = new JLabel(title, SwingConstants.CENTER);
+//				lbl.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
+//				_toolBar.add(lbl, 0);
+//				_toolBar.add(new JToolBar.Separator(), 1);
+//				setTitle(title);
+//			}
+//			content.add(_toolBar, BorderLayout.NORTH);
+//		}
 
 		// The main list for window.
 		final JList list = _uiFactory.getList();
@@ -162,24 +201,34 @@ abstract class BaseToolWindow extends BaseSheet {
 		content.add(sp, BorderLayout.CENTER);
 
 		// Add mouse listener for displaying popup menu.
-		list.addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent evt) {
+		list.addMouseListener(new MouseAdapter()
+		{
+			public void mousePressed(MouseEvent evt)
+			{
 				mousePress(evt);
 			}
-			public void mouseReleased(MouseEvent evt) {
+			public void mouseReleased(MouseEvent evt)
+			{
 				mousePress(evt);
 			}
 		});
 
 		// Add a listener to handle doubleclick events in the list.
-		list.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent evt) {
-				if (evt.getClickCount() == 2) {
+		list.addMouseListener(new MouseAdapter()
+		{
+			public void mouseClicked(MouseEvent evt)
+			{
+				if (evt.getClickCount() == 2)
+				{
 					ICommand cmd = _uiFactory.getDoubleClickCommand();
-					if (cmd != null) {
-						try {
+					if (cmd != null)
+					{
+						try
+						{
 							cmd.execute();
-						} catch (BaseException ex) {
+						}
+						catch (BaseException ex)
+						{
 							s_log.error("Error occured executing doubleclick event", ex);
 						}
 					}
@@ -188,21 +237,26 @@ abstract class BaseToolWindow extends BaseSheet {
 		});
 
 		// Add listener to listen for items added/removed from list.
-		list.getModel().addListDataListener(new ListDataListener() {
-			public void intervalAdded(ListDataEvent evt) {
+		list.getModel().addListDataListener(new ListDataListener()
+		{
+			public void intervalAdded(ListDataEvent evt)
+			{
 				list.setSelectedIndex(evt.getIndex0()); // select the one just added.
 				_uiFactory.enableDisableActions();
 			}
-			public void intervalRemoved(ListDataEvent evt) {
+			public void intervalRemoved(ListDataEvent evt)
+			{
 				int nextIdx = evt.getIndex0();
 				int lastIdx = list.getModel().getSize() - 1;
-				if (nextIdx > lastIdx) {
+				if (nextIdx > lastIdx)
+				{
 					nextIdx = lastIdx;
 				}
 				list.setSelectedIndex(nextIdx);
 				_uiFactory.enableDisableActions();
 			}
-			public void contentsChanged(ListDataEvent evt) {
+			public void contentsChanged(ListDataEvent evt)
+			{
 			}
 		});
 
@@ -211,17 +265,21 @@ abstract class BaseToolWindow extends BaseSheet {
 		// There is a bug in JDK1.2 where internalFrameOpened() doesn't get
 		// called so we've used a workaround. The workaround doesn't work in
 		// JDK1.3.
-		addInternalFrameListener(new InternalFrameAdapter() {
+		addInternalFrameListener(new InternalFrameAdapter()
+		{
 			private boolean _hasBeenActivated = false;
-			public void internalFrameActivated(InternalFrameEvent evt) {
-				if (!_hasBeenActivated) {
+			public void internalFrameActivated(InternalFrameEvent evt)
+			{
+				if (!_hasBeenActivated)
+				{
 					_hasBeenActivated = true;
 					privateResize();
 				}
 				list.requestFocus();
 			}
 
-			public void internalFrameOpened(InternalFrameEvent evt) {
+			public void internalFrameOpened(InternalFrameEvent evt)
+			{
 				privateResize();
 			}
 
@@ -231,4 +289,3 @@ abstract class BaseToolWindow extends BaseSheet {
 
 	}
 }
-

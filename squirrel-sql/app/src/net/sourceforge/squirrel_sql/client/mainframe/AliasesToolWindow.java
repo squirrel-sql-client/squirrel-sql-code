@@ -17,11 +17,13 @@ package net.sourceforge.squirrel_sql.client.mainframe;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
-import java.awt.Component;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.SwingConstants;
 
 import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -31,12 +33,13 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.mainframe.action.CreateAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CopyAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CreateAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.DeleteAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyAliasAction;
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 
 public class AliasesToolWindow extends BaseToolWindow {
 	private IApplication _app;
@@ -56,12 +59,34 @@ public class AliasesToolWindow extends BaseToolWindow {
 		// Enable/disable actions depending on whether an item is selected in
 		// the list.
 		_uiFactory.enableDisableActions();
+
+		_app.getSquirrelPreferences().addPropertyChangeListener(new PropertyChangeListener()
+		{
+			public void propertyChange(PropertyChangeEvent evt)
+			{
+				final String propName = evt != null ? evt.getPropertyName() : null;
+				if (propName == null
+					|| propName.equals(SquirrelPreferences.IPropertyNames.SHOW_ALIASES_TOOL_BAR))
+				{
+					boolean show = _app.getSquirrelPreferences().getShowAliasesToolBar();
+					if (show)
+					{
+						_uiFactory.createToolBar();
+					}
+					else
+					{
+						_uiFactory._tb = null;
+					}
+					setToolBar(_uiFactory.getToolBar());
+				}
+			}
+		});
 	}
 
 	private static final class UserInterfaceFactory implements BaseToolWindow.IUserInterfaceFactory {
 		private IApplication _app;
 		private AliasesList _aliasesList;
-		private ToolBar _tb = new ToolBar();
+		private ToolBar _tb;
 		private BasePopupMenu _pm = new BasePopupMenu();
 		private AliasesToolWindow _tw;
 		private ConnectToAliasAction _connectToAliasAction;
@@ -80,15 +105,10 @@ public class AliasesToolWindow extends BaseToolWindow {
 
 			preloadActions();
 
-			_tb.setBorder(BorderFactory.createEtchedBorder());
-			_tb.setUseRolloverButtons(true);
-			_tb.setFloatable(false);
-			_tb.add(_connectToAliasAction);
-			_tb.addSeparator();
-			_tb.add(_createAliasAction);
-			_tb.add(_modifyAliasAction);
-			_tb.add(_copyAliasAction);
-			_tb.add(_deleteAliasAction);
+			if (_app.getSquirrelPreferences().getShowAliasesToolBar())
+			{
+				createToolBar();
+			}
 
 			_pm.add(_connectToAliasAction);
 			_pm.addSeparator();
@@ -98,6 +118,7 @@ public class AliasesToolWindow extends BaseToolWindow {
 			_pm.add(_copyAliasAction);
 			_pm.addSeparator();
 			_pm.add(_deleteAliasAction);
+
 		}
 
 		public ToolBar getToolBar() {
@@ -158,6 +179,26 @@ public class AliasesToolWindow extends BaseToolWindow {
 			actions.add(_copyAliasAction = new CopyAliasAction(_app, _aliasesList));
 			actions.add(_connectToAliasAction = new ConnectToAliasAction(_app, _aliasesList));
 			actions.add(_createAliasAction = new CreateAliasAction(_app));
+		}
+
+		private void createToolBar()
+		{
+			_tb = new ToolBar();
+			_tb.setBorder(BorderFactory.createEtchedBorder());
+			_tb.setUseRolloverButtons(true);
+			_tb.setFloatable(false);
+
+			final JLabel lbl = new JLabel(getWindowTitle(), SwingConstants.CENTER);
+			lbl.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
+			_tb.add(lbl, 0);
+			_tb.add(new ToolBar.Separator(), 1);
+
+			_tb.add(_connectToAliasAction);
+			_tb.addSeparator();
+			_tb.add(_createAliasAction);
+			_tb.add(_modifyAliasAction);
+			_tb.add(_copyAliasAction);
+			_tb.add(_deleteAliasAction);
 		}
 	}
 
