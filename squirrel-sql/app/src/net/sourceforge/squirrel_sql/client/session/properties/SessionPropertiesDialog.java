@@ -91,8 +91,6 @@ public class SessionPropertiesDialog extends JDialog {
         OkClosePanel btnsPnl = new OkClosePanel();
         btnsPnl.addListener(new MyOkCancelPanelListener());
 
-        btnsPnl.makeOKButtonDefault();
-
         final Container contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
 
@@ -110,6 +108,8 @@ public class SessionPropertiesDialog extends JDialog {
 
         contentPane.add(tabPane, BorderLayout.NORTH);
         contentPane.add(btnsPnl, BorderLayout.CENTER);
+
+        btnsPnl.makeOKButtonDefault();
 
         setResizable(false);
         setModal(true);
