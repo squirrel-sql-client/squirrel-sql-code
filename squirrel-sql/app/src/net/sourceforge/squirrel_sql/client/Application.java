@@ -172,11 +172,13 @@ class Application implements IApplication {
 		_pluginManager.unloadPlugins();
 		_prefs.save();
 		_cache.save();
-		//_logger.close();
+
 		if (_jdbcDebugOutput != null) {
 			_jdbcDebugOutput.close();
 			_jdbcDebugOutput = null;
 		}
+
+		_loggerFactory.shutdown();
 	}
 
 	public PluginManager getPluginManager() {

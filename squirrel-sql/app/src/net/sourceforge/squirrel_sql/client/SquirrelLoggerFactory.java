@@ -24,16 +24,15 @@ import org.apache.log4j.Category;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.PatternLayout;
 
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.ILoggerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.Log4jLogger;
-//import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.log.Log4jLoggerFactory;
 
-public class SquirrelLoggerFactory implements ILoggerFactory {
-//	private static ILogger s_log = LoggerController.createLogger(SquirrelLoggerFactory.class);
+public class SquirrelLoggerFactory extends Log4jLoggerFactory {
 
-	public SquirrelLoggerFactory(IApplication app) {
-		super();
+	public SquirrelLoggerFactory(IApplication app) throws IllegalArgumentException {
+		super(false);
+		if (app == null) {
+			throw new IllegalArgumentException("Null IApplication passed");
+		}
 		String logFileName = app.getApplicationFiles().getExecutionLogFile().getPath();
 		Category.getRoot().removeAllAppenders();
 		try {
@@ -42,16 +41,6 @@ public class SquirrelLoggerFactory implements ILoggerFactory {
 			BasicConfigurator.configure(fa);
 		} catch (IOException ex) {
 			BasicConfigurator.configure();
-		}
-	}
-
-	public ILogger createLogger(Class clazz) {
-		return new MyLogger(clazz);
-	}
-
-	private final static class MyLogger extends Log4jLogger {
-		MyLogger(Class clazz) {
-			super(clazz);
 		}
 	}
 }

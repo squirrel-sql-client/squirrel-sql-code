@@ -26,39 +26,12 @@ public class LoggerController {
 		s_factory = factory != null ? factory : new Log4jLoggerFactory();
 	}
 
-/*
-	public LoggerController(IApplication app) {
-		String logFileName = app.getApplicationFiles().getExecutionLogFile().getPath();
-		try {
-			FileAppender fa = new FileAppender(new PatternLayout(PatternLayout.TTCC_CONVERSION_PATTERN), logFileName);
-			fa.setFile(logFileName);
-			BasicConfigurator.configure(fa);
-		} catch (IOException ex) {
-			BasicConfigurator.configure();
-		}
-*/
-/*
-		ILogger log = createLogger(LoggerFactory.class);
-		log.info("=======================================================");
-		log.info("=======================================================");
-		log.info("=======================================================");
-		log.info(Version.getVersion() + " started: " + Calendar.getInstance().getTime());
-		log.info(Version.getCopyrightStatement());
-		log.info("java.vendor:       " + System.getProperty("java.vendor"));
-		log.info("java.version:      " + System.getProperty("java.version"));
-		log.info("java.runtime.name: " + System.getProperty("java.runtime.name"));
-		log.info("os.name:           " + System.getProperty("os.name"));
-		log.info("os.version:        " + System.getProperty("os.version"));
-		log.info("os.arch:           " + System.getProperty("os.arch"));
-		log.info("user.dir:          " + System.getProperty("user.dir"));
-		log.info("user.home:         " + System.getProperty("user.home"));
-		log.info("java.home:         " + System.getProperty("java.home"));
-		log.info("java.class.path:   " + System.getProperty("java.class.path"));
-*/
-	//}
-
 	public static ILogger createLogger(Class clazz) {
 		return s_factory.createLogger(clazz);
+	}
+
+	public static void shutdown() {
+		s_factory.shutdown();
 	}
 }
 

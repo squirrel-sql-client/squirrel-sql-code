@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.fw.util.log;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 public interface ILoggerFactory {
-	public ILogger createLogger(Class clazz);
+	ILogger createLogger(Class clazz);
+	void shutdown();
 }
 

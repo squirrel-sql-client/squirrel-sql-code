@@ -18,15 +18,27 @@ package net.sourceforge.squirrel_sql.fw.util.log;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Category;
 
 public class Log4jLoggerFactory implements ILoggerFactory {
+
 	public Log4jLoggerFactory() {
+		this(true);
+	}
+
+	public Log4jLoggerFactory(boolean doBasicConfig) {
 		super();
-		BasicConfigurator.configure();
+		if (doBasicConfig) {
+			BasicConfigurator.configure();
+		}
 	}
 
 	public ILogger createLogger(Class clazz) {
 		return new Log4jLogger(clazz);
+	}
+
+	public void shutdown() {
+		Category.shutdown();
 	}
 }
 
