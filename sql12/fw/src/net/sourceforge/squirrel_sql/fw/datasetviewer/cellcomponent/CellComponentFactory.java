@@ -114,7 +114,7 @@ public class CellComponentFactory {
 			textField = dataTypeObject.getJTextField();
 		else textField = new RestorableJTextField();
 		
-		textField.setBackground(Color.YELLOW);
+		textField.setBackground(Color.yellow);
 		ed = new DefaultCellEditor(textField);
 
 		ed.setClickCountToStart(1);
