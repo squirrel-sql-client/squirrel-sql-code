@@ -32,6 +32,7 @@ import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
@@ -48,9 +49,9 @@ import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.session.BaseSessionSheet;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.SessionInternalFrame;
-import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.client.session.properties.EditWhereColsSheet;
@@ -355,7 +356,25 @@ public class WindowManager
 		{
 			throw new IllegalArgumentException("ISession == null");
 		}
-		return new SessionInternalFrame(session);
+
+		final SessionInternalFrame sif = new SessionInternalFrame(session);
+
+		session.setSessionSheet(sif.getSessionPanel());
+		_app.getPluginManager().sessionStarted(session);
+		_app.getMainFrame().addInternalFrame(sif, true, null);
+
+		// If we don't invokeLater here no Short-Cut-Key is sent
+		// to the internal frame
+		// seen under java version "1.4.1_01" and Linux
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				sif.setVisible(true);
+			}
+		});
+
+		return sif;
 	}
 
 	/**
@@ -372,7 +391,52 @@ public class WindowManager
 		{
 			throw new IllegalArgumentException("ISession == null");
 		}
-		return new SQLInternalFrame(session);
+		final SQLInternalFrame sif = new SQLInternalFrame(session);
+		getMainFrame().addInternalFrame(sif, true, null);
+
+		// If we don't invokeLater here no Short-Cut-Key is sent
+		// to the internal frame
+		// seen under java version "1.4.1_01" and Linux
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				sif.setVisible(true);
+			}
+		});
+
+		return sif;
+	}
+
+	/**
+	 * Creates a new Object Tree internal frame for the passed session.
+	 *
+	 * @param	session		Session we are creating internal frame for.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if ISession is passed as null.
+	 */
+	public synchronized ObjectTreeInternalFrame createObjectTreeInternalFrame(ISession session)
+	{
+		if (session == null)
+		{
+			throw new IllegalArgumentException("ISession == null");
+		}
+		final ObjectTreeInternalFrame oif = new ObjectTreeInternalFrame(session);
+		getMainFrame().addInternalFrame(oif, true, null);
+
+		// If we don't invokeLater here no Short-Cut-Key is sent
+		// to the internal frame
+		// seen under java version "1.4.1_01" and Linux
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				oif.setVisible(true);
+			}
+		});
+
+		return oif;
 	}
 
 	/**

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 /*
- * Copyright (C) 2003 Colin Bell
+ * Copyright (C) 2003-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -18,6 +18,10 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.event.ActionEvent;
+
+import javax.swing.JInternalFrame;
+
+import net.sourceforge.squirrel_sql.fw.gui.action.SelectInternalFrameCommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
@@ -45,13 +49,24 @@ public class PreviousSessionAction extends SquirrelAction
 
 	public void actionPerformed(ActionEvent evt)
 	{
-		if (_session != null)
+		final IApplication app = getApplication();
+		ISession nextSession = null;
+		if (_session == null)
 		{
-// JASON: TODO
-//			final IApplication app = getApplication();
-//			final ISession prevSession = app.getSessionManager().getPreviousSession(_session);
-//			final JInternalFrame sif = app.getSessionWindowManager().getInternalFrame(prevSession);
-//			new SelectInternalFrameCommand(sif).execute();
+			final ISession[] sessions = app.getSessionManager().getConnectedSessions();
+			if (sessions != null && sessions.length > 0)
+			{
+				nextSession = sessions[0]; // First session.
+			}
+		}
+		else
+		{
+			nextSession = app.getSessionManager().getNextSession(_session);
+		}
+		if (nextSession != null)
+		{
+			final JInternalFrame sif = app.getWindowManager().getMainInternalFrame(nextSession);
+			new SelectInternalFrameCommand(sif).execute();
 		}
 	}
 }

@@ -49,11 +49,22 @@ public class NextSessionAction extends SquirrelAction
 
 	public void actionPerformed(ActionEvent evt)
 	{
-		if (_session != null)
+		final IApplication app = getApplication();
+		ISession nextSession = null;
+		if (_session == null)
 		{
-// JASON: TODO
-			final IApplication app = getApplication();
-			final ISession nextSession = app.getSessionManager().getNextSession(_session);
+			final ISession[] sessions = app.getSessionManager().getConnectedSessions();
+			if (sessions != null && sessions.length > 0)
+			{
+				nextSession = sessions[sessions.length - 1]; // Last session.
+			}
+		}
+		else
+		{
+			nextSession = app.getSessionManager().getNextSession(_session);
+		}
+		if (nextSession != null)
+		{
 			final JInternalFrame sif = app.getWindowManager().getMainInternalFrame(nextSession);
 			new SelectInternalFrameCommand(sif).execute();
 		}

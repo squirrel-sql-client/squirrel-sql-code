@@ -18,13 +18,10 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.event.ActionEvent;
-import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.ObjectTreeInternalFrame;
 /**
  * This <CODE>Action</CODE> displays a new Object Tree sheet.
  *
@@ -35,9 +32,9 @@ public class NewObjectTreeAction extends SquirrelAction
 	/**
 	 * Ctor.
 	 *
-	 * @param   app	 Application API.
+	 * @param	app	 Application API.
 	 *
-	 * @throws  IllegalArgumentException
+	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> passed.
 	 */
 	public NewObjectTreeAction(IApplication app)
@@ -52,29 +49,18 @@ public class NewObjectTreeAction extends SquirrelAction
 	/**
 	 * Display the tree.
 	 *
-	 * @param   evt	 The event being processed.
+	 * @param	evt	 The event being processed.
 	 */
 	public void actionPerformed(ActionEvent evt)
 	{
-		ISession activeSession = getApplication().getSessionManager().getActiveSession();
+		final IApplication app = getApplication();
+		final ISession activeSession = app.getSessionManager().getActiveSession();
 		if (activeSession == null)
 		{
 			throw new IllegalArgumentException(
 					"This method should not be called with a null activeSession");
 		}
 
-		final ObjectTreeInternalFrame sif = new ObjectTreeInternalFrame(activeSession);
-		getApplication().getMainFrame().addInternalFrame(sif, true, null);
-
-		// If we don't invokeLater here no Short-Cut-Key is sent
-		// to the internal frame
-		// seen under java version "1.4.1_01" and Linux
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
-				sif.setVisible(true);
-			}
-		});
+		app.getWindowManager().createObjectTreeInternalFrame(activeSession);
 	}
 }

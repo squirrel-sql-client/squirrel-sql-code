@@ -538,6 +538,7 @@ public class MainFrame extends JFrame //BaseMDIParentFrame
 		{
 			throw new IllegalArgumentException("Null JInternalFrame added");
 		}
+
 		_desktop.add(child);
 		if (!GUIUtils.isToolWindow(child))
 		{

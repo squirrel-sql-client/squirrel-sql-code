@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -21,6 +21,8 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.JInternalFrame;
 /**
+ * TODO: Rename to BaseInternalFrame
+ *
  * Base functionality for Squirrels internal frames.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>

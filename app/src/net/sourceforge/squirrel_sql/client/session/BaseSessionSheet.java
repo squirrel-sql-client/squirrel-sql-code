@@ -25,7 +25,9 @@ import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
  * Base functionality for Squirrels internal frames that are attached directly
  * to a session.
  *
- * @author  <A HREF="mailto:jmheight@users.sourceforge.net">Jason Height</A>
+ * TODO: Rename to BaseSessionInternalFrame
+ *
+ * @author <A HREF="mailto:jmheight@users.sourceforge.net">Jason Height</A>
  */
 public class BaseSessionSheet extends BaseSheet
 {

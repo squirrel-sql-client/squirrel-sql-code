@@ -32,7 +32,6 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
@@ -51,9 +50,6 @@ public class SQLInternalFrame extends BaseSessionSheet
 	/** Application API. */
 	private final IApplication _app;
 
-	/** ID of the session for this window. */
-	private IIdentifier _sessionId;
-
 	private SQLPanel _sqlPanel;
 	/** Toolbar for window. */
 	private SQLToolBar _toolBar;
@@ -62,7 +58,6 @@ public class SQLInternalFrame extends BaseSessionSheet
 	{
 		super(session, session.getTitle(), true, true, true, true);
 		_app = session.getApplication();
-		_sessionId = session.getIdentifier();
 		setVisible(false);
 		createGUI(session);
 		addInternalFrameListener(new SQLActionEnabler());

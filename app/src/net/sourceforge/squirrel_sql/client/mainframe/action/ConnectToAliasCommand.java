@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001-2003 Colin Bell and Johan Compagner
+ * Copyright (C) 2001-2004 Colin Bell and Johan Compagner
  * colbell@users.sourceforge.net
  * jcompagner@j-com.nl
  *
@@ -40,7 +40,6 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.db.ConnectionSheet;
 import net.sourceforge.squirrel_sql.client.db.ConnectionSheet.IConnectionSheetHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
 /**
  * This <CODE>ICommand</CODE> allows the user to connect to
@@ -444,22 +443,7 @@ public class ConnectToAliasCommand implements ICommand
 			try
 			{
 				app.getPluginManager().sessionCreated(_session);
-				final SessionInternalFrame child = app.getWindowManager().createInternalFrame(_session);
-				_session.setSessionSheet(child.getSessionPanel());
-				app.getPluginManager().sessionStarted(_session);
-				app.getMainFrame().addInternalFrame(child, true, null);
-
-				// If we don't invokeLater here no Short-Cut-Key is sent
-				// to the internal frame
-				// seen under java version "1.4.1_01" and Linux
-				SwingUtilities.invokeLater(new Runnable()
-				{
-					public void run()
-					{
-						child.setVisible(true);
-					}
-				});
-
+				app.getWindowManager().createInternalFrame(_session);
 				_connSheet.executed(true);
 			}
 			catch (Throwable th)

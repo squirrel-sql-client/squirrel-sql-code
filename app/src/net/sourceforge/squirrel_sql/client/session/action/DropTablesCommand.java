@@ -23,12 +23,11 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
-import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 /**
- * @version 	$Id: DropTablesCommand.java,v 1.5 2004-08-16 07:07:42 colbell Exp $
+ * @version 	$Id: DropTablesCommand.java,v 1.6 2004-08-18 12:10:43 colbell Exp $
  * @author		Johan Compagner
  */
 public class DropTablesCommand implements ICommand
@@ -85,7 +84,6 @@ public class DropTablesCommand implements ICommand
 				.append(" ")
 				.append('\n');
 		}
-		final IPlugin plugin = _session.getApplication().getDummyAppPlugin();
 
 		// Execute the sql synchronously
 		SQLExecuterTask executer = new SQLExecuterTask(_session, buf.toString(),
