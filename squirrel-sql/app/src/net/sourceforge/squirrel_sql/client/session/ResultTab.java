@@ -153,6 +153,18 @@ public class ResultTab extends JPanel {
 		return _currentSqlLbl.getText();
 	}
 
+
+	/**
+	 * Return the data model for the results of the executed
+	 * SQL statement.
+	 * 
+	 * @return	the data model for the results of the executed
+	 * 			SQL statement.
+	 */
+	public IDataSetModel getResultSetDataModel() {
+		return _resultSetModel;
+	}
+
 	private class MyPropertiesListener implements PropertyChangeListener {
 		private boolean _listening = true;
 

@@ -34,6 +34,8 @@ import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.client.session.DefaultSQLEntryPanelFactory;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 
 /**
@@ -86,6 +88,20 @@ public interface IApplication {
 	 * @return the application files object.
 	 */
 	public ApplicationFiles getApplicationFiles();
+
+	/**
+	 * Return the factory object used to create the SQL entry panel.
+	 * 
+	 * @return	the factory object used to create the SQL entry panel.
+	 */
+	public ISQLEntryPanelFactory getSQLEntryPanelFactory();
+
+	/**
+	 * Set the factory object used to create the SQL entry panel.
+	 * 
+	 * @param	factory	the factory object used to create the SQL entry panel.
+	 */
+	public void setSQLEntryPanelFactory(ISQLEntryPanelFactory factory);
 
 	/**
 	 * Add a hierarchical menu to a menu.

@@ -40,6 +40,8 @@ import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.client.session.DefaultSQLEntryPanelFactory;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.client.util.SplashScreen;
 import net.sourceforge.squirrel_sql.client.util.SquirrelLogger;
@@ -77,6 +79,9 @@ class Application implements IApplication {
     
     /** Thread pool for long running tasks. */
     private TaskThreadPool _threadPool = new TaskThreadPool();
+    
+    /** Factory used to create SQL entry panels. */
+    private ISQLEntryPanelFactory _sqlEntryFactory = new DefaultSQLEntryPanelFactory();
 
     /**
      * ctor.
@@ -224,6 +229,24 @@ class Application implements IApplication {
 	 */
 	public ApplicationFiles getApplicationFiles() {
 		return _appFiles;
+	}
+
+	/**
+	 * Return the factory object used to create the SQL entry panel.
+	 * 
+	 * @return	the factory object used to create the SQL entry panel.
+	 */
+	public ISQLEntryPanelFactory getSQLEntryPanelFactory() {
+		return _sqlEntryFactory;
+	}
+
+	/**
+	 * Set the factory object used to create the SQL entry panel.
+	 * 
+	 * @param	factory	the factory object used to create the SQL entry panel.
+	 */
+	public void setSQLEntryPanelFactory(ISQLEntryPanelFactory factory) {
+		_sqlEntryFactory = factory != null ? factory : new DefaultSQLEntryPanelFactory();
 	}
 
     public synchronized void addToMenu(int menuId, JMenu menu) {

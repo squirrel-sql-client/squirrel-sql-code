@@ -38,6 +38,7 @@ import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.objectstree.DatabasePanel;
 import net.sourceforge.squirrel_sql.client.session.objectstree.ProcedurePanel;
@@ -286,13 +287,13 @@ class Session implements ISession {
 	/**
 	 * Add a listener listening for SQL Execution.
 	 *
-	 * @param   lis	 Listener
+	 * @param	lis	 Listener
 	 *
-	 * @throws  IllegalArgumentException
-	 *			  If a null <TT>ISQLExecutionListener</TT> passed.
+	 * @throws	IllegalArgumentException
+	 *			If a null <TT>ISQLExecutionListener</TT> passed.
 	 */
 	public void addSQLExecutionListener(ISQLExecutionListener lis)
-		throws IllegalArgumentException {
+			throws IllegalArgumentException {
 		if (lis == null) {
 			throw new IllegalArgumentException("null ISQLExecutionListener passed");
 		}
@@ -302,17 +303,43 @@ class Session implements ISession {
 	/**
 	 * Remove an SQL execution listener.
 	 *
-	 * @param   lis	 Listener
+	 * @param	lis	 Listener
 	 *
-	 * @throws  IllegalArgumentException
-	 *			  If a null <TT>ISQLExecutionListener</TT> passed.
+	 * @throws	IllegalArgumentException
+	 *			If a null <TT>ISQLExecutionListener</TT> passed.
 	 */
 	public void removeSQLExecutionListener(ISQLExecutionListener lis)
-		throws IllegalArgumentException {
+			throws IllegalArgumentException {
 		if (lis == null) {
 			throw new IllegalArgumentException("null ISQLExecutionListener passed");
 		}
 		_sessionSheet.getSQLPanel().removeSQLExecutionListener(lis);
+	}
+
+	/**
+	 * Add a listener for events in this sessions result tabs.
+	 * 
+	 * @param	lis		The listener.
+	 */
+	public void addResultTabListener(IResultTabListener lis)
+			throws IllegalArgumentException {
+		if (lis == null) {
+			throw new IllegalArgumentException("null IResultTabListener passed");
+		}
+		_sessionSheet.getSQLPanel().addResultTabListener(lis);
+	}
+
+	/**
+	 * Remove a listener for events in this sessions result tabs.
+	 * 
+	 * @param	lis		The listener.
+	 */
+	public void removeResultTabListener(IResultTabListener lis)
+			throws IllegalArgumentException {
+		if (lis == null) {
+			throw new IllegalArgumentException("null IResultTabListener passed");
+		}
+		_sessionSheet.getSQLPanel().removeResultTabListener(lis);
 	}
 
 	/**

@@ -32,6 +32,7 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
+import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.objectstree.DatabaseNode;
 import net.sourceforge.squirrel_sql.client.session.objectstree.ProcedureNode;
@@ -168,6 +169,20 @@ public interface ISession extends IHasIdentifier {
 	 * Rollback the current SQL transaction.
 	 */
 	void rollback();
+
+	/**
+	 * Add a listener for events in this sessions result tabs.
+	 * 
+	 * @param	lis		The listener.
+	 */
+	void addResultTabListener(IResultTabListener lis);
+
+	/**
+	 * Remove a listener for events in this sessions result tabs.
+	 * 
+	 * @param	lis		The listener.
+	 */
+	void removeResultTabListener(IResultTabListener lis);
 
 	/**
 	 * Add a tab to the main tabbed panel.
