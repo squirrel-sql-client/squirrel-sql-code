@@ -32,14 +32,20 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
  */
 public class SquirrelAppender extends DailyRollingFileAppender
 {
+	/**
+	 * Default ctor.
+	 */
 	public SquirrelAppender() throws IOException
 	{
-		super(
-			new PatternLayout("%-4r [%t] %-5p %c %x - %m%n"),
-			getLogFile().getAbsolutePath(),
-			"'.'yyyy-ww");
+		super(new PatternLayout("%-4r [%t] %-5p %c %x - %m%n"),
+				getLogFile().getAbsolutePath(), "'.'yyyy-ww");
 	}
 
+	/**
+	 * Retrieve the file to write the execution log to.
+	 * 
+	 * @return		File to write execution log to.
+	 */
 	private static File getLogFile()
 	{
 		final File logFile = new ApplicationFiles().getExecutionLogFile();
