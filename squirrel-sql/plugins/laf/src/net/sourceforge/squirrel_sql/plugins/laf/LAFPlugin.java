@@ -105,7 +105,7 @@ public class LAFPlugin extends DefaultPlugin {
         // Folder within plugins folder that belongs to this
         // plugin.
         try {
-            _pluginAppFolder = pmgr.getPluginAppSettingsFolder(this);
+            _pluginAppFolder = getPluginAppSettingsFolder();
         } catch (IOException ex) {
             throw new PluginException(ex);
         }
@@ -125,7 +125,7 @@ public class LAFPlugin extends DefaultPlugin {
 
         // Folder to store user settings.
         try {
-            _userSettingsFolder = pmgr.getPluginUserSettingsFolder(this);
+            _userSettingsFolder = getPluginUserSettingsFolder();
         } catch (IOException ex) {
             throw new PluginException(ex);
         }

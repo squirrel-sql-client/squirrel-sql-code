@@ -65,7 +65,7 @@ public class SavedQueriesPlugin extends DefaultPlugin {
         super.initialize();
         IApplication app = getApplication();
         try {
-            _cache = new FoldersCache(app, app.getPluginManager().getPluginUserSettingsFolder(this));
+            _cache = new FoldersCache(app, getPluginUserSettingsFolder());
         } catch (IOException ex) {
             throw new PluginException(ex);
         }

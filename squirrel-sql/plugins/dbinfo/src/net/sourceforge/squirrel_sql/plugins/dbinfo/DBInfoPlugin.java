@@ -46,9 +46,6 @@ public class DBInfoPlugin extends DefaultSessionPlugin {
     /** This plugins resources. */
     private PluginResources _resources;
 
-    /** App folder for this plugin. */
-    private File _pluginAppFolder;
-
     /** Folder DBInfo stores XML files. */
     private File _dataFolder;
 
@@ -98,16 +95,12 @@ public class DBInfoPlugin extends DefaultSessionPlugin {
 
         createActions();
 
-        // Folder within plugins folder that belongs to this
-        // plugin.
-        try {
-            _pluginAppFolder = getApplication().getPluginManager().getPluginAppSettingsFolder(this);
-        } catch (IOException ex) {
-            throw new PluginException(ex);
-        }
-
         // Folder that stores data files.
-        _dataFolder = new File(_pluginAppFolder, "data");
+        try {
+	        _dataFolder = new File(getPluginAppSettingsFolder(), "data");
+        } catch (IOException ex) {
+        	throw new PluginException(ex);
+        }
         if (!_dataFolder.exists()) {
             _dataFolder.mkdir();
         }
