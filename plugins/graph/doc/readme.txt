@@ -14,6 +14,14 @@ Graphs can be saved via right mouse click on the backround panel.
 Saved graphs will be loaded automatically when you open the session
 next time.
 
+You may print graphs. To do so choose the the Zoom/Print item in the
+right mouse click menu of the graph pane. A tool bar on the bottom of
+the pane will appear. The right side slider in the toolbar allows you
+to zoom the graph. The left slider allows you to zoom the paper edges
+if the paper edges check box is checked. Both sliders enable you to arrange
+your Graph on paper sheets in a WYSIWYG way. There are some predefined paper
+formats and you are able to configure formats yourself.
+
 INSTALLATION HINTS:
 
 The plugin requires JDK 1.4.x
