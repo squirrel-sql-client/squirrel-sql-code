@@ -1,8 +1,0 @@
-#!/bin/sh
-###############################################################################
-
-JYTHON_HOME=`dirname $0`
-
-exec java -Dpython.home=$JYTHON_HOME \
-    -classpath "$JYTHON_HOME/jython.jar:$CLASSPATH" \
-    org.python.util.jython "$@"
