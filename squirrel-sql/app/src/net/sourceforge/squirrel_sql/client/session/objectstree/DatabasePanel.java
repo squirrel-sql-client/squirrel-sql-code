@@ -59,21 +59,30 @@ public class DatabasePanel extends JTabbedPane {
 
 	/** Current session. */
 	private ISession _session;
-	
+
 	/**
 	 * Collection of <TT>IDatabasePanelTab</TT> objects displayed in
 	 * this tabbed panel.
 	 */
 	private List _tabs = new ArrayList();
 
-	/** Listens to changes in <CODE>_props</CODE>. */
+	/** Listens to changes in session properties. */
 	private MyPropertiesListener _propsListener;
 
 	/**
-	 * ctor specifying the properties for this window.
+	 * ctor specifying the current session.
+	 * 
+	 * @param	session		Current session.
+	 * 
+	 * @throws	IllegalArgumentException	If a <TT>null</TT>
+											<TT>ISession</TT> passed.
 	 */
 	public DatabasePanel(ISession session) {
 		super();
+		if (session == null) {
+			throw new IllegalArgumentException("ISession == null");
+		}
+
 		_session = session;
 
 		createUserInterface();
@@ -87,14 +96,14 @@ public class DatabasePanel extends JTabbedPane {
 	 * removed from the tabbed pane and the passed tab inserted in its
 	 * place. New tabs are inserted at the end.
 	 *
-	 * @param   tab	 The tab to be added.
+	 * @param	tab	 The tab to be added.
 	 *
-	 * @throws  IllegalArgumentException
-	 *		  Thrown if a <TT>null</TT> <TT>ITablePanelTab</TT> passed.
+	 * @throws	IllegalArgumentException
+	 *			Thrown if a <TT>null</TT> <TT>IDatabasePanelTab</TT> passed.
 	 */
-	public void addDatabasePanelTab(IDatabasePanelTab tab) throws IllegalArgumentException {
+	public void addDatabasePanelTab(IDatabasePanelTab tab) {
 		if (tab == null) {
-			throw new IllegalArgumentException("Null ITablePanelTab passed");
+			throw new IllegalArgumentException("Null IDatabasePanelTab passed");
 		}
 		tab.setSession(_session);
 		final String title = tab.getTitle();

@@ -85,14 +85,13 @@ public class ColumnsTab extends BaseTablePanelTab {
         return _comp;
     }
     
-    	/**
+    /**
 	 * @see BaseObjectPanelTab#clear()
 	 */
 	public void clear()
 	{
 		((ResultSetPanel)getComponent()).clear();
 	}
-	
 
     /**
      * Refresh the component displaying the <TT>ITableInfo</TT> object.
