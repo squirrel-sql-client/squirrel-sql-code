@@ -91,7 +91,7 @@ public class DumpSessionAction extends SquirrelAction
 			catch (Throwable ex)
 			{
 				final String msg = "Error occured dumping session";
-				_session.getMessageHandler().showMessage(msg + ": " + ex);
+				_session.getMessageHandler().showErrorMessage(msg + ": " + ex);
 				s_log.error(msg, ex);
 			}
 		}

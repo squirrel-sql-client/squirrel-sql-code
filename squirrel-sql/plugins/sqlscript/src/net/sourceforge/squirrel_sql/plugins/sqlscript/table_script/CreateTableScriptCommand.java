@@ -167,7 +167,7 @@ public class CreateTableScriptCommand implements ICommand {
                 }
             }
         } catch (Exception e) {
-            _session.getMessageHandler().showMessage(e);
+            _session.getMessageHandler().showErrorMessage(e);
         }
 //        _session.setEntireSQLScript(sbScript.toString());
         _session.getSQLPanelAPI(_plugin).appendSQLScript(sbScript.toString(), true);

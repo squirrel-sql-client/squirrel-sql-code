@@ -145,7 +145,7 @@ public class SaveScriptCommand implements ICommand {
                 _session.getMessageHandler().showMessage(
                     "SQL script saved to " + file.getAbsolutePath());
             } catch (IOException ex) {
-                _session.getMessageHandler().showMessage(ex);
+                _session.getMessageHandler().showErrorMessage(ex);
             } finally {
                 if (fos != null) {
                     try {

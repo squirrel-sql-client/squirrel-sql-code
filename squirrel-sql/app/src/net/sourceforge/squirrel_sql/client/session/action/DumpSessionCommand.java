@@ -175,8 +175,8 @@ public class DumpSessionCommand implements ICommand
 			catch (Throwable th)
 			{
 				final String msg = "Error dumping driver info";
-				_msgHandler.showMessage(msg);
-				_msgHandler.showMessage(th);
+				_msgHandler.showErrorMessage(msg);
+				_msgHandler.showErrorMessage(th);
 				s_log.error(msg, th);
 			}
 	
@@ -189,8 +189,8 @@ public class DumpSessionCommand implements ICommand
 			catch (Throwable th)
 			{
 				final String msg = "Error dumping driver info";
-				_msgHandler.showMessage(msg);
-				_msgHandler.showMessage(th);
+				_msgHandler.showErrorMessage(msg);
+				_msgHandler.showErrorMessage(th);
 				s_log.error(msg, th);
 			}
 	
@@ -203,8 +203,8 @@ public class DumpSessionCommand implements ICommand
 			catch (Throwable th)
 			{
 				final String msg = "Error dumping alias info";
-				_msgHandler.showMessage(msg);
-				_msgHandler.showMessage(th);
+				_msgHandler.showErrorMessage(msg);
+				_msgHandler.showErrorMessage(th);
 				s_log.error(msg, th);
 			}
 	
@@ -217,8 +217,8 @@ public class DumpSessionCommand implements ICommand
 			catch (Throwable th)
 			{
 				final String msg = "Error dumping general connection info";
-				_msgHandler.showMessage(msg);
-				_msgHandler.showMessage(th);
+				_msgHandler.showErrorMessage(msg);
+				_msgHandler.showErrorMessage(th);
 				s_log.error(msg, th);
 			}
 	
@@ -234,8 +234,8 @@ public class DumpSessionCommand implements ICommand
 			catch (Throwable th)
 			{
 				final String msg = "Error dumping metadata";
-				_msgHandler.showMessage(msg);
-				_msgHandler.showMessage(th);
+				_msgHandler.showErrorMessage(msg);
+				_msgHandler.showErrorMessage(th);
 				s_log.error(msg, th);
 			}
 	
@@ -251,8 +251,8 @@ public class DumpSessionCommand implements ICommand
 			catch (Throwable th)
 			{
 				final String msg = "Error dumping data types";
-				_msgHandler.showMessage(msg);
-				_msgHandler.showMessage(th);
+				_msgHandler.showErrorMessage(msg);
+				_msgHandler.showErrorMessage(th);
 				s_log.error(msg, th);
 			}
 	
@@ -268,8 +268,8 @@ public class DumpSessionCommand implements ICommand
 			catch (Throwable th)
 			{
 				final String msg = "Error dumping table types";
-				_msgHandler.showMessage(msg);
-				_msgHandler.showMessage(th);
+				_msgHandler.showErrorMessage(msg);
+				_msgHandler.showErrorMessage(th);
 				s_log.error(msg, th);
 			}
 		}
@@ -313,8 +313,8 @@ public class DumpSessionCommand implements ICommand
 		catch (IOException ex)
 		{
 			final String msg = "Error combining temp files into dump file";
-			_msgHandler.showMessage(msg);
-			_msgHandler.showMessage(ex.toString());
+			_msgHandler.showErrorMessage(msg);
+			_msgHandler.showErrorMessage(ex.toString());
 			s_log.error(msg, ex);
 		}
 	}

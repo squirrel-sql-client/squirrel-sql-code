@@ -162,7 +162,7 @@ public class ProcedureSourceTab extends BaseObjectPanelTab
 			}
 			catch (SQLException ex)
 			{
-				session.getMessageHandler().showMessage(ex);
+				session.getMessageHandler().showErrorMessage(ex);
 			}
 			
 		}

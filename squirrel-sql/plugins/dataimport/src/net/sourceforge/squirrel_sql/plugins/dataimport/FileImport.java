@@ -245,13 +245,13 @@ boolean createTable(){
         return true;
         }
         catch (Exception ee)
-        {_session.getMessageHandler().showMessage(ee);
+        {_session.getMessageHandler().showErrorMessage(ee);
         JOptionPane.showMessageDialog(frame,"Create table error:" +_createStr  );
         return false;
         }
     }
     catch (Exception ex) {
-        _session.getMessageHandler().showMessage(ex);
+        _session.getMessageHandler().showErrorMessage(ex);
         return false;
     }
 }
@@ -291,7 +291,7 @@ boolean insertData(){
             _session.getMessageHandler().showMessage(Integer.toString(i+1)+" Done!");
         }
         catch (Exception ee){
-            _session.getMessageHandler().showMessage(ee);
+            _session.getMessageHandler().showErrorMessage(ee);
             JOptionPane.showMessageDialog(frame,"Insert error at line: " + Integer.toString(i));
             return false;
         }
@@ -299,7 +299,7 @@ boolean insertData(){
         return true;
     }
     catch (Exception ex) {
-        _session.getMessageHandler().showMessage(ex);
+        _session.getMessageHandler().showErrorMessage(ex);
         return false;
     }
  }
@@ -395,7 +395,7 @@ boolean insertData(){
             return true;
         }
         catch (Exception ecp){
-           _session.getMessageHandler().showMessage(ecp);
+           _session.getMessageHandler().showErrorMessage(ecp);
         repaint();
         return false;
         }

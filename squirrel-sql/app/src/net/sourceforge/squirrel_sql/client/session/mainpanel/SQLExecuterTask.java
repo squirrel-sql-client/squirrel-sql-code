@@ -158,12 +158,12 @@ public class SQLExecuterTask implements Runnable
 		}
 		catch (SQLException ex)
 		{
-			_session.getMessageHandler().showMessage(ex);
+			_session.getMessageHandler().showErrorMessage("Error: " + ex);
 		}
 		catch (Throwable ex)
 		{
 			s_log.error("Error occured executing SQL", ex);
-			_session.getMessageHandler().showMessage(ex);
+			_session.getMessageHandler().showErrorMessage("Error: " + ex);
 		}
 		finally
 		{
@@ -211,12 +211,12 @@ public class SQLExecuterTask implements Runnable
 					_cancelPanelRemoved = true;
 					try
 					{
-						_session.getMessageHandler().showMessage(
-							rs.getWarnings());
+						_session.getMessageHandler().showMessage(rs.getWarnings());
 					}
-					catch (Exception e)
+					catch (Throwable th)
 					{
-							s_log.error("Can't get warnings ", e);
+						s_log.error("Can't get warnings ", th);
+						_session.getMessageHandler().showMessage(th);
 					}
 				}
 				finally
@@ -241,9 +241,9 @@ public class SQLExecuterTask implements Runnable
 		buf.append("Query ").append(nbrFmt.format(_currentQueryIndex))
 			.append(" elapsed time (seconds) - Total: ")
 			.append(nbrFmt.format(executionLength + outputLength))
-			.append(", SQL query time: ")
+			.append(", SQL query: ")
 			.append(nbrFmt.format(executionLength))
-			.append(", Building output time: ")
+			.append(", Building output: ")
 			.append(nbrFmt.format(outputLength));
 		_session.getMessageHandler().showMessage(buf.toString());
 		return true;

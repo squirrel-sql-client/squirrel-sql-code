@@ -343,16 +343,6 @@ class Session implements IClientSession
 		_msgHandler = handler != null ? handler : NullMessageHandler.getInstance();
 	}
 
-	public void showMessage(Exception ex)
-	{
-		_msgHandler.showMessage(ex);
-	}
-
-	public void showMessage(String msg)
-	{
-		_msgHandler.showMessage(msg);
-	}
-
 	public void setSessionSheet(SessionSheet child)
 	{
 		_sessionSheet = child;

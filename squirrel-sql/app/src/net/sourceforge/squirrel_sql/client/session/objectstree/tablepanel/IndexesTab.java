@@ -116,7 +116,7 @@ public class IndexesTab extends BaseTablePanelTab
 		}
 		catch (Exception ex)
 		{
-			session.getMessageHandler().showMessage(ex);
+			session.getMessageHandler().showErrorMessage(ex);
 		}
 	}
 }

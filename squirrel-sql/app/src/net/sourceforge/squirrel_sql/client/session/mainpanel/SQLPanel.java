@@ -580,7 +580,7 @@ public class SQLPanel extends JPanel
 		}
 		catch (DataSetException dse)
 		{
-			_session.getMessageHandler().showMessage(dse);
+			_session.getMessageHandler().showErrorMessage(dse);
 		}
 	}
 
@@ -674,10 +674,8 @@ public class SQLPanel extends JPanel
 				}
 				catch (SQLException ex)
 				{
-					// SQL engine doesn't support transaction control. Inform
-					// user.
 					s_log.error("Error with transaction control", ex);
-					_session.getMessageHandler().showMessage(ex);
+					_session.getMessageHandler().showErrorMessage(ex);
 				}
 				try
 				{
@@ -686,7 +684,7 @@ public class SQLPanel extends JPanel
 				catch (SQLException ex)
 				{
 					props.setAutoCommit(auto);
-					_session.getMessageHandler().showMessage(ex);
+					_session.getMessageHandler().showErrorMessage(ex);
 				}
 			}
 		}

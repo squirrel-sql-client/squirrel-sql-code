@@ -109,7 +109,7 @@ public class VersionColumnsTab extends BaseTablePanelTab {
 			// ResultSetPanel is thread save
 			((ResultSetPanel)getComponent()).load(session, rs, null, destClassName);
 		} catch (Exception ex) {
-			session.getMessageHandler().showMessage(ex);
+			session.getMessageHandler().showErrorMessage(ex);
 		}
 	}
 }

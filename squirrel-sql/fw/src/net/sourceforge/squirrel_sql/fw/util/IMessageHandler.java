@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.util;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,7 +17,37 @@ package net.sourceforge.squirrel_sql.fw.util;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-public interface IMessageHandler {
+public interface IMessageHandler
+{
+	/**
+	 * Show a message describing the passed exception.
+	 * 
+	 * @param	th		Exception.
+	 */
 	void showMessage(Throwable th);
+
+	/**
+	 * Show a message.
+	 * 
+	 * @param	msg		The message.
+	 */
 	void showMessage(String msg);
+
+	/**
+	 * Show an error message describing the passed exception. The implementation
+	 * of <TT>IMessageHandler</TT> may or may not treat this differently to
+	 * <TT>showMessage(Throwable)</TT>.
+	 * 
+	 * @param	th		Exception.
+	 */
+	void showErrorMessage(Throwable th);
+
+	/**
+	 * Show an error message. The implementation
+	 * of <TT>IMessageHandler</TT> may or may not treat this differently to
+	 * <TT>showMessage(String)</TT>.
+	 * 
+	 * @param	th		Exception.
+	 */
+	void showErrorMessage(String msg);
 }

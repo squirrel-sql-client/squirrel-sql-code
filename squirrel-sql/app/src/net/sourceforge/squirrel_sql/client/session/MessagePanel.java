@@ -44,11 +44,11 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 class MessagePanel extends JTextArea implements IMessageHandler
 {
 	/** Logger for this class. */
-	private static ILogger s_log =
+	private static final ILogger s_log =
 		LoggerController.createLogger(MessagePanel.class);
 
 	/** Application API. */
-	private IApplication _app;
+	private final IApplication _app;
 
 	/** Popup menu for this component. */
 	private TextPopupMenu _popupMenu = new TextPopupMenu();
@@ -90,121 +90,117 @@ class MessagePanel extends JTextArea implements IMessageHandler
 		});
 	}
 
-	/**
-	 * Add the passed line to the end of the messages display. Position
-	 * display so the the newly added line will be displayed.
-	 *
-	 * @param	line	The line to be added.
-	 */
-	public void addLine(String line)
-	{
-		//  If line starts with one of the keywords, change back or foreground color,
-		if (line.startsWith("Data Tr")
-			|| line.startsWith("Error: ")
-			|| line.startsWith("Warning"))
-		{
-			setBackground(Color.RED);
-			_errOccured = true;
-		}
-		//  else reset the back or foreground color.
-		else if (_errOccured)
-		{
-			setBackground(Color.WHITE);
-			_errOccured = false;
-		}
-
-		if (getDocument().getLength() > 0)
-		{
-			append("\n");
-		}
-		append(line);
-		final int len = getDocument().getLength();
-		select(len, len);
-	}
-
 	public void showMessage(final Throwable th)
 	{
 		if (th != null)
 		{
-			// Thread safe support for every call to this method.
-//			SwingUtilities.invokeLater(new Runnable()
-//			{
-//				public void run()
-//				{
-					if (th instanceof DataTruncation)
-					{
-						DataTruncation ex = (DataTruncation) th;
-						StringBuffer buf = new StringBuffer();
-						buf.append("Data Truncation error occured on")
-							.append(ex.getRead() ? " a read " : " a write ")
-							.append(" of column ")
-							.append(ex.getIndex())
-							.append("Data was ")
-							.append(ex.getDataSize())
-							.append(" bytes long and ")
-							.append(ex.getTransferSize())
-							.append(" bytes were transferred.");
-						privateShowMessage(buf.toString());
-					}
-					else if (th instanceof SQLWarning)
-					{
-						SQLWarning ex = (SQLWarning) th;
-						while (ex != null)
-						{
-                            StringBuffer buf = new StringBuffer();
-                            buf.append("Warning:   ")
-                                .append(ex.getMessage())
-                                .append("\nSQLState:  ")
-                                .append(ex.getSQLState())
-                                .append("\nErrorCode: ")
-                                .append(ex.getErrorCode());
-							s_log.debug("Warning shown in MessagePanel", th);
-							ex = ex.getNextWarning();
-                            privateShowMessage(buf.toString());
-						}
-					}
-					else if (th instanceof SQLException)
-					{
-						SQLException ex = (SQLException) th;
-						while (ex != null)
-						{
-                            StringBuffer buf = new StringBuffer();
-                            buf.append("Error:     ")
-                                .append(ex.getMessage())
-                                .append("\nSQLState:  ")
-                                .append(ex.getSQLState())
-                                .append("\nErrorCode: ")
-                                .append(ex.getErrorCode());
-							s_log.debug("Error", th);
-							ex = ex.getNextException();
-                            privateShowMessage(buf.toString());
-						}
-					}
-					else
-					{
-						privateShowMessage("Error: " + th.toString());
-						s_log.debug("Error shown in MessagePanel", th);
-					}
-//				}
-//			});
+			setBackground(Color.WHITE);
+			_errOccured = false;
+			privateShowMessage(th);
 		}
 	}
 
 	public void showMessage(final String msg)
 	{
-		privateShowMessage(msg);
-//		if (msg == null)
-//		{
-//			throw new IllegalArgumentException("null Message");
-//		}
-//		// Thread safe support for every call to this method:
-//		SwingUtilities.invokeLater(new Runnable()
-//		{
-//			public void run()
-//			{
-//				addLine(msg);
-//			}
-//		});
+		if (msg != null)
+		{
+			setBackground(Color.WHITE);
+			_errOccured = false;
+			privateShowMessage(msg);
+		}
+	}
+
+	/**
+	 * Show an error message describing the passed exception. The controls
+	 * background color will be changed to show it is an error msg.
+	 * 
+	 * @param	th		Exception.
+	 */
+	public void showErrorMessage(Throwable th)
+	{
+		if (th != null)
+		{
+			setBackground(Color.RED);
+			_errOccured = true;
+			privateShowMessage(th);
+		}
+	}
+
+	/**
+	 * Show an error message. The controls
+	 * background color will be changed to show it is an error msg.
+	 * 
+	 * @param	th		Exception.
+	 */
+	public void showErrorMessage(String msg)
+	{
+		if (msg != null)
+		{
+			setBackground(Color.RED);
+			_errOccured = true;
+			privateShowMessage(msg);
+		}
+	}
+
+	private void privateShowMessage(final Throwable th)
+	{
+		if (th != null)
+		{
+			if (th instanceof DataTruncation)
+			{
+				DataTruncation ex = (DataTruncation) th;
+				StringBuffer buf = new StringBuffer();
+				buf.append("Data Truncation error occured on")
+					.append(ex.getRead() ? " a read " : " a write ")
+					.append(" of column ")
+					.append(ex.getIndex())
+					.append("Data was ")
+					.append(ex.getDataSize())
+					.append(" bytes long and ")
+					.append(ex.getTransferSize())
+					.append(" bytes were transferred.");
+				privateShowMessage(buf.toString());
+			}
+			else if (th instanceof SQLWarning)
+			{
+				SQLWarning ex = (SQLWarning) th;
+				while (ex != null)
+				{
+                    StringBuffer buf = new StringBuffer();
+                    buf.append("Warning:   ")
+                        .append(ex.getMessage())
+                        .append("\nSQLState:  ")
+                        .append(ex.getSQLState())
+                        .append("\nErrorCode: ")
+                        .append(ex.getErrorCode());
+					s_log.debug("Warning shown in MessagePanel", th);
+					ex = ex.getNextWarning();
+                    privateShowMessage(buf.toString());
+				}
+			}
+			else if (th instanceof SQLException)
+			{
+				SQLException ex = (SQLException) th;
+				while (ex != null)
+				{
+                    StringBuffer buf = new StringBuffer();
+                    buf.append("Error:     ")
+                        .append(ex.getMessage())
+                        .append("\nSQLState:  ")
+                        .append(ex.getSQLState())
+                        .append("\nErrorCode: ")
+                        .append(ex.getErrorCode());
+					s_log.debug("Error", th);
+					ex = ex.getNextException();
+                    privateShowMessage(buf.toString());
+				}
+			}
+			else
+			{
+				privateShowMessage(th.toString());
+				s_log.debug("Exception shown in MessagePanel", th);
+			}
+		}
 	}
 
 	private void privateShowMessage(final String msg)
@@ -221,5 +217,37 @@ class MessagePanel extends JTextArea implements IMessageHandler
 				addLine(msg);
 			}
 		});
+	}
+
+	/**
+	 * Add the passed line to the end of the messages display. Position
+	 * display so the the newly added line will be displayed.
+	 *
+	 * @param	line	The line to be added.
+	 */
+	private void addLine(String line)
+	{
+		//  If line starts with one of the keywords, change back or foreground color,
+//		if (line.startsWith("Data Tr")
+//			|| line.startsWith("Error: ")
+//			|| line.startsWith("Warning"))
+//		{
+//			setBackground(Color.RED);
+//			_errOccured = true;
+//		}
+//		//  else reset the back or foreground color.
+//		else if (_errOccured)
+//		{
+//			setBackground(Color.WHITE);
+//			_errOccured = false;
+//		}
+
+		if (getDocument().getLength() > 0)
+		{
+			append("\n");
+		}
+		append(line);
+		final int len = getDocument().getLength();
+		select(len, len);
 	}
 }

@@ -33,7 +33,7 @@ public class ObjectTreeTab extends BaseMainPanelTab
 	 */
 	private interface i18n
 	{
-		String TAB_TITLE = "Objects (New)";
+		String TAB_TITLE = "Objects";
 		String TAB_DESC = "Show database objects";
 	}
 

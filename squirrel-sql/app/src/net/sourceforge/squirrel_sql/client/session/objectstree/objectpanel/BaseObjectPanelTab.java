@@ -97,7 +97,7 @@ public abstract class BaseObjectPanelTab implements IObjectPanelTab
 			}
 			catch (DataSetException ex)
 			{
-				getSession().getMessageHandler().showMessage(ex);
+				getSession().getMessageHandler().showErrorMessage(ex);
 			}
 			_hasBeenDisplayed = true;
 		}

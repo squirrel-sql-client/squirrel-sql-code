@@ -254,7 +254,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 		}
 		catch (Throwable ex)
 		{
-			_session.getMessageHandler().showMessage(ex);
+			_session.getMessageHandler().showErrorMessage(ex);
 		}
 	}
 
@@ -270,7 +270,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 		}
 		catch (Exception ex)
 		{
-			_session.getMessageHandler().showMessage(ex);
+			_session.getMessageHandler().showErrorMessage(ex);
 		}
 	}
 

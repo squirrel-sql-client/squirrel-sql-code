@@ -92,7 +92,7 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
                 }
                 catch (Exception e)
                 {
-                    _session.getMessageHandler().showMessage(e);
+                    _session.getMessageHandler().showErrorMessage(e);
                 }
                 SwingUtilities.invokeLater(new Runnable()
                 {

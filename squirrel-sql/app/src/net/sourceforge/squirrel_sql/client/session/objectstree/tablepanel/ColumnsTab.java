@@ -117,7 +117,7 @@ public class ColumnsTab extends BaseTablePanelTab
 		}
 		catch (Exception ex)
 		{
-			session.getMessageHandler().showMessage(ex);
+			session.getMessageHandler().showErrorMessage(ex);
 		}
 	}
 }

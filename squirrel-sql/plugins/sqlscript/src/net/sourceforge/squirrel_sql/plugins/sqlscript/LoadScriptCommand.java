@@ -116,7 +116,7 @@ public class LoadScriptCommand implements ICommand {
 			_session.getSQLPanelAPI(_plugin).appendSQLScript(sb.toString(), true);
 			_session.putPluginObject(_plugin, ISessionKeys.SAVE_SCRIPT_FILE_PATH_KEY, file.getAbsolutePath());
 		} catch(java.io.IOException io) {
-			_session.getMessageHandler().showMessage(io);
+			_session.getMessageHandler().showErrorMessage(io);
 		} finally {
 			try {
 				if (bis != null) {

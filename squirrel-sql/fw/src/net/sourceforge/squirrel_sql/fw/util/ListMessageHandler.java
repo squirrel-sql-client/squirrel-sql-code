@@ -31,7 +31,13 @@ public class ListMessageHandler implements IMessageHandler
 	private List _msgs = new ArrayList();
 
 	/** Stores exceptions. */
-	private List _errors = new ArrayList();
+	private List _throwables = new ArrayList();
+
+	/** Stores error msgs. */
+	private List _errMsgs = new ArrayList();
+
+	/** Stores exceptions. */
+	private List _errThrowables = new ArrayList();
 
 	/**
 	 * Ctor.
@@ -48,7 +54,7 @@ public class ListMessageHandler implements IMessageHandler
 	 */
 	public void showMessage(Throwable th)
 	{
-		_errors.add(th);
+		_throwables.add(th);
 	}
 
 	/**
@@ -62,13 +68,43 @@ public class ListMessageHandler implements IMessageHandler
 	}
 
 	/**
+	 * Store this msg.
+	 * 
+	 * @param	th		Exception.
+	 */
+	public void showErrorMessage(Throwable th)
+	{
+		_errThrowables.add(th);
+	}
+
+	/**
+	 * Store this exception.
+	 * 
+	 * @param	th		Exception.
+	 */
+	public void showErrorMessage(String msg)
+	{
+		_errMsgs.add(msg);
+	}
+
+	/**
 	 * Return array of stored exceptions.
 	 * 
 	 * @return	array of stored exceptions.
 	 */
 	public Throwable[] getExceptions()
 	{
-		return (Throwable[])_errors.toArray(new Throwable[_errors.size()]);
+		return (Throwable[])_throwables.toArray(new Throwable[_throwables.size()]);
+	}
+
+	/**
+	 * Return array of stored exceptionsfrom <TT>showErrorMessage(Throwable)</TT>..
+	 * 
+	 * @return	array of stored exceptions.
+	 */
+	public Throwable[] getErrorExceptions()
+	{
+		return (Throwable[])_errThrowables.toArray(new Throwable[_errThrowables.size()]);
 	}
 
 	/**
@@ -79,5 +115,15 @@ public class ListMessageHandler implements IMessageHandler
 	public String[] getMessages()
 	{
 		return (String[])_msgs.toArray(new String[_msgs.size()]);
+	}
+
+	/**
+	 * Return array of stored messages from <TT>showErrorMessage(String)</TT>.
+	 * 
+	 * @return	array of stored messages.
+	 */
+	public String[] getErrorMessages()
+	{
+		return (String[])_errMsgs.toArray(new String[_errMsgs.size()]);
 	}
 }

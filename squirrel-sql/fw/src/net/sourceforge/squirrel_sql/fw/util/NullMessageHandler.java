@@ -58,4 +58,18 @@ public class NullMessageHandler implements IMessageHandler
 	public void showMessage(String msg)
 	{
 	}
+
+	/**
+	 * Swallow this msg.
+	 */
+	public void showErrorMessage(Throwable th)
+	{
+	}
+
+	/**
+	 * Swallow this msg.
+	 */
+	public void showErrorMessage(String msg)
+	{
+	}
 }

@@ -71,7 +71,7 @@ public class ShowNativeSQLCommand implements ICommand
 		}
 		catch (SQLException ex)
 		{
-			_session.getMessageHandler().showMessage(ex);
+			_session.getMessageHandler().showErrorMessage(ex);
 		}
 	}
 }
