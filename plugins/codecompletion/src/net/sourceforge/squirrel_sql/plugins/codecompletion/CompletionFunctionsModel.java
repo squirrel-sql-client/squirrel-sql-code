@@ -6,12 +6,10 @@ import net.sourceforge.squirrel_sql.plugins.codecompletion.completionfunctions.*
 
 public class CompletionFunctionsModel
 {
-   private ISession _session;
    CodeCompletionFunction[] _completionFunctions;
 
    CompletionFunctionsModel(ISession session)
    {
-      _session = session;
 
       _completionFunctions =
          new CodeCompletionFunction[]

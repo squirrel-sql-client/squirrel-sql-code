@@ -69,31 +69,5 @@ public class CompleteCodeAction extends SquirrelAction
       _sqlEntryPanel.setSelectionEnd(_sqlEntryPanel.getCaretPosition());
 
       _sqlEntryPanel.replaceSelection(completion.getCompletionString());
-
-//		boolean completionDone = false;
-//		int lineBegin = _sqlEntryPanel.getCaretLineNumber();
-//		int curPos = _sqlEntryPanel.getCaretPosition() - 1;
-//		while(curPos >= lineBegin)
-//		{
-//			char c = _sqlEntryPanel.getText().substring(curPos, curPos + 1).charAt(0);
-//			//char c = ((JTextPane)_sqlEntryPanel.getTextComponent()).getText(curPos, 1).charAt(0);
-//			if('.' == c || isSeparator(c))
-//			{
-//				_sqlEntryPanel.setSelectionStart(curPos + 1);
-//				_sqlEntryPanel.setSelectionEnd(_sqlEntryPanel.getCaretPosition());
-//
-//				_sqlEntryPanel.replaceSelection(completion);
-//				completionDone = true;
-//				break;
-//			}
-//			--curPos;
-//		}
-//
-//		if(!completionDone)
-//		{
-//			_sqlEntryPanel.setSelectionStart(curPos + 1);
-//			_sqlEntryPanel.setSelectionEnd(_sqlEntryPanel.getCaretPosition());
-//			_sqlEntryPanel.replaceSelection(completion);
-//		}
 	}
 }
