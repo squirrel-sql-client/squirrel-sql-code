@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-8859-1">
+    <TITLE>Squirrel SQL Client Plugin Programmers Guide</TITLE>
+</HEAD>
+
+<BODY>
+
+<H2>Contents</H2>
+
+<TABLE>
+    <TR><TD COLSPAN="2"><A HREF="#introduction">Introduction</A></TD></TR>
+    <TR><TD COLSPAN="2"><A HREF="#internalname">The Internal Name</A></TD></TR>
+    <TR><TD COLSPAN="2"><A HREF="#files">Files and Directories</A></TD></TR>
+    <TR><TD COLSPAN="2"><A HREF="#loading">How Plugins are Loaded</A></TD></TR>
+    <TR><TD COLSPAN="2"><A HREF="#pluginclasses">Plugin Classes</A></TD></TR>
+    <TR><TD COLSPAN="2"><A HREF="#api">Plugin API</A></TD></TR>
+    <TR><TD>&nbsp;&nbsp;</TD><TD><A HREF="#addmenuitems">Adding Menu Items</A></TD></TR>
+    <TR><TD>&nbsp;&nbsp;</TD><TD><A HREF="#addapprefspanel">Adding a Panel to Application Preferences</A></TD></TR>
+    <TR><TD COLSPAN="2"><A HREF="#installing">Installing Plugins</A></TD></TR>
+</TABLE>
+
+<A NAME="introduction"><H2>Introduction</H2></A>
+
+A plugin is an application written in Java that runs within Squirrel. This
+allows developers to enhance the functionality of Squirrel without having to
+rebuild the Squirrel application itself.
+
+<A NAME="internalname"><H2>The Internal Name</H2></A>
+
+A plugins internal name is used to uniquely identify it and so
+must be different to that of any other plugin. It is supplied by
+implementing the <TT>IPlugin.getInternalName()</TT> method.
+
+<P>As the internal name is used to name files and directories it should
+only consist of characters valid on the different platforms that Squirrel
+can run on. As well the character &quot;-&quot; is reserved for internal
+use.</P>
+
+<P>As an example the internal name for the <EM>Look and Feel</EM> plugin
+is <TT>laf</TT>.</P>
+
+<P>To reserve an internal name just email a request to the Squirrel
+developers mailing list (details at http://lists.sourceforge.net/lists/listinfo/squirrel-sql-develop)
+specifying the internal name that you'd like and a quick one sentence
+description of your plugin.</P>
+ 
+<A NAME="files"><H2>Files and Directories</H2></A>
+
+Plugins are installed as a jar file within the <TT>&lt;squirrel_app&gt;/plugins</TT>
+directory. The name of the jar file should be the same as the internal name of
+one of the plugins within it plus a <TT>.jar</TT> extension. E.G. if the
+internal name of the plugin is <TT>laf</TT> then the jar file should be
+named <TT>laf.jar</TT>. No other files should be placed within the
+<TT>&lt;squirrel_app&gt;/plugins</TT> directory.
+
+<P>The directory <TT>&lt;squirrel_app&gt;/plugins/&lt;internal_name&gt;</TT>
+is reserved for the exclusive use of the plugin. All other files required
+by the plugin should be placed in here.</P>
+
+<P>The directory <TT>&lt;user_home&gt;/.squirrel-sql/plugins/&lt;internal_name&gt;</TT>
+is also reserved for the exclusive use of the plugin. All &quot;per-user&quot;
+files should be placed in here.</P>
+
+<A NAME="loading"><H2>How Plugins are Loaded</H2></A>
+
+Plugins are loaded very early in the Squirrel startup process. Once the
+application logger has been created (<TT>IApplication.getLogger())</TT> the
+plugins are loaded. All jars in the <TT>&lt;squirrel_app&gt;/plugins</TT>
+directory are loaded by a custom class loader. They are searched for
+all classes that implement the <TT>IPlugin</TT> interface. Then
+<TT>newInstance</TT> is used
+to create an instance of each of these plugin classes. Once created the
+<TT>IPlugin.load()</TT> method is called. Because most of the Squirrel
+environment hasn't yet been setup try not to use the plugin constuctor and
+<TT>load()</TT>method to do initialisation. Instead use the <TT>IPlugin.initialize()</TT>
+method.
+
+<P><TT>IPlugin.initialize()</TT> is called as the last part of the
+Squirrel startup prior to showing the main window. This is where initialization
+of the plugin should occur. Please try to keep the amount of code executed
+here to a minimum as it will affect the startup time of Squirrel. If
+possible do plugin initialization when a plugin is first requested by the user.</P>
+
+<A NAME="pluginclasses"><H2>Plugin Classes</H2></A>
+
+All plugin jars should contain at least one class that implements the
+interface <TT>net.sourceforge.squirrel_sql.client.plugin.IPugin</TT>. If
+your plugin is applicable to a session then it should implement the
+descendent of <TT>IPlugin</TT>,
+<TT>net.sourceforge.squirrel_sql.client.plugin.ISessionPlugin</TT>. As a convienence
+two abstract base classes have been supplied:
+<TT>net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin</TT> and
+<TT>net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin</TT>. As
+well as supplying some useful base behaviour these base classes should guard
+against additions to the base interfaces breaking existing implementations.
+Every attempt will be made to supply appropriate default behaviour (usually
+an empty method) to the base classes for every method added to the interfaces.
+
+<A NAME="api"><H2>Plugin API</H2></A>
+
+There are two main ways for a plugin to communicate with Squirrel. These are
+via the <TT>net.sourceforge.squirrel_sql.client.IApplication</TT> interface
+which specifies the application level API and
+<TT>net.sourceforge.squirrel_sql.client.session.ISession</TT> which specifies
+the session level API. From within a descendent of <TT>BasePlugin</TT> you
+can call <TT>getApplication()</TT> to get the <TT>IApplication</TT> object
+and descendents of <TT>BaseSessionPlugin</TT> will have <TT>ISession</TT>
+passed on requests.</P>
+
+<A NAME="addmenuitems"><H3>Adding Menu Items</H3></A>
+
+??TODO??
+&nbsp;
+
+<A NAME="addapprefspanel"><H3>Adding a Panel to Application Preferences</H3></A>
+
+??TODO??
+&nbsp;
+
+<A NAME="installing"><H2>Installing Plugins</H2></A>
+
+??TODO??
+&nbsp;
+
+</BODY>
+</HTML>
