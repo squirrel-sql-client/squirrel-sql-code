@@ -74,6 +74,14 @@ public class ProcedureColumnsTab extends BaseProcedurePanelTab {
 	}
 
 	/**
+	 * @see BaseObjectPanelTab#clear()
+	 */
+	public void clear()
+	{
+		((ResultSetPanel)getComponent()).clear();
+	}
+
+	/**
 	 * Refresh the component displaying the <TT>IProcedureInfo</TT> object.
 	 */
 	public synchronized void refreshComponent() throws IllegalStateException {
@@ -88,6 +96,7 @@ public class ProcedureColumnsTab extends BaseProcedurePanelTab {
 		String destClassName = session.getProperties().getProcedureColumnsOutputClassName();
 		try {
 			ResultSet rs = session.getSQLConnection().getProcedureColumns(pi);
+			// ResultSetPanel is thread save
 			((ResultSetPanel)getComponent()).load(session, rs, null, destClassName);
 		} catch (Exception ex) {
 			session.getMessageHandler().showMessage(ex);

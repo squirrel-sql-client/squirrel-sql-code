@@ -85,6 +85,14 @@ public class ColumnPriviligesTab extends BaseTablePanelTab {
         return _comp;
     }
 
+	/**
+	 * @see BaseObjectPanelTab#clear()
+	 */
+	public void clear()
+	{
+		((ResultSetPanel)getComponent()).clear();
+	}
+	
     /**
      * Refresh the component displaying the <TT>ITableInfo</TT> object.
      */
@@ -100,6 +108,7 @@ public class ColumnPriviligesTab extends BaseTablePanelTab {
         String destClassName = session.getProperties().getColumnPriviligesOutputClassName();
         try {
             ResultSet rs = session.getSQLConnection().getColumnPrivileges(ti);
+            // ResultSetPanel is thread save
             ((ResultSetPanel)getComponent()).load(session, rs, new int[] {4,5,6,7,8}, destClassName);
         } catch (Exception ex) {
             session.getMessageHandler().showMessage(ex);

@@ -34,6 +34,7 @@ import java.sql.ResultSet;
 //import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 //import net.sourceforge.squirrel_sql.fw.util.Logger;
 
+import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 //import net.sourceforge.squirrel_sql.client.session.objectstree.procedurepanel.BaseProcedurePanelTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.ResultSetPanel;
@@ -90,16 +91,25 @@ public class DataTypesTab extends BaseDatabasePanelTab {
 	 * Refresh the component displaying the data types.
 	 */
 	public synchronized void refreshComponent() throws IllegalStateException {
-		ISession session = getSession();
+		final ISession session = getSession();
 		if (session == null) {
 			throw new IllegalStateException("Null ISession");
 		}
-		String destClassName = session.getProperties().getDataTypesOutputClassName();
+		final String destClassName = session.getProperties().getDataTypesOutputClassName();
 		try {
-			ResultSet rs = session.getSQLConnection().getTypeInfo();
+			final ResultSet rs = session.getSQLConnection().getTypeInfo();
+			// ResultSetPanel is thread save
 			((ResultSetPanel)getComponent()).load(session, rs, null, destClassName);
 		} catch (Exception ex) {
 			session.getMessageHandler().showMessage(ex);
 		}
 	}
+	/**
+	 * @see BaseObjectPanelTab#clear()
+	 */
+	public void clear()
+	{
+		((ResultSetPanel)getComponent()).clear();
+	}
+
 }

@@ -81,7 +81,8 @@ public abstract class BaseObjectPanelTab implements IObjectPanelTab {
 	 *			<TT>IDatabaseObjectInfo</TT> object is stored here.
 	 */
 	public synchronized void select() throws IllegalStateException {
-		if (!_hasBeenDisplayed) {
+		if (!_hasBeenDisplayed) 
+		{
 			s_log.debug("Refreshing " + getTitle() + " table tab.");
 			refreshComponent();
 			_hasBeenDisplayed = true;
@@ -92,6 +93,9 @@ public abstract class BaseObjectPanelTab implements IObjectPanelTab {
 	 * Refresh the component displaying the <TT>IDatabaseObjectInfo</TT> object.
 	 */
 	protected abstract void refreshComponent();
+
+	
+
 
 	/**
 	 * Set the <TT>IDatabaseObjectInfo</TT> object that specifies the object that

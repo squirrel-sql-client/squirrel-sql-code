@@ -27,6 +27,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -62,6 +63,9 @@ public class TablePanel extends JTabbedPane {
 	/** Listens to changes in <CODE>_props</CODE>. */
 	private MyPropertiesListener _propsListener;
 
+
+	private CursorChanger _cursorChg;
+
 	/**
 	 * Ctor specifying the session.
 	 *
@@ -76,6 +80,7 @@ public class TablePanel extends JTabbedPane {
 			throw new IllegalArgumentException("null ISession passed");
 		}
 		_session = session;
+		_cursorChg = new CursorChanger(this);
 		createUserInterface();
 	}
 
@@ -91,9 +96,19 @@ public class TablePanel extends JTabbedPane {
 		for (Iterator it = _tabs.iterator(); it.hasNext();) {
 			((ITablePanelTab)it.next()).setTableInfo(value);
 		}
-
+		// first clear the visible tab
+		((ITablePanelTab)_tabs.get(getSelectedIndex())).clear();
 		// Refresh the currently selected tab.
-		((ITablePanelTab)_tabs.get(getSelectedIndex())).select();
+		_cursorChg.show();
+		Runnable refresh = new Runnable()
+		{
+			public void run()
+			{
+				((ITablePanelTab)_tabs.get(getSelectedIndex())).select();
+				_cursorChg.restore();
+			}
+		};
+		_session.getApplication().getThreadPool().addTask(refresh);
 	}
 
 	/**
@@ -204,8 +219,18 @@ public class TablePanel extends JTabbedPane {
 			Object src = evt.getSource();
 			if (src instanceof JTabbedPane) {
 				int idx = ((JTabbedPane)src).getSelectedIndex();
-				if (idx != -1) {
-					((ITablePanelTab)_tabs.get(getSelectedIndex())).select();
+				if (idx != -1) 
+				{
+					_cursorChg.show();
+					Runnable refresh = new Runnable()
+					{
+						public void run()
+						{
+							((ITablePanelTab)_tabs.get(getSelectedIndex())).select();
+							_cursorChg.restore();
+						}
+					};
+					_session.getApplication().getThreadPool().addTask(refresh);
 				}
 			}
 		}
