@@ -157,14 +157,26 @@ public class SQLDatabaseMetaData
 	 */
 	public synchronized int getJDBCVersion() throws SQLException
 	{
+		//TODO: When min version supported is 1.4 then remove reflection.
 		final String key = "getJDBCVersion";
 		Integer value = (Integer)_common.get(key);
 		if (value == null)
 		{
 			DatabaseMetaData md = getJDBCMetaData();
-			int vers = (md.getJDBCMajorVersion() * 100) + md.getJDBCMinorVersion();
-			value = new Integer(vers);
-			_common.put(key, value);
+			try
+			{
+				final Method getMajorVersion = md.getClass().getMethod("getJDBCMajorVersion", null);
+				final Method getMinorVersion = md.getClass().getMethod("getJDBCMinorVersion", null);
+				final Integer major = (Integer)getMajorVersion.invoke(md, null);
+				final Integer minor = (Integer)getMinorVersion.invoke(md, null);
+				int vers = (major.intValue() * 100) + minor.intValue();
+				value = new Integer(vers);
+				_common.put(key, value);
+			}
+			catch (Throwable th)
+			{
+				throw new SQLException("Unsupported");
+			}
 		}
 		return value.intValue();
 	}

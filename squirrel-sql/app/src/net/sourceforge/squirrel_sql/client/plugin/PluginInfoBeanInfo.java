@@ -30,6 +30,7 @@ public final class PluginInfoBeanInfo extends SimpleBeanInfo
 	public interface PropertyNames
 	{
 		String AUTHOR = "author";
+		String CONTRIBUTORS = "contributors";
 		String DESCRIPTIVE_NAME = "descriptiveName";
 		String INTERNAL_NAME = "internalName";
 		String IS_LOADED = "isLoaded";
@@ -45,7 +46,7 @@ public final class PluginInfoBeanInfo extends SimpleBeanInfo
 		super();
 		if (s_descriptors == null)
 		{
-			s_descriptors = new PropertyDescriptor[7];
+			s_descriptors = new PropertyDescriptor[8];
 			int idx = 0;
 			s_descriptors[idx++] = 	new PropertyDescriptor(
 					PropertyNames.PLUGIN_CLASS_NAME, PluginInfo.class,
@@ -62,6 +63,9 @@ public final class PluginInfoBeanInfo extends SimpleBeanInfo
 			s_descriptors[idx++] = 	new PropertyDescriptor(
 					PropertyNames.AUTHOR, PluginInfo.class,
 					"getAuthor", null);
+			s_descriptors[idx++] = 	new PropertyDescriptor(
+					PropertyNames.CONTRIBUTORS, PluginInfo.class,
+					"getContributors", null);
 			s_descriptors[idx++] = 	new PropertyDescriptor(
 					PropertyNames.WEB_SITE, PluginInfo.class,
 					"getWebSite", null);

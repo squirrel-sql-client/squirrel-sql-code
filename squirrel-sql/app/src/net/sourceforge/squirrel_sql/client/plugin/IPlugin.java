@@ -68,6 +68,13 @@ public interface IPlugin
 	String getAuthor();
 
 	/**
+	 * Returns a comma separated list of other contributors.
+	 *
+	 * @return	Contributors names.
+	 */
+	String getContributors();
+
+	/**
 	 * Returns the home page for this plugin.
 	 *
 	 * @return	the home page for this plugin.

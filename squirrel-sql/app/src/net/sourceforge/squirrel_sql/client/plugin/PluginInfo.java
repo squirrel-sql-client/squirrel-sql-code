@@ -98,6 +98,16 @@ public class PluginInfo
 	}
 
 	/**
+	 * Returns a comma separated list of other contributors.
+	 *
+	 * @return	Contributors names.
+	 */
+	public String getContributors()
+	{
+		return _plugin.getContributors();
+	}
+
+	/**
 	 * Returns the home page for this plugin.
 	 *
 	 * @return	the home page for this plugin.

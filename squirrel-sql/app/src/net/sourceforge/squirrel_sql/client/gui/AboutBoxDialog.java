@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -56,19 +57,20 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources.IImageNames;
-import net.sourceforge.squirrel_sql.client.Version;
 
 /**
  * About box dialog.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class AboutBoxDialog extends JDialog {
+public class AboutBoxDialog extends JDialog
+{
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(AboutBoxDialog.class);
+	private final static ILogger s_log =
+		LoggerController.createLogger(AboutBoxDialog.class);
 
 	/** Singleton instance of this class. */
 	private static AboutBoxDialog s_instance;
@@ -83,11 +85,13 @@ public class AboutBoxDialog extends JDialog {
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
-	private interface i18n {
+	private interface i18n
+	{
 		String ABOUT = "About";
 	}
 
-	private AboutBoxDialog(IApplication app) {
+	private AboutBoxDialog(IApplication app)
+	{
 		super(app.getMainFrame(), i18n.ABOUT, true);
 		setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 		createUserInterface(app);
@@ -102,17 +106,21 @@ public class AboutBoxDialog extends JDialog {
 	 * 			Thrown if a <TT>null</TT> <TT>IApplication</TT> object passed.
 	 */
 	public static synchronized void showAboutBox(IApplication app)
-			throws IllegalArgumentException {
-		if (app == null) {
+		throws IllegalArgumentException
+	{
+		if (app == null)
+		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
-		if (s_instance == null) {
+		if (s_instance == null)
+		{
 			s_instance = new AboutBoxDialog(app);
 		}
 		s_instance.show();
 	}
 
-	private void createUserInterface(IApplication app) {
+	private void createUserInterface(IApplication app)
+	{
 		final JPanel contentPane = new JPanel(new BorderLayout());
 		setContentPane(contentPane);
 		contentPane.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
@@ -122,40 +130,55 @@ public class AboutBoxDialog extends JDialog {
 
 		_tabPnl = new SquirrelTabbedPane(app.getSquirrelPreferences());
 
-		if (isDebug) {
+		if (isDebug)
+		{
 			start = System.currentTimeMillis();
 		}
-		_tabPnl.add("About", new AboutPanel(app));  // i18n
-		if (isDebug) {
+		_tabPnl.add("About", new AboutPanel(app)); // i18n
+		if (isDebug)
+		{
 			s_log.debug("AboutPanel created in "
-						+ (System.currentTimeMillis() - start) + "ms");
+					+ (System.currentTimeMillis() - start)
+					+ "ms");
 		}
 
-		if (isDebug) {
+		if (isDebug)
+		{
 			start = System.currentTimeMillis();
 		}
-		_tabPnl.add("Credits", new CreditsPanel(app));  // i18n
-		if (isDebug) {
+		_tabPnl.add("Credits", new CreditsPanel(app)); // i18n
+		if (isDebug)
+		{
 			s_log.debug("CreditsPanel created in "
-						+ (System.currentTimeMillis() - start) + "ms");
+					+ (System.currentTimeMillis() - start)
+					+ "ms");
 		}
 
-		if (isDebug) {
+		if (isDebug)
+		{
 			start = System.currentTimeMillis();
 		}
 		_systemPnl = new SystemPanel(app);
 		_tabPnl.add("System", _systemPnl); // i18n
-		if (isDebug) {
-			s_log.debug("SystemPanel created in "
-						+ (System.currentTimeMillis() - start) + "ms");
+		if (isDebug)
+		{
+			s_log.debug(
+				"SystemPanel created in "
+					+ (System.currentTimeMillis() - start)
+					+ "ms");
 		}
 
-		_tabPnl.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent evt) {
+		_tabPnl.addChangeListener(new ChangeListener()
+		{
+			public void stateChanged(ChangeEvent evt)
+			{
 				String title = _tabPnl.getTitleAt(_tabPnl.getSelectedIndex());
-				if (title.equals("System")) {
+				if (title.equals("System"))
+				{
 					_systemPnl._memoryPnl.startTimer();
-				} else {
+				}
+				else
+				{
 					_systemPnl._memoryPnl.stopTimer();
 				}
 			}
@@ -166,8 +189,10 @@ public class AboutBoxDialog extends JDialog {
 		// Ok button at bottom of dialog.
 		JPanel btnsPnl = new JPanel();
 		JButton okBtn = new JButton("OK");
-		okBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
+		okBtn.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent evt)
+			{
 				setVisible(false);
 			}
 		});
@@ -180,16 +205,21 @@ public class AboutBoxDialog extends JDialog {
 		ps.width = 400;
 		contentPane.setPreferredSize(ps);
 
-		addWindowListener(new WindowAdapter() {
-			public void windowActivated(WindowEvent evt) {
+		addWindowListener(new WindowAdapter()
+		{
+			public void windowActivated(WindowEvent evt)
+			{
 				String title = _tabPnl.getTitleAt(_tabPnl.getSelectedIndex());
-				if (title.equals("System")) {
+				if (title.equals("System"))
+				{
 					_systemPnl._memoryPnl.startTimer();
 				}
 			}
-			public void windowDeactivated(WindowEvent evt) {
+			public void windowDeactivated(WindowEvent evt)
+			{
 				String title = _tabPnl.getTitleAt(_tabPnl.getSelectedIndex());
-				if (title.equals("System")) {
+				if (title.equals("System"))
+				{
 					_systemPnl._memoryPnl.stopTimer();
 				}
 			}
@@ -200,70 +230,61 @@ public class AboutBoxDialog extends JDialog {
 		setResizable(false);
 	}
 
-	private static final class CreditsPanel extends JScrollPane {
-		CreditsPanel(IApplication app) {
+	private static final class CreditsPanel extends JScrollPane
+	{
+		CreditsPanel(IApplication app)
+		{
 			super();
 			final JEditorPane credits = new JEditorPane();
 			credits.setEditable(false);
 			credits.setContentType("text/html");
-			final URL url = app.getResources().getCreditsURL();
-			StringBuffer buf = new StringBuffer(2048);
 
-			if (url != null) {
-				try {
-					BufferedReader rdr = new BufferedReader(new InputStreamReader(url.openStream()));
-					try {
-						String line = null;
-						while ((line = rdr.readLine()) != null) {
-							buf.append(line);
-						}
-						credits.setText(buf.toString());
-					} finally {
-						rdr.close();
-					}
-				} catch (IOException ex) {
-					s_log.error("Error reading credits file", ex);
-					credits.setText("Error reading credits file: " + ex.toString());
-				}
-			} else {
-				s_log.error("Couldn't retrieve Credits File URL");
-				credits.setText("Couldn't retrieve Credits File URL");
-			}
+			final StringBuffer creditsData = readCreditsFile(app);
 
-			// Get list of all plugin developers names and place in credits. Make sure that
-			// we only display each developer once even if they have developed more than
-			// one plugin. Also allow for multiple developers for a plugin in the
-			// form "John Smith, James Brown". Sort names.
-			Map map = new TreeMap();
+			// Get list of contributors names.
+			final Map map = new TreeMap();
+			readContributorsFile(app, map);
+
+			// Get list of all plugin developers names. Allow for multiple
+			// developers for a plugin in the form "John Smith, James Brown".
 			PluginInfo[] pi = app.getPluginManager().getPluginInformation();
-			for (int i = 0; i < pi.length; ++i) {
-				StringTokenizer strok = new StringTokenizer(pi[i].getPlugin().getAuthor(), ",");
-				while (strok.hasMoreTokens()) {
+			for (int i = 0; i < pi.length; ++i)
+			{
+				String authors = pi[i].getAuthor();
+				StringTokenizer strok = new StringTokenizer(authors, ",");
+				while (strok.hasMoreTokens())
+				{
+					String tok = strok.nextToken().trim();
+					map.put(tok, tok);
+				}
+				authors = pi[i].getAuthor();
+				strok = new StringTokenizer(authors, ",");
+				while (strok.hasMoreTokens())
+				{
 					String tok = strok.nextToken().trim();
 					map.put(tok, tok);
 				}
 			}
 
-			StringBuffer devNamesBuf = new StringBuffer();
-			for (Iterator it = map.keySet().iterator(); it.hasNext();) {
-				String theName = (String)it.next();
-				devNamesBuf.append("<EM>").append(theName).append("</EM>, ");
+			// Put some HTML formatting around each developers name.
+			final StringBuffer devNamesBuf = new StringBuffer();
+			devNamesBuf.append("<CENTER>");
+			for (Iterator it = map.keySet().iterator(); it.hasNext();)
+			{
+				String theName = (String) it.next();
+				devNamesBuf.append("<EM>").append(theName).append("</EM><BR>");
 			}
+			devNamesBuf.append("</CENTER>");
+			final String names = devNamesBuf.toString();
 
-			// Remove trailing ", ".
-			String names = null;
-			if (devNamesBuf.length() > 2) {
-				names = devNamesBuf.substring(0, devNamesBuf.length() - 2);
-			} else {
-				names = devNamesBuf.toString();
+			int pos = creditsData.toString().indexOf("%0");
+			if (pos > -1)
+			{
+				creditsData.replace(pos, pos + 2, names);
+				credits.setText(creditsData.toString());
 			}
-
-			String data = buf.toString();
-			int pos = data.indexOf("%0");
-			if (pos > -1) {
-				buf.replace(pos, pos + 2, names);
-				credits.setText(buf.toString());
-			} else {
+			else
+			{
 				s_log.error("Unable to find Plugin Developers replacement token %0 in credits.html");
 			}
 
@@ -271,15 +292,88 @@ public class AboutBoxDialog extends JDialog {
 			credits.setCaretPosition(0);
 		}
 
+		private void readContributorsFile(IApplication app, Map map)
+		{
+			final URL url = app.getResources().getContributorsURL();
+			if (url != null)
+			{
+				try
+				{
+					BufferedReader rdr = new BufferedReader(new InputStreamReader(url.openStream()));
+					try
+					{
+						String line = null;
+						while ((line = rdr.readLine()) != null)
+						{
+							map.put(line, line);
+						}
+					}
+					finally
+					{
+						rdr.close();
+					}
+				}
+				catch (IOException ex)
+				{
+					s_log.error("Error reading contributors file", ex);
+				}
+			}
+			else
+			{
+				s_log.error("Couldn't retrieve contributors File URL");
+			}
+		}
+
+		private StringBuffer readCreditsFile(IApplication app)
+		{
+			final URL url = app.getResources().getCreditsURL();
+			StringBuffer buf = new StringBuffer(2048);
+
+			if (url != null)
+			{
+				try
+				{
+					BufferedReader rdr = new BufferedReader(new InputStreamReader(url.openStream()));
+					try
+					{
+						String line = null;
+						while ((line = rdr.readLine()) != null)
+						{
+							buf.append(line);
+						}
+					}
+					finally
+					{
+						rdr.close();
+					}
+				}
+				catch (IOException ex)
+				{
+					s_log.error("Error reading credits file", ex);
+					buf.append("Error reading credits file: " + ex.toString());
+				}
+			}
+			else
+			{
+				s_log.error("Couldn't retrieve Credits File URL");
+				buf.append("Couldn't retrieve Credits File URL");
+			}
+			return buf;
+		}
 	}
 
-	private static final class AboutPanel extends JPanel {
-		AboutPanel(IApplication app) {
+	private static final class AboutPanel extends JPanel
+	{
+		AboutPanel(IApplication app)
+		{
 			super();
 			setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 			setLayout(new BorderLayout());
-			setBackground(new Color(SquirrelResources.S_SPLASH_IMAGE_BACKGROUND));
-			Icon icon = app.getResources().getIcon(SquirrelResources.IImageNames.SPLASH_SCREEN);
+			setBackground(
+				new Color(SquirrelResources.S_SPLASH_IMAGE_BACKGROUND));
+			Icon icon =
+				app.getResources().getIcon(
+					SquirrelResources.IImageNames.SPLASH_SCREEN);
 			add(BorderLayout.CENTER, new JLabel(icon));
 			JTextArea ta = new JTextArea();
 			ta.setEditable(false);
@@ -292,16 +386,21 @@ public class AboutBoxDialog extends JDialog {
 		}
 	}
 
-	private static final class SystemPanel extends JPanel {
+	private static final class SystemPanel extends JPanel
+	{
 		private MemoryPanel _memoryPnl;
 
-		SystemPanel(IApplication app) {
+		SystemPanel(IApplication app)
+		{
 			super();
 			setLayout(new BorderLayout());
 			DataSetViewerTablePanel propsPnl = new DataSetViewerTablePanel();
-			try {
+			try
+			{
 				propsPnl.show(new HashtableDataSet(System.getProperties()));
-			} catch (DataSetException ex) {
+			}
+			catch (DataSetException ex)
+			{
 				s_log.error("Error occured displaying System Properties", ex);
 			}
 
@@ -313,29 +412,36 @@ public class AboutBoxDialog extends JDialog {
 		}
 	}
 
-	private static class MemoryPanel extends PropertyPanel implements ActionListener {
+	private static class MemoryPanel
+		extends PropertyPanel
+		implements ActionListener
+	{
 		private JLabel _totalMemoryLbl = new JLabel();
 		private JLabel _usedMemoryLbl = new JLabel();
 		private JLabel _freeMemoryLbl = new JLabel();
 		private Timer _timer;
 		private DecimalFormat _fmt = new DecimalFormat("#,##0.0");
 
-		MemoryPanel() {
+		MemoryPanel()
+		{
 			super();
 			add(new JLabel("Java heap size:"), _totalMemoryLbl); // i18n
 			add(new JLabel("Used heap:"), _usedMemoryLbl); // i18n
 			add(new JLabel("Free heap:"), _freeMemoryLbl); // i18n
 
 			JButton gcBtn = new JButton("Garbage Collect"); //i18n
-			gcBtn.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent evt) {
+			gcBtn.addActionListener(new ActionListener()
+			{
+				public void actionPerformed(ActionEvent evt)
+				{
 					System.gc();
 				}
 			});
 			add(gcBtn, new JLabel(""));
 		}
 
-		public void removeNotify() {
+		public void removeNotify()
+		{
 			stopTimer();
 			super.removeNotify();
 		}
@@ -345,12 +451,15 @@ public class AboutBoxDialog extends JDialog {
 		 * 
 		 * @param	evt		The current event.
 		 */
-		public void actionPerformed(ActionEvent evt) {
+		public void actionPerformed(ActionEvent evt)
+		{
 			updateMemoryStatus();
 		}
 
-		synchronized void startTimer() {
-			if (_timer == null) {
+		synchronized void startTimer()
+		{
+			if (_timer == null)
+			{
 				s_log.debug("Starting memory timer (AboutBox)");
 				//_thread = new Thread(new MemoryTimer());
 				//_thread.start();
@@ -360,15 +469,18 @@ public class AboutBoxDialog extends JDialog {
 			}
 		}
 
-		synchronized void stopTimer() {
-			if (_timer != null) {
+		synchronized void stopTimer()
+		{
+			if (_timer != null)
+			{
 				s_log.debug("Ending memory timer (AboutBox)");
 				_timer.stop();
 				_timer = null;
 			}
 		}
 
-		private void updateMemoryStatus() {
+		private void updateMemoryStatus()
+		{
 			Runtime rt = Runtime.getRuntime();
 			final long totalMemory = rt.totalMemory();
 			final long freeMemory = rt.freeMemory();
@@ -377,15 +489,18 @@ public class AboutBoxDialog extends JDialog {
 			_usedMemoryLbl.setText(formatSize(usedMemory));
 			_freeMemoryLbl.setText(formatSize(freeMemory));
 		}
-		
-		private String formatSize(long nbrBytes) {
+
+		private String formatSize(long nbrBytes)
+		{
 			double size = nbrBytes;
 			double val = size / (1024 * 1024);
-			if (val > 1) {
+			if (val > 1)
+			{
 				return _fmt.format(val).concat(" MB");
 			}
 			val = size / 1024;
-			if (val > 10) {
+			if (val > 10)
+			{
 				return _fmt.format(val).concat(" KB");
 			}
 			return _fmt.format(val).concat(" bytes");

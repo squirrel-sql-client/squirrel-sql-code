@@ -29,6 +29,7 @@ public class PluginInfoArrayDataSet implements IDataSet
 	{
 		String NAME = "Name";
 		String AUTHOR = "Author";
+		String CONTRIBUTORS = "Contributors";
 		String LOADED = "Loaded";
 		String VERSION = "Version";
 		String UNKNOWN = "<Unknown>";
@@ -39,10 +40,16 @@ public class PluginInfoArrayDataSet implements IDataSet
 	private PluginInfo[] _src;
 	private DataSetDefinition _dsDef;
 
-	private final static String[] s_hdgs =
-		new String[] { PluginInfoArrayDataSetI18n.NAME, PluginInfoArrayDataSetI18n.LOADED, PluginInfoArrayDataSetI18n.VERSION, PluginInfoArrayDataSetI18n.AUTHOR };
+	private final static String[] s_hdgs = new String[]
+	{
+		PluginInfoArrayDataSetI18n.NAME,
+		PluginInfoArrayDataSetI18n.LOADED,
+		PluginInfoArrayDataSetI18n.VERSION,
+		PluginInfoArrayDataSetI18n.AUTHOR,
+		PluginInfoArrayDataSetI18n.CONTRIBUTORS,
+	};
 
-	private final static int[] s_hdgWidths = new int[] { 30, 10, 10, 30 };
+	private final static int[] s_hdgWidths = new int[] { 30, 10, 10, 30, 30 };
 
 	private PluginInfo _curRow;
 	private int _curIndex = -1;
@@ -92,13 +99,25 @@ public class PluginInfoArrayDataSet implements IDataSet
 		switch (columnIndex)
 		{
 			case 0 :
-				return plugin != null ? plugin.getDescriptiveName() : PluginInfoArrayDataSetI18n.UNKNOWN;
+				return plugin != null
+					? plugin.getDescriptiveName()
+					: PluginInfoArrayDataSetI18n.UNKNOWN;
 			case 1 :
-				return _curRow.isLoaded() ? PluginInfoArrayDataSetI18n.TRUE : PluginInfoArrayDataSetI18n.FALSE;
+				return _curRow.isLoaded()
+					? PluginInfoArrayDataSetI18n.TRUE
+					: PluginInfoArrayDataSetI18n.FALSE;
 			case 2 :
-				return plugin != null ? plugin.getVersion() : PluginInfoArrayDataSetI18n.UNKNOWN;
+				return plugin != null
+					? plugin.getVersion()
+					: PluginInfoArrayDataSetI18n.UNKNOWN;
 			case 3 :
-				return plugin != null ? plugin.getAuthor() : PluginInfoArrayDataSetI18n.UNKNOWN;
+				return plugin != null
+					? plugin.getAuthor()
+					: PluginInfoArrayDataSetI18n.UNKNOWN;
+			case 4 :
+				return plugin != null
+					? plugin.getContributors()
+					: PluginInfoArrayDataSetI18n.UNKNOWN;
 			default :
 				throw new IndexOutOfBoundsException("" + columnIndex);
 		}
@@ -107,10 +126,12 @@ public class PluginInfoArrayDataSet implements IDataSet
 	private ColumnDisplayDefinition[] createColumnDefinitions()
 	{
 		final int columnCount = getColumnCount();
-		ColumnDisplayDefinition[] columnDefs = new ColumnDisplayDefinition[columnCount];
+		ColumnDisplayDefinition[] columnDefs =
+			new ColumnDisplayDefinition[columnCount];
 		for (int i = 0; i < columnCount; ++i)
 		{
-			columnDefs[i] = new ColumnDisplayDefinition(s_hdgWidths[i], s_hdgs[i]);
+			columnDefs[i] =
+				new ColumnDisplayDefinition(s_hdgWidths[i], s_hdgs[i]);
 		}
 		return columnDefs;
 	}

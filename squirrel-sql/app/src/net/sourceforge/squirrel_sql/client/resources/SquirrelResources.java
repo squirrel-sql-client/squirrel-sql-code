@@ -21,18 +21,19 @@ import java.net.URL;
 
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 
-public class SquirrelResources extends Resources {
-
+public class SquirrelResources extends Resources
+{
 	//public final static int S_SPLASH_IMAGE_BACKGROUND = 0xADAFC4;
 	public final static int S_SPLASH_IMAGE_BACKGROUND = 0xAEB0C5;
 
 	private final String _defaultsPath;
 
-	public interface IMenuResourceKeys {
+	public interface IMenuResourceKeys
+	{
 		String ALIASES = "aliases";
 		String CLOSE_ALL_SQL_RESULTS = "close_all_sql_results";
 		String DRIVERS = "drivers";
-//	  String EDIT = "edit";
+		//	  String EDIT = "edit";
 		String FILE = "file";
 		String HELP = "help";
 		String PLUGINS = "plugins";
@@ -43,24 +44,31 @@ public class SquirrelResources extends Resources {
 		String WINDOWS = "windows";
 	}
 
-	public interface IImageNames {
+	public interface IImageNames
+	{
 		String PERFORMANCE_WARNING = "PerformanceWarning";
 		String SPLASH_SCREEN = "SplashScreen";
 	}
 
 	public SquirrelResources(String rsrcBundleBaseName)
-			throws IllegalArgumentException {
+		throws IllegalArgumentException
+	{
 		super(rsrcBundleBaseName, SquirrelResources.class.getClassLoader());
 		_defaultsPath = getBundle().getString("path.defaults");
 	}
 
-	public URL getDefaultDriversUrl() {
+	public URL getDefaultDriversUrl()
+	{
 		return getClass().getResource(_defaultsPath + "default_drivers.xml");
 	}
 
-	public URL getCreditsURL() {
+	public URL getCreditsURL()
+	{
 		return getClass().getResource(getBundle().getString("Credits.file"));
 	}
+
+	public URL getContributorsURL()
+	{
+		return getClass().getResource(getBundle().getString("Contributors.file"));
+	}
 }
-
-
