@@ -97,6 +97,16 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 			_propsListener = null;
 		}
 	}
+	
+	IObjectTab getTabIfSelected(String title)
+	{
+	  IObjectTab tab = (IObjectTab)_tabs.get(getSelectedIndex());
+	  if ((tab != null) && (tab.getTitle().equals(title)))
+	  {
+	    return tab;
+	  }
+	  return null;
+	}
 
 	void addObjectPanelTab(IObjectTab tab)
 	{

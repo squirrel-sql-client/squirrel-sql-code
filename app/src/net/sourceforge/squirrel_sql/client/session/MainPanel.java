@@ -38,6 +38,7 @@ import net.sourceforge.squirrel_sql.client.session.action.GotoNextResultsTabActi
 import net.sourceforge.squirrel_sql.client.session.action.GotoPreviousResultsTabAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
+import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
 import net.sourceforge.squirrel_sql.client.session.action.ShowNativeSQLAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ObjectTreeTab;
@@ -171,6 +172,7 @@ public class MainPanel extends SquirrelTabbedPane
 			actions.get(GotoPreviousResultsTabAction.class).setEnabled(true);
 			actions.get(ShowNativeSQLAction.class).setEnabled(true);
 			actions.get(RefreshObjectTreeAction.class).setEnabled(false);
+			actions.get(SQLFilterAction.class).setEnabled(false);
 		}
 		else
 		{
@@ -179,6 +181,7 @@ public class MainPanel extends SquirrelTabbedPane
 			actions.get(GotoPreviousResultsTabAction.class).setEnabled(false);
 			actions.get(ShowNativeSQLAction.class).setEnabled(false);
 			actions.get(RefreshObjectTreeAction.class).setEnabled(true);
+			actions.get(SQLFilterAction.class).setEnabled(true);
 		}
 		final boolean isAutoCommit = _session.getProperties().getAutoCommit();
 		actions.get(CommitAction.class).setEnabled(!isAutoCommit);

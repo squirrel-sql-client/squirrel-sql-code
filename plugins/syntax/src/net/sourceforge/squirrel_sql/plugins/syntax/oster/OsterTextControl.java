@@ -346,7 +346,7 @@ class OsterTextControl extends JTextPane
 		style = _syntaxPrefs.getFunctionStyle();
 		attribs = new SimpleAttributeSet();
 		applyStyle(attribs, style, fi);
-		styles.put(IConstants.IStyleNames.DATA_TYPE, attribs);
+		styles.put(IConstants.IStyleNames.FUNCTION, attribs);
 
 		style = _syntaxPrefs.getIdentifierStyle();
 		attribs = new SimpleAttributeSet();

@@ -484,6 +484,11 @@ public class ObjectTreePanel extends JPanel
 		}
 	}
 
+	public IObjectTab getTabbedPaneIfSelected(DatabaseObjectType dbObjectType, String title)
+	{
+		return getTabbedPane(dbObjectType).getTabIfSelected(title);
+	}
+
 	/**
 	 * Set the panel to be shown in the data area for the passed
 	 * path.

@@ -63,6 +63,7 @@ import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionPropertiesSheetFactory;
+import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterSheetFactory;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 /**
  * Defines the API to do callbacks on the application.
@@ -414,6 +415,7 @@ class Application implements IApplication
 		AliasMaintSheetFactory.initialize(this);
 		DriverMaintSheetFactory.initialize(this);
 		SessionPropertiesSheetFactory.initialize(this);
+		SQLFilterSheetFactory.initialize(this);
 
 		final boolean loadPlugins = args.getLoadPlugins();
 		indicateNewStartupTask(splash, loadPlugins ? "Loading plugins..." : "No Plugins are to be loaded...");

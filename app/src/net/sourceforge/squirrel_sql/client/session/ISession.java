@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.event.ISessionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterClauses;
 /**
  * The current session. This is a "subset" of the real session which can be
  * used by plugins.
@@ -110,6 +111,8 @@ public interface ISession extends IHasIdentifier
 	ISQLPanelAPI getSQLPanelAPI(IPlugin plugin);
 
 	SessionSheet getSessionSheet();
+
+	SQLFilterClauses getSQLFilterClauses();
 
 	/**
 	 * Retrieve the schema information object for this session.

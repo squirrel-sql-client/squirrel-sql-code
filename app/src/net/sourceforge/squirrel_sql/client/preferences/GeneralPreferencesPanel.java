@@ -102,7 +102,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 		{
 			String DEBUG_JDBC = "JDBC Debug (can slow application)";
 			String LOGIN_TIMEOUT = "Login Timeout (Seconds):";
-			String MAXIMIZE_SESSION_SHEET = "Maximize Session Sheet on Open:";
+			String MAXIMIZE_SESSION_SHEET = "Maximize Session Sheet on Open";
 			String SHOW_ALIASES_WINDOW_TOOLBAR = "Show Aliases Toolbar";
 			String SHOW_CONTENTS = "Show Window Contents While Dragging";
 			String SHOW_DRIVERS_WINDOW_TOOLBAR = "Show Drivers Toolbar";
