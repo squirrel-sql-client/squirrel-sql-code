@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer;
 /*
- * Copyright (C) 2002 David MacLean
+ * Copyright (C) 2002-2004 David MacLean
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -42,10 +42,6 @@ public class DatabaseTypesDataSet implements IDataSet
 		throws DataSetException
 	{
 		super();
-		if (rs == null)
-		{
-			throw new IllegalArgumentException("Null ResultSet passed");
-		}
 
 		_rs = rs;
 		if (columnIndices != null && columnIndices.length == 0)
@@ -54,16 +50,19 @@ public class DatabaseTypesDataSet implements IDataSet
 		}
 		_columnIndices = columnIndices;
 
-		try
+		if (rs != null)
 		{
-			ResultSetMetaData md = _rs.getMetaData();
-			_columnCount = columnIndices != null ? columnIndices.length : md.getColumnCount();
-			_dataSetDefinition = new DataSetDefinition(createColumnDefinitions(md, columnIndices));
-			_row = new Object[_columnCount];
-		}
-		catch (SQLException ex)
-		{
-			throw new DataSetException(ex);
+			try
+			{
+				ResultSetMetaData md = _rs.getMetaData();
+				_columnCount = columnIndices != null ? columnIndices.length : md.getColumnCount();
+				_dataSetDefinition = new DataSetDefinition(createColumnDefinitions(md, columnIndices));
+				_row = new Object[_columnCount];
+			}
+			catch (SQLException ex)
+			{
+				throw new DataSetException(ex);
+			}
 		}
 	}
 
@@ -80,12 +79,17 @@ public class DatabaseTypesDataSet implements IDataSet
 	/**
 	 * Point to the next data type. If there are no more data types
 	 * then close the ResultSet.
-	 * 
-	 * @return	<TT>true</TT> if there is another data type.	
+	 *
+	 * @return	<TT>true</TT> if there is another data type.
 	 */
 	public synchronized boolean next(IMessageHandler msgHandler)
 		throws DataSetException
 	{
+		if (_rs == null)
+		{
+			return false;
+		}
+
 //TODO: Replace with ResultSetReader once we have column renderers.
 		try
 		{
