@@ -1,6 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.*;
 
 /*
  * Copyright (C) 2001-2002 Colin Bell
