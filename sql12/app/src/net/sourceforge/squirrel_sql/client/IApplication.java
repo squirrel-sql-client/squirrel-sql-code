@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.gui.WindowManager;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
@@ -36,7 +37,6 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
-import net.sourceforge.squirrel_sql.client.session.SessionWindowManager;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
 /**
  * Defines the API to do callbacks on the application.
@@ -64,11 +64,11 @@ public interface IApplication
 	PluginManager getPluginManager();
 
 	/**
-	 * Return the manager responsible for session windows.
+	 * Return the manager responsible for windows.
 	 *
-	 * @return	the manager responsible for session windows.
+	 * @return	the manager responsible for windows.
 	 */
-	SessionWindowManager getSessionWindowManager();
+	WindowManager getWindowManager();
 
 	ActionCollection getActionCollection();
 

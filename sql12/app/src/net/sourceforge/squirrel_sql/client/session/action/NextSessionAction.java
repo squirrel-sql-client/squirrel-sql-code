@@ -54,7 +54,7 @@ public class NextSessionAction extends SquirrelAction
 // JASON: TODO
 			final IApplication app = getApplication();
 			final ISession nextSession = app.getSessionManager().getNextSession(_session);
-			final JInternalFrame sif = app.getSessionWindowManager().getMainInternalFrame(nextSession);
+			final JInternalFrame sif = app.getWindowManager().getMainInternalFrame(nextSession);
 			new SelectInternalFrameCommand(sif).execute();
 		}
 	}

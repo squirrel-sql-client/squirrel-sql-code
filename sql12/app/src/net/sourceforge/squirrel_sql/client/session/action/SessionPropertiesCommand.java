@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,9 +19,8 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
+import net.sourceforge.squirrel_sql.client.gui.WindowManager;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SessionWindowManager;
-//import net.sourceforge.squirrel_sql.client.session.properties.SessionPropertiesSheetFactory;
 /**
  * This <CODE>ICommand</CODE> displays a session properties dialog box
  * and allows the user to modify the properties.
@@ -58,7 +57,7 @@ public class SessionPropertiesCommand implements ICommand
 	{
 		if (_session != null)
 		{
-			SessionWindowManager winMgr = _session.getApplication().getSessionWindowManager();
+			WindowManager winMgr = _session.getApplication().getWindowManager();
 			winMgr.showSessionPropertiesDialog(_session);
 		}
 	}

@@ -444,7 +444,7 @@ public class ConnectToAliasCommand implements ICommand
 			try
 			{
 				app.getPluginManager().sessionCreated(_session);
-				final SessionInternalFrame child = app.getSessionWindowManager().createInternalFrame(_session);
+				final SessionInternalFrame child = app.getWindowManager().createInternalFrame(_session);
 				_session.setSessionSheet(child.getSessionPanel());
 				app.getPluginManager().sessionStarted(_session);
 				app.getMainFrame().addInternalFrame(child, true, null);

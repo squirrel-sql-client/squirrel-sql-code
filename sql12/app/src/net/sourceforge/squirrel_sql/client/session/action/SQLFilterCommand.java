@@ -23,10 +23,9 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.WindowManager;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SessionWindowManager;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ContentsTab;
 /**
  * This <CODE>ICommand</CODE> displays a dialog box that allows the user to
  * enter a 'where' clause or an 'order by' clause used when getting data via
@@ -76,7 +75,7 @@ public class SQLFilterCommand implements ICommand
 		{
 			final ISession session = _objectTree.getSession();
 			final IApplication app = session.getApplication();
-			final SessionWindowManager winMgr = app.getSessionWindowManager();
+			final WindowManager winMgr = app.getWindowManager();
 			winMgr.showSQLFilterDialog( _objectTree, _objectInfo);
 		}
 	}

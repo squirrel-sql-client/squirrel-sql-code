@@ -44,7 +44,7 @@ import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
 import net.sourceforge.squirrel_sql.client.session.action.ShowNativeSQLAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 
-/* JMH Class*/
+/* JASON: Class*/
 public class SQLInternalFrame extends BaseSessionSheet
 								implements ISQLInternalFrame
 {
