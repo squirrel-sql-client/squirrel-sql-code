@@ -48,6 +48,7 @@ public class TableFrameController
    private JMenuItem _mnuAddChildTables;
    private JMenuItem _mnuAddParentTables;
    private JMenuItem _mnuAddAllRelatedTables;
+   private JMenuItem _mnuRefreshTable;
    private JCheckBoxMenuItem _mnuOrderByName;
    private JCheckBoxMenuItem _mnuPksAndConstraintsOnTop;
    private JCheckBoxMenuItem _mnuDbOrder;
@@ -82,73 +83,15 @@ public class TableFrameController
             }
          };
 
-         Hashtable constaintInfosByConstraintName = new Hashtable();
          if(null == xmlBean)
          {
             _tableName = tableName;
             _frame = new TableFrame(_tableName, null, toolTipProvider, _desktopController.getZoomer());
 
-            DatabaseMetaData metaData = _session.getSQLConnection().getConnection().getMetaData();
             _catalog = _session.getSQLConnection().getCatalog();
-
-            ResultSet res;
-
             _schema = null;
-            Vector colInfosBuf = new Vector();
-            res = metaData.getColumns(_catalog, null, _tableName, null);
-            while(res.next())
-            {
-               _schema = res.getString("TABLE_SCHEM");
-               String columnName = res.getString("COLUMN_NAME");
-               String columnType = res.getString("TYPE_NAME");
-               int columnSize = res.getInt("COLUMN_SIZE");
-               int decimalDigits = res.getInt("DECIMAL_DIGITS");
-               boolean nullable = "YES".equals(res.getString("IS_NULLABLE"));
 
-               ColumnInfo colInfo = new ColumnInfo(columnName, columnType, columnSize, decimalDigits,nullable);
-               colInfosBuf.add(colInfo);
-            }
-            res.close();
-            _colInfos = (ColumnInfo[]) colInfosBuf.toArray(new ColumnInfo[colInfosBuf.size()]);
-
-            res = metaData.getPrimaryKeys(_catalog, _schema, _tableName);
-            while(res.next())
-            {
-               for (int i = 0; i < _colInfos.length; i++)
-               {
-                  if(_colInfos[i].getName().equals(res.getString("COLUMN_NAME")))
-                  {
-                     _colInfos[i].markPrimaryKey();
-                  }
-
-               }
-            }
-            res.close();
-
-            res = metaData.getImportedKeys(_catalog, _schema, _tableName);
-            while(res.next())
-            {
-               ColumnInfo colInfo = findColumnInfo(res.getString("FKCOLUMN_NAME"));
-               colInfo.setImportData(res.getString("PKTABLE_NAME"), res.getString("PKCOLUMN_NAME"), res.getString("FK_NAME"));
-
-               ConstraintData  constraintData = (ConstraintData) constaintInfosByConstraintName.get(res.getString("FK_NAME"));
-
-               if(null == constraintData)
-               {
-                  constraintData = new ConstraintData(res.getString("PKTABLE_NAME"), _tableName, res.getString("FK_NAME"));
-                  constaintInfosByConstraintName.put(res.getString("FK_NAME"), constraintData);
-               }
-               constraintData.addColumnInfo(colInfo);
-            }
-            res.close();
-
-            ConstraintData[] buf = (ConstraintData[]) constaintInfosByConstraintName.values().toArray(new ConstraintData[0]);
-
-            _constraintViews = new ConstraintView[buf.length];
-            for (int i = 0; i < buf.length; i++)
-            {
-               _constraintViews[i] = new ConstraintView(buf[i], _desktopController, _session);
-            }
+            initFromDB();
 
          }
          else
@@ -247,6 +190,102 @@ public class TableFrameController
       {
          throw new RuntimeException(e);
       }
+   }
+
+   /**
+    * @return false if table doesnt exist anymore.
+    */
+   private boolean initFromDB()
+      throws SQLException
+   {
+      DatabaseMetaData metaData = _session.getSQLConnection().getConnection().getMetaData();
+      ResultSet res;
+      Hashtable constaintInfosByConstraintName = new Hashtable();
+      Vector colInfosBuf = new Vector();
+      res = metaData.getColumns(_catalog, null, _tableName, null);
+      while(res.next())
+      {
+         _schema = res.getString("TABLE_SCHEM");
+         String columnName = res.getString("COLUMN_NAME");
+         String columnType = res.getString("TYPE_NAME");
+         int columnSize = res.getInt("COLUMN_SIZE");
+         int decimalDigits = res.getInt("DECIMAL_DIGITS");
+         boolean nullable = "YES".equals(res.getString("IS_NULLABLE"));
+
+         ColumnInfo colInfo = new ColumnInfo(columnName, columnType, columnSize, decimalDigits,nullable);
+         colInfosBuf.add(colInfo);
+      }
+      res.close();
+      _colInfos = (ColumnInfo[]) colInfosBuf.toArray(new ColumnInfo[colInfosBuf.size()]);
+
+      if(0 == _colInfos.length)
+      {
+         // Table was deleted from DB
+         return false;
+      }
+
+      res = metaData.getPrimaryKeys(_catalog, _schema, _tableName);
+      while(res.next())
+      {
+         for (int i = 0; i < _colInfos.length; i++)
+         {
+            if(_colInfos[i].getName().equals(res.getString("COLUMN_NAME")))
+            {
+               _colInfos[i].markPrimaryKey();
+            }
+
+         }
+      }
+      res.close();
+
+      res = metaData.getImportedKeys(_catalog, _schema, _tableName);
+      while(res.next())
+      {
+         ColumnInfo colInfo = findColumnInfo(res.getString("FKCOLUMN_NAME"));
+         colInfo.setImportData(res.getString("PKTABLE_NAME"), res.getString("PKCOLUMN_NAME"), res.getString("FK_NAME"));
+
+         ConstraintData  constraintData = (ConstraintData) constaintInfosByConstraintName.get(res.getString("FK_NAME"));
+
+         if(null == constraintData)
+         {
+            constraintData = new ConstraintData(res.getString("PKTABLE_NAME"), _tableName, res.getString("FK_NAME"));
+            constaintInfosByConstraintName.put(res.getString("FK_NAME"), constraintData);
+         }
+         constraintData.addColumnInfo(colInfo);
+      }
+      res.close();
+
+      ConstraintData[] constraintData = (ConstraintData[]) constaintInfosByConstraintName.values().toArray(new ConstraintData[0]);
+
+      Hashtable oldConstraintViewsByConstraintName = new Hashtable();
+
+      if(null != _constraintViews)
+      {
+         _desktopController.removeConstraintViews(_constraintViews, true);
+         for (int i = 0; i < _constraintViews.length; i++)
+         {
+            oldConstraintViewsByConstraintName.put(_constraintViews[i].getData().getConstraintName(), _constraintViews[i]);
+         }
+      }
+
+      _constraintViews = new ConstraintView[constraintData.length];
+      for (int i = 0; i < constraintData.length; i++)
+      {
+         ConstraintView oldCV = (ConstraintView) oldConstraintViewsByConstraintName.get(constraintData[i].getConstraintName());
+
+         if(null != oldCV)
+         {
+            // The old view is preserved to eventually preserve folding points
+            oldCV.setData(constraintData[i]);
+            _constraintViews[i] = oldCV;
+         }
+         else
+         {
+            _constraintViews[i] = new ConstraintView(constraintData[i], _desktopController, _session);
+         }
+      }
+
+      return true;
    }
 
    private void onZoomEnabled(boolean b)
@@ -400,6 +439,19 @@ public class TableFrameController
       });
 
 
+
+
+      _mnuRefreshTable = new JMenuItem("Refresh table");
+      _mnuRefreshTable.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onRefresh();
+         }
+      });
+
+
+
       _mnuDbOrder = new JCheckBoxMenuItem("db order");
       _mnuDbOrder.addActionListener(new ActionListener()
       {
@@ -444,6 +496,8 @@ public class TableFrameController
       _popUp.add(_mnuAddParentTables);
       _popUp.add(_mnuAddAllRelatedTables);
       _popUp.add(new JSeparator());
+      _popUp.add(_mnuRefreshTable);
+      _popUp.add(new JSeparator());
       _popUp.add(_mnuDbOrder);
       _popUp.add(_mnuOrderByName);
       _popUp.add(_mnuPksAndConstraintsOnTop);
@@ -464,6 +518,34 @@ public class TableFrameController
       });
 
 
+   }
+
+   private void onRefresh()
+   {
+      refresh();
+   }
+
+   void refresh()
+   {
+      try
+      {
+         if(initFromDB())
+         {
+            orderColumns();
+            recalculateAllConnections();
+            _desktopController.repaint();
+         }
+         else
+         {
+            onClose();
+            _frame.setVisible(false);
+            _frame.dispose();
+         }
+      }
+      catch (SQLException e)
+      {
+         throw new RuntimeException(e);
+      }
    }
 
    private void onAddTableForForeignKey(ColumnInfo columnInfo)
@@ -727,7 +809,7 @@ public class TableFrameController
 
    private void onClose()
    {
-      _desktopController.removeConstraintViews(_constraintViews);
+      _desktopController.removeConstraintViews(_constraintViews, false);
       _desktopController.getZoomer().removeZoomListener(_zoomerListener);
 
 
@@ -872,7 +954,7 @@ public class TableFrameController
       }
 
       ConstraintView[] buf = (ConstraintView[]) constraintDataToRemove.toArray(new ConstraintView[constraintDataToRemove.size()]);
-      _desktopController.removeConstraintViews(buf);
+      _desktopController.removeConstraintViews(buf, false);
    }
 
    private boolean recalculateConnectionsTo(TableFrameController other)
