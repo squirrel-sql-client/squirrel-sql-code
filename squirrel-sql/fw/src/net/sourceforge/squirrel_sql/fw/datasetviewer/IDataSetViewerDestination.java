@@ -20,14 +20,41 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
 import java.util.List;
 
 public interface IDataSetViewerDestination {
-    final static int MAX_COLUMN_WIDTH = 50;
+	final static int MAX_COLUMN_WIDTH = 50;
 
-    void clear();
-    void setColumnDefinitions(ColumnDisplayDefinition[] hdgs);
-    void showHeadings(boolean show);
-    void addRow(String[] row);
+	/**
+	 * Clear the output.
+	 */
+	void clear();
+	
+	/**
+	 * Specify the column headings to use.
+	 * 
+	 * @param	hdgs	Column headings to use.
+	 */
+	void setColumnDefinitions(ColumnDisplayDefinition[] hdgs);
+	
+	/**
+	 * Specify whether to show the column headings.
+	 * 
+	 * @param	show	<TT>true</TT> if headibgs to be shown else <TT>false</TT>.
+	 */
+	void showHeadings(boolean show);
 
-    void allRowsAdded();
+	/**
+	 * Add a row.
+	 * 
+	 * @param	row		Array of objects specifying the row data.
+	 */
+	void addRow(Object[] row);
 
-    void moveToTop();
+	/**
+	 * Called once all rows have been added..
+	 */
+	void allRowsAdded();
+
+	/**
+	 * Indicates that the output display should scroll to the top.
+	 */
+	void moveToTop();
 }

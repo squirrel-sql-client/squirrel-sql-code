@@ -17,13 +17,11 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -37,14 +35,10 @@ public class ResultSetMetaDataDataSet implements IDataSet {
 		String VALUE_COLUMN = "Value";
 	}
 
-	//private final static String[] s_hdgs = new String[] {i18n.NAME_COLUMN, i18n.VALUE_COLUMN};
 	private DataSetDefinition _dsDef;
-//	private String[] _hdgs;
 	private boolean[] _propertyMethodIndicators;
 	private Iterator _rowsIter;
 	private String[] _row;
-
-	private IMessageHandler _msgHandler;
 
 	/**
 	 * Data. Each element is an array of String objects representing a column from
@@ -127,8 +121,6 @@ try {
 			}
 			_data.add(line.toArray(new String[line.size()]));
 		}
-		// Sort the rows by the property name.
-		//Collections.sort(_data, new DataSorter());
 
 		_rowsIter = _data.iterator();
 } catch (Throwable th) {
@@ -168,13 +160,4 @@ th.printStackTrace(System.out);
 			throw new DataSetException(ex);
 		}
 	}
-
-	private static final class DataSorter implements Comparator {
-		public int compare(Object obj1, Object obj2) {
-			final String lhs = ((String[])obj1)[0];
-			final String rhs = ((String[])obj2)[0];
-			return lhs.compareToIgnoreCase(rhs);
-		}
-	}
-
 }
