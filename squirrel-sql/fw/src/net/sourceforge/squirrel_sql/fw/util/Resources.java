@@ -26,6 +26,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 
 public abstract class Resources {
@@ -79,6 +80,26 @@ public abstract class Resources {
 			return KeyStroke.getKeyStroke(accel);
 		}
 		return null;
+	}
+
+	public JMenuItem addToPopupMenu(Action action, JPopupMenu menu)
+			throws MissingResourceException {
+		JMenuItem item = menu.add(action);
+		final String fullKey = Keys.MENU_ITEM +  "." + getClassName(action.getClass());
+
+		String mn = getResourceString(fullKey, MenuItemProperties.MNEMONIC);
+		if (mn.length() > 0) {
+			item.setMnemonic(mn.charAt(0));
+		}
+
+		String accel = getResourceString(fullKey, MenuItemProperties.ACCELERATOR);
+		if (accel.length() > 0) {
+			item.setAccelerator(KeyStroke.getKeyStroke(accel));
+		}
+
+		item.setToolTipText((String)action.getValue(Action.SHORT_DESCRIPTION));
+
+		return item;
 	}
 
 	public JMenuItem addToMenu(Action action, JMenu menu)
