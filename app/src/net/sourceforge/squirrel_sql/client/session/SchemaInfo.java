@@ -40,6 +40,8 @@ public class SchemaInfo
 	private final List _functions = new ArrayList();
 	private final List _tables = new ArrayList();
 	private final List _columns = new ArrayList();
+	private final List _catalogs = new ArrayList();
+	private final List _schemas = new ArrayList();
 	private final List _extendedtableInfos = new ArrayList();
 
 	/** Logger for this class. */
@@ -53,15 +55,26 @@ public class SchemaInfo
 
 	public SchemaInfo(SQLConnection conn)
 	{
+		this(conn, null, null);
+	}
+
+	public SchemaInfo(SQLConnection conn, String catalogName, String schemaName)
+	{
 		super();
 		if (conn == null)
 		{
 			throw new IllegalArgumentException("SQLConnection == null");
 		}
-		load(conn);
+		load(conn, catalogName, schemaName);
 	}
 
 	public void load(SQLConnection conn)
+	{
+		load(conn, null, null);
+	}
+
+
+	public void load(SQLConnection conn, String catalogName, String schemaName)
 	{
 		if (conn == null)
 		{
@@ -114,8 +127,30 @@ public class SchemaInfo
 
 			try
 			{
+				s_log.debug("Loading functions");
+				loadCatalogs(dmd);
+				s_log.debug("Functions loaded");
+			}
+			catch (Exception ex)
+			{
+				s_log.error("Error loading functions", ex);
+			}
+
+			try
+			{
+				s_log.debug("Loading functions");
+				loadSchemas(dmd);
+				s_log.debug("Functions loaded");
+			}
+			catch (Exception ex)
+			{
+				s_log.error("Error loading functions", ex);
+			}
+
+			try
+			{
 				s_log.debug("Loading tables");
-				loadTables(dmd);
+				loadTables(dmd, catalogName, schemaName);
 				s_log.debug("Tables loaded");
 			}
 			catch (Exception ex)
@@ -127,6 +162,38 @@ public class SchemaInfo
 		{
 			_loading = false;
 			_loaded = true;
+		}
+	}
+
+	private void loadCatalogs(DatabaseMetaData dmd)
+	{
+		try
+		{
+			ResultSet res = dmd.getCatalogs();
+			while(res.next())
+			{
+				_catalogs.add(res.getString("TABLE_CAT"));
+			}
+		}
+		catch (Throwable th)
+		{
+			s_log.error("failed to load catalog names", th);
+		}
+	}
+
+	private void loadSchemas(DatabaseMetaData dmd)
+	{
+		try
+		{
+			ResultSet res = dmd.getSchemas();
+			while(res.next())
+			{
+				_schemas.add(res.getString("TABLE_SCHEM"));
+			}
+		}
+		catch (Throwable th)
+		{
+			s_log.error("failed to load schema names", th);
 		}
 	}
 
@@ -516,6 +583,16 @@ public class SchemaInfo
 		return (String[]) _tables.toArray(new String[_tables.size()]);
 	}
 
+	public String[] getCatalogs()
+	{
+		return (String[]) _catalogs.toArray(new String[_catalogs.size()]);
+	}
+
+	public String[] getSchemas()
+	{
+		return (String[]) _schemas.toArray(new String[_schemas.size()]);
+	}
+
 	public ExtendedTableInfo[] getExtendedTableInfos()
 	{
 		return (ExtendedTableInfo[]) _extendedtableInfos.toArray(new ExtendedTableInfo[_extendedtableInfos.size()]);
@@ -526,13 +603,13 @@ public class SchemaInfo
 		return _loaded;
 	}
 
-	private void loadTables(DatabaseMetaData dmd)
+	private void loadTables(DatabaseMetaData dmd, String catalogName, String schemaName)
 	{
 		try
 		{
 			// TODO: Use table types from meta data?
 			final String[] tabTypes = new String[] { "TABLE", "VIEW" };
-			final ResultSet rs = dmd.getTables(null, null, null, tabTypes);
+			final ResultSet rs = dmd.getTables(catalogName, schemaName, null, tabTypes);
 			try
 			{
 				while (rs.next())

@@ -23,6 +23,7 @@ package net.sourceforge.squirrel_sql.client.session;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -53,6 +54,8 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterClauses;
+import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsProcessor;
+import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 /**
  * Think of a session as being the users view of the database. IE it includes
@@ -114,7 +117,9 @@ class Session implements ISession
 	private final ISQLPanelAPI _sqlPanelAPI;
 
 	/** Xref info about the current connection. */
-	private final SchemaInfo _schemaInfo = new SchemaInfo();
+	private final SchemaInfo _defaultSchemaInfo = new SchemaInfo();
+
+	private final Hashtable _schemaInfosByCatalogAndSchema = new Hashtable();
 
 	/** Set to <TT>true</TT> once session closed. */
 	private boolean _closed;
@@ -125,6 +130,7 @@ class Session implements ISession
 	private EventListenerList _listenerList = new EventListenerList();
 
 	private List _statusBarToBeAdded = new ArrayList();
+	private ParserEventsProcessor _parserEventsProcessor;
 
 	/**
 	 * Create a new session.
@@ -176,6 +182,8 @@ class Session implements ISession
 		_objectTreeAPI = new ObjectTreeAPI(this);
 		_sqlPanelAPI = new SQLPanelAPI(this);
 
+		_parserEventsProcessor = new ParserEventsProcessor(this);
+
 		// Start loading table/column info about the current database.
 		_app.getThreadPool().addTask(new Runnable()
 		{
@@ -199,6 +207,16 @@ class Session implements ISession
 		if (!_closed)
 		{
 			s_log.debug("Closing session: " + _id);
+
+			try
+			{
+				_parserEventsProcessor.endProcessing();
+			}
+			catch(Exception e)
+			{
+				s_log.info("Error stopping parser event processor", e);
+			}
+
 			try
 			{
 				closeSQLConnection();
@@ -288,7 +306,21 @@ class Session implements ISession
 	 */
 	public SchemaInfo getSchemaInfo()
 	{
-		return _schemaInfo;
+		return _defaultSchemaInfo;
+	}
+
+	public SchemaInfo getSchemaInfo(String catalogName, String schemaName)
+	{
+		String key = catalogName + "," + schemaName;
+
+		SchemaInfo ret = (SchemaInfo) _schemaInfosByCatalogAndSchema.get(key);
+		if(null == ret)
+		{
+			ret = new SchemaInfo(getSQLConnection(), catalogName, schemaName);
+			_schemaInfosByCatalogAndSchema.put(key, ret);
+		}
+
+		return ret;
 	}
 
 	/**
@@ -647,7 +679,7 @@ class Session implements ISession
 	 */
 	private void loadTableInfo()
 	{
-		_schemaInfo.load(getSQLConnection());
+		_defaultSchemaInfo.load(getSQLConnection());
 	}
 
 	// TODO: i18n
@@ -669,5 +701,10 @@ class Session implements ISession
 			title.append(" as ").append(user); // i18n
 		}
 		return title.toString();
+	}
+
+	public IParserEventsProcessor getParserEventsProcessor()
+	{
+		return _parserEventsProcessor;
 	}
 }
