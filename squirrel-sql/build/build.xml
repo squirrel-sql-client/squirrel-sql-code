@@ -165,7 +165,8 @@
 			</fileset>
 		</copy>
 
-		<jar jarfile="${core_dist_lib_dir}/${name}.jar" compress="false">
+		<jar jarfile="${core_dist_lib_dir}/${name}.jar" compress="false"
+				manifest="build/MANIFEST.MF">
 			<fileset dir="${core_obj_dir}">
 				<include name="net/sourceforge/squirrel_sql/client/**/*.*"/>
 			</fileset>

@@ -28,11 +28,14 @@
 		<pack required="yes" name="Base">
 			<description>SQL Client</description>
 			<file targetdir="$INSTALL_PATH" src="..\squirrel-sql-dist\squirrel-sql-1.1beta3\core\dist\plugins"/>
-			<file targetdir="$INSTALL_PATH" src="..\squirrel-sql-dist\squirrel-sql-1.1beta3\core\dist\lib"/>
+			<file targetdir="$INSTALL_PATH\lib" src="..\squirrel-sql-dist\squirrel-sql-1.1beta3\core\dist\lib\fw.jar"/>
+			<file targetdir="$INSTALL_PATH\lib" src="..\squirrel-sql-dist\squirrel-sql-1.1beta3\core\dist\lib\log4j.jar"/>
+			<file targetdir="$INSTALL_PATH\lib" src="..\squirrel-sql-dist\squirrel-sql-1.1beta3\core\dist\lib\nanoxml-2.1.jar"/>
 			<file targetdir="$INSTALL_PATH" src="..\squirrel-sql-dist\squirrel-sql-1.1beta3\core\dist\doc"/>
 			<file targetdir="$INSTALL_PATH" src="..\squirrel-sql-dist\squirrel-sql-1.1beta3\core\dist\squirrel-sql.bat"/>
 			<file targetdir="$INSTALL_PATH" src="..\squirrel-sql-dist\squirrel-sql-1.1beta3\core\dist\squirrel-sql.sh"/>
 			<file targetdir="$INSTALL_PATH" src="..\squirrel-sql-dist\squirrel-sql-1.1beta3\core\dist\log4j.properties"/>
+			<file targetdir="$INSTALL_PATH" src="..\squirrel-sql-dist\squirrel-sql-1.1beta3\core\dist\lib\squirrel-sql.jar"/>
 		</pack>
 	</packs>
 </installation>
