@@ -158,14 +158,17 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 		{
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = GridBagConstraints.HORIZONTAL;
+			gbc.anchor = GridBagConstraints.NORTHWEST;
 			gbc.insets = new Insets(4, 4, 4, 4);
 			gbc.gridx = 0;
 			gbc.gridy = 0;
 			gbc.weightx = 1;
 			add(createAppearancePanel(), gbc);
-			++gbc.gridy;
+			++gbc.gridx;
 			add(createGeneralPanel(), gbc);
+			gbc.gridx = 0;
 			++gbc.gridy;
+			gbc.gridwidth = 2;
 			add(createLoggingPanel(), gbc);
 		}
 
