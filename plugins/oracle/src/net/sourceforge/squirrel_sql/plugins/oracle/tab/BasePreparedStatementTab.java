@@ -28,7 +28,6 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetScrollingPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.MapDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 
@@ -116,8 +115,7 @@ abstract class BasePreparedStatementTab extends BaseObjectTab
 				{
 					final SessionProperties props = session.getProperties();
 					final String destClassName = props.getMetaDataOutputClassName();
-					final LargeResultSetObjectInfo rsoi = props.getLargeResultSetObjectInfo();
-					final IDataSet ds = createDataSetFromResultSet(rs, rsoi);
+					final IDataSet ds = createDataSetFromResultSet(rs);
 					_comp.load(ds, destClassName);
 				}
 				finally
@@ -138,11 +136,11 @@ abstract class BasePreparedStatementTab extends BaseObjectTab
 
 	protected abstract PreparedStatement createStatement() throws SQLException;
 
-	protected IDataSet createDataSetFromResultSet(ResultSet rs,
-						LargeResultSetObjectInfo rsoi) throws DataSetException
+	protected IDataSet createDataSetFromResultSet(ResultSet rs)
+		throws DataSetException
 	{
 		final ResultSetDataSet rsds = new ResultSetDataSet();
-		rsds.setResultSet(rs, rsoi);
+		rsds.setResultSet(rs);
 		if (!_firstRowOnly)
 		{
 			return rsds;
