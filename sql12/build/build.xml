@@ -319,11 +319,9 @@
 			<param name="p_internal_name" value="sqlval"/>
 		</antcall>
 -->
-<!--
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="syntax"/>
 		</antcall>
--->
 
 	</target>
 
