@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 import javax.swing.Action;
 import javax.swing.event.TreeModelListener;
+import javax.swing.event.TreeSelectionListener;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -144,8 +145,7 @@ class ObjectTreeAPI implements IObjectTreeAPI
 		{
 			throw new IllegalArgumentException("TreeModelListener == null");
 		}
-		_session.getSessionSheet().getObjectTreePanel().addTreeModelListener(
-			lis);
+		_session.getSessionSheet().getObjectTreePanel().addTreeModelListener(lis);
 	}
 
 	/**
@@ -163,6 +163,40 @@ class ObjectTreeAPI implements IObjectTreeAPI
 			throw new IllegalArgumentException("TreeModelListener == null");
 		}
 		_session.getSessionSheet().getObjectTreePanel().removeTreeModelListener(lis);
+	}
+
+	/**
+	 * Add a listener to the object tree for selection changes.
+	 * 
+	 * @param	lis		The <TT>TreeSelectionListener</TT> you want added.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>TreeSelectionListener</TT> passed.
+	 */
+	public void addTreeSelectionListener(TreeSelectionListener lis)
+	{
+		if (lis == null)
+		{
+			throw new IllegalArgumentException("TreeSelectionListener == null");
+		}
+		_session.getSessionSheet().getObjectTreePanel().addTreeSelectionListener(lis);
+	}
+
+	/**
+	 * Remove a listener from the object tree for selection changes.
+	 * 
+	 * @param	lis		The <TT>TreeSelectionListener</TT> you want removed.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>TreeSelectionListener</TT> passed.
+	 */
+	public void removeTreeSelectionListener(TreeSelectionListener lis)
+	{
+		if (lis == null)
+		{
+			throw new IllegalArgumentException("TreeSelectionListener == null");
+		}
+		_session.getSessionSheet().getObjectTreePanel().removeTreeSelectionListener(lis);
 	}
 
 	/**

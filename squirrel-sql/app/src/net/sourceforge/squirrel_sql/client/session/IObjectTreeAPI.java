@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 import javax.swing.Action;
 import javax.swing.event.TreeModelListener;
+import javax.swing.event.TreeSelectionListener;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -98,6 +99,26 @@ public interface IObjectTreeAPI
 	 * 			Thrown if <TT>null</TT> <TT>TreeModelListener</TT> passed.
 	 */
 	void removeTreeModelListener(TreeModelListener lis);
+
+	/**
+	 * Add a listener to the object tree for selection changes.
+	 * 
+	 * @param	lis		The <TT>TreeSelectionListener</TT> you want added.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>TreeSelectionListener</TT> passed.
+	 */
+	void addTreeSelectionListener(TreeSelectionListener lis);
+
+	/**
+	 * Remove a listener from the object tree for selection changes.
+	 * 
+	 * @param	lis		The <TT>TreeSelectionListener</TT> you want removed.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>TreeSelectionListener</TT> passed.
+	 */
+	void removeTreeSelectionListener(TreeSelectionListener lis);
 
 	/**
 	 * Add an item to the popup menu for the specified database object type.

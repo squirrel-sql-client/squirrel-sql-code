@@ -6,6 +6,8 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- The name of the item selected in the object tree will
+  be displayed in the statusbar.
 - Remove unnecessary borders on UI components.
 - Add HSQL and jTDS to list of default drivers.
 - The "Start of line comment" characters can now be
@@ -14,6 +16,7 @@ Enhancements
 Bug Fixes
 ---------
 - Fix deadlock when viewing logs.
+- Add missing "contributors" file for About Box.
 
 Plugin API
 ----------

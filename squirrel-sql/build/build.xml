@@ -162,6 +162,7 @@
 				<include name="**/*.html"/>
 				<include name="**/*.xml"/>
 				<include name="**/*.properties"/>
+				<include name="**/*.txt"/>
 			</fileset>
 		</copy>
 
