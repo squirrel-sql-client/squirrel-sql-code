@@ -21,6 +21,7 @@ import java.util.HashMap;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DefaultColumnRenderer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
 
 /**
  * @author gwg
@@ -294,14 +295,15 @@ public class CellComponentFactory {
 	  * type of object to be stored in the table cell.
 	  */
 	public static Object readResultSet(ColumnDisplayDefinition colDef,
-		ResultSet rs, int index)
+		ResultSet rs, int index,
+		LargeResultSetObjectInfo largeObjInfo)
 		throws java.sql.SQLException {
 			
 		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
 
 		if (dataTypeObject != null) {
 			// we have an appropriate data type object
-			return dataTypeObject.readResultSet(rs, index);
+			return dataTypeObject.readResultSet(rs, index, largeObjInfo);
 		}
 
 		//?? Best guess: read object?
@@ -489,25 +491,28 @@ public class CellComponentFactory {
 					break;
 
 				case Types.TIME :
-					//??
+					dataTypeComponent = new DataTypeTime(table, colDef);
 					break;
 
 				case Types.DATE :
-					//??
+					dataTypeComponent = new DataTypeDate(table, colDef);
 					break;
 
 				case Types.TIMESTAMP :
-					//??
+					dataTypeComponent = new DataTypeTimestamp(table, colDef);
 					break;
 
 				case Types.BIGINT :
-					//??
+					dataTypeComponent = new DataTypeLong(table, colDef);
 					break;
 
 				case Types.DOUBLE:
 				case Types.FLOAT:
+					dataTypeComponent = new DataTypeDouble(table, colDef);
+					break;
+					
 				case Types.REAL:
-					//??
+					dataTypeComponent = new DataTypeFloat(table, colDef);
 					break;
 
 				case Types.DECIMAL:
@@ -516,10 +521,16 @@ public class CellComponentFactory {
 					break;
 
 				case Types.INTEGER:
-				case Types.SMALLINT:
-				case Types.TINYINT:
 					// set up for integers
 					dataTypeComponent = new DataTypeInteger(table, colDef);
+					break;
+					
+				case Types.SMALLINT:
+					dataTypeComponent = new DataTypeShort(table, colDef);
+					break;
+					
+				case Types.TINYINT:
+					dataTypeComponent = new DataTypeByte(table, colDef);
 					break;
 
 				// TODO: Hard coded -. JDBC/ODBC bridge JDK1.4
@@ -551,11 +562,14 @@ public class CellComponentFactory {
 					break;
 
 				case Types.OTHER:
-					//??
+					dataTypeComponent = new DataTypeOther(table, colDef);
 					break;
 
-				default:	// should never happen
-					return null;	// data type is unknown to us
+				default:
+					// data type is unknown to us.
+					// It may be an unusual type like "JAVA OBJECT" or "ARRAY",
+					// or it may be a DBMS-specific type
+					dataTypeComponent = new DataTypeUnknown(table, colDef);
 
 			}
 
