@@ -90,8 +90,7 @@ public class SessionProperties implements Cloneable, Serializable
 	/** Font information for the jEdit text area. */
 	private FontInfo _fi;
 
-	private LargeResultSetObjectInfo _largeObjectInfo =
-		new LargeResultSetObjectInfo();
+	private LargeResultSetObjectInfo _largeObjectInfo = new LargeResultSetObjectInfo();
 
 	public SessionProperties()
 	{

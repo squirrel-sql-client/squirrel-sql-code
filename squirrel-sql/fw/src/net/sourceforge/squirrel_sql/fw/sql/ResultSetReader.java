@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.Clob;
@@ -27,6 +28,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -147,6 +149,7 @@ public class ResultSetReader
 			try
 			{
 				final int columnType = _rsmd.getColumnType(idx);
+				//final String columnClassName = _rsmd.getColumnClassName(idx);
 				switch (columnType)
 				{
 					case Types.NULL:
@@ -267,10 +270,12 @@ public class ResultSetReader
 						// TODO: Hard coded -. JDBC/ODBC bridge JDK1.4
 						// brings back -9 for nvarchar columns in
 						// MS SQL Server tables.
-					case Types.CHAR :
-					case Types.VARCHAR :
-					case Types.LONGVARCHAR :
-					case -9 :
+						// -8 is ROWID in Oracle.
+					case Types.CHAR:
+					case Types.VARCHAR:
+					case Types.LONGVARCHAR:
+					case -9:
+					case -8:
 						row[i] = _rs.getString(idx);
 						break;
 
@@ -366,18 +371,34 @@ public class ResultSetReader
 						break;
 
 					case Types.OTHER:
-						row[i] = _rs.getObject(idx);
+						if (_largeObjInfo.getReadSQLOther())
+						{
+							row[i] = _rs.getObject(idx);
+						}
+						else
+						{
+							row[i] = "<Other>";
+						}
 						break;
 
-					default :
-						row[i] = "<Unknown>";
+					default:
+						if (_largeObjInfo.getReadAllOther())
+						{
+							row[i] = _rs.getObject(idx);
+						}
+						else
+						{
+							row[i] = "<Unknown(" + columnType + ")>";
+						}
 				}
 			}
 			catch (Throwable th)
 			{
 				_errorOccured = true;
 				row[i] = "<Error>";
-				s_log.error("Error reading column data", th);
+				StringBuffer msg = new StringBuffer("Error reading column data");
+				msg.append(", column index = ").append(idx);
+				s_log.error(msg.toString(), th);
 			}
 		}
 

@@ -38,6 +38,16 @@ public class QueryTokenizer
 	{
 		super();
 		_querySepChar = querySepChar;
+
+		if (solComment != null && solComment.trim().length() > 0)
+		{ 
+			_solComment = solComment;
+		}
+		else
+		{
+			_solComment = null;
+		}
+
 		if(sql != null)
 		{
 			_sQuerys = sql.trim();
@@ -46,14 +56,6 @@ public class QueryTokenizer
 		else
 		{
 			_sQuerys = "";
-		}
-		if (solComment != null && solComment.trim().length() > 0)
-		{ 
-			_solComment = solComment;
-		}
-		else
-		{
-			_solComment = null;
 		}
 	}
 

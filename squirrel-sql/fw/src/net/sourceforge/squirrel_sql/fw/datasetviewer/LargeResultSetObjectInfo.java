@@ -34,7 +34,8 @@ public class LargeResultSetObjectInfo implements Cloneable, Serializable
 		String READ_CLOBS = "readClobs";
 		String READ_CLOBS_COMPLETE = "readCompleteClobs";
 		String READ_CLOBS_SIZE = "readClobsSize";
-		String READ_OTHER = "readOther";
+		String READ_SQL_OTHER = "readSQLOther";
+		String READ_ALL_OTHER = "readAllOther";
 	}
 
 	private static int LARGE_COLUMN_DEFAULT_READ_LENGTH = 255;
@@ -82,10 +83,17 @@ public class LargeResultSetObjectInfo implements Cloneable, Serializable
 	private int _readClobsSize = LARGE_COLUMN_DEFAULT_READ_LENGTH;
 
 	/**
-	 * If <TT>_readOther</TT> is <TT>true</TT> then read in all other data
+	 * If <TT>_readSQLOther</TT> is <TT>true</TT> then read in
+	 * columns that have a data type of <TT>java.sql.Types.OTHER</TT>
+	 * using <TT>getObject()</TT>.
+	 */
+	private boolean _readSQLOther = false;
+
+	/**
+	 * If <TT>_readAllOther</TT> is <TT>true</TT> then read in all other data
 	 * types as objects.
 	 */
-	private boolean _readOther = false;
+	private boolean _readAllOther = false;
 
 	/**
 	 * Return a copy of this object.
@@ -113,10 +121,8 @@ public class LargeResultSetObjectInfo implements Cloneable, Serializable
 		{
 			final boolean oldValue = _readBinary;
 			_readBinary = value;
-			_propChgReporter.firePropertyChange(
-				IPropertyNames.READ_BINARY,
-				oldValue,
-				_readBinary);
+			_propChgReporter.firePropertyChange(IPropertyNames.READ_BINARY,
+												oldValue, _readBinary);
 		}
 	}
 
@@ -131,10 +137,8 @@ public class LargeResultSetObjectInfo implements Cloneable, Serializable
 		{
 			final boolean oldValue = _readVarBinary;
 			_readVarBinary = value;
-			_propChgReporter.firePropertyChange(
-				IPropertyNames.READ_VARBINARY,
-				oldValue,
-				_readVarBinary);
+			_propChgReporter.firePropertyChange(IPropertyNames.READ_VARBINARY,
+												oldValue, _readVarBinary);
 		}
 	}
 
@@ -149,10 +153,8 @@ public class LargeResultSetObjectInfo implements Cloneable, Serializable
 		{
 			final boolean oldValue = _readLongVarBinary;
 			_readLongVarBinary = value;
-			_propChgReporter.firePropertyChange(
-				IPropertyNames.READ_LONGVARBINARY,
-				oldValue,
-				_readLongVarBinary);
+			_propChgReporter.firePropertyChange(IPropertyNames.READ_LONGVARBINARY,
+												oldValue, _readLongVarBinary);
 		}
 	}
 
@@ -167,10 +169,8 @@ public class LargeResultSetObjectInfo implements Cloneable, Serializable
 		{
 			final boolean oldValue = _readBlobs;
 			_readBlobs = value;
-			_propChgReporter.firePropertyChange(
-				IPropertyNames.READ_BLOBS,
-				oldValue,
-				_readBlobs);
+			_propChgReporter.firePropertyChange(IPropertyNames.READ_BLOBS,
+												oldValue, _readBlobs);
 		}
 	}
 
@@ -185,10 +185,8 @@ public class LargeResultSetObjectInfo implements Cloneable, Serializable
 		{
 			final boolean oldValue = _readCompleteBlobs;
 			_readCompleteBlobs = value;
-			_propChgReporter.firePropertyChange(
-				IPropertyNames.READ_BLOBS_COMPLETE,
-				oldValue,
-				_readCompleteBlobs);
+			_propChgReporter.firePropertyChange(IPropertyNames.READ_BLOBS_COMPLETE,
+												oldValue, _readCompleteBlobs);
 		}
 	}
 
@@ -203,10 +201,8 @@ public class LargeResultSetObjectInfo implements Cloneable, Serializable
 		{
 			final int oldValue = _readBlobsSize;
 			_readBlobsSize = value;
-			_propChgReporter.firePropertyChange(
-				IPropertyNames.READ_BLOBS_SIZE,
-				oldValue,
-				_readBlobsSize);
+			_propChgReporter.firePropertyChange(IPropertyNames.READ_BLOBS_SIZE,
+												oldValue, _readBlobsSize);
 		}
 	}
 
@@ -226,10 +222,8 @@ public class LargeResultSetObjectInfo implements Cloneable, Serializable
 		{
 			final boolean oldValue = _readCompleteClobs;
 			_readCompleteClobs = value;
-			_propChgReporter.firePropertyChange(
-				IPropertyNames.READ_CLOBS_COMPLETE,
-				oldValue,
-				_readCompleteClobs);
+			_propChgReporter.firePropertyChange(IPropertyNames.READ_CLOBS_COMPLETE,
+												oldValue, _readCompleteClobs);
 		}
 	}
 
@@ -239,10 +233,8 @@ public class LargeResultSetObjectInfo implements Cloneable, Serializable
 		{
 			final boolean oldValue = _readClobs;
 			_readClobs = value;
-			_propChgReporter.firePropertyChange(
-				IPropertyNames.READ_CLOBS,
-				oldValue,
-				_readClobs);
+			_propChgReporter.firePropertyChange(IPropertyNames.READ_CLOBS,
+												oldValue, _readClobs);
 		}
 	}
 
@@ -264,20 +256,35 @@ public class LargeResultSetObjectInfo implements Cloneable, Serializable
 		}
 	}
 
-	public boolean getReadOther()
+	public boolean getReadSQLOther()
 	{
-		return _readOther;
+		return _readSQLOther;
 	}
 
-	public void setReadOther(boolean value)
+	public void setReadSQLOther(boolean value)
 	{
-		if (_readOther != value)
+		if (_readSQLOther != value)
 		{
-			final boolean oldValue = _readOther;
-			_readOther = value;
-			_propChgReporter.firePropertyChange(
-				IPropertyNames.READ_OTHER,
-				oldValue, _readOther);
+			final boolean oldValue = _readSQLOther;
+			_readSQLOther = value;
+			_propChgReporter.firePropertyChange(IPropertyNames.READ_SQL_OTHER,
+													oldValue, _readSQLOther);
+		}
+	}
+
+	public boolean getReadAllOther()
+	{
+		return _readAllOther;
+	}
+
+	public void setReadAllOther(boolean value)
+	{
+		if (_readAllOther != value)
+		{
+			final boolean oldValue = _readAllOther;
+			_readAllOther = value;
+			_propChgReporter.firePropertyChange(IPropertyNames.READ_ALL_OTHER,
+													oldValue, _readAllOther);
 		}
 	}
 }

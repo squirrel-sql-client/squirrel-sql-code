@@ -35,11 +35,33 @@ public class DataSetScrollingPanel extends JScrollPane
 	private boolean _fullyCreated = false;
 	private IDataSetViewer _viewer;
 
+	/**
+	 * @deprecated
+	 */
+	public DataSetScrollingPanel()
+	{
+		super();
+	}
+
+	public DataSetScrollingPanel(String destClassName) throws DataSetException
+	{
+		super();
+		createUserInterface(destClassName);
+		_fullyCreated = true;
+	}
+
+	public void load(IDataSet ds)
+	{
+		load(ds, null);
+	}
+
+	/**
+	 * @deprecated
+	 */
 	public void load(IDataSet ds, String destClassName)
 	{
 		try
 		{
-			// Lazily create the user interface.
 			if (!_fullyCreated)
 			{
 				createUserInterface(destClassName);

@@ -63,23 +63,7 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 		super(session.getApplication().getSquirrelPreferences());
 
 		_session = session;
-
 		createUserInterface();
-		_propsListener = new SessionPropertiesListener();
-		_session.getProperties().addPropertyChangeListener(_propsListener);
-	}
-
-	/**
-	* Component has been removed from its parent. get rid of all listeners.
-	*/
-	public void removeNotify()
-	{
-		if (_propsListener != null)
-		{
-			_session.getProperties().removePropertyChangeListener(_propsListener);
-			_propsListener = null;
-		}
-		super.removeNotify();
 	}
 
 	/**
@@ -89,11 +73,28 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 	public void addNotify()
 	{
 		super.addNotify();
+
+		_propsListener = new SessionPropertiesListener();
+		_session.getProperties().addPropertyChangeListener(_propsListener);
+
 		final int idx = getSelectedIndex();
 		if (idx != -1)
 		{
 			((IObjectTab)_tabs.get(idx)).select();
 		}
+	}
+
+	/**
+	 * Component has been removed from its parent. get rid of all listeners.
+	 */
+	public void removeNotify()
+	{
+		if (_propsListener != null)
+		{
+			_session.getProperties().removePropertyChangeListener(_propsListener);
+			_propsListener = null;
+		}
+		super.removeNotify();
 	}
 
 	void addObjectPanelTab(IObjectTab tab)

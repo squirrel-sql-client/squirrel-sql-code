@@ -18,7 +18,6 @@ package net.sourceforge.squirrel_sql.client.session.properties;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Component;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -26,21 +25,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
 import net.sourceforge.squirrel_sql.fw.gui.CharField;
-import net.sourceforge.squirrel_sql.fw.gui.FontChooser;
-import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
@@ -111,6 +106,7 @@ public class SessionSQLPropertiesPanel
 		 */
 		interface SQLPropertiesPanelI18n
 		{
+			String ALL_OTHER = "All Other Data Types";
 			String AUTO_COMMIT = "Auto Commit SQL";
 			String BINARY = "Binary";
 			String BLOB = "Blob";
@@ -123,7 +119,7 @@ public class SessionSQLPropertiesPanel
 			String LIMIT_ROWS_CONTENTS = "Contents - Limit rows";
 			String LIMIT_ROWS_SQL = "SQL - Limit rows";
 			String LONGVARBINARY = "LongVarBinary";
-			String OTHER = "Other";
+			String SQL_OTHER = "SQL Other";
 			String SHOW_ROW_COUNT = "Show Row Count for Tables (can slow application)";
 			String SOL_COMENT = "Start of Line Comment";
 			String TABLE = "Table";
@@ -156,13 +152,9 @@ public class SessionSQLPropertiesPanel
 		private IntegerField _showBlobSizeField = new IntegerField(5);
 		private IntegerField _showClobSizeField = new IntegerField(5);
 
-		private JCheckBox _showOtherChk = new JCheckBox(SQLPropertiesPanelI18n.OTHER);
+		private JCheckBox _showSQLOtherChk = new JCheckBox(SQLPropertiesPanelI18n.SQL_OTHER);
 
-		/** Label displaying the selected font. */
-		private JLabel _fontLbl = new JLabel();
-
-		/** Button to select font. */
-		private FontButton _fontBtn = new FontButton("Font", _fontLbl);
+		private JCheckBox _showAllOtherChk = new JCheckBox(SQLPropertiesPanelI18n.ALL_OTHER);
 
 		/**
 		 * This object will update the status of the GUI controls as the user
@@ -205,15 +197,8 @@ public class SessionSQLPropertiesPanel
 												? ReadTypeCombo.READ_ALL_IDX
 												: ReadTypeCombo.READ_PARTIAL_IDX);
 
-			_showOtherChk.setSelected(largeObjInfo.getReadOther());
-
-			FontInfo fi = props.getFontInfo();
-			if (fi == null)
-			{
-				fi = new FontInfo(UIManager.getFont("TextArea.font"));
-			}
-			_fontLbl.setText(fi.toString());
-			_fontBtn.setSelectedFont(fi.createFont());
+			_showSQLOtherChk.setSelected(largeObjInfo.getReadSQLOther());
+			_showAllOtherChk.setSelected(largeObjInfo.getReadAllOther());
 
 			updateControlStatus();
 		}
@@ -245,9 +230,8 @@ public class SessionSQLPropertiesPanel
 			largeObjInfo.setReadCompleteClobs(
 				_clobTypeDrop.getSelectedIndex() == ReadTypeCombo.READ_ALL_IDX);
 
-			largeObjInfo.setReadOther(_showOtherChk.isSelected());
-
-			props.setFontInfo(_fontBtn.getFontInfo());
+			largeObjInfo.setReadSQLOther(_showSQLOtherChk.isSelected());
+			largeObjInfo.setReadAllOther(_showAllOtherChk.isSelected());
 		}
 
 		private void updateControlStatus()
@@ -284,9 +268,6 @@ public class SessionSQLPropertiesPanel
 
 			++gbc.gridy;
 			add(createDataTypesPanel(), gbc);
-
-			++gbc.gridy;
-			add(createFontPanel(), gbc);
 		}
 
 		private JPanel createSQLPanel(IApplication app)
@@ -383,10 +364,10 @@ public class SessionSQLPropertiesPanel
 			pnl.add(_showClobChk, gbc);
 
 			++gbc.gridy;
-			pnl.add(_showOtherChk, gbc);
+			pnl.add(_showAllOtherChk, gbc);
 
-			++gbc.gridx;
 			gbc.gridy = 2;
+			++gbc.gridx;
 			pnl.add(new RightLabel("Read"), gbc);
 
 			++gbc.gridy;
@@ -396,7 +377,10 @@ public class SessionSQLPropertiesPanel
 			gbc.gridy = 0;
 			pnl.add(_showVarBinaryChk, gbc);
 
-			gbc.gridy = 2;
+			++gbc.gridy;
+			pnl.add(_showSQLOtherChk, gbc);
+
+			++gbc.gridy;
 			pnl.add(_blobTypeDrop, gbc);
 
 			++gbc.gridy;
@@ -415,29 +399,6 @@ public class SessionSQLPropertiesPanel
 
 			++gbc.gridy;
 			pnl.add(new JLabel("Chars"), gbc);
-
-			return pnl;
-		}
-
-		private JPanel createFontPanel()
-		{
-			JPanel pnl = new JPanel();
-			pnl.setBorder(BorderFactory.createTitledBorder("SQL Entry Area"));
-			pnl.setLayout(new GridBagLayout());
-			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.fill = gbc.HORIZONTAL;
-			gbc.insets = new Insets(0, 4, 0, 4);
-
-			_fontBtn.addActionListener(new FontButtonListener());
-
-			gbc.gridx = 0;
-			gbc.gridy = 0;
-			pnl.add(_fontBtn, gbc);
-
-			++gbc.gridx;
-			gbc.fill = gbc.HORIZONTAL;
-			gbc.weightx = 1.0;
-			pnl.add(_fontLbl, gbc);
 
 			return pnl;
 		}
@@ -462,41 +423,6 @@ public class SessionSQLPropertiesPanel
 			}
 		}
 
-		private static final class FontButton extends JButton
-		{
-			private FontInfo _fi;
-			private JLabel _lbl;
-			private Font _font;
-
-			FontButton(String text, JLabel lbl)
-			{
-				super(text);
-				_lbl = lbl;
-			}
-
-			FontInfo getFontInfo()
-			{
-				return _fi;
-			}
-
-			Font getSelectedFont()
-			{
-				return _font;
-			}
-
-			void setSelectedFont(Font font)
-			{
-				_font = font;
-				if (_fi == null)
-				{
-					_fi = new FontInfo(font);
-				}
-				else
-				{
-					_fi.setFont(font);
-				}
-			}
-		}
 
 		/**
 		 * This class will update the status of the GUI controls as the user
@@ -513,29 +439,6 @@ public class SessionSQLPropertiesPanel
 			public void actionPerformed(ActionEvent evt)
 			{
 				updateControlStatus();
-			}
-		}
-
-		private static final class FontButtonListener implements ActionListener
-		{
-			public void actionPerformed(ActionEvent evt)
-			{
-				if (evt.getSource() instanceof FontButton)
-				{
-					FontButton btn = (FontButton) evt.getSource();
-					FontInfo fi = btn.getFontInfo();
-					Font font = null;
-					if (fi != null)
-					{
-						font = fi.createFont();
-					}
-					font = new FontChooser().showDialog(font);
-					if (font != null)
-					{
-						btn.setSelectedFont(font);
-						btn._lbl.setText(new FontInfo(font).toString());
-					}
-				}
 			}
 		}
 	}

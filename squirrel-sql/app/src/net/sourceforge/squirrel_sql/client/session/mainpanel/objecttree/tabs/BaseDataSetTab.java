@@ -50,7 +50,14 @@ public abstract class BaseDataSetTab extends BaseObjectTab
 	{
 		if (_comp == null)
 		{
-			_comp = new DataSetScrollingPanel();
+			try
+			{
+				_comp = new DataSetScrollingPanel(getDestinationClassName());
+			}
+			catch (Exception ex)
+			{
+				s_log.error("Error", ex);
+			}
 		}
 		return _comp;
 	}
@@ -83,9 +90,7 @@ public abstract class BaseDataSetTab extends BaseObjectTab
 		{
 			throw new IllegalStateException("Null ISession");
 		}
-		final IDataSet ds = createDataSet();
-		final String destClassName = getDestinationClassName();
-		((DataSetScrollingPanel)getComponent()).load(ds, destClassName);
+		((DataSetScrollingPanel)getComponent()).load(createDataSet());
 	}
 
 	protected abstract IDataSet createDataSet() throws DataSetException;
