@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -21,13 +21,13 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesSheet;
-
 /**
  * This <CODE>ICommand</CODE> displays the Global Preferences dialog..
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class GlobalPreferencesCommand {
+public class GlobalPreferencesCommand implements ICommand
+{
 	/** Application API. */
 	private IApplication _app;
 
@@ -39,9 +39,11 @@ public class GlobalPreferencesCommand {
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> passed.
 	 */
-	public GlobalPreferencesCommand(IApplication app) {
+	public GlobalPreferencesCommand(IApplication app)
+	{
 		super();
-		if (app == null) {
+		if (app == null)
+		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
 		_app = app;
@@ -50,9 +52,8 @@ public class GlobalPreferencesCommand {
 	/**
 	 * Display the Dialog
 	 */
-	public void execute() {
+	public void execute()
+	{
 		GlobalPreferencesSheet.showSheet(_app);
 	}
 }
-
-
