@@ -82,9 +82,9 @@ public class LoadScriptCommand implements ICommand {
 			SQLScriptPreferences prefs = _plugin.getPreferences();
 
 			if (prefs.getOpenInPreviousDirectory()) {
-				String fileName = (String)_session.getPluginObject(_plugin, ISessionKeys.SAVE_SCRIPT_FILE_PATH_KEY);
+				String fileName = prefs.getPreviousDirectory();
 				if (fileName != null) {
-					chooser.setCurrentDirectory(new File(fileName).getParentFile());
+					chooser.setCurrentDirectory(new File(fileName));
 				}
 			} else {
 				String dirName = prefs.getSpecifiedDirectory();
@@ -115,6 +115,7 @@ public class LoadScriptCommand implements ICommand {
 //			_session.setEntireSQLScript(sb.toString());
 			_session.getSQLPanelAPI(_plugin).appendSQLScript(sb.toString(), true);
 			_session.putPluginObject(_plugin, ISessionKeys.SAVE_SCRIPT_FILE_PATH_KEY, file.getAbsolutePath());
+			_plugin.setLoadedFile(file, _session);
 		} catch(java.io.IOException io) {
 			_session.getMessageHandler().showErrorMessage(io);
 		} finally {
