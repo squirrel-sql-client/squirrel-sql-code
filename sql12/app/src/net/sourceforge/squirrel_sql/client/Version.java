@@ -31,7 +31,7 @@ public class Version
 	private static final String TYPE = "beta";
 	//private static final String TYPE = "rc";
 	//private static final String TYPE = "final";
-	private static final int RELEASE = 3;
+	private static final int RELEASE = 4;
 
 	private static final String COPYRIGHT = "Copyright (c) 2001 - 2003 Colin Bell and others";
 
