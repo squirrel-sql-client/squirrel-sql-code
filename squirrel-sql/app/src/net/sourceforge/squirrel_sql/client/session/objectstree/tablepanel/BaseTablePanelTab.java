@@ -19,15 +19,17 @@ package net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel;
  */
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 
-import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.IObjectPanelTab;
+import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.BaseObjectPanelTab;
 
 /**
- * This interface defines the behaviour for a tab in <TT>TablePanel</TT>, the
- * panel displayed when a table is selected in the object tree.
+ * Base class for tabs to the added to <TT>TablePanel</TT>. If you are
+ * writing a class for a tab to be added to <TT>TablePanel</TT> you don't
+ * have to inherit from this class (only implement <TT>ITablePanelTab</TT>)
+ * but it has convenience methods.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public interface ITablePanelTab extends IObjectPanelTab {
+public abstract class BaseTablePanelTab extends BaseObjectPanelTab implements ITablePanelTab {
     /**
      * Set the <TT>ITableInfo</TT> object that specifies the table that
      * is to have its information displayed.
@@ -35,5 +37,16 @@ public interface ITablePanelTab extends IObjectPanelTab {
      * @param    value  <TT>ITableInfo</TT> object that specifies the currently
      *                  selected table. This can be <TT>null</TT>.
      */
-    void setTableInfo(ITableInfo value);
+    public void setTableInfo(ITableInfo value) {
+    	setDatabaseObjectInfo(value);
+    }
+
+    /**
+     * Retrieve the current <TT>ITableInfo</TT> object.
+     *
+     * @return    Current <TT>ITableInfo</TT> object.
+     */
+    public final ITableInfo getTableInfo() {
+        return (ITableInfo)getDatabaseObjectInfo();
+    }
 }

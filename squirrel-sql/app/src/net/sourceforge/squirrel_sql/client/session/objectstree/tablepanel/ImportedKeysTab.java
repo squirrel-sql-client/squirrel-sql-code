@@ -36,13 +36,15 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.Logger;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.*;
+
 
 /**
  * This tab shows the imported key info for the currently selected table.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ImportedKeysTab extends BaseTableTab {
+public class ImportedKeysTab extends BaseTablePanelTab {
     /**
      * This interface defines locale specific strings. This should be
      * replaced with a property file.

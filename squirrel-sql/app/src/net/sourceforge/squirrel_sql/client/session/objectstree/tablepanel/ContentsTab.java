@@ -36,89 +36,89 @@ import net.sourceforge.squirrel_sql.fw.util.Logger;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.*;
 
 /**
  * This is the tab the contents (data) of the table.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ContentsTab extends BaseTableTab {
-    /**
-     * This interface defines locale specific strings. This should be
-     * replaced with a property file.
-     */
-    private interface i18n {
-        String TITLE = "Content";
-        String HINT = "Sample Contents";
-    }
+public class ContentsTab extends BaseTablePanelTab {
+	/**
+	 * This interface defines locale specific strings. This should be
+	 * replaced with a property file.
+	 */
+	private interface i18n {
+		String TITLE = "Content";
+		String HINT = "Sample Contents";
+	}
 
-    /** Component to be displayed. */
-    private Component _comp;
+	/** Component to be displayed. */
+	private Component _comp;
 
-    /**
-     * Return the title for the tab.
-     *
-     * @return    The title for the tab.
-     */
-    public String getTitle() {
-        return i18n.TITLE;
-    }
+	/**
+	 * Return the title for the tab.
+	 *
+	 * @return	The title for the tab.
+	 */
+	public String getTitle() {
+		return i18n.TITLE;
+	}
 
-    /**
-     * Return the hint for the tab.
-     *
-     * @return    The hint for the tab.
-     */
-    public String getHint() {
-        return i18n.HINT;
-    }
+	/**
+	 * Return the hint for the tab.
+	 *
+	 * @return	The hint for the tab.
+	 */
+	public String getHint() {
+		return i18n.HINT;
+	}
 
-    /**
-     * Return the component to be displayed in the panel.
-     *
-     * @return    The component to be displayed in the panel.
-     */
-    public synchronized Component getComponent() {
-        if (_comp == null) {
-            _comp = new ResultSetPanel();
-        }
-        return _comp;
-    }
+	/**
+	 * Return the component to be displayed in the panel.
+	 *
+	 * @return	The component to be displayed in the panel.
+	 */
+	public synchronized Component getComponent() {
+		if (_comp == null) {
+			_comp = new ResultSetPanel();
+		}
+		return _comp;
+	}
 
-    /**
-     * Refresh the component displaying the <TT>ITableInfo</TT> object.
-     */
-    public synchronized void refreshComponent() throws IllegalStateException {
-        ISession session = getSession();
-        if (session == null) {
-            throw new IllegalStateException("Null ISession");
-        }
-        ITableInfo ti = getTableInfo();
-        if ( ti == null) {
-            throw new IllegalStateException("Null ITableInfo");
-        }
-        String destClassName = session.getProperties().getContentsOutputClassName();
-        try {
-            SQLConnection conn = session.getSQLConnection();
-            Statement stmt = conn.createStatement();
-            try {
-                SessionProperties props = session.getProperties();
-                if (props.getContentsLimitRows()) {
-                    stmt.setMaxRows(props.getContentsNbrRowsToShow());
-                }
-                ResultSet rs = stmt.executeQuery("select * from " + ti.getQualifiedName());
-                try {
-                    ((ResultSetPanel)getComponent()).load(session, rs, null, destClassName);
-                } finally {
-                    rs.close();
-                }
-            } finally {
-                stmt.close();
-            }
+	/**
+	 * Refresh the component displaying the <TT>ITableInfo</TT> object.
+	 */
+	public synchronized void refreshComponent() throws IllegalStateException {
+		ISession session = getSession();
+		if (session == null) {
+			throw new IllegalStateException("Null ISession");
+		}
+		ITableInfo ti = getTableInfo();
+		if (ti == null) {
+			throw new IllegalStateException("Null ITableInfo");
+		}
+		String destClassName = session.getProperties().getContentsOutputClassName();
+		try {
+			SQLConnection conn = session.getSQLConnection();
+			Statement stmt = conn.createStatement();
+			try {
+				SessionProperties props = session.getProperties();
+				if (props.getContentsLimitRows()) {
+					stmt.setMaxRows(props.getContentsNbrRowsToShow());
+				}
+				ResultSet rs = stmt.executeQuery("select * from " + ti.getQualifiedName());
+				try {
+					((ResultSetPanel) getComponent()).load(session, rs, null, destClassName);
+				} finally {
+					rs.close();
+				}
+			} finally {
+				stmt.close();
+			}
 
-        } catch (Exception ex) {
-            session.getMessageHandler().showMessage(ex);
-        }
-    }
+		} catch (Exception ex) {
+			session.getMessageHandler().showMessage(ex);
+		}
+	}
 }
-
