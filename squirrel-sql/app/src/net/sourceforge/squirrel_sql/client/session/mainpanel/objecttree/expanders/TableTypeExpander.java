@@ -98,7 +98,7 @@ public class TableTypeExpander implements INodeExpander
 //												catalogName,
 //												IDatabaseObjectTypes.CATALOG,
 //												conn);
-				ObjectTreeNode child = new ObjectTreeNode(session, tables[i], false);
+				ObjectTreeNode child = new ObjectTreeNode(session, tables[i]);
 				child.setUserObject(getNodeDisplayText(stmt, tables[i]));
 //				child.setExpander(this);
 				childNodes.add(child);

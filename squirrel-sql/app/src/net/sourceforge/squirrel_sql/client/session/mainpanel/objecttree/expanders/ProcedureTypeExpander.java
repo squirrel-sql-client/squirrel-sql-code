@@ -152,7 +152,7 @@ public class ProcedureTypeExpander implements INodeExpander
 		}
 		for (int i = 0; i < procs.length; ++i)
 		{
-			ObjectTreeNode child = new ObjectTreeNode(session, procs[i], false);
+			ObjectTreeNode child = new ObjectTreeNode(session, procs[i]);
 //				child.setExpander(this);
 			childNodes.add(child);
 		}
@@ -170,7 +170,7 @@ public class ProcedureTypeExpander implements INodeExpander
 										"%",
 										IDatabaseObjectTypes.ORACLE_PACKAGE,
 										conn);
-		ObjectTreeNode child = new ObjectTreeNode(session, dbinfo, true);
+		ObjectTreeNode child = new ObjectTreeNode(session, dbinfo);
 		child.setUserObject("Standalone");
 		child.setExpander(this);
 		childNodes.add(child);
@@ -187,7 +187,7 @@ public class ProcedureTypeExpander implements INodeExpander
 										rs.getString(1),
 										IDatabaseObjectTypes.ORACLE_PACKAGE,
 										conn);
-				child = new ObjectTreeNode(session, dbinfo, true);
+				child = new ObjectTreeNode(session, dbinfo);
 				child.setExpander(this);
 				childNodes.add(child);
 			}

@@ -29,7 +29,11 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectTypes;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -129,37 +133,8 @@ public class ObjectTree extends JTree {
 		INodeExpander expander = parentNode.getExpander();
 		if (parentNode.getChildCount() == 0 && expander != null)
 		{
-			try
-			{
-				List list = expander.createChildren(_session, parentNode);
-				Iterator it = list.iterator();
-				while (it.hasNext())
-				{
-					Object nextObj = it.next();
-					if (nextObj instanceof ObjectTreeNode)
-					{
-						ObjectTreeNode nextNode = (ObjectTreeNode)nextObj;
-						parentNode.add(nextNode);
-					}
-				}
-			}
-			catch (SQLException ex)
-			{
-				final String msg = "Error expanding: " + parentNode.toString();
-				s_log.error(msg, ex);
-				_session.getApplication().showErrorDialog(msg, ex);
-				
-			}
-			catch (BaseSQLException ex)
-			{
-				final String msg = "Error expanding: " + parentNode.toString();
-				s_log.error(msg, ex);
-				_session.getApplication().showErrorDialog(msg, ex);
-			}
-			finally
-			{
-				_model.nodeStructureChanged(parentNode);
-			}
+			TreeLoader loader = new TreeLoader(parentNode, expander);
+			_session.getApplication().getThreadPool().addTask(loader);
 		}
 	}
 	
@@ -179,7 +154,80 @@ public class ObjectTree extends JTree {
 		public void treeCollapsed(TreeExpansionEvent evt)
 		{
 		}
+	}
 
+	private final class TreeLoader implements Runnable
+	{
+		private ObjectTreeNode _parentNode;
+		private INodeExpander _expander;
+
+		TreeLoader(ObjectTreeNode parentNode, INodeExpander expander)
+		{
+			super();
+			_parentNode = parentNode;
+			_expander = expander;
+		}
+
+		public void run()
+		{
+			try
+			{
+				synchronized (ObjectTree.this)
+				{
+					CursorChanger cursorChg = new CursorChanger(ObjectTree.this);
+					cursorChg.show();
+					try
+					{
+//ObjectsTreeModel model = getTreeModel();
+//DefaultMutableTreeNode dmtn = new DefaultMutableTreeNode("Loading...");
+//model.insertNodeInto(dmtn, this, this.getChildCount());
+						IDatabaseObjectInfo doi = new DatabaseObjectInfo(null,null,
+								"Loading...", IDatabaseObjectTypes.GENERIC_LEAF,
+								_session.getSQLConnection());
+						ObjectTreeNode loadingNode = new ObjectTreeNode(_session, doi);
+						_parentNode.add(loadingNode);
+						try
+						{
+							// Show the loading node.
+							ObjectTree.this._model.nodeStructureChanged(_parentNode);
+							List list = _expander.createChildren(_session, _parentNode);
+							Iterator it = list.iterator();
+							while (it.hasNext())
+							{
+								Object nextObj = it.next();
+								if (nextObj instanceof ObjectTreeNode)
+								{
+									ObjectTreeNode nextNode = (ObjectTreeNode)nextObj;
+									_parentNode.add(nextNode);
+								}
+							}
+						}
+						finally
+						{
+							_parentNode.remove(loadingNode);
+						}
+					}
+					finally
+					{
+						ObjectTree.this._model.nodeStructureChanged(_parentNode);
+						cursorChg.restore();
+					}
+				}
+			}
+			catch (SQLException ex)
+			{
+				final String msg = "Error expanding: " + _parentNode.toString();
+				s_log.error(msg, ex);
+				_session.getMessageHandler().showMessage(msg + ": " + ex.toString());
+				
+			}
+			catch (BaseSQLException ex)
+			{
+				final String msg = "Error expanding: " + _parentNode.toString();
+				s_log.error(msg, ex);
+				_session.getMessageHandler().showMessage(msg + ": " + ex.toString());
+			}
+		}
 	}
 }
 

@@ -163,7 +163,7 @@ public class DatabaseExpander implements INodeExpander
 											catalogName,
 											IDatabaseObjectTypes.CATALOG,
 											conn);
-			ObjectTreeNode child = new ObjectTreeNode(session, dbo, true);
+			ObjectTreeNode child = new ObjectTreeNode(session, dbo);
 			child.setExpander(this);
 			childNodes.add(child);
 		}
@@ -183,7 +183,7 @@ public class DatabaseExpander implements INodeExpander
 											schemaName,
 											IDatabaseObjectTypes.SCHEMA,
 											conn);
-			ObjectTreeNode child = new ObjectTreeNode(session, dbo, true);
+			ObjectTreeNode child = new ObjectTreeNode(session, dbo);
 			child.setExpander(this);
 			childNodes.add(child);
 		}
@@ -205,7 +205,7 @@ public class DatabaseExpander implements INodeExpander
 											_tableTypes[i],
 											IDatabaseObjectTypes.GENERIC_FOLDER,
 											conn);
-			ObjectTreeNode child = new ObjectTreeNode(session, dbo, true);
+			ObjectTreeNode child = new ObjectTreeNode(session, dbo);
 			child.setExpander(tableTypeExp);
 			list.add(child);
 		}
@@ -216,7 +216,7 @@ public class DatabaseExpander implements INodeExpander
 										schemaName, "UDT",
 										IDatabaseObjectTypes.GENERIC_FOLDER,
 										conn);
-			ObjectTreeNode child = new ObjectTreeNode(session, dbo, true);
+			ObjectTreeNode child = new ObjectTreeNode(session, dbo);
 			child.setExpander(new UDTTypeExpander(session));
 			list.add(child);
 		}
@@ -238,7 +238,7 @@ public class DatabaseExpander implements INodeExpander
 												schemaName, "PROCEDURE",
 												IDatabaseObjectTypes.GENERIC_FOLDER,
 												conn);
-			ObjectTreeNode child = new ObjectTreeNode(session, dbo, true);
+			ObjectTreeNode child = new ObjectTreeNode(session, dbo);
 			child.setExpander(exp);
 			list.add(child);
 		}

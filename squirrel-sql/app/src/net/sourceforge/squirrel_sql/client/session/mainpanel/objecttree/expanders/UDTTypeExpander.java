@@ -95,7 +95,7 @@ public class UDTTypeExpander implements INodeExpander
 
 		for (int i = 0; i < udts.length; ++i)
 		{
-			ObjectTreeNode child = new ObjectTreeNode(session, udts[i], false);
+			ObjectTreeNode child = new ObjectTreeNode(session, udts[i]);
 //				child.setExpander(this);
 			childNodes.add(child);
 		}

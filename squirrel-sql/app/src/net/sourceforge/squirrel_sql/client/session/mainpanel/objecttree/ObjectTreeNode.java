@@ -36,46 +36,48 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 	boolean _allowsChildren;
 
 	/** Describes the database object represented by this node. */
-	private IDatabaseObjectInfo _dbo;
+	private IDatabaseObjectInfo _dbinfo;
 
 	/** Expander for this node (can be null). */
 	private INodeExpander _expander;
 
 	/**
-	 * Ctor that assumes node can have children.
+	 * Ctor that assumes node cannot have children.
 	 * 
 	 * @param	session		Current session.
-	 * @param	dbo			Describes this object in the database.
+	 * @param	dbinfo			Describes this object in the database.
 	 * 
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>ISession</TT> passed.
 	 */
-	public ObjectTreeNode(ISession session, IDatabaseObjectInfo dbo)
+	public ObjectTreeNode(ISession session, IDatabaseObjectInfo dbinfo)
 	{
-		this(session, dbo, true);
+		this(session, dbinfo, false);
 	}
 
 	/**
 	 * Ctor.
 	 * 
 	 * @param	session		Current session.
-	 * @param	dbo			Describes this object in the database.
+	 * @param	dbinfo		Describes this object in the database.
 	 * @param	allowsChildren	<TT>true</TT> if node can have children.
 	 * 
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> <TT>ISession</TT> passed.
+	 * 			Thrown if <TT>null</TT> <TT>ISession</TT> or
+	 * 			<TT>IDatabaseObjectInfo</TT> passed.
 	 */
-	public ObjectTreeNode(ISession session, IDatabaseObjectInfo dbo,
+//??TODO: Get rid of this ctor.
+	private ObjectTreeNode(ISession session, IDatabaseObjectInfo dbinfo,
 							boolean allowsChildren)
 	{
-		super(dbo.toString());
+		super(getNodeTitle(dbinfo));
 		if (session == null)
 		{
 			throw new IllegalArgumentException("ISession == null");
 		}
 		_session = session;
-		_allowsChildren = allowsChildren;
-		_dbo = dbo;
+		_allowsChildren = false; // Let setting the expander take care of this. allowsChildren;
+		_dbinfo = dbinfo;
 	}
 
 	/**
@@ -90,7 +92,7 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 
 	public IDatabaseObjectInfo getDatabaseObjectInfo()
 	{
-		return _dbo;
+		return _dbinfo;
 	}
 
 	/**
@@ -122,5 +124,14 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 	{
 		_expander = value;
 		_allowsChildren = (_expander != null);
+	}
+
+	private static String getNodeTitle(IDatabaseObjectInfo dbinfo)
+	{
+		if (dbinfo == null)
+		{
+			throw new IllegalArgumentException("IDatabaseObjectInfo == null");
+		}
+		return dbinfo.toString();
 	}
 }
