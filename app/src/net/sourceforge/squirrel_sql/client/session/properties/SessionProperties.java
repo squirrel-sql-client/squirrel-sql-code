@@ -75,6 +75,9 @@ public class SessionProperties implements Cloneable, Serializable
 		String TABLE_CONTENTS_OUTPUT_CLASS_NAME = "tableContentsOutputClassName";
 	}
 
+	private static final FontInfo DEFAULT_FONT_INFO =
+									new FontInfo(new Font("Monospaced", 0, 12));
+
 	/** Object to handle property change events. */
 	private transient PropertyChangeReporter _propChgReporter;
 
@@ -139,7 +142,7 @@ public class SessionProperties implements Cloneable, Serializable
 	private String _solComment = "--";
 
 	/** Font information for the SQL entry area. */
-	private FontInfo _fi = new FontInfo(new Font("Monospaced", 0, 12));
+	private FontInfo _fi = (FontInfo)DEFAULT_FONT_INFO.clone();
 
 	/** Should the number of SQL statements to save in execution history be limited?. */
 	private boolean _limitSqlEntryHistorySize = false;
@@ -570,8 +573,8 @@ public class SessionProperties implements Cloneable, Serializable
 		final String oldValue = _solComment;
 		_solComment = data;
 		getPropertyChangeReporter().firePropertyChange(
-			IPropertyNames.SQL_START_OF_LINE_COMMENT,
-			oldValue, _solComment);
+									IPropertyNames.SQL_START_OF_LINE_COMMENT,
+									oldValue, _solComment);
 	}
 
 	public FontInfo getFontInfo()
@@ -584,9 +587,9 @@ public class SessionProperties implements Cloneable, Serializable
 		if (_fi == null || !_fi.equals(data))
 		{
 			final FontInfo oldValue = _fi;
-			_fi = data;
+			_fi = data != null ? data : (FontInfo)DEFAULT_FONT_INFO.clone();
 			getPropertyChangeReporter().firePropertyChange(
-				IPropertyNames.FONT_INFO, oldValue, _fi);
+									IPropertyNames.FONT_INFO, oldValue, _fi);
 		}
 	}
 
@@ -754,7 +757,7 @@ public class SessionProperties implements Cloneable, Serializable
 
 	/**
 	 * Return comma-separated catalog of schema prefixes to display in the
-	  * object tree.
+	 * object tree.
 	 */
 	public String getCatalogPrefixList()
 	{
@@ -791,7 +794,7 @@ public class SessionProperties implements Cloneable, Serializable
 
 	/**
 	 * Set <CODE>true</CODE> if schemas and catalogs should be loaded into the
-	 * object tree. 
+	 * object tree.
 	 */
 	public synchronized void setLoadSchemasCatalogs(boolean data)
 	{

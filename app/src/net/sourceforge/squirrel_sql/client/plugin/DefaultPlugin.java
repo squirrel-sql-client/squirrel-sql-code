@@ -41,8 +41,11 @@ public abstract class DefaultPlugin implements IPlugin
 	 * Called on application startup before application started up.
 	 *
 	 * @param	app	 Application API.
+	 *
+	 * @throws	PluginException
+	 *			Thrown if an error occurs.
 	 */
-	public void load(IApplication app)
+	public void load(IApplication app) throws PluginException
 	{
 		if (app == null)
 		{
@@ -53,16 +56,22 @@ public abstract class DefaultPlugin implements IPlugin
 
 	/**
 	 * Called on application startup after application started.
+	 *
+	 * @throws	PluginException
+	 *			Thrown if an error occurs.
 	 */
-	public void initialize()
+	public void initialize() throws PluginException
 	{
 		// Empty method.
 	}
 
 	/**
 	 * Called when app shutdown.
+	 *
+	 * @throws	PluginException
+	 *			Thrown if an error occurs.
 	 */
-	public void unload()
+	public void unload() throws PluginException
 	{
 		// Empty method.
 	}
