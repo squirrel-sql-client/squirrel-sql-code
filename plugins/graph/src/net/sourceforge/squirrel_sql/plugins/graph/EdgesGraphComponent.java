@@ -27,8 +27,14 @@ public class EdgesGraphComponent implements GraphComponent
       _height = height;
    }
 
-   public void paint(Graphics g)
+   public void paint(Graphics g, boolean isPrinting)
    {
+      if(isPrinting)
+      {
+         return;
+      }
+
+
       int pixelByCm = (int) (Toolkit.getDefaultToolkit().getScreenResolution() * CM_BY_INCH + 0.5);
 
       int stepWitdth = (int)(_format.getWidth() * pixelByCm * _sldValue + 0.5);

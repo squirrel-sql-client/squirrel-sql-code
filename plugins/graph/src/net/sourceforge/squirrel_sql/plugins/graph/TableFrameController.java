@@ -51,6 +51,7 @@ public class TableFrameController
    private JCheckBoxMenuItem _mnuOrderByName;
    private JCheckBoxMenuItem _mnuPksAndConstraintsOnTop;
    private JCheckBoxMenuItem _mnuDbOrder;
+   private JMenuItem _mnuClose;
    private AddTableListener _addTablelListener;
    private ConstraintViewListener _constraintViewListener;
 
@@ -65,12 +66,12 @@ public class TableFrameController
    private double _adjustBeginZoom;
 
 
-   public TableFrameController(ISession session, GraphDesktopController paintManager, AddTableListener listener, String tableName, TableFrameControllerXmlBean xmlBean)
+   public TableFrameController(ISession session, GraphDesktopController desktopController, AddTableListener listener, String tableName, TableFrameControllerXmlBean xmlBean)
    {
       try
       {
          _session = session;
-         _desktopController = paintManager;
+         _desktopController = desktopController;
          _addTablelListener = listener;
 
          TableToolTipProvider toolTipProvider = new TableToolTipProvider()
@@ -315,10 +316,11 @@ public class TableFrameController
    {
       FontMetrics fm = _frame.txtColumsFactory.getGraphics().getFontMetrics(_frame.txtColumsFactory.getFont());
 
+      int zoomedFontHeight = (int)(  fm.getHeight() * _desktopController.getZoomer().getZoom()  + 0.5);
       for (int i = 0; i < _colInfos.length; i++)
       {
-         int unscrolledHeight = _colInfos[i].getIndex() * fm.getHeight();
-         if(unscrolledHeight <= point.y &&  point.y  <= unscrolledHeight +  fm.getHeight())
+         int unscrolledHeight = _colInfos[i].getIndex() * zoomedFontHeight;
+         if(unscrolledHeight <= point.y &&  point.y  <= unscrolledHeight +  zoomedFontHeight)
          {
             return _colInfos[i];
          }
@@ -425,6 +427,17 @@ public class TableFrameController
          }
       });
 
+      _mnuClose = new JMenuItem("close");
+      _mnuClose.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onClose();
+            _frame.setVisible(false);
+            _frame.dispose();
+         }
+      });
+
 
       _popUp.add(_mnuAddTableForForeignKey);
       _popUp.add(_mnuAddChildTables);
@@ -434,6 +447,9 @@ public class TableFrameController
       _popUp.add(_mnuDbOrder);
       _popUp.add(_mnuOrderByName);
       _popUp.add(_mnuPksAndConstraintsOnTop);
+      _popUp.add(new JSeparator());
+      _popUp.add(_mnuClose);
+
       _frame.txtColumsFactory.addMouseListener(new MouseAdapter()
       {
          public void mousePressed(MouseEvent e)
