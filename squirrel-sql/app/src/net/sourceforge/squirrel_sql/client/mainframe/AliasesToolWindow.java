@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -41,7 +41,8 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.DeleteAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyAliasAction;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 
-public class AliasesToolWindow extends BaseToolWindow {
+public class AliasesToolWindow extends BaseToolWindow
+{
 	private IApplication _app;
 
 	/** User Interface facory. */
@@ -50,17 +51,19 @@ public class AliasesToolWindow extends BaseToolWindow {
 	/**
 	 * Default ctor.
 	 */
-	public AliasesToolWindow(IApplication app) {
+	public AliasesToolWindow(IApplication app)
+	{
 		super(app, new UserInterfaceFactory(app));
 		_app = app;
-		_uiFactory = (UserInterfaceFactory)getUserInterfaceFactory();
+		_uiFactory = (UserInterfaceFactory) getUserInterfaceFactory();
 		_uiFactory.setAliasesToolWindow(this);
 
 		// Enable/disable actions depending on whether an item is selected in
 		// the list.
 		_uiFactory.enableDisableActions();
 
-		_app.getSquirrelPreferences().addPropertyChangeListener(new PropertyChangeListener()
+		_app.getSquirrelPreferences()
+			.addPropertyChangeListener(new PropertyChangeListener()
 		{
 			public void propertyChange(PropertyChangeEvent evt)
 			{
@@ -83,7 +86,9 @@ public class AliasesToolWindow extends BaseToolWindow {
 		});
 	}
 
-	private static final class UserInterfaceFactory implements BaseToolWindow.IUserInterfaceFactory {
+	private static final class UserInterfaceFactory
+		implements BaseToolWindow.IUserInterfaceFactory
+	{
 		private IApplication _app;
 		private AliasesList _aliasesList;
 		private ToolBar _tb;
@@ -95,9 +100,11 @@ public class AliasesToolWindow extends BaseToolWindow {
 		private DeleteAliasAction _deleteAliasAction;
 		private ModifyAliasAction _modifyAliasAction;
 
-		UserInterfaceFactory(IApplication app) throws IllegalArgumentException {
+		UserInterfaceFactory(IApplication app) throws IllegalArgumentException
+		{
 			super();
-			if (app == null) {
+			if (app == null)
+			{
 				throw new IllegalArgumentException("Null IApplication passed");
 			}
 			_app = app;
@@ -121,26 +128,32 @@ public class AliasesToolWindow extends BaseToolWindow {
 			_pm.addSeparator();
 		}
 
-		public ToolBar getToolBar() {
+		public ToolBar getToolBar()
+		{
 			return _tb;
 		}
 
-		public BasePopupMenu getPopupMenu() {
+		public BasePopupMenu getPopupMenu()
+		{
 			return _pm;
 		}
 
-		public JList getList() {
+		public JList getList()
+		{
 			return _aliasesList;
 		}
 
-		public String getWindowTitle() {
+		public String getWindowTitle()
+		{
 			return "Aliases"; // i18n
 		}
 
-		public ICommand getDoubleClickCommand() {
+		public ICommand getDoubleClickCommand()
+		{
 			ICommand cmd = null;
 			ISQLAlias alias = _aliasesList.getSelectedAlias();
-			if (alias != null) {
+			if (alias != null)
+			{
 				cmd = new ConnectToAliasCommand(_app, GUIUtils.getOwningFrame(_tw), alias);
 			}
 			return cmd;
@@ -149,11 +162,15 @@ public class AliasesToolWindow extends BaseToolWindow {
 		/**
 		 * Enable/disable actions depending on whether an item is selected in list.
 		 */
-		public void enableDisableActions() {
+		public void enableDisableActions()
+		{
 			boolean enable = false;
-			try {
+			try
+			{
 				enable = _aliasesList.getSelectedAlias() != null;
-			} catch (Exception ignore) {
+			}
+			catch (Exception ignore)
+			{
 				// Getting an error in the JDK.
 				// Exception occurred during event dispatching:
 				// java.lang.ArrayIndexOutOfBoundsException: 0 >= 0
@@ -168,11 +185,13 @@ public class AliasesToolWindow extends BaseToolWindow {
 			_modifyAliasAction.setEnabled(enable);
 		}
 
-		void setAliasesToolWindow(AliasesToolWindow tw) {
+		void setAliasesToolWindow(AliasesToolWindow tw)
+		{
 			_tw = tw;
 		}
 
-		private void preloadActions() {
+		private void preloadActions()
+		{
 			ActionCollection actions = _app.getActionCollection();
 			actions.add(_modifyAliasAction = new ModifyAliasAction(_app, _aliasesList));
 			actions.add(_deleteAliasAction = new DeleteAliasAction(_app, _aliasesList));

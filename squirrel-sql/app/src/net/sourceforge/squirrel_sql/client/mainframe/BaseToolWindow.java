@@ -78,7 +78,7 @@ abstract class BaseToolWindow extends BaseSheet
 
 	public BaseToolWindow(IApplication app, IUserInterfaceFactory uiFactory)
 	{
-		super("", true);
+		super("", true, true);
 		if (app == null)
 		{
 			throw new IllegalArgumentException("Null IApplication passed");
@@ -162,6 +162,8 @@ abstract class BaseToolWindow extends BaseSheet
 	{
 		// This is a tool window.
 		GUIUtils.makeToolWindow(this, true);
+
+		setDefaultCloseOperation(HIDE_ON_CLOSE);
 
 		// Pane to add window content to.
 		final Container content = getContentPane();

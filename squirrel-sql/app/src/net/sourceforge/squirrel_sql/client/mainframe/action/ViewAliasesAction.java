@@ -17,28 +17,28 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.ActionEvent;
-import net.sourceforge.squirrel_sql.fw.gui.action.SelectInternalFrameAction;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.gui.action.SelectInternalFrameAction;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.mainframe.AliasesToolWindow;
-
 /**
  * This <CODE>Action</CODE> displays the Aliases Tool Window.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ViewAliasesAction extends SelectInternalFrameAction {
+public class ViewAliasesAction extends SelectInternalFrameAction
+{
 	/**
 	 * Ctor specifying the Aliases Tool Window.
 	 *
 	 * @throws	IllegalArgumentException
 	 *			Thrown if <TT>null</TT> <TT>AliasesToolWindow</TT> passed.
 	 */
-	public ViewAliasesAction(IApplication app, AliasesToolWindow window) {
+	public ViewAliasesAction(IApplication app, AliasesToolWindow window)
+	{
 		super(window);
-		if (window == null) {
+		if (window == null)
+		{
 			throw new IllegalArgumentException("null AliasesToolWindow passed");
 		}
 		app.getResources().setupAction(this);
