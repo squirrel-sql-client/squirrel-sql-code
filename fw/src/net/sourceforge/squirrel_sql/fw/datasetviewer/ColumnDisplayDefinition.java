@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.sql.ResultSetMetaData;
 import java.sql.Types;
 /**
  * This defines the display information for a column.
@@ -38,6 +39,42 @@ public class ColumnDisplayDefinition
 	 * what operations to apply during cell editing.
 	 */
 	private int _sqlType;
+	
+	/**
+	 * A boolean indicating whether this field is nullable/may-be-nullable vs. known
+	 * to be not nullable.
+	 */
+	private boolean _isNullable;
+	
+	/**
+	 * The column's normal maximum width in characters as known to the DB.
+	 * This is different from _columnWidth in that this is the size known to the
+	 * DB whereas _columnWidth may be a different size used in the initial display
+	 * of the data on the screen.
+	 */
+	private int _columnSize;
+	
+	/**
+	 * The number of decimal digits in the column.
+	 */
+	private int _precision;
+	
+	/**
+	 * The number of decimal digits to the right of the decimal point.
+	 */
+	private int _scale;
+	
+	/**
+	 * Flag for whether or not this column is signed or unsigned.
+	 */
+	private boolean _isSigned;	
+	
+	/**
+	 * Flag for whether this column represents currency or not.
+	 */
+	private boolean _isCurrency;
+
+	
 
 	/**
 	 * Ctor.
@@ -48,7 +85,7 @@ public class ColumnDisplayDefinition
 	public ColumnDisplayDefinition(int displayWidth, String label)
 	{
 		super();
-		init(displayWidth, label, Types.NULL);
+		init(displayWidth, label, Types.NULL, true, 0, 0, 0, true, false);
 	}
 
 	/**
@@ -58,9 +95,12 @@ public class ColumnDisplayDefinition
 	 * @param	label			Column heading.
 	 * @param	className		Name of the class for the type of data in the column.
 	 */
-	public ColumnDisplayDefinition(int displayWidth, String label, int sqlType) {
+	public ColumnDisplayDefinition(int displayWidth, String label, int sqlType,
+				boolean isNullable, int columnSize, int precision, int scale,
+				boolean isSigned, boolean isCurrency) {
 		super();
-		init(displayWidth, label, sqlType);
+		init(displayWidth, label, sqlType, isNullable, columnSize, precision, scale,
+			isSigned, isCurrency);
 	}
 
 	/**
@@ -92,6 +132,63 @@ public class ColumnDisplayDefinition
 	{
 		return _sqlType;
 	}
+
+	/**
+	 * Return a boolean indicating column is nullable or not.
+	 *
+	 * @return  true = column may contain null (with some uncertainty);
+	 * 		false= definitely no nulls allowed.
+	 */
+	public boolean isNullable()
+	{
+		return _isNullable;
+	}
+	
+	/**
+	 * Override the isNullable field after creation.
+	 */
+	public void setIsNullable(boolean isNullable) {
+		_isNullable = isNullable;
+	}
+	
+	/**
+	 * Return the size of the column as known to the DB in number of characters,
+	 * For non-character fields (e.g. Integer) this will be the number of characters used
+	 * in the DB to represent the data (e.g. 4 for an Int) rather than the number of
+	 * characters (e.g. decimal digits) that the user may enter.
+	 */
+	public int getColumnSize() {
+		return _columnSize;
+	}
+	
+	/**
+	 * Return the number of decimal digits that may be entered into this field.
+	 */
+	public int getPrecision() {
+		return _precision;
+	}
+	
+	/**
+	 * Return the number of decimal digits to the right of the decimal point.
+	 */
+	public int getScale() {
+		return _scale;
+	}
+	
+	/**
+	 * Return the flag for whether this column is signed or unsigned.
+	 */
+	public boolean isSigned() {
+		return _isSigned;
+	}
+	
+	/**
+	 * Return the flag for whether this column represents currency or not.
+	 */
+	public boolean isCurrency() {
+		return _isCurrency;
+	}
+	
 
 	/**
 	 * Return the class name associated with the sql data type.
@@ -185,7 +282,9 @@ public class ColumnDisplayDefinition
 	 * @param	label			Column heading.
 	 * @param	sqlType			Type of data (from java.sql.Types).
 	 */
-	private void init(int displayWidth, String label, int sqlType)
+	private void init(int displayWidth, String label, int sqlType,
+		boolean isNullable, int columnSize, int precision, int scale,
+		boolean isSigned, boolean isCurrency)
 	{
 		if (label == null)
 		{
@@ -198,6 +297,12 @@ public class ColumnDisplayDefinition
 		}
 		_label = label;
 		_sqlType = sqlType;
+		_isNullable = isNullable;
+		_columnSize = columnSize;
+		_precision = _precision;
+		_scale = scale;
+		_isSigned = isSigned;
+		_isCurrency = isCurrency;
 	}
 }
 

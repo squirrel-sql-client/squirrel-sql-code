@@ -50,7 +50,7 @@ public class ContentsTab extends BaseTableTab
 	 * The initial value of "" allows us to dispense with a check for null
 	 * on the first pass.
 	 */
-	String _previousTableName = "";
+	String previousTableName = "";
 
 	/**
 	 * We need to save the name of the SessionProperties display class at the time
@@ -58,13 +58,13 @@ public class ContentsTab extends BaseTableTab
 	 * while we are in forced edit mode, we will change back to match the new
 	 * Session Properties.
 	 */
-	String _outputClassNameAtTimeOfForcedEdit = "";
+	String sqlOutputClassNameAtTimeOfForcedEdit = "";
 
 	/**
 	 * Remember whether or not the user has forced us into editing mode
 	 * when the SessionProperties says to use read-only mode.
 	 */
-	boolean _editModeForced = false;
+	boolean editModeForced = false;
 
 	/**
 	 * Remember which column contains the rowID; if no rowID, this is -1
@@ -141,16 +141,16 @@ public class ContentsTab extends BaseTableTab
 				 * to another table, that new table should not be editable.
 				 */
 				final String currentTableName = ti.getQualifiedName();
-				if (!currentTableName.equals(_previousTableName))
+				if (!currentTableName.equals(previousTableName))
 				{
-					_previousTableName = currentTableName;	// needed to prevent an infinite loop
-					_editModeForced = false;	// edit mode applied only to previous table
+					previousTableName = currentTableName;	// needed to prevent an infinite loop
+					editModeForced = false;	// edit mode applied only to previous table
 
 					/**
 					 * Tell the GUI to rebuild itself.
 					 * Unfortunately, this has the side effect of calling this same function
 					 * another time.  The second call does not seem to be a problem,
-					 * but we need to have reset the _previousTableName before makeing
+					 * but we need to have reset the previousTableName before makeing
 					 * this call or we will be in an infinite loop.
 					 */
 					props.forceTableContentsOutputClassNameChange();
@@ -269,6 +269,36 @@ public class ContentsTab extends BaseTableTab
 				final ResultSetDataSet rsds = new ResultSetDataSet();
 				rsds.setResultSet(rs, props.getLargeResultSetObjectInfo());
 
+				// KLUDGE:
+				// We want some info about the columns to be available for validating the
+				// user input during cell editing operations.  Ideally we would get that
+				// info inside the ResultSetDataSet class during the creation of the
+				// columnDefinition objects by using various functions in ResultSetMetaData
+				// such as isNullable(idx).  Unfortunately, in at least some DBMSs (e.g.
+				// Postgres, HSDB) the results of those calls are not the same (and are less accurate
+				// than) the SQLMetaData.getColumns() call used in ColumnsTab to get the column info.
+				// Even more unfortunate is the fact that the set of attributes reported on by the two
+				// calls is not the same, with the ResultSetMetadata listing things not provided by
+				// getColumns.  Most of the data provided by the ResultSetMetaData calls is correct.
+				// However, the nullable/not-nullable property is not set correctly in at least two
+				// DBMSs, while it is correct for those DBMSs in the getColumns() info.  Therefore,
+				// we collect the collumn nullability information from getColumns() and pass that
+				// info to the ResultSet to override what it got from the ResultSetMetaData.
+				final ResultSet columnRS = conn.getSQLMetaData().getColumns(getTableInfo());
+				final ColumnDisplayDefinition[] colDefs = rsds.getDataSetDefinition().getColumnDefinitions();
+
+				// get the nullability information and pass it into the ResultSet
+				// Unfortunately, not all DBMSs provide the column number in object 17 as stated in the
+				// SQL documentation, so we have to guess that the result set is in column order
+				int columnNumber = 0;
+				while (columnRS.next()) {
+					boolean isNullable = true;
+					if (columnRS.getInt(11) == DatabaseMetaData.columnNoNulls)
+						isNullable = false;
+					colDefs[columnNumber++].setIsNullable(isNullable);
+				}
+
+
 				//?? remember which column is the rowID (if any) so we can
 				//?? prevent editing on it
 				if (pseudoColumn.length() > 0)
@@ -296,9 +326,9 @@ public class ContentsTab extends BaseTableTab
 	 */
 	public void forceEditMode()
 	{
-		_editModeForced = true;
-		final SessionProperties props = getSession().getProperties();
-		_outputClassNameAtTimeOfForcedEdit = props.getTableContentsOutputClassName();
+		editModeForced = true;
+		sqlOutputClassNameAtTimeOfForcedEdit = 
+			getSession().getProperties().getSQLResultsOutputClassName();
 
 		/**
 		 * Tell the GUI to rebuild itself.
@@ -316,21 +346,20 @@ public class ContentsTab extends BaseTableTab
 	 */
 	protected String getDestinationClassName()
 	{
-		final SessionProperties props = getSession().getProperties();
-		final String tcClassName = props.getTableContentsOutputClassName();
-		if (_editModeForced)
+		if (editModeForced)
 		{
-			if (tcClassName.equals(_outputClassNameAtTimeOfForcedEdit))
+			if (getSession().getProperties().getSQLResultsOutputClassName().equals(
+				sqlOutputClassNameAtTimeOfForcedEdit))
 			{
-				return props.getEditableTableOutputClassName();
+				return getSession().getProperties().getEditableTableOutputClassName();
 			}
 			// forced edit mode ended because user changed the Session Properties
-			_editModeForced = false;
+			editModeForced = false;
 		}
 
 		// if the user selected Editable Table in the Session Properties,
 		// then the display will be an editable table; otherwise the display is read-only
-		return tcClassName;
+		return getSession().getProperties().getSQLResultsOutputClassName();
 	}
 
 	/**
@@ -547,6 +576,10 @@ public class ContentsTab extends BaseTableTab
 			if (i == col)
 				value = colValue;
 
+			// convert user representation of null into an actual null
+			if (value != null && value.toString().equals("<null>"))
+				value = null;
+
 			String columnLabel = colDefs[i].getLabel();
 
 			switch (colDefs[i].getSqlType())
@@ -596,7 +629,7 @@ public class ContentsTab extends BaseTableTab
 				case Types.TINYINT:
 					if (value == null || value.toString() == null || value.toString().length() == 0)
 						clause = columnLabel + " IS NULL";
-					clause = columnLabel + "=" + value.toString();
+					else clause = columnLabel + "=" + value.toString();
 					break;
 
 				// TODO: Hard coded -. JDBC/ODBC bridge JDK1.4
@@ -723,7 +756,7 @@ public class ContentsTab extends BaseTableTab
 			case Types.TINYINT:
 //????? check somehow whether column is nullable? or is this handled by cell editor?
 				if (colValue == null || colValue.toString() == null || colValue.toString().length() == 0)
-					clause = columnLabel + " TO NULL ";
+					clause = columnLabel + "=null ";
 				else clause = columnLabel + "=" + colValue.toString();
 				break;
 
@@ -738,7 +771,7 @@ public class ContentsTab extends BaseTableTab
 			case -9:
 			case -8:
 				if (colValue == null || colValue.toString() == null )
-					clause = columnLabel + " TO NULL ";
+					clause = columnLabel + "=null ";
 				else
 					clause = columnLabel + "='" + colValue.toString() + "'";
 				break;
