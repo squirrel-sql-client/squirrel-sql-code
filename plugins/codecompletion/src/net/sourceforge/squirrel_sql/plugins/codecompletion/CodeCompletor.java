@@ -44,7 +44,7 @@ public class CodeCompletor
 
    private CodeCompletionCandidates _currCandidates;
 
-	private KeyStroke[] keysToDisableWhenPopUpOpen = new KeyStroke[]
+	private KeyStroke[] _keysToDisableWhenPopUpOpen = new KeyStroke[]
 	{
 		KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false),
 		KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0, false),
@@ -56,6 +56,8 @@ public class CodeCompletor
 		KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, 0, false),
 		KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, 0, false)
 	};
+
+   private Action[] _originalActions = null;
 
 
    public CodeCompletor(JTextComponent txtComp, CodeCompletorModel model)
@@ -273,9 +275,14 @@ public class CodeCompletor
 			public void run()
 			{
 				Keymap km = _txtComp.getKeymap();
-				for (int i = 0; i < keysToDisableWhenPopUpOpen.length; i++)
+				for (int i = 0; i < _keysToDisableWhenPopUpOpen.length; i++)
 				{
-					km.removeKeyStrokeBinding(keysToDisableWhenPopUpOpen[i]);
+					km.removeKeyStrokeBinding(_keysToDisableWhenPopUpOpen[i]);
+
+               if(null != _originalActions[i])
+               {
+                  km.addActionForKeyStroke(_keysToDisableWhenPopUpOpen[i], _originalActions[i]);
+               }
 				}
 			}
 		});
@@ -360,9 +367,22 @@ public class CodeCompletor
          };
 
          Keymap km = _txtComp.getKeymap();
-         for (int i = 0; i < keysToDisableWhenPopUpOpen.length; i++)
+
+         if(null == _originalActions)
          {
-            km.addActionForKeyStroke(keysToDisableWhenPopUpOpen[i], doNothingAction);
+            _originalActions = new Action[_keysToDisableWhenPopUpOpen.length];
+
+            for (int i = 0; i < _keysToDisableWhenPopUpOpen.length; i++)
+            {
+               _originalActions[i] = km.getAction(_keysToDisableWhenPopUpOpen[i]);
+            }
+         }
+
+
+
+         for (int i = 0; i < _keysToDisableWhenPopUpOpen.length; i++)
+         {
+            km.addActionForKeyStroke(_keysToDisableWhenPopUpOpen[i], doNothingAction);
          }
       }
       catch (BadLocationException e)
