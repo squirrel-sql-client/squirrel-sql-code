@@ -46,7 +46,7 @@ public interface IDataSetTableControls
 	/**
 	 * See if a particular column is editable.
 	 */
-	public boolean isColumnEditable(int col);
+	public boolean isColumnEditable(int col, Object originalValue);
 	
 	/**
 	 * Set up the CellEditors for the various types of data.

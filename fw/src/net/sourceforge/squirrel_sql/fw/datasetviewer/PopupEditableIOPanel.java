@@ -82,6 +82,9 @@ public class PopupEditableIOPanel extends JPanel
 	// command to use when processing data with an external program
 	private JComboBox externalCommandCombo;
 	
+	// save the original value for re-use by CLOB/BLOB types in conversion
+	private Object originalValue;
+	
 	// Binary data viewing option: which radix to use
 	// This object is only non-null when the data is binary data
 	private JComboBox radixList = null;
@@ -133,6 +136,8 @@ public class PopupEditableIOPanel extends JPanel
 	 */
 	public PopupEditableIOPanel(ColumnDisplayDefinition colDef,
 		Object value, boolean isEditable) {
+			
+		originalValue = value;	// save for possible future use
 		
 		_popupMenu = new TextPopupMenu();
 		
@@ -318,7 +323,7 @@ public class PopupEditableIOPanel extends JPanel
 			return null;
 		}
 		return CellComponentFactory.validateAndConvertInPopup(_colDef,
-					text, messageBuffer);
+					originalValue, text, messageBuffer);
 	}
 	
 	/**
