@@ -34,32 +34,41 @@ public class DatabaseObjectType implements IHasIdentifier
 	/** Other - general purpose. */
 	public final static DatabaseObjectType OTHER = createNewDatabaseObjectType();
 
-	/** Database. */
-	public final static DatabaseObjectType DATABASE = createNewDatabaseObjectType();
-
-	/** Schema. */
-	public final static DatabaseObjectType SCHEMA = createNewDatabaseObjectType();
-
 	/** Catalog. */
 	public final static DatabaseObjectType CATALOG = createNewDatabaseObjectType();
 
-	/** TABLE. */
-	public final static DatabaseObjectType TABLE = createNewDatabaseObjectType();
+	/** Database. */
+	public final static DatabaseObjectType DATABASE = createNewDatabaseObjectType();
+
+	/** Function. */
+	public final static DatabaseObjectType FUNCTION = createNewDatabaseObjectType();
+
+	/** Index. */
+	public final static DatabaseObjectType INDEX = createNewDatabaseObjectType();
 
 	/** Stored procedure. */
 	public final static DatabaseObjectType PROCEDURE = createNewDatabaseObjectType();
 
-	/** User defined type. */
-	public final static DatabaseObjectType UDT = createNewDatabaseObjectType();
-
-	/** Index. */
-	public final static DatabaseObjectType INDEX = createNewDatabaseObjectType();
+	/** Schema. */
+	public final static DatabaseObjectType SCHEMA = createNewDatabaseObjectType();
 
 	/**
 	 * An object that generates uniques IDs for primary keys. E.G. an Oracle
 	 * sequence.
 	 */
 	public final static DatabaseObjectType SEQUENCE = createNewDatabaseObjectType();
+
+	/** TABLE. */
+	public final static DatabaseObjectType TABLE = createNewDatabaseObjectType();
+
+	/** Trigger. */
+	public final static DatabaseObjectType TRIGGER = createNewDatabaseObjectType();
+
+	/** User defined type. */
+	public final static DatabaseObjectType UDT = createNewDatabaseObjectType();
+
+	/** A database user. */
+	public final static DatabaseObjectType USER = createNewDatabaseObjectType();
 
 	/** Uniquely identifies this Object. */
 	private final IIdentifier _id;

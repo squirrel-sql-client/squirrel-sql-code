@@ -22,9 +22,12 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.TreeSet;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -657,6 +660,69 @@ public class SQLDatabaseMetaData
 									rs.getString(6), this));
 		}
 		return (IUDTInfo[])list.toArray(new IUDTInfo[list.size()]);
+	}
+
+	/**
+	 * Retrieve the names of the Numeric Functions that this DBMS supports.
+	 * 
+	 * @return	String[] of function names.
+	 */
+	public String[] getNumericFunctions() throws SQLException
+	{
+		return makeArray(getJDBCMetaData().getNumericFunctions());
+	}
+
+	/**
+	 * Retrieve the names of the String Functions that this DBMS supports.
+	 * 
+	 * @return	String[] of function names.
+	 */
+	public String[] getStringFunctions() throws SQLException
+	{
+		return makeArray(getJDBCMetaData().getStringFunctions());
+	}
+
+	/**
+	 * Retrieve the names of the System Functions that this DBMS supports.
+	 * 
+	 * @return	String[] of function names.
+	 */
+	public String[] getSystemFunctions() throws SQLException
+	{
+		return makeArray(getJDBCMetaData().getSystemFunctions());
+	}
+
+	/**
+	 * Retrieve the names of the Date/Time Functions that this DBMS supports.
+	 * 
+	 * @return	String[] of function names.
+	 */
+	public String[] getTimeDateFunctions() throws SQLException
+	{
+		return makeArray(getJDBCMetaData().getTimeDateFunctions());
+	}
+
+	/**
+	 * Retrieve the names of the non-standard keywords that this DBMS supports.
+	 * 
+	 * @return	String[] of keywords.
+	 */
+	public String[] getSQLKeywords() throws SQLException
+	{
+		return makeArray(getJDBCMetaData().getSQLKeywords());
+	}
+
+	private static String[] makeArray(String data)
+	{
+		List list = new ArrayList();
+		StringTokenizer st = new StringTokenizer(data != null ? data : "", ",");
+		while (st.hasMoreTokens())
+		{
+			list.add(st.nextToken());
+		}
+		Collections.sort(list);
+
+		return (String[])list.toArray(new String[list.size()]);
 	}
 
 }
