@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.util;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -18,36 +18,37 @@ package net.sourceforge.squirrel_sql.client.util;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.id.UidIdentifier;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifierFactory;
+import net.sourceforge.squirrel_sql.fw.id.UidIdentifierFactory;
 /**
  * This class is a factory that generates unique identifiers for various
  * classes within SQuirreL. All identifiers created are instances of
  * <TT>net.sourceforge.squirrel_sql.fw.id.UidIdentifier</TT>.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class IdentifierFactory
+public class IdentifierFactory implements IIdentifierFactory
 {
 	/** The single instance of this class. */
-	private static final IdentifierFactory s_instance = new IdentifierFactory();
+	private static final IIdentifierFactory s_instance = new UidIdentifierFactory();
 
 	/**
 	 * Retrieve the singleton instance of this class.
-	 * 
+	 *
 	 * @return	The singleton instance of this class.
 	 */
-	public static IdentifierFactory getInstance()
+	public static IIdentifierFactory getInstance()
 	{
 		return s_instance;
 	}
 
 	/**
 	 * Create a new identifier.
-	 * 
+	 *
 	 * @return	The new identifier.
 	 */
 	public IIdentifier createIdentifier()
 	{
-		return new UidIdentifier();
+		return s_instance.createIdentifier();
 	}
 }
