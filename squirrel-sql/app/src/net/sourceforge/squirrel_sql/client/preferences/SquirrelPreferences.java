@@ -37,7 +37,6 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 
 public class SquirrelPreferences implements Serializable
 {
-
 	public interface IPropertyNames
 	{
 		String SESSION_PROPERTIES = "sessionProperties";
@@ -45,7 +44,9 @@ public class SquirrelPreferences implements Serializable
 		String DEBUG_JDBC = "debugJdbc";
 		String MAIN_FRAME_STATE = "mainFrameWindowState";
 		String PLUGIN_OBJECTS = "pluginObjects";
+		String SHOW_ALIASES_TOOL_BAR = "showAliasesToolBar";
 		String SHOW_CONTENTS_WHEN_DRAGGING = "showContentsWhenDragging";
+		String SHOW_DRIVERS_TOOL_BAR = "showDriversToolBar";
 		String SHOW_MAIN_STATUS_BAR = "showMainStatusBar";
 		String SHOW_MAIN_TOOL_BAR = "showMainToolBar";
 		String SHOW_TOOLTIPS = "showToolTips";
@@ -87,6 +88,12 @@ public class SquirrelPreferences implements Serializable
 	/** Show main toolbar. */
 	private boolean _showMainToolBar = true;
 
+	/** Show toolbar in the drivers window. */
+	private boolean _showDriversToolBar = true;
+
+	/** Show toolbar in the aliases window. */
+	private boolean _showAliasesToolBar = true;
+
 	/**
 	 * Objects stored by plugins. Each element of this collection is a <TT>Map</TT>
 	 * keyed by the plugin's internal name and containing all objects for that
@@ -125,6 +132,8 @@ public class SquirrelPreferences implements Serializable
 		setDebugJdbc(rhs.getDebugJdbc());
 		setShowMainStatusBar(rhs.getShowMainStatusBar());
 		setShowMainToolBar(rhs.getShowMainToolBar());
+		setShowAliasesToolBar(rhs.getShowAliasesToolBar());
+		setShowDriversToolBar(rhs.getShowDriversToolBar());
 		setShowToolTips(rhs.getShowToolTips());
 		//		setPluginObjects(rhs.getPluginObjects());
 		setUseScrollableTabbedPanes(rhs.useScrollableTabbedPanes());
@@ -229,6 +238,32 @@ public class SquirrelPreferences implements Serializable
 		_showMainToolBar = data;
 		_propChgReporter.firePropertyChange(IPropertyNames.SHOW_MAIN_TOOL_BAR,
 											oldValue, _showMainToolBar);
+	}
+
+	public boolean getShowAliasesToolBar()
+	{
+		return _showAliasesToolBar;
+	}
+
+	public synchronized void setShowAliasesToolBar(boolean data)
+	{
+		final boolean oldValue = _showAliasesToolBar;
+		_showAliasesToolBar = data;
+		_propChgReporter.firePropertyChange(IPropertyNames.SHOW_ALIASES_TOOL_BAR,
+											oldValue, _showAliasesToolBar);
+	}
+
+	public boolean getShowDriversToolBar()
+	{
+		return _showDriversToolBar;
+	}
+
+	public synchronized void setShowDriversToolBar(boolean data)
+	{
+		final boolean oldValue = _showDriversToolBar;
+		_showDriversToolBar = data;
+		_propChgReporter.firePropertyChange(IPropertyNames.SHOW_DRIVERS_TOOL_BAR,
+											oldValue, _showDriversToolBar);
 	}
 
 	public int getLoginTimeout()

@@ -39,7 +39,7 @@ public class SquirrelPreferencesBeanInfo
 		super();
 		if (s_dscrs == null)
 		{
-			s_dscrs = new PropertyDescriptor[9];
+			s_dscrs = new PropertyDescriptor[11];
 			int idx = 0;
 			s_dscrs[idx++] =
 				new PropertyDescriptor(
@@ -74,6 +74,18 @@ public class SquirrelPreferencesBeanInfo
 					CLS,
 					"getShowMainToolBar",
 					"setShowMainToolBar");
+			s_dscrs[idx++] =
+				new PropertyDescriptor(
+					SHOW_ALIASES_TOOL_BAR,
+					CLS,
+					"getShowAliasesToolBar",
+					"setShowAliasesToolBar");
+			s_dscrs[idx++] =
+				new PropertyDescriptor(
+					SHOW_DRIVERS_TOOL_BAR,
+					CLS,
+					"getShowDriversToolBar",
+					"setShowDriversToolBar");
 			s_dscrs[idx++] =
 				new PropertyDescriptor(SHOW_TOOLTIPS, CLS, "getShowToolTips", "setShowToolTips");
 			s_dscrs[idx++] =

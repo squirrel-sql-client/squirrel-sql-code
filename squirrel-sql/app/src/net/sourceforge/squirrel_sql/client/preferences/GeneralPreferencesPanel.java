@@ -104,7 +104,9 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 		{
 			String DEBUG_JDBC = "JDBC Debug (can slow application)";
 			String LOGIN_TIMEOUT = "Login Timeout (Seconds):";
+			String SHOW_ALIASES_WINDOW_TOOLBAR = "Show Aliases Toolbar";
 			String SHOW_CONTENTS = "Show Window Contents While Dragging";
+			String SHOW_DRIVERS_WINDOW_TOOLBAR = "Show Drivers Toolbar";
 			String SHOW_MAIN_STATUS_BAR = "Show Main Window Status Bar";
 			String SHOW_MAIN_TOOL_BAR = "Show Main Window Tool Bar";
 			String SHOW_TOOLTIPS = "Show Tooltips";
@@ -112,6 +114,8 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			String TAB_TITLE = "General";
 		}
 
+		private JCheckBox _showAliasesToolBar = new JCheckBox(i18n.SHOW_ALIASES_WINDOW_TOOLBAR);
+		private JCheckBox _showDriversToolBar = new JCheckBox(i18n.SHOW_DRIVERS_WINDOW_TOOLBAR);
 		private JCheckBox _showMainStatusBar = new JCheckBox(i18n.SHOW_MAIN_STATUS_BAR);
 		private JCheckBox _showMainToolBar = new JCheckBox(i18n.SHOW_MAIN_TOOL_BAR);
 		private JCheckBox _showContents = new JCheckBox(i18n.SHOW_CONTENTS);
@@ -138,6 +142,8 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			_useScrollableTabbedPanes.setSelected(prefs.useScrollableTabbedPanes());
 			_showMainStatusBar.setSelected(prefs.getShowMainStatusBar());
 			_showMainToolBar.setSelected(prefs.getShowMainToolBar());
+			_showAliasesToolBar.setSelected(prefs.getShowAliasesToolBar());
+			_showDriversToolBar.setSelected(prefs.getShowDriversToolBar());
 
 			_executionLogFileNameLbl.setText(appFiles.getExecutionLogFile().getPath());
 
@@ -152,6 +158,8 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			prefs.setUseScrollableTabbedPanes(_useScrollableTabbedPanes.isSelected());
 			prefs.setShowMainStatusBar(_showMainStatusBar.isSelected());
 			prefs.setShowMainToolBar(_showMainToolBar.isSelected());
+			prefs.setShowAliasesToolBar(_showAliasesToolBar.isSelected());
+			prefs.setShowDriversToolBar(_showDriversToolBar.isSelected());
 		}
 
 		private void createUserInterface()
@@ -188,6 +196,10 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			pnl.add(_showMainToolBar, gbc);
 			++gbc.gridy;
 			pnl.add(_showMainStatusBar, gbc);
+			++gbc.gridy;
+			pnl.add(_showDriversToolBar, gbc);
+			++gbc.gridy;
+			pnl.add(_showAliasesToolBar, gbc);
 
 			return pnl;
 		}
