@@ -18,7 +18,10 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
@@ -35,6 +38,14 @@ public class SQLHistoryComboBox extends MemoryComboBox
 		super();
 		setModel(new SQLHistoryComboBoxModel(useSharedModel));
 		setRenderer(new Renderer());
+
+		addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				updateToolTip();
+			}
+		});
 	}
 
 	public SQLHistoryComboBoxModel getTypedModel()
@@ -53,11 +64,42 @@ public class SQLHistoryComboBox extends MemoryComboBox
 	}
 
 	/**
+	 * Ensure that the tooltip is still displayed when the combobox is
+	 * collapsed.
+	 */
+	private void updateToolTip()
+	{
+		String tt = " ";
+		SQLHistoryItem shi = (SQLHistoryItem)getSelectedItem();
+		if (shi != null)
+		{
+			tt = formatToolTip(shi.getSQL());
+		}
+		Component[] comps = SQLHistoryComboBox.this.getComponents();
+		for (int i = 0; i < comps.length; ++i)
+		{
+			if (comps[i] instanceof JComponent)
+			{
+				((JComponent)comps[i]).setToolTipText(tt);
+			}
+		}
+	}
+
+	private String formatToolTip(String tt)
+	{
+		final StringBuffer buf = new StringBuffer(tt.length() + 25);
+		buf.append("<HTML><PRE>")
+			.append(tt)
+			.append("</PRE></HTML>");
+		return buf.toString();
+	}
+
+	/**
 	 * Renderer for this combobox. It displays the entire SQL for the current
 	 * line as the tooltip. We use the HTML <PRE> tag in order to linebreak the
 	 * SQL in the tooltip.
 	 */
-	private static final class Renderer extends BasicComboBoxRenderer
+	private final class Renderer extends BasicComboBoxRenderer
 	{
 		public Component getListCellRendererComponent(JList list,
 								Object value, int index, boolean isSelected,
@@ -70,7 +112,8 @@ public class SQLHistoryComboBox extends MemoryComboBox
 				if (index != -1)
 				{
 					final String tt = ((SQLHistoryItem)value).getSQL();
-					list.setToolTipText("<HTML><PRE>" + tt + "</PRE></HTML>");
+					final String text = formatToolTip(tt);
+					list.setToolTipText(text);
 				}
 			}
 			else
