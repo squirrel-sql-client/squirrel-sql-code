@@ -119,7 +119,6 @@ public class SessionSheet extends BaseSheet
 			_propsListener = null;
 		}
 		_mainTabPane.sessionClosing(_session);
-		_session.setSessionSheet(null);
 		try
 		{
 			app.getSessionManager().closeSession(_session);
@@ -130,6 +129,7 @@ public class SessionSheet extends BaseSheet
 			app.showErrorDialog(msg, ex);
 			s_log.error(msg, ex);
 		}
+		_session.setSessionSheet(null);
 		super.dispose();
 	}
 

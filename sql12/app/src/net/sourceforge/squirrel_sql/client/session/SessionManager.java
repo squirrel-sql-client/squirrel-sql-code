@@ -38,14 +38,6 @@ public class SessionManager
 	private static final ILogger s_log =
 		LoggerController.createLogger(SessionManager.class);
 
-//	private int _lastOpenedSequence;
-
-	/** <TT>ISession</TT> objects keyed by the open sequence. */
-//	private Map _sessionsBySeq = new HashMap();
-
-	/** Open sequence keyed by sessionID. */
-//	private Map _seqBySessionID = new HashMap();
-
 	/** Linked list of sessions. */
 	private LinkedList _sessionsList = new LinkedList();
 
@@ -91,11 +83,10 @@ public class SessionManager
 		{
 			throw new IllegalArgumentException("null SQLConnection passed");
 		}
-//		Integer seq = new Integer(++_lastOpenedSequence);
-		IClientSession sess = new Session(app, driver, alias, conn, user, password);//, seq.intValue());
+
+		IClientSession sess = new Session(app, driver, alias, conn, user, password);
 		_sessionsList.addLast(sess);
-//		_sessionsBySeq.put(seq, sess);
-//		_seqBySessionID.put(sess.getIdentifier(), seq);
+
 		return sess;
 	}
 
@@ -124,7 +115,7 @@ public class SessionManager
 	 * @param	session		Session to close.
 	 *
 	 * @throws	IllegalArgumentException
-	 *			Thrown if IClientSession is passed as null.
+	 *			Thrown if <TT>null</TT>IClientSession passed.
 	 * 
 	 * @throws	SQLException
 	 * 			Thrown if an error closing the SQL connection. The session
@@ -150,29 +141,6 @@ public class SessionManager
 			}
 		}
 
-//		Integer seq = (Integer)_seqBySessionID.remove(session.getIdentifier());
-//		if (seq == null)
-//		{
-//			s_log.error("SessionManager.closeSession()-> Unable to find sequence for session: " + session.getIdentifier());
-//		}
-//		else
-//		{
-//			IClientSession otherSession = (IClientSession)_sessionsBySeq.get(seq);
-//			if (otherSession == null)
-//			{
-//				s_log.error("SessionManager.closeSession()-> No session stored for sequence: " + seq.intValue());
-//			}
-//			else if (otherSession != session)
-//			{
-//				s_log.error("Wrong session stored for sequence: " + seq.intValue());
-//				s_log.error("session:      " + session.getIdentifier().toString());
-//				s_log.error("otherSession: " + otherSession.getIdentifier().toString());
-//			}
-//			else
-//			{
-//				_sessionsBySeq.remove(seq);
-//			}
-//		}
 
 		// TODO: Should have session listeners instead of these calls.
 		session.getApplication().getPluginManager().sessionEnding(session);
