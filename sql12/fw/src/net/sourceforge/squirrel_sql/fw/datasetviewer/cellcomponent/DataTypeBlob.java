@@ -523,8 +523,6 @@ public class DataTypeBlob
 			return null;
 		
 		// field is not nullable, so create a reasonable default value
-//????? for BLOB, do not know how to create a default BLOB for insertion.
-//????? Is including a BLOB on an initial insertion possible?
 		return null;
 	}
 	
