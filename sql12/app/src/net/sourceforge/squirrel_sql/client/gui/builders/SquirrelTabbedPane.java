@@ -108,7 +108,6 @@ class SquirrelTabbedPane extends JTabbedPane
 		{
 			if (_setter != null)
 			{
-				
 				{
 					try
 					{
