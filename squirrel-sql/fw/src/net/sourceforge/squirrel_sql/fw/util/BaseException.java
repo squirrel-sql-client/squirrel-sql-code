@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.util;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -24,71 +24,95 @@ import java.io.PrintWriter;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class BaseException extends Exception {
-
+public class BaseException extends Exception
+{
 	/** If this exception is wrapped around another it is stored here. */
-	private Exception _wrapee;
+	private Throwable _wrapee;
 
 	/**
 	 * Default ctor. Creates an exception with an empty string ("")
 	 * as its message.
 	 */
-	public BaseException() {
+	public BaseException()
+	{
 		this("");
 	}
-	/**
+
+	/**
 	 * Ctor specifying the message.
 	 *
 	 * @param   msg	 The message.
 	 */
-	public BaseException(String msg) {
+	public BaseException(String msg)
+	{
 		super(msg != null ? msg : "");
 	}
-	/**
+
+	/**
 	 * Ctor specifying an exception that this one should
 	 * be wrapped around.
 	 *
 	 * @param   wrapee	  The wrapped exception.
 	 */
-	public BaseException(Exception wrapee) {
+	public BaseException(Throwable wrapee)
+	{
 		super(getMessageFromException(wrapee));
 		_wrapee = wrapee;
 	}
-	public String toString() {
-		if (_wrapee != null) {
+
+	public String toString()
+	{
+		if (_wrapee != null)
+		{
 			return _wrapee.toString();
 		}
 		return super.toString();
 	}
-	public void printStackTrace() {
-		if (_wrapee != null) {
+
+	public void printStackTrace()
+	{
+		if (_wrapee != null)
+		{
 			_wrapee.printStackTrace();
-		} else {
+		}
+		else
+		{
 			super.printStackTrace();
 		}
 	}
 
-	public void printStackTrace(PrintStream s) {
-		if (_wrapee != null) {
+	public void printStackTrace(PrintStream s)
+	{
+		if (_wrapee != null)
+		{
 			_wrapee.printStackTrace(s);
-		} else {
+		}
+		else
+		{
 			super.printStackTrace(s);
 		}
 	}
 
-	public void printStackTrace(PrintWriter wtr) {
-		if (_wrapee != null) {
+	public void printStackTrace(PrintWriter wtr)
+	{
+		if (_wrapee != null)
+		{
 			_wrapee.printStackTrace(wtr);
-		} else {
+		}
+		else
+		{
 			super.printStackTrace(wtr);
 		}
 	}
 
-	private static String getMessageFromException(Exception ex) {
+	private static String getMessageFromException(Throwable th)
+	{
 		String rtn = "";
-		if (ex != null) {
-			String msg = ex.getMessage();
-			if (msg != null) {
+		if (th != null)
+		{
+			String msg = th.getMessage();
+			if (msg != null)
+			{
 				rtn = msg;
 			}
 		}

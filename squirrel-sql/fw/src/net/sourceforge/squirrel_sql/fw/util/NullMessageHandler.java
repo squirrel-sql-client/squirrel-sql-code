@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.util;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,21 +17,45 @@ package net.sourceforge.squirrel_sql.fw.util;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-public class NullMessageHandler implements IMessageHandler {
 
+/**
+ * This message handler just swallows messages sent to it.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
+public class NullMessageHandler implements IMessageHandler
+{
 	private static NullMessageHandler s_handler = new NullMessageHandler();
 
-	private NullMessageHandler() {
+	/**
+	 * Ctor private becuase this is a singleton.
+	 */
+	private NullMessageHandler()
+	{
 		super();
 	}
 
-	public static NullMessageHandler getInstance() {
+	/**
+	 * Return the only instance of this class.
+	 * 
+	 * @return	the only instance of this class.
+	 */
+	public static NullMessageHandler getInstance()
+	{
 		return s_handler;
 	}
 
-	public void showMessage(Throwable th) {
+	/**
+	 * Swallow this msg.
+	 */
+	public void showMessage(Throwable th)
+	{
 	}
 
-	public void showMessage(String msg) {
+	/**
+	 * Swallow this msg.
+	 */
+	public void showMessage(String msg)
+	{
 	}
 }

@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 
+import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -154,6 +155,7 @@ public final class XMLBeanWriter
 				Class returnType = getter.getReturnType();
 				if (returnType.isArray())
 				{
+					final boolean isStringArray = returnType.getName().equals("[Ljava.lang.String;");
 					Object[] props = (Object[]) getter.invoke(bean, null);
 					if (props != null)
 					{
@@ -162,15 +164,21 @@ public final class XMLBeanWriter
 						beanElem.addChild(indexElem);
 						for (int i = 0; i < props.length; ++i)
 						{
-							indexElem.addChild(
-								createElement(
-									props[i],
-									XMLConstants.BEAN_ELEMENT_NAME));
+							if (isStringArray)
+							{
+								StringWrapper sw = new StringWrapper((String)props[i]);
+								indexElem.addChild(createElement(sw,
+											XMLConstants.BEAN_ELEMENT_NAME));
+							}
+							else
+							{
+								indexElem.addChild(createElement(props[i],
+												XMLConstants.BEAN_ELEMENT_NAME));
+							}
 						}
 					}
 				}
-				else if (
-					returnType == boolean.class
+				else if (returnType == boolean.class
 						|| returnType == int.class
 						|| returnType == short.class
 						|| returnType == long.class
@@ -190,8 +198,7 @@ public final class XMLBeanWriter
 				}
 				else
 				{
-					beanElem.addChild(
-						createElement(getter.invoke(bean, null), propName));
+					beanElem.addChild(createElement(getter.invoke(bean, null), propName));
 				}
 			}
 			catch (Exception ex)
