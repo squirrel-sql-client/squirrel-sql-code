@@ -180,6 +180,8 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 		/** Button to select font. */
 		private FontButton _fontBtn = new FontButton("Font", _fontLbl);
 
+		private ColorButtonListener _colorBtnActionListener = new ColorButtonListener();
+
 		private JLabel _keywordColorLbl1 = createColorLabel();
 		private JLabel _keywordColorLbl2 = createColorLabel();
 		private JLabel _keywordColorLbl3 = createColorLabel();
@@ -187,8 +189,6 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 		private JButton _keywordColorBtn1 = new ColorButton("Keywords", _keywordColorLbl1);
 		private JButton _keywordColorBtn2 = new ColorButton("Data Types", _keywordColorLbl2);
 		private JButton _keywordColorBtn3 = new ColorButton("Functions", _keywordColorLbl3);
-
-		private ColorButtonListener _colorBtnActionListener = new ColorButtonListener();
 
 		MyPanel() {
 			super();
@@ -434,6 +434,7 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 			JLabel _previewLbl;
 			ColorButton(String title, JLabel previewLbl) {
 				super(title);
+				_previewLbl = previewLbl;
 				addActionListener(_colorBtnActionListener);
 			}
 		}
