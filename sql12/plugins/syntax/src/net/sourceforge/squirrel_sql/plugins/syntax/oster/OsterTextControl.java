@@ -123,7 +123,8 @@ public class OsterTextControl extends JTextPane
 	private Vector _sqlTokenListeners = new Vector();
 	private Vector _currentErrorInfos = new Vector();
 
-	OsterTextControl(ISession session, SyntaxPreferences prefs)
+
+   OsterTextControl(ISession session, SyntaxPreferences prefs)
 	{
 		super();
 		_session = session;
@@ -157,6 +158,8 @@ public class OsterTextControl extends JTextPane
 				onErrorsFound(errorInfos);
 			}
 		});
+      
+      new KeyManager(this);
 	}
 
 	private void onErrorsFound(ErrorInfo[] errorInfos)
