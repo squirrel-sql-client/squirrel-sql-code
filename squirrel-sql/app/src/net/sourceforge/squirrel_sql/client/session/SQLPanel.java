@@ -37,6 +37,8 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -118,6 +120,9 @@ class SQLPanel extends JPanel {
 
 	/** Factory for generating unique IDs for new <TT>ResultTab</TT> objects. */
 	private IntegerIdentifierFactory _idFactory = new IntegerIdentifierFactory();
+
+	// Listens to caret events in data entry area. */
+	private DataEntryAreaCaretListener _dataEntryCaretListener = new DataEntryAreaCaretListener();
 
 	/**
 	 * Ctor.
@@ -273,12 +278,15 @@ class SQLPanel extends JPanel {
 		final int pos = _splitPane.getDividerLocation();
 		if (_sqlEntry != null) {
 			_sqlEntry.removeUndoableEditListener(_undoManager);
+			_sqlEntry.removeCaretListener(_dataEntryCaretListener);
 			_splitPane.remove(_sqlEntry.getJComponent());
 		}
 		_splitPane.add(pnl.getJComponent(), JSplitPane.LEFT);
 		_splitPane.setDividerLocation(pos);
 		state.restoreState(pnl);
 		_sqlEntry = pnl;
+
+		_sqlEntry.addCaretListener(_dataEntryCaretListener);
 		
 		if(!_sqlEntry.hasOwnUndoableManager())
 		{
@@ -849,6 +857,13 @@ class SQLPanel extends JPanel {
 //					});
 //				}
 			}
+		}
+	}
+
+	private final class DataEntryAreaCaretListener implements CaretListener {
+		public void caretUpdate(CaretEvent evt) {
+			_session.getSessionSheet().setStatusBarMessage("" + _sqlEntry.getCaretLineNumber()
+								+ "," + SQLPanel.this._sqlEntry.getCaretLinePosition());
 		}
 	}
 }

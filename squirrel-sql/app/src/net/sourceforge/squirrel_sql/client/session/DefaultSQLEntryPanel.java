@@ -27,7 +27,10 @@ import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
+
+import javax.swing.text.BadLocationException;
 
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
@@ -170,6 +173,27 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel {
 		_comp.setCaretPosition(pos);
 	}
 
+	/*
+	 * @see ISQLEntryPanel#getCaretLineNumber()
+	 */
+	public int getCaretLineNumber() {
+		try {
+			return _comp.getLineOfOffset(_comp.getCaretPosition());
+		} catch (BadLocationException ex) {
+			return 0;
+		}
+	}
+
+	public int getCaretLinePosition() {
+		int caretPos = _comp.getCaretPosition();
+		int caretLineOffset = caretPos;
+		try {
+			caretLineOffset = _comp.getLineStartOffset(getCaretLineNumber());
+		} catch (BadLocationException ignore) {
+		}			
+		return caretPos - caretLineOffset;
+	}
+
 	/**
 	 * @see ISQLEntryPanel#getSelectionStart()
 	 */
@@ -212,6 +236,20 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel {
 		_comp.requestFocus();
 	}
 
+	/*
+	 * @see ISQLEntryPanel#addCaretListener(CaretListener)
+	 */
+	public void addCaretListener(CaretListener lis) {
+		_comp.addCaretListener(lis);
+	}
+
+	/*
+	 * @see ISQLEntryPanel#removeCaretListener(CaretListener)
+	 */
+	public void removeCaretListener(CaretListener lis) {
+		_comp.removeCaretListener(lis);
+	}
+
 	private final class MyMouseListener extends MouseAdapter {
 		public void mousePressed(MouseEvent evt) {
 			if (evt.isPopupTrigger()) {
@@ -251,4 +289,5 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel {
 			super.removeNotify();
 		}
 	}
+
 }

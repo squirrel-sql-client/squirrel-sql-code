@@ -22,6 +22,7 @@ import java.awt.event.MouseListener;
 
 import javax.swing.Action;
 import javax.swing.JComponent;
+import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
 
 public interface ISQLEntryPanel {
@@ -42,6 +43,15 @@ public interface ISQLEntryPanel {
 	int getCaretPosition();
 	void setCaretPosition(int pos);
 
+	/**
+	 * Return the zero-based line number that the caret is currently on.
+	 * 
+	 * @return	the zero-based line number that the caret is currently on.
+	 */
+	int getCaretLineNumber();
+
+	int getCaretLinePosition();
+
 	boolean hasFocus();
 	void requestFocus();
 
@@ -58,5 +68,8 @@ public interface ISQLEntryPanel {
 	void removeUndoableEditListener(UndoableEditListener listener);
 
 	void setUndoActions(Action undo, Action redo);
+
+	void addCaretListener(CaretListener lis);
+	void removeCaretListener(CaretListener lis);
 }
 

@@ -23,6 +23,7 @@ import java.awt.event.MouseListener;
 
 import javax.swing.Action;
 import javax.swing.JComponent;
+import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.PlainDocument;
 
@@ -261,5 +262,40 @@ class JeditSQLEntryPanel extends BaseSQLEntryPanel {
 		_app.getResources().addToPopupMenu(undo, _jeditPopup);
 		_app.getResources().addToPopupMenu(redo, _jeditPopup);
 	}
+
+	/*
+	 * @see ISQLEntryPanel#getCaretLineNumber()
+	 */
+	public int getCaretLineNumber() {
+		return _jeditTextArea.getCaretLine();
+	}
+
+	/*
+	 * @see ISQLEntryPanel#getCaretLinePosition()
+	 */
+	public int getCaretLinePosition() {
+		int caretPos = _jeditTextArea.getCaretPosition();
+		int caretLineOffset = caretPos;
+//		try {
+			caretLineOffset = _jeditTextArea.getLineStartOffset(getCaretLineNumber());
+//		} catch (BadLocationException ignore) {
+//		}			
+		return caretPos - caretLineOffset;
+	}
+
+	/*
+	 * @see ISQLEntryPanel#addCaretListener(CaretListener)
+	 */
+	public void addCaretListener(CaretListener lis) {
+		_jeditTextArea.addCaretListener(lis);
+	}
+
+	/*
+	 * @see ISQLEntryPanel#removeCaretListener(CaretListener)
+	 */
+	public void removeCaretListener(CaretListener lis) {
+		_jeditTextArea.removeCaretListener(lis);
+	}
+
 }
 

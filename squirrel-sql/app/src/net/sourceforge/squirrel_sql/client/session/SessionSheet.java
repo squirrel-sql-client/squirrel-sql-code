@@ -47,6 +47,7 @@ import javax.swing.event.InternalFrameListener;
 
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -102,12 +103,13 @@ public class SessionSheet extends JInternalFrame {
 	private ISession _session;
 
 	/** Listener to the sessions properties. */
-	PropertyChangeListener _propsListener;
+	private PropertyChangeListener _propsListener;
 
 	private JTabbedPane _tabPane = new JTabbedPane();
 	private SQLPanel _sqlPnl;
 	private ObjectsPanel _objectsPnl;
 	private JSplitPane _msgSplit;
+	private MyStatusBar _statusBar = new MyStatusBar();
 
 	private boolean _hasBeenVisible = false;
 
@@ -270,6 +272,10 @@ public class SessionSheet extends JInternalFrame {
 		_tabPane.addTab(title, icon, comp, tip);
 	}
 
+	public void setStatusBarMessage(String msg) {
+		_statusBar.setText(msg);
+	}
+
 //	String getEntireSQLScript() {
 //		return _sqlPnl.getEntireSQLScript();
 //	}
@@ -383,6 +389,9 @@ public class SessionSheet extends JInternalFrame {
 				}
 			}
 		});
+
+		content.add(_statusBar, BorderLayout.SOUTH);
+
 		validate();
 	}
 
@@ -404,5 +413,8 @@ public class SessionSheet extends JInternalFrame {
 			actions.get(CommitAction.class).setEnabled(false);
 			actions.get(RollbackAction.class).setEnabled(false);
 		}
+	}
+
+	private class MyStatusBar extends StatusBar {
 	}
 }
