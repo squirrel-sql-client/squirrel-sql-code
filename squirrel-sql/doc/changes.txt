@@ -6,6 +6,10 @@ Change Log
 
 Enhancements
 ------------
+- Multiple jars can now be specified for an SQL driver.
+- You cab now search a jar in the classpath for a JDBC driver.
+- Row count is only shown on the Table Info tab if "Show Row Count"
+  is specified in session properties.
 - Updated to use Apache log4j 1.2.
 - The log file is now rotated.
 - Log files are now written to the logs subirectory within user home.
@@ -30,6 +34,7 @@ Enhancements
 
 Bug Fixes
 ---------
+- Don't show error dialog until it is properly positioned.
 - All SQL statements now get saved into the history.
 - Load images correctly in framework classes.
 - Use correct background color in Splash Screen and About Box to match
