@@ -21,10 +21,14 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
@@ -39,8 +43,11 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import net.sourceforge.squirrel_sql.fw.util.BaseException;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -97,7 +104,7 @@ public class HelpViewerWindow extends JFrame
 	 * 			Thrown if <TT>null</TT> <TT>IApplication</TT> passed.
 	 */
 	public HelpViewerWindow(IApplication app)
-		throws IllegalArgumentException
+		throws IllegalArgumentException, BaseException
 	{
 		super(i18n.TITLE);
 		if (app == null)
@@ -105,7 +112,14 @@ public class HelpViewerWindow extends JFrame
 			throw new IllegalArgumentException("IApplication == null");
 		}
 		_app = app;
-		createGUI();
+		try
+		{
+			createGUI();
+		}
+		catch (IOException ex)
+		{
+			throw new BaseException(ex);
+		}
 	}
 
 	/**
@@ -117,7 +131,6 @@ public class HelpViewerWindow extends JFrame
 	{
 		try
 		{
-//			_detailPnl.setURL(url);
 			_detailPnl.gotoURL(url);
 		}
 		catch (IOException ex)
@@ -137,7 +150,7 @@ public class HelpViewerWindow extends JFrame
 			key = key.substring(0, idx);
 		}
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode)_nodes.get(key);
-		if (node != null)
+		if (node != null) // && node != _tree.getLastSelectedPathComponent())
 		{
 			DefaultTreeModel model = (DefaultTreeModel)_tree.getModel();
 			TreePath path = new TreePath(model.getPathToRoot(node));
@@ -153,7 +166,7 @@ public class HelpViewerWindow extends JFrame
 	/**
 	 * Create user interface.
 	 */
-	private void createGUI()
+	private void createGUI() throws IOException
 	{
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		final SquirrelResources rsrc = _app.getResources();
@@ -208,7 +221,7 @@ public class HelpViewerWindow extends JFrame
 	 * 
 	 * @return	The contents tree.
 	 */
-	private JScrollPane createContentsTree()
+	private JScrollPane createContentsTree() throws IOException
 	{
 		final ApplicationFiles appFiles = new ApplicationFiles();
 		final FolderNode root = new FolderNode(i18n.HELP);
@@ -227,10 +240,13 @@ public class HelpViewerWindow extends JFrame
 		// Add Help, Licence and Change Log nodes to the tree.
 		final FolderNode helpRoot = new FolderNode(i18n.HELP);
 		root.add(helpRoot);
+		_nodes.put(helpRoot.getURL().toString(), helpRoot);
 		final FolderNode licenceRoot = new FolderNode(i18n.LICENCES);
 		root.add(licenceRoot);
+		_nodes.put(licenceRoot.getURL().toString(), licenceRoot);
 		final FolderNode changeLogRoot = new FolderNode(i18n.CHANGE_LOGS);
 		root.add(changeLogRoot);
+		_nodes.put(changeLogRoot.getURL().toString(), changeLogRoot);
 
 		// Add SQuirreL help to the Help node.
 		File file = appFiles.getQuickStartGuideFile();
@@ -306,7 +322,7 @@ public class HelpViewerWindow extends JFrame
 					s_log.error("Error generating Help entry for plugin"
 										+ pi[i].getDescriptiveName(), ex);
 				}
-	
+
 				// Licence document.
 				try
 				{
@@ -323,7 +339,7 @@ public class HelpViewerWindow extends JFrame
 					s_log.error("Error generating Licence entry for plugin"
 										+ pi[i].getDescriptiveName(), ex);
 				}
-	
+
 				try
 				{
 					// Change log.
@@ -364,9 +380,13 @@ public class HelpViewerWindow extends JFrame
 			s_log.error(msg.toString(), ex);
 		}
 
+		// generate contents file.
+		helpRoot.generateContentsFile();
+		licenceRoot.generateContentsFile();
+		changeLogRoot.generateContentsFile();
 
 		JScrollPane sp = new JScrollPane(_tree);
-		_tree.setPreferredSize(new Dimension(200, 200));
+		sp.setPreferredSize(new Dimension(200, 200));
 
 		return sp;
 	}
@@ -384,27 +404,103 @@ public class HelpViewerWindow extends JFrame
 		return _detailPnl;
 	}
 
-	private class FolderNode extends DefaultMutableTreeNode
-	{
-		FolderNode(String title)
-		{
-			super(title, true);
-		}
-	}
 
 	private class DocumentNode extends DefaultMutableTreeNode
 	{
-		private final URL _url;
-	
+		private URL _url;
+
 		DocumentNode(String title, File file) throws MalformedURLException
 		{
 			super(title, false);
-			_url = file.toURL();
+			setFile(file);
+		}
+
+		DocumentNode(String title, boolean allowsChildren)
+		{
+			super(title, allowsChildren);
 		}
 
 		URL getURL()
 		{
 			return _url;
+		}
+
+		void setFile(File file) throws MalformedURLException
+		{
+			_url = file.toURL();
+		}
+	}
+
+	private class FolderNode extends DocumentNode
+	{
+		private final List _docTitles = new ArrayList();
+		private final List _docURLs = new ArrayList();
+		private final File _contentsFile;
+
+		FolderNode(String title) throws IOException
+		{
+			super(title, true);
+			_contentsFile = File.createTempFile("sqschelp", "html");
+			_contentsFile.deleteOnExit();
+			setFile(_contentsFile);
+		}
+
+		public void add(MutableTreeNode node)
+		{
+			super.add(node);
+			if (node instanceof DocumentNode)
+			{
+				final DocumentNode dn = (DocumentNode)node;
+				final URL docURL = dn.getURL();
+				if (docURL != null)
+				{
+					String docTitle = dn.toString();
+					if (Utilities.isStringEmpty(docTitle))
+					{
+						docTitle = docURL.toExternalForm();
+					}
+					_docTitles.add(docTitle);
+					_docURLs.add(docURL);
+				} 
+			}
+		}
+
+		synchronized void generateContentsFile()
+		{
+			try
+			{
+				final PrintWriter pw = new PrintWriter(new FileWriter(_contentsFile));
+				try
+				{
+					StringBuffer buf = new StringBuffer(50);
+					buf.append("<HTML><BODY><H1>")
+						.append(toString())
+						.append("</H1>");
+					pw.println(buf.toString());
+					for (int i = 0, limit = _docTitles.size(); i < limit; ++i)
+					{
+						final String docTitle = (String)_docTitles.get(i);
+						final URL docUrl = (URL)_docURLs.get(i);
+						buf = new StringBuffer(50);
+						buf.append("<A HREF=\"")
+							.append(docUrl)
+							.append("\">")
+							.append(_docTitles.get(i))
+							.append("</A><BR>");
+						pw.println(buf.toString());
+					}
+					pw.println("</BODY></HTML");
+				}
+				finally
+				{
+					pw.close();
+				}
+			}
+			catch (IOException ex)
+			{
+				s_log.error("Error generating Contents file", ex);
+				// TODO: Display error for user
+			}
 		}
 	}
 
@@ -417,10 +513,14 @@ public class HelpViewerWindow extends JFrame
 	{
 		public void valueChanged(TreeSelectionEvent evt)
 		{
-			Object lastComp = evt.getNewLeadSelectionPath().getLastPathComponent();
-			if (lastComp instanceof DocumentNode)
+			final TreePath path = evt.getNewLeadSelectionPath();
+			if (path != null)
 			{
-				setSelectedDocument(((DocumentNode)lastComp).getURL());
+				Object lastComp = path.getLastPathComponent();
+				if (lastComp instanceof DocumentNode)
+				{
+					setSelectedDocument(((DocumentNode)lastComp).getURL());
+				}
 			}
 		}
 	}

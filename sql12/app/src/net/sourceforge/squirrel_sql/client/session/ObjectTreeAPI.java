@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session;
 /*
- * Copyright (C) 2002 Colin Bell and Johan Compagner
+ * Copyright (C) 2002-2003 Colin Bell and Johan Compagner
  * colbell@users.sourceforge.net
  * jcompagner@j-com.nl
  *
@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import javax.swing.Action;
+import javax.swing.JMenu;
 import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionListener;
 
@@ -254,9 +255,7 @@ class ObjectTreeAPI implements IObjectTreeAPI
 		{
 			throw new IllegalArgumentException("Action == null");
 		}
-		_session.getSessionSheet().getObjectTreePanel().addToObjectTreePopup(
-			dboType,
-			action);
+		_session.getSessionSheet().getObjectTreePanel().addToObjectTreePopup(dboType, action);
 	}
 
 	/**
@@ -275,6 +274,47 @@ class ObjectTreeAPI implements IObjectTreeAPI
 		}
 		_session.getSessionSheet().getObjectTreePanel().addToObjectTreePopup(
 			action);
+	}
+
+	/**
+	 * Add an hierarchical menu to the popup menu for the specified database
+	 * object type.
+	 * 
+	 * @param	dboType		Database object type.
+	 * @param	menu		<TT>JMenu</TT> to add to menu.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> <TT>DatabaseObjectType</TT> or
+	 * 			<TT>JMenu</TT> thrown.
+	 */
+	public void addToPopup(DatabaseObjectType dboType, JMenu menu)
+	{
+		if (dboType == null)
+		{
+			throw new IllegalArgumentException("DatabaseObjectType == null");
+		}
+		if (menu == null)
+		{
+			throw new IllegalArgumentException("JMenu == null");
+		}
+		_session.getSessionSheet().getObjectTreePanel().addToObjectTreePopup(dboType, menu);
+	}
+
+	/**
+	 * Add an hierarchical menu to the popup menu for all node types.
+	 * 
+	 * @param	menu	<TT>JMenu</TT> to add to menu.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> <TT>JMenu</TT> thrown.
+	 */
+	public void addToPopup(JMenu menu)
+	{
+		if (menu == null)
+		{
+			throw new IllegalArgumentException("JMenu == null");
+		}
+		_session.getSessionSheet().getObjectTreePanel().addToObjectTreePopup(menu);
 	}
 
 	/**

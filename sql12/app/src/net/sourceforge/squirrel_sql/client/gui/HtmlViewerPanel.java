@@ -56,7 +56,7 @@ public class HtmlViewerPanel extends JPanel
 
 	/** Application API. */
 	private final IApplication _app;
-	
+
 	/** Text area containing the HTML. */
 	private final JEditorPane _contentsTxt = new JEditorPane();
 
@@ -153,17 +153,24 @@ public class HtmlViewerPanel extends JPanel
 
 	public synchronized void gotoURL(URL url) throws IOException
 	{
-		ListIterator it = _history.listIterator(_historyIndex + 1);
-		while (it.hasNext())
+		if (url == null)
 		{
-			it.next();
-			it.remove();
+			throw new IllegalArgumentException("URL == null");
 		}
-		_history.add(url);
-		_historyIndex = _history.size() - 1;
-		_contentsTxt.setPage(url);
-		_currentURL = url;
-		fireURLChanged();
+		if (!url.equals(_currentURL))
+		{
+			ListIterator it = _history.listIterator(_historyIndex + 1);
+			while (it.hasNext())
+			{
+				it.next();
+				it.remove();
+			}
+			_history.add(url);
+			_historyIndex = _history.size() - 1;
+			_contentsTxt.setPage(url);
+			_currentURL = url;
+			fireURLChanged();
+		}
 	}
 
 	public synchronized void goBack()

@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.Action;
+import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
@@ -418,7 +419,7 @@ class ObjectTree extends JTree
 			throw new IllegalArgumentException("Null Action passed");
 		}
 
-		JPopupMenu pop = getPopup(dboType, true);
+		final JPopupMenu pop = getPopup(dboType, true);
 		pop.add(action);
 	}
 
@@ -443,6 +444,56 @@ class ObjectTree extends JTree
 		{
 			JPopupMenu pop = (JPopupMenu)it.next();
 			pop.add(action);
+		}
+	}
+
+	/**
+	 * Add an hierarchical menu to the popup menu for the specified database
+	 * object type.
+	 * 
+	 * @param	dboType		Database object type.
+	 * @param	menu		<TT>JMenu</TT> to add to menu.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> <TT>DatabaseObjectType</TT> or
+	 * 			<TT>JMenu</TT> thrown.
+	 */
+	public void addToPopup(DatabaseObjectType dboType, JMenu menu)
+	{
+		if (dboType == null)
+		{
+			throw new IllegalArgumentException("DatabaseObjectType == null");
+		}
+		if (menu == null)
+		{
+			throw new IllegalArgumentException("JMenu == null");
+		}
+
+		final JPopupMenu pop = getPopup(dboType, true);
+		pop.add(menu);
+	}
+
+	/**
+	 * Add an hierarchical menu to the popup menu for all node types.
+	 * 
+	 * @param	menu	<TT>JMenu</TT> to add to menu.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> <TT>JMenu</TT> thrown.
+	 */
+	public void addToPopup(JMenu menu)
+	{
+		if (menu == null)
+		{
+			throw new IllegalArgumentException("JMenu == null");
+		}
+		_globalPopup.add(menu);
+		_globalActions.add(menu);
+
+		for (Iterator it = _popups.values().iterator(); it.hasNext();)
+		{
+			JPopupMenu pop = (JPopupMenu)it.next();
+			pop.add(menu);
 		}
 	}
 
