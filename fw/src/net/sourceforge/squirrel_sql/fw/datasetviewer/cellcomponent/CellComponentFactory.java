@@ -169,7 +169,7 @@ public class CellComponentFactory {
 	 * Return a JTextArea with appropriate handlers for editing
 	 * the type of data in the cell.
 	 */
-	 public static JTextArea getJTextArea(ColumnDisplayDefinition colDef) {
+	 public static JTextArea getJTextArea(ColumnDisplayDefinition colDef, Object value) {
 
 		// The first argument is a JTable, which is only used by instances
 		// of JTextField to convert coordinates on a double-click.  Since that
@@ -178,11 +178,19 @@ public class CellComponentFactory {
 		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
 		
 		if (dataTypeObject != null)
-			return dataTypeObject.getJTextArea();
+			return dataTypeObject.getJTextArea(value);
 		
 		// default behavior if no appropriate data type found is to create
-		// a simple JTextArea with no special handling
-		return new RestorableJTextArea();
+		// a simple JTextArea with no special handling.
+		//
+		// In Theory, this cannot happen because if there is no data type object
+		// for this column's data type, then isEditableInPopup returns false, so
+		// we should not get here.  If there IS a data type object, and isEditableInPopup
+		// returns true, then we would have executed the return statement above.
+		// Assume that the value can be represented as a string.
+		RestorableJTextArea textArea = new RestorableJTextArea();
+		textArea.setText((String)value);
+		return textArea;
 	}
 	
 	/**
