@@ -62,6 +62,7 @@ implements IDataSetTableControls
 
 	private MyJTable _comp = null;
 	private MyTableModel _typedModel;
+	private IDataSetUpdateableModel _updateableModel;
 
 	public DataSetViewerTablePanel()
 	{
@@ -71,6 +72,12 @@ implements IDataSetTableControls
 	public void init(IDataSetUpdateableModel updateableModel)
 	{
 		_comp = new MyJTable(this, updateableModel);
+		_updateableModel = updateableModel;
+	}
+	
+	public IDataSetUpdateableModel getUpdateableModel()
+	{
+		return _updateableModel;
 	}
 
 	public void clear()
@@ -110,6 +117,17 @@ implements IDataSetTableControls
 	{
 		_typedModel.addRow(row);
 	}
+	
+	/*
+	 * @see BaseDataSetViewerDestination#getRow(row)
+	 */
+	protected Object[] getRow(int row)
+	{
+		Object values[] = new Object[_typedModel.getColumnCount()];
+		for (int i=0; i < values.length; i++)
+			values[i] = _typedModel.getValueAt(row, i);
+		return values;
+	}
 
 	/*
 	 * @see BaseDataSetViewerDestination#allRowsAdded()
@@ -127,16 +145,16 @@ implements IDataSetTableControls
 		return _typedModel.getRowCount();
 	}
 
-	private final static class MyTableModel extends AbstractTableModel
+	protected final static class MyTableModel extends AbstractTableModel
 	{
 		private List _data = new ArrayList();
 		private ColumnDisplayDefinition[] _colDefs = new ColumnDisplayDefinition[0];
-		private IDataSetTableControls creator = null;
+		private IDataSetTableControls _creator = null;
 
-		MyTableModel(IDataSetTableControls myCreator)
+		MyTableModel(IDataSetTableControls creator)
 		{
 			super();
-			creator = myCreator;
+			_creator = creator;
 		}
 
 		/**
@@ -145,7 +163,7 @@ implements IDataSetTableControls
 		 */
 		public boolean isCellEditable(int row, int col)
 		{
-			return creator.isTableEditable();
+			return _creator.isColumnEditable(col);
 		}
 
 		public Object getValueAt(int row, int col)
@@ -166,6 +184,23 @@ implements IDataSetTableControls
 		public String getColumnName(int col)
 		{
 			return _colDefs != null ? _colDefs[col].getLabel() : super.getColumnName(col);
+		}
+
+		public Class getColumnClass(int col)
+		{
+			try
+			{
+				// if no columns defined, return a generic class
+				// to avoid anything throwing an exception.
+				if (_colDefs == null)
+					return Object.class;
+			
+				return Class.forName(_colDefs[col].getClassName());
+			}
+			catch (Exception e)
+			{
+				return null;
+			}
 		}
 
 		void setHeadings(ColumnDisplayDefinition[] hdgs)
@@ -190,32 +225,29 @@ implements IDataSetTableControls
 
 		/**
 		 * Let creator handle saving the data, if anything is to be done with it.
+		 * If the creator succeeds in changing the underlying data,
+		 * then update the JTable as well.
 		 */
-		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-			if (creator.changeUnderlyingValueAt(rowIndex, columnIndex, aValue, getValueAt(rowIndex, columnIndex))) {
-				// data was saved correctly, so
-				// ok to set table representation to new value.
-				// if not ok, assume that the changeUnderlyingValueAt function has
-				// notified the user of the cause
-				((Object[]) _data.get(rowIndex))[columnIndex] = aValue;
-			}
-    	}
+		public void setValueAt(Object aValue, int row, int col) {
+			if ( _creator.changeUnderlyingValueAt(row, col, aValue, getValueAt(row, col)))
+				((Object[]) _data.get(row))[col] = aValue;
+		}
 	}
 
-	private final class MyJTable extends JTable
+	protected final class MyJTable extends JTable
 	{
 		private final int _multiplier;
 		private static final String data = "THE QUICK BROWN FOX JUMPED OVER THE LAZY DOG";
 
 		private TablePopupMenu _tablePopupMenu;
 		private ButtonTableHeader _bth;
-		private IDataSetTableControls creator;
+		private IDataSetTableControls _creator;
 
-		MyJTable(IDataSetTableControls myCreator, 
+		MyJTable(IDataSetTableControls creator, 
 			IDataSetUpdateableModel updateableObject)
 		{
-			super(new SortableTableModel(new MyTableModel(myCreator)));
-			creator = myCreator;
+			super(new SortableTableModel(new MyTableModel(creator)));
+			_creator = creator;
 			_typedModel = (MyTableModel) ((SortableTableModel) getModel()).getActualModel();
 			_multiplier =
 				Toolkit.getDefaultToolkit().getFontMetrics(getFont()).stringWidth(data) / data.length();
@@ -224,12 +256,12 @@ implements IDataSetTableControls
 			// it would be confusing to include the "Make Editable" option
 			// when we are already in edit mode, so only allow that option when
 			// the background model is updateable AND we are not already editing
-			if (updateableObject != null && ! myCreator.isTableEditable())
+			if (updateableObject != null && ! creator.isTableEditable())
 				allowUpdate = true;
 			createUserInterface(allowUpdate, updateableObject);
 			
 			// just in case table is editable, call creator to set up cell editors
-			creator.setCellEditors(this);
+			_creator.setCellEditors(this);
 		}
 
 		public void setColumnDefinitions(ColumnDisplayDefinition[] colDefs)
@@ -237,6 +269,9 @@ implements IDataSetTableControls
 			TableColumnModel tcm = createColumnModel(colDefs);
 			setColumnModel(tcm);
 			_typedModel.setHeadings(colDefs);
+
+			// just in case table is editable, call creator to set up cell editors
+			_creator.setCellEditors(this);
 		}
 
 		MyTableModel getTypedModel()
@@ -366,7 +401,8 @@ implements IDataSetTableControls
 				{
 					colWidth = MAX_COLUMN_WIDTH * _multiplier;
 				}
-				TableColumn col = new TableColumn(i, colWidth, renderers[i], null);
+
+				TableColumn col = new TableColumn(i, colWidth, renderers[i], null);			
 				col.setHeaderValue(colDef.getLabel());
 				cm.addColumn(col);
 			}
@@ -491,10 +527,16 @@ implements IDataSetTableControls
 	/**
 	 * Tell the table that it is editable.  This is called from within
 	 * MyTable.isCellEditable().  We do not bother to distinguish between
-	 * editable and non-editable cells within the same table since all cells
-	 * are supposed to be either editable or not editable.
+	 * editable and non-editable cells within the same table.
 	 */
 	public boolean isTableEditable() {
+		return false;
+	}
+	
+	/**
+	 * Tell the table whether particular columns are editable.
+	 */
+	public boolean isColumnEditable(int col) {
 		return false;
 	}
 	
@@ -505,18 +547,12 @@ implements IDataSetTableControls
 	
 	/**
 	 * Change the data in the permanent store that is represented by the JTable.
+	 * Does nothing in read-only table.
 	 */
-	public boolean changeUnderlyingValueAt(int rowIndex, int columnIndex, Object newValue, Object oldValue) {
-		// This function should never be called when in read-only mode.
-		//The setValueAt function in the
-		// AbstractTableModel should be called only when there is an actual change
-		// in the data in the JTable.  Since that data cannot be changed when the
-		// table is in read-only mode, the caller of this function (setValueAt)
-		// should never be called.
-		// If the above logic is not correct, we should put in here a pop-up message
-		// saying that the table cannot be changed.
-		return false;
-    }
+	public boolean changeUnderlyingValueAt(int row, int col, Object newValue, Object oldValue)
+	{
+		return false;	// underlaying data cannot be changed
+	}
 	
 	//?? Other functions??
 	/////////////////////////////////////////////////////////////////////////
