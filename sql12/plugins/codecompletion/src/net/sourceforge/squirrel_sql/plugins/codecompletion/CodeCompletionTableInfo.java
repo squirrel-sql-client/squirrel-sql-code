@@ -59,6 +59,7 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
             CodeCompletionColumnInfo buf = new CodeCompletionColumnInfo(columnName, columnType, columnSize, nullable);
             infos.add(buf);
          }
+         res.close();
          _colInfos = (CodeCompletionColumnInfo[])infos.toArray(new CodeCompletionColumnInfo[0]);
       }
 
