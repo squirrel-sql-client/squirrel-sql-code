@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -38,13 +38,6 @@ import javax.swing.border.BevelBorder;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class StatusBar extends JPanel {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n {
-	}
-
 	/** If <TT>true</TT> the current time should be shown. */
 	private boolean _showClock;
 
@@ -54,27 +47,69 @@ public class StatusBar extends JPanel {
 	 */
 	private String _msgWhenEmpty = " ";
 
+	/** Label showing the message in the statusbar. */
 	private JLabel _textLbl = new MyLabel();
+
+	/** Label showing the time. */
 	private JLabel _clockLbl;
 
+	/** Font for controls. */
+	private Font _font;
+
+	/** This is the task that updates the time every second. */
 	private ClockTask _clockTask;
 
+	/**
+	 * Default ctor. Doesn't show time in status bar.
+	 */
 	public StatusBar() {
 		this(false);
 	}
 
+	/**
+	 * Ctor specifying whether time should be displayed.
+	 * 
+	 * @param	showClock	If <TT>true</TT> time should be displayed.
+	 */
 	public StatusBar(boolean showClock) {
 		super();
 		createUserInterface(showClock);
 	}
 
-	public void showClock(boolean value) {
+	/**
+	 * Set the font for controls in this statusbar.
+	 * 
+	 * @param	font	The font to use.
+	 * 
+	 * @throws	IllegalArgumentException	if <TT>null</TT> <TT>Font</TT> passed.
+	 */
+	public synchronized void setFont(Font font) {
+		if (font == null) {
+			throw new IllegalArgumentException("Font == null");
+		}
+		super.setFont(font);
+		_font = font;
+		if (_textLbl != null) {
+			_textLbl.setFont(font);
+		}
+		if (_clockLbl != null) {
+			_clockLbl.setFont(font);
+		}
+	}
+ 
+	/**
+	 * Show/hide the time.
+	 * 
+	 * @param	value	If <TT>true</TT> time should be displayed.
+	 */
+	public synchronized void showClock(boolean value) {
 		if (value != _showClock) {
 			if (value) {
 				_clockLbl = new MyLabel();
-				Font old = _clockLbl.getFont();
-				Font nw = new Font(old.getName(),old.getStyle(),10);
-				_clockLbl.setFont(nw);
+				//Font old = _clockLbl.getFont();
+				//Font nw = new Font(old.getName(),old.getStyle(),10);
+				//_clockLbl.setFont(nw);
+				_clockLbl.setFont(_font);
 
 				add(_clockLbl, new ClockConstraints());
 				startClockThread();
@@ -85,11 +120,19 @@ public class StatusBar extends JPanel {
 		}
 	}
 
+	/**
+	 * @return	<TT>true</TT> if clock is showing else <TT>false</TT>.
+	 */
 	public boolean isClockShowing() {
 		return _showClock;
 	}
 
-	public void setText(String text) {
+	/**
+	 * Set the text to display in the message label.
+	 * 
+	 * @param	text	Text to display in the message label.
+	 */
+	public synchronized void setText(String text) {
 		String myText = null;
 		if (text != null) {
 			myText = text.trim();
@@ -101,11 +144,11 @@ public class StatusBar extends JPanel {
 		}
 	}
 
-	public void clearText() {
+	public synchronized void clearText() {
 		_textLbl.setText(_msgWhenEmpty);
 	}
 
-	public void setTextWhenEmpty(String value) {
+	public synchronized void setTextWhenEmpty(String value) {
 		final boolean wasEmpty = _textLbl.getText().equals(_msgWhenEmpty);
 		if (value != null && value.length() > 0) {
 			_msgWhenEmpty = value;
@@ -117,11 +160,11 @@ public class StatusBar extends JPanel {
 		}
 	}
 
-	private void createUserInterface(boolean showClock)
-	{
-		Font old = _textLbl.getFont();
-		Font nw = new Font(old.getName(),old.getStyle(),10);
-		_textLbl.setFont(nw);
+	private void createUserInterface(boolean showClock) {
+		//Font old = _textLbl.getFont();
+		//Font nw = new Font(old.getName(),old.getStyle(),10);
+		//_textLbl.setFont(nw);
+		_textLbl.setFont(_font);
 		setLayout(new GridBagLayout());
 		add(_textLbl, new TextConstraints());
 		showClock(showClock);
@@ -131,8 +174,6 @@ public class StatusBar extends JPanel {
 	private synchronized void startClockThread() {
 		if (_clockTask == null) {
 			_clockTask = new ClockTask(this);
-
-			// TODO??? Why not use the thread pool of Squirrel itself..
 			new Thread(_clockTask).start();
 		}
 	}
@@ -190,7 +231,6 @@ public class StatusBar extends JPanel {
 					Thread.yield();
 				} catch(Exception ignore) {
 				}
-//				break;
 			}
 		}
 	}
