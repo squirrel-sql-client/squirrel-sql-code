@@ -7,7 +7,7 @@ SQuirreL SQL Client Change Log
 Bug Fixes
 ---------
 - Fix ClassCastException thrown by the parser (Gerd Wagner).
-
+- Fix Bug #981490 OutOfMemoryException partly caused by the parser (Gerd Wagner).
 
 
 1.2beta6
