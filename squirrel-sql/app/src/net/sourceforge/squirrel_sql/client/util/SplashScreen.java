@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.util;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -55,7 +55,7 @@ public class SplashScreen extends JWindow {
 		JPanel mainPnl = new JPanel(new BorderLayout());
 		mainPnl.setBackground(new Color(SquirrelResources.S_SPLASH_IMAGE_BACKGROUND));
 
-		Icon icon = rsrc.getIcon(SquirrelResources.ImageNames.SPLASH_SCREEN);
+		Icon icon = rsrc.getIcon(SquirrelResources.IImageNames.SPLASH_SCREEN);
 		mainPnl.add(BorderLayout.NORTH, new JLabel(icon));
 
 		MultipleLineLabel versionLbl = new MultipleLineLabel();

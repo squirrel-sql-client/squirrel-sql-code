@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001 - 2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -272,7 +272,7 @@ public class AboutBoxDialog extends JDialog {
 			setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 			setLayout(new BorderLayout());
 			setBackground(new Color(SquirrelResources.S_SPLASH_IMAGE_BACKGROUND));
-			Icon icon = app.getResources().getIcon(SquirrelResources.ImageNames.SPLASH_SCREEN);
+			Icon icon = app.getResources().getIcon(SquirrelResources.IImageNames.SPLASH_SCREEN);
 			JLabel iconLbl = new JLabel(icon);
 			add(BorderLayout.CENTER, new JLabel(icon));
 			JTextArea ta = new JTextArea();
