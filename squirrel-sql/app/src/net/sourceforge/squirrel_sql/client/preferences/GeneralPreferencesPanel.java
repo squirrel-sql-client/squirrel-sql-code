@@ -225,20 +225,24 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 	
 			gbc.gridx = 0;
 			gbc.gridy = 0;
+			gbc.gridwidth = 2;
 			pnl.add(_debugJdbc, gbc);
 	
 			gbc.gridx = 0;
 			++gbc.gridy;
+			gbc.gridwidth = 1;
 			pnl.add(new RightLabel("JDBC Debug File:"), gbc);
 	
 			++gbc.gridx;
-			gbc.weightx = 1;
+//			gbc.weightx = 1;
 			pnl.add(_jdbcDebugLogFileNameLbl, gbc);
 
 			gbc.weightx = 0;
 			gbc.gridx = 0;
-			gbc.gridy = gbc.RELATIVE;
-			gbc.gridwidth = GridBagConstraints.REMAINDER;
+			++gbc.gridy;
+//			gbc.gridy = gbc.RELATIVE;
+			gbc.gridwidth = 2;
+//			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			pnl.add(new MultipleLineLabel(i18n.JDBC_PERF_WARNING), gbc);
 			
 			return pnl;
