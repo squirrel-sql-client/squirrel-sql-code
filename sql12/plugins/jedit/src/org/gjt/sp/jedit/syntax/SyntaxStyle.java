@@ -19,7 +19,7 @@ import java.awt.Toolkit;
  * A simple text style class. It can specify the color, italic flag,
  * and bold flag of a run of text.
  * @author Slava Pestov
- * @version $Id: SyntaxStyle.java,v 1.3 2003-03-05 10:27:54 colbell Exp $
+ * @version $Id: SyntaxStyle.java,v 1.4 2003-03-25 03:28:34 colbell Exp $
  */
 public class SyntaxStyle
 {
@@ -37,7 +37,7 @@ public class SyntaxStyle
 	 */
 	public SyntaxStyle()
 	{
-		this(Color.BLACK, Color.WHITE, false, false);
+		this(Color.black, Color.white, false, false);
 	}
 
 	/**
@@ -58,7 +58,7 @@ public class SyntaxStyle
 	 */
 	public SyntaxStyle(Color color, boolean italic, boolean bold)
 	{
-		this(color, Color.WHITE, italic, bold);
+		this(color, Color.white, italic, bold);
 	}
 
 	/**

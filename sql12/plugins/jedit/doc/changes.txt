@@ -1,7 +1,7 @@
 jEdit Text Area Plugin Change Log
 =================================
 
-0.21
+0.30
 ====
 
 Enhancements
@@ -20,6 +20,15 @@ Bug Fixes
 Other
 -----
 - Fixed licence information in source code.
+
+
+0.21
+====
+
+Bug Fixes
+---------
+- Filled NullPointerException when retrieving query
+  from the dropdown.
 
 
 0.20
