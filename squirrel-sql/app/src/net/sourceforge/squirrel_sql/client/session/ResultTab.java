@@ -32,13 +32,17 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewerDestination;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetListModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetModelJTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetModel;
 import net.sourceforge.squirrel_sql.fw.util.Logger;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 
@@ -46,6 +50,8 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
 public class ResultTab extends JPanel {
+private DataSetModelJTableModel _converter;
+
 	/** Current session. */
 	private ISession _session;
 
@@ -55,8 +61,11 @@ public class ResultTab extends JPanel {
 	/** Viewer to display the SQL results metadata. */
 	private DataSetViewer _metaDataViewer = new DataSetViewer();
 
+	/** Data model for the SQL results. */
+	private IDataSetModel _resultSetModel = new DataSetListModel();//?? Use a factory.
+
 	/** Panel displaying the SQL results. */
-	private IDataSetViewerDestination _resultSetOutput;
+	private /*IDataSetViewerDestination*/Component _resultSetOutput;
 
 	/** Panel displaying the SQL results meta data. */
 	private IDataSetViewerDestination _metaDataOutput;
@@ -117,7 +126,12 @@ public class ResultTab extends JPanel {
 	 */
 	public void showResults(ResultSetDataSet rsds, ResultSetMetaDataDataSet mdds, String sql) throws DataSetException {
 		_currentSqlLbl.setText(sql);
-		_resultSetViewer.show(rsds, null); // Why null??
+
+		// Display the result set.
+		_resultSetViewer.setDestination(_resultSetModel);
+		_resultSetViewer.show(rsds);
+		
+		// Display the result set metadata.
 		_metaDataViewer.show(mdds, null); // Why null??
 	}
 
@@ -125,7 +139,8 @@ public class ResultTab extends JPanel {
 	 * Clear results and current SQL script.
 	 */
 	public void clear() {
-		_resultSetOutput.clear();
+		_metaDataOutput.clear();
+		_resultSetModel.clear();
 		_currentSqlLbl.setText("");
 	}
 
@@ -187,7 +202,6 @@ public class ResultTab extends JPanel {
 	 * Close this tab.
 	 */
 	public void closeTab() {
-		//add(_outputSp, BorderLayout.CENTER);
 		add(_tp, BorderLayout.CENTER);
 		_sqlPanel.closeTab(this);
 	}
@@ -196,21 +210,19 @@ public class ResultTab extends JPanel {
 	 * Insert the method's description here.
 	 * Creation date: (20-10-2001 1:23:16)
 	 */
-	private void createWindow()
-	{
+	private void createWindow() {
 		_sqlPanel.createWindow(this);
 	}
 
-	public Component getOutputComponent()
-	{
-//	  return _outputSp;
+	public Component getOutputComponent() {
 		return _tp;
 	}
 
 	private void propertiesHaveChanged(String propertyName) {
 		final SessionProperties props = _session.getProperties();
 		final Logger logger = _session.getApplication().getLogger();
-	
+
+/*
 		if (propertyName == null || propertyName.equals(
 				SessionProperties.IPropertyNames.SQL_OUTPUT_CLASS_NAME)) {
 			final IDataSetViewerDestination previous = _resultSetOutput;
@@ -231,6 +243,16 @@ public class ResultTab extends JPanel {
 			_resultSetSp.setRowHeader(null);
 			_resultSetSp.setViewportView((Component)_resultSetOutput);
 		}
+*/
+		if (propertyName == null || propertyName.equals(
+				SessionProperties.IPropertyNames.SQL_OUTPUT_CLASS_NAME)) {
+			_converter = new DataSetModelJTableModel(_resultSetModel);
+			_resultSetOutput = new JTable(_converter);
+			_resultSetViewer.setDestination(_resultSetModel);
+			_resultSetSp.setRowHeader(null);
+			_resultSetSp.setViewportView(_resultSetOutput);
+		}
+
 
 		if (propertyName == null || propertyName.equals(
 				SessionProperties.IPropertyNames.SQL_OUTPUT_META_DATA_CLASS_NAME)) {
@@ -268,7 +290,6 @@ public class ResultTab extends JPanel {
 		panel1.add(panel2,BorderLayout.EAST);
 		panel1.add(_currentSqlLbl,BorderLayout.CENTER);
 		add(panel1,BorderLayout.NORTH);
-//	  add(_resultsSp, BorderLayout.CENTER);
 		add(_tp, BorderLayout.CENTER);
 
 		_tp.addTab("Results", _resultSetSp);

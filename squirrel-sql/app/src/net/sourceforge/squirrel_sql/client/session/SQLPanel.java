@@ -45,6 +45,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -55,7 +56,6 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewerDestination;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
-//import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
@@ -385,7 +385,7 @@ class SQLPanel extends JPanel {
 	}
 
 	void setCancelPanel(final JPanel panel) {
-		javax.swing.SwingUtilities.invokeLater(new Runnable()
+		SwingUtilities.invokeLater(new Runnable()
 		{
 			public void run()
 			{
@@ -395,29 +395,26 @@ class SQLPanel extends JPanel {
 		});
 	}
 
-	void addResultsTab(final String sToken, ResultSetDataSet rsds, ResultSetMetaDataDataSet mdds, final JPanel cancelPanel)
-	{
+	void addResultsTab(final String sToken, ResultSetDataSet rsds,
+						ResultSetMetaDataDataSet mdds,
+						final JPanel cancelPanel) {
 		final ResultTab tab;
 		final String sTitle;
-		if (_availableTabs.size() > 0)
-		{
+		if (_availableTabs.size() > 0) {
 			tab = (ResultTab) _availableTabs.remove(0);
-		}
-		else
-		{
+		} else {
 			tab = new ResultTab(_session, this);
 		}
-		if (sToken.length() > 10) sTitle = sToken.substring(0, 15);
-		else sTitle = sToken;
+		if (sToken.length() > 10) {
+			sTitle = sToken.substring(0, 15);
+		} else {
+			sTitle = sToken;
+		}
 
-		try
-		{
+		try {
 			tab.showResults(rsds, mdds, sToken);
-
-			javax.swing.SwingUtilities.invokeLater(new Runnable()
-			{
-				public void run()
-				{
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
 					_tabbedResultsPanel.remove(cancelPanel);
 					_tabbedResultsPanel.addTab(sTitle , null, tab, sToken);
 					_tabbedResultsPanel.setSelectedComponent(tab);
@@ -426,19 +423,15 @@ class SQLPanel extends JPanel {
 					_sqlComboItemListener.startListening();
 				}
 			});
-		} catch(DataSetException dse)
-		{
+		} catch(DataSetException dse) {
 			_session.getMessageHandler().showMessage(dse);
 		}
 	}
 
 
-	void removeCancelPanel(final JPanel cancelPanel)
-	{
-		javax.swing.SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
+	void removeCancelPanel(final JPanel cancelPanel) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
 				_tabbedResultsPanel.remove(cancelPanel);
 			}
 		});
