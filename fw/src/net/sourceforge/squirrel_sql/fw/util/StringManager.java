@@ -81,6 +81,38 @@ public class StringManager
 
 	/**
 	 * Retrieve the localized string for the passed key and format it with the
+	 * single passed argument.
+	 *
+	 * @param	key		Key to retrieve string for.
+	 * @param	arg		Argument to place in message.
+	 *
+	 * @return	Localized string or error message.
+	 *
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>key</TT> passed.
+	 */
+	public String getString(String key, Object arg)
+	{
+		if (key == null)
+		{
+			throw new IllegalArgumentException("key == null");
+		}
+
+		Object[] args;
+		if (arg == null)
+		{
+			args = new Object[0];
+		}
+		else
+		{
+			args = new Object[] {arg};
+		}
+
+		return getString(key, args);
+	}
+
+	/**
+	 * Retrieve the localized string for the passed key and format it with the
 	 * passed arguments.
 	 *
 	 * @param	key		Key to retrieve string for.
@@ -109,7 +141,7 @@ public class StringManager
 		}
 		catch (IllegalArgumentException ex)
 		{
-			String msg = "Error formatting i18 string";
+			String msg = "Error formatting i18 string. Key is '" + key + "'";
 			s_log.error(msg, ex);
 			return msg + ": " + ex.toString();
 		}
