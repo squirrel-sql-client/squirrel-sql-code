@@ -27,11 +27,14 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import java.awt.event.KeyEvent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JRootPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.InternalFrameAdapter;
@@ -337,6 +340,19 @@ public class ConnectionSheet extends BaseSheet {
 		});
 
 		pack();
+	}
+
+	protected JRootPane createRootPane() {
+		ActionListener escLis = new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				dispose();
+			}
+		};
+
+		JRootPane rootPane = super.createRootPane();
+		KeyStroke ks = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(escLis, ks, WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
 	}
 
 	private final class TextFieldActionListener implements ActionListener
