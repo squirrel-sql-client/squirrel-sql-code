@@ -19,6 +19,6 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  */
 
 public interface IColumnRenderer {
-    String renderObject(Object obj);
-    String renderNull();
+    Object renderObject(Object obj);
+    Object renderNull();
 }
