@@ -14,6 +14,8 @@ Enhancements
   Hammel).
 - New application setting allows you to specify whether the coloured icons are
   shown in toolbars (Bai Yuhong).
+- Contents tab has been made the default when first displaying table in
+  Object view.
 
 Bug Fixes
 ---------
