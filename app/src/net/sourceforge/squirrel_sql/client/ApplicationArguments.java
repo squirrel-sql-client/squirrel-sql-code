@@ -127,7 +127,7 @@ public class ApplicationArguments
 		}
 		if (_cmdLine.hasOption(IOptions.LOG_FILE[0]))
 		{
-			_loggingConfigFile = _cmdLine.getOptionValue(IOptions.USER_SETTINGS_DIR[0]);
+			_loggingConfigFile = _cmdLine.getOptionValue(IOptions.LOG_FILE[0]);
 		}
 	}
 

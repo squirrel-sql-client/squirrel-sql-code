@@ -12,7 +12,8 @@ Enhancements
 
 Bug Fixes
 ---------
-- Tables with many columns should now allow editing by useing the
+- Fixed incorrect handling of the "log-config-file" argument (Kevin Gilpin)
+- Tables with many columns should now allow editing by using the
   "Limit cell edit WHERE clause size" session tool.
 
 
