@@ -70,6 +70,19 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 	}
 
 	/**
+	* Component has been removed from its parent. get rid of all listeners.
+	*/
+	public void removeNotify()
+	{
+		if (_propsListener != null)
+		{
+			_session.getProperties().removePropertyChangeListener(_propsListener);
+			_propsListener = null;
+		}
+		super.removeNotify();
+	}
+
+	/**
 	 * Component has been added to its parent. Refresh the currently selected
 	 * tab.
 	 */
@@ -91,19 +104,8 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 		}
 		tab.setSession(_session);
 		final String title = tab.getTitle();
-//		int idx = indexOfTab(title);
-//		if (idx != -1)
-//		{
-//			removeTabAt(idx);
-//			_tabs.set(idx, tab);
-//		}
-//		else
-//		{
-//			idx = getTabCount();
-			_tabs.add(tab);
-			addTab(title, null, tab.getComponent(), tab.getHint());
-//		}
-		//insertTab(title, null, tab.getComponent(), tab.getHint(), idx);
+		_tabs.add(tab);
+		addTab(title, null, tab.getComponent(), tab.getHint());
 	}
 
 	void selectCurrentTab()
