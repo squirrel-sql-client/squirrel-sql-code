@@ -92,7 +92,6 @@ public class NewSessionPropertiesDialog extends JDialog {
 		if (show) {
 			final boolean isDebug = s_log.isDebugEnabled();
 			long start = 0;
-			JTabbedPane tabPane = new JTabbedPane();
 			for (Iterator it = _panels.iterator(); it.hasNext();) {
 				INewSessionPropertiesPanel pnl = (INewSessionPropertiesPanel)it.next();
 				if (isDebug) {
@@ -134,9 +133,6 @@ public class NewSessionPropertiesDialog extends JDialog {
 	}
 
 	private void createUserInterface() {
-		final SquirrelPreferences prefs = _app.getSquirrelPreferences();
-		final SessionProperties props = prefs.getSessionProperties();
-
 		// Add panels for core Squirrel functionality.
 		_panels.add(new SQLPropertiesPanel(_app));
 		_panels.add(new OutputPropertiesPanel());

@@ -91,7 +91,6 @@ public class SessionPropertiesDialog extends JDialog {
 
 	private void createUserInterface() {
 		final IApplication app = _session.getApplication();
-		final SessionProperties props = _session.getProperties();
 
 		_panels.add(new SQLPropertiesPanel(app));
 		_panels.add(new OutputPropertiesPanel());

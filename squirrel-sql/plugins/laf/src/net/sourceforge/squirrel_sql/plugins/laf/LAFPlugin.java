@@ -102,8 +102,6 @@ public class LAFPlugin extends DefaultPlugin {
 	public synchronized void load(IApplication app) throws PluginException {
 		super.load(app);
 
-		PluginManager pmgr = app.getPluginManager();
-
 		// Folder within plugins folder that belongs to this
 		// plugin.
 		File pluginAppFolder = null;

@@ -128,7 +128,6 @@ public class JeditSQLTokenMarker extends SQLTokenMarker {
 		keywords.add("VARCHAR", Token.KEYWORD2);
 		keywords.add("VARYING", Token.KEYWORD2);
 
-		StringBuffer buf = new StringBuffer();
 		try {
 			ResultSet rs = dmd.getTypeInfo();
 			try {

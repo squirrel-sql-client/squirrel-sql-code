@@ -277,7 +277,6 @@ class LAFRegister implements LAFConstants {
 		// Create a ClassLoader for all the LAF jars. Install all Look and Feels
 		// into the UIManager.
 		try {
-			URL[] urls = ((URL[]) lafUrls.toArray(new URL[lafUrls.size()]));
 			_lafClassLoader =
 				new MyURLClassLoader((URL[]) lafUrls.toArray(new URL[lafUrls.size()]));
 			Class[] lafClasses =
