@@ -35,7 +35,9 @@ import net.sourceforge.squirrel_sql.fw.gui.OkClosePanel;
 import net.sourceforge.squirrel_sql.fw.gui.OkClosePanelEvent;
 import net.sourceforge.squirrel_sql.fw.gui.IOkClosePanelListener;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
+import net.sourceforge.squirrel_sql.client.plugin.SessionPluginInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public class SessionPropertiesDialog extends JDialog {
@@ -52,9 +54,6 @@ public class SessionPropertiesDialog extends JDialog {
 
     private ISession _session;
     private List _panels = new ArrayList();
-
-    //private SQLPropertiesPanel _sqlPnl;
-    //private OutputPropertiesPanel _outputPnl;
 
     public SessionPropertiesDialog(Frame frame, ISession session) {
         super(frame, i18n.TITLE);
@@ -94,7 +93,20 @@ public class SessionPropertiesDialog extends JDialog {
         final Container contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
 
-        //?? Go thru all plugins asking for panels.
+        // Go thru all plugins attached to this session asking for panels.
+        final IApplication app = _session.getApplication();
+        SessionPluginInfo[] plugins = app.getPluginManager().getPluginInformation(_session);
+        for (int i = 0; i < plugins.length; ++i) {
+            SessionPluginInfo spi = plugins[i];
+            if (spi.isLoaded()) {
+                ISessionPropertiesPanel[] pnls = spi.getSessionPlugin().getSessionPropertiesPanels();
+                if (pnls != null && pnls.length > 0) {
+                    for (int pnlIdx = 0; pnlIdx < pnls.length; ++pnlIdx) {
+                        _panels.add(pnls[pnlIdx]);
+                    }
+                }
+            }
+        }
 
         // Initialize all panels and add them to the dialog.
         JTabbedPane tabPane = new JTabbedPane();

@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.client.plugin;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
 
 /**
  * Base interface for all plugins associated with a session.
@@ -32,10 +33,20 @@ public interface ISessionPlugin extends IPlugin {
      *          session else <TT>false</TT>.
      */
     boolean sessionStarted(ISession session);
-    /**
+
+    /**
      * Called when a session shutdown.
      */
     void sessionEnding(ISession session);
+
+    /**
+     * Create panels for the Session Properties dialog.
+     *
+     * @return  Array of <TT>ISessionPropertiesPanel</TT> objects. Return
+     *          empty array of <TT>null</TT> if this plugin doesn't require
+     *          any panels in the Session Properties Dialog.
+     */
+    ISessionPropertiesPanel[] getSessionPropertiesPanels();
 
     /**
      * Let app know what extra types of objects in object tree that

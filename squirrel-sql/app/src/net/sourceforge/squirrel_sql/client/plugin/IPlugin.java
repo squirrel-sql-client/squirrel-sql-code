@@ -27,66 +27,66 @@ import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
  * Base interface for all plugins.
  */
 public interface IPlugin {
-    /**
-     * Called on application startup before application started up.
-     *
-     * @param   app     Application API.
-     */
-    void load(IApplication app) throws PluginException;
+	/**
+	 * Called on application startup before application started up.
+	 *
+	 * @param	app	Application API.
+	 */
+	void load(IApplication app) throws PluginException;
 
-    /**
-     * Called on application startup after application started.
-     */
-    void initialize() throws PluginException;
+	/**
+	 * Called on application startup after application started.
+	 */
+	void initialize() throws PluginException;
 
-    /**
-     * Called when app shutdown.
-     */
-    void unload() throws PluginException;
+	/**
+	 * Called when app shutdown.
+	 */
+	void unload() throws PluginException;
 
-    /**
-     * Returns the name by which this plugin is uniquely identified.
-     *
-     * @return  the name by which this plugin is uniquely identified.
-     */
-    String getInternalName();
+	/**
+	 * Returns the name by which this plugin is uniquely identified.
+	 *
+	 * @return	the name by which this plugin is uniquely identified.
+	 */
+	String getInternalName();
 
-    /**
-     * Returns the descriptive name for this plugin.
-     *
-     * @return  the descriptive name for this plugin.
-     */
-    String getDescriptiveName();
+	/**
+	 * Returns the descriptive name for this plugin.
+	 *
+	 * @return	the descriptive name for this plugin.
+	 */
+	String getDescriptiveName();
 
-    /**
-     * Returns the authors name.
-     *
-     * @return  the authors name.
-     */
-    String getAuthor();
+	/**
+	 * Returns the authors name.
+	 *
+	 * @return	the authors name.
+	 */
+	String getAuthor();
 
-    /**
-     * Returns the home page for this plugin.
-     *
-     * @return  the home page for this plugin.
-     */
-    String getWebSite();
+	/**
+	 * Returns the home page for this plugin.
+	 *
+	 * @return	the home page for this plugin.
+	 */
+	String getWebSite();
 
-    /**
-     * Returns the current version of this plugin.
-     *
-     * @return  the current version of this plugin.
-     */
-    String getVersion();
+	/**
+	 * Returns the current version of this plugin.
+	 *
+	 * @return	the current version of this plugin.
+	 */
+	String getVersion();
 
-    /**
-     * Create panels for the Global Preferences dialog.
-     *
-     * @return  Array of <TT>IGlobalPreferencesPanel</TT> objects. Return
-     *          empty array of <TT>null</TT> if this plugin doesn't require
-     *          any panels in the Global Preferences Dialog.
-     */
-    IGlobalPreferencesPanel[] getGlobalPreferencePanels();
+	/**
+	 * Create panels for the Global Preferences dialog.
+	 *
+	 * @return	Array of <TT>IGlobalPreferencesPanel</TT> objects. Return
+	 *			empty array of <TT>null</TT> if this plugin doesn't require
+	 *			any panels in the Global Preferences Dialog.
+	 */
+	IGlobalPreferencesPanel[] getGlobalPreferencePanels();
 
 	/**
 	 * Return the folder with the Squirrel application folder
@@ -104,7 +104,7 @@ public interface IPlugin {
 	 * @throws	IOException
 	 * 			An error occured retrieving/creating the folder.
 	 */
-    File getPluginAppSettingsFolder()
+	File getPluginAppSettingsFolder()
 		throws IOException, IllegalStateException;
 
 	/**
@@ -123,7 +123,7 @@ public interface IPlugin {
 	 * @throws	IOException
 	 * 			An error occured retrieving/creating the folder.
 	 */
-    public File getPluginUserSettingsFolder()
-            throws IllegalStateException, IOException;
+	public File getPluginUserSettingsFolder()
+			throws IllegalStateException, IOException;
 }
 

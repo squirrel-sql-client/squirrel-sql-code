@@ -29,49 +29,49 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 
 public abstract class DefaultPlugin implements IPlugin {
 	/** Current application API. */
-    private IApplication _app;
+	private IApplication _app;
 
-    /**
-     * Called on application startup before application started up.
-     *
-     * @param   app     Application API.
-     */
-    public void load(IApplication app) throws PluginException {
-        if (app == null) {
-            throw new IllegalArgumentException("Null IApplication passed");
-        }
-        _app = app;
-    }
+	/**
+	 * Called on application startup before application started up.
+	 *
+	 * @param   app	 Application API.
+	 */
+	public void load(IApplication app) throws PluginException {
+		if (app == null) {
+			throw new IllegalArgumentException("Null IApplication passed");
+		}
+		_app = app;
+	}
 
-    /**
-     * Called on application startup after application started.
-     */
-    public void initialize() throws PluginException {
-    }
+	/**
+	 * Called on application startup after application started.
+	 */
+	public void initialize() throws PluginException {
+	}
 
-    /**
-     * Called when app shutdown.
-     */
-    public void unload() {
-    }
+	/**
+	 * Called when app shutdown.
+	 */
+	public void unload() {
+	}
 
-    /**
-     * Returns the home page for this plugin.
-     *
-     * @return  the home page for this plugin.
-     */
-    public String getWebSite() {
-        return Version.getWebSite();
-    }
+	/**
+	 * Returns the home page for this plugin.
+	 *
+	 * @return  the home page for this plugin.
+	 */
+	public String getWebSite() {
+		return Version.getWebSite();
+	}
 
 	/**
 	 * Return the current application API.
 	 * 
 	 * @return	The current application API.
 	 */
-    public final IApplication getApplication() {
-        return _app;
-    }
+	public final IApplication getApplication() {
+		return _app;
+	}
 
 	/**
 	 * Return the folder with the Squirrel application folder
@@ -89,25 +89,25 @@ public abstract class DefaultPlugin implements IPlugin {
 	 * @throws	IOException
 	 * 			An error occured retrieving/creating the folder.
 	 */
-    public synchronized File getPluginAppSettingsFolder()
-            throws IllegalStateException, IOException {
-        final String internalName = getInternalName();
-        if (internalName == null || internalName.trim().length() == 0) {
-            throw new IllegalStateException("IPlugin doesn't have a valid internal name");
-        }
-        final String name = ApplicationFiles.SQUIRREL_PLUGINS_FOLDER +
-                        	File.separator + internalName + File.separator;
-        final File file = new File(name);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
+	public synchronized File getPluginAppSettingsFolder()
+			throws IllegalStateException, IOException {
+		final String internalName = getInternalName();
+		if (internalName == null || internalName.trim().length() == 0) {
+			throw new IllegalStateException("IPlugin doesn't have a valid internal name");
+		}
+		final String name = ApplicationFiles.SQUIRREL_PLUGINS_FOLDER +
+							File.separator + internalName + File.separator;
+		final File file = new File(name);
+		if (!file.exists()) {
+			file.mkdirs();
+		}
 
-        if (!file.isDirectory()) {
-            throw new IOException("Cannot create directory as a file of the same name already exists: " + name);
-        }
+		if (!file.isDirectory()) {
+			throw new IOException("Cannot create directory as a file of the same name already exists: " + name);
+		}
 
-        return file;
-    }
+		return file;
+	}
 
 	/**
 	 * Return the folder with the users home directory
@@ -125,34 +125,34 @@ public abstract class DefaultPlugin implements IPlugin {
 	 * @throws	IOException
 	 * 			An error occured retrieving/creating the folder.
 	 */
-    public synchronized File getPluginUserSettingsFolder()
-            throws IllegalStateException, IOException {
-        final String internalName = getInternalName();
-        if (internalName == null || internalName.trim().length() == 0) {
-            throw new IllegalStateException("IPlugin doesn't have a valid internal name");
-        }
-        String name = getApplication().getApplicationFiles().getPluginsUserSettingsDirectory() +
-                        File.separator + internalName + File.separator;
-        File file = new File(name);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
+	public synchronized File getPluginUserSettingsFolder()
+			throws IllegalStateException, IOException {
+		final String internalName = getInternalName();
+		if (internalName == null || internalName.trim().length() == 0) {
+			throw new IllegalStateException("IPlugin doesn't have a valid internal name");
+		}
+		String name = getApplication().getApplicationFiles().getPluginsUserSettingsDirectory() +
+						File.separator + internalName + File.separator;
+		File file = new File(name);
+		if (!file.exists()) {
+			file.mkdirs();
+		}
 
-        if (!file.isDirectory()) {
-            throw new IOException("Cannot create directory as a file of the same name already exists: " + name);
-        }
+		if (!file.isDirectory()) {
+			throw new IOException("Cannot create directory as a file of the same name already exists: " + name);
+		}
 
-        return file;
-    }
+		return file;
+	}
 
 
-    /**
-     * Create panels for the Global Preferences dialog.
-     *
-     * @return  <TT>null</TT> to indicate that this plugin doesn't require
-     *          any panels in the Global Preferences Dialog.
-     */
-    public IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
-        return null;
-    }
+	/**
+	 * Create panels for the Global Preferences dialog.
+	 *
+	 * @return  <TT>null</TT> to indicate that this plugin doesn't require
+	 *		  any panels in the Global Preferences Dialog.
+	 */
+	public IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
+		return null;
+	}
 }

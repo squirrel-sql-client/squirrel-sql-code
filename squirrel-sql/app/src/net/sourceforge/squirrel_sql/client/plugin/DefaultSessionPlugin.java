@@ -19,32 +19,42 @@ package net.sourceforge.squirrel_sql.client.plugin;
  */
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
 
 public abstract class DefaultSessionPlugin extends DefaultPlugin implements ISessionPlugin {
-    /**
-     * Called when a session started.
-     *
-     * @param   session     The session that is starting.
-     *
-     * @return  <TT>true</TT> to indicate that this plugin is
-     *          applicable to passed session.
-     */
-    public boolean sessionStarted(ISession session) {
-        return true;
-    }
+	/**
+	 * Called when a session started.
+	 *
+	 * @param	session	The session that is starting.
+	 *
+	 * @return	<TT>true</TT> to indicate that this plugin is
+	 *			applicable to passed session.
+	 */
+	public boolean sessionStarted(ISession session) {
+		return true;
+	}
 
-    /**
-     * Called when a session shutdown.
-     */
-    public void sessionEnding(ISession session) {
-    }
+	/**
+	 * Called when a session shutdown.
+	 */
+	public void sessionEnding(ISession session) {
+	}
 
-    /**
-     * Let app know what extra types of objects in object tree that
-     * plugin can handle.
-     */
-    public IPluginDatabaseObjectType[] getObjectTypes(ISession session) {
-        return null;
-    }
+	/**
+	 * Override this to create panels for the Session Properties dialog.
+	 *
+	 * @return  <TT>null</TT> to indicate that this plugin doesn't use session property panels.
+	 */
+	public ISessionPropertiesPanel[] getSessionPropertiesPanels() {
+		return null;
+	}
+
+	/**
+	 * Let app know what extra types of objects in object tree that
+	 * plugin can handle.
+	 */
+	public IPluginDatabaseObjectType[] getObjectTypes(ISession session) {
+		return null;
+	}
 }
 

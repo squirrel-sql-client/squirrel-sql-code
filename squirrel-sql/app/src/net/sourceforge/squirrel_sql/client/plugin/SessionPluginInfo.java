@@ -17,61 +17,33 @@ package net.sourceforge.squirrel_sql.client.plugin;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
-public class PluginInfo {
-	private String _pluginClassName;
-	private IPlugin _plugin;
-	private boolean _loaded;
-
-	PluginInfo(String pluginClassName)
-			throws IllegalArgumentException {
-		super();
-		if (pluginClassName == null) {
-			throw new IllegalArgumentException("Null pluginClassName passed");
-		}
-
-		_pluginClassName = pluginClassName;
+public class SessionPluginInfo extends PluginInfo {
+	public SessionPluginInfo(PluginInfo pi) throws IllegalArgumentException {
+		super(getPassedPluginClassName(pi));
+		assignFrom(pi);
 	}
 
-	public void assignFrom(PluginInfo pi)
-			throws IllegalArgumentException {
-		if (pi == null) {
-			throw new IllegalArgumentException("Null PluginInfo passed");
-		}
-
-		setPlugin(pi.getPlugin());
-		setLoaded(pi.isLoaded());
-	}
-
-	public String getPluginClassName() {
-		return _pluginClassName;
-	}
-
-	public boolean isLoaded() {
-		return _loaded;
-	}
-
-	/**
-	 * Return the <TT>IPlugin</TT>. Warning this will be
-	 * <TT>null</TT> if the plugin could not be
-	 * instantiated.
-	 *
-	 * @return  the <TT>IPlugin</TT>.
-	 */
-	public IPlugin getPlugin() {
-		return _plugin;
+	public ISessionPlugin getSessionPlugin() {
+		return (ISessionPlugin)getPlugin();
 	}
 
 	void setPlugin(IPlugin value) throws IllegalArgumentException {
 		if (value == null) {
 			throw new IllegalArgumentException("Null IPlugin passed");
 		}
-		_plugin = value;
+		if (!(value instanceof ISessionPlugin)) {
+			throw new IllegalArgumentException("Plugin not an ISessionPlugin");
+		}
+		super.setPlugin(value);
 	}
+	
 
-	void setLoaded(boolean value) {
-		_loaded = value;
+	private static String getPassedPluginClassName(PluginInfo pi)
+			throws IllegalArgumentException {
+		if (pi == null) {
+			throw new IllegalArgumentException("Null PluginInfo passed");
+		}
+		return pi.getPluginClassName();
 	}
 }
-
 
