@@ -1,5 +1,5 @@
 #! /bin/sh
-[ $JAVA_HOME ] && JAVA=$JAVA_HOME/bin/java || JAVA=java
+[ ${JAVA_HOME} ] && JAVA=${JAVA_HOME}/bin/java || JAVA=java
 
 # Are we running within Cygwin on some version of Windows?
 cygwin=false;
