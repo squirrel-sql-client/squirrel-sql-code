@@ -27,7 +27,6 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -43,8 +42,6 @@ public class ResultSetColumnReader
 	/** The <TT>ResultSet</TT> being read. */
 	private final ResultSet _rs;
 
-	/** Describes how to handle "blob" type data. */
-	private final LargeResultSetObjectInfo _largeObjInfo;
 
 	/** <TT>true</TT> if the last column read had a value of SQL NULL. */
 	private boolean _wasNull;
@@ -54,21 +51,11 @@ public class ResultSetColumnReader
 
 	public ResultSetColumnReader(ResultSet rs) throws SQLException
 	{
-		this(rs, null, null);
+		this(rs,  null);
 	}
 
-	public ResultSetColumnReader(ResultSet rs, LargeResultSetObjectInfo largeObjInfo)
-		throws SQLException
-	{
-		this(rs, largeObjInfo, null);
-	}
 
-	public ResultSetColumnReader(ResultSet rs, int[] columnIndices) throws SQLException
-	{
-		this(rs, null, columnIndices);
-	}
-
-	public ResultSetColumnReader(ResultSet rs, LargeResultSetObjectInfo largeObjInfo,
+	public ResultSetColumnReader(ResultSet rs,
 							int[] columnIndices) throws SQLException
 	{
 		super();
@@ -79,7 +66,6 @@ public class ResultSetColumnReader
 
 		_rs = rs;
 		_rsmd = rs.getMetaData();
-		_largeObjInfo = largeObjInfo != null ? largeObjInfo : new LargeResultSetObjectInfo();
 	}
 
 	/**
