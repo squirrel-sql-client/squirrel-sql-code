@@ -19,25 +19,42 @@ package net.sourceforge.squirrel_sql.fw.sql;
  */
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Driver;
 
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.MyURLClassLoader;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-import net.sourceforge.squirrel_sql.fw.util.log.*;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 
-public class SQLDriverClassLoader extends MyURLClassLoader {
-
-	public SQLDriverClassLoader(ISQLDriver sqlDriver) {
-		super(sqlDriver.getJarFileURL());
+public class SQLDriverClassLoader extends MyURLClassLoader
+{
+	public SQLDriverClassLoader(ISQLDriver sqlDriver) throws MalformedURLException
+	{
+		super(createURLs(sqlDriver.getJarFileNames()));
 	}
 
-	public SQLDriverClassLoader(URL url) {
+	public SQLDriverClassLoader(URL url)
+	{
 		super(url);
 	}
 
-	public Class[] getDriverClasses(ILogger logger) throws IOException {
+	public Class[] getDriverClasses(ILogger logger) throws IOException
+	{
 		return getAssignableClasses(Driver.class, logger);
+	}
+
+	private static URL[] createURLs(String[] fileNames)
+		throws MalformedURLException
+	{
+		if (fileNames == null)
+		{
+			fileNames = new String[0];
+		}
+		URL[] urls = new URL[fileNames.length];
+		for (int i = 0; i < fileNames.length; ++i)
+		{
+			urls[i] = new File(fileNames[i]).toURL();
+		}
+		return urls;
 	}
 }

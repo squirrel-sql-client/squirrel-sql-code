@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.sql;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -18,39 +18,38 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
+//import java.net.URL;
 
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
 
-public interface ISQLDriver extends IHasIdentifier, Comparable {
+public interface ISQLDriver extends IHasIdentifier, Comparable
+{
 	/**
 	 * JavaBean property names for this class.
 	 */
-	public interface IPropertyNames {
+	public interface IPropertyNames
+	{
 		String DRIVER_CLASS = "driverClassName";
 		String ID = "identifier";
 		String JARFILE_NAME = "jarFileName";
+		String JARFILE_NAMES = "jarFileNames";
 		String NAME = "name";
 		String URL = "url";
-		String USES_CLASSPATH = "usesClassPath";
-		String PLUGIN_NAMES = "pluginNames";
+		//String USES_CLASSPATH = "usesClassPath";
+		//String PLUGIN_NAMES = "pluginNames";
 	}
 
 	/**
 	 * Assign data from the passed <CODE>ISQLDriver</CODE> to this one.
 	 *
-	 * @param   rhs	 <CODE>ISQLDriver</CODE> to copy data from.
+	 * @param	rhs	<CODE>ISQLDriver</CODE> to copy data from.
 	 *
-	 * @exception   ValidationException
-	 *				  Thrown if an error occurs assigning data from
-	 *				  <CODE>rhs</CODE>.
+	 * @exception	ValidationException
+	 *				Thrown if an error occurs assigning data from
+	 *				<CODE>rhs</CODE>.
 	 */
 	void assignFrom(ISQLDriver rhs) throws ValidationException;
 
@@ -61,37 +60,56 @@ public interface ISQLDriver extends IHasIdentifier, Comparable {
 	 * ClassCastException (as <TT>ISQLDriver</TT> objects are comparable only to
 	 * other <TT>ISQLDriver</TT> objects).
 	 */
-	public int compareTo(Object rhs);
+	int compareTo(Object rhs);
 
-	public IIdentifier getIdentifier();
+	IIdentifier getIdentifier();
 
-	public String getDriverClassName();
+	String getDriverClassName();
 
-	public void setDriverClassName(String driverClassName) throws ValidationException;
+	void setDriverClassName(String driverClassName)
+		throws ValidationException;
 
-	public boolean getUsesClassPath();
+	//boolean getUsesClassPath();
 
-	public void setUsesClassPath(boolean data) throws ValidationException;
+	//void setUsesClassPath(boolean data) throws ValidationException;
 
-	public URL getJarFileURL();
+	/**
+	 * @deprecated	Replaced by getJarFileURLs().
+	 */
+	//URL getJarFileURL();
 
-	public String getJarFileName();
+	/**
+	 * @deprecated	Replaced by getJarFileURLs().
+	 */
+	String getJarFileName();
 
-	public void setJarFileName(String value) throws ValidationException;
+	void setJarFileName(String value) throws ValidationException;
 
-	public String getUrl();
+	StringWrapper[] getJarFileNameWrappers();
 
-	public void setUrl(String url) throws ValidationException;
+	StringWrapper getJarFileNameWrapper(int idx) throws ArrayIndexOutOfBoundsException;
 
-	public String getName();
 
-	public void setName(String name) throws ValidationException;
+	void setJarFileNameWrappers(StringWrapper[] value);
 
-	public boolean isJDBCDriverClassLoaded();
-	public void setJDBCDriverClassLoaded(boolean cl);
+	void setJarFileNameWrapper(int idx, StringWrapper value) throws ArrayIndexOutOfBoundsException;
 
-	public StringWrapper[] getPluginNames();
-	public void setPluginNames(StringWrapper[] names) throws ValidationException;
+	String[] getJarFileNames();
+	void setJarFileNames(String[] values);
+	
+	String getUrl();
+
+	void setUrl(String url) throws ValidationException;
+
+	String getName();
+
+	void setName(String name) throws ValidationException;
+
+	boolean isJDBCDriverClassLoaded();
+	void setJDBCDriverClassLoaded(boolean cl);
+
+	//StringWrapper[] getPluginNames();
+	//void setPluginNames(StringWrapper[] names) throws ValidationException;
 
 	void addPropertyChangeListener(PropertyChangeListener listener);
 	void removePropertyChangeListener(PropertyChangeListener listener);

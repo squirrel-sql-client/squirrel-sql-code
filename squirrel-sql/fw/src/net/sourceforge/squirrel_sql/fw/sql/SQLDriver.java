@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.sql;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -22,22 +22,25 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
-import java.net.URL;
+//import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
+import net.sourceforge.squirrel_sql.fw.util.beanwrapper.URLWrapper;
 
 public class SQLDriver implements ISQLDriver, Cloneable, Serializable {
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
-	private interface i18n {
+	private interface SQLDriverI18n {
 		String ERR_BLANK_NAME = "Name cannot be blank.";
-		String ERR_BLANK_DRIVER = "JDBC Driver cannot be blank.";
+		String ERR_BLANK_DRIVER = "JDBC Driver Class Name cannot be blank.";
 		String ERR_BLANK_URL = "JDBC URL cannot be blank.";
 	}
 
@@ -48,18 +51,21 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable {
 	private String _name;
 
 	/** <CODE>true</CODE> if driver is loaded from the CLASSPATH. */
-	private boolean _usesClassPath = true;
+	//private boolean _usesClassPath = true;
 
 	/**
 	 * Jar Fle to load driver from. Only used if _usesClassPath
 	 * is <CODE>false</CODE>.
 	 */
-	private URL _jarFileURL = null;
+//	private URL _jarFileURL = null;
 
 	/**
 	 * File name associated with <CODE>_jarFileURL</CODE>.
 	 */
 	private String _jarFileName = null;
+
+	/** Names for driver jar files. */
+	private List _jarFileNamesList = new ArrayList();
 
 	/** The class name of the JDBC driver. */
 	private String _driverClassName;
@@ -71,7 +77,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable {
 	private boolean _jdbcDriverClassLoaded;
 
 	/** Array of names of plugins relevant to this driver. */
-	private StringWrapper[] _pluginNames;
+	//private StringWrapper[] _pluginNames;
 
 	/** Object to handle property change events. */
 	private PropertyChangeReporter _propChgReporter = new PropertyChangeReporter(this);
@@ -85,9 +91,9 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable {
 		super();
 		_id = id;
 		_name = "";
-		_usesClassPath = true;
+		//_usesClassPath = true;
 		_jarFileName = null;
-		_jarFileURL = null;
+		//_jarFileURL = null;
 		_driverClassName = null;
 		_url = "";
 	}
@@ -95,24 +101,6 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable {
 	public SQLDriver() {
 		super();
 	}
-
-	/**
-	 * Ctor specifying attributes.
-	 */
-/*  public SQLDriver(IIdentifier id, String name, boolean usesClasspath,
-					String jarFileName, String driverClassName, String url) {
-		super();
-		_id = id;
-		_name = name;
-		_usesClassPath = usesClasspath;
-		_jarFileName = jarFileName;
-		_driverClassName = driverClassName;
-		_url = url;
-		if (_jarFileName != null) {
-			_jarFileURL = new File(name).toURL();
-		}
-	}
-*/
 
 	/**
 	 * Assign data from the passed <CODE>ISQLDriver</CODE> to this one.
@@ -126,9 +114,10 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable {
 	public synchronized void assignFrom(ISQLDriver rhs)
 			throws ValidationException {
 		setName(rhs.getName());
-		setUsesClassPath(rhs.getUsesClassPath());
-		setJarFileURL(rhs.getJarFileURL());
-		setJarFileName(rhs.getJarFileName());
+		//setUsesClassPath(rhs.getUsesClassPath());
+		//setJarFileURL(rhs.getJarFileURL());
+		//setJarFileName(rhs.getJarFileName());
+		setJarFileNames(rhs.getJarFileNames());
 		setDriverClassName(rhs.getDriverClassName());
 		setUrl(rhs.getUrl());
 		setJDBCDriverClassLoaded(rhs.isJDBCDriverClassLoaded());
@@ -211,7 +200,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable {
 			throws ValidationException {
 		String data = getString(driverClassName);
 		if (data.length() == 0) {
-			throw new ValidationException(i18n.ERR_BLANK_DRIVER);
+			throw new ValidationException(SQLDriverI18n.ERR_BLANK_DRIVER);
 		}
 		if (_driverClassName != data) {
 			final String oldValue = _driverClassName;
@@ -220,24 +209,29 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable {
 		}
 	}
 
-	public boolean getUsesClassPath() {
-		return _usesClassPath;
-	}
+	//public boolean getUsesClassPath() {
+	//	return _usesClassPath;
+	//}
 
-	public void setUsesClassPath(boolean data)
-			throws ValidationException {
-		if (_usesClassPath != data) {
-			final boolean oldValue = _usesClassPath;
-			_usesClassPath = data;
-			_propChgReporter.firePropertyChange(ISQLDriver.IPropertyNames.USES_CLASSPATH, oldValue, _usesClassPath);
-		}
-	}
+	//public void setUsesClassPath(boolean data)
+	//		throws ValidationException {
+	//	if (_usesClassPath != data) {
+	//		final boolean oldValue = _usesClassPath;
+	//		_usesClassPath = data;
+	//		_propChgReporter.firePropertyChange(ISQLDriver.IPropertyNames.USES_CLASSPATH, oldValue, _usesClassPath);
+	//	}
+	//}
 
-	public URL getJarFileURL() {
-		return _jarFileURL;
-	}
+	/**
+	 * @deprecated	Replaced by getJarFileNames().
+	 */
+	//public URL getJarFileURL() {
+	//	return _jarFileURL;
+	//}
 
-
+	/**
+	 * @deprecated	Replaced by getJarFileNames().
+	 */
 	public String getJarFileName() {
 		return _jarFileName;
 	}
@@ -249,14 +243,31 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable {
 		}
 //	  if ((_jarFileName == null && value != null) || !_jarFileName.equals(value)) {
 		if (_jarFileName == null || !_jarFileName.equals(value)) {
-			try {
-				_jarFileURL = new File(value).toURL();
-			} catch (MalformedURLException ex) {
-				throw new ValidationException("Invalid file name"); //i18n
-			}
+//			try {
+//				_jarFileURL = new File(value).toURL();
+//			} catch (MalformedURLException ex) {
+//				throw new ValidationException("Invalid file name"); //i18n
+//			}
 			final String oldValue = _jarFileName;
 			_jarFileName = value;
 			_propChgReporter.firePropertyChange(ISQLDriver.IPropertyNames.JARFILE_NAME, oldValue, _jarFileName);
+		}
+	}
+
+	public synchronized String[] getJarFileNames()
+	{
+		return (String[])_jarFileNamesList.toArray(new String[_jarFileNamesList.size()]);
+	}
+
+	public synchronized void setJarFileNames(String[] values)
+	{
+		_jarFileNamesList.clear();
+		if (values != null)
+		{
+			for (int i = 0; i < values.length; ++i)
+			{
+				_jarFileNamesList.add(values[i]);
+			}
 		}
 	}
 
@@ -268,7 +279,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable {
 			throws ValidationException {
 		String data = getString(url);
 		if (data.length() == 0) {
-			throw new ValidationException(i18n.ERR_BLANK_URL);
+			throw new ValidationException(SQLDriverI18n.ERR_BLANK_URL);
 		}
 		if (_url != data) {
 			final String oldValue = _url;
@@ -285,7 +296,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable {
 			throws ValidationException {
 		String data = getString(name);
 		if (data.length() == 0) {
-			throw new ValidationException(i18n.ERR_BLANK_NAME);
+			throw new ValidationException(SQLDriverI18n.ERR_BLANK_NAME);
 		}
 		if (_name != data) {
 			final String oldValue = _name;
@@ -304,19 +315,45 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable {
 //		_propChgReporter.firePropertyChange(ISQLDriver.IPropertyNames.NAME, _name, _name);
 	}
 
-	public StringWrapper[] getPluginNames() {
-		return _pluginNames;
+//	public StringWrapper[] getPluginNames() {
+//		return _pluginNames;
+//	}
+
+//	public void setPluginNames(StringWrapper[] names) throws ValidationException {
+//		final StringWrapper[] oldValue = _pluginNames;
+//		_pluginNames = names;
+//		_propChgReporter.firePropertyChange(ISQLDriver.IPropertyNames.PLUGIN_NAMES, oldValue, _pluginNames);
+//	}
+
+	public synchronized StringWrapper[] getJarFileNameWrappers() {
+		StringWrapper[] wrappers = new StringWrapper[_jarFileNamesList.size()];
+		for (int i = 0; i < wrappers.length; ++i)
+		{
+			wrappers[i] = new StringWrapper((String)_jarFileNamesList.get(i));
+		}
+		return wrappers;
 	}
 
-	public void setPluginNames(StringWrapper[] names) throws ValidationException {
-		final StringWrapper[] oldValue = _pluginNames;
-		_pluginNames = names;
-		_propChgReporter.firePropertyChange(ISQLDriver.IPropertyNames.PLUGIN_NAMES, oldValue, _pluginNames);
+	public StringWrapper getJarFileNameWrapper(int idx) throws ArrayIndexOutOfBoundsException {
+		return new StringWrapper((String)_jarFileNamesList.get(idx));
 	}
 
-	private void setJarFileURL(URL value) {
-		_jarFileURL = value;
+	public void setJarFileNameWrappers(StringWrapper[] value) {
+		_jarFileNamesList.clear();
+		if (value != null) {
+			for (int i = 0; i < value.length; ++i) {
+				_jarFileNamesList.add(value[i].getString());
+			}
+		}
 	}
+
+	public void setJarFileNameWrapper(int idx, StringWrapper value) throws ArrayIndexOutOfBoundsException {
+		_jarFileNamesList.set(idx, value);
+	}
+
+//	private void setJarFileURL(URL value) {
+//		_jarFileURL = value;
+//	}
 
 	private String getString(String data) {
 		return data != null ? data.trim() : "";
