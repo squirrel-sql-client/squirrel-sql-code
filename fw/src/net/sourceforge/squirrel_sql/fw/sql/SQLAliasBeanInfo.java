@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.sql;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -40,7 +40,7 @@ public class SQLAliasBeanInfo extends SimpleBeanInfo
 		super();
 		if (s_desc == null)
 		{
-			s_desc = new PropertyDescriptor[7];
+			s_desc = new PropertyDescriptor[10];
 			s_desc[0] = new PropertyDescriptor(IPropNames.ID, CLAZZ, "getIdentifier", "setIdentifier");
 			s_desc[1] = new PropertyDescriptor(IPropNames.NAME, CLAZZ, "getName", "setName");
 			s_desc[2] = new PropertyDescriptor(IPropNames.URL, CLAZZ, "getUrl", "setUrl");
@@ -50,6 +50,9 @@ public class SQLAliasBeanInfo extends SimpleBeanInfo
 			s_desc[6] = new IndexedPropertyDescriptor(IPropNames.DRIVER_PROPERTIES, CLAZZ,
 								"getDriverProperties", "setDriverProperties",
 								"getDriverProperty", "setDriverProperty");
+			s_desc[7] = new PropertyDescriptor(IPropNames.PASSWORD, CLAZZ, "getPassword", "setPassword");
+			s_desc[8] = new PropertyDescriptor(IPropNames.PASSWORD_SAVED, CLAZZ, "isPasswordSaved", "setPasswordSaved");
+			s_desc[9] = new PropertyDescriptor(IPropNames.AUTO_LOGON, CLAZZ, "isAutoLogon", "setAutoLogon");
 		}
 	}
 

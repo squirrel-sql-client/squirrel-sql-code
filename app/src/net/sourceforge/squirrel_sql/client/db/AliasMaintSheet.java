@@ -29,7 +29,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.sql.Driver;
 import java.sql.DriverPropertyInfo;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -44,6 +43,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -104,11 +104,14 @@ public class AliasMaintSheet extends BaseSheet
 	private interface i18n
 	{
 		String ADD = "Add Alias";
+		String AUTO_LOGON_CHK = "Auto logon";
 		String CHANGE = "Change Alias";
 		String DRIVER = "Driver:";
 		String NAME = "Name:";
+		String SAVE_PASSWORD = "Save password:";
 		String URL = "URL:";
 		String USER_NAME = "User Name:";
+		String WARNING = "Warning - Passwords are saved in clear text";
 	}
 
 	/** Logger for this class. */
@@ -144,6 +147,15 @@ public class AliasMaintSheet extends BaseSheet
 
 	/** User name text field */
 	private final JTextField _userName = new JTextField();
+
+	/** Save password checkbox*/
+	private final JCheckBox _savePasswordChk = new JCheckBox(i18n.SAVE_PASSWORD);
+
+	/** Password */
+	private final JPasswordField _password = new JPasswordField();
+
+	/** Autologon checkbox. */
+	private final JCheckBox _autoLogonChk = new JCheckBox(i18n.AUTO_LOGON_CHK);
 
 	/** If checked use the extended driver properties. */
 	private final JCheckBox _useDriverPropsChk = new JCheckBox("Use Driver Properties");
@@ -229,6 +241,21 @@ public class AliasMaintSheet extends BaseSheet
 		_driverPropsBtn.setEnabled(_sqlAlias.getUseDriverProperties());
 		_aliasName.setText(_sqlAlias.getName());
 		_userName.setText(_sqlAlias.getUserName());
+
+		if(_sqlAlias.isPasswordSaved())
+		{
+			_password.setText(_sqlAlias.getPassword());
+			_password.setEnabled(true);
+			_savePasswordChk.setSelected(true);
+		}
+		else
+		{
+			_password.setText(null);
+			_password.setEnabled(false);
+			_savePasswordChk.setSelected(false);
+		}
+
+		_autoLogonChk.setSelected(_sqlAlias.isAutoLogon());
 		_useDriverPropsChk.setSelected(_sqlAlias.getUseDriverProperties());
 
 		if (_maintType != IMaintenanceType.NEW)
@@ -289,6 +316,12 @@ public class AliasMaintSheet extends BaseSheet
 		alias.setDriverIdentifier(_drivers.getSelectedDriver().getIdentifier());
 		alias.setUrl(_url.getText().trim());
 		alias.setUserName(_userName.getText().trim());
+
+		StringBuffer buf = new StringBuffer();
+		buf.append(_password.getPassword());
+		alias.setPassword(buf.toString());
+
+		alias.setAutoLogon(_autoLogonChk.isSelected());
 		alias.setUseDriverProperties(_useDriverPropsChk.isSelected());
 		alias.setDriverProperties(_sqlDriverProps);
 	}
@@ -326,6 +359,28 @@ public class AliasMaintSheet extends BaseSheet
 		}
 	}
 
+	private void enablePasswordField(ItemEvent e)
+	{
+		try
+		{
+			if (e.getStateChange() == ItemEvent.SELECTED)
+			{
+				_password.setEnabled(true);
+				_sqlAlias.setPasswordSaved(true);
+			}
+			else
+			{
+				_password.setText(null);
+				_password.setEnabled(false);
+				_sqlAlias.setPasswordSaved(false);
+			}
+		}
+		catch (ValidationException ex)
+		{
+			_app.showErrorDialog(ex);
+		}
+	}
+
 	private void createUserInterface()
 	{
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -342,6 +397,16 @@ public class AliasMaintSheet extends BaseSheet
 		_aliasName.setColumns(COLUMN_COUNT);
 		_url.setColumns(COLUMN_COUNT);
 		_userName.setColumns(COLUMN_COUNT);
+		_password.setColumns(COLUMN_COUNT);
+		_password.setEnabled(false);
+
+		_savePasswordChk.addItemListener(new ItemListener()
+		{
+			public void itemStateChanged(ItemEvent evt)
+			{
+				enablePasswordField(evt);
+			}
+		});
 
 		// This seems to be necessary to get background colours
 		// correct. Without it labels added to the content pane
@@ -462,12 +527,28 @@ public class AliasMaintSheet extends BaseSheet
 		++gbc.gridx;
 		pnl.add(_userName, gbc);
 
-		JPanel propsPnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		gbc.gridx = 0;
+		++gbc.gridy;
+		pnl.add(_savePasswordChk, gbc);
+
+		++gbc.gridx;
+		pnl.add(_password, gbc);
+
+		gbc.gridx = 0;
+		++gbc.gridy;
+		pnl.add(_autoLogonChk, gbc);
+
+		JPanel propsPnl = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 		propsPnl.add(_useDriverPropsChk);
 		propsPnl.add(_driverPropsBtn);
 
-		++gbc.gridy;
+		gbc.gridwidth = gbc.REMAINDER;
+		++gbc.gridx;
 		pnl.add(propsPnl, gbc);
+
+		gbc.gridx = 0;
+		++gbc.gridy;
+		pnl.add(new JLabel(i18n.WARNING), gbc);
 
 		return pnl;
 	}

@@ -63,6 +63,18 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 	/** Name of user for connection. */
 	private String _userName;
 
+	/** Password of user for connection. */
+	private String _password;
+
+	/**
+	 * true if the user wants to have his password saved unencrypted.
+	 * This flag is necessary if there is an empty password (standard in MSSQL)
+	 */
+	private boolean _passwordSaved;
+
+	/** <TT>true</TT> if this alias should be logged on automatically. */
+	private boolean _autoLogon;
+
 	/** If <TT>true</TT> then use drver properties. */
 	private boolean _useDriverProperties = false;
 
@@ -93,6 +105,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 		_driverId = null;
 		_url = "";
 		_userName = "";
+		_password = "";
 	}
 
 	/**
@@ -112,6 +125,9 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 		setDriverIdentifier(rhs.getDriverIdentifier());
 		setUrl(rhs.getUrl());
 		setUserName(rhs.getUserName());
+		setPassword(rhs.getPassword());
+		setPasswordSaved(rhs.isPasswordSaved());
+		setAutoLogon(rhs.isAutoLogon());
 		setUseDriverProperties(rhs.getUseDriverProperties());
 		setDriverProperties(rhs.getDriverProperties());
 	}
@@ -219,6 +235,92 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 	public String getUserName()
 	{
 		return _userName;
+	}
+
+	/**
+	 * Retrieve the saved password.
+	 * 
+	 * @return		The saved password.
+	 */
+	public String getPassword()
+	{
+		return _password;
+	}
+
+	/**
+	 * Has a password been saved in this alias?
+	 * 
+	 * @return	<TT>true</TT> if a password has been saved
+	 * 			else <TT>false</TT>.
+	 */
+	public boolean isPasswordSaved()
+	{
+		return _passwordSaved;
+	}
+
+	/**
+	 * Set the password for this alias.
+	 * 
+	 * @param	password	The new password.
+	 * 
+	 * @throws	ValidationException
+	 * 			TODO: What conditions?
+	 */
+	public void setPassword(String password) throws ValidationException
+	{
+		String data = getString(password);
+		if (_password != data)
+		{
+			final String oldValue = _password;
+			_password = data;
+			_propChgReporter.firePropertyChange(ISQLAlias.IPropertyNames.PASSWORD,
+												oldValue, _password);
+		}
+	}
+
+	/**
+	 * Set whether a password has been saved for his alias.
+	 * 
+	 * @param	passwordSaved	<TT>true</TT> if password saved else <TT>false</TT>.
+	 * 
+	 * @throws	ValidationException
+	 * 			TODO: What conditions?
+	 */
+	public void setPasswordSaved(boolean passwordSaved) throws ValidationException
+	{
+		if (_passwordSaved != passwordSaved)
+		{
+			_passwordSaved = passwordSaved;
+			_propChgReporter.firePropertyChange(ISQLAlias.IPropertyNames.PASSWORD_SAVED,
+												!_passwordSaved, _passwordSaved);
+		}
+	}
+
+	/**
+	 * Should this alias be logged on automatically.
+	 * 
+	 * @return	<TT>true</TT> is this alias should be logged on automatically
+	 * 			else <TT>false</TT>.
+	 */
+	public boolean isAutoLogon()
+	{
+		return _autoLogon;
+	}
+
+	/**
+	 * Set whether this alias should be logged on automatically.
+	 * 
+	 * @param	value	<TT>true</TT> if alias should be autologged on
+	 * 					else <TT>false</TT..
+	 */
+	public void setAutoLogon(boolean value)
+	{
+		if (_autoLogon != value)
+		{
+			_autoLogon = value;
+			_propChgReporter.firePropertyChange(ISQLAlias.IPropertyNames.AUTO_LOGON,
+												!_autoLogon, _autoLogon);
+		}
 	}
 
 	/**
