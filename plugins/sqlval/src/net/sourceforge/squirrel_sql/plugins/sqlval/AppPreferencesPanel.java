@@ -135,7 +135,7 @@ class AppPreferencesPanel extends JPanel
 		setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
 
 		final GridBagConstraints gbc = new GridBagConstraints();
-		gbc.fill = gbc.BOTH;
+		gbc.fill = GridBagConstraints.BOTH;
 		gbc.insets = new Insets(1, 4, 1, 4);
 		gbc.weightx = 1;
 
@@ -193,11 +193,11 @@ class AppPreferencesPanel extends JPanel
 		gbc.gridy = 0;
 		gbc.gridwidth = 1;
 		gbc.gridheight = 2;
-		gbc.anchor = gbc.NORTHWEST;
+		gbc.anchor = GridBagConstraints.NORTHWEST;
 		pnl.add(_anonLogonChk, gbc);
 
-		gbc.fill = gbc.HORIZONTAL;
-		gbc.anchor = gbc.EAST;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.anchor = GridBagConstraints.EAST;
 		gbc.gridheight = 1;
 		gbc.weightx = 1;
 		++gbc.gridx;
@@ -206,7 +206,7 @@ class AppPreferencesPanel extends JPanel
 		++gbc.gridy;
 		pnl.add(new JLabel("Password:", JLabel.RIGHT), gbc);
 
-		gbc.fill = gbc.NONE;
+		gbc.fill = GridBagConstraints.NONE;
 		++gbc.gridx;
 		gbc.gridy = 0;
 		gbc.weightx = 0;
@@ -232,7 +232,7 @@ class AppPreferencesPanel extends JPanel
 
 		pnl.setLayout(new GridBagLayout());
 		final GridBagConstraints gbc = new GridBagConstraints();
-		gbc.fill = gbc.HORIZONTAL;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.insets = new Insets(2, 4, 2, 4);
 
 		gbc.gridx = 0;

@@ -102,7 +102,7 @@ class SessionSettingsPanel extends JPanel
 		setBorder(BorderFactory.createEmptyBorder(1, 4, 1, 4));
 
 		final GridBagConstraints gbc = new GridBagConstraints();
-		gbc.fill = gbc.HORIZONTAL;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.insets = new Insets(1, 4, 1, 4);
 		gbc.gridx = 0;
 		gbc.gridy = 0;
@@ -121,14 +121,14 @@ class SessionSettingsPanel extends JPanel
 
 		pnl.setLayout(new GridBagLayout());
 		final GridBagConstraints gbc = new GridBagConstraints();
-		gbc.fill = gbc.HORIZONTAL;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.insets = new Insets(2, 4, 2, 4);
 
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.gridwidth = 1;
 		gbc.gridheight = 1;
-		gbc.anchor = gbc.NORTHWEST;
+		gbc.anchor = GridBagConstraints.NORTHWEST;
 		pnl.add(_anonDBMSChk, gbc);
 
 		++gbc.gridy;
