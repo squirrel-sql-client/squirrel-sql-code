@@ -33,6 +33,8 @@ import java.util.List;
 import javax.swing.Box;
 import javax.swing.JCheckBox;
 import javax.swing.JInternalFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -44,6 +46,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.EventListenerList;
 import javax.swing.text.JTextComponent;
 
+import javax.swing.undo.UndoManager;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
@@ -54,7 +57,10 @@ import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 
+import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.session.action.RedoAction;
+import net.sourceforge.squirrel_sql.client.session.action.UndoAction;
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ResultTabEvent;
@@ -100,6 +106,8 @@ class SQLPanel extends JPanel {
 	private EventListenerList _listeners = new EventListenerList();
 	
 	private MouseAdapter _sqlEntryMouseListener = new MyMouseListener();
+	
+	private UndoManager _undoManager = new UndoManager();
 
 	/**
 	 * Ctor.
@@ -249,6 +257,24 @@ class SQLPanel extends JPanel {
 		pnl.addMouseListener(_sqlEntryMouseListener);
 		state.restoreState(pnl);
 		_sqlEntry = pnl;
+		
+		if(!_sqlEntry.hasOwnUndoableManager())
+		{
+			IApplication app = _session.getApplication();
+			Resources res = app.getResources();
+			UndoAction undo = new UndoAction(app,_undoManager);
+			RedoAction redo = new RedoAction(app,_undoManager);
+			
+			_textPopupMenu.addSeparator();
+			_textPopupMenu.add(undo);
+			_textPopupMenu.add(redo);
+			
+			// Whe should also register them as a action to the textarea or this panel!?
+			this.registerKeyboardAction(undo, res.getKeyStroke(undo), this.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+			this.registerKeyboardAction(redo, res.getKeyStroke(redo), this.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+			
+			_sqlEntry.addUndoableEditListener(_undoManager);
+		}
 	}
 
 	/**
