@@ -37,6 +37,7 @@ import net.sourceforge.squirrel_sql.plugins.jedit.textarea.TextAreaPainter;
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.Token;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.session.BaseSQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -60,10 +61,7 @@ class JeditSQLEntryPanel extends BaseSQLEntryPanel
 	/** Jedit preferences for the current session. */
 	private JeditPreferences _prefs;
 
-	JeditSQLEntryPanel(
-		ISession session,
-		JeditPlugin plugin,
-		JeditPreferences prefs)
+	JeditSQLEntryPanel(ISession session, JeditPlugin plugin, JeditPreferences prefs)
 	{
 		super();
 		if (session == null)
@@ -80,18 +78,14 @@ class JeditSQLEntryPanel extends BaseSQLEntryPanel
 		}
 
 		_app = session.getApplication();
-		_prefs =
-			(JeditPreferences) session.getPluginObject(
-				plugin,
-				JeditConstants.ISessionKeys.PREFS);
+		_prefs = (JeditPreferences)session.getPluginObject(plugin, JeditConstants.ISessionKeys.PREFS);
 		_jeditTextArea = new JEditTextArea(new JeditTextAreaDefaults(_prefs));
 		_jeditTextArea.setTokenMarker(
 			new JeditSQLTokenMarker(session.getSQLConnection()));
-		_jeditTextArea.setRightClickPopup(
-			_jeditPopup = new JeditPopupMenu(session, plugin, _jeditTextArea));
+		_jeditTextArea.setRightClickPopup(_jeditPopup = new JeditPopupMenu(session, plugin, _jeditTextArea));
 
-		Action action =
-			session.getApplication().getActionCollection().get(ExecuteSqlAction.class);
+		ActionCollection coll = session.getApplication().getActionCollection();
+		Action action = coll.get(ExecuteSqlAction.class);
 		if (action != null)
 		{
 			InputHandler ih = _jeditTextArea.getInputHandler();
@@ -152,8 +146,8 @@ class JeditSQLEntryPanel extends BaseSQLEntryPanel
 	public void setText(String text, boolean select)
 	{
 		_jeditTextArea.setText(text);
-		setSelectionStart(0);
 		setSelectionEnd(_jeditTextArea.getDocument().getLength());
+		setSelectionStart(0);
 	}
 
 	/**
@@ -192,8 +186,9 @@ class JeditSQLEntryPanel extends BaseSQLEntryPanel
 			doc.insertString(doc.getLength(), sqlScript, null);
 			if (select)
 			{
-				setSelectionStart(start);
 				setSelectionEnd(doc.getLength());
+				setSelectionStart(start);
+				_jeditTextArea.setCaretPosition(start);
 			}
 		}
 		catch (Exception ex)
@@ -220,9 +215,8 @@ class JeditSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void setTabSize(int tabSize)
 	{
-		_jeditTextArea.getDocument().putProperty(
-			PlainDocument.tabSizeAttribute,
-			new Integer(tabSize));
+		_jeditTextArea.getDocument().putProperty(PlainDocument.tabSizeAttribute,
+													new Integer(tabSize));
 	}
 
 	public void setFont(Font font)

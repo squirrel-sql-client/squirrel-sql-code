@@ -153,8 +153,9 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 		_comp.setText(sqlScript);
 		if (select)
 		{
-			setSelectionStart(0);
 			setSelectionEnd(getText().length());
+			setSelectionStart(0);
+			_comp.setCaretPosition(0);
 		}
 	}
 
@@ -191,8 +192,9 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 		_comp.append(sqlScript);
 		if (select)
 		{
-			setSelectionStart(start);
 			setSelectionEnd(getText().length());
+			setSelectionStart(start);
+			_comp.setCaretPosition(start);
 		}
 	}
 
