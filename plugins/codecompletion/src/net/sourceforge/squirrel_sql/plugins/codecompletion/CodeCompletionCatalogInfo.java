@@ -26,7 +26,7 @@ public class CodeCompletionCatalogInfo extends CodeCompletionInfo
       _catalog = catalog;
    }
 
-   public String getCompletionString()
+   public String getCompareString()
    {
       return _catalog;
    }

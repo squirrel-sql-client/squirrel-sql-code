@@ -28,7 +28,7 @@ public class CodeCompletionTypeInfo extends CodeCompletionInfo
       _typeName = typeName;
    }
 
-   public String getCompletionString()
+   public String getCompareString()
    {
       return _typeName;
    }

@@ -29,7 +29,7 @@ public class CodeCompletionTableAliasInfo extends CodeCompletionTableInfo
 		_aliasInfo = aliasInfo;
 	}
 
-	public String getCompletionString()
+	public String getCompareString()
 	{
 		return _aliasInfo.aliasName;
 	}

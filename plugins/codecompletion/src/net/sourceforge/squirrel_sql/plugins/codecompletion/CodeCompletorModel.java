@@ -141,54 +141,6 @@ public class CodeCompletorModel
 
          return (CodeCompletionInfo[]) ret.toArray(new CodeCompletionInfo[ret.size()]);
       }
-
-
-
-
-
-
-
-
-
-
-
-
-
-//      String tableNamePat = "";
-//      String colNamePat = null;
-//
-//      if(1 < buf.size())
-//      {
-//         tableNamePat = (String)buf.get(buf.size() - 2);
-//         colNamePat = (String)buf.get(buf.size() - 1);
-//      }
-//      else if( 1 == buf.size())
-//      {
-//         tableNamePat = (String)buf.get(0);
-//         if(beginning.endsWith("."))
-//         {
-//            colNamePat = "";
-//         }
-//      }
-//
-//      if(null == colNamePat)
-//      {
-//			Vector ret = new Vector();
-//
-//         ///////////////////////////////////////////////////////////////////////////////
-//         // The colums of the last completed table/view that match the tableNamePat
-//         // will be returned on top of the collection
-//			ret.addAll( Arrays.asList(getColumnsFromLastSelectionStartingWith(tableNamePat)) );
-//         //
-//         //////////////////////////////////////////////////////////////////////////////
-//
-//			ret.addAll( Arrays.asList(_codeCompletionInfos.getInfosStartingWith(tableNamePat)) );
-//			return (CodeCompletionInfo[])ret.toArray(new CodeCompletionInfo[0]);
-//      }
-//      else
-//      {
-//			return getColumnsForName(tableNamePat, colNamePat);
-//      }
    }
 
 	private CodeCompletionInfo[] getColumnsForName(String catalog, String schema, String name, String colNamePat)

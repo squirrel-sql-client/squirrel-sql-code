@@ -38,7 +38,7 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
       _tableType = tableType;
    }
 
-   public String getCompletionString()
+   public String getCompareString()
    {
       return _tableName;
    }

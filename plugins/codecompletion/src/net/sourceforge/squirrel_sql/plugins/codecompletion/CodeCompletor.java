@@ -180,7 +180,7 @@ public class CodeCompletor
 			if(1 == listModel.size())
 			{
 				CodeCompletionInfo info = (CodeCompletionInfo) listModel.getElementAt(0);
-				if(_currBegining.toUpperCase().startsWith(info.getCompletionString().toUpperCase()))
+				if(_currBegining.toUpperCase().startsWith(info.getCompareString().toUpperCase()))
 				{
 					closePopup();
 				}

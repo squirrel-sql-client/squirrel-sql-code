@@ -26,7 +26,7 @@ public class CodeCompletionSchemaInfo extends CodeCompletionInfo
       _schema = schema;
    }
 
-   public String getCompletionString()
+   public String getCompareString()
    {
       return _schema;
    }
