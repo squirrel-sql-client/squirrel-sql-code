@@ -41,15 +41,32 @@ import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-
+/**
+ * This panel allows the user to tailor SQL settings for a session.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
 public class SessionSQLPropertiesPanel
 	implements INewSessionPropertiesPanel, ISessionPropertiesPanel
 {
+	/** Application API. */
 	private IApplication _app;
+
+	/** Session properties object being maintained. */
 	private SessionProperties _props;
 
+	/** The actual GUI panel that allows user to do the maintenance. */
 	private SQLPropertiesPanel _myPanel;
 
+	/**
+	 * ctor specifying the Application API.
+	 *
+	 * @param	app		Application API.
+	 *
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <tt>null</tt> <tt>IApplication</tt>
+	 * 			passed.
+	 */
 	public SessionSQLPropertiesPanel(IApplication app) throws IllegalArgumentException
 	{
 		super();
@@ -60,6 +77,7 @@ public class SessionSQLPropertiesPanel
 		_app = app;
 		_myPanel = new SQLPropertiesPanel(app);
 	}
+
 
 	public void initialize(IApplication app)
 	{
@@ -114,8 +132,8 @@ public class SessionSQLPropertiesPanel
 			String COMMIT_ON_CLOSE = "Commit On Closing Session";
 			String NBR_BYTES = "Number of bytes to read:";
 			String NBR_CHARS = "Number of chars to read:";
-			String NBR_ROWS_CONTENTS = "Number of rows:";
-			String NBR_ROWS_SQL = "Number of rows:";
+//			String NBR_ROWS_CONTENTS = "Number of rows:";
+//			String NBR_ROWS_SQL = "Number of rows:";
 			String LIMIT_ROWS_CONTENTS = "Contents - Limit rows";
 			String LIMIT_ROWS_SQL = "SQL - Limit rows";
 			String LONGVARBINARY = "LongVarBinary";
@@ -272,12 +290,12 @@ public class SessionSQLPropertiesPanel
 
 		private JPanel createSQLPanel(IApplication app)
 		{
-			JPanel pnl = new JPanel(new GridBagLayout());
+			final JPanel pnl = new JPanel(new GridBagLayout());
 			pnl.setBorder(BorderFactory.createTitledBorder("SQL"));
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = gbc.HORIZONTAL;
 			gbc.insets = new Insets(0, 4, 0, 4);
-			gbc.anchor = gbc.WEST;
+			gbc.anchor = gbc.CENTER;
 
 			_autoCommitChk.addChangeListener(_controlMediator);
 			_contentsLimitRowsChk.addChangeListener(_controlMediator);
@@ -287,44 +305,51 @@ public class SessionSQLPropertiesPanel
 			_sqlNbrRowsToShowField.setColumns(5);
 			_stmtSepCharField.setColumns(1);
 
-			// First column.
 			gbc.gridx = 0;
 			gbc.gridy = 0;
+			gbc.gridwidth = 2;
 			pnl.add(_autoCommitChk, gbc);
-			++gbc.gridy;
-			gbc.gridwidth = 3;
-			pnl.add(_showRowCountChk, gbc);
-			gbc.gridwidth = 1;
-			++gbc.gridy;
-			pnl.add(_contentsLimitRowsChk, gbc);
-			++gbc.gridy;
-			pnl.add(_sqlLimitRowsChk, gbc);
 
-			++gbc.gridx;
-			gbc.gridy = 0;
-			gbc.gridwidth = 3;
+			gbc.gridx+=2;
+			gbc.gridwidth = gbc.REMAINDER;
 			pnl.add(_commitOnClose, gbc);
-			gbc.gridy+=2;
-			gbc.gridwidth = 1;
-			pnl.add(new RightLabel(SQLPropertiesPanelI18n.NBR_ROWS_CONTENTS), gbc);
-			++gbc.gridy;
-			pnl.add(new RightLabel(SQLPropertiesPanelI18n.NBR_ROWS_SQL), gbc);
-			++gbc.gridy;
-			pnl.add(new RightLabel(SQLPropertiesPanelI18n.STATEMENT_SEPARATOR), gbc);
-			++gbc.gridy;
-			pnl.add(new RightLabel(SQLPropertiesPanelI18n.SOL_COMENT), gbc);
 
-			++gbc.gridx;
-			gbc.gridy = 0;
-			++gbc.gridy;
-			++gbc.gridy;
-			gbc.gridwidth = 3;
+			++gbc.gridy; // new line
+			gbc.gridx = 0;
+			gbc.gridwidth = gbc.REMAINDER;
+			pnl.add(_showRowCountChk, gbc);
+
+			++gbc.gridy; // new line
+			gbc.gridx = 0;
+			gbc.gridwidth = 2;
+			pnl.add(_contentsLimitRowsChk, gbc);
+			gbc.gridwidth = 1;
+			gbc.gridx+=2;
 			pnl.add(_contentsNbrRowsToShowField, gbc);
-			++gbc.gridy;
+			++gbc.gridx;
+			gbc.gridwidth = gbc.REMAINDER;
+			pnl.add(new JLabel("rows"), gbc);
+
+			++gbc.gridy; // new line
+			gbc.gridx = 0;
+			gbc.gridwidth = 2;
+			pnl.add(_sqlLimitRowsChk, gbc);
+			gbc.gridwidth = 1;
+			gbc.gridx+=2;
 			pnl.add(_sqlNbrRowsToShowField, gbc);
-			++gbc.gridy;
+			++gbc.gridx;
+			gbc.gridwidth = gbc.REMAINDER;
+			pnl.add(new JLabel("rows"), gbc);
+
+			++gbc.gridy; // new line
+			gbc.gridx = 0;
+			gbc.gridwidth = 1;
+			pnl.add(new JLabel(SQLPropertiesPanelI18n.STATEMENT_SEPARATOR), gbc);
+			++gbc.gridx;
 			pnl.add(_stmtSepCharField, gbc);
-			++gbc.gridy;
+			++gbc.gridx;
+			pnl.add(new RightLabel(SQLPropertiesPanelI18n.SOL_COMENT), gbc);
+			++gbc.gridx;
 			pnl.add(_solCommentField, gbc);
 
 			return pnl;

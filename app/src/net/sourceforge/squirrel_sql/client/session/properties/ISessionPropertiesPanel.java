@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.properties;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -20,7 +20,20 @@ package net.sourceforge.squirrel_sql.client.session.properties;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.util.IOptionPanel;
-
-public interface ISessionPropertiesPanel extends IOptionPanel {
+/**
+ * This interface defines the behaviour expected of a Session Properties
+ * panel.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
+public interface ISessionPropertiesPanel extends IOptionPanel
+{
+	/**
+	 * Initialize panel for the specified sesion.
+	 *
+	 * @param	app			Application API.
+	 * @param	session		Session whose properties are being
+	 * 						maintained.
+	 */
 	void initialize(IApplication app, ISession session);
 }
