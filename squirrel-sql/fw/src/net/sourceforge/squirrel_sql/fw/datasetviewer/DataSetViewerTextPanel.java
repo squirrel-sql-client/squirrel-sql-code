@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -79,6 +79,12 @@ public class DataSetViewerTextPanel extends BaseDataSetViewerDestination
 
 	public void moveToTop() {
 		_outText.select(0, 0);
+	}
+
+	protected Object formatValue(Object object)
+	{
+		if(object != null) return object.toString();
+		return "<null>";
 	}
 
 	/*

@@ -96,6 +96,12 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		return _comp;
 	}
 
+	protected Object formatValue(Object object)
+	{
+		if(object != null) return object.toString();
+		return "<null>";
+	}
+
 	/*
 	 * @see BaseDataSetViewerDestination#addRow(Object[])
 	 */
@@ -291,8 +297,11 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 			}
 			else
 			{
-				// getRoot() doesn't appear to return the deepest Window, but the first one
-				// if you have a dialog owned by a window you get the dialog, not the window.
+				// getRoot() doesn't appear to return the deepest Window, but the
+				// first one. If you have a dialog owned by a window you get the
+				// dialog, not the window.
+				// TODO: Need to loop in the call to WindowForComponent
+				// in case there are multiple levels of windows.
 				Component parent = SwingUtilities.windowForComponent(comp);
 				pt = SwingUtilities.convertPoint((Component) evt.getSource(), pt, parent != null ? parent : comp);
 			}
