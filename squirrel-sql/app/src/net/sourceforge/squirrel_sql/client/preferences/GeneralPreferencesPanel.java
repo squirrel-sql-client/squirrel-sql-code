@@ -17,217 +17,142 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Component;
-//import java.awt.event.ActionEvent;
-//import java.awt.event.ActionListener;
-//import java.io.File;
 
+import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
-//import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-//import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
 
-import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
+import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 
-class GeneralPreferencesPanel /*extends JPanel*/ implements IGlobalPreferencesPanel {
-    /**
-     * This interface defines locale specific strings. This should be
-     * replaced with a property file.
-     */
-//  private interface i18n {
-//      String LOOK_AND_FEEL = "Look and Feel:";
-//      String SHOW_CONTENTS = "Show Window Contents While Dragging:";
-//      String SHOW_TOOLTIPS = "Show Tooltips:";
-//      String THEME_PACK = "Theme Pack:";
-//      String LAF_WARNING = "Note: Changes to the Look and Feel or to the \nTheme Pack will require a restart of Squirrel-SQL.";
-//      String TAB_HINT = "General";
-//      String TAB_TITLE = "General";
-//  }
+class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
+	private MyPanel _myPanel = new MyPanel();
 
-    private MyPanel _myPanel = new MyPanel();
+	private IApplication _app;
 
-    private IApplication _app;
 
-//  private JCheckBox _showContents = new JCheckBox();
-//  private JCheckBox _showToolTips = new JCheckBox();
-//  private LookAndFeelComboBox _lafCmb = new LookAndFeelComboBox();
-//  private ThemePackComboBox _themePackCmb = new ThemePackComboBox();
+	public GeneralPreferencesPanel() {
+		super();
+	}
 
-//  private String _skinLafName;
+	public void initialize(IApplication app)
+			throws IllegalArgumentException {
+		if (app == null) {
+			throw new IllegalArgumentException("Null IApplication passed");
+		}
 
-    public GeneralPreferencesPanel(/*IApplication app, SquirrelPreferences prefs*/)
-            /*throws IllegalArgumentException*/ {
-        super();
-//      if (app == null) {
-//          throw new IllegalArgumentException("Null IApplication passed");
-//      }
-//      if (prefs == null) {
-//          throw new IllegalArgumentException("Null SquirrelPreferences passed");
-//      }
+		_app = app;
 
-//      _app = app;
-//      _prefs = prefs;
+		_myPanel.loadData(_app.getSquirrelPreferences());
+	}
 
-//      _skinLafName = _app.getLookAndFeelRegister().getSkinnableLookAndFeelName();
+	public Component getPanelComponent() {
+		return _myPanel;
+	}
 
-//      createUserInterface();
-//      loadData();
-    }
+	public void applyChanges() {
+		_myPanel.applyChanges(_app.getSquirrelPreferences());
+	}
 
-    public void initialize(IApplication app)
-            throws IllegalArgumentException {
-        if (app == null) {
-            throw new IllegalArgumentException("Null IApplication passed");
-        }
+	public String getTitle() {
+		return MyPanel.i18n.TAB_TITLE;
+	}
 
-        _app = app;
+	public String getHint() {
+		return MyPanel.i18n.TAB_HINT;
+	}
 
-//      createUserInterface();
-        _myPanel.loadData(_app.getSquirrelPreferences());
-//      loadData();
-    }
+	private static final class MyPanel extends JPanel {
+		/**
+		 * This interface defines locale specific strings. This should be
+		 * replaced with a property file.
+		 */
+		interface i18n {
+			String LOGIN_TIMEOUT = "Login Timeout (Seconds):";
+			String SHOW_CONTENTS = "Show Window Contents While Dragging";
+			String SHOW_TOOLTIPS = "Show Tooltips";
+			String TAB_HINT = "General";
+			String TAB_TITLE = "General";
+		}
 
-    public Component getPanelComponent() {
-        return _myPanel;
-    }
+		private JCheckBox _showContents = new JCheckBox(i18n.SHOW_CONTENTS);
+		private JCheckBox _showToolTips = new JCheckBox(i18n.SHOW_TOOLTIPS);
+		private IntegerField _loginTimeout = new IntegerField();
 
-    //public void setPreferences(SquirrelPreferences value) {
-    //  _prefs = value;
-    //}
+		MyPanel() {
+			super();
+			createUserInterface();
+		}
 
-//  private void loadData() {
-//      _showContents.setSelected(_prefs.getShowContentsWhenDragging());
-//      _showToolTips.setSelected(_prefs.getShowToolTips());
-//      _themePackCmb.setSelectedItem(_prefs.getThemePack());
-//      _themePackCmb.setEnabled(((String)_lafCmb.getSelectedItem()).equals(_skinLafName));
-//  }
+		void loadData(SquirrelPreferences prefs) {
+			_showContents.setSelected(prefs.getShowContentsWhenDragging());
+			_showToolTips.setSelected(prefs.getShowToolTips());
+			_loginTimeout.setInt(prefs.getLoginTimeout());
+		}
 
-    public void applyChanges() {
-        _myPanel.applyChanges(_app.getSquirrelPreferences());
-//      _prefs.setShowContentsWhenDragging(_showContents.isSelected());
-//      _prefs.setShowToolTips(_showToolTips.isSelected());
-//      String className = _lafCmb.getSelectedLookAndFeel().getClassName();
-//      _prefs.setLookAndFeelClassName(_lafCmb.getSelectedLookAndFeel().getClassName());
-//      _prefs.setThemePack((String)_themePackCmb.getSelectedItem());
-    }
+		void applyChanges(SquirrelPreferences prefs) {
+			prefs.setShowContentsWhenDragging(_showContents.isSelected());
+			prefs.setShowToolTips(_showToolTips.isSelected());
+			prefs.setLoginTimeout(_loginTimeout.getInt());
+		}
 
-    public String getTitle() {
-        return MyPanel.i18n.TAB_TITLE;
-    }
+		private void createUserInterface() {
+			_loginTimeout.setColumns(4);
 
-    public String getHint() {
-        return MyPanel.i18n.TAB_HINT;
-    }
+			setLayout(new GridBagLayout());
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.anchor = gbc.WEST;
+			gbc.fill = gbc.HORIZONTAL;
+			gbc.insets = new Insets(4, 4, 4, 4);
 
-//  private void createUserInterface() {
-//      setLayout(new BorderLayout());
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			add(createAppearancePanel(), gbc);
+			++gbc.gridy;
+			add(createSQLPanel(), gbc);
+		}
 
-        // Centre panel is the properties panel.
-//      PropertyPanel pnl = new PropertyPanel();
-//      _themePackCmb.setEnabled(false);
-//      JLabel lbl = new JLabel(i18n.SHOW_CONTENTS, SwingConstants.RIGHT);
-//      pnl.add(lbl, _showContents);
-//      lbl = new JLabel(i18n.SHOW_TOOLTIPS, SwingConstants.RIGHT);
-//      pnl.add(lbl, _showToolTips);
-//      lbl = new JLabel(i18n.LOOK_AND_FEEL, SwingConstants.RIGHT);
-//      pnl.add(lbl, _lafCmb);
-//      lbl = new JLabel(i18n.THEME_PACK, SwingConstants.RIGHT);
-//      pnl.add(lbl, _themePackCmb);
-//      _lafCmb.addActionListener(new ActionListener() {
-//          public void actionPerformed(ActionEvent evt) {
-//              _themePackCmb.setEnabled(((String)_lafCmb.getSelectedItem()).equals(_skinLafName));
-//          }
-//      });
-//      add(pnl, BorderLayout.CENTER);
+		private JPanel createAppearancePanel() {
+			JPanel pnl = new JPanel();
+			pnl.setBorder(BorderFactory.createTitledBorder("Appearance"));
+			
+			pnl.setLayout(new GridBagLayout());
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = gbc.HORIZONTAL;
+			gbc.insets = new Insets(4, 4, 4, 4);
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			pnl.add(_showContents, gbc);
+			++gbc.gridy;
+			pnl.add(_showToolTips, gbc);
+			
+			return pnl;
+		}
 
-        // Warning message in bottom panel.
-//      JTextArea ta = new JTextArea(i18n.LAF_WARNING);
-//      ta.setBackground(getBackground());
-//      ta.setEditable(false);
-//      ta.setFont(lbl.getFont());
-//      add(ta, BorderLayout.SOUTH);
-//  }
+		private JPanel createSQLPanel() {
+			JPanel pnl = new JPanel();
+			pnl.setBorder(BorderFactory.createTitledBorder("SQL"));
+			
+			pnl.setLayout(new GridBagLayout());
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = gbc.HORIZONTAL;
+			gbc.insets = new Insets(4, 4, 4, 4);
 
-/*
-    private class ThemePackComboBox extends JComboBox {
-        ThemePackComboBox() {
-            super();
-            loadSkins();
-        }
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			pnl.add(new JLabel(i18n.LOGIN_TIMEOUT), gbc);
 
-        private void loadSkins() {
-            File skinsFolder = new File(ApplicationFiles.SQUIRREL_SKINS_FOLDER);
-            if (skinsFolder.canRead()) {
-                File[] files = skinsFolder.listFiles(new FileExtensionFilter("JAR files", new String[] {".jar", ".zip"}));
-                for (int i = 0; i < files.length; ++i) {
-                    addItem(files[i].getName());
-                }
-            }
-        }
-    }
-*/
-    private static final class MyPanel extends JPanel {
-        /**
-         * This interface defines locale specific strings. This should be
-         * replaced with a property file.
-         */
-        interface i18n {
-    //      String LOOK_AND_FEEL = "Look and Feel:";
-            String SHOW_CONTENTS = "Show Window Contents While Dragging:";
-            String SHOW_TOOLTIPS = "Show Tooltips:";
-    //      String THEME_PACK = "Theme Pack:";
-    //      String LAF_WARNING = "Note: Changes to the Look and Feel or to the \nTheme Pack will require a restart of Squirrel-SQL.";
-            String TAB_HINT = "General";
-            String TAB_TITLE = "General";
-        }
-
-        private JCheckBox _showContents = new JCheckBox();
-        private JCheckBox _showToolTips = new JCheckBox();
-
-        MyPanel() {
-            super();
-            createUserInterface();
-        }
-
-        void loadData(SquirrelPreferences prefs) {
-            _showContents.setSelected(prefs.getShowContentsWhenDragging());
-            _showToolTips.setSelected(prefs.getShowToolTips());
-    //      _themePackCmb.setSelectedItem(_prefs.getThemePack());
-    //      _themePackCmb.setEnabled(((String)_lafCmb.getSelectedItem()).equals(_skinLafName));
-        }
-
-        void applyChanges(SquirrelPreferences prefs) {
-            prefs.setShowContentsWhenDragging(_showContents.isSelected());
-            prefs.setShowToolTips(_showToolTips.isSelected());
-    //      String className = _lafCmb.getSelectedLookAndFeel().getClassName();
-    //      _prefs.setLookAndFeelClassName(_lafCmb.getSelectedLookAndFeel().getClassName());
-    //      _prefs.setThemePack((String)_themePackCmb.getSelectedItem());
-        }
-
-        private void createUserInterface() {
-            setLayout(new BorderLayout());
-            PropertyPanel pnl = new PropertyPanel();
-    //      _themePackCmb.setEnabled(false);
-            JLabel lbl = new JLabel(i18n.SHOW_CONTENTS, SwingConstants.RIGHT);
-            pnl.add(lbl, _showContents);
-            lbl = new JLabel(i18n.SHOW_TOOLTIPS, SwingConstants.RIGHT);
-            pnl.add(lbl, _showToolTips);
-    //      lbl = new JLabel(i18n.LOOK_AND_FEEL, SwingConstants.RIGHT);
-    //      pnl.add(lbl, _lafCmb);
-    //      lbl = new JLabel(i18n.THEME_PACK, SwingConstants.RIGHT);
-    //      pnl.add(lbl, _themePackCmb);
-    //      _lafCmb.addActionListener(new ActionListener() {
-    //          public void actionPerformed(ActionEvent evt) {
-    //              _themePackCmb.setEnabled(((String)_lafCmb.getSelectedItem()).equals(_skinLafName));
-    //          }
-    //      });
-            add(pnl, BorderLayout.CENTER);
-        }
-    }
+			++gbc.gridx;
+			pnl.add(_loginTimeout, gbc);
+			
+			return pnl;
+		}
+	}
 }

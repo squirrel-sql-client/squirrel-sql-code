@@ -78,7 +78,7 @@ public class GlobalPreferencesDialog extends JDialog {
     }
 
     /**
-     * OK button pressed. Edit data and if ok save and then close dialog.
+     * OK button pressed so save changes.
      */
     private void performOk() {
         for (Iterator it = _panels.iterator(); it.hasNext();) {
@@ -94,7 +94,7 @@ public class GlobalPreferencesDialog extends JDialog {
 
         // Add panels for core Squirrel functionality.
         _panels.add(new GeneralPreferencesPanel());
-        _panels.add(new GlobalSQLPreferencesPanel());
+        _panels.add(new LoggingPreferencesPanel());
         _panels.add(new SQLPropertiesPanel(i18n.NEW_SESSION_SQL, i18n.NEW_SESSION_SQL));
         _panels.add(new OutputPropertiesPanel(i18n.NEW_SESSION_OUTPUT, i18n.NEW_SESSION_OUTPUT));
 
