@@ -619,6 +619,76 @@ public class SQLConnection {
 			throws NoConnectionException, BaseSQLException, DataSetException {
 		return new MetaDataDataSet(getMetaData(), msgHandler);
 	}
+	
+	public MetaDataListDataSet createNumericFunctionsDataSet(IMessageHandler msgHandler)
+			throws NoConnectionException, BaseSQLException, DataSetException {
+		DatabaseMetaData md = getMetaData();
+		String functionList = null;
+		if (md != null) {
+			try {
+				functionList = md.getNumericFunctions();
+			} catch (SQLException e) {
+				throw new BaseSQLException(e);
+			}
+		}
+		return new MetaDataListDataSet(functionList, msgHandler);
+	}
+
+	public MetaDataListDataSet createStringFunctionsDataSet(IMessageHandler msgHandler)
+			throws NoConnectionException, BaseSQLException, DataSetException {
+		DatabaseMetaData md = getMetaData();
+		String functionList = null;
+		if (md != null) {
+			try {
+				functionList = md.getStringFunctions();
+			} catch (SQLException e) {
+				throw new BaseSQLException(e);
+			}
+		}
+		return new MetaDataListDataSet(functionList, msgHandler);
+	}
+
+	public MetaDataListDataSet createSystemFunctionsDataSet(IMessageHandler msgHandler)
+			throws NoConnectionException, BaseSQLException, DataSetException {
+		DatabaseMetaData md = getMetaData();
+		String functionList = null;
+		if (md != null) {
+			try {
+				functionList = md.getSystemFunctions();
+			} catch (SQLException e) {
+				throw new BaseSQLException(e);
+			}
+		}
+		return new MetaDataListDataSet(functionList, msgHandler);
+	}
+
+	public MetaDataListDataSet createDateTimeFunctionsDataSet(IMessageHandler msgHandler)
+			throws NoConnectionException, BaseSQLException, DataSetException {
+		DatabaseMetaData md = getMetaData();
+		String functionList = null;
+		if (md != null) {
+			try {
+				functionList = md.getTimeDateFunctions();
+			} catch (SQLException e) {
+				throw new BaseSQLException(e);
+			}
+		}
+		return new MetaDataListDataSet(functionList, msgHandler);
+	}
+
+	public MetaDataListDataSet createSQLKeywordsDataSet(IMessageHandler msgHandler)
+			throws NoConnectionException, BaseSQLException, DataSetException {
+		DatabaseMetaData md = getMetaData();
+		String keywordList = null;
+		if (md != null) {
+			try {
+				keywordList = md.getSQLKeywords();
+			} catch (SQLException e) {
+				throw new BaseSQLException(e);
+			}
+		}
+		return new MetaDataListDataSet(keywordList, msgHandler);
+	}
 
 	public DatabaseMetaData getMetaData()
 			throws NoConnectionException {

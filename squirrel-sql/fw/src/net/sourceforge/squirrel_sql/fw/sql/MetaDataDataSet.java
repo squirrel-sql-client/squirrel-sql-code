@@ -47,6 +47,11 @@ public class MetaDataDataSet implements IDataSet {
 		s_ignoreMethods.put("fail", null);
 		s_ignoreMethods.put("hashCode", null);
 		s_ignoreMethods.put("toString", null);
+		s_ignoreMethods.put("getNumericFunctions", null);
+		s_ignoreMethods.put("getStringFunctions", null);
+		s_ignoreMethods.put("getSystemFunctions", null);
+		s_ignoreMethods.put("getTimeDateFunctions", null);
+		s_ignoreMethods.put("getSQLKeywords", null);
 	}
 
 	private interface i18n {
