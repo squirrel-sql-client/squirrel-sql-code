@@ -604,6 +604,8 @@ public class ContentsTab extends BaseTableTab
 
 	/**
 	 * helper function to create a WHERE clause to search the DB for matching rows.
+	 * If the col number is < 0, then the colValue is ignored
+	 * and the WHERE clause is constructed using only the values[].
 	 */
 	private String getWhereClause(
 		Object[] values,
@@ -691,11 +693,46 @@ public class ContentsTab extends BaseTableTab
 		// for each row in table, do delete and add to number of rows deleted from DB
 		for (int i = 0; i < rowData.length; i++) {
 			// get WHERE clause for the selected row
-//???
-//System.out.println("DB delete of row starting: "+rowData[i][0]+" "+rowData[i][1]);
+			// the -1 says to just use the contents of the values without
+			// any substitutions
+			String whereClause = getWhereClause(rowData[i], colDefs, -1, null);
 
 			// try to delete
-//???
+			try {
+				// do the delete and add the number of rows deleted to the count
+				Statement stmt = conn.createStatement();
+
+				deletedRowCount += stmt.executeUpdate("DELETE FROM " +
+					getTableInfo().getSimpleName()+whereClause);
+			}
+			catch (Exception e) {
+				// some kind of problem - rollback!
+				try {
+					conn.rollback();
+				}
+				catch (SQLException e1) {
+					return "Delete failed with exception: " + e +
+						"\nRollback of deletes failed with exception: " + e1 +
+						"\nDatabase is in an unknown state and may be corrupted.";
+				}
+
+				// restore the original transaction mode if necessary
+				if (autoCommitWasOn) {
+					try {
+						conn.setAutoCommit(true);
+					}
+					catch (SQLException e1) {
+						return "Delete failed with exception: " + e +
+							"The rows have not been deleted from the database,"+
+							"\nbut trying to turn autocommit back on failed." +
+							"Your connection now does not autocommit your changes";
+					}
+				}
+
+				// tell user no data deleted from DB
+				return "Delete failed with exception:\n" + e;	
+			}
+					
 		}
 
 		// check that the number of rows actually deleted
@@ -781,9 +818,9 @@ public class ContentsTab extends BaseTableTab
 
 
 // temp code - do not allow delete for the time being
-return "Delete function has not been implemented yet.  It should be here any day now.";
+//return "Delete function has not been implemented yet.  It should be here any day now.";
 
-//		return null;	// hear no evil, see no evil
+		return null;	// hear no evil, see no evil
 	}
 
 }
