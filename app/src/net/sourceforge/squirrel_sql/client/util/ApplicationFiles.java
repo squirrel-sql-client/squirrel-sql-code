@@ -124,7 +124,7 @@ public class ApplicationFiles
 	{
 		return new File(_userSettingsDir + File.separator + "prefs.xml");
 	}
-	
+
 	/**
 	 * @return file that contains the selections user chose for Cell import/export.
 	 */
@@ -132,6 +132,16 @@ public class ApplicationFiles
 	{
 		return new File(_userSettingsDir + File.separator + "cellImportExport.xml");
 	}
+	
+	/**
+	 * @return file that contains the selections user chose for specific columns to use
+	 * in the WHERE clause when editing a cell in a DB table.
+	 */
+	public File getEditWhereColsFile()
+	{
+		return new File(_userSettingsDir + File.separator + "editWhereCols.xml");
+	}
+	
 
 	/**
 	 * @return file to log execution information to.
