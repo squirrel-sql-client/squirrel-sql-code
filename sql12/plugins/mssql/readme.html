@@ -64,6 +64,14 @@ to email me with feature requests.
 			<dd>Performs a <font face="Courier, Courier New">DBCC SHRINKDATABASE</font> on the selected database(s).</dd>
 			<dt>Truncate Log</dt>
 			<dd>Performs a <font face="Courier, Courier New">BACKUP LOG ... WITH TRUNCATE_ONLY</font> on the selected database(s).</dd>
+            <dt>Shrink Database File</dt>
+            <dd>
+                Produces a dynamically-generated submenu containing a menu item for each data/log file in the database, along with its size.  
+                A separator bar divides the data files from the log files.
+				Performs a <font face="Courier, Courier New">DBCC SHRINKFILE</font> on the selected file.
+                <br>
+                <i>WARNING: Shrinking a log file will truncate it!</i>
+			</dd>
 		</dl>
 	</li>
 	<li>
@@ -78,12 +86,12 @@ to email me with feature requests.
 			<dt>Show Statistics</dt>
 			<dd>
 				Produces a dynamically-generated submenu containing a menu item for each index on the table.  
-				Performs a <font face="Courier, Courier New">DBCC SHOW_STATISTICS</font> on the selected index(es).
-			</dl>
+				Performs a <font face="Courier, Courier New">DBCC SHOW_STATISTICS</font> on the selected index.
+			</dd>
 			<dt>Defragment Index</dt>
 			<dd>
-				Produces a dynamically-generated submenu containing a menu item for each index on the table.  
-				Performs a <font face="Courier, Courier New">DBCC INDEXDEFRAG</font> on the selected index(es).
+				Produces a dynamically-generated submenu containing a menu item for each index on the table.
+				Performs a <font face="Courier, Courier New">DBCC INDEXDEFRAG</font> on the selected index.
 			</dd>
 		</dl>
 	</li>
