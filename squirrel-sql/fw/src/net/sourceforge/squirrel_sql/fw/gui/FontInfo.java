@@ -43,6 +43,9 @@ public class FontInfo {
 
 	public FontInfo(FontInfo rhs) {
 		super();
+		if (rhs == null) {
+			throw new IllegalArgumentException("Null FontInfo passed");
+		}
 		setFamily(rhs.getFamily());
 		setIsBold(rhs.isBold());
 		setIsItalic(rhs.isItalic());
@@ -51,6 +54,9 @@ public class FontInfo {
 
 	public FontInfo(Font font) {
 		super();
+		if (font == null) {
+			throw new IllegalArgumentException("Null Font passed");
+		}
 		setFont(font);
 	}
 

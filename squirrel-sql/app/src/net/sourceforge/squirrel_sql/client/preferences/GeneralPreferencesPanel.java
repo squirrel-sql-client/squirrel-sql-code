@@ -202,14 +202,16 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 			gbc.gridy = 0;
 			pnl.add(new RightLabel("Execution Log File:"), gbc);
 
-			++gbc.gridx;
-			pnl.add(_executionLogFileNameLbl, gbc);
-
-			gbc.gridx = 0;
 			++gbc.gridy;
 			pnl.add(new RightLabel("Configuration File:"), gbc);
 
+			gbc.weightx = 1.0;
+
+			gbc.gridy = 0;
 			++gbc.gridx;
+			pnl.add(_executionLogFileNameLbl, gbc);
+
+			++gbc.gridy;
 			pnl.add(_logConfigFileNameLbl, gbc);
 
 			return pnl;
