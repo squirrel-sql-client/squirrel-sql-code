@@ -29,10 +29,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class EditWhereCols {
-	/**
-	 * The singleton instance of this object
-	 */
-	private static EditWhereCols singleton = null;
+
 	
 	/**
 	 * The version of the data suitible for loading/unloading from/to files.
@@ -41,51 +38,39 @@ public class EditWhereCols {
 	 * so rather than trying to handle that there, we just convert the data internally into a form
 	 * that those classes can handle, i.e. an array of strings.
 	 * Each string consists of the name of the table, a space, then a comma-separated list of
-	 * all of the columns that SHOULD be used in the WHERE clause when doing editing operations.
+	 * all of the columns that SHOULD be used in the WHERE clause when doing editing
+	 * operations.
+	 * This is used in an instance of this class created during load/unload.
 	 */
 	private String[] dataArray = new String[0];
 	
 	/**
 	 * The mapping from table name to object (also a HashMap)
 	 * containing the list of names of columns to use in WHERE clause.
+	 * There is only one copy of this table for all instances of this class.
 	 */
-	private HashMap tables = new HashMap();
+	private static HashMap _tables = new HashMap();
 	
 	/**
-	 * Singleton - do not allow external objects to create instances of this
+	 * ctor
 	 */
-	private EditWhereCols() {}
+	public EditWhereCols() {}
 	
+
 	/**
-	 * let external objects get a copy of this singleton,
-	 * creating the instance the first time it is accessed.
-	 */
-	static public EditWhereCols getInstance() {
-		if (singleton == null)
-			singleton = new EditWhereCols();
-		return singleton;
-	}
-	
-	/**
-	 * get the data from the instance
-	 */
-	public HashMap getTables() {
-		return tables;
-	}
-	
-	/**
-	 * get data in form that can be used to output to file
+	 * get data in form that can be used to output to file.
+	 * This is called from an instance of this class.
 	 */
 	public String[] getDataArray() {
 		// first convert internal data into the string array
-		dataArray = new String[tables.size()];
-		Iterator keys = tables.keySet().iterator();
+		dataArray = new String[_tables.size()];
+		Iterator keys = _tables.keySet().iterator();
 		int index = 0;
 		
 		// get each table's info
 		while (keys.hasNext()) {
 			String tableName = (String)keys.next();
-			HashMap h = (HashMap)tables.get(tableName);
+			HashMap h = (HashMap)_tables.get(tableName);
 			Iterator columnNames = h.keySet().iterator();
 			String outData = tableName + " ";
 			while (columnNames.hasNext()) {
@@ -105,10 +90,11 @@ public class EditWhereCols {
 	/**
 	 * Data in the external form (array of strings) is passed in and must be converted
 	 * to the internal form.
+	 * This is called on an instance of this class.
 	 * @param inData array of strings in form "tableName col,col,col..."
 	 */
 	public void setDataArray(String[] inData) {
-		tables = new HashMap();	// make sure we are starting clean
+		_tables = new HashMap();	// make sure we are starting clean
 		
 		// convert each string into key+HashMap and fill it into the data
 		for (int i=0; i< inData.length; i++) {
@@ -127,6 +113,15 @@ public class EditWhereCols {
 				}
 				colList.add(inData[i].substring(startIndex, endIndex));
 			}
+			
+			// create a hashmap containing the column names.
+			// by convention, the value and key is the same for each column name
+			HashMap h = new HashMap(colList.size());
+			for (int j=0; j<colList.size(); j++)
+				h.put(colList.get(j), colList.get(j));
+				
+			// put the map into the tables db with the table name as the key
+			_tables.put(tableName, h);
 		}
 	}
 
@@ -134,11 +129,11 @@ public class EditWhereCols {
 	 * add or replace a table-name/hashmap-of-column-names mapping.
 	 * If map is null, remove the entry from the tables.
 	 */
-	public void put(String tableName, HashMap colNames) {
+	public static void put(String tableName, HashMap colNames) {
 		if (colNames == null)
-			tables.remove(tableName);
+			_tables.remove(tableName);
 		else 
-			tables.put(tableName, colNames);
+			_tables.put(tableName, colNames);
 		return;
 	}
 	
@@ -146,7 +141,7 @@ public class EditWhereCols {
 	 * get the HashMap of column names for the given table name.
 	 * it will be null if the table does not have any limitation on the columns to use.
 	 */
-	public HashMap get(String tableName) {
-		return (HashMap)tables.get(tableName);
+	public static HashMap get(String tableName) {
+		return (HashMap)_tables.get(tableName);
 	}
 }
