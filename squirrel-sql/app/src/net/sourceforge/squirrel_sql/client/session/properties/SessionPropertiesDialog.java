@@ -99,7 +99,7 @@ public class SessionPropertiesDialog extends JDialog {
         for (int i = 0; i < plugins.length; ++i) {
             SessionPluginInfo spi = plugins[i];
             if (spi.isLoaded()) {
-                ISessionPropertiesPanel[] pnls = spi.getSessionPlugin().getSessionPropertiesPanels();
+                ISessionPropertiesPanel[] pnls = spi.getSessionPlugin().getSessionPropertiesPanels(_session);
                 if (pnls != null && pnls.length > 0) {
                     for (int pnlIdx = 0; pnlIdx < pnls.length; ++pnlIdx) {
                         _panels.add(pnls[pnlIdx]);
