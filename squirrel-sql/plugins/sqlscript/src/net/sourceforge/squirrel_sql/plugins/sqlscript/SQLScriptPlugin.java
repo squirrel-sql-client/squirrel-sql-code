@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import javax.swing.Action;
+import javax.swing.JMenu;
 
 import net.sourceforge.squirrel_sql.fw.util.Logger;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
@@ -39,11 +40,17 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 import net.sourceforge.squirrel_sql.plugins.sqlscript.session_script.SessionScriptCache;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptAction;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTableScriptAction;
 
 /**
  * The SQL Script plugin class.
  */
 public class SQLScriptPlugin extends DefaultSessionPlugin {
+    private interface IMenuResourceKeys {
+        String SCRIPTS = "scripts";
+    }
+
     /** Plugin preferences. */
     private SQLScriptPreferences _prefs;
 
@@ -53,7 +60,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
     /** Folder to store user settings in. */
     private File _userSettingsFolder;
 
-	/** Cache of session scripts. */
+    /** Cache of session scripts. */
     private SessionScriptCache _cache;
 
     private PluginResources _resources;
@@ -91,7 +98,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
      * @return  the authors name.
      */
     public String getAuthor() {
-        return "Johan Compagner/Colin Bell";
+        return "Johan Compagner, Colin Bell";
     }
 
     /**
@@ -100,9 +107,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
      * @return  Preferences panel.
      */
     public IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
-        return new IGlobalPreferencesPanel[] {
-            new SQLScriptPreferencesPanel(_prefs)
-        };
+        return new IGlobalPreferencesPanel[] { new SQLScriptPreferencesPanel(_prefs)};
     }
 
     /**
@@ -128,19 +133,20 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
             throw new PluginException(ex);
         }
 
-        _resources = new SQLPluginResources("net.sourceforge.squirrel_sql.plugins.sqlscript.sqlplugin", this);
+        _resources =
+            new SQLPluginResources(
+                "net.sourceforge.squirrel_sql.plugins.sqlscript.sqlscript",
+                this);
 
         // Load plugin preferences.
         loadPrefs();
 
         ActionCollection coll = app.getActionCollection();
-
-        Action action = new SaveScriptAction(app, _resources, this);
-        coll.add(action);
-        app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, action);
-        action = new LoadScriptAction(app, _resources, this);
-        coll.add(action);
-        app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, action);
+        coll.add(new SaveScriptAction(app, _resources, this));
+        coll.add(new LoadScriptAction(app, _resources, this));
+        coll.add(new CreateTableScriptAction(app, _resources));
+        coll.add(new CreateDataScriptAction(app, _resources));
+        createMenu();
 
         try {
             _cache = new SessionScriptCache(this);
@@ -156,7 +162,9 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
      */
     public void unload() {
         savePrefs();
-        _cache.save();
+        if (_cache != null) {
+            _cache.save();
+        }
         super.unload();
     }
 
@@ -179,17 +187,22 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
     void loadPrefs() {
         try {
             XMLBeanReader doc = new XMLBeanReader();
-            doc.load(new File(_userSettingsFolder, SQLScriptConstants.USER_PREFS_FILE_NAME), getClass().getClassLoader());
+            doc.load(
+                new File(_userSettingsFolder, SQLScriptConstants.USER_PREFS_FILE_NAME),
+                getClass().getClassLoader());
             Iterator it = doc.iterator();
             if (it.hasNext()) {
-                _prefs = (SQLScriptPreferences)it.next();
+                _prefs = (SQLScriptPreferences) it.next();
             }
-        } catch(FileNotFoundException ignore) {
+        } catch (FileNotFoundException ignore) {
             // property file not found for user - first time user ran pgm.
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             Logger logger = getApplication().getLogger();
-            logger.showMessage(Logger.ILogTypes.ERROR, "Error occured reading from preferences file: "
-                                                + SQLScriptConstants.USER_PREFS_FILE_NAME); //i18n
+            logger.showMessage(
+                Logger.ILogTypes.ERROR,
+                "Error occured reading from preferences file: "
+                    + SQLScriptConstants.USER_PREFS_FILE_NAME);
+            //i18n
             logger.showMessage(Logger.ILogTypes.ERROR, ex);
         }
         if (_prefs == null) {
@@ -197,19 +210,24 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
         }
     }
 
-
     /**
      * Save preferences to disk.
      */
     synchronized void savePrefs() {
-        try {
-            XMLBeanWriter wtr = new XMLBeanWriter(_prefs);
-            wtr.save(new File(_userSettingsFolder, SQLScriptConstants.USER_PREFS_FILE_NAME));
-        } catch(Exception ex) {
-            Logger logger = getApplication().getLogger();
-            logger.showMessage(Logger.ILogTypes.ERROR, "Error occured writing to preferences file: "
-                                                + SQLScriptConstants.USER_PREFS_FILE_NAME); //i18n
-            logger.showMessage(Logger.ILogTypes.ERROR, ex);
+        if (_prefs != null) {
+            try {
+                XMLBeanWriter wtr = new XMLBeanWriter(_prefs);
+                wtr.save(
+                    new File(_userSettingsFolder, SQLScriptConstants.USER_PREFS_FILE_NAME));
+            } catch (Exception ex) {
+                Logger logger = getApplication().getLogger();
+                logger.showMessage(
+                    Logger.ILogTypes.ERROR,
+                    "Error occured writing to preferences file: "
+                        + SQLScriptConstants.USER_PREFS_FILE_NAME);
+                //i18n
+                logger.showMessage(Logger.ILogTypes.ERROR, ex);
+            }
         }
     }
 
@@ -217,4 +235,16 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
         return _prefs;
     }
 
+    private void createMenu() {
+        IApplication app = getApplication();
+        ActionCollection coll = app.getActionCollection();
+
+        JMenu menu = _resources.createMenu(IMenuResourceKeys.SCRIPTS);
+        _resources.addToMenu(coll.get(LoadScriptAction.class), menu);
+        _resources.addToMenu(coll.get(SaveScriptAction.class), menu);
+        _resources.addToMenu(coll.get(CreateDataScriptAction.class), menu);
+        _resources.addToMenu(coll.get(CreateTableScriptAction.class), menu);
+
+        app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, menu);
+    }
 }
