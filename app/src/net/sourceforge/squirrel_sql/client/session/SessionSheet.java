@@ -114,10 +114,14 @@ public class SessionSheet extends JPanel
 		session.getProperties().addPropertyChangeListener(_propsListener);
 	}
 
-	public void setVisible(boolean value)
+//	public void setVisible(boolean value)
+//	{
+	public void addNotify()
 	{
-		super.setVisible(value);
-		if (!_hasBeenVisible && value == true)
+//		super.setVisible(value);
+		super.addNotify();
+//		if (!_hasBeenVisible && value == true)
+		if (!_hasBeenVisible)
 		{
 			_hasBeenVisible = true;
 			_msgSplit.setDividerLocation(0.9d);
