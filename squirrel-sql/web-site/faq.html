@@ -1,117 +1,227 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Language" content="en-au">
+<meta http-equiv="Content-Type" content="text/html; CHARSET=iso-8859-1">
+<meta name="description" content="SQuirreL SQL is an open-source Java SQL Client program for any JDBC compliant database">
+<meta name="keywords" content="squirrel-sql, squirrel sql, sql, sql tool, sql client, sqlclient, java, database, open source, open-source">
+<link rel="stylesheet" type="text/css" href="style.css" title="SQuirreL SQL Client Stylesheet">
+<title>SQuirreL SQL Client Screenshots</title>
+</head>
 
-<HTML>
-
-<HEAD>
-	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-8859-1">
-	<TITLE>SQuirreL SQL Client FAQ</TITLE>
-	<LINK REL="stylesheet" TYPE="text/css" href="style.css" title="SQuirreL SQL Client Stylesheet">
-	<META NAME="description" CONTENT="SQuirreL SQL is an open-source Java SQL Client program for any JDBC compliant database">
-	<META NAME="keywords" CONTENT="squirrel-sql, squirrel sql, sql, sql tool, sql client, sqlclient, java, database, open source, open-source">
-</HEAD>
-
-<BODY>
-
-	<TABLE>
-		<TR>
-			<TD WIDTH="170">
-				<A HREF="http://www.sourceforge.net">
-					<IMG SRC="http://sourceforge.net/sflogo.php?group_id=28383&amp;type=1" WIDTH="88" HEIGHT="31" BORDER="0" ALT="SourceForge Logo">
-				</A>
-			</TD>
-			<TD WIDTH="310">
-				<IMG SRC="images/logo1.jpg" WIDTH="302" HEIGHT="99" BORDER="0" ALT="SQuirreL SQL Client Logo">
-			</TD>
-			<TD ALIGN="left">
-				<H1>SQL Client FAQ</H1>
-			</TD>
-		</TR>
-		<TR>
-			<TD>
-<a href="http://www.jedit.org">
-<img src="http://www.jedit.org/made-with-jedit-2.gif"
-alt="Made with jEdit"
-border="0" width="96" height="36">
-</a>
-			</TD>
-			<TD>
-				<A HREF="index.html">Home</A>
-				<A HREF="plugins.html">Plugins</A>
-				<A HREF="screenshots.html">Screenshots</A>
-				<A HREF="faq.html">FAQ</A>
-			</TD>
-		</TR>
-	</TABLE>
-
-	<TABLE>
-		<TR>
-			<TD HEIGHT="100%" NOWRAP VALIGN="top" WIDTH="170">
-				<B>On SourceForge</B>
-				<BR><A CLASS="menu" HREF="http://sourceforge.net/projects/squirrel-sql/">Project Home</A>
-				<BR><A CLASS="menu" HREF="http://sourceforge.net/project/showfiles.php?group_id=28383">Downloads</A>
-				<BR><A CLASS="menu" HREF="http://sourceforge.net/news/?group_id=28383">News</A>
-				<BR><A CLASS="menu" HREF="http://sourceforge.net/mail/?group_id=28383">Mailing Lists</A>
-				<BR><A CLASS="menu" HREF="http://sourceforge.net/tracker/?atid=393414&amp;group_id=28383">Bugs</A>
-				<BR><A CLASS="menu" HREF="http://sourceforge.net/tracker/?atid=393417&amp;group_id=28383">Feature Requests</A>
-				<BR><A CLASS="menu" HREF="http://sourceforge.net/pm/?group_id=28383">Future Versions</A>
-
-				<BR>&nbsp;<BR>
-
-				<B>Java Links</B>
-				<BR><A CLASS="menu" HREF="http://sourceforge.net/foundry/java/">SourceForge Java Foundry</A>
-				<BR><A CLASS="menu" HREF="http://www.javalobby.org/">JavaLobby</A>
-
-				<BR>&nbsp;<BR>
-
-				<B>Database Links</B>
-				<BR><A CLASS="menu" HREF="http://sourceforge.net/foundry/databases/">SourceForge Database Foundry</A>
-				<BR><A CLASS="menu" HREF="http://industry.java.sun.com/products/jdbc/drivers">Drivers (JavaSoft)</A>
-				<BR><A CLASS="menu" HREF="http://ourworld.compuserve.com/homepages/Ken_North/jdbcvend.htm">Drivers (Ken North)</A>
-				<BR><A CLASS="menu" HREF="http://www.javaskyline.com/database.html#ordbms">Java Skyline SQL Resources</A>
-				<BR><A CLASS="menu" HREF="http://dmoz.org/Computers/Programming/Languages/Java/Databases_and_Persistence/">DMOZ Java and Databases</A>
-				<BR><A CLASS="menu" HREF="http://www.mindprod.com/jdbc.html">Canadian Mind Products</A>
-
-				<BR>&nbsp;<BR>
-
-				<B>Useful Tools</B>
-				<BR><A CLASS="menu" HREF="http://jakarta.apache.org/ant/index.html">Apache Ant Build Tool</A>
-				<BR><A CLASS="menu" HREF="http://www.jedit.org">jEdit Text Editor</A>
-				<BR><A CLASS="menu" HREF="http://www.izforge.com/izpack/">IzPack Java Installer</A>
-
-			</TD>
-
-			<TD>
-				<H2><A NAME="top">Frequently Asked Questions</A></H2>
-				
-				<H3>SQuirreL SQL Client</H3>
-				<OL>
-					<LI><A HREF="#faq0">What database systems does SQuirreL work with?</A></LI>
-					<LI><A HREF="#faq1">SQuirreL doesn't work with JDK1.2</A></LI>
-					<LI><A HREF="#faq2">I get a &quot;Segmentation fault&quot; on Linux</A></LI>
-					<LI><A HREF="#faq3">I get a &quot;Login has timed out&quot; error with Microsoft SQL Server</A></LI>
-					<LI><A HREF="#faq4">I don't see an object tree with PostgreSQL</A></LI>
-				</OL>
-
-				<H3>Plugins</H3>
-				<OL>
-					<LI><A HREF="#plug0">How do I write a plugin?</A></LI>
-					<LI><A HREF="#plug1">What are these directories &quot;Colin Bell&quot; and
-							&quot;Johan Compagner&quot; in the plugins directory?</A></LI>
-					<LI><A HREF="#plug2">I can't see any &quot;Look and Feel&quot; files.</A></LI>
-				</OL>
-
-				<HR SIZE=1>
-				<H3>SQuirreL SQL Client</H3>
-
-				<B><A NAME="faq0">What database systems does SQuirreL work with?</A></B>
-				<BR>In theory SQuirreL should work with any DBMS that has a JDBC 2.0 driver. However not all
+<body bgcolor="#ADB0C4" link="#555A7D" vlink="#664E2D"><A NAME="top">
+<table border="0"cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left">&nbsp;<img border="0" src="images/nuts.jpg" width="114" height="56"><img border="0" src="images/small_title.jpg" width="136" height="56"></td>
+<td align="right"><img border="0" src="images/squirrel.jpg" width="158" height="59">&nbsp;</td>
+</tr>
+</table>
+<div align="left">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+	<td width="220" valign="top">
+	<table border="0" cellpadding="0" cellspacing="0" width="220">
+		<tr>
+			<td width='10' height='10' valign="top"><img border="0" src="images/menu_tl.gif" width="10" height="10"></td>
+			<td width='100%' height='10'><img border="0" src="images/menu_t.gif" width="100%" height="10"></td>
+			<td width='10' height='10'><img border="0" src="images/menu_tr.gif" width="10" height="10"></td>
+		</tr>
+		<tr>
+			<td class="menu_left_border">&nbsp;</td>
+			<td width='100%' class="menu_background">
+				<h1 class="menu">Menu</h1>
+				<p class="menu_item"><a href="index.html">Home</a></p>
+				<p class="menu_item"><a href="plugins.html">Plugins</a></p>
+				<p class="menu_item"><a href="screenshots.html">Screenshots</a></p>
+				<p class="menu_item">FAQ</p>
+			<td class="menu_right_border">&nbsp;</td>
+		</tr>
+		<tr>
+			<td width='10' height='10'><img border="0" src="images/menu_bl.gif" width="10" height="10"></td>
+			<td width='100%' height='10'><img border="0" src="images/menu_b.gif" width="100%" height="10"></td>
+			<td width='10' height='10'><img border="0" src="images/menu_br.gif" width="10" height="10"></td>
+		</tr>
+	</table>
+	<p class="menu_divider"></p>
+	<table border="0" cellpadding="0" cellspacing="0" width="220">
+		<tr>
+			<td width='10' height='10' valign="top"><img border="0" src="images/menu_tl.gif" width="10" height="10"></td>
+			<td width='100%' height='10'><img border="0" src="images/menu_t.gif" width="100%" height="10"></td>
+			<td width='10' height='10'><img border="0" src="images/menu_tr.gif" width="10" height="10"></td>
+		</tr>
+		<tr>
+			<td class="menu_left_border">&nbsp;</td>
+			<td width='100%' class="menu_background">
+				<h1 class="menu">On SourceForge</h1>
+				<p class="menu_item"><a href="http://sourceforge.net/projects/squirrel-sql">Project Home</a></p>
+				<p class="menu_item"><a href="http://sourceforge.net/project/showfiles.php?group_id=28383">Downloads</a></p>
+				<p class="menu_item"><a href="http://sourceforge.net/news/?group_id=28383">News</a></p>
+				<p class="menu_item"><a href="http://sourceforge.net/mail/?group_id=28383">Mailing Lists</a></p>
+				<p class="menu_item"><a href="http://sourceforge.net/tracker/?atid=393414&amp;group_id=28383">Bugs</a></p>
+				<p class="menu_item"><a href="http://sourceforge.net/tracker/?atid=393417&amp;group_id=28383">Feature Requests</a></p>
+				<p class="menu_item"><a href="http://sourceforge.net/pm/?group_id=28383">Future Versions</a></td>
+			<td class="menu_right_border">&nbsp;</td>
+		</tr>
+		<tr>
+			<td width='10' height='10'><img border="0" src="images/menu_bl.gif" width="10" height="10"></td>
+			<td width='100%' height='10'><img border="0" src="images/menu_b.gif" width="100%" height="10"></td>
+			<td width='10' height='10'><img border="0" src="images/menu_br.gif" width="10" height="10"></td>
+		</tr>
+	</table>
+<p class="menu_divider"></p>
+<div align="left">
+	<table border="0" cellpadding="0" cellspacing="0" width="220">
+		<tr>
+			<td width='10' height='10'><img border="0" src="images/menu_tl.gif" width="10" height="10"></td>
+			<td width='100%' height='10'><img border="0" src="images/menu_t.gif" width="100%" height="10"></td>
+			<td width='10' height='10'><img border="0" src="images/menu_tr.gif" width="10" height="10"></td>
+		</tr>
+		<tr>
+			<td class="menu_left_border">&nbsp;</td>
+			<td width='100%' class="menu_background">
+				<h1 class="menu">Java Links</h1>
+				<p class="menu_item"><a href="http://sourceforge.net/foundry/java/">SourceForge Java Foundry</a></p>
+				<p class="menu_item"><a href="http://www.javalobby.org/">JavaLobby</a></p>
+			<td class="menu_right_border">&nbsp;</td>
+		</tr>
+		<tr>
+			<td width='10' height='10'><img border="0" src="images/menu_bl.gif" width="10" height="10"></td>
+			<td width='100%' height='10'><img border="0" src="images/menu_b.gif" width="100%" height="10"></td>
+			<td width='10' height='10'><img border="0" src="images/menu_br.gif" width="10" height="10"></td>
+		</tr>
+	</table>
+</div>
+<p class="menu_divider"></p>
+<div align="left">
+	<table border="0" cellpadding="0" cellspacing="0" width="220">
+		<tr>
+			<td width='10' height='10'><img border="0" src="images/menu_tl.gif" width="10" height="10"></td>
+			<td width='100%' height='10'><img border="0" src="images/menu_t.gif" width="100%" height="10"></td>
+			<td width='10' height='10'><img border="0" src="images/menu_tr.gif" width="10" height="10"></td>
+		</tr>
+		<tr>
+			<td class="menu_left_border">&nbsp;</td>
+			<td width='100%' class="menu_background">
+				<h1 class="menu">Database Links</h1>
+				<p class="menu_item"><a href="http://sourceforge.net/foundry/databases/">SourceForge Database Foundary</a></p>
+				<p class="menu_item"><a href="http://industry.java.sun.com/products/jdbc/drivers">Drivers (JavaSoft)</a></p>
+				<p class="menu_item"><a href="http://ourworld.compuserve.com/homepages/Ken_North/jdbcvend.htm">Drivers (Ken North)</a></p>
+				<p class="menu_item"><a href="http://www.javaskyline.com/database.html#ordbms">Java Skyline SQL Resources</a></p>
+				<p class="menu_item"><a href="http://dmoz.org/Computers/Programming/Languages/Java/Databases_and_Persistence/">DMOZ Java and Databases</a></p>
+				<p class="menu_item"><a href="http://www.mindprod.com/jdbc.html">Canadian Mind Products</a></p>
+			</td>
+			<td class="menu_right_border">&nbsp;</td>
+		</tr>
+		<tr>
+			<td width='10' height='10'><img border="0" src="images/menu_bl.gif" width="10" height="10"></td>
+			<td width='100%' height='10'><img border="0" src="images/menu_b.gif" width="100%" height="10"></td>
+			<td width='10' height='10'><img border="0" src="images/menu_br.gif" width="10" height="10"></td>
+		</tr>
+	</table>
+</div>
+<p class="menu_divider"></p>
+<div align="left">
+	<table border="0" cellpadding="0" cellspacing="0" width="220">
+		<tr>
+			<td width='10' height='10'><img border="0" src="images/menu_tl.gif" width="10" height="10"></td>
+			<td width='100%' height='10'><img border="0" src="images/menu_t.gif" width="100%" height="10"></td>
+			<td width='10' height='10'><img border="0" src="images/menu_tr.gif" width="10" height="10"></td>
+		</tr>
+		<tr>
+			<td class="menu_left_border">&nbsp;</td>
+			<td width='100%' class="menu_background">
+				<h1 class="menu">Useful Tools</h1>
+				<p class="menu_item"><a href="http://jakarta.apache.org/ant">Apache Ant Build Tool</a></p>
+				<p class="menu_item"><a href="http://www.jgoodies.com/">jGoodies</a></p>
+				<p class="menu_item"><a href="http://www.jedit.org">jEdit Text Editor</a></p>
+				<p class="menu_item"><a href="http://www.izforge.com/izpack/">IzPack Java Installer</a></p>
+			</td>
+			<td class="menu_right_border">&nbsp;</td>
+		</tr>
+		<tr>
+			<td width='10' height='10'><img border="0" src="images/menu_bl.gif" width="10" height="10"></td>
+			<td width='100%' height='10'><img border="0" src="images/menu_b.gif" width="100%" height="10"></td>
+			<td width='10' height='10'><img border="0" src="images/menu_br.gif" width="10" height="10"></td>
+		</tr>
+	</table>
+	</div>
+	</td>
+	<td width="20">&nbsp;&nbsp;</td>
+	<td width="100%" valign="top">
+	<table border="0" cellpadding="0" cellspacing="0" width="100%">
+		<tr>
+			<td width='10' height='10'><img border="0" src="images/border_tl.gif" width="10" height="10"></td>
+			<td width='100%' height='10'><img border="0" src="images/border_t.gif" width="100%" height="10"></td>
+			<td width='10' height='10'><img border="0" src="images/border_tr.gif" width="10" height="10"></td>
+		</tr>
+		<tr>
+			<td class="body_left_border">&nbsp;</td>
+			<td width='100%' bgcolor="white" valign="top">
+				<h1 class="body"></A>FAQ - SQuirreL SQL Client.</h1>
+				<p>
+					<ul>
+						<li><a href="#faq0">What database systems does SQuirreL work with?</a></li>
+						<li><a href="#faq1">SQuirreL doesn't work with JDK1.2</a></li>
+						<li><a href="#faq2">I get a &quot;Segmentation fault&quot; on Linux</a></li>
+						<li><a href="#faq3">I get a &quot;Login has timed out&quot; error with Microsoft SQL Server</a></li>
+						<li><a href="#faq4">I don't see an object tree with PostgreSQL</a></li>
+					</ul>
+				</p>
+			</td>
+			<td class="body_right_border">&nbsp;</td>
+		</tr>
+		<tr>
+			<td width='10' height='10'><img border="0" src="images/border_bl.gif" width="10" height="10"></td>
+			<td width='100%' height='10'><img border="0" src="images/border_b.gif" width="100%" height="10"></td>
+			<td width='10' height='10'><img border="0" src="images/border_br.gif" width="10" height="10"></td>
+		</tr>
+	</table>
+	<p class="menu_divider"></p>
+	<table border="0" cellpadding="0" cellspacing="0" width="100%">
+		<tr>
+			<td width='10' height='10'><img border="0" src="images/border_tl.gif" width="10" height="10"></td>
+			<td width='100%' height='10'><img border="0" src="images/border_t.gif" width="100%" height="10"></td>
+			<td width='10' height='10'><img border="0" src="images/border_tr.gif" width="10" height="10"></td>
+		</tr>
+		<tr>
+			<td class="body_left_border">&nbsp;</td>
+			<td width='100%' bgcolor="white" valign="top">
+				<h1 class="body">FAQ - Plugins.</h1>
+				<p>
+					<ul>
+						<li><a href="#plug0">How do I write a plugin?</a></li>
+						<li><a href="#plug1">What are these directories &quot;Colin Bell&quot; and
+							&quot;Johan Compagner&quot; in the plugins directory?</a></li>
+						<li><a href="#plug2">I can't see any &quot;Look and Feel&quot; files.</a></li>
+					</ul>
+				</p>
+			</td>
+			<td class="body_right_border">&nbsp;</td>
+		</tr>
+		<tr>
+			<td width='10' height='10'><img border="0" src="images/border_bl.gif" width="10" height="10"></td>
+			<td width='100%' height='10'><img border="0" src="images/border_b.gif" width="100%" height="10"></td>
+			<td width='10' height='10'><img border="0" src="images/border_br.gif" width="10" height="10"></td>
+		</tr>
+	</table>
+	<p class="menu_divider"></p>
+	<table border="0" cellpadding="0" cellspacing="0" width="100%">
+		<tr>
+			<td width='10' height='10'><img border="0" src="images/border_tl.gif" width="10" height="10"></td>
+			<td width='100%' height='10'><img border="0" src="images/border_t.gif" width="100%" height="10"></td>
+			<td width='10' height='10'><img border="0" src="images/border_tr.gif" width="10" height="10"></td>
+		</tr>
+		<tr>
+			<td class="body_left_border">&nbsp;</td>
+			<td width='100%' bgcolor="white" valign="top">
+				<h1 class="body">Answers - SQuirrel SQL Client.</h1>
+				<h1 class="question"><A NAME="faq0">What database systems does SQuirreL work with?</A></h1>
+				<p class="answer">In theory SQuirreL should work with any DBMS that has a JDBC 2.0 driver. However not all
 				drivers/DBMS's are fully complient with the JDBC 2.0 specification. Users have reported SQuirreL
-				working with the following:
-				
+				working with the following:</p>
 				<UL>
 				<LI><A HREF="http://hsqldb.sourceforge.net/">HSQL</A>.</LI>
 				<LI><A HREF="http://hsql.sourceforge.net/">Hypersonic SQL</A>.</LI>
-				<LI><A HREF="http://www.ibm.com/">IBM DB2</A> for OS/400 and for Windows.</LI>
+				<LI><A HREF="http://www.ibm.com/">IBM DB2</A> for Linux, OS/400 and Windows.</LI>
 				<LI><A HREF="http://www.lutris.com/">InstantDB</A>.</LI>
 				<LI><A HREF="http://www.interbase.com/">Interbase</A> with the <A HREF="http://www.interbase.com/">Interclient</A> JDBC driver.</LI>
 				<LI><A HREF="http://mckoi.com/database/">Mckoi SQL</A>.</LI>
@@ -124,79 +234,102 @@ border="0" width="96" height="36">
 				<LI><A HREF="http://www.sybase.com">Sybase</A> with the <A HREF="http://www.sybase.com">JConnect</A> JDBC driver.</LI>
 				<LI><A HREF="http://www.thinksql.co.uk">ThinkSQL RDBMS</A>.</LI>
 				</UL>
-				
-				Please send us an <A HREF="mailto:colbell@users.sourceforge.net">email</A> if you have used SQuirreL
-				successfully with other products.
-				
-				<P><A HREF="#top">Top</A><HR SIZE=1>
-
-				<B><A NAME="faq1">SQuirreL doesn't work with JDK 1.2</A></B>
-				<BR>From version 1.1beta1 SQuirreL requires at least JDK 1.3. In the future we intend to
+				<p class="answer">Please send us an <A HREF="mailto:colbell@users.sourceforge.net">email</A> if you have used SQuirreL
+				successfully with other products.</p>
+				<p><A HREF="#top">Top</A><HR SIZE=1></HR></p>
+								
+				<h1 class="question"><A NAME="faq1">SQuirreL doesn't work with JDK 1.2</A></h1>
+				<p class="answer">From version 1.1beta1 SQuirreL requires at least JDK 1.3. In the future we intend to
 				keep SQuirreL compatible with the latest stable version of the JDK and the one prior to it. Currently the
 				stable version is JDK 1.4 so we are staying compatible with JDK 1.3 as well. When JDK 1.5 is
-				released we will drop compatibility with 1.3.
+				released we will drop compatibility with 1.3.</p>
 				
-				<P><A HREF="#top">Top</A><HR SIZE=1>
+				<p><A HREF="#top">Top</A><HR SIZE=1></HR></p>
 
-				<B><A NAME="faq2">I get a &quot;Segmentation fault&quot; on Linux</A></B>
-				<BR>Early versions of the Sun 1.3.0 VM on Linux throw a segmentation fault when running SQuirreL. Either
-				update to the latest 1.3.1 VM or pass the -classic flag to the Java executable. I.E.
+				<h1 class="question"><A NAME="faq2">I get a &quot;Segmentation fault&quot; on Linux</A></h1>
+				<p class="answer">Early versions of the Sun 1.3.0 VM on Linux throw a segmentation fault when running SQuirreL. Either
+				update to the latest 1.3.1 VM or pass the -classic flag to the Java executable - i.e.</p>
+				<p class="code">java -classic -cp...</p>
 				
-<PRE>java -classic -cp...</PRE>
-				
-				<A HREF="#top">Top</A><HR SIZE=1>
+				<p><A HREF="#top">Top</A><HR SIZE=1></HR></p>
 
-				<B><A NAME="faq3">I get a &quot;Login has timed out&quot; error with Microsoft SQL Server</A></B>
-				<BR>Early beta versions of the Microsoft type 4 JDBC driver had a bug which would cause this
+				<h1 class="question"><A NAME="faq3">I get a &quot;Login has timed out&quot; error with Microsoft SQL Server</A></h1>
+				<p class="answer">Early beta versions of the Microsoft type 4 JDBC driver had a bug which would cause this
 				error when trying to connect. Go to the General Tab in the Global Preferences dialog and
-				change the SQL Login Timeout to 0.
+				change the SQL Login Timeout to 0.</p>
 				
-				<P><A HREF="#top">Top</A><HR SIZE=1>
+				<p><A HREF="#top">Top</A><HR SIZE=1></HR></P>
 
-				<B><A NAME="faq4">I don't see an object tree with PostgreSQL</A></B>
-				<BR>Versions of PostgreSQL prior to 7.1.3 didn't supply sufficent metadata to build the object
-				tree in SQuirreL. A fix has been put into SQuirreL so that it would work with PostgreSQL 7.1.2.
+				<h1 class="question"><A NAME="faq4">I don't see an object tree with PostgreSQL</A></h1>
+				<p class="answer">Versions of PostgreSQL prior to 7.1.3 didn't supply sufficent metadata to build the object
+				tree in SQuirreL. A fix has been put into SQuirreL so that it would work with PostgreSQL 7.1.2.</p>
 				
-				<P><A HREF="#top">Top</A><HR SIZE=1>
-
-				<H3>Plugins</H3>
-
-				<B><A NAME="plug0">How do I write a plugin?</A></B>
-				<BR>There is some information in the document plugins.html which you
+				<p><A HREF="#top">Top</A></P>
+			</td>
+			<td class="body_right_border">&nbsp;</td>
+		</tr>
+		<tr>
+			<td width='10' height='10'><img border="0" src="images/border_bl.gif" width="10" height="10"></td>
+			<td width='100%' height='10'><img border="0" src="images/border_b.gif" width="100%" height="10"></td>
+			<td width='10' height='10'><img border="0" src="images/border_br.gif" width="10" height="10"></td>
+		</tr>
+	</table>
+	<p class="menu_divider"></p>
+	<table border="0" cellpadding="0" cellspacing="0" width="100%">
+		<tr>
+			<td width='10' height='10'><img border="0" src="images/border_tl.gif" width="10" height="10"></td>
+			<td width='100%' height='10'><img border="0" src="images/border_t.gif" width="100%" height="10"></td>
+			<td width='10' height='10'><img border="0" src="images/border_tr.gif" width="10" height="10"></td>
+		</tr>
+		<tr>
+			<td class="body_left_border">&nbsp;</td>
+			<td width='100%' bgcolor="white" valign="top">
+				<h1 class="body">Answers - Plugins.</h1>
+				<h1 class="question"><A NAME="plug0">How do I write a plugin?</A></h1>
+				<p class="answer">There is some information in the document plugins.html which you
 				can find in the docs directory within your SQuirreL program directory. This
 				document badly needs a lot of work and its on my todo list. You can also
-				look at the existing plugins to see how they've done things.
+				look at the existing plugins to see how they've done things.</p>
+				<p class="answer">If you have got an idea for a plugin just send a message to the SQuirreL Developers list giving a
+				brief description. This helps to ensure that two people don't develop the same plugin.</p>
+				<p><A HREF="#top">Top</A><HR SIZE=1></HR></p>
 
-				<P>If you have got an idea for a plugin just send a message to the SQuirreL Developers list giving a
-				brief description. This helps to ensure that two people don't develop the same plugin.
-				
-				<P><A HREF="#top">Top</A><HR SIZE=1>
-
-				<B><A NAME="plug1">What are these directories &quot;Colin Bell&quot; and
-							&quot;Johan Compagner&quot; in the plugins directory?</A></B>
-				<BR>Some people have reported these directories appearing when running JDK 1.3 on
+				<h1 class="question"><A NAME="plug1">What are these directories &quot;Colin Bell&quot; and
+							&quot;Johan Compagner&quot; in the plugins directory?</A></h1>
+				<p class="answer">Some people have reported these directories appearing when running JDK 1.3 on
 				Windows 2000. It appears to be a problem with the Hotspot VM. Passing the -classic flag
-				to the java executable fixes the problem. I.E.
-<PRE>java -classic -cp...</PRE>
+				to the java executable fixes the problem - i.e.</p>
+				<p class="code">java -classic -cp...</p>
+				<p><A HREF="#top">Top</A><HR SIZE=1></HR></p>
+
+				<h1 class="question"><A NAME="plug2">I can't see any &quot;Look and Feel&quot; files.</A></h1>
+				<p class="answer">This can be caused by the <A HREF="#plug1">What are these directories &quot;Colin Bell&quot; and
+							&quot;Johan Compagner&quot; in the plugins directory?</A> problem.</p>
 				
-				<P><A HREF="#top">Top</A><HR SIZE=1>
-
-				<B><A NAME="plug2">I can't see any &quot;Look and Feel&quot; files.</A></B>
-				<BR>This can be caused by the <A HREF="#plug1">What are these directories &quot;Colin Bell&quot; and
-							&quot;Johan Compagner&quot; in the plugins directory?</A> problem.
-				
-				<P><A HREF="#top">Top</A><HR SIZE=1>
-
-  <p>
-    <a href="http://validator.w3.org/check/referer"><img border="0"
-        src="http://www.w3.org/Icons/valid-html401"
-        alt="Valid HTML 4.01!" height="31" width="88"></a>
-  </p>
-
-			</TD>
-		</TR>
-	</TABLE>
-
-</BODY>
-
-</HTML>
+				<p><A HREF="#top">Top</A></P>
+			</td>
+			<td class="body_right_border">&nbsp;</td>
+		</tr>
+		<tr>
+			<td width='10' height='10'><img border="0" src="images/border_bl.gif" width="10" height="10"></td>
+			<td width='100%' height='10'><img border="0" src="images/border_b.gif" width="100%" height="10"></td>
+			<td width='10' height='10'><img border="0" src="images/border_br.gif" width="10" height="10"></td>
+		</tr>
+	</table>
+	</td>
+</table>
+</div>
+<table border="0"cellpadding="0" cellspacing="0" width="100%">
+  <tr>
+    <td align="right">
+      <a href="http://www.jedit.org">
+        <img src="http://www.jedit.org/made-with-jedit-2.gif" alt="Made with jEdit" border="0" width="96" height="36">
+      </a>
+      <a href="http://www.sourceforge.net">
+	<img src="http://sourceforge.net/sflogo.php?group_id=28383&amp;type=1" width="88" height="31" border="0" alt="SourceForge Logo">
+      </a>
+    </td>
+  </tr>
+</table>
+</body>
+</html>
