@@ -1,0 +1,8 @@
+Syntax Highlighting Plugin Change Log
+=====================================
+
+0.10
+====
+
+- Initial release.
+
