@@ -38,6 +38,7 @@ import java.sql.ResultSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 //??import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
 
 /**
  * @author gwg
@@ -62,7 +63,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
  * <P>
  * The components returned from this class extend RestorableJTextField
  * and RestorableJTextArea for use in editing table cells that
- * contain Integer values.  It provides the special behavior for null
+ * contain values of this data type.  It provides the special behavior for null
  * handling and resetting the cell to the original value.
  */
 
@@ -142,7 +143,7 @@ public class DataTypeBinary
 	public JTextField getJTextField() {
 		_textComponent = new RestorableJTextField();
 		
-		// special handling of operations while editing Integers
+		// special handling of operations while editing this data type
 		((RestorableJTextField)_textComponent).addKeyListener(new KeyTextHandler());
 				
 		//
@@ -171,7 +172,7 @@ public class DataTypeBinary
 
 
 	/**
-	 * Implement the interface for validating and converting to Integer object.
+	 * Implement the interface for validating and converting to internal object.
 	 * Null is a valid successful return, so errors are indicated only by
 	 * existance or not of a message in the messageBuffer.
 	 */
@@ -213,11 +214,11 @@ public class DataTypeBinary
 	 public JTextArea getJTextArea(Object value) {
 		_textComponent = new RestorableJTextArea();
 		
-		// value is a simple string representation of the integer,
+		// value is a simple string representation of the data,
 		// the same one used in Text and in-cell operations.
 		((RestorableJTextArea)_textComponent).setText(renderObject(value));
 		
-		// special handling of operations while editing Integers
+		// special handling of operations while editing this data type
 		((RestorableJTextArea)_textComponent).addKeyListener(new KeyTextHandler());
 		
 		return (RestorableJTextArea)_textComponent;
@@ -248,8 +249,21 @@ public class DataTypeBinary
 				JTextComponent _theComponent = (JTextComponent)DataTypeBinary.this._textComponent;
 				String text = _theComponent.getText();
 												
-				// Do not allow tabs or newlines
+				// tabs and newlines get put into the text before this check,
+				// so remove them
+				// This only applies to Popup editing since these chars are
+				// not passed to this level by the in-cell editor.
 				if (c == KeyEvent.VK_TAB || c == KeyEvent.VK_ENTER) {
+					int cIndex = text.indexOf(c);
+					String newText = null;
+					if (cIndex == 0)
+						newText = text.substring(1);
+					else if (cIndex == text.length()-1)
+						newText = text.substring(0, text.length()-1);
+					else
+						newText = text.substring(0, cIndex) + text.substring(cIndex+1);
+
+					((IRestorableTextComponent)_theComponent).updateText(newText);
 					_theComponent.getToolkit().beep();
 					e.consume();
 				}
@@ -314,7 +328,8 @@ public class DataTypeBinary
 	  * On input from the DB, read the data from the ResultSet into the appropriate
 	  * type of object to be stored in the table cell.
 	  */
-	public Object readResultSet(ResultSet rs, int index)
+	public Object readResultSet(ResultSet rs, int index,
+		LargeResultSetObjectInfo largeObjInfo)
 		throws java.sql.SQLException {
 		
 		byte[] data = rs.getBytes(index);
@@ -457,7 +472,7 @@ public class DataTypeBinary
 	 	for (int i=0; i<bytes.length; i++)
 	 		bytes[i] = bBytes[i].byteValue();
 	 	
-	 	// for integer, just send the text to the output file
+	 	// just send the text to the output file
 		outStream.write(bytes);
 		outStream.flush();
 		outStream.close();
