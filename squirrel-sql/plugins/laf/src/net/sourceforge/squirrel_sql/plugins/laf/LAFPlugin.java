@@ -22,9 +22,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
 
-import javax.swing.UIDefaults;
-import javax.swing.UIManager;
-
 import net.sourceforge.squirrel_sql.fw.util.Logger;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
@@ -42,206 +39,191 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class LAFPlugin extends DefaultPlugin {
-	private UIDefaults _origDfts;
+	/** Plugin preferences. */
+	private LAFPreferences _lafPrefs;
 
-    /** Plugin preferences. */
-    private LAFPreferences _lafPrefs;
+	/** A register of Look and Feels. */
+	private LAFRegister _lafRegister;
 
-    /** A register of Look and Feels. */
-    private LAFRegister _lafRegister;
+	/** The folder that contains LAF jars. */
+	private File _lafFolder;
 
-    /** The app folder for this plugin. */
-    private File _pluginAppFolder;
+	/** The folder that contains Skin LAF theme pack jars. */
+	private File _themePacksFolder;
 
-    /** The folder that contains LAF jars. */
-    private File _lafFolder;
+	/** Folder to store user settings in. */
+	private File _userSettingsFolder;
 
-    /** The folder that contains Skin LAF theme pack jars. */
-    private File _themePacksFolder;
+	/**
+	 * Return the internal name of this plugin.
+	 *
+	 * @return  the internal name of this plugin.
+	 */
+	public String getInternalName() {
+		return "laf";
+	}
 
-    /** Folder to store user settings in. */
-    private File _userSettingsFolder;
+	/**
+	 * Return the descriptive name of this plugin.
+	 *
+	 * @return  the descriptive name of this plugin.
+	 */
+	public String getDescriptiveName() {
+		return "Look & Feel Plugin";
+	}
 
-    /**
-     * Return the internal name of this plugin.
-     *
-     * @return  the internal name of this plugin.
-     */
-    public String getInternalName() {
-        return "laf";
-    }
+	/**
+	 * Returns the current version of this plugin.
+	 *
+	 * @return  the current version of this plugin.
+	 */
+	public String getVersion() {
+		return "0.1";
+	}
 
-    /**
-     * Return the descriptive name of this plugin.
-     *
-     * @return  the descriptive name of this plugin.
-     */
-    public String getDescriptiveName() {
-        return "Look & Feel Plugin";
-    }
+	/**
+	 * Returns the authors name.
+	 *
+	 * @return  the authors name.
+	 */
+	public String getAuthor() {
+		return "Colin Bell";
+	}
 
-    /**
-     * Returns the current version of this plugin.
-     *
-     * @return  the current version of this plugin.
-     */
-    public String getVersion() {
-        return "0.1";
-    }
+	/**
+	 * Load this plugin.
+	 *
+	 * @param   app	 Application API.
+	 */
+	public synchronized void load(IApplication app) throws PluginException {
+		super.load(app);
+		PluginManager pmgr = app.getPluginManager();
 
-    /**
-     * Returns the authors name.
-     *
-     * @return  the authors name.
-     */
-    public String getAuthor() {
-        return "Colin Bell";
-    }
+		// Folder within plugins folder that belongs to this
+		// plugin.
+		File pluginAppFolder = null;
+		try {
+			pluginAppFolder = getPluginAppSettingsFolder();
+		} catch (IOException ex) {
+			throw new PluginException(ex);
+		}
 
-    /**
-     * Load this plugin.
-     *
-     * @param   app     Application API.
-     */
-    public synchronized void load(IApplication app) throws PluginException {
-        super.load(app);
-        PluginManager pmgr = app.getPluginManager();
+		// Folder that stores Look and Feel jars.
+		_lafFolder = new File(pluginAppFolder, "lafs");
+		if (!_lafFolder.exists()) {
+			_lafFolder.mkdir();
+		}
 
-		_origDfts = (UIDefaults)UIManager.getDefaults().clone();
-		
-        // Folder within plugins folder that belongs to this
-        // plugin.
-        try {
-            _pluginAppFolder = getPluginAppSettingsFolder();
-        } catch (IOException ex) {
-            throw new PluginException(ex);
-        }
+		// Folder that stores themepacks for the Skin
+		// Look and Feel.
+		_themePacksFolder = new File(pluginAppFolder, "theme_packs");
+		if (!_themePacksFolder.exists()) {
+			_themePacksFolder.mkdir();
+		}
 
-        // Folder that stores Look and Feel jars.
-        _lafFolder = new File(_pluginAppFolder, "lafs");
-        if (!_lafFolder.exists()) {
-            _lafFolder.mkdir();
-        }
+		// Folder to store user settings.
+		try {
+			_userSettingsFolder = getPluginUserSettingsFolder();
+		} catch (IOException ex) {
+			throw new PluginException(ex);
+		}
 
-        // Folder that stores themepacks for the Skin
-        // Look and Feel.
-        _themePacksFolder = new File(_pluginAppFolder, "theme_packs");
-        if (!_themePacksFolder.exists()) {
-            _themePacksFolder.mkdir();
-        }
+		// Load plugin preferences.
+		loadPrefs();
 
-        // Folder to store user settings.
-        try {
-            _userSettingsFolder = getPluginUserSettingsFolder();
-        } catch (IOException ex) {
-            throw new PluginException(ex);
-        }
+		// Create the Look and Feel register.
+		_lafRegister = new LAFRegister(app, this);
+	}
 
-        // Load plugin preferences.
-        loadPrefs();
+	/**
+	 * Application is shutting down so save preferences.
+	 */
+	public void unload() {
+		savePrefs();
+		super.unload();
+	}
 
-        // Create the Look and Feel register.
-        _lafRegister = new LAFRegister(app, this);
-    }
+	/**
+	 * Create Look and Feel preferences panel for the Global Preferences dialog.
+	 *
+	 * @return  Look and Feel preferences panel.
+	 */
+	public IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
+		return new IGlobalPreferencesPanel[] {
+			 new LAFPreferencesPanel(this, _lafRegister)};
+	}
 
-    /**
-     * Application is shutting down so save preferences.
-     */
-    public void unload() {
-        savePrefs();
-        super.unload();
-    }
+	/**
+	 * Return the folder that contains LAF jars.
+	 *
+	 * @return  folder as <TT>File</TT> that contains LAF jars.
+	 */
+	File getLookAndFeelFolder() {
+		return _lafFolder;
+	}
 
-    /**
-     * Create Look and Feel preferences panel for the Global Preferences dialog.
-     *
-     * @return  Look and Feel preferences panel.
-     */
-    public IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
-        return new IGlobalPreferencesPanel[] {
-             new LAFPreferencesPanel(this, _lafRegister)};
-    }
+	/**
+	 * Return the folder that contains Skin Theme packs.
+	 *
+	 * @return  folder (as <TT>File</TT>) that contains Skin Theme packs.
+	 */
+	File getSkinThemePackFolder() {
+		return _themePacksFolder;
+	}
 
-    /**
-     * Return the app folder for this plugin.
-     *
-     * @return  the app folder (as <TT>File</TT>) for this plugin.
-     */
-    File getPluginAppFolder() {
-        return _pluginAppFolder;
-    }
+	/**
+	 * Get the preferences info object for this plugin.
+	 *
+	 * @return	The preferences info object for this plugin.
+	 */
+	LAFPreferences getLAFPreferences() {
+		return _lafPrefs;
+	}
 
-    /**
-     * Return the folder that contains LAF jars.
-     *
-     * @return  folder as <TT>File</TT> that contains LAF jars.
-     */
-    File getLookAndFeelFolder() {
-        return _lafFolder;
-    }
+	/**
+	 * Load from preferences file.
+	 */
+	private void loadPrefs() {
+		try {
+			XMLBeanReader doc = new XMLBeanReader();
+			doc.load(
+				new File(_userSettingsFolder, LAFConstants.USER_PREFS_FILE_NAME),
+								getClass().getClassLoader());
+			Iterator it = doc.iterator();
+			if (it.hasNext()) {
+				_lafPrefs = (LAFPreferences) it.next();
+			}
+		} catch (FileNotFoundException ignore) {
+			// property file not found for user - first time user ran pgm.
+		} catch (Exception ex) {
+			Logger logger = getApplication().getLogger();
+			logger.showMessage(
+				Logger.ILogTypes.ERROR,
+				"Error occured reading from preferences file: "
+					+ LAFConstants.USER_PREFS_FILE_NAME);
+			//i18n
+			logger.showMessage(Logger.ILogTypes.ERROR, ex);
+		}
+		if (_lafPrefs == null) {
+			_lafPrefs = new LAFPreferences();
+		}
+	}
 
-    /**
-     * Return the folder that contains Skin Theme packs.
-     *
-     * @return  folder (as <TT>File</TT>) that contains Skin Theme packs.
-     */
-    File getSkinThemePackFolder() {
-        return _themePacksFolder;
-    }
-
-    /**
-     * Get the preferences info object for this plugin.
-     *
-     * @return  The preferences info object for this plugin.
-     */
-    LAFPreferences getLAFPreferences() {
-        return _lafPrefs;
-    }
-
-    /**
-     * Load from preferences file.
-     */
-    private void loadPrefs() {
-        try {
-            XMLBeanReader doc = new XMLBeanReader();
-            doc.load(
-                new File(_userSettingsFolder, LAFConstants.USER_PREFS_FILE_NAME),
-                getClass().getClassLoader());
-            Iterator it = doc.iterator();
-            if (it.hasNext()) {
-                _lafPrefs = (LAFPreferences) it.next();
-            }
-        } catch (FileNotFoundException ignore) {
-            // property file not found for user - first time user ran pgm.
-        } catch (Exception ex) {
-            Logger logger = getApplication().getLogger();
-            logger.showMessage(
-                Logger.ILogTypes.ERROR,
-                "Error occured reading from preferences file: "
-                    + LAFConstants.USER_PREFS_FILE_NAME);
-            //i18n
-            logger.showMessage(Logger.ILogTypes.ERROR, ex);
-        }
-        if (_lafPrefs == null) {
-            _lafPrefs = new LAFPreferences();
-        }
-    }
-
-    /**
-     * Save preferences to disk.
-     */
-    private void savePrefs() {
-        try {
-            XMLBeanWriter wtr = new XMLBeanWriter(_lafPrefs);
-            wtr.save(new File(_userSettingsFolder, LAFConstants.USER_PREFS_FILE_NAME));
-        } catch (Exception ex) {
-            Logger logger = getApplication().getLogger();
-            logger.showMessage(
-                Logger.ILogTypes.ERROR,
-                "Error occured writing to preferences file: "
-                    + LAFConstants.USER_PREFS_FILE_NAME);
-            //i18n
-            logger.showMessage(Logger.ILogTypes.ERROR, ex);
-        }
-    }
+	/**
+	 * Save preferences to disk.
+	 */
+	private void savePrefs() {
+		try {
+			XMLBeanWriter wtr = new XMLBeanWriter(_lafPrefs);
+			wtr.save(new File(_userSettingsFolder, LAFConstants.USER_PREFS_FILE_NAME));
+		} catch (Exception ex) {
+			Logger logger = getApplication().getLogger();
+			logger.showMessage(
+				Logger.ILogTypes.ERROR,
+				"Error occured writing to preferences file: "
+					+ LAFConstants.USER_PREFS_FILE_NAME);
+			//i18n
+			logger.showMessage(Logger.ILogTypes.ERROR, ex);
+		}
+	}
 }

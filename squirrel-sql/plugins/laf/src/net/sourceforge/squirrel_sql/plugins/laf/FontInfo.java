@@ -20,104 +20,119 @@ package net.sourceforge.squirrel_sql.plugins.laf;
 import java.awt.Font;
 
 public class FontInfo {
+
 	public interface IPropertyNames {
-		String UIDEFAULTS_PROP_NAME = "UIDefaultsPropertyName";
-		String FONT_NAME = "FontName";
-		String FONT_STYLE = "FontStyle";
-		String FONT_SIZE = "FontSize";
+		String FAMILY = "family";
+		String IS_BOLD = "isBold";
+		String IS_ITALIC = "isItalic";
+		String SIZE = "size";
 	}
 
-	private String _uiDefaultsPropertyName;
-	private String _fontName;
-	private int _fontStyle;
-	private int _fontSize;
+	private static String DEFAULT_FAMILY = "Monospaced";
+
+	private String _familyName;
+	private boolean _isBold;
+	private boolean _isItalic;
+	private int _size;
 
 	public FontInfo() {
 		super();
-		_uiDefaultsPropertyName = "";
-		_fontName = "Monospaced";
-		_fontStyle = Font.PLAIN;
-		_fontSize = 12;
+		setFamily(DEFAULT_FAMILY);
+		setSize(12);
 	}
 
 	public FontInfo(FontInfo rhs) {
 		super();
-		setUIDefaultsPropertyName(rhs.getUIDefaultsPropertyName());
-		setFontName(rhs.getFontName());
-		setFontStyle(rhs.getFontStyle());
-		setFontSize(rhs.getFontSize());
+		setFamily(rhs.getFamily());
+		setIsBold(rhs.isBold());
+		setIsItalic(rhs.isItalic());
+		setSize(rhs.getSize());
 	}
 
-	public FontInfo(String propName) {
+	public FontInfo(Font font) {
 		super();
-		setUIDefaultsPropertyName(propName);
-		_fontName = "Monospaced";
-		_fontStyle = Font.PLAIN;
-		_fontSize = 12;
-	}
-
-	public FontInfo(String propName, Font font) {
-		super();
-		setUIDefaultsPropertyName(propName);
 		setFont(font);
 	}
 
-    /**
-     * Returns <TT>true</TT> if this objects is equal to the passed one. Two
-     * <TT>FontInfo</TT> objects are considered equal if they have the same
-     * UIDefaults property name.
-     */
-    public boolean equals(Object rhs) {
-        boolean rc = false;
-        if (rhs != null && rhs.getClass().equals(getClass())) {
-            rc = ((FontInfo)rhs).getUIDefaultsPropertyName().equals(getUIDefaultsPropertyName());
-        }
-        return rc;
-    }
-
-    /**
-     * Returns a hash code value for this object.
-     */
-    public int hashCode() {
-        return getUIDefaultsPropertyName().hashCode();
-    }
-
-	public String getUIDefaultsPropertyName() {
-		return _uiDefaultsPropertyName;
+	public String getFamily() {
+		return _familyName;
 	}
 
-	public void setUIDefaultsPropertyName(String value) {
-		_uiDefaultsPropertyName = value;
+	public void setFamily(String value) {
+		_familyName = value != null ? value : DEFAULT_FAMILY;
 	}
 
-	public String getFontName() {
-		return _fontName;
+	public boolean isBold() {
+		return _isBold;
 	}
 
-	public void setFontName(String value) {
-		_fontName = value;
+	public void setIsBold(boolean value) {
+		_isBold = value;
 	}
 
-	public int getFontStyle() {
-		return _fontStyle;
+	public boolean isItalic() {
+		return _isItalic;
 	}
 
-	public void setFontStyle(int value) {
-		_fontStyle = value;
+	public void setIsItalic(boolean value) {
+		_isItalic = value;
 	}
 
-	public int getFontSize() {
-		return _fontSize;
+	public int getSize() {
+		return _size;
 	}
 
-	public void setFontSize(int value) {
-		_fontSize = value;
+	public void setSize(int value) {
+		_size = value;
 	}
 	
-	public void setFont(Font font) {
-		_fontName = font.getFamily();
-		_fontStyle = font.getStyle();
-		_fontSize = font.getSize();
+	public void setFont(Font font) throws IllegalArgumentException {
+		if (font == null) {
+			throw new IllegalArgumentException("Null Font passed");
+		}
+		_familyName = font.getFamily();
+		_isBold = font.isBold();
+		_isItalic= font.isItalic();
+		_size = font.getSize();
+	}
+
+	public boolean doesFontMatch(Font font) {
+		if (font == null) {
+			return false;
+		}
+		return font.getFamily().equals(_familyName) && font.getSize() == getSize()
+				&& font.getStyle() == generateStyle();
+	}
+	
+	public int generateStyle() {
+		int style = 0;
+		if (!_isBold && !_isItalic) {
+			style = Font.PLAIN;
+		} else {
+			if (_isBold) {
+				style |= Font.BOLD;
+			}
+			if (_isItalic) {
+				style |= Font.ITALIC;
+			}
+		}
+		return style;
+	}
+
+	public Font createFont() {
+		return new Font(_familyName, generateStyle(), _size);
+	}
+
+	public String toString() {
+		StringBuffer buf = new StringBuffer();
+		buf.append(_familyName).append(", " + _size);
+		if (_isBold) {
+			buf.append(", bold");
+		}
+		if (_isItalic) {
+			buf.append(", italic");
+		}
+		return buf.toString();
 	}
 }
 

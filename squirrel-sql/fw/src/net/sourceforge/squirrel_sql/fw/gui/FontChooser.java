@@ -59,7 +59,7 @@ public class FontChooser extends JDialog {
 	private JLabel _previewLbl = new JLabel("The quick brown fox jumped over the lazy dog");
 
 	private Font _font;
-	private boolean _fontSelected;
+//	private boolean _fontSelected;
 	
 	public FontChooser() {
 		this((Frame)null);
@@ -75,11 +75,11 @@ public class FontChooser extends JDialog {
 		createUserInterface();
 	}
 	
-	public boolean showDialog() {
+	public Font showDialog() {
 		return showDialog(null);
 	}
 
-	public boolean showDialog(Font font) {
+	public Font showDialog(Font font) {
 		if (font != null) {
 			_fontNamesCmb.setSelectedItem(font.getName());
 			_fontSizesCmb.setSelectedItem("" + font.getSize());
@@ -91,8 +91,9 @@ public class FontChooser extends JDialog {
 			_boldChk.setSelected(false);
 			_italicChk.setSelected(false);
 		}
+		setupPreviewLabel();
 		show();
-		return _fontSelected;
+		return _font;
 	}
 
 	public Font getSelectedFont() {
@@ -194,13 +195,14 @@ public class FontChooser extends JDialog {
 		btnPnl.addListener(new IOkClosePanelListener() {
 		    public void okPressed(OkClosePanelEvent evt) {
 		    	setupFontFromDialog();
-		    	_fontSelected = true;
 		    	dispose();
 		    }
 		    public void closePressed(OkClosePanelEvent evt) {
+		    	_font = null;
 		    	dispose();
 		    }
 		    public void cancelPressed(OkClosePanelEvent evt) {
+		    	_font = null;
 		    	dispose();
 		    }
 		});

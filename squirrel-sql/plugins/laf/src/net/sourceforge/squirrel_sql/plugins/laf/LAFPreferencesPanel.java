@@ -17,7 +17,6 @@ package net.sourceforge.squirrel_sql.plugins.laf;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -27,12 +26,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+import javax.swing.BorderFactory;
 import javax.swing.ComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.MutableComboBoxModel;
 import javax.swing.SwingConstants;
@@ -40,6 +40,7 @@ import javax.swing.UIManager;
 
 import net.sourceforge.squirrel_sql.fw.gui.FontChooser;
 import net.sourceforge.squirrel_sql.fw.gui.LookAndFeelComboBox;
+import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
@@ -52,12 +53,14 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
-	
-	private final static String[][] FONTS = { {"Menus", "Menu.font", "MenuBar.font"}
-	};
+	/** The plugin. */
+	private LAFPlugin _plugin;
 
 	/** Plugin preferences object. */
-	private LAFPreferences _lafPrefs;
+	private LAFPreferences _prefs;
+
+	/** Look and Feel register. */
+	private LAFRegister _lafRegister;
 
 	/** Component to display in the Global preferences dialog. */
 	private MyPanel _myPanel;
@@ -83,9 +86,9 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
 		if (lafRegister == null) {
 			throw new IllegalArgumentException("Null LAFRegister passed");
 		}
-		_lafPrefs = plugin.getLAFPreferences();
-		// Create the actual panel that will be displayed in dialog.
-		_myPanel = new MyPanel(plugin, lafRegister);
+		_plugin = plugin;
+		_prefs = plugin.getLAFPreferences();
+		_lafRegister = lafRegister;
 	}
 
 	/**
@@ -101,7 +104,7 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
 		_app = app;
-		_myPanel.loadData();
+		((MyPanel)getPanelComponent()).loadData();
 	}
 
 	/**
@@ -109,7 +112,10 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
 	 *
 	 * @return  the component to be displayed in the Preferences dialog.
 	 */
-	public Component getPanelComponent() {
+	public synchronized Component getPanelComponent() {
+		if (_myPanel == null) {
+			_myPanel = new MyPanel(_plugin, _lafRegister);
+		}
 		return _myPanel;
 	}
 
@@ -149,7 +155,7 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
 		interface i18n {
 			String LOOK_AND_FEEL = "Look and Feel:";
 			String THEME_PACK = "Theme Pack:";
-			//			String LAF_WARNING = "Note: Changes to this panel will require a\nrestart of Squirrel-SQL to take effect.";
+			String LAF_WARNING = "<HTML>Note: Controls may not be drawn correctly after changes<BR>in this panel until the application is restarted.</HTML>";
 			String TAB_TITLE = "L & F";
 			String TAB_HINT = "Look and Feel settings";
 			String LAF_LOC = "Look and Feel jars folder:";
@@ -158,22 +164,34 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
 		private LookAndFeelComboBox _lafCmb = new LookAndFeelComboBox();
 		private ThemePackComboBox _themePackCmb;
 
+		/** Button to elect font for menus. */
+		private FontButton _menuFontBtn;
+		private FontButton _staticFontBtn;
+		private FontButton _otherFontBtn;
+
+		private JLabel _menuFontLbl = new JLabel();
+		private JLabel _staticFontLbl = new JLabel();
+		private JLabel _otherFontLbl = new JLabel();
+
+		private JCheckBox _menuFontEnabledChk = new JCheckBox("Enabled");
+		private JCheckBox _staticFontEnabledChk = new JCheckBox("Enabled");
+		private JCheckBox _otherFontEnabledChk = new JCheckBox("Enabled");
+
 		private LAFPlugin _plugin;
 		private LAFRegister _lafRegister;
 
-		private LAFPreferences _lafsPrefs;
+		private LAFPreferences _prefs;
+
 		MyPanel(LAFPlugin plugin, LAFRegister lafRegister) {
 			super();
 			_plugin = plugin;
 			_lafRegister = lafRegister;
-			_lafsPrefs = _plugin.getLAFPreferences();
+			_prefs = _plugin.getLAFPreferences();
 			createUserInterface();
 		}
 
 		void loadData() {
 			final String skinLafName = _lafRegister.getSkinnableLookAndFeelName();
-			//		  _themePackCmb.setSelectedItem(_lafsPrefs.getThemePackName());
-			//		  _themePackCmb.setEnabled(((String)_lafCmb.getSelectedItem()).equals(_skinLafName));
 			if (_themePackCmb.getModel().getSize() == 0) {
 				_themePackCmb.setEnabled(false);
 				ComboBoxModel model = _lafCmb.getModel();
@@ -181,21 +199,43 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
 					((MutableComboBoxModel) model).removeElement(skinLafName);
 				}
 			} else {
-				_themePackCmb.setSelectedItem(_lafsPrefs.getThemePackName());
+				_themePackCmb.setSelectedItem(_prefs.getThemePackName());
 				if (_themePackCmb.getSelectedIndex() == -1) {
 					_themePackCmb.setSelectedIndex(0);
 				}
 				_themePackCmb.setEnabled(
 					((String) _lafCmb.getSelectedItem()).equals(skinLafName));
 			}
+
+			_menuFontEnabledChk.setSelected(_prefs.isMenuFontEnabled());
+			_staticFontEnabledChk.setSelected(_prefs.isStaticFontEnabled());
+			_otherFontEnabledChk.setSelected(_prefs.isOtherFontEnabled());
+
+			FontInfo fi = _prefs.getMenuFontInfo();
+			_menuFontLbl.setText(fi != null ? fi.toString() : "");
+			fi = _prefs.getStaticFontInfo();
+			_staticFontLbl.setText(fi != null ? fi.toString() : "");
+			fi = _prefs.getOtherFontInfo();
+			_otherFontLbl.setText(fi != null ? fi.toString() : "");
+
+			_menuFontBtn.setEnabled(_prefs.isMenuFontEnabled());
+			_staticFontBtn.setEnabled(_prefs.isStaticFontEnabled());
+			_otherFontBtn.setEnabled(_prefs.isOtherFontEnabled());
 		}
 
 		void applyChanges() {
-			_lafsPrefs.setLookAndFeelClassName(
-				_lafCmb.getSelectedLookAndFeel().getClassName());
-			_lafsPrefs.setThemePackName((String) _themePackCmb.getSelectedItem());
+			_prefs.setLookAndFeelClassName(_lafCmb.getSelectedLookAndFeel().getClassName());
+			_prefs.setThemePackName((String) _themePackCmb.getSelectedItem());
+
+			_prefs.setMenuFontInfo(_menuFontBtn.getFontInfo());
+			_prefs.setStaticFontInfo(_staticFontBtn.getFontInfo());
+			_prefs.setOtherFontInfo(_otherFontBtn.getFontInfo());
+
+			_prefs.setMenuFontEnabled(_menuFontEnabledChk.isSelected());
+			_prefs.setStaticFontEnabled(_staticFontEnabledChk.isSelected());
+			_prefs.setOtherFontEnabled(_otherFontEnabledChk.isSelected());
+
 			try {
-				//UIManager.put("Menu.font", new Font("Lucinda Console", Font.PLAIN, 10));
 				_lafRegister.setLookAndFeel();
 			} catch (Exception ex) {
 				//?? Need to report this.
@@ -203,16 +243,27 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
 		}
 
 		private void createUserInterface() {
-			//final GridBagLayout gbl = ;
-			final GridBagConstraints gbc = new GridBagConstraints();
 			setLayout(new GridBagLayout());
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.anchor = gbc.WEST;
+			gbc.fill = gbc.HORIZONTAL;
+			gbc.insets = new Insets(4, 4, 4, 4);
 
-			gbc.anchor = GridBagConstraints.NORTHWEST;
-			Insets compInsets = gbc.insets = new Insets(2, 2, 2, 2);
-			gbc.gridx = gbc.gridy = 0;
-			add(new JLabel(i18n.LOOK_AND_FEEL, SwingConstants.RIGHT), gbc);
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			add(createLookAndFeelPanel(), gbc);
 
-			_lafCmb.setSelectedLookAndFeelClassName(_lafsPrefs.getLookAndFeelClassName());
+			++gbc.gridy;
+			add(createFontsPanel(), gbc);
+
+			++gbc.gridy;
+			gbc.gridx = 0;
+			gbc.gridwidth = gbc.REMAINDER;
+			add(new JLabel(i18n.LAF_WARNING), gbc);
+		}
+
+		private JPanel createLookAndFeelPanel() {
+			_lafCmb.setSelectedLookAndFeelClassName(_prefs.getLookAndFeelClassName());
 			_lafCmb.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					_themePackCmb.setEnabled(
@@ -220,62 +271,114 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
 							_lafRegister.getSkinnableLookAndFeelName()));
 				}
 			});
-			++gbc.gridx;
-			add(_lafCmb, gbc);
-
-			gbc.gridx = 0;
-			++gbc.gridy;
-			add(new JLabel(i18n.THEME_PACK, SwingConstants.RIGHT), gbc);
 
 			_themePackCmb = new ThemePackComboBox(_plugin.getSkinThemePackFolder());
 			_themePackCmb.setEnabled(false);
+
+			JPanel pnl = new JPanel();
+			pnl.setBorder(BorderFactory.createTitledBorder("Look and Feel"));
+			pnl.setLayout(new GridBagLayout());
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = gbc.HORIZONTAL;
+			gbc.insets = new Insets(4, 4, 4, 4);
+
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			pnl.add(new JLabel(i18n.LOOK_AND_FEEL), gbc);
+
 			++gbc.gridx;
-			add(_themePackCmb, gbc);
+			pnl.add(_lafCmb, gbc);
 
 			gbc.gridx = 0;
 			++gbc.gridy;
-			add(new JLabel(i18n.LAF_LOC, SwingConstants.RIGHT), gbc);
+			pnl.add(new JLabel(i18n.THEME_PACK), gbc);
 
 			++gbc.gridx;
-			add(new JLabel(_plugin.getLookAndFeelFolder().getAbsolutePath()), gbc);
+			pnl.add(_themePackCmb, gbc);
 
 			gbc.gridx = 0;
 			++gbc.gridy;
-			add(new JLabel(i18n.THEMEPACK_LOC, SwingConstants.RIGHT), gbc);
+			pnl.add(new JLabel(i18n.LAF_LOC), gbc);
 
 			++gbc.gridx;
-			add(new JLabel(_plugin.getSkinThemePackFolder().getAbsolutePath()), gbc);
-
-			for (int i = 0; i < FONTS.length; ++i) {
-				if (i % 2 == 0) {
-					gbc.gridx = 0;
-					++gbc.gridy;
-				} else {
-					++gbc.gridx;
-				}
-				String[] buttonInfo = FONTS[i];
-				if (buttonInfo.length > 1) {
-					JButton btn = new JButton(buttonInfo[0]);
-					String[] propertyNames = new String[buttonInfo.length - 1];
-					System.arraycopy(buttonInfo, 1, propertyNames, 0, propertyNames.length);
-					btn.addActionListener(new FontButtonListener(propertyNames));
-					add(btn, gbc);
-				}
-			}
+			pnl.add(new JLabel(_plugin.getLookAndFeelFolder().getAbsolutePath()), gbc);
 
 			gbc.gridx = 0;
 			++gbc.gridy;
-			JButton defaultsBtn = new JButton("Default Fonts");
-			add(defaultsBtn, gbc);
-			// Warning message in bottom panel.
-			//			JTextArea ta = new JTextArea(i18n.LAF_WARNING);
-			//			ta.setBackground(getBackground());
-			//			ta.setEditable(false);
-			//			ta.setFont(lbl.getFont());
-			//			add(ta, BorderLayout.SOUTH);
+			pnl.add(new JLabel(i18n.THEMEPACK_LOC), gbc);
+
+			++gbc.gridx;
+			pnl.add(new JLabel(_plugin.getSkinThemePackFolder().getAbsolutePath()), gbc);
+			
+			return pnl;
 		}
 
-		private void createFontControls(JPanel pnl) {
+		private JPanel createFontsPanel() {
+			_menuFontBtn = new FontButton("Menus", _menuFontLbl, _prefs.getMenuFontInfo());
+			_staticFontBtn = new FontButton("Static Text", _staticFontLbl, _prefs.getStaticFontInfo());
+			_otherFontBtn = new FontButton("Other", _otherFontLbl, _prefs.getOtherFontInfo());
+
+			FontButtonListener lis = new FontButtonListener();
+			_menuFontBtn.addActionListener(lis);
+			_staticFontBtn.addActionListener(lis);
+			_otherFontBtn.addActionListener(lis);
+
+			_menuFontEnabledChk.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					_menuFontBtn.setEnabled(_menuFontEnabledChk.isSelected());
+				}
+			});
+			_staticFontEnabledChk.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					_staticFontBtn.setEnabled(_staticFontEnabledChk.isSelected());
+				}
+			});
+			_otherFontEnabledChk.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					_otherFontBtn.setEnabled(_otherFontEnabledChk.isSelected());
+				}
+			});
+
+			JPanel pnl = new JPanel();
+			pnl.setBorder(BorderFactory.createTitledBorder("Fonts"));
+			pnl.setLayout(new GridBagLayout());
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = gbc.HORIZONTAL;
+			gbc.insets = new Insets(4, 4, 4, 4);
+
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			pnl.add(_menuFontEnabledChk, gbc);
+
+			++gbc.gridy;
+			pnl.add(_staticFontEnabledChk, gbc);
+
+			++gbc.gridy;
+			pnl.add(_otherFontEnabledChk, gbc);
+
+			++gbc.gridx;
+			gbc.gridy = 0;
+			pnl.add(_menuFontBtn, gbc);
+
+			++gbc.gridy;
+			pnl.add(_staticFontBtn, gbc);
+
+			++gbc.gridy;
+			pnl.add(_otherFontBtn, gbc);
+
+			++gbc.gridx;
+			gbc.gridy = 0;
+			gbc.fill = gbc.HORIZONTAL;
+			gbc.weightx = 1.0;
+			pnl.add(_menuFontLbl, gbc);
+
+			++gbc.gridy;
+			pnl.add(_staticFontLbl, gbc);
+
+			++gbc.gridy;
+			pnl.add(_otherFontLbl, gbc);
+
+			return pnl;
 		}
 
 		private class ThemePackComboBox extends JComboBox {
@@ -295,21 +398,60 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
 				}
 			}
 		}
-		
-		private class FontButtonListener implements ActionListener {
-			private String[] _propertyNames;
-			FontButtonListener(String[] propertyNames) {
-				super();
-				_propertyNames = propertyNames;
+
+		private static final class FontButton extends JButton {
+			private FontInfo _fi;
+			private JLabel _lbl;
+			private Font _font;
+			private boolean _dirty;
+
+			FontButton(String text, JLabel lbl, FontInfo fi) {
+				super(text);
+				_lbl = lbl;
+				_fi = fi;
 			}
+			
+			FontInfo getFontInfo() {
+				return _fi;
+			}
+			
+			Font getSelectedFont() {
+				return _font;
+			}
+			
+			void setSelectedFont(Font font) {
+				_font = font;
+				if (_fi == null) {
+					_fi = new FontInfo(font);
+				} else {
+					_fi.setFont(font);
+				}
+				_dirty = true;
+			}
+			
+			boolean isDirty() {
+				return _dirty;
+			}
+		}
+
+		private static final class FontButtonListener implements ActionListener {
 			public void actionPerformed(ActionEvent evt) {
-				FontChooser chooser = new FontChooser();
-				if (chooser.showDialog()) {
-					Font font = chooser.getSelectedFont();
+				if (evt.getSource() instanceof FontButton) {
+					FontButton btn = (FontButton)evt.getSource();
+					FontInfo fi = btn.getFontInfo();
+					Font font = null;
+					if (fi != null) {
+						font = fi.createFont();
+					}
+					font = new FontChooser().showDialog(font);
 					if (font != null) {
+						btn.setSelectedFont(font);
+						btn._lbl.setText(fi != null ? fi.toString() : "");
 					}
 				}
 			}
 		}
 	}
+	
+	
 }

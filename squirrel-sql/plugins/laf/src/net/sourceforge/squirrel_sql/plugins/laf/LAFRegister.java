@@ -27,6 +27,7 @@ import java.util.List;
 
 import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
+import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -41,193 +42,284 @@ import net.sourceforge.squirrel_sql.client.IApplication;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class LAFRegister implements LAFConstants {
-    /** Application API. */
-    private IApplication _app;
+class LAFRegister implements LAFConstants {
+	private final static int FONT_KEYS_ARRAY_OTHER = 0;
+	private final static int FONT_KEYS_ARRAY_MENU = 1;
+	private final static int FONT_KEYS_ARRAY_STATIC = 2;
 
-    /** Look and Feel plugin. */
-    LAFPlugin _plugin;
+	// What about these
+	// Viewport.font, ColorChooser.font, InternalFrame.font,
+	// OptionPane.font, "Panel.font",
+	// ScrollPane.font, DesktopIcon.font
+	// ToolTip.font
 
-    /** Classloader for Look and Feel classes. */
-    private MyURLClassLoader _lafClassLoader;
+	private final static String[][] FONT_KEYS = {
+		// Editable Text
+		{
+			"EditorPane.font",
+			"List.font",
+			"TextArea.font",
+			"TextField.font",
+			"PasswordField.font",
+			"Table.font",
+			"TableHeader.font",
+			"TextPane.font",
+			"Tree.font",
+		},
 
-    /** Name of the Skin Look and Feel. */
-    private String _skinLookAndFeelName = "";
+		// Menus
+		{
+			"CheckBoxMenuItem.acceleratorFont",
+			"CheckBoxMenuItem.font",
+			"Menu.acceleratorFont",
+			"Menu.font",
+			"MenuBar.font",
+			"MenuItem.acceleratorFont",
+			"MenuItem.font",
+			"PopupMenu.font",
+			"RadioButtonMenuItem.acceleratorFont",
+			"RadioButtonMenuItem.font",
+		},
+		
+		// Static text
+		{
+			"Button.font",
+			"CheckBox.font",
+			"ComboBox.font",
+			"InternalFrame.titleFont",
+			"Label.font",
+			"ProgressBar.font",
+			"RadioButton.font",
+			"TabbedPane.font",
+			"TitledBorder.font",
+			"ToggleButton.font",
+			"ToolBar.font",
+		},
+	};
 
-    /**
-     * Ctor. Load all Look and Feels from the Look and Feel folder. Set the
-     * current Look and Feel to that specified in the application preferences.
-     *
-     * @param   app     Application API.
-     * @param   plugin  The LAF plugin.
-     *
-     * @throws  IllegalArgumentException
-     *              If <TT>IApplication</TT>, or <TT>LAFPlugin</TT> are <TT>null</TT>.
-     *
-     * @throws  IllegalStateException
-     *              If no <TT>Logger</TT> object exists in the passed<TT>IApplication</TT>.
-     */
-    public LAFRegister(IApplication app, LAFPlugin plugin)
-        throws IllegalArgumentException {
-        super();
-        if (app == null) {
-            throw new IllegalArgumentException("Null IApplication passed");
-        }
-        if (plugin == null) {
-            throw new IllegalArgumentException("Null LAFPlugin passed");
-        }
-        if (app.getLogger() == null) {
-            throw new IllegalStateException("No Logger object in IApplication");
-        }
+	/** Application API. */
+	private IApplication _app;
 
-        _app = app;
-        _plugin = plugin;
+	/** Look and Feel plugin. */
+	LAFPlugin _plugin;
 
-        installLookAndFeels();
+	/** Classloader for Look and Feel classes. */
+	private MyURLClassLoader _lafClassLoader;
 
-        try {
-            setLookAndFeel();
-        } catch (Throwable ex) {
-            _app.getLogger().showMessage(Logger.ILogTypes.ERROR, ex);
-        }
-    }
+	/** Name of the Skin Look and Feel. */
+	private String _skinLookAndFeelName = "";
 
-    /**
-     * Return the name of the Skin Look and Feel.
-     *
-     * @return  name of he Skin Look and Feel.
-     */
-    public String getSkinnableLookAndFeelName() {
-        return _skinLookAndFeelName;
-    }
+	/** <UI defaults prior to us modifying them. */
+	UIDefaults _origUIDefaults;
 
-    /**
-     * Set the current Look and Feel to that specified in the app preferences.
-     */
-    void setLookAndFeel()
-        throws
-            ClassNotFoundException,
-            IllegalAccessException,
-            InstantiationException,
-            UnsupportedLookAndFeelException {
-        LAFPreferences lafPrefs = _plugin.getLAFPreferences();
-        String lafClassName = lafPrefs.getLookAndFeelClassName();
+	/**
+	 * Ctor. Load all Look and Feels from the Look and Feel folder. Set the
+	 * current Look and Feel to that specified in the application preferences.
+	 *
+	 * @param	app	 Application API.
+	 * @param	plugin  The LAF plugin.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			If <TT>IApplication</TT>, or <TT>LAFPlugin</TT> are <TT>null</TT>.
+	 *
+	 * @throws	IllegalStateException
+	 *			If no <TT>Logger</TT> object exists in the passed<TT>IApplication</TT>.
+	 */
+	LAFRegister(IApplication app, LAFPlugin plugin)
+		throws IllegalArgumentException {
+		super();
+		if (app == null) {
+			throw new IllegalArgumentException("Null IApplication passed");
+		}
+		if (plugin == null) {
+			throw new IllegalArgumentException("Null LAFPlugin passed");
+		}
+		if (app.getLogger() == null) {
+			throw new IllegalStateException("No Logger object in IApplication");
+		}
 
-        // If this is the Skin Look and Feel then load the current theme pack
-        // and set the current skin.
-        if (lafClassName.equals(SKINNABLE_LAF_CLASS_NAME)) {
-            try {
-                Class skinLafClass = _lafClassLoader.loadClass(lafClassName);
-                Class skinClass = _lafClassLoader.loadClass(SKIN_CLASS_NAME);
-                Method loadThemePack =
-                    skinLafClass.getMethod("loadThemePack", new Class[] { String.class });
-                Method setSkin = skinLafClass.getMethod("setSkin", new Class[] { skinClass });
-                Object skin =
-                    loadThemePack.invoke(
-                        skinLafClass,
-                        new Object[] {
-                             _plugin.getSkinThemePackFolder() + "/" + lafPrefs.getThemePackName()});
-                setSkin.invoke(skinLafClass, new Object[] { skin });
-            } catch (Exception ex) {
-                Logger logger = _app.getLogger();
-                logger.showMessage(
-                    Logger.ILogTypes.ERROR,
-                    "Error loading a Skinnable Look and Feel");
-                logger.showMessage(Logger.ILogTypes.ERROR, ex.toString());
-            }
-        }
+		_app = app;
+		_plugin = plugin;
 
-        // Set Look and Feel and update the main frame to use it.
-        if (_lafClassLoader != null) {
-            Class cls = Class.forName(lafClassName, true, _lafClassLoader);
-            UIManager.setLookAndFeel((LookAndFeel) cls.newInstance());
-            UIManager.getLookAndFeelDefaults().put("ClassLoader", _lafClassLoader);
-        } else {
-            Class cls = Class.forName(lafClassName);
-            UIManager.setLookAndFeel((LookAndFeel) cls.newInstance());
-        }
-        Frame frame = _app.getMainFrame();
-        if (frame != null) {
-            SwingUtilities.updateComponentTreeUI(frame);
-        }
-    }
+		// Save the current UI defaults.
+		_origUIDefaults = (UIDefaults)UIManager.getDefaults().clone();
 
-    /**
-     * Install Look and Feels from their jars.
-     */
-    private void installLookAndFeels() {
-        Logger log = _app.getLogger();
+		installLookAndFeels();
 
-        // Retrieve URLs of all the Look and Feel jars and store in lafUrls.
-        List lafUrls = new ArrayList();
-        File dir = _plugin.getLookAndFeelFolder();
-        if (dir.isDirectory()) {
-            File[] files = dir.listFiles();
-            for (int i = 0; i < files.length; ++i) {
-                File jarFile = files[i];
-                String jarFileName = jarFile.getAbsolutePath();
-                if (jarFile.isFile()
-                    && (jarFileName.toLowerCase().endsWith(".zip")
-                        || jarFileName.toLowerCase().endsWith(".jar"))) {
-                    try {
-                        lafUrls.add(jarFile.toURL());
-                    } catch (IOException ex) {
-                        log.showMessage(
-                            Logger.ILogTypes.ERROR,
-                            "Error occured reading Look and Feel jar: " + jarFileName);
-                        log.showMessage(ex);
-                    }
-                }
-            }
-        }
+		try {
+			setLookAndFeel();
+		} catch (Throwable ex) {
+			_app.getLogger().showMessage(Logger.ILogTypes.ERROR, ex);
+		}
+	}
 
-        // Add the skin LAF jar to the list.
-        try {
-            File skinLafFile =
-                new File(_plugin.getPluginAppFolder(), LAFConstants.SKINNABLE_LAF_JAR_NAME);
-            lafUrls.add(skinLafFile.toURL());
-        } catch (IOException ex) {
-            log.showMessage(
-                Logger.ILogTypes.ERROR,
-                "Error occured reading Skin Look and Feel jar: "
-                    + LAFConstants.SKINNABLE_LAF_JAR_NAME);
-            log.showMessage(ex);
-        }
+	/**
+	 * Return the name of the Skin Look and Feel.
+	 *
+	 * @return	name of he Skin Look and Feel.
+	 */
+	String getSkinnableLookAndFeelName() {
+		return _skinLookAndFeelName;
+	}
 
-        // Create a ClassLoader for all the LAF jars. Install all Look and Feels
-        // into the UIManager.
-        try {
-            URL[] urls = ((URL[]) lafUrls.toArray(new URL[lafUrls.size()]));
-            _lafClassLoader =
-                new MyURLClassLoader((URL[]) lafUrls.toArray(new URL[lafUrls.size()]));
-            Class[] lafClasses =
-                _lafClassLoader.getAssignableClasses(LookAndFeel.class, log);
-            List lafNames = new ArrayList();
-            for (int i = 0; i < lafClasses.length; ++i) {
-                Class lafClass = lafClasses[i];
-                try {
-                    LookAndFeel laf = (LookAndFeel) lafClass.newInstance();
-                    if (laf.isSupportedLookAndFeel()) {
-	                    LookAndFeelInfo info = new LookAndFeelInfo(laf.getName(), lafClass.getName());
-	                    UIManager.installLookAndFeel(info);
-	                    lafNames.add(lafClass.getName());
-	                    if (lafClass.getName().equals(this.SKINNABLE_LAF_CLASS_NAME)) {
-	                        _skinLookAndFeelName = laf.getName();
-	                    }
-                    }
-                } catch (Throwable th) {
-                    log.showMessage(
-                        Logger.ILogTypes.ERROR,
-                        "Error occured loading Look and Feel: " + lafClass.getName());
-                    log.showMessage(Logger.ILogTypes.ERROR, th);
-                }
-            }
-        } catch (Throwable th) {
-            log.showMessage(
-                Logger.ILogTypes.ERROR,
-                "Error occured trying to load Look and Feel classes");
-            log.showMessage(Logger.ILogTypes.ERROR, th);
-        }
+	/**
+	 * Set the current Look and Feel to that specified in the app preferences.
+	 */
+	void setLookAndFeel() throws ClassNotFoundException, IllegalAccessException,
+								InstantiationException, UnsupportedLookAndFeelException {
+		final LAFPreferences prefs = _plugin.getLAFPreferences();
+		final String lafClassName = prefs.getLookAndFeelClassName();
 
-    }
+		FontInfo fi = prefs.getMenuFontInfo();
+		String[] keys = FONT_KEYS[FONT_KEYS_ARRAY_MENU];
+		for (int i = 0; i < keys.length; ++i) {
+			if (prefs.isMenuFontEnabled()) {
+				if (fi != null) {
+					UIManager.put(keys[i], fi.createFont());
+				}
+			} else {
+				UIManager.put(keys[i], _origUIDefaults.getFont(keys[i]));
+			}
+		}
+
+		fi = prefs.getStaticFontInfo();
+		keys = FONT_KEYS[FONT_KEYS_ARRAY_STATIC];
+		for (int i = 0; i < keys.length; ++i) {
+			if (prefs.isStaticFontEnabled()) {
+				if (fi != null) {
+					UIManager.put(keys[i], fi.createFont());
+				}
+			} else {
+				UIManager.put(keys[i], _origUIDefaults.getFont(keys[i]));
+			}
+		}
+
+		fi = prefs.getOtherFontInfo();
+		keys = FONT_KEYS[FONT_KEYS_ARRAY_OTHER];
+		for (int i = 0; i < keys.length; ++i) {
+			if (prefs.isOtherFontEnabled()) {
+				if (fi != null) {
+					UIManager.put(keys[i], fi.createFont());
+				}
+			} else {
+				UIManager.put(keys[i], _origUIDefaults.getFont(keys[i]));
+			}
+		}
+
+		// If this is the Skin Look and Feel then load the current theme pack
+		// and set the current skin.
+		if (lafClassName.equals(SKINNABLE_LAF_CLASS_NAME)) {
+			try {
+				Class skinLafClass = _lafClassLoader.loadClass(lafClassName);
+				Class skinClass = _lafClassLoader.loadClass(SKIN_CLASS_NAME);
+				Method loadThemePack =
+					skinLafClass.getMethod("loadThemePack", new Class[] { String.class });
+				Method setSkin = skinLafClass.getMethod("setSkin", new Class[] { skinClass });
+				Object[] parms = new Object[] {
+										_plugin.getSkinThemePackFolder() + "/" + prefs.getThemePackName()
+									};
+				Object skin = loadThemePack.invoke(skinLafClass, parms);
+				setSkin.invoke(skinLafClass, new Object[] { skin });
+			} catch (Exception ex) {
+				Logger logger = _app.getLogger();
+				logger.showMessage(
+					Logger.ILogTypes.ERROR,
+					"Error loading a Skinnable Look and Feel");
+				logger.showMessage(Logger.ILogTypes.ERROR, ex.toString());
+			}
+		}
+
+		// Set Look and Feel and update the main frame to use it.
+		if (_lafClassLoader != null) {
+			Class cls = Class.forName(lafClassName, true, _lafClassLoader);
+			UIManager.setLookAndFeel((LookAndFeel) cls.newInstance());
+			UIManager.getLookAndFeelDefaults().put("ClassLoader", _lafClassLoader);
+		} else {
+			Class cls = Class.forName(lafClassName);
+			UIManager.setLookAndFeel((LookAndFeel) cls.newInstance());
+		}
+		Frame frame = _app.getMainFrame();
+		if (frame != null) {
+			SwingUtilities.updateComponentTreeUI(frame);
+		}
+	}
+
+	/**
+	 * Install Look and Feels from their jars.
+	 */
+	private void installLookAndFeels() {
+		Logger log = _app.getLogger();
+
+		// Retrieve URLs of all the Look and Feel jars and store in lafUrls.
+		List lafUrls = new ArrayList();
+		File dir = _plugin.getLookAndFeelFolder();
+		if (dir.isDirectory()) {
+			File[] files = dir.listFiles();
+			for (int i = 0; i < files.length; ++i) {
+				File jarFile = files[i];
+				String jarFileName = jarFile.getAbsolutePath();
+				if (jarFile.isFile()
+					&& (jarFileName.toLowerCase().endsWith(".zip")
+						|| jarFileName.toLowerCase().endsWith(".jar"))) {
+					try {
+						lafUrls.add(jarFile.toURL());
+					} catch (IOException ex) {
+						log.showMessage(
+							Logger.ILogTypes.ERROR,
+							"Error occured reading Look and Feel jar: " + jarFileName);
+						log.showMessage(ex);
+					}
+				}
+			}
+		}
+
+		// Add the skin LAF jar to the list.
+		try {
+			File skinLafFile =
+				new File(_plugin.getPluginAppSettingsFolder(), LAFConstants.SKINNABLE_LAF_JAR_NAME);
+			lafUrls.add(skinLafFile.toURL());
+		} catch (IOException ex) {
+			log.showMessage(
+				Logger.ILogTypes.ERROR,
+				"Error occured reading Skin Look and Feel jar: "
+					+ LAFConstants.SKINNABLE_LAF_JAR_NAME);
+			log.showMessage(ex);
+		}
+
+		// Create a ClassLoader for all the LAF jars. Install all Look and Feels
+		// into the UIManager.
+		try {
+			URL[] urls = ((URL[]) lafUrls.toArray(new URL[lafUrls.size()]));
+			_lafClassLoader =
+				new MyURLClassLoader((URL[]) lafUrls.toArray(new URL[lafUrls.size()]));
+			Class[] lafClasses =
+				_lafClassLoader.getAssignableClasses(LookAndFeel.class, log);
+			List lafNames = new ArrayList();
+			for (int i = 0; i < lafClasses.length; ++i) {
+				Class lafClass = lafClasses[i];
+				try {
+					LookAndFeel laf = (LookAndFeel) lafClass.newInstance();
+					if (laf.isSupportedLookAndFeel()) {
+						LookAndFeelInfo info = new LookAndFeelInfo(laf.getName(), lafClass.getName());
+						UIManager.installLookAndFeel(info);
+						lafNames.add(lafClass.getName());
+						if (lafClass.getName().equals(this.SKINNABLE_LAF_CLASS_NAME)) {
+							_skinLookAndFeelName = laf.getName();
+						}
+					}
+				} catch (Throwable th) {
+					log.showMessage(
+						Logger.ILogTypes.ERROR,
+						"Error occured loading Look and Feel: " + lafClass.getName());
+					log.showMessage(Logger.ILogTypes.ERROR, th);
+				}
+			}
+		} catch (Throwable th) {
+			log.showMessage(
+				Logger.ILogTypes.ERROR,
+				"Error occured trying to load Look and Feel classes");
+			log.showMessage(Logger.ILogTypes.ERROR, th);
+		}
+
+	}
 }

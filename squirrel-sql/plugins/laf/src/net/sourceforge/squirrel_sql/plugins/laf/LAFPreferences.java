@@ -17,10 +17,7 @@ package net.sourceforge.squirrel_sql.plugins.laf;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.Font;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.UIManager;
 
@@ -31,17 +28,16 @@ import javax.swing.UIManager;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class LAFPreferences implements Serializable {
-	public interface IPropertyNames {
-		String LAF_CLASS = "LookAndFeelClassName";
-		String THEME_PACK = "ThemePackName";
-		String FONT_INFO = "FontInformation";
-	}
-
 	private String _lafClassName;
 	private String _themePackName;
 
-	/** <TT>FontInfo</TT> objects */
-	private List _fontInfoList = new ArrayList();
+	private FontInfo _fiMenu;
+	private FontInfo _fiStatic;
+	private FontInfo _fiOther;
+
+	private boolean _fiMenuEnabled;
+	private boolean _fiStaticEnabled;
+	private boolean _fiOtherEnabled;
 
 	public LAFPreferences() {
 		super();
@@ -49,65 +45,67 @@ public class LAFPreferences implements Serializable {
 		_themePackName = "";
 	}
 
-
 	public String getLookAndFeelClassName() {
 		return _lafClassName;
+	}
+
+	public void setLookAndFeelClassName(String data) {
+		_lafClassName = data;
 	}
 
 	public String getThemePackName() {
 		return _themePackName;
 	}
 
-
-	public void setLookAndFeelClassName(String data) {
-		_lafClassName = data;
-	}
-
-
 	public void setThemePackName(String data) {
 		_themePackName = data;
 	}
 
-	public void setFontInfo(String[] propertyNames, Font font)
-			throws IllegalArgumentException {
-		if (propertyNames == null) {
-			throw new IllegalArgumentException("Null propertyNames passed");
-		}
-		if (font == null) {
-			throw new IllegalArgumentException("Null Font passed");
-		}
-
-		for (int i = 0; i < propertyNames.length; ++i) {
-			FontInfo fi = new FontInfo(propertyNames[i]);
-			int idx = _fontInfoList.indexOf(fi);
-			if (idx != -1) {
-				fi = (FontInfo)_fontInfoList.get(idx);
-			} else {
-				_fontInfoList.add(fi);
-			}
-			fi.setFont(font);
-		}
+	public FontInfo getMenuFontInfo() {
+		return _fiMenu;
 	}
 
-	public FontInfo[] getFontInfo() {
-		return (FontInfo[])_fontInfoList.toArray(new FontInfo[_fontInfoList.size()]);
+	public void setMenuFontInfo(FontInfo data) {
+		_fiMenu = data;
 	}
 
-	public FontInfo getFontInfo(int idx) throws ArrayIndexOutOfBoundsException {
-		return (FontInfo)_fontInfoList.get(idx);
+	public FontInfo getStaticFontInfo() {
+		return _fiStatic;
 	}
 
-	public void setFontInfo(FontInfo[] value) {
-		_fontInfoList.clear();
-		if (value != null) {
-			for (int i = 0; i < value.length; ++i) {
-				_fontInfoList.add(value[i]);
-			}
-		}
+	public void setStaticFontInfo(FontInfo data) {
+		_fiStatic = data;
 	}
 
-	public void setFontInfo(int idx, FontInfo value) throws ArrayIndexOutOfBoundsException {
-		_fontInfoList.set(idx, value);
+	public FontInfo getOtherFontInfo() {
+		return _fiOther;
 	}
 
+	public void setOtherFontInfo(FontInfo data) {
+		_fiOther = data;
+	}
+
+	public boolean isMenuFontEnabled() {
+		return _fiMenuEnabled;
+	}
+
+	public void setMenuFontEnabled(boolean data) {
+		_fiMenuEnabled = data;
+	}
+
+	public boolean isStaticFontEnabled() {
+		return _fiStaticEnabled;
+	}
+
+	public void setStaticFontEnabled(boolean data) {
+		_fiStaticEnabled = data;
+	}
+
+	public boolean isOtherFontEnabled() {
+		return _fiOtherEnabled;
+	}
+
+	public void setOtherFontEnabled(boolean data) {
+		_fiOtherEnabled = data;
+	}
 }
