@@ -1,0 +1,7 @@
+Microsoft SQL Server Assistant Plugin Change Log
+================================================
+
+0.1
+===
+- Initial release.
+
