@@ -6,6 +6,8 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Added default port to PostgreSQL entry in default drivers
+  file (Glenn Griffin).
 - Add toolbar to HTML Viewer with back, forward and close buttons.
 - Documentation updated.
 - Allow Squirrel to be run from directories other than the current
