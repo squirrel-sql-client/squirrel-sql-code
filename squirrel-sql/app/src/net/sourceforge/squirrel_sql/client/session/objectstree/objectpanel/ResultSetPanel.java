@@ -53,7 +53,6 @@ public class ResultSetPanel extends JScrollPane {
 			}
 			final ResultSetDataSet ds = new ResultSetDataSet();
 			ds.setResultSet(rs, cols);
-			rs.close();
 			Runnable run = new Runnable()
 			{
 				public void run()
