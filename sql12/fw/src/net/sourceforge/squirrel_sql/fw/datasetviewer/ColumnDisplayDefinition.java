@@ -19,6 +19,8 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  */
 import java.sql.ResultSetMetaData;
 import java.sql.Types;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+
 /**
  * This defines the display information for a column.
  *
@@ -199,78 +201,7 @@ public class ColumnDisplayDefinition
 	 */
 	public String getClassName()
 	{
-		switch (_sqlType)
-		{
-			case Types.NULL:	// should never happen
-				return "java.lang.Object";
-
-			// TODO: When JDK1.4 is the earliest JDK supported
-			// by Squirrel then remove the hardcoding of the
-			// boolean data type.
-			case Types.BIT:
-			case 16:
-//			case Types.BOOLEAN:
-				return "java.lang.Object";
-
-			case Types.TIME :
-				return "java.lang.Object";
-
-			case Types.DATE :
-				return "java.lang.Object";
-
-			case Types.TIMESTAMP :
-				return "java.lang.Object";
-
-			case Types.BIGINT :
-				return "java.lang.Object";
-
-			case Types.DOUBLE:
-			case Types.FLOAT:
-			case Types.REAL:
-				return "java.lang.Object";
-
-			case Types.DECIMAL:
-			case Types.NUMERIC:
-				return "java.lang.Object";
-
-			case Types.INTEGER:
-			case Types.SMALLINT:
-			case Types.TINYINT:
-				return "java.lang.Integer";
-
-
-			// TODO: Hard coded -. JDBC/ODBC bridge JDK1.4
-			// brings back -9 for nvarchar columns in
-			// MS SQL Server tables.
-			// -8 is ROWID in Oracle.
-			case Types.CHAR:
-			case Types.VARCHAR:
-			case Types.LONGVARCHAR:
-			case -9:
-			case -8:
-				return "java.lang.String";
-
-			case Types.BINARY:
-				return "java.lang.Object";
-
-			case Types.VARBINARY:
-				return "java.lang.Object";
-
-			case Types.LONGVARBINARY:
-				return "java.lang.Object";
-
-			case Types.BLOB:
-				return "java.lang.Object";
-
-			case Types.CLOB:
-				return "java.lang.Object";
-
-			case Types.OTHER:
-				return "java.lang.Object";
-
-			default:	// should never happen
-				return "java.lang.Object";
-		}
+		return CellComponentFactory.getClassName(this);
 	}
 
 	/**
