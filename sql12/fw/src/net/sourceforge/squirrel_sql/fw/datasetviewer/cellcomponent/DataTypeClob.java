@@ -33,6 +33,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Clob;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 //??import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
@@ -102,7 +103,7 @@ public class DataTypeClob
 	 * Return the name of the java class used to hold this data type.
 	 */
 	public String getClassName() {
-		return "java.lang.Clob";
+		return "net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.ClobDescriptor";
 	}
 
 	/**
@@ -110,7 +111,7 @@ public class DataTypeClob
 	 * Neither of the objects is null
 	 */
 	public boolean areEqual(Object obj1, Object obj2) {
-		return ((Clob)obj1).equals(obj2);
+		return ((ClobDescriptor)obj1).equals(obj2);
 	}
 
 	/*
@@ -126,9 +127,48 @@ public class DataTypeClob
 	
 	/**
 	 * This Data Type can be edited in a table cell.
+	 * This function is not called during the initial table load, or during
+	 * normal table operations.
+	 * It is called only when the user enters the cell, either to examine
+	 * or to edit the data.
+	 * The user may have set the LargeResultSetObjectInfo parameters to
+	 * minimize the data read during the initial table load (to speed it up),
+	 * but when they enter this cell we would like to show them the entire
+	 * contents of the CLOB.
+	 * Therefore we use a call to this function as a trigger to make sure
+	 * that we have all of the CLOB data, if that is possible.
 	 */
-	public boolean isEditableInCell() {
-		return true;	
+	public boolean isEditableInCell(Object originalValue) {
+		// for convenience, cast the value object to its type
+		ClobDescriptor cdesc = (ClobDescriptor)originalValue;
+		
+		// data is editable if the CLOB has been read and either
+		// the size was not limited by the user, or the data is shorter
+		// than the user's limit.
+		if (cdesc.getClobRead() &&
+			(cdesc.getUserSetClobLimit() == 0 ||
+				cdesc.getUserSetClobLimit() < cdesc.getData().length()) )
+				return true;
+		
+		// data was not fully read in before, so try to do that now
+		try {
+//????????????????????????????????????????????????????????????????
+			String data = cdesc.getClob().getSubString(1, (int)cdesc.getClob().length());
+			
+			// read succeeded, so reset the ClobDescriptor to match
+			cdesc.setClobRead(true);
+			cdesc.setData(data);
+			cdesc.setWholeClobRead(true);
+			cdesc.setUserSetClobLimit(0);
+			
+			return true;
+		}
+		catch (Exception ex) {
+			cdesc.setClobRead(true);
+			cdesc.setWholeClobRead(false);
+			cdesc.setData("Sorry Colin, could not read the data. Error was: "+ex.getMessage());
+			return false;
+		}	
 	}
 	
 	/**
@@ -168,23 +208,34 @@ public class DataTypeClob
 	 * Implement the interface for validating and converting to internal object.
 	 * Null is a valid successful return, so errors are indicated only by
 	 * existance or not of a message in the messageBuffer.
+	 * If originalValue is null, then we are just checking that the data is
+	 * in a valid format (for file import/export) and not actually converting
+	 * the data.
 	 */
-	public Object validateAndConvert(String value, StringBuffer messageBuffer) {
+	public Object validateAndConvert(String value, Object originalValue, StringBuffer messageBuffer) {
 		// handle null, which is shown as the special string "<null>"
 		if (value.equals("<null>") || value.equals(""))
 			return null;
+			
+		// Sprcial case: when reading/writing data from/to files, this function is
+		// called to verify that the string is in a valid format.  If we are able to
+		// correctly convert the string to the CLOB internal format, there is no error,
+		// so just return without creating/changing a ClobDescriptor.
+		if (originalValue == null)
+			return null;  // for CLOB, the internal data type is String, so it is ok.
 
 		// Do the conversion into the object in a safe manner
-		try {
-			Object obj = new Clob(value);
-			return obj;
-		}
-		catch (Exception e) {
-			messageBuffer.append(e.toString()+"\n");
-			//?? do we need the message also, or is it automatically part of the toString()?
-			//messageBuffer.append(e.getMessage());
-			return null;
-		}
+		// Reuse the original java.sql.Clob object, but reset all of the 
+		// fields to indicate that this is the entire value of the CLOB field.
+
+		// for convenience, cast the object
+		ClobDescriptor cdesc = (ClobDescriptor)originalValue;
+		cdesc.setData(value);
+		cdesc.setClobRead(true);
+		cdesc.setWholeClobRead(true);
+		cdesc.setUserSetClobLimit(0);
+		return originalValue;
+
 	}
 
 	/*
@@ -195,8 +246,9 @@ public class DataTypeClob
 	 * Returns true if data type may be edited in the popup,
 	 * false if not.
 	 */
-	public boolean isEditableInPopup() {
-		return true;
+	public boolean isEditableInPopup(Object originalValue) {
+		// use same algorithm as for cell
+		return isEditableInCell(originalValue);
 	}
 
 	/*
@@ -205,6 +257,7 @@ public class DataTypeClob
 	 */
 	 public JTextArea getJTextArea(Object value) {
 		_textComponent = new RestorableJTextArea();
+		
 		
 		// value is a simple string representation of the data,
 		// the same one used in Text and in-cell operations.
@@ -219,8 +272,8 @@ public class DataTypeClob
 	/**
 	 * Validating and converting in Popup is identical to cell-related operation.
 	 */
-	public Object validateAndConvertInPopup(String value, StringBuffer messageBuffer) {
-		return validateAndConvert(value, messageBuffer);
+	public Object validateAndConvertInPopup(String value, Object originalValue, StringBuffer messageBuffer) {
+		return validateAndConvert(value, originalValue, messageBuffer);
 	}
 
 	/*
@@ -240,34 +293,6 @@ public class DataTypeClob
 				// could typecast every reference, but this makes the code cleaner
 				JTextComponent _theComponent = (JTextComponent)DataTypeClob.this._textComponent;
 				String text = _theComponent.getText();
-	
-												
-				// tabs and newlines get put into the text before this check,
-				// so remove them
-				// This only applies to Popup editing since these chars are
-				// not passed to this level by the in-cell editor.
-				if (c == KeyEvent.VK_TAB || c == KeyEvent.VK_ENTER) {
-					int cIndex = text.indexOf(c);
-					String newText = null;
-					if (cIndex == 0)
-						newText = text.substring(1);
-					else if (cIndex == text.length()-1)
-						newText = text.substring(0, text.length()-1);
-					else
-						newText = text.substring(0, cIndex) + text.substring(cIndex+1);
-
-					((IRestorableTextComponent)_theComponent).updateText(newText);
-					_theComponent.getToolkit().beep();
-					e.consume();
-				}
-
-				if ( ! ( Character.isDigit(c) ||
-					(c == '-') ||
-					(c == KeyEvent.VK_BACK_SPACE) ||
-					(c == KeyEvent.VK_DELETE) ) ) {
-					_theComponent.getToolkit().beep();
-					e.consume();
-				}
 
 
 				// handle cases of null
@@ -320,8 +345,7 @@ public class DataTypeClob
 		}
 
 
-	
-	
+
 	/*
 	 * DataBase-related functions
 	 */
@@ -334,10 +358,55 @@ public class DataTypeClob
 		LargeResultSetObjectInfo largeObjInfo)
 		throws java.sql.SQLException {
 		
-		int data = rs.getInt(index);
+		// We always get the CLOB.
+		// Since the CLOB is just a pointer to the CLOB data rather than the
+		// data itself, this operation should not take much time (as opposed
+		// to getting all of the data in the clob).
+		Clob clob = rs.getClob(index);
+
 		if (rs.wasNull())
 			return null;
-		else return new Clob(data);
+		
+		// CLOB exists, so try to read the data from it
+		// based on the user's directions
+		if (largeObjInfo.getReadClobs())
+		{
+			// User said to read at least some of the data from the clob
+			String clobData = null;
+			if (clob != null)
+			{
+				int len = (int)clob.length();
+				if (len > 0)
+				{
+
+//?????????????????????????????????????????????????????????????????????????
+					int charsToRead = len;
+					if (!largeObjInfo.getReadCompleteClobs())
+					{
+						charsToRead = largeObjInfo.getReadClobsSize();
+					}
+					if (charsToRead > len)
+					{
+						charsToRead = len;
+					}
+					clobData = clob.getSubString(1, charsToRead);
+				}
+			}
+			// determine whether we read all there was in the clob or not
+			boolean wholeClobRead = false;
+			if (largeObjInfo.getReadCompleteClobs() ||
+				clobData.length() < largeObjInfo.getReadClobsSize())
+				wholeClobRead = true;
+				
+			return new ClobDescriptor(clob, clobData, true, wholeClobRead,
+				largeObjInfo.getReadClobsSize());
+		}
+		else
+		{
+			// user said not to read any of the data from the clob
+			return new ClobDescriptor(clob, null, false, false, 0);
+		}
+
 	}
 
 	/**
@@ -357,7 +426,7 @@ public class DataTypeClob
 		if (value == null || value.toString() == null || value.toString().length() == 0)
 			return _colDef.getLabel() + " IS NULL";
 		else
-			return _colDef.getLabel() + "=" + value.toString();
+			return "";	// CLOB cannot be used in WHERE clause
 	}
 	
 	
@@ -371,7 +440,17 @@ public class DataTypeClob
 			pstmt.setNull(1, _colDef.getSqlType());
 		}
 		else {
-			pstmt.setInt(1, ((Clob)value).intValue());
+			// for convenience cast the object to ClobDescriptor
+			ClobDescriptor cdesc = (ClobDescriptor)value;
+			
+			// I'm not sure whether I need to do both of the following.
+			
+			// first put the data into the Clob
+//???????????????????????????????????????????????????????????????????????????????????
+			cdesc.getClob().setString(0, cdesc.getData());
+			
+			// now put the clob back into the DB
+			pstmt.setClob(1, cdesc.getClob());
 		}
 	}
 	
@@ -434,7 +513,7 @@ public class DataTypeClob
 	 	// test that the string is valid by converting it into an
 	 	// object of this data type
 	 	StringBuffer messageBuffer = new StringBuffer();
-	 	validateAndConvertInPopup(fileText, messageBuffer);
+	 	validateAndConvertInPopup(fileText, null, messageBuffer);
 	 	if (messageBuffer.length() > 0) {
 	 		// convert number conversion issue into IO issue for consistancy
 	 		throw new IOException(
@@ -474,7 +553,7 @@ public class DataTypeClob
 	 	
 	 	// check that the text is a valid representation
 	 	StringBuffer messageBuffer = new StringBuffer();
-	 	validateAndConvertInPopup(text, messageBuffer);
+	 	validateAndConvertInPopup(text, null, messageBuffer);
 	 	if (messageBuffer.length() > 0) {
 	 		// there was an error in the conversion
 	 		throw new IOException(new String(messageBuffer));

@@ -133,7 +133,7 @@ public class DataTypeBinary
 	/**
 	 * This Data Type can be edited in a table cell.
 	 */
-	public boolean isEditableInCell() {
+	public boolean isEditableInCell(Object originalValue) {
 		return true;	
 	}
 	
@@ -176,7 +176,7 @@ public class DataTypeBinary
 	 * Null is a valid successful return, so errors are indicated only by
 	 * existance or not of a message in the messageBuffer.
 	 */
-	public Object validateAndConvert(String value, StringBuffer messageBuffer) {
+	public Object validateAndConvert(String value, Object originalValue, StringBuffer messageBuffer) {
 		// handle null, which is shown as the special string "<null>"
 		if (value == null || value.equals("<null>") || value.equals(""))
 			return null;
@@ -203,7 +203,7 @@ public class DataTypeBinary
 	 * Returns true if data type may be edited in the popup,
 	 * false if not.
 	 */
-	public boolean isEditableInPopup() {
+	public boolean isEditableInPopup(Object originalValue) {
 		return true;
 	}
 
@@ -227,8 +227,8 @@ public class DataTypeBinary
 	/**
 	 * Validating and converting in Popup is identical to cell-related operation.
 	 */
-	public Object validateAndConvertInPopup(String value, StringBuffer messageBuffer) {
-		return validateAndConvert(value, messageBuffer);
+	public Object validateAndConvertInPopup(String value, Object originalValue, StringBuffer messageBuffer) {
+		return validateAndConvert(value, originalValue, messageBuffer);
 	}
 
 	/*
@@ -461,7 +461,7 @@ public class DataTypeBinary
 	 	
 	 	// check that the text is a valid representation
 	 	StringBuffer messageBuffer = new StringBuffer();
-	 	validateAndConvertInPopup(text, messageBuffer);
+	 	validateAndConvertInPopup(text, null, messageBuffer);
 	 	if (messageBuffer.length() > 0) {
 	 		// there was an error in the conversion
 	 		throw new IOException(new String(messageBuffer));

@@ -138,7 +138,7 @@ public class DataTypeOther
 	/**
 	 * This Data Type can be edited in a table cell.
 	 */
-	public boolean isEditableInCell() {
+	public boolean isEditableInCell(Object originalValue) {
 		return false;
 	
 	}
@@ -181,7 +181,7 @@ public class DataTypeOther
 	 * Since we do not know how to convert Other objects,
 	 * just return null with no error in the messageBuffer
 	 */
-	public Object validateAndConvert(String value, StringBuffer messageBuffer) {
+	public Object validateAndConvert(String value, Object originalValue, StringBuffer messageBuffer) {
 		return null;
 	}
 	
@@ -195,7 +195,7 @@ public class DataTypeOther
 	 * Returns true if data type may be edited in the popup,
 	 * false if not.
 	 */
-	public boolean isEditableInPopup() {
+	public boolean isEditableInPopup(Object originalValue) {
 		return false;
 	}
 	
@@ -218,8 +218,8 @@ public class DataTypeOther
 	/**
 	 * Validating and converting in Popup is identical to cell-related operation.
 	 */
-	public Object validateAndConvertInPopup(String value, StringBuffer messageBuffer) {
-		return validateAndConvert(value, messageBuffer);
+	public Object validateAndConvertInPopup(String value, Object originalValue, StringBuffer messageBuffer) {
+		return validateAndConvert(value, originalValue, messageBuffer);
 	}
 
 
