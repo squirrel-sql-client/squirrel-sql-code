@@ -1,21 +1,18 @@
 Change Log
 ==========
 
-1.1 continuation
-================
-- Now using the ModifiedDefaultListCellRenderer from the
-  Kunstoff Look and Feel so list look correct under it.
-- Kunstoff Look and Feel no longer incorrectly shows the
-  session menu (Johan Compagner).
-- Enter now executes the default button in the Connection
-  dialog (Johan Compagner).
-- Table and Column names now show in a different colour in the
-  jEdit plugin (Johan Compagner).
+1.1beta1
+========
+- Plugin architecture added.
 - Now under JDK1.4 have option to scroll tabbed pane tabs
   rather than wrap them.
+- Look and Feel functionality moved to a plugin.
+- The results of queries can be displayed in multiple tabs and these tabs
+  can be "torn off" (Johan Compagner).
+- Can now enter execute multiple SQL statements (Johan Compagner).
+- The message panel is now resizable (Johan Compagner).
 - New "Info" tab on SQL query results.
 - No longer try to load blob fields from SQL Result set.
-- New API for adding tabs to the main panel tab.
 - View SQL data entry caret line/column in status bar
 - Removed control characters from SQL Result tab headings.
 - The characters -- at the beginning of a line of SQL will turn it into a comment.
@@ -25,30 +22,15 @@ Change Log
 - Now displaying SQL Error Code and State when an SQL error occurs.
 - Can now select the Font for the SQL entry area.
 - New "Show Native SQL" item in Session menu.
-- Changes to accessing the SQL script in ISession:
-	String getEntireSQLScript();
-	String getSQLScriptToBeExecuted();
-	void setEntireSQLScript(String sqlScript);
-	void appendSQLScript(String sqlScript);
-- Ctrl/Enter now works in jEdit plugin.
-- Undo/Redo now works in the jEdit plugin.
-- Keyboard shortcuts for edit options now work in the jEdit plugin.
-- jEdit plugin now has a popup menu.
-- New API ISession.removePluginObject(IPlugin plugin, String key);
-- New API added to IPlugin - INewSessionPropertiesPanel[] getNewSessionPropertiesPanels();
-- New Session options moved from Global Prefernces dialog to new Session Properties dialog.
+- "New Session" options moved from Global Prefernces dialog to new Session Properties dialog.
 - New options on the session menu - Close all result tabs and close all Result windows.
 - New option on the Windows menu - Close all sessions.
-- Torn off result tabs are now closed if there session sheet is closed.
 - Bring aliases/driver window to front if action requested.
-- More configuration options for the jEdit plugin.
 - New application argument -noplugins which will run SQuirreL without
   any plugins being loaded.
 - Undo/redo support now added to the SQL entry area (Johan Compagner).
 - Copying SQL results now includes the column headings (Johan Compagner).
 - New "Copy as HTML" option for SQL results (Johan Compagner).
-- Torn off SQL results windows can now be returned into the tabbed folder.
-- Torn off SQL Results windows now appear in the Windows menu.
 - Bug fixed in About Box where the thread that updates the memory status
   continued updating when the About Box was not being displayed.
 - Dialogs have been cleaned up.
@@ -62,19 +44,6 @@ Change Log
   that the user interface is still responsive (Johan Compagner).
 - Row count is now available on the Info tab for a table.
 - Meta data is available for the results of SQL execution.
-
-  
-1.1 alpha1
-===============================
-- Plugin architecture added.
-- Look and Feel functionality moved to a plugin.
-- The results of queries can be displayed in multiple tabs and these tabs
-  can be "torn off" (Johan Compagner).
-- Can now enter execute multiple SQL statements (Johan Compagner).
-- The message panel is now resizable (Johan Compagner).
-- If there are no Skin Look and Feel themepacks then disable
-  Themepack dropdown and remove Skin Look and Feel from the
-  Look and Feel dropdown.
 - Replaced the JDOM library with NanoXML.
 
   

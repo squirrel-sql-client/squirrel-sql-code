@@ -242,6 +242,23 @@
 				<include name="izpack.xml"/>
 			</fileset>
 		</copy>
+
+		<zip zipfile="${dist_dir}/${name}-src-${version}.zip" compress="true">
+			<fileset dir="${core_dist_dir}/src">
+				<include name="**/*.*"/>
+			</fileset>
+		</zip>
+
+		<tar tarfile="${dist_dir}/${name}-src-${version}.tar">
+			<tarfileset dir="${core_dist_dir}/src">
+				<include name="**/*.*"/>
+			</tarfileset>
+		</tar>
+		<gzip zipfile="${dist_dir}/${name}-src-${version}.tar.gz"
+			src="${dist_dir}/${name}-src-${version}.tar">
+		</gzip>
+		<delete file="${dist_dir}/${name}-src-${version}.tar"/>
+
 	</target>
 	
 	<!--
