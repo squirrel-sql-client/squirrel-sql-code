@@ -21,6 +21,7 @@
 		<property name="core_obj_dir" value="${core_work_dir}/obj"/>
 		<property name="core_dist_lib_dir" value="${core_dist_dir}/lib"/>
 		<property name="core_dist_doc_dir" value="${core_dist_dir}/doc"/>
+		<property name="core_jws_dir" value="${dist_dir}/core/jws"/>
 		<property name="plugins_src_dir" value="${basedir}/plugins"/>
 		<property name="plugins_dist_dir" value="${dist_dir}/plugins"/>
 
@@ -70,6 +71,8 @@
 		<echo message="	make_dist:  Executes jar_source."/>
 		<echo message="				Eventually this should run an Ant Task to generate the IzPack JAR."/>
 		<echo message=""/>
+		<echo message=" make_jws:   Creates Java WebStart version."/>
+		<echo message=""/>
 		<echo message="	clean:  Removes class files, old versions of source etc."/>
 		<echo message="--------------------------------------------------------"/>
 		<echo message=""/>
@@ -82,6 +85,7 @@
 	-->
 	<target name="setup" depends="init">
 		<mkdir dir="${core_obj_dir}"/>
+		<mkdir dir="${core_jws_dir}"/>
 		<mkdir dir="${core_dist_lib_dir}"/>
 		<mkdir dir="${core_dist_doc_dir}"/>
 		<mkdir dir="${core_dist_dir}/src"/>
@@ -379,6 +383,35 @@
 		</gzip>
 		<delete file="${dist_dir}/${p_internal_name}.tar"/>
 		
+	</target>
+
+	<target name="make_jws" depends="compile_app">
+		<echo message="${core_jws_dir}"/>
+		<copy todir="${core_jws_dir}">
+			<fileset dir="${core_dist_lib_dir}">
+				<include name="**/*.jar"/>
+			</fileset>
+		</copy>
+		<copy file="doc/images/logo.jpg" todir="${core_jws_dir}"/>
+		<copy file="web-site/jws/squirrel.jnlp" todir="${core_jws_dir}"/>
+<!-- TODO: Get latest version of ant and install on rory -->
+<!--		<signjar alias="squirrel" storepass="password" keystore="build/keystore"> -->
+<!--			<fileset dir="${core_jws_dir}"> -->
+<!--				<include name="**/*.jar"/> -->
+<!--			</fileset> -->
+<!--		</signjar> -->
+		<signjar	alias="squirrel" storepass="password" keystore="build/keystore"
+					jar="${core_jws_dir}/fw.jar">
+		</signjar>
+		<signjar	alias="squirrel" storepass="password" keystore="build/keystore"
+					jar="${core_jws_dir}/log4j.jar">
+		</signjar>
+		<signjar	alias="squirrel" storepass="password" keystore="build/keystore"
+					jar="${core_jws_dir}/nanoxml-2.1.jar">
+		</signjar>
+		<signjar	alias="squirrel" storepass="password" keystore="build/keystore"
+					jar="${core_jws_dir}/squirrel-sql.jar">
+		</signjar>
 	</target>
 
 </project>
