@@ -174,11 +174,13 @@ public class MainPanel extends JPanel
 	 * place. New tabs are inserted at the end.
 	 *
 	 * @param	tab	 The tab to be added.
+    *
+    * @return The index of th added tab
 	 *
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ITablePanelTab</TT> passed.
 	 */
-	public void addMainPanelTab(IMainPanelTab tab)
+	public int addMainPanelTab(IMainPanelTab tab)
 	{
 		if (tab == null)
 		{
@@ -198,6 +200,7 @@ public class MainPanel extends JPanel
 			_tabs.add(tab);
 		}
 		_tabPnl.insertTab(title, null, tab.getComponent(), tab.getHint(), idx);
+      return idx;
 	}
 
 	/**
