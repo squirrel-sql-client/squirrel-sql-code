@@ -23,6 +23,7 @@ import java.awt.event.MouseListener;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
 
@@ -32,7 +33,7 @@ public interface ISQLEntryPanel
 	 * Retrieve the text area component. Normally this would be a subclass
 	 * of <TT>javax.swing.text.JTextComponent</TT> but a plugin may use a
 	 * class other than a Swing text control.
-	 * 
+	 *
 	 * @return	The text area component.
 	 */
 	JComponent getTextComponent();
@@ -41,7 +42,7 @@ public interface ISQLEntryPanel
 	 * If the component returned by <TT>getTextComponent</TT> contains
 	 * its own scroll bars return <TT>true</TT> other wise this component
 	 * will be wrapped in the scroll pane when added to the SQL panel.
-	 * 
+	 *
 	 * @return	<TT>true</TT> if text component already handles scrolling.
 	 */
 	boolean getDoesTextComponentHaveScroller();
@@ -52,7 +53,7 @@ public interface ISQLEntryPanel
 	/**
 	 * Replace the contents of the SQL entry area with the passed
 	 * SQL script without selecting it.
-	 * 
+	 *
 	 * @param	sqlScript	The script to be placed in the SQL entry area..
 	 */
 	void setText(String sqlScript);
@@ -60,7 +61,7 @@ public interface ISQLEntryPanel
 	/**
 	 * Replace the contents of the SQL entry area with the passed
 	 * SQL script and specify whether to select it.
-	 * 
+	 *
 	 * @param	sqlScript	The script to be placed in the SQL entry area..
 	 * @param	select		If <TT>true</TT> then select the passed script
 	 * 						in the sql entry area.
@@ -70,7 +71,7 @@ public interface ISQLEntryPanel
 	/**
 	 * Append the passed SQL script to the SQL entry area but don't select
 	 * it.
-	 * 
+	 *
 	 * @param	sqlScript	The script to be appended.
 	 */
 	void appendText(String text);
@@ -78,7 +79,7 @@ public interface ISQLEntryPanel
 	/**
 	 * Append the passed SQL script to the SQL entry area and specify
 	 * whether it should be selected.
-	 * 
+	 *
 	 * @param	sqlScript	The script to be appended.
 	 * @param	select		If <TT>true</TT> then select the passed script
 	 * 						in the sql entry area.
@@ -88,7 +89,7 @@ public interface ISQLEntryPanel
 	/**
 	 * Replace the currently selected text in the SQL entry area
 	 * with the passed text.
-	 * 
+	 *
 	 * @param	sqlScript	The script to be placed in the SQL entry area.
 	 */
 	void replaceSelection(String sqlScript);
@@ -130,8 +131,10 @@ public interface ISQLEntryPanel
 	 * Add an <TT>Action</TT> to the SQL Entry Area popup menu.
 	 *
 	 * @param	action	The action to be added.
+	 *
+	 * @return	The newly created menu item.
 	 */
-	void addToSQLEntryAreaMenu(Action action);
+	JMenuItem addToSQLEntryAreaMenu(Action action);
 
 	void addMouseListener(MouseListener lis);
 	void removeMouseListener(MouseListener lis);
@@ -146,4 +149,7 @@ public interface ISQLEntryPanel
 
 	void addCaretListener(CaretListener lis);
 	void removeCaretListener(CaretListener lis);
+
+	void addSQLTokenListener(SQLTokenListener tl);
+	void removeSQLTokenListener(SQLTokenListener tl);
 }

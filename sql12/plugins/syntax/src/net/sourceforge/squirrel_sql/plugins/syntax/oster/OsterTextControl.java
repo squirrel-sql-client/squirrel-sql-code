@@ -23,7 +23,6 @@ package net.sourceforge.squirrel_sql.plugins.syntax.oster;
  */
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.HashSet;
@@ -41,7 +40,6 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.EditorKit;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
@@ -54,6 +52,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
 import net.sourceforge.squirrel_sql.client.session.SchemaInfo;
 
 import net.sourceforge.squirrel_sql.plugins.syntax.IConstants;
@@ -107,6 +106,8 @@ class OsterTextControl extends JTextPane
 
 	/** Preferences for this plugin. */
 	private final SyntaxPreferences _syntaxPrefs;
+
+	private Vector _sqlTokenListeners = new Vector();
 
 	OsterTextControl(ISession session, SyntaxPreferences prefs)
 	{
@@ -665,6 +666,7 @@ class OsterTextControl extends JTextPane
 										if (si.isTable(data))
 										{
 											type = IConstants.IStyleNames.TABLE;
+											fireTableOrViewFound(t.getContents());
 										}
 										else if (si.isColumn(data))
 										{
@@ -797,6 +799,30 @@ class OsterTextControl extends JTextPane
 				}
 				asleep = false;
 			}
+		}
+	}
+
+	public void addSQLTokenListener(SQLTokenListener l)
+	{
+		_sqlTokenListeners.add(l);
+	}
+
+	public void removeSQLTokenListener(SQLTokenListener l)
+	{
+		_sqlTokenListeners.remove(l);
+	}
+
+	private void fireTableOrViewFound(String name)
+	{
+		Vector buf;
+		synchronized(_sqlTokenListeners)
+		{
+			buf = (Vector)_sqlTokenListeners.clone();
+		}
+
+		for(int i=0; i < buf.size(); ++i)
+		{
+			((SQLTokenListener)buf.get(i)).tableOrViewFound(name);
 		}
 	}
 

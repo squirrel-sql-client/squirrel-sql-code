@@ -213,4 +213,6 @@ public interface ISession extends IHasIdentifier
 	 * @return		The descriptive title of this session.
 	 */
 	String getTitle();
+
+	public ISQLEntryPanel getSQLEntryPanel();
 }

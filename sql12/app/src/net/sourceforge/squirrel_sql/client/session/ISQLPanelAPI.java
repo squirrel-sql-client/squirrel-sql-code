@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 import javax.swing.Action;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
@@ -88,28 +89,28 @@ public interface ISQLPanelAPI
 
 	/**
 	 * Replace the SQL entry area with the passed one.
-	 * 
+	 *
 	 * @param	pnl	New SQL entry area.
 	 */
 	void installSQLEntryPanel(ISQLEntryPanel pnl);
 
 	/**
 	 * Return the entire contents of the SQL entry area.
-	 * 
+	 *
 	 * @return	the entire contents of the SQL entry area.
 	 */
 	String getEntireSQLScript();
 
 	/**
 	 * Return the selected contents of the SQL entry area.
-	 * 
+	 *
 	 * @return	the selected contents of the SQL entry area.
 	 */
 	String getSelectedSQLScript();
 
 	/**
 	 * Return the SQL script to be executed.
-	 * 
+	 *
 	 * @return	the SQL script to be executed.
 	 */
 	String getSQLScriptToBeExecuted();
@@ -117,7 +118,7 @@ public interface ISQLPanelAPI
 	/**
 	 * Append the passed SQL script to the SQL entry area but don't select
 	 * it.
-	 * 
+	 *
 	 * @param	sqlScript	The script to be appended.
 	 */
 	void appendSQLScript(String sqlScript);
@@ -125,7 +126,7 @@ public interface ISQLPanelAPI
 	/**
 	 * Append the passed SQL script to the SQL entry area and specify
 	 * whether it should be selected.
-	 * 
+	 *
 	 * @param	sqlScript	The script to be appended.
 	 * @param	select		If <TT>true</TT> then select the passed script
 	 * 						in the sql entry area.
@@ -135,7 +136,7 @@ public interface ISQLPanelAPI
 	/**
 	 * Replace the contents of the SQL entry area with the passed
 	 * SQL script without selecting it.
-	 * 
+	 *
 	 * @param	sqlScript	The script to be placed in the SQL entry area.
 	 */
 	void setEntireSQLScript(String sqlScript);
@@ -143,7 +144,7 @@ public interface ISQLPanelAPI
 	/**
 	 * Replace the contents of the SQL entry area with the passed
 	 * SQL script and specify whether to select it.
-	 * 
+	 *
 	 * @param	sqlScript	The script to be placed in the SQL entry area.
 	 * @param	select		If <TT>true</TT> then select the passed script
 	 * 						in the sql entry area.
@@ -153,7 +154,7 @@ public interface ISQLPanelAPI
 	/**
 	 * Replace the currently selected text in the SQL entry area
 	 * with the passed text.
-	 * 
+	 *
 	 * @param	sqlScript	The script to be placed in the SQL entry area.
 	 * @param	select		If <TT>true</TT> then select the passed script
 	 * 						in the sql entry area.
@@ -163,38 +164,38 @@ public interface ISQLPanelAPI
 	/**
 	 * Return the offset into the SQL entry area where the current select
 	 * starts.
-	 * 
+	 *
 	 * @return	the current selections start position.
-	 */ 
+	 */
 	int getSQLScriptSelectionStart();
 
 	/**
 	 * Return the offset into the SQL entry area where the current select
 	 * ends.
-	 * 
+	 *
 	 * @return	the current selections end position.
-	 */ 
+	 */
 	int getSQLScriptSelectionEnd();
 
 	/**
 	 * Set the offset into the SQL entry area where the current select
 	 * starts.
-	 * 
+	 *
 	 * param	start	the new selections start position.
-	 */ 
+	 */
 	void setSQLScriptSelectionStart(int start);
 
 	/**
 	 * Set the offset into the SQL entry area where the current select
 	 * ends.
-	 * 
+	 *
 	 * param	start	the new selections start position.
-	 */ 
+	 */
 	void setSQLScriptSelectionEnd(int end);
 
 	/**
 	 * Execute the passed SQL.
-	 * 
+	 *
 	 * @param	sql		SQL to be executed.
 	 */
 	void executeSQL(String sql);
@@ -238,7 +239,7 @@ public interface ISQLPanelAPI
 	 * The passed SQL should be added to the SQL history.
 	 *
 	 * @param	sql		SQL to be added to history.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>sql</TT> passed.
 	 */
@@ -256,6 +257,6 @@ public interface ISQLPanelAPI
 	 *
 	 * @param	action	The action to be added.
 	 */
-	void addToSQLEntryAreaMenu(Action action);
+	JMenuItem addToSQLEntryAreaMenu(Action action);
 }
 

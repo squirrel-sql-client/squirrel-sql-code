@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 import javax.swing.Action;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -460,15 +461,17 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 *
 	 * @param	action	The action to be added.
 	 *
+	 * @return	The newly create menu item.
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>Action</TT> passed.
 	 */
-	public void addToSQLEntryAreaMenu(Action action)
+	public JMenuItem addToSQLEntryAreaMenu(Action action)
 	{
 		if (action == null)
 		{
 			throw new IllegalArgumentException("Action == null");
 		}
-		_session.getSessionSheet().getSQLPanel().addToSQLEntryAreaMenu(action);
+		return _session.getSessionSheet().getSQLPanel().addToSQLEntryAreaMenu(action);
 	}
 }
