@@ -269,11 +269,6 @@ public class MainFrame extends JFrame //BaseMDIParentFrame
 		return ((MainFrameMenuBar) getJMenuBar()).getSessionMenu();
 	}
 
-	public JMenu getWindowsMenu()
-	{
-		return ((MainFrameMenuBar) getJMenuBar()).getWindowsMenu();
-	}
-
 	// Removed as part of JASON:
 //	public JInternalFrame getActiveInternalFrame()
 //	{
@@ -583,7 +578,7 @@ public class MainFrame extends JFrame //BaseMDIParentFrame
 		{
 			throw new IllegalArgumentException("Null JInternalFrame added");
 		}
-		child.setTitle(createTitleForChild(child));
+//		child.setTitle(createTitleForChild(child));
 		_desktop.add(child);
 		if (!GUIUtils.isToolWindow(child))
 		{
@@ -621,21 +616,26 @@ public class MainFrame extends JFrame //BaseMDIParentFrame
 		}
 	}
 
-	private String createTitleForChild(JInternalFrame child)
-	{
-		String title = child.getTitle();
-		String origTitle = title;
-		int index = 0;
-		while (_children.get(title) != null)
-		{
-			title = origTitle + "(" + ++index + ")";
-		}
-		return title;
-	}
+//	private String createTitleForChild(JInternalFrame child)
+//	{
+//		String title = child.getTitle();
+//		String origTitle = title;
+//		int index = 0;
+//		while (_children.get(title) != null)
+//		{
+//			title = origTitle + "(" + ++index + ")";
+//		}
+//		return title;
+//	}
 
 	private void positionNewInternalFrame(JInternalFrame child)
 	{
 		_internalFramePositioner.positionInternalFrame(child);
+	}
+
+	public JMenu getWindowsMenu()
+	{
+		return ((MainFrameMenuBar)getJMenuBar()).getWindowsMenu();
 	}
 
 	private class MyDesktopManager extends DefaultDesktopManager

@@ -28,6 +28,7 @@ import javax.swing.event.EventListenerList;
 
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
@@ -69,14 +70,10 @@ public class SessionManager
 	/** Map of sessions keyed by session ID. */
 	private final Map _sessionsById = new HashMap();
 
-	/**
-	 * Map of Integers (number of sessions opened) keyed by alias ID. I.E. a
-	 * count of the number of sessions that have been opened for an alias. This
-	 * count is not decremented by a session is closed.
-	 */
-	private final Map _sessionsOpenedCountByAliasId = new HashMap();
-
 	private EventListenerList listenerList = new EventListenerList();
+
+	/** Factory used to generate session IDs. */
+	private final IntegerIdentifierFactory _idFactory = new IntegerIdentifierFactory(1);
 
 	/**
 	 * Ctor.
@@ -133,21 +130,10 @@ public class SessionManager
 			throw new IllegalArgumentException("null SQLConnection passed");
 		}
 
-		Integer count = (Integer)_sessionsOpenedCountByAliasId.get(alias.getIdentifier());
-		if (count == null)
-		{
-			count = new Integer(1);
-		}
-		else
-		{
-			count = new Integer(count.intValue() + 1);
-		}
-
 		final Session sess = new Session(app, driver, alias, conn, user,
-											password, count.intValue());
+										password, _idFactory.createIdentifier());
 		_sessionsList.addLast(sess);
 		_sessionsById.put(sess.getIdentifier(), sess);
-		_sessionsOpenedCountByAliasId.put(alias.getIdentifier(), count);
 
 		fireSessionAdded(sess);
 		setActiveSession(sess);
@@ -281,11 +267,11 @@ public class SessionManager
 			{
 				// TODO: Should have session listeners instead of these calls.
 				session.getApplication().getPluginManager().sessionEnding(session);
-	
+
 				fireSessionClosing(session);
 				session.close();
 				fireSessionClosed(session);
-	
+
 				final IIdentifier sessionId = session.getIdentifier();
 				if (!_sessionsList.remove(session))
 				{
@@ -299,12 +285,12 @@ public class SessionManager
 							sessionId +
 							" not found in _sessionsById when trying to remove it.");
 				}
-				
+
 				if (_sessionsList.isEmpty())
 				{
 					fireAllSessionsClosed();
 				}
-	
+
 				// Activate another session since the current
 				// active session has closed.
 				if (session == _activeSession)
@@ -458,7 +444,7 @@ public class SessionManager
 	 *
 	 * @param	session		Session being closed.
 	 *
-	 * @return	<tt>true</tt> if confirmed to close session.	
+	 * @return	<tt>true</tt> if confirmed to close session.
 	 */
 	private boolean confirmClose(ISession session)
 	{
