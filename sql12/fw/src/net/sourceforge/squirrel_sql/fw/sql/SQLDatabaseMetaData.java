@@ -763,10 +763,14 @@ public class SQLDatabaseMetaData
 	public ResultSet getColumnPrivileges(ITableInfo ti)
 		throws SQLException
 	{
+		// MM-MYSQL driver doesnt support null for column name.
+		final String dbProdName = getDatabaseProductName();
+		final String columns = dbProdName.equalsIgnoreCase("mysql") ? "%" : null;
+		final String dbProductName = getDatabaseProductName();
 		return getJDBCMetaData().getColumnPrivileges(ti.getCatalogName(),
 													ti.getSchemaName(),
 													ti.getSimpleName(),
-													null);
+													columns);
 	}
 
 	// TODO: Write a version that returns an array of data objects.

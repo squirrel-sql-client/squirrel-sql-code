@@ -12,8 +12,13 @@ Enhancements
 - Add the ability to "Tile Vertically" and
   "Tile Horizontally" (Rick Strickland).
 
+  
+1.1final1
+========
+
 Bug Fixes
 ---------
+- Fix column privileges for MySQL.
 
 
 1.1final
