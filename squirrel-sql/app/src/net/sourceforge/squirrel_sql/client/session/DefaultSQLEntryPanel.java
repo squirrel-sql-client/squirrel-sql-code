@@ -97,7 +97,7 @@ public class DefaultSQLEntryPanel implements ISQLEntryPanel {
 	/**
 	 * @see ISQLEntryPanel#removeListener(MouseListener)
 	 */
-	public void removeListener(MouseListener lis) {
+	public void removeMouseListener(MouseListener lis) {
 		_comp.removeMouseListener(lis);
 	}
 
