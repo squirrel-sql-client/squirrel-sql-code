@@ -252,7 +252,8 @@ public class SessionSheet extends JInternalFrame {
 	}
 
 	private static String createTitle(ISession session) {
-		StringBuffer title = new StringBuffer(session.getAlias().getName());
+		StringBuffer title = new StringBuffer("Session: ");
+		title.append(session.getAlias().getName());
 		String user = null;
 		try {
 			user = session.getSQLConnection().getUserName();
