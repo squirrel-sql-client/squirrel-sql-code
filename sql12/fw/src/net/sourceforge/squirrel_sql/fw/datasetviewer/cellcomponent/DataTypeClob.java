@@ -33,7 +33,7 @@ import javax.swing.text.JTextComponent;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Clob;
-import java.io.StringBufferInputStream;
+import java.io.StringReader;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 //??import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
@@ -503,7 +503,8 @@ public class DataTypeClob
 			//		cdesc.getClob().setString(0, cdesc.getData());
 			// However, the DB2 driver throws an exception saying that that function
 			// is not implemented, so we have to use the other method, which is to use a stream.		
-			pstmt.setAsciiStream(position, new StringBufferInputStream(cdesc.getData()), cdesc.getData().length());
+			pstmt.setCharacterStream(position, new StringReader(cdesc.getData()),
+				cdesc.getData().length());
 		}
 	}
 	
