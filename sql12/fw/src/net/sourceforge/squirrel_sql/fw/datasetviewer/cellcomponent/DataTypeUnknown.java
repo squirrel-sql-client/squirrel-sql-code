@@ -37,7 +37,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 
 /**
@@ -319,8 +318,7 @@ public class DataTypeUnknown
 	  * On input from the DB, read the data from the ResultSet into the appropriate
 	  * type of object to be stored in the table cell.
 	  */
-	public Object readResultSet(ResultSet rs, int index,
-		LargeResultSetObjectInfo largeObjInfo)
+	public Object readResultSet(ResultSet rs, int index)
 		throws java.sql.SQLException {
 
 		String data = null;
