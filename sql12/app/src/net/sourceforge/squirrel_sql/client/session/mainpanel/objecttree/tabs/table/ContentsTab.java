@@ -459,9 +459,9 @@ public class ContentsTab extends BaseTableTab
 	/**
 	 * If the user forces us into edit mode, remember that they did so for this table.
 	 */
-	public void forceEditMode()
+	public void forceEditMode(boolean mode)
 	{
-		editModeForced = true;
+		editModeForced = mode;
 		sqlOutputClassNameAtTimeOfForcedEdit = 
 			getSession().getProperties().getTableContentsOutputClassName();
 
@@ -473,6 +473,15 @@ public class ContentsTab extends BaseTableTab
 		 * GUI to be rebuilt.
 		 */
 		getSession().getProperties().forceTableContentsOutputClassNameChange();
+	}
+	
+	/**
+	 * The fw needs to know whether we are in forced edit mode or not
+	 * so it can decide whether or not to let the user undo that mode.
+	 */
+	public boolean editModeIsForced()
+	{
+		return editModeForced;
 	}
 
 	/**
