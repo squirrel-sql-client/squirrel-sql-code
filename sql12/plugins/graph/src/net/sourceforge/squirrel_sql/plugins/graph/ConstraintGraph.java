@@ -86,6 +86,11 @@ public class ConstraintGraph
       return (GraphLine[]) ret.toArray(new GraphLine[ret.size()]);
    }
 
+   public GraphLine[] getLinesToArrow()
+   {
+      return _pkStubLines;
+   }
+
    public GraphLine[] getConnectLines()
    {
       if(0 == _foldingPoints.size())

@@ -228,6 +228,13 @@ public class ConstraintView implements GraphComponent
          drawLine(g, lines[i]);
       }
 
+      GraphLine[] linesToArrow = _constraintGraph.getLinesToArrow();
+
+      for (int i = 0; i < linesToArrow.length; i++)
+      {
+         paintArrow(g, linesToArrow[i].end.x, linesToArrow[i].end.y, linesToArrow[i].beg.x, linesToArrow[i].beg.y);
+      }
+
       Vector foldingPoints = _constraintGraph.getFoldingPoints();
 
       for (int i = 0; i < foldingPoints.size(); i++)
@@ -235,6 +242,32 @@ public class ConstraintView implements GraphComponent
          drawFoldingPoint(g, (Point) foldingPoints.get(i));
       }
    }
+
+   private void paintArrow(Graphics g, int x1, int y1, int x2, int y2)
+   {
+      // defines the opening angle of the arrow (not rad or so but something fancy)
+      double sAng = 0.5;
+
+      Point c = new Point(x2, y2);
+      Point a = new Point((int)(x1 + sAng*(y2-y1)), (int) (y1 - sAng*(x2-x1)));
+      Point b = new Point((int)(x1 - sAng*(y2-y1)), (int) (y1 + sAng*(x2-x1)));
+
+      // defines the size of the arrow
+      double sLen = 10 / Math.sqrt( (a.x -c.x)*(a.x -c.x) + (a.y -c.y)*(a.y -c.y) );
+
+      Point arrPa = new Point((int)(c.x + sLen*(a.x - c.x)), (int)(c.y + sLen*(a.y - c.y)));
+      Point arrPb = new Point((int)(c.x + sLen*(b.x - c.x)), (int)(c.y + sLen*(b.y - c.y)));
+
+
+      Polygon pg = new Polygon();
+      pg.addPoint(arrPa.x, arrPa.y);
+      pg.addPoint(arrPb.x, arrPb.y);
+      pg.addPoint(c.x, c.y);
+      g.fillPolygon(pg);
+   }
+
+
+
 
    private void drawFoldingPoint(Graphics g, Point fp)
    {
