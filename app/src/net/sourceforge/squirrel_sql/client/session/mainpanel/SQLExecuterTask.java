@@ -1,9 +1,9 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 /*
- * Copyright (C) 2001-2003 Johan Companger
+ * Copyright (C) 2001-2004 Johan Companger
  * jcompagner@j-com.nl
  *
- * Modification copyright (C) 2001-2004 Colin Bell
+ * Modifications copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -315,7 +315,8 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 			}
 		});
 
-		final SQLExecutionInfo exInfo = new SQLExecutionInfo(_currentQueryIndex, querySql);
+		final SQLExecutionInfo exInfo = new SQLExecutionInfo(_currentQueryIndex,
+												querySql, _stmt.getMaxRows());
 		boolean firstResultIsResultSet = _stmt.execute(querySql);
 		exInfo.sqlExecutionComplete();
 

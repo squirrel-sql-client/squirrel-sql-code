@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -41,13 +41,16 @@ public class SQLExecutionInfo
 	/** SQL script executed. */
 	private String _sql;
 
+	/** Number of rows query limited to. */
+	private final int _maxRows;
+
 	/**
 	 * Default ctor. Defaults SQL execution start time to the current time.
 	 */
-	public SQLExecutionInfo()
-	{
-		this(1, "");
-	}
+//	public SQLExecutionInfo()
+//	{
+//		this(1, "");
+//	}
 
 	/**
 	 * ctor specifying the query index. Defaults SQL execution start time to
@@ -55,10 +58,10 @@ public class SQLExecutionInfo
 	 *
 	 * @param	idx		Query index.
 	 */
-	public SQLExecutionInfo(int idx)
-	{
-		this(idx, "");
-	}
+//	public SQLExecutionInfo(int idx)
+//	{
+//		this(idx, "");
+//	}
 
 	/**
 	 * ctor specifying the SQL being executed. Defaults SQL execution start time
@@ -69,16 +72,16 @@ public class SQLExecutionInfo
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> sql passed.
 	 */
-	public SQLExecutionInfo(String sql)
-	{
-		super();
-		if (sql == null)
-		{
-			throw new IllegalArgumentException("SQL script == null");
-		}
-		_sql = sql;
-		_sqlExecutionStart = Calendar.getInstance().getTime();
-	}
+//	public SQLExecutionInfo(String sql)
+//	{
+//		super();
+//		if (sql == null)
+//		{
+//			throw new IllegalArgumentException("SQL script == null");
+//		}
+//		_sql = sql;
+//		_sqlExecutionStart = Calendar.getInstance().getTime();
+//	}
 
 	/**
 	 * ctor specifying the SQL being executed and the query index. Defaults SQL
@@ -86,11 +89,12 @@ public class SQLExecutionInfo
 	 *
 	 * @param	idx		Query index.
 	 * @param	sql		SQL being executed.
+	 * @param	maxRows	Number of rows query is limited to.
 	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> sql passed.
 	 */
-	public SQLExecutionInfo(int idx, String sql)
+	public SQLExecutionInfo(int idx, String sql, int maxRows)
 	{
 		super();
 		if (sql == null)
@@ -99,6 +103,7 @@ public class SQLExecutionInfo
 		}
 		_idx = idx;
 		_sql = sql;
+		_maxRows = maxRows;
 		_sqlExecutionStart = Calendar.getInstance().getTime();
 	}
 
@@ -203,5 +208,15 @@ public class SQLExecutionInfo
 	public long getTotalElapsedMillis()
 	{
 		return getSQLExecutionElapsedMillis() + getResultsProcessingElapsedMillis();
+	}
+
+	/**
+	 * Retrieve number of rows query limited to. Zero means unlimited.
+	 *
+	 * @return	number of rows query limited to.
+	 */
+	public int getMaxRows()
+	{
+		return _maxRows;
 	}
 }
