@@ -71,7 +71,6 @@ public class SQLExecuterTask implements Runnable {
 					new QueryTokenizer(_sql, props.getSqlStatementSeparatorChar());
 				while (qt.hasQuery() && !_bStopExecution) {
 					if (bCancelPanelRemoved) {
-
 						_sqlPanel.setCancelPanel(_cancelPanel);
 						bCancelPanelRemoved = false;
 					}
@@ -83,11 +82,9 @@ public class SQLExecuterTask implements Runnable {
 						ResultSet rs = _stmt.getResultSet();
 						if (rs != null) {
 							try {
-
 								_sqlPanel.addResultsTab(sToken, new ResultSetDataSet(rs),
 														new ResultSetMetaDataDataSet(rs),
 														_cancelPanel);
-
 								bCancelPanelRemoved = true;
 							} finally {
 								rs.close();
