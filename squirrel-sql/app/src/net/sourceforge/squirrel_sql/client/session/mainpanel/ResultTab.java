@@ -150,7 +150,7 @@ public class ResultTab extends JPanel implements IHasIdentifier {
 		_metaDataOutput.show(mdds, null); // Why null??
 
 		// And the query info.
-		_queryInfoPanel.load(rsds, sql, _metaDataOutput.getRowCount());
+		_queryInfoPanel.load(rsds, sql, _resultSetOutput.getRowCount());
 	}
 
 	/**
