@@ -41,6 +41,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
@@ -57,12 +58,13 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Version;
+import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 /**
  * About box dialog.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class AboutBoxDialog extends JDialog
 {
@@ -74,7 +76,7 @@ public class AboutBoxDialog extends JDialog
 	private static AboutBoxDialog s_instance;
 
 	/** The tabbed panel. */
-	private SquirrelTabbedPane _tabPnl;
+	private JTabbedPane _tabPnl;
 
 	/** System panel. */
 	private SystemPanel _systemPnl;
@@ -126,7 +128,7 @@ public class AboutBoxDialog extends JDialog
 		final boolean isDebug = s_log.isDebugEnabled();
 		long start = 0;
 
-		_tabPnl = new SquirrelTabbedPane(app.getSquirrelPreferences());
+		_tabPnl = UIFactory.getInstance().createTabbedPane();
 
 		if (isDebug)
 		{
@@ -449,7 +451,7 @@ public class AboutBoxDialog extends JDialog
 
 		/**
 		 * Update component with the current memory status.
-		 * 
+		 *
 		 * @param	evt		The current event.
 		 */
 		public void actionPerformed(ActionEvent evt)
