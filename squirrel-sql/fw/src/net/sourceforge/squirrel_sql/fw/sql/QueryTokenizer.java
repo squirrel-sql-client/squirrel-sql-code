@@ -106,7 +106,7 @@ public class QueryTokenizer
 				if(iNextQute > linefeed)
 				{
 					sbReturn.append(sql.substring(iPrev,linefeed));
-					sbReturn.append("\\n");
+					sbReturn.append('\n');
 					iPrev = linefeed + 1;
 					linefeed = sql.indexOf('\n',iPrev);
 				}
