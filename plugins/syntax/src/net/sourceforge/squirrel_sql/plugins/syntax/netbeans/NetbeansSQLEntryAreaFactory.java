@@ -18,7 +18,6 @@ package net.sourceforge.squirrel_sql.plugins.syntax.netbeans;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.plugins.syntax.IConstants;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
@@ -56,13 +55,12 @@ public class NetbeansSQLEntryAreaFactory
 		}
 
 		SyntaxPreferences prefs = getPreferences(session);
-      return new NetbeansSQLEntryPanel(session, prefs, _syntaxFactory);
+      return new NetbeansSQLEntryPanel(session, prefs, _syntaxFactory, _plugin);
 	}
 
 	private SyntaxPreferences getPreferences(ISession session)
 	{
-		return (SyntaxPreferences)session.getPluginObject(_plugin,
-			IConstants.ISessionKeys.PREFS);
+		return (SyntaxPreferences)session.getPluginObject(_plugin, IConstants.ISessionKeys.PREFS);
 	}
 
 

@@ -18,6 +18,8 @@ package net.sourceforge.squirrel_sql.plugins.syntax;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
@@ -30,6 +32,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
+import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.NetbeansSQLEntryAreaFactory;
 import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.NetbeansSQLEntryPanel;
 import net.sourceforge.squirrel_sql.plugins.syntax.oster.OsterSQLEntryAreaFactory;
@@ -46,6 +49,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Hashtable;
 import java.awt.*;
 /**
  * The Ostermiller plugin class. This plugin adds syntax highlighting to the
@@ -72,8 +76,15 @@ public class SyntaxPugin extends DefaultSessionPlugin
 
 	/** Resources for this plugin. */
 	private SyntaxPluginResources _resources;
+   private AutoCorrectProviderImpl _autoCorrectProvider;
 
-	/**
+   private interface IMenuResourceKeys
+   {
+      String MENU = "syntax";
+   }
+
+
+   /**
 	 * Return the internal name of this plugin.
 	 *
 	 * @return	the internal name of this plugin.
@@ -182,7 +193,25 @@ public class SyntaxPugin extends DefaultSessionPlugin
       _sqlEntryFactoryProxy = new SQLEntryPanelFactoryProxy(this, originalFactory);
 
 		app.setSQLEntryPanelFactory(_sqlEntryFactoryProxy);
-	}
+
+      _autoCorrectProvider = new AutoCorrectProviderImpl(_userSettingsFolder);
+
+      createMenu();
+   }
+
+   private void createMenu()
+   {
+      IApplication app = getApplication();
+      ActionCollection coll = app.getActionCollection();
+
+      JMenu menu = _resources.createMenu(IMenuResourceKeys.MENU);
+      app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, menu);
+
+      Action act = new ConfigureAutoCorrectAction(app, _resources, this);
+      coll.add(act);
+      _resources.addToMenu(act, menu);
+   }
+
 
 	/**
 	 * Application is shutting down so save preferences.
@@ -332,7 +361,19 @@ public class SyntaxPugin extends DefaultSessionPlugin
 		}
 	}
 
-	private static final class SessionPreferencesListener
+
+   public Object getExternalService()
+   {
+      return getAutoCorrectProviderImpl();
+   }
+
+
+   public AutoCorrectProviderImpl getAutoCorrectProviderImpl()
+   {
+      return _autoCorrectProvider;
+   }
+
+   private static final class SessionPreferencesListener
 		implements PropertyChangeListener
 	{
 		private SyntaxPugin _plugin;
