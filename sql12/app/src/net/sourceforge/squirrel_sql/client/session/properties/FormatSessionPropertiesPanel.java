@@ -36,6 +36,8 @@ import javax.swing.JTextArea;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
+import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
@@ -56,6 +58,7 @@ public class FormatSessionPropertiesPanel
 
 	/** Session properties object being maintained. */
 	private SessionProperties _props;
+
 
 	/**
 	 * ctor specifying the Application API.
@@ -126,14 +129,17 @@ public class FormatSessionPropertiesPanel
 			String ALL_OTHER = "Display Unknown, non-standard or un-handled Data Types as String";
 			String BLOB = "Blob";
 			String CLOB = "Clob";
-			String HINT = "Specify formatting options";
+			String HINT = "Set options for specific Data Types";
 			String NBR_BYTES = "Number of bytes to read:";
 			String NBR_CHARS = "Number of chars to read:";
 			String SQL_OTHER = "Display SQL Other (Data Type 1111) as String";
-			String TITLE = "Format";
+			String TITLE = "Data Type Controls";
 			String BLOB_WARNING = "Some DBMSs implement BLOB/CLOB fields as other Data Types\nsuch as BINARY and VARCHAR.\nThe following works only for Data Types 2004(BLOB) and 2005(CLOB).";
 			String OTHER_TYPE_WARNING = "The following Data Types are not the same in all DBMSs and\nmay cause exceptions if interpreted as Strings.";
 		}
+		
+		/** List of OkJPanels containing controls for specific DataType info */
+		OkJPanel[] dataTypePanels;
 
 		private JCheckBox _showBlobChk = new JCheckBox(i18n.BLOB);
 		private JCheckBox _showClobChk = new JCheckBox(i18n.CLOB);
@@ -198,6 +204,9 @@ public class FormatSessionPropertiesPanel
 
 			largeObjInfo.setReadSQLOther(_showSQLOtherChk.isSelected());
 			largeObjInfo.setReadAllOther(_showAllOtherChk.isSelected());
+			
+			for (int i=0; i< dataTypePanels.length; i++)
+				dataTypePanels[i].ok();
 		}
 
 		private void updateControlStatus()
@@ -230,6 +239,7 @@ public class FormatSessionPropertiesPanel
 
 		private JPanel createDataTypesPanel()
 		{
+/*****
 			_showBlobSizeField.setColumns(5);
 			_showClobSizeField.setColumns(5);
 
@@ -237,9 +247,10 @@ public class FormatSessionPropertiesPanel
 			_showClobChk.addActionListener(_controlMediator);
 			_blobTypeDrop.addActionListener(_controlMediator);
 			_clobTypeDrop.addActionListener(_controlMediator);
+******/
 
 			JPanel pnl = new JPanel(new GridBagLayout());
-			pnl.setBorder(BorderFactory.createTitledBorder("Show Data as Strings for Columns of these Data Types"));
+//??			pnl.setBorder(BorderFactory.createTitledBorder("Show Data as Strings for Columns of these Data Types"));
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
@@ -248,6 +259,7 @@ public class FormatSessionPropertiesPanel
 			gbc.gridx = 0;
 			gbc.gridy = 0;
 
+/*****
 			pnl.add(new JLabel(""), gbc);
 			
 			++gbc.gridy;	// leave a blank line to separate text from header
@@ -308,7 +320,16 @@ public class FormatSessionPropertiesPanel
 						
 			++gbc.gridy;
 			pnl.add(_showAllOtherChk, gbc);
+/************************************************************************************/
 
+			dataTypePanels = CellComponentFactory.getControlPanels();
+			for (int i=0; i<dataTypePanels.length; i++) {
+				gbc.gridx=0;
+				gbc.gridwidth = GridBagConstraints.REMAINDER;
+				++gbc.gridy;
+				pnl.add(dataTypePanels[i], gbc);
+			}
+			
 			return pnl;
 		}
 
