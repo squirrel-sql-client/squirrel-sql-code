@@ -28,7 +28,7 @@
 	</target>
 	
 	<target name="compile" depends="prepare">
-		<javac destdir="${build.classes}" srcdir="${src.dir}">
+		<javac destdir="${build.classes}" srcdir="${src.dir}" deprecation="on">
             <classpath refid="squirrel.libraries" />
         </javac>
 	</target>
