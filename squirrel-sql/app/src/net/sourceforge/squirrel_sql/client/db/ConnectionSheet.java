@@ -109,9 +109,6 @@ public class ConnectionSheet extends JInternalFrame {
 	/** <TT>true</TT> means that an attempt is being made to connect to the alias.*/
 	private boolean _connecting;
 
-	/** Set to <TT>true</TT> once <TT>dispose</TT> has been called. */
-	private boolean _disposed;
-
 	private IConnectionSheetHandler _handler;
 
 	private JLabel _titleLbl = new JLabel();
@@ -135,7 +132,7 @@ public class ConnectionSheet extends JInternalFrame {
 	 * 			If <TT>null</TT> <TT>IApplication</TT>, <TT>ISQLAlias</TT>,
 	 * 			or <TT>IConnectionSheetHandler</TT> passed.
 	 */
-	public ConnectionSheet(IApplication app, Frame owner, ISQLAlias alias,
+	public ConnectionSheet(IApplication app, /*Frame owner,*/ ISQLAlias alias,
 								IConnectionSheetHandler handler) {
 		super();
 		if (app == null) {
@@ -157,13 +154,6 @@ public class ConnectionSheet extends JInternalFrame {
 
 		createUserInterface();
 		loadData();
-	}
-
-	public synchronized void dispose() {
-		if (!_disposed) {
-			_disposed = true;
-			super.dispose();
-		}
 	}
 
 	public void executed(boolean connected) {
@@ -240,10 +230,10 @@ public class ConnectionSheet extends JInternalFrame {
 
 	private void createUserInterface() {
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        // This is a tool window.
-        GUIUtils.makeToolWindow(this, true);
-        
-        setTitle("Connect to " + _alias.getName());
+		// This is a tool window.
+		GUIUtils.makeToolWindow(this, true);
+		
+		setTitle("Connect to " + _alias.getName());
 
 		PropertyPanel dataEntryPnl = new PropertyPanel();
 
