@@ -6,6 +6,10 @@ Change Log
 
 Enhancements
 ------------
+- Function and keyword lists moved out of the main metadata tab and
+  placed in their own tabs (David MacLean).
+- The DATA_TYPE column in the metadata tab now has a descriptive entry
+  as well as the numeric code (David MacLean).
 - Now shows catalogs in object tree for more DBMS's.
 - Can now select the current catalog via a dropdown for those DBMS's
   that support catalogs.
@@ -13,6 +17,7 @@ Enhancements
 
 Bug Fixes
 ---------
+- Load images correctly in framework classes.
 - Use correct background color in Splash Screen and About Box to match
   the graphic.
 
@@ -209,7 +214,7 @@ Bug Fixes
 ------------
 - If a connection failed to open the error wasn't always displayed.
 - If an image couldn't be found for an Action the application wouldn't load.
-- Changing the class name of a driver wouldn't always take effect util 
+- Changing the class name of a driver wouldn't always take effect until 
   Squirrel-SQL was restarted.
 - The session properties dialog is now correctly positioned on screen.
 - The Class Loader used for the JDBC drivers wasn't searching for classes
