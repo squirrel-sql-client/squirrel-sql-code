@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.sql;
 /*
- * Copyright (C) 2002 Colin Bell.
+ * Copyright (C) 2002-2003 Colin Bell.
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -24,20 +24,20 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 /**
- * This represents a propert that can be specified when connecting to the database.
+ * This represents a property that can be specified when connecting to the database.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SQLDriverProperty implements Cloneable, Serializable
 {
-	/** Key. */
+	/** Name. */
 	private String _key;
 
-	/** Value associated with the key. */
+	/** Value associated with the name. */
 	private String _value;
 
 	/**
-	 * Default ctor. Created with the key and value being <TT>null</TT>.
+	 * Default ctor. Created with the name and value being <TT>null</TT>.
 	 */
 	public SQLDriverProperty()
 	{
@@ -45,15 +45,15 @@ public class SQLDriverProperty implements Cloneable, Serializable
 	}
 
 	/**
-	 * ctor specifying the key and value.
+	 * ctor specifying the name and value.
 	 *
-	 * @param	key		The key
-	 * @param	value	The value associated with the key.
+	 * @param	name		The name
+	 * @param	value	The value associated with the name.
 	 */
-	public SQLDriverProperty(String key, String value)
+	public SQLDriverProperty(String name, String value)
 	{
 		super();
-		_key = key;
+		_key = name;
 		_value = value;
 	}
 
@@ -75,9 +75,9 @@ public class SQLDriverProperty implements Cloneable, Serializable
 	}
 
 	/**
-	 * Retrieve the key.
+	 * Retrieve the name.
 	 *
-	 * @return	The key.
+	 * @return	The name.
 	 */
 	public String getKey()
 	{
@@ -95,13 +95,13 @@ public class SQLDriverProperty implements Cloneable, Serializable
 	}
 
 	/**
-	 * Set the key.
+	 * Set the name.
 	 *
-	 * @param	key		The key.
+	 * @param	name	The name.
 	 */
-	public void setKey(String key)
+	public void setKey(String name)
 	{
-		_key = key;
+		_key = name;
 	}
 
 	/**

@@ -22,6 +22,7 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Driver;
+import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
 import java.util.EventListener;
 import java.util.EventObject;
@@ -33,6 +34,7 @@ import javax.swing.event.EventListenerList;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.sql.event.IDriverPropertiesPanelListener;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDriverProperty;
 /**
  * This panel allows the user to review and maintain
  * the properties for a JDBC driver.
@@ -47,14 +49,33 @@ public class DriverPropertiesPanel extends JPanel
 	/** The database URL to show properties for. */
 	private final String _url;
 
-	private DriverPropertiesTable _tbl;
-
 	/** Listeners for this object. */
 	private EventListenerList _listenerList = new EventListenerList();
 
+	/** JTable containing the properties. */
+	private DriverPropertiesTable _tbl;
+
+	/** The OK button. */
 	private JButton _okBtn;
 
-	public DriverPropertiesPanel(Driver driver, String url)
+	/**
+	 * Ctor specifying driver and URL.
+	 *
+	 * @param	driver		The <TT>Driver</TT> properties are to be
+	 * 						shown for.
+	 * @param	url			URL to the database.
+	 * @param	override	Used to override the value of some or all
+	 * 						of the properties instead of using the 
+	 * 						default values.
+	 *
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>Driver</TT>
+	 * 			or <TT>url</TT> thrown.
+	 *
+	 * @throws	SQLException	Thrown if an SQL error occurs.
+	 */
+	public DriverPropertiesPanel(Driver driver, String url,
+								SQLDriverProperty[] override)
 		throws SQLException
 	{
 		super(new BorderLayout());
@@ -69,7 +90,7 @@ public class DriverPropertiesPanel extends JPanel
 
 		_driver = driver;
 		_url = url;
-		createUserInterface();
+		createUserInterface(override);
 	}
 
 	/**
@@ -96,13 +117,13 @@ public class DriverPropertiesPanel extends JPanel
 	}
 
 	/**
-	 * Retrieve the table containing the driver properties.
+	 * Retrieve the database properties.
 	 *
-	 * @return	Driver properties table.
+	 * @return		the database properties.
 	 */
-	protected DriverPropertiesTable getDriverPropertiesTable()
+	public DriverPropertyInfo[] getDriverPropertyInfo()
 	{
-		return _tbl;
+		return _tbl.getTypedModel().getDriverPropertyInfo();
 	}
 
 	private void fireButtonPressed(JButton btn)
@@ -134,7 +155,8 @@ public class DriverPropertiesPanel extends JPanel
 		}
 	}
 
-	private void createUserInterface() throws SQLException
+	private void createUserInterface(SQLDriverProperty[] override)
+		throws SQLException
 	{
 		_tbl = new DriverPropertiesTable(_driver, _url);
 		add(new JScrollPane(_tbl), BorderLayout.CENTER);
@@ -167,7 +189,6 @@ public class DriverPropertiesPanel extends JPanel
 		pnl.add(closeBtn);
 
 		GUIUtils.setJButtonSizesTheSame(new JButton[] {_okBtn, closeBtn});
-		//getRootPane().setDefaultButton(_okBtn);
 
 		return pnl;
 	}

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -21,18 +21,18 @@ import java.util.Iterator;
 
 import net.sourceforge.squirrel_sql.fw.gui.SortedListModel;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
 import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeEvent;
-import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeListener;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.db.DataCache;
-
 /**
  * Model for a <CODE>DriverList</CODE>.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-class DriversListModel extends SortedListModel {
+class DriversListModel extends SortedListModel
+{
 	/** Application API. */
 	private IApplication _app;
 
@@ -41,9 +41,11 @@ class DriversListModel extends SortedListModel {
 	 *
 	 * @param   app	 Application API.
 	 */
-	public DriversListModel(IApplication app) throws IllegalArgumentException {
+	public DriversListModel(IApplication app) throws IllegalArgumentException
+	{
 		super();
-		if (app == null) {
+		if (app == null)
+		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
 		_app = app;
@@ -54,9 +56,11 @@ class DriversListModel extends SortedListModel {
 	/**
 	 * Load from <CODE>DataCache</CODE>.
 	 */
-	private void load() {
+	private void load()
+	{
 		Iterator it = _app.getDataCache().drivers();
-		while (it.hasNext()) {
+		while (it.hasNext())
+		{
 			addDriver((ISQLDriver)it.next());
 		}
 	}
@@ -66,7 +70,8 @@ class DriversListModel extends SortedListModel {
 	 *
 	 * @param   driver  <CODE>ISQLDriver</CODE> to be added.
 	 */
-	private void addDriver(ISQLDriver driver) {
+	private void addDriver(ISQLDriver driver)
+	{
 		addElement(driver);
 	}
 
@@ -75,7 +80,8 @@ class DriversListModel extends SortedListModel {
 	 *
 	 * @param   driver  <CODE>ISQLDriver</CODE> to be removed.
 	 */
-	private void removeDriver(ISQLDriver driver) {
+	private void removeDriver(ISQLDriver driver)
+	{
 		removeElement(driver);
 	}
 
@@ -83,15 +89,18 @@ class DriversListModel extends SortedListModel {
 	 * Listener to changes in <CODE>ObjectCache</CODE>. As drivers are
 	 * added to/removed from <CODE>DataCache</CODE> this model is updated.
 	 */
-	private class MyDriversListener implements ObjectCacheChangeListener {
+	private class MyDriversListener implements IObjectCacheChangeListener
+	{
 		/**
 		 * A driver has been added to the cache.
 		 *
 		 * @param   evt	 Describes the event in the cache.
 		 */
-		public void objectAdded(ObjectCacheChangeEvent evt) {
+		public void objectAdded(ObjectCacheChangeEvent evt)
+		{
 			Object obj = evt.getObject();
-			if (obj instanceof ISQLDriver) {
+			if (obj instanceof ISQLDriver)
+			{
 				addDriver((ISQLDriver)obj);
 			}
 		}
@@ -101,9 +110,11 @@ class DriversListModel extends SortedListModel {
 		 *
 		 * @param   evt	 Describes the event in the cache.
 		 */
-		public void objectRemoved(ObjectCacheChangeEvent evt) {
+		public void objectRemoved(ObjectCacheChangeEvent evt)
+		{
 			Object obj = evt.getObject();
-			if (obj instanceof ISQLDriver) {
+			if (obj instanceof ISQLDriver)
+			{
 				removeDriver((ISQLDriver)obj);
 			}
 		}

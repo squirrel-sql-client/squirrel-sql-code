@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.db;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -35,8 +35,8 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
 import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
-import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeListener;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
@@ -44,7 +44,6 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
 
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
-
 /**
  * XML cache of JDBC drivers and aliases.
  *
@@ -158,12 +157,12 @@ public class DataCache
 		return _cache.getAllForClass(SQL_DRIVER_IMPL);
 	}
 
-	public void addDriversListener(ObjectCacheChangeListener lis)
+	public void addDriversListener(IObjectCacheChangeListener lis)
 	{
 		_cache.addChangesListener(lis, SQL_DRIVER_IMPL);
 	}
 
-	public void removeDriversListener(ObjectCacheChangeListener lis)
+	public void removeDriversListener(IObjectCacheChangeListener lis)
 	{
 		_cache.removeChangesListener(lis, SQL_DRIVER_IMPL);
 	}
@@ -202,12 +201,12 @@ public class DataCache
 		return data.iterator();
 	}
 
-	public void addAliasesListener(ObjectCacheChangeListener lis)
+	public void addAliasesListener(IObjectCacheChangeListener lis)
 	{
 		_cache.addChangesListener(lis, SQL_ALIAS_IMPL);
 	}
 
-	public void removeAliasesListener(ObjectCacheChangeListener lis)
+	public void removeAliasesListener(IObjectCacheChangeListener lis)
 	{
 		_cache.removeChangesListener(lis, SQL_ALIAS_IMPL);
 	}

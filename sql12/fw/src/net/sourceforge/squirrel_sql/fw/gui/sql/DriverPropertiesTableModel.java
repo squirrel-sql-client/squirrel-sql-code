@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui.sql;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -27,21 +27,32 @@ import javax.swing.table.AbstractTableModel;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-public class DriverPropertiesTableModel extends AbstractTableModel
+class DriverPropertiesTableModel extends AbstractTableModel
 {
+	interface IColumnIndexes
+	{
+		int NAME = 0;
+		int REQUIRED = 1;
+		int VALUE = 2;
+		int DESCRIPTION = 3;
+	}
+
+	/** Number of columns in model. */
+	private final int COLUMN_COUNT = 4;
+	
 	/** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(DriverPropertiesTableModel.class);
 
 	private DriverPropertyInfo[] _props = new DriverPropertyInfo[0];
 
-	public DriverPropertiesTableModel(DriverPropertyInfo[] props)
+	DriverPropertiesTableModel(DriverPropertyInfo[] props)
 	{
 		super();
 		load(props);
 	}
 
-	public DriverPropertiesTableModel(Driver driver, String url)
+	DriverPropertiesTableModel(Driver driver, String url)
 		throws SQLException
 	{
 		load(driver, url);
@@ -51,14 +62,17 @@ public class DriverPropertiesTableModel extends AbstractTableModel
 	{
 		switch (col)
 		{
-			case 0:	return _props[row].name;
-			case 1:	return Boolean.valueOf(_props[row].required);
-			case 2:	return _props[row].value;
-			case 3:	return _props[row].description;
-
-			default:	s_log.error("Invalid column index: " + col);
-						return "???????";
-				
+			case IColumnIndexes.NAME:
+				return _props[row].name;
+			case IColumnIndexes.REQUIRED:
+				return Boolean.valueOf(_props[row].required);
+			case IColumnIndexes.VALUE:
+				return _props[row].value;
+			case IColumnIndexes.DESCRIPTION:
+				return _props[row].description;
+			default:
+				s_log.error("Invalid column index: " + col);
+				return "???????";
 		}
 	}
 
@@ -69,16 +83,54 @@ public class DriverPropertiesTableModel extends AbstractTableModel
 
 	public int getColumnCount()
 	{
-		return 4;
+		return COLUMN_COUNT;
 	}
 
-	public final void load(Driver driver, String url)
+	public Class getColumnClass(int col)
+	{
+		switch (col)
+		{
+			case IColumnIndexes.NAME:
+				return String.class;
+			case IColumnIndexes.REQUIRED:
+				return Boolean.class;
+			case IColumnIndexes.VALUE:
+				return String.class;
+			case IColumnIndexes.DESCRIPTION:
+				return String.class;
+			default:
+				s_log.error("Invalid column index: " + col);
+				return Object.class;
+		}
+	}
+
+	public boolean isCellEditable(int row, int col)
+	{
+		return col == IColumnIndexes.VALUE;
+	}
+
+	public void setValueAt(Object aValue, int rowIndex, int columnIndex)
+	{
+		if (columnIndex != IColumnIndexes.VALUE)
+		{
+			throw new IllegalStateException("Can only edit value column. Trying to edit " + columnIndex);
+		}
+
+		_props[rowIndex].value = aValue.toString();
+	}
+
+	DriverPropertyInfo[] getDriverPropertyInfo()
+	{
+		return _props;
+	}
+
+	final void load(Driver driver, String url)
 		throws SQLException
 	{
 		load(driver.getPropertyInfo(url, new Properties()));
 	}
 
-	public final void load(DriverPropertyInfo[] props)
+	final void load(DriverPropertyInfo[] props)
 	{
 		if (props == null)
 		{
@@ -97,39 +149,5 @@ public class DriverPropertiesTableModel extends AbstractTableModel
 			fireTableRowsInserted(0, _props.length - 1);
 		}
 	}
-
-	public Class getColumnClass(int col)
-	{
-		switch (col)
-		{
-			case 0:	return String.class;
-			case 1:	return Boolean.class;
-			case 2:	return String.class;
-			case 3:	return String.class;
-
-			default:
-				s_log.error("Invalid column index: " + col);
-				return Object.class;
-		}
-	}
-
-	public boolean isCellEditable(int row, int col)
-	{
-		return col == 2;
-	}
-
-	DriverPropertyInfo[] getDriverPropertyInfo()
-	{
-		return _props;
-	}
-
-//		private void createColumns()
-//		{
-//			addColumn("Name");
-//			addColumn("Required");
-//			addColumn("Value");
-//			addColumn("Description");
-//		}
 }
-
 

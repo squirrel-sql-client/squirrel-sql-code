@@ -30,28 +30,28 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 
-public class DriverPropertiesTable extends JTable
+class DriverPropertiesTable extends JTable
 {
-	public DriverPropertiesTable()
+	DriverPropertiesTable()
 	{
 		super(new DriverPropertiesTableModel(new DriverPropertyInfo[0]));
 		init();
 	}
 
-	public DriverPropertiesTable(DriverPropertyInfo[] props)
+	DriverPropertiesTable(DriverPropertyInfo[] props)
 	{
 		super(new DriverPropertiesTableModel(props));
 		init();
 	}
 
-	public DriverPropertiesTable(Driver driver, String url)
+	DriverPropertiesTable(Driver driver, String url)
 		throws SQLException
 	{
 		super(new DriverPropertiesTableModel(driver, url));
 		init();
 	}
 
-	public DriverPropertiesTableModel getTypedModel()
+	DriverPropertiesTableModel getTypedModel()
 	{
 		return (DriverPropertiesTableModel)getModel();
 	}

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.util;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -29,21 +29,22 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.event.EventListenerList;
-
 /**
  * This class is a cache of objects. All objects stored must implement
  * <CODE>IHasIdentifier</CODE>.<P>
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ObjectCache implements IObjectCache {
+public class ObjectCache implements IObjectCache
+{
 	/** This collection stores <CODE>CacheEntry</CODE> objects. */
 	private Map _entries = new HashMap();
 
 	/**
 	 * Default constructor.
 	 */
-	public ObjectCache() {
+	public ObjectCache()
+	{
 		super();
 	}
 
@@ -57,7 +58,8 @@ public class ObjectCache implements IObjectCache {
 	 * @return  The <CODE>IHasIdentifier</CODE> retrieved or <CODE>null</CODE>
 	 *			if no object exists for <CODE>id</CODE>.
 	 */
-	public synchronized IHasIdentifier get(Class objClass, IIdentifier id) {
+	public synchronized IHasIdentifier get(Class objClass, IIdentifier id)
+	{
 		return getCacheEntry(objClass).get(id);
 	}
 
@@ -70,7 +72,8 @@ public class ObjectCache implements IObjectCache {
 	 *			 	Thrown if an object of the same class as <CODE>obj</CODE>
 	 *				and with the same identifier is already in the cache.
 	 */
-	public synchronized void add(IHasIdentifier obj) throws DuplicateObjectException {
+	public synchronized void add(IHasIdentifier obj) throws DuplicateObjectException
+	{
 		getCacheEntry(obj.getClass()).add(obj);
 	}
 
@@ -80,33 +83,36 @@ public class ObjectCache implements IObjectCache {
 	 * @param   objClass	Class of object to be removed.
 	 * @param   id			Identifier for object to be removed.
 	 */
-	public synchronized void remove(Class objClass, IIdentifier id) {
+	public synchronized void remove(Class objClass, IIdentifier id)
+	{
 		getCacheEntry(objClass).remove(id);
 	}
 
 	/**
 	 * Adds a listener for changes to the cache entry for the passed class.
 	 *
-	 * @param   lis			a ObjectCacheChangeListener that will be notified
+	 * @param   lis			a IObjectCacheChangeListener that will be notified
 	 *						when objects are added or removed from this cache
 	 *						entry.
 	 * @param   objClass	The class of objects whose cache we want to listen
 	 *						to.
 	 */
-	public void addChangesListener(ObjectCacheChangeListener lis, Class objClass) {
+	public void addChangesListener(IObjectCacheChangeListener lis, Class objClass)
+	{
 		getCacheEntry(objClass).addChangesListener(lis);
 	}
 
 	/**
 	 * Removes a listener for changes to the cache entry for the passed class.
 	 *
-	 * @param   lis			a ObjectCacheChangeListener that will be notified
+	 * @param   lis			a IObjectCacheChangeListener that will be notified
 	 *						when objects are added or removed from this cache
 	 *						entry.
 	 * @param   objClass	The class of objects whose cache we want to listen
 	 *						to.
 	 */
-	public void removeChangesListener(ObjectCacheChangeListener lis, Class objClass) {
+	public void removeChangesListener(IObjectCacheChangeListener lis, Class objClass)
+	{
 		getCacheEntry(objClass).removeChangesListener(lis);
 	}
 
@@ -116,13 +122,16 @@ public class ObjectCache implements IObjectCache {
 	 *
 	 * @return  Class[] of all classes stored.
 	 */
-	public synchronized Class[] getAllClasses() {
+	public synchronized Class[] getAllClasses()
+	{
 		List classes = new ArrayList();
-		for (Iterator it = _entries.keySet().iterator(); it.hasNext();) {
+		for (Iterator it = _entries.keySet().iterator(); it.hasNext();)
+		{
 			classes.add(it.next());
 			//classes.add(((CacheEntry)it.next())._objClass);
 		}
-		if (classes.size() > 0) {
+		if (classes.size() > 0)
+		{
 			return (Class[])classes.toArray(new Class[classes.size()]);
 		}
 		return new Class[0];
@@ -136,7 +145,8 @@ public class ObjectCache implements IObjectCache {
 	 *
 	 * @return  <CODE>Iterator</CODE> over all objects.
 	 */
-	public synchronized Iterator getAllForClass(Class objClass) {
+	public synchronized Iterator getAllForClass(Class objClass)
+	{
 		return getCacheEntry(objClass).values().iterator();
 	}
 
@@ -149,9 +159,11 @@ public class ObjectCache implements IObjectCache {
 	 * @return  <CODE>CacheEntry</CODE> which stores objects of type
 	 *			<CODE>objClass</CODE>.
 	 */
-	private CacheEntry getCacheEntry(Class objClass) {
+	private CacheEntry getCacheEntry(Class objClass)
+	{
 		CacheEntry entry = (CacheEntry)_entries.get(objClass);
-		if (entry == null) {
+		if (entry == null)
+		{
 			entry = new CacheEntry(objClass);
 			_entries.put(objClass, entry);
 		}
@@ -161,7 +173,8 @@ public class ObjectCache implements IObjectCache {
 	/**
 	 * These objects are collections for a single class.
 	 */
-	private final class CacheEntry {
+	private final class CacheEntry
+	{
 		/** Class of objects stored here. */
 		private Class _objClass;
 
@@ -179,7 +192,8 @@ public class ObjectCache implements IObjectCache {
 		 *
 		 * @param   objClass	Class of objects to be stored in this collection.
 		 */
-		CacheEntry(Class objClass) {
+		CacheEntry(Class objClass)
+		{
 			super();
 			_objClass = objClass;
 		}
@@ -192,7 +206,8 @@ public class ObjectCache implements IObjectCache {
 		 * @return  The object stored for <CODE>id</CODE> or <CODE>null</CODE>
 		 *			if none exists.
 		 */
-		IHasIdentifier get(IIdentifier id) {
+		IHasIdentifier get(IIdentifier id)
+		{
 			return (IHasIdentifier)_coll.get(id);
 		}
 
@@ -210,10 +225,12 @@ public class ObjectCache implements IObjectCache {
 		 */
 		void add(IHasIdentifier obj)
 				throws DuplicateObjectException, IllegalArgumentException{
-			if (get(obj.getIdentifier()) != null) {
+			if (get(obj.getIdentifier()) != null)
+			{
 				throw new DuplicateObjectException(obj);
 			}
-			if (!_objClass.isInstance(obj)) {
+			if (!_objClass.isInstance(obj))
+			{
 				throw new IllegalArgumentException("IHasIdentifier is not an instance of " + _objClass.getName()); //i18n
 			}
 			_coll.put(obj.getIdentifier(), obj);
@@ -225,9 +242,11 @@ public class ObjectCache implements IObjectCache {
 		 *
 		 * @param   id	  Identifier of object to be removed.
 		 */
-		void remove(IIdentifier id) {
+		void remove(IIdentifier id)
+		{
 			IHasIdentifier obj = get(id);
-			if (obj != null) {
+			if (obj != null)
+			{
 				_coll.remove(id);
 				fireObjectRemoved(obj);
 			}
@@ -236,28 +255,31 @@ public class ObjectCache implements IObjectCache {
 		/**
 		 * Return a <CODE>Collection</CODE> of all objects in this entry.
 		 */
-		Collection values() {
+		Collection values()
+		{
 			return _coll.values();
 		}
 
 		/**
 		 * Adds a listener for changes in this cache entry.
 		 *
-		 * @param   lis a ObjectCacheChangeListener that will be notified when
+		 * @param   lis a IObjectCacheChangeListener that will be notified when
 		 *			objects are added and removed from this cache entry.
 		 */
-		void addChangesListener(ObjectCacheChangeListener lis) {
-			_listenerList.add(ObjectCacheChangeListener.class, lis);
+		void addChangesListener(IObjectCacheChangeListener lis)
+		{
+			_listenerList.add(IObjectCacheChangeListener.class, lis);
 		}
 
 		/**
 		 * Removes a listener for changes in this cache entry.
 		 *
-		 * @param   lis a ObjectCacheChangeListener that will be notified when
+		 * @param   lis a IObjectCacheChangeListener that will be notified when
 		 *			objects are added and removed from this cache entry.
 		 */
-		void removeChangesListener(ObjectCacheChangeListener lis) {
-			_listenerList.remove(ObjectCacheChangeListener.class, lis);
+		void removeChangesListener(IObjectCacheChangeListener lis)
+		{
+			_listenerList.remove(IObjectCacheChangeListener.class, lis);
 		}
 
 		/**
@@ -265,19 +287,23 @@ public class ObjectCache implements IObjectCache {
 		 *
 		 * @param   obj	 The object added.
 		 */
-		private void fireObjectAdded(IHasIdentifier obj) {
+		private void fireObjectAdded(IHasIdentifier obj)
+		{
 			// Guaranteed to be non-null.
 			Object[] listeners = _listenerList.getListenerList();
 			// Process the listeners last to first, notifying
 			// those that are interested in this event.
 			ObjectCacheChangeEvent evt = null;
-			for (int i = listeners.length - 2; i >= 0; i-=2 ) {
-				if (listeners[i] == ObjectCacheChangeListener.class) {
+			for (int i = listeners.length - 2; i >= 0; i-=2 )
+			{
+				if (listeners[i] == IObjectCacheChangeListener.class)
+				{
 					// Lazily create the event.
-					if (evt == null) {
+					if (evt == null)
+					{
 						evt = new ObjectCacheChangeEvent(ObjectCache.this, obj);
 					}
-					((ObjectCacheChangeListener)listeners[i + 1]).objectAdded(evt);
+					((IObjectCacheChangeListener)listeners[i + 1]).objectAdded(evt);
 				}
 			}
 		}
@@ -287,19 +313,23 @@ public class ObjectCache implements IObjectCache {
 		 *
 		 * @param   obj	 The object added.
 		 */
-		private void fireObjectRemoved(IHasIdentifier obj) {
+		private void fireObjectRemoved(IHasIdentifier obj)
+		{
 			// Guaranteed to be non-null.
 			Object[] listeners = _listenerList.getListenerList();
 			// Process the listeners last to first, notifying
 			// those that are interested in this event.
 			ObjectCacheChangeEvent evt = null;
-			for (int i = listeners.length - 2; i >= 0; i-=2 ) {
-				if (listeners[i] == ObjectCacheChangeListener.class) {
+			for (int i = listeners.length - 2; i >= 0; i-=2 )
+			{
+				if (listeners[i] == IObjectCacheChangeListener.class)
+				{
 					// Lazily create the event:
-					if (evt == null) {
+					if (evt == null)
+					{
 						evt = new ObjectCacheChangeEvent(ObjectCache.this, obj);
 					}
-					((ObjectCacheChangeListener)listeners[i + 1]).objectRemoved(evt);
+					((IObjectCacheChangeListener)listeners[i + 1]).objectRemoved(evt);
 				}
 			}
 		}

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -21,19 +21,17 @@ import java.util.Iterator;
 
 import net.sourceforge.squirrel_sql.fw.gui.SortedListModel;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
 import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeEvent;
-import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeListener;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.db.DataCache;
-
 /**
  * Model for an <TT>AliasesList</TT> object.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class AliasesListModel extends SortedListModel {
-
+public class AliasesListModel extends SortedListModel
+{
 	/** Application API. */
 	private IApplication _app;
 
@@ -43,7 +41,8 @@ public class AliasesListModel extends SortedListModel {
 	 *
 	 * @param   app	 Application API.
 	 */
-	public AliasesListModel(IApplication app) {
+	public AliasesListModel(IApplication app)
+	{
 		super();
 		_app = app;
 		load();
@@ -53,9 +52,11 @@ public class AliasesListModel extends SortedListModel {
 	/**
 	 * Load from <TT>DataCache</TT>.
 	 */
-	private void load() {
+	private void load()
+	{
 		Iterator it = _app.getDataCache().aliases();
-		while (it.hasNext()) {
+		while (it.hasNext())
+		{
 			addAlias((ISQLAlias)it.next());
 		}
 	}
@@ -65,7 +66,8 @@ public class AliasesListModel extends SortedListModel {
 	 *
 	 * @param   alias   <TT>ISQLAlias</TT> to be added.
 	 */
-	private void addAlias(ISQLAlias alias) {
+	private void addAlias(ISQLAlias alias)
+	{
 		addElement(alias);
 	}
 
@@ -74,7 +76,8 @@ public class AliasesListModel extends SortedListModel {
 	 *
 	 * @param   alias   <TT>ISQLAlias</TT> to be removed.
 	 */
-	private void removeAlias(ISQLAlias alias) {
+	private void removeAlias(ISQLAlias alias)
+	{
 		removeElement(alias);
 	}
 
@@ -82,15 +85,18 @@ public class AliasesListModel extends SortedListModel {
 	 * Listener to changes in <TT>ObjectCache</TT>. As aliases are
 	 * added to/removed from <TT>DataCache</TT> this model is updated.
 	 */
-	private class MyAliasesListener implements ObjectCacheChangeListener {
+	private class MyAliasesListener implements IObjectCacheChangeListener
+	{
 		/**
 		 * An alias has been added to the cache.
 		 *
 		 * @param   evt	 Describes the event in the cache.
 		 */
-		public void objectAdded(ObjectCacheChangeEvent evt) {
+		public void objectAdded(ObjectCacheChangeEvent evt)
+		{
 			Object obj = evt.getObject();
-			if (obj instanceof ISQLAlias) {
+			if (obj instanceof ISQLAlias)
+			{
 				addAlias((ISQLAlias)obj);
 			}
 		}
@@ -100,9 +106,11 @@ public class AliasesListModel extends SortedListModel {
 		 *
 		 * @param   evt	 Describes the event in the cache.
 		 */
-		public void objectRemoved(ObjectCacheChangeEvent evt) {
+		public void objectRemoved(ObjectCacheChangeEvent evt)
+		{
 			Object obj = evt.getObject();
-			if (obj instanceof ISQLAlias) {
+			if (obj instanceof ISQLAlias)
+			{
 				removeAlias((ISQLAlias)obj);
 			}
 		}

@@ -19,12 +19,12 @@ package net.sourceforge.squirrel_sql.fw.util;
  */
 import java.util.EventListener;
 /**
- * :TODO Delete me
  * This interface defines a listener to changes in <CODE>ObjectCache</CODE>.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public interface ObjectCacheChangeListener extends EventListener {
+public interface IObjectCacheChangeListener extends EventListener
+{
 	/**
 	 * An object has been added to the cache.
 	 *

@@ -28,6 +28,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.sql.Driver;
+import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,9 +57,10 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDriverProperty;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
+import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
 import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeEvent;
-import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeListener;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -81,11 +83,17 @@ public class AliasMaintSheet extends BaseSheet
 	 */
 	public interface MaintenanceType
 	{
+		/** A new alias is being created. */
 		int NEW = 1;
+
+		/** An existing alias is being maintained. */
 		int MODIFY = 2;
+
+		/** A new alias is being created as a copy of an existing one. */
 		int COPY = 3;
 	}
 
+	/** Number of characters to show in text fields. */
 	private static final int COLUMN_COUNT = 25;
 
 	/**
@@ -121,6 +129,9 @@ public class AliasMaintSheet extends BaseSheet
 	 */
 	private final int _maintType;
 
+	/** Listener to the drivers cache. */
+	private DriversCacheListener _driversCacheLis;
+
 	/** Alias name. */
 	private final JTextField _aliasName = new JTextField();
 
@@ -138,6 +149,8 @@ public class AliasMaintSheet extends BaseSheet
 
 	/** Button that brings up the driver properties dialog. */
 	private final JButton _driverPropsBtn = new JButton("Properties");
+
+	private SQLDriverProperty[] _sqlDriverProps;
 
 	/**
 	 * Ctor.
@@ -177,6 +190,16 @@ public class AliasMaintSheet extends BaseSheet
 		pack();
 	}
 
+	public void dispose()
+	{
+		if (_driversCacheLis != null)
+		{
+			_app.getDataCache().removeDriversListener(_driversCacheLis);
+			_driversCacheLis = null;
+		}
+		super.dispose();
+	}
+
 	/**
 	 * Set title of this frame. Ensure that the title label
 	 * matches the frame title.
@@ -209,10 +232,11 @@ public class AliasMaintSheet extends BaseSheet
 		{
 			_drivers.setSelectedItem(_sqlAlias.getDriverIdentifier());
 			_url.setText(_sqlAlias.getUrl());
+			_sqlDriverProps = _sqlAlias.getDriverProperties();
 		}
 		else
 		{
-			ISQLDriver driver = _drivers.getSelectedDriver();
+			final ISQLDriver driver = _drivers.getSelectedDriver();
 			if (driver != null)
 			{
 				_url.setText(driver.getUrl());
@@ -263,6 +287,7 @@ public class AliasMaintSheet extends BaseSheet
 		alias.setUrl(_url.getText().trim());
 		alias.setUserName(_userName.getText().trim());
 		alias.setUseDriverProperties(_useDriverPropsChk.isSelected());
+		alias.setDriverProperties(_sqlDriverProps);
 	}
 
 	private void showNewDriverDialog()
@@ -274,11 +299,22 @@ public class AliasMaintSheet extends BaseSheet
 	{
 		try
 		{
+			final Frame owner = _app.getMainFrame();
 			final SQLDriverManager mgr = _app.getSQLDriverManager();
 			final Driver driver = mgr.getJDBCDriver(_sqlAlias.getDriverIdentifier());
-			final DriverPropertiesDialog dlog = new DriverPropertiesDialog(_app.getMainFrame(), driver, _url.getText());
-			dlog.setModal(true);
-			dlog.setVisible(true);
+			//final DriverPropertiesDialog dlog = new DriverPropertiesDialog(_app.getMainFrame(), driver, _url.getText());
+			//dlog.setModal(true);
+			//dlog.setVisible(true);
+			DriverPropertyInfo[] infoAr = DriverPropertiesDialog.showDialog(owner, driver, _url.getText(), _sqlDriverProps);
+			if (infoAr != null)
+			{
+				_sqlDriverProps = new SQLDriverProperty[infoAr.length];
+				for (int i = 0; i < infoAr.length; ++i)
+				{
+					DriverPropertyInfo info = infoAr[i];
+					_sqlDriverProps[i] = new SQLDriverProperty(info.name, info.value);
+				}
+			}
 		}
 		catch (SQLException ex)
 		{
@@ -347,17 +383,8 @@ public class AliasMaintSheet extends BaseSheet
 		++gbc.gridy;
 		contentPane.add(createButtonsPanel(), gbc);
 
-		_app.getDataCache().addDriversListener(new ObjectCacheChangeListener()
-		{
-			public void objectAdded(ObjectCacheChangeEvent evt)
-			{
-				_drivers.addItem(evt.getObject());
-			}
-			public void objectRemoved(ObjectCacheChangeEvent evt)
-			{
-				_drivers.removeItem(evt.getObject());
-			}
-		});
+		_driversCacheLis = new DriversCacheListener();
+		_app.getDataCache().addDriversListener(_driversCacheLis);
 	}
 
 	private JPanel createDataEntryPanel()
@@ -589,6 +616,22 @@ public class AliasMaintSheet extends BaseSheet
 		public void sessionCreated(ISession session)
 		{
 			s_log.error("Test Button has created a session, this is a programming error");
+		}
+	}
+
+	/**
+	 * Listens to changes in the drivers cache and adds/removes drivers from the dropdown
+	 * as they are added/removed from the cache.
+	 */
+	private final class DriversCacheListener implements IObjectCacheChangeListener
+	{
+		public void objectAdded(ObjectCacheChangeEvent evt)
+		{
+			_drivers.addItem(evt.getObject());
+		}
+		public void objectRemoved(ObjectCacheChangeEvent evt)
+		{
+			_drivers.removeItem(evt.getObject());
 		}
 	}
 }
