@@ -99,6 +99,8 @@ public class GenerateSqlDialog extends JDialog {
     private JRadioButton _UnicodeRadio;
     private JRadioButton _oneFileRadio;
     private JRadioButton _separateFilesRadio;
+    
+    private boolean _wasCompleted;
 
     public GenerateSqlDialog(ISession session, MssqlPlugin plugin, IDatabaseObjectInfo[] dbObjs) throws SQLException {
 		super(ctorHelper(session, plugin, dbObjs), true);
@@ -106,6 +108,8 @@ public class GenerateSqlDialog extends JDialog {
 		_session = session;
         _plugin = plugin;
         _dbObjs = dbObjs;
+        
+        _wasCompleted = false;
         
         createGUI();
 	}
@@ -666,18 +670,27 @@ public class GenerateSqlDialog extends JDialog {
 	private JPanel buildToolBar() {
 		final ButtonBarBuilder builder = new ButtonBarBuilder();
 		builder.addGlue();
-        JButton okButton = new JButton("OK");
-        
         final GenerateSqlDialog dlg = this;
         
+        JButton okButton = new JButton("OK");
         okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+               _wasCompleted = true;
                dlg.hide();
             }
         });
 		builder.addGridded(okButton);
+        
 		builder.addRelatedGap();
-		builder.addGridded(new JButton("Cancel"));
+		
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                _wasCompleted = false;
+                dlg.hide();
+            }
+        });
+        builder.addGridded(cancelButton);
 
 		return builder.getPanel();
 	}
@@ -767,5 +780,10 @@ public class GenerateSqlDialog extends JDialog {
 
     public boolean getOneFile() {
         return _oneFileRadio.isSelected();
+    }
+    
+    public boolean showGeneralSqlDialog() {
+        this.show();
+        return _wasCompleted;
     }
 }
