@@ -23,7 +23,6 @@ import java.awt.GridBagConstraints;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import java.awt.Insets;
-import java.awt.GridLayout;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -40,7 +39,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonModel;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
@@ -144,11 +142,11 @@ public class DataTypeTimestamp
 
 	// values for how to use timestamps in WHERE clauses
 	 private static final int DO_NOT_USE = 0;
-	 private static final int USE_TIMESTAMP_FORMAT = 1;
+	 private static final int USE_JDBC_ESCAPE_FORMAT = 1;
 	 private static final int USE_STRING_FORMAT = 2;
 	// Define whether or not to use Timestamp in internally generated WHERE
 	// clauses, and if so what format to use.
-	 private static int whereClauseUsage = USE_TIMESTAMP_FORMAT;
+	 private static int whereClauseUsage = USE_JDBC_ESCAPE_FORMAT;
 
 
 	/**
@@ -199,7 +197,7 @@ public class DataTypeTimestamp
 				lenient =false;
 
 			// how to use Timestamp in WHERE clauses
-			whereClauseUsage = USE_TIMESTAMP_FORMAT;	// default to SQL standard
+			whereClauseUsage = USE_JDBC_ESCAPE_FORMAT;	// default to SQL standard
 			String whereClauseUsageString = DTProperties.get(
 				thisClassName, "whereClauseUsage");
 			if (whereClauseUsageString != null)
@@ -235,7 +233,9 @@ public class DataTypeTimestamp
 			return (String)_renderer.renderObject(value);
 
 		// use a date formatter
-		return (String)_renderer.renderObject(dateFormat.format(value));
+		if (value == null)
+			return (String)_renderer.renderObject(value);
+		else return (String)_renderer.renderObject(dateFormat.format(value));
 	}
 
 	/**
@@ -499,8 +499,8 @@ public class DataTypeTimestamp
 		if (value == null || value.toString() == null || value.toString().length() == 0)
 			return _colDef.getLabel() + " IS NULL";
 		else
-			if (whereClauseUsage == USE_TIMESTAMP_FORMAT)
-				return _colDef.getLabel() + "=TIMESTAMP('" + value.toString() +"')";
+			if (whereClauseUsage == USE_JDBC_ESCAPE_FORMAT)
+				return _colDef.getLabel() + "={ts '" + value.toString() +"'}";
 			else
 				return _colDef.getLabel() + "='" + value.toString() +"'";
 	}
@@ -763,8 +763,8 @@ public class DataTypeTimestamp
 		private JRadioButton doNotUseButton =
 			new JRadioButton("Do not use Timstamp in WHERE clause");
 		private JRadioButton useTimestampFormatButton =
-			new JRadioButton("Use SQL standard format ( \"TIMESTAMP('"+
-				new Timestamp(new Date().getTime()).toString() + "')\")");
+			new JRadioButton("Use JDBC standard escape format ( \"{ts '"+
+				new Timestamp(new Date().getTime()).toString() + "'}\")");
 		private JRadioButton useStringFormatButton =
 			new JRadioButton("Use String version of Timestamp ('"+
 				new Timestamp(new Date().getTime()).toString() + "')");
@@ -890,7 +890,7 @@ public class DataTypeTimestamp
 					break;
 			}
 			if (buttonIndex > radioButtonModels.length)
-				buttonIndex = USE_TIMESTAMP_FORMAT;
+				buttonIndex = USE_JDBC_ESCAPE_FORMAT;
 			whereClauseUsage = buttonIndex;
 			DTProperties.put(
 				thisClassName,
