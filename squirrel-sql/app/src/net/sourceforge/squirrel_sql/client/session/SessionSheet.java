@@ -34,7 +34,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.swing.Icon;
-import javax.swing.JInternalFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -60,6 +59,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
@@ -76,7 +76,7 @@ import net.sourceforge.squirrel_sql.client.session.objectstree.TablePanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.*;
 
-public class SessionSheet extends JInternalFrame {
+public class SessionSheet extends BaseSheet {
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(SessionSheet.class);
 

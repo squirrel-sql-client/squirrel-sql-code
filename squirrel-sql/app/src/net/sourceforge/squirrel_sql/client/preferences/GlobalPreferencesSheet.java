@@ -28,7 +28,6 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -38,9 +37,10 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 
-public class GlobalPreferencesSheet extends JInternalFrame {
+public class GlobalPreferencesSheet extends BaseSheet {
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.

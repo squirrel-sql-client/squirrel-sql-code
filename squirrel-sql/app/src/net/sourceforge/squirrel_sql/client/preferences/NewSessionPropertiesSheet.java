@@ -17,9 +17,6 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-//import java.awt.BorderLayout;
-//import java.awt.Container;
-//import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -30,8 +27,6 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-//import javax.swing.JDialog;
-import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -41,12 +36,13 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.session.properties.OutputPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.properties.SQLPropertiesPanel;
 
-public class NewSessionPropertiesSheet extends JInternalFrame {
+public class NewSessionPropertiesSheet extends BaseSheet {
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
@@ -231,12 +227,4 @@ public class NewSessionPropertiesSheet extends JInternalFrame {
 
 		return pnl;
 	}
-
-/*	private static Frame getFrame(IApplication app)
-			throws IllegalArgumentException {
-		if (app == null) {
-			throw new IllegalArgumentException("Null IApplication passed");
-		}
-		return app.getMainFrame();
-	}*/
 }

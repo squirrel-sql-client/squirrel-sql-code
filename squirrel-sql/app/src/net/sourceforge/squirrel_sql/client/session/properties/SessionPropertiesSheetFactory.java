@@ -20,20 +20,16 @@ package net.sourceforge.squirrel_sql.client.session.properties;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.JInternalFrame;
-import javax.swing.event.InternalFrameListener;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionSheet;
-import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 
 /**
  * Factory to handle creation of property sheets for sessions.
@@ -104,7 +100,7 @@ public class SessionPropertiesSheetFactory {
 			session.getSessionSheet().addInternalFrameListener(new SessionSheetListener());
 
 			// When the	session is closed close its properties sheet.
-			JInternalFrame sessionSheet = session.getSessionSheet();
+			SessionSheet sessionSheet = session.getSessionSheet();
 			sessionSheet.addInternalFrameListener(new InternalFrameAdapter() {
 				public void internalFrameClosed(InternalFrameEvent evt) {
 					synchronized(SessionPropertiesSheetFactory.getInstance()) {
@@ -135,40 +131,6 @@ public class SessionPropertiesSheetFactory {
 		sheet.setVisible(true);
 		sheet.moveToFront();
 	}
-
-//	private final class SessionInfo {
-//		private ISession _session;
-//		private SessionPropertiesSheet _propsSheet;
-//		private PropertiesSheetListener _propsSheetListener;
-//		private SessionSheetListener _sessionSheetListener;
-
-//		SessionInfo(ISession session) {
-//			super();
-//			_session = session;
-//			_propsSheet = new SessionPropertiesSheet(session);
-//			_propsSheetListener = new PropertiesSheetListener();
-//			_propsSheet.addInternalFrameListener(_propsSheetListener);
-//			session.getSessionSheet().addInternalFrameListener(_sessionSheetListener);
-//		}
-
-//		void cleanup() {
-//			_propsSheet.removeInternalFrameListener(_propsSheetListener);
-//			_propsSheet.dispose();
-//			_propsSheet = null;
-//			_propsSheetListener = null;
-//			_session.getSessionSheet().removeInternalFrameListener(_sessionSheetListener);
-//			_sessionSheetListener = null;
-//			_session = null;
-//		}
-//	}
-
-//	private final class PropertiesSheetListener extends InternalFrameAdapter {
-//		public void internalFrameClosing(InternalFrameEvent evt) {
-//			synchronized(SessionPropertiesSheetFactory.getInstance()) {
-//				s_log.debug("Removing object from _sheets");
-//			}
-//		}
-//	}
 
 	private final class SessionSheetListener extends InternalFrameAdapter {
 		public void internalFrameClosed(InternalFrameEvent evt) {

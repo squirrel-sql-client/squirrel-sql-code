@@ -21,11 +21,11 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 
 import javax.swing.JButton;
-import javax.swing.JInternalFrame;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionSheet;
 import net.sourceforge.squirrel_sql.client.session.action.ReturnResultTabAction;
@@ -37,7 +37,7 @@ import net.sourceforge.squirrel_sql.client.session.action.ReturnResultTabAction;
  * Copyright (C) 2001-2002
  * 
  */
-public class ResultFrame extends JInternalFrame {
+public class ResultFrame extends BaseSheet {
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(ResultFrame.class);
 

@@ -35,7 +35,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
-import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
@@ -55,13 +54,14 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
 
 /**
  * This dialog allows maintenance of a JDBC driver definition.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class DriverMaintSheet extends JInternalFrame {
+public class DriverMaintSheet extends BaseSheet {
 	/** Different types of maintenance that can be done. */
 	public interface MaintenanceType {
 		int NEW = 1;

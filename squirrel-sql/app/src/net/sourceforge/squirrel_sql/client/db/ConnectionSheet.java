@@ -25,7 +25,6 @@ import java.awt.Container;
 import java.awt.Frame;
 import java.awt.Insets;
 
-import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -47,13 +46,14 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
 
 /**
  * This internal frame allows the user to connect to an alias.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ConnectionSheet extends JInternalFrame {
+public class ConnectionSheet extends BaseSheet {
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
