@@ -23,10 +23,7 @@ import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 
 import javax.swing.*;
-import java.util.Collections;
-import java.util.Hashtable;
-import java.util.Vector;
-import java.util.Arrays;
+import java.util.*;
 
 public class CodeCompletionInfoCollection
 {
@@ -113,6 +110,27 @@ public class CodeCompletionInfoCollection
                completionInfos.add(new CodeCompletionSchemaInfo(schemas[i]));
                _schemas.add(new CodeCompletionSchemaInfo(schemas[i]));
             }
+
+            AutoCorrectProvider autoCorrectProvider =
+               (AutoCorrectProvider) _session.getApplication().getPluginManager().bindExternalPluginService("syntax", AutoCorrectProvider.class);
+
+            if(null == autoCorrectProvider)
+            {
+               _session.getMessageHandler().showMessage("Code completion will work better if you use the Syntax plugin. Get it from squirrelsql.org, it's free!");
+            }
+            else
+            {
+               Hashtable autoCorrections = autoCorrectProvider.getAutoCorrects();
+
+               for(Enumeration e=autoCorrections.keys(); e.hasMoreElements();)
+               {
+                  String toCorrect = (String) e.nextElement();
+                  String correction = (String) autoCorrections.get(toCorrect);
+
+                  completionInfos.add(new CodeCompletionAutoCorrectInfo(toCorrect, correction));
+               }
+            }
+
          }
 
 
