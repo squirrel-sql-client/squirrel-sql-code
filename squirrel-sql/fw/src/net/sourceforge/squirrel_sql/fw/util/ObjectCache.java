@@ -131,7 +131,6 @@ public class ObjectCache implements IObjectCache {
     /**
      * Return an <CODE>Iterator</CODE> of all objects stored for the
      * passed class.
-     * ?? This isn't thread safe - fix.
      *
      * @param   objClass    Class to return objects for.
      *
