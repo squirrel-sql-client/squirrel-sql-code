@@ -27,25 +27,31 @@ import java.beans.SimpleBeanInfo;
  */
 public class SQLAliasBeanInfo extends SimpleBeanInfo
 {
-	private static PropertyDescriptor[] s_descriptors;
+	private static PropertyDescriptor[] s_desc;
+	private static Class CLAZZ = SQLAlias.class;
+
+	private interface IPropNames extends ISQLAlias.IPropertyNames
+	{
+	}
 
 	public SQLAliasBeanInfo() throws IntrospectionException
 	{
 		super();
-		if (s_descriptors == null)
+		if (s_desc == null)
 		{
-			s_descriptors = new PropertyDescriptor[5];
-			s_descriptors[0] = new PropertyDescriptor(ISQLAlias.IPropertyNames.ID, SQLAlias.class, "getIdentifier", "setIdentifier");
-			s_descriptors[1] = new PropertyDescriptor(ISQLAlias.IPropertyNames.NAME, SQLAlias.class, "getName", "setName");
-			s_descriptors[2] = new PropertyDescriptor(ISQLAlias.IPropertyNames.URL, SQLAlias.class, "getUrl", "setUrl");
-			s_descriptors[3] = new PropertyDescriptor(ISQLAlias.IPropertyNames.USER_NAME, SQLAlias.class, "getUserName", "setUserName");
-			s_descriptors[4] = new PropertyDescriptor(ISQLAlias.IPropertyNames.DRIVER, SQLAlias.class, "getDriverIdentifier", "setDriverIdentifier");
+			s_desc = new PropertyDescriptor[6];
+			s_desc[0] = new PropertyDescriptor(IPropNames.ID, CLAZZ, "getIdentifier", "setIdentifier");
+			s_desc[1] = new PropertyDescriptor(IPropNames.NAME, CLAZZ, "getName", "setName");
+			s_desc[2] = new PropertyDescriptor(IPropNames.URL, CLAZZ, "getUrl", "setUrl");
+			s_desc[3] = new PropertyDescriptor(IPropNames.USER_NAME, CLAZZ, "getUserName", "setUserName");
+			s_desc[4] = new PropertyDescriptor(IPropNames.DRIVER, CLAZZ, "getDriverIdentifier", "setDriverIdentifier");
+			s_desc[5] = new PropertyDescriptor(IPropNames.USE_DRIVER_PROPERTIES, CLAZZ, "getUseDriverProperties", "setUseDriverProperties");
 		}
 	}
 
 	public PropertyDescriptor[] getPropertyDescriptors()
 	{
-		return s_descriptors;
+		return s_desc;
 	}
 }
 

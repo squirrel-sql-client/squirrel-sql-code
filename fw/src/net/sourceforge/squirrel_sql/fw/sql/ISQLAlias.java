@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.sql;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -24,33 +24,35 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.IValidatable;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
-
 /**
  * This represents a Database alias which is a description of the means
  * required to connect to a JDBC complient database.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public interface ISQLAlias extends IHasIdentifier, IValidatable { //, Comparable {
+public interface ISQLAlias extends IHasIdentifier, IValidatable
+{
 	/**
 	 * JavaBean property names for this class.
 	 */
-	public interface IPropertyNames {
+	public interface IPropertyNames
+	{
 		String DRIVER = "driverIdentifier";
 		String ID = "identifier";
 		String NAME = "name";
 		String URL = "url";
+		String USE_DRIVER_PROPERTIES = "useDriverProperties";
 		String USER_NAME = "userName";
 	}
 
 	/**
 	 * Assign data from the passed <CODE>ISQLAlias</CODE> to this one.
 	 *
-	 * @param   rhs	 <CODE>ISQLAlias</CODE> to copy data from.
+	 * @param	rhs	<CODE>ISQLAlias</CODE> to copy data from.
 	 *
-	 * @exception   ValidationException
-	 *				  Thrown if an error occurs assigning data from
-	 *				  <CODE>rhs</CODE>.
+	 * @exception	ValidationException
+	 *				Thrown if an error occurs assigning data from
+	 *				<CODE>rhs</CODE>.
 	 */
 	void assignFrom(ISQLAlias rhs) throws ValidationException;
 
@@ -63,8 +65,6 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable { //, Comparable
 	 */
 	int compareTo(Object rhs);
 
-//  IIdentifier getIdentifier();
-
 	String getName();
 
 	IIdentifier getDriverIdentifier();
@@ -73,6 +73,8 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable { //, Comparable
 
 	String getUserName();
 
+	boolean getUseDriverProperties();
+
 	void setName(String name) throws ValidationException;
 
 	void setDriverIdentifier(IIdentifier data) throws ValidationException;
@@ -80,6 +82,8 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable { //, Comparable
 	void setUrl(String url) throws ValidationException;
 
 	void setUserName(String userName) throws ValidationException;
+
+	void setUseDriverProperties(boolean value) throws ValidationException;
 
 	void addPropertyChangeListener(PropertyChangeListener listener);
 	void removePropertyChangeListener(PropertyChangeListener listener);
