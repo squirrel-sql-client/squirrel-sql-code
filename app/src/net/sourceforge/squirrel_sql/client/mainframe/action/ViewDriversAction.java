@@ -24,7 +24,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.DriversToolWindow;
 /**
  * This <CODE>Action</CODE> displays the Drivers Tool Window.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ViewDriversAction extends SelectInternalFrameAction
 {
@@ -46,6 +46,6 @@ public class ViewDriversAction extends SelectInternalFrameAction
 		{
 			throw new IllegalArgumentException("null DriversToolWindow passed");
 		}
-		app.getResources().setupAction(this);
+		app.getResources().setupAction(this, app.getSquirrelPreferences().getShowColoriconsInToolbar());
 	}
 }

@@ -26,7 +26,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 /**
  * This <CODE>Action</CODE> cascades the internal frames.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class MaximizeAction extends MaximizeInternalFramesAction
 {
@@ -42,7 +42,7 @@ public class MaximizeAction extends MaximizeInternalFramesAction
 	{
 		super();
 		_app = app;
-		app.getResources().setupAction(this);
+		app.getResources().setupAction(this, _app.getSquirrelPreferences().getShowColoriconsInToolbar());
 	}
 
 	public void actionPerformed(ActionEvent evt)

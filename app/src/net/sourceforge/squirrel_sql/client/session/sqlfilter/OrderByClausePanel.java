@@ -33,7 +33,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
+import java.util.SortedSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -60,7 +60,7 @@ public class OrderByClausePanel	implements ISQLFilterPanel
    * @param columnList A list of column names for the database table.
    * @param tableName The name of the database table that the filter information will apply to.
    */  
-	public OrderByClausePanel(List columnList, String tableName)
+	public OrderByClausePanel(SortedSet columnList, String tableName)
 	{
 		super();
     _myPanel = new OrderByClauseSubPanel(columnList, tableName);
@@ -159,7 +159,7 @@ public class OrderByClausePanel	implements ISQLFilterPanel
      * @param tableName The name of the database table.
      *
      */    
-		OrderByClauseSubPanel(List columnList, String tableName)
+		OrderByClauseSubPanel(SortedSet columnList, String tableName)
 		{
 			super(new GridBagLayout());
       _columnCombo = new JComboBox(columnList.toArray());

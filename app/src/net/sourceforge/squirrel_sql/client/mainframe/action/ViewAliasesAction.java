@@ -24,7 +24,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.AliasesToolWindow;
 /**
  * This <CODE>Action</CODE> displays the Aliases Tool Window.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ViewAliasesAction extends SelectInternalFrameAction
 {
@@ -41,6 +41,6 @@ public class ViewAliasesAction extends SelectInternalFrameAction
 		{
 			throw new IllegalArgumentException("null AliasesToolWindow passed");
 		}
-		app.getResources().setupAction(this);
+		app.getResources().setupAction(this, app.getSquirrelPreferences().getShowColoriconsInToolbar());
 	}
 }

@@ -158,13 +158,13 @@ public abstract class Resources
 
 	/**
 	 * Setup the passed action from the resource bundle.
-	 * 
+	 *
 	 * @param	action		Action being setup.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			thrown if <TT>null</TT> <TT>action</TT> passed.
 	 */
-	public void setupAction(Action action)
+	public void setupAction(Action action, boolean showColoricons)
 	{
 		if (action == null)
 		{
@@ -180,11 +180,27 @@ public abstract class Resources
 		Icon icon = null;
 		try
 		{
-			icon = getIcon(key, ActionProperties.IMAGE);
-			action.putValue(Action.SMALL_ICON, icon);
+			if (showColoricons == true)
+			{
+				icon = getIcon(key, ActionProperties.ROLLOVER_IMAGE);
+				action.putValue(Action.SMALL_ICON, icon);
+			}
+			else
+			{
+				icon = getIcon(key, ActionProperties.IMAGE);
+				action.putValue(Action.SMALL_ICON, icon);
+			}
 		}
 		catch (MissingResourceException ex)
 		{
+			try
+			{
+				icon = getIcon(key, ActionProperties.IMAGE);
+				action.putValue(Action.SMALL_ICON, icon);
+			}
+			catch (MissingResourceException ignore)
+			{
+			}
 		}
 
 		try

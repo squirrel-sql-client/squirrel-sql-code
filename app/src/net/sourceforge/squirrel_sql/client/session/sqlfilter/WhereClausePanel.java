@@ -34,7 +34,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
+import java.util.SortedSet;
 //
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -67,7 +67,7 @@ public class WhereClausePanel implements ISQLFilterPanel
    * @param tableName The name of the database table that the filter information will apply to.
    * @throws IllegalArgumentException The exception thrown if invalid arguments are passed.
    */  
-	public WhereClausePanel(List columnList, String tableName) throws IllegalArgumentException
+	public WhereClausePanel(SortedSet columnList, String tableName) throws IllegalArgumentException
 	{
 		super();
     _myPanel = new WhereClauseSubPanel(columnList, tableName);
@@ -141,6 +141,7 @@ public class WhereClausePanel implements ISQLFilterPanel
       String AND = "AND";
       String OR = "OR";
       String LIKE = "LIKE";
+      String IN = "IN";
 		}
 
     /** A JComboBox component containing a list of the names of the columns for the
@@ -177,7 +178,7 @@ public class WhereClausePanel implements ISQLFilterPanel
      * @param tableName The name of the database table.
      *
      */    
-		WhereClauseSubPanel(List columnList, String tableName)
+		WhereClauseSubPanel(SortedSet columnList, String tableName)
 		{
 			super();
       _tableName = tableName;
@@ -315,6 +316,7 @@ public class WhereClausePanel implements ISQLFilterPanel
 				addItem("<");
 				addItem(">=");
 				addItem("<=");
+        addItem(WhereClauseSubPanelI18n.IN);
 				addItem(WhereClauseSubPanelI18n.LIKE);
 			}
 		}

@@ -26,7 +26,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 /**
  * This <CODE>Action</CODE> tiles the internal frames.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class TileAction extends TileInternalFramesAction
 {
@@ -36,13 +36,13 @@ public class TileAction extends TileInternalFramesAction
 	/**
 	 * Ctor.
 	 *
-	 * @param   app	 Application API.
+	 * @param	app	 Application API.
 	 */
 	public TileAction(IApplication app)
 	{
 		super();
 		_app = app;
-		app.getResources().setupAction(this);
+		app.getResources().setupAction(this, _app.getSquirrelPreferences().getShowColoriconsInToolbar());
 	}
 
 	public void actionPerformed(ActionEvent evt)
@@ -58,7 +58,7 @@ public class TileAction extends TileInternalFramesAction
 			cursorChg.restore();
 		}
 	}
-	
+
 	/**
 	 * Retrieve the number of rows and columns that the internal frames
 	 * should be rearranged into.
