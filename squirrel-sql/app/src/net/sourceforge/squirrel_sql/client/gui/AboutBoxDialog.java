@@ -201,10 +201,6 @@ public class AboutBoxDialog extends JDialog
 
 		getRootPane().setDefaultButton(okBtn);
 
-		Dimension ps = contentPane.getPreferredSize();
-		ps.width = 400;
-		contentPane.setPreferredSize(ps);
-
 		addWindowListener(new WindowAdapter()
 		{
 			public void windowActivated(WindowEvent evt)
@@ -235,9 +231,14 @@ public class AboutBoxDialog extends JDialog
 		CreditsPanel(IApplication app)
 		{
 			super();
+
 			final JEditorPane credits = new JEditorPane();
 			credits.setEditable(false);
 			credits.setContentType("text/html");
+
+			// Required with the first beta of JDK1.4.1 to stop
+			// this scrollpane from being too tall.
+			credits.setPreferredSize(new Dimension(200, 200));
 
 			final StringBuffer creditsData = readCreditsFile(app);
 
@@ -367,13 +368,11 @@ public class AboutBoxDialog extends JDialog
 		AboutPanel(IApplication app)
 		{
 			super();
+			final SquirrelResources rsrc = app.getResources();
 			setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 			setLayout(new BorderLayout());
-			setBackground(
-				new Color(SquirrelResources.S_SPLASH_IMAGE_BACKGROUND));
-			Icon icon =
-				app.getResources().getIcon(
-					SquirrelResources.IImageNames.SPLASH_SCREEN);
+			setBackground(new Color(rsrc.S_SPLASH_IMAGE_BACKGROUND));
+			Icon icon = rsrc.getIcon(SquirrelResources.IImageNames.SPLASH_SCREEN);
 			add(BorderLayout.CENTER, new JLabel(icon));
 			JTextArea ta = new JTextArea();
 			ta.setEditable(false);
@@ -408,7 +407,7 @@ public class AboutBoxDialog extends JDialog
 			add(new JScrollPane(propsPnl.getComponent()), BorderLayout.CENTER);
 			add(_memoryPnl, BorderLayout.SOUTH);
 
-			setPreferredSize(new Dimension(400, 400));
+			//setPreferredSize(new Dimension(400, 400));
 		}
 	}
 
