@@ -23,6 +23,7 @@ import java.sql.SQLException;
 
 import javax.swing.JScrollPane;
 
+import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
@@ -38,36 +39,64 @@ public class ResultSetPanel extends JScrollPane {
 	private static ILogger s_log = LoggerController.createLogger(ResultSetPanel.class);
 
 	private boolean _fullyCreated = false;
-	private ResultSetDataSet _ds;
 	private DataSetViewer _viewer;
 
-	public void load(ISession session, ResultSet rs, int[] cols,
-						String destClassName) {
-		try {
+	public void load(final ISession session, final ResultSet rs, final int[] cols,
+						final String destClassName) 
+	{
+		try
+		{
 			// Lazily create the user interface.
 			if (!_fullyCreated) {
 				createUserInterface(session, destClassName);
 				_fullyCreated = true;
 			}
-
-			try {
-				_ds.setResultSet(rs, cols);
-				_viewer.show(_ds);
-			} finally {
-				rs.close();
-			}
-
-		} catch (Exception ex) {
-			s_log.error("Error", ex);
+			final ResultSetDataSet ds = new ResultSetDataSet();
+			ds.setResultSet(rs, cols);
+			rs.close();
+			Runnable run = new Runnable()
+			{
+				public void run()
+				{
+					try
+					{
+						_viewer.show(ds);
+					} catch(DataSetException dse)
+					{
+						s_log.error("Error", dse);
+					}
+					
+				}
+			};
+			SwingUtilities.invokeLater(run);
 		}
+		catch(Exception ex) 
+		{
+			s_log.error("Error", ex);
+		} 
+	
 	}
 
-	private void createUserInterface(ISession session, String destClassName)
-			throws DataSetException {
+	public void clear()
+	{
+		if(_viewer != null)
+		{
+			_viewer.clearDestination();
+		}
+	}
+	private void createUserInterface(ISession session, String destClassName) 
+		throws DataSetException
+	{
 		_viewer = new DataSetViewer();
 		_viewer.setDestination(destClassName);
-		_ds = new ResultSetDataSet();
-		setViewportView(_viewer.getDestinationComponent());
+		Runnable run = new Runnable()
+		{
+			public void run()
+			{
+				setViewportView(_viewer.getDestinationComponent());
+			}
+		};
+		SwingUtilities.invokeLater(run);
 	}
 }
 

@@ -86,6 +86,14 @@ public class ContentsTab extends BaseTablePanelTab {
 	}
 
 	/**
+	 * @see BaseObjectPanelTab#clear()
+	 */
+	public void clear()
+	{
+		((ResultSetPanel)getComponent()).clear();
+	}
+	
+	/**
 	 * Refresh the component displaying the <TT>ITableInfo</TT> object.
 	 */
 	public synchronized void refreshComponent() throws IllegalStateException {
@@ -108,6 +116,7 @@ public class ContentsTab extends BaseTablePanelTab {
 				}
 				ResultSet rs = stmt.executeQuery("select * from " + ti.getQualifiedName());
 				try {
+					// ResultSetPanel is thread save
 					((ResultSetPanel) getComponent()).load(session, rs, null, destClassName);
 				} finally {
 					rs.close();

@@ -85,6 +85,14 @@ public class VersionColumnsTab extends BaseTablePanelTab {
         return _comp;
     }
 
+	/**
+	 * @see BaseObjectPanelTab#clear()
+	 */
+	public void clear()
+	{
+		((ResultSetPanel)getComponent()).clear();
+	}
+	
     /**
      * Refresh the component displaying the <TT>ITableInfo</TT> object.
      */
@@ -100,6 +108,7 @@ public class VersionColumnsTab extends BaseTablePanelTab {
         String destClassName = session.getProperties().getVersionsOutputClassName();
         try {
             ResultSet rs = session.getSQLConnection().getVersionColumns(ti);
+            // ResultSetPanel is thread save
             ((ResultSetPanel)getComponent()).load(session, rs, null, destClassName);
         } catch (Exception ex) {
             session.getMessageHandler().showMessage(ex);

@@ -61,4 +61,9 @@ public interface IObjectPanelTab {
      * This tab has been selected.
      */
     void select();
+    
+    /**
+	 * Clears the current view, is called right before select()
+	 */
+	void clear();
 }

@@ -22,6 +22,7 @@ import java.awt.Component;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
+import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -86,6 +87,14 @@ public class ProcedureInfoTab extends BaseProcedurePanelTab {
 	}
 
 	/**
+	 * @see BaseObjectPanelTab#clear()
+	 */
+	public void clear()
+	{
+		((MyComponent)getComponent()).clear();
+	}
+
+	/**
 	 * Refresh the component displaying the <TT>ITableInfo</TT> object.
 	 */
 	public synchronized void refreshComponent() throws IllegalStateException {
@@ -115,21 +124,43 @@ public class ProcedureInfoTab extends BaseProcedurePanelTab {
 			super(/*new BorderLayout()*/);
 		}
 
-		void load(ISession session, IProcedureInfo pi) {
-			try {
-				// Lazily create the user interface.
-				if (!_fullyCreated) {
-					createUserInterface();
-					_fullyCreated = true;
-				}
-				_nameLbl.setText(pi != null ? getString(pi.getSimpleName()) : "" );
-				_catalogLbl.setText(pi != null ? getString(pi.getCatalogName()) : "" );
-				_schemaLbl.setText(pi != null ? getString(pi.getSchemaName()) : "" );
-				_typeLbl.setText(pi != null ? getString(pi.getTypeDescription()) : "" );
-				_remarksLbl.setText(pi != null ? getString(pi.getRemarks()) : "" );
-			} catch (Exception ex) {
-				s_log.error("Error", ex);
+		void clear()
+		{
+			if (!_fullyCreated) {
+				createUserInterface();
+				_fullyCreated = true;
 			}
+			_nameLbl.setText("" );
+			_catalogLbl.setText("" );
+			_schemaLbl.setText("" );
+			_typeLbl.setText("" );
+			_remarksLbl.setText("" );
+		}
+		
+		void load(final ISession session, final IProcedureInfo pi) 
+		{
+			Runnable run = new Runnable()
+			{
+				public void run()
+				{
+				
+					try {
+						// Lazily create the user interface.
+						if (!_fullyCreated) {
+							createUserInterface();
+							_fullyCreated = true;
+						}
+						_nameLbl.setText(pi != null ? getString(pi.getSimpleName()) : "" );
+						_catalogLbl.setText(pi != null ? getString(pi.getCatalogName()) : "" );
+						_schemaLbl.setText(pi != null ? getString(pi.getSchemaName()) : "" );
+						_typeLbl.setText(pi != null ? getString(pi.getTypeDescription()) : "" );
+						_remarksLbl.setText(pi != null ? getString(pi.getRemarks()) : "" );
+					} catch (Exception ex) {
+						s_log.error("Error", ex);
+					}
+				}
+			};
+			SwingUtilities.invokeLater(run);
 		}
 
 		private void createUserInterface() {

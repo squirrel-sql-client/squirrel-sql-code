@@ -26,6 +26,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -87,6 +88,14 @@ public class TableInfoTab extends BaseTablePanelTab {
 	}
 
 	/**
+	 * @see BaseObjectPanelTab#clear()
+	 */
+	public void clear()
+	{
+		((MyComponent)getComponent()).clear();
+	}
+	
+	/**
 	 * Refresh the component displaying the <TT>ITableInfo</TT> object.
 	 */
 	public synchronized void refreshComponent() throws IllegalStateException {
@@ -114,7 +123,12 @@ public class TableInfoTab extends BaseTablePanelTab {
 			super(new BorderLayout());
 		}
 
-		void load(ISession session, ITableInfo ti) {
+		void clear()
+		{
+			if(_rowCount != null) _rowCount.setText("");
+			if(_viewer != null) _viewer.clearDestination();
+		}
+		void load(ISession session, final ITableInfo ti) {
 			try {
 				// Lazily create the user interface.
 				if (!_fullyCreated) {
@@ -122,23 +136,41 @@ public class TableInfoTab extends BaseTablePanelTab {
 					_fullyCreated = true;
 				}
 
+				final long nbrRows;
 				// Row count.
 				Statement stmt = session.getSQLConnection().createStatement();
 				try {
 					ResultSet rs = stmt.executeQuery(
 							"select count(*) from " + ti.getQualifiedName());
-					long nbrRows = 0;
 					if (rs.next()) {
 						nbrRows = rs.getLong(1);
 					}
-					_rowCount.setText("" + nbrRows);
+					else
+					{
+						nbrRows = 0;
+					}
 				} finally {
 					stmt.close();
 				}
 
 				// Table information viewer.
-				_ds.setTableInfo(ti);
-				_viewer.show(_ds);
+				Runnable run = new Runnable()
+				{
+					public void run()
+					{
+						_rowCount.setText("" + nbrRows);
+						_ds.setTableInfo(ti);
+						try
+						{
+							_viewer.show(_ds);
+						} catch(DataSetException dse)
+						{
+							_rowCount.setText("<error>");
+							s_log.error("Error", dse);
+						}
+					}
+				};
+				SwingUtilities.invokeLater(run);
 
 			} catch (Exception ex) {
 				_rowCount.setText("<error>");
@@ -150,17 +182,24 @@ public class TableInfoTab extends BaseTablePanelTab {
 			ISession session = getSession();
 
 			// Panel displays the row count for the table.
-			JPanel pnl = new JPanel();
+			final JPanel pnl = new JPanel();
 			pnl.add(new JLabel("Row count:"));
 			pnl.add(_rowCount);
-			add(pnl, BorderLayout.NORTH);
 
 			// Panel displays table info.
 			String destClassName = session.getProperties().getTableOutputClassName();
 			_viewer = new DataSetViewer();
 			_viewer.setDestination(destClassName);
 			_ds = new TableInfoDataSet();
-			add(new JScrollPane(_viewer.getDestinationComponent()), BorderLayout.CENTER);
+			Runnable run = new Runnable()
+			{
+				public void run()
+				{
+					add(pnl, BorderLayout.NORTH);
+					add(new JScrollPane(_viewer.getDestinationComponent()), BorderLayout.CENTER);
+				}
+			};
+			SwingUtilities.invokeLater(run);
 		}
 	}
 }

@@ -85,6 +85,14 @@ public class ExportedKeysTab extends BaseTablePanelTab {
         return _comp;
     }
 
+	/**
+	 * @see BaseObjectPanelTab#clear()
+	 */
+	public void clear()
+	{
+		((ResultSetPanel)getComponent()).clear();
+	}
+	
     /**
      * Refresh the component displaying the <TT>ITableInfo</TT> object.
      */
@@ -100,6 +108,7 @@ public class ExportedKeysTab extends BaseTablePanelTab {
         String destClassName = session.getProperties().getExportedKeysOutputClassName();
         try {
             ResultSet rs = session.getSQLConnection().getExportedKeys(ti);
+            // ResultSetPanel is thread save
             ((ResultSetPanel)getComponent()).load(session, rs, new int[] {4,7,8,9,10,11,12,13,14}, destClassName);
         } catch (Exception ex) {
             session.getMessageHandler().showMessage(ex);

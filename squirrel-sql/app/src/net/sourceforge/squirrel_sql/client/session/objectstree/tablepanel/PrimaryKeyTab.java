@@ -85,6 +85,14 @@ public class PrimaryKeyTab extends BaseTablePanelTab {
         return _comp;
     }
 
+	/**
+	 * @see BaseObjectPanelTab#clear()
+	 */
+	public void clear()
+	{
+		((ResultSetPanel)getComponent()).clear();
+	}
+	
     /**
      * Refresh the component displaying the <TT>ITableInfo</TT> object.
      */
@@ -100,6 +108,7 @@ public class PrimaryKeyTab extends BaseTablePanelTab {
         String destClassName = session.getProperties().getPrimaryKeyOutputClassName();
         try {
             ResultSet rs = session.getSQLConnection().getPrimaryKeys(ti);
+            // ResultSetPanel is thread save
             ((ResultSetPanel)getComponent()).load(session, rs,  new int[] {4,5,6}, destClassName);
         } catch (Exception ex) {
             session.getMessageHandler().showMessage(ex);

@@ -24,6 +24,7 @@ import java.sql.ResultSet;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
@@ -97,6 +98,17 @@ public class MetaDataTab extends BaseDatabasePanelTab {
 	}
 
 	/**
+	 * @see BaseObjectPanelTab#clear()
+	 */
+	public void clear()
+	{
+		if(((MyComponent)getComponent())._viewer != null)
+		{
+			((MyComponent)getComponent())._viewer.clearDestination();
+		}
+	}
+
+	/**
 	 * Component for this tab.
 	 */
 	private class MyComponent extends JPanel {
@@ -115,9 +127,21 @@ public class MetaDataTab extends BaseDatabasePanelTab {
 					createUserInterface();
 					_fullyCreated = true;
 				}
-
-				_viewer.show(_ds);
-
+				_ds = session.getSQLConnection().createMetaDataDataSet(session.getMessageHandler());
+				Runnable run = new Runnable()
+				{
+					public void run()
+					{
+						try
+						{
+							_viewer.show(_ds);
+						} catch(DataSetException dse)
+						{
+							s_log.error("Error", dse);
+						}
+					}
+				};
+				SwingUtilities.invokeLater(run);
 			} catch (Exception ex) {
 				s_log.error("Error", ex);
 			}
@@ -129,12 +153,14 @@ public class MetaDataTab extends BaseDatabasePanelTab {
 			String destClassName = session.getProperties().getMetaDataOutputClassName();
 			_viewer = new DataSetViewer();
 			_viewer.setDestination(destClassName);
-			try {
-				_ds = session.getSQLConnection().createMetaDataDataSet(session.getMessageHandler());
-			} catch (Throwable th) {
-				s_log.error("Error", th);
-			}
-			add(new JScrollPane(_viewer.getDestinationComponent()), BorderLayout.CENTER);
+			Runnable run = new Runnable()
+			{
+				public void run()
+				{
+					add(new JScrollPane(_viewer.getDestinationComponent()), BorderLayout.CENTER);
+				}
+			};
+			SwingUtilities.invokeLater(run);
 		}
 	}
 }
