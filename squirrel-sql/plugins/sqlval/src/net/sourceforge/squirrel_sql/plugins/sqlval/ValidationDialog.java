@@ -85,7 +85,7 @@ class ValidationDialog extends JDialog
 
 		ValidateSQLCommand cmd = new ValidateSQLCommand(_valProps._prefs,
 										_valProps._sessionProps, _valProps._sql,
-										_valProps._stmtSepChar);
+										_valProps._stmtSepChar, _valProps._solComment);
 		try
 		{
 			cmd.execute();

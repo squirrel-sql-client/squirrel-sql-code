@@ -1,6 +1,12 @@
 SQL Validator Change Log
 ========================
 
+0.12
+====
+
+- Updated for SQuirrel SQL Client 1.1beta7.
+
+
 0.11
 ====
 

@@ -32,6 +32,7 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
 /**
  * This action will validate the current SQL.
@@ -87,10 +88,12 @@ public class ValidateSQLAction extends SquirrelAction implements ISessionAction
 			final String sql = api.getSQLScriptToBeExecuted();
 			if (sql != null && sql.trim().length() > 0)
 			{
-				final char stmtSepChar = _session.getProperties().getSQLStatementSeparatorChar();
+				final SessionProperties sessionProps = _session.getProperties();
+				final char stmtSepChar = sessionProps.getSQLStatementSeparatorChar();
+				final String solComment = sessionProps.getStartOfLineComment();
 				final ValidationProps valProps = new ValidationProps(_prefs, props,
 														_session.getMessageHandler(),
-														sql, stmtSepChar);
+														sql, stmtSepChar, solComment);
 				final Executor executor = new Executor(app, valProps);
 				if (_prefs.getShowConfirmationDialog())
 				{
@@ -121,10 +124,12 @@ public class ValidateSQLAction extends SquirrelAction implements ISessionAction
 		final IMessageHandler _msgHandler;
 		final String _sql;
 		final char _stmtSepChar;
+		final String _solComment;
 
 		ValidationProps(WebServicePreferences prefs,
 						WebServiceSessionProperties sessionProps,
-						IMessageHandler msgHandler, String sql, char stmtSepChar)
+						IMessageHandler msgHandler, String sql, char stmtSepChar,
+						String solComment)
 		{
 			super();
 			_prefs = prefs;
@@ -132,6 +137,7 @@ public class ValidateSQLAction extends SquirrelAction implements ISessionAction
 			_msgHandler = msgHandler;
 			_sql = sql;
 			_stmtSepChar = stmtSepChar;
+			_solComment = solComment;
 		}
 	}
 
@@ -151,7 +157,8 @@ public class ValidateSQLAction extends SquirrelAction implements ISessionAction
 		{
 			ValidateSQLCommand cmd = new ValidateSQLCommand(_valProps._prefs,
 											_valProps._sessionProps,
-											_valProps._sql, _valProps._stmtSepChar);
+											_valProps._sql, _valProps._stmtSepChar,
+											_valProps._solComment);
 			try
 			{
 				cmd.execute();

@@ -36,6 +36,7 @@ public class ValidateSQLCommand implements ICommand
 	private final WebServiceSessionProperties _sessionProps;
 	private final String _sql;
 	private final char _stmtSepChar;
+	private final String _solComment;
 	private String _results;
 
 	/** Logger for this class. */
@@ -44,13 +45,14 @@ public class ValidateSQLCommand implements ICommand
 
 	public ValidateSQLCommand(WebServicePreferences prefs,
 				WebServiceSessionProperties sessionProps, String sql,
-				char stmtSepChar)
+				char stmtSepChar, String solComment)
 	{
 		super();
 		_prefs = prefs;
 		_sessionProps = sessionProps;
 		_sql = sql;
 		_stmtSepChar = stmtSepChar;
+		_solComment = solComment;
 	}
 
 	public void openSession(WebServiceSession info)
@@ -74,10 +76,10 @@ public class ValidateSQLCommand implements ICommand
 			WebServiceSession webServiceSession = new WebServiceSession(_prefs,_sessionProps);
 			webServiceSession.open();
 
-			WebServiceValidator val = new WebServiceValidator(webServiceSession, _sessionProps);
-			QueryTokenizer qt = new QueryTokenizer(_sql, _stmtSepChar);
+			final WebServiceValidator val = new WebServiceValidator(webServiceSession, _sessionProps);
+			final QueryTokenizer qt = new QueryTokenizer(_sql, _stmtSepChar, _solComment);
 
-			StringBuffer results = new StringBuffer(1024);
+			final StringBuffer results = new StringBuffer(1024);
 			while (qt.hasQuery())
 			{
 				// TODO: When message are can have some text in red (error)

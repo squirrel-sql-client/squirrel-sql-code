@@ -28,15 +28,17 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetScrollingPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.MapDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.BaseObjectPanelTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseObjectTab;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
-abstract class BaseSQLTab extends BaseObjectPanelTab
+abstract class BaseSQLTab extends BaseObjectTab
 {
 	/** Title to display for tab. */
 	private final String _title;
@@ -105,12 +107,12 @@ abstract class BaseSQLTab extends BaseObjectPanelTab
 
 	protected void refreshComponent() throws DataSetException
 	{
-		ISession session = getSession();
+		final ISession session = getSession();
 		if (session == null)
 		{
 			throw new IllegalStateException("Null ISession");
 		}
-		String destClassName = session.getProperties().getMetaDataOutputClassName();
+
 		try
 		{
 			Statement stmt = session.getSQLConnection().createStatement();
@@ -119,7 +121,10 @@ abstract class BaseSQLTab extends BaseObjectPanelTab
 				ResultSet rs = stmt.executeQuery(getSQL());
 				try
 				{
-					_comp.load(createDataSetFromResultSet(rs), destClassName);
+					final SessionProperties props = session.getProperties();
+					final String destClassName = props.getMetaDataOutputClassName();
+					final LargeResultSetObjectInfo rsoi = props.getLargeResultSetObjectInfo();
+					_comp.load(createDataSetFromResultSet(rs, rsoi), destClassName);
 				}
 					finally
 				{
@@ -139,9 +144,11 @@ abstract class BaseSQLTab extends BaseObjectPanelTab
 
 	protected abstract String getSQL() throws SQLException;
 
-	protected IDataSet createDataSetFromResultSet(ResultSet rs) throws DataSetException
+	protected IDataSet createDataSetFromResultSet(ResultSet rs,
+				LargeResultSetObjectInfo rsoi) throws DataSetException
 	{
-		final ResultSetDataSet rsds = new ResultSetDataSet(rs);
+		final ResultSetDataSet rsds = new ResultSetDataSet();
+		rsds.setResultSet(rs, rsoi);
 		if (!_firstRowOnly)
 		{
 			return rsds;

@@ -78,7 +78,7 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	 */
 	public String getVersion()
 	{
-		return "0.10";
+		return "0.11";
 	}
 
 	/**
@@ -191,8 +191,8 @@ public class MysqlPlugin extends DefaultSessionPlugin
 				_treeAPI.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateMysqlTableScriptAction.class));
 
 				// Tabs to add to the database node.
-				_treeAPI.addDetailTab(DatabaseObjectType.DATABASE, new DatabaseStatusTab());
-				_treeAPI.addDetailTab(DatabaseObjectType.DATABASE, new ProcessesTab());
+				_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new DatabaseStatusTab());
+				_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ProcessesTab());
 
 				// Tabs to add to the catalog node.
 				_treeAPI.addDetailTab(DatabaseObjectType.CATALOG, new OpenTablesTab());
@@ -207,7 +207,7 @@ public class MysqlPlugin extends DefaultSessionPlugin
 		String dbms = null;
 		try
 		{
-			dbms = session.getSQLConnection().getMetaData().getDatabaseProductName();
+			dbms = session.getSQLConnection().getSQLMetaData().getDatabaseProductName();
 		}
 		catch (SQLException ex)
 		{
