@@ -20,6 +20,7 @@
         <property name="core_work_dir" value="${dist_dir}/core/work"/>
         <property name="core_obj_dir" value="${core_work_dir}/obj"/>
         <property name="core_dist_lib_dir" value="${core_dist_dir}/lib"/>
+        <property name="core_dist_doc_dir" value="${core_dist_dir}/doc"/>
         <property name="plugins_src_dir" value="${basedir}/plugins"/>
         <property name="plugins_dist_dir" value="${dist_dir}/plugins"/>
 
@@ -33,10 +34,6 @@
         <property environment="env"/>
         <echo message="ANT HOME: ${env.ANT_HOME}"/>
         <echo message="JAVA HOME: ${env.JAVA_HOME}"/>
-        
-        <mkdir dir="${core_obj_dir}"/>
-        <mkdir dir="${core_dist_lib_dir}"/>
-        <mkdir dir="${core_dist_dir}/src"/>
     </target>
 
     <!--
@@ -54,9 +51,38 @@
         <echo message=""/>
         <echo message=" Available targets are:"/>
         <echo message=""/>
+        <echo message="    compile_fw:   Compiles the base framework classes to:"/>
+        <echo message="                  ${core_obj_dir}"/>
         <echo message=""/>
+        <echo message="    compile_app:  Compiles the SQuirreL client app to:"/>
+        <echo message="                  ${core_obj_dir}"/>
+        <echo message="                  after building compile_fw."/>
+        <echo message=""/>
+        <echo message="    compile_plugins: Compiles all plugins to:"/>
+        <echo message="                     ${plugins_dist_dir}"/>
+        <echo message="                     after building compile_app."/>
+        <echo message=""/>
+        <echo message="    jar_source: Jars the source for the framework and application to:"/>
+        <echo message="                     ${core_dist_dir}/src}"/>
+        <echo message=""/>
+        <echo message="    make_dist:  Executes jar_source and compile_plugins."/>
+        <echo message="                Eventually this should run an Ant Task to generate the IzPack JAR."/>
+        <echo message=""/>
+        <echo message="    clean:  Removes class files, old versions of source etc."/>
         <echo message="--------------------------------------------------------"/>
         <echo message=""/>
+    </target>
+        
+    <!--
+    ==================================================================
+    Setup
+    ==================================================================
+    -->
+    <target name="setup" depends="init">
+        <mkdir dir="${core_obj_dir}"/>
+        <mkdir dir="${core_dist_lib_dir}"/>
+        <mkdir dir="${core_dist_doc_dir}"/>
+        <mkdir dir="${core_dist_dir}/src"/>
     </target>
 
     <!--
@@ -65,7 +91,7 @@
     No parameters.
     ==================================================================
     -->
-    <target name="compile_fw" depends="init">
+    <target name="compile_fw" depends="setup">
         <echo message="---------------- Framework ----------------"/>
         <javac    srcdir="fw/src"
                 destdir="${core_obj_dir}"
@@ -176,7 +202,7 @@
     No parameters.
     ==================================================================
     -->
-    <target name="jar_source" depends="init">
+    <target name="jar_source" depends="setup">
         <jar jarfile="${core_dist_dir}/src/fw-src.jar" compress="false">
             <fileset dir="fw/src">
                 <include name="**/*.*"/>
