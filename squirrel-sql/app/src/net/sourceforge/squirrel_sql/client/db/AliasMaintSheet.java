@@ -18,7 +18,6 @@ package net.sourceforge.squirrel_sql.client.db;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -59,6 +58,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
+import net.sourceforge.squirrel_sql.client.mainframe.DriverListCellRenderer;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
@@ -374,6 +374,7 @@ public class AliasMaintSheet extends BaseSheet {
 
 		DriversCombo() {
 			super();
+			setRenderer(new DriverListCellRenderer());
 			List list = new ArrayList();
 			for (Iterator it = AliasMaintSheet.this._app.getDataCache().drivers(); it.hasNext();) {
 				ISQLDriver sqlDriver = ((ISQLDriver)it.next());
