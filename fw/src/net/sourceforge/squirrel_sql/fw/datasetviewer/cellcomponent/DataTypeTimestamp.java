@@ -18,6 +18,11 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.event.*;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
+import java.awt.Insets;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -28,15 +33,23 @@ import java.io.IOException;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
+import javax.swing.JComboBox;
+import javax.swing.JCheckBox;
+
 import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
+import javax.swing.BorderFactory;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 
+import java.text.DateFormat;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
+import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
 
 
 /**
@@ -88,6 +101,39 @@ public class DataTypeTimestamp
 	//?? for this data type.
 	private DefaultColumnRenderer _renderer = DefaultColumnRenderer.getInstance();
 
+	/**
+	 * Name of this class, which is needed because the class name is needed
+	 * by the static method getControlPanel, so we cannot use something
+	 * like getClass() to find this name.
+	 */
+	private static final String thisClassName =
+		"net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeTimestamp";
+
+
+	/** Default date format */
+	private static int DEFAULT_LOCALE_FORMAT = DateFormat.SHORT;
+
+	/*
+	 * Properties settable by the user
+	 */
+	 // flag for whether we have already loaded the properties or not
+	 private static boolean propertiesAlreadyLoaded = false;
+	 
+	 // flag for whether to use the default Java format (true)
+	 // or the Locale-dependent format (false)
+	 private static boolean useJavaDefaultFormat = true;
+	 
+	 // which locale-dependent format to use; short, medium, long, or full
+	 private static int localeFormat = DEFAULT_LOCALE_FORMAT;
+	 
+	 // Whether to force user to enter dates in exact format or use heuristics to guess it
+	 private static boolean lenient = true;
+	 
+	 // The DateFormat object to use for all locale-dependent formatting.
+	 // This is reset each time the user changes the previous settings.
+	 private static DateFormat dateFormat =
+	 	DateFormat.getDateTimeInstance(localeFormat, localeFormat);
+
 
 	/**
 	 * Constructor - save the data needed by this data type.
@@ -96,6 +142,46 @@ public class DataTypeTimestamp
 		_table = table;
 		_colDef = colDef;
 		_isNullable = colDef.isNullable();
+		
+		loadProperties();
+	}
+	
+	/** Internal function to get the user-settable properties from the DTProperties,
+	 * if they exist, and to ensure that defaults are set if the properties have
+	 * not yet been created.
+	 * <P>
+	 * This method may be called from different places depending on whether
+	 * an instance of this class is created before the user brings up the Session
+	 * Properties window.  In either case, the data is static and is set only
+	 * the first time we are called.
+	 */
+	private static void loadProperties() {
+		
+		//set the property values
+		// Note: this may have already been done by another instance of
+		// this DataType created to handle a different column.
+		if (propertiesAlreadyLoaded == false) {
+			// get parameters previously set by user, or set default values
+			useJavaDefaultFormat =true;	// set to use the Java default
+			String useJavaDefaultFormatString = DTProperties.get(
+				thisClassName, "useJavaDefaultFormat");
+			if (useJavaDefaultFormatString != null && useJavaDefaultFormatString.equals("false"))
+				useJavaDefaultFormat =false;
+			
+			// get which locale-dependent format to use
+			localeFormat =DateFormat.SHORT;	// set to use the Java default
+			String localeFormatString = DTProperties.get(
+				thisClassName, "localeFormat");
+			if (localeFormatString != null)
+				localeFormat = Integer.parseInt(localeFormatString);
+				
+			// use lenient input or force user to enter exact format
+			lenient = true;	// set to allow less stringent input
+			String lenientString = DTProperties.get(
+				thisClassName, "lenient");
+			if (lenientString != null && lenientString.equals("false"))
+				lenient =false;
+		}
 	}
 	
 	/**
@@ -121,7 +207,12 @@ public class DataTypeTimestamp
 	 * Render a value into text for this DataType.
 	 */
 	public String renderObject(Object value) {
-		return (String)_renderer.renderObject(value);
+		// use the Java default date-to-string
+		if (useJavaDefaultFormat == true)
+			return (String)_renderer.renderObject(value);
+			
+		// use a date formatter
+		return (String)_renderer.renderObject(dateFormat.format(value));
 	}
 	
 	/**
@@ -175,9 +266,16 @@ public class DataTypeTimestamp
 			return null;
 
 		// Do the conversion into the object in a safe manner
-		try {
-			Object obj = Timestamp.valueOf(value);
-			return obj;
+		try {		
+			if (useJavaDefaultFormat) {
+				Object obj = Timestamp.valueOf(value);
+				return obj;
+			}
+			else {
+				// use the DateFormat to parse
+				java.util.Date javaDate = dateFormat.parse(value);
+				return new Timestamp(javaDate.getTime());
+			}
 		}
 		catch (Exception e) {
 			messageBuffer.append(e.toString()+"\n");
@@ -511,4 +609,195 @@ public class DataTypeTimestamp
 		outWriter.flush();
 		outWriter.close();
 	 }
+
+	
+
+	/*
+	 * Property change control panel
+	 */	  
+	 
+	 /**
+	  * Generate a JPanel containing controls that allow the user
+	  * to adjust the properties for this DataType.
+	  * All properties are static accross all instances of this DataType. 
+	  * However, the class may choose to apply the information differentially,
+	  * such as keeping a list (also entered by the user) of table/column names
+	  * for which certain properties should be used.
+	  * <P>
+	  * This is called ONLY if there is at least one property entered into the DTProperties
+	  * for this class.
+	  * <P>
+	  * Since this method is called by reflection on the Method object derived from this class,
+	  * it does not need to be included in the Interface.
+	  * It would be nice to include this in the Interface for consistancy, documentation, etc,
+	  * but the Interface does not seem to like static methods.
+	  */
+	 public static OkJPanel getControlPanel() {
+	 	
+		/*
+		 * If you add this method to one of the standard DataTypes in the
+		 * fw/datasetviewer/cellcomponent directory, you must also add the name
+		 * of that DataType class to the list in CellComponentFactory, method
+		 * getControlPanels, variable named initialClassNameList.
+		 * If the class is being registered with the factory using registerDataType,
+		 * then you should not include the class name in the list (it will be found
+		 * automatically), but if the DataType is part of the case statement in the
+		 * factory method getDataTypeObject, then it does need to be explicitly listed
+		 * in the getControlPanels method also.
+		 */
+		 
+		 // if this panel is called before any instances of the class have been
+		 // created, we need to load the properties from the DTProperties.
+		 loadProperties();
+		 
+		return new BlobOkJPanel();
+	 }
+
+	// Class that displays the various formats available for dates
+	public static class DateFormatTypeCombo extends JComboBox
+	{
+		public DateFormatTypeCombo()
+		{
+			addItem("Full (" + 
+				DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).format(new java.util.Date()) + ")"  );
+			addItem("Long (" + 
+				DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG).format(new java.util.Date()) + ")"  );
+			addItem("Medium (" + 
+				DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new java.util.Date()) + ")"  );											
+			addItem("Short (" + 
+				DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(new java.util.Date()) + ")" );
+		}
+		
+		public void setSelectedIndex(int option) {
+			if (option == DateFormat.SHORT)
+				super.setSelectedIndex(3);
+			else if (option == DateFormat.MEDIUM)
+				super.setSelectedIndex(2);
+			else if (option == DateFormat.LONG)
+				super.setSelectedIndex(1);
+			else super.setSelectedIndex(0);
+		}
+		
+		public int getValue() {
+			if (getSelectedIndex() == 3)
+				return DateFormat.SHORT;
+			else if (getSelectedIndex() == 2)
+				return DateFormat.MEDIUM;
+			else if (getSelectedIndex() == 1)
+				return DateFormat.LONG;
+			else return DateFormat.FULL;
+		}
+	}	 
+	 
+	 
+	 /**
+	  * Inner class that extends OkJPanel so that we can call the ok()
+	  * method to save the data when the user is happy with it.
+	  */
+	 private static class BlobOkJPanel extends OkJPanel {
+		/*
+		 * GUI components - need to be here because they need to be
+		 * accessible from the event handlers to alter each other's state.
+		 */
+	   // check box for whether to use Java Default or a Locale-dependent format
+		private JCheckBox useJavaDefaultFormatChk = new JCheckBox(
+			"Use default format (" + 
+			new Timestamp(new java.util.Date().getTime()).toString() + ")");
+		
+		// label for the date format combo, used to enable/disable text
+		private RightLabel dateFormatTypeDropLabel = new RightLabel(" or locale-dependent format:");
+				
+		// Combo box for read-all/read-part of blob
+		private DateFormatTypeCombo dateFormatTypeDrop = new DateFormatTypeCombo();
+
+		// checkbox for whether to interpret input leniently or not
+		private JCheckBox lenientChk = new JCheckBox("allow inexact format on input");
+	   
+
+		public BlobOkJPanel() {
+		 	 
+			/* set up the controls */
+			// checkbox for Java default/non-default format
+			useJavaDefaultFormatChk.setSelected(useJavaDefaultFormat);
+			useJavaDefaultFormatChk.addChangeListener(new ChangeListener(){
+				public void stateChanged(ChangeEvent e) {		
+					dateFormatTypeDrop.setEnabled( ! useJavaDefaultFormatChk.isSelected());
+					dateFormatTypeDropLabel.setEnabled( ! useJavaDefaultFormatChk.isSelected());
+					lenientChk.setEnabled( ! useJavaDefaultFormatChk.isSelected());	
+				}
+			});
+		
+			// Combo box for read-all/read-part of blob
+			dateFormatTypeDrop = new DateFormatTypeCombo();
+			dateFormatTypeDrop.setSelectedIndex( localeFormat );
+
+			// lenient checkbox
+			lenientChk.setSelected(lenient);
+
+	 	 
+			// handle cross-connection between fields
+			dateFormatTypeDrop.setEnabled( ! useJavaDefaultFormatChk.isSelected());
+			dateFormatTypeDropLabel.setEnabled( ! useJavaDefaultFormatChk.isSelected());
+			lenientChk.setEnabled( ! useJavaDefaultFormatChk.isSelected());	
+
+			/*
+			  * Create the panel and add the GUI items to it
+			 */
+	 	  
+			setLayout(new GridBagLayout());
+	 	
+			setBorder(BorderFactory.createTitledBorder("Timestamp   (SQL type 93)"));
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = GridBagConstraints.HORIZONTAL;
+			gbc.insets = new Insets(4, 4, 4, 4);
+			gbc.anchor = GridBagConstraints.WEST;
+
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
+			add(useJavaDefaultFormatChk, gbc);
+
+			gbc.gridwidth = 1;
+			gbc.gridx = 0;
+			++gbc.gridy;
+			add(dateFormatTypeDropLabel, gbc);
+
+			++gbc.gridx;
+			add(dateFormatTypeDrop, gbc);
+
+			gbc.gridx = 0;
+			++gbc.gridy;
+			add(lenientChk, gbc);
+
+		} // end of constructor for inner class
+	 
+	 
+		/**
+		  * User has clicked OK in the surrounding JPanel,
+		  * so save the current state of all variables
+		  */
+		public void ok() {
+			// get the values from the controls and set them in the static properties
+			useJavaDefaultFormat = useJavaDefaultFormatChk.isSelected();
+			DTProperties.put(
+				thisClassName,
+				"useJavaDefaultFormat", Boolean.toString(useJavaDefaultFormat));
+			
+		
+			localeFormat = dateFormatTypeDrop.getValue();
+			dateFormat = DateFormat.getDateTimeInstance(localeFormat, localeFormat);	// lenient is set next
+			DTProperties.put(
+				thisClassName,
+				"localeFormat", Integer.toString(localeFormat));	
+		
+			lenient = lenientChk.isSelected();
+			dateFormat.setLenient(lenient);
+			DTProperties.put(
+				thisClassName,
+				"lenient", Boolean.toString(lenient));
+		}
+	 
+	 } // end of inner class	 
+	 
 }

@@ -755,9 +755,10 @@ public class DataTypeDate
 			gbc.gridx = 0;
 			gbc.gridy = 0;
 
-			gbc.gridwidth = 1;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			add(useJavaDefaultFormatChk, gbc);
 
+			gbc.gridwidth = 1;
 			gbc.gridx = 0;
 			++gbc.gridy;
 			add(dateFormatTypeDropLabel, gbc);
