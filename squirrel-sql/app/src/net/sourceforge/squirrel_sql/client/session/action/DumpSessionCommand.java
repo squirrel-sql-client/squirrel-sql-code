@@ -239,6 +239,40 @@ public class DumpSessionCommand implements ICommand
 				s_log.error(msg, th);
 			}
 	
+			// Dump catalogs.
+			try
+			{
+				File tempFile = File.createTempFile(PREFIX, SUFFIX);
+				IDataSetViewer dest = new DataSetViewerTextFileDestination(tempFile);
+				dest.show(new ObjectArrayDataSet(md.getCatalogs()));
+				files.add(tempFile);
+				titles.add("Catalogs");
+			}
+			catch (Throwable th)
+			{
+				final String msg = "Error dumping catalogs";
+				_msgHandler.showErrorMessage(msg);
+				_msgHandler.showErrorMessage(th);
+				s_log.error(msg, th);
+			}
+	
+			// Dump schemas.
+			try
+			{
+				File tempFile = File.createTempFile(PREFIX, SUFFIX);
+				IDataSetViewer dest = new DataSetViewerTextFileDestination(tempFile);
+				dest.show(new ObjectArrayDataSet(md.getSchemas()));
+				files.add(tempFile);
+				titles.add("Schemas");
+			}
+			catch (Throwable th)
+			{
+				final String msg = "Error dumping schemas";
+				_msgHandler.showErrorMessage(msg);
+				_msgHandler.showErrorMessage(th);
+				s_log.error(msg, th);
+			}
+	
 			// Dump data types.
 			try
 			{
