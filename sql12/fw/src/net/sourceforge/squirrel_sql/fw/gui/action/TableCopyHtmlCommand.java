@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui.action;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -21,7 +21,7 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 
 import javax.swing.JTable;
-import javax.swing.table.TableModel;
+//import javax.swing.table.TableModel;
 
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
@@ -49,13 +49,14 @@ public class TableCopyHtmlCommand implements ICommand
 		int[] selCols = _table.getSelectedColumns();
 		if (selRows.length != 0 && selCols.length != 0)
 		{
-			TableModel model = _table.getModel();
+			//TableModel model = _table.getModel();
 			StringBuffer buf = new StringBuffer();
 			buf.append("<table border=1><tr BGCOLOR=\"#CCCCFF\">");
 			for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
 			{
 				buf.append("<th>");
-				buf.append(model.getColumnName(selCols[colIdx]));
+//				buf.append(model.getColumnName(selCols[colIdx]));
+				buf.append(_table.getColumnName(selCols[colIdx]));
 				buf.append("</th>");
 			}
 			buf.append("</tr>\n");
