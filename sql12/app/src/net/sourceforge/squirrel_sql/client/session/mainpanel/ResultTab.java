@@ -1,7 +1,10 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 /*
- * Copyright (C) 2001-2003 Johan Compagner
+ * Copyright (C) 2001-2004 Johan Compagner
  * jcompagner@j-com.nl
+ *
+ * Modifications copyright (C) 2004 Colin Bell
+ * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -39,15 +42,14 @@ import javax.swing.SwingConstants;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.BaseDataSetViewerDestination;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
-
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
@@ -85,6 +87,9 @@ public class ResultTab extends JPanel implements IHasIdentifier
 
 	/** Label shows the current SQL script. */
 	private JLabel _currentSqlLbl = new JLabel();
+
+	/** The SQL execurtes, cleaned up for display. */
+	private String _sql;
 
 	/** Panel showing the query information. */
 	private QueryInfoPanel _queryInfoPanel = new QueryInfoPanel();
@@ -180,10 +185,21 @@ public class ResultTab extends JPanel implements IHasIdentifier
 		throws DataSetException
 	{
 		_exInfo = exInfo;
-		_currentSqlLbl.setText(Utilities.cleanString(exInfo.getSQL()));
+		_sql = StringUtilities.cleanString(exInfo.getSQL());
 
 		// Display the result set.
 		_resultSetOutput.show(rsds, null);
+		final int rowCount = _resultSetOutput.getRowCount();
+
+		final int maxRows =_exInfo.getMaxRows(); 
+		if (maxRows > 0 && rowCount >= maxRows)
+		{
+			_currentSqlLbl.setText("<html>Limited to <font color='red'>" + rowCount + "</font> rows;&nbsp;&nbsp;" + _sql + "</html>");
+		}
+		else
+		{
+			_currentSqlLbl.setText(_sql);
+		}
 
 		// Display the result set metadata.
 		if (mdds != null)
@@ -198,7 +214,7 @@ public class ResultTab extends JPanel implements IHasIdentifier
 		exInfo.resultsProcessingComplete();
 
 		// And the query info.
-		_queryInfoPanel.load(rsds, _resultSetOutput.getRowCount(), exInfo);
+		_queryInfoPanel.load(rsds, rowCount, exInfo);
 	}
 
 	/**
@@ -216,6 +232,7 @@ public class ResultTab extends JPanel implements IHasIdentifier
 		}
 		_exInfo = null;
 		_currentSqlLbl.setText("");
+		_sql = "";
 	}
 
 	/**
@@ -235,7 +252,7 @@ public class ResultTab extends JPanel implements IHasIdentifier
 	 */
 	public String getViewableSqlString()
 	{
-		return Utilities.cleanString(getSqlString());
+		return StringUtilities.cleanString(getSqlString());
 	}
 
 	/**
@@ -243,7 +260,7 @@ public class ResultTab extends JPanel implements IHasIdentifier
 	 */
 	public String getTitle()
 	{
-		String title = _currentSqlLbl.getText();
+		String title = _sql;
 		if (title.length() < 20)
 		{
 			return title;
@@ -316,7 +333,7 @@ public class ResultTab extends JPanel implements IHasIdentifier
 
 		final SessionProperties props = _session.getProperties();
 
-		// if the sql contains  results from only one table, allow it to be
+		// if the sql contains results from only one table, allow it to be
 		// editable (if selected by the user).  otherwise, force it to be
 		// read-only.
 		// The following assumes SQL is either:
@@ -424,7 +441,7 @@ public class ResultTab extends JPanel implements IHasIdentifier
 		void load(ResultSetDataSet rsds, int rowCount,
 					SQLExecutionInfo exInfo)
 		{
-			_queryLbl.setText(Utilities.cleanString(exInfo.getSQL()));
+			_queryLbl.setText(StringUtilities.cleanString(exInfo.getSQL()));
 			_rowCountLbl.setText(String.valueOf(rowCount));
 			_executedLbl.setText(exInfo.getSQLExecutionStartTime().toString());
 			_elapsedLbl.setText(formatElapsedTime(exInfo));
