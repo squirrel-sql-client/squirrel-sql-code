@@ -503,6 +503,13 @@ public class SessionProperties implements Cloneable, Serializable
 	 */
 	public void setSQLStatementSeparator(String value)
 	{
+		// It causes a lot of pain in serveral places to cope with nulls or
+		// emptys here.
+		if(null == value || 0 == value.trim().length())
+		{
+			value =";";
+		}
+
 		if (!_sqlStmtSep.equals(value))
 		{
 			final String oldValue = _sqlStmtSep;

@@ -196,6 +196,61 @@ class MainPanel extends JPanel
 		_tabPnl.insertTab(title, null, tab.getComponent(), tab.getHint(), idx);
 	}
 
+	/**
+	 * Add a tab to this panel at the specified index.
+	 *
+	 * @param	tab		The tab to be added.
+	 * @param	idx		The index to add the tab at.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if a <TT>null</TT> <TT>ITablePanelTab</TT> passed.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if a tab already exists with the same title as the one
+	 *			passed in.
+	 */
+	public void insertMainPanelTab(IMainPanelTab tab, int idx)
+	{
+		if (tab == null)
+		{
+			throw new IllegalArgumentException("Null IMainPanelTab passed");
+		}
+
+		tab.setSession(_session);
+		final String title = tab.getTitle();
+		int checkIdx = _tabPnl.indexOfTab(title);
+		if (checkIdx != -1)
+		{
+			throw new IllegalArgumentException("A tab with the same title already exists at index " + checkIdx);
+		}
+
+		_tabs.add(idx, tab);
+		_tabPnl.insertTab(title, null, tab.getComponent(), tab.getHint(), idx);
+		_tabPnl.setSelectedIndex(idx);
+	}
+
+	public int removeMainPanelTab(IMainPanelTab tab)
+	{
+		if (tab == null)
+		{
+			throw new IllegalArgumentException("Null IMainPanelTab passed");
+		}
+
+		final String title = tab.getTitle();
+		int idx = _tabPnl.indexOfTab(title);
+		if (idx == -1)
+		{
+			return idx;
+		}
+
+		_tabPnl.removeTabAt(idx);
+
+		return idx;
+	}
+
+
+
+
 	void updateState()
 	{
 		final ActionCollection actions = _session.getApplication().getActionCollection();

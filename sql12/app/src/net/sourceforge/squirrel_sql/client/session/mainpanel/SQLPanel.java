@@ -151,7 +151,7 @@ public class SQLPanel extends JPanel
 	/** Listeners */
 	private EventListenerList _listeners = new EventListenerList();
 
-	private UndoManager _undoManager = new UndoManager();
+	private UndoManager _undoManager = new SquirrelDefaultUndoManager();
 
 	/** Factory for generating unique IDs for new <TT>ResultTab</TT> objects. */
 	private IntegerIdentifierFactory _idFactory = new IntegerIdentifierFactory();

@@ -284,47 +284,26 @@ public class SQLExecuterTask implements Runnable
 				res = _stmt.getResultSet();
 			}
 
-			if (-1 != updateCount)
-			{
-				_session.getMessageHandler().showMessage(updateCount + " Rows Updated");
-			}
-			if( null != res)
-			{
-				if (!processResultSet(res, exInfo))
-				{
-					return false;
-				}
-			}
-	
 			if (false == supportsMultipleResultSets)
 			{
-	            // This is (a logically not sufficent) try to cope with the problem
-				// that there are the following
-	            // contradictory rules in the JDBC API Doc:
-	            // Statement.getResultSet():
-	            // This method should be called only once per result.
-	            // Statement.getUpdateCount():
-	            // This method should be called only once per result.
-	            // Statement.getMoreResults():
-	            // There are no more results when the following is true:
-				// (!getMoreResults() && (getUpdateCount() == -1)
-	            //
-	            // If getMoreResults() returns false, we don't know if we have more
-				// results, we only know that it isn't
-	            // a result set. Since we called getUpdateCount() before
-				// getMoreResults() because we would like to know
-	            // the update count of the first result, we might not be allowed to
-				// call getUpdateCount() again.
-	            //
-	            // The Intersystems Cache Driver for example always returns the same
-				// updateCount on simple
-	            // INSERT, UPDATE, DELETE statements not matter if getMoreResults()
-				// was called. So updateCount never
-	            // gets -1 and this will loop forever. When I discussed the issue
-				// with the Intersystems people they
-	            // just told me not to call getUpdateCount() twice. That simple. My
-				// hope is that this will cure
-	            // problems with DBs that just don't care for multiple result sets.
+				// This is (a logically not sufficent) try to cope with the problem that there are the following
+				// contradictory rules in the JDBC API Doc:
+				// Statement.getResultSet():
+				// This method should be called only once per result.
+				// Statement.getUpdateCount():
+				// This method should be called only once per result.
+				// Statement.getMoreResults():
+				// There are no more results when the following is true: (!getMoreResults() && (getUpdateCount() == -1)
+				//
+				// If getMoreResults() returns false, we don't know if we have more results, we only know that it isn't
+				// a result set. Since we called getUpdateCount() before getMoreResults() because we would like to know
+				// the update count of the first result, we might not be allowed to call getUpdateCount() again.
+				//
+				// The Intersystems Cache Driver for example always returns the same updateCount on simple
+				// INSERT, UPDATE, DELETE statements not matter if getMoreResults() was called. So updateCount never
+				// gets -1 and this will loop forever. When I discussed the issue with the Intersystems people they
+				// just told me not to call getUpdateCount() twice. That simple. My hope is that this will cure
+				// problems with DBs that just don't care for multiple result sets.
 				try
 				{
 					res.close();
@@ -338,11 +317,9 @@ public class SQLExecuterTask implements Runnable
 
 			if (!_stmt.getMoreResults() && -1 == updateCount)
 			{
-				// There is no need to close result sets if we call
-				// _stmt.getMoreResults() because it
+				// There is no need to close result sets if we call _stmt.getMoreResults() because it
 				// implicitly closes any current ResultSet.
-				// ON DB2 version 7.1 it is even harmful to close a ResultSet
-				// explicitly.
+				// ON DB2 version 7.1 it is even harmful to close a ResultSet explicitly.
 				// _stmt.getMoreResults() will never return true anymore if you do.
 				break;
 			}
@@ -365,21 +342,20 @@ public class SQLExecuterTask implements Runnable
 		return true;
 	}
 
-   private void writeSessionHistory(final String querySql)
-   {
-      // We do invoke later because we call this from a thread
-      // and this will update Swing controls which are not thread save.
-      SwingUtilities.invokeLater(new Runnable()
-      {
-         public void run()
-         {
-           IPlugin dummyPlugin = _session.getApplication().getDummyAppPlugin();
-            ISQLPanelAPI sqlPnlApi = _session.getSQLPanelAPI(dummyPlugin);
-            sqlPnlApi.addSQLToHistory(querySql);
-         }
-      });
-   }
-
+	private void writeSessionHistory(final String querySql)
+	{
+		// We do invoke later because we call this from a thread
+		// and this will update Swing controls which are not thread save.
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				IPlugin dummyPlugin = _session.getApplication().getDummyAppPlugin();
+				ISQLPanelAPI sqlPnlApi = _session.getSQLPanelAPI(dummyPlugin);
+				sqlPnlApi.addSQLToHistory(querySql);
+			}
+		});
+	}
 
 	private boolean processResultSet(final ResultSet rs,
 										final SQLExecutionInfo exInfo)

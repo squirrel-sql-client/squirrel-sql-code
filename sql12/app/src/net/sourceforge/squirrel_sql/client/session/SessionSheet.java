@@ -240,6 +240,29 @@ public class SessionSheet extends JPanel
 		_mainTabPane.addMainPanelTab(tab);
 	}
 
+	public void insertMainTab(IMainPanelTab tab, int idx)
+	{
+		if (tab == null)
+		{
+			throw new IllegalArgumentException("Null IMainPanelTab passed");
+		}
+		if(idx == MainPanel.ITabIndexes.SQL_TAB || idx == MainPanel.ITabIndexes.OBJECT_TREE_TAB)
+		{
+			throw new IllegalArgumentException("Index " + idx + "conflicts with standard tabs");
+		}
+
+		_mainTabPane.insertMainPanelTab(tab, idx);
+	}
+
+	public int removeMainTab(IMainPanelTab tab)
+	{
+		if (tab == null)
+		{
+			throw new IllegalArgumentException("Null IMainPanelTab passed");
+		}
+		return _mainTabPane.removeMainPanelTab(tab);
+	}
+
 	public void setStatusBarMessage(String msg)
 	{
 		_statusBar.setText(msg);
