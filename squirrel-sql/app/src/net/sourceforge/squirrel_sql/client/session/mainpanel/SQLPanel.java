@@ -689,13 +689,13 @@ public class SQLPanel extends JPanel
 
 		if (propName == null || propName.equals(SessionProperties.IPropertyNames.SQL_LIMIT_ROWS))
 		{
-			_limitRowsChk.setSelected(props.getSqlLimitRows());
+			_limitRowsChk.setSelected(props.getSQLLimitRows());
 		}
 
 		if (propName == null
 			|| propName.equals(SessionProperties.IPropertyNames.SQL_NBR_ROWS_TO_SHOW))
 		{
-			_nbrRows.setInt(props.getSqlNbrRowsToShow());
+			_nbrRows.setInt(props.getSQLNbrRowsToShow());
 		}
 
 		if (propName == null || propName.equals(SessionProperties.IPropertyNames.FONT_INFO))
@@ -877,7 +877,7 @@ public class SQLPanel extends JPanel
 			{
 				final boolean limitRows = ((JCheckBox) evt.getSource()).isSelected();
 				_nbrRows.setEnabled(limitRows);
-				_session.getProperties().setSqlLimitRows(limitRows);
+				_session.getProperties().setSQLLimitRows(limitRows);
 			}
 			finally
 			{
@@ -914,7 +914,7 @@ public class SQLPanel extends JPanel
 			}
 			try
 			{
-				_session.getProperties().setSqlNbrRowsToShow(_nbrRows.getInt());
+				_session.getProperties().setSQLNbrRowsToShow(_nbrRows.getInt());
 			}
 			finally
 			{

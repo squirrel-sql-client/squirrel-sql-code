@@ -69,18 +69,18 @@ public class SQLExecuterTask implements Runnable
 			_stmt = _session.getSQLConnection().createStatement();
 			try
 			{
-				if (props.getSqlLimitRows())
+				if (props.getSQLLimitRows())
 				{
 					try
 					{
-						_stmt.setMaxRows(props.getSqlNbrRowsToShow());
+						_stmt.setMaxRows(props.getSQLNbrRowsToShow());
 					}
 					catch (Exception e)
 					{
 						s_log.error("Can't Set MaxRows", e);
 					}
 				}
-				QueryTokenizer qt = new QueryTokenizer(_sql, props.getSqlStatementSeparatorChar());
+				QueryTokenizer qt = new QueryTokenizer(_sql, props.getSQLStatementSeparatorChar());
 				while (qt.hasQuery() && !_bStopExecution)
 				{
 					if (bCancelPanelRemoved)

@@ -244,17 +244,17 @@ public class ResultTab extends JPanel implements IHasIdentifier {
 		final SessionProperties props = _session.getProperties();
 
 		if (propertyName == null ||
-			propertyName.equals(SessionProperties.IPropertyNames.SQL_OUTPUT_RESULTSET_CLASS_NAME))
+			propertyName.equals(SessionProperties.IPropertyNames.SQL_RESULTS_OUTPUT_CLASS_NAME))
 		{
-			_resultSetOutput = BaseDataSetViewerDestination.getInstance(props.getSqlOutputResultSetClassName());
+			_resultSetOutput = BaseDataSetViewerDestination.getInstance(props.getSQLResultsOutputClassName());
 			_resultSetSp.setViewportView(_resultSetOutput.getComponent());
 			_resultSetSp.setRowHeader(null);
 		}
 
 		if (propertyName == null ||
-			propertyName.equals(SessionProperties.IPropertyNames.SQL_OUTPUT_META_DATA_CLASS_NAME))
+			propertyName.equals(SessionProperties.IPropertyNames.META_DATA_OUTPUT_CLASS_NAME))
 		{
-			_metaDataOutput = BaseDataSetViewerDestination.getInstance(props.getSqlOutputMetaDataClassName());
+			_metaDataOutput = BaseDataSetViewerDestination.getInstance(props.getMetaDataOutputClassName());
 			_metaDataSp.setViewportView(_metaDataOutput.getComponent());
 			_metaDataSp.setRowHeader(null);
 		}
