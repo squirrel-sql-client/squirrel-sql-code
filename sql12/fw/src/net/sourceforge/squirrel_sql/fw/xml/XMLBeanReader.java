@@ -41,6 +41,7 @@ import net.n3.nanoxml.XMLParserFactory;
 import net.sourceforge.squirrel_sql.fw.util.EnumerationIterator;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
 
 public class XMLBeanReader
 {
@@ -188,6 +189,7 @@ public class XMLBeanReader
 					loadProperty(bean, curProp, propElem);
 				}
 			}
+			
 			return bean;
 		}
 		catch (Exception ex)
@@ -213,6 +215,24 @@ public class XMLBeanReader
 				Object[] data = loadIndexedProperty(propElem);
 				try
 				{
+					// Arrays of Strings are a special case.
+					// In XMLBeanWriter method ProcessProperty an array of
+					// Strings is turned into a list of StringWrapper objects
+					// in the XML (presumably so that when reading them back
+					// we have a class that we can call setters on).  Thus,
+					// when reading back an array of Strings we actually read
+					// an array of StringWrappers, which gives a type mis-match
+					// in the following arrayCopy.  Therefore we need to convert
+					// the data that is currently in the StringWrapper objects
+					// into actual Strings.
+					if (arrayType.getName().equals("java.lang.String")) {
+						// convert data from StringWrappers to Strings
+						Object[] stringData = new Object[data.length];
+						for (int i=0; i<data.length; i++)
+							stringData[i] = ((StringWrapper)data[i]).getString();
+						data = stringData;
+					}
+					
 					Object obj = Array.newInstance(arrayType, data.length);
 					System.arraycopy(data, 0, obj, 0, data.length);
 					setter.invoke(bean, new Object[] { obj });
