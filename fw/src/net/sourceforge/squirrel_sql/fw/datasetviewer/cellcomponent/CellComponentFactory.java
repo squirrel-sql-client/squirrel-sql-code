@@ -141,11 +141,14 @@ public class CellComponentFactory {
 	 * Return true if the data type for the column may be edited
 	 * within the table cell, false if not.
 	 */
-	public static boolean isEditableInCell(ColumnDisplayDefinition colDef) {
+	public static boolean isEditableInCell(
+		ColumnDisplayDefinition colDef, Object originalValue)
+	{
+			
 		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
 		
 		if (dataTypeObject != null)
-			return dataTypeObject.isEditableInCell();
+			return dataTypeObject.isEditableInCell(originalValue);
 		
 		// there was no data type object, so this data type is unknown
 		// to squirrel and thus cannot be edited.	
@@ -187,6 +190,7 @@ public class CellComponentFactory {
 	 */
 	 public static Object validateAndConvert(
 	 	ColumnDisplayDefinition colDef,
+	 	Object originalValue,
 	 	String inputValue,
 	 	StringBuffer messageBuffer) {
 
@@ -194,7 +198,7 @@ public class CellComponentFactory {
 
 		if (dataTypeObject != null) {
 			// we have an appropriate data type object
-			return dataTypeObject.validateAndConvert(inputValue, messageBuffer);
+			return dataTypeObject.validateAndConvert(inputValue, originalValue, messageBuffer);
 		}
 
 	 	// No appropriate DataType for this column, so do the best
@@ -217,11 +221,11 @@ public class CellComponentFactory {
 	 * Return true if the data type for the column may be edited
 	 * in the popup, false if not.
 	 */
-	public static boolean isEditableInPopup(ColumnDisplayDefinition colDef) {
+	public static boolean isEditableInPopup(ColumnDisplayDefinition colDef, Object originalValue) {
 		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
 		
 		if (dataTypeObject != null)
-			return dataTypeObject.isEditableInPopup();
+			return dataTypeObject.isEditableInPopup(originalValue);
 		
 		// there was no data type object, so this data type is unknown
 		// to squirrel and thus cannot be edited.	
@@ -262,6 +266,7 @@ public class CellComponentFactory {
 	 */
 	 public static Object validateAndConvertInPopup(
 	 	ColumnDisplayDefinition colDef,
+	 	Object originalValue,
 	 	String inputValue,
 	 	StringBuffer messageBuffer) {
 
@@ -269,7 +274,7 @@ public class CellComponentFactory {
 
 		if (dataTypeObject != null) {
 			// we have an appropriate data type object
-			return dataTypeObject.validateAndConvertInPopup(inputValue, messageBuffer);
+			return dataTypeObject.validateAndConvertInPopup(inputValue, originalValue, messageBuffer);
 		}
 
 	 	// No appropriate DataType for this column, so do the best
