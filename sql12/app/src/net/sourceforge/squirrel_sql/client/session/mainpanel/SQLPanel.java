@@ -38,6 +38,8 @@ import java.util.Map;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -72,6 +74,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionWindowManager;
@@ -874,6 +877,15 @@ public class SQLPanel extends JPanel
 		_sqlEntry.requestFocus();
 	}
 
+	private void copySelectedItemToEntryArea()
+	{
+		SQLHistoryItem item = (SQLHistoryItem)_sqlCombo.getSelectedItem();
+		if (item != null)
+		{
+			appendSQL(item.getSQL());
+		}
+	}
+
 	private void propertiesHaveChanged(String propName)
 	{
 		final SessionProperties props = _session.getProperties();
@@ -983,6 +995,7 @@ public class SQLPanel extends JPanel
 			pnl.add(_sqlCombo, BorderLayout.CENTER);
 
 			Box box = Box.createHorizontalBox();
+			box.add(new CopyLastButton(app));
 			box.add(Box.createHorizontalStrut(10));
 			box.add(_limitRowsChk);
 			box.add(Box.createHorizontalStrut(5));
@@ -1070,14 +1083,14 @@ public class SQLPanel extends JPanel
 			}
 		}
 
-		private void copySelectedItemToEntryArea()
-		{
-			SQLHistoryItem item = (SQLHistoryItem)_sqlCombo.getSelectedItem();
-			if (item != null)
-			{
-				appendSQL(item.getSQL());
-			}
-		}
+//		private void copySelectedItemToEntryArea()
+//		{
+//			SQLHistoryItem item = (SQLHistoryItem)_sqlCombo.getSelectedItem();
+//			if (item != null)
+//			{
+//				appendSQL(item.getSQL());
+//			}
+//		}
 	}
 
 	private class LimitRowsCheckBoxListener implements ChangeListener
@@ -1268,4 +1281,25 @@ public class SQLPanel extends JPanel
 		}
 	}
 
+	private class CopyLastButton extends JButton
+	{
+		CopyLastButton(IApplication app)
+		{
+			super();
+			final SquirrelResources rsrc = app.getResources();
+			final ImageIcon icon = rsrc.getIcon(SquirrelResources.IImageNames.COPY_SELECTED);
+			setIcon(icon);
+			setToolTipText("Copy current SQL history to entry area");
+			Dimension dm = getPreferredSize();
+			dm.setSize(dm.height, dm.height);
+			setPreferredSize(dm);
+			addActionListener(new ActionListener()
+			{
+				public void actionPerformed(ActionEvent e)
+				{
+					copySelectedItemToEntryArea();
+				}
+			});
+		}
+	}
 }
