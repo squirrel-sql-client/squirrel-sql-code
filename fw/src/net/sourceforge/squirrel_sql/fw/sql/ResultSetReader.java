@@ -454,33 +454,6 @@ public class ResultSetReader
 						row[i] = null;
 						break;
 
-					// TODO: When JDK1.4 is the earliest JDK supported
-					// by Squirrel then remove the hardcoding of the
-					// boolean data type.
-					case Types.BIT:
-					case 16:
-//					case Types.BOOLEAN:
-						row[i] = _rs.getObject(idx);
-						if (row[i] != null
-							&& !(row[i] instanceof Boolean))
-						{
-							if (row[i] instanceof Number)
-							{
-								if (((Number) row[i]).intValue() == 0)
-								{
-									row[i] = Boolean.FALSE;
-								}
-								else
-								{
-									row[i] = Boolean.TRUE;
-								}
-							}
-							else
-							{
-								row[i] = Boolean.valueOf(row[i].toString());
-							}
-						}
-						break;
 
 					case Types.TIME :
 						row[i] = _rs.getTime(idx);
@@ -532,26 +505,19 @@ public class ResultSetReader
 							}
 						}
 						break;
+						
+
+// all of the following have been converted to use the new DataType object reader
+					// TODO: When JDK1.4 is the earliest JDK supported
+					// by Squirrel then remove the hardcoding of the
+					// boolean data type.
+					case Types.BIT:
+					case 16:
+//					case Types.BOOLEAN:
 
 					case Types.DECIMAL:
 					case Types.NUMERIC:
-						row[i] = _rs.getObject(idx);
-						if (row[i] != null
-							&& !(row[i] instanceof BigDecimal))
-						{
-							if (row[i] instanceof Number)
-							{
-								Number nbr = (Number)row[i];
-								row[i] = new BigDecimal(nbr.doubleValue());
-							}
-							else
-							{
-								row[i] = new BigDecimal(row[i].toString());
-							}
-						}
-						break;
 
-// all of the following have been converted to use the new DataType object reader
 					case Types.INTEGER:
 					case Types.SMALLINT:
 					case Types.TINYINT:
