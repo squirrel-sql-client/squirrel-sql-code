@@ -345,7 +345,7 @@ class Session implements ISession
 
 	public SchemaInfo getSchemaInfo(String catalogName, String schemaName)
 	{
-		String key = catalogName + "," + schemaName;
+		String key = (catalogName + "," + schemaName).toUpperCase();
 
 		SchemaInfo ret = (SchemaInfo) _schemaInfosByCatalogAndSchema.get(key);
 		if(null == ret)
