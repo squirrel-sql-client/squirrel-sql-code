@@ -37,12 +37,15 @@ public class Version
 
 	private static final String WEB_SITE = "http://squirrel-sql.sourceforge.net/";
 
-	public static String getVersion()
+	public static String getApplicationName()
+	{
+		return APP_NAME;
+	}
+
+	public static String getShortVersion()
 	{
 		StringBuffer buf = new StringBuffer();
-		buf.append(APP_NAME)
-			.append(" Version ")
-			.append(MAJOR_VERSION)
+		buf.append(MAJOR_VERSION)
 			.append('.')
 			.append(MINOR_VERSION)
 			.append(TYPE);
@@ -50,6 +53,15 @@ public class Version
 		{
 			buf.append(RELEASE);
 		}
+		return buf.toString();
+	}
+
+	public static String getVersion()
+	{
+		StringBuffer buf = new StringBuffer();
+		buf.append(APP_NAME)
+			.append(" Version ")
+			.append(getShortVersion());
 		return buf.toString();
 	}
 
