@@ -2,9 +2,9 @@ This plugin provides code completion
 hit ctrl+space in the SQL Editor to perform code completion
 
 Through code completion you can call join generation functions.
-these functions' names start with '#'. If you want to see which functions
-exist just type # and the ctrl+space. Just select the function you woult like
-to try from the code compltion popup list. Code completion will then generate
+These functions' names start with '#'. If you want to see which functions
+exist just type # and ctrl+space. Select the function you would like
+to try from the code completion popup list. Code completion will generate
 a template for the function call. Adopt the template to your needs and position
 the cursor at the end of the template. Then hit ctrl+space again and see
 what happens.
