@@ -1,6 +1,0 @@
-This directory contains configuration or resource files which are required to
-build the project.  Note that this does not include these primary configuration
-files:
-
-  o build.xml
-  o project.properties
