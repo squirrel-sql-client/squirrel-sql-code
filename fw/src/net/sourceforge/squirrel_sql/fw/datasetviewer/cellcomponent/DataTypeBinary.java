@@ -84,6 +84,13 @@ public class DataTypeBinary
 	
 	/* The JTextComponent that is being used for editing */
 	private IRestorableTextComponent _textComponent;
+	
+	/* The CellRenderer used for this data type */
+	//??? For now, use the same renderer as everyone else.
+	//??
+	//?? IN FUTURE: change this to use a new instance of renederer
+	//?? for this data type.
+	private DefaultColumnRenderer _renderer = DefaultColumnRenderer.getInstance();
 
 
 	/**
@@ -125,9 +132,21 @@ public class DataTypeBinary
 	 * Render a value into text for this DataType.
 	 */
 	public String renderObject(Object value) {
+		// The SQL Results page puts text into the table cells
+		// rather than objects of the appropriate type, so we
+		// need to convert befor proceeding
+		Byte[] useValue;
+		if (value instanceof java.lang.String) {
+			byte[] bytes = ((String)value).getBytes();
+			useValue = new Byte[bytes.length];
+			for (int i=0; i<bytes.length; i++)
+				useValue[i] = new Byte(bytes[i]);
+		}
+		else useValue = (Byte[])value;
 		// use the default settings for the conversion
-		return BinaryDisplayConverter.convertToString((Byte[])value,
-			BinaryDisplayConverter.HEX, false);
+		return (String)_renderer.renderObject(
+			BinaryDisplayConverter.convertToString(useValue,
+			BinaryDisplayConverter.HEX, false));
 	}
 	
 	/**
