@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.netbeans;
 /*
- * Copyright (C) 2003 Colin Bell
+ * Copyright (C) 2004 Gerd Wagner
  * colbell@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or

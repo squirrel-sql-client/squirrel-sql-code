@@ -1,17 +1,9 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.netbeans;
 
-import org.netbeans.editor.Settings;
 import org.netbeans.editor.Syntax;
-import org.netbeans.editor.EditorUI;
 import org.netbeans.editor.ext.ExtKit;
 
 import javax.swing.text.Document;
-import javax.swing.*;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
-
-import java.util.Vector;
 
 public class SQLKit extends ExtKit
 {
