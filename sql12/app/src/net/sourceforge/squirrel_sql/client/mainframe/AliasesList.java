@@ -29,16 +29,22 @@ import javax.swing.event.ListDataListener;
 
 import net.sourceforge.squirrel_sql.fw.gui.ModifiedDefaultListCellRenderer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 /**
  * This is a <TT>JList</TT> that displays all the <TT>ISQLAlias</TT>
  * objects.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class AliasesList extends JList
 {
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(AliasesList.class);
+
 	/** Application API. */
 	private final IApplication _app;
 
@@ -88,16 +94,16 @@ public class AliasesList extends JList
 					}
 				});
 			}
-			public void intervalRemoved(ListDataEvent evt) 
+			public void intervalRemoved(ListDataEvent evt)
 			{
 				final int idx = evt.getIndex0();
-				SwingUtilities.invokeLater(new Runnable() 
+				SwingUtilities.invokeLater(new Runnable()
 				{
 					public void run()
 					{
 						clearSelection();
 						int size = getModel().getSize();
-						if  (idx < size)
+						if (idx < size)
 						{
 							setSelectedIndex(idx);
 						}
@@ -143,7 +149,7 @@ public class AliasesList extends JList
 	/**
 	 * Return the <TT>ISQLAlias</TT> that is currently selected.
 	 */
-	public ISQLAlias getSelectedAlias() 
+	public ISQLAlias getSelectedAlias()
 	{
 		return (ISQLAlias)getSelectedValue();
 	}
@@ -152,7 +158,7 @@ public class AliasesList extends JList
 	 * Return the description for the alias that the mouse is currently
 	 * over as the tooltip text.
 	 *
-	 * @param   event   Used to determine the current mouse position.
+	 * @param	event	Used to determine the current mouse position.
 	 */
 	public String getToolTipText(MouseEvent evt)
 	{
@@ -161,7 +167,7 @@ public class AliasesList extends JList
 		if (idx != -1)
 		{
 			tip = ((ISQLAlias)getModel().getElementAt(idx)).getName();
-		} 
+		}
 		else
 		{
 			tip = getToolTipText();
@@ -175,6 +181,6 @@ public class AliasesList extends JList
 	 */
 	public String getToolTipText()
 	{
-		return "List of database aliases that can be connected to"; // i18n
+		return s_stringMgr.getString("AliasesList.tooltip");
 	}
 }

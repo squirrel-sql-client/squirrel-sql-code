@@ -55,6 +55,8 @@ import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverClassLoader;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -75,6 +77,10 @@ public class DriverMaintSheet extends BaseSheet
 		int COPY = 3;
 	}
 
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(DriverMaintSheet.class);
+
 	/** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(DriverMaintSheet.class);
 
@@ -83,19 +89,6 @@ public class DriverMaintSheet extends BaseSheet
 
 	/** Width to make listboxes. */
 	private static final int LIST_WIDTH = 400;
-
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface DriverMaintSheetI18n
-	{
-		String ADD = "Add Driver";
-		String CHANGE = "Change Driver";
-		String DRIVER = "Class Name:";
-		String NAME = "Name:";
-		String URL = "Example URL:";
-	}
 
 	/** Application API. */
 	private final IApplication _app;
@@ -292,8 +285,8 @@ public class DriverMaintSheet extends BaseSheet
 
 		final String title =
 			_maintType == MaintenanceType.MODIFY
-				? (DriverMaintSheetI18n.CHANGE + " " + _sqlDriver.getName())
-				: DriverMaintSheetI18n.ADD;
+				? (s_stringMgr.getString("DriverMaintSheet.changedriver", _sqlDriver.getName()))
+				: s_stringMgr.getString("DriverMaintSheet.adddriver");
 		setTitle(title);
 
 		_driverName.setColumns(COLUMN_COUNT);
@@ -331,8 +324,8 @@ public class DriverMaintSheet extends BaseSheet
 		contentPane.add(createDriverPanel(), gbc);
 
 		JTabbedPane tabPnl = new JTabbedPane();
-		tabPnl.addTab("Java Class Path", createJavaClassPathPanel());
-		tabPnl.addTab("Extra Class Path", createExtraClassPathPanel());
+		tabPnl.addTab(s_stringMgr.getString("DriverMaintSheet.javaclasspath"), createJavaClassPathPanel());
+		tabPnl.addTab(s_stringMgr.getString("DriverMaintSheet.extraclasspath"), createExtraClassPathPanel());
 
 		++gbc.gridy;
 		gbc.fill = GridBagConstraints.BOTH;
@@ -358,7 +351,7 @@ public class DriverMaintSheet extends BaseSheet
 	{
 		JPanel pnl = new JPanel();
 
-		JButton okBtn = new JButton("OK");
+		JButton okBtn = new JButton(s_stringMgr.getString("DriverMaintSheet.ok"));
 		okBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
@@ -366,7 +359,7 @@ public class DriverMaintSheet extends BaseSheet
 				performOk();
 			}
 		});
-		JButton closeBtn = new JButton("Close");
+		JButton closeBtn = new JButton(s_stringMgr.getString("DriverMaintSheet.close"));
 		closeBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
@@ -389,7 +382,7 @@ public class DriverMaintSheet extends BaseSheet
 		_driverName.setColumns(25);
 
 		JPanel pnl = new JPanel(new GridBagLayout());
-		pnl.setBorder(BorderFactory.createTitledBorder("Driver"));
+		pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("DriverMaintSheet.driver")));
 
 		final GridBagConstraints gbc = new GridBagConstraints();
 		gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -397,10 +390,10 @@ public class DriverMaintSheet extends BaseSheet
 
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		pnl.add(new JLabel(DriverMaintSheetI18n.NAME, SwingConstants.RIGHT), gbc);
+		pnl.add(new JLabel(s_stringMgr.getString("DriverMaintSheet.name"), SwingConstants.RIGHT), gbc);
 
 		++gbc.gridy;
-		pnl.add(new JLabel(DriverMaintSheetI18n.URL, SwingConstants.RIGHT), gbc);
+		pnl.add(new JLabel(s_stringMgr.getString("DriverMaintSheet.egurl"), SwingConstants.RIGHT), gbc);
 
 		gbc.weightx = 1.0;
 		gbc.gridy = 0;
@@ -425,7 +418,7 @@ public class DriverMaintSheet extends BaseSheet
 
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		pnl.add(new JLabel(DriverMaintSheetI18n.DRIVER, SwingConstants.RIGHT), gbc);
+		pnl.add(new JLabel(s_stringMgr.getString("DriverMaintSheet.classname"), SwingConstants.RIGHT), gbc);
 
 		gbc.weightx = 1.0;
 		++gbc.gridx;
@@ -436,7 +429,7 @@ public class DriverMaintSheet extends BaseSheet
 
 	/**
 	 * Create the panel that displays the current class path.
-	 * 
+	 *
 	 * @return	Panel that displays the current class path.
 	 */
 	private JPanel createJavaClassPathPanel()
@@ -483,7 +476,7 @@ public class DriverMaintSheet extends BaseSheet
 
 	/**
 	 * Create the panel that displays the extra class path.
-	 * 
+	 *
 	 * @return	Panel that displays the extra class path.
 	 */
 	private JPanel createExtraClassPathPanel()
@@ -491,7 +484,7 @@ public class DriverMaintSheet extends BaseSheet
 		_extraClasspathListDriversBtn = new ListDriversButton(_extraClassPathList);
 		_extraClassPathList.addListSelectionListener(new ExtraClassPathListBoxListener());
 
-		_extraClasspathUpBtn = new JButton("Up");
+		_extraClasspathUpBtn = new JButton(s_stringMgr.getString("DriverMaintSheet.up"));
 		_extraClasspathUpBtn.setEnabled(false);
 		_extraClasspathUpBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -508,7 +501,7 @@ public class DriverMaintSheet extends BaseSheet
 			}
 		});
 
-		_extraClasspathDownBtn = new JButton("Down");
+		_extraClasspathDownBtn = new JButton(s_stringMgr.getString("DriverMaintSheet.down"));
 		_extraClasspathDownBtn.setEnabled(false);
 		_extraClasspathDownBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -527,7 +520,7 @@ public class DriverMaintSheet extends BaseSheet
 
 		JButton newBtn = new AddListEntryButton();
 
-		_extraClasspathDeleteBtn = new JButton("Delete");
+		_extraClasspathDeleteBtn = new JButton(s_stringMgr.getString("DriverMaintSheet.delete"));
 		_extraClasspathDeleteBtn.setEnabled(false);
 		_extraClasspathDeleteBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -566,7 +559,7 @@ public class DriverMaintSheet extends BaseSheet
 		dm.width = LIST_WIDTH; // Required otherwise it gets too wide.
 		sp.setPreferredSize(dm);
 		pnl.add(sp, gbc);
-		
+
 		gbc.gridheight = 1;
 		gbc.weightx = 0.0;
 		gbc.weighty = 0.0;
@@ -609,10 +602,10 @@ public class DriverMaintSheet extends BaseSheet
 
 		AddListEntryButton()
 		{
-			super("Add");
+			super(s_stringMgr.getString("DriverMaintSheet.add"));
 			addActionListener(this);
 		}
-		
+
 		public void actionPerformed(ActionEvent evt)
 		{
 			if (_chooser == null)
@@ -621,7 +614,7 @@ public class DriverMaintSheet extends BaseSheet
 				_chooser.setMultiSelectionEnabled(true);
 				_chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 				_chooser.addChoosableFileFilter(
-						new FileExtensionFilter("JAR files", new String[] { ".jar", ".zip" }));
+						new FileExtensionFilter(s_stringMgr.getString("DriverMaintSheet.jarfiles"), new String[] { ".jar", ".zip" }));
 			}
 			int returnVal = _chooser.showOpenDialog(getParent());
 			if (returnVal == JFileChooser.APPROVE_OPTION)
@@ -647,10 +640,10 @@ public class DriverMaintSheet extends BaseSheet
 	private final class ListDriversButton extends JButton implements ActionListener
 	{
 		private FileListBox _listBox;
-	
+
 		ListDriversButton(FileListBox listBox)
 		{
-			super("List Drivers");
+			super(s_stringMgr.getString("DriverMaintSheet.listdrivers"));
 			setEnabled(false);
 			_listBox = listBox;
 			addActionListener(this);

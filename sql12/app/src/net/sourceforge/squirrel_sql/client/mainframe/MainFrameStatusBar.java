@@ -23,6 +23,8 @@ import java.awt.event.MouseEvent;
 import net.sourceforge.squirrel_sql.fw.gui.MemoryPanel;
 import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 import net.sourceforge.squirrel_sql.fw.gui.TimePanel;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * Statusbar component for the main frame.
  *
@@ -30,6 +32,10 @@ import net.sourceforge.squirrel_sql.fw.gui.TimePanel;
  */
 public class MainFrameStatusBar extends StatusBar
 {
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(MainFrameStatusBar.class);
+
 	/**
 	 * Default ctor.
 	 */
@@ -51,7 +57,7 @@ public class MainFrameStatusBar extends StatusBar
 				if (evt.getClickCount() == 2)
 				{
 					System.gc();
-					setText("Garbage collection requested");
+					setText(s_stringMgr.getString("MainFrameStatusBar.gc"));
 				}
 			}
 		});

@@ -23,6 +23,8 @@ import java.net.URL;
 
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
@@ -35,10 +37,10 @@ import net.sourceforge.squirrel_sql.client.mainframe.DriversToolWindow;
  */
 public class InstallDefaultDriversAction extends SquirrelAction
 {
-	/** Confirmation message. */
-	private final static String MSG_CONFIRM =
-			"Are you sure to want to copy all the default driver definitions "
-			+ "into the drivers list?";
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(InstallDefaultDriversAction.class);
+
 	/**
 	 * Ctor.
 	 *
@@ -58,7 +60,8 @@ public class InstallDefaultDriversAction extends SquirrelAction
 	{
 		final IApplication app = getApplication();
 
-		if (Dialogs.showYesNo(app.getMainFrame(), MSG_CONFIRM))
+		if (Dialogs.showYesNo(app.getMainFrame(),
+								s_stringMgr.getString("InstallDefaultDriversAction.confirm")))
 		{
 			final DriversToolWindow tw = app.getMainFrame().getDriversToolWindow();
 			tw.moveToFront();

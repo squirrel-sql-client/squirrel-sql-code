@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -21,28 +21,30 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.AboutBoxDialog;
-
 /**
  * This <CODE>ICommand</CODE> allows the user to copy an existing
  * <TT>ISQLAlias</TT> to a new one and then maintain the new one.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class AboutCommand implements ICommand {
+public class AboutCommand implements ICommand
+{
 	/** Application API. */
 	private IApplication _app;
 
 	/**
 	 * Ctor.
 	 *
-	 * @param   app	 Application API.
+	 * @param	app	 Application API.
 	 *
-	 * @throws  IllegalArgumentException
+	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> passed.
 	 */
-	public AboutCommand(IApplication app) {
+	public AboutCommand(IApplication app)
+	{
 		super();
-		if (app == null) {
+		if (app == null)
+		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
 		_app = app;
@@ -51,7 +53,8 @@ public class AboutCommand implements ICommand {
 	/**
 	 * Display the About Box.
 	 */
-	public void execute() {
+	public void execute()
+	{
 		AboutBoxDialog.showAboutBox(_app);
 	}
 }

@@ -23,16 +23,17 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.db.AliasMaintSheetFactory;
-
 /**
  * This <CODE>ICommand</CODE> allows the user to copy an existing
  * <TT>ISQLAlias</TT> to a new one and then maintain the new one.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class CopyAliasCommand implements ICommand {
+public class CopyAliasCommand implements ICommand
+{
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(CopyAliasCommand.class);
+	private static ILogger s_log =
+		LoggerController.createLogger(CopyAliasCommand.class);
 
 	/** <TT>ISQLAlias</TT> to be copied. */
 	private final ISQLAlias _sqlAlias;
@@ -45,16 +46,19 @@ public class CopyAliasCommand implements ICommand {
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
 	 */
-	public CopyAliasCommand(ISQLAlias sqlAlias) {
+	public CopyAliasCommand(ISQLAlias sqlAlias)
+	{
 		super();
-		if (sqlAlias == null) {
+		if (sqlAlias == null)
+		{
 			throw new IllegalArgumentException("Null ISQLAlias passed");
 		}
 
 		_sqlAlias = sqlAlias;
 	}
 
-	public void execute() {
+	public void execute()
+	{
 		AliasMaintSheetFactory.getInstance().showCopySheet(_sqlAlias);
 	}
 }

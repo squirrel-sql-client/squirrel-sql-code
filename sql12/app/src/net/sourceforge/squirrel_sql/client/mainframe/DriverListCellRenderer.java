@@ -23,12 +23,11 @@ import javax.swing.Icon;
 import javax.swing.JList;
 
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
-
 /**
  * A cell renderer, that shows Drivers that could not be loaded with
  * one icon and those can could be loaded with another icon.
  *
- * @author  Henner Zeller
+ * @author Henner Zeller
  */
 public class DriverListCellRenderer extends DefaultListCellRenderer
 {

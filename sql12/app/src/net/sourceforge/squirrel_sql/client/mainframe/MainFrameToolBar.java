@@ -30,6 +30,8 @@ import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
 import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeEvent;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
@@ -48,6 +50,10 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.TileVerticalAction;
  */
 class MainFrameToolBar extends ToolBar
 {
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(MainFrameToolBar.class);
+
 	/** Application API. */
 	private IApplication _app;
 
@@ -77,7 +83,7 @@ class MainFrameToolBar extends ToolBar
 		setFloatable(true);
 
 		ActionCollection actions = _app.getActionCollection();
-		JLabel lbl = new JLabel(" Connect to: ");
+		JLabel lbl = new JLabel(s_stringMgr.getString("MainFrameToolBar.connectto"));
 		lbl.setAlignmentY(0.5f);
 		add(lbl);
 		AliasesDropDown drop = new AliasesDropDown(app, frame);

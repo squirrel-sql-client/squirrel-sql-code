@@ -28,7 +28,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 /**
  * Model for a <CODE>DriverList</CODE>.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 class DriversListModel extends SortedListModel
 {
@@ -44,7 +44,7 @@ class DriversListModel extends SortedListModel
 	/**
 	 * Load drivers from the <CODE>DataCache</CODE>.
 	 *
-	 * @param   app	 Application API.
+	 * @param	app	 Application API.
 	 */
 	public DriversListModel(IApplication app) throws IllegalArgumentException
 	{
@@ -90,7 +90,7 @@ class DriversListModel extends SortedListModel
 	/**
 	 * Add an <CODE>ISQLDriver</CODE> to this model.
 	 *
-	 * @param   driver  <CODE>ISQLDriver</CODE> to be added.
+	 * @param	driver	<CODE>ISQLDriver</CODE> to be added.
 	 */
 	private void addDriver(ISQLDriver driver)
 	{
@@ -103,7 +103,7 @@ class DriversListModel extends SortedListModel
 	/**
 	 * Remove an <CODE>ISQLDriver</CODE> from this model.
 	 *
-	 * @param   driver  <CODE>ISQLDriver</CODE> to be removed.
+	 * @param	driver	<CODE>ISQLDriver</CODE> to be removed.
 	 */
 	private void removeDriver(ISQLDriver driver)
 	{
@@ -119,7 +119,7 @@ class DriversListModel extends SortedListModel
 		/**
 		 * A driver has been added to the cache.
 		 *
-		 * @param   evt	 Describes the event in the cache.
+		 * @param	evt	 Describes the event in the cache.
 		 */
 		public void objectAdded(ObjectCacheChangeEvent evt)
 		{
@@ -133,7 +133,7 @@ class DriversListModel extends SortedListModel
 		/**
 		 * A driver has been removed from the cache.
 		 *
-		 * @param   evt	 Describes the event in the cache.
+		 * @param	evt	 Describes the event in the cache.
 		 */
 		public void objectRemoved(ObjectCacheChangeEvent evt)
 		{

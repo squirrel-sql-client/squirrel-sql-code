@@ -23,21 +23,18 @@ import java.io.Serializable;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * Objects of this class hold a collection of <TT>ISQLAlias</TT> objects.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class AliasGroup implements Cloneable, Serializable, Comparable
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
-	{
-		String ERR_BLANK_NAME = "Name cannot be blank.";
-	}
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(AliasGroup.class);
 
 	/**
 	 * JavaBean property names for this class.
@@ -161,7 +158,7 @@ public class AliasGroup implements Cloneable, Serializable, Comparable
 		String data = getString(value);
 		if (data.length() == 0)
 		{
-			throw new ValidationException(i18n.ERR_BLANK_NAME);
+			throw new ValidationException(s_stringMgr.getString("AliasGroup.error.blankname"));
 		}
 		if (!_name.equals(data))
 		{

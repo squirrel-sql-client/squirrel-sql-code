@@ -54,6 +54,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.HashtableDataSet;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -74,6 +76,10 @@ public class AboutBoxDialog extends JDialog
 	private final static ILogger s_log =
 		LoggerController.createLogger(AboutBoxDialog.class);
 
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(AboutBoxDialog.class);
+
 	/** Singleton instance of this class. */
 	private static AboutBoxDialog s_instance;
 
@@ -84,20 +90,12 @@ public class AboutBoxDialog extends JDialog
 	private SystemPanel _systemPnl;
 
 	/** Close button for dialog. */
-	private final JButton _closeBtn = new JButton("Close");
+	private final JButton _closeBtn = new JButton(s_stringMgr.getString("AboutBoxDialog.close"));
 
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
-	{
-		String ABOUT = "About";
-	}
 
 	private AboutBoxDialog(IApplication app)
 	{
-		super(app.getMainFrame(), i18n.ABOUT, true);
+		super(app.getMainFrame(), s_stringMgr.getString("AboutBoxDialog.about"), true);
 		setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 		createGUI(app);
 	}
@@ -139,7 +137,7 @@ public class AboutBoxDialog extends JDialog
 		{
 			start = System.currentTimeMillis();
 		}
-		_tabPnl.add("About", new AboutPanel(app)); // i18n
+		_tabPnl.add(s_stringMgr.getString("AboutBoxDialog.about"), new AboutPanel(app));
 		if (isDebug)
 		{
 			s_log.debug("AboutPanel created in "
@@ -151,7 +149,7 @@ public class AboutBoxDialog extends JDialog
 		{
 			start = System.currentTimeMillis();
 		}
-		_tabPnl.add("Credits", new CreditsPanel(app)); // i18n
+		_tabPnl.add(s_stringMgr.getString("AboutBoxDialog.credits"), new CreditsPanel(app)); // i18n
 		if (isDebug)
 		{
 			s_log.debug("CreditsPanel created in "
@@ -164,7 +162,7 @@ public class AboutBoxDialog extends JDialog
 			start = System.currentTimeMillis();
 		}
 		_systemPnl = new SystemPanel(app);
-		_tabPnl.add("System", _systemPnl); // i18n
+		_tabPnl.add(s_stringMgr.getString("AboutBoxDialog.system"), _systemPnl);
 		if (isDebug)
 		{
 			s_log.debug(
@@ -178,7 +176,7 @@ public class AboutBoxDialog extends JDialog
 			public void stateChanged(ChangeEvent evt)
 			{
 				String title = _tabPnl.getTitleAt(_tabPnl.getSelectedIndex());
-				if (title.equals("System"))
+				if (title.equals(s_stringMgr.getString("AboutBoxDialog.system")))
 				{
 					_systemPnl._memoryPnl.startTimer();
 				}
@@ -213,7 +211,7 @@ public class AboutBoxDialog extends JDialog
 			public void windowActivated(WindowEvent evt)
 			{
 				String title = _tabPnl.getTitleAt(_tabPnl.getSelectedIndex());
-				if (title.equals("System"))
+				if (title.equals(s_stringMgr.getString("AboutBoxDialog.system")))
 				{
 					_systemPnl._memoryPnl.startTimer();
 				}
@@ -221,7 +219,7 @@ public class AboutBoxDialog extends JDialog
 			public void windowDeactivated(WindowEvent evt)
 			{
 				String title = _tabPnl.getTitleAt(_tabPnl.getSelectedIndex());
-				if (title.equals("System"))
+				if (title.equals(s_stringMgr.getString("AboutBoxDialog.system")))
 				{
 					_systemPnl._memoryPnl.stopTimer();
 				}
@@ -454,11 +452,11 @@ public class AboutBoxDialog extends JDialog
 		MemoryPanel()
 		{
 			super();
-			add(new JLabel("Java heap size:"), _totalMemoryLbl); // i18n
-			add(new JLabel("Used heap:"), _usedMemoryLbl); // i18n
-			add(new JLabel("Free heap:"), _freeMemoryLbl); // i18n
+			add(new JLabel(s_stringMgr.getString("AboutBoxDialog.heapsize")), _totalMemoryLbl);
+			add(new JLabel(s_stringMgr.getString("AboutBoxDialog.usedheap")), _usedMemoryLbl);
+			add(new JLabel(s_stringMgr.getString("AboutBoxDialog.freeheap")), _freeMemoryLbl);
 
-			JButton gcBtn = new JButton("Garbage Collect"); //i18n
+			JButton gcBtn = new JButton(s_stringMgr.getString("AboutBoxDialog.gc"));
 			gcBtn.addActionListener(new ActionListener()
 			{
 				public void actionPerformed(ActionEvent evt)

@@ -1,5 +1,9 @@
 package net.sourceforge.squirrel_sql.client;
 /*
+ * TODO: finish i18n
+ */
+
+/*
  * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
@@ -37,6 +41,7 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
+import net.sourceforge.squirrel_sql.fw.sql.DataCache;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.ProxyHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -49,7 +54,6 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.db.AliasMaintSheetFactory;
-import net.sourceforge.squirrel_sql.client.db.DataCache;
 import net.sourceforge.squirrel_sql.client.db.DriverMaintSheetFactory;
 import net.sourceforge.squirrel_sql.client.gui.FileViewerFactory;
 import net.sourceforge.squirrel_sql.client.gui.SplashScreen;
@@ -523,7 +527,10 @@ class Application implements IApplication
 
 		// TODO: pass in a message handler so user gets error msgs.
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadingjdbc"));
-		_cache = new DataCache(_driverMgr, _resources.getDefaultDriversUrl(), null);
+		final ApplicationFiles appFiles = new ApplicationFiles();
+		_cache = new DataCache(_driverMgr, appFiles.getDatabaseDriversFile(),
+								appFiles.getDatabaseAliasesFile(),
+								_resources.getDefaultDriversUrl(), null);
 
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.createmainwindow"));
 		_mainFrame = new MainFrame(this);

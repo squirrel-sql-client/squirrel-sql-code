@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -23,16 +23,17 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.db.DriverMaintSheetFactory;
-
 /**
  * This <CODE>ICommand</CODE> allows the user to copy an existing
  * <TT>ISQLDriver</TT> to a new one and then maintain the new one.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class CopyDriverCommand implements ICommand {
+public class CopyDriverCommand implements ICommand
+{
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(CopyDriverCommand.class);
+	private static ILogger s_log =
+		LoggerController.createLogger(CopyDriverCommand.class);
 
 	/** <TT>ISQLDriver</TT> to be copied. */
 	private final ISQLDriver _sqlDriver;
@@ -46,16 +47,19 @@ public class CopyDriverCommand implements ICommand {
 	 *			Thrown if a <TT>null</TT> <TT>ISQLDriver</TT> passed.
 	 */
 	public CopyDriverCommand(ISQLDriver sqlDriver)
-			throws IllegalArgumentException {
+		throws IllegalArgumentException
+	{
 		super();
-		if (sqlDriver == null) {
+		if (sqlDriver == null)
+		{
 			throw new IllegalArgumentException("Null ISQLDriver passed");
 		}
 
 		_sqlDriver = sqlDriver;
 	}
 
-	public void execute() {
+	public void execute()
+	{
 		DriverMaintSheetFactory.getInstance().showCopySheet(_sqlDriver);
 	}
 }

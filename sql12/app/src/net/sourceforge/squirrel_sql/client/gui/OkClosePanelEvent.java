@@ -21,7 +21,7 @@ import java.util.EventObject;
 /**
  * Event associated with the <TT>OkClosePanelListener</TT>.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class OkClosePanelEvent extends EventObject
 {

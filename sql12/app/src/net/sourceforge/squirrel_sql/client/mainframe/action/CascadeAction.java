@@ -23,31 +23,38 @@ import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.action.CascadeInternalFramesAction;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-
 /**
  * This <CODE>Action</CODE> cascades the internal frames.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class CascadeAction extends CascadeInternalFramesAction {
+public class CascadeAction extends CascadeInternalFramesAction
+{
 	/** Application API. */
 	private IApplication _app;
 
 	/**
 	 * Default ctor.
 	 */
-	public CascadeAction(IApplication app) {
+	public CascadeAction(IApplication app)
+	{
 		super();
 		_app = app;
-		app.getResources().setupAction(this, _app.getSquirrelPreferences().getShowColoriconsInToolbar());
+		app.getResources().setupAction(
+			this,
+			_app.getSquirrelPreferences().getShowColoriconsInToolbar());
 	}
 
-	public void actionPerformed(ActionEvent evt) {
+	public void actionPerformed(ActionEvent evt)
+	{
 		CursorChanger cursorChg = new CursorChanger(_app.getMainFrame());
 		cursorChg.show();
-		try {
+		try
+		{
 			super.actionPerformed(evt);
-		} finally {
+		}
+		finally
+		{
 			cursorChg.restore();
 		}
 	}

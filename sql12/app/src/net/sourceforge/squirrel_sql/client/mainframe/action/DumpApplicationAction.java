@@ -28,6 +28,8 @@ import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.ListMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -36,15 +38,13 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 /**
  * This <CODE>Action</CODE> dumps the current session status to an XML file.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class DumpApplicationAction extends SquirrelAction
 {
-	private interface i18n
-	{
-		String WARN = "<HTML><BODY><B>Warning:</B> Plain<BR>text passwords<BR>" +
-						"may be saved<BR>in this file.</BODY></HTML>";
-	}
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(DumpApplicationAction.class);
 
 	/** Logger for this class. */
 	private final static ILogger s_log =
@@ -70,8 +70,8 @@ public class DumpApplicationAction extends SquirrelAction
 		final IApplication app = getApplication();
 		final Frame parentFrame = getParentFrame(evt);
 		final FileExtensionFilter[] filters = new FileExtensionFilter[1];
-		filters[0] = new FileExtensionFilter("Text files", new String[] { ".txt" });
-		final JLabel lbl = new JLabel(i18n.WARN);
+		filters[0] = new FileExtensionFilter(s_stringMgr.getString("DumpApplicationAction.textfiles"), new String[] { ".txt" });
+		final JLabel lbl = new JLabel(s_stringMgr.getString("DumpApplicationAction.warning"));
 		lbl.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 		final File outFile = Dialogs.selectFileForWriting(parentFrame, filters, lbl);
 		if (outFile != null)
@@ -96,14 +96,13 @@ public class DumpApplicationAction extends SquirrelAction
 				}
 				else
 				{
-					final String msg = "Application successfuly dumped to: "
-										+ outFile.getAbsolutePath();
+					final String msg = s_stringMgr.getString("DumpApplicationAction.success", outFile.getAbsolutePath());
 					app.showErrorDialog(msg);	// TODO: Shouldn't be an error dialog.
 				}
 			}
 			catch (Throwable ex)
 			{
-				final String msg = "Error occured dumping application";
+				final String msg = s_stringMgr.getString("DumpApplicationAction.failure");
 				app.showErrorDialog(msg, ex);
 				s_log.error(msg, ex);
 			}

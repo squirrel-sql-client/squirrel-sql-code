@@ -34,16 +34,16 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.DirectoryListComboBox;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -53,18 +53,13 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 /**
  * This sheet shows the SQuirreL log files.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ViewLogsSheet extends BaseSheet
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
-	{
-		String TITLE = "SQuirreL Logs";
-	}
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ViewLogsSheet.class);
 
 	/** Logger for this class. */
 	private static final ILogger s_log =
@@ -83,7 +78,7 @@ public class ViewLogsSheet extends BaseSheet
 	private final JTextArea _logContentsTxt = new JTextArea(20, 50);
 
 	/** Button that refreshes the log contents. */
-	private final JButton _refreshBtn = new JButton("Refresh");
+	private final JButton _refreshBtn = new JButton(s_stringMgr.getString("ViewLogsSheet.refresh"));
 
 	/** Directory containing the log files. */
 	private final File _logDir;
@@ -104,7 +99,7 @@ public class ViewLogsSheet extends BaseSheet
 	 */
 	private ViewLogsSheet(IApplication app)
 	{
-		super(i18n.TITLE, true, true, true, true);
+		super(s_stringMgr.getString("ViewLogsSheet.title"), true, true, true, true);
 		if (app == null)
 		{
 			throw new IllegalArgumentException("IApplication == null");
@@ -135,7 +130,7 @@ public class ViewLogsSheet extends BaseSheet
 		final boolean wasVisible = s_instance.isVisible();
 		if (!wasVisible)
 		{
-			s_instance.setVisible(true); 
+			s_instance.setVisible(true);
 		}
 		s_instance.moveToFront();
 		if (!wasVisible && !s_instance._refreshing)
@@ -171,7 +166,7 @@ public class ViewLogsSheet extends BaseSheet
 	{
 		if (!_refreshing)
 		{
-        	_app.getThreadPool().addTask(new Refresher());
+			_app.getThreadPool().addTask(new Refresher());
 		}
 	}
 
@@ -322,12 +317,11 @@ public class ViewLogsSheet extends BaseSheet
 		tb.setUseRolloverButtons(true);
 		tb.setFloatable(false);
 
-		final JLabel lbl = new JLabel(getTitle() + " are stored in ",
-										SwingConstants.CENTER);
+		final Object[] args = {getTitle(), _logDir.getAbsolutePath()};
+		final String lblTitle = s_stringMgr.getString("ViewLogsSheet.storedin", args);
+		final JLabel lbl = new JLabel(lblTitle);
 		lbl.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
 		tb.add(lbl);
-
-		tb.add(new OutputLabel(_logDir.getAbsolutePath()));
 
 		return tb;
 	}
@@ -396,7 +390,7 @@ public class ViewLogsSheet extends BaseSheet
 			}
 		});
 
-		JButton closeBtn = new JButton("Close");
+		JButton closeBtn = new JButton(s_stringMgr.getString("ViewLogsSheet.close"));
 		closeBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)

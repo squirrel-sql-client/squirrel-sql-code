@@ -28,7 +28,7 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 /**
  * This toolbar will navigate through a <TT>HtmlViewerPanel</TT>.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class HtmlViewerPanelToolBar extends ToolBar
 {
@@ -40,14 +40,14 @@ public class HtmlViewerPanelToolBar extends ToolBar
 	private final IApplication _app;
 
 	/** Panel that this toolbar is responsible for. */
-	private final HtmlViewerPanel _pnl;	
-	
+	private final HtmlViewerPanel _pnl;
+
 	/**
 	 * Ctor.
-	 * 
+	 *
 	 * @param	app		Applciation API.
 	 * @param	pnl		Panel that this toolbar will navigate.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>IApplciation</TT> or
 	 *			<TT>HtmlViewerPanel</TT> passed.
@@ -143,5 +143,4 @@ public class HtmlViewerPanelToolBar extends ToolBar
 			_pnl.goHome();
 		}
 	}
-
 }
