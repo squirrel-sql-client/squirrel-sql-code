@@ -35,24 +35,24 @@ public class MaximizeAction extends MaximizeInternalFramesAction {
 	/** Application API. */
 	private IApplication _app;
 
-    /**
-     * Ctor.
-     *
-     * @param   app     Application API.
-     */
-    public MaximizeAction(IApplication app) {
-        super();
-        _app = app;
-        app.getResources().setupAction(this);
-    }
+	/**
+	 * Ctor.
+	 *
+	 * @param	app	Application API.
+	 */
+	public MaximizeAction(IApplication app) {
+		super();
+		_app = app;
+		app.getResources().setupAction(this);
+	}
 
-    public void actionPerformed(ActionEvent evt) {
-        CursorChanger cursorChg = new CursorChanger(_app.getMainFrame());
-        cursorChg.show();
-        try {
-            super.actionPerformed(evt);
-        } finally {
-            cursorChg.restore();
-        }
-    }
+	public void actionPerformed(ActionEvent evt) {
+		CursorChanger cursorChg = new CursorChanger(_app.getMainFrame());
+		cursorChg.show();
+		try {
+			super.actionPerformed(evt);
+		} finally {
+			cursorChg.restore();
+		}
+	}
 }
