@@ -2,6 +2,12 @@ SQL Entry Area Enhancements
 ===========================
 
 
+0.11
+====
+- Updated for SQuirreL 1.2beta4.
+
+
+
 0.10
 ====
 - Initial release
