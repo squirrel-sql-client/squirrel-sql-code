@@ -23,17 +23,19 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 
 import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
+import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 /**
  * This preferences panel allows maintenance of SQL preferences.
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
@@ -105,20 +107,12 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 
 	private static final class SQLPrefsPanel extends JPanel
 	{
-		/**
-		 * This interface defines locale specific strings. This should be
-		 * replaced with a property file.
-		 */
-		interface SQLPrefsPanelI18n
-		{
-//			String DEBUG_JDBC = "JDBC Debug (can slow application)";
-//			String LOGIN_TIMEOUT = "Login Timeout (secs):";
-//			String TAB_HINT = "SQL";
-//			String TAB_TITLE = "SQL";
-		}
 
 		private IntegerField _loginTimeout = new IntegerField();
-		private JCheckBox _debugJdbc = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebug"));
+//		private JCheckBox _debugJdbc = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebug"));
+		private JRadioButton _debugJdbcDont = new JRadioButton(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebugdont"));
+		private JRadioButton _debugJdbcStream = new JRadioButton(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebugstream"));
+		private JRadioButton _debugJdbcWriter = new JRadioButton(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebugwriter"));
 		private JLabel _jdbcDebugLogFileNameLbl = new OutputLabel(" ");
 
 		SQLPrefsPanel()
@@ -131,14 +125,27 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 		{
 			final ApplicationFiles appFiles = new ApplicationFiles();
 			_loginTimeout.setInt(prefs.getLoginTimeout());
-			_debugJdbc.setSelected(prefs.getDebugJdbc());
+			_debugJdbcStream.setSelected(prefs.isJdbcDebugToStream());
+			_debugJdbcWriter.setSelected(prefs.isJdbcDebugToWriter());
+			_debugJdbcDont.setSelected(prefs.isJdbcDebugDontDebug());
 			_jdbcDebugLogFileNameLbl.setText(appFiles.getJDBCDebugLogFile().getPath());
 		}
 
 		void applyChanges(SquirrelPreferences prefs)
 		{
 			prefs.setLoginTimeout(_loginTimeout.getInt());
-			prefs.setDebugJdbc(_debugJdbc.isSelected());
+			if (_debugJdbcStream.isSelected())
+			{
+				prefs.doJdbcDebugToStream();
+			}
+			else if (_debugJdbcWriter.isSelected())
+			{
+				prefs.doJdbcDebugToWriter();
+			}
+			else
+			{
+				prefs.dontDoJdbcDebug();
+			}
 		}
 
 		private void createUserInterface()
@@ -182,6 +189,11 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 
 		private JPanel createDebugPanel()
 		{
+			final ButtonGroup btnGroup = new ButtonGroup();
+			btnGroup.add(_debugJdbcDont);
+			btnGroup.add(_debugJdbcStream);
+			btnGroup.add(_debugJdbcWriter);
+
 			JPanel pnl = new JPanel(new GridBagLayout());
 			pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("SQLPreferencesPanel.debug")));
 
@@ -195,7 +207,13 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 			gbc.gridx = 0;
 			++gbc.gridy;
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
-			pnl.add(_debugJdbc, gbc);
+			pnl.add(_debugJdbcDont, gbc);
+
+			++gbc.gridy;
+			pnl.add(_debugJdbcStream, gbc);
+
+			++gbc.gridy;
+			pnl.add(_debugJdbcWriter, gbc);
 
 			gbc.gridx = 0;
 			++gbc.gridy;

@@ -127,21 +127,21 @@ public class ApplicationFiles
 	}
 
 	/**
-	 * @return file to log debug information to.
-	 */
-	public File getDebugLogFile()
-	{
-		return new File(_userSettingsDir + File.separator + "squirrel-sql-debug.log");
-	}
-
-	/**
 	 * @return file to log JDBC debug information to.
 	 */
 	public File getJDBCDebugLogFile()
 	{
-		return new File(_userSettingsDir + File.separator +
-							"squirrel-sql-jdbcdebug.log");
+		return new File(_userSettingsDir + File.separator + "logs"
+				+ File.separator + "jdbcdebug.log");
 	}
+
+	/**
+	 * @return file to log debug information to.
+	 */
+//	public File getDebugLogFile()
+//	{
+//		return new File(_userSettingsDir + File.separator + "squirrel-sql-debug.log");
+//	}
 
  	/**
  	 * @return serialized Vector containing history of SQL queries executed

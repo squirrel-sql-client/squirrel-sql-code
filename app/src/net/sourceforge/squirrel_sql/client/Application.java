@@ -26,8 +26,10 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.sql.DriverManager;
 import java.util.Calendar;
 import java.util.Iterator;
@@ -117,13 +119,19 @@ class Application implements IApplication
 	private ISQLEntryPanelFactory _sqlEntryFactory = new DefaultSQLEntryPanelFactory();
 
 	/** Output stream for JDBC debug logging. */
-	private PrintStream _jdbcDebugOutput;
+	private PrintStream _jdbcDebugOutputStream;
+
+	/** Output writer for JDBC debug logging. */
+	private PrintWriter _jdbcDebugOutputWriter;
 
 	/** Contains info about fonts for squirrel. */
 	private final FontInfoStore _fontInfoStore = new FontInfoStore();
 
 	/** Application level SQL History. */
 	private SQLHistory _sqlHistory;
+
+	/** Current type of JDBC debug logging that we are doing. */
+	private int _jdbcDebugType = SquirrelPreferences.IJdbcDebugTypes.NONE;
 
 	/**
 	 * Default ctor.
@@ -241,10 +249,16 @@ class Application implements IApplication
 			s_log.error(msg, th);
 		}
 
-		if (_jdbcDebugOutput != null)
+		if (_jdbcDebugOutputStream != null)
 		{
-			_jdbcDebugOutput.close();
-			_jdbcDebugOutput = null;
+			_jdbcDebugOutputStream.close();
+			_jdbcDebugOutputStream = null;
+		}
+
+		if (_jdbcDebugOutputWriter != null)
+		{
+			_jdbcDebugOutputWriter.close();
+			_jdbcDebugOutputWriter = null;
 		}
 
 		// Save Application level SQL history.
@@ -581,36 +595,16 @@ class Application implements IApplication
 	private void preferencesHaveChanged(PropertyChangeEvent evt)
 	{
 		final String propName = evt != null ? evt.getPropertyName() : null;
-		final ApplicationFiles appFiles = new ApplicationFiles();
 
 		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.SHOW_TOOLTIPS))
 		{
 			ToolTipManager.sharedInstance().setEnabled(_prefs.getShowToolTips());
 		}
 
-		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.DEBUG_JDBC))
+		if (propName == null || propName.equals(
+					SquirrelPreferences.IPropertyNames.JDBC_DEBUG_TYPE))
 		{
-			if (_prefs.getDebugJdbc())
-			{
-				try
-				{
-					_jdbcDebugOutput = new PrintStream(new FileOutputStream(appFiles.getJDBCDebugLogFile()));
-					DriverManager.setLogStream(_jdbcDebugOutput);
-				}
-				catch (IOException ex)
-				{
-					DriverManager.setLogStream(System.out);
-				}
-			}
-			else
-			{
-				if (_jdbcDebugOutput != null)
-				{
-					_jdbcDebugOutput.close();
-					_jdbcDebugOutput = null;
-				}
-				DriverManager.setLogWriter(null);
-			}
+			setupJDBCLogging();
 		}
 
 		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.LOGIN_TIMEOUT))
@@ -694,6 +688,68 @@ class Application implements IApplication
 		catch (Exception ex)
 		{
 			s_log.error("Error setting LAF", ex);
+		}
+	}
+
+	private void setupJDBCLogging()
+	{
+		// If logging has changed.
+		if (_jdbcDebugType != _prefs.getJdbcDebugType())
+		{	
+			final ApplicationFiles appFiles = new ApplicationFiles();
+			final File outFile = appFiles.getJDBCDebugLogFile();
+	
+			// Close any previous logging.
+			DriverManager.setLogStream(null);
+			if (_jdbcDebugOutputStream != null)
+			{
+				_jdbcDebugOutputStream.close();
+				_jdbcDebugOutputStream = null;
+			}
+			DriverManager.setLogWriter(null);
+			if (_jdbcDebugOutputWriter != null)
+			{
+				_jdbcDebugOutputWriter.close();
+				_jdbcDebugOutputWriter = null;
+			}
+
+			if (_prefs.isJdbcDebugToStream())
+			{
+				try
+				{
+					s_log.debug("Attempting to set JDBC debug log to output stream");
+					_jdbcDebugOutputStream = new PrintStream(new FileOutputStream(outFile));
+					DriverManager.setLogStream(_jdbcDebugOutputStream);
+					s_log.debug("JDBC debug log set to output stream successfully");
+				}
+				catch (IOException ex)
+				{
+					final String msg = s_stringMgr.getString("Application.error.jdbcstream");
+					s_log.error(msg, ex);
+					showErrorDialog(msg, ex);
+					DriverManager.setLogStream(System.out);
+				}
+			}
+	
+			if (_prefs.isJdbcDebugToWriter())
+			{
+				try
+				{
+					s_log.debug("Attempting to set JDBC debug log to writer");
+					_jdbcDebugOutputWriter = new PrintWriter(new FileWriter(outFile));
+					DriverManager.setLogWriter(_jdbcDebugOutputWriter);
+					s_log.debug("JDBC debug log set to writer successfully");
+				}
+				catch (IOException ex)
+				{
+					final String msg = s_stringMgr.getString("Application.error.jdbcwriter");
+					s_log.error(msg, ex);
+					showErrorDialog(msg, ex);
+					DriverManager.setLogWriter(new PrintWriter(System.out));
+				}
+			}
+
+			_jdbcDebugType = _prefs.getJdbcDebugType();
 		}
 	}
 }

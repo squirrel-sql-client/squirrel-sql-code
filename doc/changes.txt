@@ -6,6 +6,8 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- You can now specify whether JDBC logging uses the deprecated output stream or
+  the new writer (Neville Rowe).
 - You can now filter the catalogs displayed in the object tree (Keith
   Mashinter).
 - You can now specify whether to load schemas/catalogs in the object tree

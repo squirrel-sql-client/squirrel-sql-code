@@ -47,8 +47,8 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
 								"getShowContentsWhenDragging", "setShowContentsWhenDragging");
 			s_dscrs[3] = new PropertyDescriptor(LOGIN_TIMEOUT, CLS,
 								"getLoginTimeout", "setLoginTimeout");
-			s_dscrs[4] = new PropertyDescriptor(DEBUG_JDBC, CLS,
-									"getDebugJdbc", "setDebugJdbc");
+			s_dscrs[4] = new PropertyDescriptor(JDBC_DEBUG_TYPE, CLS,
+									"getJdbcDebugType", "setJdbcDebugType");
 			s_dscrs[5] = new PropertyDescriptor(SHOW_MAIN_STATUS_BAR, CLS,
 								"getShowMainStatusBar", "setShowMainStatusBar");
 			s_dscrs[6] = new PropertyDescriptor(SHOW_MAIN_TOOL_BAR, CLS,
