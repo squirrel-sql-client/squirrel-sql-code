@@ -27,11 +27,13 @@ import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+//import javax.swing.JTextArea;
 import javax.swing.JWindow;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Version;
@@ -51,17 +53,26 @@ public class SplashScreen extends JWindow {
 
 	private void createUserInterface(SquirrelResources rsrc, int progressBarSize) {
 		JPanel mainPnl = new JPanel(new BorderLayout());
+		mainPnl.setBackground(new Color(SquirrelResources.S_SPLASH_IMAGE_BACKGROUND));
+
+		Icon icon = rsrc.getIcon(SquirrelResources.ImageNames.SPLASH_SCREEN);
+		mainPnl.add(BorderLayout.NORTH, new JLabel(icon));
+
+		MultipleLineLabel versionLbl = new MultipleLineLabel();
+		versionLbl.setOpaque(false);
+		versionLbl.append(Version.getVersion());
+		versionLbl.append("\n");
+		versionLbl.append(Version.getCopyrightStatement());
+		versionLbl.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		mainPnl.add(BorderLayout.CENTER, versionLbl);
+
 		_progressBar = new JProgressBar(0, progressBarSize);
 		_progressBar.setStringPainted(true);
 		_progressBar.setString("");
 		_progressBar.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		_progressBar.setBackground(new Color(SquirrelResources.S_SPLASH_IMAGE_BACKGROUND));
 		_progressBar.setForeground(Color.blue);
-
-		Icon icon = rsrc.getIcon(SquirrelResources.ImageNames.SPLASH_SCREEN);
-		mainPnl.add(BorderLayout.NORTH, new JLabel(icon));
-
-		mainPnl.add(BorderLayout.CENTER, _progressBar);
+		mainPnl.add(BorderLayout.SOUTH, _progressBar);
 
 		mainPnl.setBorder(BorderFactory.createRaisedBevelBorder());
 		getContentPane().add(mainPnl);
