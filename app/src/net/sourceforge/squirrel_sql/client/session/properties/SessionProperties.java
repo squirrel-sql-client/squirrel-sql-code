@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client.session.properties;
  */
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import javax.swing.SwingConstants;
 
@@ -31,7 +32,7 @@ import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 /**
  * This class represents the settings for a session.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SessionProperties implements Cloneable, Serializable
 {
@@ -55,6 +56,7 @@ public class SessionProperties implements Cloneable, Serializable
 		String MAIN_TAB_PLACEMENT = "mainTabPlacement";
 		String META_DATA_OUTPUT_CLASS_NAME = "metaDataOutputClassName";
 		String OBJECT_TAB_PLACEMENT = "objectTabPlacement";
+		String SCHEMA_PREFIX_LIST = "schemaPrefixList";
 		String SQL_ENTRY_HISTORY_SIZE = "sqlEntryHistorySize";
 		String SHOW_ROW_COUNT = "showRowCount";
 		String SHOW_TOOL_BAR = "showToolBar";
@@ -86,13 +88,16 @@ public class SessionProperties implements Cloneable, Serializable
 	private boolean _contentsLimitRows = true;
 	private boolean _sqlLimitRows = true;
 
-	/** Name of class to use for metadata output.  */
+	/** Limit schema objects to those in this comma-delimited list.	*/
+	private String _schemaPrefixList = "";
+
+	/** Name of class to use for metadata output. */
 	private String _metaDataOutputClassName = IDataSetDestinations.READ_ONLY_TABLE;
 
-	/** Name of class to use for SQL results output.  */
+	/** Name of class to use for SQL results output. */
 	private String _sqlOutputMetaDataClassName = IDataSetDestinations.READ_ONLY_TABLE;
 
-	/** Name of class to use for table contsnts output.  */
+	/** Name of class to use for table contsnts output. */
 	private String _tableContentsClassName = IDataSetDestinations.READ_ONLY_TABLE;
 
 	/**
@@ -100,7 +105,7 @@ public class SessionProperties implements Cloneable, Serializable
 	 * The functions accessing this must use the appropriate getter to be sure
 	 * of getting either the selection made by the user in the Session Properties
 	 * or the read-only or the editable version.
-	 */ 
+	 */
 	private String _sqlResultsOutputClassName = IDataSetDestinations.READ_ONLY_TABLE;
 
 	/**
@@ -137,7 +142,7 @@ public class SessionProperties implements Cloneable, Serializable
 	/** Placement of main tabs. See javax.swing.SwingConstants for valid values. */
 	private int _mainTabPlacement = SwingConstants.TOP;
 
-	/** 
+	/**
 	 * Placement of tabs displayed when an object selected in the object
 	 * tree. See javax.swing.SwingConstants for valid values.
 	 */
@@ -145,13 +150,13 @@ public class SessionProperties implements Cloneable, Serializable
 
 	private LargeResultSetObjectInfo _largeObjectInfo = new LargeResultSetObjectInfo();
 
-	/** 
+	/**
 	 * Placement of tabs displayed for SQL execution.
 	 * See javax.swing.SwingConstants for valid values.
 	 */
 	private int _sqlExecutionTabPlacement = SwingConstants.TOP;
 
-	/** 
+	/**
 	 * Placement of tabs displayed for SQL execution results.
 	 * See javax.swing.SwingConstants for valid values.
 	 */
@@ -200,7 +205,7 @@ public class SessionProperties implements Cloneable, Serializable
 	 * Normally we display data using the class selected by the user in the
 	 * Session Preferences, but there are occasions in which the application
 	 * needs to override the user selection and explicitly use either a read-only
-	 * or an editable table.  These functions provide access to those class names.
+	 * or an editable table. These functions provide access to those class names.
 	 */
 	public String getReadOnlyTableOutputClassName()
 	{
@@ -214,7 +219,7 @@ public class SessionProperties implements Cloneable, Serializable
 
 	/**
 	 * Get the name of the read-only form of the user-selected preference,
-	 * which may be TEXT or READ_ONLY_TABLE.  The user may have selected
+	 * which may be TEXT or READ_ONLY_TABLE. The user may have selected
 	 * EDITABLE_TABLE, but the caller wants to get the read-only version
 	 * (because it does not know how to handle and changes the user makes,
 	 * e.g. because the data represents a multi-table join).
@@ -224,7 +229,7 @@ public class SessionProperties implements Cloneable, Serializable
 		if (_sqlResultsOutputClassName.equals(IDataSetDestinations.EDITABLE_TABLE))
 			return IDataSetDestinations.READ_ONLY_TABLE;
 		return _sqlResultsOutputClassName;
-	} 
+	}
 
 	public void addPropertyChangeListener(PropertyChangeListener listener)
 	{
@@ -282,7 +287,7 @@ public class SessionProperties implements Cloneable, Serializable
 	 * Get the type of output display selected by the user in the
 	 * Session Properties, which may be text, read-only table, or editable table;
 	 * the caller must be able to handle any of those (especially editable).
-	 */ 
+	 */
 	public String getSQLResultsOutputClassName()
 	{
 		return _sqlResultsOutputClassName;
@@ -290,10 +295,10 @@ public class SessionProperties implements Cloneable, Serializable
 
 	/**
 	 * Set the type of output display to user selection, which may be
-	 * text, read-only table, or editable table.  This is called
+	 * text, read-only table, or editable table. This is called
 	 * when the user makes a selection, and also when loading the
 	 * preferences object from the saved data during Squirrel startup.
-	 */ 
+	 */
 	public void setSQLResultsOutputClassName(String value)
 	{
 		if (value == null)
@@ -312,7 +317,7 @@ public class SessionProperties implements Cloneable, Serializable
 
 	/**
 	 * Force a re-build of the GUI when a user makes a table
-	 * temporarily editable.  The situation is that the current
+	 * temporarily editable. The situation is that the current
 	 * SessionProperties _tableContentsClassName is a read-only
 	 * class (either table or text) and the user has requested that
 	 * the information be made editable.
@@ -324,13 +329,13 @@ public class SessionProperties implements Cloneable, Serializable
 	 *	      output class name, and
 	 *      - telling the listeners that the SessionProperties have changed.
 	 * This function is called by the underlying data model to tell the
-	 * listeners to update the GUI.  This is done by pretending that the
+	 * listeners to update the GUI. This is done by pretending that the
 	 * SessionPropertied have just changed from being EDITABLE_TABLE to
-	 * some read-only class.  (We know that the current value of the
+	 * some read-only class. (We know that the current value of the
 	 * _tableContentsClassName is a read-only class.)
 	 *
 	 * This is not a very nice way to cause the interface to be updated,
-	 * but it was the simplest one that I could find.  GWG 10/30/02
+	 * but it was the simplest one that I could find. GWG 10/30/02
 	 *
 	 * CB TODO: (Move this elsewhere).
 	 */
@@ -338,7 +343,7 @@ public class SessionProperties implements Cloneable, Serializable
 	{
 		// We need the old value and the new value to be different, or the
 		// listeners will ignore our property change request (and not rebuild
-		// the GUI).  We know that the current output class is a read-only one
+		// the GUI). We know that the current output class is a read-only one
 		// because this function is only called when the user requests that a
 		// single table be made editable.
 		final String oldValue = _tableContentsClassName;
@@ -468,7 +473,7 @@ public class SessionProperties implements Cloneable, Serializable
 	/**
 	 * Retrieve the string used to separate multiple SQL statements. Possible
 	 * examples are ";" or "GO";
-	 * 
+	 *
 	 * @return		String used to separate SQL statements.
 	 */
 	public String getSQLStatementSeparator()
@@ -479,7 +484,7 @@ public class SessionProperties implements Cloneable, Serializable
 	/**
 	 * Set the string used to separate multiple SQL statements. Possible
 	 * examples are ";" or "GO";
-	 * 
+	 *
 	 * @param	value	Separator string.
 	 */
 	public void setSQLStatementSeparator(String value)
@@ -521,8 +526,8 @@ public class SessionProperties implements Cloneable, Serializable
 	 * Specify whether row count should be displayed for every table in
 	 * object tree.
 	 *
-	 * @param   data	<TT>true</TT> fi row count should be displayed
-	 *				  else <TT>false</TT>.
+	 * @param	data	<TT>true</TT> fi row count should be displayed
+	 *					else <TT>false</TT>.
 	 */
 	public synchronized void setShowRowCount(boolean data)
 	{
@@ -598,7 +603,7 @@ public class SessionProperties implements Cloneable, Serializable
 
 	/**
 	 * Does this session share its SQL History with other sessions?
-	 * 
+	 *
 	 * @return	<TT>true</TT> if this session shares its history.
 	 */
 	public boolean getSQLShareHistory()
@@ -608,7 +613,7 @@ public class SessionProperties implements Cloneable, Serializable
 
 	/**
 	 * Set whether this session shares its SQL History with other sessions.
-	 * 
+	 *
 	 * @param	data	<TT>true</TT> if this session shares its history.
 	 */
 	public void setSQLShareHistory(boolean data)
@@ -699,6 +704,72 @@ public class SessionProperties implements Cloneable, Serializable
 				IPropertyNames.SQL_RESULTS_TAB_PLACEMENT,
 				oldValue, _sqlResultsTabPlacement);
 		}
+	}
+
+	/**
+	 * Return comma-separated list of schema prefixes to display in the object tree.
+	 */
+	public String getSchemaPrefixList()
+	{
+		return _schemaPrefixList;
+	}
+
+	/**
+	 * Return array list of schema prefixes to display in the object tree.
+	 */
+	public String[] getSchemaPrefixArray()
+	{
+		return splitString(_schemaPrefixList, ',', true);
+	}
+
+	/**
+	 * Set the comma-separated list of schema prefixes to display in the object tree.
+	 */
+	public synchronized void setSchemaPrefixList(String data)
+	{
+		final String oldValue = _schemaPrefixList;
+		_schemaPrefixList = data;
+		getPropertyChangeReporter().firePropertyChange(
+			IPropertyNames.SCHEMA_PREFIX_LIST,
+			oldValue,
+			_schemaPrefixList);
+	}
+
+	/**
+	 * TODO: Move to a utilities class
+	 * Split a string based on the given delimiter, optionally removing empty elements.
+	 */
+	public String[] splitString(String str, char delimiter, boolean removeEmpty)
+	{
+		// return empty list if source string is empty
+		final int len = (str == null) ? 0 : str.length();
+		if (len == 0)
+		{
+			return new String[0];
+		}
+
+		final ArrayList result = new ArrayList();
+		String elem = null;
+		int i = 0, j = 0;
+		while (j != -1 && j < len)
+		{
+			j = str.indexOf(delimiter,i);
+			elem = (j != -1) ? str.substring(i,j) : str.substring(i);
+			i = j + 1;
+			if (!removeEmpty || !(elem == null || elem.length() == 0))
+			{
+				result.add(elem);
+			}
+		}
+		return (String[])result.toArray(new String[result.size()]);
+	}
+
+	/**
+	 * TODO: Move to a utilities class
+	 */
+	public String[] splitString(String str, char delimiter)
+	{
+		return splitString(str, delimiter, false);
 	}
 
 	private synchronized PropertyChangeReporter getPropertyChangeReporter()

@@ -38,7 +38,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTr
  * This class handles the expanding of database, catalog and schema nodes
  * in the object tree.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class DatabaseExpander implements INodeExpander
 {
@@ -51,9 +51,9 @@ public class DatabaseExpander implements INodeExpander
 
 	/**
 	 * Ctor.
-	 * 
+	 *
 	 * @param	session	Current session.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>ISession</TT> passed.
 	 */
@@ -79,10 +79,10 @@ public class DatabaseExpander implements INodeExpander
 	 * Create the child nodes for the passed parent node and return them. Note
 	 * that this method should <B>not</B> actually add the child nodes to the
 	 * parent node as this is taken care of in the caller.
-	 * 
+	 *
 	 * @param	session	Current session.
 	 * @param	node	Node to be expanded.
-	 * 
+	 *
 	 * @return	A list of <TT>ObjectTreeNode</TT> objects representing the child
 	 *			nodes for the passed node.
 	 */
@@ -186,16 +186,33 @@ public class DatabaseExpander implements INodeExpander
 	{
 		final List childNodes = new ArrayList();
 		final String[] schemas = md.getSchemas();
+		final String[] schemaPrefixArray = session.getProperties().getSchemaPrefixArray();
 		for (int i = 0; i < schemas.length; ++i)
 		{
-			IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName, null,
-											schemas[i],
-											DatabaseObjectType.SCHEMA, md);
-			childNodes.add(new ObjectTreeNode(session, dbo));
+//			IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName, null,
+//											schemas[i],
+//											DatabaseObjectType.SCHEMA, md);
+//			childNodes.add(new ObjectTreeNode(session, dbo));
+			boolean found = (schemaPrefixArray.length > 0) ? false : true;
+			for (int j = 0; j < schemaPrefixArray.length; ++j)
+			{
+				if (schemas[i].startsWith(schemaPrefixArray[j]))
+				{
+					found = true;
+					break;
+				}
+			}
+			if (found)
+			{
+				IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName, null,
+												schemas[i],
+												DatabaseObjectType.SCHEMA, md);
+				childNodes.add(new ObjectTreeNode(session, dbo));
+			}
 		}
 		return childNodes;
 	}
-		
+
 	private List createObjectTypeNodes(ISession session, String catalogName,
 											String schemaName)
 	{

@@ -20,13 +20,16 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.event.TreeModelListener;
@@ -611,11 +614,12 @@ public class ObjectTreePanel extends JPanel
 
 		_splitPane.setOneTouchExpandable(true);
 		_splitPane.setContinuousLayout(true);
-		final JScrollPane sp = new JScrollPane();
-		sp.setBorder(BorderFactory.createEmptyBorder());
-		sp.setViewportView(_tree);
-		sp.setPreferredSize(new Dimension(200, 200));
-		_splitPane.add(sp, JSplitPane.LEFT);
+//		final JScrollPane sp = new JScrollPane();
+//		sp.setBorder(BorderFactory.createEmptyBorder());
+//		sp.setViewportView(_tree);
+//		sp.setPreferredSize(new Dimension(200, 200));
+		
+		_splitPane.add(new LeftPanel(), JSplitPane.LEFT);
 		add(_splitPane, BorderLayout.CENTER);
 		_splitPane.setDividerLocation(200);
 
@@ -624,9 +628,37 @@ public class ObjectTreePanel extends JPanel
 		_tree.setSelectionRow(0);
 	}
 
+	private final class LeftPanel extends JPanel
+	{
+		LeftPanel()
+		{
+			super(new BorderLayout());
+			add(new TreeHeaderPanel(), BorderLayout.NORTH);
+			final JScrollPane sp = new JScrollPane();
+			sp.setBorder(BorderFactory.createEmptyBorder());
+			sp.setViewportView(_tree);
+			sp.setPreferredSize(new Dimension(200, 200));
+			add(sp, BorderLayout.CENTER);
+		}
+	}
+
+	private final class TreeHeaderPanel extends JPanel
+	{
+		JPopupMenu _pop = new JPopupMenu("abc");
+		TreeHeaderPanel()
+		{
+			super(new FlowLayout());
+			JLabel lbl = new JLabel("DB Explorer");
+			add(lbl);
+
+			_pop.add("Filter...");
+			add(_pop);
+		}
+	}
+
 	/**
 	 * This class listens for changes in the node selected in the tree
-	 * and displays the appropriate detail panrl for the node.
+	 * and displays the appropriate detail panel for the node.
 	 */
 	private final class ObjectTreeSelectionListener
 		implements TreeSelectionListener
