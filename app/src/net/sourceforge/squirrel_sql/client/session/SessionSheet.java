@@ -255,7 +255,11 @@ public class SessionSheet extends BaseSheet
 		return _mainTabPane.getSQLPanel();
 	}
 
-	ISQLEntryPanel getSQLEntryPanel()
+	/**
+	 * TODO: This shouldn't be public. Its only been done for the JComplete
+	 * plugin. At some stage this method will be returned to package visibility.
+	 */
+	public ISQLEntryPanel getSQLEntryPanel()
 	{
 		return getSQLPanel().getSQLEntryPanel();
 	}

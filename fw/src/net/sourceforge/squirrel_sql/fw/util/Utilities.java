@@ -182,7 +182,7 @@ public class Utilities
 			{
 				buf.append(ch);
 			}
-			
+
 			lastCh = ch;
 		}
 
@@ -253,6 +253,11 @@ public class Utilities
 			return fileName.substring(0, pos);
 		}
 		return fileName;
+	}
+
+	public static boolean isStringEmpty(String str)
+	{
+		return str == null || str.length() == 0;
 	}
 
 	public static String formatSize(long longSize)

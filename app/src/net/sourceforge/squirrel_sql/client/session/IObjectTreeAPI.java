@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import javax.swing.Action;
+import javax.swing.JMenu;
 import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionListener;
 
@@ -142,7 +143,8 @@ public interface IObjectTreeAPI
 	void removeObjectTreeListener(IObjectTreeListener lis);
 
 	/**
-	 * Add an item to the popup menu for the specified database object type.
+	 * Add an <TT>Action</TT> to the popup menu for the specified database
+	 * object type.
 	 * 
 	 * @param	dboType		Database object type.
 	 * @param	action		Action to add to menu.
@@ -154,7 +156,7 @@ public interface IObjectTreeAPI
 	void addToPopup(DatabaseObjectType dboType, Action action);
 
 	/**
-	 * Add an item to the popup menu for all node types.
+	 * Add an <TT>Action</TT> to the popup menu for all node types.
 	 * 
 	 * @param	action		Action to add to menu.
 	 * 
@@ -162,6 +164,29 @@ public interface IObjectTreeAPI
 	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> thrown.
 	 */
 	void addToPopup(Action action);
+
+	/**
+	 * Add an hierarchical menu to the popup menu for the specified database
+	 * object type.
+	 * 
+	 * @param	dboType		Database object type.
+	 * @param	menu		<TT>JMenu</TT> to add to menu.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> <TT>DatabaseObjectType</TT> or
+	 * 			<TT>JMenu</TT> thrown.
+	 */
+	void addToPopup(DatabaseObjectType dboType, JMenu menu);
+
+	/**
+	 * Add an hierarchical menu to the popup menu for all node types.
+	 * 
+	 * @param	menu	<TT>JMenu</TT> to add to menu.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> <TT>JMenu</TT> thrown.
+	 */
+	void addToPopup(JMenu menu);
 
 	/**
 	 * Return an array of the selected nodes in the tree. This is guaranteed

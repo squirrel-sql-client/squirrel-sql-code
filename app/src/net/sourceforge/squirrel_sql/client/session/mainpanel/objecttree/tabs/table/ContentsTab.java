@@ -51,7 +51,7 @@ public class ContentsTab extends BaseTableTab
 	 * on the first pass.
 	 */
 	String _previousTableName = "";
-	
+
 	/**
 	 * We need to save the name of the SessionProperties display class at the time
 	 * that the table was forced into edit mode so that if the properties get changed
@@ -65,7 +65,7 @@ public class ContentsTab extends BaseTableTab
 	 * when the SessionProperties says to use read-only mode.
 	 */
 	boolean _editModeForced = false;
-	
+
 	/**
 	 * Remember which column contains the rowID; if no rowID, this is -1
 	 * which does not match any legal column index.
@@ -132,7 +132,7 @@ public class ContentsTab extends BaseTableTab
 					}
 				}
 				final ITableInfo ti = getTableInfo();
-				
+
 				/**
 				 * When the SessionProperties are set to read-only (either table or text)
 				 * but the user has selected "Make Editable" on the Popup menu, we want
@@ -145,7 +145,7 @@ public class ContentsTab extends BaseTableTab
 				{
 					_previousTableName = currentTableName;	// needed to prevent an infinite loop
 					_editModeForced = false;	// edit mode applied only to previous table
-					
+
 					/**
 					 * Tell the GUI to rebuild itself.
 					 * Unfortunately, this has the side effect of calling this same function
@@ -244,10 +244,17 @@ public class ContentsTab extends BaseTableTab
 						throw ex;
 					}
 
-					// Error occured using pseudo column. One reason for this
-					// could be the actual table we are querying is a view with
-					// GROUP BY etc. In this case assume no pseudo column and
-					// retry.
+					// Some tables have pseudo column primary keys and others
+					// do not.  JDBC on some DBMSs does not handle pseudo
+					// columns 'correctly'.  Also, getTables returns 'views' as
+					// well as tables, so the thing we are looking at might not
+					// be a table. (JDBC does not give a simple way to
+					// determine what we are looking at since the type of
+					// object is described in a DBMS-specific encoding.)  For
+					// these reasons, rather than testing for all these
+					// conditions, we just try using the pseudo column info to
+					// get the table data, and if that fails, we try to get the
+					// table data without using the pseudo column.
 					// TODO: Should we change the mode from editable to
 					// non-editable?
 					s_log.debug("Error querying using pseudo column", ex);
@@ -258,7 +265,7 @@ public class ContentsTab extends BaseTableTab
 						.append(" tbl");
 					rs = stmt.executeQuery(buf.toString());
 				}
-				
+
 				final ResultSetDataSet rsds = new ResultSetDataSet();
 				rsds.setResultSet(rs, props.getLargeResultSetObjectInfo());
 
@@ -325,7 +332,7 @@ public class ContentsTab extends BaseTableTab
 		// then the display will be an editable table; otherwise the display is read-only
 		return tcClassName;
 	}
-	
+
 	/**
 	 * Link from fw to check on whether there are any unusual conditions
 	 * in the current data that the user needs to be aware of before updating.
@@ -334,7 +341,7 @@ public class ContentsTab extends BaseTableTab
 											int col, Object oldValue)
 	{
 		String whereClause = getWhereClause(values, colDefs, col, oldValue);
-		
+
 		// It is possible for a table to contain only columns of types that
 		// we cannot process or do selects on, so check for that.
 		// Since this check is on the structure of the table rather than the contents,
@@ -346,7 +353,7 @@ public class ContentsTab extends BaseTableTab
 		final SQLConnection conn = session.getSQLConnection();
 
 		int count = -1;	// start with illegal number of rows matching query
-		
+
 		try
 		{
 			final Statement stmt = conn.createStatement();
@@ -375,14 +382,14 @@ public class ContentsTab extends BaseTableTab
 
 		if (count == 0)
 			return "This row in the Database has been changed since you refreshed the data.\nNo rows will be updated by this operation.\nDo you wish to proceed?";
-			
+
 		if (count > 1)
 			return "This operation will update " + count + " identical rows.\nDo you wish to proceed?";
 
 		// no problems found, so do not return a warning message.
 		return null;	// nothing for user to worry about
 	}
-	
+
 	/**
 	 * Link from fw to check on whether there are any unusual conditions
 	 * that will occur after the update has been done.
@@ -396,7 +403,7 @@ public class ContentsTab extends BaseTableTab
 		final SQLConnection conn = session.getSQLConnection();
 
 		int count = -1;	// start with illegal number of rows matching query
-		
+
 		try
 		{
 			final Statement stmt = conn.createStatement();
@@ -442,7 +449,7 @@ public class ContentsTab extends BaseTableTab
 		}
 		else {
 			// the field being updated is one whose contents
-			//should be visible in the WHERE clause	
+			//should be visible in the WHERE clause
 			if (count > 0)
 				return "This operation will result in " + count + " identical rows.\nDo you wish to proceed?";
 		}
@@ -451,7 +458,7 @@ public class ContentsTab extends BaseTableTab
 		return null;	// nothing for user to worry about
 
 	}
-	
+
 	/**
 	 * link from fw to this for updating data
 	 */
@@ -463,11 +470,11 @@ public class ContentsTab extends BaseTableTab
 	{
 		// get WHERE clause using original value
 		String whereClause = getWhereClause(values, colDefs, col, oldValue);
-		
+
 		// The format of the SET part of the UPDATE statement varies depending
 		// on the data type, and whether it is NULL or not.
 		String setClause = getSetClause(colDefs, col, newValue);
-		
+
 		// we do not know how to set some fields, so...
 		if (setClause == null)
 			return "The '" + colDefs[col].getLabel() + "' column is a type that Squirrel does not know how to set";
@@ -476,7 +483,7 @@ public class ContentsTab extends BaseTableTab
 		final SQLConnection conn = session.getSQLConnection();
 
 		int count = -1;
-		
+
 		try
 		{
 			final Statement stmt = conn.createStatement();
@@ -484,7 +491,7 @@ public class ContentsTab extends BaseTableTab
 			{
 				final ITableInfo ti = getTableInfo();
 				String updateCommand = "UPDATE " + ti.getQualifiedName() + setClause + whereClause;
-				count = stmt.executeUpdate(updateCommand);					
+				count = stmt.executeUpdate(updateCommand);
 			}
 			finally
 			{
@@ -507,7 +514,7 @@ public class ContentsTab extends BaseTableTab
 		// everything seems to have worked ok
 		return null;
 	}
-	
+
 	/**
 	 * Let fw get the rowIDcol
 	 */
@@ -515,7 +522,7 @@ public class ContentsTab extends BaseTableTab
 	{
 		return _rowIDcol;
 	}
-	
+
 	/**
 	 * helper function to create a WHERE clause to search the DB for matching rows.
 	 */
@@ -525,12 +532,12 @@ public class ContentsTab extends BaseTableTab
 		int col,
 		Object colValue)
 	{
-		
+
 		StringBuffer whereClause = new StringBuffer("");
-		
+
 		for (int i=0; i< colDefs.length; i++) {
 			// do different things depending on data type
-			
+
 			String clause = null;
 
 			// for the column that is being changed, use the value
@@ -539,7 +546,7 @@ public class ContentsTab extends BaseTableTab
 			Object value = values[i];
 			if (i == col)
 				value = colValue;
-			
+
 			String columnLabel = colDefs[i].getLabel();
 
 			switch (colDefs[i].getSqlType())
@@ -647,7 +654,7 @@ public class ContentsTab extends BaseTableTab
 					whereClause.append(clause);
 				}
 		}
-		
+
 		// insert the "WHERE" at the front if there is anything in the clause
 		if (whereClause.length() == 0)
 			return "";
@@ -666,7 +673,7 @@ public class ContentsTab extends BaseTableTab
 	{
 
 		String clause = null;
-		
+
 		String columnLabel = colDefs[col].getLabel();
 
 		switch (colDefs[col].getSqlType())
@@ -675,7 +682,6 @@ public class ContentsTab extends BaseTableTab
 				//??
 				break;
 
-					
 			// TODO: When JDK1.4 is the earliest JDK supported
 			// by Squirrel then remove the hardcoding of the
 			// boolean data type.
@@ -766,7 +772,6 @@ public class ContentsTab extends BaseTableTab
 				break;
 		}
 
-		
 		// insert the "WHERE" at the front if there is anything in the clause
 		if (clause.length() == 0)
 			return null;

@@ -25,6 +25,7 @@ import java.util.Map;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
+import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -382,6 +383,47 @@ public class ObjectTreePanel extends JPanel
 			throw new IllegalArgumentException("Null Action passed");
 		}
 		_tree.addToPopup(action);
+	}
+
+	/**
+	 * Add an hierarchical menu to the popup menu for the specified database
+	 * object type.
+	 * 
+	 * @param	dboType		Database object type.
+	 * @param	menu		<TT>JMenu</TT> to add to menu.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> <TT>DatabaseObjectType</TT> or
+	 * 			<TT>JMenu</TT> thrown.
+	 */
+	public void addToObjectTreePopup(DatabaseObjectType dboType, JMenu menu)
+	{
+		if (dboType == null)
+		{
+			throw new IllegalArgumentException("DatabaseObjectType == null");
+		}
+		if (menu == null)
+		{
+			throw new IllegalArgumentException("JMenu == null");
+		}
+		_tree.addToPopup(dboType, menu);
+	}
+
+	/**
+	 * Add an hierarchical menu to the popup menu for all node types.
+	 * 
+	 * @param	menu	<TT>JMenu</TT> to add to menu.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> <TT>JMenu</TT> thrown.
+	 */
+	public void addToObjectTreePopup(JMenu menu)
+	{
+		if (menu == null)
+		{
+			throw new IllegalArgumentException("JMenu == null");
+		}
+		_tree.addToPopup(menu);
 	}
 
 	/**
