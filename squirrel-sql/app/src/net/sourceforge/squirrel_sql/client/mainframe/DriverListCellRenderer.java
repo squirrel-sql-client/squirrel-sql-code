@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.mainframe;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.Icon;
 import javax.swing.JList;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 
@@ -31,10 +32,16 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
  */
 public class DriverListCellRenderer extends DefaultListCellRenderer {
 	/** Color for drivers that could be loaded. */
-	private final static Color OK_COLOR   = new Color(190, 255, 190);
+	private Icon OK_ICON;
 
 	/** Color for drivers that could not be loaded. */
-	private final static Color FAIL_COLOR = new Color(255, 190, 190);
+	private Icon FAIL_ICON;
+	
+	public DriverListCellRenderer(Icon ok, Icon fail)
+	{
+		OK_ICON = ok;
+		FAIL_ICON = fail;
+	}
 
 	public Component getListCellRendererComponent(JList list,
 												Object value,
@@ -44,7 +51,7 @@ public class DriverListCellRenderer extends DefaultListCellRenderer {
 		super.getListCellRendererComponent(list, value,  index, isSelected,
 											cellHasFocus);
 		ISQLDriver drv = (ISQLDriver)value;
-		setBackground((drv.isJDBCDriverClassLoaded()) ? OK_COLOR : FAIL_COLOR);
+		setIcon((drv.isJDBCDriverClassLoaded()) ? OK_ICON: FAIL_ICON);
 		return this;
 	}
 }

@@ -27,6 +27,7 @@ import javax.swing.ToolTipManager;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 
 /**
  * This is a <CODE>JList</CODE> that dispays all the <CODE>ISQLDriver</CODE>
@@ -52,7 +53,8 @@ public class DriversList extends JList {
 		setLayout(new BorderLayout());
 		getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-		setCellRenderer(new DriverListCellRenderer());
+		SquirrelResources res = _app.getResources();
+		setCellRenderer(new DriverListCellRenderer(res.getIcon("list.driver.found"),res.getIcon("list.driver.notfound")));
 
 		// Register so that we can display different tooltips depending
 		// which entry in list mouse is over.

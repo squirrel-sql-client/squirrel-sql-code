@@ -60,6 +60,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
 import net.sourceforge.squirrel_sql.client.mainframe.DriverListCellRenderer;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 
@@ -374,7 +375,8 @@ public class AliasMaintSheet extends BaseSheet {
 
 		DriversCombo() {
 			super();
-			setRenderer(new DriverListCellRenderer());
+			SquirrelResources res = _app.getResources();
+			setRenderer(new DriverListCellRenderer(res.getIcon("list.driver.found"),res.getIcon("list.driver.notfound")));
 			List list = new ArrayList();
 			for (Iterator it = AliasMaintSheet.this._app.getDataCache().drivers(); it.hasNext();) {
 				ISQLDriver sqlDriver = ((ISQLDriver)it.next());
