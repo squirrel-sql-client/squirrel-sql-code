@@ -17,7 +17,6 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.util.Enumeration;
 import java.util.Hashtable;
 
 import java.lang.reflect.InvocationTargetException;
@@ -37,6 +36,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
+import net.sourceforge.squirrel_sql.fw.util.EnumerationIterator;
+
 public class HashtableDataSet implements IDataSet {
     private interface i18n {
         String UNSUPPORTED = "<Unsupported>";
@@ -49,13 +50,13 @@ public class HashtableDataSet implements IDataSet {
     private DataSetDefinition _dsDef;
     private final static String[] s_hdgs = new String[] {i18n.NAME_COLUMN, i18n.VALUE_COLUMN};
     private String[] _curRow = new String[2];
-    private Enumeration _rowKeys;
+    private Iterator _rowKeys;
 
     public HashtableDataSet(Hashtable src) throws DataSetException {
         super();
         _src = src;
         _dsDef = new DataSetDefinition(createColumnDefinitions());
-        _rowKeys = _src.keys();
+        _rowKeys = new EnumerationIterator(_src.keys());
     }
 
     public final int getColumnCount() {
@@ -68,8 +69,8 @@ public class HashtableDataSet implements IDataSet {
 
     public synchronized boolean next(IMessageHandler msgHandler) {
         _curRow[0] = null;
-        if (_rowKeys.hasMoreElements()) {
-            _curRow[0] = (String)_rowKeys.nextElement();
+        if (_rowKeys.hasNext()) {
+            _curRow[0] = (String)_rowKeys.next();
         }
         if (_curRow[0] != null) {
             _curRow[1] = _src.get(_curRow[0]).toString();
