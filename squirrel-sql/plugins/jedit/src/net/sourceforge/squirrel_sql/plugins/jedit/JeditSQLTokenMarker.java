@@ -54,6 +54,7 @@ public class JeditSQLTokenMarker extends SQLTokenMarker {
 		keywords.add("DROP", Token.KEYWORD1);
 		keywords.add("EXISTS", Token.KEYWORD1);
 		keywords.add("FROM", Token.KEYWORD1);
+		keywords.add("GRANT", Token.KEYWORD1);
 		keywords.add("GROUP", Token.KEYWORD1);
 		keywords.add("HAVING", Token.KEYWORD1);
 		keywords.add("IN", Token.KEYWORD1);
@@ -64,8 +65,11 @@ public class JeditSQLTokenMarker extends SQLTokenMarker {
 		keywords.add("LIKE", Token.KEYWORD1);
 		keywords.add("NULL", Token.KEYWORD1);
 		keywords.add("OR", Token.KEYWORD1);
+		keywords.add("ORDER", Token.KEYWORD1);
+		keywords.add("OUTER", Token.KEYWORD1);
 		keywords.add("SELECT", Token.KEYWORD1);
 		keywords.add("TABLE", Token.KEYWORD1);
+		keywords.add("WHERE", Token.KEYWORD1);
 		keywords.add("UNIQUE", Token.KEYWORD1);
 		keywords.add("UNION", Token.KEYWORD1);
 		keywords.add("UPDATE", Token.KEYWORD1);
@@ -79,6 +83,24 @@ public class JeditSQLTokenMarker extends SQLTokenMarker {
 		StringTokenizer strtok = new StringTokenizer(buf.toString(), ",");
 		while (strtok.hasMoreTokens()) {
 			keywords.add(strtok.nextToken().trim(), Token.KEYWORD1);
+		}
+
+		try {
+			addSingleKeyword(dmd.getCatalogTerm(), keywords);
+		} catch (SQLException ex) {
+			System.out.println(ex.toString());
+		}
+
+		try {
+			addSingleKeyword(dmd.getSchemaTerm(), keywords);
+		} catch (SQLException ex) {
+			System.out.println(ex.toString());
+		}
+
+		try {
+			addSingleKeyword(dmd.getProcedureTerm(), keywords);
+		} catch (SQLException ex) {
+			System.out.println(ex.toString());
 		}
 	}
 
@@ -139,6 +161,15 @@ public class JeditSQLTokenMarker extends SQLTokenMarker {
 		StringTokenizer strtok = new StringTokenizer(buf.toString(), ",");
 		while (strtok.hasMoreTokens()) {
 			keywords.add(strtok.nextToken().trim(), Token.KEYWORD3);
+		}
+	}
+
+	private static void addSingleKeyword(String keyword, KeywordMap keywords) {
+		if (keyword != null) {
+			keyword = keyword.trim();
+			if (keyword.length() > 0) {
+				keywords.add(keyword, Token.KEYWORD1);
+			}
 		}
 	}
 }
