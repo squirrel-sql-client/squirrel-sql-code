@@ -17,14 +17,15 @@ package net.sourceforge.squirrel_sql.client.session.properties;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.Font;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 import java.util.ArrayList;
 
 import javax.swing.SwingConstants;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerEditableTablePanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
@@ -123,7 +124,7 @@ public class SessionProperties implements Cloneable, Serializable
 	private String _solComment = "--";
 
 	/** Font information for the SQL entry area. */
-	private FontInfo _fi;
+	private FontInfo _fi = new FontInfo(new Font("Monospaced", 0, 12));
 
 	/** Should the number of SQL statements to save in execution history be limited?. */
 	private boolean _limitSqlEntryHistorySize = false;
