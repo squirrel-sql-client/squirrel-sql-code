@@ -1,6 +1,14 @@
 Change Log
 ==========
 
+1.1beta6
+========
+
+Enhancements
+------------
+- Added "Help" option to Help menu.
+
+
 1.1beta5
 ========
 
