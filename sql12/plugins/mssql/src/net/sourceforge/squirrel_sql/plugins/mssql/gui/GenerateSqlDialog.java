@@ -127,10 +127,7 @@ public class GenerateSqlDialog extends JDialog {
 
 	private JTabbedPane buildMainPanel() throws SQLException {
 		final JTabbedPane tabPanel = UIFactory.getInstance().createTabbedPane();
-		/*final JPanel pnl = new AlterColumnsPanelBuilder().buildPanel(session, ti);
-		tabPnl.addTab(getString("AlterTableDialog.columns"), null, pnl,
-						getString("AlterTableDialog.columnshint"));*/
-        tabPanel.addTab("General",null,buildGeneralPanel());
+		tabPanel.addTab("General",null,buildGeneralPanel());
         tabPanel.addTab("Formatting",null,buildFormattingPanel());
         tabPanel.addTab("Options",null,buildOptionsPanel());
 		return tabPanel;
@@ -168,22 +165,23 @@ public class GenerateSqlDialog extends JDialog {
                 else if (e.getStateChange() == e.DESELECTED)
                     transferObjectsOfType(0,(DatabaseObjectInfoTableModel) _selectedTable.getModel(),(DatabaseObjectInfoTableModel) _availableTable.getModel());
                 
-                allTablesCheckbox.setSelected(e.getStateChange() == e.SELECTED);
-                allRulesCheckbox.setSelected(e.getStateChange() == e.SELECTED);
-                allViewsCheckbox.setSelected(e.getStateChange() == e.SELECTED);
-                allUddtCheckbox.setSelected(e.getStateChange() == e.SELECTED);
-                allProceduresCheckbox.setSelected(e.getStateChange() == e.SELECTED);
-                allUdfsCheckbox.setSelected(e.getStateChange() == e.SELECTED);
-                allDefaultsCheckbox.setSelected(e.getStateChange() == e.SELECTED);
+                boolean isSelected = (e.getStateChange() == e.SELECTED);
                 
-                allTablesCheckbox.setEnabled(e.getStateChange() == e.DESELECTED);
-                allRulesCheckbox.setEnabled(e.getStateChange() == e.DESELECTED);
-                allViewsCheckbox.setEnabled(e.getStateChange() == e.DESELECTED);
-                allUddtCheckbox.setEnabled(e.getStateChange() == e.DESELECTED);
-                allProceduresCheckbox.setEnabled(e.getStateChange() == e.DESELECTED);
-                allUdfsCheckbox.setEnabled(e.getStateChange() == e.DESELECTED);
-                allDefaultsCheckbox.setEnabled(e.getStateChange() == e.DESELECTED);
+                allTablesCheckbox.setSelected(isSelected);
+                allRulesCheckbox.setSelected(isSelected);
+                allViewsCheckbox.setSelected(isSelected);
+                allUddtCheckbox.setSelected(isSelected);
+                allProceduresCheckbox.setSelected(isSelected);
+                allUdfsCheckbox.setSelected(isSelected);
+                allDefaultsCheckbox.setSelected(isSelected);
                 
+                allTablesCheckbox.setEnabled(!isSelected);
+                allRulesCheckbox.setEnabled(!isSelected);
+                allViewsCheckbox.setEnabled(!isSelected);
+                allUddtCheckbox.setEnabled(!isSelected);
+                allProceduresCheckbox.setEnabled(!isSelected);
+                allUdfsCheckbox.setEnabled(!isSelected);
+                allDefaultsCheckbox.setEnabled(!isSelected);
             }
         });
         gridBag.setConstraints(allObjectsCheckbox, c);
