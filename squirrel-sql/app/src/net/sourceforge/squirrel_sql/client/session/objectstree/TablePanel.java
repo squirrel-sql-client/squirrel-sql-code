@@ -23,13 +23,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 
+import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.ColumnPriviligesTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.ColumnsTab;
@@ -44,7 +45,7 @@ import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.TableI
 import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.TablePriviligesTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.VersionColumnsTab;
 
-public class TablePanel extends JTabbedPane {
+public class TablePanel extends SquirrelTabbedPane {
 	/** Current session. */
 	private ISession _session;
 
@@ -69,16 +70,13 @@ public class TablePanel extends JTabbedPane {
 	/**
 	 * Ctor specifying the session.
 	 *
-	 * @param   session	 The current session.
+	 * @param	session		The current session.
 	 *
-	 * @throws  IllegalArgumentException
-	 *		  Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
+	 * @throws	IllegalArgumentException
+	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
 	 */
-	public TablePanel(ISession session) throws IllegalArgumentException {
-		super();
-		if (session == null) {
-			throw new IllegalArgumentException("null ISession passed");
-		}
+	public TablePanel(ISession session) {
+		super(getPreferences(session));
 		_session = session;
 		_cursorChg = new CursorChanger(this);
 		createUserInterface();
@@ -190,6 +188,13 @@ public class TablePanel extends JTabbedPane {
 		*/
 	}
 
+	private static SquirrelPreferences getPreferences(ISession session) {
+		if (session == null) {
+			throw new IllegalArgumentException("null ISession passed");
+		}
+		return session.getApplication().getSquirrelPreferences();
+	}
+
 	private void createUserInterface() {
 		addTablePanelTab(new TableInfoTab());
 		addTablePanelTab(new ContentsTab());
@@ -217,8 +222,8 @@ public class TablePanel extends JTabbedPane {
 	private class TabbedPaneListener implements ChangeListener {
 		public void stateChanged(ChangeEvent evt) {
 			Object src = evt.getSource();
-			if (src instanceof JTabbedPane) {
-				int idx = ((JTabbedPane)src).getSelectedIndex();
+			if (src instanceof SquirrelTabbedPane) {
+				int idx = ((SquirrelTabbedPane)src).getSelectedIndex();
 				if (idx != -1) 
 				{
 					_cursorChg.show();

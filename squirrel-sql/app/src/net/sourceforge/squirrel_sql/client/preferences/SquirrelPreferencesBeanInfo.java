@@ -27,29 +27,28 @@ import java.beans.SimpleBeanInfo;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo {
+public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
+											implements SquirrelPreferences.IPropertyNames {
+	private static PropertyDescriptor[] s_dscrs;
 
-    private static PropertyDescriptor[] s_dscrs;
+	private static Class CLS = SquirrelPreferences.class;
 
-    private static Class cls = SquirrelPreferences.class;
+	public SquirrelPreferencesBeanInfo() throws IntrospectionException {
+		super();
+		if (s_dscrs == null) {
+			s_dscrs = new PropertyDescriptor[7];
+			int idx = 0;
+			s_dscrs[idx++] = new PropertyDescriptor(SESSION_PROPERTIES, CLS, "getSessionProperties", "setSessionProperties");
+			s_dscrs[idx++] = new PropertyDescriptor(MAIN_FRAME_STATE, CLS, "getMainFrameWindowState", "setMainFrameWindowState");
+			s_dscrs[idx++] = new PropertyDescriptor(SHOW_CONTENTS_WHEN_DRAGGING, CLS, "getShowContentsWhenDragging", "setShowContentsWhenDragging");
+			s_dscrs[idx++] = new PropertyDescriptor(LOGIN_TIMEOUT, CLS, "getLoginTimeout", "setLoginTimeout");
+			s_dscrs[idx++] = new PropertyDescriptor(DEBUG_JDBC, CLS, "getDebugJdbc", "setDebugJdbc");
+			s_dscrs[idx++] = new PropertyDescriptor(SHOW_TOOLTIPS, CLS, "getShowToolTips", "setShowToolTips");
+			s_dscrs[idx++] = new PropertyDescriptor(SCROLLABLE_TABBED_PANES, CLS, "useScrollableTabbedPanes", "setUseScrollableTabbedPanes");
+		}
+	}
 
-    public SquirrelPreferencesBeanInfo() throws IntrospectionException {
-        super();
-        if (s_dscrs == null) {
-            s_dscrs = new PropertyDescriptor[6];
-            int idx = 0;
-            s_dscrs[idx++] = new PropertyDescriptor(SquirrelPreferences.IPropertyNames.SESSION_PROPERTIES, cls, "getSessionProperties", "setSessionProperties");
-            s_dscrs[idx++] = new PropertyDescriptor(SquirrelPreferences.IPropertyNames.MAIN_FRAME_STATE, cls, "getMainFrameWindowState", "setMainFrameWindowState");
-            s_dscrs[idx++] = new PropertyDescriptor(SquirrelPreferences.IPropertyNames.SHOW_CONTENTS_WHEN_DRAGGING, cls, "getShowContentsWhenDragging", "setShowContentsWhenDragging");
-            s_dscrs[idx++] = new PropertyDescriptor(SquirrelPreferences.IPropertyNames.LOGIN_TIMEOUT, cls, "getLoginTimeout", "setLoginTimeout");
-            s_dscrs[idx++] = new PropertyDescriptor(SquirrelPreferences.IPropertyNames.DEBUG_JDBC, cls, "getDebugJdbc", "setDebugJdbc");
-            s_dscrs[idx++] = new PropertyDescriptor(SquirrelPreferences.IPropertyNames.SHOW_TOOLTIPS , cls, "getShowToolTips", "setShowToolTips");
-        }
-    }
-
-    public PropertyDescriptor[] getPropertyDescriptors() {
-        return s_dscrs;
-    }
+	public PropertyDescriptor[] getPropertyDescriptors() {
+		return s_dscrs;
+	}
 }
-
-

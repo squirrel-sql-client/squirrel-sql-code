@@ -28,12 +28,12 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import java.util.Date;
+
 import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
@@ -55,6 +55,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
@@ -93,7 +94,7 @@ public class ResultTab extends JPanel implements IHasIdentifier {
 	private JScrollPane _metaDataSp = new JScrollPane();
 
 	/** Tabbed pane containing the SQL results the the results meta data. */
-	private JTabbedPane _tp = new JTabbedPane(JTabbedPane.BOTTOM);
+	private SquirrelTabbedPane _tp;
 
 	/** <TT>SQLPanel</TT> that this tab is showing results for. */
 	private SQLPanel _sqlPanel;
@@ -344,6 +345,9 @@ public class ResultTab extends JPanel implements IHasIdentifier {
 	private void createUserInterface() {
 //	final Resources rsrc = _session.getApplication().getResources();
 		setLayout(new BorderLayout());
+
+		_tp = new SquirrelTabbedPane(_session.getApplication().getSquirrelPreferences());
+		_tp.setTabPlacement(SquirrelTabbedPane.BOTTOM);
 
 		JPanel panel1 = new JPanel();
 		JPanel panel2 = new JPanel();

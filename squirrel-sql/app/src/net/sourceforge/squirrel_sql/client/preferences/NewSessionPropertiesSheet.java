@@ -29,7 +29,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -37,6 +36,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
+import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.session.properties.OutputPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
@@ -178,7 +178,7 @@ public class NewSessionPropertiesSheet extends BaseSheet {
 		}
 
 		// Add all panels to the tabbed pane.
-		JTabbedPane tabPane = new JTabbedPane();
+		SquirrelTabbedPane tabPane = new SquirrelTabbedPane(_app.getSquirrelPreferences());
 		for (Iterator it = _panels.iterator(); it.hasNext();) {
 			INewSessionPropertiesPanel pnl = (INewSessionPropertiesPanel)it.next();
 			String title = pnl.getTitle();

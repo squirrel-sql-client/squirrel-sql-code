@@ -24,19 +24,20 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 
+import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.objectstree.procedurepanel.IProcedurePanelTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.procedurepanel.ProcedureColumnsTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.procedurepanel.ProcedureInfoTab;
 
-public class ProcedurePanel extends JTabbedPane {
+public class ProcedurePanel extends SquirrelTabbedPane {
 
 	private ISession _session;
 
@@ -56,7 +57,7 @@ public class ProcedurePanel extends JTabbedPane {
 	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
 	 */
 	public ProcedurePanel(ISession session) {
-		super();
+		super(getPreferences(session));
 		_session = session;
 		createUserInterface();
 	}
@@ -169,6 +170,14 @@ public class ProcedurePanel extends JTabbedPane {
 	private String getString(String str) {
 		return str != null ? str : "";
 	}
+
+	private static SquirrelPreferences getPreferences(ISession session) {
+		if (session == null) {
+			throw new IllegalArgumentException("ISession == null");
+		}
+		return session.getApplication().getSquirrelPreferences();
+	}
+
 	private static class MyPropertiesListener implements PropertyChangeListener {
 		private ProcedurePanel _panel;
 
@@ -185,8 +194,8 @@ public class ProcedurePanel extends JTabbedPane {
 	private class TabbedPaneListener implements ChangeListener {
 		public void stateChanged(ChangeEvent evt) {
 			Object src = evt.getSource();
-			if (src instanceof JTabbedPane) {
-				int idx = ((JTabbedPane)src).getSelectedIndex();
+			if (src instanceof SquirrelTabbedPane) {
+				int idx = ((SquirrelTabbedPane)src).getSelectedIndex();
 				if (idx != -1) {
 					((IProcedurePanelTab)_tabs.get(getSelectedIndex())).select();
 				}

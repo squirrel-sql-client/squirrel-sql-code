@@ -52,9 +52,10 @@ public class SquirrelPreferences implements Serializable {
 		String LOGIN_TIMEOUT = "loginTimeout";
 		String DEBUG_JDBC = "debugJdbc";
 		String MAIN_FRAME_STATE = "mainFrameWindowState";
+		String PLUGIN_OBJECTS = "pluginObjects";
 		String SHOW_CONTENTS_WHEN_DRAGGING = "showContentsWhenDragging";
 		String SHOW_TOOLTIPS = "showToolTips";
-		String PLUGIN_OBJECTS = "pluginObjects";
+		String SCROLLABLE_TABBED_PANES = "useScrollableTabbedPanes";
 	}
 
 	/** Logger for this class. */
@@ -82,6 +83,9 @@ public class SquirrelPreferences implements Serializable {
 
 	/** Show tooltips for controls. */
 	private boolean _showToolTips = true;
+
+	/** Use scrollabel tabbed panes. JDK 1.4 and above only. */
+	private boolean _useScrollableTabbedPanes;
 
 	/**
 	 * Objects stored by plugins. Each element of this collection is a <TT>Map</TT>
@@ -116,6 +120,7 @@ public class SquirrelPreferences implements Serializable {
 		setDebugJdbc(rhs.getDebugJdbc());
 		setShowToolTips(rhs.getShowToolTips());
 //		setPluginObjects(rhs.getPluginObjects());
+		setUseScrollableTabbedPanes(rhs.useScrollableTabbedPanes());
 	}
 
 	/**
@@ -212,6 +217,17 @@ public class SquirrelPreferences implements Serializable {
 		_showToolTips = data;
 		_propChgReporter.firePropertyChange(IPropertyNames.SHOW_TOOLTIPS,
 								oldValue, _showToolTips);
+	}
+
+	public boolean useScrollableTabbedPanes() {
+		return _useScrollableTabbedPanes;
+	}
+
+	public synchronized void setUseScrollableTabbedPanes(boolean data) {
+		final boolean oldValue = _useScrollableTabbedPanes;
+		_useScrollableTabbedPanes = data;
+		_propChgReporter.firePropertyChange(IPropertyNames.SCROLLABLE_TABBED_PANES,
+								oldValue, _useScrollableTabbedPanes);
 	}
 
 	/*

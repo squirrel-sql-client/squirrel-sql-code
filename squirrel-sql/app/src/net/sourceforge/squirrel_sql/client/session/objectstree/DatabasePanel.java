@@ -31,7 +31,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -47,13 +46,15 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.DataTypesTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.IDatabasePanelTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.MetaDataTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
-public class DatabasePanel extends JTabbedPane {
+public class DatabasePanel extends SquirrelTabbedPane {
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(DatabasePanel.class);
 
@@ -78,10 +79,7 @@ public class DatabasePanel extends JTabbedPane {
 											<TT>ISession</TT> passed.
 	 */
 	public DatabasePanel(ISession session) {
-		super();
-		if (session == null) {
-			throw new IllegalArgumentException("ISession == null");
-		}
+		super(getPreferences(session));
 
 		_session = session;
 
@@ -158,6 +156,13 @@ public class DatabasePanel extends JTabbedPane {
 		}
 	}
 
+	private static SquirrelPreferences getPreferences(ISession session) {
+		if (session == null) {
+			throw new IllegalArgumentException("ISession == null");
+		}
+		return session.getApplication().getSquirrelPreferences();
+	}
+
 	private abstract class MyBaseViewer extends DataSetViewer {
 		private boolean _hasBeenBuilt = false;
 
@@ -192,8 +197,8 @@ public class DatabasePanel extends JTabbedPane {
 	private class TabbedPaneListener implements ChangeListener {
 		public void stateChanged(ChangeEvent evt) {
 			Object src = evt.getSource();
-			if (src instanceof JTabbedPane) {
-				int idx = ((JTabbedPane)src).getSelectedIndex();
+			if (src instanceof SquirrelTabbedPane) {
+				int idx = ((SquirrelTabbedPane)src).getSelectedIndex();
 				if (idx != -1) {
 					((IDatabasePanelTab)_tabs.get(getSelectedIndex())).select();
 				}

@@ -23,12 +23,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
 import net.sourceforge.squirrel_sql.client.plugin.SessionPluginInfo;
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeAction;
@@ -42,7 +43,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLTab;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-public class MainPanel extends JTabbedPane {
+public class MainPanel extends SquirrelTabbedPane {
 	/**
 	 * IDs of tabs.
 	 */
@@ -75,10 +76,7 @@ public class MainPanel extends JTabbedPane {
 											<TT>ISession</TT> passed.
 	 */
 	public MainPanel(ISession session) {
-		super();
-		if (session == null) {
-			throw new IllegalArgumentException("ISession == null");
-		}
+		super(getPreferences(session));
 
 		_session = session;
 
@@ -166,6 +164,13 @@ public class MainPanel extends JTabbedPane {
 				}
 			}
 		});
+	}
+
+	private static SquirrelPreferences getPreferences(ISession session) {
+		if (session == null) {
+			throw new IllegalArgumentException("ISession == null");
+		}
+		return session.getApplication().getSquirrelPreferences();
 	}
 
 	private class MyPropertiesListener implements PropertyChangeListener {

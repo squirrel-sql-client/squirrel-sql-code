@@ -30,7 +30,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -38,6 +37,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
+import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
 import net.sourceforge.squirrel_sql.client.plugin.SessionPluginInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
@@ -159,7 +159,7 @@ public class SessionPropertiesSheet extends BaseSheet {
 		}
 
 		// Add all panels to the tabbed panel.
-		JTabbedPane tabPane = new JTabbedPane();
+		SquirrelTabbedPane tabPane = new SquirrelTabbedPane(app.getSquirrelPreferences());
 		for (Iterator it = _panels.iterator(); it.hasNext();) {
 			ISessionPropertiesPanel pnl = (ISessionPropertiesPanel)it.next();
 			String title = pnl.getTitle();

@@ -42,7 +42,6 @@ import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -74,7 +73,7 @@ public class AboutBoxDialog extends JDialog {
 	private static AboutBoxDialog s_instance;
 
 	/** The tabbed panel. */
-	private JTabbedPane _tabPnl = new JTabbedPane();
+	private SquirrelTabbedPane _tabPnl;
 
 	/** System panel. */
 	private SystemPanel _systemPnl;
@@ -120,7 +119,7 @@ public class AboutBoxDialog extends JDialog {
 		final boolean isDebug = s_log.isDebugEnabled();
 		long start = 0;
 
-		_tabPnl = new JTabbedPane();
+		_tabPnl = new SquirrelTabbedPane(app.getSquirrelPreferences());
 
 		if (isDebug) {
 			start = System.currentTimeMillis();

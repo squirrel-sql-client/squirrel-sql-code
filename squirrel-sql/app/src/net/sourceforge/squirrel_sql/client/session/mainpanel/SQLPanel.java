@@ -35,7 +35,6 @@ import javax.swing.Box;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
@@ -61,6 +60,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ResultFrame;
@@ -96,7 +96,7 @@ public class SQLPanel extends JPanel {
 	private DataSetViewer _viewer = new DataSetViewer();
 
 	/** Each tab is a <TT>ResultTab</TT> showing the results of a query. */
-	private JTabbedPane _tabbedResultsPanel = new JTabbedPane();
+	private SquirrelTabbedPane _tabbedResultsPanel;
 
 	/**
 	 * Collection of <TT>ResultTabInfo</TT> objects for all
@@ -624,6 +624,9 @@ public class SQLPanel extends JPanel {
 
 	private void createUserInterface() {
 		final IApplication app = _session.getApplication();
+
+		_tabbedResultsPanel = new SquirrelTabbedPane(app.getSquirrelPreferences());
+
 		setLayout(new BorderLayout());
 
 		 _sqlEntry = app.getSQLEntryPanelFactory().createSQLEntryPanel(_session);

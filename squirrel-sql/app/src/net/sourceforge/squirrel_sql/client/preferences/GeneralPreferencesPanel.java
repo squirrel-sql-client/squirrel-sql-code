@@ -100,6 +100,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 
 		private JCheckBox _showContents = new JCheckBox(i18n.SHOW_CONTENTS);
 		private JCheckBox _showToolTips = new JCheckBox(i18n.SHOW_TOOLTIPS);
+		private JCheckBox _useScrollableTabbedPanes = new JCheckBox("Use Scrollable Tabbed Panes (JDK1.4 and above)");
 		private IntegerField _loginTimeout = new IntegerField();
 		private JLabel _executionLogFileNameLbl = new OutputLabel(" ");// Must have at least 1 blank otherwise width gets set to zero.
 		private JLabel _logConfigFileNameLbl = new OutputLabel(" ");// Must have at least 1 blank otherwise width gets set to zero.
@@ -116,6 +117,8 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 
 			_showContents.setSelected(prefs.getShowContentsWhenDragging());
 			_showToolTips.setSelected(prefs.getShowToolTips());
+			_useScrollableTabbedPanes.setSelected(prefs.useScrollableTabbedPanes());
+
 			_loginTimeout.setInt(prefs.getLoginTimeout());
 			_executionLogFileNameLbl.setText(appFiles.getExecutionLogFile().getPath());
 
@@ -129,6 +132,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 		void applyChanges(SquirrelPreferences prefs) {
 			prefs.setShowContentsWhenDragging(_showContents.isSelected());
 			prefs.setShowToolTips(_showToolTips.isSelected());
+			prefs.setUseScrollableTabbedPanes(_useScrollableTabbedPanes.isSelected());
 			prefs.setLoginTimeout(_loginTimeout.getInt());
 			prefs.setDebugJdbc(_debugJdbc.isSelected());
 		}
@@ -155,6 +159,8 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 			pnl.add(_showContents, gbc);
 			++gbc.gridy;
 			pnl.add(_showToolTips, gbc);
+			++gbc.gridy;
+			pnl.add(_useScrollableTabbedPanes, gbc);
 			
 			return pnl;
 		}
@@ -165,8 +171,8 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 			
 			pnl.setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.fill = gbc.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
+			gbc.anchor = gbc.WEST;
 
 			gbc.gridx = 0;
 			gbc.gridy = 0;
