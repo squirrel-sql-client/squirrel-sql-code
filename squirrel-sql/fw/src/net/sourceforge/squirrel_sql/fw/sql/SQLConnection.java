@@ -187,6 +187,16 @@ public class SQLConnection {
 		}
 	}
 
+	public String getCatalog()
+			throws NoConnectionException, BaseSQLException {
+		validateConnection();
+		try {
+			return getConnection().getCatalog();
+		} catch (SQLException ex) {
+			throw new BaseSQLException(ex);
+		}
+	}
+
 	public String[] getCatalogs()
 			throws NoConnectionException, BaseSQLException {
 		DatabaseMetaData md = getMetaData();
@@ -467,6 +477,21 @@ public class SQLConnection {
 		}
 	}
 
+	public void setCatalog(String catalogName)
+			throws NoConnectionException, BaseSQLException {
+		validateConnection();
+		try {
+			getConnection().setCatalog(catalogName);
+		} catch (SQLException ex) {
+			throw new BaseSQLException(ex);
+		}
+	}
+
+	public boolean supportsCatalogs() throws NoConnectionException, BaseSQLException {
+		return supportsCatalogsInTableDefinitions() || supportsCatalogsInDataManipulation() ||
+				supportsCatalogsInProcedureCalls();
+	}
+
 	public boolean supportsCatalogsInTableDefinitions() throws NoConnectionException, BaseSQLException {
 		try {
 			return getMetaData().supportsCatalogsInTableDefinitions();
@@ -498,6 +523,10 @@ public class SQLConnection {
 			}
 			throw new BaseSQLException(ex);
 		}
+	}
+
+	public boolean supportsSchemas() throws NoConnectionException, BaseSQLException {
+		return supportsSchemasInDataManipulation() || supportsSchemasInTableDefinitions();
 	}
 
 	public boolean supportsSchemasInDataManipulation() throws NoConnectionException, BaseSQLException {
