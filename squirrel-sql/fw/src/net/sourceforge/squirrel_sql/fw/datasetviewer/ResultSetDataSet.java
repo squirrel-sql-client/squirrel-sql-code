@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -31,67 +32,84 @@ public class ResultSetDataSet implements IDataSet {
 	private int _iCurrent = -1;
 	private Object[] _currentRow;
 	
-    private int[] _columnIndices;
-    private int _columnCount;
-    private DataSetDefinition _dataSetDefinition;
+	private int[] _columnIndices;
+	private int _columnCount;
+	private DataSetDefinition _dataSetDefinition;
 	private ArrayList _alData;
 
-    public ResultSetDataSet() throws DataSetException {
-        this(null, null);
-    }
+	public ResultSetDataSet() throws DataSetException {
+		this(null, null);
+	}
 
-    public ResultSetDataSet(ResultSet rs) throws DataSetException {
-        this(rs, null);
-    }
+	public ResultSetDataSet(ResultSet rs) throws DataSetException {
+		this(rs, null);
+	}
 
-    public ResultSetDataSet(ResultSet rs, int[] columnIndices)
-            throws IllegalArgumentException, DataSetException {
-        super();
-        setResultSet(rs, columnIndices);
-    }
+	public ResultSetDataSet(ResultSet rs, int[] columnIndices)
+			throws IllegalArgumentException, DataSetException {
+		super();
+		setResultSet(rs, columnIndices);
+	}
 
-    public void setResultSet(ResultSet rs) throws DataSetException {
-        setResultSet(rs, null);
-    }
+	public void setResultSet(ResultSet rs) throws DataSetException {
+		setResultSet(rs, null);
+	}
 
-    public void setResultSet(ResultSet rs, int[] columnIndices) throws DataSetException {
-        if (columnIndices != null && columnIndices.length == 0) {
-            columnIndices = null;
-        }
-        _columnIndices = columnIndices;
-        _iCurrent = -1;
-        _alData = new ArrayList();
-        
-        if (rs != null) {
-            try {
-                ResultSetMetaData md = rs.getMetaData();
-                _columnCount = columnIndices != null ? columnIndices.length : md.getColumnCount();
-                _dataSetDefinition = new DataSetDefinition(createColumnDefinitions(md, columnIndices));
-				while (rs.next()) 
-				{
-	                Object[] row = new Object[_columnCount];
-					for (int i = 0; i < _columnCount; ++i) 
-					{
+	public void setResultSet(ResultSet rs, int[] columnIndices) throws DataSetException {
+		if (columnIndices != null && columnIndices.length == 0) {
+			columnIndices = null;
+		}
+		_columnIndices = columnIndices;
+		_iCurrent = -1;
+		_alData = new ArrayList();
+		
+		if (rs != null) {
+			try {
+				ResultSetMetaData md = rs.getMetaData();
+				_columnCount = columnIndices != null ? columnIndices.length : md.getColumnCount();
+				_dataSetDefinition = new DataSetDefinition(createColumnDefinitions(md, columnIndices));
+				while (rs.next()) {
+					Object[] row = new Object[_columnCount];
+					for (int i = 0; i < _columnCount; ++i) {
 						int idx = _columnIndices != null ? _columnIndices[i] : i + 1;
 						row[i] = rs.getString(idx);
+						switch (md.getColumnType(idx)) {
+							case Types.BIGINT:
+							case Types.BIT:
+							case Types.CHAR:
+							case Types.DATE:
+							case Types.DECIMAL:
+							case Types.DOUBLE:
+							case Types.FLOAT:
+							case Types.INTEGER:
+							case Types.NUMERIC:
+							case Types.REAL:
+							case Types.SMALLINT:
+							case Types.TIME:
+							case Types.TIMESTAMP:
+							case Types.TINYINT:
+							case Types.VARCHAR:
+								row[i] = rs.getString(idx);
+								break;
+							default:
+								row[i] = "<Unknown>";
+						}
 					}
 					_alData.add(row);
-	            }
-            } 
-			catch (SQLException ex) 
-            {
-                throw new DataSetException(ex);
-            }
-        }
-    }
+				}
+			} catch (SQLException ex) {
+				throw new DataSetException(ex);
+			}
+		}
+	}
 
-    public final int getColumnCount() {
-        return _columnCount;
-    }
+	public final int getColumnCount() {
+		return _columnCount;
+	}
 
-    public DataSetDefinition getDataSetDefinition() {
-        return _dataSetDefinition;
-    }
+	public DataSetDefinition getDataSetDefinition() {
+		return _dataSetDefinition;
+	}
 
 	public synchronized boolean next(IMessageHandler msgHandler) throws DataSetException 
 	{
@@ -104,20 +122,20 @@ public class ResultSetDataSet implements IDataSet {
 		return false;
 	}
 
-    public Object get(int columnIndex) 
-    {
-        return _currentRow[columnIndex];
-    }
+	public Object get(int columnIndex) 
+	{
+		return _currentRow[columnIndex];
+	}
 
-    private ColumnDisplayDefinition[] createColumnDefinitions(ResultSetMetaData md,
-                                                        int[] columnIndices)
-            throws SQLException {
-        ColumnDisplayDefinition[] columnDefs = new ColumnDisplayDefinition[_columnCount];
-        for (int i = 0; i < _columnCount; ++i) {
-            int idx = columnIndices != null ? columnIndices[i] : i + 1;
-            columnDefs[i] = new ColumnDisplayDefinition(
-                            md.getColumnDisplaySize(idx), md.getColumnLabel(idx));
-        }
-        return columnDefs;
-    }
+	private ColumnDisplayDefinition[] createColumnDefinitions(ResultSetMetaData md,
+														int[] columnIndices)
+			throws SQLException {
+		ColumnDisplayDefinition[] columnDefs = new ColumnDisplayDefinition[_columnCount];
+		for (int i = 0; i < _columnCount; ++i) {
+			int idx = columnIndices != null ? columnIndices[i] : i + 1;
+			columnDefs[i] = new ColumnDisplayDefinition(
+							md.getColumnDisplaySize(idx), md.getColumnLabel(idx));
+		}
+		return columnDefs;
+	}
 }
