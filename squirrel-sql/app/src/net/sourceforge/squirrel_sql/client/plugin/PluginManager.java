@@ -39,7 +39,8 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class PluginManager {
+public class PluginManager
+{
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(PluginManager.class);
 
@@ -76,9 +77,20 @@ public class PluginManager {
 
 	/**
 	 * Ctor. Loads plugins from the plugins directory.
+	 * 
+	 * @param	app	Application API.
+	 * 
+	 * @throws	IllegalArgumentException.
+	 * 			Thrown if <TT>null</TT> <TT>IApplication</TT> passed.
 	 */
-	public PluginManager(IApplication app) {
+	public PluginManager(IApplication app)
+	{
 		super();
+		if (app == null)
+		{
+			throw new IllegalArgumentException("IApplication == null");
+		}
+
 		_app = app;
 	}
 
@@ -91,17 +103,26 @@ public class PluginManager {
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> ISession</TT> passed.
 	 */
-	public synchronized void sessionCreated(ISession session) {
-		if (session == null) {
-			throw new IllegalArgumentException("Null ISession passed");
+	public synchronized void sessionCreated(ISession session)
+	{
+		if (session == null)
+		{
+			throw new IllegalArgumentException("ISession == null");
 		}
-		for (Iterator it = _sessionPlugins.iterator(); it.hasNext();) {
-			SessionPluginInfo spi = (SessionPluginInfo)it.next();
-			try {
+
+		for (Iterator it = _sessionPlugins.iterator(); it.hasNext();)
+		{
+			SessionPluginInfo spi = (SessionPluginInfo) it.next();
+			try
+			{
 				spi.getSessionPlugin().sessionCreated(session);
-			} catch (Throwable th) {
-				s_log.error("Error occured in IPlugin.sessionCreated() for "
-							+ spi.getPlugin().getDescriptiveName(), th);
+			}
+			catch (Throwable th)
+			{
+				String msg =
+					"Error occured in IPlugin.sessionCreated() for " + spi.getPlugin().getDescriptiveName();
+				s_log.error(msg, th);
+				_app.showErrorDialog(msg, th);
 			}
 		}
 	}
@@ -114,21 +135,30 @@ public class PluginManager {
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> ISession</TT> passed.
 	 */
-	public synchronized void sessionStarted(ISession session) {
-		if (session == null) {
-			throw new IllegalArgumentException("Null ISession passed");
+	public synchronized void sessionStarted(ISession session)
+	{
+		if (session == null)
+		{
+			throw new IllegalArgumentException("ISession == null");
 		}
 		List plugins = new ArrayList();
 		_activeSessions.put(session.getIdentifier(), plugins);
-		for (Iterator it = _sessionPlugins.iterator(); it.hasNext();) {
-			SessionPluginInfo spi = (SessionPluginInfo)it.next();
-			try {
-				if (spi.getSessionPlugin().sessionStarted(session)) {
+		for (Iterator it = _sessionPlugins.iterator(); it.hasNext();)
+		{
+			SessionPluginInfo spi = (SessionPluginInfo) it.next();
+			try
+			{
+				if (spi.getSessionPlugin().sessionStarted(session))
+				{
 					plugins.add(spi);
 				}
-			} catch (Throwable th) {
-				s_log.error("Error occured in IPlugin.sessionStarted() for "
-							+ spi.getPlugin().getDescriptiveName(), th);
+			}
+			catch (Throwable th)
+			{
+				String msg =
+					"Error occured in IPlugin.sessionStarted() for " + spi.getPlugin().getDescriptiveName();
+				s_log.error(msg, th);
+				_app.showErrorDialog(msg, th);
 			}
 		}
 	}
@@ -141,18 +171,29 @@ public class PluginManager {
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> ISession</TT> passed.
 	 */
-	public synchronized void sessionEnding(ISession session) {
-		if (session == null) {
-			throw new IllegalArgumentException("Null ISession passed");
+	public synchronized void sessionEnding(ISession session)
+	{
+		if (session == null)
+		{
+			throw new IllegalArgumentException("ISession == null");
 		}
-		List plugins = (List)_activeSessions.remove(session.getIdentifier());
-		if (plugins != null) {
-			for (Iterator it = plugins.iterator(); it.hasNext();) {
-				SessionPluginInfo spi = (SessionPluginInfo)it.next();
-				try {
+
+		List plugins = (List) _activeSessions.remove(session.getIdentifier());
+		if (plugins != null)
+		{
+			for (Iterator it = plugins.iterator(); it.hasNext();)
+			{
+				SessionPluginInfo spi = (SessionPluginInfo) it.next();
+				try
+				{
 					spi.getSessionPlugin().sessionEnding(session);
-				} catch (Throwable th) {
-					s_log.error("Error occured in IPlugin.sessionEnding() for " + spi.getPlugin().getDescriptiveName(), th);
+				}
+				catch (Throwable th)
+				{
+					String msg =
+						"Error occured in IPlugin.sessionEnding() for " + spi.getPlugin().getDescriptiveName();
+					s_log.error(msg, th);
+					_app.showErrorDialog(msg, th);
 				}
 			}
 		}
@@ -161,144 +202,204 @@ public class PluginManager {
 	/**
 	 * Unload all plugins.
 	 */
-	public synchronized void unloadPlugins() {
-		for (Iterator it = _loadedPlugins.values().iterator(); it.hasNext();) {
-			IPlugin plugin = (IPlugin)it.next();
-			try {
+	public synchronized void unloadPlugins()
+	{
+		for (Iterator it = _loadedPlugins.values().iterator(); it.hasNext();)
+		{
+			IPlugin plugin = (IPlugin) it.next();
+			try
+			{
 				plugin.unload();
-			} catch (Throwable th) {
-				s_log.error("Error ocured unloading plugin: "
-							+ plugin.getInternalName(), th);
+			}
+			catch (Throwable th)
+			{
+				String msg = "Error ocured unloading plugin: " + plugin.getInternalName();
+				s_log.error(msg, th);
+				_app.showErrorDialog(msg, th);
 			}
 		}
 	}
 
-	public synchronized PluginInfo[] getPluginInformation() {
-		return (PluginInfo[])_plugins.toArray(new PluginInfo[_plugins.size()]);
+	public synchronized PluginInfo[] getPluginInformation()
+	{
+		return (PluginInfo[]) _plugins.toArray(new PluginInfo[_plugins.size()]);
 	}
 
-	public synchronized SessionPluginInfo[] getPluginInformation(ISession session) {
-		if (session == null) {
+	public synchronized SessionPluginInfo[] getPluginInformation(ISession session)
+	{
+		if (session == null)
+		{
 			throw new IllegalArgumentException("Null ISession passed");
 		}
-		List list = (List)_activeSessions.get(session.getIdentifier());
-		if (list != null) {
-			return (SessionPluginInfo[])list.toArray(new SessionPluginInfo[list.size()]);
+		List list = (List) _activeSessions.get(session.getIdentifier());
+		if (list != null)
+		{
+			return (SessionPluginInfo[]) list.toArray(new SessionPluginInfo[list.size()]);
 		}
 		return new SessionPluginInfo[0];
 	}
 
-	public synchronized IPluginDatabaseObjectType[] getDatabaseObjectTypes(ISession session) {
+	public synchronized IPluginDatabaseObjectType[] getDatabaseObjectTypes(ISession session)
+	{
 		List objTypesList = new ArrayList();
-		List plugins = (List)_activeSessions.get(session.getIdentifier());
-		if (plugins != null) {
-			for (Iterator it = plugins.iterator(); it.hasNext();) {
-				SessionPluginInfo spi = (SessionPluginInfo)it.next();
+		List plugins = (List) _activeSessions.get(session.getIdentifier());
+		if (plugins != null)
+		{
+			for (Iterator it = plugins.iterator(); it.hasNext();)
+			{
+				SessionPluginInfo spi = (SessionPluginInfo) it.next();
 				IPluginDatabaseObjectType[] objTypes = spi.getSessionPlugin().getObjectTypes(session);
-				if (objTypes != null) {
-					for (int i = 0; i < objTypes.length; ++i) {
+				if (objTypes != null)
+				{
+					for (int i = 0; i < objTypes.length; ++i)
+					{
 						objTypesList.add(objTypes[i]);
 					}
 				}
 			}
 		}
 
-		return (IPluginDatabaseObjectType[])objTypesList.toArray(new IPluginDatabaseObjectType[objTypesList.size()]);
+		return (IPluginDatabaseObjectType[]) objTypesList.toArray(
+			new IPluginDatabaseObjectType[objTypesList.size()]);
 	}
 
 	/**
 	 * Load plugins. Load all plugin jars into class loader.
 	 */
-	public void loadPlugins() {
+	public void loadPlugins()
+	{
 		List pluginUrls = new ArrayList();
 		File dir = new File(ApplicationFiles.SQUIRREL_PLUGINS_FOLDER);
-		if (dir.isDirectory()) {
+		if (dir.isDirectory())
+		{
 			String[] files = dir.list();
-			for (int i = 0; i < files.length; ++i) {
+			for (int i = 0; i < files.length; ++i)
+			{
 				String fileName = files[i];
-				if (fileName.toLowerCase().endsWith(".zip") ||
-						fileName.toLowerCase().endsWith(".jar")) {
-					String jarFileName = ApplicationFiles.SQUIRREL_PLUGINS_FOLDER +
-											File.separator + fileName;
-					try {
+				if (fileName.toLowerCase().endsWith(".zip") || fileName.toLowerCase().endsWith(".jar"))
+				{
+					String jarFileName = ApplicationFiles.SQUIRREL_PLUGINS_FOLDER + File.separator + fileName;
+					try
+					{
 						pluginUrls.add(new File(jarFileName).toURL());
-					} catch (IOException ex) {
-						s_log.error("Unable to load plugin jar: " + jarFileName, ex);
+					}
+					catch (IOException ex)
+					{
+						String msg = "Unable to load plugin jar: " + jarFileName;
+						s_log.error(msg, ex);
+						_app.showErrorDialog(msg, ex);
 					}
 				}
 			}
 		}
 
-		URL[] urls = (URL[])pluginUrls.toArray(new URL[pluginUrls.size()]);
+		URL[] urls = (URL[]) pluginUrls.toArray(new URL[pluginUrls.size()]);
 		_pluginsClassLoader = new MyURLClassLoader(urls);
 
-		try {
+		try
+		{
 			Class[] classes = _pluginsClassLoader.getAssignableClasses(IPlugin.class, s_log);
-			for (int i = 0; i < classes.length; ++i) {
-				try {
-					loadPlugin(classes[i]);
-				} catch (Throwable th) {
-					s_log.error("Error occured loading plugin class "
-								+ classes[i].getName(), th);
+			for (int i = 0; i < classes.length; ++i)
+			{
+				Class clazz = classes[i];
+				try
+				{
+					loadPlugin(clazz);
+					throw new IOException("Rupert");
+				}
+				catch (Throwable th)
+				{
+					String msg = "Error occured loading plugin class: " + clazz.getName();
+					s_log.error(msg, th);
+					_app.showErrorDialog(msg, th);
 				}
 			}
-		} catch (IOException ex) {
-			s_log.error("Error occured retrieving plugins. No plugins have been loaded.", ex);
+		}
+		catch (IOException ex)
+		{
+			String msg = "Error occured retrieving plugins. No plugins have been loaded.";
+			s_log.error(msg, ex);
+			_app.showErrorDialog(msg, ex);
 		}
 	}
 
 	/**
 	 * Initialize plugins.
 	 */
-	public void initializePlugins() {
+	public void initializePlugins()
+	{
 		final boolean debug = s_log.isDebugEnabled();
-		for (Iterator it = _loadedPlugins.values().iterator(); it.hasNext();) {
-			IPlugin plugin = (IPlugin)it.next();
-			try {
-		   		long now = System.currentTimeMillis();
+		for (Iterator it = _loadedPlugins.values().iterator(); it.hasNext();)
+		{
+			IPlugin plugin = (IPlugin) it.next();
+			try
+			{
+				long now = System.currentTimeMillis();
 				plugin.initialize();
-			   	s_log.info("Plugin " + plugin.getInternalName() +
-			   				" initialised in " + (System.currentTimeMillis() - now) + " ms.");
-			} catch (Throwable th) {
-				s_log.error("Error ocured unloading plugin: " + plugin.getInternalName(), th);
+				s_log.info(
+					"Plugin "
+						+ plugin.getInternalName()
+						+ " initialised in "
+						+ (System.currentTimeMillis() - now)
+						+ " ms.");
+			}
+			catch (Throwable th)
+			{
+				String msg = "Error ocured initializing plugin: " + plugin.getInternalName();
+				s_log.error(msg, th);
+				_app.showErrorDialog(msg, th);
 			}
 		}
 	}
 
-	private void loadPlugin(Class pluginClass) {
+	private void loadPlugin(Class pluginClass)
+	{
 		PluginInfo pi = new PluginInfo(pluginClass.getName());
-		try {
-	   		long now = System.currentTimeMillis();
-			IPlugin plugin = (IPlugin)pluginClass.newInstance();
+		try
+		{
+			long now = System.currentTimeMillis();
+			IPlugin plugin = (IPlugin) pluginClass.newInstance();
 			pi.setPlugin(plugin);
 			_plugins.add(pi);
-			if (validatePlugin(plugin)) {
+			if (validatePlugin(plugin))
+			{
 				plugin.load(_app);
 				pi.setLoaded(true);
 				_loadedPlugins.put(plugin.getInternalName(), plugin);
-				if (ISessionPlugin.class.isAssignableFrom(pluginClass)) {
+				if (ISessionPlugin.class.isAssignableFrom(pluginClass))
+				{
 					_sessionPlugins.add(new SessionPluginInfo(pi));
 				}
-			  	s_log.info("Plugin " + plugin.getInternalName()
-							+ " loaded in " + (System.currentTimeMillis() - now) + " ms.");
+				s_log.info(
+					"Plugin "
+						+ plugin.getInternalName()
+						+ " loaded in "
+						+ (System.currentTimeMillis() - now)
+						+ " ms.");
 			}
-		} catch (Throwable th) {
-			s_log.error("Error occured loading class " +
-						pluginClass.getName() + " from plugin", th);
+		}
+		catch (Throwable th)
+		{
+			String msg = "Error occured loading class " + pluginClass.getName() + " from plugin";
+			s_log.error(msg, th);
+			_app.showErrorDialog(msg, th);
 		}
 	}
 
-	private boolean validatePlugin(IPlugin plugin) {
+	private boolean validatePlugin(IPlugin plugin)
+	{
 		String pluginInternalName = plugin.getInternalName();
-		if (pluginInternalName == null || pluginInternalName.trim().length() == 0) {
-			s_log.error("Plugin " + plugin.getClass().getName() +
-							"doesn't return a valid getInternalName()");
+		if (pluginInternalName == null || pluginInternalName.trim().length() == 0)
+		{
+			s_log.error(
+				"Plugin " + plugin.getClass().getName() + "doesn't return a valid getInternalName()");
 			return false;
 		}
 
-		if (_loadedPlugins.get(pluginInternalName) != null) {
-			s_log.error("A Plugin with the internal name " + pluginInternalName +
-							" has already been loaded");
+		if (_loadedPlugins.get(pluginInternalName) != null)
+		{
+			s_log.error(
+				"A Plugin with the internal name " + pluginInternalName + " has already been loaded");
 			return false;
 		}
 
