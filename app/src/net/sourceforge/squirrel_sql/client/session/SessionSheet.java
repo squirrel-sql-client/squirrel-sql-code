@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -91,7 +91,7 @@ public class SessionSheet extends JPanel
 	private MyToolBar _toolBar;
 
 	private Vector _externallyAddedToolbarActions = new Vector();
-		
+
 	private StatusBar _statusBar = new StatusBar();
 	private boolean _hasBeenVisible;
 
@@ -295,7 +295,7 @@ public class SessionSheet extends JPanel
 			_toolBar.add(action);
 		}
 	}
-	
+
 	/**
 	 * Add component to the session sheets status bar.
 	 *
@@ -337,7 +337,7 @@ public class SessionSheet extends JPanel
 				SessionProperties.IPropertyNames.SHOW_TOOL_BAR))
 		{
 			synchronized(this)
-			{	
+			{
 				boolean show = props.getShowToolBar();
 				if (show != (_toolBar != null))
 				{
@@ -350,7 +350,7 @@ public class SessionSheet extends JPanel
 							{
 								_toolBar.add((Action)_externallyAddedToolbarActions.get(i));
 							}
-	
+
 							add(_toolBar, BorderLayout.NORTH);
 						}
 					}
