@@ -21,6 +21,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -42,7 +43,6 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
-import net.sourceforge.squirrel_sql.client.session.properties.FormatSessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.session.properties.GeneralSessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionObjectTreePropertiesPanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionSQLPropertiesPanel;
@@ -184,7 +184,6 @@ public class NewSessionPropertiesSheet extends BaseSheet
 		_panels.add(new GeneralSessionPropertiesPanel());
 		_panels.add(new SessionObjectTreePropertiesPanel(_app));
 		_panels.add(new SessionSQLPropertiesPanel(_app));
-		_panels.add(new FormatSessionPropertiesPanel(_app));
 
 		// Go thru all loaded plugins asking for panels.
 		PluginInfo[] plugins = _app.getPluginManager().getPluginInformation();
@@ -214,6 +213,7 @@ public class NewSessionPropertiesSheet extends BaseSheet
 			String hint = pnl.getHint();
 			final JScrollPane sp = new JScrollPane(pnl.getPanelComponent());
 			sp.setBorder(BorderFactory.createEmptyBorder());
+			sp.setPreferredSize(new Dimension(450, 350));
 			tabPane.addTab(winTitle, null, sp/*pnl.getPanelComponent()*/, hint);
 		}
 

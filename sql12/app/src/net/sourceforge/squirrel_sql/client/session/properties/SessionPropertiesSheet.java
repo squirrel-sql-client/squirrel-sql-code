@@ -21,6 +21,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -172,7 +173,6 @@ public class SessionPropertiesSheet extends BaseSheet
 		_panels.add(new GeneralSessionPropertiesPanel());
 		_panels.add(new SessionObjectTreePropertiesPanel(app));
 		_panels.add(new SessionSQLPropertiesPanel(app));
-		_panels.add(new FormatSessionPropertiesPanel(app));
 
 		// Go thru all plugins attached to this session asking for panels.
 		SessionPluginInfo[] plugins = app.getPluginManager().getPluginInformation(_session);
@@ -202,6 +202,7 @@ public class SessionPropertiesSheet extends BaseSheet
 			String hint = pnl.getHint();
 			final JScrollPane sp = new JScrollPane(pnl.getPanelComponent());
 			sp.setBorder(BorderFactory.createEmptyBorder());
+			sp.setPreferredSize(new Dimension(450, 350));
 			tabPane.addTab(pnlTitle, null, sp, hint);
 		}
 
