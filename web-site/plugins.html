@@ -11,6 +11,12 @@
 			<p>A plugin is an application written in Java that runs within SQuirreL. This
 			allows developers to enhance the functionality of SQuirreL without having to
 			rebuild the SQuirreL application itself.</p>
+			<p>The <a href="#stable">stable plugins</a> are designed for the <a
+				href="http://sourceforge.net/project/showfiles.php?group_id=28383&package_id=29193">Stable</a>
+			release of SQuirreL and the <a href="#beta">beta plugins</a> are designed for the <a
+				href="http://sourceforge.net/project/showfiles.php?group_id=28383&package_id=22079">beta</a>
+			version of SQuirreL.</p>
+			<p>The source for each plugin is supplied with it.</p>
 		</td>
 		<td class="body_right_border">&nbsp;</td>
 	</tr>
@@ -36,9 +42,7 @@
 			<a href="http://sourceforge.net/project/showfiles.php?group_id=28383">Downloads</a>
 			page and unpack
 			it into the plugins directory within the SQuirreL SQL Client
-			application directory.</p>
-			<p>Please be sure that you select the "use folder names" option. The
-			source for each plugin is supplied with it.</p>
+			application directory. Please be sure to preserve the directory structure when you unpack the files.</p>
 		</td>
 		<td class="body_right_border">&nbsp;</td>
 	</tr>
@@ -58,7 +62,7 @@
 	<tr>
 		<td class="body_left_border">&nbsp;</td>
 		<td width='100%' bgcolor="white" valign="top">
-			<h1 class="body">Stable Plugins</h1>
+			<h1 class="body"><a name="stable">Stable Plugins</a></h1>
 
 <!-- jEdit plugin -->			  
 				<table width="100%" border="0" cellpadding="4" cellspacing="0">
@@ -274,7 +278,7 @@
 	<tr>
 		<td class="body_left_border">&nbsp;</td>
 		<td width='100%' bgcolor="white" valign="top">
-			<h1 class="body">Beta Plugins</h1>
+			<h1 class="body"><a name="beta">Beta Plugins</a></h1>
 
 <!-- MySQL Plugin. -->
 			<table width="100%" border="0" cellpadding="4" cellspacing="0">
@@ -359,6 +363,29 @@
 						<P>This plugin provides search and replace
 						functionality, adding and removing Java quoting around
 						SQL and formating of SQL in the SQL entry area.</P>
+					</td>
+				</tr>
+			</table>
+
+<!-- SQL Entry Completion Plugin. -->
+			<table width="100%" border="0" cellpadding="4" cellspacing="0">
+				<tr>
+					<td width="50%">
+						<p><a href="http://sourceforge.net/project/showfiles.php?group_id=28383&package_id=64864&release_id=239088">SQL Entry Completion Plugin</a> by
+						<a href="https://sourceforge.net/sendmessage.php?touser=776065">Gerd Wagner</a>
+						<br>Version 0.10 released 18 May 2004</p>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2"><p><em>Requirements:</em> SQuirreL SQL Client 1.2beta5+ and JDK1.4.1+</p></td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<p>This plugin offers code completion in much the same
+						way as modern IDEs do. You use code completion through
+						the standard ctrl space key.  Completion works on
+						tables, views, columns catalogs, schemas, aliases and
+						SQL keywords.</p>
 					</td>
 				</tr>
 			</table>
