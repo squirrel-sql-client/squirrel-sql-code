@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.action;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -57,7 +57,6 @@ import net.sourceforge.squirrel_sql.client.session.action.CopySimpleObjectNameAc
 import net.sourceforge.squirrel_sql.client.session.action.DropSelectedTablesAction;
 import net.sourceforge.squirrel_sql.client.session.action.DumpSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
-import net.sourceforge.squirrel_sql.client.session.action.FilterObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.GotoNextResultsTabAction;
 import net.sourceforge.squirrel_sql.client.session.action.GotoPreviousResultsTabAction;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
@@ -87,7 +86,7 @@ public final class ActionCollection
 	private IApplication _app;
 
 	/** Collection of all Actions keyed by class name. */
-	private Map _actionColl = new HashMap();
+	private final Map _actionColl = new HashMap();
 
 	/**
 	 * Ctor. Disable all actions that are not valid when the
@@ -373,7 +372,7 @@ public final class ActionCollection
 		add(new MaximizeAction(_app));
 		add(new NewSessionPropertiesAction(_app));
 		add(new NextSessionAction(_app));
-		add(new FilterObjectTreeAction(_app));
+//		add(new FilterObjectTreeAction(_app));
 		add(new PreviousSessionAction(_app));
 		add(new ReconnectAction(_app));
 		add(new RefreshObjectTreeAction(_app));
