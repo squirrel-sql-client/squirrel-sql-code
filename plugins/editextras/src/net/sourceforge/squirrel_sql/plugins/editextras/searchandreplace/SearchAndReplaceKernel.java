@@ -72,6 +72,10 @@ public class SearchAndReplaceKernel
 			{
 				ret.append("(\\^)");
 			}
+         else if('?' == _lastFindConfig.toSearch.charAt(i))
+         {
+            ret.append("(\\?)");
+         }
 			else if('$' == _lastFindConfig.toSearch.charAt(i))
 			{
 				ret.append("(\\$)");
