@@ -31,7 +31,7 @@ import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxStyle;
 /**
  * This panel allows maintenance of the selected Syntax Style.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class StyleMaintenancePanel extends JToolBar
 {
@@ -43,7 +43,7 @@ public class StyleMaintenancePanel extends JToolBar
 	private FontColorButtonListener _fontColorBtnLis;
 	private BackgroundColorButtonListener _backgroundColorBtnLis;
 	private ActionListener _toggleLis;
-	
+
 	private SyntaxStyle _style;
 
 	public StyleMaintenancePanel(StylesList list, SyntaxPluginResources rsrc)
@@ -75,7 +75,7 @@ public class StyleMaintenancePanel extends JToolBar
 	public void addNotify()
 	{
 		super.addNotify();
-	
+
 		if (_fontColorBtnLis == null)
 		{
 			_fontColorBtnLis = new FontColorButtonListener(_list);
@@ -91,7 +91,7 @@ public class StyleMaintenancePanel extends JToolBar
 			_italicChk.addActionListener(_toggleLis);
 		}
 	}
-	
+
 	/**
 	 * Component has been removed from its parent so remove listeners etc.
 	 */
@@ -110,7 +110,7 @@ public class StyleMaintenancePanel extends JToolBar
 			_italicChk.removeActionListener(_toggleLis);
 			_toggleLis = null;
 		}
-	
+
 		super.removeNotify();
 	}
 
@@ -147,7 +147,7 @@ public class StyleMaintenancePanel extends JToolBar
 	private static class FontColorButtonListener implements ActionListener
 	{
 		private final StylesList _list;
-			
+
 		FontColorButtonListener(StylesList list)
 		{
 			super();
@@ -175,7 +175,7 @@ public class StyleMaintenancePanel extends JToolBar
 	private static class BackgroundColorButtonListener implements ActionListener
 	{
 		private final StylesList _list;
-			
+
 		BackgroundColorButtonListener(StylesList list)
 		{
 			super();
@@ -192,7 +192,7 @@ public class StyleMaintenancePanel extends JToolBar
 			{
 				style.setBackgroundRGB(color.getRGB());
 			}
-				
+
 		}
 	}
 }

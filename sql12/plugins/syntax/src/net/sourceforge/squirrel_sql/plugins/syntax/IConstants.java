@@ -21,7 +21,7 @@ package net.sourceforge.squirrel_sql.plugins.syntax;
 /**
  * Plugin constants.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public interface IConstants
 {
@@ -40,6 +40,7 @@ public interface IConstants
 
 	interface IStyleNames
 	{
+		String COLUMN = "columnName";
 		String COMMENT = "comment";
 		String DATA_TYPE = "datatype";
 		String ERROR = "error";
@@ -49,6 +50,7 @@ public interface IConstants
 		String OPERATOR = "operator";
 		String RESERVED_WORD = "reservedWord";
 		String SEPARATOR = "separator";
+		String TABLE = "tableName";
 		String WHITESPACE = "whitespace";
 	}
 }

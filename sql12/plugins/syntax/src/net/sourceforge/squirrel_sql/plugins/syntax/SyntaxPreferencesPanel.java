@@ -44,7 +44,7 @@ import net.sourceforge.squirrel_sql.plugins.syntax.prefspanel.StylesList;
 /**
  * New Session and Current Session preferences panel for this plugin.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SyntaxPreferencesPanel
 	implements INewSessionPropertiesPanel, ISessionPropertiesPanel
@@ -84,7 +84,7 @@ public class SyntaxPreferencesPanel
 	 * Panel is being loaded for the Application Preferences. This means that
 	 * the settings are for newly created sessions.
 	 *
-	 * @param   app	 Application API.
+	 * @param	app	 Application API.
 	 */
 	public void initialize(IApplication app)
 	{
@@ -95,7 +95,7 @@ public class SyntaxPreferencesPanel
 	 * Panel is being loaded for the Session Properties. This means that
 	 * the settings are for the current session only.
 	 *
-	 * @param   app	 Application API.
+	 * @param	app	 Application API.
 	 *
 	 * @throws	IllegalArgumentException
 	 *			if <TT>IApplication</TT> is <TT>null</TT>.
@@ -117,7 +117,7 @@ public class SyntaxPreferencesPanel
 	/**
 	 * Return the component to be displayed in the Preferences dialog.
 	 *
-	 * @return  the component to be displayed in the Preferences dialog.
+	 * @return	the component to be displayed in the Preferences dialog.
 	 */
 	public Component getPanelComponent()
 	{
@@ -136,7 +136,7 @@ public class SyntaxPreferencesPanel
 	/**
 	 * Return the title for this panel.
 	 *
-	 * @return  the title for this panel.
+	 * @return	the title for this panel.
 	 */
 	public String getTitle()
 	{
@@ -146,7 +146,7 @@ public class SyntaxPreferencesPanel
 	/**
 	 * Return the hint for this panel.
 	 *
-	 * @return  the hint for this panel.
+	 * @return	the hint for this panel.
 	 */
 	public String getHint()
 	{
@@ -267,6 +267,7 @@ public class SyntaxPreferencesPanel
 //			prefs.setBracketHighlightRGB(_bracketAttributesPnl.getAttributeColor().getRGB());
 //			prefs.setLineNumberRGB(_lineNumberAttributesPnl.getAttributeColor().getRGB());
 
+			prefs.setColumnStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.COLUMNS));
 			prefs.setCommentStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.COMMENTS));
 			prefs.setErrorStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.ERRORS));
 			prefs.setFunctionStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.FUNCTIONS));
@@ -275,6 +276,7 @@ public class SyntaxPreferencesPanel
 			prefs.setOperatorStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.OPERATORS));
 			prefs.setReservedWordStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.RESERVED_WORDS));
 			prefs.setSeparatorStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.SEPARATORS));
+			prefs.setTableStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.TABLES));
 			prefs.setWhiteSpaceStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.WHITE_SPACE));
 		}
 
@@ -393,7 +395,7 @@ public class SyntaxPreferencesPanel
 			pnl.setBorder(BorderFactory.createTitledBorder("Syntax Styles"));
 
 			_styleMaintPnl = new StyleMaintenancePanel(_stylesList, rsrc);
- 
+
 			pnl.add(_styleMaintPnl, BorderLayout.NORTH);
 			pnl.add(_stylesList, BorderLayout.CENTER);
 
@@ -432,7 +434,7 @@ public class SyntaxPreferencesPanel
 //				final GridBagConstraints gbc = new GridBagConstraints();
 //				gbc.fill = GridBagConstraints.HORIZONTAL;
 //				gbc.insets = new Insets(2, 0, 2, 0);
-//	
+//
 //				gbc.weightx = 1.0;
 //				gbc.gridx = 0;
 //				gbc.gridy = 0;
@@ -446,7 +448,7 @@ public class SyntaxPreferencesPanel
 //			public void addNotify()
 //			{
 //				super.addNotify();
-//	
+//
 //				if (_lis == null)
 //				{
 //					_lis = new CheckBoxListener();
@@ -523,14 +525,14 @@ public class SyntaxPreferencesPanel
 //			public void addNotify()
 //			{
 //				super.addNotify();
-//	
+//
 //				if (_lis == null)
 //				{
 //					_lis = new ColorButtonListener();
 //					_btn.addActionListener(_lis);
 //				}
 //			}
-//	
+//
 //			/**
 //			 * Component has been removed from its parent so remove listeners etc.
 //			 */
@@ -599,7 +601,7 @@ public class SyntaxPreferencesPanel
 //				dm.width = dm.height;
 //				return dm;
 //			}
-//			
+//
 //			Color getColor()
 //			{
 //				 return _pnl.getBackground();
@@ -634,7 +636,7 @@ public class SyntaxPreferencesPanel
 //		private static class FontColorButtonListener implements ActionListener
 //		{
 //			private final StylesList _list;
-//			
+//
 //			FontColorButtonListener(StylesList list)
 //			{
 //				super();
@@ -662,7 +664,7 @@ public class SyntaxPreferencesPanel
 //		private static class BackgroundColorButtonListener implements ActionListener
 //		{
 //			private final StylesList _list;
-//			
+//
 //			BackgroundColorButtonListener(StylesList list)
 //			{
 //				super();
@@ -679,7 +681,7 @@ public class SyntaxPreferencesPanel
 //				{
 //					style.setBackgroundRGB(color.getRGB());
 //				}
-//				
+//
 //			}
 //		}
 
