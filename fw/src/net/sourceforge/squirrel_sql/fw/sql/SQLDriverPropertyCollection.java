@@ -127,6 +127,10 @@ public class SQLDriverPropertyCollection
 
 	public synchronized void applyDriverPropertynfo(DriverPropertyInfo[] infoAr)
 	{
+		if (infoAr == null)
+		{
+			infoAr = new DriverPropertyInfo[0];
+		}
 		for (int i = 0; i < infoAr.length; ++i)
 		{
 			SQLDriverProperty sdp = (SQLDriverProperty)_objectsIndexMap.get(infoAr[i].name);
