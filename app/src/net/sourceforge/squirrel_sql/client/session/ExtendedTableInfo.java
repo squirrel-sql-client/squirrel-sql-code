@@ -20,12 +20,16 @@ public class ExtendedTableInfo
 {
 	private String _tableName;
 	private String _tableType;
+   private String _catalog;
+   private String _schema;
 
-	ExtendedTableInfo(String tableName, String tableType)
+   ExtendedTableInfo(String tableName, String tableType, String catalog, String schema)
 	{
 		_tableName = tableName;
 		_tableType = tableType;
-	}
+      _catalog = catalog;
+      _schema = schema;
+   }
 
 	public String getTableName()
 	{
@@ -36,5 +40,15 @@ public class ExtendedTableInfo
 	{
 		return _tableType;
 	}
+
+   public String getCatalog()
+   {
+      return _catalog;
+   }
+
+   public String getSchema()
+   {
+      return _schema;
+   }
 
 }

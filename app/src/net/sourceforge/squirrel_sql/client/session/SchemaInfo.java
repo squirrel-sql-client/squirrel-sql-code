@@ -152,6 +152,33 @@ public class SchemaInfo
 				s_log.error("Error loading functions", ex);
 			}
 
+
+         //////////////////////////////////////////////////////////////////////////////////////////////
+         // Set catalog and schema names in the same case sensitive way as they are stored in the DB
+         for (int i = 0; i < _catalogs.size(); i++)
+         {
+            String cat = (String) _catalogs.get(i);
+
+            if(("" + _catalogName).equalsIgnoreCase("" + cat))
+            {
+               _catalogName = cat;
+            }
+         }
+
+         for (int i = 0; i < _schemas.size(); i++)
+         {
+            String schem = (String) _schemas.get(i);
+
+            if(("" + _schemaName).equalsIgnoreCase("" + schem))
+            {
+               _schemaName = schem;
+            }
+         }
+         //
+         /////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
 			try
 			{
 				s_log.debug("Loading tables");
@@ -699,7 +726,11 @@ public class SchemaInfo
 					_tables.put(tableName.toUpperCase(), tableName);
 
 					String tableType = rs.getString("TABLE_TYPE");
-					_extendedtableInfos.add(new ExtendedTableInfo(tableName, tableType));
+
+               String cat = rs.getString("TABLE_CAT");
+               String schem = rs.getString("TABLE_SCHEM");
+
+					_extendedtableInfos.add(new ExtendedTableInfo(tableName, tableType, cat, schem));
 				}
 			}
 			finally
@@ -735,7 +766,9 @@ public class SchemaInfo
                int columnSize = rs.getInt("COLUMN_SIZE");
                int decimalDigits = rs.getInt("DECIMAL_DIGITS");
                boolean nullable = "YES".equals(rs.getString("IS_NULLABLE"));
-               ExtendedColumnInfo buf = new ExtendedColumnInfo(columnName, columnType, columnSize, decimalDigits, nullable);
+               String cat = rs.getString("TABLE_CAT");
+               String schem = rs.getString("TABLE_SCHEM");
+               ExtendedColumnInfo buf = new ExtendedColumnInfo(columnName, columnType, columnSize, decimalDigits, nullable, cat, schem);
                infos.add(buf);
 
                _columns.put(columnName.toUpperCase(), columnName);
