@@ -6,6 +6,7 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Cleanup ResultSetMetaData handling.
 - Create Windows shortcut in installer.
 - Make shell script executable in installer.
 - Add icons for program shortcuts (Greg Mackness).

@@ -306,7 +306,7 @@ public final class ActionCollection
 	/**
 	 * Return an <TT>Iterator</TT> over this collection.
 	 */
-	private Iterator actions()
+	public Iterator actions()
 	{
 		return _actionColl.values().iterator();
 	}
