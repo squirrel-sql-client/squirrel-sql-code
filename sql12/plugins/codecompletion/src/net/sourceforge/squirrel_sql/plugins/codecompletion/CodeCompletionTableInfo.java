@@ -55,8 +55,9 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
             String columnName = res.getString("COLUMN_NAME");
             String columnType = res.getString("TYPE_NAME");
             int columnSize = res.getInt("COLUMN_SIZE");
+            int decimalDigits = res.getInt("DECIMAL_DIGITS");
             boolean nullable = "YES".equals(res.getString("IS_NULLABLE"));
-            CodeCompletionColumnInfo buf = new CodeCompletionColumnInfo(columnName, columnType, columnSize, nullable);
+            CodeCompletionColumnInfo buf = new CodeCompletionColumnInfo(columnName, columnType, columnSize, decimalDigits, nullable);
             infos.add(buf);
          }
          res.close();
