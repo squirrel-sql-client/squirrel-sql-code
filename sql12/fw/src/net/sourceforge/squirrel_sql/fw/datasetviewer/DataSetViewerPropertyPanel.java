@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -22,9 +22,7 @@ import java.awt.Component;
 import javax.swing.JLabel;
 
 import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
-import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
-
-//??RENAME to DataSetViewerPropertyDestination
+//TODO: RENAME to DataSetViewerPropertyDestination
 public class DataSetViewerPropertyPanel extends BaseDataSetViewerDestination
 {
 	/** Component to be displayed. */

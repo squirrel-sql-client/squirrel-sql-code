@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,56 +17,62 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Toolkit;
-
 import javax.swing.JTextField;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
-
 /**
  * This class is a <CODE>TextField</CODE> that only allows a single
  * character to be entered into it.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class CharField extends JTextField {
+public class CharField extends JTextField
+{
 	/**
 	 * Default ctor.
 	 */
-	public CharField() {
+	public CharField()
+	{
 		super(" ");
 	}
 
 	/**
 	 * Ctor specifying the character
 	 */
-	public CharField(char ch) {
+	public CharField(char ch)
+	{
 		super("" + ch);
 	}
 
-	public char getChar() {
+	public char getChar()
+	{
 		final String text = getText();
-		if (text == null || text.length() == 0) {
+		if (text == null || text.length() == 0)
+		{
 			return ' ';
 		}
 		return text.charAt(0);
 	}
 
-	public void setChar(char ch) {
+	public void setChar(char ch)
+	{
 		setText("" + ch);
 	}
 
-	protected Document createDefaultModel() {
+	protected Document createDefaultModel()
+	{
 		return new CharacterDocument();
 	}
 
-	static class CharacterDocument extends PlainDocument {
-
+	static class CharacterDocument extends PlainDocument
+	{
 		public void insertString(int offs, String str, AttributeSet a)
-				throws BadLocationException {
-			if (str != null) {
+			throws BadLocationException
+		{
+			if (str != null)
+			{
 				char ch = str.length() > 0 ? str.charAt(0) : ' ';
 				super.remove(0, getLength());
 				super.insertString(0, "" + ch, a);

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001-2002 Colin Bell and Johan Compagner
+ * Copyright (C) 2001-2003 Colin Bell and Johan Compagner
  * colbell@users.sourceforge.net
  * jcompagner@j-com.nl
  *
@@ -18,13 +18,6 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Frame;
-import java.sql.SQLException;
-
-import javax.swing.SwingUtilities;
-
-import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
@@ -36,13 +29,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.db.ConnectionSheet;
-import net.sourceforge.squirrel_sql.client.db.ConnectionSheet.IConnectionSheetHandler;
-import net.sourceforge.squirrel_sql.client.session.IClientSession;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SessionFactory;
-import net.sourceforge.squirrel_sql.client.session.SessionSheet;
-
 /**
  * This <CODE>ICommand</CODE> allows the user to connect to
  * an <TT>ISQLAlias</TT>.

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -35,8 +35,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
@@ -53,7 +51,6 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.DropSelectedTablesAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeItemAction;
-import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeItemAction;
 import net.sourceforge.squirrel_sql.client.session.action.SetDefaultCatalogAction;
 /**
  * This is the tree showing the structure of objects in the database.

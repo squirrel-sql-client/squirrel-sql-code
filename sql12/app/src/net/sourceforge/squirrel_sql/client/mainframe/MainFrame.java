@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -29,12 +29,10 @@ import java.beans.PropertyVetoException;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultDesktopManager;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.fw.gui.BaseMDIParentFrame;

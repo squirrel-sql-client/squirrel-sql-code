@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,17 +17,15 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.NewSessionPropertiesSheet;
-
 /**
  * This <CODE>ICommand</CODE> displays the New Session Properties dialog..
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class NewSessionPropertiesCommand {
+public class NewSessionPropertiesCommand
+{
 	/** Application API. */
 	private IApplication _app;
 
@@ -39,9 +37,11 @@ public class NewSessionPropertiesCommand {
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> passed.
 	 */
-	public NewSessionPropertiesCommand(IApplication app) {
+	public NewSessionPropertiesCommand(IApplication app)
+	{
 		super();
-		if (app == null) {
+		if (app == null)
+		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
 		_app = app;
@@ -50,9 +50,8 @@ public class NewSessionPropertiesCommand {
 	/**
 	 * Display the Dialog
 	 */
-	public void execute() {
+	public void execute()
+	{
 		NewSessionPropertiesSheet.showSheet(_app);
 	}
 }
-
-

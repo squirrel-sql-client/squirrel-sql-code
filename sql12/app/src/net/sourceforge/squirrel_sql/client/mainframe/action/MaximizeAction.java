@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -21,17 +21,15 @@ import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.action.MaximizeInternalFramesAction;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
-
 /**
  * This <CODE>Action</CODE> cascades the internal frames.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class MaximizeAction extends MaximizeInternalFramesAction {
+public class MaximizeAction extends MaximizeInternalFramesAction
+{
 	/** Application API. */
 	private IApplication _app;
 
@@ -40,18 +38,23 @@ public class MaximizeAction extends MaximizeInternalFramesAction {
 	 *
 	 * @param	app	Application API.
 	 */
-	public MaximizeAction(IApplication app) {
+	public MaximizeAction(IApplication app)
+	{
 		super();
 		_app = app;
 		app.getResources().setupAction(this);
 	}
 
-	public void actionPerformed(ActionEvent evt) {
+	public void actionPerformed(ActionEvent evt)
+	{
 		CursorChanger cursorChg = new CursorChanger(_app.getMainFrame());
 		cursorChg.show();
-		try {
+		try
+		{
 			super.actionPerformed(evt);
-		} finally {
+		}
+		finally
+		{
 			cursorChg.restore();
 		}
 	}

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 /*
- * Copyright (C) 2001 Johan Compagner
+ * Copyright (C) 2001-2003 Johan Compagner
  * jcompagner@j-com.nl
  *
  * This library is free software; you can redistribute it and/or
@@ -25,8 +25,6 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.text.NumberFormat;
-
-import java.util.Date;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;

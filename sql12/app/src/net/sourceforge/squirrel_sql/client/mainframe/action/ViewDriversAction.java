@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,20 +17,17 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.ActionEvent;
-
 import net.sourceforge.squirrel_sql.fw.gui.action.SelectInternalFrameAction;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.mainframe.DriversToolWindow;
-
 /**
  * This <CODE>Action</CODE> displays the Drivers Tool Window.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ViewDriversAction extends SelectInternalFrameAction {
+public class ViewDriversAction extends SelectInternalFrameAction
+{
 	/**
 	 * Ctor.
 	 *
@@ -38,12 +35,15 @@ public class ViewDriversAction extends SelectInternalFrameAction {
 	 *			Thrown if <TT>null</TT> <TT>DriversToolWindow</TT> or
 	 *			<TT>IApplication</TT> object passed.
 	 */
-	public ViewDriversAction(IApplication app, DriversToolWindow window) {
+	public ViewDriversAction(IApplication app, DriversToolWindow window)
+	{
 		super(window);
-		if (app == null) {
+		if (app == null)
+		{
 			throw new IllegalArgumentException("null IApplication passed");
 		}
-		if (window == null) {
+		if (window == null)
+		{
 			throw new IllegalArgumentException("null DriversToolWindow passed");
 		}
 		app.getResources().setupAction(this);

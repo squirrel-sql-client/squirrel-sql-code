@@ -63,6 +63,11 @@ class DriverPropertiesTableModel extends AbstractTableModel
 								SQLDriverProperty[] override)
 		throws SQLException
 	{
+		if (driver == null)
+		{
+			throw new IllegalArgumentException("Driver == null");
+		}
+
 		load(driver, url, override);
 	}
 
@@ -135,6 +140,10 @@ class DriverPropertiesTableModel extends AbstractTableModel
 	final void load(Driver driver, String url)
 		throws SQLException
 	{
+		if (driver == null)
+		{
+			throw new IllegalArgumentException("Driver == null");
+		}
 		load(driver, url, null);
 	}
 
@@ -142,6 +151,11 @@ class DriverPropertiesTableModel extends AbstractTableModel
 					SQLDriverProperty[] override)
 		throws SQLException
 	{
+		if (driver == null)
+		{
+			throw new IllegalArgumentException("Driver == null");
+		}
+
 		final Properties props = new Properties();
 		if (override != null)
 		{

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -21,11 +21,8 @@ import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.action.TileInternalFramesAction;
-import net.sourceforge.squirrel_sql.fw.gui.action.TileInternalFramesAction.RowColumnCount;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 
 /**
  * This <CODE>Action</CODE> horizontally tiles across the internal frames.

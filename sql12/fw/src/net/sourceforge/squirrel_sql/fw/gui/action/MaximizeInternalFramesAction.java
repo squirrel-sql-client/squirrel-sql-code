@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -18,14 +18,12 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.event.ActionEvent;
-import java.beans.PropertyVetoException;
 
-import javax.swing.DesktopManager;
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
 
-import net.sourceforge.squirrel_sql.fw.gui.MaximizeInternalFramePositioner;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.MaximizeInternalFramePositioner;
 
 /**
  * This class will cascade all internal frames owned by a
@@ -33,14 +31,16 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class MaximizeInternalFramesAction extends BaseAction
-											implements IHasJDesktopPane {
-
+public class MaximizeInternalFramesAction
+	extends BaseAction
+	implements IHasJDesktopPane
+{
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
-	private interface i18n {
+	private interface i18n
+	{
 		String TITLE = "Maximize";
 	}
 
@@ -53,7 +53,8 @@ public class MaximizeInternalFramesAction extends BaseAction
 	/**
 	 * Default constructor.
 	 */
-	public MaximizeInternalFramesAction() {
+	public MaximizeInternalFramesAction()
+	{
 		this(null);
 	}
 
@@ -64,7 +65,8 @@ public class MaximizeInternalFramesAction extends BaseAction
 	 * @param   desktop	 the <CODE>JDesktopPane</CODE> that owns the
 	 *					  internal frames to be maximized.
 	 */
-	public MaximizeInternalFramesAction(JDesktopPane desktop) {
+	public MaximizeInternalFramesAction(JDesktopPane desktop)
+	{
 		super(i18n.TITLE);
 		setJDesktopPane(desktop);
 	}
@@ -76,7 +78,8 @@ public class MaximizeInternalFramesAction extends BaseAction
 	 * @param   desktop	 the <CODE>JDesktopPane</CODE> that owns the
 	 *					  internal frames to be maximized.
 	 */
-	public void setJDesktopPane(JDesktopPane value) {
+	public void setJDesktopPane(JDesktopPane value)
+	{
 		_desktop = value;
 	}
 
@@ -85,11 +88,16 @@ public class MaximizeInternalFramesAction extends BaseAction
 	 *
 	 * @param   evt	 Specifies the event being proceessed.
 	 */
-	public void actionPerformed(ActionEvent evt) {
-		if (_desktop != null) {
-			MaximizeInternalFramePositioner pos = new MaximizeInternalFramePositioner();
-			JInternalFrame[] children = GUIUtils.getOpenNonToolWindows(_desktop.getAllFrames());
-			for (int i = children.length - 1; i >= 0; --i) {
+	public void actionPerformed(ActionEvent evt)
+	{
+		if (_desktop != null)
+		{
+			MaximizeInternalFramePositioner pos =
+				new MaximizeInternalFramePositioner();
+			JInternalFrame[] children =
+				GUIUtils.getOpenNonToolWindows(_desktop.getAllFrames());
+			for (int i = children.length - 1; i >= 0; --i)
+			{
 				pos.positionInternalFrame(children[i]);
 			}
 		}

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.sqlval;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -30,15 +30,12 @@ import javax.swing.JPanel;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-
 import net.sourceforge.squirrel_sql.plugins.sqlval.cmd.ConnectCommand;
 import net.sourceforge.squirrel_sql.plugins.sqlval.cmd.DisconnectCommand;
+
+import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public class LogonDialog extends JDialog
 {

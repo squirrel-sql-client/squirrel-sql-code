@@ -18,10 +18,9 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.beans.PropertyChangeListener;
-import java.io.Serializable;
 
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.IValidatable;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 /**

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -22,7 +22,6 @@ import java.awt.event.ActionEvent;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.IClientSession;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public class CloseSessionAction extends SquirrelAction
 									implements IClientSessionAction

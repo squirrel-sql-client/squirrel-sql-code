@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.plugin;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -18,13 +18,12 @@ package net.sourceforge.squirrel_sql.client.plugin;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
-
 /**
  * Base interface for all plugins associated with a session.
  */
-public interface ISessionPlugin extends IPlugin {
+public interface ISessionPlugin extends IPlugin
+{
 	/**
 	 * A new session has been created. At this point the
 	 * <TT>SessionSheet</TT> does not exist for the new session.
@@ -79,4 +78,3 @@ public interface ISessionPlugin extends IPlugin {
 	 */
 	IPluginDatabaseObjectType[] getObjectTypes(ISession session);
 }
-

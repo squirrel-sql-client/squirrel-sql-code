@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,23 +19,27 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  */
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.db.AliasMaintSheetFactory;
-
 /**
  * This <CODE>ICommand</CODE> allows the user to create a new <TT>ISQLAlias</TT>.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class CreateAliasCommand implements ICommand {
+public class CreateAliasCommand implements ICommand
+{
 	/**
 	 * Ctor.
 	 */
-	public CreateAliasCommand() {
+	public CreateAliasCommand()
+	{
 		super();
 	}
 
-	public void execute() {
+	/**
+	 * Execute command.
+	 */
+	public void execute()
+	{
 		AliasMaintSheetFactory.getInstance().showCreateSheet();
 	}
 }

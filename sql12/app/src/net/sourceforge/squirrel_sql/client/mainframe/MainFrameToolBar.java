@@ -22,8 +22,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
 
-import javax.swing.Action;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 
@@ -37,7 +35,6 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CascadeAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ExitAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.GlobalPreferencesAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.MaximizeAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.NewSessionPropertiesAction;

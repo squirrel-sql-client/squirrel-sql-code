@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -20,8 +20,6 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyVetoException;
 
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.mainframe.AliasesToolWindow;
@@ -31,13 +29,15 @@ import net.sourceforge.squirrel_sql.client.mainframe.AliasesToolWindow;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class CreateAliasAction extends SquirrelAction {
+public class CreateAliasAction extends SquirrelAction
+{
 	/**
 	 * Ctor.
 	 *
 	 * @param	app	Application API.
 	 */
-	public CreateAliasAction(IApplication app) {
+	public CreateAliasAction(IApplication app)
+	{
 		super(app);
 	}
 
@@ -46,13 +46,17 @@ public class CreateAliasAction extends SquirrelAction {
 	 *
 	 * @param	evt	The current event.
 	 */
-	public void actionPerformed(ActionEvent evt) {
+	public void actionPerformed(ActionEvent evt)
+	{
 		IApplication app = getApplication();
 		AliasesToolWindow tw = app.getMainFrame().getAliasesToolWindow();
 		tw.moveToFront();
-		try {
+		try
+		{
 			tw.setSelected(true);
-		} catch (PropertyVetoException ignore) {
+		}
+		catch (PropertyVetoException ignore)
+		{
 		}
 		new CreateAliasCommand().execute();
 	}

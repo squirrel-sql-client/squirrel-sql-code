@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.util.beanwrapper;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,7 +19,6 @@ package net.sourceforge.squirrel_sql.fw.util.beanwrapper;
  */
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
-import java.beans.SimpleBeanInfo;
 /**
  * This is the <CODE>BeanInfo</CODE> class for <CODE>URLWrapper</CODE>.
  *

@@ -18,13 +18,11 @@ package net.sourceforge.squirrel_sql.fw.gui.sql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.BorderLayout;
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Driver;
 import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
-import java.util.EventListener;
 import java.util.EventObject;
 
 import javax.swing.JButton;

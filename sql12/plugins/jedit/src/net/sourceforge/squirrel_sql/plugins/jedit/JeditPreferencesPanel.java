@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.jedit;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -36,7 +36,6 @@ import javax.swing.JColorChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.ListCellRenderer;
@@ -46,12 +45,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.text.BadLocationException;
 
-import org.gjt.sp.jedit.syntax.JEditTextArea;
-import org.gjt.sp.jedit.syntax.SyntaxDocument;
 import org.gjt.sp.jedit.syntax.SyntaxStyle;
-import org.omg.CORBA._PolicyStub;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;

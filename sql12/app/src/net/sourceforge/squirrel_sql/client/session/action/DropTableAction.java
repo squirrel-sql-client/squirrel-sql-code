@@ -19,24 +19,15 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.event.ActionEvent;
-import java.sql.Statement;
 
-import javax.swing.JOptionPane;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.IClientSession;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-
-import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 /**
- * @version 	$Id: DropTableAction.java,v 1.1.1.1 2002-11-17 09:00:54 colbell Exp $
+ * @version 	$Id: DropTableAction.java,v 1.2 2003-03-04 11:46:00 colbell Exp $
  * @author		Johan Compagner
  */
 public class DropTableAction extends SquirrelAction implements IClientSessionAction

@@ -8,16 +8,18 @@ package org.gjt.sp.jedit.syntax;
  * permitted, in both source and binary form, provided that this notice
  * remains intact in all source distributions of this package.
  */
-import java.awt.*;
-
-import java.util.StringTokenizer;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Toolkit;
 
 
 /**
  * A simple text style class. It can specify the color, italic flag,
  * and bold flag of a run of text.
  * @author Slava Pestov
- * @version $Id: SyntaxStyle.java,v 1.1 2002-12-21 00:34:18 colbell Exp $
+ * @version $Id: SyntaxStyle.java,v 1.2 2003-03-04 11:46:02 colbell Exp $
  */
 public class SyntaxStyle
 {

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,10 +17,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.sql.Types;
-
 /**
  * This defines the display information for a column.
  *
@@ -35,7 +32,7 @@ public class ColumnDisplayDefinition
 	private String _label;
 
 	/**
-	 * Type of data displayed in column.  When set to Types.NULL, the value is unknown.
+	 * Type of data displayed in column. When set to Types.NULL, the value is unknown.
 	 * Value is from java.sql.Types.
 	 * This is needed, for example, when editing the column to know
 	 * what operations to apply during cell editing.
@@ -57,9 +54,9 @@ public class ColumnDisplayDefinition
 	/**
 	 * Constructor for use when the type of data in the column is known/needed.
 	 *
-	 * @param   displayWidth		Number of characters to display.
-	 * @param   label			   Column heading.
-	 * @param	className			Name of the class for the type of data in the column.
+	 * @param	displayWidth	Number of characters to display.
+	 * @param	label			Column heading.
+	 * @param	className		Name of the class for the type of data in the column.
 	 */
 	public ColumnDisplayDefinition(int displayWidth, String label, int sqlType) {
 		super();

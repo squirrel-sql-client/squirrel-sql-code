@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * Modifications Copyright (C) 2001-2002 Johan Compagner
@@ -526,7 +526,6 @@ public class SQLPanel extends JPanel
 		Object[] listeners = _listeners.getListenerList();
 		// Process the listeners last to first, notifying
 		// those that are interested in this event.
-		ResultTabEvent evt = null;
 		for (int i = listeners.length - 2; i >= 0; i -= 2)
 		{
 			if (listeners[i] == ISQLExecutionListener.class)

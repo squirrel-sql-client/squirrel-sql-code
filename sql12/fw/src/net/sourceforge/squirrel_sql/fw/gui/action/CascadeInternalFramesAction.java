@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,27 +19,28 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
  */
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.beans.PropertyVetoException;
 
-import javax.swing.DesktopManager;
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
 
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.CascadeInternalFramePositioner;
-
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 /**
  * This class will cascade all internal frames owned by a
  * <CODE>JDesktopPane</CODE>.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class CascadeInternalFramesAction extends BaseAction implements IHasJDesktopPane {
+public class CascadeInternalFramesAction
+	extends BaseAction
+	implements IHasJDesktopPane
+{
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
-	private interface i18n {
+	private interface i18n
+	{
 		String TITLE = "Cascade";
 	}
 
@@ -52,7 +53,8 @@ public class CascadeInternalFramesAction extends BaseAction implements IHasJDesk
 	/**
 	 * Default constructor.
 	 */
-	public CascadeInternalFramesAction() {
+	public CascadeInternalFramesAction()
+	{
 		this(null);
 	}
 
@@ -63,7 +65,8 @@ public class CascadeInternalFramesAction extends BaseAction implements IHasJDesk
 	 * @param   desktop	 the <CODE>JDesktopPane</CODE> that owns the
 	 *					  internal frames to be cascaded.
 	 */
-	public CascadeInternalFramesAction(JDesktopPane desktop) {
+	public CascadeInternalFramesAction(JDesktopPane desktop)
+	{
 		super(i18n.TITLE);
 		setJDesktopPane(desktop);
 	}
@@ -75,7 +78,8 @@ public class CascadeInternalFramesAction extends BaseAction implements IHasJDesk
 	 * @param   desktop	 the <CODE>JDesktopPane</CODE> that owns the
 	 *					  internal frames to be tiled.
 	 */
-	public void setJDesktopPane(JDesktopPane value) {
+	public void setJDesktopPane(JDesktopPane value)
+	{
 		_desktop = value;
 	}
 
@@ -84,20 +88,29 @@ public class CascadeInternalFramesAction extends BaseAction implements IHasJDesk
 	 *
 	 * @param   evt	 Specifies the event being proceessed.
 	 */
-	public void actionPerformed(ActionEvent evt) {
-		if (_desktop != null) {
+	public void actionPerformed(ActionEvent evt)
+	{
+		if (_desktop != null)
+		{
 			Dimension cs = null; // Size to set child windows to.
-			CascadeInternalFramePositioner pos = new CascadeInternalFramePositioner();
-			JInternalFrame[] children = GUIUtils.getOpenNonToolWindows(_desktop.getAllFrames());
-			for (int i = children.length - 1; i >= 0; --i) {
+			CascadeInternalFramePositioner pos =
+				new CascadeInternalFramePositioner();
+			JInternalFrame[] children =
+				GUIUtils.getOpenNonToolWindows(_desktop.getAllFrames());
+			for (int i = children.length - 1; i >= 0; --i)
+			{
 				JInternalFrame child = children[i];
-				if (cs == null && child.getParent() != null) {
+				if (cs == null && child.getParent() != null)
+				{
 					cs = child.getParent().getSize();
 					// Cast to int required as Dimension::setSize(double,double)
 					// doesn't appear to do anything in JDK1.2.2.
-					cs.setSize((int)(cs.width * 0.8d), (int)(cs.height * 0.8d));
+					cs.setSize(
+						(int) (cs.width * 0.8d),
+						(int) (cs.height * 0.8d));
 				}
-				if (cs != null) {
+				if (cs != null)
+				{
 					child.setSize(cs);
 					pos.positionInternalFrame(child);
 				}

@@ -18,8 +18,6 @@
  */
 package org.gjt.sp.jedit.syntax;
 
-import java.util.*;
-
 import javax.swing.text.Segment;
 
 
@@ -34,7 +32,7 @@ import javax.swing.text.Segment;
  * cached.
  *
  * @author Slava Pestov
- * @version $Id: TokenMarker.java,v 1.2 2002-12-21 00:34:18 colbell Exp $
+ * @version $Id: TokenMarker.java,v 1.3 2003-03-04 11:46:02 colbell Exp $
  *
  * @see org.gjt.sp.jedit.syntax.Token
  */
@@ -279,6 +277,9 @@ public abstract class TokenMarker
 /*
  * ChangeLog:
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2002/12/21 00:34:18  colbell
+ * Add syntax styles
+ *
  * Revision 1.1  2000/01/12 03:18:00  bruce
  *
  * Addition of Syntax Colour Highlighting Package to CVS tree.  This is LGPL code used in the Moe Editor to provide syntax highlighting.

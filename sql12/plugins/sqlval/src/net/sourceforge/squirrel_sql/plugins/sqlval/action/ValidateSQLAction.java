@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.sqlval.action;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,20 +25,18 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-
 import net.sourceforge.squirrel_sql.plugins.sqlval.LogonDialog;
 import net.sourceforge.squirrel_sql.plugins.sqlval.SQLValidatorPlugin;
 import net.sourceforge.squirrel_sql.plugins.sqlval.WebServicePreferences;
 import net.sourceforge.squirrel_sql.plugins.sqlval.WebServiceSessionProperties;
 import net.sourceforge.squirrel_sql.plugins.sqlval.cmd.ValidateSQLCommand;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 /**
  * This action will validate the current SQL.
  *

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -20,9 +20,7 @@ package net.sourceforge.squirrel_sql.client.mainframe;
 import java.awt.Rectangle;
 
 import net.sourceforge.squirrel_sql.fw.gui.WindowState;
-import net.sourceforge.squirrel_sql.fw.util.beanwrapper.PointWrapper;
 import net.sourceforge.squirrel_sql.fw.util.beanwrapper.RectangleWrapper;
-
 /**
  * This bean describes the state of the main window.
  *

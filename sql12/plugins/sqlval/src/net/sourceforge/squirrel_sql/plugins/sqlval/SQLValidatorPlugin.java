@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.sqlval;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -22,13 +22,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
 
-import javax.swing.Action;
 import javax.swing.JMenu;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
+import net.sourceforge.squirrel_sql.plugins.sqlval.action.ConnectAction;
+import net.sourceforge.squirrel_sql.plugins.sqlval.action.DisconnectAction;
+import net.sourceforge.squirrel_sql.plugins.sqlval.action.ValidateSQLAction;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Version;
@@ -38,8 +40,6 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-
-import net.sourceforge.squirrel_sql.plugins.sqlval.action.*;
 /**
  * This plugin provides an interface to the SQL Validation web service provided
  * by Mimer SQL. See http://sqlvalidator.mimer.com/ for more information.

@@ -1,9 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.sql;
-
-import java.sql.SQLException;
-
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -62,7 +59,6 @@ public class TableColumnInfo extends DatabaseObjectInfo
 	{
 		return _columnName;
 	}
-
 
 	public int getDataType()
 	{

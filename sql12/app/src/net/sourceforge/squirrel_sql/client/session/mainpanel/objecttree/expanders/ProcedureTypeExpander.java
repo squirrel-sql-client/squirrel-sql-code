@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders;
 /*
- * Copyright (C) 2002 Colin Bell and Johan Compagner
+ * Copyright (C) 2002-2003 Colin Bell and Johan Compagner
  * colbell@users.sourceforge.net
  * jcompagner@j-com.nl
  *
@@ -24,7 +24,6 @@ import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
