@@ -7,8 +7,15 @@ Change Log
 
 Bug Fixes
 ------------
-- QueryTokenizer improperly parses strings with 
-  quotes on multiple lines and causes SQLException (Todd Larsen).
+- Windows batch file now passes the -classic flag  to the VM to stop
+  plugins looking for files in the "Colin Bell" or "Johan Compagner"
+  directories instead of the plugins private directory.
+- "Torn off" SQL results windows are now closed when the session is
+  closed.
+- Unix shell script now has correct line terminators.
+- QueryTokenizer improperly parsed strings with quotes on multiple lines
+  and caused SQLException (Todd Larsen).
+- Application Settings dialog now has a more sensible width under JDK1.4.
 - If no alises defined then the Alises dropdown has a sensible width
   under JDK1.4.
 - If Aliases dropdown is empty when adding the first one to it then make
@@ -23,6 +30,7 @@ Bug Fixes
 
 Enhancements
 ------------
+- Now showing all columns in meta data displays.
 - Drop table menu item on the ObjectTree (Johan Compagner)
 - Full column data can be displayed in a popup window if you double click on
   it (Johan Compagner)
@@ -31,8 +39,14 @@ Enhancements
 - If only one cell selected in table when pressing copy then no header 
   will be appended. (Johan Compagner)
 - Icon shown for drivers that are loaded or not (Johan Compagner/Henner Zeller) 
-- TableSorting by pressing column headers (Johan Compagner)
+- TableSorting by clicking column headers (Johan Compagner)
 - Escape now cancels Connection Dialog.
+
+Other
+-----
+- Licence for the client application changed from GPL to LGPL.
+- JDK1.4 specific code now called through reflection so application
+  can be compiled using JDK1.3.
 
 
 1.1beta1
