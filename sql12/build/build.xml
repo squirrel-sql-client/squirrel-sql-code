@@ -286,6 +286,11 @@
 -->
 <!--
 		<antcall target="build_plugin">
+			<param name="p_internal_name" value="macosx"/>
+		</antcall>
+-->
+<!--
+		<antcall target="build_plugin">
 			<param name="p_internal_name" value="mssql"/>
 		</antcall>
 -->
@@ -496,8 +501,14 @@
 			<fileset dir="${basedir}/mac">
 				<include name="**/*"/>
 				<exclude name="**/Info.plist"/>
+                                <exclude name="**/README"/>
 			</fileset>
 		</copy>
+                <copy todir="${dist_dir}/mac/SquirrelSQL">
+                        <fileset dir="${basedir}/mac">
+                               <include name="**/README"/>
+                        </fileset>
+                </copy>
 		<filter token="SquirrelVersion" value="${version}"/>
 		<copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app" filtering="true">
 			<fileset dir="${basedir}/mac">
@@ -516,6 +527,26 @@
 				<include name="**/squirrel-sql.jar"/>
 			</fileset>
 		</copy>
+                <copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/plugins">
+                        <fileset dir="${basedir}/plugins/macosx/deliver">
+                                <include name="**/macosx.jar"/>
+                        </fileset>
+                </copy>
+                <copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/plugins/macosx">
+                        <fileset dir="${basedir}/plugins/macosx/doc">
+                                <include name="**/*.txt"/>
+                        </fileset>
+                </copy>
+                <copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/doc">
+                        <fileset dir="${core_dist_doc_dir}">
+                                <include name="**/*"/>
+                        </fileset>
+                </copy>
+                <copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/doc">
+                        <fileset dir="${basedir}/web-site">
+                                <include name="**/faq.html"/>
+                        </fileset>
+                </copy>
 		<tar tarfile="${dist_dir}/SquirrelSQLMac.tar" basedir="${dist_dir}/mac"/>
 		<gzip zipfile="${dist_dir}/SquirrelSQLMac.tar.gz" src="${dist_dir}/SquirrelSQLMac.tar"/>
 	</target>
