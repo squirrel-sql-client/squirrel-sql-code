@@ -174,7 +174,7 @@ public class SessionScriptPlugin extends DefaultSessionPlugin
 				rc = true;
 				ISQLPanelAPI api = session.getSQLPanelAPI();
 				api.setEntireSQLScript(sql);
-				session.executeCurrentSQL();
+				api.executeCurrentSQL();
 			}
 		}
 

@@ -35,40 +35,40 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 /**
- * This class handles the expanding of the "Package Type" or "Package Heading"
- * node. It will give a list of all the packages available in the schema.
+ * This class handles the expanding of an Oracle specific object type node.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class PackageTypeExpander implements INodeExpander
+public class ObjectTypeExpander implements INodeExpander
 {
 	/** Logger for this class. */
 	private static ILogger s_log =
-		LoggerController.createLogger(PackageTypeExpander.class);
+		LoggerController.createLogger(ObjectTypeExpander.class);
 
-	/** SQL that retrieves the names of Oracle packages. */
-	private static String ORACLE_PACKAGES_SQL =
-		"select object_name from sys.all_objects where object_type = 'PACKAGE'" +
+	/** SQL that retrieves the objects for the object types. */
+	private static String SQL =
+		"select object_name from sys.all_objects where object_type = ?" +
 		" and owner = ? order by object_name";
 
-	/** The plugin. */
-	private OraclePlugin _plugin;
+	/** Type of the objects to be displayed in the child nodes. */
+	private ObjectType _objectType;
 
 	/**
 	 * Ctor.
 	 * 
+	 * @param	objectType	Object type to be displayed.
+	 * 
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> <TT>OraclePlugin</TT> passed.
+	 * 			Thrown if <TT>null</TT> objectType passed.
 	 */
-	PackageTypeExpander(OraclePlugin plugin)
+	ObjectTypeExpander(ObjectType objectType)
 	{
 		super();
-		if (plugin == null)
+		if (objectType == null)
 		{
-			throw new IllegalArgumentException("OraclePlugin == null");
+			throw new IllegalArgumentException("ObjectType == null");
 		}
-
-		_plugin = plugin;
+		_objectType = objectType;
 	}
 
 	/**
@@ -93,28 +93,44 @@ public class PackageTypeExpander implements INodeExpander
 
 		try
 		{
-			// Node type to use for package nodes.
-			final int nodeType = _plugin.getSessionInfo(session)._packageNodeType;
-
-			// Add node to contain standalone procedures.
-			IDatabaseObjectInfo dbinfo = new DatabaseObjectInfo("", schemaName,
-													"%", nodeType, conn);
-			ObjectTreeNode child = new ObjectTreeNode(session, dbinfo);
-			child.setUserObject("Standalone");
-			childNodes.add(child);
-
-			// Add packages.
-			ObjectType objType = new ObjectType("PACKAGE",
-											IDatabaseObjectTypes.GENERIC_LEAF,
-											nodeType);
-			INodeExpander exp = new ObjectTypeExpander(objType);
-			childNodes.addAll(exp.createChildren(session, parentNode));
+			childNodes.addAll(createNodes(session, catalogName, schemaName));
 		}
 		catch (SQLException ex)
 		{
 			throw new BaseSQLException(ex);
 		}
 
+		return childNodes;
+	}
+
+	private List createNodes(ISession session, String catalogName,
+											String schemaName)
+		throws SQLException, BaseSQLException
+	{
+		final SQLConnection conn = session.getSQLConnection();
+		final List childNodes = new ArrayList();
+
+		// Add node for each object.
+		PreparedStatement pstmt = conn.prepareStatement(SQL);
+		try
+		{
+			pstmt.setString(1, _objectType._objectTypeColumnData);
+			pstmt.setString(2, schemaName);
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next())
+			{
+				IDatabaseObjectInfo dbinfo = new DatabaseObjectInfo(catalogName,
+										schemaName,
+										rs.getString(1),
+										_objectType._nodeType,
+										conn);
+				childNodes.add(new ObjectTreeNode(session, dbinfo));
+			}
+		}
+		finally
+		{
+			pstmt.close();
+		}
 		return childNodes;
 	}
 }

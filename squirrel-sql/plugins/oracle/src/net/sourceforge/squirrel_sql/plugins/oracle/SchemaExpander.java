@@ -51,32 +51,37 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode.IObjectTreeNodeType;
 /**
- * This class is an expander for the schema nodes. It will add a
- * "Packages" node to the schemas children.
+ * This class is an expander for the schema nodes. It will add Object Type
+ * nodes to the xchema node.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SchemaExpander implements INodeExpander
+class SchemaExpander implements INodeExpander
 {
 	/** Logger for this class. */
 	private static ILogger s_log =
 		LoggerController.createLogger(SchemaExpander.class);
 
-	/** SQL that retrieves the names of Oracle packages. */
-	//private static String ORACLE_PACKAGES_SQL =
-	//	"select object_name from sys.all_objects where object_type = 'PACKAGE'" +
-	//	" and owner = ? order by object_name";
+	/** The plugin. */
+	private OraclePlugin _plugin;
 
 	/**
 	 * Ctor.
 	 */
-	SchemaExpander()
+	SchemaExpander(OraclePlugin plugin)
 	{
 		super();
+		if (plugin == null)
+		{
+			throw new IllegalArgumentException("OraclePlugin == null");
+		}
+		_plugin = plugin;
 	}
 
 	/**
@@ -98,12 +103,61 @@ public class SchemaExpander implements INodeExpander
 		final SQLConnection conn = session.getSQLConnection();
 		final String catalogName = parentDbinfo.getCatalogName();
 		final String schemaName = parentDbinfo.getSimpleName();
-		IDatabaseObjectInfo dbinfo = new DatabaseObjectInfo(catalogName, schemaName,
-										"PACKAGE", IDatabaseObjectTypes.GENERIC_FOLDER,
+
+		IDatabaseObjectInfo dbinfo = new DatabaseObjectInfo(catalogName,
+											schemaName, "PACKAGE",
+											IDatabaseObjectTypes.GENERIC_FOLDER,
+											conn);
+		ObjectTreeNode child = new ObjectTreeNode(session, dbinfo);
+		child.setNodeType(IObjectTreeNodeType.GENERIC_OBJECT_TYPE_NODE);
+		child.addExpander(new PackageTypeExpander(_plugin));
+		childNodes.add(child);
+
+		ObjectType objType = new ObjectType("CONSUMER GROUP",
+								IDatabaseObjectTypes.GENERIC_LEAF,
+								IObjectTreeNodeType.GENERIC_OBJECT_TYPE_NODE);
+		childNodes.add(createObjectTypeNode(session, catalogName, schemaName,
+											conn, objType));
+
+		objType = new ObjectType("FUNCTION", IDatabaseObjectTypes.GENERIC_LEAF,
+								IObjectTreeNodeType.GENERIC_OBJECT_TYPE_NODE);
+		childNodes.add(createObjectTypeNode(session, catalogName, schemaName,
+											conn, objType));
+
+		objType = new ObjectType("INDEX", IDatabaseObjectTypes.GENERIC_LEAF,
+								IObjectTreeNodeType.GENERIC_OBJECT_TYPE_NODE);
+		childNodes.add(createObjectTypeNode(session, catalogName, schemaName,
+											conn, objType));
+
+		objType = new ObjectType("LOB", IDatabaseObjectTypes.GENERIC_LEAF,
+								IObjectTreeNodeType.GENERIC_OBJECT_TYPE_NODE);
+		childNodes.add(createObjectTypeNode(session, catalogName, schemaName,
+											conn, objType));
+
+		objType = new ObjectType("SEQUENCE", IDatabaseObjectTypes.GENERIC_LEAF,
+								IObjectTreeNodeType.GENERIC_OBJECT_TYPE_NODE);
+		childNodes.add(createObjectTypeNode(session, catalogName, schemaName,
+											conn, objType));
+
+		objType = new ObjectType("TYPE", IDatabaseObjectTypes.GENERIC_LEAF,
+								IObjectTreeNodeType.GENERIC_OBJECT_TYPE_NODE);
+		childNodes.add(createObjectTypeNode(session, catalogName, schemaName,
+											conn, objType));
+
+		return childNodes;
+	}
+
+	private ObjectTreeNode createObjectTypeNode(ISession session,
+										String catalogName, String schemaName,
+										SQLConnection conn, ObjectType objType)
+	{
+		IDatabaseObjectInfo dbinfo = new DatabaseObjectInfo(catalogName,
+										schemaName, objType._objectTypeColumnData,
+										IDatabaseObjectTypes.GENERIC_FOLDER,
 										conn);
 		ObjectTreeNode child = new ObjectTreeNode(session, dbinfo);
-		child.addExpander(new PackageTypeExpander());
-		childNodes.add(child);
-		return childNodes;
+		child.setNodeType(IObjectTreeNodeType.GENERIC_OBJECT_TYPE_NODE);
+		child.addExpander(new ObjectTypeExpander(objType));
+		return child;
 	}
 }

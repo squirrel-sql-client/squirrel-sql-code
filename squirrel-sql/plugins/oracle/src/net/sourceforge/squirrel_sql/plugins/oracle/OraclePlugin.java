@@ -20,11 +20,12 @@ package net.sourceforge.squirrel_sql.plugins.oracle;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
@@ -42,17 +43,17 @@ public class OraclePlugin extends DefaultSessionPlugin
 	/** Logger for this class. */
 	private final static ILogger s_log = LoggerController.createLogger(OraclePlugin.class);
 
-	/** Name of file to store user prefs in. */
-//	static final String USER_PREFS_FILE_NAME = "OraclePreferences.xml";
-
-	/** Plugin preferences. */
-//	private LAFPreferences _lafPrefs;
-
 	/** Folder to store user settings in. */
 	private File _userSettingsFolder;
 
 	/** API for the Obejct Tree. */
 	private IObjectTreeAPI _treeAPI;
+
+	/**
+	 * Collection of <TT>SessionInfo</TT> objects keyed by
+	 * ISession.getIdentifier().
+	 */
+	private Map _sessions = new HashMap();
 
 	/**
 	 * Return the internal name of this plugin.
@@ -124,9 +125,6 @@ public class OraclePlugin extends DefaultSessionPlugin
 		{
 			throw new PluginException(ex);
 		}
-
-		// Load plugin preferences.
-		loadPrefs();
 	}
 
 	/**
@@ -134,22 +132,6 @@ public class OraclePlugin extends DefaultSessionPlugin
 	 */
 	public void unload()
 	{
-//		try
-//		{
-//			savePrefs(new File(_userSettingsFolder, USER_PREFS_FILE_NAME));
-//		}
-//		catch (IOException ex)
-//		{
-//			s_log.error("Error occured writing to preferences file: "
-//							+ USER_PREFS_FILE_NAME,
-//						ex);
-//		}
-//		catch (XMLException ex)
-//		{
-//			s_log.error("Error occured writing to preferences file: "
-//							+ USER_PREFS_FILE_NAME,
-//						ex);
-//		}
 		super.unload();
 	}
 
@@ -171,12 +153,35 @@ public class OraclePlugin extends DefaultSessionPlugin
 			isOracle = isOracle(session);
 			if (isOracle)
 			{
+				SessionInfo si = new SessionInfo(session);
+				_sessions.put(session.getIdentifier(), si);
 				_treeAPI = session.getObjectTreeAPI();
-				_treeAPI.registerExpander(ObjectTreeNode.IObjectTreeNodeType.SCHEMA, new SchemaExpander());
-				_treeAPI.registerExpander(ObjectTreeNode.IObjectTreeNodeType.PACKAGE, new PackageExpander());
+				_treeAPI.registerExpander(ObjectTreeNode.IObjectTreeNodeType.SCHEMA,
+											new SchemaExpander(this));
+				_treeAPI.registerExpander(si._packageNodeType,
+											new PackageExpander());
 			}
 		}
 		return isOracle;
+	}
+
+	/**
+	 * Return the session information object for the passed session.
+	 * 
+	 * @param	session		Session to retrieve info object for.
+	 * 
+	 * @return	The <TT>SessionInfo</TT> object for the passed session.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
+	 */
+	SessionInfo getSessionInfo(ISession session)
+	{
+		if (session == null)
+		{
+			throw new IllegalArgumentException("ISession == null");
+		}
+		return (SessionInfo)_sessions.get(session.getIdentifier());
 	}
 
 	private boolean isOracle(ISession session)
@@ -196,88 +201,5 @@ public class OraclePlugin extends DefaultSessionPlugin
 			s_log.debug("Error in getDatabaseProductName()", ex);
 		}
 		return dbms != null && dbms.toLowerCase().startsWith(ORACLE);
-	}
-
-	/**
-	 * Create Look and Feel preferences panels for the Global Preferences dialog.
-	 *
-	 * @return  Look and Feel preferences panels.
-	 */
-//	public IGlobalPreferencesPanel[] getGlobalPreferencePanels()
-//	{
-//		return new IGlobalPreferencesPanel[]
-//			{
-//				new LAFPreferencesTab(this, _lafRegister),
-//				new LAFFontsTab(this, _lafRegister),
-//			};
-//	}
-
-	/**
-	 * Get the preferences info object for this plugin.
-	 *
-	 * @return	The preferences info object for this plugin.
-	 */
-//	LAFPreferences getLAFPreferences()
-//	{
-//		return _lafPrefs;
-//	}
-
-	/**
-	 * Load from preferences file.
-	 */
-	private void loadPrefs()
-	{
-//		final File oldPrefsFile = new File(_userSettingsFolder, OLD_USER_PREFS_FILE_NAME);
-//		final File newPrefsFile = new File(_userSettingsFolder, USER_PREFS_FILE_NAME);
-//		final boolean oldExists = oldPrefsFile.exists();
-//		final boolean newExists = newPrefsFile.exists();
-
-//		try
-//		{
-//			if (oldExists)
-//			{
-//				loadOldPrefs(oldPrefsFile);
-//				try
-//				{
-//					_settingsCache.add(_lafPrefs);
-//				}
-//				catch (DuplicateObjectException ex)
-//				{
-//					s_log.error("LAFPreferences object already in cache", ex);
-//				}
-//				savePrefs(newPrefsFile);
-//				if (!oldPrefsFile.delete())
-//				{
-//					s_log.error("Unable to delete old LAF preferences file");
-//				}
-//				
-//			}
-//			else if (newExists)
-//			{
-//				loadNewPrefs(newPrefsFile);
-//			}
-//		}
-//		catch (IOException ex)
-//		{
-//			s_log.error("Error occured in preferences file", ex);
-//		}
-//		catch (XMLException ex)
-//		{
-//			s_log.error("Error occured in preferences file", ex);
-//		}
-
-		
-//		if (_lafPrefs == null)
-//		{
-//			_lafPrefs = new LAFPreferences(IdentifierFactory.getInstance().createIdentifier());
-//			try
-//			{
-//				_settingsCache.add(_lafPrefs);
-//			}
-//			catch (DuplicateObjectException ex)
-//			{
-//				s_log.error("LAFPreferences object already in cache", ex);
-//			}
-//		}
 	}
 }
