@@ -21,9 +21,13 @@
 package net.sourceforge.jcomplete.test;
 
 import javax.swing.*;
+import javax.swing.event.CaretListener;
+import javax.swing.event.CaretEvent;
 import javax.swing.text.BadLocationException;
 
 import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -84,12 +88,39 @@ public class PopUpCompletionTest extends JFrame
             }
         });
 
+        final JLabel posLabel = new JLabel("Pos: 0");
+        JPanel labelArea = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        labelArea.add(new JLabel("hit Ctrl-Enter for auto-completion on column and table references | "));
+        labelArea.add(posLabel);
+
         JTextArea textArea = new JTextArea();
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
+        textArea.setRows(20);
+        textArea.addCaretListener(new CaretListener() {
+            public void caretUpdate(CaretEvent e)
+            {
+                posLabel.setText("Pos: "+e.getDot());
+            }
+        });
 
         final JTextArea errorArea = new JTextArea();
         errorArea.setRows(5);
+        errorArea.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e)
+            {
+                super.mouseClicked(e);
+                if(e.getClickCount() == 2)
+                    errorArea.setText("");
+            }
+        });
+
+        JScrollPane textScroller = new JScrollPane(textArea);
+        JScrollPane errScroller = new JScrollPane(errorArea);
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        splitPane.setTopComponent(textScroller);
+        splitPane.setBottomComponent(errScroller);
 
         //create the parser interface handler
         SQLCompletionHandler handler = new SQLCompletionHandler(new ErrorListener(errorArea), s_TestTables);
@@ -102,15 +133,9 @@ public class PopUpCompletionTest extends JFrame
         textArea.addKeyListener(new SQLCompletionAdapter(
               textArea, handler, KeyEvent.CTRL_MASK, KeyEvent.VK_ENTER));
 
-        getContentPane().setLayout(new java.awt.BorderLayout());
-        getContentPane().add(new JLabel("hit Ctrl-Enter for auto-completion on column and table references"),
-              java.awt.BorderLayout.NORTH);
-
-        JScrollPane textScroller = new JScrollPane(textArea);
-        getContentPane().add(textScroller, java.awt.BorderLayout.CENTER);
-
-        JScrollPane errScroller = new JScrollPane(errorArea);
-        getContentPane().add(errScroller, java.awt.BorderLayout.SOUTH);
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(labelArea, BorderLayout.NORTH);
+        getContentPane().add(splitPane, BorderLayout.CENTER);
     }
 
     private class ErrorListener implements CompletionHandler.ErrorListener

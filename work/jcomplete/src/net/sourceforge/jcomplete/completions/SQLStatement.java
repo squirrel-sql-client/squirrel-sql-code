@@ -17,6 +17,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * created 24.09.2002 12:27:12
+ *
+ * @version $Id: SQLStatement.java,v 1.5 2002-10-10 22:33:49 csell Exp $
  */
 package net.sourceforge.jcomplete.completions;
 
@@ -24,12 +26,13 @@ import java.util.*;
 
 import net.sourceforge.jcomplete.SQLCompletion;
 import net.sourceforge.jcomplete.SQLSchema;
+import net.sourceforge.jcomplete.Completion;
 
 /**
  * a completion representing a full SQl statement. This object servers only
  * as a container for subelements, thus constituting a completion context.
  */
-public class SQLStatement extends SQLCompletion implements SQLSchema
+public class SQLStatement extends SQLCompletion implements SQLSchema, SQLStatementContext
 {
     private List children;
     protected SQLSchema sqlSchema;
@@ -55,27 +58,22 @@ public class SQLStatement extends SQLCompletion implements SQLSchema
         return null;
     }
 
-    public void setSqlSchema(SQLSchema handler)
+    public void setSqlSchema(SQLSchema schema)
     {
-        this.sqlSchema = handler;
+        if(schema == this) throw new RuntimeException("internal error 22");
+        this.sqlSchema = schema;
     }
 
-    public void addChild(SQLCompletion child)
+    protected void addChild(Completion child)
     {
         if(children == null) children = new ArrayList();
         children.add(child);
-        child.setParent(this);
     }
 
-    public void addStatement(SQLStatement statement)
+    public void addContext(SQLStatementContext context)
     {
-        addChild(statement);
-        statement.setSqlSchema(this);
-    }
-
-    public Iterator getChildren()
-    {
-        return children != null ? children.iterator() : Collections.EMPTY_LIST.iterator();
+        context.setSqlSchema(this);
+        addChild(context);
     }
 
     public void setEndPosition(int offset)
@@ -83,6 +81,11 @@ public class SQLStatement extends SQLCompletion implements SQLSchema
         super.setEndPosition(offset);
         if(sqlSchema instanceof SQLStatement)
             ((SQLStatement)sqlSchema).setEndPosition(offset);
+    }
+
+    public void addTable(SQLTable table)
+    {
+        addChild(table);
     }
 
     public boolean setTable(SQLTable table)
@@ -116,5 +119,20 @@ public class SQLStatement extends SQLCompletion implements SQLSchema
     public Table getTableForAlias(String alias)
     {
         return sqlSchema.getTableForAlias(alias);
+    }
+
+    public void addColumn(SQLColumn column)
+    {
+        addChild(column);
+    }
+
+    public SQLStatement getStatement()
+    {
+        return this;
+    }
+
+    protected Iterator getChildren()
+    {
+        return children != null ? children.iterator() : Collections.EMPTY_LIST.iterator();
     }
 }

@@ -1,5 +1,7 @@
 /**
  * Compiler for the SQL language, with semantic actions that support code completion
+ *
+ * @version $Id: SquirrelSQL.atg,v 1.4 2002-10-10 22:33:48 csell Exp $
  */
 PACKAGE "net.sourceforge.jcomplete.parser"
 IMPORT "net.sourceforge.jcomplete.completions.*", "net.sourceforge.jcomplete.*"
@@ -9,31 +11,31 @@ COMPILER squirrelSQL
     public List statements = new ArrayList();
     public SQLSchema rootSchema;
 
-    private Stack statementStack;
+    private Stack stack;
 
     protected void addRootStatement(SQLStatement statement)
     {
         statement.setSqlSchema(rootSchema);
         statements.add(statement);
-        statementStack = new Stack();
-        statementStack.push(statement);
+        stack = new Stack();
+        stack.push(statement);
     }
 
-    private SQLStatement getParent()
+    private SQLStatementContext getContext()
     {
-        return (SQLStatement)statementStack.peek();
+        return (SQLStatementContext)stack.peek();
     }
 
-    private void pushStatement(SQLStatement statement)
+    private void pushContext(SQLStatementContext context)
     {
-        SQLStatement parent = (SQLStatement)statementStack.peek();
-        parent.addStatement(statement);
-        statementStack.push(statement);
+        SQLStatementContext parent = (SQLStatementContext)stack.peek();
+        parent.addContext(context);
+        stack.push(context);
     }
 
-    private SQLStatement popStatement()
+    private SQLStatementContext popContext()
     {
-        return (SQLStatement)statementStack.pop();
+        return (SQLStatementContext)stack.pop();
     }
 
 IGNORE CASE
@@ -76,10 +78,10 @@ SQLStatement            (.  addRootStatement(new SQLStatement(token.pos)); .)
     [ ";" ]
     .
 
-SelectStmt              (.  pushStatement(new SQLStatement(token.pos)); .)
+SelectStmt              (.  pushContext(new SQLStatement(token.pos)); .)
     =
     (SimpleSelect {SetOperator SimpleSelect})
-                        (.  popStatement(); .)
+                        (.  popContext(); .)
     .
 
 SetOperator
@@ -88,7 +90,8 @@ SetOperator
 
 UpdateStmt =
     "UPDATE"
-    Table "SET"
+    Table <null>
+    "SET"
     UpdateFieldList  [WhereClause]
     .
 
@@ -100,20 +103,38 @@ UpdateFieldList =
     UpdateField  { ItemSeparator UpdateField  }
     .
 
-InsertStmt =
-    "INSERT" "INTO"
-    Table  [ OpenParens ColumnList CloseParens  ] 
+InsertStmt              (.  SQLStatement statement = new SQLStatement(t.pos);
+                            pushContext(statement);
+                        .)
+    =
+    "INSERT"            (.  SQLTable table = new SQLTable(statement, scanner.pos+1);
+                            statement.addTable(table);
+                        .)
+    "INTO"              (.  SQLColumn column = new SQLColumn(statement, scanner.pos+1);
+                            statement.addColumn(column);
+                        .)
+    Table <table>
+    [ OpenParens
+    ColumnList
+    CloseParens  ]
     (("VALUES" OpenParens FieldList CloseParens) | SelectStmt)
+                        (.  statement.setEndPosition(scanner.pos);
+                            popContext();
+                        .)
     .
 
-DeleteStmt =
+DeleteStmt              (.  SQLStatement statement = new SQLStatement(t.pos);
+                            pushContext(statement);
+                        .)
+    =
     "DELETE"
     "FROM"
-    Table  [ WhereClause  ]
+    Table <null>
+    [WhereClause]       (. popContext(); .)
     .
 
-SimpleSelect            (.  SQLSelectStatement stmt = new SQLSelectStatement(t.pos);
-                            pushStatement(stmt);
+SimpleSelect            (.  SQLSelectStatement statement = new SQLSelectStatement(t.pos);
+                            pushContext(statement);
                         .)
     =
     SelectClause
@@ -121,10 +142,10 @@ SimpleSelect            (.  SQLSelectStatement stmt = new SQLSelectStatement(t.p
     [WhereClause]
     [GroupByClause] 
     [HavingClause] 
-    [OrderByClause]     (. popStatement(); .)
+    [OrderByClause]     (.  popContext(); .)
     .
 
-SelectClause            (.  SQLSelectStatement statement = (SQLSelectStatement)getParent();
+SelectClause            (.  SQLSelectStatement statement = (SQLSelectStatement)getContext();
                             statement.setSelectListStart(scanner.pos);
                         .)
     =
@@ -133,7 +154,7 @@ SelectClause            (.  SQLSelectStatement statement = (SQLSelectStatement)g
     SelectFieldList     (.  statement.setSelectListEnd(t.pos); .)
     .
 
-FromClause              (.  SQLSelectStatement statement = (SQLSelectStatement)getParent();
+FromClause              (.  SQLSelectStatement statement = (SQLSelectStatement)getContext();
                             statement.setFromStart(scanner.pos);
                         .)
     =
@@ -145,8 +166,9 @@ FromTableList =
     QualifiedTable {(ItemSeparator QualifiedTable) | JoinStmt}
     .
         
-QualifiedTable          (.  SQLTable table = new SQLTable(getParent(), t.pos);
-                            getParent().addChild(table);
+QualifiedTable          (.  SQLSelectStatement statement = (SQLSelectStatement)getContext();
+                            SQLTable table = new SQLTable(statement, t.pos);
+                            statement.addTable(table);
                             boolean wasSet = false;
                         .)
     =
@@ -160,11 +182,11 @@ QualifiedTable          (.  SQLTable table = new SQLTable(getParent(), t.pos);
     [
     ["AS"]              (.  table.alias = t.str;
                             wasSet = true;
-                            if(getParent().setTable(table) == false)
+                            if(statement.setTable(table) == false)
                                 SemError(10);
                         .)
     Alias
-    ]                   (.  if(!wasSet && getParent().setTable(table) == false)
+    ]                   (.  if(!wasSet && statement.setTable(table) == false)
                                 SemError(10);
                         .)
     .
@@ -186,29 +208,36 @@ JoinExpr =
     | ("USING" OpenParens ColumnList CloseParens)
     .
 
-WhereClause             (.  SQLSelectStatement statement = (SQLSelectStatement)getParent();
-                            statement.setWhereStart(scanner.pos); .)
+WhereClause             (.  SQLStatement statement = (SQLStatement)getContext();
+                            SQLWhere where = new SQLWhere(statement, t.pos);
+                            pushContext(where);
+                        .)
     =
     SYNC "WHERE" SearchCondition
-                        (.  statement.setWhereEnd(t.pos); .)
+                        (.  where.setEndPosition(t.pos);
+                            popContext();
+                        .)
     .
 
-GroupByClause           (.  SQLSelectStatement statement = (SQLSelectStatement)getParent();
-                            statement.setGroupByStart(scanner.pos); .)
+GroupByClause           (.  SQLSelectStatement statement = (SQLSelectStatement)getContext();
+                            statement.setGroupByStart(scanner.pos);
+                        .)
     =
     SYNC "GROUP" "BY" FieldList
                         (.  statement.setGroupByEnd(t.pos); .)
     .
 
-HavingClause            (.  SQLSelectStatement statement = (SQLSelectStatement)getParent();
-                            statement.setHavingStart(scanner.pos); .)
+HavingClause            (.  SQLSelectStatement statement = (SQLSelectStatement)getContext();
+                            statement.setHavingStart(scanner.pos);
+                        .)
     =
     SYNC "HAVING" SearchCondition
                         (.  statement.setHavingEnd(t.pos); .)
     .
 
-OrderByClause           (.  SQLSelectStatement statement = (SQLSelectStatement)getParent();
-                            statement.setOrderByStart(scanner.pos); .)
+OrderByClause           (.  SQLSelectStatement statement = (SQLSelectStatement)getContext();
+                            statement.setOrderByStart(scanner.pos);
+                        .)
     =
     SYNC "ORDER" "BY" OrderByFldList
                         (.  statement.setOrderByEnd(t.pos); .)
@@ -241,8 +270,9 @@ ColumnList =
     ColumnName {ItemSeparator ColumnName}
     .
 
-ColumnName              (.  SQLColumn column = new SQLColumn(getParent(), t.pos);//System.out.println("SQLCol");
-                            getParent().addChild(column);
+ColumnName              (.  SQLStatementContext context = getContext();
+                            SQLColumn column = new SQLColumn(context, t.pos);
+                            context.addColumn(column);
                             if(scanner.ch == '.')
                                 column.setAlias(t.str, t.pos);
                             else
@@ -281,7 +311,10 @@ Field =
     | Param
     .
 
-Table =
+Table <SQLTable table>  (.  table.name = t.str;
+                            table.setEndPosition(scanner.pos);
+                        .)
+    =
     ident
     .
 
@@ -432,9 +465,13 @@ ConstraintName =
     ident
     .
     
-ForeignKey =
-    "FOREIGN" "KEY" RelationName SimpleColumnParam 
-    "REFERENCES" Table  ["MATCH" ("FULL" | "PARTIAL")] 
+ForeignKey
+    =
+    "FOREIGN" "KEY"
+    RelationName SimpleColumnParam
+    "REFERENCES"
+    Table <null>
+    ["MATCH" ("FULL" | "PARTIAL")]
     {"ON" ("DELETE" | "UPDATE") 
         ("CASCADE" | ("SET" ("NULL" | "DEFAULT")))
         |  
@@ -459,8 +496,12 @@ CreateStmt =
     "CREATE" (CreateTable | CreateIndex)
     .
 
-CreateTable =
-    "TABLE" Table OpenParens CreatePart {ItemSeparator CreatePart} CloseParens
+CreateTable
+    =
+    "TABLE"
+    Table <null>
+    OpenParens
+    CreatePart {ItemSeparator CreatePart} CloseParens
     .
 
 CascadeRestrict =
@@ -513,8 +554,12 @@ IndexName =
     ident
     .
 
-CreateIndex =
-    ["UNIQUE"] IndexAndName "ON" Table OpenParens IndexColumnList CloseParens
+CreateIndex
+    =
+    ["UNIQUE"] IndexAndName
+    "ON"
+    Table <null>
+    OpenParens IndexColumnList CloseParens
     .
 
 IndexAndName =

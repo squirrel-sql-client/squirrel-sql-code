@@ -17,6 +17,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * created by cse, 24.09.2002 11:20:31
+ *
+ * @version $Id: Completion.java,v 1.4 2002-10-10 22:33:48 csell Exp $
  */
 package net.sourceforge.jcomplete;
 
@@ -25,7 +27,14 @@ package net.sourceforge.jcomplete;
  */
 public interface Completion 
 {
-    public static final int NO_POSITION = -1;
+    /**
+     * Find a completion item for the given text position. This method can be overridden by
+     * subclasses to implement the composite pattern. If the object is not a composite, it
+     * should return itself. Otherwise, it can delegate the lookup to its children.
+     * @param position the caret position at which the completion is requested
+     * @return an appropriate completion object, or <em>null</em> of none available
+     */
+    SQLCompletion getCompletion(int position);
 
     /**
      * return completion text if the completion is fully defined
@@ -69,14 +78,4 @@ public interface Completion
      * @return whether the text between the start position and <em>position</em> must be replaced
      */
     boolean mustReplace(int position);
-
-    /**
-     * update this object with relevant information from <em>completion</em>, which is usually
-     * an obsolete representation of the same completion node, which this object is designed to replace
-     * and which may contain information that needs to be preserved.<br>
-     * This is usually invoked after it has been detected that the completion tree was rebuilt by the
-     * parser due to non-incremantal changes, and therefore the former representations have become obsolete.
-     * @param completion
-     */
-    void updateWith(Completion completion);
 }

@@ -103,14 +103,6 @@ public class SQLCompletionHandler implements CompletionHandler, SQLSchema
         parserThread.reset(textProvider.getChars(0));
     }
 
-    public Completion updateCompletion(Completion completion)
-    {
-        Completion c = getCompletion(completion.getStart());
-        if(c != completion)
-            c.updateWith(completion);
-        return c;
-    }
-
     public List getTables(String catalog, String schema, String name)
     {
         Iterator it = tables.values().iterator();

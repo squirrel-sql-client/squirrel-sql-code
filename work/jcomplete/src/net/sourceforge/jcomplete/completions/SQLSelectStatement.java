@@ -17,6 +17,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * created by cse, 26.09.2002 15:14:45
+ *
+ * @version $Id: SQLSelectStatement.java,v 1.5 2002-10-10 22:33:49 csell Exp $
  */
 package net.sourceforge.jcomplete.completions;
 
@@ -26,7 +28,6 @@ import java.util.List;
 
 import net.sourceforge.jcomplete.SQLCompletion;
 import net.sourceforge.jcomplete.SQLSchema;
-import net.sourceforge.jcomplete.Completion;
 
 /**
  * an SQL select statement
@@ -36,16 +37,14 @@ public class SQLSelectStatement extends SQLStatement
     private static final int FA_START = 0;
     private static final int FA_END = 1;
 
-    private static final int FA_WHERE = 0;
-    private static final int FA_GROUPBY = 1;
-    private static final int FA_HAVING = 2;
-    private static final int FA_ORDERBY = 3;
-    private static final int NO_LIMIT = 99999;
+    private static final int FA_GROUPBY = 0;
+    private static final int FA_HAVING = 1;
+    private static final int FA_ORDERBY = 2;
 
     private Map aliasMap = new HashMap();
     private int selectListStart, selectListEnd, fromStart, fromEnd;
 
-    private int[][] fieldAreas = new int[4][2]; //FA_xxx
+    private int[][] fieldAreas = new int[3][2]; //FA_xxx
 
     public SQLSelectStatement(int start)
     {
@@ -55,7 +54,7 @@ public class SQLSelectStatement extends SQLStatement
     public void setSelectListStart(int start)
     {
         selectListStart = start;
-        selectListEnd = 99999;
+        selectListEnd = NO_LIMIT;
         setEndPosition(selectListEnd);
     }
 
@@ -68,7 +67,7 @@ public class SQLSelectStatement extends SQLStatement
     public void setFromStart(int fromStart)
     {
         this.fromStart = fromStart;
-        this.fromEnd = 99999;
+        this.fromEnd = NO_LIMIT;
         setEndPosition(fromEnd);
     }
 
@@ -76,16 +75,6 @@ public class SQLSelectStatement extends SQLStatement
     {
         this.fromEnd = fromEnd;
         setEndPosition(fromEnd);
-    }
-
-    public void setWhereStart(int start)
-    {
-        setFieldAreaStart(FA_WHERE, start);
-    }
-
-    public void setWhereEnd(int whereEnd)
-    {
-        setFieldAreEnd(FA_WHERE, whereEnd);
     }
 
     public void setGroupByStart(int start)
@@ -177,13 +166,5 @@ public class SQLSelectStatement extends SQLStatement
             }
         }
         return null;
-    }
-
-    public void updateWith(Completion completion)
-    {
-        SQLSelectStatement other = (SQLSelectStatement)completion;
-        aliasMap.putAll(other.aliasMap);
-        if(parent != null)
-            parent.updateWith(other.parent);
     }
 }

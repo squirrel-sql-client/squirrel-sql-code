@@ -17,6 +17,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * created by cse, 07.10.2002 11:57:54
+ *
+ * @version $Id: ParserThread.java,v 1.4 2002-10-10 22:33:49 csell Exp $
  */
 package net.sourceforge.jcomplete.util;
 
@@ -151,7 +153,7 @@ public class ParserThread extends Thread
                 }
                 else {
                     char prev = current;
-                    System.out.print(prev);
+                    //System.out.print(prev);
                     current = chars.next();
                     return prev;
                 }

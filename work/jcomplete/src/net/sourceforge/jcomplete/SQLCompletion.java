@@ -17,21 +17,25 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * created by cse, 24.09.2002 12:00:04
+ *
+ * @version $Id: SQLCompletion.java,v 1.4 2002-10-10 22:33:48 csell Exp $
  */
 package net.sourceforge.jcomplete;
 
 import net.sourceforge.jcomplete.Completion;
-import net.sourceforge.jcomplete.completions.SQLStatement;
 
 /**
  * abstract superclass for completion items
  */
 public abstract class SQLCompletion implements Completion
 {
-    public static String[] EMPTY_RESULT = new String[0];
+    public static final int NO_POSITION = -1;
+    public static final int NO_LIMIT = 99999;
 
-    protected int startPosition=NO_POSITION, endPosition=NO_POSITION;
-    protected SQLStatement parent;
+    public static final String[] EMPTY_RESULT = new String[0];
+
+    protected int startPosition=NO_POSITION, endPosition=NO_LIMIT;
+
 
     protected SQLCompletion(int startPosition)
     {
@@ -40,21 +44,14 @@ public abstract class SQLCompletion implements Completion
 
     protected SQLCompletion() {}
 
-    /**
-     * Find a completion item for the given text position. This method can be overridden by
-     * subclasses which implement the composite pattern. The default implementation returns
-     * the current object if <em>position</em> is within its position limits (inclusive).
-     * @param position the caret position at which the completion is requested
-     * @return an appropriate completion object - this one, a subelement or <em>null</em>
-     */
     public SQLCompletion getCompletion(int position)
     {
         return position >= startPosition && position <= endPosition ? this : null;
     }
 
-    public void setEndPosition(int offset)
+    public void setEndPosition(int position)
     {
-        this.endPosition = offset;
+        this.endPosition = position;
     }
 
     /**
@@ -98,19 +95,5 @@ public abstract class SQLCompletion implements Completion
     public boolean mustReplace(int position)
     {
         return false;
-    }
-
-    public void updateWith(Completion completion)
-    {
-    }
-
-    public void setParent(SQLStatement sqlStatement)
-    {
-        parent = sqlStatement;
-    }
-
-    public SQLStatement getParent()
-    {
-        return parent;
     }
 }

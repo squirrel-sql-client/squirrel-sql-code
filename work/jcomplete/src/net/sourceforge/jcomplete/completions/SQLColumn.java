@@ -17,12 +17,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * created by cse, 24.09.2002 16:00:59
+ *
+ * @version $Id: SQLColumn.java,v 1.5 2002-10-10 22:33:49 csell Exp $
  */
 package net.sourceforge.jcomplete.completions;
 
 import net.sourceforge.jcomplete.SQLCompletion;
 import net.sourceforge.jcomplete.SQLSchema;
-import net.sourceforge.jcomplete.Completion;
 
 /**
  * a completion suggesting column names
@@ -33,26 +34,26 @@ public class SQLColumn extends SQLCompletion
     private String alias;
 
     private boolean isRepeatable = true;
-    private SQLStatement statement;
+    private SQLStatementContext parent;
     private int afterSeparatorPos = NO_POSITION;
 
-    public SQLColumn(SQLStatement statement,  int start)
+    public SQLColumn(SQLStatementContext parent,  int start)
     {
         super(start);
-        this.statement = statement;
+        this.parent = parent;
     }
 
-    public SQLColumn(SQLStatement statement, int start, int end)
+    public SQLColumn(SQLStatementContext parent, int start, int end)
     {
         super(start);
-        this.statement = statement;
+        this.parent = parent;
         setEndPosition(end);
     }
 
-    public SQLColumn(SQLStatement statement)
+    public SQLColumn(SQLStatementContext parent)
     {
         super();
-        this.statement = statement;
+        this.parent = parent;
     }
 
     public void setAlias(String alias, int pos)
@@ -91,7 +92,7 @@ public class SQLColumn extends SQLCompletion
 
     public SQLSchema.Table getTable()
     {
-        return alias != null ? statement.getTableForAlias(alias) : null;
+        return alias != null ? parent.getStatement().getTableForAlias(alias) : null;
     }
 
     public boolean hasTable(int position)
@@ -106,7 +107,7 @@ public class SQLColumn extends SQLCompletion
 
     public SQLStatement getStatement()
     {
-        return statement;
+        return parent.getStatement();
     }
 
     public String getText()
@@ -181,11 +182,5 @@ public class SQLColumn extends SQLCompletion
     public boolean mustReplace(int position)
     {
         return column != null && position >= startPosition && position <= endPosition;
-    }
-
-    public void updateWith(Completion completion)
-    {
-        SQLColumn oldColumn = (SQLColumn)completion;
-        getStatement().updateWith(oldColumn.getStatement());
     }
 }

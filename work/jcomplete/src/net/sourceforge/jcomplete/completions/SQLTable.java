@@ -43,6 +43,7 @@ public class SQLTable extends SQLCompletion
     public SQLTable(SQLStatement statement, int start)
     {
         super(start);
+        System.out.println("SQLTable: "+start);
         this.statement = statement;
     }
 
@@ -53,8 +54,9 @@ public class SQLTable extends SQLCompletion
 
     public SQLSchema.Table[] getCompletions(int position)
     {
-        String tb = (position >= startPosition && position <= endPosition) ?
-              name.substring(0, position - startPosition) : name;
+        String tb = (name != null && position > startPosition) ?
+              name.substring(0, position - startPosition) : null;
+
         List tables = getStatement().getTables(catalog, schema, tb);
         Collections.sort(tables);
         return (SQLSchema.Table[])tables.toArray(new SQLSchema.Table[tables.size()]);

@@ -20,31 +20,31 @@ public class Parser {
 public List statements = new ArrayList();
     public SQLSchema rootSchema;
 
-    private Stack statementStack;
+    private Stack stack;
 
     protected void addRootStatement(SQLStatement statement)
     {
         statement.setSqlSchema(rootSchema);
         statements.add(statement);
-        statementStack = new Stack();
-        statementStack.push(statement);
+        stack = new Stack();
+        stack.push(statement);
     }
 
-    private SQLStatement getParent()
+    private SQLStatementContext getContext()
     {
-        return (SQLStatement)statementStack.peek();
+        return (SQLStatementContext)stack.peek();
     }
 
-    private void pushStatement(SQLStatement statement)
+    private void pushContext(SQLStatementContext context)
     {
-        SQLStatement parent = (SQLStatement)statementStack.peek();
-        parent.addStatement(statement);
-        statementStack.push(statement);
+        SQLStatementContext parent = (SQLStatementContext)stack.peek();
+        parent.addContext(context);
+        stack.push(context);
     }
 
-    private SQLStatement popStatement()
+    private SQLStatementContext popContext()
     {
-        return (SQLStatement)statementStack.pop();
+        return (SQLStatementContext)stack.pop();
     }
 
 
@@ -215,7 +215,7 @@ public List statements = new ArrayList();
 		}
 		IndexAndName();
 		Expect(32);
-		Table();
+		Table(null);
 		Expect(5);
 		IndexColumnList();
 		CloseParens();
@@ -223,7 +223,7 @@ public List statements = new ArrayList();
 
 	private final void CreateTable() {
 		Expect(94);
-		Table();
+		Table(null);
 		Expect(5);
 		CreatePart();
 		while (t.kind == 101) {
@@ -265,7 +265,7 @@ public List statements = new ArrayList();
 		RelationName();
 		SimpleColumnParam();
 		Expect(85);
-		Table();
+		Table(null);
 		if (t.kind == 86) {
 			Get();
 			if (t.kind == 28) {
@@ -763,8 +763,9 @@ public List statements = new ArrayList();
 	}
 
 	private final void QualifiedTable() {
-		SQLTable table = new SQLTable(getParent(), t.pos);
-		getParent().addChild(table);
+		SQLSelectStatement statement = (SQLSelectStatement)getContext();
+		SQLTable table = new SQLTable(statement, t.pos);
+		statement.addTable(table);
 		boolean wasSet = false;
 		
 		Expect(1);
@@ -784,12 +785,12 @@ public List statements = new ArrayList();
 			}
 			table.alias = t.str;
 			wasSet = true;
-			if(getParent().setTable(table) == false)
+			if(statement.setTable(table) == false)
 			    SemError(10);
 			
 			Alias();
 		}
-		if(!wasSet && getParent().setTable(table) == false)
+		if(!wasSet && statement.setTable(table) == false)
 		    SemError(10);
 		
 	}
@@ -815,8 +816,9 @@ public List statements = new ArrayList();
 	}
 
 	private final void OrderByClause() {
-		SQLSelectStatement statement = (SQLSelectStatement)getParent();
+		SQLSelectStatement statement = (SQLSelectStatement)getContext();
 		statement.setOrderByStart(scanner.pos);
+		
 		while (!(t.kind == 0 || t.kind == 38)) {Error(134); Get();}
 		Expect(38);
 		Expect(36);
@@ -825,8 +827,9 @@ public List statements = new ArrayList();
 	}
 
 	private final void HavingClause() {
-		SQLSelectStatement statement = (SQLSelectStatement)getParent();
+		SQLSelectStatement statement = (SQLSelectStatement)getContext();
 		statement.setHavingStart(scanner.pos);
+		
 		while (!(t.kind == 0 || t.kind == 37)) {Error(135); Get();}
 		Expect(37);
 		SearchCondition();
@@ -834,8 +837,9 @@ public List statements = new ArrayList();
 	}
 
 	private final void GroupByClause() {
-		SQLSelectStatement statement = (SQLSelectStatement)getParent();
+		SQLSelectStatement statement = (SQLSelectStatement)getContext();
 		statement.setGroupByStart(scanner.pos);
+		
 		while (!(t.kind == 0 || t.kind == 35)) {Error(136); Get();}
 		Expect(35);
 		Expect(36);
@@ -844,7 +848,7 @@ public List statements = new ArrayList();
 	}
 
 	private final void FromClause() {
-		SQLSelectStatement statement = (SQLSelectStatement)getParent();
+		SQLSelectStatement statement = (SQLSelectStatement)getContext();
 		statement.setFromStart(scanner.pos);
 		
 		while (!(t.kind == 0 || t.kind == 19)) {Error(137); Get();}
@@ -854,7 +858,7 @@ public List statements = new ArrayList();
 	}
 
 	private final void SelectClause() {
-		SQLSelectStatement statement = (SQLSelectStatement)getParent();
+		SQLSelectStatement statement = (SQLSelectStatement)getContext();
 		statement.setSelectListStart(scanner.pos);
 		
 		while (!(t.kind == 0 || t.kind == 20)) {Error(138); Get();}
@@ -903,8 +907,9 @@ public List statements = new ArrayList();
 	}
 
 	private final void ColumnName() {
-		SQLColumn column = new SQLColumn(getParent(), t.pos);//System.out.println("SQLCol");
-		getParent().addChild(column);
+		SQLStatementContext context = getContext();
+		SQLColumn column = new SQLColumn(context, t.pos);
+		context.addColumn(column);
 		if(scanner.ch == '.')
 		    column.setAlias(t.str, t.pos);
 		else
@@ -929,12 +934,16 @@ public List statements = new ArrayList();
 	}
 
 	private final void WhereClause() {
-		SQLSelectStatement statement = (SQLSelectStatement)getParent();
-		statement.setWhereStart(scanner.pos);
+		SQLStatement statement = (SQLStatement)getContext();
+		SQLWhere where = new SQLWhere(statement, t.pos);
+		pushContext(where);
+		
 		while (!(t.kind == 0 || t.kind == 34)) {Error(140); Get();}
 		Expect(34);
 		SearchCondition();
-		statement.setWhereEnd(t.pos);
+		where.setEndPosition(t.pos);
+		popContext();
+		
 	}
 
 	private final void UpdateFieldList() {
@@ -945,7 +954,10 @@ public List statements = new ArrayList();
 		}
 	}
 
-	private final void Table() {
+	private final void Table(SQLTable table) {
+		table.name = t.str;
+		table.setEndPosition(scanner.pos);
+		
 		Expect(1);
 	}
 
@@ -965,8 +977,8 @@ public List statements = new ArrayList();
 	}
 
 	private final void SimpleSelect() {
-		SQLSelectStatement stmt = new SQLSelectStatement(t.pos);
-		pushStatement(stmt);
+		SQLSelectStatement statement = new SQLSelectStatement(t.pos);
+		pushContext(statement);
 		
 		SelectClause();
 		FromClause();
@@ -982,7 +994,7 @@ public List statements = new ArrayList();
 		if (t.kind == 38) {
 			OrderByClause();
 		}
-		popStatement();
+		popContext();
 	}
 
 	private final void Transaction() {
@@ -1028,17 +1040,21 @@ public List statements = new ArrayList();
 	}
 
 	private final void DeleteStmt() {
+		SQLStatement statement = new SQLStatement(t.pos);
+		pushContext(statement);
+		
 		Expect(18);
 		Expect(19);
-		Table();
+		Table(null);
 		if (t.kind == 34) {
 			WhereClause();
 		}
+		popContext();
 	}
 
 	private final void UpdateStmt() {
 		Expect(12);
-		Table();
+		Table(null);
 		Expect(13);
 		UpdateFieldList();
 		if (t.kind == 34) {
@@ -1047,9 +1063,18 @@ public List statements = new ArrayList();
 	}
 
 	private final void InsertStmt() {
+		SQLStatement statement = new SQLStatement(t.pos);
+		pushContext(statement);
+		
 		Expect(15);
+		SQLTable table = new SQLTable(statement, scanner.pos+1);
+		statement.addTable(table);
+		
 		Expect(16);
-		Table();
+		SQLColumn column = new SQLColumn(statement, scanner.pos+1);
+		statement.addColumn(column);
+		
+		Table(table);
 		if (t.kind == 5) {
 			Get();
 			ColumnList();
@@ -1063,16 +1088,19 @@ public List statements = new ArrayList();
 		} else if (t.kind == 20) {
 			SelectStmt();
 		} else Error(146);
+		statement.setEndPosition(scanner.pos);
+		popContext();
+		
 	}
 
 	private final void SelectStmt() {
-		pushStatement(new SQLStatement(token.pos));
+		pushContext(new SQLStatement(token.pos));
 		SimpleSelect();
 		while (StartOf(16)) {
 			SetOperator();
 			SimpleSelect();
 		}
-		popStatement();
+		popContext();
 	}
 
 	private final void SQLStatement() {

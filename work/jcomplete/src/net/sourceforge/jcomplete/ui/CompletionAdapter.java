@@ -17,6 +17,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * created by cse, 13.09.2002 23:35:35
+ *
+ * @version $Id: CompletionAdapter.java,v 1.4 2002-10-10 22:33:49 csell Exp $
  */
 package net.sourceforge.jcomplete.ui;
 
@@ -67,9 +69,9 @@ public abstract class CompletionAdapter extends KeyAdapter implements Completion
     }
 
     /**
-     * show the appropriate UI for the given completion. The UI should call back
+     * show the UI for the given completion. The UI should call back
      * to this object via the {@link CompletionListener} interface.
-     * @param completion
+     * @param completion the completion object at the current caret position
      */
     protected abstract void showCompletionUI(Completion completion);
 
@@ -91,10 +93,13 @@ public abstract class CompletionAdapter extends KeyAdapter implements Completion
     }
 
     /**
-     * process a completion event, triggered by a simple UI which provides an array of
-     * objects representing the selected completion options. The string representations of
-     * these objects are inserted after the caret position, separated by comma.
-     * @param selectedOptions
+     * process a completion event, triggered by a UI which provides an array of
+     * objects representing the selected completion options. The selected objects are
+     * translated into strings by the accompanying completion object, and inserted into
+     * the underlying document at the caret position, separated by commas.
+     * @param completion the object which handles the completion
+     * @param selectedOptions the options to use for completion
+     * @return either <em>completion</em>, or a substitute created during a reparse
      */
     public Completion completionRequested(Completion completion, Object[] selectedOptions)
     {
@@ -116,9 +121,8 @@ public abstract class CompletionAdapter extends KeyAdapter implements Completion
             }
             m_textComponent.requestFocus();
 
-            Completion c = m_completionHandler.getCompletion(completion.getStart());
-            if(c != completion) c.updateWith(completion);
-            return c;
+            //possibly, a reparse was triggered and a new completion tree created
+            return m_completionHandler.getCompletion(completion.getStart());
         }
         catch (BadLocationException e1) {
             throw new RuntimeException(e1.getMessage());
@@ -126,9 +130,10 @@ public abstract class CompletionAdapter extends KeyAdapter implements Completion
     }
 
     /**
-     * process a completion event, triggered by a complex UI which provides
-     * preprocessed completions through the event object
-     * @param event
+     * process a completion event, triggered by a UI which provides preprocessed completions
+     * through the event object
+     * @param event event object describing the completion requested
+     * @return either <em>event.completion</em>, or a substitute created during a reparse
      */
     public Completion completionRequested(CompletionListener.Event event)
     {
@@ -147,15 +152,17 @@ public abstract class CompletionAdapter extends KeyAdapter implements Completion
                 String text = comp.getText(m_textComponent.getCaretPosition());
                 doc.insertString(m_textComponent.getCaretPosition(), text, null);
             }
-            Completion c = m_completionHandler.getCompletion(event.completion.getStart());
-            if(c != event.completion) c.updateWith(event.completion);
-            return c;
+            //possibly, a reparse was triggered and a new completion tree created
+            return m_completionHandler.getCompletion(event.completion.getStart());
         }
         catch (BadLocationException e1) {
             throw new RuntimeException(e1.getMessage());
         }
     }
 
+    /**
+     * callback used if the user aborted the completion request
+     */
     public void completionAborted()
     {
         m_textComponent.requestFocus();

@@ -50,7 +50,7 @@ public class TableColumnChooser extends JDialog
 
     private CompletionListener  completor;
     private SQLColumn           sqlColumn;
-    private boolean             existingCompleted, needsSeparator;
+    private boolean             existingCompleted=true, needsSeparator;
     private Map                 assignedTables = new HashMap();
 
 
