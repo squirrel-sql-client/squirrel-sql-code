@@ -6,13 +6,22 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- When clearing the message panel the background
+  is reset to white (Maury Hammel).
 - Display column header as a tooltip if the
   table column isn't wide enough to display 
   it (Stephen Straub).
 - Add the ability to "Tile Vertically" and
   "Tile Horizontally" (Rick Strickland).
 
+Bug Fixes
+---------
+- Fix bug where sorting by clicking in the column
+  header for a table wouldn't work correctly when
+  the columns had been resequenced by dragging
+  (Johnathan James).
   
+
 1.1final1
 ========
 
