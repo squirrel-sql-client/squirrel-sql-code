@@ -40,8 +40,8 @@ class JeditTextAreaDefaults extends TextAreaDefaults {
 		caretBlinks = true;
 		electricScroll = 3;
 
-		cols = 80;
-		rows = 25;
+		cols = 1;
+		rows = 1;
 
 		styles = SyntaxUtilities.getDefaultSyntaxStyles();
 
