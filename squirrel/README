@@ -1,6 +1,6 @@
 -----------------------
 o Developmer's README
-o $Id: README,v 1.5 2001-11-22 00:23:06 placson Exp $
+o $Id: README,v 1.6 2001-11-22 00:24:10 placson Exp $
 -----------------------
 
 This README will describe how to establish your local development environment 
@@ -65,5 +65,4 @@ Bugzilla:
 ---------
 If you find any bugs with the Squirrel-sql project please immediately
 report the bugs to squirrel-sql-develop@lists.sourceforge.net
-
 
