@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,28 +17,20 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
+import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.JDialog;
 import javax.swing.JButton;
-import javax.swing.JLabel;
+import javax.swing.JDialog;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
-import javax.swing.border.BevelBorder;
-
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import javax.swing.SwingUtilities;
 
 public class ErrorDialog extends JDialog {
 	/**
@@ -56,76 +48,104 @@ public class ErrorDialog extends JDialog {
 
 	public ErrorDialog(Frame owner, Throwable th) {
 		super(owner, i18n.ERROR,true);
-		commonCtor(th);
+		createUserInterface(generateMessage(th), th);
 	}
 
 	public ErrorDialog(Dialog owner, Throwable th) {
 		super(owner, i18n.ERROR,true);
-		commonCtor(th);
+		createUserInterface(generateMessage(th), th);
 	}
 
 	public ErrorDialog(Frame owner, String msg) {
 		super(owner, i18n.ERROR,true);
-		commonCtor(msg);
+		createUserInterface(msg, null);
 	}
 
 	public ErrorDialog(Dialog owner, String msg) {
 		super(owner, i18n.ERROR, true);
-		commonCtor(msg);
+		createUserInterface(msg, null);
 	}
 
-	private void commonCtor(Throwable ex) {
-		String msg = ex.getMessage();
+	public ErrorDialog(Frame owner, String msg, Throwable th) {
+		super(owner, i18n.ERROR, true);
+		createUserInterface(msg, th);
+	}
+
+	public ErrorDialog(Dialog owner, String msg, Throwable th) {
+		super(owner, i18n.ERROR, true);
+		createUserInterface(msg, th);
+	}
+
+//	private void commonCtor(String msg) {
+//		createUserInterface(msg);
+//	}
+
+	/**
+	 * Generate a message from the exception.
+	 * 
+	 * @param	th	The exception to get the message from.
+	 * 
+	 * @return	The message.
+	 */
+	private static String generateMessage(Throwable th) {
+		String msg = th.getMessage();
 		if (msg == null || msg.length() == 0) {
-			msg = ex.toString();
+			msg = th.toString();
 		}
-		commonCtor(msg);
+		return msg;
 	}
 
-	private void commonCtor(String msg) {
-		createUserInterface(msg);
-	}
+	private void createUserInterface(String msg, Throwable th) {
+		StringBuffer buf = new StringBuffer();
+		buf/*.append("<html><body>")*/.append(msg);
+		if (th != null) {
+			StringWriter  sw = new StringWriter();
+			th.printStackTrace(new PrintWriter(sw));
+			buf/*.append("<BR>")*/.append("\n")
+			.append(sw.toString());
+		}
+//		buf.append("</body></html>");
 
-	private void createUserInterface(String msg)
-	{
-		msg = "<html><body>" + msg + "</body></html>";
 		int iDialogWidth = 350;
 		int iDialogHeight = 150;
 
-		JPanel mainPnl = new JPanel();
-		mainPnl.setLayout(new GridLayout(0, 1));
-		//		mainPnl.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-		JLabel ta = new JLabel(msg);
-		ta.setVerticalTextPosition(SwingConstants.TOP);
-		//		ta.setEditable(false);
-		Dimension dim = ta.getPreferredSize();
-		if (dim.width > iDialogWidth)
-		{
-			int widthMinScrollbar = (iDialogWidth-20); // 20 should not be guessed
-			dim.height = dim.height * (dim.width / widthMinScrollbar);
-			dim.width = widthMinScrollbar;
-		}
-		ta.setPreferredSize(dim);
-		JScrollPane scroller = new JScrollPane(ta,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-										JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		mainPnl.add(scroller);
+//		JPanel mainPnl = new JPanel();
+//		mainPnl.setLayout(new GridLayout(0, 1));
+		/*JLabel*/MultipleLineLabel ta = new /*JLabel*/MultipleLineLabel(buf.toString());
+//		ta.setVerticalTextPosition(SwingConstants.TOP);
+//		Dimension dim = ta.getPreferredSize();
+//		if (dim.width > iDialogWidth) {
+//			int widthMinScrollbar = (iDialogWidth-20); // 20 should not be guessed
+//			dim.height = dim.height * (dim.width / widthMinScrollbar);
+//			dim.width = widthMinScrollbar;
+//		}
+//		ta.setPreferredSize(dim);
+		ta.setLineWrap(true);
+		final JScrollPane scroller = new JScrollPane(ta,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+										JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+		//mainPnl.add(scroller);
 		JPanel btnsPnl = new JPanel();
-		//		btnsPnl.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		JButton okBtn = new JButton(i18n.OK);
-		okBtn.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent evt)
-			{
+		okBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
 				dispose();
 			}
 		});
 		btnsPnl.add(okBtn);
 		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(mainPnl, BorderLayout.CENTER);
+		getContentPane().add(/*mainPnl*/scroller, BorderLayout.CENTER);
 		getContentPane().add(btnsPnl, BorderLayout.SOUTH);
 		getRootPane().setDefaultButton(okBtn);
+		//pack();
 		setSize(iDialogWidth, iDialogHeight);
 		GUIUtils.centerWithinParent(this);
 		setResizable(false);
+
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				scroller.getViewport().setViewPosition(new Point(0,0));
+			}
+		});
 	}
 }
