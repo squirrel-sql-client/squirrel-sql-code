@@ -5,6 +5,8 @@ import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
 import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsAdapter;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
+import net.sourceforge.squirrel_sql.plugins.syntax.KeyManager;
+import net.sourceforge.squirrel_sql.plugins.syntax.KeyManager;
 
 import javax.swing.*;
 import javax.swing.event.UndoableEditListener;
@@ -74,6 +76,8 @@ public class NetbeansSQLEditorPane extends JEditorPane
 
 
       setToolTipText("Just to make getToolTiptext() to be called");
+
+      new KeyManager(this);
    }
 
    public void updateFromPreferences()
