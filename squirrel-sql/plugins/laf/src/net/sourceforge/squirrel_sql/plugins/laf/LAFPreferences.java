@@ -29,22 +29,55 @@ import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class LAFPreferences implements Serializable {
+public class LAFPreferences implements Cloneable, Serializable {
 	private String _lafClassName;
-	private String _themePackName;
+	private String _skinThemePackName;
 
 	private FontInfo _fiMenu;
 	private FontInfo _fiStatic;
+	private FontInfo _fiToolBar;
 	private FontInfo _fiOther;
 
 	private boolean _fiMenuEnabled;
 	private boolean _fiStaticEnabled;
+	private boolean _fiToolBarEnabled;
 	private boolean _fiOtherEnabled;
 
 	public LAFPreferences() {
 		super();
 		_lafClassName = UIManager.getCrossPlatformLookAndFeelClassName();
-		_themePackName = "";
+		_skinThemePackName = "";
+	}
+
+	/**
+	 * Return a copy of this object.
+	 */
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch(CloneNotSupportedException ex) {
+			throw new InternalError(ex.getMessage());   // Impossible.
+		}
+	}
+
+	public boolean equals(Object rhs) {
+		boolean rc = false;
+		if (rhs != null && rhs.getClass().equals(getClass())) {
+			LAFPreferences obj = (LAFPreferences)rhs;
+			if (_fiMenuEnabled == obj._fiMenuEnabled &&
+					_fiStaticEnabled == obj._fiStaticEnabled &&
+					_fiToolBarEnabled == obj._fiToolBarEnabled &&
+					_fiOtherEnabled == obj._fiOtherEnabled &&
+					_fiOther.equals(obj._fiOther) &&
+					_fiStatic.equals(obj._fiStatic) &&
+					_fiMenu.equals(obj._fiMenu) &&
+					_fiToolBar.equals(obj._fiToolBar) &&
+					_skinThemePackName.equals(obj._skinThemePackName) &&
+					_lafClassName.equals(obj._lafClassName)) {
+				rc = true;
+			}
+		}
+		return rc;
 	}
 
 	public String getLookAndFeelClassName() {
@@ -55,12 +88,12 @@ public class LAFPreferences implements Serializable {
 		_lafClassName = data;
 	}
 
-	public String getThemePackName() {
-		return _themePackName;
+	public String getSkinThemePackName() {
+		return _skinThemePackName;
 	}
 
-	public void setThemePackName(String data) {
-		_themePackName = data;
+	public void setSkinThemePackName(String data) {
+		_skinThemePackName = data;
 	}
 
 	public FontInfo getMenuFontInfo() {
@@ -77,6 +110,14 @@ public class LAFPreferences implements Serializable {
 
 	public void setStaticFontInfo(FontInfo data) {
 		_fiStatic = data;
+	}
+
+	public FontInfo getToolBarFontInfo() {
+		return _fiToolBar;
+	}
+
+	public void setToolBarFontInfo(FontInfo data) {
+		_fiToolBar = data;
 	}
 
 	public FontInfo getOtherFontInfo() {
@@ -101,6 +142,14 @@ public class LAFPreferences implements Serializable {
 
 	public void setStaticFontEnabled(boolean data) {
 		_fiStaticEnabled = data;
+	}
+
+	public boolean isToolBarFontEnabled() {
+		return _fiToolBarEnabled;
+	}
+
+	public void setToolBarFontEnabled(boolean data) {
+		_fiToolBarEnabled = data;
 	}
 
 	public boolean isOtherFontEnabled() {

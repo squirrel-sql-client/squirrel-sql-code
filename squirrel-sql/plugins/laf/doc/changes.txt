@@ -1,12 +1,26 @@
 Change Log
 ==========
 
+0.20
+====
+
+Enhancements
+------------
+- Skin Look and Feel updated to 1.2 with the latest
+  version of the Whistler theme pack.
+- OYOAHA Look and Feel added.
+- Font info split off into its own tab.
+
+Bug Fixes
+---------
+- Update all frames when Look and Feel changed.
+
 
 0.11
 ====
 
 Bug Fixes
-------------
+---------
 - Skin Look and Feel jar placed in correct directory.
 
 Other
