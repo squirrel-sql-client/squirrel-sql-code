@@ -7,7 +7,7 @@
 		</authors>
 		<url>http://squirrel-sql.sf.net</url>
 	</info>
-	<guiprefs height="480" resizable="no" width="640"/>
+	<guiprefs height="480" resizable="yes" width="640"/>
 	<locale>
 		<langpack iso3="eng"/>
 	</locale>
