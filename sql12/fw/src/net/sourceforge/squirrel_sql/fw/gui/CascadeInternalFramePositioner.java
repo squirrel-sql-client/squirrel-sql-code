@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -21,51 +21,66 @@ import java.awt.Rectangle;
 import java.beans.PropertyVetoException;
 
 import javax.swing.JInternalFrame;
-
 /**
  * This class will position an internal frame slightly below and to the
  * right of the internal frame that it previously positioned.
  */
-public class CascadeInternalFramePositioner implements IInternalFramePositioner {
-
+public class CascadeInternalFramePositioner implements IInternalFramePositioner
+{
 	private int _x = INITIAL_POS;
 	private int _y = INITIAL_POS;
 
 	private static final int MOVE = 20;
 	private static final int INITIAL_POS = 5;
 
-	public CascadeInternalFramePositioner() {
+	public CascadeInternalFramePositioner()
+	{
 		super();
 	}
 
-	public void positionInternalFrame(JInternalFrame child) {
-		if (child == null) {
+	public void positionInternalFrame(JInternalFrame child)
+	{
+		if (child == null)
+		{
 			throw new IllegalArgumentException("null JInternalFrame passed");
 		}
-		if (!child.isClosed()) {
-			if (child.getParent() != null) {
+		if (!child.isClosed())
+		{
+			if (child.getParent() != null)
+			{
 				Rectangle parentBounds = child.getParent().getBounds();
-				if (_x >= (parentBounds.width - MOVE)) {
+				if (_x >= (parentBounds.width - MOVE))
+				{
 					_x = INITIAL_POS;
 				}
-				if (_y >= (parentBounds.height - MOVE)) {
+				if (_y >= (parentBounds.height - MOVE))
+				{
 					_y = INITIAL_POS;
 				}
 			}
-			if (child.isIcon()) {
-				try {
+			if (child.isIcon())
+			{
+				try
+				{
 					child.setIcon(false);
-				} catch (PropertyVetoException ignore) {
 				}
-			} else if (child.isMaximum()) {
-				try {
+				catch (PropertyVetoException ignore)
+				{
+				}
+			}
+			else if (child.isMaximum())
+			{
+				try
+				{
 					child.setMaximum(false);
-				} catch (PropertyVetoException ignore) {
+				}
+				catch (PropertyVetoException ignore)
+				{
 				}
 			}
 			child.setBounds(_x, _y, child.getWidth(), child.getHeight());
-			_x+= MOVE;
-			_y+= MOVE;
+			_x += MOVE;
+			_y += MOVE;
 			/*try {
 				child.setSelected(true);
 			} catch (PropertyVetoException ignore) {

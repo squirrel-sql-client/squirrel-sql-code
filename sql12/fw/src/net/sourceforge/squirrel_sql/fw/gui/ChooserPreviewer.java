@@ -34,6 +34,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 /**
  * This is a decorator class that can be used in a <TT>JFileChooser</TT>
@@ -45,6 +47,10 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
  */
 public class ChooserPreviewer extends JComponent
 {
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ChooserPreviewer.class);
+
 	/** Default number of bytes to read from file for preview. */
 	private int DFT_BYTES_TO_READ = 2048;
 
@@ -211,8 +217,7 @@ public class ChooserPreviewer extends JComponent
 			}
 			catch (IOException ex)
 			{
-				buf = new StringBuffer("Error occured reading file: ");
-				buf.append(ex.toString());
+				buf = new StringBuffer(s_stringMgr.getString("ChooserPreviewer.error", ex.toString()));
 			}
 		}
 		_textComponent.setText(buf.toString());

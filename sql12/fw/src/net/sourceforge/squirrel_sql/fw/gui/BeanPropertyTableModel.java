@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -29,33 +29,46 @@ import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
 
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-public class BeanPropertyTableModel extends DefaultTableModel {
+public class BeanPropertyTableModel extends DefaultTableModel
+{
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(BeanPropertyTableModel.class);
 
 	private Object _bean;
 
-	private String _nameColumnName = "Property Name";
-	private String _valueColumnName = "Value";
+	private String _nameColumnName = s_stringMgr.getString("BeanPropertyTableModel.namecolumn");
+	private String _valueColumnName = s_stringMgr.getString("BeanPropertyTableModel.valuecolumn");
 
-	public BeanPropertyTableModel() {
+	public BeanPropertyTableModel()
+	{
 		super();
 	}
 
-	public void setBean( Object bean ) throws BaseException {
+	public void setBean(Object bean) throws BaseException
+	{
 		_bean = bean;
 		refresh();
 	}
 
-	public void refresh() throws BaseException {
+	public void refresh() throws BaseException
+	{
 		final Vector columnNames = new Vector();
 		columnNames.add(_nameColumnName);
 		columnNames.add(_valueColumnName);
 		final Vector columnData = new Vector();
-		if ( _bean != null ) {
-			try {
+		if (_bean != null)
+		{
+			try
+			{
 				BeanInfo info = Introspector.getBeanInfo(_bean.getClass(), Introspector.USE_ALL_BEANINFO);
 				processBeanInfo(info, columnData);
-			} catch(Exception ex) {
+			}
+			catch (Exception ex)
+			{
 				throw new BaseException(ex);
 			}
 		}
@@ -67,21 +80,27 @@ public class BeanPropertyTableModel extends DefaultTableModel {
 	}
 
 	private void processBeanInfo(BeanInfo info, Vector columnData)
-			throws InvocationTargetException, IllegalAccessException {
+		throws InvocationTargetException, IllegalAccessException
+	{
 		BeanInfo[] extra = info.getAdditionalBeanInfo();
-		if (extra != null) {
-			for(int i = 0; i < extra.length; ++i) {
+		if (extra != null)
+		{
+			for (int i = 0; i < extra.length; ++i)
+			{
 				processBeanInfo(extra[i], columnData);
 			}
 		}
 
 		PropertyDescriptor[] propDesc = info.getPropertyDescriptors();
-		for (int i = 0; i < propDesc.length; ++i) {
+		for (int i = 0; i < propDesc.length; ++i)
+		{
 			final String propName = propDesc[i].getName();
 			final Method getter = propDesc[i].getReadMethod();
-			if (propName != null && getter != null) {
+			if (propName != null && getter != null)
+			{
 				Vector line = generateLine(propName, _bean, getter);
-				if (line != null) {
+				if (line != null)
+				{
 					columnData.add(line);
 				}
 			}
@@ -91,9 +110,9 @@ public class BeanPropertyTableModel extends DefaultTableModel {
 	/**
 	 * Generate a line for the passed property.
 	 *
-	 * @param   propName	Name of the property.
-	 * @param   bean		Bean containg the property.
-	 * @param   getter		The "getter" function to retrieve the
+	 * @param	propName	Name of the property.
+	 * @param	bean		Bean containg the property.
+	 * @param	getter		The "getter" function to retrieve the
 	 *						properties value.
 	 *
 	 * @return	A <CODE>Vector</CODE> containing the cells for the line in
@@ -101,32 +120,37 @@ public class BeanPropertyTableModel extends DefaultTableModel {
 	 *			<CODE>null</CODE> if this property is <B>not</B> to be added
 	 *			to the table.
 	 */
-	protected Vector generateLine(String propName, Object bean,
-									Method getter)
-			throws InvocationTargetException, IllegalAccessException {
+	protected Vector generateLine(String propName, Object bean, Method getter)
+		throws InvocationTargetException, IllegalAccessException
+	{
 		final Vector line = new Vector();
 		line.add(propName);
 		line.add(executeGetter(bean, getter));
 		return line;
 	}
 
-	protected Object executeGetter( Object bean, Method getter )
-			throws InvocationTargetException, IllegalAccessException {
+	protected Object executeGetter(Object bean, Method getter)
+		throws InvocationTargetException, IllegalAccessException
+	{
 		return getter.invoke(bean, null);
 	}
 
-	public void setNameColumnName(String value) {
+	public void setNameColumnName(String value)
+	{
 		_nameColumnName = value;
 	}
 
-	public void setValueColumnName(String value) {
+	public void setValueColumnName(String value)
+	{
 		_valueColumnName = value;
 	}
 
-	private static final class DataSorter implements Comparator {
-		public int compare(Object obj1, Object obj2) {
-			String lhs = (String)((Vector)obj1).get(0);
-			String rhs = (String)((Vector)obj2).get(0);
+	private static final class DataSorter implements Comparator
+	{
+		public int compare(Object obj1, Object obj2)
+		{
+			String lhs = (String) ((Vector)obj1).get(0);
+			String rhs = (String) ((Vector)obj2).get(0);
 			return lhs.compareToIgnoreCase(rhs);
 		}
 	}
