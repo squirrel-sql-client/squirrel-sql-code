@@ -59,5 +59,14 @@ public interface IDataSetTableControls
 	 */
 	public boolean changeUnderlyingValueAt(int rowIndex, int columnIndex, Object newValue, Object oldValue);
 	
-	//?? Other functions??
+	/**
+	 * Delete a set of rows from the table.
+	 * The indexes are the row indexes in the SortableModel.
+	 */
+	public void deleteRows(int[] rows);
+	
+	/**
+	 * Insert a new row into the table.
+	 */
+	public void insertRow();
 }

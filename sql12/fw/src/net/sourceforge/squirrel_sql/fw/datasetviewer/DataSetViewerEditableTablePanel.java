@@ -28,8 +28,14 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import javax.swing.DefaultCellEditor;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.*;
+import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
+import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
+
 /**
  * @author gwg
  *
@@ -37,6 +43,9 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.*;
  */
 public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 {
+	/* Menu for right-mouse-click when in cell editors */
+	TablePopupMenu cellPopupMenu = null;
+	
 	/**
 	 * Internal definitions
 	 */
@@ -90,11 +99,35 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		// we need to table column model to be able to add CellEditors to the
 		// individual columns
 		TableColumnModel columnModel = table.getColumnModel();
+cellPopupMenu = new TablePopupMenu(getUpdateableModel(), this);
 		
 		for (int i=0; i < _colDefs.length; i++) {
 			// use factory to get the appropriate editor
-			columnModel.getColumn(i).setCellEditor(
-				CellComponentFactory.getInCellEditor(table, _colDefs[i]));
+			DefaultCellEditor editor =
+				CellComponentFactory.getInCellEditor(table, _colDefs[i]);
+			
+			// add right-click menu to cell editor
+editor.getComponent().addMouseListener(
+new MouseAdapter()
+			{
+				public void mousePressed(MouseEvent evt)
+				{
+					if (evt.isPopupTrigger())
+					{
+						DataSetViewerEditableTablePanel.this.cellPopupMenu.show(
+							evt.getComponent(), evt.getX(), evt.getY());
+					}
+				}
+				public void mouseReleased(MouseEvent evt)
+				{
+					if (evt.isPopupTrigger())
+					{
+						DataSetViewerEditableTablePanel.this.cellPopupMenu.show(
+							evt.getComponent(), evt.getX(), evt.getY());
+					}
+				}
+			});
+			columnModel.getColumn(i).setCellEditor(editor);
 		}
 	}
 	
@@ -213,5 +246,63 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		// no problems, so indicate a successful update of the underlying data
 		return true;
 	}
+	
+	/**
+	 * Delete a set of rows from the table.
+	 * The indexes are the row indexes in the SortableModel.
+	 */
+	public void deleteRows(int[] rows)
+	{
+		// The list of rows may be empty, in which case
+		// we tell user they should select something first
+		if (rows.length == 0) {
+			JOptionPane.showMessageDialog(null,
+			"You must select something in the table to delete.");
+			return;
+		}
+		
+		// Non-empty set of rows to delete.  Make sure user wants to delete
+		int option = JOptionPane.showConfirmDialog(null,
+			"Do you wish to delete "+ rows.length +
+			((rows.length==1)?" row":" rows") +" from this table?",
+			"Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+		if ( option != JOptionPane.YES_OPTION)
+		{
+			return;	// no update done to underlying data
+		}
+		
+		//cancel any current cell editing operations
+		if (currentCellEditor != null) {
+			currentCellEditor.cancelCellEditing();
+			currentCellEditor = null;
+		}
+		
+		// tell creator to delete from DB
+		String message = 
+			((IDataSetUpdateableTableModel)getUpdateableModel()).deleteRows(rows);
+		if (message != null) {
+			// tell user that there was a problem
+			JOptionPane.showMessageDialog(null,
+				message+"\nNo rows deleted from database.", "Error",
+				JOptionPane.ERROR_MESSAGE);
 
+			return;
+		}
+		
+		// DB delete worked correctly, so now delete from table
+		//IMPORTANT: The user and the creator both work through the
+		// SortableTableModel, not the Actual model.  Thus the row
+		// indexes to delete are given in the SortableTableModel row numbers,
+		// so we must work through that model model to actually do the delete.
+		((SortableTableModel)((MyJTable)getComponent()).getModel()).deleteRows(rows);
+	}
+
+	/**
+	 * Insert a new row into the table.
+	 */
+	public void insertRow() {
+JOptionPane.showMessageDialog(null,
+	"Insert will be comming soon!");
+//????????
+	}
 }
