@@ -207,7 +207,7 @@ public class AboutBoxDialog extends JDialog {
 			credits.setEditable(false);
 			credits.setContentType("text/html");
 			final URL url = app.getResources().getCreditsURL();
-			StringBuffer buf = new StringBuffer(1024);
+			StringBuffer buf = new StringBuffer(2048);
 
 			try {
 				BufferedReader rdr = new BufferedReader(new InputStreamReader(url.openStream()));
@@ -237,6 +237,7 @@ public class AboutBoxDialog extends JDialog {
 					map.put(tok, tok);
 				}
 			}
+
 			StringBuffer devNamesBuf = new StringBuffer();
 			for (Iterator it = map.keySet().iterator(); it.hasNext();) {
 				String theName = (String)it.next();
