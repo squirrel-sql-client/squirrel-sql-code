@@ -1,6 +1,13 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+1.2beta5
+========
+
+Bug Fixes
+---------
+- Fix resource strings (Dennis Lundberg).
+
 1.2beta4
 ========
 
