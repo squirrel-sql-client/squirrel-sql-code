@@ -18,7 +18,7 @@ import java.util.HashMap;
  * SQL token marker.
  *
  * @author mike dillon
- * @version $Id: SQLTokenMarker.java,v 1.3 2002-01-29 09:45:29 joco01 Exp $
+ * @version $Id: SQLTokenMarker.java,v 1.4 2002-08-07 09:18:33 colbell Exp $
  */
 public class SQLTokenMarker extends TokenMarker
 {
@@ -83,7 +83,9 @@ loop:
 					lastOffset = i + 1;
 				}
 				break;
-			case '.': case ',': case '(': case ')':
+			// colbell - Add ';' so that syntax highlighting works
+			// when line terminated by a ';'.
+			case '.': case ',': case '(': case ')': case ';':
 				if (token == Token.NULL) {
 					searchBack(line, i);
 					addToken(1, Token.NULL);

@@ -29,13 +29,6 @@ import javax.swing.text.PlainDocument;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
-import net.sourceforge.squirrel_sql.client.session.BaseSQLEntryPanel;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
-
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.InputHandler;
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.JEditTextArea;
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.SyntaxDocument;
@@ -43,9 +36,17 @@ import net.sourceforge.squirrel_sql.plugins.jedit.textarea.SyntaxStyle;
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.TextAreaPainter;
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.Token;
 
-class JeditSQLEntryPanel extends BaseSQLEntryPanel {
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.session.BaseSQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
+
+class JeditSQLEntryPanel extends BaseSQLEntryPanel
+{
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(JeditSQLEntryPanel.class);
+	private static ILogger s_log =
+		LoggerController.createLogger(JeditSQLEntryPanel.class);
 
 	/** Application API. */
 	private IApplication _app;
@@ -59,31 +60,46 @@ class JeditSQLEntryPanel extends BaseSQLEntryPanel {
 	/** Jedit preferences for the current session. */
 	private JeditPreferences _prefs;
 
-	JeditSQLEntryPanel(ISession session, JeditPlugin plugin, JeditPreferences prefs) {
+	JeditSQLEntryPanel(
+		ISession session,
+		JeditPlugin plugin,
+		JeditPreferences prefs)
+	{
 		super();
-		if (session == null) {
+		if (session == null)
+		{
 			throw new IllegalArgumentException("Null ISession passed");
 		}
-		if (plugin == null) {
+		if (plugin == null)
+		{
 			throw new IllegalArgumentException("Null JeditPlugin passed");
 		}
-		if (prefs == null) {
+		if (prefs == null)
+		{
 			throw new IllegalArgumentException("Null JeditPreferences passed");
 		}
 
 		_app = session.getApplication();
-		_prefs = (JeditPreferences)session.getPluginObject(plugin, JeditConstants.ISessionKeys.PREFS);
+		_prefs =
+			(JeditPreferences) session.getPluginObject(
+				plugin,
+				JeditConstants.ISessionKeys.PREFS);
 		_jeditTextArea = new JEditTextArea(new JeditTextAreaDefaults(_prefs));
-		_jeditTextArea.setTokenMarker(new JeditSQLTokenMarker(session.getSQLConnection()));
-		_jeditTextArea.setRightClickPopup(_jeditPopup = new JeditPopupMenu(session, plugin, _jeditTextArea));
+		_jeditTextArea.setTokenMarker(
+			new JeditSQLTokenMarker(session.getSQLConnection()));
+		_jeditTextArea.setRightClickPopup(
+			_jeditPopup = new JeditPopupMenu(session, plugin, _jeditTextArea));
 
-		Action action = session.getApplication().getActionCollection().get(ExecuteSqlAction.class);
-		if (action != null) {
+		Action action =
+			session.getApplication().getActionCollection().get(ExecuteSqlAction.class);
+		if (action != null)
+		{
 			InputHandler ih = _jeditTextArea.getInputHandler();
 			PluginResources rsrc = plugin.getResources();
 			String rsrcKey = "jeditshortcut." + rsrc.getClassName(action.getClass());
 			String binding = rsrc.getString(rsrcKey);
-			if (binding != null && binding.length() > 0) {
+			if (binding != null && binding.length() > 0)
+			{
 				ih.addKeyBinding(binding, action);
 				s_log.debug("Adding binding: " + binding);
 			}
@@ -93,39 +109,91 @@ class JeditSQLEntryPanel extends BaseSQLEntryPanel {
 	/**
 	 * @see ISQLEntryPanel#getJComponent()
 	 */
-	public JComponent getJComponent() {
+	public JComponent getJComponent()
+	{
 		return _jeditTextArea;
 	}
 
 	/**
 	 * @see ISQLEntryPanel#getText()
 	 */
-	public String getText() {
+	public String getText()
+	{
 		return _jeditTextArea.getText();
 	}
 
 	/**
 	 * @see ISQLEntryPanel#getSelectedText()
 	 */
-	public String getSelectedText() {
+	public String getSelectedText()
+	{
 		return _jeditTextArea.getSelectedText();
 	}
 
 	/**
-	 * @see ISQLEntryPanel#setText(String)
+	 * Replace the contents of the SQL entry area with the passed
+	 * SQL script without selecting it.
+	 * 
+	 * @param	sqlScript	The script to be placed in the SQL entry area..
 	 */
-	public void setText(String text) {
-		_jeditTextArea.setText(text);
+	public void setText(String text)
+	{
+		setText(text, false);
 	}
 
 	/**
-	 * @see ISQLEntryPanel#appendText(String)
+	 * Replace the contents of the SQL entry area with the passed
+	 * SQL script and specify whether to select it.
+	 * 
+	 * @param	sqlScript	The script to be placed in the SQL entry area..
+	 * @param	select		If <TT>true</TT> then select the passed script
+	 * 						in the sql entry area.
 	 */
-	public void appendText(String text) {
+	public void setText(String text, boolean select)
+	{
+		_jeditTextArea.setText(text);
+		setSelectionStart(0);
+		setSelectionEnd(_jeditTextArea.getDocument().getLength());
+	}
+
+	/**
+	 * Append the passed SQL script to the SQL entry area but don't select
+	 * it.
+	 * 
+	 * @param	sqlScript	The script to be appended.
+	 */
+	public void appendText(String sqlScript)
+	{
+		appendText(sqlScript, false);
+	}
+
+	/**
+	 * Append the passed SQL script to the SQL entry area and specify
+	 * whether it should be selected.
+	 * 
+	 * @param	sqlScript	The script to be appended.
+	 * @param	select		If <TT>true</TT> then select the passed script
+	 * 						in the sql entry area.
+	 */
+	public void appendText(String sqlScript, boolean select)
+	{
 		SyntaxDocument doc = _jeditTextArea.getDocument();
-		try {
-			doc.insertString(doc.getLength(), text, null);
-		} catch (Exception ex) {
+		try
+		{
+			int start = 0;
+			if (select)
+			{
+				start = doc.getLength();
+			}
+			doc.insertString(doc.getLength(), sqlScript, null);
+			if (select)
+			{
+				setSelectionStart(start + 1);
+				setSelectionEnd(doc.getLength());
+			}
+		}
+		catch (Exception ex)
+		{
 			s_log.error("Error appending text to text area", ex);
 		}
 	}
@@ -133,97 +201,119 @@ class JeditSQLEntryPanel extends BaseSQLEntryPanel {
 	/**
 	 * @see ISQLEntryPanel#getCaretPosition()
 	 */
-	public int getCaretPosition() {
+	public int getCaretPosition()
+	{
 		return _jeditTextArea.getCaretPosition();
 	}
 
-	public void setCaretPosition(int value) {
+	public void setCaretPosition(int value)
+	{
 		_jeditTextArea.setCaretPosition(value);
-    }
+	}
 
 	/**
 	 * @see ISQLEntryPanel#setTabSize(int)
 	 */
-	public void setTabSize(int tabSize) {
-		_jeditTextArea.getDocument().putProperty(PlainDocument.tabSizeAttribute, new Integer(tabSize));
+	public void setTabSize(int tabSize)
+	{
+		_jeditTextArea.getDocument().putProperty(
+			PlainDocument.tabSizeAttribute,
+			new Integer(tabSize));
 	}
 
-	public void setFont(Font font) {
+	public void setFont(Font font)
+	{
 		_jeditTextArea.setFont(font);
 	}
 
 	/**
 	 * @see ISQLEntryPanel#getSelectionStart()
 	 */
-	public int getSelectionStart() {
+	public int getSelectionStart()
+	{
 		return _jeditTextArea.getSelectionStart();
 	}
 
 	/**
 	 * @see ISQLEntryPanel#setSelectionStart(int)
 	 */
-	public void setSelectionStart(int pos) {
+	public void setSelectionStart(int pos)
+	{
 		_jeditTextArea.setSelectionStart(pos);
 	}
 
 	/**
 	 * @see ISQLEntryPanel#getSelectionEnd()
 	 */
-	public int getSelectionEnd() {
+	public int getSelectionEnd()
+	{
 		return _jeditTextArea.getSelectionEnd();
 	}
 
 	/**
 	 * @see ISQLEntryPanel#setSelectionEnd(int)
 	 */
-	public void setSelectionEnd(int pos) {
+	public void setSelectionEnd(int pos)
+	{
 		_jeditTextArea.setSelectionEnd(pos);
 	}
 
 	/**
 	 * @see ISQLEntryPanel#hasFocus()
 	 */
-	public boolean hasFocus() {
+	public boolean hasFocus()
+	{
 		return _jeditTextArea.hasFocus();
 	}
 
 	/**
 	 * @see ISQLEntryPanel#requestFocus()
 	 */
-	public void requestFocus() {
+	public void requestFocus()
+	{
 		_jeditTextArea.requestFocus();
 	}
 
 	/**
 	 * @see ISQLEntryPanel#addMouseListener(MouseListener)
 	 */
-	public void addMouseListener(MouseListener lis) {
+	public void addMouseListener(MouseListener lis)
+	{
 		_jeditTextArea.addMouseListener(lis);
 	}
 
 	/**
 	 * @see ISQLEntryPanel#removeMouseListener(MouseListener)
 	 */
-	public void removeMouseListener(MouseListener lis) {
+	public void removeMouseListener(MouseListener lis)
+	{
 		_jeditTextArea.removeMouseListener(lis);
 	}
 
-	JEditTextArea getTypedComponent() {
+	JEditTextArea getTypedComponent()
+	{
 		return _jeditTextArea;
 	}
 
-	void updateFromPreferences(JeditPreferences prefs) {
-		if (prefs == null) {
+	void updateFromPreferences(JeditPreferences prefs)
+	{
+		if (prefs == null)
+		{
 			throw new IllegalArgumentException("Null JEditPreferences passed");
 		}
 		JEditTextArea comp = getTypedComponent();
 		TextAreaPainter painter = comp.getPainter();
 		SyntaxStyle[] styles = painter.getStyles();
-		styles[Token.KEYWORD1] = new SyntaxStyle(new Color(prefs.getKeyword1RGB()), false, true);
-		styles[Token.KEYWORD2] = new SyntaxStyle(new Color(prefs.getKeyword2RGB()), false, true);
-		styles[Token.KEYWORD3] = new SyntaxStyle(new Color(prefs.getKeyword3RGB()), false, true);
-		styles[Token.COLOMN] = new SyntaxStyle(new Color(prefs.getColumnRGB()), false, true);
-		styles[Token.TABLE] = new SyntaxStyle(new Color(prefs.getTableRGB()), false, true);
+		styles[Token.KEYWORD1] =
+			new SyntaxStyle(new Color(prefs.getKeyword1RGB()), false, true);
+		styles[Token.KEYWORD2] =
+			new SyntaxStyle(new Color(prefs.getKeyword2RGB()), false, true);
+		styles[Token.KEYWORD3] =
+			new SyntaxStyle(new Color(prefs.getKeyword3RGB()), false, true);
+		styles[Token.COLOMN] =
+			new SyntaxStyle(new Color(prefs.getColumnRGB()), false, true);
+		styles[Token.TABLE] =
+			new SyntaxStyle(new Color(prefs.getTableRGB()), false, true);
 		painter.setStyles(styles);
 		painter.setEOLMarkersPainted(prefs.getEOLMarkers());
 		painter.setBlockCaretEnabled(prefs.isBlockCaretEnabled());
@@ -264,7 +354,8 @@ class JeditSQLEntryPanel extends BaseSQLEntryPanel {
 	/**
 	 * @see ISQLEntryPanel#setUndoActions(Action, Action)
 	 */
-	public void setUndoActions(Action undo, Action redo) {
+	public void setUndoActions(Action undo, Action redo)
+	{
 		_jeditPopup.addSeparator();
 		_app.getResources().addToPopupMenu(undo, _jeditPopup);
 		_app.getResources().addToPopupMenu(redo, _jeditPopup);
@@ -273,36 +364,39 @@ class JeditSQLEntryPanel extends BaseSQLEntryPanel {
 	/*
 	 * @see ISQLEntryPanel#getCaretLineNumber()
 	 */
-	public int getCaretLineNumber() {
+	public int getCaretLineNumber()
+	{
 		return _jeditTextArea.getCaretLine();
 	}
 
 	/*
 	 * @see ISQLEntryPanel#getCaretLinePosition()
 	 */
-	public int getCaretLinePosition() {
+	public int getCaretLinePosition()
+	{
 		int caretPos = _jeditTextArea.getCaretPosition();
 		int caretLineOffset = caretPos;
-//		try {
-			caretLineOffset = _jeditTextArea.getLineStartOffset(getCaretLineNumber());
-//		} catch (BadLocationException ignore) {
-//		}			
+		//		try {
+		caretLineOffset = _jeditTextArea.getLineStartOffset(getCaretLineNumber());
+		//		} catch (BadLocationException ignore) {
+		//		}			
 		return caretPos - caretLineOffset;
 	}
 
 	/*
 	 * @see ISQLEntryPanel#addCaretListener(CaretListener)
 	 */
-	public void addCaretListener(CaretListener lis) {
+	public void addCaretListener(CaretListener lis)
+	{
 		_jeditTextArea.addCaretListener(lis);
 	}
 
 	/*
 	 * @see ISQLEntryPanel#removeCaretListener(CaretListener)
 	 */
-	public void removeCaretListener(CaretListener lis) {
+	public void removeCaretListener(CaretListener lis)
+	{
 		_jeditTextArea.removeCaretListener(lis);
 	}
 
 }
-

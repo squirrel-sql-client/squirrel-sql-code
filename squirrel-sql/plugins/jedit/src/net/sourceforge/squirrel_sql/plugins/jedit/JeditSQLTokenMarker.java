@@ -1,5 +1,22 @@
 package net.sourceforge.squirrel_sql.plugins.jedit;
-
+/*
+ * Copyright (C) 2001-2002 Colin Bell
+ * colbell@users.sourceforge.net
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,13 +25,16 @@ import java.util.StringTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.KeywordMap;
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.SQLTokenMarker;
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.Token;
 
-public class JeditSQLTokenMarker extends SQLTokenMarker {
-	private static void addKeywords(DatabaseMetaData dmd, KeywordMap keywords) {
+// :TODO binary, array
+
+public class JeditSQLTokenMarker extends SQLTokenMarker
+{
+	private static void addKeywords(DatabaseMetaData dmd, KeywordMap keywords)
+	{
 		keywords.add("ALL", Token.KEYWORD1);
 		keywords.add("ALTER", Token.KEYWORD1);
 		keywords.add("AND", Token.KEYWORD1);
@@ -52,91 +72,122 @@ public class JeditSQLTokenMarker extends SQLTokenMarker {
 		keywords.add("UNION", Token.KEYWORD1);
 		keywords.add("UPDATE", Token.KEYWORD1);
 		StringBuffer buf = new StringBuffer();
-		try {
+		try
+		{
 			buf.append(dmd.getSQLKeywords());
-		} catch (Throwable ex) {
+		}
+		catch (Throwable ex)
+		{
 			s_log.error("Error", ex);
 		}
 		StringTokenizer strtok = new StringTokenizer(buf.toString(), ",");
-		while (strtok.hasMoreTokens()) {
+		while (strtok.hasMoreTokens())
+		{
 			keywords.add(strtok.nextToken().trim(), Token.KEYWORD1);
 		}
-		try {
+		try
+		{
 			addSingleKeyword(dmd.getCatalogTerm(), keywords);
-		} catch (Throwable ex) {
+		}
+		catch (Throwable ex)
+		{
 			s_log.error("Error", ex);
 		}
-		try {
+		try
+		{
 			addSingleKeyword(dmd.getSchemaTerm(), keywords);
-		} catch (Throwable ex) {
+		}
+		catch (Throwable ex)
+		{
 			s_log.error("Error", ex);
 		}
-		try {
+		try
+		{
 			addSingleKeyword(dmd.getProcedureTerm(), keywords);
-		} catch (Throwable ex) {
+		}
+		catch (Throwable ex)
+		{
 			s_log.error("Error", ex);
 		}
 	}
 
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(JeditSQLTokenMarker.class);
+	private static ILogger s_log =
+		LoggerController.createLogger(JeditSQLTokenMarker.class);
 
 	private KeywordMap _keywords = new KeywordMap(true);
 
 	// Keyword 1 = keywords
 	// Keyword 2 = data types
 	// Keyword 3 = functions.
-	
-	public JeditSQLTokenMarker(SQLConnection conn) {
+
+	public JeditSQLTokenMarker(SQLConnection conn)
+	{
 		super(createKeywordMap(conn), false);
 		_keywords = SQUIRREL_getKeywordMap();
 		try
 		{
-			_dmd  = conn.getMetaData();
-		} catch(Exception e){}
+			_dmd = conn.getMetaData();
+		}
+		catch (Exception ex)
+		{
+			s_log.error("Error retrieving metadata", ex);
+		}
 	}
 
-	private static KeywordMap createKeywordMap(SQLConnection conn) {
+	private static KeywordMap createKeywordMap(SQLConnection conn)
+	{
 		KeywordMap keywords = new KeywordMap(true);
-		try {
+		try
+		{
 			final DatabaseMetaData dmd = conn.getMetaData();
 			addKeywords(dmd, keywords);
 			addDataTypes(dmd, keywords);
 			addFunctions(dmd, keywords);
-			
-			// should be optional for LARGE databases??
+
+			// TODO: should be optional for LARGE databases??
 			addTableNames(dmd, keywords);
-		} catch (Throwable ex) {
+		}
+		catch (Throwable ex)
+		{
 			s_log.error("Error occured creating keyword map", ex);
 		}
 		return keywords;
 	}
 
-	private static void addTableNames(DatabaseMetaData dmd, KeywordMap keywords) {
+	private static void addTableNames(DatabaseMetaData dmd, KeywordMap keywords)
+	{
 		try
 		{
-			ResultSet rs = dmd.getTables(null,null,null,new String[]{"TABLE"});
-			while(rs.next())
+			ResultSet rs = dmd.getTables(null, null, null, new String[] { "TABLE" });
+			while (rs.next())
 			{
 				keywords.add(rs.getString(3), Token.TABLE);
 			}
 			rs.close();
-		} catch(Exception e)
+		}
+		catch (Exception e)
 		{
-			s_log.debug("failed to load table names into the keywordmap",e);
+			s_log.debug("failed to load table names into the keywordmap", e);
 		}
 	}
 
-	private static void addDataTypes(DatabaseMetaData dmd, KeywordMap keywords) {
+	private static void addDataTypes(DatabaseMetaData dmd, KeywordMap keywords)
+	{
 		keywords.add("BIT", Token.KEYWORD2);
+		keywords.add("BLOB", Token.KEYWORD2);
+		keywords.add("BOOLEAN", Token.KEYWORD2);
 		keywords.add("CHAR", Token.KEYWORD2);
 		keywords.add("CHARACTER", Token.KEYWORD2);
+		keywords.add("CLOB", Token.KEYWORD2);
 		keywords.add("DATE", Token.KEYWORD2);
 		keywords.add("DECIMAL", Token.KEYWORD2);
 		keywords.add("DOUBLE", Token.KEYWORD2);
 		keywords.add("FLOAT", Token.KEYWORD2);
 		keywords.add("INTEGER", Token.KEYWORD2);
 		keywords.add("INTERVAL", Token.KEYWORD2);
+		keywords.add("NCHAR", Token.KEYWORD2);
+		keywords.add("NCLOB", Token.KEYWORD2);
 		keywords.add("NUMERIC", Token.KEYWORD2);
 		keywords.add("PRECISION", Token.KEYWORD2);
 		keywords.add("REAL", Token.KEYWORD2);
@@ -146,50 +197,71 @@ public class JeditSQLTokenMarker extends SQLTokenMarker {
 		keywords.add("VARCHAR", Token.KEYWORD2);
 		keywords.add("VARYING", Token.KEYWORD2);
 
-		try {
+		try
+		{
 			ResultSet rs = dmd.getTypeInfo();
-			try {
-				while (rs.next()) {
+			try
+			{
+				while (rs.next())
+				{
 					keywords.add(rs.getString(1).trim(), Token.KEYWORD2);
 				}
-			} finally {
+			}
+			finally
+			{
 				rs.close();
 			}
-		} catch (Throwable ex) {
+		}
+		catch (Throwable ex)
+		{
 			s_log.error("Error", ex);
 		}
 	}
 
-	private static void addFunctions(DatabaseMetaData dmd, KeywordMap keywords) {
+	private static void addFunctions(DatabaseMetaData dmd, KeywordMap keywords)
+	{
 		StringBuffer buf = new StringBuffer();
-		try {
+		try
+		{
 			buf.append(dmd.getNumericFunctions());
-		} catch (Throwable ex) {
+		}
+		catch (Throwable ex)
+		{
 			s_log.error("Error", ex);
 		}
 		buf.append(",");
-		try {
+		try
+		{
 			buf.append(dmd.getStringFunctions());
-		} catch (Throwable ex) {
+		}
+		catch (Throwable ex)
+		{
 			s_log.error("Error", ex);
 		}
 		buf.append(",");
-		try {
+		try
+		{
 			buf.append(dmd.getTimeDateFunctions());
-		} catch (Throwable ex) {
+		}
+		catch (Throwable ex)
+		{
 			s_log.error("Error", ex);
 		}
 
 		StringTokenizer strtok = new StringTokenizer(buf.toString(), ",");
-		while (strtok.hasMoreTokens()) {
+		while (strtok.hasMoreTokens())
+		{
 			keywords.add(strtok.nextToken().trim(), Token.KEYWORD3);
 		}
 	}
 
-	private static void addSingleKeyword(String keyword, KeywordMap keywords) {
-		if (keyword != null) {
+	private static void addSingleKeyword(String keyword, KeywordMap keywords)
+	{
+		if (keyword != null)
+		{
 			keyword = keyword.trim();
-			if (keyword.length() > 0) {
+			if (keyword.length() > 0)
+			{
 				keywords.add(keyword, Token.KEYWORD1);
 			}
 		}

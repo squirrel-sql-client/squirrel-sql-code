@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.plugins.jedit;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -26,8 +27,13 @@ import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -38,6 +44,9 @@ import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPane
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.SessionSheet;
+import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.BaseObjectPanelTab;
+import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.BaseTablePanelTab;
+import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.ITablePanelTab;
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
 
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.TextAreaDefaults;
@@ -94,7 +103,7 @@ public class JeditPlugin extends DefaultSessionPlugin {
 	 * @return  the current version of this plugin.
 	 */
 	public String getVersion() {
-		return "0.1";
+		return "0.15";
 	}
 
 	/**
@@ -274,6 +283,63 @@ public class JeditPlugin extends DefaultSessionPlugin {
 				}
 			}
 		}
+	}
+private class TestTab extends BaseTablePanelTab
+{
+	private TestTabPanel _comp;
+
+	public void clear()
+	{
+	}
+
+	public synchronized Component getComponent()
+	{
+		if (_comp == null) {
+			_comp = new TestTabPanel();
+		}
+		return _comp;
+	}
+
+	public String getHint()
+	{
+		return "Test tab";
+	}
+
+	public String getTitle()
+	{
+		return "Test";
+	}
+
+	protected void refreshComponent() throws DataSetException
+	{
+		ITableInfo ti = getTableInfo();
+		if (ti != null)
+		{
+			_comp._lbl.setText(ti.getQualifiedName());
+		}
+		else
+		{
+			_comp._lbl.setText("??");
+		}
+	}
+
+	private class TestTabPanel extends JPanel
+	{
+		JLabel _lbl = new JLabel("No table selected");
+		
+		TestTabPanel()
+		{
+			super();
+			add(_lbl);
+		}
+	}
+
+}
+	public boolean sessionStarted(ISession session)
+	{
+		super.sessionStarted(session);
+		session.addTablePanelTab(new TestTab());
+		return true;
 	}
 
 }
