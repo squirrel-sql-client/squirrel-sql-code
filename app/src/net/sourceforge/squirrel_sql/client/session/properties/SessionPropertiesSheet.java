@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.properties;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -217,7 +217,7 @@ public class SessionPropertiesSheet extends BaseSheet
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 
-		gbc.fill = gbc.BOTH;
+		gbc.fill = GridBagConstraints.BOTH;
 		gbc.weightx = 1;
 		contentPane.add(_titleLbl, gbc);
 

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.db;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -59,7 +59,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
-
 /**
  * This dialog allows maintenance of a JDBC driver definition.
  *
@@ -390,7 +389,7 @@ public class DriverMaintSheet extends BaseSheet
 		pnl.setBorder(BorderFactory.createTitledBorder("Driver"));
 
 		final GridBagConstraints gbc = new GridBagConstraints();
-		gbc.fill = gbc.HORIZONTAL;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.insets = new Insets(4, 4, 4, 4);
 
 		gbc.gridx = 0;
@@ -418,7 +417,7 @@ public class DriverMaintSheet extends BaseSheet
 		JPanel pnl = new JPanel(new GridBagLayout());
 
 		final GridBagConstraints gbc = new GridBagConstraints();
-		gbc.fill = gbc.HORIZONTAL;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.insets = new Insets(4, 4, 4, 4);
 
 		gbc.gridx = 0;
@@ -451,23 +450,23 @@ public class DriverMaintSheet extends BaseSheet
 		JPanel pnl = new JPanel(new GridBagLayout());
 		final GridBagConstraints gbc = new GridBagConstraints();
 		gbc.insets = new Insets(4, 4, 4, 4);
-		gbc.anchor = gbc.WEST;
+		gbc.anchor = GridBagConstraints.WEST;
 		gbc.weighty = 1.0;
 
 		// Scrollbars are "shown always" to stop sheet resizing when they
 		// are shown/hidden.
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		gbc.gridheight = gbc.REMAINDER;
-		gbc.fill = gbc.BOTH;
+		gbc.gridheight = GridBagConstraints.REMAINDER;
+		gbc.fill = GridBagConstraints.BOTH;
 		gbc.weightx = 1.0;
 		pnl.add(new JScrollPane(_javaClassPathList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 									JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS), gbc);
 
 		++gbc.gridx;
 		gbc.gridheight = 1;
-		gbc.fill = gbc.HORIZONTAL;
-		gbc.anchor = gbc.NORTH;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.anchor = GridBagConstraints.NORTH;
 		gbc.weightx = 0.0;
 		pnl.add(_javaClasspathListDriversBtn, gbc);
 
@@ -541,24 +540,24 @@ public class DriverMaintSheet extends BaseSheet
 
 		JPanel pnl = new JPanel(new GridBagLayout());
 		final GridBagConstraints gbc = new GridBagConstraints();
-		gbc.anchor = gbc.WEST;
+		gbc.anchor = GridBagConstraints.WEST;
 		gbc.weightx = 1.0;
 		gbc.weighty = 1.0;
 		gbc.insets = new Insets(4, 4, 4, 4);
 
 		// Scrollbars are "shown always" to stop sheet resizing when they
 		// are shown/hidden.
-		gbc.gridheight = gbc.REMAINDER;
+		gbc.gridheight = GridBagConstraints.REMAINDER;
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		gbc.fill = gbc.BOTH;
+		gbc.fill = GridBagConstraints.BOTH;
 		pnl.add(new JScrollPane(_extraClassPathList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 									JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS), gbc);
 		
 		gbc.gridheight = 1;
 		gbc.weightx = 0.0;
 		gbc.weighty = 0.0;
-		gbc.fill = gbc.HORIZONTAL;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
 		++gbc.gridx;
 		pnl.add(_extraClasspathListDriversBtn, gbc);
 

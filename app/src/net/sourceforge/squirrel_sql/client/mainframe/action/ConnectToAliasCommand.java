@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.sql.WrappedSQLException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -260,6 +261,9 @@ public class ConnectToAliasCommand implements ICommand
 		/** Password to use to connect to alias. */
 		private String _password;
 
+		/** Connection properties. */
+		private SQLDriverPropertyCollection _props;
+
 		/** If <TT>true</TT> user has requested cancellation of the connection attempt. */
 		private boolean _stopConnection;
 
@@ -307,14 +311,16 @@ public class ConnectToAliasCommand implements ICommand
 		 * @param	connSheet	Connection internal frame.
 		 * @param	user		The user name entered.
 		 * @param	password	The password entered.
+		 * @param	props		Connection properties.
 		 */
 		public void performOK(ConnectionSheet connSheet, String user,
-								String password)
+								String password, SQLDriverPropertyCollection props)
 		{
 			_stopConnection = false;
 			_connSheet = connSheet;
 			_user = user;
 			_password = password;
+			_props = props;
 			_app.getThreadPool().addTask(this);
 		}
 
@@ -358,7 +364,8 @@ public class ConnectToAliasCommand implements ICommand
 
 			try
 			{
-				OpenConnectionCommand cmd = new OpenConnectionCommand(_app, _alias, _user, _password);
+				OpenConnectionCommand cmd = new OpenConnectionCommand(_app,
+								_alias, _user, _password, _props);
 				cmd.execute();
 				conn = cmd.getSQLConnection();
 				synchronized (this)

@@ -25,6 +25,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.sql.WrappedSQLException;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
@@ -52,6 +53,7 @@ public class OpenConnectionCommand implements ICommand
 
 	private final String _userName;
 	private final String _password;
+	private final SQLDriverPropertyCollection _props;
 
 	private SQLConnection _conn;
 
@@ -62,12 +64,14 @@ public class OpenConnectionCommand implements ICommand
 	 * @param	alias		The <TT>ISQLAlias</TT> to connect to.
 	 * @param	userName	The user to connect as.
 	 * @param	password	Password for userName.
+	 * @param	props		Connection properties.
 	 *
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> or <TT>ISQLAlias</TT> passed.
 	 */
 	public OpenConnectionCommand(IApplication app, ISQLAlias sqlAlias,
-									String userName, String password)
+									String userName, String password,
+									SQLDriverPropertyCollection props)
 	{
 		super();
 		if (app == null)
@@ -82,6 +86,7 @@ public class OpenConnectionCommand implements ICommand
 		_sqlAlias = sqlAlias;
 		_userName = userName;
 		_password = password;
+		_props = props;
 	}
 
 	/**
@@ -95,7 +100,7 @@ public class OpenConnectionCommand implements ICommand
 		final SQLDriverManager mgr = _app.getSQLDriverManager();
 		try
 		{
-			_conn = mgr.getConnection(sqlDriver, _sqlAlias, _userName, _password);
+			_conn = mgr.getConnection(sqlDriver, _sqlAlias, _userName, _password, _props);
 		}
 		catch (SQLException ex)
 		{
@@ -117,238 +122,4 @@ public class OpenConnectionCommand implements ICommand
 		return _conn;
 	}
 	
-//	public static class ClientCallback implements ICompletionCallback
-//	{
-//
-//		/**
-//		 * @see CompletionCallback#errorOccured(Throwable)
-//		 */
-//		public void errorOccured(Throwable th)
-//		{
-//			if (th instanceof SQLException)
-//			{
-//				String msg = "Unable to open SQL Connection";
-//				showErrorDialog(msg, th);
-//			}
-//			else if (th instanceof ClassNotFoundException)
-//			{
-//				String msg = "JDBC Driver class not found";
-//				showErrorDialog(msg, th);
-//			}
-//			else if (th instanceof NoClassDefFoundError)
-//			{
-//				String msg = "JDBC Driver class not found";
-//				s_log.error("JDBC Driver class not found", th);
-//				showErrorDialog(msg, th);
-//			}
-//			else
-//			{
-//				String msg = "Unexpected Error occured attempting to open an SQL connection.";
-//				s_log.error(msg, th);
-//				showErrorDialog(msg, th);
-//			}
-//		}
-//
-//
-//	/**
-//	 * Handler used for connection internal frame actions.
-//	 */
-//	private static class SheetHandler implements IConnectionSheetHandler, Runnable
-//	{
-//		/** The connection internal frame. */
-//		private ConnectionSheet _connSheet;
-//
-//		/** Application API. */
-//		private IApplication _app;
-//
-//		/** <TT>ISQLAlias</TT> to connect to. */
-//		private ISQLAlias _alias;
-//
-//		/** If <TT>true</TT> a session is to be created as well as connecting to database. */
-//		private boolean _createSession;
-//
-//		/** User name to use to connect to alias. */
-//		private String _user;
-//
-//		/** Password to use to connect to alias. */
-//		private String _password;
-//
-//		/** If <TT>true</TT> user has requested cancellation of the connection attempt. */
-//		private boolean _stopConnection;
-//
-//		/** Callback to notify client on the progress of this command. */
-//		private ICompletionCallback _callback;
-//
-//		/**
-//		 * Ctor.
-//		 *
-//		 * @param	app				Application API.
-//		 * @param	alias			Database alias to connect to.
-//		 * @param	createSession	If <TT>true</TT> a session should be created.
-//		 * @param	cmd				Command executing this handler.
-//		 *
-//		 * @throws	IllegalArgumentException
-//		 * 			Thrown if <TT>null</TT>IApplication</TT>, <TT>ISQLAlias</TT>,
-//		 * 			or <TT>ICompletionCallback</TT> passed.
-//		 */
-//		private SheetHandler(IApplication app, ISQLAlias alias, boolean createSession,
-//									ICompletionCallback callback)
-//		{
-//			super();
-//			if (app == null)
-//			{
-//				throw new IllegalArgumentException("IApplication == null");
-//			}
-//			if (alias == null)
-//			{
-//				throw new IllegalArgumentException("ISQLAlias == null");
-//			}
-//			if (alias == null)
-//			{
-//				throw new IllegalArgumentException("ICompletionCallback == null");
-//			}
-//			_app = app;
-//			_alias = alias;
-//			_createSession = createSession;
-//			_callback = callback;
-//		}
-//
-//		/**
-//		 * User has clicked the OK button to connect to the alias. Run the connection
-//		 * attempt in a separate thread.
-//		 *
-//		 * @param	connSheet	Connection internal frame.
-//		 * @param	user		The user name entered.
-//		 * @param	password	The password entered.
-//		 */
-//		public void performOK(ConnectionSheet connSheet, String user,
-//								String password)
-//		{
-//			_stopConnection = false;
-//			_connSheet = connSheet;
-//			_user = user;
-//			_password = password;
-//			_app.getThreadPool().addTask(this);
-//		}
-//
-//		/**
-//		 * User has clicked the Cancel button to cancel this connection attempt.
-//		 *
-//		 * @param	connSheet	Connection internal frame.
-//		 */
-//		public void performCancelConnect(ConnectionSheet connSheet)
-//		{
-//			// if blocked that means that it doesn't help anymore
-//			// Or an error dialog is shown or the connection is made
-//			// and the SessionFrame is being constructed/shown.
-//			synchronized (this)
-//			{
-//				_stopConnection = true;
-//			}
-//		}
-//
-//		/**
-//		 * User has clicked the Close button to close the internal frame.
-//		 *
-//		 * @param	connSheet	Connection internal frame.
-//		 */
-//		public void performClose(ConnectionSheet connSheet)
-//		{
-//		}
-//
-//		/**
-//		 * Execute task. Connect to the alias with the information entered
-//		 * in the connection internal frame.
-//		 */
-//		public void run()
-//		{
-//			SQLConnection conn = null;
-//			final IIdentifier driverID = _alias.getDriverIdentifier();
-//			final ISQLDriver sqlDriver = _app.getDataCache().getDriver(driverID);
-//
-//			final Thread curThread = Thread.currentThread();
-//			final SQLDriverManager mgr = _app.getSQLDriverManager();
-//
-//			try
-//			{
-//				conn = mgr.getConnection(sqlDriver, _alias, _user, _password);
-//				synchronized (this)
-//				{
-//					if (_stopConnection)
-//					{
-//						if (conn != null)
-//						{
-//							closeConnection(conn);
-//							conn = null;
-//						}
-//					}
-//					else
-//					{
-//						// After this it can't be stopped anymore!
-//						_callback.connected(conn);
-//						if (_createSession)
-//						{
-//							final IClientSession session = SessionFactory.createSession(
-//												_app, sqlDriver, _alias, conn);
-//							_callback.sessionCreated(session);
-//							Runner runner = new Runner(session, _connSheet);
-//							SwingUtilities.invokeLater(runner);
-//						}
-//						else
-//						{
-//							_connSheet.executed(true);
-//						}
-//					}
-//				}
-//			}
-//			catch (Throwable ex)
-//			{
-//				_connSheet.executed(false);
-//				_callback.errorOccured(ex);
-//			}
-//			finally
-//			{
-//			}
-//		}
-//
-//		private void closeConnection(SQLConnection conn)
-//		{
-//			if (conn != null)
-//			{
-//				try
-//				{
-//					conn.close();
-//				}
-//				catch (SQLException ex)
-//				{
-//					s_log.error("Error occured closing Connection", ex);
-//				}
-//			}
-//		}
-//	}
-//
-//	private static final class Runner implements Runnable
-//	{
-//		private final IClientSession _session;
-//		private final ConnectionSheet _connSheet;
-//	
-//		Runner(IClientSession session, ConnectionSheet connSheet)
-//		{
-//			super();
-//			_session = session;
-//			_connSheet = connSheet;
-//		}
-//
-//		public void run()
-//		{
-//			final IApplication app = _session.getApplication();
-//			app.getPluginManager().sessionCreated(_session);
-//			final SessionSheet child = new SessionSheet(_session);
-//			_session.setSessionSheet(child);
-//			app.getPluginManager().sessionStarted(_session);
-//			app.getMainFrame().addInternalFrame(child, true, null);
-//			child.setVisible(true);
-//			_connSheet.executed(true);
-//		}
-//	}
 }

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.sql;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -36,6 +36,7 @@ public class SQLConnectionState
 	private Integer _transIsolation;
 	private String _catalog;
 	private boolean _autoCommit;
+	private SQLDriverPropertyCollection _connProps;
 
 	public SQLConnectionState()
 	{
@@ -96,6 +97,8 @@ public class SQLConnectionState
 			}
 			msgHandler.showErrorMessage(ex);
 		}
+
+		_connProps = conn.getConnectionProperties();
 	}
 
 	public void restoreState(SQLConnection conn)
@@ -159,6 +162,11 @@ public class SQLConnectionState
 			}
 			msgHandler.showErrorMessage(ex);
 		}
+	}
+
+	public SQLDriverPropertyCollection getConnectionProperties()
+	{
+		return _connProps;
 	}
 }
 

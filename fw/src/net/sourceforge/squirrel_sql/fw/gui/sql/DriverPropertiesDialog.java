@@ -19,12 +19,15 @@ package net.sourceforge.squirrel_sql.fw.gui.sql;
  */
 import java.awt.Dialog;
 import java.awt.Frame;
-import java.util.EventObject;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JPanel;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.sql.event.IDriverPropertiesPanelListener;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 /**
  * This dialog allows the user to review and maintain
@@ -34,8 +37,13 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
  */
 public class DriverPropertiesDialog extends JDialog
 {
+	private interface i18n
+	{
+		String CLOSE = "Close";
+		String OK = "OK";
+	}
+
 	private DriverPropertiesPanel _propsPnl;
-	private IDriverPropertiesPanelListener _propsPnlLis;
 
 	/** The driver properties. This is only available once OK pressed. */
 	private SQLDriverPropertyCollection _driverPropInfo;
@@ -80,15 +88,15 @@ public class DriverPropertiesDialog extends JDialog
 		createUserInterface(props);
 	}
 
-	public void dispose()
-	{
-		if (_propsPnlLis != null)
-		{
-			removeDriverPropertiesPanelListener(_propsPnlLis);
-			_propsPnlLis = null;
-		}
-		super.dispose();
-	}
+//	public void dispose()
+//	{
+//		if (_propsPnlLis != null)
+//		{
+//			removeDriverPropertiesPanelListener(_propsPnlLis);
+//			_propsPnlLis = null;
+//		}
+//		super.dispose();
+//	}
 
 	/**
 	 * Adds a listener for actions in the driver properties panel.
@@ -97,10 +105,10 @@ public class DriverPropertiesDialog extends JDialog
 	 * 				will be notified when actions are performed
 	 * 				in the driver properties panel.
 	 */
-	public void addDriverPropertiesPanelListener(IDriverPropertiesPanelListener lis)
-	{
-		_propsPnl.addListener(lis);
-	}
+//	public void addDriverPropertiesPanelListener(IDriverPropertiesPanelListener lis)
+//	{
+//		_propsPnl.addListener(lis);
+//	}
 
 	/**
 	 * Removes a listener from the driver properties panel.
@@ -108,10 +116,10 @@ public class DriverPropertiesDialog extends JDialog
 	 * @param	lis	<TT>IDriverPropertiesPanelListener</TT> to
 	 * 				be removed.
 	 */
-	public void removeDriverPropertiesPanelListener(IDriverPropertiesPanelListener lis)
-	{
-		_propsPnl.removeListener(lis);
-	}
+//	public void removeDriverPropertiesPanelListener(IDriverPropertiesPanelListener lis)
+//	{
+//		_propsPnl.removeListener(lis);
+//	}
 
 	/**
 	 * Retrieve the database driver properties. This is only valid if the
@@ -126,10 +134,11 @@ public class DriverPropertiesDialog extends JDialog
 
 	private void createUserInterface(SQLDriverPropertyCollection props)
 	{
+		Box pnl = Box.createVerticalBox();
 		_propsPnl = new DriverPropertiesPanel(props);
-		_propsPnlLis = new PropertiesPanelListener();
-		addDriverPropertiesPanelListener(_propsPnlLis);
-		setContentPane(_propsPnl);
+		pnl.add(_propsPnl);
+		pnl.add(createButtonsPanel());
+		setContentPane(pnl);
 		pack();
 		GUIUtils.centerWithinParent(this);
 		setResizable(true);
@@ -146,27 +155,34 @@ public class DriverPropertiesDialog extends JDialog
 		dispose();
 	}
 
-	private final class PropertiesPanelListener implements IDriverPropertiesPanelListener
+	private JPanel createButtonsPanel()
 	{
-		/**
-		 * The OK button was pressed.
-		 *
-		 * @param	evt		Describes this event.
-		 */
-		public void okPressed(EventObject evt)
-		{
-			performOk();
-		}
+		final JPanel pnl = new JPanel();
 
-		/**
-		 * The Close button was pressed.
-		 *
-		 * @param	evt		Describes this event.
-		 */
-		public void closePressed(EventObject evt)
+		JButton okBtn = new JButton(i18n.OK);
+		okBtn.addActionListener(new ActionListener()
 		{
-			performClose();
-		}
+			public void actionPerformed(ActionEvent evt)
+			{
+				performOk();
+			}
+		});
+
+		final JButton closeBtn = new JButton(i18n.CLOSE);
+		closeBtn.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent evt)
+			{
+				performClose();
+			}
+		});
+
+		pnl.add(okBtn);
+		pnl.add(closeBtn);
+
+		GUIUtils.setJButtonSizesTheSame(new JButton[] {okBtn, closeBtn});
+
+		return pnl;
 	}
 }
 

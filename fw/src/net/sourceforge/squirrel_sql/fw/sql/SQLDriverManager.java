@@ -77,20 +77,33 @@ public class SQLDriverManager
 		_classLoaders.remove(sqlDriver.getIdentifier());
 	}
 
+	public SQLConnection getConnection(ISQLDriver sqlDriver, ISQLAlias alias,
+											String user, String pw)
+		throws ClassNotFoundException, IllegalAccessException,
+				InstantiationException, MalformedURLException, SQLException
+	{
+		return getConnection(sqlDriver, alias, user, pw, null);
+	}
+
 	public synchronized SQLConnection getConnection(ISQLDriver sqlDriver,
 											ISQLAlias alias, String user,
-											String pw)
+											String pw,
+											SQLDriverPropertyCollection props)
 		throws ClassNotFoundException, IllegalAccessException,
 			InstantiationException, MalformedURLException, SQLException
 	{
-		Properties props = new Properties();
+		Properties myProps = new Properties();
+		if (props != null)
+		{
+			props.applyTo(myProps);
+		}
 		if (user != null)
 		{
-			props.put("user", user);
+			myProps.put("user", user);
 		}
 		if (pw != null)
 		{
-			props.put("password", pw);
+			myProps.put("password", pw);
 		}
 
 		Driver driver = (Driver)_driverInfo.get(sqlDriver.getIdentifier());
@@ -102,12 +115,12 @@ public class SQLDriverManager
 			Class driverCls = loader.loadClass(sqlDriver.getDriverClassName());
 			driver = (Driver)driverCls.newInstance();
 		}
-		Connection jdbcConn = driver.connect(alias.getUrl(), props);
+		Connection jdbcConn = driver.connect(alias.getUrl(), myProps);
 		if (jdbcConn == null)
 		{
 			throw new SQLException("Unable to create connection. Check your URL.");
 		}
-		return new SQLConnection(jdbcConn);
+		return new SQLConnection(jdbcConn, props);
 	}
 
 	/**

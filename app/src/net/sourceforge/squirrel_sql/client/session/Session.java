@@ -271,19 +271,6 @@ class Session implements IClientSession
 		return _sqlPanelAPI;
 	}
 
-	/**
-	 * Get the opened sequence for this session.
-	 * 
-	 * @return	The opened sequence for this session.
-	 * 
-	 * TODO: This should not be a attribute of the session
-	 * but instead should be stored externally. We need a sessiion manager.
-	 */
-//	public int getOpenedSequence()
-//	{
-//		return _openedSequence;
-//	}
-
 	public synchronized Object getPluginObject(IPlugin plugin, String key)
 	{
 		if (plugin == null)
@@ -384,7 +371,8 @@ class Session implements IClientSession
 				s_log.error("Unexpected SQLException", ex);
 			}
 		}
-		OpenConnectionCommand cmd = new OpenConnectionCommand(_app, _alias, _user, _password);
+		OpenConnectionCommand cmd = new OpenConnectionCommand(_app, _alias,
+											_user, _password, connState.getConnectionProperties());
 		try
 		{
 			closeSQLConnection();

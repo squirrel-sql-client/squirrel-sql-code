@@ -17,6 +17,8 @@ package net.sourceforge.squirrel_sql.fw.gui.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.sql.DriverPropertyInfo;
+
 import javax.swing.table.AbstractTableModel;
 
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverProperty;
@@ -28,10 +30,10 @@ class DriverPropertiesTableModel extends AbstractTableModel
 {
 	interface IColumnIndexes
 	{
-		int IDX_SPECIFY = 2;
 		int IDX_NAME = 0;
+		int IDX_SPECIFY = 1;
+		int IDX_VALUE = 2;
 		int IDX_REQUIRED = 3;
-		int IDX_VALUE = 1;
 		int IDX_DESCRIPTION = 4;
 	}
 
@@ -43,18 +45,6 @@ class DriverPropertiesTableModel extends AbstractTableModel
 		LoggerController.createLogger(DriverPropertiesTableModel.class);
 
 	private SQLDriverPropertyCollection _props = new SQLDriverPropertyCollection();
-//	
-//	DriverPropertiesTableModel(DriverPropertyInfo[] props)
-//	{
-//		super();
-//		load(props, null);
-//	}
-
-//	DriverPropertiesTableModel(Driver driver, String url)
-//		throws SQLException
-//	{
-//		this(driver, url, null);
-//	}
 
 	DriverPropertiesTableModel(SQLDriverPropertyCollection props)
 	{
@@ -72,21 +62,38 @@ class DriverPropertiesTableModel extends AbstractTableModel
 		final SQLDriverProperty sdp = _props.getDriverProperty(row);
 		switch (col)
 		{
+			case IColumnIndexes.IDX_NAME:
+				return sdp.getName();
+
 			case IColumnIndexes.IDX_SPECIFY:
 				// Use valueof when min supported JDK is 1.4
 				return new Boolean(sdp.isSpecified());
 
-			case IColumnIndexes.IDX_NAME:
-				return sdp.getDriverPropertyInfo().name;
+			case IColumnIndexes.IDX_VALUE:
+				return sdp.getValue();
 
 			case IColumnIndexes.IDX_REQUIRED:
+			{
 				// Use valueof when min supported JDK is 1.4
 				//return Boolean.valueOf(_props[row].required);
-				return new Boolean(sdp.getDriverPropertyInfo().required);
-			case IColumnIndexes.IDX_VALUE:
-				return sdp.getDriverPropertyInfo().value;
+				DriverPropertyInfo dpi = sdp.getDriverPropertyInfo();
+				if (dpi != null)
+				{
+					return new Boolean(dpi.required);
+				}
+				return Boolean.FALSE;
+			}
+
 			case IColumnIndexes.IDX_DESCRIPTION:
-				return sdp.getDriverPropertyInfo().description;
+			{
+				DriverPropertyInfo dpi = sdp.getDriverPropertyInfo();
+				if (dpi != null)
+				{
+					return dpi.description;
+				}
+				return "Unknown";
+			}
+
 			default:
 				s_log.error("Invalid column index: " + col);
 				return "???????";
@@ -107,15 +114,15 @@ class DriverPropertiesTableModel extends AbstractTableModel
 	{
 		switch (col)
 		{
-			case IColumnIndexes.IDX_SPECIFY:
-				return Boolean.class;
 			case IColumnIndexes.IDX_NAME:
 				return String.class;
-			case IColumnIndexes.IDX_REQUIRED:
-//				return Boolean.class;
-				return Object.class;
+			case IColumnIndexes.IDX_SPECIFY:
+				return Boolean.class;
 			case IColumnIndexes.IDX_VALUE:
 				return String.class;
+			case IColumnIndexes.IDX_REQUIRED:
+//				return Boolean.class;	// Don't show checkbox for 
+				return Object.class;	// output only field.
 			case IColumnIndexes.IDX_DESCRIPTION:
 				return String.class;
 			default:
@@ -152,11 +159,6 @@ class DriverPropertiesTableModel extends AbstractTableModel
 	{
 		return _props;
 	}
-
-//	synchronized SQLDriverProperty getSQLDriverProperty(String key)
-//	{
-//		return (SQLDriverProperty)_override.get(key);
-//	}
 
 	private final void load(SQLDriverPropertyCollection props)
 	{

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.preferences;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -231,7 +231,7 @@ public class NewSessionPropertiesSheet extends BaseSheet
 		GridBagConstraints gbc = new GridBagConstraints();
 
 		gbc.gridwidth = 1;
-		gbc.fill = gbc.BOTH;
+		gbc.fill = GridBagConstraints.BOTH;
 		gbc.weightx = 1;
 
 		gbc.gridx = 0;

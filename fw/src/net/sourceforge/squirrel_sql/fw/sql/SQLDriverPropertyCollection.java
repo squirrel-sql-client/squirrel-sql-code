@@ -21,6 +21,7 @@ import java.sql.DriverPropertyInfo;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.TreeMap;
 /**
  * A collection of <TT>SQLDriverDriverProperty</TT> objects.
@@ -52,6 +53,15 @@ public class SQLDriverPropertyCollection
 	}
 
 	/**
+	 * Clear all entries from this collection.
+	 */
+	public synchronized void clear()
+	{
+		_objectsIndexMap.clear();
+		_objectsList.clear();
+	}
+
+	/**
 	 * Retrieve the number of elements in this collection.
 	 * 
 	 * @return	the number of elements in this collection.
@@ -59,6 +69,18 @@ public class SQLDriverPropertyCollection
 	public int size()
 	{
 		return _objectsList.size();
+	}
+
+	public synchronized void applyTo(Properties props)
+	{
+		for (int i = 0, limit = size(); i < limit; ++i)
+		{
+			SQLDriverProperty sdp = getDriverProperty(i);
+			if (sdp.isSpecified())
+			{
+				props.put(sdp.getName(), sdp.getValue());
+			}
+		} 
 	}
 
 	/**

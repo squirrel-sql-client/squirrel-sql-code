@@ -43,6 +43,10 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 		String ERR_BLANK_URL = "JDBC URL cannot be blank.";
 	}
 
+	private interface IPropNames extends ISQLAlias.IPropertyNames
+	{
+	}
+
 	/** The <CODE>IIdentifier</CODE> that uniquely identifies this object. */
 	private IIdentifier _id;
 
@@ -63,12 +67,6 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 
 	/** Password of user for connection. */
 	private String _password;
-
-	/**
-	 * true if the user wants to have his password saved unencrypted.
-	 * This flag is necessary if there is an empty password (standard in MSSQL)
-	 */
-//	private boolean _passwordSaved;
 
 	/** <TT>true</TT> if this alias should be logged on automatically. */
 	private boolean _autoLogon;
@@ -127,7 +125,6 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 		setUrl(rhs.getUrl());
 		setUserName(rhs.getUserName());
 		setPassword(rhs.getPassword());
-		//setPasswordSaved(rhs.isPasswordSaved());
 		setAutoLogon(rhs.isAutoLogon());
 		setUseDriverProperties(rhs.getUseDriverProperties());
 		setDriverProperties(rhs.getDriverProperties());
@@ -157,7 +154,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 		{
 			final SQLAlias alias = (SQLAlias)super.clone();
 			alias._propChgReporter = null;
-//			alias.setDriverProperties(getDriverProperties());
+			alias.setDriverProperties(getDriverProperties());
 			return alias;
 		}
 		catch (CloneNotSupportedException ex)
@@ -249,17 +246,6 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 	}
 
 	/**
-	 * Has a password been saved in this alias?
-	 * 
-	 * @return	<TT>true</TT> if a password has been saved
-	 * 			else <TT>false</TT>.
-	 */
-//	public boolean isPasswordSaved()
-//	{
-//		return _passwordSaved;
-//	}
-
-	/**
 	 * Set the password for this alias.
 	 * 
 	 * @param	password	The new password.
@@ -271,25 +257,10 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 		{
 			final String oldValue = _password;
 			_password = data;
-			getPropertyChangeReporter().firePropertyChange(ISQLAlias.IPropertyNames.PASSWORD,
+			getPropertyChangeReporter().firePropertyChange(IPropNames.PASSWORD,
 												oldValue, _password);
 		}
 	}
-
-	/**
-	 * Set whether a password has been saved for his alias.
-	 * 
-	 * @param	passwordSaved	<TT>true</TT> if password saved else <TT>false</TT>.
-	 */
-//	public void setPasswordSaved(boolean passwordSaved)
-//	{
-//		if (_passwordSaved != passwordSaved)
-//		{
-//			_passwordSaved = passwordSaved;
-//			getPropertyChangeReporter().firePropertyChange(ISQLAlias.IPropertyNames.PASSWORD_SAVED,
-//												!_passwordSaved, _passwordSaved);
-//		}
-//	}
 
 	/**
 	 * Should this alias be logged on automatically.
@@ -313,7 +284,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 		if (_autoLogon != value)
 		{
 			_autoLogon = value;
-			getPropertyChangeReporter().firePropertyChange(ISQLAlias.IPropertyNames.AUTO_LOGON,
+			getPropertyChangeReporter().firePropertyChange(IPropNames.AUTO_LOGON,
 												!_autoLogon, _autoLogon);
 		}
 	}
@@ -340,7 +311,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 		if (_connectAtStartup != value)
 		{
 			_connectAtStartup = value;
-			getPropertyChangeReporter().firePropertyChange(ISQLAlias.IPropertyNames.CONNECT_AT_STARTUP,
+			getPropertyChangeReporter().firePropertyChange(IPropNames.CONNECT_AT_STARTUP,
 												!_connectAtStartup, _connectAtStartup);
 		}
 	}
@@ -369,7 +340,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 		{
 			final String oldValue = _name;
 			_name = data;
-			getPropertyChangeReporter().firePropertyChange(ISQLAlias.IPropertyNames.NAME,
+			getPropertyChangeReporter().firePropertyChange(IPropNames.NAME,
 												oldValue, _name);
 		}
 	}
@@ -385,7 +356,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 		{
 			final IIdentifier oldValue = _driverId;
 			_driverId = data;
-			getPropertyChangeReporter().firePropertyChange(ISQLAlias.IPropertyNames.DRIVER,
+			getPropertyChangeReporter().firePropertyChange(IPropNames.DRIVER,
 												oldValue, _driverId);
 		}
 	}
@@ -401,7 +372,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 		{
 			final String oldValue = _url;
 			_url = data;
-			getPropertyChangeReporter().firePropertyChange(ISQLAlias.IPropertyNames.URL,
+			getPropertyChangeReporter().firePropertyChange(IPropNames.URL,
 													oldValue, _url);
 		}
 	}
@@ -413,7 +384,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 		{
 			final String oldValue = _userName;
 			_userName = data;
-			getPropertyChangeReporter().firePropertyChange(ISQLAlias.IPropertyNames.USER_NAME,
+			getPropertyChangeReporter().firePropertyChange(IPropNames.USER_NAME,
 												oldValue, _userName);
 		}
 	}
@@ -424,24 +395,46 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 		{
 			final boolean oldValue = _useDriverProperties;
 			_useDriverProperties = value;
-			getPropertyChangeReporter().firePropertyChange(ISQLAlias.IPropertyNames.USE_DRIVER_PROPERTIES,
+			getPropertyChangeReporter().firePropertyChange(IPropNames.USE_DRIVER_PROPERTIES,
 												oldValue, _useDriverProperties);
 		}
 	}
 
 	/**
-	 * Retrieve the SQL driver properties.
+	 * Retrieve a copy of the SQL driver properties.
 	 *
 	 * @return	the SQL driver properties.
 	 */
 	public synchronized SQLDriverPropertyCollection getDriverProperties()
 	{
-		return _driverProps;
+		final int count = _driverProps.size();
+		SQLDriverProperty[] newar = new SQLDriverProperty[count];
+		for (int i = 0; i < count; ++i)
+		{
+			newar[i] = (SQLDriverProperty)_driverProps.getDriverProperty(i).clone();
+		}
+		SQLDriverPropertyCollection coll = new SQLDriverPropertyCollection();
+		coll.setDriverProperties(newar);
+		return coll;
 	}
 
-	public void setDriverProperties(SQLDriverPropertyCollection value)
+	public synchronized void setDriverProperties(SQLDriverPropertyCollection value)
 	{
-		_driverProps = value != null ? value : new SQLDriverPropertyCollection();
+		_driverProps.clear();
+		if (value != null)
+		{
+			synchronized (value)
+			{
+				final int count = value.size();
+				SQLDriverProperty[] newar = new SQLDriverProperty[count];
+				for (int i = 0; i < count; ++i)
+				{
+					newar[i] = (SQLDriverProperty)value.getDriverProperty(i).clone();
+					
+				}
+				_driverProps.setDriverProperties(newar);
+			}
+		}
 	}
 
 	private synchronized PropertyChangeReporter getPropertyChangeReporter()

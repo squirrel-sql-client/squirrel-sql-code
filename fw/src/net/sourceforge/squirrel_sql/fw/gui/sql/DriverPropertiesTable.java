@@ -34,12 +34,6 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 class DriverPropertiesTable extends JTable
 								implements DriverPropertiesTableModel.IColumnIndexes
 {
-//	DriverPropertiesTable()
-//	{
-//		super(new DriverPropertiesTableModel(new DriverPropertyInfo[0]));
-//		init();
-//	}
-
 	DriverPropertiesTable(SQLDriverPropertyCollection props)
 	{
 		super(new DriverPropertiesTableModel(props));
@@ -72,12 +66,12 @@ class DriverPropertiesTable extends JTable
 			tc.setHeaderValue("Name");
 			addColumn(tc);
 
-			tc = new TableColumn(IDX_VALUE, 75, null, new ValueCellEditor());
-			tc.setHeaderValue("Value");
+			tc = new TableColumn(IDX_SPECIFY);
+			tc.setHeaderValue("Specify");
 			addColumn(tc);
 
-			tc = new TableColumn(IDX_SPECIFY);//, 75, null, new SpecifiedCellEditor());
-			tc.setHeaderValue("Specify");
+			tc = new TableColumn(IDX_VALUE, 75, null, new ValueCellEditor());
+			tc.setHeaderValue("Value");
 			addColumn(tc);
 
 			tc = new TableColumn(IDX_REQUIRED);
@@ -122,31 +116,5 @@ class DriverPropertiesTable extends JTable
 			return super.getTableCellEditorComponent(table, value, isSelected, row, col);
 		}
 	}
-
-//	private final class SpecifiedCellEditor extends DefaultCellEditor
-//	{
-//		SpecifiedCellEditor()
-//		{
-//			super(new JTextField());
-//			setClickCountToStart(1);
-//		}
-//
-//		public Component getTableCellEditorComponent(JTable table, Object value,
-//												boolean isSelected, int row,
-//												int col)
-//		{
-//			if (col != IDX_SPECIFY)
-//			{
-//				throw new IllegalStateException("Editor used for cell other than specify");
-//			}
-//
-//			SQLDriverPropertyCollection coll = getTypedModel().getSQLDriverProperties();
-//			SQLDriverProperty sdp = coll.getDriverProperty(row);
-//			DriverPropertyInfo prop = sdp.getDriverPropertyInfo();
-//			final JComboBox cmb = new JComboBox(new Object[] {Boolean.TRUE, Boolean.FALSE});
-//			cmb.setSelectedItem(sdp != null ? new Boolean(sdp.isSpecified()) : Boolean.FALSE);
-//			return cmb;
-//		}
-//	}
 }
 

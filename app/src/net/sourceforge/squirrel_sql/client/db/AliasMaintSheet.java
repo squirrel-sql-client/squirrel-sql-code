@@ -17,8 +17,6 @@ package net.sourceforge.squirrel_sql.client.db;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
-//import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -59,7 +57,6 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDriverProperty;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
@@ -152,9 +149,6 @@ public class AliasMaintSheet extends BaseSheet
 
 	/** User name text field */
 	private final JTextField _userName = new JTextField();
-
-	/** Save password checkbox*/
-//	private final JCheckBox _savePasswordChk = new JCheckBox(i18n.SAVE_PASSWORD);
 
 	/** Password */
 	private final JPasswordField _password = new JPasswordField();
@@ -257,18 +251,7 @@ public class AliasMaintSheet extends BaseSheet
 		_aliasName.setText(_sqlAlias.getName());
 		_userName.setText(_sqlAlias.getUserName());
 
-//		if(_sqlAlias.isPasswordSaved())
-//		{
-			_password.setText(_sqlAlias.getPassword());
-//			_password.setEnabled(true);
-//			_savePasswordChk.setSelected(true);
-//		}
-//		else
-//		{
-//			_password.setText(null);
-//			_password.setEnabled(false);
-//			_savePasswordChk.setSelected(false);
-//		}
+		_password.setText(_sqlAlias.getPassword());
 
 		_autoLogonChk.setSelected(_sqlAlias.isAutoLogon());
 		_connectAtStartupChk.setSelected(_sqlAlias.isConnectAtStartup());
@@ -337,7 +320,6 @@ public class AliasMaintSheet extends BaseSheet
 		StringBuffer buf = new StringBuffer();
 		buf.append(_password.getPassword());
 		alias.setPassword(buf.toString());
-		//alias.setPasswordSaved(_savePasswordChk.isSelected());
 
 		alias.setAutoLogon(_autoLogonChk.isSelected());
 		alias.setConnectAtStartup(_connectAtStartupChk.isSelected());
@@ -355,8 +337,6 @@ public class AliasMaintSheet extends BaseSheet
 		try
 		{
 			final Frame owner = _app.getMainFrame();
-			//final SQLDriverManager mgr = _app.getSQLDriverManager();
-			//final Driver driver = mgr.getJDBCDriver(_sqlAlias.getDriverIdentifier());
 			final ISQLDriver driver = _drivers.getSelectedDriver();
 			if (driver == null)
 			{
@@ -379,19 +359,6 @@ public class AliasMaintSheet extends BaseSheet
 		}
 	}
 
-//	private void enablePasswordField(ItemEvent evt)
-//	{
-//		if (evt.getStateChange() == ItemEvent.SELECTED)
-//		{
-//			_password.setEnabled(true);
-//		}
-//		else
-//		{
-//			_password.setText(null);
-//			_password.setEnabled(false);
-//		}
-//	}
-
 	/**
 	 * Create user interface for this sheet.
 	 */
@@ -411,15 +378,6 @@ public class AliasMaintSheet extends BaseSheet
 		_url.setColumns(COLUMN_COUNT);
 		_userName.setColumns(COLUMN_COUNT);
 		_password.setColumns(COLUMN_COUNT);
-//		_password.setEnabled(false);
-
-//		_savePasswordChk.addItemListener(new ItemListener()
-//		{
-//			public void itemStateChanged(ItemEvent evt)
-//			{
-//				enablePasswordField(evt);
-//			}
-//		});
 
 		// This seems to be necessary to get background colours
 		// correct. Without it labels added to the content pane
@@ -492,8 +450,8 @@ public class AliasMaintSheet extends BaseSheet
 		final JPanel pnl = new JPanel(new GridBagLayout());
 
 		final GridBagConstraints gbc = new GridBagConstraints();
-		gbc.fill = gbc.HORIZONTAL;
-		gbc.anchor = gbc.WEST;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.anchor = GridBagConstraints.WEST;
 		gbc.insets = new Insets(4, 4, 4, 4);
 		gbc.weightx = 1.0;
 
@@ -507,8 +465,9 @@ public class AliasMaintSheet extends BaseSheet
 		_drivers = new DriversCombo();
 		_drivers.addItemListener(new DriversComboItemListener());
 
-		final JPanel driverPnl = new JPanel(new BorderLayout());
-		driverPnl.add(_drivers, BorderLayout.CENTER);
+		final Box driverPnl = Box.createHorizontalBox();
+		driverPnl.add(_drivers);
+		driverPnl.add(Box.createHorizontalStrut(5));
 		JButton newDriverBtn = new JButton("New");
 		newDriverBtn.addActionListener(new ActionListener()
 		{
@@ -517,7 +476,7 @@ public class AliasMaintSheet extends BaseSheet
 				showNewDriverDialog();
 			}
 		});
-		driverPnl.add(newDriverBtn, BorderLayout.EAST);
+		driverPnl.add(newDriverBtn);
 
 		gbc.gridx = 0;
 		++gbc.gridy;
@@ -542,7 +501,6 @@ public class AliasMaintSheet extends BaseSheet
 
 		gbc.gridx = 0;
 		++gbc.gridy;
-//		pnl.add(_savePasswordChk, gbc);
 		pnl.add(new JLabel(i18n.PASSWORD, SwingConstants.RIGHT), gbc);
 
 		++gbc.gridx;
@@ -559,7 +517,7 @@ public class AliasMaintSheet extends BaseSheet
 		propsPnl.add(_useDriverPropsChk);
 		propsPnl.add(Box.createHorizontalStrut(5));
 		propsPnl.add(_driverPropsBtn);
-		gbc.gridwidth = gbc.REMAINDER;
+		gbc.gridwidth = GridBagConstraints.REMAINDER;
 		++gbc.gridy;
 		gbc.gridx = 0;
 		pnl.add(propsPnl, gbc);

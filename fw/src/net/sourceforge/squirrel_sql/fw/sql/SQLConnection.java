@@ -51,6 +51,9 @@ public class SQLConnection
 	/** The <TT>java.sql.Connection</TT> this object is wrapped around. */
 	private Connection _conn;
 
+	/** Connectiopn properties specified when connection was opened. */
+	private final SQLDriverPropertyCollection _connProps;
+
 	/** MetaData for this connection. */
 	private SQLDatabaseMetaData _metaData;
 
@@ -62,7 +65,7 @@ public class SQLConnection
 	/** Object to handle property change events. */
 	private transient PropertyChangeReporter _propChgReporter;
 
-	public SQLConnection(Connection conn)
+	public SQLConnection(Connection conn, SQLDriverPropertyCollection connProps)
 	{
 		super();
 		if (conn == null)
@@ -70,6 +73,7 @@ public class SQLConnection
 			throw new IllegalArgumentException("SQLConnection == null");
 		}
 		_conn = conn;
+		_connProps = connProps;
 		_timeOpened = Calendar.getInstance().getTime();
 	}
 
@@ -119,6 +123,17 @@ public class SQLConnection
 	{
 		validateConnection();
 		_conn.rollback();
+	}
+
+	/**
+	 * Retrieve the properties specified when connection was opened. This can
+	 * be <TT>null</TT>.
+	 * 
+	 * @return	Connection properties.
+	 */
+	public SQLDriverPropertyCollection getConnectionProperties()
+	{
+		return _connProps;
 	}
 
 	public boolean getAutoCommit() throws SQLException
