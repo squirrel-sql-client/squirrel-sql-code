@@ -89,6 +89,7 @@ public class ConnectToAliasCommand implements ICommand {
 		ConnectionSheet sheet = new ConnectionSheet(_app, _frame, _sqlAlias,
 											new SheetHandler(_app, _sqlAlias));
 		_app.getMainFrame().addInternalFrame(sheet, true, null);
+		GUIUtils.centerWithinDesktop(sheet);
 		sheet.setVisible(true);
 	}
 
@@ -151,7 +152,6 @@ public class ConnectToAliasCommand implements ICommand {
 			_connSheet = connSheet;
 			_user = user;
 			_password = password;
-
 			_app.getThreadPool().addTask(this);
 		}
 
