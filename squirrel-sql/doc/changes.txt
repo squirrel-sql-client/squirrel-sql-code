@@ -6,6 +6,8 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Add icons for program shortcuts.
+- Add an icon to the main window.
 - The name of the item selected in the object tree will
   be displayed in the statusbar.
 - Remove unnecessary borders on UI components.

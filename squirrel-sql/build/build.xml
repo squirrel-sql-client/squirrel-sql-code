@@ -183,7 +183,12 @@
 		<copy todir="${core_dist_doc_dir}" >
 			<fileset dir="doc" >
 				<include name="**/*.*"/>
-				<exclude name="**/*.marks"/>
+			</fileset>
+		</copy>
+
+		<copy todir="${core_dist_dir}/icons" >
+			<fileset dir="app/icons" >
+				<include name="**/*.*"/>
 			</fileset>
 		</copy>
 
