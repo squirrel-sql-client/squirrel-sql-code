@@ -181,7 +181,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			pnl.setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = gbc.HORIZONTAL;
-			gbc.insets = new Insets(4, 4, 4, 4);
+			gbc.insets = new Insets(2, 4, 2, 4);
 			gbc.gridx = 0;
 			gbc.gridy = 0;
 			gbc.weightx = 1;
@@ -210,7 +210,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			pnl.setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = gbc.HORIZONTAL;
-			gbc.insets = new Insets(4, 4, 4, 4);
+			gbc.insets = new Insets(2, 4, 2, 4);
 
 			gbc.gridx = 0;
 			gbc.gridy = 0;

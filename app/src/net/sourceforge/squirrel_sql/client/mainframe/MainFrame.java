@@ -193,13 +193,11 @@ public class MainFrame extends BaseMDIParentFrame
 	WindowState getAliasesWindowState()
 	{
 		return new WindowState(_aliasesToolWindow);
-//		return _aliasesToolWindow.getLocation();
 	}
 
 	WindowState getDriversWindowState()
 	{
 		return new WindowState(_driversToolWindow);
-//		return _driversToolWindow.getLocation();
 	}
 
 	public JMenu getSessionMenu()
@@ -327,8 +325,6 @@ public class MainFrame extends BaseMDIParentFrame
 		content.setLayout(new BorderLayout());
 //		content.add(new MainFrameToolBar(_app, this), BorderLayout.NORTH);
 		final JScrollPane sp = new JScrollPane(getDesktopPane());
-//				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-//				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		sp.setBorder(BorderFactory.createEmptyBorder());
 		content.add(sp, BorderLayout.CENTER);
 
@@ -443,7 +439,7 @@ public class MainFrame extends BaseMDIParentFrame
 			_app.getActionCollection().internalFrameDeactivated(f);
 			if (f instanceof SessionSheet)
 			{
-				((SessionSheet) f).updateState();
+				((SessionSheet)f).updateState();
 				getSessionMenu().setEnabled(false);
 			}
 		}

@@ -118,7 +118,7 @@ public class ConnectToAliasCommand implements ICommand
 		_frame = frame;
 		_sqlAlias = sqlAlias;
 		_createSession = createSession;
-		_callback = callback != null ? callback : new ClientCallback(app);
+		_callback = callback != null ? callback : new ClientCallback(app, _sqlAlias);
 	}
 
 	/**
@@ -144,15 +144,22 @@ public class ConnectToAliasCommand implements ICommand
 
 	public static class ClientCallback implements ICompletionCallback
 	{
-		private IApplication _app;
-		public ClientCallback(IApplication app)
+		private final IApplication _app;
+		private final ISQLAlias _sqlAlias;
+
+		public ClientCallback(IApplication app, ISQLAlias alias)
 		{
 			super();
 			if (app == null)
 			{
 				throw new IllegalArgumentException("IApplication == null");
 			}
+			if (alias == null)
+			{
+				throw new IllegalArgumentException("ISQLAlias == null");
+			}
 			_app = app;
+			_sqlAlias = alias;
 		}
 
 		/**
@@ -176,23 +183,23 @@ public class ConnectToAliasCommand implements ICommand
 		{
 			if (th instanceof SQLException)
 			{
-				String msg = "Unable to open SQL Connection";
+				String msg = _sqlAlias.getName() + ": Unable to open SQL Connection";
 				showErrorDialog(msg, th);
 			}
 			else if (th instanceof ClassNotFoundException)
 			{
-				String msg = "JDBC Driver class not found";
+				String msg = _sqlAlias.getName() + ": JDBC Driver class not found";
 				showErrorDialog(msg, th);
 			}
 			else if (th instanceof NoClassDefFoundError)
 			{
-				String msg = "JDBC Driver class not found";
-				s_log.error("JDBC Driver class not found", th);
+				String msg = _sqlAlias.getName() + ": JDBC Driver class not found";
+				s_log.error(msg, th);
 				showErrorDialog(msg, th);
 			}
 			else
 			{
-				String msg = "Unexpected Error occured attempting to open an SQL connection.";
+				String msg = _sqlAlias.getName() + ": Unexpected Error occured attempting to open an SQL connection.";
 				s_log.error(msg, th);
 				showErrorDialog(msg, th);
 			}

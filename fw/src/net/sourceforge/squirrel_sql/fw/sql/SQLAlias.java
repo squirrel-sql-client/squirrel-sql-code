@@ -75,6 +75,9 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 	/** <TT>true</TT> if this alias should be logged on automatically. */
 	private boolean _autoLogon;
 
+	/** Should this alias be connected when the application is started up. */
+	private boolean _connectAtStartup;
+
 	/** If <TT>true</TT> then use drver properties. */
 	private boolean _useDriverProperties = false;
 
@@ -314,6 +317,33 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 			_autoLogon = value;
 			getPropertyChangeReporter().firePropertyChange(ISQLAlias.IPropertyNames.AUTO_LOGON,
 												!_autoLogon, _autoLogon);
+		}
+	}
+
+	/**
+	 * Should this alias be connected when the application is started up.
+	 * 
+	 * @return	<TT>true</TT> if this alias should be connected when the
+	 *			application is started up.
+	 */
+	public boolean isConnectAtStartup()
+	{
+		return _connectAtStartup;
+	}
+
+	/**
+	 * Set whether alias should be connected when the application is started up.
+	 * 
+	 * @param	value	<TT>true</TT> if alias should be connected when the
+	 *					application is started up.
+	 */
+	public void setConnectAtStartup(boolean value)
+	{
+		if (_connectAtStartup != value)
+		{
+			_connectAtStartup = value;
+			getPropertyChangeReporter().firePropertyChange(ISQLAlias.IPropertyNames.CONNECT_AT_STARTUP,
+												!_connectAtStartup, _connectAtStartup);
 		}
 	}
 

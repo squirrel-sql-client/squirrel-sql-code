@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.mainframe.action;
+package net.sourceforge.squirrel_sql.client.session.action;
 /*
  * Copyright (C) 2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -17,47 +17,44 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.ActionEvent;
-import java.io.File;
+import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
+import net.sourceforge.squirrel_sql.client.session.IClientSession;
 /**
- * This <CODE>Action</CODE> displays the Squirrel Change Log Window.
+ * This <CODE>ICommand</CODE> commits the current SQL transaction.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ViewChangeLogAction extends SquirrelAction
+public class CommitCommand implements ICommand
 {
-	private File _file;
+	/** Current session. */
+	private IClientSession _session;
 
 	/**
 	 * Ctor.
-	 * 
-	 * @param	app		Application API.
-	 * @param	file	Change log file.
+	 *
+	 * @param	session		Current session.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
 	 */
-	public ViewChangeLogAction(IApplication app, File file)
+	public CommitCommand(IClientSession session)
 	{
-		super(app);
-		_file = file;
-		app.getResources().setupAction(this);
+		super();
+		if (session == null)
+		{
+			throw new IllegalArgumentException("Null ISession passed");
+		}
+		_session = session;
 	}
 
 	/**
-	 * Display the Change Log window.
+	 * Commit the transaction.
 	 */
-	public void actionPerformed(ActionEvent evt)
+	public void execute()
 	{
-		try
-		{
-			new ViewFileCommand(getApplication(), _file).execute();
-		}
-		catch (BaseException ex)
-		{
-			getApplication().showErrorDialog("Error viewing change log", ex);
-		}
+		IPlugin plugin = _session.getApplication().getDummyAppPlugin();
+		_session.getSQLPanelAPI(plugin).commit();
 	}
 }

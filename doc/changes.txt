@@ -6,6 +6,14 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- You can now specify an Alias to connect when
+  SQuirreL starts up.
+- You can now display only loaded JDBC drivers
+  in the Drivers list.
+- You can now limit the size of the SQL history
+  combobox.
+- Allow SQL history to be persistent and shareable
+  between different sessions (Lynn Pye).
 - Added Next and Previous Session commands to the
   Session menu (Gerd Wagner).
 - Allow user to store a password in the Alias

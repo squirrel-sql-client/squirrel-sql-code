@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.preferences;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -57,6 +57,7 @@ public class SquirrelPreferences implements Serializable
 		String SHOW_ALIASES_TOOL_BAR = "showAliasesToolBar";
 		String SHOW_CONTENTS_WHEN_DRAGGING = "showContentsWhenDragging";
 		String SHOW_DRIVERS_TOOL_BAR = "showDriversToolBar";
+		String SHOW_LOADED_DRIVERS_ONLY = "showLoadedDriversOnly";
 		String SHOW_MAIN_STATUS_BAR = "showMainStatusBar";
 		String SHOW_MAIN_TOOL_BAR = "showMainToolBar";
 		String SHOW_TOOLTIPS = "showToolTips";
@@ -113,6 +114,9 @@ public class SquirrelPreferences implements Serializable
 
 	/** Index in aliases window to be initially selected. */
 	private int _aliasesSelectedIndex = -1;
+
+	/** Show loaded drivers only in the Drivers window. */
+	private boolean _showLoadedDriversOnly;
 
 	/**
 	 * Objects stored by plugins. Each element of this collection is a <TT>Map</TT>
@@ -385,6 +389,30 @@ public class SquirrelPreferences implements Serializable
 		getPropertyChangeReporter().firePropertyChange(IPropertyNames.DRIVERS_SELECTED_INDEX,
 											oldValue, _driversSelectedIndex);
 	}
+
+	/**
+	 * @return	whether only the loaded JDBC drivers are displayed in the
+	 *			Drivers window.
+	 */
+	public boolean getShowLoadedDriversOnly()
+	{
+		return _showLoadedDriversOnly;
+	}
+
+	/**
+	 * Set whether only the loaded JDBC drivers are displayed in the
+	 * Drivers window.
+	 * 
+	 * @param	data	New value for this property.
+	 */
+	public synchronized void setShowLoadedDriversOnly(boolean data)
+	{
+		final boolean oldValue = _showLoadedDriversOnly;
+		_showLoadedDriversOnly = data;
+		getPropertyChangeReporter().firePropertyChange(IPropertyNames.SHOW_LOADED_DRIVERS_ONLY,
+											oldValue, _showLoadedDriversOnly);
+	}
+
 	/*
 	public synchronized PluginObjectWrapper[] getPluginObjects() {
 		//	  return (Folder[])_subFolders.toArray(new Folder[_subFolders.size()]);

@@ -1,7 +1,10 @@
-package net.sourceforge.squirrel_sql.client.mainframe.action;
+package net.sourceforge.squirrel_sql.client.session.mainpanel;
 /*
  * Copyright (C) 2003 Colin Bell
  * colbell@users.sourceforge.net
+ *
+ * Modifications Copyright (C) 2001-2002 Johan Compagner
+ * jcompagner@j-com.nl
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,47 +20,33 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.ActionEvent;
-import java.io.File;
+import net.sourceforge.squirrel_sql.fw.gui.MemoryComboBox;
 
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 /**
- * This <CODE>Action</CODE> displays the Squirrel Change Log Window.
+ * This combobox shows the history of SQL statments executed.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ViewChangeLogAction extends SquirrelAction
+public class SQLHistoryComboBox extends MemoryComboBox
 {
-	private File _file;
-
 	/**
-	 * Ctor.
-	 * 
-	 * @param	app		Application API.
-	 * @param	file	Change log file.
+	 * Singleton model shared by all instances of this class so that all
+	 * sessions can share the same history.
 	 */
-	public ViewChangeLogAction(IApplication app, File file)
-	{
-		super(app);
-		_file = file;
-		app.getResources().setupAction(this);
-	}
+	private static SQLHistoryComboBoxModel s_model;
 
-	/**
-	 * Display the Change Log window.
-	 */
-	public void actionPerformed(ActionEvent evt)
+	
+	public SQLHistoryComboBox()
 	{
-		try
+		super();
+		synchronized (this.getClass())
 		{
-			new ViewFileCommand(getApplication(), _file).execute();
-		}
-		catch (BaseException ex)
-		{
-			getApplication().showErrorDialog("Error viewing change log", ex);
+			if (s_model == null)
+			{
+				s_model = new SQLHistoryComboBoxModel(new ApplicationFiles().getUserSQLHistoryFile());
+			}
+			setModel(s_model);
 		}
 	}
 }

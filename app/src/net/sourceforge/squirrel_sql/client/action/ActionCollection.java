@@ -40,6 +40,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.GlobalPreferencesAct
 import net.sourceforge.squirrel_sql.client.mainframe.action.InstallDefaultDriversAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.MaximizeAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.NewSessionPropertiesAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ShowLoadedDriversOnlyAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileHorizontalAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileVerticalAction;
@@ -405,6 +406,7 @@ public final class ActionCollection
 		add(new RollbackAction(_app));
 		add(new SessionPropertiesAction(_app));
 		add(new SetDefaultCatalogAction(_app));
+		add(new ShowLoadedDriversOnlyAction(_app));
 		add(new ShowNativeSQLAction(_app));
 		add(new TileAction(_app));
 		add(new TileHorizontalAction(_app));

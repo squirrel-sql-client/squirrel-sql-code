@@ -17,47 +17,45 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.ActionEvent;
-import java.io.File;
-
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
+import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 /**
- * This <CODE>Action</CODE> displays the Squirrel Change Log Window.
+ * This <CODE>ICommand</CODE> allows the user to show/hide drivers in the
+ * Drivers List that cannot be loaded.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ViewChangeLogAction extends SquirrelAction
+public class ShowLoadedDriversOnlyCommand implements ICommand
 {
-	private File _file;
+	/** Application API. */
+	private final IApplication _app;
 
 	/**
 	 * Ctor.
 	 * 
 	 * @param	app		Application API.
-	 * @param	file	Change log file.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if null IApplication passed.
 	 */
-	public ViewChangeLogAction(IApplication app, File file)
+	public ShowLoadedDriversOnlyCommand(IApplication app)
 	{
-		super(app);
-		_file = file;
-		app.getResources().setupAction(this);
+		super();
+		if (app == null)
+		{
+			throw new IllegalArgumentException("IApplication == null");
+		}
+		_app = app;
 	}
 
 	/**
-	 * Display the Change Log window.
+	 * Execute this command.
 	 */
-	public void actionPerformed(ActionEvent evt)
+	public void execute()
 	{
-		try
-		{
-			new ViewFileCommand(getApplication(), _file).execute();
-		}
-		catch (BaseException ex)
-		{
-			getApplication().showErrorDialog("Error viewing change log", ex);
-		}
+		SquirrelPreferences prefs = _app.getSquirrelPreferences();
+		prefs.setShowLoadedDriversOnly(!prefs.getShowLoadedDriversOnly());
 	}
 }
