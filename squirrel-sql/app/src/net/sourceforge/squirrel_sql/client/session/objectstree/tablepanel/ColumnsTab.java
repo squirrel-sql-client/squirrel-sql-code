@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,21 +17,10 @@ package net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
-import javax.swing.JLabel;
-import javax.swing.JScrollPane;
-
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.ResultSetPanel;
@@ -41,12 +30,14 @@ import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.Resul
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ColumnsTab extends BaseTablePanelTab {
+public class ColumnsTab extends BaseTablePanelTab
+{
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
-	private interface i18n {
+	private interface i18n
+	{
 		String TITLE = "Columns";
 		String HINT = "Show columns for table";
 	}
@@ -59,7 +50,8 @@ public class ColumnsTab extends BaseTablePanelTab {
 	 *
 	 * @return	The title for the tab.
 	 */
-	public String getTitle() {
+	public String getTitle()
+	{
 		return i18n.TITLE;
 	}
 
@@ -68,7 +60,8 @@ public class ColumnsTab extends BaseTablePanelTab {
 	 *
 	 * @return	The hint for the tab.
 	 */
-	public String getHint() {
+	public String getHint()
+	{
 		return i18n.HINT;
 	}
 
@@ -77,8 +70,10 @@ public class ColumnsTab extends BaseTablePanelTab {
 	 *
 	 * @return	The component to be displayed in the panel.
 	 */
-	public synchronized Component getComponent() {
-		if (_comp == null) {
+	public synchronized Component getComponent()
+	{
+		if (_comp == null)
+		{
 			_comp = new ResultSetPanel();
 		}
 		return _comp;
@@ -89,30 +84,40 @@ public class ColumnsTab extends BaseTablePanelTab {
 	 */
 	public void clear()
 	{
-		((ResultSetPanel)getComponent()).clear();
+		((ResultSetPanel) getComponent()).clear();
 	}
 
 	/**
 	 * Refresh the component displaying the <TT>ITableInfo</TT> object.
 	 */
-	public synchronized void refreshComponent() throws IllegalStateException {
+	public synchronized void refreshComponent() throws IllegalStateException
+	{
 		ISession session = getSession();
-		if (session == null) {
+		if (session == null)
+		{
 			throw new IllegalStateException("Null ISession");
 		}
 		ITableInfo ti = getTableInfo();
-		if ( ti == null) {
+		if (ti == null)
+		{
 			throw new IllegalStateException("Null ITableInfo");
 		}
-		String destClassName = session.getProperties().getMetaDataOutputClassName();
-		try {
+		String destClassName =
+			session.getProperties().getMetaDataOutputClassName();
+		try
+		{
 			ResultSet rs = session.getSQLConnection().getColumns(ti);
 			// ResultSetPanel is thread save
-//			((ResultSetPanel)getComponent()).load(session, rs, new int[] {4,5,6,7,9,10,11,12,13,14,15,16,17,18}, destClassName);
-			((ResultSetPanel)getComponent()).load(session, rs, null, destClassName);
-		} catch (Exception ex) {
+			//			((ResultSetPanel)getComponent()).load(session, rs, new int[] {4,5,6,7,9,10,11,12,13,14,15,16,17,18}, destClassName);
+			((ResultSetPanel) getComponent()).load(
+				session,
+				rs,
+				null,
+				destClassName);
+		}
+		catch (Exception ex)
+		{
 			session.getMessageHandler().showMessage(ex);
 		}
 	}
 }
-

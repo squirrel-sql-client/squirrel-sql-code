@@ -33,7 +33,6 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextFileDestin
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DatabaseTypesDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ObjectArrayDataSet;
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.MetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
@@ -329,7 +328,7 @@ public class DumpSessionCommand implements ICommand
 	}
 
 	private File createGeneralConnectionDumpFile(SQLConnection conn)
-		throws IOException, SQLException, BaseSQLException
+		throws IOException, SQLException
 	{
 		Connection myConn = conn.getConnection();
 	

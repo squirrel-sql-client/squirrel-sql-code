@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * Modifications copyright (C) 2001 Johan Compagner
@@ -23,6 +23,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
 import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -42,7 +43,6 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectSimpleNameInfoComparator;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.EnumerationIterator;
@@ -51,7 +51,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-//import net.sourceforge.squirrel_sql.client.session.action.DropTableAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeItemAction;
 import net.sourceforge.squirrel_sql.client.session.objectstree.BaseNode;
 import net.sourceforge.squirrel_sql.client.session.objectstree.BaseNodeExpandedListener;
@@ -150,7 +149,7 @@ class ObjectsTree extends JTree
 		super.removeNotify();
 	}
 
-	void refresh() throws BaseSQLException
+	void refresh()
 	{
 		TreePath[] paths = getSelectionPaths();
 		List l = _model.refresh();
@@ -168,7 +167,7 @@ class ObjectsTree extends JTree
 		_cursorChg.restore();
 	}
 
-	void refreshSelectedDatabaseObjects() throws BaseSQLException
+	void refreshSelectedDatabaseObjects()
 	{
 		TreePath[] paths = getSelectionPaths();
 		if (paths != null)
@@ -281,7 +280,7 @@ class ObjectsTree extends JTree
 				{
 					bNode.expand();
 				}
-				catch (BaseSQLException ex)
+				catch (SQLException ex)
 				{
 					// Can't happen anymore?? Because (some) are threaded now.
 					ObjectsTree.this._session.getMessageHandler().showMessage(

@@ -23,7 +23,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectTypes;
@@ -59,7 +58,7 @@ public class PackageExpander implements INodeExpander
 	 *			nodes for the passed node.
 	 */
 	public List createChildren(ISession session, ObjectTreeNode parentNode)
-		throws BaseSQLException
+		throws SQLException
 	{
 		final List childNodes = new ArrayList();
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
@@ -79,7 +78,7 @@ public class PackageExpander implements INodeExpander
 		IProcedureInfo[] procs = null;
 		try {
 			procs = conn.getProcedures(catalogName, schemaName, "%");
-		} catch (BaseSQLException ignore) {
+		} catch (SQLException ignore) {
 			// Assume DBMS doesn't support procedures.
 			procs = new IProcedureInfo[0];
 		}

@@ -17,21 +17,19 @@ package net.sourceforge.squirrel_sql.client.session.objectstree;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
+import javax.swing.JComponent;
+import javax.swing.tree.MutableTreeNode;
+
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public class DatabaseNode extends BaseNode
 {
@@ -78,7 +76,7 @@ public class DatabaseNode extends BaseNode
 		return obj instanceof DatabaseNode;
 	}
 
-	public void expand() throws BaseSQLException
+	public void expand() throws SQLException
 	{
 		if (getChildCount() == 0)
 		{
@@ -114,7 +112,7 @@ public class DatabaseNode extends BaseNode
 			final ISession session,
 			final SQLConnection conn,
 			final ObjectsTreeModel model)
-			throws BaseSQLException
+			throws SQLException
 		{
 			final ArrayList tableTypeList = new ArrayList();
 			if (conn != null)
@@ -133,24 +131,17 @@ public class DatabaseNode extends BaseNode
 				{
 					supportsSchemas = conn.supportsSchemas();
 				}
-				catch (BaseSQLException ex)
+				catch (SQLException ex)
 				{
 				}
 				if (supportsCatalogs)
 				{
-					try
+					final String[] catalogs = conn.getSQLMetaData().getCatalogs();
+					for (int i = 0; i < catalogs.length; ++i)
 					{
-						final String[] catalogs = conn.getSQLMetaData().getCatalogs();
-						for (int i = 0; i < catalogs.length; ++i)
-						{
-							final String catalogName = catalogs[i];
-							tableTypeList.add(
-								new TableTypesGroupNode(session, model, catalogName, catalogName, null, null));
-						}
-					}
-					catch (SQLException ex)
-					{
-						throw new BaseSQLException(ex);
+						final String catalogName = catalogs[i];
+						tableTypeList.add(
+							new TableTypesGroupNode(session, model, catalogName, catalogName, null, null));
 					}
 				}
 				else if (supportsSchemas)

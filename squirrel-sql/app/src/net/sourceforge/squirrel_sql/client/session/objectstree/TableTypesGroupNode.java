@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.objectstree;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,12 +17,12 @@ package net.sourceforge.squirrel_sql.client.session.objectstree;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.tree.MutableTreeNode;
 
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 
 import net.sourceforge.squirrel_sql.client.plugin.IPluginDatabaseObjectType;
@@ -98,7 +98,7 @@ public class TableTypesGroupNode extends BaseNode
 		return buf.toString();
 	}
 
-	public void expand() throws BaseSQLException
+	public void expand() throws java.sql.SQLException
 	{
 		if(getChildCount() == 0)
 		{
@@ -164,7 +164,7 @@ public class TableTypesGroupNode extends BaseNode
 			final ISession session,
 			final SQLConnection conn,
 			final ObjectsTreeModel treeModel)
-			throws BaseSQLException
+			throws SQLException
 		{
 			final ArrayList tableTypeList = new ArrayList();
 			if (conn != null)
@@ -192,7 +192,7 @@ public class TableTypesGroupNode extends BaseNode
 						tableTypeList.add(new ProcedureObjectTypeNode(getSession(), getTreeModel(), TableTypesGroupNode.this));
 					}
 				}
-				catch (BaseSQLException ignore)
+				catch (SQLException ignore)
 				{
 					// Any probs just assume that db doesn't supports procs.
 				}

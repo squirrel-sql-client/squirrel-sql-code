@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.client.session.objectstree;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -28,7 +29,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeModel;
 
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -95,7 +95,7 @@ public class BaseNode extends DefaultMutableTreeNode {
 			((BaseNodeExpandedListener)_expandListeners.get(i)).nodeExpanded(this);
 		}
 	}
-	public void expand() throws BaseSQLException
+	public void expand() throws SQLException
 	{
 		fireExpanded();
 	}
@@ -250,7 +250,7 @@ public class BaseNode extends DefaultMutableTreeNode {
 				});
 
 			}
-			catch(final BaseSQLException ex)
+			catch(final SQLException ex)
 			{
 				SwingUtilities.invokeLater(new Runnable()
 				{
@@ -265,7 +265,7 @@ public class BaseNode extends DefaultMutableTreeNode {
 			}
 		}
 
-		public abstract List getNodeList(ISession session, SQLConnection conn,ObjectsTreeModel model) throws BaseSQLException;
+		public abstract List getNodeList(ISession session, SQLConnection conn,ObjectsTreeModel model) throws SQLException;
 	}
 
 }

@@ -18,10 +18,10 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expande
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IUDTInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
@@ -55,7 +55,7 @@ public class UDTTypeExpander implements INodeExpander
 	 *			nodes for the passed node.
 	 */
 	public List createChildren(ISession session, ObjectTreeNode parentNode)
-		throws BaseSQLException
+		throws SQLException
 	{
 		final List childNodes = new ArrayList();
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();

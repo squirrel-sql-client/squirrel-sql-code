@@ -40,7 +40,6 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectTypes;
@@ -628,7 +627,7 @@ class ObjectTree extends JTree
 		/**
 		 * This expands the parent node and shows all its children.
 		 */
-		private void loadChildren() throws SQLException, BaseSQLException
+		private void loadChildren() throws SQLException
 		{
 			for (int i = 0; i < _expanders.length; ++i)
 			{

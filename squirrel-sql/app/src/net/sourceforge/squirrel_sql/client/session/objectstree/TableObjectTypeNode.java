@@ -26,7 +26,6 @@ import java.util.List;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 
@@ -44,7 +43,7 @@ public final class TableObjectTypeNode extends ObjectTypeNode {
 		_tableTypePattern = tableTypePattern;
 	}
 
-	public void expand() throws BaseSQLException {
+	public void expand() throws SQLException {
 		if (getChildCount() == 0)
 		{
 			getSession().getApplication().getThreadPool().addTask(new TableLoader(addLoadingNode()));
@@ -86,12 +85,12 @@ public final class TableObjectTypeNode extends ObjectTypeNode {
 		/*
 		 * @see TreeNodesLoader#getNodeList(ISession, SQLConnection)
 		 */
-		public List getNodeList(ISession session, SQLConnection conn,ObjectsTreeModel model) throws BaseSQLException
+		public List getNodeList(ISession session, SQLConnection conn,ObjectsTreeModel model) throws SQLException
 		{
 			final ArrayList listNodes = new ArrayList();
 			Statement stmt = null;
 			try
-		   {
+			{
 				final String catalogId = getParentNode().getCatalogIdentifier();
 				final String schemaId = getParentNode().getSchemaIdentifier();
 				final ITableInfo[] tables = conn.getTables(catalogId, schemaId, "%", new String[]{_tableTypePattern});
@@ -101,10 +100,6 @@ public final class TableObjectTypeNode extends ObjectTypeNode {
 				for (int i = 0; i < tables.length; ++i) {
 					listNodes.add(new TableNode(session, model, tables[i], stmt));
 				}
-			}
-			catch(BaseSQLException ex)
-			{
-				throw ex;
 			}
 			finally
 			{

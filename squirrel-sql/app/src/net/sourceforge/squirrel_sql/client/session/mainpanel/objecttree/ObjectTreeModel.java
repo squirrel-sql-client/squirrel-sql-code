@@ -25,7 +25,6 @@ import java.util.Map;
 
 import javax.swing.tree.DefaultTreeModel;
 
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectTypes;

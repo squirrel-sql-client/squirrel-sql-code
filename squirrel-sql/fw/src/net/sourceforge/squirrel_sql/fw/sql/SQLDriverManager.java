@@ -41,6 +41,12 @@ public class SQLDriverManager
 	 */
 	private HashMap _driverInfo = new HashMap();
 
+	/**
+	 * Collection of the <TT>SQLDriverClassLoader</TT> class loaders used for
+	 * each driver. keyed by <TT>SQLDriver.getIdentifier()</TT>.
+	 */
+	private HashMap _classLoaders = new HashMap();
+
 	private MyDriverListener _myDriverListener = new MyDriverListener();
 
 	public synchronized void registerSQLDriver(ISQLDriver sqlDriver)
@@ -52,6 +58,7 @@ public class SQLDriverManager
 		ClassLoader loader = new SQLDriverClassLoader(sqlDriver);
 		Class driverClass = loader.loadClass(sqlDriver.getDriverClassName());
 		_driverInfo.put(sqlDriver.getIdentifier(), driverClass.newInstance());
+		_classLoaders.put(sqlDriver.getIdentifier(), loader);
 		sqlDriver.setJDBCDriverClassLoaded(true);
 	}
 
@@ -60,13 +67,14 @@ public class SQLDriverManager
 		sqlDriver.setJDBCDriverClassLoaded(false);
 		sqlDriver.removePropertyChangeListener(_myDriverListener);
 		_driverInfo.remove(sqlDriver.getIdentifier());
+		_classLoaders.remove(sqlDriver.getIdentifier());
 	}
 
 	public synchronized SQLConnection getConnection(ISQLDriver sqlDriver,
 											ISQLAlias alias, String user,
 											String pw)
 		throws ClassNotFoundException, IllegalAccessException,
-			InstantiationException, BaseSQLException, MalformedURLException
+			InstantiationException, MalformedURLException, SQLException
 	{
 		Properties props = new Properties();
 		if (user != null)
@@ -78,31 +86,21 @@ public class SQLDriverManager
 			props.put("password", pw);
 		}
 
-		try
+		Driver driver = (Driver)_driverInfo.get(sqlDriver.getIdentifier());
+		if (driver == null)
 		{
-//			ClassLoader loader = new SQLDriverClassLoader(sqlDriver);
-//			Class driverCls = loader.loadClass(sqlDriver.getDriverClassName());
-//			Driver driver = (Driver)driverCls.newInstance();
-			Driver driver = (Driver)_driverInfo.get(sqlDriver.getIdentifier());
-			if (driver == null)
-			{
-				s_log.debug("Loading driver that wasn't registered: " +
-								sqlDriver.getDriverClassName());
-				ClassLoader loader = new SQLDriverClassLoader(sqlDriver);
-				Class driverCls = loader.loadClass(sqlDriver.getDriverClassName());
-				driver = (Driver)driverCls.newInstance();
-			}
-			Connection jdbcConn = driver.connect(alias.getUrl(), props);
-			if (jdbcConn == null)
-			{
-				throw new BaseSQLException("Unable to create connection. Check your URL.");
-			}
-			return new SQLConnection(jdbcConn);
+			s_log.debug("Loading driver that wasn't registered: " +
+							sqlDriver.getDriverClassName());
+			ClassLoader loader = new SQLDriverClassLoader(sqlDriver);
+			Class driverCls = loader.loadClass(sqlDriver.getDriverClassName());
+			driver = (Driver)driverCls.newInstance();
 		}
-		catch (SQLException ex)
+		Connection jdbcConn = driver.connect(alias.getUrl(), props);
+		if (jdbcConn == null)
 		{
-			throw new BaseSQLException(ex);
+			throw new SQLException("Unable to create connection. Check your URL.");
 		}
+		return new SQLConnection(jdbcConn);
 	}
 
 	/**
@@ -123,6 +121,26 @@ public class SQLDriverManager
 		}
 
 		return (Driver)_driverInfo.get(id);
+	}
+
+	/**
+	 * Return the <TT>SQLDriverClassLoader</TT> used for the passed driver.
+	 * 
+	 * @param	sqlDriver	Driver to find class loader for.
+	 * 
+	 * @throws	IllegalArgumentException
+	 *			Thrown if <TT>null</TT> <TT>SQLDriverClassLoader</TT> passed.
+	 * 
+	 * @return	ClassLoader or null.
+	 */
+	public SQLDriverClassLoader getSQLDriverClassLoader(ISQLDriver driver)
+	{
+		if (driver == null)
+		{
+			throw new IllegalArgumentException("SQLDriverClassLoader == null");
+		}
+
+		return (SQLDriverClassLoader)_classLoaders.get(driver.getIdentifier());
 	}
 
 	private final class MyDriverListener implements PropertyChangeListener

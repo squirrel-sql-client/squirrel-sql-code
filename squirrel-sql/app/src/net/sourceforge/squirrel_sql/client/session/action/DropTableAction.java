@@ -29,7 +29,6 @@ import net.sourceforge.squirrel_sql.client.session.IClientSession;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
@@ -37,7 +36,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
- * @version 	$Id: DropTableAction.java,v 1.6 2002-08-09 22:18:19 colbell Exp $
+ * @version 	$Id: DropTableAction.java,v 1.7 2002-08-15 08:26:59 colbell Exp $
  * @author		Johan Compagner
  */
 public class DropTableAction extends SquirrelAction implements IClientSessionAction

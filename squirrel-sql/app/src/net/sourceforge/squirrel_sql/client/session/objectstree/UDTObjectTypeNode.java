@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.objectstree;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,11 +17,12 @@ package net.sourceforge.squirrel_sql.client.session.objectstree;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import javax.swing.tree.MutableTreeNode;
-
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
+
+import javax.swing.tree.MutableTreeNode;
+
 import net.sourceforge.squirrel_sql.fw.sql.IUDTInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 
@@ -79,7 +80,7 @@ public final class UDTObjectTypeNode extends ObjectTypeNode {
 		 * @see TreeNodesLoader#getNodeList(ISession, SQLConnection)
 		 */
 		public List getNodeList(ISession session, SQLConnection conn, ObjectsTreeModel model)
-			throws BaseSQLException
+			throws SQLException
 		{
 			final ArrayList listNodes = new ArrayList();
 			final String catalogId = getParentNode().getCatalogIdentifier();
@@ -87,7 +88,7 @@ public final class UDTObjectTypeNode extends ObjectTypeNode {
 			IUDTInfo[] udts = null;
 			try {
 				udts = conn.getUDTs(catalogId, schemaId, "%", null);
-			} catch (BaseSQLException ignore) {
+			} catch (SQLException ignore) {
 				// Assume DBMS doesn't support UDTs.
 			}
 

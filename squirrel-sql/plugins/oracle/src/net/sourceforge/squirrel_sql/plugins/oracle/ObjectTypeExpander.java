@@ -23,7 +23,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectTypes;
@@ -83,7 +82,7 @@ public class ObjectTypeExpander implements INodeExpander
 	 *			nodes for the passed node.
 	 */
 	public List createChildren(ISession session, ObjectTreeNode parentNode)
-		throws BaseSQLException
+		throws SQLException
 	{
 		final List childNodes = new ArrayList();
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
@@ -91,21 +90,13 @@ public class ObjectTypeExpander implements INodeExpander
 		final String catalogName = parentDbinfo.getCatalogName();
 		final String schemaName = parentDbinfo.getSchemaName();
 
-		try
-		{
-			childNodes.addAll(createNodes(session, catalogName, schemaName));
-		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
-
+		childNodes.addAll(createNodes(session, catalogName, schemaName));
 		return childNodes;
 	}
 
 	private List createNodes(ISession session, String catalogName,
 											String schemaName)
-		throws SQLException, BaseSQLException
+		throws SQLException
 	{
 		final SQLConnection conn = session.getSQLConnection();
 		final List childNodes = new ArrayList();

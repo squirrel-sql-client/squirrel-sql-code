@@ -17,17 +17,20 @@ package net.sourceforge.squirrel_sql.client.session.objectstree;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 
 import net.sourceforge.squirrel_sql.client.plugin.IPluginDatabaseObject;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
-public class PluginObjectNode extends DatabaseObjectNode {
+public class PluginObjectNode extends DatabaseObjectNode
+{
 	private IPluginDatabaseObject _obj;
 
-	public PluginObjectNode(ISession session, ObjectsTreeModel treeModel,
-							PluginGroupNode parent,
-							IPluginDatabaseObject obj) {
+	public PluginObjectNode(
+		ISession session,
+		ObjectsTreeModel treeModel,
+		PluginGroupNode parent,
+		IPluginDatabaseObject obj)
+	{
 		super(session, treeModel, obj);
 		_obj = obj;
 	}

@@ -42,7 +42,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectTypes;
@@ -57,8 +56,8 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExp
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode.IObjectTreeNodeType;
 /**
- * This class is an expander for the schema nodes. It will add Object Type
- * nodes to the xchema node.
+ * This class is an expander for the schema nodes. It will add various Object Type
+ * nodes to the schema node.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
@@ -96,7 +95,7 @@ class SchemaExpander implements INodeExpander
 	 *			nodes for the passed node.
 	 */
 	public List createChildren(ISession session, ObjectTreeNode parentNode)
-		throws BaseSQLException
+		throws SQLException
 	{
 		final List childNodes = new ArrayList();
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();

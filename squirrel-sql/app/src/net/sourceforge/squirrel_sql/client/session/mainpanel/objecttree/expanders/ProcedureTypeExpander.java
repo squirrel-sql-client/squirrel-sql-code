@@ -18,10 +18,10 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expande
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
@@ -40,7 +40,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTr
 public class ProcedureTypeExpander implements INodeExpander
 {
 	/** Logger for this class. */
-	private static ILogger s_log =
+	private static final ILogger s_log =
 		LoggerController.createLogger(ProcedureTypeExpander.class);
 
 	/**
@@ -55,7 +55,7 @@ public class ProcedureTypeExpander implements INodeExpander
 	 *			nodes for the passed node.
 	 */
 	public List createChildren(ISession session, ObjectTreeNode parentNode)
-		throws BaseSQLException
+		throws SQLException
 	{
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
 		final String catalogName = parentDbinfo.getCatalogName();
@@ -66,7 +66,7 @@ public class ProcedureTypeExpander implements INodeExpander
 
 	private List createProcedureNodes(ISession session, String catalogName,
 										String schemaName)
-		throws BaseSQLException
+		throws SQLException
 	{
 		final SQLConnection conn = session.getSQLConnection();
 		final List childNodes = new ArrayList();

@@ -22,7 +22,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectTypes;
@@ -68,7 +67,7 @@ public class DatabaseExpander implements INodeExpander
 		{
 			_tableTypes = session.getSQLConnection().getTableTypes();
 		}
-		catch (BaseSQLException ex)
+		catch (SQLException ex)
 		{
 			_tableTypes = new String[] {};
 			s_log.debug("DBMS doesn't support 'getTableTypes()", ex);
@@ -87,7 +86,7 @@ public class DatabaseExpander implements INodeExpander
 	 *			nodes for the passed node.
 	 */
 	public List createChildren(ISession session, ObjectTreeNode parentNode)
-		throws SQLException, BaseSQLException
+		throws SQLException
 	{
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
 		final SQLConnection conn = session.getSQLConnection();
@@ -108,7 +107,7 @@ public class DatabaseExpander implements INodeExpander
 		{
 			supportsSchemas = conn.supportsSchemas();
 		}
-		catch (BaseSQLException ex)
+		catch (SQLException ex)
 		{
 			s_log.debug("DBMS doesn't support 'supportsSchemas()", ex);
 		}
@@ -171,7 +170,7 @@ public class DatabaseExpander implements INodeExpander
 
 	private List createSchemaNodes(ISession session, SQLConnection conn,
 										String catalogName)
-		throws BaseSQLException
+		throws SQLException
 	{
 		final List childNodes = new ArrayList();
 		final String[] schemas = conn.getSchemas();
@@ -236,7 +235,7 @@ public class DatabaseExpander implements INodeExpander
 		{
 			supportsStoredProcs = conn.supportsStoredProcedures();
 		}
-		catch (BaseSQLException ex)
+		catch (SQLException ex)
 		{
 			s_log.debug("DBMS doesn't support 'supportsStoredProcedures()'", ex);
 		}

@@ -25,6 +25,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -52,7 +53,6 @@ import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.MemoryComboBox;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -62,9 +62,6 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.ResultFrame;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.ResultTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLExecuterTask;
 import net.sourceforge.squirrel_sql.client.session.action.RedoAction;
 import net.sourceforge.squirrel_sql.client.session.action.UndoAction;
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
@@ -675,7 +672,7 @@ public class SQLPanel extends JPanel
 				{
 					auto = conn.getAutoCommit();
 				}
-				catch (BaseSQLException ex)
+				catch (SQLException ex)
 				{
 					// SQL engine doesn't support transaction control. Inform
 					// user.
@@ -686,7 +683,7 @@ public class SQLPanel extends JPanel
 				{
 					conn.setAutoCommit(props.getAutoCommit());
 				}
-				catch (BaseSQLException ex)
+				catch (SQLException ex)
 				{
 					props.setAutoCommit(auto);
 					_session.getMessageHandler().showMessage(ex);

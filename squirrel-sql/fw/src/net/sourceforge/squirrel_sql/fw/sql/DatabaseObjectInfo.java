@@ -1,7 +1,4 @@
 package net.sourceforge.squirrel_sql.fw.sql;
-
-import java.sql.SQLException;
-
 /*
  * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
@@ -20,6 +17,8 @@ import java.sql.SQLException;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.sql.SQLException;
+
 public class DatabaseObjectInfo implements IDatabaseObjectInfo
 {
 	/** Catalog name. Can be <CODE>null</CODE> */
@@ -100,7 +99,7 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo
 		{
 			supportsSchemasInDataManipulation = conn.supportsSchemasInDataManipulation();
 		}
-		catch (BaseSQLException ignore)
+		catch (SQLException ignore)
 		{
 		}
 		try
@@ -129,7 +128,7 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo
 				identifierQuoteString = null;
 			}
 		}
-		catch (BaseSQLException ignore)
+		catch (SQLException ignore)
 		{
 		}
 

@@ -20,8 +20,6 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
 import java.sql.SQLException;
 import java.util.List;
 
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
 //TODO: Rename to IObjectTreeNodeExpander
 public interface INodeExpander
@@ -38,5 +36,5 @@ public interface INodeExpander
 	 *			nodes for the passed node.
 	 */
 	List createChildren(ISession session, ObjectTreeNode node)
-			throws SQLException, BaseSQLException;
+			throws SQLException;
 }

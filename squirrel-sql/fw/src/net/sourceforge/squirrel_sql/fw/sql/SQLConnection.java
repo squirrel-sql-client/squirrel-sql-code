@@ -58,12 +58,12 @@ public class SQLConnection
 
 	private boolean _autoCommitOnClose = false;
 
-	public SQLConnection(String url) throws BaseSQLException
+	public SQLConnection(String url) throws SQLException
 	{
 		this(null, url);
 	}
 
-	public SQLConnection(String className, String url) throws BaseSQLException
+	public SQLConnection(String className, String url) throws SQLException
 	{
 		super();
 		_url = url;
@@ -75,24 +75,17 @@ public class SQLConnection
 			}
 			catch (ClassNotFoundException ex)
 			{
-				throw new BaseSQLException(ex);
+				throw new SQLException("JDBC Driver class not found: " + className);
 			}
 		}
 	}
 
-	public SQLConnection(Connection conn) throws BaseSQLException
+	public SQLConnection(Connection conn) throws SQLException
 	{
 		super();
 		_conn = conn;
-		try
-		{
-			loadMetaData();
-			_url = _md.getURL();
-		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
+		loadMetaData();
+		_url = _md.getURL();
 	}
 
 	public void close() throws SQLException
@@ -137,57 +130,28 @@ public class SQLConnection
 		return _conn != null;
 	}
 
-	public void commit() throws NoConnectionException, BaseSQLException
+	public void commit() throws SQLException
 	{
 		validateConnection();
-		try
-		{
-			_conn.commit();
-		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
+		_conn.commit();
 	}
 
-	public void rollback() throws NoConnectionException, BaseSQLException
+	public void rollback() throws SQLException
 	{
 		validateConnection();
-		try
-		{
-			_conn.rollback();
-		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
+		_conn.rollback();
 	}
 
-	public boolean getAutoCommit() throws NoConnectionException, BaseSQLException
+	public boolean getAutoCommit() throws SQLException
 	{
 		validateConnection();
-		try
-		{
-			return _conn.getAutoCommit();
-		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
+		return _conn.getAutoCommit();
 	}
 
-	public void setAutoCommit(boolean value)
-		throws NoConnectionException, BaseSQLException
+	public void setAutoCommit(boolean value) throws SQLException
 	{
 		validateConnection();
-		try
-		{
-			_conn.setAutoCommit(value);
-		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
+		_conn.setAutoCommit(value);
 	}
 
 	public boolean getCommitOnClose()
@@ -200,32 +164,16 @@ public class SQLConnection
 		_autoCommitOnClose = value;
 	}
 
-	public Statement createStatement()
-		throws NoConnectionException, BaseSQLException
+	public Statement createStatement() throws SQLException
 	{
 		validateConnection();
-		try
-		{
-			return _conn.createStatement();
-		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
+		return _conn.createStatement();
 	}
 
-	public PreparedStatement prepareStatement(String sql)
-		throws NoConnectionException, BaseSQLException
+	public PreparedStatement prepareStatement(String sql) throws SQLException
 	{
 		validateConnection();
-		try
-		{
-			return _conn.prepareStatement(sql);
-		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
+		return _conn.prepareStatement(sql);
 	}
 
 	/**
@@ -243,519 +191,290 @@ public class SQLConnection
 	}
 
 	public ResultSet getBestRowIdentifier(ITableInfo ti)
-		throws NoConnectionException, BaseSQLException
+		throws SQLException
 	{
-		try
-		{
-			return getMetaData().getBestRowIdentifier(
-				ti.getCatalogName(), ti.getSchemaName(),
-				ti.getSimpleName(), DatabaseMetaData.bestRowSession,
-				true);
-		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
+		return getMetaData().getBestRowIdentifier(
+			ti.getCatalogName(), ti.getSchemaName(),
+			ti.getSimpleName(), DatabaseMetaData.bestRowSession,
+			true);
 	}
 
-	public String getCatalog() throws NoConnectionException, BaseSQLException
+	public String getCatalog() throws SQLException
 	{
 		validateConnection();
-		try
-		{
-			return getConnection().getCatalog();
-		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
+		return getConnection().getCatalog();
 	}
 
-//	public String[] getCatalogs() throws NoConnectionException, BaseSQLException
-//	{
-//		DatabaseMetaData md = getMetaData();
-//		ArrayList list = new ArrayList();
-//		try
-//		{
-//			ResultSet rs = md.getCatalogs();
-//			while (rs.next())
-//			{
-//				list.add(rs.getString(1));
-//			}
-//			return (String[]) list.toArray(new String[list.size()]);
-//		}
-//		catch (SQLException ex)
-//		{
-//			throw new BaseSQLException(ex);
-//		}
-//	}
-//
-//	public String getCatalogSeparator()
-//		throws NoConnectionException, BaseSQLException
-//	{
-//		try
-//		{
-//			return getMetaData().getCatalogSeparator();
-//		}
-//		catch (SQLException ex)
-//		{
-//			throw new BaseSQLException(ex);
-//		}
-//	}
-
 	public ResultSet getColumnPrivileges(ITableInfo ti)
-		throws NoConnectionException, BaseSQLException
+		throws SQLException
 	{
-		try
-		{
-			return getMetaData().getColumnPrivileges(ti.getCatalogName(),
+		return getMetaData().getColumnPrivileges(ti.getCatalogName(),
 													ti.getSchemaName(),
 													ti.getSimpleName(),
 													null);
-		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
 	}
 
 	public ResultSet getColumns(ITableInfo ti)
-		throws NoConnectionException, BaseSQLException
+		throws SQLException
 	{
-		try
-		{
-			return getMetaData().getColumns(ti.getCatalogName(),
+		return getMetaData().getColumns(ti.getCatalogName(),
 											ti.getSchemaName(),
 											ti.getSimpleName(), "%");
-		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
 	}
 
 	public ResultSet getExportedKeys(ITableInfo ti)
-		throws NoConnectionException, BaseSQLException
+		throws SQLException
 	{
-		try
-		{
-			return getMetaData().getExportedKeys(
-				ti.getCatalogName(), ti.getSchemaName(),
-				ti.getSimpleName());
-		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
+		return getMetaData().getExportedKeys(
+			ti.getCatalogName(), ti.getSchemaName(),
+			ti.getSimpleName());
 	}
 
 	public String getIdentifierQuoteString()
-		throws NoConnectionException, BaseSQLException
+		throws SQLException
 	{
-		try
+		if (_dbDriverName.equals(DriverNames.FREE_TDS)
+			|| _dbDriverName.equals(DriverNames.JCONNECT))
 		{
-			if (_dbDriverName.equals(DriverNames.FREE_TDS)
-				|| _dbDriverName.equals(DriverNames.JCONNECT))
-			{
-				return "";
-			}
-			return getMetaData().getIdentifierQuoteString();
+			return "";
 		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
+		return getMetaData().getIdentifierQuoteString();
 	}
 
 	public ResultSet getImportedKeys(ITableInfo ti)
-		throws NoConnectionException, BaseSQLException
+		throws SQLException
 	{
-		try
-		{
-			return getMetaData().getImportedKeys(
-				ti.getCatalogName(), ti.getSchemaName(),
-				ti.getSimpleName());
-		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
+		return getMetaData().getImportedKeys(
+			ti.getCatalogName(), ti.getSchemaName(),
+			ti.getSimpleName());
 	}
 
 	public ResultSet getIndexInfo(ITableInfo ti)
-		throws NoConnectionException, BaseSQLException
+		throws SQLException
 	{
-		try
-		{
-			return getMetaData().getIndexInfo(
-				ti.getCatalogName(), ti.getSchemaName(),
-				ti.getSimpleName(), false, true);
-		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
+		return getMetaData().getIndexInfo(
+			ti.getCatalogName(), ti.getSchemaName(),
+			ti.getSimpleName(), false, true);
 	}
 
 	public ResultSet getPrimaryKeys(ITableInfo ti)
-		throws NoConnectionException, BaseSQLException
+		throws SQLException
 	{
-		try
-		{
-			return getMetaData().getPrimaryKeys(
-				ti.getCatalogName(), ti.getSchemaName(),
-				ti.getSimpleName());
-		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
+		return getMetaData().getPrimaryKeys(
+			ti.getCatalogName(), ti.getSchemaName(),
+			ti.getSimpleName());
 	}
 
 	public IProcedureInfo[] getProcedures(String catalog,
 				String schemaPattern, String procedureNamePattern)
-		throws NoConnectionException, BaseSQLException
+		throws SQLException
 	{
 		DatabaseMetaData md = getMetaData();
 		ArrayList list = new ArrayList();
-		try
+		ResultSet rs = md.getProcedures(catalog, schemaPattern, procedureNamePattern);
+		while (rs.next())
 		{
-			ResultSet rs = md.getProcedures(catalog, schemaPattern, procedureNamePattern);
-			while (rs.next())
-			{
-				list.add(new ProcedureInfo(rs, this));
-			}
-			return (IProcedureInfo[]) list.toArray(new IProcedureInfo[list.size()]);
+			list.add(new ProcedureInfo(rs, this));
 		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
+		return (IProcedureInfo[]) list.toArray(new IProcedureInfo[list.size()]);
 	}
 
 	public ResultSet getProcedureColumns(IProcedureInfo ti)
-		throws NoConnectionException, BaseSQLException
+		throws SQLException
 	{
-		try
-		{
-			return getMetaData().getProcedureColumns(ti.getCatalogName(),
-														ti.getSchemaName(),
-														ti.getSimpleName(),
-														"%");
-		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
+		return getMetaData().getProcedureColumns(ti.getCatalogName(),
+													ti.getSchemaName(),
+													ti.getSimpleName(),
+													"%");
 	}
 
-	public String[] getSchemas() throws NoConnectionException, BaseSQLException
+	public String[] getSchemas() throws SQLException
 	{
 		DatabaseMetaData md = getMetaData();
 		ArrayList list = new ArrayList();
-		try
+		ResultSet rs = md.getSchemas();
+		while (rs.next())
 		{
-			ResultSet rs = md.getSchemas();
-			while (rs.next())
-			{
-				list.add(rs.getString(1));
-			}
-			return (String[]) list.toArray(new String[list.size()]);
+			list.add(rs.getString(1));
 		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
+		return (String[]) list.toArray(new String[list.size()]);
 	}
 
 	public ResultSet getTablePrivileges(ITableInfo ti)
-		throws NoConnectionException, BaseSQLException
+		throws SQLException
 	{
-		try
-		{
-			return getMetaData().getTablePrivileges(ti.getCatalogName(),
-														ti.getSchemaName(),
-														ti.getSimpleName());
-		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
+		return getMetaData().getTablePrivileges(ti.getCatalogName(),
+													ti.getSchemaName(),
+													ti.getSimpleName());
 	}
 
 	public ITableInfo[] getTables(String catalog, String schemaPattern,
 									String tableNamePattern, String[] types)
-		throws NoConnectionException, BaseSQLException
+		throws SQLException
 	{
 		DatabaseMetaData md = getMetaData();
 		Set list = new TreeSet();
+		if (_dbDriverName.equals(DriverNames.FREE_TDS) && schemaPattern == null)
+		{
+			schemaPattern = "dbo";
+		}
+
+		ResultSet tabResult = md.getTables(catalog, schemaPattern,
+											tableNamePattern, types);
+		ResultSet superTabResult = null;
+		Map nameMap = null;
 		try
 		{
-			if (_dbDriverName.equals(DriverNames.FREE_TDS) && schemaPattern == null)
+			//				superTabResult = md.getSuperTables(catalog, schemaPattern,
+			//												   tableNamePattern);
+			Class clazz = md.getClass();
+			Class[] p1 = new Class[] {String.class, String.class, String.class};
+			Method method = clazz.getMethod("getSuperTables", p1);
+			if (method != null)
 			{
-				schemaPattern = "dbo";
+				Object[] p2 = new Object[] {catalog, schemaPattern, tableNamePattern};
+				superTabResult = (ResultSet)method.invoke(md, p2);
 			}
+			// create a mapping of names if we have supertable info, since
+			// we need to find the ITableInfo again for re-ordering.
+			if (superTabResult != null && superTabResult.next())
+			{
+				nameMap = new HashMap();
+			}
+		}
+		catch (Throwable th)
+		{
+			s_log.debug("DBMS/Driver doesn't support getSupertables()", th);
+		}
 
-			ResultSet tabResult = md.getTables(catalog, schemaPattern,
-												tableNamePattern, types);
-			ResultSet superTabResult = null;
-			Map nameMap = null;
-			try
-			{
-				//				superTabResult = md.getSuperTables(catalog, schemaPattern,
-				//												   tableNamePattern);
-				Class clazz = md.getClass();
-				Class[] p1 = new Class[] {String.class, String.class, String.class};
-				Method method = clazz.getMethod("getSuperTables", p1);
-				if (method != null)
-				{
-					Object[] p2 = new Object[] {catalog, schemaPattern, tableNamePattern};
-					superTabResult = (ResultSet)method.invoke(md, p2);
-				}
-				// create a mapping of names if we have supertable info, since
-				// we need to find the ITableInfo again for re-ordering.
-				if (superTabResult != null && superTabResult.next())
-				{
-					nameMap = new HashMap();
-				}
-			}
-			catch (Throwable th)
-			{
-				s_log.debug("DBMS/Driver doesn't support getSupertables()", th);
-			}
-
-			// store all plain table info we have.
-			while (tabResult.next())
-			{
-				ITableInfo tabInfo = new TableInfo(tabResult, this);
-				if (nameMap != null)
-				{
-					nameMap.put(tabInfo.getSimpleName(), tabInfo);
-				}
-				list.add(tabInfo);
-			}
-
-			// re-order nodes if the tables are stored hierachically
+		// store all plain table info we have.
+		while (tabResult.next())
+		{
+			ITableInfo tabInfo = new TableInfo(tabResult, this);
 			if (nameMap != null)
 			{
-				do
-				{
-					String tabName = superTabResult.getString(3);
-					TableInfo tabInfo = (TableInfo) nameMap.get(tabName);
-					if (tabInfo == null)
-						continue;
-					String superTabName = superTabResult.getString(4);
-					if (superTabName == null)
-						continue;
-					TableInfo superInfo = (TableInfo) nameMap.get(superTabName);
-					if (superInfo == null)
-						continue;
-					superInfo.addChild(tabInfo);
-					list.remove(tabInfo); // remove from toplevel.
-				}
-				while (superTabResult.next());
+				nameMap.put(tabInfo.getSimpleName(), tabInfo);
 			}
-			return (ITableInfo[]) list.toArray(new ITableInfo[list.size()]);
+			list.add(tabInfo);
 		}
-		catch (SQLException ex)
+
+		// re-order nodes if the tables are stored hierachically
+		if (nameMap != null)
 		{
-			throw new BaseSQLException(ex);
+			do
+			{
+				String tabName = superTabResult.getString(3);
+				TableInfo tabInfo = (TableInfo) nameMap.get(tabName);
+				if (tabInfo == null)
+					continue;
+				String superTabName = superTabResult.getString(4);
+				if (superTabName == null)
+					continue;
+				TableInfo superInfo = (TableInfo) nameMap.get(superTabName);
+				if (superInfo == null)
+					continue;
+				superInfo.addChild(tabInfo);
+				list.remove(tabInfo); // remove from toplevel.
+			}
+			while (superTabResult.next());
 		}
+		return (ITableInfo[]) list.toArray(new ITableInfo[list.size()]);
 	}
 
-	public String[] getTableTypes() throws NoConnectionException, BaseSQLException
+	public String[] getTableTypes() throws SQLException
 	{
 		DatabaseMetaData md = getMetaData();
 
 		// Use a set rather than a list as some combinations of MS SQL and the
 		// JDBC/ODBC return multiple copies of each table type.
 		Set tableTypes = new TreeSet();
-		try
+		ResultSet rs = md.getTableTypes();
+		while (rs.next())
 		{
-			ResultSet rs = md.getTableTypes();
-			while (rs.next())
-			{
-				tableTypes.add(rs.getString(1).trim());
-			}
+			tableTypes.add(rs.getString(1).trim());
+		}
 
-			final int nbrTableTypes = tableTypes.size();
+		final int nbrTableTypes = tableTypes.size();
 
-			// InstantDB (at least version 3.13) only returns "TABLES"
-			// for getTableTypes(). If you try to use this in a call to
-			// DatabaseMetaData.getTables() no tables will be found. For the
-			// moment hard code the types for InstantDB.
-			if (nbrTableTypes == 1 && _dbProductName.equals("InstantDB"))
+		// InstantDB (at least version 3.13) only returns "TABLES"
+		// for getTableTypes(). If you try to use this in a call to
+		// DatabaseMetaData.getTables() no tables will be found. For the
+		// moment hard code the types for InstantDB.
+		if (nbrTableTypes == 1 && _dbProductName.equals("InstantDB"))
+		{
+			tableTypes.clear();
+			tableTypes.add("TABLE");
+			tableTypes.add("SYSTEM TABLE");
+		}
+
+		// At least one version of PostgreSQL through the ODBC/JDBC
+		// bridge returns an empty result set for the list of table
+		// types. Another version of PostgreSQL returns 6 entries
+		// of "SYSTEM TABLE (which we have already filtered back to one).
+		else if (_dbProductName.equals("PostgreSQL"))
+		{
+			if (nbrTableTypes == 0 || nbrTableTypes == 1)
 			{
 				tableTypes.clear();
 				tableTypes.add("TABLE");
 				tableTypes.add("SYSTEM TABLE");
+				tableTypes.add("VIEW");
+				tableTypes.add("INDEX");
+				tableTypes.add("SYSTEM INDEX");
+				tableTypes.add("SEQUENCE");
 			}
-
-			// At least one version of PostgreSQL through the ODBC/JDBC
-			// bridge returns an empty result set for the list of table
-			// types. Another version of PostgreSQL returns 6 entries
-			// of "SYSTEM TABLE (which we have already filtered back to one).
-			else if (_dbProductName.equals("PostgreSQL"))
-			{
-				if (nbrTableTypes == 0 || nbrTableTypes == 1)
-				{
-					tableTypes.clear();
-					tableTypes.add("TABLE");
-					tableTypes.add("SYSTEM TABLE");
-					tableTypes.add("VIEW");
-					tableTypes.add("INDEX");
-					tableTypes.add("SYSTEM INDEX");
-					tableTypes.add("SEQUENCE");
-				}
-			}
-
-			return (String[]) tableTypes.toArray(new String[tableTypes.size()]);
 		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
+
+		return (String[]) tableTypes.toArray(new String[tableTypes.size()]);
 	}
 
-	public ResultSet getTypeInfo() throws NoConnectionException, BaseSQLException
+	public ResultSet getTypeInfo() throws SQLException
 	{
-		try
-		{
-			return getMetaData().getTypeInfo();
-		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
+		return getMetaData().getTypeInfo();
 	}
 
 	public IUDTInfo[] getUDTs(String catalog, String schemaPattern,
 								String typeNamePattern, int[] types)
-		throws NoConnectionException, BaseSQLException
+		throws SQLException
 	{
 		DatabaseMetaData md = getMetaData();
 		ArrayList list = new ArrayList();
-		try
+		ResultSet rs = md.getUDTs(catalog, schemaPattern, typeNamePattern, types);
+		while (rs.next())
 		{
-			ResultSet rs = md.getUDTs(catalog, schemaPattern, typeNamePattern, types);
-			while (rs.next())
-			{
-				list.add(new UDTInfo(rs, this));
-			}
-			return (IUDTInfo[]) list.toArray(new IUDTInfo[list.size()]);
+			list.add(new UDTInfo(rs, this));
 		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
+		return (IUDTInfo[]) list.toArray(new IUDTInfo[list.size()]);
 	}
 
-	public String getUserName() throws NoConnectionException, BaseSQLException
+	public String getUserName() throws SQLException
 	{
-		try
-		{
-			return getMetaData().getUserName();
-		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
+		return getMetaData().getUserName();
 	}
 
 	public ResultSet getVersionColumns(ITableInfo ti)
-		throws NoConnectionException, BaseSQLException
+		throws SQLException
 	{
-		try
-		{
-			return getMetaData().getVersionColumns(ti.getCatalogName(),
-													ti.getSchemaName(),
-													ti.getSimpleName());
-		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
+		return getMetaData().getVersionColumns(ti.getCatalogName(),
+												ti.getSchemaName(),
+												ti.getSimpleName());
 	}
 
 	public void setCatalog(String catalogName)
-		throws NoConnectionException, BaseSQLException
+		throws SQLException
 	{
 		validateConnection();
-		try
-		{
-			getConnection().setCatalog(catalogName);
-		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
+		getConnection().setCatalog(catalogName);
 	}
 
-//	public boolean supportsCatalogs() throws SQLException
-//	{
-//		return supportsCatalogsInTableDefinitions()
-//			|| supportsCatalogsInDataManipulation()
-//			|| supportsCatalogsInProcedureCalls();
-//	}
-//
-//	public boolean supportsCatalogsInTableDefinitions() throws SQLException
-//	{
-//		try
-//		{
-//			return getMetaData().supportsCatalogsInTableDefinitions();
-//		}
-//		catch (SQLException ex)
-//		{
-//			if (_dbDriverName.equals(DriverNames.FREE_TDS))
-//			{
-//				return true;
-//			}
-//			throw ex;
-//		}
-//	}
-//
-//	public boolean supportsCatalogsInDataManipulation()
-//		throws NoConnectionException, BaseSQLException
-//	{
-//		try
-//		{
-//			return getMetaData().supportsCatalogsInDataManipulation();
-//		}
-//		catch (SQLException ex)
-//		{
-//			if (_dbDriverName.equals(DriverNames.FREE_TDS))
-//			{
-//				return true;
-//			}
-//			throw new BaseSQLException(ex);
-//		}
-//	}
-//
-//	public boolean supportsCatalogsInProcedureCalls()
-//		throws NoConnectionException, BaseSQLException
-//	{
-//		try
-//		{
-//			return getMetaData().supportsCatalogsInProcedureCalls();
-//		}
-//		catch (SQLException ex)
-//		{
-//			if (_dbDriverName.equals(DriverNames.FREE_TDS))
-//			{
-//				return true;
-//			}
-//			throw new BaseSQLException(ex);
-//		}
-//	}
-
-	public boolean supportsSchemas() throws NoConnectionException, BaseSQLException
+	public boolean supportsSchemas() throws SQLException
 	{
 		return supportsSchemasInDataManipulation()
 			|| supportsSchemasInTableDefinitions();
 	}
 
 	public boolean supportsSchemasInDataManipulation()
-		throws NoConnectionException, BaseSQLException
+		throws SQLException
 	{
 		try
 		{
@@ -767,12 +486,12 @@ public class SQLConnection
 			{
 				return true;
 			}
-			throw new BaseSQLException(ex);
+			throw ex;
 		}
 	}
 
 	public boolean supportsSchemasInTableDefinitions()
-		throws NoConnectionException, BaseSQLException
+		throws SQLException
 	{
 		try
 		{
@@ -784,138 +503,89 @@ public class SQLConnection
 			{
 				return true;
 			}
-			throw new BaseSQLException(ex);
+			throw ex;
 		}
 	}
 
 	public boolean supportsStoredProcedures()
-		throws NoConnectionException, BaseSQLException
+		throws SQLException
 	{
-		try
-		{
-			return getMetaData().supportsStoredProcedures();
-		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
+		return getMetaData().supportsStoredProcedures();
 	}
 
-	public SQLWarning getWarnings() throws NoConnectionException, BaseSQLException
+	public SQLWarning getWarnings() throws SQLException
 	{
 		validateConnection();
-		try
-		{
-			return _conn.getWarnings();
-		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
+		return _conn.getWarnings();
 	}
 
 	public MetaDataDataSet createMetaDataDataSet(IMessageHandler msgHandler)
-		throws NoConnectionException, BaseSQLException, DataSetException
+		throws SQLException, DataSetException
 	{
 		return new MetaDataDataSet(getMetaData(), msgHandler);
 	}
 
 	public MetaDataListDataSet createNumericFunctionsDataSet(IMessageHandler msgHandler)
-		throws NoConnectionException, BaseSQLException, DataSetException
+		throws SQLException, DataSetException
 	{
 		DatabaseMetaData md = getMetaData();
 		String functionList = null;
 		if (md != null)
 		{
-			try
-			{
-				functionList = md.getNumericFunctions();
-			}
-			catch (SQLException e)
-			{
-				throw new BaseSQLException(e);
-			}
+			functionList = md.getNumericFunctions();
 		}
 		return new MetaDataListDataSet(functionList, msgHandler);
 	}
 
 	public MetaDataListDataSet createStringFunctionsDataSet(IMessageHandler msgHandler)
-		throws NoConnectionException, BaseSQLException, DataSetException
+		throws SQLException, DataSetException
 	{
 		DatabaseMetaData md = getMetaData();
 		String functionList = null;
 		if (md != null)
 		{
-			try
-			{
-				functionList = md.getStringFunctions();
-			}
-			catch (SQLException e)
-			{
-				throw new BaseSQLException(e);
-			}
+			functionList = md.getStringFunctions();
 		}
 		return new MetaDataListDataSet(functionList, msgHandler);
 	}
 
 	public MetaDataListDataSet createSystemFunctionsDataSet(IMessageHandler msgHandler)
-		throws NoConnectionException, BaseSQLException, DataSetException
+		throws SQLException, DataSetException
 	{
 		DatabaseMetaData md = getMetaData();
 		String functionList = null;
 		if (md != null)
 		{
-			try
-			{
-				functionList = md.getSystemFunctions();
-			}
-			catch (SQLException e)
-			{
-				throw new BaseSQLException(e);
-			}
+			functionList = md.getSystemFunctions();
 		}
 		return new MetaDataListDataSet(functionList, msgHandler);
 	}
 
 	public MetaDataListDataSet createDateTimeFunctionsDataSet(IMessageHandler msgHandler)
-		throws NoConnectionException, BaseSQLException, DataSetException
+		throws SQLException, DataSetException
 	{
 		DatabaseMetaData md = getMetaData();
 		String functionList = null;
 		if (md != null)
 		{
-			try
-			{
-				functionList = md.getTimeDateFunctions();
-			}
-			catch (SQLException e)
-			{
-				throw new BaseSQLException(e);
-			}
+			functionList = md.getTimeDateFunctions();
 		}
 		return new MetaDataListDataSet(functionList, msgHandler);
 	}
 
 	public MetaDataListDataSet createSQLKeywordsDataSet(IMessageHandler msgHandler)
-		throws NoConnectionException, BaseSQLException, DataSetException
+		throws SQLException, DataSetException
 	{
 		DatabaseMetaData md = getMetaData();
 		String keywordList = null;
 		if (md != null)
 		{
-			try
-			{
-				keywordList = md.getSQLKeywords();
-			}
-			catch (SQLException e)
-			{
-				throw new BaseSQLException(e);
-			}
+			keywordList = md.getSQLKeywords();
 		}
 		return new MetaDataListDataSet(keywordList, msgHandler);
 	}
 
-	public DatabaseMetaData getMetaData() throws NoConnectionException
+	public DatabaseMetaData getMetaData() throws SQLException
 	{
 		validateConnection();
 		return _md;
@@ -926,11 +596,11 @@ public class SQLConnection
 		return _conn;
 	}
 
-	protected void validateConnection() throws NoConnectionException
+	protected void validateConnection() throws SQLException
 	{
 		if (_conn == null)
 		{
-			throw new NoConnectionException();
+			throw new SQLException("No connection");
 		}
 	}
 

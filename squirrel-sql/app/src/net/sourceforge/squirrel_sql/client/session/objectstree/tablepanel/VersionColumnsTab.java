@@ -29,7 +29,6 @@ import javax.swing.JScrollPane;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 

@@ -17,11 +17,10 @@ package net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import net.sourceforge.squirrel_sql.fw.datasetviewer.BaseDataSetViewerDestination;
+import java.sql.SQLException;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -32,25 +31,29 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class MetaDataTab extends BaseDatabasePanelTab {
+public class MetaDataTab extends BaseDatabasePanelTab
+{
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
-	private interface i18n {
+	private interface i18n
+	{
 		String TITLE = "Metadata";
 		String HINT = "Show database metadata";
 	}
 
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(MetaDataTab.class);
+	private static ILogger s_log =
+		LoggerController.createLogger(MetaDataTab.class);
 
 	/**
 	 * Return the title for the tab.
 	 *
 	 * @return	The title for the tab.
 	 */
-	public String getTitle() {
+	public String getTitle()
+	{
 		return i18n.TITLE;
 	}
 
@@ -59,14 +62,20 @@ public class MetaDataTab extends BaseDatabasePanelTab {
 	 *
 	 * @return	The hint for the tab.
 	 */
-	public String getHint() {
+	public String getHint()
+	{
 		return i18n.HINT;
 	}
 
-	protected IDataSet createDataSet(ISession session) throws DataSetException {
-		try {
-			return session.getSQLConnection().createMetaDataDataSet(session.getMessageHandler());
-		} catch (BaseSQLException ex) {
+	protected IDataSet createDataSet(ISession session) throws DataSetException
+	{
+		try
+		{
+			return session.getSQLConnection().createMetaDataDataSet(
+				session.getMessageHandler());
+		}
+		catch (SQLException ex)
+		{
 			throw new DataSetException(ex);
 		}
 	}

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.objectstree;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -18,36 +18,41 @@ package net.sourceforge.squirrel_sql.client.session.objectstree;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.sql.SQLException;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.tree.MutableTreeNode;
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
+
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.objectstree.BaseNode.TreeNodesLoader;
 
-class ProcedureObjectTypeNode extends ObjectTypeNode {
+class ProcedureObjectTypeNode extends ObjectTypeNode
+{
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
-	private interface i18n {
+	private interface i18n
+	{
 		String PROCEDURE = "PROCEDURE";
 	}
 
-	ProcedureObjectTypeNode(ISession session, ObjectsTreeModel treeModel,
-									TableTypesGroupNode parentNode) {
+	ProcedureObjectTypeNode(
+		ISession session,
+		ObjectsTreeModel treeModel,
+		TableTypesGroupNode parentNode)
+	{
 		super(session, treeModel, parentNode, i18n.PROCEDURE);
 	}
 
-	public void expand() {
+	public void expand()
+	{
 		if (getChildCount() == 0)
 		{
-			getSession().getApplication().getThreadPool().addTask(new ProcedureObjectLoader(addLoadingNode()));
+			getSession().getApplication().getThreadPool().addTask(
+				new ProcedureObjectLoader(addLoadingNode()));
 		}
 		else
 		{
@@ -55,11 +60,10 @@ class ProcedureObjectTypeNode extends ObjectTypeNode {
 		}
 	}
 
-
 	public boolean equals(Object obj)
-   {
+	{
 		return (obj instanceof ProcedureObjectTypeNode);
-   }
+	}
 	/*
 	 * @see BaseNode#getTreeNodesLoader()
 	 */
@@ -78,16 +82,22 @@ class ProcedureObjectTypeNode extends ObjectTypeNode {
 		/*
 		 * @see TreeNodesLoader#getNodeList(ISession, SQLConnection)
 		 */
-		public List getNodeList(ISession session, SQLConnection conn, ObjectsTreeModel model)
-			throws BaseSQLException
+		public List getNodeList(
+			ISession session,
+			SQLConnection conn,
+			ObjectsTreeModel model)
+			throws SQLException
 		{
 			final ArrayList listNodes = new ArrayList();
 			final String catalogId = getParentNode().getCatalogIdentifier();
 			final String schemaId = getParentNode().getSchemaIdentifier();
 			IProcedureInfo[] procs = null;
-			try {
+			try
+			{
 				procs = conn.getProcedures(catalogId, schemaId, "%");
-			} catch (BaseSQLException ignore) {
+			}
+			catch (SQLException ignore)
+			{
 				// Assume DBMS doesn't support procedures.
 			}
 
@@ -102,4 +112,3 @@ class ProcedureObjectTypeNode extends ObjectTypeNode {
 		}
 	}
 }
-

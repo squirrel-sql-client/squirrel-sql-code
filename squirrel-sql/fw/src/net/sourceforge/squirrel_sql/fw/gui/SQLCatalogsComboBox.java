@@ -24,7 +24,6 @@ import java.util.Map;
 
 import javax.swing.JComboBox;
 
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 

@@ -23,7 +23,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectTypes;
@@ -78,7 +77,7 @@ public class PackageTypeExpander implements INodeExpander
 	 *			nodes for the passed node.
 	 */
 	public List createChildren(ISession session, ObjectTreeNode parentNode)
-		throws BaseSQLException
+		throws SQLException
 	{
 		final List childNodes = new ArrayList();
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
@@ -86,29 +85,22 @@ public class PackageTypeExpander implements INodeExpander
 		final String catalogName = parentDbinfo.getCatalogName();
 		final String schemaName = parentDbinfo.getSchemaName();
 
-		try
-		{
-			// Node type to use for package nodes.
-			final int nodeType = _plugin.getSessionInfo(session)._packageNodeType;
+		// Node type to use for package nodes.
+		final int nodeType = _plugin.getSessionInfo(session)._packageNodeType;
 
-			// Add node to contain standalone procedures.
-			IDatabaseObjectInfo dbinfo = new DatabaseObjectInfo("", schemaName,
-													"%", nodeType, conn);
-			ObjectTreeNode child = new ObjectTreeNode(session, dbinfo);
-			child.setUserObject("Standalone");
-			childNodes.add(child);
+		// Add node to contain standalone procedures.
+		IDatabaseObjectInfo dbinfo = new DatabaseObjectInfo("", schemaName,
+												"%", nodeType, conn);
+		ObjectTreeNode child = new ObjectTreeNode(session, dbinfo);
+		child.setUserObject("Standalone");
+		childNodes.add(child);
 
-			// Add packages.
-			ObjectType objType = new ObjectType("PACKAGE",
-											IDatabaseObjectTypes.GENERIC_LEAF,
-											nodeType);
-			INodeExpander exp = new ObjectTypeExpander(objType);
-			childNodes.addAll(exp.createChildren(session, parentNode));
-		}
-		catch (SQLException ex)
-		{
-			throw new BaseSQLException(ex);
-		}
+		// Add packages.
+		ObjectType objType = new ObjectType("PACKAGE",
+										IDatabaseObjectTypes.GENERIC_LEAF,
+										nodeType);
+		INodeExpander exp = new ObjectTypeExpander(objType);
+		childNodes.addAll(exp.createChildren(session, parentNode));
 
 		return childNodes;
 	}

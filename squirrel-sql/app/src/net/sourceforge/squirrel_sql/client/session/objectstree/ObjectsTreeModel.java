@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.objectstree;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,13 +17,13 @@ package net.sourceforge.squirrel_sql.client.session.objectstree;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -110,12 +110,12 @@ public class ObjectsTreeModel extends DefaultTreeModel
 		return _session.getSQLConnection();
 	}
 
-	public List refresh() throws BaseSQLException
+	public List refresh()
 	{
 		return refresh(null);
 	}
 
-	public List refresh(BaseNode node) throws BaseSQLException
+	public List refresh(BaseNode node)
 	{
 		Object obj = node;
 		if (obj == null)
@@ -124,7 +124,7 @@ public class ObjectsTreeModel extends DefaultTreeModel
 		}
 		if (obj instanceof BaseNode)
 		{
-			return ((BaseNode)obj).refresh();
+			return ((BaseNode) obj).refresh();
 		}
 		return null;
 	}
@@ -135,7 +135,7 @@ public class ObjectsTreeModel extends DefaultTreeModel
 		{
 			return getConnection().getTableTypes();
 		}
-		catch (BaseSQLException ignore)
+		catch (SQLException ignore)
 		{
 			return new String[] {
 			};

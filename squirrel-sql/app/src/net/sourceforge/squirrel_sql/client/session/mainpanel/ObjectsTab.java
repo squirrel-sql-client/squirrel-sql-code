@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,22 +19,24 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  */
 import java.awt.Component;
 
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
-public class ObjectsTab extends BaseMainPanelTab {
+public class ObjectsTab extends BaseMainPanelTab
+{
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
-	private interface i18n {
+	private interface i18n
+	{
 		String TAB_TITLE = "Objects";
 		String TAB_DESC = "Show database objects";
 	}
 
-	public ObjectsTab(ISession session) {
+	public ObjectsTab(ISession session)
+	{
 		super();
 		setSession(session);
 	}
@@ -45,14 +47,16 @@ public class ObjectsTab extends BaseMainPanelTab {
 	/**
 	 * @see IMainPanelTab#getTitle()
 	 */
-	public String getTitle() {
+	public String getTitle()
+	{
 		return i18n.TAB_TITLE;
 	}
 
 	/**
 	 * @see IMainPanelTab#getHint()
 	 */
-	public String getHint() {
+	public String getHint()
+	{
 		return i18n.TAB_DESC;
 	}
 
@@ -61,8 +65,10 @@ public class ObjectsTab extends BaseMainPanelTab {
 	 *
 	 * @return	The component to be displayed in the panel.
 	 */
-	public synchronized Component getComponent() {
-		if (_comp == null) {
+	public synchronized Component getComponent()
+	{
+		if (_comp == null)
+		{
 			_comp = new ObjectsPanel(getSession());
 		}
 		return _comp;
@@ -71,7 +77,8 @@ public class ObjectsTab extends BaseMainPanelTab {
 	/**
 	 * @see IMainPanelTab#select()
 	 */
-	public synchronized void refreshComponent() {
+	public synchronized void refreshComponent()
+	{
 		getObjectsPanel().selected();
 	}
 
@@ -80,14 +87,17 @@ public class ObjectsTab extends BaseMainPanelTab {
 	 * Remove all listeners that this component has setup. Close all
 	 * torn off result tab windows.
 	 */
-	public void sessionClosing(ISession session) {
+	public void sessionClosing(ISession session)
+	{
 	}
 
-	public ObjectsPanel getObjectsPanel() {
-		return (ObjectsPanel)getComponent();
+	public ObjectsPanel getObjectsPanel()
+	{
+		return (ObjectsPanel) getComponent();
 	}
 
-	void refreshTree() throws BaseSQLException {
+	void refreshTree()
+	{
 		getObjectsPanel().refresh();
 	}
 
@@ -97,7 +107,8 @@ public class ObjectsTab extends BaseMainPanelTab {
 	 *
 	 * @return	array of <TT>IDatabaseObjectInfo</TT> objects.
 	 */
-	public IDatabaseObjectInfo[] getSelectedDatabaseObjects() {
+	public IDatabaseObjectInfo[] getSelectedDatabaseObjects()
+	{
 		return getObjectsPanel().getSelectedDatabaseObjects();
 	}
 

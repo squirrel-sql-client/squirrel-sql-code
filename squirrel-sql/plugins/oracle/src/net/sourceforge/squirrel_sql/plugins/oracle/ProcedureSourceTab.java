@@ -26,8 +26,6 @@ import java.sql.SQLException;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -156,10 +154,6 @@ public class ProcedureSourceTab extends BaseObjectPanelTab
 				{
 					pstmt.close();
 				}
-			}
-			catch (BaseSQLException ex)
-			{
-				session.getMessageHandler().showMessage(ex);
 			}
 			catch (SQLException ex)
 			{

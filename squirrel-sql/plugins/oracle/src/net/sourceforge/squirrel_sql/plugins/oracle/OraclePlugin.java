@@ -23,7 +23,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -191,10 +190,6 @@ public class OraclePlugin extends DefaultSessionPlugin
 		try
 		{
 			dbms = session.getSQLConnection().getMetaData().getDatabaseProductName();
-		}
-		catch (BaseSQLException ex)
-		{
-			s_log.debug("Error in getDatabaseProductName()", ex);
 		}
 		catch (SQLException ex)
 		{

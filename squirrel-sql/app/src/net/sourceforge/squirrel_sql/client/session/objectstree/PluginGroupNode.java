@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.objectstree;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.tree.MutableTreeNode;
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 
 import net.sourceforge.squirrel_sql.client.plugin.IPluginDatabaseObject;
@@ -42,7 +41,7 @@ public class PluginGroupNode extends ObjectTypeNode {
 		_dbObjType = type;
 	}
 
-	public void expand() throws BaseSQLException
+	public void expand() throws SQLException
 	{
 		if (getChildCount() == 0)
 		{
@@ -74,21 +73,14 @@ public class PluginGroupNode extends ObjectTypeNode {
 		 * @see TreeNodesLoader#getNodeList(ISession, SQLConnection)
 		 */
 		public List getNodeList(ISession session, SQLConnection conn, ObjectsTreeModel model)
-			throws BaseSQLException
+			throws SQLException
 		{
 			final ArrayList listNodes = new ArrayList();
 			Statement stmt = conn.createStatement();
 			try
 			{
 				IPluginDatabaseObject[] objs = null;
-				try
-				{
-					objs = _dbObjType.getObjects(session, conn, stmt);
-				}
-				catch (SQLException ex)
-				{
-					throw new BaseSQLException(ex);
-				}
+				objs = _dbObjType.getObjects(session, conn, stmt);
 				if (objs != null)
 				{
 					for (int i = 0; i < objs.length; ++i)

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -30,39 +30,45 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.objectstree.BaseNode;
 
-public class ObjectsPanel extends JPanel {
+public class ObjectsPanel extends JPanel
+{
 	private ISession _session;
 	private ObjectsTree _tree;
 	private JSplitPane _splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
 	private JComponent _emptyPnl = new JPanel();
 
-	ObjectsPanel(ISession session) {
+	ObjectsPanel(ISession session)
+	{
 		super();
 		createUserInterface(session);
 		_session = session;
 	}
 
-	void selected() {
+	void selected()
+	{
 		final TreePath[] path = _tree.getSelectionPaths();
-		if (path != null && path.length > 0) {
+		if (path != null && path.length > 0)
+		{
 			setSelectedObjectPanel(path[0]);
-		} else {
+		}
+		else
+		{
 			setSelectedObjectPanel(_emptyPnl);
 		}
 	}
 
-	public void refresh() throws BaseSQLException {
+	public void refresh()
+	{
 		_tree.refresh();
 	}
 
-	public void refreshSelectedDatabaseObjects() throws BaseSQLException
+	public void refreshSelectedDatabaseObjects()
 	{
 		_tree.refreshSelectedDatabaseObjects();
 	}
@@ -73,11 +79,13 @@ public class ObjectsPanel extends JPanel {
 	 *
 	 * @return	array of <TT>IDatabaseObjectInfo</TT> objects.
 	 */
-	public IDatabaseObjectInfo[] getSelectedDatabaseObjects() {
+	public IDatabaseObjectInfo[] getSelectedDatabaseObjects()
+	{
 		return _tree.getSelectedDatabaseObjects();
 	}
 
-	private void createUserInterface(ISession session) {
+	private void createUserInterface(ISession session)
+	{
 		setLayout(new BorderLayout());
 
 		_tree = new ObjectsTree(session);
@@ -96,39 +104,46 @@ public class ObjectsPanel extends JPanel {
 
 		_splitPane.setDividerLocation(200);
 
-//			final TreePath[] path = _tree.getSelectionPaths();
-//			if (path != null && path.length > 0) {
-//				setSelectedObjectPanel(path[0]);
-//			} else {
-//				setSelectedObjectPanel(_emptyPnl);
-//			}
+		//			final TreePath[] path = _tree.getSelectionPaths();
+		//			if (path != null && path.length > 0) {
+		//				setSelectedObjectPanel(path[0]);
+		//			} else {
+		//				setSelectedObjectPanel(_emptyPnl);
+		//			}
 	}
 
-	private void setSelectedObjectPanel(TreePath path) {
+	private void setSelectedObjectPanel(TreePath path)
+	{
 		JComponent comp = _emptyPnl;
-		if (path != null) {
-			DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
-			if (node instanceof BaseNode) {
-				comp = ((BaseNode)node).getDetailsPanel();
+		if (path != null)
+		{
+			DefaultMutableTreeNode node =
+				(DefaultMutableTreeNode) path.getLastPathComponent();
+			if (node instanceof BaseNode)
+			{
+				comp = ((BaseNode) node).getDetailsPanel();
 			}
 		}
 		setSelectedObjectPanel(comp);
 	}
 
-	private void setSelectedObjectPanel(Component comp) {
+	private void setSelectedObjectPanel(Component comp)
+	{
 		int divLoc = _splitPane.getDividerLocation();
 		Component existing = _splitPane.getRightComponent();
-		if (existing != null) {
+		if (existing != null)
+		{
 			_splitPane.remove(existing);
 		}
 		_splitPane.add(comp, JSplitPane.RIGHT);
 		_splitPane.setDividerLocation(divLoc);
 	}
 
-	private final class MySelectionListener implements TreeSelectionListener {
-		public void valueChanged(TreeSelectionEvent evt) {
+	private final class MySelectionListener implements TreeSelectionListener
+	{
+		public void valueChanged(TreeSelectionEvent evt)
+		{
 			setSelectedObjectPanel(evt.getNewLeadSelectionPath());
 		}
 	}
 }
-

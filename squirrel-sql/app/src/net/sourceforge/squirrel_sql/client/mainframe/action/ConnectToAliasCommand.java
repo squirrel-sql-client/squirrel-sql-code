@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001 Colin Bell and Johan Compagner
+ * Copyright (C) 2001-2002 Colin Bell and Johan Compagner
  * colbell@users.sourceforge.net
  * jcompagner@j-com.nl
  *
@@ -25,7 +25,7 @@ import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
@@ -38,6 +38,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.db.ConnectionSheet;
 import net.sourceforge.squirrel_sql.client.db.ConnectionSheet.IConnectionSheetHandler;
 import net.sourceforge.squirrel_sql.client.session.IClientSession;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionFactory;
 import net.sourceforge.squirrel_sql.client.session.SessionSheet;
 
@@ -169,7 +170,7 @@ public class ConnectToAliasCommand implements ICommand
 		 */
 		public void errorOccured(Throwable th)
 		{
-			if (th instanceof BaseSQLException)
+			if (th instanceof SQLException)
 			{
 				String msg = "Unable to open SQL Connection";
 				showErrorDialog(msg, th);
@@ -326,11 +327,14 @@ public class ConnectToAliasCommand implements ICommand
 		public void run()
 		{
 			SQLConnection conn = null;
-			final ISQLDriver sqlDriver =
-				_app.getDataCache().getDriver(_alias.getDriverIdentifier());
+			final IIdentifier driverID = _alias.getDriverIdentifier();
+			final ISQLDriver sqlDriver = _app.getDataCache().getDriver(driverID);
+
+			final Thread curThread = Thread.currentThread();
+			final SQLDriverManager mgr = _app.getSQLDriverManager();
+
 			try
 			{
-				SQLDriverManager mgr = _app.getSQLDriverManager();
 				conn = mgr.getConnection(sqlDriver, _alias, _user, _password);
 				synchronized (this)
 				{
@@ -351,24 +355,8 @@ public class ConnectToAliasCommand implements ICommand
 							final IClientSession session = SessionFactory.createSession(
 												_app, sqlDriver, _alias, conn);
 							_callback.sessionCreated(session);
-							SwingUtilities.invokeLater(new Runnable()
-							{
-								public void run()
-								{
-									IApplication app = session.getApplication();
-									app.getPluginManager().sessionCreated(
-										session);
-									final SessionSheet child =
-										new SessionSheet(session);
-									session.setSessionSheet(child);
-									app.getPluginManager().sessionStarted(
-																		session);
-									app.getMainFrame().addInternalFrame(child,
-														true, null);
-									child.setVisible(true);
-									_connSheet.executed(true);
-								}
-							});
+							Runner runner = new Runner(session, _connSheet);
+							SwingUtilities.invokeLater(runner);
 						}
 						else
 						{
@@ -381,6 +369,9 @@ public class ConnectToAliasCommand implements ICommand
 			{
 				_connSheet.executed(false);
 				_callback.errorOccured(ex);
+			}
+			finally
+			{
 			}
 		}
 
@@ -400,4 +391,28 @@ public class ConnectToAliasCommand implements ICommand
 		}
 	}
 
+	private static final class Runner implements Runnable
+	{
+		private final IClientSession _session;
+		private final ConnectionSheet _connSheet;
+	
+		Runner(IClientSession session, ConnectionSheet connSheet)
+		{
+			super();
+			_session = session;
+			_connSheet = connSheet;
+		}
+
+		public void run()
+		{
+			final IApplication app = _session.getApplication();
+			app.getPluginManager().sessionCreated(_session);
+			final SessionSheet child = new SessionSheet(_session);
+			_session.setSessionSheet(child);
+			app.getPluginManager().sessionStarted(_session);
+			app.getMainFrame().addInternalFrame(child, true, null);
+			child.setVisible(true);
+			_connSheet.executed(true);
+		}
+	}
 }

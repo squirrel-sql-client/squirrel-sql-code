@@ -25,9 +25,7 @@ import java.util.Enumeration;
 import javax.swing.JComponent;
 import javax.swing.tree.TreeNode;
 
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.NoConnectionException;
 
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -39,7 +37,7 @@ public final class TableNode extends DatabaseObjectNode implements ITableInfo
 
 	public TableNode(ISession session, ObjectsTreeModel treeModel,
 						ITableInfo tableInfo, Statement rowCountStmt)
-		throws BaseSQLException, NoConnectionException
+		throws SQLException
 	{
 		super(session, treeModel, tableInfo);
 		if (tableInfo == null)

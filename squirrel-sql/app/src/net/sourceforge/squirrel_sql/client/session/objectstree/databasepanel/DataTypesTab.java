@@ -17,10 +17,11 @@ package net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.sql.SQLException;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DatabaseTypesDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
@@ -67,7 +68,7 @@ public class DataTypesTab extends BaseDatabasePanelTab
 		{
 			return new DatabaseTypesDataSet(session.getSQLConnection().getTypeInfo());
 		}
-		catch (BaseSQLException ex)
+		catch (SQLException ex)
 		{
 			throw new DataSetException(ex);
 		}
