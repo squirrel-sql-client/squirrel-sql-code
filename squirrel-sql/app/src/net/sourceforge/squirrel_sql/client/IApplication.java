@@ -80,14 +80,14 @@ public interface IApplication {
 	 *
 	 * @return	the factory object used to create the SQL entry panel.
 	 */
-	public ISQLEntryPanelFactory getSQLEntryPanelFactory();
+	ISQLEntryPanelFactory getSQLEntryPanelFactory();
 
 	/**
 	 * Set the factory object used to create the SQL entry panel.
 	 *
 	 * @param	factory	the factory object used to create the SQL entry panel.
 	 */
-	public void setSQLEntryPanelFactory(ISQLEntryPanelFactory factory);
+	void setSQLEntryPanelFactory(ISQLEntryPanelFactory factory);
 
 	/**
 	 * Add a hierarchical menu to a menu.
@@ -103,7 +103,7 @@ public interface IApplication {
 	 * @param	menuId	ID of menu to add to. @see #IMenuIDs
 	 * @param	action	The action to be added.
 	 */
-	public void addToMenu(int menuId, Action action);
+	void addToMenu(int menuId, Action action);
 
 	/**
 	 * Application startup processing.
