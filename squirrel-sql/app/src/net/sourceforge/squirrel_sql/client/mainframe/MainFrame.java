@@ -40,8 +40,6 @@ import net.sourceforge.squirrel_sql.fw.gui.ScrollableDesktopPane;
 import net.sourceforge.squirrel_sql.fw.gui.WindowState;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import sun.security.krb5.internal.i;
-import sun.security.krb5.internal.crypto.f;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Version;

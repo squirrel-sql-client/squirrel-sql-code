@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.sqlscript;
 /*
- * Copyright (C) 2001 Colin Bell
- * colbell@users.sourceforge.net
+ * Copyright (C) 2001 Johan Compagner
+ * jcompagner@j-com.nl
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,7 +37,10 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
+
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -162,8 +165,8 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 	}
 
 	/**
-	 * Called when a session started. See if any startup scripts
-	 * defined for this driver/alias and if so execute them.
+	 * Called when a session started. Add commands to popup menu
+	 * in object tree.
 	 *
 	 * @param   session	 The session that is starting.
 	 *
@@ -171,6 +174,12 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 	 *		  applicable to passed session.
 	 */
 	public boolean sessionStarted(ISession session) {
+		ActionCollection coll = getApplication().getActionCollection();
+		IObjectTreeAPI api = session.getObjectTreeAPI();
+		api.addToPopup(ObjectTreeNode.IObjectTreeNodeType.TABLE,
+							coll.get(CreateTableScriptAction.class));
+		api.addToPopup(ObjectTreeNode.IObjectTreeNodeType.TABLE,
+							coll.get(CreateDataScriptAction.class));
 		return true;
 	}
 

@@ -50,7 +50,8 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
             public void run()
             {
                 SQLConnection conn = _session.getSQLConnection();
-                String selectSQL = _session.getSQLScriptToBeExecuted();
+//                String selectSQL = _session.getSQLScriptToBeExecuted();
+                String selectSQL = _session.getSQLPanelAPI().getSQLScriptToBeExecuted();
                 final StringBuffer sbRows = new StringBuffer(1000);
                 try
                 {
@@ -94,7 +95,8 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
                     {
                         if(sbRows.length() > 0)
                         {
-                            _session.setEntireSQLScript(sbRows.toString());
+//                            _session.setEntireSQLScript(sbRows.toString());
+                            _session.getSQLPanelAPI().appendSQLScript(sbRows.toString(), true);
                             _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
                         }
                         hideAbortFrame();

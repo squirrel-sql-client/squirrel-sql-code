@@ -2,6 +2,17 @@
 
 <Beans>
     <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+        <driverClassName>org.axiondb.jdbc.AxionDriver</driverClassName>
+        <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+            <string>-13</string>
+        </identifier>
+        <jarFileName/>
+        <jarFileNames Indexed="true"/>
+        <name>Axion</name>
+        <url>jdbc:axiondb:&lt;database-name&gt;&lt;:database-directory&gt;</url>
+    </Bean>
+
+    <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
         <driverClassName>com.mimer.jdbc.Driver</driverClassName>
         <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
             <string>-12</string>

@@ -19,10 +19,10 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import javax.swing.Action;
+import javax.swing.event.TreeModelListener;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
-import net.sourceforge.squirrel_sql.client.session.IClientSession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 /**
@@ -34,6 +34,9 @@ class ObjectTreeAPI implements IObjectTreeAPI
 {
 	/** Session containing the object tree. */
 	private IClientSession _session;
+
+	private int _lastUsedNodeType =
+		ObjectTreeNode.IObjectTreeNodeType.LAST_USED_NODE_TYPE;
 
 	/**
 	 * Ctor specifying the session.
@@ -63,13 +66,48 @@ class ObjectTreeAPI implements IObjectTreeAPI
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>INodeExpander</TT> thrown.
 	 */
-	public void registerExpander(int nodeType, INodeExpander expander)
+	public synchronized void registerExpander(int nodeType, INodeExpander expander)
 	{
 		if (expander == null)
 		{
 			throw new IllegalArgumentException("INodeExpander == null");
 		}
 		_session.getSessionSheet().getObjectTreePanel().registerExpander(nodeType, expander);
+	}
+
+	/**
+	 * Add a listener to the object tree for structure changes. I.E nodes
+	 * added/removed.
+	 * 
+	 * @param	lis		The <TT>TreeModelListener</TT> you want added.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>TreeModelListener</TT> passed.
+	 */
+	public synchronized void addTreeModelListener(TreeModelListener lis)
+	{
+		if (lis == null)
+		{
+			throw new IllegalArgumentException("TreeModelListener == null");
+		}
+		_session.getSessionSheet().getObjectTreePanel().addTreeModelListener(lis);	
+	}
+
+	/**
+	 * Remove a structure changes listener from the object tree.
+	 * 
+	 * @param	lis		The <TT>TreeModelListener</TT> you want removed.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>TreeModelListener</TT> passed.
+	 */
+	public synchronized void removeTreeModelListener(TreeModelListener lis)
+	{
+		if (lis == null)
+		{
+			throw new IllegalArgumentException("TreeModelListener == null");
+		}
+		_session.getSessionSheet().getObjectTreePanel().removeTreeModelListener(lis);	
 	}
 
 	/**
@@ -82,7 +120,7 @@ class ObjectTreeAPI implements IObjectTreeAPI
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> thrown.
 	 */
-	public void addToPopup(int nodeType, Action action)
+	public synchronized void addToPopup(int nodeType, Action action)
 	{
 		if (action == null)
 		{
@@ -99,7 +137,7 @@ class ObjectTreeAPI implements IObjectTreeAPI
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> thrown.
 	 */
-	public void addToPopup(Action action)
+	public synchronized void addToPopup(Action action)
 	{
 		if (action == null)
 		{
@@ -109,12 +147,24 @@ class ObjectTreeAPI implements IObjectTreeAPI
 	}
 
 	/**
+	 * Return the next unused "ObjectTree node type". This can be used by
+	 * pluigns to identify groups of nodes. I.E you may use this to identify
+	 * all Oracle Consumer group nodes.
+	 * 
+	 * @return	Return the next unused "ObjectTree node type".
+	 */
+	public synchronized int getNextAvailableNodeype()
+	{
+		return ++_lastUsedNodeType;
+	}
+
+	/**
 	 * Return an array of the selected nodes in the tree. This is guaranteed
 	 * to be non-null.
 	 * 
 	 * @return	Array of nodes in the tree.
 	 */
-	public ObjectTreeNode[] getSelectedNodes()
+	public synchronized ObjectTreeNode[] getSelectedNodes()
 	{
 		return _session.getSessionSheet().getObjectTreePanel().getSelectedNodes();
 	}
@@ -125,7 +175,7 @@ class ObjectTreeAPI implements IObjectTreeAPI
 	 *
 	 * @return	array of <TT>ObjectTreeNode</TT> objects.
 	 */
-	public IDatabaseObjectInfo[] getSelectedDatabaseObjects()
+	public synchronized IDatabaseObjectInfo[] getSelectedDatabaseObjects()
 	{
 		return _session.getSessionSheet().getObjectTreePanel().getSelectedDatabaseObjects();
 	}
@@ -133,8 +183,25 @@ class ObjectTreeAPI implements IObjectTreeAPI
 	/**
 	 * Refresh the object tree.
 	 */
-	public void refresh()
+	public synchronized void refreshTree()
 	{
-		//TODO: Write me
+		_session.getSessionSheet().getObjectTreePanel().refreshTree();
+	}
+
+	/**
+	 * Remove one or more nodes from the tree.
+	 * 
+	 * @param	nodes	Array of nodes to be removed.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> <TT>ObjectTreeNode[]</TT> thrown.
+	 */
+	public synchronized void removeNodes(ObjectTreeNode[] nodes)
+	{
+		if (nodes == null)
+		{
+			throw new IllegalArgumentException("ObjectTreeNode[] == null");
+		}
+		_session.getSessionSheet().getObjectTreePanel().removeNodes(nodes);
 	}
 }

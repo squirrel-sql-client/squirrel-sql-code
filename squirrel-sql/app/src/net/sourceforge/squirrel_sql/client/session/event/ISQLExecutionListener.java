@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.event;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * Modifications Copyright (C) 2001 Johan Compagner
@@ -28,15 +28,17 @@ import java.util.EventListener;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public interface ISQLExecutionListener extends EventListener {
+public interface ISQLExecutionListener extends EventListener
+{
 	/**
 	 * Called prior to an individual statement being executed. If you modify the
 	 * script remember to return it so that the caller knows about the
 	 * modifications.
 	 *
-	 * @param   sql	 The SQL to be executed.
+	 * @param	sql	The SQL to be executed.
 	 *
-	 * @return  The SQL to be executed. If <TT>null</TT> returned then the statement will not be executed.
+	 * @return	The SQL to be executed. If <TT>null</TT> returned then the
+	 *			statement will not be executed.
 	 */
 	String statementExecuting(String sql);
 }

@@ -114,6 +114,16 @@ public class ObjectTreeModel extends DefaultTreeModel
 	}
 
 	/**
+	 * Return the root node.
+	 * 
+	 * @return	the root node.
+	 */
+	ObjectTreeNode getRootObjectTreeNode()
+	{
+		return (ObjectTreeNode)getRoot();
+	}
+
+	/**
 	 * Get the collection of expanders for the passed node type. If one
 	 * doesn't exist then create an empty one.
 	 */

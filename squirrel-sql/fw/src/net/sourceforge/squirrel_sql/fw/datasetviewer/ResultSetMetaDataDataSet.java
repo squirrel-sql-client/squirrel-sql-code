@@ -35,7 +35,7 @@ public class ResultSetMetaDataDataSet implements IDataSet
 	{
 		String UNSUPPORTED = "<Unsupported>";
 		String NAME_COLUMN = "Property Name";
-		String NULL = "<null>";
+//		String NULL = "<null>";
 		String VALUE_COLUMN = "Value";
 	}
 
@@ -46,7 +46,7 @@ public class ResultSetMetaDataDataSet implements IDataSet
 	private DataSetDefinition _dsDef;
 	private boolean[] _propertyMethodIndicators;
 	private Iterator _rowsIter;
-	private String[] _row;
+	private Object[] _row;
 
 	/**
 	 * Data. Each element is an array of String objects representing a column from
@@ -94,7 +94,7 @@ public class ResultSetMetaDataDataSet implements IDataSet
 	{
 		if (_rowsIter.hasNext())
 		{
-			_row = (String[]) _rowsIter.next();
+			_row = (Object[]) _rowsIter.next();
 		}
 		else
 		{
@@ -150,7 +150,7 @@ public class ResultSetMetaDataDataSet implements IDataSet
 						if (_propertyMethodIndicators[methodIdx])
 						{
 							Object obj = executeGetter(md, methods[methodIdx], methodParms);
-							line.add(obj != null ? obj.toString() : i18n.NULL);
+							line.add(obj);// != null ? obj.toString() : i18n.NULL);
 						}
 					}
 					catch (Throwable th)
@@ -161,7 +161,7 @@ public class ResultSetMetaDataDataSet implements IDataSet
 
 				}
 
-				_data.add(line.toArray(new String[line.size()]));
+				_data.add(line.toArray(new Object[line.size()]));
 			}
 
 			_rowsIter = _data.iterator();

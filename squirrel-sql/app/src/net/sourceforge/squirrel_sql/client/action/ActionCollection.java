@@ -50,13 +50,13 @@ import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultWindo
 import net.sourceforge.squirrel_sql.client.session.action.CloseSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
 import net.sourceforge.squirrel_sql.client.session.action.DropSelectedTablesAction;
-import net.sourceforge.squirrel_sql.client.session.action.DropTableAction;
+//import net.sourceforge.squirrel_sql.client.session.action.DropTableAction;
 import net.sourceforge.squirrel_sql.client.session.action.DumpSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.IClientSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeAction;
-import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeAction;
+//import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeItemAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
 import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
@@ -294,7 +294,7 @@ public final class ActionCollection
 		add(new CommitAction(_app));
 		add(new DisplayPluginSummaryAction(_app));
 		add(new DropSelectedTablesAction(_app));
-		add(new DropTableAction(_app));
+//		add(new DropTableAction(_app));
 		add(new DumpApplicationAction(_app));
 		add(new DumpSessionAction(_app));
 		add(new ExecuteSqlAction(_app));
@@ -303,7 +303,7 @@ public final class ActionCollection
 		add(new MaximizeAction(_app));
 		add(new NewSessionPropertiesAction(_app));
 		add(new RefreshObjectTreeAction(_app));
-		add(new RefreshTreeAction(_app));
+//		add(new RefreshTreeAction(_app));
 		add(new RefreshTreeItemAction(_app));
 		add(new RollbackAction(_app));
 		add(new SessionPropertiesAction(_app));

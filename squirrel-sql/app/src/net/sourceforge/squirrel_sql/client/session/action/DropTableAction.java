@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 /*
+ * TODO: DELETE ME - old object tree only
  * Copyright (C) 2002 Johan Compagner
  * jcompagner@j-com.nl
  *
@@ -36,7 +37,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
- * @version 	$Id: DropTableAction.java,v 1.5 2002-08-02 21:36:05 colbell Exp $
+ * @version 	$Id: DropTableAction.java,v 1.6 2002-08-09 22:18:19 colbell Exp $
  * @author		Johan Compagner
  */
 public class DropTableAction extends SquirrelAction implements IClientSessionAction
@@ -68,6 +69,7 @@ public class DropTableAction extends SquirrelAction implements IClientSessionAct
 	 */
 	public void actionPerformed(ActionEvent e)
 	{
+/*
 		IDatabaseObjectInfo[] selected = _session.getSelectedDatabaseObjects();
 		if (selected != null && selected.length > 0)
 		{
@@ -82,7 +84,7 @@ public class DropTableAction extends SquirrelAction implements IClientSessionAct
 						.append(selected[i].getQualifiedName())
 						.append(sepChar).append('\n');
 				}
-				_session.executeSQL(buf.toString());
+				_session.getSQLPanelAPI().executeSQL(buf.toString());
 				try
 				{
 					_session.getSessionSheet().refreshTree();
@@ -95,6 +97,7 @@ public class DropTableAction extends SquirrelAction implements IClientSessionAct
 				}
 			}
 		}
+*/
 	}
 
 	public void setClientSession(IClientSession session)

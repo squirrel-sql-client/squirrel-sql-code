@@ -17,7 +17,6 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.BorderLayout;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -30,11 +29,12 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public class CreateDataScriptCommand implements ICommand, InternalFrameListener
@@ -95,7 +95,9 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
                     final Statement stmt = conn.createStatement();
                     try
                     {
-                        IDatabaseObjectInfo[] dbObjs = _session.getSelectedDatabaseObjects();
+//                        IDatabaseObjectInfo[] dbObjs = _session.getSelectedDatabaseObjects();
+						IObjectTreeAPI api = _session.getObjectTreeAPI();
+		                IDatabaseObjectInfo[] dbObjs = api.getSelectedDatabaseObjects();
 
                         for (int k = 0; k < dbObjs.length; k++)
                         {
@@ -130,7 +132,8 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
                     {
                         if(sbRows.length() > 0)
                         {
-                            _session.setEntireSQLScript(sbRows.toString());
+//                            _session.setEntireSQLScript(sbRows.toString());
+                            _session.getSQLPanelAPI().appendSQLScript(sbRows.toString(), true);
                             _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
                         }
                         hideAbortFrame();

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.event;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * Modifications Copyright (C) 2001 Johan Compagner
@@ -26,7 +26,8 @@ package net.sourceforge.squirrel_sql.client.session.event;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SQLExecutionAdapter implements ISQLExecutionListener {
+public class SQLExecutionAdapter implements ISQLExecutionListener
+{
 	/**
 	 * Called prior to an individual statement being executed. If you modify the
 	 * script remember to return it so that the caller knows about the
@@ -36,7 +37,8 @@ public class SQLExecutionAdapter implements ISQLExecutionListener {
 	 *
 	 * @return  The SQL to be executed.
 	 */
-	public String statementExecuting(String sql){
+	public String statementExecuting(String sql)
+	{
 		return sql;
 	}
 }

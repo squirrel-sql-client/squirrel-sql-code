@@ -106,11 +106,16 @@ public class ResultSetDataSet implements IDataSet
 						{
 							switch (md.getColumnType(idx))
 							{
-								case Types.NULL :
+								case Types.NULL:
 									row[i] = null;
 									break;
-
-								case Types.BIT :
+								
+								// TODO: When JDK1.4 is the earliest JDK supported
+								// by Squirrel then remove the hardcoding of the
+								// boolean data type.
+								case Types.BIT:
+								case 16:
+//								case Types.BOOLEAN:
 									row[i] = rs.getObject(idx);
 									if (row[i] != null
 										&& !(row[i] instanceof Boolean))

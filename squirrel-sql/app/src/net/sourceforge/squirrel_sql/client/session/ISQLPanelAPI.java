@@ -18,7 +18,8 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
+import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
+import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 /**
  * This interface defines the API through which plugins can work with the SQL
  * panel.
@@ -27,6 +28,40 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 public interface ISQLPanelAPI
 {
+	/**
+	 * Add a listener listening for SQL Execution.
+	 *
+	 * @param	lis	 Listener
+	 *
+	 * @throws	IllegalArgumentException
+	 *			If a null <TT>ISQLExecutionListener</TT> passed.
+	 */
+	void addSQLExecutionListener(ISQLExecutionListener lis);
+
+	/**
+	 * Remove an SQL execution listener.
+	 *
+	 * @param	lis	 Listener
+	 *
+	 * @throws	IllegalArgumentException
+	 *			If a null <TT>ISQLExecutionListener</TT> passed.
+	 */
+	void removeSQLExecutionListener(ISQLExecutionListener lis);
+
+	/**
+	 * Add a listener for events in this sessions result tabs.
+	 *
+	 * @param	lis		The listener.
+	 */
+	void addResultTabListener(IResultTabListener lis);
+
+	/**
+	 * Remove a listener for events in this sessions result tabs.
+	 *
+	 * @param	lis		The listener.
+	 */
+	void removeResultTabListener(IResultTabListener lis);
+
 	/**
 	 * Return the entire contents of the SQL entry area.
 	 * 
@@ -108,4 +143,36 @@ public interface ISQLPanelAPI
 	 * param	start	the new selections start position.
 	 */ 
 	void setSQLScriptSelectionEnd(int end);
+
+	/**
+	 * Execute the passed SQL.
+	 * 
+	 * @param	sql		SQL to be executed.
+	 */
+	void executeSQL(String sql);
+
+	/**
+	 * Execute the current SQL.
+	 */
+	void executeCurrentSQL();
+
+	/**
+	 * Commit the current SQL transaction.
+	 */
+	void commit();
+
+	/**
+	 * Rollback the current SQL transaction.
+	 */
+	void rollback();
+
+	/**
+	 * Close all the SQL result tabs.
+	 */
+	void closeAllSQLResultTabs();
+
+	/**
+	 * Close all the "torn off" SQL result frames.
+	 */
+	void closeAllSQLResultFrames();
 }

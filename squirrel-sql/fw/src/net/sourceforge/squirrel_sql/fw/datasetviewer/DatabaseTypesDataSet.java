@@ -20,11 +20,12 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.Iterator;
+
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
-public class DatabaseTypesDataSet implements IDataSet {
+public class DatabaseTypesDataSet implements IDataSet
+{
 
 	private ResultSet _rs;
 	private int[] _columnIndices;
@@ -32,161 +33,209 @@ public class DatabaseTypesDataSet implements IDataSet {
 	private DataSetDefinition _dataSetDefinition;
 	private Object[] _row;
 
-
-	public DatabaseTypesDataSet(ResultSet rs) throws DataSetException {
+	public DatabaseTypesDataSet(ResultSet rs) throws DataSetException
+	{
 		this(rs, null);
 	}
 
-
 	public DatabaseTypesDataSet(ResultSet rs, int[] columnIndices)
-			throws DataSetException {
+		throws DataSetException
+	{
 		super();
-		if (rs == null) {
+		if (rs == null)
+		{
 			throw new IllegalArgumentException("Null ResultSet passed");
 		}
-	
+
 		_rs = rs;
-		if (columnIndices != null && columnIndices.length == 0) {
+		if (columnIndices != null && columnIndices.length == 0)
+		{
 			columnIndices = null;
 		}
 		_columnIndices = columnIndices;
-	
-		try {
+
+		try
+		{
 			ResultSetMetaData md = _rs.getMetaData();
 			_columnCount = columnIndices != null ? columnIndices.length : md.getColumnCount();
 			_dataSetDefinition = new DataSetDefinition(createColumnDefinitions(md, columnIndices));
 			_row = new Object[_columnCount];
-		} catch (SQLException ex) {
+		}
+		catch (SQLException ex)
+		{
 			throw new DataSetException(ex);
 		}
 	}
 
-	public final int getColumnCount() {
+	public final int getColumnCount()
+	{
 		return _columnCount;
 	}
 
-	public DataSetDefinition getDataSetDefinition() {
+	public DataSetDefinition getDataSetDefinition()
+	{
 		return _dataSetDefinition;
 	}
 
 	public synchronized boolean next(IMessageHandler msgHandler)
-			throws DataSetException {
+		throws DataSetException
+	{
 		boolean rc = false;
 
-		try {
+		try
+		{
 			rc = _rs.next();
-			if (rc) {
-				for (int i = 0; i < _columnCount; ++i) {
+			if (rc)
+			{
+				for (int i = 0; i < _columnCount; ++i)
+				{
 					int idx = _columnIndices != null ? _columnIndices[i] : i + 1;
-					try {
-						switch (idx) {
+					try
+					{
+						switch (idx)
+						{
 
-							case 2:
+							case 2 :
 								// DATA_TYPE column of result set.
 								int data = _rs.getInt(idx);
-								_row[i] = String.valueOf(data) + " [" + JDBCTypeMapper.getJdbcTypeName(data) + "]";
+								StringBuffer buf = new StringBuffer();
+								buf.append(String.valueOf(data))
+									.append(" [")
+									.append(JDBCTypeMapper.getJdbcTypeName(data))
+									.append("]");
+								_row[i] = buf.toString();
 								break;
 
-							case 7:
+							case 7 :
 								// NULLABLE column of result set.
 								short nullable = _rs.getShort(idx);
-								switch (nullable) {
-									case DatabaseMetaData.typeNoNulls: {
+								switch (nullable)
+								{
+									case DatabaseMetaData.typeNoNulls :
 										_row[i] = "false";
 										break;
-									}
-									case DatabaseMetaData.typeNullable: {
+									case DatabaseMetaData.typeNullable :
 										_row[i] = "true";
 										break;
-									}
-									case DatabaseMetaData.typeNullableUnknown: {
+									case DatabaseMetaData.typeNullableUnknown :
 										_row[i] = "unknown";
 										break;
-									}
-									default: {
+									default :
 										_row[i] = nullable + "[error]";
 										break;
+								}
+								break;
+
+							case 8 :
+							case 10 :
+							case 11 :
+							case 12 :
+								// boolean columns
+//								_row[i] = _rs.getBoolean(idx) ? "true" : "false";
+								_row[i] = _rs.getObject(idx);
+								if (_row[i] != null
+									&& !(_row[i] instanceof Boolean))
+								{
+									if (_row[i] instanceof Number)
+									{
+										if (((Number) _row[i]).intValue() == 0)
+										{
+											_row[i] = Boolean.FALSE;
+										}
+										else
+										{
+											_row[i] = Boolean.TRUE;
+										}
+									}
+									else
+									{
+										_row[i] = Boolean.valueOf(_row[i].toString());
 									}
 								}
 								break;
 
-							case 8:
-							case 10:
-							case 11:
-							case 12:
-								// boolean columns
-								_row[i] = _rs.getBoolean(idx) ? "true" : "false";
-								break;
-
-							case 9:
+							case 9 :
 								// SEARCHABLE column of result set.
 								short searchable = _rs.getShort(idx);
-								switch (searchable) {
-									case DatabaseMetaData.typePredNone: {
+								switch (searchable)
+								{
+									case DatabaseMetaData.typePredNone :
 										_row[i] = "no support";
 										break;
-									}
-									case DatabaseMetaData.typePredChar: {
+									case DatabaseMetaData.typePredChar :
 										_row[i] = "only supports 'WHERE...like'";
 										break;
-									}
-									case DatabaseMetaData.typePredBasic: {
+									case DatabaseMetaData.typePredBasic :
 										_row[i] = "supports all except 'WHERE...LIKE'";
 										break;
-									}
-									case DatabaseMetaData.typeSearchable: {
+									case DatabaseMetaData.typeSearchable :
 										_row[i] = "supports all WHERE";
 										break;
-									}
-									default: {
+									default :
 										_row[i] = searchable + "[error]";
 										break;
-									}
 								}
 								break;
 
-							default:
+							default :
 								_row[i] = _rs.getString(idx);
 								break;
 
 						}
-					} catch (SQLException ex) {
-						if (msgHandler != null) {
+					}
+					catch (Throwable th)
+					{
+						if (msgHandler != null)
+						{
 							_row[i] = "<error>"; //i18n
-							msgHandler.showMessage(ex);
-						} else {
-							throw new DataSetException(ex);
+							msgHandler.showMessage(th);
+						}
+						else
+						{
+							throw new DataSetException(th);
 						}
 					}
 				}
 			}
 
 			return rc;
-	
-		} catch (SQLException ex) {
-			if (msgHandler != null) {
+
+		}
+		catch (SQLException ex)
+		{
+			if (msgHandler != null)
+			{
 				msgHandler.showMessage(ex);
-			} else {
+			}
+			else
+			{
 				throw new DataSetException(ex);
 			}
 		}
-	
+
 		return rc;
 	}
 
-	public Object get(int columnIndex) {
+	public Object get(int columnIndex)
+	{
 		return _row[columnIndex];
 	}
 
 	private ColumnDisplayDefinition[] createColumnDefinitions(
-				ResultSetMetaData md, int[] columnIndices)
-			throws SQLException {
+		ResultSetMetaData md,
+		int[] columnIndices)
+		throws SQLException
+	{
 
-		ColumnDisplayDefinition[] columnDefs = new ColumnDisplayDefinition[_columnCount];
-		for (int i = 0; i < _columnCount; ++i) {
+		ColumnDisplayDefinition[] columnDefs =
+			new ColumnDisplayDefinition[_columnCount];
+		for (int i = 0; i < _columnCount; ++i)
+		{
 			int idx = columnIndices != null ? columnIndices[i] : i + 1;
-			columnDefs[i] = new ColumnDisplayDefinition(
-			md.getColumnDisplaySize(idx), md.getColumnLabel(idx));
+			columnDefs[i] =
+				new ColumnDisplayDefinition(
+					md.getColumnDisplaySize(idx),
+					md.getColumnLabel(idx));
 		}
 		return columnDefs;
 	}

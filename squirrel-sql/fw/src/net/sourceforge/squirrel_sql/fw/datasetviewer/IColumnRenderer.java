@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,7 +17,22 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-public interface IColumnRenderer {
+
+/**
+ * A renderer for a DataSet viewer takes and object and returns a form
+ * that can be displayed.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
+public interface IColumnRenderer
+{
+	/**
+	 * 
+	 * Return the rendered version the passed object.
+	 * 
+	 * @param	obj	Object to eb rendered.
+	 * 
+	 * @return	The rendered object.
+	 */
 	Object renderObject(Object obj);
-	Object renderNull();
 }

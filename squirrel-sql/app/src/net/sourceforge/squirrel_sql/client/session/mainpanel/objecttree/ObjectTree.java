@@ -105,8 +105,8 @@ public class ObjectTree extends JTree
 
 		setShowsRootHandles(true);
 		setModel(_model);
-		expandNode((ObjectTreeNode)_model.getRoot());
-		setSelectionRow(0);
+
+		refresh();
 
 		// Add actions to the popup menu.
 		ActionCollection actions = session.getApplication().getActionCollection();
@@ -134,7 +134,6 @@ public class ObjectTree extends JTree
 				}
 			}
 		});
-
 	}
 
 	/**
@@ -189,16 +188,38 @@ public class ObjectTree extends JTree
 		return _model;
 	}
 
+	/**
+	 * Refresh tree.
+	 */
+	public void refresh()
+	{
+		// TODO: Put in Johans code to save/restore state of tree.
+//		TreePath[] paths = getSelectionPaths();
+//		List l = _model.refresh();
+//		if (l != null)
+//		{
+//			for (int i = 0, limit = l.size(); i < limit; ++i)
+//			{
+//				ObjectTreeNode node = (ObjectTreeNode)l.get(i);
+//				node.addBaseNodeExpandListener(this);
+//				TreePath path = new TreePath(_model.getPathToRoot(node));
+//				expandPath(path);
+//			}
+//		}
+//		setSelectionPaths(paths);
 
-	public void expandNode(ObjectTreeNode parentNode)
+		ObjectTreeNode root = getTypedModel().getRootObjectTreeNode();
+		root.removeAllChildren();
+		expandNode(root, true);
+	}
+
+	private void expandNode(ObjectTreeNode parentNode, boolean selectParentNode)
 	{
 		if (parentNode == null)
 		{
 			throw new IllegalArgumentException("ObjectTreeNode == null");
 		}
 
-		//parentNode.addBaseNodeExpandListener(ObjectsTree.this);
-		//INodeExpander[] expanders = parentNode.getExpanders();
 		// If node hasn't already been expanded.
 		if (parentNode.getChildCount() == 0)
 		{
@@ -225,7 +246,8 @@ public class ObjectTree extends JTree
 					System.arraycopy(extraExpanders, 0, expanders, stdExpanders.length,
 										extraExpanders.length);
 				}
-				TreeLoader loader = new TreeLoader(parentNode, expanders);
+				TreeLoader loader = new TreeLoader(parentNode, expanders,
+													selectParentNode);
 				_session.getApplication().getThreadPool().addTask(loader);
 			}
 		}
@@ -368,14 +390,11 @@ public class ObjectTree extends JTree
 			{
 				pop = getPopup(nodeType, false);
 			}
-			else
+			if (pop == null)
 			{
 				pop = _globalPopup;
 			}
-			if (pop != null)
-			{
-				pop.show(this, x, y);
-			}
+			pop.show(this, x, y);
 		}
 	}
 
@@ -387,7 +406,7 @@ public class ObjectTree extends JTree
 			Object parentObj = evt.getPath().getLastPathComponent();
 			if (parentObj instanceof ObjectTreeNode)
 			{
-				ObjectTree.this.expandNode((ObjectTreeNode) parentObj);
+				ObjectTree.this.expandNode((ObjectTreeNode)parentObj, false);
 			}
 		}
 
@@ -395,7 +414,6 @@ public class ObjectTree extends JTree
 		{
 		}
 	}
-
 
 	/**
 	 * This class is used to sort the nodes by their title.
@@ -408,16 +426,22 @@ public class ObjectTree extends JTree
 		}
 	}
 
+	/**
+	 * This class actually loads the tree.
+	 */
 	private final class TreeLoader implements Runnable
 	{
 		private ObjectTreeNode _parentNode;
 		private INodeExpander[] _expanders;
+		private boolean _selectParentNode;
 
-		TreeLoader(ObjectTreeNode parentNode, INodeExpander[] expanders)
+		TreeLoader(ObjectTreeNode parentNode, INodeExpander[] expanders,
+					boolean selectParentNode)
 		{
 			super();
 			_parentNode = parentNode;
 			_expanders = expanders;
+			_selectParentNode= selectParentNode;
 		}
 
 		public void run()
@@ -426,41 +450,14 @@ public class ObjectTree extends JTree
 			{
 				synchronized (ObjectTree.this)
 				{
-					CursorChanger cursorChg =
-						new CursorChanger(ObjectTree.this);
+					CursorChanger cursorChg = new CursorChanger(ObjectTree.this);
 					cursorChg.show();
 					try
 					{
-						//ObjectsTreeModel model = getTreeModel();
-						//DefaultMutableTreeNode dmtn = new DefaultMutableTreeNode("Loading...");
-						//model.insertNodeInto(dmtn, this, this.getChildCount());
-						IDatabaseObjectInfo doi = new DatabaseObjectInfo(null,
-								null, "Loading...",
-								IDatabaseObjectTypes.GENERIC_LEAF,
-								_session.getSQLConnection());
-						ObjectTreeNode loadingNode = new ObjectTreeNode(_session, doi);
-						_parentNode.add(loadingNode);
+						ObjectTreeNode loadingNode = showLoadingNode();
 						try
 						{
-							// Show the loading node.
-							ObjectTree.this._model.nodeStructureChanged(
-								_parentNode);
-							for (int i = 0; i < _expanders.length; ++i)
-							{
-								List list = _expanders[i].createChildren(
-										_session, _parentNode);
-								Iterator it = list.iterator();
-								while (it.hasNext())
-								{
-									Object nextObj = it.next();
-									if (nextObj instanceof ObjectTreeNode)
-									{
-										ObjectTreeNode nextNode =
-											(ObjectTreeNode) nextObj;
-										_parentNode.add(nextNode);
-									}
-								}
-							}
+							loadChildren();
 						}
 						finally
 						{
@@ -469,8 +466,12 @@ public class ObjectTree extends JTree
 					}
 					finally
 					{
-						ObjectTree.this._model.nodeStructureChanged(
-							_parentNode);
+						nodeStructureChanged(_parentNode);
+						if (_selectParentNode)
+						{
+							clearSelection();
+							setSelectionPath(new TreePath(_parentNode.getPath()));
+						}
 						cursorChg.restore();
 					}
 				}
@@ -487,9 +488,52 @@ public class ObjectTree extends JTree
 			{
 				final String msg = "Error expanding: " + _parentNode.toString();
 				s_log.error(msg, ex);
-				_session.getMessageHandler().showMessage(
-					msg + ": " + ex.toString());
+				_session.getMessageHandler().showMessage(msg + ": " + ex.toString());
 			}
+		}
+
+		/**
+		 * This adds a node to the tree that says "Loading..." in order to give
+		 * feedback to the user.
+		 */
+		private ObjectTreeNode showLoadingNode()
+		{
+			IDatabaseObjectInfo doi = new DatabaseObjectInfo(null, null,
+								"Loading...", IDatabaseObjectTypes.GENERIC_LEAF,
+								_session.getSQLConnection());
+			ObjectTreeNode loadingNode = new ObjectTreeNode(_session, doi);
+			_parentNode.add(loadingNode);
+			nodeStructureChanged(_parentNode);
+			return loadingNode;
+		}
+
+		/**
+		 * This expands the parent node and shows all its children.
+		 */
+		private void loadChildren() throws SQLException, BaseSQLException
+		{
+			for (int i = 0; i < _expanders.length; ++i)
+			{
+				List list = _expanders[i].createChildren(_session, _parentNode);
+				Iterator it = list.iterator();
+				while (it.hasNext())
+				{
+					Object nextObj = it.next();
+					if (nextObj instanceof ObjectTreeNode)
+					{
+						ObjectTreeNode nextNode = (ObjectTreeNode)nextObj;
+						_parentNode.add(nextNode);
+					}
+				}
+			}
+		}
+
+		/**
+		 * Let the object tree model know that its structure has changed.
+		 */
+		private void nodeStructureChanged(ObjectTreeNode node)
+		{
+			ObjectTree.this._model.nodeStructureChanged(node);
 		}
 	}
 }

@@ -28,6 +28,7 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 
 import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
@@ -60,6 +61,15 @@ public class ProcedurePanel extends SquirrelTabbedPane {
 		super(getPreferences(session));
 		_session = session;
 		createUserInterface();
+	}
+
+	// allow for new object tree.
+	public void setDatabaseObjectInfo(IDatabaseObjectInfo value)
+	{
+		if (value instanceof IProcedureInfo)
+		{
+			setProcedureInfo((IProcedureInfo)value);
+		}
 	}
 
 	/**

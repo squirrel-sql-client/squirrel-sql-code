@@ -175,7 +175,7 @@ public class DumpSessionCommand implements ICommand
 			{
 				final String msg = "Error dumping driver info";
 				_msgHandler.showMessage(msg);
-				_msgHandler.showMessage(th.toString());
+				_msgHandler.showMessage(th);
 				s_log.error(msg, th);
 			}
 	
@@ -189,7 +189,7 @@ public class DumpSessionCommand implements ICommand
 			{
 				final String msg = "Error dumping driver info";
 				_msgHandler.showMessage(msg);
-				_msgHandler.showMessage(th.toString());
+				_msgHandler.showMessage(th);
 				s_log.error(msg, th);
 			}
 	
@@ -203,7 +203,7 @@ public class DumpSessionCommand implements ICommand
 			{
 				final String msg = "Error dumping alias info";
 				_msgHandler.showMessage(msg);
-				_msgHandler.showMessage(th.toString());
+				_msgHandler.showMessage(th);
 				s_log.error(msg, th);
 			}
 	
@@ -217,7 +217,7 @@ public class DumpSessionCommand implements ICommand
 			{
 				final String msg = "Error dumping general connection info";
 				_msgHandler.showMessage(msg);
-				_msgHandler.showMessage(th.toString());
+				_msgHandler.showMessage(th);
 				s_log.error(msg, th);
 			}
 	
@@ -234,7 +234,7 @@ public class DumpSessionCommand implements ICommand
 			{
 				final String msg = "Error dumping metadata";
 				_msgHandler.showMessage(msg);
-				_msgHandler.showMessage(th.toString());
+				_msgHandler.showMessage(th);
 				s_log.error(msg, th);
 			}
 	
@@ -251,7 +251,7 @@ public class DumpSessionCommand implements ICommand
 			{
 				final String msg = "Error dumping data types";
 				_msgHandler.showMessage(msg);
-				_msgHandler.showMessage(th.toString());
+				_msgHandler.showMessage(th);
 				s_log.error(msg, th);
 			}
 	
@@ -268,7 +268,7 @@ public class DumpSessionCommand implements ICommand
 			{
 				final String msg = "Error dumping table types";
 				_msgHandler.showMessage(msg);
-				_msgHandler.showMessage(th.toString());
+				_msgHandler.showMessage(th);
 				s_log.error(msg, th);
 			}
 		}
@@ -325,7 +325,7 @@ public class DumpSessionCommand implements ICommand
 		XMLBeanWriter wtr = new XMLBeanWriter(obj);
 		wtr.save(tempFile);
 
-		return tempFile;
+		return null;
 	}
 
 	private File createGeneralConnectionDumpFile(SQLConnection conn)

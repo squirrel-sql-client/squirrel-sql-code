@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -25,14 +25,15 @@ import net.sourceforge.squirrel_sql.fw.util.BaseException;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class DataSetException extends BaseException {
-
+public class DataSetException extends BaseException
+{
 	/**
 	 * Ctor.
 	 *
 	 * @param   msg	 Message describing the error.
 	 */
-	public DataSetException(String msg) {
+	public DataSetException(String msg)
+	{
 		super(msg);
 	}
 
@@ -41,7 +42,8 @@ public class DataSetException extends BaseException {
 	 *
 	 * @param   wrapee  The exception that this one is wrapped around.
 	 */
-	public DataSetException(Exception wrapee) {
+	public DataSetException(Throwable wrapee)
+	{
 		super(wrapee);
 	}
 }

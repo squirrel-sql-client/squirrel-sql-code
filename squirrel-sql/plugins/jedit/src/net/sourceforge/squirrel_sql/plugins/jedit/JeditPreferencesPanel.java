@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.plugins.jedit;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -50,9 +49,12 @@ import net.sourceforge.squirrel_sql.client.session.properties.ISessionProperties
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessionPropertiesPanel {
+public class JeditPreferencesPanel
+	implements INewSessionPropertiesPanel, ISessionPropertiesPanel
+{
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(JeditPreferencesPanel.class);
+	private static ILogger s_log =
+		LoggerController.createLogger(JeditPreferencesPanel.class);
 
 	/** Plugin preferences object. */
 	private JeditPreferences _prefs;
@@ -68,9 +70,11 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 	 * @throws	IllegalArgumentException
 	 *			if <TT>prefs</TT> is <TT>null</TT>.
 	 */
-	public JeditPreferencesPanel(JeditPreferences prefs) {
+	public JeditPreferencesPanel(JeditPreferences prefs)
+	{
 		super();
-		if (prefs == null) {
+		if (prefs == null)
+		{
 			throw new IllegalArgumentException("Null JeditPreferences passed");
 		}
 		_prefs = prefs;
@@ -85,7 +89,8 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 	 *
 	 * @param   app	 Application API.
 	 */
-	public void initialize(IApplication app) {
+	public void initialize(IApplication app)
+	{
 		_myPanel.loadData(_prefs);
 	}
 
@@ -98,11 +103,14 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 	 * @throws	IllegalArgumentException
 	 *			if <TT>IApplication</TT> is <TT>null</TT>.
 	 */
-	public void initialize(IApplication app, ISession session) {
-		if (app == null) {
+	public void initialize(IApplication app, ISession session)
+	{
+		if (app == null)
+		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
-		if (session == null) {
+		if (session == null)
+		{
 			throw new IllegalArgumentException("Null ISession passed");
 		}
 
@@ -114,7 +122,8 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 	 *
 	 * @return  the component to be displayed in the Preferences dialog.
 	 */
-	public Component getPanelComponent() {
+	public Component getPanelComponent()
+	{
 		return _myPanel;
 	}
 
@@ -122,7 +131,8 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 	 * User has pressed OK or Apply in the dialog so save data from
 	 * panel.
 	 */
-	public void applyChanges() {
+	public void applyChanges()
+	{
 		_myPanel.applyChanges(_prefs);
 	}
 
@@ -131,7 +141,8 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 	 *
 	 * @return  the title for this panel.
 	 */
-	public String getTitle() {
+	public String getTitle()
+	{
 		return MyPanel.i18n.TAB_TITLE;
 	}
 
@@ -140,19 +151,22 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 	 *
 	 * @return  the hint for this panel.
 	 */
-	public String getHint() {
+	public String getHint()
+	{
 		return MyPanel.i18n.TAB_HINT;
 	}
 
 	/**
 	 * Component to be displayed in the preferences dialog.
 	 */
-	private final static class MyPanel extends JPanel {
+	private final static class MyPanel extends JPanel
+	{
 		/**
 		 * This interface defines locale specific strings. This should be
 		 * replaced with a property file.
 		 */
-		interface i18n {
+		interface i18n
+		{
 			String TAB_TITLE = "jEdit";
 			String TAB_HINT = "jEdit text control usage";
 			String ACTIVE = "Use jEdit text control";
@@ -162,15 +176,19 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 			String EOL_MARKERS = "End of line markers";
 			String HIGHLIGHT_CURRENT_LINE = "Highlight current line";
 		}
-		
+
 		private JCheckBox _activeChk = new JCheckBox(i18n.ACTIVE);
 		private JCheckBox _eolMarkersChk = new JCheckBox(i18n.EOL_MARKERS);
-		private JCheckBox _blockCaretEnabledChk = new JCheckBox(i18n.BLOCK_CARET);
-		private JCheckBox _bracketHighlighting = new JCheckBox(i18n.BRACKET_HIGHLIGHTING);
-		private JCheckBox _currentLineHighlighting = new JCheckBox(i18n.HIGHLIGHT_CURRENT_LINE);
+		private JCheckBox _blockCaretEnabledChk =
+			new JCheckBox(i18n.BLOCK_CARET);
+		private JCheckBox _bracketHighlighting =
+			new JCheckBox(i18n.BRACKET_HIGHLIGHTING);
+		private JCheckBox _currentLineHighlighting =
+			new JCheckBox(i18n.HIGHLIGHT_CURRENT_LINE);
 		private JCheckBox _blinkCaretChk = new JCheckBox(i18n.BLINK_CARET);
 
-		private ColorButtonListener _colorBtnActionListener = new ColorButtonListener();
+		private ColorButtonListener _colorBtnActionListener =
+			new ColorButtonListener();
 
 		private JLabel _keywordColorLbl1 = createColorLabel();
 		private JLabel _keywordColorLbl2 = createColorLabel();
@@ -183,28 +201,41 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 		private JLabel _eolMarkerColorLbl = createColorLabel();
 		private JLabel _bracketHighlightColorLbl = createColorLabel();
 
-		private JButton _keywordColorBtn1 = new ColorButton("Keywords", _keywordColorLbl1);
-		private JButton _keywordColorBtn2 = new ColorButton("Data Types", _keywordColorLbl2);
-		private JButton _keywordColorBtn3 = new ColorButton("Functions", _keywordColorLbl3);
-		private JButton _tableColorBtn = new ColorButton("Tables", _tableColorLbl);
-		private JButton _columnColorBtn = new ColorButton("Columns", _columnColorLbl);
-		private JButton _caretColorBtn = new ColorButton("Caret", _caretColorLbl);
-		private JButton _selectionColorBtn = new ColorButton("Selection", _selectionColorLbl);
-		private JButton _lineHighlightColorBtn = new ColorButton("Line Highlight", _lineHighlightColorLbl);
-		private JButton _eolMarkerColorBtn = new ColorButton("EOL Markers", _eolMarkerColorLbl);
-		private JButton _bracketHighlightColorBtn = new ColorButton("Bracket Highlight", _bracketHighlightColorLbl);
+		private JButton _keywordColorBtn1 =
+			new ColorButton("Keywords", _keywordColorLbl1);
+		private JButton _keywordColorBtn2 =
+			new ColorButton("Data Types", _keywordColorLbl2);
+		private JButton _keywordColorBtn3 =
+			new ColorButton("Functions", _keywordColorLbl3);
+		private JButton _tableColorBtn =
+			new ColorButton("Tables", _tableColorLbl);
+		private JButton _columnColorBtn =
+			new ColorButton("Columns", _columnColorLbl);
+		private JButton _caretColorBtn =
+			new ColorButton("Caret", _caretColorLbl);
+		private JButton _selectionColorBtn =
+			new ColorButton("Selection", _selectionColorLbl);
+		private JButton _lineHighlightColorBtn =
+			new ColorButton("Line Highlight", _lineHighlightColorLbl);
+		private JButton _eolMarkerColorBtn =
+			new ColorButton("EOL Markers", _eolMarkerColorLbl);
+		private JButton _bracketHighlightColorBtn =
+			new ColorButton("Bracket Highlight", _bracketHighlightColorLbl);
 
-		MyPanel() {
+		MyPanel()
+		{
 			super();
 			createUserInterface();
 		}
 
-		void loadData(JeditPreferences prefs) {
+		void loadData(JeditPreferences prefs)
+		{
 			_activeChk.setSelected(prefs.getUseJeditTextControl());
 			_eolMarkersChk.setSelected(prefs.getEOLMarkers());
 			_blockCaretEnabledChk.setSelected(prefs.isBlockCaretEnabled());
 			_bracketHighlighting.setSelected(prefs.getBracketHighlighting());
-			_currentLineHighlighting.setSelected(prefs.getCurrentLineHighlighting());
+			_currentLineHighlighting.setSelected(
+				prefs.getCurrentLineHighlighting());
 			_blinkCaretChk.setSelected(prefs.getBlinkCaret());
 
 			_keywordColorLbl1.setBackground(new Color(prefs.getKeyword1RGB()));
@@ -213,15 +244,20 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 			_tableColorLbl.setBackground(new Color(prefs.getTableRGB()));
 			_columnColorLbl.setBackground(new Color(prefs.getColumnRGB()));
 			_caretColorLbl.setBackground(new Color(prefs.getCaretRGB()));
-			_selectionColorLbl.setBackground(new Color(prefs.getSelectionRGB()));
-			_lineHighlightColorLbl.setBackground(new Color(prefs.getLineHighlightRGB()));
-			_eolMarkerColorLbl.setBackground(new Color(prefs.getEOLMarkerRGB()));
-			_bracketHighlightColorLbl.setBackground(new Color(prefs.getBracketHighlightRGB()));
+			_selectionColorLbl.setBackground(
+				new Color(prefs.getSelectionRGB()));
+			_lineHighlightColorLbl.setBackground(
+				new Color(prefs.getLineHighlightRGB()));
+			_eolMarkerColorLbl.setBackground(
+				new Color(prefs.getEOLMarkerRGB()));
+			_bracketHighlightColorLbl.setBackground(
+				new Color(prefs.getBracketHighlightRGB()));
 
 			updateControlStatus();
 		}
 
-		void applyChanges(JeditPreferences prefs) {
+		void applyChanges(JeditPreferences prefs)
+		{
 			prefs.setUseJeditTextControl(_activeChk.isSelected());
 			prefs.setEOLMarkers(_eolMarkersChk.isSelected());
 			prefs.setBlockCaretEnabled(_blockCaretEnabledChk.isSelected());
@@ -229,19 +265,25 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 			prefs.setCurrentLineHighlighting(_currentLineHighlighting.isSelected());
 			prefs.setBlinkCaret(_blinkCaretChk.isSelected());
 
-			prefs.setKeyword1RGB(_keywordColorLbl1.getBackground().getRGB());
-			prefs.setKeyword2RGB(_keywordColorLbl2.getBackground().getRGB());
-			prefs.setKeyword3RGB(_keywordColorLbl3.getBackground().getRGB());
-			prefs.setTableRGB(_tableColorLbl.getBackground().getRGB());
-			prefs.setColumnRGB(_columnColorLbl.getBackground().getRGB());
-			prefs.setCaretRGB(_caretColorLbl.getBackground().getRGB());
-			prefs.setSelectionRGB(_selectionColorLbl.getBackground().getRGB());
-			prefs.setLineHighlightRGB(_lineHighlightColorLbl.getBackground().getRGB());
-			prefs.setEOLMarkerRGB(_eolMarkerColorLbl.getBackground().getRGB());
-			prefs.setBracketHighlightRGB(_bracketHighlightColorLbl.getBackground().getRGB());
+			prefs.setKeyword1RGB(getLabelRGB(_keywordColorLbl1));
+			prefs.setKeyword2RGB(getLabelRGB(_keywordColorLbl2));
+			prefs.setKeyword3RGB(getLabelRGB(_keywordColorLbl3));
+			prefs.setTableRGB(getLabelRGB(_tableColorLbl));
+			prefs.setColumnRGB(getLabelRGB(_columnColorLbl));
+			prefs.setCaretRGB(getLabelRGB(_caretColorLbl));
+			prefs.setSelectionRGB(getLabelRGB(_selectionColorLbl));
+			prefs.setLineHighlightRGB(getLabelRGB(_lineHighlightColorLbl));
+			prefs.setEOLMarkerRGB(getLabelRGB(_eolMarkerColorLbl));
+			prefs.setBracketHighlightRGB(getLabelRGB(_bracketHighlightColorLbl));
 		}
 
-		private void updateControlStatus() {
+		private int getLabelRGB(JLabel lbl)
+		{
+			return lbl.getBackground().getRGB();
+		}
+
+		private void updateControlStatus()
+		{
 			final boolean useJeditControl = _activeChk.isSelected();
 			_keywordColorBtn1.setEnabled(useJeditControl);
 			_keywordColorBtn2.setEnabled(useJeditControl);
@@ -260,15 +302,18 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 			_blinkCaretChk.setEnabled(useJeditControl);
 		}
 
-		private void createUserInterface() {
+		private void createUserInterface()
+		{
 			setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.anchor = gbc.WEST;
 			gbc.fill = gbc.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
 
-			_activeChk.addChangeListener(new ChangeListener() {
-				public void stateChanged(ChangeEvent evt) {
+			_activeChk.addChangeListener(new ChangeListener()
+			{
+				public void stateChanged(ChangeEvent evt)
+				{
 					updateControlStatus();
 				}
 			});
@@ -285,7 +330,8 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 			add(createColorPanel(), gbc);
 		}
 
-		private JPanel createGeneralPanel() {
+		private JPanel createGeneralPanel()
+		{
 			JPanel pnl = new JPanel();
 			pnl.setBorder(BorderFactory.createTitledBorder("General"));
 			pnl.setLayout(new GridBagLayout());
@@ -313,7 +359,8 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 			return pnl;
 		}
 
-		private JPanel createColorPanel() {
+		private JPanel createColorPanel()
+		{
 			JPanel pnl = new JPanel();
 			pnl.setBorder(BorderFactory.createTitledBorder("Colors"));
 			pnl.setLayout(new GridBagLayout());
@@ -321,10 +368,13 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 			gbc.fill = gbc.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
 
-			GUIUtils.setJButtonSizesTheSame(new JButton[] {
-					_keywordColorBtn1, _keywordColorBtn2, _keywordColorBtn3});
+			GUIUtils.setJButtonSizesTheSame(
+				new JButton[] {
+					_keywordColorBtn1,
+					_keywordColorBtn2,
+					_keywordColorBtn3 });
 
-// Col1
+			// Col1
 			gbc.gridx = 0;
 			gbc.gridy = 0;
 			pnl.add(_keywordColorBtn1, gbc);
@@ -341,7 +391,7 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 			++gbc.gridy;
 			pnl.add(_eolMarkerColorBtn, gbc);
 
-// Col2
+			// Col2
 			gbc.fill = gbc.HORIZONTAL;
 			gbc.weightx = 0.5;
 
@@ -361,8 +411,8 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 			++gbc.gridy;
 			pnl.add(_eolMarkerColorLbl, gbc);
 
-// Col3
-//			gbc.fill = 0;
+			// Col3
+			//			gbc.fill = 0;
 			gbc.weightx = 0;
 
 			gbc.gridy = 0;
@@ -381,7 +431,7 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 			++gbc.gridy;
 			pnl.add(_bracketHighlightColorBtn, gbc);
 
-// Col4
+			// Col4
 			gbc.fill = gbc.HORIZONTAL;
 			gbc.weightx = 0.5;
 
@@ -404,30 +454,41 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 			return pnl;
 		}
 
-		private JLabel createColorLabel() {
-			JLabel lbl = new JLabel();
+		private JLabel createColorLabel()
+		{
+			JLabel lbl = new JLabel(" ");
 			lbl.setPreferredSize(new Dimension(75, 25));
 			lbl.setBorder(BorderFactory.createLineBorder(Color.white));
 			lbl.setOpaque(true);
 			return lbl;
 		}
 
-		private class ColorButton extends JButton {
+		private class ColorButton extends JButton
+		{
 			JLabel _previewLbl;
-			ColorButton(String title, JLabel previewLbl) {
+			ColorButton(String title, JLabel previewLbl)
+			{
 				super(title);
 				_previewLbl = previewLbl;
 				addActionListener(_colorBtnActionListener);
 			}
 		}
 
-		private class ColorButtonListener implements ActionListener {
-			public void actionPerformed(ActionEvent evt) {
+		private class ColorButtonListener implements ActionListener
+		{
+			public void actionPerformed(ActionEvent evt)
+			{
 				final Object src = evt.getSource();
-				if (src instanceof ColorButton) {
-					final ColorButton btn = (ColorButton)src;
-					final Color color = JColorChooser.showDialog(MyPanel.this, "Select Color", btn._previewLbl.getBackground());
-					if (color != null) {
+				if (src instanceof ColorButton)
+				{
+					final ColorButton btn = (ColorButton) src;
+					final Color color =
+						JColorChooser.showDialog(
+							MyPanel.this,
+							"Select Color",
+							btn._previewLbl.getBackground());
+					if (color != null)
+					{
 						btn._previewLbl.setBackground(color);
 					}
 				}

@@ -43,12 +43,11 @@ public class RollbackAction extends SquirrelAction implements IClientSessionActi
 	{
 		if (_session != null)
 		{
-			CursorChanger cursorChg =
-				new CursorChanger(getApplication().getMainFrame());
+			CursorChanger cursorChg = new CursorChanger(getApplication().getMainFrame());
 			cursorChg.show();
 			try
 			{
-				_session.rollback();
+				_session.getSQLPanelAPI().rollback();
 			}
 			finally
 			{

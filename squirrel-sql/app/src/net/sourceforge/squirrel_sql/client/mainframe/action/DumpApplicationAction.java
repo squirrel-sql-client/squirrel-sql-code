@@ -25,6 +25,7 @@ import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.ListMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -66,14 +67,30 @@ public class DumpApplicationAction extends SquirrelAction
 		final File outFile = Dialogs.selectFileForWriting(parentFrame, filters);
 		if (outFile != null)
 		{
-			//TODO: Pass error handler.
-			ICommand cmd = new DumpApplicationCommand(app, outFile, null);
+			ListMessageHandler msgHandler = new ListMessageHandler();
+			ICommand cmd = new DumpApplicationCommand(app, outFile, msgHandler);
 			try
 			{
 				cmd.execute();
-				final String msg = "Application successfuly dumped to: "
-									+ outFile.getAbsolutePath();
-				app.showErrorDialog(msg);	// TODO: Shouldn't be an error dialog.
+				String[] msgs = msgHandler.getMessages();
+				Throwable[] errors = msgHandler.getExceptions();
+				if (msgs.length > 0 || errors.length > 0)
+				{
+					for (int i = 0; i < msgs.length; ++i)
+					{
+						app.showErrorDialog(msgs[i]);
+					}
+					for (int i = 0; i < errors.length; ++i)
+					{
+						app.showErrorDialog(errors[i]);
+					}
+				}
+				else
+				{
+					final String msg = "Application successfuly dumped to: "
+										+ outFile.getAbsolutePath();
+					app.showErrorDialog(msg);	// TODO: Shouldn't be an error dialog.
+				}
 			}
 			catch (Throwable ex)
 			{

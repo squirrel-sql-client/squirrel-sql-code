@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,12 +17,9 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Frame;
-
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.ResultFrame;
 
 /**
  * This <CODE>ICommand</CODE> closes all the SQL Results tabs
@@ -30,7 +27,8 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.ResultFrame;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class CloseAllSQLResultTabsCommand implements ICommand {
+public class CloseAllSQLResultTabsCommand implements ICommand
+{
 	/** Current session. */
 	private final ISession _session;
 
@@ -42,16 +40,19 @@ public class CloseAllSQLResultTabsCommand implements ICommand {
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
 	 */
-	public CloseAllSQLResultTabsCommand(ISession session) {
+	public CloseAllSQLResultTabsCommand(ISession session)
+	{
 		super();
-		if (session == null) {
+		if (session == null)
+		{
 			throw new IllegalArgumentException("Null ISession passed");
 		}
 
 		_session = session;
 	}
 
-	public void execute() {
-		_session.closeAllSQLResultTabs();
+	public void execute()
+	{
+		_session.getSQLPanelAPI().closeAllSQLResultTabs();
 	}
 }

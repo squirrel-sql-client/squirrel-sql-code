@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -43,12 +43,11 @@ public class CommitAction extends SquirrelAction implements IClientSessionAction
 	{
 		if (_session != null)
 		{
-			CursorChanger cursorChg =
-				new CursorChanger(getApplication().getMainFrame());
+			CursorChanger cursorChg = new CursorChanger(getApplication().getMainFrame());
 			cursorChg.show();
 			try
 			{
-				_session.commit();
+				_session.getSQLPanelAPI().commit();
 			}
 			finally
 			{

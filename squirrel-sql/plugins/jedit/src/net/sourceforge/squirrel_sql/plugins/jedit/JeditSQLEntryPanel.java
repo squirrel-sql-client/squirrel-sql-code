@@ -180,6 +180,10 @@ class JeditSQLEntryPanel extends BaseSQLEntryPanel
 		SyntaxDocument doc = _jeditTextArea.getDocument();
 		try
 		{
+			if (!getText().endsWith("\n") && !sqlScript.startsWith("\n"))
+			{
+				doc.insertString(doc.getLength(), "\n", null);
+			}
 			int start = 0;
 			if (select)
 			{
@@ -188,7 +192,7 @@ class JeditSQLEntryPanel extends BaseSQLEntryPanel
 			doc.insertString(doc.getLength(), sqlScript, null);
 			if (select)
 			{
-				setSelectionStart(start + 1);
+				setSelectionStart(start);
 				setSelectionEnd(doc.getLength());
 			}
 		}

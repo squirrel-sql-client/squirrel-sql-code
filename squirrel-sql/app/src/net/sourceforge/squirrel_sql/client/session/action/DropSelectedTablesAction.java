@@ -28,9 +28,10 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.IClientSession;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 
 /**
- * @version 	$Id: DropSelectedTablesAction.java,v 1.1 2002-08-04 04:10:15 colbell Exp $
+ * @version 	$Id: DropSelectedTablesAction.java,v 1.2 2002-08-09 22:18:19 colbell Exp $
  * @author		Johan Compagner
  */
 public class DropSelectedTablesAction extends SquirrelAction
@@ -72,11 +73,13 @@ public class DropSelectedTablesAction extends SquirrelAction
 		{
 			IObjectTreeAPI treeAPI = _session.getObjectTreeAPI();
 			IDatabaseObjectInfo[] tables = treeAPI.getSelectedDatabaseObjects();
+			ObjectTreeNode[] nodes = treeAPI.getSelectedNodes();
 			if (tables.length > 0)
 			{
 				if (Dialogs.showYesNo(_session.getSessionSheet(), MSG, TITLE))
 				{
 					new DropTablesCommand(_session, tables).execute();
+					treeAPI.removeNodes(treeAPI.getSelectedNodes());
 //				try
 //				{
 //				_session.getSessionSheet().refreshTree();

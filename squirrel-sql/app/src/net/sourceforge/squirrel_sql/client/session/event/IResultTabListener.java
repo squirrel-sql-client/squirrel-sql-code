@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.event;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,10 +19,39 @@ package net.sourceforge.squirrel_sql.client.session.event;
  */
 import java.util.EventListener;
 
-public interface IResultTabListener extends EventListener {
+/**
+ * This listener is called for events to do with the SQL result tabs.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
+public interface IResultTabListener extends EventListener
+{
+	/**
+	 * An SQL results tab has been added to the tabbed folder.
+	 * 
+	 * @param	evt		The event.
+	 */
 	void resultTabAdded(ResultTabEvent evt);
+
+	/**
+	 * An SQL results tab has been removed from the tabbed folder.
+	 * 
+	 * @param	evt		The event.
+	 */
 	void resultTabRemoved(ResultTabEvent evt);
+
+	/**
+	 * An SQL results tab has been "torn off" from the tabbed folder into
+	 * its own frame.
+	 * 
+	 * @param	evt		The event.
+	 */
 	void resultTabTornOff(ResultTabEvent evt);
+
+	/**
+	 * A "torn off" SQL results tab has been returned to the tabbed folder.
+	 * 
+	 * @param	evt		The event.
+	 */
 	void tornOffResultTabReturned(ResultTabEvent evt);
 }
-

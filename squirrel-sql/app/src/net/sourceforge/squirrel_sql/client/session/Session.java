@@ -133,7 +133,7 @@ class Session implements IClientSession
 
 		final IPlugin plugin = getApplication().getDummyAppPlugin();
 
-		//?? This crap should be done better.
+		//TODO: This crap should be done better.
 		putPluginObject(plugin, ISessionKeys.DATABASE_DETAIL_PANEL_KEY,
 						new DatabasePanel(this));
 		putPluginObject(plugin, ISessionKeys.PROCEDURE_DETAIL_PANEL_KEY,
@@ -227,10 +227,10 @@ class Session implements IClientSession
 	 *
 	 * @return	array of <TT>IDatabaseObjectInfo</TT> objects.
 	 */
-	public IDatabaseObjectInfo[] getSelectedDatabaseObjects()
-	{
-		return _sessionSheet.getObjectsPanel().getSelectedDatabaseObjects();
-	}
+//	public IDatabaseObjectInfo[] getSelectedDatabaseObjects()
+//	{
+//		return _sessionSheet.getObjectsPanel().getSelectedDatabaseObjects();
+//	}
 
 	public synchronized Object getPluginObject(IPlugin plugin, String key)
 	{
@@ -286,16 +286,6 @@ class Session implements IClientSession
 		{
 			map.remove(key);
 		}
-	}
-
-	public void closeAllSQLResultTabs()
-	{
-		_sessionSheet.getSQLPanel().closeAllSQLResultTabs();
-	}
-
-	public void closeAllSQLResultFrames()
-	{
-		_sessionSheet.getSQLPanel().closeAllSQLResultFrames();
 	}
 
 	/**
@@ -366,118 +356,6 @@ class Session implements IClientSession
 	public void selectMainTab(int tabIndex)
 	{
 		_sessionSheet.selectMainTab(tabIndex);
-	}
-
-	/**
-	 * Execute the current SQL.
-	 */
-	public void executeCurrentSQL()
-	{
-		_sessionSheet.getSQLPanel().executeCurrentSQL();
-	}
-
-	/**
-	 * Execute the passed SQL.
-	 * 
-	 * @param	sql		SQL to be executed.
-	 */
-	public void executeSQL(String sql)
-	{
-		_sessionSheet.getSQLPanel().executeSQL(sql);
-	}
-
-	/**
-	 * Commit the current SQL transaction.
-	 */
-	public void commit()
-	{
-		try
-		{
-			getSQLConnection().commit();
-			getMessageHandler().showMessage("Commit completed normally."); // i18n
-		}
-		catch (Exception ex)
-		{
-			getMessageHandler().showMessage(ex);
-		}
-	}
-
-	/**
-	 * Rollback the current SQL transaction.
-	 */
-	public void rollback()
-	{
-		try
-		{
-			getSQLConnection().rollback();
-			getMessageHandler().showMessage("Rollback completed normally."); // i18n
-		}
-		catch (Exception ex)
-		{
-			getMessageHandler().showMessage(ex);
-		}
-	}
-
-	/**
-	 * Add a listener listening for SQL Execution.
-	 *
-	 * @param	lis	 Listener
-	 *
-	 * @throws	IllegalArgumentException
-	 *			If a null <TT>ISQLExecutionListener</TT> passed.
-	 */
-	public void addSQLExecutionListener(ISQLExecutionListener lis)
-	{
-		if (lis == null)
-		{
-			throw new IllegalArgumentException("null ISQLExecutionListener passed");
-		}
-		_sessionSheet.getSQLPanel().addSQLExecutionListener(lis);
-	}
-
-	/**
-	 * Remove an SQL execution listener.
-	 *
-	 * @param	lis	 Listener
-	 *
-	 * @throws	IllegalArgumentException
-	 *			If a null <TT>ISQLExecutionListener</TT> passed.
-	 */
-	public void removeSQLExecutionListener(ISQLExecutionListener lis)
-	{
-		if (lis == null)
-		{
-			throw new IllegalArgumentException("null ISQLExecutionListener passed");
-		}
-		_sessionSheet.getSQLPanel().removeSQLExecutionListener(lis);
-	}
-
-	/**
-	 * Add a listener for events in this sessions result tabs.
-	 *
-	 * @param	lis		The listener.
-	 */
-	public void addResultTabListener(IResultTabListener lis)
-	{
-		if (lis == null)
-		{
-			throw new IllegalArgumentException("null IResultTabListener passed");
-		}
-		_sessionSheet.getSQLPanel().addResultTabListener(lis);
-	}
-
-	/**
-	 * Remove a listener for events in this sessions result tabs.
-	 *
-	 * @param	lis		The listener.
-	 */
-	public void removeResultTabListener(IResultTabListener lis)
-	{
-		if (lis == null)
-		{
-			throw new IllegalArgumentException("null IResultTabListener passed");
-		}
-		_sessionSheet.getSQLPanel().removeResultTabListener(lis);
 	}
 
 	/**

@@ -179,6 +179,10 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void appendText(String sqlScript, boolean select)
 	{
+		if (!getText().endsWith("\n") && !sqlScript.startsWith("\n"))
+		{
+			_comp.append("\n");
+		}
 		int start = 0;
 		if (select)
 		{
@@ -187,7 +191,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 		_comp.append(sqlScript);
 		if (select)
 		{
-			setSelectionStart(start + 1);
+			setSelectionStart(start);
 			setSelectionEnd(getText().length());
 		}
 	}

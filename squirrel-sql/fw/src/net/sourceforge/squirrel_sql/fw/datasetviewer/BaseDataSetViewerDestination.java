@@ -37,6 +37,9 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 	/** Column definitions. */
 	protected ColumnDisplayDefinition[] _colDefs = new ColumnDisplayDefinition[0];
 
+	/** Column renderer. */
+	private IColumnRenderer _columnRenderer = new DefaultColumnRenderer();	
+
 	/**
 	 * Specify the column definitions to use.
 	 *
@@ -94,6 +97,27 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 		}
 		allRowsAdded();
 		moveToTop();
+	}
+
+	/**
+	 * Get the column renderer for this viewer.
+	 * 
+	 * @return	the colun renderer.
+	 */
+	public IColumnRenderer getColumnRenderer()
+	{
+		return _columnRenderer;
+	}
+
+	/**
+	 * Set the column renderer for this viewer.
+	 * 
+	 * @param	renderer	the new column renderer. If <TT>null</TT> then the
+	 *						default renderer should be used.
+	 */
+	public void setColumnRenderer(IColumnRenderer renderer)
+	{
+		_columnRenderer = renderer != null ? renderer : new DefaultColumnRenderer();
 	}
 
 	protected void addRow(IDataSet ds, int columnCount) throws DataSetException

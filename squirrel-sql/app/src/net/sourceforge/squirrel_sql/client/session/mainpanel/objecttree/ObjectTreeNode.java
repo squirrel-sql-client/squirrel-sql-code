@@ -35,9 +35,12 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 {
 	public interface IObjectTreeNodeType extends IDatabaseObjectTypes
 	{
-		int TABLE_TYPE_NODE = LAST_USED + 1;
-		int PROCEDURE_TYPE_NODE = LAST_USED + 2;
-		int UDT_TYPE_NODE = LAST_USED + 3;
+		int GENERIC_OBJECT_TYPE_NODE = LAST_USED_OBJECT_TYPE + 1;
+		int TABLE_TYPE_NODE = LAST_USED_OBJECT_TYPE + 2;
+		int PROCEDURE_TYPE_NODE = LAST_USED_OBJECT_TYPE + 3;
+		int UDT_TYPE_NODE = LAST_USED_OBJECT_TYPE + 4;
+
+		int LAST_USED_NODE_TYPE = LAST_USED_OBJECT_TYPE + 1024;
 	}
 
 	/** Node type; */

@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel;
  */
 import java.awt.BorderLayout;
 import java.awt.Component;
+
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
@@ -31,9 +32,11 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
-public class DatabasePanelTabComponent extends JPanel {
+public class DatabasePanelTabComponent extends JPanel
+{
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(DatabasePanelTabComponent.class);
+	private final static ILogger s_log =
+		LoggerController.createLogger(DatabasePanelTabComponent.class);
 
 	/** Current session. */
 	private ISession _session;
@@ -51,20 +54,25 @@ public class DatabasePanelTabComponent extends JPanel {
 	 * 			Thrown if a <TT>null</TT> <TT>ISession</TT> or
 	 * 			<TT>IDataSetViewer</TT> passed.
 	 */
-	public DatabasePanelTabComponent(ISession session, IDataSetViewer viewer) {
+	public DatabasePanelTabComponent(ISession session, IDataSetViewer viewer)
+	{
 		super(new BorderLayout());
-		if (session == null) {
+		if (session == null)
+		{
 			throw new IllegalArgumentException("ISession == null");
 		}
-		if (viewer == null) {
+		if (viewer == null)
+		{
 			throw new IllegalArgumentException("IDataSetViewer == null");
 		}
 
 		_session = session;
 		_viewer = viewer;
 
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
 				add(new JScrollPane(_viewer.getComponent()), BorderLayout.CENTER);
 			}
 		});
@@ -78,22 +86,32 @@ public class DatabasePanelTabComponent extends JPanel {
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT><TT>IDataSet</TT> passed.
 	 */
-	public void load(final IDataSet ds) {
-		if (ds == null) {
+	public void load(final IDataSet ds)
+	{
+		if (ds == null)
+		{
 			throw new IllegalArgumentException("IDataSet == null");
 		}
 
-		try {
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					try {
-						_viewer.show(ds);
-					} catch(DataSetException dse) {
+		try
+		{
+			SwingUtilities.invokeLater(new Runnable()
+			{
+				public void run()
+				{
+					try
+					{
+						_viewer.show(ds, _session.getMessageHandler());
+					}
+					catch (DataSetException dse)
+					{
 						s_log.error("Error", dse);
 					}
 				}
 			});
-		} catch (Exception ex) {
+		}
+		catch (Exception ex)
+		{
 			s_log.error("Error", ex);
 		}
 	}
@@ -101,7 +119,8 @@ public class DatabasePanelTabComponent extends JPanel {
 	/**
 	 * Clear data from component.
 	 */
-	public void clear() {
+	public void clear()
+	{
 		_viewer.clear();
 	}
 
@@ -110,8 +129,8 @@ public class DatabasePanelTabComponent extends JPanel {
 	 *
 	 * @return	The component to be displayed in the panel.
 	 */
-	public Component getComponent() {
+	public Component getComponent()
+	{
 		return this;
 	}
 }
-

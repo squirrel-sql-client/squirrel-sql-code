@@ -36,9 +36,12 @@ import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.BaseO
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public abstract class BaseDatabasePanelTab extends BaseObjectPanelTab implements IDatabasePanelTab {
+public abstract class BaseDatabasePanelTab extends BaseObjectPanelTab
+												implements IDatabasePanelTab
+{
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(BaseDatabasePanelTab.class);
+	private static ILogger s_log =
+		LoggerController.createLogger(BaseDatabasePanelTab.class);
 
 	/** Destination to display data in. */
 	private IDataSetViewer _viewer;
@@ -49,33 +52,43 @@ public abstract class BaseDatabasePanelTab extends BaseObjectPanelTab implements
 	/**
 	 * @see BaseObjectPanelTab#refreshComponent()
 	 */
-	protected void refreshComponent() throws DataSetException {
+	protected void refreshComponent() throws DataSetException
+	{
 		_comp.load(createDataSet(getSession()));
 	}
 
-	protected abstract IDataSet createDataSet(ISession session) throws DataSetException;
+	protected abstract IDataSet createDataSet(ISession session)
+		throws DataSetException;
 
 	/**
 	 * @see IObjectPanelTab#getComponent()
 	 */
-	public synchronized Component getComponent() {
-		if (_comp == null) {
+	public synchronized Component getComponent()
+	
+	{
+		if (_comp == null)
+		{
 			ISession session = getSession();
 			_comp = new DatabasePanelTabComponent(session, createViewer(session));
 		}
 		return _comp;
 	}
-	/**
+
+	/**
 	 * @see IObjectPanelTab#clear()
 	 */
-	public void clear() {
-		if (_comp != null) {
+	public void clear()
+	{
+		if (_comp != null)
+		{
 			_comp.clear();
 		}
 	}
 
-	protected IDataSetViewer createViewer(ISession session) {
-		String destClassName = session.getProperties().getMetaDataOutputClassName();
+	protected IDataSetViewer createViewer(ISession session)
+	{
+		String destClassName =
+			session.getProperties().getMetaDataOutputClassName();
 		return BaseDataSetViewerDestination.getInstance(destClassName);
 	}
 }

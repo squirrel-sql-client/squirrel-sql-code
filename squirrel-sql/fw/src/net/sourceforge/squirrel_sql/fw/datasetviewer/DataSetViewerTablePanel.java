@@ -97,12 +97,6 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		return _comp;
 	}
 
-	protected Object formatValue(Object object)
-	{
-		if(object != null) return object.toString();
-		return "<null>";
-	}
-
 	/*
 	 * @see BaseDataSetViewerDestination#addRow(Object[])
 	 */
@@ -411,18 +405,11 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		}
 	}
 
-	private static final class CellRenderer extends DefaultTableCellRenderer
+	private final class CellRenderer extends DefaultTableCellRenderer
 	{
 		public void setValue(Object value)
 		{
-			if (value == null)
-			{
-				super.setValue("<null>");
-			}
-			else
-			{
-				super.setValue(value);
-			}
+			super.setValue(getColumnRenderer().renderObject(value));
 		}
 	}
 }

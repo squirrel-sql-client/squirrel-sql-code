@@ -41,18 +41,24 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
  * The current session. This is a "subset" of the real session which can be
  * used by plugins.
  */
-public interface ISession extends IHasIdentifier {
+public interface ISession extends IHasIdentifier
+{
 	/**
 	 * Keys to objects stored in session.
 	 */
-//CB?? Get rid of this crap in the object tree rewrite.
-	public interface ISessionKeys {
-		String DATABASE_DETAIL_PANEL_KEY = DatabaseNode.class.getName() + "_DETAIL_PANEL_KEY";
-		String PROCEDURE_DETAIL_PANEL_KEY = ProcedureNode.class.getName() + "_DETAIL_PANEL_KEY";
-		String TABLE_DETAIL_PANEL_KEY = TableNode.class.getName() + "_DETAIL_PANEL_KEY";
+	//TODO: Get rid of this crap in the object tree rewrite.
+	public interface ISessionKeys
+	{
+		String DATABASE_DETAIL_PANEL_KEY =
+			DatabaseNode.class.getName() + "_DETAIL_PANEL_KEY";
+		String PROCEDURE_DETAIL_PANEL_KEY =
+			ProcedureNode.class.getName() + "_DETAIL_PANEL_KEY";
+		String TABLE_DETAIL_PANEL_KEY =
+			TableNode.class.getName() + "_DETAIL_PANEL_KEY";
 	}
 
-	public interface IMainPanelTabIndexes extends MainPanel.ITabIndexes {
+	public interface IMainPanelTabIndexes extends MainPanel.ITabIndexes
+	{
 	}
 
 	/**
@@ -111,40 +117,15 @@ public interface ISession extends IHasIdentifier {
 	 */
 	ISQLPanelAPI getSQLPanelAPI();
 
-	void closeAllSQLResultTabs();
-	void closeAllSQLResultFrames();
-
-	void executeSQL(String sql);
-
 	/**
 	 * Return an array of <TT>IDatabaseObjectInfo</TT> objects representing all
 	 * the objects selected in the objects tree.
 	 *
 	 * @return	array of <TT>IDatabaseObjectInfo</TT> objects.
 	 */
-	IDatabaseObjectInfo[] getSelectedDatabaseObjects();
+//	IDatabaseObjectInfo[] getSelectedDatabaseObjects();
 
 	SessionSheet getSessionSheet();
-
-	/**
-	 * Add a listener listening for SQL Execution.
-	 *
-	 * @param	lis	 Listener
-	 *
-	 * @throws	IllegalArgumentException
-	 *			If a null <TT>ISQLExecutionListener</TT> passed.
-	 */
-	public void addSQLExecutionListener(ISQLExecutionListener lis);
-
-	/**
-	 * Remove an SQL execution listener.
-	 *
-	 * @param	lis	 Listener
-	 *
-	 * @throws	IllegalArgumentException
-	 *			If a null <TT>ISQLExecutionListener</TT> passed.
-	 */
-	public void removeSQLExecutionListener(ISQLExecutionListener lis);
 
 	/**
 	 * Select a tab in the main tabbed pane.
@@ -155,35 +136,6 @@ public interface ISession extends IHasIdentifier {
 	 *			Thrown if an invalid <TT>tabIndex</TT> passed.
 	 */
 	void selectMainTab(int tabIndex) throws IllegalArgumentException;
-
-	/**
-	 * Execute the current SQL.
-	 */
-	void executeCurrentSQL();
-
-	/**
-	 * Commit the current SQL transaction.
-	 */
-	void commit();
-
-	/**
-	 * Rollback the current SQL transaction.
-	 */
-	void rollback();
-
-	/**
-	 * Add a listener for events in this sessions result tabs.
-	 *
-	 * @param	lis		The listener.
-	 */
-	void addResultTabListener(IResultTabListener lis);
-
-	/**
-	 * Remove a listener for events in this sessions result tabs.
-	 *
-	 * @param	lis		The listener.
-	 */
-	void removeResultTabListener(IResultTabListener lis);
 
 	/**
 	 * Add a tab to the main tabbed panel.

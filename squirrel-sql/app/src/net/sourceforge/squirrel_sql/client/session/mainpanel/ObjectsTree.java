@@ -51,7 +51,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.DropTableAction;
+//import net.sourceforge.squirrel_sql.client.session.action.DropTableAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeItemAction;
 import net.sourceforge.squirrel_sql.client.session.objectstree.BaseNode;
 import net.sourceforge.squirrel_sql.client.session.objectstree.BaseNodeExpandedListener;
@@ -103,7 +103,7 @@ class ObjectsTree extends JTree
 		_treeActions = new JPopupMenu();
 		_treeActions.add(
 			new JMenuItem(actions.get(RefreshTreeItemAction.class)));
-		_treeActions.add(new JMenuItem(actions.get(DropTableAction.class)));
+//		_treeActions.add(new JMenuItem(actions.get(DropTableAction.class)));
 		/*
 		 * : TODO:
 		session.getApplication().getPluginManager();

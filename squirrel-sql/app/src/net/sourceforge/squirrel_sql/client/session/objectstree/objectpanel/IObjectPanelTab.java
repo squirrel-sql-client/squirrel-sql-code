@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel;
  */
 import java.awt.Component;
 
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -28,7 +29,8 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public interface IObjectPanelTab {
+public interface IObjectPanelTab
+{
 	/**
 	 * Return the title for the tab.
 	 *
@@ -56,6 +58,15 @@ public interface IObjectPanelTab {
 	 * @param	session		Current session.
 	 */
 	void setSession(ISession session);
+
+	/**
+	 * Set the <TT>IDatabaseObjectInfo</TT> object that specifies the object that
+	 * is to have its information displayed.
+	 *
+	 * @param	value	<TT>IDatabaseObjectInfo</TT> object that specifies
+	 *					the currently selected object. This can be <TT>null</TT>.
+	 */
+	void setDatabaseObjectInfo(IDatabaseObjectInfo value);
 
 	/**
 	 * This tab has been selected.

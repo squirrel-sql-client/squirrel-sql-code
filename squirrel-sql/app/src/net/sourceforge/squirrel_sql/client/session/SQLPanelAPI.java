@@ -18,6 +18,8 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
+import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 /**
  *  * This class is the API through which plugins can work with the SQL Panel.
  *
@@ -44,6 +46,68 @@ public class SQLPanelAPI implements ISQLPanelAPI
 			throw new IllegalArgumentException("ISession == null");
 		}
 		_session = session;
+	}
+
+	/**
+	 * Add a listener listening for SQL Execution.
+	 *
+	 * @param	lis	 Listener
+	 *
+	 * @throws	IllegalArgumentException
+	 *			If a null <TT>ISQLExecutionListener</TT> passed.
+	 */
+	public synchronized void addSQLExecutionListener(ISQLExecutionListener lis)
+	{
+		if (lis == null)
+		{
+			throw new IllegalArgumentException("null ISQLExecutionListener passed");
+		}
+		_session.getSessionSheet().getSQLPanel().addSQLExecutionListener(lis);
+	}
+
+	/**
+	 * Remove an SQL execution listener.
+	 *
+	 * @param	lis	 Listener
+	 *
+	 * @throws	IllegalArgumentException
+	 *			If a null <TT>ISQLExecutionListener</TT> passed.
+	 */
+	public synchronized void removeSQLExecutionListener(ISQLExecutionListener lis)
+	{
+		if (lis == null)
+		{
+			throw new IllegalArgumentException("null ISQLExecutionListener passed");
+		}
+		_session.getSessionSheet().getSQLPanel().removeSQLExecutionListener(lis);
+	}
+
+	/**
+	 * Add a listener for events in this sessions result tabs.
+	 *
+	 * @param	lis		The listener.
+	 */
+	public synchronized void addResultTabListener(IResultTabListener lis)
+	{
+		if (lis == null)
+		{
+			throw new IllegalArgumentException("null IResultTabListener passed");
+		}
+		_session.getSessionSheet().getSQLPanel().addResultTabListener(lis);
+	}
+
+	/**
+	 * Remove a listener for events in this sessions result tabs.
+	 *
+	 * @param	lis		The listener.
+	 */
+	public synchronized void removeResultTabListener(IResultTabListener lis)
+	{
+		if (lis == null)
+		{
+			throw new IllegalArgumentException("null IResultTabListener passed");
+		}
+		_session.getSessionSheet().getSQLPanel().removeResultTabListener(lis);
 	}
 
 	/**
@@ -142,7 +206,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 * 
 	 * param	start	the new selections start position.
 	 */ 
-	public void setSQLScriptSelectionStart(int start)
+	public synchronized void setSQLScriptSelectionStart(int start)
 	{
 		_session.getSessionSheet().getSQLEntryPanel().setSelectionStart(start);
 	}
@@ -153,8 +217,77 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 * 
 	 * param	start	the new selections start position.
 	 */ 
-	public void setSQLScriptSelectionEnd(int end)
+	public synchronized void setSQLScriptSelectionEnd(int end)
 	{
 		_session.getSessionSheet().getSQLEntryPanel().setSelectionEnd(end);
 	}
+
+	/**
+	 * Execute the current SQL. Not <TT>synchronized</TT> as multiple SQL statements
+	 * can be executed simultaneously.
+	 */
+	public void executeCurrentSQL()
+	{
+		_session.getSessionSheet().getSQLPanel().executeCurrentSQL();
+	}
+
+	/**
+	 * Execute the passed SQL. Not <TT>synchronized</TT> as multiple SQL statements
+	 * can be executed simultaneously.
+	 * 
+	 * @param	sql		SQL to be executed.
+	 */
+	public void executeSQL(String sql)
+	{
+		_session.getSessionSheet().getSQLPanel().executeSQL(sql);
+	}
+
+	/**
+	 * Commit the current SQL transaction.
+	 */
+	public synchronized void commit()
+	{
+		try
+		{
+			_session.getSQLConnection().commit();
+			_session.getMessageHandler().showMessage("Commit completed normally."); // i18n
+		}
+		catch (Throwable ex)
+		{
+			_session.getMessageHandler().showMessage(ex);
+		}
+	}
+
+	/**
+	 * Rollback the current SQL transaction.
+	 */
+	public synchronized void rollback()
+	{
+		try
+		{
+			_session.getSQLConnection().rollback();
+			_session.getMessageHandler().showMessage("Rollback completed normally."); // i18n
+		}
+		catch (Exception ex)
+		{
+			_session.getMessageHandler().showMessage(ex);
+		}
+	}
+
+	/**
+	 * Close all the SQL result tabs.
+	 */
+	public synchronized void closeAllSQLResultTabs()
+	{
+		_session.getSessionSheet().getSQLPanel().closeAllSQLResultTabs();
+	}
+
+	/**
+	 * Close all the "torn off" SQL result frames.
+	 */
+	public synchronized void closeAllSQLResultFrames()
+	{
+		_session.getSessionSheet().getSQLPanel().closeAllSQLResultFrames();
+	}
+
 }

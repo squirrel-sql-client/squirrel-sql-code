@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.sqlscript;
 /*
- * Copyright (C) 2001 Johan Compagner
+ * Copyright (C) 2001-2002 Johan Compagner
  * jcompagner@j-com.nl
  *
  * This program is free software; you can redistribute it and/or
@@ -112,7 +112,8 @@ public class LoadScriptCommand implements ICommand {
 				sb.append(new String(bytes,0,iRead));
 				iRead = bis.read(bytes);
 			}
-			_session.setEntireSQLScript(sb.toString());
+//			_session.setEntireSQLScript(sb.toString());
+			_session.getSQLPanelAPI().appendSQLScript(sb.toString(), true);
 			_session.putPluginObject(_plugin, ISessionKeys.SAVE_SCRIPT_FILE_PATH_KEY, file.getAbsolutePath());
 		} catch(java.io.IOException io) {
 			_session.getMessageHandler().showMessage(io);

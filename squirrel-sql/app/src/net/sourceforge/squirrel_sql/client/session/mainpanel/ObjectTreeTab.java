@@ -18,19 +18,21 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Component;
-import net.sourceforge.squirrel_sql.client.session.ISession;
+
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 /**
  * This is the tab that contains the object tree.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ObjectTreeTab extends BaseMainPanelTab {
+public class ObjectTreeTab extends BaseMainPanelTab
+{
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
-	private interface i18n {
+	private interface i18n
+	{
 		String TAB_TITLE = "Objects (New)";
 		String TAB_DESC = "Show database objects";
 	}
@@ -38,7 +40,8 @@ public class ObjectTreeTab extends BaseMainPanelTab {
 	/**
 	 * Default ctor.
 	 */
-	public ObjectTreeTab() {
+	public ObjectTreeTab()
+	{
 		super();
 	}
 
@@ -48,21 +51,24 @@ public class ObjectTreeTab extends BaseMainPanelTab {
 	/**
 	 * @see IMainPanelTab#getTitle()
 	 */
-	public String getTitle() {
+	public String getTitle()
+	{
 		return i18n.TAB_TITLE;
 	}
 
 	/**
 	 * @see IMainPanelTab#getHint()
 	 */
-	public String getHint() {
+	public String getHint()
+	{
 		return i18n.TAB_DESC;
 	}
 
 	/**
 	 * @see BaseMainPanelTab#refreshComponent()
 	 */
-	protected void refreshComponent() {
+	protected void refreshComponent()
+	{
 	}
 
 	/**
@@ -70,12 +76,13 @@ public class ObjectTreeTab extends BaseMainPanelTab {
 	 * 
 	 * @return	the component to be displayed in this tab.
 	 */
-	public synchronized Component getComponent() {
-		if (_comp == null) {
+	public synchronized Component getComponent()
+	{
+		if (_comp == null)
+		{
 			_comp = new ObjectTreePanel(getSession());
 		}
 		return _comp;
 	}
 
 }
-

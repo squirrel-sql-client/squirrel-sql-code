@@ -53,12 +53,6 @@ public class DataSetViewerPropertyPanel extends BaseDataSetViewerDestination
 		*/
 	}
 
-	protected Object formatValue(Object object)
-	{
-		if(object != null) return object.toString();
-		return "<null>";
-	}
-
 	public Component getComponent() {
 		return _comp;
 	}

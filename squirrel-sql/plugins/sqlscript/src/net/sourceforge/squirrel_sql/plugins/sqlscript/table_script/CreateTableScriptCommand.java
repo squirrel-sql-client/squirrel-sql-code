@@ -26,6 +26,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public class CreateTableScriptCommand implements ICommand {
@@ -50,7 +51,11 @@ public class CreateTableScriptCommand implements ICommand {
         try {
             final Statement stmt = conn.createStatement();
             try {
-                IDatabaseObjectInfo[] dbObjs = _session.getSelectedDatabaseObjects();
+            	// TODO: Comment this line and uncomment the next 2 to work
+				// with the new object tree.
+//                IDatabaseObjectInfo[] dbObjs = _session.getSelectedDatabaseObjects();
+				IObjectTreeAPI api = _session.getObjectTreeAPI();
+                IDatabaseObjectInfo[] dbObjs = api.getSelectedDatabaseObjects();
 
                 for (int k = 0; k < dbObjs.length; k++) {
                     if (dbObjs[k] instanceof ITableInfo) {
@@ -159,7 +164,8 @@ public class CreateTableScriptCommand implements ICommand {
         } catch (Exception e) {
             _session.getMessageHandler().showMessage(e);
         }
-        _session.setEntireSQLScript(sbScript.toString());
+//        _session.setEntireSQLScript(sbScript.toString());
+        _session.getSQLPanelAPI().appendSQLScript(sbScript.toString(), true);
         _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
     }
 }

@@ -19,31 +19,35 @@ package net.sourceforge.squirrel_sql.client.session.event;
  */
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ResultTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.*;
 
-public class ResultTabEvent {
+public class ResultTabEvent
+{
 	private ISession _session;
 	private ResultTab _tab;
 
 	public ResultTabEvent(ISession session, ResultTab tab)
-			throws IllegalArgumentException {
+		throws IllegalArgumentException
+	{
 		super();
-		if (session == null) {
+		if (session == null)
+		{
 			throw new IllegalArgumentException("Null ISession passed");
 		}
-		if (tab == null) {
+		if (tab == null)
+		{
 			throw new IllegalArgumentException("Null ResultTab passed");
 		}
 		_session = session;
 		_tab = tab;
 	}
 
-	public ISession getSession() {
+	public ISession getSession()
+	{
 		return _session;
 	}
 
-	public ResultTab getResultTab() {
+	public ResultTab getResultTab()
+	{
 		return _tab;
 	}
 }
-

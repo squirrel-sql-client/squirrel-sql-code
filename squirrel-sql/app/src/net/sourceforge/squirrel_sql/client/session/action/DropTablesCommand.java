@@ -25,7 +25,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.session.IClientSession;
 
 /**
- * @version 	$Id: DropTablesCommand.java,v 1.1 2002-08-04 04:10:15 colbell Exp $
+ * @version 	$Id: DropTablesCommand.java,v 1.2 2002-08-09 22:18:19 colbell Exp $
  * @author		Johan Compagner
  */
 public class DropTablesCommand implements ICommand
@@ -80,6 +80,6 @@ public class DropTablesCommand implements ICommand
 				.append(sepChar)
 				.append('\n');
 		}
-		_session.executeSQL(buf.toString());
+		_session.getSQLPanelAPI().executeSQL(buf.toString());
 	}
 }

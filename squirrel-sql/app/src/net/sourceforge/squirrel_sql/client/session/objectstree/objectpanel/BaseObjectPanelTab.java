@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -33,9 +33,11 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public abstract class BaseObjectPanelTab implements IObjectPanelTab {
+public abstract class BaseObjectPanelTab implements IObjectPanelTab
+{
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(BaseObjectPanelTab.class);
+	private static ILogger s_log =
+		LoggerController.createLogger(BaseObjectPanelTab.class);
 
 	/** Current session. */
 	private ISession _session;
@@ -57,8 +59,10 @@ public abstract class BaseObjectPanelTab implements IObjectPanelTab {
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> ISession</TT> passed.
 	 */
-	public void setSession(ISession session) throws IllegalArgumentException {
-		if (session == null) {
+	public void setSession(ISession session) throws IllegalArgumentException
+	{
+		if (session == null)
+		{
 			throw new IllegalArgumentException("Null ISession passed");
 		}
 		_session = session;
@@ -69,7 +73,8 @@ public abstract class BaseObjectPanelTab implements IObjectPanelTab {
 	 *
 	 * @return	Current session.
 	 */
-	public final ISession getSession() {
+	public final ISession getSession()
+	{
 		return _session;
 	}
 
@@ -81,12 +86,17 @@ public abstract class BaseObjectPanelTab implements IObjectPanelTab {
 	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> or
 	 *			<TT>IDatabaseObjectInfo</TT> object is stored here.
 	 */
-	public synchronized void select() {
-		if (!_hasBeenDisplayed) {
+	public synchronized void select()
+	{
+		if (!_hasBeenDisplayed)
+		{
 			s_log.debug("Refreshing " + getTitle() + " table tab.");
-			try {
+			try
+			{
 				refreshComponent();
-			} catch (DataSetException ex) {
+			}
+			catch (DataSetException ex)
+			{
 				getSession().getMessageHandler().showMessage(ex);
 			}
 			_hasBeenDisplayed = true;
@@ -105,7 +115,9 @@ public abstract class BaseObjectPanelTab implements IObjectPanelTab {
 	 * @param	value	<TT>IDatabaseObjectInfo</TT> object that specifies the currently
 	 *					selected object. This can be <TT>null</TT>.
 	 */
-	protected void setDatabaseObjectInfo(IDatabaseObjectInfo value) {
+	public void setDatabaseObjectInfo(IDatabaseObjectInfo value)
+	
+	{
 		_dbObjInfo = value;
 		_hasBeenDisplayed = false;
 	}
@@ -115,7 +127,8 @@ public abstract class BaseObjectPanelTab implements IObjectPanelTab {
 	 *
 	 * @return	Current <TT>IDatabaseObjectInfo</TT> object.
 	 */
-	protected final IDatabaseObjectInfo getDatabaseObjectInfo() {
+	protected final IDatabaseObjectInfo getDatabaseObjectInfo()
+	{
 		return _dbObjInfo;
 	}
 
@@ -128,23 +141,22 @@ public abstract class BaseObjectPanelTab implements IObjectPanelTab {
 	 *
 	 * @return  The newly created panel.
 	 */
-/*
-	protected IDataSetViewerDestination createDestination(String destClassName) {
-		IDataSetViewerDestination dest = null;
-		try {
-			Class destClass = Class.forName(destClassName);
-			if (IDataSetViewerDestination.class.isAssignableFrom(destClass) &&
-					Component.class.isAssignableFrom(destClass)) {
-				dest = (IDataSetViewerDestination)destClass.newInstance();
+	/*
+		protected IDataSetViewerDestination createDestination(String destClassName) {
+			IDataSetViewerDestination dest = null;
+			try {
+				Class destClass = Class.forName(destClassName);
+				if (IDataSetViewerDestination.class.isAssignableFrom(destClass) &&
+						Component.class.isAssignableFrom(destClass)) {
+					dest = (IDataSetViewerDestination)destClass.newInstance();
+				}
+	
+			} catch (Exception ignore) {
 			}
-
-		} catch (Exception ignore) {
+			if (dest == null) {
+				dest = new DataSetViewerTablePanel();
+			}
+			return dest;
 		}
-		if (dest == null) {
-			dest = new DataSetViewerTablePanel();
-		}
-		return dest;
-	}
-*/
+	*/
 }
-

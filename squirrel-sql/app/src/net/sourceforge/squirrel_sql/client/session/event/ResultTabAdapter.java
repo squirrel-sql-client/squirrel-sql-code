@@ -17,16 +17,48 @@ package net.sourceforge.squirrel_sql.client.session.event;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-public class ResultTabAdapter implements IResultTabListener {
-	public void resultTabAdded(ResultTabEvent evt) {
+
+/**
+ * An adapter for <TT>IResultTabListener</TT> with empty methods.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
+public class ResultTabAdapter implements IResultTabListener
+{
+	/**
+	 * An SQL results tab has been added to the tabbed folder.
+	 * 
+	 * @param	evt		The event.
+	 */
+	public void resultTabAdded(ResultTabEvent evt)
+	{
 	}
 
-	public void resultTabRemoved(ResultTabEvent evt) {
+	/**
+	 * An SQL results tab has been removed from the tabbed folder.
+	 * 
+	 * @param	evt		The event.
+	 */
+	public void resultTabRemoved(ResultTabEvent evt)
+	{
 	}
 
-	public void resultTabTornOff(ResultTabEvent evt) {
+	/**
+	 * An SQL results tab has been "torn off" from the tabbed folder into
+	 * its own frame.
+	 * 
+	 * @param	evt		The event.
+	 */
+	public void resultTabTornOff(ResultTabEvent evt)
+	{
 	}
 
-	public void tornOffResultTabReturned(ResultTabEvent evt) {
+	/**
+	 * A "torn off" SQL results tab has been returned to the tabbed folder.
+	 * 
+	 * @param	evt		The event.
+	 */
+	public void tornOffResultTabReturned(ResultTabEvent evt)
+	{
 	}
 }

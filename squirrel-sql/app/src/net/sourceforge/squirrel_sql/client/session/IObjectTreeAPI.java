@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import javax.swing.Action;
+import javax.swing.event.TreeModelListener;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
@@ -45,6 +46,27 @@ public interface IObjectTreeAPI
 	void registerExpander(int nodeType, INodeExpander expander);
 
 	/**
+	 * Add a listener to the object tree for structure changes. I.E nodes
+	 * added/removed.
+	 * 
+	 * @param	lis		The <TT>TreeModelListener</TT> you want added.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>TreeModelListener</TT> passed.
+	 */
+	void addTreeModelListener(TreeModelListener lis);
+
+	/**
+	 * Remove a structure changes listener from the object tree.
+	 * 
+	 * @param	lis		The <TT>TreeModelListener</TT> you want removed.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>TreeModelListener</TT> passed.
+	 */
+	void removeTreeModelListener(TreeModelListener lis);
+
+	/**
 	 * Add an item to the popup menu for the specified node type.
 	 * 
 	 * @param	nodeType	Object Tree node type.
@@ -67,6 +89,15 @@ public interface IObjectTreeAPI
 	void addToPopup(Action action);
 
 	/**
+	 * Return the next unused "ObjectTree node type". This can be used by
+	 * pluigns to identify groups of nodes. I.E you may use this to identify
+	 * all Oracle Consumer group nodes.
+	 * 
+	 * @return	Return the next unused "ObjectTree node type".
+	 */
+	int getNextAvailableNodeype();
+
+	/**
 	 * Return an array of the selected nodes in the tree. This is guaranteed
 	 * to be non-null.
 	 * 
@@ -85,5 +116,16 @@ public interface IObjectTreeAPI
 	/**
 	 * Refresh the object tree.
 	 */
-	void refresh();
+	void refreshTree();
+
+	/**
+	 * Remove one or more nodes from the tree.
+	 * 
+	 * @param	nodes	Array of nodes to be removed.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> <TT>ObjectTreeNode[]</TT> thrown.
+	 */
+	void removeNodes(ObjectTreeNode[] nodes);
+
 }

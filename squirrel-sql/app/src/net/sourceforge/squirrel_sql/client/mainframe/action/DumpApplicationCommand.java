@@ -32,6 +32,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextFileDestination;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.HashtableDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
@@ -41,7 +42,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 
+import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfoArrayDataSet;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
@@ -102,7 +105,6 @@ public class DumpApplicationCommand implements ICommand
 		_app = app;
 		_outFile = outFile;
 		
-		// TODO: app should have a msg handler that displays error dialog.
 		_msgHandler = msgHandler != null ? msgHandler : NullMessageHandler.getInstance();
 	}
 
@@ -126,66 +128,81 @@ public class DumpApplicationCommand implements ICommand
 			{
 				final String msg = "Error dumping Application Status bean";
 				_msgHandler.showMessage(msg);
-				_msgHandler.showMessage(th.toString());
+				_msgHandler.showMessage(th);
 				s_log.error(msg, th);
 			}
 	
-			// Dump ActionCollection
-//			
-//			// Dump drivers
-//			try
-//			{
-//				File tempFile = File.createTempFile(PREFIX, SUFFIX);
-//				_app.getDataCache().saveDrivers(tempFile);
-//				files.add(tempFile);
-//				titles.add("Drivers");
-//			}
-//			catch (Throwable th)
-//			{
-//				final String msg = "Error dumping drivers";
-//				_msgHandler.showMessage(msg);
-//				_msgHandler.showMessage(th.toString());
-//				s_log.error(msg, th);
-//			}
-//			
-//			// Dump aliases.
-//			try
-//			{
-//				File tempFile = File.createTempFile(PREFIX, SUFFIX);
-//				_app.getDataCache().saveAliases(tempFile);
-//				files.add(tempFile);
-//				titles.add("Aliases");
-//			}
-//			catch (Throwable th)
-//			{
-//				final String msg = "Error dumping drivers";
-//				_msgHandler.showMessage(msg);
-//				_msgHandler.showMessage(th.toString());
-//				s_log.error(msg, th);
-//			}
-//			
-//			// Dump sessions.
-//			ISession[] sessions = _app.getActiveSessions();
-//			DumpSessionCommand sessionCmd = new DumpSessionCommand();
-//			for (int i = 0; i < sessions.length; ++i)
-//			{
-//				try
-//				{
-//					File tempFile = File.createTempFile(PREFIX, SUFFIX);
-//					sessionCmd.setSession(sessions[i]);
-//					sessionCmd.setDumpFile(tempFile);
-//					sessionCmd.execute();
-//					files.add(tempFile);
-//					titles.add("Session Dump: " + sessions[i].getIdentifier());
-//				}
-//				catch (Throwable th)
-//				{
-//					final String msg = "Error dumping sessions";
-//					_msgHandler.showMessage(msg);
-//					_msgHandler.showMessage(th.toString());
-//					s_log.error(msg, th);
-//				}
-//			}
+			// Dump System Properties.
+			try
+			{
+				File tempFile = File.createTempFile(PREFIX, SUFFIX);
+				IDataSetViewer dest = new DataSetViewerTextFileDestination(tempFile);
+				dest.show(new HashtableDataSet(System.getProperties()));
+				files.add(tempFile);
+				titles.add("System Properties");
+			}
+			catch (Throwable th)
+			{
+				final String msg = "Error dumping metadata";
+				_msgHandler.showMessage(msg);
+				_msgHandler.showMessage(th);
+				s_log.error(msg, th);
+			}
+		
+			// Dump drivers
+			try
+			{
+				File tempFile = File.createTempFile(PREFIX, SUFFIX);
+				_app.getDataCache().saveDrivers(tempFile);
+				files.add(tempFile);
+				titles.add("Drivers");
+			}
+			catch (Throwable th)
+			{
+				final String msg = "Error dumping drivers";
+				_msgHandler.showMessage(msg);
+				_msgHandler.showMessage(th);
+				s_log.error(msg, th);
+			}
+			
+			// Dump aliases.
+			try
+			{
+				File tempFile = File.createTempFile(PREFIX, SUFFIX);
+				_app.getDataCache().saveAliases(tempFile);
+				files.add(tempFile);
+				titles.add("Aliases");
+			}
+			catch (Throwable th)
+			{
+				final String msg = "Error dumping drivers";
+				_msgHandler.showMessage(msg);
+				_msgHandler.showMessage(th);
+				s_log.error(msg, th);
+			}
+			
+			// Dump sessions.
+			ISession[] sessions = _app.getActiveSessions();
+			DumpSessionCommand sessionCmd = new DumpSessionCommand();
+			for (int i = 0; i < sessions.length; ++i)
+			{
+				try
+				{
+					File tempFile = File.createTempFile(PREFIX, SUFFIX);
+					sessionCmd.setSession(sessions[i]);
+					sessionCmd.setDumpFile(tempFile);
+					sessionCmd.execute();
+					files.add(tempFile);
+					titles.add("Session Dump: " + sessions[i].getIdentifier());
+				}
+				catch (Throwable th)
+				{
+					final String msg = "Error dumping sessions";
+					_msgHandler.showMessage(msg);
+					_msgHandler.showMessage(th);
+					s_log.error(msg, th);
+				}
+			}
 			
 			// Dump thread store.
 		}			
@@ -249,6 +266,8 @@ public class DumpApplicationCommand implements ICommand
 	{
 		private SquirrelPreferences _prefs;
 		private PluginInfo[] _plugins;
+		private String[] _appArgs;
+		private String _version;
 
 		public ApplicationStatusBean()
 		{
@@ -259,6 +278,13 @@ public class DumpApplicationCommand implements ICommand
 		{
 			_prefs = app.getSquirrelPreferences();
 			_plugins = app.getPluginManager().getPluginInformation();
+			_appArgs = ApplicationArguments.getInstance().getRawArguments();
+			_version = Version.getVersion();
+		}
+
+		public String getVersion()
+		{
+			return _version;
 		}
 
 		public SquirrelPreferences getPreferences()
@@ -276,34 +302,16 @@ public class DumpApplicationCommand implements ICommand
 		{
 			return _plugins[idx];
 		}
-	}
 
-//	public final static class ApplicationStatusBeanBeanInfo
-//		extends SimpleBeanInfo
-//	{
-//		private PropertyDescriptor[] s_descriptors;
-//		private final Class CLAZZ = ApplicationStatusBean.class;
-//
-//		public ApplicationStatusBeanBeanInfo() throws IntrospectionException
-//		{
-//			super();
-//			if (s_descriptors == null)
-//			{
-//				s_descriptors = new PropertyDescriptor[2];
-//				s_descriptors[0] = new PropertyDescriptor(
-//						"prefs", CLAZZ,
-//						"getPreferences", null);
-//				s_descriptors[1] =
-//					new IndexedPropertyDescriptor(
-//						"plugins", CLAZZ,
-//						"getPluginInfo", null,
-//						"getPluginInfo", null);
-//			}
-//		}
-//
-//		public PropertyDescriptor[] getPropertyDescriptors()
-//		{
-//			return s_descriptors;
-//		}
-//	}
+		public String[] getApplicationArgument()
+		{
+			return _appArgs;
+		}
+
+		public String getApplicationArgument(int idx)
+			throws ArrayIndexOutOfBoundsException
+		{
+			return _appArgs[idx];
+		}
+	}
 }

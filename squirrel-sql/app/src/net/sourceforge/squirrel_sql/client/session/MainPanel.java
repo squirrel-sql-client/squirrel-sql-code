@@ -32,7 +32,8 @@ import net.sourceforge.squirrel_sql.client.plugin.SessionPluginInfo;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
-import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeAction;
+import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeAction;
+//import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
 import net.sourceforge.squirrel_sql.client.session.action.ShowNativeSQLAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
@@ -55,7 +56,7 @@ public class MainPanel extends SquirrelTabbedPane
 	{
 		int OBJECT_TREE_TAB = 0;
 		int SQL_TAB = 1;
-		int NEW_OBJECT_TREE_TAB = 2;
+//		int NEW_OBJECT_TREE_TAB = 2;
 	}
 
 	/** Logger for this class. */
@@ -137,7 +138,8 @@ public class MainPanel extends SquirrelTabbedPane
 			boolean isAutoCommit = _session.getProperties().getAutoCommit();
 			actions.get(CommitAction.class).setEnabled(!isAutoCommit);
 			actions.get(RollbackAction.class).setEnabled(!isAutoCommit);
-			actions.get(RefreshTreeAction.class).setEnabled(false);
+//			actions.get(RefreshTreeAction.class).setEnabled(false);
+			actions.get(RefreshObjectTreeAction.class).setEnabled(false);
 		}
 		else
 		{
@@ -145,8 +147,8 @@ public class MainPanel extends SquirrelTabbedPane
 			actions.get(ShowNativeSQLAction.class).setEnabled(false);
 			actions.get(CommitAction.class).setEnabled(false);
 			actions.get(RollbackAction.class).setEnabled(false);
-			actions.get(RefreshTreeAction.class).setEnabled(true);
-		}
+//			actions.get(RefreshTreeAction.class).setEnabled(true);
+			actions.get(RefreshObjectTreeAction.class).setEnabled(true);		}
 	}
 
 	void sessionClosing(ISession session)
@@ -171,10 +173,14 @@ public class MainPanel extends SquirrelTabbedPane
 
 	private void createUserInterface()
 	{
-		setFocusable(false);
-		addMainPanelTab(new ObjectsTab(_session));
-		addMainPanelTab(new SQLTab(_session));
+		//TODO: uncomment this when we no longer support JDK1.3
+		//setFocusable(false);
+
+//		addMainPanelTab(new ObjectsTab(_session));
+
 		addMainPanelTab(new ObjectTreeTab());
+		addMainPanelTab(new SQLTab(_session));
+//		addMainPanelTab(new ObjectTreeTab());
 
 		_propsListener = new MyPropertiesListener();
 		_session.getProperties().addPropertyChangeListener(_propsListener);
@@ -210,15 +216,16 @@ public class MainPanel extends SquirrelTabbedPane
 		}
 	}
 
-	public ObjectsPanel getObjectsPanel()
-	{
-		return ((ObjectsTab) _tabs.get(ITabIndexes.OBJECT_TREE_TAB))
-			.getObjectsPanel();
-	}
+//	public ObjectsPanel getObjectsPanel()
+//	{
+//		return ((ObjectsTab) _tabs.get(ITabIndexes.OBJECT_TREE_TAB))
+//			.getObjectsPanel();
+//	}
 
 	public ObjectTreePanel getObjectTreePanel()
 	{
-		ObjectTreeTab tab = (ObjectTreeTab)_tabs.get(ITabIndexes.NEW_OBJECT_TREE_TAB);
+//		ObjectTreeTab tab = (ObjectTreeTab)_tabs.get(ITabIndexes.NEW_OBJECT_TREE_TAB);
+		ObjectTreeTab tab = (ObjectTreeTab)_tabs.get(ITabIndexes.OBJECT_TREE_TAB);
 		return (ObjectTreePanel)tab.getComponent();
 	}
 
