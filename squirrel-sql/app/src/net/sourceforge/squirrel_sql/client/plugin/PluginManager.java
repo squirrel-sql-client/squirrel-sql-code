@@ -261,11 +261,15 @@ public class PluginManager {
      * Initialize plugins.
      */
     public void initializePlugins() {
+    	final boolean debug = _app.getSquirrelPreferences().isDebugMode();
         final Logger log = _app.getLogger();
         for (Iterator it = _loadedPlugins.values().iterator(); it.hasNext();) {
             IPlugin plugin = (IPlugin)it.next();
             try {
+           		long now = System.currentTimeMillis();
                 plugin.initialize();
+               	log.showMessage(Logger.ILogTypes.STATUS, "Plugin " + plugin.getInternalName() +
+               						" initialised in " + (System.currentTimeMillis() - now) + " ms.");
             } catch (Throwable th) {
                 log.showMessage(Logger.ILogTypes.ERROR,
                     "Error ocured unloading plugin: " + plugin.getInternalName());
@@ -278,6 +282,7 @@ public class PluginManager {
         final Logger log = _app.getLogger();
         PluginInfo wrapper = new PluginInfo(pluginClass.getName());
         try {
+       		long now = System.currentTimeMillis();
             IPlugin plugin = (IPlugin)pluginClass.newInstance();
             wrapper.setPlugin(plugin);
             _plugins.add(wrapper);
@@ -288,6 +293,8 @@ public class PluginManager {
                 if (ISessionPlugin.class.isAssignableFrom(pluginClass)) {
                     _sessionPlugins.add(plugin);
                 }
+	          	log.showMessage(Logger.ILogTypes.STATUS, "Plugin " + plugin.getInternalName()
+									+ " loaded in " + (System.currentTimeMillis() - now) + " ms.");
             }
         } catch (Throwable th) {
             log.showMessage(Logger.ILogTypes.ERROR, "\nError occured loading class " +
