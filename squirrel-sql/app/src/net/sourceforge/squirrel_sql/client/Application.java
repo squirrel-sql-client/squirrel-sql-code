@@ -53,7 +53,9 @@ import net.sourceforge.squirrel_sql.client.session.DefaultSQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionPropertiesSheetFactory;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
-import net.sourceforge.squirrel_sql.client.util.SplashScreen;
+import net.sourceforge.squirrel_sql.client.gui.SplashScreen;
+import net.sourceforge.squirrel_sql.client.gui.*;
+
 
 /**
  * Defines the API to do callbacks on the application.

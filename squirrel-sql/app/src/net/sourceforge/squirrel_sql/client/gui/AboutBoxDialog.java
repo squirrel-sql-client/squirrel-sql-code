@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.mainframe;
+package net.sourceforge.squirrel_sql.client.gui;
 /*
  * Copyright (C) 2001 - 2002 Colin Bell
  * colbell@users.sourceforge.net

@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.util;
+package net.sourceforge.squirrel_sql.client.gui;
 /*
  * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
@@ -27,7 +27,6 @@ import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-//import javax.swing.JTextArea;
 import javax.swing.JWindow;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
