@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -18,8 +18,8 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.sql.Types;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 /**
  * This defines the display information for a column.
  *
@@ -29,7 +29,7 @@ public class ColumnDisplayDefinition
 {
 	/** Number of characters to display. */
 	private int _displayWidth;
-	
+
 	/** Full name of the column, including the table Catalog, Schema and Table names. */
 	private String _fullTableColumnName;
 
@@ -43,7 +43,7 @@ public class ColumnDisplayDefinition
 	 * what operations to apply during cell editing.
 	 */
 	private int _sqlType;
-	
+
 	/**
 	 * The name of the data type as know to the DBMS.
 	 * This is used to identify a sub-type when multiple data types
@@ -54,13 +54,13 @@ public class ColumnDisplayDefinition
 	 * handler for the data type.
 	 */
 	private String _sqlTypeName;
-	
+
 	/**
 	 * A boolean indicating whether this field is nullable/may-be-nullable vs. known
 	 * to be not nullable.
 	 */
 	private boolean _isNullable;
-	
+
 	/**
 	 * The column's normal maximum width in characters as known to the DB.
 	 * This is different from _columnWidth in that this is the size known to the
@@ -68,28 +68,26 @@ public class ColumnDisplayDefinition
 	 * of the data on the screen.
 	 */
 	private int _columnSize;
-	
+
 	/**
 	 * The number of decimal digits in the column.
 	 */
 	private int _precision;
-	
+
 	/**
 	 * The number of decimal digits to the right of the decimal point.
 	 */
 	private int _scale;
-	
+
 	/**
 	 * Flag for whether or not this column is signed or unsigned.
 	 */
-	private boolean _isSigned;	
-	
+	private boolean _isSigned;
+
 	/**
 	 * Flag for whether this column represents currency or not.
 	 */
 	private boolean _isCurrency;
-
-	
 
 	/**
 	 * Ctor.
@@ -173,72 +171,77 @@ public class ColumnDisplayDefinition
 	/**
 	 * Return a boolean indicating column is nullable or not.
 	 *
-	 * @return  true = column may contain null (with some uncertainty);
-	 * 		false= definitely no nulls allowed.
+	 * @return	true = column may contain null (with some uncertainty);
+	 *			false= definitely no nulls allowed.
 	 */
 	public boolean isNullable()
 	{
 		return _isNullable;
 	}
-	
+
 	/**
 	 * Override the isNullable field after creation.
 	 */
-	public void setIsNullable(boolean isNullable) {
+	public void setIsNullable(boolean isNullable)
+	{
 		_isNullable = isNullable;
 	}
-	
+
 	/**
 	 * Return the size of the column as known to the DB in number of characters,
 	 * For non-character fields (e.g. Integer) this will be the number of characters used
 	 * in the DB to represent the data (e.g. 4 for an Int) rather than the number of
 	 * characters (e.g. decimal digits) that the user may enter.
 	 */
-	public int getColumnSize() {
+	public int getColumnSize()
+	{
 		return _columnSize;
 	}
-	
+
 	/**
 	 * Return the number of decimal digits that may be entered into this field.
 	 */
-	public int getPrecision() {
+	public int getPrecision()
+	{
 		return _precision;
 	}
-	
+
 	/**
 	 * Return the number of decimal digits to the right of the decimal point.
 	 */
-	public int getScale() {
+	public int getScale()
+	{
 		return _scale;
 	}
-	
+
 	/**
 	 * Return the flag for whether this column is signed or unsigned.
 	 */
-	public boolean isSigned() {
+	public boolean isSigned()
+	{
 		return _isSigned;
 	}
-	
+
 	/**
 	 * Return the flag for whether this column represents currency or not.
 	 */
-	public boolean isCurrency() {
+	public boolean isCurrency()
+	{
 		return _isCurrency;
 	}
-	
+
 
 	/**
 	 * Return the class name associated with the sql data type.
 	 * When the type is unknown or cannot be edited we return
 	 * "java.lang.Object".
-	 * 
+	 *
 	 * @return	The java class name for the data type
 	 */
 	public String getClassName()
 	{
 		return CellComponentFactory.getClassName(this);
 	}
-
 
 	/**
 	 * Private initializer method for ctors. If the display width
@@ -250,13 +253,13 @@ public class ColumnDisplayDefinition
 	 * @param	sqlType			Type of data (from java.sql.Types).
 	 */
 	private void init(int displayWidth, String fullTableColumnName, String label,
-		int sqlType, String sqlTypeName,
-		boolean isNullable, int columnSize, int precision, int scale,
-		boolean isSigned, boolean isCurrency)
+						int sqlType, String sqlTypeName,
+						boolean isNullable, int columnSize, int precision,
+						int scale, boolean isSigned, boolean isCurrency)
 	{
 		if (label == null)
 		{
-			label = "";	// Some drivers will give null.
+			label = " "; // Some drivers will give null.
 		}
 		_displayWidth = displayWidth;
 		if (_displayWidth < label.length())
@@ -264,7 +267,11 @@ public class ColumnDisplayDefinition
 			_displayWidth = label.length();
 		}
 		_fullTableColumnName = fullTableColumnName;
-		_label = label;
+
+		// If all columns in a table have empty strings as the headings then the
+		// row height of the label row is zero. We dont want this.
+		_label = label.length() > 0 ? label : " ";
+
 		_sqlType = sqlType;
 		_sqlTypeName = sqlTypeName;
 		_isNullable = isNullable;
@@ -275,4 +282,3 @@ public class ColumnDisplayDefinition
 		_isCurrency = isCurrency;
 	}
 }
-
