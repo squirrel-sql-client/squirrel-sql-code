@@ -90,11 +90,14 @@ public final class XMLBeanWriter {
 		IXMLElement elem = null;
 		BeanInfo info = null;
 		try {
-			info = Introspector.getBeanInfo(bean.getClass(), Object.class);
+			if (bean != null) {
+				info = Introspector.getBeanInfo(bean.getClass(), Object.class);
+			}
 //			info = Introspector.getBeanInfo(bean.getClass(), Introspector.USE_ALL_BEANINFO);
 		} catch (IntrospectionException ex) {
 			throw new XMLException(ex);
 		}
+		elem = new XMLElement(name != null ? name : XMLConstants.BEAN_ELEMENT_NAME);
 		if (info != null) {
 			if (bean instanceof IXMLAboutToBeWritten) {
 				((IXMLAboutToBeWritten)bean).aboutToBeWritten();
