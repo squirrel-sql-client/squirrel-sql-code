@@ -75,7 +75,7 @@ public class SessionSheet extends BaseSheet {
 
 	private MainPanel _mainTabPane;
 	private JSplitPane _msgSplit;
-	private StatusBar _statusBar = new StatusBar(true);
+	private StatusBar _statusBar = new StatusBar();
 
 	private boolean _hasBeenVisible;
 
@@ -107,7 +107,6 @@ public class SessionSheet extends BaseSheet {
 		_mainTabPane.sessionClosing(_session);
 		_session.getApplication().getPluginManager().sessionEnding(_session);
 		closeConnection();
-		_statusBar.showClock(false);
 		super.dispose();
 	}
 

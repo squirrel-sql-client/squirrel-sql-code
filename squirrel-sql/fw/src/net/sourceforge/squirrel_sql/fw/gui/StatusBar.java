@@ -32,15 +32,11 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
 /**
- * This is a statusbar component with a text control for messages and
- * optionally the current time.
+ * This is a statusbar component with a text control for messages.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class StatusBar extends JPanel {
-	/** If <TT>true</TT> the current time should be shown. */
-	private boolean _showClock;
-
 	/**
 	 * Message to display if there is no msg to display. Defaults to a
 	 * blank string.
@@ -50,30 +46,15 @@ public class StatusBar extends JPanel {
 	/** Label showing the message in the statusbar. */
 	private JLabel _textLbl = new MyLabel();
 
-	/** Label showing the time. */
-	private JLabel _clockLbl;
-
 	/** Font for controls. */
 	private Font _font;
 
-	/** This is the task that updates the time every second. */
-	private ClockTask _clockTask;
-
 	/**
-	 * Default ctor. Doesn't show time in status bar.
+	 * Default ctor.
 	 */
 	public StatusBar() {
-		this(false);
-	}
-
-	/**
-	 * Ctor specifying whether time should be displayed.
-	 * 
-	 * @param	showClock	If <TT>true</TT> time should be displayed.
-	 */
-	public StatusBar(boolean showClock) {
-		super();
-		createUserInterface(showClock);
+		super(new java.awt.BorderLayout());
+		createUserInterface();
 	}
 
 	/**
@@ -92,39 +73,6 @@ public class StatusBar extends JPanel {
 		if (_textLbl != null) {
 			_textLbl.setFont(font);
 		}
-		if (_clockLbl != null) {
-			_clockLbl.setFont(font);
-		}
-	}
- 
-	/**
-	 * Show/hide the time.
-	 * 
-	 * @param	value	If <TT>true</TT> time should be displayed.
-	 */
-	public synchronized void showClock(boolean value) {
-		if (value != _showClock) {
-			if (value) {
-				_clockLbl = new MyLabel();
-				//Font old = _clockLbl.getFont();
-				//Font nw = new Font(old.getName(),old.getStyle(),10);
-				//_clockLbl.setFont(nw);
-				_clockLbl.setFont(_font);
-
-				add(_clockLbl, new ClockConstraints());
-				startClockThread();
-			} else {
-				stopClockThread();
-			}
-			_showClock = value;
-		}
-	}
-
-	/**
-	 * @return	<TT>true</TT> if clock is showing else <TT>false</TT>.
-	 */
-	public boolean isClockShowing() {
-		return _showClock;
 	}
 
 	/**
@@ -160,79 +108,11 @@ public class StatusBar extends JPanel {
 		}
 	}
 
-	private void createUserInterface(boolean showClock) {
-		//Font old = _textLbl.getFont();
-		//Font nw = new Font(old.getName(),old.getStyle(),10);
-		//_textLbl.setFont(nw);
+	private void createUserInterface() {
 		_textLbl.setFont(_font);
-		setLayout(new GridBagLayout());
-		add(_textLbl, new TextConstraints());
-		showClock(showClock);
+//		setLayout(new GridBagLayout());
+		add(_textLbl, java.awt.BorderLayout.CENTER);//, new TextConstraints());
 		clearText();
-	}
-
-	private synchronized void startClockThread() {
-		if (_clockTask == null) {
-			_clockTask = new ClockTask(this);
-			new Thread(_clockTask).start();
-		}
-	}
-
-	private synchronized void stopClockThread() {
-		_clockTask.stop();
-		_clockTask = null;
-	}
-
-	private synchronized void setTime(Date time) {
-		DateFormat fmt = DateFormat.getTimeInstance(DateFormat.LONG);
-		_clockLbl.setText(fmt.format(time));
-	}
-
-	private static class ClockTask implements Runnable {
-		private boolean _stop;
-		private StatusBar _bar;
-
-		ClockTask(StatusBar bar) {
-			super();
-			_bar = bar;
-		}
-
-		synchronized void stop() {
-			_stop = true;
-		}
-
-		public void run() {
-			for(;;) {
-				try {
-					Thread.currentThread().sleep(1000); // 1 second
-				} catch(InterruptedException ex) {
-					return;
-				}
-				if (_stop) {
-					try {
-						SwingUtilities.invokeAndWait(new Runnable() {
-							public void run() {
-								_bar.remove(_bar._clockLbl);
-								_bar._clockLbl = null;
-								_bar.validate();
-							}
-						});
-						Thread.yield();
-					} catch(Exception ignore) {
-					}
-					break;
-				}
-				try {
-					SwingUtilities.invokeAndWait(new Runnable() {
-						public void run() {
-							_bar.setTime(Calendar.getInstance().getTime());
-						}
-					});
-					Thread.yield();
-				} catch(Exception ignore) {
-				}
-			}
-		}
 	}
 
 	private static class MyLabel extends JLabel {
@@ -244,7 +124,7 @@ public class StatusBar extends JPanel {
 		}
 	}
 
-	private static abstract class BaseConstraints extends GridBagConstraints {
+/*	private static abstract class BaseConstraints extends GridBagConstraints {
 		BaseConstraints() {
 			super();
 			insets = new Insets(1, 1, 1, 1);
@@ -264,14 +144,5 @@ public class StatusBar extends JPanel {
 			weightx = 1.0;
 		}
 	}
-
-	private static final class ClockConstraints extends BaseConstraints {
-		ClockConstraints() {
-			super();
-			gridx = 1;
-			fill = GridBagConstraints.NONE;
-			weightx = 0.0;
-		}
-	}
-
+*/
 }

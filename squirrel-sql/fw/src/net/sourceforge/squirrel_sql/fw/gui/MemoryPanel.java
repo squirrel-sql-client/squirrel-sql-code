@@ -22,6 +22,7 @@ import java.awt.FontMetrics;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
 
 import javax.swing.JLabel;
 import javax.swing.Timer;
@@ -38,6 +39,9 @@ public class MemoryPanel extends JLabel implements ActionListener {
 	/** Timer that updates memory status. */
 	private Timer _timer;
 
+	/** Formatter used to format memory size. */
+	private DecimalFormat _fmt = new DecimalFormat("##0.0");
+
 	/**
 	 * Default ctor.
 	 */
@@ -50,6 +54,7 @@ public class MemoryPanel extends JLabel implements ActionListener {
 	 */
 	public void addNotify() {
 		super.addNotify();
+		updateMemoryStatus();
 		ToolTipManager.sharedInstance().registerComponent(this);
 		_timer = new Timer(2000, this);
 		_timer.start();
@@ -73,14 +78,7 @@ public class MemoryPanel extends JLabel implements ActionListener {
 	 * @param	evt		The current event.
 	 */
 	public void actionPerformed(ActionEvent evt) {
-		final Runtime rt = Runtime.getRuntime();
-		final long totalMemory = rt.totalMemory() / (1024 * 1024);
-		final long freeMemory = rt.freeMemory() / (1024 * 1024);
-		final long usedMemory = totalMemory - freeMemory;
-		StringBuffer buf = new StringBuffer();
-		buf.append(usedMemory).append("MB/").append(totalMemory)
-			.append("MB");
-		setText(buf.toString());
+		updateMemoryStatus();
 	}
 
 	/**
@@ -90,13 +88,13 @@ public class MemoryPanel extends JLabel implements ActionListener {
 	 */
 	public String getToolTipText() {
 		final Runtime rt = Runtime.getRuntime();
-		final long totalMemory = rt.totalMemory() / (1024 * 1024);
-		final long freeMemory = rt.freeMemory() / (1024 * 1024);
+		final long totalMemory = rt.totalMemory() / 1024;
+		final long freeMemory = rt.freeMemory() / 1024;
 		final long usedMemory = totalMemory - freeMemory;
 		StringBuffer buf = new StringBuffer();
-		buf.append(usedMemory).append("MB used from ")
-			.append(totalMemory).append("MB total leaving ")
-			.append(freeMemory).append(" MB free");
+		buf.append(usedMemory).append("KB used from ")
+			.append(totalMemory).append("KB total leaving ")
+			.append(freeMemory).append(" KB free");
 		return buf.toString();
 	}
 
@@ -108,7 +106,7 @@ public class MemoryPanel extends JLabel implements ActionListener {
 	public Dimension getPreferredSize() {
 		Dimension dim = super.getPreferredSize();
 		FontMetrics fm = getFontMetrics(getFont());
-		dim.width = fm.stringWidth("99MB/99MB");
+		dim.width = fm.stringWidth("99.9MB/99.9MB");
 		Border border = getBorder();
 		if (border != null) {
 			Insets ins = border.getBorderInsets(this);
@@ -122,4 +120,34 @@ public class MemoryPanel extends JLabel implements ActionListener {
 		}
 		return dim;
 	}
+
+	/**
+	 * Update component with the current memory status.
+	 * 
+	 * @param	evt		The current event.
+	 */
+	private void updateMemoryStatus() {
+		final Runtime rt = Runtime.getRuntime();
+		final long totalMemory = rt.totalMemory();// / (1024 * 1024);
+		final long freeMemory = rt.freeMemory();// / (1024 * 1024);
+		final long usedMemory = totalMemory - freeMemory;
+		StringBuffer buf = new StringBuffer();
+		buf.append(formatSize(usedMemory)).append("/")
+			.append(formatSize(totalMemory));
+		setText(buf.toString());
+	}
+
+	/**
+	 * Format the passed number of bytes for display.
+	 * 
+	 * @param	nbrBytes	Nbr of bytes to be displayed.
+	 * 
+	 * @return	the formatted version of <TT>nbrBytes</TT>.
+	 */
+	private String formatSize(long nbrBytes) {
+		double size = nbrBytes;
+		double val = size / (1024 * 1024);
+		return _fmt.format(val).concat("MB");
+	}
+
 }

@@ -94,7 +94,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 			String DEBUG_JDBC = "JDBC Debug (can slow application)";
 			String LOGIN_TIMEOUT = "Login Timeout (Seconds):";
 			String SHOW_CONTENTS = "Show Window Contents While Dragging";
-			String SHOW_MAIN_STATUS_BAR = "Show Main Status Bar";
+			String SHOW_MAIN_STATUS_BAR = "Show Main Window Status Bar";
 			String SHOW_TOOLTIPS = "Show Tooltips";
 			String TAB_HINT = "General";
 			String TAB_TITLE = "General";
