@@ -1,5 +1,6 @@
 Bai Yuhong
 Bruno Haas
+Eliyahu Hershfeld
 Dave Birch
 David MacLean
 Dennis Lundberg
@@ -13,7 +14,6 @@ John Munsch
 Johnathan James
 Karsten Lentzsch
 Ken Arway
-KosherJava
 Lynn Pye
 Mike Daughton
 Maury Hammel
