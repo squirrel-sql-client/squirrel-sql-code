@@ -30,7 +30,9 @@ import java.util.List;
 import java.util.ListIterator;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JEditorPane;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
@@ -48,12 +50,13 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 /**
  * This sheet shows the contents of a HTML file.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class HtmlViewerSheet extends BaseSheet
+public class HtmlViewerSheet extends JFrame
 {
 	/** Logger for this class. */
 	private final static ILogger s_log =
@@ -91,7 +94,7 @@ public class HtmlViewerSheet extends BaseSheet
   	public HtmlViewerSheet(IApplication app, String title, URL url)
 		throws IOException
 	{
-		super(title, true, true, true, true);
+		super(title);//, true, true, true, true);
 		if (app == null)
 		{
 			throw new IllegalArgumentException("IApplication == null");
@@ -178,11 +181,18 @@ public class HtmlViewerSheet extends BaseSheet
 	 */
 	private void createGUI()
 	{
-		GUIUtils.makeToolWindow(this, true);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//		GUIUtils.makeToolWindow(this, true);
 		Container contentPane = getContentPane();
 		contentPane.setLayout(new BorderLayout());
 		contentPane.add(createMainPanel(), BorderLayout.CENTER);
 		contentPane.add(createToolBar(), BorderLayout.NORTH);
+		final SquirrelResources rsrc = _app.getResources();
+		final ImageIcon icon = rsrc.getIcon(SquirrelResources.IImageNames.APPLICATION_ICON);
+		if (icon != null)
+		{
+			setIconImage(icon.getImage());
+		}
 		pack();
 		SwingUtilities.invokeLater(new Runnable()
 		{

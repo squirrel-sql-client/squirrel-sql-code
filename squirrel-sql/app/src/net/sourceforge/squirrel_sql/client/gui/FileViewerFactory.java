@@ -17,9 +17,12 @@ package net.sourceforge.squirrel_sql.client.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.swing.event.InternalFrameAdapter;
@@ -46,7 +49,7 @@ public class FileViewerFactory
 	 * Collection of <TT>HtmlViewer</TT> objects keyed by the URL they are
 	 * displaying.
 	 */
-	private Map _sheets = new HashMap();
+	private final HashMap _sheets = new HashMap();
 
 	/** Listener used to cleanup instances of viewers after they are closed. */
 	private MyInternalFrameListener _lis = new MyInternalFrameListener();
@@ -97,30 +100,48 @@ public class FileViewerFactory
 		{
 			viewer = new HtmlViewerSheet(parent.getApplication(),
 											url.toString(), url);
-			viewer.addInternalFrameListener(_lis);
+//			viewer.addInternalFrameListener(_lis);
+			viewer.addWindowListener(_lis);
 			viewer.setSize(600, 400);
-			parent.addInternalFrame(viewer, true, null);
-			GUIUtils.centerWithinDesktop(viewer);
+//			parent.addInternalFrame(viewer, true, null);
+//			GUIUtils.centerWithinDesktop(viewer);
+			GUIUtils.centerWithinParent(viewer);
 			_sheets.put(url.toString(), viewer);
 		}
 		return viewer;
 	}
 
+	public synchronized void closeAllViewers()
+	{
+		final Map viewers = (Map)_sheets.clone();
+		final Iterator it = viewers.values().iterator();
+		while (it.hasNext())
+		{
+			final HtmlViewerSheet v = (HtmlViewerSheet)it.next();
+			removeViewer(v);
+			v.dispose();
+		}
+	}
+
 	private synchronized void removeViewer(HtmlViewerSheet viewer)
 	{
-		viewer.removeInternalFrameListener(_lis);
+		//viewer.removeInternalFrameListener(_lis);
+		viewer.removeWindowListener(_lis);
 		_sheets.remove(viewer.getURL().toString());
 	}
 
-	private final class MyInternalFrameListener extends InternalFrameAdapter
+//	private final class MyInternalFrameListener extends InternalFrameAdapter
+	private final class MyInternalFrameListener extends WindowAdapter
 	{
 		/**
 		 * Viewer has been closed so allow it to be garbage collected.
 		 */
-		public void internalFrameClosed(InternalFrameEvent evt)
+//		public void internalFrameClosed(InternalFrameEvent evt)
+		public void windowClosed(WindowEvent evt)
 		{
-			removeViewer((HtmlViewerSheet)evt.getInternalFrame());
-			super.internalFrameClosed(evt);
+//			removeViewer((HtmlViewerSheet)evt.getInternalFrame());
+			removeViewer((HtmlViewerSheet)evt.getWindow());
+//			super.internalFrameClosed(evt);
 		}
 	}
 }

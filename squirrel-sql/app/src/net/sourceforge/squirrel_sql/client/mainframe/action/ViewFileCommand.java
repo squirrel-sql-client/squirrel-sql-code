@@ -88,6 +88,7 @@ public class ViewFileCommand implements ICommand
 			HtmlViewerSheet viewer = factory.getViewer(_app.getMainFrame(), url);
 			viewer.setVisible(true);
 			viewer.toFront();
+			viewer.requestFocus();
 		}
 		catch (IOException ex)
 		{
