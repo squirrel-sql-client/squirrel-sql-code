@@ -271,13 +271,13 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
                             int iPrev = 0;
                             StringBuffer sb = new StringBuffer();
                             sb.append(sResult.substring(iPrev, iIndex));
-                            sb.append('\\');
+                            sb.append('\'');
                             iPrev = iIndex;
                             iIndex = sResult.indexOf("'", iPrev + 1);
                             while (iIndex != -1)
                             {
                                 sb.append(sResult.substring(iPrev, iIndex));
-                                sb.append('\\');
+                                sb.append('\'');
                                 iPrev = iIndex;
                                 iIndex = sResult.indexOf("'", iPrev + 1);
                             }
