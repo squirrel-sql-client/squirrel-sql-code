@@ -31,26 +31,35 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultDesktopManager;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import javax.swing.JDesktopPane;
+import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-import net.sourceforge.squirrel_sql.fw.gui.BaseMDIParentFrame;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
+import net.sourceforge.squirrel_sql.fw.gui.CascadeInternalFramePositioner;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.ScrollableDesktopPane;
+import net.sourceforge.squirrel_sql.fw.gui.IInternalFramePositioner;
 import net.sourceforge.squirrel_sql.fw.gui.WindowState;
+import net.sourceforge.squirrel_sql.fw.gui.action.SelectInternalFrameAction;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.gui.ScrollableDesktopPane;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewAliasesAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewDriversAction;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
@@ -60,7 +69,7 @@ import net.sourceforge.squirrel_sql.client.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 
-public class MainFrame extends BaseMDIParentFrame
+public class MainFrame extends JFrame //BaseMDIParentFrame
 {
 	public interface IMenuIDs extends MainFrameMenuBar.IMenuIDs
 	{
@@ -94,6 +103,12 @@ public class MainFrame extends BaseMDIParentFrame
 
 	// Removed as part of JASON:
 //	private JInternalFrame _activeInternalFrame;
+	private JDesktopPane _desktop;
+
+	private final IInternalFramePositioner _internalFramePositioner = new CascadeInternalFramePositioner();
+	private Map _children = new HashMap();
+
+	private MyInternalFrameListener _childListener = new MyInternalFrameListener();
 
 	/**
 	 * Ctor.
@@ -106,12 +121,13 @@ public class MainFrame extends BaseMDIParentFrame
 	 */
 	public MainFrame(IApplication app)
 	{
-		super(Version.getVersion(), new ScrollableDesktopPane());
+		super(Version.getVersion());//, new ScrollableDesktopPane());
 		if (app == null)
 		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
 		_app = app;
+		_desktop = new ScrollableDesktopPane();
 		createUserInterface();
 		_app.getSessionManager().addSessionListener(new MainFrameSessionListener());
 		preferencesHaveChanged(null); // Initial load of prefs.
@@ -160,10 +176,31 @@ public class MainFrame extends BaseMDIParentFrame
 		return _app;
 	}
 
+	public JDesktopPane getDesktopPane()
+	{
+		return _desktop;
+	}
+
+	/**
+	 * Add the passed internal frame to this MDI frame.
+	 * Calls <TT>addInternalFrame(child, createMenuItem, null)</TT>.
+	 *
+	 * @param	child			The internal frame to be added.
+	 * @param	createMenuItem	If <TT>true</TT> add an item to the MDI
+	 * 							Window menu to select the passed internal frame.
+	 *
+	 * @throws	IllegalArgumentException if null <TT>JInternalFrame</TT> passed.
+	 */
+	public void addInternalFrame(JInternalFrame child, boolean createMenuItem)
+	{
+		addInternalFrame(child, createMenuItem, null);
+	}
+
 	public void addInternalFrame(JInternalFrame child, boolean addToWindowMenu,
 									Action action)
 	{
-		super.addInternalFrame(child, addToWindowMenu, action);
+//		super.addInternalFrame(child, addToWindowMenu, action);
+		oldAddInternalFrame(child, addToWindowMenu, action);
 		s_log.debug("Adding " + child.getClass().getName() + " to Main Frame");
 		JInternalFrame[] frames = GUIUtils.getOpenNonToolWindows(getDesktopPane().getAllFrames());
 		_app.getActionCollection().internalFrameOpenedOrClosed(frames.length);
@@ -194,7 +231,7 @@ public class MainFrame extends BaseMDIParentFrame
 
 	public void internalFrameClosed(JInternalFrame child)
 	{
-		super.internalFrameClosed(child);
+		oldInternalFrameClosed(child);
 		s_log.debug("Removing " + child.getClass().getName() + " from Main Frame");
 		JInternalFrame[] frames =
 			GUIUtils.getOpenNonToolWindows(getDesktopPane().getAllFrames());
@@ -524,6 +561,83 @@ public class MainFrame extends BaseMDIParentFrame
 		prefs.setMainFrameWindowState(new MainFrameWindowState(this));
 	}
 
+	/**
+	 * Add the passed internal frame to this MDI frame. If it is not a tool
+	 * window <TT>GUIUtils.isToolWindow()</TT> then position it.
+	 *
+	 * @param	child			The internal frame to be added.
+	 * @param	createMenuItem	If <TT>true</TT> add an item to the MDI
+	 * 							Window menu to select the passed internal frame.
+	 * @param	action			Action to be added to this MDI frames Window menu to
+	 *							select this internal frame. If <TT>null</TT> and
+	 *							<TT>createMenuItem</TT> is <TT>true</TT> then an
+	 * 							instance of <TT>SelectInternalFrameAction</TT>
+	 * 							will be used.
+	 *
+	 * @throws	IllegalArgumentException if null <TT>JInternalFrame</TT> passed.
+	 */
+	private void oldAddInternalFrame(JInternalFrame child, boolean createMenuItem,
+									Action action)
+	{
+		if (child == null)
+		{
+			throw new IllegalArgumentException("Null JInternalFrame added");
+		}
+		child.setTitle(createTitleForChild(child));
+		_desktop.add(child);
+		if (!GUIUtils.isToolWindow(child))
+		{
+			positionNewInternalFrame(child);
+		}
+
+		JMenuItem menuItem = null;
+		if (createMenuItem)
+		{
+			final JMenu menu = getWindowsMenu();
+			if (menu != null)
+			{
+				if (action == null)
+				{
+					action = new SelectInternalFrameAction(child);
+				}
+				menuItem = menu.add(action);
+			}
+		}
+		_children.put(child.getTitle(), new ChildInfo(child, menuItem));
+		child.addInternalFrameListener(_childListener);
+	}
+
+	private void oldInternalFrameClosed(JInternalFrame child)
+	{
+		child.removeInternalFrameListener(_childListener);
+		ChildInfo ci = (ChildInfo) _children.remove(child.getTitle());
+		if (ci != null && ci._menuItem != null)
+		{
+			final JMenu menu = getWindowsMenu();
+			if (menu != null)
+			{
+				menu.remove(ci._menuItem);
+			}
+		}
+	}
+
+	private String createTitleForChild(JInternalFrame child)
+	{
+		String title = child.getTitle();
+		String origTitle = title;
+		int index = 0;
+		while (_children.get(title) != null)
+		{
+			title = origTitle + "(" + ++index + ")";
+		}
+		return title;
+	}
+
+	private void positionNewInternalFrame(JInternalFrame child)
+	{
+		_internalFramePositioner.positionInternalFrame(child);
+	}
+
 	private class MyDesktopManager extends DefaultDesktopManager
 	{
 		public void activateFrame(JInternalFrame f)
@@ -565,4 +679,26 @@ public class MainFrame extends BaseMDIParentFrame
 			getSessionMenu().setEnabled(false);
 		}
 	}
+
+	private class MyInternalFrameListener extends InternalFrameAdapter
+	{
+		public void internalFrameClosed(InternalFrameEvent evt)
+		{
+			MainFrame.this.internalFrameClosed((JInternalFrame) evt.getSource());
+		}
+	}
+
+	private static class ChildInfo
+	{
+		private JInternalFrame _child;
+		private JMenuItem _menuItem;
+
+		ChildInfo(JInternalFrame child, JMenuItem menuItem)
+		{
+			super();
+			_child = child;
+			_menuItem = menuItem;
+		}
+	}
+
 }
