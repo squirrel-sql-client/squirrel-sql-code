@@ -176,7 +176,10 @@ public class UserScriptPlugin extends DefaultSessionPlugin
    public boolean sessionStarted(ISession session)
    {
       ActionCollection coll = getApplication().getActionCollection();
-      IObjectTreeAPI api = session.getObjectTreeAPI(this);
+
+      //IObjectTreeAPI api = session.getObjectTreeAPI(this);
+      IObjectTreeAPI api = FrameWorkAcessor.getObjectTreeAPI(session, this);
+
       api.addToPopup(DatabaseObjectType.TABLE, coll.get(UserScriptAction.class));
       api.addToPopup(DatabaseObjectType.PROCEDURE, coll.get(UserScriptAction.class));
       api.addToPopup(DatabaseObjectType.SESSION, coll.get(UserScriptAction.class));
