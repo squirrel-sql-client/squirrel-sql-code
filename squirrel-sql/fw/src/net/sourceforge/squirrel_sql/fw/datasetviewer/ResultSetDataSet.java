@@ -31,6 +31,10 @@ public class ResultSetDataSet implements IDataSet {
     private DataSetDefinition _dataSetDefinition;
     private Object[] _row;
 
+    public ResultSetDataSet() throws DataSetException {
+        this(null, null);
+    }
+
     public ResultSetDataSet(ResultSet rs) throws DataSetException {
         this(rs, null);
     }
@@ -38,21 +42,28 @@ public class ResultSetDataSet implements IDataSet {
     public ResultSetDataSet(ResultSet rs, int[] columnIndices)
             throws IllegalArgumentException, DataSetException {
         super();
-        if (rs == null) {
-            throw new IllegalArgumentException("Null ResultSet passed");
-        }
+        setResultSet(rs, columnIndices);
+    }
+
+    public void setResultSet(ResultSet rs) throws DataSetException {
+        setResultSet(rs, null);
+    }
+
+    public void setResultSet(ResultSet rs, int[] columnIndices) throws DataSetException {
         _rs = rs;
         if (columnIndices != null && columnIndices.length == 0) {
             columnIndices = null;
         }
         _columnIndices = columnIndices;
-        try {
-            ResultSetMetaData md = _rs.getMetaData();
-            _columnCount = columnIndices != null ? columnIndices.length : md.getColumnCount();
-            _dataSetDefinition = new DataSetDefinition(createColumnDefinitions(md, columnIndices));
-            _row = new Object[_columnCount];
-        } catch (SQLException ex) {
-            throw new DataSetException(ex);
+        if (rs != null) {
+            try {
+                ResultSetMetaData md = _rs.getMetaData();
+                _columnCount = columnIndices != null ? columnIndices.length : md.getColumnCount();
+                _dataSetDefinition = new DataSetDefinition(createColumnDefinitions(md, columnIndices));
+                _row = new Object[_columnCount];
+            } catch (SQLException ex) {
+                throw new DataSetException(ex);
+            }
         }
     }
 
