@@ -100,6 +100,9 @@ public class SessionSheet extends JInternalFrame {
 
 	private ISession _session;
 
+	/** Listener to the sessions properties. */
+	PropertyChangeListener _propsListener;
+
 	private JTabbedPane _tabPane = new JTabbedPane();
 	private SQLPanel _sqlPnl;
 	private ObjectsPanel _objectsPnl;
@@ -117,7 +120,7 @@ public class SessionSheet extends JInternalFrame {
 
 		propertiesHaveChanged(null);
 
-		session.getProperties().addPropertyChangeListener(new PropertyChangeListener() {
+		session.getProperties().addPropertyChangeListener(_propsListener = new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
 				propertiesHaveChanged(evt.getPropertyName());
 			}
@@ -128,6 +131,10 @@ public class SessionSheet extends JInternalFrame {
 	 * Close this window.
 	 */
 	public void dispose() {
+		if (_propsListener != null) {
+			_session.getProperties().removePropertyChangeListener(_propsListener);
+			_propsListener = null;
+		}
 		_session.getApplication().getPluginManager().sessionEnding(_session);
 		closeConnection();
 		super.dispose();
