@@ -268,6 +268,7 @@ public class AboutBoxDialog extends JDialog {
 			}
 
 			setViewportView(credits);
+			credits.setCaretPosition(0);
 		}
 
 	}
