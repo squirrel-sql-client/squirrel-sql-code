@@ -18,13 +18,18 @@ package net.sourceforge.squirrel_sql.plugins.laf;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.awt.Frame;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.Properties;
 
 import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
@@ -39,7 +44,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-
+import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 /**
  * Register of Look and Feels.
  *
@@ -155,30 +160,14 @@ class LAFRegister
 		_plugin = plugin;
 
 		// Save the current UI defaults.
-		_origUIDefaults = (UIDefaults) UIManager.getDefaults().clone();
+		_origUIDefaults = (UIDefaults)UIManager.getDefaults().clone();
 
 		installLookAndFeels();
+		installLookAndFeelControllers(plugin);
 
 		try
 		{
-			_lafControllers.put(SkinLookAndFeelController.SKINNABLE_LAF_CLASS_NAME, new SkinLookAndFeelController(plugin));
-		}
-		catch (IOException ex)
-		{
-			s_log.error("Error storing SkinLookAndFeelController", ex);
-		}
-		try
-		{
-			_lafControllers.put(OyoahaLookAndFeelController.OA_LAF_CLASS_NAME, new OyoahaLookAndFeelController(plugin));
-		}
-		catch (IOException ex)
-		{
-			s_log.error("Error storing OyoahaLookAndFeelController", ex);
-		}
-
-		try
-		{
-			setLookAndFeel();
+			setLookAndFeel(true);
 		}
 		catch (Throwable ex)
 		{
@@ -250,12 +239,9 @@ class LAFRegister
 	/**
 	 * Set the current Look and Feel to that specified in the app preferences.
 	 */
-	void setLookAndFeel()
-		throws
-			ClassNotFoundException,
-			IllegalAccessException,
-			InstantiationException,
-			UnsupportedLookAndFeelException
+	void setLookAndFeel(boolean force)
+		throws ClassNotFoundException, IllegalAccessException,
+				InstantiationException, UnsupportedLookAndFeelException
 	{
 		final LAFPreferences prefs = _plugin.getLAFPreferences();
 		final String lafClassName = prefs.getLookAndFeelClassName();
@@ -271,24 +257,33 @@ class LAFRegister
 			lafClass = Class.forName(lafClassName);
 		}
 
-		// Get the Look and Feel object.
+		// Get the new Look and Feel object.
 		final LookAndFeel laf = (LookAndFeel)lafClass.newInstance();
 
-		ILookAndFeelController lafCont = getLookAndFeelController(lafClassName);
-		lafCont.aboutToBeInstalled(this, laf);
-
-		// Set Look and Feel.
-		if (_lafClassLoader != null)
+		// If a different LAF to the current one has been requested then
+		// change to the requested LAF.
+		LookAndFeel curLaf = UIManager.getLookAndFeel();
+		s_log.debug(curLaf);
+		if (force || curLaf == null || !curLaf.getName().equals(laf.getName()))
 		{
-			UIManager.setLookAndFeel(laf);
-			UIManager.getLookAndFeelDefaults().put("ClassLoader", _lafClassLoader);
-		}
-		else
-		{
-			UIManager.setLookAndFeel(laf);
-		}
+			ILookAndFeelController lafCont = getLookAndFeelController(lafClassName);
+			lafCont.aboutToBeInstalled(this, laf);
+	
+			// Set Look and Feel.
+			if (_lafClassLoader != null)
+			{
+				UIManager.setLookAndFeel(laf);
+				UIManager.getLookAndFeelDefaults().put("ClassLoader", _lafClassLoader);
+			}
+			else
+			{
+				UIManager.setLookAndFeel(laf);
+			}
+	
+			lafCont.hasBeenInstalled(this, laf);
 
-		lafCont.hasBeenInstalled(this, laf);
+			updateAllFrames();
+		}
 	}
 
 	/**
@@ -353,23 +348,17 @@ class LAFRegister
 	/**
 	 * Update all open frames for the new Look and Feel info.
 	 */
-	void updateAllFrames()
+	private void updateAllFrames()
 	{
-		SwingUtilities.invokeLater(new Runnable()
+		Frame[] frames = Frame.getFrames();
+		if (frames != null)
 		{
-			public void run()
+			for (int i = 0; i < frames.length; ++i)
 			{
-				Frame[] frames = Frame.getFrames();
-				if (frames != null)
-				{
-					for (int i = 0; i < frames.length; ++i)
-					{
-						SwingUtilities.updateComponentTreeUI(frames[i]);
-						frames[i].pack();
-					}
-				}
+				SwingUtilities.updateComponentTreeUI(frames[i]);
+				frames[i].pack();
 			}
-		});
+		}
 	}
 
 	/**
@@ -377,50 +366,34 @@ class LAFRegister
 	 */
 	private void installLookAndFeels()
 	{
+		// Map of JAR file URLs containing LAFs keyed by the LAF class name.
+		final Map lafs = loadInstallProperties();
+
+
 		// Retrieve URLs of all the Look and Feel jars and store in lafUrls.
-		List lafUrls = new ArrayList();
-		File dir = _plugin.getLookAndFeelFolder();
-		if (dir.isDirectory())
+		final List lafUrls = new ArrayList();
+		for (Iterator it = lafs.values().iterator(); it.hasNext();)
 		{
-			File[] files = dir.listFiles();
-			for (int i = 0; i < files.length; ++i)
-			{
-				File jarFile = files[i];
-				String jarFileName = jarFile.getAbsolutePath();
-				if (jarFile.isFile()
-					&& (jarFileName.toLowerCase().endsWith(".zip")
-						|| jarFileName.toLowerCase().endsWith(".jar")))
-				{
-					try
-					{
-						lafUrls.add(jarFile.toURL());
-					}
-					catch (IOException ex)
-					{
-						s_log.error("Error occured reading Look and Feel jar: " + jarFileName, ex);
-					}
-				}
-			}
+			lafUrls.add(it.next());
 		}
 
 		// Create a ClassLoader for all the LAF jars. Install all Look and Feels
 		// into the UIManager.
 		try
 		{
-			_lafClassLoader = new MyURLClassLoader((URL[]) lafUrls.toArray(new URL[lafUrls.size()]));
-			Class[] lafClasses = _lafClassLoader.getAssignableClasses(LookAndFeel.class, s_log);
-			List lafNames = new ArrayList();
-			for (int i = 0; i < lafClasses.length; ++i)
+			URL[] urls = new URL[lafUrls.size()];
+			_lafClassLoader = new MyURLClassLoader((URL[]) lafUrls.toArray(urls));
+			for (Iterator it = lafs.keySet().iterator(); it.hasNext();)
 			{
-				Class lafClass = lafClasses[i];
+				String className = (String)it.next(); 
+				Class lafClass = _lafClassLoader.loadClass(className);
 				try
 				{
-					LookAndFeel laf = (LookAndFeel) lafClass.newInstance();
+					LookAndFeel laf = (LookAndFeel)lafClass.newInstance();
 					if (laf.isSupportedLookAndFeel())
 					{
 						LookAndFeelInfo info = new LookAndFeelInfo(laf.getName(), lafClass.getName());
 						UIManager.installLookAndFeel(info);
-						lafNames.add(lafClass.getName());
 					}
 				}
 				catch (Throwable th)
@@ -434,5 +407,147 @@ class LAFRegister
 			s_log.error("Error occured trying to load Look and Feel classes", th);
 		}
 
+	}
+
+	/**
+	 * Install the controllers for those LAFs that require them.
+	 * 
+	 * @param	plugin		The LAF plugin.
+	 */
+	private void installLookAndFeelControllers(LAFPlugin plugin)
+	{
+		try
+		{
+			_lafControllers.put(SkinLookAndFeelController.SKINNABLE_LAF_CLASS_NAME, new SkinLookAndFeelController(plugin));
+		}
+		catch (IOException ex)
+		{
+			s_log.error("Error storing SkinLookAndFeelController", ex);
+		}
+
+		try
+		{
+			_lafControllers.put(OyoahaLookAndFeelController.OA_LAF_CLASS_NAME, new OyoahaLookAndFeelController(plugin));
+		}
+		catch (IOException ex)
+		{
+			s_log.error("Error storing OyoahaLookAndFeelController", ex);
+		}
+
+		try
+		{
+			PlasticLookAndFeelController ctrl = new PlasticLookAndFeelController(plugin, this);
+			String[] ar = PlasticLookAndFeelController.LAF_CLASS_NAMES;
+			for (int i = 0; i < ar.length; ++i)
+			{
+				_lafControllers.put(ar[i], ctrl);
+			}
+		}
+		catch (IOException ex)
+		{
+			s_log.error("Error storing PlasticLookAndFeelController", ex);
+		}
+	}
+
+	/**
+	 * Load the installation properties and return a <TT>Map</TT>
+	 * keyed by the class name of the LAF and containing a URL to the jar file
+	 * that contains the LAF.
+	 * 
+	 * @return	Map
+	 */
+	private Map loadInstallProperties()
+	{
+		Map lafs = new HashMap();
+
+		// Directory containing the standard LAF jar files.
+		final File stdLafJarDir = _plugin.getLookAndFeelFolder();
+
+		// Load info about the standard LAFs that come with this plugin.
+		PluginResources rsrc = _plugin.getResources();
+		for (int i = 0; /* forever */; ++i)
+		{
+			try
+			{
+				String className = rsrc.getString(LAFPluginResources.IKeys.CLASSNAME + i);
+				if (className == null || className.length() == 0)
+				{
+					break;
+				} 
+				String jarName = rsrc.getString(LAFPluginResources.IKeys.JAR + i);
+				if (jarName == null || jarName.length() == 0)
+				{
+					break;
+				}
+				File file = new File(stdLafJarDir, jarName);
+				try
+				{
+					if (file.isFile() && file.exists())
+					{
+						lafs.put(className, file.toURL());
+					}
+				}
+				catch (IOException ex)
+				{
+					s_log.error("Error occured reading Look and Feel jar: " +
+							file.getAbsolutePath(), ex);
+				}
+			}
+			catch (MissingResourceException ignore)
+			{
+				// We have read in all properties.
+				break;
+			}
+		}
+
+		// Load info about any extra LAFs supplied by the user.
+		try
+		{
+			final File extraLafsDir = _plugin.getUsersExtraLAFFolder();
+			File extraFile = new File(extraLafsDir,
+									ILAFConstants.USER_EXTRA_LAFS_PROPS_FILE);
+			BufferedInputStream is = new BufferedInputStream(new FileInputStream(extraFile));
+			try
+			{
+				Properties props = new Properties();
+				props.load(is);
+				for (int i = 0; /* forever */; ++i)
+				{
+					String className = props.getProperty(LAFPluginResources.IKeys.CLASSNAME + i);
+					if (className == null || className.length() == 0)
+					{
+						break;
+					} 
+					String jarName = props.getProperty(LAFPluginResources.IKeys.JAR + i);
+					if (jarName == null || jarName.length() == 0)
+					{
+						break;
+					}
+					File file = new File(extraLafsDir, jarName);
+					try
+					{
+						if (file.isFile() && file.exists())
+						{
+							lafs.put(className, file.toURL());
+						}
+					}
+					catch (IOException ex)
+					{
+						s_log.error("Error occured reading Look and Feel jar: " +
+								file.getAbsolutePath(), ex);
+					}
+				}
+			}
+			finally
+			{
+				is.close();
+			}
+		}
+		catch (IOException ex)
+		{
+			s_log.error("Error occured loading extra LAFs property file", ex);
+		}
+
+		return lafs;
 	}
 }

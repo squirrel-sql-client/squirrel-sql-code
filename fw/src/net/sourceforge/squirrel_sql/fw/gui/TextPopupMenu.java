@@ -23,8 +23,6 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.Action;
 import javax.swing.JMenuItem;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
@@ -36,9 +34,8 @@ public class TextPopupMenu extends BasePopupMenu
 		int CUT = 0;
 		int COPY = 1;
 		int PASTE = 2;
-		int CLEAR = 3;
-		int SELECT_ALL = 4;
-		int LAST_ENTRY = 4;
+		int SELECT_ALL = 3;
+		int LAST_ENTRY = 3;
 	}
 
 	private JTextComponent _comp;
@@ -48,7 +45,6 @@ public class TextPopupMenu extends BasePopupMenu
 	private CutAction _cut = new CutAction();
 	private CopyAction _copy = new CopyAction();
 	private PasteAction _paste = new PasteAction();
-	private ClearAction _clear = new ClearAction();
 	private SelectAllAction _select = new SelectAllAction();
 
 	/**
@@ -83,8 +79,6 @@ public class TextPopupMenu extends BasePopupMenu
 		_menuItems[IOptionTypes.COPY] = add(_copy);
 		_menuItems[IOptionTypes.PASTE] = add(_paste);
 		addSeparator();
-		_menuItems[IOptionTypes.CLEAR] = add(_clear);
-		addSeparator();
 		_menuItems[IOptionTypes.SELECT_ALL] = add(_select);
 	}
 
@@ -118,29 +112,6 @@ public class TextPopupMenu extends BasePopupMenu
 	protected JTextComponent getTextComponent()
 	{
 		return _comp;
-	}
-
-	protected class ClearAction extends BaseAction
-	{
-		protected ClearAction()
-		{
-			super("Clear");
-		}
-
-		public void actionPerformed(ActionEvent evt)
-		{
-			if (_comp != null)
-			{
-				try
-				{
-					Document doc = _comp.getDocument();
-					doc.remove(0, doc.getLength());
-				}
-				catch (BadLocationException ignore)
-				{
-				}
-			}
-		}
 	}
 
 	protected class CutAction extends BaseAction

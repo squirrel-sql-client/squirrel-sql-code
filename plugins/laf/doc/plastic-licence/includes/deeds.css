@@ -1,0 +1,21 @@
+BODY {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; FONT-SIZE: 11px; PADDING-BOTTOM: 0px; MARGIN: 0px; COLOR: black; PADDING-TOP: 0px; FONT-FAMILY: verdana, arial, helvetica, sans-serif; BACKGROUND-COLOR: white; TEXT-ALIGN: center
+}
+#deed {
+	BORDER-RIGHT: #333 3px groove; PADDING-RIGHT: 15px; BORDER-TOP: #333 3px groove; PADDING-LEFT: 15px; BACKGROUND: #ffc; PADDING-BOTTOM: 15px; MARGIN: 20px auto; BORDER-LEFT: #333 3px groove; WIDTH: 584px; PADDING-TOP: 15px; BORDER-BOTTOM: #333 3px groove; TEXT-ALIGN: left; voice-family: inherit
+}
+UNKNOWN {
+	WIDTH: 584px
+}
+.fineprint {
+	BORDER-RIGHT: black 1px solid; PADDING-RIGHT: 8px; BORDER-TOP: black 1px solid; PADDING-LEFT: 8px; BACKGROUND: #ffffff; PADDING-BOTTOM: 8px; BORDER-LEFT: black 1px solid; PADDING-TOP: 8px; BORDER-BOTTOM: black 1px solid; TEXT-ALIGN: justify
+}
+.text {
+	FONT-SIZE: 11px; MARGIN-LEFT: 20px; LINE-HEIGHT: 140%; MARGIN-RIGHT: 20px; FONT-FAMILY: verdana, sans-serif; TEXT-ALIGN: left
+}
+LI {
+	FONT-SIZE: 11px; MARGIN-LEFT: 20px; LINE-HEIGHT: 140%; MARGIN-RIGHT: 20px; FONT-FAMILY: verdana, sans-serif; TEXT-ALIGN: left
+}
+.tiny {
+	FONT-SIZE: 11px; MARGIN-BOTTOM: 10px; FONT-FAMILY: verdana, sans-serif
+}

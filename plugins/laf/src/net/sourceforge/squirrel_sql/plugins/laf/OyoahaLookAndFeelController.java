@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.laf;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -39,7 +39,6 @@ import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
-
 /**
  * Behaviour for the Oyoaha Look and Feel.
  *
@@ -99,8 +98,10 @@ public class OyoahaLookAndFeelController extends DefaultLookAndFeelController
 	 * This Look and Feel is about to be installed. Load the selected
 	 * themepack.
 	 */
-	public void aboutToBeInstalled(LAFRegister lafRegister, LookAndFeel laf) {
-		try {
+	public void aboutToBeInstalled(LAFRegister lafRegister, LookAndFeel laf)
+	{
+		try
+		{
 			final String dir = _prefs.getThemePackDirectory();
 			final String name = _prefs.getThemePackName();
 			if (dir != null && name != null)
@@ -110,12 +111,16 @@ public class OyoahaLookAndFeelController extends DefaultLookAndFeelController
 				{
 					ClassLoader cl = lafRegister.getLookAndFeelClassLoader();
 					Class oyLafClass = cl.loadClass(OA_LAF_CLASS_NAME);
-					Method setTheme = oyLafClass.getMethod("setOyoahaTheme", new Class[] {File.class});
+					Method setTheme =
+						oyLafClass.getMethod("setOyoahaTheme",
+									new Class[] { File.class });
 					Object[] parms = new Object[] { themePackFile };
 					setTheme.invoke(laf, parms);
 				}
 			}
-		} catch (Throwable th) {
+		}
+		catch (Throwable th)
+		{
 			s_log.error("Error loading an Oyoaha theme", th);
 		}
 
@@ -161,8 +166,8 @@ public class OyoahaLookAndFeelController extends DefaultLookAndFeelController
 		private void createUserInterface()
 		{
 			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.anchor = gbc.WEST;
-			gbc.fill = gbc.HORIZONTAL;
+			gbc.anchor = GridBagConstraints.WEST;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
 
 			gbc.gridx = 0;
@@ -191,15 +196,21 @@ public class OyoahaLookAndFeelController extends DefaultLookAndFeelController
 			final FileExtensionFilter filter = new FileExtensionFilter("OTM files", new String[] {".otm"});
 			_themePackCmb.load(new File(themePackDir), filter);
 			_themePackCmb.setSelectedItem(_ctrl._prefs.getThemePackName());
+			if (_themePackCmb.getSelectedIndex() == -1 &&
+					_themePackCmb.getModel().getSize() > 0)
+			{
+				_themePackCmb.setSelectedIndex(0);
+			}
 		}
 
 		/**
 		 * @see BaseLAFPreferencesPanelComponent#applyChanges()
 		 */
-		public void applyChanges()
+		public boolean applyChanges()
 		{
 			super.applyChanges();
 			_ctrl._prefs.setThemePackName((String)_themePackCmb.getSelectedItem());
+			return false;
 		}
 	}
 

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -24,7 +24,6 @@ import javax.swing.JInternalFrame;
 
 import net.sourceforge.squirrel_sql.fw.util.beanwrapper.RectangleWrapper;
 import net.sourceforge.squirrel_sql.fw.xml.IXMLAboutToBeWritten;
-
 /**
  * This bean will store the state of a window or an internal frame object.
  *
@@ -32,8 +31,18 @@ import net.sourceforge.squirrel_sql.fw.xml.IXMLAboutToBeWritten;
  */
 public class WindowState implements IXMLAboutToBeWritten
 {
+	/**
+	 * Window whose state is being stored. Only one of <TT>_window</TT>
+	 * and <TT>_internalFrame</TT> can be non-null.
+	 */
 	private Window _window;
+
+	/**
+	 * JInternalFrame whose state is being stored. Only one of <TT>_window</TT>
+	 * and <TT>_internalFrame</TT> can be non-null.
+	 */
 	private JInternalFrame _internalFrame;
+
 	private RectangleWrapper _bounds = new RectangleWrapper(new Rectangle(600, 400));
 
 	public interface IPropertyNames
@@ -51,6 +60,8 @@ public class WindowState implements IXMLAboutToBeWritten
 
 	/**
 	 * Ctor storing the state of the passed <CODE>Window</CODE>.
+	 *
+	 * @param	window	Window to store the state of.
 	 */
 	public WindowState(Window window)
 	{
@@ -59,7 +70,9 @@ public class WindowState implements IXMLAboutToBeWritten
 	}
 
 	/**
-	 * Ctor storing the state of the passed <CODE>Window</CODE>.
+	 * Ctor storing the state of the passed <CODE>JInternalFrame</CODE>.
+	 *
+	 * @param	internalFrame	JInternalFrame to store the state of.
 	 */
 	public WindowState(JInternalFrame internalFrame)
 	{

@@ -6,73 +6,61 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Wordwrap and popup menu in the Column Data popup window.
 - Show chained SQL exceptions in error dialog.
-- Add "Copy" menu options to the popup menu in
-  the object tree.
-- Add the MySQL driver to the default list of
-  drivers. Update the jTDS URL for the latest
-  version of jTDS (Dennis Lundberg).
-- Added quote/unquote items to popup menu in the
-  SQL entry area (Gerd Wagner).
-- You can now specify an Alias to connect when
-  SQuirreL starts up.
-- You can now display only loaded JDBC drivers
-  in the Drivers list.
-- You can now limit the size of the SQL history
-  combobox.
-- Allow SQL history to be persistent and shareable
-  between different sessions (Lynn Pye).
-- Added Next and Previous Session commands to the
-  Session menu (Gerd Wagner).
-- Allow user to store a password in the Alias
-  definition (Gerd Wagner).
-- Allow user to define an Alias to logon
-  automatically (Gerd Wagner).
-- Do a better job of handling schemas and/or catalogs
-  when building the object tree for DBMS's/drivers that
-  misreport catalog/schema information (Gerd Wagner).
-- Allow for multiple result sets returned from
-  an SQL statement.
-- Add "Goto Next Result Tab" and "Goto Previous
-  Result Tab" options to Session menu.
-- Remember the selected alias and driver
-  between restarts.
-- Added SQL execution statistics to the
-  Info tab on the SQL output panel.
-- Better positioning of the Column Details
-  popup (Maury Hammel)
-- Added JavaDoc target to build file (Johnathan
-  James).
-- When clearing the message panel the background
-  is reset to white (Maury Hammel).
-- Display column header as a tooltip if the
-  table column isn't wide enough to display 
-  it (Stephen Straub).
-- Add the ability to "Tile Vertically" and
-  "Tile Horizontally" (Rick Strickland).
+- Add "Copy" menu options to the popup menu in the object tree.
+- Add the MySQL driver to the default list of drivers. Update the jTDS
+  URL for the latest version of jTDS (Dennis Lundberg).
+- Added quote/unquote items to popup menu in the SQL entry area (Gerd
+  Wagner).
+- You can now specify an Alias to connect when SQuirreL starts up.
+- You can now display only loaded JDBC drivers in the Drivers list.
+- You can now limit the size of the SQL history combobox.
+- Allow SQL history to be persistent and shareable between different
+  sessions (Lynn Pye).
+- Added Next and Previous Session commands to the Session menu (Gerd
+  Wagner).
+- Allow user to store a password in the Alias definition (Gerd Wagner).
+- Allow user to define an Alias to logon automatically (Gerd Wagner).
+- Do a better job of handling schemas and/or catalogs when building the
+  object tree for DBMS's/drivers that misreport catalog/schema
+  information (Gerd Wagner).
+- Allow for multiple result sets returned from an SQL statement.
+- Add "Goto Next Result Tab" and "Goto Previous Result Tab" options to
+  Session menu.
+- Remember the selected alias and driver between restarts.
+- Added SQL execution statistics to the Info tab on the SQL output
+  panel.
+- Better positioning of the Column Details popup (Maury Hammel)
+- Added JavaDoc target to build file (Johnathan James).
+- When clearing the message panel the background is reset to white
+  (Maury Hammel).
+- Display column header as a tooltip if the table column isn't wide
+  enough to display it (Stephen Straub).
+- Add the ability to "Tile Vertically" and "Tile Horizontally" (Rick
+  Strickland).
 
 Bug Fixes
 ---------
-- Hided password contents on Proxy settings
-  panel.
-- Put correct default port in the MM MySQL
-  driver (Dennis Lundberg).
+- Remove Clear option from standard text popup menu.
+- Retrieve time as well as date for Oracle Date type columns.
+- Hide password contents on Proxy settings panel.
+- Put correct default port in the MM MySQL driver (Dennis Lundberg).
 - Allow for drivers that return null for getTableTypes().
-- Clear data in output tabs before writing. This
-  stops the problem of seeing data related to the
-  previously selected object in the object tree if
-  you are not authorised to the newly selected object
-  in the tree.
-- Fix bug where sorting by clicking in the column
-  header for a table wouldn't work correctly when
-  the columns had been resequenced by dragging
-  (Johnathan James).
+- Clear data in output tabs before writing. This stops the problem of
+  seeing data related to the previously selected object in the object
+  tree if you are not authorised to the newly selected object in the
+  tree.
+- Fix bug where sorting by clicking in the column header for a table
+  wouldn't work correctly when the columns had been resequenced by
+  dragging (Johnathan James).
   
 Other
 -----
+- Use smaller icons to indicate sort sequence in tables.
 - Cleanup handling of the SQL entry area.
-- No longer print error message in the log
-  if a JDBC driver isn't available.
+- No longer print error message in the log if a JDBC driver isn't
+  available.
 
 
 1.1final1

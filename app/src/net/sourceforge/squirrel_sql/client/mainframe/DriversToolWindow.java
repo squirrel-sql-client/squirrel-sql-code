@@ -215,22 +215,20 @@ public class DriversToolWindow extends BaseToolWindow
 			final ActionCollection actions = _app.getActionCollection();
 
 			_tb = new ToolBar();
-			_tb.setBorder(BorderFactory.createEtchedBorder());
 			_tb.setUseRolloverButtons(true);
 			_tb.setFloatable(false);
 
-			final JLabel lbl = new JLabel(getWindowTitle(), SwingConstants.LEFT);
-			lbl.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
+			final JLabel lbl = new JLabel(getWindowTitle(), SwingConstants.CENTER);
+			lbl.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
 			_tb.add(lbl, 0);
-			_tb.add(new ToolBar.Separator(), 1);
 
 			_tb.add(_createDriverAction);
 			_tb.add(_modifyDriverAction);
 			_tb.add(_copyDriverAction);
 			_tb.add(_deleteDriverAction);
-			_tb.add(new ToolBar.Separator(), 1);
+			_tb.addSeparator();
 			_tb.add(actions.get(InstallDefaultDriversAction.class));
-			_tb.add(new ToolBar.Separator(), 1);
+			_tb.addSeparator();
 //			_tb.add(actions.get(ShowLoadedDriversOnlyAction.class));
 
 			Action act = (Action)actions.get(ShowLoadedDriversOnlyAction.class);

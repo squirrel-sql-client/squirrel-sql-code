@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.laf;
 /*
- * Copyright (C) 2002-2003 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -17,30 +17,20 @@ package net.sourceforge.squirrel_sql.plugins.laf;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import javax.swing.LookAndFeel;
+
 /**
- * Behaviour of a look and feel.
+ * Plugin constants.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public interface ILookAndFeelController
+public interface ILAFConstants
 {
-	/**
-	 * This Look and Feel is about to be installed.
-	 */
-	void aboutToBeInstalled(LAFRegister lafRegister, LookAndFeel laf);
+	/** Name of file to store user prefs in. */
+	public static final String USER_PREFS_FILE_NAME = "LAFPrefs.xml";
 
-	/**
-	 * This Look and Feel has just been installed.
-	 */
-	void hasBeenInstalled(LAFRegister lafRegister, LookAndFeel laf);
+	/* Name fo directory to store extra LAFs in for the user. */
+	public static final String USER_EXTRA_LAFS_FOLDER = "extralafs";
 
-	/**
-	 * Return the component to display in the Look and Feel Preferences
-	 * panel to configure this Look and Feel. Return <TT>null</TT> if no
-	 * extra configuration required.
-	 * 
-	 * @return		The configuration component or <TT>null</TT>.
-	 */
-	BaseLAFPreferencesPanelComponent getPreferencesComponent();
+	/** Name of file that contains extra LAF definitions for the current user. */
+	public static final String USER_EXTRA_LAFS_PROPS_FILE = "extralafs.properties";
 }

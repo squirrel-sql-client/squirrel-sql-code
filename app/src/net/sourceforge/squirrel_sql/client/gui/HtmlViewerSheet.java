@@ -205,7 +205,6 @@ public class HtmlViewerSheet extends JFrame
 	private ToolBar createToolBar()
 	{
 		_toolBar = new ToolBar();
-		_toolBar.setBorder(BorderFactory.createEtchedBorder());
 		_toolBar.setUseRolloverButtons(true);
 		_toolBar.setFloatable(false);
 		_toolBar.add(new HomeAction(_app));

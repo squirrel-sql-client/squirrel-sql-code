@@ -47,9 +47,15 @@ abstract class BaseLAFPreferencesPanelComponent extends JPanel
 
 	/**
 	 * Called when this Look and Feel is specified in the preferences panel
-	 * and save is requested.
+	 * and save is requested. Returing <TT>true</TT> will cause the LAF
+	 * to be forced to be changed. E.G. if you've changed the theme for a LAF
+	 * and you need to force a change of the LAF (even tough its the same one)
+	 * in order to see the new theme. Returns <TT>false</TT> by default.
+	 * 
+	 * @return	<TT>true</TT> to force LAF to be changed.
 	 */
-	public void applyChanges()
+	public boolean applyChanges()
 	{
+		return false;
 	}
 }

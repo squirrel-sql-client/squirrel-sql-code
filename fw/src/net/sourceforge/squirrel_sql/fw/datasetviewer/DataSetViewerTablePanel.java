@@ -21,13 +21,13 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  */
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -36,6 +36,7 @@ import java.util.List;
 import javax.swing.JDialog;
 import javax.swing.JInternalFrame;
 import javax.swing.JLayeredPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -51,11 +52,11 @@ import net.sourceforge.squirrel_sql.fw.gui.BaseMDIParentFrame;
 import net.sourceforge.squirrel_sql.fw.gui.ButtonTableHeader;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
+import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
+import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-//TODO: I've made a real mess of the showtextAreaDialog() method. Clean it up!!!  CB
-//??RENAME to DataSetViewerTableDestination
 public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 implements IDataSetTableControls
 {
@@ -476,41 +477,103 @@ implements IDataSetTableControls
 		}
 	}
 
-	class TextAreaInternalFrame extends JInternalFrame {
+	class TextAreaInternalFrame extends JInternalFrame
+	{
 		public TextAreaInternalFrame(String column, String text)
 		{
-			super("Value of column " + column,true,true,true,true);
-			Container con = getContentPane();
-			con.setLayout(new BorderLayout());
-			JTextArea area = new JTextArea(text);
-			area.setEditable(false);
-			JScrollPane pane = new JScrollPane(area);
-			con.add(pane,BorderLayout.CENTER);
+			super("Value of column " + column, true, true, true, true);
+			setContentPane(new ColumnDataPopupPanel(text));
 		}
 	}
 
-	class TextAreaDialog extends JDialog {
+	class TextAreaDialog extends JDialog
+	{
 		public TextAreaDialog(Dialog owner, String column, String text)
 		{
 			super(owner, "Value of column " + column, false);
-			createUserInterface(text);
+			setContentPane(new ColumnDataPopupPanel(text));
 		}
 
 		public TextAreaDialog(Frame owner, String column, String text)
 		{
 			super(owner, "Value of column " + column, false);
-			createUserInterface(text);
+			setContentPane(new ColumnDataPopupPanel(text));
+		}
+	}
+
+	/**
+	 * This class is the panel shown when doubleclicking in a column cell.
+	 */
+	private static class ColumnDataPopupPanel extends JPanel
+	{
+		private final TextPopupMenu _popupMenu = new TextPopupMenu();
+		private final JTextArea _ta;
+		private MouseAdapter _lis;
+
+		ColumnDataPopupPanel(String cellContents)
+		{
+			super(new BorderLayout());
+			_ta = new JTextArea(cellContents);
+			_ta.setEditable(false);
+			_ta.setLineWrap(true);
+			add(new JScrollPane(_ta), BorderLayout.CENTER);
+
+			_popupMenu.add(new WrapAction());
+			_popupMenu.setTextComponent(_ta);
 		}
 
-		private void createUserInterface(String text)
+		public void addNotify()
 		{
-			Container con = getContentPane();
-			con.setLayout(new BorderLayout());
-			JTextArea area = new JTextArea(text);
-			area.setEditable(false);
-			JScrollPane pane = new JScrollPane(area);
-			con.add(pane,BorderLayout.CENTER);
+			super.addNotify();
+			if (_lis == null)
+			{
+				_lis = new MouseAdapter()
+				{
+					public void mousePressed(MouseEvent evt)
+					{
+						if (evt.isPopupTrigger())
+						{
+							_popupMenu.show(evt);
+						}
+					}
+					public void mouseReleased(MouseEvent evt)
+					{
+						if (evt.isPopupTrigger())
+						{
+							_popupMenu.show(evt);
+						}
+					}
+				};
+				_ta.addMouseListener(_lis);
+			}
 		}
+
+		public void removeNotify()
+		{
+			super.removeNotify();
+			if (_lis != null)
+			{
+				_ta.removeMouseListener(_lis);
+				_lis = null;
+			}
+		}
+
+		private class WrapAction extends BaseAction
+		{
+			WrapAction()
+			{
+				super("Wrap");
+			}
+
+			public void actionPerformed(ActionEvent evt)
+			{
+				if (_ta != null)
+				{
+					_ta.setLineWrap(!_ta.getLineWrap());
+				}
+			}
+		}
+
 	}
 
 	private final class CellRenderer extends DefaultTableCellRenderer

@@ -187,7 +187,11 @@ public class ResultSetReader
 						break;
 
 					case Types.DATE :
-						row[i] = _rs.getDate(idx);
+//						row[i] = _rs.getDate(idx);
+						// Use getObject(int) rather than getDate(int) as
+						// Oracle stores a TimeStamp in Date columns rather
+						// than a Date object.
+						row[i] = _rs.getObject(idx);
 						break;
 
 					case Types.TIMESTAMP :
