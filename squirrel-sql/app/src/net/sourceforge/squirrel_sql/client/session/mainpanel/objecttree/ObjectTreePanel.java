@@ -20,19 +20,21 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
  * This is the panel for the Object Tree tab.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ObjectTreePanel extends JPanel {
+public class ObjectTreePanel extends JPanel
+{
 	/** Current session. */
 	private ISession _session;
 
@@ -40,7 +42,8 @@ public class ObjectTreePanel extends JPanel {
 	private ObjectTree _tree;
 
 	/** Split pane between the object tree and the data panel. */
-	private final JSplitPane _splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+	private final JSplitPane _splitPane =
+		new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
 	/**
 	 * Empty data panel. Used if the object selected in the object
@@ -56,9 +59,11 @@ public class ObjectTreePanel extends JPanel {
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>ISession</TT> passed.
 	 */
-	public ObjectTreePanel(ISession session) {
+	public ObjectTreePanel(ISession session)
+	{
 		super();
-		if (session == null) {
+		if (session == null)
+		{
 			throw new IllegalArgumentException("ISession == null");
 		}
 		_session = session;
@@ -66,22 +71,22 @@ public class ObjectTreePanel extends JPanel {
 	}
 
 	/**
-	 * Register an expander for the specified database object type in the
-	 * object tree.
+	 * Register an expander for the specified object tree node type.
 	 * 
-	 * @param	dbObjectType	Database object type.
-	 *							@see net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectTypes
-	 * @param	expander		Expander called to add children to a parent node.
+	 * @param	nodeType	Object Tree node type.
+	 *						@see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode.IObjectTreeNodeType
+	 * @param	expander	Expander called to add children to a parent node.
 	 * 
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>INodeExpander</TT> thrown.
 	 */
-	public void registerExpander(int dbObjectType, INodeExpander expander)
+	public void registerExpander(int nodeType, INodeExpander expander)
 	{
 		if (expander == null)
 		{
 			throw new IllegalArgumentException("Null INodeExpander passed");
 		}
+		_tree.getTypedModel().registerExpander(nodeType, expander);
 	}
 
 	/**
@@ -93,17 +98,20 @@ public class ObjectTreePanel extends JPanel {
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT>TreePath</TT> passed.
 	 */
-	private void setSelectedObjectPanel(TreePath path) {
-		if (path == null) {
+	private void setSelectedObjectPanel(TreePath path)
+	{
+		if (path == null)
+		{
 			throw new IllegalArgumentException("TreePath == null");
 		}
 
 		JComponent comp = _emptyPnl;
-		if (path != null) {
-//			DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
-//			if (node instanceof BaseNode) {
-//				comp = ((BaseNode)node).getDetailsPanel();
-//			}
+		if (path != null)
+		{
+			//			DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
+			//			if (node instanceof BaseNode) {
+			//				comp = ((BaseNode)node).getDetailsPanel();
+			//			}
 		}
 		setSelectedObjectPanel(comp);
 	}
@@ -116,14 +124,17 @@ public class ObjectTreePanel extends JPanel {
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT>Component</TT> passed.
 	 */
-	private void setSelectedObjectPanel(Component comp) {
-		if (comp == null) {
+	private void setSelectedObjectPanel(Component comp)
+	{
+		if (comp == null)
+		{
 			throw new IllegalArgumentException("Component == null");
 		}
 
 		int divLoc = _splitPane.getDividerLocation();
 		Component existing = _splitPane.getRightComponent();
-		if (existing != null) {
+		if (existing != null)
+		{
 			_splitPane.remove(existing);
 		}
 		_splitPane.add(comp, JSplitPane.RIGHT);
@@ -133,7 +144,8 @@ public class ObjectTreePanel extends JPanel {
 	/**
 	 * Create the user interface.
 	 */
-	private void createUserInterface() {
+	private void createUserInterface()
+	{
 		setLayout(new BorderLayout());
 
 		_tree = new ObjectTree(_session);
@@ -148,9 +160,8 @@ public class ObjectTreePanel extends JPanel {
 
 		setSelectedObjectPanel(_emptyPnl);
 
-//		_tree.addTreeSelectionListener(new MySelectionListener());
+		//		_tree.addTreeSelectionListener(new MySelectionListener());
 
 		_splitPane.setDividerLocation(200);
 	}
 }
-

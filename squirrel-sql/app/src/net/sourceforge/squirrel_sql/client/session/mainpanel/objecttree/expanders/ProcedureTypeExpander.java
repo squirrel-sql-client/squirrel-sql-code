@@ -94,8 +94,7 @@ public class ProcedureTypeExpander implements INodeExpander
 		if (parentDbinfo.getDatabaseObjectType() == IDatabaseObjectTypes.ORACLE_PACKAGE)
 		{
 			final String packageName = parentDbinfo.getSimpleName();
-			childNodes.addAll(createProcedureNodes(session, packageName,
-														schemaName));
+			childNodes.addAll(createProcedureNodes(session, packageName, schemaName));
 		}
 		else
 		{

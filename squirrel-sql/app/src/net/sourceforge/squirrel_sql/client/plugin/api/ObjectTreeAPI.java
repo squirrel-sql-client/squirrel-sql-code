@@ -49,16 +49,17 @@ class ObjectTreeAPI implements IObjectTreeAPI
 	}
 
 	/**
-	 * Register an expander for the specified database object type.
+	 * Register an expander for the specified object tree node type.
 	 * 
-	 * @param	dbObjectType	Databae object type.
-	 *							@see net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectTypes
-	 * @param	expander		Expander called to add children to a parent node.
+	 * @param	nodeType	Object Tree node type.
+	 *						@see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode.IObjectTreeNodeType
+	 * @param	expander	Expander called to add children to a parent node.
 	 * 
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>INodeExpander</TT> thrown.
 	 */
-	public void registerExpander(int dbObjectType, INodeExpander expander)
+	public void registerExpander(int nodeType, INodeExpander expander)
 	{
+		_session.registerObjectTreeExpander(nodeType, expander);
 	}
 }

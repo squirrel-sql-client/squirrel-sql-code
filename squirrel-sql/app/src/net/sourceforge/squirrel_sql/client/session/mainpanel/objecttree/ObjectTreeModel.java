@@ -33,6 +33,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.DatabaseExpander;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ProcedureTypeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableTypeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.UDTTypeExpander;
 /**
@@ -71,45 +72,45 @@ public class ObjectTreeModel extends DefaultTreeModel
 		super(createRootNode(session), true);
 		_session = session;
 
-		// Standard expander for database, catalog and schema nodes.
+		// Standard expanders.
 		INodeExpander expander = new DatabaseExpander(session);
-		registerExpander(IDatabaseObjectTypes.DATABASE, expander);
-		registerExpander(IDatabaseObjectTypes.CATALOG, expander);
-		registerExpander(IDatabaseObjectTypes.SCHEMA, expander);
-
-		//		_treeLoadedListeners = new ArrayList();
-		//		setSession(session);
+		registerExpander(ObjectTreeNode.IObjectTreeNodeType.DATABASE, expander);
+		registerExpander(ObjectTreeNode.IObjectTreeNodeType.CATALOG, expander);
+		registerExpander(ObjectTreeNode.IObjectTreeNodeType.SCHEMA, expander);
+		registerExpander(ObjectTreeNode.IObjectTreeNodeType.TABLE_TYPE_NODE, new TableTypeExpander(session));
+		registerExpander(ObjectTreeNode.IObjectTreeNodeType.UDT, new UDTTypeExpander(session));
+		registerExpander(ObjectTreeNode.IObjectTreeNodeType.PROCEDURE, new ProcedureTypeExpander(session));
 	}
 
 	/**
 	 * Register an expander for the specified database object type in the
 	 * object tree.
 	 * 
-	 * @param	dbObjectType	Database object type.
-	 *							@see net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectTypes
-	 * @param	expander		Expander called to add children to a parent node.
+	 * @param	nodeType	Database object type.
+	 *						@see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode.IObjectTreeNodeType
+	 * @param	expander	Expander called to add children to a parent node.
 	 * 
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>INodeExpander</TT> thrown.
 	 */
-	public synchronized void registerExpander(int dbObjectType,
-													INodeExpander expander)
+	public synchronized void registerExpander(int nodeType,
+												INodeExpander expander)
 	{
 		if (expander == null)
 		{
 			throw new IllegalArgumentException("Null INodeExpander passed");
 		}
-		getExpandersList(dbObjectType).add(expander);
+		getExpandersList(nodeType).add(expander);
 	}
 
 	/**
-	 * Return an array of the node expanders for the passed database object type.
+	 * Return an array of the node expanders for the passed node type.
 	 * 
 	 * @return	an array of the node expanders for the passed database object type.
 	 */
-	public synchronized INodeExpander[] getExpanders(int dbObjectType)
+	public synchronized INodeExpander[] getExpanders(int nodeType)
 	{
-		List list = getExpandersList(dbObjectType);
+		List list = getExpandersList(nodeType);
 		return (INodeExpander[])list.toArray(new INodeExpander[list.size()]);
 	}
 

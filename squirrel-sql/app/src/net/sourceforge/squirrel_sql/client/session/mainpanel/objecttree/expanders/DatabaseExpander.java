@@ -197,7 +197,7 @@ public class DatabaseExpander implements INodeExpander
 		final List list = new ArrayList();
 
 		// Add table types to list.
-		final TableTypeExpander tableTypeExp = new TableTypeExpander(session);
+//		final TableTypeExpander tableTypeExp = new TableTypeExpander(session);
 		for (int i = 0; i < _tableTypes.length; ++i)
 		{
 			IDatabaseObjectInfo dbo = new DatabaseObjectInfo(
@@ -206,7 +206,8 @@ public class DatabaseExpander implements INodeExpander
 											IDatabaseObjectTypes.GENERIC_FOLDER,
 											conn);
 			ObjectTreeNode child = new ObjectTreeNode(session, dbo);
-			child.addExpander(tableTypeExp);
+			child.setNodeType(ObjectTreeNode.IObjectTreeNodeType.TABLE_TYPE_NODE);
+//			child.addExpander(tableTypeExp);
 			list.add(child);
 		}
 
@@ -217,7 +218,8 @@ public class DatabaseExpander implements INodeExpander
 										IDatabaseObjectTypes.GENERIC_FOLDER,
 										conn);
 			ObjectTreeNode child = new ObjectTreeNode(session, dbo);
-			child.addExpander(new UDTTypeExpander(session));
+			child.setNodeType(ObjectTreeNode.IObjectTreeNodeType.UDT_TYPE_NODE);
+//			child.addExpander(new UDTTypeExpander(session));
 			list.add(child);
 		}
 
@@ -233,13 +235,14 @@ public class DatabaseExpander implements INodeExpander
 		}
 		if (supportsStoredProcs)
 		{
-			ProcedureTypeExpander exp = new ProcedureTypeExpander(session);
+//			ProcedureTypeExpander exp = new ProcedureTypeExpander(session);
 			IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName,
 												schemaName, "PROCEDURE",
 												IDatabaseObjectTypes.GENERIC_FOLDER,
 												conn);
 			ObjectTreeNode child = new ObjectTreeNode(session, dbo);
-			child.addExpander(exp);
+			child.setNodeType(ObjectTreeNode.IObjectTreeNodeType.PROCEDURE_TYPE_NODE);
+//			child.addExpander(exp);
 			list.add(child);
 		}
 

@@ -17,17 +17,16 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import javax.swing.JTree;
-import javax.swing.ToolTipManager;
-import javax.swing.event.TreeExpansionEvent;
-import javax.swing.event.TreeExpansionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
-
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.JTree;
+import javax.swing.ToolTipManager;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeExpansionListener;
+import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
@@ -43,9 +42,11 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ObjectTree extends JTree {
+public class ObjectTree extends JTree
+{
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(ObjectTree.class);
+	private static ILogger s_log =
+		LoggerController.createLogger(ObjectTree.class);
 
 	/** Model for this tree. */
 	private ObjectTreeModel _model;
@@ -61,22 +62,24 @@ public class ObjectTree extends JTree {
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>ISession</TT> passed.
 	 */
-	ObjectTree(ISession session) {
+	ObjectTree(ISession session)
+	{
 		super();
-		if (session == null) {
+		if (session == null)
+		{
 			throw new IllegalArgumentException("ISession == null");
 		}
 		_session = session;
 		_model = new ObjectTreeModel(session);
-//		((BaseNode)_model.getRoot()).addBaseNodeExpandListener(this);
-//		_model.addTreeLoadedListener(this);
-//		_model.fillTree();
+		//		((BaseNode)_model.getRoot()).addBaseNodeExpandListener(this);
+		//		_model.addTreeLoadedListener(this);
+		//		_model.fillTree();
 
 		addTreeExpansionListener(new NodeExpansionListener());
 
 		setShowsRootHandles(true);
 		setModel(_model);
-		expandNode((ObjectTreeNode)_model.getRoot());
+		expandNode((ObjectTreeNode) _model.getRoot());
 		setSelectionRow(0);
 	}
 
@@ -122,6 +125,16 @@ public class ObjectTree extends JTree {
 		return tip;
 	}
 
+	/**
+	 * Return the typed data model for this tree.
+	 * 
+	 * @return	The typed data model for this tree.
+	 */
+	public ObjectTreeModel getTypedModel()
+	{
+		return _model;
+	}
+
 	public void expandNode(ObjectTreeNode parentNode)
 	{
 		if (parentNode == null)
@@ -137,8 +150,8 @@ public class ObjectTree extends JTree {
 		{
 			// Add together the standard expanders for this node type and any
 			// individual expanders that there are for the node and process them.
-			int objType = parentNode.getDatabaseObjectInfo().getDatabaseObjectType();
-			INodeExpander[] stdExpanders = _model.getExpanders(objType);
+			int nodeType = parentNode.getNodeType();
+			INodeExpander[] stdExpanders = _model.getExpanders(nodeType);
 			INodeExpander[] extraExpanders = parentNode.getExpanders();
 			if (stdExpanders.length > 0 || extraExpanders.length > 0)
 			{
@@ -155,14 +168,15 @@ public class ObjectTree extends JTree {
 				{
 					expanders = new INodeExpander[stdExpanders.length + extraExpanders.length];
 					System.arraycopy(stdExpanders, 0, expanders, 0, stdExpanders.length);
-					System.arraycopy(extraExpanders, 0, expanders, stdExpanders.length, extraExpanders.length);
+					System.arraycopy(extraExpanders, 0, expanders, stdExpanders.length,
+										extraExpanders.length);
 				}
 				TreeLoader loader = new TreeLoader(parentNode, expanders);
 				_session.getApplication().getThreadPool().addTask(loader);
 			}
 		}
 	}
-	
+
 	private final class NodeExpansionListener implements TreeExpansionListener
 	{
 		public void treeExpanded(TreeExpansionEvent evt)
@@ -171,10 +185,9 @@ public class ObjectTree extends JTree {
 			Object parentObj = evt.getPath().getLastPathComponent();
 			if (parentObj instanceof ObjectTreeNode)
 			{
-				ObjectTree.this.expandNode((ObjectTreeNode)parentObj);
+				ObjectTree.this.expandNode((ObjectTreeNode) parentObj);
 			}
 		}
-
 
 		public void treeCollapsed(TreeExpansionEvent evt)
 		{
@@ -199,32 +212,37 @@ public class ObjectTree extends JTree {
 			{
 				synchronized (ObjectTree.this)
 				{
-					CursorChanger cursorChg = new CursorChanger(ObjectTree.this);
+					CursorChanger cursorChg =
+						new CursorChanger(ObjectTree.this);
 					cursorChg.show();
 					try
 					{
-//ObjectsTreeModel model = getTreeModel();
-//DefaultMutableTreeNode dmtn = new DefaultMutableTreeNode("Loading...");
-//model.insertNodeInto(dmtn, this, this.getChildCount());
-						IDatabaseObjectInfo doi = new DatabaseObjectInfo(null,null,
-								"Loading...", IDatabaseObjectTypes.GENERIC_LEAF,
+						//ObjectsTreeModel model = getTreeModel();
+						//DefaultMutableTreeNode dmtn = new DefaultMutableTreeNode("Loading...");
+						//model.insertNodeInto(dmtn, this, this.getChildCount());
+						IDatabaseObjectInfo doi = new DatabaseObjectInfo(null,
+								null, "Loading...",
+								IDatabaseObjectTypes.GENERIC_LEAF,
 								_session.getSQLConnection());
 						ObjectTreeNode loadingNode = new ObjectTreeNode(_session, doi);
 						_parentNode.add(loadingNode);
 						try
 						{
 							// Show the loading node.
-							ObjectTree.this._model.nodeStructureChanged(_parentNode);
+							ObjectTree.this._model.nodeStructureChanged(
+								_parentNode);
 							for (int i = 0; i < _expanders.length; ++i)
 							{
-								List list = _expanders[i].createChildren(_session, _parentNode);
+								List list = _expanders[i].createChildren(
+										_session, _parentNode);
 								Iterator it = list.iterator();
 								while (it.hasNext())
 								{
 									Object nextObj = it.next();
 									if (nextObj instanceof ObjectTreeNode)
 									{
-										ObjectTreeNode nextNode = (ObjectTreeNode)nextObj;
+										ObjectTreeNode nextNode =
+											(ObjectTreeNode) nextObj;
 										_parentNode.add(nextNode);
 									}
 								}
@@ -237,7 +255,8 @@ public class ObjectTree extends JTree {
 					}
 					finally
 					{
-						ObjectTree.this._model.nodeStructureChanged(_parentNode);
+						ObjectTree.this._model.nodeStructureChanged(
+							_parentNode);
 						cursorChg.restore();
 					}
 				}
@@ -246,16 +265,17 @@ public class ObjectTree extends JTree {
 			{
 				final String msg = "Error expanding: " + _parentNode.toString();
 				s_log.error(msg, ex);
-				_session.getMessageHandler().showMessage(msg + ": " + ex.toString());
-				
+				_session.getMessageHandler().showMessage(
+					msg + ": " + ex.toString());
+
 			}
 			catch (BaseSQLException ex)
 			{
 				final String msg = "Error expanding: " + _parentNode.toString();
 				s_log.error(msg, ex);
-				_session.getMessageHandler().showMessage(msg + ": " + ex.toString());
+				_session.getMessageHandler().showMessage(
+					msg + ": " + ex.toString());
 			}
 		}
 	}
 }
-

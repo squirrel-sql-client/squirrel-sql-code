@@ -34,4 +34,10 @@ public interface IDatabaseObjectTypes
 	int PROCEDURE = 6;
 	int UDT = 7;
 	int ORACLE_PACKAGE = 8;
+
+	/**
+	 * This isn't an object type but rather is a guarantee that no value in this
+	 * interface will ever be greater than <TT>LAST_USED.
+	 */
+	int LAST_USED = 9999;
 }

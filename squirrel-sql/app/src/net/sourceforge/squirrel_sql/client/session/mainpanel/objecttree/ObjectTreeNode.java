@@ -23,6 +23,7 @@ import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectTypes;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
@@ -32,9 +33,21 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  */
 public class ObjectTreeNode extends DefaultMutableTreeNode
 {
+	public interface IObjectTreeNodeType extends IDatabaseObjectTypes
+	{
+		int TABLE_TYPE_NODE = LAST_USED + 1;
+		int PROCEDURE_TYPE_NODE = LAST_USED + 2;
+		int UDT_TYPE_NODE = LAST_USED + 3;
+	}
+
+	/** Node type; */
+	private int _nodeType;
+
 	/** Current session. */
 	private ISession _session;
 
+	/** The type of this node. See IObjectTreeNodeType. */
+	
 	/** Describes the database object represented by this node. */
 	private IDatabaseObjectInfo _dbinfo;
 
@@ -60,6 +73,7 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 		}
 		_session = session;
 		_dbinfo = dbinfo;
+		_nodeType = dbinfo.getDatabaseObjectType();
 	}
 
 	/**
@@ -79,6 +93,26 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 	public IDatabaseObjectInfo getDatabaseObjectInfo()
 	{
 		return _dbinfo;
+	}
+
+	/**
+	 * Get the type of this node. @see IObjectTreeNodeTypes.
+	 * 
+	 * @return	the type of this node.
+	 */
+	public int getNodeType()
+	{
+		return _nodeType;
+	}
+
+	/**
+	 * Set the type of this node. @see IObjectTreeNodeTypes.
+	 * 
+	 * @param	value	the new type of this node.
+	 */
+	public void setNodeType(int value)
+	{
+		_nodeType = value;
 	}
 
 	/**
