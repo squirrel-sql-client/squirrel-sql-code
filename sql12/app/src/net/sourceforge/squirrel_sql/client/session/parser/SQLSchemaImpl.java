@@ -1,15 +1,16 @@
 package net.sourceforge.squirrel_sql.client.session.parser;
 
-import java.sql.SQLException;
-import java.sql.DatabaseMetaData;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Vector;
-
-import net.sourceforge.squirrel_sql.fw.util.BaseRuntimeException;
-
+import net.sourceforge.squirrel_sql.client.session.SchemaInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.SQLSchema;
+
+import java.util.List;
+import java.util.Vector;
+import java.util.Hashtable;
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
+
+import net.sourceforge.squirrel_sql.fw.util.BaseRuntimeException;
 
 public class SQLSchemaImpl implements SQLSchema
 {
