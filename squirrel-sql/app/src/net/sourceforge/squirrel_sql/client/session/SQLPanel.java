@@ -68,6 +68,7 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
+import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.util.Logger;
@@ -198,32 +199,28 @@ class SQLPanel extends JPanel {
     //        _session.rollBack();
     //    }
 
-	public void executeCurrentSQL() 
-	{
-		String sql = _sqlEntry.getSelectedText();
-		if(sql == null || sql.trim().length() == 0)
-		{
-			sql = _sqlEntry.getText();
-	
-			int iStartIndex = 0;
-			int iEndIndex = sql.length();
-			
-			int iCaretPos = _sqlEntry.getCaretPosition();
-	
-			int iIndex = sql.lastIndexOf("\n\n",iCaretPos);
-			if(iIndex >0) iStartIndex = iIndex;
-			iIndex = sql.indexOf("\n\n",iCaretPos);
-			if(iIndex >0) iEndIndex = iIndex;
-	
-			sql = sql.substring(iStartIndex, iEndIndex).trim();
-		}
-		if(sql != null && sql.trim().length() > 0)
-		{
-//			SQLExecuter.addSqlStatement(this,_session,sql);
-			SQLExecuterTask task = new SQLExecuterTask(this, _session, sql);
-			_session.getApplication().getSQLController().addTask(task);
-		}
-	}
+    public void executeCurrentSQL() {
+        String sql = _sqlEntry.getSelectedText();
+        if(sql == null || sql.trim().length() == 0) {
+            sql = _sqlEntry.getText();
+
+            int iStartIndex = 0;
+            int iEndIndex = sql.length();
+
+            int iCaretPos = _sqlEntry.getCaretPosition();
+
+            int iIndex = sql.lastIndexOf("\n\n",iCaretPos);
+            if(iIndex >0) iStartIndex = iIndex;
+            iIndex = sql.indexOf("\n\n",iCaretPos);
+            if(iIndex >0) iEndIndex = iIndex;
+
+            sql = sql.substring(iStartIndex, iEndIndex).trim();
+        }
+        if(sql != null && sql.trim().length() > 0) {
+            SQLExecuterTask task = new SQLExecuterTask(this, _session, sql);
+            _session.getApplication().getSQLController().addTask(task);
+        }
+    }
 
     /**
      * Execute the current SQL.
@@ -363,14 +360,7 @@ class SQLPanel extends JPanel {
         _tabbedResultsPanel.remove(tab);
         ResultFrame frame = new ResultFrame(tab);
         frame.setDefaultCloseOperation(ResultFrame.DISPOSE_ON_CLOSE);
-        net
-            .sourceforge
-            .squirrel_sql
-            .client
-            .mainframe
-            .MainFrame
-            .getInstance()
-            .addInternalFrame(frame);
+        MainFrame.getInstance().addInternalFrame(frame);
         frame.setVisible(true);
         frame.pack();
         frame.toFront();
@@ -394,65 +384,65 @@ class SQLPanel extends JPanel {
         _sqlEntry.setText(sqlScript);
     }
 
-	void setCancelPanel(final JPanel panel) {
-		javax.swing.SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
-				_tabbedResultsPanel.addTab("Executing SQL", null, panel, "Press Cancel to Stop");
-				_tabbedResultsPanel.setSelectedComponent(panel);
-			}
-		});
-	}
+    void setCancelPanel(final JPanel panel) {
+        javax.swing.SwingUtilities.invokeLater(new Runnable()
+        {
+            public void run()
+            {
+                _tabbedResultsPanel.addTab("Executing SQL", null, panel, "Press Cancel to Stop");
+                _tabbedResultsPanel.setSelectedComponent(panel);
+            }
+        });
+    }
 
-	void addTab(final String sToken, IDataSet ds, final JPanel cancelPanel)
-	{
-		final ResultTab tab;
-		final String sTitle;
-		if (_availableTabs.size() > 0)
-		{
-			tab = (ResultTab) _availableTabs.remove(0);
-		}
-		else
-		{
-			tab = new ResultTab(_session, this);
-		}
-		if (sToken.length() > 10) sTitle = sToken.substring(0, 15);
-		else sTitle = sToken;
-	
-		try
-		{
-			tab.show(ds, sToken);
-			
-			javax.swing.SwingUtilities.invokeLater(new Runnable()
-			{
-				public void run()
-				{
-					_tabbedResultsPanel.remove(cancelPanel);
-					_tabbedResultsPanel.addTab(sTitle , null, tab, sToken);
-					_tabbedResultsPanel.setSelectedComponent(tab);
-					_sqlComboItemListener.stopListening();
-					_sqlCombo.addItem(new SqlComboItem(sToken));
-					_sqlComboItemListener.startListening();
-				}
-			});
-		} catch(DataSetException dse)
-		{
-			_session.getMessageHandler().showMessage(dse);
-		}
-	}
+    void addTab(final String sToken, IDataSet ds, final JPanel cancelPanel)
+    {
+        final ResultTab tab;
+        final String sTitle;
+        if (_availableTabs.size() > 0)
+        {
+            tab = (ResultTab) _availableTabs.remove(0);
+        }
+        else
+        {
+            tab = new ResultTab(_session, this);
+        }
+        if (sToken.length() > 10) sTitle = sToken.substring(0, 15);
+        else sTitle = sToken;
+
+        try
+        {
+            tab.show(ds, sToken);
+
+            javax.swing.SwingUtilities.invokeLater(new Runnable()
+            {
+                public void run()
+                {
+                    _tabbedResultsPanel.remove(cancelPanel);
+                    _tabbedResultsPanel.addTab(sTitle , null, tab, sToken);
+                    _tabbedResultsPanel.setSelectedComponent(tab);
+                    _sqlComboItemListener.stopListening();
+                    _sqlCombo.addItem(new SqlComboItem(sToken));
+                    _sqlComboItemListener.startListening();
+                }
+            });
+        } catch(DataSetException dse)
+        {
+            _session.getMessageHandler().showMessage(dse);
+        }
+    }
 
 
-	void removeCancelPanel(final JPanel cancelPanel)
-	{
-		javax.swing.SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
-				_tabbedResultsPanel.remove(cancelPanel);
-			}
-		});
-	}
+    void removeCancelPanel(final JPanel cancelPanel)
+    {
+        javax.swing.SwingUtilities.invokeLater(new Runnable()
+        {
+            public void run()
+            {
+                _tabbedResultsPanel.remove(cancelPanel);
+            }
+        });
+    }
 
     private String modifyIndividualScript(String sql) {
         List list = null;
@@ -482,7 +472,7 @@ class SQLPanel extends JPanel {
                                 Component.class.isAssignableFrom(destClass)) {
                             _output = (IDataSetViewerDestination)destClass.newInstance();
                         }
-        
+
                     } catch (Exception ex) {
                         _session.getApplication().getLogger().showMessage(Logger.ILogTypes.ERROR, ex.getMessage());
                     }
