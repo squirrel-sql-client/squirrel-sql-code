@@ -155,99 +155,99 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		return _typedModel.getRowCount();
 	}
 
-	protected final static class MyTableModel extends AbstractTableModel
-	{
-		private List _data = new ArrayList();
-		private ColumnDisplayDefinition[] _colDefs = new ColumnDisplayDefinition[0];
-		private IDataSetTableControls _creator = null;
-
-
-		MyTableModel(IDataSetTableControls creator)
-		{
-			super();
-			_creator = creator;
-		}
-
-		/**
-		 * Determine whether the cell is editable by asking the creator whether
-		 * the table is editable or not
-		 */
-		public boolean isCellEditable(int row, int col)
-		{
-			return _creator.isColumnEditable(col, getValueAt(row, col));
-		}
-
-		public Object getValueAt(int row, int col)
-		{
-			return ((Object[])_data.get(row))[col];
-		}
-
-		public int getRowCount()
-		{
-			return _data.size();
-		}
-
-		public int getColumnCount()
-		{
-			return _colDefs != null ? _colDefs.length : 0;
-		}
-
-		public String getColumnName(int col)
-		{
-			return _colDefs != null ? _colDefs[col].getLabel() : super.getColumnName(col);
-		}
-
-		public Class getColumnClass(int col)
-		{
-			try
-			{
-				// if no columns defined, return a generic class
-				// to avoid anything throwing an exception.
-				if (_colDefs == null)
-				{
-					return Object.class;
-				}
-			
-				return Class.forName(_colDefs[col].getClassName());
-			}
-			catch (Exception e)
-			{
-				return null;
-			}
-		}
-
-		void setHeadings(ColumnDisplayDefinition[] hdgs)
-		{
-			_colDefs = hdgs;
-		}
-
-		public void addRow(Object[] row)
-		{
-			_data.add(row);
-		}
-
-		void clear()
-		{
-			_data.clear();
-		}
-
-		public void allRowsAdded()
-		{
-			fireTableStructureChanged();
-		}
-
-		/**
-		 * Let creator handle saving the data, if anything is to be done with it.
-		 * If the creator succeeds in changing the underlying data,
-		 * then update the JTable as well.
-		 */
-		public void setValueAt(Object newValue, int row, int col) {
-			if ( _creator.changeUnderlyingValueAt(row, col, newValue, getValueAt(row, col)))
-			{
-				((Object[])_data.get(row))[col] = newValue;
-			}
-		}
-	}
+//??	protected final static class MyTableModel extends AbstractTableModel
+//??	{
+//??		private List _data = new ArrayList();
+//??		private ColumnDisplayDefinition[] _colDefs = new ColumnDisplayDefinition[0];
+//??		private IDataSetTableControls _creator = null;
+//??
+//??
+//??		MyTableModel(IDataSetTableControls creator)
+//??		{
+//??			super();
+//??			_creator = creator;
+//??		}
+//??
+//??		/**
+//??		 * Determine whether the cell is editable by asking the creator whether
+//??		 * the table is editable or not
+//??		 */
+//??		public boolean isCellEditable(int row, int col)
+//??		{
+//??			return _creator.isColumnEditable(col, getValueAt(row, col));
+//??		}
+//??
+//??		public Object getValueAt(int row, int col)
+//??		{
+//??			return ((Object[])_data.get(row))[col];
+//??		}
+//??
+//??		public int getRowCount()
+//??		{
+//??			return _data.size();
+//??		}
+//??
+//??		public int getColumnCount()
+//??		{
+//??			return _colDefs != null ? _colDefs.length : 0;
+//??		}
+//??
+//??		public String getColumnName(int col)
+//??		{
+//??			return _colDefs != null ? _colDefs[col].getLabel() : super.getColumnName(col);
+//??		}
+//??
+//??		public Class getColumnClass(int col)
+//??		{
+//??			try
+//??			{
+//??				// if no columns defined, return a generic class
+//??				// to avoid anything throwing an exception.
+//??				if (_colDefs == null)
+//??				{
+//??					return Object.class;
+//??				}
+//??			
+//??				return Class.forName(_colDefs[col].getClassName());
+//??			}
+//??			catch (Exception e)
+//??			{
+//??				return null;
+//??			}
+//??		}
+//??
+//??		void setHeadings(ColumnDisplayDefinition[] hdgs)
+//??		{
+//??			_colDefs = hdgs;
+//??		}
+//??
+//??		public void addRow(Object[] row)
+//??		{
+//??			_data.add(row);
+//??		}
+//??
+//??		void clear()
+//??		{
+//??			_data.clear();
+//??		}
+//??
+//??		public void allRowsAdded()
+//??		{
+//??			fireTableStructureChanged();
+//??		}
+//??
+//??		/**
+//??		 * Let creator handle saving the data, if anything is to be done with it.
+//??		 * If the creator succeeds in changing the underlying data,
+//??		 * then update the JTable as well.
+//??		 */
+//??		public void setValueAt(Object newValue, int row, int col) {
+//??			if ( _creator.changeUnderlyingValueAt(row, col, newValue, getValueAt(row, col)))
+//??			{
+//??				((Object[])_data.get(row))[col] = newValue;
+//??			}
+//??		}
+//??	}
 
 	protected final class MyJTable extends JTable
 	{
@@ -417,7 +417,8 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 			_bth = new ButtonTableHeader();
 			setTableHeader(_bth);
 
-			_tablePopupMenu = new TablePopupMenu(allowUpdate, updateableObject);
+			_tablePopupMenu = new TablePopupMenu(allowUpdate, updateableObject,
+				DataSetViewerTablePanel.this);
 			_tablePopupMenu.setTable(this);
 
 			addMouseListener(new MouseAdapter()
@@ -502,6 +503,14 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		return false;	// underlaying data cannot be changed
 	}
 	
-	//?? Other functions??
-	/////////////////////////////////////////////////////////////////////////
+	/**
+	 * Delete a set of rows from the table.
+	 * The indexes are the row indexes in the SortableModel.
+	 */
+	public void deleteRows(int[] rows) {}	// cannot delete rows in read-only table
+	
+	/**
+	 * Insert a new row into the table.
+	 */
+	public void insertRow() {}	// cannot insert row into read-only table
 }
