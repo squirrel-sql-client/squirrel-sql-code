@@ -35,7 +35,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
 
-class MetaDataDataSet implements IDataSet {
+public class MetaDataDataSet implements IDataSet {
 
     private final static HashMap s_ignoreMethods = new HashMap();
     static {

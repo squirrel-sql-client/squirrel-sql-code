@@ -67,6 +67,7 @@ import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
 import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
+import net.sourceforge.squirrel_sql.client.session.objectstree.DatabasePanel;
 import net.sourceforge.squirrel_sql.client.session.objectstree.ProcedurePanel;
 import net.sourceforge.squirrel_sql.client.session.objectstree.TablePanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
@@ -164,6 +165,11 @@ public class SessionSheet extends JInternalFrame {
 
 	ObjectsPanel getObjectPanel() {
 		return _objectsPnl;
+	}
+
+	DatabasePanel getDatabasePanel() {
+		final IPlugin plugin = _session.getApplication().getDummyAppPlugin();
+		return (DatabasePanel)_session.getPluginObject(plugin, ISession.ISessionKeys.DATABASE_DETAIL_PANEL_KEY);
 	}
 
 	TablePanel getTablePanel() {

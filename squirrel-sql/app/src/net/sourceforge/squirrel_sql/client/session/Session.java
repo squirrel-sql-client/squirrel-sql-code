@@ -39,8 +39,10 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
+import net.sourceforge.squirrel_sql.client.session.objectstree.DatabasePanel;
 import net.sourceforge.squirrel_sql.client.session.objectstree.ProcedurePanel;
 import net.sourceforge.squirrel_sql.client.session.objectstree.TablePanel;
+import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.IDatabasePanelTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.procedurepanel.IProcedurePanelTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.ITablePanelTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
@@ -113,6 +115,9 @@ class Session implements ISession {
 		_props.assignFrom(_app.getSquirrelPreferences().getSessionProperties());
 
 		final IPlugin plugin = getApplication().getDummyAppPlugin();
+		
+		//?? This crap should be done better.
+		putPluginObject(plugin, ISessionKeys.DATABASE_DETAIL_PANEL_KEY, new DatabasePanel(this));
 		putPluginObject(plugin, ISessionKeys.PROCEDURE_DETAIL_PANEL_KEY, new ProcedurePanel(this));
 		putPluginObject(plugin, ISessionKeys.TABLE_DETAIL_PANEL_KEY, new TablePanel(this));
 	}
@@ -324,6 +329,21 @@ class Session implements ISession {
 	public void addMainTab(String title, Icon icon, Component comp, String tip)
 			throws IllegalArgumentException {
 		_sessionSheet.addMainTab(title, icon, comp, tip);
+	}
+
+	/**
+	 * Add a tab to the panel shown when the database selected in the
+	 * object tree. If a tab with this title already exists it is
+	 * removed from the tabbed pane and the passed tab inserted in its
+	 * place. New tabs are inserted at the end.
+	 *
+	 * @param	tab	 The tab to be added.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if a <TT>null</TT> <TT>ITablePanelTab</TT> passed.
+	 */
+	public void addDatabasePanelTab(IDatabasePanelTab tab) throws IllegalArgumentException {
+		_sessionSheet.getDatabasePanel().addDatabasePanelTab(tab);
 	}
 
 	/**

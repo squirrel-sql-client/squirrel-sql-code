@@ -33,8 +33,10 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
+import net.sourceforge.squirrel_sql.client.session.objectstree.DatabaseNode;
 import net.sourceforge.squirrel_sql.client.session.objectstree.ProcedureNode;
 import net.sourceforge.squirrel_sql.client.session.objectstree.TableNode;
+import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.IDatabasePanelTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.procedurepanel.IProcedurePanelTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.ITablePanelTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
@@ -47,6 +49,7 @@ public interface ISession extends IHasIdentifier {
 	 * Keys to objects stored in session.
 	 */
 	public interface ISessionKeys {
+        String DATABASE_DETAIL_PANEL_KEY = DatabaseNode.class.getName() + "_DETAIL_PANEL_KEY";
         String PROCEDURE_DETAIL_PANEL_KEY = ProcedureNode.class.getName() + "_DETAIL_PANEL_KEY";
 		String TABLE_DETAIL_PANEL_KEY = TableNode.class.getName() + "_DETAIL_PANEL_KEY";
 	}
@@ -179,6 +182,19 @@ public interface ISession extends IHasIdentifier {
 	 */
 	void addMainTab(String title, Icon icon, Component comp, String tip)
 			throws IllegalArgumentException;
+
+	/**
+	 * Add a tab to the panel shown when the database selected in the
+	 * object tree. If a tab with this title already exists it is
+	 * removed from the tabbed pane and the passed tab inserted in its
+	 * place. New tabs are inserted at the end.
+	 *
+	 * @param	tab	 The tab to be added.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if a <TT>null</TT> <TT>ITablePanelTab</TT> passed.
+	 */
+	void addDatabasePanelTab(IDatabasePanelTab tab) throws IllegalArgumentException;
 
 	/**
 	 * Add a tab to the panel shown when a table selected in the

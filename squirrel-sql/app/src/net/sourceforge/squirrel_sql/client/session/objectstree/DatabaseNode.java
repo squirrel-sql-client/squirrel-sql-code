@@ -19,33 +19,34 @@ package net.sourceforge.squirrel_sql.client.session.objectstree;
  */
 import javax.swing.JComponent;
 
+import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public class DatabaseNode extends BaseNode {
-    private interface ISessionKeys {
-        String DETAIL_PANEL_KEY = DatabaseNode.class.getName() + "_DETAIL_PANEL_KEY";
-    }
+	private interface ISessionKeys {
+		String DETAIL_PANEL_KEY = DatabaseNode.class.getName() + "_DETAIL_PANEL_KEY";
+	}
 
-    /**
-     * This interface defines locale specific strings. This should be
-     * replaced with a property file.
-     */
-    private interface i18n {
-        String DATABASE = "Database";
-    }
+	/**
+	 * This interface defines locale specific strings. This should be
+	 * replaced with a property file.
+	 */
+	private interface i18n {
+		String DATABASE = "Database";
+	}
 
-    private DatabasePanel _dbPnl;
+	DatabaseNode(ISession session, ObjectsTreeModel treeModel) {
+		super(session, treeModel, i18n.DATABASE);
+	}
 
-    DatabaseNode(ISession session, ObjectsTreeModel treeModel) {
-        super(session, treeModel, i18n.DATABASE);
-        _dbPnl = new DatabasePanel(session);
-    }
+	public JComponent getDetailsPanel() {
+		final ISession session = getSession();
+		final IPlugin plugin = session.getApplication().getDummyAppPlugin();
+		DatabasePanel pnl = (DatabasePanel)session.getPluginObject(plugin, ISession.ISessionKeys.DATABASE_DETAIL_PANEL_KEY);
+		return pnl;
+	}
 
-    public JComponent getDetailsPanel() {
-        return _dbPnl;
-    }
-
-    public boolean isLeaf() {
-        return false;
-    }
+	public boolean isLeaf() {
+		return false;
+	}
 }

@@ -28,6 +28,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -45,30 +46,40 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.DataTypesTab;
+import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.IDatabasePanelTab;
+import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.MetaDataTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.util.Logger;
 
-class DatabasePanel extends JTabbedPane {
+public class DatabasePanel extends JTabbedPane {
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
-	private interface i18n {
-		String META_TAB_TITLE = "Metadata";
-		String META_TAB_DESC = "Show database metadata";
-		String TYPE_TAB_TITLE = "Data Types";
-		String TYPE_TAB_DESC = "Show all the data types available in DBMS";
-	}
+	//private interface i18n {
+		//String META_TAB_TITLE = "Metadata";
+		//String META_TAB_DESC = "Show database metadata";
+		//String TYPE_TAB_TITLE = "Data Types";
+		//String TYPE_TAB_DESC = "Show all the data types available in DBMS";
+	//}
 
+	/** Current session. */
 	private ISession _session;
 
-	private MyBaseViewer[] _viewers = new MyBaseViewer[2];
+	//private MyBaseViewer[] _viewers = new MyBaseViewer[2];
 
 	/** Viewer that displays the Database Metadata. */
-	private MyBaseViewer _metaDataViewer = new MetaDataViewer();
+	//private MyBaseViewer _metaDataViewer = new MetaDataViewer();
 
 	/** Viewer that displays the Data Types available in DBMS. */
-	private MyBaseViewer _dataTypesViewer = new DataTypesViewer();
+	//private MyBaseViewer _dataTypesViewer = new DataTypesViewer();
+	
+	/**
+	 * Collection of <TT>IDatabasePanelTab</TT> objects displayed in
+	 * this tabbed panel.
+	 */
+	private List _tabs = new ArrayList();
 
 	/** Listens to changes in <CODE>_props</CODE>. */
 	private MyPropertiesListener _propsListener;
@@ -76,50 +87,86 @@ class DatabasePanel extends JTabbedPane {
 	/**
 	 * ctor specifying the properties for this window.
 	 */
-	DatabasePanel(ISession session) {
+	public DatabasePanel(ISession session) {
 		super();
 		_session = session;
 		createUserInterface();
 		propertiesHaveChanged(null);
+		// Refresh the currently selected tab.
+		((IDatabasePanelTab)_tabs.get(getSelectedIndex())).select();
+	}
+
+	/**
+	 * Add a tab to this panel. If a tab with this title already exists it is
+	 * removed from the tabbed pane and the passed tab inserted in its
+	 * place. New tabs are inserted at the end.
+	 *
+	 * @param   tab	 The tab to be added.
+	 *
+	 * @throws  IllegalArgumentException
+	 *		  Thrown if a <TT>null</TT> <TT>ITablePanelTab</TT> passed.
+	 */
+	public void addDatabasePanelTab(IDatabasePanelTab tab) throws IllegalArgumentException {
+		if (tab == null) {
+			throw new IllegalArgumentException("Null ITablePanelTab passed");
+		}
+		tab.setSession(_session);
+		//tab.setTableInfo(_ti);
+		final String title = tab.getTitle();
+		int idx = indexOfTab(title);
+		if (idx != -1) {
+			removeTabAt(idx);
+			_tabs.set(idx, tab);
+		} else {
+			idx = getTabCount();
+			_tabs.add(tab);
+		}
+		insertTab(title, null, tab.getComponent(), tab.getHint(), idx);
 	}
 
 	private void propertiesHaveChanged(String propName) {
 		if (propName == null ||
 				propName.equals(SessionProperties.IPropertyNames.META_DATA_OUTPUT_CLASS_NAME)) {
-			addMetaDataTab();
-			_metaDataViewer.setHasBeenBuilt(false);
-			_metaDataViewer.load(_session.getSQLConnection());
+//			addMetaDataTab();
+//			_metaDataViewer.setHasBeenBuilt(false);
+//			_metaDataViewer.load(_session.getSQLConnection());
+			addDatabasePanelTab(new MetaDataTab());
 		}
 		if (propName == null ||
 				propName.equals(SessionProperties.IPropertyNames.DATA_TYPES_OUTPUT_CLASS_NAME)) {
-			addDataTypesTab();
-			_dataTypesViewer.setHasBeenBuilt(false);
-			_dataTypesViewer.load(_session.getSQLConnection());
+//			addDataTypesTab();
+//			_dataTypesViewer.setHasBeenBuilt(false);
+//			_dataTypesViewer.load(_session.getSQLConnection());
+			addDatabasePanelTab(new DataTypesTab());
 		}
 	}
 
 	private void createUserInterface() {
-		addMetaDataTab();
-		addDataTypesTab();
-		_viewers[0] = _metaDataViewer;
-		_viewers[1] = _dataTypesViewer;
+		addDatabasePanelTab(new MetaDataTab());
+		addDatabasePanelTab(new DataTypesTab());
+
+		//addMetaDataTab();
+		//addDataTypesTab();
+		//_viewers[0] = _metaDataViewer;
+		//_viewers[1] = _dataTypesViewer;
 
 		_propsListener = new MyPropertiesListener();
 		_session.getProperties().addPropertyChangeListener(_propsListener);
 
 		addChangeListener(new TabbedPaneListener());
 	}
-
+/*
 	private void addMetaDataTab() {
 		addResultSetViewerTab(i18n.META_TAB_TITLE, i18n.META_TAB_DESC, _metaDataViewer,
 								_session.getProperties().getMetaDataOutputClassName());
 	}
-
+*/
+/*
 	private void addDataTypesTab() {
 		addResultSetViewerTab(i18n.TYPE_TAB_TITLE, i18n.TYPE_TAB_DESC, _dataTypesViewer,
 								_session.getProperties().getDataTypesOutputClassName());
 	}
-
+*/
 	private void addResultSetViewerTab(String title, String description,
 												MyBaseViewer viewer,
 												String destClassName) {
@@ -180,7 +227,7 @@ class DatabasePanel extends JTabbedPane {
 			_hasBeenBuilt = value;
 		}
 	}
-
+/*
 	private class DataTypesViewer extends MyBaseViewer {
 		void loadImpl(SQLConnection conn) throws DataSetException, BaseSQLException, SQLException {
 			if (conn != null) {
@@ -196,7 +243,7 @@ class DatabasePanel extends JTabbedPane {
 			}
 		}
 	}
-
+*/
 	private class MyPropertiesListener implements PropertyChangeListener {
 		public void propertyChange(PropertyChangeEvent evt) {
 			DatabasePanel.this.propertiesHaveChanged(evt.getPropertyName());
@@ -209,7 +256,8 @@ class DatabasePanel extends JTabbedPane {
 			if (src instanceof JTabbedPane) {
 				int idx = ((JTabbedPane)src).getSelectedIndex();
 				if (idx != -1) {
-					DatabasePanel.this._viewers[idx].load(DatabasePanel.this._session.getSQLConnection());
+//					DatabasePanel.this._viewers[idx].load(DatabasePanel.this._session.getSQLConnection());
+					((IDatabasePanelTab)_tabs.get(getSelectedIndex())).select();
 				}
 			}
 		}
