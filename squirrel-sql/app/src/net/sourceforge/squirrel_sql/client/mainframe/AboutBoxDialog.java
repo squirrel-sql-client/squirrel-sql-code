@@ -44,7 +44,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.HashtableDataSet;
 import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.util.Logger;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Version;
@@ -65,8 +66,14 @@ public class AboutBoxDialog extends JDialog {
 		String ABOUT = "About";
 	}
 
+	/** Logger for this class. */
+	private static ILogger s_log;
+
 	public AboutBoxDialog(IApplication app, Frame owner) {
 		super(owner, i18n.ABOUT, true);
+		if (s_log == null) {
+			s_log = LoggerController.createLogger(getClass());
+		}
 		createUserInterface(app);
 	}
 
@@ -127,9 +134,7 @@ public class AboutBoxDialog extends JDialog {
 			try {
 				viewer.show(new HashtableDataSet(System.getProperties()));
 			} catch (DataSetException ex) {
-				Logger logger = app.getLogger();
-				logger.showMessage(Logger.ILogTypes.ERROR, "Error occured displaying System Properties");
-				logger.showMessage(Logger.ILogTypes.ERROR, ex);
+				s_log.error("Error occured displaying System Properties", ex);
 			}
 
 			add(new JScrollPane(propsPnl.getComponent()), BorderLayout.CENTER);

@@ -33,8 +33,9 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
-import net.sourceforge.squirrel_sql.fw.util.Logger;
 import net.sourceforge.squirrel_sql.fw.util.MyURLClassLoader;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 
@@ -48,11 +49,14 @@ class LAFRegister implements LAFConstants {
 	private final static int FONT_KEYS_ARRAY_MENU = 1;
 	private final static int FONT_KEYS_ARRAY_STATIC = 2;
 
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(LAFRegister.class);
+
 	// What about these
 	// Viewport.font, ColorChooser.font, InternalFrame.font,
 	// OptionPane.font, "Panel.font",
 	// ScrollPane.font, DesktopIcon.font
-	// ToolTip.font
+	// 
 
 	private final static String[][] FONT_KEYS = {
 		// Editable Text
@@ -95,6 +99,7 @@ class LAFRegister implements LAFConstants {
 			"TitledBorder.font",
 			"ToggleButton.font",
 			"ToolBar.font",
+			"ToolTip.font",
 		},
 	};
 
@@ -122,9 +127,6 @@ class LAFRegister implements LAFConstants {
 	 *
 	 * @throws	IllegalArgumentException
 	 *			If <TT>IApplication</TT>, or <TT>LAFPlugin</TT> are <TT>null</TT>.
-	 *
-	 * @throws	IllegalStateException
-	 *			If no <TT>Logger</TT> object exists in the passed<TT>IApplication</TT>.
 	 */
 	LAFRegister(IApplication app, LAFPlugin plugin)
 		throws IllegalArgumentException {
@@ -134,9 +136,6 @@ class LAFRegister implements LAFConstants {
 		}
 		if (plugin == null) {
 			throw new IllegalArgumentException("Null LAFPlugin passed");
-		}
-		if (app.getLogger() == null) {
-			throw new IllegalStateException("No Logger object in IApplication");
 		}
 
 		_app = app;
@@ -150,7 +149,7 @@ class LAFRegister implements LAFConstants {
 		try {
 			setLookAndFeel();
 		} catch (Throwable ex) {
-			_app.getLogger().showMessage(Logger.ILogTypes.ERROR, ex);
+			s_log.error("Error", ex);
 		}
 	}
 
@@ -222,11 +221,7 @@ class LAFRegister implements LAFConstants {
 				Object skin = loadThemePack.invoke(skinLafClass, parms);
 				setSkin.invoke(skinLafClass, new Object[] { skin });
 			} catch (Exception ex) {
-				Logger logger = _app.getLogger();
-				logger.showMessage(
-					Logger.ILogTypes.ERROR,
-					"Error loading a Skinnable Look and Feel");
-				logger.showMessage(Logger.ILogTypes.ERROR, ex.toString());
+				s_log.error("Error loading a Skinnable Look and Feel", ex);
 			}
 		}
 
@@ -249,8 +244,6 @@ class LAFRegister implements LAFConstants {
 	 * Install Look and Feels from their jars.
 	 */
 	private void installLookAndFeels() {
-		Logger log = _app.getLogger();
-
 		// Retrieve URLs of all the Look and Feel jars and store in lafUrls.
 		List lafUrls = new ArrayList();
 		File dir = _plugin.getLookAndFeelFolder();
@@ -265,10 +258,7 @@ class LAFRegister implements LAFConstants {
 					try {
 						lafUrls.add(jarFile.toURL());
 					} catch (IOException ex) {
-						log.showMessage(
-							Logger.ILogTypes.ERROR,
-							"Error occured reading Look and Feel jar: " + jarFileName);
-						log.showMessage(ex);
+						s_log.error("Error occured reading Look and Feel jar: " + jarFileName, ex);
 					}
 				}
 			}
@@ -280,11 +270,8 @@ class LAFRegister implements LAFConstants {
 				new File(_plugin.getPluginAppSettingsFolder(), LAFConstants.SKINNABLE_LAF_JAR_NAME);
 			lafUrls.add(skinLafFile.toURL());
 		} catch (IOException ex) {
-			log.showMessage(
-				Logger.ILogTypes.ERROR,
-				"Error occured reading Skin Look and Feel jar: "
-					+ LAFConstants.SKINNABLE_LAF_JAR_NAME);
-			log.showMessage(ex);
+			s_log.error("Error occured reading Skin Look and Feel jar: "
+					+ LAFConstants.SKINNABLE_LAF_JAR_NAME, ex);
 		}
 
 		// Create a ClassLoader for all the LAF jars. Install all Look and Feels
@@ -294,7 +281,7 @@ class LAFRegister implements LAFConstants {
 			_lafClassLoader =
 				new MyURLClassLoader((URL[]) lafUrls.toArray(new URL[lafUrls.size()]));
 			Class[] lafClasses =
-				_lafClassLoader.getAssignableClasses(LookAndFeel.class, log);
+				_lafClassLoader.getAssignableClasses(LookAndFeel.class, s_log);
 			List lafNames = new ArrayList();
 			for (int i = 0; i < lafClasses.length; ++i) {
 				Class lafClass = lafClasses[i];
@@ -309,17 +296,12 @@ class LAFRegister implements LAFConstants {
 						}
 					}
 				} catch (Throwable th) {
-					log.showMessage(
-						Logger.ILogTypes.ERROR,
-						"Error occured loading Look and Feel: " + lafClass.getName());
-					log.showMessage(Logger.ILogTypes.ERROR, th);
+					s_log.error("Error occured loading Look and Feel: " +
+								lafClass.getName(), th);
 				}
 			}
 		} catch (Throwable th) {
-			log.showMessage(
-				Logger.ILogTypes.ERROR,
-				"Error occured trying to load Look and Feel classes");
-			log.showMessage(Logger.ILogTypes.ERROR, th);
+			s_log.error("Error occured trying to load Look and Feel classes", th);
 		}
 
 	}

@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.util;
+package net.sourceforge.squirrel_sql.fw.util.log;
 /*
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net
@@ -17,35 +17,7 @@ package net.sourceforge.squirrel_sql.fw.util;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
-public final class Debug {
-
-    private static boolean s_debug = false;
-
-    private Debug() {
-        super();
-    }
-
-    public static void setDebugMode(boolean value) {
-        s_debug = value;
-    }
-
-    public static boolean isDebugMode() {
-        return s_debug;
-    }
-
-    public static void println(String msg) {
-        if (s_debug) {
-            System.out.println(msg);
-            System.out.flush();
-        }
-    }
-
-    public static void println(Throwable th) {
-        if (s_debug) {
-            println(th.toString());
-            System.out.println(Utilities.getStackTrace(th));
-            System.out.flush();
-        }
-    }
+public interface ILoggerFactory {
+	public ILogger createLogger(Class clazz);
 }
+

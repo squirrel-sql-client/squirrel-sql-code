@@ -20,27 +20,23 @@ package net.sourceforge.squirrel_sql.client.db;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
-//import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-//import net.sourceforge.squirrel_sql.fw.xml.XMLException;
-import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
-import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
-import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeListener;
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
-import net.sourceforge.squirrel_sql.fw.util.Logger;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
+import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeListener;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 
 /**
  * XML cache of JDBC drivers and aliases.
@@ -48,215 +44,200 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class DataCache {
-    private final static Class SQL_ALIAS_IMPL = SQLAlias.class;
-    private final static Class SQL_DRIVER_IMPL = SQLDriver.class;
+	private final static Class SQL_ALIAS_IMPL = SQLAlias.class;
+	private final static Class SQL_DRIVER_IMPL = SQLDriver.class;
 
-    /** Application API. */
-    private IApplication _app;
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(DataCache.class);
 
-    /** Cache that contains data. */
-    private XMLObjectCache _cache = new XMLObjectCache();
+	/** Application API. */
+	private IApplication _app;
 
-    /**
-     * Ctor. Loads drivers and aliases from the XML document.
-     *
-     * @param   app     Application API.
-     *
-     * @throws  IllegalArgumentException
-     *              Thrown if <TT>null</TT> <TT>IApplication</TT>
-     *              passed.
-     *
-     * @throws  IllegalStateException
-     *              Thrown if no <TT>SQLDriverManager</TT> or <TT>Logger</TT>
-     *              exists in IApplication.
-     */
-    public DataCache(IApplication app) throws IllegalArgumentException {
-        super();
-        if (app == null) {
-            throw new IllegalArgumentException("Null IApplication passed");
-        }
-        if (app.getSQLDriverManager() == null) {
-            throw new IllegalStateException("No SQLDriverManager in IApplication");
-        }
-        if (app.getLogger() == null) {
-            throw new IllegalStateException("No Logger in IApplication");
-        }
+	/** Cache that contains data. */
+	private XMLObjectCache _cache = new XMLObjectCache();
 
-        _app = app;
+	/**
+	 * Ctor. Loads drivers and aliases from the XML document.
+	 *
+	 * @param	app	Application API.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if <TT>null</TT> <TT>IApplication</TT>
+	 *			passed.
+	 *
+	 * @throws	IllegalStateException
+	 *			Thrown if no <TT>SQLDriverManager</TT>
+	 *			exists in IApplication.
+	 */
+	public DataCache(IApplication app) throws IllegalArgumentException {
+		super();
+		if (app == null) {
+			throw new IllegalArgumentException("Null IApplication passed");
+		}
+		if (app.getSQLDriverManager() == null) {
+			throw new IllegalStateException("No SQLDriverManager in IApplication");
+		}
 
-        loadDrivers();
-        loadAliases();
-    }
+		_app = app;
 
-    /**
-     * Save cached objects. JDBC drivers are saved to
-     * <CODE>ApplicationFiles.getUserDriversFileName()</CODE> and aliases are
-     * saved to <CODE>ApplicationFiles.getUserAliasesFileName()</CODE>.
-     */
-    public void save() {
-        final Logger logger = _app.getLogger();
+		loadDrivers();
+		loadAliases();
+	}
 
-        final File driversFile = _app.getApplicationFiles().getDatabaseDriversFile();
-        try {
-            _cache.saveAllForClass(driversFile.getPath(), SQL_DRIVER_IMPL);
-        } catch (Exception ex) {
-            logger.showMessage(Logger.ILogTypes.ERROR, "Error occured saving drivers to " + driversFile.getPath());
-            logger.showMessage(Logger.ILogTypes.ERROR, ex);
-        }
+	/**
+	 * Save cached objects. JDBC drivers are saved to
+	 * <CODE>ApplicationFiles.getUserDriversFileName()</CODE> and aliases are
+	 * saved to <CODE>ApplicationFiles.getUserAliasesFileName()</CODE>.
+	 */
+	public void save() {
+		final File driversFile = _app.getApplicationFiles().getDatabaseDriversFile();
+		try {
+			_cache.saveAllForClass(driversFile.getPath(), SQL_DRIVER_IMPL);
+		} catch (Exception ex) {
+			s_log.error("Error occured saving drivers to " + driversFile.getPath(), ex);
+		}
 
-        final File aliasesFile = _app.getApplicationFiles().getDatabaseAliasesFile();
-        try {
-            _cache.saveAllForClass(aliasesFile.getPath(), SQL_ALIAS_IMPL);
-        } catch (Exception ex) {
-            logger.showMessage(Logger.ILogTypes.ERROR, "Error occured saving aliases to " + aliasesFile.getPath());
-            logger.showMessage(Logger.ILogTypes.ERROR, ex);
-        }
-    }
+		final File aliasesFile = _app.getApplicationFiles().getDatabaseAliasesFile();
+		try {
+			_cache.saveAllForClass(aliasesFile.getPath(), SQL_ALIAS_IMPL);
+		} catch (Exception ex) {
+			s_log.error("Error occured saving aliases to " + aliasesFile.getPath(), ex);
+		}
+	}
 
-    /**
-     * Return the <TT>ISQLDriver</TT> for the passed identifier.
-     */
-    public ISQLDriver getDriver(IIdentifier id) {
-        return (ISQLDriver)_cache.get(SQL_DRIVER_IMPL, id);
-    }
+	/**
+	 * Return the <TT>ISQLDriver</TT> for the passed identifier.
+	 */
+	public ISQLDriver getDriver(IIdentifier id) {
+		return (ISQLDriver)_cache.get(SQL_DRIVER_IMPL, id);
+	}
 
-    public void addDriver(ISQLDriver sqlDriver) throws ClassNotFoundException,
-            IllegalAccessException, InstantiationException, DuplicateObjectException {
-        _app.getSQLDriverManager().registerSQLDriver(sqlDriver);
-        _cache.add(sqlDriver);
-    }
+	public void addDriver(ISQLDriver sqlDriver) throws ClassNotFoundException,
+			IllegalAccessException, InstantiationException, DuplicateObjectException {
+		_app.getSQLDriverManager().registerSQLDriver(sqlDriver);
+		_cache.add(sqlDriver);
+	}
 
-    public void removeDriver(ISQLDriver sqlDriver) {
-        _cache.remove(SQL_DRIVER_IMPL, sqlDriver.getIdentifier());
-        try {
-            _app.getSQLDriverManager().unregisterSQLDriver(sqlDriver);
-        } catch (Exception ex) {
-            final Logger logger = _app.getLogger();
-            logger.showMessage(Logger.ILogTypes.ERROR, "Error occured removing driver from cache");
-            logger.showMessage(Logger.ILogTypes.ERROR, ex);
-        }
-    }
+	public void removeDriver(ISQLDriver sqlDriver) {
+		_cache.remove(SQL_DRIVER_IMPL, sqlDriver.getIdentifier());
+		try {
+			_app.getSQLDriverManager().unregisterSQLDriver(sqlDriver);
+		} catch (Exception ex) {
+			s_log.error("Error occured removing driver from cache", ex);
+		}
+	}
 
-    public Iterator drivers() {
-        return _cache.getAllForClass(SQL_DRIVER_IMPL);
-    }
+	public Iterator drivers() {
+		return _cache.getAllForClass(SQL_DRIVER_IMPL);
+	}
 
-    public void addDriversListener(ObjectCacheChangeListener lis) {
-        _cache.addChangesListener(lis, SQL_DRIVER_IMPL);
-    }
+	public void addDriversListener(ObjectCacheChangeListener lis) {
+		_cache.addChangesListener(lis, SQL_DRIVER_IMPL);
+	}
 
-    public void removeDriversListener(ObjectCacheChangeListener lis) {
-        _cache.removeChangesListener(lis, SQL_DRIVER_IMPL);
-    }
+	public void removeDriversListener(ObjectCacheChangeListener lis) {
+		_cache.removeChangesListener(lis, SQL_DRIVER_IMPL);
+	}
 
-    public ISQLAlias getAlias(IIdentifier id) {
-        return (ISQLAlias)_cache.get(SQL_ALIAS_IMPL, id);
-    }
+	public ISQLAlias getAlias(IIdentifier id) {
+		return (ISQLAlias)_cache.get(SQL_ALIAS_IMPL, id);
+	}
 
-    public Iterator aliases() {
-        return _cache.getAllForClass(SQL_ALIAS_IMPL);
-    }
+	public Iterator aliases() {
+		return _cache.getAllForClass(SQL_ALIAS_IMPL);
+	}
 
-    public void addAlias(ISQLAlias alias) throws DuplicateObjectException {
-        _cache.add(alias);
-    }
+	public void addAlias(ISQLAlias alias) throws DuplicateObjectException {
+		_cache.add(alias);
+	}
 
-    public void removeAlias(ISQLAlias alias) {
-        _cache.remove(SQL_ALIAS_IMPL, alias.getIdentifier());
-    }
+	public void removeAlias(ISQLAlias alias) {
+		_cache.remove(SQL_ALIAS_IMPL, alias.getIdentifier());
+	}
 
-    public Iterator getAliasesForDriver(ISQLDriver driver) {
-        ArrayList data = new ArrayList();
-        for (Iterator it = aliases(); it.hasNext();) {
-            ISQLAlias alias = (ISQLAlias)it.next();
-            if (driver.equals(getDriver(alias.getDriverIdentifier()))) {
-                data.add(alias);
-            }
-        }
-        return data.iterator();
-    }
+	public Iterator getAliasesForDriver(ISQLDriver driver) {
+		ArrayList data = new ArrayList();
+		for (Iterator it = aliases(); it.hasNext();) {
+			ISQLAlias alias = (ISQLAlias)it.next();
+			if (driver.equals(getDriver(alias.getDriverIdentifier()))) {
+				data.add(alias);
+			}
+		}
+		return data.iterator();
+	}
 
-    public void addAliasesListener(ObjectCacheChangeListener lis) {
-        _cache.addChangesListener(lis, SQL_ALIAS_IMPL);
-    }
+	public void addAliasesListener(ObjectCacheChangeListener lis) {
+		_cache.addChangesListener(lis, SQL_ALIAS_IMPL);
+	}
 
-    public void removeAliasesListener(ObjectCacheChangeListener lis) {
-        _cache.removeChangesListener(lis, SQL_ALIAS_IMPL);
-    }
+	public void removeAliasesListener(ObjectCacheChangeListener lis) {
+		_cache.removeChangesListener(lis, SQL_ALIAS_IMPL);
+	}
 
-    /**
-     * Load <TT>IISqlDriver</TT> objects from XML file.
-     */
-    private void loadDrivers() {
-        final Logger logger = _app.getLogger();
+	/**
+	 * Load <TT>IISqlDriver</TT> objects from XML file.
+	 */
+	private void loadDrivers() {
+		final File driversFile = _app.getApplicationFiles().getDatabaseDriversFile();
+		try {
+			_cache.load(driversFile.getPath());
+			if (!drivers().hasNext()) {
+				loadDefaultDrivers();
+			}
+		} catch (FileNotFoundException ex) {
+			loadDefaultDrivers();// first time user has run pgm.
+		} catch (Exception ex) {
+			s_log.error("Error loading driver file: " + driversFile.getPath()
+						+ ". Default drivers loaded instead.", ex);
+			loadDefaultDrivers();
+		}
 
-        final File driversFile = _app.getApplicationFiles().getDatabaseDriversFile();
-        try {
-            _cache.load(driversFile.getPath());
-            if (!drivers().hasNext()) {
-                loadDefaultDrivers();
-            }
-        } catch (FileNotFoundException ex) {
-            loadDefaultDrivers();// first time user has run pgm.
-        } catch (Exception ex) {
-            logger.showMessage(Logger.ILogTypes.ERROR, "Error loading driver file: "
-                        + driversFile.getPath()
-                        + ". Default drivers loaded instead.");
-            logger.showMessage(Logger.ILogTypes.ERROR, ex);
-            loadDefaultDrivers();
-        }
+		registerDrivers();
+	}
 
-        registerDrivers();
-    }
+	public ISQLAlias createAlias(IIdentifier id) {
+		return new SQLAlias(id);
+	}
 
-    public ISQLAlias createAlias(IIdentifier id) {
-        return new SQLAlias(id);
-    }
+	public ISQLDriver createDriver(IIdentifier id) {
+		return new SQLDriver(id);
+	}
 
-    public ISQLDriver createDriver(IIdentifier id) {
-        return new SQLDriver(id);
-    }
+	private void loadDefaultDrivers() {
+		final URL url = _app.getResources().getDefaultDriversUrl();
+		try {
+			InputStreamReader isr = new InputStreamReader(url.openStream());
+			try {
+				_cache.load(isr);
+			} finally {
+				isr.close();
+			}
+		} catch (Exception ex) {
+			s_log.error("Error loading default driver file: " + url != null ? url.toExternalForm() : "", ex);
+		}
+	}
 
-    private void loadDefaultDrivers() {
-        final URL url = _app.getResources().getDefaultDriversUrl();
-        try {
-            InputStreamReader isr = new InputStreamReader(url.openStream());
-            try {
-                _cache.load(isr);
-            } finally {
-                isr.close();
-            }
-        } catch (Exception ex) {
-            final Logger logger = _app.getLogger();
-            logger.showMessage(Logger.ILogTypes.ERROR,
-                        "Error loading default driver file: " + url != null ? url.toExternalForm() : "");
-            logger.showMessage(Logger.ILogTypes.ERROR, ex);
-        }
-    }
+	private void registerDrivers() {
+		SQLDriverManager driverMgr = _app.getSQLDriverManager();
+		for (Iterator it = drivers(); it.hasNext();) {
+			ISQLDriver sqlDriver = (ISQLDriver)it.next();
+			try {
+				driverMgr.registerSQLDriver(sqlDriver);
+			} catch (ClassNotFoundException ex) {
+				s_log.warn("Could not find JDBC driver class for " + sqlDriver.getName() + ": " + sqlDriver.getDriverClassName());
+			} catch (Throwable th) {
+				s_log.error("Unable to register JDCB driver " + sqlDriver.getName(), th);
+			}
+		}
+	}
 
-    private void registerDrivers() {
-        SQLDriverManager driverMgr = _app.getSQLDriverManager();
-        for (Iterator it = drivers(); it.hasNext();) {
-            ISQLDriver sqlDriver = (ISQLDriver)it.next();
-            try {
-                driverMgr.registerSQLDriver(sqlDriver);
-            } catch (Throwable th) {
-                final Logger logger = _app.getLogger();
-                logger.showMessage(Logger.ILogTypes.STATUS, "Unable to register JDCB driver " + sqlDriver.getName());
-                logger.showMessage(Logger.ILogTypes.STATUS, th.toString());
-            }
-        }
-    }
-
-    private void loadAliases() {
-        final Logger logger = _app.getLogger();
-        final File aliasesFile = _app.getApplicationFiles().getDatabaseAliasesFile();
-        try {
-            _cache.load(aliasesFile.getPath());
-        } catch (FileNotFoundException ignore) { // first time user has run pgm.
-        } catch (Exception ex) {
-            logger.showMessage(Logger.ILogTypes.ERROR, "Error loading aliases file: " + aliasesFile.getPath());
-            logger.showMessage(Logger.ILogTypes.ERROR, ex);
-        }
-    }
+	private void loadAliases() {
+		final File aliasesFile = _app.getApplicationFiles().getDatabaseAliasesFile();
+		try {
+			_cache.load(aliasesFile.getPath());
+		} catch (FileNotFoundException ignore) { // first time user has run pgm.
+		} catch (Exception ex) {
+			s_log.error("Error loading aliases file: " + aliasesFile.getPath(), ex);
+		}
+	}
 }

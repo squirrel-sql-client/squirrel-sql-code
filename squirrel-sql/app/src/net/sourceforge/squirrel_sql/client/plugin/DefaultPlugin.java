@@ -24,7 +24,6 @@ import java.io.IOException;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
-
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 
 public abstract class DefaultPlugin implements IPlugin {
@@ -144,7 +143,6 @@ public abstract class DefaultPlugin implements IPlugin {
 
 		return file;
 	}
-
 
 	/**
 	 * Create panels for the Global Preferences dialog.

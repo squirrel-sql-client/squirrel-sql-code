@@ -75,7 +75,7 @@ class LoggingPreferencesPanel implements IGlobalPreferencesPanel {
 			String DEBUG_JDBC = "JDBC Debug";
 			String TAB_HINT = "Logging and Debug settings";
 			String TAB_TITLE = "Logging/Debug";
-			String PERF_WARNING = "Note: Turning on debug options will have\nperformance implications.";
+			String PERF_WARNING = "Note: Turning on debug options will have performance implications.";
 		}
 
 		/** Application API. */

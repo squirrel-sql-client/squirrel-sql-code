@@ -22,84 +22,81 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
-import net.sourceforge.squirrel_sql.fw.util.Logger;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 
 /**
  * XML cache of SQL scripts.
  */
 public class SessionScriptCache {
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(SessionScriptCache.class);
+
 	/** Current plugin. */
 	private SQLScriptPlugin _plugin;
  
-    /** Cache that contains data. */
-    private XMLObjectCache _cache = new XMLObjectCache();
+	/** Cache that contains data. */
+	private XMLObjectCache _cache = new XMLObjectCache();
 
 	/** File name to save scripts to. */
-    private String _scriptsFileName;
+	private String _scriptsFileName;
 
-    /**
-     * Ctor. Loads scripts from the XML document.
-     * 
-     * @param	sqlScriptPlugin		Current plugin.
-     *
-     * @throws  IllegalArgumentException
-     *              Thrown if <TT>null</TT> <TT>SQLScriptPlugin</TT> passed.
-     */
-    public SessionScriptCache(SQLScriptPlugin plugin) throws IOException {
-        super();
-        if (plugin == null) {
-            throw new IllegalArgumentException("Null SQLScriptPlugin passed");
-        }
-    
-        _plugin = plugin;
-        _scriptsFileName = _plugin.getPluginUserSettingsFolder().getAbsolutePath() +
+	/**
+	 * Ctor. Loads scripts from the XML document.
+	 * 
+	 * @param	sqlScriptPlugin	Current plugin.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if <TT>null</TT> <TT>SQLScriptPlugin</TT> passed.
+	 */
+	public SessionScriptCache(SQLScriptPlugin plugin) throws IOException {
+		super();
+		if (plugin == null) {
+			throw new IllegalArgumentException("Null SQLScriptPlugin passed");
+		}
+	
+		_plugin = plugin;
+
+		_scriptsFileName = _plugin.getPluginUserSettingsFolder().getAbsolutePath() +
 									File.separator + "session-scripts.xml";
-    }
+	}
 
 	/**
 	 * Load scripts from XML document.
 	 */
-    public void load() {
-        final Logger logger = _plugin.getApplication().getLogger();
-        try {
-            _cache.load(_scriptsFileName, getClass().getClassLoader());
-        } catch (FileNotFoundException ignore) { // first time user has run pgm.
-        } catch (XMLException ex) {
-            logger.showMessage(Logger.ILogTypes.ERROR, "Error loading aliases file: " + _scriptsFileName);
-            logger.showMessage(Logger.ILogTypes.ERROR, ex);
-        } catch (DuplicateObjectException ex) {
-            logger.showMessage(Logger.ILogTypes.ERROR, "Error loading aliases file: " + _scriptsFileName);
-            logger.showMessage(Logger.ILogTypes.ERROR, ex);
-        }
+	public void load() {
+		try {
+			_cache.load(_scriptsFileName, getClass().getClassLoader());
+		} catch (FileNotFoundException ignore) { // first time user has run pgm.
+		} catch (XMLException ex) {
+			s_log.error("Error loading aliases file: " + _scriptsFileName, ex);
+		} catch (DuplicateObjectException ex) {
+			s_log.error("Error loading aliases file: " + _scriptsFileName, ex);
+		}
 // Create dummy script for testing purposes.
-//        try {
+//		try {
 //SessionScript ss = new SessionScript();
 //ss.setScript("set dateformat(\"*DMY\")");
 //_cache.add(ss);
-//        } catch(Exception ignore) {}
-    }
+//		} catch(Exception ignore) {}
+	}
 
-    /**
-     * Save scripts.
-     */
-    public void save() {
-        try {
-            _cache.save(_scriptsFileName);
-        } catch (IOException ex) {
-	        final Logger logger = _plugin.getApplication().getLogger();
-            logger.showMessage(Logger.ILogTypes.ERROR, "Error occured saving scripts to " + _scriptsFileName);
-            logger.showMessage(Logger.ILogTypes.ERROR, ex);
-        } catch (XMLException ex) {
-	        final Logger logger = _plugin.getApplication().getLogger();
-            logger.showMessage(Logger.ILogTypes.ERROR, "Error occured saving scripts to " + _scriptsFileName);
-            logger.showMessage(Logger.ILogTypes.ERROR, ex);
-        }
-    }
+	/**
+	 * Save scripts.
+	 */
+	public void save() {
+		try {
+			_cache.save(_scriptsFileName);
+		} catch (IOException ex) {
+			s_log.error("Error occured saving scripts to " + _scriptsFileName, ex);
+		} catch (XMLException ex) {
+			s_log.error("Error occured saving scripts to " + _scriptsFileName, ex);
+		}
+	}
 }
 

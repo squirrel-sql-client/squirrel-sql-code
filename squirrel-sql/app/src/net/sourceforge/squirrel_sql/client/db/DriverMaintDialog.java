@@ -53,16 +53,20 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverClassLoader;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 
 public class DriverMaintDialog extends JDialog {
-
 	public interface MaintenanceType {
 		int NEW = 1;
 		int MODIFY = 2;
 		int COPY = 3;
 	}
+
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(DriverMaintDialog.class);
 
 	/**
 	 * This interface defines locale specific strings. This should be
@@ -100,10 +104,10 @@ public class DriverMaintDialog extends JDialog {
 		String jarFileName = sqlDriver.getJarFileName();
 		_sqlDriver = sqlDriver;
 		_maintType = maintType;
+
 		createUserInterface();
 		loadData();
 	}
-
 
 	private void loadData() {
 		_driverName.setText(_sqlDriver.getName());
@@ -135,8 +139,7 @@ public class DriverMaintDialog extends JDialog {
 		}
 	}
 
-	private void applyFromDialog()
-			throws ValidationException {
+	private void applyFromDialog() throws ValidationException {
 		_sqlDriver.setName(_driverName.getText().trim());
 		_sqlDriver.setUsesClassPath(_usesClassPathChk.isSelected());
 		_sqlDriver.setJarFileName(_jarFileName.getText().trim());
@@ -149,7 +152,7 @@ public class DriverMaintDialog extends JDialog {
 		if (!_usesClassPathChk.isSelected()) {
 			try {
 				SQLDriverClassLoader cl = new SQLDriverClassLoader(new File(_jarFileName.getText().trim()).toURL());
-				Class[] classes = cl.getDriverClasses(_app.getLogger());
+				Class[] classes = cl.getDriverClasses(s_log);
 				for (int i = 0; i < classes.length; ++i) {
 					_driverClassCmb.addItem(classes[i].getName());
 				}

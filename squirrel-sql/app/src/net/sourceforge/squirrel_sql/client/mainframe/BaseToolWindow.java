@@ -38,186 +38,188 @@ import javax.swing.event.ListDataListener;
 import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
+import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.fw.util.Logger;
 
 abstract class BaseToolWindow extends JInternalFrame {
 
-    protected interface IUserInterfaceFactory {
-        ToolBar getToolBar();
-        BasePopupMenu getPopupMenu();
-        JList getList();
-        String getWindowTitle();
-        ICommand getDoubleClickCommand();
-        void enableDisableActions();
-    }
+	protected interface IUserInterfaceFactory {
+		ToolBar getToolBar();
+		BasePopupMenu getPopupMenu();
+		JList getList();
+		String getWindowTitle();
+		ICommand getDoubleClickCommand();
+		void enableDisableActions();
+	}
 
-    /** Application API. */
-    private IApplication _app;
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(BaseToolWindow.class);
 
-    private IUserInterfaceFactory _uiFactory;
+	/** Application API. */
+	private IApplication _app;
 
-    /** Popup menu for the list. */
-    private BasePopupMenu _popupMenu;
+	private IUserInterfaceFactory _uiFactory;
 
-    /** Toolbar for window. */
-    private ToolBar _toolBar;
+	/** Popup menu for the list. */
+	private BasePopupMenu _popupMenu;
 
-    private boolean _hasBeenBuilt;
+	/** Toolbar for window. */
+	private ToolBar _toolBar;
 
-    public BaseToolWindow(IApplication app, IUserInterfaceFactory uiFactory)
-            throws IllegalArgumentException {
-        super();
-        if (app == null) {
-            throw new IllegalArgumentException("Null IApplication passed");
-        }
-        if (uiFactory == null) {
-            throw new IllegalArgumentException("Null IUserInterfaceFactory passed");
-        }
+	private boolean _hasBeenBuilt;
 
-        _app = app;
-        _uiFactory = uiFactory;
-        createUserInterface();
-    }
+	public BaseToolWindow(IApplication app, IUserInterfaceFactory uiFactory)
+			throws IllegalArgumentException {
+		super();
+		if (app == null) {
+			throw new IllegalArgumentException("Null IApplication passed");
+		}
+		if (uiFactory == null) {
+			throw new IllegalArgumentException("Null IUserInterfaceFactory passed");
+		}
+		_app = app;
+		_uiFactory = uiFactory;
 
-    protected IUserInterfaceFactory getUserInterfaceFactory() {
-        return _uiFactory;
-    }
+		createUserInterface();
+	}
 
-    /**
-     * Process a mouse press event in this list. If this event is a trigger
-     * for a popup menu then display the popup menu.
-     *
-     * @param   evt     The mouse event being processed.
-     */
-    private void mousePress(MouseEvent evt) {
-        if (evt.isPopupTrigger()) {
-            if (_popupMenu == null) {
-                _popupMenu = _uiFactory.getPopupMenu();
-            }
-//          _popupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
-            _popupMenu.show(evt);
-        }
-    }
+	protected IUserInterfaceFactory getUserInterfaceFactory() {
+		return _uiFactory;
+	}
 
-    private void createUserInterface() {
-        // This is a tool window.
-        GUIUtils.makeToolWindow(this, true);
+	/**
+	 * Process a mouse press event in this list. If this event is a trigger
+	 * for a popup menu then display the popup menu.
+	 *
+	 * @param   evt	 The mouse event being processed.
+	 */
+	private void mousePress(MouseEvent evt) {
+		if (evt.isPopupTrigger()) {
+			if (_popupMenu == null) {
+				_popupMenu = _uiFactory.getPopupMenu();
+			}
+//		  _popupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+			_popupMenu.show(evt);
+		}
+	}
 
-        // Pane to add window content to.
-        final Container content = getContentPane();
-        content.setLayout(new BorderLayout());
+	private void createUserInterface() {
+		// This is a tool window.
+		GUIUtils.makeToolWindow(this, true);
 
-        // Put title and toolbar at top of window.
-        _toolBar = _uiFactory.getToolBar();
-        if (_toolBar != null) {
-            String title = _uiFactory.getWindowTitle();
-            if (title != null) {
-                final JLabel lbl = new JLabel(title, SwingConstants.CENTER);
-                lbl.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
-                _toolBar.add(lbl, 0);
-                _toolBar.add(new JToolBar.Separator(), 1);
-                setTitle(title);
-            }
-            content.add(_toolBar, BorderLayout.NORTH);
-        }
+		// Pane to add window content to.
+		final Container content = getContentPane();
+		content.setLayout(new BorderLayout());
 
-        // The main list for window.
-        final JList list = _uiFactory.getList();
+		// Put title and toolbar at top of window.
+		_toolBar = _uiFactory.getToolBar();
+		if (_toolBar != null) {
+			String title = _uiFactory.getWindowTitle();
+			if (title != null) {
+				final JLabel lbl = new JLabel(title, SwingConstants.CENTER);
+				lbl.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
+				_toolBar.add(lbl, 0);
+				_toolBar.add(new JToolBar.Separator(), 1);
+				setTitle(title);
+			}
+			content.add(_toolBar, BorderLayout.NORTH);
+		}
 
-        // Allow list to scroll.
-        final JScrollPane sp = new JScrollPane();
-        sp.setViewportView(list);
-        sp.setPreferredSize(new Dimension(100, 100));
+		// The main list for window.
+		final JList list = _uiFactory.getList();
 
-        // List in the centre of the window.
-        content.add(sp, BorderLayout.CENTER);
+		// Allow list to scroll.
+		final JScrollPane sp = new JScrollPane();
+		sp.setViewportView(list);
+		sp.setPreferredSize(new Dimension(100, 100));
 
-        // Add mouse listener for displaying popup menu.
-        list.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent evt) {
-                mousePress(evt);
-            }
-            public void mouseReleased(MouseEvent evt) {
-                mousePress(evt);
-            }
-        });
+		// List in the centre of the window.
+		content.add(sp, BorderLayout.CENTER);
 
-        // Add a listener to handle doubleclick events in the list.
-        list.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent evt) {
-                if (evt.getClickCount() == 2) {
-                    ICommand cmd = _uiFactory.getDoubleClickCommand();
-                    if (cmd != null) {
-                        try {
-                            cmd.execute();
-                        } catch (BaseException ex) {
-                            _app.getLogger().showMessage(Logger.ILogTypes.ERROR, ex);
-                        }
-                    }
-                }
-            }
-        });
+		// Add mouse listener for displaying popup menu.
+		list.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent evt) {
+				mousePress(evt);
+			}
+			public void mouseReleased(MouseEvent evt) {
+				mousePress(evt);
+			}
+		});
 
-        // Add listener to listen for items added/removed from list.
-        list.getModel().addListDataListener(new ListDataListener() {
-            public void intervalAdded(ListDataEvent evt) {
-                list.setSelectedIndex(evt.getIndex0()); // select the one just added.
-                _uiFactory.enableDisableActions();
-            }
-            public void intervalRemoved(ListDataEvent evt) {
-                int nextIdx = evt.getIndex0();
-                int lastIdx = list.getModel().getSize() - 1;
-                if (nextIdx > lastIdx) {
-                    nextIdx = lastIdx;
-                }
-                list.setSelectedIndex(nextIdx);
-                _uiFactory.enableDisableActions();
-            }
-            public void contentsChanged(ListDataEvent evt) {
-            }
-        });
+		// Add a listener to handle doubleclick events in the list.
+		list.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent evt) {
+				if (evt.getClickCount() == 2) {
+					ICommand cmd = _uiFactory.getDoubleClickCommand();
+					if (cmd != null) {
+						try {
+							cmd.execute();
+						} catch (BaseException ex) {
+							s_log.error("Error occured executing doubleclick event", ex);
+						}
+					}
+				}
+			}
+		});
 
-        // When this window is activated give focus to the list box.
-        // When window opened ensure it is wide enough to display the toolbar.
-        // There is a bug in JDK1.2 where internalFrameOpened() doesn't get
-        // called so we've used a workaround. The workaround doesn't work in
-        // JDK1.3.
-        addInternalFrameListener(new InternalFrameAdapter() {
-            private boolean _hasBeenActivated = false;
-            private boolean _hasBeenSized = false;
-            public void internalFrameActivated(InternalFrameEvent evt) {
-                if (!_hasBeenActivated) {
-                    _hasBeenActivated = true;
-                    reSize();
-                }
+		// Add listener to listen for items added/removed from list.
+		list.getModel().addListDataListener(new ListDataListener() {
+			public void intervalAdded(ListDataEvent evt) {
+				list.setSelectedIndex(evt.getIndex0()); // select the one just added.
+				_uiFactory.enableDisableActions();
+			}
+			public void intervalRemoved(ListDataEvent evt) {
+				int nextIdx = evt.getIndex0();
+				int lastIdx = list.getModel().getSize() - 1;
+				if (nextIdx > lastIdx) {
+					nextIdx = lastIdx;
+				}
+				list.setSelectedIndex(nextIdx);
+				_uiFactory.enableDisableActions();
+			}
+			public void contentsChanged(ListDataEvent evt) {
+			}
+		});
 
+		// When this window is activated give focus to the list box.
+		// When window opened ensure it is wide enough to display the toolbar.
+		// There is a bug in JDK1.2 where internalFrameOpened() doesn't get
+		// called so we've used a workaround. The workaround doesn't work in
+		// JDK1.3.
+		addInternalFrameListener(new InternalFrameAdapter() {
+			private boolean _hasBeenActivated = false;
+			private boolean _hasBeenSized = false;
+			public void internalFrameActivated(InternalFrameEvent evt) {
+				if (!_hasBeenActivated) {
+					_hasBeenActivated = true;
+					reSize();
+				}
+				list.requestFocus();
+			}
 
-                list.requestFocus();
-            }
+			public void internalFrameOpened(InternalFrameEvent evt) {
+				reSize();
+			}
 
-            public void internalFrameOpened(InternalFrameEvent evt) {
-                reSize();
-            }
+			private void reSize() {
+				if (!_hasBeenSized) {
+					_hasBeenSized = true;
+					Dimension windowSize = BaseToolWindow.this.getSize();
+					int rqdWidth = _toolBar.getPreferredSize().width  + 15;
+					if (rqdWidth > windowSize.width) {
+						windowSize.width = rqdWidth;
+						BaseToolWindow.this.setSize(windowSize);
+					}
+				}
+			}
+		});
 
-            private void reSize() {
-                if (!_hasBeenSized) {
-                    _hasBeenSized = true;
-                    Dimension windowSize = BaseToolWindow.this.getSize();
-                    int rqdWidth = _toolBar.getPreferredSize().width  + 15;
-                    if (rqdWidth > windowSize.width) {
-                        windowSize.width = rqdWidth;
-                        BaseToolWindow.this.setSize(windowSize);
-                    }
-                }
-            }
-        });
+		validate();
 
-        validate();
-
-    }
+	}
 }
 

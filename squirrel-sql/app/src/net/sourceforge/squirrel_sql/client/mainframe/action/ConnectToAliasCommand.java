@@ -31,7 +31,8 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
-import net.sourceforge.squirrel_sql.fw.util.Logger;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -49,6 +50,9 @@ import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
  * @author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ConnectToAliasCommand implements ICommand {
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(ConnectToAliasCommand.class);
+
 	/** Application API. */
 	private IApplication _app;
 
@@ -255,9 +259,7 @@ public class ConnectToAliasCommand implements ICommand {
 				//if(!_stopConnection) {
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
-							Logger logger = _app.getLogger();
-							logger.showMessage(Logger.ILogTypes.ERROR, msg);
-							logger.showMessage(Logger.ILogTypes.ERROR, th);
+							s_log.error(msg, th);
 						}
 					});
 				//}
@@ -269,9 +271,7 @@ public class ConnectToAliasCommand implements ICommand {
 				try {
 					conn.close();
 				} catch (SQLException ex) {
-					Logger logger = _app.getLogger();
-					logger.showMessage(Logger.ILogTypes.ERROR, "Error occured closing Connection");
-					logger.showMessage(Logger.ILogTypes.ERROR, ex);
+					s_log.error("Error occured closing Connection", ex);
 				}
 			}
 		}

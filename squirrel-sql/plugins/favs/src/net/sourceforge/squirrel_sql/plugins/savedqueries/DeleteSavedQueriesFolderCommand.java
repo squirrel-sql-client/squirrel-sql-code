@@ -27,7 +27,6 @@ import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
-import net.sourceforge.squirrel_sql.fw.util.Logger;
 
 import net.sourceforge.squirrel_sql.client.db.AliasMaintDialog;
 import net.sourceforge.squirrel_sql.client.db.DataCache;

@@ -28,135 +28,128 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
-import net.sourceforge.squirrel_sql.fw.util.Logger;
-
 public abstract class Resources {
 
-    private interface ActionProperties {
-        String IMAGE = "image";
-        String NAME = "name";
-        String TOOLTIP = "tooltip";
-    }
+	private interface ActionProperties {
+		String IMAGE = "image";
+		String NAME = "name";
+		String TOOLTIP = "tooltip";
+	}
 
-    private interface MenuProperties {
-        String TITLE = "title";
-        String MNEMONIC = "mnemonic";
-    }
+	private interface MenuProperties {
+		String TITLE = "title";
+		String MNEMONIC = "mnemonic";
+	}
 
-    private interface MenuItemProperties extends MenuProperties {
-        String ACCELERATOR = "accelerator";
-    }
+	private interface MenuItemProperties extends MenuProperties {
+		String ACCELERATOR = "accelerator";
+	}
 
-    private interface Keys {
-        String ACTION = "action";
-        String MENU = "menu";
-        String MENU_ITEM = "menuitem";
-    }
+	private interface Keys {
+		String ACTION = "action";
+		String MENU = "menu";
+		String MENU_ITEM = "menuitem";
+	}
 
-    /** Applications resource bundle. */
-    private final ResourceBundle _bundle;
+	/** Applications resource bundle. */
+	private final ResourceBundle _bundle;
 
-    /** Path to images. */
-    private final String _imagePath;
+	/** Path to images. */
+	private final String _imagePath;
 
-    protected Resources(String rsrcBundleBaseName, ClassLoader cl)
-            throws IllegalArgumentException {
-        super();
-        if (rsrcBundleBaseName == null || rsrcBundleBaseName.trim().length() == 0) {
-            throw new IllegalArgumentException("Null or empty rsrcBundleBaseName passed");
-        }
+	protected Resources(String rsrcBundleBaseName, ClassLoader cl)
+			throws IllegalArgumentException {
+		super();
+		if (rsrcBundleBaseName == null || rsrcBundleBaseName.trim().length() == 0) {
+			throw new IllegalArgumentException("Null or empty rsrcBundleBaseName passed");
+		}
 
-//      _app = app;
-        _bundle = ResourceBundle.getBundle(rsrcBundleBaseName,
-                    Locale.getDefault(), cl);
-        _imagePath = _bundle.getString("path.images");
-    }
+//	  _app = app;
+		_bundle = ResourceBundle.getBundle(rsrcBundleBaseName,
+					Locale.getDefault(), cl);
+		_imagePath = _bundle.getString("path.images");
+	}
 
-    public JMenuItem addToMenu(Action action, JMenu menu)
-            throws MissingResourceException {
-        JMenuItem item = menu.add(action);
-        final String fullKey = Keys.MENU_ITEM +  "." + getClassName(action.getClass());
+	public JMenuItem addToMenu(Action action, JMenu menu)
+			throws MissingResourceException {
+		JMenuItem item = menu.add(action);
+		final String fullKey = Keys.MENU_ITEM +  "." + getClassName(action.getClass());
 
-        String mn = getResourceString(fullKey, MenuItemProperties.MNEMONIC);
-        if (mn.length() > 0) {
-            item.setMnemonic(mn.charAt(0));
-        }
+		String mn = getResourceString(fullKey, MenuItemProperties.MNEMONIC);
+		if (mn.length() > 0) {
+			item.setMnemonic(mn.charAt(0));
+		}
 
-        String accel = getResourceString(fullKey, MenuItemProperties.ACCELERATOR);
-        if (accel.length() > 0) {
-            //try {
-                item.setAccelerator(KeyStroke.getKeyStroke(accel));
-            //} catch (Exception ex) {
-            //  _app.getLogger().showMessage(Logger.ILogTypes.ERROR, "Invalid accelerator "
-            //                                          + accel + " for fullKey");
-            //}
-        }
+		String accel = getResourceString(fullKey, MenuItemProperties.ACCELERATOR);
+		if (accel.length() > 0) {
+			item.setAccelerator(KeyStroke.getKeyStroke(accel));
+		}
 
-        item.setToolTipText((String)action.getValue(Action.SHORT_DESCRIPTION));
+		item.setToolTipText((String)action.getValue(Action.SHORT_DESCRIPTION));
 
-        return item;
-    }
+		return item;
+	}
 
-    public JMenu createMenu(String menuKey) throws MissingResourceException {
-        JMenu menu = new JMenu();
-        final String fullKey = Keys.MENU +  "." + menuKey;
-        menu.setText(getResourceString(fullKey, MenuProperties.TITLE));
-        String mn = getResourceString(fullKey, MenuProperties.MNEMONIC);
-        if (mn.length() >= 1) {
-            menu.setMnemonic(mn.charAt(0));
-        }
-        return menu;
-    }
+	public JMenu createMenu(String menuKey) throws MissingResourceException {
+		JMenu menu = new JMenu();
+		final String fullKey = Keys.MENU +  "." + menuKey;
+		menu.setText(getResourceString(fullKey, MenuProperties.TITLE));
+		String mn = getResourceString(fullKey, MenuProperties.MNEMONIC);
+		if (mn.length() >= 1) {
+			menu.setMnemonic(mn.charAt(0));
+		}
+		return menu;
+	}
 
-    public void setupAction(Action action) {
-        String key = Keys.ACTION + "." + getClassName(action.getClass());
-        action.putValue(Action.NAME, getResourceString(key, ActionProperties.NAME));
-        action.putValue(Action.SHORT_DESCRIPTION, getResourceString(key, ActionProperties.TOOLTIP));
-        setIconForAction(action, key);
-    }
+	public void setupAction(Action action) {
+		String key = Keys.ACTION + "." + getClassName(action.getClass());
+		action.putValue(Action.NAME, getResourceString(key, ActionProperties.NAME));
+		action.putValue(Action.SHORT_DESCRIPTION, getResourceString(key, ActionProperties.TOOLTIP));
+		setIconForAction(action, key);
+	}
 
-    public Icon getIcon(String keyName) {
-        return getIcon(keyName, "image");
-    }
+	public Icon getIcon(String keyName) {
+		return getIcon(keyName, "image");
+	}
 
-    public Icon getIcon(String keyName, String propName) {
-        return privateGetIcon(getResourceString(keyName, propName));
-    }
+	public Icon getIcon(String keyName, String propName) {
+		return privateGetIcon(getResourceString(keyName, propName));
+	}
 
-    public Icon getIcon(Class objClass, String propName) {
-        return getIcon(getClassName(objClass), propName);
-    }
+	public Icon getIcon(Class objClass, String propName) {
+		return getIcon(getClassName(objClass), propName);
+	}
 
-    protected ResourceBundle getBundle() {
-        return _bundle;
-    }
+	protected ResourceBundle getBundle() {
+		return _bundle;
+	}
 
-    private Icon privateGetIcon(String iconName) {
-        if (iconName != null && iconName.length() > 0) {
-            return new ImageIcon(getClass().getResource(_imagePath + iconName));
-        }
-        return null;
-    }
+	private Icon privateGetIcon(String iconName) {
+		if (iconName != null && iconName.length() > 0) {
+			return new ImageIcon(getClass().getResource(_imagePath + iconName));
+		}
+		return null;
+	}
 
-    private void setIconForAction(Action action, String actionClassName) {
-        Icon icon = getIcon(actionClassName, ActionProperties.IMAGE);
-        if (icon != null) {
-            action.putValue(Action.SMALL_ICON, icon);
-        }
-    }
+	private void setIconForAction(Action action, String actionClassName) {
+		Icon icon = getIcon(actionClassName, ActionProperties.IMAGE);
+		if (icon != null) {
+			action.putValue(Action.SMALL_ICON, icon);
+		}
+	}
 
-    private String getResourceString(String keyName, String propName)
-            throws MissingResourceException {
-        return _bundle.getString(keyName + "." + propName);
-    }
+	private String getResourceString(String keyName, String propName)
+			throws MissingResourceException {
+		return _bundle.getString(keyName + "." + propName);
+	}
 
-    private String getClassName(Class objClass) {
-        // Retrieve class name of the passed Action minus the package name.
-        String className = objClass.getName();
-        int pos = className.lastIndexOf(".");
-        if (pos != -1) {
-            className = className.substring(pos + 1);
-        }
-        return className;
-    }
+	private String getClassName(Class objClass) {
+		// Retrieve class name of the passed Action minus the package name.
+		String className = objClass.getName();
+		int pos = className.lastIndexOf(".");
+		if (pos != -1) {
+			className = className.substring(pos + 1);
+		}
+		return className;
+	}
 }

@@ -41,8 +41,8 @@ import javax.swing.ToolTipManager;
 import net.sourceforge.squirrel_sql.fw.gui.BaseMDIParentFrame;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.ScrollableDesktopPane;
-import net.sourceforge.squirrel_sql.fw.util.Debug;
-import net.sourceforge.squirrel_sql.fw.util.Logger;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Version;
@@ -61,6 +61,8 @@ import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
 public class MainFrame extends BaseMDIParentFrame {
     public interface IMenuIDs extends MainFrameMenuBar.IMenuIDs {
     }
+
+	private ILogger s_log = LoggerController.createLogger(MainFrame.class);
 
     private IApplication _app;
 
@@ -109,7 +111,7 @@ public class MainFrame extends BaseMDIParentFrame {
 
     public void addInternalFrame(JInternalFrame child, boolean addToWindowMenu, Action action) {
         super.addInternalFrame(child, addToWindowMenu, action);
-        Debug.println("Adding " + child.getClass().getName() + " to Main Frame");
+        s_log.debug("Adding " + child.getClass().getName() + " to Main Frame");
         JInternalFrame[] frames = GUIUtils.getOpenNonToolWindows(getDesktopPane().getAllFrames());
         _app.getActionCollection().internalFrameOpenedOrClosed(frames.length);
 
@@ -126,7 +128,7 @@ public class MainFrame extends BaseMDIParentFrame {
 
     public void internalFrameClosed(JInternalFrame child) {
         super.internalFrameClosed(child);
-        Debug.println("Removing " + child.getClass().getName() + " from Main Frame");
+        s_log.debug("Removing " + child.getClass().getName() + " from Main Frame");
         JInternalFrame[] frames = GUIUtils.getOpenNonToolWindows(getDesktopPane().getAllFrames());
         _app.getActionCollection().internalFrameOpenedOrClosed(frames.length);
         if (frames.length == 0) {

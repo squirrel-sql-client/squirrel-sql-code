@@ -126,7 +126,7 @@ public class SQLPropertiesPanel
 			String TABLE = "Table";
 			String TEXT = "Text";
 			String STATEMENT_SEPARATOR = "Statement Separator:";
-			String PERF_WARNING = "Note: Settings marked with an hourglass will have\nperformance implications.";
+			String PERF_WARNING = "Note: Settings marked with an hourglass will have performance implications.";
 			String SQL = "SQL";
 		}
 

@@ -27,8 +27,9 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
-import net.sourceforge.squirrel_sql.fw.util.Logger;
 import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeListener;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
@@ -37,6 +38,9 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
  * XML cache of <CODE>Folder</CODE> objects.
  */
 public final class FoldersCache {
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(FoldersCache.class);
+
     /** Application API. */
     private IApplication _app;
 
@@ -71,13 +75,9 @@ public final class FoldersCache {
             }
         } catch (FileNotFoundException ignore) { // first time user has run pgm.
         } catch (XMLException ex) {
-            final Logger log = _app.getLogger();
-            log.showMessage(Logger.ILogTypes.ERROR, "Error loading queries file: " + _queriesFileName);
-            log.showMessage(Logger.ILogTypes.ERROR, ex);
+            s_log.error("Error loading queries file: " + _queriesFileName, ex);
         } catch (DuplicateObjectException ex) {
-            final Logger log = _app.getLogger();
-            log.showMessage(Logger.ILogTypes.ERROR, "Error loading queries file: " + _queriesFileName);
-            log.showMessage(Logger.ILogTypes.ERROR, ex);
+            s_log.error("Error loading queries file: " + _queriesFileName, ex);
         }
     }
 
@@ -95,13 +95,9 @@ public final class FoldersCache {
             }
             cache.save(_queriesFileName);
         } catch (IOException ex) {
-            final Logger logger = _app.getLogger();
-            logger.showMessage(Logger.ILogTypes.ERROR, "Error occured saving queries to " + _queriesFileName);
-            logger.showMessage(Logger.ILogTypes.ERROR, ex);
+            s_log.error("Error occured saving queries to " + _queriesFileName, ex);
         } catch (XMLException ex) {
-            final Logger logger = _app.getLogger();
-            logger.showMessage(Logger.ILogTypes.ERROR, "Error occured saving queries to " + _queriesFileName);
-            logger.showMessage(Logger.ILogTypes.ERROR, ex);
+            s_log.error("Error occured saving queries to " + _queriesFileName, ex);
         }
     }
 }

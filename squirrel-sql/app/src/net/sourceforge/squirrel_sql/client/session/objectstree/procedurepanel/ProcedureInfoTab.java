@@ -24,7 +24,8 @@ import javax.swing.SwingConstants;
 
 import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
-import net.sourceforge.squirrel_sql.fw.util.Logger;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
@@ -47,6 +48,9 @@ public class ProcedureInfoTab extends BaseProcedurePanelTab {
         String TYPE = "Type:";
         String REMARKS = "Remarks:";
 	}
+
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(ProcedureInfoTab.class);
 
 	/** Component to be displayed. */
 	private MyComponent _comp;
@@ -124,8 +128,7 @@ public class ProcedureInfoTab extends BaseProcedurePanelTab {
 				_typeLbl.setText(pi != null ? getString(pi.getTypeDescription()) : "" );
 				_remarksLbl.setText(pi != null ? getString(pi.getRemarks()) : "" );
 			} catch (Exception ex) {
-				Logger log = session.getApplication().getLogger();
-				log.showMessage(Logger.ILogTypes.ERROR, ex);
+				s_log.error("Error", ex);
 			}
 		}
 

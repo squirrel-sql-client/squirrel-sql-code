@@ -28,7 +28,8 @@ import javax.swing.Action;
 
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
-import net.sourceforge.squirrel_sql.fw.util.Logger;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
@@ -38,7 +39,9 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.SessionSheet;
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
+
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.TextAreaDefaults;
+import net.sourceforge.squirrel_sql.fw.util.log.*;
 
 /**
  * The jEdit plugin class. This plugin replaces the standard SQL entry text area
@@ -47,6 +50,9 @@ import net.sourceforge.squirrel_sql.plugins.jedit.textarea.TextAreaDefaults;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class JeditPlugin extends DefaultSessionPlugin {
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(JeditPlugin.class);
+
 	/** Plugin preferences. */
 	private JeditPreferences _prefs;
 
@@ -223,13 +229,8 @@ public class JeditPlugin extends DefaultSessionPlugin {
 		} catch (FileNotFoundException ignore) {
 			// property file not found for user - first time user ran pgm.
 		} catch (Exception ex) {
-			Logger logger = getApplication().getLogger();
-			logger.showMessage(
-				Logger.ILogTypes.ERROR,
-				"Error occured reading from preferences file: "
-					+ JeditConstants.USER_PREFS_FILE_NAME);
-			//i18n
-			logger.showMessage(Logger.ILogTypes.ERROR, ex);
+			s_log.error("Error occured reading from preferences file: "
+							+ JeditConstants.USER_PREFS_FILE_NAME, ex);
 		}
 		if (_prefs == null) {
 			_prefs = new JeditPreferences();
@@ -244,13 +245,8 @@ public class JeditPlugin extends DefaultSessionPlugin {
 			XMLBeanWriter wtr = new XMLBeanWriter(_prefs);
 			wtr.save(new File(_userSettingsFolder, JeditConstants.USER_PREFS_FILE_NAME));
 		} catch (Exception ex) {
-			Logger logger = getApplication().getLogger();
-			logger.showMessage(
-				Logger.ILogTypes.ERROR,
-				"Error occured writing to preferences file: "
-					+ JeditConstants.USER_PREFS_FILE_NAME);
-			//i18n
-			logger.showMessage(Logger.ILogTypes.ERROR, ex);
+			s_log.error("Error occured writing to preferences file: "
+					+ JeditConstants.USER_PREFS_FILE_NAME, ex);
 		}
 	}
 

@@ -21,7 +21,8 @@ import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
-import net.sourceforge.squirrel_sql.fw.util.Logger;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
@@ -29,6 +30,8 @@ import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public class RefreshTreeAction extends SquirrelAction implements ISessionAction {
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(RefreshTreeAction.class);
 
 	private ISession _session;
 
@@ -47,8 +50,7 @@ public class RefreshTreeAction extends SquirrelAction implements ISessionAction 
 			try {
 				_session.getSessionSheet().refreshTree();
 			} catch (BaseSQLException ex) {
-				getApplication().getLogger().showMessage(Logger.ILogTypes.ERROR,
-									"Error occured refreshing the objects tree");
+				s_log.error("Error occured refreshing the objects tree", ex);
 			} finally {
 				cursorChg.restore();
 			}

@@ -44,13 +44,17 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetModelConverter;
-import net.sourceforge.squirrel_sql.fw.util.Logger;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
 public class ResultTab extends JPanel {
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(ResultTab.class);
+
 	/** Current session. */
 	private ISession _session;
 
@@ -205,8 +209,6 @@ public class ResultTab extends JPanel {
 
 	private void propertiesHaveChanged(String propertyName) {
 		final SessionProperties props = _session.getProperties();
-		final Logger logger = _session.getApplication().getLogger();
-
 /*
 		if (propertyName == null || propertyName.equals(
 				SessionProperties.IPropertyNames.SQL_OUTPUT_CLASS_NAME)) {
@@ -243,7 +245,7 @@ public class ResultTab extends JPanel {
 			try {
 				dest = _resultSetViewer.setDestination(props.getSqlOutputConverterClassName());
 			} catch (Exception ex) {
-				logger.showMessage(Logger.ILogTypes.ERROR, ex.getMessage());
+				s_log.error("Error", ex);
 			}
 			IDataSetModelConverter conv = null;
 			if (dest == null || !IDataSetModelConverter.class.isAssignableFrom(dest.getClass())) {
@@ -279,7 +281,7 @@ public class ResultTab extends JPanel {
 			try {
 				_metaDataViewer.setDestination(props.getSqlOutputMetaDataClassName());
 			} catch (Exception ex) {
-				logger.showMessage(Logger.ILogTypes.ERROR, ex.getMessage());
+				s_log.error("error", ex);
 				_metaDataOutput = new DataSetViewerTablePanel();
 			}
 //			_metaDataViewer.setDestination(_metaDataOutput);

@@ -29,7 +29,6 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.db.AliasMaintDialog;
 import net.sourceforge.squirrel_sql.client.db.DataCache;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
-import net.sourceforge.squirrel_sql.fw.util.Logger;
 
 /**
  * This <CODE>ICommand</CODE> allows the user to delete an existing

@@ -40,41 +40,43 @@ import net.sourceforge.squirrel_sql.fw.sql.NoConnectionException;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
-import net.sourceforge.squirrel_sql.fw.util.Logger;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-//import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.plugin.IPluginDatabaseObject;
 import net.sourceforge.squirrel_sql.client.plugin.IPluginDatabaseObjectType;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
-import net.sourceforge.squirrel_sql.fw.util.*;
-
 
 public class ObjectsTreeModel extends DefaultTreeModel {
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(ObjectsTreeModel.class);
+
 	private ISession _session;
 	private ArrayList _treeLoadedListeners;
 
-    /**
-     * This interface defines locale specific strings. This should be
-     * replaced with a property file.
-     */
-    private interface i18n {
-        String DATABASE = "Database";
-        String NO_CATALOG = "No Catalog";   // i18n or Replace with md.getCatalogueTerm.
-        String PROCEDURE = "PROCEDURE";
-        String UDT = "UDT";
-    }
+	/**
+	 * This interface defines locale specific strings. This should be
+	 * replaced with a property file.
+	 */
+	private interface i18n {
+		String DATABASE = "Database";
+		String NO_CATALOG = "No Catalog";   // i18n or Replace with md.getCatalogueTerm.
+		String PROCEDURE = "PROCEDURE";
+		String UDT = "UDT";
+	}
 
-    public ObjectsTreeModel(ISession session) {
-        super(new DefaultMutableTreeNode());
-        _session = session;
-        _treeLoadedListeners = new ArrayList();
+	public ObjectsTreeModel(ISession session) {
+		super(new DefaultMutableTreeNode());
+		_session = session;
+
+		_treeLoadedListeners = new ArrayList();
 		DatabaseNode rootNode = new DatabaseNode(session, this);
 /*i18n*/rootNode.add(new DefaultMutableTreeNode("Loading..."));
-        setRoot(rootNode);
-        reload();
-    }
-    
+		setRoot(rootNode);
+		reload();
+	}
+	
 	public void addTreeLoadedListener(TreeLoadedListener listener)
 	{
 		if(listener != null && !_treeLoadedListeners.contains(listener))
@@ -96,73 +98,73 @@ public class ObjectsTreeModel extends DefaultTreeModel {
 			((TreeLoadedListener)_treeLoadedListeners.get(i)).treeLoaded();
 		}
 	}	
-    public void fillTree()
-    {
-        _session.getApplication().getThreadPool().addTask(new ObjectsTreeLoader());
-    }
+	public void fillTree()
+	{
+		_session.getApplication().getThreadPool().addTask(new ObjectsTreeLoader());
+	}
 
-    private SQLConnection getConnection() {
-        return _session.getSQLConnection();
-    }
+	private SQLConnection getConnection() {
+		return _session.getSQLConnection();
+	}
 
-    public void refresh() throws BaseSQLException {
-        final DefaultMutableTreeNode root = (DefaultMutableTreeNode)getRoot();
-        root.removeAllChildren();
-        loadTree();
-    }
+	public void refresh() throws BaseSQLException {
+		final DefaultMutableTreeNode root = (DefaultMutableTreeNode)getRoot();
+		root.removeAllChildren();
+		loadTree();
+	}
 
-    String[] getTableTypes() {
-        try {
-            return getConnection().getTableTypes();
-        } catch (BaseSQLException ignore) {
-            return new String[] {};
-            // Assume driver doesn't handle getTableTypes().
-        }
-    }
+	String[] getTableTypes() {
+		try {
+			return getConnection().getTableTypes();
+		} catch (BaseSQLException ignore) {
+			return new String[] {};
+			// Assume driver doesn't handle getTableTypes().
+		}
+	}
 
-    private void loadTree() throws BaseSQLException {
+	private void loadTree() throws BaseSQLException {
 		final ArrayList tableTypeList = new ArrayList();
-        try {
-            SQLConnection conn = getConnection();
-            if (conn != null) {
-                // Load object types from plugins.
-//              PluginManager mgr = _session.getApplication().getPluginManager();
-//              IPluginDatabaseObjectType[] types = mgr.getDatabaseObjectTypes(_session);
-//              for (int i = 0; i < types.length; ++i) {
-//                  root.add(new BaseNode(_session, this, types[i]));
-//              }
+		try {
+			SQLConnection conn = getConnection();
+			if (conn != null) {
+				// Load object types from plugins.
+//			  PluginManager mgr = _session.getApplication().getPluginManager();
+//			  IPluginDatabaseObjectType[] types = mgr.getDatabaseObjectTypes(_session);
+//			  for (int i = 0; i < types.length; ++i) {
+//				  root.add(new BaseNode(_session, this, types[i]));
+//			  }
 
-                boolean supportsCatalogs = false;
-                try {
-                    supportsCatalogs = conn.supportsCatalogsInTableDefinitions();
-                } catch (BaseSQLException ex) {
-                }
+				boolean supportsCatalogs = false;
+				try {
+					supportsCatalogs = conn.supportsCatalogsInTableDefinitions();
+				} catch (BaseSQLException ex) {
+				}
 
-                boolean supportsSchemas = false;
-                try {
-                    supportsSchemas = conn.supportsSchemasInTableDefinitions();
-                } catch (BaseSQLException ex) {
-                }
-                if (supportsCatalogs) {
-                    final String[] catalogs = conn.getCatalogs();
-                    for (int i = 0; i < catalogs.length; ++i) {
-                        final String catalogName =  catalogs[i];
-                        tableTypeList.add(new TableTypesGroupNode(_session, this, catalogName,
-                                                            catalogName, null, null));
-                    }
-                } else if (supportsSchemas) {
-                    final String[] schemas = conn.getSchemas();
-                    for (int i = 0; i < schemas.length; ++i) {
-                        final String schemaName = schemas[i];
-                        tableTypeList.add(new TableTypesGroupNode(_session, this, null,
-                                                null, schemaName, schemaName));
-                    }
-                } else {
-                    tableTypeList.add(new TableTypesGroupNode(_session, this, null, null, null, null));
-                }
-            }
-        } 
-        finally 
+				boolean supportsSchemas = false;
+				try {
+					supportsSchemas = conn.supportsSchemasInTableDefinitions();
+				} catch (BaseSQLException ex) {
+				}
+				if (supportsCatalogs) {
+					final String[] catalogs = conn.getCatalogs();
+					for (int i = 0; i < catalogs.length; ++i) {
+						final String catalogName =  catalogs[i];
+						tableTypeList.add(new TableTypesGroupNode(_session, this, catalogName,
+															catalogName, null, null));
+					}
+				} else if (supportsSchemas) {
+					final String[] schemas = conn.getSchemas();
+					for (int i = 0; i < schemas.length; ++i) {
+						final String schemaName = schemas[i];
+						tableTypeList.add(new TableTypesGroupNode(_session, this, null,
+												null, schemaName, schemaName));
+					}
+				} else {
+					tableTypeList.add(new TableTypesGroupNode(_session, this, null, null, null, null));
+				}
+			}
+		} 
+		finally 
 		{
 			SwingUtilities.invokeLater(new Runnable()
 			{
@@ -174,12 +176,12 @@ public class ObjectsTreeModel extends DefaultTreeModel {
 					{
 						 root.add((DefaultMutableTreeNode)tableTypeList.get(i));
 					}
-		            reload();
-		            fireTreeLoaded();
+					reload();
+					fireTreeLoaded();
 				}
 			});
-        }
-    }
+		}
+	}
 
 	protected class ObjectsTreeLoader implements Runnable
 	{
@@ -195,10 +197,8 @@ public class ObjectsTreeModel extends DefaultTreeModel {
 				{
 					public void run()
 					{ 
-			            Logger logger = _session.getApplication().getLogger();
-			            logger.showMessage(Logger.ILogTypes.ERROR, "Error occured building the objects tree");
-			            logger.showMessage(Logger.ILogTypes.ERROR, ex);
-			            _session.getMessageHandler().showMessage(ex.toString());
+						s_log.error("Error occured building the objects tree", ex);
+						_session.getMessageHandler().showMessage(ex.toString());
 					}
 				});
 			}

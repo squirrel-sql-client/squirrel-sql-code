@@ -30,8 +30,6 @@ import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 
-import net.sourceforge.squirrel_sql.fw.util.Logger;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public final class TableObjectTypeNode extends ObjectTypeNode {

@@ -22,12 +22,13 @@ import java.awt.Frame;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.db.DriverMaintDialog;
 import net.sourceforge.squirrel_sql.client.db.DataCache;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
-import net.sourceforge.squirrel_sql.fw.util.Logger;
 
 /**
  * This <CODE>ICommand</CODE> allows the user to copy an existing
@@ -36,6 +37,9 @@ import net.sourceforge.squirrel_sql.fw.util.Logger;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class CopyDriverCommand implements ICommand {
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(CopyDriverCommand.class);
+
     /** Application API. */
     private final IApplication _app;
 
@@ -82,7 +86,7 @@ public class CopyDriverCommand implements ICommand {
         try {
             newDriver.assignFrom(_sqlDriver);
         } catch (ValidationException ex) {
-            _app.getLogger().showMessage(Logger.ILogTypes.ERROR, ex);
+            s_log.error("Error occured copying driver", ex);
         }
         new DriverMaintDialog(_app, _frame, newDriver, DriverMaintDialog.MaintenanceType.COPY).show();
     }

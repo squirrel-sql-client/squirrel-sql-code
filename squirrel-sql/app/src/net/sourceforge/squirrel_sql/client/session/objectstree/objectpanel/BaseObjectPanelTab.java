@@ -22,7 +22,8 @@ import java.awt.Component;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewerDestination;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.util.Debug;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
@@ -32,6 +33,9 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public abstract class BaseObjectPanelTab implements IObjectPanelTab {
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(BaseObjectPanelTab.class);
+
 	/** Current session. */
 	private ISession _session;
 
@@ -78,9 +82,7 @@ public abstract class BaseObjectPanelTab implements IObjectPanelTab {
 	 */
 	public synchronized void select() throws IllegalStateException {
 		if (!_hasBeenDisplayed) {
-			if (Debug.isDebugMode()) {
-				Debug.println("Refreshing " + getTitle() + " table tab.");
-			}
+			s_log.debug("Refreshing " + getTitle() + " table tab.");
 			refreshComponent();
 			_hasBeenDisplayed = true;
 		}

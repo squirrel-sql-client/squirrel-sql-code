@@ -58,25 +58,6 @@ public class Utilities {
 	}
 
 	/**
-	 * Print the current stack trace to <TT>logger</TT>.
-	 *
-	 * @param   logger  The <TT>Logger</TT> to print stack trace to.
-	 *
-	 * @throws  IllegalArgumentException	If a null <TT>Logger</TT> passed.
-	 */
-	public static void printStackTrace(Logger logger) throws IllegalArgumentException {
-		if (logger == null) {
-			throw new IllegalArgumentException("null Logger passed.");
-		}
-
-		try {
-			throw new Exception();
-		} catch (Exception ex) {
-			logger.showMessage(Logger.ILogTypes.MSG, getStackTrace(ex));
-		}
-	}
-
-	/**
 	 * Return the stack trace from the passed exception as a string
 	 *
 	 * @param   th  The exception to retrieve stack trace for.

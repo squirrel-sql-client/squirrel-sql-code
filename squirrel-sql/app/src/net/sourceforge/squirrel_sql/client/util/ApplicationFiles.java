@@ -20,7 +20,8 @@ package net.sourceforge.squirrel_sql.client.util;
 import java.io.File;
 
 import net.sourceforge.squirrel_sql.fw.util.IJavaPropertyNames;
-import net.sourceforge.squirrel_sql.fw.util.Logger;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.IApplication;
@@ -64,9 +65,8 @@ public class ApplicationFiles {
 		try {
 			new File(_userSettingsDir).mkdirs();
 		} catch (Exception ex) {
-			app.getLogger().showMessage(Logger.ILogTypes.ERROR,
-				"Error creating user settings directory: " + _userSettingsDir);
-			app.getLogger().showMessage(Logger.ILogTypes.ERROR, ex);
+			System.out.println("Error creating user settings directory: " + _userSettingsDir);
+			System.out.println(ex.toString());
 		}
 	}
 	

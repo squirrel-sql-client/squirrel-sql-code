@@ -25,7 +25,6 @@ import javax.swing.JMenu;
 
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
-import net.sourceforge.squirrel_sql.fw.util.Logger;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.db.DataCache;
@@ -43,37 +42,35 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
  * about this one.
  */
 public interface IApplication {
-    public interface IMenuIDs extends MainFrame.IMenuIDs {
-    }
+	public interface IMenuIDs extends MainFrame.IMenuIDs {
+	}
 
-    Logger getLogger();
-    IPlugin getDummyAppPlugin();
-    PluginManager getPluginManager();
+	IPlugin getDummyAppPlugin();
+	PluginManager getPluginManager();
 
-    ActionCollection getActionCollection();
+	ActionCollection getActionCollection();
 
-    SQLDriverManager getSQLDriverManager();
+	SQLDriverManager getSQLDriverManager();
 
-    DataCache getDataCache();
+	DataCache getDataCache();
 
+	SquirrelPreferences getSquirrelPreferences();
 
-    SquirrelPreferences getSquirrelPreferences();
-
-    SquirrelResources getResources();
+	SquirrelResources getResources();
 
 	/**
 	 * Return the main frame.
 	 * 
 	 * @return	The main frame for the app.
 	 */
-    MainFrame getMainFrame();
+	MainFrame getMainFrame();
 
 	/**
 	 * Return the thread pool for this app.
 	 * 
 	 * @return	the thread pool for this app.
 	 */
-    TaskThreadPool getThreadPool();
+	TaskThreadPool getThreadPool();
 
 	/**
 	 * Return the arguments passed in from the command line.
@@ -109,7 +106,7 @@ public interface IApplication {
 	 * @param	menuId	ID of menu to add to. @see #IMenuIDs
 	 * @param	menu	The menu that will be added.
 	 */
-    void addToMenu(int menuId, JMenu menu);
+	void addToMenu(int menuId, JMenu menu);
 
 	/**
 	 * Add an <TT>Action</TT> to a menu.
@@ -117,17 +114,17 @@ public interface IApplication {
 	 * @param	menuId	ID of menu to add to. @see #IMenuIDs
 	 * @param	action	The action to be added.
 	 */
-    public void addToMenu(int menuId, Action action);
+	public void addToMenu(int menuId, Action action);
 
 	/**
 	 * Application startup processing.
 	 */
-    void startup();
+	void startup();
 
 	/**
 	 * Application shutdown processing.
 	 */
-    void shutdown();
+	void shutdown();
 }
 
 

@@ -29,9 +29,10 @@ import javax.swing.JMenu;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
-import net.sourceforge.squirrel_sql.fw.util.Debug;
-import net.sourceforge.squirrel_sql.fw.util.Logger;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.Log4jLogger;
 import net.sourceforge.squirrel_sql.fw.util.Pair;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.db.DataCache;
@@ -44,7 +45,6 @@ import net.sourceforge.squirrel_sql.client.session.DefaultSQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.client.util.SplashScreen;
-import net.sourceforge.squirrel_sql.client.util.SquirrelLogger;
 
 /**
  * Defines the API to do callbacks on the application.
@@ -52,166 +52,154 @@ import net.sourceforge.squirrel_sql.client.util.SquirrelLogger;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 class Application implements IApplication {
-    /** Application arguments. */
-    private ApplicationArguments _args;
-    
-    private ApplicationFiles _appFiles;
-    
-    /** Splash screen used during startup process. */
-    private SplashScreen _splash;
+	/** Logger for this class. */
+	private static ILogger s_log;
 
-    private SquirrelPreferences _prefs;
-    private SQLDriverManager _driverMgr;
-    private DataCache _cache;
-    private ActionCollection _actions;
+	/** Application arguments. */
+	private ApplicationArguments _args;
+	
+	private ApplicationFiles _appFiles;
+	
+	/** Splash screen used during startup process. */
+	private SplashScreen _splash;
 
-    private MainFrame _mainFrame;
+	private SquirrelPreferences _prefs;
+	private SQLDriverManager _driverMgr;
+	private DataCache _cache;
+	private ActionCollection _actions;
 
-    /** Object for Application level logging. */
-    private Logger _logger;
+	private MainFrame _mainFrame;
 
-    /** Object to manage plugins. */
-    private PluginManager _pluginManager;
+	/** Object to manage plugins. */
+	private PluginManager _pluginManager;
 
-    private DummyAppPlugin _dummyPlugin = new DummyAppPlugin();
+	private DummyAppPlugin _dummyPlugin = new DummyAppPlugin();
 
-    private SquirrelResources _resources;
-    
-    /** Thread pool for long running tasks. */
-    private TaskThreadPool _threadPool = new TaskThreadPool();
-    
-    /** Factory used to create SQL entry panels. */
-    private ISQLEntryPanelFactory _sqlEntryFactory = new DefaultSQLEntryPanelFactory();
+	private SquirrelResources _resources;
+	
+	/** Thread pool for long running tasks. */
+	private TaskThreadPool _threadPool = new TaskThreadPool();
 
-    /**
-     * ctor.
-     *
-     * @param   args    Application arguments.
-     */
-    public Application(ApplicationArguments args) {
-        super();
-        _args = args;
-        _appFiles = new ApplicationFiles(this);
-    }
+	private LoggerController _loggerFactory;
 
-    public void startup() {
-        _resources = new SquirrelResources("net.sourceforge.squirrel_sql.client.resources.squirrel");
-        if (_args.getShowSplashScreen()) {
-            _splash = new SplashScreen(_resources, 9);
-        }
-        
-        try {
-            CursorChanger chg = null;
-            if (_splash != null) {
-                chg = new CursorChanger(_splash);
-                chg.show();
-            }
-            try {
-                // Create a logger object that logs to a text file in the users
-                // preferences directory. If that fails log to standard output.
-                indicateNewStartupTask("Creating logger...");
-                File logFile = _appFiles.getExecutionLogFile();
-                try {
-                    _logger = new SquirrelLogger(logFile);
-                } catch (IOException ex) {
-                    _logger = new Logger();
-                    _logger.showMessage(Logger.ILogTypes.ERROR, "Unable to write to log file: " + logFile.getPath());
-                    _logger.showMessage(Logger.ILogTypes.ERROR, "Logging to standard output");
-                    _logger.showMessage(Logger.ILogTypes.ERROR, ex);
-                }
+	/** Factory used to create SQL entry panels. */
+	private ISQLEntryPanelFactory _sqlEntryFactory = new DefaultSQLEntryPanelFactory();
 
-                indicateNewStartupTask("Loading plugins...");
-                _pluginManager = new PluginManager(this);
-                _pluginManager.loadPlugins();
+	/**
+	 * ctor.
+	 *
+	 * @param   args	Application arguments.
+	 */
+	Application(ApplicationArguments args) {
+		super();
+		_args = args;
+		_appFiles = new ApplicationFiles(this);
+	}
 
-                indicateNewStartupTask("Loading preferences...");
-                _prefs = new SquirrelPreferences();
-                _prefs.setApplication(this);
-                _prefs.load();
-                Debug.setDebugMode(_prefs.isDebugMode());
+	public void startup() {
+		LoggerController.registerLoggerFactory(new SquirrelLoggerFactory(this));
+		s_log = LoggerController.createLogger(getClass());
 
-                indicateNewStartupTask("Loading actions...");
-                _actions = new ActionCollection(this);
+		_resources = new SquirrelResources("net.sourceforge.squirrel_sql.client.resources.squirrel");
+		if (_args.getShowSplashScreen()) {
+			_splash = new SplashScreen(_resources, 8);
+		}
+		
+		try {
+			CursorChanger chg = null;
+			if (_splash != null) {
+				chg = new CursorChanger(_splash);
+				chg.show();
+			}
+			try {
+				indicateNewStartupTask("Loading plugins...");
+				_pluginManager = new PluginManager(this);
+				_pluginManager.loadPlugins();
 
-                indicateNewStartupTask("Creating JDBC driver manager...");
-                _driverMgr = new SQLDriverManager(_logger);
+				indicateNewStartupTask("Loading preferences...");
+				_prefs = new SquirrelPreferences();
+				_prefs.setApplication(this);
+				_prefs.load();
+//				Debug.setDebugMode(_prefs.isDebugMode());
 
-                indicateNewStartupTask("Loading JDBC driver and alias information...");
-                _cache = new DataCache(this);
+				indicateNewStartupTask("Loading actions...");
+				_actions = new ActionCollection(this);
 
-                indicateNewStartupTask("Creating main window...");
-                _mainFrame = new MainFrame(this);
+				indicateNewStartupTask("Creating JDBC driver manager...");
+				_driverMgr = new SQLDriverManager();
 
-                indicateNewStartupTask("Initializing plugins...");
-                _pluginManager.initializePlugins();
+				indicateNewStartupTask("Loading JDBC driver and alias information...");
+				_cache = new DataCache(this);
 
-                indicateNewStartupTask("Showing main window...");
-                _mainFrame.setVisible(true);
-            } finally {
-                if (chg != null) {
-                    chg.restore();
-                }
-            }
-        } finally {
-            if (_splash != null) {
-                _splash.dispose();
-            }
-            _splash = null;
-        }
+				indicateNewStartupTask("Creating main window...");
+				_mainFrame = new MainFrame(this);
 
-    }
+				indicateNewStartupTask("Initializing plugins...");
+				_pluginManager.initializePlugins();
 
-    public void shutdown() {
-        _pluginManager.unloadPlugins();
-        _prefs.save();
-        _cache.save();
-        _logger.close();
-    }
+				indicateNewStartupTask("Showing main window...");
+				_mainFrame.setVisible(true);
+			} finally {
+				if (chg != null) {
+					chg.restore();
+				}
+			}
+		} finally {
+			if (_splash != null) {
+				_splash.dispose();
+			}
+			_splash = null;
+		}
 
-    public Logger getLogger() {
-        return _logger;
-    }
+	}
 
-    public PluginManager getPluginManager() {
-        return _pluginManager;
-    }
+	public void shutdown() {
+		_pluginManager.unloadPlugins();
+		_prefs.save();
+		_cache.save();
+		//_logger.close();
+	}
 
-    public ActionCollection getActionCollection() {
-        return _actions;
-    }
+	public PluginManager getPluginManager() {
+		return _pluginManager;
+	}
 
-    public  SQLDriverManager getSQLDriverManager() {
-        return _driverMgr;
-    }
+	public ActionCollection getActionCollection() {
+		return _actions;
+	}
 
-    public DataCache getDataCache() {
-        return _cache;
-    }
+	public  SQLDriverManager getSQLDriverManager() {
+		return _driverMgr;
+	}
 
-    public IPlugin getDummyAppPlugin() {
-        return _dummyPlugin;
-    }
+	public DataCache getDataCache() {
+		return _cache;
+	}
 
-    public SquirrelResources getResources() {
-        return _resources;
-    }
+	public IPlugin getDummyAppPlugin() {
+		return _dummyPlugin;
+	}
 
-    public SquirrelPreferences getSquirrelPreferences() {
-        return _prefs;
-    }
+	public SquirrelResources getResources() {
+		return _resources;
+	}
 
-    public MainFrame getMainFrame() {
-        return _mainFrame;
-    }
+	public SquirrelPreferences getSquirrelPreferences() {
+		return _prefs;
+	}
+
+	public MainFrame getMainFrame() {
+		return _mainFrame;
+	}
 
 	/**
 	 * Return the thread pool for this app.
 	 * 
 	 * @return	the thread pool for this app.
 	 */
-    public TaskThreadPool getThreadPool() {
-    	return _threadPool;
-    }
+	public TaskThreadPool getThreadPool() {
+		return _threadPool;
+	}
 
 	/**
 	 * Return the arguments passed in from the command line.
@@ -229,6 +217,10 @@ class Application implements IApplication {
 	 */
 	public ApplicationFiles getApplicationFiles() {
 		return _appFiles;
+	}
+
+	public LoggerController getLoggerFactory() {
+		return _loggerFactory;
 	}
 
 	/**
@@ -249,32 +241,32 @@ class Application implements IApplication {
 		_sqlEntryFactory = factory != null ? factory : new DefaultSQLEntryPanelFactory();
 	}
 
-    public synchronized void addToMenu(int menuId, JMenu menu) {
-        if (_mainFrame != null) {
-            _mainFrame.addToMenu(menuId, menu);
-        } else {
-            throw new IllegalStateException("Cannot add items to menus prior to menu being created.");
-        }
-    }
+	public synchronized void addToMenu(int menuId, JMenu menu) {
+		if (_mainFrame != null) {
+			_mainFrame.addToMenu(menuId, menu);
+		} else {
+			throw new IllegalStateException("Cannot add items to menus prior to menu being created.");
+		}
+	}
 
-    public synchronized void addToMenu(int menuId, Action action) {
-        if (_mainFrame != null) {
-            _mainFrame.addToMenu(menuId, action);
-        } else {
-            throw new IllegalStateException("Cannot add items to menus prior to menu being created.");
-        }
-    }
-    
-    /**
-     * If we are running with a splash screen then indicate in the splash
-     * screen that a new task has commenced.
-     *
-     * @param   taskDescription     Description of new task.
-     */
-    private void indicateNewStartupTask(String taskDescription) {
-        if (_splash != null) {
-            _splash.indicateNewTask(taskDescription);
-        }
-    }
+	public synchronized void addToMenu(int menuId, Action action) {
+		if (_mainFrame != null) {
+			_mainFrame.addToMenu(menuId, action);
+		} else {
+			throw new IllegalStateException("Cannot add items to menus prior to menu being created.");
+		}
+	}
+	
+	/**
+	 * If we are running with a splash screen then indicate in the splash
+	 * screen that a new task has commenced.
+	 *
+	 * @param   taskDescription	 Description of new task.
+	 */
+	private void indicateNewStartupTask(String taskDescription) {
+		if (_splash != null) {
+			_splash.indicateNewTask(taskDescription);
+		}
+	}
 }
 

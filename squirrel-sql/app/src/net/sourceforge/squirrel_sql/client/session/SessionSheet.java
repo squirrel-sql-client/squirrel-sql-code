@@ -53,8 +53,8 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
-import net.sourceforge.squirrel_sql.fw.util.Logger;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
@@ -71,6 +71,8 @@ import net.sourceforge.squirrel_sql.client.session.objectstree.DatabasePanel;
 import net.sourceforge.squirrel_sql.client.session.objectstree.ProcedurePanel;
 import net.sourceforge.squirrel_sql.client.session.objectstree.TablePanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class SessionSheet extends JInternalFrame {
 	/**
@@ -94,6 +96,9 @@ public class SessionSheet extends JInternalFrame {
 		int SQL_TAB = 1;
 	}
 
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(SessionSheet.class);
+
 	private ISession _session;
 
 	private MyPropertiesListener _propsListener = new MyPropertiesListener();
@@ -109,6 +114,7 @@ public class SessionSheet extends JInternalFrame {
 		super(createTitle(session), true, true, true, true);
 		_session = session;
 		setVisible(false);
+
 		createUserInterface();
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
@@ -268,11 +274,7 @@ public class SessionSheet extends JInternalFrame {
 		try {
 			user = session.getSQLConnection().getUserName();
 		} catch (BaseSQLException ex) {
-			Logger logger = session.getApplication().getLogger();
-			logger.showMessage(
-				Logger.ILogTypes.ERROR,
-				"Error occured retrieving user name from Connection");
-			logger.showMessage(Logger.ILogTypes.ERROR, ex);
+			s_log.error("Error occured retrieving user name from Connection", ex);
 		}
 		if (user != null && user.length() > 0) {
 			title.append(" as ").append(user); // i18n

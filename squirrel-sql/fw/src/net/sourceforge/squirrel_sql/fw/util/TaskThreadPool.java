@@ -23,9 +23,13 @@ package net.sourceforge.squirrel_sql.fw.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.squirrel_sql.fw.util.Debug;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class TaskThreadPool {
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(TaskThreadPool.class);
+
 	// Count of available or free threads.
 	private int _iFree;
 
@@ -76,10 +80,10 @@ public class TaskThreadPool {
 			th.setDaemon(true);
 			th.start();
 			++_threadCount;
-			Debug.println("Creating thread nbr: " + _threadCount);
+			s_log.debug("Creating thread nbr: " + _threadCount);
 		} else {
 			synchronized (_callback) {
-				Debug.println("Reusing existing thread");
+				s_log.debug("Reusing existing thread");
 				_callback.notify();
 			}
 		}
@@ -88,12 +92,12 @@ public class TaskThreadPool {
 	private final class MyCallback implements ITaskThreadPoolCallback {
 		public void incrementFreeThreadCount() {
 			++_iFree;
-			Debug.println("++_iFree: " + _iFree);
+			s_log.debug("Returning thread. " + _iFree + " threads available");
 		}
 
 		public void decrementFreeThreadCount() {
 			--_iFree;
-			Debug.println("--_iFree: " + _iFree);
+			s_log.debug("Using a thread. " + _iFree + " threads available");
 		}
 	
 		public synchronized Runnable nextTask() {

@@ -20,6 +20,8 @@ package net.sourceforge.squirrel_sql.client.plugin;
 import java.io.File;
 import java.io.IOException;
 
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 
@@ -123,7 +125,7 @@ public interface IPlugin {
 	 * @throws	IOException
 	 * 			An error occured retrieving/creating the folder.
 	 */
-	public File getPluginUserSettingsFolder()
+	File getPluginUserSettingsFolder()
 			throws IllegalStateException, IOException;
 }
 

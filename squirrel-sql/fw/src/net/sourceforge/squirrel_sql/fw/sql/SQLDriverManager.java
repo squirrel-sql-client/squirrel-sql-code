@@ -28,85 +28,87 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
-import net.sourceforge.squirrel_sql.fw.util.Logger;
-public class SQLDriverManager {
-    private Logger _logger;
-    private HashMap _driverInfo = new HashMap();
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-    private MyDriverListener _myDriverListener = new MyDriverListener();
+public class SQLDriverManager {
+	private static ILogger s_log = LoggerController.createLogger(SQLDriverManager.class);
+	private HashMap _driverInfo = new HashMap();
 
-    public SQLDriverManager(Logger logger) {
-        super();
-        _logger = logger;
-    }
-    public synchronized void registerSQLDriver(ISQLDriver sqlDriver)
-            throws IllegalAccessException, InstantiationException,
-                    ClassNotFoundException {
-        unregisterSQLDriver(sqlDriver);
-        sqlDriver.addPropertyChangeListener(_myDriverListener);
-        Class driverClass = null;
-        if (sqlDriver.getUsesClassPath()) {
-            driverClass = Class.forName(sqlDriver.getDriverClassName());
-        } else {
-            driverClass = new SQLDriverClassLoader(sqlDriver).loadClass(sqlDriver.getDriverClassName());
-        }
-        _driverInfo.put(sqlDriver.getIdentifier(), driverClass.newInstance());
-    }
-    public synchronized void unregisterSQLDriver(ISQLDriver sqlDriver) {
-        sqlDriver.removePropertyChangeListener(_myDriverListener);
-        _driverInfo.remove(sqlDriver.getIdentifier());
-    }
+	private MyDriverListener _myDriverListener = new MyDriverListener();
 
-    public synchronized SQLConnection getConnection(ISQLDriver sqlDriver,
-                                                    ISQLAlias alias,
-                                                    String user, String pw)
-            throws ClassNotFoundException, IllegalAccessException,
-                    InstantiationException, BaseSQLException {
-        Properties props = new Properties();
-        if (user != null) {
-            props.put("user", user);
-        }
-        if (pw != null) {
-            props.put("password", pw);
-        }
+	public synchronized void registerSQLDriver(ISQLDriver sqlDriver)
+			throws IllegalAccessException, InstantiationException,
+					ClassNotFoundException {
+		unregisterSQLDriver(sqlDriver);
+		sqlDriver.addPropertyChangeListener(_myDriverListener);
+		Class driverClass = null;
+		if (sqlDriver.getUsesClassPath()) {
+			driverClass = Class.forName(sqlDriver.getDriverClassName());
+		} else {
+			driverClass = new SQLDriverClassLoader(sqlDriver).loadClass(sqlDriver.getDriverClassName());
+		}
+		_driverInfo.put(sqlDriver.getIdentifier(), driverClass.newInstance());
+	}
 
-        try {
-            if (!sqlDriver.getUsesClassPath()) {
-                try {
-                    Class driverCls = new SQLDriverClassLoader(sqlDriver).loadClass(sqlDriver.getDriverClassName());
-                    Driver driver = (Driver)driverCls.newInstance();
-                    return new SQLConnection(driver.connect(alias.getUrl(), props));
-                } catch (SQLException ex) {
-                    throw new BaseSQLException(ex);
-                }
-            }
-            return new SQLConnection(DriverManager.getConnection(alias.getUrl(), user, pw));
-        } catch (SQLException ex) {
-            throw new BaseSQLException(ex);
-        }
-    }
+	public synchronized void unregisterSQLDriver(ISQLDriver sqlDriver) {
+		sqlDriver.removePropertyChangeListener(_myDriverListener);
+		_driverInfo.remove(sqlDriver.getIdentifier());
+	}
 
-    private final class MyDriverListener implements PropertyChangeListener {
-        public void propertyChange(PropertyChangeEvent evt) {
-            final String propName = evt.getPropertyName();
-            if (propName != null && propName.equals(ISQLDriver.IPropertyNames.DRIVER_CLASS)) {
-                Object obj = evt.getSource();
-                if (obj instanceof ISQLDriver) {
-                    ISQLDriver driver = (ISQLDriver)obj;
-                    SQLDriverManager.this.unregisterSQLDriver(driver);
-                    try {
-                        SQLDriverManager.this.registerSQLDriver(driver);
-                    } catch (IllegalAccessException ex) {
-                        _logger.showMessage(Logger.ILogTypes.ERROR, "Unable to create instance of Class " + driver.getDriverClassName() + " for JDCB driver " + driver.getName());
-                    } catch (InstantiationException ex) {
-                        _logger.showMessage(Logger.ILogTypes.ERROR, "Unable to create instance of Class " + driver.getDriverClassName() + " for JDCB driver " + driver.getName());
-                    } catch (ClassNotFoundException ex) {
-                        _logger.showMessage(Logger.ILogTypes.ERROR, "Unable to find Driver Class " + driver.getDriverClassName() + " for JDBC Driver" +  driver.getName());
-                    }
-                } else {
-                    _logger.showMessage(Logger.ILogTypes.ERROR, "SqlDriverManager.MyDriverListener is listening to a non-ISQLDriver");
-                }
-            }
-        }
-    }
+	public synchronized SQLConnection getConnection(ISQLDriver sqlDriver,
+													ISQLAlias alias,
+													String user, String pw)
+			throws ClassNotFoundException, IllegalAccessException,
+					InstantiationException, BaseSQLException {
+		Properties props = new Properties();
+		if (user != null) {
+			props.put("user", user);
+		}
+		if (pw != null) {
+			props.put("password", pw);
+		}
+
+		try {
+			if (!sqlDriver.getUsesClassPath()) {
+				try {
+					Class driverCls = new SQLDriverClassLoader(sqlDriver).loadClass(sqlDriver.getDriverClassName());
+					Driver driver = (Driver)driverCls.newInstance();
+					return new SQLConnection(driver.connect(alias.getUrl(), props));
+				} catch (SQLException ex) {
+					throw new BaseSQLException(ex);
+				}
+			}
+			return new SQLConnection(DriverManager.getConnection(alias.getUrl(), user, pw));
+		} catch (SQLException ex) {
+			throw new BaseSQLException(ex);
+		}
+	}
+
+	private final class MyDriverListener implements PropertyChangeListener {
+		public void propertyChange(PropertyChangeEvent evt) {
+			final String propName = evt.getPropertyName();
+			if (propName != null && propName.equals(ISQLDriver.IPropertyNames.DRIVER_CLASS)) {
+				Object obj = evt.getSource();
+				if (obj instanceof ISQLDriver) {
+					ISQLDriver driver = (ISQLDriver)obj;
+					SQLDriverManager.this.unregisterSQLDriver(driver);
+					try {
+						SQLDriverManager.this.registerSQLDriver(driver);
+					} catch (IllegalAccessException ex) {
+						s_log.error("Unable to create instance of Class " + driver.getDriverClassName() +
+										" for JDCB driver " + driver.getName());
+					} catch (InstantiationException ex) {
+						s_log.error("Unable to create instance of Class " + driver.getDriverClassName() +
+										" for JDCB driver " + driver.getName());
+					} catch (ClassNotFoundException ex) {
+						s_log.error("Unable to find Driver Class " + driver.getDriverClassName() +
+										" for JDCB driver " + driver.getName());
+					}
+				} else {
+					s_log.error("SqlDriverManager.MyDriverListener is listening to a non-ISQLDriver");
+				}
+			}
+		}
+	}
 }

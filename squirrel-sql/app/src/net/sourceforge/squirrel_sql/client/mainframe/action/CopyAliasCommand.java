@@ -22,12 +22,14 @@ import java.awt.Frame;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.db.AliasMaintDialog;
 import net.sourceforge.squirrel_sql.client.db.DataCache;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
-import net.sourceforge.squirrel_sql.fw.util.Logger;
+
 
 /**
  * This <CODE>ICommand</CODE> allows the user to copy an existing
@@ -36,6 +38,9 @@ import net.sourceforge.squirrel_sql.fw.util.Logger;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class CopyAliasCommand implements ICommand {
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(CopyAliasCommand.class);
+
     /** Application API. */
     private final IApplication _app;
 
@@ -82,7 +87,7 @@ public class CopyAliasCommand implements ICommand {
         try {
             newAlias.assignFrom(_sqlAlias);
         } catch (ValidationException ex) {
-            _app.getLogger().showMessage(Logger.ILogTypes.ERROR, ex);
+            s_log.error("Error occured copying the alias", ex);
         }
         new AliasMaintDialog(_app, _frame, newAlias, AliasMaintDialog.MaintenanceType.COPY).show();
     }

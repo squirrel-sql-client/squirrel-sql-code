@@ -30,6 +30,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import net.sourceforge.squirrel_sql.fw.util.EnumerationIterator;
+import net.sourceforge.squirrel_sql.fw.util.log.*;
+
 
 public class MyURLClassLoader extends URLClassLoader {
 	private Map _classes = new HashMap();
@@ -56,7 +58,7 @@ public class MyURLClassLoader extends URLClassLoader {
 		return cls;
 	}
 
-	public Class[] getAssignableClasses(Class type, Logger logger) throws IOException {
+	public Class[] getAssignableClasses(Class type, ILogger logger) throws IOException {
 		List classes = new ArrayList();
 		URL[] urls = getURLs();
 		for (int i = 0; i < urls.length; ++i) {
@@ -67,9 +69,8 @@ public class MyURLClassLoader extends URLClassLoader {
 				try {
 					zipFile = new ZipFile(file);
 				} catch (IOException ex) {
-					logger.showMessage(Logger.ILogTypes.ERROR, "Error occured trying to load: "
-										+ file.getAbsolutePath());
-					logger.showMessage(Logger.ILogTypes.ERROR, ex);
+					logger.error("Error occured trying to load: "
+									+ file.getAbsolutePath(), ex);
 				}
 				for (Iterator it = new EnumerationIterator(zipFile.entries()); it.hasNext();) {
 					Class cls = null;
@@ -79,8 +80,7 @@ public class MyURLClassLoader extends URLClassLoader {
 						try {
 							cls = loadClass(className);
 						} catch (Throwable th) {
-						  logger.showMessage(Logger.ILogTypes.ERROR, "Error loading class " + className);
-						  logger.showMessage(Logger.ILogTypes.ERROR, th);
+						  logger.error("Error loading class " + className, th);
 						}
 						if (cls != null) {
 							if (type.isAssignableFrom(cls)) {

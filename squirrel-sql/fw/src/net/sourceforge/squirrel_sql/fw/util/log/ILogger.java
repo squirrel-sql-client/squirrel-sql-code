@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.sql;
+package net.sourceforge.squirrel_sql.fw.util.log;
 /*
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net
@@ -17,28 +17,23 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.sql.Driver;
 
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.MyURLClassLoader;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-import net.sourceforge.squirrel_sql.fw.util.log.*;
-
-
-public class SQLDriverClassLoader extends MyURLClassLoader {
-
-    public SQLDriverClassLoader(ISQLDriver sqlDriver) {
-        super(sqlDriver.getJarFileURL());
-    }
-
-    public SQLDriverClassLoader(URL url) {
-        super(url);
-    }
-
-    public Class[] getDriverClasses(ILogger logger) throws IOException {
-        return getAssignableClasses(Driver.class, logger);
-    }
+/**
+ * This interface describes a logging object.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
+public interface ILogger {
+	public void debug(Object message);
+	public void debug(Object message, Throwable th);
+	public void info(Object message);
+	public void info(Object message, Throwable th);
+	public void warn(Object message);
+	public void warn(Object message, Throwable th);
+	public void error(Object message);
+	public void error(Object message, Throwable th);
+	
+	boolean isDebugEnabled();
+	boolean isInfoEnabled();
 }
+

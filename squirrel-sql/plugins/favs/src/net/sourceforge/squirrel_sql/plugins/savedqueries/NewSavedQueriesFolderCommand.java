@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.plugins.savedqueries;
 import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
-import net.sourceforge.squirrel_sql.fw.util.Logger;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 

@@ -28,15 +28,18 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewerDestination;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
-import net.sourceforge.squirrel_sql.fw.util.Logger;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public class ResultSetPanel extends JScrollPane {
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(ResultSetPanel.class);
+
 	private boolean _fullyCreated = false;
 	private ResultSetDataSet _ds;
 	private DataSetViewer _viewer;
-	//private IDataSetViewerDestination _dest;
 
 	public void load(ISession session, ResultSet rs, int[] cols,
 						String destClassName) {
@@ -55,47 +58,15 @@ public class ResultSetPanel extends JScrollPane {
 			}
 
 		} catch (Exception ex) {
-			Logger log = session.getApplication().getLogger();
-			log.showMessage(Logger.ILogTypes.ERROR, ex);
+			s_log.error("Error", ex);
 		}
 	}
-
-	/**
-	 * Create a viewer panel for an <T>IDataSet</TT>. If the passed class
-	 * name is invalid return a <TT>import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel</TT>.
-	 *
-	 * @param	destClassName	Class Name of panel to be created. This class
-	 *							must have a default constructor.
-	 *
-	 * @return	The newly created panel.
-	 */
-	/*
-	protected IDataSetViewerDestination createDestination(String destClassName) {
-		IDataSetViewerDestination dest = null;
-		try {
-			Class destClass = Class.forName(destClassName);
-			if (IDataSetViewerDestination.class.isAssignableFrom(destClass) &&
-					Component.class.isAssignableFrom(destClass)) {
-				dest = (IDataSetViewerDestination)destClass.newInstance();
-			}
-
-		} catch (Exception ignore) {
-		}
-		if (dest == null) {
-			dest = new DataSetViewerTablePanel();
-		}
-		return dest;
-	}
-*/
 
 	private void createUserInterface(ISession session, String destClassName)
 			throws DataSetException {
 		_viewer = new DataSetViewer();
-//		_dest = createDestination(destClassName);
-//		_viewer.setDestination(_dest);
 		_viewer.setDestination(destClassName);
 		_ds = new ResultSetDataSet();
-//		setViewportView((Component)_dest);
 		setViewportView(_viewer.getDestinationComponent());
 	}
 }

@@ -22,7 +22,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
 
-import net.sourceforge.squirrel_sql.fw.util.Logger;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
@@ -39,6 +40,9 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class LAFPlugin extends DefaultPlugin {
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(LAFPlugin.class);
+
 	/** Plugin preferences. */
 	private LAFPreferences _lafPrefs;
 
@@ -97,6 +101,7 @@ public class LAFPlugin extends DefaultPlugin {
 	 */
 	public synchronized void load(IApplication app) throws PluginException {
 		super.load(app);
+
 		PluginManager pmgr = app.getPluginManager();
 
 		// Folder within plugins folder that belongs to this
@@ -196,13 +201,8 @@ public class LAFPlugin extends DefaultPlugin {
 		} catch (FileNotFoundException ignore) {
 			// property file not found for user - first time user ran pgm.
 		} catch (Exception ex) {
-			Logger logger = getApplication().getLogger();
-			logger.showMessage(
-				Logger.ILogTypes.ERROR,
-				"Error occured reading from preferences file: "
-					+ LAFConstants.USER_PREFS_FILE_NAME);
-			//i18n
-			logger.showMessage(Logger.ILogTypes.ERROR, ex);
+			s_log.error("Error occured reading from preferences file: "
+					+ LAFConstants.USER_PREFS_FILE_NAME, ex);
 		}
 		if (_lafPrefs == null) {
 			_lafPrefs = new LAFPreferences();
@@ -217,13 +217,8 @@ public class LAFPlugin extends DefaultPlugin {
 			XMLBeanWriter wtr = new XMLBeanWriter(_lafPrefs);
 			wtr.save(new File(_userSettingsFolder, LAFConstants.USER_PREFS_FILE_NAME));
 		} catch (Exception ex) {
-			Logger logger = getApplication().getLogger();
-			logger.showMessage(
-				Logger.ILogTypes.ERROR,
-				"Error occured writing to preferences file: "
-					+ LAFConstants.USER_PREFS_FILE_NAME);
-			//i18n
-			logger.showMessage(Logger.ILogTypes.ERROR, ex);
+			s_log.error("Error occured writing to preferences file: "
+					+ LAFConstants.USER_PREFS_FILE_NAME, ex);
 		}
 	}
 }

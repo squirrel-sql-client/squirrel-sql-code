@@ -17,28 +17,30 @@ package net.sourceforge.squirrel_sql.client.session.objectstree;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
-
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeModel;
-import java.util.ArrayList;
-import java.util.List;
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 
+import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
-import net.sourceforge.squirrel_sql.fw.util.Logger;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.util.*;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
 
 /**
  * This is the base class for all nodes in the Objects Tree.
  */
 public class BaseNode extends DefaultMutableTreeNode {
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(BaseNode.class);
 
 	/*
 	 * BaseNode expand listeners array
@@ -66,6 +68,7 @@ public class BaseNode extends DefaultMutableTreeNode {
         if (treeModel == null) {
             throw new IllegalArgumentException("null ObjectsTreeModel passed");
         }
+
         _session = session;
         _treeModel = treeModel;
         _expandListeners = new ArrayList();
@@ -163,9 +166,7 @@ public class BaseNode extends DefaultMutableTreeNode {
 						model.removeNodeFromParent(_loading);
 						fireExpanded();
 						_session.getMessageHandler().showMessage(ex);
-						Logger logger = _session.getApplication().getLogger();
-						logger.showMessage(Logger.ILogTypes.ERROR, "Error occured expanding " + BaseNode.this.getClass().getName());
-						logger.showMessage(Logger.ILogTypes.ERROR, ex);
+						s_log.error("Error occured expanding " + BaseNode.this.getClass().getName(), ex);
 					}
 				});
 			}

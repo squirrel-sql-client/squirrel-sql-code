@@ -26,6 +26,8 @@ import javax.swing.JMenuItem;
 
 import net.sourceforge.squirrel_sql.fw.gui.action.IHasJDesktopPane;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
@@ -47,11 +49,9 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyDriverAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewAliasesAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewDriversAction;
-//import net.sourceforge.squirrel_sql.client.resources.Resources;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
-import net.sourceforge.squirrel_sql.fw.util.Logger;
 
 /**
  * Menu bar for <CODE>MainFrame</CODE>.
@@ -74,6 +74,9 @@ final class MainFrameMenuBar extends JMenuBar {
         String SESSION = "session";
         String WINDOWS = "windows";
     }
+
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(MainFrameMenuBar.class);
 
     private IApplication _app;
 
@@ -252,7 +255,7 @@ final class MainFrameMenuBar extends JMenuBar {
             if (act instanceof IHasJDesktopPane) {
                 ((IHasJDesktopPane)act).setJDesktopPane(desktopPane);
             } else {
-                _app.getLogger().showMessage(Logger.ILogTypes.ERROR, "Tryimg to add non IHasJDesktopPane (" + actionClass.getName() + ") in MainFrameMenuBar.addDesktopPaneActionToMenu");
+                s_log.error("Tryimg to add non IHasJDesktopPane (" + actionClass.getName() + ") in MainFrameMenuBar.addDesktopPaneActionToMenu");
             }
         }
         return act;
@@ -263,7 +266,7 @@ final class MainFrameMenuBar extends JMenuBar {
         if (act != null) {
             rsrc.addToMenu(act, menu);
         } else {
-            _app.getLogger().showMessage(Logger.ILogTypes.ERROR, "Could not retrieve instance of " + actionClass.getName() + ") in MainFrameMenuBar.addToMenu");
+            s_log.error("Could not retrieve instance of " + actionClass.getName() + ") in MainFrameMenuBar.addToMenu");
         }
         return act;
     }

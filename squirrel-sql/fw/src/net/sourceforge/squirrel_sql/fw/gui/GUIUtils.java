@@ -35,8 +35,6 @@ import javax.swing.JButton;
 import javax.swing.JInternalFrame;
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.squirrel_sql.fw.util.Debug;
-
 /**
  * Common GUI utilities accessed via static methods.
  *

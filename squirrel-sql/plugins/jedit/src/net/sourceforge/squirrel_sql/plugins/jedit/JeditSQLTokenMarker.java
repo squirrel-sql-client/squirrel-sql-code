@@ -46,6 +46,7 @@ public class JeditSQLTokenMarker extends SQLTokenMarker {
 		keywords.add("BETWEEN", Token.KEYWORD1);
 		keywords.add("BY", Token.KEYWORD1);
 		keywords.add("CASCADE", Token.KEYWORD1);
+		keywords.add("COUNT", Token.KEYWORD1);
 		keywords.add("CREATE", Token.KEYWORD1);
 		keywords.add("DEFAULT", Token.KEYWORD1);
 		keywords.add("DELETE", Token.KEYWORD1);

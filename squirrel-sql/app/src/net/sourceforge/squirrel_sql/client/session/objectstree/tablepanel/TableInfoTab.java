@@ -30,7 +30,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfoDataSet;
-import net.sourceforge.squirrel_sql.fw.util.Logger;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
@@ -48,6 +49,9 @@ public class TableInfoTab extends BaseTablePanelTab {
 		String TITLE = "Info";
 		String HINT = "Basic information";
 	}
+
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(TableInfoTab.class);
 
 	/** Component to be displayed. */
 	private MyComponent _comp;
@@ -138,8 +142,7 @@ public class TableInfoTab extends BaseTablePanelTab {
 
 			} catch (Exception ex) {
 				_rowCount.setText("<error>");
-				Logger log = session.getApplication().getLogger();
-				log.showMessage(Logger.ILogTypes.ERROR, ex);
+				s_log.error("Error", ex);
 			}
 		}
 

@@ -20,8 +20,6 @@ package net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.sql.ResultSet;
-//import java.sql.SQLException;
-//import java.sql.Statement;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -30,13 +28,10 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewerDestination;
-///import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
-//import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
-//import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-import net.sourceforge.squirrel_sql.fw.util.Logger;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-//import net.sourceforge.squirrel_sql.client.session.objectstree.procedurepanel.BaseProcedurePanelTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.ResultSetPanel;
 
 /**
@@ -53,6 +48,9 @@ public class MetaDataTab extends BaseDatabasePanelTab {
 		String TITLE = "Metadata";
 		String HINT = "Show database metadata";
 	}
+
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(MetaDataTab.class);
 
 	/** Component to be displayed. */
 	private MyComponent _comp;
@@ -105,7 +103,6 @@ public class MetaDataTab extends BaseDatabasePanelTab {
 		private boolean _fullyCreated = false;
 		private IDataSet _ds;
 		private DataSetViewer _viewer;
-//		private IDataSetViewerDestination _dest;
 
 		MyComponent() {
 			super(new BorderLayout());
@@ -122,8 +119,7 @@ public class MetaDataTab extends BaseDatabasePanelTab {
 				_viewer.show(_ds);
 
 			} catch (Exception ex) {
-				Logger log = session.getApplication().getLogger();
-				log.showMessage(Logger.ILogTypes.ERROR, ex);
+				s_log.error("Error", ex);
 			}
 		}
 
@@ -131,15 +127,12 @@ public class MetaDataTab extends BaseDatabasePanelTab {
 			ISession session = getSession();
 
 			String destClassName = session.getProperties().getMetaDataOutputClassName();
-			//_dest = createDestination(destClassName);
 			_viewer = new DataSetViewer();
-			//_viewer.setDestination(_dest);
 			_viewer.setDestination(destClassName);
 			try {
 				_ds = session.getSQLConnection().createMetaDataDataSet(session.getMessageHandler());
 			} catch (Throwable th) {
-				Logger log = session.getApplication().getLogger();
-				log.showMessage(Logger.ILogTypes.ERROR, th);
+				s_log.error("Error", th);
 			}
 			add(new JScrollPane(_viewer.getDestinationComponent()), BorderLayout.CENTER);
 		}
