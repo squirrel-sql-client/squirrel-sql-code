@@ -2,6 +2,17 @@
 
 <Beans>
     <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+        <driverClassName>COM.ibm.db2.jdbc.app.DB2Driver</driverClassName>
+        <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+            <string>-24</string>
+        </identifier>
+        <jarFileName/>
+        <jarFileNames Indexed="true"/>
+        <name>IBM DB2 App Driver</name>
+        <url>jdbc:db2:&lt;dbname&gt;</url>
+    </Bean>
+
+    <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
         <driverClassName>com.pointbase.net.netJDBCDriver</driverClassName>
         <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
             <string>-23</string>

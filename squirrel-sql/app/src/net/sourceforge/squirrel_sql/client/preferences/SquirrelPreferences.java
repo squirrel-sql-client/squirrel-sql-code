@@ -25,6 +25,7 @@ import java.sql.DriverManager;
 import java.util.Iterator;
 
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
+import net.sourceforge.squirrel_sql.fw.util.ProxySettings;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
@@ -45,13 +46,14 @@ public class SquirrelPreferences implements Serializable
 		String DEBUG_JDBC = "debugJdbc";
 		String MAIN_FRAME_STATE = "mainFrameWindowState";
 		String PLUGIN_OBJECTS = "pluginObjects";
+		String PROXY = "proxyPerferences";
+		String SCROLLABLE_TABBED_PANES = "useScrollableTabbedPanes";
 		String SHOW_ALIASES_TOOL_BAR = "showAliasesToolBar";
 		String SHOW_CONTENTS_WHEN_DRAGGING = "showContentsWhenDragging";
 		String SHOW_DRIVERS_TOOL_BAR = "showDriversToolBar";
 		String SHOW_MAIN_STATUS_BAR = "showMainStatusBar";
 		String SHOW_MAIN_TOOL_BAR = "showMainToolBar";
 		String SHOW_TOOLTIPS = "showToolTips";
-		String SCROLLABLE_TABBED_PANES = "useScrollableTabbedPanes";
 	}
 
 	/** Logger for this class. */
@@ -96,6 +98,9 @@ public class SquirrelPreferences implements Serializable
 
 	/** Accelerators and mnemonics for actions. */
 	private ActionKeys[] _actionsKeys = new ActionKeys[0];
+
+	/** Proxy settings. */
+	private ProxySettings _proxySettings = new ProxySettings();
 
 	/**
 	 * Objects stored by plugins. Each element of this collection is a <TT>Map</TT>
@@ -294,6 +299,29 @@ public class SquirrelPreferences implements Serializable
 		_actionsKeys[idx] = value;
 		getPropertyChangeReporter().firePropertyChange(IPropertyNames.ACTION_KEYS,
 											oldValue, _actionsKeys);
+	}
+
+	/**
+	 * Retrieve the proxy settings. Noet that this method returns a clone
+	 * of the actual proxy settings used.
+	 * 
+	 * @return	<TT>ProxySettings</TT> object.
+	 */
+	public ProxySettings getProxySettings()
+	{
+		return (ProxySettings)_proxySettings.clone();
+	}
+
+	public synchronized void setProxySettings(ProxySettings data)
+	{
+		if (data == null)
+		{
+			data = new ProxySettings();
+		}
+		final ProxySettings oldValue = _proxySettings;
+		_proxySettings= data;
+		getPropertyChangeReporter().firePropertyChange(IPropertyNames.PROXY,
+											oldValue, _proxySettings);
 	}
 
 	/*

@@ -30,6 +30,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -86,14 +87,14 @@ public class GlobalPreferencesSheet extends BaseSheet
 	 */
 	private GlobalPreferencesSheet(IApplication app)
 	{
-		super(i18n.TITLE);
+		super(i18n.TITLE, true);
 		if (app == null)
 		{
 			throw new IllegalArgumentException("IApplication == null");
 		}
 
 		_app = app;
-		createUserInterface();
+		createGUI();
 	}
 
 	/**
@@ -237,7 +238,7 @@ public class GlobalPreferencesSheet extends BaseSheet
 	/**
 	 * Create user interface.
 	 */
-	private void createUserInterface()
+	private void createGUI()
 	{
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
@@ -247,6 +248,7 @@ public class GlobalPreferencesSheet extends BaseSheet
 		// Add panels for core Squirrel functionality.
 		_panels.add(new GeneralPreferencesPanel());
 		_panels.add(new SQLPreferencesPanel());
+		_panels.add(new ProxyPreferencesPanel());
 
 		// Go thru all loaded plugins asking for panels.
 		PluginInfo[] plugins = _app.getPluginManager().getPluginInformation();
@@ -274,7 +276,9 @@ public class GlobalPreferencesSheet extends BaseSheet
 			IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel) it.next();
 			String title = pnl.getTitle();
 			String hint = pnl.getHint();
-			tabPane.addTab(title, null, pnl.getPanelComponent(), hint);
+			final JScrollPane sp = new JScrollPane(pnl.getPanelComponent());
+			sp.setBorder(BorderFactory.createEmptyBorder());
+			tabPane.addTab(title, null, sp/*pnl.getPanelComponent()*/, hint);
 		}
 
 		// This seems to be necessary to get background colours
@@ -291,15 +295,19 @@ public class GlobalPreferencesSheet extends BaseSheet
 		contentPane.setLayout(new GridBagLayout());
 
 		gbc.gridwidth = 1;
+		gbc.fill = gbc.BOTH;
 
 		gbc.gridx = 0;
 		gbc.gridy = 0;
+		gbc.weightx = 1;
 		contentPane.add(_titleLbl, gbc);
 
 		++gbc.gridy;
+		gbc.weighty = 1;
 		contentPane.add(tabPane, gbc);
 
 		++gbc.gridy;
+		gbc.weighty = 0;
 		contentPane.add(createButtonsPanel(), gbc);
 	}
 

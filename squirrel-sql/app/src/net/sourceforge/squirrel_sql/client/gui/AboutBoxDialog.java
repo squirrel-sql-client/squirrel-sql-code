@@ -28,8 +28,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.text.DecimalFormat;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -53,6 +51,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.HashtableDataSet;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -94,7 +93,7 @@ public class AboutBoxDialog extends JDialog
 	{
 		super(app.getMainFrame(), i18n.ABOUT, true);
 		setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-		createUserInterface(app);
+		createGUI(app);
 	}
 
 	/**
@@ -119,7 +118,7 @@ public class AboutBoxDialog extends JDialog
 		s_instance.show();
 	}
 
-	private void createUserInterface(IApplication app)
+	private void createGUI(IApplication app)
 	{
 		final JPanel contentPane = new JPanel(new BorderLayout());
 		setContentPane(contentPane);
@@ -223,7 +222,7 @@ public class AboutBoxDialog extends JDialog
 
 		pack();
 		GUIUtils.centerWithinParent(this);
-		setResizable(false);
+		setResizable(true);
 	}
 
 	private static final class CreditsPanel extends JScrollPane
@@ -417,11 +416,10 @@ public class AboutBoxDialog extends JDialog
 		extends PropertyPanel
 		implements ActionListener
 	{
-		private JLabel _totalMemoryLbl = new JLabel();
-		private JLabel _usedMemoryLbl = new JLabel();
-		private JLabel _freeMemoryLbl = new JLabel();
+		private final JLabel _totalMemoryLbl = new JLabel();
+		private final JLabel _usedMemoryLbl = new JLabel();
+		private final JLabel _freeMemoryLbl = new JLabel();
 		private Timer _timer;
-		private DecimalFormat _fmt = new DecimalFormat("#,##0.0");
 
 		MemoryPanel()
 		{
@@ -486,25 +484,9 @@ public class AboutBoxDialog extends JDialog
 			final long totalMemory = rt.totalMemory();
 			final long freeMemory = rt.freeMemory();
 			final long usedMemory = totalMemory - freeMemory;
-			_totalMemoryLbl.setText(formatSize(totalMemory));
-			_usedMemoryLbl.setText(formatSize(usedMemory));
-			_freeMemoryLbl.setText(formatSize(freeMemory));
-		}
-
-		private String formatSize(long nbrBytes)
-		{
-			double size = nbrBytes;
-			double val = size / (1024 * 1024);
-			if (val > 1)
-			{
-				return _fmt.format(val).concat(" MB");
-			}
-			val = size / 1024;
-			if (val > 10)
-			{
-				return _fmt.format(val).concat(" KB");
-			}
-			return _fmt.format(val).concat(" bytes");
+			_totalMemoryLbl.setText(Utilities.formatSize(totalMemory, 1));
+			_usedMemoryLbl.setText(Utilities.formatSize(usedMemory, 1));
+			_freeMemoryLbl.setText(Utilities.formatSize(freeMemory, 1));
 		}
 	}
 }

@@ -43,6 +43,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.InstallDefaultDriver
 import net.sourceforge.squirrel_sql.client.mainframe.action.MaximizeAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.NewSessionPropertiesAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ViewFAQAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewHelpAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewLogsAction;
 import net.sourceforge.squirrel_sql.client.session.IClientSession;
@@ -79,12 +80,6 @@ public final class ActionCollection
 
 	/** Collection of all Actions keyed by class name. */
 	private Map _actionColl = new HashMap();
-
-	/** Current <CODE>ISQLAlias</CODE>. */
-	//private ISQLAlias _alias;
-
-	/** Current <CODE>ISQLDriver</CODE>. */
-//	private ISQLDriver _driver;
 
 	/**
 	 * Ctor. Disable all actions that are not valid when the
@@ -401,6 +396,7 @@ public final class ActionCollection
 		add(new SessionPropertiesAction(_app));
 		add(new ShowNativeSQLAction(_app));
 		add(new TileAction(_app));
+		add(new ViewFAQAction(_app));
 		add(new ViewHelpAction(_app));
 		add(new ViewLogsAction(_app));
 	}

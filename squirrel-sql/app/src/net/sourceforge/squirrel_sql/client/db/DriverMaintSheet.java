@@ -42,7 +42,6 @@ import javax.swing.JTextField;
 import javax.swing.ListModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -150,7 +149,7 @@ public class DriverMaintSheet extends BaseSheet
 	 */
 	DriverMaintSheet(IApplication app, ISQLDriver sqlDriver, int maintType)
 	{
-		super();
+		super("", true);
 		if (app == null)
 		{
 			throw new IllegalArgumentException("Null IApplication passed");
@@ -169,7 +168,7 @@ public class DriverMaintSheet extends BaseSheet
 		_sqlDriver = sqlDriver;
 		_maintType = maintType;
 
-		createUserInterface();
+		createGUI();
 		loadData();
 		pack();
 	}
@@ -282,7 +281,7 @@ public class DriverMaintSheet extends BaseSheet
 		});
 	}
 
-	private void createUserInterface()
+	private void createGUI()
 	{
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
@@ -312,7 +311,7 @@ public class DriverMaintSheet extends BaseSheet
 
 		gbc.anchor = GridBagConstraints.NORTHWEST;
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.weightx = gbc.weighty = 1;
+		gbc.weightx = 1;
 
 		// Title label at top.
 		gbc.gridx = 0;
@@ -334,9 +333,13 @@ public class DriverMaintSheet extends BaseSheet
 		tabPnl.addTab("Extra Class Path", createExtraClassPathPanel());
 
 		++gbc.gridy;
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.weighty = 1;
 		contentPane.add(tabPnl, gbc);
 
 		++gbc.gridy;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.weighty = 0;
 		contentPane.add(createDriverClassPanel(), gbc);
 
 		// Separated by a line.
@@ -451,12 +454,15 @@ public class DriverMaintSheet extends BaseSheet
 		gbc.anchor = gbc.WEST;
 		gbc.weighty = 1.0;
 
+		// Scrollbars are "shown always" to stop sheet resizing when they
+		// are shown/hidden.
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.gridheight = gbc.REMAINDER;
 		gbc.fill = gbc.BOTH;
 		gbc.weightx = 1.0;
-		pnl.add(new JScrollPane(_javaClassPathList), gbc);
+		pnl.add(new JScrollPane(_javaClassPathList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+									JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS), gbc);
 
 		++gbc.gridx;
 		gbc.gridheight = 1;
@@ -540,11 +546,14 @@ public class DriverMaintSheet extends BaseSheet
 		gbc.weighty = 1.0;
 		gbc.insets = new Insets(4, 4, 4, 4);
 
+		// Scrollbars are "shown always" to stop sheet resizing when they
+		// are shown/hidden.
 		gbc.gridheight = gbc.REMAINDER;
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.fill = gbc.BOTH;
-		pnl.add(new JScrollPane(_extraClassPathList), gbc);
+		pnl.add(new JScrollPane(_extraClassPathList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+									JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS), gbc);
 		
 		gbc.gridheight = 1;
 		gbc.weightx = 0.0;

@@ -55,7 +55,6 @@ public class ViewHelpAction extends SquirrelAction
 	{
 		super(app);
 		_file = file;
-		app.getResources().setupAction(this);
 		if (_file == null)
 		{
 			_file = new ApplicationFiles().getQuickStartGuideFile();

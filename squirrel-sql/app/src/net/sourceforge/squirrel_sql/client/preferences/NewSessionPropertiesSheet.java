@@ -29,6 +29,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -39,7 +40,6 @@ import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
 import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.session.properties.GeneralSessionPropertiesPanel;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionSQLPropertiesPanel;
 
 public class NewSessionPropertiesSheet extends BaseSheet
@@ -54,7 +54,7 @@ public class NewSessionPropertiesSheet extends BaseSheet
 	}
 
 	/** Logger for this class. */
-	private static ILogger s_log =
+	private static final ILogger s_log =
 		LoggerController.createLogger(NewSessionPropertiesSheet.class);
 
 	/** Singleton instance of this class. */
@@ -66,17 +66,12 @@ public class NewSessionPropertiesSheet extends BaseSheet
 	private IApplication _app;
 	private List _panels = new ArrayList();
 
-	/**
-	 * Default properties for new sessions.
-	 */
-//	private SessionProperties _sessionProperties;
-
 	private NewSessionPropertiesSheet(IApplication app)
 	{
-		super(NewSessionPropertiesSheetI18n.TITLE);
+		super(NewSessionPropertiesSheetI18n.TITLE, true);
 		_app = app;
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
-		createUserInterface();
+		createGUI();
 	}
 
 	/**
@@ -186,7 +181,7 @@ public class NewSessionPropertiesSheet extends BaseSheet
 		dispose();
 	}
 
-	private void createUserInterface()
+	private void createGUI()
 	{
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
@@ -217,14 +212,16 @@ public class NewSessionPropertiesSheet extends BaseSheet
 		}
 
 		// Add all panels to the tabbed pane.
-		SquirrelTabbedPane tabPane =
+		final SquirrelTabbedPane tabPane =
 			new SquirrelTabbedPane(_app.getSquirrelPreferences());
 		for (Iterator it = _panels.iterator(); it.hasNext();)
 		{
-			INewSessionPropertiesPanel pnl = (INewSessionPropertiesPanel) it.next();
+			INewSessionPropertiesPanel pnl = (INewSessionPropertiesPanel)it.next();
 			String title = pnl.getTitle();
 			String hint = pnl.getHint();
-			tabPane.addTab(title, null, pnl.getPanelComponent(), hint);
+			final JScrollPane sp = new JScrollPane(pnl.getPanelComponent());
+			sp.setBorder(BorderFactory.createEmptyBorder());
+			tabPane.addTab(title, null, sp/*pnl.getPanelComponent()*/, hint);
 		}
 
 		final JPanel contentPane = new JPanel(new GridBagLayout());
@@ -234,13 +231,18 @@ public class NewSessionPropertiesSheet extends BaseSheet
 		GridBagConstraints gbc = new GridBagConstraints();
 
 		gbc.gridwidth = 1;
+		gbc.fill = gbc.BOTH;
+		gbc.weightx = 1;
 
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		contentPane.add(_titleLbl, gbc);
 		++gbc.gridy;
+		gbc.weighty = 1;
 		contentPane.add(tabPane, gbc);
+
 		++gbc.gridy;
+		gbc.weighty = 0;
 		contentPane.add(createButtonsPanel(), gbc);
 	}
 

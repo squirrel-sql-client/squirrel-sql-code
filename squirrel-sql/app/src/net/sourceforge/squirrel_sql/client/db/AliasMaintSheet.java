@@ -27,6 +27,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -63,11 +64,13 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 
-public class AliasMaintSheet extends BaseSheet {
+public class AliasMaintSheet extends BaseSheet
+{
 	/**
 	 * Maintenance types.
 	 */
-	public interface MaintenanceType {
+	public interface MaintenanceType
+	{
 		int NEW = 1;
 		int MODIFY = 2;
 		int COPY = 3;
@@ -79,7 +82,8 @@ public class AliasMaintSheet extends BaseSheet {
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
-	private interface i18n {
+	private interface i18n
+	{
 		String ADD = "Add Alias";
 		String CHANGE = "Change Alias";
 		String DRIVER = "Driver:";
@@ -89,34 +93,35 @@ public class AliasMaintSheet extends BaseSheet {
 	}
 
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(AliasMaintSheet.class);
+	private static final ILogger s_log =
+		LoggerController.createLogger(AliasMaintSheet.class);
 
 	/** Application API. */
-	private IApplication _app;
+	private final IApplication _app;
 
 	/** The <TT>ISQLAlias</TT> being maintained. */
-	private ISQLAlias _sqlAlias;
+	private final ISQLAlias _sqlAlias;
 
 	/** Frame title. */
-	private JLabel _titleLbl = new JLabel();
+	private final JLabel _titleLbl = new JLabel();
 
 	/**
 	 * The requested type of maintenace.
 	 * @see MaintenanceType
 	 */
-	private int _maintType;
+	private final int _maintType;
 
 	/** Alias name. */
-	private JTextField _aliasName = new JTextField();
+	private final JTextField _aliasName = new JTextField();
 
 	/** Dropdown of all the drivers in the system. */
 	private DriversCombo _drivers;
 
 	/** URL to the data source. */
-	private JTextField _url = new JTextField();
+	private final JTextField _url = new JTextField();
 
 	/** User name */
-	private JTextField _userName = new JTextField();
+	private final JTextField _userName = new JTextField();
 
 	/**
 	 * Ctor.
@@ -129,16 +134,24 @@ public class AliasMaintSheet extends BaseSheet {
 	 * 			Thrown if <TT>null</TT> passed for <TT>app</TT> or <TT>ISQLAlias</TT> or
 	 * 			an invalid value passed for <TT>maintType</TT>.
 	 */
-	AliasMaintSheet(IApplication app, ISQLAlias sqlAlias, int maintType) {
-		super();
-		if (app == null) {
+	AliasMaintSheet(IApplication app, ISQLAlias sqlAlias, int maintType)
+	{
+		super("", true);
+		if (app == null)
+		{
 			throw new IllegalArgumentException("IApplication == null");
 		}
-		if (sqlAlias == null) {
+		if (sqlAlias == null)
+		{
 			throw new IllegalArgumentException("ISQLAlias == null");
 		}
-		if (maintType < MaintenanceType.NEW || maintType > MaintenanceType.COPY) {
-			throw new IllegalArgumentException("Illegal value of " + maintType + " passed for Maintenance type");
+		if (maintType < MaintenanceType.NEW
+			|| maintType > MaintenanceType.COPY)
+		{
+			throw new IllegalArgumentException(
+				"Illegal value of "
+					+ maintType
+					+ " passed for Maintenance type");
 		}
 
 		_app = app;
@@ -156,7 +169,8 @@ public class AliasMaintSheet extends BaseSheet {
 	 *
 	 * @param	title	New title text.
 	 */
-	public void setTitle(String title) {
+	public void setTitle(String title)
+	{
 		super.setTitle(title);
 		_titleLbl.setText(title);
 	}
@@ -166,25 +180,32 @@ public class AliasMaintSheet extends BaseSheet {
 	 *
 	 * @return	the alias that is being maintained.
 	 */
-	ISQLAlias getSQLAlias() {
+	ISQLAlias getSQLAlias()
+	{
 		return _sqlAlias;
 	}
 
-	private void loadData() {
+	private void loadData()
+	{
 		_aliasName.setText(_sqlAlias.getName());
 		_userName.setText(_sqlAlias.getUserName());
-		if (_maintType != MaintenanceType.NEW) {
+		if (_maintType != MaintenanceType.NEW)
+		{
 			_drivers.setSelectedItem(_sqlAlias.getDriverIdentifier());
 			_url.setText(_sqlAlias.getUrl());
-		} else {
+		}
+		else
+		{
 			ISQLDriver driver = _drivers.getSelectedDriver();
-			if (driver != null) {
+			if (driver != null)
+			{
 				_url.setText(driver.getUrl());
 			}
 		}
 	}
 
-	private void performClose() {
+	private void performClose()
+	{
 		dispose();
 	}
 
@@ -192,26 +213,34 @@ public class AliasMaintSheet extends BaseSheet {
 	 * OK button pressed. Edit data and if ok save to aliases model
 	 * and then close dialog.
 	 */
-	private void performOk() {
-		try {
+	private void performOk()
+	{
+		try
+		{
 			applyFromDialog(_sqlAlias);
-			if (_maintType == MaintenanceType.NEW ||
-					_maintType == MaintenanceType.COPY) {
+			if (_maintType == MaintenanceType.NEW
+				|| _maintType == MaintenanceType.COPY)
+			{
 				_app.getDataCache().addAlias(_sqlAlias);
 			}
 			dispose();
-		} catch(ValidationException ex) {
+		}
+		catch (ValidationException ex)
+		{
 			_app.showErrorDialog(ex);
-		} catch(DuplicateObjectException ex) {
+		}
+		catch (DuplicateObjectException ex)
+		{
 			_app.showErrorDialog(ex);
 		}
 	}
 
-	private void applyFromDialog(ISQLAlias alias)
-			throws ValidationException {
+	private void applyFromDialog(ISQLAlias alias) throws ValidationException
+	{
 		ISQLDriver driver = _drivers.getSelectedDriver();
-		if (driver == null) {
-			throw new ValidationException("Must select driver");//i18n
+		if (driver == null)
+		{
+			throw new ValidationException("Must select driver"); //i18n
 		}
 		alias.setName(_aliasName.getText().trim());
 		alias.setDriverIdentifier(_drivers.getSelectedDriver().getIdentifier());
@@ -219,19 +248,22 @@ public class AliasMaintSheet extends BaseSheet {
 		alias.setUserName(_userName.getText().trim());
 	}
 
-	private void showNewDriverDialog() {
+	private void showNewDriverDialog()
+	{
 		DriverMaintSheetFactory.getInstance().showCreateSheet();
 	}
 
-	private void createUserInterface() {
+	private void createUserInterface()
+	{
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
 		// This is a tool window.
 		GUIUtils.makeToolWindow(this, true);
 
-		final String title = _maintType == MaintenanceType.MODIFY
-										? (i18n.CHANGE + " " + _sqlAlias.getName())
-										: i18n.ADD;
+		final String title =
+			_maintType == MaintenanceType.MODIFY
+				? (i18n.CHANGE + " " + _sqlAlias.getName())
+				: i18n.ADD;
 		setTitle(title);
 
 		_aliasName.setColumns(COLUMN_COUNT);
@@ -253,7 +285,7 @@ public class AliasMaintSheet extends BaseSheet {
 
 		gbc.anchor = GridBagConstraints.NORTHWEST;
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.weightx = gbc.weighty = 1;
+		gbc.weightx = 1;
 
 		// Title label at top.
 		gbc.gridx = 0;
@@ -272,14 +304,16 @@ public class AliasMaintSheet extends BaseSheet {
 		JLabel lbl = new JLabel(i18n.NAME, SwingConstants.RIGHT);
 		dataEntryPnl.add(lbl, _aliasName);
 
-		_drivers = new  DriversCombo();
+		_drivers = new DriversCombo();
 		_drivers.addItemListener(new DriversComboItemListener());
 		lbl = new JLabel(i18n.DRIVER, SwingConstants.RIGHT);
 		JPanel driverPnl = new JPanel(new BorderLayout());
 		driverPnl.add(_drivers, BorderLayout.CENTER);
 		JButton newDriverBtn = new JButton("New");
-		newDriverBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
+		newDriverBtn.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent evt)
+			{
 				showNewDriverDialog();
 			}
 		});
@@ -287,16 +321,18 @@ public class AliasMaintSheet extends BaseSheet {
 		dataEntryPnl.add(lbl, driverPnl);
 
 		lbl = new JLabel(i18n.URL, SwingConstants.RIGHT);
-		dataEntryPnl.add(lbl, _url );
+		dataEntryPnl.add(lbl, _url);
 
 		lbl = new JLabel(i18n.USER_NAME, SwingConstants.RIGHT);
 		dataEntryPnl.add(lbl, _userName);
 
 		gbc.insets = new Insets(0, 10, 0, 10);
 		++gbc.gridy;
+		gbc.weighty = 1;
 		contentPane.add(dataEntryPnl, gbc);
 
 		// Separated by a line.
+		gbc.weighty = 0;
 		++gbc.gridy;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.insets = new Insets(5, 10, 5, 10);
@@ -308,43 +344,63 @@ public class AliasMaintSheet extends BaseSheet {
 		++gbc.gridy;
 		contentPane.add(createButtonsPanel(), gbc);
 
-		_app.getDataCache().addDriversListener(new ObjectCacheChangeListener() {
-			public void objectAdded(ObjectCacheChangeEvent evt) {
+		_app.getDataCache().addDriversListener(new ObjectCacheChangeListener()
+		{
+			public void objectAdded(ObjectCacheChangeEvent evt)
+			{
 				_drivers.addItem(evt.getObject());
 			}
-			public void objectRemoved(ObjectCacheChangeEvent evt) {
+			public void objectRemoved(ObjectCacheChangeEvent evt)
+			{
 				_drivers.removeItem(evt.getObject());
 			}
 		});
 	}
 
-	private JPanel createButtonsPanel() {
+	private JPanel createButtonsPanel()
+	{
 		JPanel pnl = new JPanel();
 
 		JButton okBtn = new JButton("OK");
-		okBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
+		okBtn.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent evt)
+			{
 				performOk();
 			}
 		});
 		JButton closeBtn = new JButton("Close");
-		closeBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
+		closeBtn.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent evt)
+			{
 				performClose();
 			}
 		});
 
 		JButton testBtn = new JButton("Test");
-		testBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				final DataCache cache =_app.getDataCache();
-				final IdentifierFactory factory = IdentifierFactory.getInstance();
-				final ISQLAlias testAlias = cache.createAlias(factory.createIdentifier());
-				try {
+		testBtn.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent evt)
+			{
+				final DataCache cache = _app.getDataCache();
+				final IdentifierFactory factory =
+					IdentifierFactory.getInstance();
+				final ISQLAlias testAlias =
+					cache.createAlias(factory.createIdentifier());
+				try
+				{
 					applyFromDialog(testAlias);
-					new ConnectToAliasCommand(_app, _app.getMainFrame(), testAlias, false,
-												new ConnectionCallBack(_app)).execute();
-				} catch (ValidationException ex) {
+					new ConnectToAliasCommand(
+						_app,
+						_app.getMainFrame(),
+						testAlias,
+						false,
+						new ConnectionCallBack(_app))
+						.execute();
+				}
+				catch (ValidationException ex)
+				{
 					_app.showErrorDialog(ex);
 				}
 			}
@@ -354,70 +410,101 @@ public class AliasMaintSheet extends BaseSheet {
 		pnl.add(closeBtn);
 		pnl.add(testBtn);
 
-		GUIUtils.setJButtonSizesTheSame(new JButton[] {okBtn, closeBtn, testBtn});
+		GUIUtils.setJButtonSizesTheSame(
+			new JButton[] { okBtn, closeBtn, testBtn });
 		getRootPane().setDefaultButton(okBtn);
 
 		return pnl;
 	}
 
-	private final class DriversComboItemListener implements ItemListener {
-		public void itemStateChanged(ItemEvent evt) {
-			ISQLDriver driver = (ISQLDriver)evt.getItem();
-			if (driver != null) {
+	private final class DriversComboItemListener implements ItemListener
+	{
+		public void itemStateChanged(ItemEvent evt)
+		{
+			ISQLDriver driver = (ISQLDriver) evt.getItem();
+			if (driver != null)
+			{
 				_url.setText(driver.getUrl());
 			}
 		}
 	}
 
-	private final class DriversCombo extends JComboBox {
+	private final class DriversCombo extends JComboBox
+	{
 		private Map _map = new HashMap();
 
-		DriversCombo() {
+		DriversCombo()
+		{
 			super();
 			SquirrelResources res = _app.getResources();
-			setRenderer(new DriverListCellRenderer(res.getIcon("list.driver.found"),res.getIcon("list.driver.notfound")));
+			setRenderer(new DriverListCellRenderer(res.getIcon("list.driver.found"),
+											res.getIcon("list.driver.notfound")));
 			List list = new ArrayList();
-			for (Iterator it = AliasMaintSheet.this._app.getDataCache().drivers(); it.hasNext();) {
-				ISQLDriver sqlDriver = ((ISQLDriver)it.next());
+			for (Iterator it = AliasMaintSheet.this._app.getDataCache().drivers();
+					it.hasNext();)
+			{
+				ISQLDriver sqlDriver = ((ISQLDriver) it.next());
 				_map.put(sqlDriver.getIdentifier(), sqlDriver);
 				list.add(sqlDriver);
 			}
-			Collections.sort(list);
-			for (Iterator it = list.iterator(); it.hasNext();) {
+			Collections.sort(list, new DriverComparator());
+			for (Iterator it = list.iterator(); it.hasNext();)
+			{
 				addItem(it.next());
 			}
 		}
 
-		void setSelectedItem(IIdentifier id) {
+		void setSelectedItem(IIdentifier id)
+		{
 			super.setSelectedItem(_map.get(id));
 		}
 
-		ISQLDriver getSelectedDriver() {
-			return (ISQLDriver)getSelectedItem();
+		ISQLDriver getSelectedDriver()
+		{
+			return (ISQLDriver) getSelectedItem();
 		}
+
+		private class DriverComparator implements Comparator
+		{
+			public int compare(Object o1, Object o2)
+			{
+				return o1.toString().compareToIgnoreCase(o2.toString());
+			}
+
+}
 	}
 
-	private final class ConnectionCallBack extends ConnectToAliasCommand.ClientCallback {
-		private ConnectionCallBack(IApplication app) {
+	private final class ConnectionCallBack
+		extends ConnectToAliasCommand.ClientCallback
+	{
+		private ConnectionCallBack(IApplication app)
+		{
 			super(app);
 		}
 
 		/**
 		 * @see CompletionCallback#connected(SQLConnection)
 		 */
-		public void connected(SQLConnection conn) {
-			try {
+		public void connected(SQLConnection conn)
+		{
+			try
+			{
 				conn.close();
-			} catch (Throwable th) {
+			}
+			catch (Throwable th)
+			{
 				s_log.error("Error closing Connection", th);
-				_app.showErrorDialog("Error closing opened connection: " + th.toString());
+				_app.showErrorDialog(
+					"Error closing opened connection: " + th.toString());
 			}
 			Dialogs.showOk(AliasMaintSheet.this, "Connection successful");
 		}
-		/**
+
+		/**
 		 * @see CompletionCallback#sessionCreated(ISession)
 		 */
-		public void sessionCreated(ISession session) {
+		public void sessionCreated(ISession session)
+		{
 			s_log.error("Test Button has created a session, this is a programming error");
 		}
 	}

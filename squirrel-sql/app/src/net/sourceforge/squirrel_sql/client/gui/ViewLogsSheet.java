@@ -26,6 +26,7 @@ import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -43,6 +44,7 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -72,19 +74,19 @@ public class ViewLogsSheet extends BaseSheet
 	private static ViewLogsSheet s_instance;
 
 	/** Application API. */
-	private IApplication _app;
+	private final IApplication _app;
 
 	/** Combo box containing all the log files. */
-	private DirectoryListComboBox _logDirCmb = new DirectoryListComboBox();
+	private final LogsComboBox _logDirCmb = new LogsComboBox();
 
 	/** Text area containing the log contents. */
-	private JTextArea _logContentsTxt = new JTextArea(20, 50);
+	private final JTextArea _logContentsTxt = new JTextArea(20, 50);
 
 	/** Button that refreshes the log contents. */
-	private JButton _refreshBtn;
+	private final JButton _refreshBtn = new JButton("Refresh");
 
 	/** Directory containing the log files. */
-	private File _logDir;
+	private final File _logDir;
 
 	/** If <TT>true</TT> user is closing this window. */
 	private boolean _closing = false;
@@ -198,12 +200,11 @@ public class ViewLogsSheet extends BaseSheet
 			{
 				s_log.error(ex);
 			}
-			String log = (String) _logDirCmb.getSelectedItem();
-			if (log != null)
+			final File logFile = (File)_logDirCmb.getSelectedItem();
+			if (logFile != null)
 			{
 				try
 				{
-					final File logFile = new File(_logDir, log);
 					if (logFile.exists() && logFile.canRead())
 					{
 						final BufferedReader rdr = new BufferedReader(new FileReader(logFile));
@@ -322,8 +323,8 @@ public class ViewLogsSheet extends BaseSheet
 		tb.setUseRolloverButtons(true);
 		tb.setFloatable(false);
 
-		final JLabel lbl =
-			new JLabel(getTitle() + " are stored in ", SwingConstants.CENTER);
+		final JLabel lbl = new JLabel(getTitle() + " are stored in ",
+										SwingConstants.CENTER);
 		lbl.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
 		tb.add(lbl);
 
@@ -387,7 +388,6 @@ public class ViewLogsSheet extends BaseSheet
 	{
 		JPanel pnl = new JPanel();
 
-		_refreshBtn = new JButton("Refresh");
 		pnl.add(_refreshBtn);
 		_refreshBtn.addActionListener(new ActionListener()
 		{
@@ -426,6 +426,41 @@ public class ViewLogsSheet extends BaseSheet
 		public void run()
 		{
 			ViewLogsSheet.this.refreshLog();
+		}
+	}
+
+	private static final class LogsComboBox extends DirectoryListComboBox
+	{
+		private File _dir;
+
+		public void load(File dir, FilenameFilter filter)
+		{
+			_dir = dir;
+			super.load(dir, filter);
+		}
+
+		public void addItem(Object anObject)
+		{
+			super.addItem(new LogFile(_dir, anObject.toString()));
+		}
+	}
+
+	private static final class LogFile extends File
+	{
+		private final String _stringRep;
+
+		LogFile(File dir, String name)
+		{
+			super(dir, name);
+			StringBuffer buf = new StringBuffer();
+			buf.append(getName()).append(" (")
+				.append(Utilities.formatSize(length())).append(")");
+			_stringRep = buf.toString();
+		}
+
+		public String toString()
+		{
+			return _stringRep;
 		}
 	}
 }

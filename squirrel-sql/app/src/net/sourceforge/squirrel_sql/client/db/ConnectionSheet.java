@@ -142,7 +142,7 @@ public class ConnectionSheet extends BaseSheet
 	public ConnectionSheet(IApplication app, /*Frame owner,*/
 	ISQLAlias alias, IConnectionSheetHandler handler)
 	{
-		super();
+		super("", true);
 		if (app == null)
 		{
 			throw new IllegalArgumentException("Null IApplication passed");
@@ -169,7 +169,7 @@ public class ConnectionSheet extends BaseSheet
 												_alias.getName());
 		}
 
-		createUserInterface();
+		createGUI();
 		loadData();
 	}
 
@@ -256,7 +256,7 @@ public class ConnectionSheet extends BaseSheet
 		}
 	}
 
-	private void createUserInterface()
+	private void createGUI()
 	{
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		GUIUtils.makeToolWindow(this, true);
@@ -298,7 +298,7 @@ public class ConnectionSheet extends BaseSheet
 
 		gbc.anchor = GridBagConstraints.NORTHWEST;
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.weightx = gbc.weighty = 1;
+		gbc.weightx = 1;
 
 		// Title label at top.
 		gbc.insets = new Insets(5, 10, 5, 10);
@@ -316,6 +316,7 @@ public class ConnectionSheet extends BaseSheet
 		//gbc.fill = GridBagConstraints.NONE;
 		gbc.insets = new Insets(0, 10, 0, 10);
 		gbl.setConstraints(dataEntryPnl, gbc);
+		gbc.weighty = 1;
 		contentPane.add(dataEntryPnl);
 
 		// Next the case-sensitivity warning.
@@ -323,6 +324,7 @@ public class ConnectionSheet extends BaseSheet
 		gbc.insets = new Insets(5, 10, 5, 10);
 		lbl = new JLabel("Warning - Caps lock may interfere with passwords");
 		gbl.setConstraints(lbl, gbc);
+		gbc.weighty = 0;
 		contentPane.add(lbl);
 
 		// Separated by a line.

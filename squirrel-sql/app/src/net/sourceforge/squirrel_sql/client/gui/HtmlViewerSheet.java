@@ -22,21 +22,17 @@ import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLDocument;
@@ -94,43 +90,39 @@ public class HtmlViewerSheet extends BaseSheet
 			throw new IllegalArgumentException("IApplication == null");
 		}
 		_app = app;
-		createUserInterface();
-		if (url != null)
-		{
-			read(url);
-		}
+		createGUI();
+		read(url);
 	}
 
 	public synchronized void read(URL url) throws IOException
 	{
-		if (url == null)
+		if (url != null)
 		{
-			throw new IllegalArgumentException("URL == null");
-		}
-
-		_documentURL = url;
-
-		CursorChanger cursorChg = new CursorChanger(this);
-		cursorChg.show();
-		try
-		{
-// Causes NPE in JDK 1.3.1
-//			_contentsTxt.setText("");
+			_documentURL = url;
+	
+			CursorChanger cursorChg = new CursorChanger(this);
+			cursorChg.show();
 			try
 			{
-				_contentsTxt.setPage(url);
-				_history.add(url);
-				_historyIndex = 0;
+	// Causes NPE in JDK 1.3.1
+	//			_contentsTxt.setText("");
+				try
+				{
+					_contentsTxt.setPage(url);
+					_history.add(url);
+					_historyIndex = 0;
+				}
+				catch (IOException ex)
+				{
+					final String msg = "Error occured reading from URL";
+					s_log.error(msg, ex);
+					throw(ex);
+				}
 			}
-			catch (IOException ex)
+			finally
 			{
-				final String msg = "Error occured reading from URL";
-				s_log.error(msg, ex);
-				throw(ex);
+				cursorChg.restore();
 			}
-		} finally
-		{
-			cursorChg.restore();
 		}
 	}
 
@@ -144,7 +136,7 @@ public class HtmlViewerSheet extends BaseSheet
 		return _documentURL;
 	}
 
-	private void goBack()
+	public void goBack()
 	{
 		if (_historyIndex > 0 && _historyIndex < _history.size())
 		{
@@ -159,7 +151,7 @@ public class HtmlViewerSheet extends BaseSheet
 		}
 	}
 
-	private void goForward()
+	public void goForward()
 	{
 		if (_historyIndex > -1 && _historyIndex < _history.size() - 1)
 		{
@@ -177,7 +169,7 @@ public class HtmlViewerSheet extends BaseSheet
 	/**
 	 * Create user interface.
 	 */
-	private void createUserInterface()
+	private void createGUI()
 	{
 		GUIUtils.makeToolWindow(this, true);
 		Container contentPane = getContentPane();
@@ -185,6 +177,13 @@ public class HtmlViewerSheet extends BaseSheet
 		contentPane.add(createMainPanel(), BorderLayout.CENTER);
 		contentPane.add(createToolBar(), BorderLayout.NORTH);
 		pack();
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				_contentsTxt.requestFocus();
+			}
+		});
 	}
 
 	private ToolBar createToolBar()
@@ -195,8 +194,8 @@ public class HtmlViewerSheet extends BaseSheet
 		_toolBar.setFloatable(false);
 		_toolBar.add(new BackAction(_app));
 		_toolBar.add(new ForwardAction(_app));
-		JButton btn = _toolBar.add(new CloseAction(_app));
-		btn.setAlignmentX(btn.RIGHT_ALIGNMENT);
+		_toolBar.add(new RefreshAction(_app));
+		_toolBar.add(new CloseAction(_app));
 		return _toolBar;
 	}
 
@@ -316,6 +315,30 @@ public class HtmlViewerSheet extends BaseSheet
 		public void actionPerformed(ActionEvent evt)
 		{
 			goForward();
+		}
+	}
+
+	private final class RefreshAction extends SquirrelAction
+	{
+		public RefreshAction(IApplication app)
+		{
+			super(app);
+			if (app == null)
+			{
+				throw new IllegalArgumentException("Null IApplication passed");
+			}
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			try
+			{
+				read(_documentURL);
+			}
+			catch (IOException ex)
+			{
+				s_log.error("Error reading URL", ex);
+			}
 		}
 	}
 
