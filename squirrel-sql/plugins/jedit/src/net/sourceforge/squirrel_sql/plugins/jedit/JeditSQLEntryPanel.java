@@ -17,11 +17,14 @@ package net.sourceforge.squirrel_sql.plugins.jedit;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Color;
-
+import java.awt.Font;
 import java.awt.event.MouseListener;
+
+import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
@@ -32,51 +35,57 @@ import net.sourceforge.squirrel_sql.plugins.jedit.textarea.SyntaxStyle;
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.TextAreaPainter;
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.Token;
 
-public class JeditSQLEntryPanel implements ISQLEntryPanel {
+class JeditSQLEntryPanel implements ISQLEntryPanel {
 	/** Text component. */
-	private JEditTextArea _comp;
+	private JEditTextArea _jeditTextArea;
 
 	JeditSQLEntryPanel(ISession session, JeditPreferences prefs) {
 		super();
 		if (prefs == null) {
 			throw new IllegalArgumentException("Null JeditPreferences passed");
 		}
-		_comp = new JEditTextArea(new JeditTextAreaDefaults(prefs));
-		_comp.setTokenMarker(new JeditSQLTokenMarker(session.getSQLConnection()));
+
+		_jeditTextArea = new JEditTextArea(new JeditTextAreaDefaults(prefs));
+		_jeditTextArea.setTokenMarker(new JeditSQLTokenMarker(session.getSQLConnection()));
+		Font font = (Font)UIManager.get("TextArea.font");
+		if (font != null) {
+			_jeditTextArea.getPainter().setFont(font);
+		}
 	}
 
 	/**
 	 * @see ISQLEntryPanel#getComponent()
 	 */
 	public Component getComponent() {
-		return _comp;
+		return _jeditTextArea;
 	}
 
 	/**
 	 * @see ISQLEntryPanel#getText()
 	 */
 	public String getText() {
-		return _comp.getText();
+		return _jeditTextArea.getText();
 	}
-	/**
+
+	/**
 	 * @see ISQLEntryPanel#getSelectedText()
 	 */
 	public String getSelectedText() {
-		return _comp.getSelectedText();
+		return _jeditTextArea.getSelectedText();
 	}
 
 	/**
 	 * @see ISQLEntryPanel#setText(String)
 	 */
 	public void setText(String text) {
-		_comp.setText(text);
+		_jeditTextArea.setText(text);
 	}
 
 	/**
 	 * @see ISQLEntryPanel#appendText(String)
 	 */
 	public void appendText(String text) {
-		SyntaxDocument doc = _comp.getDocument();
+		SyntaxDocument doc = _jeditTextArea.getDocument();
 		try {
 			doc.insertString(doc.getLength(), text, null);
 		} catch (Exception ex) {
@@ -88,15 +97,12 @@ public class JeditSQLEntryPanel implements ISQLEntryPanel {
 	 * @see ISQLEntryPanel#getCaretPosition()
 	 */
 	public int getCaretPosition() {
-		return _comp.getCaretPosition();
+		return _jeditTextArea.getCaretPosition();
 	}
 
-	/**
-	 * @see ISQLEntryPanel#setCaretPosition()
-	 */
 	public void setCaretPosition(int value) {
-		_comp.setCaretPosition(value);
-	}
+		_jeditTextArea.setCaretPosition(value);
+    }
 
 	/**
 	 * @see ISQLEntryPanel#setRows(int)
@@ -116,17 +122,18 @@ public class JeditSQLEntryPanel implements ISQLEntryPanel {
 	 * @see ISQLEntryPanel#addMouseListener(MouseListener)
 	 */
 	public void addMouseListener(MouseListener lis) {
-		_comp.addMouseListener(lis);
+		_jeditTextArea.addMouseListener(lis);
 	}
-	/**
+
+	/**
 	 * @see ISQLEntryPanel#removeMouseListener(MouseListener)
 	 */
 	public void removeMouseListener(MouseListener lis) {
-		_comp.removeMouseListener(lis);
+		_jeditTextArea.removeMouseListener(lis);
 	}
 
 	JEditTextArea getTypedComponent() {
-		return (JEditTextArea)getComponent();
+		return _jeditTextArea;
 	}
 
 	void updateFromPreferences(JeditPreferences prefs)
