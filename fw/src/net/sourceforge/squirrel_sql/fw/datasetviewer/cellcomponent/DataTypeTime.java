@@ -389,7 +389,14 @@ public class DataTypeTime
 				// not passed to this level by the in-cell editor.
 				if (c == KeyEvent.VK_TAB || c == KeyEvent.VK_ENTER) {
 					// remove all instances of the offending char
-					((IRestorableTextComponent)_theComponent).updateText( text.replaceAll(""+c, ""));
+					int index = text.indexOf(c);
+					if (index == text.length() -1) {
+						text = text.substring(0, text.length()-1);	// truncate string
+					}
+					else {
+						text = text.substring(0, index) + text.substring(index+1);
+					}
+					((IRestorableTextComponent)_theComponent).updateText( text);
 					_theComponent.getToolkit().beep();
 					e.consume();
 				}
@@ -806,7 +813,7 @@ public class DataTypeTime
 			useJavaDefaultFormat = useJavaDefaultFormatChk.isSelected();
 			DTProperties.put(
 				thisClassName,
-				"useJavaDefaultFormat", Boolean.toString(useJavaDefaultFormat));
+				"useJavaDefaultFormat", new Boolean(useJavaDefaultFormat).toString());
 			
 		
 			localeFormat = dateFormatTypeDrop.getValue();
@@ -819,7 +826,7 @@ public class DataTypeTime
 			dateFormat.setLenient(lenient);
 			DTProperties.put(
 				thisClassName,
-				"lenient", Boolean.toString(lenient));
+				"lenient", new Boolean(lenient).toString());
 		}
 	 
 	 } // end of inner class
