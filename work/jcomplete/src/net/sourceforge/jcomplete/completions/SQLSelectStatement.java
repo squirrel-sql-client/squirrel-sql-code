@@ -18,7 +18,7 @@
  *
  * created by cse, 26.09.2002 15:14:45
  *
- * @version $Id: SQLSelectStatement.java,v 1.5 2002-10-10 22:33:49 csell Exp $
+ * @version $Id: SQLSelectStatement.java,v 1.6 2002-10-11 07:58:59 csell Exp $
  */
 package net.sourceforge.jcomplete.completions;
 
@@ -153,13 +153,13 @@ public class SQLSelectStatement extends SQLStatement
         if(comp != null) return comp;
 
         if(offset >= selectListStart && offset <= selectListEnd)
-            return new SQLColumn(this, offset);
+            return new SQLColumn(this, offset, offset);
         else if(offset >= fromStart && offset <= fromEnd)
-            return new SQLTable(this, offset);
+            return new SQLTable(this, offset, offset);
         else {
             for(int i=0; i<fieldAreas.length; i++) {
                 if(offset >= fieldAreas[i][FA_START] && offset <= fieldAreas[i][FA_END]) {
-                    SQLColumn col = new SQLColumn(this, offset);
+                    SQLColumn col = new SQLColumn(this, offset, offset);
                     col.setRepeatable(false);
                     return col;
                 }

@@ -770,20 +770,20 @@ public List statements = new ArrayList();
 		
 		Expect(1);
 		if(t.val.equals("."))
-		    table.schema = token.str;
+		    table.setSchema(token.str, token.pos);
 		else
-		    table.name = token.str;
+		    table.setName(token.str, token.pos);
 		
 		if (t.kind == 22) {
 			Get();
 			Expect(1);
-			table.name = token.str;
+			table.setName(token.str, token.pos);
 		}
 		if (t.kind == 1 || t.kind == 23) {
 			if (t.kind == 23) {
 				Get();
 			}
-			table.alias = t.str;
+			table.setAlias(t.str, t.pos);
 			wasSet = true;
 			if(statement.setTable(table) == false)
 			    SemError(10);
@@ -955,8 +955,8 @@ public List statements = new ArrayList();
 	}
 
 	private final void Table(SQLTable table) {
-		table.name = t.str;
-		table.setEndPosition(scanner.pos);
+		if(table != null)
+		    table.setName(t.str, t.pos);
 		
 		Expect(1);
 	}
@@ -1072,6 +1072,7 @@ public List statements = new ArrayList();
 		
 		Expect(16);
 		SQLColumn column = new SQLColumn(statement, scanner.pos+1);
+		column.setRepeatable(true);
 		statement.addColumn(column);
 		
 		Table(table);
@@ -1080,6 +1081,7 @@ public List statements = new ArrayList();
 			ColumnList();
 			CloseParens();
 		}
+		column.setEndPosition(token.pos);
 		if (t.kind == 17) {
 			Get();
 			Expect(5);
@@ -1088,7 +1090,7 @@ public List statements = new ArrayList();
 		} else if (t.kind == 20) {
 			SelectStmt();
 		} else Error(146);
-		statement.setEndPosition(scanner.pos);
+		statement.setEndPosition(token.pos);
 		popContext();
 		
 	}

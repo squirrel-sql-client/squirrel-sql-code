@@ -1,7 +1,7 @@
 /**
  * Compiler for the SQL language, with semantic actions that support code completion
  *
- * @version $Id: SquirrelSQL.atg,v 1.4 2002-10-10 22:33:48 csell Exp $
+ * @version $Id: SquirrelSQL.atg,v 1.5 2002-10-11 07:58:59 csell Exp $
  */
 PACKAGE "net.sourceforge.jcomplete.parser"
 IMPORT "net.sourceforge.jcomplete.completions.*", "net.sourceforge.jcomplete.*"
@@ -111,14 +111,15 @@ InsertStmt              (.  SQLStatement statement = new SQLStatement(t.pos);
                             statement.addTable(table);
                         .)
     "INTO"              (.  SQLColumn column = new SQLColumn(statement, scanner.pos+1);
+                            column.setRepeatable(true);
                             statement.addColumn(column);
                         .)
     Table <table>
     [ OpenParens
     ColumnList
-    CloseParens  ]
+    CloseParens  ]      (. column.setEndPosition(token.pos); .)
     (("VALUES" OpenParens FieldList CloseParens) | SelectStmt)
-                        (.  statement.setEndPosition(scanner.pos);
+                        (.  statement.setEndPosition(token.pos);
                             popContext();
                         .)
     .
@@ -173,14 +174,14 @@ QualifiedTable          (.  SQLSelectStatement statement = (SQLSelectStatement)g
                         .)
     =
     ident               (.  if(t.val.equals("."))
-                                table.schema = token.str;
+                                table.setSchema(token.str, token.pos);
                             else
-                                table.name = token.str;
+                                table.setName(token.str, token.pos);
                         .)
-    [ "." ident         (.  table.name = token.str; .)
+    [ "." ident         (.  table.setName(token.str, token.pos); .)
     ] 
     [
-    ["AS"]              (.  table.alias = t.str;
+    ["AS"]              (.  table.setAlias(t.str, t.pos);
                             wasSet = true;
                             if(statement.setTable(table) == false)
                                 SemError(10);
@@ -311,8 +312,8 @@ Field =
     | Param
     .
 
-Table <SQLTable table>  (.  table.name = t.str;
-                            table.setEndPosition(scanner.pos);
+Table <SQLTable table>  (.  if(table != null)
+                                table.setName(t.str, t.pos);
                         .)
     =
     ident

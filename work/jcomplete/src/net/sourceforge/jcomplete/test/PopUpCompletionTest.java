@@ -79,7 +79,7 @@ public class PopUpCompletionTest extends JFrame
     }
     public PopUpCompletionTest()
     {
-        setSize(600, 400);
+        setSize(800, 400);
         addWindowListener(new WindowAdapter()
         {
             public void windowClosing(WindowEvent e)
@@ -96,7 +96,8 @@ public class PopUpCompletionTest extends JFrame
         JTextArea textArea = new JTextArea();
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
-        textArea.setRows(20);
+        textArea.setRows(12);
+        textArea.setColumns(80);
         textArea.addCaretListener(new CaretListener() {
             public void caretUpdate(CaretEvent e)
             {
@@ -105,7 +106,8 @@ public class PopUpCompletionTest extends JFrame
         });
 
         final JTextArea errorArea = new JTextArea();
-        errorArea.setRows(5);
+        errorArea.setRows(4);
+        errorArea.setColumns(80);
         errorArea.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e)
             {
@@ -121,6 +123,11 @@ public class PopUpCompletionTest extends JFrame
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitPane.setTopComponent(textScroller);
         splitPane.setBottomComponent(errScroller);
+        splitPane.setDividerSize(5);
+
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(labelArea, BorderLayout.NORTH);
+        getContentPane().add(splitPane, BorderLayout.CENTER);
 
         //create the parser interface handler
         SQLCompletionHandler handler = new SQLCompletionHandler(new ErrorListener(errorArea), s_TestTables);
@@ -132,10 +139,6 @@ public class PopUpCompletionTest extends JFrame
         //connect the GUI to the handler
         textArea.addKeyListener(new SQLCompletionAdapter(
               textArea, handler, KeyEvent.CTRL_MASK, KeyEvent.VK_ENTER));
-
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(labelArea, BorderLayout.NORTH);
-        getContentPane().add(splitPane, BorderLayout.CENTER);
     }
 
     private class ErrorListener implements CompletionHandler.ErrorListener
@@ -163,7 +166,7 @@ public class PopUpCompletionTest extends JFrame
     public static void main(String[] args)
     {
         PopUpCompletionTest test = new PopUpCompletionTest();
-        test.validate();
+        test.pack();
         test.show();
     }
 }
