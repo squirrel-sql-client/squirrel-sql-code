@@ -52,10 +52,12 @@ public class NetbeansSQLEditorPane extends JEditorPane
       Settings.addInitializer(new SQLSettingsInitializer(SQLKit.class, _prefs));
 
 
-
+      //////////////////////////////////////////////////////////////////////////////////////////
+      //Needs to be done at this moment. That's why we can't call updateFromPreferences() here.
       _sqlKit = new SQLKit(syntaxFactory);
-
       setEditorKit(_sqlKit);
+      //
+      //////////////////////////////////////////////////////////////////////////////////////////
 
       //////////////////////////////////////////////////////////////////////////////////////////////////////////////
       // The ctrl enter short cut in the Netbeans editor is set in org.netbeans.editor.ext.BaseKit
