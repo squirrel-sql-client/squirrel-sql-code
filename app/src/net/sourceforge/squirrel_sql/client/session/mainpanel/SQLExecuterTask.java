@@ -67,7 +67,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
 /**
  * JASON: Superseeded by import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask
- * DELETEME:
+ * DELETEME: once checked against the new one
  * @deprecated
  */
 class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel

@@ -21,7 +21,6 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 import java.util.Calendar;
 import java.util.Date;
-//JASON: Check against the other version.
 /**
  * Information about an executed query.
  *
