@@ -570,11 +570,11 @@ public class ObjectTreePanel extends JPanel
 		sp.setPreferredSize(new Dimension(200, 200));
 		_splitPane.add(sp, JSplitPane.LEFT);
 		add(_splitPane, BorderLayout.CENTER);
+		_splitPane.setDividerLocation(200);
 
 		_tree.addTreeSelectionListener(new ObjectTreeSelectionListener());
 
-		setSelectedObjectPanel(_emptyTabPane);
-		_splitPane.setDividerLocation(200);
+		_tree.setSelectionRow(0);
 	}
 
 	/**
