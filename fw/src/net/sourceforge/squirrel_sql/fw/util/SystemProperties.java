@@ -39,4 +39,10 @@ public class SystemProperties
 	{
 		return get().getProperty("java.class.path");
 	}
+
+	public static boolean isRunningOnOSX()
+	{
+		return true;
+//		return get().getProperty("mrj.version") != null;
+	}
 }

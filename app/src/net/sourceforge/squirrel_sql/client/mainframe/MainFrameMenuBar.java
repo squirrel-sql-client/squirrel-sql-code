@@ -29,6 +29,7 @@ import javax.swing.JMenuBar;
 
 import net.sourceforge.squirrel_sql.fw.gui.action.IHasJDesktopPane;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.util.SystemProperties;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -61,6 +62,9 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.ViewAliasesAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewDriversAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewHelpAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewLogsAction;
+import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
+import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
+import net.sourceforge.squirrel_sql.client.plugin.PluginStatus;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsAction;
@@ -109,6 +113,8 @@ final class MainFrameMenuBar extends JMenuBar
 	/** Listener to changes to application properties. */
 	private SquirrelPropertiesListener _propsLis;
 
+	private final boolean _osxPluginLoaded;
+
 	/**
 	 * Ctor.
 	 */
@@ -140,6 +146,7 @@ final class MainFrameMenuBar extends JMenuBar
 		_actions = actions;
 
 		_app = app;
+		_osxPluginLoaded = isOsxPluginLoaded();
 
 		add(createFileMenu(rsrc));
 //		add(_editMenu = createEditMenu(rsrc));
@@ -285,12 +292,19 @@ final class MainFrameMenuBar extends JMenuBar
 	private JMenu createFileMenu(Resources rsrc)
 	{
 		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.FILE);
-		addToMenu(rsrc, GlobalPreferencesAction.class, menu);
+		if (!_osxPluginLoaded)
+		{
+			addToMenu(rsrc, GlobalPreferencesAction.class, menu);
+		}
 		addToMenu(rsrc, NewSessionPropertiesAction.class, menu);
 		menu.addSeparator();
 		addToMenu(rsrc, DumpApplicationAction.class, menu);
 		menu.addSeparator();
-		addToMenu(rsrc, ExitAction.class, menu);
+		if (!_osxPluginLoaded)
+		{
+			addToMenu(rsrc, ExitAction.class, menu);
+		}
+
 		return menu;
 	}
 
@@ -391,7 +405,11 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, ViewHelpAction.class, menu);
 
 		menu.addSeparator();
-		addToMenu(rsrc, AboutAction.class, menu);
+		if (!_osxPluginLoaded)
+		{
+			addToMenu(rsrc, AboutAction.class, menu);
+		}
+
 		return menu;
 	}
 
@@ -468,6 +486,24 @@ final class MainFrameMenuBar extends JMenuBar
 			boolean show = _app.getSquirrelPreferences().getShowLoadedDriversOnly();
 			_showLoadedDriversOnlyItem.setSelected(show);
 		}
+	}
+
+	// TODO: This is a nasty quick hack. Needs an API to do this.
+	private boolean isOsxPluginLoaded()
+	{
+		if (SystemProperties.isRunningOnOSX())
+		{
+			final PluginManager mgr = _app.getPluginManager();
+			PluginInfo[] ar = mgr.getPluginInformation();
+			for (int i = 0; i < ar.length; ++i)
+			{
+				if (ar[i].getInternalName().equals("macosx"))
+				{
+					return ar[i].isLoaded();
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
