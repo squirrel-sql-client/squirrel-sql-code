@@ -53,10 +53,12 @@ import javax.swing.text.JTextComponent;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewerDestination;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.gui.GUIExecutionController;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.MemoryComboBox;
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
@@ -105,6 +107,7 @@ class SQLPanel extends JPanel {
     private JSplitPane _splitPane;
 
     private ArrayList _sqlExecutionListeners = new ArrayList();
+
     /**
      * Ctor.
      *
@@ -195,9 +198,37 @@ class SQLPanel extends JPanel {
     //        _session.rollBack();
     //    }
 
+	public void executeCurrentSQL() 
+	{
+		String sql = _sqlEntry.getSelectedText();
+		if(sql == null || sql.trim().length() == 0)
+		{
+			sql = _sqlEntry.getText();
+	
+			int iStartIndex = 0;
+			int iEndIndex = sql.length();
+			
+			int iCaretPos = _sqlEntry.getCaretPosition();
+	
+			int iIndex = sql.lastIndexOf("\n\n",iCaretPos);
+			if(iIndex >0) iStartIndex = iIndex;
+			iIndex = sql.indexOf("\n\n",iCaretPos);
+			if(iIndex >0) iEndIndex = iIndex;
+	
+			sql = sql.substring(iStartIndex, iEndIndex).trim();
+		}
+		if(sql != null && sql.trim().length() > 0)
+		{
+//			SQLExecuter.addSqlStatement(this,_session,sql);
+			SQLExecuterTask task = new SQLExecuterTask(this, _session, sql);
+			_session.getApplication().getSQLController().addTask(task);
+		}
+	}
+
     /**
      * Execute the current SQL.
      */
+/*
     void executeCurrentSQL() {
         try {
             String sql = _sqlEntry.getSelectedText();
@@ -217,12 +248,6 @@ class SQLPanel extends JPanel {
 
                 sql = sql.substring(iStartIndex, iEndIndex).trim();
 
-                /*              if(sql == null || sql.trim().equals(""))
-                                {
-                                    appendStatus(getLabel("message.nothingtoexecute"));
-                                    return;
-                                }
-                */
             }
 
             final long start = System.currentTimeMillis();
@@ -302,7 +327,7 @@ class SQLPanel extends JPanel {
             _session.getMessageHandler().showMessage(th);
         }
     }
-
+*/
     /**
      * Close the passed <TT>ResultTab</TT>. This is done by clearing
      * all data from the tab, removing it from the tabbed panel
@@ -368,6 +393,66 @@ class SQLPanel extends JPanel {
     public void setSQLScript(String sqlScript) {
         _sqlEntry.setText(sqlScript);
     }
+
+	void setCancelPanel(final JPanel panel) {
+		javax.swing.SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				_tabbedResultsPanel.addTab("Executing SQL", null, panel, "Press Cancel to Stop");
+				_tabbedResultsPanel.setSelectedComponent(panel);
+			}
+		});
+	}
+
+	void addTab(final String sToken, IDataSet ds, final JPanel cancelPanel)
+	{
+		final ResultTab tab;
+		final String sTitle;
+		if (_availableTabs.size() > 0)
+		{
+			tab = (ResultTab) _availableTabs.remove(0);
+		}
+		else
+		{
+			tab = new ResultTab(_session, this);
+		}
+		if (sToken.length() > 10) sTitle = sToken.substring(0, 15);
+		else sTitle = sToken;
+	
+		try
+		{
+			tab.show(ds, sToken);
+			
+			javax.swing.SwingUtilities.invokeLater(new Runnable()
+			{
+				public void run()
+				{
+					_tabbedResultsPanel.remove(cancelPanel);
+					_tabbedResultsPanel.addTab(sTitle , null, tab, sToken);
+					_tabbedResultsPanel.setSelectedComponent(tab);
+					_sqlComboItemListener.stopListening();
+					_sqlCombo.addItem(new SqlComboItem(sToken));
+					_sqlComboItemListener.startListening();
+				}
+			});
+		} catch(DataSetException dse)
+		{
+			_session.getMessageHandler().showMessage(dse);
+		}
+	}
+
+
+	void removeCancelPanel(final JPanel cancelPanel)
+	{
+		javax.swing.SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				_tabbedResultsPanel.remove(cancelPanel);
+			}
+		});
+	}
 
     private String modifyIndividualScript(String sql) {
         List list = null;
