@@ -23,22 +23,22 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.IClientSession;
-import net.sourceforge.squirrel_sql.client.session.action.IClientSessionAction;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 /**
  * This action will convert the SQL string to a StringBuffer.
  *
  * @author  Gerd Wagner
  */
 class ConvertToStringBufferAction extends SquirrelAction
-					implements IClientSessionAction
+					implements ISessionAction
 {
 	/** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(ConvertToStringBufferAction.class);
 
 	/** Current session. */
-	private IClientSession _session;
+	private ISession _session;
 
 	private EditExtrasPlugin _plugin;
 
@@ -48,7 +48,7 @@ class ConvertToStringBufferAction extends SquirrelAction
 		_plugin = plugin;
 	}
 
-	public void setClientSession(IClientSession session)
+	public void setSession(ISession session)
 	{
 		_session = session;
 	}

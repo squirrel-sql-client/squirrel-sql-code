@@ -27,14 +27,15 @@ public class SearchAndReplaceController
 	private SearchAndReplaceDlg _dlg;
 	private ISession _session;
 	private EditExtrasPlugin _plugin;
-	private FindConfig _lastFingCfg;
+//	private FindConfig _lastFingCfg;
 
 	SearchAndReplaceController(ISession session, EditExtrasPlugin plugin, int modus)
 	{
 		_session = session;
 		_plugin = plugin;
 
-		_dlg = new SearchAndReplaceDlg(session.getApplication().getMainFrame(), "Find in " + _session.getSessionSheet().getTitle(), modus);
+		final String title = "Find in " + _session.getTitle();
+		_dlg = new SearchAndReplaceDlg(session.getApplication().getMainFrame(), title, modus);
 		_dlg.btnSearch.addActionListener
 			(
 				new ActionListener()
