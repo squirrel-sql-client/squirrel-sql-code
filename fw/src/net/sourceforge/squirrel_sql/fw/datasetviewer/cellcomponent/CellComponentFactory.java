@@ -7,6 +7,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import java.sql.Types;
+import java.sql.PreparedStatement;
 import java.awt.Color;
 
 import java.util.HashMap;
@@ -59,6 +60,25 @@ public class CellComponentFactory {
 			return "java.lang.Object";
 	}
 	
+	/**
+	 * Determine if the values of two objects are the same.
+	 */
+	public static boolean areEqual(ColumnDisplayDefinition colDef,
+		Object newValue, Object oldValue) {
+			
+		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
+		if (dataTypeObject != null)
+			return dataTypeObject.areEqual(newValue, oldValue);
+		
+		// we should never get here because the areEqual function is only
+		// called when we are trying to update the database, so we know
+		// that we have a DataType object for this column (or we would
+		// have been stopped from editing by the isEditableXXX methods),
+		// but we need a return here to keep the compiler happy.
+		return false;
+	}
+
+
 	/*
 	 * Operations for Text and in-cell work
 	 */
@@ -294,25 +314,25 @@ public class CellComponentFactory {
 	}
 	
 	/**
-	 * When updating the database, generate a string form of this object value
-	 * that can be used in the SET clause to update this value in the Database.
-	 * This function must also include the column label so that its output
-	 * is of the form:
-	 * 	"columnName = value"
-	 * or
-	 * 	"columnName is null"
-	 * or whatever is appropriate for this column in the database.
+	 * When updating the database, insert the appropriate datatype into the
+	 * prepared statment at variable position 1.
 	 */
-	public static String getSetClauseValue(ColumnDisplayDefinition colDef, Object value) {
+	public static void setPreparedStatementValue(ColumnDisplayDefinition colDef,
+		PreparedStatement pstmt, Object value)
+		throws java.sql.SQLException {
+
 		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
 
+		// We should never NOT have an object here because we only get here
+		// when a DataType object has claimed that the column is editable.
+		// If there is no DataType for the column, then the default in the
+		// isEditableXXX() methods in this class is to say that the column
+		// is not editable, and therefore we should never have this method
+		// called in that case.
 		if (dataTypeObject != null) {
 			// we have an appropriate data type object
-			return dataTypeObject.getSetClauseValue(colDef, value);
+			dataTypeObject.setPreparedStatementValue(colDef, pstmt, value);
 		}
-		
-		// if no object for this data type, then cannot use value in set clause
-		return null;
 	}
 
 

@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.JTable;
+import java.sql.PreparedStatement;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 
 /**
@@ -38,6 +39,12 @@ public interface IDataTypeComponent
 	 * in the application.
 	 */
 	public String getClassName();
+	
+	/**
+	 * Determine if two objects of this data type contain the same value.
+	 * Neither of the objects is null.
+	 */
+	public boolean areEqual(Object obj1, Object obj2);
 	
 	/*
 	 * Cell related methods come next.
@@ -130,30 +137,13 @@ public interface IDataTypeComponent
 	 */
 	public String getWhereClauseValue(ColumnDisplayDefinition colDef, Object value);
 	
+	
 	/**
-	 * When updating the database, generate a string form of this object value
-	 * that can be used in the SET clause to update this value in the Database.
-	 * This function must also include the column label so that its output
-	 * is of the form:
-	 * 	"columnName = value"
-	 * or
-	 * 	"columnName is null"
-	 * or whatever is appropriate for this column in the database.
-	 * 
-	 * To indicate that this DataType cannot be updated using the simple text
-	 * SQL statement "UPDATE table SET column=value WHERE...", return null from
-	 * this method.
-	 * 
-	 * Note: This method has two separate uses:
-	 * 	- return the appropriate string to use in an SQL text update statement
-	 * 	- indicate whether or not this DataType may be updated by a simple text statement
-	 * These two separate uses should be equivilent because:
-	 * 	- if a data type can be updated as simple text, then it must be able to
-	 * 		generate the appropriate text for the SET clause
-	 * 	- if a data type cannot be updated as simple text, then the method
-	 * 		changeUnderlyingValueAt will pass the entire updating process to
-	 * 		the DataType object and will not call this method for the purpose
-	 * 		of getting a SET clause string.
+	 * When updating the database, insert the appropriate datatype into the
+	 * prepared statment at variable position 1.
 	 */
-	public String getSetClauseValue(ColumnDisplayDefinition colDef, Object value);
+	public void setPreparedStatementValue(ColumnDisplayDefinition colDef, 
+		PreparedStatement pstmt, Object value)
+		throws java.sql.SQLException;
+
 }
