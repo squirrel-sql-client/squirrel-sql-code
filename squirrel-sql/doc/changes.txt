@@ -35,6 +35,7 @@ Enhancements
 
 Bug Fixes
 ---------
+- "Refresh" option in the popup menu for the object tree now works. 
 - Ensure a sessions message panel is tall enough to display all
   three lines of an SQL error when first displayed.
 - Fix bug where changing "autocommit" during a session wasn't
