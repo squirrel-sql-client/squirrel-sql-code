@@ -44,6 +44,7 @@ public class SessionProperties implements Cloneable, Serializable
 
 	public interface IPropertyNames
 	{
+		String ABORT_ON_ERROR = "abortOnError";
 		String AUTO_COMMIT = "autoCommit";
 		String COMMIT_ON_CLOSING_CONNECTION = "commitOnClosingConnection";
 		String CONTENTS_LIMIT_ROWS = "contentsLimitRows";
@@ -155,6 +156,11 @@ public class SessionProperties implements Cloneable, Serializable
 	 * See javax.swing.SwingConstants for valid values.
 	 */
 	private int _sqlResultsTabPlacement = SwingConstants.BOTTOM;
+
+	/**
+	 * If <TT>true</TT> then don't execute any further SQL if an error occurs in one.
+	 */
+	private boolean _abortOnError = false;
 
 	/**
 	 * Default ctor.
@@ -355,6 +361,22 @@ public class SessionProperties implements Cloneable, Serializable
 			getPropertyChangeReporter().firePropertyChange(
 				IPropertyNames.AUTO_COMMIT,
 				!_autoCommit, _autoCommit);
+		}
+	}
+
+	public boolean getAbortOnError()
+	{
+		return _abortOnError;
+	}
+
+	public void setAbortOnError(boolean value)
+	{
+		if (_abortOnError != value)
+		{
+			_abortOnError = value;
+			getPropertyChangeReporter().firePropertyChange(
+				IPropertyNames.ABORT_ON_ERROR,
+				!_abortOnError, _abortOnError);
 		}
 	}
 

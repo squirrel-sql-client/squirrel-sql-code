@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.client.session.properties;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -25,24 +26,26 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.FontChooser;
+import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
+import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 /**
  * This panel allows the user to tailor SQL settings for a session.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SessionSQLPropertiesPanel
 	implements INewSessionPropertiesPanel, ISessionPropertiesPanel
@@ -122,30 +125,31 @@ public class SessionSQLPropertiesPanel
 		 */
 		interface i18n
 		{
+			String ABORT_ON_ERROR = "Abort On Error";
 			String AUTO_COMMIT = "Auto Commit SQL";
 			String COMMIT_ON_CLOSE = "Commit On Closing Session";
-			String LIMIT_ROWS_CONTENTS = "Contents - Limit rows";
 			String LIMIT_ROWS_SQL = "SQL results - Limit rows";
 			String SHARE_SQL_HISTORY = "Share SQL History";
-			String SHOW_ROW_COUNT = "Show Row Count for Tables (can slow application)";
 			String SOL_COMENT = "Start of Line Comment";
-			String TABLE = "Table";
-			String TEXT = "Text";
 			String STATEMENT_SEPARATOR = "Statement Separator:";
 			String SQL = "SQL";
 			String SQL_HISTORY = "SQL History";
 			String LIMIT_SQL_HISTORY_COMBO_SIZE = "Limit SQL History Combo Size";
 		}
 
+		private JCheckBox _abortOnErrorChk = new JCheckBox(i18n.ABORT_ON_ERROR);
 		private JCheckBox _autoCommitChk = new JCheckBox(i18n.AUTO_COMMIT);
 		private JCheckBox _commitOnClose = new JCheckBox(i18n.COMMIT_ON_CLOSE);
-		private IntegerField _contentsNbrRowsToShowField = new IntegerField(5);
-		private JCheckBox _contentsLimitRowsChk = new JCheckBox(i18n.LIMIT_ROWS_CONTENTS);
-		private JCheckBox _showRowCountChk = new JCheckBox(i18n.SHOW_ROW_COUNT);
 		private IntegerField _sqlNbrRowsToShowField = new IntegerField(5);
 		private JCheckBox _sqlLimitRowsChk = new JCheckBox(i18n.LIMIT_ROWS_SQL);
 		private JTextField _stmtSepField = new JTextField(5);
 		private JTextField _solCommentField = new JTextField(2);
+
+		/** Label displaying the selected font. */
+		private JLabel _fontLbl = new JLabel();
+
+		/** Button to select font. */
+		private FontButton _fontBtn = new FontButton("Font", _fontLbl);
 
 		private JCheckBox _shareSQLHistoryChk = new JCheckBox(i18n.SHARE_SQL_HISTORY);
 		private JCheckBox _limitSQLHistoryComboSizeChk = new JCheckBox(i18n.LIMIT_SQL_HISTORY_COMBO_SIZE);
@@ -165,13 +169,11 @@ public class SessionSQLPropertiesPanel
 
 		void loadData(SessionProperties props)
 		{
+			_abortOnErrorChk.setSelected(props.getAbortOnError());
 			_autoCommitChk.setSelected(props.getAutoCommit());
 			_commitOnClose.setSelected(props.getCommitOnClosingConnection());
-			_contentsNbrRowsToShowField.setInt(props.getContentsNbrRowsToShow());
-			_contentsLimitRowsChk.setSelected(props.getContentsLimitRows());
 			_sqlNbrRowsToShowField.setInt(props.getSQLNbrRowsToShow());
 			_sqlLimitRowsChk.setSelected(props.getSQLLimitRows());
-			_showRowCountChk.setSelected(props.getShowRowCount());
 			_stmtSepField.setText(props.getSQLStatementSeparator());
 			_solCommentField.setText(props.getStartOfLineComment());
 
@@ -179,20 +181,28 @@ public class SessionSQLPropertiesPanel
 			_limitSQLHistoryComboSizeChk.setSelected(props.getLimitSQLEntryHistorySize());
 			_limitSQLHistoryComboSizeField.setInt(props.getSQLEntryHistorySize());
 
+			FontInfo fi = props.getFontInfo();
+			if (fi == null)
+			{
+				fi = new FontInfo(UIManager.getFont("TextArea.font"));
+			}
+			_fontLbl.setText(fi.toString());
+			_fontBtn.setSelectedFont(fi.createFont());
+
 			updateControlStatus();
 		}
 
 		void applyChanges(SessionProperties props)
 		{
+			props.setAbortOnError(_abortOnErrorChk.isSelected());
 			props.setAutoCommit(_autoCommitChk.isSelected());
 			props.setCommitOnClosingConnection(_commitOnClose.isSelected());
-			props.setContentsNbrRowsToShow(_contentsNbrRowsToShowField.getInt());
-			props.setContentsLimitRows(_contentsLimitRowsChk.isSelected());
 			props.setSQLNbrRowsToShow(_sqlNbrRowsToShowField.getInt());
 			props.setSQLLimitRows(_sqlLimitRowsChk.isSelected());
-			props.setShowRowCount(_showRowCountChk.isSelected());
 			props.setSQLStatementSeparator(_stmtSepField.getText());
 			props.setStartOfLineComment(_solCommentField.getText());
+
+			props.setFontInfo(_fontBtn.getFontInfo());
 
 			props.setSQLShareHistory(_shareSQLHistoryChk.isSelected());
 			props.setLimitSQLEntryHistorySize(_limitSQLHistoryComboSizeChk.isSelected());
@@ -203,7 +213,6 @@ public class SessionSQLPropertiesPanel
 		{
 			_commitOnClose.setEnabled(!_autoCommitChk.isSelected());
 
-			_contentsNbrRowsToShowField.setEnabled(_contentsLimitRowsChk.isSelected());
 			_sqlNbrRowsToShowField.setEnabled(_sqlLimitRowsChk.isSelected());
 
 			// If this session doesn't share SQL history with other sessions
@@ -211,7 +220,7 @@ public class SessionSQLPropertiesPanel
 			final boolean shareSQLHistory = _shareSQLHistoryChk.isSelected();
 			_limitSQLHistoryComboSizeChk.setEnabled(!shareSQLHistory);
 			_limitSQLHistoryComboSizeField.setEnabled(!shareSQLHistory &&
-								_limitSQLHistoryComboSizeChk.isSelected());	
+								_limitSQLHistoryComboSizeChk.isSelected());
 		}
 
 		private void createGUI()
@@ -227,6 +236,9 @@ public class SessionSQLPropertiesPanel
 			add(createSQLPanel(), gbc);
 
 			++gbc.gridy;
+			add(createFontPanel(), gbc);
+
+			++gbc.gridy;
 			add(createSQLHistoryPanel(), gbc);
 		}
 
@@ -240,10 +252,8 @@ public class SessionSQLPropertiesPanel
 			gbc.anchor = GridBagConstraints.CENTER;
 
 			_autoCommitChk.addChangeListener(_controlMediator);
-			_contentsLimitRowsChk.addChangeListener(_controlMediator);
 			_sqlLimitRowsChk.addChangeListener(_controlMediator);
 
-			_contentsNbrRowsToShowField.setColumns(5);
 			_sqlNbrRowsToShowField.setColumns(5);
 			_stmtSepField.setColumns(5);
 
@@ -258,22 +268,6 @@ public class SessionSQLPropertiesPanel
 
 			++gbc.gridy; // new line
 			gbc.gridx = 0;
-			gbc.gridwidth = GridBagConstraints.REMAINDER;
-			pnl.add(_showRowCountChk, gbc);
-
-			++gbc.gridy; // new line
-			gbc.gridx = 0;
-			gbc.gridwidth = 2;
-			pnl.add(_contentsLimitRowsChk, gbc);
-			gbc.gridwidth = 1;
-			gbc.gridx+=2;
-			pnl.add(_contentsNbrRowsToShowField, gbc);
-			++gbc.gridx;
-			gbc.gridwidth = GridBagConstraints.REMAINDER;
-			pnl.add(new JLabel("rows"), gbc);
-
-			++gbc.gridy; // new line
-			gbc.gridx = 0;
 			gbc.gridwidth = 2;
 			pnl.add(_sqlLimitRowsChk, gbc);
 			gbc.gridwidth = 1;
@@ -285,6 +279,11 @@ public class SessionSQLPropertiesPanel
 
 			++gbc.gridy; // new line
 			gbc.gridx = 0;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
+			pnl.add(_abortOnErrorChk, gbc);
+
+			++gbc.gridy; // new line
+			gbc.gridx = 0;
 			gbc.gridwidth = 1;
 			pnl.add(new JLabel(i18n.STATEMENT_SEPARATOR), gbc);
 			++gbc.gridx;
@@ -293,6 +292,27 @@ public class SessionSQLPropertiesPanel
 			pnl.add(new RightLabel(i18n.SOL_COMENT), gbc);
 			++gbc.gridx;
 			pnl.add(_solCommentField, gbc);
+
+			return pnl;
+		}
+		private JPanel createFontPanel()
+		{
+			JPanel pnl = new JPanel();
+			pnl.setBorder(BorderFactory.createTitledBorder("SQL Entry Area"));
+			pnl.setLayout(new GridBagLayout());
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = GridBagConstraints.HORIZONTAL;
+			gbc.insets = new Insets(4, 4, 4, 4);
+
+			_fontBtn.addActionListener(new FontButtonListener());
+
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			pnl.add(_fontBtn, gbc);
+
+			++gbc.gridx;
+			gbc.weightx = 1.0;
+			pnl.add(_fontLbl, gbc);
 
 			return pnl;
 		}
@@ -315,7 +335,7 @@ public class SessionSQLPropertiesPanel
 
 			++gbc.gridy;
 			pnl.add(_limitSQLHistoryComboSizeChk, gbc);
-			
+
 			++gbc.gridx;
 			pnl.add(_limitSQLHistoryComboSizeField, gbc);
 
@@ -330,17 +350,64 @@ public class SessionSQLPropertiesPanel
 			}
 		}
 
-//		private static final class ReadTypeCombo extends JComboBox
-//		{
-//			static final int READ_ALL_IDX = 1;
-//			static final int READ_PARTIAL_IDX = 0;
-//			
-//			ReadTypeCombo()
-//			{
-//				addItem("only the first");
-//				addItem("all");
-//			}
-//		}
+		private static final class FontButton extends JButton
+		{
+			private FontInfo _fi;
+			private JLabel _lbl;
+			private Font _font;
+
+			FontButton(String text, JLabel lbl)
+			{
+				super(text);
+				_lbl = lbl;
+			}
+
+			FontInfo getFontInfo()
+			{
+				return _fi;
+			}
+
+			Font getSelectedFont()
+			{
+				return _font;
+			}
+
+			void setSelectedFont(Font font)
+			{
+				_font = font;
+				if (_fi == null)
+				{
+					_fi = new FontInfo(font);
+				}
+				else
+				{
+					_fi.setFont(font);
+				}
+			}
+		}
+
+		private static final class FontButtonListener implements ActionListener
+		{
+			public void actionPerformed(ActionEvent evt)
+			{
+				if (evt.getSource() instanceof FontButton)
+				{
+					FontButton btn = (FontButton) evt.getSource();
+					FontInfo fi = btn.getFontInfo();
+					Font font = null;
+					if (fi != null)
+					{
+						font = fi.createFont();
+					}
+					font = new FontChooser().showDialog(font);
+					if (font != null)
+					{
+						btn.setSelectedFont(font);
+						btn._lbl.setText(new FontInfo(font).toString());
+					}
+				}
+			}
+		}
 
 		/**
 		 * This class will update the status of the GUI controls as the user

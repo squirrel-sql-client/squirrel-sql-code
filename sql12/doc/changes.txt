@@ -6,6 +6,8 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- New session property "Abort On Error".
+
 
 Bug Fixes
 --------
