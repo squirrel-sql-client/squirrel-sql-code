@@ -44,7 +44,12 @@ import net.sourceforge.squirrel_sql.client.session.event.ISessionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
-
+/**
+ * Think of a session as being the users view of the database. IE it includes
+ * the database connetion and the UI.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
 class Session implements IClientSession
 {
 	/** Logger for this class. */
@@ -88,6 +93,9 @@ class Session implements IClientSession
 
 	/** API object for the SQL panel. */
 	private final ISQLPanelAPI _sqlPanelAPI;
+
+	/** Xref info about the current connection. */
+	private final SchemaInfo _schemaInfo = new SchemaInfo();
 
 	/** Set to <TT>true</TT> once session closed. */
 	private boolean _closed;
@@ -144,6 +152,15 @@ class Session implements IClientSession
 		// areas of the session.
 		_objectTreeAPI = new ObjectTreeAPI(this);
 		_sqlPanelAPI = new SQLPanelAPI(this);
+
+		// Start loading table/column info about the current database.
+		_app.getThreadPool().addTask(new Runnable()
+		{
+			public void run()
+			{
+				loadTableInfo();
+			}
+		});
 	}
 
 	/**
@@ -235,6 +252,14 @@ class Session implements IClientSession
 	public SessionProperties getProperties()
 	{
 		return _props;
+	}
+
+	/**
+	 * Retrieve the schema information object for this session.
+	 */
+	public SchemaInfo getSchemaInfo()
+	{
+		return _schemaInfo;
 	}
 
 	/**
@@ -480,5 +505,13 @@ class Session implements IClientSession
 	public void addMainTab(IMainPanelTab tab)
 	{
 		_sessionSheet.addMainTab(tab);
+	}
+
+	/**
+	 * Load table information about the current database.
+	 */
+	private void loadTableInfo()
+	{
+		_schemaInfo.load(getSQLConnection());
 	}
 }
