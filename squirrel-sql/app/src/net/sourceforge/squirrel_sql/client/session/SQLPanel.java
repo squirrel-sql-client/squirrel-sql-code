@@ -445,7 +445,10 @@ class SQLPanel extends JPanel {
 		_session.getApplication().getMainFrame().addInternalFrame(frame, true, null);
 		fireTabTornOffEvent(tab);
 		frame.setVisible(true);
-		frame.pack();
+
+		// There used to be a frame.pack() here but it resized the frame
+		// to be very wide if text output was used.
+
 		frame.toFront();
 		frame.requestFocus();
 	}
