@@ -25,7 +25,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.IOException;
 
-import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
@@ -34,6 +33,7 @@ import javax.swing.text.JTextComponent;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Clob;
+import java.io.StringBufferInputStream;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 //??import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
@@ -111,7 +111,18 @@ public class DataTypeClob
 	 * Neither of the objects is null
 	 */
 	public boolean areEqual(Object obj1, Object obj2) {
-		return ((ClobDescriptor)obj1).equals(obj2);
+		if (obj1 == obj2)
+			return true;
+		
+		// if both objs are null, then they matched in the previous test,
+		// so at this point we know that at least one of them (or both) is not null.
+		// However, one of them may still be null, and we cannot call equals() on
+		// the null object, so make sure that the one we call it on is not null.
+		// The equals() method handles the other one being null, if it is.
+		if (obj1 != null)
+			return ((ClobDescriptor)obj1).equals((ClobDescriptor)obj2);
+		else
+			return ((ClobDescriptor)obj2).equals((ClobDescriptor)obj1);
 	}
 
 	/*
@@ -137,38 +148,28 @@ public class DataTypeClob
 	 * contents of the CLOB.
 	 * Therefore we use a call to this function as a trigger to make sure
 	 * that we have all of the CLOB data, if that is possible.
+	 * <P>
+	 * If the data includes newlines, the user must not be allowed to edit it
+	 * in the cell because the CellEditor uses a JTextField which filters out newlines.
+	 * If we try to use anything other than a JTextField, or use a JTextField with no
+	 * newline filtering, the text is not visible in the cell, so the user cannot even read
+	 * the text, much less edit it.  The simplest solution is to allow editing of multi-line
+	 * text only in the Popup window.
 	 */
 	public boolean isEditableInCell(Object originalValue) {
 		// for convenience, cast the value object to its type
 		ClobDescriptor cdesc = (ClobDescriptor)originalValue;
 		
-		// data is editable if the CLOB has been read and either
-		// the size was not limited by the user, or the data is shorter
-		// than the user's limit.
-		if (cdesc.getClobRead() &&
-			(cdesc.getUserSetClobLimit() == 0 ||
-				cdesc.getUserSetClobLimit() < cdesc.getData().length()) )
-				return true;
-		
-		// data was not fully read in before, so try to do that now
-		try {
-//????????????????????????????????????????????????????????????????
-			String data = cdesc.getClob().getSubString(1, (int)cdesc.getClob().length());
-			
-			// read succeeded, so reset the ClobDescriptor to match
-			cdesc.setClobRead(true);
-			cdesc.setData(data);
-			cdesc.setWholeClobRead(true);
-			cdesc.setUserSetClobLimit(0);
-			
-			return true;
+		if (wholeClobRead(cdesc)) {
+			// all the data from the clob has been read.
+			// make sure there are no newlines in it
+			if ( cdesc != null && cdesc.getData() != null && cdesc.getData().indexOf('\n') > -1)
+					return false;
+				else return true;
 		}
-		catch (Exception ex) {
-			cdesc.setClobRead(true);
-			cdesc.setWholeClobRead(false);
-			cdesc.setData("Sorry Colin, could not read the data. Error was: "+ex.getMessage());
-			return false;
-		}	
+		
+		// since we do not have all of the data from the clob, we cannot allow editing
+		return false;
 	}
 	
 	/**
@@ -214,27 +215,30 @@ public class DataTypeClob
 	 */
 	public Object validateAndConvert(String value, Object originalValue, StringBuffer messageBuffer) {
 		// handle null, which is shown as the special string "<null>"
-		if (value.equals("<null>") || value.equals(""))
+		if (value.equals("<null>"))
 			return null;
 			
-		// Sprcial case: when reading/writing data from/to files, this function is
-		// called to verify that the string is in a valid format.  If we are able to
-		// correctly convert the string to the CLOB internal format, there is no error,
-		// so just return without creating/changing a ClobDescriptor.
-		if (originalValue == null)
-			return null;  // for CLOB, the internal data type is String, so it is ok.
-
 		// Do the conversion into the object in a safe manner
-		// Reuse the original java.sql.Clob object, but reset all of the 
-		// fields to indicate that this is the entire value of the CLOB field.
 
-		// for convenience, cast the object
-		ClobDescriptor cdesc = (ClobDescriptor)originalValue;
-		cdesc.setData(value);
-		cdesc.setClobRead(true);
-		cdesc.setWholeClobRead(true);
-		cdesc.setUserSetClobLimit(0);
-		return originalValue;
+		// if the original object is not null, then it contains a Clob object
+		// that we need to re-use, since that is the DBs reference to the clob data area.
+		// Otherwise, we set the original Clob to null, and the write method needs to
+		// know to set the field to null.
+		ClobDescriptor cdesc;
+		if (originalValue == null) {
+			// no existing clob to re-use
+			cdesc = new ClobDescriptor(null, value, true, true, 0);
+		}
+		else {
+			// for convenience, cast the existing object
+			cdesc = (ClobDescriptor)originalValue;
+			
+			// create new object to hold the different value, but use the same internal CLOB pointer
+			// as the original
+			cdesc = new ClobDescriptor(cdesc.getClob(),value, 
+				true, true, 0);
+		}
+		return cdesc;
 
 	}
 
@@ -265,8 +269,9 @@ public class DataTypeClob
 	 * false if not.
 	 */
 	public boolean isEditableInPopup(Object originalValue) {
-		// use same algorithm as for cell
-		return isEditableInCell(originalValue);
+		// If all of the data has been read, then the clob can be edited in the Popup,
+		// otherwise it cannot
+		return wholeClobRead((ClobDescriptor)originalValue);
 	}
 
 	/*
@@ -362,7 +367,39 @@ public class DataTypeClob
 			}
 		}
 
+	/*
+	 * Make sure the entire CLOB data is read in.
+	 * Return true if it has been read successfully, and false if not.
+	 */
+	private boolean wholeClobRead(ClobDescriptor cdesc) {
+		if (cdesc == null)
+			return true;	// can use an empty clob for editing
+			
+		if (cdesc.getWholeClobRead())
+			return true;	// the whole clob has been previously read in
 
+		// data was not fully read in before, so try to do that now
+		try {
+			String data = cdesc.getClob().getSubString(1, (int)cdesc.getClob().length());
+			
+			// read succeeded, so reset the ClobDescriptor to match
+			cdesc.setClobRead(true);
+			cdesc.setData(data);
+			cdesc.setWholeClobRead(true);
+			cdesc.setUserSetClobLimit(0);
+			
+			// we successfully read the whole thing
+			 return true;
+		}
+		catch (Exception ex) {
+			cdesc.setClobRead(false);
+			cdesc.setWholeClobRead(false);
+			cdesc.setData(null);
+			//?? What to do with this error?
+			//?? error message = "Could not read the complete data. Error was: "+ex.getMessage());
+			return false;
+		}	
+	}
 
 	/*
 	 * DataBase-related functions
@@ -396,8 +433,6 @@ public class DataTypeClob
 				int len = (int)clob.length();
 				if (len > 0)
 				{
-
-//?????????????????????????????????????????????????????????????????????????
 					int charsToRead = len;
 					if (!largeObjInfo.getReadCompleteClobs())
 					{
@@ -410,6 +445,7 @@ public class DataTypeClob
 					clobData = clob.getSubString(1, charsToRead);
 				}
 			}
+			
 			// determine whether we read all there was in the clob or not
 			boolean wholeClobRead = false;
 			if (largeObjInfo.getReadCompleteClobs() ||
@@ -441,7 +477,7 @@ public class DataTypeClob
 	 * or whatever is appropriate for this column in the database.
 	 */
 	public String getWhereClauseValue(Object value) {
-		if (value == null || value.toString() == null || value.toString().length() == 0)
+		if (value == null || ((ClobDescriptor)value).getData() == null)
 			return _colDef.getLabel() + " IS NULL";
 		else
 			return "";	// CLOB cannot be used in WHERE clause
@@ -454,21 +490,20 @@ public class DataTypeClob
 	 */
 	public void setPreparedStatementValue(PreparedStatement pstmt, Object value, int position)
 		throws java.sql.SQLException {
-		if (value == null) {
+		if (value == null || ((ClobDescriptor)value).getData() == null) {
 			pstmt.setNull(position, _colDef.getSqlType());
 		}
 		else {
 			// for convenience cast the object to ClobDescriptor
 			ClobDescriptor cdesc = (ClobDescriptor)value;
+//?? Any problem if no previous clob??
 			
-			// I'm not sure whether I need to do both of the following.
-			
-			// first put the data into the Clob
-//???????????????????????????????????????????????????????????????????????????????????
-			cdesc.getClob().setString(0, cdesc.getData());
-			
-			// now put the clob back into the DB
-			pstmt.setClob(position, cdesc.getClob());
+			// There are a couple of possible ways to update the data in the DB.
+			// The first is to use setString like this:
+			//		cdesc.getClob().setString(0, cdesc.getData());
+			// However, the DB2 driver throws an exception saying that that function
+			// is not implemented, so we have to use the other method, which is to use a stream.		
+			pstmt.setAsciiStream(position, new StringBufferInputStream(cdesc.getData()), cdesc.getData().length());
 		}
 	}
 	
