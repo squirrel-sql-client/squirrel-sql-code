@@ -18,6 +18,9 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.event.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -28,13 +31,22 @@ import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Blob;
 import java.io.ByteArrayInputStream;
 
+import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
+import net.sourceforge.squirrel_sql.fw.gui.ReadTypeCombo;
+import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
+import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
-//??import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
 
@@ -87,6 +99,43 @@ public class DataTypeBlob
 	//?? for this data type.
 	private DefaultColumnRenderer _renderer = DefaultColumnRenderer.getInstance();
 
+	/**
+	 * Name of this class, which is needed because the class name is needed
+	 * by the static method getControlPanel, so we cannot use something
+	 * like getClass() to find this name.
+	 */
+	private static final String thisClassName =
+		"net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeBlob";
+
+
+	/** Default length of BLOB to read */
+	private static int LARGE_COLUMN_DEFAULT_READ_LENGTH = 255;
+
+	/*
+	 * Properties settable by the user
+	 */
+	 // flag for whether we have already loaded the properties or not
+	 private static boolean propertiesAlreadyLoaded = false;
+	 
+		 
+	/** Read the contents of Blobs from Result sets when first loading the tables. */
+	private static boolean _readBlobs = false;
+
+	/**
+	 * If <TT>_readBlobs</TT> is <TT>true</TT> this specifies if the complete
+	 * BLOB should be read in.
+	 */
+	private static boolean _readCompleteBlobs = false;
+
+	/**
+	 * If <TT>_readBlobs</TT> is <TT>true</TT> and <TT>_readCompleteBlobs</TT>
+	 * is <tt>false</TT> then this specifies the number of characters to read.
+	 */
+	private static int _readBlobsSize = LARGE_COLUMN_DEFAULT_READ_LENGTH;
+
+	 
+
+	 
 
 	/**
 	 * Constructor - save the data needed by this data type.
@@ -95,6 +144,46 @@ public class DataTypeBlob
 		_table = table;
 		_colDef = colDef;
 		_isNullable = colDef.isNullable();
+		
+		loadProperties();
+	}
+	
+	/** Internal function to get the user-settable properties from the DTProperties,
+	 * if they exist, and to ensure that defaults are set if the properties have
+	 * not yet been created.
+	 * <P>
+	 * This method may be called from different places depending on whether
+	 * an instance of this class is created before the user brings up the Session
+	 * Properties window.  In either case, the data is static and is set only
+	 * the first time we are called.
+	 */
+	private static void loadProperties() {
+		
+		//set the property values
+		// Note: this may have already been done by another instance of
+		// this DataType created to handle a different column.
+		if (propertiesAlreadyLoaded == false) {
+			// get parameters previously set by user, or set default values
+			_readBlobs = false;	// set to the default
+			String readBlobsString = DTProperties.get(
+				thisClassName, "readBlobs");
+			if (readBlobsString != null && readBlobsString.equals("true"))
+				_readBlobs = true;
+
+			_readCompleteBlobs = false;	// set to the default
+			String readCompleteBlobsString = DTProperties.get(
+				thisClassName, "readCompleteBlobs");
+			if (readCompleteBlobsString != null && readCompleteBlobsString.equals("true"))
+				_readCompleteBlobs = true;
+		
+			_readBlobsSize = LARGE_COLUMN_DEFAULT_READ_LENGTH;	// set to default
+			String readBlobsSizeString = DTProperties.get(
+				thisClassName, "readBlobsSize");
+			if (readBlobsSizeString != null)
+				_readBlobsSize = Integer.parseInt(readBlobsSizeString);
+
+			propertiesAlreadyLoaded = true;
+		}
 	}
 	
 	/**
@@ -408,7 +497,7 @@ public class DataTypeBlob
 		LargeResultSetObjectInfo largeObjInfo)
 		throws java.sql.SQLException {
 		
-		// We always get the BLOB.
+		// We always get the BLOB, even when we are not reading the contents.
 		// Since the BLOB is just a pointer to the BLOB data rather than the
 		// data itself, this operation should not take much time (as opposed
 		// to getting all of the data in the blob).
@@ -419,7 +508,7 @@ public class DataTypeBlob
 		
 		// BLOB exists, so try to read the data from it
 		// based on the user's directions
-		if (largeObjInfo.getReadBlobs())
+		if (_readBlobs)
 		{
 			// User said to read at least some of the data from the blob
 			byte[] blobData = null;
@@ -429,9 +518,9 @@ public class DataTypeBlob
 				if (len > 0)
 				{
 					int charsToRead = len;
-					if (!largeObjInfo.getReadCompleteBlobs())
+					if (! _readCompleteBlobs)
 					{
-						charsToRead = largeObjInfo.getReadBlobsSize();
+						charsToRead = _readBlobsSize;
 					}
 					if (charsToRead > len)
 					{
@@ -443,12 +532,12 @@ public class DataTypeBlob
 			
 			// determine whether we read all there was in the blob or not
 			boolean wholeBlobRead = false;
-			if (largeObjInfo.getReadCompleteBlobs() ||
-				blobData.length < largeObjInfo.getReadBlobsSize())
+			if (_readCompleteBlobs ||
+				blobData.length < _readBlobsSize)
 				wholeBlobRead = true;
 				
 			return new BlobDescriptor(blob, blobData, true, wholeBlobRead,
-				largeObjInfo.getReadBlobsSize());
+				_readBlobsSize);
 		}
 		else
 		{
@@ -626,4 +715,158 @@ public class DataTypeBlob
 	   outStream.flush();
 	   outStream.close();
 	}
+	
+
+	/*
+	 * Property change control panel
+	 */	  
+	 
+	 /**
+	  * Generate a JPanel containing controls that allow the user
+	  * to adjust the properties for this DataType.
+	  * All properties are static accross all instances of this DataType. 
+	  * However, the class may choose to apply the information differentially,
+	  * such as keeping a list (also entered by the user) of table/column names
+	  * for which certain properties should be used.
+	  * <P>
+	  * This is called ONLY if there is at least one property entered into the DTProperties
+	  * for this class.
+	  * <P>
+	  * Since this method is called by reflection on the Method object derived from this class,
+	  * it does not need to be included in the Interface.
+	  * It would be nice to include this in the Interface for consistancy, documentation, etc,
+	  * but the Interface does not seem to like static methods.
+	  */
+	 public static OkJPanel getControlPanel() {
+	 	
+		/*
+		 * If you add this method to one of the standard DataTypes in the
+		 * fw/datasetviewer/cellcomponent directory, you must also add the name
+		 * of that DataType class to the list in CellComponentFactory, method
+		 * getControlPanels, variable named initialClassNameList.
+		 * If the class is being registered with the factory using registerDataType,
+		 * then you should not include the class name in the list (it will be found
+		 * automatically), but if the DataType is part of the case statement in the
+		 * factory method getDataTypeObject, then it does need to be explicitly listed
+		 * in the getControlPanels method also.
+		 */
+		 
+		 // if this panel is called before any instances of the class have been
+		 // created, we need to load the properties from the DTProperties.
+		 loadProperties();
+		 
+		return new BlobOkJPanel();
+	 }
+	 
+	 
+	 
+	 /**
+	  * Inner class that extends OkJPanel so that we can call the ok()
+	  * method to save the data when the user is happy with it.
+	  */
+	 private static class BlobOkJPanel extends OkJPanel {
+		/*
+		 * GUI components - need to be here because they need to be
+		 * accessible from the event handlers to alter each other's state.
+		 */
+	   // check box for whether to read contents during table load or not
+	  private JCheckBox _showBlobChk = new JCheckBox(
+		"Read contents when table is first loaded:");
+		
+		// label for type combo - used to enable/disable text associated with the combo
+		private RightLabel _typeDropLabel = new RightLabel("Read");
+				
+		// Combo box for read-all/read-part of blob
+		private ReadTypeCombo _blobTypeDrop = new ReadTypeCombo();
+
+		// text field for how many bytes of Blob to read
+		private IntegerField _showBlobSizeField = new IntegerField(5);
+	   
+
+		public BlobOkJPanel() {
+		 	 
+			/* set up the controls */
+			// checkbox for read/not-read on table load
+			_showBlobChk.setSelected(_readBlobs);
+			_showBlobChk.addChangeListener(new ChangeListener(){
+				public void stateChanged(ChangeEvent e) {		
+				_blobTypeDrop.setEnabled(_showBlobChk.isSelected());
+				_typeDropLabel.setEnabled(_showBlobChk.isSelected());
+				_showBlobSizeField.setEnabled(_showBlobChk.isSelected() &&
+					(_blobTypeDrop.getSelectedIndex()== 0));	
+				}
+			});
+		
+			// Combo box for read-all/read-part of blob
+			_blobTypeDrop = new ReadTypeCombo();
+			_blobTypeDrop.setSelectedIndex( (_readCompleteBlobs) ? 1 : 0 );
+			_blobTypeDrop.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent e) {		
+					_showBlobSizeField.setEnabled(_blobTypeDrop.getSelectedIndex()== 0);	
+				}
+			});
+
+			_showBlobSizeField = new IntegerField(5);	
+			_showBlobSizeField.setInt(_readBlobsSize);
+
+	 	 
+			// handle cross-connection between fields
+			_blobTypeDrop.setEnabled(_readBlobs);
+			_typeDropLabel.setEnabled(_readBlobs);
+			_showBlobSizeField.setEnabled(_readBlobs &&  ! _readCompleteBlobs);
+
+			/*
+			  * Create the panel and add the GUI items to it
+			 */
+	 	  
+			setLayout(new GridBagLayout());
+	 	
+			setBorder(BorderFactory.createTitledBorder("BLOB   (SQL type 2004)"));
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = GridBagConstraints.HORIZONTAL;
+			gbc.insets = new Insets(4, 4, 4, 4);
+			gbc.anchor = GridBagConstraints.WEST;
+
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+
+			gbc.gridwidth = 1;
+			add(_showBlobChk, gbc);
+
+			++gbc.gridx;
+			add(_typeDropLabel, gbc);
+
+			++gbc.gridx;
+			add(_blobTypeDrop, gbc);
+
+			++gbc.gridx;
+			add(_showBlobSizeField, gbc);
+
+		} // end of constructor for inner class
+	 
+	 
+		/**
+		  * User has clicked OK in the surrounding JPanel,
+		  * so save the current state of all variables
+		  */
+		public void ok() {
+			// get the values from the controls and set them in the static properties
+			_readBlobs = _showBlobChk.isSelected();
+			DTProperties.put(
+				thisClassName,
+				"readBlobs", Boolean.toString(_readBlobs));
+			
+		
+			_readCompleteBlobs = (_blobTypeDrop.getSelectedIndex() == 0) ? false : true;
+			DTProperties.put(
+				thisClassName,
+				"readCompleteBlobs", Boolean.toString(_readCompleteBlobs));	
+		
+			_readBlobsSize = _showBlobSizeField.getInt();
+			DTProperties.put(
+				thisClassName,
+				"readBlobsSize", Integer.toString(_readBlobsSize));
+		}
+	 
+	 } // end of inner class
 }
