@@ -174,7 +174,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		 */
 		public boolean isCellEditable(int row, int col)
 		{
-			return _creator.isColumnEditable(col);
+			return _creator.isColumnEditable(col, getValueAt(row, col));
 		}
 
 		public Object getValueAt(int row, int col)
@@ -329,7 +329,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		 	StringBuffer messageBuffer = new StringBuffer();
 		 	ColumnDisplayDefinition colDef = getColumnDefinitions()[col];
 		 	Object newValueObject = CellComponentFactory.validateAndConvert(
-		 		colDef, (String)newValueString, messageBuffer);
+		 		colDef, getValueAt(row, col), (String)newValueString, messageBuffer);
 		 	if (messageBuffer.length() > 0) {
 		 		// display error message and do not update the table
 				messageBuffer.insert(0,
@@ -484,7 +484,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 	/**
 	 * Tell the table whether particular columns are editable.
 	 */
-	public boolean isColumnEditable(int col) {
+	public boolean isColumnEditable(int col, Object originalValue) {
 		return false;
 	}
 	
