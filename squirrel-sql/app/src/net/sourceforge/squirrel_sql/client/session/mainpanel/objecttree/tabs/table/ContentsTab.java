@@ -84,7 +84,7 @@ public class ContentsTab extends BaseTableTab
 			final Statement stmt = conn.createStatement();
 			try
 			{
-				SessionProperties props = session.getProperties();
+				final SessionProperties props = session.getProperties();
 				if (props.getContentsLimitRows())
 				{
 					try
@@ -99,7 +99,10 @@ public class ContentsTab extends BaseTableTab
 				final ITableInfo ti = getTableInfo();
 				final ResultSet rs = stmt.executeQuery("select * from "
 													+ ti.getQualifiedName());
-				return new ResultSetDataSet(rs);
+				final ResultSetDataSet rsds = new ResultSetDataSet();
+				rsds.setLargeResultSetObjectInfo(props.getLargeResultSetObjectInfo());
+				rsds.setResultSet(rs);
+				return rsds;
 			}
 			finally
 			{
