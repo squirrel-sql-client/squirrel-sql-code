@@ -62,11 +62,18 @@
 			</fileset>
 		</copy>
 
-		<copy todir="${p_plugin.dist_dir}/${internal_name}" >
-			<fileset dir="files" >
+		<copy todir="${p_plugin.dist_dir}/${internal_name}/lafs" >
+			<fileset dir="lafs" >
 				<include name="**/*.*"/>
 			</fileset>
 		</copy>
+
+		<copy todir="${p_plugin.dist_dir}/${internal_name}/skinlf-theme-packs" >
+			<fileset dir="skinlf-theme-packs" >
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+
 		<jar jarfile="${p_plugin.dist_dir}/${internal_name}/src.jar" compress="false">
 			<fileset dir=".">
 				<include name="src/**/*.*"/>
