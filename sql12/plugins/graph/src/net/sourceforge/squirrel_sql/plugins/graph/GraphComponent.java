@@ -4,7 +4,7 @@ import java.awt.*;
 
 public interface GraphComponent
 {
-   void paint(Graphics g);
+   void paint(Graphics g, boolean isPrinting);
 
    Dimension getRequiredSize();
 }

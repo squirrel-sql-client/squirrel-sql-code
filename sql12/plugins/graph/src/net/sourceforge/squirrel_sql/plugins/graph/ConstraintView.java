@@ -233,7 +233,7 @@ public class ConstraintView implements GraphComponent
       _constraintGraph.setPkGatherPoint(pkGatherPoint);
    }
 
-   public void paint(Graphics g)
+   public void paint(Graphics g, boolean isPrinting)
    {
       GraphLine[] lines = _constraintGraph.getAllLines();
       for (int i = 0; i < lines.length; i++)
@@ -256,9 +256,12 @@ public class ConstraintView implements GraphComponent
 
       Vector foldingPoints = _constraintGraph.getFoldingPoints();
 
-      for (int i = 0; i < foldingPoints.size(); i++)
+      if(false == isPrinting)
       {
-         drawFoldingPoint(g, (Point) foldingPoints.get(i));
+         for (int i = 0; i < foldingPoints.size(); i++)
+         {
+            drawFoldingPoint(g, (Point) foldingPoints.get(i));
+         }
       }
    }
 
@@ -547,14 +550,9 @@ public class ConstraintView implements GraphComponent
 
    }
 
-   public void setDesktopController(GraphDesktopController desktopController)
+   public void removeAllFoldingPoints()
    {
-      _desktopController = desktopController;
-
-      if (null == desktopController)
-      {
-         _constraintGraph.removeAllFoldingPoints();
-      }
+      _constraintGraph.removeAllFoldingPoints();
    }
 
    public boolean equals(Object obj)

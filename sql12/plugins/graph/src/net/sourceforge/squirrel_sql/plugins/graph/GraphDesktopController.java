@@ -206,11 +206,6 @@ public class GraphDesktopController
    public void putConstraintViews(ConstraintView[] constraintViews)
    {
       _desktopPane.putGraphComponents(constraintViews);
-
-      for (int i = 0; i < constraintViews.length; i++)
-      {
-         constraintViews[i].setDesktopController(this);
-      }
    }
 
    public void removeConstraintViews(ConstraintView[] constraintViews)
@@ -219,7 +214,7 @@ public class GraphDesktopController
 
       for (int i = 0; i < constraintViews.length; i++)
       {
-         constraintViews[i].setDesktopController(null);
+         constraintViews[i].removeAllFoldingPoints();
       }
    }
 

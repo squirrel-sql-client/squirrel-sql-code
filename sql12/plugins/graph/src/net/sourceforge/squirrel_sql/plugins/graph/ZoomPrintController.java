@@ -120,7 +120,7 @@ public class ZoomPrintController
       _panel.sldEdges.setEnabled(_panel.chkShowEdges.isSelected());
       _panel.btnPrint.setEnabled(_panel.chkShowEdges.isSelected());
 
-      fireEdgesGraphComponentChanged(_panel.chkShowEdges.isSelected());
+      fireEdgesGraphComponentChanged(_panel.chkShowEdges.isSelected() && _panel.isVisible());
    }
 
    private void onSelectedFormatChanged(ItemEvent e)
@@ -257,6 +257,7 @@ public class ZoomPrintController
    {
       _panel.setVisible(b);
       _zoomer.setEnabled(b);
+      fireEdgesGraphComponentChanged(b);
 
       onShowEdges();
 

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
-import net.sourceforge.squirrel_sql.client.gui.ScrollableDesktopPane;
+import net.sourceforge.squirrel_sql.fw.gui.ScrollableDesktopPane;
 
 import javax.swing.*;
 import java.awt.*;
@@ -58,14 +58,7 @@ public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrin
             ((EdgesGraphComponent)comp).setBounds(getWidth(), getHeight());
          }
 
-         if(_isPrinting && comp instanceof EdgesGraphComponent)
-         {
-            // When printing edges are not painted
-         }
-         else
-         {
-            comp.paint(g);
-         }
+         comp.paint(g, _isPrinting);
       }
    }
 

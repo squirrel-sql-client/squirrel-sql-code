@@ -165,7 +165,6 @@ public class TableFrame extends JInternalFrame
 
          selectedTextColor = Color.black;
          notSelectedTextColor = Color.black;
-         //setFont(new Font("Tahoma", Font.BOLD, 11));
          setFont(new Font(getFont().getFontName(), Font.BOLD, getFont().getSize()));
       }
 
@@ -208,7 +207,7 @@ public class TableFrame extends JInternalFrame
 
             if (r.x == 0) r.x = frame.getWidth() - frame.getInsets().right;
             titleX = menuBar.getX() + menuBar.getWidth() + 2;
-            titleW = r.x - titleX - 3;
+            titleW = (int)(  (r.x - titleX - 3)/_zoomer.getZoom() + 0.5  );
             title = getTitle(frame.getTitle(), fm, titleW);
 
             Graphics2D g2d = (Graphics2D) g;
