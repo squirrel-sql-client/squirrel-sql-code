@@ -505,20 +505,25 @@ public class ContentsTab extends BaseTableTab
 		if (count == -1)
 			return "Unknown error during check on DB.  Update is probably not safe.\nDo you wish to proceed?";
 
-		// Since a BLOB or CLOB cannot be used in a WHERE clause, an update to one of those
-		// fields will look like we are replacing one row with an identical row (because
+		// There are some fields that cannot be used in a WHERE clause, either
+		// because there cannot be an exact match (e.g. REAL, FLOAT), or
+		// because we may not have the actual data in hand (BLOB/CLOB), or
+		// because the data cannot be expressed in a string form (e.g. BINARY).
+		// An update to one of those fields
+		// will look like we are replacing one row with an identical row (because
 		// we can only "see" the fields that we know how to do WHEREs on).  Therefore,
-		// when we are updating a BLOB/CLOB, there should be exactly one row that matches
-		// all of our other fields, and when we are not updating a BLOB/CLOB, there should be
+		// when we are updating them, there should be exactly one row that matches
+		// all of our other fields, and when we are not updating one of these
+		// special types of fields, there should be
 		// no rows that exactly match our criteria (we hope).
-//??
-//?? Open Issue:
-//??	Are there other data types that should be included in this list?
-//??
-
-//?? Also, this code has not been tested properly (I don't have BLOBs or CLOBs set up yet
 		if (colDefs[col].getSqlType() == Types.BLOB ||
-			colDefs[col].getSqlType() == Types.CLOB ) {
+			colDefs[col].getSqlType() == Types.CLOB ||
+			colDefs[col].getSqlType() == Types.REAL ||
+			colDefs[col].getSqlType() == Types.FLOAT ||
+			colDefs[col].getSqlType() == Types.DOUBLE ||
+			colDefs[col].getSqlType() == Types.BINARY ||
+			colDefs[col].getSqlType() == Types.VARBINARY ||
+			colDefs[col].getSqlType() == Types.LONGVARBINARY ) {
 				if (count > 1)
 					return "This operation will result in " + count +" identical rows.\nDo you wish to proceed?";
 		}
