@@ -155,7 +155,7 @@ public class ValidatorGlobalPreferencesTab implements IGlobalPreferencesPanel
 			setBorder(BorderFactory.createEmptyBorder());
 
 			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.fill = gbc.HORIZONTAL;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(1, 1, 1, 1);
 			gbc.gridx = 0;
 			gbc.gridy = 0;

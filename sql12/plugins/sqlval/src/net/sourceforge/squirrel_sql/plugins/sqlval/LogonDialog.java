@@ -134,7 +134,7 @@ public class LogonDialog extends JDialog
 		setContentPane(contentPane);
 
 		final GridBagConstraints gbc = new GridBagConstraints();
-		gbc.fill = gbc.BOTH;
+		gbc.fill = GridBagConstraints.BOTH;
 		gbc.insets = new Insets(1, 4, 1, 4);
 		gbc.weightx = 1;
 
