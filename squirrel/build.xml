@@ -6,7 +6,7 @@
   <!ENTITY local              SYSTEM "file:./local.xml">
 ]>
 
-<!--  $Id: build.xml,v 1.4 2001-11-20 19:48:51 placson Exp $               -->
+<!--  $Id: build.xml,v 1.5 2001-11-20 20:13:46 placson Exp $               -->
 <!-- ===================================================================== -->
 <!--                                                                       -->
 <!--  Build file (for use w/Ant & BuildMagic modifications)                -->
@@ -104,7 +104,7 @@
     <mkdir dir="${build.lib}"/>
 
     <!-- build a jar containing all classes -->
-    <jar jarfile="${project.jar.filename}" basedir="${build.classes}">
+    <jar jarfile="${project.name}-${project.version}.jar" basedir="${build.classes}">
       <include name="**"/>
     </jar>
   </target>
@@ -179,7 +179,8 @@
   <target name="config" depends="bin, etc"
 	  description="Generates all configuration related files"/>
 
-  <target name="plugins" depends="classes" description="Builds the individual plugin jars">
+  <!-- Builds the individual plugin jars -->
+  <target name="plugins" depends="classes">
     <mkdir dir="${release.root}/plugins" />
 
     <jar jarfile="${release.root}/plugins/dbinfo.jar" basedir="${dbinfo.plugin}">
@@ -225,14 +226,14 @@
   </target>
 
   <!-- Build a release distribution archive -->
-  <target name="dist" depends="release"
+  <target name="dist" depends="release, izpack"
 	  description="Creates a 'release' distribution archive">
     <jar jarfile="${release.target.jarfile}" compress="true">
       <fileset dir="${release.root}" includes="${release.target}/**"/>
     </jar>
   </target>
 
-  <target name="izpack" depends="plugins" description="Private/Internal target">
+  <target name="izpack" depends="plugins">
     <java dir="${izpack.bin}" jar="${izpack.compiler}" 
           fork="yes">
       <arg value="${izpack.xml}" />
@@ -273,6 +274,13 @@
     <delete dir="${release.target.root}"/>
     <delete file="${release.target.jarfile}"/>
   </target>
+
+  <!-- Clean up all target products -->
+  <target name="clean-all" depends="clean-dist, clean-release-target"
+          description="CLEANS ALL TARGET OUTPUTS!">
+    <echo>Completed cleaning all target products</echo>
+  </target>
+  
 
 
   <!-- =================================================================== -->
