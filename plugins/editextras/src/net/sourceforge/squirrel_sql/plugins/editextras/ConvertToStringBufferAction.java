@@ -59,7 +59,9 @@ class ConvertToStringBufferAction extends SquirrelAction
 		{
 			try
 			{
-				new ConvertToStringBufferCommand(_session.getSQLPanelAPI(_plugin)).execute();
+
+				//new ConvertToStringBufferCommand(_session.getSQLPanelAPI(_plugin)).execute();
+				new ConvertToStringBufferCommand(FrameWorkAcessor.getSQLPanelAPI(_session, _plugin)).execute();
 			}
 			catch (Throwable ex)
 			{
