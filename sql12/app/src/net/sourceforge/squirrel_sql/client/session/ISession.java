@@ -34,6 +34,7 @@ import net.sourceforge.squirrel_sql.client.session.event.ISessionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterClauses;
+import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
 /**
  * The current session.
  */
@@ -155,6 +156,11 @@ public interface ISession extends IHasIdentifier
 	SchemaInfo getSchemaInfo();
 
 	/**
+	 * TODO: Javadoc
+	 */
+	SchemaInfo getSchemaInfo(String catalogName, String schemaName);
+
+	/**
 	 * Select a tab in the main tabbed pane.
 	 *
 	 * @param	tabIndex	The tab to select. @see #IMainTabIndexes
@@ -223,4 +229,9 @@ public interface ISession extends IHasIdentifier
 	 * @param	action	Action to be added.
 	 */
 	void addToToolbar(Action action);
+
+	/**
+	 * TODO: Javadoc
+	 */
+	IParserEventsProcessor getParserEventsProcessor();
 }
