@@ -70,6 +70,17 @@ public abstract class Resources {
 		_imagePath = _bundle.getString("path.images");
 	}
 
+	public KeyStroke getKeyStroke(Action action)
+	{
+		final String fullKey = Keys.MENU_ITEM +  "." + getClassName(action.getClass());
+
+		String accel = getResourceString(fullKey, MenuItemProperties.ACCELERATOR);
+		if (accel.length() > 0) {
+			return KeyStroke.getKeyStroke(accel);
+		}
+		return null;
+	}
+
 	public JMenuItem addToMenu(Action action, JMenu menu)
 			throws MissingResourceException {
 		JMenuItem item = menu.add(action);
