@@ -17,8 +17,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-//??????????????????????????????????????????????????????????? for testing only!!! ?????????
-import java.awt.Color;
+
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.Dimension;
@@ -321,24 +320,31 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 	 */
 	public void insertRow() {
 		JTable table = (JTable)getComponent();
-// temporarilly block access to insert function
-if (true) {
-	JOptionPane.showMessageDialog(null,
-			"Insert not quite implemented yet.");
-	return;
-}
 		
 		// Setting the starting position is ugly.  I just picked a point.
 		Point pt = new Point(10, 200);
 
 		Component comp = SwingUtilities.getRoot(table);
 		Component newComp = null;
+		
+		// get the default values from the DB for the table columns
+		String[] dbDefaultValues = 
+			((IDataSetUpdateableTableModel)getUpdateableModelReference()).
+				getDefaultValues(_colDefs);
+		
+		// based on defaults from DB, get the default object instance
+		// for each column
+		Object[] initialValues = new Object[dbDefaultValues.length];
+		for (int i=0; i< initialValues.length; i++) {
+			initialValues[i] = CellComponentFactory.getDefaultValue(
+				_colDefs[i], dbDefaultValues[i]);
+		}
 
 		// The following only works if SwingUtilities.getRoot(table) returns
 		// and instanceof BaseMDIParentFrame.
 		// If SwingTUilities.getRoot(table) returns and instance of Dialog or
 		// Frame, then other code must be used.
-		RowDataInputFrame rdif = new RowDataInputFrame(_colDefs, this);
+		RowDataInputFrame rdif = new RowDataInputFrame(_colDefs, initialValues, this);
 		((BaseMDIParentFrame)comp).addInternalFrame(rdif, false);
 		rdif.setLayer(JLayeredPane.POPUP_LAYER);
 		rdif.pack();
@@ -351,51 +357,12 @@ if (true) {
 			dim.width = 300;
 			dimChanged = true;
 		}
-/*
-		if (dim.height < 300)
-		{
-			dim.height = 300;
-			dimChanged = true;
-		}
-		if (dim.width > 600)
-		{
-			dim.width = 600;
-			dimChanged = true;
-		}
-		if (dim.height > 500)
-		{
-			dim.height = 500;
-			dimChanged = true;
-		}
-*/
+
 		if (dimChanged)
 		{
 			newComp.setSize(dim);
 		}
-/*
-		if (comp instanceof BaseMDIParentFrame)
-		{
-			pt = SwingUtilities.convertPoint((Component) evt.getSource(), pt, comp);
-			pt.y -= dim.height;
-			if (pt.y < 0)
-				pt.y = 0;	// fudge for larger inset windows
-		}
-		else
-		{
-			// getRoot() doesn't appear to return the deepest Window, but the first one. 
-			// If you have a dialog owned by a window you get the dialog, not the window.
-			Component parent = SwingUtilities.windowForComponent(comp);
-			while ((parent != null) &&
-				!(parent instanceof BaseMDIParentFrame) &&
-				!(parent.equals(comp)))
-			{
-				comp = parent;
-				parent = SwingUtilities.windowForComponent(comp);
-			}
-			comp = (parent != null) ? parent : comp;
-			pt = SwingUtilities.convertPoint((Component) evt.getSource(), pt, comp);
-		}
-*/
+
 			
 		// Determine the position to place the new internal frame. Ensure that the right end
 		// of the internal frame doesn't exend past the right end the parent frame.	Use a

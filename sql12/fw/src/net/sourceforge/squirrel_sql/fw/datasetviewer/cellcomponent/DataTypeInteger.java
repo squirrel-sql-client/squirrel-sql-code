@@ -136,7 +136,7 @@ public class DataTypeInteger
 	 * This Data Type can be edited in a table cell.
 	 */
 	public boolean isEditableInCell(Object originalValue) {
-		return true;	
+		return true;
 	}
 	
 	/**
@@ -164,7 +164,7 @@ public class DataTypeInteger
 						(RestorableJTextField)DataTypeInteger.this._textComponent,
 						evt, DataTypeInteger.this._table);
 					CellDataPopup.showDialog(DataTypeInteger.this._table,
-						DataTypeInteger.this._colDef, tableEvt);
+						DataTypeInteger.this._colDef, tableEvt, true);
 				}
 			}
 		});	// end of mouse listener
@@ -404,16 +404,41 @@ public class DataTypeInteger
 	
 	/**
 	 * When updating the database, insert the appropriate datatype into the
-	 * prepared statment at variable position 1.
+	 * prepared statment at the given variable position.
 	 */
-	public void setPreparedStatementValue(PreparedStatement pstmt, Object value)
+	public void setPreparedStatementValue(PreparedStatement pstmt, Object value, int position)
 		throws java.sql.SQLException {
 		if (value == null) {
-			pstmt.setNull(1, _colDef.getSqlType());
+			pstmt.setNull(position, _colDef.getSqlType());
 		}
 		else {
-			pstmt.setInt(1, ((Integer)value).intValue());
+			pstmt.setInt(position, ((Integer)value).intValue());
 		}
+	}
+	
+	/**
+	 * Get a default value for the table used to input data for a new row
+	 * to be inserted into the DB.
+	 */
+	public Object getDefaultValue(String dbDefaultValue) {
+		if (dbDefaultValue != null) {
+			// try to use the DB default value
+			StringBuffer mbuf = new StringBuffer();
+			Object newObject = validateAndConvert(dbDefaultValue, null, mbuf);
+			
+			// if there was a problem with converting, then just fall through
+			// and continue as if there was no default given in the DB.
+			// Otherwise, use the converted object
+			if (mbuf.length() == 0)
+				return newObject;
+		}
+		
+		// no default in DB.  If nullable, use null.
+		if (_isNullable)
+			return null;
+		
+		// field is not nullable, so create a reasonable default value
+		return new Integer(0);
 	}
 	
 	

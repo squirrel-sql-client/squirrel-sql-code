@@ -166,7 +166,7 @@ public class DataTypeUnknown
 						(RestorableJTextField)DataTypeUnknown.this._textComponent,
 						evt, DataTypeUnknown.this._table);
 					CellDataPopup.showDialog(DataTypeUnknown.this._table,
-						DataTypeUnknown.this._colDef, tableEvt);
+						DataTypeUnknown.this._colDef, tableEvt, true);
 				}
 			}
 		});	// end of mouse listener
@@ -322,10 +322,36 @@ public class DataTypeUnknown
 	 * prepared statment at variable position 1.
 	 * This function should never be called for type Unknown
 	 */
-	public void setPreparedStatementValue(PreparedStatement pstmt, Object value)
+	public void setPreparedStatementValue(PreparedStatement pstmt, Object value, int position)
 		throws java.sql.SQLException {
 
 		throw new java.sql.SQLException("Can not update data of type OTHER");
+	}
+	
+	/**
+	 * Get a default value for the table used to input data for a new row
+	 * to be inserted into the DB.
+	 */
+	public Object getDefaultValue(String dbDefaultValue) {
+		if (dbDefaultValue != null) {
+			// try to use the DB default value
+			StringBuffer mbuf = new StringBuffer();
+			Object newObject = validateAndConvert(dbDefaultValue, null, mbuf);
+			
+			// if there was a problem with converting, then just fall through
+			// and continue as if there was no default given in the DB.
+			// Otherwise, use the converted object
+			if (mbuf.length() == 0)
+				return newObject;
+		}
+		
+		// no default in DB.  If nullable, use null.
+		if (_isNullable)
+			return null;
+		
+		// field is not nullable, so create a reasonable default value
+		// cannot create default value for unknown data type
+		return null;
 	}
 	
 	

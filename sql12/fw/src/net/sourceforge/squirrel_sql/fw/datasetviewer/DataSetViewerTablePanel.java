@@ -437,7 +437,8 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 						Point pt = evt.getPoint();
 						int col = MyJTable.this.columnAtPoint(pt);
 						ColumnDisplayDefinition colDefs[] = getColumnDefinitions();
-						CellDataPopup.showDialog(MyJTable.this, colDefs[col], evt);
+						CellDataPopup.showDialog(MyJTable.this, colDefs[col], evt,
+							MyJTable.this._creator.isTableEditable());
 					}
 				}
 				public void mouseReleased(MouseEvent evt)
