@@ -17,12 +17,8 @@ package net.sourceforge.squirrel_sql.client.session;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.Component;
 import java.sql.SQLException;
 
-import javax.swing.Icon;
-
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
@@ -34,6 +30,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.DatabaseNode;
 import net.sourceforge.squirrel_sql.client.session.objectstree.ProcedureNode;
 import net.sourceforge.squirrel_sql.client.session.objectstree.TableNode;
@@ -49,16 +46,14 @@ public interface ISession extends IHasIdentifier {
 	/**
 	 * Keys to objects stored in session.
 	 */
+//CB?? Get rid of this crap in the object tree rewrite.
 	public interface ISessionKeys {
         String DATABASE_DETAIL_PANEL_KEY = DatabaseNode.class.getName() + "_DETAIL_PANEL_KEY";
         String PROCEDURE_DETAIL_PANEL_KEY = ProcedureNode.class.getName() + "_DETAIL_PANEL_KEY";
 		String TABLE_DETAIL_PANEL_KEY = TableNode.class.getName() + "_DETAIL_PANEL_KEY";
 	}
 
-	/**
-	 * IDs of tabs in the main tabbed pane.
-	 */
-	public interface IMainTabIndexes extends SessionSheet.IMainTabIndexes {
+	public interface IMainPanelTabIndexes extends MainPanel.ITabIndexes {
 	}
 
 	/**
@@ -121,15 +116,6 @@ public interface ISession extends IHasIdentifier {
 	int getSQLScriptSelectionEnd();
 	void setSQLScriptSelectionStart(int start);
 	void setSQLScriptSelectionEnd(int start);
-//	SQLPanel getSQLPanel();
-
-	/**
-	 * Return the object that handles the SQL entry
-	 * component.
-	 * 
-	 * @return	<TT>ISQLEntryPanel</TT> object.
-	 */
-//	ISQLEntryPanel getSQLEntryPanel();
 
 	/**
 	 * Return an array of <TT>IDatabaseObjectInfo</TT> objects representing all
@@ -150,8 +136,7 @@ public interface ISession extends IHasIdentifier {
 	 * @throws	IllegalArgumentException
 	 *			If a null <TT>ISQLExecutionListener</TT> passed.
 	 */
-	public void addSQLExecutionListener(ISQLExecutionListener lis)
-		throws IllegalArgumentException;
+	public void addSQLExecutionListener(ISQLExecutionListener lis);
 
 	/**
 	 * Remove an SQL execution listener.
@@ -161,8 +146,7 @@ public interface ISession extends IHasIdentifier {
 	 * @throws	IllegalArgumentException
 	 *			If a null <TT>ISQLExecutionListener</TT> passed.
 	 */
-	public void removeSQLExecutionListener(ISQLExecutionListener lis)
-		throws IllegalArgumentException;
+	public void removeSQLExecutionListener(ISQLExecutionListener lis);
 
 	/**
 	 * Select a tab in the main tabbed pane.
@@ -206,16 +190,12 @@ public interface ISession extends IHasIdentifier {
 	/**
 	 * Add a tab to the main tabbed panel.
 	 *
-	 * title	The title to display in the tab.
-	 * icon		The icon to display in the tab. If <TT>null</TT> then no icon displayed.
-	 * comp		The component to be shown when the tab is active.
-	 * tip		The tooltip to be displayed for the tab. Can be <TT>null</TT>.
+	 * @param	tab	 The tab to be added.
 	 *
 	 * @throws	IllegalArgumentException
-	 *			If <TT>title</TT> or <TT>comp</TT> is <TT>null</TT>.
+	 *			Thrown if a <TT>null</TT> <TT>IMainPanelTab</TT> passed.
 	 */
-	void addMainTab(String title, Icon icon, Component comp, String tip)
-			throws IllegalArgumentException;
+	void addMainTab(IMainPanelTab tab);
 
 	/**
 	 * Add a tab to the panel shown when the database selected in the
@@ -228,7 +208,7 @@ public interface ISession extends IHasIdentifier {
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ITablePanelTab</TT> passed.
 	 */
-	void addDatabasePanelTab(IDatabasePanelTab tab) throws IllegalArgumentException;
+	void addDatabasePanelTab(IDatabasePanelTab tab);
 
 	/**
 	 * Add a tab to the panel shown when a table selected in the
@@ -241,7 +221,7 @@ public interface ISession extends IHasIdentifier {
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ITablePanelTab</TT> passed.
 	 */
-	void addTablePanelTab(ITablePanelTab tab) throws IllegalArgumentException;
+	void addTablePanelTab(ITablePanelTab tab);
 
 	/**
 	 * Add a tab to the panel shown when a procedure selected in the
@@ -254,5 +234,5 @@ public interface ISession extends IHasIdentifier {
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>IProcedurePanelTab</TT> passed.
 	 */
-	void addProcedurePanelTab(IProcedurePanelTab tab) throws IllegalArgumentException;
+	void addProcedurePanelTab(IProcedurePanelTab tab);
 }

@@ -40,6 +40,7 @@ import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.DatabasePanel;
 import net.sourceforge.squirrel_sql.client.session.objectstree.ProcedurePanel;
 import net.sourceforge.squirrel_sql.client.session.objectstree.TablePanel;
@@ -248,10 +249,6 @@ class Session implements ISession {
 		_sessionSheet.getSQLEntryPanel().setSelectionEnd(start);
 	}
 
-//	public SQLPanel getSQLPanel() {
-//		return _sessionSheet.getSQLPanel();
-//	}
-
 	/**
 	 * Return the object that handles the SQL entry
 	 * component.
@@ -305,7 +302,7 @@ class Session implements ISession {
 	 * @throws	IllegalArgumentException
 	 *		  Thrown if an invalid <TT>tabId</TT> passed.
 	 */
-	public void selectMainTab(int tabIndex) throws IllegalArgumentException {
+	public void selectMainTab(int tabIndex) {
 		_sessionSheet.selectMainTab(tabIndex);
 	}
 
@@ -348,8 +345,7 @@ class Session implements ISession {
 	 * @throws	IllegalArgumentException
 	 *			If a null <TT>ISQLExecutionListener</TT> passed.
 	 */
-	public void addSQLExecutionListener(ISQLExecutionListener lis)
-			throws IllegalArgumentException {
+	public void addSQLExecutionListener(ISQLExecutionListener lis) {
 		if (lis == null) {
 			throw new IllegalArgumentException("null ISQLExecutionListener passed");
 		}
@@ -364,8 +360,7 @@ class Session implements ISession {
 	 * @throws	IllegalArgumentException
 	 *			If a null <TT>ISQLExecutionListener</TT> passed.
 	 */
-	public void removeSQLExecutionListener(ISQLExecutionListener lis)
-			throws IllegalArgumentException {
+	public void removeSQLExecutionListener(ISQLExecutionListener lis) {
 		if (lis == null) {
 			throw new IllegalArgumentException("null ISQLExecutionListener passed");
 		}
@@ -377,8 +372,7 @@ class Session implements ISession {
 	 * 
 	 * @param	lis		The listener.
 	 */
-	public void addResultTabListener(IResultTabListener lis)
-			throws IllegalArgumentException {
+	public void addResultTabListener(IResultTabListener lis) {
 		if (lis == null) {
 			throw new IllegalArgumentException("null IResultTabListener passed");
 		}
@@ -390,8 +384,7 @@ class Session implements ISession {
 	 * 
 	 * @param	lis		The listener.
 	 */
-	public void removeResultTabListener(IResultTabListener lis)
-			throws IllegalArgumentException {
+	public void removeResultTabListener(IResultTabListener lis) {
 		if (lis == null) {
 			throw new IllegalArgumentException("null IResultTabListener passed");
 		}
@@ -401,17 +394,13 @@ class Session implements ISession {
 	/**
 	 * Add a tab to the main tabbed panel.
 	 *
-	 * title	The title to display in the tab.
-	 * icon	 The icon to display in the tab. If <TT>null</TT> then no icon displayed.
-	 * comp	 The component to be shown when the tab is active.
-	 * tip	  The tooltip to be displayed for the tab. Can be <TT>null</TT>.
+	 * @param	tab	 The tab to be added.
 	 *
 	 * @throws	IllegalArgumentException
-	 *		  If <TT>title</TT> or <TT>comp</TT> is <TT>null</TT>.
+	 *			Thrown if a <TT>null</TT> <TT>IMainPanelTab</TT> passed.
 	 */
-	public void addMainTab(String title, Icon icon, Component comp, String tip)
-			throws IllegalArgumentException {
-		_sessionSheet.addMainTab(title, icon, comp, tip);
+	public void addMainTab(IMainPanelTab tab) {
+		_sessionSheet.addMainTab(tab);
 	}
 
 	/**
@@ -425,7 +414,7 @@ class Session implements ISession {
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ITablePanelTab</TT> passed.
 	 */
-	public void addDatabasePanelTab(IDatabasePanelTab tab) throws IllegalArgumentException {
+	public void addDatabasePanelTab(IDatabasePanelTab tab) {
 		_sessionSheet.getDatabasePanel().addDatabasePanelTab(tab);
 	}
 
@@ -440,7 +429,7 @@ class Session implements ISession {
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ITablePanelTab</TT> passed.
 	 */
-	public void addTablePanelTab(ITablePanelTab tab) throws IllegalArgumentException {
+	public void addTablePanelTab(ITablePanelTab tab) {
 		if (tab == null) {
 			throw new IllegalArgumentException("Null ITablePanelTab passed");
 		}
@@ -458,7 +447,7 @@ class Session implements ISession {
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>IProcedurePanelTab</TT> passed.
 	 */
-	public void addProcedurePanelTab(IProcedurePanelTab tab) throws IllegalArgumentException {
+	public void addProcedurePanelTab(IProcedurePanelTab tab) {
 		if (tab == null) {
 			throw new IllegalArgumentException("Null IProcedurePanelTab passed");
 		}
