@@ -39,6 +39,9 @@ import net.sourceforge.squirrel_sql.plugins.oracle.expander.TableExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.TriggerParentExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.UserParentExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.explainplan.ExplainPlanExecuter;
+import net.sourceforge.squirrel_sql.plugins.oracle.invalidobjects.NewInvalidObjectsWorksheetAction;
+import net.sourceforge.squirrel_sql.plugins.oracle.sessioninfo.NewSessionInfoWorksheetAction;
+import net.sourceforge.squirrel_sql.plugins.oracle.SGAtrace.NewSGATraceWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.InstanceDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.ObjectSourceTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.OptionsTab;
@@ -74,6 +77,9 @@ public class OraclePlugin extends DefaultSessionPlugin
        private PluginResources _resources;
 
        private NewDBOutputWorksheetAction _newDBOutputWorksheet;
+       private NewInvalidObjectsWorksheetAction _newInvalidObjectsWorksheet;
+       private NewSessionInfoWorksheetAction _newSessionInfoWorksheet;
+       private NewSGATraceWorksheetAction _newSGATraceWorksheet;
 
 	/**
 	 * Return the internal name of this plugin.
@@ -156,6 +162,19 @@ public class OraclePlugin extends DefaultSessionPlugin
                 _newDBOutputWorksheet.setEnabled(false);
                 app.getMainFrame().addToActionBar(_newDBOutputWorksheet);
 
+                _newInvalidObjectsWorksheet = new NewInvalidObjectsWorksheetAction(app, _resources);
+                _newInvalidObjectsWorksheet.setEnabled(false);
+                app.getMainFrame().addToActionBar(_newInvalidObjectsWorksheet);
+
+                _newSessionInfoWorksheet = new NewSessionInfoWorksheetAction(app, _resources);
+                _newSessionInfoWorksheet.setEnabled(false);
+                app.getMainFrame().addToActionBar(_newSessionInfoWorksheet);
+
+                _newSGATraceWorksheet = new NewSGATraceWorksheetAction(app, _resources);
+                _newSGATraceWorksheet.setEnabled(false);
+                app.getMainFrame().addToActionBar(_newSGATraceWorksheet);
+
+
                 app.getSessionManager().addSessionListener(new OraclePluginSessionListener());
 	}
 
@@ -186,7 +205,11 @@ public class OraclePlugin extends DefaultSessionPlugin
           public void sessionActivated(SessionEvent evt) {
             final ISession session = evt.getSession();
 
-            _newDBOutputWorksheet.setEnabled(isOracle(session));
+            boolean enable = isOracle(session);
+            _newDBOutputWorksheet.setEnabled(enable);
+            _newInvalidObjectsWorksheet.setEnabled(enable);
+            _newSessionInfoWorksheet.setEnabled(enable);
+            //jmh tbd _newSGATraceWorksheet.setEnabled(enable);
           }
         }
 
