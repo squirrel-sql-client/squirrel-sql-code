@@ -63,14 +63,15 @@ public class CellDataPopup
 	 */
 	public static void showDialog(JTable table,
 		ColumnDisplayDefinition colDef,
-		MouseEvent evt)
+		MouseEvent evt,
+		boolean isModelEditable)
 	{;
 		CellDataPopup popup = new CellDataPopup();
-		popup.createAndShowDialog(table, evt, colDef);
+		popup.createAndShowDialog(table, evt, colDef, isModelEditable);
 	}
 
 	private void createAndShowDialog(JTable table, MouseEvent evt,
-		ColumnDisplayDefinition colDef)
+		ColumnDisplayDefinition colDef, boolean isModelEditable)
 	{	
 				
 		ILogger s_log = LoggerController.createLogger(CellDataPopup.class);
@@ -86,9 +87,6 @@ public class CellDataPopup
 		CellEditor editor = table.getCellEditor(row, col);
 		if (editor != null)
 			editor.cancelCellEditing();
-			
-		IDataSetTableControls creator =
-			((DataSetViewerTablePanel.MyJTable)table).getCreator();
 
 		Component comp = SwingUtilities.getRoot(table);
 		Component newComp = null;
@@ -99,7 +97,7 @@ public class CellDataPopup
 		// Frame, then other code must be used.
 		TextAreaInternalFrame taif = 
 			new TextAreaInternalFrame(table.getColumnName(col), colDef, obj,
-				row, col, creator, table);
+				row, col, isModelEditable, table);
 		((BaseMDIParentFrame)comp).addInternalFrame(taif, false);
 		taif.setLayer(JLayeredPane.POPUP_LAYER);
 		taif.pack();
@@ -303,11 +301,11 @@ public class CellDataPopup
 	{
 		public TextAreaInternalFrame(String columnName, ColumnDisplayDefinition colDef,
 			Object value, int row, int col,
-			IDataSetTableControls creator, JTable table)
+			boolean isModelEditable, JTable table)
 		{
 			super("Value of column " + columnName, true, true, true, true);
 			ColumnDataPopupPanel popup =
-				new ColumnDataPopupPanel(value, colDef, creator.isTableEditable());
+				new ColumnDataPopupPanel(value, colDef, isModelEditable);
 			popup.setUserActionInfo(this, row, col, table);
 			setContentPane(popup);
 		}
