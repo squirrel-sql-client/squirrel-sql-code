@@ -180,7 +180,7 @@ public class DumpApplicationCommand implements ICommand
 				_msgHandler.showMessage(th);
 				s_log.error(msg, th);
 			}
-			
+
 			// Dump sessions.
 			ISession[] sessions = _app.getActiveSessions();
 			DumpSessionCommand sessionCmd = new DumpSessionCommand();
@@ -207,7 +207,12 @@ public class DumpApplicationCommand implements ICommand
 			// Dump thread store.
 		}			
 			
-		// Combine the multiple dump files into one file.
+		combineTempFiles(titles, files);
+		deleteTempFiles(files);
+	}
+
+	private void combineTempFiles(List titles, List files)
+	{
 		try
 		{
 			PrintWriter wtr = new PrintWriter(new FileWriter(_outFile));
@@ -249,6 +254,17 @@ public class DumpApplicationCommand implements ICommand
 			_msgHandler.showMessage(msg);
 			_msgHandler.showMessage(ex.toString());
 			s_log.error(msg, ex);
+		}
+	}
+
+	private void deleteTempFiles(List files)
+	{
+		for (int i = 0, limit = files.size(); i < limit; ++i)
+		{
+			if (!((File)files.get(i)).delete())
+			{
+				s_log.error("Couldn't delete temporary DumpSession file");
+			}
 		}
 	}
 

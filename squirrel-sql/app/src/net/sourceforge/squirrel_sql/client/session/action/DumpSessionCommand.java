@@ -159,8 +159,8 @@ public class DumpSessionCommand implements ICommand
 			throw new IllegalStateException("Trying to dump session to null file");
 		}
 
-		List files = new ArrayList();
-		List titles = new ArrayList();
+		final List files = new ArrayList();
+		final List titles = new ArrayList();
 		synchronized (_session)
 		{
 			final SQLConnection conn = _session.getSQLConnection();
@@ -274,7 +274,12 @@ public class DumpSessionCommand implements ICommand
 			}
 		}
 
-		// Combine the multiple dump files into one file.
+		combineTempFiles(titles, files);
+		deleteTempFiles(files);
+	}
+
+	private void combineTempFiles(List titles, List files)
+	{
 		try
 		{
 			PrintWriter wtr = new PrintWriter(new FileWriter(_outFile));
@@ -316,6 +321,17 @@ public class DumpSessionCommand implements ICommand
 			_msgHandler.showErrorMessage(msg);
 			_msgHandler.showErrorMessage(ex.toString());
 			s_log.error(msg, ex);
+		}
+	}
+
+	private void deleteTempFiles(List files)
+	{
+		for (int i = 0, limit = files.size(); i < limit; ++i)
+		{
+			if (!((File)files.get(i)).delete())
+			{
+				s_log.error("Couldn't delete temporary DumpSession file");
+			}
 		}
 	}
 
