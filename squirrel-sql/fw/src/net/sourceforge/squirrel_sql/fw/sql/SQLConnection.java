@@ -29,6 +29,8 @@ import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class SQLConnection {
 
@@ -36,6 +38,8 @@ public class SQLConnection {
 		String FREE_TDS = "InternetCDS Type 4 JDBC driver for MS SQLServer";
 		String JCONNECT = "jConnect (TM) for JDBC (TM)";
 	}
+
+	private ILogger s_log = LoggerController.createLogger(SQLConnection.class);
 
 	private String _url;
 	private Connection _conn;
@@ -45,7 +49,6 @@ public class SQLConnection {
 	private String _dbDriverName;
 
 	private boolean _autoCommitOnClose = false;
-
 
 	public SQLConnection(String url) throws BaseSQLException {
 		this(null, url);
@@ -77,6 +80,7 @@ public class SQLConnection {
 	public void close() throws SQLException {
 		SQLException savedEx = null;
 		if (_conn != null) {
+			s_log.debug("Closing connection");
 			try {
 				if (!_conn.getAutoCommit()) {
 					if (_autoCommitOnClose) {
@@ -93,8 +97,10 @@ public class SQLConnection {
 			_md = null;
 
 			if (savedEx != null) {
+				s_log.debug("Connection close failed", savedEx);
 				throw savedEx;
 			}
+			s_log.debug("Connection closed successfully");
 		}
 	}
 
