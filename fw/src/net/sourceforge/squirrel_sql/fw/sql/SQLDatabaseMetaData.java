@@ -41,6 +41,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * This class represents the metadata for a database. It is essentially
  * a wrapper around <TT>java.sql.DatabaseMetaData</TT>.
  *
+ * <P>Some data can be cached on the first retrieval in order to speed up
+ * subsequent retrievals. To clear this cache call <TT>clearCache()</TT>.
+ *
  * <P>From the JavaDoc for <TT>java.sql.DatabaseMetaData</TT>. &quot;Some
  * methods take arguments that are String patterns. These arguments all
  * have names such as fooPattern. Within a pattern String, "%" means match any
@@ -48,9 +51,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * metadata entries matching the search pattern are returned. If a search pattern
  * argument is set to null, that argument's criterion will be dropped from the
  * search.&quot;
- *
- * <P>Some data can be cached on the first retrieval in order to speed up
- * subsequent retrievals. To clear this cache call <TT>clearCache()</TT>.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
@@ -64,6 +64,10 @@ public class SQLDatabaseMetaData
 	private final static ILogger s_log =
 		LoggerController.createLogger(SQLDatabaseMetaData.class);
 
+	/**
+	 * Full or partial names of various JDBC driivers that can be matched
+	 * to <tt>getDriverName()</tt>.
+	 */
 	private interface IDriverNames
 	{
 		String FREE_TDS = "InternetCDS Type 4 JDBC driver for MS SQLServer";
@@ -71,8 +75,13 @@ public class SQLDatabaseMetaData
 		String OPTA2000 = "i-net OPTA 2000";
 	}
 
+	/**
+	 * Full or partial names of various DBMS poducts that can be matched
+	 * to <tt>getDatabaseProductName()</tt>.
+	 */
 	private interface IDBMSProductNames
 	{
+		String DB2 = "DB2";
 		String MYSQL = "mysql";
 		String MICROSOFT_SQL = "Microsoft SQL Server";
 		String POSTGRESQL = "PostgreSQL";
@@ -88,7 +97,6 @@ public class SQLDatabaseMetaData
 	 * name that attempts to retrieve them.
 	 */
 	private Map _cache = new HashMap();
-
 
 	/**
 	 * ctor specifying the connection that we are retrieving metadata for.
@@ -110,7 +118,7 @@ public class SQLDatabaseMetaData
 	}
 
 	/**
-	 * Return the name of the current user.
+	 * Return the name of the current user. Cached on first call.
 	 *
 	 * @return	the current user name.
 	 */
@@ -127,7 +135,8 @@ public class SQLDatabaseMetaData
 	}
 
 	/**
-	 * Return the database product name for this connection.
+	 * Return the database product name for this connection. Cached on first
+	 * call.
 	 *
 	 * @return	the database product name for this connection.
 	 *
@@ -147,7 +156,8 @@ public class SQLDatabaseMetaData
 	}
 
 	/**
-	 * Return the database product version for this connection.
+	 * Return the database product version for this connection. Cached on first
+	 * call.
 	 *
 	 * @return	database product version
 	 *
@@ -167,7 +177,7 @@ public class SQLDatabaseMetaData
 	}
 
 	/**
-	 * Return the JDBC driver name for this connection.
+	 * Return the JDBC driver name for this connection. Cached on first call.
 	 *
 	 * @return	the JDBC driver name for this connection.
 	 *
@@ -186,7 +196,7 @@ public class SQLDatabaseMetaData
 	}
 
 	/**
-	 * Return the JDBC version of this driver.
+	 * Return the JDBC version of this driver. Cached on first call.
 	 *
 	 * @return	the JDBC version of the driver.
 	 *
@@ -219,7 +229,8 @@ public class SQLDatabaseMetaData
 	}
 
 	/**
-	 * Return the string used to quote characters in thuis DBMS.
+	 * Return the string used to quote characters in this DBMS. Cached on first
+	 * call.
 	 *
 	 * @return	quote string.
 	 *
@@ -248,7 +259,7 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Return a string array containing the names of all the schemas in the
-	 * database.
+	 * database. Cached on first call.
 	 *
 	 * @return	String[] of the names of the schemas in the database.
 	 *
@@ -264,10 +275,14 @@ public class SQLDatabaseMetaData
 		}
 
 		boolean hasGuest = false;
+		boolean hasSysFun = false;
+
 		final String dbProductName = getDatabaseProductName();
 		final boolean isMSSQLorSYBASE = dbProductName.equals(IDBMSProductNames.MICROSOFT_SQL)
 								|| dbProductName.equals(IDBMSProductNames.SYBASE)
 								|| dbProductName.equals(IDBMSProductNames.SYBASE_OLD);
+		final boolean isDB2 = dbProductName.startsWith(IDBMSProductNames.DB2);
+
 		final ArrayList list = new ArrayList();
 		ResultSet rs = privateGetJDBCMetaData().getSchemas();
 		try
@@ -279,6 +294,10 @@ public class SQLDatabaseMetaData
 				if (isMSSQLorSYBASE && row[0].equals("guest"))
 				{
 					hasGuest = true;
+				}
+				if (isDB2 && row[0].equals("SYSFUN"))
+				{
+					hasSysFun = true;
 				}
 				list.add(row[0]);
 			}
@@ -293,6 +312,13 @@ public class SQLDatabaseMetaData
 		if (isMSSQLorSYBASE && !hasGuest)
 		{
 			list.add("guest");
+		}
+
+		// Some drivers for DB2 don't return SYSFUN as a schema name. A
+		// number of system stored procs are kept in this schema.
+		if (isDB2 && !hasSysFun)
+		{
+			list.add("SYSFUN");
 		}
 
 		value = (String[])list.toArray(new String[list.size()]);
@@ -316,7 +342,7 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Retrieves whether a schema name can be used in a data manipulation
-	 * statement.
+	 * statement. Cached on first call.
 	 *
 	 * @return	<TT>true</TT> if a schema name can be used in a data
 	 *			manipulation statement.
@@ -353,7 +379,7 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Retrieves whether a schema name can be used in a table definition
-	 * statement.
+	 * statement. Cached on first call.
 	 *
 	 * @return	<TT>true</TT> if a schema name can be used in a table
 	 *			definition statement.
@@ -389,7 +415,8 @@ public class SQLDatabaseMetaData
 	}
 
 	/**
-	 * Retrieves whether this DBMS supports stored procedures.
+	 * Retrieves whether this DBMS supports stored procedures. Cached on first
+	 * call.
 	 *
 	 * @return	<TT>true</TT> if DBMS supports stored procedures.
 	 *
@@ -421,7 +448,7 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Return a string array containing the names of all the catalogs in the
-	 * database.
+	 * database. Cached on first call.
 	 *
 	 * @return	String[] of the names of the catalogs in the database.
 	 *
@@ -460,7 +487,7 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Retrieves the String that this database uses as the separator between a
-	 * catalog and table name.
+	 * catalog and table name. Cached on first call.
 	 *
 	 * @return	The separator character.
 	 *
@@ -497,7 +524,7 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Retrieves whether a catalog name can be used in a table definition
-	 * statement.
+	 * statement. Cached on first call.
 	 *
 	 * @return	<TT>true</TT> if a catalog name can be used in a table
 	 *			definition statement.
@@ -533,7 +560,7 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Retrieves whether a catalog name can be used in a data manipulation
-	 * statement.
+	 * statement. Cached on first call.
 	 *
 	 * @return	<TT>true</TT> if a catalog name can be used in a data
 	 *			manipulation statement.
@@ -567,7 +594,8 @@ public class SQLDatabaseMetaData
 	}
 
 	/**
-	 * Retrieves whether a catalog name can be used in a procedure call.
+	 * Retrieves whether a catalog name can be used in a procedure call. Cached
+	 * on first call.
 	 *
 	 * @return	<TT>true</TT> if a catalog name can be used in a procedure
 	 *			call.
@@ -622,6 +650,8 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Retrieve information about the data types in the database.
+	 *
+	 * TODO: Any reason this is not cached?
 	 *
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
@@ -713,7 +743,8 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Return a string array containing the different types of tables in this
-	 * database. E.G. <TT>"TABLE", "VIEW", "SYSTEM TABLE"</TT>.
+	 * database. E.G. <TT>"TABLE", "VIEW", "SYSTEM TABLE"</TT>. Cached on first
+	 * call.
 	 *
 	 * @return	table type names.
 	 *
@@ -763,7 +794,7 @@ public class SQLDatabaseMetaData
 			tableTypes.add("SYSTEM TABLE");
 		}
 
-		// At least one version of PostgreSQL through the ODBC/JDBC
+		// At least one version of PostgreSQL through the JDBC/ODBC
 		// bridge returns an empty result set for the list of table
 		// types. Another version of PostgreSQL returns 6 entries
 		// of "SYSTEM TABLE" (which we have already filtered back to one).
@@ -855,7 +886,7 @@ public class SQLDatabaseMetaData
 			}
 
 			// store all plain table info we have.
-         tabResult = md.getTables(catalog, schemaPattern, tableNamePattern, types);
+			tabResult = md.getTables(catalog, schemaPattern, tableNamePattern, types);
 			while (tabResult.next())
 			{
 				ITableInfo tabInfo = new TableInfo(tabResult.getString(1),
@@ -892,10 +923,10 @@ public class SQLDatabaseMetaData
 		}
 		finally
 		{
-         if(tabResult != null)
-         {
-			   tabResult.close();
-         }
+			if(tabResult != null)
+			{
+				tabResult.close();
+			}
 			if (superTabResult != null)
 			{
 				superTabResult.close();
@@ -953,6 +984,7 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Retrieve the names of the Numeric Functions that this DBMS supports.
+	 * Cached on first call.
 	 *
 	 * @return	String[] of function names.
 	 */
@@ -972,6 +1004,7 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Retrieve the names of the String Functions that this DBMS supports.
+	 * Cached on first call.
 	 *
 	 * @return	String[] of function names.
 	 */
@@ -991,6 +1024,7 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Retrieve the names of the System Functions that this DBMS supports.
+	 * Cached on first call.
 	 *
 	 * @return	String[] of function names.
 	 */
@@ -1010,6 +1044,7 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Retrieve the names of the Date/Time Functions that this DBMS supports.
+	 * Cached on first call.
 	 *
 	 * @return	String[] of function names.
 	 */
@@ -1029,6 +1064,7 @@ public class SQLDatabaseMetaData
 
 	/**
 	 * Retrieve the names of the non-standard keywords that this DBMS supports.
+	 * Cached on first call.
 	 *
 	 * @return	String[] of keywords.
 	 */
@@ -1069,7 +1105,7 @@ public class SQLDatabaseMetaData
 													columns);
 	}
 
-	// TODO: Write a version that returns an array of data objects.
+	// @deprecated. Replaced by getExportedKeysInfo
 	public ResultSet getExportedKeys(ITableInfo ti)
 		throws SQLException
 	{
@@ -1078,6 +1114,7 @@ public class SQLDatabaseMetaData
 			ti.getSimpleName());
 	}
 
+	// @deprecated. Replaced by getImportedKeysInfo
 	public ResultSet getImportedKeys(ITableInfo ti)
 		throws SQLException
 	{
@@ -1151,20 +1188,6 @@ public class SQLDatabaseMetaData
 		return results;
 	}
 
-	private String createForeignKeyInfoKey(ForeignKeyInfo fki)
-	{
-		StringBuffer buf = new StringBuffer();
-		buf.append(fki.getForeignKeyCatalogName())
-			.append(fki.getForeignKeySchemaName())
-			.append(fki.getForeignKeyTableName())
-			.append(fki.getForeignKeyName())
-			.append(fki.getPrimaryKeyCatalogName())
-			.append(fki.getPrimaryKeySchemaName())
-			.append(fki.getPrimaryKeyTableName())
-			.append(fki.getPrimaryKeyName());
-		return buf.toString();
-	}
-
 	// TODO: Write a version that returns an array of data objects.
 	public ResultSet getIndexInfo(ITableInfo ti)
 		throws SQLException
@@ -1211,6 +1234,7 @@ public class SQLDatabaseMetaData
 												ti.getSimpleName());
 	}
 
+	// TODO: Write a version that returns an array of data objects.
 	public ResultSet getColumns(ITableInfo ti)
 		throws SQLException
 	{
@@ -1266,14 +1290,15 @@ public class SQLDatabaseMetaData
 	}
 
 	/**
-	 * Retrieve whether this driver supports multiple result sets.
+	 * Retrieve whether this driver supports multiple result sets. Cached on
+	 * first call.
 	 *
 	 * @return	<tt>true</tt> if driver supports multiple result sets
 	 *			else <tt>false</tt>.
 	 *
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
-   public synchronized boolean supportsMultipleResultSets()
+	public synchronized boolean supportsMultipleResultSets()
 			throws SQLException
 	{
 		final String key = "supportsMultipleResultSets";
@@ -1307,8 +1332,8 @@ public class SQLDatabaseMetaData
 	 */
 	private static String[] makeArray(String data)
 	{
-		List list = new ArrayList();
-		StringTokenizer st = new StringTokenizer(data, ",");
+		final List list = new ArrayList();
+		final StringTokenizer st = new StringTokenizer(data, ",");
 		while (st.hasMoreTokens())
 		{
 			list.add(st.nextToken());
@@ -1329,4 +1354,19 @@ public class SQLDatabaseMetaData
 	{
 		return _conn.getConnection().getMetaData();
 	}
+
+	private String createForeignKeyInfoKey(ForeignKeyInfo fki)
+	{
+		final StringBuffer buf = new StringBuffer();
+		buf.append(fki.getForeignKeyCatalogName())
+			.append(fki.getForeignKeySchemaName())
+			.append(fki.getForeignKeyTableName())
+			.append(fki.getForeignKeyName())
+			.append(fki.getPrimaryKeyCatalogName())
+			.append(fki.getPrimaryKeySchemaName())
+			.append(fki.getPrimaryKeyTableName())
+			.append(fki.getPrimaryKeyName());
+		return buf.toString();
+	}
 }
+
