@@ -4,6 +4,7 @@ package net.sourceforge.squirrel_sql.plugins.codecompletion;
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
+import javax.swing.text.Keymap;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;
@@ -22,11 +23,19 @@ public class CodeCompletor
 
 	private MouseAdapter _listMouseAdapter;
 	private KeyListener _listKeyListener;
-	private FocusListener _listFocusListener;
 	private Rectangle _currCaretBounds;
 	private static final int MAX_ITEMS_IN_COMPLETION_LIST = 10;
 	private JScrollPane _completionListScrollPane;
-	private Timer _focusTimer;
+
+	private KeyStroke[] keysToDisableWhenPopUpOpen = new KeyStroke[]
+	{
+		KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false),
+		KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0, false),
+		KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, false),
+		KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false),
+		KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0, false),
+		KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0, false)
+	};
 
 
 	public CodeCompletor(JTextComponent txtComp, CodeCompletorModel model)
@@ -60,47 +69,11 @@ public class CodeCompletor
 				public void keyPressed(KeyEvent e){onKeyPressedOnList(e);}
 			};
 
-		_listFocusListener = new FocusListener()
-		{
-			public void focusGained(FocusEvent e){onFocusGained(e);}
-
-			public void focusLost(FocusEvent e){onFocusLosOnList(e);}
-		};
-
-
 		_completionListScrollPane = new JScrollPane(_completionList);
 		_completionPanel.add(_completionListScrollPane, BorderLayout.CENTER);
 		_completionPanel.setVisible(false);
 
 		_popupMan = new PopupManager(txtComp);
-
-		ActionListener timerListener = new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				closePopup();
-			}
-		};
-
-		_focusTimer = new Timer(300, timerListener);
-		_focusTimer.setRepeats(false);
-
-	}
-
-	private void onFocusGained(FocusEvent e)
-	{
-		if(false == e.isTemporary())
-		{
-			_focusTimer.stop();
-		}
-	}
-
-	private void onFocusLosOnList(FocusEvent e)
-	{
-		if(false == e.isTemporary())
-		{
-			_focusTimer.start();
-		}
 	}
 
 	private void onKeyPressedOnList(KeyEvent e)
@@ -124,22 +97,34 @@ public class CodeCompletor
 				_currBegining = _currBegining.substring(0, _currBegining.length() - 1);
 				reInitList(false);
 			}
-			removeLastCharInTextComponent();
+			//removeLastCharInTextComponent();
 		}
 		else if(e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT)
 		{
-			closePopup();
+			// do nothing
 		}
-		else if(e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN)
+		else if(e.getKeyCode() == KeyEvent.VK_UP)
 		{
-			// don't send to text field
+			if(0 < _completionList.getSelectedIndex())
+			{
+				int newSelIx = _completionList.getSelectedIndex() - 1;
+				_completionList.setSelectionInterval(newSelIx, newSelIx);
+				_completionList.ensureIndexIsVisible(newSelIx);
+			}
 		}
-
-		if(shouldBeSentToTextComponent(e))
+		else if(e.getKeyCode() == KeyEvent.VK_DOWN)
+		{
+			if(_completionList.getSelectedIndex() + 1 < _completionList.getModel().getSize())
+			{
+				int newSelIx = _completionList.getSelectedIndex() + 1;
+				_completionList.setSelectionInterval(newSelIx, newSelIx);
+				_completionList.ensureIndexIsVisible(newSelIx);
+			}
+		}
+		else
 		{
 			_currBegining += e.getKeyChar();
 			reInitList(true);
-			_txtComp.replaceSelection("" + e.getKeyChar());
 
 			DefaultListModel listModel = (DefaultListModel) _completionList.getModel();
 			if(1 == listModel.size())
@@ -152,47 +137,6 @@ public class CodeCompletor
 			}
 		}
 	}
-
-	boolean shouldBeSentToTextComponent(KeyEvent e)
-	{
-		// TODO find something better than this hard codening
-		char[] allowedBesidesLettersOrDigits
-		= new char[]{
-			           '!', '"', '§', '$', '%', '&', '/', '(', ')', '=', '?','\'', '\\', '#', '~',
-			           '_', '+', '-', '*', '{', '}', '[', ']', ',', ';', '.', ':',
-						  'ä', 'Ä', 'ö', 'Ö', 'ü', 'Ü', 'ß'
-		            };
-
-		if(Character.isLetterOrDigit(e.getKeyChar()))
-		{
-			return true;
-		}
-
-		for (int i = 0; i < allowedBesidesLettersOrDigits.length; i++)
-		{
-			if(e.getKeyChar() == allowedBesidesLettersOrDigits[i])
-			{
-				return true;
-			}
-		}
-
-		return false;
-
-
-	}
-
-	private void removeLastCharInTextComponent()
-	{
-		int caretPos = _txtComp.getCaretPosition();
-		if(0 < caretPos)
-		{
-			_txtComp.setSelectionStart(caretPos -1);
-			_txtComp.setSelectionEnd(caretPos);
-			_txtComp.replaceSelection("");
-		}
-
-	}
-
 
 	private void reInitList(boolean selectionNarrowed)
 	{
@@ -240,11 +184,24 @@ public class CodeCompletor
 
 	private void closePopup()
 	{
-		_completionList.removeMouseListener(_listMouseAdapter);
-		_completionList.removeKeyListener(_listKeyListener);
-		_completionList.removeFocusListener(_listFocusListener);
-		_completionPanel.setVisible(false);
 		_txtComp.requestFocus();
+
+		_completionList.removeMouseListener(_listMouseAdapter);
+		_txtComp.removeKeyListener(_listKeyListener);
+		_completionPanel.setVisible(false);
+
+
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				Keymap km = _txtComp.getKeymap();
+				for (int i = 0; i < keysToDisableWhenPopUpOpen.length; i++)
+				{
+					km.removeKeyStrokeBinding(keysToDisableWhenPopUpOpen[i]);
+				}
+			}
+		});
 	}
 
 
@@ -293,15 +250,6 @@ public class CodeCompletor
 		// see initializationof _curCompletionPanelSize
 		_curCompletionPanelSize = getCurCompletionPanelSize(candidates);
 
-//		if(MAX_ITEMS_IN_COMPLETION_LIST >= candidates.length)
-//		{
-//			_completionListScrollPane.setHorizontalScrollBar(null);
-//		}
-//		else
-//		{
-//			_completionListScrollPane.setHorizontalScrollBar(new JScrollBar());
-//		}
-
 		DefaultListModel model = (DefaultListModel) _completionList.getModel();
 		model.removeAllElements();
 
@@ -317,13 +265,23 @@ public class CodeCompletor
 
 		_completionList.removeMouseListener(_listMouseAdapter);
 		_completionList.addMouseListener(_listMouseAdapter);
-		_completionList.removeKeyListener(_listKeyListener);
-		_completionList.addKeyListener(_listKeyListener);
-		_completionList.removeFocusListener(_listFocusListener);
-		_completionList.addFocusListener(_listFocusListener);
+		_txtComp.removeKeyListener(_listKeyListener);
+		_txtComp.addKeyListener(_listKeyListener);
 
-		_completionList.requestFocus();
+		Action doNothingAction = new AbstractAction("doNothingAction")
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+			}
+		};
+
+		Keymap km = _txtComp.getKeymap();
+		for (int i = 0; i < keysToDisableWhenPopUpOpen.length; i++)
+		{
+			km.addActionForKeyStroke(keysToDisableWhenPopUpOpen[i], doNothingAction);
+		}
 	}
+
 
 	private Rectangle getCurCompletionPanelSize(CodeCompletionInfo[] candidates)
 	{
