@@ -32,7 +32,7 @@ import javax.swing.text.Segment;
  * cached.
  *
  * @author Slava Pestov
- * @version $Id: TokenMarker.java,v 1.3 2003-03-04 11:46:02 colbell Exp $
+ * @version $Id: TokenMarker.java,v 1.4 2003-03-05 10:27:53 colbell Exp $
  *
  * @see org.gjt.sp.jedit.syntax.Token
  */

@@ -31,7 +31,7 @@ import javax.swing.text.Segment;
 * care of inserting and deleting lines from the token marker's state.
 *
 * @author Slava Pestov
-* @version $Id: DefaultSyntaxDocument.java,v 1.3 2003-03-04 11:46:02 colbell Exp $
+* @version $Id: DefaultSyntaxDocument.java,v 1.4 2003-03-05 10:27:54 colbell Exp $
 *
 * @see org.gjt.sp.jedit.syntax.SyntaxDocument
 */

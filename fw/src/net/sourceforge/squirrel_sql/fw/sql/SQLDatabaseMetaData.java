@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.sql;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -62,11 +62,22 @@ public class SQLDatabaseMetaData
 		String JCONNECT = "jConnect (TM) for JDBC (TM)";
 	}
 
+	private interface IDBMSProductNames
+	{
+		String MYSQL = "mysql";
+		String MICROSOFT_SQL = "Microsoft SQL Server";
+		String SYBASE = "Sybase SQL Server";
+		String SYBASE_OLD = "SQL Server";
+	}
+
 	/** Connection to database this class is supplying information for. */
 	private SQLConnection _conn;
 
-	/** Collection of commonly accessed metadata properties. */
-	private Map _common = new HashMap();
+	/**
+	 * Cache of commonly accessed metadata properties keyed by the method
+	 * name that attempts to retrieve them.
+	 */
+	private Map _cache = new HashMap();
 
 	/** Defines how to handel result sets. */
 	private LargeResultSetObjectInfo _lrsi;
@@ -101,9 +112,16 @@ public class SQLDatabaseMetaData
 	 * 
 	 * @return	the current user name.
 	 */
-	public String getUserName() throws SQLException
+	public synchronized String getUserName() throws SQLException
 	{
-		return getJDBCMetaData().getUserName();
+		final String key = "getUserName";
+		String value = (String)_cache.get(key);
+		if (value == null)
+		{
+			value = privateGetJDBCMetaData().getUserName();
+			_cache.put(key, value);
+		}
+		return value;
 	}
 
 	/**
@@ -117,11 +135,11 @@ public class SQLDatabaseMetaData
 		throws SQLException
 	{
 		final String key = "getDatabaseProductName";
-		String value = (String)_common.get(key);
+		String value = (String)_cache.get(key);
 		if (value == null)
 		{
-			value = getJDBCMetaData().getDatabaseProductName();
-			_common.put(key, value);
+			value = privateGetJDBCMetaData().getDatabaseProductName();
+			_cache.put(key, value);
 		}
 		return value;
 	}
@@ -137,11 +155,11 @@ public class SQLDatabaseMetaData
 		throws SQLException
 	{
 		final String key = "getDatabaseProductVersion";
-		String value = (String)_common.get(key);
+		String value = (String)_cache.get(key);
 		if (value == null)
 		{
-			value = getJDBCMetaData().getDatabaseProductVersion();
-			_common.put(key, value);
+			value = privateGetJDBCMetaData().getDatabaseProductVersion();
+			_cache.put(key, value);
 		}
 		return value;
 	}
@@ -156,11 +174,11 @@ public class SQLDatabaseMetaData
 	public synchronized String getDriverName() throws SQLException
 	{
 		final String key = "getDriverName";
-		String value = (String)_common.get(key);
+		String value = (String)_cache.get(key);
 		if (value == null)
 		{
-			value = getJDBCMetaData().getDriverName();
-			_common.put(key, value);
+			value = privateGetJDBCMetaData().getDriverName();
+			_cache.put(key, value);
 		}
 		return value;
 	}
@@ -176,10 +194,10 @@ public class SQLDatabaseMetaData
 	{
 		//TODO: When min version supported is 1.4 then remove reflection.
 		final String key = "getJDBCVersion";
-		Integer value = (Integer)_common.get(key);
+		Integer value = (Integer)_cache.get(key);
 		if (value == null)
 		{
-			DatabaseMetaData md = getJDBCMetaData();
+			DatabaseMetaData md = privateGetJDBCMetaData();
 			try
 			{
 				final Method getMajorVersion = md.getClass().getMethod("getJDBCMajorVersion", null);
@@ -188,7 +206,7 @@ public class SQLDatabaseMetaData
 				final Integer minor = (Integer)getMinorVersion.invoke(md, null);
 				int vers = (major.intValue() * 100) + minor.intValue();
 				value = new Integer(vers);
-				_common.put(key, value);
+				_cache.put(key, value);
 			}
 			catch (Throwable th)
 			{
@@ -208,7 +226,7 @@ public class SQLDatabaseMetaData
 	public synchronized String getIdentifierQuoteString() throws SQLException
 	{
 		final String key = "getIdentifierQuoteString";
-		String value = (String)_common.get(key);
+		String value = (String)_cache.get(key);
 		if (value == null)
 		{
 			final String driverName = getDriverName();
@@ -219,9 +237,9 @@ public class SQLDatabaseMetaData
 			}
 			else
 			{
-				value = getJDBCMetaData().getIdentifierQuoteString();
+				value = privateGetJDBCMetaData().getIdentifierQuoteString();
 			}
-			_common.put(key, value);
+			_cache.put(key, value);
 		}
 		return value;
 	}
@@ -238,19 +256,27 @@ public class SQLDatabaseMetaData
 	{
 		boolean hasGuest = false;
 		final String dbProductName = getDatabaseProductName();
-		final boolean isMSSQLorSYBASE = dbProductName.equals("Microsoft SQL Server") ||
-											dbProductName.equals("Sybase SQL Server") ||
-											dbProductName.equals("SQL Server"); // Old Sybase
+		final boolean isMSSQLorSYBASE = dbProductName.equals(IDBMSProductNames.MICROSOFT_SQL)
+								|| dbProductName.equals(IDBMSProductNames.SYBASE)
+								|| dbProductName.equals(IDBMSProductNames.SYBASE_OLD);
 		final ArrayList list = new ArrayList();
-		final ResultSetReader rdr = new ResultSetReader(getJDBCMetaData().getSchemas(), _lrsi);
-		Object[] row = null;
-		while ((row = rdr.readRow()) != null)
+		ResultSet rs = privateGetJDBCMetaData().getSchemas();
+		try
 		{
-			if (isMSSQLorSYBASE && row[0].equals("guest"))
+			final ResultSetReader rdr = new ResultSetReader(rs, _lrsi);
+			Object[] row = null;
+			while ((row = rdr.readRow()) != null)
 			{
-				hasGuest = true;
+				if (isMSSQLorSYBASE && row[0].equals("guest"))
+				{
+					hasGuest = true;
+				}
+				list.add(row[0]);
 			}
-			list.add(row[0]);
+		}
+		finally
+		{
+			rs.close();
 		}
 
 		// Some drivers for both MS SQL and Sybase don't return guest as
@@ -289,7 +315,7 @@ public class SQLDatabaseMetaData
 	{
 		try
 		{
-			return getJDBCMetaData().supportsSchemasInDataManipulation();
+			return privateGetJDBCMetaData().supportsSchemasInDataManipulation();
 		}
 		catch (SQLException ex)
 		{
@@ -315,7 +341,7 @@ public class SQLDatabaseMetaData
 	{
 		try
 		{
-			return getJDBCMetaData().supportsSchemasInTableDefinitions();
+			return privateGetJDBCMetaData().supportsSchemasInTableDefinitions();
 		}
 		catch (SQLException ex)
 		{
@@ -336,7 +362,7 @@ public class SQLDatabaseMetaData
 	 */
 	public boolean supportsStoredProcedures() throws SQLException
 	{
-		return getJDBCMetaData().supportsStoredProcedures();
+		return privateGetJDBCMetaData().supportsStoredProcedures();
 	}
 
 	/**
@@ -350,11 +376,19 @@ public class SQLDatabaseMetaData
 	public String[] getCatalogs() throws SQLException
 	{
 		final ArrayList list = new ArrayList();
-		final ResultSetReader rdr = new ResultSetReader(getJDBCMetaData().getCatalogs(), _lrsi);
-		Object[] row = null;
-		while ((row = rdr.readRow()) != null)
+		ResultSet rs = privateGetJDBCMetaData().getCatalogs();
+		try
 		{
-			list.add(row[0]);
+			final ResultSetReader rdr = new ResultSetReader(rs, _lrsi);
+			Object[] row = null;
+			while ((row = rdr.readRow()) != null)
+			{
+				list.add(row[0]);
+			}
+		}
+		finally
+		{
+			rs.close();
 		}
 
 		return (String[])list.toArray(new String[list.size()]);
@@ -370,7 +404,7 @@ public class SQLDatabaseMetaData
 	 */
 	public String getCatalogSeparator() throws SQLException
 	{
-		return getJDBCMetaData().getCatalogSeparator();
+		return privateGetJDBCMetaData().getCatalogSeparator();
 	}
 
 	/**
@@ -400,7 +434,7 @@ public class SQLDatabaseMetaData
 	{
 		try
 		{
-			return getJDBCMetaData().supportsCatalogsInTableDefinitions();
+			return privateGetJDBCMetaData().supportsCatalogsInTableDefinitions();
 		}
 		catch (SQLException ex)
 		{
@@ -425,7 +459,7 @@ public class SQLDatabaseMetaData
 	{
 		try
 		{
-			return getJDBCMetaData().supportsCatalogsInDataManipulation();
+			return privateGetJDBCMetaData().supportsCatalogsInDataManipulation();
 		}
 		catch (SQLException ex)
 		{
@@ -449,7 +483,7 @@ public class SQLDatabaseMetaData
 	{
 		try
 		{
-			return getJDBCMetaData().supportsCatalogsInProcedureCalls();
+			return privateGetJDBCMetaData().supportsCatalogsInProcedureCalls();
 		}
 		catch (SQLException ex)
 		{
@@ -470,7 +504,7 @@ public class SQLDatabaseMetaData
 	 */
 	public DatabaseMetaData getJDBCMetaData() throws SQLException
 	{
-		return _conn.getConnection().getMetaData();
+		return privateGetJDBCMetaData();
 	}
 
 	/**
@@ -494,17 +528,24 @@ public class SQLDatabaseMetaData
 				String schemaPattern, String procedureNamePattern)
 		throws SQLException
 	{
-		DatabaseMetaData md = getJDBCMetaData();
+		DatabaseMetaData md = privateGetJDBCMetaData();
 		ArrayList list = new ArrayList();
 		ResultSet rs = md.getProcedures(catalog, schemaPattern, procedureNamePattern);
-		final int[] cols = new int[] {1, 2, 3, 7, 8};
-		final ResultSetReader rdr = new ResultSetReader(rs, cols);
-		Object[] row = null;
-		while ((row = rdr.readRow()) != null)
+		try
 		{
-			final int type = ((Number)row[4]).intValue();
-			list.add(new ProcedureInfo((String)row[0], (String)row[1],
-									(String)row[2], (String)row[3], type, this));
+			final int[] cols = new int[] {1, 2, 3, 7, 8};
+			final ResultSetReader rdr = new ResultSetReader(rs, cols);
+			Object[] row = null;
+			while ((row = rdr.readRow()) != null)
+			{
+				final int type = ((Number)row[4]).intValue();
+				list.add(new ProcedureInfo((String)row[0], (String)row[1],
+										(String)row[2], (String)row[3], type, this));
+			}
+		}
+		finally
+		{
+			rs.close();
 		}
 		return (IProcedureInfo[])list.toArray(new IProcedureInfo[list.size()]);
 	}
@@ -519,18 +560,25 @@ public class SQLDatabaseMetaData
 	 */
 	public String[] getTableTypes() throws SQLException
 	{
-		final DatabaseMetaData md = getJDBCMetaData();
+		final DatabaseMetaData md = privateGetJDBCMetaData();
 
 		// Use a set rather than a list as some combinations of MS SQL and the
 		// JDBC/ODBC return multiple copies of each table type.
 		final Set tableTypes = new TreeSet();
 		final ResultSet rs = md.getTableTypes();
-		if (rs != null)
+		try
 		{
-			while (rs.next())
+			if (rs != null)
 			{
-				tableTypes.add(rs.getString(1).trim());
+				while (rs.next())
+				{
+					tableTypes.add(rs.getString(1).trim());
+				}
 			}
+		}
+		finally
+		{
+			rs.close();
 		}
 
 		final String dbProductName = getDatabaseProductName();
@@ -590,7 +638,7 @@ public class SQLDatabaseMetaData
 									String tableNamePattern, String[] types)
 		throws SQLException
 	{
-		final DatabaseMetaData md = getJDBCMetaData();
+		final DatabaseMetaData md = privateGetJDBCMetaData();
 		final String dbDriverName = getDriverName();
 		Set list = new TreeSet();
 
@@ -599,76 +647,87 @@ public class SQLDatabaseMetaData
 			schemaPattern = "dbo";
 		}
 
-		ResultSet tabResult = md.getTables(catalog, schemaPattern,
-											tableNamePattern, types);
-		ResultSet superTabResult = null;
 		Map nameMap = null;
+		ResultSet superTabResult = null;
+		ResultSet tabResult = md.getTables(catalog, schemaPattern, tableNamePattern, types);
 		try
 		{
-			//TODO: remove reflection once we only support JDK1.4
-			//superTabResult = md.getSuperTables(catalog, schemaPattern,
-			//									   tableNamePattern);
-			Class clazz = md.getClass();
-			Class[] p1 = new Class[] {String.class, String.class, String.class};
-			Method method = clazz.getMethod("getSuperTables", p1);
-			if (method != null)
+			try
 			{
-				Object[] p2 = new Object[] {catalog, schemaPattern, tableNamePattern};
-				try
+				//TODO: remove reflection once we only support JDK1.4
+				//superTabResult = md.getSuperTables(catalog, schemaPattern,
+				//									   tableNamePattern);
+				Class clazz = md.getClass();
+				Class[] p1 = new Class[] {String.class, String.class, String.class};
+				Method method = clazz.getMethod("getSuperTables", p1);
+				if (method != null)
 				{
-					superTabResult = (ResultSet)method.invoke(md, p2);
+					Object[] p2 = new Object[] {catalog, schemaPattern, tableNamePattern};
+					try
+					{
+						superTabResult = (ResultSet)method.invoke(md, p2);
+					}
+					catch (InvocationTargetException ignore)
+					{
+						// unsupported by this driver.
+					}
 				}
-				catch (InvocationTargetException ignore)
+				// create a mapping of names if we have supertable info, since
+				// we need to find the ITableInfo again for re-ordering.
+				if (superTabResult != null && superTabResult.next())
 				{
-					// unsupported by this driver.
+					nameMap = new HashMap();
 				}
 			}
-			// create a mapping of names if we have supertable info, since
-			// we need to find the ITableInfo again for re-ordering.
-			if (superTabResult != null && superTabResult.next())
+			catch (Throwable th)
 			{
-				nameMap = new HashMap();
+				s_log.debug("DBMS/Driver doesn't support getSupertables()", th);
 			}
-		}
-		catch (Throwable th)
-		{
-			s_log.debug("DBMS/Driver doesn't support getSupertables()", th);
-		}
+	
+			// store all plain table info we have.
+			while (tabResult.next())
+			{
+				ITableInfo tabInfo = new TableInfo(tabResult.getString(1),
+									tabResult.getString(2), tabResult.getString(3),
+									tabResult.getString(4), tabResult.getString(5),
+									this);
+				if (nameMap != null)
+				{
+					nameMap.put(tabInfo.getSimpleName(), tabInfo);
+				}
+				list.add(tabInfo);
+			}
 
-		// store all plain table info we have.
-		while (tabResult.next())
-		{
-			ITableInfo tabInfo = new TableInfo(tabResult.getString(1),
-								tabResult.getString(2), tabResult.getString(3),
-								tabResult.getString(4), tabResult.getString(5),
-								this);
+			// re-order nodes if the tables are stored hierachically
 			if (nameMap != null)
 			{
-				nameMap.put(tabInfo.getSimpleName(), tabInfo);
+				do
+				{
+					String tabName = superTabResult.getString(3);
+					TableInfo tabInfo = (TableInfo) nameMap.get(tabName);
+					if (tabInfo == null)
+						continue;
+					String superTabName = superTabResult.getString(4);
+					if (superTabName == null)
+						continue;
+					TableInfo superInfo = (TableInfo) nameMap.get(superTabName);
+					if (superInfo == null)
+						continue;
+					superInfo.addChild(tabInfo);
+					list.remove(tabInfo); // remove from toplevel.
+				}
+				while (superTabResult.next());
 			}
-			list.add(tabInfo);
+		}
+		finally
+		{
+			tabResult.close();
+			if (superTabResult != null)
+			{
+				superTabResult.close();
+			}
 		}
 
-		// re-order nodes if the tables are stored hierachically
-		if (nameMap != null)
-		{
-			do
-			{
-				String tabName = superTabResult.getString(3);
-				TableInfo tabInfo = (TableInfo) nameMap.get(tabName);
-				if (tabInfo == null)
-					continue;
-				String superTabName = superTabResult.getString(4);
-				if (superTabName == null)
-					continue;
-				TableInfo superInfo = (TableInfo) nameMap.get(superTabName);
-				if (superInfo == null)
-					continue;
-				superInfo.addChild(tabInfo);
-				list.remove(tabInfo); // remove from toplevel.
-			}
-			while (superTabResult.next());
-		}
 		return (ITableInfo[])list.toArray(new ITableInfo[list.size()]);
 	}
 
@@ -695,18 +754,26 @@ public class SQLDatabaseMetaData
 								String typeNamePattern, int[] types)
 		throws SQLException
 	{
-		DatabaseMetaData md = getJDBCMetaData();
+		DatabaseMetaData md = privateGetJDBCMetaData();
 		ArrayList list = new ArrayList();
 		ResultSet rs = md.getUDTs(catalog, schemaPattern, typeNamePattern, types);
-		final int[] cols = new int[] {1, 2, 3, 4, 5, 6};
-		final ResultSetReader rdr = new ResultSetReader(rs, cols);
-		Object[] row = null;
-		while ((row = rdr.readRow()) != null)
+		try
 		{
-			list.add(new UDTInfo((String)row[0], (String)row[1], (String)row[2],
-								(String)row[3], (String)row[4], (String)row[5],
-								this));
+			final int[] cols = new int[] {1, 2, 3, 4, 5, 6};
+			final ResultSetReader rdr = new ResultSetReader(rs, cols);
+			Object[] row = null;
+			while ((row = rdr.readRow()) != null)
+			{
+				list.add(new UDTInfo((String)row[0], (String)row[1], (String)row[2],
+									(String)row[3], (String)row[4], (String)row[5],
+									this));
+			}
 		}
+		finally
+		{
+			rs.close();
+		}
+
 		return (IUDTInfo[])list.toArray(new IUDTInfo[list.size()]);
 	}
 
@@ -717,7 +784,7 @@ public class SQLDatabaseMetaData
 	 */
 	public String[] getNumericFunctions() throws SQLException
 	{
-		return makeArray(getJDBCMetaData().getNumericFunctions());
+		return makeArray(privateGetJDBCMetaData().getNumericFunctions());
 	}
 
 	/**
@@ -727,7 +794,7 @@ public class SQLDatabaseMetaData
 	 */
 	public String[] getStringFunctions() throws SQLException
 	{
-		return makeArray(getJDBCMetaData().getStringFunctions());
+		return makeArray(privateGetJDBCMetaData().getStringFunctions());
 	}
 
 	/**
@@ -737,7 +804,7 @@ public class SQLDatabaseMetaData
 	 */
 	public String[] getSystemFunctions() throws SQLException
 	{
-		return makeArray(getJDBCMetaData().getSystemFunctions());
+		return makeArray(privateGetJDBCMetaData().getSystemFunctions());
 	}
 
 	/**
@@ -747,7 +814,7 @@ public class SQLDatabaseMetaData
 	 */
 	public String[] getTimeDateFunctions() throws SQLException
 	{
-		return makeArray(getJDBCMetaData().getTimeDateFunctions());
+		return makeArray(privateGetJDBCMetaData().getTimeDateFunctions());
 	}
 
 	/**
@@ -757,14 +824,14 @@ public class SQLDatabaseMetaData
 	 */
 	public String[] getSQLKeywords() throws SQLException
 	{
-		return makeArray(getJDBCMetaData().getSQLKeywords());
+		return makeArray(privateGetJDBCMetaData().getSQLKeywords());
 	}
 
 	// TODO: Write a version that returns an array of RowIdentifier objects.
 	public ResultSet getBestRowIdentifier(ITableInfo ti)
 		throws SQLException
 	{
-		return getJDBCMetaData().getBestRowIdentifier(
+		return privateGetJDBCMetaData().getBestRowIdentifier(
 			ti.getCatalogName(), ti.getSchemaName(),
 			ti.getSimpleName(), DatabaseMetaData.bestRowTransaction,
 			true);
@@ -776,69 +843,77 @@ public class SQLDatabaseMetaData
 	{
 		// MM-MYSQL driver doesnt support null for column name.
 		final String dbProdName = getDatabaseProductName();
-		final String columns = dbProdName.equalsIgnoreCase("mysql") ? "%" : null;
-		return getJDBCMetaData().getColumnPrivileges(ti.getCatalogName(),
+		final String columns = dbProdName.equalsIgnoreCase(IDBMSProductNames.MYSQL) ? "%" : null;
+		return privateGetJDBCMetaData().getColumnPrivileges(ti.getCatalogName(),
 													ti.getSchemaName(),
 													ti.getSimpleName(),
 													columns);
 	}
 
 	// TODO: Write a version that returns an array of data objects.
-	public ResultSet getExportedKeys(ITableInfo ti)
-		throws SQLException
-	{
-		return getJDBCMetaData().getExportedKeys(
-			ti.getCatalogName(), ti.getSchemaName(),
-			ti.getSimpleName());
-	}
-
-	public ResultSet getImportedKeys(ITableInfo ti)
-		throws SQLException
-	{
-		return getJDBCMetaData().getImportedKeys(
-			ti.getCatalogName(), ti.getSchemaName(),
-			ti.getSimpleName());
-	}
+//	public ResultSet getExportedKeys(ITableInfo ti)
+//		throws SQLException
+//	{
+//		return privateGetJDBCMetaData().getExportedKeys(
+//			ti.getCatalogName(), ti.getSchemaName(),
+//			ti.getSimpleName());
+//	}
+//
+//	public ResultSet getImportedKeys(ITableInfo ti)
+//		throws SQLException
+//	{
+//		return privateGetJDBCMetaData().getImportedKeys(
+//			ti.getCatalogName(), ti.getSchemaName(),
+//			ti.getSimpleName());
+//	}
 
 	public ForeignKeyInfo[] getImportedKeysInfo(ITableInfo ti)
 		throws SQLException
 	{
-		return getForeignKeyInfo(getJDBCMetaData().getImportedKeys(ti.getCatalogName(),
+		return getForeignKeyInfo(privateGetJDBCMetaData().getImportedKeys(ti.getCatalogName(),
 								ti.getSchemaName(), ti.getSimpleName()));
 	}
 
 	public ForeignKeyInfo[] getExportedKeysInfo(ITableInfo ti)
 		throws SQLException
 	{
-		return getForeignKeyInfo(getJDBCMetaData().getExportedKeys(ti.getCatalogName(),
+		return getForeignKeyInfo(privateGetJDBCMetaData().getExportedKeys(ti.getCatalogName(),
 								ti.getSchemaName(), ti.getSimpleName()));
 	}
 
 	public ForeignKeyInfo[] getForeignKeyInfo(ResultSet rs)
 		throws SQLException
 	{
-		final ResultSetColumnReader rdr = new ResultSetColumnReader(rs);
 		final Map keys = new HashMap();
 		final Map columns = new HashMap();
-		while (rdr.next())
-		{
-			final ForeignKeyInfo fki = new ForeignKeyInfo(rdr.getString(1),
-						rdr.getString(2), rdr.getString(3), rdr.getString(5),
-						rdr.getString(6), rdr.getString(7),
-						rdr.getLong(10).intValue(), rdr.getLong(11).intValue(),
-						rdr.getString(12), rdr.getString(13),
-						rdr.getLong(14).intValue(), null, this);
-			final String key = createForeignKeyInfoKey(fki);
-			if (!keys.containsKey(key))
-			{
-				keys.put(key, fki);
-				columns.put(key, new ArrayList());
-			}
 
-			ForeignKeyColumnInfo fkiCol = new ForeignKeyColumnInfo(rdr.getString(8),
-													rdr.getString(8),
-													rdr.getLong(9).intValue());
-			((List)columns.get(key)).add(fkiCol);
+		try
+		{
+			final ResultSetColumnReader rdr = new ResultSetColumnReader(rs);
+			while (rdr.next())
+			{
+				final ForeignKeyInfo fki = new ForeignKeyInfo(rdr.getString(1),
+							rdr.getString(2), rdr.getString(3), rdr.getString(5),
+							rdr.getString(6), rdr.getString(7),
+							rdr.getLong(10).intValue(), rdr.getLong(11).intValue(),
+							rdr.getString(12), rdr.getString(13),
+							rdr.getLong(14).intValue(), null, this);
+				final String key = createForeignKeyInfoKey(fki);
+				if (!keys.containsKey(key))
+				{
+					keys.put(key, fki);
+					columns.put(key, new ArrayList());
+				}
+	
+				ForeignKeyColumnInfo fkiCol = new ForeignKeyColumnInfo(rdr.getString(8),
+														rdr.getString(8),
+														rdr.getLong(9).intValue());
+				((List)columns.get(key)).add(fkiCol);
+			}
+		}
+		finally
+		{
+			rs.close();
 		}
 
 		final ForeignKeyInfo[] results = new ForeignKeyInfo[keys.size()];
@@ -875,7 +950,7 @@ public class SQLDatabaseMetaData
 	public ResultSet getIndexInfo(ITableInfo ti)
 		throws SQLException
 	{
-		return getJDBCMetaData().getIndexInfo(
+		return privateGetJDBCMetaData().getIndexInfo(
 			ti.getCatalogName(), ti.getSchemaName(),
 			ti.getSimpleName(), false, true);
 	}
@@ -884,7 +959,7 @@ public class SQLDatabaseMetaData
 	public ResultSet getPrimaryKeys(ITableInfo ti)
 		throws SQLException
 	{
-		return getJDBCMetaData().getPrimaryKeys(
+		return privateGetJDBCMetaData().getPrimaryKeys(
 			ti.getCatalogName(), ti.getSchemaName(),
 			ti.getSimpleName());
 	}
@@ -893,7 +968,7 @@ public class SQLDatabaseMetaData
 	public ResultSet getProcedureColumns(IProcedureInfo ti)
 		throws SQLException
 	{
-		return getJDBCMetaData().getProcedureColumns(ti.getCatalogName(),
+		return privateGetJDBCMetaData().getProcedureColumns(ti.getCatalogName(),
 													ti.getSchemaName(),
 													ti.getSimpleName(),
 													"%");
@@ -903,7 +978,7 @@ public class SQLDatabaseMetaData
 	public ResultSet getTablePrivileges(ITableInfo ti)
 		throws SQLException
 	{
-		return getJDBCMetaData().getTablePrivileges(ti.getCatalogName(),
+		return privateGetJDBCMetaData().getTablePrivileges(ti.getCatalogName(),
 													ti.getSchemaName(),
 													ti.getSimpleName());
 	}
@@ -912,14 +987,14 @@ public class SQLDatabaseMetaData
 	// TODO: Write a version that returns an array of data objects.
 	public ResultSet getTypeInfo() throws SQLException
 	{
-		return getJDBCMetaData().getTypeInfo();
+		return privateGetJDBCMetaData().getTypeInfo();
 	}
 
 	// TODO: Write a version that returns an array of data objects.
 	public ResultSet getVersionColumns(ITableInfo ti)
 		throws SQLException
 	{
-		return getJDBCMetaData().getVersionColumns(ti.getCatalogName(),
+		return privateGetJDBCMetaData().getVersionColumns(ti.getCatalogName(),
 												ti.getSchemaName(),
 												ti.getSimpleName());
 	}
@@ -927,7 +1002,7 @@ public class SQLDatabaseMetaData
 	public ResultSet getColumns(ITableInfo ti)
 		throws SQLException
 	{
-		return getJDBCMetaData().getColumns(ti.getCatalogName(),
+		return privateGetJDBCMetaData().getColumns(ti.getCatalogName(),
 											ti.getSchemaName(),
 											ti.getSimpleName(), "%");
 	}
@@ -935,25 +1010,49 @@ public class SQLDatabaseMetaData
 	public TableColumnInfo[] getColumnInfo(ITableInfo ti)
 		throws SQLException
 	{
-		final ResultSetColumnReader rdr = new ResultSetColumnReader(getColumns(ti));
 		final Map columns = new TreeMap();
-		while (rdr.next())
+		final ResultSet rs = getColumns(ti);
+		try
 		{
-			final TableColumnInfo tci = new TableColumnInfo(rdr.getString(1),
-						rdr.getString(2), rdr.getString(3), rdr.getString(4),
-						rdr.getLong(5).intValue(), rdr.getString(6),
-						rdr.getLong(7).intValue(), rdr.getLong(9).intValue(),
-						rdr.getLong(10).intValue(), rdr.getLong(11).intValue(),
-						rdr.getString(12), rdr.getString(13),
-						rdr.getLong(16).intValue(), rdr.getLong(17).intValue(),
-						rdr.getString(18), this);
-			columns.put(new Integer(tci.getOrdinalPosition()), tci);
+			final ResultSetColumnReader rdr = new ResultSetColumnReader(rs);
+			while (rdr.next())
+			{
+				final TableColumnInfo tci = new TableColumnInfo(rdr.getString(1),
+							rdr.getString(2), rdr.getString(3), rdr.getString(4),
+							rdr.getLong(5).intValue(), rdr.getString(6),
+							rdr.getLong(7).intValue(), rdr.getLong(9).intValue(),
+							rdr.getLong(10).intValue(), rdr.getLong(11).intValue(),
+							rdr.getString(12), rdr.getString(13),
+							rdr.getLong(16).intValue(), rdr.getLong(17).intValue(),
+							rdr.getString(18), this);
+				columns.put(new Integer(tci.getOrdinalPosition()), tci);
+			}
+		}
+		finally
+		{
+			rs.close();
 		}
 
 		return (TableColumnInfo[])columns.values().toArray(
 									new TableColumnInfo[columns.size()]);
 	}
 
+	/**
+	 * Clear cache of commonly accessed metadata properties.
+	 */
+	public synchronized void clearCache()
+	{
+		_cache.clear();
+	}
+
+	/**
+	 * Make a String array of the passed string. Commas separate the elements
+	 * in the input string. The array is sorted.
+	 * 
+	 * @param	data	Data to be split into the array.
+	 * 
+	 * @return	data as an array.
+	 */
 	private static String[] makeArray(String data)
 	{
 		List list = new ArrayList();
@@ -967,4 +1066,15 @@ public class SQLDatabaseMetaData
 		return (String[])list.toArray(new String[list.size()]);
 	}
 
+	/**
+	 * Return the <TT>DatabaseMetaData</TT> object for this connection.
+	 * 
+	 * @return	The <TT>DatabaseMetaData</TT> object for this connection.
+	 * 
+	 * @throws	SQLException	Thrown if an SQL error occurs.
+	 */
+	private DatabaseMetaData privateGetJDBCMetaData() throws SQLException
+	{
+		return _conn.getConnection().getMetaData();
+	}
 }

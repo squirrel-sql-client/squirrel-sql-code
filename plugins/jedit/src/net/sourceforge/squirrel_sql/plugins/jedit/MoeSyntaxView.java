@@ -44,7 +44,7 @@ import org.gjt.sp.jedit.syntax.TokenMarker;
  * @author Bruce Quig
  * @author Michael Kolling
  *
- * @version $Id: MoeSyntaxView.java,v 1.2 2003-03-04 11:46:02 colbell Exp $
+ * @version $Id: MoeSyntaxView.java,v 1.3 2003-03-05 10:27:55 colbell Exp $
  */
 public class MoeSyntaxView extends PlainView
 {

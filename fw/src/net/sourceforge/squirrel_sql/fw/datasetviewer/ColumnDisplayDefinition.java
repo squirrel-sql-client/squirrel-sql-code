@@ -106,7 +106,6 @@ public class ColumnDisplayDefinition
 		{
 			case Types.NULL:	// should never happen
 				return "java.lang.Object";
-
 					
 			// TODO: When JDK1.4 is the earliest JDK supported
 			// by Squirrel then remove the hardcoding of the

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,12 +17,13 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.ta
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.JavabeanArrayDataSet;
+import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 /**
  * This tab shows the columns in the currently selected table.
@@ -69,10 +70,9 @@ public class ExportedKeysTab extends BaseTableTab
 		final SQLConnection conn = getSession().getSQLConnection();
 		try
 		{
-			final ResultSet rs = conn.getSQLMetaData().getExportedKeys(getTableInfo());
-			final ResultSetDataSet rsds = new ResultSetDataSet();
-			rsds.setResultSet(rs, getSession().getProperties().getLargeResultSetObjectInfo());
-			return rsds;
+			final ITableInfo ti = getTableInfo();
+			final ForeignKeyInfo[] fki = conn.getSQLMetaData().getExportedKeysInfo(ti);
+			return new JavabeanArrayDataSet(fki);
 		}
 		catch (SQLException ex)
 		{

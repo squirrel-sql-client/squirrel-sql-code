@@ -40,7 +40,7 @@ import javax.swing.text.Utilities;
  * should be used instead.
  *
  * @author Slava Pestov
- * @version $Id: SyntaxView.java,v 1.3 2003-03-04 11:46:02 colbell Exp $
+ * @version $Id: SyntaxView.java,v 1.4 2003-03-05 10:27:54 colbell Exp $
  */
 public class SyntaxView extends PlainView
 {

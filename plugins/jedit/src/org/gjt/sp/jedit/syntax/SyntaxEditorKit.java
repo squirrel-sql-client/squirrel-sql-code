@@ -36,7 +36,7 @@ import javax.swing.text.ViewFactory;
  * jEdit classes.
  *
  * @author Slava Pestov
- * @version $Id: SyntaxEditorKit.java,v 1.2 2003-03-04 11:46:02 colbell Exp $
+ * @version $Id: SyntaxEditorKit.java,v 1.3 2003-03-05 10:27:54 colbell Exp $
  *
  * @see org.gjt.sp.jedit.syntax.SyntaxView
  */
