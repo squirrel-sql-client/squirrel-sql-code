@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.properties;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -169,8 +169,8 @@ public class GeneralSessionPropertiesPanel
 		private void createUserInterface()
 		{
 			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.anchor = gbc.WEST;
-			gbc.fill = gbc.HORIZONTAL;
+			gbc.anchor = GridBagConstraints.WEST;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
 
 			gbc.gridx = 0;
@@ -190,8 +190,8 @@ public class GeneralSessionPropertiesPanel
 			pnl.setBorder(BorderFactory.createTitledBorder("General"));
 
 			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.fill = gbc.HORIZONTAL;
-			gbc.anchor = gbc.WEST;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
+			gbc.anchor = GridBagConstraints.WEST;
 			gbc.insets = new Insets(4, 4, 4, 4);
 			gbc.weightx = 1.0;
 
@@ -208,7 +208,7 @@ public class GeneralSessionPropertiesPanel
 			pnl.setBorder(BorderFactory.createTitledBorder("Output"));
 
 			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.fill = gbc.HORIZONTAL;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
 
 			gbc.gridx = 0;
@@ -234,7 +234,7 @@ public class GeneralSessionPropertiesPanel
 			pnl.setBorder(BorderFactory.createTitledBorder("SQL Entry Area"));
 			pnl.setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.fill = gbc.HORIZONTAL;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
 
 			_fontBtn.addActionListener(new FontButtonListener());
@@ -244,7 +244,6 @@ public class GeneralSessionPropertiesPanel
 			pnl.add(_fontBtn, gbc);
 
 			++gbc.gridx;
-			gbc.fill = gbc.HORIZONTAL;
 			gbc.weightx = 1.0;
 			pnl.add(_fontLbl, gbc);
 

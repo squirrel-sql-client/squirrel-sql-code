@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -107,9 +107,9 @@ public class MainFrameStatusBar extends JPanel
 
 		GridBagConstraints gbc = new GridBagConstraints();
 
-		gbc.anchor = gbc.WEST;
+		gbc.anchor = GridBagConstraints.WEST;
 		gbc.weightx = 1.0;
-		gbc.fill = gbc.HORIZONTAL;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.gridy = 0;
 
 		_textLbl.setBorder(createComponentBorder());
@@ -130,7 +130,7 @@ public class MainFrameStatusBar extends JPanel
 		});
 		_mp.setBorder(createComponentBorder());
 		gbc.weightx = 0.0;
-		gbc.anchor = gbc.CENTER;
+		gbc.anchor = GridBagConstraints.CENTER;
 		++gbc.gridx;
 		add(_mp, gbc);
 

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.preferences;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -295,7 +295,7 @@ public class GlobalPreferencesSheet extends BaseSheet
 		contentPane.setLayout(new GridBagLayout());
 
 		gbc.gridwidth = 1;
-		gbc.fill = gbc.BOTH;
+		gbc.fill = GridBagConstraints.BOTH;
 
 		gbc.gridx = 0;
 		gbc.gridy = 0;

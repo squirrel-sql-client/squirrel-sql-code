@@ -371,7 +371,7 @@ public class AboutBoxDialog extends JDialog
 			final SquirrelResources rsrc = app.getResources();
 			setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 			setLayout(new BorderLayout());
-			setBackground(new Color(rsrc.S_SPLASH_IMAGE_BACKGROUND));
+			setBackground(new Color(SquirrelResources.S_SPLASH_IMAGE_BACKGROUND));
 			Icon icon = rsrc.getIcon(SquirrelResources.IImageNames.SPLASH_SCREEN);
 			add(BorderLayout.CENTER, new JLabel(icon));
 			JTextArea ta = new JTextArea();

@@ -393,7 +393,7 @@ public class ResultTab extends JPanel implements IHasIdentifier
 			++gbc.gridy;
 			add(new JLabel("Elapsed Time (seconds):", SwingConstants.RIGHT), gbc);
 
-			gbc.gridwidth = gbc.REMAINDER;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			gbc.weightx = 1;
 
 			gbc.gridx = 1;

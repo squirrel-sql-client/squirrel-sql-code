@@ -183,7 +183,7 @@ class ProxyPreferencesPanel implements IGlobalPreferencesPanel
 		private void createUserInterface()
 		{
 			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.fill = gbc.HORIZONTAL;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
 			gbc.gridx = 0;
 			gbc.gridy = 0;
@@ -204,13 +204,13 @@ class ProxyPreferencesPanel implements IGlobalPreferencesPanel
 			pnl.setBorder(BorderFactory.createTitledBorder("HTTP Proxy"));
 
 			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.anchor = gbc.WEST;
+			gbc.anchor = GridBagConstraints.WEST;
 			gbc.insets = new Insets(4, 4, 4, 4);
 			gbc.gridx = 0;
 			gbc.gridy = 0;
 			pnl.add(_httpUseProxyChk, gbc);
 
-			gbc.fill = gbc.HORIZONTAL;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
 			++gbc.gridx;
 			pnl.add(new JLabel("Server:", JLabel.RIGHT), gbc);
 
@@ -228,7 +228,7 @@ class ProxyPreferencesPanel implements IGlobalPreferencesPanel
 
 			++gbc.gridy;
 			--gbc.gridx;
-			gbc.gridwidth = gbc.REMAINDER;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			pnl.add(new MultipleLineLabel(i18n.NOTES), gbc);
 			gbc.gridwidth = 1;
 			++gbc.gridx;
@@ -259,13 +259,13 @@ class ProxyPreferencesPanel implements IGlobalPreferencesPanel
 			pnl.setBorder(BorderFactory.createTitledBorder("SOCKS Proxy"));
 
 			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.anchor = gbc.WEST;
+			gbc.anchor = GridBagConstraints.WEST;
 			gbc.insets = new Insets(4, 4, 4, 4);
 			gbc.gridx = 0;
 			gbc.gridy = 0;
 			pnl.add(_socksUseProxyChk, gbc);
 
-			gbc.fill = gbc.HORIZONTAL;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
 			++gbc.gridx;
 			pnl.add(new JLabel("Server:", JLabel.RIGHT), gbc);
 

@@ -146,8 +146,8 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 			_loginTimeout.setColumns(4);
 
 			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.anchor = gbc.WEST;
-			gbc.fill = gbc.NONE;
+			gbc.anchor = GridBagConstraints.WEST;
+			gbc.fill = GridBagConstraints.NONE;
 			gbc.insets = new Insets(4, 4, 4, 4);
 			gbc.weightx = 0;
 
@@ -161,10 +161,10 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 			++gbc.gridx;
 			add(new JLabel("Zero means unlimited"), gbc);
 
-			gbc.fill = gbc.HORIZONTAL;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.gridx = 0;
 			++gbc.gridy;
-			gbc.gridwidth = gbc.REMAINDER;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			add(_debugJdbc, gbc);
 
 			gbc.gridx = 0;
@@ -174,7 +174,7 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 
 			++gbc.gridx;
 			gbc.weightx = 1;
-			gbc.gridwidth = gbc.REMAINDER;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			add(_jdbcDebugLogFileNameLbl, gbc);
 		}
 

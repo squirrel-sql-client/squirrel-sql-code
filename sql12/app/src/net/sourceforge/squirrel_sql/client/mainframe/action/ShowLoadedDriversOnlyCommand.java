@@ -65,7 +65,9 @@ public class ShowLoadedDriversOnlyCommand implements ICommand
 	 */
 	public ShowLoadedDriversOnlyCommand(IApplication app, boolean show)
 	{
-		this(app, Boolean.valueOf(show));
+// TODO: Once 1.4 is the minimum version of Java supported...
+//		this(app, Boolean.valueOf(show));
+		this(app, new Boolean(show));
 	}
 
 	/**

@@ -43,13 +43,19 @@ public class OkClosePanel extends JPanel
 		String OK = "OK";
 	}
 
-	private JButton _okBtn = new JButton(i18n.OK);
+	private JButton _okBtn;
 	private JButton _closeBtn = new JButton(i18n.CLOSE);
 
 	public OkClosePanel()
 	{
 		super();
-		createUserInterface();
+		createUserInterface(i18n.OK);
+	}
+
+	public OkClosePanel(String okButtonText)
+	{
+		super();
+		createUserInterface(okButtonText != null ? okButtonText : i18n.OK);
 	}
 
 	/**
@@ -155,8 +161,9 @@ public class OkClosePanel extends JPanel
 		}
 	}
 
-	private void createUserInterface()
+	private void createUserInterface(String okButtonText)
 	{
+		_okBtn = new JButton(okButtonText);
 		add(_okBtn);
 		add(_closeBtn);
 		_okBtn.addActionListener(new ActionListener()

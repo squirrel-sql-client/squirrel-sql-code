@@ -6,6 +6,7 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Driver properties can now be specified on the alias.
 - Wordwrap and popup menu in the Column Data popup window.
 - Show chained SQL exceptions in error dialog.
 - Add "Copy" menu options to the popup menu in the object tree.
