@@ -253,7 +253,7 @@ public class ResultSetDataSet implements IDataSet
 			// we will allow the user to enter nulls and any problems will be caught
 			// when they try to save the data to the DB
 			boolean isNullable = true;
-			if (md.isNullable(idx) == md.columnNoNulls)
+			if (md.isNullable(idx) == ResultSetMetaData.columnNoNulls)
 				isNullable = false;
 			
 			int precis;
