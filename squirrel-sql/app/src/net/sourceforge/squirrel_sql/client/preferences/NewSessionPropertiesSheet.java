@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.preferences;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -40,19 +40,22 @@ import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.session.properties.GeneralSessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-import net.sourceforge.squirrel_sql.client.session.properties.SQLPropertiesPanel;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionSQLPropertiesPanel;
 
-public class NewSessionPropertiesSheet extends BaseSheet {
+public class NewSessionPropertiesSheet extends BaseSheet
+{
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
-	private interface i18n {
+	private interface NewSessionPropertiesSheetI18n
+	{
 		String TITLE = "New Session Properties";
 	}
 
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(NewSessionPropertiesSheet.class);
+	private static ILogger s_log =
+		LoggerController.createLogger(NewSessionPropertiesSheet.class);
 
 	/** Singleton instance of this class. */
 	private static NewSessionPropertiesSheet s_instance;
@@ -69,8 +72,8 @@ public class NewSessionPropertiesSheet extends BaseSheet {
 	private SessionProperties _sessionProperties;
 
 	private NewSessionPropertiesSheet(IApplication app)
-			throws IllegalArgumentException {
-		super(i18n.TITLE);
+	{
+		super(NewSessionPropertiesSheetI18n.TITLE);
 		_app = app;
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		createUserInterface();
@@ -85,28 +88,39 @@ public class NewSessionPropertiesSheet extends BaseSheet {
 	 * 			Thrown if a <TT>null</TT> <TT>IApplication</TT> object passed.
 	 */
 	public static synchronized void showSheet(IApplication app)
-			throws IllegalArgumentException {
-		if (s_instance == null) {
+	{
+		if (s_instance == null)
+		{
 			s_instance = new NewSessionPropertiesSheet(app);
 			app.getMainFrame().addInternalFrame(s_instance, true, null);
 		}
 		s_instance.setVisible(true);
 	}
 
-	public void setVisible(boolean show) {
-		if (show) {
-			if (!isVisible()) {
+	public void setVisible(boolean show)
+	{
+		if (show)
+		{
+			if (!isVisible())
+			{
 				final boolean isDebug = s_log.isDebugEnabled();
 				long start = 0;
-				for (Iterator it = _panels.iterator(); it.hasNext();) {
-					INewSessionPropertiesPanel pnl = (INewSessionPropertiesPanel)it.next();
-					if (isDebug) {
+				for (Iterator it = _panels.iterator(); it.hasNext();)
+				{
+					INewSessionPropertiesPanel pnl = (INewSessionPropertiesPanel) it.next();
+					if (isDebug)
+					{
 						start = System.currentTimeMillis();
 					}
 					pnl.initialize(_app);
-					if (isDebug) {
-						s_log.debug("Panel " + pnl.getTitle() + " initialized in "
-									+ (System.currentTimeMillis() - start) + "ms");
+					if (isDebug)
+					{
+						s_log.debug(
+							"Panel "
+								+ pnl.getTitle()
+								+ " initialized in "
+								+ (System.currentTimeMillis() - start)
+								+ "ms");
 					}
 				}
 				pack();
@@ -123,37 +137,48 @@ public class NewSessionPropertiesSheet extends BaseSheet {
 	 *
 	 * @param	title	New title text.
 	 */
-	public void setTitle(String title) {
+	public void setTitle(String title)
+	{
 		super.setTitle(title);
 		_titleLbl.setText(title);
 	}
 
-	private void performClose() {
+	private void performClose()
+	{
 		setVisible(false);
 	}
 
 	/**
 	 * OK button pressed so save changes.
 	 */
-	private void performOk() {
+	private void performOk()
+	{
 		final boolean isDebug = s_log.isDebugEnabled();
 		long start = 0;
-		for (Iterator it = _panels.iterator(); it.hasNext();) {
-			if (isDebug) {
+		for (Iterator it = _panels.iterator(); it.hasNext();)
+		{
+			if (isDebug)
+			{
 				start = System.currentTimeMillis();
 			}
-			INewSessionPropertiesPanel pnl = (INewSessionPropertiesPanel)it.next();
+			INewSessionPropertiesPanel pnl = (INewSessionPropertiesPanel) it.next();
 			pnl.applyChanges();
-			if (isDebug) {
-				s_log.debug("Panel " + pnl.getTitle() + " applied changes in "
-							+ (System.currentTimeMillis() - start) + "ms");
+			if (isDebug)
+			{
+				s_log.debug(
+					"Panel "
+						+ pnl.getTitle()
+						+ " applied changes in "
+						+ (System.currentTimeMillis() - start)
+						+ "ms");
 			}
 		}
 
 		setVisible(false);
 	}
 
-	private void createUserInterface() {
+	private void createUserInterface()
+	{
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 
 		// This is a tool window.
@@ -161,16 +186,21 @@ public class NewSessionPropertiesSheet extends BaseSheet {
 
 		// Add panels for core Squirrel functionality.
 		_panels.add(new GeneralSessionPropertiesPanel());
-		_panels.add(new SQLPropertiesPanel(_app));
+		_panels.add(new SessionSQLPropertiesPanel(_app));
 
 		// Go thru all loaded plugins asking for panels.
 		PluginInfo[] plugins = _app.getPluginManager().getPluginInformation();
-		for (int plugIdx = 0; plugIdx < plugins.length; ++plugIdx) {
+		for (int plugIdx = 0; plugIdx < plugins.length; ++plugIdx)
+		{
 			PluginInfo pi = plugins[plugIdx];
-			if (pi.isLoaded()) {
-				INewSessionPropertiesPanel[] pnls = pi.getPlugin().getNewSessionPropertiesPanels();
-				if (pnls != null && pnls.length > 0) {
-					for (int pnlIdx = 0; pnlIdx < pnls.length; ++pnlIdx) {
+			if (pi.isLoaded())
+			{
+				INewSessionPropertiesPanel[] pnls =
+					pi.getPlugin().getNewSessionPropertiesPanels();
+				if (pnls != null && pnls.length > 0)
+				{
+					for (int pnlIdx = 0; pnlIdx < pnls.length; ++pnlIdx)
+					{
 						_panels.add(pnls[pnlIdx]);
 					}
 				}
@@ -178,9 +208,11 @@ public class NewSessionPropertiesSheet extends BaseSheet {
 		}
 
 		// Add all panels to the tabbed pane.
-		SquirrelTabbedPane tabPane = new SquirrelTabbedPane(_app.getSquirrelPreferences());
-		for (Iterator it = _panels.iterator(); it.hasNext();) {
-			INewSessionPropertiesPanel pnl = (INewSessionPropertiesPanel)it.next();
+		SquirrelTabbedPane tabPane =
+			new SquirrelTabbedPane(_app.getSquirrelPreferences());
+		for (Iterator it = _panels.iterator(); it.hasNext();)
+		{
+			INewSessionPropertiesPanel pnl = (INewSessionPropertiesPanel) it.next();
 			String title = pnl.getTitle();
 			String hint = pnl.getHint();
 			tabPane.addTab(title, null, pnl.getPanelComponent(), hint);
@@ -203,18 +235,23 @@ public class NewSessionPropertiesSheet extends BaseSheet {
 		contentPane.add(createButtonsPanel(), gbc);
 	}
 
-	private JPanel createButtonsPanel() {
+	private JPanel createButtonsPanel()
+	{
 		JPanel pnl = new JPanel();
 
 		JButton okBtn = new JButton("OK");
-		okBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
+		okBtn.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent evt)
+			{
 				performOk();
 			}
 		});
 		JButton closeBtn = new JButton("Close");
-		closeBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
+		closeBtn.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent evt)
+			{
 				performClose();
 			}
 		});
@@ -222,7 +259,7 @@ public class NewSessionPropertiesSheet extends BaseSheet {
 		pnl.add(okBtn);
 		pnl.add(closeBtn);
 
-		GUIUtils.setJButtonSizesTheSame(new JButton[] {okBtn, closeBtn});
+		GUIUtils.setJButtonSizesTheSame(new JButton[] { okBtn, closeBtn });
 		getRootPane().setDefaultButton(okBtn);
 
 		return pnl;

@@ -39,9 +39,11 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
  * This preferences panel allows maintenance of SQL preferences.
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SQLPreferencesPanel implements IGlobalPreferencesPanel {
+public class SQLPreferencesPanel implements IGlobalPreferencesPanel
+{
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(SQLPreferencesPanel.class);
+	private static ILogger s_log =
+		LoggerController.createLogger(SQLPreferencesPanel.class);
 
 	/** Panel to be displayed in preferences dialog. */
 	private SQLPrefsPanel _myPanel;
@@ -52,7 +54,8 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel {
 	/**
 	 * Default ctor.
 	 */
-	public SQLPreferencesPanel() {
+	public SQLPreferencesPanel()
+	{
 		super();
 	}
 
@@ -64,41 +67,51 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel {
 	 * @throws	IllegalArgumentException
 	 * 			if <TT>null</TT> <TT>IApplication</TT> passed.
 	 */
-	public void initialize(IApplication app) {
-		if (app == null) {
+	public void initialize(IApplication app)
+	{
+		if (app == null)
+		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
 
 		_app = app;
 
-		((SQLPrefsPanel)getPanelComponent()).loadData(_app, _app.getSquirrelPreferences());
+		SQLPrefsPanel pnl = (SQLPrefsPanel)getPanelComponent();
+		pnl.loadData(_app, _app.getSquirrelPreferences());
 	}
 
-	public synchronized Component getPanelComponent() {
-		if (_myPanel == null) {
+	public synchronized Component getPanelComponent()
+	{
+		if (_myPanel == null)
+		{
 			_myPanel = new SQLPrefsPanel();
 		}
 		return _myPanel;
 	}
 
-	public void applyChanges() {
+	public void applyChanges()
+	{
 		_myPanel.applyChanges(_app.getSquirrelPreferences());
 	}
 
-	public String getTitle() {
-		return SQLPrefsPanel.i18n.TAB_TITLE;
+	public String getTitle()
+	{
+		return SQLPrefsPanel.SQLPrefsPanelI18n.TAB_TITLE;
 	}
 
-	public String getHint() {
-		return SQLPrefsPanel.i18n.TAB_HINT;
+	public String getHint()
+	{
+		return SQLPrefsPanel.SQLPrefsPanelI18n.TAB_HINT;
 	}
 
-	private static final class SQLPrefsPanel extends JPanel {
+	private static final class SQLPrefsPanel extends JPanel
+	{
 		/**
 		 * This interface defines locale specific strings. This should be
 		 * replaced with a property file.
 		 */
-		interface i18n {
+		interface SQLPrefsPanelI18n
+		{
 			String DEBUG_JDBC = "JDBC Debug (can slow application)";
 			String LOGIN_TIMEOUT = "Login Timeout (Seconds):";
 			String TAB_HINT = "SQL";
@@ -106,27 +119,31 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel {
 		}
 
 		private IntegerField _loginTimeout = new IntegerField();
-		private JCheckBox _debugJdbc = new JCheckBox(i18n.DEBUG_JDBC);
-		private JLabel _jdbcDebugLogFileNameLbl = new OutputLabel(" ");// Must have at least 1 blank otherwise width gets set to zero.
+		private JCheckBox _debugJdbc = new JCheckBox(SQLPrefsPanelI18n.DEBUG_JDBC);
+		private JLabel _jdbcDebugLogFileNameLbl = new OutputLabel(" ");
 
-		SQLPrefsPanel() {
+		SQLPrefsPanel()
+		{
 			super(new GridBagLayout());
 			createUserInterface();
 		}
 
-		void loadData(IApplication app, SquirrelPreferences prefs) {
+		void loadData(IApplication app, SquirrelPreferences prefs)
+		{
 			final ApplicationFiles appFiles = new ApplicationFiles();
 			_loginTimeout.setInt(prefs.getLoginTimeout());
 			_debugJdbc.setSelected(prefs.getDebugJdbc());
 			_jdbcDebugLogFileNameLbl.setText(appFiles.getJDBCDebugLogFile().getPath());
 		}
 
-		void applyChanges(SquirrelPreferences prefs) {
+		void applyChanges(SquirrelPreferences prefs)
+		{
 			prefs.setLoginTimeout(_loginTimeout.getInt());
 			prefs.setDebugJdbc(_debugJdbc.isSelected());
 		}
 
-		private void createUserInterface() {
+		private void createUserInterface()
+		{
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = gbc.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
@@ -138,7 +155,8 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel {
 			add(createJDBCDebugPanel(), gbc);
 		}
 
-		private JPanel createSQLPanel() {
+		private JPanel createSQLPanel()
+		{
 			_loginTimeout.setColumns(4);
 
 			JPanel pnl = new JPanel();
@@ -151,7 +169,7 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel {
 
 			gbc.gridx = 0;
 			gbc.gridy = 0;
-			pnl.add(new JLabel(i18n.LOGIN_TIMEOUT), gbc);
+			pnl.add(new JLabel(SQLPrefsPanelI18n.LOGIN_TIMEOUT), gbc);
 
 			++gbc.gridx;
 			pnl.add(_loginTimeout, gbc);
@@ -163,7 +181,8 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel {
 			return pnl;
 		}
 
-		private JPanel createJDBCDebugPanel() {
+		private JPanel createJDBCDebugPanel()
+		{
 			JPanel pnl = new JPanel();
 			pnl.setBorder(BorderFactory.createTitledBorder("JDBC Debug"));
 
@@ -192,4 +211,3 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel {
 	}
 
 }
-
