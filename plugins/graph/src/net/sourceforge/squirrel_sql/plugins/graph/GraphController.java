@@ -6,6 +6,7 @@ import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.GraphControllerXmlBea
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.GraphXmlSerializer;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameControllerXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.FormatXmlBean;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 
 import javax.swing.*;
 import java.awt.*;
@@ -55,6 +56,11 @@ public class GraphController
          public void refreshAllTablesRequested()
          {
             refreshAllTables();
+         }
+
+         public void scriptAllTablesRequested()
+         {
+            scriptAllTables();
          }
 
       };
@@ -112,6 +118,19 @@ public class GraphController
             addTableIntern(null, null, tableFrameControllerXmls[i]);
          }
       }
+   }
+
+   private void scriptAllTables()
+   {
+      ITableInfo[] tableInfos = new ITableInfo[_openTableFrameCtrls.size()];
+
+      for (int i = 0; i < _openTableFrameCtrls.size(); i++)
+      {
+         TableFrameController tableFrameController = (TableFrameController) _openTableFrameCtrls.elementAt(i);
+         tableInfos[i] = tableFrameController.getTableInfo();
+      }
+
+      SqlScriptAcessor.scriptTablesToSQLEntryArea(_session, tableInfos);
    }
 
    private void refreshAllTables()

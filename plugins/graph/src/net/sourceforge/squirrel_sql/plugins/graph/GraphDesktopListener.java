@@ -6,4 +6,5 @@ public interface GraphDesktopListener
    void renameRequest(String newName);
    void removeRequest();
    void refreshAllTablesRequested();
+   void scriptAllTablesRequested();
 }

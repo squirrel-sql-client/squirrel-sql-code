@@ -24,6 +24,7 @@ public class GraphDesktopController
    private JMenuItem _mnuRenameGraph;
    private JMenuItem _mnuRemoveGraph;
    private JMenuItem _mnuRefreshAllTables;
+   private JMenuItem _mnuScriptAllTables;
    private JCheckBoxMenuItem _mnuShowConstraintNames;
    private JCheckBoxMenuItem _mnuZoomPrint;
    private GraphDesktopListener _listener;
@@ -148,6 +149,15 @@ public class GraphDesktopController
          }
       });
 
+      _mnuScriptAllTables = new JMenuItem("Script all tables");
+      _mnuScriptAllTables.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onScriptAllTables();
+         }
+      });
+
       _mnuShowConstraintNames = new JCheckBoxMenuItem("Show constraint names");
       _mnuShowConstraintNames.addActionListener(new ActionListener()
       {
@@ -171,9 +181,15 @@ public class GraphDesktopController
       _popUp.add(_mnuRemoveGraph);
       _popUp.add(new JSeparator());
       _popUp.add(_mnuRefreshAllTables);
+      _popUp.add(_mnuScriptAllTables);
       _popUp.add(new JSeparator());
       _popUp.add(_mnuShowConstraintNames);
       _popUp.add(_mnuZoomPrint);
+   }
+
+   private void onScriptAllTables()
+   {
+      _listener.scriptAllTablesRequested();
    }
 
    private void onRefreshAllTables()
