@@ -19,6 +19,10 @@ package net.sourceforge.squirrel_sql.client.session.objectstree;
  */
 import java.sql.SQLException;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.tree.MutableTreeNode;
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
@@ -40,25 +44,48 @@ class ProcedureObjectTypeNode extends ObjectTypeNode {
     }
 
     public void expand() {
-        if (getChildCount() == 0) {
-            final ISession session = getSession();
-            final SQLConnection conn = session.getSQLConnection();
-            final ObjectsTreeModel model = getTreeModel();
-            final String catalogId = getParentNode().getCatalogIdentifier();
-            final String schemaId = getParentNode().getSchemaIdentifier();
+		if (getChildCount() == 0) 
+        {
+        	getSession().getApplication().getThreadPool().addTask(new ProcedureObjectLoader(addLoadingNode()));
+        }
+		else
+		{
+        	fireExpanded();
+        }
+    }
+    
+	protected class ProcedureObjectLoader extends BaseNode.TreeNodesLoader
+	{
+		ProcedureObjectLoader(MutableTreeNode loading)
+		{
+			super(loading);
+		}
+		
+		/*
+		 * @see TreeNodesLoader#getNodeList(ISession, SQLConnection)
+		 */
+		public List getNodeList(ISession session, SQLConnection conn, ObjectsTreeModel model)
+			throws BaseSQLException
+		{
+			final ArrayList listNodes = new ArrayList();
+			final String catalogId = getParentNode().getCatalogIdentifier();
+			final String schemaId = getParentNode().getSchemaIdentifier();
             IProcedureInfo[] procs = null;
             try {
                 procs = conn.getProcedures(catalogId, schemaId, "%");
             } catch (BaseSQLException ignore) {
                 // Assume DBMS doesn't support procedures.
             }
-            if (procs != null) {
-                for (int i = 0; i < procs.length; ++i) {
-                    ProcedureNode node = new ProcedureNode(session, model, procs[i]);
-                    model.insertNodeInto(node, this, this.getChildCount());
-                }
-            }
-        }
-    }
+
+			if (procs != null)
+			{
+				for (int i = 0; i < procs.length; ++i)
+				{
+					listNodes.add(new ProcedureNode(session, model, procs[i]));
+				}
+			}
+			return listNodes;
+		}
+	}    
 }
 

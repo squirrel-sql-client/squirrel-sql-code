@@ -38,9 +38,6 @@ public class UDTNode extends BaseNode implements IUDTInfo {
         _udtInfo = udtInfo;
     }
 
-    public void expand() {
-    }
-
     public String getCatalogName() {
         return _udtInfo.getCatalogName();
     }

@@ -24,7 +24,6 @@ import java.awt.BorderLayout;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -46,28 +45,36 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectSimpleNameInfoComparator;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.EnumerationIterator;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.objectstree.BaseNode;
+import net.sourceforge.squirrel_sql.client.session.objectstree.BaseNodeExpandedListener;
 import net.sourceforge.squirrel_sql.client.session.objectstree.ObjectsTreeModel;
-//import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.client.session.objectstree.TreeLoadedListener;
 
-class ObjectsTree extends JTree {
+class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedListener {
     private ISession _session;
-    private ObjectsTreeModel _model;
+	private ObjectsTreeModel _model;
+    
+	private CursorChanger _cursorChg;
 
 	private static DatabaseObjectSimpleNameInfoComparator s_comparator = new DatabaseObjectSimpleNameInfoComparator();
 
     ObjectsTree(ISession session) {
         super();
         _session = session;
+        _cursorChg = new CursorChanger(this);
+        _cursorChg.show();
         _model = new ObjectsTreeModel(session);
+        _model.addTreeLoadedListener(this);
+        _model.fillTree();
         setModel(_model);
         setLayout(new BorderLayout());
         setShowsRootHandles(true);
         setEditable(false);
         addTreeExpansionListener(new MyExpansionListener());
-
+		
         // Register so that we can display different tooltips depending
         // which entry in tree mouse is over.
         ToolTipManager.sharedInstance().registerComponent(this);
@@ -82,7 +89,20 @@ class ObjectsTree extends JTree {
         es.restore();
         _model.reload();
     }
-
+	/*
+	 * @see BaseNodeExpandedListener#nodeExpanded(BaseNode)
+	 */
+	public void nodeExpanded(BaseNode node)
+	{
+		_cursorChg.restore();
+	}
+	/*
+	 * @see TreeLoadedListener#treeLoaded()
+	 */
+	public void treeLoaded()
+	{
+		_cursorChg.restore();
+	}
     /**
      * Return the name of the object that the mouse is currently
      * over as the tooltip text.
@@ -129,16 +149,19 @@ class ObjectsTree extends JTree {
         public void treeExpanded(TreeExpansionEvent evt) {
             DefaultMutableTreeNode node =
                 (DefaultMutableTreeNode)evt.getPath().getLastPathComponent();
-            if (node instanceof BaseNode) {
-                CursorChanger cursorChg = new CursorChanger(ObjectsTree.this);
-                cursorChg.show();
-                try {
-                    ((BaseNode)node).expand();
-                } catch (BaseSQLException ex) {
+			if (node instanceof BaseNode) 
+            {
+            	BaseNode bNode= (BaseNode)node;
+            	bNode.addBaseNodeExpandListener(ObjectsTree.this);
+                _cursorChg.show();
+				try 
+				{
+                    bNode.expand();
+                } catch (BaseSQLException ex) 
+                {
+                	// Can't happen anymore?? Because (some) are threaded now.
                     ObjectsTree.this._session.getMessageHandler().showMessage(ex);
-                } finally {
-                    cursorChg.restore();
-                }
+                } 
             }
         }
 
@@ -200,13 +223,13 @@ class ObjectsTree extends JTree {
             final TreeModel model = _tree.getModel();
             TreeNode rootNode = (TreeNode)model.getRoot();
             TreePath rootPath = new TreePath(rootNode);
-            Enumeration en = _tree.getExpandedDescendants(rootPath);
-            if (en != null) {
-                while (en.hasMoreElements()) {
+            Iterator it = new EnumerationIterator(_tree.getExpandedDescendants(rootPath));
+            if (it != null) {
+                while (it.hasNext()) {
                     // Get the list of all the parent nodes that make up
                     // this node and save their names into the _expanded
                     // collection.
-                    TreePath tp = (TreePath)en.nextElement();
+                    TreePath tp = (TreePath)it.next();
                     Object[] objs = tp.getPath();
                     Map searchMap = _expanded;
 
@@ -224,15 +247,15 @@ class ObjectsTree extends JTree {
             }
         }
 
-        private void restoreState(TreeModel model, TreeNode node, Iterator it) {
+        private void restoreState(TreeModel model, TreeNode node, Iterator outIt) {
             _tree.expandPath(new TreePath(node));
             Map nodes = new HashMap();
-            for (Enumeration en = node.children(); en.hasMoreElements();) {
-                TreeNode childNode = (TreeNode)en.nextElement();
+            for (Iterator it = new EnumerationIterator(node.children()); it.hasNext();) {
+                TreeNode childNode = (TreeNode)it.next();
                 nodes.put(childNode.toString(), childNode);
             }
-            while (it.hasNext()) {
-                Map.Entry entry = (Map.Entry)it.next();
+            while (outIt.hasNext()) {
+                Map.Entry entry = (Map.Entry)outIt.next();
                 String obj = (String)entry.getKey();
                 Map children = (Map)entry.getValue();
                 restoreState(model, (TreeNode)nodes.get(obj), children.entrySet().iterator());

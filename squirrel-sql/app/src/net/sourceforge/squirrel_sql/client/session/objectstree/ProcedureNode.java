@@ -34,9 +34,6 @@ public class ProcedureNode extends BaseNode implements IProcedureInfo {
 		_procInfo = procInfo;
 	}
 
-	public void expand() {
-	}
-
 	public String getCatalogName() {
 		return _procInfo.getCatalogName();
 	}

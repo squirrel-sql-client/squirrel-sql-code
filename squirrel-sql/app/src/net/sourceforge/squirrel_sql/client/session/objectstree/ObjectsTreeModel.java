@@ -27,9 +27,11 @@ import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
+import javax.swing.tree.MutableTreeNode;
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -45,9 +47,12 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.plugin.IPluginDatabaseObject;
 import net.sourceforge.squirrel_sql.client.plugin.IPluginDatabaseObjectType;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
+import net.sourceforge.squirrel_sql.fw.util.*;
+
 
 public class ObjectsTreeModel extends DefaultTreeModel {
-    private ISession _session;
+	private ISession _session;
+	private ArrayList _treeLoadedListeners;
 
     /**
      * This interface defines locale specific strings. This should be
@@ -63,16 +68,37 @@ public class ObjectsTreeModel extends DefaultTreeModel {
     public ObjectsTreeModel(ISession session) {
         super(new DefaultMutableTreeNode());
         _session = session;
-        setRoot(new DatabaseNode(session, this));
-        try {
-            SQLConnection conn = session.getSQLConnection();
-            loadTree();
-        } catch (BaseSQLException ex) {
-            Logger logger = _session.getApplication().getLogger();
-            logger.showMessage(Logger.ILogTypes.ERROR, "Error occured building the objects tree");
-            logger.showMessage(Logger.ILogTypes.ERROR, ex);
-            _session.getMessageHandler().showMessage(ex.toString());
-        }
+        _treeLoadedListeners = new ArrayList();
+		DatabaseNode rootNode = new DatabaseNode(session, this);
+/*i18n*/rootNode.add(new DefaultMutableTreeNode("Loading..."));
+        setRoot(rootNode);
+        reload();
+    }
+    
+	public void addTreeLoadedListener(TreeLoadedListener listener)
+	{
+		if(listener != null && !_treeLoadedListeners.contains(listener))
+		{
+			_treeLoadedListeners.add(listener);
+		}
+	}
+	public void removeTreeLoadedListener(TreeLoadedListener listener)
+	{
+		if(listener != null)
+		{
+			_treeLoadedListeners.remove(listener);
+		}
+	}
+	protected void fireTreeLoaded()
+	{
+		for(int i=_treeLoadedListeners.size();--i>=0;)
+		{
+			((TreeLoadedListener)_treeLoadedListeners.get(i)).treeLoaded();
+		}
+	}	
+    public void fillTree()
+    {
+        _session.getApplication().getThreadPool().addTask(new ObjectsTreeLoader());
     }
 
     private SQLConnection getConnection() {
@@ -95,7 +121,7 @@ public class ObjectsTreeModel extends DefaultTreeModel {
     }
 
     private void loadTree() throws BaseSQLException {
-        final DefaultMutableTreeNode root = (DefaultMutableTreeNode)getRoot();
+		final ArrayList tableTypeList = new ArrayList();
         try {
             SQLConnection conn = getConnection();
             if (conn != null) {
@@ -121,24 +147,64 @@ public class ObjectsTreeModel extends DefaultTreeModel {
                     final String[] catalogs = conn.getCatalogs();
                     for (int i = 0; i < catalogs.length; ++i) {
                         final String catalogName =  catalogs[i];
-                        root.add(new TableTypesGroupNode(_session, this, catalogName,
+                        tableTypeList.add(new TableTypesGroupNode(_session, this, catalogName,
                                                             catalogName, null, null));
                     }
                 } else if (supportsSchemas) {
                     final String[] schemas = conn.getSchemas();
                     for (int i = 0; i < schemas.length; ++i) {
                         final String schemaName = schemas[i];
-                        root.add(new TableTypesGroupNode(_session, this, null,
+                        tableTypeList.add(new TableTypesGroupNode(_session, this, null,
                                                 null, schemaName, schemaName));
                     }
                 } else {
-                    root.add(new TableTypesGroupNode(_session, this, null, null, null, null));
+                    tableTypeList.add(new TableTypesGroupNode(_session, this, null, null, null, null));
                 }
             }
-        } finally {
-            reload();
+        } 
+        finally 
+		{
+			SwingUtilities.invokeLater(new Runnable()
+			{
+				public void run()
+				{ 
+					DefaultMutableTreeNode root = (DefaultMutableTreeNode)getRoot();
+					root.removeAllChildren();
+					for (int i = 0; i < tableTypeList.size(); i++)
+					{
+						 root.add((DefaultMutableTreeNode)tableTypeList.get(i));
+					}
+		            reload();
+		            fireTreeLoaded();
+				}
+			});
         }
     }
 
+	protected class ObjectsTreeLoader implements Runnable
+	{
+		public void run()
+		{
+			try
+			{
+				loadTree();
+			}
+			catch(final BaseSQLException ex)
+			{
+				SwingUtilities.invokeLater(new Runnable()
+				{
+					public void run()
+					{ 
+			            Logger logger = _session.getApplication().getLogger();
+			            logger.showMessage(Logger.ILogTypes.ERROR, "Error occured building the objects tree");
+			            logger.showMessage(Logger.ILogTypes.ERROR, ex);
+			            _session.getMessageHandler().showMessage(ex.toString());
+					}
+				});
+			}
+
+		}
+
+}
 
 }

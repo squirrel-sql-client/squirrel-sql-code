@@ -20,6 +20,10 @@ package net.sourceforge.squirrel_sql.client.session.objectstree;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.tree.MutableTreeNode;
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 
@@ -37,29 +41,62 @@ public class PluginGroupNode extends ObjectTypeNode {
         _dbObjType = type;
     }
 
-    public void expand() throws BaseSQLException {
-        final ObjectsTreeModel model = getTreeModel();
-        ISession session = getSession();
-        SQLConnection conn = session.getSQLConnection();
-        Statement stmt = conn.createStatement();
-        try {
-            IPluginDatabaseObject[] objs = null;
-            try {
-                objs = _dbObjType.getObjects(session, conn, stmt);
-            } catch (SQLException ex) {
-                throw new BaseSQLException(ex);
-            }
-            if (objs != null) {
-                for (int i = 0; i < objs.length; ++i) {
-                    BaseNode node = new BaseNode(session,getTreeModel(), objs[i]);
-                    model.insertNodeInto(node, this, this.getChildCount());
-                }
-            }
-        } finally {
-            try {
-                stmt.close();
-            } catch (SQLException ignore) {
-            }
+    public void expand() throws BaseSQLException 
+    {
+		if (getChildCount() == 0) 
+        {
+        	getSession().getApplication().getThreadPool().addTask(new PluginGroupLoader(addLoadingNode()));
+        }
+		else
+		{
+        	fireExpanded();
         }
     }
+	protected class PluginGroupLoader extends BaseNode.TreeNodesLoader
+	{
+		PluginGroupLoader(MutableTreeNode loading)
+		{
+			super(loading);
+		}
+		
+		/*
+		 * @see TreeNodesLoader#getNodeList(ISession, SQLConnection)
+		 */
+		public List getNodeList(ISession session, SQLConnection conn, ObjectsTreeModel model)
+			throws BaseSQLException
+		{
+			final ArrayList listNodes = new ArrayList();
+			Statement stmt = conn.createStatement();
+			try
+			{
+				IPluginDatabaseObject[] objs = null;
+				try
+				{
+					objs = _dbObjType.getObjects(session, conn, stmt);
+				}
+				catch (SQLException ex)
+				{
+					throw new BaseSQLException(ex);
+				}
+				if (objs != null)
+				{
+					for (int i = 0; i < objs.length; ++i)
+					{
+						listNodes.add(new BaseNode(session, getTreeModel(), objs[i]));
+					}
+				}
+			}
+			finally
+			{
+				try
+				{
+					stmt.close();
+				}
+				catch (SQLException ignore)
+				{
+				}
+			}
+			return listNodes;
+		}
+	}    
 }

@@ -32,9 +32,6 @@ public class DatabaseObjectNode extends BaseNode implements IDatabaseObjectInfo 
         _objInfo = objInfo;
     }
 
-    public void expand() {
-    }
-
     public String getCatalogName() {
         return _objInfo.getCatalogName();
     }

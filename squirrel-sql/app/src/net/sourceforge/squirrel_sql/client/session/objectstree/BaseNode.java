@@ -19,17 +19,32 @@ package net.sourceforge.squirrel_sql.client.session.objectstree;
  */
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeModel;
+import java.util.ArrayList;
+import java.util.List;
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.util.BaseException;
+import net.sourceforge.squirrel_sql.fw.util.Logger;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.util.*;
+
 
 /**
  * This is the base class for all nodes in the Objects Tree.
  */
 public class BaseNode extends DefaultMutableTreeNode {
 
+	/*
+	 * BaseNode expand listeners array
+	 */ 
+	private List _expandListeners;
+	
     /**
      * Empty panel. Used by those nodes that don't want to display anything
      * in the main display area if they are selected.
@@ -53,9 +68,32 @@ public class BaseNode extends DefaultMutableTreeNode {
         }
         _session = session;
         _treeModel = treeModel;
+        _expandListeners = new ArrayList();
     }
-
-    public void expand() throws BaseSQLException {
+	public void addBaseNodeExpandListener(BaseNodeExpandedListener listener)
+	{
+		if(listener != null && !_expandListeners.contains(listener))
+		{
+			_expandListeners.add(listener);
+		}
+	}
+	public void removeBaseNodeExpandListener(BaseNodeExpandedListener listener)
+	{
+		if(listener != null)
+		{
+			_expandListeners.remove(listener);
+		}
+	}
+	protected void fireExpanded()
+	{
+		for(int i=_expandListeners.size();--i>=0;)
+		{
+			((BaseNodeExpandedListener)_expandListeners.get(i)).nodeExpanded(this);
+		}
+	}
+    public void expand() throws BaseSQLException 
+    {
+    	fireExpanded();
     }
 
     public JComponent getDetailsPanel() {
@@ -73,4 +111,67 @@ public class BaseNode extends DefaultMutableTreeNode {
     protected String getSafeString(String str) {
         return str != null ? str : "";
     }
+    
+    public DefaultMutableTreeNode addLoadingNode()
+	{
+        	ObjectsTreeModel model = getTreeModel();
+/* i18n*/ 	DefaultMutableTreeNode dmtn = new DefaultMutableTreeNode("Loading...");
+        	model.insertNodeInto(dmtn, this, this.getChildCount());
+        	return dmtn;
+	}
+    
+	protected abstract class TreeNodesLoader implements Runnable
+	{
+		private MutableTreeNode _loading;
+
+		TreeNodesLoader(MutableTreeNode loading)
+		{
+			if(loading == null) throw new IllegalArgumentException("loading node is null");
+			_loading = loading;
+		}
+		
+		public void run()
+		{
+			final ISession session = getSession();
+			final ObjectsTreeModel model = getTreeModel();
+			try 
+           {
+				final SQLConnection conn = session.getSQLConnection();
+				final List nodes = getNodeList(session, conn,model);
+				SwingUtilities.invokeLater(new Runnable()
+				{
+					public void run()
+					{
+						// Maybe this shouldn't be adding nodes one by one but just setting
+						// the childarray at onces, Then only one fire in the model has to be processed.
+						model.removeNodeFromParent(_loading);
+						for (int i=0;i<nodes.size();i++)
+						{
+							model.insertNodeInto((MutableTreeNode)nodes.get(i), BaseNode.this, getChildCount());
+						}
+						fireExpanded();
+					}
+				});
+
+			} 
+			catch(final BaseSQLException ex)
+			{
+				SwingUtilities.invokeLater(new Runnable()
+				{
+					public void run()
+					{ 
+						model.removeNodeFromParent(_loading);
+						fireExpanded();
+						_session.getMessageHandler().showMessage(ex);
+						Logger logger = _session.getApplication().getLogger();
+						logger.showMessage(Logger.ILogTypes.ERROR, "Error occured expanding " + BaseNode.this.getClass().getName());
+						logger.showMessage(Logger.ILogTypes.ERROR, ex);
+					}
+				});
+			}
+		}
+		
+		public abstract List getNodeList(ISession session, SQLConnection conn,ObjectsTreeModel model) throws BaseSQLException;
+	}
+    
 }

@@ -17,6 +17,10 @@ package net.sourceforge.squirrel_sql.client.session.objectstree;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import javax.swing.tree.MutableTreeNode;
+
+import java.util.ArrayList;
+import java.util.List;
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.IUDTInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
@@ -37,25 +41,54 @@ public final class UDTObjectTypeNode extends ObjectTypeNode {
         super(session, treeModel, parentNode, i18n.UDT);
     }
 
-    public void expand() {
-        if (getChildCount() == 0) {
-            final ObjectsTreeModel model = getTreeModel();
-            final ISession session = getSession();
-            final SQLConnection conn = session.getSQLConnection();
-            final String catalogId = getParentNode().getCatalogIdentifier();
-            final String schemaId = getParentNode().getSchemaIdentifier();
-            IUDTInfo[] udts = null;
-            try {
-                udts = conn.getUDTs(catalogId, schemaId, "%", null);
+		public void expand()
+		{
+			if (getChildCount() == 0)
+			{
+			}
+			if (getChildCount() == 0)
+			{
+				getSession().getApplication().getThreadPool().addTask(
+					new UDTObjectLoader(addLoadingNode()));
+			}
+			else
+			{
+				fireExpanded();
+			}
+
+		}
+    
+	protected class UDTObjectLoader extends BaseNode.TreeNodesLoader
+	{
+		UDTObjectLoader(MutableTreeNode loading)
+		{
+			super(loading);
+		}
+		
+		/*
+		 * @see TreeNodesLoader#getNodeList(ISession, SQLConnection)
+		 */
+		public List getNodeList(ISession session, SQLConnection conn, ObjectsTreeModel model)
+			throws BaseSQLException
+		{
+			final ArrayList listNodes = new ArrayList();
+			final String catalogId = getParentNode().getCatalogIdentifier();
+			final String schemaId = getParentNode().getSchemaIdentifier();
+			IUDTInfo[] udts = null;
+			try {
+				udts = conn.getUDTs(catalogId, schemaId, "%", null);
             } catch (BaseSQLException ignore) {
-                // Assume DBMS doesn't support UDTs.
+				// Assume DBMS doesn't support UDTs.
             }
-            if (udts != null) {
-                for (int i = 0; i < udts.length; ++i) {
-                    UDTNode node = new UDTNode(session, model, udts[i]);
-                    model.insertNodeInto(node, this, getChildCount());
-                }
-            }
-        }
-    }
+
+			if (udts != null)
+			{
+				for (int i = 0; i < udts.length; ++i)
+				{
+					listNodes.add(new UDTNode(session, model, udts[i]));
+				}
+			}
+			return listNodes;
+		}
+	}    
 }

@@ -32,6 +32,4 @@ public class PluginObjectNode extends DatabaseObjectNode {
         _obj = obj;
     }
 
-    public void expand() {
     }
-}

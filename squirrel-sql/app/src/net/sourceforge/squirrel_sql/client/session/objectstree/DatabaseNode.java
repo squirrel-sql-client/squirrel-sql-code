@@ -41,9 +41,6 @@ public class DatabaseNode extends BaseNode {
         _dbPnl = new DatabasePanel(session);
     }
 
-    public void expand() {
-    }
-
     public JComponent getDetailsPanel() {
         return _dbPnl;
     }

@@ -47,9 +47,6 @@ public final class TableNode extends DatabaseObjectNode implements ITableInfo {
         setUserObject(getDisplayText(rowCountStmt));
     }
 
-    public void expand() {
-    }
-
     public String getCatalogName() {
         return _tableInfo.getCatalogName();
     }

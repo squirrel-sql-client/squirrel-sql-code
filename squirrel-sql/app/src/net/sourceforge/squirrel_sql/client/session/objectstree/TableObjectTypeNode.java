@@ -20,6 +20,12 @@ package net.sourceforge.squirrel_sql.client.session.objectstree;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import java.util.ArrayList;
+
+import java.util.List;
+import javax.swing.SwingUtilities;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.MutableTreeNode;
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
@@ -41,35 +47,55 @@ public final class TableObjectTypeNode extends ObjectTypeNode {
     }
 
     public void expand() throws BaseSQLException {
-        if (getChildCount() == 0) {
-            final ISession session = getSession();
-            final SQLConnection conn = session.getSQLConnection();
-            final String catalogId = getParentNode().getCatalogIdentifier();
-            final String schemaId = getParentNode().getSchemaIdentifier();
-            final ITableInfo[] tables = conn.getTables(catalogId, schemaId, "%", new String[]{_tableTypePattern});
-            Statement stmt = null;
-            if (session.getProperties().getShowRowCount()) {
-                stmt = conn.createStatement();
-            }
-            try {
-                ObjectsTreeModel model = getTreeModel();
-                for (int i = 0; i < tables.length; ++i) {
-                    TableNode node = new TableNode(session, model, tables[i], stmt);
-                    model.insertNodeInto(node, this, this.getChildCount());
-                }
-            } finally {
-                try {
-                    if (stmt != null) {
-                        stmt.close();
-                    }
-                } catch (SQLException ex) {
-                    session.getMessageHandler().showMessage(ex);
-                    Logger logger = session.getApplication().getLogger();
-                    logger.showMessage(Logger.ILogTypes.ERROR, "Error occured expanding TableObjectTypeNode");
-                    logger.showMessage(Logger.ILogTypes.ERROR, ex);
-                }
-            }
+		if (getChildCount() == 0) 
+        {
+        	getSession().getApplication().getThreadPool().addTask(new TableLoader(addLoadingNode()));
+        }
+		else
+		{
+        	fireExpanded();
         }
     }
 
+	protected class TableLoader extends BaseNode.TreeNodesLoader
+	{
+		TableLoader(MutableTreeNode loading)
+		{
+			super(loading);
+		}
+		
+		/*
+		 * @see TreeNodesLoader#getNodeList(ISession, SQLConnection)
+		 */
+		public List getNodeList(ISession session, SQLConnection conn,ObjectsTreeModel model) throws BaseSQLException
+		{
+			final ArrayList listNodes = new ArrayList();
+			Statement stmt = null;
+			try 
+           {
+				final String catalogId = getParentNode().getCatalogIdentifier();
+				final String schemaId = getParentNode().getSchemaIdentifier();
+				final ITableInfo[] tables = conn.getTables(catalogId, schemaId, "%", new String[]{_tableTypePattern});
+				if (session.getProperties().getShowRowCount()) {
+					stmt = conn.createStatement();
+				}
+				for (int i = 0; i < tables.length; ++i) {
+					listNodes.add(new TableNode(session, model, tables[i], stmt));
+				}
+			} 
+			catch(BaseSQLException ex)
+			{
+				throw ex;
+			}
+			finally 
+			{
+				try 
+				{
+					if (stmt != null) stmt.close();
+				}
+				catch (SQLException ex) { }
+			} 
+			return listNodes;
+		}
+	}
 }

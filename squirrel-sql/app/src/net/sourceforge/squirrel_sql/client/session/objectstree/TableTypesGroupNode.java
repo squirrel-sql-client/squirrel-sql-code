@@ -65,9 +65,6 @@ public class TableTypesGroupNode extends BaseNode {
         }
     }
 
-    public void expand() {
-    }
-
     String getCatalogName() {
         return _catalogName;
     }
