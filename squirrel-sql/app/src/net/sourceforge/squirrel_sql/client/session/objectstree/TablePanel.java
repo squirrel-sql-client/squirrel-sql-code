@@ -45,7 +45,7 @@ import net.sourceforge.squirrel_sql.fw.sql.TableInfoDataSet;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionSheetProperties;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.util.Logger;
 
 public class TablePanel extends JTabbedPane {
@@ -109,47 +109,47 @@ public class TablePanel extends JTabbedPane {
 
     private void propertiesHaveChanged(PropertyChangeEvent evt) {
         String propName = evt.getPropertyName();
-        if (propName.equals(SessionSheetProperties.IPropertyNames.CONTENTS_OUTPUT_CLASS_NAME)) {
+        if (propName.equals(SessionProperties.IPropertyNames.CONTENTS_OUTPUT_CLASS_NAME)) {
             MyBaseViewer viewer = (MyBaseViewer)_viewersMap.get(i18n.CONTENTS_TAB_TITLE);
             addContentsViewerTab(viewer);
             viewer.load();
-        } else if (propName.equals(SessionSheetProperties.IPropertyNames.TABLE_OUTPUT_CLASS_NAME)) {
+        } else if (propName.equals(SessionProperties.IPropertyNames.TABLE_OUTPUT_CLASS_NAME)) {
             MyBaseViewer viewer = (MyBaseViewer)_viewersMap.get(i18n.TABLE_TAB_TITLE);
             addTableInfoViewerTab(viewer);
             viewer.load();
-        } else if (propName.equals(SessionSheetProperties.IPropertyNames.COLUMNS_OUTPUT_CLASS_NAME)) {
+        } else if (propName.equals(SessionProperties.IPropertyNames.COLUMNS_OUTPUT_CLASS_NAME)) {
             MyBaseViewer viewer = (MyBaseViewer)_viewersMap.get(i18n.COL_TAB_TITLE);
             addColumnsViewerTab(viewer);
             viewer.load();
-        } else if (propName.equals(SessionSheetProperties.IPropertyNames.PRIM_KEY_OUTPUT_CLASS_NAME)) {
+        } else if (propName.equals(SessionProperties.IPropertyNames.PRIM_KEY_OUTPUT_CLASS_NAME)) {
             MyBaseViewer viewer = (MyBaseViewer)_viewersMap.get(i18n.PRIMARY_KEY_TITLE);
             addPrimaryKeyViewerTab(viewer);
             viewer.load();
-        } else if (propName.equals(SessionSheetProperties.IPropertyNames.EXP_KEYS_OUTPUT_CLASS_NAME)) {
+        } else if (propName.equals(SessionProperties.IPropertyNames.EXP_KEYS_OUTPUT_CLASS_NAME)) {
             MyBaseViewer viewer = (MyBaseViewer)_viewersMap.get(i18n.EXP_KEY_TAB_TITLE);
             addExportedKeysViewerTab(viewer);
             viewer.load();
-        } else if (propName.equals(SessionSheetProperties.IPropertyNames.IMP_KEYS_OUTPUT_CLASS_NAME)) {
+        } else if (propName.equals(SessionProperties.IPropertyNames.IMP_KEYS_OUTPUT_CLASS_NAME)) {
             MyBaseViewer viewer = (MyBaseViewer)_viewersMap.get(i18n.IMP_KEY_TAB_TITLE);
             addImportedKeysViewerTab(viewer);
             viewer.load();
-        } else if (propName.equals(SessionSheetProperties.IPropertyNames.INDEXES_OUTPUT_CLASS_NAME)) {
+        } else if (propName.equals(SessionProperties.IPropertyNames.INDEXES_OUTPUT_CLASS_NAME)) {
             MyBaseViewer viewer = (MyBaseViewer)_viewersMap.get(i18n.IDX_TAB_TITLE);
             addIndexesViewerTab(viewer);
             viewer.load();
-        } else if (propName.equals(SessionSheetProperties.IPropertyNames.PRIVILIGES_OUTPUT_CLASS_NAME)) {
+        } else if (propName.equals(SessionProperties.IPropertyNames.PRIVILIGES_OUTPUT_CLASS_NAME)) {
             MyBaseViewer viewer = (MyBaseViewer)_viewersMap.get(i18n.PRIV_TAB_TITLE);
             addTablePriviligesViewerTab(viewer);
             viewer.load();
-        } else if (propName.equals(SessionSheetProperties.IPropertyNames.COLUMN_PRIVILIGES_OUTPUT_CLASS_NAME)) {
+        } else if (propName.equals(SessionProperties.IPropertyNames.COLUMN_PRIVILIGES_OUTPUT_CLASS_NAME)) {
             MyBaseViewer viewer = (MyBaseViewer)_viewersMap.get(i18n.COLPRIV_TAB_TITLE);
             addColumnPriviligesViewerTab(viewer);
             viewer.load();
-        } else if (propName.equals(SessionSheetProperties.IPropertyNames.ROWID_OUTPUT_CLASS_NAME)) {
+        } else if (propName.equals(SessionProperties.IPropertyNames.ROWID_OUTPUT_CLASS_NAME)) {
             MyBaseViewer viewer = (MyBaseViewer)_viewersMap.get(i18n.ROWID_TAB_TITLE);
             addRowIdViewerTab(viewer);
             viewer.load();
-        } else if (propName.equals(SessionSheetProperties.IPropertyNames.VERSIONS_OUTPUT_CLASS_NAME)) {
+        } else if (propName.equals(SessionProperties.IPropertyNames.VERSIONS_OUTPUT_CLASS_NAME)) {
             MyBaseViewer viewer = (MyBaseViewer)_viewersMap.get(i18n.VERS_TAB_TITLE);
             addVersionColumnsViewerTab(viewer);
             viewer.load();
@@ -314,7 +314,7 @@ public class TablePanel extends JTabbedPane {
             if (conn != null && ti != null) {
                 Statement stmt = conn.createStatement();
                 try {
-                    SessionSheetProperties props = getSession().getProperties();
+                    SessionProperties props = getSession().getProperties();
                     if (props.getContentsLimitRows()) {
                         stmt.setMaxRows(props.getContentsNbrRowsToShow());
                     }

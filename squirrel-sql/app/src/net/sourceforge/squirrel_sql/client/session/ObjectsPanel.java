@@ -36,7 +36,7 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.objectstree.BaseNode;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionSheetProperties;
+//import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
 class ObjectsPanel extends JPanel {
 

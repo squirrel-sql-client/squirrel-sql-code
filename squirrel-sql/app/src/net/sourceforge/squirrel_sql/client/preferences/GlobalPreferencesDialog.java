@@ -41,7 +41,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.session.properties.OutputPropertiesPanel;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionSheetProperties;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.properties.SQLPropertiesPanel;
 
 public class GlobalPreferencesDialog extends JDialog {
@@ -59,9 +59,9 @@ public class GlobalPreferencesDialog extends JDialog {
     private List _panels = new ArrayList();
 
     /**
-     * Default properties for new <T>SessionSheet</TT> objects.
+     * Default properties for new sessions.
      */
-    private SessionSheetProperties _sessionProperties;
+    private SessionProperties _sessionProperties;
 
     public GlobalPreferencesDialog(IApplication app, Frame owner)
             throws IllegalArgumentException {
@@ -90,7 +90,7 @@ public class GlobalPreferencesDialog extends JDialog {
 
     private void createUserInterface() {
         final SquirrelPreferences prefs = _app.getSquirrelPreferences();
-        final SessionSheetProperties props = prefs.getSessionSheetProperties();
+        final SessionProperties props = prefs.getSessionProperties();
 
         // Add panels for core Squirrel functionality.
         _panels.add(new GeneralPreferencesPanel());

@@ -55,7 +55,8 @@ import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.Logger;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
-import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
@@ -63,8 +64,8 @@ import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
-import net.sourceforge.squirrel_sql.client.session.action.SessionSheetPropertiesAction;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionSheetProperties;
+import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
 public class SessionSheet extends JInternalFrame {
     /**
@@ -95,13 +96,17 @@ public class SessionSheet extends JInternalFrame {
         setVisible(false);
         createUserInterface();
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        propertiesHaveChanged(null);
+
+        propertiesHaveChanged(null);
+
 
         session.getProperties().addPropertyChangeListener(_propsListener);
 
+
         _session.getApplication().getPluginManager().sessionStarted(session);
     }
-    /**
+
+    /**
      * Close this window.
      */
     public void dispose() {
@@ -109,7 +114,8 @@ public class SessionSheet extends JInternalFrame {
         closeConnection();
         super.dispose();
     }
-    public boolean hasConnection() {
+
+    public boolean hasConnection() {
         return _session.getSQLConnection() != null;
     }
 
@@ -149,14 +155,16 @@ public class SessionSheet extends JInternalFrame {
             actions.get(RefreshTreeAction.class).setEnabled(true);
         }
     }
-    void closeConnection() {
+
+    void closeConnection() {
         try {
             _session.closeSQLConnection();
         } catch (SQLException ex) {
             showError(ex);
         }
     }
-    public void setVisible(boolean value) {
+
+    public void setVisible(boolean value) {
         super.setVisible(value);
         // Required under JDK1.2. Without it the divider location is reset to 0.
         if (!_hasBeenVisible && value == true) {
@@ -165,10 +173,12 @@ public class SessionSheet extends JInternalFrame {
             _hasBeenVisible = true;
         }
     }
-    public String getSQLScript() {
+
+    public String getSQLScript() {
         return _sqlPnl.getSQLScript();
     }
-    public void setSQLScript(String sqlScript) {
+
+    public void setSQLScript(String sqlScript) {
         _sqlPnl.setSQLScript(sqlScript);
     }
 
@@ -187,18 +197,20 @@ public class SessionSheet extends JInternalFrame {
         }
         return title.toString();
     }
-    private void showError(Exception ex) {
+
+    private void showError(Exception ex) {
         new ErrorDialog(MainFrame.getInstance(), ex).show();
     }
 
     private void propertiesHaveChanged(String propertyName) {
-        SessionSheetProperties props = _session.getProperties();
-        if (propertyName == null || propertyName.equals(SessionSheetProperties.IPropertyNames.COMMIT_ON_CLOSING_CONNECTION)) {
+        SessionProperties props = _session.getProperties();
+        if (propertyName == null || propertyName.equals(SessionProperties.IPropertyNames.COMMIT_ON_CLOSING_CONNECTION)) {
             _session.getSQLConnection().setCommitOnClose(props.getCommitOnClosingConnection());
         }
         updateState();
     }
-    private void createUserInterface() {
+
+    private void createUserInterface() {
         setVisible(false);
         Icon icon = _session.getApplication().getResources().getIcon(getClass(), "frameIcon"); //i18n
         if (icon != null) {
@@ -212,7 +224,8 @@ public class SessionSheet extends JInternalFrame {
         _tabPane.addTab(i18n.SQL_TAB_TITLE, null, _sqlPnl, i18n.SQL_TAB_DESC);
 
         _tabPane.addChangeListener(new MyTabsListener());
-        Container content = getContentPane();
+
+        Container content = getContentPane();
         content.setLayout(new BorderLayout());
         content.add(new MyToolBar(this), BorderLayout.NORTH);
 
@@ -226,7 +239,8 @@ public class SessionSheet extends JInternalFrame {
         _msgSplit.add(_tabPane, JSplitPane.LEFT);
         _msgSplit.add(new JScrollPane(msgPnl), JSplitPane.RIGHT);
         content.add(_msgSplit, BorderLayout.CENTER);
-        // This is to fix a problem with the JDK (up to version 1.3)
+
+        // This is to fix a problem with the JDK (up to version 1.3)
         // where focus events were not generated correctly. The sympton
         // is being unable to key into the text entry field unless you click
         // elsewhere after focus is gained by the internal frame.
@@ -245,15 +259,17 @@ public class SessionSheet extends JInternalFrame {
                 }
             }
         });
-        validate();
+
+        validate();
     }
-    private class MyToolBar extends ToolBar {
+
+    private class MyToolBar extends ToolBar {
         MyToolBar(SessionSheet frame) {
             super();
             ActionCollection actions = _session.getApplication().getActionCollection();
             setUseRolloverButtons(true);
             setFloatable(false);
-            add(actions.get(SessionSheetPropertiesAction.class));
+            add(actions.get(SessionPropertiesAction.class));
             add(actions.get(RefreshTreeAction.class));
             addSeparator();
             add(actions.get(ExecuteSqlAction.class));
@@ -266,7 +282,8 @@ public class SessionSheet extends JInternalFrame {
             actions.get(RollbackAction.class).setEnabled(false);
         }
     }
-    private class MyPropertiesListener implements PropertyChangeListener {
+
+    private class MyPropertiesListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent evt) {
             SessionSheet.this.propertiesHaveChanged(evt.getPropertyName());
         }
@@ -277,7 +294,8 @@ public class SessionSheet extends JInternalFrame {
             updateState();
         }
     }
-    private static MouseListener s_dummyMouseAdapter = new MouseAdapter() {
+
+    private static MouseListener s_dummyMouseAdapter = new MouseAdapter() {
         private void cancelEvent(MouseEvent evt) {
             Component pane = (Component)evt.getSource();
             pane.setVisible(true);

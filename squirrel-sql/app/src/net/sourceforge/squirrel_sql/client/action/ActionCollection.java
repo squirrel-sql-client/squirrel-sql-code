@@ -232,7 +232,7 @@ public final class ActionCollection {
         add(new MaximizeAction(_app));
         add(new RefreshTreeAction(_app));
         add(new RollbackAction(_app));
-        add(new SessionSheetPropertiesAction(_app));
+        add(new SessionPropertiesAction(_app));
         add(new TileAction(_app));
     }
 }

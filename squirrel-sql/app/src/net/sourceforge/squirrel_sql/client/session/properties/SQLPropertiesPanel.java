@@ -41,12 +41,12 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public class SQLPropertiesPanel
-        implements IGlobalPreferencesPanel, ISessionSheetPropertiesPanel {
+        implements IGlobalPreferencesPanel, ISessionPropertiesPanel {
     private boolean _initialized = false;
     private String _title;
     private String _hint;
     private IApplication _app;
-    private SessionSheetProperties _props;
+    private SessionProperties _props;
 
     private MyPanel _myPanel = new MyPanel();
 
@@ -63,16 +63,16 @@ public class SQLPropertiesPanel
             throw new IllegalArgumentException("Null IApplication passed");
         }
 
-        initialize(app, app.getSquirrelPreferences().getSessionSheetProperties());
+        initialize(app, app.getSquirrelPreferences().getSessionProperties());
     }
 
-    public void initialize(IApplication app, SessionSheetProperties props)
+    public void initialize(IApplication app, SessionProperties props)
             throws IllegalArgumentException {
         if (app == null) {
             throw new IllegalArgumentException("Null IApplication passed");
         }
         if (props == null) {
-            throw new IllegalArgumentException("Null SessionSheetProperties passed");
+            throw new IllegalArgumentException("Null SessionProperties passed");
         }
         _app = app;
         _props = props;
@@ -135,7 +135,7 @@ public class SQLPropertiesPanel
             super();
         }
 
-        void loadData(SessionSheetProperties props) {
+        void loadData(SessionProperties props) {
             _autoCommitChk.setSelected(props.getAutoCommit());
             _commitOnClose.setSelected(props.getCommitOnClosingConnection());
             _contentsNbrRowsToShowField.setInt(props.getContentsNbrRowsToShow());
@@ -147,7 +147,7 @@ public class SQLPropertiesPanel
             _stmtSepChar.setChar(props.getSqlStatementSeparatorChar());
         }
 
-        void applyChanges(SessionSheetProperties props) {
+        void applyChanges(SessionProperties props) {
             props.setAutoCommit(_autoCommitChk.isSelected());
             props.setCommitOnClosingConnection(_commitOnClose.isSelected());
             props.setContentsNbrRowsToShow(_contentsNbrRowsToShowField.getInt());

@@ -20,7 +20,8 @@ package net.sourceforge.squirrel_sql.client.session;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
@@ -30,12 +31,13 @@ import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionSheetProperties;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 
 class Session implements ISession {
     private SessionSheet _sessionSheet;
-    /** The <TT>IIdentifier</TT> that uniquely identifies this object. */
+
+    /** The <TT>IIdentifier</TT> that uniquely identifies this object. */
     private IIdentifier _id = IdentifierFactory.getInstance().createIdentifier();
 
     private IApplication _app;
@@ -50,7 +52,7 @@ class Session implements ISession {
     private ISQLAlias _alias;
 
     /** Properties for this session. */
-    private SessionSheetProperties _props = new SessionSheetProperties();
+    private SessionProperties _props = new SessionProperties();
 
     /**
      * Objects stored in session. Each entry is a <TT>Map</TT>
@@ -58,8 +60,10 @@ class Session implements ISession {
      * contains the objects saved for the plugin.
      */
     private Map _pluginObjects = new HashMap();
-    private IMessageHandler _msgHandler = NullMessageHandler.getInstance();
-    /**
+
+    private IMessageHandler _msgHandler = NullMessageHandler.getInstance();
+
+    /**
      * Create a new session.
      *
      * @param   app     Application API.
@@ -88,7 +92,8 @@ class Session implements ISession {
         _driver = driver;
         _alias = alias;
         _conn = conn;
-        _props.assignFrom(_app.getSquirrelPreferences().getSessionSheetProperties());
+
+        _props.assignFrom(_app.getSquirrelPreferences().getSessionProperties());
     }
 
     public IIdentifier getIdentifier() {
@@ -105,20 +110,22 @@ class Session implements ISession {
     public SQLConnection getSQLConnection() {
         return _conn;
     }
-    /**
+
+    /**
      * @return <TT>ISQLDriver</TT> for this session.
      */
     public ISQLDriver getDriver() {
         return _driver;
     }
-    /**
+
+    /**
      * @return <TT>ISQLAlias</TT> for this session.
      */
     public ISQLAlias getAlias() {
         return _alias;
     }
 
-    public SessionSheetProperties getProperties() {
+    public SessionProperties getProperties() {
         return _props;
     }
 
@@ -173,18 +180,22 @@ class Session implements ISession {
     public IMessageHandler getMessageHandler() {
         return _msgHandler;
     }
-    public void setMessageHandler(IMessageHandler handler) {
+
+    public void setMessageHandler(IMessageHandler handler) {
         _msgHandler = handler != null ? handler : NullMessageHandler.getInstance();
     }
-    public void showMessage(Exception ex) {
+
+    public void showMessage(Exception ex) {
         _msgHandler.showMessage(ex);
     }
 
     public void showMessage(String msg) {
         _msgHandler.showMessage(msg);
     }
-    public void setSessionSheet(SessionSheet child) {
+
+    public void setSessionSheet(SessionSheet child) {
         _sessionSheet = child;
     }
 }
+
 

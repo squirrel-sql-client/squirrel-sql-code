@@ -39,8 +39,9 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel;
 import net.sourceforge.squirrel_sql.fw.util.Logger;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 
-import net.sourceforge.squirrel_sql.client.session.properties.SessionSheetProperties;
-public class ResultTab extends JPanel {
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+
+public class ResultTab extends JPanel {
     private ISession _session;
     private JScrollPane _outputSp;
     private IDataSetViewerDestination _output;
@@ -54,7 +55,8 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionSheetProper
 
     private MyPropertiesListener _propsListener = new MyPropertiesListener();
     private MyActionListener _actionListener = new MyActionListener();
-    /**
+
+    /**
      * Ctor.
      *
      * @param   session     Current session.
@@ -78,12 +80,15 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionSheetProper
         _session = session;
         _sqlPanel = sqlPanel;
 
+
         createUserInterface();
+
 
         _session.getProperties().addPropertyChangeListener(_propsListener);
         propertiesHaveChanged(null);
     }
-    /**
+
+    /**
      * Show the results from the passed <TT>IDataSet</TT>.
      *
      * @param   ds      <TT>IDataSet</TT> to show results for.
@@ -103,6 +108,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionSheetProper
         _currentSqlLbl.setText("");
     }
 
+
     /**
      * Return the current SQL script.
      *
@@ -111,16 +117,20 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionSheetProper
     public String getSqlString() {
         return _currentSqlLbl.getText();
     }
-    private class MyPropertiesListener implements PropertyChangeListener {
+
+    private class MyPropertiesListener implements PropertyChangeListener {
         private boolean _listening = true;
+
 
         void stopListening() {
             _listening = false;
         }
 
+
         void startListening() {
             _listening = true;
         }
+
 
         public void propertyChange(PropertyChangeEvent evt) {
             if (_listening) {
@@ -129,17 +139,21 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionSheetProper
         }
     }
 
+
     private class MyActionListener implements ActionListener
     {
         private boolean _listening = true;
+
 
         void stopListening() {
             _listening = false;
         }
 
+
         void startListening() {
             _listening = true;
         }
+
 
         public void actionPerformed(ActionEvent evt) {
             if (_listening)
@@ -155,7 +169,8 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionSheetProper
             }
         }
     }
-    /**
+
+    /**
      * Insert the method's description here.
      * Creation date: (20-10-2001 1:23:16)
      */
@@ -164,6 +179,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionSheetProper
         add(_outputSp, BorderLayout.CENTER);
         _sqlPanel.closeTab(this);
     }
+
 
     /**
      * Insert the method's description here.
@@ -174,14 +190,16 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionSheetProper
         _sqlPanel.createWindow(this);
     }
 
+
     public Component getOutputComponent()
     {
         return _outputSp;
     }
-    private void propertiesHaveChanged(String propertyName) {
-            final SessionSheetProperties props = _session.getProperties();
+
+    private void propertiesHaveChanged(String propertyName) {
+            final SessionProperties props = _session.getProperties();
             if (propertyName == null || propertyName.equals(
-                    SessionSheetProperties.IPropertyNames.SQL_OUTPUT_CLASS_NAME)) {
+                    SessionProperties.IPropertyNames.SQL_OUTPUT_CLASS_NAME)) {
                 final IDataSetViewerDestination previous = _output;
                 try {
                     Class destClass = Class.forName(props.getSqlOutputClassName());
@@ -201,6 +219,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionSheetProper
                 _outputSp.setViewportView((Component)_output);
             }
         }
+
 
     private void createUserInterface() {
 //      final Resources rsrc = _session.getApplication().getResources();
@@ -235,5 +254,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionSheetProper
         }
     }
 }
+
+
 
 

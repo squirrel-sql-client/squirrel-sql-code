@@ -49,7 +49,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.ViewAliasesAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewDriversAction;
 //import net.sourceforge.squirrel_sql.client.resources.Resources;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeAction;
-import net.sourceforge.squirrel_sql.client.session.action.SessionSheetPropertiesAction;
+import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
 import net.sourceforge.squirrel_sql.fw.util.Logger;
 
@@ -180,7 +180,7 @@ final class MainFrameMenuBar extends JMenuBar {
 
     private JMenu createSessionMenu(Resources rsrc) {
         JMenu menu = rsrc.createMenu(IMenuResourceKeys.SESSION);
-        addToMenu(rsrc, SessionSheetPropertiesAction.class, menu);
+        addToMenu(rsrc, SessionPropertiesAction.class, menu);
         menu.addSeparator();
         addToMenu(rsrc, RefreshTreeAction.class, menu);
         addToMenu(rsrc, ExecuteSqlAction.class, menu);

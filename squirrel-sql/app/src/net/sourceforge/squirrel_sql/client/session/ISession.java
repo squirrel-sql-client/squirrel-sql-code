@@ -28,16 +28,47 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionSheetProperties;
-/**
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+
+/**
  * The current session.
  */
 public interface ISession extends IHasIdentifier {
+    /**
+     * Return the Application API object.
+     *
+     * @return the Application API object.
+     */
     IApplication getApplication();
+
+    /**
+     * Return the current SQL connection object.
+     *
+     * @return the current SQL connection object.
+     */
     SQLConnection getSQLConnection();
+
+    /**
+     * Return the driver used to connect to the database.
+     *
+     * @return the driver used to connect to the database.
+     */
     ISQLDriver getDriver();
+
+    /**
+     * Return the alias used to connect to the database.
+     *
+     * @return the alias used to connect to the database.
+     */
     ISQLAlias getAlias();
-    SessionSheetProperties getProperties();
+
+    /**
+     * Return the properties for this session.
+     *
+     * @return the properties for this session.
+     */
+    SessionProperties getProperties();
+
     void closeSQLConnection() throws SQLException;
 
     Object getPluginObject(IPlugin plugin, String key);

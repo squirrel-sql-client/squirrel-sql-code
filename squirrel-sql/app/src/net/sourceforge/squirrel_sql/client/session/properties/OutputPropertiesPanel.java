@@ -29,12 +29,12 @@ import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 
 public class OutputPropertiesPanel
-        implements IGlobalPreferencesPanel, ISessionSheetPropertiesPanel {
+        implements IGlobalPreferencesPanel, ISessionPropertiesPanel {
     private String _title;
     private String _hint;
 
     private IApplication _app;
-    private SessionSheetProperties _props;
+    private SessionProperties _props;
 
     private MyPanel _myPanel = new MyPanel();
 
@@ -55,10 +55,10 @@ public class OutputPropertiesPanel
     private OutputTypeCombo _sqlCmb = new OutputTypeCombo();
 */
 
-    public OutputPropertiesPanel(String title, String hint/*SessionSheetProperties props*/) {
+    public OutputPropertiesPanel(String title, String hint/*SessionProperties props*/) {
         super();
 //      if (props == null) {
-//          throw new IllegalArgumentException("Null SessionSheetProperties passed");
+//          throw new IllegalArgumentException("Null SessionProperties passed");
 //      }
 //      _props = props;
 //      createUserInterface();
@@ -67,7 +67,7 @@ public class OutputPropertiesPanel
         _hint = hint != null ? hint : MyPanel.i18n.OUTPUT;
     }
 
-//  public void setSessionSheetProperties(SessionSheetProperties value) {
+//  public void setSessionProperties(SessionProperties value) {
 //      _props = value;
 //      loadData();
 //  }
@@ -78,16 +78,16 @@ public class OutputPropertiesPanel
             throw new IllegalArgumentException("Null IApplication passed");
         }
 
-        initialize(app, app.getSquirrelPreferences().getSessionSheetProperties());
+        initialize(app, app.getSquirrelPreferences().getSessionProperties());
     }
 
-    public void initialize(IApplication app, SessionSheetProperties props)
+    public void initialize(IApplication app, SessionProperties props)
             throws IllegalArgumentException {
         if (app == null) {
             throw new IllegalArgumentException("Null IApplication passed");
         }
         if (props == null) {
-            throw new IllegalArgumentException("Null SessionSheetProperties passed");
+            throw new IllegalArgumentException("Null SessionProperties passed");
         }
 
         _app = app;
@@ -209,7 +209,7 @@ public class OutputPropertiesPanel
             createUserInterface();
         }
 
-        void loadData(SessionSheetProperties props) {
+        void loadData(SessionProperties props) {
             _metaDataCmb.selectClassName(props.getMetaDataOutputClassName());
             _dataTypeCmb.selectClassName(props.getDataTypesOutputClassName());
             _tableCmb.selectClassName(props.getTableOutputClassName());
@@ -226,7 +226,7 @@ public class OutputPropertiesPanel
             _sqlCmb.selectClassName(props.getSqlOutputClassName());
         }
 
-        void applyChanges(SessionSheetProperties props) {
+        void applyChanges(SessionProperties props) {
             props.setMetaDataOutputClassName(_metaDataCmb.getSelectedClassName());
             props.setDataTypesOutputClassName(_dataTypeCmb.getSelectedClassName());
             props.setTableOutputClassName(_tableCmb.getSelectedClassName());

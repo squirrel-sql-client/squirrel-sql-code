@@ -41,7 +41,7 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.Logger;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionSheetProperties;
+//import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.plugin.IPluginDatabaseObject;
 import net.sourceforge.squirrel_sql.client.plugin.IPluginDatabaseObjectType;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;

@@ -40,7 +40,7 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrameWindowState;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionSheetProperties;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 
 public class SquirrelPreferences implements Serializable {
@@ -64,7 +64,7 @@ public class SquirrelPreferences implements Serializable {
 
     private boolean _debugMode = false;
 
-    private SessionSheetProperties _sessionProps = new SessionSheetProperties();
+    private SessionProperties _sessionProps = new SessionProperties();
 
     /**
      * Show contents of internal frames when dragging. <CODE>false</CODE> makes
@@ -108,7 +108,7 @@ public class SquirrelPreferences implements Serializable {
             // When loading from prefs file this will be null.
         }
         setDebugMode(rhs.isDebugMode());
-        setSessionSheetProperties(rhs.getSessionSheetProperties());
+        setSessionProperties(rhs.getSessionProperties());
         setMainFrameWindowState(rhs.getMainFrameWindowState());
         setShowContentsWhenDragging(rhs.getShowContentsWhenDragging());
         setLoginTimeout(rhs.getLoginTimeout());
@@ -157,13 +157,13 @@ public class SquirrelPreferences implements Serializable {
         }
     }
 
-    public SessionSheetProperties getSessionSheetProperties() {
+    public SessionProperties getSessionProperties() {
         return _sessionProps;
     }
 
-    public synchronized void setSessionSheetProperties(SessionSheetProperties data) {
+    public synchronized void setSessionProperties(SessionProperties data) {
         if (_sessionProps != data) {
-            final SessionSheetProperties oldValue = _sessionProps;
+            final SessionProperties oldValue = _sessionProps;
             _sessionProps = data;
             _propChgReporter.firePropertyChange(IPropertyNames.SESSION_PROPERTIES,
                                 oldValue, _sessionProps);

@@ -28,7 +28,8 @@ import java.beans.SimpleBeanInfo;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo {
-    private static PropertyDescriptor[] s_dscrs;
+
+    private static PropertyDescriptor[] s_dscrs;
 
     private static Class cls = SquirrelPreferences.class;
 
@@ -37,7 +38,7 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo {
         if (s_dscrs == null) {
             s_dscrs = new PropertyDescriptor[7];
             int idx = 0;
-            s_dscrs[idx++] = new PropertyDescriptor(SquirrelPreferences.IPropertyNames.SESSION_PROPERTIES, cls, "getSessionSheetProperties", "setSessionSheetProperties");
+            s_dscrs[idx++] = new PropertyDescriptor(SquirrelPreferences.IPropertyNames.SESSION_PROPERTIES, cls, "getSessionProperties", "setSessionProperties");
             s_dscrs[idx++] = new PropertyDescriptor(SquirrelPreferences.IPropertyNames.MAIN_FRAME_STATE, cls, "getMainFrameWindowState", "setMainFrameWindowState");
             s_dscrs[idx++] = new PropertyDescriptor(SquirrelPreferences.IPropertyNames.SHOW_CONTENTS_WHEN_DRAGGING, cls, "getShowContentsWhenDragging", "setShowContentsWhenDragging");
             s_dscrs[idx++] = new PropertyDescriptor(SquirrelPreferences.IPropertyNames.LOGIN_TIMEOUT, cls, "getLoginTimeout", "setLoginTimeout");
@@ -46,8 +47,10 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo {
             s_dscrs[idx++] = new PropertyDescriptor(SquirrelPreferences.IPropertyNames.SHOW_TOOLTIPS , cls, "getShowToolTips", "setShowToolTips");
         }
     }
-    public PropertyDescriptor[] getPropertyDescriptors() {
+
+    public PropertyDescriptor[] getPropertyDescriptors() {
         return s_dscrs;
     }
 }
+
 

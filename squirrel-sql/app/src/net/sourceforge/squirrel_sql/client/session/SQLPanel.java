@@ -66,7 +66,7 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
-import net.sourceforge.squirrel_sql.client.session.properties.SessionSheetProperties;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.util.Logger;
 
 class SQLPanel extends JPanel {
@@ -203,7 +203,7 @@ class SQLPanel extends JPanel {
             }
 
             final long start = System.currentTimeMillis();
-            SessionSheetProperties props = _session.getProperties();
+            SessionProperties props = _session.getProperties();
             final Statement stmt = _session.getSQLConnection().createStatement();
             try {
 //              String sToken = sql;
@@ -336,10 +336,10 @@ class SQLPanel extends JPanel {
     }
 
     private void propertiesHaveChanged(String propertyName) {
-        final SessionSheetProperties props = _session.getProperties();
+        final SessionProperties props = _session.getProperties();
 /*
         if (propertyName == null || propertyName.equals(
-                SessionSheetProperties.IPropertyNames.SQL_OUTPUT_CLASS_NAME)) {
+                SessionProperties.IPropertyNames.SQL_OUTPUT_CLASS_NAME)) {
             final IDataSetViewerDestination previous = _output;
             try {
                 Class destClass = Class.forName(props.getSqlOutputClassName());
@@ -360,7 +360,7 @@ class SQLPanel extends JPanel {
         }
 */
 //      if (propertyName == null || propertyName.equals(
-//              SessionSheetProperties.IPropertyNames.SQL_REUSE_OUTPUT_TABS)) {
+//              SessionProperties.IPropertyNames.SQL_REUSE_OUTPUT_TABS)) {
 //          if (props.getSqlReuseOutputTabs()) {
 //              for (int i = _tabbedResultsPanel.getTabCount() - 1;
 //                      i > 0; --i) {
@@ -376,7 +376,7 @@ class SQLPanel extends JPanel {
 //      }
 
         if (propertyName == null || propertyName.equals(
-                        SessionSheetProperties.IPropertyNames.AUTO_COMMIT)) {
+                        SessionProperties.IPropertyNames.AUTO_COMMIT)) {
             final SQLConnection conn = _session.getSQLConnection();
             if (conn != null) {
                 boolean auto = true;
@@ -395,11 +395,11 @@ class SQLPanel extends JPanel {
             }
         }
 
-        if (propertyName == null || propertyName.equals(SessionSheetProperties.IPropertyNames.SQL_LIMIT_ROWS)) {
+        if (propertyName == null || propertyName.equals(SessionProperties.IPropertyNames.SQL_LIMIT_ROWS)) {
             _limitRowsChk.setSelected(props.getSqlLimitRows());
         }
 
-        if (propertyName == null || propertyName.equals(SessionSheetProperties.IPropertyNames.SQL_NBR_ROWS_TO_SHOW)) {
+        if (propertyName == null || propertyName.equals(SessionProperties.IPropertyNames.SQL_NBR_ROWS_TO_SHOW)) {
             _nbrRows.setInt(props.getSqlNbrRowsToShow());
         }
     }

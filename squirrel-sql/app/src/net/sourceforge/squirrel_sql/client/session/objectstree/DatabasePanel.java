@@ -46,7 +46,7 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionSheetProperties;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.util.Logger;
 
 class DatabasePanel extends JTabbedPane {
@@ -86,13 +86,13 @@ class DatabasePanel extends JTabbedPane {
 
     private void propertiesHaveChanged(String propName) {
         if (propName == null ||
-                propName.equals(SessionSheetProperties.IPropertyNames.META_DATA_OUTPUT_CLASS_NAME)) {
+                propName.equals(SessionProperties.IPropertyNames.META_DATA_OUTPUT_CLASS_NAME)) {
             addMetaDataTab();
             _metaDataViewer.setHasBeenBuilt(false);
             _metaDataViewer.load(_session.getSQLConnection());
         }
         if (propName == null ||
-                propName.equals(SessionSheetProperties.IPropertyNames.DATA_TYPES_OUTPUT_CLASS_NAME)) {
+                propName.equals(SessionProperties.IPropertyNames.DATA_TYPES_OUTPUT_CLASS_NAME)) {
             addDataTypesTab();
             _dataTypesViewer.setHasBeenBuilt(false);
             _dataTypesViewer.load(_session.getSQLConnection());

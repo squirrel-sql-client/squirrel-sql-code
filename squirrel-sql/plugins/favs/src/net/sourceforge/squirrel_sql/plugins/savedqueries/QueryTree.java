@@ -39,7 +39,7 @@ import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionSheetProperties;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
 public final class QueryTree extends JTree {
     private IApplication _app;

@@ -56,7 +56,7 @@ import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
-import net.sourceforge.squirrel_sql.client.session.action.SessionSheetPropertiesAction;
+//import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
 
 public class MainFrame extends BaseMDIParentFrame {
     public interface IMenuIDs extends MainFrameMenuBar.IMenuIDs {
