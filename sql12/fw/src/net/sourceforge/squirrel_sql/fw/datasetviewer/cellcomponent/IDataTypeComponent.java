@@ -24,12 +24,10 @@ import java.io.IOException;
 
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
-import javax.swing.JTable;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
 
 /**
