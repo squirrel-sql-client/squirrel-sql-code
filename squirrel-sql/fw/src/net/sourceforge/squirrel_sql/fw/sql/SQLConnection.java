@@ -17,7 +17,6 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -25,24 +24,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class SQLConnection
 {
-	private final ILogger s_log = LoggerController.createLogger(SQLConnection.class);
+	private final static ILogger s_log =
+		LoggerController.createLogger(SQLConnection.class);
 
-	private final String _url;
 	private Connection _conn;
 	private DatabaseMetaData _md;
 
@@ -54,7 +46,7 @@ public class SQLConnection
 	private Date _timeOpened = Calendar.getInstance().getTime();
 	private Date _timeClosed;
 
-	public SQLConnection(Connection conn) throws SQLException
+	public SQLConnection(Connection conn)
 	{
 		super();
 		if (conn == null)
@@ -62,8 +54,6 @@ public class SQLConnection
 			throw new IllegalArgumentException("SQLConnection == null");
 		}
 		_conn = conn;
-		loadMetaData();
-		_url = _md.getURL();
 	}
 
 	public void close() throws SQLException
@@ -188,9 +178,13 @@ public class SQLConnection
 	}
 
 //todo: get rid of this method.
-	public DatabaseMetaData getMetaData() throws SQLException
+	public synchronized DatabaseMetaData getMetaData() throws SQLException
 	{
 		validateConnection();
+		if (_md == null)
+		{
+			_md = getConnection().getMetaData();
+		}
 		return _md;
 	}
 
@@ -317,27 +311,5 @@ public class SQLConnection
 		return getMetaData().getVersionColumns(ti.getCatalogName(),
 												ti.getSchemaName(),
 												ti.getSimpleName());
-	}
-
-
-	private void loadMetaData() throws SQLException
-	{
-		_md = getConnection().getMetaData();
-//		try
-//		{
-//			_dbProductName = _md.getDatabaseProductName();
-//		}
-//		catch (SQLException ignore)
-//		{
-//			_dbProductName = "";
-//		}
-//		try
-//		{
-//			_dbDriverName = _md.getDriverName().trim();
-//		}
-//		catch (SQLException ignore)
-//		{
-//			_dbDriverName = "";
-//		}
 	}
 }

@@ -40,6 +40,9 @@ public class DatabaseObjectType implements IHasIdentifier
 	/** Database. */
 	public final static DatabaseObjectType DATABASE = createNewDatabaseObjectType();
 
+	/** Standard datatype. */
+	public final static DatabaseObjectType DATATYPE = createNewDatabaseObjectType();
+
 	/** Function. */
 	public final static DatabaseObjectType FUNCTION = createNewDatabaseObjectType();
 

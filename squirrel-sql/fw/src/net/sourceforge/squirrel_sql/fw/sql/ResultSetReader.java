@@ -316,7 +316,11 @@ public class ResultSetReader
 								int len = (int)blob.length();
 								if (len > 0)
 								{
-									int bytesToRead = _largeObjInfo.getReadBlobsSize();
+									int bytesToRead = len;
+									if (!_largeObjInfo.getReadCompleteBlobs())
+									{
+										bytesToRead = _largeObjInfo.getReadBlobsSize();
+									}
 									if (bytesToRead > len)
 									{
 										bytesToRead = len;
@@ -341,7 +345,11 @@ public class ResultSetReader
 								int len = (int)clob.length();
 								if (len > 0)
 								{
-									int charsToRead = _largeObjInfo.getReadClobsSize();
+									int charsToRead = len;
+									if (!_largeObjInfo.getReadCompleteClobs())
+									{
+										charsToRead = _largeObjInfo.getReadClobsSize();
+									}
 									if (charsToRead > len)
 									{
 										charsToRead = len;
