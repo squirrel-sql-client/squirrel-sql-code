@@ -1130,22 +1130,26 @@ JDBC driver will wait while attempting to connect to the database.</P>
 <P><B>No Debug</B> - If checked then no debugging information
 is output from Squirrel.</P>
 
-<P><B>JDBC Debug to Output Stream</B> - If checked tells the JDBC drivers
-to write
-debugging information to the JDBC Debug File. Depending on the JDBC
-driver you are using this may generate a lot of output and
-significantly slow down SQuirreL.</P>
+<P><B>JDBC Debug to Output Stream</B> - If checked tells the JDBC drivers to
+write debugging information to the JDBC Debug File. Depending on the JDBC
+driver you are using this may generate a lot of output and significantly slow
+down SQuirreL.</P>
 
-<P><B>JDBC Debug to Writer</B> - If checked tells the JDBC drivers
-to write
-debugging information to the JDBC Debug File. Depending on the JDBC
-driver you are using this may generate a lot of output and
-significantly slow down SQuirreL.</P>
+<P><B>JDBC Debug to Writer</B> - If checked tells the JDBC drivers to write
+debugging information to the JDBC Debug File. Depending on the JDBC driver you
+are using this may generate a lot of output and significantly slow down
+SQuirreL.</P>
 
-<P><B>JDBC Debug File</B> - If JDBC Debug is checked then this
-(display only) setting is the file that the debug information will be
-written out to. If the file name is too long for the label then the
-full name will be displayed in a tooltip.</P>
+<P><B>JDBC Debug File</B> - If JDBC Debug is enabled then this (display only)
+setting is the file that the debug information will be written out to. If the
+file name is too long for the label then the full name will be displayed in a
+tooltip.</P>
+
+<P>The <B>JDBC Debug to Output Stream</B> has been deprecated by JavaSoft in
+favour of the <B>JDBC Debug To Writer</B> option. However some older JDBC
+drivers may use the <B>Output Stream</B> rather than the <B>Writer</B>. Other
+drivers (such as the oracle 8 JDBC driver) may write different information to
+the <B>Output Stream</B> than they do to the <B>Writer</B>.</P>
 
 <H3>Proxy Tab</H3>
 
