@@ -179,14 +179,14 @@ public class ErrorDialog extends JDialog
 		getRootPane().setDefaultButton(_closeBtn);
 		setResizable(false);
 
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
+		//SwingUtilities.invokeLater(new Runnable()
+		//{
+		//	public void run()
+		//	{
 				pack();
 				GUIUtils.centerWithinParent(ErrorDialog.this);
-			}
-		});
+		//	}
+		//});
 	}
 
 	private static Color getTextAreaBackgroundColor()
