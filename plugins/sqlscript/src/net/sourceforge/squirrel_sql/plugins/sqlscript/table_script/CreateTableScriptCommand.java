@@ -130,50 +130,25 @@ public class CreateTableScriptCommand implements ICommand
                   }
                   rsPks.close();
                }
+
+               ScriptUtil su = new ScriptUtil();
                ResultSet rsColumns = conn.getSQLMetaData().getColumns(ti);
                while (rsColumns.next())
                {
 
-                  String decimalDigitsString = "";
+                  int decimalDigits = 0;
                   if (false == isJdbcOdbc)
                   {
-                     int decimalDigits = rsColumns.getInt(9);
-                     decimalDigitsString = 0 == decimalDigits ? "" : "," + decimalDigits;
+                     decimalDigits = rsColumns.getInt(9);
                   }
 
                   String sColumnName = rsColumns.getString(4);
-                  sbScript.append("\n   ");
-                  sbScript.append(sColumnName);
-                  sbScript.append(" ");
-                  //						int iType = rsColumns.getInt()
                   String sType = rsColumns.getString(6);
-                  sbScript.append(sType);
-                  String sLower = sType.toLowerCase();
-                  if (sLower.indexOf("char") != -1)
-                  {
-                     sbScript.append("(");
-                     sbScript.append(rsColumns.getString(7)).append(decimalDigitsString);
-                     sbScript.append(")");
-                  }
-                  else if (sLower.equals("numeric"))
-                  {
-                     sbScript.append("(");
-                     sbScript.append(rsColumns.getString(7)).append(decimalDigitsString);
-                     sbScript.append(")");
-                  }
-                  else if (sLower.equals("number"))
-                  {
-                     sbScript.append("(");
-                     sbScript.append(rsColumns.getString(7)).append(decimalDigitsString);
-                     ;
-                     sbScript.append(")");
-                  }
-                  else if (sLower.equals("decimal"))
-                  {
-                     sbScript.append("(");
-                     sbScript.append(rsColumns.getString(7)).append(decimalDigitsString);
-                     sbScript.append(")");
-                  }
+                  int colSize = rsColumns.getInt(7);
+
+                  sbScript.append("\n   ");
+                  sbScript.append(su.getColumnDef(sColumnName, sType, colSize, decimalDigits));
+
                   if (pks.size() == 1 && pks.get(0).equals(sColumnName))
                   {
                      sbScript.append(" PRIMARY KEY");
@@ -202,7 +177,7 @@ public class CreateTableScriptCommand implements ICommand
                }
                sbScript.setLength(sbScript.length() - 1);
 
-               sbScript.append("\n)").append(getStatementSeparator()).append("\n");
+               sbScript.append("\n)").append(ScriptUtil.getStatementSeparator(_session)).append("\n");
 
 
                if(isJdbcOdbc)
@@ -258,6 +233,7 @@ public class CreateTableScriptCommand implements ICommand
 
       return sbScript.append("\n").append(sbConstraints).toString();
    }
+
 
    private String createIndexes(ITableInfo ti)
       throws SQLException
@@ -347,7 +323,7 @@ public class CreateTableScriptCommand implements ICommand
                }
             }
          }
-         sbToAppend.append(")").append(getStatementSeparator()).append("\n");
+         sbToAppend.append(")").append(ScriptUtil.getStatementSeparator(_session)).append("\n");
       }
 
       return sbToAppend.toString();
@@ -470,21 +446,9 @@ public class CreateTableScriptCommand implements ICommand
             }
          }
 
-         sbToAppend.append(")").append(getStatementSeparator()).append("\n");
+         sbToAppend.append(")").append(ScriptUtil.getStatementSeparator(_session)).append("\n");
       }
 
       return sbToAppend.toString();
-   }
-
-   private String getStatementSeparator()
-   {
-      String statementSeparator = _session.getProperties().getSQLStatementSeparator();
-
-      if (1 < statementSeparator.length())
-      {
-         statementSeparator = "\n" + statementSeparator + "\n";
-      }
-
-      return statementSeparator;
    }
 }

@@ -31,10 +31,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptAction;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptOfCurrentSQLAction;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTableScriptAction;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTemplateDataScriptAction;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.*;
 
 import javax.swing.*;
 import java.io.File;
@@ -198,6 +195,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 		coll.add(new CreateDataScriptAction(app, _resources, this));
 		coll.add(new CreateTemplateDataScriptAction(app, _resources, this));
 		coll.add(new CreateDataScriptOfCurrentSQLAction(app, _resources, this));
+      coll.add(new CreateTableOfCurrentSQLAction(app, _resources, this));
 		createMenu();
 	}
 
@@ -292,6 +290,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 		_resources.addToMenu(coll.get(CreateTemplateDataScriptAction.class), menu);
 		_resources.addToMenu(coll.get(CreateTableScriptAction.class), menu);
 		_resources.addToMenu(coll.get(CreateDataScriptOfCurrentSQLAction.class), menu);
+      _resources.addToMenu(coll.get(CreateTableOfCurrentSQLAction.class), menu);
 
 		app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, menu);
 	}

@@ -123,7 +123,7 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
                         ITableInfo ti = (ITableInfo) dbObjs[k];
                         String sTable = ti.getSimpleName();
                         ResultSet srcResult = stmt.executeQuery("select * from " + ti.getQualifiedName());
-                        genInserts(srcResult, sTable, sbRows);
+                        genInserts(srcResult, sTable, sbRows, false);
                      }
                   }
                }
@@ -162,7 +162,7 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
       showAbortFrame();
    }
 
-   protected void genInserts(ResultSet srcResult, String sTable, StringBuffer sbRows)
+   protected void genInserts(ResultSet srcResult, String sTable, StringBuffer sbRows, boolean headerOnly)
       throws SQLException
    {
       ResultSetMetaData metaData = srcResult.getMetaData();
@@ -178,23 +178,27 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
 
       // Just a helper to make the fromResultSet ? ... below
       // look nicer.
-      boolean fromResultSet = !_templateScriptOnly;
+      boolean fromResultSet = !_templateScriptOnly && !headerOnly;
 
-      while (srcResult.next() || _templateScriptOnly)
+      sbRows.append("\n\n");
+      while (srcResult.next() || _templateScriptOnly || headerOnly)
       {
          if (_bStop) break;
-         sbRows.append("insert into ");
+         sbRows.append("INSERT INTO ");
          StringBuffer sbValues = new StringBuffer();
          sbRows.append(sTable);
          sbRows.append(" (");
-         sbValues.append(" values (");
+         sbValues.append(" VALUES (");
+
+         ScriptUtil su = new ScriptUtil();
+
          for (int i = 0; i < iColumnCount; i++)
          {
             String sColumnTypeName = typeAndName[i][0];
-            String sName = typeAndName[i][1];
-            int iIndexPoint = sName.lastIndexOf('.');
-            sName = sName.substring(iIndexPoint + 1);
-            sbRows.append(sName);
+            String sColumnName = typeAndName[i][1];
+            int iIndexPoint = sColumnName.lastIndexOf('.');
+            sColumnName = sColumnName.substring(iIndexPoint + 1);
+            sbRows.append(su.makeColumnNameUnique(sColumnName));
 
             if (sColumnTypeName.equals("INTEGER")
                || sColumnTypeName.equals("COUNTER")
@@ -353,9 +357,13 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
          // close it.
          sbValues.append(")").append(getStatementSeparator()).append("\n");
          sbRows.append(")");
-         sbRows.append(sbValues.toString());
 
-         if(_templateScriptOnly)
+         if(false == headerOnly)
+         {
+            sbRows.append(sbValues.toString());
+         }
+
+         if(_templateScriptOnly || headerOnly)
          {
             break;
          }

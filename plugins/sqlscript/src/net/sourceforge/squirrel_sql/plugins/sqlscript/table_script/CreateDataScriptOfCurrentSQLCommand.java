@@ -80,7 +80,7 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
                      int iFromIndex = getTokenBeginIndex(selectSQL, "from");
                      sTable = getNextToken(selectSQL, iFromIndex + "from".length());
                   }
-                  genInserts(srcResult, sTable, sbRows);
+                  genInserts(srcResult, sTable, sbRows, false);
                }
                finally
                {
