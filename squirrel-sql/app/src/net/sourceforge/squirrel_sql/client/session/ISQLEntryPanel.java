@@ -20,6 +20,8 @@ package net.sourceforge.squirrel_sql.client.session;
 import java.awt.Component;
 import java.awt.event.MouseListener;
 
+import javax.swing.event.UndoableEditListener;
+
 public interface ISQLEntryPanel {
 
 	Component getComponent();
@@ -46,5 +48,11 @@ public interface ISQLEntryPanel {
 	
 	void addMouseListener(MouseListener lis);
 	void removeMouseListener(MouseListener lis);
+
+	boolean hasOwnUndoableManager();
+		
+	void addUndoableEditListener(UndoableEditListener listener);
+
+	void removeUndoableEditListener(UndoableEditListener listener);
 }
 
