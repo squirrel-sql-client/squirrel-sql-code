@@ -58,7 +58,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
-implements IDataSetTableControls
+										implements IDataSetTableControls
 {
 	private ILogger s_log = LoggerController.createLogger(DataSetViewerTablePanel.class);
 
@@ -170,7 +170,7 @@ implements IDataSetTableControls
 
 		public Object getValueAt(int row, int col)
 		{
-			return ((Object[]) _data.get(row))[col];
+			return ((Object[])_data.get(row))[col];
 		}
 
 		public int getRowCount()
@@ -195,7 +195,9 @@ implements IDataSetTableControls
 				// if no columns defined, return a generic class
 				// to avoid anything throwing an exception.
 				if (_colDefs == null)
+				{
 					return Object.class;
+				}
 			
 				return Class.forName(_colDefs[col].getClassName());
 			}
@@ -232,7 +234,9 @@ implements IDataSetTableControls
 		 */
 		public void setValueAt(Object aValue, int row, int col) {
 			if ( _creator.changeUnderlyingValueAt(row, col, aValue, getValueAt(row, col)))
-				((Object[]) _data.get(row))[col] = aValue;
+			{
+				((Object[])_data.get(row))[col] = aValue;
+			}
 		}
 	}
 
@@ -295,10 +299,7 @@ implements IDataSetTableControls
 			int row = rowAtPoint(pt);
 			int col = columnAtPoint(pt);
 
-			//Component comp = SwingUtilities.getRoot(this);
-//			Component comp = SwingUtilities.windowForComponent(this);
 			Component comp = SwingUtilities.getRoot(this);
-
 			Object obj = _comp.getValueAt(row, col);
 			if (obj != null)
 			{
@@ -308,7 +309,6 @@ implements IDataSetTableControls
 			{
 				obj = "";
 			}
-
 
 			Component newComp = null;
 			if (comp instanceof BaseMDIParentFrame)
@@ -562,7 +562,7 @@ implements IDataSetTableControls
 		{
 			WrapAction()
 			{
-				super("Wrap");
+				super("Word Wrap");
 			}
 
 			public void actionPerformed(ActionEvent evt)

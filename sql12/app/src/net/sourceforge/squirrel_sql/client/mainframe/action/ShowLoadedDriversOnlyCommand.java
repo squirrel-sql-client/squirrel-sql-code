@@ -103,9 +103,7 @@ public class ShowLoadedDriversOnlyCommand implements ICommand
 		}
 		else
 		{
-System.out.println("before: " + prefs.getShowLoadedDriversOnly());
 			prefs.setShowLoadedDriversOnly(_show.booleanValue());
-System.out.println("after:  " + prefs.getShowLoadedDriversOnly());
 		}
 	}
 }

@@ -41,7 +41,7 @@ public class SQLDriverPropertyCollection
 	private final Map _objectsIndexMap = new TreeMap();
 
 	/** Array of  <TT>SQLDriverProperty</TT> objects. */
-	private List _objectsList = new ArrayList();
+	private final List _objectsList = new ArrayList();
 
 	/**
 	 * Default ctor. Creates an empty collection.
@@ -86,7 +86,7 @@ public class SQLDriverPropertyCollection
 		for (int i = 0; i < values.length; ++i)
 		{
 			_objectsList.add(values[i]);
-			_objectsIndexMap.put(values[i].getKey(), values[i]);
+			_objectsIndexMap.put(values[i].getName(), values[i]);
 		}
 	}
 
@@ -96,7 +96,7 @@ public class SQLDriverPropertyCollection
 	public synchronized void setDriverProperty(int idx, SQLDriverProperty value)
 	{
 		_objectsList.add(idx, value);
-		_objectsIndexMap.put(value.getKey(), value);
+		_objectsIndexMap.put(value.getName(), value);
 	}
 
 	public synchronized void applyDriverPropertynfo(DriverPropertyInfo[] infoAr)
@@ -107,7 +107,7 @@ public class SQLDriverPropertyCollection
 			if (sdp == null)
 			{
 				sdp = new SQLDriverProperty(infoAr[i]); 
-				_objectsIndexMap.put(sdp.getKey(), sdp);
+				_objectsIndexMap.put(sdp.getName(), sdp);
 				_objectsList.add(sdp);
 			}
 			sdp.setDriverPropertyInfo(infoAr[i]);

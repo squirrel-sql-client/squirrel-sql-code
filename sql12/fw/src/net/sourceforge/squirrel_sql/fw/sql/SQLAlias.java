@@ -68,7 +68,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 	 * true if the user wants to have his password saved unencrypted.
 	 * This flag is necessary if there is an empty password (standard in MSSQL)
 	 */
-	private boolean _passwordSaved;
+//	private boolean _passwordSaved;
 
 	/** <TT>true</TT> if this alias should be logged on automatically. */
 	private boolean _autoLogon;
@@ -127,7 +127,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 		setUrl(rhs.getUrl());
 		setUserName(rhs.getUserName());
 		setPassword(rhs.getPassword());
-		setPasswordSaved(rhs.isPasswordSaved());
+		//setPasswordSaved(rhs.isPasswordSaved());
 		setAutoLogon(rhs.isAutoLogon());
 		setUseDriverProperties(rhs.getUseDriverProperties());
 		setDriverProperties(rhs.getDriverProperties());
@@ -254,10 +254,10 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 	 * @return	<TT>true</TT> if a password has been saved
 	 * 			else <TT>false</TT>.
 	 */
-	public boolean isPasswordSaved()
-	{
-		return _passwordSaved;
-	}
+//	public boolean isPasswordSaved()
+//	{
+//		return _passwordSaved;
+//	}
 
 	/**
 	 * Set the password for this alias.
@@ -281,15 +281,15 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 	 * 
 	 * @param	passwordSaved	<TT>true</TT> if password saved else <TT>false</TT>.
 	 */
-	public void setPasswordSaved(boolean passwordSaved)
-	{
-		if (_passwordSaved != passwordSaved)
-		{
-			_passwordSaved = passwordSaved;
-			getPropertyChangeReporter().firePropertyChange(ISQLAlias.IPropertyNames.PASSWORD_SAVED,
-												!_passwordSaved, _passwordSaved);
-		}
-	}
+//	public void setPasswordSaved(boolean passwordSaved)
+//	{
+//		if (_passwordSaved != passwordSaved)
+//		{
+//			_passwordSaved = passwordSaved;
+//			getPropertyChangeReporter().firePropertyChange(ISQLAlias.IPropertyNames.PASSWORD_SAVED,
+//												!_passwordSaved, _passwordSaved);
+//		}
+//	}
 
 	/**
 	 * Should this alias be logged on automatically.

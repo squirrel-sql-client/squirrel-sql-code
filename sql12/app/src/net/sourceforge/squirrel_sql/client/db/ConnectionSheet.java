@@ -242,10 +242,10 @@ public class ConnectionSheet extends BaseSheet
 		_driverName.setText(_sqlDriver.getName());
 		_url.setText(_alias.getUrl());
 		_user.setText(userName);
-		if (_alias.isPasswordSaved())
-		{
+//		if (_alias.isPasswordSaved())
+//		{
 			_password.setText(password);
-		}
+//		}
 
 		// This is mainly for long URLs that cannot be fully
 		// displayed in the label.
@@ -386,7 +386,10 @@ public class ConnectionSheet extends BaseSheet
 					{
 						public void run()
 						{
-							if(_alias.isPasswordSaved())
+//							if(_alias.isPasswordSaved())
+//							{
+							final String pw = _password.getText();
+							if (pw != null && pw.length() > 0)
 							{
 								_btnsPnl.getOKButton().requestFocus();
 							}

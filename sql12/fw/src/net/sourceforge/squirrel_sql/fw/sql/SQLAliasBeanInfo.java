@@ -39,7 +39,7 @@ public class SQLAliasBeanInfo extends SimpleBeanInfo
 		super();
 		if (s_desc == null)
 		{
-			s_desc = new PropertyDescriptor[11];
+			s_desc = new PropertyDescriptor[10];
 			s_desc[0] = new PropertyDescriptor(IPropNames.ID, CLAZZ, "getIdentifier", "setIdentifier");
 			s_desc[1] = new PropertyDescriptor(IPropNames.NAME, CLAZZ, "getName", "setName");
 			s_desc[2] = new PropertyDescriptor(IPropNames.URL, CLAZZ, "getUrl", "setUrl");
@@ -48,9 +48,9 @@ public class SQLAliasBeanInfo extends SimpleBeanInfo
 			s_desc[5] = new PropertyDescriptor(IPropNames.USE_DRIVER_PROPERTIES, CLAZZ, "getUseDriverProperties", "setUseDriverProperties");
 			s_desc[6] = new PropertyDescriptor(IPropNames.DRIVER_PROPERTIES, CLAZZ, "getDriverProperties", "setDriverProperties");
 			s_desc[7] = new PropertyDescriptor(IPropNames.PASSWORD, CLAZZ, "getPassword", "setPassword");
-			s_desc[8] = new PropertyDescriptor(IPropNames.PASSWORD_SAVED, CLAZZ, "isPasswordSaved", "setPasswordSaved");
-			s_desc[9] = new PropertyDescriptor(IPropNames.AUTO_LOGON, CLAZZ, "isAutoLogon", "setAutoLogon");
-			s_desc[10] = new PropertyDescriptor(IPropNames.CONNECT_AT_STARTUP, CLAZZ, "isConnectAtStartup", "setConnectAtStartup");
+//			s_desc[8] = new PropertyDescriptor(IPropNames.PASSWORD_SAVED, CLAZZ, "isPasswordSaved", "setPasswordSaved");
+			s_desc[8] = new PropertyDescriptor(IPropNames.AUTO_LOGON, CLAZZ, "isAutoLogon", "setAutoLogon");
+			s_desc[9] = new PropertyDescriptor(IPropNames.CONNECT_AT_STARTUP, CLAZZ, "isConnectAtStartup", "setConnectAtStartup");
 		}
 	}
 

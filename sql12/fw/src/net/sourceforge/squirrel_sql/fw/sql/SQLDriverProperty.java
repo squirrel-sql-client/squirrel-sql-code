@@ -29,8 +29,8 @@ public class SQLDriverProperty implements Cloneable, Serializable
 	/** Property names for this bean. */
 	public interface IPropertyNames
 	{
-		/** Property Key. */
-		String KEY = "key";
+		/** Property Name. */
+		String NAME = "name";
 
 		/** Property value. */
 		String VALUE = "value";
@@ -40,7 +40,7 @@ public class SQLDriverProperty implements Cloneable, Serializable
 	}
 
 	/** Name. */
-	private String _key;
+	private String _name;
 
 	/** Value associated with the name. */
 	private String _value;
@@ -61,17 +61,17 @@ public class SQLDriverProperty implements Cloneable, Serializable
 	/**
 	 * Create from a <TT>DriverPropertyInfo</TT> object.
 	 */
-	public SQLDriverProperty(DriverPropertyInfo value)
+	public SQLDriverProperty(DriverPropertyInfo parm)
 	{
 		super();
-		if (value == null)
+		if (parm == null)
 		{
 			throw new IllegalArgumentException("DriverPropertyInfo == null");
 		}
 	
-		setKey(value.name);
-		setValue(value.value);
-		setDriverPropertyInfo(value);	
+		setName(parm.name);
+		setValue(parm.value);
+		setDriverPropertyInfo(parm);	
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class SQLDriverProperty implements Cloneable, Serializable
 	public SQLDriverProperty(String name, String value)
 	{
 		super();
-		_key = name;
+		_name = name;
 		_value = value;
 	}
 
@@ -109,9 +109,9 @@ public class SQLDriverProperty implements Cloneable, Serializable
 	 *
 	 * @return	The name.
 	 */
-	public String getKey()
+	public String getName()
 	{
-		return _key;
+		return _name;
 	}
 
 	/**
@@ -139,9 +139,13 @@ public class SQLDriverProperty implements Cloneable, Serializable
 	 *
 	 * @param	name	The name.
 	 */
-	public void setKey(String name)
+	public synchronized void setName(String name)
 	{
-		_key = name;
+		_name = name;
+		if (_driverPropInfo != null)
+		{
+			_driverPropInfo.name = name;
+		}
 	}
 
 	/**
@@ -149,9 +153,13 @@ public class SQLDriverProperty implements Cloneable, Serializable
 	 *
 	 * @param	value	The value.
 	 */
-	public void setValue(String value)
+	public synchronized void setValue(String value)
 	{
 		_value = value;
+		if (_driverPropInfo != null)
+		{
+			_driverPropInfo.value = value;
+		}
 	}
 
 	public void setIsSpecified(boolean value)
@@ -159,16 +167,17 @@ public class SQLDriverProperty implements Cloneable, Serializable
 		_isSpecified = value;
 	}
 
-	public void setDriverPropertyInfo(DriverPropertyInfo value)
+	public void setDriverPropertyInfo(DriverPropertyInfo parm)
 	{
-		if (value != null)
+		if (parm != null)
 		{
-			if (!value.name.equals(getKey()))
+			if (!parm.name.equals(getName()))
 			{
 				throw new IllegalArgumentException("DriverPropertyInfo.name != my name");
 			}
 		}
-		_driverPropInfo = value;
+		_driverPropInfo = parm;
+		_driverPropInfo.value = _value;
 	}
 }
 
