@@ -22,6 +22,7 @@ import java.sql.Types;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.PreparedStatement;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
@@ -531,18 +532,6 @@ public class ContentsTab extends BaseTableTab
 		// get WHERE clause using original value
 		String whereClause = getWhereClause(values, colDefs, col, oldValue);
 
-		// The format of the SET part of the UPDATE statement varies depending
-		// on the data type, and whether it is NULL or not.
-		String setClause = getSetClause(colDefs, col, newValue);
-
-		// we do not know how to set some fields,
-		// but we should never see this because the changeUnderlyingValueAt method
-		// in DataSetViewerEditableTablePanel checks for this condition and
-		// does not call this (general, text-based) update method if the
-		// DataType does not support it.
-		if (setClause == null)
-			return "The '" + colDefs[col].getLabel() + "' column is a type that Squirrel does not know how to set";
-
 		final ISession session = getSession();
 		final SQLConnection conn = session.getSQLConnection();
 
@@ -550,16 +539,20 @@ public class ContentsTab extends BaseTableTab
 
 		try
 		{
-			final Statement stmt = conn.createStatement();
+			final ITableInfo ti = getTableInfo();
+			final PreparedStatement pstmt = conn.prepareStatement(
+				"UPDATE " + ti.getQualifiedName() +
+				" SET " + colDefs[col].getLabel() + " = ? " +
+				whereClause);
 			try
 			{
-				final ITableInfo ti = getTableInfo();
-				String updateCommand = "UPDATE " + ti.getQualifiedName() + setClause + whereClause;
-				count = stmt.executeUpdate(updateCommand);
+				// have the DataType object fill in the appropriate kind of value
+				CellComponentFactory.setPreparedStatementValue(colDefs[col], pstmt, newValue);
+				count = pstmt.executeUpdate();
 			}
 			finally
 			{
-				stmt.close();
+				pstmt.close();
 			}
 		}
 		catch (SQLException ex)
@@ -579,6 +572,7 @@ public class ContentsTab extends BaseTableTab
 		return null;
 	}
 
+
 	/**
 	 * Let fw get the rowIDcol
 	 */
@@ -586,6 +580,7 @@ public class ContentsTab extends BaseTableTab
 	{
 		return _rowIDcol;
 	}
+
 
 	/**
 	 * helper function to create a WHERE clause to search the DB for matching rows.
@@ -636,21 +631,5 @@ public class ContentsTab extends BaseTableTab
 		return whereClause.toString();
 	}
 
-	/**
-	 * helper function to create a SET clause to update the cell in the DB.
-	 */
-	private String getSetClause(
-		ColumnDisplayDefinition[] colDefs,
-		int col,
-		Object colValue)
-	{
 
-		String clause = CellComponentFactory.getSetClauseValue(colDefs[col], colValue);
-
-		// if column cannot be used in SET clause, return null
-		if (clause == null || clause.length() == 0)
-			return null;
-
-		return " SET " + clause;
-	}
 }
