@@ -24,6 +24,8 @@ import java.awt.GridBagLayout;
 import java.awt.Container;
 import java.awt.Frame;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -240,6 +242,10 @@ public class ConnectionSheet extends BaseSheet {
 		_user.setColumns(COLUMN_COUNT);
 		_password.setColumns(COLUMN_COUNT);
 
+		TextFieldActionListener textListener = new TextFieldActionListener();
+		_user.addActionListener(textListener);
+		_password.addActionListener(textListener);
+		
 		PropertyPanel dataEntryPnl = new PropertyPanel();
 
 		JLabel lbl = new JLabel(i18n.ALIAS, SwingConstants.RIGHT);
@@ -333,6 +339,14 @@ public class ConnectionSheet extends BaseSheet {
 		pack();
 	}
 
+	private final class TextFieldActionListener implements ActionListener
+	{
+		public void actionPerformed(ActionEvent event)
+		{
+			connect(true);
+		}
+	}
+	
 	/**
 	 * Listener to handle button events in OK/Close panel.
 	 */
