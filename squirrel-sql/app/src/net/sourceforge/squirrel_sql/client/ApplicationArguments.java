@@ -19,6 +19,9 @@ package net.sourceforge.squirrel_sql.client;
  */
 import java.util.StringTokenizer;
 
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 /**
  * Application arguments.
  *
@@ -28,8 +31,11 @@ import java.util.StringTokenizer;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ApplicationArguments {
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(ApplicationArguments.class);
+
 	/** Only instance of this class. */
-	private static ApplicationArguments s_instance = null;
+	private static ApplicationArguments s_instance;
 
 	/** &quot;Raw&quot; arguments straight from the command line. */
 	private String[] _rawArgs;
@@ -86,13 +92,23 @@ public class ApplicationArguments {
 	 *
 	 * @param   args	Arguments passed on command line.
 	 */
-	public static void initialize(String[] args) {
-		if (s_instance != null) {
-			throw new IllegalStateException("ApplicationArguments.initialize() called twice");
+	public synchronized static void initialize(String[] args) {
+		if (s_instance == null) {
+			s_instance = new ApplicationArguments(args);
+		} else {
+			s_log.debug("ApplicationArguments.initialize() called twice");
 		}
-		s_instance = new ApplicationArguments(args);
 	}
 
+	/**
+	 * Return the single instance of this class.
+	 * 
+	 * @return the single instance of this class.
+	 *
+	 * @throws	IllegalStateException
+	 * 			Thrown if ApplicationArguments.getInstance() called
+	 *			before ApplicationArguments.initialize()
+	 */
 	public static ApplicationArguments getInstance() {
 		if (s_instance == null) {
 			throw new IllegalStateException("ApplicationArguments.getInstance() called before ApplicationArguments.initialize()");
