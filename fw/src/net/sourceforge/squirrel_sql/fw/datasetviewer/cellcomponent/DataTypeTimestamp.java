@@ -23,6 +23,7 @@ import java.awt.GridBagConstraints;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import java.awt.Insets;
+import java.awt.GridLayout;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -35,6 +36,11 @@ import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.JComboBox;
 import javax.swing.JCheckBox;
+import javax.swing.ButtonGroup;
+import javax.swing.JRadioButton;
+import javax.swing.ButtonModel;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
@@ -43,6 +49,8 @@ import javax.swing.BorderFactory;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+
+import java.util.Date;
 
 import java.text.DateFormat;
 
@@ -133,6 +141,14 @@ public class DataTypeTimestamp
 	 // This is reset each time the user changes the previous settings.
 	 private static DateFormat dateFormat =
 	 	DateFormat.getDateTimeInstance(localeFormat, localeFormat);
+	 	
+	// values for how to use timestamps in WHERE clauses
+	 private static final int DO_NOT_USE = 0;
+	 private static final int USE_TIMESTAMP_FORMAT = 1;
+	 private static final int USE_STRING_FORMAT = 2;
+	// Define whether or not to use Timestamp in internally generated WHERE
+	// clauses, and if so what format to use. 
+	 private static int whereClauseUsage = USE_TIMESTAMP_FORMAT;
 
 
 	/**
@@ -181,6 +197,13 @@ public class DataTypeTimestamp
 				thisClassName, "lenient");
 			if (lenientString != null && lenientString.equals("false"))
 				lenient =false;
+			
+			// how to use Timestamp in WHERE clauses
+			whereClauseUsage = USE_TIMESTAMP_FORMAT;	// default to SQL standard
+			String whereClauseUsageString = DTProperties.get(
+				thisClassName, "whereClauseUsage");
+			if (whereClauseUsageString != null)
+				whereClauseUsage = Integer.parseInt(whereClauseUsageString);
 		}
 	}
 	
@@ -466,10 +489,15 @@ public class DataTypeTimestamp
 	 * or whatever is appropriate for this column in the database.
 	 */
 	public String getWhereClauseValue(Object value) {
+		if (whereClauseUsage == DO_NOT_USE)
+			return "";
 		if (value == null || value.toString() == null || value.toString().length() == 0)
 			return _colDef.getLabel() + " IS NULL";
 		else
-			return _colDef.getLabel() + "='" + value.toString() +"'";
+			if (whereClauseUsage == USE_TIMESTAMP_FORMAT)
+				return _colDef.getLabel() + "=TIMESTAMP('" + value.toString() +"')";
+			else
+				return _colDef.getLabel() + "='" + value.toString() +"'";
 	}
 	
 	
@@ -725,6 +753,23 @@ public class DataTypeTimestamp
 
 		// checkbox for whether to interpret input leniently or not
 		private JCheckBox lenientChk = new JCheckBox("allow inexact format on input");
+		
+		// Objects needed to handle radio buttons
+		private JRadioButton doNotUseButton =
+			new JRadioButton("Do not use Timstamp in WHERE clause");
+		private JRadioButton useTimestampFormatButton =
+			new JRadioButton("Use SQL standard format ( \"TIMESTAMP('"+
+				new Timestamp(new Date().getTime()).toString() + "')\")");
+		private JRadioButton useStringFormatButton =
+			new JRadioButton("Use String version of Timestamp ('"+
+				new Timestamp(new Date().getTime()).toString() + "')");
+		// IMPORTANT: put the buttons into the array in same order as their
+		// associated values defined for whereClauseUsage.
+		private ButtonModel radioButtonModels[] = {
+			doNotUseButton.getModel(),
+			useTimestampFormatButton.getModel(),
+			useStringFormatButton.getModel() };
+		private ButtonGroup whereClauseUsageGroup = new ButtonGroup();
 	   
 
 		public BlobOkJPanel() {
@@ -746,6 +791,12 @@ public class DataTypeTimestamp
 
 			// lenient checkbox
 			lenientChk.setSelected(lenient);
+			
+			// where clause usage group
+			whereClauseUsageGroup.add(doNotUseButton);
+			whereClauseUsageGroup.add(useTimestampFormatButton);
+			whereClauseUsageGroup.add(useStringFormatButton);
+			whereClauseUsageGroup.setSelected(radioButtonModels[whereClauseUsage], true);
 
 	 	 
 			// handle cross-connection between fields
@@ -782,6 +833,22 @@ public class DataTypeTimestamp
 			gbc.gridx = 0;
 			++gbc.gridy;
 			add(lenientChk, gbc);
+			
+			// add label for the radio button group
+			gbc.gridx = 0;
+			++gbc.gridy;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
+			add(new JLabel("For internally generated WHERE clauses:"), gbc);
+
+			++gbc.gridy;
+			gbc.insets = new Insets(0,30,0,0);
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
+			add(doNotUseButton, gbc);
+			++gbc.gridy;
+			add(useTimestampFormatButton, gbc);
+			++gbc.gridy;
+			add(useStringFormatButton,gbc);
+
 
 		} // end of constructor for inner class
 	 
@@ -809,6 +876,20 @@ public class DataTypeTimestamp
 			DTProperties.put(
 				thisClassName,
 				"lenient", Boolean.toString(lenient));
+			
+			//WARNING: this depends on entires in ButtonGroup being in the same order
+			// as the values for whereClauseUsage
+			int buttonIndex;
+			for (buttonIndex=0; buttonIndex< radioButtonModels.length; buttonIndex++) {
+				if (whereClauseUsageGroup.isSelected(radioButtonModels[buttonIndex]))
+					break;
+			}
+			if (buttonIndex > radioButtonModels.length)
+				buttonIndex = USE_TIMESTAMP_FORMAT;
+			whereClauseUsage = buttonIndex;
+			DTProperties.put(
+				thisClassName,
+				"whereClauseUsage", Integer.toString(whereClauseUsage));
 		}
 	 
 	 } // end of inner class	 
