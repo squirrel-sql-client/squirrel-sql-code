@@ -17,10 +17,12 @@ package net.sourceforge.squirrel_sql.client.db;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,12 +32,14 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -47,7 +51,6 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.OkClosePanel;
 import net.sourceforge.squirrel_sql.fw.gui.OkClosePanelEvent;
 import net.sourceforge.squirrel_sql.fw.gui.IOkClosePanelListener;
-import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverClassLoader;
@@ -76,8 +79,7 @@ public class DriverMaintDialog extends JDialog {
 		String ADD = "Add Driver";
 		String CHANGE = "Change Driver";
 		String DRIVER = "Driver Class Name:";
-		String JAR_FILE = "JAR File:";
-		String LOAD_WHERE = "Load Driver from CLASSPATH:";
+		String LOAD_WHERE = "Load from CLASSPATH or JAR File:";
 		String NAME = "Name:";
 		String URL = "Example URL:";
 	}
@@ -88,7 +90,7 @@ public class DriverMaintDialog extends JDialog {
 	private int _maintType;
 
 	private JTextField _driverName = new JTextField();
-	private JCheckBox _usesClassPathChk = new JCheckBox();
+	private JCheckBox _usesClassPathChk = new JCheckBox(i18n.LOAD_WHERE);
 	private JTextField _jarFileName = new JTextField();
 	private JComboBox _driverClassCmb = new JComboBox();
 	private JTextField _url = new JTextField();
@@ -113,7 +115,6 @@ public class DriverMaintDialog extends JDialog {
 		_driverName.setText(_sqlDriver.getName());
 		_usesClassPathChk.setSelected(_sqlDriver.getUsesClassPath());
 		setJarFileName(_sqlDriver.getJarFileName());
-		//_driverClassName.setText(_sqlDriver.getDriverClassName());
 		_driverClassCmb.setSelectedItem(_sqlDriver.getDriverClassName());
 		_url.setText(_sqlDriver.getUrl());
 	}
@@ -190,38 +191,65 @@ public class DriverMaintDialog extends JDialog {
 	}
 
 	private void createUserInterface() {
-		PropertyPanel dataEntryPnl = new PropertyPanel();
-
-		JLabel lbl = new JLabel(i18n.NAME, SwingConstants.RIGHT);
-		dataEntryPnl.add(lbl, _driverName);
 		_driverName.setColumns(25);
-
-		lbl = new JLabel(i18n.LOAD_WHERE, SwingConstants.RIGHT);
-		dataEntryPnl.add(lbl, _usesClassPathChk);
-
-		lbl = new JLabel(i18n.JAR_FILE, SwingConstants.RIGHT);
-		dataEntryPnl.add(lbl, _jarFileName, _searchBtn);
-
-		lbl = new JLabel(i18n.DRIVER, SwingConstants.RIGHT);
-		dataEntryPnl.add(lbl, _driverClassCmb);
-
-		lbl = new JLabel(i18n.URL, SwingConstants.RIGHT);
-		dataEntryPnl.add(lbl, _url);
-
 		_driverClassCmb.setEditable(true);
 
 		_usesClassPathChk.addChangeListener(new UsesClassPathCheckBoxListener());
 		_searchBtn.addActionListener(new MySearchButtonListener());
 		_jarFileName.addFocusListener(new JarFileFocusListener());
 
-		// Ok and cancel buttons at bottom of dialog.
+		final JPanel contentPane = new JPanel();
+		setContentPane(contentPane);
+		contentPane.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+
+		contentPane.setLayout(new GridBagLayout());
+		final GridBagConstraints gbc = new GridBagConstraints();
+		gbc.anchor = gbc.WEST;
+		gbc.fill = gbc.HORIZONTAL;
+		gbc.insets = new Insets(4, 4, 4, 4);
+
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		contentPane.add(new RightLabel(i18n.NAME), gbc);
+
+		++gbc.gridy;
+		contentPane.add(_usesClassPathChk, gbc);
+
+		++gbc.gridy;
+		contentPane.add(new RightLabel(i18n.DRIVER), gbc);
+
+		++gbc.gridy;
+		contentPane.add(new RightLabel(i18n.URL), gbc);
+
+		gbc.weightx = 1.0;
+		gbc.gridwidth = 2;
+		gbc.gridy = 0;
+		++gbc.gridx;
+		contentPane.add(_driverName, gbc);
+
+		++gbc.gridy;
+		contentPane.add(_jarFileName, gbc);
+
+		++gbc.gridy;
+		contentPane.add(_driverClassCmb, gbc);
+
+		++gbc.gridy;
+		contentPane.add(_url, gbc);
+
+		gbc.weightx = 0;
+		gbc.gridwidth = 1;
+		gbc.gridy = 1;
+		++gbc.gridx;
+		++gbc.gridx;
+		contentPane.add(_searchBtn, gbc);
+
 		OkClosePanel btnsPnl = new OkClosePanel();
 		btnsPnl.addListener(new MyOkCancelPanelListener());
 
-		final Container contentPane = getContentPane();
-		contentPane.setLayout(new BorderLayout());
-		contentPane.add(dataEntryPnl, BorderLayout.NORTH);
-		contentPane.add(btnsPnl, BorderLayout.CENTER);
+		gbc.gridx = 0;
+		gbc.gridy = gbc.RELATIVE;
+		gbc.gridwidth = gbc.REMAINDER;
+		contentPane.add(btnsPnl, gbc);
 
 		btnsPnl.makeOKButtonDefault();
 		pack();
@@ -259,6 +287,12 @@ public class DriverMaintDialog extends JDialog {
 			boolean allowJarFileEntry = !((JCheckBox)evt.getSource()).isSelected();
 			_jarFileName.setEnabled(allowJarFileEntry);
 			_searchBtn.setEnabled(allowJarFileEntry);
+		}
+	}
+
+	private final static class RightLabel extends JLabel {
+		RightLabel(String title) {
+			super(title, SwingConstants.RIGHT);
 		}
 	}
 

@@ -35,5 +35,7 @@ public interface ILogger {
 	
 	boolean isDebugEnabled();
 	boolean isInfoEnabled();
+
+	void setPriority(LoggingLevel level);
 }
 

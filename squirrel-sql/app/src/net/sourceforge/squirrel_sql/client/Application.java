@@ -17,14 +17,20 @@ package net.sourceforge.squirrel_sql.client;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.Action;
 import javax.swing.JMenu;
+import javax.swing.ToolTipManager;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
@@ -33,6 +39,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.Log4jLogger;
 import net.sourceforge.squirrel_sql.fw.util.Pair;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggingLevel;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.db.DataCache;
@@ -85,6 +92,9 @@ class Application implements IApplication {
 	/** Factory used to create SQL entry panels. */
 	private ISQLEntryPanelFactory _sqlEntryFactory = new DefaultSQLEntryPanelFactory();
 
+	/** Output stream for JDBC debug logging. */
+	private PrintStream _jdbcDebugOutput;
+
 	/**
 	 * ctor.
 	 *
@@ -120,7 +130,12 @@ class Application implements IApplication {
 				_prefs = new SquirrelPreferences();
 				_prefs.setApplication(this);
 				_prefs.load();
-//				Debug.setDebugMode(_prefs.isDebugMode());
+				preferencesHaveChanged(null);
+				_prefs.addPropertyChangeListener(new PropertyChangeListener() {
+					public void propertyChange(PropertyChangeEvent evt) {
+						preferencesHaveChanged(evt);
+					}
+				});
 
 				indicateNewStartupTask("Loading actions...");
 				_actions = new ActionCollection(this);
@@ -158,6 +173,10 @@ class Application implements IApplication {
 		_prefs.save();
 		_cache.save();
 		//_logger.close();
+		if (_jdbcDebugOutput != null) {
+			_jdbcDebugOutput.close();
+			_jdbcDebugOutput = null;
+		}
 	}
 
 	public PluginManager getPluginManager() {
@@ -266,6 +285,39 @@ class Application implements IApplication {
 	private void indicateNewStartupTask(String taskDescription) {
 		if (_splash != null) {
 			_splash.indicateNewTask(taskDescription);
+		}
+	}
+
+	private void preferencesHaveChanged(PropertyChangeEvent evt) {
+		String propName = evt != null ? evt.getPropertyName() : null;
+
+		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.SHOW_TOOLTIPS)) {
+			ToolTipManager.sharedInstance().setEnabled(_prefs.getShowToolTips());
+		}
+
+		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.DEBUG_JDBC)) {
+			if (_prefs.getDebugJdbc()) {
+				try {
+					_jdbcDebugOutput = new PrintStream(new FileOutputStream(getApplicationFiles().getJDBCDebugLogFile()));
+					DriverManager.setLogStream(_jdbcDebugOutput);
+				} catch (IOException ex) {
+					DriverManager.setLogStream(System.out);
+				}
+			} else {
+				if (_jdbcDebugOutput != null) {
+					_jdbcDebugOutput.close();
+					_jdbcDebugOutput = null;
+				}
+				DriverManager.setLogWriter(null);
+			}
+		}
+
+		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.LOGIN_TIMEOUT)) {
+			DriverManager.setLoginTimeout(_prefs.getLoginTimeout());
+		}
+
+		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.LOGGING_LEVEL)) {
+			s_log.setPriority(LoggingLevel.get(_prefs.getLoggingLevel()));
 		}
 	}
 }

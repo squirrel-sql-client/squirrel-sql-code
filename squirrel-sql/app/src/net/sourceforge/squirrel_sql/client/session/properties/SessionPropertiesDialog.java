@@ -81,9 +81,10 @@ public class SessionPropertiesDialog extends JDialog {
     }
 
     private void createUserInterface() {
+        final IApplication app = _session.getApplication();
         final SessionProperties props = _session.getProperties();
 
-        _panels.add(new SQLPropertiesPanel(i18n.SQL, i18n.SQL));
+        _panels.add(new SQLPropertiesPanel(app, i18n.SQL, i18n.SQL));
         _panels.add(new OutputPropertiesPanel(i18n.OUTPUT, i18n.OUTPUT));
 
         // Ok and cancel buttons at bottom of dialog.
@@ -94,7 +95,6 @@ public class SessionPropertiesDialog extends JDialog {
         contentPane.setLayout(new BorderLayout());
 
         // Go thru all plugins attached to this session asking for panels.
-        final IApplication app = _session.getApplication();
         SessionPluginInfo[] plugins = app.getPluginManager().getPluginInformation(_session);
         for (int i = 0; i < plugins.length; ++i) {
             SessionPluginInfo spi = plugins[i];

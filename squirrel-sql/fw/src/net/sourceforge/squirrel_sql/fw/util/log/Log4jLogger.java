@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.fw.util.log;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import org.apache.log4j.Category;
+import org.apache.log4j.Priority;
 
 /**
  * This is a logger that logs using the Apache log4j package.
@@ -114,6 +115,20 @@ public class Log4jLogger implements ILogger {
 	 */
 	public boolean isInfoEnabled() {
 		return _cat.isInfoEnabled();
+	}
+	
+	public void setPriority(LoggingLevel level) {
+		if (level == LoggingLevel.OFF) {
+			//??
+		} else if (level == LoggingLevel.ERROR) {
+			_cat.getRoot().setPriority(Priority.ERROR);
+		} else if (level == LoggingLevel.WARN) {
+			_cat.getRoot().setPriority(Priority.WARN);
+		} else if (level == LoggingLevel.INFO) {
+			_cat.getRoot().setPriority(Priority.INFO);
+		} else {
+			_cat.getRoot().setPriority(Priority.DEBUG);
+		}
 	}
 }
 

@@ -31,6 +31,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggingLevel;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
@@ -41,14 +42,14 @@ class LoggingPreferencesPanel implements IGlobalPreferencesPanel {
 
 	private MyPanel _myPanel;
 
-	public void initialize(IApplication app)
-			throws IllegalArgumentException {
-		if (app == null) {
-			throw new IllegalArgumentException("Null IApplication passed");
-		}
-
+	LoggingPreferencesPanel(IApplication app) {
+		super();
 		_app = app;
 		_myPanel = new MyPanel(_app);
+	}
+
+	public void initialize(IApplication app)
+			throws IllegalArgumentException {
 		_myPanel.loadData(_app.getSquirrelPreferences());
 	}
 
@@ -109,7 +110,7 @@ class LoggingPreferencesPanel implements IGlobalPreferencesPanel {
 			prefs.setLoggingLevel(_logCmb.getSelectedLoggingLevel().getLevel());
 		}
 
-		private void createUserInterface(SquirrelPreferences prefs) {
+		private void createUserInterface(SquirrelPreferences prefs1) {
 			final ApplicationFiles appFiles = _app.getApplicationFiles();
 
 			setLayout(new GridBagLayout());
@@ -214,47 +215,6 @@ class LoggingPreferencesPanel implements IGlobalPreferencesPanel {
 
 		LoggingLevel getSelectedLoggingLevel() {
 			return (LoggingLevel)getSelectedItem();	
-		}
-	}
-
-	private static final class LoggingLevel {
-		static final LoggingLevel DEBUG = new LoggingLevel("Debug", SquirrelPreferences.ILoggingLevel.DEBUG);
-		static final LoggingLevel INFO = new LoggingLevel("Informational", SquirrelPreferences.ILoggingLevel.INFO);
-		static final LoggingLevel WARN = new LoggingLevel("Warning", SquirrelPreferences.ILoggingLevel.WARN);
-		static final LoggingLevel ERROR = new LoggingLevel("Error", SquirrelPreferences.ILoggingLevel.ERROR);
-		static final LoggingLevel OFF = new LoggingLevel("Off", SquirrelPreferences.ILoggingLevel.OFF);
-
-		private String _description;
-		private int _level;
-
-		static LoggingLevel get(int level) {
-			switch (level) {
-				case SquirrelPreferences.ILoggingLevel.DEBUG: return DEBUG;
-				case SquirrelPreferences.ILoggingLevel.INFO: return INFO;
-				case SquirrelPreferences.ILoggingLevel.WARN: return WARN;
-				case SquirrelPreferences.ILoggingLevel.ERROR: return ERROR;
-				case SquirrelPreferences.ILoggingLevel.OFF: return OFF;
-				
-				default: return DEBUG;
-			}
-		}
-
-		private LoggingLevel(String description, int level) {
-			super();
-			_description = description;
-			_level = level;
-		}
-
-		public String toString() {
-			return _description;
-		}
-
-		String getDescription() {
-			return _description;
-		}
-
-		int getLevel() {
-			return _level;
 		}
 	}
 }

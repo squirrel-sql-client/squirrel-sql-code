@@ -44,52 +44,38 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public class SQLPropertiesPanel
 		implements IGlobalPreferencesPanel, ISessionPropertiesPanel {
-	private boolean _initialized = false;
+
 	private String _title;
 	private String _hint;
 	private IApplication _app;
 	private SessionProperties _props;
 
-	private MyPanel _myPanel = new MyPanel();
+	private MyPanel _myPanel;
 
-	public SQLPropertiesPanel(String title, String hint) {
-		super();
-
-		_title = title != null ? title : MyPanel.i18n.SQL;
-		_hint = hint != null ? hint : MyPanel.i18n.SQL;
-	}
-
-	public void initialize(IApplication app)
+	public SQLPropertiesPanel(IApplication app, String title,
+								String hint)
 			throws IllegalArgumentException {
+		super();
 		if (app == null) {
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
-
 		_app = app;
-		_props = app.getSquirrelPreferences().getSessionProperties();
+		_title = title != null ? title : MyPanel.i18n.SQL;
+		_hint = hint != null ? hint : MyPanel.i18n.SQL;
+		_myPanel = new MyPanel(app);
+	}
 
-		if (!_initialized) {
-			_initialized = true;
-			_myPanel.createUserInterface(app);
-		}
+	public void initialize(IApplication app) {
+		_props = app.getSquirrelPreferences().getSessionProperties();
 		_myPanel.loadData(_props);
 	}
 
 	public void initialize(IApplication app, ISession session)
 			throws IllegalArgumentException {
-		if (app == null) {
-			throw new IllegalArgumentException("Null IApplication passed");
-		}
 		if (session == null) {
 			throw new IllegalArgumentException("Null ISession passed");
 		}
-		_app = app;
 		_props = session.getProperties();
-
-		if (!_initialized) {
-			_initialized = true;
-			_myPanel.createUserInterface(app);
-		}
 		_myPanel.loadData(_props);
 	}
 
@@ -140,8 +126,9 @@ public class SQLPropertiesPanel
 		private JCheckBox _sqlMultipleTabs = new JCheckBox(i18n.MULTIPLE_TABS_SQL);
 		private CharField _stmtSepChar = new CharField();
 
-		MyPanel() {
+		MyPanel(IApplication app) {
 			super();
+			createUserInterface(app);
 		}
 
 		void loadData(SessionProperties props) {
