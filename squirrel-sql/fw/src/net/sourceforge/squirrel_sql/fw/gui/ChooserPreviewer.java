@@ -49,7 +49,7 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ChooserPreviewer extends /*JPanel {*/ JComponent {
+public class ChooserPreviewer extends JComponent {
 	/** Default number of bytes to read from file for preview. */
 	private int DFT_BYTES_TO_READ = 2048;
 
@@ -148,13 +148,6 @@ public class ChooserPreviewer extends /*JPanel {*/ JComponent {
 			_currentComponentSp.setViewportView(componentToUse);
 			_currentComponent = componentToUse;
 		}
-		
-		// This doesn't work?? Scrolls to end of panel.
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				_currentComponentSp.getViewport().setViewPosition(TOP_LEFT);
-			}
-		});
 	}
 
 	/**
@@ -200,6 +193,7 @@ public class ChooserPreviewer extends /*JPanel {*/ JComponent {
 			}
 		}
 		_textComponent.setText(buf.toString());
+		_textComponent.setCaretPosition(0);
 		return _textComponent;
 	}
 
