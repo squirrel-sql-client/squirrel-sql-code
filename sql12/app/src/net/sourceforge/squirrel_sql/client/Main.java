@@ -20,7 +20,7 @@ package net.sourceforge.squirrel_sql.client;
 /**
  * Application entry point.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class Main
 {
@@ -35,11 +35,21 @@ public class Main
 	/**
 	 * Application entry point.
 	 *
-	 * @param   args	Arguments passed on command line.
+	 * @param	args	Arguments passed on command line.
 	 */
 	public static void main(String[] args)
 	{
-		ApplicationArguments.initialize(args);
-		new Application().startup();
+		if (ApplicationArguments.initialize(args))
+		{
+			final ApplicationArguments appArgs = ApplicationArguments.getInstance();
+			if (appArgs.getShowHelp())
+			{
+				appArgs.printHelp();
+			}
+			else
+			{
+				new Application().startup();
+			}
+		}
 	}
 }

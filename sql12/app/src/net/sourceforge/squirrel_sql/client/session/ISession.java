@@ -17,6 +17,8 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import javax.swing.JComponent;
+
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
@@ -138,6 +140,20 @@ public interface ISession extends IHasIdentifier
 	 *			Thrown if a <TT>null</TT> <TT>IMainPanelTab</TT> passed.
 	 */
 	void addMainTab(IMainPanelTab tab);
+
+	/**
+	 * Add component to the session sheets status bar.
+	 *
+	 * @param	comp	Component to add.
+	 */
+	void addToStatusBar(JComponent comp);
+
+	/**
+	 * Remove component to the session sheets status bar.
+	 *
+	 * @param	comp	Component to remove.
+	 */
+	void removeFromStatusBar(JComponent comp);
 
 	/**
 	 * Add a listener to this session

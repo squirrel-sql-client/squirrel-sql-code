@@ -76,6 +76,9 @@ public class MainFrame extends BaseMDIParentFrame
 	/** Status bar at bottom of window. */
 	private MainFrameStatusBar _statusBar;
 
+	/** If <TT>true</TT> then status bar is visible. */
+	private boolean _statusBarVisible = false;
+
 	private JInternalFrame _activeInternalFrame;
 
 	/**
@@ -230,7 +233,7 @@ public class MainFrame extends BaseMDIParentFrame
 		{
 			throw new IllegalArgumentException("Null JMenu passed");
 		}
-		((MainFrameMenuBar) getJMenuBar()).addToMenu(menuId, menu);
+		((MainFrameMenuBar)getJMenuBar()).addToMenu(menuId, menu);
 	}
 
 	public void addToMenu(int menuId, Action action)
@@ -239,7 +242,38 @@ public class MainFrame extends BaseMDIParentFrame
 		{
 			throw new IllegalArgumentException("Null BaseAction passed");
 		}
-		((MainFrameMenuBar) getJMenuBar()).addToMenu(menuId, action);
+		((MainFrameMenuBar)getJMenuBar()).addToMenu(menuId, action);
+	}
+
+	/**
+	 * Add component to the status bar.
+	 *
+	 * @param	comp	Component to add.
+	 *
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>JComponent</TT> passed.
+	 */
+	public void addToStatusBar(JComponent comp)
+	{
+		if (comp == null)
+		{
+			throw new IllegalArgumentException("JComponent == null");
+		}
+		_statusBar.addJComponent(comp);
+	}
+
+	/**
+	 * Remove component to the main frames status bar.
+	 *
+	 * @param	comp	Component to remove.
+	 */
+	public void removeFromStatusBar(JComponent comp)
+	{
+		if (comp == null)
+		{
+			throw new IllegalArgumentException("JComponent == null");
+		}
+		_statusBar.remove(comp);
 	}
 
 	private void preferencesHaveChanged(PropertyChangeEvent evt)
@@ -266,17 +300,15 @@ public class MainFrame extends BaseMDIParentFrame
 			|| propName.equals(SquirrelPreferences.IPropertyNames.SHOW_MAIN_STATUS_BAR))
 		{
 			final boolean show = prefs.getShowMainStatusBar();
-			if (!show && _statusBar != null)
+			if (!show && _statusBarVisible)
 			{
 				getContentPane().remove(_statusBar);
-				_statusBar = null;
+				_statusBarVisible = false;
 			}
-			else if (show && _statusBar == null)
+			else if (show && !_statusBarVisible)
 			{
-				_statusBar = new MainFrameStatusBar();
-				Font fn = _app.getFontInfoStore().getStatusBarFontInfo().createFont();
-				_statusBar.setFont(fn);
 				getContentPane().add(_statusBar, BorderLayout.SOUTH);
+				_statusBarVisible = true;
 			}
 		}
 		if (propName == null
@@ -337,10 +369,9 @@ public class MainFrame extends BaseMDIParentFrame
 		sp.setBorder(BorderFactory.createEmptyBorder());
 		content.add(sp, BorderLayout.CENTER);
 
-		//		_statusBar = new MainFrameStatusBar(true);
-		//		Font fn = _app.getFontInfoStore().getStatusBarFontInfo().createFont();
-		//		_statusBar.setFont(fn);
-		//		content.add(_statusBar, BorderLayout.SOUTH);
+		_statusBar = new MainFrameStatusBar();
+		final Font fn = _app.getFontInfoStore().getStatusBarFontInfo().createFont();
+		_statusBar.setFont(fn);
 
 		setJMenuBar(new MainFrameMenuBar(_app, getDesktopPane(), _app.getActionCollection()));
 
@@ -359,7 +390,7 @@ public class MainFrame extends BaseMDIParentFrame
 		// On Win 2000 & XP mnemonics are normally hidden. To make them
 		// visible you press the alt key. Under the Windows L&F pressing
 		// alt may not work. This code is a workaround. See bug report
-		// 4736093 for more information. 
+		// 4736093 for more information.
 		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
 				KeyStroke.getKeyStroke(KeyEvent.VK_ALT, Event.ALT_MASK, false),
 				"repaint");

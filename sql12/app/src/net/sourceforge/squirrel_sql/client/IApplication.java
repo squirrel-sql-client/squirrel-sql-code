@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.client;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import javax.swing.Action;
+import javax.swing.JComponent;
 import javax.swing.JMenu;
 
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
@@ -69,35 +70,35 @@ public interface IApplication
 
 	/**
 	 * Return an array of all the sessions currently active.
-	 * 
+	 *
 	 * @return	array of all active sessions.
 	 */
 	//ISession[] getActiveSessions();
 
 	/**
 	 * Retrieve the object that manages sessions.
-	 * 
+	 *
 	 * @return	<TT>SessionManager</TT>.
 	 */
 	SessionManager getSessionManager();
 
 	/**
 	 * Display an error message dialog.
-	 * 
+	 *
 	 * @param	msg		The error msg.
 	 */
 	void showErrorDialog(String msg);
 
 	/**
 	 * Display an error message dialog.
-	 * 
+	 *
 	 * @param	th		The Throwable that caused the error
 	 */
 	void showErrorDialog(Throwable th);
 
 	/**
 	 * Display an error message dialog.
-	 * 
+	 *
 	 * @param	msg		The error msg.
 	 * @param	th		The Throwable that caused the error
 	 */
@@ -119,7 +120,7 @@ public interface IApplication
 
 	/**
 	 * Return the collection of <TT>FontInfo </TT> objects for this app.
-	 * 
+	 *
 	 * @return	the collection of <TT>FontInfo </TT> objects for this app.
 	 */
 	FontInfoStore getFontInfoStore();
@@ -133,7 +134,7 @@ public interface IApplication
 
 	/**
 	 * Retrieve the application level SQL History object.
-	 * 
+	 *
 	 * @return		the application level SQL History object.
 	 */
 	SQLHistory getSQLHistory();
@@ -162,6 +163,20 @@ public interface IApplication
 	void addToMenu(int menuId, Action action);
 
 	/**
+	 * Add component to the main frames status bar.
+	 *
+	 * @param	comp	Component to add.
+	 */
+	void addToStatusBar(JComponent comp);
+
+	/**
+	 * Remove component to the main frames status bar.
+	 *
+	 * @param	comp	Component to remove.
+	 */
+	void removeFromStatusBar(JComponent comp);
+
+	/**
 	 * Application startup processing.
 	 */
 	void startup();
@@ -171,5 +186,3 @@ public interface IApplication
 	 */
 	void shutdown();
 }
-
-

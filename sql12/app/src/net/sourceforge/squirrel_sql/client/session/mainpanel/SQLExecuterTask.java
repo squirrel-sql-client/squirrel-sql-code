@@ -75,7 +75,7 @@ public class SQLExecuterTask implements Runnable
 	private boolean _stopExecution = false;
 
 	private int _currentQueryIndex = 0;
-	
+
 	private boolean _cancelPanelRemoved = false;
 
 	/**
@@ -120,11 +120,15 @@ public class SQLExecuterTask implements Runnable
 				final QueryTokenizer qt = new QueryTokenizer(_sql,
 										props.getSQLStatementSeparator(),
 										props.getStartOfLineComment());
-				final List queryStrings = new ArrayList();
+				List queryStrings = new ArrayList();
 				while (qt.hasQuery())
 				{
 					queryStrings.add(qt.nextQuery());
 				}
+
+				// Allow plugins to modify the requested SQL prior to execution.
+				queryStrings = _sqlPanel.fireAllSQLToBeExecutedEvent(queryStrings);
+
 
 				_cancelPanel.setQueryCount(queryStrings.size());
 				_currentQueryIndex = 0;
@@ -271,7 +275,7 @@ public class SQLExecuterTask implements Runnable
 		{
 			s_log.debug("Driver doesn't handle Statement.getWarnings()/clearWarnings()", th);
 		}
-		
+
 		if (rc)
 		{
 			if (_stopExecution)
@@ -348,7 +352,7 @@ public class SQLExecuterTask implements Runnable
 				_stmt.getUpdateCount() + " Rows Updated");
 		}
 
-		//  i18n
+		// i18n
 		final NumberFormat nbrFmt = NumberFormat.getNumberInstance();
 		double executionLength = exInfo.getSQLExecutionElapsedMillis() / 1000.0;
 		double outputLength = exInfo.getResultsProcessingElapsedMillis() / 1000.0;

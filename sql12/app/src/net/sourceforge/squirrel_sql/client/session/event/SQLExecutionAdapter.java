@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.event;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * Modifications Copyright (C) 2001 Johan Compagner
@@ -20,22 +20,32 @@ package net.sourceforge.squirrel_sql.client.session.event;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
+import java.util.List;
 /**
  * An adapter for <TT>ISQLExecutionListener</TT>.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SQLExecutionAdapter implements ISQLExecutionListener
 {
+	/**
+	 * Called prior to any statement being executed.
+	 *
+	 * @param	sql		Collection of Strign objects, each is an SQL script to
+	 *					be executing.
+	 */
+	public void allStatementsExecuting(List sql)
+	{
+	}
+
 	/**
 	 * Called prior to an individual statement being executed. If you modify the
 	 * script remember to return it so that the caller knows about the
 	 * modifications.
 	 *
-	 * @param   sql	 The SQL to be executed.
+	 * @param	sql	 The SQL to be executed.
 	 *
-	 * @return  The SQL to be executed.
+	 * @return	The SQL to be executed.
 	 */
 	public String statementExecuting(String sql)
 	{

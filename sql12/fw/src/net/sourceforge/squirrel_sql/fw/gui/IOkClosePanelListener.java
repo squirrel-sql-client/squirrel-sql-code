@@ -1,5 +1,8 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
+ * TODO: Delete this class as it has been moved to vlient code
+ */
+/*
  * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *

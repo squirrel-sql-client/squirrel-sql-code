@@ -17,7 +17,16 @@ package net.sourceforge.squirrel_sql.client;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.util.StringTokenizer;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 /**
  * Application arguments.
  *
@@ -28,17 +37,46 @@ import java.util.StringTokenizer;
  */
 public class ApplicationArguments
 {
+	/**
+	 * Option descriptions.
+	 *
+	 * <UL>
+	 * <LI>element 0 - short option
+	 * <LI>element 1 - long option (null if none)
+	 * <LI>element 2 - option description
+	 * </UL>
+	 */
+	private interface IOptions
+	{
+		String[] HELP = { "help", null, "Display Help and exit"};
+		String[] SQUIRREL_HOME = { "home", "squirrel-home",
+									"SQuirreL home directory"};
+		String[] LOG_FILE = { "l", "log-config-file",
+											"Logging configuration file"};
+		String[] USE_DEFAULT_METAL_THEME = { "m", "use-default-metal-theme",
+											"Use default metal theme"};
+		String[] USE_NATIVE_LAF = { "n", "native-laf",
+									"Use native look and feel"};
+		String[] NO_PLUGINS = {"nop", "no-plugins", "Don't load plugins"};
+		String[] NO_SPLASH = { "nos", "no-splash", "Don't display splash screen"};
+		String[] USER_SETTINGS_DIR = { "userdir", "user-settings-dir",
+								"SQuirreL settings directory"};
+	}
+
 	/** Only instance of this class. */
 	private static ApplicationArguments s_instance;
+
+	/** Collection of possible options that acn be passed. */
+	private final Options _options = new Options();
+
+	/** Parsed command line that was passed to application. */
+	private CommandLine _cmdLine;
 
 	/** &quot;Raw&quot; arguments straight from the command line. */
 	private String[] _rawArgs;
 
 	/** Squirrels home directory. */
 	private String _squirrelHome = null;
-
-	/** <TT>true</TT> if splashscreen should be shown. */
-	private boolean _showSplashScreen = true;
 
 	/**
 	 * If not <TT>null</TT> then is an override for the users .squirrel-sql
@@ -49,69 +87,44 @@ public class ApplicationArguments
 	/** Path for logging configuration file */
 	private String _loggingConfigFile = null;
 
-	/** If <TT>true</TT> plugins are to be loaded. */
-	private boolean _loadPlugins = true;
-
-	/** If <TT>true</TT> use default metal theme rther than the SQuirreL theme. */
-	private boolean _userDefaultMetalTheme = false;
-
-	/** If <TT>true</TT> use native LAF rather than Metal. */
-	private boolean _useNativeLAF = false;
-
 	/**
 	 * Ctor specifying arguments from command line.
 	 *
 	 * @param	args	Arguments passed on command line.
+	 *
+	 * @throws	ParseException
+	 * 			Thrown if unable to parse arguments.
 	 */
 	private ApplicationArguments(String[] args)
+		throws ParseException
 	{
 		super();
-		_rawArgs = args;
-		for (int i = 0; i < args.length; ++i)
+		createOptions();
+
+
+		final CommandLineParser parser = new GnuParser();
+		try
 		{
-			StringTokenizer strTok = new StringTokenizer(args[i], "=");
-			String parm = null;
-			String value = null;
-			while (strTok.hasMoreTokens())
-			{
-				String token = strTok.nextToken();
-				if (parm == null)
-				{
-					parm = token;
-				}
-				else
-				{
-					value = token;
-				}
-			}
-			if (parm.equalsIgnoreCase("-nosplash"))
-			{
-				_showSplashScreen = false;
-			}
-			else if (parm.equalsIgnoreCase("-squirrelHome"))
-			{
-				_squirrelHome = value;
-			}
-			else if (parm.equalsIgnoreCase("-settingsDir"))
-			{
-				_userSettingsDir = value;
-			}
-			else if (parm.equalsIgnoreCase("-loggingConfigFile"))
-			{
-				_loggingConfigFile = value;
-			}
-			else if (parm.equalsIgnoreCase("-noplugins"))
-			{
-				_loadPlugins = false;
-			}
-			else if (parm.equalsIgnoreCase("-useDefaultMetalTheme"))
-			{
-				_userDefaultMetalTheme = true;
-			}
-			else if (parm.equalsIgnoreCase("-useNativeLAF"))
-			{
-				_useNativeLAF = true;
-			}
+			_cmdLine = parser.parse(_options, args);
+		}
+		catch(ParseException ex)
+		{
+			System.err.println("Parsing failed. Reason: " + ex.getMessage());
+			printHelp();
+			throw ex;
+		}
+
+		if (_cmdLine.hasOption(IOptions.SQUIRREL_HOME[0]))
+		{
+			_squirrelHome = _cmdLine.getOptionValue(IOptions.SQUIRREL_HOME[0]);
+		}
+		if (_cmdLine.hasOption(IOptions.USER_SETTINGS_DIR[0]))
+		{
+			_userSettingsDir = _cmdLine.getOptionValue(IOptions.USER_SETTINGS_DIR[0]);
+		}
+		if (_cmdLine.hasOption(IOptions.LOG_FILE[0]))
+		{
+			_loggingConfigFile = _cmdLine.getOptionValue(IOptions.USER_SETTINGS_DIR[0]);
 		}
 	}
 
@@ -119,22 +132,34 @@ public class ApplicationArguments
 	 * Initialize application arguments.
 	 *
 	 * @param	args	Arguments passed on command line.
+	 *
+	 * @return	<TT>true</TT> if arguments parsed successfully else
+	 *			<TT>false<.TT>. If parsing was unsuccessful an error was written
+	 *			to standard error.
 	 */
-	public synchronized static void initialize(String[] args)
+	public synchronized static boolean initialize(String[] args)
 	{
 		if (s_instance == null)
 		{
-			s_instance = new ApplicationArguments(args);
+			try
+			{
+				s_instance = new ApplicationArguments(args);
+			}
+			catch (ParseException ex)
+			{
+				return false;
+			}
 		}
 		else
 		{
 			System.out.println("ApplicationArguments.initialize() called twice");
 		}
+		return true;
 	}
 
 	/**
 	 * Return the single instance of this class.
-	 * 
+	 *
 	 * @return the single instance of this class.
 	 *
 	 * @throws	IllegalStateException
@@ -148,14 +173,6 @@ public class ApplicationArguments
 			throw new IllegalStateException("ApplicationArguments.getInstance() called before ApplicationArguments.initialize()");
 		}
 		return s_instance;
-	}
-
-	/**
-	 * @return The raw arguments passed on the command line.
-	 */
-	public String[] getRawArguments()
-	{
-		return _rawArgs;
 	}
 
 	/**
@@ -180,7 +197,16 @@ public class ApplicationArguments
 	 */
 	public boolean getShowSplashScreen()
 	{
-		return _showSplashScreen;
+		return !_cmdLine.hasOption(IOptions.NO_SPLASH[0]);
+	}
+
+	/**
+	 * @return <TT>true</TT> if help information should be written to
+	 * standard output.
+	 */
+	public boolean getShowHelp()
+	{
+		return _cmdLine.hasOption(IOptions.HELP[0]);
 	}
 
 	/**
@@ -197,16 +223,16 @@ public class ApplicationArguments
 	 */
 	public boolean getLoadPlugins()
 	{
-		return _loadPlugins;
+		return !_cmdLine.hasOption(IOptions.NO_PLUGINS[0]);
 	}
 
 	/**
-	 * @return		<TT>true</TT> if the default metal theme should be used
-	 *				rather than the SQuirreL metal theme.
+	 * @return	<TT>true</TT> if the default metal theme should be used
+	 *			rather than the SQuirreL metal theme.
 	 */
 	public boolean useDefaultMetalTheme()
 	{
-		return _userDefaultMetalTheme;
+		return _cmdLine.hasOption(IOptions.USE_DEFAULT_METAL_THEME[0]);
 	}
 
 	/**
@@ -216,7 +242,76 @@ public class ApplicationArguments
 	 */
 	public boolean useNativeLAF()
 	{
-		return _useNativeLAF;
+		return _cmdLine.hasOption(IOptions.USE_NATIVE_LAF[0]);
+	}
+
+	/**
+	 * @return The raw arguments passed on the command line.
+	 */
+	public String[] getRawArguments()
+	{
+		return _rawArgs;
+	}
+
+	void printHelp()
+	{
+		HelpFormatter formatter = new HelpFormatter();
+		formatter.printHelp("squirrel-sql", _options);
+	}
+
+	/**
+	 * Create the <TT>Options</TT> object used to parse the command line.
+	 */
+	private void createOptions()
+	{
+		Option opt;
+
+		opt = createAnOption(IOptions.NO_SPLASH);
+		_options.addOption(opt);
+
+		opt = createAnOption(IOptions.HELP);
+		_options.addOption(opt);
+
+		opt = createAnOption(IOptions.NO_PLUGINS);
+		_options.addOption(opt);
+
+		opt = createAnOption(IOptions.USE_DEFAULT_METAL_THEME);
+		_options.addOption(opt);
+
+		opt = createAnOption(IOptions.USE_NATIVE_LAF);
+		_options.addOption(opt);
+
+		opt = createAnOptionWithArgument(IOptions.SQUIRREL_HOME);
+		_options.addOption(opt);
+
+		opt = createAnOptionWithArgument(IOptions.USER_SETTINGS_DIR);
+		_options.addOption(opt);
+
+		opt = createAnOptionWithArgument(IOptions.LOG_FILE);
+		_options.addOption(opt);
+	}
+
+	private Option createAnOption(String[] argInfo)
+	{
+		Option opt = new Option(argInfo[0], argInfo[2]);
+		if (!Utilities.isStringEmpty(argInfo[1]))
+		{
+			opt.setLongOpt(argInfo[1]);
+		}
+
+		return opt;
+	}
+
+	private Option createAnOptionWithArgument(String[] argInfo)
+	{
+		OptionBuilder.withArgName(argInfo[0]);
+		OptionBuilder.hasArg();
+		OptionBuilder.withDescription(argInfo[2]);
+		Option opt = OptionBuilder.create( argInfo[0]);
+		if (!Utilities.isStringEmpty(argInfo[1]))
+		{
+			opt.setLongOpt(argInfo[1]);
+		}
+		return opt;
 	}
 }
-

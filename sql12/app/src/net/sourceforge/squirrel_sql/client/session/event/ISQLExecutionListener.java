@@ -21,15 +21,23 @@ package net.sourceforge.squirrel_sql.client.session.event;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.util.EventListener;
-
+import java.util.List;
 /**
  * This listener is called whenever an SQL script is about to be
  * executed.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public interface ISQLExecutionListener extends EventListener
 {
+	/**
+	 * Called prior to any statement being executed.
+	 *
+	 * @param	sql		Collection of Strign objects, each is an SQL script to
+	 *					be executing.
+	 */
+	void allStatementsExecuting(List sql);
+
 	/**
 	 * Called prior to an individual statement being executed. If you modify the
 	 * script remember to return it so that the caller knows about the

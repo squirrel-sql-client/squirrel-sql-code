@@ -31,6 +31,7 @@ import java.beans.PropertyVetoException;
 import java.sql.SQLException;
 
 import javax.swing.Icon;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -266,6 +267,26 @@ public class SessionSheet extends BaseSheet
 	public ISQLEntryPanel getSQLEntryPanel()
 	{
 		return getSQLPanel().getSQLEntryPanel();
+	}
+
+	/**
+	 * Add component to the session sheets status bar.
+	 *
+	 * @param	comp	Component to add.
+	 */
+	public void addToStatusBar(JComponent comp)
+	{
+		_statusBar.addJComponent(comp);
+	}
+
+	/**
+	 * Remove component from the session sheets status bar.
+	 *
+	 * @param	comp	Component to remove.
+	 */
+	public void removeFromStatusBar(JComponent comp)
+	{
+		_statusBar.remove(comp);
 	}
 
 	private static String createTitle(IClientSession session)

@@ -21,6 +21,9 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -37,11 +40,13 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.ChangeEvent;
@@ -87,7 +92,7 @@ public class SQLPanel extends JPanel
 	/** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(SQLPanel.class);
 
-//	private final static String LINE_SEPARATOR = System.getProperty("line.separator");
+	/** Used to separate lines in teh SQL entry area. */
 	private final static String LINE_SEPARATOR = "\n";
 
 	/**
@@ -131,6 +136,12 @@ public class SQLPanel extends JPanel
 
 	private boolean _hasBeenVisible = false;
 	private JSplitPane _splitPane;
+
+	/**
+	 * Label added to session sheets statusbar sgowing row/col of the
+	 * caret in the sql entryy area.
+	 */
+	private final RowColumnLabel _rowColLbl = new RowColumnLabel();
 
 	/** Listeners */
 	private EventListenerList _listeners = new EventListenerList();
@@ -567,10 +578,6 @@ public class SQLPanel extends JPanel
 		_sqlComboListener.stopListening();
 		try
 		{
-//			_sqlCombo.removeItem(sql);
-//			final int size = _sqlCombo.getItemCount();
-//			_sqlCombo.insertItemAt(sql, size);
-//			_sqlCombo.setSelectedIndex(size);
 			int beforeSize = 0;
 			int afterSize = _sqlCombo.getItemCount();
 			do
@@ -725,6 +732,26 @@ public class SQLPanel extends JPanel
 				((IResultTabListener) listeners[i + 1]).tornOffResultTabReturned(evt);
 			}
 		}
+	}
+
+	protected List fireAllSQLToBeExecutedEvent(List sql)
+	{
+		// Guaranteed to be non-null.
+		Object[] listeners = _listeners.getListenerList();
+		// Process the listeners last to first, notifying
+		// those that are interested in this event.
+		for (int i = listeners.length - 2; i >= 0; i -= 2)
+		{
+			if (listeners[i] == ISQLExecutionListener.class)
+			{
+				((ISQLExecutionListener)listeners[i + 1]).allStatementsExecuting(sql);
+				if (sql.size() == 0)
+				{
+					break;
+				}
+			}
+		}
+		return sql;
 	}
 
 	protected String fireSQLToBeExecutedEvent(String sql)
@@ -950,13 +977,8 @@ public class SQLPanel extends JPanel
 		}
 
 		{
-//			final SquirrelResources rsrc = app.getResources();
-//			final Action act = new GetLastSQLAction(app, rsrc);
-//			final ToolBar tb = new ToolBar();
-//			tb.add(act);
 			JPanel pnl = new JPanel();
 			pnl.setLayout(new BorderLayout());
-//			pnl.add(tb, BorderLayout.WEST);
 			pnl.add(_sqlCombo, BorderLayout.CENTER);
 
 			Box box = Box.createHorizontalBox();
@@ -979,6 +1001,10 @@ public class SQLPanel extends JPanel
 		_sqlCombo.addActionListener(_sqlComboListener);
 		_limitRowsChk.addChangeListener(new LimitRowsCheckBoxListener());
 		_nbrRows.getDocument().addDocumentListener(new LimitRowsTextBoxListener());
+
+		// Add a label to the session sheets statusbar to show the current
+		// row/col of the caret in the sql entry area.
+		_session.addToStatusBar(_rowColLbl);
 
 		// Set focus to the SQL entry panel.
 		SwingUtilities.invokeLater(new Runnable()
@@ -1049,12 +1075,6 @@ public class SQLPanel extends JPanel
 			if (item != null)
 			{
 				appendSQL(item.getSQL());
-//				if (_sqlEntry.getText().length() > 0)
-//				{
-//					_sqlEntry.appendText("\n\n");
-//				}
-//				_sqlEntry.appendText(item.getSQL(), true);
-//				_sqlEntry.requestFocus();
 			}
 		}
 	}
@@ -1190,11 +1210,7 @@ public class SQLPanel extends JPanel
 			final StringBuffer msg = new StringBuffer();
 			msg.append(_sqlEntry.getCaretLineNumber() + 1)
 				.append(",").append(_sqlEntry.getCaretLinePosition() + 1);
-			final SessionSheet ss = _session.getSessionSheet();
-			if (ss != null)
-			{
-				ss.setStatusBarMessage(msg.toString());
-			}
+			SQLPanel.this._rowColLbl.setText(msg.toString());
 		}
 	}
 
@@ -1204,7 +1220,7 @@ public class SQLPanel extends JPanel
 		{
 			super(app, rsrc);
 		}
-		
+
 		public void actionPerformed(ActionEvent evt)
 		{
 			int idx = _sqlCombo.getItemCount() - 1;
@@ -1215,4 +1231,40 @@ public class SQLPanel extends JPanel
 			}
 		}
 	}
+
+	private final class RowColumnLabel extends JLabel
+	{
+		RowColumnLabel()
+		{
+			super(" ", JLabel.CENTER);
+		}
+
+		/**
+		 * Return the preferred size of this component.
+		 *
+		 * @return	the preferred size of this component.
+		 */
+		public Dimension getPreferredSize()
+		{
+			Dimension dim = super.getPreferredSize();
+			FontMetrics fm = getFontMetrics(getFont());
+			dim.width = fm.stringWidth("000,000");
+			Border border = getBorder();
+			if (border != null)
+			{
+				Insets ins = border.getBorderInsets(this);
+				if (ins != null)
+				{
+					dim.width += (ins.left + ins.right);
+				}
+			}
+			Insets ins = getInsets();
+			if (ins != null)
+			{
+				dim.width += (ins.left + ins.right);
+			}
+			return dim;
+		}
+	}
+
 }

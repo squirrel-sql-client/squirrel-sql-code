@@ -17,107 +17,34 @@ package net.sourceforge.squirrel_sql.client.mainframe;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.Border;
-
 import net.sourceforge.squirrel_sql.fw.gui.MemoryPanel;
+import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 import net.sourceforge.squirrel_sql.fw.gui.TimePanel;
 /**
  * Statusbar component for the main frame.
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ *
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class MainFrameStatusBar extends JPanel
+public class MainFrameStatusBar extends StatusBar
 {
-	/** Label showing the message in the statusbar. */
-	private JLabel _textLbl = new JLabel();
-
-	/** Panel displaying memory status. */
-	private MemoryPanel _mp;
-
-	/** Panel displaying the current time. */
-	private TimePanel _tp;
-
 	/**
 	 * Default ctor.
 	 */
 	public MainFrameStatusBar()
 	{
-		super(new GridBagLayout());
-		createUserInterface();
+		super();
+		createGUI();
 	}
 
-	/**
-	 * Set the font for controls in this statusbar.
-	 * 
-	 * @param	font	The font to use.
-	 * 
-	 * @throws	IllegalArgumentException	if <TT>null</TT> <TT>Font</TT> passed.
-	 */
-	public synchronized void setFont(Font font)
-	{
-		if (font == null)
-		{
-			throw new IllegalArgumentException("Font == null");
-		}
-		super.setFont(font);
-		updateContainerFont(this, font);
-	}
-
-	/**
-	 * Set the text to display in the message label.
-	 * 
-	 * @param	text	Text to display in the message label.
-	 */
-	public synchronized void setText(String text)
-	{
-		String myText = null;
-		if (text != null)
-		{
-			myText = text.trim();
-		}
-		if (myText != null && myText.length() > 0)
-		{
-			_textLbl.setText(myText);
-		}
-		else
-		{
-			clearText();
-		}
-	}
-
-	public synchronized void clearText()
-	{
-		_textLbl.setText(" ");
-	}
-
-	private void createUserInterface()
+	private void createGUI()
 	{
 		clearText();
 
-		GridBagConstraints gbc = new GridBagConstraints();
-
-		gbc.anchor = GridBagConstraints.WEST;
-		gbc.weightx = 1.0;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.gridy = 0;
-
-		_textLbl.setBorder(createComponentBorder());
-		gbc.gridx = 0;
-		add(_textLbl, gbc);
-
-		_mp = new MemoryPanel();
-		_mp.addMouseListener(new MouseAdapter()
+		final MemoryPanel mp = new MemoryPanel();
+		mp.addMouseListener(new MouseAdapter()
 		{
 			public void mouseClicked(MouseEvent evt)
 			{
@@ -128,37 +55,7 @@ public class MainFrameStatusBar extends JPanel
 				}
 			}
 		});
-		_mp.setBorder(createComponentBorder());
-		gbc.weightx = 0.0;
-		gbc.anchor = GridBagConstraints.CENTER;
-		++gbc.gridx;
-		add(_mp, gbc);
-
-		_tp = new TimePanel();
-		_tp.setBorder(createComponentBorder());
-		++gbc.gridx;
-		add(_tp, gbc);
-
+		addJComponent(mp);
+		addJComponent(new TimePanel());
 	}
-
-	public static Border createComponentBorder()
-	{
-		return BorderFactory.createCompoundBorder(
-			BorderFactory.createBevelBorder(BevelBorder.LOWERED),
-			BorderFactory.createEmptyBorder(0, 4, 0, 4));
-	}
-
-	private static void updateContainerFont(Container cont, Font font)
-	{
-		Component[] comps = cont.getComponents();
-		for (int i = 0; i < comps.length; ++i)
-		{
-			comps[i].setFont(font);
-			if (comps[i] instanceof Container)
-			{
-				updateContainerFont((Container) comps[i], font);
-			}
-		}
-	}
-
 }

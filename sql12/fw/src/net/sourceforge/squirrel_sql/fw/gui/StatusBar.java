@@ -17,13 +17,18 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 
 import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
 /**
  * This is a statusbar component with a text control for messages.
  *
@@ -38,9 +43,11 @@ public class StatusBar extends JPanel
 	private String _msgWhenEmpty = " ";
 
 	/** Label showing the message in the statusbar. */
-	private JLabel _textLbl = new StatusBarLabel();
+	private final JLabel _textLbl = new JLabel();
 
-	/** Font for controls. */
+	/** Constraints used to add new controls to this statusbar. */
+	private final GridBagConstraints _gbc = new GridBagConstraints();
+
 	private Font _font;
 
 	/**
@@ -48,8 +55,8 @@ public class StatusBar extends JPanel
 	 */
 	public StatusBar()
 	{
-		super(new BorderLayout());
-		createUserInterface();
+		super(new GridBagLayout());
+		createGUI();
 	}
 
 	/**
@@ -68,10 +75,7 @@ public class StatusBar extends JPanel
 		}
 		super.setFont(font);
 		_font = font;
-		if (_textLbl != null)
-		{
-			_textLbl.setFont(font);
-		}
+		updateSubcomponentsFont(this);
 	}
 
 	/**
@@ -118,21 +122,65 @@ public class StatusBar extends JPanel
 		}
 	}
 
-	private void createUserInterface()
+	public synchronized void addJComponent(JComponent comp)
 	{
-		_textLbl.setFont(_font);
-		add(_textLbl, BorderLayout.CENTER);
-		clearText();
+		if (comp == null)
+		{
+			throw new IllegalArgumentException("JComponent == null");
+		}
+		comp.setBorder(createComponentBorder());
+		if (_font != null)
+		{
+			comp.setFont(_font);
+			updateSubcomponentsFont(comp);
+		}
+		super.add(comp, _gbc);
 	}
 
-	private static class StatusBarLabel extends JLabel
+	public static Border createComponentBorder()
 	{
-		StatusBarLabel()
+		return BorderFactory.createCompoundBorder(
+			BorderFactory.createBevelBorder(BevelBorder.LOWERED),
+			BorderFactory.createEmptyBorder(0, 4, 0, 4));
+	}
+
+	private void createGUI()
+	{
+		clearText();
+
+		// The message area is on the right of the statusbar and takes
+		// up all available space.
+		_gbc.anchor = GridBagConstraints.WEST;
+		_gbc.weightx = 1.0;
+		_gbc.fill = GridBagConstraints.HORIZONTAL;
+		_gbc.gridy = 0;
+		_gbc.gridx = 0;
+		addJComponent(_textLbl);
+
+		// Any other components are on the right.
+		_gbc.weightx = 0.0;
+		_gbc.anchor = GridBagConstraints.CENTER;
+		_gbc.gridx = GridBagConstraints.RELATIVE;
+	}
+
+	private void updateSubcomponentsFont(Container cont)
+	{
+		Component[] comps = cont.getComponents();
+		for (int i = 0; i < comps.length; ++i)
+		{
+			comps[i].setFont(_font);
+			if (comps[i] instanceof Container)
+			{
+				updateSubcomponentsFont((Container)comps[i]);
+			}
+		}
+	}
+
+	public static class StatusBarLabel extends JLabel
+	{
+		public StatusBarLabel()
 		{
 			super();
-			setBorder(BorderFactory.createCompoundBorder(
-							BorderFactory.createBevelBorder(BevelBorder.LOWERED),
-							BorderFactory.createEmptyBorder(0, 4, 0, 4)));
 		}
 	}
 }
