@@ -74,27 +74,28 @@ public interface SQLSchema
             }
         }
 
-        public Table(String catalog, String schema, String name)
+        public Table(String catalog, String schema, String name, DatabaseMetaData dmd)
         {
             this.catalog = catalog;
             this.schema = schema;
             this.name = name;
             this.compositeName = createCompositeName(catalog, schema, name);
+            this.dmd = dmd;
+        }
+
+        public Table(String catalog, String schema, String name)
+        {
+            this(catalog, schema, name, null);
         }
 
         public Table(String schema, String name)
         {
-            this(null, schema, name);
+            this(null, schema, name, null);
         }
 
         public Table(String name)
         {
-            this(null, null, name);
-        }
-
-        public void setDatabaseMetaData(DatabaseMetaData dmd)
-        {
-            this.dmd = dmd;
+            this(null, null, name, null);
         }
 
         public void setColumns(String[] columns)

@@ -34,7 +34,7 @@ import java.util.HashMap;
 import net.sourceforge.jcomplete.SQLCompletionHandler;
 import net.sourceforge.jcomplete.CompletionHandler;
 import net.sourceforge.jcomplete.SQLSchema;
-import net.sourceforge.jcomplete.ui.ParserAdapter;
+import net.sourceforge.jcomplete.ui.DocumentAdapter;
 import net.sourceforge.jcomplete.ui.SQLCompletionAdapter;
 
 public class PopUpCompletionTest extends JFrame
@@ -135,7 +135,7 @@ public class PopUpCompletionTest extends JFrame
 
         //connect the handler to the document
         textArea.getDocument().addDocumentListener(
-              new ParserAdapter(handler, textArea.getDocument()));
+              new DocumentAdapter(handler, textArea.getDocument()));
 
         //connect the GUI to the handler
         textArea.addKeyListener(new SQLCompletionAdapter(

@@ -18,7 +18,7 @@
  *
  * created by cse, 13.09.2002 23:35:35
  *
- * @version $Id: CompletionAdapter.java,v 1.4 2002-10-10 22:33:49 csell Exp $
+ * @version $Id: CompletionAdapter.java,v 1.5 2002-10-14 19:13:56 csell Exp $
  */
 package net.sourceforge.jcomplete.ui;
 
@@ -45,7 +45,7 @@ public abstract class CompletionAdapter extends KeyAdapter implements Completion
     protected PopupManager m_popupManager;
     protected CompletionListPopup m_popup;
 
-    private int m_popupKey = KeyEvent.VK_ENTER;
+    private int m_popupKey = KeyEvent.VK_SPACE;
     private int m_popupMask = KeyEvent.CTRL_MASK;
 
     public CompletionAdapter(

@@ -32,12 +32,12 @@ import net.sourceforge.jcomplete.TextProvider;
  * This class mediates between the document and the parser through the
  * DocumentListener interface
  */
-public class ParserAdapter implements DocumentListener, TextProvider
+public class DocumentAdapter implements DocumentListener, TextProvider
 {
     private CompletionHandler m_handler;
     private Document m_document;
 
-    public ParserAdapter(CompletionHandler handler, Document document)
+    public DocumentAdapter(CompletionHandler handler, Document document)
     {
         m_handler = handler;
         m_document = document;

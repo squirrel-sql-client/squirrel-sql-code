@@ -176,7 +176,7 @@ public class SQLCompletionHandler implements CompletionHandler, SQLSchema
                 String schema = rs.getString(2);
                 String table = rs.getString(3);
 
-                tdesc = new SQLSchema.Table(catalog, schema, table);
+                tdesc = new SQLSchema.Table(catalog, schema, table, dbData);
                 tables.put(tdesc.getCompositeName(), tdesc);
             }
         }
