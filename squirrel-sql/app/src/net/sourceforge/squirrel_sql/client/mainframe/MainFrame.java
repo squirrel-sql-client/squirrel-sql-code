@@ -41,6 +41,7 @@ import javax.swing.ToolTipManager;
 import net.sourceforge.squirrel_sql.fw.gui.BaseMDIParentFrame;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.ScrollableDesktopPane;
+import net.sourceforge.squirrel_sql.fw.util.Debug;
 import net.sourceforge.squirrel_sql.fw.util.Logger;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
@@ -84,6 +85,9 @@ public class MainFrame extends BaseMDIParentFrame {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
 
+	/**
+	 * @deprecated	Replaced by <TT>IApplication.getMainFrame()</TT>.
+	 */
     public static MainFrame getInstance() {
         if (s_instance == null) {
             throw new IllegalStateException("MainFrame hasn't been created");
@@ -115,8 +119,9 @@ public class MainFrame extends BaseMDIParentFrame {
         }
     }
 
-    public void addInternalFrame(JInternalFrame child) {
-        super.addInternalFrame(child);
+    public void addInternalFrame(JInternalFrame child, boolean addToWindowMenu, Action action) {
+        super.addInternalFrame(child, addToWindowMenu, action);
+        Debug.println("Adding " + child.getClass().getName() + " to Main Frame");
         JInternalFrame[] frames = GUIUtils.getOpenNonToolWindows(getDesktopPane().getAllFrames());
         _app.getActionCollection().internalFrameOpenedOrClosed(frames.length);
 
@@ -133,6 +138,7 @@ public class MainFrame extends BaseMDIParentFrame {
 
     public void internalFrameClosed(JInternalFrame child) {
         super.internalFrameClosed(child);
+        Debug.println("Removing " + child.getClass().getName() + " from Main Frame");
         JInternalFrame[] frames = GUIUtils.getOpenNonToolWindows(getDesktopPane().getAllFrames());
         _app.getActionCollection().internalFrameOpenedOrClosed(frames.length);
         if (frames.length == 0) {
@@ -273,7 +279,7 @@ public class MainFrame extends BaseMDIParentFrame {
             setLocation(new Point(10, 10));
         }
 
-        addInternalFrame(_driversToolWindow);
+        addInternalFrame(_driversToolWindow, false, null);
         Point pt = ws.getDriversWindowLocation().createPoint();
         _driversToolWindow.setBounds(pt.x, pt.y, 200, 200);
         _driversToolWindow.setVisible(true);
@@ -282,7 +288,7 @@ public class MainFrame extends BaseMDIParentFrame {
         } catch (PropertyVetoException ignore) {
         }
 
-        addInternalFrame(_aliasesToolWindow);
+        addInternalFrame(_aliasesToolWindow, false, null);
         pt = ws.getAliasesWindowLocation().createPoint();
         _aliasesToolWindow.setBounds(pt.x, pt.y, 200, 200);
         _aliasesToolWindow.setVisible(true);
