@@ -17,7 +17,8 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
- 
+
+
 /**
  * @author gwg
  *
@@ -28,21 +29,56 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * it is needed when the application saves this info to a file
  * for re-loading the next time the app starts.
  */
-public class CellImportExportInfo {
+public class CellImportExportInfo
+{
 
-	String _tableColumnName;
-	String _fileName;
-	String _command;
+	/**
+	 * The full name of the table and column for which these user inputs apply.
+	 */
+	private String _tableColumnName;
 	
+	/**
+	 * The file name selected by the user.
+	 */
+	private String _fileName;
+	
+	/**
+	 * The executable command entered by the user
+	 */
+	private String _command;
+	
+	/**
+	 * Null Ctor - used only by XMLBeanReader when loading data from file on startup.
+	 */
+	public CellImportExportInfo() {
+		this("", "", "");
+	}
+
+	/**
+	 * Normal Constructor
+	 */
 	CellImportExportInfo(String tableColumnName, String fileName, String command) {
 		_tableColumnName = tableColumnName;
 		_fileName = fileName;
 		_command = command;
 	}
+
+	/*
+	 * Setters and Getters for each field.
+	 */
+	 
+	public String getTableColumnName() { return _tableColumnName;}
+	public void setTableColumnName(String tableColumnName) {
+		_tableColumnName = tableColumnName;
+	}
 	
-	String getTableColumnName() { return _tableColumnName;}
+	public String getFileName() { return _fileName;}
+	public void setFileName(String fileName) {
+		_fileName = fileName;
+	}
 	
-	String getFileName() { return _fileName;}
-	
-	String getCommand() { return _command;}
+	public String getCommand() { return _command;}
+	public void setCommand(String command) {
+		_command = command;
+	}
 }
