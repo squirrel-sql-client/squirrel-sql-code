@@ -58,7 +58,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
 //import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
-import net.sourceforge.squirrel_sql.fw.gui.GUIExecutionController;
+import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.MemoryComboBox;
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
@@ -218,7 +218,7 @@ class SQLPanel extends JPanel {
 		}
 		if(sql != null && sql.trim().length() > 0) {
 			SQLExecuterTask task = new SQLExecuterTask(this, _session, sql);
-			_session.getApplication().getSQLController().addTask(task);
+			_session.getApplication().getThreadPool().addTask(task);
 		}
 	}
 
