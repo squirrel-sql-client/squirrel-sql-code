@@ -47,8 +47,9 @@ public interface IPlugin
 
 	/**
 	 * Called when app shutdown.
+	 * TODO: Put throws clause back in
 	 */
-	void unload() throws PluginException;
+	void unload(); //throws PluginException;
 
 	/**
 	 * Returns the name by which this plugin is uniquely identified.
