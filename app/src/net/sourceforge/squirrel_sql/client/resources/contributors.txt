@@ -2,6 +2,7 @@ Bai Yuhong
 Bruno Haas
 Dave Birch
 David MacLean
+Gerd Wagner
 Glenn Griffin
 Greg Mackness
 Henner Zeller
