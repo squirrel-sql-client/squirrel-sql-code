@@ -29,8 +29,10 @@ public class LargeResultSetObjectInfo implements Cloneable, Serializable
 		String READ_VARBINARY = "readVarBinary";
 		String READ_LONGVARBINARY = "readLongVarBinary";
 		String READ_BLOBS = "readBlobs";
+		String READ_BLOBS_COMPLETE = "readCompleteBlobs";
 		String READ_BLOBS_SIZE = "readBlobsSize";
 		String READ_CLOBS = "readClobs";
+		String READ_CLOBS_COMPLETE = "readCompleteClobs";
 		String READ_CLOBS_SIZE = "readClobsSize";
 	}
 
@@ -52,8 +54,14 @@ public class LargeResultSetObjectInfo implements Cloneable, Serializable
 	private boolean _readBlobs = false;
 
 	/**
-	 * If <TT>_readBlobs</TT> is <TT>true</TT> this specifies the number of
-	 * characters to read.
+	 * If <TT>_readBlobs</TT> is <TT>true</TT> this specifies if the complete
+	 * BLOB should be read in.
+	 */
+	private boolean _readCompleteBlobs = false;
+
+	/**
+	 * If <TT>_readBlobs</TT> is <TT>true</TT> and <TT>_readCompleteBlobs</TT>
+	 * is <tt>false</TT> then this specifies the number of bytes to read.
 	 */
 	private int _readBlobsSize = LARGE_COLUMN_DEFAULT_READ_LENGTH;
 
@@ -61,8 +69,14 @@ public class LargeResultSetObjectInfo implements Cloneable, Serializable
 	private boolean _readClobs = false;
 
 	/**
-	 * If <TT>_readClobs</TT> is <TT>true</TT> this specifies the number of
-	 * characters to read.
+	 * If <TT>_readClobs</TT> is <TT>true</TT> this specifies if the complete
+	 * CLOB should be read in.
+	 */
+	private boolean _readCompleteClobs = false;
+
+	/**
+	 * If <TT>_readClobs</TT> is <TT>true</TT> and <TT>_readCompleteClobs</TT>
+	 * is <tt>false</TT> then this specifies the number of characters to read.
 	 */
 	private int _readClobsSize = LARGE_COLUMN_DEFAULT_READ_LENGTH;
 
@@ -153,6 +167,24 @@ public class LargeResultSetObjectInfo implements Cloneable, Serializable
 		}
 	}
 
+	public boolean getReadCompleteBlobs()
+	{
+		return _readCompleteBlobs;
+	}
+
+	public void setReadCompleteBlobs(boolean value)
+	{
+		if (_readCompleteBlobs != value)
+		{
+			final boolean oldValue = _readCompleteBlobs;
+			_readCompleteBlobs = value;
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.READ_BLOBS_COMPLETE,
+				oldValue,
+				_readCompleteBlobs);
+		}
+	}
+
 	public int getReadBlobsSize()
 	{
 		return _readBlobsSize;
@@ -174,6 +206,24 @@ public class LargeResultSetObjectInfo implements Cloneable, Serializable
 	public boolean getReadClobs()
 	{
 		return _readClobs;
+	}
+
+	public boolean getReadCompleteClobs()
+	{
+		return _readCompleteClobs;
+	}
+
+	public void setReadCompleteClobs(boolean value)
+	{
+		if (_readCompleteClobs != value)
+		{
+			final boolean oldValue = _readCompleteClobs;
+			_readCompleteClobs = value;
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.READ_CLOBS_COMPLETE,
+				oldValue,
+				_readCompleteClobs);
+		}
 	}
 
 	public void setReadClobs(boolean value)
