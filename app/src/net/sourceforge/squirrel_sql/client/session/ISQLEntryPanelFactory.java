@@ -23,4 +23,3 @@ public interface ISQLEntryPanelFactory
 {
 	ISQLEntryPanel createSQLEntryPanel(ISession session);
 }
-

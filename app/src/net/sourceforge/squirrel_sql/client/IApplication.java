@@ -42,6 +42,7 @@ public interface IApplication
 {
 	public interface IMenuIDs extends MainFrame.IMenuIDs
 	{
+		// Empty body.
 	}
 
 	/**

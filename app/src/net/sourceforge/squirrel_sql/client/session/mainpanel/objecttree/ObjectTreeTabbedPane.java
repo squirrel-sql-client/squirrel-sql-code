@@ -25,8 +25,6 @@ import javax.swing.JTabbedPane;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
@@ -46,10 +44,6 @@ class ObjectTreeTabbedPane
 		String TABBED_PANE_OBJ = ObjectTreeTabbedPane.class.getName() + "/TabPaneObj";
 	}
 
-	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(ObjectTreeTabbedPane.class);
-
 	/** The tabbed pane. */
 	private final JTabbedPane _tabPnl = UIFactory.getInstance().createTabbedPane();
 
@@ -58,9 +52,6 @@ class ObjectTreeTabbedPane
 
 	/** ID of the session for this window. */
 	private final IIdentifier _sessionId;
-
-	/** Current session. */
-//	private ISession _session;
 
 	/**
 	 * Collection of <TT>IObjectTab</TT> objects displayed in
@@ -77,7 +68,6 @@ class ObjectTreeTabbedPane
 			throw new IllegalArgumentException("ISession == null");
 		}
 
-//		_session = session;
 		_sessionId = session.getIdentifier();
 		_app = session.getApplication();
 

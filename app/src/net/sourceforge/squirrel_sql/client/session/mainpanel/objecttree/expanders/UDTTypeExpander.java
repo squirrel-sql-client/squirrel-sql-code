@@ -25,8 +25,6 @@ import java.util.List;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IUDTInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
@@ -35,22 +33,18 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTr
  * This class handles the expanding of a UDT Type node. It will build all the
  * UDTs.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class UDTTypeExpander implements INodeExpander
 {
-	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(UDTTypeExpander.class);
-
 	/**
 	 * Create the child nodes for the passed parent node and return them. Note
 	 * that this method should <B>not</B> actually add the child nodes to the
 	 * parent node as this is taken care of in the caller.
-	 * 
+	 *
 	 * @param	session	Current session.
 	 * @param	node	Node to be expanded.
-	 * 
+	 *
 	 * @return	A list of <TT>ObjectTreeNode</TT> objects representing the child
 	 *			nodes for the passed node.
 	 */

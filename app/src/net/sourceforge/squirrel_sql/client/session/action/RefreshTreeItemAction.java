@@ -21,29 +21,27 @@ package net.sourceforge.squirrel_sql.client.session.action;
 import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
- * @version 	$Id: RefreshTreeItemAction.java,v 1.4 2003-09-13 22:50:29 colbell Exp $
+ * @version 	$Id: RefreshTreeItemAction.java,v 1.5 2003-12-01 12:03:32 colbell Exp $
  * @author		Johan Compagner
  */
 public class RefreshTreeItemAction extends SquirrelAction
 										implements ISessionAction
 {
-	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(RefreshTreeItemAction.class);
-
+	/** Current session. */
 	private ISession _session;
 
 	/**
 	 * Constructor for DropTableAction.
-	 * @param app
-	 * @throws IllegalArgumentException
+	 *
+	 * @param	app		Application API.
+	 *
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <tt>null</tt> <tt>IApplication</tt> passed.
 	 */
 	public RefreshTreeItemAction(IApplication app)
 		throws IllegalArgumentException

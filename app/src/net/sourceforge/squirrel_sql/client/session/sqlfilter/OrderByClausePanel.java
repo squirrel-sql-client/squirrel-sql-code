@@ -37,7 +37,7 @@ import javax.swing.JTextArea;
 /**
  * This panel allows the user to change the where clause for a Contents tab query.
  *
- * @author  <A HREF="mailto:mjhammel@users.sourceforge.net">Maury Hammel</A>
+ * @author <A HREF="mailto:mjhammel@users.sourceforge.net">Maury Hammel</A>
  */
 public class OrderByClausePanel implements ISQLFilterPanel
 {
@@ -49,7 +49,7 @@ public class OrderByClausePanel implements ISQLFilterPanel
 
 	/**
 	 * Create a new instance of an OrderByClausePanel
-	 * 
+	 *
 	 * @param	columnList	A list of column names for the database table.
 	 * @param	tableName	The name of the database table that the filter
 	 * 						information will apply to.
@@ -62,7 +62,7 @@ public class OrderByClausePanel implements ISQLFilterPanel
 
 	/**
 	 * Initialize the components of the OrderByClausePanel.
-	 * 
+	 *
 	 * @param	sqlFilterClauses	An instance of a class containing information
 	 * 								about SQL filters already in place for the table.
 	 *
@@ -82,7 +82,7 @@ public class OrderByClausePanel implements ISQLFilterPanel
 
 	/**
 	 * Returns the panel created by the class.
-	 * 
+	 *
 	 * @return Return an instance of a WhereClauseSubPanel.
 	 *
 	 */
@@ -93,7 +93,7 @@ public class OrderByClausePanel implements ISQLFilterPanel
 
 	/**
 	 * Get the title of the panel.
-	 * 
+	 *
 	 * @return Return a string containing the title of the panl.
 	 */
 	public String getTitle()
@@ -103,7 +103,7 @@ public class OrderByClausePanel implements ISQLFilterPanel
 
 	/**
 	 * Get the hint text associated with the panel.
-	 * 
+	 *
 	 * @return	A String value containing the hint text associated with the
 	 * 			panel.
 	 *
@@ -203,8 +203,8 @@ public class OrderByClausePanel implements ISQLFilterPanel
 		private void createUserInterface()
 		{
 			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.anchor = gbc.WEST;
-			gbc.fill = gbc.HORIZONTAL;
+			gbc.anchor = GridBagConstraints.WEST;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
 
 			gbc.gridx = 0;
 			gbc.gridy = 0;
@@ -220,8 +220,8 @@ public class OrderByClausePanel implements ISQLFilterPanel
 			JPanel pnl = new JPanel(new GridBagLayout());
 
 			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.fill = gbc.HORIZONTAL;
-			gbc.anchor = gbc.WEST;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
+			gbc.anchor = GridBagConstraints.WEST;
 			gbc.insets = new Insets(4, 4, 4, 4);
 			gbc.weightx = 10.0;
 
@@ -235,7 +235,7 @@ public class OrderByClausePanel implements ISQLFilterPanel
 			columnPanel.add(_columnCombo);
 			pnl.add(columnPanel, gbc);
 
-			gbc.fill = gbc.NONE;
+			gbc.fill = GridBagConstraints.NONE;
 			gbc.gridx += 2;
 			gbc.weightx = 1.0;
 			JPanel orderPanel = new JPanel();
@@ -247,7 +247,7 @@ public class OrderByClausePanel implements ISQLFilterPanel
 			pnl.add(orderPanel, gbc);
 
 			gbc.gridx += 2;
-			gbc.gridwidth = gbc.REMAINDER;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			_addButton.addActionListener(new ActionListener()
 			{
 				public void actionPerformed(ActionEvent evt)
@@ -259,7 +259,7 @@ public class OrderByClausePanel implements ISQLFilterPanel
 
 			gbc.gridx = 0;
 			gbc.gridy++;
-			gbc.fill = gbc.HORIZONTAL;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.ipady = 4;
 			_orderClauseArea.setBorder(BorderFactory.createEtchedBorder());
 			pnl.add(_orderClauseArea, gbc);

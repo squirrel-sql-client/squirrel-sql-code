@@ -4,9 +4,19 @@ SQuirreL SQL Client Change Log
 1.2beta5
 ========
 
+Enhancements
+------------
+- You can now filter the catalogs displayed in the object tree (Keith
+  Mashinter).
+- You can now specify whether to load schemas/catalogs in the object tree
+  (Keith Mashinter).
+- You can now specify whether to load result set metadata when executing an SQL
+  (Keith Mashinter).
+
 Bug Fixes
 ---------
 - Fix resource strings (Dennis Lundberg).
+
 
 1.2beta4
 ========
@@ -21,9 +31,11 @@ Enhancements
   in status bar.
 - Added a statusbar to the Help Viewer.
 - New session property "Abort On Error".
-- Data in the Popup (from double-clicking a cell in ContentsTab) is now editable.
+- Data in the Popup (from double-clicking a cell in ContentsTab) is now
+  editable (Glenn Griffin).
 - Data in individual cells may be imported, exported, or operated on by an
-  external program from the Popup window (double-click on cell in ContentsTab).
+  external program from the Popup window (double-click on cell in ContentsTab)
+  (Glenn Griffin).
 
 
 Bug Fixes

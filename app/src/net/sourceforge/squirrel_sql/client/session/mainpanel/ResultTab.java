@@ -46,8 +46,6 @@ import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
@@ -57,10 +55,6 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
 public class ResultTab extends JPanel implements IHasIdentifier
 {
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(ResultTab.class);
-
 	/** Uniquely identifies this ResultTab. */
 	private IIdentifier _id;
 
@@ -172,10 +166,10 @@ public class ResultTab extends JPanel implements IHasIdentifier
 	 * @param	rsds	<TT>ResultSetDataSet</TT> to show results for.
 	 * @param	mdds	<TT>ResultSetMetaDataDataSet</TT> for rsds.
 	 * @param	exInfo	Execution info.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <tt>null</tt> <tt>SQLExecutionInfo</tt> passed.
-	 * 
+	 *
 	 * @throws	DataSetException
 	 * 			Thrown if error occured processing dataset.
 	 */
@@ -225,7 +219,7 @@ public class ResultTab extends JPanel implements IHasIdentifier
 	/**
 	 * Return the current SQL script.
 	 *
-	 * @return  Current SQL script.
+	 * @return	Current SQL script.
 	 */
 	public String getSqlString()
 	{
@@ -235,7 +229,7 @@ public class ResultTab extends JPanel implements IHasIdentifier
 	/**
 	 * Return the current SQL script with control characters removed.
 	 *
-	 * @return  Current SQL script.
+	 * @return	Current SQL script.
 	 */
 	public String getViewableSqlString()
 	{
@@ -268,11 +262,6 @@ public class ResultTab extends JPanel implements IHasIdentifier
 	{
 		add(_tp, BorderLayout.CENTER);
 		_sqlPanel.returnToTabbedPane(this);
-	}
-
-	private void createWindow()
-	{
-		_sqlPanel.createWindow(this);
 	}
 
 	public Component getOutputComponent()

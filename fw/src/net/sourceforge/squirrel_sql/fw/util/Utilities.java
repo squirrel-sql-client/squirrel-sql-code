@@ -22,6 +22,8 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -161,7 +163,7 @@ public class Utilities
 	 * with
 	 *
 	 * [pre]
-	 *  select * from tab01
+	 * select * from tab01
 	 * [/pre]
 	 *
 	 * @param	str	String to be cleaned.
@@ -291,5 +293,54 @@ public class Utilities
 			return fmt.format(val).concat(" KB");
 		}
 		return fmt.format(val).concat(" bytes");
+	}
+
+	/**
+	 * Split a string based on the given delimiter, but don't remove
+	 * empty elements.
+	 *
+	 * @param	str			The string to be split.
+	 * @param	delimiter	Split string based on this delimiter.
+	 *
+	 * @return	Array of split strings. Guaranteeded to be not null.
+	 */
+	public static String[] splitString(String str, char delimiter)
+	{
+		return splitString(str, delimiter, false);
+	}
+
+	/**
+	 * Split a string based on the given delimiter, optionally removing
+	 * empty elements.
+	 *
+	 * @param	str			The string to be split.
+	 * @param	delimiter	Split string based on this delimiter.
+	 * @param	removeEmpty	If <tt>true</tt> then remove empty elements.
+	 *
+	 * @return	Array of split strings. Guaranteeded to be not null.
+	 */
+	public static String[] splitString(String str, char delimiter, boolean removeEmpty)
+	{
+		// Return empty list if source string is empty.
+		final int len = (str == null) ? 0 : str.length();
+		if (len == 0)
+		{
+			return new String[0];
+		}
+
+		final List result = new ArrayList();
+		String elem = null;
+		int i = 0, j = 0;
+		while (j != -1 && j < len)
+		{
+			j = str.indexOf(delimiter,i);
+			elem = (j != -1) ? str.substring(i, j) : str.substring(i);
+			i = j + 1;
+			if (!removeEmpty || !(elem == null || elem.length() == 0))
+			{
+				result.add(elem);
+			}
+		}
+		return (String[])result.toArray(new String[result.size()]);
 	}
 }

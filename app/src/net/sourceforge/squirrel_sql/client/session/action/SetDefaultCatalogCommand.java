@@ -21,8 +21,6 @@ import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
@@ -32,10 +30,6 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  */
 public class SetDefaultCatalogCommand implements ICommand
 {
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(SetDefaultCatalogCommand.class);
-
 	/** Current session. */
 	private final ISession _session;
 

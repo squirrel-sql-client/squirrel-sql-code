@@ -71,7 +71,7 @@ public class LookAndFeelComboBox extends JComboBox
 
 	public LookAndFeelInfo getSelectedLookAndFeel()
 	{
-		return (LookAndFeelInfo)_lafsByName.get((String)getSelectedItem());
+		return (LookAndFeelInfo)_lafsByName.get(getSelectedItem());
 	}
 
 	public void setSelectedLookAndFeelName(String selectedLafName)

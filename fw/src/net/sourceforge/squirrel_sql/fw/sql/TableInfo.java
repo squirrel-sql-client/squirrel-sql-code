@@ -17,7 +17,6 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.SQLException;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -34,7 +33,7 @@ public class TableInfo extends DatabaseObjectInfo implements ITableInfo
 
 	TableInfo(String catalog, String schema, String simpleName,
 							String tableType, String remarks,
-							SQLDatabaseMetaData md) throws SQLException
+							SQLDatabaseMetaData md)
 	{
 		super(catalog, schema, simpleName, DatabaseObjectType.TABLE, md);
 		_remarks = remarks;

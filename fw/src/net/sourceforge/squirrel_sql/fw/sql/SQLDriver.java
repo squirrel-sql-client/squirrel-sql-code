@@ -233,7 +233,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 		return _jarFileName;
 	}
 
-	public void setJarFileName(String value) throws ValidationException
+	public void setJarFileName(String value)
 	{
 		if (value == null)
 		{

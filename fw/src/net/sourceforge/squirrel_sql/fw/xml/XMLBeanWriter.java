@@ -28,20 +28,14 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 
-import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import net.n3.nanoxml.IXMLElement;
 import net.n3.nanoxml.XMLElement;
 import net.n3.nanoxml.XMLWriter;
 
+import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
+
 public final class XMLBeanWriter
 {
-	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(XMLBeanWriter.class);
-
 	private IXMLElement _rootElement;
 
 	public XMLBeanWriter() throws XMLException
@@ -79,12 +73,12 @@ public final class XMLBeanWriter
 		}
 	}
 
-	public void save(String fileName) throws IOException, XMLException
+	public void save(String fileName) throws IOException
 	{
 		save(new File(fileName));
 	}
 
-	public void save(File file) throws IOException, XMLException
+	public void save(File file) throws IOException
 	{
 		BufferedOutputStream os =
 			new BufferedOutputStream(new FileOutputStream(file));

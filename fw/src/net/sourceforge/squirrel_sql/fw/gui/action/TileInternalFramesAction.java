@@ -135,6 +135,7 @@ public abstract class TileInternalFramesAction extends BaseAction implements IHa
 									frame.setIcon(false);
 								} catch (PropertyVetoException ignore)
 								{
+									// Ignore.
 								}
 							}
 							else if (frame.isMaximum())
@@ -145,6 +146,7 @@ public abstract class TileInternalFramesAction extends BaseAction implements IHa
 								}
 								catch (PropertyVetoException ignore)
 								{
+									// Ignore.
 								}
 							}
 

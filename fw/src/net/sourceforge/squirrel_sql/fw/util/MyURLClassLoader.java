@@ -55,7 +55,6 @@ public class MyURLClassLoader extends URLClassLoader
 	}
 
 	public Class[] getAssignableClasses(Class type, ILogger logger)
-		throws IOException
 	{
 		List classes = new ArrayList();
 		URL[] urls = getURLs();
@@ -125,5 +124,6 @@ public class MyURLClassLoader extends URLClassLoader
 
 	protected void classHasBeenLoaded(Class cls)
 	{
+		// Empty
 	}
 }

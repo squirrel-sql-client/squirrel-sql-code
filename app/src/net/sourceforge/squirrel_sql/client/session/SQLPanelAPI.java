@@ -21,6 +21,9 @@ package net.sourceforge.squirrel_sql.client.session;
 import javax.swing.Action;
 import javax.swing.JMenu;
 
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
@@ -32,6 +35,10 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
  */
 public class SQLPanelAPI implements ISQLPanelAPI
 {
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(MainPanel.class);
+
 	/** Session containing the SQL Panel. */
 	private ISession _session;
 
@@ -350,7 +357,8 @@ public class SQLPanelAPI implements ISQLPanelAPI
 		try
 		{
 			_session.getSQLConnection().commit();
-			_session.getMessageHandler().showMessage("Commit completed normally."); // i18n
+			final String msg = s_stringMgr.getString("SQLPanelAPI.commit");
+			_session.getMessageHandler().showMessage(msg);
 		}
 		catch (Throwable ex)
 		{
@@ -366,7 +374,8 @@ public class SQLPanelAPI implements ISQLPanelAPI
 		try
 		{
 			_session.getSQLConnection().rollback();
-			_session.getMessageHandler().showMessage("Rollback completed normally."); // i18n
+			final String msg = s_stringMgr.getString("SQLPanelAPI.rollback");
+			_session.getMessageHandler().showMessage(msg);
 		}
 		catch (Exception ex)
 		{

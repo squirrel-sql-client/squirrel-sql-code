@@ -64,7 +64,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 		}
 
 		_session = session;
-		_textPopupMenu = new SessionTextEditPopupMenu(session);
+		_textPopupMenu = new SessionTextEditPopupMenu();
 		_comp = new MyTextArea(session, this);
 	}
 
@@ -188,11 +188,6 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void appendText(String sqlScript, boolean select)
 	{
-//		if (getText().length() > 0 && !getText().endsWith("\n")
-//				&& !sqlScript.startsWith("\n"))
-//		{
-//			_comp.append("\n");
-//		}
 		final int start = select ? getText().length() : 0;
 		_comp.append(sqlScript);
 		if (select)
@@ -317,8 +312,9 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 		{
 			caretLineOffset = _comp.getLineStartOffset(getCaretLineNumber());
 		}
-		catch (BadLocationException ignore)
+		catch (BadLocationException ex)
 		{
+			s_log.error("BadLocationException in getCaretLinePosition", ex);
 		}
 		return caretPos - caretLineOffset;
 	}
@@ -412,13 +408,11 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 
 	private static class MyTextArea extends JTextArea
 	{
-		private ISession _session;
 		private DefaultSQLEntryPanel _pnl;
 
 		private MyTextArea(ISession session, DefaultSQLEntryPanel pnl)
 		{
 			super();
-			_session = session;
 			_pnl = pnl;
 			SessionProperties props = session.getProperties();
 			final FontInfo fi = props.getFontInfo();

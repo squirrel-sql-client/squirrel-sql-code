@@ -35,5 +35,6 @@ public class SessionAdapter implements ISessionListener
 	 */
 	public void sessionClosed(SessionEvent evt)
 	{
+		// Empty body.
 	}
 }

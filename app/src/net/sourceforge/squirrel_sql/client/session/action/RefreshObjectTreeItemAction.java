@@ -19,12 +19,11 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import java.awt.event.ActionEvent;
 
+import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
  * This <CODE>Action</CODE> will refresh the selected nodes in the object tree.
  *
@@ -33,10 +32,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 public class RefreshObjectTreeItemAction extends SquirrelAction
 											implements ISessionAction
 {
-	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(RefreshObjectTreeItemAction.class);
-
 	/** Current session. */
 	private ISession _session;
 

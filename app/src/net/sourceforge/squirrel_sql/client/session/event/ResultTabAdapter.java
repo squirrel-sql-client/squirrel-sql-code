@@ -21,44 +21,48 @@ package net.sourceforge.squirrel_sql.client.session.event;
 /**
  * An adapter for <TT>IResultTabListener</TT> with empty methods.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ResultTabAdapter implements IResultTabListener
 {
 	/**
 	 * An SQL results tab has been added to the tabbed folder.
-	 * 
+	 *
 	 * @param	evt		The event.
 	 */
 	public void resultTabAdded(ResultTabEvent evt)
 	{
+		// Empty body.
 	}
 
 	/**
 	 * An SQL results tab has been removed from the tabbed folder.
-	 * 
+	 *
 	 * @param	evt		The event.
 	 */
 	public void resultTabRemoved(ResultTabEvent evt)
 	{
+		// Empty body.
 	}
 
 	/**
 	 * An SQL results tab has been "torn off" from the tabbed folder into
 	 * its own frame.
-	 * 
+	 *
 	 * @param	evt		The event.
 	 */
 	public void resultTabTornOff(ResultTabEvent evt)
 	{
+		// Empty body.
 	}
 
 	/**
 	 * A "torn off" SQL results tab has been returned to the tabbed folder.
-	 * 
+	 *
 	 * @param	evt		The event.
 	 */
 	public void tornOffResultTabReturned(ResultTabEvent evt)
 	{
+		// Empty body.
 	}
 }

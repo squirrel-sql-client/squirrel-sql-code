@@ -120,6 +120,7 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo
 		}
 		catch (SQLException ignore)
 		{
+			// Ignore.
 		}
 		try
 		{
@@ -127,6 +128,7 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo
 		}
 		catch (SQLException ignore)
 		{
+			// Ignore.
 		}
 		try
 		{
@@ -137,6 +139,7 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo
 		}
 		catch (SQLException ignore)
 		{
+			// Ignore.
 		}
 		try
 		{
@@ -149,6 +152,7 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo
 		}
 		catch (SQLException ignore)
 		{
+			// Ignore.
 		}
 
 		StringBuffer buf = new StringBuffer();

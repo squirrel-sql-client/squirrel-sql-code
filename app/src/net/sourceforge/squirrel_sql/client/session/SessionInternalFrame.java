@@ -28,18 +28,12 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
 
 public class SessionInternalFrame extends BaseSheet
 {
-	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(SessionInternalFrame.class);
-
 	/** Application API. */
 	private final IApplication _app;
 

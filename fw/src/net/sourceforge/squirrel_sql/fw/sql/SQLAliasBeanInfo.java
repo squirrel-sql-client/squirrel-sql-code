@@ -32,6 +32,7 @@ public class SQLAliasBeanInfo extends SimpleBeanInfo
 
 	private interface IPropNames extends ISQLAlias.IPropertyNames
 	{
+		// Empty body.
 	}
 
 	public SQLAliasBeanInfo() throws IntrospectionException

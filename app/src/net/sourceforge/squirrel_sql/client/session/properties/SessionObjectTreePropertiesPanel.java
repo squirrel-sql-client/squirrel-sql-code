@@ -57,7 +57,7 @@ public class SessionObjectTreePropertiesPanel
 	/**
 	 * ctor specifying the Application API.
 	 *
-	 * @param	app		Application API.
+	 * @param	app	Application API.
 	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <tt>null</tt> <tt>IApplication</tt>
@@ -78,7 +78,7 @@ public class SessionObjectTreePropertiesPanel
 	/**
 	 * Initialize this panel with the "New Session" settings.
 	 *
-	 * @param	app		Application API.
+	 * @param	app	Application API.
 	 */
 	public void initialize(IApplication app)
 	{
@@ -125,6 +125,7 @@ public class SessionObjectTreePropertiesPanel
 		 */
 		interface i18n
 		{
+			String CATALOG_PREFIX = "Limit Catalog Objects using these comma-delimited prefixes:";
 			String LIMIT_ROWS_CONTENTS = "Contents - Limit rows";
 			String SCHEMA_PREFIX = "Limit Schema Objects using these comma-delimited prefixes:";
 			String SHOW_ROW_COUNT = "Show Row Count for Tables (can slow application)";
@@ -135,6 +136,8 @@ public class SessionObjectTreePropertiesPanel
 		private JCheckBox _contentsLimitRowsChk = new JCheckBox(i18n.LIMIT_ROWS_CONTENTS);
 		private JCheckBox _showRowCountChk = new JCheckBox(i18n.SHOW_ROW_COUNT);
 		private JTextField _schemaPrefixField = new JTextField(20);
+		private JTextField _catalogPrefixField = new JTextField(20);
+		private JCheckBox _loadSchemasCatalogsChk = new JCheckBox("Load Schemas/Catalogs into object tree");
 
 		/**
 		 * This object will update the status of the GUI controls as the user
@@ -154,6 +157,8 @@ public class SessionObjectTreePropertiesPanel
 			_contentsLimitRowsChk.setSelected(props.getContentsLimitRows());
 			_showRowCountChk.setSelected(props.getShowRowCount());
 			_schemaPrefixField.setText(props.getSchemaPrefixList());
+			_catalogPrefixField.setText(props.getCatalogPrefixList());
+			_loadSchemasCatalogsChk.setSelected(props.getLoadSchemasCatalogs());
 
 			updateControlStatus();
 		}
@@ -164,6 +169,8 @@ public class SessionObjectTreePropertiesPanel
 			props.setContentsLimitRows(_contentsLimitRowsChk.isSelected());
 			props.setShowRowCount(_showRowCountChk.isSelected());
 			props.setSchemaPrefixList(_schemaPrefixField.getText());
+			props.setCatalogPrefixList(_catalogPrefixField.getText());
+			props.setLoadSchemasCatalogs(_loadSchemasCatalogsChk.isSelected());
 		}
 
 		private void updateControlStatus()
@@ -181,13 +188,13 @@ public class SessionObjectTreePropertiesPanel
 
 			gbc.gridx = 0;
 			gbc.gridy = 0;
-			add(createSQLPanel(), gbc);
+			add(createObjectTreePanel(), gbc);
 
 			++gbc.gridy;
 			add(createFilterPanel(), gbc);
 		}
 
-		private JPanel createSQLPanel()
+		private JPanel createObjectTreePanel()
 		{
 			final JPanel pnl = new JPanel(new GridBagLayout());
 			pnl.setBorder(BorderFactory.createTitledBorder(i18n.OBJECT_TREE));
@@ -200,9 +207,13 @@ public class SessionObjectTreePropertiesPanel
 
 			_contentsNbrRowsToShowField.setColumns(5);
 
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			gbc.gridx = 0;
 			gbc.gridy = 0;
-			gbc.gridwidth = GridBagConstraints.REMAINDER;
+			pnl.add(_loadSchemasCatalogsChk, gbc);
+
+			++gbc.gridy; // new line
+			gbc.gridx = 0;
 			pnl.add(_showRowCountChk, gbc);
 
 			++gbc.gridy; // new line
@@ -220,7 +231,7 @@ public class SessionObjectTreePropertiesPanel
 		}
 		private JPanel createFilterPanel()
 		{
-			JPanel pnl = new JPanel(new GridBagLayout());
+			final JPanel pnl = new JPanel(new GridBagLayout());
 			pnl.setBorder(BorderFactory.createTitledBorder("Filters"));
 
 			final GridBagConstraints gbc = new GridBagConstraints();
@@ -231,9 +242,14 @@ public class SessionObjectTreePropertiesPanel
 
 			gbc.gridx = 0;
 			gbc.gridy = 0;
-			pnl.add(new JLabel(i18n.SCHEMA_PREFIX, SwingConstants.RIGHT));
+			pnl.add(new JLabel(i18n.SCHEMA_PREFIX, SwingConstants.RIGHT), gbc);
 			++gbc.gridy;
 			pnl.add(_schemaPrefixField, gbc);
+
+			++gbc.gridy;
+			pnl.add(new JLabel(i18n.CATALOG_PREFIX, SwingConstants.RIGHT), gbc);
+			++gbc.gridy;
+			pnl.add(_catalogPrefixField, gbc);
 
 			return pnl;
 		}

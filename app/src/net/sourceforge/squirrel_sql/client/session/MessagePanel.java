@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session;
 /*
+ * TODO: i18n
  * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
@@ -37,8 +38,6 @@ import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
 /**
  * This is the message panel at the bottom of the session sheet.
  *
@@ -50,16 +49,8 @@ class MessagePanel extends JTextPane implements IMessageHandler
 	private static final ILogger s_log =
 		LoggerController.createLogger(MessagePanel.class);
 
-	/** Application API. */
-	private final IApplication _app;
-
 	/** Popup menu for this component. */
 	private final TextPopupMenu _popupMenu = new MessagePanelPopupMenu();
-
-	/**
-	 * Memorize if a error occured and foreground color was changed.
-	 */
-	private boolean _errOccured = false;
 
 	/**
 	 * Attribute sets for error and last message.
@@ -78,22 +69,11 @@ class MessagePanel extends JTextPane implements IMessageHandler
 	private SimpleAttributeSet _lastSASet;
 
 	/**
-	 * Constructor.
-	 *
-	 * @param	app		Application API.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> <TT>IApplication</T> passed.
+	 * Default ctor.
 	 */
-	MessagePanel(IApplication app)
+	MessagePanel()
 	{
 		super();
-		if (app == null)
-		{
-			throw new IllegalArgumentException("Null IApplication passed");
-		}
-
-		_app = app;
 
 		_popupMenu.setTextComponent(this);
 
@@ -137,7 +117,6 @@ class MessagePanel extends JTextPane implements IMessageHandler
 	{
 		if (th != null)
 		{
-			_errOccured = false;
 			privateShowMessage(th, null);
 		}
 	}
@@ -151,7 +130,6 @@ class MessagePanel extends JTextPane implements IMessageHandler
 	{
 		if (msg != null)
 		{
-			_errOccured = false;
 			privateShowMessage(msg, null);
 		}
 	}
@@ -166,7 +144,6 @@ class MessagePanel extends JTextPane implements IMessageHandler
 	{
 		if (th != null)
 		{
-			_errOccured = true;
 			privateShowMessage(th, _saSetError);
 		}
 	}
@@ -181,7 +158,6 @@ class MessagePanel extends JTextPane implements IMessageHandler
 	{
 		if (msg != null)
 		{
-			_errOccured = true;
 			privateShowMessage(msg, _saSetError);
 		}
 	}

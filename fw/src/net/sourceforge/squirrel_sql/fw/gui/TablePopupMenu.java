@@ -138,20 +138,20 @@ public class TablePopupMenu extends BasePopupMenu
 		_menuItems[IOptionTypes.SELECT_ALL] = add(_select);
 	}
 
-	private class ClearAction extends BaseAction
-	{
-		ClearAction()
-		{
-			super(s_stringMgr.getString("TablePopupMenu.clear"));
-		}
-
-		public void actionPerformed(ActionEvent evt)
-		{
-			if (_table != null)
-			{
-			}
-		}
-	}
+//	private class ClearAction extends BaseAction
+//	{
+//		ClearAction()
+//		{
+//			super(s_stringMgr.getString("TablePopupMenu.clear"));
+//		}
+//
+//		public void actionPerformed(ActionEvent evt)
+//		{
+//			if (_table != null)
+//			{
+//			}
+//		}
+//	}
 
 	private class CutAction extends BaseAction
 	{

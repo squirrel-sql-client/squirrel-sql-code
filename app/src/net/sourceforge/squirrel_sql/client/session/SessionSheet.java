@@ -40,6 +40,8 @@ import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -67,11 +69,12 @@ public class SessionSheet extends JPanel
 	private static final ILogger s_log =
 		LoggerController.createLogger(SessionSheet.class);
 
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(SessionSheet.class);
+
 	/** Application API. */
 	private final IApplication _app;
-
-	/** Session for this window. */
-//	private ISession _session;
 
 	/** ID of the session for this window. */
 	private IIdentifier _sessionId;
@@ -145,7 +148,7 @@ public class SessionSheet extends JPanel
 	 */
 	public ISession getSession()
 	{
-		return (ISession)_app.getSessionManager().getSession(_sessionId);
+		return _app.getSessionManager().getSession(_sessionId);
 	}
 
 	public void updateState()
@@ -164,19 +167,6 @@ public class SessionSheet extends JPanel
 				_propsListener = null;
 			}
 			_mainTabPane.sessionClosing(session);
-//			try
-//			{
-//				_app.getSessionManager().closeSession(session);
-//			}
-//			catch (SQLException ex)
-//			{
-//				final String msg = "Error closing session";
-//				_app.showErrorDialog(msg, ex);
-//				s_log.error(msg, ex);
-//			}
-
-//			session.setSessionSheet(null);
-
 			_sessionId = null;
 		}
 	}
@@ -339,13 +329,11 @@ public class SessionSheet extends JPanel
 
 	private void createGUI(ISession session)
 	{
-//		setVisible(false);
-//		SessionProperties props = _session.getProperties();
 		final IApplication app = session.getApplication();
 
 		_mainTabPane = new MainPanel(session);
 
-		MessagePanel msgPnl = new MessagePanel(app);
+		MessagePanel msgPnl = new MessagePanel();
 		session.setMessageHandler(msgPnl);
 		msgPnl.setEditable(false);
 		_msgSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
@@ -412,7 +400,7 @@ public class SessionSheet extends JPanel
 				if (conn.getSQLMetaData().supportsCatalogs())
 				{
 					_catalogsCmb = new SQLCatalogsComboBox();
-					add(new JLabel(" Catalog: "));
+					add(new JLabel(s_stringMgr.getString("SessionSheet.catalog")));
 					add(_catalogsCmb);
 					addSeparator();
 

@@ -29,12 +29,13 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
-import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.GotoNextResultsTabAction;
@@ -64,6 +65,9 @@ class MainPanel extends JPanel
 		int OBJECT_TREE_TAB = 0;
 		int SQL_TAB = 1;
 	}
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(MainPanel.class);
 
 	/** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(MainPanel.class);
@@ -91,8 +95,8 @@ class MainPanel extends JPanel
 	 *
 	 * @param	session		Current session.
 	 *
-	 * @throws	IllegalArgumentException	If a <TT>null</TT>
-											<TT>ISession</TT> passed.
+	 * @throws	IllegalArgumentException
+	 *			If a <TT>null</TT> <TT>ISession</TT> passed.
 	 */
 	MainPanel(ISession session)
 	{
@@ -232,7 +236,7 @@ class MainPanel extends JPanel
 			}
 			catch (Throwable th)
 			{
-				String msg = "Error closing session";
+				String msg = s_stringMgr.getString("MainPanel.error.sessionclose");
 				_session.getApplication().showErrorDialog(msg, th);
 				s_log.error(msg, th);
 			}
@@ -262,15 +266,6 @@ class MainPanel extends JPanel
 		{
 			((IMainPanelTab)_tabs.get(idx)).select();
 		}
-	}
-
-	private static SquirrelPreferences getPreferences(ISession session)
-	{
-		if (session == null)
-		{
-			throw new IllegalArgumentException("ISession == null");
-		}
-		return session.getApplication().getSquirrelPreferences();
 	}
 
 	ObjectTreePanel getObjectTreePanel()

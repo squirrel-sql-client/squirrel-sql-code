@@ -25,8 +25,6 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.JavabeanDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseDataSetTab;
@@ -34,7 +32,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.Bas
 /**
  * This is the tab displaying connection status information.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ConnectionStatusTab extends BaseDataSetTab
 {
@@ -47,10 +45,6 @@ public class ConnectionStatusTab extends BaseDataSetTab
 		String TITLE = "Status";
 		String HINT = "Connection Status";
 	}
-
-	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(ConnectionStatusTab.class);
 
 	/**
 	 * Return the title for the tab.

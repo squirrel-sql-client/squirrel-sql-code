@@ -368,6 +368,7 @@ public class DataCache
 			}
 			catch (ClassNotFoundException ignore)
 			{
+				// Ignore.
 			}
 			catch (Throwable th)
 			{
@@ -424,6 +425,7 @@ public class DataCache
 					}
 					catch (ValidationException ignore)
 					{
+						// Ignore
 					}
 				}
 			}

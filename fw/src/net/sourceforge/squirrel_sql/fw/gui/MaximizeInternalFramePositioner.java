@@ -20,12 +20,18 @@ package net.sourceforge.squirrel_sql.fw.gui;
 import java.beans.PropertyVetoException;
 
 import javax.swing.JInternalFrame;
+
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
  * This class will maximize an internal frame.
  */
 public class MaximizeInternalFramePositioner
 	implements IInternalFramePositioner
 {
+	/** Logger for this class. */
+	private static ILogger s_log =
+		LoggerController.createLogger(MaximizeInternalFramePositioner.class);
 
 	public MaximizeInternalFramePositioner()
 	{
@@ -42,8 +48,9 @@ public class MaximizeInternalFramePositioner
 		{
 			child.setMaximum(true);
 		}
-		catch (PropertyVetoException ignore)
+		catch (PropertyVetoException ex)
 		{
+			s_log.error("Error maximizing JInternalFrame", ex);
 		}
 	}
 }

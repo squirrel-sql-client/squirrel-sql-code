@@ -32,6 +32,7 @@ public class SQLDriverPropertyCollectionBeanInfo extends SimpleBeanInfo
 
 	private interface IPropNames extends SQLDriverPropertyCollection.IPropertyNames
 	{
+		// Empty body.
 	}
 
 	public SQLDriverPropertyCollectionBeanInfo() throws IntrospectionException

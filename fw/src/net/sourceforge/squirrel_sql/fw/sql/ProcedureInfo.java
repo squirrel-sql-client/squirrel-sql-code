@@ -18,7 +18,6 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.sql.DatabaseMetaData;
-import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -46,7 +45,7 @@ public class ProcedureInfo extends DatabaseObjectInfo implements IProcedureInfo
 
 	ProcedureInfo(String catalog, String schema, String simpleName,
 							String remarks, int procType,
-							SQLDatabaseMetaData md) throws SQLException
+							SQLDatabaseMetaData md)
 	{
 		super(catalog, schema, simpleName, DatabaseObjectType.PROCEDURE, md);
 		_remarks = remarks;

@@ -302,7 +302,10 @@ public class SQLExecuterTask implements Runnable
 					ResultSetMetaDataDataSet rsmdds = null;
 					try
 					{
-						rsmdds = new ResultSetMetaDataDataSet(rs);
+						if (props.getShowResultsMetaData())
+						{
+							rsmdds = new ResultSetMetaDataDataSet(rs);
+						}
 					}
 					catch (DataSetException ex)
 					{
@@ -380,6 +383,7 @@ public class SQLExecuterTask implements Runnable
 		}
 		catch (Throwable th)
 		{
+			s_log.debug("Driver/DBMS can't handle SQLWarnings", th);
 		}
 	}
 

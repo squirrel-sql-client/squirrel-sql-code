@@ -36,6 +36,7 @@ public class SQLExecutionAdapter implements ISQLExecutionListener
 	 */
 	public void allStatementsExecuting(List sql)
 	{
+		// Empty nody.
 	}
 
 	/**

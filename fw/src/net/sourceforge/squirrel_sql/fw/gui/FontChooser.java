@@ -208,6 +208,7 @@ public class FontChooser extends JDialog
 		}
 		catch (Exception ignore)
 		{
+			// Ignore.
 		}
 		FontInfo fi = new FontInfo();
 		fi.setFamily((String)_fontNamesCmb.getSelectedItem());

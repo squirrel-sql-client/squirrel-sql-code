@@ -21,7 +21,6 @@ import java.lang.reflect.Method;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -29,7 +28,6 @@ import java.util.Map;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
@@ -82,13 +80,12 @@ public class MetaDataDataSet implements IDataSet
 	 */
 	private List _data = new ArrayList();
 
-	public MetaDataDataSet(DatabaseMetaData md) throws DataSetException
+	public MetaDataDataSet(DatabaseMetaData md)
 	{
 		this(md, null);
 	}
 
 	public MetaDataDataSet(DatabaseMetaData md, IMessageHandler msgHandler)
-		throws DataSetException
 	{
 		super();
 		_msgHandler =
@@ -235,16 +232,6 @@ public class MetaDataDataSet implements IDataSet
 		catch (Throwable th)
 		{
 			return IStrings.UNSUPPORTED;
-		}
-	}
-
-	private static final class DataSorter implements Comparator
-	{
-		public int compare(Object obj1, Object obj2)
-		{
-			final String lhs = ((String[]) obj1)[0];
-			final String rhs = ((String[]) obj2)[0];
-			return lhs.compareToIgnoreCase(rhs);
 		}
 	}
 }

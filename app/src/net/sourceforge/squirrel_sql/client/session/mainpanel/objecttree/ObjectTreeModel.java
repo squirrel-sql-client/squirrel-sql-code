@@ -32,8 +32,6 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -48,13 +46,6 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expander
  */
 public class ObjectTreeModel extends DefaultTreeModel
 {
-	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(ObjectTreeModel.class);
-
-	/** Current session. */
-	private ISession _session;
-
 	/**
 	 * Collection of <TT>INodeExpander</TT> objects. Each entry is a <TT>List</TT>
 	 * of <TT>INodeExpander</TT> objects. The key to the list is the
@@ -79,7 +70,6 @@ public class ObjectTreeModel extends DefaultTreeModel
 		{
 			throw new IllegalArgumentException("ISession == null");
 		}
-		_session = session;
 
 		// Standard expanders.
 		final INodeExpander expander = new DatabaseExpander(session);

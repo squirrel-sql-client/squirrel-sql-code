@@ -23,7 +23,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTr
 /**
  * This is the tab that contains the object tree.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ObjectTreeTab extends BaseMainPanelTab
 {
@@ -69,11 +69,12 @@ public class ObjectTreeTab extends BaseMainPanelTab
 	 */
 	protected void refreshComponent()
 	{
+		// Empty method.
 	}
 
 	/**
 	 * Return the component to be displayed in this tab.
-	 * 
+	 *
 	 * @return	the component to be displayed in this tab.
 	 */
 	public synchronized Component getComponent()

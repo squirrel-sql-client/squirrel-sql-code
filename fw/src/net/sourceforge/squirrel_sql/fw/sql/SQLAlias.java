@@ -30,7 +30,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  * required to connect to a JDBC complient database.<P>
  * This class is a <CODE>JavaBean</CODE>.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 {
@@ -47,6 +47,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 
 	private interface IPropNames extends ISQLAlias.IPropertyNames
 	{
+		// Empty block.
 	}
 
 	/** The <CODE>IIdentifier</CODE> that uniquely identifies this object. */
@@ -96,7 +97,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 	/**
 	 * Ctor specifying the identifier.
 	 *
-	 * @param   id  Uniquely identifies this object.
+	 * @param	id	Uniquely identifies this object.
 	 */
 	public SQLAlias(IIdentifier id)
 	{
@@ -113,7 +114,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 	 * TODO: Replace with clone().
 	 * Assign data from the passed <CODE>ISQLAlias</CODE> to this one.
 	 *
-	 * @param   rhs	 <CODE>ISQLAlias</CODE> to copy data from.
+	 * @param	rhs	 <CODE>ISQLAlias</CODE> to copy data from.
 	 *
 	 * @exception	ValidationException
 	 *				Thrown if an error occurs assigning data from
@@ -239,7 +240,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 
 	/**
 	 * Retrieve the saved password.
-	 * 
+	 *
 	 * @return		The saved password.
 	 */
 	public String getPassword()
@@ -249,7 +250,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 
 	/**
 	 * Set the password for this alias.
-	 * 
+	 *
 	 * @param	password	The new password.
 	 */
 	public void setPassword(String password)
@@ -266,7 +267,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 
 	/**
 	 * Should this alias be logged on automatically.
-	 * 
+	 *
 	 * @return	<TT>true</TT> is this alias should be logged on automatically
 	 * 			else <TT>false</TT>.
 	 */
@@ -277,7 +278,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 
 	/**
 	 * Set whether this alias should be logged on automatically.
-	 * 
+	 *
 	 * @param	value	<TT>true</TT> if alias should be autologged on
 	 * 					else <TT>false</TT.
 	 */
@@ -293,7 +294,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 
 	/**
 	 * Should this alias be connected when the application is started up.
-	 * 
+	 *
 	 * @return	<TT>true</TT> if this alias should be connected when the
 	 *			application is started up.
 	 */
@@ -304,7 +305,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 
 	/**
 	 * Set whether alias should be connected when the application is started up.
-	 * 
+	 *
 	 * @param	value	<TT>true</TT> if alias should be connected when the
 	 *					application is started up.
 	 */
@@ -379,7 +380,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 		}
 	}
 
-	public void setUserName(String userName) throws ValidationException
+	public void setUserName(String userName)
 	{
 		String data = getString(userName);
 		if (_userName != data)
@@ -391,7 +392,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 		}
 	}
 
-	public void setUseDriverProperties(boolean value) throws ValidationException
+	public void setUseDriverProperties(boolean value)
 	{
 		if (_useDriverProperties != value)
 		{
@@ -432,7 +433,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 				for (int i = 0; i < count; ++i)
 				{
 					newar[i] = (SQLDriverProperty)value.getDriverProperty(i).clone();
-					
+
 				}
 				_driverProps.setDriverProperties(newar);
 			}

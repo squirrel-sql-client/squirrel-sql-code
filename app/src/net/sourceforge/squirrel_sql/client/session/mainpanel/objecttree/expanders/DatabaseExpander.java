@@ -168,14 +168,31 @@ public class DatabaseExpander implements INodeExpander
 		throws SQLException
 	{
 		final List childNodes = new ArrayList();
-		final String[] catalogs = md.getCatalogs();
-		for (int i = 0; i < catalogs.length; ++i)
+		if (session.getProperties().getLoadSchemasCatalogs())
 		{
-			IDatabaseObjectInfo dbo = new DatabaseObjectInfo(null, null,
-											catalogs[i],
-											DatabaseObjectType.CATALOG,
-											md);
-			childNodes.add(new ObjectTreeNode(session, dbo));
+			final String[] catalogs = md.getCatalogs();
+			final String[] catalogPrefixArray =
+						session.getProperties().getCatalogPrefixArray();
+			for (int i = 0; i < catalogs.length; ++i)
+			{
+				boolean found = (catalogPrefixArray.length > 0) ? false : true;
+				for (int j = 0; j < catalogPrefixArray.length; ++j)
+				{
+					if (catalogs[i].startsWith(catalogPrefixArray[j]))
+					{
+						found = true;
+						break;
+					}
+				}
+				if (found)
+				{
+					IDatabaseObjectInfo dbo = new DatabaseObjectInfo(null, null,
+												catalogs[i],
+												DatabaseObjectType.CATALOG,
+												md);
+					childNodes.add(new ObjectTreeNode(session, dbo));
+				}
+			}
 		}
 		return childNodes;
 	}
@@ -185,29 +202,29 @@ public class DatabaseExpander implements INodeExpander
 		throws SQLException
 	{
 		final List childNodes = new ArrayList();
-		final String[] schemas = md.getSchemas();
-		final String[] schemaPrefixArray = session.getProperties().getSchemaPrefixArray();
-		for (int i = 0; i < schemas.length; ++i)
+		if (session.getProperties().getLoadSchemasCatalogs())
 		{
-//			IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName, null,
-//											schemas[i],
-//											DatabaseObjectType.SCHEMA, md);
-//			childNodes.add(new ObjectTreeNode(session, dbo));
-			boolean found = (schemaPrefixArray.length > 0) ? false : true;
-			for (int j = 0; j < schemaPrefixArray.length; ++j)
+			final String[] schemas = md.getSchemas();
+			final String[] schemaPrefixArray =
+							session.getProperties().getSchemaPrefixArray();
+			for (int i = 0; i < schemas.length; ++i)
 			{
-				if (schemas[i].startsWith(schemaPrefixArray[j]))
+				boolean found = (schemaPrefixArray.length > 0) ? false : true;
+				for (int j = 0; j < schemaPrefixArray.length; ++j)
 				{
-					found = true;
-					break;
+					if (schemas[i].startsWith(schemaPrefixArray[j]))
+					{
+						found = true;
+						break;
+					}
 				}
-			}
-			if (found)
-			{
-				IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName, null,
-												schemas[i],
-												DatabaseObjectType.SCHEMA, md);
-				childNodes.add(new ObjectTreeNode(session, dbo));
+				if (found)
+				{
+					IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName, null,
+													schemas[i],
+													DatabaseObjectType.SCHEMA, md);
+					childNodes.add(new ObjectTreeNode(session, dbo));
+				}
 			}
 		}
 		return childNodes;
@@ -216,59 +233,63 @@ public class DatabaseExpander implements INodeExpander
 	private List createObjectTypeNodes(ISession session, String catalogName,
 											String schemaName)
 	{
-		final SQLConnection conn = session.getSQLConnection();
-		final SQLDatabaseMetaData md = conn.getSQLMetaData();
 		final List list = new ArrayList();
 
-		// Add table types to list.
-		if (_tableTypes.length > 0)
+		if (session.getProperties().getLoadSchemasCatalogs())
 		{
-			for (int i = 0; i < _tableTypes.length; ++i)
+			final SQLConnection conn = session.getSQLConnection();
+			final SQLDatabaseMetaData md = conn.getSQLMetaData();
+
+			// Add table types to list.
+			if (_tableTypes.length > 0)
+			{
+				for (int i = 0; i < _tableTypes.length; ++i)
+				{
+					IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName,
+													schemaName, _tableTypes[i],
+													IObjectTreeAPI.TABLE_TYPE_DBO, md);
+					ObjectTreeNode child = new ObjectTreeNode(session, dbo);
+					list.add(child);
+				}
+			}
+			else
+			{
+				s_log.debug("List of table types is empty so trying null table type to load all tables");
+				IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName,
+												schemaName, null,
+												IObjectTreeAPI.TABLE_TYPE_DBO, md);
+				ObjectTreeNode child = new ObjectTreeNode(session, dbo);
+				child.setUserObject("TABLE");
+				list.add(child);
+			}
+
+			// Add stored proc parent node.
+			boolean supportsStoredProcs = false;
+			try
+			{
+				supportsStoredProcs = md.supportsStoredProcedures();
+			}
+			catch (SQLException ex)
+			{
+				s_log.debug("DBMS doesn't support 'supportsStoredProcedures()'", ex);
+			}
+			if (supportsStoredProcs)
 			{
 				IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName,
-												schemaName, _tableTypes[i],
-												IObjectTreeAPI.TABLE_TYPE_DBO, md);
+													schemaName, "PROCEDURE",
+													IObjectTreeAPI.PROC_TYPE_DBO, md);
 				ObjectTreeNode child = new ObjectTreeNode(session, dbo);
 				list.add(child);
 			}
-		}
-		else
-		{
-			s_log.debug("List of table types is empty so trying null table type to load all tables");
-			IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName,
-											schemaName, null,
-											IObjectTreeAPI.TABLE_TYPE_DBO, md);
-			ObjectTreeNode child = new ObjectTreeNode(session, dbo);
-			child.setUserObject("TABLE");
-			list.add(child);
-		}
 
-		// Add stored proc parent node.
-		boolean supportsStoredProcs = false;
-		try
-		{
-			supportsStoredProcs = md.supportsStoredProcedures();
-		}
-		catch (SQLException ex)
-		{
-			s_log.debug("DBMS doesn't support 'supportsStoredProcedures()'", ex);
-		}
-		if (supportsStoredProcs)
-		{
-			IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName,
-												schemaName, "PROCEDURE",
-												IObjectTreeAPI.PROC_TYPE_DBO, md);
-			ObjectTreeNode child = new ObjectTreeNode(session, dbo);
-			list.add(child);
-		}
-
-		// Add UDT parent node.
-		{
-			IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName,
-										schemaName, "UDT",
-										IObjectTreeAPI.UDT_TYPE_DBO, md);
-			ObjectTreeNode child = new ObjectTreeNode(session, dbo);
-			list.add(child);
+			// Add UDT parent node.
+			{
+				IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName,
+											schemaName, "UDT",
+											IObjectTreeAPI.UDT_TYPE_DBO, md);
+				ObjectTreeNode child = new ObjectTreeNode(session, dbo);
+				list.add(child);
+			}
 		}
 
 		return list;

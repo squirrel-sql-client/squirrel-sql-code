@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.client.session.properties;
 import java.awt.Font;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
-import java.util.ArrayList;
 
 import javax.swing.SwingConstants;
 
@@ -30,6 +29,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 /**
  * This class represents the settings for a session.
  *
@@ -48,17 +48,20 @@ public class SessionProperties implements Cloneable, Serializable
 	{
 		String ABORT_ON_ERROR = "abortOnError";
 		String AUTO_COMMIT = "autoCommit";
+		String CATALOG_PREFIX_LIST = "catalogPrefixList";
 		String COMMIT_ON_CLOSING_CONNECTION = "commitOnClosingConnection";
 		String CONTENTS_LIMIT_ROWS = "contentsLimitRows";
 		String CONTENTS_NBR_ROWS_TO_SHOW = "contentsNbrOfRowsToShow";
 		String FONT_INFO = "fontInfo";
 		String LARGE_RESULT_SET_OBJECT_INFO = "largeResultSetObjectInfo";
 		String LIMIT_SQL_ENTRY_HISTORY_SIZE = "limitSqlEntryHistorySize";
+		String LOAD_SCHEMAS_CATALOGS = "loadCatalogsSchemas";
 		String MAIN_TAB_PLACEMENT = "mainTabPlacement";
 		String META_DATA_OUTPUT_CLASS_NAME = "metaDataOutputClassName";
 		String OBJECT_TAB_PLACEMENT = "objectTabPlacement";
 		String SCHEMA_PREFIX_LIST = "schemaPrefixList";
 		String SQL_ENTRY_HISTORY_SIZE = "sqlEntryHistorySize";
+		String SHOW_RESULTS_META_DATA = "showResultsMetaData";
 		String SHOW_ROW_COUNT = "showRowCount";
 		String SHOW_TOOL_BAR = "showToolBar";
 		String SQL_SHARE_HISTORY = "sqlShareHistory";
@@ -89,14 +92,26 @@ public class SessionProperties implements Cloneable, Serializable
 	private boolean _contentsLimitRows = true;
 	private boolean _sqlLimitRows = true;
 
+	/**
+	 * <CODE>true</CODE> if schemas and catalogs should be loaded in the object
+	 * tree.
+	 */
+	private boolean _loadSchemasCatalogs = true;
+
 	/** Limit schema objects to those in this comma-delimited list.	*/
 	private String _schemaPrefixList = "";
+
+	/** Limit catalog objects to those in this comma-delimited list. */
+	private String _catalogPrefixList = "";
+
+	/** <TT>true</TT> if sql result meta data should be shown. */
+	private boolean _showResultsMetaData = true;
 
 	/** Name of class to use for metadata output. */
 	private String _metaDataOutputClassName = IDataSetDestinations.READ_ONLY_TABLE;
 
 	/** Name of class to use for SQL results output. */
-	private String _sqlOutputMetaDataClassName = IDataSetDestinations.READ_ONLY_TABLE;
+//	private String _sqlOutputMetaDataClassName = IDataSetDestinations.READ_ONLY_TABLE;
 
 	/** Name of class to use for table contsnts output. */
 	private String _tableContentsClassName = IDataSetDestinations.READ_ONLY_TABLE;
@@ -708,7 +723,8 @@ public class SessionProperties implements Cloneable, Serializable
 	}
 
 	/**
-	 * Return comma-separated list of schema prefixes to display in the object tree.
+	 * Return comma-separated list of schema prefixes to display in the object
+	 * tree.
 	 */
 	public String getSchemaPrefixList()
 	{
@@ -716,11 +732,11 @@ public class SessionProperties implements Cloneable, Serializable
 	}
 
 	/**
-	 * Return array list of schema prefixes to display in the object tree.
+	 * Return array of schema prefixes to display in the object tree.
 	 */
 	public String[] getSchemaPrefixArray()
 	{
-		return splitString(_schemaPrefixList, ',', true);
+		return Utilities.splitString(_schemaPrefixList, ',', true);
 	}
 
 	/**
@@ -737,40 +753,72 @@ public class SessionProperties implements Cloneable, Serializable
 	}
 
 	/**
-	 * TODO: Move to a utilities class
-	 * Split a string based on the given delimiter, optionally removing empty elements.
+	 * Return comma-separated catalog of schema prefixes to display in the
+	  * object tree.
 	 */
-	public String[] splitString(String str, char delimiter, boolean removeEmpty)
+	public String getCatalogPrefixList()
 	{
-		// return empty list if source string is empty
-		final int len = (str == null) ? 0 : str.length();
-		if (len == 0)
-		{
-			return new String[0];
-		}
-
-		final ArrayList result = new ArrayList();
-		String elem = null;
-		int i = 0, j = 0;
-		while (j != -1 && j < len)
-		{
-			j = str.indexOf(delimiter,i);
-			elem = (j != -1) ? str.substring(i,j) : str.substring(i);
-			i = j + 1;
-			if (!removeEmpty || !(elem == null || elem.length() == 0))
-			{
-				result.add(elem);
-			}
-		}
-		return (String[])result.toArray(new String[result.size()]);
+		return _catalogPrefixList;
 	}
 
 	/**
-	 * TODO: Move to a utilities class
+	 * Return array of catalog prefixes to display in the object tree.
 	 */
-	public String[] splitString(String str, char delimiter)
+	public String[] getCatalogPrefixArray()
 	{
-		return splitString(str, delimiter, false);
+		return Utilities.splitString(_catalogPrefixList, ',', true);
+	}
+
+	/**
+	 * Set the comma-separated list of catalog prefixes to display in the object tree.
+	 */
+	public synchronized void setCatalogPrefixList(String data)
+	{
+		final String oldValue = _catalogPrefixList;
+		_catalogPrefixList = data;
+		getPropertyChangeReporter().firePropertyChange(IPropertyNames.CATALOG_PREFIX_LIST,
+												oldValue, _catalogPrefixList);
+	}
+
+	/**
+	 * Return <CODE>true</CODE> if schemas and catalogs should be loaded into
+	 * the object tree.
+	 */
+	public boolean getLoadSchemasCatalogs()
+	{
+		return _loadSchemasCatalogs;
+	}
+
+	/**
+	 * Set <CODE>true</CODE> if schemas and catalogs should be loaded into the
+	 * object tree. 
+	 */
+	public synchronized void setLoadSchemasCatalogs(boolean data)
+	{
+		final boolean oldValue = _loadSchemasCatalogs;
+		_loadSchemasCatalogs = data;
+		getPropertyChangeReporter().firePropertyChange(
+			IPropertyNames.LOAD_SCHEMAS_CATALOGS, oldValue, _loadSchemasCatalogs);
+	}
+
+	/**
+	 * Set <CODE>true</CODE> if sql results meta data should be loaded.
+	 */
+	public synchronized void setShowResultsMetaData(boolean data)
+	{
+		final boolean oldValue = _showResultsMetaData;
+		_showResultsMetaData = data;
+		getPropertyChangeReporter().firePropertyChange(
+							IPropertyNames.SHOW_RESULTS_META_DATA,
+							oldValue, _showResultsMetaData);
+	}
+
+	/**
+	 * Return <CODE>true</CODE> if sql results meta data should be loaded.
+	 */
+	public boolean getShowResultsMetaData()
+	{
+		return _showResultsMetaData;
 	}
 
 	private synchronized PropertyChangeReporter getPropertyChangeReporter()

@@ -35,22 +35,18 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTr
  * This class handles the expanding of a Procedure Type node. It will build all the
  * procedures for the procedure type.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ProcedureTypeExpander implements INodeExpander
 {
-	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(ProcedureTypeExpander.class);
-
 	/**
 	 * Create the child nodes for the passed parent node and return them. Note
 	 * that this method should <B>not</B> actually add the child nodes to the
 	 * parent node as this is taken care of in the caller.
-	 * 
+	 *
 	 * @param	session	Current session.
 	 * @param	node	Node to be expanded.
-	 * 
+	 *
 	 * @return	A list of <TT>ObjectTreeNode</TT> objects representing the child
 	 *			nodes for the passed node.
 	 */

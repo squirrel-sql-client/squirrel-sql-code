@@ -22,7 +22,7 @@ import java.util.Date;
 /**
  * Information about an executed query.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SQLExecutionInfo
 {
@@ -41,9 +41,6 @@ public class SQLExecutionInfo
 	/** SQL script executed. */
 	private String _sql;
 
-	/** Row count of results. */
-	private final int _rowCount = -1;
-
 	/**
 	 * Default ctor. Defaults SQL execution start time to the current time.
 	 */
@@ -55,7 +52,7 @@ public class SQLExecutionInfo
 	/**
 	 * ctor specifying the query index. Defaults SQL execution start time to
 	 * the current time.
-	 * 
+	 *
 	 * @param	idx		Query index.
 	 */
 	public SQLExecutionInfo(int idx)
@@ -66,9 +63,9 @@ public class SQLExecutionInfo
 	/**
 	 * ctor specifying the SQL being executed. Defaults SQL execution start time
 	 * to the current time.
-	 * 
+	 *
 	 * @param	sql		SQL being executed.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> sql passed.
 	 */
@@ -86,10 +83,10 @@ public class SQLExecutionInfo
 	/**
 	 * ctor specifying the SQL being executed and the query index. Defaults SQL
 	 * execution start time to the current time.
-	 * 
+	 *
 	 * @param	idx		Query index.
 	 * @param	sql		SQL being executed.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> sql passed.
 	 */
@@ -123,7 +120,7 @@ public class SQLExecutionInfo
 
 	/**
 	 * Retrieve the query index.
-	 * 
+	 *
 	 * @return	Query index.
 	 */
 	public int getQueryIndex()
@@ -133,7 +130,7 @@ public class SQLExecutionInfo
 
 	/**
 	 * Retrieve the SQL script executed.
-	 * 
+	 *
 	 * @return	SQL script executed.
 	 */
 	public String getSQL()
@@ -143,7 +140,7 @@ public class SQLExecutionInfo
 
 	/**
 	 * Retrieve the SQL Execution start time.
-	 * 
+	 *
 	 * @return	SQL execution start time.
 	 */
 	public Date getSQLExecutionStartTime()
@@ -153,9 +150,9 @@ public class SQLExecutionInfo
 
 	/**
 	 * Set the SQL Execution start time.
-	 * 
+	 *
 	 * @param	value	SQL execution start time.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>Date</TT> passed.
 	 */
@@ -170,7 +167,7 @@ public class SQLExecutionInfo
 
 	/**
 	 * Retrieve the elapsed time time in milliseconds for the SQL execution.
-	 * 
+	 *
 	 * @return		SQL execution elapsed time in millis.
 	 */
 	public long getSQLExecutionElapsedMillis()
@@ -185,7 +182,7 @@ public class SQLExecutionInfo
 
 	/**
 	 * Retrieve the elapsed time time in milliseconds for the results processing.
-	 * 
+	 *
 	 * @return		Results processing elapsed time in millis.
 	 */
 	public long getResultsProcessingElapsedMillis()
@@ -200,7 +197,7 @@ public class SQLExecutionInfo
 
 	/**
 	 * Retrieve the total elapsed time time in milliseconds.
-	 * 
+	 *
 	 * @return	Total elapsed time in millis.
 	 */
 	public long getTotalElapsedMillis()
