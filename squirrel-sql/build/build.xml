@@ -177,6 +177,7 @@
 				<include name="**/*.*"/>
 			</fileset>
 		</copy>
+		<chmod file="${core_dist_dir}/*.sh" perm="ugo+rx"/>
 
 		<copy todir="${core_dist_doc_dir}" >
 			<fileset dir="doc" >
@@ -269,7 +270,6 @@
 	==================================================================
 	-->
 	<target name="make_dist" depends="compile_plugins,jar_source">
-		
 	</target>
 
 	<!--
