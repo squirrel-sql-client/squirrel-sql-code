@@ -41,25 +41,25 @@ import net.sourceforge.squirrel_sql.client.session.objectstree.BaseNode;
 
 class ObjectsPanel extends JPanel {
 
-    private ObjectsTree _tree;
-    private JSplitPane _splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+	private ObjectsTree _tree;
+	private JSplitPane _splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
-    private JComponent _emptyPnl = new JPanel();
+	private JComponent _emptyPnl = new JPanel();
 
-    ObjectsPanel(ISession session) {
-        super();
-        createUserInterface(session);
-    }
+	ObjectsPanel(ISession session) {
+		super();
+		createUserInterface(session);
+	}
 
-    // Required under JDK1.2. Without it the divider location is initialised to
-    // zero.
-    void fixDividerLocation() {
-        _splitPane.setDividerLocation(200);
-    }
+	// Required under JDK1.2. Without it the divider location is initialised to
+	// zero.
+	void fixDividerLocation() {
+		_splitPane.setDividerLocation(200);
+	}
 
-    void refreshTree() throws BaseSQLException {
-        _tree.refresh();
-    }
+	void refreshTree() throws BaseSQLException {
+		_tree.refresh();
+	}
 
 	/**
 	 * Return an array of <TT>IDatabaseObjectInfo</TT> objects representing all
@@ -71,57 +71,57 @@ class ObjectsPanel extends JPanel {
 		return _tree.getSelectedDatabaseObjects();
 	}
 
-    private void createUserInterface(ISession session) {
-        setLayout(new BorderLayout());
+	private void createUserInterface(ISession session) {
+		setLayout(new BorderLayout());
 
-        _tree = new ObjectsTree(session);
+		_tree = new ObjectsTree(session);
 
-        _splitPane.setOneTouchExpandable(true);
-        _splitPane.setContinuousLayout(true);
-        JScrollPane sp = new JScrollPane();
-        sp.setViewportView(_tree);
-        sp.setPreferredSize(new Dimension(200, 200));
-        _splitPane.add(sp, JSplitPane.LEFT);
-        add(_splitPane, BorderLayout.CENTER);
+		_splitPane.setOneTouchExpandable(true);
+		_splitPane.setContinuousLayout(true);
+		JScrollPane sp = new JScrollPane();
+		sp.setViewportView(_tree);
+		sp.setPreferredSize(new Dimension(200, 200));
+		_splitPane.add(sp, JSplitPane.LEFT);
+		add(_splitPane, BorderLayout.CENTER);
 
-        setSelectedObjectPanel(_emptyPnl);
+		setSelectedObjectPanel(_emptyPnl);
 
-        _tree.addTreeSelectionListener(new MySelectionListener());
+		_tree.addTreeSelectionListener(new MySelectionListener());
 
-        _splitPane.setDividerLocation(200);
+		_splitPane.setDividerLocation(200);
 
-        final TreePath[] path = _tree.getSelectionPaths();
-        if (path != null && path.length > 0) {
-            setSelectedObjectPanel(path[0]);
-        } else {
-            setSelectedObjectPanel(_emptyPnl);
-        }
-    }
+		final TreePath[] path = _tree.getSelectionPaths();
+		if (path != null && path.length > 0) {
+			setSelectedObjectPanel(path[0]);
+		} else {
+			setSelectedObjectPanel(_emptyPnl);
+		}
+	}
 
-    private void setSelectedObjectPanel(TreePath path) {
-        JComponent comp = _emptyPnl;
-        if (path != null) {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
-            if (node instanceof BaseNode) {
-                comp = ((BaseNode)node).getDetailsPanel();
-            }
-        }
-        setSelectedObjectPanel(comp);
-    }
+	private void setSelectedObjectPanel(TreePath path) {
+		JComponent comp = _emptyPnl;
+		if (path != null) {
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
+			if (node instanceof BaseNode) {
+				comp = ((BaseNode)node).getDetailsPanel();
+			}
+		}
+		setSelectedObjectPanel(comp);
+	}
 
-    private void setSelectedObjectPanel(Component comp) {
-        int divLoc = _splitPane.getDividerLocation();
-        Component existing = _splitPane.getRightComponent();
-        if (existing != null) {
-            _splitPane.remove(existing);
-        }
-        _splitPane.add(comp, JSplitPane.RIGHT);
-        _splitPane.setDividerLocation(divLoc);
-    }
+	private void setSelectedObjectPanel(Component comp) {
+		int divLoc = _splitPane.getDividerLocation();
+		Component existing = _splitPane.getRightComponent();
+		if (existing != null) {
+			_splitPane.remove(existing);
+		}
+		_splitPane.add(comp, JSplitPane.RIGHT);
+		_splitPane.setDividerLocation(divLoc);
+	}
 
-    private final class MySelectionListener implements TreeSelectionListener {
-        public void valueChanged(TreeSelectionEvent evt) {
-            setSelectedObjectPanel(evt.getNewLeadSelectionPath());
-        }
-    }
+	private final class MySelectionListener implements TreeSelectionListener {
+		public void valueChanged(TreeSelectionEvent evt) {
+			setSelectedObjectPanel(evt.getNewLeadSelectionPath());
+		}
+	}
 }

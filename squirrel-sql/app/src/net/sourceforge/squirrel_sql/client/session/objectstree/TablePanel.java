@@ -44,10 +44,19 @@ import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.TableP
 import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.VersionColumnsTab;
 
 public class TablePanel extends JTabbedPane {
+	/** Current session. */
 	private ISession _session;
 
+	/**
+	 * Describes the DB table urrently selected. If <TT>null</TT>
+	 * then no table is selected.
+	 */
 	private ITableInfo _ti;
 
+	/**
+	 * Collection of <TT>ITablePanelTab</TT> objects displayed in
+	 * this tabbed panel.
+	 */
 	private List _tabs = new ArrayList();
 
 	/** Listens to changes in <CODE>_props</CODE>. */
@@ -179,21 +188,14 @@ public class TablePanel extends JTabbedPane {
 		addTablePanelTab(new RowIDTab());
 		addTablePanelTab(new VersionColumnsTab());
 
-		_propsListener = new MyPropertiesListener(this);
+		_propsListener = new MyPropertiesListener(/*this*/);
 		_session.getProperties().addPropertyChangeListener(_propsListener);
 		addChangeListener(new TabbedPaneListener());
 	}
 
-	private static class MyPropertiesListener implements PropertyChangeListener {
-		private TablePanel _panel;
-
-		MyPropertiesListener(TablePanel panel) {
-			super();
-			_panel = panel;
-		}
-
+	private class MyPropertiesListener implements PropertyChangeListener {
 		public void propertyChange(PropertyChangeEvent evt) {
-			_panel.propertiesHaveChanged(evt);
+			TablePanel.this.propertiesHaveChanged(evt);
 		}
 	}
 

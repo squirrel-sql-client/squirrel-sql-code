@@ -17,25 +17,12 @@ package net.sourceforge.squirrel_sql.client.session.objectstree.procedurepanel;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
-import javax.swing.JScrollPane;
-
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewerDestination;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-import net.sourceforge.squirrel_sql.fw.util.Logger;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.objectstree.procedurepanel.BaseProcedurePanelTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.ResultSetPanel;
 
 /**
@@ -43,7 +30,7 @@ import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.Resul
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ProcedureColumnsTab extends net.sourceforge.squirrel_sql.client.session.objectstree.procedurepanel.BaseProcedurePanelTab {
+public class ProcedureColumnsTab extends BaseProcedurePanelTab {
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
