@@ -95,19 +95,19 @@ public class ConstraintGraph
    {
       if(0 == _foldingPoints.size())
       {
-         return new GraphLine[]{new GraphLine(_fkGatherPoint, _pkGatherPoint)};
+         return new GraphLine[]{new GraphLine(_fkGatherPoint, _pkGatherPoint, false, false)};
       }
 
       GraphLine[] ret = new GraphLine[_foldingPoints.size() + 1];
 
-      ret[0] = new GraphLine(_fkGatherPoint, (Point) _foldingPoints.get(0));
+      ret[0] = new GraphLine(_fkGatherPoint, (Point) _foldingPoints.get(0), false, true);
 
       for (int i = 0; i < _foldingPoints.size() - 1; i++)
       {
-         ret[i + 1] = new GraphLine((Point) _foldingPoints.get(i), (Point) _foldingPoints.get(i+1));
+         ret[i + 1] = new GraphLine((Point) _foldingPoints.get(i), (Point) _foldingPoints.get(i+1), true, true);
       }
 
-      ret[ret.length -1] = new GraphLine((Point) _foldingPoints.lastElement(), _pkGatherPoint);
+      ret[ret.length -1] = new GraphLine((Point) _foldingPoints.lastElement(), _pkGatherPoint, true, false);
 
       return ret;
 
@@ -212,11 +212,11 @@ public class ConstraintGraph
    {
       if(0 == _foldingPoints.size())
       {
-         return new GraphLine(_pkGatherPoint, _fkGatherPoint);
+         return new GraphLine(_pkGatherPoint, _fkGatherPoint, false, false);
       }
       else
       {
-         return new GraphLine((Point) _foldingPoints.get(0), _fkGatherPoint);
+         return new GraphLine((Point) _foldingPoints.get(0), _fkGatherPoint, true, false);
       }
    }
 }

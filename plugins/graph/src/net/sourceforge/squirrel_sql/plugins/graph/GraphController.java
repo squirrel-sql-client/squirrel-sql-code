@@ -87,11 +87,13 @@ public class GraphController
       {
          graphControllerXmlBean = _xmlSerializer.read();
          _graphPane.setTitle(graphControllerXmlBean.getTitle());
+         _desktopController.initZoomer(graphControllerXmlBean.getZoomerXmlBean());
          _desktopController.setShowConstraintNames(graphControllerXmlBean.isShowConstraintNames());
       }
       else
       {
          _graphPane.setTitle(_plugin.patchName(_graphPane.getTitle(), _session));
+         _desktopController.initZoomer(null);
       }
 
       _session.getSessionSheet().addMainTab(_graphPane);
@@ -137,6 +139,7 @@ public class GraphController
       GraphControllerXmlBean xmlBean = new GraphControllerXmlBean();
       xmlBean.setTitle(_graphPane.getTitle());
       xmlBean.setShowConstraintNames(_desktopController.isShowConstraintNames());
+      xmlBean.setZoomerXmlBean(_desktopController.getZoomer().getXmlBean());
 
       TableFrameControllerXmlBean[] frameXmls = new TableFrameControllerXmlBean[_openTableFrameCtrls.size()];
 

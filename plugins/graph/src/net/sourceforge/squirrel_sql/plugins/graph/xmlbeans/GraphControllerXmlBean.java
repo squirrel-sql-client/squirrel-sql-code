@@ -6,6 +6,7 @@ public class GraphControllerXmlBean
    private String title;
    private TableFrameControllerXmlBean[] tableFrameControllerXmls;
    private boolean showConstraintNames;
+   private ZoomerXmlBean zoomerXmlBean;
 
    public String getTitle()
    {
@@ -36,4 +37,15 @@ public class GraphControllerXmlBean
    {
       this.showConstraintNames = showConstraintNames;
    }
+
+   public ZoomerXmlBean getZoomerXmlBean()
+   {
+      return zoomerXmlBean;
+   }
+
+   public void setZoomerXmlBean(ZoomerXmlBean zoomerXmlBean)
+   {
+      this.zoomerXmlBean = zoomerXmlBean;
+   }
+
 }
