@@ -53,6 +53,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.CopyQualifiedObjectNameAction;
 import net.sourceforge.squirrel_sql.client.session.action.CopySimpleObjectNameAction;
 import net.sourceforge.squirrel_sql.client.session.action.DropSelectedTablesAction;
+import net.sourceforge.squirrel_sql.client.session.action.FilterObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeItemAction;
 import net.sourceforge.squirrel_sql.client.session.action.SetDefaultCatalogAction;
@@ -135,6 +136,7 @@ class ObjectTree extends JTree
 		// Options for global popup menu.
 		addToPopup(actions.get(RefreshObjectTreeAction.class));
 		addToPopup(actions.get(RefreshObjectTreeItemAction.class));
+		addToPopup(actions.get(FilterObjectTreeAction.class));
 
 		// Option to select default catalog only applies to sessions
 		// that support catalogs.
@@ -820,6 +822,7 @@ class ObjectTree extends JTree
 							DatabaseObjectType childNodeDboType = childNode.getDatabaseObjectType();
 							if (childNodeDboType != lastDboType)
 							{
+								getTypedModel().addKnownDatabaseObjectType(childNodeDboType);
 								lastDboType = childNodeDboType;
 								if (_model.getExpanders(childNodeDboType).length > 0)
 								{

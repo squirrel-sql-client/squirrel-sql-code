@@ -34,7 +34,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IOb
  * This interface defines the API through which plugins can work with the object
  * tree.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public interface IObjectTreeAPI
 {
@@ -42,26 +42,26 @@ public interface IObjectTreeAPI
 	 * Database object type for a "Table Type" node in the object tree. Some examples
 	 * are "TABLE", "SYSTEM TABLE", "VIEW" etc.
 	 */
-	DatabaseObjectType TABLE_TYPE_DBO = DatabaseObjectType.createNewDatabaseObjectType();
+	DatabaseObjectType TABLE_TYPE_DBO = DatabaseObjectType.createNewDatabaseObjectType("Table Type");
 
 	/**
 	 * Database object type for a "Procedure Type" node in the object tree. There is
 	 * only one node of this type in the object tree and it says "PROCEDURE".
 	 */
-	DatabaseObjectType PROC_TYPE_DBO = DatabaseObjectType.createNewDatabaseObjectType();
+	DatabaseObjectType PROC_TYPE_DBO = DatabaseObjectType.createNewDatabaseObjectType("Stored Procedure Type");
 
 	/**
 	 * Database object type for a "UDT Type" node in the object tree. There is only one
 	 * node of this type in the object tree and it says "UDT".
 	 */
-	DatabaseObjectType UDT_TYPE_DBO = DatabaseObjectType.createNewDatabaseObjectType();
+	DatabaseObjectType UDT_TYPE_DBO = DatabaseObjectType.createNewDatabaseObjectType("UDT Type");
 
 	/**
 	 * Add an expander for the specified object tree node type.
-	 * 
+	 *
 	 * @param	dboType		Database object type.
 	 * @param	expander	Expander called to add children to a parent node.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>DatabaseObjectType</TT> or
 	 * 			<TT>INodeExpander</TT> thrown.
@@ -71,10 +71,10 @@ public interface IObjectTreeAPI
 	/**
 	 * Add a tab to be displayed in the detail panel for the passed
 	 * database object type.
-	 * 
+	 *
 	 * @param	dboType		Database object type.
 	 * @param	tab			Tab to be displayed.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown when a <TT>null</TT> <TT>DatabaseObjectType</TT> or
 	 *			<TT>IObjectTab</TT> passed.
@@ -84,9 +84,9 @@ public interface IObjectTreeAPI
 	/**
 	 * Add a listener to the object tree for structure changes. I.E nodes
 	 * added/removed.
-	 * 
+	 *
 	 * @param	lis		The <TT>TreeModelListener</TT> you want added.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>TreeModelListener</TT> passed.
 	 */
@@ -94,9 +94,9 @@ public interface IObjectTreeAPI
 
 	/**
 	 * Remove a structure changes listener from the object tree.
-	 * 
+	 *
 	 * @param	lis		The <TT>TreeModelListener</TT> you want removed.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>TreeModelListener</TT> passed.
 	 */
@@ -104,9 +104,9 @@ public interface IObjectTreeAPI
 
 	/**
 	 * Add a listener to the object tree for selection changes.
-	 * 
+	 *
 	 * @param	lis		The <TT>TreeSelectionListener</TT> you want added.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>TreeSelectionListener</TT> passed.
 	 */
@@ -114,9 +114,9 @@ public interface IObjectTreeAPI
 
 	/**
 	 * Remove a listener from the object tree for selection changes.
-	 * 
+	 *
 	 * @param	lis		The <TT>TreeSelectionListener</TT> you want removed.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>TreeSelectionListener</TT> passed.
 	 */
@@ -124,9 +124,9 @@ public interface IObjectTreeAPI
 
 	/**
 	 * Add a listener to the object tree.
-	 * 
+	 *
 	 * @param	lis		The <TT>ObjectTreeListener</TT> you want added.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>ObjectTreeListener</TT> passed.
 	 */
@@ -134,9 +134,9 @@ public interface IObjectTreeAPI
 
 	/**
 	 * Remove a listener from the object tree.
-	 * 
+	 *
 	 * @param	lis		The <TT>ObjectTreeListener</TT> you want removed.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>ObjectTreeListener</TT> passed.
 	 */
@@ -145,10 +145,10 @@ public interface IObjectTreeAPI
 	/**
 	 * Add an <TT>Action</TT> to the popup menu for the specified database
 	 * object type.
-	 * 
+	 *
 	 * @param	dboType		Database object type.
 	 * @param	action		Action to add to menu.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>DatabaseObjectType</TT> or
 	 * 			<TT>Action</TT> thrown.
@@ -157,9 +157,9 @@ public interface IObjectTreeAPI
 
 	/**
 	 * Add an <TT>Action</TT> to the popup menu for all node types.
-	 * 
+	 *
 	 * @param	action		Action to add to menu.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> thrown.
 	 */
@@ -168,10 +168,10 @@ public interface IObjectTreeAPI
 	/**
 	 * Add an hierarchical menu to the popup menu for the specified database
 	 * object type.
-	 * 
+	 *
 	 * @param	dboType		Database object type.
 	 * @param	menu		<TT>JMenu</TT> to add to menu.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>DatabaseObjectType</TT> or
 	 * 			<TT>JMenu</TT> thrown.
@@ -180,9 +180,9 @@ public interface IObjectTreeAPI
 
 	/**
 	 * Add an hierarchical menu to the popup menu for all node types.
-	 * 
+	 *
 	 * @param	menu	<TT>JMenu</TT> to add to menu.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>JMenu</TT> thrown.
 	 */
@@ -191,7 +191,7 @@ public interface IObjectTreeAPI
 	/**
 	 * Return an array of the selected nodes in the tree. This is guaranteed
 	 * to be non-null.
-	 * 
+	 *
 	 * @return	Array of nodes in the tree.
 	 */
 	ObjectTreeNode[] getSelectedNodes();
@@ -216,19 +216,33 @@ public interface IObjectTreeAPI
 
 	/**
 	 * Remove one or more nodes from the tree.
-	 * 
+	 *
 	 * @param	nodes	Array of nodes to be removed.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>ObjectTreeNode[]</TT> thrown.
 	 */
 	void removeNodes(ObjectTreeNode[] nodes);
 
-
 	/**
 	 * Create a new <TT>DatabaseObjectType</TT>
-	 * 
+	 *
 	 * @return	a new <TT>DatabaseObjectType</TT>
 	 */
-	DatabaseObjectType createNewDatabaseObjectType();	
+	DatabaseObjectType createNewDatabaseObjectType(String name);
+
+	/**
+	 * Retrieve details about all object types that can be in this
+	 * tree.
+	 *
+	 * @return	DatabaseObjectType[]	Array of object type info objects.
+	 */
+	DatabaseObjectType[] getDatabaseObjectTypes();
+
+	/**
+	 * Add a known database object type to the object tree.
+	 *
+	 * @param	dboType		The new database object type.
+	 */
+	void addKnownDatabaseObjectType(DatabaseObjectType dboType);
 }

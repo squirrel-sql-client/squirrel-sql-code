@@ -18,6 +18,8 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.sql.SQLException;
+
 import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.event.TreeModelListener;
@@ -25,6 +27,9 @@ import javax.swing.event.TreeSelectionListener;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.IObjectTreeListener;
@@ -37,26 +42,15 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IOb
  */
 class ObjectTreeAPI implements IObjectTreeAPI
 {
+	/** Logger for this class. */
+	private static ILogger s_log =
+		LoggerController.createLogger(ObjectTreeAPI.class);
+
 	/** Session containing the object tree. */
 	private IClientSession _session;
 
-	/**
-	 * Database object type for a "Table Type" node. Some examples
-	 * are "TABLE", "SSYTEM TABLE", "VIEW" etc.
-	 */
-	private final DatabaseObjectType _tableGroupType;
-
-	/**
-	 * Database object type for a "Procedure Type" node. There is only one
-	 * node of this type in the object tree and it says "PROCEDURE".
-	 */
-	private final DatabaseObjectType _procGroupType;
-
-	/**
-	 * Database object type for a "UDT" node. There is only one
-	 * node of this type in the object tree and it says "UDT".
-	 */
-	private final DatabaseObjectType _udtGroupType;
+	/** <TT>true</TT> until the object tree has been built the first time. */
+	private boolean _firstRefresh = true;
 
 	/**
 	 * Ctor specifying the session.
@@ -74,13 +68,6 @@ class ObjectTreeAPI implements IObjectTreeAPI
 			throw new IllegalArgumentException("ISession == null");
 		}
 		_session = session;
-
-		// Create database object type objects to represent the "group" nodes
-		// that we will have in the tree. E.G. one of the "group" nodes would be
-		// the table type nodes such as "TABLE", "SYSTEM TABLE" etc.
-		_tableGroupType = DatabaseObjectType.createNewDatabaseObjectType();
-		_procGroupType = DatabaseObjectType.createNewDatabaseObjectType();
-		_udtGroupType = DatabaseObjectType.createNewDatabaseObjectType();
 	}
 
 	/**
@@ -344,6 +331,51 @@ class ObjectTreeAPI implements IObjectTreeAPI
 	 */
 	public synchronized void refreshTree()
 	{
+		if (_firstRefresh)
+		{
+			_firstRefresh = false;
+
+			addKnownDatabaseObjectType(IObjectTreeAPI.TABLE_TYPE_DBO);
+			addKnownDatabaseObjectType(IObjectTreeAPI.PROC_TYPE_DBO);
+			addKnownDatabaseObjectType(IObjectTreeAPI.UDT_TYPE_DBO);
+			addKnownDatabaseObjectType(DatabaseObjectType.TABLE);
+			addKnownDatabaseObjectType(DatabaseObjectType.UDT);
+
+			final SQLDatabaseMetaData md = _session.getSQLConnection().getSQLMetaData();
+			try
+			{
+				if (md.supportsCatalogs())
+				{
+					addKnownDatabaseObjectType(DatabaseObjectType.CATALOG);
+				}
+			}
+			catch (SQLException ex)
+			{
+				s_log.debug("Error in SQLDatabaseMetaData.supportsCatalogs() call", ex);
+			}
+			try
+			{
+				if (md.supportsSchemas())
+				{
+					addKnownDatabaseObjectType(DatabaseObjectType.SCHEMA);
+				}
+			}
+			catch (SQLException ex)
+			{
+				s_log.debug("Error in SQLDatabaseMetaData.supportsSchemas() call", ex);
+			}
+			try
+			{
+				if (md.supportsStoredProcedures())
+				{
+					addKnownDatabaseObjectType(DatabaseObjectType.PROCEDURE);
+				}
+			}
+			catch (SQLException ex)
+			{
+				s_log.debug("Error in SQLDatabaseMetaData.supportsStoredProcedures() call", ex);
+			}
+		}
 		_session.getSessionSheet().getObjectTreePanel().refreshTree();
 	}
 
@@ -377,8 +409,29 @@ class ObjectTreeAPI implements IObjectTreeAPI
 	 *
 	 * @return	a new <TT>DatabaseObjectType</TT>
 	 */
-	public DatabaseObjectType createNewDatabaseObjectType()
+	public DatabaseObjectType createNewDatabaseObjectType(String name)
 	{
-		return DatabaseObjectType.createNewDatabaseObjectType();
+		return DatabaseObjectType.createNewDatabaseObjectType(name);
+	}
+
+	/**
+	 * Retrieve details about all object types that can be in this
+	 * tree.
+	 *
+	 * @return	DatabaseObjectType[]	Array of object type info objects.
+	 */
+	public DatabaseObjectType[] getDatabaseObjectTypes()
+	{
+		return _session.getSessionSheet().getObjectTreePanel().getDatabaseObjectTypes();
+	}
+
+	/**
+	 * Add a known database object type to the object tree.
+	 *
+	 * @param	dboType		The new database object type.
+	 */
+	public void addKnownDatabaseObjectType(DatabaseObjectType dboType)
+	{
+		_session.getSessionSheet().getObjectTreePanel().addKnownDatabaseObjectType(dboType);
 	}
 }

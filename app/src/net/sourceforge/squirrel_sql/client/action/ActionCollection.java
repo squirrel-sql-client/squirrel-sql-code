@@ -57,6 +57,7 @@ import net.sourceforge.squirrel_sql.client.session.action.CopySimpleObjectNameAc
 import net.sourceforge.squirrel_sql.client.session.action.DropSelectedTablesAction;
 import net.sourceforge.squirrel_sql.client.session.action.DumpSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.FilterObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.GotoNextResultsTabAction;
 import net.sourceforge.squirrel_sql.client.session.action.GotoPreviousResultsTabAction;
 import net.sourceforge.squirrel_sql.client.session.action.IClientSessionAction;
@@ -75,7 +76,7 @@ import net.sourceforge.squirrel_sql.client.session.action.ShowNativeSQLAction;
  * This class represents a collection of <TT>Action</CODE> objects for the
  * application.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public final class ActionCollection
 {
@@ -93,7 +94,7 @@ public final class ActionCollection
 	 * application is first initialised.
 	 *
 	 * @param	app		Application API.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>IApplication</TT> passed.
 	 */
@@ -262,9 +263,9 @@ public final class ActionCollection
 
 	/**
 	 * Apply these action keys to the actions currently loaded.
-	 * 
+	 *
 	 * actionkeys	Action keys to load.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>ActionKeys[]</TT> passed.
 	 */
@@ -369,6 +370,7 @@ public final class ActionCollection
 		add(new MaximizeAction(_app));
 		add(new NewSessionPropertiesAction(_app));
 		add(new NextSessionAction(_app));
+		add(new FilterObjectTreeAction(_app));
 		add(new PreviousSessionAction(_app));
 		add(new ReconnectAction(_app));
 		add(new RefreshObjectTreeAction(_app));
