@@ -26,7 +26,6 @@ import javax.swing.JList;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
@@ -45,7 +44,7 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 /**
  * This window shows all the database aliases defined in the system.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class AliasesToolWindow extends BaseToolWindow
 {
@@ -64,10 +63,10 @@ public class AliasesToolWindow extends BaseToolWindow
 	 */
 	public AliasesToolWindow(IApplication app)
 	{
-		super(app, new UserInterfaceFactory(app));
+		super(new UserInterfaceFactory(app));
 		_app = app;
 		_uiFactory = (UserInterfaceFactory) getUserInterfaceFactory();
-		_uiFactory.setAliasesToolWindow(this);
+//		_uiFactory.setAliasesToolWindow(this);
 
 		// Enable/disable actions depending on whether an item is selected in
 		// the list.
@@ -113,7 +112,7 @@ public class AliasesToolWindow extends BaseToolWindow
 		private AliasesList _aliasesList;
 		private ToolBar _tb;
 		private BasePopupMenu _pm = new BasePopupMenu();
-		private AliasesToolWindow _tw;
+//		private AliasesToolWindow _tw;
 		private ConnectToAliasAction _connectToAliasAction;
 		private CopyAliasAction _copyAliasAction;
 		private CreateAliasAction _createAliasAction;
@@ -174,7 +173,7 @@ public class AliasesToolWindow extends BaseToolWindow
 			ISQLAlias alias = _aliasesList.getSelectedAlias();
 			if (alias != null)
 			{
-				cmd = new ConnectToAliasCommand(_app, GUIUtils.getOwningFrame(_tw), alias);
+				cmd = new ConnectToAliasCommand(_app, alias);
 			}
 			return cmd;
 		}
@@ -205,10 +204,10 @@ public class AliasesToolWindow extends BaseToolWindow
 			_modifyAliasAction.setEnabled(enable);
 		}
 
-		void setAliasesToolWindow(AliasesToolWindow tw)
-		{
-			_tw = tw;
-		}
+//		void setAliasesToolWindow(AliasesToolWindow tw)
+//		{
+//			_tw = tw;
+//		}
 
 		private void preloadActions()
 		{

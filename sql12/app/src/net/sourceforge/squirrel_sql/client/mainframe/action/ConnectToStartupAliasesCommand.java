@@ -76,7 +76,7 @@ public class ConnectToStartupAliasesCommand implements ICommand
 		while (it.hasNext())
 		{
 			final ISQLAlias alias = (ISQLAlias)it.next();
-			new ConnectToAliasCommand(_app, _app.getMainFrame(), alias).execute();
+			new ConnectToAliasCommand(_app, alias).execute();
 		}
 	}
 }

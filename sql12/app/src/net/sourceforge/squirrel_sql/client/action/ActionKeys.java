@@ -24,7 +24,7 @@ import java.awt.event.KeyEvent;
 /**
  * Describes the accelerator and mnemonic keys associated with an <TT>Action</TT>.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ActionKeys
 {

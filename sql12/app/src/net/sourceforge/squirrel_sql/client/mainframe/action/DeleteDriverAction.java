@@ -21,12 +21,13 @@ import java.awt.event.ActionEvent;
 import java.beans.PropertyVetoException;
 
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.mainframe.DriversList;
 import net.sourceforge.squirrel_sql.client.mainframe.DriversToolWindow;
-
 /**
  * This <CODE>Action</CODE> allows the user to delete a <TT>ISQLDriver</TT>.
  *
@@ -34,6 +35,10 @@ import net.sourceforge.squirrel_sql.client.mainframe.DriversToolWindow;
  */
 public class DeleteDriverAction extends SquirrelAction
 {
+	/** Logger for this class. */
+	private static ILogger s_log =
+		LoggerController.createLogger(ConnectToAliasAction.class);
+
 	/**
 	 * List of all the users drivers.
 	 */
@@ -72,8 +77,9 @@ public class DeleteDriverAction extends SquirrelAction
 		{
 			tw.setSelected(true);
 		}
-		catch (PropertyVetoException ignore)
+		catch (PropertyVetoException ex)
 		{
+			s_log.error("Error selecting window", ex);
 		}
 		ISQLDriver driver = _drivers.getSelectedDriver();
 		if (driver != null)

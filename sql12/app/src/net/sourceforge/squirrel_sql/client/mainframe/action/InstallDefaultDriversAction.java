@@ -25,6 +25,8 @@ import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
@@ -37,6 +39,10 @@ import net.sourceforge.squirrel_sql.client.mainframe.DriversToolWindow;
  */
 public class InstallDefaultDriversAction extends SquirrelAction
 {
+	/** Logger for this class. */
+	private static ILogger s_log =
+		LoggerController.createLogger(ConnectToAliasAction.class);
+
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(InstallDefaultDriversAction.class);
@@ -69,8 +75,9 @@ public class InstallDefaultDriversAction extends SquirrelAction
 			{
 				tw.setSelected(true);
 			}
-			catch (PropertyVetoException ignore)
+			catch (PropertyVetoException ex)
 			{
+				s_log.error("Error selecting window", ex);
 			}
 			final URL url = app.getResources().getDefaultDriversUrl();
 			try

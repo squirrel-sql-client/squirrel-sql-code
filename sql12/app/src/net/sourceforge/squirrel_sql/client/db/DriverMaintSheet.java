@@ -27,7 +27,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 
 import javax.swing.BorderFactory;
@@ -283,11 +282,17 @@ public class DriverMaintSheet extends BaseSheet
 		// This is a tool window.
 		GUIUtils.makeToolWindow(this, true);
 
-		final String title =
-			_maintType == MaintenanceType.MODIFY
-				? (s_stringMgr.getString("DriverMaintSheet.changedriver", _sqlDriver.getName()))
-				: s_stringMgr.getString("DriverMaintSheet.adddriver");
-		setTitle(title);
+		String winTitle;
+		if (_maintType == MaintenanceType.MODIFY)
+		{
+			winTitle = s_stringMgr.getString("DriverMaintSheet.changedriver",
+												_sqlDriver.getName());
+		}
+		else
+		{
+			winTitle = s_stringMgr.getString("DriverMaintSheet.adddriver");
+		}
+		setTitle(winTitle);
 
 		_driverName.setColumns(COLUMN_COUNT);
 		_url.setColumns(COLUMN_COUNT);
@@ -324,8 +329,10 @@ public class DriverMaintSheet extends BaseSheet
 		contentPane.add(createDriverPanel(), gbc);
 
 		JTabbedPane tabPnl = new JTabbedPane();
-		tabPnl.addTab(s_stringMgr.getString("DriverMaintSheet.javaclasspath"), createJavaClassPathPanel());
-		tabPnl.addTab(s_stringMgr.getString("DriverMaintSheet.extraclasspath"), createExtraClassPathPanel());
+		tabPnl.addTab(s_stringMgr.getString("DriverMaintSheet.javaclasspath"),
+												createJavaClassPathPanel());
+		tabPnl.addTab(s_stringMgr.getString("DriverMaintSheet.extraclasspath"),
+												createExtraClassPathPanel());
 
 		++gbc.gridy;
 		gbc.fill = GridBagConstraints.BOTH;
@@ -486,11 +493,15 @@ public class DriverMaintSheet extends BaseSheet
 
 		_extraClasspathUpBtn = new JButton(s_stringMgr.getString("DriverMaintSheet.up"));
 		_extraClasspathUpBtn.setEnabled(false);
-		_extraClasspathUpBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				synchronized (_extraClassPathList) {
+		_extraClasspathUpBtn.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent evt)
+			{
+				synchronized (_extraClassPathList)
+				{
 					int idx = _extraClassPathList.getSelectedIndex();
-					if (idx > 0) {
+					if (idx > 0)
+					{
 						IFileListBoxModel model = _extraClassPathList.getTypedModel();
 						File file = model.removeFile(idx);
 						--idx;
@@ -503,12 +514,16 @@ public class DriverMaintSheet extends BaseSheet
 
 		_extraClasspathDownBtn = new JButton(s_stringMgr.getString("DriverMaintSheet.down"));
 		_extraClasspathDownBtn.setEnabled(false);
-		_extraClasspathDownBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				synchronized (_extraClassPathList) {
+		_extraClasspathDownBtn.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent evt)
+			{
+				synchronized (_extraClassPathList)
+				{
 					int idx = _extraClassPathList.getSelectedIndex();
 					IFileListBoxModel model = _extraClassPathList.getTypedModel();
-					if (idx > -1 && idx < (model.getSize() - 1)) {
+					if (idx > -1 && idx < (model.getSize() - 1))
+					{
 						File file = model.removeFile(idx);
 						++idx;
 						model.insertFileAt(file, idx);
@@ -522,17 +537,22 @@ public class DriverMaintSheet extends BaseSheet
 
 		_extraClasspathDeleteBtn = new JButton(s_stringMgr.getString("DriverMaintSheet.delete"));
 		_extraClasspathDeleteBtn.setEnabled(false);
-		_extraClasspathDeleteBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
+		_extraClasspathDeleteBtn.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent evt)
+			{
 				int idx = _extraClassPathList.getSelectedIndex();
 				if (idx != -1)
 				{
 					IFileListBoxModel model = _extraClassPathList.getTypedModel();
 					model.removeFile(idx);
 					final int size = model.getSize();
-					if (idx < size) {
+					if (idx < size)
+					{
 						_extraClassPathList.setSelectedIndex(idx);
-					} else if (size > 0) {
+					}
+					else if (size > 0)
+					{
 						_extraClassPathList.setSelectedIndex(size - 1);
 					}
 				}
@@ -622,12 +642,12 @@ public class DriverMaintSheet extends BaseSheet
 				File[] selFiles = _chooser.getSelectedFiles();
 				if (selFiles != null)
 				{
-					IFileListBoxModel model = _extraClassPathList.getTypedModel();
+					IFileListBoxModel myModel = _extraClassPathList.getTypedModel();
 					for (int i = 0; i < selFiles.length; ++i)
 					{
-						model.addFile(selFiles[i]);
+						myModel.addFile(selFiles[i]);
 					}
-					_extraClassPathList.setSelectedIndex(model.getSize() - 1);
+					_extraClassPathList.setSelectedIndex(myModel.getSize() - 1);
 				}
 			}
 		}
@@ -665,10 +685,6 @@ public class DriverMaintSheet extends BaseSheet
 					}
 				}
 				catch (MalformedURLException ex)
-				{
-					displayErrorMessage(ex);
-				}
-				catch (IOException ex)
 				{
 					displayErrorMessage(ex);
 				}

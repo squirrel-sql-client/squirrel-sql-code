@@ -90,7 +90,8 @@ public class AliasMaintSheetFactory implements AliasMaintSheet.IMaintenanceType
 	 *
 	 * @return	The maintenance sheet for the passed alias.
 	 *
-	 * @throws	IllegalArgumentException	if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
+	 * @throws	IllegalArgumentException
+	 *			Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
 	 */
 	public synchronized AliasMaintSheet showModifySheet(ISQLAlias alias)
 	{

@@ -19,7 +19,6 @@ package net.sourceforge.squirrel_sql.client.gui;
  */
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -81,7 +80,6 @@ public class FileViewerFactory
 	 * 			Thrown if null MainFrame or URL passed.
 	 */
 	public synchronized HtmlViewerSheet getViewer(MainFrame parent, URL url)
-		throws IOException
 	{
 		if (parent == null)
 		{

@@ -29,8 +29,6 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.sql.WrappedSQLException;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 /**
@@ -41,10 +39,6 @@ import net.sourceforge.squirrel_sql.client.IApplication;
  */
 public class OpenConnectionCommand implements ICommand
 {
-	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(OpenConnectionCommand.class);
-
 	/** Application API. */
 	private IApplication _app;
 

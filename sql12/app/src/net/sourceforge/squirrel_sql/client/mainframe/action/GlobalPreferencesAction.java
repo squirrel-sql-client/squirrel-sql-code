@@ -24,7 +24,6 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 
 public class GlobalPreferencesAction extends SquirrelAction
 {
-
 	public GlobalPreferencesAction(IApplication app)
 	{
 		super(app);

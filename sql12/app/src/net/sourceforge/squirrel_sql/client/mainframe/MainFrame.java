@@ -59,6 +59,7 @@ public class MainFrame extends BaseMDIParentFrame
 {
 	public interface IMenuIDs extends MainFrameMenuBar.IMenuIDs
 	{
+		// EMpty body.
 	}
 
 	/** Logger for this class. */
@@ -131,9 +132,10 @@ public class MainFrame extends BaseMDIParentFrame
 		System.exit(0);
 	}
 
-	//??Why
+	// TODO: Why?
 	public void pack()
 	{
+		// Don't call super. Packing this frame causes problems.
 	}
 
 	public IApplication getApplication()
@@ -166,8 +168,9 @@ public class MainFrame extends BaseMDIParentFrame
 				{
 					child.setMaximum(true);
 				}
-				catch (PropertyVetoException ignore)
+				catch (PropertyVetoException ex)
 				{
+					s_log.error("Unable to maximize window", ex);
 				}
 			}
 		}
@@ -322,7 +325,7 @@ public class MainFrame extends BaseMDIParentFrame
 			}
 			else if (show && _toolBar == null)
 			{
-				_toolBar = new MainFrameToolBar(_app, this);
+				_toolBar = new MainFrameToolBar(_app);
 				getContentPane().add(_toolBar, BorderLayout.NORTH);
 			}
 		}
@@ -440,8 +443,9 @@ public class MainFrame extends BaseMDIParentFrame
 		{
 			_driversToolWindow.setSelected(true);
 		}
-		catch (PropertyVetoException ignore)
+		catch (PropertyVetoException ex)
 		{
+			s_log.error("Error selecting window", ex);
 		}
 
 		addInternalFrame(_aliasesToolWindow, false, null);
@@ -452,8 +456,9 @@ public class MainFrame extends BaseMDIParentFrame
 		{
 			_aliasesToolWindow.setSelected(true);
 		}
-		catch (PropertyVetoException ignore)
+		catch (PropertyVetoException ex)
 		{
+			s_log.error("Error selecting window", ex);
 		}
 
 		prefs.setMainFrameWindowState(new MainFrameWindowState(this));

@@ -74,11 +74,11 @@ public class DriversList extends JList
 
 		propertiesChanged(null);
 
-		final int idx = app.getSquirrelPreferences().getDriversSelectedIndex();
+		final int selDriverIdx = app.getSquirrelPreferences().getDriversSelectedIndex();
 		final int size = getModel().getSize();
-		if (idx > -1 && idx < size)
+		if (selDriverIdx > -1 && selDriverIdx < size)
 		{
-			setSelectedIndex(idx);
+			setSelectedIndex(selDriverIdx);
 		}
 		else
 		{
@@ -98,6 +98,7 @@ public class DriversList extends JList
 		{
 			public void contentsChanged(ListDataEvent evt)
 			{
+				// Unused.
 			}
 			public void intervalAdded(ListDataEvent evt)
 			{
@@ -118,14 +119,14 @@ public class DriversList extends JList
 					public void run()
 					{
 						clearSelection();
-						int size = getModel().getSize();
-						if (idx < size)
+						int modelSize = getModel().getSize();
+						if (idx < modelSize)
 						{
 							setSelectedIndex(idx);
 						}
-						else if (size > 0)
+						else if (modelSize > 0)
 						{
-							setSelectedIndex(size - 1);
+							setSelectedIndex(modelSize - 1);
 						}
 					}
 				});

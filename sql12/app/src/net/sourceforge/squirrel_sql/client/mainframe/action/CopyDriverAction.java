@@ -21,6 +21,8 @@ import java.awt.event.ActionEvent;
 import java.beans.PropertyVetoException;
 
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
@@ -30,10 +32,14 @@ import net.sourceforge.squirrel_sql.client.mainframe.DriversToolWindow;
  * This <CODE>Action</CODE> allows the user to copy a <TT>ISQLDriver</TT>
  * and maintain the newly copied one.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class CopyDriverAction extends SquirrelAction
 {
+	/** Logger for this class. */
+	private static ILogger s_log =
+		LoggerController.createLogger(ConnectToAliasAction.class);
+
 	/**
 	 * List of all the users drivers.
 	 */
@@ -42,10 +48,10 @@ public class CopyDriverAction extends SquirrelAction
 	/**
 	 * Ctor specifying the list of drivers.
 	 *
-	 * @param   app		Application API.
-	 * @param   list	List of <TT>ISQLDriver</TT> objects.
+	 * @param	app		Application API.
+	 * @param	list	List of <TT>ISQLDriver</TT> objects.
 	 *
-	 * @throws  IllegalArgumentException
+	 * @throws	IllegalArgumentException
 	 *			thrown if a <TT>null</TT> <TT>DriversList</TT> passed.
 	 */
 	public CopyDriverAction(IApplication app, DriversList list)
@@ -62,7 +68,7 @@ public class CopyDriverAction extends SquirrelAction
 	/**
 	 * Perform this action. Use the <TT>CopyDriverCommand</TT>.
 	 *
-	 * @param   evt	 The current event.
+	 * @param	evt	 The current event.
 	 */
 	public void actionPerformed(ActionEvent evt)
 	{
@@ -73,8 +79,9 @@ public class CopyDriverAction extends SquirrelAction
 		{
 			tw.setSelected(true);
 		}
-		catch (PropertyVetoException ignore)
+		catch (PropertyVetoException ex)
 		{
+			s_log.error("Error selecting window", ex);
 		}
 		ISQLDriver driver = _drivers.getSelectedDriver();
 		if (driver != null)

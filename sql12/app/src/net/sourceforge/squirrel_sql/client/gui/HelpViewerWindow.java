@@ -213,6 +213,7 @@ public class HelpViewerWindow extends JFrame
 			}
 			public void homeURLHasChanged(HtmlViewerPanelListenerEvent evt)
 			{
+				// Nothing to do.
 			}
 		});
 	}
@@ -394,14 +395,7 @@ public class HelpViewerWindow extends JFrame
 
 	HtmlViewerPanel createDetailsPanel()
 	{
-		try
-		{
-			_detailPnl = new HtmlViewerPanel(_app, null);
-		}
-		catch (IOException ex)
-		{
-			s_log.error("Error creating details panel for Help display", ex);
-		}
+		_detailPnl = new HtmlViewerPanel(null);
 		return _detailPnl;
 	}
 

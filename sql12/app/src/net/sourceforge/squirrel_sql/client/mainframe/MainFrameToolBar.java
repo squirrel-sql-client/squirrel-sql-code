@@ -61,22 +61,17 @@ class MainFrameToolBar extends ToolBar
 	 * ctor.
 	 * 
 	 * @param	app		Application API
-	 * @param	frame	Application main frame
 	 *
 	 * @throws	IllegalArgumentException
 	 *			<TT>null</TT> <TT>IApplication</TT> or <TT>MainFrame</TT>
 	 *			passed.
 	 */
-	MainFrameToolBar(IApplication app, MainFrame frame)
+	MainFrameToolBar(IApplication app)
 	{
 		super();
 		if (app == null)
 		{
 			throw new IllegalArgumentException("null IApplication passed.");
-		}
-		if (frame == null)
-		{
-			throw new IllegalArgumentException("null MainFrame passed.");
 		}
 		_app = app;
 		setUseRolloverButtons(true);
@@ -86,7 +81,7 @@ class MainFrameToolBar extends ToolBar
 		JLabel lbl = new JLabel(s_stringMgr.getString("MainFrameToolBar.connectto"));
 		lbl.setAlignmentY(0.5f);
 		add(lbl);
-		AliasesDropDown drop = new AliasesDropDown(app, frame);
+		AliasesDropDown drop = new AliasesDropDown(app);
 		drop.setAlignmentY(0.5f);
 		add(drop);
 		addSeparator();
@@ -98,8 +93,6 @@ class MainFrameToolBar extends ToolBar
 		add(actions.get(TileVerticalAction.class));
 		add(actions.get(CascadeAction.class));
 		add(actions.get(MaximizeAction.class));
-//		addSeparator();
-//		add(actions.get(ExitAction.class));
 	}
 
 	/**
@@ -121,14 +114,12 @@ class MainFrameToolBar extends ToolBar
 	private static class AliasesDropDown extends JComboBox
 											implements ActionListener
 	{
-		private IApplication _app;
-		private MainFrame _mainFrame;
+		final private IApplication _app;
 
-		AliasesDropDown(IApplication app, MainFrame mainFrame)
+		AliasesDropDown(IApplication app)
 		{
 			super();
 			_app = app;
-			_mainFrame = mainFrame;
 			final AliasesDropDownModel model = new AliasesDropDownModel(_app);
 			setModel(model);
 
@@ -142,7 +133,7 @@ class MainFrameToolBar extends ToolBar
 			// Under JDK1.4 an empty JComboBox has an almost zero width.
 			else
 			{
-				Dimension dm = getPreferredSize();
+				final Dimension dm = getPreferredSize();
 				dm.width = 100;
 				setPreferredSize(dm);
 			}
@@ -164,7 +155,7 @@ class MainFrameToolBar extends ToolBar
 				Object obj = getSelectedItem();
 				if (obj instanceof ISQLAlias)
 				{
-					new ConnectToAliasCommand(_app, _mainFrame, (ISQLAlias) obj).execute();
+					new ConnectToAliasCommand(_app, (ISQLAlias)obj).execute();
 				}
 			}
 			finally

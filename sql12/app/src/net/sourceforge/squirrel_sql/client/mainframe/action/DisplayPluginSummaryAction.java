@@ -26,18 +26,21 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class DisplayPluginSummaryAction extends SquirrelAction {
+public class DisplayPluginSummaryAction extends SquirrelAction
+{
 	/**
 	 * Ctor.
 	 *
-	 * @param	app	 Application API.
+	 * @param	app	Application API.
 	 *
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> passed.
 	 */
-	public DisplayPluginSummaryAction(IApplication app) {
+	public DisplayPluginSummaryAction(IApplication app)
+	{
 		super(app);
-		if (app == null) {
+		if (app == null)
+		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
 	}
@@ -45,10 +48,11 @@ public class DisplayPluginSummaryAction extends SquirrelAction {
 	/**
 	 * Display the about box.
 	 *
-	 * @param	evt	 The event being processed.
+	 * @param	evt	The event being processed.
 	 */
-	public void actionPerformed(ActionEvent evt) {
-		new DisplayPluginSummaryCommand(getApplication(), getParentFrame(evt)).execute();
+	public void actionPerformed(ActionEvent evt)
+	{
+		final IApplication app = getApplication();
+		new DisplayPluginSummaryCommand(app, getParentFrame(evt)).execute();
 	}
 }
-

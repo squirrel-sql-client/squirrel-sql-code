@@ -31,5 +31,6 @@ public class UIFactoryAdapter implements IUIFactoryListener
 	 */
 	public void tabbedPaneCreated(UIFactoryComponentCreatedEvent evt)
 	{
+		// Empty method.
 	}
 }

@@ -67,7 +67,7 @@ public class DriversToolWindow extends BaseToolWindow
 	 */
 	public DriversToolWindow(IApplication app)
 	{
-		super(app, new UserInterfaceFactory(app));
+		super(new UserInterfaceFactory(app));
 		_app = app;
 		_uiFactory = (UserInterfaceFactory)getUserInterfaceFactory();
 		_uiFactory.setDriversToolWindow(this);
@@ -237,9 +237,9 @@ public class DriversToolWindow extends BaseToolWindow
 			_tb.addSeparator();
 //			_tb.add(actions.get(ShowLoadedDriversOnlyAction.class));
 
-			Action act = (Action)actions.get(ShowLoadedDriversOnlyAction.class);
-			JToggleButton btn = new JToggleButton(act);
-			boolean show = _app.getSquirrelPreferences().getShowLoadedDriversOnly();
+			final Action act = actions.get(ShowLoadedDriversOnlyAction.class);
+			final JToggleButton btn = new JToggleButton(act);
+			final boolean show = _app.getSquirrelPreferences().getShowLoadedDriversOnly();
 			btn.setSelected(show);
 			btn.setText(null);
 			_tb.add(btn);

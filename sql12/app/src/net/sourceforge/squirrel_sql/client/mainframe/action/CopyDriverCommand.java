@@ -19,8 +19,6 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  */
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.db.DriverMaintSheetFactory;
 /**
@@ -31,10 +29,6 @@ import net.sourceforge.squirrel_sql.client.db.DriverMaintSheetFactory;
  */
 public class CopyDriverCommand implements ICommand
 {
-	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(CopyDriverCommand.class);
-
 	/** <TT>ISQLDriver</TT> to be copied. */
 	private final ISQLDriver _sqlDriver;
 

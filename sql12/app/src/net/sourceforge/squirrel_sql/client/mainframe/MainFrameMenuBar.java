@@ -82,7 +82,7 @@ import net.sourceforge.squirrel_sql.client.session.action.ShowNativeSQLAction;
 /**
  * Menu bar for <CODE>MainFrame</CODE>.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 final class MainFrameMenuBar extends JMenuBar
 {
@@ -98,8 +98,6 @@ final class MainFrameMenuBar extends JMenuBar
 
 	private final IApplication _app;
 //	private final JMenu _editMenu;
-	private final JMenu _driversMenu;
-	private final JMenu _aliasesMenu;
 	private final JMenu _pluginsMenu;
 	private final JMenu _sessionMenu;
 	private final JMenu _windowsMenu;
@@ -144,8 +142,8 @@ final class MainFrameMenuBar extends JMenuBar
 
 		add(createFileMenu(rsrc));
 //		add(_editMenu = createEditMenu(rsrc));
-		add(_driversMenu = createDriversMenu(rsrc));
-		add(_aliasesMenu = createAliasesMenu(rsrc));
+		add(createDriversMenu(rsrc));
+		add(createAliasesMenu(rsrc));
 		add(_pluginsMenu = createPluginsMenu(rsrc));
 		add(_sessionMenu = createSessionMenu(rsrc));
 		add(_windowsMenu = createWindowsMenu(rsrc, desktopPane));
@@ -247,10 +245,10 @@ final class MainFrameMenuBar extends JMenuBar
 
 	/**
 	 * Add a component to the end of the menu.
-	 * 
+	 *
 	 * @param	menuId	Defines the menu to add the component to. @see IMenuIDs
 	 * @param	comp	Component to add to menu.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException if null <TT>Component</TT> passed or
 	 * 			an invalid <TT>menuId</TT> passed.
 	 */
@@ -299,7 +297,7 @@ final class MainFrameMenuBar extends JMenuBar
 //	{
 //		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.EDIT);
 //		return menu;
-//	  }
+//	}
 
 	private JMenu createSessionMenu(Resources rsrc)
 	{
@@ -389,8 +387,6 @@ final class MainFrameMenuBar extends JMenuBar
 		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.HELP);
 		addToMenu(rsrc, ViewHelpAction.class, menu);
 
-//		ApplicationFiles appFiles = new ApplicationFiles();
-
 		menu.addSeparator();
 		addToMenu(rsrc, AboutAction.class, menu);
 		return menu;
@@ -457,7 +453,7 @@ final class MainFrameMenuBar extends JMenuBar
 
 	/**
 	 * Application properties have changed so update this object.
-	 * 
+	 *
 	 * @param	propName	Name of property that has changed or <TT>null</TT>
 	 * 						if multiple properties have changed.
 	 */

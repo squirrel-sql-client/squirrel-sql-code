@@ -20,8 +20,6 @@ package net.sourceforge.squirrel_sql.client.gui;
 import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
@@ -32,10 +30,6 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
  */
 public class HtmlViewerPanelToolBar extends ToolBar
 {
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(HtmlViewerPanelToolBar.class);
-
 	/** Application API. */
 	private final IApplication _app;
 

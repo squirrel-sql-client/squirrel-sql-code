@@ -41,8 +41,6 @@ import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
 /**
  * This panel shows the contents of a HTML file.
  *
@@ -53,9 +51,6 @@ public class HtmlViewerPanel extends JPanel
 	/** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(HtmlViewerPanel.class);
-
-	/** Application API. */
-	private final IApplication _app;
 
 	/** Text area containing the HTML. */
 	private final JEditorPane _contentsTxt = new JEditorPane();
@@ -83,17 +78,11 @@ public class HtmlViewerPanel extends JPanel
 	/**
 	 * Ctor.
 	 * 
-	 * @param	app	Application API.
 	 * @param	url	URL to home document.
 	 */
-	public HtmlViewerPanel(IApplication app, URL url) throws IOException
+	public HtmlViewerPanel(URL url)
 	{
 		super();
-		if (app == null)
-		{
-			throw new IllegalArgumentException("IApplication == null");
-		}
-		_app = app;
 		createGUI();
 		setHomeURL(url);
 		setURL(url);
@@ -206,11 +195,8 @@ public class HtmlViewerPanel extends JPanel
 	 * Displayed the passed URL in this panel.
 	 * 
 	 * @param	url		URL to be displayed.
-	 * 
-	 * @throws	IOException
-	 * 			Thrown if error when displaying URL.
 	 */
-	private synchronized void setURL(URL url) throws IOException
+	private synchronized void setURL(URL url)
 	{
 		if (url != null)
 		{

@@ -30,12 +30,18 @@ import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 
 public class SplashScreen extends JWindow
 {
+	/** Logger for this class. */
+	private final static ILogger s_log =
+		LoggerController.createLogger(SplashScreen.class);
+
 	private JProgressBar _progressBar;
 
 	public SplashScreen(SquirrelResources rsrc, int progressBarSize)
@@ -99,8 +105,9 @@ public class SplashScreen extends JWindow
 			});
 			Thread.yield();
 		}
-		catch (Exception ignore)
+		catch (Exception ex)
 		{
+			s_log.error("Error occured updating progress bar", ex);
 		}
 	}
 }
