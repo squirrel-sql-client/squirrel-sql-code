@@ -40,6 +40,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
+import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.ConnectionStatusTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.DataTypesTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.DateTimeFunctionsTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.KeywordsTab;
@@ -50,7 +51,6 @@ import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.Sys
 import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.TableTypesTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.IObjectPanelTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.procedurepanel.ProcedureColumnsTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.procedurepanel.ProcedureInfoTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.ColumnPriviligesTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.ColumnsTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.ContentsTab;
@@ -60,7 +60,6 @@ import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.Indexe
 import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.PrimaryKeyTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.RowCountTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.RowIDTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.TableInfoTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.TablePriviligesTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.VersionColumnsTab;
 /**
@@ -124,6 +123,7 @@ public class ObjectTreePanel extends JPanel
 
 		// Register tabs to display in the details panel for database nodes.
 		addDetailTab(DatabaseObjectType.DATABASE, new MetaDataTab());
+		addDetailTab(DatabaseObjectType.DATABASE, new ConnectionStatusTab());
 		addDetailTab(DatabaseObjectType.DATABASE, new TableTypesTab());
 		addDetailTab(DatabaseObjectType.DATABASE, new DataTypesTab());
 		addDetailTab(DatabaseObjectType.DATABASE, new NumericFunctionsTab());

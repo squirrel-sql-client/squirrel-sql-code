@@ -26,6 +26,8 @@ import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -38,12 +40,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class SQLConnection
 {
-//	private interface DriverNames
-//	{
-//		String FREE_TDS = "InternetCDS Type 4 JDBC driver for MS SQLServer";
-//		String JCONNECT = "jConnect (TM) for JDBC (TM)";
-//	}
-
 	private final ILogger s_log = LoggerController.createLogger(SQLConnection.class);
 
 	private final String _url;
@@ -53,36 +49,18 @@ public class SQLConnection
 	/** MetaData for this connection. */
 	private SQLDatabaseMetaData _metaData;
 
-//	private String _dbProductName;
-//	private String _dbDriverName;
-
 	private boolean _autoCommitOnClose = false;
 
-	public SQLConnection(String url) throws SQLException
-	{
-		this(null, url);
-	}
-
-	public SQLConnection(String className, String url) throws SQLException
-	{
-		super();
-		_url = url;
-		if (className != null)
-		{
-			try
-			{
-				Class.forName(className);
-			}
-			catch (ClassNotFoundException ex)
-			{
-				throw new SQLException("JDBC Driver class not found: " + className);
-			}
-		}
-	}
+	private Date _timeOpened = Calendar.getInstance().getTime();
+	private Date _timeClosed;
 
 	public SQLConnection(Connection conn) throws SQLException
 	{
 		super();
+		if (conn == null)
+		{
+			throw new IllegalArgumentException("SQLConnection == null");
+		}
 		_conn = conn;
 		loadMetaData();
 		_url = _md.getURL();
@@ -115,7 +93,7 @@ public class SQLConnection
 			_conn.close();
 			_conn = null;
 			_md = null;
-
+			_timeClosed = Calendar.getInstance().getTime();
 			if (savedEx != null)
 			{
 				s_log.debug("Connection close failed", savedEx);
@@ -123,11 +101,6 @@ public class SQLConnection
 			}
 			s_log.debug("Connection closed successfully");
 		}
-	}
-
-	public boolean isConnected()
-	{
-		return _conn != null;
 	}
 
 	public void commit() throws SQLException
@@ -176,6 +149,30 @@ public class SQLConnection
 		return _conn.prepareStatement(sql);
 	}
 
+	/**
+	 * Retrieve the time that this connection was opened. Note that this time
+	 * is the time that this <TT>SQLConnection</TT> was created, not the time
+	 * that the <TT>java.sql.Connection</TT> object that it is wrapped around
+	 * was opened.
+	 * 
+	 * @return	Time connection opened.
+	 */
+	public Date getTimeOpened()
+	{
+		return _timeOpened;
+	}
+
+	/**
+	 * Retrieve the time that this connection was closed. If this connection
+	 * is still opened then <TT>null</TT> will be returned..
+	 * 
+	 * @return	Time connection closed.
+	 */
+	public Date getTimeClosed()
+	{
+		return _timeClosed;
+	}
+	
 	/**
 	 * Retrieve the metadata for this connection.
 	 * 

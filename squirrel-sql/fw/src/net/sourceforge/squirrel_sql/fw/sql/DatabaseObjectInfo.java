@@ -21,6 +21,22 @@ import java.sql.SQLException;
 
 public class DatabaseObjectInfo implements IDatabaseObjectInfo
 {
+	/** Property names for this bean. */
+	public interface IPropertyNames
+	{
+		/** Catalog name. */
+		String CATALOG_NAME = "catalogName";
+
+		/** Schema name. */
+		String SCHEMA_NAME = "schemaName";
+
+		/** Simple name. */
+		String SIMPLE_NAME = "simpleName";
+
+		/** Qualified name. */
+		String QUALIFIED_NAME = "qualifiedName";
+	}
+
 	/** Catalog name. Can be <CODE>null</CODE> */
 	private final String _catalog;
 
