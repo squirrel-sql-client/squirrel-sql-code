@@ -6,10 +6,13 @@ Change Log
 
 Enhancements
 ------------
+- Aliases and Drivers windows can now be resized.
+- The toolbar in the main window can now be hidden.
 - Multiple jars can now be specified for an SQL driver.
-- You cab now search a jar in the classpath for a JDBC driver.
+- You can now search a jar in the classpath for a JDBC driver.
 - Row count is only shown on the Table Info tab if "Show Row Count"
   is specified in session properties.
+- New "Refresh Row Count" button on the Table Information tab.
 - Updated to use Apache log4j 1.2.
 - The log file is now rotated.
 - Log files are now written to the logs subirectory within user home.
