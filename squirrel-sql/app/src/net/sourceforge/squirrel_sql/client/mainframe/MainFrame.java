@@ -36,10 +36,9 @@ import javax.swing.ScrollPaneConstants;
 import net.sourceforge.squirrel_sql.fw.gui.BaseMDIParentFrame;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.ScrollableDesktopPane;
+import net.sourceforge.squirrel_sql.fw.gui.WindowState;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import sun.security.krb5.internal.i;
-import sun.security.krb5.internal.crypto.f;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Version;
@@ -170,14 +169,16 @@ public class MainFrame extends BaseMDIParentFrame
 		return _aliasesToolWindow;
 	}
 
-	Point getAliasesWindowLocation()
+	WindowState getAliasesWindowState()
 	{
-		return _aliasesToolWindow.getLocation();
+		return new WindowState(_aliasesToolWindow);
+//		return _aliasesToolWindow.getLocation();
 	}
 
-	Point getDriversWindowLocation()
+	WindowState getDriversWindowState()
 	{
-		return _driversToolWindow.getLocation();
+		return new WindowState(_driversToolWindow);
+//		return _driversToolWindow.getLocation();
 	}
 
 	public JMenu getSessionMenu()
@@ -314,8 +315,7 @@ public class MainFrame extends BaseMDIParentFrame
 		//		_statusBar.setFont(fn);
 		//		content.add(_statusBar, BorderLayout.SOUTH);
 
-		setJMenuBar(
-			new MainFrameMenuBar(_app, getDesktopPane(), _app.getActionCollection()));
+		setJMenuBar(new MainFrameMenuBar(_app, getDesktopPane(), _app.getActionCollection()));
 
 		setupFromPreferences();
 
@@ -357,8 +357,8 @@ public class MainFrame extends BaseMDIParentFrame
 		}
 
 		addInternalFrame(_driversToolWindow, false, null);
-		Point pt = ws.getDriversWindowLocation().createPoint();
-		_driversToolWindow.setBounds(pt.x, pt.y, 200, 200);
+		WindowState toolWs = ws.getDriversWindowState();
+		_driversToolWindow.setBounds(toolWs.getBounds().createRectangle());
 		_driversToolWindow.setVisible(true);
 		try
 		{
@@ -369,8 +369,8 @@ public class MainFrame extends BaseMDIParentFrame
 		}
 
 		addInternalFrame(_aliasesToolWindow, false, null);
-		pt = ws.getAliasesWindowLocation().createPoint();
-		_aliasesToolWindow.setBounds(pt.x, pt.y, 200, 200);
+		toolWs = ws.getAliasesWindowState();
+		_aliasesToolWindow.setBounds(toolWs.getBounds().createRectangle());
 		_aliasesToolWindow.setVisible(true);
 		try
 		{

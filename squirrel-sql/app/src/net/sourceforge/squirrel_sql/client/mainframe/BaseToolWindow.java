@@ -76,7 +76,7 @@ abstract class BaseToolWindow extends BaseSheet {
 
 	public BaseToolWindow(IApplication app, IUserInterfaceFactory uiFactory)
 			throws IllegalArgumentException {
-		super();
+		super("", true);
 		if (app == null) {
 			throw new IllegalArgumentException("Null IApplication passed");
 		}

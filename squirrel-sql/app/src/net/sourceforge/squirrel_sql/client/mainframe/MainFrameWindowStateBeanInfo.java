@@ -32,8 +32,8 @@ public class MainFrameWindowStateBeanInfo extends SimpleBeanInfo {
 		super();
 		if (s_dscrs == null) {
 			s_dscrs = new PropertyDescriptor[2];
-			s_dscrs[0] = new PropertyDescriptor(MainFrameWindowState.IPropertyNames.ALIASES_WINDOW_LOCATION, s_actualClass, "getAliasesWindowLocation", "setAliasesWindowLocation");
-			s_dscrs[1] = new PropertyDescriptor(MainFrameWindowState.IPropertyNames.DRIVERS_WINDOW_LOCATION, s_actualClass, "getDriversWindowLocation", "setDriversWindowLocation");
+			s_dscrs[0] = new PropertyDescriptor(MainFrameWindowState.IPropertyNames.ALIASES_WINDOW_STATE, s_actualClass, "getAliasesWindowState", "setAliasesWindowState");
+			s_dscrs[1] = new PropertyDescriptor(MainFrameWindowState.IPropertyNames.DRIVERS_WINDOW_STATE, s_actualClass, "getDriversWindowState", "setDriversWindowState");
 		}
 	}
 

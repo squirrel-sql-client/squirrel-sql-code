@@ -17,32 +17,39 @@ package net.sourceforge.squirrel_sql.client.mainframe;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Point;
+import java.awt.Rectangle;
 
 import net.sourceforge.squirrel_sql.fw.gui.WindowState;
 import net.sourceforge.squirrel_sql.fw.util.beanwrapper.PointWrapper;
+import net.sourceforge.squirrel_sql.fw.util.beanwrapper.RectangleWrapper;
 
 /**
  * This bean describes the state of the main window.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class MainFrameWindowState extends WindowState {
-
-	public interface IPropertyNames {
-		String ALIASES_WINDOW_LOCATION = "aliasesWindowLocation";
-		String DRIVERS_WINDOW_LOCATION = "driversWindowLocation";
+public class MainFrameWindowState extends WindowState
+{
+	public interface IPropertyNames
+	{
+		String ALIASES_WINDOW_STATE = "aliasesWindowState";
+		String DRIVERS_WINDOW_STATE = "driversWindowState";
 	}
-	private PointWrapper _driversWindowLocation = new PointWrapper(new Point(2, 0));
-	private PointWrapper _aliasesWindowLocation = new PointWrapper(new Point(2, 200));
+
+	private WindowState _driversWindowState = new WindowState();
+	private WindowState _aliasesWindowState = new WindowState();
 
 	private MainFrame _frame;
 
-	public MainFrameWindowState() {
+	public MainFrameWindowState()
+	{
 		super();
+		_driversWindowState.setBounds(new RectangleWrapper(new Rectangle(5, 5, 250, 250)));
+		_aliasesWindowState.setBounds(new RectangleWrapper(new Rectangle(400, 5, 250, 250)));
 	}
 
-	public MainFrameWindowState(MainFrame frame) {
+	public MainFrameWindowState(MainFrame frame)
+	{
 		super(frame);
 		_frame = frame;
 	}
@@ -51,37 +58,48 @@ public class MainFrameWindowState extends WindowState {
 	 * This bean is about to be written out to XML so load its values from its
 	 * window.
 	 */
-	public void aboutToBeWritten() {
+	public void aboutToBeWritten()
+	{
 		super.aboutToBeWritten();
 		refresh();
 	}
-	public PointWrapper getAliasesWindowLocation() {
+
+	public WindowState getAliasesWindowState()
+	{
 		refresh();
-		return _aliasesWindowLocation;
+		return _aliasesWindowState;
 	}
 
-	public PointWrapper getDriversWindowLocation() {
+	public WindowState getDriversWindowState()
+	{
 		refresh();
-		return _driversWindowLocation;
-	}
-	public void setAliasesWindowLocation(PointWrapper value) {
-		_aliasesWindowLocation = value;
+		return _driversWindowState;
 	}
 
-	public void setDriversWindowLocation(PointWrapper value) {
-		_driversWindowLocation = value;
+	public void setAliasesWindowState(WindowState value)
+	{
+		_aliasesWindowState = value;
 	}
 
-	private void refresh() {
-		if (_frame != null) {
-			if (_aliasesWindowLocation == null) {
-				_aliasesWindowLocation = new PointWrapper();
+	public void setDriversWindowState(WindowState value)
+	{
+		_driversWindowState = value;
+	}
+
+	private void refresh()
+	{
+		if (_frame != null)
+		{
+			if (_aliasesWindowState == null)
+			{
+				_aliasesWindowState = new WindowState();
 			}
-			if (_driversWindowLocation == null) {
-				_driversWindowLocation = new PointWrapper();
+			if (_driversWindowState == null)
+			{
+				_driversWindowState = new WindowState();
 			}
-			_aliasesWindowLocation.setFrom(_frame.getAliasesWindowLocation());
-			_driversWindowLocation.setFrom(_frame.getDriversWindowLocation());
+			_aliasesWindowState.setBounds(_frame.getAliasesWindowState().getBounds());
+			_driversWindowState.setBounds(_frame.getDriversWindowState().getBounds());
 		}
 	}
 }
