@@ -6,6 +6,7 @@ Change Log
 - SQL execution now in its own thread so that the user interface is
   still responsive (Johan Compagner).
 - Row count is now available on the Info tab for a table.
+- Meta data is available for SQL execution.
 
   
 1.1 alpha1
