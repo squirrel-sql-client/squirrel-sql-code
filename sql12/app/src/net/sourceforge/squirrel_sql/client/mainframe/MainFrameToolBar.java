@@ -128,8 +128,8 @@ class MainFrameToolBar extends ToolBar
 			private ISession _currentSession;
 			public void sessionClosed(SessionEvent e)
 			{
-				ISession session = e.getSession();
-				if (session == _currentSession)
+				final ISession sess = e.getSession();
+				if (sess == _currentSession)
 				{
 					_currentSession = null;
 					_sessionCommit.setSession(_currentSession);

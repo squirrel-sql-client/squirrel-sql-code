@@ -24,9 +24,6 @@ import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
@@ -42,8 +39,8 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 public class SQLPanelAPI implements ISQLPanelAPI
 {
 	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(MainPanel.class);
+//	private static final StringManager s_stringMgr =
+//		StringManagerFactory.getStringManager(SQLPanelAPI.class);
 
 	/** The SQL Panel. */
 	private SQLPanel _panel;

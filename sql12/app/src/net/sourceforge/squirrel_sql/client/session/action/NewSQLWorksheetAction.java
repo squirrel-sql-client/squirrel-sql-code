@@ -18,27 +18,24 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.event.ActionEvent;
-import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SQLInternalFrame;
 /**
  * This <CODE>Action</CODE> displays a new SQL Worksheet.
  *
- * @author  <A HREF="mailto:jmheight@users.sourceforge.net">Jason Height</A>
+ * @author <A HREF="mailto:jmheight@users.sourceforge.net">Jason Height</A>
  */
 public class NewSQLWorksheetAction extends SquirrelAction
 {
 	/**
 	 * Ctor.
 	 *
-	 * @param   app	 Application API.
+	 * @param	app	 Application API.
 	 *
-	 * @throws  IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> passed.
+	 * @throws		IllegalArgumentException
+	 *				Thrown if a <TT>null</TT> <TT>IApplication</TT> passed.
 	 */
 	public NewSQLWorksheetAction(IApplication app)
 	{
@@ -52,29 +49,18 @@ public class NewSQLWorksheetAction extends SquirrelAction
 	/**
 	 * Display a new worksheet.
 	 *
-	 * @param   evt	 The event being processed.
+	 * @param	evt	 The event being processed.
 	 */
 	public void actionPerformed(ActionEvent evt)
 	{
-		ISession activeSession = getApplication().getSessionManager().getActiveSession();
+		final IApplication app = getApplication();
+		final ISession activeSession = app.getSessionManager().getActiveSession();
 		if (activeSession == null)
 		{
 			throw new IllegalArgumentException(
 					"This method should not be called with a null activeSession");
 		}
 
-		final SQLInternalFrame sif = new SQLInternalFrame(activeSession);
-		getApplication().getMainFrame().addInternalFrame(sif, true, null);
-
-		// If we don't invokeLater here no Short-Cut-Key is sent
-		// to the internal frame
-		// seen under java version "1.4.1_01" and Linux
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
-				sif.setVisible(true);
-			}
-		});
+		app.getWindowManager().createSQLInternalFrame(activeSession);
 	}
 }

@@ -29,8 +29,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 
 public class SessionInternalFrame extends BaseSessionSheet
@@ -38,9 +36,6 @@ public class SessionInternalFrame extends BaseSessionSheet
 {
 	/** Application API. */
 	private final IApplication _app;
-
-	/** ID of the session for this window. */
-	private IIdentifier _sessionId;
 
 	private SessionSheet _sessionPanel;
 
@@ -51,7 +46,6 @@ public class SessionInternalFrame extends BaseSessionSheet
 	{
 		super(session, session.getTitle(), true, true, true, true);
 		_app = session.getApplication();
-		_sessionId = session.getIdentifier();
 		setVisible(false);
 		createGUI(session);
 
@@ -131,10 +125,10 @@ public class SessionInternalFrame extends BaseSessionSheet
 			}
 			public void internalFrameClosing(InternalFrameEvent evt)
 			{
-				final ISession session = getSession();
-				if (session != null)
+				final ISession mySession = getSession();
+				if (mySession != null)
 				{
-					_app.getSessionManager().closeSession(session);
+					_app.getSessionManager().closeSession(mySession);
 				}
 			}
 		});

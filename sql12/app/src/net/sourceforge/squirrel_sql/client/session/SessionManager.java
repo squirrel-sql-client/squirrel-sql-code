@@ -482,6 +482,7 @@ public class SessionManager
 	 * This listener enables/disables the default actions attached to
 	 * the session
 	 */
+	// JASON: Do this stuff elsewhere 
 	private class SessionActionEnabler extends SessionAdapter
 	{
 		public void sessionActivated(SessionEvent evt)

@@ -42,7 +42,6 @@ import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.fw.gui.SQLCatalogsComboBox;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -63,9 +62,6 @@ public class ObjectTreeInternalFrame extends BaseSessionSheet
 	/** Application API. */
 	private final IApplication _app;
 
-	/** ID of the session for this window. */
-	private IIdentifier _sessionId;
-
 	private ObjectTreePanel _objTreePanel;
 
 	/** Toolbar for window. */
@@ -77,7 +73,6 @@ public class ObjectTreeInternalFrame extends BaseSessionSheet
 	{
 		super(session, session.getTitle(), true, true, true, true);
 		_app = session.getApplication();
-		_sessionId = session.getIdentifier();
 		setVisible(false);
 		createGUI(session);
 		addInternalFrameListener(new ObjectTreeActionEnabler());
