@@ -32,6 +32,8 @@ import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class MaximizeAction extends MaximizeInternalFramesAction {
+	/** Application API. */
+	private IApplication _app;
 
     /**
      * Ctor.
@@ -40,11 +42,12 @@ public class MaximizeAction extends MaximizeInternalFramesAction {
      */
     public MaximizeAction(IApplication app) {
         super();
+        _app = app;
         app.getResources().setupAction(this);
     }
 
     public void actionPerformed(ActionEvent evt) {
-        CursorChanger cursorChg = new CursorChanger(MainFrame.getInstance());
+        CursorChanger cursorChg = new CursorChanger(_app.getMainFrame());
         cursorChg.show();
         try {
             super.actionPerformed(evt);

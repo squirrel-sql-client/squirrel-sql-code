@@ -40,7 +40,7 @@ public class RollbackAction extends SquirrelAction implements ISessionAction {
 
     public void actionPerformed(ActionEvent evt) {
         if (_session != null) {
-            CursorChanger cursorChg = new CursorChanger(MainFrame.getInstance());
+            CursorChanger cursorChg = new CursorChanger(getApplication().getMainFrame());
             cursorChg.show();
             try {
                 _session.rollback();

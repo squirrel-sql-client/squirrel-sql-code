@@ -271,7 +271,7 @@ public class SessionSheet extends JInternalFrame {
 	}
 
 	private void showError(Exception ex) {
-		new ErrorDialog(MainFrame.getInstance(), ex).show();
+		new ErrorDialog(_session.getApplication().getMainFrame(), ex).show();
 	}
 
 	private void propertiesHaveChanged(String propertyName) {

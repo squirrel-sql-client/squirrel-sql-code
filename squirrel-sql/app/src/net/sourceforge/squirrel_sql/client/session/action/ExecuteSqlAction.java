@@ -29,26 +29,26 @@ import net.sourceforge.squirrel_sql.client.session.SessionSheet;
 
 public class ExecuteSqlAction extends SquirrelAction implements ISessionAction {
 
-    private ISession _session;
+	private ISession _session;
 
-    public ExecuteSqlAction(IApplication app) {
-        super(app);
-    }
+	public ExecuteSqlAction(IApplication app) {
+		super(app);
+	}
 
-    public void setSession(ISession session) {
-        _session = session;
-    }
+	public void setSession(ISession session) {
+		_session = session;
+	}
 
-    public void actionPerformed(ActionEvent evt) {
-        if (_session != null) {
-            CursorChanger cursorChg = new CursorChanger(MainFrame.getInstance());
-            cursorChg.show();
-            try {
-                _session.executeCurrentSQL();
-            } finally {
-                cursorChg.restore();
-            }
-        }
-    }
+	public void actionPerformed(ActionEvent evt) {
+		if (_session != null) {
+			CursorChanger cursorChg = new CursorChanger(_session.getApplication().getMainFrame());
+			cursorChg.show();
+			try {
+				_session.executeCurrentSQL();
+			} finally {
+				cursorChg.restore();
+			}
+		}
+	}
 }
 

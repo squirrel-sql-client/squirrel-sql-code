@@ -132,7 +132,7 @@ class Application implements IApplication {
                 _cache = new DataCache(this);
 
                 indicateNewStartupTask("Creating main window...");
-                _mainFrame = MainFrame.create(this);
+                _mainFrame = new MainFrame(this);
 
                 indicateNewStartupTask("Initializing plugins...");
                 _pluginManager.initializePlugins();

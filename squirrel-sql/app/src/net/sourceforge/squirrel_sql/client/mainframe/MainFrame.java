@@ -57,13 +57,10 @@ import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
-//import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
 
 public class MainFrame extends BaseMDIParentFrame {
     public interface IMenuIDs extends MainFrameMenuBar.IMenuIDs {
     }
-
-    private static MainFrame s_instance = null;
 
     private IApplication _app;
 
@@ -72,7 +69,16 @@ public class MainFrame extends BaseMDIParentFrame {
 
     private JInternalFrame _activeInternalFrame;
 
-    private MainFrame(IApplication app)
+    /**
+     * Ctor.
+     *
+     * @param   app     Application API.
+     *
+     * @throws  IllegalArgumentException
+     *              Thrown if <TT>null</TT> <TT>IApplication</TT>
+     *              passed.
+     */
+    public MainFrame(IApplication app)
             throws IllegalArgumentException {
         super(Version.getVersion(), new ScrollableDesktopPane());
         if (app == null) {
@@ -83,24 +89,6 @@ public class MainFrame extends BaseMDIParentFrame {
         preferencesHaveChanged(null);   // Initial load of prefs.
         _app.getSquirrelPreferences().addPropertyChangeListener(new PreferencesListener());
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-    }
-
-	/**
-	 * @deprecated	Replaced by <TT>IApplication.getMainFrame()</TT>.
-	 */
-    public static MainFrame getInstance() {
-        if (s_instance == null) {
-            throw new IllegalStateException("MainFrame hasn't been created");
-        }
-        return s_instance;
-    }
-
-    public static MainFrame create(IApplication app) {
-        if (s_instance != null) {
-            throw new IllegalStateException("MainFrame already created");
-        }
-        s_instance = new MainFrame(app);
-        return s_instance;
     }
 
     private boolean closeAllChildWindows() {

@@ -23,13 +23,18 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 
+/**
+ * Action that allows program termination.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
 public class ExitAction extends SquirrelAction {
 
-    public ExitAction(IApplication app) {
-        super(app);
-    }
+	public ExitAction(IApplication app) {
+		super(app);
+	}
 
-    public void actionPerformed(ActionEvent evt) {
-        MainFrame.getInstance().dispose();
-    }
+	public void actionPerformed(ActionEvent evt) {
+		getApplication().getMainFrame().dispose();
+	}
 }

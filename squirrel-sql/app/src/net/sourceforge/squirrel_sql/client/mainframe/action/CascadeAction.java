@@ -32,22 +32,25 @@ import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class CascadeAction extends CascadeInternalFramesAction {
+	/** Application API. */
+	private IApplication _app;
 
-    /**
-     * Default ctor.
-     */
-    public CascadeAction(IApplication app) {
-        super();
-        app.getResources().setupAction(this);
-    }
+	/**
+	 * Default ctor.
+	 */
+	public CascadeAction(IApplication app) {
+		super();
+		_app = app;
+		app.getResources().setupAction(this);
+	}
 
-    public void actionPerformed(ActionEvent evt) {
-        CursorChanger cursorChg = new CursorChanger(MainFrame.getInstance());
-        cursorChg.show();
-        try {
-            super.actionPerformed(evt);
-        } finally {
-            cursorChg.restore();
-        }
-    }
+	public void actionPerformed(ActionEvent evt) {
+		CursorChanger cursorChg = new CursorChanger(_app.getMainFrame());
+		cursorChg.show();
+		try {
+			super.actionPerformed(evt);
+		} finally {
+			cursorChg.restore();
+		}
+	}
 }
