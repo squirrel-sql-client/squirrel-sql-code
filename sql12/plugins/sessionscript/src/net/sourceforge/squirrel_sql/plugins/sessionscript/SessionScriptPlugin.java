@@ -77,7 +77,7 @@ public class SessionScriptPlugin extends DefaultSessionPlugin
 	 */
 	public String getVersion()
 	{
-		return "0.12";
+		return "0.13";
 	}
 
 	/**
