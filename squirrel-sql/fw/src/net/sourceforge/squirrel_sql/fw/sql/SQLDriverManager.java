@@ -76,7 +76,11 @@ public class SQLDriverManager {
 				try {
 					Class driverCls = new SQLDriverClassLoader(sqlDriver).loadClass(sqlDriver.getDriverClassName());
 					Driver driver = (Driver)driverCls.newInstance();
-					return new SQLConnection(driver.connect(alias.getUrl(), props));
+					Connection jdbcConn = driver.connect(alias.getUrl(), props);
+					if (jdbcConn == null) {
+						throw new BaseSQLException("Unable to create connection. Check your URL.");
+					}
+					return new SQLConnection(jdbcConn);
 				} catch (SQLException ex) {
 					throw new BaseSQLException(ex);
 				}
