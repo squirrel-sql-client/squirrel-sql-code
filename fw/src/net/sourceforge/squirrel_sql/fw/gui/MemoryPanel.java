@@ -66,13 +66,13 @@ public class MemoryPanel extends JLabel
 	 */
 	public void removeNotify()
 	{
+		super.removeNotify();
 		ToolTipManager.sharedInstance().unregisterComponent(this);
 		if (_timer != null)
 		{
 			_timer.stop();
 			_timer = null;
 		}
-		super.removeNotify();
 	}
 
 	/**

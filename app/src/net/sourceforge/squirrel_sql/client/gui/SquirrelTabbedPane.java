@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -35,7 +35,7 @@ public class SquirrelTabbedPane extends JTabbedPane
 
 	private PropsListener _prefsListener;
 
-	/** Convienient way to refer to Application Preferences property names. */
+	/** Convenient way to refer to Application Preferences property names. */
 	private interface IAppPrefPropertynames
 							extends SquirrelPreferences.IPropertyNames
 	{
@@ -92,12 +92,12 @@ public class SquirrelTabbedPane extends JTabbedPane
 	 */
 	public void removeNotify()
 	{
+		super.removeNotify();
 		if (_prefsListener != null)
 		{
 			_prefs.removePropertyChangeListener(_prefsListener);
 			_prefsListener = null;
 		}
-		super.removeNotify();
 	}
 
 	private void propertiesHaveChanged(String propName)
