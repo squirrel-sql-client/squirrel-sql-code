@@ -21,9 +21,10 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
  * This is the model for the object tree.
  *
@@ -64,7 +65,7 @@ public class ObjectTreeModel extends DefaultTreeModel {
 
 	private static final class RootNode extends ObjectTreeNode {
 		RootNode(ISession session) {
-			super(session, getNodeText(session));
+			super(session, INodeTypes.DATABASE,getNodeText(session));
 		}
 
 		private static final String getNodeText(ISession session) {

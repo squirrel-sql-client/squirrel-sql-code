@@ -18,6 +18,10 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import javax.swing.JTree;
+import javax.swing.ToolTipManager;
+import javax.swing.tree.TreePath;
+
+import java.awt.event.MouseEvent;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -55,6 +59,48 @@ public class ObjectTree extends JTree {
 //		_model.fillTree();
 		setModel(_model);
 		setSelectionRow(0);
+	}
+
+	/**
+	 * Component has been added to its parent.
+	 */
+	public void addNotify()
+	{
+		super.addNotify();
+		// Register so that we can display different tooltips depending
+		// which entry in list mouse is over.
+		ToolTipManager.sharedInstance().registerComponent(this);
+	}
+
+	/**
+	 * Component has been removed from its parent.
+	 */
+	public void removeNotify()
+	{
+		// Don't need tooltips any more.
+		ToolTipManager.sharedInstance().unregisterComponent(this);
+		super.removeNotify();
+	}
+
+	/**
+	 * Return the name of the object that the mouse is currently
+	 * over as the tooltip text.
+	 *
+	 * @param   event   Used to determine the current mouse position.
+	 */
+	public String getToolTipText(MouseEvent evt)
+	{
+		String tip = null;
+		final TreePath path = getPathForLocation(evt.getX(), evt.getY());
+		if (path != null)
+		{
+			tip = path.getLastPathComponent().toString();
+		}
+		else
+		{
+			tip = getToolTipText();
+		}
+		return tip;
 	}
 }
 

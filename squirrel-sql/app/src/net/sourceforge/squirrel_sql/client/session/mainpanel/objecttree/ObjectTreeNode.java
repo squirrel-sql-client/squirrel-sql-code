@@ -25,10 +25,32 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ObjectTreeNode extends DefaultMutableTreeNode {
+public class ObjectTreeNode extends DefaultMutableTreeNode
+{
+	/** Type of this node. */
+	private int _nodeType;
 
-	public ObjectTreeNode(ISession session, Object userObject) {
+	/** Current session. */
+	private ISession _session;
+
+	boolean _canHaveChildren;
+
+	public ObjectTreeNode(ISession session, int nodeType, Object userObject)
+	{
+		this(session, nodeType, userObject, true);
+	}
+
+	public ObjectTreeNode(ISession session, int nodeType, Object userObject,
+							boolean canHaveChildren)
+	{
 		super(userObject);
+		if (session == null)
+		{
+			throw new IllegalArgumentException("ISession == null");
+		}
+		_nodeType = nodeType;
+		_session = session;
+		_canHaveChildren = canHaveChildren;
 	}
 
 	/**
@@ -38,9 +60,28 @@ public class ObjectTreeNode extends DefaultMutableTreeNode {
 	 * @return	<TT>false</TT> to indicate that this node can have
 	 *			children.
 	 */
-	public boolean isLeaf() {
-		return false;
+	public boolean isLeaf()
+	{
+		return !_canHaveChildren;
 	}
 
-}
+	/**
+	 * Return the type of this node. See <TT>INodeTypes</TT>.
+	 * 
+	 * @return	the type of this node. See <TT>INodeTypes</TT>.
+	 */
+	public int getNodeType()
+	{
+		return _nodeType;
+	}
 
+	/**
+	 * Return the current session.
+	 * 
+	 * @return	the current session.
+	 */
+	public ISession getSession()
+	{
+		return _session;
+	}
+}
