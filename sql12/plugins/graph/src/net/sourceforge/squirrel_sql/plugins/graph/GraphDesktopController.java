@@ -234,6 +234,11 @@ public class GraphDesktopController
 
       for (int i = 0; i < graphComponents.size(); i++)
       {
+         if(false == graphComponents.elementAt(i) instanceof ConstraintView)
+         {
+            continue;
+         }
+
          ConstraintView constraintView = (ConstraintView) graphComponents.elementAt(i);
          if(false == constraintView.equals(hitOne))
          {
