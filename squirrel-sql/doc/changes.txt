@@ -6,6 +6,10 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Add home toolbar button to the HTML Viewer.
+- Fix Refresh in HtmlViewer.
+- Change icons for commit/rollback. The old icons were
+  too similar and confused people.
 - Add Proxy settings to Application Preferences.
 - Add file sizes into SQuirreL Logs dropdown.
 - Sort the driver names in dropdown box in a

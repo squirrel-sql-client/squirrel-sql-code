@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client.gui;
  */
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -64,11 +65,17 @@ public class HtmlViewerSheet extends BaseSheet
 	/** Toolbar for window. */
 	private ToolBar _toolBar;
 
-	/** URL being displayed. */
+	/** Original URL (home). */
 	private URL _documentURL;
+
+	/** Current URL. */
+	private URL _currentURL;
 	
 	/** Text area containing the HTML. */
 	private JEditorPane _contentsTxt = new JEditorPane();
+
+	/** <TT>JScrollPane</TT> for <TT>_contentsText</TT>. */
+	private JScrollPane _contentsScrollPane;
 
 	/** History of links. */
 	private List _history = new LinkedList();
@@ -106,18 +113,9 @@ public class HtmlViewerSheet extends BaseSheet
 			{
 	// Causes NPE in JDK 1.3.1
 	//			_contentsTxt.setText("");
-				try
-				{
-					_contentsTxt.setPage(url);
-					_history.add(url);
-					_historyIndex = 0;
-				}
-				catch (IOException ex)
-				{
-					final String msg = "Error occured reading from URL";
-					s_log.error(msg, ex);
-					throw(ex);
-				}
+				displayURL(url);
+				_history.add(url);
+				_historyIndex = 0;
 			}
 			finally
 			{
@@ -140,14 +138,7 @@ public class HtmlViewerSheet extends BaseSheet
 	{
 		if (_historyIndex > 0 && _historyIndex < _history.size())
 		{
-			try
-			{
-				_contentsTxt.setPage((URL)_history.get(--_historyIndex));
-			}
-			catch (IOException ex)
-			{
-				s_log.error(ex);
-			}
+			displayURL((URL)_history.get(--_historyIndex));
 		}
 	}
 
@@ -155,11 +146,27 @@ public class HtmlViewerSheet extends BaseSheet
 	{
 		if (_historyIndex > -1 && _historyIndex < _history.size() - 1)
 		{
+			displayURL((URL)_history.get(++_historyIndex));
+		}
+	}
+
+	public void refreshPage()
+	{
+		final Point pos = _contentsScrollPane.getViewport().getViewPosition();
+		displayURL(_currentURL);
+		_contentsScrollPane.getViewport().setViewPosition(pos);
+	}
+
+	private void displayURL(URL url)
+	{
+		if (url != null)
+		{
 			try
 			{
-				_contentsTxt.setPage((URL)_history.get(++_historyIndex));
+				_contentsTxt.setPage(url);
+				_currentURL = url;
 			}
-			catch (IOException ex)
+			catch (Exception ex)
 			{
 				s_log.error(ex);
 			}
@@ -192,6 +199,7 @@ public class HtmlViewerSheet extends BaseSheet
 		_toolBar.setBorder(BorderFactory.createEtchedBorder());
 		_toolBar.setUseRolloverButtons(true);
 		_toolBar.setFloatable(false);
+		_toolBar.add(new HomeAction(_app));
 		_toolBar.add(new BackAction(_app));
 		_toolBar.add(new ForwardAction(_app));
 		_toolBar.add(new RefreshAction(_app));
@@ -224,7 +232,8 @@ public class HtmlViewerSheet extends BaseSheet
 		final JPanel pnl = new JPanel(new BorderLayout());
 		_contentsTxt.setBorder(BorderFactory.createEmptyBorder(0, 1, 0, 0));
 		_contentsTxt.addHyperlinkListener(createHyperLinkListener());
-		pnl.add(new JScrollPane(_contentsTxt), BorderLayout.CENTER);
+		_contentsScrollPane = new JScrollPane(_contentsTxt);
+		pnl.add(_contentsScrollPane, BorderLayout.CENTER);
 
 		return pnl;
 	}
@@ -246,7 +255,6 @@ public class HtmlViewerSheet extends BaseSheet
 						try
 						{
 							final URL url = e.getURL();
-
 							ListIterator it = _history.listIterator(_historyIndex + 1);
 							while (it.hasNext())
 							{
@@ -256,6 +264,7 @@ public class HtmlViewerSheet extends BaseSheet
 							_history.add(url);
 							_historyIndex = _history.size() - 1;
 							_contentsTxt.setPage(url);
+							_currentURL = url;
 						}
 						catch (IOException ioe)
 						{
@@ -321,6 +330,23 @@ public class HtmlViewerSheet extends BaseSheet
 	private final class RefreshAction extends SquirrelAction
 	{
 		public RefreshAction(IApplication app)
+		{
+			super(app);
+			if (app == null)
+			{
+				throw new IllegalArgumentException("Null IApplication passed");
+			}
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			refreshPage();
+		}
+	}
+
+	private final class HomeAction extends SquirrelAction
+	{
+		public HomeAction(IApplication app)
 		{
 			super(app);
 			if (app == null)

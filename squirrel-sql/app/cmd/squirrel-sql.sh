@@ -3,8 +3,9 @@
 
 SQUIRREL_SQL_HOME="$INSTALL_PATH"
 
+IFS=":"
 for a in $SQUIRREL_SQL_HOME/squirrel-sql.jar $SQUIRREL_SQL_HOME/lib/*; do
-    TMP_CP="$TMP_CP:$a"
+        TMP_CP="$TMP_CP:$a"
 done
 
 cygwin=false;

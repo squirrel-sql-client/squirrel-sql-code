@@ -35,11 +35,14 @@
     <TR><TD><A HREF="#session_props">New Session and Session Properties</A></TD></TR>
     <TR><TD><A HREF="#plugins">Plugins</A></TD></TR>
     <TR><TD><A HREF="#logs">Logs</A></TD></TR>
-	<TR><TD><A HREF="#home_page">Home Page</A></TD></TR>
-	<TR><TD><A HREF="#mailing_lists">Mailing Lists</A></TD></TR>
-	<TR><TD><A HREF="#bugs_and_feature_requests">Bugs and Feature Requests</A></TD></TR>
-	<TR><TD><A HREF="#libraries">Libraries</A></TD></TR>
-	<TR><TD><A HREF="#graphics">Graphics</A></TD></TR>
+    <TR><TD><A HREF="#menus">Menus</A></TD></TR>
+	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#file_menu">File Menu</A></TD></TR>
+	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#drivers_menu">Drivers Menu</A></TD></TR>
+	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#aliases_menu">Aliases Menu</A></TD></TR>
+	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#plugins_menu">Plugins Menu</A></TD></TR>
+	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#session_menu">Session Menu</A></TD></TR>
+	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#windows_menu">Windows Menu</A></TD></TR>
+	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#help_menu">Help Menu</A></TD></TR>
 </TABLE>
 
 
@@ -131,7 +134,7 @@ use and the alias specifies the connection parameters.
 
 <A NAME="the_driver"><H2>The Driver</H2></A>
 
-<!-- CB - Put new graphic up showing all the default drivers -->
+<!-- TODO: - Put new graphic up showing all the default drivers -->
 
 <P>A number of default driver definitions ship with SQuirreL SQL Client.
 These can be seen in the Drivers List window (<EM>View Drivers</EM> option
@@ -314,6 +317,7 @@ results will open up a new window showing the entire contents of the cell.</P>
 			ALT="&quot;Torn off&quot; query results"></P>
 
 
+
 <A NAME="global_prefs"><H2>Global Preferences</H2></A>
 
 <P>Global Perferences specify con
@@ -340,57 +344,183 @@ structure. To use the plugin you will need to restart SQuirreL.</P>
 a dialog box of the plugins currently installed.</P>
 
 <P ALIGN="CENTER"><IMG SRC="images/plugins_1.png" BORDER="0"
-			ALT="Plugins Summary"></P>
+	ALT="Plugins Summary"></P>
 
 
-			<A NAME="logs"><H2>Logs</H2></A>
+<A NAME="logs"><H2>Logs</H2></A>
 
 
-<A NAME="home_page"><H2>Home Page</H2></A>
-
-<P>The SQuirreL SQL Client project is hosted at
-<A HREF="http://squirrel-sql.sourceforge.net/">SourceForge</A>.</P>
-
-<A NAME="mailing_lists"><H2>Mailing Lists</H2></A>
-
-<P>There are several mailng lists available for SQuirrel. These
-can be found at
-<A HREF="http://sourceforge.net/mail/?group_id=28383">SourceForge</A>.</P>
+<A NAME="menus"><H2>Menus</H2></A>
 
 
-<A NAME="bugs_and_feature_requests"><H2>Bugs and Feature Requests</H2></A>
+<A NAME="file_menu"><H3>File Menu</H3></A>
 
-<P>I am using the SourceForge
-<A HREF="http://sourceforge.net/tracker/?atid=393414&amp;group_id=28383">Bug</A> and
-<A HREF="http://sourceforge.net/tracker/?atid=393417&amp;group_id=28383">Feature Request</A>
-Tracking software. Please check existing entries (and the FAQ) before
-creating new entries.</P>
+<DL>
+	<DT><B>Global Preferences</B>
+	<DD>
+
+	<DT><B>New Session Properties</B>
+	<DD>
+
+	<DT><B>Dump Application</B>
+	<DD>This option will dump some internal structures of the application to 
+		a text file along with a <A HREF="#dump_session">dump</A> of all
+		the currently open sessions.
+		This may be useful for debugging problems with SQuirreL.
+
+	<DT><B>Exit</B>
+	<DD>Exit the application after closing all sessions.
+</DL>
+
+<A NAME="drivers_menu"><H3>Drivers Menu</H3></A>
+
+<DL>
+	<DT><B>New Driver</B>
+	<DD>
+
+	<DT><B>Modify Driver</B>
+	<DD>
+
+	<DT><B>Delete Driver</B>
+	<DD>
+
+	<DT><B>Copy Driver</B>
+	<DD>
+
+	<DT><B>Install Default Drivers</B>
+	<DD>
+</DL>
+
+<A NAME="aliases_menu"><H3>Aliases Menu</H3></A>
+
+<DL>
+	<DT><B>Connect</B>
+	<DD>
+
+	<DT><B>New Alias</B>
+	<DD>
+
+	<DT><B>Modify Alias</B>
+	<DD>
+
+	<DT><B>Delete Alias</B>
+	<DD>
+
+	<DT><B>Copy Alias</B>
+	<DD>
+
+	<DT><B>Install Default Drivers</B>
+	<DD>
+</DL>
 
 
-<A NAME="libraries"><H2>Libraries</H2></A>
+<A NAME="plugins_menu"><H3>Plugins Menu</H3></A>
 
-<P>SQuirreL SQL Client depends on and comes with the following libraries:</P>
-<UL>
-	<LI><A HREF="http://NanoXML.sourceforge.net/">NanoXML</A> Java XML API.</A> Its licence is
-        <A HREF="licences/nano_xml_licence.txt">here</A></LI>
-	<LI><A HREF="http://jakarta.apache.org/log4j/">Log4j</A> Java Logging API.</A> Its licence is
-        <A HREF="licences/log4j-licence.txt">here</A></LI>
-</UL>
+<DL>
+	<DT><B>Summary</B>
+	<DD>
+</DL>
 
-<A NAME="graphics"><H2>Graphics</H2></A>
+<A NAME="session_menu"><H3>Session Menu</H3></A>
 
-<P>Some of the icons in this product are from the JavaSoft
-<A HREF="http://developer.java.sun.com/developer/techDocs/hi/repository/">
-Java Look and Feel Graphics Repository</A>. The licence for this is
-<A HREF="licences/sun_icons_licence.txt">here</A>. Other icons are
-from the <A HREF="http://sourceforge.net/projects/icon-collection/">Dean
-S. Jones' Icon Collection</A>. The licence for this can be found
-<A HREF="licences/dean_jones_icons_licence.txt">here</A>. The majority
-of icons are from the <A HREF="http://www.eclipse.org">Eclipse</A>
-project. This licence is <A HREF="licences/eclipse-icons-licence.html">here</A>.</P>
+<DL>
+	<DT><B>Session Properties</B>
+	<DD>This option will display the Session Properties dialog allowing you
+		configure your current session. <A HREF="#session_props">More</A>.
 
-<P>Thanks to Greg Mackness for the splash screen.</P>
+	<DT><B><A NAME="dump_session">Dump Session</A></B>
+	<DD>This option will dump some internal structures of the current session to 
+		a text file. This may be useful for debugging problems with SQuirreL.
 
+	<DT><B>Refresh Tree</B>
+	<DD>This option will refresh the object tree. 
+
+	<DT><B>Run SQL</B>
+	<DD>This option will run the current SQL in the SQL entry area.
+		<A HREF="#executing">More</A>.
+
+	<DT><B>Commit</B>
+	<DD>This option will commit the current SQL transaction. This is only
+		applicable if &quot;Auto Commit&quot; has been turned off in the
+		<A HREF="#session_props">Session Properties</A>.
+
+	<DT><B>Rollback</B>
+	<DD>This option will rollback the current SQL transaction. This is only
+		applicable if &quot;Auto Commit&quot; has been turned off in the
+		<A HREF="#session_props">Session Properties</A>.
+
+	<DT><B>Show Native SQL</B>
+	<DD>This option will append the native SQL for the current JDBC SQL into the
+		SQL entry area. E.G.
+		If you enter the following in an Oracle session
+<pre>
+    select * from table1
+	where entered_date = {d '2002-12-01'} 
+</pre>
+		then the following will be appended to the SQL entry area.
+<pre>
+    select * from table1 where
+		entered_date = TO_DATE ('2002-12-01', 'YYYY-MM-DD') 
+</pre>
+
+	<DT><B>Reconnect</B>
+	<DD>
+
+	<DT><B>Close Session</B>
+	<DD>
+
+	<DT><B>Close All SQL Result Tabs</B>
+	<DD>
+
+	<DT><B>Close All SQL Result Windows</B>
+	<DD>
+</DL>
+
+
+<A NAME="windows_menu"><H2>Windows Menu</H3></A>
+
+<DL>
+	<DT><B>View Aliases</B>
+	<DD>
+
+	<DT><B>View Drivers</B>
+	<DD>
+
+	<DT><B>View SQuirreL Logs</B>
+	<DD>
+
+	<DT><B>Tile</B>
+	<DD>
+
+	<DT><B>Cascade</B>
+	<DD>
+
+	<DT><B>Maximize</B>
+	<DD>
+
+	<DT><B>Close All Sessions</B>
+	<DD>
+</DL>
+
+
+<A NAME="help_menu"><H2>Help Menu</H3></A>
+
+<DL>
+	<DT><B>Help</B>
+	<DD>
+
+	<DT><B>FAQ</B>
+	<DD>
+
+	<DT><B>Change Log</B>
+	<DD>
+
+	<DT><B>Licence</B>
+	<DD>
+
+	<DT><B>About</B>
+	<DD>
+</DL>
 
 </BODY>
 </HTML>
