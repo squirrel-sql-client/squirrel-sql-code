@@ -47,7 +47,7 @@ import net.sourceforge.squirrel_sql.plugins.syntax.oster.OsterSQLEntryPanel;
  * The Ostermiller plugin class. This plugin adds syntax highlighting to the
  * SQL entry area.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SyntaxPugin extends DefaultSessionPlugin
 {
@@ -72,7 +72,7 @@ public class SyntaxPugin extends DefaultSessionPlugin
 	/**
 	 * Return the internal name of this plugin.
 	 *
-	 * @return  the internal name of this plugin.
+	 * @return	the internal name of this plugin.
 	 */
 	public String getInternalName()
 	{
@@ -82,7 +82,7 @@ public class SyntaxPugin extends DefaultSessionPlugin
 	/**
 	 * Return the descriptive name of this plugin.
 	 *
-	 * @return  the descriptive name of this plugin.
+	 * @return	the descriptive name of this plugin.
 	 */
 	public String getDescriptiveName()
 	{
@@ -92,7 +92,7 @@ public class SyntaxPugin extends DefaultSessionPlugin
 	/**
 	 * Returns the current version of this plugin.
 	 *
-	 * @return  the current version of this plugin.
+	 * @return	the current version of this plugin.
 	 */
 	public String getVersion()
 	{
@@ -102,7 +102,7 @@ public class SyntaxPugin extends DefaultSessionPlugin
 	/**
 	 * Returns the authors name.
 	 *
-	 * @return  the authors name.
+	 * @return	the authors name.
 	 */
 	public String getAuthor()
 	{
@@ -114,8 +114,8 @@ public class SyntaxPugin extends DefaultSessionPlugin
 	 * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
 	 * directory.
 	 *
-	 * @return    the changelog file name or <TT>null</TT> if plugin doesn't have
-	 *             a change log.
+	 * @return	the changelog file name or <TT>null</TT> if plugin doesn't have
+	 *			a change log.
 	 */
 	public String getChangeLogFileName()
 	{
@@ -127,8 +127,8 @@ public class SyntaxPugin extends DefaultSessionPlugin
 	 * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
 	 * directory.
 	 *
-	 * @return    the Help file name or <TT>null</TT> if plugin doesn't have
-	 *             a help file.
+	 * @return	the Help file name or <TT>null</TT> if plugin doesn't have
+	 *			a help file.
 	 */
 	public String getHelpFileName()
 	{
@@ -140,8 +140,8 @@ public class SyntaxPugin extends DefaultSessionPlugin
 	 * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
 	 * directory.
 	 *
-	 * @return    the Licence file name or <TT>null</TT> if plugin doesn't have
-	 *             a licence file.
+	 * @return	the Licence file name or <TT>null</TT> if plugin doesn't have
+	 *			a licence file.
 	 */
 	public String getLicenceFileName()
 	{
@@ -179,8 +179,11 @@ public class SyntaxPugin extends DefaultSessionPlugin
 
 	/**
 	 * Application is shutting down so save preferences.
+	 *
+	 * @throws	PluginException
+	 * 			Thrown if an error occurs.
 	 */
-	public void unload()
+	public void unload() throws PluginException
 	{
 		savePrefs();
 		super.unload();
@@ -190,7 +193,7 @@ public class SyntaxPugin extends DefaultSessionPlugin
 	 * Called when a session created but the UI hasn't been built for the
 	 * session.
 	 *
-	 * @param    session    The session that is starting.
+	 * @param	session	The session that is starting.
 	 */
 	public void sessionCreated(ISession session)
 	{
@@ -218,7 +221,7 @@ public class SyntaxPugin extends DefaultSessionPlugin
 	/**
 	 * Called when a session shutdown.
 	 *
-	 * @param    session    The session that is ending.
+	 * @param	session	The session that is ending.
 	 */
 	public void sessionEnding(ISession session)
 	{
@@ -230,7 +233,7 @@ public class SyntaxPugin extends DefaultSessionPlugin
 	/**
 	 * Create preferences panel for the New Session Properties dialog.
 	 *
-	 * @return  preferences panel.
+	 * @return	preferences panel.
 	 */
 	public INewSessionPropertiesPanel[] getNewSessionPropertiesPanels()
 	{

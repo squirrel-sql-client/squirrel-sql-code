@@ -75,7 +75,7 @@ public class OsterSQLEntryPanel extends BaseSQLEntryPanel
 		_app = session.getApplication();
 
 		_textArea = new OsterTextControl(session, prefs);
-		_textPopupMenu = new SessionTextEditPopupMenu(session);
+		_textPopupMenu = new SessionTextEditPopupMenu();
 	}
 
 	/**
