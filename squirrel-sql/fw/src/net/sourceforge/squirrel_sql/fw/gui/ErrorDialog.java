@@ -17,135 +17,251 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.Point;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
-public class ErrorDialog extends JDialog {
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+
+public class ErrorDialog extends JDialog
+{
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
-	private interface i18n {
+	private interface ErrorDialog_i18n
+	{
 		String ERROR = "Error";
-		String OK = "OK";
+		String CLOSE = "Close";
+		String UNKNOWN_ERROR = "Unknown error";
+		String MORE = "More";
+		String LESS = "Less";
 	}
 
-	public ErrorDialog(Throwable th) {
-		this((Frame)null, th);
+	/** Preferred width of the message area. TODO: remove magic number*/
+	private static final int PREFERRED_WIDTH = 400;
+
+	/** Close button. */
+	private JButton _closeBtn;
+
+	/** Handler for Close button. */
+	private ActionListener _closeHandler = new CloseButtonHandler();
+
+	/** More button. */
+	private JButton _moreBtn;
+
+	/** Handler for More button. */
+	private ActionListener _moreHandler = null;
+
+	/** Panel to display the stack trace in. */
+	private JScrollPane _stackTraceScroller;
+
+	public ErrorDialog(Throwable th)
+	{
+		this((Frame) null, th);
 	}
 
-	public ErrorDialog(Frame owner, Throwable th) {
-		super(owner, i18n.ERROR,true);
-		createUserInterface(generateMessage(th), th);
+	public ErrorDialog(Frame owner, Throwable th)
+	{
+		super(owner, ErrorDialog_i18n.ERROR, true);
+		createUserInterface(null, th);
 	}
 
-	public ErrorDialog(Dialog owner, Throwable th) {
-		super(owner, i18n.ERROR,true);
-		createUserInterface(generateMessage(th), th);
+	public ErrorDialog(Dialog owner, Throwable th)
+	{
+		super(owner, ErrorDialog_i18n.ERROR, true);
+		createUserInterface(null, th);
 	}
 
-	public ErrorDialog(Frame owner, String msg) {
-		super(owner, i18n.ERROR,true);
+	public ErrorDialog(Frame owner, String msg)
+	{
+		super(owner, ErrorDialog_i18n.ERROR, true);
 		createUserInterface(msg, null);
 	}
 
-	public ErrorDialog(Dialog owner, String msg) {
-		super(owner, i18n.ERROR, true);
+	public ErrorDialog(Frame owner, String msg, Throwable th)
+	{
+		super(owner, ErrorDialog_i18n.ERROR, true);
+		createUserInterface(msg, th);
+	}
+
+	public ErrorDialog(Dialog owner, String msg)
+	{
+		super(owner, ErrorDialog_i18n.ERROR, true);
 		createUserInterface(msg, null);
 	}
-
-	public ErrorDialog(Frame owner, String msg, Throwable th) {
-		super(owner, i18n.ERROR, true);
-		createUserInterface(msg, th);
-	}
-
-	public ErrorDialog(Dialog owner, String msg, Throwable th) {
-		super(owner, i18n.ERROR, true);
-		createUserInterface(msg, th);
-	}
-
-//	private void commonCtor(String msg) {
-//		createUserInterface(msg);
-//	}
 
 	/**
-	 * Generate a message from the exception.
-	 * 
-	 * @param	th	The exception to get the message from.
-	 * 
-	 * @return	The message.
+	 * Dispose of this dialog after cleaning up all listeners.
 	 */
-	private static String generateMessage(Throwable th) {
-		String msg = th.getMessage();
-		if (msg == null || msg.length() == 0) {
-			msg = th.toString();
+	public void dispose()
+	{
+		if (_closeBtn != null && _closeHandler != null)
+		{
+			_closeBtn.removeActionListener(_closeHandler);
 		}
-		return msg;
+		if (_moreBtn != null && _moreHandler != null)
+		{
+			_moreBtn.removeActionListener(_moreHandler);
+		}
+		super.dispose();
 	}
 
-	private void createUserInterface(String msg, Throwable th) {
-		StringBuffer buf = new StringBuffer();
-		buf/*.append("<html><body>")*/.append(msg);
-		if (th != null) {
-			StringWriter  sw = new StringWriter();
-			th.printStackTrace(new PrintWriter(sw));
-			buf/*.append("<BR>")*/.append("\n")
-			.append(sw.toString());
-		}
-//		buf.append("</body></html>");
-
-		int iDialogWidth = 350;
-		int iDialogHeight = 150;
-
-//		JPanel mainPnl = new JPanel();
-//		mainPnl.setLayout(new GridLayout(0, 1));
-		/*JLabel*/MultipleLineLabel ta = new /*JLabel*/MultipleLineLabel(buf.toString());
-//		ta.setVerticalTextPosition(SwingConstants.TOP);
-//		Dimension dim = ta.getPreferredSize();
-//		if (dim.width > iDialogWidth) {
-//			int widthMinScrollbar = (iDialogWidth-20); // 20 should not be guessed
-//			dim.height = dim.height * (dim.width / widthMinScrollbar);
-//			dim.width = widthMinScrollbar;
-//		}
-//		ta.setPreferredSize(dim);
-		ta.setLineWrap(true);
-		final JScrollPane scroller = new JScrollPane(ta,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-										JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
-		//mainPnl.add(scroller);
-		JPanel btnsPnl = new JPanel();
-		JButton okBtn = new JButton(i18n.OK);
-		okBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				dispose();
+	/**
+	 * Create user intnerface.
+	 * 
+	 * @param	msg		Message to be displayed. Can be null.
+	 * @param	th		Exception to be shown. Can be null.
+	 */
+	private void createUserInterface(String msg, Throwable th)
+	{
+		if (msg == null || msg.length() == 0)
+		{
+			if (th != null)
+			{
+				msg = th.getMessage();
+				if (msg == null || msg.length() == 0)
+				{
+					msg = th.toString();
+				}
 			}
-		});
-		btnsPnl.add(okBtn);
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(/*mainPnl*/scroller, BorderLayout.CENTER);
-		getContentPane().add(btnsPnl, BorderLayout.SOUTH);
-		getRootPane().setDefaultButton(okBtn);
-		//pack();
-		setSize(iDialogWidth, iDialogHeight);
-		GUIUtils.centerWithinParent(this);
+		}
+		if (msg == null || msg.length() == 0)
+		{
+			msg = ErrorDialog_i18n.UNKNOWN_ERROR;
+		}
+
+		// Message panel.
+		MessagePanel msgPnl = new MessagePanel(msg);
+
+		_stackTraceScroller = new JScrollPane(new StackTracePanel(th));
+		_stackTraceScroller.setVisible(false);
+
+		JPanel btnsPnl = new JPanel();
+		if (th != null)
+		{
+			_moreBtn = new JButton(ErrorDialog_i18n.MORE);
+			btnsPnl.add(_moreBtn);
+			_moreBtn.addActionListener(new MoreButtonHandler());
+		}
+		_closeBtn = new JButton(ErrorDialog_i18n.CLOSE);
+		_closeBtn.addActionListener(new CloseButtonHandler());
+		btnsPnl.add(_closeBtn);
+
+		Container content = getContentPane();
+		content.setLayout(new GridBagLayout());
+		final GridBagConstraints gbc = new GridBagConstraints();
+		gbc.fill = gbc.BOTH;
+		gbc.insets = new Insets(4, 4, 4, 4);
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.weightx = 1;
+		content.add(new JScrollPane(msgPnl), gbc);
+		++gbc.gridy;
+		content.add(btnsPnl, gbc);
+		++gbc.gridy;
+		content.add(_stackTraceScroller, gbc);
+
+		getRootPane().setDefaultButton(_closeBtn);
 		setResizable(false);
 
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				scroller.getViewport().setViewPosition(new Point(0,0));
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				pack();
+				GUIUtils.centerWithinParent(ErrorDialog.this);
 			}
 		});
+//		SwingUtilities.invokeLater(new Runnable() {
+//			public void run() {
+//				scroller.getViewport().setViewPosition(new Point(0,0));
+//			}
+//		});
+	}
+
+	private static Color getTextAreaBackgroundColor()
+	{
+		return (Color)UIManager.get("TextArea.background");
+	}
+
+	/**
+	 * Panel to display the message in.
+	 */
+	private final class MessagePanel extends MultipleLineLabel
+	{
+		MessagePanel(String msg)
+		{
+			super();
+			setText(msg);
+			setBackground(ErrorDialog.this.getTextAreaBackgroundColor());
+			Dimension dim = getPreferredSize();
+			dim.width = PREFERRED_WIDTH;
+			setPreferredSize(dim);
+		}
+	}
+
+	/**
+	 * Panel to display the stack trace in.
+	 */
+	private final class StackTracePanel extends MultipleLineLabel
+	{
+		StackTracePanel(Throwable th)
+		{
+			super();
+			setBackground(ErrorDialog.this.getTextAreaBackgroundColor());
+			if (th != null)
+			{
+				setText(Utilities.getStackTrace(th));
+			}
+		}
+	}
+
+	/**
+	 * Handler for Close button. Disposes of this dialog.
+	 */
+	private final class CloseButtonHandler implements ActionListener
+	{
+		/**
+		 * Disposes of this dialog.
+		 */
+		public void actionPerformed(ActionEvent evt)
+		{
+			ErrorDialog.this.dispose();
+		}
+
+	}
+
+	/**
+	 * Handler for More button. Shows/hides the stack trace.
+	 */
+	private final class MoreButtonHandler implements ActionListener
+	{
+		/**
+		 * Show/hide the stack trace.
+		 */
+		public void actionPerformed(ActionEvent evt)
+		{
+			_stackTraceScroller.setVisible(!_stackTraceScroller.isVisible());
+			_moreBtn.setText(
+				_stackTraceScroller.isVisible()
+					? ErrorDialog_i18n.LESS
+					: ErrorDialog_i18n.MORE);
+			ErrorDialog.this.pack();
+		}
 	}
 }
