@@ -28,13 +28,13 @@ public class Version
 	private static final String APP_NAME = "SQuirreL SQL Client";
 	private static final int MAJOR_VERSION = 1;
 	private static final int MINOR_VERSION = 2;
-	//private static final String TYPE = "alpha";
-	private static final String TYPE = "beta";
+	private static final String TYPE = "alpha";
+	//private static final String TYPE = "beta";
 	//private static final String TYPE = "rc";
 	//private static final String TYPE = "final";
 	private static final int RELEASE = 1;
 
-	private static final String COPYRIGHT = "Copyright (c) 2001 - 2002 Colin Bell";
+	private static final String COPYRIGHT = "Copyright (c) 2001 - 2003 Colin Bell and others";
 
 	private static final String WEB_SITE = "http://squirrel-sql.sourceforge.net/";
 
