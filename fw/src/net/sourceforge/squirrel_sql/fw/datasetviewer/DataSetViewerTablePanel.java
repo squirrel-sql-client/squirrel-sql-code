@@ -510,7 +510,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 	public void deleteRows(int[] rows) {}	// cannot delete rows in read-only table
 	
 	/**
-	 * Insert a new row into the table.
+	 * Initiate operations to insert a new row into the table.
 	 */
 	public void insertRow() {}	// cannot insert row into read-only table
 }

@@ -61,4 +61,10 @@ public interface IDataSetUpdateableTableModel extends IDataSetUpdateableModel
 	 * so they are either all done or all not done.
 	 */
 	public String deleteRows(Object[][] rowData, ColumnDisplayDefinition[] colDefs);
+	
+	/**
+	 * Insert a row into the DB.
+	 * If the insert succeeds this returns a null string.
+	 */
+	public String insertRow(Object[] values, ColumnDisplayDefinition[] colDefs);
 }

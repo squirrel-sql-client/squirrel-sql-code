@@ -20,8 +20,12 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
 //??????????????????????????????????????????????????????????? for testing only!!! ?????????
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Point;
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -30,12 +34,14 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.DefaultCellEditor;
+import javax.swing.JLayeredPane;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.*;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
+import net.sourceforge.squirrel_sql.fw.gui.BaseMDIParentFrame;
 
 /**
  * @author gwg
@@ -310,11 +316,142 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 	}
 
 	/**
-	 * Insert a new row into the table.
+	 * Initiate operations to insert a new row into the table.
+	 * This method just creates the panel to get the row input from the user.
 	 */
 	public void insertRow() {
-JOptionPane.showMessageDialog(null,
-	"Insert will be comming soon!");
-//????????
+		JTable table = (JTable)getComponent();
+// temporarilly block access to insert function
+if (true) {
+	JOptionPane.showMessageDialog(null,
+			"Insert not quite implemented yet.");
+	return;
+}
+		
+		// Setting the starting position is ugly.  I just picked a point.
+		Point pt = new Point(10, 200);
+
+		Component comp = SwingUtilities.getRoot(table);
+		Component newComp = null;
+
+		// The following only works if SwingUtilities.getRoot(table) returns
+		// and instanceof BaseMDIParentFrame.
+		// If SwingTUilities.getRoot(table) returns and instance of Dialog or
+		// Frame, then other code must be used.
+		RowDataInputFrame rdif = new RowDataInputFrame(_colDefs, this);
+		((BaseMDIParentFrame)comp).addInternalFrame(rdif, false);
+		rdif.setLayer(JLayeredPane.POPUP_LAYER);
+		rdif.pack();
+		newComp = rdif;
+
+		Dimension dim = newComp.getSize();
+		boolean dimChanged = false;
+		if (dim.width < 300)
+		{
+			dim.width = 300;
+			dimChanged = true;
+		}
+/*
+		if (dim.height < 300)
+		{
+			dim.height = 300;
+			dimChanged = true;
+		}
+		if (dim.width > 600)
+		{
+			dim.width = 600;
+			dimChanged = true;
+		}
+		if (dim.height > 500)
+		{
+			dim.height = 500;
+			dimChanged = true;
+		}
+*/
+		if (dimChanged)
+		{
+			newComp.setSize(dim);
+		}
+/*
+		if (comp instanceof BaseMDIParentFrame)
+		{
+			pt = SwingUtilities.convertPoint((Component) evt.getSource(), pt, comp);
+			pt.y -= dim.height;
+			if (pt.y < 0)
+				pt.y = 0;	// fudge for larger inset windows
+		}
+		else
+		{
+			// getRoot() doesn't appear to return the deepest Window, but the first one. 
+			// If you have a dialog owned by a window you get the dialog, not the window.
+			Component parent = SwingUtilities.windowForComponent(comp);
+			while ((parent != null) &&
+				!(parent instanceof BaseMDIParentFrame) &&
+				!(parent.equals(comp)))
+			{
+				comp = parent;
+				parent = SwingUtilities.windowForComponent(comp);
+			}
+			comp = (parent != null) ? parent : comp;
+			pt = SwingUtilities.convertPoint((Component) evt.getSource(), pt, comp);
+		}
+*/
+			
+		// Determine the position to place the new internal frame. Ensure that the right end
+		// of the internal frame doesn't exend past the right end the parent frame.	Use a
+		// fudge factor as the dim.width doesn't appear to get the final width of the internal
+		// frame (e.g. where pt.x + dim.width == parentBounds.width, the new internal frame
+		// still extends past the right end of the parent frame).
+		int fudgeFactor = 100;
+		Rectangle parentBounds = comp.getBounds();
+		if (parentBounds.width <= (dim.width + fudgeFactor))
+		{
+			dim.width = parentBounds.width - fudgeFactor;
+			pt.x = fudgeFactor / 2;
+			newComp.setSize(dim);
+		}
+		else 
+		{
+			if ((pt.x + dim.width + fudgeFactor) > (parentBounds.width))
+			{
+				pt.x -= (pt.x + dim.width + fudgeFactor) - parentBounds.width;
+			}
+		}
+
+		newComp.setLocation(pt);
+		newComp.setVisible(true);
+	}
+	
+	/**
+	 * Insert a new row into the table after the user has entered the row's data.
+	 */
+	protected String insertRow(Object[] values) {
+
+		String message = 
+			((IDataSetUpdateableTableModel)getUpdateableModelReference()).
+				insertRow(values, _colDefs);
+		
+		if (message != null) {
+			// there was a problem inserting into the DB
+			JOptionPane.showMessageDialog(null,
+				message, "Error",
+				JOptionPane.ERROR_MESSAGE);
+				
+			return "Error";	// non-null return tells caller there was a problem
+		}
+
+		// add the data to the existing tables
+		
+		// Do not try to be fancy and insert the data where the user is looking,
+		// just stuff it into the actual model and re-paint the table
+		// when the 'table changed' event is fired.
+		
+		SortableTableModel sortedModel =
+			(SortableTableModel)((JTable)getComponent()).getModel();
+			
+		sortedModel.insertRow(values);
+		
+		// everything is ok
+		return null;
 	}
 }
