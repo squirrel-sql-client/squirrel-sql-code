@@ -57,6 +57,7 @@ import net.sourceforge.squirrel_sql.plugins.mssql.action.ShrinkDatabaseAction;
 import net.sourceforge.squirrel_sql.plugins.mssql.action.ShrinkDatabaseFileAction;
 import net.sourceforge.squirrel_sql.plugins.mssql.action.TruncateLogAction;
 import net.sourceforge.squirrel_sql.plugins.mssql.action.UpdateStatisticsAction;
+import net.sourceforge.squirrel_sql.plugins.mssql.gui.MonitorPanel;
 import net.sourceforge.squirrel_sql.plugins.mssql.event.IndexIterationListener;
 import net.sourceforge.squirrel_sql.plugins.mssql.sql.dbfile.DatabaseFileInfo;
 import net.sourceforge.squirrel_sql.plugins.mssql.sql.dbfile.DatabaseFile;
@@ -193,6 +194,9 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
 
             _session = iSession;
             
+            MonitorPanel monitorPanel = new MonitorPanel();
+            iSession.addMainTab(monitorPanel);
+            
             return true;
 		}
 
@@ -292,9 +296,8 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
         /* this should just bring back one table, i hope. */
 		final IDatabaseObjectInfo[] dbObjs = _treeAPI.getSelectedDatabaseObjects();
 
-		// Get the names of all the selected tables in a comma separated list,
 		if (dbObjs.length != 1) {
-            System.err.println("iterateIndexes: dbObjs.length != 1");
+            System.err.println("iterateIndexes: more than one item is selected");
             return;
         }
         if (dbObjs[0].getDatabaseObjectType() != DatabaseObjectType.TABLE) {
