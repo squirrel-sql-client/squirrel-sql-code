@@ -29,7 +29,6 @@ import java.util.Arrays;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DefaultColumnRenderer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
@@ -479,8 +478,7 @@ public class CellComponentFactory {
 	  * type of object to be stored in the table cell.
 	  */
 	public static Object readResultSet(ColumnDisplayDefinition colDef,
-		ResultSet rs, int index,
-		LargeResultSetObjectInfo largeObjInfo)
+		ResultSet rs, int index)
 		throws java.sql.SQLException {
 			
 		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);

@@ -73,7 +73,7 @@ public class IndexesTab extends BaseTableTab
 			try
 			{
 				final ResultSetDataSet rsds = new ResultSetDataSet();
-	 			rsds.setResultSet(rs, getSession().getProperties().getLargeResultSetObjectInfo(), new int[] {5, 6, 8, 9, 10, 4, 7, 11, 12, 13 }, true);
+	 			rsds.setResultSet(rs, new int[] {5, 6, 8, 9, 10, 4, 7, 11, 12, 13 }, true);
 				return rsds;
 			}
 			finally

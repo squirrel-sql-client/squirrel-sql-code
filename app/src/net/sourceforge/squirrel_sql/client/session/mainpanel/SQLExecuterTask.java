@@ -330,7 +330,7 @@ public class SQLExecuterTask implements Runnable
 		ResultSetDataSet rsds = new ResultSetDataSet();
 		_results.add(rsds);
 		SessionProperties props = _session.getProperties();
-		rsds.setResultSet(rs, props.getLargeResultSetObjectInfo());
+		rsds.setResultSet(rs);
 		if (_stopExecution)
 		{
 			return false;

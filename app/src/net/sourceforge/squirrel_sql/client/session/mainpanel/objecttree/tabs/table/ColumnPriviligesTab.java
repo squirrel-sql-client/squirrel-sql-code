@@ -73,7 +73,7 @@ public class ColumnPriviligesTab extends BaseTableTab
 			try
 			{
 				final ResultSetDataSet rsds = new ResultSetDataSet();
- 				rsds.setResultSet(rs, getSession().getProperties().getLargeResultSetObjectInfo(), new int[] { 4, 6, 7, 5, 8 }, true );
+ 				rsds.setResultSet(rs, new int[] { 4, 6, 7, 5, 8 }, true );
 				return rsds;
 			}
 			finally
