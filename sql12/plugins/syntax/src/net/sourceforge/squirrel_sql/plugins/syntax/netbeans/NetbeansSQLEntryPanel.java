@@ -25,17 +25,22 @@ import net.sourceforge.squirrel_sql.client.session.SessionTextEditPopupMenu;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
+import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPugin;
 
 import javax.swing.*;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.DocumentEvent;
 import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
 import javax.swing.text.Element;
+import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Hashtable;
 
 public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 {
@@ -56,18 +61,21 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 
    private SyntaxFactory _syntaxFactory;
    private ISession _session;
+   private SyntaxPugin _plugin;
+   private boolean _isFirstAutocorrectInSession = true;
 
-   NetbeansSQLEntryPanel(ISession session, SyntaxPreferences prefs, SyntaxFactory syntaxFactory)
+   NetbeansSQLEntryPanel(ISession session, SyntaxPreferences prefs, SyntaxFactory syntaxFactory, SyntaxPugin plugin)
 	{
-		super();
+      _plugin = plugin;
 
-		if (session == null)
+      if (session == null)
 		{
 			throw new IllegalArgumentException("Null ISession passed");
 		}
 
       _syntaxFactory = syntaxFactory;
       _session = session;
+      _plugin = plugin;
 
 		_app = session.getApplication();
 
@@ -75,7 +83,98 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 
 		_textPopupMenu = new SessionTextEditPopupMenu();
 		_textArea.addMouseListener(_sqlEntryMouseListener);
+
+
+      _textArea.getDocument().addDocumentListener(new DocumentListener()
+      {
+         public void changedUpdate(DocumentEvent e)
+         {
+            //To change body of implemented methods use File | Settings | File Templates.
+         }
+
+         public void insertUpdate(DocumentEvent e)
+         {
+            onInsertUpdate(e);
+         }
+
+         public void removeUpdate(DocumentEvent e)
+         {
+            //To change body of implemented methods use File | Settings | File Templates.
+         }
+      });
 	}
+
+   private void onInsertUpdate(DocumentEvent e)
+   {
+      try
+      {
+         if(1 != e.getLength())
+         {
+            return;
+         }
+
+         final String insertChar = e.getDocument().getText(e.getOffset(), 1);
+
+         if (Character.isWhitespace(insertChar.charAt(0)))
+         {
+            String autoCorrCandidate = getStringBeforeWhiteSpace(e.getOffset()).toUpperCase();
+            final String corr = (String) _plugin.getAutoCorrectProviderImpl().getAutoCorrects().get(autoCorrCandidate);
+            if(null != corr)
+            {
+               setSelectionStart(e.getOffset() - autoCorrCandidate.length());
+               setSelectionEnd(e.getOffset());
+
+               if(_isFirstAutocorrectInSession)
+               {
+                  _session.getMessageHandler().showMessage(autoCorrCandidate + " has been auto corrected to " + corr + ". To configure auto correct see Menu Session --> Syntax --> Configure auto correct");
+                  _isFirstAutocorrectInSession = false;
+               }
+
+               SwingUtilities.invokeLater(new Runnable()
+               {
+                  public void run()
+                  {
+                     replaceSelection(corr + insertChar);
+                  }
+               });
+            }
+         }
+      }
+      catch (BadLocationException ex)
+      {
+         throw new RuntimeException(ex);
+
+      }
+   }
+
+   private String getStringBeforeWhiteSpace(int offset)
+   {
+      try
+      {
+         String text = _textArea.getDocument().getText(0, offset);
+
+
+         String ret = null;
+         int begPos = text.length();
+         for(int i=text.length()-1; 0 <= i; --i)
+         {
+            if(false == Character.isJavaIdentifierStart(text.charAt(i)))
+            {
+               break;
+            }
+            --begPos;
+         }
+
+         ret = text.substring(begPos, text.length());
+
+         return ret;
+
+      }
+      catch (BadLocationException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
 
 
    public int getCaretLineNumber()
