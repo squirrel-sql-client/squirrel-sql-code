@@ -41,6 +41,7 @@ public class CodeCompletionStoredProcedureInfo extends CodeCompletionInfo
             ResultSet res = _session.getSQLConnection().getConnection().getMetaData().getProcedureColumns(_catalog, _schema, _procName, null);
 
             String[] paramStrings = getParamStrings(res);
+            res.close();
 
             if(0 < paramStrings.length)
             {
