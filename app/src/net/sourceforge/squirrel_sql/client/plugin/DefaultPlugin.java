@@ -71,8 +71,9 @@ public abstract class DefaultPlugin implements IPlugin
 	 * @throws	PluginException
 	 *			Thrown if an error occurs.
 	 */
-	public void unload() throws PluginException
+	public void unload() // throws PluginException
 	{
+		// TODO: Put throws clause back in
 		// Empty method.
 	}
 

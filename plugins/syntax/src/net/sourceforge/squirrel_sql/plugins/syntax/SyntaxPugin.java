@@ -179,11 +179,8 @@ public class SyntaxPugin extends DefaultSessionPlugin
 
 	/**
 	 * Application is shutting down so save preferences.
-	 *
-	 * @throws	PluginException
-	 * 			Thrown if an error occurs.
 	 */
-	public void unload() throws PluginException
+	public void unload()
 	{
 		savePrefs();
 		super.unload();
