@@ -118,6 +118,7 @@ public class ConnectToAliasCommand implements ICommand {
                 ISession session = SessionFactory.createSession(_app, sqlDriver, _alias, conn);
                 SessionSheet child = new SessionSheet(session);
                 session.setSessionSheet(child);
+                session.getApplication().getPluginManager().sessionStarted(session);
                 MainFrame.getInstance().addInternalFrame(child);
                 child.setVisible(true);
                 rc = true;
