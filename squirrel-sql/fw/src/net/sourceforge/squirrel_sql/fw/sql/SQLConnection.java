@@ -38,23 +38,23 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class SQLConnection
 {
-	private interface DriverNames
-	{
-		String FREE_TDS = "InternetCDS Type 4 JDBC driver for MS SQLServer";
-		String JCONNECT = "jConnect (TM) for JDBC (TM)";
-	}
+//	private interface DriverNames
+//	{
+//		String FREE_TDS = "InternetCDS Type 4 JDBC driver for MS SQLServer";
+//		String JCONNECT = "jConnect (TM) for JDBC (TM)";
+//	}
 
-	private ILogger s_log = LoggerController.createLogger(SQLConnection.class);
+	private final ILogger s_log = LoggerController.createLogger(SQLConnection.class);
 
-	private String _url;
+	private final String _url;
 	private Connection _conn;
 	private DatabaseMetaData _md;
 
 	/** MetaData for this connection. */
 	private SQLDatabaseMetaData _metaData;
 
-	private String _dbProductName;
-	private String _dbDriverName;
+//	private String _dbProductName;
+//	private String _dbDriverName;
 
 	private boolean _autoCommitOnClose = false;
 
@@ -221,6 +221,14 @@ public class SQLConnection
 		return _conn.getWarnings();
 	}
 
+	protected void validateConnection() throws SQLException
+	{
+		if (_conn == null)
+		{
+			throw new SQLException("No connection");
+		}
+	}
+
 
 /////////////////////////////////////////////////////////////////////
 // TODO: to be moved to metadata class///////////////////////////////
@@ -380,32 +388,24 @@ public class SQLConnection
 		return new MetaDataListDataSet(keywordList, msgHandler);
 	}
 
-	protected void validateConnection() throws SQLException
-	{
-		if (_conn == null)
-		{
-			throw new SQLException("No connection");
-		}
-	}
-
 	private void loadMetaData() throws SQLException
 	{
 		_md = getConnection().getMetaData();
-		try
-		{
-			_dbProductName = _md.getDatabaseProductName();
-		}
-		catch (SQLException ignore)
-		{
-			_dbProductName = "";
-		}
-		try
-		{
-			_dbDriverName = _md.getDriverName().trim();
-		}
-		catch (SQLException ignore)
-		{
-			_dbDriverName = "";
-		}
+//		try
+//		{
+//			_dbProductName = _md.getDatabaseProductName();
+//		}
+//		catch (SQLException ignore)
+//		{
+//			_dbProductName = "";
+//		}
+//		try
+//		{
+//			_dbDriverName = _md.getDriverName().trim();
+//		}
+//		catch (SQLException ignore)
+//		{
+//			_dbDriverName = "";
+//		}
 	}
 }
