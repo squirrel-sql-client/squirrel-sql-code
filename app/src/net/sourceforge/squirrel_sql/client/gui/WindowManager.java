@@ -41,6 +41,7 @@ import javax.swing.event.InternalFrameListener;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.WindowState;
 import net.sourceforge.squirrel_sql.fw.gui.action.SelectInternalFrameAction;
+import net.sourceforge.squirrel_sql.fw.gui.action.SelectInternalFrameCommand;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
@@ -78,6 +79,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.ViewDriversAction;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SessionManager;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.client.session.properties.EditWhereColsSheet;
@@ -218,40 +220,6 @@ public class WindowManager
 	public WindowState getDriversWindowState()
 	{
 		return new WindowState(_driversListWindow);
-	}
-
-	/**
-	 * Retrieve the main internal frame for the passed session. Can be <TT>null</TT>
-	 *
-	 * @return	the internal frame for the passed session. Can be <TT>null</TT>.
-	 *
-	 * @throws	IllegalArgumentException
-	 *			Thrown if ISession is passed as null.
-	 */
-	public JInternalFrame getMainInternalFrame(ISession session)
-	{
-		if (session == null)
-		{
-			throw new IllegalArgumentException("ISession == null");
-		}
-
-		final List sheets = (List)_sessionWindows.get(session.getIdentifier());
-		if (sheets != null)
-		{
-			for (Iterator it = sheets.iterator(); it.hasNext();)
-			{
-				final Object sheet = it.next();
-				if (sheet instanceof SessionInternalFrame)
-				{
-					final SessionInternalFrame sif = (SessionInternalFrame)sheet;
-					if (sif.getSession().equals(session))
-					{
-						return sif;
-					}
-				}
-			}
-		}
-		return null;
 	}
 
 	public void showConnectionInternalFrame(final ISQLAlias alias,
@@ -451,112 +419,6 @@ public class WindowManager
 		}
 
 		_listenerList.add(InternalFrameListener.class, listener);
-	}
-
-	protected void refireSessionSheetOpened(InternalFrameEvent evt)
-	{
-		// Guaranteed to return a non-null array
-		Object[] listeners = _listenerList.getListenerList();
-		// Process the listeners last to first, notifying
-		// those that are interested in this event
-		for (int i = listeners.length - 2; i >= 0; i -= 2)
-		{
-			if (listeners[i] == InternalFrameListener.class)
-			{
-				((InternalFrameListener)listeners[i + 1]).internalFrameOpened(evt);
-			}
-		}
-	}
-
-	protected void refireSessionSheetClosing(InternalFrameEvent evt)
-	{
-		// Guaranteed to return a non-null array
-		Object[] listeners = _listenerList.getListenerList();
-		// Process the listeners last to first, notifying
-		// those that are interested in this event
-		for (int i = listeners.length - 2; i >= 0; i -= 2)
-		{
-			if (listeners[i] == InternalFrameListener.class)
-			{
-				((InternalFrameListener)listeners[i + 1]).internalFrameClosing(evt);
-			}
-		}
-	}
-
-	protected void refireSessionSheetClosed(InternalFrameEvent evt)
-	{
-		// Guaranteed to return a non-null array
-		Object[] listeners = _listenerList.getListenerList();
-		// Process the listeners last to first, notifying
-		// those that are interested in this event
-		for (int i = listeners.length - 2; i >= 0; i -= 2)
-		{
-			if (listeners[i] == InternalFrameListener.class)
-			{
-				((InternalFrameListener)listeners[i + 1]).internalFrameClosed(evt);
-			}
-		}
-	}
-
-	protected void refireSessionSheetIconified(InternalFrameEvent evt)
-	{
-		// Guaranteed to return a non-null array
-		Object[] listeners = _listenerList.getListenerList();
-		// Process the listeners last to first, notifying
-		// those that are interested in this event
-		for (int i = listeners.length - 2; i >= 0; i -= 2)
-		{
-			if (listeners[i] == InternalFrameListener.class)
-			{
-				((InternalFrameListener)listeners[i + 1]).internalFrameIconified(evt);
-			}
-		}
-	}
-
-	protected void refireSessionSheetDeiconified(InternalFrameEvent evt)
-	{
-		// Guaranteed to return a non-null array
-		Object[] listeners = _listenerList.getListenerList();
-		// Process the listeners last to first, notifying
-		// those that are interested in this event
-		for (int i = listeners.length - 2; i >= 0; i -= 2)
-		{
-			if (listeners[i] == InternalFrameListener.class)
-			{
-				((InternalFrameListener)listeners[i + 1])
-						.internalFrameDeiconified(evt);
-			}
-		}
-	}
-
-	protected void refireSessionSheetActivated(InternalFrameEvent evt)
-	{
-		// Guaranteed to return a non-null array
-		Object[] listeners = _listenerList.getListenerList();
-		// Process the listeners last to first, notifying
-		// those that are interested in this event
-		for (int i = listeners.length - 2; i >= 0; i -= 2)
-		{
-			if (listeners[i] == InternalFrameListener.class)
-			{
-				((InternalFrameListener)listeners[i + 1]).internalFrameActivated(evt);
-			}
-		}
-	}
-
-	protected void refireSessionSheetDeactivated(InternalFrameEvent evt)
-	{
-		// Guaranteed to return a non-null array
-		Object[] listeners = _listenerList.getListenerList();
-		// Process the listeners last to first, notifying
-		// those that are interested in this event
-		for (int i = listeners.length - 2; i >= 0; i -= 2)
-		{
-			if (listeners[i] == InternalFrameListener.class)
-			{
-				((InternalFrameListener)listeners[i + 1]).internalFrameDeactivated(evt);
-			}
-		}
 	}
 
 	/**
@@ -807,6 +669,162 @@ public class WindowManager
 		}
 	}
 
+	public void activateNextSession()
+	{
+		final SessionManager sessMgr = _app.getSessionManager();
+		final ISession currSession = sessMgr.getActiveSession();
+		
+		ISession nextSession = null;
+		if (currSession == null)
+		{
+			final ISession[] sessions = sessMgr.getConnectedSessions();
+			if (sessions != null && sessions.length > 0)
+			{
+				nextSession = sessions[sessions.length - 1]; // Last session.
+			}
+		}
+		else
+		{
+			nextSession = sessMgr.getNextSession(currSession);
+		}
+		if (nextSession != null)
+		{
+			final JInternalFrame sif = getInternalFrameForSession(nextSession);
+			new SelectInternalFrameCommand(sif).execute();
+		}
+	}
+
+	public void activatePreviousSession()
+	{
+		final SessionManager sessMgr = _app.getSessionManager();
+		final ISession currSession = sessMgr.getActiveSession();
+		ISession prevSession = null;
+
+		if (currSession == null)
+		{
+			final ISession[] sessions = sessMgr.getConnectedSessions();
+			if (sessions != null && sessions.length > 0)
+			{
+				prevSession = sessions[0]; // First session.
+			}
+		}
+		else
+		{
+			prevSession = sessMgr.getPreviousSession(currSession);
+		}
+		if (prevSession != null)
+		{
+			final JInternalFrame sif = getInternalFrameForSession(prevSession);
+			new SelectInternalFrameCommand(sif).execute();
+		}
+	}
+
+	protected void refireSessionSheetOpened(InternalFrameEvent evt)
+	{
+		// Guaranteed to return a non-null array
+		Object[] listeners = _listenerList.getListenerList();
+		// Process the listeners last to first, notifying
+		// those that are interested in this event
+		for (int i = listeners.length - 2; i >= 0; i -= 2)
+		{
+			if (listeners[i] == InternalFrameListener.class)
+			{
+				((InternalFrameListener)listeners[i + 1]).internalFrameOpened(evt);
+			}
+		}
+	}
+
+	protected void refireSessionSheetClosing(InternalFrameEvent evt)
+	{
+		// Guaranteed to return a non-null array
+		Object[] listeners = _listenerList.getListenerList();
+		// Process the listeners last to first, notifying
+		// those that are interested in this event
+		for (int i = listeners.length - 2; i >= 0; i -= 2)
+		{
+			if (listeners[i] == InternalFrameListener.class)
+			{
+				((InternalFrameListener)listeners[i + 1]).internalFrameClosing(evt);
+			}
+		}
+	}
+
+	protected void refireSessionSheetClosed(InternalFrameEvent evt)
+	{
+		// Guaranteed to return a non-null array
+		Object[] listeners = _listenerList.getListenerList();
+		// Process the listeners last to first, notifying
+		// those that are interested in this event
+		for (int i = listeners.length - 2; i >= 0; i -= 2)
+		{
+			if (listeners[i] == InternalFrameListener.class)
+			{
+				((InternalFrameListener)listeners[i + 1]).internalFrameClosed(evt);
+			}
+		}
+	}
+
+	protected void refireSessionSheetIconified(InternalFrameEvent evt)
+	{
+		// Guaranteed to return a non-null array
+		Object[] listeners = _listenerList.getListenerList();
+		// Process the listeners last to first, notifying
+		// those that are interested in this event
+		for (int i = listeners.length - 2; i >= 0; i -= 2)
+		{
+			if (listeners[i] == InternalFrameListener.class)
+			{
+				((InternalFrameListener)listeners[i + 1]).internalFrameIconified(evt);
+			}
+		}
+	}
+
+	protected void refireSessionSheetDeiconified(InternalFrameEvent evt)
+	{
+		// Guaranteed to return a non-null array
+		Object[] listeners = _listenerList.getListenerList();
+		// Process the listeners last to first, notifying
+		// those that are interested in this event
+		for (int i = listeners.length - 2; i >= 0; i -= 2)
+		{
+			if (listeners[i] == InternalFrameListener.class)
+			{
+				((InternalFrameListener)listeners[i + 1])
+						.internalFrameDeiconified(evt);
+			}
+		}
+	}
+
+	protected void refireSessionSheetActivated(InternalFrameEvent evt)
+	{
+		// Guaranteed to return a non-null array
+		Object[] listeners = _listenerList.getListenerList();
+		// Process the listeners last to first, notifying
+		// those that are interested in this event
+		for (int i = listeners.length - 2; i >= 0; i -= 2)
+		{
+			if (listeners[i] == InternalFrameListener.class)
+			{
+				((InternalFrameListener)listeners[i + 1]).internalFrameActivated(evt);
+			}
+		}
+	}
+
+	protected void refireSessionSheetDeactivated(InternalFrameEvent evt)
+	{
+		// Guaranteed to return a non-null array
+		Object[] listeners = _listenerList.getListenerList();
+		// Process the listeners last to first, notifying
+		// those that are interested in this event
+		for (int i = listeners.length - 2; i >= 0; i -= 2)
+		{
+			if (listeners[i] == InternalFrameListener.class)
+			{
+				((InternalFrameListener)listeners[i + 1]).internalFrameDeactivated(evt);
+			}
+		}
+	}
+
 	private SessionPropertiesSheet getSessionPropertiesDialog(ISession session)
 	{
 		List sheets = (List)_sessionWindows.get(session.getIdentifier());
@@ -999,6 +1017,45 @@ public class WindowManager
 		prefs.setMainFrameWindowState(new MainFrameWindowState(this));
 	}
 
+	/**
+	 * Retrieve an internal frame for the passed session. Can be <TT>null</TT>
+	 *
+	 * @return	an internal frame for the passed session. Can be <TT>null</TT>.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if ISession is passed as null.
+	 */
+	private JInternalFrame getInternalFrameForSession(ISession session)
+	{
+		if (session == null)
+		{
+			throw new IllegalArgumentException("ISession == null");
+		}
+
+		JInternalFrame firstWindow = null;
+		final List sheets = (List)_sessionWindows.get(session.getIdentifier());
+		if (sheets != null)
+		{
+			for (Iterator it = sheets.iterator(); it.hasNext();)
+			{
+				final Object sheet = it.next();
+				if (sheet instanceof BaseSessionInternalFrame)
+				{
+					firstWindow = (BaseSessionInternalFrame)sheet;
+				}
+				if (sheet instanceof SessionInternalFrame)
+				{
+					final SessionInternalFrame sif = (SessionInternalFrame)sheet;
+					if (sif.getSession().equals(session))
+					{
+						return sif;
+					}
+				}
+			}
+		}
+		return firstWindow;
+	}
+
 	// JASON: Needs to be done elsewhere
 //	private synchronized void editWhereColsDialogClosed(EditWhereColsSheet sfs)
 //	{
@@ -1158,7 +1215,7 @@ public class WindowManager
 			}
 			if (currSession != newSession)
 			{
-				sif = getMainInternalFrame(newSession);
+				sif = getInternalFrameForSession(newSession);
 				if (sif != null)
 				{
 					moveToFront(sif);
