@@ -6,6 +6,8 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Arguments passed to both the shell script and the batch file will be passed
+  on to SQuirreL.
 - Replace newlines with <BR> when doing a "Copy as HTML" from the results of a
   query.
 - Display text reminding the user if the results of a query have been limted to
