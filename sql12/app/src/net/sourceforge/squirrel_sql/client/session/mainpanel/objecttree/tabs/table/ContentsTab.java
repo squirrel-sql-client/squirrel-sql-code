@@ -1009,8 +1009,10 @@ public class ContentsTab extends BaseTableTab
 				"INSERT INTO " + ti.getQualifiedName() + " VALUES (");
 			
 			// add a variable position for each of the columns
-			for (int i=0; i<colDefs.length; i++)
-				buf.append(" ?,");
+			for (int i=0; i<colDefs.length; i++) {
+				if (i != _rowIDcol)
+					buf.append(" ?,");
+			}
 			
 			// replace the last "," with ")"
 			buf.setCharAt(buf.length()-1, ')');
@@ -1022,8 +1024,10 @@ public class ContentsTab extends BaseTableTab
 				// have the DataType object fill in the appropriate kind of value
 				// into the appropriate variable position in the prepared stmt
 				for (int i=0; i<colDefs.length; i++) {
-					CellComponentFactory.setPreparedStatementValue(
-						colDefs[i], pstmt, values[i], i+1);
+					if (i != _rowIDcol) {
+						CellComponentFactory.setPreparedStatementValue(
+							colDefs[i], pstmt, values[i], i+1);
+					}
 				}
 				count = pstmt.executeUpdate();
 			}
