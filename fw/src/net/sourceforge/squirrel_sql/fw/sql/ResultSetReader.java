@@ -455,88 +455,6 @@ public class ResultSetReader
 						break;
 
 
-					case Types.TIME :
-						row[i] = _rs.getTime(idx);
-						break;
-
-					case Types.DATE :
-//						row[i] = _rs.getDate(idx);
-						// Use getObject(int) rather than getDate(int) as
-						// Oracle stores a TimeStamp in Date columns rather
-						// than a Date object.
-						row[i] = _rs.getObject(idx);
-						break;
-
-					case Types.TIMESTAMP :
-						row[i] = _rs.getTimestamp(idx);
-						break;
-
-					case Types.BIGINT :
-						row[i] = _rs.getObject(idx);
-						if (row[i] != null
-							&& !(row[i] instanceof Long))
-						{
-							if (row[i] instanceof Number)
-							{
-								row[i] = new Long(((Number)row[i]).longValue());
-							}
-							else
-							{
-								row[i] = new Long(row[i].toString());
-							}
-						}
-						break;
-
-					case Types.DOUBLE:
-					case Types.FLOAT:
-					case Types.REAL:
-						row[i] = _rs.getObject(idx);
-						if (row[i] != null
-							&& !(row[i] instanceof Double))
-						{
-							if (row[i] instanceof Number)
-							{
-								Number nbr = (Number)row[i];
-								row[i] = new Double(nbr.doubleValue());
-							}
-							else
-							{
-								row[i] = new Double(row[i].toString());
-							}
-						}
-						break;
-						
-
-// all of the following have been converted to use the new DataType object reader
-					// TODO: When JDK1.4 is the earliest JDK supported
-					// by Squirrel then remove the hardcoding of the
-					// boolean data type.
-					case Types.BIT:
-					case 16:
-//					case Types.BOOLEAN:
-
-					case Types.DECIMAL:
-					case Types.NUMERIC:
-
-					case Types.INTEGER:
-					case Types.SMALLINT:
-					case Types.TINYINT:
-						// TODO: Hard coded -. JDBC/ODBC bridge JDK1.4
-						// brings back -9 for nvarchar columns in
-						// MS SQL Server tables.
-						// -8 is ROWID in Oracle.
-					case Types.CHAR:
-					case Types.VARCHAR:
-					case Types.LONGVARCHAR:
-					case -9:
-					case -8:
-					// binary types
-					case Types.BINARY:
-					case Types.VARBINARY:
-					case Types.LONGVARBINARY:
-row[i] = CellComponentFactory.readResultSet(colDefs[i], _rs, idx);
-
-						break;
 
 // the following are not yet converted to new DataType mechanism
 					case Types.BLOB:
@@ -596,32 +514,57 @@ row[i] = CellComponentFactory.readResultSet(colDefs[i], _rs, idx);
 							row[i] = s_stringMgr.getString("ResultSetReader.clob");
 						}
 						break;
+						
+						
+						
 
+// all of the following have been converted to use the new DataType object reader
+					// TODO: When JDK1.4 is the earliest JDK supported
+					// by Squirrel then remove the hardcoding of the
+					// boolean data type.
+					case Types.BIT:
+					case 16:
+//					case Types.BOOLEAN:
+
+					case Types.DECIMAL:
+					case Types.NUMERIC:
+
+					case Types.INTEGER:
+					case Types.SMALLINT:
+					case Types.TINYINT:
+					case Types.BIGINT :
+					
+					case Types.DOUBLE:
+					case Types.FLOAT:
+					case Types.REAL:
+					
+					case Types.DATE :
+					case Types.TIME :
+					case Types.TIMESTAMP :
+					
+					// TODO: Hard coded -. JDBC/ODBC bridge JDK1.4
+					// brings back -9 for nvarchar columns in
+					// MS SQL Server tables.
+					// -8 is ROWID in Oracle.
+					case Types.CHAR:
+					case Types.VARCHAR:
+					case Types.LONGVARCHAR:
+					case -9:
+					case -8:
+					
+					// binary types
+					case Types.BINARY:
+					case Types.VARBINARY:
+					case Types.LONGVARBINARY:
+					
+					
 					case Types.OTHER:
-						if (_largeObjInfo.getReadSQLOther())
-						{
-							// Running getObject on a java class attempts
-							// to load the class in memory which we don't want.
-							// getString() just gets the value without loading
-							// the class (at least under PostgreSQL).
-							//row[i] = _rs.getObject(idx);
-							row[i] = _rs.getString(idx);
-						}
-						else
-						{
-							row[i] = s_stringMgr.getString("ResultSetReader.other");
-						}
-						break;
 
 					default:
-						if (_largeObjInfo.getReadAllOther())
-						{
-							row[i] = _rs.getObject(idx);
-						}
-						else
-						{
-							row[i] = s_stringMgr.getString("ResultSetReader.unknown", new Object[] {new Integer(columnType)});
-						}
+row[i] = CellComponentFactory.readResultSet(colDefs[i], _rs, idx, _largeObjInfo);
+
+						break;
+
 				}
 			}
 			catch (Throwable th)
