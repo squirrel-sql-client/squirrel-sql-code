@@ -207,15 +207,12 @@ class Application implements IApplication
 	{
 		s_log.info(s_stringMgr.getString("Application.shutdown",
 									Calendar.getInstance().getTime()));
-// JASON: Put back in.
-//		if (!_windowManager.closeAllSessions())
-//		{
-//			s_log.info(s_stringMgr.getString("Application.shutdownCancelled",
-//					Calendar.getInstance().getTime()));
-//			return false;
-//		}
-		_sessionManager.closeAllSessions();
-
+		if (!_sessionManager.closeAllSessions())
+		{
+			s_log.info(s_stringMgr.getString("Application.shutdownCancelled",
+					Calendar.getInstance().getTime()));
+			return false;
+		}
 
 		_pluginManager.unloadPlugins();
 

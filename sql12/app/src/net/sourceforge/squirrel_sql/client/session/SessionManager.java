@@ -251,10 +251,12 @@ public class SessionManager
 	 *
 	 * @param	session		Session to close.
 	 *
+	 * @return	<tt>true</tt> if session was closed else <tt>false</tt>.
+	 *
 	 * @throws	IllegalArgumentException
 	 *			Thrown if <TT>null</TT>ISession passed.
 	 */
-	public synchronized void closeSession(ISession session)
+	public synchronized boolean closeSession(ISession session)
 	{
 		if (session == null)
 		{
@@ -302,6 +304,8 @@ public class SessionManager
 						setActiveSession((ISession)_sessionsList.getLast());
 					}
 				}
+
+				return true;
 			}
 		}
 		catch (Throwable ex)
@@ -309,25 +313,33 @@ public class SessionManager
 			ex.printStackTrace();
 			session.getMessageHandler().showErrorMessage(ex);
 		}
+
+		return false;
 	}
 
 	/**
 	 * Closes all currently open sessions.
+	 *
+	 * @return	<tt>true</tt> if all sessions closed else <tt>false</tt>.
 	 *
 	 * @throws	SQLException
 	 * 			Thrown if an error closing the SQL connection. The session
 	 * 			will still be closed even though the connection may not have
 	 *			been.
 	 */
-	synchronized public void closeAllSessions()
+	synchronized public boolean closeAllSessions()
 	{
 		// Get an array since we dont want trouble with the sessionsList when
 		// we remove the sessions from it.
 		final ISession[] sessions = getConnectedSessions();
-		for (int i = sessions.length-1; i >= 0; i--)
+		for (int i = sessions.length - 1; i >= 0; i--)
 		{
-			closeSession(sessions[i]);
+			if (!closeSession(sessions[i]))
+			{
+				return false;
+			}
 		}
+		return true;
 	}
 
 	/**
@@ -482,7 +494,7 @@ public class SessionManager
 	 * This listener enables/disables the default actions attached to
 	 * the session
 	 */
-	// JASON: Do this stuff elsewhere 
+	// JASON: Do this stuff elsewhere
 	private class SessionActionEnabler extends SessionAdapter
 	{
 		public void sessionActivated(SessionEvent evt)
