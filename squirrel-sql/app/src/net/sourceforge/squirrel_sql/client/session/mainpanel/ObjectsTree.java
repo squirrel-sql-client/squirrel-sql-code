@@ -124,10 +124,10 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 
 	void refresh() throws BaseSQLException 
 	{
+		TreePath[] paths = getSelectionPaths();
 		List l = _model.refresh();
 		if(l != null)
 		{
-			
 			for (int i=0;i<l.size();i++)
 			{
 				BaseNode node = (BaseNode)l.get(i);
@@ -136,8 +136,8 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 				expandPath(path);
 			}
 		}
+		setSelectionPaths(paths);
 		_cursorChg.restore();
-		
 	}
 	/*
 	 * @see BaseNodeExpandedListener#nodeExpanded(BaseNode)
