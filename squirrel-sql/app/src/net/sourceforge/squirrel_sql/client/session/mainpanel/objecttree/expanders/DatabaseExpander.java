@@ -119,7 +119,7 @@ public class DatabaseExpander implements INodeExpander
 		{
 			if (supportsCatalogs)
 			{
-				childNodes.addAll(createCatalogNodes(session, conn, md));
+				childNodes.addAll(createCatalogNodes(session, md));
 			}
 			else if (supportsSchemas)
 			{
@@ -152,8 +152,7 @@ public class DatabaseExpander implements INodeExpander
 		return childNodes;
 	}
 
-	private List createCatalogNodes(ISession session, SQLConnection conn,
-										SQLDatabaseMetaData md)
+	private List createCatalogNodes(ISession session, SQLDatabaseMetaData md)
 		throws SQLException
 	{
 		final List childNodes = new ArrayList();

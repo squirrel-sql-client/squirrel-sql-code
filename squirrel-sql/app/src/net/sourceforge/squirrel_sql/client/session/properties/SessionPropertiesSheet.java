@@ -29,6 +29,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -52,7 +53,7 @@ public class SessionPropertiesSheet extends BaseSheet
 	}
 
 	/** Logger for this class. */
-	private static ILogger s_log =
+	private static final ILogger s_log =
 		LoggerController.createLogger(SessionPropertiesSheet.class);
 
 	private ISession _session;
@@ -63,13 +64,13 @@ public class SessionPropertiesSheet extends BaseSheet
 
 	SessionPropertiesSheet(ISession session)
 	{
-		super(i18n.TITLE);
+		super(i18n.TITLE, true);
 		if (session == null)
 		{
 			throw new IllegalArgumentException("Null ISession passed");
 		}
 		_session = session;
-		createUserInterface();
+		createGUI();
 	}
 
 	public synchronized void setVisible(boolean show)
@@ -158,7 +159,7 @@ public class SessionPropertiesSheet extends BaseSheet
 		dispose();
 	}
 
-	private void createUserInterface()
+	private void createGUI()
 	{
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
@@ -200,7 +201,9 @@ public class SessionPropertiesSheet extends BaseSheet
 			ISessionPropertiesPanel pnl = (ISessionPropertiesPanel) it.next();
 			String title = pnl.getTitle();
 			String hint = pnl.getHint();
-			tabPane.addTab(title, null, pnl.getPanelComponent(), hint);
+			final JScrollPane sp = new JScrollPane(pnl.getPanelComponent());
+			sp.setBorder(BorderFactory.createEmptyBorder());
+			tabPane.addTab(title, null, sp, hint);
 		}
 
 		final JPanel contentPane = new JPanel(new GridBagLayout());
@@ -214,10 +217,16 @@ public class SessionPropertiesSheet extends BaseSheet
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 
+		gbc.fill = gbc.BOTH;
+		gbc.weightx = 1;
 		contentPane.add(_titleLbl, gbc);
+
 		++gbc.gridy;
+		gbc.weighty = 1;
 		contentPane.add(tabPane, gbc);
+
 		++gbc.gridy;
+		gbc.weighty = 0;
 		contentPane.add(createButtonsPanel(), gbc);
 	}
 

@@ -32,7 +32,7 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 
 /**
- * @version 	$Id: DropSelectedTablesAction.java,v 1.4 2002-08-15 08:40:34 colbell Exp $
+ * @version 	$Id: DropSelectedTablesAction.java,v 1.5 2002-09-20 09:13:10 colbell Exp $
  * @author		Johan Compagner
  */
 public class DropSelectedTablesAction extends SquirrelAction
@@ -74,7 +74,7 @@ public class DropSelectedTablesAction extends SquirrelAction
 			IPlugin plugin = _session.getApplication().getDummyAppPlugin();
 			IObjectTreeAPI treeAPI = _session.getObjectTreeAPI(plugin);
 			IDatabaseObjectInfo[] tables = treeAPI.getSelectedDatabaseObjects();
-			ObjectTreeNode[] nodes = treeAPI.getSelectedNodes();
+//			ObjectTreeNode[] nodes = treeAPI.getSelectedNodes();
 			if (tables.length > 0)
 			{
 				if (Dialogs.showYesNo(_session.getSessionSheet(), MSG, TITLE))

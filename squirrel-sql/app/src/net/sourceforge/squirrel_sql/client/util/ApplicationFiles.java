@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.util;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -30,24 +30,15 @@ public class ApplicationFiles
 
 	/** Name of folder that contains Squirrel app. */
 	private final String _squirrelHomeDir;
-//	public static final String SQUIRREL_FOLDER =
-//		System.getProperty(IJavaPropertyNames.USER_DIR);
 
 	/** Name of folder that contains Squirrel libraries. */
 	private final String _squirrelLibrariesDir;
 
-//	public static final String SQUIRREL_LIB_FOLDER =
-//		SQUIRREL_FOLDER + File.separator + "lib";
-
 	/** Name of folder that contains plugins. */
-//	public static final String SQUIRREL_PLUGINS_FOLDER =
-//		SQUIRREL_FOLDER + File.separator + "plugins";
 	private String _squirrelPluginsDir;
 
 	/** Documentation folder. */
 	private String _documentationDir;
-//	private static final String DOCUMENTATION_FOLDER = SQUIRREL_FOLDER +
-//			File.separator + "doc";
 
 	/**
 	 * Ctor.
@@ -165,6 +156,14 @@ public class ApplicationFiles
 	public File getQuickStartGuideFile()
 	{
 		return new File(_documentationDir + File.separator + "quick_start.html");
+	}
+
+	/**
+	 * @return the FAQ.
+	 */
+	public File getFAQFile()
+	{
+		return new File(_documentationDir + File.separator + "faq.html");
 	}
 
 	/**
