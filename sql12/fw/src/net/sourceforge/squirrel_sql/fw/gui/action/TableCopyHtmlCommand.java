@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui.action;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -21,26 +21,40 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 
 import javax.swing.JTable;
-//import javax.swing.table.TableModel;
 
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
-
+/**
+ * This command gets the current selected text from a <TT>JTable</TT>
+ * and formats it as HTML table and places it on the system clipboard.
+ *
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
 public class TableCopyHtmlCommand implements ICommand
 {
-//	private final static String NULL_CELL = "<null>";
-
+	/** The table we are copying data from. */
 	private JTable _table;
 
+	/**
+	 * Ctor specifying the <TT>JTable</TT> to get the data from.
+	 *
+	 * @param	table	The <TT>JTable</TT> to get data from.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if <tt>null</tt> <tt>JTable</tt> passed.
+	 */
 	public TableCopyHtmlCommand(JTable table)
 	{
 		super();
 		if (table == null)
 		{
-			throw new IllegalArgumentException("Null JTable passed");
+			throw new IllegalArgumentException("JTable == null");
 		}
 		_table = table;
 	}
 
+	/**
+	 * Execute this command.
+	 */
 	public void execute()
 	{
 		int nbrSelRows = _table.getSelectedRowCount();
@@ -49,13 +63,11 @@ public class TableCopyHtmlCommand implements ICommand
 		int[] selCols = _table.getSelectedColumns();
 		if (selRows.length != 0 && selCols.length != 0)
 		{
-			//TableModel model = _table.getModel();
-			StringBuffer buf = new StringBuffer();
+			StringBuffer buf = new StringBuffer(1024);
 			buf.append("<table border=1><tr BGCOLOR=\"#CCCCFF\">");
 			for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
 			{
 				buf.append("<th>");
-//				buf.append(model.getColumnName(selCols[colIdx]));
 				buf.append(_table.getColumnName(selCols[colIdx]));
 				buf.append("</th>");
 			}
@@ -65,51 +77,75 @@ public class TableCopyHtmlCommand implements ICommand
 				buf.append("<tr>");
 				for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
 				{
-					Object cellObj =
-						_table.getValueAt(selRows[rowIdx], selCols[colIdx]);
+					final Object cellObj = 	_table.getValueAt(selRows[rowIdx],
+															selCols[colIdx]);
 					buf.append("<td>");
 					if (cellObj == null)
-						buf.append("&nbsp;");
-					else if (cellObj instanceof String)
 					{
-						String tmp = (String) cellObj;
-						if (tmp.trim().equals(""))
-							buf.append("&nbsp;");
-						else
-						{
-							for (int i = 0; i < tmp.length(); i++)
-							{
-								switch (tmp.charAt(i))
-								{
-									case '<' :
-										buf.append("&lt;");
-										break;
-									case '>' :
-										buf.append("&gt;");
-										break;
-									case '&' :
-										buf.append("&amp;");
-										break;
-									case '"' :
-										buf.append("&quot;");
-										break;
-									default :
-										buf.append(tmp.charAt(i));
-								}
-							}
-						}
+						buf.append("&nbsp;");
 					}
 					else
-						buf.append(cellObj);
+					{
+						final String tmp = cellObj. toString();
+						if (tmp.trim().equals(""))
+						{
+							buf.append("&nbsp;");
+						}
+						else
+						{
+							buf.append(htmlizeString(tmp));
+						}
+					}
+//					else if (cellObj instanceof String)
+//					{
+//						final String tmp = (String)cellObj;
+//						if (tmp.trim().equals(""))
+//							buf.append("&nbsp;");
+//						else
+//						{
+//							buf.append(htmlizeString(tmp));
+//						}
+//					}
+//					else
+//					{
+//						buf.append(cellObj);
+//					}
 					buf.append("</td>");
 				}
 				buf.append("</tr>\n");
 			}
 			buf.append("</table>");
-			StringSelection ss = new StringSelection(buf.toString());
-			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
-				ss,
-				ss);
+			final StringSelection ss = new StringSelection(buf.toString());
+			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
 		}
+	}
+
+	private static final String htmlizeString(String str)
+	{
+		final StringBuffer buf = new StringBuffer(1024);
+		for (int i = 0, limit = str.length(); i < limit; ++i)
+		{
+			switch (str.charAt(i))
+			{
+				case '<':
+					buf.append("&lt;");
+					break;
+				case '>':
+					buf.append("&gt;");
+					break;
+				case '&':
+					buf.append("&amp;");
+					break;
+				case '"':
+					buf.append("&quot;");
+					break;
+				case '\n':
+					buf.append("<BR>");
+					break;
+				default:
+					buf.append(str.charAt(i));
+			}
+		}
+		return buf.toString();
 	}
 }

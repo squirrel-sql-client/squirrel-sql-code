@@ -6,6 +6,8 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Replace newlines with <BR> when doing a "Copy as HTML" from the results of a
+  query.
 - Display text reminding the user if the results of a query have been limted to
   X rows.
 - Prompt for confirmation before closing a session.
