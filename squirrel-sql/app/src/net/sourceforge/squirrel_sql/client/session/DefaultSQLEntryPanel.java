@@ -29,9 +29,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
-
 import javax.swing.text.BadLocationException;
 
+import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -43,7 +43,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
 public class DefaultSQLEntryPanel extends BaseSQLEntryPanel {
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(SQLPanel.class);
+	private static ILogger s_log = LoggerController.createLogger(DefaultSQLEntryPanel.class);
 
 	/** Application API. */
 	private IApplication _app;
@@ -276,7 +276,10 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel {
 			_app = app;
 			_pnl = pnl;
 			SessionProperties props = app.getSquirrelPreferences().getSessionProperties();
-			this.setFont(props.getFontInfo().createFont());
+			FontInfo fi = props.getFontInfo();
+			if (fi != null) {
+				this.setFont(props.getFontInfo().createFont());
+			}
 		}
 
 		public void addNotify() {
