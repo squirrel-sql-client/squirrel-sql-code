@@ -37,6 +37,6 @@ public interface ISQLEntryPanel {
 	void appendText(String text);
 	
 	void addMouseListener(MouseListener lis);
-	void removeListener(MouseListener lis);
+	void removeMouseListener(MouseListener lis);
 }
 
