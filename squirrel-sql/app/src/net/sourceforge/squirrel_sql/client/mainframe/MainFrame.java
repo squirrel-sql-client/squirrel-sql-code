@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.client.mainframe;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -32,6 +33,7 @@ import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.fw.gui.BaseMDIParentFrame;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -99,6 +101,15 @@ public class MainFrame extends BaseMDIParentFrame
 			}
 		});
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run()
+			{
+				ScrollableDesktopPane comp = (ScrollableDesktopPane)getDesktopPane();
+				comp.setPreferredSize(comp.getRequiredSize());
+				comp.revalidate();
+			}
+		});
 	}
 
 	public void dispose()
