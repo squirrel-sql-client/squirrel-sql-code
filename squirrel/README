@@ -1,0 +1,46 @@
+-----------------------
+o Developmer's README
+o $Id: README,v 1.1 2001-11-20 02:40:54 placson Exp $
+-----------------------
+
+This README will describe how to establish your local development environment 
+and how to compile the sources using the built-in targets.
+
+
+1) First you need to create the local.xml file required by typing
+
+   ./configure (unix)
+
+   or
+
+   configure.bat (win32)
+
+
+2) Next you will need to compile the sources by typing
+
+   ./build (unix)
+
+   or
+
+   build.bat (win32)
+
+
+3) To create a release build type
+
+   ./build release (unix)
+
+   or
+
+   build.bat release
+
+
+4) To start the application in your development environment type
+
+   ./build start
+
+
+Bugzilla:
+---------
+If you find any bugs with the Squirrel-sql project please immediately
+report the bugs to squirrel-sql-develop@lists.sourceforge.net
+
