@@ -3,6 +3,16 @@ Change Log
 
 1.1 continuation
 ================
+- Now using the ModifiedDefaultListCellRenderer from the
+  Kunstoff Look and Feel so list look correct under it.
+- Kunstoff Look and Feel no longer incorrectly shows the
+  session menu (Johan Compagner).
+- Enter now executes the default button in the Connection
+  dialog (Johan Compagner).
+- Table and Column names now show in a different colour in the
+  jEdit plugin (Johan Compagner).
+- Now under JDK1.4 have option to scroll tabbed pane tabs
+  rather than wrap them.
 - New "Info" tab on SQL query results.
 - No longer try to load blob fields from SQL Result set.
 - New API for adding tabs to the main panel tab.
