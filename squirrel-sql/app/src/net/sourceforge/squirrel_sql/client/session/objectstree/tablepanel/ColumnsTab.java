@@ -106,14 +106,8 @@ public class ColumnsTab extends BaseTablePanelTab
 			session.getProperties().getMetaDataOutputClassName();
 		try
 		{
-			ResultSet rs = session.getSQLConnection().getColumns(ti);
-			// ResultSetPanel is thread save
-			//			((ResultSetPanel)getComponent()).load(session, rs, new int[] {4,5,6,7,9,10,11,12,13,14,15,16,17,18}, destClassName);
-			((ResultSetPanel) getComponent()).load(
-				session,
-				rs,
-				null,
-				destClassName);
+			ResultSet rs = session.getSQLConnection().getSQLMetaData().getColumns(ti);
+			((ResultSetPanel) getComponent()).load(session, rs, null, destClassName);
 		}
 		catch (Exception ex)
 		{

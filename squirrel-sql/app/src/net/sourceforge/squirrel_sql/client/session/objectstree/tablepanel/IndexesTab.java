@@ -105,14 +105,8 @@ public class IndexesTab extends BaseTablePanelTab
 			session.getProperties().getMetaDataOutputClassName();
 		try
 		{
-			ResultSet rs = session.getSQLConnection().getIndexInfo(ti);
-			// ResultSetPanel is thread save
-			//			((ResultSetPanel)getComponent()).load(session, rs, new int[] {4,5,6,7,8,9,10,11,12,13}, destClassName);
-			((ResultSetPanel) getComponent()).load(
-				session,
-				rs,
-				null,
-				destClassName);
+			ResultSet rs = session.getSQLConnection().getSQLMetaData().getIndexInfo(ti);
+			((ResultSetPanel) getComponent()).load(session, rs, null, destClassName);
 		}
 		catch (Exception ex)
 		{

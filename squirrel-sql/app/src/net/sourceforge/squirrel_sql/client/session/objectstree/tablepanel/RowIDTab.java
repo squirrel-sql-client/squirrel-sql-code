@@ -106,13 +106,8 @@ public class RowIDTab extends BaseTablePanelTab
 			session.getProperties().getMetaDataOutputClassName();
 		try
 		{
-			ResultSet rs = session.getSQLConnection().getBestRowIdentifier(ti);
-			// ResultSetPanel is thread save
-			((ResultSetPanel) getComponent()).load(
-				session,
-				rs,
-				null,
-				destClassName);
+			ResultSet rs = session.getSQLConnection().getSQLMetaData().getBestRowIdentifier(ti);
+			((ResultSetPanel)getComponent()).load(session, rs, null, destClassName);
 		}
 		catch (Exception ex)
 		{

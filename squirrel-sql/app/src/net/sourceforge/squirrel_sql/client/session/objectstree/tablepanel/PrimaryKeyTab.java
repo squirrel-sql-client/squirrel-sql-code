@@ -106,14 +106,8 @@ public class PrimaryKeyTab extends BaseTablePanelTab
 			session.getProperties().getMetaDataOutputClassName();
 		try
 		{
-			ResultSet rs = session.getSQLConnection().getPrimaryKeys(ti);
-			// ResultSetPanel is thread save
-			//			((ResultSetPanel)getComponent()).load(session, rs,  new int[] {4,5,6}, destClassName);
-			((ResultSetPanel) getComponent()).load(
-				session,
-				rs,
-				null,
-				destClassName);
+			ResultSet rs = session.getSQLConnection().getSQLMetaData().getPrimaryKeys(ti);
+			((ResultSetPanel) getComponent()).load(session, rs, null, destClassName);
 		}
 		catch (Exception ex)
 		{

@@ -17,16 +17,15 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.da
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.MetaDataDataSet;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseDataSetTab;
 
 /**
@@ -75,11 +74,10 @@ public class MetaDataTab extends BaseDataSetTab
 	 */
 	protected IDataSet createDataSet() throws DataSetException
 	{
-		final ISession session = getSession();
+		final SQLConnection conn = getSession().getSQLConnection();
 		try
 		{
-			final DatabaseMetaData md = session.getSQLConnection().getMetaData();
-			return new MetaDataDataSet(md);
+			return new MetaDataDataSet(conn.getSQLMetaData().getJDBCMetaData());
 		}
 		catch (SQLException ex)
 		{

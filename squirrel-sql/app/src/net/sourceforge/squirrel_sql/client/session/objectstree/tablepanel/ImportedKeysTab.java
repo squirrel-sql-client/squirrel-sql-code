@@ -106,14 +106,8 @@ public class ImportedKeysTab extends BaseTablePanelTab
 			session.getProperties().getMetaDataOutputClassName();
 		try
 		{
-			ResultSet rs = session.getSQLConnection().getImportedKeys(ti);
-			// ResultSetPanel is thread save
-			//			((ResultSetPanel)getComponent()).load(session, rs, new int[] {3,4,8,9,10,11,12,13,14}, destClassName);
-			((ResultSetPanel) getComponent()).load(
-				session,
-				rs,
-				null,
-				destClassName);
+			ResultSet rs = session.getSQLConnection().getSQLMetaData().getImportedKeys(ti);
+			((ResultSetPanel) getComponent()).load(session, rs, null, destClassName);
 		}
 		catch (Exception ex)
 		{

@@ -95,7 +95,7 @@ public class ProcedureColumnsTab extends BaseProcedurePanelTab {
 		}
 		String destClassName = session.getProperties().getMetaDataOutputClassName();
 		try {
-			ResultSet rs = session.getSQLConnection().getProcedureColumns(pi);
+			ResultSet rs = session.getSQLConnection().getSQLMetaData().getProcedureColumns(pi);
 			((ResultSetPanel)getComponent()).load(session, rs, null, destClassName);
 		} catch (Exception ex) {
 			session.getMessageHandler().showErrorMessage(ex);

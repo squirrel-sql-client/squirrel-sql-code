@@ -79,7 +79,7 @@ public class DataTypesTab extends BaseDataSetTab
 		final ISession session = getSession();
 		try
 		{
-			return new DatabaseTypesDataSet(session.getSQLConnection().getTypeInfo());
+			return new DatabaseTypesDataSet(session.getSQLConnection().getSQLMetaData().getTypeInfo());
 		}
 		catch (SQLException ex)
 		{

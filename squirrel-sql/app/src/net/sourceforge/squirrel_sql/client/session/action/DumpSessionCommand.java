@@ -227,7 +227,7 @@ public class DumpSessionCommand implements ICommand
 			{
 				File tempFile = File.createTempFile(PREFIX, SUFFIX);
 				IDataSetViewer dest = new DataSetViewerTextFileDestination(tempFile);
-				dest.show(new MetaDataDataSet(conn.getMetaData()));
+				dest.show(new MetaDataDataSet(conn.getSQLMetaData().getJDBCMetaData()));
 				files.add(tempFile);
 				titles.add("Metadata");
 			}
@@ -244,7 +244,7 @@ public class DumpSessionCommand implements ICommand
 			{
 				File tempFile = File.createTempFile(PREFIX, SUFFIX);
 				IDataSetViewer dest = new DataSetViewerTextFileDestination(tempFile);
-				dest.show(new DatabaseTypesDataSet(conn.getTypeInfo()));
+				dest.show(new DatabaseTypesDataSet(conn.getSQLMetaData().getTypeInfo()));
 				files.add(tempFile);
 				titles.add("Data Types");
 			}

@@ -106,13 +106,8 @@ public class ColumnPriviligesTab extends BaseTablePanelTab
 			session.getProperties().getMetaDataOutputClassName();
 		try
 		{
-			ResultSet rs = session.getSQLConnection().getColumnPrivileges(ti);
-			//			((ResultSetPanel)getComponent()).load(session, rs, new int[] {4,5,6,7,8}, destClassName);
-			((ResultSetPanel) getComponent()).load(
-				session,
-				rs,
-				null,
-				destClassName);
+			ResultSet rs = session.getSQLConnection().getSQLMetaData().getColumnPrivileges(ti);
+			((ResultSetPanel) getComponent()).load(session, rs, null, destClassName);
 		}
 		catch (Exception ex)
 		{
