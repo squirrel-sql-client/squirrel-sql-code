@@ -19,8 +19,13 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  */
 import java.awt.Component;
 
+import java.awt.event.MouseAdapter;
+
+import java.awt.event.MouseEvent;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
+import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
+
 import javax.swing.event.TableModelListener;
 
 /**
@@ -34,6 +39,8 @@ public class DataSetModelJTableModel extends AbstractTableModel
 	/** Component for this converter. */
 	private JTable _comp;
 
+	private TablePopupMenu _tablePopupMenu;
+	
 	/** <TT>IDataSetModel</TT> that this object is wrapped around. */
 	private IDataSetModel _model;
 
@@ -58,6 +65,26 @@ public class DataSetModelJTableModel extends AbstractTableModel
 		_comp = new JTable(this);
 		_comp.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		setDataSetModel(model);
+		
+		_tablePopupMenu = new TablePopupMenu();
+		_tablePopupMenu.setTable(_comp);
+
+		_comp.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent evt) 
+			{
+				if (evt.isPopupTrigger()) {
+					_tablePopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+				}
+			}
+			public void mouseReleased(MouseEvent evt) 
+			{
+				if (evt.isPopupTrigger()) {
+					_tablePopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+				}
+			}
+		});
+
+		
 	}
 
 	/**
@@ -185,7 +212,8 @@ public class DataSetModelJTableModel extends AbstractTableModel
 	 * 
 	 * @throws	IllegalStateException
 	 * 			If object is not in a valid state to be used.
-	 */	protected void validate() throws IllegalStateException {
+	 */
+	protected void validate() throws IllegalStateException {
 		if (_model == null) {
 			throw new IllegalStateException("Null IDataSetModel");
 		}
