@@ -39,7 +39,7 @@ import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
- * @version 	$Id: ButtonTableHeader.java,v 1.1.1.1 2002-11-17 08:56:39 colbell Exp $
+ * @version 	$Id: ButtonTableHeader.java,v 1.2 2002-12-02 07:48:08 colbell Exp $
  * @author		Johan Compagner
  */
 public class ButtonTableHeader extends JTableHeader
@@ -67,18 +67,19 @@ public class ButtonTableHeader extends JTableHeader
 	private boolean _dragged;
 
 	/**
-	 * If <tt>_pressed</TT> is <tt>true</tt> then this is the column that the
-	 * mouse was pressed in.
+	 * if <tt>_pressed</tt> is <tt>true</tt> then this is the physical column 
+	 * that the mouse was pressed in.
 	 */
 	private int _pressedColumnIdx;
 
 	/** Icon for the currently sorted column. */
 	private Icon _currentSortedColumnIcon;
 
-	/** Index of the currently sorted column. */
+	/** Physical (as opposed to model) index of the currently sorted column. */
 	private int _currentlySortedColumnIdx = -1;
 
-	static {
+	static
+	{
 		try
 		{
 			LibraryResources rsrc = new LibraryResources();
@@ -139,30 +140,33 @@ public class ButtonTableHeader extends JTableHeader
 	}
 
         // SS: Display complete column header as tooltip if the column isn't wide enough to display it
-        public String getToolTipText(MouseEvent e) {
-          int col  = columnAtPoint(e.getPoint());
-          //int modelCol = getTable().convertColumnIndexToModel(col);
-          String retStr = null;
+	public String getToolTipText(MouseEvent e)
+	{
+		int col = columnAtPoint(e.getPoint());
+		//int modelCol = getTable().convertColumnIndexToModel(col);
+		String retStr = null;
 
-          if (col >= 0) {
+		if (col >= 0)
+		{
+			TableColumn tcol = getColumnModel().getColumn(col);
+			int colWidth = tcol.getWidth();
+			TableCellRenderer h = tcol.getHeaderRenderer();
 
-            TableColumn tcol = getColumnModel().getColumn(col);
-            int colWidth = tcol.getWidth();
-            TableCellRenderer h = tcol.getHeaderRenderer();
+			if (h == null)
+			{
+				h = getDefaultRenderer();
+			}
 
-            if (h == null)
-              h = getDefaultRenderer();
+			Component c = h.getTableCellRendererComponent(table, tcol.getHeaderValue(), false, false, -1, col);
 
-            Component c = h.getTableCellRendererComponent
-               (table, tcol.getHeaderValue(), false, false, -1, col);
-
-            int prefWidth = c.getPreferredSize().width;
-            if (prefWidth > colWidth) {
-              retStr = tcol.getHeaderValue().toString();
-            }
-          }
-          return retStr;
-        }
+			int prefWidth = c.getPreferredSize().width;
+			if (prefWidth > colWidth)
+			{
+				retStr = tcol.getHeaderValue().toString();
+			}
+		}
+		return retStr;
+	}
 
 	private final class TableDataListener implements TableModelListener
 	{
@@ -203,6 +207,7 @@ public class ButtonTableHeader extends JTableHeader
 					&& tm instanceof SortableTableModel)
 				{
 					((SortableTableModel) tm).sortByColumn(column);
+//					((SortableTableModel) tm).sortByColumn(_pressedColumnIdx);
 					if (((SortableTableModel) tm)._bAscending)
 					{
 						_currentSortedColumnIcon = s_ascIcon;
@@ -211,7 +216,8 @@ public class ButtonTableHeader extends JTableHeader
 					{
 						_currentSortedColumnIcon = s_descIcon;
 					}
-					_currentlySortedColumnIdx = column;
+//					_currentlySortedColumnIdx = column;
+					_currentlySortedColumnIdx = _pressedColumnIdx;
 				}
 				repaint();
 			}
