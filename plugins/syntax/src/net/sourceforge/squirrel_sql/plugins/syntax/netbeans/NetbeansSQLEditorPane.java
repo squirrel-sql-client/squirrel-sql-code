@@ -7,6 +7,7 @@ import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsAdapter;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
 
 import javax.swing.*;
+import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoManager;
 import javax.swing.text.Document;
 import javax.swing.text.Keymap;
@@ -26,13 +27,15 @@ public class NetbeansSQLEditorPane extends JEditorPane
    private ISession _session;
    private ErrorInfo[] _currentErrorInfos = new ErrorInfo[0];
    private SyntaxPreferences _prefs;
+   private SyntaxFactory _syntaxFactory;
 
    public NetbeansSQLEditorPane(ISession session, SyntaxPreferences prefs, SyntaxFactory syntaxFactory)
    {
       _session = session;
       _prefs = prefs;
-      syntaxFactory.putEditorPane(_session, this);
+      _syntaxFactory = syntaxFactory;
 
+      _syntaxFactory.putEditorPane(_session, this);
 
       Settings.removeInitializer(BaseSettingsInitializer.NAME);
       Settings.addInitializer(new BaseSettingsInitializer(), Settings.CORE_LEVEL);
@@ -46,31 +49,13 @@ public class NetbeansSQLEditorPane extends JEditorPane
       //
       /////////////////////////////////////////////////////////////////////////////
       Settings.removeInitializer(SQLSettingsInitializer.NAME);
-      Settings.addInitializer(new SQLSettingsInitializer(SQLKit.class, prefs));
+      Settings.addInitializer(new SQLSettingsInitializer(SQLKit.class, _prefs));
+
+
 
       _sqlKit = new SQLKit(syntaxFactory);
 
       setEditorKit(_sqlKit);
-
-      Document doc = getDocument();
-      syntaxFactory.putDocument(session, doc);
-      
-
-
-
-//      final JComponent c = (getUI() instanceof BaseTextUI) ?
-//      Utilities.getEditorUI(this).getExtComponent() : new JScrollPane( this );
-//      Document doc = getDocument();
-
-      //doc.addDocumentListener( new MarkingDocumentListener( c ) );
-
-
-      UndoManager um = new UndoManager();
-      doc.addUndoableEditListener( um );
-      doc.putProperty( BaseDocument.UNDO_MANAGER_PROP, um );
-
-      //new NetbeansKeyManager(this);
-
 
       //////////////////////////////////////////////////////////////////////////////////////////////////////////////
       // The ctrl enter short cut in the Netbeans editor is set in org.netbeans.editor.ext.BaseKit
@@ -82,9 +67,11 @@ public class NetbeansSQLEditorPane extends JEditorPane
       //
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+      Document doc = getDocument();
+      _syntaxFactory.putDocument(_session, doc);
+
+
       setToolTipText("Just to make getToolTiptext() to be called");
-
-
    }
 
    public void updateFromPreferences()
@@ -102,6 +89,21 @@ public class NetbeansSQLEditorPane extends JEditorPane
       /////////////////////////////////////////////////////////////////////////////
       Settings.removeInitializer(SQLSettingsInitializer.NAME);
       Settings.addInitializer(new SQLSettingsInitializer(SQLKit.class, _prefs));
+
+
+      //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      // The ctrl enter short cut in the Netbeans editor is set in org.netbeans.editor.ext.BaseKit
+      // to the org.netbeans.editor.ext.BaseKit.SplitLineAction.
+      // Since the ctrl enter shorcut is a basic SQuirreL short cut and is defined via the main menu action
+      // we must remove this binding here.
+      KeyStroke ctrlEnterStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, java.awt.event.InputEvent.CTRL_MASK);
+      getKeymap().removeKeyStrokeBinding(ctrlEnterStroke);
+      //
+      ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+      Document doc = getDocument();
+      _syntaxFactory.putDocument(_session, doc);
+
    }
 
 
@@ -148,4 +150,9 @@ public class NetbeansSQLEditorPane extends JEditorPane
       return super.getText().replaceAll("\r\n", "\n");
    }
 
+   public void setUndoManager(UndoableEditListener um)
+   {
+      getDocument().addUndoableEditListener(um);
+      getDocument().putProperty( BaseDocument.UNDO_MANAGER_PROP, um );
+   }
 }

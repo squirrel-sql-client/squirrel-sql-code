@@ -350,7 +350,7 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void addUndoableEditListener(UndoableEditListener listener)
 	{
-		_textArea.getDocument().addUndoableEditListener(listener);
+		_textArea.setUndoManager(listener);
 	}
 
 	/**
