@@ -360,7 +360,7 @@ class SQLPanel extends JPanel {
 		_tabbedResultsPanel.remove(tab);
 		ResultFrame frame = new ResultFrame(_session, tab);
 		frame.setDefaultCloseOperation(ResultFrame.DISPOSE_ON_CLOSE);
-		MainFrame.getInstance().addInternalFrame(frame);
+		MainFrame.getInstance().addInternalFrame(frame, false, null);
 		frame.setVisible(true);
 		frame.pack();
 		frame.toFront();
