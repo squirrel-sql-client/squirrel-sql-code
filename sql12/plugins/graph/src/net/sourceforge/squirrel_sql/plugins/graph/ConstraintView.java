@@ -34,7 +34,7 @@ public class ConstraintView implements GraphComponent
    public static final int STUB_LENGTH = 20;
    private ISession _session;
    private TableFrameController _pkFramePointingTo;
-   private ConstraintViewListener _constraintViewListener;
+   private Vector _constraintViewListeners = new Vector();
 
    public ConstraintView(ConstraintData constraintData, GraphDesktopController desktopController, ISession session)
    {
@@ -191,7 +191,7 @@ public class ConstraintView implements GraphComponent
    public void setConnectionPoints(ConnectionPoints fkPoints, ConnectionPoints pkPoints, TableFrameController pkFramePointingTo, ConstraintViewListener constraintViewListener)
    {
       _pkFramePointingTo = pkFramePointingTo;
-      _constraintViewListener = constraintViewListener;
+      addConstraintViewListener(constraintViewListener);
 
       int fkCenterY = getCenterY(fkPoints.points);
       int pkCenterY = getCenterY(pkPoints.points);
@@ -241,6 +241,30 @@ public class ConstraintView implements GraphComponent
       {
          drawFoldingPoint(g, (Point) foldingPoints.get(i));
       }
+   }
+
+   public Dimension getRequiredSize()
+   {
+      Dimension ret = new Dimension();
+      for (int i = 0; i < _constraintGraph.getFoldingPoints().size(); i++)
+      {
+         Point fp =(Point) _constraintGraph.getFoldingPoints().get(i);
+
+         if(fp.x > ret.width)
+         {
+            ret.width = fp.x;
+         }
+
+         if(fp.y > ret.height)
+         {
+            ret.height = fp.y;
+         }
+      }
+
+      ret.width += 5;
+      ret.height += 5;
+
+      return ret;
    }
 
    private void paintArrow(Graphics g, int x1, int y1, int x2, int y2)
@@ -453,7 +477,12 @@ public class ConstraintView implements GraphComponent
       {
          // hit is on folding point
          _constraintGraph.moveLastHitFoldingPointTo(e.getPoint());
-         _constraintViewListener.foldingPointMoved(this);
+
+         ConstraintViewListener[] listeners = (ConstraintViewListener[]) _constraintViewListeners.toArray(new ConstraintViewListener[_constraintViewListeners.size()]);
+         for (int i = 0; i < listeners.length; i++)
+         {
+            listeners[i].foldingPointMoved(this);
+         }
       }
    }
 
@@ -475,5 +504,11 @@ public class ConstraintView implements GraphComponent
    public void replaceCopiedColsByReferences(ColumnInfo[] colInfos)
    {
       _constraintData.replaceCopiedColsByReferences(colInfos);
+   }
+
+   public void addConstraintViewListener(ConstraintViewListener constraintViewListener)
+   {
+      _constraintViewListeners.remove(constraintViewListener);
+      _constraintViewListeners.add(constraintViewListener);
    }
 }
