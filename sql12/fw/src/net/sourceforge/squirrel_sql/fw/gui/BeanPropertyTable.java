@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -23,10 +23,7 @@ import net.sourceforge.squirrel_sql.fw.util.BaseException;
 
 public class BeanPropertyTable extends JTable
 {
-
 	private BeanPropertyTableModel _model;
-
-	//	private Object _bean;
 
 	public BeanPropertyTable() throws BaseException
 	{
@@ -57,5 +54,4 @@ public class BeanPropertyTable extends JTable
 		_model = model;
 		refresh();
 	}
-
 }

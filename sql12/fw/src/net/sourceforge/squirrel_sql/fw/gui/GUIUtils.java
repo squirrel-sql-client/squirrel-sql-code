@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -34,7 +34,6 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JInternalFrame;
 import javax.swing.SwingUtilities;
-
 /**
  * Common GUI utilities accessed via static methods.
  *
