@@ -44,8 +44,8 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
 import com.Ostermiller.Syntax.Lexer.Lexer;
-import com.Ostermiller.Syntax.Lexer.SQLLexer;
 import com.Ostermiller.Syntax.Lexer.Token;
+import com.Ostermiller.Syntax.Lexer.SQLLexer;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
 import net.sourceforge.squirrel_sql.client.session.SchemaInfo;
@@ -298,7 +298,7 @@ public class OsterTextControl extends JTextPane
 
 	private Token getNextToken(SchemaInfo si) throws IOException
 	{
-		return syntaxLexer.getNextToken();
+      return syntaxLexer.getNextToken();
 	}
 
 	private void applyStyle(SimpleAttributeSet attribs, SyntaxStyle style,
@@ -1134,7 +1134,11 @@ public class OsterTextControl extends JTextPane
 					position += length;
 					for (int i = 0; i < length; i++)
 					{
-						cbuf[off + i] = s.charAt(i);
+                  // The Ostermiller SQLLexer crashes with an ArrayIndexOutOfBoundsException
+                  // if the char is greater then 255. So we prevent the char from being greater.
+                  // This is surely not a proper Unicode treatment but it doesn't seem
+                  // to do no harm and it keeps the SQLLexer working.
+						cbuf[off + i] = (char)(((int)s.charAt(i)) % 256);
 					}
 					return length;
 				}
