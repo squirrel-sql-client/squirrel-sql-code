@@ -119,17 +119,17 @@ class MessagePanel extends JTextPane implements IMessageHandler
 		// Initialize sttribute sets.
 		// Last message, no error.
 		_saSetLastMessage = new SimpleAttributeSet();
-		StyleConstants.setBackground(_saSetLastMessage, Color.GREEN);
+		StyleConstants.setBackground(_saSetLastMessage, Color.green);
 		// Last message, error.
 		_saSetLastMessageError = new SimpleAttributeSet();
-		StyleConstants.setBackground(_saSetLastMessageError, Color.RED);
+		StyleConstants.setBackground(_saSetLastMessageError, Color.red);
 		// Message, with error.
 		_saSetError = new SimpleAttributeSet();
-		StyleConstants.setBackground(_saSetError, Color.PINK);
+		StyleConstants.setBackground(_saSetError, Color.pink);
 	}
 
 	/**
-	 * Show an message describing the passed throwable object.
+	 * Show a message describing the passed throwable object.
 	 *
 	 * @param th	The throwable object.
 	 */
