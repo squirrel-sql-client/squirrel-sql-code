@@ -43,6 +43,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.plugins.sqlscript.session_script.SessionScriptCache;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptAction;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptOfCurrentSQLAction;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTableScriptAction;
 
 /**
@@ -152,6 +153,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 		coll.add(new LoadScriptAction(app, _resources, this));
 		coll.add(new CreateTableScriptAction(app, _resources));
 		coll.add(new CreateDataScriptAction(app, _resources));
+		coll.add(new CreateDataScriptOfCurrentSQLAction(app, _resources));
 		createMenu();
 
 		try {
@@ -241,6 +243,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 		_resources.addToMenu(coll.get(SaveScriptAction.class), menu);
 		_resources.addToMenu(coll.get(CreateDataScriptAction.class), menu);
 		_resources.addToMenu(coll.get(CreateTableScriptAction.class), menu);
+		_resources.addToMenu(coll.get(CreateDataScriptOfCurrentSQLAction.class), menu);
 
 		app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, menu);
 	}
