@@ -176,7 +176,7 @@ public class GraphPlugin extends DefaultSessionPlugin
    public boolean sessionStarted(ISession session)
    {
       ActionCollection coll = getApplication().getActionCollection();
-      IObjectTreeAPI api = session.getObjectTreeAPI(this);
+      IObjectTreeAPI api = session.getSessionSheet().getObjectTreePanel();
       api.addToPopup(DatabaseObjectType.TABLE, coll.get(AddToGraphAction.class));
 
       GraphXmlSerializer[] serializers  = GraphXmlSerializer.getGraphXmSerializers(this, session);

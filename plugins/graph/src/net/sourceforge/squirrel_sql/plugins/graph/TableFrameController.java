@@ -598,7 +598,11 @@ public class TableFrameController
       {
          public void run()
          {
-            _frame.txtColumsFactory.getBestReadyComponent().scrollRectToVisible(new Rectangle(0,0,1,1));
+            JComponent bestReadyComponent = _frame.txtColumsFactory.getBestReadyComponent();
+            if(null != bestReadyComponent)
+            {
+               _frame.txtColumsFactory.getBestReadyComponent().scrollRectToVisible(new Rectangle(0,0,1,1));
+            }
          }
       });
    }

@@ -196,6 +196,8 @@ public class ConstraintView implements GraphComponent
 
    public void setConnectionPoints(ConnectionPoints fkPoints, ConnectionPoints pkPoints, TableFrameController pkFramePointingTo, ConstraintViewListener constraintViewListener)
    {
+      double zoom = _desktopController.getZoomer().getZoom();
+
       _pkFramePointingTo = pkFramePointingTo;
       addConstraintViewListener(constraintViewListener);
 
@@ -204,10 +206,9 @@ public class ConstraintView implements GraphComponent
 
       int signFkStub = fkPoints.pointsAreLeftOfWindow ? -1 : 1;
       int signPkStub = pkPoints.pointsAreLeftOfWindow ? -1 : 1;
-      ;
 
-      Point fkGatherPoint = new Point(fkPoints.points[0].x + signFkStub * STUB_LENGTH, fkCenterY);
-      Point pkGatherPoint = new Point(pkPoints.points[0].x + signPkStub * STUB_LENGTH, pkCenterY);
+      Point fkGatherPoint = new Point((int) (fkPoints.points[0].x + signFkStub * STUB_LENGTH * zoom + 0.5), fkCenterY);
+      Point pkGatherPoint = new Point((int) (pkPoints.points[0].x + signPkStub * STUB_LENGTH * zoom + 0.5), pkCenterY);
 
       GraphLine[] fkStubLines = new GraphLine[fkPoints.points.length];
       for (int i = 0; i < fkPoints.points.length; i++)
@@ -273,8 +274,8 @@ public class ConstraintView implements GraphComponent
 
          int lineLen = (int) Math.sqrt((line.beg.x - line.end.x) * (line.beg.x - line.end.x) + (line.beg.y - line.end.y) * (line.beg.y - line.end.y));
 
-         FontMetrics fontMetrics = g.getFontMetrics(g.getFont());
-         while (lineLen < fontMetrics.stringWidth(drawText.toString()))
+         FontMetrics fontMetrics = g2d.getFontMetrics(g2d.getFont());
+         while (lineLen < (fontMetrics.stringWidth(drawText.toString()) * zoom + 0.5))
          {
             if (0 == drawText.length())
             {
@@ -283,7 +284,6 @@ public class ConstraintView implements GraphComponent
             drawText.setLength(drawText.length() - 1);
          }
 
-         AffineTransform at = new AffineTransform();
          Point right;
          Point left;
 
@@ -323,7 +323,9 @@ public class ConstraintView implements GraphComponent
          }
 
 
+         AffineTransform at = new AffineTransform();
          at.setToRotation(angle);
+         at.scale(zoom, zoom);
          g2d.transform(at);
 
          Point invTransBeg = (Point) at.inverseTransform(left, new Point());
@@ -367,6 +369,8 @@ public class ConstraintView implements GraphComponent
 
    private void paintArrow(Graphics g, int x1, int y1, int x2, int y2)
    {
+      double zoom = _desktopController.getZoomer().getZoom();
+
       // defines the opening angle of the arrow (not rad or so but something fancy)
       double sAng = 0.5;
 
@@ -375,7 +379,7 @@ public class ConstraintView implements GraphComponent
       Point b = new Point((int) (x1 - sAng * (y2 - y1)), (int) (y1 + sAng * (x2 - x1)));
 
       // defines the size of the arrow
-      double sLen = 10 / Math.sqrt((a.x - c.x) * (a.x - c.x) + (a.y - c.y) * (a.y - c.y));
+      double sLen = 10 / Math.sqrt((a.x - c.x) * (a.x - c.x) + (a.y - c.y) * (a.y - c.y)) * zoom;
 
       Point arrPa = new Point((int) (c.x + sLen * (a.x - c.x)), (int) (c.y + sLen * (a.y - c.y)));
       Point arrPb = new Point((int) (c.x + sLen * (b.x - c.x)), (int) (c.y + sLen * (b.y - c.y)));
