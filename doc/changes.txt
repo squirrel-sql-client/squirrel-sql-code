@@ -6,6 +6,8 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Remove the plugin Help menu options and display their help in the main
+  help window.
 - Display error message if no SQL selected for execution.
 - Cache database metadata information.
 - Refresh catalogs dropdown when object tree refreshed

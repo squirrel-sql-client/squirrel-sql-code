@@ -1,7 +1,5 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
-
-
-/* TODO: Delete this class - no longer required.
+/*
  * Copyright (C) 2002 Colin Bell
  * colbell@users.sourceforge.net
  *
@@ -19,15 +17,14 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.io.File;
-
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.client.gui.HelpViewerWindow;
 /**
  * This <CODE>ICommand</CODE> displays the Help window.
  *
@@ -38,6 +35,9 @@ public class ViewHelpCommand implements ICommand
 	/** Logger for this class. */
 	private static ILogger s_log =
 		LoggerController.createLogger(ViewHelpCommand.class);
+
+	/** Singleton instance of the help window. */
+	private static HelpViewerWindow s_window;
 
 	/** Application API. */
 	private IApplication _app;
@@ -61,22 +61,20 @@ public class ViewHelpCommand implements ICommand
 	}
 
 	/**
-	 * Display the Dialog
+	 * Display the Help window
 	 */
-	public void execute()
+	public void execute() throws BaseException
 	{
-		try
+		synchronized (getClass())
 		{
-			File file = new ApplicationFiles().getQuickStartGuideFile();
-			ICommand cmd = new ViewFileCommand(_app, file);
-			cmd.execute();
+			if (s_window == null)
+			{
+				s_window = new HelpViewerWindow(_app);
+				s_window.setSize(600, 400);
+				GUIUtils.centerWithinParent(s_window);
+			}
 		}
-		catch (BaseException ex)
-		{
-			final String msg = "Error occured reading quickstart file";
-			s_log.error(msg, ex);
-			_app.showErrorDialog(msg, ex);
-		}
+		s_window.setVisible(true);
 	}
 
 }
