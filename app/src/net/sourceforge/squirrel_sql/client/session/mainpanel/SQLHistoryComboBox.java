@@ -17,6 +17,11 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.Component;
+
+import javax.swing.JList;
+import javax.swing.plaf.basic.BasicComboBoxRenderer;
+
 import net.sourceforge.squirrel_sql.fw.gui.MemoryComboBox;
 /**
  * This combobox holds the history of SQL statments executed.
@@ -29,6 +34,7 @@ public class SQLHistoryComboBox extends MemoryComboBox
 	{
 		super();
 		setModel(new SQLHistoryComboBoxModel(useSharedModel));
+		setRenderer(new Renderer());
 	}
 
 	public SQLHistoryComboBoxModel getTypedModel()
@@ -44,5 +50,39 @@ public class SQLHistoryComboBox extends MemoryComboBox
 	public boolean isUsingSharedDataModel()
 	{
 		return getTypedModel().isUsingSharedDataModel();
+	}
+
+	/**
+	 * Renderer for this combobox. It displays the entire SQL for the current
+	 * line as the tooltip. We use the HTML <PRE> tag in order to linebreak the
+	 * SQL in the tooltip.
+	 */
+	private static final class Renderer extends BasicComboBoxRenderer
+	{
+		public Component getListCellRendererComponent(JList list,
+								Object value, int index, boolean isSelected,
+								boolean cellHasFocus)
+		{
+			if (isSelected)
+			{
+				setBackground(list.getSelectionBackground());
+				setForeground(list.getSelectionForeground());
+				if (index != -1)
+				{
+					final String tt = ((SQLHistoryItem)value).getSQL();
+					list.setToolTipText("<HTML><PRE>" + tt + "</PRE></HTML>");
+				}
+			}
+			else
+			{
+				setBackground(list.getBackground());
+				setForeground(list.getForeground());
+			}
+
+			setFont(list.getFont());
+			setText((value == null) ? "" : value.toString());
+
+			return this;
+		}
 	}
 }

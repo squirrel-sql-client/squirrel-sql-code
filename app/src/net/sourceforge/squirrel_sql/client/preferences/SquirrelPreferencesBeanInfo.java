@@ -38,7 +38,7 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
 		super();
 		if (s_dscrs == null)
 		{
-			s_dscrs = new PropertyDescriptor[16];
+			s_dscrs = new PropertyDescriptor[17];
 			s_dscrs[0] = new PropertyDescriptor(SESSION_PROPERTIES, CLS,
 									"getSessionProperties", "setSessionProperties");
 			s_dscrs[1] = new PropertyDescriptor(MAIN_FRAME_STATE, CLS,
@@ -72,6 +72,8 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
 								"getDriversSelectedIndex", "setDriversSelectedIndex");
 			s_dscrs[15] = new PropertyDescriptor(SHOW_LOADED_DRIVERS_ONLY, CLS,
 								"getShowLoadedDriversOnly", "setShowLoadedDriversOnly");
+			s_dscrs[16] = new PropertyDescriptor(MAXIMIMIZE_SESSION_SHEET_ON_OPEN, CLS,
+								"getMaximizeSessionSheetOnOpen", "setMaximizeSessionSheetOnOpen");
 		}
 	}
 

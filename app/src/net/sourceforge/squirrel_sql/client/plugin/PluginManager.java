@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.plugin;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -34,16 +34,15 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
-
 /**
  * Manages plugins for the application.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class PluginManager
 {
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(PluginManager.class);
+	private static final ILogger s_log = LoggerController.createLogger(PluginManager.class);
 
 	/** Application API object. */
 	private IApplication _app;
@@ -55,26 +54,33 @@ public class PluginManager
 	 * Contains a <TT>PluginInfo</TT> object for every plugin that we attempted
 	 * to load.
 	 */
-	private List _plugins = new ArrayList();
+	private final List _plugins = new ArrayList();
 
 	/**
 	 * Contains all plugins (<TT>IPlugin</TT>) successfully
 	 * loaded. Keyed by <TT>IPlugin.getInternalName()</TT>.
 	 */
-	private Map _loadedPlugins = new HashMap();
+	private final Map _loadedPlugins = new HashMap();
 
 	/**
 	 * Contains a <TT>SessionPluginInfo</TT> object for evey object in
 	 * <TT>_loadedPlugins<TT> that is an instance of <TT>ISessionPlugin</TT>.
 	 */
-	private List _sessionPlugins = new ArrayList();
+	private final List _sessionPlugins = new ArrayList();
 
 	/**
 	 * Collection of active sessions. Keyed by <TT>ISession.getIdentifier()</TT>
 	 * and contains a <TT>List</TT> of active <TT>ISessionPlugin</TT> objects
 	 * for the session.
 	 */
-	private Map _activeSessions = new HashMap();
+	private final Map _activeSessions = new HashMap();
+
+	/**
+	 * Collection of <TT>PluginLoadInfo</TT> objects for the
+	 * plugins. Stores info about how long it took to load
+	 * each plugin.
+	 */
+	private final Map _pluginLoadInfoColl = new HashMap();
 
 	/**
 	 * Ctor. Loads plugins from the plugins directory.
@@ -99,7 +105,7 @@ public class PluginManager
 	 * A new session has been created. At this point the
 	 * <TT>SessionSheet</TT> does not exist for the new session.
 	 *
-	 * @param   session	 The new session.
+	 * @param	session	 The new session.
 	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> ISession</TT> passed.
@@ -120,8 +126,8 @@ public class PluginManager
 			}
 			catch (Throwable th)
 			{
-				String msg =
-					"Error occured in IPlugin.sessionCreated() for " + spi.getPlugin().getDescriptiveName();
+				String msg = "Error occured in IPlugin.sessionCreated() for "
+								+ spi.getPlugin().getDescriptiveName();
 				s_log.error(msg, th);
 				_app.showErrorDialog(msg, th);
 			}
@@ -131,7 +137,7 @@ public class PluginManager
 	/**
 	 * A new session is starting.
 	 *
-	 * @param   session	 The new session.
+	 * @param	session	 The new session.
 	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> ISession</TT> passed.
@@ -156,8 +162,8 @@ public class PluginManager
 			}
 			catch (Throwable th)
 			{
-				String msg =
-					"Error occured in IPlugin.sessionStarted() for " + spi.getPlugin().getDescriptiveName();
+				String msg = "Error occured in IPlugin.sessionStarted() for "
+								+ spi.getPlugin().getDescriptiveName();
 				s_log.error(msg, th);
 				_app.showErrorDialog(msg, th);
 			}
@@ -167,7 +173,7 @@ public class PluginManager
 	/**
 	 * A session is ending.
 	 *
-	 * @param   session	 The session ending.
+	 * @param	session	 The session ending.
 	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> ISession</TT> passed.
@@ -384,14 +390,10 @@ public class PluginManager
 			IPlugin plugin = (IPlugin) it.next();
 			try
 			{
-				long now = System.currentTimeMillis();
+				final PluginLoadInfo pli = getPluginLoadInfo(plugin);
+				pli.startInitializing();
 				plugin.initialize();
-				s_log.info(
-					"Plugin "
-						+ plugin.getInternalName()
-						+ " initialised in "
-						+ (System.currentTimeMillis() - now)
-						+ " ms.");
+				pli.endInitializing();
 			}
 			catch (Throwable th)
 			{
@@ -402,17 +404,31 @@ public class PluginManager
 		}
 	}
 
+	/**
+	 * Retrieve information about plugin load times
+	 *
+	 * @return	<TT>Iterator</TT> over a collection of
+	 * 			<TT>PluginLoadInfo</TT> objects.
+	 */
+	public Iterator getPluginLoadInfoIterator()
+	{
+		return _pluginLoadInfoColl.values().iterator();
+	}
+
 	private void loadPlugin(Class pluginClass)
 	{
 		PluginInfo pi = new PluginInfo(pluginClass.getName());
 		try
 		{
-			long now = System.currentTimeMillis();
-			IPlugin plugin = (IPlugin) pluginClass.newInstance();
+			final PluginLoadInfo pli = new PluginLoadInfo();
+			final IPlugin plugin = (IPlugin)pluginClass.newInstance();
+			pli.pluginCreated(plugin);
+			_pluginLoadInfoColl.put(plugin.getInternalName(), pli);
 			pi.setPlugin(plugin);
 			_plugins.add(pi);
 			if (validatePlugin(plugin))
 			{
+				pli.startLoading();
 				plugin.load(_app);
 				pi.setLoaded(true);
 				_loadedPlugins.put(plugin.getInternalName(), plugin);
@@ -420,13 +436,8 @@ public class PluginManager
 				{
 					_sessionPlugins.add(new SessionPluginInfo(pi));
 				}
-				s_log.info(
-					"Plugin "
-						+ plugin.getInternalName()
-						+ " loaded in "
-						+ (System.currentTimeMillis() - now)
-						+ " ms.");
 			}
+			pli.endLoading();
 		}
 		catch (Throwable th)
 		{
@@ -456,4 +467,9 @@ public class PluginManager
 		return true;
 	}
 
+	private PluginLoadInfo getPluginLoadInfo(IPlugin plugin)
+	{
+		return (PluginLoadInfo)_pluginLoadInfoColl.get(plugin.getInternalName());
+	}
 }
+

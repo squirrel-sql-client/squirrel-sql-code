@@ -6,6 +6,16 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Can now specify session sheets to be opened maximized.
+- Show as much as possible of the SQL statement in the SQL history
+  dropdown and show it all in the tooltip.
+- Put focus to SQL entry area when SQL tab selected (Gerd Wagner).
+- The SQL separator character can now be a multiple character string
+  (Gerd Wagner).
+- New application argument -useNativeLAF which will make SQuirreL use
+  the native Look and Feel rather than the Java one.
+- Data can now be maintained in the Contents tab (Glenn Griffin).
+- Orientation of tabs can now be specified in session properties.
 - Remove the plugin Help menu options and display their help in the main
   help window.
 - Display error message if no SQL selected for execution.
@@ -14,22 +24,23 @@ Enhancements
 - Make Plugins Summary dialog modeless.
 - Allow queries to be cancelled when they are "building output".
 - Driver properties can now be specified on the alias.
-- Wordwrap and popup menu in the Column Data popup window.
+- You can now "word wrap" data in the Column Data popup window.
+- Text Popup menu can now be displayed in the Column Data popup window.
 - Show chained SQL exceptions in error dialog.
 - Add "Copy" menu options to the popup menu in the object tree.
 - Add the MySQL driver to the default list of drivers. Update the jTDS
   URL for the latest version of jTDS (Dennis Lundberg).
-- Added quote/unquote items to popup menu in the SQL entry area (Gerd
-  Wagner).
-- You can now specify an Alias to connect when SQuirreL starts up.
+- You can now specify that an Alias will connect when SQuirreL starts
+  up.
+- Allow user to define an Alias to logon automatically without prompting
+  for user and password (Gerd Wagner).
+- Allow user to store a password in the Alias definition (Gerd Wagner).
 - You can now display only loaded JDBC drivers in the Drivers list.
 - You can now limit the size of the SQL history combobox.
 - Allow SQL history to be persistent and shareable between different
   sessions (Lynn Pye).
 - Added Next and Previous Session commands to the menu system (Gerd
   Wagner).
-- Allow user to store a password in the Alias definition (Gerd Wagner).
-- Allow user to define an Alias to logon automatically (Gerd Wagner).
 - Do a better job of handling schemas and/or catalogs when building the
   object tree for DBMS's/drivers that misreport catalog/schema
   information (Gerd Wagner).
@@ -52,7 +63,7 @@ Bug Fixes
 ---------
 - Fix NullPointer exception when updating caret position in statusbar.
 - Clear all metadata result sets when finished with them.
-- Default catalogs dropdown to correct catalog when session opened.
+- Default catalogs dropdown to the correct catalog when session opened.
 - Remove Clear option from standard text popup menu.
 - Retrieve time as well as date for Oracle Date type columns.
 - Hide password contents on Proxy settings panel.

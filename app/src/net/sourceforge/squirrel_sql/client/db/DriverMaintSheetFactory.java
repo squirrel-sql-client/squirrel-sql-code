@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.db;
 /*
- * Copyright (C) 2001-203 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -31,7 +31,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
-
 /**
  * Factory to handle creation of maintenance sheets for SQL Driver objects.
  *
@@ -51,14 +50,14 @@ public class DriverMaintSheetFactory
 	 * Collection of <TT>DriverMaintDialog</TT> that are currently visible modifying
 	 * an existing driver. Keyed by <TT>ISQLDriver.getIdentifier()</TT>.
 	 */
-	private Map _modifySheets = new HashMap();
+	private final Map _modifySheets = new HashMap();
 
 	/** Singleton instance of this class. */
-	private static DriverMaintSheetFactory s_instance =
+	private final static DriverMaintSheetFactory s_instance =
 		new DriverMaintSheetFactory();
 
 	/**
-	 * ctor. Private as cass is a singleton.
+	 * ctor. Private as class is a singleton.
 	 */
 	private DriverMaintSheetFactory()
 	{
@@ -114,10 +113,8 @@ public class DriverMaintSheetFactory
 				{
 					synchronized (getInstance())
 					{
-						DriverMaintSheet frame =
-							(DriverMaintSheet) evt.getInternalFrame();
-						_modifySheets.remove(
-							frame.getSQLDriver().getIdentifier());
+						DriverMaintSheet frame = (DriverMaintSheet) evt.getInternalFrame();
+						_modifySheets.remove(frame.getSQLDriver().getIdentifier());
 					}
 				}
 			});
@@ -191,3 +188,4 @@ public class DriverMaintSheetFactory
 		sheet.moveToFront();
 	}
 }
+

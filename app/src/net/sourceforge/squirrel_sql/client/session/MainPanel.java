@@ -17,6 +17,8 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -42,6 +44,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.ObjectTreeTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 /**
  * This tabbed panel is the main panel within the session window.
  *
@@ -64,6 +67,9 @@ public class MainPanel extends SquirrelTabbedPane
 	/** Current session. */
 	private ISession _session;
 
+	/** Listener to the sessions properties. */
+	private PropertyChangeListener _propsListener;
+
 	/**
 	 * Collection of <TT>IMainPanelTab</TT> objects displayed in
 	 * this tabbed panel.
@@ -83,11 +89,44 @@ public class MainPanel extends SquirrelTabbedPane
 		super(getPreferences(session));
 
 		_session = session;
+		createGUI();
 
-		createUserInterface();
+		propertiesHaveChanged(null);
 
 		// Refresh the currently selected tab.
 		((IMainPanelTab)_tabs.get(getSelectedIndex())).select();
+	}
+
+	/**
+	 * Panel is being added to its parent. Setup any required listeners.
+	 */
+	public void addNotify()
+	{
+		super.addNotify();
+		if (_propsListener == null)
+		{
+			_propsListener = new PropertyChangeListener()
+			{
+				public void propertyChange(PropertyChangeEvent evt)
+				{
+					propertiesHaveChanged(evt.getPropertyName());
+				}
+			};
+			_session.getProperties().addPropertyChangeListener(_propsListener);
+		}
+	}
+
+	/**
+	 * Panel is being removed from its parent. Remove any required listeners.
+	 */
+	public void removeNotify()
+	{
+		super.removeNotify();
+		if (_propsListener != null)
+		{
+			_session.getProperties().removePropertyChangeListener(_propsListener);
+			_propsListener = null;
+		}
 	}
 
 	/**
@@ -144,7 +183,8 @@ public class MainPanel extends SquirrelTabbedPane
 			actions.get(ShowNativeSQLAction.class).setEnabled(false);
 			actions.get(CommitAction.class).setEnabled(false);
 			actions.get(RollbackAction.class).setEnabled(false);
-			actions.get(RefreshObjectTreeAction.class).setEnabled(true);		}
+			actions.get(RefreshObjectTreeAction.class).setEnabled(true);
+		}
 	}
 
 	/**
@@ -169,7 +209,25 @@ public class MainPanel extends SquirrelTabbedPane
 		}
 	}
 
-	private void createUserInterface()
+	/**
+	 * Session properties have changed so update GUI if required.
+	 *
+	 * @param	propertyName	Name of property that has changed.
+	 */
+	private void propertiesHaveChanged(String propertyName)
+	{
+		SessionProperties props = _session.getProperties();
+		if (propertyName == null
+			|| propertyName.equals(SessionProperties.IPropertyNames.MAIN_TAB_PLACEMENT))
+		{
+			setTabPlacement(props.getMainTabPlacement());
+		}
+	}
+
+	/**
+	 * Create the GUI.
+	 */
+	private void createGUI()
 	{
 		//TODO: uncomment this when we no longer support JDK1.3
 		//setFocusable(false);
@@ -181,14 +239,19 @@ public class MainPanel extends SquirrelTabbedPane
 		{
 			public void stateChanged(ChangeEvent evt)
 			{
-				updateState();
-				int idx = getSelectedIndex();
-				if (idx != -1)
-				{
-					((IMainPanelTab) _tabs.get(getSelectedIndex())).select();
-				}
+				performStateChanged();
 			}
 		});
+	}
+
+	private void performStateChanged()
+	{
+		updateState();
+		int idx = getSelectedIndex();
+		if (idx != -1)
+		{
+			((IMainPanelTab)_tabs.get(getSelectedIndex())).select();
+		}
 	}
 
 	private static SquirrelPreferences getPreferences(ISession session)

@@ -136,22 +136,22 @@ class DriverPropertiesTableModel extends AbstractTableModel
 		return col == IColumnIndexes.IDX_SPECIFY || col == IColumnIndexes.IDX_VALUE;
 	}
 
-	public void setValueAt(Object aValue, int rowIndex, int columnIndex)
+	public void setValueAt(Object value, int row, int col)
 	{
-		if (columnIndex == IColumnIndexes.IDX_VALUE)
+		if (col == IColumnIndexes.IDX_VALUE)
 		{
-			final SQLDriverProperty sdp = _props.getDriverProperty(rowIndex);
-			sdp.setValue(aValue.toString());
+			final SQLDriverProperty sdp = _props.getDriverProperty(row);
+			sdp.setValue(value.toString());
 		}
-		else if (columnIndex == IColumnIndexes.IDX_SPECIFY)
+		else if (col == IColumnIndexes.IDX_SPECIFY)
 		{
-			final SQLDriverProperty sdp = _props.getDriverProperty(rowIndex);
-			Boolean bool = Boolean.valueOf(aValue.toString());
+			final SQLDriverProperty sdp = _props.getDriverProperty(row);
+			Boolean bool = Boolean.valueOf(value.toString());
 			sdp.setIsSpecified(bool.booleanValue());
 		}
 		else
 		{
-			throw new IllegalStateException("Can only edit value/specify column. Trying to edit " + columnIndex);
+			throw new IllegalStateException("Can only edit value/specify column. Trying to edit " + col);
 		}
 	}
 

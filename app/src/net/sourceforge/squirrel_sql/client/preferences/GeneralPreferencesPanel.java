@@ -39,7 +39,7 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 {
 	/** Logger for this class. */
-	private static ILogger s_log =
+	private final static ILogger s_log =
 		LoggerController.createLogger(GeneralPreferencesPanel.class);
 
 	/** Panel to be displayed in preferences dialog. */
@@ -60,7 +60,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 	{
 		if (app == null)
 		{
-			throw new IllegalArgumentException("Null IApplication passed");
+			throw new IllegalArgumentException("IApplication == null");
 		}
 
 		_app = app;
@@ -102,6 +102,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 		{
 			String DEBUG_JDBC = "JDBC Debug (can slow application)";
 			String LOGIN_TIMEOUT = "Login Timeout (Seconds):";
+			String MAXIMIZE_SESSION_SHEET = "Maximize Session Sheet on Open:";
 			String SHOW_ALIASES_WINDOW_TOOLBAR = "Show Aliases Toolbar";
 			String SHOW_CONTENTS = "Show Window Contents While Dragging";
 			String SHOW_DRIVERS_WINDOW_TOOLBAR = "Show Drivers Toolbar";
@@ -110,6 +111,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			String SHOW_TOOLTIPS = "Show Tooltips";
 			String TAB_HINT = "General";
 			String TAB_TITLE = "General";
+			String USE_SCROLLABLE_TABS = "Use Scrollable Tabbed Panes (JDK1.4 and above)";
 		}
 
 		private JCheckBox _showAliasesToolBar = new JCheckBox(i18n.SHOW_ALIASES_WINDOW_TOOLBAR);
@@ -118,8 +120,8 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 		private JCheckBox _showMainToolBar = new JCheckBox(i18n.SHOW_MAIN_TOOL_BAR);
 		private JCheckBox _showContents = new JCheckBox(i18n.SHOW_CONTENTS);
 		private JCheckBox _showToolTips = new JCheckBox(i18n.SHOW_TOOLTIPS);
-		private JCheckBox _useScrollableTabbedPanes =
-			new JCheckBox("Use Scrollable Tabbed Panes (JDK1.4 and above)");
+		private JCheckBox _useScrollableTabbedPanes = new JCheckBox(i18n.USE_SCROLLABLE_TABS);
+		private JCheckBox _maximimizeSessionSheet = new JCheckBox(i18n.MAXIMIZE_SESSION_SHEET);
 		private JLabel _executionLogFileNameLbl = new OutputLabel(" ");
 		// Must have at least 1 blank otherwise width gets set to zero.
 		private JLabel _logConfigFileNameLbl = new OutputLabel(" ");
@@ -142,6 +144,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			_showMainToolBar.setSelected(prefs.getShowMainToolBar());
 			_showAliasesToolBar.setSelected(prefs.getShowAliasesToolBar());
 			_showDriversToolBar.setSelected(prefs.getShowDriversToolBar());
+			_maximimizeSessionSheet.setSelected(prefs.getMaximizeSessionSheetOnOpen());
 
 			_executionLogFileNameLbl.setText(appFiles.getExecutionLogFile().getPath());
 
@@ -158,6 +161,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			prefs.setShowMainToolBar(_showMainToolBar.isSelected());
 			prefs.setShowAliasesToolBar(_showAliasesToolBar.isSelected());
 			prefs.setShowDriversToolBar(_showDriversToolBar.isSelected());
+			prefs.setMaximizeSessionSheetOnOpen(_maximimizeSessionSheet.isSelected());
 		}
 
 		private void createUserInterface()
@@ -175,10 +179,9 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 
 		private JPanel createAppearancePanel()
 		{
-			JPanel pnl = new JPanel();
+			JPanel pnl = new JPanel(new GridBagLayout());
 			pnl.setBorder(BorderFactory.createTitledBorder("Appearance"));
 
-			pnl.setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(2, 4, 2, 4);
@@ -198,6 +201,8 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			pnl.add(_showDriversToolBar, gbc);
 			++gbc.gridy;
 			pnl.add(_showAliasesToolBar, gbc);
+			++gbc.gridy;
+			pnl.add(_maximimizeSessionSheet, gbc);
 
 			return pnl;
 		}
@@ -232,3 +237,4 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 		}
 	}
 }
+

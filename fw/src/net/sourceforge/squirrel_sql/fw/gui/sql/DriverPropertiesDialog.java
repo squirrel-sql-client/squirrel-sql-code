@@ -88,39 +88,6 @@ public class DriverPropertiesDialog extends JDialog
 		createUserInterface(props);
 	}
 
-//	public void dispose()
-//	{
-//		if (_propsPnlLis != null)
-//		{
-//			removeDriverPropertiesPanelListener(_propsPnlLis);
-//			_propsPnlLis = null;
-//		}
-//		super.dispose();
-//	}
-
-	/**
-	 * Adds a listener for actions in the driver properties panel.
-	 *
-	 * @param	lis	<TT>IDriverPropertiesPanelListener</TT> that
-	 * 				will be notified when actions are performed
-	 * 				in the driver properties panel.
-	 */
-//	public void addDriverPropertiesPanelListener(IDriverPropertiesPanelListener lis)
-//	{
-//		_propsPnl.addListener(lis);
-//	}
-
-	/**
-	 * Removes a listener from the driver properties panel.
-	 *
-	 * @param	lis	<TT>IDriverPropertiesPanelListener</TT> to
-	 * 				be removed.
-	 */
-//	public void removeDriverPropertiesPanelListener(IDriverPropertiesPanelListener lis)
-//	{
-//		_propsPnl.removeListener(lis);
-//	}
-
 	/**
 	 * Retrieve the database driver properties. This is only valid if the
 	 * OK button was pressed.

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -47,9 +47,10 @@ public class ContentsTab extends BaseTableTab
 	 * Name of the table that this tab displayed last time it was loaded.
 	 * This is needed to prevent an on-demand edit operation from turning
 	 * all data into editable tables.
-	 * The initial value of "" allows us to dispense with a check for null on the first pass.
+	 * The initial value of "" allows us to dispense with a check for null
+	 * on the first pass.
 	 */
-	String previousTableName = "";
+	String _previousTableName = "";
 	
 	/**
 	 * We need to save the name of the SessionProperties display class at the time
@@ -57,13 +58,13 @@ public class ContentsTab extends BaseTableTab
 	 * while we are in forced edit mode, we will change back to match the new
 	 * Session Properties.
 	 */
-	String sqlOutputClassNameAtTimeOfForcedEdit = "";
+	String _outputClassNameAtTimeOfForcedEdit = "";
 
 	/**
 	 * Remember whether or not the user has forced us into editing mode
 	 * when the SessionProperties says to use read-only mode.
 	 */
-	boolean editModeForced = false;
+	boolean _editModeForced = false;
 	
 	/**
 	 * Remember which column contains the rowID; if no rowID, this is -1
@@ -82,7 +83,7 @@ public class ContentsTab extends BaseTableTab
 	}
 
 	/** Logger for this class. */
-	private static ILogger s_log =
+	private static final ILogger s_log =
 		LoggerController.createLogger(ContentsTab.class);
 
 	/**
@@ -140,19 +141,19 @@ public class ContentsTab extends BaseTableTab
 				 * to another table, that new table should not be editable.
 				 */
 				final String currentTableName = ti.getQualifiedName();
-				if ( ! currentTableName.equals(previousTableName))
+				if (!currentTableName.equals(_previousTableName))
 				{
-					previousTableName = currentTableName;	// needed to prevent an infinite loop
-					editModeForced = false;	// edit mode applied only to previous table
+					_previousTableName = currentTableName;	// needed to prevent an infinite loop
+					_editModeForced = false;	// edit mode applied only to previous table
 					
 					/**
 					 * Tell the GUI to rebuild itself.
 					 * Unfortunately, this has the side effect of calling this same function
 					 * another time.  The second call does not seem to be a problem,
-					 * but we need to have reset the previousTableName before makeing
+					 * but we need to have reset the _previousTableName before makeing
 					 * this call or we will be in an infinite loop.
 					 */
-					props.forceSQLOutputClassNameChange();
+					props.forceTableContentsOutputClassNameChange();
 				}
 
 				/**
@@ -170,24 +171,34 @@ public class ContentsTab extends BaseTableTab
 
 				//?? Tested and it works on oracle - Col ??
 
-				ResultSet rowIdentifierRS = conn.getSQLMetaData().getBestRowIdentifier(ti);
 				try
 				{
-					while (rowIdentifierRS.next())
+					ResultSet rowIdentifierRS = conn.getSQLMetaData().getBestRowIdentifier(ti);
+					try
 					{
-						// according to spec, col 8 is indicator of pseudo/not-pseudo
-						// and col 2 is name of rowid column
-						short pseudo = rowIdentifierRS.getShort(8);
-						if (pseudo == DatabaseMetaData.bestRowPseudo)
+						while (rowIdentifierRS.next())
 						{
-							pseudoColumn = " ," + rowIdentifierRS.getString(2);
-							break;
+							// according to spec, col 8 is indicator of pseudo/not-pseudo
+							// and col 2 is name of rowid column
+							short pseudo = rowIdentifierRS.getShort(8);
+							if (pseudo == DatabaseMetaData.bestRowPseudo)
+							{
+								pseudoColumn = " ," + rowIdentifierRS.getString(2);
+								break;
+							}
 						}
 					}
+					finally
+					{
+						rowIdentifierRS.close();
+					}
 				}
-				finally
+
+				// Some DBMS's (EG Think SQL) throw an exception on a call to
+				// getBestRowIdentifier.
+				catch (Throwable th)
 				{
-					rowIdentifierRS.close();
+					s_log.debug("getBestRowIdentifier not supported", th);
 				}
 
 				// TODO: - Col - Add method to Databasemetadata that returns array
@@ -210,18 +221,44 @@ public class ContentsTab extends BaseTableTab
 					}
 				}
 
-				// Note. Some DBMSs such as Oracle do not allow:
-				// "select *, rowid from table"
-				// You cannot have any column name in the columns clause if you
-				// have * in there. Aliasing the table name seems to be the best
-				// way to get around the problem.
-				StringBuffer buf = new StringBuffer();
-				buf.append("select tbl.*")
-					.append(pseudoColumn)
-					.append(" from ")
-					.append(ti.getQualifiedName())
-					.append(" tbl");
-				final ResultSet rs = stmt.executeQuery(buf.toString());
+				ResultSet rs = null;
+				try
+				{
+					// Note. Some DBMSs such as Oracle do not allow:
+					// "select *, rowid from table"
+					// You cannot have any column name in the columns clause
+					// if you have * in there. Aliasing the table name seems to
+					// be the best way to get around the problem.
+					final StringBuffer buf = new StringBuffer();
+					buf.append("select tbl.*")
+						.append(pseudoColumn)
+						.append(" from ")
+						.append(ti.getQualifiedName())
+						.append(" tbl");
+					rs = stmt.executeQuery(buf.toString());
+				}
+				catch (SQLException ex)
+				{
+					if (pseudoColumn.length() == 0)
+					{
+						throw ex;
+					}
+
+					// Error occured using pseudo column. One reason for this
+					// could be the actual table we are querying is a view with
+					// GROUP BY etc. In this case assume no pseudo column and
+					// retry.
+					// TODO: Should we change the mode from editable to
+					// non-editable?
+					s_log.debug("Error querying using pseudo column", ex);
+					final StringBuffer buf = new StringBuffer();
+					buf.append("select *")
+						.append(" from ")
+						.append(ti.getQualifiedName())
+						.append(" tbl");
+					rs = stmt.executeQuery(buf.toString());
+				}
+				
 				final ResultSetDataSet rsds = new ResultSetDataSet();
 				rsds.setResultSet(rs, props.getLargeResultSetObjectInfo());
 
@@ -252,9 +289,10 @@ public class ContentsTab extends BaseTableTab
 	 */
 	public void forceEditMode()
 	{
-		editModeForced = true;
-		sqlOutputClassNameAtTimeOfForcedEdit = 
-			getSession().getProperties().getSQLResultsOutputClassName();
+		_editModeForced = true;
+		final SessionProperties props = getSession().getProperties();
+		_outputClassNameAtTimeOfForcedEdit = props.getTableContentsOutputClassName();
+
 		/**
 		 * Tell the GUI to rebuild itself.
 		 * This is not a clean way to do that, since we are telling the
@@ -262,7 +300,7 @@ public class ContentsTab extends BaseTableTab
 		 * in reality none of them have done so, but this does cause the
 		 * GUI to be rebuilt.
 		 */
-		getSession().getProperties().forceSQLOutputClassNameChange();
+		getSession().getProperties().forceTableContentsOutputClassNameChange();
 	}
 
 	/**
@@ -271,27 +309,29 @@ public class ContentsTab extends BaseTableTab
 	 */
 	protected String getDestinationClassName()
 	{
-		if (editModeForced)
+		final SessionProperties props = getSession().getProperties();
+		final String tcClassName = props.getTableContentsOutputClassName();
+		if (_editModeForced)
 		{
-			if (getSession().getProperties().getSQLResultsOutputClassName().equals(
-				sqlOutputClassNameAtTimeOfForcedEdit))
+			if (tcClassName.equals(_outputClassNameAtTimeOfForcedEdit))
 			{
-				return getSession().getProperties().getEditableTableOutputClassName();
+				return props.getEditableTableOutputClassName();
 			}
 			// forced edit mode ended because user changed the Session Properties
-			editModeForced = false;
+			_editModeForced = false;
 		}
 
 		// if the user selected Editable Table in the Session Properties,
 		// then the display will be an editable table; otherwise the display is read-only
-		return getSession().getProperties().getSQLResultsOutputClassName();
+		return tcClassName;
 	}
 	
 	/**
-	 * Link from fw to check on whether there are any unusual coniditions
+	 * Link from fw to check on whether there are any unusual conditions
 	 * in the current data that the user needs to be aware of before updating.
 	 */
-	public String getWarningOnCurrentData(Object[] values, ColumnDisplayDefinition[] colDefs, int col, Object oldValue)
+	public String getWarningOnCurrentData(Object[] values, ColumnDisplayDefinition[] colDefs,
+											int col, Object oldValue)
 	{
 		String whereClause = getWhereClause(values, colDefs, col, oldValue);
 		
@@ -552,7 +592,6 @@ public class ContentsTab extends BaseTableTab
 					clause = columnLabel + "=" + value.toString();
 					break;
 
-
 				// TODO: Hard coded -. JDBC/ODBC bridge JDK1.4
 				// brings back -9 for nvarchar columns in
 				// MS SQL Server tables.
@@ -616,8 +655,6 @@ public class ContentsTab extends BaseTableTab
 		whereClause.insert(0, " WHERE ");
 		return whereClause.toString();
 	}
-
-
 
 	/**
 	 * helper function to create a SET clause to update the cell in the DB.

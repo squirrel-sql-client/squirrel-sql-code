@@ -61,8 +61,10 @@ public class MainFrame extends BaseMDIParentFrame
 	{
 	}
 
+	/** Logger for this class. */
 	private final ILogger s_log = LoggerController.createLogger(MainFrame.class);
 
+	/** Application API. */
 	private final IApplication _app;
 
 	private AliasesToolWindow _aliasesToolWindow;
@@ -70,7 +72,7 @@ public class MainFrame extends BaseMDIParentFrame
 
 	/** Toolbar at top of window. */
 	private MainFrameToolBar _toolBar;
-	
+
 	/** Status bar at bottom of window. */
 	private MainFrameStatusBar _statusBar;
 
@@ -136,15 +138,12 @@ public class MainFrame extends BaseMDIParentFrame
 		return _app;
 	}
 
-	public void addInternalFrame(
-		JInternalFrame child,
-		boolean addToWindowMenu,
-		Action action)
+	public void addInternalFrame(JInternalFrame child, boolean addToWindowMenu,
+									Action action)
 	{
 		super.addInternalFrame(child, addToWindowMenu, action);
 		s_log.debug("Adding " + child.getClass().getName() + " to Main Frame");
-		JInternalFrame[] frames =
-			GUIUtils.getOpenNonToolWindows(getDesktopPane().getAllFrames());
+		JInternalFrame[] frames = GUIUtils.getOpenNonToolWindows(getDesktopPane().getAllFrames());
 		_app.getActionCollection().internalFrameOpenedOrClosed(frames.length);
 
 		// Size non-tool child window.
@@ -156,6 +155,18 @@ public class MainFrame extends BaseMDIParentFrame
 			// doesn't appear to do anything in JDK1.2.2.
 			cs.setSize((int) (cs.width * 0.8d), (int) (cs.height * 0.8d));
 			child.setSize(cs);
+
+			if (child.isMaximizable() &&
+					_app.getSquirrelPreferences().getMaximizeSessionSheetOnOpen())
+			{
+				try
+				{
+					child.setMaximum(true);
+				}
+				catch (PropertyVetoException ignore)
+				{
+				}
+			}
 		}
 	}
 

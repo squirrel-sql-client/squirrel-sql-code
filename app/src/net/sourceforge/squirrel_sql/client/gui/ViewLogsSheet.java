@@ -104,7 +104,7 @@ public class ViewLogsSheet extends BaseSheet
 	 */
 	private ViewLogsSheet(IApplication app)
 	{
-		super(i18n.TITLE, true);
+		super(i18n.TITLE, true, true, true, true);
 		if (app == null)
 		{
 			throw new IllegalArgumentException("IApplication == null");

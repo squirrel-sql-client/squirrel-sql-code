@@ -64,6 +64,7 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 
 		_session = session;
 		createUserInterface();
+		propertiesHaveChanged(null);
 	}
 
 	/**
@@ -142,11 +143,19 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 
 	private void propertiesHaveChanged(String propName)
 	{
+		final SessionProperties props = _session.getProperties();
+
 		if (propName == null
 			|| propName.equals(SessionProperties.IPropertyNames.META_DATA_OUTPUT_CLASS_NAME)
+			|| propName.equals(SessionProperties.IPropertyNames.TABLE_CONTENTS_OUTPUT_CLASS_NAME)
 			|| propName.equals(SessionProperties.IPropertyNames.SQL_RESULTS_OUTPUT_CLASS_NAME))
 		{
 			rebuild();
+		}
+		if (propName == null
+			|| propName.equals(SessionProperties.IPropertyNames.OBJECT_TAB_PLACEMENT))
+		{
+			setTabPlacement(props.getObjectTabPlacement());
 		}
 	}
 

@@ -112,7 +112,6 @@ class Session implements IClientSession
 	 */
 	public Session(IApplication app, ISQLDriver driver, ISQLAlias alias,
 					SQLConnection conn, String user, String password)
-//					int openedSeq)
 	{
 		super();
 		if (app == null)
@@ -138,7 +137,6 @@ class Session implements IClientSession
 		_conn = conn;
 		_user = user;
 		_password = password;
-//		_openedSequence = openedSeq;
 
 		_props = (SessionProperties)_app.getSquirrelPreferences().getSessionProperties().clone();
 

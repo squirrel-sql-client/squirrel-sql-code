@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -39,9 +39,11 @@ public class ViewLogsCommand implements ICommand
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> passed.
 	 */
-	public ViewLogsCommand(IApplication app) {
+	public ViewLogsCommand(IApplication app)
+	{
 		super();
-		if (app == null) {
+		if (app == null)
+		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
 		_app = app;
@@ -50,9 +52,9 @@ public class ViewLogsCommand implements ICommand
 	/**
 	 * Display the Dialog
 	 */
-	public void execute() {
+	public void execute()
+	{
 		ViewLogsSheet.showSheet(_app);
 	}
 }
-
 

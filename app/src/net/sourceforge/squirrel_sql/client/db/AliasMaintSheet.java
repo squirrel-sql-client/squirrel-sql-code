@@ -75,7 +75,7 @@ import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 /**
  * This dialog allows the maintenance of an database alias.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class AliasMaintSheet extends BaseSheet
 {

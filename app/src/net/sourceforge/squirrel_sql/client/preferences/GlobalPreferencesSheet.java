@@ -41,11 +41,10 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
 import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
-
 /**
  * This sheet allows the user to maintain global preferences.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class GlobalPreferencesSheet extends BaseSheet
 {
@@ -59,7 +58,7 @@ public class GlobalPreferencesSheet extends BaseSheet
 	}
 
 	/** Logger for this class. */
-	private static ILogger s_log =
+	private final static ILogger s_log =
 		LoggerController.createLogger(GlobalPreferencesSheet.class);
 
 	/** Singleton instance of this class. */

@@ -688,7 +688,9 @@ public class SQLPanel extends JPanel
 		_sqlComboListener.stopListening();
 		try
 		{
-			_sqlCombo.addItem(sql);
+//			_sqlCombo.addItem(sql);
+			_sqlCombo.insertItemAt(sql, _sqlCombo.getItemCount());
+			_sqlCombo.setSelectedIndex(_sqlCombo.getItemCount() - 1);
 		}
 		finally
 		{
@@ -840,6 +842,12 @@ public class SQLPanel extends JPanel
 			{
 				_sqlCombo.setMaxMemoryCount(MemoryComboBox.NO_MAX);
 			}
+		}
+
+		if (propName == null
+			|| propName.equals(SessionProperties.IPropertyNames.SQL_EXECUTION_TAB_PLACEMENT))
+		{
+			_tabbedResultsPanel.setTabPlacement(props.getSQLExecutionTabPlacement());
 		}
 	}
 

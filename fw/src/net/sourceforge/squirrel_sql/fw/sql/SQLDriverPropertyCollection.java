@@ -78,7 +78,11 @@ public class SQLDriverPropertyCollection
 			SQLDriverProperty sdp = getDriverProperty(i);
 			if (sdp.isSpecified())
 			{
-				props.put(sdp.getName(), sdp.getValue());
+				final String value = sdp.getValue();
+				if (value != null)
+				{
+					props.put(sdp.getName(), value);
+				}
 			}
 		} 
 	}

@@ -26,7 +26,6 @@ import javax.swing.Box;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -42,7 +41,6 @@ public class DriverPropertiesPanel extends JPanel
 {
 	private interface i18n
 	{
-//		String CLOSE = "Close";
 		String INSTRUCTIONS = "For every driver property that you want to " +
 								"specify check the \"Specify\" checkbox " +
 								"and enter its value in the \"Value\" column. " +
@@ -50,17 +48,10 @@ public class DriverPropertiesPanel extends JPanel
 								"\"password\" properties as these will be setup " +
 								"from the \"user\" and \"password\" entered " +
 								"in the connection dialog.";
-//		String OK = "OK";
 	}
-
-	/** Listeners for this object. */
-//	private EventListenerList _listenerList = new EventListenerList();
 
 	/** JTable containing the properties. */
 	private DriverPropertiesTable _tbl;
-
-	/** The OK button. */
-//	private JButton _okBtn;
 
 	/**
 	 * Display the description for the currently selected property in this
@@ -80,29 +71,6 @@ public class DriverPropertiesPanel extends JPanel
 	}
 
 	/**
-	 * Adds a listener for actions in this panel.
-	 *
-	 * @param	lis	<TT>IDriverPropertiesPanelListener</TT> that
-	 * 				will be notified when actions are performed
-	 * 				in this panel.
-	 */
-//	public synchronized void addListener(IDriverPropertiesPanelListener lis)
-//	{
-//		_listenerList.add(IDriverPropertiesPanelListener.class, lis);
-//	}
-
-	/**
-	 * Removes a listener from this panel.
-	 *
-	 * @param	lis	<TT>IDriverPropertiesPanelListener</TT> to
-	 * 				be removed.
-	 */
-//	public synchronized void removeListener(IDriverPropertiesPanelListener lis)
-//	{
-//		_listenerList.remove(IDriverPropertiesPanelListener.class, lis);
-//	}
-
-	/**
 	 * Retrieve the database properties.
 	 *
 	 * @return		the database properties.
@@ -111,35 +79,6 @@ public class DriverPropertiesPanel extends JPanel
 	{
 		return _tbl.getTypedModel().getSQLDriverProperties();
 	}
-
-//	private void fireButtonPressed(JButton btn)
-//	{
-//		// Guaranteed to be non-null.
-//		Object[] listeners = _listenerList.getListenerList();
-//		// Process the listeners last to first, notifying
-//		// those that are interested in this event.
-//		EventObject evt = null;
-//		for (int i = listeners.length - 2; i >= 0; i-=2 )
-//		{
-//			if (listeners[i] == IDriverPropertiesPanelListener.class)
-//			{
-//				// Lazily create the event:
-//				if (evt == null)
-//				{
-//					evt = new EventObject(this);
-//				}
-//				IDriverPropertiesPanelListener lis = (IDriverPropertiesPanelListener)listeners[i + 1];
-//				if (btn == _okBtn)
-//				{
-//					lis.okPressed(evt);
-//				}
-//				else
-//				{
-//					lis.closePressed(evt);
-//				}
-//			}
-//		}
-//	}
 
 	private void createUserInterface(SQLDriverPropertyCollection props)
 	{
@@ -163,9 +102,6 @@ public class DriverPropertiesPanel extends JPanel
 		gbc.weighty = 0.0;
 		++gbc.gridy;
 		add(createInfoPanel(), gbc);
-
-//		++gbc.gridy;
-//		add(createButtonsPanel(), gbc);
 
 		_tbl.getSelectionModel().addListSelectionListener(new ListSelectionListener()
 		{
@@ -204,35 +140,5 @@ public class DriverPropertiesPanel extends JPanel
 		
 		return pnl;
 	}
-
-//	private JPanel createButtonsPanel()
-//	{
-//		final JPanel pnl = new JPanel();
-//
-//		_okBtn = new JButton(i18n.OK);
-//		_okBtn.addActionListener(new ActionListener()
-//		{
-//			public void actionPerformed(ActionEvent evt)
-//			{
-//				fireButtonPressed(_okBtn);
-//			}
-//		});
-//
-//		final JButton closeBtn = new JButton(i18n.CLOSE);
-//		closeBtn.addActionListener(new ActionListener()
-//		{
-//			public void actionPerformed(ActionEvent evt)
-//			{
-//				fireButtonPressed(closeBtn);
-//			}
-//		});
-//
-//		pnl.add(_okBtn);
-//		pnl.add(closeBtn);
-//
-//		GUIUtils.setJButtonSizesTheSame(new JButton[] {_okBtn, closeBtn});
-//
-//		return pnl;
-//	}
 }
 

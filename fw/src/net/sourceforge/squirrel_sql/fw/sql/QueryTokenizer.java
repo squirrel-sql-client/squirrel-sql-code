@@ -21,7 +21,10 @@ import java.util.StringTokenizer;
 
 public class QueryTokenizer
 {
-	private final char _querySepChar;
+//	private final char _querySepChar;
+
+	/** String used to separate SQL statemets in the query string. */
+	private final String _querySep;
 
 	private String _sQuerys;
 
@@ -29,20 +32,28 @@ public class QueryTokenizer
 
 	/**
 	 * These characters at the beginning of an SQL statement indicate that it
-     * is a comment.
+	 * is a comment.
 	 */
 	private String _solComment;
 
 	/**
-	 * QueryTokenizer constructor comment.
+	 * Construct a query tokenizer.
+	 *
+	 * @param	sql			The SQL string to tokenize.
+	 * @param	querySep	The string used to separate individual SQL
+	 * 						statements within <TT>sql</TT>.
+	 * @param	solComment	The string that indicates that the current line
+	 * 						is a comment.
 	 */
-	public QueryTokenizer(String sql, char querySepChar, String solComment)
+//	public QueryTokenizer(String sql, char querySepChar, String solComment)
+	public QueryTokenizer(String sql, String querySep, String solComment)
 	{
 		super();
-		_querySepChar = querySepChar;
+//		_querySepChar = querySepChar;
+		_querySep = querySep;
 
 		if (solComment != null && solComment.trim().length() > 0)
-		{ 
+		{
 			_solComment = solComment;
 		}
 		else
@@ -50,7 +61,7 @@ public class QueryTokenizer
 			_solComment = null;
 		}
 
-		if(sql != null)
+		if (sql != null)
 		{
 			_sQuerys = prepareSQL(sql);
 			_sNextQuery = parse();
@@ -75,27 +86,53 @@ public class QueryTokenizer
 
 	public String parse()
 	{
-		if(_sQuerys.length() == 0)
+		if (_sQuerys.length() == 0)
 		{
 			return null;
 		}
 		int iQuoteCount = 1;
 		int iIndex1 = -1;
-		while(iQuoteCount%2 != 0)
+		while (iQuoteCount % 2 != 0)
 		{
 			iQuoteCount = 0;
-			iIndex1 = _sQuerys.indexOf(_querySepChar,iIndex1+1);
+//			iIndex1 = _sQuerys.indexOf(_querySepChar,iIndex1+1);
 
-			if(iIndex1 != -1)
+			if (1 == _querySep.length())
 			{
-				int iIndex2 = _sQuerys.lastIndexOf('\'',iIndex1);
-				while(iIndex2 != -1)
+				iIndex1 = _sQuerys.indexOf(_querySep, iIndex1 + 1);
+			}
+			else
+			{
+				// such a querySep is expected to be surounded by white spaces
+				iIndex1 = _sQuerys.indexOf(_querySep, iIndex1 + _querySep.length());
+
+				while (-1 != iIndex1)
 				{
-					if(_sQuerys.charAt(iIndex2-1) != '\\')
+					if ((0 != iIndex1
+						&& !Character.isWhitespace(_sQuerys.charAt(iIndex1 - 1)))
+						|| (_sQuerys.length() - _querySep.length() != iIndex1
+							&& !Character.isWhitespace(_sQuerys.charAt(iIndex1 + _querySep.length()))))
+					{
+						// this querySep is not surounded by whitespace, so look for next querySep
+						iIndex1 = _sQuerys.indexOf(_querySep, iIndex1 + _querySep.length());
+					}
+					else
+					{
+						break;
+					}
+				}
+			}
+
+			if (iIndex1 != -1)
+			{
+				int iIndex2 = _sQuerys.lastIndexOf('\'', iIndex1);
+				while (iIndex2 != -1)
+				{
+					if (_sQuerys.charAt(iIndex2 - 1) != '\\')
 					{
 						iQuoteCount++;
 					}
-					iIndex2 = _sQuerys.lastIndexOf('\'',iIndex2-1);
+					iIndex2 = _sQuerys.lastIndexOf('\'', iIndex2 - 1);
 				}
 			}
 			else
@@ -109,8 +146,9 @@ public class QueryTokenizer
 				return replaceLineFeeds(sNextQuery);
 			}
 		}
-		String sNextQuery = _sQuerys.substring(0,iIndex1);
-		_sQuerys = _sQuerys.substring(iIndex1+1).trim();
+		String sNextQuery = _sQuerys.substring(0, iIndex1);
+//		_sQuerys = _sQuerys.substring(iIndex1+1).trim();
+		_sQuerys = _sQuerys.substring(iIndex1 + _querySep.length()).trim();
 		if (_solComment != null && sNextQuery.startsWith(_solComment))
 		{
 			return parse();
@@ -141,33 +179,29 @@ public class QueryTokenizer
 		int iPrev = 0;
 		int linefeed = sql.indexOf('\n');
 		int iQuote = -1;
-		while(linefeed != -1)
+		while (linefeed != -1)
 		{
-			iQuote = sql.indexOf('\'',iQuote+1);
-			if(iQuote != -1 && iQuote < linefeed)
+			iQuote = sql.indexOf('\'', iQuote + 1);
+			if (iQuote != -1 && iQuote < linefeed)
 			{
-				int iNextQute = sql.indexOf('\'',iQuote+1);
-				if(iNextQute > linefeed)
+				int iNextQute = sql.indexOf('\'', iQuote + 1);
+				if (iNextQute > linefeed)
 				{
-					sbReturn.append(sql.substring(iPrev,linefeed));
+					sbReturn.append(sql.substring(iPrev, linefeed));
 					sbReturn.append('\n');
 					iPrev = linefeed + 1;
-					linefeed = sql.indexOf('\n',iPrev);
+					linefeed = sql.indexOf('\n', iPrev);
 				}
 			}
 			else
 			{
-				linefeed = sql.indexOf('\n', linefeed+1);
+				linefeed = sql.indexOf('\n', linefeed + 1);
 			}
 		}
 		sbReturn.append(sql.substring(iPrev));
 		return sbReturn.toString();
 	}
 
-	/**
-	 * Creation date: (6/13/2001 3:32:13 PM)
-	 * @param args java.lang.String[]
-	 */
 /*
 	public static void main(String[] args)
 	{
