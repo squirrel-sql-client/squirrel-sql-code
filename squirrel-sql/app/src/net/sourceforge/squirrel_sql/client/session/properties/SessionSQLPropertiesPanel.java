@@ -273,11 +273,12 @@ public class SessionSQLPropertiesPanel
 			_sqlNbrRowsToShowField.setColumns(5);
 			_stmtSepChar.setColumns(1);
 
+			// First column.
 			gbc.gridx = 0;
 			gbc.gridy = 0;
 			pnl.add(_autoCommitChk, gbc);
 			++gbc.gridy;
-			gbc.gridwidth = 2;
+			gbc.gridwidth = 3;
 			pnl.add(_showRowCount, gbc);
 			gbc.gridwidth = 1;
 			++gbc.gridy;
@@ -301,6 +302,7 @@ public class SessionSQLPropertiesPanel
 			gbc.gridy = 0;
 			++gbc.gridy;
 			++gbc.gridy;
+			gbc.gridwidth = 3;
 			pnl.add(_contentsNbrRowsToShowField, gbc);
 			++gbc.gridy;
 			pnl.add(_sqlNbrRowsToShowField, gbc);
