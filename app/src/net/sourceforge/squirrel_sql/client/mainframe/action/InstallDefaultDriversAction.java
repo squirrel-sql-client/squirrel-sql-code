@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2002-2003 Colin Bell
+ * Copyright (C) 2002-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -30,18 +30,18 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.mainframe.DriversToolWindow;
+import net.sourceforge.squirrel_sql.client.gui.db.DriversListInternalFrame;
 /**
  * This <CODE>Action</CODE> will install the default drivers into the drivers
  * list.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class InstallDefaultDriversAction extends SquirrelAction
 {
 	/** Logger for this class. */
 	private static ILogger s_log =
-		LoggerController.createLogger(ConnectToAliasAction.class);
+		LoggerController.createLogger(InstallDefaultDriversAction.class);
 
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
@@ -50,7 +50,7 @@ public class InstallDefaultDriversAction extends SquirrelAction
 	/**
 	 * Ctor.
 	 *
-	 * @param   app	 Application API.
+	 * @param	app	 Application API.
 	 */
 	public InstallDefaultDriversAction(IApplication app)
 	{
@@ -60,7 +60,7 @@ public class InstallDefaultDriversAction extends SquirrelAction
 	/**
 	 * Perform this action.
 	 *
-	 * @param   evt	 The current event.
+	 * @param	evt	 The current event.
 	 */
 	public void actionPerformed(ActionEvent evt)
 	{
@@ -69,7 +69,7 @@ public class InstallDefaultDriversAction extends SquirrelAction
 		if (Dialogs.showYesNo(app.getMainFrame(),
 								s_stringMgr.getString("InstallDefaultDriversAction.confirm")))
 		{
-			final DriversToolWindow tw = app.getMainFrame().getDriversToolWindow();
+			final DriversListInternalFrame tw = app.getWindowManager().getDriversListInternalFrame();
 			tw.moveToFront();
 			try
 			{

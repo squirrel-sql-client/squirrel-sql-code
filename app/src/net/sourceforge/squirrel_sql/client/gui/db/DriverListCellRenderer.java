@@ -1,6 +1,6 @@
-package net.sourceforge.squirrel_sql.client.mainframe;
+package net.sourceforge.squirrel_sql.client.gui.db;
 /*
- * Copyright (C) 2001 Henner Zeller
+ * Copyright (C) 2001-2004 Henner Zeller
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,13 +29,13 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
  *
  * @author Henner Zeller
  */
-public class DriverListCellRenderer extends DefaultListCellRenderer
+class DriverListCellRenderer extends DefaultListCellRenderer
 {
 	/** Icon for drivers that could be loaded. */
-	private Icon OK_ICON;
+	private final Icon OK_ICON;
 
 	/** Icon for drivers that could not be loaded. */
-	private Icon FAIL_ICON;
+	private final Icon FAIL_ICON;
 
 	public DriverListCellRenderer(Icon ok, Icon fail)
 	{

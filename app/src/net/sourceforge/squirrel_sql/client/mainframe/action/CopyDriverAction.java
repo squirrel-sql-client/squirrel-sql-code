@@ -26,8 +26,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.mainframe.DriversList;
-import net.sourceforge.squirrel_sql.client.mainframe.DriversToolWindow;
+import net.sourceforge.squirrel_sql.client.gui.db.IDriversList;
+import net.sourceforge.squirrel_sql.client.gui.db.DriversListInternalFrame;
 /**
  * This <CODE>Action</CODE> allows the user to copy a <TT>ISQLDriver</TT>
  * and maintain the newly copied one.
@@ -43,7 +43,7 @@ public class CopyDriverAction extends SquirrelAction
 	/**
 	 * List of all the users drivers.
 	 */
-	private DriversList _drivers;
+	private IDriversList _drivers;
 
 	/**
 	 * Ctor specifying the list of drivers.
@@ -54,7 +54,7 @@ public class CopyDriverAction extends SquirrelAction
 	 * @throws	IllegalArgumentException
 	 *			thrown if a <TT>null</TT> <TT>DriversList</TT> passed.
 	 */
-	public CopyDriverAction(IApplication app, DriversList list)
+	public CopyDriverAction(IApplication app, IDriversList list)
 		throws IllegalArgumentException
 	{
 		super(app);
@@ -73,7 +73,7 @@ public class CopyDriverAction extends SquirrelAction
 	public void actionPerformed(ActionEvent evt)
 	{
 		final IApplication app = getApplication();
-		final DriversToolWindow tw = app.getMainFrame().getDriversToolWindow();
+		final DriversListInternalFrame tw = app.getWindowManager().getDriversListInternalFrame();
 		tw.moveToFront();
 		try
 		{

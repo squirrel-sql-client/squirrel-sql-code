@@ -26,8 +26,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.mainframe.AliasesList;
-import net.sourceforge.squirrel_sql.client.mainframe.AliasesToolWindow;
+import net.sourceforge.squirrel_sql.client.gui.db.AliasesListInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.db.IAliasesList;
 /**
  * This <CODE>Action</CODE> allows the user to maintain an <TT>ISQLAlias</TT>.
  *
@@ -37,12 +37,12 @@ public class ModifyAliasAction extends SquirrelAction
 {
 	/** Logger for this class. */
 	private static ILogger s_log =
-		LoggerController.createLogger(ConnectToAliasAction.class);
+		LoggerController.createLogger(ModifyAliasAction.class);
 
 	/**
 	 * List of all the users aliases.
 	 */
-	private AliasesList _aliases;
+	private IAliasesList _aliases;
 
 	/**
 	 * Ctor specifying the list of aliases.
@@ -53,7 +53,7 @@ public class ModifyAliasAction extends SquirrelAction
 	 * @throws	IllegalArgumentException
 	 *			thrown if a <TT>null</TT> <TT>AliasesList</TT> passed.
 	 */
-	public ModifyAliasAction(IApplication app, AliasesList list)
+	public ModifyAliasAction(IApplication app, IAliasesList list)
 		throws IllegalArgumentException
 	{
 		super(app);
@@ -73,7 +73,7 @@ public class ModifyAliasAction extends SquirrelAction
 	public void actionPerformed(ActionEvent evt)
 	{
 		IApplication app = getApplication();
-		AliasesToolWindow tw = app.getMainFrame().getAliasesToolWindow();
+		AliasesListInternalFrame tw = app.getWindowManager().getAliasesListInternalFrame();
 		tw.moveToFront();
 		try
 		{

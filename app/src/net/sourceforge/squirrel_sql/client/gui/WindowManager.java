@@ -38,6 +38,7 @@ import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.WindowState;
 import net.sourceforge.squirrel_sql.fw.gui.action.SelectInternalFrameAction;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -47,10 +48,17 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasWindowFactory;
+import net.sourceforge.squirrel_sql.client.gui.db.AliasesListInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.db.ConnectionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.db.DriverWindowFactory;
+import net.sourceforge.squirrel_sql.client.gui.db.DriversListInternalFrame;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
+import net.sourceforge.squirrel_sql.client.mainframe.MainFrameWindowState;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ViewAliasesAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ViewDriversAction;
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.BaseSessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -104,6 +112,9 @@ public class WindowManager
 	/** Applications main frame. */
 	private final MainFrame _mainFrame;
 
+	private AliasesListInternalFrame _aliasesListWindow;
+	private DriversListInternalFrame _driversListWindow;
+
 	/** Window Factory for alias maintenace windows. */
 	private final AliasWindowFactory _aliasWinFactory;
 
@@ -149,9 +160,17 @@ public class WindowManager
 
 		_app = app;
 		_mainFrame = new MainFrame(app);
-		_app.getSessionManager().addSessionListener(_sessionListener);
+
+		_aliasesListWindow = new AliasesListInternalFrame(_app);
+		_driversListWindow = new DriversListInternalFrame(_app);
+
 		_aliasWinFactory = new AliasWindowFactory(_app);
 		_driverWinFactory = new DriverWindowFactory(_app);
+
+		_app.getSessionManager().addSessionListener(_sessionListener);
+
+		preLoadActions();
+		setupFromPreferences();
 	}
 
 	/**
@@ -162,6 +181,26 @@ public class WindowManager
 	public MainFrame getMainFrame()
 	{
 		return _mainFrame;
+	}
+
+	public AliasesListInternalFrame getAliasesListInternalFrame()
+	{
+		return _aliasesListWindow;
+	}
+
+	public DriversListInternalFrame getDriversListInternalFrame()
+	{
+		return _driversListWindow;
+	}
+
+	public WindowState getAliasesWindowState()
+	{
+		return new WindowState(_aliasesListWindow);
+	}
+
+	public WindowState getDriversWindowState()
+	{
+		return new WindowState(_driversListWindow);
 	}
 
 	/**
@@ -771,6 +810,59 @@ public class WindowManager
 				moveToFront(jifs[0]);
 			}
 		}
+	}
+
+	private void preLoadActions()
+	{
+		final ActionCollection actions = _app.getActionCollection();
+		if (actions == null)
+		{
+			throw new IllegalStateException("ActionCollection hasn't been created.");
+		}
+
+		actions.add(new ViewAliasesAction(_app, getAliasesListInternalFrame()));
+		actions.add(new ViewDriversAction(_app, getDriversListInternalFrame()));
+	}
+
+	private void setupFromPreferences()
+	{
+		final SquirrelPreferences prefs = _app.getSquirrelPreferences();
+		final MainFrameWindowState ws = prefs.getMainFrameWindowState();
+
+		_mainFrame.addInternalFrame(_driversListWindow, false, null);
+		WindowState toolWs = ws.getDriversWindowState();
+		_driversListWindow.setBounds(toolWs.getBounds().createRectangle());
+		_driversListWindow.setVisible(toolWs.isVisible());
+		try
+		{
+			_driversListWindow.setSelected(true);
+		}
+		catch (PropertyVetoException ex)
+		{
+			s_log.error("Error selecting window", ex);
+		}
+
+		_mainFrame.addInternalFrame(_aliasesListWindow, false, null);
+		toolWs = ws.getAliasesWindowState();
+		_aliasesListWindow.setBounds(toolWs.getBounds().createRectangle());
+		if (toolWs.isVisible())
+		{
+			_aliasesListWindow.setVisible(true);
+			try
+			{
+				_aliasesListWindow.setSelected(true);
+			}
+			catch (PropertyVetoException ex)
+			{
+				s_log.error("Error selecting window", ex);
+			}
+		}
+		else
+		{
+			_aliasesListWindow.setVisible(false);
+		}
+		prefs.setMainFrameWindowState(new MainFrameWindowState(this));
+
 	}
 
 	// JASON: Needs to be done elsewhere

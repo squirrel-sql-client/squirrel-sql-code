@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -26,8 +26,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.mainframe.DriversList;
-import net.sourceforge.squirrel_sql.client.mainframe.DriversToolWindow;
+import net.sourceforge.squirrel_sql.client.gui.db.DriversListInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.db.IDriversList;
 /**
  * This <CODE>Action</CODE> allows the user to delete a <TT>ISQLDriver</TT>.
  *
@@ -37,12 +37,12 @@ public class DeleteDriverAction extends SquirrelAction
 {
 	/** Logger for this class. */
 	private static ILogger s_log =
-		LoggerController.createLogger(ConnectToAliasAction.class);
+		LoggerController.createLogger(DeleteDriverAction.class);
 
 	/**
 	 * List of all the users drivers.
 	 */
-	private DriversList _drivers;
+	private IDriversList _drivers;
 
 	/**
 	 * Ctor specifying the list of drivers.
@@ -53,7 +53,7 @@ public class DeleteDriverAction extends SquirrelAction
 	 * @throws	IllegalArgumentException
 	 *			thrown if a <TT>null</TT> <TT>DriversList</TT> passed.
 	 */
-	public DeleteDriverAction(IApplication app, DriversList list)
+	public DeleteDriverAction(IApplication app, IDriversList list)
 	{
 		super(app);
 		if (list == null)
@@ -71,7 +71,7 @@ public class DeleteDriverAction extends SquirrelAction
 	public void actionPerformed(ActionEvent evt)
 	{
 		IApplication app = getApplication();
-		DriversToolWindow tw = app.getMainFrame().getDriversToolWindow();
+		DriversListInternalFrame tw = app.getWindowManager().getDriversListInternalFrame();
 		tw.moveToFront();
 		try
 		{

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -26,8 +26,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.mainframe.AliasesList;
-import net.sourceforge.squirrel_sql.client.mainframe.AliasesToolWindow;
+import net.sourceforge.squirrel_sql.client.gui.db.AliasesList;
+import net.sourceforge.squirrel_sql.client.gui.db.AliasesListInternalFrame;
 /**
  * This <CODE>Action</CODE> allows the user to connect to an alias.
  *
@@ -42,7 +42,7 @@ public class ConnectToAliasAction extends SquirrelAction
 	/**
 	 * List of all the users aliases.
 	 */
-	private AliasesList _aliases;
+	private final AliasesList _aliases;
 
 	/**
 	 * Ctor specifying the list of aliases.
@@ -65,7 +65,7 @@ public class ConnectToAliasAction extends SquirrelAction
 	public void actionPerformed(ActionEvent evt)
 	{
 		final IApplication app = getApplication();
-		final AliasesToolWindow tw = app.getMainFrame().getAliasesToolWindow();
+		final AliasesListInternalFrame tw = app.getWindowManager().getAliasesListInternalFrame();
 		tw.moveToFront();
 		try
 		{

@@ -20,7 +20,7 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
 import net.sourceforge.squirrel_sql.fw.gui.action.SelectInternalFrameAction;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.mainframe.AliasesToolWindow;
+import net.sourceforge.squirrel_sql.client.gui.db.AliasesListInternalFrame;
 /**
  * This <CODE>Action</CODE> displays the Aliases Tool Window.
  *
@@ -34,7 +34,7 @@ public class ViewAliasesAction extends SelectInternalFrameAction
 	 * @throws	IllegalArgumentException
 	 *			Thrown if <TT>null</TT> <TT>AliasesToolWindow</TT> passed.
 	 */
-	public ViewAliasesAction(IApplication app, AliasesToolWindow window)
+	public ViewAliasesAction(IApplication app, AliasesListInternalFrame window)
 	{
 		super(window);
 		if (window == null)
