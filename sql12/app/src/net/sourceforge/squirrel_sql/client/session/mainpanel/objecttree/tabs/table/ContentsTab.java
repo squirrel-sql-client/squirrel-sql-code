@@ -747,10 +747,11 @@ public class ContentsTab extends BaseTableTab
 		try
 		{
 			final ITableInfo ti = getTableInfo();
-			final PreparedStatement pstmt = conn.prepareStatement(
-				"UPDATE " + ti.getQualifiedName() +
+			final String sql = "UPDATE " + ti.getQualifiedName() +
 				" SET " + colDefs[col].getLabel() + " = ? " +
-				whereClause);
+				whereClause;
+			s_log.debug(sql);
+			final PreparedStatement pstmt = conn.prepareStatement(sql);
 			try
 			{
 				// have the DataType object fill in the appropriate kind of value
