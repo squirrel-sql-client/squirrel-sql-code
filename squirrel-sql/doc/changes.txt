@@ -6,6 +6,10 @@ Change Log
 
 Enhancements
 ------------
+- The squirrel log file is now rotated.
+- Updated to use Apache log4j 1.2.
+- The default Metal Look and Feel now has a blue theme (Karsten Lentzsch)
+- Error message dialog can now show the stack trace if available.
 - New status bar in main window.
 - SQL settings moved from the General tab in the Global Preferences
   dialog to its own SQL tab.
