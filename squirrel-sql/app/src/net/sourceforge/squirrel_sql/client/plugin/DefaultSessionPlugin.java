@@ -36,16 +36,20 @@ public abstract class DefaultSessionPlugin extends DefaultPlugin implements ISes
 
 	/**
 	 * Called when a session shutdown.
+	 * 
+	 * @param	session	The session that is ending.
 	 */
 	public void sessionEnding(ISession session) {
 	}
 
 	/**
 	 * Override this to create panels for the Session Properties dialog.
+	 * 
+	 * @param	session	The session that will be displayed in the properties dialog.
 	 *
 	 * @return  <TT>null</TT> to indicate that this plugin doesn't use session property panels.
 	 */
-	public ISessionPropertiesPanel[] getSessionPropertiesPanels() {
+	public ISessionPropertiesPanel[] getSessionPropertiesPanels(ISession session) {
 		return null;
 	}
 

@@ -42,11 +42,13 @@ public interface ISessionPlugin extends IPlugin {
     /**
      * Create panels for the Session Properties dialog.
      *
+	 * @param	session	The session that will be displayed in the properties dialog.
+     *
      * @return  Array of <TT>ISessionPropertiesPanel</TT> objects. Return
      *          empty array of <TT>null</TT> if this plugin doesn't require
      *          any panels in the Session Properties Dialog.
      */
-    ISessionPropertiesPanel[] getSessionPropertiesPanels();
+    ISessionPropertiesPanel[] getSessionPropertiesPanels(ISession session);
 
     /**
      * Let app know what extra types of objects in object tree that
