@@ -77,6 +77,7 @@ import net.sourceforge.squirrel_sql.client.session.action.ReconnectAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
 import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
+import net.sourceforge.squirrel_sql.client.session.action.EditWhereColsAction;
 import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
 import net.sourceforge.squirrel_sql.client.session.action.ShowNativeSQLAction;
 /**
@@ -310,6 +311,7 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, CommitAction.class, menu);
 		addToMenu(rsrc, RollbackAction.class, menu);
 		addToMenu(rsrc, SQLFilterAction.class, menu);
+		addToMenu(rsrc, EditWhereColsAction.class, menu);
 		menu.addSeparator();
 		addToMenu(rsrc, GotoPreviousResultsTabAction.class, menu);
 		addToMenu(rsrc, GotoNextResultsTabAction.class, menu);
