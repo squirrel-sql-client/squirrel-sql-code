@@ -25,14 +25,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -43,6 +43,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -55,9 +56,10 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources.IImageNames;
+import net.sourceforge.squirrel_sql.client.Version;
 
 /**
  * About box dialog.
@@ -152,9 +154,9 @@ public class AboutBoxDialog extends JDialog {
 			public void stateChanged(ChangeEvent evt) {
 				String title = _tabPnl.getTitleAt(_tabPnl.getSelectedIndex());
 				if (title.equals("System")) {
-					_systemPnl._memoryPnl.startThread();
+					_systemPnl._memoryPnl.startTimer();
 				} else {
-					_systemPnl._memoryPnl.stopThread();
+					_systemPnl._memoryPnl.stopTimer();
 				}
 			}
 		});
@@ -182,13 +184,13 @@ public class AboutBoxDialog extends JDialog {
 			public void windowActivated(WindowEvent evt) {
 				String title = _tabPnl.getTitleAt(_tabPnl.getSelectedIndex());
 				if (title.equals("System")) {
-					_systemPnl._memoryPnl.startThread();
+					_systemPnl._memoryPnl.startTimer();
 				}
 			}
 			public void windowDeactivated(WindowEvent evt) {
 				String title = _tabPnl.getTitleAt(_tabPnl.getSelectedIndex());
 				if (title.equals("System")) {
-					_systemPnl._memoryPnl.stopThread();
+					_systemPnl._memoryPnl.stopTimer();
 				}
 			}
 		});
@@ -290,7 +292,7 @@ public class AboutBoxDialog extends JDialog {
 	}
 
 	private static final class SystemPanel extends JPanel {
-		MemoryPanel _memoryPnl;
+		private MemoryPanel _memoryPnl;
 
 		SystemPanel(IApplication app) {
 			super();
@@ -310,12 +312,12 @@ public class AboutBoxDialog extends JDialog {
 		}
 	}
 
-	private static class MemoryPanel extends PropertyPanel {
+	private static class MemoryPanel extends PropertyPanel implements ActionListener {
 		private JLabel _totalMemoryLbl = new JLabel();
 		private JLabel _usedMemoryLbl = new JLabel();
 		private JLabel _freeMemoryLbl = new JLabel();
-		private boolean _killThread = false;
-		private Thread _thread = null;
+		private Timer _timer;
+		private DecimalFormat _fmt = new DecimalFormat("#,##0.0");
 
 		MemoryPanel() {
 			super();
@@ -333,75 +335,59 @@ public class AboutBoxDialog extends JDialog {
 		}
 
 		public void removeNotify() {
-			stopThread();
+			stopTimer();
 			super.removeNotify();
 		}
 
-		synchronized void startThread() {
-			if (_thread == null) {
-				s_log.debug("Starting memory thread");
-				_thread = new Thread(new MemoryTimer());
-				_thread.start();
+		/**
+		 * Update component with the current memory status.
+		 * 
+		 * @param	evt		The current event.
+		 */
+		public void actionPerformed(ActionEvent evt) {
+			updateMemoryStatus();
+		}
+
+		synchronized void startTimer() {
+			if (_timer == null) {
+				s_log.debug("Starting memory timer (AboutBox)");
+				//_thread = new Thread(new MemoryTimer());
+				//_thread.start();
+				updateMemoryStatus();
+				_timer = new Timer(2000, this);
+				_timer.start();
 			}
 		}
 
-		synchronized void stopThread() {
-			if (_thread != null) {
-				s_log.debug("Ending memory thread");
-				_killThread = true;
-				try {
-					_thread.join();
-				} catch (InterruptedException ignore) {
-				}
-				_thread = null;
-				_killThread = false;
+		synchronized void stopTimer() {
+			if (_timer != null) {
+				s_log.debug("Ending memory timer (AboutBox)");
+				_timer.stop();
+				_timer = null;
 			}
 		}
 
-		private final class MemoryTimer implements Runnable {
-			private static final long MB_VALUE = 1048576;
-			private static final long KB_VALUE = 1024;
-
-			private static final String MB = " MB";
-			private static final String KB = " KB";
-			private static final String BYTES = " bytes";
-
-			private DecimalFormat _fmt = new DecimalFormat("#,##0.0#");
-
-
-			public void run() {
-				Thread.currentThread().setName("Memory Timer");
-				for (;;) {
-					Runtime rt = Runtime.getRuntime();
-					final long totalMemory = rt.totalMemory();
-					final long freeMemory = rt.freeMemory();
-					final long usedMemory = totalMemory - freeMemory;
-					_totalMemoryLbl.setText(formatSize(totalMemory));
-					_usedMemoryLbl.setText(formatSize(usedMemory));
-					_freeMemoryLbl.setText(formatSize(freeMemory));
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException ex) {
-					}
-					if (_killThread) {
-						break;
-					}
-				}
+		private void updateMemoryStatus() {
+			Runtime rt = Runtime.getRuntime();
+			final long totalMemory = rt.totalMemory();
+			final long freeMemory = rt.freeMemory();
+			final long usedMemory = totalMemory - freeMemory;
+			_totalMemoryLbl.setText(formatSize(totalMemory));
+			_usedMemoryLbl.setText(formatSize(usedMemory));
+			_freeMemoryLbl.setText(formatSize(freeMemory));
+		}
+		
+		private String formatSize(long nbrBytes) {
+			double size = nbrBytes;
+			double val = size / (1024 * 1024);
+			if (val > 1) {
+				return _fmt.format(val).concat(" MB");
 			}
-
-			// i18n
-			private String formatSize(long nbrBytes) {
-				double size = nbrBytes;
-				double val = size / MB_VALUE;
-				if (val > 1) {
-					return _fmt.format(val).concat(MB);
-				}
-				val = size / KB_VALUE;
-				if (val > 10) {
-					return _fmt.format(val).concat(KB);
-				}
-				return _fmt.format(val).concat(BYTES);
+			val = size / 1024;
+			if (val > 10) {
+				return _fmt.format(val).concat(" KB");
 			}
+			return _fmt.format(val).concat(" bytes");
 		}
 	}
 }
