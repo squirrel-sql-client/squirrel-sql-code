@@ -198,9 +198,9 @@ public class RowDataInputFrame extends JInternalFrame
 			{
 				ColumnDisplayDefinition colDef = colDefs[i];
 				int colWidth = colDef.getDisplayWidth() * _multiplier;
-				if (colWidth > _caller.MAX_COLUMN_WIDTH * _multiplier)
+				if (colWidth > IDataSetViewer.MAX_COLUMN_WIDTH * _multiplier)
 				{
-					colWidth = _caller.MAX_COLUMN_WIDTH * _multiplier;
+					colWidth = IDataSetViewer.MAX_COLUMN_WIDTH * _multiplier;
 				}
 
 				TableColumn col = new TableColumn(i, colWidth,
