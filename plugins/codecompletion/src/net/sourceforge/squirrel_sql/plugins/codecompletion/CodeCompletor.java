@@ -36,13 +36,13 @@ public class CodeCompletor
 	private Rectangle _curCompletionPanelSize;
 	private PopupManager _popupMan;
 	private JTextComponent _txtComp;
-	private String _currBegining;
 
 	private MouseAdapter _listMouseAdapter;
 	private KeyListener _listKeyListener;
-	private Rectangle _currCaretBounds;
 	private static final int MAX_ITEMS_IN_COMPLETION_LIST = 10;
 	private JScrollPane _completionListScrollPane;
+
+   private CodeCompletionCandidates _currCandidates;
 
 	private KeyStroke[] keysToDisableWhenPopUpOpen = new KeyStroke[]
 	{
@@ -58,7 +58,7 @@ public class CodeCompletor
 	};
 
 
-	public CodeCompletor(JTextComponent txtComp, CodeCompletorModel model)
+   public CodeCompletor(JTextComponent txtComp, CodeCompletorModel model)
 	{
 		_txtComp = txtComp;
 		_model = model;
@@ -98,7 +98,7 @@ public class CodeCompletor
 
 	private void onKeyPressedOnList(KeyEvent e)
 	{
-		if(e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_SPACE)
+		if(e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_TAB)
 		{
          completionSelected();
 		}
@@ -108,13 +108,12 @@ public class CodeCompletor
 		}
 		else if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE)
 		{
-			if(1 >= _currBegining.length())
+			if(1 >= _currCandidates.getStringToReplace().length())
 			{
 				closePopup();
 			}
 			else
 			{
-				_currBegining = _currBegining.substring(0, _currBegining.length() - 1);
 				reInitList(false);
 			}
 			//removeLastCharInTextComponent();
@@ -173,14 +172,13 @@ public class CodeCompletor
       }
 		else
 		{
-			_currBegining += e.getKeyChar();
 			reInitList(true);
 
 			DefaultListModel listModel = (DefaultListModel) _completionList.getModel();
 			if(1 == listModel.size())
 			{
 				CodeCompletionInfo info = (CodeCompletionInfo) listModel.getElementAt(0);
-				if(_currBegining.toUpperCase().startsWith(info.getCompareString().toUpperCase()))
+				if(_currCandidates.getStringToReplace().toUpperCase().startsWith(info.getCompareString().toUpperCase()))
 				{
 					closePopup();
 				}
@@ -190,18 +188,20 @@ public class CodeCompletor
 
 	private void reInitList(boolean selectionNarrowed)
 	{
-		CodeCompletionInfo[] candidates = _model.getCompletionInfos(_currBegining);
-		if(0 == candidates.length)
-		{
-			closePopup();
-		}
-		else
-		{
-			fillAndShowCompletionList(candidates);
-		}
+      SwingUtilities.invokeLater(new Runnable()
+      {
+         public void run()
+         {
+            // Needs to be done later because when reInitList is called,
+            // the text componetes model is not yet up to date.
+            // E.g. the last character is missing.
+            reInitListLater();
+         }
+      });
 
 
-		/*
+
+      /*
 		As long as there are no performance problems, don't care for this
 		if(selectionNarrowed)
 		{
@@ -214,7 +214,34 @@ public class CodeCompletor
 		*/
 	}
 
-	private void onMousClicked(MouseEvent e)
+   private void reInitListLater()
+   {
+      try
+      {
+         _currCandidates = _model.getCompletionCandidates(getTextTillCarret());
+
+         if(0 == _currCandidates.getCandidates().length)
+         {
+            closePopup();
+         }
+         else
+         {
+            fillAndShowCompletionList(_currCandidates.getCandidates());
+         }
+      }
+      catch (BadLocationException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+   private String getTextTillCarret()
+      throws BadLocationException
+   {
+      return _txtComp.getText(0, _txtComp.getCaretPosition());
+   }
+
+   private void onMousClicked(MouseEvent e)
 	{
 		if(2 == e.getClickCount())
 		{
@@ -227,7 +254,7 @@ public class CodeCompletor
 		Object selected = _completionList.getSelectedValue();
 		if(null != selected && selected instanceof CodeCompletionInfo)
 		{
-			fireEvent( ( (CodeCompletionInfo)selected ).getCompletionString());
+			fireEvent( (CodeCompletionInfo)selected);
 		}
 		closePopup();
 	}
@@ -255,38 +282,26 @@ public class CodeCompletor
 	}
 
 
-	public void show(String beginning)
+	public void show()
 	{
 		try
 		{
-			CodeCompletionInfo[] candidates = _model.getCompletionInfos(beginning);
+			_currCandidates = _model.getCompletionCandidates(getTextTillCarret());
 
-			if(0 == candidates.length)
+			if(0 == _currCandidates.getCandidates().length)
 			{
 				return;
 			}
-			if(1 == candidates.length)
+			if(1 == _currCandidates.getCandidates().length)
 			{
-				fireEvent(candidates[0].getCompletionString());
+				fireEvent(_currCandidates.getCandidates()[0]);
 				return;
 			}
 
-			_currBegining = beginning;
-
-			int caretPos = _txtComp.getCaret().getDot();
-
-			if(-1 < _currBegining.indexOf('.'))
-			{
-				_currCaretBounds = _txtComp.modelToView(caretPos - (_currBegining.length() - _currBegining.lastIndexOf('.') - 1));
-			}
-			else
-			{
-				_currCaretBounds = _txtComp.modelToView(caretPos - _currBegining.length());
-			}
-
+         _txtComp.modelToView(_currCandidates.getReplacementStart());
 
 			_completionList.setFont(_txtComp.getFont());
-			fillAndShowCompletionList(candidates);
+			fillAndShowCompletionList(_currCandidates.getCandidates());
 		}
 		catch (BadLocationException e)
 		{
@@ -294,43 +309,67 @@ public class CodeCompletor
 		}
 	}
 
-	private void fillAndShowCompletionList(CodeCompletionInfo[] candidates)
+   private int getCarretLineBeg()
+   {
+      String textTillCarret = _txtComp.getText().substring(0, _txtComp.getCaretPosition());
+
+      int lineFeedIndex = textTillCarret.lastIndexOf('\n');
+      if(-1 == lineFeedIndex)
+      {
+         return 0;
+      }
+      else
+      {
+         return lineFeedIndex;
+      }
+   }
+
+   private void fillAndShowCompletionList(CodeCompletionInfo[] candidates)
 	{
-		// needed to resize completion panle appropriately
-		// see initializationof _curCompletionPanelSize
-		_curCompletionPanelSize = getCurCompletionPanelSize(candidates);
+      try
+      {
+         // needed to resize completion panle appropriately
+         // see initializationof _curCompletionPanelSize
+         _curCompletionPanelSize = getCurCompletionPanelSize(candidates);
 
-		DefaultListModel model = (DefaultListModel) _completionList.getModel();
-		model.removeAllElements();
+         DefaultListModel model = (DefaultListModel) _completionList.getModel();
+         model.removeAllElements();
 
-		for (int i = 0; i < candidates.length; i++)
-		{
-			model.addElement(candidates[i]);
-		}
+         for (int i = 0; i < candidates.length; i++)
+         {
+            model.addElement(candidates[i]);
+         }
 
-		_completionList.setSelectedIndex(0);
+         _completionList.setSelectedIndex(0);
 
-		_popupMan.install(_completionPanel, _currCaretBounds, PopupManager.BelowPreferred);
-		_completionPanel.setVisible(true);
+         Rectangle caretBounds = _txtComp.modelToView(_currCandidates.getReplacementStart());
 
-		_completionList.removeMouseListener(_listMouseAdapter);
-		_completionList.addMouseListener(_listMouseAdapter);
-		_txtComp.removeKeyListener(_listKeyListener);
-		_txtComp.addKeyListener(_listKeyListener);
+         _popupMan.install(_completionPanel, caretBounds, PopupManager.BelowPreferred);
+         _completionPanel.setVisible(true);
 
-		Action doNothingAction = new AbstractAction("doNothingAction")
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-			}
-		};
+         _completionList.removeMouseListener(_listMouseAdapter);
+         _completionList.addMouseListener(_listMouseAdapter);
+         _txtComp.removeKeyListener(_listKeyListener);
+         _txtComp.addKeyListener(_listKeyListener);
 
-		Keymap km = _txtComp.getKeymap();
-		for (int i = 0; i < keysToDisableWhenPopUpOpen.length; i++)
-		{
-			km.addActionForKeyStroke(keysToDisableWhenPopUpOpen[i], doNothingAction);
-		}
-	}
+         Action doNothingAction = new AbstractAction("doNothingAction")
+         {
+            public void actionPerformed(ActionEvent e)
+            {
+            }
+         };
+
+         Keymap km = _txtComp.getKeymap();
+         for (int i = 0; i < keysToDisableWhenPopUpOpen.length; i++)
+         {
+            km.addActionForKeyStroke(keysToDisableWhenPopUpOpen[i], doNothingAction);
+         }
+      }
+      catch (BadLocationException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
 
 
 	private Rectangle getCurCompletionPanelSize(CodeCompletionInfo[] candidates)
@@ -357,13 +396,13 @@ public class CodeCompletor
 	}
 
 
-	private void fireEvent(String completion)
+	private void fireEvent(CodeCompletionInfo completion)
 	{
 		Vector clone =(Vector) _listeners.clone();
 
 		for (int i = 0; i < clone.size(); i++)
 		{
-			( (CodeCompletorListener)clone.elementAt(i) ).completionSelected(completion);
+			( (CodeCompletorListener)clone.elementAt(i) ).completionSelected(completion, _currCandidates.getReplacementStart());
 		}
 	}
 

@@ -26,6 +26,7 @@ import javax.swing.*;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.Arrays;
 
 public class CodeCompletionInfoCollection
 {
@@ -129,6 +130,12 @@ public class CodeCompletionInfoCollection
 
       Vector completionInfos = getCompletionInfos(catalog, schema);
 
+      if(null == completionInfos)
+      {
+         // CompletionInfos are still loading
+         return new CodeCompletionInfo[0];
+      }
+
       String upperCasePrefix = prefix.trim().toUpperCase();
 
       if("".equals(upperCasePrefix))
@@ -213,4 +220,20 @@ public class CodeCompletionInfoCollection
       return false;
    }
 
+   public boolean addCompletionsAtListBegin(String catalog, String schema, CodeCompletionInfo[] completions)
+   {
+      Vector completionInfos = getCompletionInfos(catalog, schema);
+
+      if(null == completionInfos)
+      {
+         // CompletionInfos are still loading
+         return false;
+      }
+      else
+      {
+         Arrays.sort(completions);
+         completionInfos.addAll(0,Arrays.asList(completions));
+         return true;
+      }
+   }
 }
