@@ -563,7 +563,7 @@ public class CellComponentFactory {
 					break;
 
 				case Types.CLOB:
-					//??
+					dataTypeComponent = new DataTypeClob(table, colDef);
 					break;
 
 				case Types.OTHER:
