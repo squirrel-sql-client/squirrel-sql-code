@@ -91,7 +91,8 @@ public class ToolBar extends JToolBar
 	 */
 	protected Icon getIconFromAction(Action action, String key)
 	{
-		Object obj = action.getValue(BaseAction.IBaseActionPropertyNames.ROLLOVER_ICON);
+		//Object obj = action.getValue(BaseAction.IBaseActionPropertyNames.ROLLOVER_ICON);
+		Object obj = action.getValue(key);
 		if (obj != null)
 		{
 			if (obj instanceof Icon)

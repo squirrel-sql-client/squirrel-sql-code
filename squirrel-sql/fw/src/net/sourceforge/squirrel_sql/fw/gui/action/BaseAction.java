@@ -74,20 +74,20 @@ public abstract class BaseAction extends AbstractAction
 	 * 
 	 * @param	icon	The new icon.
 	 */
-	public void setIcon(Icon icon)
-	{
-		putValue(Action.SMALL_ICON, icon);
-	}
+	//public void setIcon(Icon icon)
+	//{
+	//	putValue(Action.SMALL_ICON, icon);
+	//}
 
 	/**
 	 * Set the "rollover" icon for this action.
 	 * 
 	 * @param	icon	The new icon.
 	 */
-	public void setRolloverIcon(Icon icon)
-	{
-		putValue(IBaseActionPropertyNames.ROLLOVER_ICON, icon);
-	}
+	//public void setRolloverIcon(Icon icon)
+	//{
+	//	putValue(IBaseActionPropertyNames.ROLLOVER_ICON, icon);
+	//}
 
 	/**
 	 * Return the <CODE>Frame</CODE> object associated with the passed event.<P>
