@@ -43,6 +43,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -97,11 +98,13 @@ public class SQLExecuterTask implements Runnable
 		_cancelPanelRemoved = false;
 		try
 		{
+			final SQLConnection conn = _session.getSQLConnection();
 			final SessionProperties props = _session.getProperties();
-			_stmt = _session.getSQLConnection().createStatement();
+			_stmt = conn.createStatement();
 			try
 			{
-				if (props.getSQLLimitRows())
+				final boolean correctlySupportsMaxRows = conn.getSQLMetaData().correctlySupportsSetMaxRows();
+				if (correctlySupportsMaxRows && props.getSQLLimitRows())
 				{
 					try
 					{
@@ -127,6 +130,7 @@ public class SQLExecuterTask implements Runnable
 				_currentQueryIndex = 0;
 
 				// Process each individual query.
+				boolean maxRowsHasBeenSet = correctlySupportsMaxRows;
 				while (!queryStrings.isEmpty())
 				{
 					if (_cancelPanelRemoved)
@@ -141,6 +145,34 @@ public class SQLExecuterTask implements Runnable
 						querySql = _sqlPanel.fireSQLToBeExecutedEvent(querySql);
 						if (querySql != null)
 						{
+							// Some driver don't correctly support setMaxRows. In
+							// these cases use setMaxRows only if this is a
+							// SELECT.
+							if (!correctlySupportsMaxRows && props.getSQLLimitRows())
+							{
+								if ("SELECT".length() < querySql.trim().length()
+										&& "SELECT".equalsIgnoreCase(querySql.trim().substring(0, "SELECT".length())))
+								{
+									if (!maxRowsHasBeenSet)
+									{
+										try
+										{
+											_stmt.setMaxRows(props.getSQLNbrRowsToShow());
+										}
+										catch (Exception e)
+										{
+											s_log.error("Can't Set MaxRows", e);
+										}
+										maxRowsHasBeenSet = true;
+									}
+								}
+								else if (maxRowsHasBeenSet)
+								{
+									_stmt.close();
+									_stmt = conn.createStatement();
+									maxRowsHasBeenSet = false;
+								}
+							}
 							if (!processQuery(querySql))
 							{
 								break;
@@ -201,18 +233,29 @@ public class SQLExecuterTask implements Runnable
 		exInfo.sqlExecutionComplete();
 
 		// If SQL executing produced warnings then write them out to the session
-		// message handler.
+		// message handler. TODO: This is a pain. PostgreSQL sends "raise
+		// notice" messages to the connection, not to the statment so they will
+		// be mixed up with warnings from other statements.
+		final SQLConnection conn = _session.getSQLConnection();
+		synchronized (conn)
+		{
+			try
+			{
+				processWarnings(conn.getWarnings());
+				conn.getConnection().clearWarnings();
+			}
+			catch (Throwable th)
+			{
+				s_log.debug("Driver doesn't handle Connection.getWarnings()/clearWarnings()", th);
+			}
+		}
 		try
 		{
-			SQLWarning sw = _stmt.getWarnings();
-			while (sw != null)
-			{
-				_session.getMessageHandler().showMessage(sw);
-				sw = sw.getNextWarning();
-			}
+			processWarnings(_stmt.getWarnings());
 		}
 		catch (Throwable th)
 		{
+			s_log.debug("Driver doesn't handle Statement.getWarnings()/clearWarnings()", th);
 		}
 		
 		if (rc)
@@ -305,6 +348,21 @@ public class SQLExecuterTask implements Runnable
 			.append(nbrFmt.format(outputLength));
 		_session.getMessageHandler().showMessage(buf.toString());
 		return true;
+	}
+
+	private void processWarnings(SQLWarning sw)
+	{
+		try
+		{
+			while (sw != null)
+			{
+				_session.getMessageHandler().showMessage(sw);
+				sw = sw.getNextWarning();
+			}
+		}
+		catch (Throwable th)
+		{
+		}
 	}
 
 	private final class CancelPanel extends JPanel implements ActionListener
