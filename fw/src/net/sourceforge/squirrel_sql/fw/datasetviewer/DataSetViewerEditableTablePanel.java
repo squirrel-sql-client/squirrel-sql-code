@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
 import java.awt.Color;
 import java.awt.Component;
 import java.sql.Types;
+import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -277,9 +278,20 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 			currentCellEditor = null;
 		}
 		
+		// create data structure containing contents of rows to be deleted
+		// We cannot use the getRow() method because that uses MyJTable whereas
+		// the indexes that we have are indexes in the SortableTableModel.
+		SortableTableModel tableModel = (SortableTableModel)((JTable)getComponent()).getModel();
+
+		Object[][] rowData = new Object[rows.length][_colDefs.length];
+		for (int i=0; i<rows.length; i++) {
+			for (int j=0; j<_colDefs.length; j++)
+				rowData[i][j] = tableModel.getValueAt(rows[i],j);
+		}
+		
 		// tell creator to delete from DB
 		String message = 
-			((IDataSetUpdateableTableModel)getUpdateableModel()).deleteRows(rows);
+			((IDataSetUpdateableTableModel)getUpdateableModel()).deleteRows(rowData, _colDefs);
 		if (message != null) {
 			// tell user that there was a problem
 			JOptionPane.showMessageDialog(null,
