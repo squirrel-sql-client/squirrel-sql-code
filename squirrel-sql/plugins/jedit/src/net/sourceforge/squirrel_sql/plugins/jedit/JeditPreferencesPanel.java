@@ -36,8 +36,8 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.squirrel_sql.fw.gui.FontChooser;
-import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
+//import net.sourceforge.squirrel_sql.fw.gui.FontChooser;
+//import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -172,13 +172,13 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 		private JCheckBox _currentLineHighlighting = new JCheckBox(i18n.HIGHLIGHT_CURRENT_LINE);
 		private JCheckBox _blinkCaretChk = new JCheckBox(i18n.BLINK_CARET);
 
-		private JCheckBox _fontEnabledChk = new JCheckBox("Enabled");
+//		private JCheckBox _fontEnabledChk = new JCheckBox("Enabled");
 
 		/** Label displaying the selected font. */
-		private JLabel _fontLbl = new JLabel();
+//		private JLabel _fontLbl = new JLabel();
 
 		/** Button to select font. */
-		private FontButton _fontBtn = new FontButton("Font", _fontLbl);
+//		private FontButton _fontBtn = new FontButton("Font", _fontLbl);
 
 		private ColorButtonListener _colorBtnActionListener = new ColorButtonListener();
 
@@ -203,6 +203,7 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 			_currentLineHighlighting.setSelected(prefs.getCurrentLineHighlighting());
 			_blinkCaretChk.setSelected(prefs.getBlinkCaret());
 
+/*
 			_fontEnabledChk.setSelected(prefs.isFontEnabled());
 			FontInfo fi = prefs.getFontInfo();
 			if (fi == null) {
@@ -211,6 +212,7 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 			_fontLbl.setText(fi.toString());
 			_fontBtn.setSelectedFont(fi.createFont());
 			_fontBtn.setEnabled(prefs.isFontEnabled() && prefs.getUseJeditTextControl());
+*/
 
 			_keywordColorLbl1.setBackground(new Color(prefs.getKeyword1RGB()));
 			_keywordColorLbl2.setBackground(new Color(prefs.getKeyword2RGB()));
@@ -226,8 +228,8 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 			prefs.setBracketHighlighting(_bracketHighlighting.isSelected());
 			prefs.setCurrentLineHighlighting(_currentLineHighlighting.isSelected());
 			prefs.setBlinkCaret(_blinkCaretChk.isSelected());
-			prefs.setFontInfo(_fontBtn.getFontInfo());
-			prefs.setFontEnabled(_fontEnabledChk.isSelected());
+//			prefs.setFontInfo(_fontBtn.getFontInfo());
+//			prefs.setFontEnabled(_fontEnabledChk.isSelected());
 			prefs.setKeyword1RGB(_keywordColorLbl1.getBackground().getRGB());
 			prefs.setKeyword2RGB(_keywordColorLbl2.getBackground().getRGB());
 			prefs.setKeyword3RGB(_keywordColorLbl3.getBackground().getRGB());
@@ -243,8 +245,8 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 			_bracketHighlighting.setEnabled(useJeditControl);
 			_currentLineHighlighting.setEnabled(useJeditControl);
 			_blinkCaretChk.setEnabled(useJeditControl);
-			_fontEnabledChk.setEnabled(useJeditControl);
-			_fontBtn.setEnabled(useJeditControl && _fontEnabledChk.isSelected());
+//			_fontEnabledChk.setEnabled(useJeditControl);
+//			_fontBtn.setEnabled(useJeditControl && _fontEnabledChk.isSelected());
 		}
 
 		private void createUserInterface() {
@@ -268,8 +270,8 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 			++gbc.gridy;
 			add(createGeneralPanel(), gbc);
 
-			++gbc.gridy;
-			add(createFontPanel(), gbc);
+//			++gbc.gridy;
+//			add(createFontPanel(), gbc);
 
 			++gbc.gridy;
 			add(createColorPanel(), gbc);
@@ -303,6 +305,7 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 			return pnl;
 		}
 
+		/*
 		private JPanel createFontPanel() {
 			JPanel pnl = new JPanel();
 			pnl.setBorder(BorderFactory.createTitledBorder("Font"));
@@ -332,7 +335,7 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 
 			return pnl;
 		}
-
+*/
 		private JPanel createColorPanel() {
 			JPanel pnl = new JPanel();
 			pnl.setBorder(BorderFactory.createTitledBorder("Colors"));
@@ -377,7 +380,7 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 			lbl.setOpaque(true);
 			return lbl;
 		}
-
+/*
 		private static final class FontButton extends JButton {
 			private FontInfo _fi;
 			private JLabel _lbl;
@@ -411,7 +414,8 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 				return _dirty;
 			}
 		}
-
+*/
+/*
 		private static final class FontButtonListener implements ActionListener {
 			public void actionPerformed(ActionEvent evt) {
 				if (evt.getSource() instanceof FontButton) {
@@ -429,7 +433,7 @@ public class JeditPreferencesPanel implements INewSessionPropertiesPanel, ISessi
 				}
 			}
 		}
-
+*/
 		private class ColorButton extends JButton {
 			JLabel _previewLbl;
 			ColorButton(String title, JLabel previewLbl) {

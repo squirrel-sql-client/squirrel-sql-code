@@ -21,7 +21,6 @@ import java.awt.Color;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 
-import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 
 /**
@@ -37,8 +36,6 @@ public class JeditPreferences implements Serializable, Cloneable {
 		String BRACKET_HIGHLIGHTING = "bracketHighlighting";
 		String CURRENT_LINE_HIGHLIGHTING = "currentLineHighlighting";
 		String EOL_MARKERS = "eolMarkers";
-		String FONT_INFO = "fontInfo";
-		String FONT_ENABLED = "fontEnabled";
 		String USE_JEDIT_CONTROL = "useJeditControl";
 		String KEYWORD1_COLOR = "keyword1Color";
 		String KEYWORD2_COLOR = "keyword2Color";
@@ -65,12 +62,6 @@ public class JeditPreferences implements Serializable, Cloneable {
 
 	/** If <TT>true</TT> the current line should be highlighted. */
 	private boolean _currentLineHighlighting = true;
-
-	/** Font information for the jEdit text area. */
-	private FontInfo _fi;
-
-	/** If <TT>true</TT> use user specified font info for jEdit text area. */
-	private boolean _fontEnabled;
 
 	private int _keyword1RGB = Color.black.getRGB();
 	private int _keyword2RGB = Color.magenta.getRGB();
@@ -169,33 +160,6 @@ public class JeditPreferences implements Serializable, Cloneable {
 								oldValue, _blinkCaret);
 		}
 	}
-
-	public boolean isFontEnabled() {
-		return _fontEnabled;
-	}
-
-	public void setFontEnabled(boolean data) {
-		if (_fontEnabled != data) {
-			final boolean oldValue = _fontEnabled;
-			_fontEnabled = data;
-			_propChgReporter.firePropertyChange(IPropertyNames.FONT_ENABLED,
-								oldValue, _fontEnabled);
-		}
-	}
-
-	public FontInfo getFontInfo() {
-		return _fi;
-	}
-
-	public void setFontInfo(FontInfo data) {
-		if (_fi == null || !_fi.equals(data)) {
-			final FontInfo oldValue = _fi;
-			_fi = data;
-			_propChgReporter.firePropertyChange(IPropertyNames.FONT_INFO,
-								oldValue, _fi);
-		}
-	}
-
 
 	public int getKeyword1RGB() {
 		return _keyword1RGB;

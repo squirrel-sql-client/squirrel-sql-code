@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.plugins.jedit;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.MouseListener;
 
 import javax.swing.Action;
@@ -29,8 +30,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.session.BaseSQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
 
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.InputHandler;
@@ -40,7 +41,7 @@ import net.sourceforge.squirrel_sql.plugins.jedit.textarea.SyntaxStyle;
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.TextAreaPainter;
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.Token;
 
-class JeditSQLEntryPanel implements ISQLEntryPanel {
+class JeditSQLEntryPanel extends BaseSQLEntryPanel {
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(JeditSQLEntryPanel.class);
 
@@ -141,6 +142,10 @@ class JeditSQLEntryPanel implements ISQLEntryPanel {
 		_jeditTextArea.getDocument().putProperty(PlainDocument.tabSizeAttribute, new Integer(tabSize));
 	}
 
+	public void setFont(Font font) {
+		_jeditTextArea.setFont(font);
+	}
+
 	/**
 	 * @see ISQLEntryPanel#getSelectionStart()
 	 */
@@ -218,7 +223,6 @@ class JeditSQLEntryPanel implements ISQLEntryPanel {
 		painter.setBracketHighlightEnabled(prefs.getBracketHighlighting());
 		painter.setLineHighlightEnabled(prefs.getCurrentLineHighlighting());
 		comp.setCaretBlinkEnabled(prefs.getBlinkCaret());
-		comp.setFont(prefs.getFontInfo().createFont());
 	}
 
 	/*

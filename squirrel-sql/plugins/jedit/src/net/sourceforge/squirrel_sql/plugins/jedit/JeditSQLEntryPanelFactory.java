@@ -61,29 +61,12 @@ class JeditSQLEntryPanelFactory implements ISQLEntryPanelFactory {
 			JeditSQLEntryPanel pnl = (JeditSQLEntryPanel)session.getPluginObject(_plugin, JeditConstants.ISessionKeys.JEDIT_SQL_ENTRY_CONTROL);
 			if (pnl == null) {
 				pnl = new JeditSQLEntryPanel(session, _plugin, prefs);
-				final JEditTextArea ta = pnl.getTypedComponent();
-				if (prefs.isFontEnabled()) {
-					FontInfo fi = prefs.getFontInfo();
-					if (fi != null) {
-						ta.setFont(fi.createFont());
-					} else {
-						setStandardFont(ta);
-					}
-				} else {
-					setStandardFont(ta);
-				}
+//				final JEditTextArea ta = pnl.getTypedComponent();
 				session.putPluginObject(_plugin, JeditConstants.ISessionKeys.JEDIT_SQL_ENTRY_CONTROL, pnl);
 			}
 			return pnl;
 		}
 		session.removePluginObject(_plugin, JeditConstants.ISessionKeys.JEDIT_SQL_ENTRY_CONTROL);
 		return _originalFactory.createSQLEntryPanel(session);
-	}
-
-	private void setStandardFont(JEditTextArea ta) {
-		Font font = (Font)UIManager.get("TextArea.font");
-		if (font != null) {
-			ta.getPainter().setFont(font);
-		}
 	}
 }
