@@ -299,7 +299,7 @@ public class ContentsTab extends BaseTableTab
 				}
 
 				final ResultSetDataSet rsds = new ResultSetDataSet();
-				rsds.setResultSet(rs, props.getLargeResultSetObjectInfo());
+				rsds.setContentsTabResultSet(rs, props.getLargeResultSetObjectInfo());
 
 				// KLUDGE:
 				// We want some info about the columns to be available for validating the
