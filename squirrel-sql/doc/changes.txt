@@ -1,6 +1,21 @@
 Change Log
 ==========
 
+1.1beta2
+========
+
+Bug Fixes
+------------
+- JDBC drivers reloaded when they have been modified
+  through the maintenance window.
+
+Enhancements
+------------
+- Escape now cancels Connection Dialog.
+- JDBC drivers that can be loaded are shown in a different
+  colour to those that cannot be loaded (Henner Zeller).
+
+
 1.1beta1
 ========
 - Plugin architecture added.

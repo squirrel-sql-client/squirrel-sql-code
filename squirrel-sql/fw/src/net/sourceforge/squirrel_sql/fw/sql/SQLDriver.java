@@ -31,280 +31,294 @@ import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
 
 public class SQLDriver implements ISQLDriver, Cloneable, Serializable {
-    /**
-     * This interface defines locale specific strings. This should be
-     * replaced with a property file.
-     */
-    private interface i18n {
-        String ERR_BLANK_NAME = "Name cannot be blank.";
-        String ERR_BLANK_DRIVER = "JDBC Driver cannot be blank.";
-        String ERR_BLANK_URL = "JDBC URL cannot be blank.";
-    }
+	/**
+	 * This interface defines locale specific strings. This should be
+	 * replaced with a property file.
+	 */
+	private interface i18n {
+		String ERR_BLANK_NAME = "Name cannot be blank.";
+		String ERR_BLANK_DRIVER = "JDBC Driver cannot be blank.";
+		String ERR_BLANK_URL = "JDBC URL cannot be blank.";
+	}
 
-    /** The <CODE>IIdentifier</CODE> that uniquely identifies this object. */
-    private IIdentifier _id;
+	/** The <CODE>IIdentifier</CODE> that uniquely identifies this object. */
+	private IIdentifier _id;
 
-    /** The name of this driver. */
-    private String _name;
+	/** The name of this driver. */
+	private String _name;
 
-    /** <CODE>true</CODE> if driver is loaded from the CLASSPATH. */
-    private boolean _usesClassPath = true;
+	/** <CODE>true</CODE> if driver is loaded from the CLASSPATH. */
+	private boolean _usesClassPath = true;
 
-    /**
-     * Jar Fle to load driver from. Only used if _usesClassPath
-     * is <CODE>false</CODE>.
-     */
-    private URL _jarFileURL = null;
+	/**
+	 * Jar Fle to load driver from. Only used if _usesClassPath
+	 * is <CODE>false</CODE>.
+	 */
+	private URL _jarFileURL = null;
 
-    /**
-     * File name associated with <CODE>_jarFileURL</CODE>.
-     */
-    private String _jarFileName = null;
+	/**
+	 * File name associated with <CODE>_jarFileURL</CODE>.
+	 */
+	private String _jarFileName = null;
 
-    /** The class name of the JDBC driver. */
-    private String _driverClassName;
+	/** The class name of the JDBC driver. */
+	private String _driverClassName;
 
-    /** Default URL required to access the database. */
-    private String _url;
+	/** Default URL required to access the database. */
+	private String _url;
 
-    /** Array of names of plugins relevant to this driver. */
-    private StringWrapper[] _pluginNames;
+	/** Is the JDBC driver class for this object loaded? */
+	private boolean _jdbcDriverClassLoaded;
 
-    /** Object to handle property change events. */
-    private PropertyChangeReporter _propChgReporter = new PropertyChangeReporter(this);
+	/** Array of names of plugins relevant to this driver. */
+	private StringWrapper[] _pluginNames;
 
-    /**
-     * Ctor specifying the identifier.
-     *
-     * @param   id  Uniquely identifies this object.
-     */
-    public SQLDriver(IIdentifier id) {
-        super();
-        _id = id;
-        _name = "";
-        _usesClassPath = true;
-        _jarFileName = null;
-        _jarFileURL = null;
-        _driverClassName = null;
-        _url = "";
-    }
+	/** Object to handle property change events. */
+	private PropertyChangeReporter _propChgReporter = new PropertyChangeReporter(this);
 
-    public SQLDriver() {
-        super();
-    }
+	/**
+	 * Ctor specifying the identifier.
+	 *
+	 * @param   id  Uniquely identifies this object.
+	 */
+	public SQLDriver(IIdentifier id) {
+		super();
+		_id = id;
+		_name = "";
+		_usesClassPath = true;
+		_jarFileName = null;
+		_jarFileURL = null;
+		_driverClassName = null;
+		_url = "";
+	}
 
-    /**
-     * Ctor specifying attributes.
-     */
+	public SQLDriver() {
+		super();
+	}
+
+	/**
+	 * Ctor specifying attributes.
+	 */
 /*  public SQLDriver(IIdentifier id, String name, boolean usesClasspath,
-                    String jarFileName, String driverClassName, String url) {
-        super();
-        _id = id;
-        _name = name;
-        _usesClassPath = usesClasspath;
-        _jarFileName = jarFileName;
-        _driverClassName = driverClassName;
-        _url = url;
-        if (_jarFileName != null) {
-            _jarFileURL = new File(name).toURL();
-        }
-    }
+					String jarFileName, String driverClassName, String url) {
+		super();
+		_id = id;
+		_name = name;
+		_usesClassPath = usesClasspath;
+		_jarFileName = jarFileName;
+		_driverClassName = driverClassName;
+		_url = url;
+		if (_jarFileName != null) {
+			_jarFileURL = new File(name).toURL();
+		}
+	}
 */
 
-    /**
-     * Assign data from the passed <CODE>ISQLDriver</CODE> to this one.
-     *
-     * @param   rhs     <CODE>ISQLDriver</CODE> to copy data from.
-     *
-     * @exception   ValidationException
-     *                  Thrown if an error occurs assigning data from
-     *                  <CODE>rhs</CODE>.
-     */
-    public synchronized void assignFrom(ISQLDriver rhs)
-            throws ValidationException {
-        setName(rhs.getName());
-        setUsesClassPath(rhs.getUsesClassPath());
-        setJarFileURL(rhs.getJarFileURL());
-        setJarFileName(rhs.getJarFileName());
-        setDriverClassName(rhs.getDriverClassName());
-        setUrl(rhs.getUrl());
-    }
+	/**
+	 * Assign data from the passed <CODE>ISQLDriver</CODE> to this one.
+	 *
+	 * @param   rhs	 <CODE>ISQLDriver</CODE> to copy data from.
+	 *
+	 * @exception   ValidationException
+	 *				  Thrown if an error occurs assigning data from
+	 *				  <CODE>rhs</CODE>.
+	 */
+	public synchronized void assignFrom(ISQLDriver rhs)
+			throws ValidationException {
+		setName(rhs.getName());
+		setUsesClassPath(rhs.getUsesClassPath());
+		setJarFileURL(rhs.getJarFileURL());
+		setJarFileName(rhs.getJarFileName());
+		setDriverClassName(rhs.getDriverClassName());
+		setUrl(rhs.getUrl());
+		setJDBCDriverClassLoaded(rhs.isJDBCDriverClassLoaded());
+	}
 
-    /**
-     * Returns <TT>true</TT> if this objects is equal to the passed one. Two
-     * <TT>ISQLDriver</TT> objects are considered equal if they have the same
-     * identifier.
-     */
-    public boolean equals(Object rhs) {
-        boolean rc = false;
-        if (rhs != null && rhs.getClass().equals(getClass())) {
-            rc = ((ISQLDriver)rhs).getIdentifier().equals(getIdentifier());
-        }
-        return rc;
-    }
+	/**
+	 * Returns <TT>true</TT> if this objects is equal to the passed one. Two
+	 * <TT>ISQLDriver</TT> objects are considered equal if they have the same
+	 * identifier.
+	 */
+	public boolean equals(Object rhs) {
+		boolean rc = false;
+		if (rhs != null && rhs.getClass().equals(getClass())) {
+			rc = ((ISQLDriver)rhs).getIdentifier().equals(getIdentifier());
+		}
+		return rc;
+	}
 
-    /**
-     * Returns a hash code value for this object.
-     */
-    public synchronized int hashCode() {
-        return getIdentifier().hashCode();
-    }
+	/**
+	 * Returns a hash code value for this object.
+	 */
+	public synchronized int hashCode() {
+		return getIdentifier().hashCode();
+	}
 
-    /**
-     * Returns the name of this <TT>ISQLDriver</TT>.
-     */
-    public String toString() {
-        return getName();
-    }
+	/**
+	 * Returns the name of this <TT>ISQLDriver</TT>.
+	 */
+	public String toString() {
+		return getName();
+	}
 
-    /**
-     * Return a clone of this object.
-     */
-    public Object clone() {
-        try {
-            return super.clone();
-        } catch(CloneNotSupportedException ex) {
-            throw new InternalError(ex.getMessage());   // Impossible.
-        }
-    }
+	/**
+	 * Return a clone of this object.
+	 */
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch(CloneNotSupportedException ex) {
+			throw new InternalError(ex.getMessage());   // Impossible.
+		}
+	}
 
-    /**
-     * Compare this <TT>ISQLDriver</TT> to another object. If the passed object
-     * is a <TT>ISQLDriver</TT>, then the <TT>getName()</TT> functions of the two
-     * <TT>ISQLDriver</TT> objects are used to compare them. Otherwise, it throws a
-     * ClassCastException (as <TT>ISQLDriver</TT> objects are comparable only to
-     * other <TT>ISQLDriver</TT> objects).
-     */
-    public int compareTo(Object rhs) {
-        return _name.compareTo(((ISQLDriver)rhs).getName());
-    }
+	/**
+	 * Compare this <TT>ISQLDriver</TT> to another object. If the passed object
+	 * is a <TT>ISQLDriver</TT>, then the <TT>getName()</TT> functions of the two
+	 * <TT>ISQLDriver</TT> objects are used to compare them. Otherwise, it throws a
+	 * ClassCastException (as <TT>ISQLDriver</TT> objects are comparable only to
+	 * other <TT>ISQLDriver</TT> objects).
+	 */
+	public int compareTo(Object rhs) {
+		return _name.compareTo(((ISQLDriver)rhs).getName());
+	}
 
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        _propChgReporter.addPropertyChangeListener(listener);
-    }
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		_propChgReporter.addPropertyChangeListener(listener);
+	}
 
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        _propChgReporter.removePropertyChangeListener(listener);
-    }
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		_propChgReporter.removePropertyChangeListener(listener);
+	}
 
-    public void setReportPropertyChanges(boolean report) {
-        _propChgReporter.setNotify(report);
-    }
+	public void setReportPropertyChanges(boolean report) {
+		_propChgReporter.setNotify(report);
+	}
 
-    public IIdentifier getIdentifier() {
-        return _id;
-    }
+	public IIdentifier getIdentifier() {
+		return _id;
+	}
 
-    public void setIdentifier(IIdentifier id) {
-        _id = id;
-    }
+	public void setIdentifier(IIdentifier id) {
+		_id = id;
+	}
 
-    public String getDriverClassName() {
-        return _driverClassName;
-    }
+	public String getDriverClassName() {
+		return _driverClassName;
+	}
 
-    public void setDriverClassName(String driverClassName)
-            throws ValidationException {
-        String data = getString(driverClassName);
-        if (data.length() == 0) {
-            throw new ValidationException(i18n.ERR_BLANK_DRIVER);
-        }
-        if (_driverClassName != data) {
-            final String oldValue = _driverClassName;
-            _driverClassName = data;
-            _propChgReporter.firePropertyChange(ISQLDriver.IPropertyNames.DRIVER_CLASS, oldValue, _driverClassName);
-        }
-    }
+	public void setDriverClassName(String driverClassName)
+			throws ValidationException {
+		String data = getString(driverClassName);
+		if (data.length() == 0) {
+			throw new ValidationException(i18n.ERR_BLANK_DRIVER);
+		}
+		if (_driverClassName != data) {
+			final String oldValue = _driverClassName;
+			_driverClassName = data;
+			_propChgReporter.firePropertyChange(ISQLDriver.IPropertyNames.DRIVER_CLASS, oldValue, _driverClassName);
+		}
+	}
 
-    public boolean getUsesClassPath() {
-        return _usesClassPath;
-    }
+	public boolean getUsesClassPath() {
+		return _usesClassPath;
+	}
 
-    public void setUsesClassPath(boolean data)
-            throws ValidationException {
-        if (_usesClassPath != data) {
-            final boolean oldValue = _usesClassPath;
-            _usesClassPath = data;
-            _propChgReporter.firePropertyChange(ISQLDriver.IPropertyNames.USES_CLASSPATH, oldValue, _usesClassPath);
-        }
-    }
+	public void setUsesClassPath(boolean data)
+			throws ValidationException {
+		if (_usesClassPath != data) {
+			final boolean oldValue = _usesClassPath;
+			_usesClassPath = data;
+			_propChgReporter.firePropertyChange(ISQLDriver.IPropertyNames.USES_CLASSPATH, oldValue, _usesClassPath);
+		}
+	}
 
-    public URL getJarFileURL() {
-        return _jarFileURL;
-    }
+	public URL getJarFileURL() {
+		return _jarFileURL;
+	}
 
 
-    public String getJarFileName() {
-        return _jarFileName;
-    }
+	public String getJarFileName() {
+		return _jarFileName;
+	}
 
-    public void setJarFileName(String value)
-            throws ValidationException {
-        if (value == null) {
-            value = "";
-        }
-//      if ((_jarFileName == null && value != null) || !_jarFileName.equals(value)) {
-        if (_jarFileName == null || !_jarFileName.equals(value)) {
-            try {
-                _jarFileURL = new File(value).toURL();
-            } catch (MalformedURLException ex) {
-                throw new ValidationException("Invalid file name"); //i18n
-            }
-            final String oldValue = _jarFileName;
-            _jarFileName = value;
-            _propChgReporter.firePropertyChange(ISQLDriver.IPropertyNames.JARFILE_NAME, oldValue, _jarFileName);
-        }
-    }
+	public void setJarFileName(String value)
+			throws ValidationException {
+		if (value == null) {
+			value = "";
+		}
+//	  if ((_jarFileName == null && value != null) || !_jarFileName.equals(value)) {
+		if (_jarFileName == null || !_jarFileName.equals(value)) {
+			try {
+				_jarFileURL = new File(value).toURL();
+			} catch (MalformedURLException ex) {
+				throw new ValidationException("Invalid file name"); //i18n
+			}
+			final String oldValue = _jarFileName;
+			_jarFileName = value;
+			_propChgReporter.firePropertyChange(ISQLDriver.IPropertyNames.JARFILE_NAME, oldValue, _jarFileName);
+		}
+	}
 
-    public String getUrl() {
-        return _url;
-    }
-    public void setUrl(String url)
-            throws ValidationException {
-        String data = getString(url);
-        if (data.length() == 0) {
-            throw new ValidationException(i18n.ERR_BLANK_URL);
-        }
-        if (_url != data) {
-            final String oldValue = _url;
-            _url = data;
-            _propChgReporter.firePropertyChange(ISQLDriver.IPropertyNames.URL, oldValue, _url);
-        }
-    }
+	public String getUrl() {
+		return _url;
+	}
 
-    public String getName() {
-        return _name;
-    }
+	public void setUrl(String url)
+			throws ValidationException {
+		String data = getString(url);
+		if (data.length() == 0) {
+			throw new ValidationException(i18n.ERR_BLANK_URL);
+		}
+		if (_url != data) {
+			final String oldValue = _url;
+			_url = data;
+			_propChgReporter.firePropertyChange(ISQLDriver.IPropertyNames.URL, oldValue, _url);
+		}
+	}
 
-    public void setName(String name)
-            throws ValidationException {
-        String data = getString(name);
-        if (data.length() == 0) {
-            throw new ValidationException(i18n.ERR_BLANK_NAME);
-        }
-        if (_name != data) {
-            final String oldValue = _name;
-            _name = data;
-            _propChgReporter.firePropertyChange(ISQLDriver.IPropertyNames.NAME, oldValue, _name);
-        }
-    }
+	public String getName() {
+		return _name;
+	}
 
-    public StringWrapper[] getPluginNames() {
-        return _pluginNames;
-    }
+	public void setName(String name)
+			throws ValidationException {
+		String data = getString(name);
+		if (data.length() == 0) {
+			throw new ValidationException(i18n.ERR_BLANK_NAME);
+		}
+		if (_name != data) {
+			final String oldValue = _name;
+			_name = data;
+			_propChgReporter.firePropertyChange(ISQLDriver.IPropertyNames.NAME, oldValue, _name);
+		}
+	}
 
-    public void setPluginNames(StringWrapper[] names) throws ValidationException {
-        final StringWrapper[] oldValue = _pluginNames;
-        _pluginNames = names;
-        _propChgReporter.firePropertyChange(ISQLDriver.IPropertyNames.PLUGIN_NAMES, oldValue, _pluginNames);
-    }
+	public boolean isJDBCDriverClassLoaded() { 
+		return _jdbcDriverClassLoaded; 
+	}
+	
+	public void setJDBCDriverClassLoaded(boolean cl) { 
+		_jdbcDriverClassLoaded = cl; 
+		//??
+//		_propChgReporter.firePropertyChange(ISQLDriver.IPropertyNames.NAME, _name, _name);
+	}
 
-    private void setJarFileURL(URL value) {
-        _jarFileURL = value;
-    }
+	public StringWrapper[] getPluginNames() {
+		return _pluginNames;
+	}
 
-    private String getString(String data) {
-        return data != null ? data.trim() : "";
-    }
+	public void setPluginNames(StringWrapper[] names) throws ValidationException {
+		final StringWrapper[] oldValue = _pluginNames;
+		_pluginNames = names;
+		_propChgReporter.firePropertyChange(ISQLDriver.IPropertyNames.PLUGIN_NAMES, oldValue, _pluginNames);
+	}
 
+	private void setJarFileURL(URL value) {
+		_jarFileURL = value;
+	}
+
+	private String getString(String data) {
+		return data != null ? data.trim() : "";
+	}
 }

@@ -18,9 +18,12 @@ package net.sourceforge.squirrel_sql.client.mainframe;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.util.Iterator;
 
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
 import javax.swing.ToolTipManager;
@@ -54,7 +57,7 @@ public class DriversList extends JList {
 		setLayout(new BorderLayout());
 		getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-		setCellRenderer(new ModifiedDefaultListCellRenderer());
+		setCellRenderer(new DriverListCellRenderer());
 
 		// Register so that we can display different tooltips depending
 		// which entry in list mouse is over.
@@ -104,4 +107,25 @@ public class DriversList extends JList {
 	public String getToolTipText() {
 		return "List of database drivers that can be used to configure an alias"; //i18n
 	}
+
+	/**
+	 * a cell renderer, that shows Drivers, that could not be loaded in red.
+	 */
+	private static class DriverListCellRenderer extends DefaultListCellRenderer {
+		private final static Color OK_COLOR   = new Color(190, 255, 190);
+		private final static Color FAIL_COLOR = new Color(255, 190, 190);
+
+		public Component getListCellRendererComponent(JList list,
+													Object value,
+													int index,
+													boolean isSelected,
+													boolean cellHasFocus) {
+			super.getListCellRendererComponent(list, value,  index, isSelected,
+												cellHasFocus);
+			ISQLDriver drv = (ISQLDriver)value;
+			setBackground((drv.isJDBCDriverClassLoaded()) ? OK_COLOR : FAIL_COLOR);
+			return this;
+		}
+	}
 }
+

@@ -49,9 +49,11 @@ public class SQLDriverManager {
 			driverClass = new SQLDriverClassLoader(sqlDriver).loadClass(sqlDriver.getDriverClassName());
 		}
 		_driverInfo.put(sqlDriver.getIdentifier(), driverClass.newInstance());
+		sqlDriver.setJDBCDriverClassLoaded(true);
 	}
 
 	public synchronized void unregisterSQLDriver(ISQLDriver sqlDriver) {
+		sqlDriver.setJDBCDriverClassLoaded(false);
 		sqlDriver.removePropertyChangeListener(_myDriverListener);
 		_driverInfo.remove(sqlDriver.getIdentifier());
 	}
@@ -88,7 +90,11 @@ public class SQLDriverManager {
 	private final class MyDriverListener implements PropertyChangeListener {
 		public void propertyChange(PropertyChangeEvent evt) {
 			final String propName = evt.getPropertyName();
-			if (propName != null && propName.equals(ISQLDriver.IPropertyNames.DRIVER_CLASS)) {
+//			if (propName != null && propName.equals(ISQLDriver.IPropertyNames.DRIVER_CLASS)) {
+			if (propName == null ||
+					propName.equals(ISQLDriver.IPropertyNames.DRIVER_CLASS) ||
+					propName.equals(ISQLDriver.IPropertyNames.JARFILE_NAME) ||
+					propName.equals(ISQLDriver.IPropertyNames.USES_CLASSPATH)) {
 				Object obj = evt.getSource();
 				if (obj instanceof ISQLDriver) {
 					ISQLDriver driver = (ISQLDriver)obj;

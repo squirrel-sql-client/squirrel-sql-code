@@ -87,6 +87,9 @@ public interface ISQLDriver extends IHasIdentifier, Comparable {
 
     public void setName(String name) throws ValidationException;
 
+	public boolean isJDBCDriverClassLoaded();
+	public void setJDBCDriverClassLoaded(boolean cl);
+
     public StringWrapper[] getPluginNames();
     public void setPluginNames(StringWrapper[] names) throws ValidationException;
 
