@@ -43,7 +43,6 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable
 		String ID = "identifier";
 		String NAME = "name";
 		String PASSWORD = "password";
-//		String PASSWORD_SAVED = "passwordSaved";
 		String URL = "url";
 		String USE_DRIVER_PROPERTIES = "useDriverProperties";
 		String USER_NAME = "userName";
@@ -63,9 +62,9 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable
 	/**
 	 * Compare this <TT>ISQLAlias</TT> to another object. If the passed object
 	 * is a <TT>ISQLAlias</TT>, then the <TT>getName()</TT> functions of the two
-	 * <TT>ISQLAlias</TT> objects are used to compare them. Otherwise, it throws a
-	 * ClassCastException (as <TT>ISQLAlias</TT> objects are comparable only to
-	 * other <TT>ISQLAlias</TT> objects).
+	 * <TT>ISQLAlias</TT> objects are used to compare them. Otherwise, it throws
+	 * a ClassCastException (as <TT>ISQLAlias</TT> objects are comparable only
+	 * to other <TT>ISQLAlias</TT> objects).
 	 */
 	int compareTo(Object rhs);
 
@@ -84,17 +83,9 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable
 	/**
 	 * Retrieve the saved password.
 	 * 
-	 * @return		The saved password.
+	 * @return	The saved password.
 	 */
 	String getPassword();
-
-	/**
-	 * Has a password been saved in this alias?
-	 * 
-	 * @return	<TT>true</TT> if a password has been saved
-	 * 			else <TT>false</TT>.
-	 */
-	//boolean isPasswordSaved();
 
 	/**
 	 * Set the password for this alias.
@@ -105,16 +96,6 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable
 	 * 			TODO: What conditions?
 	 */
 	void setPassword(String password) throws ValidationException;
-
-	/**
-	 * Set whether a password has been saved for his alias.
-	 * 
-	 * @param	passwordSaved	<TT>true</TT> if password saved else <TT>false</TT>.
-	 * 
-	 * @throws	ValidationException
-	 * 			TODO: What conditions?
-	 */
-	//void setPasswordSaved(boolean passwordSaved) throws ValidationException;
 
 	/**
 	 * Should this alias be logged on automatically.
@@ -128,7 +109,7 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable
 	 * Set whether this alias should be logged on automatically.
 	 * 
 	 * @param	value	<TT>true</TT> if alias should be autologged on
-	 * 					else <TT>false</TT..
+	 * 					else <TT>false</TT>.
 	 */
 	void setAutoLogon(boolean value);
 
