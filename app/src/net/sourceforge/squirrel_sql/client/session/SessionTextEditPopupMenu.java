@@ -25,6 +25,8 @@ import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.gui.action.MakeEditableCommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import net.sourceforge.squirrel_sql.client.gui.session.MainPanel;
 /**
  * A popup menu useful for a editable text area.
  * 

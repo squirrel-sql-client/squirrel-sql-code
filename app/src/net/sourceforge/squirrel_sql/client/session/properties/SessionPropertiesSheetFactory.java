@@ -99,7 +99,7 @@ public class SessionPropertiesSheetFactory
 //			propsSheet.addInternalFrameListener(new PropertiesSheetListener());
 //
 //			// When the	session is closed close its properties sheet.
-//			SessionSheet sessionSheet = session.getSessionSheet();
+//			SessionPanel sessionSheet = session.getSessionSheet();
 //			sessionSheet.addInternalFrameListener(new SessionSheetListener());
 //
 //			positionSheet(propsSheet);
@@ -128,7 +128,7 @@ public class SessionPropertiesSheetFactory
 //		{
 //			synchronized (SessionPropertiesSheetFactory.getInstance())
 //			{
-//				SessionSheet sessionSheet = (SessionSheet) evt.getInternalFrame();
+//				SessionPanel sessionSheet = (SessionPanel) evt.getInternalFrame();
 //				SessionPropertiesSheet propsSheet =
 //					(SessionPropertiesSheet) _sheets.remove(
 //						sessionSheet.getSession().getIdentifier());

@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.session;
+package net.sourceforge.squirrel_sql.client.gui.session;
 /*
  * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
@@ -38,6 +38,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.GotoNextResultsTabAction;
@@ -58,7 +59,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-class MainPanel extends JPanel
+public class MainPanel extends JPanel
 {
 	/**
 	 * IDs of tabs.

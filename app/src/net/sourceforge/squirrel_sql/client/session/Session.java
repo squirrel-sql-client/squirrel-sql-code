@@ -46,6 +46,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.mainframe.action.OpenConnectionCommand;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
@@ -73,8 +74,9 @@ class Session implements ISession
 	/** Descriptive title for session. */
 	private String _title = "";
 
-	private SessionSheet _sessionSheet;
+	private SessionPanel _sessionSheet;
 
+	//JASON: What was this used for?
 	private boolean _sessionCreated = false;
 
 	/** The <TT>IIdentifier</TT> that uniquely identifies this object. */
@@ -224,7 +226,7 @@ class Session implements ISession
 			}
 			finally
 			{
-				// This is set here as SessionSheet.dispose() will attempt
+				// This is set here as SessionPanel.dispose() will attempt
 				// to close the session.
 				_closed = true;
 
@@ -525,7 +527,7 @@ class Session implements ISession
 		_msgHandler = handler != null ? handler : NullMessageHandler.getInstance();
 	}
 
-	public synchronized void setSessionSheet(SessionSheet child)
+	public synchronized void setSessionSheet(SessionPanel child)
 	{
 		_sessionSheet = child;
 		if (_sessionSheet != null)
@@ -539,7 +541,7 @@ class Session implements ISession
 		}
 	}
 
-	public SessionSheet getSessionSheet()
+	public SessionPanel getSessionSheet()
 	{
 		return _sessionSheet;
 	}

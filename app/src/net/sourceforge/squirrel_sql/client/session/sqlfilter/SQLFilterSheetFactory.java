@@ -111,7 +111,7 @@ public class SQLFilterSheetFactory
 //				new PropertiesSheetListener());
 //
 //			// When the	session is closed close its properties sheet.
-//			SessionSheet sessionSheet = session.getSessionSheet();
+//			SessionPanel sessionSheet = session.getSessionSheet();
 //			sessionSheet.addInternalFrameListener(new SessionSheetListener());
 //
 //			positionSheet(sqlFilterSheet);
@@ -158,8 +158,8 @@ public class SQLFilterSheetFactory
 //		{
 //			synchronized (SQLFilterSheetFactory.getInstance())
 //			{
-//				SessionSheet sessionSheet =
-//					(SessionSheet)evt.getInternalFrame();
+//				SessionPanel sessionSheet =
+//					(SessionPanel)evt.getInternalFrame();
 //				SQLFilterSheet sqlFilterSheet =
 //					(SQLFilterSheet)_sheets.remove(
 //						sessionSheet.getSession().getIdentifier());

@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.session;
+package net.sourceforge.squirrel_sql.client.gui.session;
 /*
  * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
@@ -50,6 +50,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeAction;
@@ -65,15 +68,15 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTr
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
-public class SessionSheet extends JPanel
+public class SessionPanel extends JPanel
 {
 	/** Logger for this class. */
 	private static final ILogger s_log =
-		LoggerController.createLogger(SessionSheet.class);
+		LoggerController.createLogger(SessionPanel.class);
 
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(SessionSheet.class);
+		StringManagerFactory.getStringManager(SessionPanel.class);
 
 	/** Application API. */
 	private final IApplication _app;
@@ -99,7 +102,7 @@ public class SessionSheet extends JPanel
 
 	private ObjectTreeSelectionListener _objTreeSelectionLis = null;
 
-	public SessionSheet(ISession session)
+	public SessionPanel(ISession session)
 	{
 		super(new BorderLayout());
 
@@ -163,7 +166,7 @@ public class SessionSheet extends JPanel
 		_mainTabPane.updateState();
 	}
 
-	void sessionHasClosed()
+	public void sessionHasClosed()
 	{
 		if (_objTreeSelectionLis != null)
 		{
@@ -465,7 +468,7 @@ public class SessionSheet extends JPanel
 				if (conn.getSQLMetaData().supportsCatalogs())
 				{
 					_catalogsCmb = new SQLCatalogsComboBox();
-					add(new JLabel(s_stringMgr.getString("SessionSheet.catalog")));
+					add(new JLabel(s_stringMgr.getString("SessionPanel.catalog")));
 					add(_catalogsCmb);
 					addSeparator();
 
@@ -540,7 +543,7 @@ public class SessionSheet extends JPanel
 						catch (SQLException ex)
 						{
 							getSession().getMessageHandler().showErrorMessage(ex);
-							SessionSheet.this.setupCatalogsCombo();
+							SessionPanel.this.setupCatalogsCombo();
 						}
 					}
 				}

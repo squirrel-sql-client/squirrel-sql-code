@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.session;
+package net.sourceforge.squirrel_sql.client.gui.session;
 /*
  * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
@@ -51,7 +51,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
@@ -171,7 +173,7 @@ public class ObjectTreeInternalFrame extends BaseSessionInternalFrame
 				{
 					_catalogsCmb = new SQLCatalogsComboBox();
 					_catalogsCmb.setConnection(conn);
-					add(new JLabel(s_stringMgr.getString("SessionSheet.catalog")));
+					add(new JLabel(s_stringMgr.getString("SessionPanel.catalog")));
 					add(_catalogsCmb);
 					addSeparator();
 

@@ -38,8 +38,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.ConnectionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
 /**
  * This <CODE>ICommand</CODE> allows the user to connect to
