@@ -123,7 +123,7 @@ public class SQLPanel extends JPanel {
 	/** Factory for generating unique IDs for new <TT>ResultTab</TT> objects. */
 	private IntegerIdentifierFactory _idFactory = new IntegerIdentifierFactory();
 
-	// Listens to caret events in data entry area. */
+	/** Listens to caret events in data entry area. */
 	private DataEntryAreaCaretListener _dataEntryCaretListener = new DataEntryAreaCaretListener();
 
 	/**
@@ -263,7 +263,7 @@ public class SQLPanel extends JPanel {
 	 * Remove all listeners that this component has setup. Close all
 	 * torn off result tab windows.
 	 */
-	void sessionEnding() {
+	void sessionClosing() {
 		if (_propsListener != null) {
 			_session.getProperties().removePropertyChangeListener(_propsListener);
 			_propsListener = null;
