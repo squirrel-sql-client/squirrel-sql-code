@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.event.EventListenerList;
+import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 /**
  * This is a <TT>IDataSetViewerDestination</TT> that doesn't
@@ -29,7 +30,8 @@ import javax.swing.event.EventListenerList;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class DataSetListModel extends BaseDataSetViewerDestination
-								implements IDataSetModel {
+								implements IDataSetModel 
+{
 	/** Event types. */
 	private interface IEventTypes {
 		int ALL_ROWS_ADDED = 1;
@@ -63,45 +65,18 @@ public java.awt.Component getComponent() {
 	}
 
 	/**
-	 * Specify the column headings to use.
-	 * 
-	 * @param	hdgs	Column headings to use.
-	 */
-//	public void setColumnDefinitions(ColumnDisplayDefinition[] hdgs) {
-//		_hdgs = hdgs != null ? hdgs : new ColumnDisplayDefinition[0];
-//	}
-
-	/**
-	 * Get the column definitions.
-	 * 
-	 * @return	Column definitions.
-	 */
-//	public ColumnDisplayDefinition[] getColumnDefinitions() {
-//		return _hdgs;
-//	}
-
-	/**
-	 * Specify whether to show the column headings.
-	 * 
-	 * @param	show	<TT>true</TT> if headings to be shown else <TT>false</TT>.
-	 */
-//	public void showHeadings(boolean show) {
-//		_showHeadings = show;
-//	}
-
-	/**
 	 * Add a row.
 	 * 
 	 * @param	row		Array of objects specifying the row data.
 	 */
-	public void addRow(Object[] row) {
+	protected void addRow(Object[] row) {
 		_data.add(row);
 	}
 
 	/**
 	 * Called once all rows have been added..
 	 */
-	public void allRowsAdded() {
+	protected void allRowsAdded() {
 		fireEvent(IEventTypes.ALL_ROWS_ADDED);
 	}
 

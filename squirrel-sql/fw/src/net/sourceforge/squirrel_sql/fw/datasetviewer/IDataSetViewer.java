@@ -20,9 +20,16 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
 import java.awt.Component;
 import java.util.List;
 
-public interface IDataSetViewerDestination {
+import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+
+public interface IDataSetViewer {
 	final static int MAX_COLUMN_WIDTH = 50;
 
+	/**
+	 * Get the rowcount of the DataSet
+	 */
+	int getRowCount();
+	
 	/**
 	 * Clear the output.
 	 */
@@ -56,18 +63,10 @@ public interface IDataSetViewerDestination {
 	 */
 	boolean getShowHeadings();
 
-	/**
-	 * Add a row.
-	 * 
-	 * @param	row		Array of objects specifying the row data.
-	 */
-	void addRow(Object[] row);
+	void show(IDataSet ds) throws DataSetException;
 
-	/**
-	 * Called once all rows have been added..
-	 */
-	void allRowsAdded();
-
+	void show(IDataSet ds, IMessageHandler msgHandler) throws DataSetException;
+	
 	/**
 	 * Indicates that the output display should scroll to the top.
 	 */

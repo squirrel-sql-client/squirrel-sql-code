@@ -24,7 +24,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public interface IDataSetModel extends IDataSetViewerDestination {
+public interface IDataSetModel extends IDataSetViewer {
 	/**
 	 * Get the column definitions.
 	 * 

@@ -27,8 +27,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import javax.swing.SwingUtilities;
+
+import net.sourceforge.squirrel_sql.fw.datasetviewer.BaseDataSetViewerDestination;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfoDataSet;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -117,7 +119,7 @@ public class TableInfoTab extends BaseTablePanelTab {
 		private boolean _fullyCreated = false;
 		private JLabel _rowCount = new JLabel("");
 		private TableInfoDataSet _ds;
-		private DataSetViewer _viewer;
+		private IDataSetViewer _viewer;
 
 		MyComponent() {
 			super(new BorderLayout());
@@ -126,7 +128,7 @@ public class TableInfoTab extends BaseTablePanelTab {
 		void clear()
 		{
 			if(_rowCount != null) _rowCount.setText("");
-			if(_viewer != null) _viewer.clearDestination();
+			if(_viewer != null) _viewer.clear();
 		}
 		void load(ISession session, final ITableInfo ti) {
 			try {
@@ -188,15 +190,14 @@ public class TableInfoTab extends BaseTablePanelTab {
 
 			// Panel displays table info.
 			String destClassName = session.getProperties().getTableOutputClassName();
-			_viewer = new DataSetViewer();
-			_viewer.setDestination(destClassName);
+			_viewer = BaseDataSetViewerDestination.getInstance(destClassName);
 			_ds = new TableInfoDataSet();
 			Runnable run = new Runnable()
 			{
 				public void run()
 				{
 					add(pnl, BorderLayout.NORTH);
-					add(new JScrollPane(_viewer.getDestinationComponent()), BorderLayout.CENTER);
+					add(new JScrollPane(_viewer.getComponent()), BorderLayout.CENTER);
 				}
 			};
 			SwingUtilities.invokeLater(run);

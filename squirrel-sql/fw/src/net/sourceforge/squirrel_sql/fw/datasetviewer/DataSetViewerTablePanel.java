@@ -19,82 +19,58 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  */
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JLayeredPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.JTable;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
+import net.sourceforge.squirrel_sql.fw.gui.ButtonTableHeader;
+import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
+import net.sourceforge.squirrel_sql.fw.gui.TextAreaInternalFrame;
+import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 //??RENAME to DataSetViewerTableDestination
-public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implements IDataSetViewerDestination {
-//	private boolean _showHeadings = true;
-//	private MyTableModel _model;
-
-//	private ColumnDisplayDefinition[] _colDefs;
-
-//	private final int _multiplier;
-
+public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
+{
 	private MyJTable _comp = new MyJTable();
-
-	/** Popup menu for table component. */
-//	private TablePopupMenu _tablePopupMenu;
-
-//	private static final String data = "THE QUICK BROWN FOX JUMPED OVER THE LAZY DOG";
+	private MyTableModel _typedModel;
 
 	public DataSetViewerTablePanel() {
-		super(/*new MyTableModel()*/);
-		//_model = (MyTableModel)getModel();
-//		_multiplier = Toolkit.getDefaultToolkit().getFontMetrics(getFont()).stringWidth(data) / data.length();
-		//createUserInterface();
+		super();
 	}
 
-//	public void showHeadings(boolean show) {
-//		_showHeadings = show;
-//	}
 
 	public void clear() {
-		MyTableModel model = _comp.getTypedModel();
-		model.clear();
-		model.fireTableDataChanged();
-		//_model.clear();
-		//_model.fireTableDataChanged();
+		_typedModel.clear();
+		_typedModel.fireTableDataChanged();
 	}
 
 	public void setColumnDefinitions(ColumnDisplayDefinition[] colDefs) {
-		//_model.setHeadings(colDefs);
-		//setColumnModel(createColumnModel(colDefs));
-		//_comp.setColumnModel(createColumnModel(colDefs));
 		super.setColumnDefinitions(colDefs);
 		_comp.setColumnDefinitions(colDefs);
 	}
 
-	public void addRow(Object[] row) {
-//		_model.addRow(row);
-		_comp.getTypedModel().addRow(row);
-	}
-
 	public void moveToTop() {
 		if (_comp.getRowCount() > 0) {
-			//setRowSelectionInterval(0, 0);
 			_comp.setRowSelectionInterval(0, 0);
 		}
-	}
-
-	public void allRowsAdded() {
-		//_model.allRowsAdded();
-		_comp.getTypedModel().allRowsAdded();
 	}
 
 	/**
@@ -106,63 +82,31 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implem
 		return _comp;
 	}
 
-	/**
-	 * Display the popup menu for this component.
+	/*
+	 * @see BaseDataSetViewerDestination#addRow(Object[])
 	 */
-//	protected void displayPopupMenu(MouseEvent evt) {
-//		_tablePopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
-//	}
-
-/*
-	private TableColumnModel createColumnModel(ColumnDisplayDefinition[] hdgs) {
-		_colDefs = hdgs;
-		TableColumnModel cm = new DefaultTableColumnModel();
-		for (int i = 0; i < hdgs.length; ++i) {
-			ColumnDisplayDefinition colDef = hdgs[i];
-			int colWidth = colDef.getDisplayWidth() * _multiplier;
-			if (colWidth > MAX_COLUMN_WIDTH * _multiplier) {
-				colWidth = MAX_COLUMN_WIDTH * _multiplier;
-			}
-			TableColumn col = new TableColumn(i, colWidth);
-			col.setHeaderValue(colDef.getLabel());
-			cm.addColumn(col);
-		}
-		return cm;
+	protected void addRow(Object[] row) 
+	{
+		_typedModel.addRow(row);
 	}
-*/
-/*
-	private void createUserInterface() {
-		setLayout(new BorderLayout());
-		setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-		setRowSelectionAllowed(false);
-		setColumnSelectionAllowed(false);
-		setCellSelectionEnabled(true);
-		getTableHeader().setResizingAllowed(true);
-		getTableHeader().setReorderingAllowed(true);
-		setAutoCreateColumnsFromModel(false);
-		setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-		_tablePopupMenu = new TablePopupMenu();
-		_tablePopupMenu.setTable(this);
-
-		addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent evt) {
-				if (evt.isPopupTrigger()) {
-					DataSetViewerTablePanel.this.displayPopupMenu(evt);
-				}
-			}
-			public void mouseReleased(MouseEvent evt) {
-				if (evt.isPopupTrigger()) {
-					DataSetViewerTablePanel.this.displayPopupMenu(evt);
-				}
-			}
-		});
-
+	/*
+	 * @see BaseDataSetViewerDestination#allRowsAdded()
+	 */
+	protected void allRowsAdded() {
+		_typedModel.fireTableStructureChanged();
 	}
-*/
-	private static final class MyTableModel extends AbstractTableModel {
+
+	/*
+	 * @see IDataSetViewer#getRowCount()
+	 */
+	public int getRowCount() {
+		return _typedModel.getRowCount();
+	}
+
+
+	private final class MyTableModel extends AbstractTableModel {
 		private List _data = new ArrayList();
-		private ColumnDisplayDefinition[] _colDefs;
 
 		MyTableModel() {
 			super();
@@ -201,22 +145,24 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implem
 		}
 	}
 
-	private static final class MyJTable extends JTable {
+	private final class MyJTable extends JTable {
 		private final int _multiplier;
 		private static final String data = "THE QUICK BROWN FOX JUMPED OVER THE LAZY DOG";
 
-		private MyTableModel _typedModel;
 		private TablePopupMenu _tablePopupMenu;
+		private ButtonTableHeader _bth;
+
 
 		MyJTable() {
-			super(new MyTableModel());
-			_typedModel = (MyTableModel)getModel();
+			super(new SortableTableModel(new MyTableModel()));
+			_typedModel = (MyTableModel)((SortableTableModel)getModel()).getActualModel();
 			_multiplier = Toolkit.getDefaultToolkit().getFontMetrics(getFont()).stringWidth(data) / data.length();
 			createUserInterface();
 		}
 
 		public void setColumnDefinitions(ColumnDisplayDefinition[] colDefs) {
-			setColumnModel(createColumnModel(colDefs));
+			TableColumnModel tcm = createColumnModel(colDefs);
+			setColumnModel(tcm);
 			_typedModel.setHeadings(colDefs);
 		}
 	
@@ -230,6 +176,49 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implem
 		private void displayPopupMenu(MouseEvent evt) {
 			_tablePopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
 		}
+
+		private void showTextAreaDialog(MouseEvent evt) 
+		{
+			// TODO? Better way to do this?? I don't have the IApplication here.
+			Component comp = SwingUtilities.getRoot(this);
+			Point p = evt.getPoint();
+			int row = this.rowAtPoint(p);
+			int column = this.columnAtPoint(p);
+			Object o = _typedModel.getValueAt(row,column);
+			if(o != null) o = o.toString();
+			else o = "";
+			TextAreaInternalFrame taif = new TextAreaInternalFrame(_typedModel.getColumnName(column),(String)o);
+			p = SwingUtilities.convertPoint((Component)evt.getSource(),p,comp);
+			((MainFrame)comp).addInternalFrame(taif,false);
+			taif.setLayer(JLayeredPane.POPUP_LAYER);
+			taif.pack();
+			Dimension dim = taif.getSize();
+			boolean dimChanged = false;
+			if(dim.width < 250)
+			{
+				dim.width = 250;
+				dimChanged = true;
+			}
+			if(dim.height < 100)
+			{
+				dim.height = 100;
+				dimChanged = true;
+			}
+			if(dim.width > 500)
+			{
+				dim.width = 500;
+				dimChanged = true;
+			}
+			if(dim.height > 400)
+			{
+				dim.height = 400;
+				dimChanged = true;
+			}
+			if(dimChanged) taif.setSize(dim);
+			taif.setLocation(p);
+			taif.setVisible(true);
+		}
+		
 
 		private TableColumnModel createColumnModel(ColumnDisplayDefinition[] colDefs) {
 			//_colDefs = hdgs;
@@ -257,7 +246,9 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implem
 			getTableHeader().setReorderingAllowed(true);
 			setAutoCreateColumnsFromModel(false);
 			setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-	
+			_bth = new ButtonTableHeader(null);
+			setTableHeader(_bth);
+
 			_tablePopupMenu = new TablePopupMenu();
 			_tablePopupMenu.setTable(this);
 	
@@ -265,6 +256,10 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implem
 				public void mousePressed(MouseEvent evt) {
 					if (evt.isPopupTrigger()) {
 						MyJTable.this.displayPopupMenu(evt);
+					}
+					else if(evt.getClickCount() == 2)
+					{
+						MyJTable.this.showTextAreaDialog(evt);
 					}
 				}
 				public void mouseReleased(MouseEvent evt) {
@@ -276,5 +271,5 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implem
 	
 		}
 	}
-
 }
+

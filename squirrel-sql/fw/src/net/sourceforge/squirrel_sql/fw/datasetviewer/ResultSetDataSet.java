@@ -72,24 +72,40 @@ public class ResultSetDataSet implements IDataSet {
 					Object[] row = new Object[_columnCount];
 					for (int i = 0; i < _columnCount; ++i) {
 						int idx = _columnIndices != null ? _columnIndices[i] : i + 1;
-						row[i] = rs.getString(idx);
+//						row[i] = rs.getString(idx);
 						switch (md.getColumnType(idx)) {
-							case Types.BIGINT:
 							case Types.BIT:
-							case Types.CHAR:
+								row[i] = new Boolean(rs.getBoolean(idx));
+								break;
+							case Types.TIME:
 							case Types.DATE:
+							case Types.TIMESTAMP:
+								row[i] = rs.getDate(idx);
+								break;
+							case Types.BIGINT:
+								row[i] = new Long(rs.getLong(idx));
+								break;
 							case Types.DECIMAL:
 							case Types.DOUBLE:
 							case Types.FLOAT:
-							case Types.INTEGER:
 							case Types.NUMERIC:
 							case Types.REAL:
+								row[i] = new Double(rs.getDouble(idx));
+								break;
+							case Types.INTEGER:
 							case Types.SMALLINT:
-							case Types.TIME:
-							case Types.TIMESTAMP:
 							case Types.TINYINT:
+								row[i] = new Integer(rs.getInt(idx));
+								break;
+							case Types.CHAR:
 							case Types.VARCHAR:
-								row[i] = rs.getString(idx);
+							case Types.LONGVARCHAR:
+								String s = rs.getString(idx);
+								if(s != null && s.length() > 50)
+								{
+									s = s.substring(0,45) + ".......";
+								}
+								row[i] = s;
 								break;
 							default:
 								row[i] = "<Unknown>";

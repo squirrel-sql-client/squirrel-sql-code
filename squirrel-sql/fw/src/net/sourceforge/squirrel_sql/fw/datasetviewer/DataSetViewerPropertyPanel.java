@@ -30,14 +30,11 @@ import javax.swing.JLabel;
 //import javax.swing.SwingConstants;
 
 import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
+import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 //??RENAME to DataSetViewerPropertyDestination
-public class DataSetViewerPropertyPanel extends BaseDataSetViewerDestination implements IDataSetViewerDestination {
-	private boolean _showHeadings;
-	private ColumnDisplayDefinition[] _hdgs = new ColumnDisplayDefinition[0];
-//	private List _leftData = new ArrayList();
-//	private List _rightData = new ArrayList();
-
+public class DataSetViewerPropertyPanel extends BaseDataSetViewerDestination 
+{
 	/** Component to be displayed. */
 	private PropertyPanel _comp = new PropertyPanel();
 	
@@ -45,21 +42,7 @@ public class DataSetViewerPropertyPanel extends BaseDataSetViewerDestination imp
 		super();
 	}
 
-	public void showHeadings(boolean show) {
-		_showHeadings = show;
-	}
-
-	public void clear() {
-		_comp.removeAll();
-//		_leftData.clear();
-//		_rightData.clear();
-	}
-
-	public void setColumnDefinitions(ColumnDisplayDefinition[] hdgs) {
-		_hdgs = hdgs;
-	}
-
-	public void addRow(Object[] row) {
+	protected void addRow(Object[] row) {
 		//_leftData.add(row[0]);
 		//_rightData.add(row[1]);
 		JLabel left = new JLabel(row[0].toString());
@@ -67,10 +50,7 @@ public class DataSetViewerPropertyPanel extends BaseDataSetViewerDestination imp
 		_comp.add(left, right);
 	}
 
-	public void moveToTop() {
-	}
-
-	public void allRowsAdded() {
+	protected void allRowsAdded() {
 		/*
 		for (int i = 0, limit = Math.max(_leftData.size(), _rightData.size());
 				i < limit; ++i) {
@@ -81,7 +61,29 @@ public class DataSetViewerPropertyPanel extends BaseDataSetViewerDestination imp
 		*/
 	}
 	
+	protected Object formatValue(Object object)
+	{
+		if(object != null) return object.toString();
+		return "<null>";
+	}
+
 	public Component getComponent() {
 		return _comp;
 	}
+		
+	public void moveToTop() {
+	}
+
+	public void clear() {
+		_comp.removeAll();
+	}
+
+
+	/*
+	 * @see IDataSetViewer#getRowCount()
+	 */
+	public int getRowCount() {
+		return _comp.getComponentCount();
+	}
+
 }

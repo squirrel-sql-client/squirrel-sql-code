@@ -1,4 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer;
+
+import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 /*
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net
@@ -22,12 +24,12 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public abstract class BaseDataSetViewerDestination implements IDataSetViewerDestination {
+public abstract class BaseDataSetViewerDestination implements IDataSetViewer {
 	/** Specifies whether to show the column headings. */
 	private boolean _showHeadings = true;
 
 	/** Column definitions. */
-	private ColumnDisplayDefinition[] _colDefs = new ColumnDisplayDefinition[0];
+	protected ColumnDisplayDefinition[] _colDefs = new ColumnDisplayDefinition[0];
 
 	/**
 	 * Specify the column definitions to use.
@@ -64,11 +66,57 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewerDest
 	public boolean getShowHeadings() {
 		return _showHeadings;
 	}
-
-	public void allRowsAdded() {
+	
+	public synchronized void show(IDataSet ds) throws DataSetException {
+		show(ds, null);
 	}
 
-	public void moveToTop() {
+	public synchronized void show(IDataSet ds, IMessageHandler msgHandler) throws DataSetException {
+		clear();
+		setColumnDefinitions(ds.getDataSetDefinition().getColumnDefinitions());
+		final int colCount = ds.getColumnCount();
+		while (ds.next(msgHandler)) {
+			addRow(ds, colCount);
+		}
+		allRowsAdded();
+		moveToTop();
+	}
+	
+	protected void addRow(IDataSet ds, int columnCount) throws DataSetException {
+		Object[] row = new Object[columnCount];
+		for (int i = 0; i < columnCount; ++i) {
+			row[i] = formatValue(ds.get(i));
+		}
+		addRow(row);
+	}
+		
+	protected Object formatValue(Object object)
+	{
+		return object;
+	}
+	
+	protected abstract void allRowsAdded();
+	protected abstract void addRow(Object[] row);
+	
+	/**
+	 * factory method for getting IDataSetViewer instances
+	 * If no instance can be made then the default
+	 * will be returned.
+	 */
+	public static IDataSetViewer getInstance(String sName)
+	{
+		IDataSetViewer dsv = null;
+		try
+		{
+			Class cls = Class.forName(sName);
+			dsv = (IDataSetViewer)cls.newInstance();
+		}
+		catch(Exception e)
+		{
+			// Log Exception????
+		}
+		if(dsv == null) return new DataSetViewerTablePanel();
+		return dsv;
 	}
 }
 

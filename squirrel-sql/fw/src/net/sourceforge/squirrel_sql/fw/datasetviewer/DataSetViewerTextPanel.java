@@ -30,33 +30,23 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
+import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 //??RENAME to DataSetViewerTextDestination
 
-public class DataSetViewerTextPanel extends BaseDataSetViewerDestination implements IDataSetViewerDestination {
-
+public class DataSetViewerTextPanel extends BaseDataSetViewerDestination 
+{
 	private final static int COLUMN_PADDING = 2;
-
-//	private boolean _showHeadings = true;
-
-//	private JTextArea _outText;
 	private MyJTextArea _outText = new MyJTextArea();
-
-//	private ColumnDisplayDefinition[] _colDefs = new ColumnDisplayDefinition[0];
-
-	/** Popup menu for text component. */
-//	private TextPopupMenu _textPopupMenu;
+	private int _rowCount;
 
 	public DataSetViewerTextPanel() {
 		super();
-		//createuserInterface();
+		_rowCount = 0;
 	}
-
-//	public void showHeadings(boolean show) {
-//		_showHeadings = show;
-//	}
 
 	public void clear() {
 		_outText.setText("");
+		_rowCount = 0;
 	}
 
 	public void setColumnDefinitions(ColumnDisplayDefinition[] colDefs) {
@@ -76,7 +66,9 @@ public class DataSetViewerTextPanel extends BaseDataSetViewerDestination impleme
 		}
 	}
 
-	public void addRow(Object[] row) {
+	protected void addRow(Object[] row) 
+	{
+		_rowCount++;
 		ColumnDisplayDefinition[] colDefs = getColumnDefinitions();
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < row.length; ++i) {
@@ -89,7 +81,10 @@ public class DataSetViewerTextPanel extends BaseDataSetViewerDestination impleme
 		_outText.select(0, 0);
 	}
 
-	public void allRowsAdded() {
+	/*
+	 * @see BaseDataSetViewerDestination#allRowsAdded()
+	 */
+	protected void allRowsAdded() {
 	}
 
 	/**
@@ -99,6 +94,13 @@ public class DataSetViewerTextPanel extends BaseDataSetViewerDestination impleme
 	 */
 	public Component getComponent() {
 		return _outText;
+	}
+
+	/*
+	 * @see IDataSetViewer#getRowCount()
+	 */
+	public int getRowCount() {
+		return _rowCount;
 	}
 
 	protected void addLine(String line) {
@@ -133,39 +135,6 @@ public class DataSetViewerTextPanel extends BaseDataSetViewerDestination impleme
 		return output.toString();
 	}
 
-	/**
-	 * Display the popup menu for this component.
-	 */
-//	protected void displayPopupMenu(MouseEvent evt) {
-//		_textPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
-//	}
-
-/*
-	protected void createuserInterface() {
-		setLayout(new BorderLayout());
-		_outText = new JTextArea();
-		_outText.setEditable(false);
-		_outText.setLineWrap(false);
-		_outText.setFont(new Font("Monospaced", Font.PLAIN, 12));
-		add(_outText, BorderLayout.CENTER);
-
-		_textPopupMenu = new TextPopupMenu();
-		_textPopupMenu.setTextComponent(_outText);
-
-		_outText.addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent evt) {
-				if (evt.isPopupTrigger()) {
-					DataSetViewerTextPanel.this.displayPopupMenu(evt);
-				}
-			}
-			public void mouseReleased(MouseEvent evt) {
-				if (evt.isPopupTrigger()) {
-					DataSetViewerTextPanel.this.displayPopupMenu(evt);
-				}
-			}
-		});
-	}
-*/	
    	private static final class MyJTextArea extends JTextArea {
 		private TextPopupMenu _textPopupMenu;
 		
