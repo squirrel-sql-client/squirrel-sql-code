@@ -38,6 +38,7 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable
 	public interface IPropertyNames
 	{
 		String DRIVER = "driverIdentifier";
+		String DRIVER_PROPERTIES = "driverProperties";
 		String ID = "identifier";
 		String NAME = "name";
 		String URL = "url";
@@ -66,24 +67,24 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable
 	int compareTo(Object rhs);
 
 	String getName();
-
-	IIdentifier getDriverIdentifier();
-
-	String getUrl();
-
-	String getUserName();
-
-	boolean getUseDriverProperties();
-
 	void setName(String name) throws ValidationException;
 
+	IIdentifier getDriverIdentifier();
 	void setDriverIdentifier(IIdentifier data) throws ValidationException;
 
+	String getUrl();
 	void setUrl(String url) throws ValidationException;
 
+	String getUserName();
 	void setUserName(String userName) throws ValidationException;
 
+	boolean getUseDriverProperties();
 	void setUseDriverProperties(boolean value) throws ValidationException;
+
+	SQLDriverProperty[] getDriverProperties();
+	SQLDriverProperty getDriverProperty(int idx);
+	void setDriverProperties(SQLDriverProperty[] value);
+	void setDriverProperty(int idx, SQLDriverProperty value);
 
 	void addPropertyChangeListener(PropertyChangeListener listener);
 	void removePropertyChangeListener(PropertyChangeListener listener);

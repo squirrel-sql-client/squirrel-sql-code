@@ -19,6 +19,8 @@ package net.sourceforge.squirrel_sql.fw.sql;
  */
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
@@ -63,6 +65,9 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 
 	/** If <TT>true</TT> then use drver properties. */
 	private boolean _useDriverProperties = false;
+
+	/** List of <TT>DriverProperty</TT> objects for this alias. */
+	private List _driverProps = new ArrayList();
 
 	/** Object to handle property change events. */
 	private transient PropertyChangeReporter _propChgReporter;
@@ -296,6 +301,40 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 			getPropertyChangeReporter().firePropertyChange(ISQLAlias.IPropertyNames.USE_DRIVER_PROPERTIES,
 												oldValue, _useDriverProperties);
 		}
+	}
+
+	public synchronized SQLDriverProperty[] getDriverProperties()
+	{
+		SQLDriverProperty[] props = new SQLDriverProperty[_driverProps.size()];
+		for (int i = 0; i < props.length; ++i)
+		{
+			props[i] = (SQLDriverProperty)((SQLDriverProperty)_driverProps.get(i)).clone();
+		}
+		return props;
+	}
+
+	public SQLDriverProperty getDriverProperty(int idx)
+		throws ArrayIndexOutOfBoundsException
+	{
+		return (SQLDriverProperty)((SQLDriverProperty)_driverProps.get(idx)).clone();
+	}
+
+	public void setDriverProperties(SQLDriverProperty[] value)
+	{
+		_driverProps.clear();
+		if (value != null)
+		{
+			for (int i = 0; i < value.length; ++i)
+			{
+				_driverProps.add(value[i]);
+			}
+		}
+	}
+
+	public void setDriverProperty(int idx, SQLDriverProperty value)
+		throws ArrayIndexOutOfBoundsException
+	{
+		_driverProps.set(idx, value);
 	}
 
 	private synchronized PropertyChangeReporter getPropertyChangeReporter()

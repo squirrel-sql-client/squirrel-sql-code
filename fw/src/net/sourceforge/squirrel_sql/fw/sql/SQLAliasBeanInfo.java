@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.beans.IndexedPropertyDescriptor;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.beans.SimpleBeanInfo;
@@ -39,13 +40,16 @@ public class SQLAliasBeanInfo extends SimpleBeanInfo
 		super();
 		if (s_desc == null)
 		{
-			s_desc = new PropertyDescriptor[6];
+			s_desc = new PropertyDescriptor[7];
 			s_desc[0] = new PropertyDescriptor(IPropNames.ID, CLAZZ, "getIdentifier", "setIdentifier");
 			s_desc[1] = new PropertyDescriptor(IPropNames.NAME, CLAZZ, "getName", "setName");
 			s_desc[2] = new PropertyDescriptor(IPropNames.URL, CLAZZ, "getUrl", "setUrl");
 			s_desc[3] = new PropertyDescriptor(IPropNames.USER_NAME, CLAZZ, "getUserName", "setUserName");
 			s_desc[4] = new PropertyDescriptor(IPropNames.DRIVER, CLAZZ, "getDriverIdentifier", "setDriverIdentifier");
 			s_desc[5] = new PropertyDescriptor(IPropNames.USE_DRIVER_PROPERTIES, CLAZZ, "getUseDriverProperties", "setUseDriverProperties");
+			s_desc[6] = new IndexedPropertyDescriptor(IPropNames.DRIVER_PROPERTIES, CLAZZ,
+								"getDriverProperties", "setDriverProperties",
+								"getDriverProperty", "setDriverProperty");
 		}
 	}
 
