@@ -30,9 +30,7 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JComboBox;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
@@ -42,89 +40,96 @@ import net.sourceforge.squirrel_sql.fw.gui.CharField;
 import net.sourceforge.squirrel_sql.fw.gui.FontChooser;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
-import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
-import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
-public class SQLPropertiesPanel
-		implements INewSessionPropertiesPanel, ISessionPropertiesPanel {
-
+public class SessionSQLPropertiesPanel
+	implements INewSessionPropertiesPanel, ISessionPropertiesPanel
+{
 	private IApplication _app;
 	private SessionProperties _props;
 
-	private MyPanel _myPanel;
+	private SQLPropertiesPanel _myPanel;
 
-	public SQLPropertiesPanel(IApplication app)
-			throws IllegalArgumentException {
+	public SessionSQLPropertiesPanel(IApplication app) throws IllegalArgumentException
+	{
 		super();
-		if (app == null) {
+		if (app == null)
+		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
 		_app = app;
-		_myPanel = new MyPanel(app);
+		_myPanel = new SQLPropertiesPanel(app);
 	}
 
-	public void initialize(IApplication app) {
+	public void initialize(IApplication app)
+	{
 		_props = app.getSquirrelPreferences().getSessionProperties();
 		_myPanel.loadData(_props);
 	}
 
 	public void initialize(IApplication app, ISession session)
-			throws IllegalArgumentException {
-		if (session == null) {
+		throws IllegalArgumentException
+	{
+		if (session == null)
+		{
 			throw new IllegalArgumentException("Null ISession passed");
 		}
 		_props = session.getProperties();
 		_myPanel.loadData(_props);
 	}
 
-	public Component getPanelComponent() {
+	public Component getPanelComponent()
+	{
 		return _myPanel;
 	}
 
-	public String getTitle() {
-		return MyPanel.i18n.SQL;
+	public String getTitle()
+	{
+		return SQLPropertiesPanel.SQLPropertiesPanelI18n.SQL;
 	}
 
-	public String getHint() {
-		return MyPanel.i18n.SQL;
+	public String getHint()
+	{
+		return SQLPropertiesPanel.SQLPropertiesPanelI18n.SQL;
 	}
 
-	public void applyChanges() {
+	public void applyChanges()
+	{
 		_myPanel.applyChanges(_props);
 	}
 
-	private static final class MyPanel extends JPanel {
+	private static final class SQLPropertiesPanel extends JPanel
+	{
 		/**
 		 * This interface defines locale specific strings. This should be
 		 * replaced with a property file.
 		 */
-		interface i18n {
+		interface SQLPropertiesPanelI18n
+		{
 			String AUTO_COMMIT = "Auto Commit SQL";
 			String COMMIT_ON_CLOSE = "Commit On Closing Session";
 			String NBR_ROWS_CONTENTS = "Number of rows:";
 			String NBR_ROWS_SQL = "Number of rows:";
 			String LIMIT_ROWS_CONTENTS = "Contents - Limit rows";
 			String LIMIT_ROWS_SQL = "SQL - Limit rows";
-			String SHOW_ROW_COUNT = "Show Row Count for Tables";
+			String SHOW_ROW_COUNT = "Show Row Count for Tables (can slow application)";
 			String TABLE = "Table";
 			String TEXT = "Text";
 			String STATEMENT_SEPARATOR = "Statement Separator:";
-			String PERF_WARNING = "Note: Settings marked with an hourglass will have performance implications.";
 			String SQL = "SQL";
 		}
 
-		private JCheckBox _autoCommitChk = new JCheckBox(i18n.AUTO_COMMIT);
-		private JCheckBox _commitOnClose = new JCheckBox(i18n.COMMIT_ON_CLOSE);
+		private JCheckBox _autoCommitChk = new JCheckBox(SQLPropertiesPanelI18n.AUTO_COMMIT);
+		private JCheckBox _commitOnClose = new JCheckBox(SQLPropertiesPanelI18n.COMMIT_ON_CLOSE);
 		private IntegerField _contentsNbrRowsToShowField = new IntegerField();
-		private JCheckBox _contentsLimitRowsChk = new JCheckBox(i18n.LIMIT_ROWS_CONTENTS);
-		private JCheckBox _showRowCount = new JCheckBox(i18n.SHOW_ROW_COUNT);
+		private JCheckBox _contentsLimitRowsChk = new JCheckBox(SQLPropertiesPanelI18n.LIMIT_ROWS_CONTENTS);
+		private JCheckBox _showRowCount = new JCheckBox(SQLPropertiesPanelI18n.SHOW_ROW_COUNT);
 		private IntegerField _sqlNbrRowsToShowField = new IntegerField();
-		private JCheckBox _sqlLimitRows = new JCheckBox(i18n.LIMIT_ROWS_SQL);
+		private JCheckBox _sqlLimitRows = new JCheckBox(SQLPropertiesPanelI18n.LIMIT_ROWS_SQL);
 		private CharField _stmtSepChar = new CharField();
 
 		/** Label displaying the selected font. */
@@ -133,12 +138,14 @@ public class SQLPropertiesPanel
 		/** Button to select font. */
 		private FontButton _fontBtn = new FontButton("Font", _fontLbl);
 
-		MyPanel(IApplication app) {
+		SQLPropertiesPanel(IApplication app)
+		{
 			super();
 			createUserInterface(app);
 		}
 
-		void loadData(SessionProperties props) {
+		void loadData(SessionProperties props)
+		{
 			_autoCommitChk.setSelected(props.getAutoCommit());
 			_commitOnClose.setSelected(props.getCommitOnClosingConnection());
 			_contentsNbrRowsToShowField.setInt(props.getContentsNbrRowsToShow());
@@ -149,14 +156,16 @@ public class SQLPropertiesPanel
 			_stmtSepChar.setChar(props.getSQLStatementSeparatorChar());
 
 			FontInfo fi = props.getFontInfo();
-			if (fi == null) {
+			if (fi == null)
+			{
 				fi = new FontInfo(UIManager.getFont("TextArea.font"));
 			}
 			_fontLbl.setText(fi.toString());
 			_fontBtn.setSelectedFont(fi.createFont());
 		}
 
-		void applyChanges(SessionProperties props) {
+		void applyChanges(SessionProperties props)
+		{
 			props.setAutoCommit(_autoCommitChk.isSelected());
 			props.setCommitOnClosingConnection(_commitOnClose.isSelected());
 			props.setContentsNbrRowsToShow(_contentsNbrRowsToShowField.getInt());
@@ -168,7 +177,8 @@ public class SQLPropertiesPanel
 			props.setFontInfo(_fontBtn.getFontInfo());
 		}
 
-		private void createUserInterface(IApplication app) {
+		private void createUserInterface(IApplication app)
+		{
 			setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.anchor = gbc.WEST;
@@ -181,37 +191,37 @@ public class SQLPropertiesPanel
 
 			++gbc.gridy;
 			add(createFontPanel(), gbc);
-
-			gbc.gridx = 0;
-			++gbc.gridy;
-			gbc.gridwidth = GridBagConstraints.REMAINDER;
-			add(new MultipleLineLabel(i18n.PERF_WARNING), gbc);
 		}
 
-		private JPanel createSQLPanel(IApplication app) {
-			JPanel pnl = new JPanel();
+		private JPanel createSQLPanel(IApplication app)
+		{
+			JPanel pnl = new JPanel(new GridBagLayout());
 			pnl.setBorder(BorderFactory.createTitledBorder("SQL"));
-			pnl.setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = gbc.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
+			gbc.anchor = gbc.WEST;
 
-			final Icon warnIcon = app.getResources().getIcon(SquirrelResources.IImageNames.PERFORMANCE_WARNING);
-
-			_autoCommitChk.addChangeListener(new ChangeListener() {
-				public void stateChanged(ChangeEvent evt) {
-					_commitOnClose.setEnabled(!((JCheckBox)evt.getSource()).isSelected());
+			_autoCommitChk.addChangeListener(new ChangeListener()
+			{
+				public void stateChanged(ChangeEvent evt)
+				{
+					_commitOnClose.setEnabled(!((JCheckBox) evt.getSource()).isSelected());
 				}
 			});
 
-			_contentsLimitRowsChk.addChangeListener(new ChangeListener() {
-				public void stateChanged(ChangeEvent evt) {
+			_contentsLimitRowsChk.addChangeListener(new ChangeListener()
+			{
+				public void stateChanged(ChangeEvent evt)
+				{
 					_contentsNbrRowsToShowField.setEnabled(_contentsLimitRowsChk.isSelected());
 				}
 			});
 
-			_sqlLimitRows.addChangeListener(new ChangeListener() {
-				public void stateChanged(ChangeEvent evt) {
+			_sqlLimitRows.addChangeListener(new ChangeListener()
+			{
+				public void stateChanged(ChangeEvent evt)
+				{
 					_sqlNbrRowsToShowField.setEnabled(_sqlLimitRows.isSelected());
 				}
 			});
@@ -224,7 +234,9 @@ public class SQLPropertiesPanel
 			gbc.gridy = 0;
 			pnl.add(_autoCommitChk, gbc);
 			++gbc.gridy;
+			gbc.gridwidth = 2;
 			pnl.add(_showRowCount, gbc);
+			gbc.gridwidth = 1;
 			++gbc.gridy;
 			pnl.add(_contentsLimitRowsChk, gbc);
 			++gbc.gridy;
@@ -232,28 +244,17 @@ public class SQLPropertiesPanel
 
 			gbc.insets = new Insets(2, 0, 2, 4);
 			++gbc.gridx;
-			gbc.gridy = 1;
-			pnl.add(new JLabel(warnIcon), gbc);
-			++gbc.gridy;
-			pnl.add(new JLabel(warnIcon), gbc);
-			++gbc.gridy;
-			pnl.add(new JLabel(warnIcon), gbc);
-
-			gbc.insets = new Insets(2, 0, 2, 4);
-			++gbc.gridx;
 			gbc.gridy = 0;
-			gbc.gridwidth = 2;
+			gbc.gridwidth = 3;
 			pnl.add(_commitOnClose, gbc);
-			++gbc.gridy;
+			gbc.gridy+=2;
 			gbc.gridwidth = 1;
+			pnl.add(new RightLabel(SQLPropertiesPanelI18n.NBR_ROWS_CONTENTS), gbc);
 			++gbc.gridy;
-			pnl.add(new RightLabel(i18n.NBR_ROWS_CONTENTS), gbc);
+			pnl.add(new RightLabel(SQLPropertiesPanelI18n.NBR_ROWS_SQL), gbc);
 			++gbc.gridy;
-			pnl.add(new RightLabel(i18n.NBR_ROWS_SQL), gbc);
-			++gbc.gridy;
-			pnl.add(new RightLabel(i18n.STATEMENT_SEPARATOR), gbc);
+			pnl.add(new RightLabel(SQLPropertiesPanelI18n.STATEMENT_SEPARATOR), gbc);
 
-			gbc.insets = new Insets(2, 0, 2, 1);
 			++gbc.gridx;
 			gbc.gridy = 0;
 			++gbc.gridy;
@@ -264,16 +265,11 @@ public class SQLPropertiesPanel
 			++gbc.gridy;
 			pnl.add(_stmtSepChar, gbc);
 
-			++gbc.gridx;
-			gbc.gridy = 2;
-			pnl.add(new JLabel(warnIcon), gbc);
-			++gbc.gridy;
-			pnl.add(new JLabel(warnIcon), gbc);
-
 			return pnl;
 		}
 
-		private JPanel createFontPanel() {
+		private JPanel createFontPanel()
+		{
 			JPanel pnl = new JPanel();
 			pnl.setBorder(BorderFactory.createTitledBorder("SQL Entry Area"));
 			pnl.setLayout(new GridBagLayout());
@@ -295,57 +291,66 @@ public class SQLPropertiesPanel
 			return pnl;
 		}
 
-		private static final class RightLabel extends JLabel {
-			RightLabel(String title) {
+		private static final class RightLabel extends JLabel
+		{
+			RightLabel(String title)
+			{
 				super(title, SwingConstants.RIGHT);
 			}
 		}
 
-		private static final class FontButton extends JButton {
+		private static final class FontButton extends JButton
+		{
 			private FontInfo _fi;
 			private JLabel _lbl;
 			private Font _font;
-//			private boolean _dirty;
 
-			FontButton(String text, JLabel lbl) {
+			FontButton(String text, JLabel lbl)
+			{
 				super(text);
 				_lbl = lbl;
 			}
 
-			FontInfo getFontInfo() {
+			FontInfo getFontInfo()
+			{
 				return _fi;
 			}
 
-			Font getSelectedFont() {
+			Font getSelectedFont()
+			{
 				return _font;
 			}
 
-			void setSelectedFont(Font font) {
+			void setSelectedFont(Font font)
+			{
 				_font = font;
-				if (_fi == null) {
+				if (_fi == null)
+				{
 					_fi = new FontInfo(font);
-				} else {
+				}
+				else
+				{
 					_fi.setFont(font);
 				}
-//				_dirty = true;
 			}
-
-//			boolean isDirty() {
-//				return _dirty;
-//			}
 		}
 
-		private static final class FontButtonListener implements ActionListener {
-			public void actionPerformed(ActionEvent evt) {
-				if (evt.getSource() instanceof FontButton) {
-					FontButton btn = (FontButton)evt.getSource();
+		private static final class FontButtonListener implements ActionListener
+		{
+			public void actionPerformed(ActionEvent evt)
+			{
+				if (evt.getSource() instanceof FontButton)
+				{
+					FontButton btn = (FontButton) evt.getSource();
 					FontInfo fi = btn.getFontInfo();
 					Font font = null;
-					if (fi != null) {
+					if (fi != null)
+					{
 						font = fi.createFont();
 					}
 					font = new FontChooser().showDialog(font);
-					if (font != null) {
+					if (font != null)
+					{
 						btn.setSelectedFont(font);
 						btn._lbl.setText(new FontInfo(font).toString());
 					}
@@ -353,21 +358,25 @@ public class SQLPropertiesPanel
 			}
 		}
 
-		private final static class OutputType {
+		private final static class OutputType
+		{
 			private final String _name;
 			private final String _className;
 
-			OutputType(String name, String className) {
+			OutputType(String name, String className)
+			{
 				super();
 				_name = name;
 				_className = className;
 			}
 
-			public String toString() {
+			public String toString()
+			{
 				return _name;
 			}
 
-			String getPanelClassName() {
+			String getPanelClassName()
+			{
 				return _className;
 			}
 		}

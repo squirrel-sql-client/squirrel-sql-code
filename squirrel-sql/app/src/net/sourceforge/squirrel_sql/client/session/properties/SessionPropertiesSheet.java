@@ -142,7 +142,7 @@ public class SessionPropertiesSheet extends BaseSheet {
 		final IApplication app = _session.getApplication();
 
 		_panels.add(new GeneralSessionPropertiesPanel());
-		_panels.add(new SQLPropertiesPanel(app));
+		_panels.add(new SessionSQLPropertiesPanel(app));
 
 		// Go thru all plugins attached to this session asking for panels.
 		SessionPluginInfo[] plugins = app.getPluginManager().getPluginInformation(_session);
