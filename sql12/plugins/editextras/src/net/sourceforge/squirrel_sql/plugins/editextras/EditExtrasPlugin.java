@@ -170,13 +170,15 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 	{
 		if (super.sessionStarted(session))
 		{
-			session.getSQLPanelAPI(this).addSQLPanelListener(_lis);
-			setupSQLEntryArea(session);
+			//session.getSQLPanelAPI(this).addSQLPanelListener(_lis);
+			FrameWorkAcessor.getSQLPanelAPI(session, this).addSQLPanelListener(_lis);
 
-//			JeditSQLEntryPanel pnl = (JeditSQLEntryPanel)session.getPluginObject(this, JeditConstants.ISessionKeys.JEDIT_SQL_ENTRY_CONTROL);
-//			JEditTextArea textArea = (JEditTextArea) ( (JScrollPane)pnl.getJComponent() ).getViewport().getView();
+         setupSQLEntryArea(session);
 
-			ISQLPanelAPI api = session.getSQLPanelAPI(this);
+
+			//ISQLPanelAPI api = session.getSQLPanelAPI(this);
+         ISQLPanelAPI api = FrameWorkAcessor.getSQLPanelAPI(session, this);
+
 			_searchAndReplaceKernelsBySessionID.put(session.getIdentifier(),
 					new SearchAndReplaceKernel(api));
 
@@ -192,7 +194,10 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 	 */
 	public void sessionEnding(ISession session)
 	{
-		session.getSQLPanelAPI(this).removeSQLPanelListener(_lis);
+		//session.getSQLPanelAPI(this).removeSQLPanelListener(_lis);
+      FrameWorkAcessor.getSQLPanelAPI(session, this).removeSQLPanelListener(_lis);
+
+
 		_searchAndReplaceKernelsBySessionID.remove(session.getIdentifier());
 		super.sessionEnding(session);
 	}
@@ -259,7 +264,9 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 
 	private void setupSQLEntryArea(ISession session)
 	{
-		ISQLPanelAPI api = session.getSQLPanelAPI(this);
+		//ISQLPanelAPI api = session.getSQLPanelAPI(this);
+		ISQLPanelAPI api = FrameWorkAcessor.getSQLPanelAPI(session, this);
+      
 		ActionCollection actions = getApplication().getActionCollection();
 		api.addToSQLEntryAreaMenu(actions.get(InQuotesAction.class));
 		api.addToSQLEntryAreaMenu(actions.get(RemoveQuotesAction.class));

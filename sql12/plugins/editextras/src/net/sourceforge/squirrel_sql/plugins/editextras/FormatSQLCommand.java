@@ -43,7 +43,9 @@ class FormatSQLCommand implements ICommand
 
 	public void execute() throws BaseException
 	{
-		ISQLPanelAPI api = _session.getSQLPanelAPI(_plugin);
+		//ISQLPanelAPI api = _session.getSQLPanelAPI(_plugin);
+		ISQLPanelAPI api = FrameWorkAcessor.getSQLPanelAPI(_session, _plugin);
+      
 		String textToReformat = api.getSelectedSQLScript();
 		boolean isSelection = true;
 		if (null == textToReformat)
