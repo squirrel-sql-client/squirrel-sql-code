@@ -385,6 +385,16 @@ class Session implements ISession
 	}
 
 	/**
+	 * Execute the passed SQL.
+	 * 
+	 * @param	sql		SQL to be executed.
+	 */
+	public void executeSQL(String sql)
+	{
+		_sessionSheet.getSQLPanel().executeSQL(sql);
+	}
+
+	/**
 	 * Commit the current SQL transaction.
 	 */
 	public void commit()

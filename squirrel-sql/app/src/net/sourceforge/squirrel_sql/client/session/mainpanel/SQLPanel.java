@@ -239,7 +239,11 @@ public class SQLPanel extends JPanel
 
 	public void executeCurrentSQL()
 	{
-		String sql = getSQLEntryPanel().getSQLToBeExecuted();
+		executeSQL(getSQLEntryPanel().getSQLToBeExecuted());
+	}
+
+	public void executeSQL(String sql)
+	{
 		if (sql != null && sql.trim().length() > 0)
 		{
 			SQLExecuterTask task = new SQLExecuterTask(this, _session, sql);

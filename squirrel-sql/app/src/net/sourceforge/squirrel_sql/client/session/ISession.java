@@ -121,6 +121,7 @@ public interface ISession extends IHasIdentifier {
 	int getSQLScriptSelectionEnd();
 	void setSQLScriptSelectionStart(int start);
 	void setSQLScriptSelectionEnd(int start);
+	void executeSQL(String sql);
 
 	/**
 	 * Return an array of <TT>IDatabaseObjectInfo</TT> objects representing all
