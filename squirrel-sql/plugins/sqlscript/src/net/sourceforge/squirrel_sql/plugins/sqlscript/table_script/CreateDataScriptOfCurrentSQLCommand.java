@@ -21,6 +21,9 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -28,112 +31,72 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
-public class CreateDataScriptOfCurrentSQLCommand implements ICommand {
-    /** Current session. */
-    private ISession _session;
-
+public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
+{
     /**
      * Ctor specifying the current session.
      */
     public CreateDataScriptOfCurrentSQLCommand(ISession session) {
-        super();
-        _session = session;
+        super(session);
     }
 
-    /**
-     * Execute this command.
-     */
-    public void execute() {
-        SQLConnection conn = _session.getSQLConnection();
-        String selectSQL = _session.getSQLScriptToBeExecuted();
-        StringBuffer sbRows = new StringBuffer(1000);
-        try {
-            final Statement stmt = conn.createStatement();
-            try {
-                ResultSet srcResult = stmt.executeQuery(selectSQL);
-                ResultSetMetaData metaData = srcResult.getMetaData();
-				String sTable = metaData.getTableName(1);
-                while (srcResult.next()) {
-                    sbRows.append("insert into ");
-                    StringBuffer sbValues = new StringBuffer();
-                    sbRows.append(sTable);
-                    sbRows.append(" (");
-                    sbValues.append(" values (");
-                    for (int i = 1; i < metaData.getColumnCount() + 1; i++) {
-                        if (i > 1) {
-                            sbValues.append(",");
-                            sbRows.append(",");
-                        }
-                        String sColumnTypeName = metaData.getColumnTypeName(i);
-                        String sName = metaData.getColumnName(i);
-                        int iIndexPoint = sName.lastIndexOf('.');
-                        sName = sName.substring(iIndexPoint + 1);
-                        sbRows.append(sName);
-
-                        if (sColumnTypeName.equalsIgnoreCase("INTEGER")
-                            || sColumnTypeName.equalsIgnoreCase("COUNTER")
-                            || sColumnTypeName.equalsIgnoreCase("LONG")
-                            || sColumnTypeName.equalsIgnoreCase("DOUBLE")
-                            || sColumnTypeName.equalsIgnoreCase("NUMERIC")
-                            || sColumnTypeName.equalsIgnoreCase("DECIMAL")
-                            || sColumnTypeName.equalsIgnoreCase("TINY")
-                            || sColumnTypeName.equalsIgnoreCase("SHORT")
-                            || sColumnTypeName.equalsIgnoreCase("FLOAT")) {
-                            Object value = srcResult.getObject(i);
-                            sbValues.append(value);
-                        } else if (sColumnTypeName.equalsIgnoreCase("DATE")) {
-                            sbValues.append("\'");
-                            sbValues.append(srcResult.getDate(i));
-                            sbValues.append("\'");
-                        } else if (sColumnTypeName.equalsIgnoreCase("BIT")) {
-                            boolean iBoolean = srcResult.getBoolean(i);
-                            if (iBoolean) {
-                                sbValues.append(1);
-                            } else {
-                                sbValues.append(0);
-                            }
-                        } else {
-                            String sResult = srcResult.getString(i);
-                            if (sResult == null) {
-                                sbValues.append("null");
-                            } else {
-                                int iIndex = sResult.indexOf("'");
-                                if (iIndex != -1) {
-                                    int iPrev = 0;
-                                    StringBuffer sb = new StringBuffer();
-                                    sb.append(sResult.substring(iPrev, iIndex));
-                                    sb.append('\\');
-                                    iPrev = iIndex;
-                                    iIndex = sResult.indexOf("'", iPrev + 1);
-                                    while (iIndex != -1) {
-                                        sb.append(sResult.substring(iPrev, iIndex));
-                                        sb.append('\\');
-                                        iPrev = iIndex;
-                                        iIndex = sResult.indexOf("'", iPrev + 1);
-                                    }
-                                    sb.append(sResult.substring(iPrev));
-                                    sResult = sb.toString();
-                                }
-                                sbValues.append("\'");
-                                sbValues.append(sResult);
-                                sbValues.append("\'");
-                            }
-                        }
-                    }
-                    sbValues.append(");\n");
-                    sbRows.append(")");
-                    sbRows.append(sbValues.toString());
-                }
-            } finally {
-                try {
-                    stmt.close();
-                } catch (Exception e) {
-                }
-            }
-        } catch (Exception e) {
-            _session.getMessageHandler().showMessage(e);
-        }
-        _session.setEntireSQLScript(sbRows.toString());
-        _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
-    }
+	/**
+	 * Execute this command.
+	 */
+	public void execute()
+	{
+		_session.getApplication().getThreadPool().addTask(new Runnable()
+		{
+			public void run()
+			{
+				SQLConnection conn = _session.getSQLConnection();
+				String selectSQL = _session.getSQLScriptToBeExecuted();
+				final StringBuffer sbRows = new StringBuffer(1000);
+				try
+				{
+					final Statement stmt = conn.createStatement();
+					try
+					{
+						ResultSet srcResult = stmt.executeQuery(selectSQL);
+						ResultSetMetaData metaData = srcResult.getMetaData();
+						String sTable = metaData.getTableName(1);
+						if (sTable == null || sTable.equals(""))
+						{
+							int iFromIndex = selectSQL.toLowerCase().indexOf("from ") + 5;
+							int iSpaceIndex = selectSQL.indexOf(" ", iFromIndex + 2);
+							sTable = selectSQL.substring(iFromIndex, iSpaceIndex).trim();
+						}
+						genInserts(srcResult, sTable, sbRows);
+					}
+					finally
+					{
+						try
+						{
+							stmt.close();
+						}
+						catch (Exception e)
+						{
+						}
+					}
+				}
+				catch (Exception e)
+				{
+					_session.getMessageHandler().showMessage(e);
+				}
+				SwingUtilities.invokeLater(new Runnable()
+				{
+					public void run()
+					{
+						if(sbRows.length() > 0)
+						{
+							_session.setEntireSQLScript(sbRows.toString());
+							_session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
+						}
+						hideAbortFrame();
+					}
+				});
+			}
+		});
+		showAbortFrame();
+	}
 }

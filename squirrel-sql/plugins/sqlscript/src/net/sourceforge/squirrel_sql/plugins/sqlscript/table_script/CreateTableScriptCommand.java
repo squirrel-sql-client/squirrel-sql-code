@@ -91,16 +91,36 @@ public class CreateTableScriptCommand implements ICommand {
                           	{
                                 sbScript.append("(");
                                 sbScript.append(rsColumns.getString(7));
-                                sbScript.append(",");
-                                sbScript.append(rsColumns.getString(9));
+                                String tmp = rsColumns.getString(9);
+                                if(tmp != null && "".equals(tmp))
+                                {
+	                                sbScript.append(",");
+	                                sbScript.append(tmp);
+                                }
+                                sbScript.append(")");
+                          	}
+                         else if(sLower.equals("number"))
+                          	{
+                                sbScript.append("(");
+                                sbScript.append(rsColumns.getString(7));
+                                String tmp = rsColumns.getString(9);
+                                if(tmp != null && "".equals(tmp))
+                                {
+	                                sbScript.append(",");
+	                                sbScript.append(tmp);
+                                }
                                 sbScript.append(")");
                           	}
                          else if(sLower.equals("decimal"))
                           	{
                                 sbScript.append("(");
                                 sbScript.append(rsColumns.getString(7));
-                                sbScript.append(",");
-                                sbScript.append(rsColumns.getString(9));
+                                String tmp = rsColumns.getString(9);
+                                if(tmp != null && "".equals(tmp))
+                                {
+	                                sbScript.append(",");
+	                                sbScript.append(tmp);
+                                }
                                 sbScript.append(")");
                           	}
                             if (pks.size() == 1 && pks.get(0).equals(sColumnName)) {
