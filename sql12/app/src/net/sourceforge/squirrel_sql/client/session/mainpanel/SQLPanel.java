@@ -71,6 +71,7 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
@@ -793,7 +794,8 @@ public class SQLPanel extends JPanel
 	}
 
 	void addResultsTab(SQLExecutionInfo exInfo, ResultSetDataSet rsds,
-						ResultSetMetaDataDataSet mdds, final JPanel cancelPanel)
+						ResultSetMetaDataDataSet mdds, final JPanel cancelPanel,
+						IDataSetUpdateableTableModel creator)
 	{
 		final ResultTab tab;
 		if (_availableTabs.size() > 0)
@@ -805,7 +807,7 @@ public class SQLPanel extends JPanel
 		}
 		else
 		{
-			tab = new ResultTab(_session, this, _idFactory.createIdentifier());
+			tab = new ResultTab(_session, this, _idFactory.createIdentifier(), exInfo, creator);
 			ResultTabInfo ti = new ResultTabInfo(tab);
 			_allTabs.put(tab.getIdentifier(), ti);
 			_usedTabs.add(ti);

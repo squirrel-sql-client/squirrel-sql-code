@@ -129,7 +129,7 @@ public class GeneralSessionPropertiesPanel
 		private TabPlacementCombo _sqlExecutionTabPlacementCmb = new TabPlacementCombo();
 		private TabPlacementCombo _sqlResultsTabPlacementCmb = new TabPlacementCombo();
 		private OutputTypeCombo _metaDataCmb = new OutputTypeCombo(false);
-		private OutputTypeCombo _sqlResultsCmb = new OutputTypeCombo(false);
+		private OutputTypeCombo _sqlResultsCmb = new OutputTypeCombo(true);
 		private OutputTypeCombo _tableContentsCmb = new OutputTypeCombo(true);
 
 		MyPanel()
@@ -241,12 +241,12 @@ public class GeneralSessionPropertiesPanel
 			++gbc.gridy;
 			add(createOutputPanel(), gbc);
 
-++gbc.gridy;
-add(new JLabel(""), gbc);
-++gbc.gridy;
-add(new JLabel(GeneralSessionPropertiesPanelI18n.DATA_TYPE1), gbc);
-++gbc.gridy;
-add(new JLabel(GeneralSessionPropertiesPanelI18n.DATA_TYPE2), gbc);
+			++gbc.gridy;
+			add(new JLabel(""), gbc);
+			++gbc.gridy;
+			add(new JLabel(GeneralSessionPropertiesPanelI18n.DATA_TYPE1), gbc);
+			++gbc.gridy;
+			add(new JLabel(GeneralSessionPropertiesPanelI18n.DATA_TYPE2), gbc);
 		}
 
 		private JPanel createAppearancePanel()
