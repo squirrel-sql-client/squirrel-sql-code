@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -33,7 +33,6 @@ import net.sourceforge.squirrel_sql.fw.gui.action.SelectInternalFrameAction;
 
 public class BaseMDIParentFrame extends JFrame
 {
-
 	private JDesktopPane _desktop;
 	private IInternalFramePositioner _internalFramePositioner;
 	private Map _children = new HashMap();

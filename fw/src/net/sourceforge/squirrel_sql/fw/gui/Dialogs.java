@@ -26,6 +26,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * This class provides some methods for using standard JDK dialogs.
  *
@@ -33,6 +35,10 @@ import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
  */
 public class Dialogs
 {
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(Dialogs.class);
+
 	public static File selectFileForWriting(Frame parentFrame,
 							FileExtensionFilter[] filters)
 	{
@@ -79,9 +85,8 @@ public class Dialogs
 
 	public static void showNotYetImplemented(Component owner)
 	{
-		JOptionPane.showMessageDialog(owner,
-			"This function has not yet been implemented", "",
-			JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(owner, s_stringMgr.getString("Dialogs.nyi"),
+										"", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	public static boolean showYesNo(Component owner, String msg)
@@ -107,16 +112,16 @@ public class Dialogs
 		{
 			return true;
 		}
-		String msg = outFile.getAbsolutePath() +
-			"\nalready exists. Do you want to replace it?";
+		String msg = s_stringMgr.getString("Dialogs.alreadyexists",
+											outFile.getAbsolutePath());
 		if (!Dialogs.showYesNo(parentFrame, msg))
 		{
 			return false;
 		}
 		if (!outFile.canWrite())
 		{
-			msg = "File " + outFile.getAbsolutePath()
-					+ "\ncannot be written to.";
+			msg = s_stringMgr.getString("Dialogs.cannotwrite",
+											outFile.getAbsolutePath());
 			Dialogs.showOk(parentFrame, msg);
 			return false;
 		}
