@@ -344,6 +344,10 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 				{
 					colWidth = MAX_COLUMN_WIDTH * _multiplier;
 				}
+				else if (colWidth < MIN_COLUMN_WIDTH * _multiplier)
+				{
+			        colWidth = MIN_COLUMN_WIDTH * _multiplier;
+				}
 
 				TableColumn col = new TableColumn(i, colWidth,
 					CellComponentFactory.getTableCellRenderer(colDefs[i]), null);			

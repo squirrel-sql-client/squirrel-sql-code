@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -23,8 +23,12 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 public interface IDataSetViewer
 {
+	/** Minimum width (in nbr of characters) for a column. */
+	int MIN_COLUMN_WIDTH = 3;
+
+	/** Maximum width (in nbr of characters) for a column. */
 	int MAX_COLUMN_WIDTH = 50;
-	
+
 	/**
 	 * Allow some DataSetViewers to complete their initialization.
 	 */
@@ -83,11 +87,11 @@ public interface IDataSetViewer
 	 * @return	The component for this viewer.
 	 */
 	Component getComponent();
-	
+
 	/**
 	 * Get the reference to the updateable model object that represents the
 	 * actual data behind the GUI that fw is displaying.
-	 * 
+	 *
 	 * @return	the object IDataSetUpdateableModel object.
 	 */
 	IDataSetUpdateableModel getUpdateableModelReference();
