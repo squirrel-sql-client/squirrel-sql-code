@@ -40,6 +40,11 @@ import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
 import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 
+/**
+ * This sheet allows the user to maintain global preferences.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
 public class GlobalPreferencesSheet extends BaseSheet {
 	/**
 	 * This interface defines locale specific strings. This should be
@@ -63,6 +68,14 @@ public class GlobalPreferencesSheet extends BaseSheet {
 	/** Frame title. */
 	private JLabel _titleLbl = new JLabel();
 
+	/**
+	 * Ctor specifying the application API.
+	 *
+	 * @param	app		Application API.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if a <TT>null</TT> <TT>IApplication passed.
+	 */
 	private GlobalPreferencesSheet(IApplication app) {
 		super(i18n.TITLE);
 		if (app == null) {
@@ -110,6 +123,7 @@ public class GlobalPreferencesSheet extends BaseSheet {
 			}
 			moveToFront();
 		}
+
 		super.setVisible(show);
 	}
 
@@ -124,6 +138,9 @@ public class GlobalPreferencesSheet extends BaseSheet {
 		_titleLbl.setText(title);
 	}
 
+	/**
+	 * Close this sheet by making it invisible.
+	 */
 	private void performClose() {
 		setVisible(false);
 	}
@@ -149,6 +166,9 @@ public class GlobalPreferencesSheet extends BaseSheet {
 		setVisible(false);
 	}
 
+	/**
+	 * Create user interface.
+	 */
 	private void createUserInterface() {
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 
@@ -207,6 +227,9 @@ public class GlobalPreferencesSheet extends BaseSheet {
 		contentPane.add(createButtonsPanel(), gbc);
 	}
 
+	/**
+	 * Create panel at bottom containing the buttons.
+	 */
 	private JPanel createButtonsPanel() {
 		JPanel pnl = new JPanel();
 
@@ -233,6 +256,14 @@ public class GlobalPreferencesSheet extends BaseSheet {
 		return pnl;
 	}
 
+	/**
+	 * Get the main frame from the passed <TT>IApplication</TT> object.
+	 *
+	 * @return	The main frame.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			If <TT>null</TT> <TT>IApplication</TT> passed.
+	 */
 	private static Frame getFrame(IApplication app) {
 		if (app == null) {
 			throw new IllegalArgumentException("Null IApplication passed");

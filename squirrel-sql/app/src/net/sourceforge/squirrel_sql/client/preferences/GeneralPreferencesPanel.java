@@ -17,23 +17,19 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Component;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
-import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -83,14 +79,13 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 		return MyPanel.i18n.TAB_HINT;
 	}
 
-	private static final class MyPanel extends Box {
+	private static final class MyPanel extends JPanel { // Box {
 		/**
 		 * This interface defines locale specific strings. This should be
 		 * replaced with a property file.
 		 */
 		interface i18n {
-			String DEBUG_JDBC = "JDBC Debug";
-			String JDBC_PERF_WARNING = "Note: JDBC debug will slow down this application.";
+			String DEBUG_JDBC = "JDBC Debug (can slow application)";
 			String LOGIN_TIMEOUT = "Login Timeout (Seconds):";
 			String SHOW_CONTENTS = "Show Window Contents While Dragging";
 			String SHOW_TOOLTIPS = "Show Tooltips";
@@ -108,7 +103,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 		private JLabel _jdbcDebugLogFileNameLbl = new OutputLabel(" ");// Must have at least 1 blank otherwise width gets set to zero.
 
 		MyPanel() {
-			super(BoxLayout.Y_AXIS);
+			super(new GridBagLayout());
 			createUserInterface();
 		}
 
@@ -138,10 +133,19 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 		}
 
 		private void createUserInterface() {
-			add(createAppearancePanel());
-			add(createSQLPanel());
-			add(createLoggingPanel());
-			add(createJDBCDebugPanel());
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = gbc.HORIZONTAL;
+			gbc.insets = new Insets(4, 4, 4, 4);
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			gbc.weightx = 1;
+			add(createAppearancePanel(), gbc);
+			++gbc.gridy;
+			add(createSQLPanel(), gbc);
+			++gbc.gridy;
+			add(createLoggingPanel(), gbc);
+			++gbc.gridy;
+			add(createJDBCDebugPanel(), gbc);
 		}
 
 		private JPanel createAppearancePanel() {
@@ -238,16 +242,8 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 			pnl.add(new RightLabel("JDBC Debug File:"), gbc);
 
 			++gbc.gridx;
-//			gbc.weightx = 1;
+			gbc.weightx = 1;
 			pnl.add(_jdbcDebugLogFileNameLbl, gbc);
-
-			gbc.weightx = 0;
-			gbc.gridx = 0;
-			++gbc.gridy;
-//			gbc.gridy = gbc.RELATIVE;
-			gbc.gridwidth = 2;
-//			gbc.gridwidth = GridBagConstraints.REMAINDER;
-			pnl.add(new MultipleLineLabel(i18n.JDBC_PERF_WARNING), gbc);
 
 			return pnl;
 		}
