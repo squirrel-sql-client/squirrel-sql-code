@@ -34,6 +34,22 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+
+import net.sourceforge.squirrel_sql.plugins.mysql.action.AnalyzeTableAction;
+import net.sourceforge.squirrel_sql.plugins.mysql.action.CheckTableAction;
+import net.sourceforge.squirrel_sql.plugins.mysql.action.CreateMysqlTableScriptAction;
+import net.sourceforge.squirrel_sql.plugins.mysql.action.ExplainSelectTableAction;
+import net.sourceforge.squirrel_sql.plugins.mysql.action.ExplainTableAction;
+import net.sourceforge.squirrel_sql.plugins.mysql.action.OptimizeTableAction;
+import net.sourceforge.squirrel_sql.plugins.mysql.expander.SessionExpander;
+import net.sourceforge.squirrel_sql.plugins.mysql.expander.UserParentExpander;
+import net.sourceforge.squirrel_sql.plugins.mysql.tab.DatabaseStatusTab;
+import net.sourceforge.squirrel_sql.plugins.mysql.tab.OpenTablesTab;
+import net.sourceforge.squirrel_sql.plugins.mysql.tab.ProcessesTab;
+import net.sourceforge.squirrel_sql.plugins.mysql.tab.ShowLogsTab;
+import net.sourceforge.squirrel_sql.plugins.mysql.tab.ShowVariablesTab;
+import net.sourceforge.squirrel_sql.plugins.mysql.tab.TableStatusTab;
+import net.sourceforge.squirrel_sql.plugins.mysql.tab.UserGrantsTab;
 /**
  * MySQL plugin class.
  *
@@ -80,7 +96,7 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	 */
 	public String getVersion()
 	{
-		return "0.15";
+		return "0.20";
 	}
 
 	/**
@@ -155,12 +171,15 @@ public class MysqlPlugin extends DefaultSessionPlugin
 		final IApplication app = getApplication();
 		final ActionCollection coll = app.getActionCollection();
 
+		coll.add(new AnalyzeTableAction(app, _resources, this));
 		coll.add(new CreateMysqlTableScriptAction(app, _resources, this));
 		coll.add(new CheckTableAction.ChangedCheckTableAction(app, _resources, this));
 		coll.add(new CheckTableAction.ExtendedCheckTableAction(app, _resources, this));
 		coll.add(new CheckTableAction.FastCheckTableAction(app, _resources, this));
 		coll.add(new CheckTableAction.MediumCheckTableAction(app, _resources, this));
 		coll.add(new CheckTableAction.QuickCheckTableAction(app, _resources, this));
+		coll.add(new ExplainSelectTableAction(app, _resources, this));
+		coll.add(new ExplainTableAction(app, _resources, this));
 		coll.add(new OptimizeTableAction(app, _resources, this));
 
 		app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, createMysqlMenu());
@@ -177,16 +196,16 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	/**
 	 * Session has been started. If this is a MySQL session
 	 * then setup MySQL tabs etc.
-	 * 
+	 *
 	 * @param	session		Session that has started.
-	 * 
+	 *
 	 * @return	<TT>true</TT> if session is MySQL in which case this plugin
 	 * 			is interested in it.
 	 */
 	public boolean sessionStarted(ISession session)
 	{
 		boolean isMysql = false;
-		if( super.sessionStarted(session))
+		if (super.sessionStarted(session))
 		{
 			isMysql = isMysql(session);
 			if (isMysql)
@@ -195,15 +214,22 @@ public class MysqlPlugin extends DefaultSessionPlugin
 				final ActionCollection coll = getApplication().getActionCollection();
 				_treeAPI.addToPopup(DatabaseObjectType.TABLE, createMysqlMenu());
 
+				// Show users in the object tee.
+				_treeAPI.addExpander(DatabaseObjectType.SESSION, new SessionExpander());
+				_treeAPI.addExpander(IObjectTypes.USER_PARENT, new UserParentExpander(this));
+
 				// Tabs to add to the database node.
 				_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new DatabaseStatusTab());
 				_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ProcessesTab());
+				_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowVariablesTab());
+				_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowLogsTab());
 
 				// Tabs to add to the catalog node.
 				_treeAPI.addDetailTab(DatabaseObjectType.CATALOG, new OpenTablesTab());
+				_treeAPI.addDetailTab(DatabaseObjectType.CATALOG, new TableStatusTab());
 
-				// Tabs to add to table nodes.
-				_treeAPI.addDetailTab(DatabaseObjectType.TABLE, new AnalyzeTableTab());
+				// Tabs to add to the user node.
+				_treeAPI.addDetailTab(DatabaseObjectType.USER, new UserGrantsTab());
 			}
 		}
 		return isMysql;
@@ -219,18 +245,25 @@ public class MysqlPlugin extends DefaultSessionPlugin
 		final IApplication app = getApplication();
 		final ActionCollection coll = app.getActionCollection();
 
-		final JMenu menu = _resources.createMenu(MysqlResources.IMenuResourceKeys.MYSQL);
-		_resources.addToMenu(coll.get(CreateMysqlTableScriptAction.class), menu);
-		_resources.addToMenu(coll.get(CheckTableAction.ChangedCheckTableAction.class), menu);
-		_resources.addToMenu(coll.get(CheckTableAction.ExtendedCheckTableAction.class), menu);
-		_resources.addToMenu(coll.get(CheckTableAction.FastCheckTableAction.class), menu);
-		_resources.addToMenu(coll.get(CheckTableAction.MediumCheckTableAction.class), menu);
-		_resources.addToMenu(coll.get(CheckTableAction.QuickCheckTableAction.class), menu);
-		_resources.addToMenu(coll.get(OptimizeTableAction.class), menu);
+		final JMenu mysqlMenu = _resources.createMenu(MysqlResources.IMenuResourceKeys.MYSQL);
+		_resources.addToMenu(coll.get(CreateMysqlTableScriptAction.class), mysqlMenu);
 
-		app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, menu);
+		_resources.addToMenu(coll.get(AnalyzeTableAction.class), mysqlMenu);
+		_resources.addToMenu(coll.get(ExplainTableAction.class), mysqlMenu);
+		_resources.addToMenu(coll.get(ExplainSelectTableAction.class), mysqlMenu);
+		_resources.addToMenu(coll.get(OptimizeTableAction.class), mysqlMenu);
 
-		return menu;
+		final JMenu checkTableMenu = _resources.createMenu(MysqlResources.IMenuResourceKeys.CHECK_TABLE);
+		_resources.addToMenu(coll.get(CheckTableAction.ChangedCheckTableAction.class), checkTableMenu);
+		_resources.addToMenu(coll.get(CheckTableAction.ExtendedCheckTableAction.class), checkTableMenu);
+		_resources.addToMenu(coll.get(CheckTableAction.FastCheckTableAction.class), checkTableMenu);
+		_resources.addToMenu(coll.get(CheckTableAction.MediumCheckTableAction.class), checkTableMenu);
+		_resources.addToMenu(coll.get(CheckTableAction.QuickCheckTableAction.class), checkTableMenu);
+		mysqlMenu.add(checkTableMenu);
+
+		app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, mysqlMenu);
+
+		return mysqlMenu;
 	}
 
 	/**

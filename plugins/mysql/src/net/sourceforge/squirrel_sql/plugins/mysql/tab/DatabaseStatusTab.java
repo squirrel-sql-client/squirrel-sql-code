@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.mysql;
+package net.sourceforge.squirrel_sql.plugins.mysql.tab;
 /*
  * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -20,11 +20,11 @@ package net.sourceforge.squirrel_sql.plugins.mysql;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
- * This tab will display open tables in the database.
+ * This tab will display the database status.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class OpenTablesTab extends BaseSQLTab
+public class DatabaseStatusTab extends BaseSQLTab
 {
 	/**
 	 * This interface defines locale specific strings. This should be
@@ -32,22 +32,21 @@ public class OpenTablesTab extends BaseSQLTab
 	 */
 	private interface i18n
 	{
-		String TITLE = "(MySQL) Open tables";
-		String HINT = "(MySQL) Display open tables";
+		String TITLE = "MySQL Status";
+		String HINT = "(MySQL) Display database status";
 	}
 
 	/** Logger for this class. */
 	private final static ILogger s_log =
-		LoggerController.createLogger(OpenTablesTab.class);
+		LoggerController.createLogger(DatabaseStatusTab.class);
 
-	public OpenTablesTab()
+	public DatabaseStatusTab()
 	{
 		super(i18n.TITLE, i18n.HINT);
 	}
 
 	protected String getSQL()
 	{
-		final String catalog = getDatabaseObjectInfo().getSimpleName();
-		return "show open tables from " + catalog;
+		return "show status";
 	}
 }

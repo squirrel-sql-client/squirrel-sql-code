@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.mysql;
+package net.sourceforge.squirrel_sql.plugins.mysql.tab;
 /*
  * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -17,23 +17,37 @@ package net.sourceforge.squirrel_sql.plugins.mysql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
- * Plugin resources
+ * This tab will display open tables in the database.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-final class MysqlResources extends PluginResources
+public class OpenTablesTab extends BaseSQLTab
 {
-	interface IMenuResourceKeys
+	/**
+	 * This interface defines locale specific strings. This should be
+	 * replaced with a property file.
+	 */
+	private interface i18n
 	{
-		String CHECK_TABLE = "checktable";
-		String MYSQL = "mysql";
+		String TITLE = "MySQL Open tables";
+		String HINT = "(MySQL) Display open tables";
 	}
 
-	MysqlResources(String rsrcBundleBaseName, IPlugin plugin)
+	/** Logger for this class. */
+	private final static ILogger s_log =
+		LoggerController.createLogger(OpenTablesTab.class);
+
+	public OpenTablesTab()
 	{
-		super(rsrcBundleBaseName, plugin);
+		super(i18n.TITLE, i18n.HINT);
+	}
+
+	protected String getSQL()
+	{
+		final String catalog = getDatabaseObjectInfo().getSimpleName();
+		return "show open tables from " + catalog;
 	}
 }
