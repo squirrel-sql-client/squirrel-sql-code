@@ -107,19 +107,19 @@ public class CellDataPopup
 
 		Dimension dim = newComp.getSize();
 		boolean dimChanged = false;
-		if (dim.width < 250)
+		if (dim.width < 300)
 		{
-			dim.width = 250;
+			dim.width = 300;
 			dimChanged = true;
 		}
-		if (dim.height < 100)
+		if (dim.height < 200)
 		{
 			dim.height = 200;
 			dimChanged = true;
 		}
-		if (dim.width > 500)
+		if (dim.width > 600)
 		{
-			dim.width = 500;
+			dim.width = 600;
 			dimChanged = true;
 		}
 		if (dim.height > 400)
