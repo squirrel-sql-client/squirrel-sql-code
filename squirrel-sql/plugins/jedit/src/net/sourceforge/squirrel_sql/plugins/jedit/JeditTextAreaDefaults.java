@@ -38,7 +38,8 @@ class JeditTextAreaDefaults extends TextAreaDefaults {
 
 		caretVisible = true;
 //		caretBlinks = true;
-		electricScroll = 3;
+//		electricScroll = 3;
+		electricScroll = 0;
 
 		cols = 0;
 		rows = 1;
