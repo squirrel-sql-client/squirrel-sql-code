@@ -4,6 +4,8 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ColumnInfoXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ConstraintViewXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameControllerXmlBean;
+import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
@@ -49,6 +51,7 @@ public class TableFrameController
    private JMenuItem _mnuAddParentTables;
    private JMenuItem _mnuAddAllRelatedTables;
    private JMenuItem _mnuRefreshTable;
+   private JMenuItem _mnuScriptTable;
    private JCheckBoxMenuItem _mnuOrderByName;
    private JCheckBoxMenuItem _mnuPksAndConstraintsOnTop;
    private JCheckBoxMenuItem _mnuDbOrder;
@@ -438,9 +441,6 @@ public class TableFrameController
          }
       });
 
-
-
-
       _mnuRefreshTable = new JMenuItem("Refresh table");
       _mnuRefreshTable.addActionListener(new ActionListener()
       {
@@ -450,7 +450,14 @@ public class TableFrameController
          }
       });
 
-
+      _mnuScriptTable = new JMenuItem("Script table");
+      _mnuScriptTable.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onScriptTable();
+         }
+      });
 
       _mnuDbOrder = new JCheckBoxMenuItem("db order");
       _mnuDbOrder.addActionListener(new ActionListener()
@@ -497,6 +504,7 @@ public class TableFrameController
       _popUp.add(_mnuAddAllRelatedTables);
       _popUp.add(new JSeparator());
       _popUp.add(_mnuRefreshTable);
+      _popUp.add(_mnuScriptTable);
       _popUp.add(new JSeparator());
       _popUp.add(_mnuDbOrder);
       _popUp.add(_mnuOrderByName);
@@ -519,6 +527,24 @@ public class TableFrameController
 
 
    }
+
+   private void onScriptTable()
+   {
+      SqlScriptAcessor.scriptTablesToSQLEntryArea(_session, new ITableInfo[]{getTableInfo()});
+   }
+
+   ITableInfo getTableInfo()
+   {
+      try
+      {
+         return _session.getSQLConnection().getSQLMetaData().getTables(_catalog, _schema, _tableName, new String[]{"TABLE"})[0];
+      }
+      catch (SQLException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
 
    private void onRefresh()
    {
