@@ -163,7 +163,7 @@ public class DataTypeInteger
 	 */
 	public Object validateAndConvert(String value, StringBuffer messageBuffer) {
 		// handle null, which is shown as the special string "<null>"
-		if (value.equals("<null>"))
+		if (value.equals("<null>") || value.equals(""))
 			return null;
 
 		// Do the conversion into the object in a safe manner
