@@ -3,6 +3,7 @@ Change Log
 
 1.1 continuation
 ================
+- New API added to IPlugin - INewSessionPropertiesPanel[] getNewSessionPropertiesPanels();
 - New Session options moved from Global Prefernces dialog to new Session Properties dialog.
 - New options on the session menu - Close all result tabs and close all Result windows.
 - New option on the Windows menu - Close all sessions.
