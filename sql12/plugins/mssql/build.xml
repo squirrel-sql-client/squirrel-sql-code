@@ -47,5 +47,11 @@
 				<include name="*.jar"/>
 			</fileset>
 		</copy>
+		<copy todir="${squirrel.plugins}/mssql">
+			<fileset dir=".">	
+				<include name="*.txt"/>
+				<include name="*.html"/>
+			</fileset>
+		</copy>
 	</target>
 </project>
