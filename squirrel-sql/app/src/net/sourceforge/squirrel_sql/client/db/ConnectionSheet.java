@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.db;
 /*
- * Copyright (C) 2001 Colin Bell and Johan Compagner
+ * Copyright (C) 2001-2002 Colin Bell and Johan Compagner
  * colbell@users.sourceforge.net
  * jcompagner@j-com.nl
  *
@@ -18,17 +18,14 @@ package net.sourceforge.squirrel_sql.client.db;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Container;
-import java.awt.Frame;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.awt.event.KeyEvent;
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -40,12 +37,11 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
-import javax.swing.event.InternalFrameListener;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.IOkClosePanelListener;
 import net.sourceforge.squirrel_sql.fw.gui.OkClosePanel;
 import net.sourceforge.squirrel_sql.fw.gui.OkClosePanelEvent;
-import net.sourceforge.squirrel_sql.fw.gui.IOkClosePanelListener;
 import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
 import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
@@ -59,12 +55,14 @@ import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ConnectionSheet extends BaseSheet {
+public class ConnectionSheet extends BaseSheet
+{
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
-	private interface i18n {
+	private interface ConnectionSheetI18n
+	{
 		String ALIAS = "Alias:";
 		String CANCELLING = "Cancelling connection attempt...";
 		String CONNECT = "Connect";
@@ -76,7 +74,8 @@ public class ConnectionSheet extends BaseSheet {
 	}
 
 	/** Handler called for internal frame actions. */
-	public interface IConnectionSheetHandler {
+	public interface IConnectionSheetHandler
+	{
 		/**
 		 * User has clicked the OK button to connect to the alias.
 		 *
@@ -140,16 +139,20 @@ public class ConnectionSheet extends BaseSheet {
 	 * 			If <TT>null</TT> <TT>IApplication</TT>, <TT>ISQLAlias</TT>,
 	 * 			or <TT>IConnectionSheetHandler</TT> passed.
 	 */
-	public ConnectionSheet(IApplication app, /*Frame owner,*/ ISQLAlias alias,
-								IConnectionSheetHandler handler) {
+	public ConnectionSheet(IApplication app, /*Frame owner,*/
+	ISQLAlias alias, IConnectionSheetHandler handler)
+	{
 		super();
-		if (app == null) {
+		if (app == null)
+		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
-		if (alias == null) {
+		if (alias == null)
+		{
 			throw new IllegalArgumentException("Null ISQLAlias passed");
 		}
-		if (handler == null) {
+		if (handler == null)
+		{
 			throw new IllegalArgumentException("Null IConnectionSheetHandler passed");
 		}
 
@@ -164,11 +167,15 @@ public class ConnectionSheet extends BaseSheet {
 		loadData();
 	}
 
-	public void executed(boolean connected) {
+	public void executed(boolean connected)
+	{
 		_connecting = false;
-		if (connected) {
+		if (connected)
+		{
 			dispose();
-		} else {
+		}
+		else
+		{
 			setStatusText(null);
 			_user.setEnabled(true);
 			_password.setEnabled(true);
@@ -182,7 +189,8 @@ public class ConnectionSheet extends BaseSheet {
 	 *
 	 * @param	title	New title text.
 	 */
-	public void setTitle(String title) {
+	public void setTitle(String title)
+	{
 		super.setTitle(title);
 		_titleLbl.setText(title);
 	}
@@ -192,14 +200,16 @@ public class ConnectionSheet extends BaseSheet {
 	 *
 	 * @param	text	The text to place in the status bar.
 	 */
-	public void setStatusText(String text) {
+	public void setStatusText(String text)
+	{
 		_statusBar.setText(text);
 	}
 
 	/**
 	 * Load data about selected alias into the UI.
 	 */
-	private void loadData() {
+	private void loadData()
+	{
 		final String userName = _alias.getUserName();
 		_aliasName.setText(_alias.getName());
 		_driverName.setText(_sqlDriver.getName());
@@ -214,21 +224,25 @@ public class ConnectionSheet extends BaseSheet {
 		_url.setToolTipText(_url.getText());
 	}
 
-	private void connect(boolean connecting) {
-		if (!_connecting) {
+	private void connect(boolean connecting)
+	{
+		if (!_connecting)
+		{
 			_connecting = true;
 			_btnsPnl.setExecuting(true);
-			setStatusText(i18n.CONNECTING);
+			setStatusText(ConnectionSheetI18n.CONNECTING);
 			_user.setEnabled(false);
 			_password.setEnabled(false);
 			_handler.performOK(this, _user.getText(), _password.getText());
 		}
 	}
 
-	private void cancelConnect() {
-		if(_connecting) {
+	private void cancelConnect()
+	{
+		if (_connecting)
+		{
 			// abort first..
-			setStatusText(i18n.CANCELLING);
+			setStatusText(ConnectionSheetI18n.CANCELLING);
 			_btnsPnl.enableCloseButton(false);
 			_handler.performCancelConnect(this);
 			_connecting = false;
@@ -236,36 +250,31 @@ public class ConnectionSheet extends BaseSheet {
 		}
 	}
 
-	private void createUserInterface() {
+	private void createUserInterface()
+	{
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		// This is a tool window.
 		GUIUtils.makeToolWindow(this, true);
-
-		setTitle("Connect to " + _alias.getName());
+		setTitle("Connect to: " + _alias.getName());
 
 		_user.setColumns(COLUMN_COUNT);
 		_password.setColumns(COLUMN_COUNT);
 
-		TextFieldActionListener textListener = new TextFieldActionListener();
-		_user.addActionListener(textListener);
-		_password.addActionListener(textListener);
-
 		PropertyPanel dataEntryPnl = new PropertyPanel();
 
-		JLabel lbl = new JLabel(i18n.ALIAS, SwingConstants.RIGHT);
+		JLabel lbl = new JLabel(ConnectionSheetI18n.ALIAS, SwingConstants.RIGHT);
 		dataEntryPnl.add(lbl, _aliasName);
 
-		lbl = new JLabel(i18n.DRIVER, SwingConstants.RIGHT);
+		lbl = new JLabel(ConnectionSheetI18n.DRIVER, SwingConstants.RIGHT);
 		dataEntryPnl.add(lbl, _driverName);
 
-		lbl = new JLabel(i18n.URL, SwingConstants.RIGHT);
+		lbl = new JLabel(ConnectionSheetI18n.URL, SwingConstants.RIGHT);
 		dataEntryPnl.add(lbl, _url);
 
-		lbl = new JLabel(i18n.USER, SwingConstants.RIGHT);
+		lbl = new JLabel(ConnectionSheetI18n.USER, SwingConstants.RIGHT);
 		_user.setColumns(25);
 		dataEntryPnl.add(lbl, _user);
 
-		lbl = new JLabel(i18n.PASSWORD, SwingConstants.RIGHT);
+		lbl = new JLabel(ConnectionSheetI18n.PASSWORD, SwingConstants.RIGHT);
 		dataEntryPnl.add(lbl, _password);
 
 		// This seems to be necessary to get background colours
@@ -332,14 +341,19 @@ public class ConnectionSheet extends BaseSheet {
 		_btnsPnl.makeOKButtonDefault();
 
 		// Set focus to password control if default user name has been setup.
-		addInternalFrameListener(new InternalFrameAdapter() {
+		addInternalFrameListener(new InternalFrameAdapter()
+		{
 			private InternalFrameAdapter _this;
-			public void internalFrameActivated(InternalFrameEvent evt) {
+			public void internalFrameActivated(InternalFrameEvent evt)
+			{
 				_this = this;
 				final String userName = _user.getText();
-				if (userName != null && userName.length() > 0) {
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
+				if (userName != null && userName.length() > 0)
+				{
+					SwingUtilities.invokeLater(new Runnable()
+					{
+						public void run()
+						{
 							_password.requestFocus();
 							ConnectionSheet.this.removeInternalFrameListener(_this);
 						}
@@ -351,40 +365,55 @@ public class ConnectionSheet extends BaseSheet {
 		pack();
 	}
 
-	protected JRootPane createRootPane() {
-		ActionListener escLis = new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				dispose();
+	/**
+	 * Allow base class to create rootpane and add a couple
+	 * of listeners for ENTER and ESCAPE to it.
+	 */
+	protected JRootPane createRootPane()
+	{
+		ActionListener escapeListener = new ActionListener()
+		{
+			public void actionPerformed(ActionEvent actionEvent)
+			{
+				ConnectionSheet.this.dispose();
+			}
+		};
+
+		ActionListener enterListener = new ActionListener()
+		{
+			public void actionPerformed(ActionEvent actionEvent)
+			{
+				ConnectionSheet.this.connect(true);
 			}
 		};
 
 		JRootPane rootPane = super.createRootPane();
-		KeyStroke ks = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(escLis, ks, WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
-	}
 
-	private final class TextFieldActionListener implements ActionListener
-	{
-		public void actionPerformed(ActionEvent event)
-		{
-			connect(true);
-		}
+		KeyStroke ks = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(escapeListener, ks, WHEN_IN_FOCUSED_WINDOW);
+		ks = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(enterListener, ks, WHEN_IN_FOCUSED_WINDOW);
+
+		return rootPane;
 	}
 
 	/**
 	 * Listener to handle button events in OK/Close panel.
 	 */
-	private final class MyOkClosePanelListener implements IOkClosePanelListener {
-		public void okPressed(OkClosePanelEvent evt) {
+	private final class MyOkClosePanelListener implements IOkClosePanelListener
+	{
+		public void okPressed(OkClosePanelEvent evt)
+		{
 			ConnectionSheet.this.connect(true);
 		}
 
-		public void closePressed(OkClosePanelEvent evt) {
+		public void closePressed(OkClosePanelEvent evt)
+		{
 			ConnectionSheet.this.dispose();
 		}
 
-		public void cancelPressed(OkClosePanelEvent evt) {
+		public void cancelPressed(OkClosePanelEvent evt)
+		{
 			ConnectionSheet.this.cancelConnect();
 		}
 	}
