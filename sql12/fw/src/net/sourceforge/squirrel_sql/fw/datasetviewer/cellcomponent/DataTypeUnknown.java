@@ -563,7 +563,7 @@ public class DataTypeUnknown
 			_readUnknown = _showUnknownChk.isSelected();
 			DTProperties.put(
 				thisClassName,
-				"readUnknown", Boolean.toString(_readUnknown));
+				"readUnknown", new Boolean(_readUnknown).toString());
 		}
 	 
 	 } // end of inner class

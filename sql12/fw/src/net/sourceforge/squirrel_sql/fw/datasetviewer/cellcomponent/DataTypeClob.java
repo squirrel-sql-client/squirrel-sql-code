@@ -225,8 +225,24 @@ public class DataTypeClob
 	 */
 	public String renderObject(Object value) {
 		String text = (String)_renderer.renderObject(value);
-		if (_makeNewlinesVisibleInCell)
-			text = text.replaceAll("\n", "/\\n");
+		if (_makeNewlinesVisibleInCell){
+			/*
+			 * TODO: When 1.4 is the earliest version supported,
+			 * replace the following code with:
+			 * 	text = text.replaceAll("\n", "/\\n");
+			 */
+			 int index = 0;
+			 StringBuffer buf = new StringBuffer(text);
+			 while (index < buf.length()) {
+			 	if (buf.charAt(index) == '\n') {
+			 		// found a newline - change it into the string "\n"
+			 		buf.replace(index, index+1 , "/n");
+			 		index +=1;
+			 	}
+			 	index++;
+			 }
+			 text = buf.toString();
+		}	 
 		return text;
 	}
 	
@@ -909,12 +925,12 @@ public class DataTypeClob
 			_readClobs = _showClobChk.isSelected();
 			DTProperties.put(
 				thisClassName,
-				"readClobs", Boolean.toString(_readClobs));
+				"readClobs", new Boolean(_readClobs).toString());
 			
 			_readCompleteClobs = (_clobTypeDrop.getSelectedIndex() == 0) ? false : true;
 			DTProperties.put(
 				thisClassName,
-				"readCompleteClobs", Boolean.toString(_readCompleteClobs));	
+				"readCompleteClobs", new Boolean(_readCompleteClobs).toString());	
 		
 			_readClobsSize = _showClobSizeField.getInt();
 			DTProperties.put(
@@ -924,7 +940,7 @@ public class DataTypeClob
 			_makeNewlinesVisibleInCell = _makeNewlinesVisibleInCellChk.isSelected();
 			DTProperties.put(
 				thisClassName,
-				"makeNewlinesVisibleInCell", Boolean.toString(_makeNewlinesVisibleInCell));
+				"makeNewlinesVisibleInCell", new Boolean(_makeNewlinesVisibleInCell).toString());
 		}
 	 
 	 } // end of inner class

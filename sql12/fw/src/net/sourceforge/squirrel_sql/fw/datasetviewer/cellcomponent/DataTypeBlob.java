@@ -873,13 +873,13 @@ public class DataTypeBlob
 			_readBlobs = _showBlobChk.isSelected();
 			DTProperties.put(
 				thisClassName,
-				"readBlobs", Boolean.toString(_readBlobs));
+				"readBlobs", new Boolean(_readBlobs).toString());
 			
 		
 			_readCompleteBlobs = (_blobTypeDrop.getSelectedIndex() == 0) ? false : true;
 			DTProperties.put(
 				thisClassName,
-				"readCompleteBlobs", Boolean.toString(_readCompleteBlobs));	
+				"readCompleteBlobs", new Boolean(_readCompleteBlobs).toString());	
 		
 			_readBlobsSize = _showBlobSizeField.getInt();
 			DTProperties.put(

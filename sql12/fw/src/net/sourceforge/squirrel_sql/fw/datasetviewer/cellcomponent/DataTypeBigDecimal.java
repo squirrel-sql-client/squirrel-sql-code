@@ -317,7 +317,14 @@ public class DataTypeBigDecimal
 				// not passed to this level by the in-cell editor.
 				if (c == KeyEvent.VK_TAB || c == KeyEvent.VK_ENTER) {
 					// remove all instances of the offending char
-					((IRestorableTextComponent)_theComponent).updateText( text.replaceAll(""+c, ""));
+					int index = text.indexOf(c);
+					if (index == text.length() -1) {
+						text = text.substring(0, text.length()-1);	// truncate string
+					}
+					else {
+						text = text.substring(0, index) + text.substring(index+1);
+					}
+					((IRestorableTextComponent)_theComponent).updateText( text);
 					_theComponent.getToolkit().beep();
 					e.consume();
 				}

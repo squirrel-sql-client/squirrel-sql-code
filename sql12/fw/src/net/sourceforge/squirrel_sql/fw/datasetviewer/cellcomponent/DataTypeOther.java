@@ -576,7 +576,7 @@ public class DataTypeOther
 			_readSQLOther = _showSQLOtherChk.isSelected();
 			DTProperties.put(
 				thisClassName,
-				"readSQLOther", Boolean.toString(_readSQLOther));
+				"readSQLOther", new Boolean(_readSQLOther).toString());
 		}
 	 
 	 } // end of inner class

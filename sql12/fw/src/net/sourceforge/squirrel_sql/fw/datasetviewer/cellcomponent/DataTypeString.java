@@ -269,8 +269,24 @@ public class DataTypeString
 	 */
 	public String renderObject(Object value) {
 		String text = (String)_renderer.renderObject(value);
-		if (_makeNewlinesVisibleInCell)
-			text = text.replaceAll("\n", "/\\n");
+		if (_makeNewlinesVisibleInCell) {
+			/*
+				 * TODO: When 1.4 is the earliest version supported,
+			 * replace the following code with:
+			 * 	text = text.replaceAll("\n", "/\\n");
+			 */
+			 int index = 0;
+			 StringBuffer buf = new StringBuffer(text);
+			 while (index < buf.length()) {
+				if (buf.charAt(index) == '\n') {
+					// found a newline - change it into the string "\n"
+					buf.replace(index, index+1 , "/n");
+					index +=1;
+				}
+				index++;
+			 }
+			 text = buf.toString();
+		}
 		return text;
 	}
 	
@@ -948,15 +964,15 @@ public class DataTypeString
 			// get the values from the controls and set them in the static properties
 			_makeNewlinesVisibleInCell = _makeNewlinesVisibleInCellChk.isSelected();
 			DTProperties.put(thisClassName,
-				"makeNewlinesVisibleInCell", Boolean.toString(_makeNewlinesVisibleInCell));
+				"makeNewlinesVisibleInCell", new Boolean(_makeNewlinesVisibleInCell).toString());
 			
 			_useLongInWhere = _useLongInWhereChk.isSelected();
 			DTProperties.put(thisClassName,
-				"useLongInWhere", Boolean.toString(_useLongInWhere));
+				"useLongInWhere", new Boolean(_useLongInWhere).toString());
 			
 			_limitRead = _limitReadChk.isSelected();
 			DTProperties.put(thisClassName,
-				"limitRead", Boolean.toString(_limitRead));
+				"limitRead", new Boolean(_limitRead).toString());
 			
 			_limitReadLength = _limitReadLengthTextField.getInt();
 			DTProperties.put(thisClassName,
@@ -964,7 +980,7 @@ public class DataTypeString
 			
 			_limitReadOnSpecificColumns = _limitReadOnSpecificColumnsChk.isSelected();
 			DTProperties.put(thisClassName,
-				"limitReadOnSpecificColumns", Boolean.toString(_limitReadOnSpecificColumns));
+				"limitReadOnSpecificColumns", new Boolean(_limitReadOnSpecificColumns).toString());
 			
 			// Handle list of column names
 			
