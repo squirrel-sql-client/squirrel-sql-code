@@ -29,6 +29,8 @@ Enhancements
 
 Bug Fixes
 ---------
+- Incorrect error message was displayed in View Help
+  command (Glenn Griffin).
 - Fix Nullpointer exception in HTML viewer under JDK1.3.
 - CLOB/BLOB columns weren't handled correctly on metadata and
   Content tabs.
