@@ -4,6 +4,11 @@ SQuirreL SQL Client Change Log
 1.2beta7
 ========
 
+Enhancements
+------------
+- If you close the aliases and drivers windows this is remembered when you
+  restart SQuirreL.
+
 Bug Fixes
 ---------
 - Allow for DB2 not returning all possible schema names.

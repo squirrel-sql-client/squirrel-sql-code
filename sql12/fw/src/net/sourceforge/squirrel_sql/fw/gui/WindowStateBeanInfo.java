@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -34,13 +34,13 @@ public class WindowStateBeanInfo extends SimpleBeanInfo
 		super();
 		if (s_dscrs == null)
 		{
-			s_dscrs = new PropertyDescriptor[1];
-			s_dscrs[0] =
-				new PropertyDescriptor(
-					WindowState.IPropertyNames.BOUNDS,
-					WindowState.class,
-					"getBounds",
-					"setBounds");
+			s_dscrs = new PropertyDescriptor[2];
+			s_dscrs[0] = new PropertyDescriptor(WindowState.IPropertyNames.BOUNDS,
+												WindowState.class,
+												"getBounds", "setBounds");
+			s_dscrs[1] = new PropertyDescriptor(WindowState.IPropertyNames.VISIBLE,
+												WindowState.class,
+												"isVisible", "setVisible");
 		}
 	}
 

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -27,7 +27,7 @@ import net.sourceforge.squirrel_sql.fw.xml.IXMLAboutToBeWritten;
 /**
  * This bean will store the state of a window or an internal frame object.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class WindowState implements IXMLAboutToBeWritten
 {
@@ -43,11 +43,16 @@ public class WindowState implements IXMLAboutToBeWritten
 	 */
 	private JInternalFrame _internalFrame;
 
+	/** Window bounds. */
 	private RectangleWrapper _bounds = new RectangleWrapper(new Rectangle(600, 400));
+
+	/** Was the window visible. */
+	private boolean _visible = true;
 
 	public interface IPropertyNames
 	{
 		String BOUNDS = "bounds";
+		String VISIBLE = "visible";
 	}
 
 	/**
@@ -81,6 +86,26 @@ public class WindowState implements IXMLAboutToBeWritten
 	}
 
 	/**
+	 * Set this objects state to that of the passed object. Think of this as
+	 * being like an assignment operator
+	 *
+	 * @param	obj		Object to copy state from
+	 *
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <tt>null</tt> <tt>WindowState</tt> passed.
+	 */
+	public void copyFrom(WindowState obj)
+	{
+		if (obj == null)
+		{
+			throw new IllegalArgumentException("WindowState == null");
+		}
+
+		setBounds(obj.getBounds());
+		setVisible(obj.isVisible());
+	}
+
+	/**
 	 * This bean is about to be written out to XML so load its values from its
 	 * window.
 	 */
@@ -102,16 +127,29 @@ public class WindowState implements IXMLAboutToBeWritten
 		_internalFrame = null;
 	}
 
+	public boolean isVisible()
+	{
+		refresh();
+		return _visible;
+	}
+
+	public void setVisible(boolean value)
+	{
+		_visible = value;
+	}
+
 	private void refresh()
 	{
 		Rectangle windRc = null;
 		if (_window != null)
 		{
 			windRc = _window.getBounds();
+			_visible = _window.isVisible();
 		}
 		else if (_internalFrame != null)
 		{
 			windRc = _internalFrame.getBounds();
+			_visible = _internalFrame.isVisible();
 		}
 
 		if (windRc != null)
