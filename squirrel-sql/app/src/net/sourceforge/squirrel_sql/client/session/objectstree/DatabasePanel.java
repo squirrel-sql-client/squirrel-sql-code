@@ -34,11 +34,10 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewerDestination;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
@@ -137,55 +136,11 @@ public class DatabasePanel extends SquirrelTabbedPane {
 		addChangeListener(new TabbedPaneListener());
 	}
 
-	private void addResultSetViewerTab(String title, String description,
-												MyBaseViewer viewer,
-												String destClassName) {
-		try {
-			viewer.setDestination(destClassName);
-		} catch (Exception ex) {
-			s_log.error("Error occured setting destination", ex);
-			viewer.setDestination(new DataSetViewerTablePanel());
-		}
-		Component comp = viewer.getDestinationComponent();
-		int idx = indexOfTab(title);
-		if (idx != -1) {
-			removeTabAt(idx);
-			insertTab(title, null, new JScrollPane(comp), description, idx);
-		} else {
-			addTab(title, null, new JScrollPane(comp), description);
-		}
-	}
-
 	private static SquirrelPreferences getPreferences(ISession session) {
 		if (session == null) {
 			throw new IllegalArgumentException("ISession == null");
 		}
 		return session.getApplication().getSquirrelPreferences();
-	}
-
-	private abstract class MyBaseViewer extends DataSetViewer {
-		private boolean _hasBeenBuilt = false;
-
-		abstract void loadImpl(SQLConnection conn) throws DataSetException,
-										BaseSQLException, SQLException;
-
-		void load(SQLConnection conn) {
-			if (!_hasBeenBuilt) {
-				try {
-					clearDestination();
-					loadImpl(conn);
-				} catch (Exception ex) {
-					IMessageHandler msgHandler = _session.getMessageHandler();
-					msgHandler.showMessage("Error in: " + getClass().getName());
-					msgHandler.showMessage(ex);
-				}
-				_hasBeenBuilt = true;
-			}
-		}
-
-		public void setHasBeenBuilt(boolean value) {
-			_hasBeenBuilt = value;
-		}
 	}
 
 	private class MyPropertiesListener implements PropertyChangeListener {
