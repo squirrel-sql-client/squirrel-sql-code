@@ -20,36 +20,27 @@ package net.sourceforge.squirrel_sql.plugins.syntax.oster;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-
 import net.sourceforge.squirrel_sql.plugins.syntax.IConstants;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPugin;
 /**
- * Factory for creating SQL entry area objects.
+ * Factory creating Oster SQL entry area objects.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class OsterSQLEntryAreaFactory implements ISQLEntryPanelFactory
+public class OsterSQLEntryAreaFactory
 {
 	private SyntaxPugin _plugin;
 
-	/** The original Squirrel SQL CLient factory for creating SQL entry panels. */
-	private ISQLEntryPanelFactory _originalFactory;
-
-	public OsterSQLEntryAreaFactory(SyntaxPugin plugin, ISQLEntryPanelFactory originalFactory)
+	public OsterSQLEntryAreaFactory(SyntaxPugin plugin)
 	{
 		if (plugin == null)
 		{
 			throw new IllegalArgumentException("Null OsterPlugin passed");
 		}
 
-		if (originalFactory == null)
-		{
-			throw new IllegalArgumentException("Null originalFactory passed");
-		}
 
 		_plugin = plugin;
-		_originalFactory = originalFactory;
 	}
 
 	/**
@@ -63,47 +54,14 @@ public class OsterSQLEntryAreaFactory implements ISQLEntryPanelFactory
 			throw new IllegalArgumentException("Null ISession passed");
 		}
 
-		final SyntaxPreferences prefs = getPreferences(session);
+      SyntaxPreferences prefs = getPreferences(session);
 
-		if (prefs.getUseOsterTextControl())
-		{
-			OsterSQLEntryPanel pnl = getPanel(session);
-
-			if (pnl == null)
-			{
-				pnl = new OsterSQLEntryPanel(session, prefs);
-				savePanel(session, pnl);
-			}
-
-			return pnl;
-		}
-
-		removePanel(session);
-
-		return _originalFactory.createSQLEntryPanel(session);
+		return new OsterSQLEntryPanel(session, prefs);
 	}
 
-	private SyntaxPreferences getPreferences(ISession session)
-	{
-		return (SyntaxPreferences)session.getPluginObject(_plugin,
-			IConstants.ISessionKeys.PREFS);
-	}
 
-	private OsterSQLEntryPanel getPanel(ISession session)
-	{
-		return (OsterSQLEntryPanel)session.getPluginObject(_plugin,
-			IConstants.ISessionKeys.SQL_ENTRY_CONTROL);
-	}
-
-	private void savePanel(ISession session, OsterSQLEntryPanel pnl)
-	{
-		session.putPluginObject(_plugin,
-			IConstants.ISessionKeys.SQL_ENTRY_CONTROL, pnl);
-	}
-
-	private void removePanel(ISession session)
-	{
-		session.removePluginObject(_plugin,
-			IConstants.ISessionKeys.SQL_ENTRY_CONTROL);
-	}
+   private SyntaxPreferences getPreferences(ISession session)
+   {
+      return (SyntaxPreferences)session.getPluginObject(_plugin, IConstants.ISessionKeys.PREFS);
+   }
 }

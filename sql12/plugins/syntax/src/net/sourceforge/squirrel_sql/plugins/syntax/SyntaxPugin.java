@@ -17,20 +17,6 @@ package net.sourceforge.squirrel_sql.plugins.syntax;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
-import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
@@ -40,9 +26,27 @@ import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
-
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
+import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
+import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.NetbeansSQLEntryAreaFactory;
+import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.NetbeansSQLEntryPanel;
 import net.sourceforge.squirrel_sql.plugins.syntax.oster.OsterSQLEntryAreaFactory;
 import net.sourceforge.squirrel_sql.plugins.syntax.oster.OsterSQLEntryPanel;
+
+import javax.swing.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.VetoableChangeListener;
+import java.beans.PropertyVetoException;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.awt.*;
 /**
  * The Ostermiller plugin class. This plugin adds syntax highlighting to the
  * SQL entry area.
@@ -61,7 +65,7 @@ public class SyntaxPugin extends DefaultSessionPlugin
 	private File _userSettingsFolder;
 
 	/** Factory that creates text controls. */
-	private ISQLEntryPanelFactory _sqlEntryFactory;
+	private SQLEntryPanelFactoryProxy _sqlEntryFactoryProxy;
 
 	/** Listeners to the preferences object in each open session. */
 	private Map _prefListeners = new HashMap();
@@ -173,8 +177,11 @@ public class SyntaxPugin extends DefaultSessionPlugin
 		// Install the factory for creating SQL entry text controls.
 		final IApplication app = getApplication();
 		final ISQLEntryPanelFactory originalFactory = app.getSQLEntryPanelFactory();
-		_sqlEntryFactory = new OsterSQLEntryAreaFactory(this, originalFactory);
-		app.setSQLEntryPanelFactory(_sqlEntryFactory);
+		//_sqlEntryFactoryProxy = new OsterSQLEntryAreaFactory(this, originalFactory);
+
+      _sqlEntryFactoryProxy = new SQLEntryPanelFactoryProxy(this, originalFactory);
+
+		app.setSQLEntryPanelFactory(_sqlEntryFactoryProxy);
 	}
 
 	/**
@@ -195,6 +202,8 @@ public class SyntaxPugin extends DefaultSessionPlugin
 	public void sessionCreated(ISession session)
 	{
 		super.sessionCreated(session);
+
+      //nbedit.NbEditTest._editTest = new nbedit.NbEditTest(session);
 
 		SyntaxPreferences prefs = null;
 
@@ -224,13 +233,10 @@ public class SyntaxPugin extends DefaultSessionPlugin
 	{
 		super.sessionEnding(session);
 
-      if(session.getSQLEntryPanel() instanceof OsterSQLEntryPanel)
-      {
-         ((OsterSQLEntryPanel)session.getSQLEntryPanel()).endColorerThread();
-      }
-
 		session.removePluginObject(this, IConstants.ISessionKeys.PREFS);
 		_prefListeners.remove(session.getIdentifier());
+
+      _sqlEntryFactoryProxy.sessionEnding(session);
 	}
 
 	/**
@@ -269,7 +275,7 @@ public class SyntaxPugin extends DefaultSessionPlugin
 
 	ISQLEntryPanelFactory getSQLEntryAreaFactory()
 	{
-		return _sqlEntryFactory;
+		return _sqlEntryFactoryProxy;
 	}
 
 	/**
@@ -331,48 +337,62 @@ public class SyntaxPugin extends DefaultSessionPlugin
 	{
 		private SyntaxPugin _plugin;
 		private ISession _session;
-		private SyntaxPreferences _prefs;
 
-		SessionPreferencesListener(SyntaxPugin plugin, ISession session,
-			SyntaxPreferences prefs)
+      SessionPreferencesListener(SyntaxPugin plugin, ISession session, SyntaxPreferences prefs)
 		{
 			super();
 			_plugin = plugin;
 			_session = session;
-			_prefs = prefs;
-		}
+      }
 
 		public void propertyChange(PropertyChangeEvent evt)
 		{
-			final String propName = evt.getPropertyName();
+			String propName = evt.getPropertyName();
 
-			if ((propName == null) ||
-					propName.equals(SyntaxPreferences.IPropertyNames.USE_OSTER_CONTROL))
-			{
-				synchronized (_session)
-				{
-					ISQLEntryPanelFactory factory = _plugin.getSQLEntryAreaFactory();
-					ISQLEntryPanel pnl = factory.createSQLEntryPanel(_session);
+         if(   false == SyntaxPreferences.IPropertyNames.USE_NETBEANS_CONTROL.equals(propName)
+            && false == SyntaxPreferences.IPropertyNames.USE_OSTER_CONTROL.equals(propName) )
+         {
 
-					//_session.getSQLPanelAPI(_plugin).installSQLEntryPanel(pnl);
-               _session.getSessionSheet().getSQLPaneAPI().installSQLEntryPanel(pnl);
-				}
-			}
+            // Not the Textcontrol itself changed but some other of the Syntax Preferences, for example a color.
+            // So we tell the current control to update the preferences.
+            Object pluginObject = _session.getPluginObject(_plugin, IConstants.ISessionKeys.SQL_ENTRY_CONTROL);
 
-			if ((propName == null) ||
-					!propName.equals(SyntaxPreferences.IPropertyNames.USE_OSTER_CONTROL))
-			{
-				if (_prefs.getUseOsterTextControl())
-				{
-					OsterSQLEntryPanel pnl = (OsterSQLEntryPanel)_session.getPluginObject(_plugin,
-							IConstants.ISessionKeys.SQL_ENTRY_CONTROL);
+            if(pluginObject instanceof NetbeansSQLEntryPanel)
+            {
+               ((NetbeansSQLEntryPanel)pluginObject).updateFromPreferences();
+            }
 
-					if (pnl != null)
-					{
-						pnl.updateFromPreferences();
-					}
-				}
-			}
+            if(pluginObject instanceof OsterSQLEntryPanel)
+            {
+               ((OsterSQLEntryPanel)pluginObject).updateFromPreferences();
+            }
+         }
+         else
+         {
+            /*
+            We don't support switching the entry control during a session
+            because serveral things, that are attached to the entry control
+            from outside this plugin would need to reinitialze too.
+            For example code completion and edit extras.
+
+            synchronized (_session)
+            {
+               ISQLEntryPanelFactory factory = _plugin.getSQLEntryAreaFactory();
+               ISQLEntryPanel pnl = factory.createSQLEntryPanel(_session);
+               _session.getSQLPanelAPI(_plugin).installSQLEntryPanel(pnl);
+            }
+            */
+
+            String msg =
+               "Switching the editor of a runninig session is not supported.\n" +
+               "You may switch the entry area in the New Session Properties dialog";
+
+            JOptionPane.showMessageDialog(_session.getApplication().getMainFrame(), msg);
+
+            throw new SyntaxPrefChangeNotSupportedException();
+
+         }
+
 		}
 	}
 }

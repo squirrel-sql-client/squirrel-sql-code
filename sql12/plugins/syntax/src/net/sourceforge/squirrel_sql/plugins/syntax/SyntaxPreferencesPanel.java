@@ -17,15 +17,9 @@ package net.sourceforge.squirrel_sql.plugins.syntax;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
@@ -158,7 +152,7 @@ public class SyntaxPreferencesPanel
 	 */
 	private final static class MyPanel extends JPanel
 	{
-		/**
+      /**
 		 * This interface defines locale specific strings. This should be
 		 * replaced with a property file.
 		 */
@@ -166,27 +160,18 @@ public class SyntaxPreferencesPanel
 		{
 			String TAB_TITLE = "Syntax";
 			String TAB_HINT = "Syntax Highlighting";
-			String OSTER = "Use Ostermiller text control";
-//			String BLINK_CARET = "Blink";
-//			String BLOCK_CARET = "Block";
-//			String BRACKET_HIGHLIGHTING = "Highlight matching brackets";
-//			String EOL_MARKERS = "End of line markers";
-//			String HIGHLIGHT_CURRENT_LINE = "Highlight current line";
-		}
+         String NETBEANS = "Use Netbeans editor (recommended)";
+			String OSTER = "Use Ostermiller editor";
+         String PLAIN = "Use plain editor";
+      }
 
-		private final JCheckBox _activeChk = new JCheckBox(i18n.OSTER);
-//		private final JCheckBox _blockCaretEnabledChk = new JCheckBox(i18n.BLOCK_CARET);
-//		private final JCheckBox _blinkCaretChk = new JCheckBox(i18n.BLINK_CARET);
+      private final JRadioButton _netbeansActiveOpt  = new JRadioButton(i18n.NETBEANS);
+		private final JRadioButton _osterActiveOpt = new JRadioButton(i18n.OSTER);
+      private final JRadioButton _plainActiveOpt  = new JRadioButton(i18n.PLAIN);
+
 
 		private StylesListSelectionListener _listLis;
 
-//		private ColorSelector _caretColorSelector;
-//		private ColorSelector _selectionColorSelector;
-
-//		private ColorAttributePanel _eolAttributesPnl;
-//		private ColorAttributePanel _currentLineAttributesPnl;
-//		private ColorAttributePanel _bracketAttributesPnl;
-//		private ColorAttributePanel _lineNumberAttributesPnl;
 
 		private final StylesList _stylesList = new StylesList();
 
@@ -227,22 +212,9 @@ public class SyntaxPreferencesPanel
 
 		void loadData(SyntaxPreferences prefs)
 		{
-			_activeChk.setSelected(prefs.getUseOsterTextControl());
-//			_eolAttributesPnl.setAttributeSelected(prefs.getEOLMarkers());
-//			_blockCaretEnabledChk.setSelected(prefs.isBlockCaretEnabled());
-//			_blinkCaretChk.setSelected(prefs.getBlinkCaret());
-
-//			_caretColorSelector.setColor(new Color(prefs.getCaretRGB()));
-//			_selectionColorSelector.setColor(new Color(prefs.getSelectionRGB()));
-
-//			_eolAttributesPnl.setAttributeColor(new Color(prefs.getEOLMarkerRGB()));
-//			_eolAttributesPnl.setAttributeSelected(prefs.getEOLMarkers());
-//			_bracketAttributesPnl.setAttributeColor(new Color(prefs.getBracketHighlightRGB()));
-//			_bracketAttributesPnl.setAttributeSelected(prefs.getBracketHighlighting());
-//			_currentLineAttributesPnl.setAttributeColor(new Color(prefs.getCurrentLineHighlightRGB()));
-//			_currentLineAttributesPnl.setAttributeSelected(prefs.getCurrentLineHighlighting());
-//			_lineNumberAttributesPnl.setAttributeColor(new Color(prefs.getLineNumberRGB()));
-//			_lineNumberAttributesPnl.setAttributeSelected(prefs.getShowLineNumbers());
+			_osterActiveOpt.setSelected(prefs.getUseOsterTextControl());
+         _netbeansActiveOpt.setSelected(prefs.getUseNetbeansTextControl());
+         _plainActiveOpt.setSelected(prefs.getUsePlainTextControl());
 
 			_stylesList.loadData(prefs);
 			_styleMaintPnl.setStyle(_stylesList.getSelectedSyntaxStyle());
@@ -252,22 +224,24 @@ public class SyntaxPreferencesPanel
 
 		void applyChanges(SyntaxPreferences prefs)
 		{
-			prefs.setUseOsterTextControl(_activeChk.isSelected());
-//			prefs.setEOLMarkers(_eolAttributesPnl.isAttributeSelected());
-//			prefs.setBlockCaretEnabled(_blockCaretEnabledChk.isSelected());
-//			prefs.setBracketHighlighting(_bracketAttributesPnl.isAttributeSelected());
-//			prefs.setCurrentLineHighlighting(_currentLineAttributesPnl.isAttributeSelected());
-//			prefs.setBlinkCaret(_blinkCaretChk.isSelected());
-//			prefs.setShowLineNumbers(_lineNumberAttributesPnl.isAttributeSelected());
+         boolean oldUseNetbeansTextControl = prefs.getUseNetbeansTextControl();
+         boolean oldUseOsterTextControl = prefs.getUseOsterTextControl();
+         boolean oldUsePlainTextControl = prefs.getUsePlainTextControl();
 
-//			prefs.setCaretRGB(_caretColorSelector.getColor().getRGB());
-//			prefs.setSelectionRGB(_selectionColorSelector.getColor().getRGB());
-//			prefs.setCurrentLineHighlightRGB(_currentLineAttributesPnl.getAttributeColor().getRGB());
-//			prefs.setEOLMarkerRGB(_eolAttributesPnl.getAttributeColor().getRGB());
-//			prefs.setBracketHighlightRGB(_bracketAttributesPnl.getAttributeColor().getRGB());
-//			prefs.setLineNumberRGB(_lineNumberAttributesPnl.getAttributeColor().getRGB());
+         try
+         {
+            prefs.setUseNetbeansTextControl(_netbeansActiveOpt.isSelected());
+            prefs.setUseOsterTextControl(_osterActiveOpt.isSelected());
+            prefs.setUsePlainTextControl(_plainActiveOpt.isSelected());
+         }
+         catch (SyntaxPrefChangeNotSupportedException e)
+         {
+            prefs.setUseNetbeansTextControl(oldUseNetbeansTextControl);
+            prefs.setUseOsterTextControl(oldUseOsterTextControl);
+            prefs.setUsePlainTextControl(oldUsePlainTextControl);
+         }
 
-			prefs.setColumnStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.COLUMNS));
+         prefs.setColumnStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.COLUMNS));
 			prefs.setCommentStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.COMMENTS));
 			prefs.setErrorStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.ERRORS));
 			prefs.setFunctionStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.FUNCTIONS));
@@ -282,21 +256,12 @@ public class SyntaxPreferencesPanel
 
 		private void updateControlStatus()
 		{
-			final boolean useOsterControl = _activeChk.isSelected();
+			final boolean useOsterControl = _osterActiveOpt.isSelected();
+         final boolean useNetbeansControl = _netbeansActiveOpt.isSelected();
+         final boolean usePlainControl = _plainActiveOpt.isSelected();
 
-//			_caretColorSelector.setEnabled(useOsterControl);
-//			_selectionColorSelector.setEnabled(useOsterControl);
-
-//			_currentLineAttributesPnl.setEnabled(useOsterControl);
-//			_eolAttributesPnl.setEnabled(useOsterControl);
-//			_bracketAttributesPnl.setEnabled(useOsterControl);
-//			_lineNumberAttributesPnl.setEnabled(useOsterControl);
-
-//			_blockCaretEnabledChk.setEnabled(useOsterControl);
-//			_blinkCaretChk.setEnabled(useOsterControl);
-
-			_stylesList.setEnabled(useOsterControl);
-			_styleMaintPnl.setEnabled(useOsterControl);
+			_stylesList.setEnabled(useOsterControl || useNetbeansControl);
+			_styleMaintPnl.setEnabled(useOsterControl || useNetbeansControl);
 		}
 
 		private void createUserInterface(SyntaxPreferences prefs,
@@ -308,7 +273,12 @@ public class SyntaxPreferencesPanel
 			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
 
-			_activeChk.addChangeListener(new ChangeListener()
+         ButtonGroup bg = new ButtonGroup();
+         bg.add(_netbeansActiveOpt);
+         bg.add(_osterActiveOpt);
+         bg.add(_plainActiveOpt);
+
+			_osterActiveOpt.addChangeListener(new ChangeListener()
 			{
 				public void stateChanged(ChangeEvent evt)
 				{
@@ -316,78 +286,69 @@ public class SyntaxPreferencesPanel
 				}
 			});
 
+         _netbeansActiveOpt.addChangeListener(new ChangeListener()
+         {
+            public void stateChanged(ChangeEvent evt)
+            {
+               updateControlStatus();
+            }
+         });
+
+         _plainActiveOpt.addChangeListener(new ChangeListener()
+         {
+            public void stateChanged(ChangeEvent evt)
+            {
+               updateControlStatus();
+            }
+         });
+
+         JPanel pnlLeft = new JPanel(new BorderLayout(4,0));
+
+         String[] text =
+            {
+            "Note:",
+            "The preferable editor is the",
+            "Netbeans editor.",
+            "The Netbeans editor",
+            "- is less memory consuming,",
+            "- its highlightning is more exact,",
+            "- can handle many lines well.",
+            "The Oster editor is still there",
+            "because it can handle",
+            "very long lines better than the",
+            "Netbeans editor.",
+            "This is due to a known bug in",
+            "the Netbeans editor (Issue #41241).",
+            "As soon as this bug is fixed",
+            "the Oster editor will be removed."
+            };
+
+         JPanel multiLineLabel = new JPanel(new GridLayout(text.length + 1,1));
+
+         for (int i = 0; i < text.length; i++)
+         {
+            multiLineLabel.add(new JLabel(text[i]));
+         }
+         multiLineLabel.add(new JLabel());
+         pnlLeft.add(multiLineLabel);
+
+
+         JPanel pnlOpt = new JPanel(new GridLayout(3,1,4,0));
+         pnlOpt.add(_netbeansActiveOpt);
+         pnlOpt.add(_osterActiveOpt);
+         pnlOpt.add(_plainActiveOpt);
+         pnlLeft.add(pnlOpt, BorderLayout.SOUTH);
+
+
 			gbc.gridx = 0;
 			gbc.gridy = 0;
-			add(_activeChk, gbc);
+			add(pnlLeft, gbc);
 
-//			gbc.fill = GridBagConstraints.BOTH;
-//
-//			gbc.gridx = 0;
-//			++gbc.gridy;
-//			add(createGeneralPanel(rsrc), gbc);
-
+         gbc.gridy = 0;
 			++gbc.gridx;
 			add(createStylePanel(rsrc), gbc);
 		}
 
-//		private JPanel createGeneralPanel(SyntaxPluginResources rsrc)
-//		{
-//			_caretColorSelector = new ColorSelector(rsrc);
-//			_selectionColorSelector = new ColorSelector(rsrc);
-//
-//			_eolAttributesPnl = new ColorAttributePanel(i18n.EOL_MARKERS, rsrc);
-//			_bracketAttributesPnl = new ColorAttributePanel(i18n.BRACKET_HIGHLIGHTING, rsrc);
-//			_currentLineAttributesPnl = new ColorAttributePanel(i18n.HIGHLIGHT_CURRENT_LINE, rsrc);;
-//			_lineNumberAttributesPnl = new ColorAttributePanel("Line numbers", rsrc);
-//
-//			JPanel pnl = new JPanel();
-//			pnl.setBorder(BorderFactory.createTitledBorder("General"));
-//			pnl.setLayout(new GridBagLayout());
-//			final GridBagConstraints gbc = new GridBagConstraints();
-//			gbc.fill = GridBagConstraints.HORIZONTAL;
-//			gbc.insets = new Insets(2, 4, 2, 4);
-//
-//			gbc.gridx = 0;
-//			gbc.gridy = 0;
-//			pnl.add(new JLabel("Selection:"), gbc);
-//
-//			gbc.gridx = 3;
-//			pnl.add(_selectionColorSelector, gbc);
-//
-//			gbc.gridx = 0;
-//			++gbc.gridy;
-//			pnl.add(new JLabel("Caret:"), gbc);
-//
-//			++gbc.gridx;
-//			pnl.add(_blinkCaretChk, gbc);
-//
-//			++gbc.gridx;
-//			pnl.add(_blockCaretEnabledChk, gbc);
-//
-//			++gbc.gridx;
-//			pnl.add(_caretColorSelector, gbc);
-//
-//			gbc.gridx = 0;
-//			++gbc.gridy;
-//			gbc.gridwidth = 4;
-//			pnl.add(_eolAttributesPnl, gbc);
-//
-//			gbc.gridx = 0;
-//			++gbc.gridy;
-//			gbc.gridwidth = 4;
-//			pnl.add(_currentLineAttributesPnl, gbc);
-//
-//			gbc.gridx = 0;
-//			++gbc.gridy;
-//			gbc.gridwidth = 4;
-//			pnl.add(_bracketAttributesPnl, gbc);
-//
-//			gbc.gridx = 0;
-//			++gbc.gridy;
-//			pnl.add(_lineNumberAttributesPnl, gbc);
-//
-//			return pnl;
-//		}
 
 		private JPanel createStylePanel(SyntaxPluginResources rsrc)
 		{
@@ -402,288 +363,6 @@ public class SyntaxPreferencesPanel
 			return pnl;
 		}
 
-//		private JPanel createPreviewPanel(SyntaxPreferences prefs)
-//		{
-//			JPanel pnl = new JPanel(new BorderLayout());
-//			pnl.setBorder(BorderFactory.createTitledBorder("Preview"));
-//			_previewtextArea = new PreviewTextArea(prefs);
-//			pnl.add(new JScrollPane(_previewtextArea), BorderLayout.CENTER);
-//
-//			return pnl;
-//		}
-
-		/**
-		 * This panel represents an attribute that can be turned off
-		 * via a checkbox and a color selector for the attribute that is
-		 * only enabled if the checkbox is enabled.
-		 */
-//		private static final class ColorAttributePanel extends JPanel
-//		{
-//			private final JCheckBox _chk;
-//			private final ColorSelector _sel;
-//			private ActionListener _lis;
-//			private boolean _attributeSelected;
-//
-//			ColorAttributePanel(String checkBoxText, SyntaxPluginResources rsrc)
-//			{
-//				super(new GridBagLayout());
-//
-//				_chk = new JCheckBox(checkBoxText);
-//				_sel = new ColorSelector(rsrc);
-//
-//				final GridBagConstraints gbc = new GridBagConstraints();
-//				gbc.fill = GridBagConstraints.HORIZONTAL;
-//				gbc.insets = new Insets(2, 0, 2, 0);
-//
-//				gbc.weightx = 1.0;
-//				gbc.gridx = 0;
-//				gbc.gridy = 0;
-//				add(_chk, gbc);
-//
-//				gbc.weightx = 0.0;
-//				++gbc.gridx;
-//				add(_sel, gbc);
-//			}
-//
-//			public void addNotify()
-//			{
-//				super.addNotify();
-//
-//				if (_lis == null)
-//				{
-//					_lis = new CheckBoxListener();
-//					_chk.addActionListener(_lis);
-//				}
-//			}
-//
-//			public void removeNotify()
-//			{
-//				if (_lis != null)
-//				{
-//					_chk.removeActionListener(_lis);
-//					_lis = null;
-//				}
-//			}
-//
-//			public void setEnabled(boolean value)
-//			{
-//				super.setEnabled(value);
-//				_chk.setEnabled(value);
-//				_sel.setEnabled(value && _attributeSelected);
-//			}
-//
-//			Color getAttributeColor()
-//			{
-//				return _sel.getColor();
-//			}
-//
-//			void setAttributeColor(Color color)
-//			{
-//				_sel.setColor(color);
-//			}
-//
-//			boolean isAttributeSelected()
-//			{
-//				return _attributeSelected;
-//			}
-//
-//			void setAttributeSelected(boolean value)
-//			{
-//				_attributeSelected = value;
-//				_chk.setSelected(value);
-//				_sel.setEnabled(value && _attributeSelected);
-//			}
-//
-//			private final class CheckBoxListener implements ActionListener
-//			{
-//				public void actionPerformed(ActionEvent evt)
-//				{
-//					_attributeSelected = _chk.isSelected();
-//					_sel.setEnabled(_attributeSelected);
-//				}
-//			}
-//		}
-
-//		private static final class ColorSelector extends JPanel
-//		{
-//			private final JPanel _colorPnl = new JPanel();
-//			private ColorButton _btn;
-//			private ColorButtonListener _lis;
-//
-//			ColorSelector(SyntaxPluginResources rsrc)
-//			{
-//				super(new GridLayout(1, 0, 4, 4));
-//				_btn = new ColorButton(_colorPnl, rsrc);
-//				add(_colorPnl);
-//				add(_btn);
-//				_colorPnl.setBorder(BorderFactory.createLoweredBevelBorder());
-//			}
-//
-//			/**
-//			 * Component has been added to its parent so setup listeners etc.
-//			 */
-//			public void addNotify()
-//			{
-//				super.addNotify();
-//
-//				if (_lis == null)
-//				{
-//					_lis = new ColorButtonListener();
-//					_btn.addActionListener(_lis);
-//				}
-//			}
-//
-//			/**
-//			 * Component has been removed from its parent so remove listeners etc.
-//			 */
-//			public void removeNotify()
-//			{
-//				if (_lis != null)
-//				{
-//					_btn.removeActionListener(_lis);
-//					_lis = null;
-//				}
-//			}
-//
-//			public void setEnabled(boolean value)
-//			{
-//				super.setEnabled(value);
-//				_btn.setEnabled(value);
-////				if (value)
-////				{
-////					_colorPnl.setBorder(BorderFactory.createLoweredBevelBorder());
-////				}
-////				else
-////				{
-////					_colorPnl.setBorder(BorderFactory.createRaisedBevelBorder());
-////				}
-//			}
-//
-//			Color getColor()
-//			{
-//				return _btn.getColor();
-//			}
-//
-//			void setColor(Color color)
-//			{
-//				_btn.setColor(color);
-//			}
-//
-//			private class ColorButtonListener implements ActionListener
-//			{
-//				public void actionPerformed(ActionEvent evt)
-//				{
-//					final Color color = JColorChooser.showDialog(null,
-//														"Select Color",
-//														getColor());
-//					if (color != null)
-//					{
-//						setColor(color);
-//					}
-//				}
-//			}
-//		}
-
-//		private static class ColorButton extends JButton
-//		{
-//			private final JPanel _pnl;
-//
-//			ColorButton(JPanel pnl, SyntaxPluginResources rsrc)
-//			{
-//				super(rsrc.getIcon(SyntaxPluginResources.IKeys.COLOR_SELECTOR_IMAGE));
-//				_pnl = pnl;
-//				setToolTipText("Select colour");
-//			}
-//
-//			public Dimension getPreferredSize()
-//			{
-//				Dimension dm = super.getPreferredSize();
-//				dm.width = dm.height;
-//				return dm;
-//			}
-//
-//			Color getColor()
-//			{
-//				 return _pnl.getBackground();
-//			}
-//
-//			void setColor(Color value)
-//			{
-//				_pnl.setBackground(value);
-//			}
-//		}
-
-//		private static class ColorButtonListener implements ActionListener
-//		{
-//			public void actionPerformed(ActionEvent evt)
-//			{
-//				final ColorButton btn = (ColorButton)evt.getSource();
-//				final Color color = JColorChooser.showDialog(null,
-//													"Select Color",
-//													btn.getBackground());
-//				if (color != null)
-//				{
-//					btn.setColor(color);
-//				}
-//			}
-//		}
-
-		/**
-		 * Listener for the Font Color selection button. Show a Color selection
-		 * dialog and if the user selects a color update the current style with
-		 * that color.
-		 */
-//		private static class FontColorButtonListener implements ActionListener
-//		{
-//			private final StylesList _list;
-//
-//			FontColorButtonListener(StylesList list)
-//			{
-//				super();
-//				_list = list;
-//			}
-//
-//			public void actionPerformed(ActionEvent evt)
-//			{
-//				final SyntaxStyle style = _list.getSelectedSyntaxStyle();
-//				final Color origColor = style.getTextColor();
-//				final Color color = JColorChooser.showDialog(null,
-//													"Select Color", origColor);
-//				if (color != null)
-//				{
-//					style.setTextRGB(color.getRGB());
-//				}
-//			}
-//		}
-
-		/**
-		 * Listener for the Background Color selection button. Show a Color
-		 * selection dialog and if the user selects a color update the current
-		 * style with that color.
-		 */
-//		private static class BackgroundColorButtonListener implements ActionListener
-//		{
-//			private final StylesList _list;
-//
-//			BackgroundColorButtonListener(StylesList list)
-//			{
-//				super();
-//				_list = list;
-//			}
-//
-//			public void actionPerformed(ActionEvent evt)
-//			{
-//				final SyntaxStyle style = _list.getSelectedSyntaxStyle();
-//				final Color origColor = style.getBackgroundColor();
-//				final Color color = JColorChooser.showDialog(null,
-//													"Select Color", origColor);
-//				if (color != null)
-//				{
-//					style.setBackgroundRGB(color.getRGB());
-//				}
-//
-//			}
-//		}
 
 		/**
 		 * Selection listener for the Styles List. As selection changes in the
