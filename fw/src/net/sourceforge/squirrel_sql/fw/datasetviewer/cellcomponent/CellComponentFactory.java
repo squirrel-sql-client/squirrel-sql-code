@@ -30,22 +30,106 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
  * @author gwg
  *
- * This class is used by other parts of SQuirreL to select and create
- * the appropriate CellRenderer, CellEditor, JTextArea (for popup dialog),
- * and text representation (for Text datasetviewer).
- * The components are actually created by separate classes which
- * attach the appropriate behavior to them, e.g. not allowing alpha chars
- * in an Integer field.
+ * This class is used by other parts of SQuirreL to handle all
+ * DataType-specific behavior for the ContentsTab.
+ * This includes reading/updating the DB, formatting data for display,
+ * validating user input, converting user input into an internal object
+ * of the appropriate type, and saving the data to or reading from a file.
+ * The actual work is handled by separate DataType-specific classes,
+ * so this class is a facade that selects the class to use and calls
+ * the desired method on that class.  All of the DataType-specifc classes
+ * implement the IDataTypeComponent interface.
  * <P>
- * At this time we use only the SQL data type to determine which DataType
+ * At this time we use only the type of the data to determine which DataType
  * class to use for the requested component.  In the future it may become
  * useful to include other factors, such as the specific table and column
  * being displayed.  This info could be used to select a specialized class
  * (or a general class using an external resource file) to display table
- * and column specific translations of data, such as translating an integer
- * code in the DB into a mnemonic representation.
- * 
- * The JTable is also needed so that components can translate mouse events properly.
+ * and column specific translations of data, such as mapping an integer
+ * code in the DB into a mnemonic representation (eg. 1='dial-up', 2='cable', 3='DSL').
+ * <P>
+ * The JTable is needed to allow the components to identify which cell
+ * is being referred to by a double-click mouse event, which causes
+ * a popup editing window to be generated.
+ * <P>
+ * <B>Creating new DataType handlers</B>
+ * Plugins and other code may need to create and install handlers for
+ * data types that are not included in the standard SQuirreL product.
+ * This might be needed to handle DBMS-specific data types,
+ * or to override the standard behavior for a specific data type.
+ * For example:
+ * <DL>
+ * <LI>
+ * PostgreSQL defines several non-standard data types, such as "bytea",
+ * "tid", "xid", int2vector", etc.  All of these have the same SQL type-code
+ * of "1111", which means "OTHER".
+ * The default ContesTab operation on type 1111 is to not display it
+ * and not allow editing.  However, if a plugin is able to define the
+ * operations on those fields, it can register a handler that will
+ * display the data appropriately and allow editing on those fields.
+ * <LI>
+ * If a DBMS defines a standard SQL data type in a non-standard way,
+ * a plugin for that DBMS may need to override the normal DataType class
+ * for that data type with another.
+ * An example would be if a DBMS implemented SQL type SMALLINT,
+ * which is handled internally as a Short, as an INTEGER, which is
+ * handled as an Integer.
+ * In order to correctly read and display values of that type in the ContentsTab,
+ * the handler for SQL type SMALLINT (=5) should be changed from
+ * DataTypeShort to DataTypeInteger.
+ * </DL>
+ * <P>
+ * Here is how to create and register a DataType handler:
+ * <DL>
+ * <LI>
+ * Using SQuirrel, connect to the DBMS.
+ * Click on the "Data Types" tab.
+ * Get the "TYPE_NAME" and "DATA_TYPE" values for the data type
+ * for which you want to create a handler.
+ * <LI>
+ * Create a handler for that type of data.
+ * The files whose names start with "DataType..."
+ * in the package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent
+ * (i.e. the same place as this file)
+ * are examples of how to handle different data types.
+ * The data must be held in the JTable as a Java object.
+ * You must first identify what class of that object is.
+ * It may be your own local class or one of the standard Java classes
+ * since all of the code outside of the DataType class just treats it as an Object.
+ * The DataType class that you create must handle all transformations
+ * between that internal Java class and the Database,
+ * rendering in a cell, rendering in the Popup editing window
+ * (which may be the same as in a cell), and export/import with files.
+ * The DataType class also determines whether or not these verious translations
+ * are allowed.
+ * <LI>
+ * As part of the initialization of the application or plugin,
+ * register the DataType class as the handler for the data type.
+ * This is done using the static method registerDataType() in this class.
+ * The first argument is the fully-qualified name of the method,
+ * and the other two arguments identify the data type.
+ * For example:
+ * <PRE>
+ * 	CellComponentFactory.registerDataType(
+ * 		"net.sourceforge.squirrel_sql.plugins.postgreSQLPlugin.DataTypeBytea",
+ * 		1111, "bytea");
+ * </PRE>
+ * Another example, in the case where a SMALLINT is actually handled
+ * by the DBMS as an integer:
+ * <PRE>
+ * 	CellComponentFactory.registerDataType(
+ * 		"net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeInteger",
+ * 		5, "SHORT");
+ * </PRE>
+ * Once the DataType class is registered,
+ * that class is called to process that data type in all of the
+ * associated data type.
+ * </DL>
+ * <P>
+ * The DataType registration process does not associate DataType handlers
+ * with particular DBMSs.  Therefore, if two plugins for two different DBMSs
+ * register exactly the same SQL Type code and data type name,
+ * one of the databases will not be handled correctly.
  */
 public class CellComponentFactory {
 
