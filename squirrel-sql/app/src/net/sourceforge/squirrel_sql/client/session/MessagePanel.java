@@ -24,6 +24,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JMenuItem;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
@@ -113,18 +114,34 @@ public class MessagePanel extends JTextArea implements IMessageHandler {
 		//_popupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
 	}
 
-	public void showMessage(Throwable th) throws IllegalArgumentException {
+	public void showMessage(final Throwable th) throws IllegalArgumentException {
 		if (th == null) {
 			throw new IllegalArgumentException("null Throwable");
 		}
-		showMessage(th.toString());
-		s_log.error("Error", th);
+		// Thread save support for every call to this method:
+		Runnable run = new Runnable()
+		{
+			public void run()
+			{
+				showMessage(th.toString());
+				s_log.error("Error", th);
+			}
+		};
+		SwingUtilities.invokeLater(run);
 	}
 
-	public void showMessage(String msg) throws IllegalArgumentException {
+	public void showMessage(final String msg) throws IllegalArgumentException {
 		if (msg == null) {
 			throw new IllegalArgumentException("null Message");
 		}
-		addLine(msg);
+		// Thread save support for every call to this method:
+		Runnable run = new Runnable()
+		{
+			public void run()
+			{
+				addLine(msg);
+			}
+		};
+		SwingUtilities.invokeLater(run);
 	}
 }
