@@ -40,7 +40,10 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.ActionEvent;
 import java.util.Hashtable;
+
+import org.netbeans.editor.ext.ExtKit;
 
 public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 {
@@ -79,7 +82,7 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 
 		_app = session.getApplication();
 
-		_textArea = new NetbeansSQLEditorPane(session, prefs, syntaxFactory);
+		_textArea = new NetbeansSQLEditorPane(session, prefs, syntaxFactory, _plugin);
 
 		_textPopupMenu = new SessionTextEditPopupMenu();
 		_textArea.addMouseListener(_sqlEntryMouseListener);
@@ -523,7 +526,19 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
       _syntaxFactory.addSQLTokenListeners(_session, tl);
 	}
 
-	private final class MyMouseListener extends MouseAdapter
+   public void showFindDialog(ActionEvent evt)
+   {
+      SQLKit kit = (SQLKit) _textArea.getEditorKit();
+      kit.getActionByName(ExtKit.findAction).actionPerformed(evt);
+   }
+
+   public void showReplaceDialog(ActionEvent evt)
+   {
+      SQLKit kit = (SQLKit) _textArea.getEditorKit();
+      kit.getActionByName(ExtKit.replaceAction).actionPerformed(evt);
+   }
+
+   private final class MyMouseListener extends MouseAdapter
 	{
 		public void mousePressed(MouseEvent evt)
 		{

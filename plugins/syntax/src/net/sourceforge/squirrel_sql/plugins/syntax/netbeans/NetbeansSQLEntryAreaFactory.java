@@ -22,6 +22,14 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.plugins.syntax.IConstants;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPugin;
+import org.netbeans.editor.ImplementationProvider;
+import org.netbeans.editor.DialogSupport;
+import org.netbeans.modules.editor.NbImplementationProvider;
+import org.netbeans.modules.editor.NbDialogSupport;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionListener;
 /**
  * Factory for creating Netbeans SQL entry area objects.
  *
@@ -41,6 +49,10 @@ public class NetbeansSQLEntryAreaFactory
 
 		_plugin = plugin;
       _syntaxFactory = new SyntaxFactory();
+
+      //DialogSupport.setDialogFactory(new NbDialogSupport());
+      DialogSupport.setDialogFactory(new SquirrelNBDialogFactory(_plugin));
+      ImplementationProvider.registerDefault(new NbImplementationProvider());
 	}
 
 	/**

@@ -5,14 +5,22 @@ import org.netbeans.editor.ext.ExtSettingsDefaults;
 import org.netbeans.editor.ext.java.JavaLayerTokenContext;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.InputEvent;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.Hashtable;
+import java.util.Enumeration;
 
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxStyle;
+import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPugin;
+
+import javax.swing.*;
 
 
 public class SQLSettingsDefaults extends ExtSettingsDefaults
 {
-
    // Formatting
    public static final Boolean defaultJavaFormatSpaceBeforeParenthesis = Boolean.FALSE;
    public static final Boolean defaultJavaFormatSpaceAfterComma = Boolean.TRUE;
@@ -165,5 +173,75 @@ public class SQLSettingsDefaults extends ExtSettingsDefaults
       }
 
    }
+
+   public static Map getAbbrevMap(SyntaxPugin plugin)
+   {
+      Map javaAbbrevMap = new TreeMap();
+
+      // We do abrevs ourselfs in the DocumentListener in NetbeansSQLEntryPanel.
+      // We don't use the Netbeans implementation mainly because it is case sensitive.
+      // If we accounter a performance problem one day we can still try to use this.
+
+      //Hashtable autoCorrects = plugin.getAutoCorrectProviderImpl().getAutoCorrects();
+      //javaAbbrevMap.putAll(autoCorrects);
+
+      return javaAbbrevMap;
+
+
+
+//      javaAbbrevMap.put("sout", "System.out.println(\"|\");"); // NOI18N
+//      javaAbbrevMap.put("serr", "System.err.println(\"|\");"); // NOI18N
+//
+//      javaAbbrevMap.put("psf", "private static final "); // NOI18N
+//      javaAbbrevMap.put("psfi", "private static final int "); // NOI18N
+//      javaAbbrevMap.put("psfs", "private static final String "); // NOI18N
+//      javaAbbrevMap.put("psfb", "private static final boolean "); // NOI18N
+//      javaAbbrevMap.put("Psf", "public static final "); // NOI18N
+//      javaAbbrevMap.put("Psfi", "public static final int "); // NOI18N
+//      javaAbbrevMap.put("Psfs", "public static final String "); // NOI18N
+//      javaAbbrevMap.put("Psfb", "public static final boolean "); // NOI18N
+//
+//      javaAbbrevMap.put("ab", "abstract "); // NOI18N
+//      javaAbbrevMap.put("bo", "boolean "); // NOI18N
+//      javaAbbrevMap.put("br", "break"); // NOI18N
+//      javaAbbrevMap.put("ca", "catch ("); // NOI18N
+//      javaAbbrevMap.put("cl", "class "); // NOI18N
+//      javaAbbrevMap.put("cn", "continue"); // NOI18N
+//      javaAbbrevMap.put("df", "default:"); // NOI18N
+//      javaAbbrevMap.put("ex", "extends "); // NOI18N
+//      javaAbbrevMap.put("fa", "false"); // NOI18N
+//      javaAbbrevMap.put("fi", "final "); // NOI18N
+//      javaAbbrevMap.put("fl", "float "); // NOI18N
+//      javaAbbrevMap.put("fy", "finally "); // NOI18N
+//      javaAbbrevMap.put("im", "implements "); // NOI18N
+//      javaAbbrevMap.put("ir", "import "); // NOI18N
+//      javaAbbrevMap.put("iof", "instanceof "); // NOI18N
+//      javaAbbrevMap.put("ie", "interface "); // NOI18N
+//      javaAbbrevMap.put("pr", "private "); // NOI18N
+//      javaAbbrevMap.put("pe", "protected "); // NOI18N
+//      javaAbbrevMap.put("pu", "public "); // NOI18N
+//      javaAbbrevMap.put("re", "return "); // NOI18N
+//      javaAbbrevMap.put("st", "static "); // NOI18N
+//      javaAbbrevMap.put("sw", "switch ("); // NOI18N
+//      javaAbbrevMap.put("sy", "synchronized "); // NOI18N
+//      javaAbbrevMap.put("th", "throws "); // NOI18N
+//      javaAbbrevMap.put("tw", "throw "); // NOI18N
+//      javaAbbrevMap.put("twn", "throw new "); // NOI18N
+//      javaAbbrevMap.put("wh", "while ("); // NOI18N
+//
+//      javaAbbrevMap.put("eq", "equals"); // NOI18N
+//      javaAbbrevMap.put("le", "length"); // NOI18N
+//
+//      javaAbbrevMap.put("En", "Enumeration"); // NOI18N
+//      javaAbbrevMap.put("Ex", "Exception"); // NOI18N
+//      javaAbbrevMap.put("Ob", "Object"); // NOI18N
+//      javaAbbrevMap.put("St", "String"); // NOI18N
+//
+//      javaAbbrevMap.put("pst", "printStackTrace();"); // NOI18N
+//      javaAbbrevMap.put("tds", "Thread.dumpStack();"); // NOI18N
+//
+//      return javaAbbrevMap;
+   }
+
 
 }

@@ -7,6 +7,7 @@ import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsAdapter;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
 import net.sourceforge.squirrel_sql.plugins.syntax.KeyManager;
 import net.sourceforge.squirrel_sql.plugins.syntax.KeyManager;
+import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPugin;
 
 import javax.swing.*;
 import javax.swing.event.UndoableEditListener;
@@ -29,12 +30,14 @@ public class NetbeansSQLEditorPane extends JEditorPane
    private ErrorInfo[] _currentErrorInfos = new ErrorInfo[0];
    private SyntaxPreferences _prefs;
    private SyntaxFactory _syntaxFactory;
+   private SyntaxPugin _plugin;
 
-   public NetbeansSQLEditorPane(ISession session, SyntaxPreferences prefs, SyntaxFactory syntaxFactory)
+   public NetbeansSQLEditorPane(ISession session, SyntaxPreferences prefs, SyntaxFactory syntaxFactory, SyntaxPugin plugin)
    {
       _session = session;
       _prefs = prefs;
       _syntaxFactory = syntaxFactory;
+      _plugin = plugin;
 
       _syntaxFactory.putEditorPane(_session, this);
 
@@ -50,7 +53,7 @@ public class NetbeansSQLEditorPane extends JEditorPane
       //
       /////////////////////////////////////////////////////////////////////////////
       Settings.removeInitializer(SQLSettingsInitializer.NAME);
-      Settings.addInitializer(new SQLSettingsInitializer(SQLKit.class, _prefs));
+      Settings.addInitializer(new SQLSettingsInitializer(SQLKit.class, _prefs, _plugin));
 
 
       //////////////////////////////////////////////////////////////////////////////////////////
@@ -92,7 +95,7 @@ public class NetbeansSQLEditorPane extends JEditorPane
       //
       /////////////////////////////////////////////////////////////////////////////
       Settings.removeInitializer(SQLSettingsInitializer.NAME);
-      Settings.addInitializer(new SQLSettingsInitializer(SQLKit.class, _prefs));
+      Settings.addInitializer(new SQLSettingsInitializer(SQLKit.class, _prefs, _plugin));
 
 
       //////////////////////////////////////////////////////////////////////////////////////////////////////////////

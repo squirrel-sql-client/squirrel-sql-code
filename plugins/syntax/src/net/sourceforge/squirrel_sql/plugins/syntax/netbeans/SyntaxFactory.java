@@ -9,6 +9,7 @@ import org.netbeans.editor.Syntax;
 import javax.swing.text.Document;
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.ResourceBundle;
 
 
 /**
@@ -34,6 +35,9 @@ public class SyntaxFactory
 
    public SyntaxFactory()
    {
+
+      final ResourceBundle bundle = ResourceBundle.getBundle("org.netbeans.editor.Bundle");
+
       LocaleSupport.addLocalizer(new LocaleSupport.Localizer()
       {
          public String getString(String key)
@@ -48,7 +52,7 @@ public class SyntaxFactory
             }
             else
             {
-               return "Gerd";
+               return bundle.getString(key);
             }
          }
       });

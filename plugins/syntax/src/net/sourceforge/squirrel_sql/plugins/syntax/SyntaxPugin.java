@@ -19,12 +19,10 @@ package net.sourceforge.squirrel_sql.plugins.syntax;
  */
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
@@ -32,25 +30,20 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
-import net.sourceforge.squirrel_sql.fw.xml.XMLException;
-import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.NetbeansSQLEntryAreaFactory;
+import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.FindAction;
 import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.NetbeansSQLEntryPanel;
-import net.sourceforge.squirrel_sql.plugins.syntax.oster.OsterSQLEntryAreaFactory;
+import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.ReplaceAction;
 import net.sourceforge.squirrel_sql.plugins.syntax.oster.OsterSQLEntryPanel;
 
 import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.VetoableChangeListener;
-import java.beans.PropertyVetoException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Hashtable;
-import java.awt.*;
 /**
  * The Ostermiller plugin class. This plugin adds syntax highlighting to the
  * SQL entry area.
@@ -210,6 +203,16 @@ public class SyntaxPugin extends DefaultSessionPlugin
       Action act = new ConfigureAutoCorrectAction(app, _resources, this);
       coll.add(act);
       _resources.addToMenu(act, menu);
+
+      act = new FindAction(getApplication(), _resources);
+      coll.add(act);
+      _resources.addToMenu(act, menu);
+      
+      act = new ReplaceAction(getApplication(), _resources);
+      coll.add(act);
+      _resources.addToMenu(act, menu);
+
+
    }
 
 
@@ -252,6 +255,21 @@ public class SyntaxPugin extends DefaultSessionPlugin
 		prefs.addPropertyChangeListener(lis);
 		_prefListeners.put(session.getIdentifier(), lis);
 	}
+
+
+   public boolean sessionStarted(ISession session)
+   {
+      if(super.sessionStarted(session))
+      {
+         ActionCollection coll = getApplication().getActionCollection();
+         session.addToToolbar(coll.get(FindAction.class));
+         session.addToToolbar(coll.get(ReplaceAction.class));
+
+         return true;
+      }
+
+      return false;
+   }
 
 	/**
 	 * Called when a session shutdown.
