@@ -6,8 +6,8 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
-- Added default port to PostgreSQL entry in default drivers
-  file (Glenn Griffin).
+- Add HSQL to list of default drivers (Glenn Griffin).
+- Cleanup example URLs for many of the default drivers (Glenn Griffin).
 - Add toolbar to HTML Viewer with back, forward and close buttons.
 - Documentation updated.
 - Allow Squirrel to be run from directories other than the current
@@ -23,12 +23,15 @@ Enhancements
 - The name of the item selected in the object tree will
   be displayed in the statusbar.
 - Remove unnecessary borders on UI components.
-- Add HSQL and jTDS to list of default drivers.
+- Add jTDS to list of default drivers.
 - The "Start of line comment" characters can now be
   specified in preferences instead of just using '--'.
 
 Bug Fixes
 ---------
+- Fix Nullpointer exception in HTML viewer under JDK1.3.
+- CLOB/BLOB colums weren't handled correctly on metadata and
+  Content tabs.
 - The line/column number displayed for the SQL entry area
   now starts from 1,1 not 0,0
 - Make multiple line label use the same font as static text controls not
@@ -44,6 +47,7 @@ Other
 -----
 - Cleanup ResultSetMetaData handling.
 - Move metadata methods to metadata classes.
+- Make the installation window resizeable.
 
 
 1.1beta6
