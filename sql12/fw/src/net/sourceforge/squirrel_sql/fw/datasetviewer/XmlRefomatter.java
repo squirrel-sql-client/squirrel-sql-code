@@ -16,25 +16,71 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+ 
+ import javax.swing.JOptionPane;
+ import java.util.ArrayList;
+
+/**
+ * This is an XML prettyprinter.  It takes a string that is in XML format
+ * and converts it into a multi-line, indented structure
+ * that is easier for the user to read.
+ * Prior to calling this method, nothing in Squirrel is "XML-aware",
+ * so we do not prevent the user from calling this method if the
+ * data is not an XML string.
+ * However, we do warn the user if the data is not XML or is improperly formatted.
+ */
 public class XmlRefomatter
 {
-	public static String reformatXml(String xml)
+
+	private static String DEFAULT_MESSAGE = "Unexpected problem during formatting.";
+	private static String _message = DEFAULT_MESSAGE;
+   private static boolean _showWarningMessages = true;
+
+   public static String reformatXml(String xml)
 	{
+		// do a simple check to see if the string might contain XML or not
+		if (xml.indexOf("<") == -1 || xml.equals("<null>")) {
+			// no tags, so cannot be XML
+			JOptionPane.showMessageDialog(null,
+				"The data does not contain any XML tags.  No reformatting done.",
+				"XML Warning", JOptionPane.WARNING_MESSAGE);
+			return xml;
+		}
+
 		try
 		{
 			StringBuffer ret = new StringBuffer();
 			int depth = 0;
 			ParseRes parseRes = getParseRes(xml, 0);
 
+			if (parseRes == null)
+         {
+				// the parse did not find XML, or it was mal-formed
+            showWarning(_message);
+				return xml;
+			}
+
 			xml = xml.trim();
+
+			ArrayList tagList = new ArrayList();	// GWG XML format check code
 
 			while(null != parseRes)
 			{
 
 				if(ParseRes.BEGIN_TAG == parseRes.type)
 				{
+					tagList.add(parseRes.item);	// GWG XML format check code
+
 					ret.append(getIndent(depth)).append(parseRes.item);
 					ParseRes nextRes = getParseRes(xml, parseRes.pos);
+
+					// see if there was a problem during parsing
+					if (nextRes == null) {
+						// the parse did not find XML, or it was mal-formed
+                  showWarning(_message);
+						return xml;
+					}
+
 					if(ParseRes.TEXT != nextRes.type)
 					{
 						ret.append("\n");
@@ -44,6 +90,28 @@ public class XmlRefomatter
 				}
 				else if(ParseRes.END_TAG == parseRes.type)
 				{
+					// GWG format check code follows...
+					if (tagList.size()> 0 ) {
+						String startTag = (String)tagList.remove(tagList.size()-1);
+						// Assume that all start tags are "<...>" or include a space
+						// after the tag name (e.g. as in "<SOMETAG args>" and all
+						// end tags are "</...>".  Remove the syntactic markers,
+						// then remove any spaces, and convert to upper case for comparison
+						String testableStartTag = startTag.substring(1, startTag.length() -1).trim().toUpperCase();
+						if (testableStartTag.indexOf(' ') > -1)
+							testableStartTag = testableStartTag.substring(0, testableStartTag.indexOf(' '));
+						String endTag = parseRes.item.substring(2, parseRes.item.length()-1).trim().toUpperCase();
+
+						if ( ! testableStartTag.equals(endTag))
+                  {
+                     String msg =
+                        "Possible mal-formed XML:\n   Starting tag was: "+startTag +
+                        "\n   Ending Tag was: "+ parseRes.item +"\nContinuing with reformatting XML.";
+                     showWarning(msg);
+						}
+					}
+					// End GWG format check code
+
 					--depth;
 					if(ret.toString().endsWith("\n"))
 					{
@@ -66,11 +134,44 @@ public class XmlRefomatter
 		}
 		catch(Exception e)
 		{
+			// the parse did not find XML, or it was mal-formed
+			JOptionPane.showMessageDialog(null,
+				DEFAULT_MESSAGE,
+				"XML Warning", JOptionPane.WARNING_MESSAGE);
 			e.printStackTrace();
 		}
+      finally
+      {
+         _message = DEFAULT_MESSAGE;
+         _showWarningMessages = true;
+      }
 		return xml;
 
 	}
+
+
+   private static void showWarning(String message)
+   {
+      if(false == _showWarningMessages)
+      {
+         return;
+      }
+
+      Object[] options = { "YES", "NO" };
+      int ret = JOptionPane.showOptionDialog(null,
+                message + "\nDo you wish to see other errors?",
+                "XML Warning",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+                null, options, options[0]);
+
+
+      if(0 != ret)
+      {
+         _showWarningMessages = false;
+      }
+
+   }
+
 
 	private static ParseRes getParseRes(String xml, int pos)
 	{
@@ -106,6 +207,17 @@ public class XmlRefomatter
 		}
 		else
 		{
+			//			check for "malformed" XML, or text that happens to contain
+			//			a "<" with no corresponding ">"
+			if (ltIndex == -1) {
+				int lengthToPrint = xml.length() - pos;
+				if (lengthToPrint > 40)
+					lengthToPrint = 40;
+				_message = "Malformed XML.  No ending tag seen for text starting at:\n   " +
+					xml.substring(pos, pos + lengthToPrint);
+				return null;
+			}		
+
 			ret.type = ParseRes.TEXT;
 			ret.item = xml.substring(pos, ltIndex);
 			ret.pos = ltIndex;
