@@ -35,7 +35,11 @@ import net.sourceforge.squirrel_sql.client.action.ActionKeys;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrameWindowState;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
-
+/**
+ * This class represents the application preferences.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
 public class SquirrelPreferences implements Serializable
 {
 	public interface IPropertyNames
@@ -101,6 +105,12 @@ public class SquirrelPreferences implements Serializable
 
 	/** Proxy settings. */
 	private ProxySettings _proxySettings = new ProxySettings();
+
+	/** Index in drivers window to be initially selected. */
+	private int _driversSelectedIndex = -1;
+
+	/** Index in aliases window to be initially selected. */
+	private int _aliasesSelectedIndex = -1;
 
 	/**
 	 * Objects stored by plugins. Each element of this collection is a <TT>Map</TT>

@@ -21,7 +21,6 @@ import java.beans.IndexedPropertyDescriptor;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.beans.SimpleBeanInfo;
-
 /**
  * This is the <CODE>BeanInfo</CODE> class for <CODE>SquirrelPreferences</CODE>.
  *
