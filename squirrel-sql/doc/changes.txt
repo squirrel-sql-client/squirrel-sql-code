@@ -1,42 +1,38 @@
 Change Log
 ==========
 
-1.1Beta3
-========
-
-- TableSorting by pressing column headers, need small icons (ascending/descending) 
-  (Johan Compagner)
-- Icon shown for drivers, instead of colors, that are loaded or not (Need better Icons!!)
-  (Johan Compagner) 
-- If only one cell selected in table when pressing copy then no header 
-  will be appended. (Johan Compagner)
-- longvarchars will also be displayed now instead of <null> (Johan Compagner)
-- If selected String are longer then 50 chars then 45 chars + "......" 
-  wil be displayed. (Johan Compagner)
-- Those strings (and everything else) can also be displayed in a TextArea if
-  you double click on it, so that you can display the whole value of a cell 
-  (Johan Compagner)
-- Drop table menu item on the ObjectTree (Johan Compagner)
-- Keeping the state when refreshing the tree works now (Johan Compagner)
-
-not yet completely working: 
-- Refresh table menu item option (so that you can refresh the selected item
-	instead of the complete tree) (Johan Compagner)
-
 
 1.1beta2
 ========
 
 Bug Fixes
 ------------
+- QueryTokenizer improperly parses strings with 
+  quotes on multiple lines and causes SQLException (Todd Larsen ).
+- If no alises defined then the Alises dropdown has a sensible width
+  under JDK1.4.
+- If Aliases dropdown is empty when adding the first one to it then make
+  the new one the selected one.
+- When adding aliases/drivers then select the newly added one in the list.
+- When deleting aliases/drivers then ensure that another one selected
+  in the list.
+- longvarchars will also be displayed now instead of <null> (Johan Compagner)
 - JDBC drivers reloaded when they have been modified
   through the maintenance window.
+- Keeping the state when refreshing the tree works now (Johan Compagner)
 
 Enhancements
 ------------
+- Drop table menu item on the ObjectTree (Johan Compagner)
+- Full column data can be displayed in a popup window if you double click on
+  it (Johan Compagner)
+- If selected String are longer then 50 chars then 45 chars + "......" 
+  will be displayed. (Johan Compagner)
+- If only one cell selected in table when pressing copy then no header 
+  will be appended. (Johan Compagner)
+- Icon shown for drivers that are loaded or not (Johan Compagner/Henner Zeller) 
+- TableSorting by pressing column headers (Johan Compagner)
 - Escape now cancels Connection Dialog.
-- JDBC drivers that can be loaded are shown in a different
-  colour to those that cannot be loaded (Henner Zeller).
 
 
 1.1beta1
