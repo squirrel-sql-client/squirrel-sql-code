@@ -2,9 +2,9 @@ package net.sourceforge.squirrel_sql.plugins.syntax.oster;
 /*
  * Copyright (C) 2003 Colin Bell
  * colbell@users.sourceforge.net
- * 
+ *
  * This is based on the text editor demonstration class that comes with
- * the Ostermiller Syntax Highlighter Copyright (C) 2001 Stephen Ostermiller 
+ * the Ostermiller Syntax Highlighter Copyright (C) 2001 Stephen Ostermiller
  * http://ostermiller.org/contact.pl?regarding=Syntax+Highlighting
  *
  * This program is free software; you can redistribute it and/or
@@ -60,7 +60,8 @@ import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxStyle;
 class OsterTextControl extends JTextPane
 {
 	/** Logger for this class. */
-	private static final ILogger s_log = LoggerController.createLogger(OsterTextControl.class);
+	private static final ILogger s_log =
+			LoggerController.createLogger(OsterTextControl.class);
 
 	/** Current session. */
 	private final ISession _session;
@@ -150,7 +151,11 @@ class OsterTextControl extends JTextPane
 			final FontInfo fi = _session.getProperties().getFontInfo();
 			SyntaxStyle style;
 			SimpleAttributeSet attribs;
-			
+
+			style = _syntaxPrefs.getColumnStyle();
+			attribs = getMyStyle(IConstants.IStyleNames.COLUMN);
+			applyStyle(attribs, style, fi);
+
 			style = _syntaxPrefs.getCommentStyle();
 			attribs = getMyStyle(IConstants.IStyleNames.COMMENT);
 			applyStyle(attribs, style, fi);
@@ -187,6 +192,10 @@ class OsterTextControl extends JTextPane
 			attribs = getMyStyle(IConstants.IStyleNames.SEPARATOR);
 			applyStyle(attribs, style, fi);
 
+			style = _syntaxPrefs.getTableStyle();
+			attribs = getMyStyle(IConstants.IStyleNames.TABLE);
+			applyStyle(attribs, style, fi);
+
 			style = _syntaxPrefs.getWhiteSpaceStyle();
 			attribs = getMyStyle(IConstants.IStyleNames.WHITESPACE);
 			applyStyle(attribs, style, fi);
@@ -209,9 +218,9 @@ class OsterTextControl extends JTextPane
 	 * the requested position and continue as long
 	 * as needed.
 	 *
-	 * @param position the starting point for the coloring.
-	 * @param adjustment amount of text inserted or removed
-	 *    at the starting point.
+	 * @param position		the starting point for the coloring.
+	 * @param adjustment	amount of text inserted or removed
+	 *						at the starting point.
 	 */
 	public void color(int position, int adjustment)
 	{
@@ -221,8 +230,8 @@ class OsterTextControl extends JTextPane
 	/**
 	 * retrieve the style for the given type of text.
 	 *
-	 * @param styleName the label for the type of text ("tag" for example) 
-	 *      or null if the styleName is not known.
+	 * @param styleName	the label for the type of text ("tag" for example)
+	 *					or null if the styleName is not known.
 	 * @return the style
 	 */
 	private SimpleAttributeSet getMyStyle(String styleName)
@@ -258,7 +267,6 @@ class OsterTextControl extends JTextPane
 		}
 		catch (BadLocationException ex)
 		{
-			
 			s_log.error("Error setting initial document style", ex);
 		}
 	}
@@ -343,6 +351,11 @@ class OsterTextControl extends JTextPane
 		StyleConstants.setItalic(attribs, false);
 		styles.put("text", attribs);
 
+		style = _syntaxPrefs.getColumnStyle();
+		attribs = new SimpleAttributeSet();
+		applyStyle(attribs, style, fi);
+		styles.put(IConstants.IStyleNames.COLUMN, attribs);
+
 		style = _syntaxPrefs.getCommentStyle();
 		attribs = new SimpleAttributeSet();
 		applyStyle(attribs, style, fi);
@@ -388,6 +401,11 @@ class OsterTextControl extends JTextPane
 		applyStyle(attribs, style, fi);
 		styles.put(IConstants.IStyleNames.SEPARATOR, attribs);
 
+		style = _syntaxPrefs.getTableStyle();
+		attribs = new SimpleAttributeSet();
+		applyStyle(attribs, style, fi);
+		styles.put(IConstants.IStyleNames.TABLE, attribs);
+
 		style = _syntaxPrefs.getWhiteSpaceStyle();
 		attribs = new SimpleAttributeSet();
 		applyStyle(attribs, style, fi);
@@ -419,8 +437,8 @@ class OsterTextControl extends JTextPane
 
 		/**
 		 * Keep a list of places in the file that it is safe to restart the
-		 * highlighting.  This happens whenever the lexer reports that it has
-		 * returned to its initial state.  Since this list needs to be sorted
+		 * highlighting. This happens whenever the lexer reports that it has
+		 * returned to its initial state. Since this list needs to be sorted
 		 * and we need to be able to retrieve ranges from it, it is stored in a
 		 * balanced tree.
 		 */
@@ -429,7 +447,7 @@ class OsterTextControl extends JTextPane
 
 		/**
 		 * As we go through and remove invalid positions we will also be finding
-		 * new valid positions. 
+		 * new valid positions.
 		 * Since the position list cannot be deleted from and written to at the same
 		 * time, we will keep a list of the new positions and simply add it to the
 		 * list of positions once all the old positions have been removed.
@@ -478,7 +496,7 @@ class OsterTextControl extends JTextPane
 
 		/**
 		 * Tell the Syntax Highlighting thread to take another look at this
-		 * section of the document.  It will process this as a FIFO.
+		 * section of the document. It will process this as a FIFO.
 		 * This method should be done inside a doclock.
 		 */
 		public void color(int position, int adjustment)
@@ -509,7 +527,7 @@ class OsterTextControl extends JTextPane
 
 		/**
 		 * The colorer runs forever and may sleep for long
-		 * periods of time.  It should be interrupted every
+		 * periods of time. It should be interrupted every
 		 * time there is something for it to do.
 		 */
 		public void run()
@@ -552,7 +570,7 @@ class OsterTextControl extends JTextPane
 					DocPosition dpStart = null;
 					DocPosition dpEnd = null;
 
-					// find the starting position.  We must start at least one
+					// find the starting position. We must start at least one
 					// token before the current position
 					try
 					{
@@ -641,13 +659,21 @@ class OsterTextControl extends JTextPane
 									if (type.equals(IConstants.IStyleNames.IDENTIFIER))
 									{
 										final String data = t.getContents();
-										if (si.isDataType(data))
+										if (si.isTable(data))
 										{
-											type = IConstants.IStyleNames.DATA_TYPE;					
+											type = IConstants.IStyleNames.TABLE;
+										}
+										else if (si.isColumn(data))
+										{
+											type = IConstants.IStyleNames.COLUMN;
+										}
+										else if (si.isDataType(data))
+										{
+											type = IConstants.IStyleNames.DATA_TYPE;
 										}
 										else if (si.isKeyword(data))
 										{
-											type = IConstants.IStyleNames.RESERVED_WORD;					
+											type = IConstants.IStyleNames.RESERVED_WORD;
 										}
 									}
 
@@ -693,7 +719,7 @@ class OsterTextControl extends JTextPane
 									else
 									{
 										// didn't find it, and there is no more info from last
-										// time.  This means that we will just continue
+										// time. This means that we will just continue
 										// until the end of the document.
 										dp = null;
 									}
@@ -739,7 +765,7 @@ class OsterTextControl extends JTextPane
 						while (workingIt.hasNext()){
 							System.out.println(workingIt.next());
 						}
-						
+
 						System.out.println("Started: " + dpStart.getPosition() + " Ended: " + dpEnd.getPosition());*/
 					}
 					catch (IOException x)
@@ -804,7 +830,7 @@ class OsterTextControl extends JTextPane
 
 		/**
 		 * Modifying the document while the reader is working is like
-		 * pulling the rug out from under the reader.  Alerting the
+		 * pulling the rug out from under the reader. Alerting the
 		 * reader with this method (in a nice thread safe way, this
 		 * should not be called at the same time as a read) allows
 		 * the reader to compensate.
@@ -851,7 +877,7 @@ class OsterTextControl extends JTextPane
 		}
 
 		/**
-		 * Has no effect.  This reader can be used even after
+		 * Has no effect. This reader can be used even after
 		 * it has been closed.
 		 */
 		public void close()

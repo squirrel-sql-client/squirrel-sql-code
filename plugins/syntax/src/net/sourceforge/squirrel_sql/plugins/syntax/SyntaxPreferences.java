@@ -26,7 +26,7 @@ import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
  * This JavaBean class represents the user specific
  * preferences for this plugin.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SyntaxPreferences implements Serializable, Cloneable
 {
@@ -37,6 +37,7 @@ public class SyntaxPreferences implements Serializable, Cloneable
 //		String BRACKET_HIGHLIGHTING = "bracketHighlighting";
 //		String BRACKET_HIGHLIGHT_COLOR = "bracketHighlightColor";
 //		String CARET_COLOR = "caretColor";
+		String COLUMN_STYLE = "columnStyle";
 		String COMMENT_STYLE = "commentStyle";
 //		String CURRENT_LINE_HIGHLIGHTING = "currentLineHighlighting";
 //		String CURRENT_LINE_HIGHLIGHT_COLOR = "currentLineHighlightColor";
@@ -53,6 +54,7 @@ public class SyntaxPreferences implements Serializable, Cloneable
 //		String LINE_NUMBER_COLOR = "lineNumberColor";
 //		String SELECTION_COLOR = "selectionColor";
 //		String SHOW_LINE_NBRS = "showLineNumbers";
+		String TABLE_STYLE = "tableStyle";
 		String USE_OSTER_CONTROL = "useOsterControl";
 		String WHITE_SPACE_STYLE = "whiteSpaceStyle";
 	}
@@ -81,7 +83,7 @@ public class SyntaxPreferences implements Serializable, Cloneable
 	/** If <TT>true</TT> line numbers should be displayed. */
 //	private boolean _showLineNumbers = false;
 
-//	private SyntaxStyle _columnStyle;
+	private SyntaxStyle _columnStyle = new SyntaxStyle();
 	private SyntaxStyle _commentStyle = new SyntaxStyle();
 	private SyntaxStyle _dataTypeStyle = new SyntaxStyle();
 	private SyntaxStyle _errorStyle = new SyntaxStyle();
@@ -91,6 +93,7 @@ public class SyntaxPreferences implements Serializable, Cloneable
 	private SyntaxStyle _operatorStyle = new SyntaxStyle();
 	private SyntaxStyle _reservedWordStyle = new SyntaxStyle();
 	private SyntaxStyle _separatorStyle = new SyntaxStyle();
+	private SyntaxStyle _tableStyle = new SyntaxStyle();
 	private SyntaxStyle _whiteSpaceStyle = new SyntaxStyle();
 
 //	private int _caretRGB = Color.red.getRGB();
@@ -103,6 +106,12 @@ public class SyntaxPreferences implements Serializable, Cloneable
 	public SyntaxPreferences()
 	{
 		super();
+
+		_columnStyle.setName(IConstants.IStyleNames.COMMENT);
+		_columnStyle.setBackgroundRGB(Color.white.getRGB());
+		_columnStyle.setTextRGB(0x00FFFF);
+		_columnStyle.setBold(false);
+		_columnStyle.setItalic(false);
 
 		_commentStyle.setName(IConstants.IStyleNames.COMMENT);
 		_commentStyle.setBackgroundRGB(Color.white.getRGB());
@@ -157,6 +166,12 @@ public class SyntaxPreferences implements Serializable, Cloneable
 		_separatorStyle.setTextRGB(0x000080); // Navy.
 		_separatorStyle.setBold(false);
 		_separatorStyle.setItalic(false);
+
+		_tableStyle.setName(IConstants.IStyleNames.TABLE);
+		_tableStyle.setBackgroundRGB(Color.white.getRGB());
+		_tableStyle.setTextRGB(0x00FFFF);
+		_tableStyle.setBold(false);
+		_tableStyle.setItalic(false);
 
 		_whiteSpaceStyle.setName(IConstants.IStyleNames.WHITESPACE);
 		_whiteSpaceStyle.setBackgroundRGB(Color.white.getRGB());
@@ -441,47 +456,47 @@ public class SyntaxPreferences implements Serializable, Cloneable
 		}
 	}
 
-//	public SyntaxStyle getTableStyle()
-//	{
-//		return _tableStyle;
-//	}
-//
-//	public void setTableStyle(SyntaxStyle data)
-//	{
-//		if (data == null)
-//		{
-//			throw new IllegalArgumentException("SyntaxStyle==null");
-//		}
-//
-//		if (_tableStyle != data)
-//		{
-//			final SyntaxStyle oldValue = _tableStyle;
-//			_tableStyle = data;
-//			getPropertyChangeReporter().firePropertyChange(IPropertyNames.TABLE_STYLE,
-//				oldValue, _tableStyle);
-//		}
-//	}
-//
-//	public SyntaxStyle getColumnStyle()
-//	{
-//		return _columnStyle;
-//	}
-//
-//	public void setColumnStyle(SyntaxStyle data)
-//	{
-//		if (data == null)
-//		{
-//			throw new IllegalArgumentException("SyntaxStyle==null");
-//		}
-//
-//		if (_columnStyle != data)
-//		{
-//			final SyntaxStyle oldValue = _columnStyle;
-//			_columnStyle = data;
-//			getPropertyChangeReporter().firePropertyChange(IPropertyNames.COLUMN_STYLE,
-//				oldValue, _columnStyle);
-//		}
-//	}
+	public SyntaxStyle getTableStyle()
+	{
+		return _tableStyle;
+	}
+
+	public void setTableStyle(SyntaxStyle data)
+	{
+		if (data == null)
+		{
+			throw new IllegalArgumentException("SyntaxStyle==null");
+		}
+
+		if (_tableStyle != data)
+		{
+			final SyntaxStyle oldValue = _tableStyle;
+			_tableStyle = data;
+			getPropertyChangeReporter().firePropertyChange(IPropertyNames.TABLE_STYLE,
+				oldValue, _tableStyle);
+		}
+	}
+
+	public SyntaxStyle getColumnStyle()
+	{
+		return _columnStyle;
+	}
+
+	public void setColumnStyle(SyntaxStyle data)
+	{
+		if (data == null)
+		{
+			throw new IllegalArgumentException("SyntaxStyle==null");
+		}
+
+		if (_columnStyle != data)
+		{
+			final SyntaxStyle oldValue = _columnStyle;
+			_columnStyle = data;
+			getPropertyChangeReporter().firePropertyChange(IPropertyNames.COLUMN_STYLE,
+				oldValue, _columnStyle);
+		}
+	}
 
 	public SyntaxStyle getOperatorStyle()
 	{

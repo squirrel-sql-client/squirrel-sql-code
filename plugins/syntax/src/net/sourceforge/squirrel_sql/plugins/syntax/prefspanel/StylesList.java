@@ -34,31 +34,34 @@ import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxStyle;
 /**
  * This control is a listbox containing SyntaxStyle objects.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class StylesList extends JList
 {
 	/** Defines indices in the Styles list for the individual styles. */
 	public interface IStylesListIndices
 	{
-		int COMMENTS = 0;
-		int DATA_TYPES = 1;
-		int ERRORS = 2;
-		int FUNCTIONS = 3;
-		int IDENTIFIERS = 4;
-		int LITERALS = 5;
-		int OPERATORS = 6;
-		int RESERVED_WORDS = 7;
-		int SEPARATORS = 8;
-		int WHITE_SPACE = 9;
+		int COLUMNS = 0;
+		int COMMENTS = 1;
+		int DATA_TYPES = 2;
+		int ERRORS = 3;
+		int FUNCTIONS = 4;
+		int IDENTIFIERS = 5;
+		int LITERALS = 6;
+		int OPERATORS = 7;
+		int RESERVED_WORDS = 8;
+		int SEPARATORS = 9;
+		int TABLES = 10;
+		int WHITE_SPACE = 11;
 
-		int LIST_SIZE = 10;
+		int LIST_SIZE = 12;
 	}
 
-// TODO: columns, tables 
+// TODO: columns, tables
 	/** Titles for each style in the styles list. */
 	private final static String[] s_styleTitles = new String[]
 	{
+		"Columns",
 		"Comments",
 		"Data Types",
 		"Errors",
@@ -68,6 +71,7 @@ public class StylesList extends JList
 		"Operators",
 		"Reserved Words",
 		"Separators",
+		"Tables",
 		"White Space",
 	};
 
@@ -85,6 +89,7 @@ public class StylesList extends JList
 	{
 		removeAll();
 
+		_styles[IStylesListIndices.COLUMNS] = new SyntaxStyle(prefs.getColumnStyle());
 		_styles[IStylesListIndices.COMMENTS] = new SyntaxStyle(prefs.getCommentStyle());
 		_styles[IStylesListIndices.DATA_TYPES] = new SyntaxStyle(prefs.getDataTypeStyle());
 		_styles[IStylesListIndices.ERRORS] = new SyntaxStyle(prefs.getErrorStyle());
@@ -94,6 +99,7 @@ public class StylesList extends JList
 		_styles[IStylesListIndices.OPERATORS] = new SyntaxStyle(prefs.getOperatorStyle());
 		_styles[IStylesListIndices.RESERVED_WORDS] = new SyntaxStyle(prefs.getReservedWordStyle());
 		_styles[IStylesListIndices.SEPARATORS] = new SyntaxStyle(prefs.getSeparatorStyle());
+		_styles[IStylesListIndices.TABLES] = new SyntaxStyle(prefs.getTableStyle());
 		_styles[IStylesListIndices.WHITE_SPACE] = new SyntaxStyle(prefs.getWhiteSpaceStyle());
 
 		final DefaultListModel model = (DefaultListModel)getModel();
