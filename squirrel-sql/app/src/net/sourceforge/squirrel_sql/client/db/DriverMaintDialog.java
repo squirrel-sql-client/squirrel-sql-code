@@ -44,9 +44,9 @@ import javax.swing.event.ChangeListener;
 
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.OkCancelPanel;
-import net.sourceforge.squirrel_sql.fw.gui.OkCancelPanelEvent;
-import net.sourceforge.squirrel_sql.fw.gui.OkCancelPanelListener;
+import net.sourceforge.squirrel_sql.fw.gui.OkClosePanel;
+import net.sourceforge.squirrel_sql.fw.gui.OkClosePanelEvent;
+import net.sourceforge.squirrel_sql.fw.gui.OkClosePanelListener;
 import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
@@ -212,9 +212,9 @@ public class DriverMaintDialog extends JDialog {
         _jarFileName.addFocusListener(new JarFileFocusListener());
 
         // Ok and cancel buttons at bottom of dialog.
-        OkCancelPanel btnsPnl = new OkCancelPanel();
+        OkClosePanel btnsPnl = new OkClosePanel();
         btnsPnl.addListener(new MyOkCancelPanelListener());
-        getRootPane().setDefaultButton(btnsPnl.getOkButton());
+        btnsPnl.makeOKButtonDefault();
 
         final Container contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
@@ -226,12 +226,16 @@ public class DriverMaintDialog extends JDialog {
         setResizable(false);
     }
 
-    private final class MyOkCancelPanelListener implements OkCancelPanelListener {
-        public void okPressed(OkCancelPanelEvent evt) {
+    private final class MyOkCancelPanelListener implements OkClosePanelListener {
+        public void okPressed(OkClosePanelEvent evt) {
             performOk();
         }
 
-        public void cancelPressed(OkCancelPanelEvent evt) {
+        public void closePressed(OkClosePanelEvent evt) {
+            performCancel();
+        }
+
+        public void cancelPressed(OkClosePanelEvent evt) {
             performCancel();
         }
     }
