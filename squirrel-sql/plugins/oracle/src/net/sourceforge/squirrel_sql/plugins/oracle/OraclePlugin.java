@@ -33,6 +33,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode.IObjectTreeNodeType;
 /**
  * Oracle plugin class.
  *
@@ -156,10 +157,9 @@ public class OraclePlugin extends DefaultSessionPlugin
 				SessionInfo si = new SessionInfo(session);
 				_sessions.put(session.getIdentifier(), si);
 				_treeAPI = session.getObjectTreeAPI();
-				_treeAPI.registerExpander(ObjectTreeNode.IObjectTreeNodeType.SCHEMA,
-											new SchemaExpander(this));
-				_treeAPI.registerExpander(si._packageNodeType,
-											new PackageExpander());
+				_treeAPI.registerExpander(IObjectTreeNodeType.SCHEMA, new SchemaExpander(this));
+				_treeAPI.registerExpander(si._packageNodeType, new PackageExpander());
+				_treeAPI.registerDetailTab(IObjectTreeNodeType.PROCEDURE, new ProcedureSourceTab());
 			}
 		}
 		return isOracle;

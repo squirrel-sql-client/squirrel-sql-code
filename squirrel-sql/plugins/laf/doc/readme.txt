@@ -1,3 +1,5 @@
+Look and Feel Plugin
+====================
 This plugin allows you to select a Look and Feel other than the
 default Java one. It also allows you to specify the fonts for the
 different GUI elements. As well as allowing you to use the default

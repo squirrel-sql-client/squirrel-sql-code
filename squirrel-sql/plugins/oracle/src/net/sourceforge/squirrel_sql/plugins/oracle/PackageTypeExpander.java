@@ -46,11 +46,6 @@ public class PackageTypeExpander implements INodeExpander
 	private static ILogger s_log =
 		LoggerController.createLogger(PackageTypeExpander.class);
 
-	/** SQL that retrieves the names of Oracle packages. */
-	private static String ORACLE_PACKAGES_SQL =
-		"select object_name from sys.all_objects where object_type = 'PACKAGE'" +
-		" and owner = ? order by object_name";
-
 	/** The plugin. */
 	private OraclePlugin _plugin;
 

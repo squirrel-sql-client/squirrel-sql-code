@@ -1,22 +1,27 @@
-Change Log
-==========
+SQuirreL SQL Client Change Log
+==============================
 
 1.1beta6
 ========
 
 Enhancements
 ------------
+- Rewrite of the object tree code.
+- Show both schemas and catalogs in the object tree for databases that
+  support both.
+- Added "Help", "Change Log" and "Licence" options to Help menu for SQuirreL
+  and for plugins.
 - Documentation updated.
 - Allow for error in Axions ResultSet.getBoolean() implementation.
-- Mimer added to default drivers
-- Axion added to default drivers
+- Axion and Mimer added to default drivers
 - Added "Dump Application" and "Dump Session" options to menus to aid in
   debugging issues with different drivers and databases.
-- Added "Help" option to Help menu.
 
 Bug Fixes
 ---------
-- Handle sorting by different table types in tables.
+- Expand first level of object tree for JDBC/ODBC bridge when session
+  first started.
+- Handle sorting by different data types in tables.
 - Fix XMLBeanWriter to transparently handle arrays of strings.
 - Fix error handling in data types display.
 - Firstly the "create data script" function would fail if the table/view was
@@ -28,6 +33,9 @@ Bug Fixes
 Plugin API
 ----------
 - Move APIs from ISession to their own classes.
+- Add API to add nodes to the object tree.
+- Add API to add tabs to the object tree details panel.
+- Add API to add options to the object tree popup menu.
 
 
 1.1beta5
