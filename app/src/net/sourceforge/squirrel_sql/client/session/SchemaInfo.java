@@ -754,7 +754,7 @@ public class SchemaInfo
          }
 
 
-         ResultSet rs = _dmd.getColumns(_catalogName, _schemaName, tableName, null);
+         ResultSet rs = _dmd.getColumns(_catalogName, _schemaName, getCaseSensitiveTableName(tableName), null);
          try
          {
             Vector infos = new Vector();
