@@ -12,6 +12,8 @@ Enhancements
 Bug Fixes
 ---------
 - List Drivers button now works when a JDBC driver spans multiple jar files.
+- Don't list abstract classes (I.E. JDBC drivers that can't be loaded) when
+  the List Drivers button pressed.
 - Allow for DB2 not returning all possible schema names.
 - Make sure popup dialogs aren't positioned off screen.
 - The data displayed within the Contents tab was lost when a session sheet was

@@ -18,9 +18,12 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.io.File;
+import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Driver;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.util.MyURLClassLoader;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -44,7 +47,17 @@ public class SQLDriverClassLoader extends MyURLClassLoader
 
 	public Class[] getDriverClasses(ILogger logger)
 	{
-		return getAssignableClasses(Driver.class, logger);
+		final Class[] classes = getAssignableClasses(Driver.class, logger);
+		final List list = new ArrayList();
+		for (int i = 0; i < classes.length; ++i)
+		{
+			Class clazz = classes[i];
+			if (!Modifier.isAbstract(clazz.getModifiers()))
+			{
+				list.add(clazz);
+			}
+		}
+		return (Class[])list.toArray(new Class[list.size()]);
 	}
 
 	private static URL[] createURLs(String[] fileNames)
