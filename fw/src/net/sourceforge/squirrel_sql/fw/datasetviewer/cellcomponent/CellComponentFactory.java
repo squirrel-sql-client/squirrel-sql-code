@@ -6,6 +6,8 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
+import javax.swing.JLabel;
+import java.awt.Component;
 import java.sql.Types;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -217,6 +219,10 @@ public class CellComponentFactory {
 	}
 	
 
+	/**
+	 * The base component of a DefaultTableCellRenderer is a JLabel.
+	 * @author gwg
+	 */
 	static private final class CellRenderer extends DefaultTableCellRenderer
 	{
 		private final IDataTypeComponent _dataTypeObject;
@@ -228,9 +234,52 @@ public class CellComponentFactory {
 			_dataTypeObject = dataTypeObject;
 		}
 
-		public void setValue(Object value)
-		{
+		/**
+		 *
+		 * Returns the default table cell renderer - overridden from DefaultTableCellRenderer.
+		 *
+		 * @param table  the <code>JTable</code>
+		 * @param value  the value to assign to the cell at
+		 *			<code>[row, column]</code>
+		 * @param isSelected true if cell is selected
+		 * @param hasFocus true if cell has focus
+		 * @param row  the row of the cell to render
+		 * @param column the column of the cell to render
+		 * @return the default table cell renderer
+		 */
+		public Component getTableCellRendererComponent(JTable table, Object value,
+				boolean isSelected, boolean hasFocus, int row, int column) {
+				  	
+				JLabel label = (JLabel)super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
+				// Newlines are stripped from the text by the underlying document, so before
+				// actually displaying the text, make sure that the user sees that there are newlines
+				// in the text by displaying them as "\n".
+				if (label.getText().indexOf('\n') > -1) {
+					label.setText(label.getText().replaceAll("\n", "/\\n"));
+				}
+
+				// if text cannot be edited in the cell but can be edited in
+				//				the popup, show that by changing the text colors.
+				if (_dataTypeObject != null &&
+					_dataTypeObject.isEditableInCell(value) == false &&
+					_dataTypeObject.isEditableInPopup(value) == true) {
+					// Use a CYAN background to indicate that the cell is
+					// editable in the popup
+				   setBackground(Color.CYAN);
+			   }
+			   else {
+				   // since the previous entry might have changed the color,
+				   // we need to reset the color back to default value for table cells.
+					setBackground(table.getBackground());
+			   }				
+
+				return label;	  	
+		 }
+		 
+		 
+		public void setValue(Object value)
+		{		
 			// default behavior if no DataType object is to use the
 			// DefaultColumnRenderer with no modification.
 			if (_dataTypeObject != null)
