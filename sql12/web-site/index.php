@@ -24,6 +24,9 @@
 
 	switch ($pageKey)
 	{
+		case 'tutorial':
+			$pageFileName = 'kulvir/tutorial.html';
+			break;
 		case 'home':
 			$pageFileName = 'home.html';
 			break;
