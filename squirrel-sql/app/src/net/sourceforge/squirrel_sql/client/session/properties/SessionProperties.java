@@ -21,6 +21,7 @@ import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetModelJTableModel;
+import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -41,6 +42,7 @@ public class SessionProperties implements Serializable {
 		String CONTENTS_OUTPUT_CLASS_NAME = "contentsOutputClassName";
 		String DATA_TYPES_OUTPUT_CLASS_NAME = "dataTypesOutputClassName";
 		String EXP_KEYS_OUTPUT_CLASS_NAME = "exportedKeysOutputClassName";
+		String FONT_INFO = "fontInfo";
 		String IMP_KEYS_OUTPUT_CLASS_NAME = "importedKeysOutputClassName";
 		String INDEXES_OUTPUT_CLASS_NAME = "indexesOutputClassName";
 		String META_DATA_OUTPUT_CLASS_NAME = "metaDataOutputClassName";
@@ -108,6 +110,9 @@ public class SessionProperties implements Serializable {
 
 	private char _sqlStmtSepChar = ';';
 
+	/** Font information for the jEdit text area. */
+	private FontInfo _fi;
+
 	public SessionProperties() {
 		super();
 	}
@@ -122,6 +127,7 @@ public class SessionProperties implements Serializable {
 		setContentsOutputClassName(rhs.getContentsOutputClassName());
 		setDataTypesOutputClassName(rhs.getDataTypesOutputClassName());
 		setExportedKeysOutputClassName(rhs.getExportedKeysOutputClassName());
+		setFontInfo(rhs.getFontInfo());
 		setImportedKeysOutputClassName(rhs.getImportedKeysOutputClassName());
 		setIndexesOutputClassName(rhs.getIndexesOutputClassName());
 		setMetaDataOutputClassName(rhs.getMetaDataOutputClassName());
@@ -544,5 +550,18 @@ public class SessionProperties implements Serializable {
 		_showRowCount = data;
 		_propChgReporter.firePropertyChange(IPropertyNames.SHOW_ROW_COUNT,
 								oldValue, _showRowCount);
+	}
+
+	public FontInfo getFontInfo() {
+		return _fi;
+	}
+
+	public void setFontInfo(FontInfo data) {
+		if (_fi == null || !_fi.equals(data)) {
+			final FontInfo oldValue = _fi;
+			_fi = data;
+			_propChgReporter.firePropertyChange(IPropertyNames.FONT_INFO,
+								oldValue, _fi);
+		}
 	}
 }

@@ -34,7 +34,7 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo {
 	public SessionPropertiesBeanInfo() throws IntrospectionException {
 		super();
 		if (s_dscrs == null) {
-			s_dscrs = new PropertyDescriptor[24];
+			s_dscrs = new PropertyDescriptor[25];
 			int i = 0;
 			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.AUTO_COMMIT, cls,
 				"getAutoCommit", "setAutoCommit");
@@ -54,6 +54,8 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo {
 				"getDataTypesOutputClassName", "setDataTypesOutputClassName");
 			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.EXP_KEYS_OUTPUT_CLASS_NAME, cls,
 				"getExportedKeysOutputClassName", "setExportedKeysOutputClassName");
+			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.FONT_INFO, cls,
+				"getFontInfo", "setFontInfo");
 			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.IMP_KEYS_OUTPUT_CLASS_NAME, cls,
 				"getImportedKeysOutputClassName", "setImportedKeysOutputClassName");
 			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.INDEXES_OUTPUT_CLASS_NAME, cls,

@@ -18,21 +18,29 @@ package net.sourceforge.squirrel_sql.client.session.properties;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.squirrel_sql.fw.gui.CharField;
+import net.sourceforge.squirrel_sql.fw.gui.FontChooser;
+import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 
@@ -119,6 +127,12 @@ public class SQLPropertiesPanel
 		private JCheckBox _sqlLimitRows = new JCheckBox(i18n.LIMIT_ROWS_SQL);
 		private CharField _stmtSepChar = new CharField();
 
+		/** Label displaying the selected font. */
+		private JLabel _fontLbl = new JLabel();
+
+		/** Button to select font. */
+		private FontButton _fontBtn = new FontButton("Font", _fontLbl);
+
 		MyPanel(IApplication app) {
 			super();
 			createUserInterface(app);
@@ -133,6 +147,13 @@ public class SQLPropertiesPanel
 			_sqlLimitRows.setSelected(props.getSqlLimitRows());
 			_showRowCount.setSelected(props.getShowRowCount());
 			_stmtSepChar.setChar(props.getSqlStatementSeparatorChar());
+
+			FontInfo fi = props.getFontInfo();
+			if (fi == null) {
+				fi = new FontInfo(UIManager.getFont("TextArea.font"));
+			}
+			_fontLbl.setText(fi.toString());
+			_fontBtn.setSelectedFont(fi.createFont());
 		}
 
 		void applyChanges(SessionProperties props) {
@@ -144,10 +165,31 @@ public class SQLPropertiesPanel
 			props.setSqlLimitRows(_sqlLimitRows.isSelected());
 			props.setShowRowCount(_showRowCount.isSelected());
 			props.setSqlStatementSeparatorChar(_stmtSepChar.getChar());
+			props.setFontInfo(_fontBtn.getFontInfo());
 		}
 
 		private void createUserInterface(IApplication app) {
 			setLayout(new GridBagLayout());
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.anchor = gbc.WEST;
+			gbc.fill = gbc.HORIZONTAL;
+			gbc.insets = new Insets(4, 4, 4, 4);
+
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			add(createSQLPanel(app), gbc);
+
+			++gbc.gridy;
+			add(createFontPanel(), gbc);
+		}
+
+		private JPanel createSQLPanel(IApplication app) {
+			JPanel pnl = new JPanel();
+			pnl.setBorder(BorderFactory.createTitledBorder("SQL"));
+			pnl.setLayout(new GridBagLayout());
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = gbc.HORIZONTAL;
+			gbc.insets = new Insets(4, 4, 4, 4);
 
 			final Icon warnIcon = app.getResources().getIcon(SquirrelResources.IImageNames.PERFORMANCE_WARNING);
 
@@ -173,69 +215,141 @@ public class SQLPropertiesPanel
 			_sqlNbrRowsToShowField.setColumns(5);
 			_stmtSepChar.setColumns(1);
 
-			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.fill = gbc.HORIZONTAL;
-
-			gbc.insets = new Insets(2, 0, 2, 1);
 			gbc.gridx = 0;
 			gbc.gridy = 0;
-			add(_autoCommitChk, gbc);
+			pnl.add(_autoCommitChk, gbc);
 			++gbc.gridy;
-			add(_showRowCount, gbc);
+			pnl.add(_showRowCount, gbc);
 			++gbc.gridy;
-			add(_contentsLimitRowsChk, gbc);
+			pnl.add(_contentsLimitRowsChk, gbc);
 			++gbc.gridy;
-			add(_sqlLimitRows, gbc);
+			pnl.add(_sqlLimitRows, gbc);
 
 			gbc.insets = new Insets(2, 0, 2, 4);
 			++gbc.gridx;
 			gbc.gridy = 1;
-			add(new JLabel(warnIcon), gbc);
+			pnl.add(new JLabel(warnIcon), gbc);
 			++gbc.gridy;
-			add(new JLabel(warnIcon), gbc);
+			pnl.add(new JLabel(warnIcon), gbc);
 			++gbc.gridy;
-			add(new JLabel(warnIcon), gbc);
+			pnl.add(new JLabel(warnIcon), gbc);
 
 			gbc.insets = new Insets(2, 0, 2, 4);
 			++gbc.gridx;
 			gbc.gridy = 0;
 			gbc.gridwidth = 2;
-			add(_commitOnClose, gbc);
+			pnl.add(_commitOnClose, gbc);
 			++gbc.gridy;
 			gbc.gridwidth = 1;
 			++gbc.gridy;
-			add(new RightLabel(i18n.NBR_ROWS_CONTENTS), gbc);
+			pnl.add(new RightLabel(i18n.NBR_ROWS_CONTENTS), gbc);
 			++gbc.gridy;
-			add(new RightLabel(i18n.NBR_ROWS_SQL), gbc);
+			pnl.add(new RightLabel(i18n.NBR_ROWS_SQL), gbc);
 			++gbc.gridy;
-			add(new RightLabel(i18n.STATEMENT_SEPARATOR), gbc);
+			pnl.add(new RightLabel(i18n.STATEMENT_SEPARATOR), gbc);
 
 			gbc.insets = new Insets(2, 0, 2, 1);
 			++gbc.gridx;
 			gbc.gridy = 0;
 			++gbc.gridy;
 			++gbc.gridy;
-			add(_contentsNbrRowsToShowField, gbc);
+			pnl.add(_contentsNbrRowsToShowField, gbc);
 			++gbc.gridy;
-			add(_sqlNbrRowsToShowField, gbc);
+			pnl.add(_sqlNbrRowsToShowField, gbc);
 			++gbc.gridy;
-			add(_stmtSepChar, gbc);
+			pnl.add(_stmtSepChar, gbc);
 
 			++gbc.gridx;
 			gbc.gridy = 2;
-			add(new JLabel(warnIcon), gbc);
+			pnl.add(new JLabel(warnIcon), gbc);
 			++gbc.gridy;
-			add(new JLabel(warnIcon), gbc);
+			pnl.add(new JLabel(warnIcon), gbc);
 
 			gbc.gridx = 0;
 			gbc.gridy = gbc.RELATIVE;
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
-			add(new MultipleLineLabel(i18n.PERF_WARNING), gbc);
+			pnl.add(new MultipleLineLabel(i18n.PERF_WARNING), gbc);
+
+			return pnl;
+		}
+
+		private JPanel createFontPanel() {
+			JPanel pnl = new JPanel();
+			pnl.setBorder(BorderFactory.createTitledBorder("Font"));
+			pnl.setLayout(new GridBagLayout());
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = gbc.HORIZONTAL;
+			gbc.insets = new Insets(4, 4, 4, 4);
+
+			_fontBtn.addActionListener(new FontButtonListener());
+
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			pnl.add(_fontBtn, gbc);
+
+			++gbc.gridx;
+			gbc.fill = gbc.HORIZONTAL;
+			gbc.weightx = 1.0;
+			pnl.add(_fontLbl, gbc);
+
+			return pnl;
 		}
 
 		private static final class RightLabel extends JLabel {
 			RightLabel(String title) {
 				super(title, SwingConstants.RIGHT);
+			}
+		}
+
+		private static final class FontButton extends JButton {
+			private FontInfo _fi;
+			private JLabel _lbl;
+			private Font _font;
+//			private boolean _dirty;
+
+			FontButton(String text, JLabel lbl) {
+				super(text);
+				_lbl = lbl;
+			}
+			
+			FontInfo getFontInfo() {
+				return _fi;
+			}
+			
+			Font getSelectedFont() {
+				return _font;
+			}
+			
+			void setSelectedFont(Font font) {
+				_font = font;
+				if (_fi == null) {
+					_fi = new FontInfo(font);
+				} else {
+					_fi.setFont(font);
+				}
+//				_dirty = true;
+			}
+			
+//			boolean isDirty() {
+//				return _dirty;
+//			}
+		}
+
+		private static final class FontButtonListener implements ActionListener {
+			public void actionPerformed(ActionEvent evt) {
+				if (evt.getSource() instanceof FontButton) {
+					FontButton btn = (FontButton)evt.getSource();
+					FontInfo fi = btn.getFontInfo();
+					Font font = null;
+					if (fi != null) {
+						font = fi.createFont();
+					}
+					font = new FontChooser().showDialog(font);
+					if (font != null) {
+						btn.setSelectedFont(font);
+						btn._lbl.setText(new FontInfo(font).toString());
+					}
+				}
 			}
 		}
 
