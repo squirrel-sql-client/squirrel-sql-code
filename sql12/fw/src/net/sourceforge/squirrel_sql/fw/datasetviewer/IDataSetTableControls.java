@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+ 
 import javax.swing.JTable;
 /**
  * @author gwg
@@ -66,7 +67,7 @@ public interface IDataSetTableControls
 	public void deleteRows(int[] rows);
 	
 	/**
-	 * Insert a new row into the table.
+	 * Initiate operations to insert a new row into the table.
 	 */
 	public void insertRow();
 }

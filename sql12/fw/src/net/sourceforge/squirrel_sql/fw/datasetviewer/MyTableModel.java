@@ -152,7 +152,6 @@ public final class MyTableModel extends AbstractTableModel
 		// descending order (see previous comment), so run through the
 		// list backwards.
 		for (int i=rows.length - 1; i>=0; i--) {
-//??System.out.println("deleting row "+rows[i] + " containing "+getValueAt(rows[i],0)+" "+getValueAt(rows[i],1));
 			// delete the row from the table
 			_data.remove(rows[i]);
 		}

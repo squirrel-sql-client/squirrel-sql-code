@@ -156,6 +156,32 @@ public class SortableTableModel extends AbstractTableModel
 	}
 	
 	/**
+	 * Insert a new row into the table.
+	 */
+	public void insertRow(Object[] values) {
+		// first attempt to add data to underlying table model
+		((MyTableModel)_actualModel).addRow(values);
+
+		// tell the rest of the world that the table has changed.
+		// The 'fire' method used here is very course - it says that the whole table
+		// has been changed when really only one row has been added.
+		// However, finer-grained methods did not seem to cause the right
+		// effect, so I'm using this one untill someone reports a problem with it.
+		// Also, if either of these notifications (the actual model and the sortable
+		// model) are eliminated, it either throws an exception or does not update
+		// the GUI.  Go figure.
+		// Finally, the 'fire' on the _acutalModel is triggered from this method
+		// rather than from inside the MyJTable code because the add() method used
+		// to add a row is also used when loading the table with lots of rows, and
+		// in that case we do not want to generate events until all of the rows
+		// have been added, so the 'fire' cannot happen there.
+		((MyTableModel)_actualModel).fireTableChanged(new TableModelEvent(_actualModel));
+		fireTableChanged(new TableModelEvent(this));
+	}
+	
+	
+	
+	/**
 	 * The actual model may or may not be editable, so return
 	 * the value returned by the model when asked if this
 	 * cell is editable.
