@@ -26,9 +26,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -45,7 +45,6 @@ import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public class SessionSQLPropertiesPanel
@@ -137,10 +136,10 @@ public class SessionSQLPropertiesPanel
 		private JCheckBox _commitOnClose = new JCheckBox(SQLPropertiesPanelI18n.COMMIT_ON_CLOSE);
 		private IntegerField _contentsNbrRowsToShowField = new IntegerField(5);
 		private JCheckBox _contentsLimitRowsChk = new JCheckBox(SQLPropertiesPanelI18n.LIMIT_ROWS_CONTENTS);
-		private JCheckBox _showRowCount = new JCheckBox(SQLPropertiesPanelI18n.SHOW_ROW_COUNT);
+		private JCheckBox _showRowCountChk = new JCheckBox(SQLPropertiesPanelI18n.SHOW_ROW_COUNT);
 		private IntegerField _sqlNbrRowsToShowField = new IntegerField(5);
-		private JCheckBox _sqlLimitRows = new JCheckBox(SQLPropertiesPanelI18n.LIMIT_ROWS_SQL);
-		private CharField _stmtSepChar = new CharField(' ');
+		private JCheckBox _sqlLimitRowsChk = new JCheckBox(SQLPropertiesPanelI18n.LIMIT_ROWS_SQL);
+		private CharField _stmtSepCharField = new CharField(' ');
 		private JTextField _solCommentField = new JTextField(2);
 
 		private JCheckBox _showBinaryChk = new JCheckBox(SQLPropertiesPanelI18n.BINARY);
@@ -150,8 +149,11 @@ public class SessionSQLPropertiesPanel
 		private JCheckBox _showBlobChk = new JCheckBox(SQLPropertiesPanelI18n.BLOB);
 		private JCheckBox _showClobChk = new JCheckBox(SQLPropertiesPanelI18n.CLOB);
 
-		private IntegerField _showBlobSize = new IntegerField(5);
-		private IntegerField _showClobSize = new IntegerField(5);
+		private final ReadTypeCombo _blobTypeDrop = new ReadTypeCombo();
+		private final ReadTypeCombo _clobTypeDrop = new ReadTypeCombo();
+
+		private IntegerField _showBlobSizeField = new IntegerField(5);
+		private IntegerField _showClobSizeField = new IntegerField(5);
 
 		/** Label displaying the selected font. */
 		private JLabel _fontLbl = new JLabel();
@@ -159,10 +161,16 @@ public class SessionSQLPropertiesPanel
 		/** Button to select font. */
 		private FontButton _fontBtn = new FontButton("Font", _fontLbl);
 
+		/**
+		 * This object will update the status of the GUI controls as the user
+		 * makes changes.
+		 */
+		private final ControlMediator _controlMediator = new ControlMediator();
+
 		SQLPropertiesPanel(IApplication app)
 		{
 			super();
-			createUserInterface(app);
+			createGUI(app);
 		}
 
 		void loadData(SessionProperties props)
@@ -172,22 +180,27 @@ public class SessionSQLPropertiesPanel
 			_contentsNbrRowsToShowField.setInt(props.getContentsNbrRowsToShow());
 			_contentsLimitRowsChk.setSelected(props.getContentsLimitRows());
 			_sqlNbrRowsToShowField.setInt(props.getSQLNbrRowsToShow());
-			_sqlLimitRows.setSelected(props.getSQLLimitRows());
-			_showRowCount.setSelected(props.getShowRowCount());
-			_stmtSepChar.setChar(props.getSQLStatementSeparatorChar());
+			_sqlLimitRowsChk.setSelected(props.getSQLLimitRows());
+			_showRowCountChk.setSelected(props.getShowRowCount());
+			_stmtSepCharField.setChar(props.getSQLStatementSeparatorChar());
 			_solCommentField.setText(props.getStartOfLineComment());
 
 			LargeResultSetObjectInfo largeObjInfo = props.getLargeResultSetObjectInfo();
 			_showBinaryChk.setSelected(largeObjInfo.getReadBinary());
 			_showVarBinaryChk.setSelected(largeObjInfo.getReadVarBinary());
 			_showLongVarBinaryChk.setSelected(largeObjInfo.getReadLongVarBinary());
-			_showBlobChk.setSelected(largeObjInfo.getReadBlobs());
-			_showClobChk.setSelected(largeObjInfo.getReadClobs());
-			_showBlobSize.setInt(largeObjInfo.getReadBlobsSize());
-			_showClobSize.setInt(largeObjInfo.getReadClobsSize());
 
-			_showBlobSize.setEnabled(_showBlobChk.isSelected());
-			_showClobSize.setEnabled(_showClobChk.isSelected());
+			_showBlobChk.setSelected(largeObjInfo.getReadBlobs());
+			_showBlobSizeField.setInt(largeObjInfo.getReadBlobsSize());
+			_blobTypeDrop.setSelectedIndex(largeObjInfo.getReadCompleteBlobs()
+												? ReadTypeCombo.READ_ALL_IDX
+												: ReadTypeCombo.READ_PARTIAL_IDX);
+
+			_showClobChk.setSelected(largeObjInfo.getReadClobs());
+			_showClobSizeField.setInt(largeObjInfo.getReadClobsSize());
+			_clobTypeDrop.setSelectedIndex(largeObjInfo.getReadCompleteClobs()
+												? ReadTypeCombo.READ_ALL_IDX
+												: ReadTypeCombo.READ_PARTIAL_IDX);
 
 			FontInfo fi = props.getFontInfo();
 			if (fi == null)
@@ -196,6 +209,8 @@ public class SessionSQLPropertiesPanel
 			}
 			_fontLbl.setText(fi.toString());
 			_fontBtn.setSelectedFont(fi.createFont());
+
+			updateControlStatus();
 		}
 
 		void applyChanges(SessionProperties props)
@@ -205,24 +220,50 @@ public class SessionSQLPropertiesPanel
 			props.setContentsNbrRowsToShow(_contentsNbrRowsToShowField.getInt());
 			props.setContentsLimitRows(_contentsLimitRowsChk.isSelected());
 			props.setSQLNbrRowsToShow(_sqlNbrRowsToShowField.getInt());
-			props.setSQLLimitRows(_sqlLimitRows.isSelected());
-			props.setShowRowCount(_showRowCount.isSelected());
-			props.setSQLStatementSeparatorChar(_stmtSepChar.getChar());
+			props.setSQLLimitRows(_sqlLimitRowsChk.isSelected());
+			props.setShowRowCount(_showRowCountChk.isSelected());
+			props.setSQLStatementSeparatorChar(_stmtSepCharField.getChar());
 			props.setStartOfLineComment(_solCommentField.getText());
 
 			LargeResultSetObjectInfo largeObjInfo = props.getLargeResultSetObjectInfo();
 			largeObjInfo.setReadBinary(_showBinaryChk.isSelected());
 			largeObjInfo.setReadVarBinary(_showVarBinaryChk.isSelected());
 			largeObjInfo.setReadLongVarBinary(_showLongVarBinaryChk.isSelected());
+
 			largeObjInfo.setReadBlobs(_showBlobChk.isSelected());
+			largeObjInfo.setReadBlobsSize(_showBlobSizeField.getInt());
+			largeObjInfo.setReadCompleteBlobs(
+				_blobTypeDrop.getSelectedIndex() == ReadTypeCombo.READ_ALL_IDX);
+
+			largeObjInfo.setReadClobsSize(_showClobSizeField.getInt());
 			largeObjInfo.setReadClobs(_showClobChk.isSelected());
-			largeObjInfo.setReadBlobsSize(_showBlobSize.getInt());
-			largeObjInfo.setReadClobsSize(_showClobSize.getInt());
+			largeObjInfo.setReadCompleteClobs(
+				_clobTypeDrop.getSelectedIndex() == ReadTypeCombo.READ_ALL_IDX);
 
 			props.setFontInfo(_fontBtn.getFontInfo());
 		}
 
-		private void createUserInterface(IApplication app)
+		private void updateControlStatus()
+		{
+			_commitOnClose.setEnabled(!_autoCommitChk.isSelected());
+
+			_contentsNbrRowsToShowField.setEnabled(_contentsLimitRowsChk.isSelected());
+			_sqlNbrRowsToShowField.setEnabled(_sqlLimitRowsChk.isSelected());
+
+			final boolean showBlobs = _showBlobChk.isSelected();
+			final boolean showPartialBlobs =
+				_blobTypeDrop.getSelectedIndex() == ReadTypeCombo.READ_PARTIAL_IDX;
+			_showBlobSizeField.setEnabled(showBlobs && showPartialBlobs);
+			_blobTypeDrop.setEnabled(showBlobs);
+
+			final boolean showClobs = _showClobChk.isSelected();
+			final boolean showPartialClobs =
+				_clobTypeDrop.getSelectedIndex() == ReadTypeCombo.READ_PARTIAL_IDX;
+			_showClobSizeField.setEnabled(showClobs && showPartialClobs);
+			_clobTypeDrop.setEnabled(showClobs);
+		}
+
+		private void createGUI(IApplication app)
 		{
 			setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
@@ -250,33 +291,13 @@ public class SessionSQLPropertiesPanel
 			gbc.insets = new Insets(0, 4, 0, 4);
 			gbc.anchor = gbc.WEST;
 
-			_autoCommitChk.addChangeListener(new ChangeListener()
-			{
-				public void stateChanged(ChangeEvent evt)
-				{
-					_commitOnClose.setEnabled(!((JCheckBox) evt.getSource()).isSelected());
-				}
-			});
-
-			_contentsLimitRowsChk.addChangeListener(new ChangeListener()
-			{
-				public void stateChanged(ChangeEvent evt)
-				{
-					_contentsNbrRowsToShowField.setEnabled(_contentsLimitRowsChk.isSelected());
-				}
-			});
-
-			_sqlLimitRows.addChangeListener(new ChangeListener()
-			{
-				public void stateChanged(ChangeEvent evt)
-				{
-					_sqlNbrRowsToShowField.setEnabled(_sqlLimitRows.isSelected());
-				}
-			});
+			_autoCommitChk.addChangeListener(_controlMediator);
+			_contentsLimitRowsChk.addChangeListener(_controlMediator);
+			_sqlLimitRowsChk.addChangeListener(_controlMediator);
 
 			_contentsNbrRowsToShowField.setColumns(5);
 			_sqlNbrRowsToShowField.setColumns(5);
-			_stmtSepChar.setColumns(1);
+			_stmtSepCharField.setColumns(1);
 
 			// First column.
 			gbc.gridx = 0;
@@ -284,12 +305,12 @@ public class SessionSQLPropertiesPanel
 			pnl.add(_autoCommitChk, gbc);
 			++gbc.gridy;
 			gbc.gridwidth = 3;
-			pnl.add(_showRowCount, gbc);
+			pnl.add(_showRowCountChk, gbc);
 			gbc.gridwidth = 1;
 			++gbc.gridy;
 			pnl.add(_contentsLimitRowsChk, gbc);
 			++gbc.gridy;
-			pnl.add(_sqlLimitRows, gbc);
+			pnl.add(_sqlLimitRowsChk, gbc);
 
 			++gbc.gridx;
 			gbc.gridy = 0;
@@ -314,20 +335,75 @@ public class SessionSQLPropertiesPanel
 			++gbc.gridy;
 			pnl.add(_sqlNbrRowsToShowField, gbc);
 			++gbc.gridy;
-			pnl.add(_stmtSepChar, gbc);
+			pnl.add(_stmtSepCharField, gbc);
 			++gbc.gridy;
 			pnl.add(_solCommentField, gbc);
 
 			return pnl;
 		}
 
+//		private JPanel createDataTypesPanel()
+//		{
+//			_showBlobSize.setColumns(5);
+//			_showClobSize.setColumns(5);
+//
+//			_showBlobChk.addActionListener(_controlMediator);
+//			_showClobChk.addActionListener(_controlMediator);
+//
+//			JPanel pnl = new JPanel(new GridBagLayout());
+//			pnl.setBorder(BorderFactory.createTitledBorder("Show String Data for Columns of these Data Types"));
+//			final GridBagConstraints gbc = new GridBagConstraints();
+//			gbc.fill = gbc.HORIZONTAL;
+//			gbc.insets = new Insets(0, 4, 0, 4);
+//			gbc.anchor = gbc.WEST;
+//
+//			gbc.gridwidth = 1;
+//			gbc.gridx = 0;
+//			gbc.gridy = 0;
+//			gbc.weightx = 1;
+//			pnl.add(_showBinaryChk, gbc);
+//
+//			++gbc.gridx;
+//			gbc.weightx = 0;
+//			gbc.gridwidth = 2;
+//			pnl.add(_showVarBinaryChk, gbc);
+//
+//			++gbc.gridy;
+//			gbc.gridx = 0;
+//			gbc.gridwidth = 1;
+//			pnl.add(_showLongVarBinaryChk, gbc);
+//
+//			++gbc.gridy;
+//			pnl.add(_showBlobChk, gbc);
+//
+//			++gbc.gridx;
+//			pnl.add(new RightLabel(SQLPropertiesPanelI18n.NBR_BYTES), gbc);
+//
+//			++gbc.gridx;
+//			pnl.add(_showBlobSize, gbc);
+//
+//			gbc.gridx = 0;
+//			++gbc.gridy;
+//			pnl.add(_showClobChk, gbc);
+//
+//			++gbc.gridx;
+//			pnl.add(new RightLabel(SQLPropertiesPanelI18n.NBR_CHARS), gbc);
+//
+//			++gbc.gridx;
+//			pnl.add(_showClobSize, gbc);
+//
+//			return pnl;
+//		}
+
 		private JPanel createDataTypesPanel()
 		{
-			_showBlobSize.setColumns(5);
-			_showClobSize.setColumns(5);
+			_showBlobSizeField.setColumns(5);
+			_showClobSizeField.setColumns(5);
 
-			_showBlobChk.addActionListener(new DataTypeCheckBoxListener(_showBlobSize));
-			_showClobChk.addActionListener(new DataTypeCheckBoxListener(_showClobSize));
+			_showBlobChk.addActionListener(_controlMediator);
+			_showClobChk.addActionListener(_controlMediator);
+			_blobTypeDrop.addActionListener(_controlMediator);
+			_clobTypeDrop.addActionListener(_controlMediator);
 
 			JPanel pnl = new JPanel(new GridBagLayout());
 			pnl.setBorder(BorderFactory.createTitledBorder("Show String Data for Columns of these Data Types"));
@@ -336,40 +412,52 @@ public class SessionSQLPropertiesPanel
 			gbc.insets = new Insets(0, 4, 0, 4);
 			gbc.anchor = gbc.WEST;
 
-			gbc.gridwidth = 1;
 			gbc.gridx = 0;
 			gbc.gridy = 0;
 			gbc.weightx = 1;
 			pnl.add(_showBinaryChk, gbc);
 
-			++gbc.gridx;
-			gbc.weightx = 0;
-			gbc.gridwidth = 2;
-			pnl.add(_showVarBinaryChk, gbc);
-
 			++gbc.gridy;
-			gbc.gridx = 0;
-			gbc.gridwidth = 1;
+			gbc.gridwidth = 2;
 			pnl.add(_showLongVarBinaryChk, gbc);
 
+			gbc.gridwidth = 1;
 			++gbc.gridy;
 			pnl.add(_showBlobChk, gbc);
 
-			++gbc.gridx;
-			pnl.add(new RightLabel(SQLPropertiesPanelI18n.NBR_BYTES), gbc);
-
-			++gbc.gridx;
-			pnl.add(_showBlobSize, gbc);
-
-			gbc.gridx = 0;
 			++gbc.gridy;
 			pnl.add(_showClobChk, gbc);
 
 			++gbc.gridx;
-			pnl.add(new RightLabel(SQLPropertiesPanelI18n.NBR_CHARS), gbc);
+			gbc.gridy = 2;
+			pnl.add(new RightLabel("Read"), gbc);
+
+			++gbc.gridy;
+			pnl.add(new RightLabel("Read"), gbc);
 
 			++gbc.gridx;
-			pnl.add(_showClobSize, gbc);
+			gbc.gridy = 0;
+			pnl.add(_showVarBinaryChk, gbc);
+
+			gbc.gridy = 2;
+			pnl.add(_blobTypeDrop, gbc);
+
+			++gbc.gridy;
+			pnl.add(_clobTypeDrop, gbc);
+
+			++gbc.gridx;
+			gbc.gridy = 2;
+			pnl.add(_showBlobSizeField, gbc);
+
+			++gbc.gridy;
+			pnl.add(_showClobSizeField, gbc);
+
+			++gbc.gridx;
+			gbc.gridy = 2;
+			pnl.add(new JLabel("Bytes"), gbc);
+
+			++gbc.gridy;
+			pnl.add(new JLabel("Chars"), gbc);
 
 			return pnl;
 		}
@@ -402,6 +490,18 @@ public class SessionSQLPropertiesPanel
 			RightLabel(String title)
 			{
 				super(title, SwingConstants.RIGHT);
+			}
+		}
+
+		private static final class ReadTypeCombo extends JComboBox
+		{
+			static final int READ_ALL_IDX = 1;
+			static final int READ_PARTIAL_IDX = 0;
+			
+			ReadTypeCombo()
+			{
+				addItem("only the first");
+				addItem("all");
 			}
 		}
 
@@ -441,22 +541,21 @@ public class SessionSQLPropertiesPanel
 			}
 		}
 
-		private static final class DataTypeCheckBoxListener implements ActionListener
+		/**
+		 * This class will update the status of the GUI controls as the user
+		 * makes changes.
+		 */
+		private final class ControlMediator implements ChangeListener,
+															ActionListener
 		{
-			private IntegerField _field;
-
-			DataTypeCheckBoxListener(IntegerField field)
+			public void stateChanged(ChangeEvent evt)
 			{
-				super();
-				_field = field;
+				updateControlStatus();
 			}
 
 			public void actionPerformed(ActionEvent evt)
 			{
-				if (evt.getSource() instanceof JCheckBox)
-				{
-					_field.setEnabled(((JCheckBox)evt.getSource()).isSelected());
-				}
+				updateControlStatus();
 			}
 		}
 
@@ -482,29 +581,5 @@ public class SessionSQLPropertiesPanel
 				}
 			}
 		}
-
-		private final static class OutputType
-		{
-			private final String _name;
-			private final String _className;
-
-			OutputType(String name, String className)
-			{
-				super();
-				_name = name;
-				_className = className;
-			}
-
-			public String toString()
-			{
-				return _name;
-			}
-
-			String getPanelClassName()
-			{
-				return _className;
-			}
-		}
-
 	}
 }
