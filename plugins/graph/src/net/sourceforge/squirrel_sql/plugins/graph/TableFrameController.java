@@ -70,7 +70,7 @@ public class TableFrameController
    private double _adjustBeginZoom;
 
 
-   public TableFrameController(ISession session, GraphDesktopController desktopController, AddTableListener listener, String tableName, TableFrameControllerXmlBean xmlBean)
+   public TableFrameController(ISession session, GraphDesktopController desktopController, AddTableListener listener, String tableName, String schemaName, String catalogName, TableFrameControllerXmlBean xmlBean)
    {
       try
       {
@@ -91,8 +91,8 @@ public class TableFrameController
             _tableName = tableName;
             _frame = new TableFrame(_tableName, null, toolTipProvider, _desktopController.getZoomer());
 
-            _catalog = _session.getSQLConnection().getCatalog();
-            _schema = null;
+            _catalog = catalogName;
+            _schema = schemaName;
 
             initFromDB();
 
@@ -205,10 +205,9 @@ public class TableFrameController
       ResultSet res;
       Hashtable constaintInfosByConstraintName = new Hashtable();
       Vector colInfosBuf = new Vector();
-      res = metaData.getColumns(_catalog, null, _tableName, null);
+      res = metaData.getColumns(_catalog, _schema, _tableName, null);
       while(res.next())
       {
-         _schema = res.getString("TABLE_SCHEM");
          String columnName = res.getString("COLUMN_NAME");
          String columnType = res.getString("TYPE_NAME");
          int columnSize = res.getInt("COLUMN_SIZE");
@@ -576,7 +575,7 @@ public class TableFrameController
 
    private void onAddTableForForeignKey(ColumnInfo columnInfo)
    {
-      _addTablelListener.addTablesRequest(new String[]{columnInfo.getImportedTableName()});
+      _addTablelListener.addTablesRequest(new String[]{columnInfo.getImportedTableName()}, _schema, _catalog);
    }
 
    private void onPkConstraintOrder()
@@ -758,7 +757,7 @@ public class TableFrameController
             }
             _tablesExportedTo = (String[]) exportBuf.keySet().toArray(new String[0]);
          }
-         _addTablelListener.addTablesRequest(_tablesExportedTo);
+         _addTablelListener.addTablesRequest(_tablesExportedTo, _schema, _catalog);
 
       }
       catch (SQLException e)
@@ -778,7 +777,7 @@ public class TableFrameController
          tablesToAdd.add(_constraintViews[i].getData().getPkTableName());
       }
 
-      _addTablelListener.addTablesRequest((String[]) tablesToAdd.toArray(new String[tablesToAdd.size()]));
+      _addTablelListener.addTablesRequest((String[]) tablesToAdd.toArray(new String[tablesToAdd.size()]), _schema, _catalog);
    }
 
 
@@ -808,7 +807,7 @@ public class TableFrameController
          ColumnInfo ci = getColumnInfoForPoint(e.getPoint());
          if(null != ci && null != ci.getImportedTableName())
          {
-            _addTablelListener.addTablesRequest(new String[]{ci.getImportedTableName()});
+            _addTablelListener.addTablesRequest(new String[]{ci.getImportedTableName()}, _schema, _catalog);
          }
       }
 

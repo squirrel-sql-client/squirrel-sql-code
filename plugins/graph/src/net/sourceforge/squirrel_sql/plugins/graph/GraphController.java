@@ -2,18 +2,15 @@ package net.sourceforge.squirrel_sql.plugins.graph;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.GraphControllerXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.GraphXmlSerializer;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameControllerXmlBean;
-import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.FormatXmlBean;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.Vector;
-
-import org.apache.xml.dtm.ref.DTMNodeProxy;
 
 
 public class GraphController
@@ -88,9 +85,9 @@ public class GraphController
 
       _addTableListener = new AddTableListener()
       {
-         public void addTablesRequest(String[] tablenames)
+         public void addTablesRequest(String[] tablenames, String schema, String catalog)
          {
-            onAddTablesRequest(tablenames);
+            onAddTablesRequest(tablenames, schema, catalog);
          }
       };
 
@@ -115,7 +112,7 @@ public class GraphController
          TableFrameControllerXmlBean[] tableFrameControllerXmls = graphControllerXmlBean.getTableFrameControllerXmls();
          for (int i = 0; i < tableFrameControllerXmls.length; i++)
          {
-            addTableIntern(null, null, tableFrameControllerXmls[i]);
+            addTableIntern(null, null, null, null, tableFrameControllerXmls[i]);
          }
       }
    }
@@ -187,12 +184,12 @@ public class GraphController
 
 
 
-   private void onAddTablesRequest(String[] tablenames)
+   private void onAddTablesRequest(String[] tablenames, String schema, String catalog)
    {
       Point[] refCascadeIndent = new Point[1];
       for (int i = 0; i < tablenames.length; i++)
       {
-         addTableIntern(refCascadeIndent, tablenames[i], null);
+         addTableIntern(refCascadeIndent, tablenames[i], schema, catalog, null);
       }
    }
 
@@ -209,11 +206,15 @@ public class GraphController
 
    public void addTable(ObjectTreeNode selectedNode, final Point[] refCascadeIndent)
    {
-      addTableIntern(refCascadeIndent, selectedNode.getDatabaseObjectInfo().getSimpleName(), null);
+      String catalog = selectedNode.getDatabaseObjectInfo().getCatalogName();
+      String schema = selectedNode.getDatabaseObjectInfo().getSchemaName();
+      String table = selectedNode.getDatabaseObjectInfo().getSimpleName();
+
+      addTableIntern(refCascadeIndent, table, schema, catalog,  null);
    }
 
 
-   private void addTableIntern(final Point[] refCascadeIndent, String tableName, final TableFrameControllerXmlBean xmlBean)
+   private void addTableIntern(final Point[] refCascadeIndent, String tableName, String schemaName, String catalogName, final TableFrameControllerXmlBean xmlBean)
    {
 
 
@@ -221,11 +222,11 @@ public class GraphController
 
       if(null == xmlBean)
       {
-         tfc = new TableFrameController(_session, _desktopController, _addTableListener, tableName, null);
+         tfc = new TableFrameController(_session, _desktopController, _addTableListener, tableName, schemaName, catalogName, null);
       }
       else
       {
-         tfc = new TableFrameController(_session, _desktopController, _addTableListener, null, xmlBean);
+         tfc = new TableFrameController(_session, _desktopController, _addTableListener, null, null, null, xmlBean);
       }
 
       if (_openTableFrameCtrls.contains(tfc))
