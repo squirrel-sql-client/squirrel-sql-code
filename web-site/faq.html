@@ -1,0 +1,196 @@
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+	<tr>
+		<td width='10' height='10'><img border="0" src="images/border_tl.gif" width="10" height="10"></td>
+		<td width='100%' height='10'><img border="0" src="images/border_t.gif" width="100%" height="10"></td>
+		<td width='10' height='10'><img border="0" src="images/border_tr.gif" width="10" height="10"></td>
+	</tr>
+	<tr>
+		<td class="body_left_border">&nbsp;</td>
+		<td width='100%' bgcolor="white" valign="top">
+			<h1 class="body"></A>FAQ - SQuirreL SQL Client.</h1>
+			<p>
+				<ul>
+					<li><a href="#faq0">What database systems does SQuirreL work with?</a></li>
+					<li><a href="#faq1">SQuirreL doesn't work with JDK1.2</a></li>
+					<li><a href="#faq2">I get a &quot;Segmentation fault&quot; on Linux</a></li>
+					<li><a href="#faq3">I get a &quot;Login has timed out&quot; error with Microsoft SQL Server</a></li>
+					<li><a href="#faq4">I don't see an object tree with PostgreSQL</a></li>
+				</ul>
+			</p>
+		</td>
+		<td class="body_right_border">&nbsp;</td>
+	</tr>
+	<tr>
+		<td width='10' height='10'><img border="0" src="images/border_bl.gif" width="10" height="10"></td>
+		<td width='100%' height='10'><img border="0" src="images/border_b.gif" width="100%" height="10"></td>
+		<td width='10' height='10'><img border="0" src="images/border_br.gif" width="10" height="10"></td>
+	</tr>
+</table>
+<p class="menu_divider"></p>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+	<tr>
+		<td width='10' height='10'><img border="0" src="images/border_tl.gif" width="10" height="10"></td>
+		<td width='100%' height='10'><img border="0" src="images/border_t.gif" width="100%" height="10"></td>
+		<td width='10' height='10'><img border="0" src="images/border_tr.gif" width="10" height="10"></td>
+	</tr>
+	<tr>
+		<td class="body_left_border">&nbsp;</td>
+		<td width='100%' bgcolor="white" valign="top">
+			<h1 class="body">FAQ - Plugins.</h1>
+			<p>
+				<ul>
+					<li><a href="#plug0">How do I write a plugin?</a></li>
+					<li><a href="#plug1">What are these directories &quot;Colin Bell&quot; and
+					&quot;Johan Compagner&quot; in the plugins directory?</a></li>
+					<li><a href="#plug2">I can't see any &quot;Look and Feel&quot; files.</a></li>
+					<li><a href="#plug3">I get a <TT>java.lang.NoClassDefFoundError:
+						org/w3c/dom/Node</TT> error when trying to
+					validate SQL.</a></li>
+				</ul>
+			</p>
+		</td>
+		<td class="body_right_border">&nbsp;</td>
+	</tr>
+	<tr>
+		<td width='10' height='10'><img border="0" src="images/border_bl.gif" width="10" height="10"></td>
+		<td width='100%' height='10'><img border="0" src="images/border_b.gif" width="100%" height="10"></td>
+		<td width='10' height='10'><img border="0" src="images/border_br.gif" width="10" height="10"></td>
+	</tr>
+</table>
+<p class="menu_divider"></p>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+	<tr>
+		<td width='10' height='10'><img border="0" src="images/border_tl.gif" width="10" height="10"></td>
+		<td width='100%' height='10'><img border="0" src="images/border_t.gif" width="100%" height="10"></td>
+		<td width='10' height='10'><img border="0" src="images/border_tr.gif" width="10" height="10"></td>
+	</tr>
+	<tr>
+		<td class="body_left_border">&nbsp;</td>
+		<td width='100%' bgcolor="white" valign="top">
+			<h1 class="body">Answers - SQuirrel SQL Client.</h1>
+			<h1 class="question"><A NAME="faq0">What database systems does SQuirreL work with?</A></h1>
+			<p class="answer">In theory SQuirreL should work with any DBMS that has a JDBC 2.0 driver. However not all
+			drivers/DBMS's are fully complient with the JDBC 2.0 specification. People have reported SQuirreL
+			working with the following:</p>
+			<UL>
+			<LI><A HREF="http://axion.tigris.org/">Axion Java RDBMS</A>.</LI> 
+			<LI><A HREF="http://hsqldb.sourceforge.net/">HSQL</A>.</LI>
+			<LI><A HREF="http://hsql.sourceforge.net/">Hypersonic SQL</A>.</LI>
+			<LI><A HREF="http://www.ibm.com/">IBM DB2</A> for Linux, OS/400 and Windows.</LI>
+			<LI><A HREF="http://www.informix.com/">Informix</A>.</LI>
+			<LI><A HREF="http://www.lutris.com/">InstantDB</A>.</LI>
+			<LI><A HREF="http://www.interbase.com/">Interbase</A> with the <A HREF="http://www.interbase.com/">Interclient</A> JDBC driver.</LI>
+			<LI><A HREF="http://mckoi.com/database/">Mckoi SQL</A>.</LI>
+			<LI><A HREF="http://www.microsoft.com">Microsoft Access</A> with the JDBC/ODBC bridge.</LI>
+			<LI><A HREF="http://www.microsoft.com">Microsoft SQL Server</A> with the Microsoft, 
+					<A HREF="http://www.weblogic.com">WebLogic</A> and
+					<A HREF="http://jtds.sourceforge.net">jTDS</A>
+					JDBC drivers.</LI>
+			<LI><A HREF="http://www.mimer.com/">Mimer SQL</A></LI> 
+			<LI><A HREF="http://www.mysql.com">MySQL</A> with the <A HREF="http://mmmysql.sourceforge.net/">MM MySQL</A> JDBC driver.</LI>
+			<LI><A HREF="http://www.oracle.com">Oracle 8</A> with the Oracle thin and OCI drivers.</LI>
+			<LI><A HREF="http://www.pointbase.com">Pointbase</A>.</LI>
+			<LI><A HREF="http://www.postgresql.org">PostgreSQL 7.1.3 and higher.</A>.</LI>
+			<LI><A HREF="http://www.sapdb.org">SAPDB</A>.
+			<LI><A HREF="http://www.sybase.com">Sybase</A> with the <A HREF="http://www.sybase.com">JConnect</A> JDBC driver.
+					There are currently some issues with Sybase JConnect 5.5 and
+					SQuirreL 1.1 although JConnect 4.5 seems to work.</LI>
+			<LI><A HREF="http://www.sunopsis.com/corporate/us/products/jdbcforxml/">Sunopsis XML Driver (JDBC Edition)</A>.</LI>
+			<LI><A HREF="http://www.thinksql.co.uk">ThinkSQL RDBMS</A>.</LI>
+			</UL>
+			<p class="answer">Please send us an <A HREF="mailto:colbell@users.sourceforge.net">email</A> if you have used SQuirreL
+			successfully with other products.</p>
+			<p><A HREF="#top">Top</A><HR SIZE=1></HR></p>
+							
+			<h1 class="question"><A NAME="faq1">SQuirreL doesn't work with JDK 1.2</A></h1>
+			<p class="answer">From version 1.1beta1 SQuirreL requires at least JDK 1.3. In the future we intend to
+			keep SQuirreL compatible with the latest stable version of the JDK and the one prior to it. Currently the
+			stable version is JDK 1.4 so we are staying compatible with JDK 1.3 as well. When JDK 1.5 is
+			released we will drop compatibility with 1.3.</p>
+			
+			<p><A HREF="#top">Top</A><HR SIZE=1></HR></p>
+
+			<h1 class="question"><A NAME="faq2">I get a &quot;Segmentation fault&quot; on Linux</A></h1>
+			<p class="answer">Early versions of the Sun 1.3.0 VM on Linux throw a segmentation fault when running SQuirreL. Either
+			update to the latest 1.3.1 VM or pass the -classic flag to the Java executable - i.e.</p>
+			<p class="code">java -classic -cp...</p>
+			
+			<p><A HREF="#top">Top</A><HR SIZE=1></HR></p>
+
+			<h1 class="question"><A NAME="faq3">I get a &quot;Login has timed out&quot; error with Microsoft SQL Server</A></h1>
+			<p class="answer">Early beta versions of the Microsoft type 4 JDBC driver had a bug which would cause this
+			error when trying to connect. Go to the General Tab in the Global Preferences dialog and
+			change the SQL Login Timeout to 0.</p>
+			
+			<p><A HREF="#top">Top</A><HR SIZE=1></HR></P>
+
+			<h1 class="question"><A NAME="faq4">I don't see an object tree with PostgreSQL</A></h1>
+			<p class="answer">Versions of PostgreSQL prior to 7.1.3 didn't supply sufficent metadata to build the object
+			tree in SQuirreL. A fix has been put into SQuirreL so that it would work with PostgreSQL 7.1.2.</p>
+			
+			<p><A HREF="#top">Top</A></P>
+		</td>
+		<td class="body_right_border">&nbsp;</td>
+	</tr>
+	<tr>
+		<td width='10' height='10'><img border="0" src="images/border_bl.gif" width="10" height="10"></td>
+		<td width='100%' height='10'><img border="0" src="images/border_b.gif" width="100%" height="10"></td>
+		<td width='10' height='10'><img border="0" src="images/border_br.gif" width="10" height="10"></td>
+	</tr>
+</table>
+<p class="menu_divider"></p>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+	<tr>
+		<td width='10' height='10'><img border="0" src="images/border_tl.gif" width="10" height="10"></td>
+		<td width='100%' height='10'><img border="0" src="images/border_t.gif" width="100%" height="10"></td>
+		<td width='10' height='10'><img border="0" src="images/border_tr.gif" width="10" height="10"></td>
+	</tr>
+	<tr>
+		<td class="body_left_border">&nbsp;</td>
+		<td width='100%' bgcolor="white" valign="top">
+			<h1 class="body">Answers - Plugins.</h1>
+			<h1 class="question"><A NAME="plug0">How do I write a plugin?</A></h1>
+			<p class="answer">There is some information in the document plugins.html which you
+			can find in the docs directory within your SQuirreL program directory. This
+			document badly needs a lot of work and its on my todo list. You can also
+			look at the existing plugins to see how they've done things.</p>
+			<p class="answer">If you have got an idea for a plugin just send a message to the SQuirreL Developers list giving a
+			brief description. This helps to ensure that two people don't develop the same plugin.</p>
+			<p><A HREF="#top">Top</A><HR SIZE=1></HR></p>
+
+			<h1 class="question"><A NAME="plug1">What are these directories &quot;Colin Bell&quot; and
+						&quot;Johan Compagner&quot; in the plugins directory?</A></h1>
+			<p class="answer">Some people have reported these directories appearing when running JDK 1.3 on
+			Windows 2000. It appears to be a problem with the Hotspot VM. Passing the -classic flag
+			to the java executable fixes the problem - i.e.</p>
+			<p class="code">java -classic -cp...</p>
+			<p><A HREF="#top">Top</A><HR SIZE=1></HR></p>
+
+			<h1 class="question"><A NAME="plug2">I can't see any &quot;Look and Feel&quot; files.</A></h1>
+			<p class="answer">This can be caused by the <A HREF="#plug1">What are these directories &quot;Colin Bell&quot; and
+						&quot;Johan Compagner&quot; in the plugins directory?</A> problem.</p>
+			
+			<p><A HREF="#top">Top</A></P>
+
+			<h1 class="question"><a name="plug3">I get a java.lang.NoClassDefFoundError:
+						org/w3c/dom/Node error when trying to
+					validate SQL.</a></h1>
+
+			<p class="answer">If you use the SQL Validator plugin with JDK 1.3 you will need a JAXP 1.1 XML compliant
+						parser such as <A HREF="http://xml.apache.org/dist/xerces-j/">xml-xerces</A>
+						or the <A HREF="http://java.sun.com/xml/jaxp/index.html">
+						JAXP 1.1 reference implementation</A>. Copy the jar files from your XML parser to the
+						directory &lt;squirrel-sql&gt;/plugins/sqlval/lib. For
+						xml-xerces this should be xerces.jar and for JAXP 1.1 reference implementation this should be
+						crimson.jar and jaxp.jar.</p>
+			
+			<p><A HREF="#top">Top</A></P>
+		</td>
+		<td class="body_right_border">&nbsp;</td>
+	</tr>
+	<tr>
+		<td width='10' height='10'><img border="0" src="images/border_bl.gif" width="10" height="10"></td>
+		<td width='100%' height='10'><img border="0" src="images/border_b.gif" width="100%" height="10"></td>
+		<td width='10' height='10'><img border="0" src="images/border_br.gif" width="10" height="10"></td>
+	</tr>
+</table>

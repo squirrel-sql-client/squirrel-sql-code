@@ -1,0 +1,438 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-8859-1">
+    <TITLE>SQuirreL SQL Client Plugin Programmers Guide</TITLE>
+</HEAD>
+
+<BODY>
+
+<H1>SQuirreL SQL Client Programmers Guide</H1>
+
+<H3>Contents</H3>
+
+<TABLE>
+    <TR><TD COLSPAN="2"><A HREF="#introduction">Introduction</A></TD></TR>
+    <TR><TD COLSPAN="2"><A HREF="#licence">What Licence should I Use?</A></TD></TR>
+    <TR><TD COLSPAN="2"><A HREF="#internalname">The Internal Name</A></TD></TR>
+    <TR><TD COLSPAN="2"><A HREF="#packagename">What Package can I put my Plugin into?</A></TD></TR>
+    <TR><TD COLSPAN="2"><A HREF="#files">Files and Directories</A></TD></TR>
+    <TR><TD COLSPAN="2"><A HREF="#loading">How Plugins are Loaded</A></TD></TR>
+    <TR><TD COLSPAN="2"><A HREF="#pluginclasses">Plugin Classes</A></TD></TR>
+    <TR><TD COLSPAN="2"><A HREF="#api">Plugin API</A></TD></TR>
+    <TR><TD>&nbsp;&nbsp;</TD><TD><A HREF="#logging">Logging</A></TD></TR>
+    <TR><TD>&nbsp;&nbsp;</TD><TD><A HREF="#loadinglibraries">Loading Libraries</A></TD></TR>
+    <TR><TD>&nbsp;&nbsp;</TD><TD><A HREF="#loadingrsrc">Loading Resources</A></TD></TR>
+    <TR><TD>&nbsp;&nbsp;</TD><TD><A HREF="#addmenuitems">Adding Menu Items</A></TD></TR>
+    <TR><TD>&nbsp;&nbsp;</TD><TD><A HREF="#addprefspanel">Adding a Panel to Application Preferences/Session Properties</A></TD></TR>
+    <TR><TD>&nbsp;&nbsp;</TD><TD><A HREF="#sqlexecution">Hooking into SQL Execution</A></TD></TR>
+    <TR><TD>&nbsp;&nbsp;</TD><TD><A HREF="#xml">XML</A></TD></TR>
+    <TR><TD>&nbsp;&nbsp;</TD><TD><A HREF="#loadsavesettings">Loading and Saving Settings</A></TD></TR>
+    <TR><TD>&nbsp;&nbsp;</TD><TD><A HREF="#objectcaches">Object Caches</A></TD></TR>
+    <TR><TD>&nbsp;&nbsp;</TD><TD><A HREF="#addtab">Adding a Tab to the Main, Table or Procedure Tabbed Panel</A></TD></TR>
+    <TR><TD>&nbsp;&nbsp;</TD><TD><A HREF="#sqloutputmodel">SQL Results Data Model</A></TD></TR>
+    <TR><TD>&nbsp;&nbsp;</TD><TD><A HREF="#sqlresultsapi">SQL Results Tab API</A></TD></TR>
+    <TR><TD COLSPAN="2"><A HREF="#installing">Installing Plugins</A></TD></TR>
+</TABLE>
+
+<A NAME="introduction"><H3>Introduction</H3></A>
+
+A plugin is an application written in Java that runs within SQuirreL. This
+allows developers to enhance the functionality of SQuirreL without having to
+rebuild the SQuirreL application itself.
+
+<P>This document (like the plugin API itself) is in a very early stage and is lagging
+behind the plugin API. Its suggested that you check the existing plugins in CVS to
+see how they use the API.
+
+<A NAME="licence"><H3>What Licence should I Use?</H3></A>
+
+Please bear in mind when you are reading this section that I am not a lawyer. All
+my comments reflect how I believe licencing of free and open source software
+works. If you have any questions I suggest you consult a lawyer.
+
+<P>If you're just writing a plugin for your personal use then licencing
+doesn't matter but if you intend to distibute your plugin (either through
+the SourceForge release system in the SQuirreL SQL Client project or in any
+other way) then the licence you select should be compatible with the GNU General
+Public Licence that SQuirreL is distributed under.
+
+<P>I believe (although as I said I am not a lawyer) that as long as your plugin
+is dynamically linked into SQuirreL (as it will be because thats how the
+plugin API works) then any OSI approved licence should be appropriate.
+
+<P>Unless you have a philosophical dislike of the GNU GPL I suggest you release
+your plugin under it so that I don't wonder if your choice of licence is
+going to cause me any problems &lt;grin/&gt;.
+
+<P>For more information about licences please see <A HREF="http://www.fsf.org">The Free
+Software Foundation</A>, the <A HREF="http://www.opensource.org/">Open Source Initiative</A>
+or the <A HREF="http://sourceforge.net/docman/display_doc.php?docid=778&group_id=1">
+documents</A> at SouceForge about selecting a licence.
+
+<A NAME="internalname"><H3>The Internal Name</H3></A>
+
+A plugins internal name is used to uniquely identify it and so
+must be different to that of any other plugin. It is supplied by
+implementing the <TT>IPlugin.getInternalName()</TT> method. As the
+internal name is used to name files and directories it should
+only consist of characters valid on the different platforms that SQuirreL
+can run on. As well the character &quot;-&quot; is reserved for internal
+use. The internal name &quot;app&quot; is reserved for the use of
+the core SQuirrel code.</P>
+
+<A NAME="packagename"><H3>What Package can I put my Plugin into?</H3></A>
+
+If you already have a domain name that you use for naming java packages
+and you'd like to use that then by all means do so. If you don't have a domain
+name then as a convienience the package
+<TT>net.sourceforge.squirrel_sql.plugins.&lt;internal_name&gt;</TT> is
+available. Using this package name does <EM>not</EM> in any way imply my
+ownership of your code. This resides with you under the conditions of the
+licence that you have selected for your plugin.
+
+<P>As an example the internal name for the <EM>Look and Feel</EM> plugin
+is <TT>laf</TT>.</P>
+
+<P>To reserve an internal name just email a request to the SQuirreL
+developers mailing list (details at
+http://lists.sourceforge.net/lists/listinfo/squirrel-sql-develop)
+specifying the internal name that you'd like and a quick description of your plugin.</P>
+
+<A NAME="files"><H3>Files and Directories</H3></A>
+
+Plugins are installed as a jar file within the <TT>&lt;squirrel_app&gt;/plugins</TT>
+directory. The name of the jar file should be the same as the internal name of
+one of the plugins within it plus a <TT>.jar</TT> extension. E.G. if the
+internal name of the plugin is <TT>laf</TT> then the jar file should be
+named <TT>laf.jar</TT>. No other files should be placed within the
+<TT>&lt;squirrel_app&gt;/plugins</TT> directory.
+
+<P>The directory <TT>&lt;squirrel_app&gt;/plugins/&lt;internal_name&gt;</TT>
+is reserved for the exclusive use of the plugin. All non-user specific
+other files required by the plugin should be placed in here.</P>
+
+<P>The directory <TT>&lt;user_home&gt;/.squirrel-sql/plugins/&lt;internal_name&gt;</TT>
+is also reserved for the exclusive use of the plugin. All &quot;per-user&quot;
+files should be placed in here.</P>
+
+<A NAME="loading"><H3>How Plugins are Loaded</H3></A>
+
+Plugins are loaded very early in the SQuirreL startup process. Once the
+application logging factory has been created the
+plugins are loaded. All jars in the <TT>&lt;squirrel_app&gt;/plugins</TT>
+directory are loaded by the same custom class loader. The jars are searched
+for all classes that implement the <TT>IPlugin</TT> interface. Then
+<TT>newInstance</TT> is used to create an instance of each of these plugin
+classes. Once created the <TT>IPlugin.load()</TT> method is called. Because
+most of the SQuirreL environment hasn't yet been setup try not to use the
+plugin constuctor and <TT>load()</TT>method to do initialisation. Instead
+use the <TT>IPlugin.initialize()</TT> method.
+
+<P><TT>IPlugin.initialize()</TT> is called as the last part of the
+SQuirreL startup prior to showing the main window. This is where initialization
+of the plugin should occur. Please try to keep the amount of code executed
+here to a minimum as it will affect the startup time of SQuirreL. If
+possible do plugin initialization when a plugin is first requested by the user.</P>
+
+<A NAME="pluginclasses"><H3>Plugin Classes</H3></A>
+
+All plugin jars should contain at least one class that implements the
+interface <TT>net.sourceforge.squirrel_sql.client.plugin.IPugin</TT>. If
+your plugin is applicable to a session then it should implement the
+descendent of <TT>IPlugin</TT>,
+<TT>net.sourceforge.squirrel_sql.client.plugin.ISessionPlugin</TT>. As a convienence
+two abstract base classes have been supplied:
+<TT>net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin</TT> and
+<TT>net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin</TT>. As
+well as supplying some useful base behaviour these base classes should guard
+against additions to the base interfaces breaking existing implementations.
+Every attempt will be made to supply appropriate default behaviour (usually
+an empty method) to the base classes for every method added to the interfaces.
+
+<A NAME="api"><H3>Plugin API</H3></A>
+
+There are two main ways for a plugin to communicate with SQuirreL. These are
+via the <TT>net.sourceforge.squirrel_sql.client.IApplication</TT> interface
+which specifies the application level API and
+<TT>net.sourceforge.squirrel_sql.client.session.ISession</TT> which specifies
+the session level API. From within a descendent of <TT>BasePlugin</TT> you
+can call <TT>getApplication()</TT> to get the <TT>IApplication</TT> object
+and descendents of <TT>BaseSessionPlugin</TT> will have <TT>ISession</TT>
+passed on requests.</P>
+
+<A NAME="logging"><H4>Logging</H4></A>
+
+Logging is done via the <A HREF="http://jakarta.apache.org/log4j/">log4j</A>
+API from the <A HREF="http://www.apache.org">Apache Foundation</A>.
+
+<P>The configuration file for logging is passed in via the
+<TT>-loggingConfigFile</TT> application argument. E.G.
+<TT>-loggingConfigFile=log4j.properties</TT>. The standard configuration file
+specifies the appender <TT>SquirrelAppender</TT> which writes out to the
+text file <TT>&lt;user-home&gt;\squirrel-sql\squirrel-sql.log</TT></P>
+
+<P>To use logging in your classes you need to import the logging
+classes:</P>
+
+<PRE>
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+</PRE>
+
+<P>Create a static logging object:</P>
+
+<PRE>
+private static ILogger s_log = LoggerController.createLogger(&lt;your-class&gt;.class);
+</PRE>
+
+<P>And then you can use the logger:</P>
+
+<PRE>
+s_log.error("Error occured loading Look and Feel: " + lafClassName, ex);
+</PRE>
+
+<P>Giving the output:</P>
+
+<PRE>
+12468 [main] ERROR net.sourceforge.squirrel_sql.plugins.laf.LAFRegister  - Error occured loading Look and Feel: com.l2fprod.gui.plaf.skin.LinuxLookAndFeel
+com.l2fprod.gui.plaf.skin.impl.gtk.GtkSkinNotFoundException
+	at com.l2fprod.gui.plaf.skin.impl.gtk.GtkSkin.getDefaultSkinLocation(GtkSkin.java)
+	at com.l2fprod.gui.plaf.skin.LinuxLookAndFeel.<init>(LinuxLookAndFeel.java)
+	at java.lang.Class.newInstance0(Native Method)
+	at java.lang.Class.newInstance(Class.java:254)
+	at net.sourceforge.squirrel_sql.plugins.laf.LAFRegister.installLookAndFeels(LAFRegister.java:289)
+	at net.sourceforge.squirrel_sql.plugins.laf.LAFRegister.<init>(LAFRegister.java:147)
+	at net.sourceforge.squirrel_sql.plugins.laf.LAFPlugin.load(LAFPlugin.java:140)
+	at net.sourceforge.squirrel_sql.client.plugin.PluginManager.loadPlugin(PluginManager.java:243)
+	at net.sourceforge.squirrel_sql.client.plugin.PluginManager.loadPlugins(PluginManager.java:206)
+	at net.sourceforge.squirrel_sql.client.Application.startup(Application.java:122)
+	at net.sourceforge.squirrel_sql.client.Main.main(Main.java:41)
+</PRE>
+
+<A NAME="loadinglibraries"><H4>Loading Libraries</H4></A>
+
+??TODO??
+&nbsp;
+
+<A NAME="loadingrsrc"><H4>Loading Resources</H4></A>
+
+??TODO??
+&nbsp;
+
+<A NAME="addmenuitems"><H4>Adding Menu Items</H4></A>
+
+??TODO??
+&nbsp;
+
+<A NAME="addprefspanel"><H4>Adding a Panel to Application Preferences/Session Properties</H4></A>
+
+To add a panel to the Application Preferences or to the Session Properties
+dialog you need to create a class that implements either
+<TT>net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel</TT>
+or <TT>net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel</TT>
+and override <TT>IPlugin.getGlobalPreferencePanels()</TT> or
+<TT>ISessionPlugin.getSessionPropertiesPanels()</TT>.
+
+<P><TT>IGlobalPreferencesPanel.initialize(IApplication)</TT> or
+<TT>ISessionPropertiesPanel.initialize(IApplication, ISession)</TT>
+are called so that the options panel can initialise itself.</P>
+
+<P><TT>String getTitle()</TT> is called to
+retrieve the title for the panel.</P>
+
+<P><TT>String getHint()</TT> is called
+to get the tooltip hint for the panel.</P>
+
+<P><TT>Component getPanelComponent()</TT> is called to
+get the component that is actually placed in the dialog.</P>
+
+<P><TT>void applyChanges()</TT></P> is called when the user
+presses the OK button in the dialog. You should save your changes at this point.</P>
+
+<A NAME="sqlexecution"><H4>Hooking into SQL Execution</H4></A>
+
+The method <TT>ISession.addSQLExecutionListener(ISQLExecutionListener</TT>)
+allows you to &quot;listen&quot; for SQL being executed in the SQL panel and modify
+it. Remember to use <TT>ISession.removeSQLExecutionListener(ISQLExecutionListener)</TT>
+to remove the listener when you are finished with it.
+
+<P><TT>ISQLExecutionListener</TT> specifies one method:
+
+<PRE>
+public String statementExecuting(String sql)
+</PRE>
+
+<P>This method is called for every statement to be executed in the SQL panel. E.G. If the
+user enters the following in the SQL panel:</P>
+
+<PRE>
+select * from table1;
+select * from table2
+</PRE>
+
+<P>and requests them both to be executed then <TT>statementExecuting()</TT>
+will be called twice. Once with <TT>&quot;select * from table1&quot;</TT>
+passed and the second time with <TT>&quot;select * from table2&quot;</TT>.</P>
+
+<P>Whatever you return from the method (allowing for any changes that other plugins
+may make) is what will be executed. If you return <TT>null</TT> then no other listeners
+will be called and the statement will not be executed.</P>
+
+<P>This would be useful for macro expansion etc.</P>
+
+<A NAME="xml"><H4>XML</H4></A>
+
+SQuirreL now comes with the XML parser <A HREF="http://NanoXML.sourceforge.net/">NanoXML</A>.
+Previously it came with <A HREF="http://www.jdom.org/">JDOM</A> but as I was using
+almost none of the available functionality I replaced it with with a smaller one.
+
+<A NAME="loadsavesettings"><H4>Loading and Saving Settings</H4></A>
+
+The package <TT>net.sourceforge.squirrel_sql.fw.xml</TT> contains classes
+that will take a javabean and turn it into XML and load a javabean
+from XML. SQuirreL uses this for saving global preferences, driver and alias
+configuration information.
+
+<P>This is an example of the XML file that stores JDBC driver configuration
+information.:</P>
+
+<PRE>
+&lt;Beans>
+    &lt;Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver"&gt;
+        &lt;jarFileName/&gt;
+        &lt;url&gt;jdbc:postgresql:&lt;//host&gt;:&lt;port&gt;/&lt;database&gt;&lt;/url&gt;
+        &lt;identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier"&gt;
+            &lt;string&gt;-7&lt;/string&gt;
+        &lt;/identifier&gt;
+        &lt;name&gt;PostgreSQL&lt;/name&gt;
+        &lt;driverClassName&gt;org.postgresql.Driver&lt;/driverClassName&gt;
+        &lt;usesClassPath&gt;true&lt;/usesClassPath&gt;
+    &lt;/Bean&gt;
+&lt;/Beans&gt;
+</PRE>
+
+<P>The following example shows how two javabeans can be
+saved to an XML file.</P>
+
+<PRE>
+    XMLBeanWriter wtr = new XMLBeanWriter(bean1);
+    wtr.addToRoot(bean2);
+    wtr.save("javabeans.xml");
+</PRE>
+
+<P>This example shows the loading of javabeans from an XML
+File:</P>
+
+<PRE>
+    XMLBeanReader rdr = new XMLBeanReader();
+    rdr.load("javabeans.xml", getClass().getClassLoader());
+    for (Iterator it = rdr.iterator(); it.hasNext();) {
+        final Object Bean = it.next();
+        ...
+    }
+</PRE>
+
+<P>Because the <TT>XMLBeanReader</TT> has to instantiate the javabean
+it needs to know the class loader that it used for the javabean's class
+files. As plugins are loaded by a custom class loader this would normally
+be the class loader used for the plugin classes.</P>
+
+<P>The processing supplied by the classes in
+<TT>net.sourceforge.squirrel_sql.fw.xml</TT> is fairly rudimentary and
+has some limitations. Chief amongst them is that is has no concept of
+multiple references to the same object, it will save and restore multiple
+objects in this case.</P>
+
+<P>The properties of the javabean to be saved/restored can be builtin types,
+instances of <TT>String</TT> or other javabeans. If you have a property that
+doesn't fit this list then you can write a wrapper class to turn it into a
+javabean. See the package
+<TT>net.sourceforge.squirrel_sql.fw.util.beanwrapper</TT> for
+some examples.</P>
+
+<P>Array properties are handled but currently not for builtin types nor
+<TT>String</TT> objects. For these you need to use a wrapper class.</P>
+
+<A NAME="objectcaches"><H4>Object Caches</H4></A>
+
+<A NAME="addtab"><H4>Adding a Tab to the Main, Table or Procedure Tabbed Panel</H4></A>
+
+To add a tab to the main tabbed panel (the one containing the &quot;Objects&quot; and
+&quot;SQL&quot; tabs) use the <TT>ISession.addMainTab(String title, Icon icon,
+Component comp, String tip)</TT> method. In the future this method will be
+deprecated by being replaced by one similar to the one for the table
+tabbed panel.
+
+<P>To add a tab to the Table tabbed panel (the one displayed when you select
+a table in the object tree) use the method
+<TT>ISession.addTablePanelTab(ITablePanelTab)</TT>. For the Procedure tabbed
+panel use the method <TT>ISession.addProcedurePanelTab(IProcedurePanelTab)</TT>.</P>
+
+<P>You should create a class that implements either
+<TT>net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.ITablePanelTab</TT>
+or
+<TT>net.sourceforge.squirrel_sql.client.session.objectstree.procedurepanel.IProcedurePanelTab</TT>
+in order to create a tab. The methods <TT>getTitle()</TT> and
+<TT>getHint()</TT> define the title and the flyover hint
+respectively. Override <TT>getComponent()</TT> to provide
+the actual component to be displayed in the tab (remember to wrap it in a
+<TT>javax.swing.JScrollPane</TT> if the contents could be larger than the
+tab).</P>
+
+<P><TT>ITablePanelTab.setTableInfo(ITableInfo)</TT> will be called whenever
+the currently selected table changes. For the procedure tab
+<TT>IProcedurePanelTabsetProcedureInfo(IProcedureInfo)</TT>
+will be called when the procedure changes. For performance reasons please
+don't refresh the panel at this point. Use <TT>select()</TT>
+for this. <TT>select()</TT> is called whenever the your tab is to be displayed.
+Remember that this could be called multiple times without a different table
+or procedure being selected in the object tree so you only need to refresh your
+component the first time it is called.</P>
+
+<P>As a convenience the classes
+<TT>net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.BaseTableTab</TT>
+and
+<TT>net.sourceforge.squirrel_sql.client.session.objectstree.procedurepanel.BaseProcedureTab</TT>
+have been provided. You would normally use these classes (which implement
+<TT>ITablePanelTab</TT> and <TT>IProcedureTab</TT>) as the base for any tabs
+you create.</P>
+
+<P><TT>BaseTableTab</TT> and <TT>BaseProcedureTab</TT> provides the methods
+<TT>getSession()</TT>, and <TT>getTableInfo()/getProcedureInfo()</TT>.
+They also provide the method <TT>refreshComponent</TT> which will be called
+the first time a tab is displayed for a table or procedure and is
+the appropriate place to load the information to be displayed.</P>
+
+<A NAME="sqloutputmodel"><H4>SQL Results Data Model</H4></A>
+
+A data model <TT>net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetModel</TT>
+is available for the SQL results. You can get it from <TT>ResultTab::getResultSetDataModel()</TT>
+In the near future it will be added to the
+content tab for the tables as well.
+
+<A NAME="sqlresultsapi"><H4>SQL Results Tab API</H4></A>
+
+An API in ISession allows a plugin to listen to events in the Result Tabs.
+
+<PRE>
+void addResultTabListener(IResultTabListener lis);
+void removeResultTabListener(IResultTabListener lis);
+</PRE>
+
+<P><TT>IResultTabListener</TT> gives you:</P>
+
+<PRE>
+void resultTabAdded(ResultTabEvent evt);
+void resultTabRemoved(ResultTabEvent evt);
+void resultTabTornOff(ResultTabEvent evt);
+void tornOffResultTabReturned(ResultTabEvent evt); /** Not yet implemented*/
+</PRE>
+
+<A NAME="installing"><H3>Installing Plugins</H3></A>
+
+??TODO??
+&nbsp;
+
+</BODY>
+</HTML>

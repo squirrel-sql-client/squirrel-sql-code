@@ -1,0 +1,43 @@
+Summary of the major changes between SQuirreL SQL Client 1.0
+and 1.1. The full change history can be found in changes.txt.
+
+Plugin Architecture Added
+-------------------------
+SQuirreL now supports plugins. These are applications written in Java that
+run within SQuirreL. This allows developers to enhance the functionality
+of SQuirreL without having to rebuild the SQuirreL application itself. Some
+of the plugins that have been written for SQuirreL include the jEdit plugin,
+Look and Feel Plugin, MySQL plugin, Oracle Plugin, Session Scripts plugin,
+SQL Scripts plugin, and the SQL Validator plugin.
+
+SQL Execution Enhanced
+----------------------
+Multiple SQL statements can be executed simultaneoulsy or sequentially. The
+results of these queries are now displayed in multiple tabs and these tabs
+can be "torn off" (Johan Compagner).
+
+Many more data types are now displayed.
+
+Undo/redo support has been added to the SQL entry area.
+
+Meta data is now available for the results of SQL execution.
+
+Object Tree Enhancements
+------------------------
+The object tree code has been rewritten and now executes faster.
+
+JDBC Drivers
+------------
+Multiple jar files (and directories) can now be specified for a
+JDBC driver. You can now list the JDBC driver classes within a jar file.
+
+General
+-------
+The licence for the application has been changed from GPL to LGPL.
+
+SQL execution and object tree expansion now run in separate threads so
+that the user interface is still responsive.
+
+Tables can now be sorted by clicking on the column headers. Full column 
+data in tables can now be displayed in a popup window by double clicking
+in the column.

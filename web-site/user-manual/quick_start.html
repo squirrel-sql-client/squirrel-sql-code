@@ -1,0 +1,825 @@
+<HTML>
+
+<HEAD>
+	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-8859-1">
+    <TITLE>SQuirreL SQL Client Help</TITLE>
+	<LINK REL="stylesheet" TYPE="text/css" href="style.css" title="SQuirreL SQL Client Stylesheet">
+</HEAD>
+
+<BODY>
+
+<TABLE>
+    <TR>
+        <TD WIDTH="310">
+			<IMG SRC="images/logo_1.jpg" WIDTH="302" HEIGHT="99" BORDER="0" ALT="SQuirreL SQL Client Logo">
+        </TD>
+        <TD ALIGN="left">
+            <H1>SQL Client Help File</H1>
+        </TD>
+    </TR>
+</TABLE>
+
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+    <TR><TD><B>Contents</B></TD></TR>
+    <TR><TD><A HREF="#introduction">Introduction</A></TD></TR>
+	<TR><TD><A HREF="#installation">Installation</A></TD></TR>
+	<TR><TD><A HREF="#cmd_line_options">Command Line Options</A></TD></TR>
+    <TR><TD><A HREF="#howtoconnect">How to Connect to a Database</A></TD></TR>
+    <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#the_driver">The Driver</A></TD></TR>
+    <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#the_alias">The Alias</A></TD></TR>
+    <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#connecting">Connecting</A></TD></TR>
+    <TR><TD><A HREF="#executing">Executing SQL</A></TD></TR>
+    <TR><TD><A HREF="#data_types">Data Types</A></TD></TR>
+    <TR><TD><A HREF="#global_prefs">Global Preferences</A></TD></TR>
+    <TR><TD><A HREF="#session_props">New Session and Session Properties</A></TD></TR>
+    <TR><TD><A HREF="#plugins">Plugins</A></TD></TR>
+    <TR><TD><A HREF="#logs">Logs</A></TD></TR>
+    <TR><TD><A HREF="#menus">Menus</A></TD></TR>
+	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#file_menu">File Menu</A></TD></TR>
+	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#drivers_menu">Drivers Menu</A></TD></TR>
+	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#aliases_menu">Aliases Menu</A></TD></TR>
+	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#plugins_menu">Plugins Menu</A></TD></TR>
+	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#session_menu">Session Menu</A></TD></TR>
+	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#windows_menu">Windows Menu</A></TD></TR>
+	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#help_menu">Help Menu</A></TD></TR>
+</TABLE>
+
+<BR>
+
+<A NAME="introduction"><H2>Introduction</H2></A>
+
+<p>SQuirreL SQL Client is a graphical Java program that will allow you
+to view the structure of a JDBC compliant database, browse the data in
+tables, issue SQL commands etc. You need to be running at least version
+1.3 of Java. Some people have had problems with Java 1.3.0 so it is
+recommended that you use at least Java 1.3.1. Java 1.4 is
+preferred. See the
+<a href="http://squirrel-sql.sf.net/index.php?page=old.html">Old Versions</a>
+page for SQuirreL downloads that will work with older versions of Java.</P>
+
+<P>It is free software, and you are welcome to redistribute it under
+the terms of the <A HREF="licences/squirrel_licence.txt">GNU Lesser
+General Public License</A>.</P>
+
+<A NAME="installation"><H2>Installation</H2></A>
+
+<P>The installer has been created using the
+<a href="http://www.izforge.com/izpack/">IzPack Java Installer</a>.
+<a href="http://sourceforge.net/project/showfiles.php?group_id=28383">Download</A>
+the file <TT>squirrel-sql-&lt;version&gt;-install.jar</TT> and
+execute it with the command:</P>
+
+<PRE>
+java -jar squirrel-sql-&lt;version&gt;-install.jar
+</PRE>
+
+<P>On some operating systems (currently Windows NT, 2000 and XP)
+a shortcut will be created in the menu
+system. For Windows the file <TT>squirrel-sql.bat</TT> will run the
+application. For Unix the file is <TT>squirrel-sql.sh</TT>. The
+<TT>squirrel-sql.jar</TT> file is executable so on those operating
+systems that support it you can run SQuirrel by double clicking
+<TT>squirrel-sql.jar</TT>. You can also run it by issuing the
+following command:</P>
+
+<PRE>
+java -jar squirrel-sql.jar
+</PRE>
+
+<P>Just remember that when executing the jar file directly you don't
+use your current class path ($CLASSPATH on Unix or %CLASSPATH% on
+Windows) so if you have your JDBC drivers in your class path then
+SQuirreL won't see them. See <A HREF="#the_driver">The Driver</A> for
+more information.</P>
+
+<P>Some people have reported core dumps with the Sun JDK1.3.1 running
+under Linux. If this happens passing the -classic flag to the java
+executable appears to fix the problem. No similar problems have been
+reported with any other JDK on Linux.</P>
+
+<A NAME="cmd_line_options"><H2>Command Line Options</H2></A>
+
+<P>The command line option <TT>-nosplash</TT> can be passed to the
+main class in order to start SQuirreL without the splash screen
+appearing. E.G.</P>
+
+<PRE>
+java net.sourceforge.squirrel_sql.client.Main -nosplash
+</PRE>
+
+<P>The command line option <TT>-noplugins</TT> can be passed to the
+main class in order to start SQuirreL without loading any of the
+plugins.</P>
+
+<PRE>
+java net.sourceforge.squirrel_sql.client.Main -noplugins
+</PRE>
+
+<P>The user settings directory can be overridden by the
+<TT>-settingsdir</TT> option. E.G.</P>
+
+<PRE>
+java net.sourceforge.squirrel_sql.client.Main -settingsdir=c:\my-squirrel-settings
+</PRE>
+
+<P>The configuration file for <EM>log4j</EM>&nbsp; is specified by the
+<TT>loggingConfigFile</TT> option. E.G.</P>
+
+<PRE>
+java net.sourceforge.squirrel_sql.client.Main -loggingConfigFile=c:\config.properties
+</PRE>
+
+<P>The application directory is specified by the <TT>squirrelHome</TT>
+option. This tells SQuirreL where to look for plugins etc. This should
+be the directory that you installed SQuirreL into.  E.G.</P>
+
+<PRE>
+java net.sourceforge.squirrel_sql.client.Main -squirrelHome=$SQUIRREL_SQL_HOME
+</PRE>
+
+<P>To return to the standard theme for the metal Look and Feel pass
+the <TT>-usedefaultmetaltheme</TT> option. E.G.</P>
+
+<PRE>
+java net.sourceforge.squirrel_sql.client.Main -usedefaultmetaltheme
+</PRE>
+
+<A NAME="howtoconnect"><H2>How to Connect to a Database</H2></A>
+
+There are two pieces of information you need to supply to connect to a
+database; the driver and the alias. The driver specifies the JDBC
+driver to use and the alias specifies the connection parameters.
+
+<A NAME="the_driver"><H3>The Driver</H3></A>
+
+<P>A number of default driver definitions ship with SQuirreL.
+These are added to the Drivers List window (<EM>View Drivers</EM> option
+on the <EM>Windows</EM> menu) when you first start up SQuirreL.</P>
+
+<P ALIGN="CENTER"><IMG SRC="images/drivers_tool_window_1.png" BORDER="0"
+ALT="Drivers List Window"></P>
+
+<P>The
+<IMG ALIGN="CENTER" SRC="images/ok_st_obj.gif" BORDER="0" ALT="Blue Tick">
+icon next to a driver indicates that it has been successfully loaded while
+the
+<IMG ALIGN="CENTER" SRC="images/error_st_obj.gif" BORDER="0" ALT="Cross">
+icon indicates that the JDBC driver could not be loaded and so cannot be
+used to connect to a database.</P>
+
+<P>All of the default driver definitions assume that the JDBC driver
+classes are in the current class path or in your JRE extensions
+directory (consult the documentation for your Java implementation for
+more information on this). If this is not the case you will need to
+modify the driver definition to point to the jar file or the classes
+directory that contains these classes.
+
+<P>You can create new driver definitions using the <EM>New Driver</EM>
+option on the <EM>Drivers</EM> menu.</P>
+
+<P ALIGN="CENTER"><IMG SRC="images/chg_driver_1.png"
+BORDER="0" ALT="Change Driver dialog (Java Class Path tab)"></A></P>
+
+<P>This is an example of a driver definition. This dialog can be
+displayed by selecting a driver definition in the Drivers List window
+and then selecting the <EM>Modify Driver</EM> option from the
+<EM>Drivers</EM> menu.
+
+<P>The <EM>Name</EM> text field specifies an easy to remember name for
+the database driver definition and is the text shown in the Drivers
+List window.</P>
+
+<P>The <EM>Example URL</EM> shows an example URL for this driver. This
+can be found in the documentation that comes with the driver.</P>
+
+<P>The entries in the <EM>Java Class path</EM> tab show the
+directories and jars in the current class path. If you click on a jar
+file and press the <EM>List Drivers</EM> button then the class names
+of all the JDBC drivers in that jar will be placed in the <EM>Class
+Name</EM> dropdown control.
+
+<P>The <EM>Class Name</EM> specifies the class name of the JDBC
+driver. Either select an existing entry in the dropdown or key in the
+class name of the JDBC driver (it can normally be found in the
+documentation that comes with the driver).
+
+<P>The <EM>Extra Class Path</EM> tab allows you to select a JDBC
+driver that is in a jar file or a directory that is not in the current
+class path.
+
+<P ALIGN="CENTER"><IMG SRC="images/chg_driver_2.png" BORDER="0" ALT="Change
+Driver dialog (Extra Class Path tab)"></A></P>
+
+<P>The <EM>Add</EM> button will display a File Open dialog
+allowing you to select one or more jar files or directories. The
+<EM>Delete</EM> button allows you to remove a jar file or directory
+from the list. The <EM>Up</EM> and <EM>Down</EM> buttons allow you to
+change the sequence of the entries. The <EM>List Drivers</EM> button
+will place the class names of all the JDBC drivers in the currently
+selected jar file into the <EM>Class Name</EM> dropdown.</P>
+
+<P>Press the <EM>OK</EM> button to save the driver definition and close the
+window or the <EM>Close</EM> button to close the window without saving
+any changes.</P>
+
+<A NAME="the_alias"><H3>The Alias</H3></A>
+
+<P>Now you need to create an alias to your database.</P>
+
+<P>Display the Aliases List window (<EM>View Aliases</EM>
+option on the <EM>Windows</EM> menu).  When you run SQuirreL
+for the first time this window will be empty.</P>
+
+<P ALIGN="CENTER"><IMG SRC="images/aliases_tool_window_1.png" BORDER="0"
+ALT="Aliases List Window">
+
+<P>&nbsp;</P>
+
+<P>Take the <EM>New Alias</EM> option from the <EM>Aliases</EM> menu
+and the following dialog will be displayed.</P>
+
+<P ALIGN="CENTER"><IMG SRC="images/add_alias_1.png" BORDER="0" ALT="Add
+New Alias Window"></P>
+
+<P>Enter an easy to remember name in the <EM>Name</EM> field for this
+database URL. This is the text that will be displayed in the Aliases
+List Window.</P>
+
+<P>Select the driver for this alias from the <EM>Driver</EM> dropdown
+or click on the <EM>New</EM> button to create a new driver
+definition.</P>
+
+<P>Change the <EM>URL</EM> to point to your database.</P>
+
+<P>Optionally enter a user name if you want the alias to default to a
+specific user.</P>
+
+<P>The <EM>Test</EM> button will allow you to attempt to connect to
+your alias to ensure that the parameters you have entered are
+correct.</P>
+
+<P>Press the <EM>OK</EM> button to save the alias definition and close the
+window or the <EM>Close</EM> button to close the window without saving
+any changes.</P>
+
+<BR CLEAR="LEFT">
+
+<A NAME="connecting"><H3>Connecting</H3></A>
+
+<P>The new alias should now appear in the <EM>Connect To</EM>
+dropdown.  Select it in the dropdown and enter your user name and
+password in the connection dialog, press <EM>OK</EM> and you should be
+connected.</P>
+
+<A NAME="sessionwindow"><H2>Session Window</H2></A>
+
+<P>When you first connect to a database a Session window will be
+shown.
+
+<P ALIGN="CENTER"><IMG SRC="images/session_1.png" BORDER="0"
+			ALT="Session Window"></P>
+
+<P>The Object Tree on the left shows the structure of the database.
+Clicking on various nodes within this object tree will show further
+information in the right hand detail panel. In this example the
+database metadata is shown. Clicking on the title of a column will
+sort the display by the data in that column. This is true of all
+tabular displays in SQuirreL.</P>
+
+<P ALIGN="CENTER"><IMG SRC="images/session_2.png" BORDER="0"
+			ALT="Session Window Showing a Table"></P>
+
+<P>This shows the data displayed when a table is selected in the
+Object Tree.</P>
+
+<A NAME="executing"><H2>Executing SQL</H2></A>
+
+<P>SQL can be executed from the SQL tab in the window that opens once
+you have connected to an alias. Multiple statements can be executed
+and the results will be displayed in multiple tabs below the SQL entry
+area.</P>
+
+<P>When the SQL tab is selected pressing
+<TT>&lt;ctrl&gt;&lt;enter&gt;</TT>, taking the Execute SQL option from
+the Session menu or pressing the Execute SQL button in the session
+window tool bar will execute the entered SQL.</P>
+
+<P>If a single statement is entered then pressing
+<TT>&lt;ctrl&gt;&lt;enter&gt;</TT> will execute just that
+statement.</P>
+
+<P>If you only want to execute part of the SQL entered then highlight
+the SQL that you want to execute and press
+<TT>&lt;ctrl&gt;&lt;enter&gt;</TT>.</P>
+
+<P>To only execute a single statement amongst several statements
+(separated from the other statements by at least one blank line)
+within the SQL entry area then click on the line containing the
+statement that you want to execute and press
+<TT>&lt;ctrl&gt;&lt;enter&gt;</TT>.</P>
+
+<P>The characters -- at the beginning of a line will turn it into a
+comment.</P>
+
+<P ALIGN="CENTER"><IMG SRC="images/sql_1.png" BORDER="0"
+			ALT="Executing SQL"></P>
+
+<P>As can be seen in the above screen shot, double clicking in a cell in
+the query results will open up a new window showing the entire
+contents of the cell.</P>
+
+<P>The <IMG SRC="images/createresultwindow.gif" BORDER="0"
+ALIGN="CENTER" ALT="Tearoff icon"> icon on the tabbed folder
+containing the SQL results allow you to &quot;tear off&quot; the query
+results from the tabbed folder and display it in its own window.</P>
+
+<P ALIGN="CENTER"><IMG SRC="images/sql_2.png" BORDER="0"
+			ALT="&quot;Torn off&quot; query results"></P>
+
+<A NAME="data_types"><H2>Data Types</H2></A>
+
+<P>This is a quick description of how SQuirreL handles various data types when
+displaying the results of SQL statements. SQuirreL uses the column type
+(ResultSetMetaData.getColumnType(...)) from the metadata for the result set to
+determine how to display the column.</P>
+
+<DL>
+	<DT><B>java.sql.Types.NULL</B>
+	<DD><EM>&lt;Null&gt;</EM> is displayed.
+
+	<DT><B>java.sql.Types.BOOLEAN and java.sql.Types.BIT</B>
+	<DD>If the retrieved column data is a <EM>java.lang.Boolean</EM> object
+	then the appropriate <EM>true/false</EM> is displayed. If the retrieved
+	column is a <EM>java.lang.Number</EM> then a non-zero value will display
+	<EM>true</EM> while a zero value will display <EM>false</EM>. Otherwise the
+	column data is converted to a string and if this string equals (ignoring
+	case) &quot;true&quot; then <EM>true</EM> is displayed else <EM>false</EM>.
+
+	<DT><B>java.sql.Types.TIME</B>
+	<DD>A <EM>java.sql.Time</EM> object is retrieved from the result set and
+	displayed in <EM>hh:mm:ss</EM> format.
+
+	<DT><B>java.sql.Types.DATE</B>
+	<DD>A <EM>java.sql.Date</EM> object is retrieved from the result set and
+	displayed in <EM>yyyy-mm-dd</EM> format.
+
+	<DT><B>java.sql.Types.TIMESTAMP</B>
+	<DD>A <EM>java.sql.TimeStamp</EM> object is retrieved from the result set
+	and displayed in <EM>yyyy-mm-dd hh:mm:ss.fffffffff</EM> format.
+
+	<DT><B>java.sql.Types.BIGINT</B>
+	<DD>If the retrieved column type is a <EM>java.lang.Long</EM> or a
+	<EM>java.lang.Number</EM> then it is stored as a <EM>java.lang.Long</EM>
+	and displayed as a base ten signed long. Otherwise the column data is
+	converted to a string which is then parsed as a base ten signed long.
+
+	<DT><B>java.sql.Types.DOUBLE, java.sql.Types.FLOAT, java.sql.Types.REAL</B>
+	<DD>If the retrieved column type is a <EM>java.lang.Double</EM> or a
+	<EM>java.lang.Number</EM> then it is stored as a <EM>java.lang.Double</EM>
+	and displayed as a string representation of the double. Otherwise the
+	column data is converted to a string which is then parsed as a double.
+
+	<DT><B>java.sql.Types.DECIMAL, java.sql.Types.NUMERIC</B>
+	<DD>If the retrieved column type is a <EM>java.math.BigDecimal</EM> or a
+	<EM>java.lang.Number</EM> then it is stored as a <EM>java.math.BigDecimal</EM>
+	and displayed as a string representation of the <EM>BigDecimal</EM>. Otherwise the
+	column data is converted to a string which is then parsed as a <EM>BigDecimal</EM>.
+
+	<DT><B>java.sql.Types.INTEGER, java.sql.Types.SMALLINT, java.sql.Types.TINYINT</B>
+	<DD>If the retrieved column type is a <EM>java.lang.Integer</EM> or a
+	<EM>java.lang.Number</EM> then it is stored as a <EM>java.lang.Integer</EM>
+	and displayed as a string representation of the <EM>Integer</EM>. Otherwise the
+	column data is converted to a string which is then parsed as a <EM>Integer</EM>.
+
+	<DT><B>java.sql.Types.CHAR, java.sql.Types.VARCHAR, java.sql.Types.LONGVARCHAR</B>
+	<DD>The column data is displayed as a string.
+
+	<DT><B>java.sql.Types.BINARY, java.sql.Types.VARBINARY, java.sql.Types.LONGVARBINARY</B>
+	<DD>If the appropriate <A HREF="#session_props_sql_data_types">session property</A> says
+	to retrieve data of this type then the column data is displayed as a string
+	otherwise one of <EM>&lt;Binary&gt;</EM>, <EM>&lt;Varbinary&gt;</EM> or
+	<EM>&lt;Longvarbinary&gt;</EM> is displayed.
+
+	<DT><B>java.sql.Types.BLOB</B>
+	<DD>If the <A HREF="#session_props_sql_data_types">session property</A>
+	says to retrieve blobs then the column data is displayed as bytes. Note
+	that the <A HREF="#session_props_sql_data_types">session property</A> can
+	specify the number of bytes of the blob to read in.
+
+	<DT><B>java.sql.Types.CLOB</B>
+	<DD>If the <A HREF="#session_props_sql_data_types">session property</A>
+	says to retrieve clobs then the column data is displayed as a string. Note
+	that the <A HREF="#session_props_sql_data_types">session property</A> can
+	specify the number of characters of the clob to read in.
+
+	<DT><B>java.sql.Types.OTHER</B>
+	<DD>If the <A HREF="#session_props_sql_data_types">session property</A>
+	says to retrieve columns of this type then the column data is displayed as
+	a string.
+
+	<DT><B>Any other type</B>
+	<DD>If the <A HREF="#session_props_sql_data_types">session property</A>
+	says to retrieve all other data types then the column data is displayed
+	as a string.
+</DL>
+
+
+<A NAME="global_prefs"><H2>Global Preferences</H2></A>
+
+<P>Global Preferences specify configuration settings for the
+application.</P>
+
+<H3>General Tab</H3>
+
+<P ALIGN="CENTER"><IMG SRC="images/global_general.png" BORDER="0"
+			ALT="General tab"></P>
+
+<H4>General Tab (Appearance)</H4>
+
+<P><B>Show Window Contents While Dragging</B> - If checked this shows
+the contents of windows as they are being dragged. If unchecked only
+the outline of the window will be shown. Uncheck for a speed
+improvement on slow machines.</P>
+
+<P><B>Show Tooltips</B> - If checked then tooltips (or hints) will be
+shown when the mouse &quot;hovers&quot; over some controls.</P>
+
+<P><B>Use Scrollable Tabbed Panes</B> - When running version 1.4 or
+above of Java selecting this checkbox will display the tabs in tabbed
+folders in a scrollable region rather than wrapping them when all tabs
+will not fit within a single run.</P>
+
+<P><B>Show Main Window Tool Bar</B> - If checked then the tool bar
+will be displayed in the main window.</P>
+
+<P><B>Show Main Window Status Bar</B> - If checked then the status bar
+will be displayed in the main window.</P>
+
+<P><B>Show Drivers Tool Bar</B> - If checked then the tool bar will be
+displayed in the Aliases Window.</P>
+
+<P><B>Show Aliases Tool Bar</B> - If checked then the tool bar will be
+displayed in the Aliases Window.</P>
+
+<H4>General Tab (Logging)</H4>
+
+<P><B>Execution Log File</B> - This (display only) setting tells you the
+name (and location) of the logging file for SQuirreL. If the file name
+is too long for the label then the full name will be displayed in a
+tooltip.</P>For more information see <A HREF="#logs">Logs</A>.</P>
+
+<P><B>Configuration File</B> - This (display only) setting tells you the
+name (and location) of the logging configuration file for SQuirreL. If
+the file name is too long for the label then the full name will be
+displayed in a tooltip.</P>For more information see
+<A HREF="#logs">Logs</A>.</P>
+
+<H4>SQL Tab</H4>
+
+<P ALIGN="CENTER"><IMG SRC="images/global_sql.png" BORDER="0"
+			ALT="SQL tab"></P>
+
+<P><B>Login Timeout</B> - Sets the maximum time in seconds that a
+JDBC driver will wait while attempting to connect to the database.</P>
+
+<P><B>JDBC Debug</B> - If checked tells the JDBC drivers to write
+debugging information to the JDBC Debug File. Depending on the JDBC
+driver you are using this may generate a lot of output and
+significantly slow down SQuirreL.</P>
+
+<P><B>JDBC Debug File</B> - If JDBC Debug is checked then this
+(display only) setting is the file that the debug information will be
+written out to. If the file name is too long for the label then the
+full name will be displayed in a tooltip.</P>
+
+<H3>Proxy Tab</H3>
+
+<P ALIGN="CENTER"><IMG SRC="images/global_proxy.png" BORDER="0"
+			ALT="Proxy tab"></P>
+
+<H4>Proxy Tab (HTTP Proxy)</H4>
+
+<P><B>Use Proxy</B> - If checked then a HTTP proxy server will be used
+for connecting to servers.</P>
+
+<P><B>Server</B> - The name (or IP address) of your proxy server.</P>
+
+<P><B>Port</B> - The port number to use on the proxy server.</P>
+
+<P><B>User</B> - The user name to use to log onto the proxy
+server.</P>
+
+<P><B>Password</B> - The password to use to log onto the proxy
+server.</P>
+
+<P><B>No Proxy For</B> - A list of servers (separated by |) that do
+not need to be accessed through your proxy server.</P>
+
+<H4>Proxy Tab (SOCKS Proxy)</H4>
+
+<P><B>Use Proxy</B> - If checked then a SOCKS proxy server will be
+used for connecting to servers.</P>
+
+<P><B>Server</B> - The name (or IP address) of your proxy server.</P>
+
+<P><B>Port</B> - The port number to use on the proxy server.</P>
+
+<A NAME="session_props"><H2>New Session and Session Properties</H2></A>
+
+<P>The &quot;New Session Properties&quot; dialog allows you to specify
+settings for future session. To change the settings for existing
+sessions use the &quot;Session Properties&quot; menu option.
+
+<H3>General Tab</H3>
+
+<P ALIGN="CENTER"><IMG SRC="images/session_props_general.png" BORDER="0"
+			ALT="General tab"></P>
+
+<H4>General Tab (General)</H4>
+
+<P><B>Show Tool Bar</B> - If checked then display a toolbar on the
+session window.</P>
+
+<H4>General Tab (Output)</H4>
+
+<P><B>Meta Data</B> - Specify the output type for meta data displays.</P>
+
+<P><B>SQL Results</B> - Specify the output type for SQL result displays.</P>
+
+<H4>General Tab (SQL Entry Area)</H4>
+
+<P><B>Font</B> - The <EM>Font</EM> button allows you to specify the font
+to be used in the SQL entry area.</P>
+
+<H3>SQL Tab</H3>
+
+<H4>SQL Tab (SQL)</H4>
+
+<P ALIGN="CENTER"><IMG SRC="images/session_props_sql.png" BORDER="0"
+			ALT="SQL tab"></P>
+
+<P><B>Auto Commit</B> - If checked then all SQL will be automatically
+committed after it is executed. If unchecked then you will be able to
+use the &quot;Commit&quot; and &quot;Rollback&quot; options on the
+&quot;Session&quot; menu.</P>
+
+<P><B>Commit on Closing Session</B> - If &quot;Auto Commit&quot; is
+not checked then this option controls whether or not a
+&quot;Commit&quot; is issued prior to closing a session. If this
+option is not checked then you will lose all uncommitted work when the
+session is closed. Only applicable if &quot;Auto Commit&quot; is not
+checked.</P>
+
+<P><B>Show Row Count for Tables</B> - Show the number of rows for each
+table in the object tree. This will slow down the building of the
+object tree.</P>
+
+<P><B>Contents - Limit Rows/Number of Rows</B> - If <EM>Contents - Limit
+	rows</EM> is checked then only the number of rows specified in the
+<EM>Number of rows</EM> will be displayed in the <EM>Contents</EM> tab for a
+table.</P>
+
+<P><B>SQL - Limit Rows/Number of Rows</B> - If <EM>SQL - Limit
+	rows</EM> is checked then only the number of rows specified in the
+<EM>Number of rows</EM> will be displayed for an SQL query.</P>
+
+<P><B>Statement Separator</B> - The character used to separate SQL statements in the
+SQL entry area.</P>
+
+<P><B>Start of Line Comment</B> - The character that specifies that the line
+in the SQL entry area is a comment and should not be passed to the database for
+execution.</P>
+
+<A NAME="session_props_sql_data_types"><H4>SQL Tab (Show These Data Types)</H4></A>
+
+<P><B>Binary</B> - If checked then binary columns will be displayed.</P>
+
+<P><B>VarBinary</B> - If checked then varbinary columns will be displayed.</P>
+
+<P><B>LongVarBinary</B> - If checked then longvarbinary columns will be
+displayed.</P>
+
+<P><B>SQL Other</B> - If checked then <em>java.SQuirreLl.Types.Other</em>
+columns will be displayed.</P>
+
+<P><B>Blob</B> - If checked then blob columns will be displayed. You can
+specify the number of bytes to read or <EM>all</EM>.</P>
+
+<P><B>Clob</B> - If checked then clob columns will be displayed. You can
+specify the number of characters to read or <EM>all</EM>.</P>
+
+<P><B>All Other Data Types</B> - If checked then all other columns will be
+displayed.</P>
+
+<A NAME="plugins"><H2>Plugins</H2></A>
+
+<P>A plugin is an application written in Java that runs within
+SQuirreL. This allows developers to enhance the functionality of
+SQuirreL without having to rebuild the SQuirreL application itself. It
+also allows you to &quot;pick and choose&quot; the functionality that
+you want in SQuirreL. For instance if you don't use Oracle then you
+don't need the Oracle specific functionality supplied by the Oracle
+plugin.</P>
+
+<P>Plugins can be downloaded from the SQuirreL web site
+http://squirrel-sql.sf.net</P>
+
+<P>To install a plugin unpack the zip or gz file into the plugins
+directory within the SQuirreL application directory keeping
+the directory structure. To use the plugin you will need to restart
+SQuirreL.</P>
+
+<P>The &quot;Summary&quot; option on the &quot;Plugins&quot; menu will
+display a dialog box showing the plugins currently installed.</P>
+
+<P ALIGN="CENTER"><IMG SRC="images/plugins_1.png" BORDER="0"
+	ALT="Plugins Summary"></P>
+
+<A NAME="logs"><H2>Logs</H2></A>
+
+<A NAME="menus"><H2>Menus</H2></A>
+
+<A NAME="file_menu"><H3>File Menu</H3></A>
+
+<DL>
+	<DT><B>Global Preferences</B>
+	<DD>Displays the <A HREF="#global_prefs">Global Preferences</A> dialog.
+
+	<DT><B>New Session Properties</B>
+	<DD>Displays the <A HREF="#session_props">New Session Properties</A> dialog.
+	<DD>
+
+	<DT><B>Dump Application</B>
+	<DD>This option will dump some internal structures of the
+	application to a text file along with a <A
+	HREF="#dump_session">dump</A> of all the currently open sessions.
+	This may be useful for debugging problems with SQuirreL.
+
+	<DT><B>Exit</B>
+	<DD>Exit the application after closing all sessions.
+</DL>
+
+<A NAME="drivers_menu"><H3>Drivers Menu</H3></A>
+
+<DL>
+	<DT><B>New Driver</B>
+	<DD>Displays a dialog allowing you to specify a new JDBC <A
+		HREF="#the_driver">driver</A>.
+
+	<DT><B>Modify Driver</B>
+	<DD>Displays a dialog allowing you to modify an existing JDBC <A
+		HREF="#the_driver">driver</A>.
+
+	<DT><B>Delete Driver</B>
+	<DD>Allows you to delete an existing JDBC <A HREF="#the_driver">driver</A>.
+
+	<DT><B>Copy Driver</B>
+	<DD>Copies the JDBC <A HREF="#the_driver">driver</A> currently selected in
+	the Drivers list and displays it as a new driver in the driver maintenance
+	dialog
+
+	<DT><B>Install Default Drivers</B>
+	<DD>Copies entries from the default JDBC drivers that ships with SQuirreL
+	to the Drivers List. If the driver is already in the list then the default
+	one will not be copied.
+</DL>
+
+<A NAME="aliases_menu"><H3>Aliases Menu</H3></A>
+
+<DL>
+	<DT><B>Connect</B>
+	<DD>Display a connection dialog allowing you to <A
+		HREF="#howtoconnect">connect</A> to the specified <A
+		HREF="#the_alias">alias</A>.
+
+	<DT><B>New Alias</B>
+	<DD>Displays a dialog allowing you to specify a new <A
+		HREF="#the_alias">alias</A>.
+
+	<DT><B>Modify Alias</B>
+	<DD>Displays a dialog allowing you to modify an existing <A
+		HREF="#the_alias">alias</A>.
+
+	<DT><B>Delete Alias</B>
+	<DD>Allows you to delete an existing <A HREF="#the_alias">alias</A>.
+
+	<DT><B>Copy Alias</B>
+	<DD>Copies the <A HREF="#the_alias">alias</A> currently selected in
+	the ALiases list and displays it as a new alias in the alias maintenance
+	dialog
+</DL>
+
+
+<A NAME="plugins_menu"><H3>Plugins Menu</H3></A>
+
+<DL>
+	<DT><B>Summary</B>
+	<DD>Displays a dialog showing the installed <A HREF="#plugins">plugins</A>.
+</DL>
+
+<A NAME="session_menu"><H3>Session Menu</H3></A>
+
+<DL>
+	<DT><B>Session Properties</B>
+	<DD>This option will display the Session Properties dialog
+	allowing you configure your current session. <A
+	HREF="#session_props">More</A>.
+
+	<DT><B><A NAME="dump_session">Dump Session</A></B>
+	<DD>This option will dump some internal structures of the current
+	session to a text file. This may be useful for debugging problems
+	with SQuirreL.
+
+	<DT><B>Refresh Tree</B>
+	<DD>This option will refresh the object tree.
+
+	<DT><B>Run SQL</B>
+	<DD>This option will run the current SQL in the SQL entry area.
+	<A HREF="#executing">More</A>.
+
+	<DT><B>Commit</B>
+	<DD>This option will commit the current SQL transaction. This is
+	only applicable if &quot;Auto Commit&quot; has been turned off in
+	the <A HREF="#session_props">Session Properties</A>.
+
+	<DT><B>Rollback</B>
+	<DD>This option will rollback the current SQL transaction. This is
+	only applicable if &quot;Auto Commit&quot; has been turned off in
+	the <A HREF="#session_props">Session Properties</A>.
+
+	<DT><B>Show Native SQL</B>
+	<DD>This option will append the native SQL for the current JDBC SQL
+	into the SQL entry area. E.G.  If you enter the following in an
+	Oracle session
+
+	<pre>select * from table1 where entered_date = {d'2002-12-01'}</pre>
+
+	and take this option then the following will be appended to the
+	SQL entry area.
+
+	<pre>select * from table1 where entered_date = TO_DATE ('2002-12-01', 'YYYY-MM-DD')</pre>
+
+	<DT><B>Reconnect</B>
+	<DD>Close the current connection to the database and reopen it using
+	the same user name and password.
+
+	<DT><B>Close Session</B>
+	<DD>Close the current connection to the database and close the session window.
+
+	<DT><B>Close All SQL Result Tabs</B>
+	<DD>Close all SQL results displayed in the tabbed folder for the current session.
+
+	<DT><B>Close All SQL Result Windows</B>
+	<DD>Close all SQL results windows &quot;torn off&quot; from the tabbed folder
+	for the current session.
+</DL>
+
+<A NAME="windows_menu"><H3>Windows Menu</H3></A>
+
+<DL>
+	<DT><B>View Aliases</B>
+	<DD>Display the list of <A HREF="#the_alias">aliases</A> that define a
+	connection to a database.
+
+	<DT><B>View Drivers</B>
+	<DD>Display the list of <A HREF="#the_driver">drivers</A>.
+
+	<DT><B>View SQuirreL Logs</B>
+	<DD>Display the execution <A HREF="#logs">logs</A> for SQuirreL.
+
+	<DT><B>Tile</B>
+	<DD>Tile the open session windows.
+
+	<DT><B>Cascade</B>
+	<DD>Cascade the open session windows.
+
+	<DT><B>Maximize</B>
+	<DD>Maximize the open session windows.
+
+	<DT><B>Close All Sessions</B>
+	<DD>Close all existing sessions.
+</DL>
+
+
+<A NAME="help_menu"><H3>Help Menu</H3></A>
+
+<DL>
+	<DT><B>Help</B>
+	<DD>Displays this Help File.
+
+	<DT><B>FAQ</B>
+	<DD>Displays the Frequently Asked Questions file.
+
+	<DT><B>Change Log</B>
+	<DD>Displays the development history of SQuirreL.
+
+	<DT><B>Licence</B>
+	<DD>Displays the licence for SQuirreL.
+
+	<DT><B>About</B>
+	<DD>Displays the About Box for SQuirrel.
+</DL>
+
+</BODY>
+</HTML>
+

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jardesc>
+    <jar path="/home/colbell/src/squirrel-sql/plugins/sqlval.jar"/>
+    <options buildIfNeeded="true" compress="true"
+        descriptionLocation="/plugin-sqlval/sqlval.jardesc"
+        exportErrors="true" exportWarnings="true" logErrors="true"
+        logWarnings="true" overwrite="false" saveDescription="true" useSourceFolders="false"/>
+    <manifest generateManifest="true" manifestLocation=""
+        manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false">
+        <javaElement handleIdentifier="=plugin-sqlval/src"/>
+    </selectedElements>
+</jardesc>
