@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -18,14 +18,11 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.event.ActionEvent;
-import java.io.File;
 
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
-
 /**
  * This <CODE>Action</CODE> displays the Squirrel Help Window.
  *
@@ -33,32 +30,14 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
  */
 public class ViewHelpAction extends SquirrelAction
 {
-	private File _file;
-
-	/**
-	 * Ctor.
-	 * 
-	 * @param	app	Application API.
-	 */
-	public ViewHelpAction(IApplication app)
-	{
-		this(app, null);
-	}
-
 	/**
 	 * Ctor.
 	 * 
 	 * @param	app		Application API.
-	 * @param	file	Help file.
 	 */
-	public ViewHelpAction(IApplication app, File file)
+	public ViewHelpAction(IApplication app)
 	{
 		super(app);
-		_file = file;
-		if (_file == null)
-		{
-			_file = new ApplicationFiles().getQuickStartGuideFile();
-		}
 	}
 
 	/**
@@ -68,7 +47,7 @@ public class ViewHelpAction extends SquirrelAction
 	{
 		try
 		{
-			new ViewFileCommand(getApplication(), _file).execute();
+			new ViewHelpCommand(getApplication()).execute();
 		}
 		catch (BaseException ex)
 		{

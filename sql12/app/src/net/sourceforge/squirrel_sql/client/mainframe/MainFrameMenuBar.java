@@ -103,6 +103,7 @@ final class MainFrameMenuBar extends JMenuBar
 		LoggerController.createLogger(MainFrameMenuBar.class);
 
 	private final IApplication _app;
+//	private final JMenu _editMenu;
 	private final JMenu _driversMenu;
 	private final JMenu _aliasesMenu;
 	private final JMenu _pluginsMenu;
@@ -148,6 +149,7 @@ final class MainFrameMenuBar extends JMenuBar
 		_app = app;
 
 		add(createFileMenu(rsrc));
+//		add(_editMenu = createEditMenu(rsrc));
 		add(_driversMenu = createDriversMenu(rsrc));
 		add(_aliasesMenu = createAliasesMenu(rsrc));
 		add(_pluginsMenu = createPluginsMenu(rsrc));
@@ -290,9 +292,6 @@ final class MainFrameMenuBar extends JMenuBar
 	private JMenu createFileMenu(Resources rsrc)
 	{
 		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.FILE);
-		addToMenu(rsrc, CloseSessionAction.class, menu);
-		addToMenu(rsrc, CloseAllSessionsAction.class, menu);
-		menu.addSeparator();
 		addToMenu(rsrc, GlobalPreferencesAction.class, menu);
 		addToMenu(rsrc, NewSessionPropertiesAction.class, menu);
 		menu.addSeparator();
@@ -301,6 +300,12 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, ExitAction.class, menu);
 		return menu;
 	}
+
+//	private JMenu createEditMenu(Resources rsrc)
+//	{
+//		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.EDIT);
+//		return menu;
+//	  }
 
 	private JMenu createSessionMenu(Resources rsrc)
 	{
@@ -319,7 +324,11 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, ShowNativeSQLAction.class, menu);
 		menu.addSeparator();
 		addToMenu(rsrc, ReconnectAction.class, menu);
+		addToMenu(rsrc, CloseSessionAction.class, menu);
 		menu.add(createSQLResultsCloseMenu(rsrc));
+		menu.addSeparator();
+		addToMenu(rsrc, PreviousSessionAction.class, menu);
+		addToMenu(rsrc, NextSessionAction.class, menu);
 		menu.addSeparator();
 		menu.setEnabled(false);
 		return menu;
@@ -375,8 +384,7 @@ final class MainFrameMenuBar extends JMenuBar
 		addDesktopPaneActionToMenu(rsrc, CascadeAction.class, menu, desktopPane);
 		addDesktopPaneActionToMenu(rsrc, MaximizeAction.class, menu, desktopPane);
 		menu.addSeparator();
-		addToMenu(rsrc, PreviousSessionAction.class, menu);
-		addToMenu(rsrc, NextSessionAction.class, menu);
+		addToMenu(rsrc, CloseAllSessionsAction.class, menu);
 		menu.addSeparator();
 		return menu;
 	}
@@ -394,11 +402,9 @@ final class MainFrameMenuBar extends JMenuBar
 		action = new ViewLicenceAction(_app, appFiles.getLicenceFile());
 		menu.add(action);
 
-		// Add plugin help files, change logs and licences to menu.
+		// Add plugin change logs and licences to menu.
 		JMenu pluginChangeLog = rsrc.createMenu(
 						SquirrelResources.IMenuResourceKeys.PLUGIN_CHANGE_LOG);
-		JMenu pluginHelp = rsrc.createMenu(
-						SquirrelResources.IMenuResourceKeys.PLUGIN_HELP);
 		JMenu pluginLicence = rsrc.createMenu(
 						SquirrelResources.IMenuResourceKeys.PLUGIN_LICENCE);
 		PluginInfo[] pi = _app.getPluginManager().getPluginInformation();
@@ -417,14 +423,6 @@ final class MainFrameMenuBar extends JMenuBar
 					pluginChangeLog.add(action);
 				}
 
-				fn = pi[i].getHelpFileName();
-				if (fn != null)
-				{
-					action = new ViewHelpAction(_app, new File(dir, fn));
-					action.putValue(Action.NAME, title);
-					pluginHelp.add(action);
-				}
-
 				fn = pi[i].getLicenceFileName();
 				if (fn != null)
 				{
@@ -438,10 +436,6 @@ final class MainFrameMenuBar extends JMenuBar
 				s_log.error("Error creating menu item for plugin"
 									+ pi[i].getDescriptiveName(), ex);
 			}
-		}
-		if (pluginHelp.getMenuComponentCount() > 0)
-		{
-			menu.add(pluginHelp);
 		}
 		if (pluginChangeLog.getMenuComponentCount() > 0)
 		{
