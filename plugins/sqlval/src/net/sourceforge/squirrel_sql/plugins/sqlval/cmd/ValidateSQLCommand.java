@@ -1,7 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.sqlval.cmd;
-
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -30,7 +29,6 @@ import net.sourceforge.squirrel_sql.plugins.sqlval.WebServicePreferences;
 import net.sourceforge.squirrel_sql.plugins.sqlval.WebServiceSession;
 import net.sourceforge.squirrel_sql.plugins.sqlval.WebServiceSessionProperties;
 import net.sourceforge.squirrel_sql.plugins.sqlval.WebServiceValidator;
-
 /**
  * This <CODE>ICommand</CODE> will validate the passed SQL.
  *
@@ -41,7 +39,7 @@ public class ValidateSQLCommand implements ICommand
 	private final WebServicePreferences _prefs;
 	private final WebServiceSessionProperties _sessionProps;
 	private final String _sql;
-	private final char _stmtSepChar;
+	private final String _stmtSep;
 	private final String _solComment;
 	private String _results;
 
@@ -51,13 +49,13 @@ public class ValidateSQLCommand implements ICommand
 
 	public ValidateSQLCommand(WebServicePreferences prefs,
 				WebServiceSessionProperties sessionProps, String sql,
-				char stmtSepChar, String solComment)
+				String stmtSep, String solComment)
 	{
 		super();
 		_prefs = prefs;
 		_sessionProps = sessionProps;
 		_sql = sql;
-		_stmtSepChar = stmtSepChar;
+		_stmtSep= stmtSep;
 		_solComment = solComment;
 	}
 
@@ -83,7 +81,7 @@ public class ValidateSQLCommand implements ICommand
 			wss.open();
 
 			final WebServiceValidator val = new WebServiceValidator(wss, _sessionProps);
-			final QueryTokenizer qt = new QueryTokenizer(_sql, _stmtSepChar, _solComment);
+			final QueryTokenizer qt = new QueryTokenizer(_sql, _stmtSep, _solComment);
 
 			final StringBuffer results = new StringBuffer(1024);
 			while (qt.hasQuery())
@@ -101,5 +99,5 @@ public class ValidateSQLCommand implements ICommand
 			throw new BaseException(th);
 		}
 	}
-
 }
+

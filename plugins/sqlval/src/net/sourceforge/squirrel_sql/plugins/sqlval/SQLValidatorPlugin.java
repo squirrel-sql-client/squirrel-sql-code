@@ -40,11 +40,15 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
+import net.sourceforge.squirrel_sql.client.session.event.SQLPanelAdapter;
+import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
 /**
  * This plugin provides an interface to the SQL Validation web service provided
  * by Mimer SQL. See http://sqlvalidator.mimer.com/ for more information.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SQLValidatorPlugin extends DefaultSessionPlugin
 {
@@ -70,6 +74,9 @@ public class SQLValidatorPlugin extends DefaultSessionPlugin
 
 	/** Resources for this plugin. */
 	private PluginResources _resources;
+
+	/** Listener to the SQL panel. */
+	private ISQLPanelListener _lis = new SQLPanelListener();
 
 	/**
 	 * Return the internal name of this plugin.
@@ -98,7 +105,7 @@ public class SQLValidatorPlugin extends DefaultSessionPlugin
 	 */
 	public String getVersion()
 	{
-		return "0.12";
+		return "0.13";
 	}
 
 	/**
@@ -201,16 +208,35 @@ public class SQLValidatorPlugin extends DefaultSessionPlugin
 	}
 
 	/**
-	 * Called when a session started.
+	 * Called when a session started. The session sheet doesn't
+	 * exist at this point.
 	 *
 	 * @param	session	The session that is starting.
 	 */
 	public void sessionCreated(ISession session)
 	{
-		super.sessionStarted(session);
+		super.sessionCreated(session);
 		WebServiceSessionProperties props = new WebServiceSessionProperties(_prefs);
 		props.setSQLConnection(session.getSQLConnection());
 		session.putPluginObject(this, PREFS_KEY, props);
+	}
+
+	/**
+	 * Called when a session started.
+	 *
+	 * @param	session	The session that is starting.
+	 *
+	 * @return	<TT>true</TT> if plugin is applicable to passed
+	 *			session else <TT>false</TT>.
+	 */
+	public boolean sessionStarted(ISession session)
+	{
+		if (super.sessionStarted(session))
+		{
+			setupSQLEntryArea(session);
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -249,6 +275,13 @@ public class SQLValidatorPlugin extends DefaultSessionPlugin
 			throw new IllegalArgumentException("ISession == null");
 		}
 		return (WebServiceSessionProperties)session.getPluginObject(this, PREFS_KEY);
+	}
+
+	private void setupSQLEntryArea(ISession session)
+	{
+		final ISQLPanelAPI api = session.getSQLPanelAPI(this);
+		final ActionCollection coll = getApplication().getActionCollection();
+		api.addToSQLEntryAreaMenu(coll.get(ValidateSQLAction.class));
 	}
 
 	/**
@@ -313,5 +346,13 @@ public class SQLValidatorPlugin extends DefaultSessionPlugin
 		_resources.addToMenu(coll.get(ValidateSQLAction.class), menu);
 
 		app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, menu);
+	}
+
+	private class SQLPanelListener extends SQLPanelAdapter
+	{
+		public void sqlEntryAreaReplaced(SQLPanelEvent evt)
+		{
+			setupSQLEntryArea(evt.getSession());
+		}
 	}
 }

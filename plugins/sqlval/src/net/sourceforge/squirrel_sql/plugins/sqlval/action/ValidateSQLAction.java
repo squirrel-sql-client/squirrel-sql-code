@@ -1,20 +1,21 @@
 package net.sourceforge.squirrel_sql.plugins.sqlval.action;
 /*
  * Copyright (C) 2002-2003 Colin Bell
+ * colbell@users.sourceforge.net
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.event.ActionEvent;
 
@@ -40,7 +41,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 /**
  * This action will validate the current SQL.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ValidateSQLAction extends SquirrelAction implements ISessionAction
 {
@@ -112,11 +113,11 @@ public class ValidateSQLAction extends SquirrelAction implements ISessionAction
 		{
 			final SessionProperties sessionProps = _session.getProperties();
 			final WebServiceSessionProperties wssProps = _plugin.getWebServiceSessionProperties(_session);
-			final char stmtSepChar = sessionProps.getSQLStatementSeparatorChar();
+			final String stmtSep= sessionProps.getSQLStatementSeparator();
 			final String solComment = sessionProps.getStartOfLineComment();
 			final ValidationProps valProps = new ValidationProps(_prefs, wssProps,
 													_session.getMessageHandler(),
-													sql, stmtSepChar, solComment);
+													sql, stmtSep, solComment);
 			new Executor(_session.getApplication(), valProps).execute();
 		}
 		else
@@ -131,12 +132,12 @@ public class ValidateSQLAction extends SquirrelAction implements ISessionAction
 		final WebServiceSessionProperties _sessionProps;
 		final IMessageHandler _msgHandler;
 		final String _sql;
-		final char _stmtSepChar;
+		final String _stmtSep;
 		final String _solComment;
 
 		ValidationProps(WebServicePreferences prefs,
 						WebServiceSessionProperties sessionProps,
-						IMessageHandler msgHandler, String sql, char stmtSepChar,
+						IMessageHandler msgHandler, String sql, String stmtSep,
 						String solComment)
 		{
 			super();
@@ -144,7 +145,7 @@ public class ValidateSQLAction extends SquirrelAction implements ISessionAction
 			_sessionProps = sessionProps;
 			_msgHandler = msgHandler;
 			_sql = sql;
-			_stmtSepChar = stmtSepChar;
+			_stmtSep= stmtSep;
 			_solComment = solComment;
 		}
 	}
@@ -165,7 +166,7 @@ public class ValidateSQLAction extends SquirrelAction implements ISessionAction
 		{
 			ValidateSQLCommand cmd = new ValidateSQLCommand(_valProps._prefs,
 											_valProps._sessionProps,
-											_valProps._sql, _valProps._stmtSepChar,
+											_valProps._sql, _valProps._stmtSep,
 											_valProps._solComment);
 			try
 			{
@@ -181,3 +182,4 @@ public class ValidateSQLAction extends SquirrelAction implements ISessionAction
 		}
 	}
 }
+

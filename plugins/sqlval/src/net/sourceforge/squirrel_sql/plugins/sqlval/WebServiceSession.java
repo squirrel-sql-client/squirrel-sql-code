@@ -4,7 +4,7 @@ package net.sourceforge.squirrel_sql.plugins.sqlval;
  * colbell@users.sourceforge.net
  *
  * This code is based on the example web service client code originally written
- * by  Olof Edlund.
+ * by Olof Edlund.
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -140,7 +140,7 @@ public class WebServiceSession
 	}
 
 	/**
-	 * Close the session..
+	 * Close the session.
 	 */
 	public void close()
 	{
@@ -195,5 +195,6 @@ public class WebServiceSession
 		{
 			throw new IllegalStateException("Connection to web service has not been opened");
 		}
-	}	
+	}
 }
+

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.sqlval.cmd;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -65,7 +65,7 @@ public class DisconnectCommand implements ICommand
 	{
 		try
 		{
-			final WebServiceSession wss =  _sessionProps.getWebServiceSession();
+			final WebServiceSession wss = _sessionProps.getWebServiceSession();
 			if (wss.isOpen())
 			{
 				wss.close();
@@ -77,5 +77,5 @@ public class DisconnectCommand implements ICommand
 			throw new BaseException(th);
 		}
 	}
-
 }
+

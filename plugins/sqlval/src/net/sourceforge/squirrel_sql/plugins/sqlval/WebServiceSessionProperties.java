@@ -77,16 +77,6 @@ public class WebServiceSessionProperties implements Cloneable, Serializable
 	}
 
 	/**
-	 * Set the web service session.
-	 * 
-	 * @param	value	Web Service Session.
-	 */
-//	public void setWebServiceSession(WebServiceSession value)
-//	{
-//		_webServiceSession = value;
-//	}
-
-	/**
 	 * If <TT>true</TT> use anonymous client database and connection
 	 * technology.
 	 *
@@ -201,3 +191,4 @@ public class WebServiceSessionProperties implements Cloneable, Serializable
 		}
 	}
 }
+
