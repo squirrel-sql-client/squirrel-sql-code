@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.jedit;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -25,6 +25,7 @@ import javax.swing.Action;
 import javax.swing.JMenuItem;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
+import javax.swing.text.DefaultEditorKit.PasteAction;
 
 import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -38,9 +39,11 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.InputHandler;
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.JEditTextArea;
 
-class JeditPopupMenu extends BasePopupMenu {
+class JeditPopupMenu extends BasePopupMenu
+{
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(JeditPopupMenu.class);
+	private static final ILogger s_log =
+		LoggerController.createLogger(JeditPopupMenu.class);
 
 	private JeditPlugin _plugin;
 
@@ -52,7 +55,8 @@ class JeditPopupMenu extends BasePopupMenu {
 
 	private JEditTextArea _comp;
 
-	JeditPopupMenu(ISession session, JeditPlugin plugin, JEditTextArea ta) {
+	JeditPopupMenu(ISession session, JeditPlugin plugin, JEditTextArea ta)
+	{
 		super();
 		_plugin = plugin;
 		_comp = ta;
@@ -69,13 +73,15 @@ class JeditPopupMenu extends BasePopupMenu {
 		add(_select = new SelectAllAction(app, rsrc));
 	}
 
-	public JMenuItem add(Action action) {
+	public JMenuItem add(Action action)
+	{
 		JMenuItem mi = super.add(action);
 		InputHandler ih = _comp.getInputHandler();
 		PluginResources rsrc = _plugin.getResources();
 		String rsrcKey = "jeditshortcut." + rsrc.getClassName(action.getClass());
 		String binding = rsrc.getString(rsrcKey);
-		if (binding != null && binding.length() > 0) {
+		if (binding != null && binding.length() > 0)
+		{
 			ih.addKeyBinding(binding, action);
 			s_log.debug("Adding binding: " + binding);
 		}
@@ -85,81 +91,107 @@ class JeditPopupMenu extends BasePopupMenu {
 	/**
 	 * Show the menu.
 	 */
-	public void show(Component invoker, int x, int y) {
+	public void show(Component invoker, int x, int y)
+	{
 		updateActions();
 		super.show(invoker, x, y);
 	}
 
-	public void show(MouseEvent evt) {
+	public void show(MouseEvent evt)
+	{
 		updateActions();
 		super.show(evt);
 	}
 
-	protected void updateActions() {
+	protected void updateActions()
+	{
 		final boolean isEditable = _comp != null && _comp.isEditable();
 		_cut.setEnabled(isEditable);
 		_paste.setEnabled(isEditable);
 	}
 
-	private class ClearAction extends SquirrelAction {
-		ClearAction(IApplication app, PluginResources rsrc) {
+	private class ClearAction extends SquirrelAction
+	{
+		ClearAction(IApplication app, PluginResources rsrc)
+		{
 			super(app, rsrc);
 		}
 
-		public void actionPerformed(ActionEvent evt) {
-			if (_comp != null) {
-				try {
+		public void actionPerformed(ActionEvent evt)
+		{
+			if (_comp != null)
+			{
+				try
+				{
 					Document doc = _comp.getDocument();
 					doc.remove(0, doc.getLength());
-				} catch (BadLocationException ignore) {
+				}
+				catch (BadLocationException ignore)
+				{
 				}
 			}
 		}
 	}
 
-	private class CutAction extends SquirrelAction {
-		CutAction(IApplication app, PluginResources rsrc) {
+	private class CutAction extends SquirrelAction
+	{
+		CutAction(IApplication app, PluginResources rsrc)
+		{
 			super(app, rsrc);
 		}
 
-		public void actionPerformed(ActionEvent evt) {
-			if (_comp != null) {
+		public void actionPerformed(ActionEvent evt)
+		{
+			if (_comp != null)
+			{
 				_comp.cut();
 			}
 		}
 	}
 
-	private class CopyAction extends SquirrelAction {
-		CopyAction(IApplication app, PluginResources rsrc) {
+	private class CopyAction extends SquirrelAction
+	{
+		CopyAction(IApplication app, PluginResources rsrc)
+		{
 			super(app, rsrc);
 		}
 
-		public void actionPerformed(ActionEvent evt) {
-			if (_comp != null) {
+		public void actionPerformed(ActionEvent evt)
+		{
+			if (_comp != null)
+			{
 				_comp.copy();
 			}
 		}
 	}
 
-	private class PasteAction extends SquirrelAction {
-		PasteAction(IApplication app, PluginResources rsrc) {
+	private class PasteAction extends SquirrelAction
+	{
+		PasteAction(IApplication app, PluginResources rsrc)
+		{
 			super(app, rsrc);
 		}
 
-		public void actionPerformed(ActionEvent evt) {
-			if (_comp != null) {
+		public void actionPerformed(ActionEvent evt)
+		{
+			if (_comp != null)
+			{
 				_comp.paste();
 			}
 		}
 	}
 
-	private class SelectAllAction extends SquirrelAction {
-		SelectAllAction(IApplication app, PluginResources rsrc) {
+	private class SelectAllAction extends SquirrelAction
+	{
+		SelectAllAction(IApplication app, PluginResources rsrc)
+		{
 			super(app, rsrc);
 		}
 
-		public void actionPerformed(ActionEvent evt) {
-			if (_comp != null) {
+		public void actionPerformed(ActionEvent evt)
+		{
+			if (_comp != null)
+			{
 				_comp.selectAll();
 			}
 		}

@@ -29,8 +29,10 @@ import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class JeditPreferences implements Serializable, Cloneable {
-	public interface IPropertyNames {
+public class JeditPreferences implements Serializable, Cloneable
+{
+	public interface IPropertyNames
+	{
 		String BLINK_CARET = "blinkCaret";
 		String BLOCK_CARET_ENABLED = "blockCaretEnabled";
 		String BRACKET_HIGHLIGHTING = "bracketHighlighting";
@@ -50,7 +52,8 @@ public class JeditPreferences implements Serializable, Cloneable {
 	}
 
 	/** Object to handle property change events. */
-	private PropertyChangeReporter _propChgReporter = new PropertyChangeReporter(this);
+	private PropertyChangeReporter _propChgReporter =
+										new PropertyChangeReporter(this);
 
 	/** If <TT>true</TT> use the jEdit text control else use the standard Java control. */
 	private boolean _useJeditTextControl = true;
@@ -80,228 +83,312 @@ public class JeditPreferences implements Serializable, Cloneable {
 	private int _lineHighlightRGB = 0xccccff;
 	private int _eolMarkerRGB = 0x009999;
 	private int _bracketHighlightColor = Color.black.getRGB();
-	
-	public JeditPreferences() {
+
+	public JeditPreferences()
+	{
 		super();
 	}
 
-	public Object clone() throws CloneNotSupportedException {
+	public Object clone() throws CloneNotSupportedException
+	{
 		return super.clone();
 	}
 
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
+	public void addPropertyChangeListener(PropertyChangeListener listener)
+	{
 		_propChgReporter.addPropertyChangeListener(listener);
 	}
 
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
+	public void removePropertyChangeListener(PropertyChangeListener listener)
+	{
 		_propChgReporter.removePropertyChangeListener(listener);
 	}
 
-	public boolean getUseJeditTextControl() {
+	public boolean getUseJeditTextControl()
+	{
 		return _useJeditTextControl;
 	}
 
-	public void setUseJeditTextControl(boolean data) {
-		if (_useJeditTextControl != data) {
+	public void setUseJeditTextControl(boolean data)
+	{
+		if (_useJeditTextControl != data)
+		{
 			final boolean oldValue = _useJeditTextControl;
 			_useJeditTextControl = data;
-			_propChgReporter.firePropertyChange(IPropertyNames.USE_JEDIT_CONTROL,
-								oldValue, _useJeditTextControl);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.USE_JEDIT_CONTROL,
+				oldValue,
+				_useJeditTextControl);
 		}
 	}
 
-	public boolean getBracketHighlighting() {
+	public boolean getBracketHighlighting()
+	{
 		return _bracketHighlighting;
 	}
 
-	public void setBracketHighlighting(boolean data) {
-		if (_bracketHighlighting != data) {
+	public void setBracketHighlighting(boolean data)
+	{
+		if (_bracketHighlighting != data)
+		{
 			final boolean oldValue = _bracketHighlighting;
 			_bracketHighlighting = data;
-			_propChgReporter.firePropertyChange(IPropertyNames.BRACKET_HIGHLIGHTING,
-								oldValue, _bracketHighlighting);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.BRACKET_HIGHLIGHTING,
+				oldValue,
+				_bracketHighlighting);
 		}
 	}
 
-	public boolean isBlockCaretEnabled() {
+	public boolean isBlockCaretEnabled()
+	{
 		return _blockCaretEnabled;
 	}
 
-	public void setBlockCaretEnabled(boolean data) {
-		if (_blockCaretEnabled != data) {
+	public void setBlockCaretEnabled(boolean data)
+	{
+		if (_blockCaretEnabled != data)
+		{
 			final boolean oldValue = _blockCaretEnabled;
 			_blockCaretEnabled = data;
-			_propChgReporter.firePropertyChange(IPropertyNames.BLOCK_CARET_ENABLED,
-								oldValue, _blockCaretEnabled);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.BLOCK_CARET_ENABLED,
+				oldValue,
+				_blockCaretEnabled);
 		}
 	}
 
-	public boolean getEOLMarkers() {
+	public boolean getEOLMarkers()
+	{
 		return _showEndOfLineMarkers;
 	}
 
-	public void setEOLMarkers(boolean data) {
-		if (_showEndOfLineMarkers != data) {
+	public void setEOLMarkers(boolean data)
+	{
+		if (_showEndOfLineMarkers != data)
+		{
 			final boolean oldValue = _showEndOfLineMarkers;
 			_showEndOfLineMarkers = data;
-			_propChgReporter.firePropertyChange(IPropertyNames.EOL_MARKERS,
-								oldValue, _showEndOfLineMarkers);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.EOL_MARKERS,
+				oldValue,
+				_showEndOfLineMarkers);
 		}
 	}
 
-	public boolean getCurrentLineHighlighting() {
+	public boolean getCurrentLineHighlighting()
+	{
 		return _currentLineHighlighting;
 	}
 
-	public void setCurrentLineHighlighting(boolean data) {
-		if (_currentLineHighlighting != data) {
+	public void setCurrentLineHighlighting(boolean data)
+	{
+		if (_currentLineHighlighting != data)
+		{
 			final boolean oldValue = _currentLineHighlighting;
 			_currentLineHighlighting = data;
-			_propChgReporter.firePropertyChange(IPropertyNames.CURRENT_LINE_HIGHLIGHTING,
-								oldValue, _currentLineHighlighting);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.CURRENT_LINE_HIGHLIGHTING,
+				oldValue,
+				_currentLineHighlighting);
 		}
 	}
 
-	public boolean getBlinkCaret() {
+	public boolean getBlinkCaret()
+	{
 		return _blinkCaret;
 	}
 
-	public void setBlinkCaret(boolean data) {
-		if (_blinkCaret != data) {
+	public void setBlinkCaret(boolean data)
+	{
+		if (_blinkCaret != data)
+		{
 			final boolean oldValue = _blinkCaret;
 			_blinkCaret = data;
-			_propChgReporter.firePropertyChange(IPropertyNames.BLINK_CARET,
-								oldValue, _blinkCaret);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.BLINK_CARET,
+				oldValue,
+				_blinkCaret);
 		}
 	}
 
-	public int getKeyword1RGB() {
+	public int getKeyword1RGB()
+	{
 		return _keyword1RGB;
 	}
 
-	public void setKeyword1RGB(int data) {
-		if (_keyword1RGB != data) {
+	public void setKeyword1RGB(int data)
+	{
+		if (_keyword1RGB != data)
+		{
 			final int oldValue = _keyword1RGB;
 			_keyword1RGB = data;
-			_propChgReporter.firePropertyChange(IPropertyNames.KEYWORD1_COLOR,
-								oldValue, _keyword1RGB);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.KEYWORD1_COLOR,
+				oldValue,
+				_keyword1RGB);
 		}
 	}
 
-	public int getKeyword2RGB() {
+	public int getKeyword2RGB()
+	{
 		return _keyword2RGB;
 	}
 
-	public void setKeyword2RGB(int data) {
-		if (_keyword2RGB != data) {
+	public void setKeyword2RGB(int data)
+	{
+		if (_keyword2RGB != data)
+		{
 			final int oldValue = _keyword2RGB;
 			_keyword2RGB = data;
-			_propChgReporter.firePropertyChange(IPropertyNames.KEYWORD2_COLOR,
-								oldValue, _keyword2RGB);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.KEYWORD2_COLOR,
+				oldValue,
+				_keyword2RGB);
 		}
 	}
 
-	public int getKeyword3RGB() {
+	public int getKeyword3RGB()
+	{
 		return _keyword3RGB;
 	}
 
-	public void setKeyword3RGB(int data) {
-		if (_keyword3RGB != data) {
+	public void setKeyword3RGB(int data)
+	{
+		if (_keyword3RGB != data)
+		{
 			final int oldValue = _keyword3RGB;
 			_keyword3RGB = data;
-			_propChgReporter.firePropertyChange(IPropertyNames.KEYWORD3_COLOR,
-								oldValue, _keyword3RGB);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.KEYWORD3_COLOR,
+				oldValue,
+				_keyword3RGB);
 		}
 	}
 
-	public int getTableRGB() {
+	public int getTableRGB()
+	{
 		return _tableRGB;
 	}
 
-	public void setTableRGB(int data) {
-		if (_tableRGB != data) {
+	public void setTableRGB(int data)
+	{
+		if (_tableRGB != data)
+		{
 			final int oldValue = _tableRGB;
 			_tableRGB = data;
-			_propChgReporter.firePropertyChange(IPropertyNames.TABLE_COLOR,
-								oldValue, _tableRGB);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.TABLE_COLOR,
+				oldValue,
+				_tableRGB);
 		}
 	}
 
-	public int getColumnRGB() {
+	public int getColumnRGB()
+	{
 		return _columnRGB;
 	}
 
-	public void setColumnRGB(int data) {
-		if (_columnRGB != data) {
+	public void setColumnRGB(int data)
+	{
+		if (_columnRGB != data)
+		{
 			final int oldValue = _columnRGB;
 			_columnRGB = data;
-			_propChgReporter.firePropertyChange(IPropertyNames.COLUMN_COLOR,
-								oldValue, _columnRGB);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.COLUMN_COLOR,
+				oldValue,
+				_columnRGB);
 		}
 	}
 
-	public int getCaretRGB() {
+	public int getCaretRGB()
+	{
 		return _caretRGB;
 	}
 
-	public void setCaretRGB(int data) {
-		if (_caretRGB != data) {
+	public void setCaretRGB(int data)
+	{
+		if (_caretRGB != data)
+		{
 			final int oldValue = _caretRGB;
 			_caretRGB = data;
-			_propChgReporter.firePropertyChange(IPropertyNames.CARET_COLOR,
-								oldValue, _caretRGB);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.CARET_COLOR,
+				oldValue,
+				_caretRGB);
 		}
 	}
 
-	public int getSelectionRGB() {
+	public int getSelectionRGB()
+	{
 		return _selectionRGB;
 	}
 
-	public void setSelectionRGB(int data) {
-		if (_selectionRGB != data) {
+	public void setSelectionRGB(int data)
+	{
+		if (_selectionRGB != data)
+		{
 			final int oldValue = _selectionRGB;
 			_selectionRGB = data;
-			_propChgReporter.firePropertyChange(IPropertyNames.SELECTION_COLOR,
-								oldValue, _selectionRGB);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.SELECTION_COLOR,
+				oldValue,
+				_selectionRGB);
 		}
 	}
 
-	public int getLineHighlightRGB() {
+	public int getLineHighlightRGB()
+	{
 		return _lineHighlightRGB;
 	}
 
-	public void setLineHighlightRGB(int data) {
-		if (_lineHighlightRGB != data) {
+	public void setLineHighlightRGB(int data)
+	{
+		if (_lineHighlightRGB != data)
+		{
 			final int oldValue = _lineHighlightRGB;
 			_lineHighlightRGB = data;
-			_propChgReporter.firePropertyChange(IPropertyNames.LINE_HIGHLIGHT_COLOR,
-								oldValue, _lineHighlightRGB);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.LINE_HIGHLIGHT_COLOR,
+				oldValue,
+				_lineHighlightRGB);
 		}
 	}
 
-	public int getEOLMarkerRGB() {
+	public int getEOLMarkerRGB()
+	{
 		return _eolMarkerRGB;
 	}
 
-	public void setEOLMarkerRGB(int data) {
-		if (_eolMarkerRGB != data) {
+	public void setEOLMarkerRGB(int data)
+	{
+		if (_eolMarkerRGB != data)
+		{
 			final int oldValue = _eolMarkerRGB;
 			_eolMarkerRGB = data;
-			_propChgReporter.firePropertyChange(IPropertyNames.EOL_MARKER_COLOR,
-								oldValue, _eolMarkerRGB);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.EOL_MARKER_COLOR,
+				oldValue,
+				_eolMarkerRGB);
 		}
 	}
 
-	public int getBracketHighlightRGB() {
+	public int getBracketHighlightRGB()
+	{
 		return _bracketHighlightColor;
 	}
 
-	public void setBracketHighlightRGB(int data) {
-		if (_bracketHighlightColor != data) {
+	public void setBracketHighlightRGB(int data)
+	{
+		if (_bracketHighlightColor != data)
+		{
 			final int oldValue = _bracketHighlightColor;
 			_bracketHighlightColor = data;
-			_propChgReporter.firePropertyChange(IPropertyNames.BRACKET_HIGHLIGHT_COLOR,
-								oldValue, _bracketHighlightColor);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.BRACKET_HIGHLIGHT_COLOR,
+				oldValue,
+				_bracketHighlightColor);
 		}
 	}
 }

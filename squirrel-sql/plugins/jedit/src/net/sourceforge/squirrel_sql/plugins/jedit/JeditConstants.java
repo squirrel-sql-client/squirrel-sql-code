@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.jedit;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -25,15 +25,18 @@ import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-interface JeditConstants {
+interface JeditConstants
+{
 	/** Name of file to store user prefs in. */
 	static final String USER_PREFS_FILE_NAME = "jEditPrefs.xml";
 
 	/** Default font used in the jEdit text control. */
-	static final FontInfo DEFAULT_FONT_INFO = new FontInfo(new Font("Monospaced",Font.PLAIN,14));
+	static final FontInfo DEFAULT_FONT_INFO =
+		new FontInfo(new Font("Monospaced", Font.PLAIN, 14));
 
 	/** Keys to objects stored in session. */
-	interface ISessionKeys {
+	interface ISessionKeys
+	{
 		/** The sessions <TT>JeditPreferences</TT> object. */
 		String PREFS = "prefs";
 

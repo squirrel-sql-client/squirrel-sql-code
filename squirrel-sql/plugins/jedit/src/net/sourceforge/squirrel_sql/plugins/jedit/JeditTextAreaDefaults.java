@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.jedit;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -25,10 +25,13 @@ import net.sourceforge.squirrel_sql.plugins.jedit.textarea.SyntaxUtilities;
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.TextAreaDefaults;
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.Token;
 
-class JeditTextAreaDefaults extends TextAreaDefaults {
-	JeditTextAreaDefaults(JeditPreferences prefs) throws IllegalArgumentException {
+class JeditTextAreaDefaults extends TextAreaDefaults
+{
+	JeditTextAreaDefaults(JeditPreferences prefs)
+	{
 		super();
-		if (prefs == null) {
+		if (prefs == null)
+		{
 			throw new IllegalArgumentException("Null JEditPreferences passed");
 		}
 
@@ -37,8 +40,8 @@ class JeditTextAreaDefaults extends TextAreaDefaults {
 		editable = true;
 
 		caretVisible = true;
-//		caretBlinks = true;
-//		electricScroll = 3;
+		//		caretBlinks = true;
+		//		electricScroll = 3;
 		electricScroll = 0;
 
 		cols = 0;
@@ -46,29 +49,37 @@ class JeditTextAreaDefaults extends TextAreaDefaults {
 
 		styles = SyntaxUtilities.getDefaultSyntaxStyles();
 
-//		blockCaret = true;
-//		caretColor = Color.red;
-//		selectionColor = new Color(0xccccff);
-//		lineHighlightColor = new Color(0xe0e0e0);
-//		lineHighlight = true;
-//		bracketHighlightColor = Color.black;
-//		bracketHighlight = true;
-//		eolMarkerColor = new Color(0x009999);
-//		eolMarkers = false;
+		//		blockCaret = true;
+		//		caretColor = Color.red;
+		//		selectionColor = new Color(0xccccff);
+		//		lineHighlightColor = new Color(0xe0e0e0);
+		//		lineHighlight = true;
+		//		bracketHighlightColor = Color.black;
+		//		bracketHighlight = true;
+		//		eolMarkerColor = new Color(0x009999);
+		//		eolMarkers = false;
 		paintInvalid = false;
 
 		updateFromPreferences(prefs);
 	}
 
-	private void updateFromPreferences(JeditPreferences prefs) throws IllegalArgumentException {
-		if (prefs == null) {
+	private void updateFromPreferences(JeditPreferences prefs)
+		throws IllegalArgumentException
+	{
+		if (prefs == null)
+		{
 			throw new IllegalArgumentException("Null JEditPreferences passed");
 		}
-		styles[Token.KEYWORD1] = new SyntaxStyle(new Color(prefs.getKeyword1RGB()), false, true);
-		styles[Token.KEYWORD2] = new SyntaxStyle(new Color(prefs.getKeyword2RGB()), false, true);
-		styles[Token.KEYWORD3] = new SyntaxStyle(new Color(prefs.getKeyword3RGB()), false, true);
-		styles[Token.COLOMN] = new SyntaxStyle(new Color(prefs.getColumnRGB()), false, true);
-		styles[Token.TABLE] = new SyntaxStyle(new Color(prefs.getTableRGB()), false, true);
+		styles[Token.KEYWORD1] =
+			new SyntaxStyle(new Color(prefs.getKeyword1RGB()), false, true);
+		styles[Token.KEYWORD2] =
+			new SyntaxStyle(new Color(prefs.getKeyword2RGB()), false, true);
+		styles[Token.KEYWORD3] =
+			new SyntaxStyle(new Color(prefs.getKeyword3RGB()), false, true);
+		styles[Token.COLOMN] =
+			new SyntaxStyle(new Color(prefs.getColumnRGB()), false, true);
+		styles[Token.TABLE] =
+			new SyntaxStyle(new Color(prefs.getTableRGB()), false, true);
 		blockCaret = prefs.isBlockCaretEnabled();
 		eolMarkers = prefs.getEOLMarkers();
 		bracketHighlight = prefs.getBracketHighlighting();
@@ -81,4 +92,3 @@ class JeditTextAreaDefaults extends TextAreaDefaults {
 		bracketHighlightColor = new Color(prefs.getBracketHighlightRGB());
 	}
 }
-

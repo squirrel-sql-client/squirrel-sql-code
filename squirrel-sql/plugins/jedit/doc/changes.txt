@@ -6,6 +6,7 @@ jEdit Text Area Plugin Change Log
 
 Bug Fixes
 ---------
+- All ANSI keywords now recognized.
 - Keyword colors now shown correctly.
 
 Other

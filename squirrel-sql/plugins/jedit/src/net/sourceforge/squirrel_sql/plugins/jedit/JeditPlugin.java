@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.jedit;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -17,7 +17,6 @@ package net.sourceforge.squirrel_sql.plugins.jedit;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -27,16 +26,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
-import net.sourceforge.squirrel_sql.plugins.jedit.textarea.TextAreaDefaults;
 
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
@@ -45,8 +38,9 @@ import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPane
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionSheet;
-import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.BaseTablePanelTab;
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
+
+import net.sourceforge.squirrel_sql.plugins.jedit.textarea.TextAreaDefaults;
 
 /**
  * The jEdit plugin class. This plugin replaces the standard SQL entry text area
@@ -57,8 +51,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.ISessionProperties
 public class JeditPlugin extends DefaultSessionPlugin
 {
 	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(JeditPlugin.class);
+	private static final ILogger s_log = LoggerController.createLogger(JeditPlugin.class);
 
 	/** Preferences for new sessions. */
 	private JeditPreferences _newSessionPrefs;
@@ -165,9 +158,7 @@ public class JeditPlugin extends DefaultSessionPlugin
 		super.initialize();
 
 		_resources =
-			new PluginResources(
-				"net.sourceforge.squirrel_sql.plugins.jedit.jedit",
-				this);
+			new PluginResources("net.sourceforge.squirrel_sql.plugins.jedit.jedit", this);
 
 		// Folder to store user settings.
 		try
@@ -185,8 +176,7 @@ public class JeditPlugin extends DefaultSessionPlugin
 		dfts.inputHandler = new JeditInputHandler();
 
 		// Install the jEdit factory for creating SQL entry text controls.
-		ISQLEntryPanelFactory originalFactory =
-			getApplication().getSQLEntryPanelFactory();
+		ISQLEntryPanelFactory originalFactory = getApplication().getSQLEntryPanelFactory();
 		_jeditFactory = new JeditSQLEntryPanelFactory(this, originalFactory);
 		getApplication().setSQLEntryPanelFactory(_jeditFactory);
 	}
@@ -219,8 +209,7 @@ public class JeditPlugin extends DefaultSessionPlugin
 		}
 		session.putPluginObject(this, JeditConstants.ISessionKeys.PREFS, prefs);
 
-		SessionPreferencesListener lis =
-			new SessionPreferencesListener(this, session, prefs);
+		SessionPreferencesListener lis = new SessionPreferencesListener(this, session, prefs);
 		prefs.addPropertyChangeListener(lis);
 		_prefListeners.put(session.getIdentifier(), lis);
 	}
@@ -243,10 +232,8 @@ public class JeditPlugin extends DefaultSessionPlugin
 	 */
 	public INewSessionPropertiesPanel[] getNewSessionPropertiesPanels()
 	{
-		return new INewSessionPropertiesPanel[]
-		{
-			new JeditPreferencesPanel(_newSessionPrefs)
-		};
+		return new INewSessionPropertiesPanel[] {
+			 new JeditPreferencesPanel(_newSessionPrefs)};
 	}
 
 	/**
@@ -256,12 +243,11 @@ public class JeditPlugin extends DefaultSessionPlugin
 	 */
 	public ISessionPropertiesPanel[] getSessionPropertiesPanels(ISession session)
 	{
-		JeditPreferences sessionPrefs = (JeditPreferences) session.getPluginObject(
-								this, JeditConstants.ISessionKeys.PREFS);
-		return new ISessionPropertiesPanel[]
-		{
-			new JeditPreferencesPanel(sessionPrefs)
-		};
+		JeditPreferences sessionPrefs =
+			(JeditPreferences) session.getPluginObject(
+				this,
+				JeditConstants.ISessionKeys.PREFS);
+		return new ISessionPropertiesPanel[] { new JeditPreferencesPanel(sessionPrefs)};
 	}
 
 	PluginResources getResources()
@@ -283,9 +269,7 @@ public class JeditPlugin extends DefaultSessionPlugin
 		{
 			XMLBeanReader doc = new XMLBeanReader();
 			doc.load(
-				new File(
-					_userSettingsFolder,
-					JeditConstants.USER_PREFS_FILE_NAME),
+				new File(_userSettingsFolder, JeditConstants.USER_PREFS_FILE_NAME),
 				getClass().getClassLoader());
 			Iterator it = doc.iterator();
 			if (it.hasNext())
@@ -318,10 +302,7 @@ public class JeditPlugin extends DefaultSessionPlugin
 		try
 		{
 			XMLBeanWriter wtr = new XMLBeanWriter(_newSessionPrefs);
-			wtr.save(
-				new File(
-					_userSettingsFolder,
-					JeditConstants.USER_PREFS_FILE_NAME));
+			wtr.save(new File(_userSettingsFolder, JeditConstants.USER_PREFS_FILE_NAME));
 		}
 		catch (Exception ex)
 		{
@@ -340,10 +321,8 @@ public class JeditPlugin extends DefaultSessionPlugin
 		private JeditPreferences _prefs;
 		private boolean _usingJeditControl;
 
-		SessionPreferencesListener(
-			JeditPlugin plugin,
-			ISession session,
-			JeditPreferences prefs)
+		SessionPreferencesListener(JeditPlugin plugin, ISession session,
+									JeditPreferences prefs)
 		{
 			super();
 			_plugin = plugin;
@@ -355,8 +334,7 @@ public class JeditPlugin extends DefaultSessionPlugin
 		{
 			final String propName = evt.getPropertyName();
 			if (propName == null
-				|| propName.equals(
-					JeditPreferences.IPropertyNames.USE_JEDIT_CONTROL))
+				|| propName.equals(JeditPreferences.IPropertyNames.USE_JEDIT_CONTROL))
 			{
 				synchronized (_session)
 				{
@@ -364,24 +342,20 @@ public class JeditPlugin extends DefaultSessionPlugin
 					if (sheet != null)
 					{
 						sheet.replaceSQLEntryPanel(
-							_plugin.getJeditFactory().createSQLEntryPanel(
-								_session));
+							_plugin.getJeditFactory().createSQLEntryPanel(_session));
 					}
 				}
 			}
 
 			if (propName == null
-				|| !propName.equals(
-					JeditPreferences.IPropertyNames.USE_JEDIT_CONTROL))
+				|| !propName.equals(JeditPreferences.IPropertyNames.USE_JEDIT_CONTROL))
 			{
 				if (_prefs.getUseJeditTextControl())
 				{
 					JeditSQLEntryPanel pnl =
 						(JeditSQLEntryPanel) _session.getPluginObject(
 							_plugin,
-							JeditConstants
-								.ISessionKeys
-								.JEDIT_SQL_ENTRY_CONTROL);
+							JeditConstants.ISessionKeys.JEDIT_SQL_ENTRY_CONTROL);
 					if (pnl != null)
 					{
 						pnl.updateFromPreferences(_prefs);
