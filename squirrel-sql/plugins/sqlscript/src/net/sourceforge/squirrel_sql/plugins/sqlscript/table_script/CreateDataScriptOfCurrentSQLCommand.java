@@ -40,63 +40,68 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
         super(session);
     }
 
-	/**
-	 * Execute this command.
-	 */
-	public void execute()
-	{
-		_session.getApplication().getThreadPool().addTask(new Runnable()
-		{
-			public void run()
-			{
-				SQLConnection conn = _session.getSQLConnection();
-				String selectSQL = _session.getSQLScriptToBeExecuted();
-				final StringBuffer sbRows = new StringBuffer(1000);
-				try
-				{
-					final Statement stmt = conn.createStatement();
-					try
-					{
-						ResultSet srcResult = stmt.executeQuery(selectSQL);
-						ResultSetMetaData metaData = srcResult.getMetaData();
-						String sTable = metaData.getTableName(1);
-						if (sTable == null || sTable.equals(""))
-						{
-							int iFromIndex = selectSQL.toLowerCase().indexOf("from ") + 5;
-							int iSpaceIndex = selectSQL.indexOf(" ", iFromIndex + 2);
-							sTable = selectSQL.substring(iFromIndex, iSpaceIndex).trim();
-						}
-						genInserts(srcResult, sTable, sbRows);
-					}
-					finally
-					{
-						try
-						{
-							stmt.close();
-						}
-						catch (Exception e)
-						{
-						}
-					}
-				}
-				catch (Exception e)
-				{
-					_session.getMessageHandler().showMessage(e);
-				}
-				SwingUtilities.invokeLater(new Runnable()
-				{
-					public void run()
-					{
-						if(sbRows.length() > 0)
-						{
-							_session.setEntireSQLScript(sbRows.toString());
-							_session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
-						}
-						hideAbortFrame();
-					}
-				});
-			}
-		});
-		showAbortFrame();
-	}
+    /**
+     * Execute this command.
+     */
+    public void execute()
+    {
+        _session.getApplication().getThreadPool().addTask(new Runnable()
+        {
+            public void run()
+            {
+                SQLConnection conn = _session.getSQLConnection();
+                String selectSQL = _session.getSQLScriptToBeExecuted();
+                final StringBuffer sbRows = new StringBuffer(1000);
+                try
+                {
+                    final Statement stmt = conn.createStatement();
+                    try
+                    {
+                        ResultSet srcResult = stmt.executeQuery(selectSQL);
+                        ResultSetMetaData metaData = srcResult.getMetaData();
+                        String sTable = metaData.getTableName(1);
+                        if (sTable == null || sTable.equals(""))
+                        {
+                            int iFromIndex = selectSQL.toLowerCase().indexOf("from ") + 5;
+                            int iSpaceIndex = selectSQL.indexOf(" ", iFromIndex + 2);
+                            if (iSpaceIndex == -1)
+                            {
+                                iSpaceIndex = selectSQL.length()-1;
+                            }
+
+                            sTable = selectSQL.substring(iFromIndex, iSpaceIndex).trim();
+                        }
+                        genInserts(srcResult, sTable, sbRows);
+                    }
+                    finally
+                    {
+                        try
+                        {
+                            stmt.close();
+                        }
+                        catch (Exception e)
+                        {
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    _session.getMessageHandler().showMessage(e);
+                }
+                SwingUtilities.invokeLater(new Runnable()
+                {
+                    public void run()
+                    {
+                        if(sbRows.length() > 0)
+                        {
+                            _session.setEntireSQLScript(sbRows.toString());
+                            _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
+                        }
+                        hideAbortFrame();
+                    }
+                });
+            }
+        });
+        showAbortFrame();
+    }
 }
