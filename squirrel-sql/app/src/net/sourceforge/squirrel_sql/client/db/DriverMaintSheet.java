@@ -512,7 +512,7 @@ public class DriverMaintSheet extends BaseSheet
 			}
 		});
 
-		JButton newBtn = new NewListEntryButton();
+		JButton newBtn = new AddListEntryButton();
 
 		_extraClasspathDeleteBtn = new JButton("Delete");
 		_extraClasspathDeleteBtn.setEnabled(false);
@@ -582,13 +582,13 @@ public class DriverMaintSheet extends BaseSheet
 	 * Button that allows user to enter new items in the Extra Class Path
 	 * list.
 	 */
-	private final class NewListEntryButton extends JButton implements ActionListener
+	private final class AddListEntryButton extends JButton implements ActionListener
 	{
 		private JFileChooser _chooser;
 
-		NewListEntryButton()
+		AddListEntryButton()
 		{
-			super("New");
+			super("Add");
 			addActionListener(this);
 		}
 		
