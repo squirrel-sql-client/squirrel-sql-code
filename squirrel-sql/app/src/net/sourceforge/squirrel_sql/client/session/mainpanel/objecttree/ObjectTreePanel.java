@@ -58,6 +58,7 @@ import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.Export
 import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.ImportedKeysTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.IndexesTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.PrimaryKeyTab;
+import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.RowCountTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.RowIDTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.TableInfoTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.TablePriviligesTab;
@@ -141,6 +142,7 @@ public class ObjectTreePanel extends JPanel
 		addDetailTab(DatabaseObjectType.TABLE, new DatabaseObjectInfoTab());
 //		addDetailTab(DatabaseObjectType.TABLE, new TableInfoTab());
 		addDetailTab(DatabaseObjectType.TABLE, new ContentsTab());
+		addDetailTab(DatabaseObjectType.TABLE, new RowCountTab());
 		addDetailTab(DatabaseObjectType.TABLE, new ColumnsTab());
 		addDetailTab(DatabaseObjectType.TABLE, new PrimaryKeyTab());
 		addDetailTab(DatabaseObjectType.TABLE, new ExportedKeysTab());
