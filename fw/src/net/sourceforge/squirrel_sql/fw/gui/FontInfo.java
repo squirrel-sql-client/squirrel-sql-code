@@ -157,6 +157,7 @@ public class FontInfo implements Cloneable
 		return new Font(_familyName, generateStyle(), _size);
 	}
 
+	// i18n ? What is this used for?
 	public String toString()
 	{
 		StringBuffer buf = new StringBuffer();

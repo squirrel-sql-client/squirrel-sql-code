@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -57,7 +57,7 @@ public class FontChooser extends JDialog
 												{ "8", "9", "10", "12", "14" });
 	private final JCheckBox _boldChk = new JCheckBox(s_stringMgr.getString("FontChooser.bold"));
 	private final JCheckBox _italicChk = new JCheckBox(s_stringMgr.getString("FontChooser.italic"));
-	private final JLabel _previewLbl = new JLabel(s_stringMgr.getString("FontChooser.preview"));
+	private final JLabel _previewLbl = new JLabel(s_stringMgr.getString("FontChooser.previewText"));
 
 	private Font _font;
 
@@ -204,7 +204,7 @@ public class FontChooser extends JDialog
 		int size = 12;
 		try
 		{
-			size = Integer.parseInt((String) _fontSizesCmb.getSelectedItem());
+			size = Integer.parseInt((String)_fontSizesCmb.getSelectedItem());
 		}
 		catch (Exception ignore)
 		{
@@ -231,15 +231,15 @@ public class FontChooser extends JDialog
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 
 		gbc.gridx = gbc.gridy = 0;
-		content.add(new JLabel("Font"), gbc);
+		content.add(new JLabel(s_stringMgr.getString("FontChooser.font")), gbc);
 
 		++gbc.gridx;
-		content.add(new JLabel("Size"), gbc);
+		content.add(new JLabel(s_stringMgr.getString("FontChooser.size")), gbc);
 
 		if (_selectStyles)
 		{
 			++gbc.gridx;
-			content.add(new JLabel("Style"), gbc);
+			content.add(new JLabel(s_stringMgr.getString("FontChooser.style")), gbc);
 		}
 
 		++gbc.gridy;
@@ -278,7 +278,7 @@ public class FontChooser extends JDialog
 	private JPanel createPreviewPanel()
 	{
 		final JPanel pnl = new JPanel(new BorderLayout());
-		pnl.setBorder(BorderFactory.createTitledBorder("Preview"));
+		pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("FontChooser.previewTitle")));
 		Dimension prefSize = _previewLbl.getPreferredSize();
 		prefSize.height = 50;
 		_previewLbl.setPreferredSize(prefSize);
@@ -292,7 +292,7 @@ public class FontChooser extends JDialog
 	{
 		JPanel pnl = new JPanel();
 
-		JButton okBtn = new JButton("OK");
+		JButton okBtn = new JButton(s_stringMgr.getString("FontChooser.ok"));
 		okBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
@@ -301,7 +301,7 @@ public class FontChooser extends JDialog
 				dispose();
 			}
 		});
-		JButton cancelBtn = new JButton("Cancel");
+		JButton cancelBtn = new JButton(s_stringMgr.getString("FontChooser.cancel"));
 		cancelBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
@@ -333,5 +333,4 @@ public class FontChooser extends JDialog
 			setupPreviewLabel();
 		}
 	}
-
 }

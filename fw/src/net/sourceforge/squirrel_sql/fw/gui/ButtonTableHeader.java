@@ -39,7 +39,7 @@ import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
- * @version 	$Id: ButtonTableHeader.java,v 1.3 2004-07-15 11:59:14 colbell Exp $
+ * @version 	$Id: ButtonTableHeader.java,v 1.4 2004-08-16 09:16:37 colbell Exp $
  * @author		Johan Compagner
  */
 public class ButtonTableHeader extends JTableHeader
@@ -67,7 +67,7 @@ public class ButtonTableHeader extends JTableHeader
 	private boolean _dragged;
 
 	/**
-	 * if <tt>_pressed</tt> is <tt>true</tt> then this is the physical column 
+	 * if <tt>_pressed</tt> is <tt>true</tt> then this is the physical column
 	 * that the mouse was pressed in.
 	 */
 	private int _pressedColumnIdx;
@@ -139,7 +139,7 @@ public class ButtonTableHeader extends JTableHeader
 		_currentlySortedColumnIdx = -1;
 	}
 
-        // SS: Display complete column header as tooltip if the column isn't wide enough to display it
+	// SS: Display complete column header as tooltip if the column isn't wide enough to display it
 	public String getToolTipText(MouseEvent e)
 	{
 		int col = columnAtPoint(e.getPoint());

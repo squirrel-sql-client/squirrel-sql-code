@@ -1,4 +1,3 @@
-
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
  * Copyright (C) 2001-2004 Colin Bell
@@ -19,17 +18,18 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import javax.swing.JPanel;
-
 /**
  * A JPanel with a method that can be called by a surrounding JPanel
  * to indicate that the user has selected "OK" in a higher-level context,
  * such as a panel containing this panel.
  */
-public abstract class OkJPanel extends JPanel {
-	
-	// User has clicked OK button, so apply changes
-	// made within this particular panel
-	public void ok() {
+public abstract class OkJPanel extends JPanel
+{
+	/**
+	 * User has clicked OK button, so apply changes
+	 * made within this particular panel
+	 */
+	public void ok()
+	{
 	}
-
 }
