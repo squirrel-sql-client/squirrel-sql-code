@@ -27,16 +27,6 @@ package net.sourceforge.squirrel_sql.client.session.event;
  */
 public class SessionAdapter implements ISessionListener
 {
- 	/**
-	 * The session title has changed
-	 *
-	 * @param	evt		The event that has just occured.
-	 */
-	public void sessionTitleChanged(SessionEvent evt)
-	{
-		// Empty body.
-	}
-
 	/**
 	 * The session has been closed.
 	 *
