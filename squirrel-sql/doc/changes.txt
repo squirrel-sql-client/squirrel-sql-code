@@ -6,6 +6,16 @@ Change Log
 
 Enhancements
 ------------
+- Windows batch file now uses Java in %JAVAHOME% if it is defined else
+  uses the current path.
+- Windows batch file now loads all jars from /lib directory.
+- Unix shell script now uses Java in $JAVAHOME if it is defined else
+  uses the current path (Sergio Ballestrero).
+- Unix shell script now loads all jars from /lib
+  directory (Sergio Ballestrero)
+- Commit/Rollback options added to the session menu.
+- Session Sheet can show/hide its toolbar.
+- Aliases and Drivers can show/hide their toolbars.
 - Aliases and Drivers windows can now be resized.
 - The toolbar in the main window can now be hidden.
 - Multiple jars can now be specified for an SQL driver.
@@ -37,6 +47,7 @@ Enhancements
 
 Bug Fixes
 ---------
+- Show main window scrollbars at startup if tool windows are offscreen.
 - Don't show error dialog until it is properly positioned.
 - All SQL statements now get saved into the history.
 - Load images correctly in framework classes.
