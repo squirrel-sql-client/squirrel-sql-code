@@ -66,10 +66,7 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
     }
     
     public String getChangeLogFileName() {
-        String retValue;
-        
-        retValue = super.getChangeLogFileName();
-        return retValue;
+        return "changes.txt";
     }
     
     public String getContributors() {
@@ -87,17 +84,11 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
     }
     
     public String getHelpFileName() {
-        String retValue;
-        
-        retValue = super.getHelpFileName();
-        return retValue;
+        return "readme.html";
     }
     
     public String getLicenceFileName() {
-        String retValue;
-        
-        retValue = super.getLicenceFileName();
-        return retValue;
+        return "licence.txt";
     }
     
     public net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel[] getNewSessionPropertiesPanels() {
@@ -212,11 +203,11 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
     }
     
     public String getInternalName() {
-        return new String("mssqlassist");
+        return new String("mssql");
     }
     
     public String getVersion() {
-        return new String("0.1a");
+        return new String("0.1");
     }
     
     private void removeActionsOfType(ActionCollection coll,java.lang.Class classType) {
