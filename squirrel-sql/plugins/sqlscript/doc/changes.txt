@@ -1,0 +1,15 @@
+Change Log
+==========
+
+0.11
+====
+
+Enhancements
+------------
+- Script execution can now be cancelled.
+- Script execution is now threaded.
+
+
+0.1
+===
+- Initial release
