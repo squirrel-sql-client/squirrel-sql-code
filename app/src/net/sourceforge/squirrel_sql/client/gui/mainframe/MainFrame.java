@@ -97,6 +97,8 @@ public class MainFrame extends JFrame //BaseMDIParentFrame
 	private final IInternalFramePositioner _internalFramePositioner = new CascadeInternalFramePositioner();
 //	private Map _children = new HashMap();
 
+	private boolean _lastActionWasSeparator = false;
+
 	/**
 	 * Ctor.
 	 *
@@ -290,6 +292,34 @@ public class MainFrame extends JFrame //BaseMDIParentFrame
 			throw new IllegalArgumentException("JComponent == null");
 		}
 		_statusBar.remove(comp);
+	}
+
+	/**
+	 * Add action to the action bar.
+	 *
+	 * @param	act	Action to add.
+	 *
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>Action</TT> passed.
+	 */
+	public void addToActionBar(Action act)
+	{
+			if (act == null)
+			{
+					throw new IllegalArgumentException("Action == null");
+			}
+			_actionBar.add(act);
+			_lastActionWasSeparator = false;
+	}
+
+	public void addActionBarSeparator()
+	{
+		// Dont allow for two separators in a row, just doesnt make any sense.
+		if (!_lastActionWasSeparator)
+		{
+			_actionBar.addSeparator();
+			_lastActionWasSeparator = true;
+		}
 	}
 
 	public MessagePanel getMessagePanel()
