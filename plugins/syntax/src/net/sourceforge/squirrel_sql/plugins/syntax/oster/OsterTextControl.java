@@ -36,6 +36,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.syntax.IConstants;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxStyle;
+import net.sourceforge.squirrel_sql.plugins.syntax.KeyManager;
 
 import javax.swing.*;
 import javax.swing.plaf.ComponentUI;

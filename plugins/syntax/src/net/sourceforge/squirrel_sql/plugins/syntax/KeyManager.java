@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.syntax.oster;
+package net.sourceforge.squirrel_sql.plugins.syntax;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,10 +15,10 @@ public class KeyManager
 {
    public static final char[] STOP_AT = new char[]{'.', '(', ')' , '\'', '\n', ',', '=', '<', '>'};
 
-   private JTextPane _textPane;
+   private JEditorPane _textPane;
 
 
-   KeyManager(JTextPane textPane)
+   public KeyManager(JEditorPane textPane)
    {
       _textPane = textPane;
 
