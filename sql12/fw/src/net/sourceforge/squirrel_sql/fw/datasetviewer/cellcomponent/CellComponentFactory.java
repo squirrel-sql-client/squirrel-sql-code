@@ -7,7 +7,6 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 import java.awt.Component;
 import java.sql.Types;
@@ -33,6 +32,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComp
 import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 
 
 /**
@@ -672,7 +672,7 @@ public class CellComponentFactory {
 	  * 	- those that are registered through the registerDataType method, and
 	  * 	- those that are specifically listed in the variable initialClassNameList
 	  */
-	 public static JPanel[] getControlPanels() {
+	 public static OkJPanel[] getControlPanels() {
 		ArrayList panelList = new ArrayList();
 		
 		/*
@@ -708,7 +708,7 @@ public class CellComponentFactory {
 				Method panelMethod =
 					Class.forName(className).getMethod("getControlPanel", parameterTypes);
 					
-				JPanel panel = (JPanel)panelMethod.invoke(null, null);
+				OkJPanel panel = (OkJPanel)panelMethod.invoke(null, null);
 				panelList.add(panel);
 			}
 			catch (Exception e) {
@@ -716,7 +716,7 @@ public class CellComponentFactory {
 			}
 		}
 		
-		return (JPanel[])panelList.toArray(new JPanel[0]);
+		return (OkJPanel[])panelList.toArray(new OkJPanel[0]);
 	}
 
 
