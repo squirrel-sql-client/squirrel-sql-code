@@ -36,7 +36,6 @@ import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggingLevel;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
@@ -52,7 +51,6 @@ public class SquirrelPreferences implements Serializable {
 		String SESSION_PROPERTIES = "sessionProperties";
 		String LOGIN_TIMEOUT = "loginTimeout";
 		String DEBUG_JDBC = "debugJdbc";
-		String LOGGING_LEVEL = "loggingLevel";
 		String MAIN_FRAME_STATE = "mainFrameWindowState";
 		String SHOW_CONTENTS_WHEN_DRAGGING = "showContentsWhenDragging";
 		String SHOW_TOOLTIPS = "showToolTips";
@@ -84,9 +82,6 @@ public class SquirrelPreferences implements Serializable {
 
 	/** Show tooltips for controls. */
 	private boolean _showToolTips = true;
-
-	/** Logging level. */
-	private int _logLevel = LoggingLevel.INFO.getLevel();
 
 	/**
 	 * Objects stored by plugins. Each element of this collection is a <TT>Map</TT>
@@ -120,7 +115,6 @@ public class SquirrelPreferences implements Serializable {
 		setLoginTimeout(rhs.getLoginTimeout());
 		setDebugJdbc(rhs.getDebugJdbc());
 		setShowToolTips(rhs.getShowToolTips());
-		setLoggingLevel(rhs.getLoggingLevel());
 //		setPluginObjects(rhs.getPluginObjects());
 	}
 
@@ -150,10 +144,6 @@ public class SquirrelPreferences implements Serializable {
 
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		_propChgReporter.removePropertyChangeListener(listener);
-	}
-
-	public boolean isDebugMode() {
-		return getLoggingLevel() == LoggingLevel.DEBUG.getLevel();
 	}
 
 	public SessionProperties getSessionProperties() {
@@ -222,17 +212,6 @@ public class SquirrelPreferences implements Serializable {
 		_showToolTips = data;
 		_propChgReporter.firePropertyChange(IPropertyNames.SHOW_TOOLTIPS,
 								oldValue, _showToolTips);
-	}
-
-	public int getLoggingLevel() {
-		return _logLevel;
-	}
-
-	public synchronized void setLoggingLevel(int data) {
-		final int oldValue = _logLevel;
-		_logLevel = data;
-		_propChgReporter.firePropertyChange(IPropertyNames.LOGGING_LEVEL,
-								oldValue, _logLevel);
 	}
 
 	/*
@@ -332,7 +311,7 @@ public class SquirrelPreferences implements Serializable {
 */
 
 	public void load() {
-		File prefsFile = _app.getApplicationFiles().getUserPreferencesFile();
+		File prefsFile = new ApplicationFiles().getUserPreferencesFile();
 		try {
 			XMLBeanReader doc = new XMLBeanReader();
 			doc.load(prefsFile);
@@ -353,7 +332,7 @@ public class SquirrelPreferences implements Serializable {
 	 * Save preferences to disk.
 	 */
 	public synchronized void save() {
-		File prefsFile = _app.getApplicationFiles().getUserPreferencesFile();
+		File prefsFile = new ApplicationFiles().getUserPreferencesFile();
 		try {
 			XMLBeanWriter wtr = new XMLBeanWriter(this);
 			wtr.save(prefsFile);

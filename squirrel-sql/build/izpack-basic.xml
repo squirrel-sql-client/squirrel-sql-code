@@ -31,6 +31,7 @@
             <file targetdir="$INSTALL_PATH" src="doc"/>
             <file targetdir="$INSTALL_PATH" src="..\squirrel-sql-dist\squirrel-sql-1.1alpha4\core\dist\squirrel-sql.bat"/>
             <file targetdir="$INSTALL_PATH" src="..\squirrel-sql-dist\squirrel-sql-1.1alpha4\core\dist\squirrel-sql.sh"/>
+			<file targetdir="$INSTALL_PATH" src="..\squirrel-sql-dist\squirrel-sql-1.1alpha4\core\dist\log4j.properties"/>
         </pack>
     </packs>
 </installation>

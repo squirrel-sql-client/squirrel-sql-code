@@ -37,6 +37,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 
 /**
  * XML cache of JDBC drivers and aliases.
@@ -90,14 +91,15 @@ public class DataCache {
 	 * saved to <CODE>ApplicationFiles.getUserAliasesFileName()</CODE>.
 	 */
 	public void save() {
-		final File driversFile = _app.getApplicationFiles().getDatabaseDriversFile();
+		final ApplicationFiles appFiles = new ApplicationFiles();
+		final File driversFile = appFiles.getDatabaseDriversFile();
 		try {
 			_cache.saveAllForClass(driversFile.getPath(), SQL_DRIVER_IMPL);
 		} catch (Exception ex) {
 			s_log.error("Error occured saving drivers to " + driversFile.getPath(), ex);
 		}
 
-		final File aliasesFile = _app.getApplicationFiles().getDatabaseAliasesFile();
+		final File aliasesFile = appFiles.getDatabaseAliasesFile();
 		try {
 			_cache.saveAllForClass(aliasesFile.getPath(), SQL_ALIAS_IMPL);
 		} catch (Exception ex) {
@@ -178,7 +180,8 @@ public class DataCache {
 	 * Load <TT>IISqlDriver</TT> objects from XML file.
 	 */
 	private void loadDrivers() {
-		final File driversFile = _app.getApplicationFiles().getDatabaseDriversFile();
+		final ApplicationFiles appFiles = new ApplicationFiles();
+		final File driversFile = appFiles.getDatabaseDriversFile();
 		try {
 			_cache.load(driversFile.getPath());
 			if (!drivers().hasNext()) {
@@ -232,7 +235,8 @@ public class DataCache {
 	}
 
 	private void loadAliases() {
-		final File aliasesFile = _app.getApplicationFiles().getDatabaseAliasesFile();
+		final ApplicationFiles appFiles = new ApplicationFiles();
+		final File aliasesFile = appFiles.getDatabaseAliasesFile();
 		try {
 			_cache.load(aliasesFile.getPath());
 		} catch (FileNotFoundException ignore) { // first time user has run pgm.

@@ -24,7 +24,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
-import net.sourceforge.squirrel_sql.client.IApplication;
 
 public class ApplicationFiles {
 	/** Name of directory to contain users settings. */
@@ -41,22 +40,10 @@ public class ApplicationFiles {
 
 	/**
 	 * Ctor.
-	 * 
-	 * @param	app	Application API
-	 * 
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> <TT>IApplication</TT>
-	 * 			passed in.
 	 */
-	public ApplicationFiles(IApplication app)
-			throws IllegalArgumentException {
+	public ApplicationFiles() {
 		super();
-		if (app == null) {
-			throw new IllegalArgumentException("Null IApplication passed");
-		}
-		
-		ApplicationArguments args = app.getArguments();
-		
+		ApplicationArguments args = ApplicationArguments.getInstance();
 		_userSettingsDir = args.getUserSettingsDirectoryOverride();
 		if (_userSettingsDir == null) {
 			_userSettingsDir = System.getProperty(IJavaPropertyNames.USER_HOME) +

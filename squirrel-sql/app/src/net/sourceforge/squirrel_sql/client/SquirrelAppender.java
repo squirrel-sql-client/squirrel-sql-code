@@ -17,20 +17,31 @@ package net.sourceforge.squirrel_sql.client;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import java.io.File;
+import java.io.IOException;
 
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.PatternLayout;
+
+import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 /**
- * Application entry point.
+ * This log4j appender writes out to the
+ * <TT>ApplicationFiles.getExecutionLogFile()</TT> file.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class Main {
-    /**
-     * Application entry point.
-     *
-     * @param   args    Arguments passed on command line.
-     */
-    public static void main(String[] args) {
-		ApplicationArguments.initialize(args);
-        new Application().startup();
-    }
+public class SquirrelAppender extends FileAppender {
+
+	public SquirrelAppender() throws IOException, IllegalStateException {
+		super(new PatternLayout("%-4r [%t] %-5p %c %x - %m%n"), getLogFile().getAbsolutePath());
+	}
+
+	private static File getLogFile() throws IllegalStateException {
+		final File logFile = new ApplicationFiles().getExecutionLogFile();
+		if (logFile == null) {
+			throw new IllegalStateException("null ExecutionLogFile in ApplicationFiles");
+		}
+		return logFile;
+	}
 }
+

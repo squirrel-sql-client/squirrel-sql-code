@@ -123,7 +123,6 @@ public class GlobalPreferencesDialog extends JDialog {
 
 		// Add panels for core Squirrel functionality.
 		_panels.add(new GeneralPreferencesPanel());
-		_panels.add(new LoggingPreferencesPanel(_app));
 		_panels.add(new SQLPropertiesPanel(_app, i18n.NEW_SESSION_SQL, i18n.NEW_SESSION_SQL));
 		_panels.add(new OutputPropertiesPanel(i18n.NEW_SESSION_OUTPUT, i18n.NEW_SESSION_OUTPUT));
 

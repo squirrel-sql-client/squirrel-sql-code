@@ -116,19 +116,5 @@ public class Log4jLogger implements ILogger {
 	public boolean isInfoEnabled() {
 		return _cat.isInfoEnabled();
 	}
-	
-	public void setPriority(LoggingLevel level) {
-		if (level == LoggingLevel.OFF) {
-			//??
-		} else if (level == LoggingLevel.ERROR) {
-			_cat.getRoot().setPriority(Priority.ERROR);
-		} else if (level == LoggingLevel.WARN) {
-			_cat.getRoot().setPriority(Priority.WARN);
-		} else if (level == LoggingLevel.INFO) {
-			_cat.getRoot().setPriority(Priority.INFO);
-		} else {
-			_cat.getRoot().setPriority(Priority.DEBUG);
-		}
-	}
 }
 

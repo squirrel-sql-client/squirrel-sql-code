@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -26,13 +27,22 @@ import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 
 class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(GeneralPreferencesPanel.class);
+
 	private MyPanel _myPanel;
 
 	private IApplication _app;
@@ -50,7 +60,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 
 		_app = app;
 
-		((MyPanel)getPanelComponent()).loadData(_app.getSquirrelPreferences());
+		((MyPanel)getPanelComponent()).loadData(_app, _app.getSquirrelPreferences());
 	}
 
 	public synchronized Component getPanelComponent() {
@@ -78,6 +88,8 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 		 * replaced with a property file.
 		 */
 		interface i18n {
+			String DEBUG_JDBC = "JDBC Debug";
+			String JDBC_PERF_WARNING = "Note: JDBC debug will slow down this application.";
 			String LOGIN_TIMEOUT = "Login Timeout (Seconds):";
 			String SHOW_CONTENTS = "Show Window Contents While Dragging";
 			String SHOW_TOOLTIPS = "Show Tooltips";
@@ -88,22 +100,36 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 		private JCheckBox _showContents = new JCheckBox(i18n.SHOW_CONTENTS);
 		private JCheckBox _showToolTips = new JCheckBox(i18n.SHOW_TOOLTIPS);
 		private IntegerField _loginTimeout = new IntegerField();
+		private JLabel _executionLogFileNameLbl = new OutputLabel(" ");// Must have at least 1 blank otherwise width gets set to zero.
+		private JLabel _logConfigFileNameLbl = new OutputLabel(" ");// Must have at least 1 blank otherwise width gets set to zero.
+		private JCheckBox _debugJdbc = new JCheckBox(i18n.DEBUG_JDBC);
+		private JLabel _jdbcDebugLogFileNameLbl = new OutputLabel(" ");// Must have at least 1 blank otherwise width gets set to zero.
 
 		MyPanel() {
 			super();
 			createUserInterface();
 		}
 
-		void loadData(SquirrelPreferences prefs) {
+		void loadData(IApplication app, SquirrelPreferences prefs) {
+			final ApplicationFiles appFiles = new ApplicationFiles();
+
 			_showContents.setSelected(prefs.getShowContentsWhenDragging());
 			_showToolTips.setSelected(prefs.getShowToolTips());
 			_loginTimeout.setInt(prefs.getLoginTimeout());
+			_executionLogFileNameLbl.setText(appFiles.getExecutionLogFile().getPath());
+
+			String configFile = ApplicationArguments.getInstance().getLoggingConfigFileName();
+			_logConfigFileNameLbl.setText(configFile != null ? configFile : "<unspecified>");//i18n.
+
+			_debugJdbc.setSelected(prefs.getDebugJdbc());
+			_jdbcDebugLogFileNameLbl.setText(appFiles.getJDBCDebugLogFile().getPath());
 		}
 
 		void applyChanges(SquirrelPreferences prefs) {
 			prefs.setShowContentsWhenDragging(_showContents.isSelected());
 			prefs.setShowToolTips(_showToolTips.isSelected());
 			prefs.setLoginTimeout(_loginTimeout.getInt());
+			prefs.setDebugJdbc(_debugJdbc.isSelected());
 		}
 
 		private void createUserInterface() {
@@ -120,6 +146,10 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 			add(createAppearancePanel(), gbc);
 			++gbc.gridy;
 			add(createSQLPanel(), gbc);
+			++gbc.gridy;
+			add(createLoggingPanel(), gbc);
+			++gbc.gridy;
+			add(createJDBCDebugPanel(), gbc);
 		}
 
 		private JPanel createAppearancePanel() {
@@ -157,6 +187,80 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 			pnl.add(_loginTimeout, gbc);
 			
 			return pnl;
+		}
+
+		private JPanel createLoggingPanel() {
+			JPanel pnl = new JPanel();
+			pnl.setBorder(BorderFactory.createTitledBorder("Logging"));
+			
+			pnl.setLayout(new GridBagLayout());
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = gbc.HORIZONTAL;
+			gbc.insets = new Insets(4, 4, 4, 4);
+
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			pnl.add(new RightLabel("Execution Log File:"), gbc);
+
+			++gbc.gridx;
+			pnl.add(_executionLogFileNameLbl, gbc);
+
+			gbc.gridx = 0;
+			++gbc.gridy;
+			pnl.add(new RightLabel("Configuration File:"), gbc);
+
+			++gbc.gridx;
+			pnl.add(_logConfigFileNameLbl, gbc);
+
+			return pnl;
+		}
+
+		private JPanel createJDBCDebugPanel() {
+			JPanel pnl = new JPanel();
+			pnl.setBorder(BorderFactory.createTitledBorder("JDBC Debug"));
+			
+			pnl.setLayout(new GridBagLayout());
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = gbc.HORIZONTAL;
+			gbc.insets = new Insets(4, 4, 4, 4);
+	
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			pnl.add(_debugJdbc, gbc);
+	
+			gbc.gridx = 0;
+			++gbc.gridy;
+			pnl.add(new RightLabel("JDBC Debug File:"), gbc);
+	
+			++gbc.gridx;
+			pnl.add(_jdbcDebugLogFileNameLbl, gbc);
+
+			gbc.gridx = 0;
+			gbc.gridy = gbc.RELATIVE;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
+			pnl.add(new MultipleLineLabel(i18n.JDBC_PERF_WARNING), gbc);
+			
+			return pnl;
+		}
+	}
+
+	private static final class RightLabel extends JLabel {
+		RightLabel(String title) {
+			super(title, SwingConstants.RIGHT);
+		}
+	}
+	
+	private static final class OutputLabel extends JLabel {
+		OutputLabel(String text) {
+			super(text);
+			setToolTipText(text);
+			Dimension ps = getPreferredSize();
+			ps.width = 150;
+			setPreferredSize(ps);
+		}
+		public void setText(String text) {
+			super.setText(text);
+			setToolTipText(text);
 		}
 	}
 }

@@ -218,7 +218,7 @@ public class PluginManager {
 	 * Initialize plugins.
 	 */
 	public void initializePlugins() {
-		final boolean debug = _app.getSquirrelPreferences().isDebugMode();
+		final boolean debug = s_log.isDebugEnabled();
 		for (Iterator it = _loadedPlugins.values().iterator(); it.hasNext();) {
 			IPlugin plugin = (IPlugin)it.next();
 			try {

@@ -22,9 +22,15 @@ import java.util.StringTokenizer;
 /**
  * Application arguments.
  *
+ * <B>Note:</B> <EM>This class <B>cannot</B> use the logging package as this
+ * class is used to initialize the logging package.</EM>
+ *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ApplicationArguments {
+	/** Only instance of this class. */
+	private static ApplicationArguments s_instance = null;
+
 	/** &quot;Raw&quot; arguments straight from the command line. */
 	private String[] _rawArgs;
 
@@ -36,12 +42,15 @@ public class ApplicationArguments {
 	 */
 	private String _userSettingsDir = null;
 
+	/** Path for logging configuration file */
+	private String _loggingConfigFile = null;
+
 	/**
 	 * Ctor specifying arguments from command line. 
 	 *
 	 * @param   args	Arguments passed on command line.
 	 */
-	public ApplicationArguments(String[] args) {
+	private ApplicationArguments(String[] args) {
 		super();
 		_rawArgs = args;
 		for (int i = 0; i < args.length; ++i) {
@@ -60,8 +69,29 @@ public class ApplicationArguments {
 				_showSplashScreen = false;
 			} else if (parm.equalsIgnoreCase("-settingsdir")) {
 				_userSettingsDir = value;
+			} else if (parm.equalsIgnoreCase("-loggingconfigfile")) {
+				_loggingConfigFile = value;
 			}
 		}
+	}
+
+	/**
+	 * Initialize application arguments. 
+	 *
+	 * @param   args	Arguments passed on command line.
+	 */
+	public static void initialize(String[] args) {
+		if (s_instance != null) {
+			throw new IllegalStateException("ApplicationArguments.initialize() called twice");
+		}
+		s_instance = new ApplicationArguments(args);
+	}
+
+	public static ApplicationArguments getInstance() {
+		if (s_instance == null) {
+			throw new IllegalStateException("ApplicationArguments.getInstance() called before ApplicationArguments.initialize()");
+		}
+		return s_instance;
 	}
 
 	/**
@@ -84,5 +114,13 @@ public class ApplicationArguments {
 	 */
 	public boolean getShowSplashScreen() {
 		return _showSplashScreen;
+	}
+
+	/**
+	 *  @return	the logging configuration file name. Will be
+	 * 			<TT>null</TT> if not passed.
+	 */
+	public String getLoggingConfigFileName() {
+		return _loggingConfigFile;
 	}
 }

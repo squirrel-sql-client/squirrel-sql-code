@@ -39,7 +39,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.Log4jLogger;
 import net.sourceforge.squirrel_sql.fw.util.Pair;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggingLevel;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.db.DataCache;
@@ -61,11 +60,6 @@ import net.sourceforge.squirrel_sql.client.util.SplashScreen;
 class Application implements IApplication {
 	/** Logger for this class. */
 	private static ILogger s_log;
-
-	/** Application arguments. */
-	private ApplicationArguments _args;
-	
-	private ApplicationFiles _appFiles;
 	
 	/** Splash screen used during startup process. */
 	private SplashScreen _splash;
@@ -100,18 +94,17 @@ class Application implements IApplication {
 	 *
 	 * @param   args	Application arguments.
 	 */
-	Application(ApplicationArguments args) {
+	Application() {
 		super();
-		_args = args;
-		_appFiles = new ApplicationFiles(this);
 	}
 
 	public void startup() {
-		LoggerController.registerLoggerFactory(new SquirrelLoggerFactory(this));
+		LoggerController.registerLoggerFactory(new SquirrelLoggerFactory());
 		s_log = LoggerController.createLogger(getClass());
 
 		_resources = new SquirrelResources("net.sourceforge.squirrel_sql.client.resources.squirrel");
-		if (_args.getShowSplashScreen()) {
+		final ApplicationArguments args = ApplicationArguments.getInstance();
+		if (args.getShowSplashScreen()) {
 			_splash = new SplashScreen(_resources, 8);
 		}
 		
@@ -222,24 +215,6 @@ class Application implements IApplication {
 		return _threadPool;
 	}
 
-	/**
-	 * Return the arguments passed in from the command line.
-	 * 
-	 * @return the arguments passed in from the command line.
-	 */
-	public ApplicationArguments getArguments() {
-		return _args;
-	}
-
-	/**
-	 * Return the application files object
-	 * 
-	 * @return the application files object.
-	 */
-	public ApplicationFiles getApplicationFiles() {
-		return _appFiles;
-	}
-
 	public LoggerController getLoggerFactory() {
 		return _loggerFactory;
 	}
@@ -291,7 +266,8 @@ class Application implements IApplication {
 	}
 
 	private void preferencesHaveChanged(PropertyChangeEvent evt) {
-		String propName = evt != null ? evt.getPropertyName() : null;
+		final String propName = evt != null ? evt.getPropertyName() : null;
+		final ApplicationFiles appFiles = new ApplicationFiles();
 
 		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.SHOW_TOOLTIPS)) {
 			ToolTipManager.sharedInstance().setEnabled(_prefs.getShowToolTips());
@@ -300,7 +276,7 @@ class Application implements IApplication {
 		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.DEBUG_JDBC)) {
 			if (_prefs.getDebugJdbc()) {
 				try {
-					_jdbcDebugOutput = new PrintStream(new FileOutputStream(getApplicationFiles().getJDBCDebugLogFile()));
+					_jdbcDebugOutput = new PrintStream(new FileOutputStream(appFiles.getJDBCDebugLogFile()));
 					DriverManager.setLogStream(_jdbcDebugOutput);
 				} catch (IOException ex) {
 					DriverManager.setLogStream(System.out);
@@ -316,10 +292,6 @@ class Application implements IApplication {
 
 		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.LOGIN_TIMEOUT)) {
 			DriverManager.setLoginTimeout(_prefs.getLoginTimeout());
-		}
-
-		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.LOGGING_LEVEL)) {
-			s_log.setPriority(LoggingLevel.get(_prefs.getLoggingLevel()));
 		}
 	}
 }

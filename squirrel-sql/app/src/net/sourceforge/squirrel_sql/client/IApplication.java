@@ -73,20 +73,6 @@ public interface IApplication {
 	TaskThreadPool getThreadPool();
 
 	/**
-	 * Return the arguments passed in from the command line.
-	 * 
-	 * @return the arguments passed in from the command line.
-	 */
-	public ApplicationArguments getArguments();
-
-	/**
-	 * Return the application files object
-	 * 
-	 * @return the application files object.
-	 */
-	public ApplicationFiles getApplicationFiles();
-
-	/**
 	 * Return the factory object used to create the SQL entry panel.
 	 * 
 	 * @return	the factory object used to create the SQL entry panel.

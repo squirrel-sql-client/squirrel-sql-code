@@ -19,28 +19,40 @@ package net.sourceforge.squirrel_sql.client;
  */
 import java.io.IOException;
 
+import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Category;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.PatternLayout;
 
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.Log4jLoggerFactory;
+
+import net.sourceforge.squirrel_sql.client.ApplicationArguments;
+import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 
 public class SquirrelLoggerFactory extends Log4jLoggerFactory {
 
-	public SquirrelLoggerFactory(IApplication app) throws IllegalArgumentException {
+	public SquirrelLoggerFactory() throws IllegalArgumentException {
 		super(false);
-		if (app == null) {
-			throw new IllegalArgumentException("Null IApplication passed");
-		}
-		String logFileName = app.getApplicationFiles().getExecutionLogFile().getPath();
-		Category.getRoot().removeAllAppenders();
-		try {
-			FileAppender fa = new FileAppender(new PatternLayout("%-4r [%t] %-5p %c %x - %m%n"/*PatternLayout.TTCC_CONVERSION_PATTERN*/), logFileName);
-			fa.setFile(logFileName);
-			BasicConfigurator.configure(fa);
-		} catch (IOException ex) {
-			BasicConfigurator.configure();
+		String configFileName = ApplicationArguments.getInstance().getLoggingConfigFileName();
+		if (configFileName != null) {
+			PropertyConfigurator.configure(configFileName);
+		} else {
+			Category.getRoot().removeAllAppenders();
+			try {
+				final String logFileName = new ApplicationFiles().getExecutionLogFile().getPath();
+				final PatternLayout layout = new PatternLayout("%-4r [%t] %-5p %c %x - %m%n");
+				FileAppender fa = new FileAppender(layout, logFileName);
+				fa.setFile(logFileName);
+				BasicConfigurator.configure(fa);
+				final ILogger log = createLogger(getClass());
+				log.warn("No logger configuration file passed on command line arguments");
+			} catch (IOException ex) {
+				final ILogger log = createLogger(getClass());
+				log.error("Error occured configuring logging", ex);
+				BasicConfigurator.configure();
+			}
 		}
 	}
 }
