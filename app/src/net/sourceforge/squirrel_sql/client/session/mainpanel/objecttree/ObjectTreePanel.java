@@ -42,6 +42,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -608,21 +609,27 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 	 *
 	 * @param	path	path of node currently selected.
 	 */
-	private void setSelectedObjectPanel(TreePath path)
+	private void setSelectedObjectPanel(final TreePath path)
 	{
-		ObjectTreeTabbedPane tabPane = null;
-		if (path != null)
+		GUIUtils.processOnSwingEventThread(new Runnable()
 		{
-			Object lastComp = path.getLastPathComponent();
-			if (lastComp instanceof ObjectTreeNode)
+			public void run()
 			{
-				ObjectTreeNode node = (ObjectTreeNode)lastComp;
-				tabPane = getDetailPanel(node);
-				tabPane.setDatabaseObjectInfo(node.getDatabaseObjectInfo());
-				tabPane.selectCurrentTab();
+				ObjectTreeTabbedPane tabPane = null;
+				if (path != null)
+				{
+					Object lastComp = path.getLastPathComponent();
+					if (lastComp instanceof ObjectTreeNode)
+					{
+						ObjectTreeNode node = (ObjectTreeNode)lastComp;
+						tabPane = getDetailPanel(node);
+						tabPane.setDatabaseObjectInfo(node.getDatabaseObjectInfo());
+						tabPane.selectCurrentTab();
+					}
+				}
+				setSelectedObjectPanel(tabPane);
 			}
-		}
-		setSelectedObjectPanel(tabPane);
+		});
 	}
 
 	/**

@@ -40,6 +40,7 @@ import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
@@ -715,9 +716,15 @@ class ObjectTree extends JTree
 					expandNode(_node, _selectNode);
 					if (_selectedPathNames != null)
 					{
-						List newlySelectedTreepaths = new ArrayList();
+						final List newlySelectedTreepaths = new ArrayList();
 						restoreExpansionState(_node, _selectedPathNames, newlySelectedTreepaths);
-						setSelectionPaths((TreePath[])newlySelectedTreepaths.toArray(new TreePath[newlySelectedTreepaths.size()]));
+						GUIUtils.processOnSwingEventThread(new Runnable()
+						{
+							public void run()
+							{
+								setSelectionPaths((TreePath[])newlySelectedTreepaths.toArray(new TreePath[newlySelectedTreepaths.size()]));
+							}
+						});
 					}
 				}
 				finally
@@ -845,7 +852,13 @@ class ObjectTree extends JTree
 		 */
 		private void fireStructureChanged(final ObjectTreeNode node)
 		{
-			ObjectTree.this._model.nodeStructureChanged(node);
+			GUIUtils.processOnSwingEventThread(new Runnable()
+			{
+				public void run()
+				{
+					ObjectTree.this._model.nodeStructureChanged(node);
+				}
+			});
 		}
 	}
 }

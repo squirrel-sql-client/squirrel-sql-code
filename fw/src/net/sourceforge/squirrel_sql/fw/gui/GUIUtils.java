@@ -28,16 +28,19 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.geom.Rectangle2D;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JInternalFrame;
 import javax.swing.SwingUtilities;
+
+import net.sourceforge.squirrel_sql.fw.util.BaseRuntimeException;
 /**
  * Common GUI utilities accessed via static methods.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class GUIUtils
 {
@@ -47,7 +50,7 @@ public class GUIUtils
 	 * above the parent (I.E. cannot see the titlebar and so cannot move the
 	 * window) then move the window down.
 	 *
-	 * @param   wind	The Window to be centered.
+	 * @param	 wind	The Window to be centered.
 	 *
 	 * @throws IllegalArgumentException	 If <TT>wind</TT> is <TT>null</TT>.
 	 */
@@ -71,10 +74,10 @@ public class GUIUtils
 
 	/**
 	 * Centers passed internal frame within its desktop area. If centering
-     * would cause the title bar to go off the top of the screen then move the
+	 * would cause the title bar to go off the top of the screen then move the
 	 * window down.
 	 *
-	 * @param   frame	The internal frame to be centered.
+	 * @param	frame	The internal frame to be centered.
 	 *
 	 * @throws IllegalArgumentException	 If <TT>frame</TT> is <TT>null</TT>.
 	 */
@@ -95,7 +98,7 @@ public class GUIUtils
 	 * Centers <CODE>wind</CODE> within the screen. If centering would cause the
 	 * title bar to go off the top of the screen then move the window down.
 	 *
-	 * @param   wind	The Window to be centered.
+	 * @param	wind	The Window to be centered.
 	 *
 	 * @throws IllegalArgumentException	 If <TT>wind</TT> is <TT>null</TT>.
 	 */
@@ -144,7 +147,7 @@ public class GUIUtils
 	 * Return <TT>true</TT> if <TT>frame</TT> is a tool window. I.E. is the
 	 * <TT>JInternalFrame.isPalette</TT> set to <TT>Boolean.TRUE</TT>?
 	 *
-	 * @param   frame   The <TT>JInternalFrame</TT> to be checked.
+	 * @param	frame	The <TT>JInternalFrame</TT> to be checked.
 	 *
 	 * @throws IllegalArgumentException	 If <TT>frame</TT> is <TT>null</TT>.
 	 */
@@ -176,7 +179,7 @@ public class GUIUtils
 	 * Change the sizes of all the passed buttons to be the size of the
 	 * largest one.
 	 *
-	 * @param   btns   Array of buttons to eb resized.
+	 * @param	btns	Array of buttons to eb resized.
 	 *
 	 * @throws IllegalArgumentException	 If <TT>btns</TT> is <TT>null</TT>.
 	 */
@@ -215,7 +218,7 @@ public class GUIUtils
 	 * Return an array containing all <TT>JInternalFrame</TT> objects
 	 * that were passed in <TT>frames</TT> that are tool windows.
 	 *
-	 * @param   frames	  <TT>JInternalFrame</TT> objects to be checked.
+	 * @param	frames	<TT>JInternalFrame</TT> objects to be checked.
 	 */
 	public static JInternalFrame[] getOpenToolWindows(JInternalFrame[] frames)
 	{
@@ -239,7 +242,7 @@ public class GUIUtils
 	 * Return an array containing all <TT>JInternalFrame</TT> objects
 	 * that were passed in <TT>frames</TT> that are <EM>not</EM> tool windows.
 	 *
-	 * @param   frames	  <TT>JInternalFrame</TT> objects to be checked.
+	 * @param	frames	<TT>JInternalFrame</TT> objects to be checked.
 	 */
 	public static JInternalFrame[] getOpenNonToolWindows(JInternalFrame[] frames)
 	{
@@ -264,7 +267,7 @@ public class GUIUtils
 	 * that were passed in <TT>frames</TT> that are <EM>not</EM> tool windows.
 	 * and are not minimized.
 	 *
-	 * @param   frames	  <TT>JInternalFrame</TT> objects to be checked.
+	 * @param	frames	<TT>JInternalFrame</TT> objects to be checked.
 	 */
 	public static JInternalFrame[] getNonMinimizedNonToolWindows(JInternalFrame[] frames)
 	{
@@ -312,13 +315,55 @@ public class GUIUtils
 		return true;
 	}
 
+	public static void processOnSwingEventThread(Runnable todo)
+	{
+		processOnSwingEventThread(todo, false);
+	}
+
+	public static void processOnSwingEventThread(Runnable todo, boolean wait)
+	{
+		if (todo == null)
+		{
+			throw new IllegalArgumentException("Runnable == null");
+		}
+
+		if (wait)
+		{
+			if (SwingUtilities.isEventDispatchThread())
+			{
+				todo.run();
+			}
+			else
+			{
+				try
+				{
+					SwingUtilities.invokeAndWait(todo);
+				}
+				catch (InvocationTargetException ex)
+				{
+					// TODO: Should this be a checked exception?
+					throw new BaseRuntimeException(ex);
+				}
+				catch (InterruptedException ex)
+				{
+					// TODO: Should this be a checked exception?
+					throw new BaseRuntimeException(ex);
+				}
+			}
+		}
+		else
+		{
+			SwingUtilities.invokeLater(todo);
+		}
+	}
+
 	// From a comp.lang.java.programmer item by James White.
 	//	public static void showModally(JInternalFrame frame) {
 	//		frame.setVisible(true);
 	//
 	//		// Since all input will be blocked until this dialog is dismissed,
 	//		// make sure its parent containers are visible first (this component
-	//		// is tested below).  This is necessary for JApplets, because
+	//		// is tested below). This is necessary for JApplets, because
 	//		// because an applet normally isn't made visible until after its
 	//		// start() method returns -- if this method is called from start(),
 	//		// the applet will appear to hang while an invisible modal frame
@@ -368,12 +413,12 @@ public class GUIUtils
 	/**
 	 * Centers <CODE>wind</CODE> within the passed rectangle.
 	 *
-	 * @param   wind	The Window to be centered.
-	 * @param   rect	The rectangle (in screen coords) to center
+	 * @param	wind	The Window to be centered.
+	 * @param	rect	The rectangle (in screen coords) to center
 	 *					<CODE>wind</CODE> within.
 	 *
-	 * @throws IllegalArgumentException
-	 *	  If <TT>Window</TT> or <TT>Rectangle</TT> is <TT>null</TT>.
+	 * @throws	IllegalArgumentException
+	 *			If <TT>Window</TT> or <TT>Rectangle</TT> is <TT>null</TT>.
 	 */
 	private static void center(Component wind, Rectangle rect)
 	{

@@ -27,6 +27,7 @@ import java.util.Iterator;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.SortedComboBoxModel;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
@@ -123,6 +124,7 @@ class MainFrameToolBar extends ToolBar
 
 		// Listen for changes to the active session. When active then
 		// enable/disable the actions above
+		// JASON: Is this listener removed when session closed.
 		_app.getSessionManager().addSessionListener(new SessionAdapter()
 		{
 			private ISession _currentSession;
@@ -131,21 +133,34 @@ class MainFrameToolBar extends ToolBar
 				final ISession sess = e.getSession();
 				if (sess == _currentSession)
 				{
-					_currentSession = null;
-					_sessionCommit.setSession(_currentSession);
-					_sessionRollback.setSession(_currentSession);
-					_sessionCommit.setEnabled(false);
-					_sessionRollback.setEnabled(false);
+					GUIUtils.processOnSwingEventThread(new Runnable()
+					{
+						public void run()
+						{
+							_currentSession = null;
+							_sessionCommit.setSession(_currentSession);
+							_sessionRollback.setSession(_currentSession);
+							_sessionCommit.setEnabled(false);
+							_sessionRollback.setEnabled(false);
+						}
+					});
 				}
 			}
 
 			public void sessionActivated(SessionEvent e)
 			{
 				_currentSession = e.getSession();
-				_sessionCommit.setSession(_currentSession);
-				_sessionRollback.setSession(_currentSession);
-				_sessionCommit.setEnabled(true);
-				_sessionRollback.setEnabled(true);
+
+				GUIUtils.processOnSwingEventThread(new Runnable()
+				{
+					public void run()
+					{
+						_sessionCommit.setSession(_currentSession);
+						_sessionRollback.setSession(_currentSession);
+						_sessionCommit.setEnabled(true);
+						_sessionRollback.setEnabled(true);
+					}
+				});
 			}
 		});
 	}
@@ -366,6 +381,7 @@ class MainFrameToolBar extends ToolBar
 			addActionListener(this);
 			setMaximumSize(getPreferredSize());
 
+			// JASON: Is this listner cleaned up when session closed?
 			sessionManager.addSessionListener(new MySessionListener(model, this));
 		}
 
@@ -448,10 +464,10 @@ class MainFrameToolBar extends ToolBar
 	private static class MySessionListener extends SessionAdapter
 	{
 		/** Model that is listening. */
-		private SessionDropDownModel _model;
+		private final SessionDropDownModel _model;
 
 		/** Control for _model. */
-		SessionDropDown _control;
+		private final SessionDropDown _control;
 
 		/**
 		 * Ctor specifying the model and control that is listening.
@@ -463,32 +479,47 @@ class MainFrameToolBar extends ToolBar
 			_control = control;
 		}
 
-		public void sessionConnected(SessionEvent e)
+		public void sessionConnected(SessionEvent evt)
 		{
-			_model.addSession(e.getSession());
-			_control.setEnabled(true);
+			final ISession session = evt.getSession();
+			GUIUtils.processOnSwingEventThread(new Runnable()
+			{
+				public void run()
+				{
+					_model.addSession(session);
+					_control.setEnabled(true);
+				}
+			});
 		}
 
-		public void sessionClosing(SessionEvent e)
+		public void sessionClosing(SessionEvent evt)
 		{
-			_control.closing = true;
-			_model.removeSession(e.getSession());
-			if (_model.getSize() == 0)
-				_control.setEnabled(false);
-			_control.closing = false;
+			final ISession session = evt.getSession();
+			GUIUtils.processOnSwingEventThread(new Runnable()
+			{
+				public void run()
+				{
+					_control.closing = true;
+					_model.removeSession(session);
+					if (_model.getSize() == 0)
+					{
+						_control.setEnabled(false);
+					}
+					_control.closing = false;
+				}
+			});
 		}
 
-		public void allSessionsClosed()
+		public void sessionActivated(SessionEvent evt)
 		{
-		}
-
-		public void sessionClosed(SessionEvent e)
-		{
-		}
-
-		public void sessionActivated(SessionEvent e)
-		{
-			_control.setSelectedItem(e.getSession());
+			final ISession session = evt.getSession();
+			GUIUtils.processOnSwingEventThread(new Runnable()
+			{
+				public void run()
+				{
+					_control.setSelectedItem(session);
+				}
+			});
 		}
 	}
 }

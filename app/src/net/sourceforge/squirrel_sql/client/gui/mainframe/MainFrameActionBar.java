@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.client.gui.mainframe;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
@@ -26,9 +27,9 @@ import net.sourceforge.squirrel_sql.client.session.action.NewSQLWorksheetAction;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 /**
- * Action Bar  for <CODE>MainFrame</CODE>.
+ * Action Bar for <CODE>MainFrame</CODE>.
  *
- * @author  <A HREF="mailto:jmheight@users.sourceforge.net">Jason Height</A>
+ * @author <A HREF="mailto:jmheight@users.sourceforge.net">Jason Height</A>
  */
 class MainFrameActionBar extends ToolBar
 {
@@ -76,16 +77,28 @@ class MainFrameActionBar extends ToolBar
 	{
 		public void sessionClosing(SessionEvent evt)
 		{
-			ActionCollection actions = _app.getActionCollection();
-			actions.get(NewSQLWorksheetAction.class).setEnabled(false);
-			actions.get(NewObjectTreeAction.class).setEnabled(false);
+			GUIUtils.processOnSwingEventThread(new Runnable()
+			{
+				public void run()
+				{
+					final ActionCollection actions = _app.getActionCollection();
+					actions.get(NewSQLWorksheetAction.class).setEnabled(false);
+					actions.get(NewObjectTreeAction.class).setEnabled(false);
+				}
+			});
 		}
 
 		public void sessionActivated(SessionEvent evt)
 		{
-			ActionCollection actions = _app.getActionCollection();
-			actions.get(NewSQLWorksheetAction.class).setEnabled(true);
-			actions.get(NewObjectTreeAction.class).setEnabled(true);
+			GUIUtils.processOnSwingEventThread(new Runnable()
+			{
+				public void run()
+				{
+					ActionCollection actions = _app.getActionCollection();
+					actions.get(NewSQLWorksheetAction.class).setEnabled(true);
+					actions.get(NewObjectTreeAction.class).setEnabled(true);
+				}
+			});
 		}
 	}
 }
