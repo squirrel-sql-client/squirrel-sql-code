@@ -18,33 +18,19 @@ package net.sourceforge.squirrel_sql.fw.id;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 /**
- * This class is a factory that generates <tt>IntegerIdentifier</tt>
- * objects. Each identifier generated will have a value one greater
- * than the previously generated one.
+ * This class is a factory that generates <tt>UidIdentifier</tt>
+ * objects.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class IntegerIdentifierFactory implements IIdentifierFactory
+public class UidIdentifierFactory implements IIdentifierFactory
 {
-	private int _next;
-
 	/**
-	 * Default ctor. First identifier generated will have a value of zero.
+	 * Default ctor.
 	 */
-	public IntegerIdentifierFactory()
-	{
-		this(0);
-	}
-
-	/**
-	 * ctor specifying the value of the first identifier.
-	 *
-	 * @param	initialValue	Value for first identifier generated.
-	 */
-	public IntegerIdentifierFactory(int initialValue)
+	public UidIdentifierFactory()
 	{
 		super();
-		_next = initialValue;
 	}
 
 	/**
@@ -54,6 +40,6 @@ public class IntegerIdentifierFactory implements IIdentifierFactory
 	 */
 	public synchronized IIdentifier createIdentifier()
 	{
-		return new IntegerIdentifier(_next++);
+		return new UidIdentifier();
 	}
 }
