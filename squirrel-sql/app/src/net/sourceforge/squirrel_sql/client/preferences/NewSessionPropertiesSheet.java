@@ -69,7 +69,7 @@ public class NewSessionPropertiesSheet extends BaseSheet
 	/**
 	 * Default properties for new sessions.
 	 */
-	private SessionProperties _sessionProperties;
+//	private SessionProperties _sessionProperties;
 
 	private NewSessionPropertiesSheet(IApplication app)
 	{
