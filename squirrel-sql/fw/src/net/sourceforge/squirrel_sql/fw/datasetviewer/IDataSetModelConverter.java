@@ -29,8 +29,8 @@ public interface IDataSetModelConverter {
 	void setDataSetModel(IDataSetModel model);
 
 	/**
-	 * Create the default component for this converter.
+	 * Get the component for this converter.
 	 */
-	Component createComponent();
+	Component getComponent();
 }
 

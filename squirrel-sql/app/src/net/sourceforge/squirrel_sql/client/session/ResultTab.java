@@ -252,7 +252,7 @@ public class ResultTab extends JPanel {
 				conv = (IDataSetModelConverter)dest;
 			}
 			conv.setDataSetModel(_resultSetModel);
-			_resultSetOutput = conv.createComponent();
+			_resultSetOutput = conv.getComponent();
 			_resultSetViewer.setDestination(_resultSetModel);
 			_resultSetSp.setRowHeader(null);
 			_resultSetSp.setViewportView(_resultSetOutput);

@@ -19,20 +19,14 @@ package net.sourceforge.squirrel_sql.client.session.event;
  */
 public class ResultTabAdapter implements IResultTabListener {
 	public void resultTabAdded(ResultTabEvent evt) {
-System.out.println("ResultTabAdapter::resultTabAdded()");
 	}
 
 	public void resultTabRemoved(ResultTabEvent evt) {
-System.out.println("ResultTabAdapter::resultTabRemoved()");
 	}
 
 	public void resultTabTornOff(ResultTabEvent evt) {
-System.out.println("ResultTabAdapter::resultTabTornOff()");
 	}
 
 	public void tornOffResultTabReturned(ResultTabEvent evt) {
-System.out.println("ResultTabAdapter::tornOffResultTabReturned()");
 	}
-
 }
-

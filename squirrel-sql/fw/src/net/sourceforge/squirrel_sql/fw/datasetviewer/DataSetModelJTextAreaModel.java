@@ -37,6 +37,8 @@ import javax.swing.text.Segment;
  */
 public class DataSetModelJTextAreaModel extends PlainDocument
 		implements IDataSetModelConverter {
+	private JTextArea _comp = new JTextArea(this);
+
 	/** <TT>IDataSetModel</TT> that this object is wrapped around. */
 	private IDataSetModel _model;
 
@@ -77,13 +79,13 @@ public class DataSetModelJTextAreaModel extends PlainDocument
 		}
 	}
 	/**
-	 * Create the default component for this converter. In this
+	 * Return the component for this converter. In this
 	 * case a <TT>JTextArea</TT>
 	 * 
-	 * @return	A new instance of a <TT>JTable</TT>.
+	 * @return	A <TT>JTextArea</TT> object.
 	 */
-	public Component createComponent() {
-		return new JTextArea(this);
+	public Component getComponent() {
+		return _comp;
 	}
 
 	private synchronized void buildDocument() {

@@ -31,6 +31,9 @@ import javax.swing.event.TableModelListener;
  */
 public class DataSetModelJTableModel extends AbstractTableModel
 				implements IDataSetModelConverter {
+	/** Component for this converter. */
+	private JTable _comp;
+
 	/** <TT>IDataSetModel</TT> that this object is wrapped around. */
 	private IDataSetModel _model;
 
@@ -52,6 +55,8 @@ public class DataSetModelJTableModel extends AbstractTableModel
 	 */
 	public DataSetModelJTableModel(IDataSetModel model) {
 		super();
+		_comp = new JTable(this);
+		_comp.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		setDataSetModel(model);
 	}
 
@@ -69,19 +74,16 @@ public class DataSetModelJTableModel extends AbstractTableModel
 		if (_model != null) {
 			_model.addListener(_modelListener);
 		}
+		fireTableStructureChanged();
 	}
 
 	/**
 	 * Return number of rows in model.
 	 * 
 	 * @return	Number of rows.
-	 * 
-	 * @throws	IllegalStateException
-	 *			if <TT>IDataSetModel</TT> hasn't been specified.
 	 */
-	public int getRowCount() throws IllegalStateException {
-		validate();
-		return _model.getRowCount();
+	public int getRowCount() {
+		return _model != null ? _model.getRowCount() : 0;
 	}
 	/**
 	 * Return number of columns in model.
@@ -149,32 +151,29 @@ public class DataSetModelJTableModel extends AbstractTableModel
 	}
 
 	/**
-	 * Create the default component for this converter. In this
+	 * Get the component for this converter. In this
 	 * case a <TT>JTable</TT>
 	 * 
-	 * @return	A new instance of a <TT>JTable</TT>.
+	 * @return	The <TT>JTable</TT> object.
 	 */
-	public Component createComponent() {
-		return new JTable(this);
+	public Component getComponent() {
+		return _comp;
 	}
 
 	/**
 	 * Return the column definitions for the model.
 	 * 
 	 * @return	the column definitions for the model.
-	 * 
-	 * @throws	IllegalStateException
-	 * 			If model is <TT>null</TT> or the column definitions
-	 *			are <TT>null</TT>.
 	 */
-	protected ColumnDisplayDefinition[] getColumnDefinitions()
-			throws IllegalStateException {
-		validate();
-		ColumnDisplayDefinition[] hdgs = _model.getColumnDefinitions();
-		if (hdgs == null) {
-			throw new IllegalStateException("Null ColumnDisplayDefinition[]");
+	protected ColumnDisplayDefinition[] getColumnDefinitions() {
+		ColumnDisplayDefinition[] colDefs = null;
+		if (_model != null) {
+			 colDefs = _model.getColumnDefinitions();
 		}
-		return hdgs;
+		if (colDefs == null) {
+			colDefs = new ColumnDisplayDefinition[0];
+		}
+		return colDefs;
 	}
 
 	/**
