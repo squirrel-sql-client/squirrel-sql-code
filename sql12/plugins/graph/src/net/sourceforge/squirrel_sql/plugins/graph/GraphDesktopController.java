@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ZoomerXmlBean;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,8 +21,11 @@ public class GraphDesktopController
    private JMenuItem _mnuRenameGraph;
    private JMenuItem _mnuRemoveGraph;
    private JCheckBoxMenuItem _mnuShowConstraintNames;
+   private JCheckBoxMenuItem _mnuZoomPrint;
    private GraphDesktopListener _listener;
    private ISession _session;
+   private ZoomPrintController _zoomPrintController;
+   private JPanel _graphPanel;
 
 
    public GraphDesktopController(GraphDesktopListener listener, ISession session)
@@ -30,7 +34,12 @@ public class GraphDesktopController
       _session = session;
       _desktopPane = new GraphDesktopPane();
       _desktopPane.setBackground(Color.white);
+
       _scrollPane = new JScrollPane(_desktopPane);
+
+      _graphPanel = new JPanel(new BorderLayout());
+      _graphPanel.add(_scrollPane, BorderLayout.CENTER);
+
 
       _desktopPane.addMouseListener(new MouseAdapter()
       {
@@ -60,6 +69,14 @@ public class GraphDesktopController
 
       createPopUp();
 
+   }
+
+   void initZoomer(ZoomerXmlBean zoomerXmlBean)
+   {
+      _zoomPrintController = new ZoomPrintController(zoomerXmlBean);
+      _graphPanel.add(_zoomPrintController.getPanel(), BorderLayout.SOUTH);
+      _mnuZoomPrint.setSelected(_zoomPrintController.getZoomer().isEnabled());
+      onZoomPrint();
    }
 
    private void createPopUp()
@@ -103,11 +120,25 @@ public class GraphDesktopController
          }
       });
 
+      _mnuZoomPrint = new JCheckBoxMenuItem("Zoom/Print");
+      _mnuZoomPrint.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onZoomPrint();
+         }
+      });
 
       _popUp.add(_mnuSaveGraph);
       _popUp.add(_mnuRenameGraph);
       _popUp.add(_mnuRemoveGraph);
       _popUp.add(_mnuShowConstraintNames);
+      _popUp.add(_mnuZoomPrint);
+   }
+
+   private void onZoomPrint()
+   {
+      _zoomPrintController.setVisible(_mnuZoomPrint.isSelected());
    }
 
    private void onRemoveGraph()
@@ -282,9 +313,9 @@ public class GraphDesktopController
       _desktopPane.repaint();
    }
 
-   public Component getScrollPane()
+   public Component getGraphPanel()
    {
-      return _scrollPane;
+      return _graphPanel;
    }
 
    public void addFrame(JInternalFrame frame)
@@ -305,5 +336,10 @@ public class GraphDesktopController
    public void setShowConstraintNames(boolean showConstraintNames)
    {
       _mnuShowConstraintNames.setSelected(showConstraintNames);
+   }
+
+   public Zoomer getZoomer()
+   {
+      return _zoomPrintController.getZoomer();
    }
 }

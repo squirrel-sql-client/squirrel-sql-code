@@ -187,7 +187,10 @@ public class ConstraintView implements GraphComponent
 
    private void onAddFoldingPoint()
    {
-      _constraintGraph.addFoldingPointToHitConnectLine(_lastPopupClickPoint);
+      double zoom = _desktopController.getZoomer().getZoom();
+      Point p = new Point((int)(_lastPopupClickPoint.x/zoom+0.5), (int)(_lastPopupClickPoint.y/zoom+0.5));
+
+      _constraintGraph.addFoldingPointToHitConnectLine(p);
       _desktopController.repaint();
    }
 
@@ -209,14 +212,14 @@ public class ConstraintView implements GraphComponent
       GraphLine[] fkStubLines = new GraphLine[fkPoints.points.length];
       for (int i = 0; i < fkPoints.points.length; i++)
       {
-         fkStubLines[i] = new GraphLine(fkPoints.points[i], fkGatherPoint);
+         fkStubLines[i] = new GraphLine(fkPoints.points[i], fkGatherPoint, false, false);
       }
       _constraintGraph.setFkStubLines(fkStubLines);
 
       GraphLine[] pkStubLines = new GraphLine[pkPoints.points.length];
       for (int i = 0; i < pkPoints.points.length; i++)
       {
-         pkStubLines[i] = new GraphLine(pkPoints.points[i], pkGatherPoint);
+         pkStubLines[i] = new GraphLine(pkPoints.points[i], pkGatherPoint, false, false);
       }
       _constraintGraph.setPkStubLines(pkStubLines);
 
@@ -260,7 +263,13 @@ public class ConstraintView implements GraphComponent
 
       try
       {
+         double zoom = _desktopController.getZoomer().getZoom();
          StringBuffer drawText = new StringBuffer(_constraintData.getConstraintName());
+
+         if(line.begIsFoldingPoint || line.endIsFoldingPoint)
+         {
+            line = new GraphLine(line, zoom);
+         }
 
          int lineLen = (int) Math.sqrt((line.beg.x - line.end.x) * (line.beg.x - line.end.x) + (line.beg.y - line.end.y) * (line.beg.y - line.end.y));
 
@@ -388,20 +397,53 @@ public class ConstraintView implements GraphComponent
          rad = 5;
       }
 
-      g.fillOval(fp.x - rad, fp.y - rad, 2 * rad, 2 * rad);
+      double zoom = _desktopController.getZoomer().getZoom();
+
+      g.fillOval((int)(zoom*fp.x + 0.5) - rad, (int)(zoom*fp.y+0.5) - rad, 2 * rad, 2 * rad);
 
    }
 
 
    private void drawLine(Graphics g, GraphLine line)
    {
+      double zoom = _desktopController.getZoomer().getZoom();
       if (_isSelected)
       {
-         g.fillPolygon(createPolygon(line.beg.x, line.beg.y, line.end.x, line.end.y, 1));
+         if(line.begIsFoldingPoint && line.endIsFoldingPoint)
+         {
+            g.fillPolygon(createPolygon((int)(zoom*line.beg.x + 0.5), (int)(zoom*line.beg.y + 0.5), (int)(zoom*line.end.x + 0.5), (int)(zoom*line.end.y + 0.5), 1));
+         }
+         else if(line.begIsFoldingPoint && false ==line.endIsFoldingPoint)
+         {
+            g.fillPolygon(createPolygon((int)(zoom*line.beg.x + 0.5), (int)(zoom*line.beg.y + 0.5), line.end.x, line.end.y, 1));
+         }
+         else if(false == line.begIsFoldingPoint && line.endIsFoldingPoint)
+         {
+            g.fillPolygon(createPolygon(line.beg.x, line.beg.y, (int)(zoom*line.end.x + 0.5), (int)(zoom*line.end.y + 0.5), 1));
+         }
+         else
+         {
+            g.fillPolygon(createPolygon(line.beg.x, line.beg.y, line.end.x, line.end.y, 1));
+         }
       }
       else
       {
-         g.drawLine(line.beg.x, line.beg.y, line.end.x, line.end.y);
+         if(line.begIsFoldingPoint && line.endIsFoldingPoint)
+         {
+            g.drawLine((int)(zoom*line.beg.x + 0.5), (int)(zoom*line.beg.y + 0.5), (int)(zoom*line.end.x + 0.5), (int)(zoom*line.end.y + 0.5));
+         }
+         else if(line.begIsFoldingPoint && false ==line.endIsFoldingPoint)
+         {
+            g.drawLine((int)(zoom*line.beg.x + 0.5), (int)(zoom*line.beg.y + 0.5), line.end.x, line.end.y);
+         }
+         else if(false == line.begIsFoldingPoint && line.endIsFoldingPoint)
+         {
+            g.drawLine(line.beg.x, line.beg.y, (int)(zoom*line.end.x + 0.5), (int)(zoom*line.end.y + 0.5));
+         }
+         else
+         {
+            g.drawLine(line.beg.x, line.beg.y, line.end.x, line.end.y);
+         }
       }
 
    }
@@ -454,12 +496,14 @@ public class ConstraintView implements GraphComponent
    {
       Vector foldingPoints = _constraintGraph.getFoldingPoints();
 
+      double zoom = _desktopController.getZoomer().getZoom();
+
       int hitDist = 8;
       for (int i = 0; i < foldingPoints.size(); i++)
       {
          Point foldingPoint = (Point) foldingPoints.get(i);
-         if (Math.abs(e.getPoint().x - foldingPoint.x) < hitDist
-            && Math.abs(e.getPoint().y - foldingPoint.y) < hitDist)
+         if (Math.abs(e.getPoint().x - foldingPoint.x*zoom) < hitDist
+            && Math.abs(e.getPoint().y - foldingPoint.y*zoom) < hitDist)
          {
             _constraintGraph.setHitFoldingPoint(foldingPoint);
             return true;
@@ -562,8 +606,13 @@ public class ConstraintView implements GraphComponent
    {
       if (false == _constraintGraph.isHitOnConnectLine())
       {
+         double zoom = _desktopController.getZoomer().getZoom();
+
          // hit is on folding point
-         _constraintGraph.moveLastHitFoldingPointTo(e.getPoint());
+         Point point = e.getPoint();
+         point.x = (int)(point.x/zoom +0.5);
+         point.y = (int)(point.y/zoom +0.5);
+         _constraintGraph.moveLastHitFoldingPointTo(point);
 
          ConstraintViewListener[] listeners = (ConstraintViewListener[]) _constraintViewListeners.toArray(new ConstraintViewListener[_constraintViewListeners.size()]);
          for (int i = 0; i < listeners.length; i++)

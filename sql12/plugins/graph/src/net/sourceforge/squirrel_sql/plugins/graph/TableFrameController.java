@@ -60,6 +60,9 @@ public class TableFrameController
    private static final int ORDER_PK_CONSTRAINT = 2;
    private ColumnInfo[] _orderedColumnInfos;
    private static final String MNU_PROP_COLUMN_INFO = "MNU_PROP_COLUMN_INFO";
+   private ZoomerListener _zoomerListener;
+   private Rectangle _adjustBeginBounds;
+   private double _adjustBeginZoom;
 
 
    public TableFrameController(ISession session, GraphDesktopController paintManager, AddTableListener listener, String tableName, TableFrameControllerXmlBean xmlBean)
@@ -82,7 +85,7 @@ public class TableFrameController
          if(null == xmlBean)
          {
             _tableName = tableName;
-            _frame = new TableFrame(_tableName, null, toolTipProvider);
+            _frame = new TableFrame(_tableName, null, toolTipProvider, _desktopController.getZoomer());
 
             DatabaseMetaData metaData = _session.getSQLConnection().getConnection().getMetaData();
             _catalog = _session.getSQLConnection().getCatalog();
@@ -150,7 +153,7 @@ public class TableFrameController
          else
          {
             _tableName = xmlBean.getTablename();
-            _frame = new TableFrame(_tableName, xmlBean.getTableFrameXmlBean(), toolTipProvider);
+            _frame = new TableFrame(_tableName, xmlBean.getTableFrameXmlBean(), toolTipProvider, _desktopController.getZoomer());
             _catalog = xmlBean.getCatalog();
             _schema = xmlBean.getSchema();
             _columnOrder = xmlBean.getColumOrder();
@@ -217,12 +220,82 @@ public class TableFrameController
 
          orderColumns();
 
+         _zoomerListener = new ZoomerListener()
+         {
+            public void zoomChanged(double newZoom, double oldZoom, boolean adjusting)
+            {
+               onZoomChanged(newZoom, oldZoom, adjusting);
+            }
+
+            public void zoomEnabled(boolean b)
+            {
+               onZoomEnabled(b);
+            }
+
+            public void setHideScrollBars(boolean b)
+            {
+               onHideScrollBars(b);
+            }
+         };
+
+         _desktopController.getZoomer().addZoomListener(_zoomerListener);
+         onHideScrollBars(_desktopController.getZoomer().isHideScrollbars() );
 
       }
       catch (SQLException e)
       {
          throw new RuntimeException(e);
       }
+   }
+
+   private void onZoomEnabled(boolean b)
+   {
+      if(false == b)
+      {
+         onHideScrollBars(false);
+      }
+      else
+      {
+         onHideScrollBars(_desktopController.getZoomer().isHideScrollbars());
+      }
+   }
+
+   private void onHideScrollBars(boolean b)
+   {
+      if(b)
+      {
+         _frame.scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+         _frame.scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+      }
+      else
+      {
+         _frame.scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+         _frame.scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+      }
+   }
+
+   private void onZoomChanged(double newZoom, double oldZoom, boolean adjusting)
+   {
+      if(null == _adjustBeginBounds)
+      {
+         _adjustBeginZoom = oldZoom;
+         _adjustBeginBounds = new Rectangle(_frame.getBounds());
+      }
+
+      Rectangle bounds = new Rectangle();
+      bounds.x = (int) (_adjustBeginBounds.x * newZoom / _adjustBeginZoom + 0.5);
+      bounds.y = (int) (_adjustBeginBounds.y * newZoom / _adjustBeginZoom + 0.5);
+      bounds.width = (int) (_adjustBeginBounds.width * newZoom / _adjustBeginZoom + 0.5);
+      bounds.height = (int) (_adjustBeginBounds.height * newZoom / _adjustBeginZoom + 0.5);;
+      _frame.setBounds(bounds);
+      recalculateAllConnections();
+
+      if(false == adjusting)
+      {
+         _adjustBeginZoom = newZoom;
+         _adjustBeginBounds = null;
+      }
+
    }
 
    private String onGetToolTipText(MouseEvent event)
@@ -240,7 +313,7 @@ public class TableFrameController
 
    private ColumnInfo getColumnInfoForPoint(Point point)
    {
-      FontMetrics fm = _frame.txtColums.getGraphics().getFontMetrics(_frame.txtColums.getFont());
+      FontMetrics fm = _frame.txtColumsFactory.getGraphics().getFontMetrics(_frame.txtColumsFactory.getFont());
 
       for (int i = 0; i < _colInfos.length; i++)
       {
@@ -361,7 +434,7 @@ public class TableFrameController
       _popUp.add(_mnuDbOrder);
       _popUp.add(_mnuOrderByName);
       _popUp.add(_mnuPksAndConstraintsOnTop);
-      _frame.txtColums.addMouseListener(new MouseAdapter()
+      _frame.txtColumsFactory.addMouseListener(new MouseAdapter()
       {
          public void mousePressed(MouseEvent e)
          {
@@ -519,19 +592,13 @@ public class TableFrameController
             throw new IllegalStateException("Unknown order " + _columnOrder);
       }
 
-      StringBuffer sb = new StringBuffer();
-      for (int i = 0; i < _orderedColumnInfos.length; i++)
-      {
-         _orderedColumnInfos[i].setIndex(i);
-         sb.append(_orderedColumnInfos[i]).append('\n');
-      }
-      _frame.txtColums.setText(sb.toString());
+      _frame.txtColumsFactory.setColumns(_orderedColumnInfos);
 
       SwingUtilities.invokeLater(new Runnable()
       {
          public void run()
          {
-            _frame.txtColums.scrollRectToVisible(new Rectangle(0,0,1,1));
+            _frame.txtColumsFactory.getBestReadyComponent().scrollRectToVisible(new Rectangle(0,0,1,1));
          }
       });
    }
@@ -634,13 +701,15 @@ public class TableFrameController
          _frame.setBounds(_startSize);
       }
       _frame.setVisible(true);
-      _frame.txtColums.scrollRectToVisible(new Rectangle(0,0,1,1));
 
+      _frame.txtColumsFactory.getBestReadyComponent().scrollRectToVisible(new Rectangle(0,0,1,1));
    }
 
    private void onClose()
    {
       _desktopController.removeConstraintViews(_constraintViews);
+      _desktopController.getZoomer().removeZoomListener(_zoomerListener);
+
 
       for (int i = 0; i < _listeners.size(); i++)
       {
@@ -891,11 +960,13 @@ public class TableFrameController
    private int[] calculateRelativeConnectionPointHeights(ColumnInfo[] colInfos)
    {
       Hashtable buf = new Hashtable();
-      FontMetrics fm = _frame.txtColums.getGraphics().getFontMetrics(_frame.txtColums.getFont());
+      FontMetrics fm = _frame.txtColumsFactory.getGraphics().getFontMetrics(_frame.txtColumsFactory.getFont());
 
       for (int i = 0; i < colInfos.length; i++)
       {
-         int unscrolledHeight = colInfos[i].getIndex() * fm.getHeight() + fm.getHeight() / 2;
+         double zoom = _desktopController.getZoomer().getZoom();
+
+         int unscrolledHeight = (int)((colInfos[i].getIndex() * fm.getHeight() + fm.getHeight() / 2) * zoom + 0.5);
          int scrolledHeight;
          Rectangle viewRect = _frame.scrollPane.getViewport().getViewRect();
 
@@ -941,7 +1012,7 @@ public class TableFrameController
    {
       int maxViewingCols = 15;
 
-      FontMetrics fm = _frame.txtColums.getGraphics().getFontMetrics(_frame.txtColums.getFont());
+      FontMetrics fm = _frame.txtColumsFactory.getGraphics().getFontMetrics(_frame.txtColumsFactory.getFont());
       int width = getMaxSize(_colInfos, fm) + 30;
       int height = (int)(Math.min(_colInfos.length, maxViewingCols) * (fm.getHeight()) + 47);
       _startSize = new Rectangle(width, height);

@@ -35,7 +35,7 @@ public class GraphMainPanelTab extends BaseMainPanelTab
 
    public Component getComponent()
    {
-      return _desktopController.getScrollPane();
+      return _desktopController.getGraphPanel();
    }
 
    public void setTitle(String title)
