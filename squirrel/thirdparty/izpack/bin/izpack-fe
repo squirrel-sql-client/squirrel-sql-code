@@ -1,3 +1,0 @@
-#!/bin/sh
-# Runs the IzPack Frontend
-java -classpath "../lib/compiler.jar:../lib/kunststoff.jar:../lib/frontend.jar" com.izforge.izpack.frontend.Frontend
