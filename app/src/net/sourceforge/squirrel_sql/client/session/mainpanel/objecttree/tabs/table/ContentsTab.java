@@ -24,6 +24,10 @@ import java.sql.Statement;
 import java.sql.PreparedStatement;
 import javax.swing.JOptionPane;
 import java.util.HashMap;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseEvent;
+import java.awt.Component;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
@@ -35,6 +39,10 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetScrollingPanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
+
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
@@ -101,6 +109,7 @@ public class ContentsTab extends BaseTableTab
 	/** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(ContentsTab.class);
+		
 
 	/**
 	 * Return the title for the tab.
@@ -123,6 +132,52 @@ public class ContentsTab extends BaseTableTab
 	}
 	
 	/**
+	 * This inner class defines a pop-up menu with only one item, "insert", which
+	 * allows the user to add a new row to an empty table.
+	 */
+	class ContentsTabPopupMenu extends TablePopupMenu
+	{
+		public ContentsTabPopupMenu(DataSetViewerTablePanel viewer) {
+			super(viewer.isTableEditable(), ContentsTab.this, viewer);
+			removeAll();	// the normal constructor creates a bunch of entries we do not want
+			add(_insertRow);
+		}
+	}
+	
+	/**
+	 * Override the parent's getComponent method so that we can
+	 * attach a menu to the ContentsTab pane that allows the user
+	 * to insert a new row when the table is empty.
+	 */
+	public Component getComponent(){
+		final Component c = super.getComponent();
+			
+		if (c != null) {
+			// remove any previously set listeners
+			MouseListener[] oldListeners = c.getMouseListeners();
+			for (int i=0; i< oldListeners.length; i++)
+				c.removeMouseListener(oldListeners[i]);
+			// If the viewer is a table AND table iseditable, add a listener using the current viewer
+			if (((DataSetScrollingPanel)c).getViewer() instanceof DataSetViewerTablePanel) {
+				final DataSetViewerTablePanel viewer =
+							(DataSetViewerTablePanel)((DataSetScrollingPanel)c).getViewer();
+				if (viewer.isTableEditable()) {
+					c.addMouseListener(new MouseAdapter()
+					{
+						public void mousePressed(MouseEvent evt)
+						{
+							if (evt.isPopupTrigger())
+								new ContentsTabPopupMenu(viewer).show(evt);
+						}
+					});
+				}
+			}
+		}
+		return c;
+	}
+	
+	
+	/**
 	 * return the name of the table that is unambiguous across DB accesses,
 	 * including the same DB on different machines.
 	 * This function is static because it is used elsewhere to generate the same
@@ -143,14 +198,6 @@ public class ContentsTab extends BaseTableTab
 				final ISession session = getSession();
 				final String name = getTableInfo().getQualifiedName();
 				fullTableName = getUnambiguousTableName(session, name);
-/***
-				final ISession session = getSession();
-				final ITableInfo ti = getTableInfo();
-				
-				fullTableName = session.getAlias().getUrl()+":"+
-					ti.getCatalogName()+":"+ti.getSchemaName()+
-					":"+ti.getSimpleName();
-****/
 			}
 			catch (Exception e) {
 					// not sure what to do with this exception???
