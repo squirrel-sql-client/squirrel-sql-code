@@ -29,6 +29,7 @@
 	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#the_alias">The Alias</A></TD></TR>
 	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#connecting">Connecting</A></TD></TR>
 	<TR><TD><A HREF="#executing">Executing SQL</A></TD></TR>
+	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#editing_sql">Editing the SQL Results</A></TD></TR>
 	<TR><TD><A HREF="#ContentsTab">The Contents Tab and Editing Data</A></TD></TR>
 	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#ViewingDataInContentsTab">Viewing Data in the Contents Tab</A></TD></TR>
 	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#enablingediting">Enabling Editing</A></TD></TR>
@@ -43,6 +44,7 @@
 	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#summary_of_how_it_works">Summary of How it works (and why you may care)</A></TD></TR>
 	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#quirks">Quirks, Oddities and Known Bugs and work-arounds</A></TD></TR>
 	<TR><TD><A HREF="#data_types">Data Types</A></TD></TR>
+	<TR><TD><A HREF="#printing">Printing</A></TD></TR>
 	<TR><TD><A HREF="#global_prefs">Global Preferences</A></TD></TR>
 	<TR><TD><A HREF="#session_props">New Session and Session Properties</A></TD></TR>
 	<TR><TD><A HREF="#plugins">Plugins</A></TD></TR>
@@ -361,6 +363,34 @@ results from the tabbed folder and display it in its own window.</P>
 			ALT="&quot;Torn off&quot; query results"></P>
 
 <P>
+<A NAME="editing_sql"><h3>Editing Data in the SQL Results Tables</h3></A>
+<P>
+The data displayed within the SQL Results may be edited in the same manner
+as the data within the <A href="#ContentsTab">Contents Tab</A>.
+You should read that section to understand the capabilities and limitations
+of data editing,
+including the use of the Popup window to import and export data.
+In addition, there are two things that you need to know about editing
+in the SQL Results:
+<DL>
+<LI> To enable editing in the SQL Results tables, you must set
+the "SQL Results" entry in the Session Properties to "Editable Table".
+<LI>
+Editing is only allowed when the SQL that was executed consists of:
+<PRE>
+	"SELECT <column list> FROM <single_table_name>"
+    or
+	"SELECT <column list> FROM <single_table_name> WHERE ..."
+</PRE>
+In addition, the name of the table must be unique within the entire DB.
+This means that if you have multiple catalogs or schemas which have that
+same table name defined in them, Squirrel cannot determine which to use
+and thus will not allow data to be updated in the DB.
+(Squirrel is just a bit stupid on this point: it will let you edit the data,
+and then tell you that it cannot update the DB
+when you exit the cell being changed.)
+</DL>
+<P>
 <A NAME="ContentsTab"><h2>The Contents Tab and Editing Data</h2></A>
 
 <P>SQuirreL allows you to easily view and change the data in a single table. Data may
@@ -424,7 +454,8 @@ There are a few special cases for how data is displayed.
 	If a cell contains Newlines
 	(which is possible in the various VARCHAR and CLOB data types),
 	the cell background is colored Cyan and the Newline characters are
-	explicitly shown as "\n".
+	explicitly shown as "\n" (unless changed in the
+	<A HREF="#data_type_controls">Data Type Controls</A>).
 	If the table is editable,
 	the Cyan background means that the cell contents cannot be edited
 	in the cell as displayed in the table, but can be edited using the
@@ -530,10 +561,13 @@ list gives the following options:</P>
 <P>After you have connected with a database, you may change the format
 or editing mode for the data in the Contents tab by the <em>Session
 	Properties</em> option from the <em>Session</em> and clicking on the
-<EM>General</EM> tab and changing the selection for <em>Table
-	Contents</em>.</P>
+<EM>General</EM> tab and changing the selection for
+<em>Table Contents</em>.</P>
 
-<A name="howtoedit"><h3>How To Edit</h3><A>
+Note that the individual data items may be displayed in different formats
+as described in <A HREF="#data_type_controls">"Data Type Controls"</A>.
+
+<A name="howtoedit"><h3>How To Edit</h3></A>
 
 <P>Here is how to edit data in the table:</P>
 
@@ -627,33 +661,33 @@ of the cell, the DB will not be updated.</P>
 
 
 <h3><a name="insert_delete"></a>Inserting and Deleteing Rows</h3>
-You may easilly insert or delete rows in the table using the Contents Tab.
-For both operations the table must be editable
-(see <A href ="enablingediting">Enabling Editing</A>).
-<P>
-To insert a row into the table, 
-click the right mouse button, and choose the "Insert row" option from the menu.
-This brings up a separate window showing the columns of the table
-with two rows.
-The first row contains the data to be filled in
-with default values as defined for the table's columns
-already filled in.
-The second row shows information about the field,
-including the type of data, the field length (if known), and so forth.
-You should edit the values in the first row in the same way that you would
-if that row already existed in the table.
-When the data in the row is the way you want it, click the "OK" button
-to have the row entered into the table.
-<P>
-If there are no rows in the table when you open the Contents Tab,
-clicking the right mouse button brings up a menu with only the "Insert Row"
-option.
-You may use this in the normal manner to enter the first row in the table.
-<P>
-To delete one or more rows from the table,
-select the rows to be deleted, then click the right mouse button and
-choose the "Delete Rows" option from the menu.
-<P>
+You may easilly insert or delete rows in the table using the Contents Tab
+For both operations the table must be editabl
+(see <A href ="enablingediting">Enabling Editing</A>)
+<P
+To insert a row into the table,
+click the right mouse button, and choose the "Insert row" option from the menu
+This brings up a separate window showing the columns of the tabl
+with two rows
+The first row contains the data to be filled i
+with default values as defined for the table's column
+already filled in
+The second row shows information about the field
+including the type of data, the field length (if known), and so forth
+You should edit the values in the first row in the same way that you woul
+if that row already existed in the table
+When the data in the row is the way you want it, click the "OK" butto
+to have the row entered into the table
+<P
+If there are no rows in the table when you open the Contents Tab
+clicking the right mouse button brings up a menu with only the "Insert Row
+option
+You may use this in the normal manner to enter the first row in the table
+<P
+To delete one or more rows from the table
+select the rows to be deleted, then click the right mouse button an
+choose the "Delete Rows" option from the menu
+<P
 
 <h3><a name="UsingPopup"></a>Using the Popup Window</h3>
 <h4><a name="EditingInPopup"></a>Editing within the Popup</h4>
@@ -795,26 +829,26 @@ you can enter the "File:" and "Command:" field information and click on "Apply".
 
 
 
-<h3><a name="Limitations"></a>Limitations</h3>
+<h3><a name="Limitations"></a>Limitations</h3
 
-<P>
-Some DBMSs implement "standard" data types in non-standard ways.
-For example, we know that many DBMSs claim to implement the BLOB data type,
-but they actually store that data using a BINARY or LONGVARBINARY field.
-SQuirreL uses the <I>actual</I> data type as defined in the DATA_TYPE field
-in the Columns tab for the table, not the TYPE_NAME.
-Thus it is possible that you may think you are working with one type of data,
-but actually using something else,
-so controls and limitations on specific data types
-(e.g. limiting the data read when loading the Contents tab)
+<P
+Some DBMSs implement "standard" data types in non-standard ways
+For example, we know that many DBMSs claim to implement the BLOB data type
+but they actually store that data using a BINARY or LONGVARBINARY field
+SQuirreL uses the <I>actual</I> data type as defined in the DATA_TYPE fiel
+in the Columns tab for the table, not the TYPE_NAME
+Thus it is possible that you may think you are working with one type of data
+but actually using something else
+so controls and limitations on specific data type
+(e.g. limiting the data read when loading the Contents tab
 may not work as expected.
 
-<P>SQuirreL allows editing only on cells that are defined using the
-basic standard SQL data types
-(see <a href="#data_types">Data Types</a>).
-If your DBMS provides other data types, you can create a plug-in that supports them
-(see the file
-net/sourceforge/squirrel_sql/fw/datasetviewer/cellcomponent/CellComponentFactory for more information).
+<P>SQuirreL allows editing only on cells that are defined using th
+basic standard SQL data type
+(see <a href="#data_types">Data Types</a>)
+If your DBMS provides other data types, you can create a plug-in that supports the
+(see the fil
+net/sourceforge/squirrel_sql/fw/datasetviewer/cellcomponent/CellComponentFactory for more information)
 </P>
 
 <P>Some attempt has been made to validate user input for each of the
@@ -822,32 +856,32 @@ types. For example, INTEGER fields allow only digits and '-' as input.
 However, not all of the necessary information is supplied by all DBMSs,
 so we cannot do a complete validation of user input in all cases. For
 example, we cannot check that a value entered for a SMALLINT field
-will fit into a SMALLINT column in a specific DBMS. Also, the drivers for
-each DBMS provide different amounts of information for the same field type
-in different situation, and SQuirreL cannot validate the input when such data is
-missing.
+will fit into a SMALLINT column in a specific DBMS. Also, the drivers fo
+each DBMS provide different amounts of information for the same field typ
+in different situation, and SQuirreL cannot validate the input when such data i
+missing
 The "validation of last
 resort" is done when we try to do an update on the DB. The DBMS either
 succeeds or it fails, and if there is an error we display that message
 to the user with the information that the DB has not been updated.</P>
 
-<P>VARCHAR fields containing tabs or newlines may only be edited in the Popup
-window.
-Fields that can only be edited in the Popup are displayed with a cyan background.
+<P>VARCHAR fields containing tabs or newlines may only be edited in the Popu
+window
+Fields that can only be edited in the Popup are displayed with a cyan background
 
 <P>VARCHAR fields
 that may be set to null cannot be set to the string value
 "&lt;null&gt; " (without the quotes). VARCHAR fields in the database may
-include that value as long as you do not try to edit them.
+include that value as long as you do not try to edit them
 
 </P>
-Tables with a large number of columns or with a column containing a very
-long value (not includeing BLOB/CLOB data types) may get an error when
-trying to update the DB because the WHERE clause is too long.  In this case
-you should open the table in a session, go to the <B>Session</B> menu in the
-main window, and select the entry "Limit cell edit WHERE clause size".
-That tool lets you specify which columns SQuirrel should use in the WHERE clause
-when doing the requested update on the cell contents.
+Tables with a large number of columns or with a column containing a ver
+long value (not includeing BLOB/CLOB data types) may get an error whe
+trying to update the DB because the WHERE clause is too long.  In this cas
+you should open the table in a session, go to the <B>Session</B> menu in th
+main window, and select the entry "Limit cell edit WHERE clause size"
+That tool lets you specify which columns SQuirrel should use in the WHERE claus
+when doing the requested update on the cell contents
 See <a href=#session_menu>Session Menu</a>.
 
 <A NAME="summary_of_how_it_works"><h3>Summary of How it works (and why
@@ -912,6 +946,27 @@ This could lead to "erroneous" warning messages.</P>
 
 </ul>
 
+<A NAME="printing"><H2>Printing</H2></A>
+<P>
+Any data that is displayed in a Table may be printed.
+This includes all of the meta-data tables displayed in the Object View
+as well as the Contents Tab and SQL Results tables.
+To print, first make sure that the Session Properties
+for the type of information (Meta Data, Table Contents, or SQL Results)
+has been set to either "Table" or "Editable Table".
+Then, with the cursor over the table to be printed,
+click on the right mouse button and click on "Print".
+This will bring up a dialog box in which you can adjust the
+parameters of the print job.
+When you tell the dialog to print, the selected table will be printed.
+<P>
+Tables that are too wide or too long to fit onto one page will be printed
+across multiple pages that can be pieced together to show the entire table.
+<P>
+If the Session Properties for "Table Contents" or
+"SQL Results" have been set to "Text",
+then the data within the Contents Tab or SQL Results tables (respectively)
+may be copied and pasted into a separate window for printing.
 <A NAME="data_types"><H2>Data Types</H2></A>
 
 <P>This is a quick description of how SQuirreL handles various data types when
@@ -1031,6 +1086,10 @@ These are all handled as "Any other type" as described above.
 <P>Global Preferences specify configuration settings for the
 application.</P>
 
+The descriptions included here are for the tabs created by the core product.
+Plugins may add other tabs to this window.
+See the Plugin-specific help for descriptions of the tabs added by that plugin.
+
 <H3>General Tab</H3>
 
 <P ALIGN="CENTER"><IMG SRC="images/global_general.png" BORDER="0"
@@ -1126,11 +1185,182 @@ used for connecting to servers.</P>
 
 <P><B>Port</B> - The port number to use on the proxy server.</P>
 
+<A NAME="data_type_controls"><H3>Data Type Controls Tab</H3></A>
+<P>
+The contents of this tab may change depending on what Plugins you have loaded.
+Plugins are allowed to define new Data Types or override the existing
+Data Types, and that may add or remove controls from this window.
+The following describes the standard Data Type controls with
+no changes made by any Plugins.
+<P>
+Even with only the default Data Type Controls defined,
+there are still two screens of them to describe.
+
+
+<P ALIGN="CENTER"><IMG SRC="images/data_type_controls_1.png" BORDER="0"
+			ALT="Data Type Controls Tab, part 1"></P>
+
+<H4>BLOB (SQL Type 2004)</H4>
+
+<P><B>Read contents when table is first loaded</B> - If checked then the
+actual contents of the BLOB is read when the table is first loaded.
+This is usually not recommended because it usually degrades performance.
+If this is not checked, then the data will initally display as "&gt;Blob&lt;"
+in the table, and the entire contents will be read in and displayed
+when you click on that cell.</P>
+
+<P><B>Read</B> - If reading the contents during initial table load,
+select whether to read the entire contents or just part of the data.
+If only part of the data is read, then the entire contents will be read
+when you click on that cell.</P>
+
+<P><B>(unlabeled number)</B> - When reading part of the data during
+inital table load, how many bytes to read.</P>
+
+<H4>CLOB (SQL Type 2005)</H4>
+
+<P><B>Read contents when table is first loaded</B> - If checked then the
+actual contents of the CLOB is read when the table is first loaded.
+This is usually not recommended because it usually degrades performance.
+If this is not checked, then the data will initally display as "&gt;Clob&lt;"
+in the table, and the entire contents will be read in and displayed
+
+<P><B>Read</B> - If reading the contents during initial table load,
+select whether to read the entire contents or just part of the data.
+If only part of the data is read, then the entire contents will be read
+when you click on that cell.</P>
+
+<P><B>(unlabeled number)</B> - When reading part of the data during
+inital table load, how many characters to read.</P>
+
+<P><B>Show newlines as \n within cells</B> - If checked, when the
+data contains newlines, the newlines will be displayed as "\n" within
+the cell.  When unchecked, the newlines are ignored within the cell.
+The difference is between seeing:
+<PRE>
+	first line\nsecond line\nthird line
+    and
+	first linesecond linethird line
+</PRE>
+Note that this option does not affect display in the Popup window,
+where newlines actually become new lines.</P>
+
+<H4>CHAR, VARCHAR, LONGVARCHAR (SQL Types 1, 12, -1)</H4>
+
+<P><B>Show newlines as \n within cells</B> - If checked, when the
+data contains newlines, the newlines will be displayed as "\n" within
+the cell.  When unchecked, the newlines are ignored within the cell.
+The difference is between seeing:
+<PRE>
+	first line\nsecond line\nthird line
+    and
+	first linesecond linethird line
+</PRE>
+Note that this option does not affect display in the Popup window,
+where newlines actually become new lines.</P>
+
+<P><B>Allow LONGVARCHAR type to be used in WHERE clause</B> -
+When checked, the LONGVARCHAR type is used in WHERE clauses just as
+other types.  When unchecked, columns of type LONGVARCHAR are not
+used in the WHERE clause when performing edits in the cell data.
+This is necessary because some databases (e.g. Oracle, DB2)
+do not allow LONGVARCHAR data types to be used in WHERE clauses
+and generate odd error messages when they are seen.<P>
+
+<P><B>Limit size of strings read during initial table load ... </B> -
+When checked, the amount of string data loaded during
+the initial table read is limited to a maximum size (see next field).
+When unchecked, the amount of data is not limited.
+(Note: This was originally built as a performance improvement,
+but the implementation actually reads all of the data from the DB
+in either case and just displays or does not display all of it,
+and thus may not make an impact on performance.)
+If the inital data read is limited, the entire data contents will be
+displayed when the user clicks on the cell.<P>
+
+<P><B>... to max of</B> - When limiting the size of the data,
+this defines how many characters to display.<P>
+
+<P><B>Limit read only on columns with these names:</B> - When limiting the
+size of data during the initial table load, only apply the limit to
+columns with the names listed in this box.
+All other columns load all of the data.
+(This was built as a technology demo to show how Data Type Controls,
+which are global to all columns of the given SQL type(s),
+can be applied selectively to a limited set of columns.)<P>
+
+<H4>SQL Other (SQL Type 1111)</H4>
+
+<P><B>Read contents when table is first loaded and display as string</B> -
+If checked then columns of this SQL Type will be read by Squirrel
+and displayed using the toString() function.
+<BR>
+Warning: Since fields of this data type are not known to Squirrel
+and have been explicitly defined as NOT being of a normal, known type,
+attempting to display them as Strings may result in unintelligable
+displays, and may cause exceptions during processing.<P>
+
+
+<P ALIGN="CENTER"><IMG SRC="images/data_type_controls_2.png" BORDER="0"
+			ALT="Data Type Controls Tab, part 1"></P>
+
+<H4>Unknown DataTypes (non-standard SQL type codes)</H4>
+
+<P><B>Read contents when table is first loaded and display as string</B> -
+If checked then columns of this SQL Type will be read by Squirrel
+and displayed using the toString() function.
+<BR>
+Warning: Since fields of this data type are not known to Squirrel
+and have been explicitly defined as NOT being of a normal, known type,
+attempting to display them as Strings may result in unintelligable
+displays, and may cause exceptions during processing.<P>
+
+<H4>Date (SQL Type 91)</H4>
+
+<P><B>Use default format(yyyy-mm-dd)</B> - If checked then
+dates will be displayed in the JDBC default format as shown.
+If unchecked, then the "locale-dependent" formats are made available.<P>
+
+<P><B>or locale-dependent format:</B> - When not using the default format,
+this allows you to select from one of the other available formats.<P>
+
+<P><B>allow inexact format on input</B> - If checked then
+Squirrel allows some flexibility when you type a new value for the field.<P>
+
+<H4>Time (SQL Type 92)</H4>
+
+<P><B>Use default format(hh:mm:ss)</B> - If checked then
+times will be displayed in the JDBC default format as shown.
+If unchecked, then the "locale-dependent" formats are made available.<P>
+
+<P><B>or locale-dependent format:</B> - When not using the default format,
+this allows you to select from one of the other available formats.<P>
+
+<P><B>allow inexact format on input</B> - If checked then
+Squirrel allows some flexibility when you type a new value for the field.<P>
+
+<H4>Timestamp (SQL Type 93)</H4>
+
+<P><B>Use default format(yyyy-mm-dd hh:mm:ss.msec)</B> - If checked then
+timestamps will be displayed in the JDBC default format as shown.
+If unchecked, then the "locale-dependent" formats are made available.<P>
+
+<P><B>or locale-dependent format:</B> - When not using the default format,
+this allows you to select from one of the other available formats.<P>
+
+<P><B>allow inexact format on input</B> - If checked then
+Squirrel allows some flexibility when you type a new value for the field.<P>
+
+
 <A NAME="session_props"><H2>New Session and Session Properties</H2></A>
 
 <P>The &quot;New Session Properties&quot; dialog allows you to specify
 settings for future session. To change the settings for existing
 sessions use the &quot;Session Properties&quot; menu option.
+
+The descriptions included here are for the tabs created by the core product.
+Plugins may add other tabs to this window.
+See the Plugin-specific help for descriptions of the tabs added by that plugin.
 
 <H3>General Tab</H3>
 
@@ -1382,32 +1612,32 @@ display a dialog box showing the plugins currently installed.</P>
 
 	<DT><B>Close All SQL Result Windows</B>
 	<DD>Close all SQL results windows &quot;torn off&quot; from the tabbed folder
-	for the current session.
+	for the current session
 
 	<DT><B>Limit cell edit WHERE clause size</B>
-	<DD>This allows you to select specific columns to use as the key fields
-	when updating the DB after you edit a cell in a table. The purpose of this
-	is to reduce the size of the WHERE clause, which normally includes all fields
-	in the table.  For tables with many columns, or with columns containing long
-	data entries (not includeing BLOB/CLOB fields, which are handled differently),
-	the automatically generated WHERE clause may exceed the DBMS length limitiation.
-	<BR> 
-	You may move column names between the "use columns" and "not use columns" boxes
-	by selecting the names and using the arrow buttons to move them to the other box.
-	You must leave at least one column in the "use columns" box, and the columns
-	in the "use columns" box must be sufficient to uniquely identify each row
-	in the table, e.g. the primary key fields for the table.
-	The "Reset" button restores the column name lists to the way they were when
-	you opened the window.
+	<DD>This allows you to select specific columns to use as the key field
+	when updating the DB after you edit a cell in a table. The purpose of thi
+	is to reduce the size of the WHERE clause, which normally includes all field
+	in the table.  For tables with many columns, or with columns containing lon
+	data entries (not includeing BLOB/CLOB fields, which are handled differently)
+	the automatically generated WHERE clause may exceed the DBMS length limitiation
 	<BR>
-	Remember to click "OK" when you are done.
-	<BR>
-	If you define a set of columns to use in the WHERE clause and then edit some
-	other column, SQuirreL will warn you that "1 duplicate row" is about to be
-	created.  Since you have told SQuirreL to not look at the edited column,
-	it does not
-	recognize that the new data is different than the old data so it
-	gives you a warning.  In this case there is no problem and you should just
+	You may move column names between the "use columns" and "not use columns" boxe
+	by selecting the names and using the arrow buttons to move them to the other box
+	You must leave at least one column in the "use columns" box, and the column
+	in the "use columns" box must be sufficient to uniquely identify each ro
+	in the table, e.g. the primary key fields for the table
+	The "Reset" button restores the column name lists to the way they were whe
+	you opened the window
+	<BR
+	Remember to click "OK" when you are done
+	<BR
+	If you define a set of columns to use in the WHERE clause and then edit som
+	other column, SQuirreL will warn you that "1 duplicate row" is about to b
+	created.  Since you have told SQuirreL to not look at the edited column
+	it does no
+	recognize that the new data is different than the old data so i
+	gives you a warning.  In this case there is no problem and you should jus
 	tell SQuirreL to go ahead with the update.
 </DL>
 
