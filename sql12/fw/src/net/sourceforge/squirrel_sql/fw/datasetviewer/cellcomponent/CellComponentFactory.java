@@ -462,10 +462,10 @@ public class CellComponentFactory {
 	
 	/**
 	 * When updating the database, insert the appropriate datatype into the
-	 * prepared statment at variable position 1.
+	 * prepared statment at the given variable position.
 	 */
 	public static void setPreparedStatementValue(ColumnDisplayDefinition colDef,
-		PreparedStatement pstmt, Object value)
+		PreparedStatement pstmt, Object value, int position)
 		throws java.sql.SQLException {
 
 		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
@@ -478,9 +478,25 @@ public class CellComponentFactory {
 		// called in that case.
 		if (dataTypeObject != null) {
 			// we have an appropriate data type object
-			dataTypeObject.setPreparedStatementValue(pstmt, value);
+			dataTypeObject.setPreparedStatementValue(pstmt, value, position);
 		}
 	}
+	
+	/**
+	 * Get a default value for the table used to input data for a new row
+	 * to be inserted into the DB.
+	 */
+	static public Object getDefaultValue(ColumnDisplayDefinition colDef, String dbDefaultValue) {
+		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
+		
+		if (dataTypeObject != null)
+			return dataTypeObject.getDefaultValue(dbDefaultValue);
+		
+		// there was no data type object, so this data type is unknown
+		// to squirrel and thus cannot be edited.	
+		return null;
+	}
+	
 	
 	
 	/*
