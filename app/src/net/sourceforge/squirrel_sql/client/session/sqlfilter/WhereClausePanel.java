@@ -36,6 +36,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 /**
@@ -63,7 +64,7 @@ public class WhereClausePanel implements ISQLFilterPanel
 	 * @throws	IllegalArgumentException
 	 *			The exception thrown if invalid arguments are passed.
 	 */
-	public WhereClausePanel(SortedSet columnList, Map textColumns,
+	public WhereClausePanel(SortedSet columnList, Map textColumns, 
 							String tableName)
 		throws IllegalArgumentException
 	{
@@ -152,6 +153,8 @@ public class WhereClausePanel implements ISQLFilterPanel
 			String OR = "OR";
 			String LIKE = "LIKE";
 			String IN = "IN";
+			String IS_NULL = "IS NULL";
+			String IS_NOT_NULL = "IS NOT NULL";
 		}
 
 		/**
@@ -185,7 +188,7 @@ public class WhereClausePanel implements ISQLFilterPanel
 		private JLabel _andOrLabel = new JLabel(" ");
 
 		/** A text area used to contain all of the information for the Where clause. */
-		private JTextArea _whereClauseArea = new JTextArea(4, 40);
+		private JTextArea _whereClauseArea = new JTextArea(10, 40);
 
 		/**
 		 * A button used to add information from the combo boxes and text fields into the
@@ -332,7 +335,10 @@ public class WhereClausePanel implements ISQLFilterPanel
 			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.ipady = 4;
 			_whereClauseArea.setBorder(BorderFactory.createEtchedBorder());
-			pnl.add(_whereClauseArea, gbc);
+			_whereClauseArea.setLineWrap(true);
+			JScrollPane sp = new JScrollPane(_whereClauseArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+												JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			pnl.add(sp, gbc);
 
 			return pnl;
 		}
@@ -349,6 +355,8 @@ public class WhereClausePanel implements ISQLFilterPanel
 				addItem("<=");
 				addItem(WhereClauseSubPanelI18n.IN);
 				addItem(WhereClauseSubPanelI18n.LIKE);
+				addItem(WhereClauseSubPanelI18n.IS_NULL);
+				addItem(WhereClauseSubPanelI18n.IS_NOT_NULL);
 			}
 		}
 
@@ -367,12 +375,14 @@ public class WhereClausePanel implements ISQLFilterPanel
 		 */
 		private void addTextToClause()
 		{
-			String value = _valueField.getText();
-			if ((value != null) && (value.length() > 0))
+			String value = (String)_valueField.getText();
+			String operator = (String)_operatorCombo.getSelectedItem();
+			if (((value != null) && (value.length() > 0))
+					|| ((operator.equals(WhereClauseSubPanelI18n.IS_NULL))
+					|| 	(operator.equals(WhereClauseSubPanelI18n.IS_NOT_NULL))))
 			{
 				String andOr = (String)_andOrCombo.getSelectedItem();
 				String column = (String)_columnCombo.getSelectedItem();
-				String operator = (String)_operatorCombo.getSelectedItem();
 
 				// Put the 'AND' or the 'OR' in front of the clause if
 				// there are already values in the text area.
@@ -391,14 +401,22 @@ public class WhereClausePanel implements ISQLFilterPanel
 
 				// If the column is a text column, and there aren't single quotes around the value, put them there.
 
-				else if (
-					_textColumns.containsKey(column)
-						&& (!value.trim().startsWith("'")))
+				else if ((value != null) && (value.length() > 0)) 
 				{
-					value = "'" + value + "'";
+					if (_textColumns.containsKey(column)
+							&& (!value.trim().startsWith("'")))
+					{
+						value = "'" + value + "'";
+					}
 				}
-				_whereClauseArea.append(column + " " + operator + " " + value);
+				_whereClauseArea.append(column + " " + operator);
+
+				if ((value != null) && (value.length() > 0)) 
+				{
+					_whereClauseArea.append(" " + value);
+				}
 			}
+			_valueField.setText("");
 		}
 
 		/**

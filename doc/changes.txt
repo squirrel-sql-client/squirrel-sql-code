@@ -6,6 +6,13 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- added the 'IS NULL' and 'IS NOT NULL' to the choices for operator in 
+  the Where Clause panel (Maury Hammel).
+- When the 'add' button is pressed to put a Where Clause construct into 
+  the text area, the 'Value' text area is cleared (Maury Hammel).
+- Enabled wrapping and added JScrollPanes to the Where Clause and Order 
+  By Clause text areas, so Panels behave better where large values are put 
+  in them (Maury Hammel).
 - You can now specify whether JDBC logging uses the deprecated output stream or
   the new writer (Neville Rowe).
 - You can now filter the catalogs displayed in the object tree (Keith
