@@ -197,7 +197,9 @@ class LAFRegister implements LAFConstants {
 	 * Set the font that the application uses for statusbars.
 	 */
 	void updateStatusBarFont() {
-		_app.getFontInfoStore().setStatusBarFontInfo(_plugin.getLAFPreferences().getStatusBarFontInfo());
+		if (_plugin.getLAFPreferences().isStatusBarFontEnabled()) {
+			_app.getFontInfoStore().setStatusBarFontInfo(_plugin.getLAFPreferences().getStatusBarFontInfo());
+		}
 	}
 
 	/**
