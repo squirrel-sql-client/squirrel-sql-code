@@ -236,15 +236,47 @@ public class HelpViewerWindow extends JFrame
 		File file = appFiles.getQuickStartGuideFile();
 		try
 		{
-			DocumentNode docNode = new DocumentNode(i18n.SQUIRREL, file);
-			helpRoot.add(docNode);
-			_homeURL = docNode.getURL();
-			_nodes.put(_homeURL.toString(), docNode);
+			DocumentNode dn = new DocumentNode(i18n.SQUIRREL, file);
+			helpRoot.add(dn);
+			_homeURL = dn.getURL();
+			_nodes.put(_homeURL.toString(), dn);
 		}
 		catch (MalformedURLException ex)
 		{
 			StringBuffer msg = new StringBuffer();
 			msg.append("Error retrieving Help file URL for ")
+				.append(file.getAbsolutePath());
+			s_log.error(msg.toString(), ex);
+		}
+
+		// Add SQuirreL Licence to the Licence node.
+		file = appFiles.getLicenceFile();
+		try
+		{
+			DocumentNode dn = new DocumentNode(i18n.SQUIRREL, file);
+			licenceRoot.add(dn);
+			_nodes.put(dn.getURL(), dn);
+		}
+		catch (MalformedURLException ex)
+		{
+			StringBuffer msg = new StringBuffer();
+			msg.append("Error retrieving Licence file URL for ")
+				.append(file.getAbsolutePath());
+			s_log.error(msg.toString(), ex);
+		}
+
+		// Add SQuirreL Change Log to the Licence node.
+		file = appFiles.getChangeLogFile();
+		try
+		{
+			DocumentNode dn = new DocumentNode(i18n.SQUIRREL, file);
+			changeLogRoot.add(dn);
+			_nodes.put(dn.getURL(), dn);
+		}
+		catch (MalformedURLException ex)
+		{
+			StringBuffer msg = new StringBuffer();
+			msg.append("Error retrieving Change Log file URL for ")
 				.append(file.getAbsolutePath());
 			s_log.error(msg.toString(), ex);
 		}
