@@ -21,7 +21,6 @@ import java.beans.IndexedPropertyDescriptor;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.beans.SimpleBeanInfo;
-
 /**
  * This is the <CODE>BeanInfo</CODE> class for <CODE>SQLDriver</CODE>.
  *
@@ -29,71 +28,33 @@ import java.beans.SimpleBeanInfo;
  */
 public class SQLDriverBeanInfo extends SimpleBeanInfo
 {
+	private interface IPropertyNames extends ISQLDriver.IPropertyNames
+	{
+	}
 
-	private final static Class s_cls = SQLDriver.class;
-	private static PropertyDescriptor[] s_descriptors;
+	private final static Class CLAZZ = SQLDriver.class;
+	
+	private static PropertyDescriptor[] s_descr;
 
 	public SQLDriverBeanInfo() throws IntrospectionException
 	{
 		super();
-		if (s_descriptors == null)
+		if (s_descr == null)
 		{
-			s_descriptors = new PropertyDescriptor[6];
-			s_descriptors[0] =
-				new PropertyDescriptor(
-					ISQLDriver.IPropertyNames.NAME,
-					s_cls,
-					"getName",
-					"setName");
-			s_descriptors[1] =
-				new PropertyDescriptor(
-					ISQLDriver.IPropertyNames.DRIVER_CLASS,
-					s_cls,
-					"getDriverClassName",
-					"setDriverClassName");
-			s_descriptors[2] =
-				new PropertyDescriptor(
-					ISQLDriver.IPropertyNames.ID,
-					s_cls,
-					"getIdentifier",
-					"setIdentifier");
-			s_descriptors[3] =
-				new PropertyDescriptor(
-					ISQLDriver.IPropertyNames.URL,
-					s_cls,
-					"getUrl",
-					"setUrl");
-			//s_descriptors[4] =
-			//	new PropertyDescriptor(
-			//		ISQLDriver.IPropertyNames.USES_CLASSPATH,
-			//		s_cls,
-			///		"getUsesClassPath",
-			//		"setUsesClassPath");
-			s_descriptors[4] =
-				new PropertyDescriptor(
-					ISQLDriver.IPropertyNames.JARFILE_NAME,
-					s_cls,
-					"getJarFileName",
-					"setJarFileName");
-			//s_descriptors[6] =
-			//	new PropertyDescriptor(
-			//		ISQLDriver.IPropertyNames.PLUGIN_NAMES,
-			//		s_cls,
-			//		"getPluginNames",
-			//		"setPluginNames");
-			s_descriptors[5] =
-				new IndexedPropertyDescriptor(
-					ISQLDriver.IPropertyNames.JARFILE_NAMES,
-					s_cls,
-					"getJarFileNameWrappers",
-					"setJarFileNameWrappers",
-					"getJarFileNameWrapper",
-					"setJarFileNameWrapper");
+			s_descr = new PropertyDescriptor[6];
+			s_descr[0] = new PropertyDescriptor(IPropertyNames.NAME, CLAZZ, "getName", "setName");
+			s_descr[1] = new PropertyDescriptor(IPropertyNames.DRIVER_CLASS, CLAZZ, "getDriverClassName", "setDriverClassName");
+			s_descr[2] = new PropertyDescriptor(IPropertyNames.ID, CLAZZ, "getIdentifier", "setIdentifier");
+			s_descr[3] = new PropertyDescriptor(IPropertyNames.URL, CLAZZ, "getUrl", "setUrl");
+			s_descr[4] = new PropertyDescriptor(IPropertyNames.JARFILE_NAME, CLAZZ, "getJarFileName", "setJarFileName");
+			s_descr[5] = new IndexedPropertyDescriptor(IPropertyNames.JARFILE_NAMES, CLAZZ,
+								"getJarFileNameWrappers", "setJarFileNameWrappers",
+								"getJarFileNameWrapper", "setJarFileNameWrapper");
 		}
 	}
 
 	public PropertyDescriptor[] getPropertyDescriptors()
 	{
-		return s_descriptors;
+		return s_descr;
 	}
 }

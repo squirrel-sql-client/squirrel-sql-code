@@ -68,8 +68,7 @@ public class DataCache
 	 * Ctor. Loads drivers and aliases from the XML document.
 	 *
 	 * @throws	IllegalStateException
-	 *			Thrown if no <TT>SQLDriverManager</TT>
-	 *			exists in IApplication.
+	 *			Thrown if null <TT>SQLDriverManager</TT> passed.
 	 */
 	public DataCache(SQLDriverManager driverMgr, SquirrelResources rsrc,
 						IMessageHandler msgHandler)

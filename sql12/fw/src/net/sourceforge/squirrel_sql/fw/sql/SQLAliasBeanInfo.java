@@ -20,18 +20,20 @@ package net.sourceforge.squirrel_sql.fw.sql;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.beans.SimpleBeanInfo;
-
 /**
  * This is the <CODE>BeanInfo</CODE> class for <CODE>SQLAlias</CODE>.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SQLAliasBeanInfo extends SimpleBeanInfo {
+public class SQLAliasBeanInfo extends SimpleBeanInfo
+{
 	private static PropertyDescriptor[] s_descriptors;
 
-	public SQLAliasBeanInfo() throws IntrospectionException {
+	public SQLAliasBeanInfo() throws IntrospectionException
+	{
 		super();
-		if (s_descriptors == null) {
+		if (s_descriptors == null)
+		{
 			s_descriptors = new PropertyDescriptor[5];
 			s_descriptors[0] = new PropertyDescriptor(ISQLAlias.IPropertyNames.ID, SQLAlias.class, "getIdentifier", "setIdentifier");
 			s_descriptors[1] = new PropertyDescriptor(ISQLAlias.IPropertyNames.NAME, SQLAlias.class, "getName", "setName");
@@ -41,7 +43,8 @@ public class SQLAliasBeanInfo extends SimpleBeanInfo {
 		}
 	}
 
-	public PropertyDescriptor[] getPropertyDescriptors() {
+	public PropertyDescriptor[] getPropertyDescriptors()
+	{
 		return s_descriptors;
 	}
 }

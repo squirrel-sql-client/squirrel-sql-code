@@ -62,9 +62,11 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 	private String _userName;
 
 	/** Object to handle property change events. */
-	private final PropertyChangeReporter _propChgReporter =
-		new PropertyChangeReporter(this);
+	private transient PropertyChangeReporter _propChgReporter;
 
+	/**
+	 * Default ctor.
+	 */
 	public SQLAlias()
 	{
 		super();
@@ -126,7 +128,9 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 	{
 		try
 		{
-			return super.clone();
+			final SQLAlias alias = (SQLAlias)super.clone();
+			alias._propChgReporter = null;
+			return alias;
 		}
 		catch (CloneNotSupportedException ex)
 		{
@@ -164,12 +168,12 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 
 	public void addPropertyChangeListener(PropertyChangeListener listener)
 	{
-		_propChgReporter.addPropertyChangeListener(listener);
+		getPropertyChangeReporter().addPropertyChangeListener(listener);
 	}
 
 	public void removePropertyChangeListener(PropertyChangeListener listener)
 	{
-		_propChgReporter.removePropertyChangeListener(listener);
+		getPropertyChangeReporter().removePropertyChangeListener(listener);
 	}
 
 	/**
@@ -222,7 +226,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 		{
 			final String oldValue = _name;
 			_name = data;
-			_propChgReporter.firePropertyChange(ISQLAlias.IPropertyNames.NAME,
+			getPropertyChangeReporter().firePropertyChange(ISQLAlias.IPropertyNames.NAME,
 												oldValue, _name);
 		}
 	}
@@ -238,7 +242,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 		{
 			final IIdentifier oldValue = _driverId;
 			_driverId = data;
-			_propChgReporter.firePropertyChange(ISQLAlias.IPropertyNames.DRIVER,
+			getPropertyChangeReporter().firePropertyChange(ISQLAlias.IPropertyNames.DRIVER,
 												oldValue, _driverId);
 		}
 	}
@@ -254,7 +258,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 		{
 			final String oldValue = _url;
 			_url = data;
-			_propChgReporter.firePropertyChange(ISQLAlias.IPropertyNames.URL,
+			getPropertyChangeReporter().firePropertyChange(ISQLAlias.IPropertyNames.URL,
 													oldValue, _url);
 		}
 	}
@@ -266,9 +270,18 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 		{
 			final String oldValue = _userName;
 			_userName = data;
-			_propChgReporter.firePropertyChange(ISQLAlias.IPropertyNames.USER_NAME,
+			getPropertyChangeReporter().firePropertyChange(ISQLAlias.IPropertyNames.USER_NAME,
 												oldValue, _userName);
 		}
+	}
+
+	private synchronized PropertyChangeReporter getPropertyChangeReporter()
+	{
+		if (_propChgReporter == null)
+		{
+			_propChgReporter = new PropertyChangeReporter(this);
+		}
+		return _propChgReporter;
 	}
 
 	private String getString(String data)
