@@ -18,12 +18,10 @@ package net.sourceforge.squirrel_sql.client.db;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Font;
+import java.awt.FlowLayout;
 import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -37,19 +35,17 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JRootPane;
-import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.IOkClosePanelListener;
-import net.sourceforge.squirrel_sql.fw.gui.OkClosePanel;
-import net.sourceforge.squirrel_sql.fw.gui.OkClosePanelEvent;
-import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
 import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 import net.sourceforge.squirrel_sql.fw.gui.sql.DriverPropertiesDialog;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
@@ -62,6 +58,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
+import net.sourceforge.squirrel_sql.client.gui.IOkClosePanelListener;
+import net.sourceforge.squirrel_sql.client.gui.OkClosePanel;
+import net.sourceforge.squirrel_sql.client.gui.OkClosePanelEvent;
 /**
  * This internal frame allows the user to connect to an alias.
  *
@@ -120,8 +119,6 @@ public class ConnectionSheet extends BaseSheet
 	private static final ILogger s_log =
 		LoggerController.createLogger(ConnectionSheet.class);
 
-	private static final int COLUMN_COUNT = 25;
-
 	/** Application API. */
 	private IApplication _app;
 
@@ -138,7 +135,6 @@ public class ConnectionSheet extends BaseSheet
 
 	private IConnectionSheetHandler _handler;
 
-	private JLabel _titleLbl = new JLabel();
 	private JLabel _aliasName = new JLabel();
 	private JLabel _driverName = new JLabel();
 	private JLabel _url = new JLabel();
@@ -199,6 +195,7 @@ public class ConnectionSheet extends BaseSheet
 
 		createGUI();
 		loadData();
+		pack();
 	}
 
 	public void executed(boolean connected)
@@ -215,18 +212,6 @@ public class ConnectionSheet extends BaseSheet
 			_password.setEnabled(true);
 			_btnsPnl.setExecuting(false);
 		}
-	}
-
-	/**
-	 * Set title of this frame. Ensure that the title label
-	 * matches the frame title.
-	 *
-	 * @param	title	New title text.
-	 */
-	public void setTitle(String title)
-	{
-		super.setTitle(title);
-		_titleLbl.setText(title);
 	}
 
 	/**
@@ -348,99 +333,90 @@ public class ConnectionSheet extends BaseSheet
 
 	private void createGUI()
 	{
-//		if (_alias.getUseDriverProperties())
-//		{
-//			try
-//			{
-//				final SQLDriverManager mgr = _app.getSQLDriverManager();
-//				final Driver jdbcDriver = mgr.getJDBCDriver(_sqlDriver.getIdentifier());
-//				if (jdbcDriver == null)
-//				{
-//					throw new BaseException("Cannot determine driver properties as the driver cannot be loaded.");
-//				}
-//
-//				_props = _alias.getDriverProperties();
-//				DriverPropertyInfo[] infoAr = jdbcDriver.getPropertyInfo(_alias.getUrl(),
-//																new Properties());
-//				_props.applyDriverPropertynfo(infoAr);
-//			}
-//			catch (Exception ex)
-//			{
-//				String msg = "Error loading Driver Properties";
-//				s_log.error(msg, ex);
-//				_app.showErrorDialog(msg, ex);
-//			}
-//		}
-
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		GUIUtils.makeToolWindow(this, true);
-		setTitle("Connect to: " + _alias.getName());
 
-		// This seems to be necessary to get background colours
-		// correct. Without it labels added to the content pane
-		// have a dark background while those added to a JPanel
-		// in the content pane have a light background under
-		// the java look and feel. Similar effects occur for other
-		// look and feels.
-		final JPanel contentPane = new JPanel(new GridBagLayout());
-		setContentPane(contentPane);
+		final String title = "Connect to: " + _alias.getName();
+		setTitle(title);
 
-		GridBagConstraints gbc = new GridBagConstraints();
+		JPanel content = new JPanel(new BorderLayout());
+		content.add(createMainPanel(), BorderLayout.CENTER);
+		content.add(_statusBar, BorderLayout.SOUTH);
+		setContentPane(content);
 
-		gbc.anchor = GridBagConstraints.WEST;
-		gbc.weightx = 1;
-		gbc.gridwidth = GridBagConstraints.REMAINDER;
+//		_btnsPnl.makeOKButtonDefault();
+	}
 
-		// Title label at top.
-		gbc.insets = new Insets(5, 10, 5, 10);
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.gridx = gbc.gridy = 0;
-		contentPane.add(_titleLbl, gbc);
+	/**
+	 * Create the main panel
+	 *
+	 * @return	main panel.
+	 */
+	private Component createMainPanel()
+	{
+		_user.setColumns(20);
+		_password.setColumns(20);
 
-		// Separated by a line.
-		gbc.insets = new Insets(0, 10, 5, 10);
-		++gbc.gridy;
-		contentPane.add(new JSeparator(), gbc);
+		_driverPropsBtn.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent evt)
+			{
+				showDriverPropertiesDialog();
+			}
+		});
 
-		// Next is the data entry panel. Let it take up any excess space.
-		gbc.insets = new Insets(5, 10, 5, 10);
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.weighty = 1;
-		++gbc.gridy;
-		contentPane.add(createMainPanel(), gbc);
+		_btnsPnl.addListener(new MyOkClosePanelListener());
 
-		gbc.fill = GridBagConstraints.NONE;
-		gbc.weighty = 0;
-//		if (_alias.getUseDriverProperties())
-//		{
-			++gbc.gridy;
-			gbc.gridwidth = 1;
-			contentPane.add(_useDriverPropsChk, gbc);
-			++gbc.gridx;
-			gbc.gridwidth = GridBagConstraints.REMAINDER;
-			contentPane.add(_driverPropsBtn, gbc);
-//		}
+		final FormLayout layout = new FormLayout(
+			// Columns
+			"right:pref, 8dlu, left:min(100dlu;pref):grow",
+			// Rows
+			"pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, "
+		+	"pref, 6dlu, pref, 6dlu, pref, 3dlu, pref, 3dlu, pref");
 
-		gbc.gridx = 0;
-		++gbc.gridy;
-		contentPane.add(new JLabel("Warning - Caps lock may interfere with passwords"), gbc);
+		PanelBuilder builder = new PanelBuilder(layout);
+		CellConstraints cc = new CellConstraints();
+		builder.setDefaultDialogBorder();
 
-		// Separated by a line.
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.insets = new Insets(5, 10, 5, 10);
-		++gbc.gridy;
-		contentPane.add(new JSeparator(), gbc);
+		int y = 1;
+		builder.addSeparator(title, cc.xywh(1, y, 3, 1));
 
-		// Next the buttons.
-		gbc.insets = new Insets(0, 0, 0, 0);
-		++gbc.gridy;
-		contentPane.add(createButtonsPanel(), gbc);
+		y += 2;
+		builder.addLabel(ConnectionSheetI18n.ALIAS, cc.xy(1, y));
+		builder.add(_aliasName, cc.xywh(3, y, 1, 1));
 
-		// Finally the status bar.
-		Font fn = _app.getFontInfoStore().getStatusBarFontInfo().createFont();
-		_statusBar.setFont(fn);
-		++gbc.gridy;
-		contentPane.add(_statusBar, gbc);
+		y += 2;
+		builder.addLabel(ConnectionSheetI18n.DRIVER, cc.xy(1, y));
+		builder.add(_driverName, cc.xywh(3, y, 1, 1));
+
+		y += 2;
+		builder.addLabel(ConnectionSheetI18n.URL, cc.xy(1, y));
+		builder.add(_url, cc.xywh(3, y, 1, 1));
+
+		y += 2;
+		builder.addLabel(ConnectionSheetI18n.USER, cc.xy(1, y));
+		builder.add(_user, cc.xywh(3, y, 1, 1));
+
+		y += 2;
+		builder.addLabel(ConnectionSheetI18n.PASSWORD, cc.xy(1, y));
+		builder.add(_password, cc.xywh(3, y, 1, 1));
+
+		y += 2;
+		JPanel propsPnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		propsPnl.add(_useDriverPropsChk);
+		propsPnl.add(_driverPropsBtn);
+		builder.add(propsPnl, cc.xywh(1, y, 3, 1));
+
+		y += 2;
+		builder.addLabel("Warning - Caps lock may interfere with passwords",
+							cc.xywh(1, y, 3, 1));
+
+		y += 2;
+		builder.addSeparator("", cc.xywh(1, y, 3, 1));
+
+		y += 2;
+		builder.add(_btnsPnl, cc.xywh(1, y, 3, 1));
+
 
 		_useDriverPropsChk.addActionListener(new ActionListener()
 		{
@@ -485,60 +461,7 @@ public class ConnectionSheet extends BaseSheet
 			}
 		});
 
-		_btnsPnl.makeOKButtonDefault();
-
-		pack();
-	}
-
-	/**
-	 * Create the panel in which user name and password is entered.
-	 *
-	 * @return	user name/password panel.
-	 */
-	private Component createMainPanel()
-	{
-		_user.setColumns(COLUMN_COUNT);
-		_password.setColumns(COLUMN_COUNT);
-
-		_driverPropsBtn.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent evt)
-			{
-				showDriverPropertiesDialog();
-			}
-		});
-
-		PropertyPanel dataEntryPnl = new PropertyPanel();
-
-		JLabel lbl = new JLabel(ConnectionSheetI18n.ALIAS, SwingConstants.RIGHT);
-		dataEntryPnl.add(lbl, _aliasName);
-
-		lbl = new JLabel(ConnectionSheetI18n.DRIVER, SwingConstants.RIGHT);
-		dataEntryPnl.add(lbl, _driverName);
-
-		lbl = new JLabel(ConnectionSheetI18n.URL, SwingConstants.RIGHT);
-		dataEntryPnl.add(lbl, _url);
-
-		lbl = new JLabel(ConnectionSheetI18n.USER, SwingConstants.RIGHT);
-		_user.setColumns(25);
-		dataEntryPnl.add(lbl, _user);
-
-		lbl = new JLabel(ConnectionSheetI18n.PASSWORD, SwingConstants.RIGHT);
-		dataEntryPnl.add(lbl, _password);
-
-		return dataEntryPnl;
-	}
-
-	/**
-	 * Create the buttons panel.
-	 *
-	 * @return	The buttons panel.
-	 */
-	private JPanel createButtonsPanel()
-	{
-		_btnsPnl.addListener(new MyOkClosePanelListener());
-		_btnsPnl.getOKButton().setText("Connect");
-		return _btnsPnl;
+		return builder.getPanel();
 	}
 
 	private void showDriverPropertiesDialog()

@@ -29,6 +29,7 @@ import java.util.Calendar;
 import java.util.Iterator;
 
 import javax.swing.Action;
+import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
@@ -390,6 +391,40 @@ class Application implements IApplication
 		else
 		{
 			throw new IllegalStateException("Cannot add items to menus prior to menu being created.");
+		}
+	}
+
+	/**
+	 * Add component to the main frames status bar.
+	 *
+	 * @param	comp	Component to add.
+	 */
+	public void addToStatusBar(JComponent comp)
+	{
+		if (_mainFrame != null)
+		{
+			_mainFrame.addToStatusBar(comp);
+		}
+		else
+		{
+			throw new IllegalStateException("Cannot add items to mainframe prior to it being created.");
+		}
+	}
+
+	/**
+	 * Remove component to the main frames status bar.
+	 *
+	 * @param	comp	Component to remove.
+	 */
+	public void removeFromStatusBar(JComponent comp)
+	{
+		if (_mainFrame != null)
+		{
+			_mainFrame.removeFromStatusBar(comp);
+		}
+		else
+		{
+			throw new IllegalStateException("Cannot remove items from mainframe prior to it being created.");
 		}
 	}
 

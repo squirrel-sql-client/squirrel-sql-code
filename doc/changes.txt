@@ -6,6 +6,8 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Show the position of the caret from the SQL entry area caret in a new label
+  in status bar.
 - Added a statusbar to the Help Viewer.
 - New session property "Abort On Error".
 
@@ -17,6 +19,13 @@ Bug Fixes
   the clipboard then the column headings in the clipboard were in the wrong
   order (Joseph Boyd).
 - Entries in the catalogs dropdown are now sorted.
+
+Other
+-----
+- Add jGoodies Forms library for building GUIs.
+- Use Apache CLI library for processing command line arguments.
+- New method in SQL execution listener &quot;allStatementsExecuting&quot;.
+- New API allowing plugins to add/remove items from the status bars.
 
 
 1.2beta3

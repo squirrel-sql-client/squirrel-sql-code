@@ -21,9 +21,13 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
+import javax.swing.JComponent;
 import javax.swing.event.EventListenerList;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -50,7 +54,7 @@ import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
  * Think of a session as being the users view of the database. IE it includes
  * the database connetion and the UI.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 class Session implements IClientSession
 {
@@ -108,6 +112,8 @@ class Session implements IClientSession
 	 * Collection of listeners to this object tree.
 	 */
 	private EventListenerList _listenerList = new EventListenerList();
+
+	private List _statusBarToBeAdded = new ArrayList();
 
 	/**
 	 * Create a new session.
@@ -170,7 +176,7 @@ class Session implements IClientSession
 
 	/**
 	 * Close this session.
-	 * 
+	 *
 	 * @throws	SQLException
 	 * 			Thrown if an error closing the SQL connection. The session
 	 * 			will still be closed even though the connection may not have
@@ -212,7 +218,7 @@ class Session implements IClientSession
 
 	/**
 	 * Retrieve whether this session has been closed.
-	 * 
+	 *
 	 * @return	<TT>true</TT> if session closed else <TT>false</TT>.
 	 */
 	public boolean isClosed()
@@ -269,11 +275,11 @@ class Session implements IClientSession
 
 	/**
 	 * Return the API for the Object Tree.
-	 * 
+	 *
 	 * @param	plugin	Plugin requesting the API.
-	 * 
+	 *
 	 * @return	the API object for the Object Tree.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if null IPlugin passed.
 	 */
@@ -288,11 +294,11 @@ class Session implements IClientSession
 
 	/**
 	 * Return the API object for the SQL panel.
-	 * 
+	 *
 	 * @param	plugin	Plugin requesting the API.
-	 * 
+	 *
 	 * @return	the API object for the SQL panel.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if null IPlugin passed.
 	 */
@@ -326,9 +332,9 @@ class Session implements IClientSession
 
 	/**
 	 * Add a listener to this session
-	 * 
+	 *
 	 * @param	lis		The listener to add.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> listener passed.
 	 */
@@ -339,9 +345,9 @@ class Session implements IClientSession
 
 	/**
 	 * Remove a listener from this session
-	 * 
+	 *
 	 * @param	lis		The listener to remove.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> listener passed.
 	 */
@@ -480,10 +486,18 @@ class Session implements IClientSession
 		_msgHandler = handler != null ? handler : NullMessageHandler.getInstance();
 	}
 
-	public void setSessionSheet(SessionSheet child)
+	public synchronized void setSessionSheet(SessionSheet child)
 	{
 		_sessionSheet = child;
-
+		if (_sessionSheet != null)
+		{
+			final ListIterator it = _statusBarToBeAdded.listIterator();
+			while (it.hasNext())
+			{
+				addToStatusBar((JComponent)it.next());
+				it.remove();
+			}
+		}
 	}
 
 	public SessionSheet getSessionSheet()
@@ -494,10 +508,10 @@ class Session implements IClientSession
 	/**
 	 * Select a tab in the main tabbed pane.
 	 *
-	 * @param	tabIndex   The tab to select. @see ISession.IMainTabIndexes
+	 * @param	tabIndex	The tab to select. @see ISession.IMainTabIndexes
 	 *
 	 * @throws	IllegalArgumentException
-	 *		  Thrown if an invalid <TT>tabId</TT> passed.
+	 *			Thrown if an invalid <TT>tabId</TT> passed.
 	 */
 	public void selectMainTab(int tabIndex)
 	{
@@ -515,6 +529,40 @@ class Session implements IClientSession
 	public void addMainTab(IMainPanelTab tab)
 	{
 		_sessionSheet.addMainTab(tab);
+	}
+
+	/**
+	 * Add component to the session sheets status bar.
+	 *
+	 * @param	comp	Component to add.
+	 */
+	public synchronized void addToStatusBar(JComponent comp)
+	{
+		if (_sessionSheet != null)
+		{
+			_sessionSheet.addToStatusBar(comp);
+		}
+		else
+		{
+			_statusBarToBeAdded.add(comp);
+		}
+	}
+
+	/**
+	 * Remove component from the session sheets status bar.
+	 *
+	 * @param	comp	Component to remove.
+	 */
+	public synchronized void removeFromStatusBar(JComponent comp)
+	{
+		if (_sessionSheet != null)
+		{
+			_sessionSheet.removeFromStatusBar(comp);
+		}
+		else
+		{
+			_statusBarToBeAdded.remove(comp);
+		}
 	}
 
 	public SQLFilterClauses getSQLFilterClauses()

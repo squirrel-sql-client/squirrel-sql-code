@@ -52,7 +52,7 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 /**
  * This <CODE>ICommand</CODE> will dump the status of the application.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class DumpApplicationCommand implements ICommand
 {
@@ -101,7 +101,7 @@ public class DumpApplicationCommand implements ICommand
 		}
 		_app = app;
 		_outFile = outFile;
-		
+
 		_msgHandler = msgHandler != null ? msgHandler : NullMessageHandler.getInstance();
 	}
 
@@ -200,8 +200,8 @@ public class DumpApplicationCommand implements ICommand
 					s_log.error(msg, th);
 				}
 			}
-		}			
-			
+		}
+
 		combineTempFiles(titles, files);
 		deleteTempFiles(files);
 	}
