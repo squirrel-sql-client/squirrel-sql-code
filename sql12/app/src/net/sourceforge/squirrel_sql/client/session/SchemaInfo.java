@@ -498,11 +498,18 @@ public class SchemaInfo
 		try
 		{
 			// TODO: Use table types from meta data?
-			final ResultSet rs = dmd.getTables(null, null, null,
-					new String[] { "TABLE", "VIEW" });
-			while (rs.next())
+			final String[] tabTypes = new String[] { "TABLE", "VIEW" };
+			final ResultSet rs = dmd.getTables(null, null, null, tabTypes);
+			try
 			{
-				_tables.add(rs.getString(3).toUpperCase());
+				while (rs.next())
+				{
+					_tables.add(rs.getString(3).toUpperCase());
+				}
+			}
+			finally
+			{
+				rs.close();
 			}
 		}
 		catch (Throwable th)
