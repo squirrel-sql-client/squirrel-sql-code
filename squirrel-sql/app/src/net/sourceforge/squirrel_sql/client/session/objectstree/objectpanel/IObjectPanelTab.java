@@ -77,4 +77,10 @@ public interface IObjectPanelTab
 	 * Clears the current view, is called right before select()
 	 */
 	void clear();
+
+	/**
+	 * Rebuild the tab. This usually means that some kind of configuration
+	 * data has changed (I.E. the output type has changed from text to table).
+	 */
+	void rebuild();
 }

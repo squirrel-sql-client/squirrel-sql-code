@@ -48,8 +48,8 @@ public class DatabaseObjectInfoTab extends BaseObjectPanelTab
 	 */
 	private interface TableInfoi18n
 	{
-		String TITLE = "??";//"Info";
-		String HINT = "Basic information1";
+		String TITLE = "Info";
+		String HINT = "Basic information";
 	}
 
 	/** Logger for this class. */
@@ -91,6 +91,16 @@ public class DatabaseObjectInfoTab extends BaseObjectPanelTab
 			_comp = new DatabaseObjectInfoComponent(getSession());
 		}
 		return _comp;
+	}
+
+	/**
+	 * Rebuild the tab. This usually means that some kind of configuration
+	 * data has changed (I.E. the output type has changed from text to table).
+	 */
+	public void rebuild()
+	{
+		super.rebuild();
+		_comp = null;
 	}
 
 	/**
@@ -164,9 +174,10 @@ public class DatabaseObjectInfoTab extends BaseObjectPanelTab
 							_ds.setJavabean(doi);
 							_viewer.show(_ds);
 						}
-						catch (DataSetException dse)
+						catch (DataSetException ex)
 						{
-							s_log.error("Error", dse);
+							s_log.error("Error", ex);
+							session.getMessageHandler().showErrorMessage(ex);
 						}
 					}
 				});
@@ -174,6 +185,7 @@ public class DatabaseObjectInfoTab extends BaseObjectPanelTab
 			catch (Exception ex)
 			{
 				s_log.error("Error", ex);
+				session.getMessageHandler().showErrorMessage(ex);
 			}
 		}
 	}

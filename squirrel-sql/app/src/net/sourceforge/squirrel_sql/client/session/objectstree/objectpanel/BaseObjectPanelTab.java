@@ -17,11 +17,7 @@ package net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Component;
-
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -36,13 +32,13 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 public abstract class BaseObjectPanelTab implements IObjectPanelTab
 {
 	/** Logger for this class. */
-	private static ILogger s_log =
+	private static final ILogger s_log =
 		LoggerController.createLogger(BaseObjectPanelTab.class);
 
 	/** Current session. */
 	private ISession _session;
 
-	/** Defines the table that info is to be displayed for. */
+	/** Defines the object that info is to be displayed for. */
 	private IDatabaseObjectInfo _dbObjInfo;
 
 	/**
@@ -104,6 +100,15 @@ public abstract class BaseObjectPanelTab implements IObjectPanelTab
 	}
 
 	/**
+	 * Rebuild the tab. This usually means that some kind of configuration
+	 * data has changed (I.E. the output type has changed from text to table).
+	 */
+	public void rebuild()
+	{
+		_hasBeenDisplayed = false;
+	}
+
+	/**
 	 * Refresh the component displaying the <TT>IDatabaseObjectInfo</TT> object.
 	 */
 	protected abstract void refreshComponent() throws DataSetException;
@@ -131,32 +136,4 @@ public abstract class BaseObjectPanelTab implements IObjectPanelTab
 	{
 		return _dbObjInfo;
 	}
-
-	/**
-	 * Create a viewer panel for an <T>IDataSet</TT>. If the passed class
-	 * name is invalid return a <TT>import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel</TT>.
-	 *
-	 * @param	destClassName	Class Name of panel to be created. This class
-	 *							must have a default constructor.
-	 *
-	 * @return  The newly created panel.
-	 */
-	/*
-		protected IDataSetViewerDestination createDestination(String destClassName) {
-			IDataSetViewerDestination dest = null;
-			try {
-				Class destClass = Class.forName(destClassName);
-				if (IDataSetViewerDestination.class.isAssignableFrom(destClass) &&
-						Component.class.isAssignableFrom(destClass)) {
-					dest = (IDataSetViewerDestination)destClass.newInstance();
-				}
-	
-			} catch (Exception ignore) {
-			}
-			if (dest == null) {
-				dest = new DataSetViewerTablePanel();
-			}
-			return dest;
-		}
-	*/
 }

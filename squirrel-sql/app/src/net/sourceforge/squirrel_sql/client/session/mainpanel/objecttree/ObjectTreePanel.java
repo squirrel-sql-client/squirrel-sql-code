@@ -118,9 +118,6 @@ public class ObjectTreePanel extends JPanel
 
 		createUserInterface();
 
-		// Register tabs to appear for all nodes in the object tree.
-//		addDetailTab(new DatabaseObjectInfoTab());
-
 		// Register tabs to display in the details panel for database nodes.
 		addDetailTab(DatabaseObjectType.DATABASE, new MetaDataTab());
 		addDetailTab(DatabaseObjectType.DATABASE, new ConnectionStatusTab());
@@ -140,7 +137,6 @@ public class ObjectTreePanel extends JPanel
 
 		// Register tabs to display in the details panel for table nodes.
 		addDetailTab(DatabaseObjectType.TABLE, new DatabaseObjectInfoTab());
-//		addDetailTab(DatabaseObjectType.TABLE, new TableInfoTab());
 		addDetailTab(DatabaseObjectType.TABLE, new ContentsTab());
 		addDetailTab(DatabaseObjectType.TABLE, new RowCountTab());
 		addDetailTab(DatabaseObjectType.TABLE, new ColumnsTab());
@@ -154,12 +150,10 @@ public class ObjectTreePanel extends JPanel
 		addDetailTab(DatabaseObjectType.TABLE, new VersionColumnsTab());
 
 		// Register tabs to display in the details panel for procedure nodes.
-//		addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureInfoTab());
 		addDetailTab(DatabaseObjectType.PROCEDURE, new DatabaseObjectInfoTab());
 		addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureColumnsTab());
 
 		// Register tabs to display in the details panel for UDT nodes.
-		// TODO: get rid of this once all nodes have a DatabaseObjectInfoTab tab.
 		addDetailTab(DatabaseObjectType.UDT, new DatabaseObjectInfoTab());
 	}
 
@@ -187,31 +181,6 @@ public class ObjectTreePanel extends JPanel
 	}
 
 	/**
-	 * Add a tab to be displayed in the detail panel for all nodes
-	 * in the object tree.
-	 * 
-	 * @param	tab			Tab to be displayed.
-	 * 
-	 * @throws	IllegalArgumentException
-	 * 			Thrown when a <TT>null</TT> <TT>IObjectPanelTab</TT> passed.
-	 */
-	public void addDetailTab(IObjectPanelTab tab)
-	{
-		if (tab == null)
-		{
-			throw new IllegalArgumentException("IObjectPanelTab == null");
-		}
-
-		_tabsForAllNodes.add(tab);
-//		Iterator it = _tabbedPanes.values().iterator();
-//		while (it.hasNext())
-//		{
-//			ObjectTreeTabbedPane tabPane = (ObjectTreeTabbedPane)it.next();
-//			tabPane.addObjectPaneltab(tab);
-//		}
-	}
-
-	/**
 	 * Add a tab to be displayed in the detail panel for the passed
 	 * database object type type.
 	 * 
@@ -233,7 +202,7 @@ public class ObjectTreePanel extends JPanel
 			throw new IllegalArgumentException("IObjectPanelTab == null");
 		}
 		
-		getOrCreateObjectPanelTabbedPane(dboType).addObjectPaneltab(tab);
+		getOrCreateObjectPanelTabbedPane(dboType).addObjectPanelTab(tab);
 	}
 
 	/**
@@ -469,16 +438,6 @@ public class ObjectTreePanel extends JPanel
 		{
 			tabPane = new ObjectTreeTabbedPane(_session);
 			_tabbedPanes.put(key, tabPane);
-
-			// Add tabs that are displayed for all nodes to this new tabbed
-			// folder.
-//			Iterator it = _tabsForAllNodes.iterator();
-//			while (it.hasNext())
-//			{
-//				//?? TODO: Should clone/copy the tab
-//				IObjectPanelTab tab = (IObjectPanelTab)it.next();
-//				tabPane.addObjectPaneltab(tab);
-//			}
 		}
 		return tabPane;
 	}

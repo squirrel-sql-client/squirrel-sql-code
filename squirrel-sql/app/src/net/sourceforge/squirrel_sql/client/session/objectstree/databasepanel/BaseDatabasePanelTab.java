@@ -40,7 +40,7 @@ public abstract class BaseDatabasePanelTab extends BaseObjectPanelTab
 												implements IDatabasePanelTab
 {
 	/** Logger for this class. */
-	private static ILogger s_log =
+	private static final ILogger s_log =
 		LoggerController.createLogger(BaseDatabasePanelTab.class);
 
 	/** Destination to display data in. */
@@ -54,7 +54,7 @@ public abstract class BaseDatabasePanelTab extends BaseObjectPanelTab
 	 */
 	protected void refreshComponent() throws DataSetException
 	{
-		_comp.load(createDataSet(getSession()));
+		((DatabasePanelTabComponent)getComponent()).load(createDataSet(getSession()));
 	}
 
 	protected abstract IDataSet createDataSet(ISession session)
@@ -85,10 +85,19 @@ public abstract class BaseDatabasePanelTab extends BaseObjectPanelTab
 		}
 	}
 
+	/**
+	 * Rebuild the tab. This usually means that some kind of configuration
+	 * data has changed (I.E. the output type has changed from text to table).
+	 */
+	public void rebuild()
+	{
+		super.rebuild();
+		_comp = null;
+	}
+
 	protected IDataSetViewer createViewer(ISession session)
 	{
-		String destClassName =
-			session.getProperties().getMetaDataOutputClassName();
+		String destClassName = session.getProperties().getMetaDataOutputClassName();
 		return BaseDataSetViewerDestination.getInstance(destClassName);
 	}
 }

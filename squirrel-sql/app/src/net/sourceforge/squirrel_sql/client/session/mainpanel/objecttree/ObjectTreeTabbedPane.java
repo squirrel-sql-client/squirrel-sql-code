@@ -17,6 +17,8 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -30,7 +32,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.BaseDatabasePanelTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.IObjectPanelTab;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 /**
  * This is the tabbed panel displayed when a node is selected in the
  * object tree.
@@ -46,6 +50,9 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 	/** Current session. */
 	private ISession _session;
 
+	/** Listens to changes in session properties. */
+	private SessionPropertiesListener _propsListener;
+
 	/**
 	 * Collection of <TT>IObjectPanelTab</TT> objects displayed in
 	 * this tabbed panel.
@@ -59,6 +66,8 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 		_session = session;
 
 		createUserInterface();
+		_propsListener = new SessionPropertiesListener();
+		_session.getProperties().addPropertyChangeListener(_propsListener);
 	}
 
 	/**
@@ -75,7 +84,7 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 		}
 	}
 
-	void addObjectPaneltab(IObjectPanelTab tab)
+	void addObjectPanelTab(IObjectPanelTab tab)
 	{
 		if (tab == null)
 		{
@@ -83,18 +92,19 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 		}
 		tab.setSession(_session);
 		final String title = tab.getTitle();
-		int idx = indexOfTab(title);
-		if (idx != -1)
-		{
-			removeTabAt(idx);
-			_tabs.set(idx, tab);
-		}
-		else
-		{
-			idx = getTabCount();
+//		int idx = indexOfTab(title);
+//		if (idx != -1)
+//		{
+//			removeTabAt(idx);
+//			_tabs.set(idx, tab);
+//		}
+//		else
+//		{
+//			idx = getTabCount();
 			_tabs.add(tab);
-		}
-		insertTab(title, null, tab.getComponent(), tab.getHint(), idx);
+			addTab(title, null, tab.getComponent(), tab.getHint());
+//		}
+		//insertTab(title, null, tab.getComponent(), tab.getHint(), idx);
 	}
 
 	void selectCurrentTab()
@@ -125,10 +135,39 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 
 	private void createUserInterface()
 	{
-//		addTabs();
-//		_propsListener = new MyPropertiesListener();
-//		_session.getProperties().addPropertyChangeListener(_propsListener);
 		addChangeListener(new TabbedPaneListener());
+	}
+
+	private void propertiesHaveChanged(String propName)
+	{
+		if (propName == null
+			|| propName.equals(SessionProperties.IPropertyNames.META_DATA_OUTPUT_CLASS_NAME))
+		{
+			rebuild();
+		}
+	}
+
+	/**
+	 * Rebuild the tabs. This usually means that some kind of configuration
+	 * data has changed (I.E. the output type has changed from text to table).
+	 */
+	private synchronized void rebuild()
+	{
+		final List oldTabs = new ArrayList();
+		oldTabs.addAll(_tabs);
+		removeAll();
+		_tabs.clear();
+		Iterator it = oldTabs.iterator();
+		while (it.hasNext())
+		{
+			final IObjectPanelTab tab = (IObjectPanelTab)it.next();
+			tab.rebuild();
+//			if (tab instanceof BaseDatabasePanelTab)
+//			{
+//				((BaseDatabasePanelTab)tab).rebuild();
+//			}
+			addObjectPanelTab(tab);
+		}
 	}
 
 	/**
@@ -139,6 +178,17 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 		public void stateChanged(ChangeEvent evt)
 		{
 			selectCurrentTab();
+		}
+	}
+
+	/**
+	 * Listen for changes in session properties.
+	 */
+	private class SessionPropertiesListener implements PropertyChangeListener
+	{
+		public void propertyChange(PropertyChangeEvent evt)
+		{
+			propertiesHaveChanged(evt.getPropertyName());
 		}
 	}
 }
