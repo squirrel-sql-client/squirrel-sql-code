@@ -17,21 +17,23 @@ package net.sourceforge.squirrel_sql.plugins.jedit;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.Component;
 import java.awt.Color;
 import java.awt.event.MouseListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
+import javax.swing.Action;
+import javax.swing.JComponent;
 import javax.swing.event.UndoableEditListener;
+import javax.swing.text.PlainDocument;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
-import net.sourceforge.squirrel_sql.client.session.SessionSheet;
+import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
 
+import net.sourceforge.squirrel_sql.plugins.jedit.textarea.InputHandler;
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.JEditTextArea;
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.SyntaxDocument;
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.SyntaxStyle;
@@ -45,11 +47,11 @@ class JeditSQLEntryPanel implements ISQLEntryPanel {
 	/** Text component. */
 	private JEditTextArea _jeditTextArea;
 
+	/** Rightclick menu for <TT>_jeditTextArea</TT>. */
+	private JeditPopupMenu _jeditPopup;
+
 	/** Jedit preferences for the current session. */
 	private JeditPreferences _prefs;
-
-	/** Listener for the session preferences. */
-	private SessionPreferencesListener _sessionPrefsListener;
 
 	JeditSQLEntryPanel(ISession session, JeditPlugin plugin, JeditPreferences prefs) {
 		super();
@@ -66,23 +68,25 @@ class JeditSQLEntryPanel implements ISQLEntryPanel {
 		_prefs = (JeditPreferences)session.getPluginObject(plugin, JeditConstants.ISessionKeys.PREFS);
 		_jeditTextArea = new JEditTextArea(new JeditTextAreaDefaults(_prefs));
 		_jeditTextArea.setTokenMarker(new JeditSQLTokenMarker(session.getSQLConnection()));
+		_jeditTextArea.setRightClickPopup(_jeditPopup = new JeditPopupMenu(session, plugin, _jeditTextArea));
 
-		_sessionPrefsListener = new SessionPreferencesListener(plugin, session, _prefs);
-		_prefs.addPropertyChangeListener(_sessionPrefsListener);
-	}
-
-	// Need to call this at the appropriate time??
-	public void cleanup() {
-		if (_sessionPrefsListener != null) {
-			_prefs.removePropertyChangeListener(_sessionPrefsListener);
-			_sessionPrefsListener = null;
+		Action action = session.getApplication().getActionCollection().get(ExecuteSqlAction.class);
+		if (action != null) {
+			InputHandler ih = _jeditTextArea.getInputHandler();
+			PluginResources rsrc = plugin.getResources();
+			String rsrcKey = "jeditshortcut." + rsrc.getClassName(action.getClass());
+			String binding = rsrc.getString(rsrcKey);
+			if (binding != null && binding.length() > 0) {
+				ih.addKeyBinding(binding, action);
+				s_log.debug("Adding binding: " + binding);
+			}
 		}
 	}
 
 	/**
-	 * @see ISQLEntryPanel#getComponent()
+	 * @see ISQLEntryPanel#getJComponent()
 	 */
-	public Component getComponent() {
+	public JComponent getJComponent() {
 		return _jeditTextArea;
 	}
 
@@ -134,7 +138,7 @@ class JeditSQLEntryPanel implements ISQLEntryPanel {
 	 * @see ISQLEntryPanel#setTabSize(int)
 	 */
 	public void setTabSize(int tabSize) {
-		//??
+		_jeditTextArea.getDocument().putProperty(PlainDocument.tabSizeAttribute, new Integer(tabSize));
 	}
 
 	/**
@@ -197,7 +201,7 @@ class JeditSQLEntryPanel implements ISQLEntryPanel {
 		return _jeditTextArea;
 	}
 
-	private void updateFromPreferences(JeditPreferences prefs)
+	void updateFromPreferences(JeditPreferences prefs)
 			throws IllegalArgumentException {
 		if (prefs == null) {
 			throw new IllegalArgumentException("Null JEditPreferences passed");
@@ -241,41 +245,13 @@ class JeditSQLEntryPanel implements ISQLEntryPanel {
 		_jeditTextArea.getDocument().removeUndoableEditListener(listener);
 	}
 
-	private static final class SessionPreferencesListener implements PropertyChangeListener {
-		private JeditPlugin _plugin;
-		private ISession _session;
-		private JeditPreferences _prefs;
-		private boolean _usingJeditControl;		
-		SessionPreferencesListener(JeditPlugin plugin, ISession session, JeditPreferences prefs) {
-			super();
-			_plugin = plugin;
-			_session = session;
-			_prefs = prefs;
-		}
-
-		public void propertyChange(PropertyChangeEvent evt) {
-			final String propName = evt.getPropertyName();
-
-			if (propName == null || propName.equals(
-					JeditPreferences.IPropertyNames.USE_JEDIT_CONTROL)) {
-				synchronized (_session) {
-					SessionSheet sheet = _session.getSessionSheet();
-					if (sheet != null) {
-						sheet.replaceSQLEntryPanel(_plugin.getJeditFactory().createSQLEntryPanel(_session));
-					}
-				}
-			}
-
-			if (propName == null ||
-					!propName.equals(JeditPreferences.IPropertyNames.USE_JEDIT_CONTROL)) {
-				if (_prefs.getUseJeditTextControl()) {
-					JeditSQLEntryPanel pnl = (JeditSQLEntryPanel)_session.getPluginObject(_plugin, JeditConstants.ISessionKeys.JEDIT_SQL_ENTRY_CONTROL);
-					if (pnl != null) {
-						pnl.updateFromPreferences(_prefs);
-					}
-				}
-			}
-		}
+	/**
+	 * @see ISQLEntryPanel#setUndoActions(Action, Action)
+	 */
+	public void setUndoActions(Action undo, Action redo) {
+		_jeditPopup.addSeparator();
+		_jeditPopup.add(undo);
+		_jeditPopup.add(redo);
 	}
 }
 

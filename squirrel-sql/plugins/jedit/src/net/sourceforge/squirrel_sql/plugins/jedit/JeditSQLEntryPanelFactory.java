@@ -31,25 +31,19 @@ import net.sourceforge.squirrel_sql.plugins.jedit.textarea.JEditTextArea;
 
 class JeditSQLEntryPanelFactory implements ISQLEntryPanelFactory {
 	private JeditPlugin _plugin;
-	private JeditPreferences _globalPrefs;
 
-	/** The original Squirrel CQL CLient factory for creating SQL entry panels. */
+	/** The original Squirrel SQL CLient factory for creating SQL entry panels. */
 	private ISQLEntryPanelFactory _originalFactory;
 
-	JeditSQLEntryPanelFactory(JeditPlugin plugin, JeditPreferences globalPrefs,
-								ISQLEntryPanelFactory originalFactory) {
+	JeditSQLEntryPanelFactory(JeditPlugin plugin, ISQLEntryPanelFactory originalFactory) {
 		if (plugin == null) {
 			throw new IllegalArgumentException("Null JeditPlugin passed");
-		}
-		if (globalPrefs == null) {
-			throw new IllegalArgumentException("Null JeditPreferences passed");
 		}
 		if (originalFactory == null) {
 			throw new IllegalArgumentException("Null originalFactory passed");
 		}
 
 		_plugin = plugin;
-		_globalPrefs = globalPrefs;
 		_originalFactory = originalFactory;
 	}
 
@@ -61,15 +55,8 @@ class JeditSQLEntryPanelFactory implements ISQLEntryPanelFactory {
 		if (session == null) {
 			throw new IllegalArgumentException("Null ISession passed");
 		}
+
 		JeditPreferences prefs = (JeditPreferences)session.getPluginObject(_plugin, JeditConstants.ISessionKeys.PREFS);
-		if (prefs == null) {
-			try {
-				prefs = (JeditPreferences)_globalPrefs.clone();
-			} catch (CloneNotSupportedException ex) {
-				throw new InternalError("CloneNotSupportedException for JeditPreferences");
-			}
-			session.putPluginObject(_plugin, JeditConstants.ISessionKeys.PREFS, prefs);
-		}
 		if (prefs.getUseJeditTextControl()) {
 			JeditSQLEntryPanel pnl = (JeditSQLEntryPanel)session.getPluginObject(_plugin, JeditConstants.ISessionKeys.JEDIT_SQL_ENTRY_CONTROL);
 			if (pnl == null) {
@@ -89,6 +76,7 @@ class JeditSQLEntryPanelFactory implements ISQLEntryPanelFactory {
 			}
 			return pnl;
 		}
+		session.removePluginObject(_plugin, JeditConstants.ISessionKeys.JEDIT_SQL_ENTRY_CONTROL);
 		return _originalFactory.createSQLEntryPanel(session);
 	}
 
