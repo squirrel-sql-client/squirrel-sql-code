@@ -757,15 +757,7 @@ public class WindowManager
 			final ISession newSession = evt.getSession();
 
 			// Allocate the current session to the actions.
-			for (Iterator it = _app.getActionCollection().actions();
-					it.hasNext();)
-			{
-				final Action act = (Action)it.next();
-				if (act instanceof ISessionAction)
-				{
-					((ISessionAction)act).setSession(newSession);
-				}
-			}
+			_app.getActionCollection().setCurrentSession(newSession);
 
 			// If the active window isn't for the currently selected session
 			// then select the main window for the session.
@@ -798,15 +790,7 @@ public class WindowManager
 			getMainFrame().getSessionMenu().setEnabled(false);
 
 			// Clear session info from all actions.
-			for (Iterator it = _app.getActionCollection().actions();
-					it.hasNext();)
-			{
-				final Action act = (Action)it.next();
-				if (act instanceof ISessionAction)
-				{
-					((ISessionAction)act).setSession(null);
-				}
-			}
+			_app.getActionCollection().setCurrentSession(null);
 
 			// Close all sheets for the session.
 			_sessionClosing = true;

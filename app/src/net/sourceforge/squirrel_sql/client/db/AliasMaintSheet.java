@@ -52,6 +52,7 @@ import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.sql.DriverPropertiesDialog;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.DataCache;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
@@ -550,7 +551,7 @@ public class AliasMaintSheet extends BaseSheet
 			public void actionPerformed(ActionEvent evt)
 			{
 				final DataCache cache = _app.getDataCache();
-				final IdentifierFactory factory = IdentifierFactory.getInstance();
+				final IIdentifierFactory factory = IdentifierFactory.getInstance();
 				final ISQLAlias testAlias = cache.createAlias(factory.createIdentifier());
 				try
 				{

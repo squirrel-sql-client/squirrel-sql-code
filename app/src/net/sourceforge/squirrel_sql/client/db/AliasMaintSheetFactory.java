@@ -24,6 +24,7 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.DataCache;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
@@ -136,7 +137,7 @@ public class AliasMaintSheetFactory implements AliasMaintSheet.IMaintenanceType
 	public AliasMaintSheet showCreateSheet()
 	{
 		final DataCache cache = _app.getDataCache();
-		final IdentifierFactory factory = IdentifierFactory.getInstance();
+		final IIdentifierFactory factory = IdentifierFactory.getInstance();
 		final ISQLAlias alias = cache.createAlias(factory.createIdentifier());
 		final AliasMaintSheet sheet = new AliasMaintSheet(_app, alias, NEW);
 		_app.getMainFrame().addInternalFrame(sheet, true, null);
@@ -160,7 +161,7 @@ public class AliasMaintSheetFactory implements AliasMaintSheet.IMaintenanceType
 		}
 
 		final DataCache cache = _app.getDataCache();
-		final IdentifierFactory factory = IdentifierFactory.getInstance();
+		final IIdentifierFactory factory = IdentifierFactory.getInstance();
 		ISQLAlias newAlias = cache.createAlias(factory.createIdentifier());
 		try
 		{
