@@ -18,7 +18,7 @@
  *
  * created by cse, 07.10.2002 11:57:54
  *
- * @version $Id: ParserThread.java,v 1.3 2004-11-27 23:39:55 gerdwagner Exp $
+ * @version $Id: ParserThread.java,v 1.4 2004-12-05 14:17:30 gerdwagner Exp $
  */
 package net.sourceforge.squirrel_sql.client.session.parser.kernel;
 
@@ -105,12 +105,113 @@ public class ParserThread extends Thread
 
    private int predictNextStatementBegin(int errPos)
    {
+      int commentIntervals[][] = calculateCommentIntervals();
+
+//      for (int i = 0; i < commentIntervals.length; i++)
+//      {
+//         System.out.println("###################");
+//         System.out.println(_workingString.substring(commentIntervals[i][0], commentIntervals[i][1]));
+//         System.out.println("###################");
+//      }
+
+
       int ret = errPos;
-      while(   _workingString.length() > ret && false == startsWithBeginKeyWord(ret) )
+      while(   _workingString.length() > ret && (false == startsWithBeginKeyWord(ret) || isInComment(ret, commentIntervals)) )
       {
          ++ret;
       }
+
+//      if(_workingString.length() > ret)
+//      {
+//         System.out.println("*****************************BEGIN startsWithBeginKeyWord(ret) " + startsWithBeginKeyWord(ret) + " isInComment(ret, commentIntervals)" + isInComment(ret, commentIntervals));
+//         System.out.println(_workingString.substring(ret));
+//      }
+
       return ret;
+   }
+
+   private int[][] calculateCommentIntervals()
+   {
+      Vector ret = new Vector();
+      boolean inMultiLineComment = false;
+      boolean inLineComment = false;
+      boolean isaSlash = false;
+      boolean isaStar = false;
+      boolean isaMinus = false;
+
+      int[] curComment = null;
+
+      for(int i=0; i < _workingString.length(); ++i)
+      {
+         if('*' == _workingString.charAt(i) && isaSlash && false == inMultiLineComment && false == inLineComment)
+         {
+            inMultiLineComment = true;
+            curComment = new int[]{i-1, -1};
+         }
+         else if('/' == _workingString.charAt(i) && isaStar && false == inLineComment && inMultiLineComment)
+         {
+            inMultiLineComment = false;
+            curComment[1] = i;
+            ret.add(curComment);
+            curComment = null;
+
+         }
+         else if('-' == _workingString.charAt(i) && isaMinus && false == inMultiLineComment && false == inLineComment)
+         {
+            inLineComment = true;
+            curComment = new int[]{i-1, -1};
+         }
+         else if('\n' == _workingString.charAt(i) && false == inMultiLineComment && inLineComment)
+         {
+            inLineComment = false;
+            curComment[1] = i;
+            ret.add(curComment);
+            curComment = null;
+         }
+
+
+
+         if('/' == _workingString.charAt(i))
+         {
+            isaSlash = true;
+         }
+         else if('*' == _workingString.charAt(i))
+         {
+            isaStar = true;
+         }
+         else if('-' == _workingString.charAt(i))
+         {
+            isaMinus = true;
+         }
+         else
+         {
+            isaSlash = false;
+            isaStar = false;
+            isaMinus = false;
+         }
+      }
+
+      if(null != curComment)
+      {
+         curComment[1] = _workingString.length();
+      }
+
+      return (int[][]) ret.toArray(new int[ret.size()][]);
+
+
+   }
+
+   private boolean isInComment(int ret, int commentIntervals[][])
+   {
+      for(int i=0; i < commentIntervals.length; ++i)
+      {
+         if(commentIntervals[i][0] <= ret && ret <= commentIntervals[i][1])
+         {
+            return true;
+         }
+      }
+
+      return false;
    }
 
    private boolean startsWithBeginKeyWord(int ret)
@@ -246,19 +347,6 @@ public class ParserThread extends Thread
 					{
 						break;
 					}
-
-//					if(_workingString.length() > _lastErrEnd)
-//					{
-//						_workingString = _workingString.substring(_lastErrEnd, _workingString.length());
-//						if("".equals(_workingString.trim()))
-//						{
-//							break;
-//						}
-//					}
-//					else
-//					{
-//						break;
-//					}
 
 					_lastParserRunOffset += _nextStatBegin;
 					_workingBuffer = new IncrementalBuffer(new StringCharacterIterator(_workingString));
