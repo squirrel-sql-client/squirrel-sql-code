@@ -17,12 +17,14 @@ package net.sourceforge.squirrel_sql.client.mainframe;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.Component;
+
 import javax.swing.Action;
 import javax.swing.JDesktopPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 
+//import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.gui.action.IHasJDesktopPane;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -63,8 +65,10 @@ import net.sourceforge.squirrel_sql.client.session.action.ShowNativeSQLAction;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-final class MainFrameMenuBar extends JMenuBar {
-	public interface IMenuIDs {
+final class MainFrameMenuBar extends JMenuBar
+{
+	public interface IMenuIDs
+	{
 		int PLUGINS_MENU = 1;
 		int SESSION_MENU = 2;
 	}
@@ -86,19 +90,24 @@ final class MainFrameMenuBar extends JMenuBar {
 	/**
 	 * Ctor.
 	 */
-	MainFrameMenuBar(IApplication app, JDesktopPane desktopPane, ActionCollection actions) {
+	MainFrameMenuBar(IApplication app, JDesktopPane desktopPane, ActionCollection actions)
+	{
 		super();
-		if (app == null) {
+		if (app == null)
+		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
-		if (desktopPane == null) {
+		if (desktopPane == null)
+		{
 			throw new IllegalArgumentException("Null JDesktopPane passed");
 		}
-		if (actions == null) {
+		if (actions == null)
+		{
 			throw new IllegalArgumentException("Null ActionCollection passed");
 		}
 		Resources rsrc = app.getResources();
-		if (rsrc == null) {
+		if (rsrc == null)
+		{
 			throw new IllegalStateException("No Resources object in IApplication");
 		}
 
@@ -106,7 +115,7 @@ final class MainFrameMenuBar extends JMenuBar {
 		_app = app;
 
 		add(createFileMenu(rsrc));
-//	  add(createEditMenu());
+		//	  add(createEditMenu());
 		add(createDriversMenu(rsrc));
 		add(createAliasesMenu(rsrc));
 		add(createPluginsMenu(rsrc));
@@ -115,54 +124,102 @@ final class MainFrameMenuBar extends JMenuBar {
 		add(createHelpMenu(rsrc));
 	}
 
-	JMenu getWindowsMenu() {
+	JMenu getWindowsMenu()
+	{
 		return _windowsMenu;
 	}
 
-	JMenu getSessionMenu() {
+	JMenu getSessionMenu()
+	{
 		return _sessionMenu;
 	}
 
-
-	void addToMenu(int menuId, JMenu menu) throws IllegalArgumentException {
-		if (menu == null) {
+	void addToMenu(int menuId, JMenu menu) throws IllegalArgumentException
+	{
+		if (menu == null)
+		{
 			throw new IllegalArgumentException("Null JMenu passed");
 		}
-		switch (menuId) {
-			case IMenuIDs.PLUGINS_MENU: {
+		switch (menuId)
+		{
+			case IMenuIDs.PLUGINS_MENU :
+			{
 				_pluginsMenu.add(menu);
 				break;
 			}
-			case IMenuIDs.SESSION_MENU: {
+			case IMenuIDs.SESSION_MENU :
+			{
 				_sessionMenu.add(menu);
 				break;
 			}
-			default: {
+			default :
+			{
 				throw new IllegalArgumentException("Invalid menuId passed: " + menuId);
 			}
 		}
 	}
 
-	void addToMenu(int menuId, Action action) {
-		if (action == null) {
+	void addToMenu(int menuId, Action action)
+	{
+		if (action == null)
+		{
 			throw new IllegalArgumentException("Null Action passed");
 		}
-		switch (menuId) {
-			case IMenuIDs.PLUGINS_MENU: {
+		switch (menuId)
+		{
+			case IMenuIDs.PLUGINS_MENU :
+			{
 				_pluginsMenu.add(action);
 				break;
 			}
-			case IMenuIDs.SESSION_MENU: {
+			case IMenuIDs.SESSION_MENU :
+			{
 				_sessionMenu.add(action);
 				break;
 			}
-			default: {
+			default :
+			{
 				throw new IllegalArgumentException("Invalid menuId passed: " + menuId);
 			}
 		}
 	}
 
-	private JMenu createFileMenu(Resources rsrc) {
+	/**
+	 * Add a component to the end of the menu.
+	 * 
+	 * @param	menuId	Defines the menu to add the component to. @see IMenuIDs
+	 * @param	comp	Component to add to menu.
+	 * 
+	 * @throws	IllegalArgumentException if null <TT>Component</TT> passed or
+	 * 			an invalid <TT>menuId</TT> passed.
+	 */
+	void addToMenu(int menuId, Component comp)
+	{
+		if (comp == null)
+		{
+			throw new IllegalArgumentException("Component == null");
+		}
+		switch (menuId)
+		{
+			case IMenuIDs.PLUGINS_MENU :
+			{
+				_pluginsMenu.add(comp);
+				break;
+			}
+			case IMenuIDs.SESSION_MENU :
+			{
+				_sessionMenu.add(comp);
+				break;
+			}
+			default :
+			{
+				throw new IllegalArgumentException("Invalid menuId passed: " + menuId);
+			}
+		}
+	}
+
+	private JMenu createFileMenu(Resources rsrc)
+	{
 		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.FILE);
 		addToMenu(rsrc, GlobalPreferencesAction.class, menu);
 		addToMenu(rsrc, NewSessionPropertiesAction.class, menu);
@@ -171,13 +228,14 @@ final class MainFrameMenuBar extends JMenuBar {
 		return menu;
 	}
 
-//  private JMenu createEditMenu() {
-//	  JMenu menu = s_res.createMenu(MenuResourceKeys.EDIT);
-//	  addToMenu(GlobalPreferencesAction.class, menu);
-//	  return menu;
-//  }
+	//  private JMenu createEditMenu() {
+	//	  JMenu menu = s_res.createMenu(MenuResourceKeys.EDIT);
+	//	  addToMenu(GlobalPreferencesAction.class, menu);
+	//	  return menu;
+	//  }
 
-	private JMenu createSessionMenu(Resources rsrc) {
+	private JMenu createSessionMenu(Resources rsrc)
+	{
 		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.SESSION);
 		addToMenu(rsrc, SessionPropertiesAction.class, menu);
 		menu.addSeparator();
@@ -193,7 +251,8 @@ final class MainFrameMenuBar extends JMenuBar {
 		return menu;
 	}
 
-	private JMenu createPluginsMenu(Resources rsrc) {
+	private JMenu createPluginsMenu(Resources rsrc)
+	{
 		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.PLUGINS);
 		addToMenu(rsrc, DisplayPluginSummaryAction.class, menu);
 		menu.addSeparator();
@@ -201,7 +260,8 @@ final class MainFrameMenuBar extends JMenuBar {
 		return menu;
 	}
 
-	private JMenu createAliasesMenu(Resources rsrc) {
+	private JMenu createAliasesMenu(Resources rsrc)
+	{
 		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.ALIASES);
 		addToMenu(rsrc, ConnectToAliasAction.class, menu);
 		menu.addSeparator();
@@ -214,7 +274,8 @@ final class MainFrameMenuBar extends JMenuBar {
 		return menu;
 	}
 
-	private JMenu createDriversMenu(Resources rsrc) {
+	private JMenu createDriversMenu(Resources rsrc)
+	{
 		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.DRIVERS);
 		addToMenu(rsrc, CreateDriverAction.class, menu);
 		menu.addSeparator();
@@ -225,7 +286,8 @@ final class MainFrameMenuBar extends JMenuBar {
 		return menu;
 	}
 
-	private JMenu createWindowsMenu(Resources rsrc, JDesktopPane desktopPane) {
+	private JMenu createWindowsMenu(Resources rsrc, JDesktopPane desktopPane)
+	{
 		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.WINDOWS);
 
 		addToMenu(rsrc, ViewAliasesAction.class, menu);
@@ -244,13 +306,15 @@ final class MainFrameMenuBar extends JMenuBar {
 		return menu;
 	}
 
-	private JMenu createHelpMenu(Resources rsrc) {
+	private JMenu createHelpMenu(Resources rsrc)
+	{
 		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.HELP);
 		addToMenu(rsrc, AboutAction.class, menu);
 		return menu;
 	}
 
-	private JMenu createSQLResultsCloseMenu(Resources rsrc) {
+	private JMenu createSQLResultsCloseMenu(Resources rsrc)
+	{
 		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.CLOSE_ALL_SQL_RESULTS);
 		addToMenu(rsrc, CloseAllSQLResultTabsAction.class, menu);
 		addToMenu(rsrc, CloseAllSQLResultWindowsAction.class, menu);
@@ -258,25 +322,43 @@ final class MainFrameMenuBar extends JMenuBar {
 		return menu;
 	}
 
-	private Action addDesktopPaneActionToMenu(Resources rsrc, Class actionClass,
-										JMenu menu, JDesktopPane desktopPane) {
+	private Action addDesktopPaneActionToMenu(
+		Resources rsrc,
+		Class actionClass,
+		JMenu menu,
+		JDesktopPane desktopPane)
+	{
 		Action act = addToMenu(rsrc, actionClass, menu);
-		if (act != null) {
-			if (act instanceof IHasJDesktopPane) {
-				((IHasJDesktopPane)act).setJDesktopPane(desktopPane);
-			} else {
-				s_log.error("Tryimg to add non IHasJDesktopPane (" + actionClass.getName() + ") in MainFrameMenuBar.addDesktopPaneActionToMenu");
+		if (act != null)
+		{
+			if (act instanceof IHasJDesktopPane)
+			{
+				((IHasJDesktopPane) act).setJDesktopPane(desktopPane);
+			}
+			else
+			{
+				s_log.error(
+					"Tryimg to add non IHasJDesktopPane ("
+						+ actionClass.getName()
+						+ ") in MainFrameMenuBar.addDesktopPaneActionToMenu");
 			}
 		}
 		return act;
 	}
 
-	private Action addToMenu(Resources rsrc, Class actionClass, JMenu menu) {
+	private Action addToMenu(Resources rsrc, Class actionClass, JMenu menu)
+	{
 		Action act = _actions.get(actionClass);
-		if (act != null) {
+		if (act != null)
+		{
 			rsrc.addToMenu(act, menu);
-		} else {
-			s_log.error("Could not retrieve instance of " + actionClass.getName() + ") in MainFrameMenuBar.addToMenu");
+		}
+		else
+		{
+			s_log.error(
+				"Could not retrieve instance of "
+					+ actionClass.getName()
+					+ ") in MainFrameMenuBar.addToMenu");
 		}
 		return act;
 	}

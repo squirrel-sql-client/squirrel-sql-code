@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,24 +17,42 @@ package net.sourceforge.squirrel_sql.client.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.lang.reflect.Field;
-import java.util.Iterator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.swing.Action;
 import javax.swing.JInternalFrame;
 
+//import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.mainframe.action.*;
+import net.sourceforge.squirrel_sql.client.mainframe.action.AboutAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CascadeAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CloseAllSessionsAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.DisplayPluginSummaryAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ExitAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.GlobalPreferencesAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.MaximizeAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.NewSessionPropertiesAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.TileAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionSheet;
-import net.sourceforge.squirrel_sql.client.session.action.*;
+import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsAction;
+import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultWindowsAction;
+import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
+import net.sourceforge.squirrel_sql.client.session.action.DropTableAction;
+import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
+import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeAction;
+import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeItemAction;
+import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
+import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
+import net.sourceforge.squirrel_sql.client.session.action.ShowNativeSQLAction;
 
 /**
  * This class represents a collection of <TT>Action</CODE> objects for the
@@ -42,7 +60,8 @@ import net.sourceforge.squirrel_sql.client.session.action.*;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public final class ActionCollection {
+public final class ActionCollection
+{
 	/** Logger for this class. */
 	private static ILogger s_log;
 
@@ -63,13 +82,19 @@ public final class ActionCollection {
 	 * application is first initialised.
 	 *
 	 * @param	app		Application API.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>IApplication</TT> passed.
 	 */
-	public ActionCollection(IApplication app) throws IllegalArgumentException {
+	public ActionCollection(IApplication app)
+	{
 		super();
-		if (app == null) {
-			throw new IllegalArgumentException("Null IApplication passed");
+		if (app == null)
+		{
+			throw new IllegalArgumentException("IApplication == null");
 		}
-		if (s_log == null) {
+		if (s_log == null)
+		{
 			s_log = LoggerController.createLogger(getClass());
 		}
 		_app = app;
@@ -87,7 +112,8 @@ public final class ActionCollection {
 	 * @throws	IllegalArgumentException
 	 *			If a <TT>null</TT> <TT>Action</TT> passed.
 	 */
-	public void add(Action action) throws IllegalArgumentException {
+	public void add(Action action)
+	{
 		_actionColl.put(action.getClass(), action);
 	}
 
@@ -103,17 +129,21 @@ public final class ActionCollection {
 	 *
 	 * @throws	IllegalArgumentException	Thrown if a null action class passed.
 	 */
-	public synchronized Action get(Class actionClass) throws IllegalArgumentException {
-		if (actionClass == null) {
+	public synchronized Action get(Class actionClass)
+		throws IllegalArgumentException
+	{
+		if (actionClass == null)
+		{
 			throw new IllegalArgumentException("null Action Class passed.");
 		}
 
 		Action action = (Action)_actionColl.get(actionClass);
-		if (action == null) {
-//			log.showMessage(Logger.ILogTypes.ERROR, "Action " + actionClass.getName()
-//						+ " not found in ActionCollection. Will attempt to create it"); //i18n
-			s_log.error("Action " + actionClass.getName()
-						+ " not found in ActionCollection. Will attempt to create it"); //i18n
+		if (action == null)
+		{
+			s_log.error(
+				"Action "
+					+ actionClass.getName()
+					+ " not found in ActionCollection. Will attempt to create it");
 			action = createAction(actionClass);
 		}
 		return action;
@@ -133,13 +163,17 @@ public final class ActionCollection {
 	 *
 	 * @throws	IllegalArgumentException	Thrown if a null action class passed.
 	 */
-	public void enableAction(Class actionClass, boolean enable) throws IllegalArgumentException {
-		if (actionClass == null) {
+	public void enableAction(Class actionClass, boolean enable)
+		throws IllegalArgumentException
+	{
+		if (actionClass == null)
+		{
 			throw new IllegalArgumentException("null Action Class passed.");
 		}
 
 		final Action action = get(actionClass);
-		if (action != null) {
+		if (action != null)
+		{
 			action.setEnabled(enable);
 		}
 	}
@@ -151,7 +185,8 @@ public final class ActionCollection {
 	 *
 	 * @param	nbrInternalFramesOpen	The count of the internal frames open.
 	 */
-	public void internalFrameOpenedOrClosed(int nbrInternalFramesOpen) {
+	public void internalFrameOpenedOrClosed(int nbrInternalFramesOpen)
+	{
 		enableInternalFrameOptions(nbrInternalFramesOpen > 0);
 	}
 
@@ -161,7 +196,8 @@ public final class ActionCollection {
 	 *
 	 * @param	frame	The <TT>JInternalFrame</TT> deactivated.
 	 */
-	public void internalFrameDeactivated(JInternalFrame frame) {
+	public void internalFrameDeactivated(JInternalFrame frame)
+	{
 		internalFrameActivated(null);
 	}
 
@@ -171,15 +207,19 @@ public final class ActionCollection {
 	 *
 	 * @param	frame	The <TT>JInternalFrame</TT> activated.
 	 */
-	public synchronized void internalFrameActivated(JInternalFrame frame) {
+	public synchronized void internalFrameActivated(JInternalFrame frame)
+	{
 		ISession session = null;
-		if (frame instanceof SessionSheet) {
-			session = ((SessionSheet)frame).getSession();
+		if (frame instanceof SessionSheet)
+		{
+			session = ((SessionSheet) frame).getSession();
 		}
-		for (Iterator it = actions(); it.hasNext();) {
-			final Action act = (Action)it.next();
-			if (act instanceof ISessionAction) {
-				((ISessionAction)act).setSession(session);
+		for (Iterator it = actions(); it.hasNext();)
+		{
+			final Action act = (Action) it.next();
+			if (act instanceof ISessionAction)
+			{
+				((ISessionAction) act).setSession(session);
 			}
 		}
 	}
@@ -187,7 +227,8 @@ public final class ActionCollection {
 	/**
 	 * Return an <TT>Iterator</TT> over this collection.
 	 */
-	private Iterator actions() {
+	private Iterator actions()
+	{
 		return _actionColl.values().iterator();
 	}
 
@@ -200,15 +241,17 @@ public final class ActionCollection {
 	 *						using <TT>newInstance()</TT> this <TT>Class</TT>
 	 *						must have a default ctor.
 	 */
-	private Action createAction(Class actionClass) {
+	private Action createAction(Class actionClass)
+	{
 		Action action = null;
-		try {
-			action = (Action)actionClass.newInstance();
+		try
+		{
+			action = (Action) actionClass.newInstance();
 			_actionColl.put(actionClass, action);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex)
+		{
 			s_log.error("Error occured creating Action: " + actionClass.getName(), ex);
-//			log.showMessage(Logger.ILogTypes.ERROR, "Error occured creating Action: " + actionClass.getName());
-//			log.showMessage(Logger.ILogTypes.ERROR,ex.toString());
 		}
 		return action;
 	}
@@ -217,7 +260,8 @@ public final class ActionCollection {
 	 * Enable/disable actions that are valid only if an internal frame
 	 * is open.
 	 */
-	private void enableInternalFrameOptions(boolean enable) {
+	private void enableInternalFrameOptions(boolean enable)
+	{
 		enableAction(CascadeAction.class, enable);
 		enableAction(MaximizeAction.class, enable);
 		enableAction(TileAction.class, enable);
@@ -227,7 +271,8 @@ public final class ActionCollection {
 	/**
 	 * Load actions.
 	 */
-	private void preloadActions() {
+	private void preloadActions()
+	{
 		add(new AboutAction(_app));
 		add(new CascadeAction(_app));
 		add(new CloseAllSessionsAction(_app));

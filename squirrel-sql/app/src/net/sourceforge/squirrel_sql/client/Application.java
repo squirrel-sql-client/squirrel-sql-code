@@ -70,6 +70,7 @@ class Application implements IApplication
 	private DataCache _cache;
 	private ActionCollection _actions;
 
+	/** Applications main frame. */
 	private MainFrame _mainFrame;
 
 	/** Object to manage plugins. */

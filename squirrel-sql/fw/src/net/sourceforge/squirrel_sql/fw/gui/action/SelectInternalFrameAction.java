@@ -22,12 +22,11 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
 
-import javax.swing.AbstractAction;
 import javax.swing.JInternalFrame;
 
 import net.sourceforge.squirrel_sql.fw.gui.action.SelectInternalFrameCommand;
 
-public class SelectInternalFrameAction extends AbstractAction
+public class SelectInternalFrameAction extends BaseAction
 			implements PropertyChangeListener {
 
 	/**
@@ -61,7 +60,7 @@ public class SelectInternalFrameAction extends AbstractAction
 	}
 
 	public void propertyChange(PropertyChangeEvent evt) {
-		putValue(AbstractAction.NAME, getInternalFrame().getTitle());
+		putValue(BaseAction.NAME, getInternalFrame().getTitle());
 	}
 
 	private JInternalFrame getInternalFrame() throws IllegalStateException {
