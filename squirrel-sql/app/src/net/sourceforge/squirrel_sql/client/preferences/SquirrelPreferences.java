@@ -17,23 +17,14 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.beans.IndexedPropertyDescriptor;
-import java.beans.IntrospectionException;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyDescriptor;
-import java.beans.SimpleBeanInfo;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.sql.DriverManager;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
-import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
@@ -41,13 +32,14 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrameWindowState;
-import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 
-public class SquirrelPreferences implements Serializable {
+public class SquirrelPreferences implements Serializable
+{
 
-	public interface IPropertyNames {
+	public interface IPropertyNames
+	{
 		String SESSION_PROPERTIES = "sessionProperties";
 		String LOGIN_TIMEOUT = "loginTimeout";
 		String DEBUG_JDBC = "debugJdbc";
@@ -55,6 +47,7 @@ public class SquirrelPreferences implements Serializable {
 		String PLUGIN_OBJECTS = "pluginObjects";
 		String SHOW_CONTENTS_WHEN_DRAGGING = "showContentsWhenDragging";
 		String SHOW_MAIN_STATUS_BAR = "showMainStatusBar";
+		String SHOW_MAIN_TOOL_BAR = "showMainToolBar";
 		String SHOW_TOOLTIPS = "showToolTips";
 		String SCROLLABLE_TABBED_PANES = "useScrollableTabbedPanes";
 	}
@@ -85,11 +78,14 @@ public class SquirrelPreferences implements Serializable {
 	/** Show tooltips for controls. */
 	private boolean _showToolTips = true;
 
-	/** Use scrollabel tabbed panes. JDK 1.4 and above only. */
+	/** Use scrollable tabbed panes. JDK 1.4 and above only. */
 	private boolean _useScrollableTabbedPanes;
 
 	/** Show main statusbar. */
 	private boolean _showMainStatusBar = true;
+
+	/** Show main toolbar. */
+	private boolean _showMainToolBar = true;
 
 	/**
 	 * Objects stored by plugins. Each element of this collection is a <TT>Map</TT>
@@ -104,17 +100,22 @@ public class SquirrelPreferences implements Serializable {
 	/**
 	 * Default ctor.
 	 */
-	public SquirrelPreferences() {
+	public SquirrelPreferences()
+	{
 		super();
 	}
 
 	/**
 	 * Assign contents of the passed prefernces object to this one.
 	 */
-	public void assignFrom(SquirrelPreferences rhs) {
-		try {
+	public void assignFrom(SquirrelPreferences rhs)
+	{
+		try
+		{
 			setApplication(rhs.getApplication());
-		} catch (IllegalArgumentException ignore) {
+		}
+		catch (IllegalArgumentException ignore)
+		{
 			// When loading from prefs file this will be null.
 		}
 		setSessionProperties(rhs.getSessionProperties());
@@ -123,8 +124,9 @@ public class SquirrelPreferences implements Serializable {
 		setLoginTimeout(rhs.getLoginTimeout());
 		setDebugJdbc(rhs.getDebugJdbc());
 		setShowMainStatusBar(rhs.getShowMainStatusBar());
+		setShowMainToolBar(rhs.getShowMainToolBar());
 		setShowToolTips(rhs.getShowToolTips());
-//		setPluginObjects(rhs.getPluginObjects());
+		//		setPluginObjects(rhs.getPluginObjects());
 		setUseScrollableTabbedPanes(rhs.useScrollableTabbedPanes());
 	}
 
@@ -136,114 +138,148 @@ public class SquirrelPreferences implements Serializable {
 	 * @throws  IllegalArgumentException
 	 *			  Thrown if <TT>null</TT> <TT>IApplication</TT> passed.
 	 */
-	public void setApplication(IApplication app) throws IllegalArgumentException {
-		if (app == null) {
+	public void setApplication(IApplication app) throws IllegalArgumentException
+	{
+		if (app == null)
+		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
 
 		_app = app;
 	}
 
-	public IApplication getApplication() {
+	public IApplication getApplication()
+	{
 		return _app;
 	}
 
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
+	public void addPropertyChangeListener(PropertyChangeListener listener)
+	{
 		_propChgReporter.addPropertyChangeListener(listener);
 	}
 
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
+	public void removePropertyChangeListener(PropertyChangeListener listener)
+	{
 		_propChgReporter.removePropertyChangeListener(listener);
 	}
 
-	public SessionProperties getSessionProperties() {
+	public SessionProperties getSessionProperties()
+	{
 		return _sessionProps;
 	}
 
-	public synchronized void setSessionProperties(SessionProperties data) {
-		if (_sessionProps != data) {
+	public synchronized void setSessionProperties(SessionProperties data)
+	{
+		if (_sessionProps != data)
+		{
 			final SessionProperties oldValue = _sessionProps;
 			_sessionProps = data;
 			_propChgReporter.firePropertyChange(IPropertyNames.SESSION_PROPERTIES,
-								oldValue, _sessionProps);
+												oldValue, _sessionProps);
 		}
 	}
 
-	public MainFrameWindowState getMainFrameWindowState() {
+	public MainFrameWindowState getMainFrameWindowState()
+	{
 		return _mainFrameState;
 	}
 
-	public synchronized void setMainFrameWindowState(MainFrameWindowState data) {
+	public synchronized void setMainFrameWindowState(MainFrameWindowState data)
+	{
 		final MainFrameWindowState oldValue = _mainFrameState;
 		_mainFrameState = data;
 		_propChgReporter.firePropertyChange(IPropertyNames.MAIN_FRAME_STATE,
-								oldValue, _mainFrameState);
+											oldValue, _mainFrameState);
 	}
 
-	public boolean getShowContentsWhenDragging() {
+	public boolean getShowContentsWhenDragging()
+	{
 		return _showContentsWhenDragging;
 	}
 
-	public synchronized void setShowContentsWhenDragging(boolean data) {
+	public synchronized void setShowContentsWhenDragging(boolean data)
+	{
 		final boolean oldValue = _showContentsWhenDragging;
 		_showContentsWhenDragging = data;
 		_propChgReporter.firePropertyChange(IPropertyNames.SHOW_CONTENTS_WHEN_DRAGGING,
-								oldValue, _showContentsWhenDragging);
+											oldValue, _showContentsWhenDragging);
 	}
 
-	public boolean getShowMainStatusBar() {
+	public boolean getShowMainStatusBar()
+	{
 		return _showMainStatusBar;
 	}
 
-	public synchronized void setShowMainStatusBar(boolean data) {
+	public synchronized void setShowMainStatusBar(boolean data)
+	{
 		final boolean oldValue = _showMainStatusBar;
 		_showMainStatusBar = data;
 		_propChgReporter.firePropertyChange(IPropertyNames.SHOW_MAIN_STATUS_BAR,
-								oldValue, _showMainStatusBar);
+											oldValue, _showMainStatusBar);
 	}
 
-	public int getLoginTimeout() {
+	public boolean getShowMainToolBar()
+	{
+		return _showMainToolBar;
+	}
+
+	public synchronized void setShowMainToolBar(boolean data)
+	{
+		final boolean oldValue = _showMainToolBar;
+		_showMainToolBar = data;
+		_propChgReporter.firePropertyChange(IPropertyNames.SHOW_MAIN_TOOL_BAR,
+											oldValue, _showMainToolBar);
+	}
+
+	public int getLoginTimeout()
+	{
 		return _loginTimeout;
 	}
 
-	public synchronized void setLoginTimeout(int data) {
+	public synchronized void setLoginTimeout(int data)
+	{
 		final int oldValue = _loginTimeout;
 		_loginTimeout = data;
 		_propChgReporter.firePropertyChange(IPropertyNames.LOGIN_TIMEOUT,
-								oldValue, _loginTimeout);
+											oldValue, _loginTimeout);
 	}
 
-	public boolean getDebugJdbc() {
+	public boolean getDebugJdbc()
+	{
 		return _debugJdbc;
 	}
 
-	public synchronized void setDebugJdbc(boolean data) {
+	public synchronized void setDebugJdbc(boolean data)
+	{
 		final boolean oldValue = _debugJdbc;
 		_debugJdbc = data;
-		_propChgReporter.firePropertyChange(IPropertyNames.DEBUG_JDBC,
-								oldValue, _debugJdbc);
+		_propChgReporter.firePropertyChange(IPropertyNames.DEBUG_JDBC, oldValue, _debugJdbc);
 	}
 
-	public boolean getShowToolTips() {
+	public boolean getShowToolTips()
+	{
 		return _showToolTips;
 	}
 
-	public synchronized void setShowToolTips(boolean data) {
+	public synchronized void setShowToolTips(boolean data)
+	{
 		final boolean oldValue = _showToolTips;
 		_showToolTips = data;
 		_propChgReporter.firePropertyChange(IPropertyNames.SHOW_TOOLTIPS,
-								oldValue, _showToolTips);
+												oldValue, _showToolTips);
 	}
 
-	public boolean useScrollableTabbedPanes() {
+	public boolean useScrollableTabbedPanes()
+	{
 		return _useScrollableTabbedPanes;
 	}
 
-	public synchronized void setUseScrollableTabbedPanes(boolean data) {
+	public synchronized void setUseScrollableTabbedPanes(boolean data)
+	{
 		final boolean oldValue = _useScrollableTabbedPanes;
 		_useScrollableTabbedPanes = data;
 		_propChgReporter.firePropertyChange(IPropertyNames.SCROLLABLE_TABBED_PANES,
-								oldValue, _useScrollableTabbedPanes);
+											oldValue, _useScrollableTabbedPanes);
 	}
 
 	/*
@@ -267,95 +303,99 @@ public class SquirrelPreferences implements Serializable {
 				keysAr[entriesIdx] = new StringWrapper((String)entry.getKey());
 				objsAr[entriesIdx++] = entry.getValue();
 			}
-
+	
 			pow.setKeys(keysAr);
 			pow.setObjects(objsAr);
 			wrappers[wrappersIdx++] = pow;
 		}
-
-
+	
+	
 		return wrappers;
 	}
-*/
+	*/
 
-/*
-	public PluginObjectWrapper getPluginObjectByIndex(int idx) {
-		return null;
-	}
-*/
+	/*
+		public PluginObjectWrapper getPluginObjectByIndex(int idx) {
+			return null;
+		}
+	*/
 
-
-/*
-	public void setPluginObjects(PluginObjectWrapper[] parm) {
-		_allPluginObjects = new HashMap();
-		for (int i = 0; i < parm.length; ++i) {
-			Map map = new HashMap();
-			StringWrapper[] keys = parm[i].getKeys();
-			Object[] objects = parm[i].getObjects();
-			for (int j = 0; j < keys.length; ++j) {
-				map.put(keys[j], objects[j]);
+	/*
+		public void setPluginObjects(PluginObjectWrapper[] parm) {
+			_allPluginObjects = new HashMap();
+			for (int i = 0; i < parm.length; ++i) {
+				Map map = new HashMap();
+				StringWrapper[] keys = parm[i].getKeys();
+				Object[] objects = parm[i].getObjects();
+				for (int j = 0; j < keys.length; ++j) {
+					map.put(keys[j], objects[j]);
+				}
+				_allPluginObjects.put(parm[i].getPluginInternalName(), map);
 			}
-			_allPluginObjects.put(parm[i].getPluginInternalName(), map);
 		}
-	}
-*/
+	*/
 
-/*
-	public void setPluginObjectByIndex(int idx, PluginObjectWrapper value) {
-		//_objects[idx] = value;
-	}
-*/
-
-/*
-	public synchronized Object getPluginObject(IPlugin plugin, String key) {
-		String pluginName = plugin.getInternalName();
-		Map pluginValues = (Map)_allPluginObjects.get(pluginName);
-		if (pluginValues == null) {
-			pluginValues = new HashMap();
-			_allPluginObjects.put(pluginName, pluginValues);
+	/*
+		public void setPluginObjectByIndex(int idx, PluginObjectWrapper value) {
+			//_objects[idx] = value;
 		}
-		return pluginValues.get(key);
-	}
-*/
+	*/
 
-
-/*
-	public synchronized Object putPluginObject(IPlugin plugin, String key, Object obj) {
-		String pluginName = plugin.getInternalName();
-		Map pluginValues = (Map)_allPluginObjects.get(pluginName);
-		if (pluginValues == null) {
-			pluginValues = new HashMap();
-			_allPluginObjects.put(pluginName, pluginValues);
+	/*
+		public synchronized Object getPluginObject(IPlugin plugin, String key) {
+			String pluginName = plugin.getInternalName();
+			Map pluginValues = (Map)_allPluginObjects.get(pluginName);
+			if (pluginValues == null) {
+				pluginValues = new HashMap();
+				_allPluginObjects.put(pluginName, pluginValues);
+			}
+			return pluginValues.get(key);
 		}
-		return pluginValues.put(key, obj);
-	}
-*/
+	*/
 
-
-/*
-	public synchronized Object removePluginObject(IPlugin plugin, String key) {
-		Object obj = getPluginObject(plugin, key);
-		if (obj != null) {
-			((Map)_allPluginObjects.get(plugin.getInternalName())).remove(obj);
+	/*
+		public synchronized Object putPluginObject(IPlugin plugin, String key, Object obj) {
+			String pluginName = plugin.getInternalName();
+			Map pluginValues = (Map)_allPluginObjects.get(pluginName);
+			if (pluginValues == null) {
+				pluginValues = new HashMap();
+				_allPluginObjects.put(pluginName, pluginValues);
+			}
+			return pluginValues.put(key, obj);
 		}
-		return obj;
-	}
-*/
+	*/
 
-	public void load() {
+	/*
+		public synchronized Object removePluginObject(IPlugin plugin, String key) {
+			Object obj = getPluginObject(plugin, key);
+			if (obj != null) {
+				((Map)_allPluginObjects.get(plugin.getInternalName())).remove(obj);
+			}
+			return obj;
+		}
+	*/
+
+	public void load()
+	{
 		File prefsFile = new ApplicationFiles().getUserPreferencesFile();
-		try {
+		try
+		{
 			XMLBeanReader doc = new XMLBeanReader();
 			doc.load(prefsFile);
 			Iterator it = doc.iterator();
-			if (it.hasNext()) {
+			if (it.hasNext())
+			{
 				assignFrom((SquirrelPreferences)it.next());
 			}
-		} catch(FileNotFoundException ignore) {
+		}
+		catch (FileNotFoundException ignore)
+		{
 			// property file not found for user - first time user ran pgm.
-		} catch(Exception ex) {
-			s_log.error("Error occured reading from preferences file: "
-							+ prefsFile.getPath(), ex); //i18n
+		}
+		catch (Exception ex)
+		{
+			s_log.error("Error occured reading from preferences file: " + prefsFile.getPath(), ex);
+			//i18n
 		}
 		loadDefaults();
 	}
@@ -363,104 +403,110 @@ public class SquirrelPreferences implements Serializable {
 	/**
 	 * Save preferences to disk.
 	 */
-	public synchronized void save() {
+	public synchronized void save()
+	{
 		File prefsFile = new ApplicationFiles().getUserPreferencesFile();
-		try {
+		try
+		{
 			XMLBeanWriter wtr = new XMLBeanWriter(this);
 			wtr.save(prefsFile);
-		} catch(Exception ex) {
-			s_log.error("Error occured writing to preferences file: "
-						+ prefsFile.getPath(), ex); //i18n
+		}
+		catch (Exception ex)
+		{
+			s_log.error("Error occured writing to preferences file: " + prefsFile.getPath(), ex);
+			//i18n
 		}
 	}
 
-	private void loadDefaults() {
-		if (_loginTimeout == -1) {
+	private void loadDefaults()
+	{
+		if (_loginTimeout == -1)
+		{
 			_loginTimeout = DriverManager.getLoginTimeout();
 		}
 	}
 
-/*
-	public static final class PluginObjectWrapper {
-		private String _pluginInternalName;
-		private StringWrapper[] _keys;
-		private Object[] _objects;
-
-		public String getPluginInternalName() {
-			return _pluginInternalName;
-		}
-
-
-		public void setPluginInternalName(String value) {
-			_pluginInternalName = value;
-		}
-
-
-		public Object[] getObjects() {
-			return _objects;
-		}
-
-
-		public Object getObjects(int idx) {
-			return _objects[idx];
-		}
-
-
-		public void setObjects(Object[] value) {
-			_objects = value;
-		}
-
-
-		public void setObjects(int idx, Object value) {
-			_objects[idx] = value;
-		}
-
-
-		public StringWrapper[] getKeys() {
-			return _keys;
-		}
-
-
-		public StringWrapper getKeys(int idx) {
-			return _keys[idx];
-		}
-
-
-		public void setKeys(StringWrapper[] value) {
-			_keys = value;
-		}
-
-
-		public void setKeys(int idx, StringWrapper value) {
-			_keys[idx] = value;
-		}
-	}
-
-
-	public class PluginObjectWrapperBeanInfo extends SimpleBeanInfo {
-		private static final String PLUGIN_INTERNAL_NAME = "pluginInternalName";
-		private static final String KEYS = "keys";
-		private static final String OBJECTS = "objects";
-
-
-		private PropertyDescriptor[] s_dscrs;
-
-		private Class cls = PluginObjectWrapper.class;
-
-		public PluginObjectWrapperBeanInfo() throws IntrospectionException {
-			super();
-			if (s_dscrs == null) {
-				s_dscrs = new PropertyDescriptor[3];
-				int idx = 0;
-				s_dscrs[idx++] = new PropertyDescriptor(PLUGIN_INTERNAL_NAME, cls, "getPluginInternalName", "setPluginInternalName");
-				s_dscrs[idx++] = new IndexedPropertyDescriptor(KEYS, cls, "getKeys", "setKeys", "getKeys", "setKeys");
-				s_dscrs[idx++] = new IndexedPropertyDescriptor(OBJECTS, cls, "getObjects", "setObjects", "getObjects", "setObjects");
+	/*
+		public static final class PluginObjectWrapper {
+			private String _pluginInternalName;
+			private StringWrapper[] _keys;
+			private Object[] _objects;
+	
+			public String getPluginInternalName() {
+				return _pluginInternalName;
+			}
+	
+	
+			public void setPluginInternalName(String value) {
+				_pluginInternalName = value;
+			}
+	
+	
+			public Object[] getObjects() {
+				return _objects;
+			}
+	
+	
+			public Object getObjects(int idx) {
+				return _objects[idx];
+			}
+	
+	
+			public void setObjects(Object[] value) {
+				_objects = value;
+			}
+	
+	
+			public void setObjects(int idx, Object value) {
+				_objects[idx] = value;
+			}
+	
+	
+			public StringWrapper[] getKeys() {
+				return _keys;
+			}
+	
+	
+			public StringWrapper getKeys(int idx) {
+				return _keys[idx];
+			}
+	
+	
+			public void setKeys(StringWrapper[] value) {
+				_keys = value;
+			}
+	
+	
+			public void setKeys(int idx, StringWrapper value) {
+				_keys[idx] = value;
 			}
 		}
-
-		public PropertyDescriptor[] getPropertyDescriptors() {
-			return s_dscrs;
+	
+	
+		public class PluginObjectWrapperBeanInfo extends SimpleBeanInfo {
+			private static final String PLUGIN_INTERNAL_NAME = "pluginInternalName";
+			private static final String KEYS = "keys";
+			private static final String OBJECTS = "objects";
+	
+	
+			private PropertyDescriptor[] s_dscrs;
+	
+			private Class cls = PluginObjectWrapper.class;
+	
+			public PluginObjectWrapperBeanInfo() throws IntrospectionException {
+				super();
+				if (s_dscrs == null) {
+					s_dscrs = new PropertyDescriptor[3];
+					int idx = 0;
+					s_dscrs[idx++] = new PropertyDescriptor(PLUGIN_INTERNAL_NAME, cls, "getPluginInternalName", "setPluginInternalName");
+					s_dscrs[idx++] = new IndexedPropertyDescriptor(KEYS, cls, "getKeys", "setKeys", "getKeys", "setKeys");
+					s_dscrs[idx++] = new IndexedPropertyDescriptor(OBJECTS, cls, "getObjects", "setObjects", "getObjects", "setObjects");
+				}
+			}
+	
+			public PropertyDescriptor[] getPropertyDescriptors() {
+				return s_dscrs;
+			}
 		}
-	}
-*/
+	*/
 }

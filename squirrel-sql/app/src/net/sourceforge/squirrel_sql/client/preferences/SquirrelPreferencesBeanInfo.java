@@ -17,7 +17,6 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.beans.IndexedPropertyDescriptor;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.beans.SimpleBeanInfo;
@@ -27,29 +26,67 @@ import java.beans.SimpleBeanInfo;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
-											implements SquirrelPreferences.IPropertyNames {
+public class SquirrelPreferencesBeanInfo
+	extends SimpleBeanInfo
+	implements SquirrelPreferences.IPropertyNames
+{
 	private static PropertyDescriptor[] s_dscrs;
 
 	private static Class CLS = SquirrelPreferences.class;
 
-	public SquirrelPreferencesBeanInfo() throws IntrospectionException {
+	public SquirrelPreferencesBeanInfo() throws IntrospectionException
+	{
 		super();
-		if (s_dscrs == null) {
-			s_dscrs = new PropertyDescriptor[8];
+		if (s_dscrs == null)
+		{
+			s_dscrs = new PropertyDescriptor[9];
 			int idx = 0;
-			s_dscrs[idx++] = new PropertyDescriptor(SESSION_PROPERTIES, CLS, "getSessionProperties", "setSessionProperties");
-			s_dscrs[idx++] = new PropertyDescriptor(MAIN_FRAME_STATE, CLS, "getMainFrameWindowState", "setMainFrameWindowState");
-			s_dscrs[idx++] = new PropertyDescriptor(SHOW_CONTENTS_WHEN_DRAGGING, CLS, "getShowContentsWhenDragging", "setShowContentsWhenDragging");
-			s_dscrs[idx++] = new PropertyDescriptor(LOGIN_TIMEOUT, CLS, "getLoginTimeout", "setLoginTimeout");
+			s_dscrs[idx++] =
+				new PropertyDescriptor(
+					SESSION_PROPERTIES,
+					CLS,
+					"getSessionProperties",
+					"setSessionProperties");
+			s_dscrs[idx++] =
+				new PropertyDescriptor(
+					MAIN_FRAME_STATE,
+					CLS,
+					"getMainFrameWindowState",
+					"setMainFrameWindowState");
+			s_dscrs[idx++] =
+				new PropertyDescriptor(
+					SHOW_CONTENTS_WHEN_DRAGGING,
+					CLS,
+					"getShowContentsWhenDragging",
+					"setShowContentsWhenDragging");
+			s_dscrs[idx++] =
+				new PropertyDescriptor(LOGIN_TIMEOUT, CLS, "getLoginTimeout", "setLoginTimeout");
 			s_dscrs[idx++] = new PropertyDescriptor(DEBUG_JDBC, CLS, "getDebugJdbc", "setDebugJdbc");
-			s_dscrs[idx++] = new PropertyDescriptor(SHOW_MAIN_STATUS_BAR, CLS, "getShowMainStatusBar", "setShowMainStatusBar");
-			s_dscrs[idx++] = new PropertyDescriptor(SHOW_TOOLTIPS, CLS, "getShowToolTips", "setShowToolTips");
-			s_dscrs[idx++] = new PropertyDescriptor(SCROLLABLE_TABBED_PANES, CLS, "useScrollableTabbedPanes", "setUseScrollableTabbedPanes");
+			s_dscrs[idx++] =
+				new PropertyDescriptor(
+					SHOW_MAIN_STATUS_BAR,
+					CLS,
+					"getShowMainStatusBar",
+					"setShowMainStatusBar");
+			s_dscrs[idx++] =
+				new PropertyDescriptor(
+					SHOW_MAIN_TOOL_BAR,
+					CLS,
+					"getShowMainToolBar",
+					"setShowMainToolBar");
+			s_dscrs[idx++] =
+				new PropertyDescriptor(SHOW_TOOLTIPS, CLS, "getShowToolTips", "setShowToolTips");
+			s_dscrs[idx++] =
+				new PropertyDescriptor(
+					SCROLLABLE_TABBED_PANES,
+					CLS,
+					"useScrollableTabbedPanes",
+					"setUseScrollableTabbedPanes");
 		}
 	}
 
-	public PropertyDescriptor[] getPropertyDescriptors() {
+	public PropertyDescriptor[] getPropertyDescriptors()
+	{
 		return s_dscrs;
 	}
 }

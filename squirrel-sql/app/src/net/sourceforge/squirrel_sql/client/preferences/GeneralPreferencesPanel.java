@@ -38,9 +38,11 @@ import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 
-class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
+class GeneralPreferencesPanel implements IGlobalPreferencesPanel
+{
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(GeneralPreferencesPanel.class);
+	private static ILogger s_log =
+		LoggerController.createLogger(GeneralPreferencesPanel.class);
 
 	/** Panel to be displayed in preferences dialog. */
 	private MyPanel _myPanel;
@@ -51,89 +53,109 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 	/**
 	 * Default ctor.
 	 */
-	public GeneralPreferencesPanel() {
+	public GeneralPreferencesPanel()
+	{
 		super();
 	}
 
 	public void initialize(IApplication app)
-			throws IllegalArgumentException {
-		if (app == null) {
+	{
+		if (app == null)
+		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
 
 		_app = app;
 
-		((MyPanel)getPanelComponent()).loadData(_app, _app.getSquirrelPreferences());
+		((MyPanel) getPanelComponent()).loadData(_app, _app.getSquirrelPreferences());
 	}
 
-	public synchronized Component getPanelComponent() {
-		if (_myPanel == null) {
+	public synchronized Component getPanelComponent()
+	{
+		if (_myPanel == null)
+		{
 			_myPanel = new MyPanel();
 		}
 		return _myPanel;
 	}
 
-	public void applyChanges() {
+	public void applyChanges()
+	{
 		_myPanel.applyChanges(_app.getSquirrelPreferences());
 	}
 
-	public String getTitle() {
+	public String getTitle()
+	{
 		return MyPanel.i18n.TAB_TITLE;
 	}
 
-	public String getHint() {
+	public String getHint()
+	{
 		return MyPanel.i18n.TAB_HINT;
 	}
 
-	private static final class MyPanel extends JPanel {
+	private static final class MyPanel extends JPanel
+	{
 		/**
 		 * This interface defines locale specific strings. This should be
 		 * replaced with a property file.
 		 */
-		interface i18n {
+		interface i18n
+		{
 			String DEBUG_JDBC = "JDBC Debug (can slow application)";
 			String LOGIN_TIMEOUT = "Login Timeout (Seconds):";
 			String SHOW_CONTENTS = "Show Window Contents While Dragging";
 			String SHOW_MAIN_STATUS_BAR = "Show Main Window Status Bar";
+			String SHOW_MAIN_TOOL_BAR = "Show Main Window Tool Bar";
 			String SHOW_TOOLTIPS = "Show Tooltips";
 			String TAB_HINT = "General";
 			String TAB_TITLE = "General";
 		}
 
 		private JCheckBox _showMainStatusBar = new JCheckBox(i18n.SHOW_MAIN_STATUS_BAR);
+		private JCheckBox _showMainToolBar = new JCheckBox(i18n.SHOW_MAIN_TOOL_BAR);
 		private JCheckBox _showContents = new JCheckBox(i18n.SHOW_CONTENTS);
 		private JCheckBox _showToolTips = new JCheckBox(i18n.SHOW_TOOLTIPS);
-		private JCheckBox _useScrollableTabbedPanes = new JCheckBox("Use Scrollable Tabbed Panes (JDK1.4 and above)");
-		private JLabel _executionLogFileNameLbl = new OutputLabel(" ");// Must have at least 1 blank otherwise width gets set to zero.
-		private JLabel _logConfigFileNameLbl = new OutputLabel(" ");// Must have at least 1 blank otherwise width gets set to zero.
+		private JCheckBox _useScrollableTabbedPanes =
+			new JCheckBox("Use Scrollable Tabbed Panes (JDK1.4 and above)");
+		private JLabel _executionLogFileNameLbl = new OutputLabel(" ");
+		// Must have at least 1 blank otherwise width gets set to zero.
+		private JLabel _logConfigFileNameLbl = new OutputLabel(" ");
+		// Must have at least 1 blank otherwise width gets set to zero.
 
-		MyPanel() {
+		MyPanel()
+		{
 			super(new GridBagLayout());
 			createUserInterface();
 		}
 
-		void loadData(IApplication app, SquirrelPreferences prefs) {
+		void loadData(IApplication app, SquirrelPreferences prefs)
+		{
 			final ApplicationFiles appFiles = new ApplicationFiles();
 
 			_showContents.setSelected(prefs.getShowContentsWhenDragging());
 			_showToolTips.setSelected(prefs.getShowToolTips());
 			_useScrollableTabbedPanes.setSelected(prefs.useScrollableTabbedPanes());
 			_showMainStatusBar.setSelected(prefs.getShowMainStatusBar());
+			_showMainToolBar.setSelected(prefs.getShowMainToolBar());
 
 			_executionLogFileNameLbl.setText(appFiles.getExecutionLogFile().getPath());
 
 			String configFile = ApplicationArguments.getInstance().getLoggingConfigFileName();
-			_logConfigFileNameLbl.setText(configFile != null ? configFile : "<unspecified>");//i18n.
+			_logConfigFileNameLbl.setText(configFile != null ? configFile : "<unspecified>"); //i18n.
 		}
 
-		void applyChanges(SquirrelPreferences prefs) {
+		void applyChanges(SquirrelPreferences prefs)
+		{
 			prefs.setShowContentsWhenDragging(_showContents.isSelected());
 			prefs.setShowToolTips(_showToolTips.isSelected());
 			prefs.setUseScrollableTabbedPanes(_useScrollableTabbedPanes.isSelected());
 			prefs.setShowMainStatusBar(_showMainStatusBar.isSelected());
+			prefs.setShowMainToolBar(_showMainToolBar.isSelected());
 		}
 
-		private void createUserInterface() {
+		private void createUserInterface()
+		{
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = gbc.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
@@ -145,7 +167,8 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 			add(createLoggingPanel(), gbc);
 		}
 
-		private JPanel createAppearancePanel() {
+		private JPanel createAppearancePanel()
+		{
 			JPanel pnl = new JPanel();
 			pnl.setBorder(BorderFactory.createTitledBorder("Appearance"));
 
@@ -162,12 +185,15 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel {
 			++gbc.gridy;
 			pnl.add(_useScrollableTabbedPanes, gbc);
 			++gbc.gridy;
+			pnl.add(_showMainToolBar, gbc);
+			++gbc.gridy;
 			pnl.add(_showMainStatusBar, gbc);
 
 			return pnl;
 		}
 
-		private JPanel createLoggingPanel() {
+		private JPanel createLoggingPanel()
+		{
 			JPanel pnl = new JPanel();
 			pnl.setBorder(BorderFactory.createTitledBorder("Logging"));
 

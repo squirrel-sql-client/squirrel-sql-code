@@ -38,6 +38,8 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.ScrollableDesktopPane;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import sun.security.krb5.internal.i;
+import sun.security.krb5.internal.crypto.f;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Version;
@@ -60,6 +62,9 @@ public class MainFrame extends BaseMDIParentFrame
 	private AliasesToolWindow _aliasesToolWindow;
 	private DriversToolWindow _driversToolWindow;
 
+	/** Toolbar at top of window. */
+	private MainFrameToolBar _toolBar;
+	
 	/** Status bar at bottom of window. */
 	private MainFrameStatusBar _statusBar;
 
@@ -245,6 +250,21 @@ public class MainFrame extends BaseMDIParentFrame
 				getContentPane().add(_statusBar, BorderLayout.SOUTH);
 			}
 		}
+		if (propName == null
+			|| propName.equals(SquirrelPreferences.IPropertyNames.SHOW_MAIN_TOOL_BAR))
+		{
+			final boolean show = prefs.getShowMainToolBar();
+			if (!show && _toolBar != null)
+			{
+				getContentPane().remove(_toolBar);
+				_toolBar = null;
+			}
+			else if (show && _toolBar == null)
+			{
+				_toolBar = new MainFrameToolBar(_app, this);
+				getContentPane().add(_toolBar, BorderLayout.NORTH);
+			}
+		}
 	}
 
 	synchronized public boolean closeAllNonToolWindows()
@@ -281,7 +301,7 @@ public class MainFrame extends BaseMDIParentFrame
 
 		preLoadActions();
 		content.setLayout(new BorderLayout());
-		content.add(new MainFrameToolBar(_app, this), BorderLayout.NORTH);
+//		content.add(new MainFrameToolBar(_app, this), BorderLayout.NORTH);
 		JScrollPane sp =
 			new JScrollPane(
 				getDesktopPane(),
