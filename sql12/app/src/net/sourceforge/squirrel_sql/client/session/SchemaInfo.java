@@ -22,9 +22,7 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
@@ -37,21 +35,26 @@ public class SchemaInfo
 	private boolean _loading = false;
 	private boolean _loaded = false;
 
-	private final List _keywords = new ArrayList();
-	private final List _dataTypes = new ArrayList();
+   private DatabaseMetaData _dmd;
+	private final HashMap _keywords = new HashMap();
+	private final HashMap _dataTypes = new HashMap();
 	private final List _functions = new ArrayList();
-	private final List _tables = new ArrayList();
-	private final List _columns = new ArrayList();
+	private final HashMap _tables = new HashMap();
+	private final HashMap _columns = new HashMap();
+   private Hashtable _extendedColumnInfosByTableName = new Hashtable();
 	private final List _catalogs = new ArrayList();
 	private final List _schemas = new ArrayList();
 	private final List _extendedtableInfos = new ArrayList();
 	private IProcedureInfo[] _procInfos = new IProcedureInfo[0];
 
+   private String _catalogName;
+   private String _schemaName;
+
 	/** Logger for this class. */
 	private static final ILogger s_log =
 				LoggerController.createLogger(SchemaInfo.class);
 
-	public SchemaInfo()
+   public SchemaInfo()
 	{
 		super();
 	}
@@ -64,20 +67,17 @@ public class SchemaInfo
 	public SchemaInfo(SQLConnection conn, String catalogName, String schemaName)
 	{
 		super();
+      _catalogName = catalogName;
+      _schemaName = schemaName;
+
 		if (conn == null)
 		{
 			throw new IllegalArgumentException("SQLConnection == null");
 		}
-		load(conn, catalogName, schemaName);
+		load(conn);
 	}
 
 	public void load(SQLConnection conn)
-	{
-		load(conn, null, null);
-	}
-
-
-	public void load(SQLConnection conn, String catalogName, String schemaName)
 	{
 		if (conn == null)
 		{
@@ -89,10 +89,10 @@ public class SchemaInfo
 		{
 			final SQLDatabaseMetaData sqlDmd = conn.getSQLMetaData();
 
-			DatabaseMetaData dmd = null;
+			_dmd = null;
 			try
 			{
-				dmd = sqlDmd.getJDBCMetaData();
+				_dmd = sqlDmd.getJDBCMetaData();
 			}
 			catch (Exception ex)
 			{
@@ -102,7 +102,7 @@ public class SchemaInfo
 			try
 			{
 				s_log.debug("Loading keywords");
-				loadKeywords(dmd);
+				loadKeywords(_dmd);
 				s_log.debug("Keywords loaded");
 			}
 			catch (Exception ex)
@@ -112,7 +112,7 @@ public class SchemaInfo
 
 			try
 			{
-				loadDataTypes(dmd);
+				loadDataTypes(_dmd);
 			}
 			catch (Exception ex)
 			{
@@ -122,7 +122,7 @@ public class SchemaInfo
 			try
 			{
 				s_log.debug("Loading functions");
-				loadFunctions(dmd);
+				loadFunctions(_dmd);
 				s_log.debug("Functions loaded");
 			}
 			catch (Exception ex)
@@ -133,7 +133,7 @@ public class SchemaInfo
 			try
 			{
 				s_log.debug("Loading functions");
-				loadCatalogs(dmd);
+				loadCatalogs(_dmd);
 				s_log.debug("Functions loaded");
 			}
 			catch (Exception ex)
@@ -144,7 +144,7 @@ public class SchemaInfo
 			try
 			{
 				s_log.debug("Loading functions");
-				loadSchemas(dmd);
+				loadSchemas(_dmd);
 				s_log.debug("Functions loaded");
 			}
 			catch (Exception ex)
@@ -155,7 +155,7 @@ public class SchemaInfo
 			try
 			{
 				s_log.debug("Loading tables");
-				loadTables(dmd, catalogName, schemaName);
+				loadTables(_dmd, _catalogName, _schemaName);
 				s_log.debug("Tables loaded");
 			}
 			catch (Exception ex)
@@ -166,7 +166,7 @@ public class SchemaInfo
 			try
 			{
 				s_log.debug("Loading stored procedures");
-				loadStoredProcedures(sqlDmd, catalogName, schemaName);
+				loadStoredProcedures(sqlDmd, _catalogName, _schemaName);
 				s_log.debug("stored procedures loaded");
 			}
 			catch (Exception ex)
@@ -252,7 +252,7 @@ public class SchemaInfo
 	{
 		if (!_loading && data != null)
 		{
-			return _keywords.contains(data.toUpperCase());
+			return _keywords.containsKey(data.toUpperCase());
 		}
 		return false;
 	}
@@ -268,7 +268,7 @@ public class SchemaInfo
 	{
 		if (!_loading && data != null)
 		{
-			return _dataTypes.contains(data.toUpperCase());
+			return _dataTypes.containsKey(data.toUpperCase());
 		}
 		return false;
 	}
@@ -300,12 +300,17 @@ public class SchemaInfo
 	{
 		if (!_loading && data != null)
 		{
-			return _tables.contains(data.toUpperCase());
+         String ucData = data.toUpperCase();
+         if(_tables.containsKey(ucData))
+         {
+            loadColumns(ucData);
+            return true;
+         }
 		}
 		return false;
 	}
 
-	/**
+   /**
 	 * Retrieve whether the passed string is a column.
 	 *
 	 * @param	keyword		String to check.
@@ -316,7 +321,7 @@ public class SchemaInfo
 	{
 		if (!_loading && data != null)
 		{
-			return _columns.contains(data.toUpperCase());
+			return _columns.containsKey(data.toUpperCase());
 		}
 		return false;
 	}
@@ -325,149 +330,149 @@ public class SchemaInfo
 	{
 		try
 		{
-			_keywords.add("ABSOLUTE");
-			_keywords.add("ACTION");
-			_keywords.add("ADD");
-			_keywords.add("ALL");
-			_keywords.add("ALTER");
-			_keywords.add("AND");
-			_keywords.add("AS");
-			_keywords.add("ASC");
-			_keywords.add("ASSERTION");
-			_keywords.add("AUTHORIZATION");
-			_keywords.add("AVG");
-			_keywords.add("BETWEEN");
-			_keywords.add("BY");
-			_keywords.add("CASCADE");
-			_keywords.add("CASCADED");
-			_keywords.add("CATALOG");
-			_keywords.add("CHARACTER");
-			_keywords.add("CHECK");
-			_keywords.add("COLLATE");
-			_keywords.add("COLLATION");
-			_keywords.add("COLUMN");
-			_keywords.add("COMMIT");
-			_keywords.add("COMMITTED");
-			_keywords.add("CONNECT");
-			_keywords.add("CONNECTION");
-			_keywords.add("CONSTRAINT");
-			_keywords.add("COUNT");
-			_keywords.add("CORRESPONDING");
-			_keywords.add("CREATE");
-			_keywords.add("CROSS");
-			_keywords.add("CURRENT");
-			_keywords.add("CURSOR");
-			_keywords.add("DECLARE");
-			_keywords.add("DEFAULT");
-			_keywords.add("DEFERRABLE");
-			_keywords.add("DEFERRED");
-			_keywords.add("DELETE");
-			_keywords.add("DESC");
-			_keywords.add("DIAGNOSTICS");
-			_keywords.add("DISCONNECT");
-			_keywords.add("DISTINCT");
-			_keywords.add("DOMAIN");
-			_keywords.add("DROP");
-			_keywords.add("ESCAPE");
-			_keywords.add("EXCEPT");
-			_keywords.add("EXISTS");
-			_keywords.add("EXTERNAL");
-			_keywords.add("FALSE");
-			_keywords.add("FETCH");
-			_keywords.add("FIRST");
-			_keywords.add("FOREIGN");
-			_keywords.add("FROM");
-			_keywords.add("FULL");
-			_keywords.add("GET");
-			_keywords.add("GLOBAL");
-			_keywords.add("GRANT");
-			_keywords.add("GROUP");
-			_keywords.add("HAVING");
-			_keywords.add("IDENTITY");
-			_keywords.add("IMMEDIATE");
-			_keywords.add("IN");
-			_keywords.add("INITIALLY");
-			_keywords.add("INNER");
-			_keywords.add("INSENSITIVE");
-			_keywords.add("INSERT");
-			_keywords.add("INTERSECT");
-			_keywords.add("INTO");
-			_keywords.add("IS");
-			_keywords.add("ISOLATION");
-			_keywords.add("JOIN");
-			_keywords.add("KEY");
-			_keywords.add("LAST");
-			_keywords.add("LEFT");
-			_keywords.add("LEVEL");
-			_keywords.add("LIKE");
-			_keywords.add("LOCAL");
-			_keywords.add("MATCH");
-			_keywords.add("MAX");
-			_keywords.add("MIN");
-			_keywords.add("NAMES");
-			_keywords.add("NEXT");
-			_keywords.add("NO");
-			_keywords.add("NOT");
-			_keywords.add("NULL");
-			_keywords.add("OF");
-			_keywords.add("ON");
-			_keywords.add("ONLY");
-			_keywords.add("OPEN");
-			_keywords.add("OPTION");
-			_keywords.add("OR");
-			_keywords.add("ORDER");
-			_keywords.add("OUTER");
-			_keywords.add("OVERLAPS");
-			_keywords.add("PARTIAL");
-			_keywords.add("PRESERVE");
-			_keywords.add("PRIMARY");
-			_keywords.add("PRIOR");
-			_keywords.add("PRIVILIGES");
-			_keywords.add("PUBLIC");
-			_keywords.add("READ");
-			_keywords.add("REFERENCES");
-			_keywords.add("RELATIVE");
-			_keywords.add("REPEATABLE");
-			_keywords.add("RESTRICT");
-			_keywords.add("REVOKE");
-			_keywords.add("RIGHT");
-			_keywords.add("ROLLBACK");
-			_keywords.add("ROWS");
-			_keywords.add("SCHEMA");
-			_keywords.add("SCROLL");
-			_keywords.add("SELECT");
-			_keywords.add("SERIALIZABLE");
-			_keywords.add("SESSION");
-			_keywords.add("SET");
-			_keywords.add("SIZE");
-			_keywords.add("SOME");
-			_keywords.add("SUM");
-			_keywords.add("TABLE");
-			_keywords.add("TEMPORARY");
-			_keywords.add("THEN");
-			_keywords.add("TIME");
-			_keywords.add("TO");
-			_keywords.add("TRANSACTION");
-			_keywords.add("TRIGGER");
-			_keywords.add("TRUE");
-			_keywords.add("UNCOMMITTED");
-			_keywords.add("UNION");
-			_keywords.add("UNIQUE");
-			_keywords.add("UNKNOWN");
-			_keywords.add("UPDATE");
-			_keywords.add("USAGE");
-			_keywords.add("USER");
-			_keywords.add("USING");
-			_keywords.add("VALUES");
-			_keywords.add("VIEW");
-			_keywords.add("WHERE");
-			_keywords.add("WITH");
-			_keywords.add("WORK");
-			_keywords.add("WRITE");
-			_keywords.add("ZONE");
+			_keywords.put("ABSOLUTE", "DUMMY");
+			_keywords.put("ACTION", "DUMMY");
+			_keywords.put("ADD", "DUMMY");
+			_keywords.put("ALL", "DUMMY");
+			_keywords.put("ALTER", "DUMMY");
+			_keywords.put("AND", "DUMMY");
+			_keywords.put("AS", "DUMMY");
+			_keywords.put("ASC", "DUMMY");
+			_keywords.put("ASSERTION", "DUMMY");
+			_keywords.put("AUTHORIZATION", "DUMMY");
+			_keywords.put("AVG", "DUMMY");
+			_keywords.put("BETWEEN", "DUMMY");
+			_keywords.put("BY", "DUMMY");
+			_keywords.put("CASCADE", "DUMMY");
+			_keywords.put("CASCADED", "DUMMY");
+			_keywords.put("CATALOG", "DUMMY");
+			_keywords.put("CHARACTER", "DUMMY");
+			_keywords.put("CHECK", "DUMMY");
+			_keywords.put("COLLATE", "DUMMY");
+			_keywords.put("COLLATION", "DUMMY");
+			_keywords.put("COLUMN", "DUMMY");
+			_keywords.put("COMMIT", "DUMMY");
+			_keywords.put("COMMITTED", "DUMMY");
+			_keywords.put("CONNECT", "DUMMY");
+			_keywords.put("CONNECTION", "DUMMY");
+			_keywords.put("CONSTRAINT", "DUMMY");
+			_keywords.put("COUNT", "DUMMY");
+			_keywords.put("CORRESPONDING", "DUMMY");
+			_keywords.put("CREATE", "DUMMY");
+			_keywords.put("CROSS", "DUMMY");
+			_keywords.put("CURRENT", "DUMMY");
+			_keywords.put("CURSOR", "DUMMY");
+			_keywords.put("DECLARE", "DUMMY");
+			_keywords.put("DEFAULT", "DUMMY");
+			_keywords.put("DEFERRABLE", "DUMMY");
+			_keywords.put("DEFERRED", "DUMMY");
+			_keywords.put("DELETE", "DUMMY");
+			_keywords.put("DESC", "DUMMY");
+			_keywords.put("DIAGNOSTICS", "DUMMY");
+			_keywords.put("DISCONNECT", "DUMMY");
+			_keywords.put("DISTINCT", "DUMMY");
+			_keywords.put("DOMAIN", "DUMMY");
+			_keywords.put("DROP", "DUMMY");
+			_keywords.put("ESCAPE", "DUMMY");
+			_keywords.put("EXCEPT", "DUMMY");
+			_keywords.put("EXISTS", "DUMMY");
+			_keywords.put("EXTERNAL", "DUMMY");
+			_keywords.put("FALSE", "DUMMY");
+			_keywords.put("FETCH", "DUMMY");
+			_keywords.put("FIRST", "DUMMY");
+			_keywords.put("FOREIGN", "DUMMY");
+			_keywords.put("FROM", "DUMMY");
+			_keywords.put("FULL", "DUMMY");
+			_keywords.put("GET", "DUMMY");
+			_keywords.put("GLOBAL", "DUMMY");
+			_keywords.put("GRANT", "DUMMY");
+			_keywords.put("GROUP", "DUMMY");
+			_keywords.put("HAVING", "DUMMY");
+			_keywords.put("IDENTITY", "DUMMY");
+			_keywords.put("IMMEDIATE", "DUMMY");
+			_keywords.put("IN", "DUMMY");
+			_keywords.put("INITIALLY", "DUMMY");
+			_keywords.put("INNER", "DUMMY");
+			_keywords.put("INSENSITIVE", "DUMMY");
+			_keywords.put("INSERT", "DUMMY");
+			_keywords.put("INTERSECT", "DUMMY");
+			_keywords.put("INTO", "DUMMY");
+			_keywords.put("IS", "DUMMY");
+			_keywords.put("ISOLATION", "DUMMY");
+			_keywords.put("JOIN", "DUMMY");
+			_keywords.put("KEY", "DUMMY");
+			_keywords.put("LAST", "DUMMY");
+			_keywords.put("LEFT", "DUMMY");
+			_keywords.put("LEVEL", "DUMMY");
+			_keywords.put("LIKE", "DUMMY");
+			_keywords.put("LOCAL", "DUMMY");
+			_keywords.put("MATCH", "DUMMY");
+			_keywords.put("MAX", "DUMMY");
+			_keywords.put("MIN", "DUMMY");
+			_keywords.put("NAMES", "DUMMY");
+			_keywords.put("NEXT", "DUMMY");
+			_keywords.put("NO", "DUMMY");
+			_keywords.put("NOT", "DUMMY");
+			_keywords.put("NULL", "DUMMY");
+			_keywords.put("OF", "DUMMY");
+			_keywords.put("ON", "DUMMY");
+			_keywords.put("ONLY", "DUMMY");
+			_keywords.put("OPEN", "DUMMY");
+			_keywords.put("OPTION", "DUMMY");
+			_keywords.put("OR", "DUMMY");
+			_keywords.put("ORDER", "DUMMY");
+			_keywords.put("OUTER", "DUMMY");
+			_keywords.put("OVERLAPS", "DUMMY");
+			_keywords.put("PARTIAL", "DUMMY");
+			_keywords.put("PRESERVE", "DUMMY");
+			_keywords.put("PRIMARY", "DUMMY");
+			_keywords.put("PRIOR", "DUMMY");
+			_keywords.put("PRIVILIGES", "DUMMY");
+			_keywords.put("PUBLIC", "DUMMY");
+			_keywords.put("READ", "DUMMY");
+			_keywords.put("REFERENCES", "DUMMY");
+			_keywords.put("RELATIVE", "DUMMY");
+			_keywords.put("REPEATABLE", "DUMMY");
+			_keywords.put("RESTRICT", "DUMMY");
+			_keywords.put("REVOKE", "DUMMY");
+			_keywords.put("RIGHT", "DUMMY");
+			_keywords.put("ROLLBACK", "DUMMY");
+			_keywords.put("ROWS", "DUMMY");
+			_keywords.put("SCHEMA", "DUMMY");
+			_keywords.put("SCROLL", "DUMMY");
+			_keywords.put("SELECT", "DUMMY");
+			_keywords.put("SERIALIZABLE", "DUMMY");
+			_keywords.put("SESSION", "DUMMY");
+			_keywords.put("SET", "DUMMY");
+			_keywords.put("SIZE", "DUMMY");
+			_keywords.put("SOME", "DUMMY");
+			_keywords.put("SUM", "DUMMY");
+			_keywords.put("TABLE", "DUMMY");
+			_keywords.put("TEMPORARY", "DUMMY");
+			_keywords.put("THEN", "DUMMY");
+			_keywords.put("TIME", "DUMMY");
+			_keywords.put("TO", "DUMMY");
+			_keywords.put("TRANSACTION", "DUMMY");
+			_keywords.put("TRIGGER", "DUMMY");
+			_keywords.put("TRUE", "DUMMY");
+			_keywords.put("UNCOMMITTED", "DUMMY");
+			_keywords.put("UNION", "DUMMY");
+			_keywords.put("UNIQUE", "DUMMY");
+			_keywords.put("UNKNOWN", "DUMMY");
+			_keywords.put("UPDATE", "DUMMY");
+			_keywords.put("USAGE", "DUMMY");
+			_keywords.put("USER", "DUMMY");
+			_keywords.put("USING", "DUMMY");
+			_keywords.put("VALUES", "DUMMY");
+			_keywords.put("VIEW", "DUMMY");
+			_keywords.put("WHERE", "DUMMY");
+			_keywords.put("WITH", "DUMMY");
+			_keywords.put("WORK", "DUMMY");
+			_keywords.put("WRITE", "DUMMY");
+			_keywords.put("ZONE", "DUMMY");
 
 			// Not actually in the std.
-			_keywords.add("INDEX");
+			_keywords.put("INDEX", "DUMMY");
 
 			// Extra _keywords that this DBMS supports.
 			if (dmd != null)
@@ -487,7 +492,7 @@ public class SchemaInfo
 
 				while (strtok.hasMoreTokens())
 				{
-					_keywords.add(strtok.nextToken().trim());
+					_keywords.put(strtok.nextToken().trim(), "DUMMY");
 				}
 
 				try
@@ -533,7 +538,8 @@ public class SchemaInfo
 			{
 				while (rs.next())
 				{
-					_dataTypes.add(rs.getString(1).trim().toUpperCase());
+               String typeName = rs.getString(1).trim();
+					_dataTypes.put(typeName.toUpperCase(), typeName);
 				}
 			}
 			finally
@@ -594,6 +600,7 @@ public class SchemaInfo
 		}
 	}
 
+
 	private void addSingleKeyword(String keyword)
 	{
 		if (keyword != null)
@@ -602,19 +609,19 @@ public class SchemaInfo
 
 			if (keyword.length() > 0)
 			{
-				_keywords.add(keyword.toUpperCase());
+				_keywords.put(keyword.toUpperCase(), "DUMMY");
 			}
 		}
 	}
 
 	public String[] getKeywords()
 	{
-		return (String[]) _keywords.toArray(new String[_keywords.size()]);
+		return (String[]) _keywords.keySet().toArray(new String[_keywords.size()]);
 	}
 
 	public String[] getDataTypes()
 	{
-		return (String[]) _dataTypes.toArray(new String[_dataTypes.size()]);
+		return (String[]) _dataTypes.values().toArray(new String[_dataTypes.size()]);
 	}
 
 	public String[] getFunctions()
@@ -624,7 +631,7 @@ public class SchemaInfo
 
 	public String[] getTables()
 	{
-		return (String[]) _tables.toArray(new String[_tables.size()]);
+		return (String[]) _tables.values().toArray(new String[_tables.size()]);
 	}
 
 	public String[] getCatalogs()
@@ -663,9 +670,10 @@ public class SchemaInfo
 			{
 				while (rs.next())
 				{
-					_tables.add(rs.getString(3).toUpperCase());
+               String tableName = rs.getString("TABLE_NAME");
 
-					String tableName = rs.getString("TABLE_NAME");
+					_tables.put(tableName.toUpperCase(), tableName);
+
 					String tableType = rs.getString("TABLE_TYPE");
 					_extendedtableInfos.add(new ExtendedTableInfo(tableName, tableType));
 				}
@@ -680,4 +688,63 @@ public class SchemaInfo
 			s_log.error("failed to load table names", th);
 		}
 	}
+
+   private void loadColumns(String tableName)
+   {
+      try
+      {
+         if(_extendedColumnInfosByTableName.containsKey(tableName))
+         {
+            return;
+         }
+
+
+         ResultSet rs = _dmd.getColumns(_catalogName, _schemaName, tableName, null);
+         try
+         {
+            Vector infos = new Vector();
+
+            while (rs.next())
+            {
+               String columnName = rs.getString("COLUMN_NAME");
+               String columnType = rs.getString("TYPE_NAME");
+               int columnSize = rs.getInt("COLUMN_SIZE");
+               int decimalDigits = rs.getInt("DECIMAL_DIGITS");
+               boolean nullable = "YES".equals(rs.getString("IS_NULLABLE"));
+               ExtendedColumnInfo buf = new ExtendedColumnInfo(columnName, columnType, columnSize, decimalDigits, nullable);
+               infos.add(buf);
+
+               _columns.put(columnName.toUpperCase(), columnName);
+            }
+            _extendedColumnInfosByTableName.put(tableName, infos);
+
+         }
+         finally
+         {
+            rs.close();
+         }
+      }
+      catch (Throwable th)
+      {
+         s_log.error("failed to load table names", th);
+      }
+   }
+
+   public ExtendedColumnInfo[] getExtendedColumnInfos(String tableName)
+   {
+      String upperCaseTableName = tableName.toUpperCase();
+      loadColumns(upperCaseTableName);
+      Vector ret = (Vector) _extendedColumnInfosByTableName.get(upperCaseTableName);
+
+      if(null == ret)
+      {
+         return new ExtendedColumnInfo[0];
+      }
+      else
+      {
+         return (ExtendedColumnInfo[]) ret.toArray(new ExtendedColumnInfo[ret.size()]);
+      }
+   }
+
+
 }
