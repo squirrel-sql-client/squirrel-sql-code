@@ -47,7 +47,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * metadata entries matching the search pattern are returned. If a search pattern
  * argument is set to null, that argument's criterion will be dropped from the
  * search.&quot;
- * e
+ *
  * <P>Some data can be cached on the first retrieval in order to speed up
  * subsequent retrievals. To clear this cache call <TT>clearCache()</TT>.
  *
@@ -59,7 +59,7 @@ public class SQLDatabaseMetaData
 	private final static ILogger s_log =
 		LoggerController.createLogger(SQLDatabaseMetaData.class);
 
-	private interface DriverNames
+	private interface IDriverNames
 	{
 		String FREE_TDS = "InternetCDS Type 4 JDBC driver for MS SQLServer";
 		String JCONNECT = "jConnect (TM) for JDBC (TM)";
@@ -82,7 +82,7 @@ public class SQLDatabaseMetaData
 	 */
 	private Map _cache = new HashMap();
 
-	/** Defines how to handel result sets. */
+	/** Defines how to handle result sets. */
 	private LargeResultSetObjectInfo _lrsi;
 
 	/**
@@ -233,8 +233,8 @@ public class SQLDatabaseMetaData
 		if (value == null)
 		{
 			final String driverName = getDriverName();
-			if (driverName.equals(DriverNames.FREE_TDS)
-				|| driverName.equals(DriverNames.JCONNECT))
+			if (driverName.equals(IDriverNames.FREE_TDS)
+				|| driverName.equals(IDriverNames.JCONNECT))
 			{
 				value = "";
 			}
@@ -255,8 +255,15 @@ public class SQLDatabaseMetaData
 	 * 
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
-	public String[] getSchemas() throws SQLException
+	public synchronized String[] getSchemas() throws SQLException
 	{
+		final String key = "getSchemas";
+		String[] value = (String[])_cache.get(key);
+		if (value != null)
+		{
+			return value;
+		}
+
 		boolean hasGuest = false;
 		final String dbProductName = getDatabaseProductName();
 		final boolean isMSSQLorSYBASE = dbProductName.equals(IDBMSProductNames.MICROSOFT_SQL)
@@ -288,7 +295,11 @@ public class SQLDatabaseMetaData
 		{
 			list.add("guest");
 		}
-		return (String[])list.toArray(new String[list.size()]);
+
+		value = (String[])list.toArray(new String[list.size()]);
+		_cache.put(key, value);
+
+		return value;
 	}
 
 	/**
@@ -313,21 +324,32 @@ public class SQLDatabaseMetaData
 	 * 
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
-	public boolean supportsSchemasInDataManipulation()
+	public synchronized boolean supportsSchemasInDataManipulation()
 		throws SQLException
 	{
+		final String key = "supportsSchemasInDataManipulation";
+		Boolean value = (Boolean)_cache.get(key);
+		if (value != null)
+		{
+			return value.booleanValue();
+		}
+
 		try
 		{
-			return privateGetJDBCMetaData().supportsSchemasInDataManipulation();
+			value = new Boolean(privateGetJDBCMetaData().supportsSchemasInDataManipulation());
 		}
 		catch (SQLException ex)
 		{
-			if (getDriverName().equals(DriverNames.FREE_TDS))
+			if (getDriverName().equals(IDriverNames.FREE_TDS))
 			{
-				return true;
+				value = Boolean.TRUE;
 			}
 			throw ex;
 		}
+
+		_cache.put(key, value);
+
+		return value.booleanValue();
 	}
 
 	/**
@@ -339,21 +361,32 @@ public class SQLDatabaseMetaData
 	 * 
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
-	public boolean supportsSchemasInTableDefinitions()
+	public synchronized boolean supportsSchemasInTableDefinitions()
 		throws SQLException
 	{
+		final String key = "supportsSchemasInTableDefinitions";
+		Boolean value = (Boolean)_cache.get(key);
+		if (value != null)
+		{
+			return value.booleanValue();
+		}
+
 		try
 		{
-			return privateGetJDBCMetaData().supportsSchemasInTableDefinitions();
+			value = new Boolean(privateGetJDBCMetaData().supportsSchemasInTableDefinitions());
 		}
 		catch (SQLException ex)
 		{
-			if (getDriverName().equals(DriverNames.FREE_TDS))
+			if (getDriverName().equals(IDriverNames.FREE_TDS))
 			{
-				return true;
+				value = Boolean.TRUE;
 			}
 			throw ex;
 		}
+
+		_cache.put(key, value);
+
+		return value.booleanValue();
 	}
 
 	/**
@@ -363,9 +396,19 @@ public class SQLDatabaseMetaData
 	 * 
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
-	public boolean supportsStoredProcedures() throws SQLException
+	public synchronized boolean supportsStoredProcedures() throws SQLException
 	{
-		return privateGetJDBCMetaData().supportsStoredProcedures();
+		final String key = "supportsStoredProcedures";
+		Boolean value = (Boolean)_cache.get(key);
+		if (value != null)
+		{
+			return value.booleanValue();
+		}
+
+		value = new Boolean(privateGetJDBCMetaData().supportsStoredProcedures());
+		_cache.put(key, value);
+
+		return value.booleanValue();
 	}
 
 	/**
@@ -376,8 +419,15 @@ public class SQLDatabaseMetaData
 	 * 
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
-	public String[] getCatalogs() throws SQLException
+	public synchronized String[] getCatalogs() throws SQLException
 	{
+		final String key = "getCatalogs";
+		String[] value = (String[])_cache.get(key);
+		if (value != null)
+		{
+			return value;
+		}
+
 		final ArrayList list = new ArrayList();
 		ResultSet rs = privateGetJDBCMetaData().getCatalogs();
 		try
@@ -394,7 +444,10 @@ public class SQLDatabaseMetaData
 			rs.close();
 		}
 
-		return (String[])list.toArray(new String[list.size()]);
+		value = (String[])list.toArray(new String[list.size()]);
+		_cache.put(key, value);
+
+		return value;
 	}
 
 	/**
@@ -405,9 +458,19 @@ public class SQLDatabaseMetaData
 	 * 
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
-	public String getCatalogSeparator() throws SQLException
+	public synchronized String getCatalogSeparator() throws SQLException
 	{
-		return privateGetJDBCMetaData().getCatalogSeparator();
+		final String key = "getCatalogSeparator";
+		String value = (String)_cache.get(key);
+		if (value != null)
+		{
+			return value;
+		}
+
+		value = privateGetJDBCMetaData().getCatalogSeparator();
+		_cache.put(key, value);
+
+		return value;
 	}
 
 	/**
@@ -433,20 +496,31 @@ public class SQLDatabaseMetaData
 	 * 
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
-	public boolean supportsCatalogsInTableDefinitions() throws SQLException
+	public synchronized boolean supportsCatalogsInTableDefinitions() throws SQLException
 	{
+		final String key = "supportsCatalogsInTableDefinitions";
+		Boolean value = (Boolean)_cache.get(key);
+		if (value != null)
+		{
+			return value.booleanValue();
+		}
+
 		try
 		{
-			return privateGetJDBCMetaData().supportsCatalogsInTableDefinitions();
+			value = new Boolean(privateGetJDBCMetaData().supportsCatalogsInTableDefinitions());
 		}
 		catch (SQLException ex)
 		{
-			if (getDriverName().equals(DriverNames.FREE_TDS))
+			if (getDriverName().equals(IDriverNames.FREE_TDS))
 			{
-				return true;
+				value = Boolean.TRUE;
 			}
 			throw ex;
 		}
+
+		_cache.put(key, value);
+
+		return value.booleanValue();
 	}
 
 	/**
@@ -458,20 +532,30 @@ public class SQLDatabaseMetaData
 	 * 
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
-	public boolean supportsCatalogsInDataManipulation() throws SQLException
+	public synchronized boolean supportsCatalogsInDataManipulation() throws SQLException
 	{
+		final String key = "supportsCatalogsInDataManipulation";
+		Boolean value = (Boolean)_cache.get(key);
+		if (value != null)
+		{
+			return value.booleanValue();
+		}
+
 		try
 		{
-			return privateGetJDBCMetaData().supportsCatalogsInDataManipulation();
+			value = new Boolean(privateGetJDBCMetaData().supportsCatalogsInDataManipulation());
 		}
 		catch (SQLException ex)
 		{
-			if (getDriverName().equals(DriverNames.FREE_TDS))
+			if (getDriverName().equals(IDriverNames.FREE_TDS))
 			{
-				return true;
+				value = Boolean.TRUE;
 			}
 			throw ex;
 		}
+		_cache.put(key, value);
+
+		return value.booleanValue();
 	}
 
 	/**
@@ -482,20 +566,30 @@ public class SQLDatabaseMetaData
 	 * 
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
-	public boolean supportsCatalogsInProcedureCalls() throws SQLException
+	public synchronized boolean supportsCatalogsInProcedureCalls() throws SQLException
 	{
+		final String key = "supportsCatalogsInProcedureCalls";
+		Boolean value = (Boolean)_cache.get(key);
+		if (value != null)
+		{
+			return value.booleanValue();
+		}
+
 		try
 		{
-			return privateGetJDBCMetaData().supportsCatalogsInProcedureCalls();
+			value = new Boolean(privateGetJDBCMetaData().supportsCatalogsInProcedureCalls());
 		}
 		catch (SQLException ex)
 		{
-			if (getDriverName().equals(DriverNames.FREE_TDS))
+			if (getDriverName().equals(IDriverNames.FREE_TDS))
 			{
-				return true;
+				value = Boolean.TRUE;
 			}
 			throw ex;
 		}
+		_cache.put(key, value);
+
+		return value.booleanValue();
 	}
 
 	/**
@@ -561,8 +655,15 @@ public class SQLDatabaseMetaData
 	 * 
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
-	public String[] getTableTypes() throws SQLException
+	public synchronized String[] getTableTypes() throws SQLException
 	{
+		final String key = "getTableTypes";
+		String[] value = (String[])_cache.get(key);
+		if (value != null)
+		{
+			return value;
+		}
+
 		final DatabaseMetaData md = privateGetJDBCMetaData();
 
 		// Use a set rather than a list as some combinations of MS SQL and the
@@ -616,7 +717,9 @@ public class SQLDatabaseMetaData
 			}
 		}
 
-		return (String[]) tableTypes.toArray(new String[tableTypes.size()]);
+		value = (String[])tableTypes.toArray(new String[tableTypes.size()]);
+		_cache.put(key, value);
+		return value;
 	}
 
 	/**
@@ -645,7 +748,7 @@ public class SQLDatabaseMetaData
 		final String dbDriverName = getDriverName();
 		Set list = new TreeSet();
 
-		if (dbDriverName.equals(DriverNames.FREE_TDS) && schemaPattern == null)
+		if (dbDriverName.equals(IDriverNames.FREE_TDS) && schemaPattern == null)
 		{
 			schemaPattern = "dbo";
 		}
@@ -785,9 +888,18 @@ public class SQLDatabaseMetaData
 	 * 
 	 * @return	String[] of function names.
 	 */
-	public String[] getNumericFunctions() throws SQLException
+	public synchronized String[] getNumericFunctions() throws SQLException
 	{
-		return makeArray(privateGetJDBCMetaData().getNumericFunctions());
+		final String key = "getNumericFunctions";
+		String[] value = (String[])_cache.get(key);
+		if (value != null)
+		{
+			return value;
+		}
+
+		value = makeArray(privateGetJDBCMetaData().getNumericFunctions());
+		_cache.put(key, value);
+		return value;
 	}
 
 	/**
@@ -795,9 +907,18 @@ public class SQLDatabaseMetaData
 	 * 
 	 * @return	String[] of function names.
 	 */
-	public String[] getStringFunctions() throws SQLException
+	public synchronized String[] getStringFunctions() throws SQLException
 	{
-		return makeArray(privateGetJDBCMetaData().getStringFunctions());
+		final String key = "getStringFunctions";
+		String[] value = (String[])_cache.get(key);
+		if (value != null)
+		{
+			return value;
+		}
+
+		value = makeArray(privateGetJDBCMetaData().getStringFunctions());
+		_cache.put(key, value);
+		return value;
 	}
 
 	/**
@@ -805,9 +926,18 @@ public class SQLDatabaseMetaData
 	 * 
 	 * @return	String[] of function names.
 	 */
-	public String[] getSystemFunctions() throws SQLException
+	public synchronized String[] getSystemFunctions() throws SQLException
 	{
-		return makeArray(privateGetJDBCMetaData().getSystemFunctions());
+		final String key = "getSystemFunctions";
+		String[] value = (String[])_cache.get(key);
+		if (value != null)
+		{
+			return value;
+		}
+
+		value = makeArray(privateGetJDBCMetaData().getSystemFunctions());
+		_cache.put(key, value);
+		return value;
 	}
 
 	/**
@@ -815,9 +945,18 @@ public class SQLDatabaseMetaData
 	 * 
 	 * @return	String[] of function names.
 	 */
-	public String[] getTimeDateFunctions() throws SQLException
+	public synchronized String[] getTimeDateFunctions() throws SQLException
 	{
-		return makeArray(privateGetJDBCMetaData().getTimeDateFunctions());
+		final String key = "getTimeDateFunctions";
+		String[] value = (String[])_cache.get(key);
+		if (value != null)
+		{
+			return value;
+		}
+
+		value = makeArray(privateGetJDBCMetaData().getTimeDateFunctions());
+		_cache.put(key, value);
+		return value;
 	}
 
 	/**
@@ -825,9 +964,18 @@ public class SQLDatabaseMetaData
 	 * 
 	 * @return	String[] of keywords.
 	 */
-	public String[] getSQLKeywords() throws SQLException
+	public synchronized String[] getSQLKeywords() throws SQLException
 	{
-		return makeArray(privateGetJDBCMetaData().getSQLKeywords());
+		final String key = "getSQLKeywords";
+		String[] value = (String[])_cache.get(key);
+		if (value != null)
+		{
+			return value;
+		}
+
+		value = makeArray(privateGetJDBCMetaData().getSQLKeywords());
+		_cache.put(key, value);
+		return value;
 	}
 
 	// TODO: Write a version that returns an array of RowIdentifier objects.

@@ -24,7 +24,7 @@ import java.io.Serializable;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SQLHistoryItem implements Serializable
+public class SQLHistoryItem implements Serializable, Cloneable
 {
 	/** The SQL. */
 	private String _sql;
@@ -76,6 +76,23 @@ public class SQLHistoryItem implements Serializable
 			rc = ((SQLHistoryItem)rhs).getSQL().equals(getSQL());
 		}
 		return rc;
+	}
+
+	/**
+	 * Return a copy of this object.
+	 * 
+	 * @return	The cloned object.
+	 */
+	public Object clone()
+	{
+		try
+		{
+			return (SQLHistoryItem)super.clone();
+		}
+		catch (CloneNotSupportedException ex)
+		{
+			throw new InternalError(ex.getMessage()); // Impossible.
+		}
 	}
 
 	/**

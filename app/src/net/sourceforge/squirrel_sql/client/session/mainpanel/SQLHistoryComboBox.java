@@ -3,9 +3,6 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * Copyright (C) 2003 Colin Bell
  * colbell@users.sourceforge.net
  *
- * Modifications Copyright (C) 2001-2002 Johan Compagner
- * jcompagner@j-com.nl
- *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -24,28 +21,28 @@ import net.sourceforge.squirrel_sql.fw.gui.MemoryComboBox;
 /**
  * This combobox holds the history of SQL statments executed.
  * 
- * TODO: Delete this class
- *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SQLHistoryComboBox extends MemoryComboBox
 {
-	/**
-	 * Singleton model shared by all instances of this class so that all
-	 * sessions can share the same history.
-	 */
-//	private static SQLHistoryComboBoxModel s_model;
-
-	public SQLHistoryComboBox()
+	public SQLHistoryComboBox(boolean useSharedModel)
 	{
 		super();
-//		synchronized (this.getClass())
-//		{
-//			if (s_model == null)
-//			{
-//				s_model = new SQLHistoryComboBoxModel(/*new ApplicationFiles().getUserSQLHistoryFile()*/);
-//			}
-//			setModel(s_model);
-//		}
+		setModel(new SQLHistoryComboBoxModel(useSharedModel));
+	}
+
+	public SQLHistoryComboBoxModel getTypedModel()
+	{
+		return (SQLHistoryComboBoxModel)getModel();
+	}
+
+	public void setUseSharedModel(boolean use)
+	{
+		getTypedModel().setUseSharedModel(use);
+	}
+
+	public boolean isUsingSharedDataModel()
+	{
+		return getTypedModel().isUsingSharedDataModel();
 	}
 }

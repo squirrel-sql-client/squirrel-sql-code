@@ -30,6 +30,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -72,6 +74,12 @@ public class SQLExecuterTask implements Runnable
 	private int _currentQueryIndex = 0;
 	
 	private boolean _cancelPanelRemoved = false;
+
+	/**
+	 * Collection of <TT>ResultSetDataSet</TT> objects produced by SQL
+	 * execution.
+	 */
+	private final List _results = Collections.synchronizedList(new ArrayList());
 
 	public SQLExecuterTask(SQLPanel sqlPanel, ISession session, String sql)
 	{
@@ -171,6 +179,10 @@ public class SQLExecuterTask implements Runnable
 			{
 				_sqlPanel.removeCancelPanel(_cancelPanel);
 			}
+			if (_stopExecution)
+			{
+				_session.getMessageHandler().showMessage("Query execution cancelled by user.");
+			}
 		}
 	}
 
@@ -191,7 +203,7 @@ public class SQLExecuterTask implements Runnable
 			{
 				return false;
 			}
-			//_sqlPanel.addSQLToHistory(querySql);
+
 			_session.getSQLPanelAPI(_session.getApplication().getDummyAppPlugin()).addSQLToHistory(querySql);
 			ResultSet rs = _stmt.getResultSet();
 			if (rs != null)
@@ -200,8 +212,13 @@ public class SQLExecuterTask implements Runnable
 				{
 					_cancelPanel.setStatusLabel("Building output...");
 					ResultSetDataSet rsds = new ResultSetDataSet();
+					_results.add(rsds);
 					SessionProperties props = _session.getProperties();
 					rsds.setResultSet(rs, props.getLargeResultSetObjectInfo());
+					if (_stopExecution)
+					{
+						return false;
+					}
 
 					ResultSetMetaDataDataSet rsmdds = null;
 					try
@@ -350,6 +367,14 @@ public class SQLExecuterTask implements Runnable
 			catch (Throwable th)
 			{
 				s_log.error("Error occured cancelling SQL", th);
+			}
+
+			synchronized (_results)
+			{
+				for (Iterator it = _results.iterator(); it.hasNext();)
+				{
+					((ResultSetDataSet)it.next()).cancelProcessing();
+				}
 			}
 		}
 	}

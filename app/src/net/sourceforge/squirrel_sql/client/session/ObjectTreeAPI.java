@@ -26,6 +26,7 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.IObjectTreeListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
 /**
@@ -197,6 +198,40 @@ class ObjectTreeAPI implements IObjectTreeAPI
 			throw new IllegalArgumentException("TreeSelectionListener == null");
 		}
 		_session.getSessionSheet().getObjectTreePanel().removeTreeSelectionListener(lis);
+	}
+
+	/**
+	 * Add a listener to the object tree.
+	 * 
+	 * @param	lis		The <TT>ObjectTreeListener</TT> you want added.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>ObjectTreeListener</TT> passed.
+	 */
+	public void addObjectTreeListener(IObjectTreeListener lis)
+	{
+		if (lis == null)
+		{
+			throw new IllegalArgumentException("IObjectTreeListener == null");
+		}
+		_session.getSessionSheet().getObjectTreePanel().addObjectTreeListener(lis);
+	}
+
+	/**
+	 * Remove a listener from the object tree.
+	 * 
+	 * @param	lis		The <TT>ObjectTreeListener</TT> you want removed.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>ObjectTreeListener</TT> passed.
+	 */
+	public void removeObjectTreeListener(IObjectTreeListener lis)
+	{
+		if (lis == null)
+		{
+			throw new IllegalArgumentException("IObjectTreeListener == null");
+		}
+		_session.getSessionSheet().getObjectTreePanel().removeObjectTreeListener(lis);
 	}
 
 	/**

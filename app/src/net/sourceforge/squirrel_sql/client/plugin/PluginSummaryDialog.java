@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.plugin;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -26,7 +26,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -36,13 +36,12 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
-
 /**
  * This dialog displays a summary of all plugins.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class PluginSummaryDialog extends JDialog
+public class PluginSummaryDialog extends JFrame
 {
 	/**
 	 * This interface defines locale specific strings. This should be
@@ -50,20 +49,22 @@ public class PluginSummaryDialog extends JDialog
 	 */
 	private interface i18n
 	{
+		String CLOSE = "Close";
 		String TITLE = "Plugin Summary";
 	}
 
 	public PluginSummaryDialog(IApplication app, Frame owner)
 		throws DataSetException
 	{
-		super(owner, i18n.TITLE, true);
-		createUserInterface(app);
+		super(i18n.TITLE);
+		createGUI(app);
 	}
 
-	private void createUserInterface(IApplication app) throws DataSetException
+	private void createGUI(IApplication app) throws DataSetException
 	{
-		final Container contentPane = getContentPane();
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
+		final Container contentPane = getContentPane();
 		contentPane.setLayout(new BorderLayout());
 
 		// Label containing the location of the plugins at top of dialog.
@@ -80,21 +81,20 @@ public class PluginSummaryDialog extends JDialog
 
 		// Ok button at bottom of dialog.
 		JPanel btnsPnl = new JPanel();
-		JButton okBtn = new JButton("OK");
-		okBtn.addActionListener(new ActionListener()
+		JButton closeBtn = new JButton(i18n.CLOSE);
+		closeBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
 			{
 				dispose();
 			}
 		});
-		btnsPnl.add(okBtn);
+		btnsPnl.add(closeBtn);
 		contentPane.add(btnsPnl, BorderLayout.SOUTH);
 
-		getRootPane().setDefaultButton(okBtn);
+		getRootPane().setDefaultButton(closeBtn);
 
-		//	  pack();
-		setSize(600, 400);
+		pack();
 		GUIUtils.centerWithinParent(this);
 		setResizable(true);
 	}

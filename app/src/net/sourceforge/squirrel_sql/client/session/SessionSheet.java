@@ -44,6 +44,7 @@ import net.sourceforge.squirrel_sql.fw.gui.SQLCatalogsComboBox;
 import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -57,6 +58,9 @@ import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
 import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.IObjectTreeListener;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeAdapter;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeListenerEvent;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
@@ -81,6 +85,8 @@ public class SessionSheet extends BaseSheet
 
 	private StatusBar _statusBar = new StatusBar();
 	private boolean _hasBeenVisible;
+
+	private boolean _buildingListOfCatalogs = false;
 
 	public SessionSheet(IClientSession session)
 	{
@@ -278,7 +284,7 @@ public class SessionSheet extends BaseSheet
 				{
 					if (_toolBar == null)
 					{
-						_toolBar = new MyToolBar(_session, this);
+						_toolBar = new MyToolBar(_session);
 						getContentPane().add(_toolBar, BorderLayout.NORTH);
 					}
 				}
@@ -295,6 +301,14 @@ public class SessionSheet extends BaseSheet
 		updateState();
 	}
 
+	private void setupCatalogsCombo()
+	{
+		if (_toolBar != null)
+		{
+			_toolBar.setupCatalogsCombo();
+		}
+	}
+
 	private void createUserInterface()
 	{
 		setVisible(false);
@@ -305,18 +319,14 @@ public class SessionSheet extends BaseSheet
 		{
 			setFrameIcon(icon);
 		}
+
 		_mainTabPane = new MainPanel(_session);
 		Container content = getContentPane();
 		content.setLayout(new BorderLayout());
-		if (props.getShowToolBar())
-		{
-			_toolBar = new MyToolBar(_session, this);
-			content.add(_toolBar, BorderLayout.NORTH);
-		}
+
 		MessagePanel msgPnl = new MessagePanel(app);
 		_session.setMessageHandler(msgPnl);
 		msgPnl.setEditable(false);
-		//		msgPnl.setRows(4);
 		_msgSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		_msgSplit.setOneTouchExpandable(true);
 		_msgSplit.add(_mainTabPane, JSplitPane.LEFT);
@@ -332,17 +342,14 @@ public class SessionSheet extends BaseSheet
 		{
 			public void internalFrameActivated(InternalFrameEvent evt)
 			{
-				Window window =
-					SwingUtilities.windowForComponent(
-						SessionSheet.this.getSQLPanel());
-				Component focusOwner =
-					(window != null) ? window.getFocusOwner() : null;
+				Window window = SwingUtilities.windowForComponent(
+										SessionSheet.this.getSQLPanel());
+				Component focusOwner = (window != null)
+											? window.getFocusOwner() : null;
 				if (focusOwner != null)
 				{
-					FocusEvent lost =
-						new FocusEvent(focusOwner, FocusEvent.FOCUS_LOST);
-					FocusEvent gained =
-						new FocusEvent(focusOwner, FocusEvent.FOCUS_GAINED);
+					FocusEvent lost = new FocusEvent(focusOwner, FocusEvent.FOCUS_LOST);
+					FocusEvent gained = new FocusEvent(focusOwner, FocusEvent.FOCUS_GAINED);
 					window.dispatchEvent(lost);
 					window.dispatchEvent(gained);
 					window.dispatchEvent(lost);
@@ -361,25 +368,61 @@ public class SessionSheet extends BaseSheet
 
 	private class MyToolBar extends ToolBar
 	{
-		MyToolBar(IClientSession session, SessionSheet frame)
+		private SQLCatalogsComboBox _catalogsCmb;
+		private IObjectTreeListener _lis;
+
+		MyToolBar(IClientSession session)
 		{
 			super();
+			createGUI(session);
+		}
+
+		public void addNotify()
+		{
+			super.addNotify();
+
+			// Whenever object tree refreshed refresh list of catalogs.
+			if (_catalogsCmb != null && _lis == null)
+			{
+				_lis = new ObjectTreeAdapter()
+				{
+					public void objectTreeRefreshed(ObjectTreeListenerEvent evt)
+					{
+						setupCatalogsCombo();
+					}
+				};
+				getObjectTreePanel().addObjectTreeListener(_lis);
+			}
+		}
+
+		public void removeNotify()
+		{
+			super.removeNotify();
+			if (_lis != null)
+			{
+				getObjectTreePanel().removeObjectTreeListener(_lis);
+				_lis = null;
+			}
+		}
+
+		private void createGUI(ISession session)
+		{
 			// If DBMS supports catalogs then place combo box of catalogs
 			// in toolbar.
-			SQLConnection conn = session.getSQLConnection();
-			SQLCatalogsComboBox catalogsCmb = null;
-
 			try
 			{
+				SQLConnection conn = _session.getSQLConnection();
 				if (conn.getSQLMetaData().supportsCatalogs())
 				{
-					catalogsCmb = new SQLCatalogsComboBox();
-					catalogsCmb.setConnection(conn);
-					catalogsCmb.setSelectedCatalog(conn.getCatalog());
-					catalogsCmb.addActionListener(new CatalogsComboListener());
+					_catalogsCmb = new SQLCatalogsComboBox();
 					add(new JLabel(" Catalog: "));
-					add(catalogsCmb);
+					add(_catalogsCmb);
 					addSeparator();
+
+					// Listener for changes in the connection status.
+					conn.addPropertyChangeListener(new SQLConnectionListener(_catalogsCmb));
+
+					_catalogsCmb.addActionListener(new CatalogsComboListener());
 				}
 			}
 			catch (SQLException ex)
@@ -387,10 +430,7 @@ public class SessionSheet extends BaseSheet
 				s_log.error("Unable to retrieve catalog info", ex);
 			}
 
-			// Listener for changes in the connection status.
-			conn.addPropertyChangeListener(new SQLConnectionListener(catalogsCmb));
-			ActionCollection actions =
-				session.getApplication().getActionCollection();
+			ActionCollection actions = session.getApplication().getActionCollection();
 			setUseRolloverButtons(true);
 			setFloatable(false);
 			add(actions.get(SessionPropertiesAction.class));
@@ -404,26 +444,51 @@ public class SessionSheet extends BaseSheet
 			actions.get(CommitAction.class).setEnabled(false);
 			actions.get(RollbackAction.class).setEnabled(false);
 		}
+
+		private void setupCatalogsCombo()
+		{
+			try
+			{
+				SQLConnection conn = _session.getSQLConnection();
+				try
+				{
+					_buildingListOfCatalogs = true;
+					_catalogsCmb.setConnection(conn);
+				}
+				finally
+				{
+					_buildingListOfCatalogs = false;
+				}
+			}
+			catch (SQLException ex)
+			{
+				s_log.error("Unable to retrieve catalog info", ex);
+			}
+		}
 	}
 
 	private final class CatalogsComboListener implements ActionListener
 	{
 		public void actionPerformed(ActionEvent evt)
 		{
-			Object src = evt.getSource();
-			if (src instanceof SQLCatalogsComboBox)
+			if (!_buildingListOfCatalogs)
 			{
-				SQLCatalogsComboBox cmb = (SQLCatalogsComboBox)src;
-				String catalog = cmb.getSelectedCatalog();
-				if (catalog != null)
+				Object src = evt.getSource();
+				if (src instanceof SQLCatalogsComboBox)
 				{
-					try
+					SQLCatalogsComboBox cmb = (SQLCatalogsComboBox)src;
+					String catalog = cmb.getSelectedCatalog();
+					if (catalog != null)
 					{
-						_session.getSQLConnection().setCatalog(catalog);
-					}
-					catch (SQLException ex)
-					{
-						_session.getMessageHandler().showErrorMessage(ex);
+						try
+						{
+							_session.getSQLConnection().setCatalog(catalog);
+						}
+						catch (SQLException ex)
+						{
+							_session.getMessageHandler().showErrorMessage(ex);
+							SessionSheet.this.setupCatalogsCombo();
+						}
 					}
 				}
 			}
@@ -442,21 +507,27 @@ public class SessionSheet extends BaseSheet
 
 		public void propertyChange(PropertyChangeEvent evt)
 		{
-			final String propName = evt.getPropertyName();
-
-			if (propName == null ||
-					propName.equals(SQLConnection.IPropertyNames.CATALOG))
+			if (!_buildingListOfCatalogs)
 			{
-				if (_cmb != null)
+				final String propName = evt.getPropertyName();
+				if (propName == null ||
+						propName.equals(SQLConnection.IPropertyNames.CATALOG))
 				{
-					final SQLConnection conn = _session.getSQLConnection();
-					try
+					if (_cmb != null)
 					{
-						_cmb.setSelectedCatalog(conn.getCatalog());
-					}
-					catch (SQLException ex)
-					{
-						_session.getMessageHandler().showErrorMessage(ex);
+						final SQLConnection conn = _session.getSQLConnection();
+						try
+						{
+							if (!Utilities.areStringsEqual(conn.getCatalog(),
+														_cmb.getSelectedCatalog()))
+							{
+								_cmb.setSelectedCatalog(conn.getCatalog());
+							}
+						}
+						catch (SQLException ex)
+						{
+							_session.getMessageHandler().showErrorMessage(ex);
+						}
 					}
 				}
 			}

@@ -79,6 +79,11 @@ public class SQLCatalogsComboBox extends JComboBox
 				{
 					addItem(it.next());
 				}
+				final String selCatalog = conn.getCatalog();
+				if (selCatalog != null)
+				{
+					setSelectedCatalog(selCatalog);
+				}
 			}
 		}
 

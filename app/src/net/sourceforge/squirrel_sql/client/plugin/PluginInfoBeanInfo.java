@@ -27,56 +27,41 @@ import java.beans.SimpleBeanInfo;
  */
 public final class PluginInfoBeanInfo extends SimpleBeanInfo
 {
-	public interface PropertyNames
-	{
-		String AUTHOR = "author";
-		String CONTRIBUTORS = "contributors";
-		String DESCRIPTIVE_NAME = "descriptiveName";
-		String INTERNAL_NAME = "internalName";
-		String IS_LOADED = "isLoaded";
-		String PLUGIN_CLASS_NAME = "pluginClassName";
-		String VERSION = "version";
-		String WEB_SITE = "webSite";
-	}
+	private static PropertyDescriptor[] s_descr;
 
-	private static PropertyDescriptor[] s_descriptors;
+	private interface IPropNames extends PluginInfo.IPropertyNames
+	{
+	}
 
 	public PluginInfoBeanInfo() throws IntrospectionException
 	{
 		super();
-		if (s_descriptors == null)
+		if (s_descr == null)
 		{
-			s_descriptors = new PropertyDescriptor[8];
-			int idx = 0;
-			s_descriptors[idx++] = 	new PropertyDescriptor(
-					PropertyNames.PLUGIN_CLASS_NAME, PluginInfo.class,
-					"getPluginClassName", null);
-			s_descriptors[idx++] = 	new PropertyDescriptor(
-					PropertyNames.IS_LOADED, PluginInfo.class,
-					"isLoaded", null);
-			s_descriptors[idx++] = 	new PropertyDescriptor(
-					PropertyNames.INTERNAL_NAME, PluginInfo.class,
-					"getInternalName", null);
-			s_descriptors[idx++] = 	new PropertyDescriptor(
-					PropertyNames.DESCRIPTIVE_NAME, PluginInfo.class,
-					"getDescriptiveName", null);
-			s_descriptors[idx++] = 	new PropertyDescriptor(
-					PropertyNames.AUTHOR, PluginInfo.class,
-					"getAuthor", null);
-			s_descriptors[idx++] = 	new PropertyDescriptor(
-					PropertyNames.CONTRIBUTORS, PluginInfo.class,
-					"getContributors", null);
-			s_descriptors[idx++] = 	new PropertyDescriptor(
-					PropertyNames.WEB_SITE, PluginInfo.class,
-					"getWebSite", null);
-			s_descriptors[idx++] = 	new PropertyDescriptor(
-					PropertyNames.VERSION, PluginInfo.class,
-					"getVersion", null);
+			final Class CLAZZ = PluginInfo.class;
+			s_descr = new PropertyDescriptor[9];
+
+			s_descr[0] = new PropertyDescriptor(IPropNames.PLUGIN_CLASS_NAME, CLAZZ,
+												"getPluginClassName", null);
+			s_descr[1] = new PropertyDescriptor(IPropNames.IS_LOADED, CLAZZ,
+												"isLoaded", null);
+			s_descr[2] = new PropertyDescriptor(IPropNames.INTERNAL_NAME, CLAZZ,
+												"getInternalName", null);
+			s_descr[3] = new PropertyDescriptor(IPropNames.DESCRIPTIVE_NAME, CLAZZ,
+												"getDescriptiveName", null);
+			s_descr[4] = new PropertyDescriptor(IPropNames.AUTHOR, CLAZZ,
+												"getAuthor", null);
+			s_descr[5] = new PropertyDescriptor(IPropNames.CONTRIBUTORS, CLAZZ,
+												"getContributors", null);
+			s_descr[6] = new PropertyDescriptor(IPropNames.WEB_SITE, CLAZZ,
+												"getWebSite", null);
+			s_descr[7] = new PropertyDescriptor(IPropNames.VERSION, CLAZZ,
+												"getVersion", null);
 		}
 	}
 
 	public PropertyDescriptor[] getPropertyDescriptors()
 	{
-		return s_descriptors;
+		return s_descr;
 	}
 }

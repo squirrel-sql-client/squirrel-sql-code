@@ -244,7 +244,6 @@ public class SQLConnection
 		throws SQLException
 	{
 		validateConnection();
-		validateConnection();
 		final Connection conn = getConnection();
 		final String oldValue = conn.getCatalog();
 		if (!Utilities.areStringsEqual(oldValue, catalogName))

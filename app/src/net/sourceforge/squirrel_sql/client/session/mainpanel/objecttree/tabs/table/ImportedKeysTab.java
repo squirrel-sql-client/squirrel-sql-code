@@ -73,7 +73,7 @@ public class ImportedKeysTab extends BaseTableTab
 		try
 		{
 			final ITableInfo ti = getTableInfo();
-			final ResultSet rs = conn.getSQLMetaData().getExportedKeys(ti);
+			final ResultSet rs = conn.getSQLMetaData().getImportedKeys(ti);
 			try
 			{
 				final ResultSetDataSet rsds = new ResultSetDataSet();

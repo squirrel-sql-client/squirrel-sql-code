@@ -18,15 +18,15 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.MutableComboBoxModel;
+import javax.swing.event.ListDataListener;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
- * This class provides a model for a MemoryComboBox object allowing it to
- * save/restore its data from disk.
- * TODO: Delete this class
+ * TODO: JavaDoc
  * 
- * @author Lynn Pye
+ * @author Colin Bell
  */
 public class SQLHistoryComboBoxModel extends DefaultComboBoxModel
 {
@@ -34,147 +34,182 @@ public class SQLHistoryComboBoxModel extends DefaultComboBoxModel
 	private static final ILogger s_log =
 		LoggerController.createLogger(SQLHistoryComboBoxModel.class);
 
-	/** The file to save/restore data to. */
-//	private File _file;
+	/** Shared data model. */
+	private static MutableComboBoxModel s_sharedDataModel;
 
-	public SQLHistoryComboBoxModel()
+	/** Actual data model. */
+	private MutableComboBoxModel _dataModel;
+
+	/** The currently selected model. */
+	private Object _selectedObject;
+
+	public SQLHistoryComboBoxModel(boolean useSharedModel)
 	{
 		super();
+		if (useSharedModel && s_sharedDataModel == null)
+		{
+			throw new IllegalStateException("Shared instance has not been initialized");
+		}
+		_dataModel = useSharedModel ? s_sharedDataModel : new DefaultComboBoxModel();
 	}
 
-	public SQLHistoryComboBoxModel(Object[] data)
+	public synchronized static void initializeSharedInstance(Object[] data)
 	{
-		super(data);
+		if (s_sharedDataModel != null)
+		{
+			s_log.error("Shared data model has already been initialized");
+		}
+		else
+		{
+			s_sharedDataModel = new DefaultComboBoxModel(data);
+		}
 	}
 
 	/**
-	 * Ctor specifying File to save/restore from.
+	 * Is this model using the shared data model?
 	 * 
-	 * @param	file	File to save/restore from.
-	 * 
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> <TT>File</TT> passed.
+	 * @return	<TT>true</TT> if this model is using the shared data model.
 	 */
-//	public SQLHistoryComboBoxModel(File file)
-//	{
-//		super(loadDataFromStorage(file));
-//		_file = file;
-//	}
-
-//	public void addElement(Object anObject)
-//	{
-//		super.addElement(anObject);
-//		writeDataToStorage();
-//	}
-//
-//	public void insertElementAt(Object anObject, int index)
-//	{
-//		super.insertElementAt(anObject, index);
-//		writeDataToStorage();
-//	}
-//
-//	public void removeAllElements()
-//	{
-//		super.removeAllElements();
-//		writeDataToStorage();
-//	}
-//
-//	public void removeElement(Object anObject)
-//	{
-//		super.removeElement(anObject);
-//		writeDataToStorage();
-//	}
-//
-//	public void removeElementAt(int index)
-//	{
-//		super.removeElementAt(index);
-//		writeDataToStorage();
-//	}
-
-//	private synchronized void writeDataToStorage()
-//	{
-//		// Get the history into an array.
-//		final int historySize = getSize();
-//		final List history = new ArrayList(historySize);
-//		for (int i = 0; i < historySize; ++i)
-//		{
-//			history.add(getElementAt(i));
-//		}
-//		SQLHistoryComboBoxItem[] data = new SQLHistoryComboBoxItem[historySize];
-//		data = (SQLHistoryComboBoxItem[])history.toArray(data);
-//
-//		// Wrap a JavaBean around the array and save it.
-//		final SQLHistoryArrayBean bean = new SQLHistoryArrayBean();
-//		bean.setData(data);
-//		try
-//		{
-//			XMLBeanWriter wtr = new XMLBeanWriter(bean);
-//			wtr.save(_file);
-//		}
-//		catch (Exception ex)
-//		{
-//			s_log.error("Unable to write SQL queries to persistant storage.", ex);
-//		}
-//	}
+	public boolean isUsingSharedDataModel()
+	{
+		return _dataModel == s_sharedDataModel;
+	}
 
 	/**
-	 * Load SQL history from the passed file and return it in a Vector.
+	 * Specify whether this model is usning the shared data model.
 	 * 
-	 * @param	file	File containing SQL history.
-	 * 
-	 * @return		Vector containing SQL history. 
-	 * 
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> <TT>File</TT> passed.
+	 * @param use	<TT>true</TT> use the shared model.
 	 */
-//	private static Vector loadDataFromStorage(File file)
-//	{
-//		if (file == null)
-//		{
-//			throw new IllegalArgumentException("File == null");
-//		}
-//
-//		try
-//		{
-//			XMLBeanReader doc = new XMLBeanReader();
-//			doc.load(file);
-//			Iterator it = doc.iterator();
-//			if (it.hasNext())
-//			{
-//				SQLHistoryArrayBean bean = (SQLHistoryArrayBean)it.next();
-//				SQLHistoryComboBoxItem[] data = bean.getData();
-//				return new Vector(Arrays.asList(data));
-//
-//			}
-//		}
-//		catch (FileNotFoundException ignore)
-//		{
-//			// History file not found for user - first time user ran pgm.
-//		}
-//		catch (Exception ex)
-//		{
-//			s_log.error("Unable to load SQL queries from persistant storage.", ex);
-//		}
-//
-//		return new Vector(0);
-//	}
+	public synchronized void setUseSharedModel(boolean use)
+	{
+		if (isUsingSharedDataModel() != use)
+		{
+			_dataModel = use ? s_sharedDataModel : duplicateSharedDataModel();
+		}
+	}
 
-//	public static class SQLHistoryArrayBean
-//	{
-//		private SQLHistoryComboBoxItem[] _data = new SQLHistoryComboBoxItem[0];
-//
-//		public SQLHistoryArrayBean()
-//		{
-//		}
-//
-//		public SQLHistoryComboBoxItem[] getData()
-//		{
-//			return _data;
-//		}
-//
-//		public void setData(SQLHistoryComboBoxItem[] data)
-//		{
-//			_data = data;
-//		}
-//	}
+	/**
+	 * Add an element to this model.
+	 * 
+	 * This method is passed onto the data model that this data model is
+	 * wrapped around.
+	 * 
+	 * @param	object	The object to be added.
+	 */
+	public void addElement(Object object)
+	{
+		_dataModel.addElement(object);
+	}
+
+	/**
+	 * Add an item at a specified index.
+	 * 
+	 * This method is passed onto the data model that this data model is
+	 * wrapped around.
+	 * 
+	 * @param	object	The object to be added.
+	 * @param	index	The index to add it at.
+	 */
+	public void insertElementAt(Object object, int index)
+	{
+		_dataModel.insertElementAt(object, index);
+	}
+
+	/**
+	 * Remove the passed object from this collection.
+	 * 
+	 * This method is passed onto the data model that this data model is
+	 * wrapped around.
+	 * 
+	 * @param	object	The object to be removed.
+	 */
+	public void removeElement(Object object)
+	{
+		_dataModel.removeElement(object);
+	}
+
+	/**
+	 * Remove the element from this collection at the passed index.
+	 * 
+	 * This method is passed onto the data model that this data model is
+	 * wrapped around.
+	 * 
+	 * @param	index	The index to remove an element from.
+	 */
+	public void removeElementAt(int index)
+	{
+		_dataModel.removeElementAt(index);
+	}
+
+	/**
+	 * Retrieve the element currently selected. This is <EM>not</EM> passed
+	 * on to the wrapped model as this model is responsible for keeping track
+	 * of the currently selected item.
+	 * 
+	 * @return	The object currently selected.
+	 */
+	public Object getSelectedItem()
+	{
+		return _selectedObject;
+	}
+
+	/**
+	 * @see javax.swing.ComboBoxModel#setSelectedItem(java.lang.Object)
+	 */
+	public void setSelectedItem(Object object)
+	{
+		_selectedObject = object;
+		fireContentsChanged(this, -1, -1);
+	}
+
+	/**
+	 * This method is passed onto the data model that this data model is
+	 * wrapped around.
+	 */
+	public void addListDataListener(ListDataListener arg0)
+	{
+		_dataModel.addListDataListener(arg0);
+	}
+
+	/**
+	 * This method is passed onto the data model that this data model is
+	 * wrapped around.
+	 */
+	public Object getElementAt(int arg0)
+	{
+		return _dataModel.getElementAt(arg0);
+	}
+
+	/**
+	 * Retrieve the number of elements in this model.
+	 * 
+	 * This method is passed onto the data model that this data model is
+	 * wrapped around.
+	 * 
+	 * @return	Number of elements in this model.
+	 */
+	public int getSize()
+	{
+		return _dataModel.getSize();
+	}
+
+	/**
+	 * This method is passed onto the data model that this data model is
+	 * wrapped around.
+	 */
+	public void removeListDataListener(ListDataListener arg0)
+	{
+		_dataModel.removeListDataListener(arg0);
+	}
+
+	protected synchronized MutableComboBoxModel duplicateSharedDataModel()
+	{
+		MutableComboBoxModel newModel = new DefaultComboBoxModel();
+		for (int i = 0, limit = s_sharedDataModel.getSize(); i < limit; ++i)
+		{
+			SQLHistoryItem obj = (SQLHistoryItem)s_sharedDataModel.getElementAt(i);
+			newModel.addElement(obj.clone());
+		} 
+		return newModel;
+	}
 }

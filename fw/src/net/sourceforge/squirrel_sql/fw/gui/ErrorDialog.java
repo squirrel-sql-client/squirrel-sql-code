@@ -162,23 +162,34 @@ public class ErrorDialog extends JDialog
 		_stackTraceScroller = new JScrollPane(new StackTracePanel(th));
 		_stackTraceScroller.setVisible(false);
 
-		_moreErrorsScroller = new JScrollPane(new MoreErrorsPanel(th));
-		_moreErrorsScroller.setVisible(false);
+		final MoreErrorsPanel moreErrPnl = createMoreErrorsPanel(th);
+		if (moreErrPnl != null)
+		{
+			_moreErrorsScroller = new JScrollPane(moreErrPnl);
+			_moreErrorsScroller.setVisible(false);
+		}
 
 		Container content = getContentPane();
 		content.setLayout(new GridBagLayout());
 		final GridBagConstraints gbc = new GridBagConstraints();
-		gbc.fill = gbc.BOTH;
+		gbc.fill = GridBagConstraints.BOTH;
 		gbc.insets = new Insets(4, 4, 4, 4);
+
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		content.add(createMessagePanel(msg, th), gbc);
+
 		++gbc.gridy;
 		content.add(createButtonsPanel(th), gbc);
+
 		++gbc.gridy;
 		content.add(_stackTraceScroller, gbc);
-		++gbc.gridy;
-		content.add(_moreErrorsScroller, gbc);
+
+		if (_moreErrorsScroller != null)
+		{
+			++gbc.gridy;
+			content.add(_moreErrorsScroller, gbc);
+		}
 
 		getRootPane().setDefaultButton(_closeBtn);
 		setResizable(false);
@@ -235,9 +246,12 @@ public class ErrorDialog extends JDialog
 			_stackTraceBtn = new JButton(ErrorDialog_i18n.STACK_TRACE);
 			_stackTraceBtn.addActionListener(_stackTraceHandler);
 			btnsPnl.add(_stackTraceBtn);
-			_moreBtn = new JButton(ErrorDialog_i18n.MORE);
-			_moreBtn.addActionListener(_moreHandler);
-			btnsPnl.add(_moreBtn);
+			if (_moreErrorsScroller != null)
+			{
+				_moreBtn = new JButton(ErrorDialog_i18n.MORE);
+				_moreBtn.addActionListener(_moreHandler);
+				btnsPnl.add(_moreBtn);
+			}
 		}
 		_closeBtn = new JButton(ErrorDialog_i18n.CLOSE);
 		_closeBtn.addActionListener(_closeHandler);
@@ -251,6 +265,19 @@ public class ErrorDialog extends JDialog
 		return (Color)UIManager.get("TextArea.background");
 	}
 
+	private MoreErrorsPanel createMoreErrorsPanel(Throwable th)
+	{
+		if (th instanceof SQLException)
+		{
+			SQLException ex = ((SQLException)th).getNextException();
+			if (ex != null)
+			{
+				return new MoreErrorsPanel(ex);
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * Panel to display the message in.
 	 */
@@ -260,7 +287,7 @@ public class ErrorDialog extends JDialog
 		{
 			super();
 			setText(msg);
-			setBackground(ErrorDialog.this.getTextAreaBackgroundColor());
+			setBackground(ErrorDialog.getTextAreaBackgroundColor());
 //			Dimension dim = getPreferredSize();
 //			dim.width = PREFERRED_WIDTH;
 //			setPreferredSize(dim);
@@ -276,7 +303,7 @@ public class ErrorDialog extends JDialog
 		StackTracePanel(Throwable th)
 		{
 			super();
-			setBackground(ErrorDialog.this.getTextAreaBackgroundColor());
+			setBackground(ErrorDialog.getTextAreaBackgroundColor());
 			if (th != null)
 			{
 				setText(Utilities.getStackTrace(th));
@@ -287,23 +314,23 @@ public class ErrorDialog extends JDialog
 
 	private final class MoreErrorsPanel extends MultipleLineLabel
 	{
-		MoreErrorsPanel(Throwable th)
+		MoreErrorsPanel(SQLException ex)
 		{
 			super();
 			StringBuffer buf = new StringBuffer();
-			setBackground(ErrorDialog.this.getTextAreaBackgroundColor());
-			if (th instanceof SQLException)
+			setBackground(ErrorDialog.getTextAreaBackgroundColor());
+			while (ex != null)
 			{
-				SQLException ex = (SQLException)th;
-				while (ex != null)
+				String msg = ex.getMessage();
+				if (msg != null && msg.length() > 0)
 				{
-					String msg = ex.getMessage();
-					if (msg != null && msg.length() > 0)
-					{
-						buf.append(msg).append('\n');
-					}
-					ex = ex.getNextException();
+					buf.append(msg).append('\n');
 				}
+				else
+				{
+					buf.append(ex.toString()).append('\n');
+				}
+				ex = ex.getNextException();
 			}
 			setText(buf.toString());
 			setRows(10);
@@ -338,7 +365,10 @@ public class ErrorDialog extends JDialog
 			boolean currentlyVisible = _stackTraceScroller.isVisible();
 			if (!currentlyVisible)
 			{
-				_moreErrorsScroller.setVisible(false);
+				if (_moreErrorsScroller != null)
+				{
+					_moreErrorsScroller.setVisible(false);
+				}
 			}
 			_stackTraceScroller.setVisible(!currentlyVisible);
 			ErrorDialog.this.pack();

@@ -33,6 +33,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
+import javax.swing.event.EventListenerList;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.TreePath;
@@ -97,6 +98,11 @@ class ObjectTree extends JTree
 	 * is <TT>null</TT>.
 	 */
 	private Map _expandedPathNames = new HashMap();
+
+	/**
+	 * Collection of listeners to this object tree.
+	 */
+	private EventListenerList _listenerList = new EventListenerList();
 
 	/**
 	 * ctor specifying session.
@@ -240,7 +246,9 @@ class ObjectTree extends JTree
 		}
 		ObjectTreeNode root = _model.getRootObjectTreeNode();
 		root.removeAllChildren();
+		fireObjectTreeCleared();
 		startExpandingTree(root, false, selectedPathNames);
+		fireObjectTreeRefreshed();
 	}
 
 	/**
@@ -267,6 +275,28 @@ class ObjectTree extends JTree
 		clearSelection();
 		nodes[0].removeAllChildren();
 		startExpandingTree(nodes[0], false, selectedPathNames);
+	}
+
+	/**
+	 * Adds a listener for changes in this cache entry.
+	 *
+	 * @param   lis a IObjectCacheChangeListener that will be notified when
+	 *			objects are added and removed from this cache entry.
+	 */
+	public void addObjectTreeListener(IObjectTreeListener lis)
+	{
+		_listenerList.add(IObjectTreeListener.class, lis);
+	}
+
+	/**
+	 * Removes a listener for changes in this cache entry.
+	 *
+	 * @param   lis a IObjectCacheChangeListener that will be notified when
+	 *			objects are added and removed from this cache entry.
+	 */
+	void removeObjectTreeListener(IObjectTreeListener lis)
+	{
+		_listenerList.remove(IObjectTreeListener.class, lis);
 	}
 
 	/**
@@ -525,6 +555,54 @@ class ObjectTree extends JTree
 				pop = _globalPopup;
 			}
 			pop.show(this, x, y);
+		}
+	}
+
+	/**
+	 * Fire a "tree cleared" event to all listeners.
+	 */
+	private void fireObjectTreeCleared()
+	{
+		// Guaranteed to be non-null.
+		Object[] listeners = _listenerList.getListenerList();
+		// Process the listeners last to first, notifying
+		// those that are interested in this event.
+		ObjectTreeListenerEvent evt = null;
+		for (int i = listeners.length - 2; i >= 0; i-=2 )
+		{
+			if (listeners[i] == IObjectTreeListener.class)
+			{
+				// Lazily create the event.
+				if (evt == null)
+				{
+					evt = new ObjectTreeListenerEvent(ObjectTree.this);
+				}
+				((IObjectTreeListener)listeners[i + 1]).objectTreeCleared(evt);
+			}
+		}
+	}
+
+	/**
+	 * Fire a "tree refreshed" event to all listeners.
+	 */
+	private void fireObjectTreeRefreshed()
+	{
+		// Guaranteed to be non-null.
+		Object[] listeners = _listenerList.getListenerList();
+		// Process the listeners last to first, notifying
+		// those that are interested in this event.
+		ObjectTreeListenerEvent evt = null;
+		for (int i = listeners.length - 2; i >= 0; i-=2 )
+		{
+			if (listeners[i] == IObjectTreeListener.class)
+			{
+				// Lazily create the event.
+				if (evt == null)
+				{
+					evt = new ObjectTreeListenerEvent(ObjectTree.this);
+				}
+				((IObjectTreeListener)listeners[i + 1]).objectTreeRefreshed(evt);
+			}
 		}
 	}
 
