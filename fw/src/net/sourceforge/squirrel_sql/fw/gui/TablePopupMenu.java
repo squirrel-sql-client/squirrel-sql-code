@@ -21,6 +21,8 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 
+import javax.swing.Action;
+import javax.swing.JMenuItem;
 import javax.swing.JTable;
 
 import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
@@ -33,6 +35,16 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableModel;
 
 public class TablePopupMenu extends BasePopupMenu
 {
+	public interface IOptionTypes
+	{
+		int COPY = 0;
+		int COPY_HTML = 1;
+		int SELECT_ALL = 2;
+		int LAST_ENTRY = 2;
+	}
+
+	private final JMenuItem[] _menuItems = new JMenuItem[IOptionTypes.LAST_ENTRY + 1];
+
 	private JTable _table;
 
 	private CutAction _cut = new CutAction();
@@ -61,19 +73,7 @@ public class TablePopupMenu extends BasePopupMenu
 		// save the pointer needed to enable editing of data on-demand
 		_updateableModel = updateableModel;
 
-		//add(_cut);
-		add(_copy);
-		add(_copyHtml);
-		//add(_paste);
-		if (allowEditing)
-		{
-			addSeparator();
-			add(_makeEditable);
-		}
-		addSeparator();
-		//add(_clear);
-		//addSeparator();
-		add(_select);
+		addMenuItems(allowEditing);
 	}
 
 	public void setTable(JTable value)
@@ -96,11 +96,41 @@ public class TablePopupMenu extends BasePopupMenu
 		super.show(evt);
 	}
 
+	protected void setItemAction(int optionType, Action action)
+	{
+		if (optionType < 0 || optionType > IOptionTypes.LAST_ENTRY)
+		{
+			throw new IllegalArgumentException("Invalid option type: " + optionType);
+		}
+		if (action == null)
+		{
+			throw new IllegalArgumentException("Action == null");
+		}
+
+		final int idx = getComponentIndex(_menuItems[optionType]);
+		remove(idx);
+		insert(action, idx);
+		_menuItems[optionType] = (JMenuItem)getComponent(idx);
+	}
+
 	protected void updateActions()
 	{
 		final boolean isEditable = false;
 		_cut.setEnabled(isEditable);
 		_paste.setEnabled(isEditable);
+	}
+
+	private void addMenuItems(boolean allowEditing)
+	{
+		_menuItems[IOptionTypes.COPY] = add(_copy);
+		_menuItems[IOptionTypes.COPY_HTML] = add(_copyHtml);
+		if (allowEditing)
+		{
+			addSeparator();
+			add(_makeEditable);
+		}
+		addSeparator();
+		_menuItems[IOptionTypes.SELECT_ALL] = add(_select);
 	}
 
 	private class ClearAction extends BaseAction
