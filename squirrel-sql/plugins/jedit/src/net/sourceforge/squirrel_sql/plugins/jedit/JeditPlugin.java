@@ -17,8 +17,6 @@ package net.sourceforge.squirrel_sql.plugins.jedit;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -34,7 +32,6 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
-import net.sourceforge.squirrel_sql.client.session.SessionSheet;
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
 
 import net.sourceforge.squirrel_sql.plugins.jedit.textarea.TextAreaDefaults;
@@ -49,14 +46,11 @@ public class JeditPlugin extends DefaultSessionPlugin {
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(JeditPlugin.class);
 
-	/** Plugin preferences. */
-	private JeditPreferences _globalPrefs;
+	/** Preferences for new sessions. */
+	private JeditPreferences _newSessionPrefs;
 
 	/** Folder to store user settings in. */
 	private File _userSettingsFolder;
-
-	/** The initial factory for creating SQL entry panels. */
-	private ISQLEntryPanelFactory _originalFactory;
 
 	/** Factory that creates jEdit text controls. */
 	private ISQLEntryPanelFactory _jeditFactory;
@@ -110,20 +104,15 @@ public class JeditPlugin extends DefaultSessionPlugin {
 			throw new PluginException(ex);
 		}
 
-		_originalFactory = getApplication().getSQLEntryPanelFactory();
-
 		// Load plugin preferences.
 		loadPrefs();
 		TextAreaDefaults dfts = TextAreaDefaults.getDefaults();
 		dfts.inputHandler = new JeditInputHandler();
 
-		globalPreferencesHaveChanged(null);
-		
-		_globalPrefs.addPropertyChangeListener(new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent evt) {
-				globalPreferencesHaveChanged(evt.getPropertyName());
-			}
-		});
+		// Install the jEdit factory for creating SQL entry text controls.
+		ISQLEntryPanelFactory originalFactory = getApplication().getSQLEntryPanelFactory();
+		_jeditFactory = new JeditSQLEntryPanelFactory(this, _newSessionPrefs, originalFactory);
+		getApplication().setSQLEntryPanelFactory(_jeditFactory);
 	}
 
 	/**
@@ -141,7 +130,7 @@ public class JeditPlugin extends DefaultSessionPlugin {
 	 */
 	public IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
 		return new IGlobalPreferencesPanel[] {
-			new JeditPreferencesPanel(this, _globalPrefs)
+			new JeditPreferencesPanel(_newSessionPrefs)
 		};
 	}
 
@@ -153,37 +142,12 @@ public class JeditPlugin extends DefaultSessionPlugin {
 	public ISessionPropertiesPanel[] getSessionPropertiesPanels(ISession session) {
 		JeditPreferences sessionPrefs = (JeditPreferences)session.getPluginObject(this, JeditConstants.ISessionKeys.PREFS);
 		return new ISessionPropertiesPanel[] {
-			 new JeditPreferencesPanel(this, sessionPrefs)
+			 new JeditPreferencesPanel(sessionPrefs)
 		};
 	}
 
-	/**
-	 * Install the factory to use to create SQL text panels.
-	 */
-	synchronized void installFactory() {
-		if (_globalPrefs.getUseJeditTextControl()) {
-			getApplication().setSQLEntryPanelFactory(getJeditFactory());
-		} else {
-			getApplication().setSQLEntryPanelFactory(_originalFactory);
-		}
-	}
-
-	synchronized ISQLEntryPanelFactory getJeditFactory() {
-		if (_jeditFactory == null) {
-			_jeditFactory = new JeditSQLEntryPanelFactory(this, _globalPrefs);
-		}
+	ISQLEntryPanelFactory getJeditFactory() {
 		return _jeditFactory;
-	}
-
-	ISQLEntryPanelFactory getOriginalFactory() {
-		return _originalFactory;
-	}
-
-	private void globalPreferencesHaveChanged(String propName) {
-		if (propName == null || propName.equals(
-				JeditPreferences.IPropertyNames.USE_JEDIT_CONTROL)) {
-			installFactory();
-		}
 	}
 
 	/**
@@ -197,7 +161,7 @@ public class JeditPlugin extends DefaultSessionPlugin {
 				getClass().getClassLoader());
 			Iterator it = doc.iterator();
 			if (it.hasNext()) {
-				_globalPrefs = (JeditPreferences)it.next();
+				_newSessionPrefs = (JeditPreferences)it.next();
 			}
 		} catch (FileNotFoundException ignore) {
 			// property file not found for user - first time user ran pgm.
@@ -205,8 +169,8 @@ public class JeditPlugin extends DefaultSessionPlugin {
 			s_log.error("Error occured reading from preferences file: "
 							+ JeditConstants.USER_PREFS_FILE_NAME, ex);
 		}
-		if (_globalPrefs == null) {
-			_globalPrefs = new JeditPreferences();
+		if (_newSessionPrefs == null) {
+			_newSessionPrefs = new JeditPreferences();
 		}
 	}
 
@@ -215,7 +179,7 @@ public class JeditPlugin extends DefaultSessionPlugin {
 	 */
 	private void savePrefs() {
 		try {
-			XMLBeanWriter wtr = new XMLBeanWriter(_globalPrefs);
+			XMLBeanWriter wtr = new XMLBeanWriter(_newSessionPrefs);
 			wtr.save(new File(_userSettingsFolder, JeditConstants.USER_PREFS_FILE_NAME));
 		} catch (Exception ex) {
 			s_log.error("Error occured writing to preferences file: "

@@ -17,7 +17,9 @@ package net.sourceforge.squirrel_sql.plugins.jedit;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import java.awt.Font;
 
+import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 /**
  * Plugin constants.
  *
@@ -26,6 +28,9 @@ package net.sourceforge.squirrel_sql.plugins.jedit;
 interface JeditConstants {
 	/** Name of file to store user prefs in. */
 	static final String USER_PREFS_FILE_NAME = "jEditPrefs.xml";
+
+	/** Default font used in the jEdit text control. */
+	static final FontInfo DEFAULT_FONT_INFO = new FontInfo(new Font("Monospaced",Font.PLAIN,14));
 
 	/** Keys to objects stored in session. */
 	interface ISessionKeys {
