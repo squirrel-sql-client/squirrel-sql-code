@@ -41,7 +41,19 @@ public interface IApplication {
 	public interface IMenuIDs extends MainFrame.IMenuIDs {
 	}
 
+	/**
+	 * Return the dummy plugin used internally by the SQuirreL client
+	 * when a plugin is needed for accessing API functions.
+	 *
+	 * @return	the dummy plugin used internally by the SQuirreL client.
+	 */
 	IPlugin getDummyAppPlugin();
+
+	/**
+	 * Return the plugin manager responsible for this applications plugins.
+	 *
+	 * @return	the plugin manager responsible for this applications plugins.
+	 */
 	PluginManager getPluginManager();
 
 	ActionCollection getActionCollection();
