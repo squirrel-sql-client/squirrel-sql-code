@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -208,7 +208,7 @@ public class DataTypeDate
 	 */
 	public String renderObject(Object value) {
 		// use the Java default date-to-string
-		if (useJavaDefaultFormat == true)
+		if (useJavaDefaultFormat == true || value == null)
 			return (String)_renderer.renderObject(value);
 			
 		// use a date formatter
@@ -719,7 +719,7 @@ public class DataTypeDate
 		 * GUI components - need to be here because they need to be
 		 * accessible from the event handlers to alter each other's state.
 		 */
-	   // check box for whether to use Java Default or a Locale-dependent format
+		// check box for whether to use Java Default or a Locale-dependent format
 		private JCheckBox useJavaDefaultFormatChk = new JCheckBox(
 			"Use default format (" + 
 			new java.sql.Date(new java.util.Date().getTime()).toString() + ")");
@@ -732,7 +732,6 @@ public class DataTypeDate
 
 		// checkbox for whether to interpret input leniently or not
 		private JCheckBox lenientChk = new JCheckBox("allow inexact format on input");
-	   
 
 		public BlobOkJPanel() {
 		 	 
