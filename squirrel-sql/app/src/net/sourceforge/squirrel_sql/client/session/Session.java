@@ -20,9 +20,12 @@ package net.sourceforge.squirrel_sql.client.session;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import java.awt.Component;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.swing.Icon;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -297,5 +300,21 @@ class Session implements ISession {
         }
         _sessionSheet.getSQLPanel().removeSQLExecutionListener(lis);
     }
+
+    /**
+     * Add a tab to the main tabbed panel.
+     * 
+     * title	The title to display in the tab.
+     * icon		The icon to display in the tab. If <TT>null</TT> then no icon displayed.
+     * comp		The component to be shown when the tab is active.
+     * tip		The tooltip to be displayed for the tab. Can be <TT>null</TT>.
+     * 
+     * @throws	IllegalArgumentException
+     * 			If <TT>title</TT> or <TT>comp</TT> is <TT>null</TT>.
+     */
+	public void addMainTab(String title, Icon icon, Component comp, String tip)
+			throws IllegalArgumentException {
+		_sessionSheet.addMainTab(title, icon, comp, tip);
+	}
 }
 
