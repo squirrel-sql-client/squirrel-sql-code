@@ -27,7 +27,9 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 public interface INodeExpander
 {
 	/**
-	 * Expand the passed node.
+	 * Create the child nodes for the passed parent node and return them. Note
+	 * that this method should <B>not</B> actually add the child nodes to the
+	 * parent node as this is taken care of in the caller.
 	 * 
 	 * @param	session	Current session.
 	 * @param	node	Node to be expanded.
@@ -35,6 +37,6 @@ public interface INodeExpander
 	 * @return	A list of <TT>ObjectTreeNode</TT> objects representing the child
 	 *			nodes for the passed node.
 	 */
-	List expand(ISession session, ObjectTreeNode node)
+	List createChildren(ISession session, ObjectTreeNode node)
 			throws SQLException, BaseSQLException;
 }

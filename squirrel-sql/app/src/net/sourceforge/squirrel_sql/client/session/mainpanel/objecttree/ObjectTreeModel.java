@@ -18,20 +18,16 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.tree.DefaultTreeModel;
 
-import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectTypes;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.DatabaseExpander;
 /**
  * This is the model for the object tree.
  *
@@ -42,6 +38,9 @@ public class ObjectTreeModel extends DefaultTreeModel
 	/** Logger for this class. */
 	private static ILogger s_log =
 		LoggerController.createLogger(ObjectTreeModel.class);
+
+	/** Current session. */
+	private ISession _session;
 
 	/**
 	 * ctor specifying session.
@@ -54,6 +53,7 @@ public class ObjectTreeModel extends DefaultTreeModel
 	public ObjectTreeModel(ISession session)
 	{
 		super(createRootNode(session), true);
+		_session = session;
 		//		_treeLoadedListeners = new ArrayList();
 		//		setSession(session);
 	}
@@ -80,7 +80,7 @@ public class ObjectTreeModel extends DefaultTreeModel
 		RootNode(ISession session)
 		{
 			super(session, createDbo(session));
-			setExpander(new DatabaseExpander());
+			setExpander(new DatabaseExpander(session));
 		}
 
 		private static final IDatabaseObjectInfo createDbo(ISession session)
@@ -88,107 +88,6 @@ public class ObjectTreeModel extends DefaultTreeModel
 			return new DatabaseObjectInfo(null, null, session.getAlias().getName(),
 											IDatabaseObjectTypes.DATABASE,
 											session.getSQLConnection());
-		}
-	}
-
-	private static final class DatabaseExpander implements INodeExpander
-	{
-		public List expand(ISession session, ObjectTreeNode parentNode)
-			throws SQLException, BaseSQLException
-		{
-			String currentCatalogName = null;
-			String currentSchemaName = null;
-
-			IDatabaseObjectInfo dbinfo = parentNode.getDatabaseObjectInfo();
-			switch (dbinfo.getDatabaseObjectType())
-			{
-				case IDatabaseObjectTypes.CATALOG:
-				{
-					currentCatalogName = dbinfo.getSimpleName();
-					break;
-				}
-				case IDatabaseObjectTypes.SCHEMA:
-				{
-					currentSchemaName = dbinfo.getSimpleName();
-					break;
-				}
-			}
-
-			final SQLConnection conn = session.getSQLConnection();
-			boolean supportsCatalogs = false;
-			try
-			{
-				supportsCatalogs = conn.supportsCatalogs();
-			}
-			catch (BaseSQLException ex)
-			{
-			}
-
-			boolean supportsSchemas = false;
-			try
-			{
-				supportsSchemas = conn.supportsSchemas();
-			}
-			catch (BaseSQLException ex)
-			{
-			}
-
-			List list = new ArrayList();
-
-			if (dbinfo.getDatabaseObjectType() == IDatabaseObjectTypes.DATABASE)
-			{
-				if (supportsCatalogs)
-				{
-					final String[] catalogs = conn.getCatalogs();
-					for (int i = 0; i < catalogs.length; ++i)
-					{
-						final String catalogName = catalogs[i];
-						DatabaseObjectInfo dbo = new DatabaseObjectInfo(null, null,
-														catalogName,
-														IDatabaseObjectTypes.CATALOG,
-														conn);
-						ObjectTreeNode child = new ObjectTreeNode(session, dbo, true);
-						child.setExpander(this);
-						list.add(child);
-					}
-				}
-				else if (supportsSchemas)
-				{
-					final String[] schemas = conn.getSchemas();
-					for (int i = 0; i < schemas.length; ++i)
-					{
-						final String schemaName = schemas[i];
-						DatabaseObjectInfo dbo = new DatabaseObjectInfo(null, null,
-														schemaName,
-														IDatabaseObjectTypes.SCHEMA,
-														conn);
-						ObjectTreeNode child = new ObjectTreeNode(session, dbo, true);
-						child.setExpander(this);
-						list.add(child);
-					}
-				}
-			}
-			else if (dbinfo.getDatabaseObjectType() == IDatabaseObjectTypes.CATALOG)
-			{
-				if (supportsSchemas)
-				{
-					final String[] schemas = conn.getSchemas();
-					for (int i = 0; i < schemas.length; ++i)
-					{
-						final String schemaName = schemas[i];
-						DatabaseObjectInfo dbo = new DatabaseObjectInfo(
-														currentCatalogName,
-														null, schemaName,
-														IDatabaseObjectTypes.SCHEMA,
-														conn);
-						ObjectTreeNode child = new ObjectTreeNode(session, dbo, true);
-						child.setExpander(this);
-						list.add(child);
-					}
-				}
-			}
-
-			return list;
 		}
 	}
 }

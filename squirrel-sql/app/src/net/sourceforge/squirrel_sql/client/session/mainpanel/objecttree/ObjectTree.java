@@ -120,13 +120,18 @@ public class ObjectTree extends JTree {
 
 	public void expandNode(ObjectTreeNode parentNode)
 	{
+		if (parentNode == null)
+		{
+			throw new IllegalArgumentException("ObjectTreeNode == null");
+		}
+
 		//parentNode.addBaseNodeExpandListener(ObjectsTree.this);
 		INodeExpander expander = parentNode.getExpander();
 		if (parentNode.getChildCount() == 0 && expander != null)
 		{
 			try
 			{
-				List list = expander.expand(_session, parentNode);
+				List list = expander.createChildren(_session, parentNode);
 				Iterator it = list.iterator();
 				while (it.hasNext())
 				{
@@ -140,13 +145,16 @@ public class ObjectTree extends JTree {
 			}
 			catch (SQLException ex)
 			{
-				ex.printStackTrace();
-				//??
+				final String msg = "Error expanding: " + parentNode.toString();
+				s_log.error(msg, ex);
+				_session.getApplication().showErrorDialog(msg, ex);
+				
 			}
 			catch (BaseSQLException ex)
 			{
-				ex.printStackTrace();
-				//??
+				final String msg = "Error expanding: " + parentNode.toString();
+				s_log.error(msg, ex);
+				_session.getApplication().showErrorDialog(msg, ex);
 			}
 			finally
 			{

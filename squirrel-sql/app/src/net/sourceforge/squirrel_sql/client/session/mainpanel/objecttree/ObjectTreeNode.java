@@ -68,7 +68,7 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 	public ObjectTreeNode(ISession session, IDatabaseObjectInfo dbo,
 							boolean allowsChildren)
 	{
-		super(dbo);
+		super(dbo.toString());
 		if (session == null)
 		{
 			throw new IllegalArgumentException("ISession == null");
@@ -121,5 +121,6 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 	public void setExpander(INodeExpander value)
 	{
 		_expander = value;
+		_allowsChildren = (_expander != null);
 	}
 }
