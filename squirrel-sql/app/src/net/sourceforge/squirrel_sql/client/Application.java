@@ -27,11 +27,12 @@ import java.sql.DriverManager;
 import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.ToolTipManager;
+import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
-import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
+import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -40,6 +41,7 @@ import net.sourceforge.squirrel_sql.client.db.AliasMaintSheetFactory;
 import net.sourceforge.squirrel_sql.client.db.DataCache;
 import net.sourceforge.squirrel_sql.client.db.DriverMaintSheetFactory;
 import net.sourceforge.squirrel_sql.client.gui.SplashScreen;
+import net.sourceforge.squirrel_sql.client.gui.laf.AllBluesBoldMetalTheme;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
@@ -53,9 +55,10 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 /**
  * Defines the API to do callbacks on the application.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ *@author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-class Application implements IApplication {
+class Application implements IApplication
+{
 	/** Logger for this class. */
 	private static ILogger s_log;
 
@@ -92,31 +95,42 @@ class Application implements IApplication {
 
 	/**
 	 * ctor.
-	 *
-	 * @param   args	Application arguments.
 	 */
-	Application() {
+	Application()
+	{
 		super();
 	}
 
-	public void startup() {
+	public void startup()
+	{
 		LoggerController.registerLoggerFactory(new SquirrelLoggerFactory());
 		s_log = LoggerController.createLogger(getClass());
 
 		final ApplicationArguments args = ApplicationArguments.getInstance();
+
+		// Load default LAF info.
+		if (!args.useDefaultMetalTheme())
+		{
+			MetalLookAndFeel.setCurrentTheme(new AllBluesBoldMetalTheme());
+		}
+
 		_resources = new SquirrelResources("net.sourceforge.squirrel_sql.client.resources.squirrel");
 		final boolean loadPlugins = args.getLoadPlugins();
-		if (args.getShowSplashScreen()) {
+		if (args.getShowSplashScreen())
+		{
 			_splash = new SplashScreen(_resources, 9);
 		}
 
-		try {
+		try
+		{
 			CursorChanger chg = null;
-			if (_splash != null) {
+			if (_splash != null)
+			{
 				chg = new CursorChanger(_splash);
 				chg.show();
 			}
-			try {
+			try
+			{
 				indicateNewStartupTask("Initializing UI factories...");
 				AliasMaintSheetFactory.initialize(this);
 				DriverMaintSheetFactory.initialize(this);
@@ -124,7 +138,8 @@ class Application implements IApplication {
 
 				indicateNewStartupTask(loadPlugins ? "Loading plugins..." : "No Plugins are to be loaded...");
 				_pluginManager = new PluginManager(this);
-				if (loadPlugins) {
+				if (loadPlugins)
+				{
 					_pluginManager.loadPlugins();
 				}
 
@@ -133,11 +148,14 @@ class Application implements IApplication {
 				_prefs.setApplication(this);
 				_prefs.load();
 				preferencesHaveChanged(null);
-				_prefs.addPropertyChangeListener(new PropertyChangeListener() {
-					public void propertyChange(PropertyChangeEvent evt) {
-						preferencesHaveChanged(evt);
-					}
-				});
+				_prefs.addPropertyChangeListener(
+					new PropertyChangeListener()
+					{
+						public void propertyChange(PropertyChangeEvent evt)
+						{
+							preferencesHaveChanged(evt);
+						}
+					});
 
 				indicateNewStartupTask("Loading actions...");
 				_actions = new ActionCollection(this);
@@ -156,13 +174,19 @@ class Application implements IApplication {
 
 				indicateNewStartupTask("Showing main window...");
 				_mainFrame.setVisible(true);
-			} finally {
-				if (chg != null) {
+			}
+			finally
+			{
+				if (chg != null)
+				{
 					chg.restore();
 				}
 			}
-		} finally {
-			if (_splash != null) {
+		}
+		finally
+		{
+			if (_splash != null)
+			{
 				_splash.dispose();
 			}
 			_splash = null;
@@ -170,12 +194,14 @@ class Application implements IApplication {
 
 	}
 
-	public void shutdown() {
+	public void shutdown()
+	{
 		_pluginManager.unloadPlugins();
 		_prefs.save();
 		_cache.save();
 
-		if (_jdbcDebugOutput != null) {
+		if (_jdbcDebugOutput != null)
+		{
 			_jdbcDebugOutput.close();
 			_jdbcDebugOutput = null;
 		}
@@ -183,118 +209,146 @@ class Application implements IApplication {
 		_loggerFactory.shutdown();
 	}
 
-	public PluginManager getPluginManager() {
+	public PluginManager getPluginManager()
+	{
 		return _pluginManager;
 	}
 
-	public ActionCollection getActionCollection() {
+	public ActionCollection getActionCollection()
+	{
 		return _actions;
 	}
 
-	public  SQLDriverManager getSQLDriverManager() {
+	public SQLDriverManager getSQLDriverManager()
+	{
 		return _driverMgr;
 	}
 
-	public DataCache getDataCache() {
+	public DataCache getDataCache()
+	{
 		return _cache;
 	}
 
-	public IPlugin getDummyAppPlugin() {
+	public IPlugin getDummyAppPlugin()
+	{
 		return _dummyPlugin;
 	}
 
-	public SquirrelResources getResources() {
+	public SquirrelResources getResources()
+	{
 		return _resources;
 	}
 
-	public SquirrelPreferences getSquirrelPreferences() {
+	public SquirrelPreferences getSquirrelPreferences()
+	{
 		return _prefs;
 	}
 
-	public MainFrame getMainFrame() {
+	public MainFrame getMainFrame()
+	{
 		return _mainFrame;
 	}
 
 	/**
 	 * Display an error message dialog.
-	 * 
-	 * @param	msg		The error msg.
+	 *
+	 *
+	 *@param  msg The error msg.
 	 */
-	public void showErrorDialog(String msg) {
+	public void showErrorDialog(String msg)
+	{
 		new ErrorDialog(getMainFrame(), msg).show();
 	}
 
 	/**
 	 * Display an error message dialog.
-	 * 
-	 * @param	th		The Throwable that caused the error
+	 *
+	 *
+	 *@param  th The Throwable that caused the error
 	 */
-	public void showErrorDialog(Throwable th) {
+	public void showErrorDialog(Throwable th)
+	{
 		new ErrorDialog(getMainFrame(), th).show();
 	}
 
 	/**
 	 * Display an error message dialog.
-	 * 
-	 * @param	msg		The error msg.
-	 * @param	th		The Throwable that caused the error
+	 *
+	 *
+	 *@param  msg The error msg.
+	 *@param  th The Throwable that caused the error
 	 */
-	public void showErrorDialog(String msg, Throwable th) {
+	public void showErrorDialog(String msg, Throwable th)
+	{
 		new ErrorDialog(getMainFrame(), msg, th).show();
 	}
 
 	/**
 	 * Return the collection of <TT>FontInfo </TT> objects for this app.
-	 * 
-	 * @return	the collection of <TT>FontInfo </TT> objects for this app.
+	 *
+	 *
+	 *@return  the collection of <TT>FontInfo </TT> objects for this app.
 	 */
-	public FontInfoStore getFontInfoStore() {
+	public FontInfoStore getFontInfoStore()
+	{
 		return _fontInfoStore;
 	}
 
 	/**
 	 * Return the thread pool for this app.
 	 *
-	 * @return	the thread pool for this app.
+	 *@return  the thread pool for this app.
 	 */
-	public TaskThreadPool getThreadPool() {
+	public TaskThreadPool getThreadPool()
+	{
 		return _threadPool;
 	}
 
-	public LoggerController getLoggerFactory() {
+	public LoggerController getLoggerFactory()
+	{
 		return _loggerFactory;
 	}
 
 	/**
 	 * Return the factory object used to create the SQL entry panel.
 	 *
-	 * @return	the factory object used to create the SQL entry panel.
+	 *@return  the factory object used to create the SQL entry panel.
 	 */
-	public ISQLEntryPanelFactory getSQLEntryPanelFactory() {
+	public ISQLEntryPanelFactory getSQLEntryPanelFactory()
+	{
 		return _sqlEntryFactory;
 	}
 
 	/**
 	 * Set the factory object used to create the SQL entry panel.
 	 *
-	 * @param	factory	the factory object used to create the SQL entry panel.
+	 *@param  factory the factory object used to create the SQL entry panel.
 	 */
-	public void setSQLEntryPanelFactory(ISQLEntryPanelFactory factory) {
+	public void setSQLEntryPanelFactory(ISQLEntryPanelFactory factory)
+	{
 		_sqlEntryFactory = factory != null ? factory : new DefaultSQLEntryPanelFactory();
 	}
 
-	public synchronized void addToMenu(int menuId, JMenu menu) {
-		if (_mainFrame != null) {
+	public synchronized void addToMenu(int menuId, JMenu menu)
+	{
+		if (_mainFrame != null)
+		{
 			_mainFrame.addToMenu(menuId, menu);
-		} else {
+		}
+		else
+		{
 			throw new IllegalStateException("Cannot add items to menus prior to menu being created.");
 		}
 	}
 
-	public synchronized void addToMenu(int menuId, Action action) {
-		if (_mainFrame != null) {
+	public synchronized void addToMenu(int menuId, Action action)
+	{
+		if (_mainFrame != null)
+		{
 			_mainFrame.addToMenu(menuId, action);
-		} else {
+		}
+		else
+		{
 			throw new IllegalStateException("Cannot add items to menus prior to menu being created.");
 		}
 	}
@@ -303,32 +357,44 @@ class Application implements IApplication {
 	 * If we are running with a splash screen then indicate in the splash
 	 * screen that a new task has commenced.
 	 *
-	 * @param   taskDescription	 Description of new task.
+	 *@param  taskDescription Description of new task.
 	 */
-	private void indicateNewStartupTask(String taskDescription) {
-		if (_splash != null) {
+	private void indicateNewStartupTask(String taskDescription)
+	{
+		if (_splash != null)
+		{
 			_splash.indicateNewTask(taskDescription);
 		}
 	}
 
-	private void preferencesHaveChanged(PropertyChangeEvent evt) {
+	private void preferencesHaveChanged(PropertyChangeEvent evt)
+	{
 		final String propName = evt != null ? evt.getPropertyName() : null;
 		final ApplicationFiles appFiles = new ApplicationFiles();
 
-		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.SHOW_TOOLTIPS)) {
+		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.SHOW_TOOLTIPS))
+		{
 			ToolTipManager.sharedInstance().setEnabled(_prefs.getShowToolTips());
 		}
 
-		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.DEBUG_JDBC)) {
-			if (_prefs.getDebugJdbc()) {
-				try {
+		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.DEBUG_JDBC))
+		{
+			if (_prefs.getDebugJdbc())
+			{
+				try
+				{
 					_jdbcDebugOutput = new PrintStream(new FileOutputStream(appFiles.getJDBCDebugLogFile()));
 					DriverManager.setLogStream(_jdbcDebugOutput);
-				} catch (IOException ex) {
+				}
+				catch (IOException ex)
+				{
 					DriverManager.setLogStream(System.out);
 				}
-			} else {
-				if (_jdbcDebugOutput != null) {
+			}
+			else
+			{
+				if (_jdbcDebugOutput != null)
+				{
 					_jdbcDebugOutput.close();
 					_jdbcDebugOutput = null;
 				}
@@ -336,7 +402,8 @@ class Application implements IApplication {
 			}
 		}
 
-		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.LOGIN_TIMEOUT)) {
+		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.LOGIN_TIMEOUT))
+		{
 			DriverManager.setLoginTimeout(_prefs.getLoginTimeout());
 		}
 	}

@@ -30,9 +30,11 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ApplicationArguments {
+public class ApplicationArguments
+{
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(ApplicationArguments.class);
+	private static ILogger s_log =
+		LoggerController.createLogger(ApplicationArguments.class);
 
 	/** Only instance of this class. */
 	private static ApplicationArguments s_instance;
@@ -55,34 +57,54 @@ public class ApplicationArguments {
 	/** If <TT>true</TT> plugins are to be loaded. */
 	private boolean _loadPlugins = true;
 
+	/** If <TT>true</TT> use default metal theme rther than the SQuirreL theme. */
+	private boolean _userDefaultMetalTheme = false;
+
 	/**
 	 * Ctor specifying arguments from command line.
 	 *
 	 * @param   args	Arguments passed on command line.
 	 */
-	private ApplicationArguments(String[] args) {
+	private ApplicationArguments(String[] args)
+	{
 		super();
 		_rawArgs = args;
-		for (int i = 0; i < args.length; ++i) {
+		for (int i = 0; i < args.length; ++i)
+		{
 			StringTokenizer strTok = new StringTokenizer(args[i], "=");
 			String parm = null;
 			String value = null;
-			while (strTok.hasMoreTokens()) {
+			while (strTok.hasMoreTokens())
+			{
 				String token = strTok.nextToken();
-				if (parm == null) {
+				if (parm == null)
+				{
 					parm = token;
-				} else {
+				}
+				else
+				{
 					value = token;
 				}
 			}
-			if (parm.equalsIgnoreCase("-nosplash")) {
+			if (parm.equalsIgnoreCase("-nosplash"))
+			{
 				_showSplashScreen = false;
-			} else if (parm.equalsIgnoreCase("-settingsdir")) {
+			}
+			else if (parm.equalsIgnoreCase("-settingsdir"))
+			{
 				_userSettingsDir = value;
-			} else if (parm.equalsIgnoreCase("-loggingconfigfile")) {
+			}
+			else if (parm.equalsIgnoreCase("-loggingconfigfile"))
+			{
 				_loggingConfigFile = value;
-			} else if (parm.equalsIgnoreCase("-noplugins")) {
+			}
+			else if (parm.equalsIgnoreCase("-noplugins"))
+			{
 				_loadPlugins = false;
+			}
+			else if (parm.equalsIgnoreCase("-usedefaultmetaltheme"))
+			{
+				_userDefaultMetalTheme = true;
 			}
 		}
 	}
@@ -92,10 +114,14 @@ public class ApplicationArguments {
 	 *
 	 * @param   args	Arguments passed on command line.
 	 */
-	public synchronized static void initialize(String[] args) {
-		if (s_instance == null) {
+	public synchronized static void initialize(String[] args)
+	{
+		if (s_instance == null)
+		{
 			s_instance = new ApplicationArguments(args);
-		} else {
+		}
+		else
+		{
 			s_log.debug("ApplicationArguments.initialize() called twice");
 		}
 	}
@@ -109,8 +135,10 @@ public class ApplicationArguments {
 	 * 			Thrown if ApplicationArguments.getInstance() called
 	 *			before ApplicationArguments.initialize()
 	 */
-	public static ApplicationArguments getInstance() {
-		if (s_instance == null) {
+	public static ApplicationArguments getInstance()
+	{
+		if (s_instance == null)
+		{
 			throw new IllegalStateException("ApplicationArguments.getInstance() called before ApplicationArguments.initialize()");
 		}
 		return s_instance;
@@ -119,14 +147,16 @@ public class ApplicationArguments {
 	/**
 	 *  @return The raw arguments passed on the command line.
 	 */
-	public String[] getRawArguments() {
+	public String[] getRawArguments()
+	{
 		return _rawArgs;
 	}
 
 	/**
 	 *  @return <TT>true</TT> if splashscreen should be shown.
 	 */
-	public String getUserSettingsDirectoryOverride() {
+	public String getUserSettingsDirectoryOverride()
+	{
 		return _userSettingsDir;
 	}
 
@@ -134,7 +164,8 @@ public class ApplicationArguments {
 	 *  @return	override for the user settings directory. Will be
 	 * 			<TT>null</TT> if not overridden.
 	 */
-	public boolean getShowSplashScreen() {
+	public boolean getShowSplashScreen()
+	{
 		return _showSplashScreen;
 	}
 
@@ -142,14 +173,26 @@ public class ApplicationArguments {
 	 *  @return	the logging configuration file name. Will be
 	 * 			<TT>null</TT> if not passed.
 	 */
-	public String getLoggingConfigFileName() {
+	public String getLoggingConfigFileName()
+	{
 		return _loggingConfigFile;
 	}
 
 	/**
 	 *  @return	<TT>true</TT> if the plugins should be loaded.
 	 */
-	public boolean getLoadPlugins() {
+	public boolean getLoadPlugins()
+	{
 		return _loadPlugins;
 	}
+
+	/**
+	 *  @return		<TT>true</TT> if the default metal theme should be used
+	 *				rather than the SQuirreL metal theme.
+	 */
+	public boolean useDefaultMetalTheme()
+	{
+		return _userDefaultMetalTheme;
+	}
+
 }
