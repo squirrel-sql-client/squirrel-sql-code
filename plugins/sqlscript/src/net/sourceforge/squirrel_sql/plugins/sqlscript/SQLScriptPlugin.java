@@ -34,6 +34,7 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptAction;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptOfCurrentSQLAction;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTableScriptAction;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTemplateDataScriptAction;
 
 import javax.swing.*;
 import java.io.File;
@@ -195,6 +196,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 		coll.add(new LoadScriptAction(app, _resources, this));
 		coll.add(new CreateTableScriptAction(app, _resources, this));
 		coll.add(new CreateDataScriptAction(app, _resources, this));
+		coll.add(new CreateTemplateDataScriptAction(app, _resources, this));
 		coll.add(new CreateDataScriptOfCurrentSQLAction(app, _resources, this));
 		createMenu();
 	}
@@ -225,6 +227,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 		
       api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTableScriptAction.class));
 		api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateDataScriptAction.class));
+		api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTemplateDataScriptAction.class));
 
 		session.addToToolbar(coll.get(LoadScriptAction.class));
 		session.addToToolbar(coll.get(SaveScriptAction.class));
@@ -286,6 +289,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 		_resources.addToMenu(coll.get(SaveScriptAction.class), menu);
 		_resources.addToMenu(coll.get(SaveScriptAsAction.class), menu);
 		_resources.addToMenu(coll.get(CreateDataScriptAction.class), menu);
+		_resources.addToMenu(coll.get(CreateTemplateDataScriptAction.class), menu);
 		_resources.addToMenu(coll.get(CreateTableScriptAction.class), menu);
 		_resources.addToMenu(coll.get(CreateDataScriptOfCurrentSQLAction.class), menu);
 
