@@ -1,9 +1,9 @@
 <installation version="1.0">
     <info>
         <appname>Squirrel SQL Client</appname>
-        <appversion>1.1beta4</appversion>
+        <appversion>1.1beta5</appversion>
         <authors>
-            <author email="colbell@users.sourceforge.net" name="Colin Bell"/>
+            <author name="Colin Bell" email="colbell@users.sourceforge.net"/>
         </authors>
         <url>http://squirrel-sql.sf.net</url>
     </info>
@@ -12,8 +12,8 @@
         <langpack iso3="eng"/>
     </locale>
     <resources>
-        <res src="/home/col/src/squirrel-sql/squirrel-sql-dist/squirrel-sql-1.1beta4/core/dist/doc/licences/squirrel_licence.txt" id="LicencePanel.licence"/>
-        <res src="/home/col/src/squirrel-sql/squirrel-sql-dist/squirrel-sql-1.1beta4/core/dist/doc/readme.html" id="HTMLInfoPanel.info"/>
+        <res src="/home/colbell/src/squirrel-sql/squirrel-sql-dist/squirrel-sql-1.1beta5/core/dist/doc/licences/squirrel_licence.txt" id="LicencePanel.licence"/>
+        <res src="/home/colbell/src/squirrel-sql/squirrel-sql-dist/squirrel-sql-1.1beta5/core/dist/doc/readme.html" id="HTMLInfoPanel.info"/>
     </resources>
     <panels>
         <panel classname="HelloPanel"/>
@@ -27,16 +27,16 @@
     <packs>
         <pack name="Base" required="yes">
             <description>SQL Client</description>
-            <file targetdir="$INSTALL_PATH" src="/home/col/src/squirrel-sql/squirrel-sql-dist/squirrel-sql-1.1beta4/core/dist/plugins"/>
-            <file targetdir="$INSTALL_PATH/lib" src="/home/col/src/squirrel-sql/squirrel-sql-dist/squirrel-sql-1.1beta4/core/dist/lib/fw.jar"/>
-            <file targetdir="$INSTALL_PATH/lib" src="/home/col/src/squirrel-sql/squirrel-sql-dist/squirrel-sql-1.1beta4/core/dist/lib/log4j.jar"/>
-            <file targetdir="$INSTALL_PATH/lib" src="/home/col/src/squirrel-sql/squirrel-sql-dist/squirrel-sql-1.1beta4/core/dist/lib/nanoxml-2.1.jar"/>
-            <file targetdir="$INSTALL_PATH" src="/home/col/src/squirrel-sql/squirrel-sql-dist/squirrel-sql-1.1beta4/core/dist/doc"/>
-            <file targetdir="$INSTALL_PATH" src="/home/col/src/squirrel-sql/squirrel-sql-dist/squirrel-sql-1.1beta4/core/dist/squirrel-sql.bat"/>
-            <file targetdir="$INSTALL_PATH" src="/home/col/src/squirrel-sql/squirrel-sql-dist/squirrel-sql-1.1beta4/core/dist/addpath.bat"/>
-            <file targetdir="$INSTALL_PATH" src="/home/col/src/squirrel-sql/squirrel-sql-dist/squirrel-sql-1.1beta4/core/dist/squirrel-sql.sh"/>
-            <file targetdir="$INSTALL_PATH" src="/home/col/src/squirrel-sql/squirrel-sql-dist/squirrel-sql-1.1beta4/core/dist/log4j.properties"/>
-            <file targetdir="$INSTALL_PATH" src="/home/col/src/squirrel-sql/squirrel-sql-dist/squirrel-sql-1.1beta4/core/dist/lib/squirrel-sql.jar"/>
+            <file targetdir="$INSTALL_PATH" src="/home/colbell/src/squirrel-sql/squirrel-sql-dist/squirrel-sql-1.1beta5/core/dist/plugins"/>
+            <file targetdir="$INSTALL_PATH/lib" src="/home/colbell/src/squirrel-sql/squirrel-sql-dist/squirrel-sql-1.1beta5/core/dist/lib/fw.jar"/>
+            <file targetdir="$INSTALL_PATH/lib" src="/home/colbell/src/squirrel-sql/squirrel-sql-dist/squirrel-sql-1.1beta5/core/dist/lib/log4j.jar"/>
+            <file targetdir="$INSTALL_PATH/lib" src="/home/colbell/src/squirrel-sql/squirrel-sql-dist/squirrel-sql-1.1beta5/core/dist/lib/nanoxml-2.1.jar"/>
+            <file targetdir="$INSTALL_PATH" src="/home/colbell/src/squirrel-sql/squirrel-sql-dist/squirrel-sql-1.1beta5/core/dist/doc"/>
+            <file targetdir="$INSTALL_PATH" src="/home/colbell/src/squirrel-sql/squirrel-sql-dist/squirrel-sql-1.1beta5/core/dist/squirrel-sql.bat"/>
+            <file targetdir="$INSTALL_PATH" src="/home/colbell/src/squirrel-sql/squirrel-sql-dist/squirrel-sql-1.1beta5/core/dist/addpath.bat"/>
+            <file targetdir="$INSTALL_PATH" src="/home/colbell/src/squirrel-sql/squirrel-sql-dist/squirrel-sql-1.1beta5/core/dist/squirrel-sql.sh"/>
+            <file targetdir="$INSTALL_PATH" src="/home/colbell/src/squirrel-sql/squirrel-sql-dist/squirrel-sql-1.1beta5/core/dist/log4j.properties"/>
+            <file targetdir="$INSTALL_PATH" src="/home/colbell/src/squirrel-sql/squirrel-sql-dist/squirrel-sql-1.1beta5/core/dist/lib/squirrel-sql.jar"/>
         </pack>
     </packs>
 </installation>
