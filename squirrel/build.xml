@@ -6,7 +6,7 @@
   <!ENTITY local              SYSTEM "file:./local.xml">
 ]>
 
-<!--  $Id: build.xml,v 1.6 2001-11-20 20:26:12 placson Exp $               -->
+<!--  $Id: build.xml,v 1.7 2001-11-20 22:15:14 placson Exp $               -->
 <!-- ===================================================================== -->
 <!--                                                                       -->
 <!--  Build file (for use w/Ant & BuildMagic modifications)                -->
@@ -49,7 +49,7 @@
   </target>
     
   <!-- Build everything -->
-  <target name="all" depends="most, doc, jar"
+  <target name="all" depends="most, doc"
 	  description="Build 'all' of the system components">
   </target>
 
@@ -105,7 +105,7 @@
 
     <!-- build a jar containing all classes -->
     <jar jarfile="${project.name}-${project.version}.jar" basedir="${build.classes}">
-      <include name="**"/>
+      <include name="**/**" />
     </jar>
   </target>
 
@@ -181,21 +181,21 @@
 
   <!-- Builds the individual plugin jars -->
   <target name="plugins" depends="classes">
-    <mkdir dir="${release.root}/plugins" />
+    <mkdir dir="${release.target.root}/plugins" />
 
-    <jar jarfile="${release.root}/plugins/dbinfo.jar" basedir="${dbinfo.plugin}">
+    <jar jarfile="${release.target.root}/plugins/dbinfo.jar" basedir="${dbinfo.plugin}">
       <include name="**"/>
     </jar>
 
-    <jar jarfile="${release.root}/plugins/laf.jar" basedir="${laf.plugin}">
+    <jar jarfile="${release.target.root}/plugins/laf.jar" basedir="${laf.plugin}">
       <include name="**"/>
     </jar>
 
-    <jar jarfile="${release.root}/plugins/savedqueries.jar" basedir="${savedqueries.plugin}">
+    <jar jarfile="${release.target.root}/plugins/savedqueries.jar" basedir="${savedqueries.plugin}">
       <include name="**"/>
     </jar>
 
-    <jar jarfile="${release.root}/plugins/sqlscript.jar" basedir="${sqlscript.plugin}">
+    <jar jarfile="${release.target.root}/plugins/sqlscript.jar" basedir="${sqlscript.plugin}">
       <include name="**"/>
     </jar>
 
@@ -206,16 +206,25 @@
   <!-- =================================================================== -->
 
   <!-- Build a release distribution -->
-  <target name="release" depends="all"
+  <target name="release" depends="jar, plugins"
 	  description="Creates a 'release' of the current system">
     <mkdir dir="${release.target.root}"/>
+    <mkdir dir="${release.target.root}/bin"/>
+    <mkdir dir="${release.target.root}/doc"/>
+    <mkdir dir="${release.target.root}/lib"/>
+    <mkdir dir="${release.target.root}/plugins"/>
 
-    <!-- Copy output to release -->
-    <copy todir="${release.target.root}" filtering="off">
-      <fileset dir="${build.root}">
-	<include name="**"/>
+    <!-- Copy libraries out release lib -->
+    <copy file="${nanoxml.jar}" todir="${release.target.root}/lib" />
+    <copy file="${project.name}-${project.version}.jar" todir="${release.target.root}/lib" />
+
+    <!-- Copy start scripts to release lib -->
+    <copy todir="${release.target.root}/bin" filtering="off">
+      <fileset dir="${source.bin}">
+        <include name="squirrel-sql*" />
       </fileset>
     </copy>
+    
 
     <!-- Copy static documents to release -->
     <copy todir="${release.target.doc}" filtering="off">
@@ -233,13 +242,14 @@
     </jar>
   </target>
 
+  <!-- Create the distribution installaer -->
   <target name="izpack" depends="plugins">
     <java dir="${izpack.bin}" jar="${izpack.compiler}" 
           fork="yes">
       <arg value="${izpack.xml}" />
 
       <arg value="-b" />
-      <arg value="${izpack.base}" />
+      <arg value="${release.target.root}" />
 
       <arg value="-k" />
       <arg value="${izpack.kind}" />
@@ -278,6 +288,8 @@
   <!-- Clean up all target products -->
   <target name="clean-all" depends="clean-dist, clean-release-target"
           description="CLEANS ALL TARGET OUTPUTS!">
+    <delete file="${basedir}/${project.name}-${project.version}.jar" />
+    <delete file="${basedir}/${project.name}-${project.version}-install.jar" />
     <echo>Completed cleaning all target products</echo>
   </target>
   

@@ -4,7 +4,7 @@
 <!--                                                                        -->
 <!--  Define configuration elements that are used by the build system here. -->
 <!--                                                                        -->
-<!--  $Id: project.xml,v 1.6 2001-11-20 19:48:51 placson Exp $ -->
+<!--  $Id: project.xml,v 1.7 2001-11-20 22:15:14 placson Exp $ -->
 <!--                                                                        -->
 <!-- ====================================================================== -->
 
@@ -38,7 +38,7 @@
 <!-- define thirdparty classpath properties here -->
 
 <!-- nanoxml library -->
-<property name="classpath.nanoxml" type="path" 
+<property name="nanoxml.jar" type="path" 
           value="${basedir}/thirdparty/n3/lib/nanoxml-2.1.jar"/>
 
 <!-- IzPack root directory -->
@@ -60,7 +60,7 @@
 
 <!-- The combined thirdparty classpath -->
 <property name="classpath.thirdparty" type="path" separator=":">
-  <element value="${classpath.nanoxml}" />
+  <element value="${nanoxml.jar}" />
   <element value="${izpack.compiler}" />
 </property>
 
