@@ -84,6 +84,7 @@ public class GenerateSqlCommand implements ICommand {
             }
             
 			GenerateSqlDialog dlog = new GenerateSqlDialog(_session, _plugin, _dbObjs);
+            dlog.preselectObjects(_dbObjs);
 			dlog.pack();
 			GUIUtils.centerWithinParent(dlog);
 			if (!dlog.showGeneralSqlDialog())
@@ -118,7 +119,7 @@ public class GenerateSqlCommand implements ICommand {
                     IDatabaseObjectInfo oi = (IDatabaseObjectInfo) objs.get(i);
                     
                     if (!dlog.getOneFile())
-                        fw = new FileWriter(fc.getSelectedFile() + java.io.File.separator + oi.getSimpleName() + ".txt",false);
+                        fw = new FileWriter(fc.getSelectedFile() + java.io.File.separator + MssqlIntrospector.getFixedVersionedObjectName(oi.getSimpleName()) + ".txt",false);
                     
                     if (dlog.getGenerateDrop())
                         fw.write(MssqlIntrospector.generateDropScript(oi));
