@@ -6,6 +6,11 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Display error message if no SQL selected for execution.
+- Cache database metadata information.
+- Refresh catalogs dropdown when object tree refreshed
+- Make Plugins Summary dialog modeless.
+- Allow queries to be cancelled when they are "building output".
 - Driver properties can now be specified on the alias.
 - Wordwrap and popup menu in the Column Data popup window.
 - Show chained SQL exceptions in error dialog.
@@ -19,7 +24,7 @@ Enhancements
 - You can now limit the size of the SQL history combobox.
 - Allow SQL history to be persistent and shareable between different
   sessions (Lynn Pye).
-- Added Next and Previous Session commands to the Session menu (Gerd
+- Added Next and Previous Session commands to the menu system (Gerd
   Wagner).
 - Allow user to store a password in the Alias definition (Gerd Wagner).
 - Allow user to define an Alias to logon automatically (Gerd Wagner).
@@ -43,6 +48,9 @@ Enhancements
 
 Bug Fixes
 ---------
+- Fix NullPointer exception when updating caret position in statusbar.
+- Clear all metadata result sets when finished with them.
+- Default catalogs dropdown to correct catalog when session opened.
 - Remove Clear option from standard text popup menu.
 - Retrieve time as well as date for Oracle Date type columns.
 - Hide password contents on Proxy settings panel.

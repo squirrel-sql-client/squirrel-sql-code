@@ -114,9 +114,8 @@ public final class ActionCollection
 	}
 
 	/**
-	 * Add an <TT>Action</TT> to this collection. Normally <TT>get</TT> will
-	 * do this &quot;on demand&quot; but this function can be used when
-	 * there is no default ctor for the <TT>Action</TT>.
+	 * Add an <TT>Action</TT> to this collection. Any
+	 * <TT>ISessionAction</TT> actions will be disabled when added.
 	 *
 	 * @param	action	<TT>Action</TT> to be added.
 	 *

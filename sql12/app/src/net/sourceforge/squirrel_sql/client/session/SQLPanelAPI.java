@@ -322,8 +322,11 @@ public class SQLPanelAPI implements ISQLPanelAPI
 			throw new IllegalArgumentException("sql == null");
 		}
 
-		SQLHistoryItem shi = new SQLHistoryItem(sql); 
-		_session.getApplication().getSQLHistory().add(shi);
+		SQLHistoryItem shi = new SQLHistoryItem(sql);
+		if (_session.getProperties().getSQLShareHistory())
+		{
+			_session.getApplication().getSQLHistory().add(shi);
+		}
 		_session.getSessionSheet().getSQLPanel().addSQLToHistory(shi);
 	}
 

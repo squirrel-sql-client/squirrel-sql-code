@@ -1,8 +1,8 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
- * Copyright (C) 2001-2002 Johan Compagner
+ * Copyright (C) 2001-2003 Johan Compagner
  * jcompagner@j-com.nl
  *
  * This library is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class ResultSetDataSet implements IDataSet
 {
-	private final ILogger s_log =
+	private final static ILogger s_log =
 		LoggerController.createLogger(ResultSetDataSet.class);
 
 	// TODO: These 2 should be handled with an Iterator.
@@ -43,25 +43,13 @@ public class ResultSetDataSet implements IDataSet
 	private DataSetDefinition _dataSetDefinition;
 	private List _alData;
 
-//	private LargeResultSetObjectInfo _largeObjInfo = new LargeResultSetObjectInfo();
+	/** If <TT>true</TT> cancel has been requested. */
+	private boolean _cancel = false;
 
-	public ResultSetDataSet() throws DataSetException
+	public ResultSetDataSet()
 	{
-//		this(null, null);
 		super();
 	}
-
-//	public ResultSetDataSet(ResultSet rs) throws DataSetException
-//	{
-//		this(rs, null);
-//	}
-
-//	public ResultSetDataSet(ResultSet rs, int[] columnIndices)
-//		throws IllegalArgumentException, DataSetException
-//	{
-//		super();
-//		setResultSet(rs, columnIndices);
-//	}
 
 	public void setResultSet(ResultSet rs) throws DataSetException
 	{
@@ -84,6 +72,8 @@ public class ResultSetDataSet implements IDataSet
  				 int[] columnIndices, boolean computeWidths)
  			throws DataSetException
 	{
+		reset();
+
 		if (largeObjInfo == null)
 		{
 			largeObjInfo = new LargeResultSetObjectInfo();
@@ -101,14 +91,18 @@ public class ResultSetDataSet implements IDataSet
 			try
 			{
 				ResultSetMetaData md = rs.getMetaData();
- 				_columnCount = columnIndices != null ? columnIndices.length
- 				: md.getColumnCount();
+ 				_columnCount = columnIndices != null ? columnIndices.length : md.getColumnCount();
 
  				// Read the entire row, since some drivers complain if columns are read out of sequence
  				ResultSetReader rdr = new ResultSetReader(rs, largeObjInfo, null);
 				Object[] row = null;
 				while ((row = rdr.readRow()) != null)
 				{
+					if (_cancel)
+					{
+						return;
+					}
+
  					// SS: now select/reorder columns
  					if (columnIndices != null)
 					{
@@ -160,10 +154,10 @@ public class ResultSetDataSet implements IDataSet
 		return _currentRow[columnIndex];
 	}
 
-//	public void setLargeResultSetObjectInfo(LargeResultSetObjectInfo value)
-//	{
-//		_largeObjInfo = value != null ? value : new LargeResultSetObjectInfo();
-//	}
+	public void cancelProcessing()
+	{
+		_cancel = true;
+	}
 
  	// SS: Modified to auto-compute column widths if <computeWidths> is true
 	private ColumnDisplayDefinition[] createColumnDefinitions(ResultSetMetaData md,
@@ -200,5 +194,14 @@ public class ResultSetDataSet implements IDataSet
  					md.getColumnType(idx));
 		}
 		return columnDefs;
+	}
+
+	private void reset()
+	{
+		_iCurrent = -1;
+		_currentRow = null;
+		_columnCount = 0;
+		_dataSetDefinition = null;
+		_alData = null;
 	}
 }

@@ -148,7 +148,6 @@ final class MainFrameMenuBar extends JMenuBar
 		_app = app;
 
 		add(createFileMenu(rsrc));
-		//	  add(createEditMenu());
 		add(_driversMenu = createDriversMenu(rsrc));
 		add(_aliasesMenu = createAliasesMenu(rsrc));
 		add(_pluginsMenu = createPluginsMenu(rsrc));
@@ -291,6 +290,9 @@ final class MainFrameMenuBar extends JMenuBar
 	private JMenu createFileMenu(Resources rsrc)
 	{
 		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.FILE);
+		addToMenu(rsrc, CloseSessionAction.class, menu);
+		addToMenu(rsrc, CloseAllSessionsAction.class, menu);
+		menu.addSeparator();
 		addToMenu(rsrc, GlobalPreferencesAction.class, menu);
 		addToMenu(rsrc, NewSessionPropertiesAction.class, menu);
 		menu.addSeparator();
@@ -299,12 +301,6 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, ExitAction.class, menu);
 		return menu;
 	}
-
-	//  private JMenu createEditMenu() {
-	//	  JMenu menu = s_res.createMenu(MenuResourceKeys.EDIT);
-	//	  addToMenu(GlobalPreferencesAction.class, menu);
-	//	  return menu;
-	//  }
 
 	private JMenu createSessionMenu(Resources rsrc)
 	{
@@ -323,11 +319,7 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, ShowNativeSQLAction.class, menu);
 		menu.addSeparator();
 		addToMenu(rsrc, ReconnectAction.class, menu);
-		addToMenu(rsrc, CloseSessionAction.class, menu);
 		menu.add(createSQLResultsCloseMenu(rsrc));
-		menu.addSeparator();
-		addToMenu(rsrc, PreviousSessionAction.class, menu);
-		addToMenu(rsrc, NextSessionAction.class, menu);
 		menu.addSeparator();
 		menu.setEnabled(false);
 		return menu;
@@ -383,7 +375,8 @@ final class MainFrameMenuBar extends JMenuBar
 		addDesktopPaneActionToMenu(rsrc, CascadeAction.class, menu, desktopPane);
 		addDesktopPaneActionToMenu(rsrc, MaximizeAction.class, menu, desktopPane);
 		menu.addSeparator();
-		addToMenu(rsrc, CloseAllSessionsAction.class, menu);
+		addToMenu(rsrc, PreviousSessionAction.class, menu);
+		addToMenu(rsrc, NextSessionAction.class, menu);
 		menu.addSeparator();
 		return menu;
 	}

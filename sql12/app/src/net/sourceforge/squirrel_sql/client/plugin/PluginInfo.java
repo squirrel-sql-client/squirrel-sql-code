@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.plugin;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,10 +17,27 @@ package net.sourceforge.squirrel_sql.client.plugin;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
- 
- // TODO: This should implement IPlugin or IPlugin should extend this.
+
+/**
+ * This class keeps information about a plugin.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
 public class PluginInfo
 {
+	/** Property names for this JavaBean. */
+	public interface IPropertyNames
+	{
+		String AUTHOR = "author";
+		String CONTRIBUTORS = "contributors";
+		String DESCRIPTIVE_NAME = "descriptiveName";
+		String INTERNAL_NAME = "internalName";
+		String IS_LOADED = "isLoaded";
+		String PLUGIN_CLASS_NAME = "pluginClassName";
+		String VERSION = "version";
+		String WEB_SITE = "webSite";
+	}
+
 	private String _pluginClassName;
 	private IPlugin _plugin;
 	private boolean _loaded;
@@ -40,7 +57,7 @@ public class PluginInfo
 		super();
 		if (pluginClassName == null)
 		{
-			throw new IllegalArgumentException("Null pluginClassName passed");
+			throw new IllegalArgumentException("pluginClassName == null");
 		}
 
 		_pluginClassName = pluginClassName;
@@ -50,11 +67,14 @@ public class PluginInfo
 	{
 		if (pi == null)
 		{
-			throw new IllegalArgumentException("Null PluginInfo passed");
+			throw new IllegalArgumentException("PluginInfo == null");
 		}
 
-		setPlugin(pi.getPlugin());
-		setLoaded(pi.isLoaded());
+		if (this != pi)
+		{
+			setPlugin(pi.getPlugin());
+			setLoaded(pi.isLoaded());
+		}
 	}
 
 	public String getPluginClassName()

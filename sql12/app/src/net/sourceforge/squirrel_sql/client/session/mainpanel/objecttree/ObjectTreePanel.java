@@ -310,6 +310,40 @@ public class ObjectTreePanel extends JPanel
 	}
 
 	/**
+	 * Add a listener to the object tree.
+	 * 
+	 * @param	lis		The <TT>ObjectTreeListener</TT> you want added.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>ObjectTreeListener</TT> passed.
+	 */
+	public void addObjectTreeListener(IObjectTreeListener lis)
+	{
+		if (lis == null)
+		{
+			throw new IllegalArgumentException("IObjectTreeListener == null");
+		}
+		_tree.addObjectTreeListener(lis);
+	}
+
+	/**
+	 * Remove a listener from the object tree.
+	 * 
+	 * @param	lis		The <TT>ObjectTreeListener</TT> you want removed.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>ObjectTreeListener</TT> passed.
+	 */
+	public void removeObjectTreeListener(IObjectTreeListener lis)
+	{
+		if (lis == null)
+		{
+			throw new IllegalArgumentException("IObjectTreeListener == null");
+		}
+		_tree.removeObjectTreeListener(lis);
+	}
+
+	/**
 	 * Add an item to the popup menu for the specified database object type
 	 * in the object tree.
 	 * 

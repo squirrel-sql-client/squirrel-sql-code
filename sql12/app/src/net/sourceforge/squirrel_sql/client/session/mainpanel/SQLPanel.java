@@ -65,6 +65,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SessionSheet;
 import net.sourceforge.squirrel_sql.client.session.action.RedoAction;
 import net.sourceforge.squirrel_sql.client.session.action.UndoAction;
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
@@ -82,10 +83,10 @@ public class SQLPanel extends JPanel
 	private static final ILogger s_log = LoggerController.createLogger(SQLPanel.class);
 
 	/**
-	 * Shared model for the SQL history combo. This is used by those sessions
-	 * that don't want to keep a separate SQL history.
+	 * Set to <TT>true</TT> once SQL history has been loaded from the file
+	 * system.
 	 */
-	private static SQLHistoryComboBoxModel s_sqlHistoryModel;
+	private static boolean s_loadedSQLHistory;
 
 	/** Current session. */
 	private ISession _session;
@@ -146,7 +147,7 @@ public class SQLPanel extends JPanel
 	{
 		super();
 		setSession(session);
-		createUserInterface();
+		createGUI();
 		propertiesHaveChanged(null);
 	}
 
@@ -245,7 +246,15 @@ public class SQLPanel extends JPanel
 
 	public void executeCurrentSQL()
 	{
-		executeSQL(getSQLEntryPanel().getSQLToBeExecuted());
+		String sql = getSQLEntryPanel().getSQLToBeExecuted();
+		if (sql != null && sql.length() > 0)
+		{
+			executeSQL(getSQLEntryPanel().getSQLToBeExecuted());
+		}
+		else
+		{
+			_session.getMessageHandler().showErrorMessage("No SQL selected for execution.");
+		}
 	}
 
 	public void executeSQL(String sql)
@@ -711,57 +720,8 @@ public class SQLPanel extends JPanel
 		if (propName == null || propName.equals(
 				SessionProperties.IPropertyNames.SQL_SHARE_HISTORY))
 		{
-			boolean usingSharedModel = _sqlCombo.getModel() == s_sqlHistoryModel;
-			boolean shouldUseSharedModel = props.getSQLShareHistory();
-			if (usingSharedModel != shouldUseSharedModel)
-			{
-				if (shouldUseSharedModel)
-				{
-					_sqlCombo.setModel(s_sqlHistoryModel);
-				}
-				else
-				{
-					_sqlCombo.setModel(new SQLHistoryComboBoxModel());
-				}
-			}
+			_sqlCombo.setUseSharedModel(props.getSQLShareHistory());
 		}
-		/*
-				if (propertyName == null || propertyName.equals(
-						SessionProperties.IPropertyNames.SQL_OUTPUT_CLASS_NAME)) {
-					final IDataSetViewerDestination previous = _output;
-					try {
-						Class destClass = Class.forName(props.getSqlOutputClassName());
-						if (IDataSetViewerDestination.class.isAssignableFrom(destClass) &&
-								Component.class.isAssignableFrom(destClass)) {
-							_output = (IDataSetViewerDestination)destClass.newInstance();
-						}
-		
-					} catch (Exception ex) {
-						_session.getApplication().getLogger().showMessage(Logger.ILogTypes.ERROR, ex.getMessage());
-					}
-					if (_output == null) {
-						_output = new DataSetViewerTextPanel();
-					}
-					_viewer.setDestination(_output);
-					_outputSp.setRowHeader(null);
-					_outputSp.setViewportView((Component)_output);
-				}
-		*/
-		//	  if (propertyName == null || propertyName.equals(
-		//			  SessionProperties.IPropertyNames.SQL_REUSE_OUTPUT_TABS)) {
-		//		  if (props.getSqlReuseOutputTabs()) {
-		//			  for (int i = _tabbedResultsPanel.getTabCount() - 1;
-		//					  i > 0; --i) {
-		//				  _tabbedResultsPanel.remove(i);
-		//			  }
-		//			  _availableTabs.clear();
-		//			  if (_usedTabs.size() > 0) {
-		//				  Object tab = _usedTabs.get(0);
-		//				  _usedTabs.clear();
-		//				  _usedTabs.add(tab);
-		//			  }
-		//		  }
-		//	  }
 
 		if (propName == null || propName.equals(SessionProperties.IPropertyNames.AUTO_COMMIT))
 		{
@@ -824,15 +784,15 @@ public class SQLPanel extends JPanel
 		}
 	}
 
-	private void createUserInterface()
+	private void createGUI()
 	{
 		final IApplication app = _session.getApplication();
 		synchronized (getClass())
 		{
-			if (s_sqlHistoryModel == null)
+			if (!s_loadedSQLHistory)
 			{
 				final SQLHistory sqlHistory = app.getSQLHistory();
-				s_sqlHistoryModel = new SQLHistoryComboBoxModel(sqlHistory.getData()); 
+				SQLHistoryComboBoxModel.initializeSharedInstance(sqlHistory.getData());
 			}
 		}
 
@@ -844,9 +804,14 @@ public class SQLPanel extends JPanel
 
 		_nbrRows.setColumns(8);
 
-		_sqlCombo = new SQLHistoryComboBox();
-		_sqlCombo.setModel(s_sqlHistoryModel);
+		final SessionProperties props = _session.getProperties();
+		_sqlCombo = new SQLHistoryComboBox(props.getSQLShareHistory());
 		_sqlCombo.setEditable(false);
+		if (_sqlCombo.getItemCount() > 0)
+		{
+			_sqlCombo.setSelectedIndex(_sqlCombo.getItemCount() - 1);
+		}
+
 		{
 			JPanel pnl = new JPanel();
 			pnl.setLayout(new BorderLayout());
@@ -923,72 +888,27 @@ public class SQLPanel extends JPanel
 		{
 			if (_listening)
 			{
-				SQLHistoryItem item = (SQLHistoryItem)_sqlCombo.getSelectedItem();
-				if (item != null)
+				// Because the datamodel for the combobox may be shared
+				// between sessions we only want to update the sql entry area
+				// if this is actually the combox box that a new item has been
+				// selected in.
+				SessionSheet ss = _session.getSessionSheet();
+				if (ss.isSelected())
 				{
-					if (_sqlEntry.getText().length() > 0)
+					SQLHistoryItem item = (SQLHistoryItem)_sqlCombo.getSelectedItem();
+					if (item != null)
 					{
-						_sqlEntry.appendText("\n\n");
+						if (_sqlEntry.getText().length() > 0)
+						{
+							_sqlEntry.appendText("\n\n");
+						}
+						_sqlEntry.appendText(item.getSQL());
+						_sqlEntry.setCaretPosition(_sqlEntry.getText().length() - 1);
 					}
-					_sqlEntry.appendText(item.getSQL());
-					_sqlEntry.setCaretPosition(_sqlEntry.getText().length() - 1);
 				}
 			}
 		}
 	}
-
-//	private static class SqlComboItem implements Serializable
-//	{
-//		private String _sql;
-//		private String _firstLine;
-//
-//		SqlComboItem(String sql)
-//		{
-//			super();
-//			_sql = sql.trim();
-//			_firstLine = getFirstLine(sql);
-//		}
-//
-//		public boolean equals(Object rhs)
-//		{
-//			boolean rc = false;
-//			if (this == rhs)
-//			{
-//				rc = true;
-//			}
-//			else if (rhs != null && rhs.getClass().equals(getClass()))
-//			{
-//				rc = ((SqlComboItem)rhs).getText().equals(getText());
-//			}
-//			return rc;
-//		}
-//
-//		public String toString()
-//		{
-//			return _firstLine;
-//		}
-//
-//		String getText()
-//		{
-//			return _sql;
-//		}
-//
-//		private String getFirstLine(String sql)
-//		{
-//			int idx1 = sql.indexOf('\n');
-//			int idx2 = sql.indexOf('\r');
-//			if (idx1 == -1)
-//			{
-//				idx1 = idx2;
-//			}
-//			if (idx2 != -1 && idx2 < idx1)
-//			{
-//				idx1 = idx2;
-//			}
-//			sql = idx1 == -1 ? sql : sql.substring(0, idx1);
-//			return sql.replace('\t', ' ');
-//		}
-//	}
 
 	private class LimitRowsCheckBoxListener implements ChangeListener
 	{
@@ -1121,7 +1041,11 @@ public class SQLPanel extends JPanel
 			final StringBuffer msg = new StringBuffer();
 			msg.append(_sqlEntry.getCaretLineNumber() + 1)
 				.append(",").append(_sqlEntry.getCaretLinePosition() + 1);
-			_session.getSessionSheet().setStatusBarMessage(msg.toString());
+			final SessionSheet ss = _session.getSessionSheet();
+			if (ss != null)
+			{ 
+				ss.setStatusBarMessage(msg.toString());
+			}
 		}
 	}
 }

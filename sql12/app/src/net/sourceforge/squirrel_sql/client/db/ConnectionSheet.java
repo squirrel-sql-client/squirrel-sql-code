@@ -353,7 +353,7 @@ public class ConnectionSheet extends BaseSheet
 			}
 			catch (Exception ex)
 			{
-				String msg = "Error creating Driver Properties Panel";
+				String msg = "Error loading Driver Properties";
 				s_log.error(msg, ex);
 				_app.showErrorDialog(msg, ex);
 			}

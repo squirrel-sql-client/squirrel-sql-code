@@ -26,6 +26,7 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.IObjectTreeListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
 /**
@@ -119,6 +120,26 @@ public interface IObjectTreeAPI
 	 * 			Thrown if <TT>null</TT> <TT>TreeSelectionListener</TT> passed.
 	 */
 	void removeTreeSelectionListener(TreeSelectionListener lis);
+
+	/**
+	 * Add a listener to the object tree.
+	 * 
+	 * @param	lis		The <TT>ObjectTreeListener</TT> you want added.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>ObjectTreeListener</TT> passed.
+	 */
+	void addObjectTreeListener(IObjectTreeListener lis);
+
+	/**
+	 * Remove a listener from the object tree.
+	 * 
+	 * @param	lis		The <TT>ObjectTreeListener</TT> you want removed.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>ObjectTreeListener</TT> passed.
+	 */
+	void removeObjectTreeListener(IObjectTreeListener lis);
 
 	/**
 	 * Add an item to the popup menu for the specified database object type.
