@@ -382,7 +382,7 @@ public class SessionSheet extends BaseSheet
 		msgPnl.setEditable(false);
 		_msgSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		_msgSplit.setOneTouchExpandable(true);
-		_msgSplit.add(_mainTabPane.getTabbedPane(), JSplitPane.LEFT);
+		_msgSplit.add(_mainTabPane, JSplitPane.LEFT);
 		_msgSplit.add(new JScrollPane(msgPnl), JSplitPane.RIGHT);
 		content.add(_msgSplit, BorderLayout.CENTER);
 

@@ -27,7 +27,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
  * Base class for tabs to the added to one of the object panels.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public abstract class BaseObjectTab implements IObjectTab
 {
@@ -122,7 +122,6 @@ public abstract class BaseObjectTab implements IObjectTab
 	 *					selected object. This can be <TT>null</TT>.
 	 */
 	public void setDatabaseObjectInfo(IDatabaseObjectInfo value)
-	
 	{
 		_dbObjInfo = value;
 		_hasBeenDisplayed = false;

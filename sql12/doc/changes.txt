@@ -6,6 +6,8 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- You can now filter the schemas displayed in the object tree (Keith
+  Mashinter).
 - Show the position of the caret from the SQL entry area caret in a new label
   in status bar.
 - Added a statusbar to the Help Viewer.
