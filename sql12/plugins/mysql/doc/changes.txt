@@ -1,9 +1,15 @@
 MySQL Plugin Change Log
 =======================
 
+0.21
+====
+- Added "Columns" and "Indexes" tabs to table nodes.
+- Added "Master Status", "Master Logs", and "Slave Status" tabs to
+  database nodes.
+
+
 0.20
 ====
-
 - Updated for SQuirrel SQL Client 1.2beta1.
 - Added "Variables" and "Logs" tabs to the session node.
 - Added "Table Status" tab to the catalog nodes.
@@ -15,13 +21,12 @@ MySQL Plugin Change Log
   "Check Table" options to the popup menu for table nodes.
 - Added "User" nodes to the object tree.
 
+
 0.11
 ====
-
 - Updated for SQuirrel SQL Client 1.1rc7.
 
 
 0.10
 ====
-
 - Initial release.

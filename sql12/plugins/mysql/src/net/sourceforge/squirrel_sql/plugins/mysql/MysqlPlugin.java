@@ -43,7 +43,12 @@ import net.sourceforge.squirrel_sql.plugins.mysql.expander.UserParentExpander;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.DatabaseStatusTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.OpenTablesTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.ProcessesTab;
+import net.sourceforge.squirrel_sql.plugins.mysql.tab.ShowColumnsTab;
+import net.sourceforge.squirrel_sql.plugins.mysql.tab.ShowIndexesTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.ShowLogsTab;
+import net.sourceforge.squirrel_sql.plugins.mysql.tab.ShowMasterLogsTab;
+import net.sourceforge.squirrel_sql.plugins.mysql.tab.ShowMasterStatusTab;
+import net.sourceforge.squirrel_sql.plugins.mysql.tab.ShowSlaveStatusTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.ShowVariablesTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.TableStatusTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.UserGrantsTab;
@@ -104,7 +109,7 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	 */
 	public String getVersion()
 	{
-		return "0.25";
+		return "0.21";
 	}
 
 	/**
@@ -237,12 +242,19 @@ public class MysqlPlugin extends DefaultSessionPlugin
 				_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ProcessesTab());
 				_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowVariablesTab());
 				_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowLogsTab());
+				_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowMasterStatusTab());
+				_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowMasterLogsTab());
+				_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowSlaveStatusTab());
 
-				// Tabs to add to the catalog node.
+				// Tabs to add to the catalog nodes.
 				_treeAPI.addDetailTab(DatabaseObjectType.CATALOG, new OpenTablesTab());
 				_treeAPI.addDetailTab(DatabaseObjectType.CATALOG, new TableStatusTab());
 
-				// Tabs to add to the user node.
+				// Tabs to add to the table nodes.
+				_treeAPI.addDetailTab(DatabaseObjectType.TABLE, new ShowColumnsTab());
+				_treeAPI.addDetailTab(DatabaseObjectType.TABLE, new ShowIndexesTab());
+
+				// Tabs to add to the user nodes.
 				_treeAPI.addDetailTab(DatabaseObjectType.USER, new UserGrantsTab());
 
 				// Options in popup menu.
