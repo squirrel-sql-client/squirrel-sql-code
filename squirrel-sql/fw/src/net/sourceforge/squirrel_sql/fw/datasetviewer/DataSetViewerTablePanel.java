@@ -40,7 +40,7 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
-import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
+import net.sourceforge.squirrel_sql.fw.gui.BaseMDIParentFrame;
 import net.sourceforge.squirrel_sql.fw.gui.ButtonTableHeader;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
@@ -184,12 +184,12 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 			Point p = evt.getPoint();
 			int row = this.rowAtPoint(p);
 			int column = this.columnAtPoint(p);
-			Object o = _typedModel.getValueAt(row,column);
+			Object o = _comp.getValueAt(row,column);
 			if(o != null) o = o.toString();
 			else o = "";
 			TextAreaInternalFrame taif = new TextAreaInternalFrame(_typedModel.getColumnName(column),(String)o);
 			p = SwingUtilities.convertPoint((Component)evt.getSource(),p,comp);
-			((MainFrame)comp).addInternalFrame(taif,false);
+			((BaseMDIParentFrame)comp).addInternalFrame(taif,false);
 			taif.setLayer(JLayeredPane.POPUP_LAYER);
 			taif.pack();
 			Dimension dim = taif.getSize();
