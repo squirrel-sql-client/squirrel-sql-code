@@ -240,17 +240,19 @@ public class SessionPanel extends JPanel
 	 * Add a tab to the main tabbed panel.
 	 *
 	 * tab	Describes the tab to be added.
+    *
+    * @return The index of th added tab.
 	 *
 	 * @throws	IllegalArgumentException
 	 *			If <TT>tab</TT> is <TT>null</TT>.
 	 */
-	public void addMainTab(IMainPanelTab tab)
+	public int addMainTab(IMainPanelTab tab)
 	{
 		if (tab == null)
 		{
 			throw new IllegalArgumentException("IMainPanelTab == null");
 		}
-		_mainTabPane.addMainPanelTab(tab);
+		return _mainTabPane.addMainPanelTab(tab);
 	}
 
 	public void insertMainTab(IMainPanelTab tab, int idx)
