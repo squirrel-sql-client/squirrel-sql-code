@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.client.db;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.GridBagConstraints;
@@ -41,6 +42,8 @@ import javax.swing.JTextField;
 import javax.swing.ListModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -295,7 +298,14 @@ public class DriverMaintSheet extends BaseSheet
 		_driverName.setColumns(COLUMN_COUNT);
 		_url.setColumns(COLUMN_COUNT);
 
+		// Reset the background the the current Look and Feel uses for
+		// internal frames.
 		Container contentPane = getContentPane();
+		Color color = UIManager.getDefaults().getColor("Panel.background");
+		if (color != null)
+		{
+			contentPane.setBackground(color);
+		}
 
 		GridBagConstraints gbc = new GridBagConstraints();
 		contentPane.setLayout(new GridBagLayout());
@@ -465,6 +475,7 @@ public class DriverMaintSheet extends BaseSheet
 		_extraClassPathList.addListSelectionListener(new ExtraClassPathListBoxListener());
 
 		_extraClasspathUpBtn = new JButton("Up");
+		_extraClasspathUpBtn.setEnabled(false);
 		_extraClasspathUpBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				synchronized (_extraClassPathList) {
@@ -481,6 +492,7 @@ public class DriverMaintSheet extends BaseSheet
 		});
 
 		_extraClasspathDownBtn = new JButton("Down");
+		_extraClasspathDownBtn.setEnabled(false);
 		_extraClasspathDownBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				synchronized (_extraClassPathList) {
