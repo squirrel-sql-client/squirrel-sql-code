@@ -82,6 +82,7 @@ public class DatabaseTypesDataSet implements IDataSet
 	{
 		boolean rc = false;
 
+//TODO: Replace with ResultSetReader once we have column renderers.
 		try
 		{
 			rc = _rs.next();

@@ -2,6 +2,8 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
 /*
  * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
+ * Copyright (C) 2001-2002 Johan Compagner
+ * jcompagner@j-com.nl
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,16 +19,12 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.io.Reader;
-import java.math.BigDecimal;
-import java.sql.Blob;
-import java.sql.Clob;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.ArrayList;
 
+import net.sourceforge.squirrel_sql.fw.sql.ResultSetReader;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -36,11 +34,10 @@ public class ResultSetDataSet implements IDataSet
 	private ILogger s_log =
 		LoggerController.createLogger(ResultSetDataSet.class);
 
-	// These 2 should be handled with an Iterator!!!
+	// TODO: These 2 should be handled with an Iterator.
 	private int _iCurrent = -1;
 	private Object[] _currentRow;
 
-	private int[] _columnIndices;
 	private int _columnCount;
 	private DataSetDefinition _dataSetDefinition;
 	private ArrayList _alData;
@@ -81,7 +78,6 @@ public class ResultSetDataSet implements IDataSet
 		{
 			columnIndices = null;
 		}
-		_columnIndices = columnIndices;
 		_iCurrent = -1;
 		_alData = new ArrayList();
 
@@ -89,242 +85,17 @@ public class ResultSetDataSet implements IDataSet
 		{
 			try
 			{
-				final char[] work = new char[100];
 				ResultSetMetaData md = rs.getMetaData();
 				_columnCount = columnIndices != null
 								? columnIndices.length
 								: md.getColumnCount();
 				ColumnDisplayDefinition[] colDefs = createColumnDefinitions(md, columnIndices);
 				_dataSetDefinition = new DataSetDefinition(colDefs);
-				while (rs.next())
+
+				ResultSetReader rdr = new ResultSetReader(rs, _largeObjInfo, columnIndices);
+				Object[] row = null;
+				while ((row = rdr.readRow()) != null)
 				{
-					Object[] row = new Object[_columnCount];
-					for (int i = 0; i < _columnCount; ++i)
-					{
-						int idx = _columnIndices != null ? _columnIndices[i] : i + 1;
-						try
-						{
-							switch (md.getColumnType(idx))
-							{
-								case Types.NULL:
-									row[i] = null;
-									break;
-								
-								// TODO: When JDK1.4 is the earliest JDK supported
-								// by Squirrel then remove the hardcoding of the
-								// boolean data type.
-								case Types.BIT:
-								case 16:
-//								case Types.BOOLEAN:
-									row[i] = rs.getObject(idx);
-									if (row[i] != null
-										&& !(row[i] instanceof Boolean))
-									{
-										if (row[i] instanceof Number)
-										{
-											if (((Number) row[i]).intValue() == 0)
-											{
-												row[i] = Boolean.FALSE;
-											}
-											else
-											{
-												row[i] = Boolean.TRUE;
-											}
-										}
-										else
-										{
-											row[i] = Boolean.valueOf(row[i].toString());
-										}
-									}
-									break;
-
-								case Types.TIME :
-									row[i] = rs.getTime(idx);
-									break;
-
-								case Types.DATE :
-									row[i] = rs.getDate(idx);
-									break;
-
-								case Types.TIMESTAMP :
-									row[i] = rs.getTimestamp(idx);
-									break;
-
-								case Types.BIGINT :
-									row[i] = rs.getObject(idx);
-									if (row[i] != null
-										&& !(row[i] instanceof Long))
-									{
-										if (row[i] instanceof Number)
-										{
-											row[i] = new Long(((Number)row[i]).longValue());
-										}
-										else
-										{
-											row[i] = new Long(row[i].toString());
-										}
-									}
-									break;
-
-								case Types.DOUBLE:
-								case Types.FLOAT:
-								case Types.REAL:
-									row[i] = rs.getObject(idx);
-									if (row[i] != null
-										&& !(row[i] instanceof Double))
-									{
-										if (row[i] instanceof Number)
-										{
-											Number nbr = (Number)row[i];
-											row[i] = new Double(nbr.doubleValue());
-										}
-										else
-										{
-											row[i] = new Double(row[i].toString());
-										}
-									}
-									break;
-
-								case Types.DECIMAL:
-								case Types.NUMERIC:
-									row[i] = rs.getObject(idx);
-									if (row[i] != null
-										&& !(row[i] instanceof BigDecimal))
-									{
-										if (row[i] instanceof Number)
-										{
-											Number nbr = (Number)row[i];
-											row[i] = new BigDecimal(nbr.doubleValue());
-										}
-										else
-										{
-											row[i] = new BigDecimal(row[i].toString());
-										}
-									}
-									break;
-
-								case Types.INTEGER:
-								case Types.SMALLINT:
-								case Types.TINYINT:
-									row[i] = rs.getObject(idx);
-									if (row[i] != null
-										&& !(row[i] instanceof Integer))
-									{
-										if (row[i] instanceof Number)
-										{
-											row[i] = new Integer(((Number)row[i]).intValue());
-										}
-										else
-										{
-											row[i] = new Integer(row[i].toString());
-										}
-									}
-									break;
-
-									// ?? Hard coded -. JDBC/ODBC bridge JDK1.4
-									// brings back -9 for nvarchar columns in
-									// MS SQL Server tables.
-								case Types.CHAR :
-								case Types.VARCHAR :
-								case Types.LONGVARCHAR :
-								case -9 :
-									row[i] = rs.getString(idx);
-									break;
-
-								case Types.BINARY:
-									if (_largeObjInfo.getReadBinary())
-									{
-										row[i] = rs.getString(idx);
-									}
-									else
-									{
-										row[i] = "<Binary>";
-									}
-									break;
-
-								case Types.VARBINARY:
-									if (_largeObjInfo.getReadVarBinary())
-									{
-										row[i] = rs.getString(idx);
-									}
-									else
-									{
-										row[i] = "<VarBinary>";
-									}
-									break;
-
-								case Types.LONGVARBINARY:
-									if (_largeObjInfo.getReadLongVarBinary())
-									{
-										row[i] = rs.getString(idx);
-									}
-									else
-									{
-										row[i] = "<LongVarBinary>";
-									}
-									break;
-
-								case Types.BLOB:
-									if (_largeObjInfo.getReadBlobs())
-									{
-										row[i] = null;
-										Blob blob = rs.getBlob(idx);
-										if (blob != null)
-										{
-											int len = (int)blob.length();
-											if (len > 0)
-											{
-												int bytesToRead = _largeObjInfo.getReadBlobsSize();
-												if (bytesToRead > len)
-												{
-													bytesToRead = len;
-												}
-												row[i] = new String(blob.getBytes(1, bytesToRead));
-											}
-										}
-									}
-									else
-									{
-										row[i] = "<Blob>";
-									}
-									break;
-
-								case Types.CLOB:
-									if (_largeObjInfo.getReadClobs())
-									{
-										row[i] = null;
-										Clob clob = rs.getClob(idx);
-										if (clob != null)
-										{
-											int len = (int)clob.length();
-											if (len > 0)
-											{
-												int charsToRead = _largeObjInfo.getReadClobsSize();
-												if (charsToRead > len)
-												{
-													charsToRead = len;
-												}
-												row[i] = clob.getSubString(1, charsToRead);
-											}
-										}
-									}
-									else
-									{
-										row[i] = "<Clob>";
-									}
-									break;
-
-								default :
-									row[i] = "<Unknown>";
-							}
-						}
-						catch (Throwable th)
-						{
-							row[i] = "<Error>";
-							s_log.error("Error reading column data", th);
-						}
-
-					}
 					_alData.add(row);
 				}
 			}
@@ -349,10 +120,10 @@ public class ResultSetDataSet implements IDataSet
 	public synchronized boolean next(IMessageHandler msgHandler)
 		throws DataSetException
 	{
-		// This should be handled with an Iterator!!!
+		// TODO: This should be handled with an Iterator
 		if (++_iCurrent < _alData.size())
 		{
-			_currentRow = (Object[]) _alData.get(_iCurrent);
+			_currentRow = (Object[])_alData.get(_iCurrent);
 			return true;
 		}
 		return false;

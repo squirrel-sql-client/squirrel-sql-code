@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -222,13 +223,14 @@ public class SQLDatabaseMetaData
 	 */
 	public String[] getSchemas() throws SQLException
 	{
-		DatabaseMetaData md = getJDBCMetaData();
-		ArrayList list = new ArrayList();
-		ResultSet rs = md.getSchemas();
-		while (rs.next())
+		final ArrayList list = new ArrayList();
+		final ResultSetReader rdr = new ResultSetReader(getJDBCMetaData().getSchemas());
+		Object[] row = null;
+		while ((row = rdr.readRow()) != null)
 		{
-			list.add(rs.getString(1));
+			list.add(row[0]);
 		}
+
 		return (String[])list.toArray(new String[list.size()]);
 	}
 
@@ -319,13 +321,14 @@ public class SQLDatabaseMetaData
 	 */
 	public String[] getCatalogs() throws SQLException
 	{
-		DatabaseMetaData md = getJDBCMetaData();
-		ArrayList list = new ArrayList();
-		ResultSet rs = md.getCatalogs();
-		while (rs.next())
+		final ArrayList list = new ArrayList();
+		final ResultSetReader rdr = new ResultSetReader(getJDBCMetaData().getCatalogs());
+		Object[] row = null;
+		while ((row = rdr.readRow()) != null)
 		{
-			list.add(rs.getString(1));
+			list.add(row[0]);
 		}
+
 		return (String[])list.toArray(new String[list.size()]);
 	}
 
@@ -466,11 +469,14 @@ public class SQLDatabaseMetaData
 		DatabaseMetaData md = getJDBCMetaData();
 		ArrayList list = new ArrayList();
 		ResultSet rs = md.getProcedures(catalog, schemaPattern, procedureNamePattern);
-		while (rs.next())
+		final int[] cols = new int[] {1, 2, 3, 7, 8};
+		final ResultSetReader rdr = new ResultSetReader(rs, cols);
+		Object[] row = null;
+		while ((row = rdr.readRow()) != null)
 		{
-			list.add(new ProcedureInfo(rs.getString(1), rs.getString(2),
-										rs.getString(3), rs.getString(7),
-										rs.getInt(8), this));
+			final int type = ((Number)row[4]).intValue();
+			list.add(new ProcedureInfo((String)row[0], (String)row[1],
+									(String)row[2], (String)row[3], type, this));
 		}
 		return (IProcedureInfo[])list.toArray(new IProcedureInfo[list.size()]);
 	}
@@ -568,15 +574,23 @@ public class SQLDatabaseMetaData
 		Map nameMap = null;
 		try
 		{
-			//				superTabResult = md.getSuperTables(catalog, schemaPattern,
-			//												   tableNamePattern);
+			//TODO: Put remove reflection once we only support JDK1.4
+			//superTabResult = md.getSuperTables(catalog, schemaPattern,
+			//									   tableNamePattern);
 			Class clazz = md.getClass();
 			Class[] p1 = new Class[] {String.class, String.class, String.class};
 			Method method = clazz.getMethod("getSuperTables", p1);
 			if (method != null)
 			{
 				Object[] p2 = new Object[] {catalog, schemaPattern, tableNamePattern};
-				superTabResult = (ResultSet)method.invoke(md, p2);
+				try
+				{
+					superTabResult = (ResultSet)method.invoke(md, p2);
+				}
+				catch (InvocationTargetException ignore)
+				{
+					// unsupported by this driver.
+				}
 			}
 			// create a mapping of names if we have supertable info, since
 			// we need to find the ITableInfo again for re-ordering.
@@ -595,7 +609,7 @@ public class SQLDatabaseMetaData
 		{
 			ITableInfo tabInfo = new TableInfo(tabResult.getString(1),
 								tabResult.getString(2), tabResult.getString(3),
-								tabResult.getString(4), tabResult.getString(4),
+								tabResult.getString(4), tabResult.getString(5),
 								this);
 			if (nameMap != null)
 			{
@@ -653,11 +667,14 @@ public class SQLDatabaseMetaData
 		DatabaseMetaData md = getJDBCMetaData();
 		ArrayList list = new ArrayList();
 		ResultSet rs = md.getUDTs(catalog, schemaPattern, typeNamePattern, types);
-		while (rs.next())
+		final int[] cols = new int[] {1, 2, 3, 4, 5, 6};
+		final ResultSetReader rdr = new ResultSetReader(rs, cols);
+		Object[] row = null;
+		while ((row = rdr.readRow()) != null)
 		{
-			list.add(new UDTInfo(rs.getString(1), rs.getString(2), rs.getString(3),
-									rs.getString(4), rs.getString(5),
-									rs.getString(6), this));
+			list.add(new UDTInfo((String)row[0], (String)row[1], (String)row[2],
+								(String)row[3], (String)row[4], (String)row[5],
+								this));
 		}
 		return (IUDTInfo[])list.toArray(new IUDTInfo[list.size()]);
 	}
@@ -715,7 +732,7 @@ public class SQLDatabaseMetaData
 	private static String[] makeArray(String data)
 	{
 		List list = new ArrayList();
-		StringTokenizer st = new StringTokenizer(data != null ? data : "", ",");
+		StringTokenizer st = new StringTokenizer(data, ",");
 		while (st.hasMoreTokens())
 		{
 			list.add(st.nextToken());
