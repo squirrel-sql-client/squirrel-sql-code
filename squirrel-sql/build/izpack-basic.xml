@@ -15,7 +15,7 @@
 	<resources>
 		<res	src="../../squirrel-sql-dist/squirrel-sql-1.1beta7/core/dist/doc/licences/squirrel_licence.txt"
 				id="LicencePanel.licence"/>
-		<res	src="../../squirrel-sql-dist/squirrel-sql-1.1beta7/core/dist/doc/installer-readme.html"
+		<res	src="installer-readme.html"
 				id="HTMLInfoPanel.info"/>
 		<res	src="shortcutSpec.xml"
 				id="shortcutSpec.xml"/>
