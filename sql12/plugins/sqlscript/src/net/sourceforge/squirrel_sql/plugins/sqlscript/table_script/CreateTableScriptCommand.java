@@ -84,6 +84,10 @@ public class CreateTableScriptCommand implements ICommand {
                         rsPks.close();
                         ResultSet rsColumns = conn.getSQLMetaData().getColumns(ti);
                         while (rsColumns.next()) {
+
+                            int decimalDigits = rsColumns.getInt(9);
+                            String decimalDigitsString = 0 == decimalDigits ? "" : "," + decimalDigits;
+
                             String sColumnName = rsColumns.getString(4);
                             sbScript.append("\n\t");
                             sbScript.append(sColumnName);
@@ -92,45 +96,27 @@ public class CreateTableScriptCommand implements ICommand {
                             String sType = rsColumns.getString(6);
                             sbScript.append(sType);
                             String sLower = sType.toLowerCase();
-							if (sLower.indexOf("char") != -1) {
+                         if (sLower.indexOf("char") != -1) {
                                 sbScript.append("(");
-                                sbScript.append(rsColumns.getString(7));
+                                sbScript.append(rsColumns.getString(7)).append(decimalDigitsString);
                                 sbScript.append(")");
                             }
                          else if(sLower.equals("numeric"))
                           	{
                                 sbScript.append("(");
-                                sbScript.append(rsColumns.getString(7));
-                                String tmp = rsColumns.getString(9);
-                                if(tmp != null && "".equals(tmp))
-                                {
-	                                sbScript.append(",");
-	                                sbScript.append(tmp);
-                                }
+                                sbScript.append(rsColumns.getString(7)).append(decimalDigitsString);
                                 sbScript.append(")");
                           	}
                          else if(sLower.equals("number"))
                           	{
                                 sbScript.append("(");
-                                sbScript.append(rsColumns.getString(7));
-                                String tmp = rsColumns.getString(9);
-                                if(tmp != null && "".equals(tmp))
-                                {
-	                                sbScript.append(",");
-	                                sbScript.append(tmp);
-                                }
+                                sbScript.append(rsColumns.getString(7)).append(decimalDigitsString);;
                                 sbScript.append(")");
                           	}
                          else if(sLower.equals("decimal"))
                           	{
                                 sbScript.append("(");
-                                sbScript.append(rsColumns.getString(7));
-                                String tmp = rsColumns.getString(9);
-                                if(tmp != null && "".equals(tmp))
-                                {
-	                                sbScript.append(",");
-	                                sbScript.append(tmp);
-                                }
+                                sbScript.append(rsColumns.getString(7)).append(decimalDigitsString);
                                 sbScript.append(")");
                           	}
                             if (pks.size() == 1 && pks.get(0).equals(sColumnName)) {
@@ -156,7 +142,9 @@ public class CreateTableScriptCommand implements ICommand {
                             sbScript.append("),");
                         }
                         sbScript.setLength(sbScript.length() - 1);
-                        sbScript.append("\n);\n");
+
+                        sbScript.append("\n)").append(getStatementSeparator()).append("\n");
+
 
                     }
                 }
@@ -173,4 +161,16 @@ public class CreateTableScriptCommand implements ICommand {
         _session.getSQLPanelAPI(_plugin).appendSQLScript(sbScript.toString(), true);
         _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
     }
+
+   private String getStatementSeparator()
+   {
+      String statementSeparator = _session.getProperties().getSQLStatementSeparator();
+
+      if(1 < statementSeparator.length())
+      {
+         statementSeparator = "\n" + statementSeparator + "\n";
+      }
+
+      return statementSeparator;
+   }
 }

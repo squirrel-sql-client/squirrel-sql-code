@@ -65,7 +65,7 @@ public class SQLScriptPreferences implements Serializable {
         _specifiedDirectory = data != null ? data : "";
     }
 
-    public void setPerviousDirectory(String data) {
+    public void setPreviousDirectory(String data) {
         _previousDirectory = data != null ? data : "";
     }
 }

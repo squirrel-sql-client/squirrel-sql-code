@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.sqlscript;
+
 /*
  * Copyright (C) 2001 Johan Compagner
  * jcompagner@j-com.nl
@@ -17,6 +18,7 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
 import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.fw.util.Resources;
@@ -27,27 +29,34 @@ import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 
-public class SaveScriptAction extends SquirrelAction implements ISessionAction {
+public class SaveScriptAction extends SquirrelAction implements ISessionAction
+{
+	private SQLScriptPlugin _plugin;
+	private SaveAndLoadScriptActionDelegate _delegate;
 
-    private ISession _session;
-    private SQLScriptPlugin _plugin;
+	public SaveScriptAction(IApplication app, Resources rsrc, SQLScriptPlugin plugin)
+			throws IllegalArgumentException
+	{
+		super(app, rsrc);
+		_plugin = plugin;
+		setEnabled(false);
+	}
 
-    public SaveScriptAction(IApplication app, Resources rsrc, SQLScriptPlugin plugin)
-            throws IllegalArgumentException {
-        super(app, rsrc);
-        if (plugin ==  null) {
-            throw new IllegalArgumentException("null IPlugin passed");
-        }
-        _plugin = plugin;
-    }
+	public void actionPerformed(ActionEvent evt)
+	{
+		_delegate.actionPerformed(getParentFrame(evt), evt, false);
+	}
 
-    public void actionPerformed(ActionEvent evt) {
-        if (_session != null) {
-            new SaveScriptCommand(getParentFrame(evt), _session, _plugin).execute();
-        }
-    }
-
-    public void setSession(ISession session) {
-        _session = session;
-    }
+	public void setSession(ISession session)
+	{
+		if(null != session)
+		{
+			_delegate = _plugin.getLoadAndSaveDelegate(session);
+			setEnabled(true);
+		}
+		else
+		{
+			setEnabled(false);
+		}
+	}
 }

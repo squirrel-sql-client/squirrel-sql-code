@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.sqlscript;
+
 /*
  * Copyright (C) 2001 Johan Compagner
  * jcompagner@j-com.nl
@@ -17,6 +18,7 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
 import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.fw.util.Resources;
@@ -28,27 +30,42 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 
-public class LoadScriptAction extends SquirrelAction implements ISessionAction {
+public class LoadScriptAction extends SquirrelAction implements ISessionAction
+{
+	private ISession _session;
+	private SQLScriptPlugin _plugin;
 
-    private ISession _session;
-    private SQLScriptPlugin _plugin;
+	public LoadScriptAction(IApplication app, Resources rsrc, SQLScriptPlugin plugin)
+			throws IllegalArgumentException
+	{
+		super(app, rsrc);
+		if (plugin == null)
+		{
+			throw new IllegalArgumentException("null IPlugin passed");
+		}
+		_plugin = plugin;
+		setEnabled(false);
+	}
 
-    public LoadScriptAction(IApplication app, Resources rsrc, SQLScriptPlugin plugin)
-            throws IllegalArgumentException {
-        super(app, rsrc);
-        if (plugin ==  null) {
-            throw new IllegalArgumentException("null IPlugin passed");
-        }
-        _plugin = plugin;
-    }
+	public void actionPerformed(ActionEvent evt)
+	{
+		if (_session != null)
+		{
+			new LoadScriptCommand(getParentFrame(evt), _session, _plugin).execute();
+		}
+	}
 
-    public void actionPerformed(ActionEvent evt) {
-        if (_session != null) {
-            new LoadScriptCommand(getParentFrame(evt), _session, _plugin).execute();
-        }
-    }
+	public void setSession(ISession session)
+	{
+		_session = session;
+		if(null == _session)
+		{
+			setEnabled(false);
+		}
+		else
+		{
+			setEnabled(true);
+		}
 
-    public void setSession(ISession session) {
-        _session = session;
-    }
+	}
 }

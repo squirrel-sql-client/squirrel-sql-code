@@ -281,11 +281,24 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
             sbRows.setLength(sbRows.length()-1);
 
             // close it.
-            sbValues.append(");\n");
+            sbValues.append(")").append(getStatementSeparator()).append("\n");
             sbRows.append(")");
             sbRows.append(sbValues.toString());
         }
     }
+
+   private String getStatementSeparator()
+   {
+      String statementSeparator = _session.getProperties().getSQLStatementSeparator();
+
+      if(1 < statementSeparator.length())
+      {
+         statementSeparator = "\n" + statementSeparator + "\n";
+      }
+
+      return statementSeparator;
+   }
+
 
     /**
      * @see InternalFrameListener#internalFrameActivated(InternalFrameEvent)
