@@ -10,6 +10,8 @@ import java.util.Hashtable;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
+import net.sourceforge.squirrel_sql.fw.util.BaseRuntimeException;
+
 public class SQLSchemaImpl implements SQLSchema
 {
    private ISession _session;
@@ -44,7 +46,7 @@ public class SQLSchemaImpl implements SQLSchema
       }
       catch (SQLException e)
       {
-         throw new RuntimeException(e);
+         throw new BaseRuntimeException(e);
       }
    }
 
@@ -87,7 +89,7 @@ public class SQLSchemaImpl implements SQLSchema
       }
       catch (SQLException e)
       {
-         throw new RuntimeException(e);
+         throw new BaseRuntimeException(e);
       }
    }
 

@@ -10,6 +10,9 @@ import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.completions.ErrorListener;
 
 import javax.swing.*;
+
+import net.sourceforge.squirrel_sql.fw.util.BaseRuntimeException;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
@@ -45,7 +48,7 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 		{
 			public void run()
 			{
-				throw new RuntimeException(e);
+				throw new BaseRuntimeException(e);
 			}
 		});
 
