@@ -18,7 +18,7 @@
  *
  * created by cse, 07.10.2002 11:57:54
  *
- * @version $Id: ParserThread.java,v 1.2 2004-08-25 07:38:22 gerdwagner Exp $
+ * @version $Id: ParserThread.java,v 1.3 2004-11-27 23:39:55 gerdwagner Exp $
  */
 package net.sourceforge.squirrel_sql.client.session.parser.kernel;
 
@@ -81,6 +81,9 @@ public class ParserThread extends Thread
 
 
 		this._errors = new Errors(errListener);
+
+      setPriority(Thread.MIN_PRIORITY);
+
 		start();
 	}
 
