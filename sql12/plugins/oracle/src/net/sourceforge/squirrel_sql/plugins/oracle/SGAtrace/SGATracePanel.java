@@ -35,6 +35,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
+import net.sourceforge.squirrel_sql.plugins.oracle.common.AutoWidthResizeTable;
+
 public class SGATracePanel extends JPanel
 {
 	/** Logger for this class. */
@@ -88,13 +90,13 @@ public class SGATracePanel extends JPanel
           "         a.Address || ':' || a.Hash_Value "+
           "    FROM v$sqlarea a, "+
           "         sys.all_users b "+
-          "   WHERE a.parsing_user_id = b.user_id "+
-          "     AND b.username = ? ";
+          "   WHERE a.parsing_user_id = b.user_id ";
 
 	/** Current session. */
 	private ISession _session;
 
-        private JTable _sgaTrace;
+        private AutoWidthResizeTable _sgaTrace;
+        private boolean hasResized = false;
         private Timer _refreshTimer = new Timer(true);
 
         private boolean _autoRefresh = false;
@@ -213,6 +215,10 @@ public class SGATracePanel extends JPanel
                                         bufGetsRow});
               }
               _sgaTrace.setModel(tm);
+              if (!hasResized) {
+                hasResized = true;
+                _sgaTrace.resizeColumnWidth(300);
+              }
             }
           } catch (SQLException ex) {
             _session.getMessageHandler().showErrorMessage(ex);
@@ -223,9 +229,11 @@ public class SGATracePanel extends JPanel
 	{
             final IApplication app = _session.getApplication();
             setLayout(new BorderLayout());
-            _sgaTrace = new JTable();
+            _sgaTrace = new AutoWidthResizeTable(new DefaultTableModel());
             _sgaTrace.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
             add(new JScrollPane(_sgaTrace));
+
+            populateSGATrace();
 	}
 
 }
