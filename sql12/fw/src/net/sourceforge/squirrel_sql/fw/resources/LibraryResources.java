@@ -30,7 +30,7 @@ public class LibraryResources extends Resources
 
 	public LibraryResources() throws IllegalArgumentException
 	{
-		super("net.sourceforge.squirrel_sql.fw.resources.library",
+		super(LibraryResources.class.getName(),
 				LibraryResources.class.getClassLoader());
 	}
 }
