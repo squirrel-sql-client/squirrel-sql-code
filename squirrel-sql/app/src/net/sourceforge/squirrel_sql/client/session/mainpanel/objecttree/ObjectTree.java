@@ -146,8 +146,6 @@ class ObjectTree extends JTree
 				}
 			}
 		});
-
-		startExpandingTree(_model.getRootObjectTreeNode(), true, null);
 	}
 
 	/**
@@ -215,11 +213,10 @@ class ObjectTree extends JTree
 			{
 				selectedPathNames.put(selectedPaths[i].toString(), null);
 			}
-	
-			ObjectTreeNode root = _model.getRootObjectTreeNode();
-			root.removeAllChildren();
-			startExpandingTree(root, false, selectedPathNames);
 		}
+		ObjectTreeNode root = _model.getRootObjectTreeNode();
+		root.removeAllChildren();
+		startExpandingTree(root, false, selectedPathNames);
 	}
 
 	/**
