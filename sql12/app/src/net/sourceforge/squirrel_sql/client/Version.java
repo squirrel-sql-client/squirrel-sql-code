@@ -17,7 +17,6 @@ package net.sourceforge.squirrel_sql.client;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
 /**
  * Application version information.
  *
@@ -28,11 +27,11 @@ public class Version
 	private static final String APP_NAME = "SQuirreL SQL Client";
 	private static final int MAJOR_VERSION = 1;
 	private static final int MINOR_VERSION = 2;
-	private static final String TYPE = "alpha";
-	//private static final String TYPE = "beta";
+	//private static final String TYPE = "alpha";
+	private static final String TYPE = "beta";
 	//private static final String TYPE = "rc";
 	//private static final String TYPE = "final";
-	private static final int RELEASE = 2;
+	private static final int RELEASE = 1;
 
 	private static final String COPYRIGHT = "Copyright (c) 2001 - 2003 Colin Bell and others";
 
