@@ -14,10 +14,8 @@
 
 <TABLE>
 	<TR>
-		<TD WIDTH="170">
-			<A HREF="http://www.sourceforge.net">
-				<IMG SRC="http://sourceforge.net/sflogo.php?group_id=28383&amp;type=1" WIDTH="88" HEIGHT="31" BORDER="0" ALT="SourceForge Logo">
-			</A>
+		<TD WIDTH="310">
+            <IMG SRC="images/logo_1.jpg" WIDTH="302" HEIGHT="99" BORDER="0" ALT="SQuirreL SQL Client Logo">
 		</TD>
 		<TD ALIGN="left">
 			<H1>SQL Client ReadMe</H1>
@@ -30,8 +28,7 @@
 	<TR><TD><A HREF="#introduction">Introduction</A></TD></TR>
 	<TR><TD><A HREF="#installation">Installation</A></TD></TR>
 	<TR><TD><A HREF="#jdbc_drivers">JDBC Drivers</A></TD></TR>
-	<TR><TD><A HREF="#skin_look_and_feel">Skin Look and Feel</A></TD></TR>
-	<TR><TD><A HREF="#other_look_and_feel_implementations">Other Look and Feel Implementations</A></TD></TR>
+	<TR><TD><A HREF="#look_and_feel">Look and Feel Implementations</A></TD></TR>
 	<TR><TD><A HREF="#home_page">Home Page</A></TD></TR>
 	<TR><TD><A HREF="#mailing_lists">Mailing Lists</A></TD></TR>
 	<TR><TD><A HREF="#bugs_and_feature_requests">Bugs and Feature Requests</A></TD></TR>
@@ -57,7 +54,7 @@ find the time I hope to add other database products to this list.</P>
 <A NAME="installation"><H2>Installation</H2></A>
 
 <P>The preferred way to install SQuirreL SQL Client is with the IzPack
-Java installer. Download the file <TT>squirrel-sql-&ltversion&gt-install.jar</TT>
+Java installer. Download the file <TT>squirrel-sql-&lt;version&gt;-install.jar</TT>
 and execute it with the command:</P>
 
 <PRE>
@@ -72,11 +69,16 @@ the appropriate file for your operating system (*.gz for Uniz,
 the file is squirrel-sql.sh.</P>
 
 <P>The command line option <TT>-nosplash</TT> can be passed to the
-main class in order to start SQuirreL without the splash screen appearing. E.G.
+main class in order to start SQuirreL without the splash screen appearing. E.G.</P>
 
 <PRE>
 java &lt;removed&gt; net.sourceforge.squirrel_sql.client.Main -nosplash
 </PRE>
+
+<P>Some people have reported core dumps with the Sun JDK1.3.1 running under
+Linux. If this happens passing the -classic flag to the java executable
+appears to fix the problem. No similar problems have been reported with
+any other JDK on Linux.</P>
 
 <A NAME="jdbc_drivers"><H2>JDBC Drivers</H2></A>
 
@@ -84,36 +86,26 @@ java &lt;removed&gt; net.sourceforge.squirrel_sql.client.Main -nosplash
 before the application is launched or (since 1.0beta3) can be specified
 dynamically through the Drivers maintenance dialog.</P>
 
+<A NAME="look_and_feel"><H2>Look and Feel Implementations</H2></A>
 
-<A NAME="skin_look_and_feel"><H2>Skin Look and Feel</H2></A>
+<P>The ability to change the Look and Feel of SQuirreL has been moved
+out of the core into the Look and Feel plugin. This plugin comes with both
+the <A HREF="http://www.L2FProd.com">Skin</A> and
+<A HREF="http://www.incors.org/">Kunststoff</A> Look and Feels.</P>
 
-<P>This application can use Skin Look and Feel themepacks from
-<A HREF="http://www.L2FProd.com">L2FProd</A>. Drop the theme packs into the
-<TT>/plugins/skins</TT> directory within your SQuirreL SQL directory. Set
-the Look and Feel in the General tab of the Global Preferences dialog to
-"Skin Look and Feel" and select the theme in the Theme Pack dropdown.</P>
-
-
-<A NAME="other_look_and_feel_implementations"><H2>Other Look and Feel Implementations</H2></A>
-
-<P>You can now drop a Look and Feel implementation (see <A HREF="http://www.javootoo.com/">JataToo</A>
-for examples of Look and Feel implementations) into the <TT>/plugins/lafs</TT>
-directory within your SQuirreL SQL directory and have it selectable from
-the "Look and Feel" dropdown on the General tab of the Global
-Preferences dialog.</P>
 
 
 <A NAME="home_page"><H2>Home Page</H2></A>
 
-<P>The SQuirreL SQL Client is hosted at
-<A HREF="http://sourceforge.net/projects/squirrel-sql/">SourceForge</A>.</P>
+<P>The SQuirreL SQL Client project is hosted at
+<A HREF="http://squirrel-sql.sourceforge.net/">SourceForge</A>.</P>
 
 
 <A NAME="mailing_lists"><H2>Mailing Lists</H2></A>
 
-<P>There is currently a
-<A HREF="http://sourceforge.net/mail/?group_id=28383">mailing list</A>
- for announcements.</P>
+<P>There are several mailng lists available for SQuirrel. These
+can be found at
+<A HREF="http://sourceforge.net/mail/?group_id=28383">SourceForge</A>.</P>
 
 
 <A NAME="bugs_and_feature_requests"><H2>Bugs and Feature Requests</H2></A>
@@ -129,8 +121,8 @@ Preferences dialog.</P>
 
 <P>SQuirreL SQL Client depends on and comes with the following libraries:</P>
 <UL>
-	<LI><A HREF="http://www.jdom.org">JDOM</A> Java XML API.</A></LI>
-	<LI><A HREF="http://www.L2FProd.com">Skin Look and Feel.</A></LI>
+	<LI><A HREF="http://NanoXML.sourceforge.net/">NanoXML</A> Java XML API.</A> Its licence is
+        <A HREF="licences/nano_xml_licence.txt">here</A></LI>
 </UL>
 
 <A NAME="graphics"><H2>Graphics</H2></A>
