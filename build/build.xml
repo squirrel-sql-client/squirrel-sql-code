@@ -249,6 +249,11 @@
 		</antcall> -->
 <!--
 		<antcall target="build_plugin">
+			<param name="p_internal_name" value="editextras"/>
+		</antcall>
+-->
+<!--
+		<antcall target="build_plugin">
 			<param name="p_internal_name" value="favs"/>
 		</antcall>
 -->
@@ -265,11 +270,9 @@
 			<param name="p_internal_name" value="mysql"/>
 		</antcall>
 -->
-<!--
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="oracle"/>
 		</antcall>
--->
 <!--
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="sessionscript"/>
@@ -285,9 +288,11 @@
 			<param name="p_internal_name" value="sqlval"/>
 		</antcall>
 -->
+<!--
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="syntax"/>
 		</antcall>
+-->
 	</target>
 
 	<!--
