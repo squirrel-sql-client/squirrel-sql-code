@@ -215,6 +215,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 				dimChanged = true;
 			}
 			if(dimChanged) taif.setSize(dim);
+			p.y -= dim.height;
 			taif.setLocation(p);
 			taif.setVisible(true);
 		}
