@@ -20,8 +20,10 @@ package net.sourceforge.squirrel_sql.client.mainframe;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Event;
 import java.awt.Font;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
@@ -30,9 +32,11 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultDesktopManager;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.fw.gui.BaseMDIParentFrame;
@@ -346,6 +350,14 @@ public class MainFrame extends BaseMDIParentFrame
 		{
 			s_log.error("Missing icon for mainframe");
 		}
+
+		// On Win 2000 & XP mnemonics are normally hidden. To make them
+		// visible you press the alt key. Under the Windows L&F pressing
+		// alt may not work. This code is a workaround. See bug report
+		// 4736093 for more information. 
+		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+				KeyStroke.getKeyStroke(KeyEvent.VK_ALT, Event.ALT_MASK, false),
+				"repaint");
 
 		validate();
 	}
