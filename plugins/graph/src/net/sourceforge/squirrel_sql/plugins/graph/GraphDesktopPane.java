@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.plugins.graph;
 
 import net.sourceforge.squirrel_sql.client.gui.ScrollableDesktopPane;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.print.Printable;
@@ -21,6 +22,7 @@ public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrin
    private double _formatWidth;
    private double _formatHeight;
    private double _formatScale;
+   private boolean _isPrinting;
    //
    /////////////////////////////////////////////////////////
 
@@ -41,6 +43,13 @@ public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrin
       super.paintComponent(g);
       super.paintBorder(g);
 
+      paintGraphComponents(g);
+
+      super.paintChildren(g);
+   }
+
+   private void paintGraphComponents(Graphics g)
+   {
       for (int i = 0; i < _graphComponents.size(); i++)
       {
          GraphComponent comp = (GraphComponent)_graphComponents.elementAt(i);
@@ -48,11 +57,16 @@ public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrin
          {
             ((EdgesGraphComponent)comp).setBounds(getWidth(), getHeight());
          }
-         
-         ((GraphComponent)_graphComponents.elementAt(i)).paint(g);
-      }
 
-      super.paintChildren(g);
+         if(_isPrinting && comp instanceof EdgesGraphComponent)
+         {
+            // When printing edges are not painted
+         }
+         else
+         {
+            comp.paint(g);
+         }
+      }
    }
 
    public void putGraphComponents(GraphComponent[] graphComponents)
@@ -135,8 +149,13 @@ public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrin
 
       AffineTransform oldTransform = g2d.getTransform();
 
+      boolean origDoubleBufferingEnabled = RepaintManager.currentManager(this).isDoubleBufferingEnabled();
+
       try
       {
+         _isPrinting = true;
+         RepaintManager.currentManager(this).setDoubleBufferingEnabled(false);
+
          double tx = -getPageWidthInPixel(pageFormat) * (pageIndex % pageCountHorizontal) + pageFormat.getImageableX();
          double ty = -getPageHeightInPixel(pageFormat) * (pageIndex / pageCountHorizontal) + pageFormat.getImageableY();
 
@@ -147,11 +166,15 @@ public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrin
 
          g2d.scale(sx, sy);
 
-         paintComponents(g2d);
+         paintGraphComponents(g2d);
+         super.paintChildren(g2d);
+
       }
       finally
       {
          g2d.setTransform(oldTransform);
+         RepaintManager.currentManager(this).setDoubleBufferingEnabled(origDoubleBufferingEnabled);
+         _isPrinting = false;
       }
 
       return Printable.PAGE_EXISTS;
@@ -183,9 +206,6 @@ public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrin
    {
       return 0 < d - (int)d ? (int)(d+1) : (int)d;
    }
-
-
-
    //
    ///////////////////////////////////////////////////////////////////////////////////////
 
