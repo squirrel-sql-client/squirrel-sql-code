@@ -23,6 +23,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
 
+import javax.swing.Action;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 
 import net.sourceforge.squirrel_sql.fw.gui.SortedComboBoxModel;
@@ -73,7 +75,9 @@ class MainFrameToolBar extends ToolBar {
         ActionCollection actions = _app.getActionCollection();
 //      add(actions.get(OpenAliasAction.class));
 //      addSeparator();
-        add(new AliasesDropDown(frame));
+		AliasesDropDown drop = new AliasesDropDown(frame);
+        add(drop);
+    	drop.setAlignmentY(0.5f);
         addSeparator();
         add(actions.get(GlobalPreferencesAction.class));
         addSeparator();
@@ -82,6 +86,17 @@ class MainFrameToolBar extends ToolBar {
         add(actions.get(MaximizeAction.class));
         addSeparator();
         add(actions.get(ExitAction.class));
+    }
+    
+    /**
+     * Add an action to the toolbar. Centre it vertically so that
+     * it lines up with the dropdown.
+     * 
+     * @param	action		<TT>Action</TT> to be added.
+     */
+    private void addAction(Action action) {
+    	JButton btn = add(action);
+    	btn.setAlignmentY(0.5f);
     }
 
     /**
@@ -94,11 +109,11 @@ class MainFrameToolBar extends ToolBar {
         AliasesDropDown(MainFrame mainFrame) {
             super();
             _mainFrame = mainFrame;
-            setMaximumSize(new Dimension(150, 150));
             setModel(new AliasesDropDownModel());
             addItem(" Connect To...");
             setSelectedIndex(0);
             addActionListener(this);
+            setMaximumSize(getPreferredSize());
         }
 
         /**
