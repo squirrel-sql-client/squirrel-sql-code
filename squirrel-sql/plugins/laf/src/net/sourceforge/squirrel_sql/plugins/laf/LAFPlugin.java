@@ -82,7 +82,7 @@ public class LAFPlugin extends DefaultPlugin {
 	 * @return  the current version of this plugin.
 	 */
 	public String getVersion() {
-		return "0.1";
+		return "0.11";
 	}
 
 	/**
@@ -119,7 +119,7 @@ public class LAFPlugin extends DefaultPlugin {
 
 		// Folder that stores themepacks for the Skin
 		// Look and Feel.
-		_themePacksFolder = new File(pluginAppFolder, "theme_packs");
+		_themePacksFolder = new File(pluginAppFolder, "skinlf-theme-packs");
 		if (!_themePacksFolder.exists()) {
 			_themePacksFolder.mkdir();
 		}
