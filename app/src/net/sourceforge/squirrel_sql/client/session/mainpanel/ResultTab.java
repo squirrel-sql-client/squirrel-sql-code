@@ -46,6 +46,7 @@ import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
@@ -103,7 +104,8 @@ public class ResultTab extends JPanel implements IHasIdentifier
 	 *			Thrown if a <TT>null</TT> <TT>ISession</TT>,
 	 *			<<TT>SQLPanel</TT> or <TT>IIdentifier</TT> passed.
 	 */
-	public ResultTab(ISession session, SQLPanel sqlPanel, IIdentifier id)
+	public ResultTab(ISession session, SQLPanel sqlPanel, IIdentifier id,
+		SQLExecutionInfo exInfo, IDataSetUpdateableTableModel creator)
 		throws IllegalArgumentException
 	{
 		super();
@@ -124,7 +126,7 @@ public class ResultTab extends JPanel implements IHasIdentifier
 		_sqlPanel = sqlPanel;
 		_id = id;
 
-		createGUI();
+		createGUI(exInfo, creator);
 		propertiesHaveChanged(null);
 	}
 
@@ -285,7 +287,7 @@ public class ResultTab extends JPanel implements IHasIdentifier
 		}
 	}
 
-	private void createGUI()
+	private void createGUI(SQLExecutionInfo exInfo, IDataSetUpdateableTableModel creator)
 	{
 		//	final Resources rsrc = _session.getApplication().getResources();
 		setLayout(new BorderLayout());
@@ -314,8 +316,43 @@ public class ResultTab extends JPanel implements IHasIdentifier
 
 		final SessionProperties props = _session.getProperties();
 
-		_resultSetOutput = BaseDataSetViewerDestination.getInstance(
-			props.getReadOnlySQLResultsOutputClassName(), null);
+		// if the sql contains  results from only one table, allow it to be
+		// editable (if selected by the user).  otherwise, force it to be
+		// read-only.
+		// The following assumes SQL is either:
+		//		select <fields> FROM <tables>
+		//	or
+		//		select <fields> FROM <tables> WHERE <etc>
+		// and that the presence of multiple tables is indicated by
+		// a comma separating the table names
+		boolean allowEditing = false;
+		String sqlString = exInfo != null ? exInfo.getSQL() : null;
+		if (sqlString != null) {
+			sqlString = sqlString.toUpperCase();
+			int selectIndex = sqlString.indexOf("SELECT");
+			int fromIndex = sqlString.indexOf("FROM");
+			if (selectIndex > -1 && fromIndex > -1 && selectIndex < fromIndex) {
+				int whereIndex = sqlString.indexOf("WHERE");
+				if (whereIndex == -1)
+					whereIndex = sqlString.length() -1;
+				if (sqlString.substring(fromIndex+4, whereIndex).indexOf(',') == -1)
+					allowEditing = true;	// no comma, so only one table selected from
+			}
+		}
+		if (allowEditing) {
+				_resultSetOutput = BaseDataSetViewerDestination.getInstance(
+					props.getSQLResultsOutputClassName(), creator);
+		}
+		else {
+			// sql contains columns from multiple tables,
+			// so we cannot use all of the columns in a WHERE clause
+			// and it becomes difficult to know which table (or tables!) an
+			// edited column belongs to.  Therefore limit the output
+			// to be read-only
+			_resultSetOutput = BaseDataSetViewerDestination.getInstance(
+				props.getReadOnlySQLResultsOutputClassName(), null);
+		}
+
 		_resultSetSp.setViewportView(_resultSetOutput.getComponent());
 		_resultSetSp.setRowHeader(null);
 
