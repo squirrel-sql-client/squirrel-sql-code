@@ -26,24 +26,24 @@ import java.util.NoSuchElementException;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class EmptyIterator implements Iterator {
-    /**
-     * Returns <CODE>false</CODE> as container is empty.
-     */
-    public boolean hasNext() {
-        return false;
-    }
+	/**
+	 * Returns <CODE>false</CODE> as container is empty.
+	 */
+	public boolean hasNext() {
+		return false;
+	}
 
-    /**
-     * Throws <CODE>NoSuchElementException</CODE> as container is empty.
-     */
-    public Object next() throws NoSuchElementException {
-        throw new NoSuchElementException();
-    }
+	/**
+	 * Throws <CODE>NoSuchElementException</CODE> as container is empty.
+	 */
+	public Object next() throws NoSuchElementException {
+		throw new NoSuchElementException();
+	}
 
-    /**
-     * Throws <CODE>IllegalStateException</CODE> as container is empty.
-     */
-    public void remove() throws IllegalStateException {
-        throw new IllegalStateException();
-    }
+	/**
+	 * Throws <CODE>IllegalStateException</CODE> as container is empty.
+	 */
+	public void remove() throws IllegalStateException {
+		throw new IllegalStateException();
+	}
 }
