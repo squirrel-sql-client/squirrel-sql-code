@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.util;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -33,21 +33,21 @@ public interface IOptionPanel
 
 	/**
 	 * Retrieve the title for this option panel.
-	 * 
+	 *
 	 * @return	Panel's title.
 	 */
 	String getTitle();
 
 	/**
 	 * Retrieve the hint to be used for a tooltip for this option panel.
-	 * 
+	 *
 	 * @return	Panel's hint.
 	 */
 	String getHint();
 
 	/**
 	 * Retrieve the actual component to display as the option panel.
-	 * 
+	 *
 	 * @return		The component.
 	 */
 	Component getPanelComponent();

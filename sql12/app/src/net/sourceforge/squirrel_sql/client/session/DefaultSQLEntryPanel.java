@@ -72,7 +72,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 * Retrieve the text area component. Normally this would be a subclass
 	 * of <TT>javax.swing.text.JTextComponent</TT> but a plugin may use a
 	 * class otehr than a Swing text control.
-	 * 
+	 *
 	 * @return	The text area component.
 	 */
 	public JComponent getTextComponent()
@@ -84,7 +84,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 * If the component returned by <TT>getTextComponent</TT> contains
 	 * its own scroll bars return <TT>true</TT> other wise this component
 	 * will be wrapped in the scroll pane when added to the SQL panel.
-	 * 
+	 *
 	 * @return	<TT>true</TT> if text component already handles scrolling.
 	 */
 	public boolean getDoesTextComponentHaveScroller()
@@ -140,7 +140,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	/**
 	 * Replace the contents of the SQL entry area with the passed
 	 * SQL script without selecting it.
-	 * 
+	 *
 	 * @param	sqlScript	The script to be placed in the SQL entry area..
 	 */
 	public void setText(String sqlScript)
@@ -151,7 +151,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	/**
 	 * Replace the contents of the SQL entry area with the passed
 	 * SQL script and specify whether to select it.
-	 * 
+	 *
 	 * @param	sqlScript	The script to be placed in the SQL entry area..
 	 * @param	select		If <TT>true</TT> then select the passed script
 	 * 						in the sql entry area.
@@ -170,7 +170,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	/**
 	 * Append the passed SQL script to the SQL entry area but don't select
 	 * it.
-	 * 
+	 *
 	 * @param	sqlScript	The script to be appended.
 	 */
 	public void appendText(String sqlScript)
@@ -181,14 +181,15 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	/**
 	 * Append the passed SQL script to the SQL entry area and specify
 	 * whether it should be selected.
-	 * 
+	 *
 	 * @param	sqlScript	The script to be appended.
 	 * @param	select		If <TT>true</TT> then select the passed script
 	 * 						in the sql entry area.
 	 */
 	public void appendText(String sqlScript, boolean select)
 	{
-		if (!getText().endsWith("\n") && !sqlScript.startsWith("\n"))
+		if (getText().length() > 0 && !getText().endsWith("\n")
+				&& !sqlScript.startsWith("\n"))
 		{
 			_comp.append("\n");
 		}
@@ -209,7 +210,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	/**
 	 * Replace the currently selected text in the SQL entry area
 	 * with the passed text.
-	 * 
+	 *
 	 * @param	sqlScript	The script to be placed in the SQL entry area.
 	 */
 	public void replaceSelection(String sqlScript)
@@ -242,7 +243,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 * Add a hierarchical menu to the SQL Entry Area popup menu.
 	 *
 	 * @param	menu	The menu that will be added.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>Menu</TT> passed.
 	 */
@@ -260,7 +261,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 * Add an <TT>Action</TT> to the SQL Entry Area popup menu.
 	 *
 	 * @param	action	The action to be added.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>Action</TT> passed.
 	 */
@@ -425,7 +426,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 			_session = session;
 			_pnl = pnl;
 			SessionProperties props = session.getProperties();
-			FontInfo fi = props.getFontInfo();
+			final FontInfo fi = props.getFontInfo();
 			if (fi != null)
 			{
 				this.setFont(props.getFontInfo().createFont());
@@ -444,5 +445,4 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 			_pnl.removeMouseListener(_pnl._sqlEntryMouseListener);
 		}
 	}
-
 }

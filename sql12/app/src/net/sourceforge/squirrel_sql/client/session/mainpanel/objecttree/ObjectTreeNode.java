@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -29,16 +29,13 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
  * This is a node in the object tree.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ObjectTreeNode extends DefaultMutableTreeNode
 {
-	/** Node type */
-//	private ObjectTreeNodeType _nodeType;
-
 	/** Current session. */
 	private final ISession _session;
-	
+
 	/** Describes the database object represented by this node. */
 	private final IDatabaseObjectInfo _dboInfo;
 
@@ -50,10 +47,10 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 
 	/**
 	 * Ctor that assumes node cannot have children.
-	 * 
+	 *
 	 * @param	session	Current session.
 	 * @param	dbinfo	Describes this object in the database.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>ISession</TT> or
 	 *			<TT>IDatabaseObjectInfo</TT> passed.
@@ -71,13 +68,11 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 		}
 		_session = session;
 		_dboInfo = dboInfo;
-		
-//		_nodeType = ObjectTreeNodeType.get(dboInfo.getDatabaseObjectType());
 	}
 
 	/**
 	 * Return the current session.
-	 * 
+	 *
 	 * @return	the current session.
 	 */
 	public ISession getSession()
@@ -96,7 +91,7 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 
 	/**
 	 * Convenience method to get the database object type for this node.
-	 * 
+	 *
 	 * @return	the database object type of this node.
 	 */
 	public DatabaseObjectType getDatabaseObjectType()
@@ -105,25 +100,8 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 	}
 
 	/**
-	 * Set the type of this node. @see ObjectTreeNodeType.
-	 * 
-	 * @param	value	the new type of this node.
-	 * 
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if null ObjectTreeNodeType passed.
-	 */
-//	public void setNodeType(ObjectTreeNodeType value)
-//	{
-//		if (value == null)
-//		{
-//			throw new IllegalArgumentException("ObjectTreeNodeType == null");
-//		}
-//		_nodeType = value;
-//	}
-
-	/**
 	 * Returns <TT>true</TT> if this node can have children.
-	 * 
+	 *
 	 * @return	<TT>true</TT> if this node can have children.
 	 */
 	public boolean getAllowsChildren()
@@ -140,7 +118,7 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 	 * Return the expanders for this node. Remember that these are in addition
 	 * to the standard expanders stored in the object tree model. Normally
 	 * this would be empty.
-	 * 
+	 *
 	 * @return	The <TT>INodeExpander</TT> objects for this node.
 	 */
 	public INodeExpander[] getExpanders()
@@ -150,9 +128,9 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 
 	/**
 	 * Adds an expander to this node.
-	 * 
+	 *
 	 * @param	value	New <TT>INodeExpander</TT> for this node.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT>INodeExpander</TT> passed.
 	 */
@@ -168,7 +146,7 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 
 	/**
 	 * Specify whether this node can have children.
-	 * 
+	 *
 	 * @param	value	<TT>true</TT> if this node can have children.
 	 */
 	public void setAllowsChildren(boolean value)

@@ -154,20 +154,19 @@ public class SessionSheet extends BaseSheet
 	{
 		super.setSelected(selected);
 
-		// TODO:
 		// Without this when using alt left/right to move
-		// bwtween sessions the focus is left in the SQL
-		// entry area of the previouis session.
-//		if (selected)
-//		{
-//			SwingUtilities.invokeLater(new Runnable()
-//			{
-//				public void run()
-//				{
-//					getSQLEntryPanel().requestFocus();
-//				}
-//			});
-//		}
+		// between sessions the focus is left in the SQL
+		// entry area of the previous session.
+		if (selected)
+		{
+			SwingUtilities.invokeLater(new Runnable()
+			{
+				public void run()
+				{
+					getSQLEntryPanel().requestFocus();
+				}
+			});
+		}
 	}
 
 	public boolean hasConnection()

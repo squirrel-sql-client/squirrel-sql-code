@@ -30,7 +30,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 /**
  * This class manages sessions.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SessionManager
 {
@@ -65,7 +65,8 @@ public class SessionManager
 	 */
 	public synchronized IClientSession createSession(IApplication app,
 									ISQLDriver driver, ISQLAlias alias,
-									SQLConnection conn, String user, String password)
+									SQLConnection conn, String user,
+									String password)
 	{
 		if (app == null)
 		{
@@ -102,9 +103,9 @@ public class SessionManager
 			{
 				closeSession(sessions[i]);
 			}
-			catch (SQLException ex)
+			catch (Throwable th)
 			{
-				s_log.error("Error closing session", ex);
+				s_log.error("Error closing session", th);
 			}
 		}
 	}
@@ -116,7 +117,7 @@ public class SessionManager
 	 *
 	 * @throws	IllegalArgumentException
 	 *			Thrown if <TT>null</TT>IClientSession passed.
-	 * 
+	 *
 	 * @throws	SQLException
 	 * 			Thrown if an error closing the SQL connection. The session
 	 * 			will still be closed even though the connection may not have
@@ -141,16 +142,15 @@ public class SessionManager
 			}
 		}
 
-
 		// TODO: Should have session listeners instead of these calls.
 		session.getApplication().getPluginManager().sessionEnding(session);
 
-		session.close();	// throws SQLException
+		session.close();
 	}
 
 	/**
 	 * Retrieve an array of all the sessions currently active.
-	 * 
+	 *
 	 * @return	array of all active sessions.
 	 */
 	public synchronized IClientSession[] getActiveSessions()
@@ -161,7 +161,7 @@ public class SessionManager
 
 	/**
 	 * Get the next session opened after the passed one.
-	 * 
+	 *
 	 * @return	The next session or the first one if the passed one is
 	 * 			the last session.
 	 */
@@ -192,7 +192,7 @@ public class SessionManager
 
 	/**
 	 * Get the next session opened before the passed one.
-	 * 
+	 *
 	 * @return	The previous session or the last one if the passed one is
 	 * 			the first session.
 	 */

@@ -70,7 +70,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.tab
 /**
  * This is the panel for the Object Tree tab.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ObjectTreePanel extends JPanel
 {
@@ -101,16 +101,16 @@ public class ObjectTreePanel extends JPanel
 	private Map _tabbedPanes = new HashMap();
 
 	/**
-	 *  Collection of <TT>IObjectPanelTab</TT> objects to be displayed for all
+	 * Collection of <TT>IObjectPanelTab</TT> objects to be displayed for all
 	 * nodes in the object tree.
 	 */
 //	private List _tabsForAllNodes = new ArrayList();
-	
+
 	/**
 	 * ctor specifying the current session.
-	 * 
+	 *
 	 * @param	session	Current session.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>ISession</TT> passed.
 	 */
@@ -125,7 +125,7 @@ public class ObjectTreePanel extends JPanel
 
 		_emptyTabPane = new ObjectTreeTabbedPane(_session);
 
-		createUserInterface();
+		CreateGUI();
 
 		// Register tabs to display in the details panel for database nodes.
 		addDetailTab(DatabaseObjectType.SESSION, new MetaDataTab());
@@ -195,10 +195,10 @@ public class ObjectTreePanel extends JPanel
 
 	/**
 	 * Add an expander for the specified database object type.
-	 * 
+	 *
 	 * @param	dboType		Database object type.
 	 * @param	expander	Expander called to add children to a parent node.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>DatabaseObjectType</TT>
 	 * 			or <TT>INodeExpander</TT> passed.
@@ -219,10 +219,10 @@ public class ObjectTreePanel extends JPanel
 	/**
 	 * Add a tab to be displayed in the detail panel for the passed
 	 * database object type type.
-	 * 
+	 *
 	 * @param	dboType		Database Object type.
 	 * @param	tab			Tab to be displayed.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown when a <TT>null</TT> <TT>DatabaseObjectType</TT> or
 	 * 			<TT>IObjectPanelTab</TT> passed.
@@ -237,16 +237,16 @@ public class ObjectTreePanel extends JPanel
 		{
 			throw new IllegalArgumentException("IObjectPanelTab == null");
 		}
-		
+
 		getOrCreateObjectPanelTabbedPane(dboType).addObjectPanelTab(tab);
 	}
 
 	/**
 	 * Add a listener to the object tree for structure changes. I.E nodes
 	 * added/removed.
-	 * 
+	 *
 	 * @param	lis		The <TT>TreeModelListener</TT> you want added.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>TreeModelListener</TT> passed.
 	 */
@@ -261,9 +261,9 @@ public class ObjectTreePanel extends JPanel
 
 	/**
 	 * Remove a structure changes listener from the object tree.
-	 * 
+	 *
 	 * @param	lis		The <TT>TreeModelListener</TT> you want removed.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>TreeModelListener</TT> passed.
 	 */
@@ -278,9 +278,9 @@ public class ObjectTreePanel extends JPanel
 
 	/**
 	 * Add a listener to the object tree for selection changes.
-	 * 
+	 *
 	 * @param	lis		The <TT>TreeSelectionListener</TT> you want added.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>TreeSelectionListener</TT> passed.
 	 */
@@ -295,9 +295,9 @@ public class ObjectTreePanel extends JPanel
 
 	/**
 	 * Remove a listener from the object tree for selection changes.
-	 * 
+	 *
 	 * @param	lis		The <TT>TreeSelectionListener</TT> you want removed.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>TreeSelectionListener</TT> passed.
 	 */
@@ -312,9 +312,9 @@ public class ObjectTreePanel extends JPanel
 
 	/**
 	 * Add a listener to the object tree.
-	 * 
+	 *
 	 * @param	lis		The <TT>ObjectTreeListener</TT> you want added.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>ObjectTreeListener</TT> passed.
 	 */
@@ -329,9 +329,9 @@ public class ObjectTreePanel extends JPanel
 
 	/**
 	 * Remove a listener from the object tree.
-	 * 
+	 *
 	 * @param	lis		The <TT>ObjectTreeListener</TT> you want removed.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>ObjectTreeListener</TT> passed.
 	 */
@@ -347,9 +347,9 @@ public class ObjectTreePanel extends JPanel
 	/**
 	 * Add an item to the popup menu for the specified database object type
 	 * in the object tree.
-	 * 
+	 *
 	 * @param	dboType		Database Object type.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</passed> <TT>DatabaseObjectType</TT>
 	 * 			or <TT>Action</TT> passed.
@@ -370,9 +370,9 @@ public class ObjectTreePanel extends JPanel
 	/**
 	 * Add an item to the popup menu for all node types in the object
 	 * tree.
-	 * 
+	 *
 	 * @param	action		Action to add to menu.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> passed.
 	 */
@@ -388,10 +388,10 @@ public class ObjectTreePanel extends JPanel
 	/**
 	 * Add an hierarchical menu to the popup menu for the specified database
 	 * object type.
-	 * 
+	 *
 	 * @param	dboType		Database object type.
 	 * @param	menu		<TT>JMenu</TT> to add to menu.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>DatabaseObjectType</TT> or
 	 * 			<TT>JMenu</TT> thrown.
@@ -411,9 +411,9 @@ public class ObjectTreePanel extends JPanel
 
 	/**
 	 * Add an hierarchical menu to the popup menu for all node types.
-	 * 
+	 *
 	 * @param	menu	<TT>JMenu</TT> to add to menu.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>JMenu</TT> thrown.
 	 */
@@ -465,9 +465,9 @@ public class ObjectTreePanel extends JPanel
 
 	/**
 	 * Remove one or more nodes from the tree.
-	 * 
+	 *
 	 * @param	nodes	Array of nodes to be removed.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>ObjectTreeNode[]</TT> thrown.
 	 */
@@ -487,7 +487,7 @@ public class ObjectTreePanel extends JPanel
 	/**
 	 * Set the panel to be shown in the data area for the passed
 	 * path.
-	 * 
+	 *
 	 * @param	path	path of node currently selected.
 	 */
 	private void setSelectedObjectPanel(TreePath path)
@@ -509,7 +509,7 @@ public class ObjectTreePanel extends JPanel
 
 	/**
 	 * Set the panel in the data area to that passed.
-	 * 
+	 *
 	 * @param	comp	Component to be displayed. If <TT>null</TT> use an empty
 	 * 					panel.
 	 */
@@ -532,9 +532,9 @@ public class ObjectTreePanel extends JPanel
 
 	/**
 	 * Get the detail panel to be displayed for the passed node.
-	 * 
+	 *
 	 * @param	node	Node to get details panel for.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>ObjectTreeNode</TT> passed.
 	 */
@@ -556,10 +556,10 @@ public class ObjectTreePanel extends JPanel
 
 	/**
 	 * Return the tabbed pane for the passed object tree node type.
-	 * 
+	 *
 	 * @param	dboType		The database object type we are getting a tabbed
 	 *						pane for.
-	 * 
+	 *
 	 * @return		the <TT>ObjectTreeTabbedPane</TT> for the passed database object
 	 *				type.
 	 */
@@ -571,10 +571,10 @@ public class ObjectTreePanel extends JPanel
 	/**
 	 * Return the tabbed pane for the passed database object type. If one
 	 * doesn't exist then create it.
-	 * 
+	 *
 	 * @param	dboType		The database object type we are getting a tabbed
 	 *						pane for.
-	 * 
+	 *
 	 * @return	the <TT>List</TT> containing all the <TT>IObjectPanelTab</TT>
 	 * 			instances for the passed object tree node type.
 	 */
@@ -598,7 +598,7 @@ public class ObjectTreePanel extends JPanel
 	/**
 	 * Create the user interface.
 	 */
-	private void createUserInterface()
+	private void CreateGUI()
 	{
 		setLayout(new BorderLayout());
 

@@ -40,7 +40,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 /**
  * This is the message panel at the bottom of the session sheet.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 class MessagePanel extends JTextArea implements IMessageHandler
 {
@@ -54,10 +54,10 @@ class MessagePanel extends JTextArea implements IMessageHandler
 	/** Popup menu for this component. */
 	private TextPopupMenu _popupMenu = new MessagePanelPopupMenu();
 
-    /**
-     * Memorize if a error occured and foreground color was changed.
+	/**
+	 * Memorize if a error occured and foreground color was changed.
 	 */
-    private boolean _errOccured = false;
+	private boolean _errOccured = false;
 
 	MessagePanel(IApplication app)
 	{
@@ -114,7 +114,7 @@ class MessagePanel extends JTextArea implements IMessageHandler
 	/**
 	 * Show an error message describing the passed exception. The controls
 	 * background color will be changed to show it is an error msg.
-	 * 
+	 *
 	 * @param	th		Exception.
 	 */
 	public void showErrorMessage(Throwable th)
@@ -130,7 +130,7 @@ class MessagePanel extends JTextArea implements IMessageHandler
 	/**
 	 * Show an error message. The controls
 	 * background color will be changed to show it is an error msg.
-	 * 
+	 *
 	 * @param	th		Exception.
 	 */
 	public void showErrorMessage(String msg)
@@ -167,16 +167,16 @@ class MessagePanel extends JTextArea implements IMessageHandler
 				SQLWarning ex = (SQLWarning) th;
 				while (ex != null)
 				{
-                    StringBuffer buf = new StringBuffer();
-                    buf.append("Warning:   ")
-                        .append(ex.getMessage())
-                        .append("\nSQLState:  ")
-                        .append(ex.getSQLState())
-                        .append("\nErrorCode: ")
-                        .append(ex.getErrorCode());
+					StringBuffer buf = new StringBuffer();
+					buf.append("Warning:   ")
+						.append(ex.getMessage())
+						.append("\nSQLState:  ")
+						.append(ex.getSQLState())
+						.append("\nErrorCode: ")
+						.append(ex.getErrorCode());
 					s_log.debug("Warning shown in MessagePanel", th);
 					ex = ex.getNextWarning();
-                    privateShowMessage(buf.toString());
+					privateShowMessage(buf.toString());
 				}
 			}
 			else if (th instanceof SQLException)
@@ -184,16 +184,16 @@ class MessagePanel extends JTextArea implements IMessageHandler
 				SQLException ex = (SQLException) th;
 				while (ex != null)
 				{
-                    StringBuffer buf = new StringBuffer();
-                    buf.append("Error:     ")
-                        .append(ex.getMessage())
-                        .append("\nSQLState:  ")
-                        .append(ex.getSQLState())
-                        .append("\nErrorCode: ")
-                        .append(ex.getErrorCode());
+					StringBuffer buf = new StringBuffer();
+					buf.append("Error:     ")
+						.append(ex.getMessage())
+						.append("\nSQLState:  ")
+						.append(ex.getSQLState())
+						.append("\nErrorCode: ")
+						.append(ex.getErrorCode());
 					s_log.debug("Error", th);
 					ex = ex.getNextException();
-                    privateShowMessage(buf.toString());
+					privateShowMessage(buf.toString());
 				}
 			}
 			else

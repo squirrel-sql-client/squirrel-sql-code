@@ -543,6 +543,16 @@ public class SQLPanel extends JPanel
 		}
 	}
 
+	/**
+	 * Add the passed item to end of the SQL history. If the item
+	 * at the end of the history is the same as the passed one
+	 * then don't add it.
+	 *
+	 * @param	sql		SQL item to add.
+	 *
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> sql passed.
+	 */
 	public void addSQLToHistory(SQLHistoryItem sql)
 	{
 		if (sql == null)
@@ -553,8 +563,10 @@ public class SQLPanel extends JPanel
 		_sqlComboListener.stopListening();
 		try
 		{
-			_sqlCombo.insertItemAt(sql, _sqlCombo.getItemCount());
-			_sqlCombo.setSelectedIndex(_sqlCombo.getItemCount() - 1);
+			_sqlCombo.removeItem(sql);
+			final int size = _sqlCombo.getItemCount();
+			_sqlCombo.insertItemAt(sql, size);
+			_sqlCombo.setSelectedIndex(size);
 		}
 		finally
 		{
@@ -566,7 +578,7 @@ public class SQLPanel extends JPanel
 	 * Add a hierarchical menu to the SQL Entry Area popup menu.
 	 *
 	 * @param	menu	The menu that will be added.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>Menu</TT> passed.
 	 */
@@ -583,7 +595,7 @@ public class SQLPanel extends JPanel
 	 * Add an <TT>Action</TT> to the SQL Entry Area popup menu.
 	 *
 	 * @param	action	The action to be added.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>Action</TT> passed.
 	 */
@@ -902,8 +914,6 @@ public class SQLPanel extends JPanel
 
 		setLayout(new BorderLayout());
 
-		//_sqlEntry = app.getSQLEntryPanelFactory().createSQLEntryPanel(_session);
-
 		_nbrRows.setColumns(8);
 
 		final SessionProperties props = _session.getProperties();
@@ -1005,7 +1015,8 @@ public class SQLPanel extends JPanel
 							_sqlEntry.appendText("\n\n");
 						}
 						_sqlEntry.appendText(item.getSQL());
-						_sqlEntry.setCaretPosition(_sqlEntry.getText().length() - 1);
+						_sqlEntry.setCaretPosition(_sqlEntry.getText().length());
+						_sqlEntry.requestFocus();
 					}
 				}
 			}
@@ -1145,7 +1156,7 @@ public class SQLPanel extends JPanel
 				.append(",").append(_sqlEntry.getCaretLinePosition() + 1);
 			final SessionSheet ss = _session.getSessionSheet();
 			if (ss != null)
-			{ 
+			{
 				ss.setStatusBarMessage(msg.toString());
 			}
 		}

@@ -26,7 +26,7 @@ import net.sourceforge.squirrel_sql.client.ApplicationArguments;
  * This class contains information about files and directories used by the
  * application.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ApplicationFiles
 {
@@ -146,7 +146,7 @@ public class ApplicationFiles
 		return new File(_userSettingsDir + File.separator +
 							"squirrel-sql-jdbcdebug.log");
 	}
- 	
+ 
  	/**
  	 * @return serialized Vector containing history of SQL queries executed
  	 */

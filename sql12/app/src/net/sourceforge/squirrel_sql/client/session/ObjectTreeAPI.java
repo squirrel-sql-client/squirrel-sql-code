@@ -33,7 +33,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IOb
 /**
  * This class is the API through which plugins can work with the object tree.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 class ObjectTreeAPI implements IObjectTreeAPI
 {
@@ -60,9 +60,9 @@ class ObjectTreeAPI implements IObjectTreeAPI
 
 	/**
 	 * Ctor specifying the session.
-	 * 
+	 *
 	 * @param	session	<TT>ISession</TT> containing the object tree.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <T>null</TT> <TT>ISession</TT> passed.
 	 */
@@ -85,10 +85,10 @@ class ObjectTreeAPI implements IObjectTreeAPI
 
 	/**
 	 * Add an expander for the specified object tree node type.
-	 * 
+	 *
 	 * @param	dboType		Database object type.
 	 * @param	expander	Expander called to add children to a parent node.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>DatabaseObjectType</TT> or
 	 * 			<TT>INodeExpander</TT> thrown.
@@ -110,10 +110,10 @@ class ObjectTreeAPI implements IObjectTreeAPI
 	/**
 	 * Add a tab to be displayed in the detail panel for the passed
 	 * object tree node type.
-	 * 
+	 *
 	 * @param	dboType		Database object type.
 	 * @param	tab			Tab to be displayed.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown when a <TT>null</TT> <TT>DatabaseObjectType</TT> or
 	 * 			<TT>IObjectTab</TT> passed.
@@ -135,9 +135,9 @@ class ObjectTreeAPI implements IObjectTreeAPI
 	/**
 	 * Add a listener to the object tree for structure changes. I.E nodes
 	 * added/removed.
-	 * 
+	 *
 	 * @param	lis		The <TT>TreeModelListener</TT> you want added.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>TreeModelListener</TT> passed.
 	 */
@@ -152,9 +152,9 @@ class ObjectTreeAPI implements IObjectTreeAPI
 
 	/**
 	 * Remove a structure changes listener from the object tree.
-	 * 
+	 *
 	 * @param	lis		The <TT>TreeModelListener</TT> you want removed.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>TreeModelListener</TT> passed.
 	 */
@@ -169,9 +169,9 @@ class ObjectTreeAPI implements IObjectTreeAPI
 
 	/**
 	 * Add a listener to the object tree for selection changes.
-	 * 
+	 *
 	 * @param	lis		The <TT>TreeSelectionListener</TT> you want added.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>TreeSelectionListener</TT> passed.
 	 */
@@ -186,9 +186,9 @@ class ObjectTreeAPI implements IObjectTreeAPI
 
 	/**
 	 * Remove a listener from the object tree for selection changes.
-	 * 
+	 *
 	 * @param	lis		The <TT>TreeSelectionListener</TT> you want removed.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>TreeSelectionListener</TT> passed.
 	 */
@@ -203,9 +203,9 @@ class ObjectTreeAPI implements IObjectTreeAPI
 
 	/**
 	 * Add a listener to the object tree.
-	 * 
+	 *
 	 * @param	lis		The <TT>ObjectTreeListener</TT> you want added.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>ObjectTreeListener</TT> passed.
 	 */
@@ -220,9 +220,9 @@ class ObjectTreeAPI implements IObjectTreeAPI
 
 	/**
 	 * Remove a listener from the object tree.
-	 * 
+	 *
 	 * @param	lis		The <TT>ObjectTreeListener</TT> you want removed.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>ObjectTreeListener</TT> passed.
 	 */
@@ -237,10 +237,10 @@ class ObjectTreeAPI implements IObjectTreeAPI
 
 	/**
 	 * Add an item to the popup menu for the specified node type.
-	 * 
+	 *
 	 * @param	dboType		Database object type.
 	 * @param	action		Action to add to menu.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>DatabaseObjectType</TT>
 	 * 			<TT>Action</TT> thrown.
@@ -260,9 +260,9 @@ class ObjectTreeAPI implements IObjectTreeAPI
 
 	/**
 	 * Add an item to the popup menu for all node types.
-	 * 
+	 *
 	 * @param	action		Action to add to menu.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> thrown.
 	 */
@@ -279,10 +279,10 @@ class ObjectTreeAPI implements IObjectTreeAPI
 	/**
 	 * Add an hierarchical menu to the popup menu for the specified database
 	 * object type.
-	 * 
+	 *
 	 * @param	dboType		Database object type.
 	 * @param	menu		<TT>JMenu</TT> to add to menu.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>DatabaseObjectType</TT> or
 	 * 			<TT>JMenu</TT> thrown.
@@ -302,9 +302,9 @@ class ObjectTreeAPI implements IObjectTreeAPI
 
 	/**
 	 * Add an hierarchical menu to the popup menu for all node types.
-	 * 
+	 *
 	 * @param	menu	<TT>JMenu</TT> to add to menu.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>JMenu</TT> thrown.
 	 */
@@ -320,7 +320,7 @@ class ObjectTreeAPI implements IObjectTreeAPI
 	/**
 	 * Return an array of the selected nodes in the tree. This is guaranteed
 	 * to be non-null.
-	 * 
+	 *
 	 * @return	Array of nodes in the tree.
 	 */
 	public synchronized ObjectTreeNode[] getSelectedNodes()
@@ -357,9 +357,9 @@ class ObjectTreeAPI implements IObjectTreeAPI
 
 	/**
 	 * Remove one or more nodes from the tree.
-	 * 
+	 *
 	 * @param	nodes	Array of nodes to be removed.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>ObjectTreeNode[]</TT> thrown.
 	 */
@@ -374,7 +374,7 @@ class ObjectTreeAPI implements IObjectTreeAPI
 
 	/**
 	 * Create a new <TT>DatabaseObjectType</TT>
-	 * 
+	 *
 	 * @return	a new <TT>DatabaseObjectType</TT>
 	 */
 	public DatabaseObjectType createNewDatabaseObjectType()

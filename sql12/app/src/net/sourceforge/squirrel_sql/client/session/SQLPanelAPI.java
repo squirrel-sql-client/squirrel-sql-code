@@ -37,9 +37,9 @@ public class SQLPanelAPI implements ISQLPanelAPI
 
 	/**
 	 * Ctor specifying the session.
-	 * 
+	 *
 	 * @param	session	<TT>IClientSession</TT> containing the SQL Panel.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <T>null</TT> <TT>IClientSession</TT> passed.
 	 */
@@ -151,7 +151,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 
 	/**
 	 * Replace the SQL entry area with the passed one.
-	 * 
+	 *
 	 * @param	pnl		New SQL entry area.
 	 */
 	public synchronized void installSQLEntryPanel(ISQLEntryPanel pnl)
@@ -161,7 +161,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 
 	/**
 	 * Return the entire contents of the SQL entry area.
-	 * 
+	 *
 	 * @return	the entire contents of the SQL entry area.
 	 */
 	public synchronized String getEntireSQLScript()
@@ -171,7 +171,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 
 	/**
 	 * Return the selected contents of the SQL entry area.
-	 * 
+	 *
 	 * @return	the selected contents of the SQL entry area.
 	 */
 	public String getSelectedSQLScript()
@@ -181,7 +181,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 
 	/**
 	 * Return the SQL script to be executed.
-	 * 
+	 *
 	 * @return	the SQL script to be executed.
 	 */
 	public synchronized String getSQLScriptToBeExecuted()
@@ -192,7 +192,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	/**
 	 * Append the passed SQL script to the SQL entry area but don't select
 	 * it.
-	 * 
+	 *
 	 * @param	sqlScript	The script to be appended.
 	 */
 	public synchronized void appendSQLScript(String sqlScript)
@@ -203,7 +203,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	/**
 	 * Append the passed SQL script to the SQL entry area and specify
 	 * whether it should be selected.
-	 * 
+	 *
 	 * @param	sqlScript	The script to be appended.
 	 * @param	select		If <TT>true</TT> then select the passed script
 	 * 						in the sql entry area.
@@ -216,7 +216,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	/**
 	 * Replace the contents of the SQL entry area with the passed
 	 * SQL script without selecting it.
-	 * 
+	 *
 	 * @param	sqlScript	The script to be placed in the SQL entry area.
 	 */
 	public synchronized void setEntireSQLScript(String sqlScript)
@@ -227,7 +227,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	/**
 	 * Replace the contents of the SQL entry area with the passed
 	 * SQL script and specify whether to select it.
-	 * 
+	 *
 	 * @param	sqlScript	The script to be placed in the SQL entry area.
 	 * @param	select		If <TT>true</TT> then select the passed script
 	 * 						in the sql entry area.
@@ -240,7 +240,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	/**
 	 * Replace the currently selected text in the SQL entry area
 	 * with the passed text.
-	 * 
+	 *
 	 * @param	sqlScript	The script to be placed in the SQL entry area.
 	 * @param	select		If <TT>true</TT> then select the passed script
 	 * 						in the sql entry area.
@@ -276,15 +276,14 @@ public class SQLPanelAPI implements ISQLPanelAPI
 				pnl.setSelectionEnd(selEnd);
 			}
 		}
-
 	}
 
 	/**
 	 * Return the offset into the SQL entry area where the current select
 	 * starts.
-	 * 
+	 *
 	 * @return	the current selections start position.
-	 */ 
+	 */
 	public synchronized int getSQLScriptSelectionStart()
 	{
 		return _session.getSessionSheet().getSQLEntryPanel().getSelectionStart();
@@ -293,9 +292,9 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	/**
 	 * Return the offset into the SQL entry area where the current select
 	 * ends.
-	 * 
+	 *
 	 * @return	the current selections end position.
-	 */ 
+	 */
 	public synchronized int getSQLScriptSelectionEnd()
 	{
 		return _session.getSessionSheet().getSQLEntryPanel().getSelectionEnd();
@@ -304,9 +303,9 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	/**
 	 * Set the offset into the SQL entry area where the current select
 	 * starts.
-	 * 
+	 *
 	 * param	start	the new selections start position.
-	 */ 
+	 */
 	public synchronized void setSQLScriptSelectionStart(int start)
 	{
 		_session.getSessionSheet().getSQLEntryPanel().setSelectionStart(start);
@@ -315,9 +314,9 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	/**
 	 * Set the offset into the SQL entry area where the current select
 	 * ends.
-	 * 
+	 *
 	 * param	start	the new selections start position.
-	 */ 
+	 */
 	public synchronized void setSQLScriptSelectionEnd(int end)
 	{
 		_session.getSessionSheet().getSQLEntryPanel().setSelectionEnd(end);
@@ -335,7 +334,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	/**
 	 * Execute the passed SQL. Not <TT>synchronized</TT> as multiple SQL statements
 	 * can be executed simultaneously.
-	 * 
+	 *
 	 * @param	sql		SQL to be executed.
 	 */
 	public void executeSQL(String sql)
@@ -411,7 +410,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 * The passed SQL should be added to the SQL history.
 	 *
 	 * @param	sql		SQL to be added to history.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>sql</TT> passed.
 	 */
@@ -434,7 +433,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 * Add a hierarchical menu to the SQL Entry Area popup menu.
 	 *
 	 * @param	menu	The menu that will be added.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>Menu</TT> passed.
 	 */
@@ -451,7 +450,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 * Add an <TT>Action</TT> to the SQL Entry Area popup menu.
 	 *
 	 * @param	action	The action to be added.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>Action</TT> passed.
 	 */
@@ -464,4 +463,3 @@ public class SQLPanelAPI implements ISQLPanelAPI
 		_session.getSessionSheet().getSQLPanel().addToSQLEntryAreaMenu(action);
 	}
 }
-

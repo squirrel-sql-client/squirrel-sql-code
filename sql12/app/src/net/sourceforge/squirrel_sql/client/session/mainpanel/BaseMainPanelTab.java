@@ -24,7 +24,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
  * Base class for tabs to the added to the main tabbed panel.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public abstract class BaseMainPanelTab implements IMainPanelTab
 {

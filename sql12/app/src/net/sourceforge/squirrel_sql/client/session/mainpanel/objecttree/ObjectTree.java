@@ -59,7 +59,7 @@ import net.sourceforge.squirrel_sql.client.session.action.SetDefaultCatalogActio
 /**
  * This is the tree showing the structure of objects in the database.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 class ObjectTree extends JTree
 {
@@ -107,9 +107,9 @@ class ObjectTree extends JTree
 
 	/**
 	 * ctor specifying session.
-	 * 
+	 *
 	 * @param	session	Current session.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>ISession</TT> passed.
 	 */
@@ -201,7 +201,7 @@ class ObjectTree extends JTree
 	 * Return the name of the object that the mouse is currently
 	 * over as the tooltip text.
 	 *
-	 * @param   event   Used to determine the current mouse position.
+	 * @param	event	Used to determine the current mouse position.
 	 */
 	public String getToolTipText(MouseEvent evt)
 	{
@@ -220,7 +220,7 @@ class ObjectTree extends JTree
 
 	/**
 	 * Return the typed data model for this tree.
-	 * 
+	 *
 	 * @return	The typed data model for this tree.
 	 */
 	public ObjectTreeModel getTypedModel()
@@ -281,8 +281,8 @@ class ObjectTree extends JTree
 	/**
 	 * Adds a listener for changes in this cache entry.
 	 *
-	 * @param   lis a IObjectCacheChangeListener that will be notified when
-	 *			objects are added and removed from this cache entry.
+	 * @param	lis	a IObjectCacheChangeListener that will be notified when
+	 *				objects are added and removed from this cache entry.
 	 */
 	public void addObjectTreeListener(IObjectTreeListener lis)
 	{
@@ -292,7 +292,7 @@ class ObjectTree extends JTree
 	/**
 	 * Removes a listener for changes in this cache entry.
 	 *
-	 * @param   lis a IObjectCacheChangeListener that will be notified when
+	 * @param	lis a IObjectCacheChangeListener that will be notified when
 	 *			objects are added and removed from this cache entry.
 	 */
 	void removeObjectTreeListener(IObjectTreeListener lis)
@@ -303,9 +303,9 @@ class ObjectTree extends JTree
 	/**
 	 * Restore the expansion state of the tree starting at the passed node.
 	 * The passed node is always expanded.
-	 * 
+	 *
 	 * @param	node	Node to restore expansion state from.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if null ObjectTreeNode passed.
 	 */
@@ -321,7 +321,7 @@ class ObjectTree extends JTree
 		if (previouslySelectedTreePathNames.containsKey(nodePath.toString()))
 		{
 			selectedTreePaths.add(nodePath);
-		}		
+		}
 		expandPath(nodePath);
 
 		// Go through each child of the parent and see if it was previously
@@ -337,7 +337,7 @@ class ObjectTree extends JTree
 			if (previouslySelectedTreePathNames.containsKey(childPathName))
 			{
 				selectedTreePaths.add(childPath);
-			}		
+			}
 
 			if (_expandedPathNames.containsKey(childPathName))
 			{
@@ -400,10 +400,10 @@ class ObjectTree extends JTree
 	/**
 	 * Add an item to the popup menu for the specified node type in the object
 	 * tree.
-	 * 
+	 *
 	 * @param	dboType		Database Object Type.
 	 * @param	action		Action to add to menu.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> or
 	 *			<TT>DatabaseObjectType</TT>thrown.
@@ -425,9 +425,9 @@ class ObjectTree extends JTree
 
 	/**
 	 * Add an item to the popup menu for the all nodes.
-	 * 
+	 *
 	 * @param	action		Action to add to menu.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> thrown.
 	 */
@@ -450,10 +450,10 @@ class ObjectTree extends JTree
 	/**
 	 * Add an hierarchical menu to the popup menu for the specified database
 	 * object type.
-	 * 
+	 *
 	 * @param	dboType		Database object type.
 	 * @param	menu		<TT>JMenu</TT> to add to menu.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>DatabaseObjectType</TT> or
 	 * 			<TT>JMenu</TT> thrown.
@@ -475,9 +475,9 @@ class ObjectTree extends JTree
 
 	/**
 	 * Add an hierarchical menu to the popup menu for all node types.
-	 * 
+	 *
 	 * @param	menu	<TT>JMenu</TT> to add to menu.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>JMenu</TT> thrown.
 	 */
@@ -504,7 +504,7 @@ class ObjectTree extends JTree
 	 * @param	dboType		Database Object Type.
 	 * @param	create		If <TT>true</TT> popup will eb created if it
 	 *						doesn't exist.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> or
 	 *			<TT>DatabaseObjectType</TT>thrown.
@@ -575,7 +575,7 @@ class ObjectTree extends JTree
 	/**
 	 * Get the appropriate popup menu for the currently selected nodes
 	 * in the object tree and display it.
-	 * 
+	 *
 	 * @param	x	X pos to display popup at.
 	 * @param	y	Y pos to display popup at.
 	 */
@@ -596,7 +596,7 @@ class ObjectTree extends JTree
 				}
 			}
 
-			JPopupMenu pop = null; 
+			JPopupMenu pop = null;
 			if (sameType)
 			{
 				pop = getPopup(dboType, false);
@@ -702,7 +702,7 @@ class ObjectTree extends JTree
 			_selectNode = selectNode;
 			_selectedPathNames = selectedPathNames;
 		}
-		
+
 		public void run()
 		{
 			synchronized (ObjectTree.this._syncObject)

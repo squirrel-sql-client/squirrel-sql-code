@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -43,7 +43,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 {
 	/** Logger for this class. */
-	private static ILogger s_log =
+	private static final ILogger s_log =
 		LoggerController.createLogger(ObjectTreeTabbedPane.class);
 
 	/** Current session. */
@@ -63,7 +63,7 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 		super(session.getApplication().getSquirrelPreferences());
 
 		_session = session;
-		createUserInterface();
+		CreateGUI();
 		propertiesHaveChanged(null);
 	}
 
@@ -136,7 +136,7 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 		}
 	}
 
-	private void createUserInterface()
+	private void CreateGUI()
 	{
 		addChangeListener(new TabbedPaneListener());
 	}
