@@ -30,6 +30,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDriverProperty;
 import net.sourceforge.squirrel_sql.fw.sql.WrappedSQLException;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
@@ -61,10 +62,32 @@ public class GenerateSqlCommand implements ICommand {
 
 	public void execute() throws BaseException {
 		try {
+            /* because of the cross-catalog problem, let's not invoke this if the current catalog isn't equal
+             * to the catalog specified in the URL.
+             */
+            
+            SQLDriverProperty[] props = _session.getSQLConnection().getConnectionProperties().getDriverProperties();
+            for (int i = 0; i < props.length; i++) {
+                if (props[i].getName().equals("DBNAME")) {
+                    // there's a DBNAME specified, so make sure it matches the current catalog.
+                    if (!props[i].getValue().equals(_session.getSQLConnection().getCatalog())) {
+                        StringBuffer buf = new StringBuffer();
+                        buf.append("The DBNAME of the session's URL is set to '");
+                        buf.append(props[i].getValue());
+                        buf.append("', but the session's current catalog is set to '");
+                        buf.append(_session.getSQLConnection().getCatalog());
+                        buf.append("'.\n\nSQL Server doesn't support this in most cases.  This is a current issue.");
+                        _session.getApplication().showErrorDialog(buf.toString());
+                        return;
+                    }
+                }
+            }
+            
 			GenerateSqlDialog dlog = new GenerateSqlDialog(_session, _plugin, _dbObjs);
 			dlog.pack();
 			GUIUtils.centerWithinParent(dlog);
-			dlog.show();
+			if (!dlog.showGeneralSqlDialog())
+                return;
             
             JFileChooser fc = new JFileChooser();
             if (dlog.getOneFile()) {
