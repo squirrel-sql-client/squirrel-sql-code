@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
+package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table;
 /*
  * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
@@ -17,31 +17,29 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.JavabeanDataSet;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 /**
- * This is the tab displaying information about a database object.
+ * This tab shows the columns in the currently selected table.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class DatabaseObjectInfoTab extends BaseDataSetTab
+public class IndexesTab extends BaseTableTab
 {
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
-	private interface TableInfoi18n
+	private interface i18n
 	{
-		String TITLE = "Info";
-		String HINT = "Basic information";
+		String TITLE = "Indexes";
+		String HINT = "Show indexes";
 	}
-
-	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(DatabaseObjectInfoTab.class);
 
 	/**
 	 * Return the title for the tab.
@@ -50,7 +48,7 @@ public class DatabaseObjectInfoTab extends BaseDataSetTab
 	 */
 	public String getTitle()
 	{
-		return TableInfoi18n.TITLE;
+		return i18n.TITLE;
 	}
 
 	/**
@@ -60,11 +58,23 @@ public class DatabaseObjectInfoTab extends BaseDataSetTab
 	 */
 	public String getHint()
 	{
-		return TableInfoi18n.HINT;
+		return i18n.HINT;
 	}
 
+	/**
+	 * Create the <TT>IDataSet</TT> to be displayed in this tab.
+	 */
 	protected IDataSet createDataSet() throws DataSetException
 	{
-		return new JavabeanDataSet(getDatabaseObjectInfo());
+		final SQLConnection conn = getSession().getSQLConnection();
+		try
+		{
+			final ResultSet rs = conn.getSQLMetaData().getIndexInfo(getTableInfo());
+			return new ResultSetDataSet(rs);
+		}
+		catch (SQLException ex)
+		{
+			throw new DataSetException(ex);
+		}
 	}
 }

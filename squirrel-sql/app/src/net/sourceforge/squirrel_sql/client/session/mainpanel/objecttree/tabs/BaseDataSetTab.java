@@ -26,9 +26,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.BaseObjectPanelTab;
 
-public abstract class BaseDataSetTab extends BaseObjectPanelTab
+public abstract class BaseDataSetTab extends BaseObjectTab
 {
 	/** Logger for this class. */
 	private static final ILogger s_log =
@@ -84,11 +83,15 @@ public abstract class BaseDataSetTab extends BaseObjectPanelTab
 		{
 			throw new IllegalStateException("Null ISession");
 		}
-		String destClassName = session.getProperties().getMetaDataOutputClassName();
-		IDataSet ds = createDataSet();
+		final IDataSet ds = createDataSet();
+		final String destClassName = getDestinationClassName();
 		((DataSetScrollingPanel)getComponent()).load(ds, destClassName);
 	}
 
 	protected abstract IDataSet createDataSet() throws DataSetException;
 
+	protected String getDestinationClassName()
+	{
+		return getSession().getProperties().getMetaDataOutputClassName();
+	}
 }

@@ -27,7 +27,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
-import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.IObjectPanelTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
 /**
  * This interface defines the API through which plugins can work with the object
  * tree.
@@ -75,9 +75,9 @@ public interface IObjectTreeAPI
 	 * 
 	 * @throws	IllegalArgumentException
 	 * 			Thrown when a <TT>null</TT> <TT>DatabaseObjectType</TT> or
-	 *			<TT>IObjectPanelTab</TT> passed.
+	 *			<TT>IObjectTab</TT> passed.
 	 */
-	void addDetailTab(DatabaseObjectType dboType, IObjectPanelTab tab);
+	void addDetailTab(DatabaseObjectType dboType, IObjectTab tab);
 
 	/**
 	 * Add a listener to the object tree for structure changes. I.E nodes

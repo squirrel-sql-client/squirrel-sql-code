@@ -27,7 +27,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
-import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.IObjectPanelTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
 /**
  * This class is the API through which plugins can work with the object tree.
  *
@@ -114,10 +114,10 @@ class ObjectTreeAPI implements IObjectTreeAPI
 	 * 
 	 * @throws	IllegalArgumentException
 	 * 			Thrown when a <TT>null</TT> <TT>DatabaseObjectType</TT> or
-	 * 			<TT>IObjectPanelTab</TT> passed.
+	 * 			<TT>IObjectTab</TT> passed.
 	 */
 	public void addDetailTab(DatabaseObjectType dboType,
-									IObjectPanelTab tab)
+									IObjectTab tab)
 	{
 		if (dboType == null)
 		{
@@ -125,7 +125,7 @@ class ObjectTreeAPI implements IObjectTreeAPI
 		}
 		if (tab == null)
 		{
-			throw new IllegalArgumentException("IObjectPanelTab == null");
+			throw new IllegalArgumentException("IObjectTab == null");
 		}
 		_session.getSessionSheet().getObjectTreePanel().addDetailTab(dboType, tab);
 	}

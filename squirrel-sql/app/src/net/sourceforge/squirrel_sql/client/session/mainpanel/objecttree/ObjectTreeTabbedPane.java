@@ -32,7 +32,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.IObjectPanelTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 /**
  * This is the tabbed panel displayed when a node is selected in the
@@ -53,7 +53,7 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 	private SessionPropertiesListener _propsListener;
 
 	/**
-	 * Collection of <TT>IObjectPanelTab</TT> objects displayed in
+	 * Collection of <TT>IObjectTab</TT> objects displayed in
 	 * this tabbed panel.
 	 */
 	private List _tabs = new ArrayList();
@@ -79,15 +79,15 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 		final int idx = getSelectedIndex();
 		if (idx != -1)
 		{
-			((IObjectPanelTab)_tabs.get(idx)).select();
+			((IObjectTab)_tabs.get(idx)).select();
 		}
 	}
 
-	void addObjectPanelTab(IObjectPanelTab tab)
+	void addObjectPanelTab(IObjectTab tab)
 	{
 		if (tab == null)
 		{
-			throw new IllegalArgumentException("Null IObjectPanelTab passed");
+			throw new IllegalArgumentException("Null IObjectTab passed");
 		}
 		tab.setSession(_session);
 		final String title = tab.getTitle();
@@ -113,7 +113,7 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 			int idx = getSelectedIndex();
 			if (idx != -1)
 			{
-				IObjectPanelTab tab = (IObjectPanelTab)_tabs.get(idx);
+				IObjectTab tab = (IObjectTab)_tabs.get(idx);
 				if (tab != null)
 				{
 					tab.select();
@@ -127,7 +127,7 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 		Iterator it = _tabs.iterator();
 		while (it.hasNext())
 		{
-			IObjectPanelTab tab = (IObjectPanelTab)it.next();
+			IObjectTab tab = (IObjectTab)it.next();
 			tab.setDatabaseObjectInfo(dboInfo);
 		}
 	}
@@ -140,7 +140,8 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 	private void propertiesHaveChanged(String propName)
 	{
 		if (propName == null
-			|| propName.equals(SessionProperties.IPropertyNames.META_DATA_OUTPUT_CLASS_NAME))
+			|| propName.equals(SessionProperties.IPropertyNames.META_DATA_OUTPUT_CLASS_NAME)
+			|| propName.equals(SessionProperties.IPropertyNames.SQL_RESULTS_OUTPUT_CLASS_NAME))
 		{
 			rebuild();
 		}
@@ -160,7 +161,7 @@ public class ObjectTreeTabbedPane extends SquirrelTabbedPane
 		Iterator it = oldTabs.iterator();
 		while (it.hasNext())
 		{
-			final IObjectPanelTab tab = (IObjectPanelTab)it.next();
+			final IObjectTab tab = (IObjectTab)it.next();
 			tab.rebuild();
 			addObjectPanelTab(tab);
 		}

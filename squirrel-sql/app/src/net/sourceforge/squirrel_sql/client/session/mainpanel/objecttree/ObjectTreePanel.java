@@ -38,9 +38,12 @@ import javax.swing.tree.TreePath;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.ConnectionStatusTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.DataTypesTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.KeywordsTab;
@@ -50,19 +53,18 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.dat
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.SystemFunctionsTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.TableTypesTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.TimeDateFunctionsTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.IObjectPanelTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.procedurepanel.ProcedureColumnsTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.ColumnPriviligesTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.ColumnsTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.ContentsTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.ExportedKeysTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.ImportedKeysTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.IndexesTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.PrimaryKeyTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.RowCountTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.RowIDTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.TablePriviligesTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.VersionColumnsTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.procedure.ProcedureColumnsTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ColumnPriviligesTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ColumnsTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ContentsTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ExportedKeysTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ImportedKeysTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.IndexesTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.PrimaryKeyTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.RowCountTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.RowIDTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.TablePriviligesTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.VersionColumnsTab;
 /**
  * This is the panel for the Object Tree tab.
  *
@@ -70,6 +72,10 @@ import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.Versio
  */
 public class ObjectTreePanel extends JPanel
 {
+	/** Logger for this class. */
+	private static final ILogger s_log =
+		LoggerController.createLogger(ObjectTreePanel.class);
+
 	/** Current session. */
 	private ISession _session;
 
@@ -192,7 +198,7 @@ public class ObjectTreePanel extends JPanel
 	 * 			Thrown when a <TT>null</TT> <TT>DatabaseObjectType</TT> or
 	 * 			<TT>IObjectPanelTab</TT> passed.
 	 */
-	public void addDetailTab(DatabaseObjectType dboType, IObjectPanelTab tab)
+	public void addDetailTab(DatabaseObjectType dboType, IObjectTab tab)
 	{
 		if (dboType == null)
 		{
