@@ -28,6 +28,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.*;
 /**
  * @author gwg
  *
@@ -94,105 +96,9 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		TableColumnModel columnModel = table.getColumnModel();
 		
 		for (int i=0; i < _colDefs.length; i++) {
-			switch (_colDefs[i].getSqlType())
-			{
-				case Types.NULL:	// should never happen
-					//??
-					break;
-
-				// TODO: When JDK1.4 is the earliest JDK supported
-				// by Squirrel then remove the hardcoding of the
-				// boolean data type.
-				case Types.BIT:
-				case 16:
-//				case Types.BOOLEAN:
-					//??
-					break;
-
-				case Types.TIME :
-					//??
-					break;
-
-				case Types.DATE :
-					//??
-					break;
-
-				case Types.TIMESTAMP :
-					//??
-					break;
-
-				case Types.BIGINT :
-					//??
-					break;
-
-				case Types.DOUBLE:
-				case Types.FLOAT:
-				case Types.REAL:
-					//??
-					break;
-
-				case Types.DECIMAL:
-				case Types.NUMERIC:
-					//??
-					break;
-
-				case Types.INTEGER:
-				case Types.SMALLINT:
-				case Types.TINYINT:
-					// set up for integers
-					columnModel.getColumn(i).setCellEditor(
-						DataTypeInteger.getInCellEditor( (JTable)getComponent(),
-							_colDefs[i].isNullable(),
-							_colDefs[i].isSigned(),
-							_colDefs[i].getScale()));
-					break;
-
-
-				// TODO: Hard coded -. JDBC/ODBC bridge JDK1.4
-				// brings back -9 for nvarchar columns in
-				// MS SQL Server tables.
-				// -8 is ROWID in Oracle.
-				case Types.CHAR:
-				case Types.VARCHAR:
-				case Types.LONGVARCHAR:
-				case -9:
-				case -8:
-					// set up for string types
-					columnModel.getColumn(i).setCellEditor(
-						DataTypeString.getInCellEditor( (JTable)getComponent(),
-							_colDefs[i].isNullable(),
-							_colDefs[i].getColumnSize()));
-					break;
-
-				case Types.BINARY:
-					//??
-					break;
-
-				case Types.VARBINARY:
-					//??
-					break;
-
-				case Types.LONGVARBINARY:
-					//??
-					break;
-
-				case Types.BLOB:
-					//??
-					break;
-
-				case Types.CLOB:
-					//??
-					break;
-
-				case Types.OTHER:
-					//??
-					break;
-
-				default:	// should never happen
-					//??
-					break;
-			}
-
+			// use factory to get the appropriate editor
+			columnModel.getColumn(i).setCellEditor(
+				CellComponentFactory.getInCellEditor(table, _colDefs[i]));
 		}
 	}
 	
@@ -236,11 +142,9 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		// operations here in that it puts up a message to the user if there is a problem,
 		// so that test-and-display mechanism is the same throughout this function.
 		StringBuffer messageBuffer = new StringBuffer();
-		JTable thisTable = (JTable)getComponent();
-		IDataTypeComponent editorComponent =
-			(IDataTypeComponent)(thisTable.getCellEditor(row,col).getTableCellEditorComponent(
-				thisTable, newValueString, true, row,col));
-		Object newValue = editorComponent.validateAndConvert((String)newValueString, messageBuffer);
+
+		Object newValue = CellComponentFactory.validateAndConvert(
+			_colDefs[col], (String)newValueString, messageBuffer);
 		if (messageBuffer.length() > 0) {
 			// there was a problem in the validate/conversion
 			// tell user and do not update data
