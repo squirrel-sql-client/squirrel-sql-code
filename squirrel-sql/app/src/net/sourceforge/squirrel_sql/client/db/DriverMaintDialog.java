@@ -46,7 +46,7 @@ import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.OkClosePanel;
 import net.sourceforge.squirrel_sql.fw.gui.OkClosePanelEvent;
-import net.sourceforge.squirrel_sql.fw.gui.OkClosePanelListener;
+import net.sourceforge.squirrel_sql.fw.gui.IOkClosePanelListener;
 import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
@@ -226,7 +226,7 @@ public class DriverMaintDialog extends JDialog {
 		setResizable(false);
 	}
 
-	private final class MyOkCancelPanelListener implements OkClosePanelListener {
+	private final class MyOkCancelPanelListener implements IOkClosePanelListener {
 		public void okPressed(OkClosePanelEvent evt) {
 			performOk();
 		}

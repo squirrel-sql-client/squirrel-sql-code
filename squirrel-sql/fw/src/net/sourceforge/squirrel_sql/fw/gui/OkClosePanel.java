@@ -28,6 +28,7 @@ import javax.swing.event.EventListenerList;
 public class OkClosePanel extends JPanel {
 	private boolean _executingMode;
 
+	/** Listeners for this object. */
 	private EventListenerList _listenerList = new EventListenerList();
 
 	/**
@@ -75,11 +76,11 @@ public class OkClosePanel extends JPanel {
 	/**
 	 * Adds a listener for actions in this panel.
 	 *
-	 * @param	lis a OkClosePanelListener that will be notified when
-	 *			actions are performed in this panel.
+	 * @param	lis		<TT>OkClosePanelListener</TT> that will be notified when
+	 *					actions are performed in this panel.
 	 */
-	public synchronized void addListener(OkClosePanelListener lis) {
-		_listenerList.add(OkClosePanelListener.class, lis);
+	public synchronized void addListener(IOkClosePanelListener lis) {
+		_listenerList.add(IOkClosePanelListener.class, lis);
 	}
 
 	/**
@@ -108,12 +109,12 @@ public class OkClosePanel extends JPanel {
 		// those that are interested in this event.
 		OkClosePanelEvent evt = null;
 		for (int i = listeners.length - 2; i >= 0; i-=2 ) {
-			if (listeners[i] == OkClosePanelListener.class) {
+			if (listeners[i] == IOkClosePanelListener.class) {
 				// Lazily create the event:
 				if (evt == null) {
 					evt = new OkClosePanelEvent(this);
 				}
-				OkClosePanelListener lis = (OkClosePanelListener)listeners[i + 1];
+				IOkClosePanelListener lis = (IOkClosePanelListener)listeners[i + 1];
 				if (btn == _okBtn) {
 					lis.okPressed(evt);
 				} else if (_executingMode) {

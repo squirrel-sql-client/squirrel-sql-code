@@ -24,7 +24,7 @@ import java.util.EventListener;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public interface OkClosePanelListener extends EventListener {
+public interface IOkClosePanelListener extends EventListener {
 	/**
 	 * The OK button was pressed.
 	 * 
