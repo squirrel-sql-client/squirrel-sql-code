@@ -114,10 +114,9 @@ public class MainFrame extends BaseMDIParentFrame {
 		JInternalFrame[] frames = GUIUtils.getOpenNonToolWindows(getDesktopPane().getAllFrames());
 		_app.getActionCollection().internalFrameOpenedOrClosed(frames.length);
 
-		getSessionMenu().setEnabled(true);
-
 		// Size non-tool child window.
 		if (!GUIUtils.isToolWindow(child)) {
+			getSessionMenu().setEnabled(true);
 			Dimension cs = child.getParent().getSize();
 			// Cast to int required as Dimension::setSize(double,double)
 			// doesn't appear to do anything in JDK1.2.2.
