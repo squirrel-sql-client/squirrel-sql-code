@@ -26,6 +26,7 @@ public class CodeCompletor
 	private Rectangle _currCaretBounds;
 	private static final int MAX_ITEMS_IN_COMPLETION_LIST = 10;
 	private JScrollPane _completionListScrollPane;
+	private Timer _focusTimer;
 
 
 	public CodeCompletor(JTextComponent txtComp, CodeCompletorModel model)
@@ -59,8 +60,10 @@ public class CodeCompletor
 				public void keyPressed(KeyEvent e){onKeyPressedOnList(e);}
 			};
 
-		_listFocusListener = new FocusAdapter()
+		_listFocusListener = new FocusListener()
 		{
+			public void focusGained(FocusEvent e){onFocusGained(e);}
+
 			public void focusLost(FocusEvent e){onFocusLosOnList(e);}
 		};
 
@@ -70,14 +73,34 @@ public class CodeCompletor
 		_completionPanel.setVisible(false);
 
 		_popupMan = new PopupManager(txtComp);
+
+		ActionListener timerListener = new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				closePopup();
+			}
+		};
+
+		_focusTimer = new Timer(300, timerListener);
+		_focusTimer.setRepeats(false);
+
+	}
+
+	private void onFocusGained(FocusEvent e)
+	{
+		if(false == e.isTemporary())
+		{
+			_focusTimer.stop();
+		}
 	}
 
 	private void onFocusLosOnList(FocusEvent e)
 	{
-//		if(false == e.isTemporary())
-//		{
-//			closePopup();
-//		}
+		if(false == e.isTemporary())
+		{
+			_focusTimer.start();
+		}
 	}
 
 	private void onKeyPressedOnList(KeyEvent e)
@@ -244,7 +267,15 @@ public class CodeCompletor
 			_currBegining = beginning;
 
 			int caretPos = _txtComp.getCaret().getDot();
-			_currCaretBounds = _txtComp.modelToView(caretPos - _currBegining.length());
+
+			if(-1 < _currBegining.indexOf('.'))
+			{
+				_currCaretBounds = _txtComp.modelToView(caretPos - (_currBegining.length() - _currBegining.lastIndexOf('.') - 1));
+			}
+			else
+			{
+				_currCaretBounds = _txtComp.modelToView(caretPos - _currBegining.length());
+			}
 
 
 			_completionList.setFont(_txtComp.getFont());
@@ -298,7 +329,7 @@ public class CodeCompletor
 	{
 		FontMetrics fm = _txtComp.getGraphics().getFontMetrics(_txtComp.getFont());
 		int width = getMaxSize(candidates, fm) + 30;
-		int height = (int)(Math.min(candidates.length,  MAX_ITEMS_IN_COMPLETION_LIST) * (fm.getHeight() + 2.3) + 1);
+		int height = (int)(Math.min(candidates.length,  MAX_ITEMS_IN_COMPLETION_LIST) * (fm.getHeight() + 2.3) + 3);
 		return new Rectangle(width, height);
 	}
 
