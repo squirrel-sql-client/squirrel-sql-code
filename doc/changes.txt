@@ -24,6 +24,8 @@ Enhancements
 - You can Import/Export cell data to/from files and operate on that data with
   external commands (e.g. VI, etc).
   (Glenn Griffin)
+- BLOBs and CLOBs are now fully editable, as are all of the most common SQL
+  types.
 
 Bug Fixes
 ---------
