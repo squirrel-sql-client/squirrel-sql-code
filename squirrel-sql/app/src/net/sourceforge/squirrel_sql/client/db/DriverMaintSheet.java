@@ -448,17 +448,21 @@ public class DriverMaintSheet extends BaseSheet
 		JPanel pnl = new JPanel(new GridBagLayout());
 		final GridBagConstraints gbc = new GridBagConstraints();
 		gbc.insets = new Insets(4, 4, 4, 4);
-		gbc.anchor = gbc.NORTH;
+		gbc.anchor = gbc.WEST;
+		gbc.weighty = 1.0;
 
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.gridheight = gbc.REMAINDER;
 		gbc.fill = gbc.BOTH;
+		gbc.weightx = 1.0;
 		pnl.add(new JScrollPane(_javaClassPathList), gbc);
 
 		++gbc.gridx;
 		gbc.gridheight = 1;
 		gbc.fill = gbc.HORIZONTAL;
+		gbc.anchor = gbc.NORTH;
+		gbc.weightx = 0.0;
 		pnl.add(_javaClasspathListDriversBtn, gbc);
 
 		return pnl;
@@ -533,7 +537,7 @@ public class DriverMaintSheet extends BaseSheet
 		final GridBagConstraints gbc = new GridBagConstraints();
 		gbc.anchor = gbc.WEST;
 		gbc.weightx = 1.0;
-		gbc.weighty = 0.5;
+		gbc.weighty = 1.0;
 		gbc.insets = new Insets(4, 4, 4, 4);
 
 		gbc.gridheight = gbc.REMAINDER;
