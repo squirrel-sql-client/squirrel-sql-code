@@ -27,7 +27,7 @@ import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
  * This represents a Database alias which is a description of the means
  * required to connect to a JDBC complient database.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public interface ISQLAlias extends IHasIdentifier, IValidatable
 {
@@ -82,16 +82,16 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable
 
 	/**
 	 * Retrieve the saved password.
-	 * 
+	 *
 	 * @return	The saved password.
 	 */
 	String getPassword();
 
 	/**
 	 * Set the password for this alias.
-	 * 
+	 *
 	 * @param	password	The new password.
-	 * 
+	 *
 	 * @throws	ValidationException
 	 * 			TODO: What conditions?
 	 */
@@ -99,7 +99,7 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable
 
 	/**
 	 * Should this alias be logged on automatically.
-	 * 
+	 *
 	 * @return	<TT>true</TT> if this alias should be logged on automatically
 	 * 			else <TT>false</TT>.
 	 */
@@ -107,7 +107,7 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable
 
 	/**
 	 * Set whether this alias should be logged on automatically.
-	 * 
+	 *
 	 * @param	value	<TT>true</TT> if alias should be autologged on
 	 * 					else <TT>false</TT>.
 	 */
@@ -115,7 +115,7 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable
 
 	/**
 	 * Should this alias be connected when the application is started up.
-	 * 
+	 *
 	 * @return	<TT>true</TT> if this alias should be connected when the
 	 *			application is started up.
 	 */
@@ -123,7 +123,7 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable
 
 	/**
 	 * Set whether alias should be connected when the application is started up.
-	 * 
+	 *
 	 * @param	value	<TT>true</TT> if alias should be connected when the
 	 *					application is started up.
 	 */

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.util.beanwrapper;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -18,16 +18,17 @@ package net.sourceforge.squirrel_sql.fw.util.beanwrapper;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Dimension;
-
 /**
  * This class is a wrapper around a <TT>java.awt.Dimension</TT> that turns
  * it into a JavaBean.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class DimensionWrapper {
+public class DimensionWrapper
+{
 	/** Property names for this bean. */
-	public interface IPropertyNames {
+	public interface IPropertyNames
+	{
 		/** Width of <TT>Dimension</TT>. */
 		String WIDTH = "width";
 
@@ -44,7 +45,8 @@ public class DimensionWrapper {
 	/**
 	 * Default ctor.
 	 */
-	public DimensionWrapper() {
+	public DimensionWrapper()
+	{
 		this(null);
 	}
 
@@ -52,36 +54,44 @@ public class DimensionWrapper {
 	 * Ctor specifying the <TT>Dimension</TT> that this object will be
 	 * wrapped around.
 	 *
-	 * @param   dm  The <TT>Dimension</TT> that this object will be
-	 *			  wrapped around.
+	 * @param	dm	The <TT>Dimension</TT> that this object will be
+	 *				wrapped around.
 	 */
-	public DimensionWrapper(Dimension dm) {
+	public DimensionWrapper(Dimension dm)
+	{
 		super();
 		setFrom(dm);
 	}
 
-	public int getWidth() {
+	public int getWidth()
+	{
 		return _width;
 	}
 
-	public void setWidth(int value) {
+	public void setWidth(int value)
+	{
 		_width = value;
 	}
 
-	public int getHeight() {
+	public int getHeight()
+	{
 		return _height;
 	}
 
-	public void setHeight(int value) {
+	public void setHeight(int value)
+	{
 		_height = value;
 	}
 
-	public Dimension createDimension() {
+	public Dimension createDimension()
+	{
 		return new Dimension(_width, _height);
 	}
 
-	public void setFrom(Dimension dm) {
-		if (dm != null) {
+	public void setFrom(Dimension dm)
+	{
+		if (dm != null)
+		{
 			_width = (int)dm.getWidth();
 			_height = (int)dm.getHeight();
 		}

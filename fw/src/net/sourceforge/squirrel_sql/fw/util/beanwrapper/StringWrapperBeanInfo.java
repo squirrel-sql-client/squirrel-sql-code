@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.util.beanwrapper;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -20,27 +20,33 @@ package net.sourceforge.squirrel_sql.fw.util.beanwrapper;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.beans.SimpleBeanInfo;
-
 /**
  * This is the <CODE>BeanInfo</CODE> class for <CODE>StringWrapper</CODE>.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class StringWrapperBeanInfo extends SimpleBeanInfo {
+public class StringWrapperBeanInfo extends SimpleBeanInfo
+{
 
 	private static PropertyDescriptor[] s_descriptors;
 
-	public StringWrapperBeanInfo() throws IntrospectionException {
+	public StringWrapperBeanInfo() throws IntrospectionException
+	{
 		super();
-		if (s_descriptors == null) {
+		if (s_descriptors == null)
+		{
 			s_descriptors = new PropertyDescriptor[1];
-			s_descriptors[0] = new PropertyDescriptor(
-					StringWrapper.IPropertyNames.STRINGS, StringWrapper.class,
-					"getString", "setString");
+			s_descriptors[0] =
+				new PropertyDescriptor(
+					StringWrapper.IPropertyNames.STRINGS,
+					StringWrapper.class,
+					"getString",
+					"setString");
 		}
 	}
 
-	public PropertyDescriptor[] getPropertyDescriptors() {
+	public PropertyDescriptor[] getPropertyDescriptors()
+	{
 		return s_descriptors;
 	}
 }

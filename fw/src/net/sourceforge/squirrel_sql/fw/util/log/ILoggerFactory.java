@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.util.log;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,8 +17,8 @@ package net.sourceforge.squirrel_sql.fw.util.log;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-public interface ILoggerFactory {
+public interface ILoggerFactory
+{
 	ILogger createLogger(Class clazz);
 	void shutdown();
 }
-

@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
@@ -39,6 +41,10 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class SQLDriverManager
 {
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(SQLDriverManager.class);
+
 	private static final ILogger s_log =
 		LoggerController.createLogger(SQLDriverManager.class);
 
@@ -118,7 +124,7 @@ public class SQLDriverManager
 		Connection jdbcConn = driver.connect(alias.getUrl(), myProps);
 		if (jdbcConn == null)
 		{
-			throw new SQLException("Unable to create connection. Check your URL.");
+			throw new SQLException(s_stringMgr.getString("SQLDriverManager.error.noconnection"));
 		}
 		return new SQLConnection(jdbcConn, props);
 	}
@@ -212,8 +218,7 @@ public class SQLDriverManager
 				}
 				else
 				{
-					s_log.error(
-						"SqlDriverManager.MyDriverListener is listening to a non-ISQLDriver");
+					s_log.error("SqlDriverManager.MyDriverListener is listening to a non-ISQLDriver");
 				}
 			}
 		}

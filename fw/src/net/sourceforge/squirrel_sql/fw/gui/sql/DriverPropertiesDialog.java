@@ -29,19 +29,19 @@ import javax.swing.JPanel;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * This dialog allows the user to review and maintain
  * the properties for a JDBC driver.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class DriverPropertiesDialog extends JDialog
 {
-	private interface i18n
-	{
-		String CLOSE = "Close";
-		String OK = "OK";
-	}
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(DriverPropertiesDialog.class);
 
 	private DriverPropertiesPanel _propsPnl;
 
@@ -68,7 +68,7 @@ public class DriverPropertiesDialog extends JDialog
 
 	public DriverPropertiesDialog(Dialog owner, SQLDriverPropertyCollection props)
 	{
-		super(owner, "Driver Properties");
+		super(owner, s_stringMgr.getString("DriverPropertiesDialog.driverproperties"));
 		if (props == null)
 		{
 			throw new IllegalArgumentException("SQLDriverPropertyCollection == null");
@@ -126,7 +126,7 @@ public class DriverPropertiesDialog extends JDialog
 	{
 		final JPanel pnl = new JPanel();
 
-		JButton okBtn = new JButton(i18n.OK);
+		JButton okBtn = new JButton(s_stringMgr.getString("DriverPropertiesDialog.ok"));
 		okBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
@@ -135,7 +135,7 @@ public class DriverPropertiesDialog extends JDialog
 			}
 		});
 
-		final JButton closeBtn = new JButton(i18n.CLOSE);
+		final JButton closeBtn = new JButton(s_stringMgr.getString("DriverPropertiesDialog.close"));
 		closeBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
@@ -152,4 +152,3 @@ public class DriverPropertiesDialog extends JDialog
 		return pnl;
 	}
 }
-

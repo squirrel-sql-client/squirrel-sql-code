@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.sql;
 /*
- * Copyright (C) 2001-2002 Johan Compagner
+ * Copyright (C) 2001-2003 Johan Compagner
  * jcompagner@j-com.nl
  *
  * This library is free software; you can redistribute it and/or
@@ -21,8 +21,6 @@ import java.util.StringTokenizer;
 
 public class QueryTokenizer
 {
-//	private final char _querySepChar;
-
 	/** String used to separate SQL statemets in the query string. */
 	private final String _querySep;
 
@@ -45,11 +43,9 @@ public class QueryTokenizer
 	 * @param	solComment	The string that indicates that the current line
 	 * 						is a comment.
 	 */
-//	public QueryTokenizer(String sql, char querySepChar, String solComment)
 	public QueryTokenizer(String sql, String querySep, String solComment)
 	{
 		super();
-//		_querySepChar = querySepChar;
 		_querySep = querySep;
 
 		if (solComment != null && solComment.trim().length() > 0)
@@ -95,49 +91,37 @@ public class QueryTokenizer
 		while (iQuoteCount % 2 != 0)
 		{
 			iQuoteCount = 0;
-//			iIndex1 = _sQuerys.indexOf(_querySepChar,iIndex1+1);
 
-//			if (1 == _querySep.length())
-//			{
-//				iIndex1 = _sQuerys.indexOf(_querySep, iIndex1 + 1);
-//			}
-//			else
-//			{
-				// A multiple character querySep is expected to be surounded by
-				// white spaces. A single character querySep is expected to be
-				// surrounded by whitespace unless it is at the end of a line.
-				iIndex1 = _sQuerys.indexOf(_querySep, iIndex1 + _querySep.length());
+			// A multiple character querySep is expected to be surounded by
+			// white spaces. A single character querySep is expected to be
+			// surrounded by whitespace unless it is at the end of a line.
+			iIndex1 = _sQuerys.indexOf(_querySep, iIndex1 + _querySep.length());
 
-				while (-1 != iIndex1)
+			while (-1 != iIndex1)
+			{
+				boolean isSep = !((0 != iIndex1 && !Character.isWhitespace(_sQuerys.charAt(iIndex1 - 1)))
+					|| (_sQuerys.length() - _querySep.length() != iIndex1
+						&& !Character.isWhitespace(_sQuerys.charAt(iIndex1 + _querySep.length()))));
+				if (!isSep && _querySep.length() == 1)
 				{
-					boolean isSep = !((0 != iIndex1 && !Character.isWhitespace(_sQuerys.charAt(iIndex1 - 1)))
-						|| (_sQuerys.length() - _querySep.length() != iIndex1
-							&& !Character.isWhitespace(_sQuerys.charAt(iIndex1 + _querySep.length()))));
-					if (!isSep && _querySep.length() == 1)
+					if (iIndex1 == (_sQuerys.length() - 1)
+							|| _sQuerys.charAt(iIndex1 + 1) == '\n'
+							|| _sQuerys.charAt(iIndex1 + 1) == '\r')
 					{
-						if (iIndex1 == (_sQuerys.length() - 1)
-								|| _sQuerys.charAt(iIndex1 + 1) == '\n'
-								|| _sQuerys.charAt(iIndex1 + 1) == '\r')
-						{
-							isSep = true;
-						}
-					}
-
-//					if ((0 != iIndex1
-//						&& !Character.isWhitespace(_sQuerys.charAt(iIndex1 - 1)))
-//						|| (_sQuerys.length() - _querySep.length() != iIndex1
-//							&& !Character.isWhitespace(_sQuerys.charAt(iIndex1 + _querySep.length()))))
-					if (!isSep)
-					{
-						// this querySep is not surounded by whitespace, so look for next querySep
-						iIndex1 = _sQuerys.indexOf(_querySep, iIndex1 + _querySep.length());
-					}
-					else
-					{
-						break;
+						isSep = true;
 					}
 				}
-//			}
+
+				if (!isSep)
+				{
+					// this querySep is not surounded by whitespace, so look for next querySep
+					iIndex1 = _sQuerys.indexOf(_querySep, iIndex1 + _querySep.length());
+				}
+				else
+				{
+					break;
+				}
+			}
 
 			if (iIndex1 != -1)
 			{
@@ -163,7 +147,6 @@ public class QueryTokenizer
 			}
 		}
 		String sNextQuery = _sQuerys.substring(0, iIndex1);
-//		_sQuerys = _sQuerys.substring(iIndex1+1).trim();
 		_sQuerys = _sQuerys.substring(iIndex1 + _querySep.length()).trim();
 		if (_solComment != null && sNextQuery.startsWith(_solComment))
 		{

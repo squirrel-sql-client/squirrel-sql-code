@@ -36,21 +36,20 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 public class ErrorDialog extends JDialog
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface ErrorDialog_i18n
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ErrorDialog.class);
+
+	private interface IStringKeys
 	{
-		String ERROR = "Error";
-		String CLOSE = "Close";
-		String MORE = "More";
-		String STACK_TRACE = "Stack Trace";
-		String UNKNOWN_ERROR = "Unknown error";
+		String ERROR = "ErrorDialog.error";
+		String UNKNOWN_ERROR = "ErrorDialog.unknownerror";
 	}
 
 	/** Preferred width of the message area. TODO: remove magic number*/
@@ -87,31 +86,31 @@ public class ErrorDialog extends JDialog
 
 	public ErrorDialog(Frame owner, Throwable th)
 	{
-		super(owner, ErrorDialog_i18n.ERROR, true);
+		super(owner, s_stringMgr.getString(IStringKeys.ERROR), true);
 		createUserInterface(null, th);
 	}
 
 	public ErrorDialog(Dialog owner, Throwable th)
 	{
-		super(owner, ErrorDialog_i18n.ERROR, true);
+		super(owner, s_stringMgr.getString(IStringKeys.ERROR), true);
 		createUserInterface(null, th);
 	}
 
 	public ErrorDialog(Frame owner, String msg)
 	{
-		super(owner, ErrorDialog_i18n.ERROR, true);
+		super(owner, s_stringMgr.getString(IStringKeys.ERROR), true);
 		createUserInterface(msg, null);
 	}
 
 	public ErrorDialog(Frame owner, String msg, Throwable th)
 	{
-		super(owner, ErrorDialog_i18n.ERROR, true);
+		super(owner, s_stringMgr.getString(IStringKeys.ERROR), true);
 		createUserInterface(msg, th);
 	}
 
 	public ErrorDialog(Dialog owner, String msg)
 	{
-		super(owner, ErrorDialog_i18n.ERROR, true);
+		super(owner, s_stringMgr.getString(IStringKeys.ERROR), true);
 		createUserInterface(msg, null);
 	}
 
@@ -137,7 +136,7 @@ public class ErrorDialog extends JDialog
 
 	/**
 	 * Create user interface.
-	 * 
+	 *
 	 * @param	msg		Message to be displayed. Can be null.
 	 * @param	th		Exception to be shown. Can be null.
 	 */
@@ -156,7 +155,7 @@ public class ErrorDialog extends JDialog
 		}
 		if (msg == null || msg.length() == 0)
 		{
-			msg = ErrorDialog_i18n.UNKNOWN_ERROR;
+			msg = s_stringMgr.getString(IStringKeys.UNKNOWN_ERROR);
 		}
 
 		_stackTraceScroller = new JScrollPane(new StackTracePanel(th));
@@ -200,10 +199,10 @@ public class ErrorDialog extends JDialog
 
 	/**
 	 * Create the message panel.
-	 * 
+	 *
 	 * @param	msg		The message to be displayed.
 	 * @param	th		The exception to be displayed.
-	 * 
+	 *
 	 * @return	The newly created message panel.
 	 */
 	private JComponent createMessagePanel(String msg, Throwable th)
@@ -221,7 +220,7 @@ public class ErrorDialog extends JDialog
 		}
 		if (msg == null || msg.length() == 0)
 		{
-			msg = ErrorDialog_i18n.UNKNOWN_ERROR;
+			msg = s_stringMgr.getString(IStringKeys.UNKNOWN_ERROR);
 		}
 		JScrollPane sp = new JScrollPane(new MessagePanel(msg));
 		Dimension dim = sp.getPreferredSize();
@@ -233,9 +232,9 @@ public class ErrorDialog extends JDialog
 
 	/**
 	 * Create the buttons panel.
-	 * 
+	 *
 	 * @param	th		The exception.
-	 * 
+	 *
 	 * @return	The newly created buttons panel.
 	 */
 	private JPanel createButtonsPanel(Throwable th)
@@ -243,17 +242,17 @@ public class ErrorDialog extends JDialog
 		JPanel btnsPnl = new JPanel();
 		if (th != null)
 		{
-			_stackTraceBtn = new JButton(ErrorDialog_i18n.STACK_TRACE);
+			_stackTraceBtn = new JButton(s_stringMgr.getString("ErrorDialog.stacktrace"));
 			_stackTraceBtn.addActionListener(_stackTraceHandler);
 			btnsPnl.add(_stackTraceBtn);
 			if (_moreErrorsScroller != null)
 			{
-				_moreBtn = new JButton(ErrorDialog_i18n.MORE);
+				_moreBtn = new JButton(s_stringMgr.getString("ErrorDialog.more"));
 				_moreBtn.addActionListener(_moreHandler);
 				btnsPnl.add(_moreBtn);
 			}
 		}
-		_closeBtn = new JButton(ErrorDialog_i18n.CLOSE);
+		_closeBtn = new JButton(s_stringMgr.getString("ErrorDialog.close"));
 		_closeBtn.addActionListener(_closeHandler);
 		btnsPnl.add(_closeBtn);
 

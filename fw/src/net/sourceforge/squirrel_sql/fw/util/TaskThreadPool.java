@@ -26,9 +26,11 @@ import java.util.List;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-public class TaskThreadPool {
+public class TaskThreadPool
+{
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(TaskThreadPool.class);
+	private static ILogger s_log =
+		LoggerController.createLogger(TaskThreadPool.class);
 
 	// Count of available or free threads.
 	private int _iFree;
@@ -43,7 +45,8 @@ public class TaskThreadPool {
 	/**
 	 * Default ctor.
 	 */
-	public TaskThreadPool() {
+	public TaskThreadPool()
+	{
 		this(0);
 	}
 
@@ -55,9 +58,11 @@ public class TaskThreadPool {
 	 * @throws	IllegalArgumentException
 	 * 			If maxThreads < 0
 	 */
-	public TaskThreadPool(int maxThreads) throws IllegalArgumentException {
+	public TaskThreadPool(int maxThreads) throws IllegalArgumentException
+	{
 		super();
-		if (maxThreads < 0) {
+		if (maxThreads < 0)
+		{
 			throw new IllegalArgumentException("Negative maxThreads passed");
 		}
 	}
@@ -68,49 +73,61 @@ public class TaskThreadPool {
 	 * but the maximum number of threads hasn't been reached then
 	 * create a new thread.
 	 */
-	public synchronized void addTask(Runnable task) throws IllegalArgumentException {
-		if (task == null) {
+	public synchronized void addTask(Runnable task)
+		throws IllegalArgumentException
+	{
+		if (task == null)
+		{
 			throw new IllegalArgumentException("Null Runnable passed");
 		}
 		_tasks.add(task);
 		// Should there me a Max Number of threads?
-		if (_iFree == 0) {
+		if (_iFree == 0)
+		{
 			Thread th = new Thread(new TaskExecuter(_callback));
-			th.setPriority(Thread.MIN_PRIORITY);//??
+			th.setPriority(Thread.MIN_PRIORITY); //??
 			th.setDaemon(true);
 			th.start();
 			++_threadCount;
 			s_log.debug("Creating thread nbr: " + _threadCount);
-		} else {
-			synchronized (_callback) {
+		}
+		else
+		{
+			synchronized (_callback)
+			{
 				s_log.debug("Reusing existing thread");
 				_callback.notify();
 			}
 		}
 	}
 
-	private final class MyCallback implements ITaskThreadPoolCallback {
-		public void incrementFreeThreadCount() {
+	private final class MyCallback implements ITaskThreadPoolCallback
+	{
+		public void incrementFreeThreadCount()
+		{
 			++_iFree;
 			s_log.debug("Returning thread. " + _iFree + " threads available");
 		}
 
-		public void decrementFreeThreadCount() {
+		public void decrementFreeThreadCount()
+		{
 			--_iFree;
 			s_log.debug("Using a thread. " + _iFree + " threads available");
 		}
 
-		public synchronized Runnable nextTask() {
-			if (_tasks.size() > 0) {
+		public synchronized Runnable nextTask()
+		{
+			if (_tasks.size() > 0)
+			{
 				return (Runnable)_tasks.remove(0);
 			}
 			return null;
 		}
 
-		//??Show to user
-		public void showMessage(Throwable th) {
+		// TODO: Show to user
+		public void showMessage(Throwable th)
+		{
 			s_log.error("Error", th);
 		}
 	}
 }
-

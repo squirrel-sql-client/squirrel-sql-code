@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.id;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,36 +17,44 @@ package net.sourceforge.squirrel_sql.fw.id;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-public class IntegerIdentifier implements IIdentifier {
-	public interface IPropertyNames {
+public class IntegerIdentifier implements IIdentifier
+{
+	public interface IPropertyNames
+	{
 		String STRING = "string";
 	}
 
 	private int _id;
 
-	public IntegerIdentifier(int value) {
+	public IntegerIdentifier(int value)
+	{
 		super();
 		_id = value;
 	}
 
-	public boolean equals(Object rhs) {
+	public boolean equals(Object rhs)
+	{
 		boolean rc = false;
-		if (rhs != null && rhs.getClass().equals(getClass())) {
+		if (rhs != null && rhs.getClass().equals(getClass()))
+		{
 			rc = ((IntegerIdentifier)rhs).toString().equals(toString());
 		}
 		return rc;
 	}
 
-	public synchronized int hashCode() {
+	public synchronized int hashCode()
+	{
 		return _id;
 	}
 
-	public String toString() {
+	public String toString()
+	{
 		return "" + _id;
 	}
 
 	// Only for restoring from XML etc.
-	public void setString(String value) {
+	public void setString(String value)
+	{
 		_id = Integer.parseInt(value);
 	}
 }

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.sql;
 /*
- * Copyright (C) 2001 Johan Compagner
+ * Copyright (C) 2001-2003 Johan Compagner
  * jcompagner@j-com.nl
  *
  * This library is free software; you can redistribute it and/or
@@ -18,14 +18,15 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.util.Comparator;
-
 /**
  * This class compares does a case-insensitive comparison of two
  * <TT>IDatabaseObjectInfo</TT> objects using their simple names.
  */
-public class DatabaseObjectSimpleNameInfoComparator implements Comparator {
-	public int compare(Object o1, Object o2) {
-		return ((IDatabaseObjectInfo) o1).getSimpleName().compareToIgnoreCase(
-			((IDatabaseObjectInfo) o2).getSimpleName());
+public class DatabaseObjectSimpleNameInfoComparator implements Comparator
+{
+	public int compare(Object o1, Object o2)
+	{
+		return ((IDatabaseObjectInfo)o1).getSimpleName().compareToIgnoreCase(
+			((IDatabaseObjectInfo)o2).getSimpleName());
 	}
 }

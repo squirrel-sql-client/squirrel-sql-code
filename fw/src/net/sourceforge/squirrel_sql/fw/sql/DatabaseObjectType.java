@@ -20,6 +20,8 @@ package net.sourceforge.squirrel_sql.fw.sql;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  *
  * Defines the different types of database objects.
@@ -28,56 +30,60 @@ import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
  */
 public class DatabaseObjectType implements IHasIdentifier
 {
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(DatabaseObjectType.class);
+
 	/** Factory to generate unique IDs for these objects. */
 	private final static IntegerIdentifierFactory s_idFactory = new IntegerIdentifierFactory();
 
 	/** Other - general purpose. */
-	public final static DatabaseObjectType OTHER = createNewDatabaseObjectType("Other");
+	public final static DatabaseObjectType OTHER = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.other"));
 
 	/** Catalog. */
-	public final static DatabaseObjectType CATALOG = createNewDatabaseObjectType("Catalog");
+	public final static DatabaseObjectType CATALOG = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.catalog"));
 
 	/** Column. */
-	public final static DatabaseObjectType COLUMN = createNewDatabaseObjectType("Column");
+	public final static DatabaseObjectType COLUMN = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.column"));
 
 	/** Database. */
-	public final static DatabaseObjectType SESSION = createNewDatabaseObjectType("Database");
+	public final static DatabaseObjectType SESSION = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.database"));
 
 	/** Standard datatype. */
-	public final static DatabaseObjectType DATATYPE = createNewDatabaseObjectType("Data Type");
+	public final static DatabaseObjectType DATATYPE = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.datatype"));
 
 	/** Foreign Key relationship. */
-	public final static DatabaseObjectType FOREIGN_KEY = createNewDatabaseObjectType(" Foreign Key");
+	public final static DatabaseObjectType FOREIGN_KEY = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.foreignkey"));
 
 	/** Function. */
-	public final static DatabaseObjectType FUNCTION = createNewDatabaseObjectType("Function");
+	public final static DatabaseObjectType FUNCTION = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.function"));
 
 	/** Index. */
-	public final static DatabaseObjectType INDEX = createNewDatabaseObjectType("Index");
+	public final static DatabaseObjectType INDEX = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.index"));
 
 	/** Stored procedure. */
-	public final static DatabaseObjectType PROCEDURE = createNewDatabaseObjectType("Stored Procedure");
+	public final static DatabaseObjectType PROCEDURE = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.storproc"));
 
 	/** Schema. */
-	public final static DatabaseObjectType SCHEMA = createNewDatabaseObjectType("Schema");
+	public final static DatabaseObjectType SCHEMA = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.schema"));
 
 	/**
 	 * An object that generates uniques IDs for primary keys. E.G. an Oracle
 	 * sequence.
 	 */
-	public final static DatabaseObjectType SEQUENCE = createNewDatabaseObjectType("Sequence");
+	public final static DatabaseObjectType SEQUENCE = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.sequence"));
 
 	/** TABLE. */
-	public final static DatabaseObjectType TABLE = createNewDatabaseObjectType("Table");
+	public final static DatabaseObjectType TABLE = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.table"));
 
 	/** Trigger. */
-	public final static DatabaseObjectType TRIGGER = createNewDatabaseObjectType("Trigger");
+	public final static DatabaseObjectType TRIGGER = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.catalog"));
 
 	/** User defined type. */
-	public final static DatabaseObjectType UDT = createNewDatabaseObjectType("UDT");
+	public final static DatabaseObjectType UDT = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.udt"));
 
 	/** A database user. */
-	public final static DatabaseObjectType USER = createNewDatabaseObjectType("User");
+	public final static DatabaseObjectType USER = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.user"));
 
 	/** Uniquely identifies this Object. */
 	private final IIdentifier _id;
@@ -108,7 +114,7 @@ public class DatabaseObjectType implements IHasIdentifier
 	/**
 	 * Retrieve the descriptive name of this object.
 	 *
-	 * @return	The descriptiev name of this object.
+	 * @return	The descriptive name of this object.
 	 */
 	public String getName()
 	{

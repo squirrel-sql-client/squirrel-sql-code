@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.util.beanwrapper;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,9 +19,10 @@ package net.sourceforge.squirrel_sql.fw.util.beanwrapper;
  */
 import java.awt.Rectangle;
 
-public class RectangleWrapper {
-
-	public interface IPropertyNames {
+public class RectangleWrapper
+{
+	public interface IPropertyNames
+	{
 		String X = "x";
 		String Y = "y";
 		String WIDTH = "width";
@@ -33,53 +34,66 @@ public class RectangleWrapper {
 	private int _width;
 	private int _height;
 
-	public RectangleWrapper() {
+	public RectangleWrapper()
+	{
 		this(null);
 	}
 
-	public RectangleWrapper(Rectangle rc) {
+	public RectangleWrapper(Rectangle rc)
+	{
 		super();
 		setFrom(rc);
 	}
 
-	public int getX() {
+	public int getX()
+	{
 		return _x;
 	}
 
-	public void setX(int value) {
+	public void setX(int value)
+	{
 		_x = value;
 	}
 
-	public int getY() {
+	public int getY()
+	{
 		return _y;
 	}
 
-	public void setY(int value) {
+	public void setY(int value)
+	{
 		_y = value;
 	}
 
-	public int getWidth() {
+	public int getWidth()
+	{
 		return _width;
 	}
 
-	public void setWidth(int value) {
+	public void setWidth(int value)
+	{
 		_width = value;
 	}
 
-	public int getHeight() {
+	public int getHeight()
+	{
 		return _height;
 	}
 
-	public void setHeight(int value) {
+	public void setHeight(int value)
+	{
 		_height = value;
 	}
 
-	public Rectangle createRectangle() {
+	public Rectangle createRectangle()
+	{
 		return new Rectangle(_x, _y, _width, _height);
 	}
 
-	public void setFrom(Rectangle rc) {
-		if (rc != null) {
+	public void setFrom(Rectangle rc)
+	{
+		if (rc != null)
+		{
 			_x = (int)rc.getX();
 			_y = (int)rc.getY();
 			_width = (int)rc.getWidth();

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.util.beanwrapper;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -20,27 +20,39 @@ package net.sourceforge.squirrel_sql.fw.util.beanwrapper;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.beans.SimpleBeanInfo;
-
 /**
  * This is the <CODE>BeanInfo</CODE> class for <CODE>DimensionWrapper</CODE>.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class DimensionWrapperBeanInfo extends SimpleBeanInfo {
+public class DimensionWrapperBeanInfo extends SimpleBeanInfo
+{
 
 	private static PropertyDescriptor[] s_descriptors;
 
-	public DimensionWrapperBeanInfo() throws IntrospectionException {
+	public DimensionWrapperBeanInfo() throws IntrospectionException
+	{
 		super();
-		if (s_descriptors == null) {
+		if (s_descriptors == null)
+		{
 			s_descriptors = new PropertyDescriptor[2];
-			s_descriptors[0] = new PropertyDescriptor(DimensionWrapper.IPropertyNames.WIDTH, DimensionWrapper.class, "getWidth", "setWidth");
-			s_descriptors[1] = new PropertyDescriptor(DimensionWrapper.IPropertyNames.HEIGHT, DimensionWrapper.class, "getHeight", "setHeight");
+			s_descriptors[0] =
+				new PropertyDescriptor(
+					DimensionWrapper.IPropertyNames.WIDTH,
+					DimensionWrapper.class,
+					"getWidth",
+					"setWidth");
+			s_descriptors[1] =
+				new PropertyDescriptor(
+					DimensionWrapper.IPropertyNames.HEIGHT,
+					DimensionWrapper.class,
+					"getHeight",
+					"setHeight");
 		}
 	}
 
-	public PropertyDescriptor[] getPropertyDescriptors() {
+	public PropertyDescriptor[] getPropertyDescriptors()
+	{
 		return s_descriptors;
 	}
 }
-

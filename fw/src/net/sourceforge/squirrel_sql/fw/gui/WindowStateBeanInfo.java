@@ -20,25 +20,32 @@ package net.sourceforge.squirrel_sql.fw.gui;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.beans.SimpleBeanInfo;
-
 /**
  * This is the <CODE>BeanInfo</CODE> class for <CODE>WindowState</CODE>.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class WindowStateBeanInfo extends SimpleBeanInfo {
+public class WindowStateBeanInfo extends SimpleBeanInfo
+{
 	private static PropertyDescriptor[] s_dscrs;
 
-	public WindowStateBeanInfo() throws IntrospectionException {
+	public WindowStateBeanInfo() throws IntrospectionException
+	{
 		super();
-		if (s_dscrs == null) {
+		if (s_dscrs == null)
+		{
 			s_dscrs = new PropertyDescriptor[1];
-			s_dscrs[0] = new PropertyDescriptor(WindowState.IPropertyNames.BOUNDS, WindowState.class, "getBounds", "setBounds");
+			s_dscrs[0] =
+				new PropertyDescriptor(
+					WindowState.IPropertyNames.BOUNDS,
+					WindowState.class,
+					"getBounds",
+					"setBounds");
 		}
 	}
 
-	public PropertyDescriptor[] getPropertyDescriptors() {
+	public PropertyDescriptor[] getPropertyDescriptors()
+	{
 		return s_dscrs;
 	}
 }
-

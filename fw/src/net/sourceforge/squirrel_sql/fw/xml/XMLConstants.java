@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.xml;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -23,8 +23,8 @@ package net.sourceforge.squirrel_sql.fw.xml;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-interface XMLConstants {
-
+interface XMLConstants
+{
 	String ROOT_ELEMENT_NAME = "Beans";
 
 	String BEAN_ELEMENT_NAME = "Bean";

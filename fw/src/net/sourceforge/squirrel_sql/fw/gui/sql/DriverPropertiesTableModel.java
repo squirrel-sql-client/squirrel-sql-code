@@ -23,11 +23,17 @@ import javax.swing.table.AbstractTableModel;
 
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverProperty;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 class DriverPropertiesTableModel extends AbstractTableModel
 {
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(DriverPropertiesTableModel.class);
+
 	interface IColumnIndexes
 	{
 		int IDX_NAME = 0;
@@ -39,7 +45,7 @@ class DriverPropertiesTableModel extends AbstractTableModel
 
 	/** Number of columns in model. */
 	private final int COLUMN_COUNT = 5;
-	
+
 	/** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(DriverPropertiesTableModel.class);
@@ -66,7 +72,7 @@ class DriverPropertiesTableModel extends AbstractTableModel
 				return sdp.getName();
 
 			case IColumnIndexes.IDX_SPECIFY:
-				// Use valueof when min supported JDK is 1.4
+				// TODO: Use valueof when min supported JDK is 1.4
 				return new Boolean(sdp.isSpecified());
 
 			case IColumnIndexes.IDX_VALUE:
@@ -91,7 +97,7 @@ class DriverPropertiesTableModel extends AbstractTableModel
 				{
 					return dpi.description;
 				}
-				return "Unknown";
+				return s_stringMgr.getString("DriverPropertiesTableModel.unknown");
 			}
 
 			default:
@@ -121,7 +127,7 @@ class DriverPropertiesTableModel extends AbstractTableModel
 			case IColumnIndexes.IDX_VALUE:
 				return String.class;
 			case IColumnIndexes.IDX_REQUIRED:
-//				return Boolean.class;	// Don't show checkbox for 
+//				return Boolean.class;	// Don't show checkbox for
 				return Object.class;	// output only field.
 			case IColumnIndexes.IDX_DESCRIPTION:
 				return String.class;

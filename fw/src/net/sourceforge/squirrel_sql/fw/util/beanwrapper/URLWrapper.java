@@ -22,7 +22,7 @@ import java.net.URL;
 /**
  * This wrapper turns a <TT>java.net.URL</TT> into a bean.
  *
- *@author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ *@author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class URLWrapper
 {

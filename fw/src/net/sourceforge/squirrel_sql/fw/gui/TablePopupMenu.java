@@ -25,16 +25,21 @@ import javax.swing.Action;
 import javax.swing.JMenuItem;
 import javax.swing.JTable;
 
-import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyHtmlCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.MakeEditableCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableSelectAllCellsCommand;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableModel;
 
 public class TablePopupMenu extends BasePopupMenu
 {
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(TablePopupMenu.class);
+
 	public interface IOptionTypes
 	{
 		int COPY = 0;
@@ -137,7 +142,7 @@ public class TablePopupMenu extends BasePopupMenu
 	{
 		ClearAction()
 		{
-			super("Clear");
+			super(s_stringMgr.getString("TablePopupMenu.clear"));
 		}
 
 		public void actionPerformed(ActionEvent evt)
@@ -152,7 +157,7 @@ public class TablePopupMenu extends BasePopupMenu
 	{
 		CutAction()
 		{
-			super("Cut");
+			super(s_stringMgr.getString("TablePopupMenu.cut"));
 		}
 
 		public void actionPerformed(ActionEvent evt)
@@ -167,7 +172,7 @@ public class TablePopupMenu extends BasePopupMenu
 	{
 		CopyAction()
 		{
-			super("Copy");
+			super(s_stringMgr.getString("TablePopupMenu.copy"));
 		}
 
 		public void actionPerformed(ActionEvent evt)
@@ -183,7 +188,7 @@ public class TablePopupMenu extends BasePopupMenu
 	{
 		CopyHtmlAction()
 		{
-			super("Copy as Html");
+			super(s_stringMgr.getString("TablePopupMenu.copyashtml"));
 		}
 
 		public void actionPerformed(ActionEvent evt)
@@ -199,7 +204,7 @@ public class TablePopupMenu extends BasePopupMenu
 	{
 		PasteAction()
 		{
-			super("Paste");
+			super(s_stringMgr.getString("TablePopupMenu.paste"));
 		}
 
 		public void actionPerformed(ActionEvent evt)
@@ -214,7 +219,7 @@ public class TablePopupMenu extends BasePopupMenu
 	{
 		MakeEditableAction()
 		{
-			super("Make Editable");
+			super(s_stringMgr.getString("TablePopupMenu.makeeditable"));
 		}
 
 		public void actionPerformed(ActionEvent evt)
@@ -230,7 +235,7 @@ public class TablePopupMenu extends BasePopupMenu
 	{
 		SelectAllAction()
 		{
-			super("Select All");
+			super(s_stringMgr.getString("TablePopupMenu.selectall"));
 		}
 
 		public void actionPerformed(ActionEvent evt)

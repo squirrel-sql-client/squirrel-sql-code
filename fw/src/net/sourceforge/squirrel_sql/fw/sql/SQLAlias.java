@@ -23,6 +23,8 @@ import java.io.Serializable;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * This represents a Database alias which is a description of the means
  * required to connect to a JDBC complient database.<P>
@@ -32,15 +34,15 @@ import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
  */
 public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(SQLAlias.class);
+
+	private interface IStrings
 	{
-		String ERR_BLANK_NAME = "Name cannot be blank.";
-		String ERR_BLANK_DRIVER = "JDBC Driver cannot be blank.";
-		String ERR_BLANK_URL = "JDBC URL cannot be blank.";
+		String ERR_BLANK_NAME = s_stringMgr.getString("SQLAlias.error.blankname");
+		String ERR_BLANK_DRIVER = s_stringMgr.getString("SQLAlias.error.blankdriver");
+		String ERR_BLANK_URL = s_stringMgr.getString("SQLAlias.error.blankurl");
 	}
 
 	private interface IPropNames extends ISQLAlias.IPropertyNames
@@ -334,7 +336,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 		String data = getString(name);
 		if (data.length() == 0)
 		{
-			throw new ValidationException(i18n.ERR_BLANK_NAME);
+			throw new ValidationException(IStrings.ERR_BLANK_NAME);
 		}
 		if (_name != data)
 		{
@@ -350,7 +352,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 	{
 		if (data == null)
 		{
-			throw new ValidationException(i18n.ERR_BLANK_DRIVER);
+			throw new ValidationException(IStrings.ERR_BLANK_DRIVER);
 		}
 		if (_driverId != data)
 		{
@@ -366,7 +368,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 		String data = getString(url);
 		if (data.length() == 0)
 		{
-			throw new ValidationException(i18n.ERR_BLANK_URL);
+			throw new ValidationException(IStrings.ERR_BLANK_URL);
 		}
 		if (_url != data)
 		{

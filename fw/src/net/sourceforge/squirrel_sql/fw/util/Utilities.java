@@ -22,6 +22,9 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.NumberFormat;
+
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
  * General purpose utilities functions.
  *
@@ -29,6 +32,10 @@ import java.text.NumberFormat;
  */
 public class Utilities
 {
+	/** Logger for this class. */
+	private static ILogger s_log =
+		LoggerController.createLogger(Utilities.class);
+
 	/**
 	 * Ctor. <TT>private</TT> as all methods are static.
 	 */
@@ -93,8 +100,9 @@ public class Utilities
 			{
 				sw.close();
 			}
-			catch (IOException ignore)
+			catch (IOException ex)
 			{
+				s_log.error("Unexpected error closing StringWriter", ex);
 			}
 		}
 	}
@@ -263,6 +271,7 @@ public class Utilities
 		return formatSize(longSize, -1);
 	}
 
+	// TODO: i18n
 	public static String formatSize(long longSize, int decimalPos)
 	{
 		NumberFormat fmt = NumberFormat.getNumberInstance();

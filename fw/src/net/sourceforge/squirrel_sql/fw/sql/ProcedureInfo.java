@@ -20,20 +20,22 @@ package net.sourceforge.squirrel_sql.fw.sql;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 public class ProcedureInfo extends DatabaseObjectInfo implements IProcedureInfo
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ProcedureInfo.class);
+
+	private interface IStrings
 	{
-		String DATABASE = "Database";
-		//String NO_CATALOG = "No Catalog"; // i18n or Replace with md.getCatalogueTerm.
-		String MAY_RETURN = "May return a result";
-		String DOESNT_RETURN = "Does not return a result";
-		String DOES_RETURN = "Returns a result";
-		String UNKNOWN = "Unknown";
+		String DATABASE = s_stringMgr.getString("ProcedureInfo.database");
+		String MAY_RETURN = s_stringMgr.getString("ProcedureInfo.mayreturn");
+		String DOESNT_RETURN = s_stringMgr.getString("ProcedureInfo.doesntreturn");
+		String DOES_RETURN = s_stringMgr.getString("ProcedureInfo.returns");
+		String UNKNOWN = s_stringMgr.getString("ProcedureInfo.unknown");
 	}
 
 	/** Procedure Type. */
@@ -68,13 +70,13 @@ public class ProcedureInfo extends DatabaseObjectInfo implements IProcedureInfo
 		switch (_procType)
 		{
 			case DatabaseMetaData.procedureNoResult :
-				return i18n.DOESNT_RETURN;
+				return IStrings.DOESNT_RETURN;
 			case DatabaseMetaData.procedureReturnsResult :
-				return i18n.DOES_RETURN;
+				return IStrings.DOES_RETURN;
 			case DatabaseMetaData.procedureResultUnknown :
-				return i18n.MAY_RETURN;
+				return IStrings.MAY_RETURN;
 			default :
-				return i18n.UNKNOWN;
+				return IStrings.UNKNOWN;
 		}
 	}
 

@@ -28,21 +28,23 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
-
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * Represents the list of functions and SQL keywords as a one-column data set.
  */
 public class MetaDataListDataSet implements IDataSet
 {
-	private interface i18n
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(MetaDataListDataSet.class);
+
+	private interface IStrings
 	{
-		String UNSUPPORTED = "<Unsupported>";
-		String NAME_COLUMN = "Name";
-		//		String NULL = "<null>";
-		String VALUE_COLUMN = "Value";
+		String NAME_COLUMN = s_stringMgr.getString("MetaDataListDataSet.propname");
 	}
 
-	private final static String[] s_hdgs = new String[] { i18n.NAME_COLUMN };
+	private final static String[] s_hdgs = new String[] { IStrings.NAME_COLUMN };
 	private DataSetDefinition _dsDef;
 	private Iterator _rowIter;
 	private List _row = new ArrayList();

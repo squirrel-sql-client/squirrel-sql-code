@@ -28,7 +28,7 @@ import javax.swing.text.PlainDocument;
  * This class is a <CODE>TextField</CODE> that only allows integer
  * values to be entered into it.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class IntegerField extends JTextField
 {
@@ -42,7 +42,7 @@ public class IntegerField extends JTextField
 
 	/**
 	 * Ctor specifying the field width.
-	 * 
+	 *
 	 * @param	cols	Number of columns.
 	 */
 	public IntegerField(int cols)
@@ -52,7 +52,7 @@ public class IntegerField extends JTextField
 
 	/**
 	 * Retrieve the contents of this field as an <TT>int</TT>.
-	 * 
+	 *
 	 * @return	the contents of this field as an <TT>int</TT>.
 	 */
 	public int getInt()
@@ -67,7 +67,7 @@ public class IntegerField extends JTextField
 
 	/**
 	 * Set the contents of this field to the passed <TT>int</TT>.
-	 * 
+	 *
 	 * @param	value	The new value for this field.
 	 */
 	public void setInt(int value)
@@ -78,7 +78,7 @@ public class IntegerField extends JTextField
 	/**
 	 * Create a new document model for this control that only accepts
 	 * integral values.
-	 * 
+	 *
 	 * @return	The new document model.
 	 */
 	protected Document createDefaultModel()

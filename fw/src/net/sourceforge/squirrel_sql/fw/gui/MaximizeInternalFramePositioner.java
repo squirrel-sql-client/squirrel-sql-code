@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -20,23 +20,30 @@ package net.sourceforge.squirrel_sql.fw.gui;
 import java.beans.PropertyVetoException;
 
 import javax.swing.JInternalFrame;
-
 /**
  * This class will maximize an internal frame.
  */
-public class MaximizeInternalFramePositioner implements IInternalFramePositioner {
+public class MaximizeInternalFramePositioner
+	implements IInternalFramePositioner
+{
 
-	public MaximizeInternalFramePositioner() {
+	public MaximizeInternalFramePositioner()
+	{
 		super();
 	}
 
-	public void positionInternalFrame(JInternalFrame child) {
-		if (child == null) {
+	public void positionInternalFrame(JInternalFrame child)
+	{
+		if (child == null)
+		{
 			throw new IllegalArgumentException("null JInternalFrame passed");
 		}
-		try {
+		try
+		{
 			child.setMaximum(true);
-		} catch (PropertyVetoException ignore) {
+		}
+		catch (PropertyVetoException ignore)
+		{
 		}
 	}
 }
