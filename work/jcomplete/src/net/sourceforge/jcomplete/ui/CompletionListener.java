@@ -30,17 +30,19 @@ import net.sourceforge.jcomplete.Completion;
  */
 public interface CompletionListener
 {
-    public abstract class Event implements Iterator
+    public abstract class Event
     {
         public Completion completion;
         public Event(Completion completion)
         {
             this.completion = completion;
         }
+        public abstract boolean hasNext();
+        public abstract Completion next();
         public abstract boolean needsSeparator();
     }
     void completionAborted();
-    void completionRequested(Event event);
-    void completionRequested(Completion sourceCompletion, Object[] selectedOptions);
+    Completion completionRequested(Event event);
+    Completion completionRequested(Completion completion, Object[] selectedOptions);
 }
 

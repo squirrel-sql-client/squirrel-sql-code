@@ -69,4 +69,14 @@ public interface Completion
      * @return whether the text between the start position and <em>position</em> must be replaced
      */
     boolean mustReplace(int position);
+
+    /**
+     * update this object with relevant information from <em>completion</em>, which is usually
+     * an obsolete representation of the same completion node, which this object is designed to replace
+     * and which may contain information that needs to be preserved.<br>
+     * This is usually invoked after it has been detected that the completion tree was rebuilt by the
+     * parser due to non-incremantal changes, and therefore the former representations have become obsolete.
+     * @param completion
+     */
+    void updateWith(Completion completion);
 }

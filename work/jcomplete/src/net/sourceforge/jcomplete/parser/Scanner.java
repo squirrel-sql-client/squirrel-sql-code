@@ -67,7 +67,7 @@ public class Scanner
 	private static final char EOF = '\0';
 	private static final char CR  = '\r';
 	private static final char LF  = '\n';
-	private static final int noSym = 100;
+	private static final int noSym = 103;
 	private static final int[] start = {
 	 23,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
 	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
@@ -202,129 +202,132 @@ public class Scanner
 		t.val = buf.toString().toUpperCase();
 		switch (t.val.charAt(0)) {
 			case 'A': {
-				if (t.val.equals("ACTION")) t.kind = 87;
-				else if (t.val.equals("ADD")) t.kind = 94;
-				else if (t.val.equals("ALL")) t.kind = 8;
-				else if (t.val.equals("ALTER")) t.kind = 95;
-				else if (t.val.equals("AND")) t.kind = 54;
-				else if (t.val.equals("AS")) t.kind = 20;
-				else if (t.val.equals("ASC")) t.kind = 48;
-				else if (t.val.equals("AVG")) t.kind = 45;
+				if (t.val.equals("ACTION")) t.kind = 90;
+				else if (t.val.equals("ADD")) t.kind = 97;
+				else if (t.val.equals("ALL")) t.kind = 11;
+				else if (t.val.equals("ALTER")) t.kind = 98;
+				else if (t.val.equals("AND")) t.kind = 57;
+				else if (t.val.equals("AS")) t.kind = 23;
+				else if (t.val.equals("ASC")) t.kind = 51;
+				else if (t.val.equals("AVG")) t.kind = 48;
 				break;}
 			case 'B': {
-				if (t.val.equals("BETWEEN")) t.kind = 64;
-				else if (t.val.equals("BY")) t.kind = 34;
+				if (t.val.equals("BETWEEN")) t.kind = 67;
+				else if (t.val.equals("BY")) t.kind = 36;
 				break;}
 			case 'C': {
-				if (t.val.equals("CASCADE")) t.kind = 85;
-				else if (t.val.equals("CHAR")) t.kind = 69;
-				else if (t.val.equals("CHARACTER")) t.kind = 70;
-				else if (t.val.equals("CHECK")) t.kind = 89;
-				else if (t.val.equals("COMMIT")) t.kind = 66;
-				else if (t.val.equals("CONSTRAINT")) t.kind = 96;
-				else if (t.val.equals("COUNT")) t.kind = 41;
-				else if (t.val.equals("CREATE")) t.kind = 90;
-				else if (t.val.equals("CROSS")) t.kind = 22;
+				if (t.val.equals("CASCADE")) t.kind = 88;
+				else if (t.val.equals("CHAR")) t.kind = 72;
+				else if (t.val.equals("CHARACTER")) t.kind = 73;
+				else if (t.val.equals("CHECK")) t.kind = 92;
+				else if (t.val.equals("COMMIT")) t.kind = 69;
+				else if (t.val.equals("CONSTRAINT")) t.kind = 99;
+				else if (t.val.equals("COUNT")) t.kind = 44;
+				else if (t.val.equals("CREATE")) t.kind = 93;
+				else if (t.val.equals("CROSS")) t.kind = 25;
 				break;}
 			case 'D': {
-				if (t.val.equals("DATE")) t.kind = 76;
-				else if (t.val.equals("DEFAULT")) t.kind = 78;
-				else if (t.val.equals("DELETE")) t.kind = 15;
-				else if (t.val.equals("DESC")) t.kind = 47;
-				else if (t.val.equals("DISTINCT")) t.kind = 18;
-				else if (t.val.equals("DROP")) t.kind = 93;
+				if (t.val.equals("DATE")) t.kind = 79;
+				else if (t.val.equals("DEFAULT")) t.kind = 81;
+				else if (t.val.equals("DELETE")) t.kind = 18;
+				else if (t.val.equals("DESC")) t.kind = 50;
+				else if (t.val.equals("DISTINCT")) t.kind = 21;
+				else if (t.val.equals("DROP")) t.kind = 96;
 				break;}
 			case 'E': {
-				if (t.val.equals("ESCAPE")) t.kind = 57;
+				if (t.val.equals("ESCAPE")) t.kind = 60;
+				else if (t.val.equals("EXCEPT")) t.kind = 8;
 				break;}
 			case 'F': {
-				if (t.val.equals("FOREIGN")) t.kind = 81;
-				else if (t.val.equals("FROM")) t.kind = 16;
-				else if (t.val.equals("FULL")) t.kind = 25;
+				if (t.val.equals("FOREIGN")) t.kind = 84;
+				else if (t.val.equals("FROM")) t.kind = 19;
+				else if (t.val.equals("FULL")) t.kind = 28;
 				break;}
 			case 'G': {
 				if (t.val.equals("GROUP")) t.kind = 35;
 				break;}
 			case 'H': {
-				if (t.val.equals("HAVING")) t.kind = 32;
+				if (t.val.equals("HAVING")) t.kind = 37;
 				break;}
 			case 'I': {
-				if (t.val.equals("IN")) t.kind = 65;
-				else if (t.val.equals("INDEX")) t.kind = 97;
-				else if (t.val.equals("INNER")) t.kind = 24;
-				else if (t.val.equals("INSERT")) t.kind = 12;
-				else if (t.val.equals("INT")) t.kind = 73;
-				else if (t.val.equals("INTEGER")) t.kind = 72;
-				else if (t.val.equals("INTO")) t.kind = 13;
-				else if (t.val.equals("IS")) t.kind = 58;
+				if (t.val.equals("IN")) t.kind = 68;
+				else if (t.val.equals("INDEX")) t.kind = 100;
+				else if (t.val.equals("INNER")) t.kind = 27;
+				else if (t.val.equals("INSERT")) t.kind = 15;
+				else if (t.val.equals("INT")) t.kind = 76;
+				else if (t.val.equals("INTEGER")) t.kind = 75;
+				else if (t.val.equals("INTERSECT")) t.kind = 9;
+				else if (t.val.equals("INTO")) t.kind = 16;
+				else if (t.val.equals("IS")) t.kind = 61;
 				break;}
 			case 'J': {
-				if (t.val.equals("JOIN")) t.kind = 21;
+				if (t.val.equals("JOIN")) t.kind = 24;
 				break;}
 			case 'K': {
-				if (t.val.equals("KEY")) t.kind = 80;
+				if (t.val.equals("KEY")) t.kind = 83;
 				break;}
 			case 'L': {
-				if (t.val.equals("LEFT")) t.kind = 26;
-				else if (t.val.equals("LIKE")) t.kind = 56;
+				if (t.val.equals("LEFT")) t.kind = 29;
+				else if (t.val.equals("LIKE")) t.kind = 59;
 				break;}
 			case 'M': {
-				if (t.val.equals("MATCH")) t.kind = 83;
-				else if (t.val.equals("MAX")) t.kind = 43;
-				else if (t.val.equals("MIN")) t.kind = 44;
-				else if (t.val.equals("MONTH")) t.kind = 39;
+				if (t.val.equals("MATCH")) t.kind = 86;
+				else if (t.val.equals("MAX")) t.kind = 46;
+				else if (t.val.equals("MIN")) t.kind = 47;
+				else if (t.val.equals("MINUS")) t.kind = 10;
+				else if (t.val.equals("MONTH")) t.kind = 42;
 				break;}
 			case 'N': {
-				if (t.val.equals("NATURAL")) t.kind = 23;
-				else if (t.val.equals("NO")) t.kind = 86;
-				else if (t.val.equals("NOT")) t.kind = 51;
-				else if (t.val.equals("NULL")) t.kind = 46;
-				else if (t.val.equals("NUMERIC")) t.kind = 75;
+				if (t.val.equals("NATURAL")) t.kind = 26;
+				else if (t.val.equals("NO")) t.kind = 89;
+				else if (t.val.equals("NOT")) t.kind = 54;
+				else if (t.val.equals("NULL")) t.kind = 49;
+				else if (t.val.equals("NUMERIC")) t.kind = 78;
 				break;}
 			case 'O': {
-				if (t.val.equals("ON")) t.kind = 29;
-				else if (t.val.equals("OR")) t.kind = 55;
-				else if (t.val.equals("ORDER")) t.kind = 33;
-				else if (t.val.equals("OUTER")) t.kind = 28;
+				if (t.val.equals("ON")) t.kind = 32;
+				else if (t.val.equals("OR")) t.kind = 58;
+				else if (t.val.equals("ORDER")) t.kind = 38;
+				else if (t.val.equals("OUTER")) t.kind = 31;
 				break;}
 			case 'P': {
-				if (t.val.equals("PARTIAL")) t.kind = 84;
-				else if (t.val.equals("PRIMARY")) t.kind = 79;
+				if (t.val.equals("PARTIAL")) t.kind = 87;
+				else if (t.val.equals("PRIMARY")) t.kind = 82;
 				break;}
 			case 'R': {
-				if (t.val.equals("REFERENCES")) t.kind = 82;
-				else if (t.val.equals("RESTRICT")) t.kind = 92;
-				else if (t.val.equals("RIGHT")) t.kind = 27;
-				else if (t.val.equals("ROLLBACK")) t.kind = 67;
+				if (t.val.equals("REFERENCES")) t.kind = 85;
+				else if (t.val.equals("RESTRICT")) t.kind = 95;
+				else if (t.val.equals("RIGHT")) t.kind = 30;
+				else if (t.val.equals("ROLLBACK")) t.kind = 70;
 				break;}
 			case 'S': {
-				if (t.val.equals("SELECT")) t.kind = 17;
-				else if (t.val.equals("SET")) t.kind = 10;
-				else if (t.val.equals("SMALLINT")) t.kind = 74;
-				else if (t.val.equals("SUM")) t.kind = 42;
+				if (t.val.equals("SELECT")) t.kind = 20;
+				else if (t.val.equals("SET")) t.kind = 13;
+				else if (t.val.equals("SMALLINT")) t.kind = 77;
+				else if (t.val.equals("SUM")) t.kind = 45;
 				break;}
 			case 'T': {
-				if (t.val.equals("TABLE")) t.kind = 91;
-				else if (t.val.equals("TIME")) t.kind = 77;
-				else if (t.val.equals("TIMESTAMP")) t.kind = 37;
+				if (t.val.equals("TABLE")) t.kind = 94;
+				else if (t.val.equals("TIME")) t.kind = 80;
+				else if (t.val.equals("TIMESTAMP")) t.kind = 40;
 				break;}
 			case 'U': {
 				if (t.val.equals("UNION")) t.kind = 7;
-				else if (t.val.equals("UNIQUE")) t.kind = 88;
-				else if (t.val.equals("UPDATE")) t.kind = 9;
-				else if (t.val.equals("UPPER")) t.kind = 38;
-				else if (t.val.equals("USING")) t.kind = 30;
+				else if (t.val.equals("UNIQUE")) t.kind = 91;
+				else if (t.val.equals("UPDATE")) t.kind = 12;
+				else if (t.val.equals("UPPER")) t.kind = 41;
+				else if (t.val.equals("USING")) t.kind = 33;
 				break;}
 			case 'V': {
-				if (t.val.equals("VALUES")) t.kind = 14;
-				else if (t.val.equals("VARCHAR")) t.kind = 71;
+				if (t.val.equals("VALUES")) t.kind = 17;
+				else if (t.val.equals("VARCHAR")) t.kind = 74;
 				break;}
 			case 'W': {
-				if (t.val.equals("WHERE")) t.kind = 31;
-				else if (t.val.equals("WORK")) t.kind = 68;
+				if (t.val.equals("WHERE")) t.kind = 34;
+				else if (t.val.equals("WORK")) t.kind = 71;
 				break;}
 			case 'Y': {
-				if (t.val.equals("YEAR")) t.kind = 40;
+				if (t.val.equals("YEAR")) t.kind = 43;
 				break;}
 		}
 	}
@@ -352,7 +355,7 @@ public class Scanner
 					else {t.kind = 1; CheckLiteral(buf); break loop;}
 				case 2:
 					if ((ch >= '0' && ch <= '9')) {state = 3; break;}
-					else {t.kind = 19; break loop;}
+					else {t.kind = 22; break loop;}
 				case 3:
 					if ((ch >= '0' && ch <= '9')) {break;}
 					else {t.kind = 3; break loop;}
@@ -377,34 +380,34 @@ public class Scanner
 				case 9:
 					{t.kind = 6; break loop;}
 				case 10:
-					{t.kind = 11; break loop;}
+					{t.kind = 14; break loop;}
 				case 11:
-					{t.kind = 36; break loop;}
+					{t.kind = 39; break loop;}
 				case 12:
-					{t.kind = 49; break loop;}
-				case 13:
-					{t.kind = 50; break loop;}
-				case 14:
 					{t.kind = 52; break loop;}
-				case 15:
+				case 13:
 					{t.kind = 53; break loop;}
+				case 14:
+					{t.kind = 55; break loop;}
+				case 15:
+					{t.kind = 56; break loop;}
 				case 16:
 					if (ch == '>') {state = 17; break;}
 					else if (ch == '=') {state = 18; break;}
-					else {t.kind = 60; break loop;}
+					else {t.kind = 63; break loop;}
 				case 17:
-					{t.kind = 59; break loop;}
+					{t.kind = 62; break loop;}
 				case 18:
-					{t.kind = 61; break loop;}
+					{t.kind = 64; break loop;}
 				case 19:
 					if (ch == '=') {state = 20; break;}
-					else {t.kind = 62; break loop;}
+					else {t.kind = 65; break loop;}
 				case 20:
-					{t.kind = 63; break loop;}
+					{t.kind = 66; break loop;}
 				case 21:
-					{t.kind = 98; break loop;}
+					{t.kind = 101; break loop;}
 				case 22:
-					{t.kind = 99; break loop;}
+					{t.kind = 102; break loop;}
 				case 23:
 					{t.kind = 0; break loop;}
 			}

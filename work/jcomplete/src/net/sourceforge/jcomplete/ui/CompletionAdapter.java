@@ -96,7 +96,7 @@ public abstract class CompletionAdapter extends KeyAdapter implements Completion
      * these objects are inserted after the caret position, separated by comma.
      * @param selectedOptions
      */
-    public void completionRequested(Completion completion, Object[] selectedOptions)
+    public Completion completionRequested(Completion completion, Object[] selectedOptions)
     {
         try {
             // insert the text
@@ -115,9 +115,13 @@ public abstract class CompletionAdapter extends KeyAdapter implements Completion
                 needsSeparator = true;
             }
             m_textComponent.requestFocus();
+
+            Completion c = m_completionHandler.getCompletion(completion.getStart());
+            if(c != completion) c.updateWith(completion);
+            return c;
         }
         catch (BadLocationException e1) {
-            System.out.println(e1.getMessage());
+            throw new RuntimeException(e1.getMessage());
         }
     }
 
@@ -126,7 +130,7 @@ public abstract class CompletionAdapter extends KeyAdapter implements Completion
      * preprocessed completions through the event object
      * @param event
      */
-    public void completionRequested(CompletionListener.Event event)
+    public Completion completionRequested(CompletionListener.Event event)
     {
         try {
             // insert the text
@@ -139,14 +143,16 @@ public abstract class CompletionAdapter extends KeyAdapter implements Completion
                 if(event.needsSeparator())
                     doc.insertString(m_textComponent.getCaretPosition(), ", ", null);
 
-                Completion comp = (Completion)event.next();
+                Completion comp = event.next();
                 String text = comp.getText(m_textComponent.getCaretPosition());
                 doc.insertString(m_textComponent.getCaretPosition(), text, null);
             }
-            event.completion = m_completionHandler.getCompletion(event.completion.getStart());
+            Completion c = m_completionHandler.getCompletion(event.completion.getStart());
+            if(c != event.completion) c.updateWith(event.completion);
+            return c;
         }
         catch (BadLocationException e1) {
-            System.out.println(e1.getMessage());
+            throw new RuntimeException(e1.getMessage());
         }
     }
 

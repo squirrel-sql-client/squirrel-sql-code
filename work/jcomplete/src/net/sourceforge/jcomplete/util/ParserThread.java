@@ -61,16 +61,14 @@ public class ParserThread extends Thread
     public void run()
     {
         while(buffer != null) {
-            System.out.println("begin parse");
-
             errors.reset();
             Scanner scanner = new Scanner(buffer, errors);
 
             Parser parser = new Parser(scanner);
             parser.rootSchema = handler;
             handler.statements = parser.statements;
+            System.out.println("begin parse");
             parser.parse();
-
             System.out.println("end parse");
         }
     }
@@ -93,8 +91,8 @@ public class ParserThread extends Thread
      */
     public void accept(CharacterIterator chars)
     {
-        buffer.accept(chars);   //post new characters to be read
-        buffer.waitChars();     //wait till they have been processed
+        buffer.waitChars();     //wait for pending chars to be processed
+        buffer.accept(chars);   //post new characters
     }
 
     /**

@@ -64,6 +64,7 @@ public class SQLStatement extends SQLCompletion implements SQLSchema
     {
         if(children == null) children = new ArrayList();
         children.add(child);
+        child.setParent(this);
     }
 
     public void addStatement(SQLStatement statement)
@@ -86,6 +87,7 @@ public class SQLStatement extends SQLCompletion implements SQLSchema
 
     public boolean setTable(SQLTable table)
     {
+        System.out.println("setTable");
         return setTable(table.catalog, table.schema, table.name, table.alias);
     }
 
@@ -107,9 +109,5 @@ public class SQLStatement extends SQLCompletion implements SQLSchema
     public Table getTableForAlias(String alias)
     {
         return sqlSchema.getTableForAlias(alias);
-    }
-
-    public void takeTables(SQLStatement statement)
-    {
     }
 }

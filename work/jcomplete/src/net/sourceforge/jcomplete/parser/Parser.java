@@ -4,8 +4,8 @@ import net.sourceforge.jcomplete.*;
 import java.util.*;
 
 public class Parser {
-	private static final int maxT = 100;
-	private static final int maxP = 100;
+	private static final int maxT = 103;
+	private static final int maxP = 103;
 
 	private static final boolean T = true;
 	private static final boolean x = false;
@@ -125,7 +125,7 @@ public List statements = new ArrayList();
 
 	private final void IndexColumnList() {
 		IndexColumn();
-		while (t.kind == 98) {
+		while (t.kind == 101) {
 			ItemSeparator();
 			IndexColumn();
 		}
@@ -133,8 +133,8 @@ public List statements = new ArrayList();
 
 	private final void IndexColumn() {
 		SimpleColumnName();
-		if (t.kind == 47 || t.kind == 48) {
-			if (t.kind == 48) {
+		if (t.kind == 50 || t.kind == 51) {
+			if (t.kind == 51) {
 				Get();
 			} else {
 				Get();
@@ -143,78 +143,78 @@ public List statements = new ArrayList();
 	}
 
 	private final void DropPart() {
-		Expect(93);
+		Expect(96);
 		if (t.kind == 1) {
 			SimpleColumnName();
 			CascadeRestrict();
-		} else if (t.kind == 79) {
+		} else if (t.kind == 82) {
 			Get();
-			Expect(80);
-		} else if (t.kind == 81) {
+			Expect(83);
+		} else if (t.kind == 84) {
 			Get();
-			Expect(80);
+			Expect(83);
 			RelationName();
-		} else if (t.kind == 96) {
+		} else if (t.kind == 99) {
 			Get();
 			ConstraintName();
 			CascadeRestrict();
-		} else Error(101);
+		} else Error(104);
 	}
 
 	private final void Alter() {
-		Expect(95);
+		Expect(98);
 		SimpleColumnName();
-		if (t.kind == 93) {
+		if (t.kind == 96) {
 			Get();
-			Expect(78);
-		} else if (t.kind == 10) {
+			Expect(81);
+		} else if (t.kind == 13) {
 			Get();
 			ColumnDefault();
-		} else Error(102);
+		} else Error(105);
 	}
 
 	private final void Add() {
-		Expect(94);
+		Expect(97);
 		if (t.kind == 1) {
 			ColumnDefList();
-		} else if (t.kind == 79) {
+		} else if (t.kind == 82) {
 			PrimaryKey();
-		} else if (t.kind == 81) {
+		} else if (t.kind == 84) {
 			ForeignKey();
-		} else if (t.kind == 88) {
+		} else if (t.kind == 91) {
 			Unique();
-		} else if (t.kind == 89) {
+		} else if (t.kind == 92) {
 			CheckConstraint();
-		} else Error(103);
+		} else Error(106);
 	}
 
 	private final void IndexAndName() {
-		Expect(97);
+		Expect(100);
 		IndexName();
 	}
 
 	private final void DropTable() {
-		Expect(91);
+		Expect(94);
 		QualifiedTable();
-		if (t.kind == 85 || t.kind == 92) {
+		if (t.kind == 88 || t.kind == 95) {
 			CascadeRestrict();
 		}
 	}
 
 	private final void CascadeRestrict() {
-		if (t.kind == 85) {
+		if (t.kind == 88) {
 			Get();
-		} else if (t.kind == 92) {
+		} else if (t.kind == 95) {
 			Get();
-		} else Error(104);
+		} else Error(107);
 	}
 
 	private final void CreateIndex() {
-		if (t.kind == 88) {
+		if (t.kind == 91) {
 			Get();
 		}
 		IndexAndName();
-		Expect(29);
+		Expect(32);
 		Table();
 		Expect(5);
 		IndexColumnList();
@@ -222,11 +222,11 @@ public List statements = new ArrayList();
 	}
 
 	private final void CreateTable() {
-		Expect(91);
+		Expect(94);
 		Table();
 		Expect(5);
 		CreatePart();
-		while (t.kind == 98) {
+		while (t.kind == 101) {
 			ItemSeparator();
 			CreatePart();
 		}
@@ -236,65 +236,65 @@ public List statements = new ArrayList();
 	private final void CreatePart() {
 		if (t.kind == 1) {
 			ColumnDef();
-		} else if (t.kind == 79) {
+		} else if (t.kind == 82) {
 			PrimaryKey();
-		} else if (t.kind == 81) {
+		} else if (t.kind == 84) {
 			ForeignKey();
-		} else if (t.kind == 88) {
+		} else if (t.kind == 91) {
 			Unique();
-		} else if (t.kind == 89) {
+		} else if (t.kind == 92) {
 			CheckConstraint();
-		} else Error(105);
+		} else Error(108);
 	}
 
 	private final void CheckConstraint() {
-		Expect(89);
+		Expect(92);
 		Expect(5);
 		Expression();
 		CloseParens();
 	}
 
 	private final void Unique() {
-		Expect(88);
+		Expect(91);
 		SimpleColumnParam();
 	}
 
 	private final void ForeignKey() {
-		Expect(81);
-		Expect(80);
+		Expect(84);
+		Expect(83);
 		RelationName();
 		SimpleColumnParam();
-		Expect(82);
+		Expect(85);
 		Table();
-		if (t.kind == 83) {
+		if (t.kind == 86) {
 			Get();
-			if (t.kind == 25) {
+			if (t.kind == 28) {
 				Get();
-			} else if (t.kind == 84) {
+			} else if (t.kind == 87) {
 				Get();
-			} else Error(106);
+			} else Error(109);
 		}
-		while (t.kind == 29 || t.kind == 86) {
-			if (t.kind == 29) {
+		while (t.kind == 32 || t.kind == 89) {
+			if (t.kind == 32) {
 				Get();
-				if (t.kind == 15) {
+				if (t.kind == 18) {
 					Get();
-				} else if (t.kind == 9) {
+				} else if (t.kind == 12) {
 					Get();
-				} else Error(107);
-				if (t.kind == 85) {
+				} else Error(110);
+				if (t.kind == 88) {
 					Get();
-				} else if (t.kind == 10) {
+				} else if (t.kind == 13) {
 					Get();
-					if (t.kind == 46) {
+					if (t.kind == 49) {
 						Get();
-					} else if (t.kind == 78) {
+					} else if (t.kind == 81) {
 						Get();
-					} else Error(108);
-				} else Error(109);
+					} else Error(111);
+				} else Error(112);
 			} else {
 				Get();
-				Expect(87);
+				Expect(90);
 			}
 		}
 	}
@@ -308,93 +308,93 @@ public List statements = new ArrayList();
 	}
 
 	private final void PrimaryKey() {
-		Expect(79);
-		Expect(80);
+		Expect(82);
+		Expect(83);
 		SimpleColumnParam();
 	}
 
 	private final void ColumnDef() {
 		SimpleColumnName();
 		DataType();
-		while (t.kind == 51 || t.kind == 78) {
-			if (t.kind == 78) {
+		while (t.kind == 54 || t.kind == 81) {
+			if (t.kind == 81) {
 				ColumnDefault();
 			} else {
 				NotOperator();
-				Expect(46);
+				Expect(49);
 			}
 		}
 	}
 
 	private final void ColumnDefList() {
 		ColumnDef();
-		while (t.kind == 98) {
+		while (t.kind == 101) {
 			ItemSeparator();
 			ColumnDef();
 		}
 	}
 
 	private final void ColumnDefault() {
-		Expect(78);
+		Expect(81);
 		if (t.kind == 4) {
 			Get();
 		} else if (t.kind == 2) {
 			Get();
 		} else if (t.kind == 3) {
 			Get();
-		} else Error(110);
+		} else Error(113);
 	}
 
 	private final void DataType() {
 		switch (t.kind) {
-		case 69: case 70: {
-			if (t.kind == 69) {
-				Get();
-			} else {
-				Get();
-			}
-			lenParam();
-			break;
-		}
-		case 71: {
-			Get();
-			lenParam();
-			break;
-		}
 		case 72: case 73: {
 			if (t.kind == 72) {
 				Get();
 			} else {
 				Get();
 			}
+			lenParam();
 			break;
 		}
 		case 74: {
 			Get();
+			lenParam();
 			break;
 		}
-		case 75: {
+		case 75: case 76: {
+			if (t.kind == 75) {
+				Get();
+			} else {
+				Get();
+			}
+			break;
+		}
+		case 77: {
+			Get();
+			break;
+		}
+		case 78: {
 			Get();
 			Expect(5);
 			precision();
 			CloseParens();
 			break;
 		}
-		case 76: {
+		case 79: {
 			Get();
 			break;
 		}
-		case 77: {
-			Get();
-			lenParam();
-			break;
-		}
-		case 37: {
+		case 80: {
 			Get();
 			lenParam();
 			break;
 		}
-		default: Error(111);
+		case 40: {
+			Get();
+			lenParam();
+			break;
+		}
+		default: Error(114);
 		}
 	}
 
@@ -415,91 +415,91 @@ public List statements = new ArrayList();
 	}
 
 	private final void BetweenExpr() {
-		Expect(64);
+		Expect(67);
 		Field();
-		Expect(54);
+		Expect(57);
 		Field();
 	}
 
 	private final void InSetExpr() {
-		Expect(65);
+		Expect(68);
 		Expect(5);
 		if (StartOf(1)) {
 			FieldList();
-		} else if (t.kind == 17) {
+		} else if (t.kind == 20) {
 			SelectStmt();
-		} else Error(112);
+		} else Error(115);
 		CloseParens();
 	}
 
 	private final void NullTest() {
-		Expect(58);
-		if (t.kind == 51) {
+		Expect(61);
+		if (t.kind == 54) {
 			NotOperator();
 		}
-		Expect(46);
+		Expect(49);
 	}
 
 	private final void LikeTest() {
-		Expect(56);
+		Expect(59);
 		if (t.kind == 4) {
 			Get();
-		} else if (t.kind == 50) {
+		} else if (t.kind == 53) {
 			Param();
-		} else Error(113);
-		if (t.kind == 57) {
+		} else Error(116);
+		if (t.kind == 60) {
 			Get();
 			Expect(4);
 		}
 	}
 
 	private final void WordOperator() {
-		if (t.kind == 54) {
+		if (t.kind == 57) {
 			Get();
-		} else if (t.kind == 55) {
+		} else if (t.kind == 58) {
 			Get();
-		} else Error(114);
+		} else Error(117);
 	}
 
 	private final void MathOperator() {
-		if (t.kind == 36) {
+		if (t.kind == 39) {
+			Get();
+		} else if (t.kind == 55) {
+			Get();
+		} else if (t.kind == 56) {
 			Get();
 		} else if (t.kind == 52) {
 			Get();
-		} else if (t.kind == 53) {
-			Get();
-		} else if (t.kind == 49) {
-			Get();
-		} else Error(115);
+		} else Error(118);
 	}
 
 	private final void TestExpr() {
-		if (t.kind == 58) {
+		if (t.kind == 61) {
 			NullTest();
 		} else if (StartOf(2)) {
-			if (t.kind == 51) {
+			if (t.kind == 54) {
 				NotOperator();
 			}
-			if (t.kind == 65) {
+			if (t.kind == 68) {
 				InSetExpr();
-			} else if (t.kind == 64) {
+			} else if (t.kind == 67) {
 				BetweenExpr();
-			} else if (t.kind == 56) {
+			} else if (t.kind == 59) {
 				LikeTest();
-			} else Error(116);
-		} else Error(117);
+			} else Error(119);
+		} else Error(120);
 	}
 
 	private final void Operator() {
 		if (StartOf(3)) {
 			MathOperator();
-		} else if (t.kind == 54 || t.kind == 55) {
+		} else if (t.kind == 57 || t.kind == 58) {
 			WordOperator();
-		} else Error(118);
+		} else Error(121);
 	}
 
 	private final void Term() {
-		if (t.kind == 49) {
+		if (t.kind == 52) {
 			Get();
 		}
 		if (StartOf(1)) {
@@ -515,32 +515,20 @@ public List statements = new ArrayList();
 			Get();
 			if (StartOf(7)) {
 				Expression();
-			} else if (t.kind == 17) {
+			} else if (t.kind == 20) {
 				SelectStmt();
-			} else Error(119);
+			} else Error(122);
 			CloseParens();
-		} else Error(120);
+		} else Error(123);
 	}
 
 	private final void NotOperator() {
-		Expect(51);
+		Expect(54);
 	}
 
 	private final void Relation() {
 		switch (t.kind) {
-		case 11: {
-			Get();
-			break;
-		}
-		case 59: {
-			Get();
-			break;
-		}
-		case 60: {
-			Get();
-			break;
-		}
-		case 61: {
+		case 14: {
 			Get();
 			break;
 		}
@@ -552,18 +540,30 @@ public List statements = new ArrayList();
 			Get();
 			break;
 		}
-		default: Error(121);
+		case 64: {
+			Get();
+			break;
+		}
+		case 65: {
+			Get();
+			break;
+		}
+		case 66: {
+			Get();
+			break;
+		}
+		default: Error(124);
 		}
 	}
 
 	private final void SimpleExpression() {
-		if (t.kind == 51) {
+		if (t.kind == 54) {
 			NotOperator();
 		}
 		Term();
 		while (StartOf(8)) {
 			Operator();
-			if (t.kind == 51) {
+			if (t.kind == 54) {
 				NotOperator();
 			}
 			Term();
@@ -575,9 +575,9 @@ public List statements = new ArrayList();
 			ColumnName();
 		} else if (t.kind == 2) {
 			Get();
-		} else Error(122);
-		if (t.kind == 47 || t.kind == 48) {
-			if (t.kind == 47) {
+		} else Error(125);
+		if (t.kind == 50 || t.kind == 51) {
+			if (t.kind == 50) {
 				Get();
 			} else {
 				Get();
@@ -586,7 +586,7 @@ public List statements = new ArrayList();
 	}
 
 	private final void Param() {
-		Expect(50);
+		Expect(53);
 		Expect(1);
 	}
 
@@ -596,7 +596,7 @@ public List statements = new ArrayList();
 			ColumnName();
 			break;
 		}
-		case 46: {
+		case 49: {
 			Get();
 			break;
 		}
@@ -612,11 +612,11 @@ public List statements = new ArrayList();
 			Get();
 			break;
 		}
-		case 50: {
+		case 53: {
 			Param();
 			break;
 		}
-		default: Error(123);
+		default: Error(126);
 		}
 	}
 
@@ -628,7 +628,7 @@ public List statements = new ArrayList();
 
 	private final void SimpleColumnList() {
 		SimpleColumnName();
-		while (t.kind == 98) {
+		while (t.kind == 101) {
 			ItemSeparator();
 			SimpleColumnName();
 		}
@@ -639,42 +639,42 @@ public List statements = new ArrayList();
 	}
 
 	private final void ColumnFunction() {
-		if (t.kind == 41) {
+		if (t.kind == 44) {
+			Get();
+		} else if (t.kind == 45) {
+			Get();
+		} else if (t.kind == 46) {
+			Get();
+		} else if (t.kind == 47) {
+			Get();
+		} else if (t.kind == 48) {
+			Get();
+		} else Error(127);
+		Expect(5);
+		if (t.kind == 39) {
+			Get();
+		} else if (StartOf(9)) {
+			if (t.kind == 21) {
+				Get();
+			}
+			Expression();
+		} else Error(128);
+		CloseParens();
+	}
+
+	private final void FunctionExpr() {
+		if (t.kind == 40) {
+			Get();
+		} else if (t.kind == 41) {
 			Get();
 		} else if (t.kind == 42) {
 			Get();
 		} else if (t.kind == 43) {
 			Get();
-		} else if (t.kind == 44) {
-			Get();
-		} else if (t.kind == 45) {
-			Get();
-		} else Error(124);
-		Expect(5);
-		if (t.kind == 36) {
-			Get();
-		} else if (StartOf(9)) {
-			if (t.kind == 18) {
-				Get();
-			}
-			Expression();
-		} else Error(125);
-		CloseParens();
-	}
-
-	private final void FunctionExpr() {
-		if (t.kind == 37) {
-			Get();
-		} else if (t.kind == 38) {
-			Get();
-		} else if (t.kind == 39) {
-			Get();
-		} else if (t.kind == 40) {
-			Get();
-		} else Error(126);
+		} else Error(129);
 		Expect(5);
 		Expression();
-		while (t.kind == 98) {
+		while (t.kind == 101) {
 			ItemSeparator();
 			Expression();
 		}
@@ -684,18 +684,18 @@ public List statements = new ArrayList();
 	private final void SelectField() {
 		if (StartOf(7)) {
 			Expression();
-			if (t.kind == 20) {
+			if (t.kind == 23) {
 				Get();
 				Alias();
 			}
-		} else if (t.kind == 36) {
+		} else if (t.kind == 39) {
 			Get();
-		} else Error(127);
+		} else Error(130);
 	}
 
 	private final void OrderByFldList() {
 		OrderByField();
-		while (t.kind == 98) {
+		while (t.kind == 101) {
 			ItemSeparator();
 			OrderByField();
 		}
@@ -706,40 +706,40 @@ public List statements = new ArrayList();
 	}
 
 	private final void JoinExpr() {
-		if (t.kind == 29) {
+		if (t.kind == 32) {
 			Get();
 			Expression();
-		} else if (t.kind == 30) {
+		} else if (t.kind == 33) {
 			Get();
 			Expect(5);
 			ColumnList();
 			CloseParens();
-		} else Error(128);
+		} else Error(131);
 	}
 
 	private final void JoinType() {
-		if (t.kind == 23) {
+		if (t.kind == 26) {
 			Get();
 		}
-		if (t.kind == 24) {
+		if (t.kind == 27) {
 			Get();
-		} else if (t.kind == 25 || t.kind == 26 || t.kind == 27) {
-			if (t.kind == 25) {
+		} else if (t.kind == 28 || t.kind == 29 || t.kind == 30) {
+			if (t.kind == 28) {
 				Get();
-			} else if (t.kind == 26) {
+			} else if (t.kind == 29) {
 				Get();
 			} else {
 				Get();
 			}
-			if (t.kind == 28) {
+			if (t.kind == 31) {
 				Get();
 			}
-		} else Error(129);
+		} else Error(132);
 	}
 
 	private final void CrossJoin() {
-		Expect(22);
-		Expect(21);
+		Expect(25);
+		Expect(24);
 		QualifiedTable();
 	}
 
@@ -748,18 +748,18 @@ public List statements = new ArrayList();
 	}
 
 	private final void JoinStmt() {
-		if (t.kind == 22) {
+		if (t.kind == 25) {
 			CrossJoin();
 		} else if (StartOf(10)) {
 			if (StartOf(11)) {
 				JoinType();
 			}
-			Expect(21);
+			Expect(24);
 			QualifiedTable();
-			if (t.kind == 29 || t.kind == 30) {
+			if (t.kind == 32 || t.kind == 33) {
 				JoinExpr();
 			}
-		} else Error(130);
+		} else Error(133);
 	}
 
 	private final void QualifiedTable() {
@@ -773,13 +773,13 @@ public List statements = new ArrayList();
 		else
 		    table.name = token.str;
 		
-		if (t.kind == 19) {
+		if (t.kind == 22) {
 			Get();
 			Expect(1);
 			table.name = token.str;
 		}
-		if (t.kind == 1 || t.kind == 20) {
-			if (t.kind == 20) {
+		if (t.kind == 1 || t.kind == 23) {
+			if (t.kind == 23) {
 				Get();
 			}
 			table.alias = t.str;
@@ -797,7 +797,7 @@ public List statements = new ArrayList();
 	private final void FromTableList() {
 		QualifiedTable();
 		while (StartOf(12)) {
-			if (t.kind == 98) {
+			if (t.kind == 101) {
 				ItemSeparator();
 				QualifiedTable();
 			} else {
@@ -808,38 +808,47 @@ public List statements = new ArrayList();
 
 	private final void SelectFieldList() {
 		SelectField();
-		while (t.kind == 98) {
+		while (t.kind == 101) {
 			ItemSeparator();
 			SelectField();
 		}
 	}
 
 	private final void OrderByClause() {
-		while (!(t.kind == 0 || t.kind == 33)) {Error(131); Get();}
-		Expect(33);
-		Expect(34);
+		SQLSelectStatement statement = (SQLSelectStatement)getParent();
+		statement.setOrderByStart(scanner.pos);
+		while (!(t.kind == 0 || t.kind == 38)) {Error(134); Get();}
+		Expect(38);
+		Expect(36);
 		OrderByFldList();
+		statement.setOrderByEnd(t.pos);
 	}
 
 	private final void HavingClause() {
-		while (!(t.kind == 0 || t.kind == 32)) {Error(132); Get();}
-		Expect(32);
+		SQLSelectStatement statement = (SQLSelectStatement)getParent();
+		statement.setHavingStart(scanner.pos);
+		while (!(t.kind == 0 || t.kind == 37)) {Error(135); Get();}
+		Expect(37);
 		SearchCondition();
+		statement.setHavingEnd(t.pos);
 	}
 
 	private final void GroupByClause() {
-		while (!(t.kind == 0 || t.kind == 35)) {Error(133); Get();}
+		SQLSelectStatement statement = (SQLSelectStatement)getParent();
+		statement.setGroupByStart(scanner.pos);
+		while (!(t.kind == 0 || t.kind == 35)) {Error(136); Get();}
 		Expect(35);
-		Expect(34);
+		Expect(36);
 		FieldList();
+		statement.setGroupByEnd(t.pos);
 	}
 
 	private final void FromClause() {
 		SQLSelectStatement statement = (SQLSelectStatement)getParent();
 		statement.setFromStart(scanner.pos);
 		
-		while (!(t.kind == 0 || t.kind == 16)) {Error(134); Get();}
-		Expect(16);
+		while (!(t.kind == 0 || t.kind == 19)) {Error(137); Get();}
+		Expect(19);
 		FromTableList();
 		statement.setFromEnd(t.pos);
 	}
@@ -848,10 +857,10 @@ public List statements = new ArrayList();
 		SQLSelectStatement statement = (SQLSelectStatement)getParent();
 		statement.setSelectListStart(scanner.pos);
 		
-		while (!(t.kind == 0 || t.kind == 17)) {Error(135); Get();}
-		Expect(17);
-		if (t.kind == 8 || t.kind == 18) {
-			if (t.kind == 18) {
+		while (!(t.kind == 0 || t.kind == 20)) {Error(138); Get();}
+		Expect(20);
+		if (t.kind == 11 || t.kind == 21) {
+			if (t.kind == 21) {
 				Get();
 			} else {
 				Get();
@@ -863,26 +872,26 @@ public List statements = new ArrayList();
 
 	private final void FieldList() {
 		Field();
-		while (t.kind == 98) {
+		while (t.kind == 101) {
 			ItemSeparator();
 			Field();
 		}
 	}
 
 	private final void CloseParens() {
-		ExpectWeak(99, 13);
+		ExpectWeak(102, 13);
 	}
 
 	private final void ColumnList() {
 		ColumnName();
-		while (t.kind == 98) {
+		while (t.kind == 101) {
 			ItemSeparator();
 			ColumnName();
 		}
 	}
 
 	private final void ItemSeparator() {
-		ExpectWeak(98, 14);
+		ExpectWeak(101, 14);
 	}
 
 	private final void Expression() {
@@ -894,7 +903,7 @@ public List statements = new ArrayList();
 	}
 
 	private final void ColumnName() {
-		SQLColumn column = new SQLColumn(getParent(), t.pos);
+		SQLColumn column = new SQLColumn(getParent(), t.pos);//System.out.println("SQLCol");
 		getParent().addChild(column);
 		if(scanner.ch == '.')
 		    column.setAlias(t.str, t.pos);
@@ -902,35 +911,35 @@ public List statements = new ArrayList();
 		    column.setColumn(t.str, t.pos);
 		
 		Expect(1);
-		if (t.kind == 19) {
+		if (t.kind == 22) {
 			Get();
 			if (t.kind == 1) {
 				Get();
 				column.setColumn(token.str, token.pos);
-			} else if (t.kind == 36) {
+			} else if (t.kind == 39) {
 				Get();
-			} else Error(136);
+			} else Error(139);
 		}
 	}
 
 	private final void UpdateField() {
 		ColumnName();
-		Expect(11);
+		Expect(14);
 		Expression();
 	}
 
 	private final void WhereClause() {
 		SQLSelectStatement statement = (SQLSelectStatement)getParent();
 		statement.setWhereStart(scanner.pos);
-		while (!(t.kind == 0 || t.kind == 31)) {Error(137); Get();}
-		Expect(31);
+		while (!(t.kind == 0 || t.kind == 34)) {Error(140); Get();}
+		Expect(34);
 		SearchCondition();
 		statement.setWhereEnd(t.pos);
 	}
 
 	private final void UpdateFieldList() {
 		UpdateField();
-		while (t.kind == 98) {
+		while (t.kind == 101) {
 			ItemSeparator();
 			UpdateField();
 		}
@@ -940,115 +949,127 @@ public List statements = new ArrayList();
 		Expect(1);
 	}
 
+	private final void SetOperator() {
+		if (t.kind == 7) {
+			Get();
+		} else if (t.kind == 8) {
+			Get();
+		} else if (t.kind == 9) {
+			Get();
+		} else if (t.kind == 10) {
+			Get();
+		} else Error(141);
+		if (t.kind == 11) {
+			Get();
+		}
+	}
+
 	private final void SimpleSelect() {
 		SQLSelectStatement stmt = new SQLSelectStatement(t.pos);
 		pushStatement(stmt);
 		
 		SelectClause();
 		FromClause();
-		if (t.kind == 31) {
+		if (t.kind == 34) {
 			WhereClause();
 		}
 		if (t.kind == 35) {
 			GroupByClause();
 		}
-		if (t.kind == 32) {
+		if (t.kind == 37) {
 			HavingClause();
 		}
-		if (t.kind == 33) {
+		if (t.kind == 38) {
 			OrderByClause();
 		}
 		popStatement();
 	}
 
 	private final void Transaction() {
-		if (t.kind == 66) {
+		if (t.kind == 69) {
 			Get();
-		} else if (t.kind == 67) {
+		} else if (t.kind == 70) {
 			Get();
-		} else Error(138);
-		if (t.kind == 68) {
+		} else Error(142);
+		if (t.kind == 71) {
 			Get();
 		}
 	}
 
 	private final void AlterTable() {
-		Expect(95);
-		Expect(91);
+		Expect(98);
+		Expect(94);
 		QualifiedTable();
-		if (t.kind == 94) {
+		if (t.kind == 97) {
 			Add();
-		} else if (t.kind == 95) {
+		} else if (t.kind == 98) {
 			Alter();
-		} else if (t.kind == 93) {
+		} else if (t.kind == 96) {
 			DropPart();
-		} else Error(139);
+		} else Error(143);
 	}
 
 	private final void Drop() {
-		Expect(93);
-		if (t.kind == 91) {
+		Expect(96);
+		if (t.kind == 94) {
 			DropTable();
-		} else if (t.kind == 97) {
+		} else if (t.kind == 100) {
 			IndexAndName();
-		} else Error(140);
+		} else Error(144);
 	}
 
 	private final void CreateStmt() {
-		Expect(90);
-		if (t.kind == 91) {
+		Expect(93);
+		if (t.kind == 94) {
 			CreateTable();
-		} else if (t.kind == 88 || t.kind == 97) {
+		} else if (t.kind == 91 || t.kind == 100) {
 			CreateIndex();
-		} else Error(141);
+		} else Error(145);
 	}
 
 	private final void DeleteStmt() {
-		Expect(15);
-		Expect(16);
+		Expect(18);
+		Expect(19);
 		Table();
-		if (t.kind == 31) {
+		if (t.kind == 34) {
 			WhereClause();
 		}
 	}
 
 	private final void UpdateStmt() {
-		Expect(9);
+		Expect(12);
 		Table();
-		Expect(10);
+		Expect(13);
 		UpdateFieldList();
-		if (t.kind == 31) {
+		if (t.kind == 34) {
 			WhereClause();
 		}
 	}
 
 	private final void InsertStmt() {
-		Expect(12);
-		Expect(13);
+		Expect(15);
+		Expect(16);
 		Table();
 		if (t.kind == 5) {
 			Get();
 			ColumnList();
 			CloseParens();
 		}
-		if (t.kind == 14) {
+		if (t.kind == 17) {
 			Get();
 			Expect(5);
 			FieldList();
 			CloseParens();
-		} else if (t.kind == 17) {
+		} else if (t.kind == 20) {
 			SelectStmt();
-		} else Error(142);
+		} else Error(146);
 	}
 
 	private final void SelectStmt() {
 		pushStatement(new SQLStatement(token.pos));
 		SimpleSelect();
-		while (t.kind == 7) {
-			Get();
-			if (t.kind == 8) {
-				Get();
-			}
+		while (StartOf(16)) {
+			SetOperator();
 			SimpleSelect();
 		}
 		popStatement();
@@ -1057,39 +1078,39 @@ public List statements = new ArrayList();
 	private final void SQLStatement() {
 		addRootStatement(new SQLStatement(token.pos));
 		switch (t.kind) {
-		case 17: {
+		case 20: {
 			SelectStmt();
 			break;
 		}
-		case 12: {
+		case 15: {
 			InsertStmt();
 			break;
 		}
-		case 9: {
+		case 12: {
 			UpdateStmt();
 			break;
 		}
-		case 15: {
+		case 18: {
 			DeleteStmt();
 			break;
 		}
-		case 90: {
+		case 93: {
 			CreateStmt();
 			break;
 		}
-		case 93: {
+		case 96: {
 			Drop();
 			break;
 		}
-		case 95: {
+		case 98: {
 			AlterTable();
 			break;
 		}
-		case 66: case 67: {
+		case 69: case 70: {
 			Transaction();
 			break;
 		}
-		default: Error(143);
+		default: Error(147);
 		}
 		if (t.kind == 6) {
 			Get();
@@ -1098,7 +1119,7 @@ public List statements = new ArrayList();
 
 	private final void squirrelSQL() {
 		SQLStatement();
-		while (StartOf(16)) {
+		while (StartOf(17)) {
 			SQLStatement();
 		}
 		Expect(0);
@@ -1120,40 +1141,42 @@ public List statements = new ArrayList();
 	}
 
 	private static boolean[][] set = {
-	{T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,T,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x,
-	 x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-	{x,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,T,x, x,x,x,x, x,x,x,x,
-	 x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, T,x,x,x,
-	 x,x,x,x, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, T,T,x,x, x,x,x,x,
-	 x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, T,x,T,x,
-	 x,x,x,x, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,T,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x,
-	 x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x,
-	 x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-	{x,T,T,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,x, x,T,T,T, x,x,x,x, x,x,x,x,
-	 x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, T,T,T,T, x,x,x,x,
-	 x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-	{x,T,T,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,x, x,T,T,T, x,x,x,x, x,x,x,x,
-	 x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,T, T,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x,
-	 x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x,
-	 x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,T,T, T,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x,
-	 x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x},
-	{T,x,x,x, x,x,T,T, x,T,x,T, T,x,T,T, T,T,x,x, T,T,T,T, T,T,T,T, x,x,x,T, T,T,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,T,x,T, T,T,T,T, x,x,x,T,
-	 T,T,T,T, x,x,T,T, x,x,x,x, x,x,x,x, x,x,T,x, x,x,T,x, x,x,x,x, x,x,T,x, x,T,x,T, x,x,T,T, x,x},
-	{T,T,T,T, T,T,x,x, x,x,x,x, x,x,x,x, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,T,x,T, T,T,T,T, T,T,T,T, T,T,T,x, x,T,T,T, x,x,x,x, x,x,x,x,
-	 x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,T,x,x, x,x,x,x, T,T,x,x, x,x,x,x, x,x,x,x, x,x},
-	{x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T,
-	 T,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-	{x,x,x,x, x,x,x,x, x,T,x,x, T,x,x,T, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x,
-	 x,x,x,x, x,x,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,T,x,T, x,x,x,x, x,x}
+	{T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, x,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x,
+	 x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x},
+	{x,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,T,x,x, x,x,x,x,
+	 x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,T,
+	 x,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,T, T,x,x,x,
+	 x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,T,
+	 x,T,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x,
+	 x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x,
+	 x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x},
+	{x,T,T,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,T,T,T, T,T,T,T, T,T,x,x, T,T,T,x, x,x,x,x,
+	 x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,T, T,T,T,x,
+	 x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x},
+	{x,T,T,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,T,T,T, T,T,T,T, T,T,x,x, T,T,T,x, x,x,x,x,
+	 x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,T,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x,
+	 x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x,
+	 x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,T,T,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x,
+	 x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x},
+	{T,x,x,x, x,x,T,T, T,T,T,x, T,x,T,T, x,T,T,T, T,x,x,T, T,T,T,T, T,T,T,x, x,x,T,T, x,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, T,x,T,T, T,T,T,x,
+	 x,x,T,T, T,T,T,x, x,T,T,x, x,x,x,x, x,x,x,x, x,T,x,x, x,T,x,x, x,x,x,x, x,T,x,x, T,x,T,x, x,T,T,x, x},
+	{T,T,T,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, x,T,T,T, T,T,T,T, T,T,T,T, T,T,x,x, T,T,T,x, x,x,x,x,
+	 x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, T,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x,
+	 x,x,T,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x},
+	{x,x,x,x, x,x,x,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x,
+	 x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,T, x,x,T,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x,
+	 x,x,x,x, x,x,x,x, x,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, T,x,T,x, x,x,x,x, x}
 
 	};
 }

@@ -26,14 +26,26 @@ import java.util.List;
 
 import net.sourceforge.jcomplete.SQLCompletion;
 import net.sourceforge.jcomplete.SQLSchema;
+import net.sourceforge.jcomplete.Completion;
 
 /**
  * an SQL select statement
  */
 public class SQLSelectStatement extends SQLStatement
 {
+    private static final int FA_START = 0;
+    private static final int FA_END = 1;
+
+    private static final int FA_WHERE = 0;
+    private static final int FA_GROUPBY = 1;
+    private static final int FA_HAVING = 2;
+    private static final int FA_ORDERBY = 3;
+    private static final int NO_LIMIT = 99999;
+
     private Map aliasMap = new HashMap();
-    private int selectListStart, selectListEnd, fromStart, fromEnd, whereStart, whereEnd;
+    private int selectListStart, selectListEnd, fromStart, fromEnd;
+
+    private int[][] fieldAreas = new int[4][2]; //FA_xxx
 
     public SQLSelectStatement(int start)
     {
@@ -42,7 +54,6 @@ public class SQLSelectStatement extends SQLStatement
 
     public void setSelectListStart(int start)
     {
-        System.out.println("entering selectlist: "+start);
         selectListStart = start;
         selectListEnd = 99999;
         setEndPosition(selectListEnd);
@@ -50,14 +61,12 @@ public class SQLSelectStatement extends SQLStatement
 
     public void setSelectListEnd(int end)
     {
-        System.out.println("leaving selectlist: "+end);
         selectListEnd = end;
         setEndPosition(end);
     }
 
     public void setFromStart(int fromStart)
     {
-        System.out.println("entering from: "+fromStart);
         this.fromStart = fromStart;
         this.fromEnd = 99999;
         setEndPosition(fromEnd);
@@ -65,29 +74,65 @@ public class SQLSelectStatement extends SQLStatement
 
     public void setFromEnd(int fromEnd)
     {
-        System.out.println("leaving from: "+fromEnd);
         this.fromEnd = fromEnd;
         setEndPosition(fromEnd);
     }
 
-    public void setWhereStart(int whereStart)
+    public void setWhereStart(int start)
     {
-        System.out.println("entering where: "+whereStart);
-        this.whereStart = whereStart;
-        this.whereEnd = 99999;
-        setEndPosition(whereEnd);
+        setFieldAreaStart(FA_WHERE, start);
     }
 
     public void setWhereEnd(int whereEnd)
     {
-        System.out.println("leaving where: "+whereEnd);
-        this.whereEnd = whereEnd;
-        setEndPosition(whereEnd);
+        setFieldAreEnd(FA_WHERE, whereEnd);
+    }
+
+    public void setGroupByStart(int start)
+    {
+        setFieldAreaStart(FA_GROUPBY, start);
+    }
+
+    public void setGroupByEnd(int whereEnd)
+    {
+        setFieldAreEnd(FA_GROUPBY, whereEnd);
+    }
+
+    public void setHavingStart(int start)
+    {
+        setFieldAreaStart(FA_HAVING, start);
+    }
+
+    public void setHavingEnd(int whereEnd)
+    {
+        setFieldAreEnd(FA_HAVING, whereEnd);
+    }
+
+    public void setOrderByStart(int start)
+    {
+        setFieldAreaStart(FA_ORDERBY, start);
+    }
+
+    public void setOrderByEnd(int whereEnd)
+    {
+        setFieldAreEnd(FA_ORDERBY, whereEnd);
+    }
+
+    private void setFieldAreaStart(int fa, int start)
+    {
+        fieldAreas[fa][FA_START] = start;
+        fieldAreas[fa][FA_END] = NO_LIMIT;
+        setEndPosition(NO_LIMIT);
+    }
+
+    private void setFieldAreEnd(int fa, int end)
+    {
+        fieldAreas[fa][FA_END] = end;
+        setEndPosition(end);
     }
 
     public boolean setTable(String catalog, String schema, String name, String alias)
     {
-        System.out.println("setTable: "+alias+"."+name);
         Table table = sqlSchema.getTable(catalog, schema, name);
         if(table == null) return false;
         if(alias != null)
@@ -121,17 +166,23 @@ public class SQLSelectStatement extends SQLStatement
             return new SQLColumn(this, offset);
         else if(offset >= fromStart && offset <= fromEnd)
             return new SQLTable(this, offset);
-        else if(offset >= whereStart && offset <= whereEnd) {
-            SQLColumn col = new SQLColumn(this, offset);
-            col.setRepeatable(false);
-            return col;
+        else {
+            for(int i=0; i<fieldAreas.length; i++) {
+                if(offset >= fieldAreas[i][FA_START] && offset <= fieldAreas[i][FA_END]) {
+                    SQLColumn col = new SQLColumn(this, offset);
+                    col.setRepeatable(false);
+                    return col;
+                }
+            }
         }
         return null;
     }
 
-    public void takeTables(SQLStatement statement)
+    public void updateWith(Completion completion)
     {
-        SQLSelectStatement other = (SQLSelectStatement)statement;
+        SQLSelectStatement other = (SQLSelectStatement)completion;
         aliasMap.putAll(other.aliasMap);
+        if(parent != null)
+            parent.updateWith(other.parent);
     }
 }

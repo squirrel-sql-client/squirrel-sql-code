@@ -78,7 +78,7 @@ public class CompletionListPopup extends JPanel
             {
                 if(e.getClickCount() == 2) {
                     closeWindow();
-                    completor.completionRequested(completion, list.getSelectedValues());
+                    completion = completor.completionRequested(completion, list.getSelectedValues());
                 }
             }
         });

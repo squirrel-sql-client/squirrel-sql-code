@@ -32,6 +32,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.border.EmptyBorder;
 import net.sourceforge.jcomplete.completions.SQLColumn;
 import net.sourceforge.jcomplete.SQLSchema;
+import net.sourceforge.jcomplete.Completion;
 
 
 /**
@@ -256,7 +257,7 @@ public class TableColumnChooser extends JDialog
                 return index < cols.length;
             }
 
-            public Object next()
+            public Completion next()
             {
                 SQLColumn col = (!existingCompleted && index == 0) ? sqlColumn : newCol;
                 col.setColumn((String)cols[index++]);
@@ -269,19 +270,9 @@ public class TableColumnChooser extends JDialog
             {
                 return needsSeparator;
             }
-
-            public void remove()
-            {
-                throw new UnsupportedOperationException();
-            }
         };
-        completor.completionRequested(event);
+        sqlColumn = (SQLColumn)completor.completionRequested(event);
 
-        if(event.completion != sqlColumn) {
-            SQLColumn newColumn = (SQLColumn)event.completion;
-            newColumn.getStatement().takeTables(sqlColumn.getStatement());
-            sqlColumn = (SQLColumn)event.completion;
-        }
         setExistingCompleted();
 
         if(sqlColumn.isRepeatable() == false)

@@ -22,6 +22,7 @@ package net.sourceforge.jcomplete.completions;
 
 import net.sourceforge.jcomplete.SQLCompletion;
 import net.sourceforge.jcomplete.SQLSchema;
+import net.sourceforge.jcomplete.Completion;
 
 /**
  * a completion suggesting column names
@@ -179,5 +180,11 @@ public class SQLColumn extends SQLCompletion
     public boolean mustReplace(int position)
     {
         return column != null && position >= startPosition && position <= endPosition;
+    }
+
+    public void updateWith(Completion completion)
+    {
+        SQLColumn oldColumn = (SQLColumn)completion;
+        getStatement().updateWith(oldColumn.getStatement());
     }
 }

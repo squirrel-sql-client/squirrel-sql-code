@@ -21,6 +21,7 @@
 package net.sourceforge.jcomplete;
 
 import net.sourceforge.jcomplete.Completion;
+import net.sourceforge.jcomplete.completions.SQLStatement;
 
 /**
  * abstract superclass for completion items
@@ -30,6 +31,7 @@ public abstract class SQLCompletion implements Completion
     public static String[] EMPTY_RESULT = new String[0];
 
     protected int startPosition=NO_POSITION, endPosition=NO_POSITION;
+    protected SQLStatement parent;
 
     protected SQLCompletion(int startPosition)
     {
@@ -96,5 +98,19 @@ public abstract class SQLCompletion implements Completion
     public boolean mustReplace(int position)
     {
         return false;
+    }
+
+    public void updateWith(Completion completion)
+    {
+    }
+
+    public void setParent(SQLStatement sqlStatement)
+    {
+        parent = sqlStatement;
+    }
+
+    public SQLStatement getParent()
+    {
+        return parent;
     }
 }

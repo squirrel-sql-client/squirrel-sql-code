@@ -78,8 +78,12 @@ SQLStatement            (.  addRootStatement(new SQLStatement(token.pos)); .)
 
 SelectStmt              (.  pushStatement(new SQLStatement(token.pos)); .)
     =
-    (SimpleSelect {"UNION" ["ALL"] SimpleSelect})
+    (SimpleSelect {SetOperator SimpleSelect})
                         (.  popStatement(); .)
+    .
+
+SetOperator
+    = ("UNION" | "EXCEPT" | "INTERSECT" | "MINUS") [ "ALL" ]
     .
 
 UpdateStmt =
@@ -189,16 +193,25 @@ WhereClause             (.  SQLSelectStatement statement = (SQLSelectStatement)g
                         (.  statement.setWhereEnd(t.pos); .)
     .
 
-HavingClause =
-    SYNC "HAVING" SearchCondition
-    .
-
-OrderByClause =
-    SYNC "ORDER" "BY" OrderByFldList
-    .
-
-GroupByClause =
+GroupByClause           (.  SQLSelectStatement statement = (SQLSelectStatement)getParent();
+                            statement.setGroupByStart(scanner.pos); .)
+    =
     SYNC "GROUP" "BY" FieldList
+                        (.  statement.setGroupByEnd(t.pos); .)
+    .
+
+HavingClause            (.  SQLSelectStatement statement = (SQLSelectStatement)getParent();
+                            statement.setHavingStart(scanner.pos); .)
+    =
+    SYNC "HAVING" SearchCondition
+                        (.  statement.setHavingEnd(t.pos); .)
+    .
+
+OrderByClause           (.  SQLSelectStatement statement = (SQLSelectStatement)getParent();
+                            statement.setOrderByStart(scanner.pos); .)
+    =
+    SYNC "ORDER" "BY" OrderByFldList
+                        (.  statement.setOrderByEnd(t.pos); .)
     .
 
 SelectFieldList
@@ -228,7 +241,7 @@ ColumnList =
     ColumnName {ItemSeparator ColumnName}
     .
 
-ColumnName              (.  SQLColumn column = new SQLColumn(getParent(), t.pos);
+ColumnName              (.  SQLColumn column = new SQLColumn(getParent(), t.pos);//System.out.println("SQLCol");
                             getParent().addChild(column);
                             if(scanner.ch == '.')
                                 column.setAlias(t.str, t.pos);

@@ -26,6 +26,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import net.sourceforge.jcomplete.completions.SQLStatement;
+import net.sourceforge.jcomplete.completions.SQLColumn;
 import net.sourceforge.jcomplete.Completion;
 import net.sourceforge.jcomplete.CompletionHandler;
 import net.sourceforge.jcomplete.util.ParserThread;
@@ -101,6 +102,14 @@ public class SQLCompletionHandler implements CompletionHandler, SQLSchema
     public void textRemoved(int offset, int length)
     {
         parserThread.reset(textProvider.getChars(0));
+    }
+
+    public Completion updateCompletion(Completion completion)
+    {
+        Completion c = getCompletion(completion.getStart());
+        if(c != completion)
+            c.updateWith(completion);
+        return c;
     }
 
     public boolean setTable(String catalog, String schema, String name, String alias)
