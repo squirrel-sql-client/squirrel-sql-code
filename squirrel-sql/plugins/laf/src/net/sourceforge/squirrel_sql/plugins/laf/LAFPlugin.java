@@ -22,6 +22,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
 
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
+
 import net.sourceforge.squirrel_sql.fw.util.Logger;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
@@ -39,6 +42,8 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class LAFPlugin extends DefaultPlugin {
+	private UIDefaults _origDfts;
+
     /** Plugin preferences. */
     private LAFPreferences _lafPrefs;
 
@@ -102,6 +107,8 @@ public class LAFPlugin extends DefaultPlugin {
         super.load(app);
         PluginManager pmgr = app.getPluginManager();
 
+		_origDfts = (UIDefaults)UIManager.getDefaults().clone();
+		
         // Folder within plugins folder that belongs to this
         // plugin.
         try {
