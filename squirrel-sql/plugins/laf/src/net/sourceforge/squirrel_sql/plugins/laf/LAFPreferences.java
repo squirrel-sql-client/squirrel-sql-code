@@ -35,12 +35,12 @@ public class LAFPreferences implements Cloneable, Serializable {
 
 	private FontInfo _fiMenu;
 	private FontInfo _fiStatic;
-	private FontInfo _fiToolBar;
+	private FontInfo _fiStatusBar;
 	private FontInfo _fiOther;
 
 	private boolean _fiMenuEnabled;
 	private boolean _fiStaticEnabled;
-	private boolean _fiToolBarEnabled;
+	private boolean _fiStatusBarEnabled;
 	private boolean _fiOtherEnabled;
 
 	public LAFPreferences() {
@@ -66,12 +66,12 @@ public class LAFPreferences implements Cloneable, Serializable {
 			LAFPreferences obj = (LAFPreferences)rhs;
 			if (_fiMenuEnabled == obj._fiMenuEnabled &&
 					_fiStaticEnabled == obj._fiStaticEnabled &&
-					_fiToolBarEnabled == obj._fiToolBarEnabled &&
+					_fiStatusBarEnabled == obj._fiStatusBarEnabled &&
 					_fiOtherEnabled == obj._fiOtherEnabled &&
 					_fiOther.equals(obj._fiOther) &&
 					_fiStatic.equals(obj._fiStatic) &&
 					_fiMenu.equals(obj._fiMenu) &&
-					_fiToolBar.equals(obj._fiToolBar) &&
+					_fiStatusBar.equals(obj._fiStatusBar) &&
 					_skinThemePackName.equals(obj._skinThemePackName) &&
 					_lafClassName.equals(obj._lafClassName)) {
 				rc = true;
@@ -112,12 +112,12 @@ public class LAFPreferences implements Cloneable, Serializable {
 		_fiStatic = data;
 	}
 
-	public FontInfo getToolBarFontInfo() {
-		return _fiToolBar;
+	public FontInfo getStatusBarFontInfo() {
+		return _fiStatusBar;
 	}
 
-	public void setToolBarFontInfo(FontInfo data) {
-		_fiToolBar = data;
+	public void setStatusBarFontInfo(FontInfo data) {
+		_fiStatusBar = data;
 	}
 
 	public FontInfo getOtherFontInfo() {
@@ -144,12 +144,12 @@ public class LAFPreferences implements Cloneable, Serializable {
 		_fiStaticEnabled = data;
 	}
 
-	public boolean isToolBarFontEnabled() {
-		return _fiToolBarEnabled;
+	public boolean isStatusBarFontEnabled() {
+		return _fiStatusBarEnabled;
 	}
 
-	public void setToolBarFontEnabled(boolean data) {
-		_fiToolBarEnabled = data;
+	public void setStatusBarFontEnabled(boolean data) {
+		_fiStatusBarEnabled = data;
 	}
 
 	public boolean isOtherFontEnabled() {

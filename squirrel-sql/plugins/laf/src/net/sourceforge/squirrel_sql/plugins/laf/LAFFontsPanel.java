@@ -36,6 +36,7 @@ import javax.swing.SwingConstants;
 import net.sourceforge.squirrel_sql.fw.gui.FontChooser;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
+import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -150,7 +151,7 @@ class LAFFontsPanel implements IGlobalPreferencesPanel {
 		 * replaced with a property file.
 		 */
 		interface i18n {
-			String LAF_WARNING = "Note: Controls may not be drawn correctly after changes in this panel until the application is restarted.";
+			String LAF_WARNING = "Note: Changes will not take effect until the application is restarted.";
 			String TAB_TITLE = "Fonts";
 			String TAB_HINT = "Fonts";
 		}
@@ -161,20 +162,20 @@ class LAFFontsPanel implements IGlobalPreferencesPanel {
 		/** Button to select font for static text. */
 		private FontButton _staticFontBtn;
 
-		/** Button to select font for toolbars. */
-		private FontButton _toolBarFontBtn;
+		/** Button to select font for status bars. */
+		private FontButton _statusBarFontBtn;
 
 		/** Button to select font for other controls. */
 		private FontButton _otherFontBtn;
 
-		private JLabel _menuFontLbl = new JLabel();
-		private JLabel _staticFontLbl = new JLabel();
-		private JLabel _toolBarFontLbl = new JLabel();
-		private JLabel _otherFontLbl = new JLabel();
+		private JLabel _menuFontLbl = new OutputLabel(" ");
+		private JLabel _staticFontLbl = new OutputLabel(" ");
+		private JLabel _statusBarFontLbl = new OutputLabel(" ");
+		private JLabel _otherFontLbl = new OutputLabel(" ");
 
 		private JCheckBox _menuFontEnabledChk = new JCheckBox("Enabled");
 		private JCheckBox _staticFontEnabledChk = new JCheckBox("Enabled");
-		private JCheckBox _toolBarFontEnabledChk = new JCheckBox("Enabled");
+		private JCheckBox _statusBarFontEnabledChk = new JCheckBox("Enabled");
 		private JCheckBox _otherFontEnabledChk = new JCheckBox("Enabled");
 
 		private LAFPlugin _plugin;
@@ -193,40 +194,40 @@ class LAFFontsPanel implements IGlobalPreferencesPanel {
 		void loadData() {
 			_menuFontEnabledChk.setSelected(_prefs.isMenuFontEnabled());
 			_staticFontEnabledChk.setSelected(_prefs.isStaticFontEnabled());
-			_toolBarFontEnabledChk.setSelected(_prefs.isToolBarFontEnabled());
+			_statusBarFontEnabledChk.setSelected(_prefs.isStatusBarFontEnabled());
 			_otherFontEnabledChk.setSelected(_prefs.isOtherFontEnabled());
 
 			FontInfo fi = _prefs.getMenuFontInfo();
 			_menuFontLbl.setText(fi != null ? fi.toString() : "");
 			fi = _prefs.getStaticFontInfo();
 			_staticFontLbl.setText(fi != null ? fi.toString() : "");
-			fi = _prefs.getToolBarFontInfo();
-			_toolBarFontLbl.setText(fi != null ? fi.toString() : "");
+			fi = _prefs.getStatusBarFontInfo();
+			_statusBarFontLbl.setText(fi != null ? fi.toString() : "");
 			fi = _prefs.getOtherFontInfo();
 			_otherFontLbl.setText(fi != null ? fi.toString() : "");
 
 			_menuFontBtn.setEnabled(_prefs.isMenuFontEnabled());
 			_staticFontBtn.setEnabled(_prefs.isStaticFontEnabled());
-			_toolBarFontBtn.setEnabled(_prefs.isToolBarFontEnabled());
+			_statusBarFontBtn.setEnabled(_prefs.isStatusBarFontEnabled());
 			_otherFontBtn.setEnabled(_prefs.isOtherFontEnabled());
 		}
 
 		void applyChanges() {
 			_prefs.setMenuFontInfo(_menuFontBtn.getFontInfo());
 			_prefs.setStaticFontInfo(_staticFontBtn.getFontInfo());
-			_prefs.setToolBarFontInfo(_toolBarFontBtn.getFontInfo());
+			_prefs.setStatusBarFontInfo(_statusBarFontBtn.getFontInfo());
 			_prefs.setOtherFontInfo(_otherFontBtn.getFontInfo());
 
 			_prefs.setMenuFontEnabled(_menuFontEnabledChk.isSelected());
 			_prefs.setStaticFontEnabled(_staticFontEnabledChk.isSelected());
-			_prefs.setToolBarFontEnabled(_toolBarFontEnabledChk.isSelected());
+			_prefs.setStatusBarFontEnabled(_statusBarFontEnabledChk.isSelected());
 			_prefs.setOtherFontEnabled(_otherFontEnabledChk.isSelected());
 
-			try {
-				_lafRegister.updateApplicationFonts();
-			} catch (Exception ex) {
-				s_log.error("Error updating fonts", ex);
-			}
+//			try {
+//				_lafRegister.updateApplicationFonts();
+//			} catch (Exception ex) {
+//				s_log.error("Error updating fonts", ex);
+//			}
 		}
 
 		private void createUserInterface() {
@@ -235,11 +236,12 @@ class LAFFontsPanel implements IGlobalPreferencesPanel {
 			gbc.anchor = gbc.WEST;
 			gbc.fill = gbc.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
-
+			gbc.gridx = 0;
+			gbc.gridy = 0;
 			add(createFontsPanel(), gbc);
 
 			++gbc.gridy;
-			gbc.gridx = 0;
+//			gbc.gridx = 0;
 			gbc.gridwidth = gbc.REMAINDER;
 			add(new MultipleLineLabel(i18n.LAF_WARNING), gbc);
 		}
@@ -247,13 +249,13 @@ class LAFFontsPanel implements IGlobalPreferencesPanel {
 		private JPanel createFontsPanel() {
 			_menuFontBtn = new FontButton("Menus", _menuFontLbl, _prefs.getMenuFontInfo());
 			_staticFontBtn = new FontButton("Static Text", _staticFontLbl, _prefs.getStaticFontInfo());
-			_toolBarFontBtn = new FontButton("Toolbars", _toolBarFontLbl, _prefs.getToolBarFontInfo());
+			_statusBarFontBtn = new FontButton("Status Bars", _statusBarFontLbl, _prefs.getStatusBarFontInfo());
 			_otherFontBtn = new FontButton("Other", _otherFontLbl, _prefs.getOtherFontInfo());
 
 			FontButtonListener lis = new FontButtonListener();
 			_menuFontBtn.addActionListener(lis);
 			_staticFontBtn.addActionListener(lis);
-			_toolBarFontBtn.addActionListener(lis);
+			_statusBarFontBtn.addActionListener(lis);
 			_otherFontBtn.addActionListener(lis);
 
 			_menuFontEnabledChk.addActionListener(new ActionListener() {
@@ -266,9 +268,9 @@ class LAFFontsPanel implements IGlobalPreferencesPanel {
 					_staticFontBtn.setEnabled(_staticFontEnabledChk.isSelected());
 				}
 			});
-			_toolBarFontEnabledChk.addActionListener(new ActionListener() {
+			_statusBarFontEnabledChk.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					_toolBarFontBtn.setEnabled(_toolBarFontEnabledChk.isSelected());
+					_statusBarFontBtn.setEnabled(_statusBarFontEnabledChk.isSelected());
 				}
 			});
 			_otherFontEnabledChk.addActionListener(new ActionListener() {
@@ -292,7 +294,7 @@ class LAFFontsPanel implements IGlobalPreferencesPanel {
 			pnl.add(_staticFontEnabledChk, gbc);
 
 			++gbc.gridy;
-			pnl.add(_toolBarFontEnabledChk, gbc);
+			pnl.add(_statusBarFontEnabledChk, gbc);
 
 			++gbc.gridy;
 			pnl.add(_otherFontEnabledChk, gbc);
@@ -305,7 +307,7 @@ class LAFFontsPanel implements IGlobalPreferencesPanel {
 			pnl.add(_staticFontBtn, gbc);
 
 			++gbc.gridy;
-			pnl.add(_toolBarFontBtn, gbc);
+			pnl.add(_statusBarFontBtn, gbc);
 
 			++gbc.gridy;
 			pnl.add(_otherFontBtn, gbc);
@@ -320,7 +322,7 @@ class LAFFontsPanel implements IGlobalPreferencesPanel {
 			pnl.add(_staticFontLbl, gbc);
 
 			++gbc.gridy;
-			pnl.add(_toolBarFontLbl, gbc);
+			pnl.add(_statusBarFontLbl, gbc);
 
 			++gbc.gridy;
 			pnl.add(_otherFontLbl, gbc);
@@ -380,24 +382,6 @@ class LAFFontsPanel implements IGlobalPreferencesPanel {
 				}
 			}
 		}
-
-		private static final class RightLabel extends JLabel {
-			RightLabel(String title) {
-				super(title, SwingConstants.RIGHT);
-			}
-		}
-
-		private static final class OutputLabel extends JLabel {
-			OutputLabel(String title) {
-				super(title);
-				setToolTipText(title);
-				Dimension ps = getPreferredSize();
-				ps.width = 150;
-				setPreferredSize(ps);
-			}
-		}
-
 	}
-
 }
 

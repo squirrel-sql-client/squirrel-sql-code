@@ -139,6 +139,14 @@ public class LAFPlugin extends DefaultPlugin {
 	}
 
 	/**
+	 * Plugin initialization. Main frame has now been created so we can
+	 * set the font for its status bar.
+	 */
+	public void initialize() {
+		_lafRegister.updateStatusBarFont();
+	}
+
+	/**
 	 * Application is shutting down so save preferences.
 	 */
 	public void unload() {

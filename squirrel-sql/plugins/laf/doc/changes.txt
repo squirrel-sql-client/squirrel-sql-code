@@ -6,6 +6,7 @@ Change Log
 
 Enhancements
 ------------
+- Can now select font for status bars.
 - Skin Look and Feel updated to 1.2 with the latest
   version of the Whistler theme pack.
 - OYOAHA Look and Feel added.

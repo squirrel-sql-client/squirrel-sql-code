@@ -147,6 +147,10 @@ class LAFRegister implements LAFConstants {
 
 		try {
 			updateApplicationFonts();
+		} catch (Throwable ex) {
+			s_log.error("Error", ex);
+		}
+		try {
 			setLookAndFeel();
 		} catch (Throwable ex) {
 			s_log.error("Error", ex);
@@ -187,6 +191,13 @@ class LAFRegister implements LAFConstants {
 			return new SkinLookAndFeelController();
 		}
 		return new DefaultLookAndFeelController();
+	}
+
+	/**
+	 * Set the font that the application uses for statusbars.
+	 */
+	void updateStatusBarFont() {
+		_app.getFontInfoStore().setStatusBarFontInfo(_plugin.getLAFPreferences().getStatusBarFontInfo());
 	}
 
 	/**
