@@ -1,6 +1,6 @@
-package net.sourceforge.squirrel_sql.client.db;
+package net.sourceforge.squirrel_sql.client.gui.db;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -38,14 +38,14 @@ import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class AliasMaintSheetFactory implements AliasMaintSheet.IMaintenanceType
+public class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
 {
 	/** Logger for this class. */
 	private static final ILogger s_log =
-		LoggerController.createLogger(AliasMaintSheetFactory.class);
+		LoggerController.createLogger(AliasWindowFactory.class);
 
 	/** Application API. */
-	private IApplication _app;
+	private final IApplication _app;
 
 	/**
 	 * Collection of <TT>AliasMaintDialog</TT> that are currently visible modifying
@@ -53,33 +53,18 @@ public class AliasMaintSheetFactory implements AliasMaintSheet.IMaintenanceType
 	 */
 	private Map _modifySheets = new HashMap();
 
-	/** Singleton instance of this class. */
-	private static AliasMaintSheetFactory s_instance = new AliasMaintSheetFactory();
-
 	/**
-	 * ctor. Private as cass is a singleton.
+	 * ctor.
 	 */
-	private AliasMaintSheetFactory()
+	public AliasWindowFactory(IApplication app)
 	{
 		super();
-	}
+		if (app == null)
+		{
+			throw new IllegalArgumentException("IApplication == null");
+		}
 
-	/**
-	 * Return the single instance of this class.
-	 *
-	 * @return	the single instance of this class.
-	 */
-	public static AliasMaintSheetFactory getInstance()
-	{
-		return s_instance;
-	}
-
-	/**
-	 * Initialize this class. This <EM>must</EM> be called prior to using this class.
-	 */
-	public static void initialize(IApplication app)
-	{
-		getInstance()._app = app;
+		_app = app;
 	}
 
 	/**
@@ -94,17 +79,17 @@ public class AliasMaintSheetFactory implements AliasMaintSheet.IMaintenanceType
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
 	 */
-	public synchronized AliasMaintSheet showModifySheet(ISQLAlias alias)
+	public synchronized AliasInternalFrame showModifySheet(ISQLAlias alias)
 	{
 		if (alias == null)
 		{
 			throw new IllegalArgumentException("ISQLALias == null");
 		}
 
-		AliasMaintSheet sheet = get(alias);
+		AliasInternalFrame sheet = get(alias);
 		if (sheet == null)
 		{
-			sheet = new AliasMaintSheet(_app, alias, MODIFY);
+			sheet = new AliasInternalFrame(_app, alias, MODIFY);
 			_modifySheets.put(alias.getIdentifier(), sheet);
 			_app.getMainFrame().addInternalFrame(sheet, true, null);
 
@@ -112,19 +97,15 @@ public class AliasMaintSheetFactory implements AliasMaintSheet.IMaintenanceType
 			{
 				public void internalFrameClosed(InternalFrameEvent evt)
 				{
-					synchronized (getInstance())
+					synchronized (AliasWindowFactory.this)
 					{
-						AliasMaintSheet frame =
-							(AliasMaintSheet) evt.getInternalFrame();
-						_modifySheets.remove(
-							frame.getSQLAlias().getIdentifier());
+						AliasInternalFrame frame = (AliasInternalFrame)evt.getInternalFrame();
+						_modifySheets.remove(frame.getSQLAlias().getIdentifier());
 					}
 				}
 			});
-			positionSheet(sheet);
+			GUIUtils.centerWithinDesktop(sheet);
 		}
-
-		sheet.moveToFront();
 
 		return sheet;
 	}
@@ -134,14 +115,14 @@ public class AliasMaintSheetFactory implements AliasMaintSheet.IMaintenanceType
 	 *
 	 * @return	The new maintenance sheet.
 	 */
-	public AliasMaintSheet showCreateSheet()
+	public AliasInternalFrame showCreateSheet()
 	{
 		final DataCache cache = _app.getDataCache();
 		final IIdentifierFactory factory = IdentifierFactory.getInstance();
 		final ISQLAlias alias = cache.createAlias(factory.createIdentifier());
-		final AliasMaintSheet sheet = new AliasMaintSheet(_app, alias, NEW);
+		final AliasInternalFrame sheet = new AliasInternalFrame(_app, alias, NEW);
 		_app.getMainFrame().addInternalFrame(sheet, true, null);
-		positionSheet(sheet);
+		GUIUtils.centerWithinDesktop(sheet);
 		return sheet;
 	}
 
@@ -153,7 +134,7 @@ public class AliasMaintSheetFactory implements AliasMaintSheet.IMaintenanceType
 	 *
 	 * @throws	IllegalArgumentException	if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
 	 */
-	public AliasMaintSheet showCopySheet(ISQLAlias alias)
+	public AliasInternalFrame showCopySheet(ISQLAlias alias)
 	{
 		if (alias == null)
 		{
@@ -171,21 +152,14 @@ public class AliasMaintSheetFactory implements AliasMaintSheet.IMaintenanceType
 		{
 			s_log.error("Error occured copying the alias", ex);
 		}
-		final AliasMaintSheet sheet = new AliasMaintSheet(_app, newAlias, COPY);
+		final AliasInternalFrame sheet = new AliasInternalFrame(_app, newAlias, COPY);
 		_app.getMainFrame().addInternalFrame(sheet, true, null);
-		positionSheet(sheet);
+		GUIUtils.centerWithinDesktop(sheet);
 		return sheet;
 	}
 
-	private AliasMaintSheet get(ISQLAlias alias)
+	private AliasInternalFrame get(ISQLAlias alias)
 	{
-		return (AliasMaintSheet) _modifySheets.get(alias.getIdentifier());
-	}
-
-	private void positionSheet(AliasMaintSheet sheet)
-	{
-		GUIUtils.centerWithinDesktop(sheet);
-		sheet.setVisible(true);
-		sheet.moveToFront();
+		return (AliasInternalFrame) _modifySheets.get(alias.getIdentifier());
 	}
 }

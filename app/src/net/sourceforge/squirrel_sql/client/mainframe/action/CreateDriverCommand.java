@@ -19,7 +19,7 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  */
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
-import net.sourceforge.squirrel_sql.client.db.DriverMaintSheetFactory;
+import net.sourceforge.squirrel_sql.client.IApplication;
 
 /**
  * This <CODE>ICommand</CODE> allows the user to create a new <TT>ISQLDriver</TT>.
@@ -28,16 +28,26 @@ import net.sourceforge.squirrel_sql.client.db.DriverMaintSheetFactory;
  */
 public class CreateDriverCommand implements ICommand
 {
+	/** Application API. */
+	private final IApplication _app;
+
 	/**
 	 * Ctor.
+	 *
+	 * @param	app			Application API.
 	 */
-	public CreateDriverCommand()
+	public CreateDriverCommand(IApplication app)
 	{
 		super();
+		if (app == null)
+		{
+			throw new IllegalArgumentException("IApplication == null");
+		}
+		_app = app;
 	}
 
 	public void execute()
 	{
-		DriverMaintSheetFactory.getInstance().showCreateSheet();
+		_app.getWindowManager().showNewDriverInternalFrame();
 	}
 }

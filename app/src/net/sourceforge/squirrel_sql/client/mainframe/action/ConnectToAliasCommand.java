@@ -37,9 +37,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.db.ConnectionSheet;
-import net.sourceforge.squirrel_sql.client.db.ConnectionSheet.IConnectionSheetHandler;
+import net.sourceforge.squirrel_sql.client.gui.db.ConnectionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
 /**
  * This <CODE>ICommand</CODE> allows the user to connect to
@@ -130,7 +130,7 @@ public class ConnectToAliasCommand implements ICommand
 		try
 		{
 			SheetHandler hdl = new SheetHandler(_app, _sqlAlias, _createSession, _callback);
-			ConnectionSheet sheet = new ConnectionSheet(_app, _sqlAlias, hdl);
+			ConnectionInternalFrame sheet = new ConnectionInternalFrame(_app, _sqlAlias, hdl);
 			_app.getMainFrame().addInternalFrame(sheet, true, null);
 			GUIUtils.centerWithinDesktop(sheet);
 			sheet.moveToFront();
@@ -241,10 +241,10 @@ public class ConnectToAliasCommand implements ICommand
 	/**
 	 * Handler used for connection internal frame actions.
 	 */
-	private static class SheetHandler implements IConnectionSheetHandler, Runnable
+	private static class SheetHandler implements ConnectionInternalFrame.IHandler, Runnable
 	{
 		/** The connection internal frame. */
-		private ConnectionSheet _connSheet;
+		private ConnectionInternalFrame _connSheet;
 
 		/** Application API. */
 		private IApplication _app;
@@ -313,7 +313,7 @@ public class ConnectToAliasCommand implements ICommand
 		 * @param	password	The password entered.
 		 * @param	props		Connection properties.
 		 */
-		public void performOK(ConnectionSheet connSheet, String user,
+		public void performOK(ConnectionInternalFrame connSheet, String user,
 								String password, SQLDriverPropertyCollection props)
 		{
 			_stopConnection = false;
@@ -329,7 +329,7 @@ public class ConnectToAliasCommand implements ICommand
 		 *
 		 * @param	connSheet	Connection internal frame.
 		 */
-		public void performCancelConnect(ConnectionSheet connSheet)
+		public void performCancelConnect(ConnectionInternalFrame connSheet)
 		{
 			// if blocked that means that it doesn't help anymore
 			// Or an error dialog is shown or the connection is made
@@ -345,7 +345,7 @@ public class ConnectToAliasCommand implements ICommand
 		 *
 		 * @param	connSheet	Connection internal frame.
 		 */
-		public void performClose(ConnectionSheet connSheet)
+		public void performClose(ConnectionInternalFrame connSheet)
 		{
 			// Empty.
 		}
@@ -428,9 +428,9 @@ public class ConnectToAliasCommand implements ICommand
 	private static final class Runner implements Runnable
 	{
 		private final ISession _session;
-		private final ConnectionSheet _connSheet;
+		private final ConnectionInternalFrame _connSheet;
 
-		Runner(ISession session, ConnectionSheet connSheet)
+		Runner(ISession session, ConnectionInternalFrame connSheet)
 		{
 			super();
 			_session = session;
@@ -443,7 +443,7 @@ public class ConnectToAliasCommand implements ICommand
 			try
 			{
 				app.getPluginManager().sessionCreated(_session);
-				app.getWindowManager().createInternalFrame(_session);
+				final SessionInternalFrame child = app.getWindowManager().createInternalFrame(_session);
 				_connSheet.executed(true);
 			}
 			catch (Throwable th)

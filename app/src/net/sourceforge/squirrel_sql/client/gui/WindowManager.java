@@ -41,10 +41,15 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.action.SelectInternalFrameAction;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.db.AliasWindowFactory;
+import net.sourceforge.squirrel_sql.client.gui.db.ConnectionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.db.DriverWindowFactory;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.session.BaseSessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
@@ -99,6 +104,12 @@ public class WindowManager
 	/** Applications main frame. */
 	private final MainFrame _mainFrame;
 
+	/** Window Factory for alias maintenace windows. */
+	private final AliasWindowFactory _aliasWinFactory;
+
+	/** Window Factory for driver maintenace windows. */
+	private final DriverWindowFactory _driverWinFactory;
+
 	/**
 	 * Map of windows(s) that are currently open for a session, keyed by
 	 * session ID.
@@ -139,6 +150,8 @@ public class WindowManager
 		_app = app;
 		_mainFrame = new MainFrame(app);
 		_app.getSessionManager().addSessionListener(_sessionListener);
+		_aliasWinFactory = new AliasWindowFactory(_app);
+		_driverWinFactory = new DriverWindowFactory(_app);
 	}
 
 	/**
@@ -185,11 +198,97 @@ public class WindowManager
 		return null;
 	}
 
+	public void showConnectionInternalFrame(ISQLAlias sqlAlias,
+							ConnectionInternalFrame.IHandler handler)
+	{
+		ConnectionInternalFrame sheet = new ConnectionInternalFrame(_app, sqlAlias,
+																	handler);
+		_app.getMainFrame().addInternalFrame(sheet, true, null);
+		GUIUtils.centerWithinDesktop(sheet);
+		sheet.moveToFront();
+		sheet.setVisible(true);
+	}
+
+	/**
+	 * Get a maintenance sheet for the passed alias. If a maintenance sheet already
+	 * exists it will be brought to the front. If one doesn't exist it will be
+	 * created.
+	 *
+	 * @param	alias	The alias that user has requested to modify.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
+	 */
+	public void showModifyAliasInternalFrame(ISQLAlias alias)
+	{
+		moveToFront(_aliasWinFactory.showModifySheet(alias));
+	}
+
+	/**
+	 * Create and show a new maintenance window to allow the user to create a
+	 * new alias.
+	 */
+	public void showNewAliasInternalFrame()
+	{
+		moveToFront(_aliasWinFactory.showCreateSheet());
+	}
+
+	/**
+	 * Create and show a new maintenance sheet that will allow the user to create a
+	 * new alias that is a copy of the passed one.
+	 *
+	 * @return	The new maintenance sheet.
+	 *
+	 * @throws	IllegalArgumentException	if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
+	 */
+	public void showCopyAliasInternalFrame(ISQLAlias alias)
+	{
+		moveToFront(_aliasWinFactory.showCopySheet(alias));
+	}
+
+	/**
+	 * Get a maintenance sheet for the passed driver. If a maintenance sheet
+	 * already exists it will be brought to the front. If one doesn't exist
+	 * it will be created.
+	 *
+	 * @param	driver	The driver that user has requested to modify.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if a <TT>null</TT> <TT>ISQLDriver</TT> passed.
+	 */
+	public void showModifyDriverInternalFrame(ISQLDriver alias)
+	{
+		moveToFront(_driverWinFactory.showModifySheet(alias));
+	}
+
+	/**
+	 * Create and show a new maintenance window to allow the user to create a
+	 * new driver.
+	 */
+	public void showNewDriverInternalFrame()
+	{
+		moveToFront(_driverWinFactory.showCreateSheet());
+	}
+
+	/**
+	 * Create and show a new maintenance sheet that will allow the user to
+	 * create a new driver that is a copy of the passed one.
+	 *
+	 * @return	The new maintenance sheet.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if a <TT>null</TT> <TT>ISQLDriver</TT> passed.
+	 */
+	public void showCopyDriverInternalFrame(ISQLDriver driver)
+	{
+		moveToFront(_driverWinFactory.showCopySheet(driver));
+	}
+
 	/**
 	 * Registers a sheet that is attached to a session. This sheet will
 	 * be automatically closed when the session is closing.
 	 * <p/><b>There is no need to call this method manually.</b> Any
-	 * classes that properly extend BaseSessionSheet will be registered.
+	 * classes that properly extend BaseSessionInternalFrame will be registered.
 	 */
 	public synchronized void registerSessionSheet(BaseSessionInternalFrame sheet)
 	{

@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.db;
+package net.sourceforge.squirrel_sql.client.gui.db;
 /*
  * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
@@ -34,18 +34,15 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 /**
- * JASON: Rename to DriverMaintInternalFrameFactory
- * JASON: Move functionality to Windowmanager
- * 
  * Factory to handle creation of maintenance sheets for SQL Driver objects.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class DriverMaintSheetFactory implements DriverMaintSheet.MaintenanceType
+public class DriverWindowFactory implements AliasInternalFrame.IMaintenanceType
 {
 	/** Logger for this class. */
 	private static ILogger s_log =
-		LoggerController.createLogger(DriverMaintSheetFactory.class);
+		LoggerController.createLogger(DriverWindowFactory.class);
 
 	/** Application API. */
 	private IApplication _app;
@@ -56,34 +53,18 @@ public class DriverMaintSheetFactory implements DriverMaintSheet.MaintenanceType
 	 */
 	private final Map _modifySheets = new HashMap();
 
-	/** Singleton instance of this class. */
-	private final static DriverMaintSheetFactory s_instance =
-		new DriverMaintSheetFactory();
-
 	/**
-	 * ctor. Private as class is a singleton.
+	 * ctor.
 	 */
-	private DriverMaintSheetFactory()
+	public DriverWindowFactory(IApplication app)
 	{
 		super();
-	}
+		if (app == null)
+		{
+			throw new IllegalArgumentException("IApplication == null");
+		}
 
-	/**
-	 * Return the single instance of this class.
-	 *
-	 * @return	the single instance of this class.
-	 */
-	public static DriverMaintSheetFactory getInstance()
-	{
-		return s_instance;
-	}
-
-	/**
-	 * Initialize this class. This <EM>must</EM> be called prior to using this class.
-	 */
-	public static void initialize(IApplication app)
-	{
-		getInstance()._app = app;
+		_app = app;
 	}
 
 	/**
@@ -97,17 +78,17 @@ public class DriverMaintSheetFactory implements DriverMaintSheet.MaintenanceType
 	 *
 	 * @throws	IllegalArgumentException	if a <TT>null</TT> <TT>ISQLDriver</TT> passed.
 	 */
-	public synchronized DriverMaintSheet showModifySheet(ISQLDriver driver)
+	public synchronized DriverInternalFrame showModifySheet(ISQLDriver driver)
 	{
 		if (driver == null)
 		{
 			throw new IllegalArgumentException("ISQLDriver == null");
 		}
 
-		DriverMaintSheet sheet = get(driver);
+		DriverInternalFrame sheet = get(driver);
 		if (sheet == null)
 		{
-			sheet = new DriverMaintSheet(_app, driver, MODIFY);
+			sheet = new DriverInternalFrame(_app, driver, MODIFY);
 			_modifySheets.put(driver.getIdentifier(), sheet);
 			_app.getMainFrame().addInternalFrame(sheet, true, null);
 
@@ -115,17 +96,15 @@ public class DriverMaintSheetFactory implements DriverMaintSheet.MaintenanceType
 			{
 				public void internalFrameClosed(InternalFrameEvent evt)
 				{
-					synchronized (getInstance())
+					synchronized (DriverWindowFactory.this)
 					{
-						DriverMaintSheet frame = (DriverMaintSheet)evt.getInternalFrame();
+						DriverInternalFrame frame = (DriverInternalFrame) evt.getInternalFrame();
 						_modifySheets.remove(frame.getSQLDriver().getIdentifier());
 					}
 				}
 			});
-			positionSheet(sheet);
+			GUIUtils.centerWithinDesktop(sheet);
 		}
-
-		sheet.moveToFront();
 
 		return sheet;
 	}
@@ -135,15 +114,14 @@ public class DriverMaintSheetFactory implements DriverMaintSheet.MaintenanceType
 	 *
 	 * @return	The new maintenance sheet.
 	 */
-	public DriverMaintSheet showCreateSheet()
+	public DriverInternalFrame showCreateSheet()
 	{
 		final DataCache cache = _app.getDataCache();
 		final IIdentifierFactory factory = IdentifierFactory.getInstance();
-		final ISQLDriver driver =
-			cache.createDriver(factory.createIdentifier());
-		final DriverMaintSheet sheet = new DriverMaintSheet(_app, driver, NEW);
+		final ISQLDriver driver = cache.createDriver(factory.createIdentifier());
+		final DriverInternalFrame sheet = new DriverInternalFrame(_app, driver, NEW);
 		_app.getMainFrame().addInternalFrame(sheet, true, null);
-		positionSheet(sheet);
+		GUIUtils.centerWithinDesktop(sheet);
 		return sheet;
 	}
 
@@ -155,7 +133,7 @@ public class DriverMaintSheetFactory implements DriverMaintSheet.MaintenanceType
 	 *
 	 * @throws	IllegalArgumentException	if a <TT>null</TT> <TT>ISQLDriver</TT> passed.
 	 */
-	public DriverMaintSheet showCopySheet(ISQLDriver driver)
+	public DriverInternalFrame showCopySheet(ISQLDriver driver)
 	{
 		if (driver == null)
 		{
@@ -173,23 +151,17 @@ public class DriverMaintSheetFactory implements DriverMaintSheet.MaintenanceType
 		{
 			s_log.error("Error occured copying the driver", ex);
 		}
-		final DriverMaintSheet sheet =
-			new DriverMaintSheet(_app, newDriver, COPY);
+		final DriverInternalFrame sheet =
+			new DriverInternalFrame(_app, newDriver, COPY);
 		_app.getMainFrame().addInternalFrame(sheet, true, null);
-		positionSheet(sheet);
+		GUIUtils.centerWithinDesktop(sheet);
+
 		return sheet;
 	}
 
-	private DriverMaintSheet get(ISQLDriver driver)
+	private DriverInternalFrame get(ISQLDriver driver)
 	{
-		return (DriverMaintSheet) _modifySheets.get(driver.getIdentifier());
-	}
-
-	private void positionSheet(DriverMaintSheet sheet)
-	{
-		GUIUtils.centerWithinDesktop(sheet);
-		sheet.setVisible(true);
-		sheet.moveToFront();
+		return (DriverInternalFrame) _modifySheets.get(driver.getIdentifier());
 	}
 }
 

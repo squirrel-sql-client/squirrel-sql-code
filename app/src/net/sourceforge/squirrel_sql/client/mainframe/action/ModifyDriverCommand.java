@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,9 +17,10 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import net.sourceforge.squirrel_sql.client.db.DriverMaintSheetFactory;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
 /**
  * This <CODE>ICommand</CODE> allows the user to modify an existing
  * <TT>ISQLDriver</TT>.
@@ -28,25 +29,35 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
  */
 public class ModifyDriverCommand implements ICommand
 {
+	/** Application API. */
+	private final IApplication _app;
+
 	/** <TT>ISQLDriver</TT> to be modified. */
 	private ISQLDriver _driver;
 
 	/**
 	 * Ctor.
 	 *
+	 * @param	app			Application API.
 	 * @param	sqlDriver	<TT>ISQLDriver</TT> to be modified.
 	 *
 	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>ISQLDriver</TT> passed.
+	 *			Thrown if a <TT>null</TT> <IApplication</tt> or
+	 *			<TT>ISQLDriver</TT> passed.
 	 */
-	public ModifyDriverCommand(ISQLDriver driver)
+	public ModifyDriverCommand(IApplication app, ISQLDriver driver)
 	{
 		super();
+		if (app == null)
+		{
+			throw new IllegalArgumentException("IApplication == null");
+		}
 		if (driver == null)
 		{
 			throw new IllegalArgumentException("ISQLDriver == null");
 		}
 
+		_app = app;
 		_driver = driver;
 	}
 
@@ -55,6 +66,6 @@ public class ModifyDriverCommand implements ICommand
 	 */
 	public void execute()
 	{
-		DriverMaintSheetFactory.getInstance().showModifySheet(_driver);
+		_app.getWindowManager().showModifyDriverInternalFrame(_driver);
 	}
 }

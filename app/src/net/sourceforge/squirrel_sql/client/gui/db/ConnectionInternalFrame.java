@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.db;
+package net.sourceforge.squirrel_sql.client.gui.db;
 /*
  * Copyright (C) 2001-2004 Colin Bell and Johan Compagner
  * colbell@users.sourceforge.net
@@ -64,15 +64,14 @@ import net.sourceforge.squirrel_sql.client.gui.IOkClosePanelListener;
 import net.sourceforge.squirrel_sql.client.gui.OkClosePanel;
 import net.sourceforge.squirrel_sql.client.gui.OkClosePanelEvent;
 /**
- * JASON" Rename to ConnectionInternalFrame
  * This internal frame allows the user to connect to an alias.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ConnectionSheet extends BaseInternalFrame
+public class ConnectionInternalFrame extends BaseInternalFrame
 {
 	/** Handler called for internal frame actions. */
-	public interface IConnectionSheetHandler
+	public interface IHandler
 	{
 		/**
 		 * User has clicked the OK button to connect to the alias.
@@ -82,7 +81,7 @@ public class ConnectionSheet extends BaseInternalFrame
 		 * @param	password	The password entered.
 		 * @param	props		SQLDriverPropertyCollection to connect with.
 		 */
-		public void performOK(ConnectionSheet connSheet, String user,
+		public void performOK(ConnectionInternalFrame connSheet, String user,
 								String password, SQLDriverPropertyCollection props);
 
 		/**
@@ -91,7 +90,7 @@ public class ConnectionSheet extends BaseInternalFrame
 		 *
 		 * @param	connSheet	The connection internal frame.
 		 */
-		public void performClose(ConnectionSheet connSheet);
+		public void performClose(ConnectionInternalFrame connSheet);
 
 		/**
 		 * User has clicked the Cancel button. They want to cancel
@@ -99,16 +98,16 @@ public class ConnectionSheet extends BaseInternalFrame
 		 *
 		 * @param	connSheet	The connection internal frame.
 		 */
-		public void performCancelConnect(ConnectionSheet connSheet);
+		public void performCancelConnect(ConnectionInternalFrame connSheet);
 	}
 
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(ConnectionSheet.class);
+		StringManagerFactory.getStringManager(ConnectionInternalFrame.class);
 
 	/** Logger for this class. */
 	private static final ILogger s_log =
-		LoggerController.createLogger(ConnectionSheet.class);
+		LoggerController.createLogger(ConnectionInternalFrame.class);
 
 	/** Application API. */
 	private IApplication _app;
@@ -124,22 +123,22 @@ public class ConnectionSheet extends BaseInternalFrame
 
 	private SQLDriverPropertyCollection _props = new SQLDriverPropertyCollection();
 
-	private IConnectionSheetHandler _handler;
+	private IHandler _handler;
 
 	private JLabel _aliasName = new JLabel();
 	private JLabel _driverName = new JLabel();
 	private JLabel _url = new JLabel();
 	private JTextField _user = new JTextField();
 	private JTextField _password = new JPasswordField();
-	private OkClosePanel _btnsPnl = new OkClosePanel(s_stringMgr.getString("ConnectionSheet.connect"));
+	private OkClosePanel _btnsPnl = new OkClosePanel(s_stringMgr.getString("ConnectionInternalFrame.connect"));
 
 	private boolean _driverPropertiesLoaded = false;
 
 	/** If checked use the extended driver properties. */
-	private final JCheckBox _useDriverPropsChk = new JCheckBox(s_stringMgr.getString("ConnectionSheet.userdriverprops"));
+	private final JCheckBox _useDriverPropsChk = new JCheckBox(s_stringMgr.getString("ConnectionInternalFrame.userdriverprops"));
 
 	/** Button that brings up the driver properties dialog. */
-	private final JButton _driverPropsBtn = new JButton(s_stringMgr.getString("ConnectionSheet.props"));
+	private final JButton _driverPropsBtn = new JButton(s_stringMgr.getString("ConnectionInternalFrame.props"));
 
 	private StatusBar _statusBar = new StatusBar();
 
@@ -152,10 +151,10 @@ public class ConnectionSheet extends BaseInternalFrame
 	 *
 	 * @throws	IllegalArgumentException
 	 * 			If <TT>null</TT> <TT>IApplication</TT>, <TT>ISQLAlias</TT>,
-	 * 			or <TT>IConnectionSheetHandler</TT> passed.
+	 * 			or <TT>IConnectionInternalFrameHandler</TT> passed.
 	 */
-	public ConnectionSheet(IApplication app, ISQLAlias alias,
-							IConnectionSheetHandler handler)
+	public ConnectionInternalFrame(IApplication app, ISQLAlias alias,
+									IHandler handler)
 	{
 		super("", true);
 		if (app == null)
@@ -168,7 +167,7 @@ public class ConnectionSheet extends BaseInternalFrame
 		}
 		if (handler == null)
 		{
-			throw new IllegalArgumentException("Null IConnectionSheetHandler passed");
+			throw new IllegalArgumentException("Null IConnectionInternalFrameHandler passed");
 		}
 
 		_app = app;
@@ -178,7 +177,7 @@ public class ConnectionSheet extends BaseInternalFrame
 		_sqlDriver = _app.getDataCache().getDriver(_alias.getDriverIdentifier());
 		if (_sqlDriver == null)
 		{
-			throw new IllegalStateException(s_stringMgr.getString("ConnectionSheet.error.nodriver",
+			throw new IllegalStateException(s_stringMgr.getString("ConnectionInternalFrame.error.nodriver",
 												_alias.getName()));
 		}
 
@@ -244,7 +243,7 @@ public class ConnectionSheet extends BaseInternalFrame
 		{
 			public void actionPerformed(ActionEvent actionEvent)
 			{
-				ConnectionSheet.this.dispose();
+				ConnectionInternalFrame.this.dispose();
 			}
 		};
 
@@ -252,7 +251,7 @@ public class ConnectionSheet extends BaseInternalFrame
 		{
 			public void actionPerformed(ActionEvent actionEvent)
 			{
-				ConnectionSheet.this.connect();
+				ConnectionInternalFrame.this.connect();
 			}
 		};
 
@@ -296,7 +295,7 @@ public class ConnectionSheet extends BaseInternalFrame
 		{
 			_connecting = true;
 			_btnsPnl.setExecuting(true);
-			setStatusText(s_stringMgr.getString("ConnectionSheet.connecting"));
+			setStatusText(s_stringMgr.getString("ConnectionInternalFrame.connecting"));
 			_user.setEnabled(false);
 			_password.setEnabled(false);
 			if (!_useDriverPropsChk.isSelected())
@@ -312,7 +311,7 @@ public class ConnectionSheet extends BaseInternalFrame
 		if (_connecting)
 		{
 			// abort first..
-			setStatusText(s_stringMgr.getString("ConnectionSheet.cancelling"));
+			setStatusText(s_stringMgr.getString("ConnectionInternalFrame.cancelling"));
 			_btnsPnl.enableCloseButton(false);
 			_handler.performCancelConnect(this);
 			_connecting = false;
@@ -326,7 +325,7 @@ public class ConnectionSheet extends BaseInternalFrame
 		GUIUtils.makeToolWindow(this, true);
 
 		final String winTitle =
-			s_stringMgr.getString("ConnectionSheet.title", _alias.getName());
+			s_stringMgr.getString("ConnectionInternalFrame.title", _alias.getName());
 		setTitle(winTitle);
 
 		JPanel content = new JPanel(new BorderLayout());
@@ -373,23 +372,23 @@ public class ConnectionSheet extends BaseInternalFrame
 		builder.addSeparator(title, cc.xywh(1, y, 3, 1));
 
 		y += 2;
-		builder.addLabel(s_stringMgr.getString("ConnectionSheet.alias"), cc.xy(1, y));
+		builder.addLabel(s_stringMgr.getString("ConnectionInternalFrame.alias"), cc.xy(1, y));
 		builder.add(_aliasName, cc.xywh(3, y, 1, 1));
 
 		y += 2;
-		builder.addLabel(s_stringMgr.getString("ConnectionSheet.driver"), cc.xy(1, y));
+		builder.addLabel(s_stringMgr.getString("ConnectionInternalFrame.driver"), cc.xy(1, y));
 		builder.add(_driverName, cc.xywh(3, y, 1, 1));
 
 		y += 2;
-		builder.addLabel(s_stringMgr.getString("ConnectionSheet.url"), cc.xy(1, y));
+		builder.addLabel(s_stringMgr.getString("ConnectionInternalFrame.url"), cc.xy(1, y));
 		builder.add(_url, cc.xywh(3, y, 1, 1));
 
 		y += 2;
-		builder.addLabel(s_stringMgr.getString("ConnectionSheet.user"), cc.xy(1, y));
+		builder.addLabel(s_stringMgr.getString("ConnectionInternalFrame.user"), cc.xy(1, y));
 		builder.add(_user, cc.xywh(3, y, 1, 1));
 
 		y += 2;
-		builder.addLabel(s_stringMgr.getString("ConnectionSheet.password"), cc.xy(1, y));
+		builder.addLabel(s_stringMgr.getString("ConnectionInternalFrame.password"), cc.xy(1, y));
 		builder.add(_password, cc.xywh(3, y, 1, 1));
 
 		y += 2;
@@ -399,7 +398,7 @@ public class ConnectionSheet extends BaseInternalFrame
 		builder.add(propsPnl, cc.xywh(1, y, 3, 1));
 
 		y += 2;
-		builder.addLabel(s_stringMgr.getString("ConnectionSheet.warningcapslock"),
+		builder.addLabel(s_stringMgr.getString("ConnectionInternalFrame.warningcapslock"),
 							cc.xywh(1, y, 3, 1));
 
 		y += 2;
@@ -445,7 +444,7 @@ public class ConnectionSheet extends BaseInternalFrame
 							{
 								_password.requestFocus();
 							}
-							ConnectionSheet.this.removeInternalFrameListener(_this);
+							ConnectionInternalFrame.this.removeInternalFrameListener(_this);
 						}
 					});
 				}
@@ -474,7 +473,7 @@ public class ConnectionSheet extends BaseInternalFrame
 					final Driver jdbcDriver = mgr.getJDBCDriver(_sqlDriver.getIdentifier());
 					if (jdbcDriver == null)
 					{
-						throw new BaseException(s_stringMgr.getString("ConnectionSheet.error.cannotloaddriver"));
+						throw new BaseException(s_stringMgr.getString("ConnectionInternalFrame.error.cannotloaddriver"));
 					}
 
 					_props = _alias.getDriverProperties();
@@ -484,7 +483,7 @@ public class ConnectionSheet extends BaseInternalFrame
 				}
 				catch (Exception ex)
 				{
-					String msg = s_stringMgr.getString("ConnectionSheet.error.driverprops");
+					String msg = s_stringMgr.getString("ConnectionInternalFrame.error.driverprops");
 					s_log.error(msg, ex);
 					_app.showErrorDialog(msg, ex);
 				}
@@ -499,17 +498,17 @@ public class ConnectionSheet extends BaseInternalFrame
 	{
 		public void okPressed(OkClosePanelEvent evt)
 		{
-			ConnectionSheet.this.connect();
+			ConnectionInternalFrame.this.connect();
 		}
 
 		public void closePressed(OkClosePanelEvent evt)
 		{
-			ConnectionSheet.this.dispose();
+			ConnectionInternalFrame.this.dispose();
 		}
 
 		public void cancelPressed(OkClosePanelEvent evt)
 		{
-			ConnectionSheet.this.cancelConnect();
+			ConnectionInternalFrame.this.cancelConnect();
 		}
 	}
 }

@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.db;
+package net.sourceforge.squirrel_sql.client.gui.db;
 /*
  * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
@@ -65,12 +65,11 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
 /**
- * TODO: Rename to DriverMaintInternalFrame
  * This dialog allows maintenance of a JDBC driver definition.
  *
  * @author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class DriverMaintSheet extends BaseInternalFrame
+public class DriverInternalFrame extends BaseInternalFrame
 {
 	/** Different types of maintenance that can be done. */
 	public interface MaintenanceType
@@ -82,10 +81,11 @@ public class DriverMaintSheet extends BaseInternalFrame
 
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(DriverMaintSheet.class);
+		StringManagerFactory.getStringManager(DriverInternalFrame.class);
 
 	/** Logger for this class. */
-	private static final ILogger s_log = LoggerController.createLogger(DriverMaintSheet.class);
+	private static final ILogger s_log =
+		LoggerController.createLogger(DriverInternalFrame.class);
 
 	/** Number of characters to display in D/E fields. */
 	private static final int COLUMN_COUNT = 25;
@@ -146,7 +146,7 @@ public class DriverMaintSheet extends BaseInternalFrame
 	 * 			Thrown if <TT>null</TT> passed for <TT>app</TT> or <TT>sqlDriver</TT> or
 	 * 			an invalid value passed for <TT>maintType</TT>.
 	 */
-	DriverMaintSheet(IApplication app, ISQLDriver sqlDriver, int maintType)
+	DriverInternalFrame(IApplication app, ISQLDriver sqlDriver, int maintType)
 	{
 		super("", true);
 		if (app == null)
@@ -289,12 +289,12 @@ public class DriverMaintSheet extends BaseInternalFrame
 		String winTitle;
 		if (_maintType == MaintenanceType.MODIFY)
 		{
-			winTitle = s_stringMgr.getString("DriverMaintSheet.changedriver",
+			winTitle = s_stringMgr.getString("DriverInternalFrame.changedriver",
 												_sqlDriver.getName());
 		}
 		else
 		{
-			winTitle = s_stringMgr.getString("DriverMaintSheet.adddriver");
+			winTitle = s_stringMgr.getString("DriverInternalFrame.adddriver");
 		}
 		setTitle(winTitle);
 
@@ -333,9 +333,9 @@ public class DriverMaintSheet extends BaseInternalFrame
 		contentPane.add(createDriverPanel(), gbc);
 
 		JTabbedPane tabPnl = new JTabbedPane();
-		tabPnl.addTab(s_stringMgr.getString("DriverMaintSheet.javaclasspath"),
+		tabPnl.addTab(s_stringMgr.getString("DriverInternalFrame.javaclasspath"),
 												createJavaClassPathPanel());
-		tabPnl.addTab(s_stringMgr.getString("DriverMaintSheet.extraclasspath"),
+		tabPnl.addTab(s_stringMgr.getString("DriverInternalFrame.extraclasspath"),
 												createExtraClassPathPanel());
 
 		++gbc.gridy;
@@ -362,7 +362,7 @@ public class DriverMaintSheet extends BaseInternalFrame
 	{
 		JPanel pnl = new JPanel();
 
-		JButton okBtn = new JButton(s_stringMgr.getString("DriverMaintSheet.ok"));
+		JButton okBtn = new JButton(s_stringMgr.getString("DriverInternalFrame.ok"));
 		okBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
@@ -370,7 +370,7 @@ public class DriverMaintSheet extends BaseInternalFrame
 				performOk();
 			}
 		});
-		JButton closeBtn = new JButton(s_stringMgr.getString("DriverMaintSheet.close"));
+		JButton closeBtn = new JButton(s_stringMgr.getString("DriverInternalFrame.close"));
 		closeBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
@@ -393,7 +393,7 @@ public class DriverMaintSheet extends BaseInternalFrame
 		_driverName.setColumns(25);
 
 		JPanel pnl = new JPanel(new GridBagLayout());
-		pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("DriverMaintSheet.driver")));
+		pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("DriverInternalFrame.driver")));
 
 		final GridBagConstraints gbc = new GridBagConstraints();
 		gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -401,10 +401,10 @@ public class DriverMaintSheet extends BaseInternalFrame
 
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		pnl.add(new JLabel(s_stringMgr.getString("DriverMaintSheet.name"), SwingConstants.RIGHT), gbc);
+		pnl.add(new JLabel(s_stringMgr.getString("DriverInternalFrame.name"), SwingConstants.RIGHT), gbc);
 
 		++gbc.gridy;
-		pnl.add(new JLabel(s_stringMgr.getString("DriverMaintSheet.egurl"), SwingConstants.RIGHT), gbc);
+		pnl.add(new JLabel(s_stringMgr.getString("DriverInternalFrame.egurl"), SwingConstants.RIGHT), gbc);
 
 		gbc.weightx = 1.0;
 		gbc.gridy = 0;
@@ -429,7 +429,7 @@ public class DriverMaintSheet extends BaseInternalFrame
 
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		pnl.add(new JLabel(s_stringMgr.getString("DriverMaintSheet.classname"), SwingConstants.RIGHT), gbc);
+		pnl.add(new JLabel(s_stringMgr.getString("DriverInternalFrame.classname"), SwingConstants.RIGHT), gbc);
 
 		gbc.weightx = 1.0;
 		++gbc.gridx;
@@ -497,7 +497,7 @@ public class DriverMaintSheet extends BaseInternalFrame
 		_extraClassPathList.addListSelectionListener(new ExtraClassPathListBoxListener());
 		_extraClassPathList.getModel().addListDataListener(new ExtraClassPathListDataListener());
 
-		_extraClasspathUpBtn = new JButton(s_stringMgr.getString("DriverMaintSheet.up"));
+		_extraClasspathUpBtn = new JButton(s_stringMgr.getString("DriverInternalFrame.up"));
 		_extraClasspathUpBtn.setEnabled(false);
 		_extraClasspathUpBtn.addActionListener(new ActionListener()
 		{
@@ -518,7 +518,7 @@ public class DriverMaintSheet extends BaseInternalFrame
 			}
 		});
 
-		_extraClasspathDownBtn = new JButton(s_stringMgr.getString("DriverMaintSheet.down"));
+		_extraClasspathDownBtn = new JButton(s_stringMgr.getString("DriverInternalFrame.down"));
 		_extraClasspathDownBtn.setEnabled(false);
 		_extraClasspathDownBtn.addActionListener(new ActionListener()
 		{
@@ -541,7 +541,7 @@ public class DriverMaintSheet extends BaseInternalFrame
 
 		JButton newBtn = new AddListEntryButton();
 
-		_extraClasspathDeleteBtn = new JButton(s_stringMgr.getString("DriverMaintSheet.delete"));
+		_extraClasspathDeleteBtn = new JButton(s_stringMgr.getString("DriverInternalFrame.delete"));
 		_extraClasspathDeleteBtn.setEnabled(false);
 		_extraClasspathDeleteBtn.addActionListener(new ActionListener()
 		{
@@ -628,7 +628,7 @@ public class DriverMaintSheet extends BaseInternalFrame
 
 		AddListEntryButton()
 		{
-			super(s_stringMgr.getString("DriverMaintSheet.add"));
+			super(s_stringMgr.getString("DriverInternalFrame.add"));
 			addActionListener(this);
 		}
 
@@ -640,7 +640,7 @@ public class DriverMaintSheet extends BaseInternalFrame
 				_chooser.setMultiSelectionEnabled(true);
 				_chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 				_chooser.addChoosableFileFilter(
-						new FileExtensionFilter(s_stringMgr.getString("DriverMaintSheet.jarfiles"), new String[] { ".jar", ".zip" }));
+						new FileExtensionFilter(s_stringMgr.getString("DriverInternalFrame.jarfiles"), new String[] { ".jar", ".zip" }));
 			}
 			int returnVal = _chooser.showOpenDialog(getParent());
 			if (returnVal == JFileChooser.APPROVE_OPTION)
@@ -669,7 +669,7 @@ public class DriverMaintSheet extends BaseInternalFrame
 
 		ListDriversButton(FileListBox listBox)
 		{
-			super(s_stringMgr.getString("DriverMaintSheet.listdrivers"));
+			super(s_stringMgr.getString("DriverInternalFrame.listdrivers"));
 			setEnabled(false);
 			_listBox = listBox;
 			addActionListener(this);

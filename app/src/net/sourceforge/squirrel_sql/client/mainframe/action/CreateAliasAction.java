@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -30,7 +30,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.AliasesToolWindow;
 /**
  * This <CODE>Action</CODE> allows the user to create a new <TT>ISQLAlias</TT>.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class CreateAliasAction extends SquirrelAction
 {
@@ -66,6 +66,6 @@ public class CreateAliasAction extends SquirrelAction
 		{
 			s_log.error("Error selecting window", ex);
 		}
-		new CreateAliasCommand().execute();
+		new CreateAliasCommand(getApplication()).execute();
 	}
 }
