@@ -19,7 +19,6 @@ package net.sourceforge.squirrel_sql.client.plugin;
  */
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -42,7 +41,7 @@ public class PluginInfoArrayDataSet implements IDataSet
 	private final static String[] s_hdgs = new String[]
 	{
 		s_stringMgr.getString("PluginInfoArrayDataSet.name"),
-		s_stringMgr.getString("PluginInfoArrayDataSet.Loaded"),
+		s_stringMgr.getString("PluginInfoArrayDataSet.loaded"),
 		s_stringMgr.getString("PluginInfoArrayDataSet.version"),
 		s_stringMgr.getString("PluginInfoArrayDataSet.author"),
 		s_stringMgr.getString("PluginInfoArrayDataSet.contributors"),
@@ -54,7 +53,7 @@ public class PluginInfoArrayDataSet implements IDataSet
 	private int _curIndex = -1;
 
 	public PluginInfoArrayDataSet(PluginInfo[] src)
-		throws DataSetException, IllegalArgumentException
+		throws IllegalArgumentException
 	{
 		super();
 		if (src == null)
