@@ -262,6 +262,7 @@ public class LAFPreferencesTab implements IGlobalPreferencesPanel
 			_lafPnl = new JPanel(new GridBagLayout());
 			_lafPnl.setBorder(BorderFactory.createTitledBorder("Look and Feel"));
 			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.weightx = 1;
 			gbc.fill = gbc.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
 			gbc.anchor = gbc.WEST;

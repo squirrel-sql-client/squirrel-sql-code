@@ -149,7 +149,7 @@ class LAFFontsTab implements IGlobalPreferencesPanel {
 		 * replaced with a property file.
 		 */
 		interface i18n {
-			String LAF_WARNING = "Note: Changes will not take effect until the application is restarted.";
+			String LAF_WARNING = "Note: Changes may not take effect until the application is restarted.";
 			String TAB_TITLE = "Fonts";
 			String TAB_HINT = "Fonts";
 		}

@@ -34,7 +34,6 @@ import net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
-
 /**
  * The Look and Feel plugin class.
  *
@@ -43,7 +42,8 @@ import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 public class LAFPlugin extends DefaultPlugin
 {
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(LAFPlugin.class);
+	private final static ILogger
+			s_log = LoggerController.createLogger(LAFPlugin.class);
 
 	/** Old name of file to store user prefs in. Replaced by USER_PREFS_FILE_NAME. */
 	static final String OLD_USER_PREFS_FILE_NAME = "LAFPrefs.xml";
@@ -64,7 +64,7 @@ public class LAFPlugin extends DefaultPlugin
 	private File _userSettingsFolder;
 
 	/** Cache of settings for the plugin. */
-	private XMLObjectCache _settingsCache = new XMLObjectCache();
+	private final XMLObjectCache _settingsCache = new XMLObjectCache();
 
 	/**
 	 * Return the internal name of this plugin.
@@ -93,7 +93,7 @@ public class LAFPlugin extends DefaultPlugin
 	 */
 	public String getVersion()
 	{
-		return "0.22";
+		return "0.23";
 	}
 
 	/**
