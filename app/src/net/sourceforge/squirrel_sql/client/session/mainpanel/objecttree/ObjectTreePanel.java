@@ -509,7 +509,7 @@ public class ObjectTreePanel extends JPanel
 				tabPane.selectCurrentTab();
 			}
 		}
-		setSelectedObjectPanel(tabPane);
+		setSelectedObjectPanel(tabPane != null ? tabPane.getTabbedPane() : null);
 	}
 
 	/**
@@ -522,7 +522,7 @@ public class ObjectTreePanel extends JPanel
 	{
 		if (comp == null)
 		{
-			comp = _emptyTabPane;
+			comp = _emptyTabPane.getTabbedPane();
 		}
 
 		int divLoc = _splitPane.getDividerLocation();

@@ -17,12 +17,15 @@ package net.sourceforge.squirrel_sql.client.session;
 * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.event.ContainerAdapter;
+import java.awt.event.ContainerEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -30,7 +33,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
+import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
@@ -51,7 +54,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class MainPanel extends SquirrelTabbedPane
+public class MainPanel
 {
 	/**
 	 * IDs of tabs.
@@ -67,6 +70,9 @@ public class MainPanel extends SquirrelTabbedPane
 
 	/** Current session. */
 	private ISession _session;
+
+	/** The tabbed pane. */
+	private final JTabbedPane _tabPnl = UIFactory.getInstance().createTabbedPane();
 
 	/** Listener to the sessions properties. */
 	private PropertyChangeListener _propsListener;
@@ -87,7 +93,12 @@ public class MainPanel extends SquirrelTabbedPane
 	 */
 	public MainPanel(ISession session)
 	{
-		super(getPreferences(session));
+		super();
+
+		if (session == null)
+		{
+			throw new IllegalArgumentException("ISession == null");
+		}
 
 		_session = session;
 		createGUI();
@@ -95,39 +106,17 @@ public class MainPanel extends SquirrelTabbedPane
 		propertiesHaveChanged(null);
 
 		// Refresh the currently selected tab.
-		((IMainPanelTab)_tabs.get(getSelectedIndex())).select();
+		((IMainPanelTab)_tabs.get(getTabbedPane().getSelectedIndex())).select();
 	}
 
 	/**
-	 * Panel is being added to its parent. Setup any required listeners.
+	 * Retrieve the tabbed pan for this component.
+	 * 
+	 * @return	The tabbed pane.
 	 */
-	public void addNotify()
+	public JTabbedPane getTabbedPane()
 	{
-		super.addNotify();
-		if (_propsListener == null)
-		{
-			_propsListener = new PropertyChangeListener()
-			{
-				public void propertyChange(PropertyChangeEvent evt)
-				{
-					propertiesHaveChanged(evt.getPropertyName());
-				}
-			};
-			_session.getProperties().addPropertyChangeListener(_propsListener);
-		}
-	}
-
-	/**
-	 * Panel is being removed from its parent. Remove any required listeners.
-	 */
-	public void removeNotify()
-	{
-		super.removeNotify();
-		if (_propsListener != null)
-		{
-			_session.getProperties().removePropertyChangeListener(_propsListener);
-			_propsListener = null;
-		}
+		return _tabPnl;
 	}
 
 	/**
@@ -148,24 +137,24 @@ public class MainPanel extends SquirrelTabbedPane
 		}
 		tab.setSession(_session);
 		final String title = tab.getTitle();
-		int idx = indexOfTab(title);
+		int idx = _tabPnl.indexOfTab(title);
 		if (idx != -1)
 		{
-			removeTabAt(idx);
+			_tabPnl.removeTabAt(idx);
 			_tabs.set(idx, tab);
 		}
 		else
 		{
-			idx = getTabCount();
+			idx = _tabPnl.getTabCount();
 			_tabs.add(tab);
 		}
-		insertTab(title, null, tab.getComponent(), tab.getHint(), idx);
+		_tabPnl.insertTab(title, null, tab.getComponent(), tab.getHint(), idx);
 	}
 
 	void updateState()
 	{
 		final ActionCollection actions = _session.getApplication().getActionCollection();
-		if (getSelectedIndex() == ITabIndexes.SQL_TAB)
+		if (_tabPnl.getSelectedIndex() == ITabIndexes.SQL_TAB)
 		{
 			actions.get(ExecuteSqlAction.class).setEnabled(true);
 			actions.get(GotoNextResultsTabAction.class).setEnabled(true);
@@ -221,7 +210,7 @@ public class MainPanel extends SquirrelTabbedPane
 		if (propertyName == null
 			|| propertyName.equals(SessionProperties.IPropertyNames.MAIN_TAB_PLACEMENT))
 		{
-			setTabPlacement(props.getMainTabPlacement());
+			_tabPnl.setTabPlacement(props.getMainTabPlacement());
 		}
 	}
 
@@ -236,7 +225,33 @@ public class MainPanel extends SquirrelTabbedPane
 		addMainPanelTab(new ObjectTreeTab());
 		addMainPanelTab(new SQLTab(_session));
 
-		addChangeListener(new ChangeListener()
+		_tabPnl.addContainerListener(new ContainerAdapter()
+		{
+			public void componentAdded(ContainerEvent evt)
+			{
+				if (_propsListener == null)
+				{
+					_propsListener = new PropertyChangeListener()
+					{
+						public void propertyChange(PropertyChangeEvent evt)
+						{
+							propertiesHaveChanged(evt.getPropertyName());
+						}
+					};
+					_session.getProperties().addPropertyChangeListener(_propsListener);
+				}
+			}
+			public void componentRemoved(ContainerEvent evt)
+			{
+				if (_propsListener != null)
+				{
+					_session.getProperties().removePropertyChangeListener(_propsListener);
+					_propsListener = null;
+				}
+			}
+		});
+
+		_tabPnl.addChangeListener(new ChangeListener()
 		{
 			public void stateChanged(ChangeEvent evt)
 			{
@@ -248,10 +263,10 @@ public class MainPanel extends SquirrelTabbedPane
 	private void performStateChanged()
 	{
 		updateState();
-		int idx = getSelectedIndex();
+		int idx = _tabPnl.getSelectedIndex();
 		if (idx != -1)
 		{
-			((IMainPanelTab)_tabs.get(getSelectedIndex())).select();
+			((IMainPanelTab)_tabs.get(idx)).select();
 		}
 	}
 

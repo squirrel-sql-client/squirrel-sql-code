@@ -40,6 +40,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -54,7 +55,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
-import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
+import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ContentsTab;
 /**
@@ -305,8 +306,7 @@ public class SQLFilterSheet extends BaseSheet
 		_panels.add(_whereClausePanel);
 		_panels.add(_orderByClausePanel);
 
-		SquirrelTabbedPane tabPane =
-			new SquirrelTabbedPane(app.getSquirrelPreferences());
+		JTabbedPane tabPane = UIFactory.getInstance().createTabbedPane();
 		for (Iterator it = _panels.iterator(); it.hasNext();)
 		{
 			ISQLFilterPanel pnl = (ISQLFilterPanel)it.next();
@@ -322,7 +322,7 @@ public class SQLFilterSheet extends BaseSheet
 			public void stateChanged(ChangeEvent event)
 			{
 				setButtonLabel(
-					((SquirrelTabbedPane)event.getSource()).getSelectedIndex());
+					((JTabbedPane)event.getSource()).getSelectedIndex());
 			}
 		});
 

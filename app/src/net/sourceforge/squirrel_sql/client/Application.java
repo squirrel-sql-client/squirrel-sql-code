@@ -51,6 +51,7 @@ import net.sourceforge.squirrel_sql.client.db.DataCache;
 import net.sourceforge.squirrel_sql.client.db.DriverMaintSheetFactory;
 import net.sourceforge.squirrel_sql.client.gui.FileViewerFactory;
 import net.sourceforge.squirrel_sql.client.gui.SplashScreen;
+import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.gui.laf.AllBluesBoldMetalTheme;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToStartupAliasesCommand;
@@ -140,7 +141,7 @@ class Application implements IApplication
 		SplashScreen splash = null;
 		if (args.getShowSplashScreen())
 		{
-			splash = new SplashScreen(_resources, 11);
+			splash = new SplashScreen(_resources, 12);
 		}
 
 		try
@@ -471,6 +472,9 @@ class Application implements IApplication
 					preferencesHaveChanged(evt);
 				}
 			});
+
+		indicateNewStartupTask(splash, "Initializing UI factories...");
+		UIFactory.initialize(_prefs);
 
 		indicateNewStartupTask(splash, "Loading actions...");
 		_actions = new ActionCollection(this);
