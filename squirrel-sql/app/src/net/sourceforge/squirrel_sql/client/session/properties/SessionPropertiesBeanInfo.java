@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.properties;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -26,71 +26,180 @@ import java.beans.SimpleBeanInfo;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SessionPropertiesBeanInfo extends SimpleBeanInfo {
+public class SessionPropertiesBeanInfo extends SimpleBeanInfo
+{
 
 	private static PropertyDescriptor[] s_dscrs;
 	private static Class cls = SessionProperties.class;
 
-	public SessionPropertiesBeanInfo() throws IntrospectionException {
+	public SessionPropertiesBeanInfo() throws IntrospectionException
+	{
 		super();
-		if (s_dscrs == null) {
-			s_dscrs = new PropertyDescriptor[25];
+		if (s_dscrs == null)
+		{
+			s_dscrs = new PropertyDescriptor[26];
 			int i = 0;
-			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.AUTO_COMMIT, cls,
-				"getAutoCommit", "setAutoCommit");
-			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.COLUMNS_OUTPUT_CLASS_NAME, cls,
-				"getColumnsOutputClassName", "setColumnsOutputClassName");
-			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.COLUMN_PRIVILIGES_OUTPUT_CLASS_NAME, cls,
-				"getColumnPriviligesOutputClassName", "setColumnPriviligesOutputClassName");
-			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.COMMIT_ON_CLOSING_CONNECTION, cls,
-				"getCommitOnClosingConnection", "setCommitOnClosingConnection");
-			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.CONTENTS_LIMIT_ROWS, cls,
-				"getContentsLimitRows", "setContentsLimitRows");
-			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.CONTENTS_NBR_ROWS_TO_SHOW, cls,
-				"getContentsNbrRowsToShow", "setContentsNbrRowsToShow");
-			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.CONTENTS_OUTPUT_CLASS_NAME, cls,
-				"getContentsOutputClassName", "setContentsOutputClassName");
-			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.DATA_TYPES_OUTPUT_CLASS_NAME, cls,
-				"getDataTypesOutputClassName", "setDataTypesOutputClassName");
-			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.EXP_KEYS_OUTPUT_CLASS_NAME, cls,
-				"getExportedKeysOutputClassName", "setExportedKeysOutputClassName");
-			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.FONT_INFO, cls,
-				"getFontInfo", "setFontInfo");
-			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.IMP_KEYS_OUTPUT_CLASS_NAME, cls,
-				"getImportedKeysOutputClassName", "setImportedKeysOutputClassName");
-			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.INDEXES_OUTPUT_CLASS_NAME, cls,
-				"getIndexesOutputClassName", "setIndexesOutputClassName");
-			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.META_DATA_OUTPUT_CLASS_NAME, cls,
-				"getMetaDataOutputClassName", "setMetaDataOutputClassName");
-			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.PRIM_KEY_OUTPUT_CLASS_NAME, cls,
-				"getPrimaryKeyOutputClassName", "setPrimaryKeyOutputClassName");
-			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.PRIVILIGES_OUTPUT_CLASS_NAME, cls,
-				"getPriviligesOutputClassName", "setPriviligesOutputClassName");
-			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.PROC_COLUMNS_OUTPUT_CLASS_NAME, cls,
-				"getProcedureColumnsOutputClassName", "setProcedureColumnsOutputClassName");
-			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.ROWID_OUTPUT_CLASS_NAME, cls,
-				"getRowIdOutputClassName", "setRowIdOutputClassName");
-			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.SHOW_ROW_COUNT, cls,
-				"getShowRowCount", "setShowRowCount");
-			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.SQL_LIMIT_ROWS, cls,
-				"getSqlLimitRows", "setSqlLimitRows");
-			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.SQL_NBR_ROWS_TO_SHOW, cls,
-				"getSqlNbrRowsToShow", "setSqlNbrRowsToShow");
-			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.SQL_OUTPUT_RESULTSET_CLASS_NAME, cls,
-				"getSqlOutputResultSetClassName", "setSqlOutputResultSetClassName");
-			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.SQL_OUTPUT_META_DATA_CLASS_NAME, cls,
-				"getSqlOutputMetaDataClassName", "setSqlOutputMetaDataClassName");
-			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.SQL_STATEMENT_SEPARATOR, cls,
-				"getSqlStatementSeparatorChar", "setSqlStatementSeparatorChar");
-			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.TABLE_OUTPUT_CLASS_NAME, cls,
-				"getTableOutputClassName", "setTableOutputClassName");
-			s_dscrs[i++] = new PropertyDescriptor(SessionProperties.IPropertyNames.VERSIONS_OUTPUT_CLASS_NAME, cls,
-				"getVersionsOutputClassName", "setVersionsOutputClassName");
+			s_dscrs[i++] =
+				new PropertyDescriptor(
+					SessionProperties.IPropertyNames.AUTO_COMMIT,
+					cls,
+					"getAutoCommit",
+					"setAutoCommit");
+			s_dscrs[i++] =
+				new PropertyDescriptor(
+					SessionProperties.IPropertyNames.COLUMNS_OUTPUT_CLASS_NAME,
+					cls,
+					"getColumnsOutputClassName",
+					"setColumnsOutputClassName");
+			s_dscrs[i++] =
+				new PropertyDescriptor(
+					SessionProperties.IPropertyNames.COLUMN_PRIVILIGES_OUTPUT_CLASS_NAME,
+					cls,
+					"getColumnPriviligesOutputClassName",
+					"setColumnPriviligesOutputClassName");
+			s_dscrs[i++] =
+				new PropertyDescriptor(
+					SessionProperties.IPropertyNames.COMMIT_ON_CLOSING_CONNECTION,
+					cls,
+					"getCommitOnClosingConnection",
+					"setCommitOnClosingConnection");
+			s_dscrs[i++] =
+				new PropertyDescriptor(
+					SessionProperties.IPropertyNames.CONTENTS_LIMIT_ROWS,
+					cls,
+					"getContentsLimitRows",
+					"setContentsLimitRows");
+			s_dscrs[i++] =
+				new PropertyDescriptor(
+					SessionProperties.IPropertyNames.CONTENTS_NBR_ROWS_TO_SHOW,
+					cls,
+					"getContentsNbrRowsToShow",
+					"setContentsNbrRowsToShow");
+			s_dscrs[i++] =
+				new PropertyDescriptor(
+					SessionProperties.IPropertyNames.CONTENTS_OUTPUT_CLASS_NAME,
+					cls,
+					"getContentsOutputClassName",
+					"setContentsOutputClassName");
+			s_dscrs[i++] =
+				new PropertyDescriptor(
+					SessionProperties.IPropertyNames.DATA_TYPES_OUTPUT_CLASS_NAME,
+					cls,
+					"getDataTypesOutputClassName",
+					"setDataTypesOutputClassName");
+			s_dscrs[i++] =
+				new PropertyDescriptor(
+					SessionProperties.IPropertyNames.EXP_KEYS_OUTPUT_CLASS_NAME,
+					cls,
+					"getExportedKeysOutputClassName",
+					"setExportedKeysOutputClassName");
+			s_dscrs[i++] =
+				new PropertyDescriptor(
+					SessionProperties.IPropertyNames.FONT_INFO,
+					cls,
+					"getFontInfo",
+					"setFontInfo");
+			s_dscrs[i++] =
+				new PropertyDescriptor(
+					SessionProperties.IPropertyNames.IMP_KEYS_OUTPUT_CLASS_NAME,
+					cls,
+					"getImportedKeysOutputClassName",
+					"setImportedKeysOutputClassName");
+			s_dscrs[i++] =
+				new PropertyDescriptor(
+					SessionProperties.IPropertyNames.INDEXES_OUTPUT_CLASS_NAME,
+					cls,
+					"getIndexesOutputClassName",
+					"setIndexesOutputClassName");
+			s_dscrs[i++] =
+				new PropertyDescriptor(
+					SessionProperties.IPropertyNames.META_DATA_OUTPUT_CLASS_NAME,
+					cls,
+					"getMetaDataOutputClassName",
+					"setMetaDataOutputClassName");
+			s_dscrs[i++] =
+				new PropertyDescriptor(
+					SessionProperties.IPropertyNames.PRIM_KEY_OUTPUT_CLASS_NAME,
+					cls,
+					"getPrimaryKeyOutputClassName",
+					"setPrimaryKeyOutputClassName");
+			s_dscrs[i++] =
+				new PropertyDescriptor(
+					SessionProperties.IPropertyNames.PRIVILIGES_OUTPUT_CLASS_NAME,
+					cls,
+					"getPriviligesOutputClassName",
+					"setPriviligesOutputClassName");
+			s_dscrs[i++] =
+				new PropertyDescriptor(
+					SessionProperties.IPropertyNames.PROC_COLUMNS_OUTPUT_CLASS_NAME,
+					cls,
+					"getProcedureColumnsOutputClassName",
+					"setProcedureColumnsOutputClassName");
+			s_dscrs[i++] =
+				new PropertyDescriptor(
+					SessionProperties.IPropertyNames.ROWID_OUTPUT_CLASS_NAME,
+					cls,
+					"getRowIdOutputClassName",
+					"setRowIdOutputClassName");
+			s_dscrs[i++] =
+				new PropertyDescriptor(
+					SessionProperties.IPropertyNames.SHOW_ROW_COUNT,
+					cls,
+					"getShowRowCount",
+					"setShowRowCount");
+			s_dscrs[i++] =
+				new PropertyDescriptor(
+					SessionProperties.IPropertyNames.SHOW_TOOL_BAR,
+					cls,
+					"getShowToolBar",
+					"setShowToolBar");
+			s_dscrs[i++] =
+				new PropertyDescriptor(
+					SessionProperties.IPropertyNames.SQL_LIMIT_ROWS,
+					cls,
+					"getSqlLimitRows",
+					"setSqlLimitRows");
+			s_dscrs[i++] =
+				new PropertyDescriptor(
+					SessionProperties.IPropertyNames.SQL_NBR_ROWS_TO_SHOW,
+					cls,
+					"getSqlNbrRowsToShow",
+					"setSqlNbrRowsToShow");
+			s_dscrs[i++] =
+				new PropertyDescriptor(
+					SessionProperties.IPropertyNames.SQL_OUTPUT_RESULTSET_CLASS_NAME,
+					cls,
+					"getSqlOutputResultSetClassName",
+					"setSqlOutputResultSetClassName");
+			s_dscrs[i++] =
+				new PropertyDescriptor(
+					SessionProperties.IPropertyNames.SQL_OUTPUT_META_DATA_CLASS_NAME,
+					cls,
+					"getSqlOutputMetaDataClassName",
+					"setSqlOutputMetaDataClassName");
+			s_dscrs[i++] =
+				new PropertyDescriptor(
+					SessionProperties.IPropertyNames.SQL_STATEMENT_SEPARATOR,
+					cls,
+					"getSqlStatementSeparatorChar",
+					"setSqlStatementSeparatorChar");
+			s_dscrs[i++] =
+				new PropertyDescriptor(
+					SessionProperties.IPropertyNames.TABLE_OUTPUT_CLASS_NAME,
+					cls,
+					"getTableOutputClassName",
+					"setTableOutputClassName");
+			s_dscrs[i++] =
+				new PropertyDescriptor(
+					SessionProperties.IPropertyNames.VERSIONS_OUTPUT_CLASS_NAME,
+					cls,
+					"getVersionsOutputClassName",
+					"setVersionsOutputClassName");
 		}
 	}
 
-	public PropertyDescriptor[] getPropertyDescriptors() {
+	public PropertyDescriptor[] getPropertyDescriptors()
+	{
 		return s_dscrs;
 	}
 }
-

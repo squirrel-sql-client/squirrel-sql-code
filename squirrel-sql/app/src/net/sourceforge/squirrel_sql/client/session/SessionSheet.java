@@ -76,6 +76,10 @@ public class SessionSheet extends BaseSheet
 
 	private MainPanel _mainTabPane;
 	private JSplitPane _msgSplit;
+
+	/** Toolbar for window. */
+	private MyToolBar _toolBar;
+
 	private StatusBar _statusBar = new StatusBar();
 
 	private boolean _hasBeenVisible;
@@ -284,12 +288,42 @@ public class SessionSheet extends BaseSheet
 			_session.getSQLConnection().setCommitOnClose(
 				props.getCommitOnClosingConnection());
 		}
+
+		if (propertyName == null
+			|| propertyName.equals(
+				SessionProperties.IPropertyNames.SHOW_TOOL_BAR))
+		{
+			boolean show = props.getShowToolBar();
+			if (show != (_toolBar != null))
+			{
+				if (show)
+				{
+					if (_toolBar == null)
+					{
+						_toolBar = new MyToolBar(_session, this);
+						getContentPane().add(_toolBar, BorderLayout.NORTH);
+					}
+				}
+				else
+				{
+					if (_toolBar != null)
+					{
+						getContentPane().remove(_toolBar);
+						_toolBar = null;
+					}
+				}
+			}
+		}
+
 		updateState();
 	}
 
 	private void createUserInterface()
 	{
 		setVisible(false);
+
+		SessionProperties props = _session.getProperties();
+
 		final IApplication app = _session.getApplication();
 		Icon icon = app.getResources().getIcon(getClass(), "frameIcon"); //i18n
 		if (icon != null)
@@ -301,7 +335,11 @@ public class SessionSheet extends BaseSheet
 
 		Container content = getContentPane();
 		content.setLayout(new BorderLayout());
-		content.add(new MyToolBar(_session, this), BorderLayout.NORTH);
+		if (props.getShowToolBar())
+		{
+			_toolBar = new MyToolBar(_session, this);
+			content.add(_toolBar, BorderLayout.NORTH);
+		}
 
 		MessagePanel msgPnl = new MessagePanel(app);
 		_session.setMessageHandler(msgPnl);

@@ -20,19 +20,21 @@ package net.sourceforge.squirrel_sql.client.session.properties;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
-
-public class SessionProperties implements Serializable {
-	public interface IDataSetDestinations {
-		String TEXT = net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel.class.getName();
-		String TABLE = net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel.class.getName();
+public class SessionProperties implements Serializable
+{
+	public interface IDataSetDestinations
+	{
+		String TEXT =
+			net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel.class.getName();
+		String TABLE =
+			net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel.class.getName();
 	}
 
-	public interface IPropertyNames {
+	public interface IPropertyNames
+	{
 		String AUTO_COMMIT = "autoCommit";
 		String COLUMN_PRIVILIGES_OUTPUT_CLASS_NAME = "columnPriviligesOutputClassName";
 		String COLUMNS_OUTPUT_CLASS_NAME = "columnsOutputClassName";
@@ -51,11 +53,12 @@ public class SessionProperties implements Serializable {
 		String PROC_COLUMNS_OUTPUT_CLASS_NAME = "procedureColumnsOutputClassName";
 		String ROWID_OUTPUT_CLASS_NAME = "rowIdOutputClassName";
 		String SHOW_ROW_COUNT = "showRowCount";
+		String SHOW_TOOL_BAR = "showToolBar";
 		String SQL_LIMIT_ROWS = "sqlLimitRows";
 		String SQL_NBR_ROWS_TO_SHOW = "sqlNbrOfRowsToShow";
 		String SQL_OUTPUT_RESULTSET_CLASS_NAME = "sqlOutputResultSetClassName";
 		String SQL_OUTPUT_META_DATA_CLASS_NAME = "sqlOutputMetaDataClassName";
-		String SQL_STATEMENT_SEPARATOR="sqlStatementSeparator";
+		String SQL_STATEMENT_SEPARATOR = "sqlStatementSeparator";
 		String TABLE_OUTPUT_CLASS_NAME = "tableOutputClassName";
 		String VERSIONS_OUTPUT_CLASS_NAME = "versionsOutputClassName";
 	}
@@ -76,6 +79,7 @@ public class SessionProperties implements Serializable {
 
 	private boolean _contentsLimitRows = true;
 	private boolean _sqlLimitRows = true;
+
 	private String _dataTypesOutputClassName = IDataSetDestinations.TABLE;
 	private String _metaDataOutputClassName = IDataSetDestinations.TABLE;
 	private String _tableOutputClassName = IDataSetDestinations.TABLE;
@@ -98,6 +102,9 @@ public class SessionProperties implements Serializable {
 	 */
 	private boolean _showRowCount = false;
 
+	/** <TT>true</TT> if toolbar should be shown. */
+	private boolean _showToolbar = true;
+
 	/**
 	 * Name of the class to use as the <TT>IDataSetModelConverter</TT>
 	 * for SQL output.
@@ -112,11 +119,13 @@ public class SessionProperties implements Serializable {
 	/** Font information for the jEdit text area. */
 	private FontInfo _fi;
 
-	public SessionProperties() {
+	public SessionProperties()
+	{
 		super();
 	}
 
-	public void assignFrom(SessionProperties rhs) {
+	public void assignFrom(SessionProperties rhs)
+	{
 		setAutoCommit(rhs.getAutoCommit());
 		setColumnsOutputClassName(rhs.getColumnsOutputClassName());
 		setColumnPriviligesOutputClassName(rhs.getColumnPriviligesOutputClassName());
@@ -135,6 +144,7 @@ public class SessionProperties implements Serializable {
 		setProcedureColumnsOutputClassName(rhs.getProcedureColumnsOutputClassName());
 		setRowIdOutputClassName(rhs.getRowIdOutputClassName());
 		setShowRowCount(rhs.getShowRowCount());
+		setShowToolBar(rhs.getShowToolBar());
 		setSqlLimitRows(rhs.getSqlLimitRows());
 		setSqlNbrRowsToShow(rhs.getSqlNbrRowsToShow());
 		setSqlOutputResultSetClassName(rhs.getSqlOutputResultSetClassName());
@@ -144,219 +154,299 @@ public class SessionProperties implements Serializable {
 		setVersionsOutputClassName(rhs.getVersionsOutputClassName());
 	}
 
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
+	public void addPropertyChangeListener(PropertyChangeListener listener)
+	{
 		_propChgReporter.addPropertyChangeListener(listener);
 	}
 
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
+	public void removePropertyChangeListener(PropertyChangeListener listener)
+	{
 		_propChgReporter.removePropertyChangeListener(listener);
 	}
 
-	public String getDataTypesOutputClassName() {
+	public String getDataTypesOutputClassName()
+	{
 		return _dataTypesOutputClassName;
 	}
 
-	public void setDataTypesOutputClassName(String value) {
-		if (value == null) {
+	public void setDataTypesOutputClassName(String value)
+	{
+		if (value == null)
+		{
 			value = "";
 		}
-		if (!_dataTypesOutputClassName.equals(value)) {
+		if (!_dataTypesOutputClassName.equals(value))
+		{
 			final String oldValue = _dataTypesOutputClassName;
 			_dataTypesOutputClassName = value;
-			_propChgReporter.firePropertyChange(IPropertyNames.DATA_TYPES_OUTPUT_CLASS_NAME,
-								oldValue, _dataTypesOutputClassName);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.DATA_TYPES_OUTPUT_CLASS_NAME,
+				oldValue,
+				_dataTypesOutputClassName);
 		}
 	}
 
-	public String getMetaDataOutputClassName() {
+	public String getMetaDataOutputClassName()
+	{
 		return _metaDataOutputClassName;
 	}
 
-	public void setMetaDataOutputClassName(String value) {
-		if (value == null) {
+	public void setMetaDataOutputClassName(String value)
+	{
+		if (value == null)
+		{
 			value = "";
 		}
-		if (!_metaDataOutputClassName.equals(value)) {
+		if (!_metaDataOutputClassName.equals(value))
+		{
 			final String oldValue = _metaDataOutputClassName;
 			_metaDataOutputClassName = value;
-			_propChgReporter.firePropertyChange(IPropertyNames.META_DATA_OUTPUT_CLASS_NAME,
-								oldValue, _metaDataOutputClassName);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.META_DATA_OUTPUT_CLASS_NAME,
+				oldValue,
+				_metaDataOutputClassName);
 		}
 	}
 
-	public String getTableOutputClassName() {
+	public String getTableOutputClassName()
+	{
 		return _tableOutputClassName;
 	}
 
-	public void setTableOutputClassName(String value) {
-		if (value == null) {
+	public void setTableOutputClassName(String value)
+	{
+		if (value == null)
+		{
 			value = "";
 		}
-		if (!_tableOutputClassName.equals(value)) {
+		if (!_tableOutputClassName.equals(value))
+		{
 			final String oldValue = _tableOutputClassName;
 			_tableOutputClassName = value;
-			_propChgReporter.firePropertyChange(IPropertyNames.TABLE_OUTPUT_CLASS_NAME,
-								oldValue, _tableOutputClassName);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.TABLE_OUTPUT_CLASS_NAME,
+				oldValue,
+				_tableOutputClassName);
 		}
 	}
 
-	public String getContentsOutputClassName() {
+	public String getContentsOutputClassName()
+	{
 		return _contentsOutputClassName;
 	}
 
-	public void setContentsOutputClassName(String value) {
-		if (value == null) {
+	public void setContentsOutputClassName(String value)
+	{
+		if (value == null)
+		{
 			value = "";
 		}
-		if (!_contentsOutputClassName.equals(value)) {
+		if (!_contentsOutputClassName.equals(value))
+		{
 			final String oldValue = _contentsOutputClassName;
 			_contentsOutputClassName = value;
-			_propChgReporter.firePropertyChange(IPropertyNames.CONTENTS_OUTPUT_CLASS_NAME,
-								oldValue, _contentsOutputClassName);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.CONTENTS_OUTPUT_CLASS_NAME,
+				oldValue,
+				_contentsOutputClassName);
 		}
 	}
 
-	public String getColumnsOutputClassName() {
+	public String getColumnsOutputClassName()
+	{
 		return _columnsOutputClassName;
 	}
 
-	public void setColumnsOutputClassName(String value) {
-		if (value == null) {
+	public void setColumnsOutputClassName(String value)
+	{
+		if (value == null)
+		{
 			value = "";
 		}
-		if (!_columnsOutputClassName.equals(value)) {
+		if (!_columnsOutputClassName.equals(value))
+		{
 			final String oldValue = _columnsOutputClassName;
 			_columnsOutputClassName = value;
-			_propChgReporter.firePropertyChange(IPropertyNames.COLUMNS_OUTPUT_CLASS_NAME,
-								oldValue, _columnsOutputClassName);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.COLUMNS_OUTPUT_CLASS_NAME,
+				oldValue,
+				_columnsOutputClassName);
 		}
 	}
 
-	public String getPriviligesOutputClassName() {
+	public String getPriviligesOutputClassName()
+	{
 		return _priviligesOutputClassName;
 	}
 
-	public void setPriviligesOutputClassName(String value) {
-		if (value == null) {
+	public void setPriviligesOutputClassName(String value)
+	{
+		if (value == null)
+		{
 			value = "";
 		}
-		if (!_priviligesOutputClassName.equals(value)) {
+		if (!_priviligesOutputClassName.equals(value))
+		{
 			final String oldValue = _priviligesOutputClassName;
 			_priviligesOutputClassName = value;
-			_propChgReporter.firePropertyChange(IPropertyNames.PRIVILIGES_OUTPUT_CLASS_NAME,
-								oldValue, _priviligesOutputClassName);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.PRIVILIGES_OUTPUT_CLASS_NAME,
+				oldValue,
+				_priviligesOutputClassName);
 		}
 	}
 
-	public String getVersionsOutputClassName() {
+	public String getVersionsOutputClassName()
+	{
 		return _versionsOutputClassName;
 	}
 
-	public void setVersionsOutputClassName(String value) {
-		if (value == null) {
+	public void setVersionsOutputClassName(String value)
+	{
+		if (value == null)
+		{
 			value = "";
 		}
-		if (!_versionsOutputClassName.equals(value)) {
+		if (!_versionsOutputClassName.equals(value))
+		{
 			final String oldValue = _versionsOutputClassName;
 			_versionsOutputClassName = value;
-			_propChgReporter.firePropertyChange(IPropertyNames.VERSIONS_OUTPUT_CLASS_NAME,
-								oldValue, _versionsOutputClassName);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.VERSIONS_OUTPUT_CLASS_NAME,
+				oldValue,
+				_versionsOutputClassName);
 		}
 	}
 
-	public String getPrimaryKeyOutputClassName() {
+	public String getPrimaryKeyOutputClassName()
+	{
 		return _primaryKeyOutputClassName;
 	}
 
-	public void setPrimaryKeyOutputClassName(String value) {
-		if (value == null) {
+	public void setPrimaryKeyOutputClassName(String value)
+	{
+		if (value == null)
+		{
 			value = "";
 		}
-		if (!_primaryKeyOutputClassName.equals(value)) {
+		if (!_primaryKeyOutputClassName.equals(value))
+		{
 			final String oldValue = _primaryKeyOutputClassName;
 			_primaryKeyOutputClassName = value;
-			_propChgReporter.firePropertyChange(IPropertyNames.PRIM_KEY_OUTPUT_CLASS_NAME,
-								oldValue, _primaryKeyOutputClassName);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.PRIM_KEY_OUTPUT_CLASS_NAME,
+				oldValue,
+				_primaryKeyOutputClassName);
 		}
 	}
 
-	public String getExportedKeysOutputClassName() {
+	public String getExportedKeysOutputClassName()
+	{
 		return _exportedKeysOutputClassName;
 	}
 
-	public void setExportedKeysOutputClassName(String value) {
-		if (value == null) {
+	public void setExportedKeysOutputClassName(String value)
+	{
+		if (value == null)
+		{
 			value = "";
 		}
-		if (!_exportedKeysOutputClassName.equals(value)) {
+		if (!_exportedKeysOutputClassName.equals(value))
+		{
 			final String oldValue = _exportedKeysOutputClassName;
 			_exportedKeysOutputClassName = value;
-			_propChgReporter.firePropertyChange(IPropertyNames.EXP_KEYS_OUTPUT_CLASS_NAME,
-								oldValue, _exportedKeysOutputClassName);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.EXP_KEYS_OUTPUT_CLASS_NAME,
+				oldValue,
+				_exportedKeysOutputClassName);
 		}
 	}
 
-	public String getIndexesOutputClassName() {
+	public String getIndexesOutputClassName()
+	{
 		return _indexesOutputClassName;
 	}
 
-	public void setIndexesOutputClassName(String value) {
-		if (value == null) {
+	public void setIndexesOutputClassName(String value)
+	{
+		if (value == null)
+		{
 			value = "";
 		}
-		if (!_indexesOutputClassName.equals(value)) {
+		if (!_indexesOutputClassName.equals(value))
+		{
 			final String oldValue = _indexesOutputClassName;
 			_indexesOutputClassName = value;
-			_propChgReporter.firePropertyChange(IPropertyNames.INDEXES_OUTPUT_CLASS_NAME,
-								oldValue, _indexesOutputClassName);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.INDEXES_OUTPUT_CLASS_NAME,
+				oldValue,
+				_indexesOutputClassName);
 		}
 	}
 
-	public String getImportedKeysOutputClassName() {
+	public String getImportedKeysOutputClassName()
+	{
 		return _importedKeysOutputClassName;
 	}
 
-	public void setImportedKeysOutputClassName(String value) {
-		if (value == null) {
+	public void setImportedKeysOutputClassName(String value)
+	{
+		if (value == null)
+		{
 			value = "";
 		}
-		if (!_importedKeysOutputClassName.equals(value)) {
+		if (!_importedKeysOutputClassName.equals(value))
+		{
 			final String oldValue = _importedKeysOutputClassName;
 			_importedKeysOutputClassName = value;
-			_propChgReporter.firePropertyChange(IPropertyNames.IMP_KEYS_OUTPUT_CLASS_NAME,
-								oldValue, _importedKeysOutputClassName);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.IMP_KEYS_OUTPUT_CLASS_NAME,
+				oldValue,
+				_importedKeysOutputClassName);
 		}
 	}
 
-	public String getColumnPriviligesOutputClassName() {
+	public String getColumnPriviligesOutputClassName()
+	{
 		return _columnPriviligesOutputClassName;
 	}
 
-	public void setColumnPriviligesOutputClassName(String value) {
-		if (value == null) {
+	public void setColumnPriviligesOutputClassName(String value)
+	{
+		if (value == null)
+		{
 			value = "";
 		}
-		if (!_columnPriviligesOutputClassName.equals(value)) {
+		if (!_columnPriviligesOutputClassName.equals(value))
+		{
 			final String oldValue = _columnPriviligesOutputClassName;
 			_columnPriviligesOutputClassName = value;
-			_propChgReporter.firePropertyChange(IPropertyNames.COLUMN_PRIVILIGES_OUTPUT_CLASS_NAME,
-								oldValue, _columnPriviligesOutputClassName);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.COLUMN_PRIVILIGES_OUTPUT_CLASS_NAME,
+				oldValue,
+				_columnPriviligesOutputClassName);
 		}
 	}
 
-	public String getRowIdOutputClassName() {
+	public String getRowIdOutputClassName()
+	{
 		return _rowIdOutputClassName;
 	}
 
-	public void setRowIdOutputClassName(String value) {
-		if (value == null) {
+	public void setRowIdOutputClassName(String value)
+	{
+		if (value == null)
+		{
 			value = "";
 		}
-		if (!_rowIdOutputClassName.equals(value)) {
+		if (!_rowIdOutputClassName.equals(value))
+		{
 			final String oldValue = _rowIdOutputClassName;
 			_rowIdOutputClassName = value;
-			_propChgReporter.firePropertyChange(IPropertyNames.ROWID_OUTPUT_CLASS_NAME,
-								oldValue, _rowIdOutputClassName);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.ROWID_OUTPUT_CLASS_NAME,
+				oldValue,
+				_rowIdOutputClassName);
 		}
 	}
 
@@ -367,7 +457,8 @@ public class SessionProperties implements Serializable {
 	 * @return	the name of the class to use as the
 	 *			<TT>IDataSetViewer</TT> for SQL output.
 	 */
-	public String getSqlOutputResultSetClassName() {
+	public String getSqlOutputResultSetClassName()
+	{
 		return _sqlOutputConverterClassName;
 	}
 
@@ -379,143 +470,212 @@ public class SessionProperties implements Serializable {
 	 *					<TT>IDataSetViewer</TT> for
 	 *					SQL output.
 	 */
-	public void setSqlOutputResultSetClassName(String value) {
-		if (value == null) {
+	public void setSqlOutputResultSetClassName(String value)
+	{
+		if (value == null)
+		{
 			value = "";
 		}
-		if (!_sqlOutputConverterClassName.equals(value)) {
+		if (!_sqlOutputConverterClassName.equals(value))
+		{
 			final String oldValue = _sqlOutputConverterClassName;
 			_sqlOutputConverterClassName = value;
-			_propChgReporter.firePropertyChange(IPropertyNames.SQL_OUTPUT_RESULTSET_CLASS_NAME,
-								oldValue, _sqlOutputConverterClassName);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.SQL_OUTPUT_RESULTSET_CLASS_NAME,
+				oldValue,
+				_sqlOutputConverterClassName);
 		}
 	}
 
-	public String getSqlOutputMetaDataClassName() {
+	public String getSqlOutputMetaDataClassName()
+	{
 		return _sqlOutputMetaDataClassName;
 	}
 
-	public void setSqlOutputMetaDataClassName(String value) {
-		if (value == null) {
+	public void setSqlOutputMetaDataClassName(String value)
+	{
+		if (value == null)
+		{
 			value = "";
 		}
-		if (!_sqlOutputMetaDataClassName.equals(value)) {
+		if (!_sqlOutputMetaDataClassName.equals(value))
+		{
 			final String oldValue = _sqlOutputMetaDataClassName;
 			_sqlOutputMetaDataClassName = value;
-			_propChgReporter.firePropertyChange(IPropertyNames.SQL_OUTPUT_META_DATA_CLASS_NAME,
-								oldValue, _sqlOutputMetaDataClassName);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.SQL_OUTPUT_META_DATA_CLASS_NAME,
+				oldValue,
+				_sqlOutputMetaDataClassName);
 		}
 	}
 
-	public String getProcedureColumnsOutputClassName() {
+	public String getProcedureColumnsOutputClassName()
+	{
 		return _procColsOutputClassName;
 	}
 
-	public void setProcedureColumnsOutputClassName(String value) {
-		if (value == null) {
+	public void setProcedureColumnsOutputClassName(String value)
+	{
+		if (value == null)
+		{
 			value = "";
 		}
-		if (!_procColsOutputClassName.equals(value)) {
+		if (!_procColsOutputClassName.equals(value))
+		{
 			final String oldValue = _procColsOutputClassName;
 			_procColsOutputClassName = value;
-			_propChgReporter.firePropertyChange(IPropertyNames.PROC_COLUMNS_OUTPUT_CLASS_NAME,
-								oldValue, _procColsOutputClassName);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.PROC_COLUMNS_OUTPUT_CLASS_NAME,
+				oldValue,
+				_procColsOutputClassName);
 		}
 	}
 
-	public boolean getAutoCommit() {
+	public boolean getAutoCommit()
+	{
 		return _autoCommit;
 	}
 
-	public void setAutoCommit(boolean value) {
-		if (_autoCommit != value) {
+	public void setAutoCommit(boolean value)
+	{
+		if (_autoCommit != value)
+		{
 			_autoCommit = value;
-			_propChgReporter.firePropertyChange(IPropertyNames.AUTO_COMMIT,
-								!_autoCommit, _autoCommit);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.AUTO_COMMIT,
+				!_autoCommit,
+				_autoCommit);
 		}
 	}
 
-	public int getContentsNbrRowsToShow() {
+	public boolean getShowToolBar()
+	{
+		return _showToolbar;
+	}
+
+	public void setShowToolBar(boolean value)
+	{
+		if (_showToolbar != value)
+		{
+			_showToolbar = value;
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.SHOW_TOOL_BAR,
+				!_showToolbar,
+				_showToolbar);
+		}
+	}
+
+	public int getContentsNbrRowsToShow()
+	{
 		return _contentsNbrRowsToShow;
 	}
 
-	public void setContentsNbrRowsToShow(int value) {
-		if (_contentsNbrRowsToShow != value) {
+	public void setContentsNbrRowsToShow(int value)
+	{
+		if (_contentsNbrRowsToShow != value)
+		{
 			final int oldValue = _contentsNbrRowsToShow;
 			_contentsNbrRowsToShow = value;
-			_propChgReporter.firePropertyChange(IPropertyNames.CONTENTS_NBR_ROWS_TO_SHOW,
-								oldValue, _contentsNbrRowsToShow);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.CONTENTS_NBR_ROWS_TO_SHOW,
+				oldValue,
+				_contentsNbrRowsToShow);
 		}
 	}
 
-	public int getSqlNbrRowsToShow() {
+	public int getSqlNbrRowsToShow()
+	{
 		return _sqlNbrRowsToShow;
 	}
 
-	public void setSqlNbrRowsToShow(int value) {
-		if (_sqlNbrRowsToShow != value) {
+	public void setSqlNbrRowsToShow(int value)
+	{
+		if (_sqlNbrRowsToShow != value)
+		{
 			final int oldValue = _sqlNbrRowsToShow;
 			_sqlNbrRowsToShow = value;
-			_propChgReporter.firePropertyChange(IPropertyNames.SQL_NBR_ROWS_TO_SHOW,
-								oldValue, _sqlNbrRowsToShow);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.SQL_NBR_ROWS_TO_SHOW,
+				oldValue,
+				_sqlNbrRowsToShow);
 		}
 	}
 
-	public boolean getContentsLimitRows() {
+	public boolean getContentsLimitRows()
+	{
 		return _contentsLimitRows;
 	}
 
-	public void setContentsLimitRows(boolean value) {
-		if (_contentsLimitRows != value) {
+	public void setContentsLimitRows(boolean value)
+	{
+		if (_contentsLimitRows != value)
+		{
 			final boolean oldValue = _contentsLimitRows;
 			_contentsLimitRows = value;
-			_propChgReporter.firePropertyChange(IPropertyNames.CONTENTS_LIMIT_ROWS,
-								oldValue, _contentsLimitRows);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.CONTENTS_LIMIT_ROWS,
+				oldValue,
+				_contentsLimitRows);
 		}
 	}
 
-	public boolean getSqlLimitRows() {
+	public boolean getSqlLimitRows()
+	{
 		return _sqlLimitRows;
 	}
 
-	public void setSqlLimitRows(boolean value) {
-		if (_sqlLimitRows != value) {
+	public void setSqlLimitRows(boolean value)
+	{
+		if (_sqlLimitRows != value)
+		{
 			final boolean oldValue = _sqlLimitRows;
 			_sqlLimitRows = value;
-			_propChgReporter.firePropertyChange(IPropertyNames.SQL_LIMIT_ROWS,
-								oldValue, _sqlLimitRows);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.SQL_LIMIT_ROWS,
+				oldValue,
+				_sqlLimitRows);
 		}
 	}
 
-	public char getSqlStatementSeparatorChar() {
+	public char getSqlStatementSeparatorChar()
+	{
 		return _sqlStmtSepChar;
 	}
 
-	public void setSqlStatementSeparatorChar(char value) {
-		if (_sqlStmtSepChar != value) {
+	public void setSqlStatementSeparatorChar(char value)
+	{
+		if (_sqlStmtSepChar != value)
+		{
 			final char oldValue = _sqlStmtSepChar;
 			_sqlStmtSepChar = value;
-			_propChgReporter.firePropertyChange(IPropertyNames.SQL_STATEMENT_SEPARATOR,
-								oldValue, _sqlStmtSepChar);
+			_propChgReporter.firePropertyChange(
+				IPropertyNames.SQL_STATEMENT_SEPARATOR,
+				oldValue,
+				_sqlStmtSepChar);
 		}
 	}
 
-	public boolean getCommitOnClosingConnection() {
+	public boolean getCommitOnClosingConnection()
+	{
 		return _commitOnClosingConnection;
 	}
 
-	public synchronized void setCommitOnClosingConnection(boolean data) {
+	public synchronized void setCommitOnClosingConnection(boolean data)
+	{
 		final boolean oldValue = _commitOnClosingConnection;
 		_commitOnClosingConnection = data;
-		_propChgReporter.firePropertyChange(IPropertyNames.COMMIT_ON_CLOSING_CONNECTION,
-								oldValue, _commitOnClosingConnection);
+		_propChgReporter.firePropertyChange(
+			IPropertyNames.COMMIT_ON_CLOSING_CONNECTION,
+			oldValue,
+			_commitOnClosingConnection);
 	}
 
 	/**
 	 * Return <TT>true</TT> if row count should be displayed for every table in
 	 * object tree.
 	 */
-	public boolean getShowRowCount() {
+	public boolean getShowRowCount()
+	{
 		return _showRowCount;
 	}
 
@@ -526,23 +686,28 @@ public class SessionProperties implements Serializable {
 	 * @param   data	<TT>true</TT> fi row count should be displayed
 	 *				  else <TT>false</TT>.
 	 */
-	public synchronized void setShowRowCount(boolean data) {
+	public synchronized void setShowRowCount(boolean data)
+	{
 		final boolean oldValue = _showRowCount;
 		_showRowCount = data;
-		_propChgReporter.firePropertyChange(IPropertyNames.SHOW_ROW_COUNT,
-								oldValue, _showRowCount);
+		_propChgReporter.firePropertyChange(
+			IPropertyNames.SHOW_ROW_COUNT,
+			oldValue,
+			_showRowCount);
 	}
 
-	public FontInfo getFontInfo() {
+	public FontInfo getFontInfo()
+	{
 		return _fi;
 	}
 
-	public void setFontInfo(FontInfo data) {
-		if (_fi == null || !_fi.equals(data)) {
+	public void setFontInfo(FontInfo data)
+	{
+		if (_fi == null || !_fi.equals(data))
+		{
 			final FontInfo oldValue = _fi;
 			_fi = data;
-			_propChgReporter.firePropertyChange(IPropertyNames.FONT_INFO,
-								oldValue, _fi);
+			_propChgReporter.firePropertyChange(IPropertyNames.FONT_INFO, oldValue, _fi);
 		}
 	}
 }

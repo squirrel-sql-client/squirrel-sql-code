@@ -38,6 +38,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
 import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
+import net.sourceforge.squirrel_sql.client.session.properties.GeneralSessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.session.properties.OutputPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.properties.SQLPropertiesPanel;
@@ -160,6 +161,7 @@ public class NewSessionPropertiesSheet extends BaseSheet {
 		GUIUtils.makeToolWindow(this, true);
 
 		// Add panels for core Squirrel functionality.
+		_panels.add(new GeneralSessionPropertiesPanel());
 		_panels.add(new SQLPropertiesPanel(_app));
 		_panels.add(new OutputPropertiesPanel());
 

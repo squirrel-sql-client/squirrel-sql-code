@@ -141,6 +141,7 @@ public class SessionPropertiesSheet extends BaseSheet {
 
 		final IApplication app = _session.getApplication();
 
+		_panels.add(new GeneralSessionPropertiesPanel());
 		_panels.add(new SQLPropertiesPanel(app));
 		_panels.add(new OutputPropertiesPanel());
 
