@@ -6,6 +6,7 @@ Change Log
 
 Enhancements
 ------------
+- Add Sybase drivers to list of default drivers.
 - Windows batch file now uses Java in %JAVAHOME% if it is defined else
   uses the current path.
 - Windows batch file now loads all jars from /lib directory.
