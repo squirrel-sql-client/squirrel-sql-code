@@ -27,6 +27,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLWarning;
 import java.sql.Statement;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -114,7 +115,6 @@ public class SQLExecuterTask implements Runnable
 
 				// Retrieve all the statements to execute.
 				final QueryTokenizer qt = new QueryTokenizer(_sql,
-//										props.getSQLStatementSeparatorChar(),
 										props.getSQLStatementSeparator(),
 										props.getStartOfLineComment());
 				final List queryStrings = new ArrayList();
@@ -200,6 +200,21 @@ public class SQLExecuterTask implements Runnable
 		boolean rc = _stmt.execute(querySql);
 		exInfo.sqlExecutionComplete();
 
+		// If SQL executing produced warnings then write them out to the session
+		// message handler.
+		try
+		{
+			SQLWarning sw = _stmt.getWarnings();
+			while (sw != null)
+			{
+				_session.getMessageHandler().showMessage(sw);
+				sw = sw.getNextWarning();
+			}
+		}
+		catch (Throwable th)
+		{
+		}
+		
 		if (rc)
 		{
 			if (_stopExecution)

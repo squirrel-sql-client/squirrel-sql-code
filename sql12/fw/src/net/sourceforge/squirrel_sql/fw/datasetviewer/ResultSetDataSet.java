@@ -109,7 +109,14 @@ public class ResultSetDataSet implements IDataSet
  						Object[] newRow = new Object[_columnCount];
  						for (int i = 0; i < _columnCount; i++)
 						{
- 							newRow[i] = row[columnIndices[i] - 1];
+							if (columnIndices[i] - 1 < row.length)
+							{
+ 								newRow[i] = row[columnIndices[i] - 1];
+							}
+							else
+							{
+								newRow[i] = "Unknown";
+							}
  						}
  						row = newRow;
  					}

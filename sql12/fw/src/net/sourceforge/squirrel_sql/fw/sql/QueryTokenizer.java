@@ -97,21 +97,37 @@ public class QueryTokenizer
 			iQuoteCount = 0;
 //			iIndex1 = _sQuerys.indexOf(_querySepChar,iIndex1+1);
 
-			if (1 == _querySep.length())
-			{
-				iIndex1 = _sQuerys.indexOf(_querySep, iIndex1 + 1);
-			}
-			else
-			{
-				// such a querySep is expected to be surounded by white spaces
+//			if (1 == _querySep.length())
+//			{
+//				iIndex1 = _sQuerys.indexOf(_querySep, iIndex1 + 1);
+//			}
+//			else
+//			{
+				// A multiple character querySep is expected to be surounded by
+				// white spaces. A single character querySep is expected to be
+				// surrounded by whitespace unless it is at the end of a line.
 				iIndex1 = _sQuerys.indexOf(_querySep, iIndex1 + _querySep.length());
 
 				while (-1 != iIndex1)
 				{
-					if ((0 != iIndex1
-						&& !Character.isWhitespace(_sQuerys.charAt(iIndex1 - 1)))
+					boolean isSep = !((0 != iIndex1 && !Character.isWhitespace(_sQuerys.charAt(iIndex1 - 1)))
 						|| (_sQuerys.length() - _querySep.length() != iIndex1
-							&& !Character.isWhitespace(_sQuerys.charAt(iIndex1 + _querySep.length()))))
+							&& !Character.isWhitespace(_sQuerys.charAt(iIndex1 + _querySep.length()))));
+					if (!isSep && _querySep.length() == 1)
+					{
+						if (iIndex1 == (_sQuerys.length() - 1)
+								|| _sQuerys.charAt(iIndex1 + 1) == '\n'
+								|| _sQuerys.charAt(iIndex1 + 1) == '\r')
+						{
+							isSep = true;
+						}
+					}
+
+//					if ((0 != iIndex1
+//						&& !Character.isWhitespace(_sQuerys.charAt(iIndex1 - 1)))
+//						|| (_sQuerys.length() - _querySep.length() != iIndex1
+//							&& !Character.isWhitespace(_sQuerys.charAt(iIndex1 + _querySep.length()))))
+					if (!isSep)
 					{
 						// this querySep is not surounded by whitespace, so look for next querySep
 						iIndex1 = _sQuerys.indexOf(_querySep, iIndex1 + _querySep.length());
@@ -121,7 +137,7 @@ public class QueryTokenizer
 						break;
 					}
 				}
-			}
+//			}
 
 			if (iIndex1 != -1)
 			{
