@@ -1,13 +1,64 @@
 Change Log
 ==========
 
+1.1beta5
+========
+
+Enhancements
+------------
+- Added keyboard accelerators to "Close all SQL Result Tabs" and
+  "Close all SQL Result Windows" menu options.
+- Display more information about the executing query on the
+  execution panel.
+- Split query execution times into "sql execution" and "building
+  output" times.
+- When executing multiple sql statements show elapsed time
+  for each individual statement.
+- Add "Table Types" tab to the database metadata display.
+- Add handling of blob, clob, binary, varbinary and longvarbinary
+  columns.
+- Allow for some combinations of the JDBC/ODBC bridge and MSSQL
+  that give duplicate table types from the database metadata.
+- Add "Close Session" option to Session menu.
+- Add "View Logs" item to the Windows menu.
+- Set maximum allowed width for the Window menu.
+- Added Sunopsis XML JDBC driver and Microsoft MSSQL JDBC
+  driver (Ken Arway) to default drivers.
+- Display session name in Session Properties Dialog to
+  differentiate it from another sessions dialog.
+- Log any error other than an SQL error to the logger
+  when user executes SQL.
+- Consolidated the plethora of "meta data" output type settings into a
+  single setting.
+- Main window toolbar is now floatable.
+- Using icons from the Eclipse (http://www.eclipse.org) project.
+
+Bug Fixes
+---------
+- "Refresh" option in the popup menu for the object tree now works. 
+- Ensure a sessions message panel is tall enough to display all
+  three lines of an SQL error when first displayed.
+- Fix bug where changing "autocommit" during a session wasn't
+  recognized.
+- Limit rows checkbox wasn't updated when session properties
+  changed.
+- Fix incorrect row count in Info tab for a table.
+- Add error handling to result set metadata displays.
+- Don't show closed property dialogs in Windows menu.
+- Directory list combo boxes now only show required file types.
+- Fix option in Windows batch file not to show command window.
+- Show decimal positions in column data when required.
+- Show <null> when column data is null instead of an empty string.
+- Fixed metadata problems with the JDBC/ODBC bridge.
+
+
 1.1beta4
 ========
 
 Bug Fixes
 ---------
-- Correctly size the Java Classpath listbox.
-- Indicate whether driver can be loaded whenever the driver classpath is changed.
+- Correctly size the java Classpath listbox.
+- Indicate whether driver can be loaded whenever the driver classpath is changed
 - Add missing batch file (addpath.bat) to distribution.
 
 
