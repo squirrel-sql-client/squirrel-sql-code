@@ -23,9 +23,10 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 
 final class MssqlResources extends PluginResources {
 	interface IMenuResourceKeys {
-		String SHOW_STATISTICS = "show_statistics";
+        String SHOW_STATISTICS = "show_statistics";
         String INDEXDEFRAG = "indexdefrag";
-		String MSSQL = "mssql";
+        String SHRINKDBFILE = "shrinkdbfile";
+        String MSSQL = "mssql";
 	}
 
 	MssqlResources(String rsrcBundleBaseName, IPlugin plugin) {

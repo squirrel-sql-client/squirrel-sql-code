@@ -37,11 +37,14 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.WrappedSQLException;
+import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -50,9 +53,13 @@ import net.sourceforge.squirrel_sql.plugins.mssql.action.IndexDefragAction;
 import net.sourceforge.squirrel_sql.plugins.mssql.action.ScriptProcedureAction;
 import net.sourceforge.squirrel_sql.plugins.mssql.action.ShowStatisticsAction;
 import net.sourceforge.squirrel_sql.plugins.mssql.action.ShrinkDatabaseAction;
+import net.sourceforge.squirrel_sql.plugins.mssql.action.ShrinkDatabaseFileAction;
 import net.sourceforge.squirrel_sql.plugins.mssql.action.TruncateLogAction;
 import net.sourceforge.squirrel_sql.plugins.mssql.action.UpdateStatisticsAction;
 import net.sourceforge.squirrel_sql.plugins.mssql.event.IndexIterationListener;
+import net.sourceforge.squirrel_sql.plugins.mssql.sql.dbfile.DatabaseFileInfo;
+import net.sourceforge.squirrel_sql.plugins.mssql.sql.dbfile.DatabaseFile;
+import net.sourceforge.squirrel_sql.plugins.mssql.util.MssqlIntrospector;
 
 public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin {
 	private final static ILogger s_log = LoggerController.createLogger(MssqlPlugin.class);
@@ -312,8 +319,10 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
                 }
             }
         }
-        catch (SQLException e) {
-            e.printStackTrace();
+        catch (SQLException ex) {
+            ex.printStackTrace();
+            // fine, don't show any indexes.
+			//throw new WrappedSQLException(ex);
         }
     }
     
@@ -335,6 +344,7 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
     private JMenu addToMssqlCatalogMenu(JMenu menu) {
         final IApplication app = getApplication();
 		final ActionCollection coll = app.getActionCollection();
+        final MssqlPlugin plugin = this;
 
         final JMenu mssqlMenu;
         if (menu == null)
@@ -344,7 +354,52 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
         
         _resources.addToMenu(coll.get(ShrinkDatabaseAction.class),mssqlMenu);
         _resources.addToMenu(coll.get(TruncateLogAction.class),mssqlMenu);
-
+        
+        final JMenu shrinkDBFileMenu = _resources.createMenu(MssqlResources.IMenuResourceKeys.SHRINKDBFILE);
+        shrinkDBFileMenu.addMenuListener(new MenuListener() {
+            public void menuSelected(MenuEvent e) {
+                final JMenu menu = (JMenu) e.getSource();
+                menu.removeAll();
+                removeActionsOfType(coll,ShrinkDatabaseFileAction.class);
+                
+                final ObjectTreeNode[] nodes = _treeAPI.getSelectedNodes();
+                if (nodes.length != 1)
+                    return;
+                
+                try {
+                    if (nodes[0].getDatabaseObjectType() != DatabaseObjectType.CATALOG)
+                        return;
+                    
+                    DatabaseFileInfo info = MssqlIntrospector.getDatabaseFileInfo(nodes[0].toString(), _session.getSQLConnection());
+                    Object[] files = info.getDataFiles();
+                    for (int i = 0; i < files.length; i++) {
+                        DatabaseFile file = (DatabaseFile) files[i];
+                        final ShrinkDatabaseFileAction shrinkDatabaseFileAction = new ShrinkDatabaseFileAction(app,_resources,plugin,nodes[0].toString(),file);
+                        shrinkDatabaseFileAction.setSession(_session);
+                        coll.add(shrinkDatabaseFileAction);
+                        _resources.addToMenu(shrinkDatabaseFileAction,menu);
+                    }
+                    files = info.getLogFiles();
+                    for (int i = 0; i < files.length; i++) {
+                        DatabaseFile file = (DatabaseFile) files[i];
+                        final ShrinkDatabaseFileAction shrinkDatabaseFileAction = new ShrinkDatabaseFileAction(app,_resources,plugin,nodes[0].toString(),file);
+                        shrinkDatabaseFileAction.setSession(_session);
+                        coll.add(shrinkDatabaseFileAction);
+                        _resources.addToMenu(shrinkDatabaseFileAction,menu);
+                    }
+                }
+                catch (java.sql.SQLException ex) {
+                    ex.printStackTrace();
+                    // fine, don't add any data files.
+                    //throw new WrappedSQLException(ex);
+                }
+            }
+            public void menuDeselected(MenuEvent e) { }
+            public void menuCanceled(MenuEvent e) { }
+        }
+        );
+        mssqlMenu.add(shrinkDBFileMenu);
+        
 		return mssqlMenu;
     }
     
