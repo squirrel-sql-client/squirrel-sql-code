@@ -255,6 +255,13 @@
 			</fileset>
 		</jar>
 
+		<jar jarfile="${core_dist_dir}/src/build.jar" compress="false">
+			<fileset dir="build">
+				<include name="**/*.*"/>
+				<exclude name="test.jar"/>
+			</fileset>
+		</jar>
+
 		<copy todir="${core_dist_dir}/src" >
 			<fileset dir="." >
 				<include name="build.xml"/>
