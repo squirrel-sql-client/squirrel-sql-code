@@ -7,13 +7,15 @@ public class FormatXmlBean
    private double width;
    private double height;
    private boolean selected;
+   private boolean landscape;
 
-   public FormatXmlBean(String name, double width, double height, boolean selected)
+   public FormatXmlBean(String name, double width, double height, boolean selected, boolean landscape)
    {
       this.setName(name);
       this.setWidth(width);
       this.setHeight(height);
       this.setSelected(selected);
+      this.setLandscape(landscape);
     }
 
    /**
@@ -66,6 +68,16 @@ public class FormatXmlBean
    public void setSelected(boolean selected)
    {
       this.selected = selected;
+   }
+
+   public boolean isLandscape()
+   {
+      return landscape;
+   }
+
+   public void setLandscape(boolean landscape)
+   {
+      this.landscape = landscape;
    }
 
 }
