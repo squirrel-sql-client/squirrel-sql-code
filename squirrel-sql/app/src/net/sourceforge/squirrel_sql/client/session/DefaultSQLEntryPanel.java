@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.client.session;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -26,7 +27,6 @@ import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.event.UndoableEditListener;
-//import javax.swing.undo.UndoManager;
 
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
@@ -34,10 +34,10 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-//import net.sourceforge.squirrel_sql.client.session.action.RedoAction;
-//import net.sourceforge.squirrel_sql.client.session.action.UndoAction;
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
-public class DefaultSQLEntryPanel implements ISQLEntryPanel {
+public class DefaultSQLEntryPanel extends BaseSQLEntryPanel {
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(SQLPanel.class);
 
@@ -53,19 +53,9 @@ public class DefaultSQLEntryPanel implements ISQLEntryPanel {
 	/** Listener for displaying the popup menu. */
 	private MouseListener _sqlEntryMouseListener = new MyMouseListener();
 
-	/** Undo manager for this component. */
-//	private UndoManager _undoManager = new UndoManager();
-
 	public DefaultSQLEntryPanel(IApplication app) {
 		super();
-
-//		UndoAction undo = new UndoAction(app, _undoManager);
-//		RedoAction redo = new RedoAction(app, _undoManager);
-
-//		_textPopupMenu.add(undo);
-//		_textPopupMenu.add(redo);
-
-		_comp = new MyTextArea(app);//, undo, redo);
+		_comp = new MyTextArea(app, this);
 		_scroller = new JScrollPane(_comp);
 	}
 
@@ -144,6 +134,10 @@ public class DefaultSQLEntryPanel implements ISQLEntryPanel {
 	 */
 	public void setTabSize(int tabSize) {
 		_comp.setTabSize(tabSize);
+	}
+
+	public void setFont(Font font) {
+		_comp.setFont(font);
 	}
 
 	/**
@@ -226,35 +220,25 @@ public class DefaultSQLEntryPanel implements ISQLEntryPanel {
 		}
 	}
 
-	private class MyTextArea extends JTextArea {
+	private static class MyTextArea extends JTextArea {
 		private IApplication _app;
-//		private UndoAction _undo;
-		//private RedoAction _redo;
+		private DefaultSQLEntryPanel _pnl;
 
-		private MyTextArea(IApplication app) {//, UndoAction undo, RedoAction redo) {
+		private MyTextArea(IApplication app, DefaultSQLEntryPanel pnl) {
 			super();
 			_app = app;
-//			_undo = undo;
-//			_redo = redo;
+			_pnl = pnl;
+			SessionProperties props = app.getSquirrelPreferences().getSessionProperties();
+			this.setFont(props.getFontInfo().createFont());
 		}
 
 		public void addNotify() {
 			super.addNotify();
-
-			DefaultSQLEntryPanel.this.addMouseListener(_sqlEntryMouseListener);
-	
-			//Resources res = _app.getResources();
-				
-			// ??Whe should also register them as a action to the textarea or this panel!?
-//			registerKeyboardAction(_undo, res.getKeyStroke(_undo), _comp.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-//			registerKeyboardAction(_redo, res.getKeyStroke(_redo), _comp.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-				
-	//		_sqlEntry.addUndoableEditListener(_undoManager);
-//			_comp.getDocument().addUndoableEditListener(_undoManager);
+			_pnl.addMouseListener(_pnl._sqlEntryMouseListener);
 		}
 
 		public void removeNotify() {
-			DefaultSQLEntryPanel.this.removeMouseListener(_sqlEntryMouseListener);
+			_pnl.removeMouseListener(_pnl._sqlEntryMouseListener);
 			super.removeNotify();
 		}
 	}
