@@ -17,6 +17,8 @@ Enhancements
 
 Bug Fixes
 ---------
+- SQL that returns multiple result sets is now handled correctly (Neville
+  Rowe).
 - Fix manifest file so the the squirrel-sql.jar file is again executable (Denis
   Lundberg).
 - Fix resource strings (Dennis Lundberg).
