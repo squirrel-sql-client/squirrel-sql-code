@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -144,7 +144,7 @@ public class ContentsTab extends BaseTableTab
 			add(_insertRow);
 		}
 	}
-	
+
 	/**
 	 * Override the parent's getComponent method so that we can
 	 * attach a menu to the ContentsTab pane that allows the user
@@ -152,7 +152,9 @@ public class ContentsTab extends BaseTableTab
 	 */
 	public Component getComponent(){
 		final Component c = super.getComponent();
-			
+		if (c == null) {
+System.err.println("c==null");
+		}
 		if (c != null) {
 			// remove any previously set listeners
 			MouseListener[] oldListeners = c.getMouseListeners();
