@@ -22,6 +22,9 @@ package net.sourceforge.jcomplete;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * requirements for objects that maintain schema information
@@ -39,8 +42,8 @@ public interface SQLSchema
         public final String compositeName;
         public transient String alias;
 
-        private final List columns;
-        private String[] _columns;
+        private DatabaseMetaData dmd;
+        private String[] columns;
 
         public static String createCompositeName(String catalog, String schema, String name)
         {
@@ -77,7 +80,6 @@ public interface SQLSchema
             this.schema = schema;
             this.name = name;
             this.compositeName = createCompositeName(catalog, schema, name);
-            this.columns = new ArrayList();
         }
 
         public Table(String schema, String name)
@@ -90,22 +92,25 @@ public interface SQLSchema
             this(null, null, name);
         }
 
-        public void addColumns(String[] columns)
+        public void setDatabaseMetaData(DatabaseMetaData dmd)
         {
-            for(int i=0; i<columns.length; i++)
-                addColumn(columns[i]);
+            this.dmd = dmd;
         }
 
-        public void addColumn(String column)
+        public void setColumns(String[] columns)
         {
-            columns.add(column);
+            this.columns = columns;
+        }
+
+        public void setColumns(List columns)
+        {
+            this.columns = (String[])columns.toArray(new String[columns.size()]);
         }
 
         public String[] getColumns()
         {
-            if(_columns == null)
-                _columns = (String[])columns.toArray(new String[columns.size()]);
-            return _columns;
+            if(columns == null) loadColumns();
+            return columns;
         }
 
         public String[] getColumns(String prefix)
@@ -181,6 +186,26 @@ public interface SQLSchema
                 return 1;
             }
             return compositeName.compareTo(other.compositeName);
+        }
+
+        protected void loadColumns()
+        {
+            ResultSet rs = null;
+            try {
+                List cols = new ArrayList();
+                rs = dmd.getColumns(catalog, schema, name, null);
+                while(rs.next())
+                {
+                    cols.add(rs.getString(4));
+                }
+                setColumns(cols);
+            }
+            catch (SQLException e) {
+                throw new RuntimeException(e.getMessage());
+            }
+            finally {
+                if(rs != null) try {rs.close();} catch(SQLException e) {}
+            }
         }
     }
 

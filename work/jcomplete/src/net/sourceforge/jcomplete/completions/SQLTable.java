@@ -28,7 +28,7 @@ import net.sourceforge.jcomplete.SQLSchema;
 
 /**
  * this class represents a table completion, as it appears within the FROM
- * clause.<br>
+ * clause of a a select statement, and in other places.<br>
  * <em>Note: do not confuse with SQLSchema.Table</em>
  */
 public class SQLTable extends SQLCompletion
@@ -63,25 +63,25 @@ public class SQLTable extends SQLCompletion
     public void setCatalog(String catalog, int pos)
     {
         this.catalog = catalog;
-        setEndPosition(pos+catalog.length());
+        setEndPosition(pos+catalog.length()-1);
     }
 
     public void setSchema(String schema, int pos)
     {
         this.schema = schema;
-        setEndPosition(pos+schema.length());
+        setEndPosition(pos+schema.length()-1);
     }
 
     public void setName(String name, int pos)
     {
         this.name = name;
-        setEndPosition(pos+name.length());
+        setEndPosition(pos+name.length()-1);
     }
 
     public void setAlias(String alias, int pos)
     {
         this.alias = alias;
-        setEndPosition(pos+alias.length());
+        setEndPosition(pos+alias.length()-1);
     }
 
     public SQLSchema.Table[] getCompletions(int position)
@@ -92,6 +92,14 @@ public class SQLTable extends SQLCompletion
         List tables = getStatement().getTables(catalog, schema, tb);
         Collections.sort(tables);
         return (SQLSchema.Table[])tables.toArray(new SQLSchema.Table[tables.size()]);
+    }
+
+    /**
+     * @return true if the name is set
+     */
+    protected boolean isConcrete()
+    {
+        return name != null;
     }
 
     /**

@@ -18,7 +18,7 @@
  *
  * created by cse, 10.10.2002 14:29:20
  *
- * @version $Id: SQLWhere.java,v 1.2 2002-10-11 20:42:49 csell Exp $
+ * @version $Id: SQLWhere.java,v 1.3 2002-10-13 18:09:13 csell Exp $
  */
 package net.sourceforge.jcomplete.completions;
 
@@ -28,6 +28,7 @@ import java.util.Iterator;
 
 import net.sourceforge.jcomplete.SQLCompletion;
 import net.sourceforge.jcomplete.SQLSchema;
+import net.sourceforge.jcomplete.Completion;
 
 /**
  * a completion which represents the WHERE clause inside SELECT, UPDATE or DLETE
@@ -51,12 +52,12 @@ public class SQLWhere extends SQLCompletion implements SQLStatementContext
         super.setEndPosition(position);
     }
 
-    public SQLCompletion getCompletion(int position)
+    public Completion getCompletion(int position)
     {
         if(super.getCompletion(position) != null) {
             Iterator it = children.iterator();
             while(it.hasNext()) {
-                SQLCompletion comp = (SQLCompletion)it.next();
+                Completion comp = (Completion)it.next();
                 if((comp = comp.getCompletion(position)) != null)
                     return comp;
             }

@@ -42,39 +42,39 @@ public class PopUpCompletionTest extends JFrame
     public static Map s_TestTables = new HashMap();
     static {
         SQLSchema.Table t = new SQLSchema.Table("TESTTABLE1");
-        t.addColumns(new String[]{"column11", "column12", "column13", "column14"});
+        t.setColumns(new String[]{"column11", "column12", "column13", "column14"});
         s_TestTables.put(t.getCompositeName(), t);
 
         t = new SQLSchema.Table("TESTTABLE2");
-        t.addColumns(new String[]{"column21", "column22", "column23", "column24"});
+        t.setColumns(new String[]{"column21", "column22", "column23", "column24"});
         s_TestTables.put(t.getCompositeName(), t);
 
         t = new SQLSchema.Table("TABLE1_Data_Data");
-        t.addColumns(new String[]{"column1", "column2"});
+        t.setColumns(new String[]{"column1", "column2"});
         s_TestTables.put(t.getCompositeName(), t);
 
         t = new SQLSchema.Table("TABLE2");
-        t.addColumns(new String[]{"column11", "column12"});
+        t.setColumns(new String[]{"column11", "column12"});
         s_TestTables.put(t.getCompositeName(), t);
 
         t = new SQLSchema.Table("TABLE3");
-        t.addColumns(new String[]{"column311", "column312", "column321", "column322"});
+        t.setColumns(new String[]{"column311", "column312", "column321", "column322"});
         s_TestTables.put(t.getCompositeName(), t);
 
         t = new SQLSchema.Table("TABLE4");
-        t.addColumns(new String[]{"column411", "column412"});
+        t.setColumns(new String[]{"column411", "column412"});
         s_TestTables.put(t.getCompositeName(), t);
 
         t = new SQLSchema.Table("TABLE5");
-        t.addColumns(new String[]{"column511", "column512"});
+        t.setColumns(new String[]{"column511", "column512"});
         s_TestTables.put(t.getCompositeName(), t);
 
         t = new SQLSchema.Table("TABLE6");
-        t.addColumns(new String[]{"column611", "column612"});
+        t.setColumns(new String[]{"column611", "column612"});
         s_TestTables.put(t.getCompositeName(), t);
 
         t = new SQLSchema.Table("TABLE7");
-        t.addColumns(new String[]{"column711", "column712"});
+        t.setColumns(new String[]{"column711", "column712"});
         s_TestTables.put(t.getCompositeName(), t);
     }
     public PopUpCompletionTest()

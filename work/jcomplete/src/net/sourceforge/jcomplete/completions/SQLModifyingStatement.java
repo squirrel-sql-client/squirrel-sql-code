@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import net.sourceforge.jcomplete.SQLSchema;
+import net.sourceforge.jcomplete.SQLCompletion;
+import net.sourceforge.jcomplete.Completion;
 
 /**
  * an SQL statement class representing modyfing statements, i.e.
@@ -21,6 +23,8 @@ import net.sourceforge.jcomplete.SQLSchema;
 public class SQLModifyingStatement extends SQLStatement
 {
     private SQLTable m_table;
+    private int updateListStart = NO_POSITION;
+    private int updateListEnd = NO_POSITION;
 
     public SQLModifyingStatement(int start)
     {
@@ -29,7 +33,7 @@ public class SQLModifyingStatement extends SQLStatement
 
     public List getTables(String catalog, String schema, String name)
     {
-        if(m_table == null) {
+        if(name != null || m_table == null) {
             return super.getTables(catalog, schema, name);
         }
         else {
@@ -59,5 +63,30 @@ public class SQLModifyingStatement extends SQLStatement
     public boolean setTable(String catalog, String schema, String name, String alias)
     {
         return super.setTable(catalog, schema, name, alias);
+    }
+
+    public void setUpdateListStart(int position)
+    {
+        System.out.println("updateListStart: "+position);
+        updateListStart = position;
+        updateListEnd = NO_LIMIT;
+    }
+
+    public void setUpdateListEnd(int position)
+    {
+        updateListEnd = position;
+    }
+
+    public Completion getCompletion(int position)
+    {
+        Completion c = super.getCompletion(position);
+        if(c == null) {
+            if(position >= updateListStart && position <= updateListEnd) {
+                SQLColumn col = new SQLColumn(this, position);
+                col.setRepeatable(false);
+                return col;
+            }
+        }
+        return c;
     }
 }

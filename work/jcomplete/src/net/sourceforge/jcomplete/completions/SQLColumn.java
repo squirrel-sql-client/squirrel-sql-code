@@ -18,7 +18,7 @@
  *
  * created by cse, 24.09.2002 16:00:59
  *
- * @version $Id: SQLColumn.java,v 1.6 2002-10-11 20:42:49 csell Exp $
+ * @version $Id: SQLColumn.java,v 1.7 2002-10-13 18:09:13 csell Exp $
  */
 package net.sourceforge.jcomplete.completions;
 
@@ -30,12 +30,12 @@ import net.sourceforge.jcomplete.SQLSchema;
  */
 public class SQLColumn extends SQLCompletion
 {
-    private String column;
+    private String name;
     private String qualifier;
 
     private boolean isRepeatable = true;
     private SQLStatementContext parent;
-    private int afterSeparatorPos = NO_POSITION;
+    private int namePos = NO_POSITION;
 
     public SQLColumn(SQLStatementContext parent,  int start)
     {
@@ -59,8 +59,8 @@ public class SQLColumn extends SQLCompletion
     public void setQualifier(String alias, int pos)
     {
         this.qualifier = alias;
-        this.afterSeparatorPos = pos+alias.length()+1;
-        setEndPosition(afterSeparatorPos);
+        this.namePos = pos+alias.length()+1;
+        setEndPosition(namePos);
         System.out.println("setAlias: s="+startPosition+" e="+endPosition);
     }
 
@@ -76,18 +76,19 @@ public class SQLColumn extends SQLCompletion
 
     public void setColumn(String name, int pos)
     {
-        column = name;
+        this.name = name;
+        this.namePos = pos;
         setEndPosition(pos+name.length()-1);
     }
 
-    public void setColumn(String column)
+    public void setName(String name)
     {
-        this.column = column;
+        this.name = name;
     }
 
-    public String getColumn()
+    public String getName()
     {
-        return column;
+        return name;
     }
 
     /**
@@ -105,7 +106,7 @@ public class SQLColumn extends SQLCompletion
         return
               (qualifier == null &&  parent.getStatement().getTable() != null) ||
               (qualifier != null &&
-              position >= afterSeparatorPos && position <= endPosition &&
+              position >= namePos && position <= endPosition &&
               parent.getStatement().getTableForAlias(qualifier) != null);
     }
 
@@ -116,7 +117,7 @@ public class SQLColumn extends SQLCompletion
 
     public String getText()
     {
-        String text = qualifier != null ? qualifier+"."+column : column;
+        String text = qualifier != null ? qualifier+"."+name : name;
 
         if(hasTextPosition()) {
             int oldDataPos = endPosition - startPosition;
@@ -126,9 +127,17 @@ public class SQLColumn extends SQLCompletion
         }
     }
 
+    /**
+     * @return true if the name is set
+     */
+    protected boolean isConcrete()
+    {
+        return name != null;
+    }
+
     public String getText(int position)
     {
-        return getText(position, column);
+        return getText(position, name);
     }
 
     public String getText(int position, String option)
@@ -170,8 +179,8 @@ public class SQLColumn extends SQLCompletion
         // now match the columns
         if(table != null) {
             String col = null;
-            if(position > afterSeparatorPos && column != null) {
-                col = position <= endPosition ? column.substring(0, position-afterSeparatorPos) : column;
+            if(name != null && position > namePos) {
+                col = position <= endPosition ? name.substring(0, position-namePos) : name;
             }
             String[] result = table.getColumns(col);
             return (col != null && result.length == 1 && result[0].length() == col.length()) ?
@@ -193,6 +202,6 @@ public class SQLColumn extends SQLCompletion
 
     public boolean mustReplace(int position)
     {
-        return column != null && position >= startPosition && position <= endPosition;
+        return name != null && position >= startPosition && position <= endPosition;
     }
 }

@@ -64,7 +64,7 @@ public class SQLCompletionAdapter extends CompletionAdapter
             SQLSchema.Table[] tables = table.getCompletions(m_textComponent.getCaretPosition());
             if(tables.length > 1)
                 showPopupList(table, tables, table.isRepeatable());
-            else if(tables.length == 1)
+            else if(tables.length == 1 && !tables[0].equals(table.catalog, table.schema, table.name))
                 completionRequested(table, tables);
         }
     }

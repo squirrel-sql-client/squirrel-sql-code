@@ -48,7 +48,7 @@ public class SQLCompletionHandler implements CompletionHandler, SQLSchema
           DatabaseMetaData metaData)
     {
         this.dbData = metaData;
-        loadMetaData();
+        loadSchema(false);
         this.parserThread = new ParserThread(this, errorListener);
     }
 
@@ -125,11 +125,20 @@ public class SQLCompletionHandler implements CompletionHandler, SQLSchema
         return (SQLSchema.Table)tables.get(SQLSchema.Table.createCompositeName(catalog, schema, name));
     }
 
-    private void loadMetaData()
+    private void loadSchema(boolean all)
+    {
+        if(all)
+            loadTablesAndColumns();
+        else
+            loadTables();
+    }
+
+    private void loadTablesAndColumns()
     {
         ResultSet rs = null;
         try {
             SQLSchema.Table tdesc = null;
+            List cols = new ArrayList();
             rs = dbData.getColumns(null, null, null, null);
             while(rs.next())
             {
@@ -139,15 +148,43 @@ public class SQLCompletionHandler implements CompletionHandler, SQLSchema
                 String column = rs.getString(4);
 
                 if(tdesc == null || !tdesc.equals(catalog, schema, table)) {
+                    if(tdesc != null) tdesc.setColumns(cols);
+                    cols.clear();
                     tdesc = new SQLSchema.Table(catalog, schema, table);
                     tables.put(tdesc.getCompositeName(), tdesc);
                 }
-                tdesc.addColumn(column);
+                cols.add(column);
+            }
+            if(tdesc != null) tdesc.setColumns(cols);
+        }
+        catch(SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        finally {
+            if(rs != null) try {rs.close();} catch(SQLException e){}
+        }
+    }
+    private void loadTables()
+    {
+        ResultSet rs = null;
+        try {
+            SQLSchema.Table tdesc = null;
+            rs = dbData.getTables(null, null, null, null);
+            while(rs.next())
+            {
+                String catalog = rs.getString(1);
+                String schema = rs.getString(2);
+                String table = rs.getString(3);
+
+                tdesc = new SQLSchema.Table(catalog, schema, table);
+                tables.put(tdesc.getCompositeName(), tdesc);
             }
         }
-        catch(SQLException e) {}
+        catch(SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
         finally {
-            try {rs.close();} catch(SQLException e){}
+            if(rs != null) try {rs.close();} catch(SQLException e){}
         }
     }
 }

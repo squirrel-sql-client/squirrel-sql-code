@@ -18,7 +18,7 @@
  *
  * created by cse, 24.09.2002 12:00:04
  *
- * @version $Id: SQLCompletion.java,v 1.4 2002-10-10 22:33:48 csell Exp $
+ * @version $Id: SQLCompletion.java,v 1.5 2002-10-13 18:09:13 csell Exp $
  */
 package net.sourceforge.jcomplete;
 
@@ -44,9 +44,22 @@ public abstract class SQLCompletion implements Completion
 
     protected SQLCompletion() {}
 
-    public SQLCompletion getCompletion(int position)
+    public Completion getCompletion(int position)
     {
-        return position >= startPosition && position <= endPosition ? this : null;
+        return isEnclosed(position) ? this : null;
+    }
+
+    /**
+     * @return whether this object reperesents a concrete item, as opposed to being a
+     * placeholder for potential items. For example, a non-concrete item may be inserted
+     * into the completion tree to allow inserting completions in a certain text area. A
+     * concrete item should be created when the parser encounters an existing item in the
+     * token stream. During {@link #getCompletion completion lookup}, concrete items are
+     * preferred before non-concrete ones
+     */
+    protected boolean isConcrete()
+    {
+        return true;
     }
 
     public void setEndPosition(int position)
@@ -95,5 +108,30 @@ public abstract class SQLCompletion implements Completion
     public boolean mustReplace(int position)
     {
         return false;
+    }
+
+    /**
+     * @param position the text position to be checked
+     * @return whether the given text position is enclosed by this objects range
+     */
+    protected boolean isEnclosed(int position)
+    {
+        return position >= startPosition && position <= endPosition;
+    }
+
+    /**
+     * A comparator implementation which sorts descending according to startPosition,
+     * while preferring {@link #isConcrete concrete} items before non-concrete ones
+     */
+    public class ChildComparator implements java.util.Comparator
+    {
+        public int compare(Object o1, Object o2)
+        {
+            SQLCompletion c1 = (SQLCompletion)o1;
+            SQLCompletion c2 = (SQLCompletion)o2;
+            if(c1.isConcrete() == c2.isConcrete())
+                return c2.startPosition - c1.startPosition ;
+            else return c1.isConcrete() ? -1 : 1;
+        }
     }
 }

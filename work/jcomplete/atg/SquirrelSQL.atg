@@ -1,7 +1,7 @@
 /**
  * Compiler for the SQL language, with semantic actions that support code completion
  *
- * @version $Id: SquirrelSQL.atg,v 1.6 2002-10-11 20:42:49 csell Exp $
+ * @version $Id: SquirrelSQL.atg,v 1.7 2002-10-13 18:09:12 csell Exp $
  */
 PACKAGE "net.sourceforge.jcomplete.parser"
 IMPORT "net.sourceforge.jcomplete.completions.*", "net.sourceforge.jcomplete.*"
@@ -96,15 +96,18 @@ UpdateStmt              (.  SQLModifyingStatement statement = new SQLModifyingSt
     =
     "UPDATE"            (.  table.setName(t.str, t.pos); .)
     Table <null>
+                        (.  statement.setUpdateListStart(t.pos+4); .)
     "SET"
-    UpdateFieldList
+    UpdateFieldList     (.  statement.setUpdateListEnd(token.pos); .)
     [WhereClause]       (.  statement.setEndPosition(token.pos);
                             popContext();
                         .)
     .
 
-UpdateFieldList =
-    UpdateField  { ItemSeparator UpdateField  }
+UpdateFieldList
+    =
+    UpdateField
+    { ItemSeparator UpdateField  }
     .
 
 UpdateField =
@@ -118,7 +121,7 @@ InsertStmt              (.  SQLModifyingStatement statement = new SQLModifyingSt
     "INSERT"            (.  SQLTable table = new SQLTable(statement, scanner.pos+1);
                             statement.addTable(table);
                         .)
-    "INTO"              (.  SQLColumn column = new SQLColumn(statement, scanner.pos+1);
+    "INTO"              (.  SQLColumn column = new SQLColumn(statement, scanner.pos+2);
                             table.setName(t.str, t.pos);
                             column.setRepeatable(true);
                             statement.addColumn(column);

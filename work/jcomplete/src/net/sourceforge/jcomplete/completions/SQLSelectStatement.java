@@ -18,7 +18,7 @@
  *
  * created by cse, 26.09.2002 15:14:45
  *
- * @version $Id: SQLSelectStatement.java,v 1.6 2002-10-11 07:58:59 csell Exp $
+ * @version $Id: SQLSelectStatement.java,v 1.7 2002-10-13 18:09:13 csell Exp $
  */
 package net.sourceforge.jcomplete.completions;
 
@@ -28,6 +28,7 @@ import java.util.List;
 
 import net.sourceforge.jcomplete.SQLCompletion;
 import net.sourceforge.jcomplete.SQLSchema;
+import net.sourceforge.jcomplete.Completion;
 
 /**
  * an SQL select statement
@@ -147,9 +148,9 @@ public class SQLSelectStatement extends SQLStatement
         return table != null ? table : sqlSchema.getTableForAlias(alias);
     }
 
-    public SQLCompletion getCompletion(int offset)
+    public Completion getCompletion(int offset)
     {
-        SQLCompletion comp = super.getCompletion(offset);
+        Completion comp = super.getCompletion(offset);
         if(comp != null) return comp;
 
         if(offset >= selectListStart && offset <= selectListEnd)

@@ -18,7 +18,7 @@
  *
  * created by cse, 24.09.2002 11:20:31
  *
- * @version $Id: Completion.java,v 1.4 2002-10-10 22:33:48 csell Exp $
+ * @version $Id: Completion.java,v 1.5 2002-10-13 18:09:13 csell Exp $
  */
 package net.sourceforge.jcomplete;
 
@@ -34,7 +34,7 @@ public interface Completion
      * @param position the caret position at which the completion is requested
      * @return an appropriate completion object, or <em>null</em> of none available
      */
-    SQLCompletion getCompletion(int position);
+    Completion getCompletion(int position);
 
     /**
      * return completion text if the completion is fully defined

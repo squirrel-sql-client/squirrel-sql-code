@@ -18,7 +18,7 @@
  *
  * created 24.09.2002 12:27:12
  *
- * @version $Id: SQLStatement.java,v 1.6 2002-10-11 20:42:49 csell Exp $
+ * @version $Id: SQLStatement.java,v 1.7 2002-10-13 18:09:13 csell Exp $
  */
 package net.sourceforge.jcomplete.completions;
 
@@ -34,7 +34,7 @@ import net.sourceforge.jcomplete.Completion;
  */
 public class SQLStatement extends SQLCompletion implements SQLSchema, SQLStatementContext
 {
-    private List children;
+    private SortedSet children;
     protected SQLSchema sqlSchema;
 
 
@@ -47,12 +47,12 @@ public class SQLStatement extends SQLCompletion implements SQLSchema, SQLStateme
      * @param position the position at which the completion should be inserted
      * @return the available completion
      */
-    public SQLCompletion getCompletion(int position)
+    public Completion getCompletion(int position)
     {
-        if(super.getCompletion(position) != null) {
+        if(isEnclosed(position)) {
             Iterator it = getChildren();
             while(it.hasNext()) {
-                SQLCompletion c = ((SQLCompletion)it.next()).getCompletion(position);
+                Completion c = ((Completion)it.next()).getCompletion(position);
                 if(c != null) return c;
             }
         }
@@ -61,13 +61,13 @@ public class SQLStatement extends SQLCompletion implements SQLSchema, SQLStateme
 
     public void setSqlSchema(SQLSchema schema)
     {
-        if(schema == this) throw new RuntimeException("internal error 22");
+        if(schema == this) throw new RuntimeException("internal error: recursive schema");
         this.sqlSchema = schema;
     }
 
     protected void addChild(Completion child)
     {
-        if(children == null) children = new ArrayList();
+        if(children == null) children = new TreeSet(new ChildComparator());
         children.add(child);
     }
 

@@ -1067,8 +1067,10 @@ public List statements = new ArrayList();
 		Expect(12);
 		table.setName(t.str, t.pos);
 		Table(null);
+		statement.setUpdateListStart(t.pos+4);
 		Expect(13);
 		UpdateFieldList();
+		statement.setUpdateListEnd(token.pos);
 		if (t.kind == 34) {
 			WhereClause();
 		}
@@ -1086,7 +1088,7 @@ public List statements = new ArrayList();
 		statement.addTable(table);
 		
 		Expect(16);
-		SQLColumn column = new SQLColumn(statement, scanner.pos+1);
+		SQLColumn column = new SQLColumn(statement, scanner.pos+2);
 		table.setName(t.str, t.pos);
 		column.setRepeatable(true);
 		statement.addColumn(column);
