@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+0.21
+====
+- Skin Look and Feel updated to 1.2.1
+
+
 0.20
 ====
 
