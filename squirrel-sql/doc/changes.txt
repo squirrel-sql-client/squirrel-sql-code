@@ -3,6 +3,12 @@ Change Log
 
 1.1 continuation
 ================
+- New "Show Native SQL" item in Session menu.
+- Changes to accessing the SQL script in ISession:
+	String getEntireSQLScript();
+	String getSQLScriptToBeExecuted();
+	void setEntireSQLScript(String sqlScript);
+	void appendSQLScript(String sqlScript);
 - Ctrl/Enter now works in jEdit plugin.
 - Undo/Redo now works in the jEdit plugin.
 - Keyboard shortcuts for edit options now work in the jEdit plugin.
