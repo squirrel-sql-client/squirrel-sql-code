@@ -131,11 +131,15 @@ public final class TableNode extends DatabaseObjectNode implements ITableInfo {
 				ResultSet rs =
 					rowCountStmt.executeQuery(
 						"select count(*) from " + _tableInfo.getQualifiedName());
-				long nbrRows = 0;
-				if (rs.next()) {
-					nbrRows = rs.getLong(1);
+				try {
+					long nbrRows = 0;
+					if (rs.next()) {
+						nbrRows = rs.getLong(1);
+					}
+					return _tableInfo.getSimpleName() + " (" + nbrRows + ")";
+				} finally {
+					rs.close();
 				}
-				return _tableInfo.getSimpleName() + " (" + nbrRows + ")";
 			} catch (SQLException ex) {
 				return _tableInfo.getSimpleName();
 			}
