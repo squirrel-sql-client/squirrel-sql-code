@@ -21,7 +21,6 @@ import java.awt.Component;
 import java.awt.Window;
 import java.awt.event.FocusEvent;
 import java.beans.PropertyVetoException;
-import java.sql.SQLException;
 
 import javax.swing.Icon;
 import javax.swing.SwingUtilities;
@@ -51,34 +50,12 @@ public class SessionInternalFrame extends BaseSheet
 
 	SessionInternalFrame(ISession session)
 	{
-		super(createTitle(session), true, true, true, true);
+		super(session.getTitle(), true, true, true, true);
 		_app = session.getApplication();
 		_sessionId = session.getIdentifier();
 		setVisible(false);
 		createGUI(session);
 	}
-
-//	public void dispose()
-//	{
-//		final SessionManager mgr = _app.getSessionManager();
-//		if (_sessionId != null)
-//		{
-//			final ISession session = (ISession)mgr.getSession(_sessionId);
-//			_sessionId = null;
-//			if (session != null)
-//			{
-//				try
-//				{
-//					mgr.closeSession(session);
-//				}
-//				catch (SQLException ex)
-//				{
-//					s_log.error("SQL error closing session", ex);
-//				}
-//			}
-//		}
-//		super.dispose();
-//	}
 
 	public ISession getSession()
 	{
@@ -153,25 +130,5 @@ public class SessionInternalFrame extends BaseSheet
 		_sessionPanel = new SessionSheet(session);
 		setContentPane(_sessionPanel);
 		validate();
-	}
-
-	private static String createTitle(ISession session)
-	{
-		StringBuffer title = new StringBuffer();
-		title.append(session.getAlias().getName());
-		String user = null;
-		try
-		{
-			user = session.getSQLConnection().getSQLMetaData().getUserName();
-		}
-		catch (SQLException ex)
-		{
-			s_log.error("Error occured retrieving user name from Connection", ex);
-		}
-		if (user != null && user.length() > 0)
-		{
-			title.append(" as ").append(user); // i18n
-		}
-		return title.toString();
 	}
 }

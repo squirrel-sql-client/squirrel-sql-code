@@ -46,7 +46,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * Provides a means to build consistent form-oriented panels quickly
  * using the {@link FormLayout}. This builder combines frequently used
  * panel building steps: add a new row, add a label, proceed to the next 
- * data column then add a component.
+ * data column, then add a component.
  * <p>
  * This builder can map resource keys to internationalized (i15d) texts
  * when creating text labels, titles and titled separators. Therefore
@@ -194,7 +194,7 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
      * constant size.
      *  
      * @param lineGapSize   the <coide>ConstantSize</code> that describes 
-     * the size of the gaps between component lines
+     *     the size of the gaps between component lines
      */
     public void setLineGapSize(ConstantSize lineGapSize) {
         RowSpec rowSpec = FormFactory.createGapRowSpec(lineGapSize);
@@ -202,11 +202,20 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
     }
     
     /**
+     * Returns the row specification that is used to separate component lines.
+     *  
+     * @return the <code>RowSpec</code> that is used to separate lines 
+     */
+    public RowSpec getLineGapSpec() {
+        return lineGapSpec;
+    }
+    
+    /**
      * Sets the size of gaps between paragraphs using the given 
      * constant size.
      *  
      * @param paragraphGapSize   the <coide>ConstantSize</code> that describes 
-     * the size of the gaps between paragraphs
+     *     the size of the gaps between paragraphs
      */
     public void setParagraphGapSize(ConstantSize paragraphGapSize) {
         RowSpec rowSpec = FormFactory.createGapRowSpec(paragraphGapSize);

@@ -59,9 +59,6 @@ public class SessionWindowManager
 
 	private final Map _sqlFilterSheets = new HashMap();
 
-	/** Listens to sessions waiting for them to close. */
-//	private final MySessionListener _sessionListener = new MySessionListener();
-
 	/** Listens to session properties dialogs waiting for them to close. */
 	private final PropertiesSheetListener _sessionPropertiesDialogListener = new PropertiesSheetListener();
 
@@ -73,9 +70,9 @@ public class SessionWindowManager
 
 	/**
 	 * Ctor.
-	 * 
+	 *
 	 * @param	app		Application API.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>IApplication</TT> passed.
 	 */
@@ -84,7 +81,7 @@ public class SessionWindowManager
 		super();
 		if (app == null)
 		{
-			throw new IllegalArgumentException("IApplication == null"); 
+			throw new IllegalArgumentException("IApplication == null");
 		}
 
 		_app = app;
@@ -107,7 +104,6 @@ public class SessionWindowManager
 
 		SessionInternalFrame sif = new SessionInternalFrame(session);
 		_internalFrames.put(session.getIdentifier(), sif);
-//		session.addSessionListener(_sessionListener);
 		sif.addInternalFrameListener(_sessionInternalFrameListener);
 
 		return sif;
@@ -115,7 +111,7 @@ public class SessionWindowManager
 
 	/**
 	 * Retrieve the internal frame for the passed session. Can be <TT>null</TT>
-	 * 
+	 *
 	 * @return	the internal frame for the passed session. Can be <TT>null</TT>.
 	 *
 	 * @throws	IllegalArgumentException
@@ -133,7 +129,7 @@ public class SessionWindowManager
 
 	/**
 	 * Retrieve the session for the passed internal frame.
-	 * 
+	 *
 	 * @param	sif		Internal frame to retrieve session for.
 	 *
 	 * @throws	IllegalArgumentException
@@ -246,7 +242,7 @@ public class SessionWindowManager
 
 	/**
 	 * Close the passed session.
-	 * 
+	 *
 	 * @param	session		Session to be closed.
 	 *
 	 * @throws	IllegalArgumentException
@@ -341,42 +337,6 @@ public class SessionWindowManager
 			_sessionPropertySheets.remove(sps.getSession().getIdentifier());
 		}
 	}
-	
-//	private synchronized void sessionHasClosed(ISession session)
-//	{
-//		JInternalFrame jif = getSessionPropertiesDialog(session);
-//		if (jif != null)
-//		{
-//			jif.dispose();
-//		}
-//
-//		Map map = getAllSQLFilterSheets(session);
-//		for (Iterator it = map.values().iterator(); it.hasNext();)
-//		{
-//			((JInternalFrame)it.next()).dispose();
-//		}
-//		map.clear(); //TODO: This map should be removed from its containing map.
-//
-//		session.removeSessionListener(_sessionListener);
-//		jif = (JInternalFrame)_internalFrames.remove(session.getIdentifier());
-//		if (jif != null)
-//		{
-//			jif.dispose();
-//		}
-//	}
-
-//	private final class MySessionListener extends SessionAdapter
-//	{
-//		/**
-//		 * The session has been closed.
-//		 *
-//		 * @param	evt		The event that has just occured.
-//		 */
-//		public void sessionClosed(SessionEvent evt)
-//		{
-//			SessionWindowManager.this.sessionHasClosed(evt.getSession());
-//		}
-//	}
 
 	private final class PropertiesSheetListener extends InternalFrameAdapter
 	{

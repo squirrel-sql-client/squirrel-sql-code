@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -34,8 +34,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterClauses;
 /**
- * The current session. This is a "subset" of the real session which can be
- * used by plugins.
+ * The current session.
  */
 public interface ISession extends IHasIdentifier
 {
@@ -45,7 +44,7 @@ public interface ISession extends IHasIdentifier
 
 	/**
 	 * Retrieve whether this session has been closed.
-	 * 
+	 *
 	 * @return	<TT>true</TT> if session closed else <TT>false</TT>.
 	 */
 	boolean isClosed();
@@ -86,7 +85,7 @@ public interface ISession extends IHasIdentifier
 	SessionProperties getProperties();
 	/**
 	 * Close this session.
-	 * 
+	 *
 	 * @throws	SQLException
 	 * 			Thrown if an error closing the SQL connection. The session
 	 * 			will still be closed even though the connection may not have
@@ -97,13 +96,13 @@ public interface ISession extends IHasIdentifier
 	/**
 	 * Close the current connection to the database.
 	 *
-	 * @throws	SQLException  if an SQL error occurs.
+	 * @throws	SQLException	if an SQL error occurs.
 	 */
 	void closeSQLConnection() throws SQLException;
 
 	/**
 	 * Set the session sheet for this session.
-	 * 
+	 *
 	 * @param	sheet	Sheet for this session.
 	 */
 	void setSessionSheet(SessionSheet child);
@@ -195,7 +194,7 @@ public interface ISession extends IHasIdentifier
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> listener passed.
 	 */
-	public void addSessionListener(ISessionListener lis);
+	void addSessionListener(ISessionListener lis);
 
 	/**
 	 * Remove a listener from this session
@@ -205,5 +204,12 @@ public interface ISession extends IHasIdentifier
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> listener passed.
 	 */
-	public void removeSessionListener(ISessionListener lis);
+	void removeSessionListener(ISessionListener lis);
+
+	/**
+	 * Retrieve the descriptive title of this session.
+	 *
+	 * @return		The descriptive title of this session.
+	 */
+	String getTitle();
 }

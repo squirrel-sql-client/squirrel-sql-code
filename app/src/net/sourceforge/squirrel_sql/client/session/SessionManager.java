@@ -48,6 +48,13 @@ public class SessionManager
 	private final Map _sessionsById = new HashMap();
 
 	/**
+	 * Map of Integers (number of sessions opened) keyed by alias ID. I.E. a
+	 * count of the number of sessions that have been opened for an alias. This
+	 * count is not decremented by a session is closed.
+	 */
+	private final Map _sessionsOpenedCountByAliasId = new HashMap();
+
+	/**
 	 * Default ctor.
 	 */
 	public SessionManager()
@@ -91,31 +98,30 @@ public class SessionManager
 			throw new IllegalArgumentException("null SQLConnection passed");
 		}
 
-		ISession sess = new Session(app, driver, alias, conn, user, password);
+		Session sess = new Session(app, driver, alias, conn, user, password);
 		_sessionsList.addLast(sess);
 		_sessionsById.put(sess.getIdentifier(), sess);
+		Integer count = (Integer)_sessionsOpenedCountByAliasId.get(alias.getIdentifier());
+		if (count == null)
+		{
+			count = new Integer(1);
+		}
+		else
+		{
+			count = new Integer(count.intValue() + 1);
+		}
+		_sessionsOpenedCountByAliasId.put(alias.getIdentifier(), count);
+
+		// If there is more than one session that has been opened for this alias
+		// then append a sequential number to the session title.
+		if (count.intValue() > 1 )
+		{
+			String title = sess.getTitle();
+			sess.setTitle(sess.getTitle() + " (" + count.intValue() + ")");
+		}
 
 		return sess;
 	}
-//
-//	/**
-//	 * Close all sessions.
-//	 */
-//	synchronized void closeAllSessions()
-//	{
-//		final ISession[] sessions = getActiveSessions();
-//		for (int i = 0; i < sessions.length; ++i)
-//		{
-//			try
-//			{
-//				closeSession(sessions[i]);
-//			}
-//			catch (Throwable th)
-//			{
-//				s_log.error("Error closing session", th);
-//			}
-//		}
-//	}
 
 	/**
 	 * Retrieve an array of all the sessions currently active.
@@ -226,16 +232,17 @@ public class SessionManager
 
 		if (!session.isClosed())
 		{
+			final IIdentifier sessionId = session.getIdentifier();
 			if (!_sessionsList.remove(session))
 			{
 				s_log.error("SessionManager.closeSession()-> Session " +
-						session.getIdentifier() +
+						sessionId +
 						" not found in _sessionsList when trying to remove it.");
 			}
-			if (_sessionsById.remove(session.getIdentifier()) == null)
+			if (_sessionsById.remove(sessionId) == null)
 			{
 				s_log.error("SessionManager.closeSession()-> Session " +
-						session.getIdentifier() +
+						sessionId +
 						" not found in _sessionsById when trying to remove it.");
 			}
 		}
