@@ -53,6 +53,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.CellImportExportInfo;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.CellImportExportInfoSaver;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.db.AliasMaintSheetFactory;
@@ -263,6 +265,9 @@ class Application implements IApplication
 
 		// Save Application level SQL history.
 		saveSQLHistory();
+		
+		// Save options selected for Cell Import Export operations
+		saveCellImportExportInfo();
 
 		String msg = s_stringMgr.getString("Application.shutdowncomplete",
 										Calendar.getInstance().getTime());
@@ -569,6 +574,9 @@ class Application implements IApplication
 
 		indicateNewStartupTask(splash, "Loading SQL history...");
 		loadSQLHistory();
+		
+		indicateNewStartupTask(splash, "Loading Cell Import/Export selections...");
+		loadCellImportExportInfo();
 
 		indicateNewStartupTask(splash, "Showing main window...");
 		_mainFrame.setVisible(true);
@@ -664,6 +672,56 @@ class Application implements IApplication
 		catch (Exception ex)
 		{
 			s_log.error("Unable to write SQL queries to persistant storage.", ex);
+		}
+	}
+
+
+	/**
+	 * Load the options previously selected by user for import/export of
+	 * data in various Cells.
+	 */
+	private void loadCellImportExportInfo()
+	{
+		CellImportExportInfoSaver saverInstance = null;
+		try
+		{
+			XMLBeanReader doc = new XMLBeanReader();
+			doc.load(new ApplicationFiles().getCellImportExportSelectionsFile());
+			Iterator it = doc.iterator();
+			if (it.hasNext())
+			{
+				saverInstance = (CellImportExportInfoSaver)it.next();
+			}
+		}
+		catch (FileNotFoundException ignore)
+		{
+			// Cell Import/Export file not found for user - first time user ran pgm.
+		}
+		catch (Exception ex)
+		{
+			s_log.error("Unable to load Cell Import/Export selections from persistant storage.", ex);
+		}
+		finally
+		{
+			// set the singleton instance of the Saver class to be the
+			// instance just created by the XMLBeanReader
+			CellImportExportInfoSaver.setInstance(saverInstance);
+		}
+	}
+	
+	/**
+	 * Save the options selected by user for Cell Import Export.
+	 */
+	private void saveCellImportExportInfo()
+	{
+		try
+		{
+			XMLBeanWriter wtr = new XMLBeanWriter(CellImportExportInfoSaver.getInstance());
+			wtr.save(new ApplicationFiles().getCellImportExportSelectionsFile());
+		}
+		catch (Exception ex)
+		{
+			s_log.error("Unable to write Cell Import/Export options to persistant storage.", ex);
 		}
 	}
 
