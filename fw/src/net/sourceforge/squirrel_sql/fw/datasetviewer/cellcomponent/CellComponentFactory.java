@@ -212,7 +212,14 @@ public class CellComponentFactory {
 			return dataTypeObject.renderObject(value);
 		
 		// default behavior: toString
-		return value.toString();
+      if(null == value)
+      {
+         return "<null>";
+      }
+      else
+      {
+		   return value.toString();
+      }
 	}
 	
 	/**
