@@ -20,16 +20,36 @@ package net.sourceforge.squirrel_sql.client.session;
 import java.awt.Component;
 
 import java.awt.event.MouseListener;
+
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.event.UndoableEditListener;
+import javax.swing.undo.UndoManager;
 
 public class DefaultSQLEntryPanel implements ISQLEntryPanel {
 	/** Text area control. */
-	private JTextArea _comp = new JTextArea();
+	private JTextArea _comp;
 
 	/** Scroll pane for text control. */
-	private JScrollPane _scroller = new JScrollPane(_comp);
+	private JScrollPane _scroller;
+	
+	public DefaultSQLEntryPanel()
+	{
+		 _comp = new JTextArea();
+		 _scroller = new JScrollPane(_comp);
+	}
+	
+	
+	public void addUndoableEditListener(UndoableEditListener listener)
+	{
+		_comp.getDocument().addUndoableEditListener(listener);
+	}
 
+	public void removeUndoableEditListener(UndoableEditListener listener)
+	{
+		_comp.getDocument().removeUndoableEditListener(listener);
+	}
+	
 	/**
 	 * Return the text area control. In this case an instance of <TT>JTextArea</TT>.
 	 * 
@@ -142,5 +162,13 @@ public class DefaultSQLEntryPanel implements ISQLEntryPanel {
 	public void requestFocus() {
 		_comp.requestFocus();
 	}
+	/*
+	 * @see ISQLEntryPanel#hasOwnUndoableManager()
+	 */
+	public boolean hasOwnUndoableManager()
+	{
+		return false;
+	}
+
 }
 

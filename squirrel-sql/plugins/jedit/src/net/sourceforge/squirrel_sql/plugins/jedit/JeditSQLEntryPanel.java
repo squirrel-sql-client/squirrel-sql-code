@@ -26,6 +26,7 @@ import java.awt.event.MouseListener;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
+import javax.swing.event.UndoableEditListener;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -189,6 +190,30 @@ class JeditSQLEntryPanel implements ISQLEntryPanel {
 		styles[Token.KEYWORD2] = new SyntaxStyle(new Color(prefs.getKeyword2RGB()), false, true);
 		styles[Token.KEYWORD3] = new SyntaxStyle(new Color(prefs.getKeyword3RGB()), false, true);
 		painter.setStyles(styles);
+	}
+
+	/*
+	 * @see ISQLEntryPanel#hasOwnUndoableManager()
+	 */
+	public boolean hasOwnUndoableManager()
+	{
+		return false;
+	}
+
+	/*
+	 * @see ISQLEntryPanel#addUndoableEditListener(UndoableEditListener)
+	 */
+	public void addUndoableEditListener(UndoableEditListener listener)
+	{
+		_jeditTextArea.getDocument().addUndoableEditListener(listener);
+	}
+
+	/*
+	 * @see ISQLEntryPanel#removeUndoableEditListener(UndoableEditListener)
+	 */
+	public void removeUndoableEditListener(UndoableEditListener listener)
+	{
+		_jeditTextArea.getDocument().removeUndoableEditListener(listener);
 	}
 
 }
