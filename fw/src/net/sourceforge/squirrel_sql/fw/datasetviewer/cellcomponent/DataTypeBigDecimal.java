@@ -208,7 +208,9 @@ public class DataTypeBigDecimal
 			if (value.indexOf(".") > -1)
 				objPrecision--;
 			
-			if (objPrecision > _precision) {
+			// Some drivers (e.g. Oracle) give precision as 0 in some cases.
+			// When precision is 0, we cannot check the length, so do not try.
+			if (_precision > 0 && objPrecision > _precision) {
 				messageBuffer.append("Precision Exceeded: Number of digits in number ("+
 					objPrecision+")\nis greater than allowed in column ("+_precision+").");
 				return null;
