@@ -3,6 +3,8 @@ Change Log
 
 1.1 continuation
 ================
+- No longer try to load blob fields from SQL Result set.
+- New API for adding tabs to the main panel tab.
 - View SQL data entry caret line/column in status bar
 - Removed control characters from SQL Result tab headings.
 - The characters -- at the beginning of a line of SQL will turn it into a comment.
