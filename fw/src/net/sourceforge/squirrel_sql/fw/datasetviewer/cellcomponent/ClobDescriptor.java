@@ -95,18 +95,31 @@ public class ClobDescriptor {
 	 * then they are "equal", in a wierd kind of way.
 	 */
 	public boolean equals(ClobDescriptor c) {
-		if (c == null)
-			return false;
-		if (c.getClobRead() == false) {
-			if (_clobRead == true)
+		if (c == null) {
+			// the other obj is null, so see if this non-null obj contains
+			// a null value, which is equivilent.
+			// Assume that if we have read some of the data and we still have
+			// _data == null, then the value in the DB is actually null.
+			if (_clobRead == true && _data == null)
+				return true;
+			else
 				return false;
-			else return true;
 		}
+		
+		if (c.getClobRead() == false) {
+			// the other obj has not read the data yet.
+			if (_clobRead == true)
+				return false;	// we have read data, so that is not the same state
+			else return true;	//  odd-ball case: assume if neither has read data that they are equal
+		}
+		
 		// the other object has real data
 		if (_clobRead == false)
 			return false;	// this one does not, so they are not equal
 		
 		// both have actual data, so compare the strings
+		// Note that if one has read all of the data and the other has read only part
+		// of the data that we will say that they are NOT equal.
 		return c.getData().equals(_data);
 	}
 	
@@ -118,7 +131,7 @@ public class ClobDescriptor {
 		if (_clobRead) {
 			if (_wholeClobRead || _userSetClobLimit > _data.length())
 				return _data;	// we have the whole contents of the CLOB
-			else return _data+"[...]";	// tell user the data is truncated
+			else return _data+"...";	// tell user the data is truncated
 		}
 		else return s_stringMgr.getString("ClobDescriptor.clob");
 	}
