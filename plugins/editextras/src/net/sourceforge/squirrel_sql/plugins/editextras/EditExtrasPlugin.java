@@ -257,9 +257,9 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 	{
 		ISQLPanelAPI api = session.getSQLPanelAPI(this);
 		ActionCollection actions = getApplication().getActionCollection();
-//		api.addToSQLEntryMenu(actions.get(InQuotesAction.class));
-//		api.addToSQLEntryMenu(actions.get(RemoveQuotesAction.class));
-//		api.addToSQLEntryMenu(actions.get(ConvertToStringBufferAction.class));
+		api.addToSQLEntryAreaMenu(actions.get(InQuotesAction.class));
+		api.addToSQLEntryAreaMenu(actions.get(RemoveQuotesAction.class));
+		api.addToSQLEntryAreaMenu(actions.get(ConvertToStringBufferAction.class));
 	}
 
 	private class SQLPanelListener extends SQLPanelAdapter
