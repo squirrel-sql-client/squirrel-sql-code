@@ -353,7 +353,9 @@ public class SyntaxPugin extends DefaultSessionPlugin
 				{
 					ISQLEntryPanelFactory factory = _plugin.getSQLEntryAreaFactory();
 					ISQLEntryPanel pnl = factory.createSQLEntryPanel(_session);
-					_session.getSQLPanelAPI(_plugin).installSQLEntryPanel(pnl);
+
+					//_session.getSQLPanelAPI(_plugin).installSQLEntryPanel(pnl);
+               _session.getSessionSheet().getSQLPaneAPI().installSQLEntryPanel(pnl);
 				}
 			}
 
