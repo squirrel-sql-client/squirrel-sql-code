@@ -31,14 +31,11 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.OkClosePanel;
-import net.sourceforge.squirrel_sql.fw.gui.OkClosePanelEvent;
-import net.sourceforge.squirrel_sql.fw.gui.IOkClosePanelListener;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.session.properties.OutputPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
@@ -54,7 +51,10 @@ public class GlobalPreferencesDialog extends JDialog {
 		String NEW_SESSION_SQL = "New Session SQL";
 		String NEW_SESSION_OUTPUT = "New Session Output";
 	}
-   
+
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(GlobalPreferencesDialog.class);
+
 	/** Singleton instance of this class. */
 	private static GlobalPreferencesDialog s_instance;
 
@@ -92,11 +92,19 @@ public class GlobalPreferencesDialog extends JDialog {
 
 	public void setVisible(boolean show) {
 		if (show) {
-			// Initialize all panels.
+			final boolean isDebug = s_log.isDebugEnabled();
+			long start = 0;
 			JTabbedPane tabPane = new JTabbedPane();
 			for (Iterator it = _panels.iterator(); it.hasNext();) {
 				IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel)it.next();
+				if (isDebug) {
+					start = System.currentTimeMillis();
+				}
 				pnl.initialize(_app);
+				if (isDebug) {
+					s_log.debug("Panel " + pnl.getTitle() + " initialized in "
+								+ (System.currentTimeMillis() - start) + "ms");
+				}
 			}
 		}
 		super.setVisible(show);
@@ -110,8 +118,18 @@ public class GlobalPreferencesDialog extends JDialog {
 	 * OK button pressed so save changes.
 	 */
 	private void performOk() {
+		final boolean isDebug = s_log.isDebugEnabled();
+		long start = 0;
 		for (Iterator it = _panels.iterator(); it.hasNext();) {
-			((IGlobalPreferencesPanel)it.next()).applyChanges();
+			if (isDebug) {
+				start = System.currentTimeMillis();
+			}
+			IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel)it.next();
+			pnl.applyChanges();
+			if (isDebug) {
+				s_log.debug("Panel " + pnl.getTitle() + " applied changes in "
+							+ (System.currentTimeMillis() - start) + "ms");
+			}
 		}
 
 		setVisible(false);
@@ -149,22 +167,41 @@ public class GlobalPreferencesDialog extends JDialog {
 			tabPane.addTab(title, null, pnl.getPanelComponent(), hint);
 		}
 
-		// Ok and cancel buttons at bottom of dialog.
-		OkClosePanel btnsPnl = new OkClosePanel();
-		btnsPnl.addListener(new MyOkCancelPanelListener());
-
 		final Container contentPane = getContentPane();
 		contentPane.setLayout(new BorderLayout());
 
 		contentPane.add(tabPane, BorderLayout.NORTH);
-		contentPane.add(btnsPnl, BorderLayout.CENTER);
-
-		btnsPnl.makeOKButtonDefault();
+		contentPane.add(createButtonsPanel(), BorderLayout.CENTER);
 
 		pack();
 		GUIUtils.centerWithinParent(this);
 		setResizable(false);
 		setModal(true);
+	}
+
+	private JPanel createButtonsPanel() {
+		JPanel pnl = new JPanel();
+
+		JButton okBtn = new JButton("OK");
+		okBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				performOk();			
+			}
+		});
+		JButton cancelBtn = new JButton("Cancel");
+		cancelBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				performCancel();			
+			}
+		});
+
+		pnl.add(okBtn);
+		pnl.add(cancelBtn);		
+
+		GUIUtils.setJButtonSizesTheSame(new JButton[] {okBtn, cancelBtn});
+		getRootPane().setDefaultButton(okBtn);
+
+		return pnl;
 	}
 
 	private static Frame getFrame(IApplication app)
@@ -173,19 +210,5 @@ public class GlobalPreferencesDialog extends JDialog {
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
 		return app.getMainFrame();
-	}
-
-	private final class MyOkCancelPanelListener implements IOkClosePanelListener {
-		public void okPressed(OkClosePanelEvent evt) {
-			performOk();
-		}
-
-		public void closePressed(OkClosePanelEvent evt) {
-			performCancel();
-		}
-
-		public void cancelPressed(OkClosePanelEvent evt) {
-			performCancel();
-		}
 	}
 }

@@ -20,9 +20,10 @@ package net.sourceforge.squirrel_sql.client.mainframe;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
@@ -104,14 +105,50 @@ public class AboutBoxDialog extends JDialog {
 	}
 
 	private void createUserInterface(IApplication app) {
+		addWindowListener(new WindowAdapter() {
+			public void windowActivated(WindowEvent evt) {
+				s_log.debug("windowActivated");
+			}
+			public void windowDeactivated(WindowEvent evt) {
+				s_log.debug("windowdeActivated");
+			}
+		});
+
 		final JPanel contentPane = new JPanel(new BorderLayout());
 		setContentPane(contentPane);
 		contentPane.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
+		final boolean isDebug = s_log.isDebugEnabled();
+		long start = 0;
+
 		JTabbedPane tabPnl = new JTabbedPane();
+
+		if (isDebug) {
+			start = System.currentTimeMillis();
+		}
 		tabPnl.add("About", new AboutPanel(app));  // i18n
+		if (isDebug) {
+			s_log.debug("AboutPanel created in "
+						+ (System.currentTimeMillis() - start) + "ms");
+		}
+
+		if (isDebug) {
+			start = System.currentTimeMillis();
+		}
 		tabPnl.add("Credits", new CreditsPanel(app));  // i18n
+		if (isDebug) {
+			s_log.debug("CreditsPanel created in "
+						+ (System.currentTimeMillis() - start) + "ms");
+		}
+
+		if (isDebug) {
+			start = System.currentTimeMillis();
+		}
 		tabPnl.add("System", new SystemPanel(app)); // i18n
+		if (isDebug) {
+			s_log.debug("SystemPanel created in "
+						+ (System.currentTimeMillis() - start) + "ms");
+		}
 
 		contentPane.add(tabPnl, BorderLayout.CENTER);
 
@@ -300,6 +337,7 @@ public class AboutBoxDialog extends JDialog {
 					_totalMemoryLbl.setText(formatSize(totalMemory));
 					_usedMemoryLbl.setText(formatSize(usedMemory));
 					_freeMemoryLbl.setText(formatSize(freeMemory));
+					s_log.debug("Memory timer thread executed");
 					try {
 						Thread.sleep(1000);
 					} catch (InterruptedException ex) {

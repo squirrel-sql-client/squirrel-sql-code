@@ -26,121 +26,137 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.OkClosePanel;
-import net.sourceforge.squirrel_sql.fw.gui.OkClosePanelEvent;
-import net.sourceforge.squirrel_sql.fw.gui.IOkClosePanelListener;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.plugin.SessionPluginInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public class SessionPropertiesDialog extends JDialog {
+	/**
+	 * This interface defines locale specific strings. This should be
+	 * replaced with a property file.
+	 */
+	private interface i18n {
+		String TITLE = "Session Properties";
+		String OUTPUT = "Output";
+		String SQL = "SQL";
+	}
 
-    /**
-     * This interface defines locale specific strings. This should be
-     * replaced with a property file.
-     */
-    private interface i18n {
-        String TITLE = "Session Properties";
-        String OUTPUT = "Output";
-        String SQL = "SQL";
-    }
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(SessionPropertiesDialog.class);
 
-    private ISession _session;
-    private List _panels = new ArrayList();
+	private ISession _session;
+	private List _panels = new ArrayList();
 
-    public SessionPropertiesDialog(Frame frame, ISession session) {
-        super(frame, i18n.TITLE);
-        if (session == null) {
-            throw new IllegalArgumentException("Null ISession passed");
-        }
-        _session = session;
-        createUserInterface();
-    }
+	public SessionPropertiesDialog(Frame frame, ISession session) {
+		super(frame, i18n.TITLE);
+		if (session == null) {
+			throw new IllegalArgumentException("Null ISession passed");
+		}
+		_session = session;
+		createUserInterface();
+	}
 
-    private void performCancel() {
-        setVisible(false);
-    }
+	private void performCancel() {
+		setVisible(false);
+	}
 
-    /**
-     * OK button pressed. Edit data and if ok save to aliases model
-     * and then close dialog.
-     */
-    private void performOk() {
-        for (Iterator it = _panels.iterator(); it.hasNext();) {
-            ((ISessionPropertiesPanel)it.next()).applyChanges();
-        }
+	/**
+	 * OK button pressed. Edit data and if ok save to aliases model
+	 * and then close dialog.
+	 */
+	private void performOk() {
+		final boolean isDebug = s_log.isDebugEnabled();
+		long start = 0;
+		for (Iterator it = _panels.iterator(); it.hasNext();) {
+			ISessionPropertiesPanel pnl = (ISessionPropertiesPanel)it.next();
+			if (isDebug) {
+				start = System.currentTimeMillis();
+			}
+			pnl.applyChanges();
+			if (isDebug) {
+				s_log.debug("Panel " + pnl.getTitle() + " applied changes in "
+							+ (System.currentTimeMillis() - start) + "ms");
+			}
+		}
 
-        dispose();
-    }
+		dispose();
+	}
 
-    private void createUserInterface() {
-        final IApplication app = _session.getApplication();
-        final SessionProperties props = _session.getProperties();
+	private void createUserInterface() {
+		final IApplication app = _session.getApplication();
+		final SessionProperties props = _session.getProperties();
 
-        _panels.add(new SQLPropertiesPanel(app, i18n.SQL, i18n.SQL));
-        _panels.add(new OutputPropertiesPanel(i18n.OUTPUT, i18n.OUTPUT));
+		_panels.add(new SQLPropertiesPanel(app, i18n.SQL, i18n.SQL));
+		_panels.add(new OutputPropertiesPanel(i18n.OUTPUT, i18n.OUTPUT));
 
-        // Ok and cancel buttons at bottom of dialog.
-        OkClosePanel btnsPnl = new OkClosePanel();
-        btnsPnl.addListener(new MyOkCancelPanelListener());
+		final Container contentPane = getContentPane();
+		contentPane.setLayout(new BorderLayout());
 
-        final Container contentPane = getContentPane();
-        contentPane.setLayout(new BorderLayout());
+		// Go thru all plugins attached to this session asking for panels.
+		SessionPluginInfo[] plugins = app.getPluginManager().getPluginInformation(_session);
+		for (int i = 0; i < plugins.length; ++i) {
+			SessionPluginInfo spi = plugins[i];
+			if (spi.isLoaded()) {
+				ISessionPropertiesPanel[] pnls = spi.getSessionPlugin().getSessionPropertiesPanels(_session);
+				if (pnls != null && pnls.length > 0) {
+					for (int pnlIdx = 0; pnlIdx < pnls.length; ++pnlIdx) {
+						_panels.add(pnls[pnlIdx]);
+					}
+				}
+			}
+		}
 
-        // Go thru all plugins attached to this session asking for panels.
-        SessionPluginInfo[] plugins = app.getPluginManager().getPluginInformation(_session);
-        for (int i = 0; i < plugins.length; ++i) {
-            SessionPluginInfo spi = plugins[i];
-            if (spi.isLoaded()) {
-                ISessionPropertiesPanel[] pnls = spi.getSessionPlugin().getSessionPropertiesPanels(_session);
-                if (pnls != null && pnls.length > 0) {
-                    for (int pnlIdx = 0; pnlIdx < pnls.length; ++pnlIdx) {
-                        _panels.add(pnls[pnlIdx]);
-                    }
-                }
-            }
-        }
+		// Initialize all panels and add them to the dialog.
+		JTabbedPane tabPane = new JTabbedPane();
+		for (Iterator it = _panels.iterator(); it.hasNext();) {
+			ISessionPropertiesPanel pnl = (ISessionPropertiesPanel)it.next();
+			pnl.initialize(_session.getApplication(), _session);
+			String title = pnl.getTitle();
+			String hint = pnl.getHint();
+			tabPane.addTab(title, null, pnl.getPanelComponent(), hint);
+		}
 
-        // Initialize all panels and add them to the dialog.
-        JTabbedPane tabPane = new JTabbedPane();
-        for (Iterator it = _panels.iterator(); it.hasNext();) {
-            ISessionPropertiesPanel pnl = (ISessionPropertiesPanel)it.next();
-            pnl.initialize(_session.getApplication(), _session);
-            String title = pnl.getTitle();
-            String hint = pnl.getHint();
-            tabPane.addTab(title, null, pnl.getPanelComponent(), hint);
-        }
+		contentPane.add(tabPane, BorderLayout.NORTH);
+		contentPane.add(createButtonsPanel(), BorderLayout.CENTER);
 
-        contentPane.add(tabPane, BorderLayout.NORTH);
-        contentPane.add(btnsPnl, BorderLayout.CENTER);
+		setResizable(false);
+		setModal(true);
+		pack();
 
-        btnsPnl.makeOKButtonDefault();
+		GUIUtils.centerWithinParent(this);
+	}
 
-        setResizable(false);
-        setModal(true);
-        pack();
+	private JPanel createButtonsPanel() {
+		JPanel pnl = new JPanel();
 
-        GUIUtils.centerWithinParent(this);
-    }
+		JButton okBtn = new JButton("OK");
+		okBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				performOk();			
+			}
+		});
+		JButton cancelBtn = new JButton("Cancel");
+		cancelBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				performCancel();			
+			}
+		});
 
-    private final class MyOkCancelPanelListener implements IOkClosePanelListener {
-        public void okPressed(OkClosePanelEvent evt) {
-            performOk();
-        }
+		pnl.add(okBtn);
+		pnl.add(cancelBtn);		
 
-        public void closePressed(OkClosePanelEvent evt) {
-            performCancel();
-        }
+		GUIUtils.setJButtonSizesTheSame(new JButton[] {okBtn, cancelBtn});
+		getRootPane().setDefaultButton(okBtn);
 
-        public void cancelPressed(OkClosePanelEvent evt) {
-            performCancel();
-        }
-    }
+		return pnl;
+	}
 }

@@ -187,6 +187,8 @@ public class AliasMaintDialog extends JDialog {
 	}
 
 	private void createUserInterface() {
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
 		PropertyPanel dataEntryPnl = new PropertyPanel();
 
 		JLabel lbl = new JLabel(i18n.NAME, SwingConstants.RIGHT);
@@ -212,19 +214,39 @@ public class AliasMaintDialog extends JDialog {
 		lbl = new JLabel(i18n.USER_NAME, SwingConstants.RIGHT);
 		dataEntryPnl.add(lbl, _userName);
 
-		// Ok and cancel buttons at bottom of dialog.
-		OkClosePanel btnsPnl = new OkClosePanel();
-		btnsPnl.addListener(new MyOkCancelPanelListener());
-
 		final Container contentPane = getContentPane();
 		contentPane.setLayout(new BorderLayout());
 		contentPane.add(dataEntryPnl, BorderLayout.NORTH);
-		contentPane.add(btnsPnl, BorderLayout.CENTER);
+		contentPane.add(createButtonsPanel(), BorderLayout.CENTER);
 
-		btnsPnl.makeOKButtonDefault();
 		pack();
 		GUIUtils.centerWithinParent(this);
 		setResizable(false);
+	}
+
+	private JPanel createButtonsPanel() {
+		JPanel pnl = new JPanel();
+
+		JButton okBtn = new JButton("OK");
+		okBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				performOk();			
+			}
+		});
+		JButton cancelBtn = new JButton("Cancel");
+		cancelBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				performCancel();			
+			}
+		});
+
+		pnl.add(okBtn);
+		pnl.add(cancelBtn);		
+
+		GUIUtils.setJButtonSizesTheSame(new JButton[] {okBtn, cancelBtn});
+		getRootPane().setDefaultButton(okBtn);
+
+		return pnl;
 	}
 
 	private final class MyOkCancelPanelListener implements IOkClosePanelListener {
