@@ -1,11 +1,4 @@
-/*
- * SQLFilterSheetFactory.java
- *
- * Created on April 5, 2003, 9:57 AM
- */
-
 package net.sourceforge.squirrel_sql.client.session.sqlfilter;
-
 /*
  * Copyright (C) 2003 Maury Hammel
  * mjhammel@users.sourceforge.net
@@ -26,7 +19,6 @@ package net.sourceforge.squirrel_sql.client.session.sqlfilter;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,35 +33,38 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionSheet;
-
 /**
  * Factory to handle creation of property sheets for sessions.
  *
- * @author  <A HREF="mailto:mjhammel@users.sourceforge.net">Maury Hammel</A>
+ * @author <A HREF="mailto:mjhammel@users.sourceforge.net">Maury Hammel</A>
  */
 public class SQLFilterSheetFactory
 {
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(SQLFilterSheetFactory.class);
+	private final static ILogger s_log =
+		LoggerController.createLogger(SQLFilterSheetFactory.class);
 
 	/** Application API. */
 	private IApplication _app;
 
-	/** 
+	/**
 	 * Collection of <TT>SQLFilterSheet</TT> objects that currently exist for
 	 * sessions. Keyed by <TT>ISession.getIdentifier()</TT>.
 	 */
 	private Map _sheets = new HashMap();
 
 	/** Singleton instance of this class. */
-	private static SQLFilterSheetFactory s_instance = new SQLFilterSheetFactory();
+	private static final SQLFilterSheetFactory s_instance =
+		new SQLFilterSheetFactory();
 
-	/** Creates a new instance of SQLFilterSheetFactory */
-	public SQLFilterSheetFactory()
+	/**
+	 * Creates a new instance of SQLFilterSheetFactory.
+	 */
+	private SQLFilterSheetFactory()
 	{
 		super();
 	}
-	
+
 	/**
 	 * Return the single instance of this class.
 	 *
@@ -80,31 +75,39 @@ public class SQLFilterSheetFactory
 		return s_instance;
 	}
 
-	/** Initialize this class. This <EM>must</EM> be called prior to using this class.
-   * @param app The instance of the SQuirreL application
-   */
+	/**
+	 * Initialize this class. This <EM>must</EM> be called prior to using this
+	 * class.
+	 *
+	 * @param	app	The instance of the SQuirreL application
+	 */
 	public static void initialize(IApplication app)
 	{
 		getInstance()._app = app;
 	}
 
-	/** Get a SQL Filter sheet for the passed session. If one already exists it will be brought to the front.
-   * If one doesn't exist it will be created.
-   * @param session The session for which the user has requested the SQL Filter sheet.
-   * @return The maintenance sheet for the passed session.
-   * @param objectInfo An instance of a class containing information about the database metadata.
-   *
-   */
-	public synchronized SQLFilterSheet showSheet(ISession session, IDatabaseObjectInfo objectInfo)
+	/**
+	 * Get a SQL Filter sheet for the passed session. If one already exists it
+	 * will be brought to the front. If one doesn't exist it will be created.
+	 *
+	 * @param	session		The session for which the user has requested the SQL
+	 * 						Filter sheet.
+	 * @param	objectInfo	An instance of a class containing information about
+	 * 						the database metadata.
+	 *
+	 * @return	The maintenance sheet for the passed session.
+	 */
+	public synchronized SQLFilterSheet showSheet(ISession session,
+											IDatabaseObjectInfo objectInfo)
 	{
 		if (session == null)
 		{
 			throw new IllegalArgumentException("ISession == null");
 		}
-    if (objectInfo == null)
-    {
-      throw new IllegalArgumentException("IDatabaseObjectInfo == null");
-    }
+		if (objectInfo == null)
+		{
+			throw new IllegalArgumentException("IDatabaseObjectInfo == null");
+		}
 
 		SQLFilterSheet sqlFilterSheet = get(session);
 		if (sqlFilterSheet == null)
@@ -114,7 +117,8 @@ public class SQLFilterSheetFactory
 			_app.getMainFrame().addInternalFrame(sqlFilterSheet, true, null);
 
 			// When properties sheet is closed remove it from the list of property sheets.
-			sqlFilterSheet.addInternalFrameListener(new PropertiesSheetListener());
+			sqlFilterSheet.addInternalFrameListener(
+				new PropertiesSheetListener());
 
 			// When the	session is closed close its properties sheet.
 			SessionSheet sessionSheet = session.getSessionSheet();
@@ -128,18 +132,23 @@ public class SQLFilterSheetFactory
 		return sqlFilterSheet;
 	}
 
-  /** Get the unique id associated with the passed session
-   * @param session The current SQuirreL session
-   * @return Returns a value uniquely identifying the session
-   */  
+	/**
+	 * Get the unique id associated with the passed session
+	 *
+	 * @param	session	The current SQuirreL session
+	 *
+	 * @return	Returns a value uniquely identifying the session
+	 */
 	private SQLFilterSheet get(ISession session)
 	{
-		return (SQLFilterSheet) _sheets.get(session.getIdentifier());
+		return (SQLFilterSheet)_sheets.get(session.getIdentifier());
 	}
 
-  /** Position and display the sheet on the desktop.
-   * @param sheet The sheet to be displayed.
-   */  
+	/**
+	 * Position and display the sheet on the desktop.
+	 *
+	 * @param	sheet	The sheet to be displayed.
+	 */
 	private void positionSheet(SQLFilterSheet sheet)
 	{
 		GUIUtils.centerWithinDesktop(sheet);
@@ -147,18 +156,23 @@ public class SQLFilterSheetFactory
 		sheet.moveToFront();
 	}
 
-  /** A listener used to determine when the Session sheet is closed. */  
+	/** A listener used to determine when the Session sheet is closed. */
 	private final class SessionSheetListener extends InternalFrameAdapter
 	{
-    /** Dispose of the Filter sheets when the session is closed.
-     * @param evt The event triggered by the closing of the session frame.
-     */    
+		/**
+		 * Dispose of the Filter sheets when the session is closed.
+		 *
+		 * @param	evt	The event triggered by the closing of the session frame.
+		 */
 		public void internalFrameClosed(InternalFrameEvent evt)
 		{
 			synchronized (SQLFilterSheetFactory.getInstance())
 			{
-				SessionSheet sessionSheet = (SessionSheet) evt.getInternalFrame();
-				SQLFilterSheet sqlFilterSheet = (SQLFilterSheet)_sheets.remove(sessionSheet.getSession().getIdentifier());
+				SessionSheet sessionSheet =
+					(SessionSheet)evt.getInternalFrame();
+				SQLFilterSheet sqlFilterSheet =
+					(SQLFilterSheet)_sheets.remove(
+						sessionSheet.getSession().getIdentifier());
 				if (sqlFilterSheet != null)
 				{
 					sqlFilterSheet.dispose();
@@ -174,14 +188,18 @@ public class SQLFilterSheetFactory
 		{
 			synchronized (SQLFilterSheetFactory.getInstance())
 			{
-				SQLFilterSheet sqlFilterSheet = (SQLFilterSheet) evt.getInternalFrame();
+				SQLFilterSheet sqlFilterSheet =
+					(SQLFilterSheet)evt.getInternalFrame();
 				if (sqlFilterSheet != null)
 				{
 					sqlFilterSheet.removeInternalFrameListener(this);
-					Object sheet = _sheets.remove(sqlFilterSheet.getSession().getIdentifier());
+					Object sheet =
+						_sheets.remove(sqlFilterSheet.getSession().getIdentifier());
 					if (sheet == null)
 					{
-						s_log.error("SQLFilterSheet not found for session: " + sqlFilterSheet.getSession().getIdentifier());
+						s_log.error(
+							"SQLFilterSheet not found for session: "
+								+ sqlFilterSheet.getSession().getIdentifier());
 					}
 				}
 			}

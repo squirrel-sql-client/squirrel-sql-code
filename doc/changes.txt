@@ -6,6 +6,7 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Put quotes around character data in the contents tab Filter (Maury Hammel).
 - Column names in the Contents Tab Filter are now sorted (Maury Hammel).
 - The IN operator has been added to the Contents Tab Filter (Maury
   Hammel).

@@ -1,9 +1,3 @@
-/*
- * ISQLFilterPanel.java
- *
- * Created on April 5, 2003, 10:26 AM
- */
-
 package net.sourceforge.squirrel_sql.client.session.sqlfilter;
 /*
  * Copyright (C) 2003 Maury Hammel
@@ -25,10 +19,7 @@ package net.sourceforge.squirrel_sql.client.session.sqlfilter;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.util.IOptionPanel;
-
 /**
  * This interface defines the behaviour expected of a SQL Filter panel.
  *
@@ -39,7 +30,8 @@ public interface ISQLFilterPanel extends IOptionPanel
 	/**
 	 * Initialize panel for the specified sesion.
 	 *
-	 * @param	sqlFilterClauses		Session whose SQL Filter Information are being maintained.
+	 * @param	sqlFilterClauses	Session whose SQL Filter Information are
+	 * 								being maintained.
 	 */
 	void initialize(SQLFilterClauses sqlFilterClauses);
 }
