@@ -24,7 +24,9 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
+import java.util.Vector;
 
+import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -42,7 +44,7 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -88,6 +90,8 @@ public class SessionSheet extends JPanel
 	/** Toolbar for window. */
 	private MyToolBar _toolBar;
 
+	private Vector _externallyAddedToolbarActions = new Vector();
+		
 	private StatusBar _statusBar = new StatusBar();
 	private boolean _hasBeenVisible;
 
@@ -256,6 +260,20 @@ public class SessionSheet extends JPanel
 	}
 
 	/**
+	 * Add the passed action to the session toolbar.
+	 *
+	 * @param	action	Action to be added.
+	 */
+	public synchronized void addToToolbar(Action action)
+	{
+		_externallyAddedToolbarActions.add(action);
+		if (null != _toolBar)
+		{
+			_toolBar.add(action);
+		}
+	}
+	
+	/**
 	 * Add component to the session sheets status bar.
 	 *
 	 * @param	comp	Component to add.
@@ -295,23 +313,31 @@ public class SessionSheet extends JPanel
 			|| propertyName.equals(
 				SessionProperties.IPropertyNames.SHOW_TOOL_BAR))
 		{
-			boolean show = props.getShowToolBar();
-			if (show != (_toolBar != null))
-			{
-				if (show)
+			synchronized(this)
+			{	
+				boolean show = props.getShowToolBar();
+				if (show != (_toolBar != null))
 				{
-					if (_toolBar == null)
+					if (show)
 					{
-						_toolBar = new MyToolBar(session);
-						add(_toolBar, BorderLayout.NORTH);
+						if (_toolBar == null)
+						{
+							_toolBar = new MyToolBar(session);
+							for (int i = 0; i < _externallyAddedToolbarActions.size(); i++)
+							{
+								_toolBar.add((Action)_externallyAddedToolbarActions.get(i));
+							}
+	
+							add(_toolBar, BorderLayout.NORTH);
+						}
 					}
-				}
-				else
-				{
-					if (_toolBar != null)
+					else
 					{
-						remove(_toolBar);
-						_toolBar = null;
+						if (_toolBar != null)
+						{
+							remove(_toolBar);
+							_toolBar = null;
+						}
 					}
 				}
 			}
@@ -506,8 +532,8 @@ public class SessionSheet extends JPanel
 						final SQLConnection conn = getSession().getSQLConnection();
 						try
 						{
-							if (!Utilities.areStringsEqual(conn.getCatalog(),
-														_cmb.getSelectedCatalog()))
+							if (!StringUtilities.areStringsEqual(
+									conn.getCatalog(), _cmb.getSelectedCatalog()))
 							{
 								_cmb.setSelectedCatalog(conn.getCatalog());
 							}

@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 import java.sql.SQLException;
 
+import javax.swing.Action;
 import javax.swing.JComponent;
 
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
@@ -214,5 +215,12 @@ public interface ISession extends IHasIdentifier
 	 */
 	String getTitle();
 
-	public ISQLEntryPanel getSQLEntryPanel();
+	ISQLEntryPanel getSQLEntryPanel();
+
+	/**
+	 * Add the passed action to the session toolbar.
+	 *
+	 * @param	action	Action to be added.
+	 */
+	void addToToolbar(Action action);
 }

@@ -448,4 +448,45 @@
 		</signjar>
 	</target>
 
+	<!--
+	==================================================================
+	Build a MAC distribution
+	No parameters
+	==================================================================
+	-->
+	<target name="mac_dist" depends="compile_app">
+		<mkdir dir="${dist_dir}/mac"/>
+		<mkdir dir="${dist_dir}/mac/SquirrelSQL"/>
+		<delete includeEmptyDirs="true" failonerror="false">
+			<fileset dir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app">
+			</fileset>
+		</delete>
+		<mkdir dir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app"/>
+		<copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app">
+			<fileset dir="${basedir}/mac">
+				<include name="**/*"/>
+				<exclude name="**/Info.plist"/>
+			</fileset>
+		</copy>
+		<filter token="SquirrelVersion" value="${version}"/>
+		<copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app" filtering="true">
+			<fileset dir="${basedir}/mac">
+				<include name="**/Info.plist"/>
+			</fileset>
+		</copy>
+		<chmod file="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app/Contents/MacOS/JavaApplicationStub" perm="ugo+rx"/>
+		<copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/lib">
+			<fileset dir="${core_dist_lib_dir}">
+				<include name="**/*"/>
+				<exclude name="**/squirrel-sql.jar"/>
+			</fileset>
+		</copy>
+		<copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java">
+			<fileset dir="${core_dist_lib_dir}">
+				<include name="**/squirrel-sql.jar"/>
+			</fileset>
+		</copy>
+		<tar tarfile="${dist_dir}/SquirrelSQLMac.tar" basedir="${dist_dir}/mac"/>
+		<gzip zipfile="${dist_dir}/SquirrelSQLMac.tar.gz" src="${dist_dir}/SquirrelSQLMac.tar"/>
+	</target>
 </project>

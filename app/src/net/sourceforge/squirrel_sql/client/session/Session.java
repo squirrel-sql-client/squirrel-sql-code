@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.event.EventListenerList;
 
@@ -373,6 +374,16 @@ class Session implements ISession
 		_listenerList.remove(ISessionListener.class, lis);
 	}
 
+	/**
+	 * Add the passed action to the session toolbar.
+	 *
+	 * @param	action	Action to be added.
+	 */
+	public void addToToolbar(Action action)
+	{
+		_sessionSheet.addToToolbar(action);
+	}
+	
 	public synchronized Object putPluginObject(IPlugin plugin, String key,
 												Object value)
 	{

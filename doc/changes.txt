@@ -29,6 +29,7 @@ Bug Fixes
 
 Other
 -----
+- New API ISession.addToToolbar(Action action) added (Gerd Wagner).
 - Don't default to displaying the Contents Tab for a table. This can cause
   performance issues when looking at SQL Views (Gerd Wagner).
 
