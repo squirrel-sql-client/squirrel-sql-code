@@ -38,7 +38,8 @@ public interface IDataTypeComponent
 	public String getClassName();
 	
 	/**
-	 * Convert the given object into its printable String value.
+	 * Convert the given object into its printable String value for use
+	 * in Text output and the in-cell representations (CellRenderer and CellEditor).
 	 */
 	public String renderObject(Object object);
 	
@@ -50,6 +51,9 @@ public interface IDataTypeComponent
 
 	/**
 	 * Get the JTextField component for this data type to be used in a CellEditor.
+	 * The value of the text field is set by the JTable mechanism using
+	 * the same mechanism as the renderer.  The Assumption here is that
+	 * the CellEditor uses the same string representation as the CellRenderer.
 	 */
 	public JTextField getJTextField();
 	
@@ -60,9 +64,10 @@ public interface IDataTypeComponent
 	public boolean isEditableInPopup();
 	
 	/**
-	 * Get the JTextArea component for this data type to be used in the CellPopupDialog.
+	 * Get the JTextArea component for this data type to be used in the CellPopupDialog
+	 * and fill in the initial value in the appropriate representation.
 	 */
-	public JTextArea getJTextArea();
+	public JTextArea getJTextArea(Object value);
 	
 	/**
 	 * Validate that the contents of a cell is in the right form for this data type
