@@ -36,14 +36,14 @@ public class EmptyIterator implements Iterator {
 	/**
 	 * Throws <CODE>NoSuchElementException</CODE> as container is empty.
 	 */
-	public Object next() throws NoSuchElementException {
+	public Object next() {
 		throw new NoSuchElementException();
 	}
 
 	/**
 	 * Throws <CODE>IllegalStateException</CODE> as container is empty.
 	 */
-	public void remove() throws IllegalStateException {
+	public void remove() {
 		throw new IllegalStateException();
 	}
 }

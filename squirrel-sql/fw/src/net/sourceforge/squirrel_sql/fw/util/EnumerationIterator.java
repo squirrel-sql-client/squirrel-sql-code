@@ -17,15 +17,8 @@ package net.sourceforge.squirrel_sql.fw.util;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
-
-import net.sourceforge.squirrel_sql.fw.util.EmptyEnumeration;
 
 /**
  * An <TT>EnumerationIterator</TT> object will allow you to treat
@@ -36,9 +29,6 @@ import net.sourceforge.squirrel_sql.fw.util.EmptyEnumeration;
 public class EnumerationIterator implements Iterator {
 	/** <TT>Enumeration</TT> that this <TT>Iterator</TT> is built over. */
 	private Enumeration _en;
-	
-	/** An <TT>Iterator</TT> over an empty collection. */
-	private Enumeration s_emptyEn = new EmptyEnumeration();
 
 	/**
 	 * Ctor.
@@ -49,10 +39,7 @@ public class EnumerationIterator implements Iterator {
 	 */
 	public EnumerationIterator(Enumeration en) throws IllegalArgumentException {
 		super();
-		if (en == null) {
-			throw new IllegalArgumentException("Null Enumeration passed");
-		}
-		_en = en != null ? en : s_emptyEn;
+		_en = en != null ? en : new EmptyEnumeration();
 	}
 
 	/**
@@ -72,7 +59,7 @@ public class EnumerationIterator implements Iterator {
 	 * @throws	<TT>NoSuchElementException</TT>
 	 *			iteration has no more elements.
 	 */
-	public Object next() throws NoSuchElementException {
+	public Object next() {
 		return _en.nextElement();
 	}
 

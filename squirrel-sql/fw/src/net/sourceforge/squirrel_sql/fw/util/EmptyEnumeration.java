@@ -36,7 +36,7 @@ public class EmptyEnumeration implements Enumeration {
 	/**
 	 * Throws <CODE>NoSuchElementException</CODE> as container is empty.
 	 */
-	public Object nextElement() throws NoSuchElementException {
+	public Object nextElement() {
 		throw new NoSuchElementException();
 	}
 }
