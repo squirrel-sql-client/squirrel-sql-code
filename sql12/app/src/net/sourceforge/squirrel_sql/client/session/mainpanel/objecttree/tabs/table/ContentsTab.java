@@ -651,4 +651,17 @@ public class ContentsTab extends BaseTableTab
 	}
 
 
+	/**
+	 * Delete a set of rows from the DB.
+	 * If the delete succeeded this returns a null string.
+	 * The deletes are done within a transaction
+	 * so they are either all done or all not done.
+	 */
+	public String deleteRows(int[] rows) {
+
+// temp code - do not allow delete for the time being
+return "Delete function has not been implemented yet.  It should be here any day now.";
+//		return null;	// hear no evil, see no evil
+	}
+
 }
