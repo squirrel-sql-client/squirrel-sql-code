@@ -35,6 +35,7 @@ import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteAllSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.GotoNextResultsTabAction;

@@ -550,11 +550,6 @@ class Application implements IApplication
 				}
 			});
 
-		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.uifactoryinit"));
-//		AliasMaintSheetFactory.initialize(this);
-//		DriverMaintSheetFactory.initialize(this);
-		UIFactory.initialize(_prefs);
-
 		final boolean loadPlugins = args.getLoadPlugins();
 		if (loadPlugins)
 		{
@@ -590,6 +585,11 @@ class Application implements IApplication
 		_windowManager = new WindowManager(this);
 
 //		_mainFrame = new MainFrame(this);
+
+		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.uifactoryinit"));
+//		AliasMaintSheetFactory.initialize(this);
+//		DriverMaintSheetFactory.initialize(this);
+		UIFactory.initialize(_prefs);
 
 		indicateNewStartupTask(splash, loadPlugins ? "Initializing plugins..." : "No Plugins are to be loaded...");
 		if (loadPlugins)

@@ -50,16 +50,28 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasWindowFactory;
+import net.sourceforge.squirrel_sql.client.gui.db.AliasesList;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasesListInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.db.ConnectionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.db.DriverWindowFactory;
+import net.sourceforge.squirrel_sql.client.gui.db.DriversList;
 import net.sourceforge.squirrel_sql.client.gui.db.DriversListInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.db.IAliasesList;
+import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrameWindowState;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CopyAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CopyDriverAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CreateAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CreateDriverAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.DeleteAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.DeleteDriverAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyDriverAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewAliasesAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewDriversAction;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
-import net.sourceforge.squirrel_sql.client.session.BaseSessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ObjectTreeInternalFrame;
@@ -159,17 +171,19 @@ public class WindowManager
 		}
 
 		_app = app;
-		_mainFrame = new MainFrame(app);
 
-		_aliasesListWindow = new AliasesListInternalFrame(_app);
-		_driversListWindow = new DriversListInternalFrame(_app);
+		createAliasesListUI(app);
+		createDriversListUI(app);
+
+		preLoadActions();
+
+		_app.getSessionManager().addSessionListener(_sessionListener);
 
 		_aliasWinFactory = new AliasWindowFactory(_app);
 		_driverWinFactory = new DriverWindowFactory(_app);
 
-		_app.getSessionManager().addSessionListener(_sessionListener);
+		_mainFrame = new MainFrame(app);
 
-		preLoadActions();
 		setupFromPreferences();
 	}
 
@@ -812,6 +826,33 @@ public class WindowManager
 		}
 	}
 
+	private void createAliasesListUI(IApplication app)
+	{
+		final AliasesList al = new AliasesList(app);
+
+		final ActionCollection actions = _app.getActionCollection();
+		actions.add(new ModifyAliasAction(_app, al));
+		actions.add(new DeleteAliasAction(_app, al));
+		actions.add(new CopyAliasAction(_app, al));
+		actions.add(new ConnectToAliasAction(_app, al));
+		actions.add(new CreateAliasAction(_app));
+
+		_aliasesListWindow = new AliasesListInternalFrame(_app, al);
+	}
+
+	private void createDriversListUI(IApplication app)
+	{
+		final DriversList dl = new DriversList(app);
+
+		final ActionCollection actions = app.getActionCollection();
+		actions.add(new ModifyDriverAction(_app, dl));
+		actions.add(new DeleteDriverAction(_app, dl));
+		actions.add(new CopyDriverAction(_app, dl));
+		actions.add(new CreateDriverAction(_app));
+
+		_driversListWindow = new DriversListInternalFrame(_app, dl);
+	}
+
 	private void preLoadActions()
 	{
 		final ActionCollection actions = _app.getActionCollection();
@@ -822,6 +863,8 @@ public class WindowManager
 
 		actions.add(new ViewAliasesAction(_app, getAliasesListInternalFrame()));
 		actions.add(new ViewDriversAction(_app, getDriversListInternalFrame()));
+
+		IAliasesList al = getAliasesListInternalFrame().getAliasesList();
 	}
 
 	private void setupFromPreferences()

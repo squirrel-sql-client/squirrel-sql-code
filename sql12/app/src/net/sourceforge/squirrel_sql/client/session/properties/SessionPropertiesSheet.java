@@ -39,11 +39,11 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
+import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.SessionPluginInfo;
-import net.sourceforge.squirrel_sql.client.session.BaseSessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-
-// JASON: Rename to SessionPropertiesInternalFrame
+// JASON: Move to package gui...something
+// JASON: Create thru WindowManager
 public class SessionPropertiesSheet extends BaseSessionInternalFrame
 {
 	/**
@@ -52,21 +52,21 @@ public class SessionPropertiesSheet extends BaseSessionInternalFrame
 	 */
 	private interface i18n
 	{
-		String TITLE = "Session Properties";
+		String TITLE = "- Session Properties";
 	}
 
 	/** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(SessionPropertiesSheet.class);
 
-	private List _panels = new ArrayList();
+	private final List _panels = new ArrayList();
 
 	/** Frame title. */
 	private JLabel _titleLbl = new JLabel();
 
 	public SessionPropertiesSheet(ISession session)
 	{
-		super(session, i18n.TITLE, true);
+		super(session, session.getTitle() + " " + i18n.TITLE, true);
 		createGUI();
 	}
 
@@ -76,6 +76,7 @@ public class SessionPropertiesSheet extends BaseSessionInternalFrame
 		{
 			if (!isVisible())
 			{
+				_titleLbl.setText(getTitle());
 				final boolean isDebug = s_log.isDebugEnabled();
 				long start = 0;
 				for (Iterator it = _panels.iterator(); it.hasNext();)
@@ -109,7 +110,10 @@ public class SessionPropertiesSheet extends BaseSessionInternalFrame
 	public void setTitle(String newTitle)
 	{
 		super.setTitle(newTitle);
-		_titleLbl.setText(newTitle);
+		if (_titleLbl != null)
+		{
+			_titleLbl.setText(newTitle);
+		}
 	}
 
 	private void performClose()
@@ -135,12 +139,8 @@ public class SessionPropertiesSheet extends BaseSessionInternalFrame
 			pnl.applyChanges();
 			if (isDebug)
 			{
-				s_log.debug(
-					"Panel "
-						+ pnl.getTitle()
-						+ " applied changes in "
-						+ (System.currentTimeMillis() - start)
-						+ "ms");
+				s_log.debug("Panel " + pnl.getTitle() + " applied changes in "
+						+ (System.currentTimeMillis() - start) + "ms");
 			}
 		}
 
