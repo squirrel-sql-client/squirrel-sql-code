@@ -17,12 +17,15 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import java.awt.AWTEvent;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.FontMetrics;
 import java.awt.Frame;
 import java.awt.Insets;
+import java.awt.MenuComponent;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -165,7 +168,6 @@ public class GUIUtils {
 		for (int i = 0; i < btns.length; ++i) {
 			JButton btn = btns[i];
 			FontMetrics fm = btn.getFontMetrics(btn.getFont());
-			String text = btn.getText();
 			Rectangle2D bounds = fm.getStringBounds(btn.getText(), btn.getGraphics());
 			int boundsHeight = (int)bounds.getHeight();
 			int boundsWidth = (int)bounds.getWidth();
@@ -244,6 +246,62 @@ public class GUIUtils {
 		}
 		return true;
 	}
+
+
+	// From a comp.lang.java.programmer item by James White.
+	public static void showModally(JInternalFrame frame) {
+		frame.setVisible(true);
+		
+		// Since all input will be blocked until this dialog is dismissed,
+		// make sure its parent containers are visible first (this component
+		// is tested below).  This is necessary for JApplets, because
+		// because an applet normally isn't made visible until after its
+		// start() method returns -- if this method is called from start(),
+		// the applet will appear to hang while an invisible modal frame
+		// waits for input.
+		if (!frame.isShowing()) {
+			Container parent = frame.getParent();
+			while (parent != null) {
+				if (!parent.isVisible()) {
+					parent.setVisible(true);
+				}
+				parent = parent.getParent();
+			}
+		}
+		
+		try {
+			if (SwingUtilities.isEventDispatchThread()) {
+				// System.err.println("Modal on dispatch thread.");
+				EventQueue theQueue =
+				frame.getToolkit().getSystemEventQueue();
+				while (frame.isShowing()) {
+					// This is essentially the body of EventDispatchThread
+					AWTEvent event = theQueue.getNextEvent();
+					Object src = event.getSource();
+					// can't call theQueue.dispatchEvent, so I pasted it's body here
+					/*if (event instanceof ActiveEvent) {
+						((ActiveEvent) event).dispatch();
+					} else */
+					if (src instanceof Component) {
+						((Component) src).dispatchEvent(event);
+					} else if (src instanceof MenuComponent) {
+						((MenuComponent) src).dispatchEvent(event);
+					} else {
+//						System.err.println("unable to dispatch event: " + event);
+					}
+				}
+			} else {
+				// System.err.println("Modal on seperate thread.");
+				while (frame.isShowing()) {
+					frame.wait();
+				}
+			}
+		} catch(InterruptedException e) {
+		}
+		// System.err.println("Modal finished.");
+    }
+
+
 
 	/**
 	 * Centers <CODE>wind</CODE> within the passed rectangle.
