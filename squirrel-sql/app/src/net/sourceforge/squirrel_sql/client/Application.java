@@ -41,7 +41,9 @@ import net.sourceforge.squirrel_sql.fw.util.Pair;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.db.AliasMaintDialogFactory;
 import net.sourceforge.squirrel_sql.client.db.DataCache;
+import net.sourceforge.squirrel_sql.client.db.DriverMaintDialogFactory;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
@@ -99,6 +101,9 @@ class Application implements IApplication {
 	}
 
 	public void startup() {
+		AliasMaintDialogFactory.initialize(this);
+		DriverMaintDialogFactory.initialize(this);
+
 		LoggerController.registerLoggerFactory(new SquirrelLoggerFactory());
 		s_log = LoggerController.createLogger(getClass());
 
