@@ -6,12 +6,19 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Change the background of the contents tab when in "edit mode" (Glenn
+  Griffin)
 - Put quotes around character data in the contents tab Filter (Maury Hammel).
 - Column names in the Contents Tab Filter are now sorted (Maury Hammel).
 - The IN operator has been added to the Contents Tab Filter (Maury
   Hammel).
 - New application setting allows you to specify whether the coloured icons are
   shown in toolbars (Bai Yuhong).
+
+Bug Fixes
+---------
+- Fix data corruption issue if you change the selected table in the
+  object tree while editing data (Glenn Griffin)
 
 
 1.2beta1
