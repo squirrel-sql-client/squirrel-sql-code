@@ -1,6 +1,17 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+1.2beta4
+========
+
+Enhancements
+------------
+
+Bug Fixes
+---------
+- Entries in the catalogs dropdown are now sorted.
+
+
 1.2beta3
 ========
 
