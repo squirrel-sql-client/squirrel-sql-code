@@ -1,6 +1,11 @@
 MySQL Plugin Change Log
 =======================
 
+0.31
+====
+- Updated for SQuirreL 1.2beta5.
+
+
 0.30
 ====
 - Added "Delete Database" menu item (Arun Kapilan.P).

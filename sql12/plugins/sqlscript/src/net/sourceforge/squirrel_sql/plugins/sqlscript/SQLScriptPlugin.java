@@ -88,7 +88,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 	 * @return  the current version of this plugin.
 	 */
 	public String getVersion() {
-		return "0.21";
+		return "0.22";
 	}
 
 	/**
