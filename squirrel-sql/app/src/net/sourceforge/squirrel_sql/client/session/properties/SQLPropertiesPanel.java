@@ -17,8 +17,10 @@ package net.sourceforge.squirrel_sql.client.session.properties;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
@@ -32,7 +34,6 @@ import javax.swing.event.ChangeListener;
 
 import net.sourceforge.squirrel_sql.fw.gui.CharField;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
-import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
@@ -115,8 +116,8 @@ public class SQLPropertiesPanel
 		interface i18n {
 			String AUTO_COMMIT = "Auto Commit SQL:";
 			String COMMIT_ON_CLOSE = "Commit On Closing Session:";
-			String NBR_ROWS_CONTENTS = "Contents - Number of rows:";
-			String NBR_ROWS_SQL = "SQL - Number of rows:";
+			String NBR_ROWS_CONTENTS = "Number of rows:";
+			String NBR_ROWS_SQL = "Number of rows:";
 			String LIMIT_ROWS_CONTENTS = "Contents - Limit rows:";
 			String LIMIT_ROWS_SQL = "SQL - Limit rows:";
 			String MULTIPLE_TABS_SQL = "SQL - Reuse Output Tabs:";
@@ -124,7 +125,7 @@ public class SQLPropertiesPanel
 			String TABLE = "Table";
 			String TEXT = "Text";
 			String STATEMENT_SEPARATOR = "Statement Separator:";
-			String PERF_WARNING = "Note: Settings marked with an hourglass will have performance implications.";
+			String PERF_WARNING = "<HTML><BR>Note: Settings marked with an hourglass will<BR>have performance implications.</HTML>";
 			String SQL = "SQL";
 		}
 
@@ -167,48 +168,98 @@ public class SQLPropertiesPanel
 		}
 
 		private void createUserInterface(IApplication app) {
-			setLayout(new BorderLayout());
+			setLayout(new GridBagLayout());
 
 			final Icon warnIcon = app.getResources().getIcon(SquirrelResources.ImageNames.PERFORMANCE_WARNING);
-
-			// Centre panel is the properties panel.
-			PropertyPanel pnl = new PropertyPanel();
-			JLabel lbl = new JLabel(i18n.AUTO_COMMIT, SwingConstants.RIGHT);
-			pnl.add(lbl, _autoCommitChk);
 			_autoCommitChk.addChangeListener(new AutoCommitCheckBoxListener());
-
-			lbl = new JLabel(i18n.COMMIT_ON_CLOSE, SwingConstants.RIGHT);
-			pnl.add(lbl, _commitOnClose);
-
-			lbl = new JLabel(i18n.SHOW_ROW_COUNT, SwingConstants.RIGHT);
-			pnl.add(lbl, _showRowCount, new JLabel(warnIcon));
-
-			lbl = new JLabel(i18n.LIMIT_ROWS_CONTENTS, SwingConstants.RIGHT);
-			pnl.add(lbl, _contentsLimitRowsChk, new JLabel(warnIcon));
-			lbl = new JLabel(i18n.NBR_ROWS_CONTENTS, SwingConstants.RIGHT);
-			pnl.add(lbl, _contentsNbrRowsToShowField, new JLabel(warnIcon));
 			_contentsLimitRowsChk.addChangeListener(new LimitRowsCheckBoxListener(_contentsNbrRowsToShowField));
-
-			lbl = new JLabel(i18n.LIMIT_ROWS_SQL, SwingConstants.RIGHT);
-			pnl.add(lbl, _sqlLimitRows, new JLabel(warnIcon));
-			lbl = new JLabel(i18n.NBR_ROWS_SQL, SwingConstants.RIGHT);
-			pnl.add(lbl, _sqlNbrRowsToShowField, new JLabel(warnIcon));
 			_sqlLimitRows.addChangeListener(new LimitRowsCheckBoxListener(_sqlNbrRowsToShowField));
 
-			lbl = new JLabel(i18n.MULTIPLE_TABS_SQL, SwingConstants.RIGHT);
-			pnl.add(lbl, _sqlMultipleTabs);
+			_contentsNbrRowsToShowField.setColumns(5);
+			_sqlNbrRowsToShowField.setColumns(5);
+			_stmtSepChar.setColumns(1);
 
-			lbl = new JLabel(i18n.STATEMENT_SEPARATOR, SwingConstants.RIGHT);
-			pnl.add(lbl, _stmtSepChar);
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = gbc.HORIZONTAL;
 
-			add(pnl, BorderLayout.CENTER);
+			// First column is a set of labels.
+			gbc.insets = new Insets(2, 0, 2, 4);
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			add(new JLabel(i18n.AUTO_COMMIT), gbc);
+			++gbc.gridy;
+			add(new JLabel(i18n.SHOW_ROW_COUNT), gbc);
+			++gbc.gridy;
+			add(new JLabel(i18n.LIMIT_ROWS_CONTENTS), gbc);
+			++gbc.gridy;
+			add(new JLabel(i18n.LIMIT_ROWS_SQL), gbc);
+			++gbc.gridy;
+			add(new JLabel(i18n.MULTIPLE_TABS_SQL), gbc);
 
-			// Warning message in bottom panel.
-			JTextArea ta = new JTextArea(i18n.PERF_WARNING);
-			ta.setBackground(getBackground());
-			ta.setEditable(false);
-			ta.setFont(lbl.getFont());
-			add(ta, BorderLayout.SOUTH);
+			// Second column is the data entry controls for the labels in first column.
+			gbc.insets = new Insets(2, 0, 2, 1);
+			gbc.gridx = 1;
+			gbc.gridy = 0;
+			add(_autoCommitChk, gbc);
+			++gbc.gridy;
+			add(_showRowCount, gbc);
+			++gbc.gridy;
+			add(_contentsLimitRowsChk, gbc);
+			++gbc.gridy;
+			add(_sqlLimitRows, gbc);
+			++gbc.gridy;
+			add(_sqlMultipleTabs, gbc);
+
+			// Third column is the icon specifying "performance implications" for the data entry control
+			// in the second column.
+			gbc.insets = new Insets(2, 0, 2, 4);
+			gbc.gridx = 2;
+			gbc.gridy = 1;
+			add(new JLabel(warnIcon), gbc);
+			++gbc.gridy;
+			add(new JLabel(warnIcon), gbc);
+			++gbc.gridy;
+			add(new JLabel(warnIcon), gbc);
+
+			// Fourth column is a set of labels.
+			gbc.insets = new Insets(2, 0, 2, 4);
+			gbc.gridx = 3;
+			gbc.gridy = 0;
+			add(new JLabel(i18n.COMMIT_ON_CLOSE), gbc);
+			++gbc.gridy;
+			++gbc.gridy;
+			add(new JLabel(i18n.NBR_ROWS_CONTENTS), gbc);
+			++gbc.gridy;
+			add(new JLabel(i18n.NBR_ROWS_SQL), gbc);
+			++gbc.gridy;
+			add(new JLabel(i18n.STATEMENT_SEPARATOR), gbc);
+
+			// Fifth column is the data entry controls for the labels in fourth column.
+			gbc.insets = new Insets(2, 0, 2, 1);
+			gbc.gridx = 4;
+			gbc.gridy = 0;
+			add(_commitOnClose, gbc);
+			++gbc.gridy;
+			++gbc.gridy;
+			add(_contentsNbrRowsToShowField, gbc);
+			++gbc.gridy;
+			add(_sqlNbrRowsToShowField, gbc);
+			++gbc.gridy;
+			add(_stmtSepChar, gbc);
+
+			// Sixth column is the icon specifying "performance implications" for the data entry control
+			// in the fifth column.
+			gbc.gridx = 5;
+			gbc.gridy = 3;
+			add(new JLabel(warnIcon), gbc);
+			++gbc.gridy;
+			add(new JLabel(warnIcon), gbc);
+
+			// Right at the bottom we put the performance warning.
+			gbc.gridx = 0;
+			gbc.gridy = gbc.RELATIVE;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
+			add(new JLabel(i18n.PERF_WARNING), gbc);
 		}
 
 		private class LimitRowsCheckBoxListener implements ChangeListener {

@@ -18,14 +18,19 @@ package net.sourceforge.squirrel_sql.client.session.properties;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.awt.Component;
-import javax.swing.JLabel;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+
+import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetModelJTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel;
-import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
@@ -51,9 +56,9 @@ public class OutputPropertiesPanel implements IGlobalPreferencesPanel, ISessionP
 		if (app == null) {
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
-
 		_app = app;
 		_props = app.getSquirrelPreferences().getSessionProperties();
+
 		_myPanel.loadData(_props);
 	}
 
@@ -88,7 +93,7 @@ public class OutputPropertiesPanel implements IGlobalPreferencesPanel, ISessionP
 		_myPanel.applyChanges(_props);
 	}
 
-	private static final class MyPanel extends PropertyPanel {
+	private static final class MyPanel extends JPanel {
 		/**
 		 * This interface defines locale specific strings. This should be
 		 * replaced with a property file.
@@ -169,23 +174,153 @@ public class OutputPropertiesPanel implements IGlobalPreferencesPanel, ISessionP
 		}
 
 		private void createUserInterface() {
-			setSingleColumn(false);
-			add(new JLabel(i18n.META_DATA, SwingConstants.RIGHT), _metaDataCmb);
-			add(new JLabel(i18n.DATA_TYPES, SwingConstants.RIGHT), _dataTypeCmb);
-			add(new JLabel(i18n.TABLE_HDG, SwingConstants.RIGHT), _tableCmb);
-			add(new JLabel(i18n.CONTENT, SwingConstants.RIGHT), _contentsCmb);
-			add(new JLabel(i18n.COLUMNS, SwingConstants.RIGHT), _columnsCmb);
-			add(new JLabel("Primary Keys:", SwingConstants.RIGHT), _primKeysCmb);
-			add(new JLabel("Exported Keys:", SwingConstants.RIGHT), _expKeysCmb);
-			add(new JLabel("Imported Keys:", SwingConstants.RIGHT), _impKeysCmb);
-			add(new JLabel("Indexes:", SwingConstants.RIGHT), _indexesCmb);
-			add(new JLabel(i18n.PRIVILIGES, SwingConstants.RIGHT), _priviligesCmb);
-			add(new JLabel("Column Priviliges:", SwingConstants.RIGHT), _columnPriviligesCmb);
-			add(new JLabel("Row ID:", SwingConstants.RIGHT), _rowIdPriviligesCmb);
-			add(new JLabel(i18n.VERSIONS, SwingConstants.RIGHT), _versionsCmb);
-			add(new JLabel("Stored Proc Columns:", SwingConstants.RIGHT), _procColumnsCmb);
-			add(new JLabel("SQL:", SwingConstants.RIGHT), _sqlCmb);
-			add(new JLabel("SQL Meta Data:", SwingConstants.RIGHT), _sqlMetaDataCmb);
+			setLayout(new GridBagLayout());
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.anchor = gbc.WEST;
+			gbc.fill = gbc.HORIZONTAL;
+			//gbc.insets = new Insets(4, 4, 4, 4);
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			add(createDatabasePanel(), gbc);
+			++gbc.gridy;
+			add(createTablePanel(), gbc);
+			++gbc.gridy;
+			add(createProcedurePanel(), gbc);
+			++gbc.gridy;
+			add(createSQLPanel(), gbc);
+		}
+
+		private JPanel createDatabasePanel() {
+			JPanel pnl = new JPanel();
+			pnl.setBorder(BorderFactory.createTitledBorder("Database"));
+			
+			pnl.setLayout(new GridBagLayout());
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = gbc.HORIZONTAL;
+			gbc.insets = new Insets(4, 4, 4, 4);
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			pnl.add(new JLabel(i18n.META_DATA), gbc);
+			++gbc.gridx;
+			pnl.add(_metaDataCmb, gbc);
+			++gbc.gridx;
+			pnl.add(new JLabel(i18n.DATA_TYPES), gbc);
+			++gbc.gridx;
+			pnl.add(_dataTypeCmb, gbc);
+			
+			return pnl;
+		}
+
+		private JPanel createTablePanel() {
+			JPanel pnl = new JPanel();
+			pnl.setBorder(BorderFactory.createTitledBorder("Tables"));
+			
+			pnl.setLayout(new GridBagLayout());
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = gbc.HORIZONTAL;
+			gbc.insets = new Insets(4, 4, 4, 4);
+
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			pnl.add(new JLabel(i18n.TABLE_HDG), gbc);
+			++gbc.gridx;
+			pnl.add(_tableCmb, gbc);
+
+			++gbc.gridx;
+			pnl.add(new JLabel(i18n.CONTENT), gbc);
+			++gbc.gridx;
+			pnl.add(_contentsCmb, gbc);
+
+			gbc.gridx = 0;
+			++gbc.gridy;
+			pnl.add(new JLabel(i18n.COLUMNS), gbc);
+			++gbc.gridx;
+			pnl.add(_columnsCmb, gbc);
+
+			++gbc.gridx;
+			pnl.add(new JLabel("Primary Keys:"), gbc);
+			++gbc.gridx;
+			pnl.add(_primKeysCmb, gbc);
+
+			gbc.gridx = 0;
+			++gbc.gridy;
+			pnl.add(new JLabel("Exported Keys:"), gbc);
+			++gbc.gridx;
+			pnl.add(_expKeysCmb, gbc);
+			
+			++gbc.gridx;
+			pnl.add(new JLabel("Imported Keys:"), gbc);
+			++gbc.gridx;
+			pnl.add(_impKeysCmb, gbc);
+
+			gbc.gridx = 0;
+			++gbc.gridy;
+			pnl.add(new JLabel("Indexes:"), gbc);
+			++gbc.gridx;
+			pnl.add(_indexesCmb, gbc);
+
+			++gbc.gridx;
+			pnl.add(new JLabel(i18n.PRIVILIGES), gbc);
+			++gbc.gridx;
+			pnl.add(_priviligesCmb, gbc);
+
+			gbc.gridx = 0;
+			++gbc.gridy;
+			pnl.add(new JLabel("Column Priviliges:"), gbc);
+			++gbc.gridx;
+			pnl.add(_columnPriviligesCmb, gbc);
+
+			++gbc.gridx;
+			pnl.add(new JLabel("Row ID:"), gbc);
+			++gbc.gridx;
+			pnl.add(_rowIdPriviligesCmb, gbc);
+
+			gbc.gridx = 0;
+			++gbc.gridy;
+			pnl.add(new JLabel(i18n.VERSIONS), gbc);
+			++gbc.gridx;
+			pnl.add(_versionsCmb, gbc);
+
+			return pnl;
+		}
+
+		private JPanel createProcedurePanel() {
+			JPanel pnl = new JPanel();
+			pnl.setBorder(BorderFactory.createTitledBorder("Procedures"));
+			
+			pnl.setLayout(new GridBagLayout());
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = gbc.HORIZONTAL;
+			gbc.insets = new Insets(4, 4, 4, 4);
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			pnl.add(new JLabel("Stored Proc Columns:"), gbc);
+			++gbc.gridx;
+			pnl.add(_procColumnsCmb, gbc);
+			
+			return pnl;
+		}
+
+		private JPanel createSQLPanel() {
+			JPanel pnl = new JPanel();
+			pnl.setBorder(BorderFactory.createTitledBorder("SQL"));
+			
+			pnl.setLayout(new GridBagLayout());
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = gbc.HORIZONTAL;
+			gbc.insets = new Insets(4, 4, 4, 4);
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			pnl.add(new JLabel("SQL:"), gbc);
+			++gbc.gridx;
+			pnl.add(_sqlCmb, gbc);
+
+			++gbc.gridx;
+			pnl.add(new JLabel("SQL Meta Data:"), gbc);
+			++gbc.gridx;
+			pnl.add(_sqlMetaDataCmb, gbc);
+			
+			return pnl;
 		}
 
 		private final static class OutputType {
