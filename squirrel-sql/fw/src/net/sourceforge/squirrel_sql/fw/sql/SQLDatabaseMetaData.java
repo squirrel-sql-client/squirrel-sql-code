@@ -33,6 +33,7 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
@@ -67,6 +68,9 @@ public class SQLDatabaseMetaData
 	/** Collection of commonly accessed metadata properties. */
 	private Map _common = new HashMap();
 
+	/** Defines how to handel result sets. */
+	private LargeResultSetObjectInfo _lrsi;
+
 	/**
 	 * ctor specifying the connection that we are retrieving metadata for.
 	 * 
@@ -83,6 +87,13 @@ public class SQLDatabaseMetaData
 			throw new IllegalArgumentException("SQLDatabaseMetaData == null");
 		}
 		_conn = conn;
+
+		_lrsi = new LargeResultSetObjectInfo();
+		_lrsi.setReadBinary(true);
+		_lrsi.setReadLongVarBinary(true);
+		_lrsi.setReadVarBinary(true);
+		_lrsi.setReadAllOther(true);
+		_lrsi.setReadSQLOther(true);
 	}
 
 	/**
@@ -231,7 +242,7 @@ public class SQLDatabaseMetaData
 											dbProductName.equals("Sybase SQL Server") ||
 											dbProductName.equals("SQL Server"); // Old Sybase
 		final ArrayList list = new ArrayList();
-		final ResultSetReader rdr = new ResultSetReader(getJDBCMetaData().getSchemas());
+		final ResultSetReader rdr = new ResultSetReader(getJDBCMetaData().getSchemas(), _lrsi);
 		Object[] row = null;
 		while ((row = rdr.readRow()) != null)
 		{
@@ -339,7 +350,7 @@ public class SQLDatabaseMetaData
 	public String[] getCatalogs() throws SQLException
 	{
 		final ArrayList list = new ArrayList();
-		final ResultSetReader rdr = new ResultSetReader(getJDBCMetaData().getCatalogs());
+		final ResultSetReader rdr = new ResultSetReader(getJDBCMetaData().getCatalogs(), _lrsi);
 		Object[] row = null;
 		while ((row = rdr.readRow()) != null)
 		{
@@ -755,7 +766,7 @@ public class SQLDatabaseMetaData
 	{
 		return getJDBCMetaData().getBestRowIdentifier(
 			ti.getCatalogName(), ti.getSchemaName(),
-			ti.getSimpleName(), DatabaseMetaData.bestRowSession,
+			ti.getSimpleName(), DatabaseMetaData.bestRowTransaction,
 			true);
 	}
 
