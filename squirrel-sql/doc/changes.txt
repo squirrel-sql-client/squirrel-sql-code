@@ -17,6 +17,10 @@ Enhancements
 
 Bug Fixes
 ---------
+- Fix shell script to work with Cygwin.
+- Fix NullPointerException when changing output
+  type for result sets in New Session Properties
+  dialog.
 - Fix Copy cmd in tables so that if only a single
   column selected it doesn't put all the rows on one
   line.

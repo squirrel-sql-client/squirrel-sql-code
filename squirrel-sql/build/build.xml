@@ -65,7 +65,7 @@
 		<echo message="	jar_source: Jars the source for the framework and application to:"/>
 		<echo message="					 ${core_dist_dir}/src}"/>
 		<echo message=""/>
-		<echo message="	make_dist:  Executes jar_source and compile_plugins."/>
+		<echo message="	make_dist:  Executes jar_source."/>
 		<echo message="				Eventually this should run an Ant Task to generate the IzPack JAR."/>
 		<echo message=""/>
 		<echo message="	clean:  Removes class files, old versions of source etc."/>
@@ -294,7 +294,7 @@
 	No parameters.
 	==================================================================
 	-->
-	<target name="make_dist" depends="compile_plugins,jar_source">
+	<target name="make_dist" depends="jar_source">
 	</target>
 
 	<!--

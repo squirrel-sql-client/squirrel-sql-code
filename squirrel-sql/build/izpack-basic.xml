@@ -65,12 +65,10 @@
 					src="../../squirrel-sql-dist/squirrel-sql-1.1rc2/core/dist/lib/nanoxml-2.1.jar"/>
 
 			<parsable targetfile="$INSTALL_PATH/squirrel-sql.bat"/>
-			<parsable targetfile="$INSTALL_PATH/squirrel-sql.sh"/>
+			<!-- <parsable targetfile="$INSTALL_PATH/squirrel-sql.sh"/> -->
 
 			<!-- Make Unix script executable. -->
-			<executable	targetfile="$INSTALL_PATH/squirrel-sql.sh"
-						stage="never">
-			</executable>
+			<executable	targetfile="$INSTALL_PATH/squirrel-sql.sh" stage="never"/>
 
 		</pack>
 	</packs>
