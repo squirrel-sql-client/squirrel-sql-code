@@ -105,8 +105,10 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 	}
 
 
-	private final class MyTableModel extends AbstractTableModel {
+	private final static class MyTableModel extends AbstractTableModel {
 		private List _data = new ArrayList();
+		private ColumnDisplayDefinition[] _colDefs = new ColumnDisplayDefinition[0];
+
 
 		MyTableModel() {
 			super();
