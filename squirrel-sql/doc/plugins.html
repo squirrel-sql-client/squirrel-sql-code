@@ -27,7 +27,9 @@
     <TR><TD>&nbsp;&nbsp;</TD><TD><A HREF="#sqlexecution">Hooking into SQL Execution</A></TD></TR>
     <TR><TD>&nbsp;&nbsp;</TD><TD><A HREF="#xml">XML</A></TD></TR>
     <TR><TD>&nbsp;&nbsp;</TD><TD><A HREF="#loadsavesettings">Loading and Saving Settings</A></TD></TR>
+    <TR><TD>&nbsp;&nbsp;</TD><TD><A HREF="#objectcaches">Object Caches</A></TD></TR>
     <TR><TD>&nbsp;&nbsp;</TD><TD><A HREF="#addmaintab">Adding a Tab to the Main Tabbed Panel</A></TD></TR>
+    <TR><TD>&nbsp;&nbsp;</TD><TD><A HREF="#addtabletab">Adding a Tab to the Table Tabbed Panel</A></TD></TR>
     <TR><TD COLSPAN="2"><A HREF="#installing">Installing Plugins</A></TD></TR>
 </TABLE>
 
@@ -211,22 +213,22 @@ public String statementExecuting(String sql)
 </PRE>
 
 <P>This method is called for every statement to be executed in the SQL panel. E.G. If the
-user enters the following in the SQL panel:
+user enters the following in the SQL panel:</P>
 
 <PRE>
 select * from table1;
 select * from table2
 </PRE>
 
-and requests them both to be executed then <TT>statementExecuting()</TT> will be
-called twice. Once with <TT>&quot;select * from table1&quot;</TT> passed and the
-second time with <TT>&quot;select * from table2&quot;</TT>.
+<P>and requests them both to be executed then <TT>statementExecuting()</TT>
+will be called twice. Once with <TT>&quot;select * from table1&quot;</TT>
+passed and the second time with <TT>&quot;select * from table2&quot;</TT>.</P>
 
 <P>Whatever you return from the method (allowing for any changes that other plugins
 may make) is what will be executed. If you return <TT>null</TT> then no other listeners
-will be called and the statement will not be executed.
+will be called and the statement will not be executed.</P>
 
-<P>This would be useful for macro expansion etc.
+<P>This would be useful for macro expansion etc.</P>
 
 <A NAME="xml"><H3>XML</H3></A>
 
@@ -236,13 +238,115 @@ almost none of the available functionality I replaced it with with a smaller one
 
 <A NAME="loadsavesettings"><H3>Loading and Saving Settings</H3></A>
 
-??TODO??
-&nbsp;
+The package <TT>net.sourceforge.squirrel_sql.fw.xml</TT> contains classes
+that will take a javabean and turn it into XML and load a javabean
+from XML. SQuirreL uses this for saving global preferences, driver and alias
+configuration information.
+
+<P>This is an example of the XML file that stores JDBC driver configuration
+information.:</P>
+
+<PRE>
+&lt;Beans>
+    &lt;Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver"&gt;
+        &lt;jarFileName/&gt;
+        &lt;url&gt;jdbc:postgresql:&lt;//host&gt;:&lt;port&gt;/&lt;database&gt;&lt;/url&gt;
+        &lt;identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier"&gt;
+            &lt;string&gt;-7&lt;/string&gt;
+        &lt;/identifier&gt;
+        &lt;name&gt;PostgreSQL&lt;/name&gt;
+        &lt;driverClassName&gt;org.postgresql.Driver&lt;/driverClassName&gt;
+        &lt;usesClassPath&gt;true&lt;/usesClassPath&gt;
+    &lt;/Bean&gt;
+&lt;/Beans&gt;
+</PRE> 
+
+<P>The following example shows how two javabeans can be
+saved to an XML file.</P>
+
+<PRE>
+    XMLBeanWriter wtr = new XMLBeanWriter(bean1);
+    wtr.addToRoot(bean2);
+    wtr.save("javabeans.xml");
+</PRE>
+
+<P>This example shows the loading of javabeans from an XML
+File:</P>
+
+<PRE>
+    XMLBeanReader rdr = new XMLBeanReader();
+    rdr.load("javabeans.xml", getClass().getClassLoader());
+    for (Iterator it = rdr.iterator(); it.hasNext();) {
+        final Object Bean = it.next();
+        ...
+    }
+</PRE>
+
+<P>Because the <TT>XMLBeanReader</TT> has to instantiate the javabean
+it needs to know the class loader that it used for the javabean's class
+files. As plugins are loaded by a customer class loader this would normally
+be the class loader used for the plugin classes.</P>
+
+<P>The processing supplied by the classes in
+<TT>net.sourceforge.squirrel_sql.fw.xml</TT> is fairly rudimentary and
+has some limitations. Chief amongst them is that is has no concept of
+multiple references to the same object, it will save and restore multiple
+objects in this case.</P>
+
+<P>The properties of the javabean to be saved/restored can be builtin types,
+instances of <TT>String</TT> or other javabeans. If you have a property that
+doesn't fit this list then you can write a wrapper class to turn it into a
+javabean. See <TT>net.sourceforge.squirrel_sql.fw.util.beanwrapper</TT> for
+some examples.</P>
+
+<P>Array properties are handled but currently not for builtin types nor
+<TT>String</TT> objects. For these you need to use a wrapper class.</P>
+
+<A NAME="objectcaches"><H3>Object Caches</H3></A>
 
 <A NAME="addmaintab"><H3>Adding a Tab to the Main Tabbed Panel</H3></A>
 
 To add a tab to the main tabbed panel (the one containing the &quot;Objects&quot; and
-&quot;SQL&quot; tabs) use the <TT>ISession.addMainTab(...)</TT> method.
+&quot;SQL&quot; tabs) use the <TT>ISession.addMainTab(String title, Icon icon,
+Component comp, String tip)</TT> method.
+
+<P>In the future this method will be deprecated by being replaced by one
+similar to <A HREF="#addtabletab">Adding a Tab to the Table Tabbed Panel</A>.</P>
+
+
+<A NAME="addtabletab"><H3>Adding a Tab to the Table Tabbed Panel</H3></A>
+
+The Table tabbed panel is the panel displayed when you select a table in the
+object tree. The method <TT>ISession.addTablePanelTab(ITablePanelTab)</TT>
+is used to add a tab to it.
+</P>
+
+<P>You should create a class that implements
+<TT>net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.ITablePanelTab
+in order to create a tab. The methods<TT>ITablePanelTab.getTitle()</TT> and
+<TT>ITablePanelTab.getHint()</TT> define the title and the flyover hint
+respectively. Override <TT>ITablePanelTab.getComponent()</TT> to provide
+the actual component to be displayed in the tab (remember to wrap it in a
+<TT>javax.swing.JScrollPane</TT> if the contents could be larger than the
+tab).</P>
+
+<P><TT>ITablePanelTab.setTableInfo(ITableInfo)</TT> will be called whenever
+the currently selected table changes. For performance reasons please
+don't refresh the panel at this point. Use <TT>ITablePanelTab.select()</TT>
+for this. <TT>select()</TT> is called whenever the your tab is to be displayed.
+Remember that this could be called multiple times without a different table
+being selected in the object tree so you only need to refresh your component
+the first time it is called.</P>
+
+<P>As a convenience the class
+<TT>net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.BaseTableTab</TT>
+has been provided. You would normally use this class (which implements
+<TT>ITablePanelTab</TT>) as the base for any tabs you create.</P>
+
+<P><TT>BaseTableTab</TT> provides the methods <TT>getSession()</TT>,
+and <TT>getTableInfo()</TT>. It also provides the method <TT>refreshComponent</TT>
+which will be called the first time a tab is displayed for a table and is
+the appropriate place to load the information to be displayed for a table.</P> 
 
 <A NAME="installing"><H3>Installing Plugins</H3></A>
 
