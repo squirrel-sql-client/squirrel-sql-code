@@ -26,6 +26,11 @@ Enhancements
   (Glenn Griffin)
 - BLOBs and CLOBs are now fully editable, as are all of the most common SQL
   types.
+- Data that can be edited only in the Popup (ie. not in the cell) is now shown
+  with a Cyan background to tell the user that it can be edited, but only in
+  the Popup.
+- Data containing newlines now shows the newlines explicitly in the in-cell
+  view, i.e. as "\n".
 
 Bug Fixes
 ---------
@@ -35,6 +40,9 @@ Bug Fixes
   Lundberg).
 - Fix resource strings (Dennis Lundberg).
 - Do a better job of handling MS SQL server catalog names that contain periods.
+- Strings (VARCHAR and CLOB) fields containing newlines would loose those
+  newlines if edited within the cell.  In-cell editing of that data is now
+  blocked.
 
 Other
 -----
