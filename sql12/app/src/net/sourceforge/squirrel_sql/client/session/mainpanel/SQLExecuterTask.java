@@ -284,6 +284,18 @@ public class SQLExecuterTask implements Runnable
 				res = _stmt.getResultSet();
 			}
 
+			if (-1 != updateCount)
+			{
+				_session.getMessageHandler().showMessage(updateCount + " Rows Updated");
+			}
+			if (null != res)
+			{
+				if (!processResultSet(res, exInfo))
+				{
+					return false;
+				}
+			}
+
 			if (false == supportsMultipleResultSets)
 			{
 				// This is (a logically not sufficent) try to cope with the problem that there are the following
