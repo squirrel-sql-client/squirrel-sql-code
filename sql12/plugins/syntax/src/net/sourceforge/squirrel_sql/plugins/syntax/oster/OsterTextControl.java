@@ -49,24 +49,14 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SchemaInfo;
 
+import net.sourceforge.squirrel_sql.plugins.syntax.IConstants;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxStyle;
 
 class OsterTextControl extends JTextPane
 {
-	private interface IStyleNames
-	{
-		String COMMENT = "comment";
-		String ERROR = "error";
-		String IDENTIFIER = "identifier";
-		String LITERAL = "literal";
-		String OPERATOR = "operator";
-		String RESERVED_WORD = "reservedWord";
-		String SEPARATOR = "separator";
-		String WHITESPACE = "whitespace";
-	}
-
 	/** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(OsterTextControl.class);
 
@@ -147,35 +137,43 @@ class OsterTextControl extends JTextPane
 			SimpleAttributeSet attribs;
 			
 			style = _syntaxPrefs.getCommentStyle();
-			attribs = getMyStyle(IStyleNames.COMMENT);
+			attribs = getMyStyle(IConstants.IStyleNames.COMMENT);
+			applyStyle(attribs, style, fi);
+
+			style = _syntaxPrefs.getDataTypeStyle();
+			attribs = getMyStyle(IConstants.IStyleNames.DATA_TYPE);
 			applyStyle(attribs, style, fi);
 
 			style = _syntaxPrefs.getErrorStyle();
-			attribs = getMyStyle(IStyleNames.ERROR);
+			attribs = getMyStyle(IConstants.IStyleNames.ERROR);
+			applyStyle(attribs, style, fi);
+
+			style = _syntaxPrefs.getFunctionStyle();
+			attribs = getMyStyle(IConstants.IStyleNames.FUNCTION);
 			applyStyle(attribs, style, fi);
 
 			style = _syntaxPrefs.getIdentifierStyle();
-			attribs = getMyStyle(IStyleNames.IDENTIFIER);
+			attribs = getMyStyle(IConstants.IStyleNames.IDENTIFIER);
 			applyStyle(attribs, style, fi);
 
 			style = _syntaxPrefs.getLiteralStyle();
-			attribs = getMyStyle(IStyleNames.LITERAL);
+			attribs = getMyStyle(IConstants.IStyleNames.LITERAL);
 			applyStyle(attribs, style, fi);
 
 			style = _syntaxPrefs.getOperatorStyle();
-			attribs = getMyStyle(IStyleNames.OPERATOR);
+			attribs = getMyStyle(IConstants.IStyleNames.OPERATOR);
 			applyStyle(attribs, style, fi);
 
 			style = _syntaxPrefs.getReservedWordStyle();
-			attribs = getMyStyle(IStyleNames.RESERVED_WORD);
+			attribs = getMyStyle(IConstants.IStyleNames.RESERVED_WORD);
 			applyStyle(attribs, style, fi);
 
 			style = _syntaxPrefs.getSeparatorStyle();
-			attribs = getMyStyle(IStyleNames.SEPARATOR);
+			attribs = getMyStyle(IConstants.IStyleNames.SEPARATOR);
 			applyStyle(attribs, style, fi);
 
 			style = _syntaxPrefs.getWhiteSpaceStyle();
-			attribs = getMyStyle(IStyleNames.WHITESPACE);
+			attribs = getMyStyle(IConstants.IStyleNames.WHITESPACE);
 			applyStyle(attribs, style, fi);
 
 			colorAll();
@@ -217,6 +215,10 @@ class OsterTextControl extends JTextPane
 		return ((SimpleAttributeSet)styles.get(styleName));
 	}
 
+	private Token getNextToken(SchemaInfo si) throws IOException
+	{
+		return syntaxLexer.getNextToken();
+	}
 
 	private void applyStyle(SimpleAttributeSet attribs, SyntaxStyle style,
 								FontInfo fi)
@@ -326,35 +328,55 @@ class OsterTextControl extends JTextPane
 		StyleConstants.setItalic(attribs, false);
 		styles.put("text", attribs);
 
-		style = _syntaxPrefs.getReservedWordStyle();
+		style = _syntaxPrefs.getCommentStyle();
 		attribs = new SimpleAttributeSet();
 		applyStyle(attribs, style, fi);
-		styles.put(IStyleNames.RESERVED_WORD, attribs);
+		styles.put(IConstants.IStyleNames.COMMENT, attribs);
+
+		style = _syntaxPrefs.getDataTypeStyle();
+		attribs = new SimpleAttributeSet();
+		applyStyle(attribs, style, fi);
+		styles.put(IConstants.IStyleNames.DATA_TYPE, attribs);
+
+		style = _syntaxPrefs.getErrorStyle();
+		attribs = new SimpleAttributeSet();
+		applyStyle(attribs, style, fi);
+		styles.put(IConstants.IStyleNames.ERROR, attribs);
+
+		style = _syntaxPrefs.getFunctionStyle();
+		attribs = new SimpleAttributeSet();
+		applyStyle(attribs, style, fi);
+		styles.put(IConstants.IStyleNames.DATA_TYPE, attribs);
 
 		style = _syntaxPrefs.getIdentifierStyle();
 		attribs = new SimpleAttributeSet();
 		applyStyle(attribs, style, fi);
-		styles.put(IStyleNames.IDENTIFIER, attribs);
+		styles.put(IConstants.IStyleNames.IDENTIFIER, attribs);
 
 		style = _syntaxPrefs.getLiteralStyle();
 		attribs = new SimpleAttributeSet();
 		applyStyle(attribs, style, fi);
-		styles.put(IStyleNames.LITERAL, attribs);
-
-		style = _syntaxPrefs.getSeparatorStyle();
-		attribs = new SimpleAttributeSet();
-		applyStyle(attribs, style, fi);
-		styles.put(IStyleNames.SEPARATOR, attribs);
+		styles.put(IConstants.IStyleNames.LITERAL, attribs);
 
 		style = _syntaxPrefs.getOperatorStyle();
 		attribs = new SimpleAttributeSet();
 		applyStyle(attribs, style, fi);
-		styles.put(IStyleNames.OPERATOR, attribs);
+		styles.put(IConstants.IStyleNames.OPERATOR, attribs);
 
-		style = _syntaxPrefs.getCommentStyle();
+		style = _syntaxPrefs.getReservedWordStyle();
 		attribs = new SimpleAttributeSet();
 		applyStyle(attribs, style, fi);
-		styles.put(IStyleNames.COMMENT, attribs);
+		styles.put(IConstants.IStyleNames.RESERVED_WORD, attribs);
+
+		style = _syntaxPrefs.getSeparatorStyle();
+		attribs = new SimpleAttributeSet();
+		applyStyle(attribs, style, fi);
+		styles.put(IConstants.IStyleNames.SEPARATOR, attribs);
+
+		style = _syntaxPrefs.getWhiteSpaceStyle();
+		attribs = new SimpleAttributeSet();
+		applyStyle(attribs, style, fi);
+		styles.put(IConstants.IStyleNames.WHITESPACE, attribs);
 
 		// TODO: Do we need this one. */
 		attribs = new SimpleAttributeSet();
@@ -365,16 +387,6 @@ class OsterTextControl extends JTextPane
 		StyleConstants.setBold(attribs, false);
 		StyleConstants.setItalic(attribs, false);
 		styles.put("preprocessor", attribs);
-
-		style = _syntaxPrefs.getWhiteSpaceStyle();
-		attribs = new SimpleAttributeSet();
-		applyStyle(attribs, style, fi);
-		styles.put(IStyleNames.WHITESPACE, attribs);
-
-		style = _syntaxPrefs.getErrorStyle();
-		attribs = new SimpleAttributeSet();
-		applyStyle(attribs, style, fi);
-		styles.put(IStyleNames.ERROR, attribs);
 
 		// TODO: Do we need this one. */
 		attribs = new SimpleAttributeSet();
@@ -573,6 +585,7 @@ class OsterTextControl extends JTextPane
 					}
 					try
 					{
+						final SchemaInfo si = _session.getSchemaInfo();
 						Token t;
 						boolean done = false;
 						dpEnd = dpStart;
@@ -597,7 +610,7 @@ class OsterTextControl extends JTextPane
 							// the first obvious stopping place is the end of the document.
 							// the lexer will return null at the end of the document and wee
 							// need to stop there.
-							t = syntaxLexer.getNextToken();
+							t = getNextToken(si);
 						}
 						newPositions.add(dpStart);
 						while (!done && t != null)
@@ -609,11 +622,24 @@ class OsterTextControl extends JTextPane
 							{
 								if (t.getCharEnd() <= document.getLength())
 								{
+									String type = t.getDescription();
+									if (type.equals(IConstants.IStyleNames.IDENTIFIER))
+									{
+										final String data = t.getContents();
+										if (si.isDataType(data))
+										{
+											type = IConstants.IStyleNames.DATA_TYPE;					
+										}
+										else if (si.isKeyword(data))
+										{
+											type = IConstants.IStyleNames.RESERVED_WORD;					
+										}
+									}
+
 									document.setCharacterAttributes(
 										t.getCharBegin() + change,
 										t.getCharEnd() - t.getCharBegin(),
-										getMyStyle(t.getDescription()),
-										true);
+										getMyStyle(type), true);
 									// record the position of the last bit of text that we colored
 									dpEnd =
 										new DocPosition(t.getCharEnd());
@@ -663,7 +689,7 @@ class OsterTextControl extends JTextPane
 							}
 							synchronized (doclock)
 							{
-								t = syntaxLexer.getNextToken();
+								t = getNextToken(si);
 							}
 						}
 

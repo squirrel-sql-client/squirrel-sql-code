@@ -40,9 +40,11 @@ public class SyntaxPreferences implements Serializable, Cloneable
 		String COMMENT_STYLE = "commentStyle";
 //		String CURRENT_LINE_HIGHLIGHTING = "currentLineHighlighting";
 //		String CURRENT_LINE_HIGHLIGHT_COLOR = "currentLineHighlightColor";
+		String DATA_TYPE_STYLE = "dataTypeStyle";
 //		String EOL_MARKERS = "eolMarkers";
 //		String EOL_MARKER_COLOR = "eolMarkerColor";
 		String ERROR_STYLE = "errorStyle";
+		String FUNCTION_STYLE = "functionStyle";
 		String IDENTIFIER_STYLE = "identifierStyle";
 		String LITERAL_STYLE = "literalStyle";
 		String OPERATOR_STYLE = "operatorStyle";
@@ -81,7 +83,9 @@ public class SyntaxPreferences implements Serializable, Cloneable
 
 //	private SyntaxStyle _columnStyle;
 	private SyntaxStyle _commentStyle = new SyntaxStyle();
+	private SyntaxStyle _dataTypeStyle = new SyntaxStyle();
 	private SyntaxStyle _errorStyle = new SyntaxStyle();
+	private SyntaxStyle _functionStyle = new SyntaxStyle();
 	private SyntaxStyle _identifierStyle = new SyntaxStyle();
 	private SyntaxStyle _literalStyle = new SyntaxStyle();
 	private SyntaxStyle _operatorStyle = new SyntaxStyle();
@@ -100,49 +104,61 @@ public class SyntaxPreferences implements Serializable, Cloneable
 	{
 		super();
 
-		_commentStyle.setName("comment");
+		_commentStyle.setName(IConstants.IStyleNames.COMMENT);
 		_commentStyle.setBackgroundRGB(Color.white.getRGB());
 		_commentStyle.setTextRGB(Color.green.darker().getRGB());
 		_commentStyle.setBold(false);
 		_commentStyle.setItalic(false);
 
-		_errorStyle.setName("error");
+		_dataTypeStyle.setName(IConstants.IStyleNames.DATA_TYPE);
+		_dataTypeStyle.setBackgroundRGB(Color.white.getRGB());
+		_dataTypeStyle.setTextRGB(Color.yellow.darker().getRGB());
+		_dataTypeStyle.setBold(false);
+		_dataTypeStyle.setItalic(false);
+
+		_errorStyle.setName(IConstants.IStyleNames.ERROR);
 		_errorStyle.setBackgroundRGB(Color.white.getRGB());
 		_errorStyle.setTextRGB(Color.red.getRGB());
 		_errorStyle.setBold(false);
 		_errorStyle.setItalic(false);
 
-		_identifierStyle.setName("identifier");
+		_functionStyle.setName(IConstants.IStyleNames.FUNCTION);
+		_functionStyle.setBackgroundRGB(Color.white.getRGB());
+		_functionStyle.setTextRGB(Color.black.getRGB());
+		_functionStyle.setBold(false);
+		_functionStyle.setItalic(false);
+
+		_identifierStyle.setName(IConstants.IStyleNames.IDENTIFIER);
 		_identifierStyle.setBackgroundRGB(Color.white.getRGB());
 		_identifierStyle.setTextRGB(Color.black.getRGB());
 		_identifierStyle.setBold(false);
 		_identifierStyle.setItalic(false);
 
-		_literalStyle.setName("literal");
+		_literalStyle.setName(IConstants.IStyleNames.LITERAL);
 		_literalStyle.setBackgroundRGB(Color.white.getRGB());
 		_literalStyle.setTextRGB(0xB03060); // Maroon.
 		_literalStyle.setBold(false);
 		_literalStyle.setItalic(false);
 
-		_operatorStyle.setName("operator");
+		_operatorStyle.setName(IConstants.IStyleNames.OPERATOR);
 		_operatorStyle.setBackgroundRGB(Color.white.getRGB());
 		_operatorStyle.setTextRGB(Color.black.getRGB());
 		_operatorStyle.setBold(true);
 		_operatorStyle.setItalic(false);
 
-		_reservedWordStyle.setName("reservedWord");
+		_reservedWordStyle.setName(IConstants.IStyleNames.RESERVED_WORD);
 		_reservedWordStyle.setBackgroundRGB(Color.white.getRGB());
 		_reservedWordStyle.setTextRGB(Color.blue.getRGB());
 		_reservedWordStyle.setBold(false);
 		_reservedWordStyle.setItalic(false);
 
-		_separatorStyle.setName("separator");
+		_separatorStyle.setName(IConstants.IStyleNames.SEPARATOR);
 		_separatorStyle.setBackgroundRGB(Color.white.getRGB());
 		_separatorStyle.setTextRGB(0x000080); // Navy.
 		_separatorStyle.setBold(false);
 		_separatorStyle.setItalic(false);
 
-		_whiteSpaceStyle.setName("whitespace");
+		_whiteSpaceStyle.setName(IConstants.IStyleNames.WHITESPACE);
 		_whiteSpaceStyle.setBackgroundRGB(Color.white.getRGB());
 		_whiteSpaceStyle.setTextRGB(Color.black.getRGB());
 		_whiteSpaceStyle.setBold(false);
@@ -319,6 +335,27 @@ public class SyntaxPreferences implements Serializable, Cloneable
 		}
 	}
 
+	public SyntaxStyle getDataTypeStyle()
+	{
+		return _dataTypeStyle;
+	}
+
+	public void setDataTypeStyle(SyntaxStyle data)
+	{
+		if (data == null)
+		{
+			throw new IllegalArgumentException("SyntaxStyle==null");
+		}
+
+		if (_dataTypeStyle != data)
+		{
+			final SyntaxStyle oldValue = _dataTypeStyle;
+			_dataTypeStyle = data;
+			getPropertyChangeReporter().firePropertyChange(IPropertyNames.DATA_TYPE_STYLE,
+				oldValue, _dataTypeStyle);
+		}
+	}
+
 	public SyntaxStyle getErrorStyle()
 	{
 		return _errorStyle;
@@ -337,6 +374,27 @@ public class SyntaxPreferences implements Serializable, Cloneable
 			_errorStyle = data;
 			getPropertyChangeReporter().firePropertyChange(IPropertyNames.ERROR_STYLE,
 				oldValue, _errorStyle);
+		}
+	}
+
+	public SyntaxStyle getFunctionStyle()
+	{
+		return _functionStyle;
+	}
+
+	public void setFunctionStyle(SyntaxStyle data)
+	{
+		if (data == null)
+		{
+			throw new IllegalArgumentException("SyntaxStyle==null");
+		}
+
+		if (_functionStyle != data)
+		{
+			final SyntaxStyle oldValue = _functionStyle;
+			_functionStyle = data;
+			getPropertyChangeReporter().firePropertyChange(IPropertyNames.FUNCTION_STYLE,
+				oldValue, _functionStyle);
 		}
 	}
 
