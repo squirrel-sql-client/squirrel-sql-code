@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.plugin;
 /*
- * Copyright (C) 20031 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -20,9 +20,8 @@ package net.sourceforge.squirrel_sql.client.plugin;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
 
-public abstract class DefaultSessionPlugin
-	extends DefaultPlugin
-	implements ISessionPlugin
+public abstract class DefaultSessionPlugin extends DefaultPlugin
+											implements ISessionPlugin
 {
 	/**
 	 * A new session has been created. At this point the
@@ -70,19 +69,6 @@ public abstract class DefaultSessionPlugin
 	{
 		return null;
 	}
-
-	/**
-	 * Create panels for the Main Tabbed Pane.
-	 *
-	 * @param	session		The current session.
-	 *
-	 * @return	Array of <TT>IMainPanelTab</TT> objects. Return
-	 *			empty array of <TT>null</TT> if this plugin doesn't require
-	 *			any panels in the Main Tabbed Pane.
-	 */
-	//public IMainPanelTab[] getMainTabbedPanePanels(ISession session) {
-	//	return null;
-	//}
 
 	/**
 	 * Let app know what extra types of objects in object tree that

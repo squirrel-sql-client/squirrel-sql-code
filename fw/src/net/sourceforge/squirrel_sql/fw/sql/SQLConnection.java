@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.sql;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,7 +19,6 @@ package net.sourceforge.squirrel_sql.fw.sql;
  */
 import java.beans.PropertyChangeListener;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
@@ -31,7 +30,12 @@ import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
+/**
+ * This represents a connection to an SQL server. it is basically a wrapper
+ * around <TT>java.sql.Connection</TT>.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
 public class SQLConnection
 {
 	public interface IPropertyNames
@@ -40,11 +44,12 @@ public class SQLConnection
 		String CATALOG = "catalog";
 	}
 
+	/** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(SQLConnection.class);
 
+	/** The <TT>java.sql.Connection</TT> this object is wrapped around. */
 	private Connection _conn;
-	private DatabaseMetaData _md;
 
 	/** MetaData for this connection. */
 	private SQLDatabaseMetaData _metaData;
@@ -94,7 +99,6 @@ public class SQLConnection
 			}
 			_conn.close();
 			_conn = null;
-			_md = null;
 			_timeClosed = Calendar.getInstance().getTime();
 			if (savedEx != null)
 			{
@@ -209,17 +213,6 @@ public class SQLConnection
 		}
 		return _metaData;
 	}
-
-//todo: get rid of this method.
-//	public synchronized DatabaseMetaData getMetaData() throws SQLException
-//	{
-//		validateConnection();
-//		if (_md == null)
-//		{
-//			_md = getConnection().getMetaData();
-//		}
-//		return _md;
-//	}
 
 	public Connection getConnection()
 	{
