@@ -70,7 +70,7 @@ public class DataSetViewerTablePanel extends JTable implements IDataSetViewerDes
         setColumnModel(createColumnModel(hdgs));
     }
 
-    public void addRow(String[] row) {
+    public void addRow(Object[] row) {
         _model.addRow(row);
     }
 
@@ -146,7 +146,7 @@ public class DataSetViewerTablePanel extends JTable implements IDataSetViewerDes
         }
 
         public Object getValueAt(int row, int col) {
-            return ((String[])_data.get(row))[col];
+            return ((Object[])_data.get(row))[col];
         }
 
         public int getRowCount() {
@@ -165,7 +165,7 @@ public class DataSetViewerTablePanel extends JTable implements IDataSetViewerDes
             _hdgs = hdgs;
         }
 
-        public void addRow(String[] row) {
+        public void addRow(Object[] row) {
             _data.add(row);
         }
 

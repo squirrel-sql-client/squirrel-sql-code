@@ -53,7 +53,7 @@ public class DataSetViewerPropertyPanel extends PropertyPanel implements IDataSe
         _hdgs = hdgs;
     }
 
-    public void addRow(String[] row) {
+    public void addRow(Object[] row) {
         _leftData.add(row[0]);
         _rightData.add(row[1]);
     }
@@ -64,8 +64,8 @@ public class DataSetViewerPropertyPanel extends PropertyPanel implements IDataSe
     public void allRowsAdded() {
         for (int i = 0, limit = Math.max(_leftData.size(), _rightData.size());
                 i < limit; ++i) {
-            JLabel left = new JLabel(i < _leftData.size() ? (String)_leftData.get(i) : " ", SwingConstants.RIGHT);
-            JLabel right = new JLabel( i < _rightData.size() ? (String)_rightData.get(i) : " ");
+            JLabel left = new JLabel(i < _leftData.size() ? (_leftData.get(i)).toString() : " ", SwingConstants.RIGHT);
+            JLabel right = new JLabel( i < _rightData.size() ? (_rightData.get(i)).toString() : " ");
             add(left, right);
         }
     }

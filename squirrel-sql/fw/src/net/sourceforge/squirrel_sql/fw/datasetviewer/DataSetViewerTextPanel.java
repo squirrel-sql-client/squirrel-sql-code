@@ -74,10 +74,10 @@ public class DataSetViewerTextPanel extends JPanel implements IDataSetViewerDest
         }
     }
 
-    public void addRow(String[] row) {
+    public void addRow(Object[] row) {
         StringBuffer buf = new StringBuffer();
         for (int i = 0; i < row.length; ++i) {
-            buf.append(format(row[i], _colDefs[i].getDisplayWidth(), ' '));
+            buf.append(format(row[i].toString(), _colDefs[i].getDisplayWidth(), ' '));
         }
         addLine(buf.toString());
     }
