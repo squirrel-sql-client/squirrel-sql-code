@@ -754,7 +754,6 @@ public class ContentsTab extends BaseTableTab
 			case Types.INTEGER:
 			case Types.SMALLINT:
 			case Types.TINYINT:
-//????? check somehow whether column is nullable? or is this handled by cell editor?
 				if (colValue == null || colValue.toString() == null || colValue.toString().length() == 0)
 					clause = columnLabel + "=null ";
 				else clause = columnLabel + "=" + colValue.toString();
