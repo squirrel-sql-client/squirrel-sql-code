@@ -1,6 +1,25 @@
 jEdit Text Area Plugin Change Log
 =================================
 
+0.20
+====
+
+Bug Fixes
+---------
+- Mouse wheel now scrolls.
+- Empty unreachable lines no longer left at the
+  top of the edit area when deleting multiple lines.
+- Changing the font now works.
+
+Other
+-----
+- Now using a standard JEditorPane for the text control
+  but still using the syntax highlighting code from
+  the jEdit control. Based on work from the Jalopy
+  http://jalopy.sourceforge.net and BlueJ
+  http://www.bluej.org projects.
+
+
 0.17
 ====
 

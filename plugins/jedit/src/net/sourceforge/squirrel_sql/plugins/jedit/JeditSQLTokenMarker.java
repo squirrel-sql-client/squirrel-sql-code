@@ -22,12 +22,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.StringTokenizer;
 
+import org.gjt.sp.jedit.syntax.KeywordMap;
+import org.gjt.sp.jedit.syntax.SQLTokenMarker;
+import org.gjt.sp.jedit.syntax.Token;
+
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.jedit.textarea.KeywordMap;
-import net.sourceforge.squirrel_sql.plugins.jedit.textarea.SQLTokenMarker;
-import net.sourceforge.squirrel_sql.plugins.jedit.textarea.Token;
 
 public class JeditSQLTokenMarker extends SQLTokenMarker
 {
@@ -39,7 +40,7 @@ public class JeditSQLTokenMarker extends SQLTokenMarker
 	private static ILogger s_log =
 		LoggerController.createLogger(JeditSQLTokenMarker.class);
 
-	private KeywordMap _keywords = new KeywordMap(true);
+	private KeywordMap _keywords;
 
 	public JeditSQLTokenMarker(SQLConnection conn)
 	{
@@ -79,12 +80,6 @@ public class JeditSQLTokenMarker extends SQLTokenMarker
 	private static void addKeywords(DatabaseMetaData dmd, KeywordMap keywords)
 	{
 		// ANSI std keywords.
-//		keywords.add("=", Token.KEYWORD1);
-//		keywords.add("<>", Token.KEYWORD1);
-//		keywords.add("<", Token.KEYWORD1);
-//		keywords.add("<=", Token.KEYWORD1);
-//		keywords.add(">", Token.KEYWORD1);
-//		keywords.add(">=", Token.KEYWORD1);
 		keywords.add("ABSOLUTE", Token.KEYWORD1);
 		keywords.add("ACTION", Token.KEYWORD1);
 		keywords.add("ADD", Token.KEYWORD1);
@@ -182,7 +177,7 @@ public class JeditSQLTokenMarker extends SQLTokenMarker
 		keywords.add("PRESERVE", Token.KEYWORD1);
 		keywords.add("PRIMARY", Token.KEYWORD1);
 		keywords.add("PRIOR", Token.KEYWORD1);
-		keywords.add("PRIVILIGES", Token.KEYWORD1);
+		keywords.add("PRIVILEGES", Token.KEYWORD1);
 		keywords.add("PUBLIC", Token.KEYWORD1);
 		keywords.add("READ", Token.KEYWORD1);
 		keywords.add("REFERENCES", Token.KEYWORD1);
@@ -290,29 +285,6 @@ public class JeditSQLTokenMarker extends SQLTokenMarker
 
 	private static void addDataTypes(DatabaseMetaData dmd, KeywordMap keywords)
 	{
-//		keywords.add("BIT", Token.KEYWORD2);
-//		keywords.add("BLOB", Token.KEYWORD2);
-//		keywords.add("BOOLEAN", Token.KEYWORD2);
-//		keywords.add("CHAR", Token.KEYWORD2);
-//		keywords.add("CHARACTER", Token.KEYWORD2);
-//		keywords.add("CLOB", Token.KEYWORD2);
-//		keywords.add("DATE", Token.KEYWORD2);
-//		keywords.add("DECIMAL", Token.KEYWORD2);
-//		keywords.add("DOUBLE", Token.KEYWORD2);
-//		keywords.add("FLOAT", Token.KEYWORD2);
-//		keywords.add("INTEGER", Token.KEYWORD2);
-//		keywords.add("INTERVAL", Token.KEYWORD2);
-//		keywords.add("NCHAR", Token.KEYWORD2);
-//		keywords.add("NCLOB", Token.KEYWORD2);
-//		keywords.add("NUMERIC", Token.KEYWORD2);
-//		keywords.add("PRECISION", Token.KEYWORD2);
-//		keywords.add("REAL", Token.KEYWORD2);
-//		keywords.add("SMALLINT", Token.KEYWORD2);
-//		keywords.add("TIME", Token.KEYWORD2);
-//		keywords.add("TIMESTAMP", Token.KEYWORD2);
-//		keywords.add("VARCHAR", Token.KEYWORD2);
-//		keywords.add("VARYING", Token.KEYWORD2);
-//
 		try
 		{
 			ResultSet rs = dmd.getTypeInfo();

@@ -19,67 +19,59 @@ package net.sourceforge.squirrel_sql.plugins.jedit;
  */
 import java.awt.Color;
 
-import net.sourceforge.squirrel_sql.plugins.jedit.textarea.SyntaxDocument;
-import net.sourceforge.squirrel_sql.plugins.jedit.textarea.SyntaxStyle;
-import net.sourceforge.squirrel_sql.plugins.jedit.textarea.SyntaxUtilities;
-import net.sourceforge.squirrel_sql.plugins.jedit.textarea.TextAreaDefaults;
-import net.sourceforge.squirrel_sql.plugins.jedit.textarea.Token;
+import javax.swing.JEditorPane;
+import javax.swing.text.Caret;
+import javax.swing.text.Document;
+
+import org.gjt.sp.jedit.syntax.DefaultSyntaxDocument;
+import org.gjt.sp.jedit.syntax.SyntaxUtilities;
+import org.gjt.sp.jedit.syntax.TextAreaDefaults;
+import org.gjt.sp.jedit.syntax.Token;
 
 class JeditTextAreaDefaults extends TextAreaDefaults
 {
-	JeditTextAreaDefaults(JeditPreferences prefs)
+	/** Default blink rate for the caret. */
+	private int _defaultCaretBlinkRate;
+
+	/** Default caret. */
+	private Caret _defaultCaret;
+
+	JeditTextAreaDefaults(JEditorPane textArea, JeditPreferences prefs)
 	{
 		super();
 		if (prefs == null)
 		{
 			throw new IllegalArgumentException("Null JEditPreferences passed");
 		}
+		if (textArea == null)
+		{
+			throw new IllegalArgumentException("Null JEditorPane passed");
+		}
 
-		inputHandler = new JeditInputHandler();
-		document = new SyntaxDocument();
-		editable = true;
+		_defaultCaret = textArea.getCaret();
+		_defaultCaretBlinkRate = _defaultCaret.getBlinkRate();
+
+		document = new DefaultSyntaxDocument();
 
 		caretVisible = true;
-		//		caretBlinks = true;
-		//		electricScroll = 3;
-		electricScroll = 0;
 
-		cols = 0;
-		rows = 1;
-
-		styles = SyntaxUtilities.getDefaultSyntaxStyles();
-
-		//		blockCaret = true;
-		//		caretColor = Color.red;
-		//		selectionColor = new Color(0xccccff);
-		//		lineHighlightColor = new Color(0xe0e0e0);
-		//		lineHighlight = true;
-		//		bracketHighlightColor = Color.black;
-		//		bracketHighlight = true;
-		//		eolMarkerColor = new Color(0x009999);
-		//		eolMarkers = false;
-		paintInvalid = false;
+		colors = SyntaxUtilities.getDefaultSyntaxColors();
 
 		updateFromPreferences(prefs);
 	}
 
-	private void updateFromPreferences(JeditPreferences prefs)
+	void updateFromPreferences(JeditPreferences prefs)
 		throws IllegalArgumentException
 	{
 		if (prefs == null)
 		{
 			throw new IllegalArgumentException("Null JEditPreferences passed");
 		}
-		styles[Token.KEYWORD1] =
-			new SyntaxStyle(new Color(prefs.getKeyword1RGB()), false, true);
-		styles[Token.KEYWORD2] =
-			new SyntaxStyle(new Color(prefs.getKeyword2RGB()), false, true);
-		styles[Token.KEYWORD3] =
-			new SyntaxStyle(new Color(prefs.getKeyword3RGB()), false, true);
-		styles[Token.COLOMN] =
-			new SyntaxStyle(new Color(prefs.getColumnRGB()), false, true);
-		styles[Token.TABLE] =
-			new SyntaxStyle(new Color(prefs.getTableRGB()), false, true);
+		colors[Token.KEYWORD1] = new Color(prefs.getKeyword1RGB());
+		colors[Token.KEYWORD2] = new Color(prefs.getKeyword2RGB());
+		colors[Token.KEYWORD3] = new Color(prefs.getKeyword3RGB());
+		colors[Token.COLUMN] = new Color(prefs.getColumnRGB());
+		colors[Token.TABLE] = new Color(prefs.getTableRGB());
 		blockCaret = prefs.isBlockCaretEnabled();
 		eolMarkers = prefs.getEOLMarkers();
 		bracketHighlight = prefs.getBracketHighlighting();
@@ -91,4 +83,18 @@ class JeditTextAreaDefaults extends TextAreaDefaults
 		eolMarkerColor = new Color(prefs.getEOLMarkerRGB());
 		bracketHighlightColor = new Color(prefs.getBracketHighlightRGB());
 	}
+
+	void updateControl(JEditorPane textArea)
+	{
+		final Document doc = textArea.getDocument();
+		if (doc instanceof DefaultSyntaxDocument)
+		{
+			final DefaultSyntaxDocument syntaxDoc = ((DefaultSyntaxDocument)doc);
+			syntaxDoc.setColors(colors);
+		}
+
+		textArea.setCaret(blockCaret ? new BlockCaret() : _defaultCaret);
+		textArea.setCaretColor(caretColor);
+		textArea.getCaret().setBlinkRate(caretBlinks ? _defaultCaretBlinkRate : 0);
+		textArea.setSelectionColor(selectionColor);	}
 }
