@@ -8,6 +8,7 @@ public class ColumnInfo extends Object
    private String _columnName;
    private String _columnType;
    private int _columnSize;
+   private int _decimalDigits;
    private boolean _nullable;
    private int _index;
    private String _importedFromTable;
@@ -18,19 +19,22 @@ public class ColumnInfo extends Object
    private boolean _isPrimaryKey;
 
 
-   public ColumnInfo(String columnName, String columnType, int columnSize, boolean nullable)
+   public ColumnInfo(String columnName, String columnType, int columnSize, int decimalDigits, boolean nullable)
    {
       _columnName = columnName;
       _columnType = columnType;
       _columnSize = columnSize;
+      _decimalDigits = decimalDigits;
       _nullable = nullable;
 
-      _toString = _columnName + "  " + _columnType + "(" + _columnSize + ") " + (_nullable? "NULL": "NOT NULL");
+      String decimalDigitsString = 0 == _decimalDigits? "": "," + _decimalDigits;
+
+      _toString = _columnName + "  " + _columnType + "(" + _columnSize + decimalDigitsString + ") " + (_nullable? "NULL": "NOT NULL");
    }
 
    public ColumnInfo(ColumnInfoXmlBean xmlBean)
    {
-      this(xmlBean.getColumnName(), xmlBean.getColumnType(), xmlBean.getColumnSize(), xmlBean.isNullable());
+      this(xmlBean.getColumnName(), xmlBean.getColumnType(), xmlBean.getColumnSize(), xmlBean.getDecimalDigits(), xmlBean.isNullable());
       _index = xmlBean.getIndex();
       if(xmlBean.isPrimaryKey())
       {
@@ -50,6 +54,7 @@ public class ColumnInfo extends Object
       ret.setColumnName(_columnName);
       ret.setColumnType(_columnType);
       ret.setColumnSize(_columnSize);
+      ret.setDecimalDigits(_decimalDigits);
       ret.setNullable(_nullable);
       ret.setIndex(_index);
       ret.setImportedFromTable(_importedFromTable);
