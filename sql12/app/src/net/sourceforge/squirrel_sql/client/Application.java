@@ -583,11 +583,9 @@ class Application implements IApplication
 		
 		indicateNewStartupTask(splash, "Loading Cell Import/Export selections...");
 		loadCellImportExportInfo();
-		
-//????		
-//????		indicateNewStartupTask(splash, "Loading Edit 'Where' Columns selections...");
-//?????		loadEditWhereColsInfo();
-//???????
+				
+		indicateNewStartupTask(splash, "Loading Edit 'Where' Columns selections...");
+		loadEditWhereColsInfo();
 
 		indicateNewStartupTask(splash, "Showing main window...");
 		_mainFrame.setVisible(true);
@@ -751,6 +749,7 @@ class Application implements IApplication
 			if (it.hasNext())
 			{
 				saverInstance = (EditWhereCols)it.next();
+EditWhereCols x = saverInstance;
 			}
 		}
 		catch (FileNotFoundException ignore)
@@ -776,7 +775,7 @@ class Application implements IApplication
 	{
 		try
 		{
-			XMLBeanWriter wtr = new XMLBeanWriter(EditWhereCols.getInstance());
+			XMLBeanWriter wtr = new XMLBeanWriter(new EditWhereCols());
 			wtr.save(new ApplicationFiles().getEditWhereColsFile());
 		}
 		catch (Exception ex)
