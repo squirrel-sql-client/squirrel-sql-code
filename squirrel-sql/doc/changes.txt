@@ -3,7 +3,8 @@ Change Log
 
 1.1 continuation
 ================
-- Driver and ALias maintenace windows are now modeless.
+- Properties windows are now modeless.
+- Driver and Alias maintenance windows are now modeless.
 - Aliaes and Drivers tool window now resized when Look and Feel changed (if required).
 - Now displaying SQL Error Code and State when an SQL error occurs.
 - Can now select the Font for the SQL entry area.
