@@ -36,31 +36,28 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * A dialog allow selection and a font and its associated info.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class FontChooser extends JDialog
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
-	{
-		String TITLE = "Font Chooser";
-		String OK = "OK";
-	}
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(FontChooser.class);
 
 	private final boolean _selectStyles;
 
 	private JComboBox _fontNamesCmb;
 	private final JComboBox _fontSizesCmb = new JComboBox(new String[]
 												{ "8", "9", "10", "12", "14" });
-	private final JCheckBox _boldChk = new JCheckBox("Bold");
-	private final JCheckBox _italicChk = new JCheckBox("Italic");
-	private final JLabel _previewLbl = new JLabel("select * from tab01");
+	private final JCheckBox _boldChk = new JCheckBox(s_stringMgr.getString("FontChooser.bold"));
+	private final JCheckBox _italicChk = new JCheckBox(s_stringMgr.getString("FontChooser.italic"));
+	private final JLabel _previewLbl = new JLabel(s_stringMgr.getString("FontChooser.preview"));
 
 	private Font _font;
 
@@ -76,7 +73,7 @@ public class FontChooser extends JDialog
 
 	/**
 	 * ctor specifying whether styles can be selected.
-	 * 
+	 *
 	 * @param	selectStyles	If <TT>true</TT> bold and italic checkboxes displayed.
 	 */
 	public FontChooser(boolean selectStyles)
@@ -86,50 +83,50 @@ public class FontChooser extends JDialog
 
 	/**
 	 * ctor specifying the parent frame.
-	 * 
+	 *
 	 * @param	owner	Parent frame.
 	 */
 	public FontChooser(Frame owner)
 	{
-		super(owner, i18n.TITLE, true);
+		super(owner, s_stringMgr.getString("FontChooser.title"), true);
 		_selectStyles = true;
 		createUserInterface();
 	}
 
 	/**
 	 * ctor specifying the parent frame and whether styles can be selected.
-	 * 
+	 *
 	 * @param	owner			Parent frame.
 	 * @param	selectStyles	If <TT>true</TT> bold and italic checkboxes displayed.
 	 */
 	public FontChooser(Frame owner, boolean selectStyles)
 	{
-		super(owner, i18n.TITLE, true);
+		super(owner, s_stringMgr.getString("FontChooser.title"), true);
 		_selectStyles = selectStyles;
 		createUserInterface();
 	}
 
 	/**
 	 * ctor specifying the parent dialog.
-	 * 
+	 *
 	 * @param	owner	Parent frame.
 	 */
 	public FontChooser(Dialog owner)
 	{
-		super(owner, i18n.TITLE, true);
+		super(owner, s_stringMgr.getString("FontChooser.title"), true);
 		_selectStyles = true;
 		createUserInterface();
 	}
 
 	/**
 	 * ctor specifying the parent dialog and whether styles can be selected.
-	 * 
+	 *
 	 * @param	owner	Parent frame.
 	 * @param	selectStyles	If <TT>true</TT> bold and italic checkboxes displayed.
 	 */
 	public FontChooser(Dialog owner, boolean selectStyles)
 	{
-		super(owner, i18n.TITLE, true);
+		super(owner, s_stringMgr.getString("FontChooser.title"), true);
 		_selectStyles = selectStyles;
 		createUserInterface();
 	}
@@ -173,7 +170,7 @@ public class FontChooser extends JDialog
 
 	/**
 	 * Show dialog defaulting to the passed font.
-	 * 
+	 *
 	 * @param	font	The font to default to.
 	 */
 	public Font showDialog(Font font)

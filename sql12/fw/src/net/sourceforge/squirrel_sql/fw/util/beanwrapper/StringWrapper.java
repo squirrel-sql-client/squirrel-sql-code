@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.util.beanwrapper;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,32 +17,33 @@ package net.sourceforge.squirrel_sql.fw.util.beanwrapper;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-public class StringWrapper {
-
-	public interface IPropertyNames {
+public class StringWrapper
+{
+	public interface IPropertyNames
+	{
 		String STRINGS = "string";
 	}
 
 	private String _string;
 
-	public StringWrapper() {
+	public StringWrapper()
+	{
 		this(null);
 	}
 
-	public StringWrapper(String string) {
+	public StringWrapper(String string)
+	{
 		super();
 		setString(string);
 	}
 
-	public String getString() {
+	public String getString()
+	{
 		return _string;
 	}
 
-	public void setString(String value) {
+	public void setString(String value)
+	{
 		_string = value;
 	}
-
-//  public Rectangle createRectangle() {
-//	  return new Rectangle(_x, _y, _width, _height);
-//  }
 }

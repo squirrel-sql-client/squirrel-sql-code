@@ -18,22 +18,24 @@ package net.sourceforge.squirrel_sql.fw.util;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.util.Properties;
-
 /**
  * Wrapper around system properties.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SystemProperties {
-
-	private SystemProperties() {
+public class SystemProperties
+{
+	private SystemProperties()
+	{
 	}
 
-	public static Properties get() {
+	public static Properties get()
+	{
 		return System.getProperties();
 	}
 
-	public static String getClassPath() {
+	public static String getClassPath()
+	{
 		return get().getProperty("java.class.path");
 	}
 }

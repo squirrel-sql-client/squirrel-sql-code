@@ -28,6 +28,8 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
@@ -38,6 +40,10 @@ public class ResultSetReader
 	/** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(ResultSetReader.class);
+
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ResultSetReader.class);
 
 	/** The <TT>ResultSet</TT> being read. */
 	private final ResultSet _rs;
@@ -52,7 +58,7 @@ public class ResultSetReader
 	/** Describes how to handle "blob" type data. */
 	private final LargeResultSetObjectInfo _largeObjInfo;
 
-	/** 
+	/**
 	 * The number of columns to read. This may or may not be the same as the
 	 * number of columns in the <TT>ResultSet</TT>. @see _columnIndices.
 	 */
@@ -92,7 +98,7 @@ public class ResultSetReader
 		_rs = rs;
 
 		_largeObjInfo = largeObjInfo != null ? largeObjInfo : new LargeResultSetObjectInfo();
-	
+
 		if (columnIndices != null && columnIndices.length == 0)
 		{
 			columnIndices = null;
@@ -110,14 +116,14 @@ public class ResultSetReader
 	 * returned where each element of the array is an object representing
 	 * the contents of the column. These objects could be of type <TT>String</TT>,
 	 * <TT>BigDecimal</TT> etc.
-	 * 
+	 *
 	 * <P>If an error occurs calling <TT>next()</TT> on the <TT>ResultSet</TT>
 	 * then an <TT>SQLException will be thrown, however if an error occurs
 	 * retrieving the data for a column an error msg will be placed in that
 	 * element of the array, but no exception will be thrown. To see if an
 	 * error occured retrieving column data you can call
 	 * <TT>getColumnErrorInPreviousRow</TT> after the call to <TT>readRow()</TT>.
-	 * 
+	 *
 	 * @throws	SQLException	Error occured on <TT>ResultSet.next()</TT>.
 	 */
 	public Object[] readRow() throws SQLException
@@ -134,19 +140,19 @@ public class ResultSetReader
 	 * Read the next row from the <TT>ResultSet</TT> for use in the ContentTab.
 	 * This is different from readRow() in that data is put into the Object array
 	 * in a form controlled by the DataType objects, and may be used for editing
-	 * the data and updating the DB.  If no more rows then
+	 * the data and updating the DB. If no more rows then
 	 * <TT>null</TT> will be returned, otherwise an <TT>Object[]</TT> will be
 	 * returned where each element of the array is an object representing
 	 * the contents of the column. These objects could be of type <TT>String</TT>,
 	 * <TT>BigDecimal</TT> etc.
-	 * 
+	 *
 	 * <P>If an error occurs calling <TT>next()</TT> on the <TT>ResultSet</TT>
 	 * then an <TT>SQLException will be thrown, however if an error occurs
 	 * retrieving the data for a column an error msg will be placed in that
 	 * element of the array, but no exception will be thrown. To see if an
 	 * error occured retrieving column data you can call
 	 * <TT>getColumnErrorInPreviousRow</TT> after the call to <TT>readRow()</TT>.
-	 * 
+	 *
 	 * @throws	SQLException	Error occured on <TT>ResultSet.next()</TT>.
 	 */
 	public Object[] readRow(ColumnDisplayDefinition colDefs[]) throws SQLException
@@ -158,11 +164,10 @@ public class ResultSetReader
 		}
 		return null;
 	}
-	
-	
+
 	/**
 	 * Retrieve whether an error occured reading a column in the previous row.
-	 * 
+	 *
 	 * @return	<TT>true</TT> if error occured.
 	 */
 	public boolean getColumnErrorInPreviousRow()
@@ -189,7 +194,7 @@ public class ResultSetReader
 					case Types.NULL:
 						row[i] = null;
 						break;
-					
+
 					// TODO: When JDK1.4 is the earliest JDK supported
 					// by Squirrel then remove the hardcoding of the
 					// boolean data type.
@@ -356,7 +361,7 @@ public class ResultSetReader
 						}
 						else
 						{
-							row[i] = "<Blob>";
+							row[i] = s_stringMgr.getString("ResultSetReader.blob");
 						}
 						break;
 
@@ -385,7 +390,7 @@ public class ResultSetReader
 						}
 						else
 						{
-							row[i] = "<Clob>";
+							row[i] = s_stringMgr.getString("ResultSetReader.clob");
 						}
 						break;
 
@@ -401,7 +406,7 @@ public class ResultSetReader
 						}
 						else
 						{
-							row[i] = "<Other>";
+							row[i] = s_stringMgr.getString("ResultSetReader.other");
 						}
 						break;
 
@@ -412,7 +417,7 @@ public class ResultSetReader
 						}
 						else
 						{
-							row[i] = "<Unknown(" + columnType + ")>";
+							row[i] = s_stringMgr.getString("ResultSetReader.unknown", new Object[] {new Integer(columnType)});
 						}
 				}
 			}
@@ -428,7 +433,6 @@ public class ResultSetReader
 
 		return row;
 	}
-	
 
 	/**
 	 * Method used to read data for the ContentsTab, where
@@ -449,7 +453,7 @@ public class ResultSetReader
 					case Types.NULL:
 						row[i] = null;
 						break;
-					
+
 					// TODO: When JDK1.4 is the earliest JDK supported
 					// by Squirrel then remove the hardcoding of the
 					// boolean data type.
@@ -595,7 +599,7 @@ row[i] = CellComponentFactory.readResultSet(colDefs[i], _rs, idx);
 						}
 						else
 						{
-							row[i] = "<Blob>";
+							row[i] = s_stringMgr.getString("ResultSetReader.blob");
 						}
 						break;
 
@@ -624,7 +628,7 @@ row[i] = CellComponentFactory.readResultSet(colDefs[i], _rs, idx);
 						}
 						else
 						{
-							row[i] = "<Clob>";
+							row[i] = s_stringMgr.getString("ResultSetReader.clob");
 						}
 						break;
 
@@ -640,7 +644,7 @@ row[i] = CellComponentFactory.readResultSet(colDefs[i], _rs, idx);
 						}
 						else
 						{
-							row[i] = "<Other>";
+							row[i] = s_stringMgr.getString("ResultSetReader.other");
 						}
 						break;
 
@@ -651,7 +655,7 @@ row[i] = CellComponentFactory.readResultSet(colDefs[i], _rs, idx);
 						}
 						else
 						{
-							row[i] = "<Unknown(" + columnType + ")>";
+							row[i] = s_stringMgr.getString("ResultSetReader.unknown", new Object[] {new Integer(columnType)});
 						}
 				}
 			}

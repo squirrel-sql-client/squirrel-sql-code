@@ -33,11 +33,18 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class MetaDataDataSet implements IDataSet
 {
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(MetaDataDataSet.class);
+
 	private final static Map s_ignoreMethods = new HashMap();
-	static {
+	static
+	{
 		s_ignoreMethods.put("getCatalogs", null);
 		s_ignoreMethods.put("getConnection", null);
 		s_ignoreMethods.put("getSchemas", null);
@@ -53,16 +60,15 @@ public class MetaDataDataSet implements IDataSet
 		s_ignoreMethods.put("getSQLKeywords", null);
 	}
 
-	private interface i18n
+	private interface IStrings
 	{
-		String UNSUPPORTED = "<Unsupported>";
-		String NAME_COLUMN = "Property Name";
-		//String NULL = "<null>";
-		String VALUE_COLUMN = "Value";
+		String UNSUPPORTED = s_stringMgr.getString("MetaDataDataSet.unsupported");
+		String NAME_COLUMN = s_stringMgr.getString("MetaDataDataSet.propname");
+		String VALUE_COLUMN = s_stringMgr.getString("MetaDataDataSet.value");
 	}
 
 	private final static String[] s_hdgs =
-		new String[] { i18n.NAME_COLUMN, i18n.VALUE_COLUMN };
+		new String[] { IStrings.NAME_COLUMN, IStrings.VALUE_COLUMN };
 	private DataSetDefinition _dsDef;
 
 	private Iterator _rowsIter;
@@ -170,7 +176,7 @@ public class MetaDataDataSet implements IDataSet
 		{
 			try
 			{
-				line[1] = i18n.UNSUPPORTED;
+				line[1] = IStrings.UNSUPPORTED;
 				final int isol = md.getDefaultTransactionIsolation();
 				switch (isol)
 				{
@@ -215,7 +221,7 @@ public class MetaDataDataSet implements IDataSet
 		else
 		{
 			Object obj = executeGetter(md, getter);
-			line[1] = obj;// != null ? obj.toString() : i18n.NULL;
+			line[1] = obj;
 		}
 		return line;
 	}
@@ -228,7 +234,7 @@ public class MetaDataDataSet implements IDataSet
 		}
 		catch (Throwable th)
 		{
-			return i18n.UNSUPPORTED;
+			return IStrings.UNSUPPORTED;
 		}
 	}
 

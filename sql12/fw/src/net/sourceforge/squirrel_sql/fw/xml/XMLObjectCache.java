@@ -28,6 +28,8 @@ import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.util.IObjectCache;
 import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
 import net.sourceforge.squirrel_sql.fw.util.ObjectCache;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * This class is a cache of objects that can be read from/written to an XML
  * document. All objects stored must implement <CODE>IHasIdentifier</CODE>.<P>
@@ -38,6 +40,10 @@ import net.sourceforge.squirrel_sql.fw.util.ObjectCache;
  */
 public class XMLObjectCache implements IObjectCache
 {
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(XMLObjectCache.class);
+
 	/** Cache of stored objects. */
 	private ObjectCache _cache = new ObjectCache();
 
@@ -189,8 +195,7 @@ public class XMLObjectCache implements IObjectCache
 			final Object obj = it.next();
 			if (!(obj instanceof IHasIdentifier))
 			{
-				throw new XMLException("Trying to load object that doesn't implement IHasIdentifier");
-				//i18n
+				throw new XMLException(s_stringMgr.getString("XMLObjectCache.error.notimplemented"));
 			}
 			add((IHasIdentifier) obj);
 		}
@@ -243,8 +248,7 @@ public class XMLObjectCache implements IObjectCache
 			final Object obj = it.next();
 			if (!(obj instanceof IHasIdentifier))
 			{
-				throw new XMLException("Trying to load object that doesn't implement IHasIdentifier");
-				//i18n
+				throw new XMLException(s_stringMgr.getString("XMLObjectCache.error.notimplemented"));
 			}
 			try
 			{

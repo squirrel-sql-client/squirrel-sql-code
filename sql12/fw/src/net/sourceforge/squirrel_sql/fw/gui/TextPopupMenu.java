@@ -26,9 +26,15 @@ import javax.swing.JMenuItem;
 import javax.swing.text.JTextComponent;
 
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class TextPopupMenu extends BasePopupMenu
 {
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(TextPopupMenu.class);
+
 	public interface IOptionTypes
 	{
 		int CUT = 0;
@@ -118,7 +124,7 @@ public class TextPopupMenu extends BasePopupMenu
 	{
 		CutAction()
 		{
-			super("Cut");
+			super(s_stringMgr.getString("TextPopupMenu.cut"));
 		}
 
 		public void actionPerformed(ActionEvent evt)
@@ -134,7 +140,7 @@ public class TextPopupMenu extends BasePopupMenu
 	{
 		CopyAction()
 		{
-			super("Copy");
+			super(s_stringMgr.getString("TextPopupMenu.copy"));
 		}
 
 		public void actionPerformed(ActionEvent evt)
@@ -150,7 +156,7 @@ public class TextPopupMenu extends BasePopupMenu
 	{
 		PasteAction()
 		{
-			super("Paste");
+			super(s_stringMgr.getString("TextPopupMenu.paste"));
 		}
 
 		public void actionPerformed(ActionEvent evt)
@@ -166,7 +172,7 @@ public class TextPopupMenu extends BasePopupMenu
 	{
 		SelectAllAction()
 		{
-			super("Select All");
+			super(s_stringMgr.getString("TextPopupMenu.selectall"));
 		}
 
 		public void actionPerformed(ActionEvent evt)

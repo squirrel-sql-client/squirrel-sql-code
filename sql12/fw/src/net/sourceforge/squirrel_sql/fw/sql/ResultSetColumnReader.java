@@ -84,9 +84,9 @@ public class ResultSetColumnReader
 
 	/**
 	 * Position <TT>ResultSet</TT> to the next row.
-	 * 
+	 *
 	 * @return	<TT>true</TT> if there is a &quot;next row&quot; to read.
-	 * 
+	 *
 	 * @throws	SQLException	SQL error occured.
 	 */
 	public boolean next() throws SQLException
@@ -96,11 +96,11 @@ public class ResultSetColumnReader
 
 	/**
 	 * Retrieve the specifed column as a <TT>Boolean</TT>.
-	 * 
+	 *
 	 * @param	columnIdx	Column index (starts at 1) of the column to be read.
-	 * 
+	 *
 	 * @return	Boolean value of the specified column.
-	 * 
+	 *
 	 * @throws	SQLException	SQL error occured.
 	 */
 	public Boolean getBoolean(int columnIdx) throws SQLException
@@ -146,7 +146,7 @@ public class ResultSetColumnReader
 							}
 						}
 						break;
-		
+
 					default:
 						results = Boolean.valueOf(obj.toString());
 						break;
@@ -159,11 +159,11 @@ public class ResultSetColumnReader
 
 	/**
 	 * Retrieve the specifed column as a <TT>Date</TT>.
-	 * 
+	 *
 	 * @param	columnIdx	Column index (starts at 1) of the column to be read.
-	 * 
+	 *
 	 * @return	Time value of the specified column.
-	 * 
+	 *
 	 * @throws	SQLException	SQL error occured.
 	 */
 	public Date getDate(int columnIdx) throws SQLException
@@ -175,11 +175,11 @@ public class ResultSetColumnReader
 
 	/**
 	 * Retrieve the specifed column as a <TT>Double</TT>.
-	 * 
+	 *
 	 * @param	columnIdx	Column index (starts at 1) of the column to be read.
-	 * 
+	 *
 	 * @return	Double value of the specified column.
-	 * 
+	 *
 	 * @throws	SQLException	SQL error occured.
 	 */
 	public Double getDouble(int columnIdx) throws SQLException
@@ -212,7 +212,7 @@ public class ResultSetColumnReader
 							results = new Double(obj.toString());
 						}
 						break;
-		
+
 					default:
 						results = new Double(obj.toString());
 						break;
@@ -225,11 +225,11 @@ public class ResultSetColumnReader
 
 	/**
 	 * Retrieve the specifed column as a <TT>Long</TT>.
-	 * 
+	 *
 	 * @param	columnIdx	Column index (starts at 1) of the column to be read.
-	 * 
+	 *
 	 * @return	long value of the specified column.
-	 * 
+	 *
 	 * @throws	SQLException	SQL error occured.
 	 */
 	public Long getLong(int columnIdx) throws SQLException
@@ -263,7 +263,7 @@ public class ResultSetColumnReader
 							results = new Long(obj.toString());
 						}
 						break;
-		
+
 					default:
 						results = new Long(obj.toString());
 						break;
@@ -276,11 +276,11 @@ public class ResultSetColumnReader
 
 	/**
 	 * Retrieve the specifed column as an object.
-	 * 
+	 *
 	 * @param	columnIdx	Column index (starts at 1) of the column to be read.
-	 * 
+	 *
 	 * @return	Object value of the specified column.
-	 * 
+	 *
 	 * @throws	SQLException	SQL error occured.
 	 */
 	public Object getObject(int columnIdx) throws SQLException
@@ -292,11 +292,11 @@ public class ResultSetColumnReader
 
 	/**
 	 * Retrieve the specifed column as a string.
-	 * 
+	 *
 	 * @param	columnIdx	Column index (starts at 1) of the column to be read.
-	 * 
+	 *
 	 * @return	String value of the specified column.
-	 * 
+	 *
 	 * @throws	SQLException	SQL error occured.
 	 */
 	public String getString(int columnIdx) throws SQLException
@@ -308,11 +308,11 @@ public class ResultSetColumnReader
 
 	/**
 	 * Retrieve the specifed column as a <TT>Time</TT>.
-	 * 
+	 *
 	 * @param	columnIdx	Column index (starts at 1) of the column to be read.
-	 * 
+	 *
 	 * @return	Time value of the specified column.
-	 * 
+	 *
 	 * @throws	SQLException	SQL error occured.
 	 */
 	public Time getTime(int columnIdx) throws SQLException
@@ -324,11 +324,11 @@ public class ResultSetColumnReader
 
 	/**
 	 * Retrieve the specifed column as a <TT>TimeStamp</TT>.
-	 * 
+	 *
 	 * @param	columnIdx	Column index (starts at 1) of the column to be read.
-	 * 
+	 *
 	 * @return	TimeStamp value of the specified column.
-	 * 
+	 *
 	 * @throws	SQLException	SQL error occured.
 	 */
 	public Timestamp getTimeStamp(int columnIdx) throws SQLException

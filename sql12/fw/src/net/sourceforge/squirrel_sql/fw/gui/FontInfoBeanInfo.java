@@ -24,25 +24,47 @@ import java.beans.SimpleBeanInfo;
 /**
  * This is the <CODE>BeanInfo</CODE> class for <CODE>FontInfo</CODE>.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public final class FontInfoBeanInfo extends SimpleBeanInfo {
-
+public final class FontInfoBeanInfo extends SimpleBeanInfo
+{
 	private static PropertyDescriptor[] s_descriptors;
 
-	public FontInfoBeanInfo() throws IntrospectionException {
+	public FontInfoBeanInfo() throws IntrospectionException
+	{
 		super();
-		if (s_descriptors == null) {
+		if (s_descriptors == null)
+		{
 			s_descriptors = new PropertyDescriptor[4];
-			s_descriptors[0] = new PropertyDescriptor(FontInfo.IPropertyNames.FAMILY, FontInfo.class, "getFamily", "setFamily");
-			s_descriptors[1] = new PropertyDescriptor(FontInfo.IPropertyNames.IS_BOLD, FontInfo.class, "isBold", "setIsBold");
-			s_descriptors[2] = new PropertyDescriptor(FontInfo.IPropertyNames.IS_ITALIC, FontInfo.class, "isItalic", "setIsItalic");
-			s_descriptors[3] = new PropertyDescriptor(FontInfo.IPropertyNames.SIZE, FontInfo.class, "getSize", "setSize");
+			s_descriptors[0] =
+				new PropertyDescriptor(
+					FontInfo.IPropertyNames.FAMILY,
+					FontInfo.class,
+					"getFamily",
+					"setFamily");
+			s_descriptors[1] =
+				new PropertyDescriptor(
+					FontInfo.IPropertyNames.IS_BOLD,
+					FontInfo.class,
+					"isBold",
+					"setIsBold");
+			s_descriptors[2] =
+				new PropertyDescriptor(
+					FontInfo.IPropertyNames.IS_ITALIC,
+					FontInfo.class,
+					"isItalic",
+					"setIsItalic");
+			s_descriptors[3] =
+				new PropertyDescriptor(
+					FontInfo.IPropertyNames.SIZE,
+					FontInfo.class,
+					"getSize",
+					"setSize");
 		}
 	}
 
-	public PropertyDescriptor[] getPropertyDescriptors() {
+	public PropertyDescriptor[] getPropertyDescriptors()
+	{
 		return s_descriptors;
 	}
 }
-

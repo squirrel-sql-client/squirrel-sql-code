@@ -31,10 +31,16 @@ import javax.swing.table.TableColumn;
 
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverProperty;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 class DriverPropertiesTable extends JTable
 								implements DriverPropertiesTableModel.IColumnIndexes
 {
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(DriverPropertiesTable.class);
+
 	DriverPropertiesTable(SQLDriverPropertyCollection props)
 	{
 		super(new DriverPropertiesTableModel(props));
@@ -63,23 +69,23 @@ class DriverPropertiesTable extends JTable
 			super();
 
 			TableColumn tc = new TableColumn(IDX_NAME);
-			tc.setHeaderValue("Name");
+			tc.setHeaderValue(s_stringMgr.getString("DriverPropertiesTable.name"));
 			addColumn(tc);
 
 			tc = new TableColumn(IDX_SPECIFY);
-			tc.setHeaderValue("Specify");
+			tc.setHeaderValue(s_stringMgr.getString("DriverPropertiesTable.specify"));
 			addColumn(tc);
 
 			tc = new TableColumn(IDX_VALUE, 75, null, new ValueCellEditor());
-			tc.setHeaderValue("Value");
+			tc.setHeaderValue(s_stringMgr.getString("DriverPropertiesTable.value"));
 			addColumn(tc);
 
 			tc = new TableColumn(IDX_REQUIRED);
-			tc.setHeaderValue("Required");
+			tc.setHeaderValue(s_stringMgr.getString("DriverPropertiesTable.required"));
 			addColumn(tc);
 
 			tc = new TableColumn(IDX_DESCRIPTION);
-			tc.setHeaderValue("Description");
+			tc.setHeaderValue(s_stringMgr.getString("DriverPropertiesTable.description"));
 			addColumn(tc);
 		}
 	}
@@ -128,7 +134,7 @@ class DriverPropertiesTable extends JTable
 			}
 			return _currentEditor;
 		}
-    
+
 		public Object getCellEditorValue()
 		{
 			if (_currentEditor == _comboEditor)
@@ -139,4 +145,3 @@ class DriverPropertiesTable extends JTable
 		}
 	}
 }
-

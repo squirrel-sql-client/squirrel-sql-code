@@ -31,6 +31,8 @@ import javax.swing.event.ListSelectionListener;
 
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * This panel allows the user to review and maintain
  * the properties for a JDBC driver.
@@ -39,15 +41,13 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
  */
 public class DriverPropertiesPanel extends JPanel
 {
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(DriverPropertiesPanel.class);
+
 	private interface i18n
 	{
-		String INSTRUCTIONS = "For every driver property that you want to " +
-								"specify check the \"Specify\" checkbox " +
-								"and enter its value in the \"Value\" column. " +
-								"Normally you won't use the \"user\" and " +
-								"\"password\" properties as these will be setup " +
-								"from the \"user\" and \"password\" entered " +
-								"in the connection dialog.";
+		String INSTRUCTIONS = s_stringMgr.getString("DriverPropertiesPanel.instructions");
 	}
 
 	/** JTable containing the properties. */

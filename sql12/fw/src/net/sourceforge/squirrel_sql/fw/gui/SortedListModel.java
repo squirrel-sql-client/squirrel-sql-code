@@ -18,7 +18,6 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import javax.swing.DefaultListModel;
-
 /**
  * This class is a descendant of <CODE>DefaultListModel</CODE> that will
  * keep its data in a sorted order.

@@ -28,6 +28,8 @@ import javax.swing.Timer;
 import javax.swing.ToolTipManager;
 import javax.swing.border.Border;
 
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 /**
  * Memory panel. This will show the used/total memory in the heap.
@@ -38,6 +40,10 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
  */
 public class MemoryPanel extends JLabel
 {
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(MemoryPanel.class);
+
 	/** Timer that updates memory status. */
 	private Timer _timer;
 
@@ -86,14 +92,12 @@ public class MemoryPanel extends JLabel
 		final long totalMemory = rt.totalMemory();
 		final long freeMemory = rt.freeMemory();
 		final long usedMemory = totalMemory - freeMemory;
-		StringBuffer buf = new StringBuffer();
-		buf.append(Utilities.formatSize(usedMemory))
-			.append(" used from ")
-			.append(Utilities.formatSize(totalMemory))
-			.append(" total leaving ")
-			.append(Utilities.formatSize(freeMemory))
-			.append(" free");
-		return buf.toString();
+		final Object[] args = new Object[]
+		{
+			Utilities.formatSize(usedMemory), Utilities.formatSize(totalMemory),
+			Utilities.formatSize(freeMemory)
+		};
+		return s_stringMgr.getString("MemoryPanel.message", args);
 	}
 
 	/**

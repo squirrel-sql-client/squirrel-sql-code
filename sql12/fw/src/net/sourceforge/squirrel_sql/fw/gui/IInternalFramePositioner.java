@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,7 +19,12 @@ package net.sourceforge.squirrel_sql.fw.gui;
  */
 import javax.swing.JInternalFrame;
 
-public interface IInternalFramePositioner {
-
+public interface IInternalFramePositioner
+{
+	/**
+	 * Position the passed internal frame.
+	 *
+	 * @param	child	The internal frame to be positioned.
+	 */
 	void positionInternalFrame(JInternalFrame child);
 }

@@ -25,49 +25,66 @@ package net.sourceforge.squirrel_sql.fw.util;
  * This is the code called by a thread in the thead pool that
  * handles the executing of tasks.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
- * @author  <A HREF="mailto:jcompagner@j-com.nl">Johan Companger</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:jcompagner@j-com.nl">Johan Companger</A>
  */
-class TaskExecuter implements Runnable {
+class TaskExecuter implements Runnable
+{
 	private boolean _bStopThread = false;
 	private boolean _bStopExecution = false;
 	private ITaskThreadPoolCallback _callback;
 
-	TaskExecuter(ITaskThreadPoolCallback callback) throws IllegalArgumentException {
+	TaskExecuter(ITaskThreadPoolCallback callback)
+		throws IllegalArgumentException
+	{
 		super();
-		if (callback == null) {
+		if (callback == null)
+		{
 			throw new IllegalArgumentException("Null IGUIExecutionControllerCallback passed");
 		}
 		_callback = callback;
 	}
 
-	public void run() {
-		while (!_bStopThread) {
+	public void run()
+	{
+		while (!_bStopThread)
+		{
 			Runnable task = null;
-			synchronized (_callback) {
+			synchronized (_callback)
+			{
 				_callback.incrementFreeThreadCount();
-				while(!_bStopThread) {
+				while (!_bStopThread)
+				{
 					_bStopExecution = false;
 					task = _callback.nextTask();
-					if(task != null) {
+					if (task != null)
+					{
 						_callback.decrementFreeThreadCount();
 						break;
-					} else {
-						try {
+					}
+					else
+					{
+						try
+						{
 							_callback.wait();
-						} catch(InterruptedException ignore){
+						}
+						catch (InterruptedException ignore)
+						{
 						}
 					}
 				}
 			}
-			if(task != null) {
-				try {
+			if (task != null)
+			{
+				try
+				{
 					task.run();
-				} catch (Throwable th) {
+				}
+				catch (Throwable th)
+				{
 					_callback.showMessage(th);
 				}
 			}
 		}
 	}
 }
-

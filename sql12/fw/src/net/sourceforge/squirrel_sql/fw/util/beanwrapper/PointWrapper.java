@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.util.beanwrapper;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,9 +19,10 @@ package net.sourceforge.squirrel_sql.fw.util.beanwrapper;
  */
 import java.awt.Point;
 
-public class PointWrapper {
-
-	public interface IPropertyNames {
+public class PointWrapper
+{
+	public interface IPropertyNames
+	{
 		String X = "x";
 		String Y = "y";
 	}
@@ -29,37 +30,46 @@ public class PointWrapper {
 	private int _x;
 	private int _y;
 
-	public PointWrapper() {
+	public PointWrapper()
+	{
 		this(null);
 	}
 
-	public PointWrapper(Point pt) {
+	public PointWrapper(Point pt)
+	{
 		super();
 		setFrom(pt);
 	}
 
-	public int getX() {
+	public int getX()
+	{
 		return _x;
 	}
 
-	public void setX(int value) {
+	public void setX(int value)
+	{
 		_x = value;
 	}
 
-	public int getY() {
+	public int getY()
+	{
 		return _y;
 	}
 
-	public void setY(int value) {
+	public void setY(int value)
+	{
 		_y = value;
 	}
 
-	public Point createPoint() {
+	public Point createPoint()
+	{
 		return new Point(_x, _y);
 	}
 
-	public void setFrom(Point pt) {
-		if (pt != null) {
+	public void setFrom(Point pt)
+	{
+		if (pt != null)
+		{
 			_x = pt.x;
 			_y = pt.y;
 		}

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.id;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,36 +19,44 @@ package net.sourceforge.squirrel_sql.fw.id;
  */
 import java.rmi.server.UID;
 
-public class UidIdentifier implements IIdentifier {
-	public interface IPropertyNames {
+public class UidIdentifier implements IIdentifier
+{
+	public interface IPropertyNames
+	{
 		String STRING = "string";
 	}
 
 	private String _id;
 
-	public UidIdentifier() {
+	public UidIdentifier()
+	{
 		super();
 		_id = new UID().toString();
 	}
 
-	public boolean equals(Object rhs) {
+	public boolean equals(Object rhs)
+	{
 		boolean rc = false;
-		if (rhs != null && rhs.getClass().equals(getClass())) {
+		if (rhs != null && rhs.getClass().equals(getClass()))
+		{
 			rc = ((UidIdentifier)rhs).toString().equals(toString());
 		}
 		return rc;
 	}
 
-	public synchronized int hashCode() {
+	public synchronized int hashCode()
+	{
 		return toString().hashCode();
 	}
 
-	public String toString() {
+	public String toString()
+	{
 		return _id;
 	}
 
 	// Only for restoring from XML etc.
-	public void setString(String value) {
+	public void setString(String value)
+	{
 		_id = value;
 	}
 }

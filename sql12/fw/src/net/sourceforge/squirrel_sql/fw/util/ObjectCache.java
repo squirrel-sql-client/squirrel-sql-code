@@ -32,7 +32,7 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
  * This class is a cache of objects. All objects stored must implement
  * <CODE>IHasIdentifier</CODE>.<P>
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ObjectCache implements IObjectCache
 {
@@ -50,11 +50,11 @@ public class ObjectCache implements IObjectCache
 	/**
 	 * Retrieve a stored object.
 	 *
-	 * @param   objClass	The class of the object to be retrieved.
-	 * @param   id			The <CODE>IIdentifier</CODE> that identifies
+	 * @param	objClass	The class of the object to be retrieved.
+	 * @param	id			The <CODE>IIdentifier</CODE> that identifies
 	 *						the object to be retrieved.
 	 *
-	 * @return  The <CODE>IHasIdentifier</CODE> retrieved or <CODE>null</CODE>
+	 * @return	The <CODE>IHasIdentifier</CODE> retrieved or <CODE>null</CODE>
 	 *			if no object exists for <CODE>id</CODE>.
 	 */
 	public synchronized IHasIdentifier get(Class objClass, IIdentifier id)
@@ -65,9 +65,9 @@ public class ObjectCache implements IObjectCache
 	/**
 	 * Store an object.
 	 *
-	 * @param   obj	 Object to be stored.
+	 * @param	obj	 Object to be stored.
 	 *
-	 * @exception   DuplicateObjectException
+	 * @exception	DuplicateObjectException
 	 *			 	Thrown if an object of the same class as <CODE>obj</CODE>
 	 *				and with the same identifier is already in the cache.
 	 */
@@ -79,8 +79,8 @@ public class ObjectCache implements IObjectCache
 	/**
 	 * Remove an object.
 	 *
-	 * @param   objClass	Class of object to be removed.
-	 * @param   id			Identifier for object to be removed.
+	 * @param	objClass	Class of object to be removed.
+	 * @param	id			Identifier for object to be removed.
 	 */
 	public synchronized void remove(Class objClass, IIdentifier id)
 	{
@@ -90,10 +90,10 @@ public class ObjectCache implements IObjectCache
 	/**
 	 * Adds a listener for changes to the cache entry for the passed class.
 	 *
-	 * @param   lis			a IObjectCacheChangeListener that will be notified
+	 * @param	lis			a IObjectCacheChangeListener that will be notified
 	 *						when objects are added or removed from this cache
 	 *						entry.
-	 * @param   objClass	The class of objects whose cache we want to listen
+	 * @param	objClass	The class of objects whose cache we want to listen
 	 *						to.
 	 */
 	public void addChangesListener(IObjectCacheChangeListener lis, Class objClass)
@@ -104,10 +104,10 @@ public class ObjectCache implements IObjectCache
 	/**
 	 * Removes a listener for changes to the cache entry for the passed class.
 	 *
-	 * @param   lis			a IObjectCacheChangeListener that will be notified
+	 * @param	lis			a IObjectCacheChangeListener that will be notified
 	 *						when objects are added or removed from this cache
 	 *						entry.
-	 * @param   objClass	The class of objects whose cache we want to listen
+	 * @param	objClass	The class of objects whose cache we want to listen
 	 *						to.
 	 */
 	public void removeChangesListener(IObjectCacheChangeListener lis, Class objClass)
@@ -119,7 +119,7 @@ public class ObjectCache implements IObjectCache
 	 * Return an array of <CODE>Class</CODE objects that represent all the
 	 * different types of objects stored.
 	 *
-	 * @return  Class[] of all classes stored.
+	 * @return	Class[] of all classes stored.
 	 */
 	public synchronized Class[] getAllClasses()
 	{
@@ -140,9 +140,9 @@ public class ObjectCache implements IObjectCache
 	 * Return an <CODE>Iterator</CODE> of all objects stored for the
 	 * passed class.
 	 *
-	 * @param   objClass	Class to return objects for.
+	 * @param	objClass	Class to return objects for.
 	 *
-	 * @return  <CODE>Iterator</CODE> over all objects.
+	 * @return	<CODE>Iterator</CODE> over all objects.
 	 */
 	public synchronized Iterator getAllForClass(Class objClass)
 	{
@@ -153,9 +153,9 @@ public class ObjectCache implements IObjectCache
 	 * Return a <CODE>CacheEntry</CODE> for the passed class. If one doesn't
 	 * exist then create it and add to <CODE>_entries</CODE>.
 	 *
-	 * @param   objClass	Class to return <CODE>CacheEntry</CODE> for.
+	 * @param	objClass	Class to return <CODE>CacheEntry</CODE> for.
 	 *
-	 * @return  <CODE>CacheEntry</CODE> which stores objects of type
+	 * @return	<CODE>CacheEntry</CODE> which stores objects of type
 	 *			<CODE>objClass</CODE>.
 	 */
 	private CacheEntry getCacheEntry(Class objClass)

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.persist;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,9 +19,10 @@ package net.sourceforge.squirrel_sql.fw.persist;
  */
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 
-public class ValidationException extends BaseException {
-
-	public ValidationException(String msg) {
+public class ValidationException extends BaseException
+{
+	public ValidationException(String msg)
+	{
 		super(msg);
 	}
 }

@@ -25,6 +25,8 @@ import java.util.List;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
 /**
  * This represents a JDBC driver.
@@ -34,15 +36,15 @@ import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
  */
 public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface SQLDriverI18n
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(SQLDriver.class);
+
+	private interface IStrings
 	{
-		String ERR_BLANK_NAME = "Name cannot be blank.";
-		String ERR_BLANK_DRIVER = "JDBC Driver Class Name cannot be blank.";
-		String ERR_BLANK_URL = "JDBC URL cannot be blank.";
+		String ERR_BLANK_NAME = s_stringMgr.getString("SQLDriver.error.blankname");
+		String ERR_BLANK_DRIVER = s_stringMgr.getString("SQLDriver.error.blankdriver");
+		String ERR_BLANK_URL = s_stringMgr.getString("SQLDriver.error.blankurl");
 	}
 
 	/** The <CODE>IIdentifier</CODE> that uniquely identifies this object. */
@@ -210,7 +212,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 		String data = getString(driverClassName);
 		if (data.length() == 0)
 		{
-			throw new ValidationException(SQLDriverI18n.ERR_BLANK_DRIVER);
+			throw new ValidationException(IStrings.ERR_BLANK_DRIVER);
 		}
 		if (_driverClassName != data)
 		{
@@ -286,7 +288,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 		String data = getString(url);
 		if (data.length() == 0)
 		{
-			throw new ValidationException(SQLDriverI18n.ERR_BLANK_URL);
+			throw new ValidationException(IStrings.ERR_BLANK_URL);
 		}
 		if (_url != data)
 		{
@@ -309,7 +311,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 		String data = getString(name);
 		if (data.length() == 0)
 		{
-			throw new ValidationException(SQLDriverI18n.ERR_BLANK_NAME);
+			throw new ValidationException(IStrings.ERR_BLANK_NAME);
 		}
 		if (_name != data)
 		{

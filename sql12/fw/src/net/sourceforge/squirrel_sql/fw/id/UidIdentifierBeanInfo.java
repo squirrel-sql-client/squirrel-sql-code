@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.id;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -20,26 +20,32 @@ package net.sourceforge.squirrel_sql.fw.id;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.beans.SimpleBeanInfo;
-
 /**
  * This is the <CODE>BeanInfo</CODE> class for <CODE>UidIdentifier</CODE>.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class UidIdentifierBeanInfo extends SimpleBeanInfo {
-
+public class UidIdentifierBeanInfo extends SimpleBeanInfo
+{
 	private static PropertyDescriptor[] s_dscrs;
 
-	public UidIdentifierBeanInfo() throws IntrospectionException {
+	public UidIdentifierBeanInfo() throws IntrospectionException
+	{
 		super();
-		if (s_dscrs == null) {
+		if (s_dscrs == null)
+		{
 			s_dscrs = new PropertyDescriptor[1];
-			s_dscrs[0] = new PropertyDescriptor(UidIdentifier.IPropertyNames.STRING, UidIdentifier.class, "toString", "setString");
+			s_dscrs[0] =
+				new PropertyDescriptor(
+					UidIdentifier.IPropertyNames.STRING,
+					UidIdentifier.class,
+					"toString",
+					"setString");
 		}
 	}
 
-	public PropertyDescriptor[] getPropertyDescriptors() {
+	public PropertyDescriptor[] getPropertyDescriptors()
+	{
 		return s_dscrs;
 	}
 }
-

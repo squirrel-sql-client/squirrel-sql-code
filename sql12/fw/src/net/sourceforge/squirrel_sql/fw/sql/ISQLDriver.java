@@ -85,7 +85,7 @@ public interface ISQLDriver extends IHasIdentifier, Comparable
 
 	String[] getJarFileNames();
 	void setJarFileNames(String[] values);
-	
+
 	String getUrl();
 
 	void setUrl(String url) throws ValidationException;

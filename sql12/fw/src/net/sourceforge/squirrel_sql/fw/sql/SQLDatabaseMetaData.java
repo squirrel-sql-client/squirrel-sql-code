@@ -34,6 +34,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
@@ -55,6 +57,10 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class SQLDatabaseMetaData
 {
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(SQLDatabaseMetaData.class);
+
 	/** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(SQLDatabaseMetaData.class);
@@ -212,7 +218,7 @@ public class SQLDatabaseMetaData
 			}
 			catch (Throwable th)
 			{
-				throw new SQLException("Unsupported");
+				throw new SQLException(s_stringMgr.getString("SQLDatabaseMetaData.unsupported"));
 			}
 		}
 		return value.intValue();

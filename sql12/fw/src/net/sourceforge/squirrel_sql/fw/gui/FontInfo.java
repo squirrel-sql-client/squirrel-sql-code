@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,9 +19,10 @@ package net.sourceforge.squirrel_sql.fw.gui;
  */
 import java.awt.Font;
 
-public class FontInfo implements Cloneable {
-
-	public interface IPropertyNames {
+public class FontInfo implements Cloneable
+{
+	public interface IPropertyNames
+	{
 		String FAMILY = "family";
 		String IS_BOLD = "isBold";
 		String IS_ITALIC = "isItalic";
@@ -35,15 +36,18 @@ public class FontInfo implements Cloneable {
 	private boolean _isItalic;
 	private int _size;
 
-	public FontInfo() {
+	public FontInfo()
+	{
 		super();
 		setFamily(DEFAULT_FAMILY);
 		setSize(12);
 	}
 
-	public FontInfo(Font font) {
+	public FontInfo(Font font)
+	{
 		super();
-		if (font == null) {
+		if (font == null)
+		{
 			throw new IllegalArgumentException("Null Font passed");
 		}
 		setFont(font);
@@ -52,93 +56,119 @@ public class FontInfo implements Cloneable {
 	/**
 	 * Return a copy of this object.
 	 */
-	public Object clone() {
-		try {
+	public Object clone()
+	{
+		try
+		{
 			return super.clone();
-		} catch(CloneNotSupportedException ex) {
-			throw new InternalError(ex.getMessage());   // Impossible.
+		}
+		catch (CloneNotSupportedException ex)
+		{
+			throw new InternalError(ex.getMessage()); // Impossible.
 		}
 	}
 
-	public String getFamily() {
+	public String getFamily()
+	{
 		return _familyName;
 	}
 
-	public void setFamily(String value) {
+	public void setFamily(String value)
+	{
 		_familyName = value != null ? value : DEFAULT_FAMILY;
 	}
 
-	public boolean isBold() {
+	public boolean isBold()
+	{
 		return _isBold;
 	}
 
-	public void setIsBold(boolean value) {
+	public void setIsBold(boolean value)
+	{
 		_isBold = value;
 	}
 
-	public boolean isItalic() {
+	public boolean isItalic()
+	{
 		return _isItalic;
 	}
 
-	public void setIsItalic(boolean value) {
+	public void setIsItalic(boolean value)
+	{
 		_isItalic = value;
 	}
 
-	public int getSize() {
+	public int getSize()
+	{
 		return _size;
 	}
 
-	public void setSize(int value) {
+	public void setSize(int value)
+	{
 		_size = value;
 	}
 
-	public void setFont(Font font) throws IllegalArgumentException {
-		if (font == null) {
+	public void setFont(Font font) throws IllegalArgumentException
+	{
+		if (font == null)
+		{
 			throw new IllegalArgumentException("Null Font passed");
 		}
 		_familyName = font.getFamily();
 		_isBold = font.isBold();
-		_isItalic= font.isItalic();
+		_isItalic = font.isItalic();
 		_size = font.getSize();
 	}
 
-	public boolean doesFontMatch(Font font) {
-		if (font == null) {
+	public boolean doesFontMatch(Font font)
+	{
+		if (font == null)
+		{
 			return false;
 		}
-		return font.getFamily().equals(_familyName) && font.getSize() == getSize()
-				&& font.getStyle() == generateStyle();
+		return font.getFamily().equals(_familyName)
+			&& font.getSize() == getSize()
+			&& font.getStyle() == generateStyle();
 	}
 
-	public int generateStyle() {
+	public int generateStyle()
+	{
 		int style = 0;
-		if (!_isBold && !_isItalic) {
+		if (!_isBold && !_isItalic)
+		{
 			style = Font.PLAIN;
-		} else {
-			if (_isBold) {
+		}
+		else
+		{
+			if (_isBold)
+			{
 				style |= Font.BOLD;
 			}
-			if (_isItalic) {
+			if (_isItalic)
+			{
 				style |= Font.ITALIC;
 			}
 		}
 		return style;
 	}
 
-	public Font createFont() {
+	public Font createFont()
+	{
 		return new Font(_familyName, generateStyle(), _size);
 	}
 
-	public String toString() {
+	public String toString()
+	{
 		StringBuffer buf = new StringBuffer();
 		buf.append(_familyName).append(", " + _size);
-		if (_isBold) {
+		if (_isBold)
+		{
 			buf.append(", bold");
 		}
-		if (_isItalic) {
+		if (_isItalic)
+		{
 			buf.append(", italic");
 		}
 		return buf.toString();
 	}
 }
-
