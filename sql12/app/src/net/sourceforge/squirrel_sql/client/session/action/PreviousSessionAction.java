@@ -19,10 +19,6 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import java.awt.event.ActionEvent;
 
-import javax.swing.JInternalFrame;
-
-import net.sourceforge.squirrel_sql.fw.gui.action.SelectInternalFrameCommand;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -49,24 +45,6 @@ public class PreviousSessionAction extends SquirrelAction
 
 	public void actionPerformed(ActionEvent evt)
 	{
-		final IApplication app = getApplication();
-		ISession nextSession = null;
-		if (_session == null)
-		{
-			final ISession[] sessions = app.getSessionManager().getConnectedSessions();
-			if (sessions != null && sessions.length > 0)
-			{
-				nextSession = sessions[0]; // First session.
-			}
-		}
-		else
-		{
-			nextSession = app.getSessionManager().getNextSession(_session);
-		}
-		if (nextSession != null)
-		{
-			final JInternalFrame sif = app.getWindowManager().getMainInternalFrame(nextSession);
-			new SelectInternalFrameCommand(sif).execute();
-		}
+		getApplication().getWindowManager().activatePreviousSession();
 	}
 }
