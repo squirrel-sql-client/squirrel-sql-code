@@ -31,6 +31,7 @@ import java.util.Map;
 import javax.swing.Action;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
@@ -111,8 +112,6 @@ public class ObjectTree extends JTree
 
 		setShowsRootHandles(true);
 		setModel(_model);
-
-//		refresh();
 
 		// Add actions to the popup menu.
 		ActionCollection actions = session.getApplication().getActionCollection();

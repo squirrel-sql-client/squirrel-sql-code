@@ -475,6 +475,7 @@ public class ObjectTreePanel extends JPanel
 //		setSelectedObjectPanel(_emptyTabPane);
 		_tree.addTreeSelectionListener(new ObjectTreeSelectionListener());
 
+		setSelectedObjectPanel(_emptyTabPane);
 		_splitPane.setDividerLocation(200);
 	}
 
