@@ -207,11 +207,13 @@ public class LAFRegister implements LAFConstants {
                 Class lafClass = lafClasses[i];
                 try {
                     LookAndFeel laf = (LookAndFeel) lafClass.newInstance();
-                    LookAndFeelInfo info = new LookAndFeelInfo(laf.getName(), lafClass.getName());
-                    UIManager.installLookAndFeel(info);
-                    lafNames.add(lafClass.getName());
-                    if (lafClass.getName().equals(this.SKINNABLE_LAF_CLASS_NAME)) {
-                        _skinLookAndFeelName = laf.getName();
+                    if (laf.isSupportedLookAndFeel()) {
+	                    LookAndFeelInfo info = new LookAndFeelInfo(laf.getName(), lafClass.getName());
+	                    UIManager.installLookAndFeel(info);
+	                    lafNames.add(lafClass.getName());
+	                    if (lafClass.getName().equals(this.SKINNABLE_LAF_CLASS_NAME)) {
+	                        _skinLookAndFeelName = laf.getName();
+	                    }
                     }
                 } catch (Throwable th) {
                     log.showMessage(
