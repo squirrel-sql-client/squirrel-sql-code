@@ -122,62 +122,58 @@ public class ObjectTreePanel extends JPanel
 //		registerDetailTab(new DatabaseObjectInfoTab());
 
 		// Register tabs to display in the details panel for database nodes.
-		final ObjectTreeNodeType db = ObjectTreeNodeType.get(DatabaseObjectType.DATABASE);
-		registerDetailTab(db, new MetaDataTab());
-		registerDetailTab(db, new TableTypesTab());
-		registerDetailTab(db, new DataTypesTab());
-		registerDetailTab(db, new NumericFunctionsTab());
-		registerDetailTab(db, new StringFunctionsTab());
-		registerDetailTab(db, new SystemFunctionsTab());
-		registerDetailTab(db, new DateTimeFunctionsTab());
-		registerDetailTab(db, new KeywordsTab());
+		registerDetailTab(DatabaseObjectType.DATABASE, new MetaDataTab());
+		registerDetailTab(DatabaseObjectType.DATABASE, new TableTypesTab());
+		registerDetailTab(DatabaseObjectType.DATABASE, new DataTypesTab());
+		registerDetailTab(DatabaseObjectType.DATABASE, new NumericFunctionsTab());
+		registerDetailTab(DatabaseObjectType.DATABASE, new StringFunctionsTab());
+		registerDetailTab(DatabaseObjectType.DATABASE, new SystemFunctionsTab());
+		registerDetailTab(DatabaseObjectType.DATABASE, new DateTimeFunctionsTab());
+		registerDetailTab(DatabaseObjectType.DATABASE, new KeywordsTab());
 
 		// Register tabs to display in the details panel for table nodes.
-		final ObjectTreeNodeType tbl = ObjectTreeNodeType.get(DatabaseObjectType.TABLE);
-		registerDetailTab(tbl, new TableInfoTab());
-		registerDetailTab(tbl, new ContentsTab());
-		registerDetailTab(tbl, new ColumnsTab());
-		registerDetailTab(tbl, new PrimaryKeyTab());
-		registerDetailTab(tbl, new ExportedKeysTab());
-		registerDetailTab(tbl, new ImportedKeysTab());
-		registerDetailTab(tbl, new IndexesTab());
-		registerDetailTab(tbl, new TablePriviligesTab());
-		registerDetailTab(tbl, new ColumnPriviligesTab());
-		registerDetailTab(tbl, new RowIDTab());
-		registerDetailTab(tbl, new VersionColumnsTab());
+		registerDetailTab(DatabaseObjectType.TABLE, new TableInfoTab());
+		registerDetailTab(DatabaseObjectType.TABLE, new ContentsTab());
+		registerDetailTab(DatabaseObjectType.TABLE, new ColumnsTab());
+		registerDetailTab(DatabaseObjectType.TABLE, new PrimaryKeyTab());
+		registerDetailTab(DatabaseObjectType.TABLE, new ExportedKeysTab());
+		registerDetailTab(DatabaseObjectType.TABLE, new ImportedKeysTab());
+		registerDetailTab(DatabaseObjectType.TABLE, new IndexesTab());
+		registerDetailTab(DatabaseObjectType.TABLE, new TablePriviligesTab());
+		registerDetailTab(DatabaseObjectType.TABLE, new ColumnPriviligesTab());
+		registerDetailTab(DatabaseObjectType.TABLE, new RowIDTab());
+		registerDetailTab(DatabaseObjectType.TABLE, new VersionColumnsTab());
 
 		// Register tabs to display in the details panel for procedure nodes.
-		final ObjectTreeNodeType proc = ObjectTreeNodeType.get(DatabaseObjectType.PROCEDURE);
-		registerDetailTab(proc, new ProcedureInfoTab());
-		registerDetailTab(proc, new ProcedureColumnsTab());
+		registerDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureInfoTab());
+		registerDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureColumnsTab());
 
 		// Register tabs to display in the details panel for UDT nodes.
 		// TODO: get rid of this once all nodes have a DatabaseObjectInfoTab tab.
-		final ObjectTreeNodeType udt = ObjectTreeNodeType.get(DatabaseObjectType.UDT);
-		registerDetailTab(udt, new DatabaseObjectInfoTab());
+		registerDetailTab(DatabaseObjectType.UDT, new DatabaseObjectInfoTab());
 	}
 
 	/**
-	 * Register an expander for the specified object tree node type.
+	 * Register an expander for the specified database object type.
 	 * 
-	 * @param	nodeType	Object Tree node type.
+	 * @param	dboType		Database object type.
 	 * @param	expander	Expander called to add children to a parent node.
 	 * 
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>ObjectTreeNodeType</TT>
+	 * 			Thrown if a <TT>null</TT> <TT>DatabaseObjectType</TT>
 	 * 			or <TT>INodeExpander</TT> passed.
 	 */
-	public void registerExpander(ObjectTreeNodeType nodeType, INodeExpander expander)
+	public void registerExpander(DatabaseObjectType dboType, INodeExpander expander)
 	{
-		if (nodeType == null)
+		if (dboType == null)
 		{
-			throw new IllegalArgumentException("Null ObjectTreeNodeType passed");
+			throw new IllegalArgumentException("Null DatabaseObjectType passed");
 		}
 		if (expander == null)
 		{
 			throw new IllegalArgumentException("Null INodeExpander passed");
 		}
-		_tree.getTypedModel().registerExpander(nodeType, expander);
+		_tree.getTypedModel().registerExpander(dboType, expander);
 	}
 
 	/**
@@ -207,27 +203,27 @@ public class ObjectTreePanel extends JPanel
 
 	/**
 	 * Register a tab to be displayed in the detail panel for the passed
-	 * object tree node type.
+	 * database object type type.
 	 * 
-	 * @param	nodeType	Node type.
+	 * @param	dboType		Database Object type.
 	 * @param	tab			Tab to be displayed.
 	 * 
 	 * @throws	IllegalArgumentException
-	 * 			Thrown when a <TT>null</TT> <TT>ObjectTreeNodeType</TT> or
+	 * 			Thrown when a <TT>null</TT> <TT>DatabaseObjectType</TT> or
 	 * 			<TT>IObjectPanelTab</TT> passed.
 	 */
-	public void registerDetailTab(ObjectTreeNodeType nodeType, IObjectPanelTab tab)
+	public void registerDetailTab(DatabaseObjectType dboType, IObjectPanelTab tab)
 	{
-		if (nodeType == null)
+		if (dboType == null)
 		{
-			throw new IllegalArgumentException("Null ObjectTreeNodeType passed");
+			throw new IllegalArgumentException("Null DatabaseObjectType passed");
 		}
 		if (tab == null)
 		{
 			throw new IllegalArgumentException("IObjectPanelTab == null");
 		}
 		
-		getOrCreateObjectPanelTabbedPane(nodeType).addObjectPaneltab(tab);
+		getOrCreateObjectPanelTabbedPane(dboType).addObjectPaneltab(tab);
 	}
 
 	/**
@@ -266,26 +262,26 @@ public class ObjectTreePanel extends JPanel
 	}
 
 	/**
-	 * Add an item to the popup menu for the specified node type in the object
-	 * tree.
+	 * Add an item to the popup menu for the specified database object type
+	 * in the object tree.
 	 * 
-	 * @param	nodeType	Object Tree node type.
+	 * @param	dboType		Database Object type.
 	 * 
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</passed> <TT>ObjectTreeNodeType</TT>
+	 * 			Thrown if a <TT>null</passed> <TT>DatabaseObjectType</TT>
 	 * 			or <TT>Action</TT> passed.
 	 */
-	public void addToObjectTreePopup(ObjectTreeNodeType nodeType, Action action)
+	public void addToObjectTreePopup(DatabaseObjectType dboType, Action action)
 	{
-		if (nodeType == null)
+		if (dboType == null)
 		{
-			throw new IllegalArgumentException("Null ObjectTreeNodeType passed");
+			throw new IllegalArgumentException("Null DatabaseObjectType passed");
 		}
 		if (action == null)
 		{
 			throw new IllegalArgumentException("Null Action passed");
 		}
-		_tree.addToPopup(nodeType, action);
+		_tree.addToPopup(dboType, action);
 	}
 
 	/**
@@ -417,7 +413,7 @@ public class ObjectTreePanel extends JPanel
 			throw new IllegalArgumentException("ObjectTreeNode == null");
 		}
 
-		ObjectTreeTabbedPane tabPane = getObjectPanelTabbedPane(node.getNodeType());
+		ObjectTreeTabbedPane tabPane = getTabbedPane(node.getDatabaseObjectType());
 		if (tabPane != null)
 		{
 			return tabPane;
@@ -429,35 +425,35 @@ public class ObjectTreePanel extends JPanel
 	/**
 	 * Return the tabbed pane for the passed object tree node type.
 	 * 
-	 * @param	nodeType	The object tree node type we are getting a tabbed
+	 * @param	dboType		The database object type we are getting a tabbed
 	 *						pane for.
 	 * 
-	 * @return	the <TT>ObjectTreeTabbedPane</TT> for the passed object
-	 *			tree node type.
+	 * @return		the <TT>ObjectTreeTabbedPane</TT> for the passed database object
+	 *				type.
 	 */
-	private ObjectTreeTabbedPane getObjectPanelTabbedPane(ObjectTreeNodeType nodeType)
+	private ObjectTreeTabbedPane getTabbedPane(DatabaseObjectType dboType)
 	{
-		return (ObjectTreeTabbedPane)_tabbedPanes.get(nodeType.getIdentifier());
+		return (ObjectTreeTabbedPane)_tabbedPanes.get(dboType.getIdentifier());
 	}
 
 	/**
-	 * Return the tabbed pane for the passed object tree node type. If one
+	 * Return the tabbed pane for the passed database object type. If one
 	 * doesn't exist then create it.
 	 * 
-	 * @param	nodeType	The object tree node type we are getting a tabbed
+	 * @param	dboType		The database object type we are getting a tabbed
 	 *						pane for.
 	 * 
 	 * @return	the <TT>List</TT> containing all the <TT>IObjectPanelTab</TT>
 	 * 			instances for the passed object tree node type.
 	 */
-	private ObjectTreeTabbedPane getOrCreateObjectPanelTabbedPane(ObjectTreeNodeType nodeType)
+	private ObjectTreeTabbedPane getOrCreateObjectPanelTabbedPane(DatabaseObjectType dboType)
 	{
-		if (nodeType == null)
+		if (dboType == null)
 		{
-			throw new IllegalArgumentException("Null ObjectTreeNodeType passed");
+			throw new IllegalArgumentException("Null DatabaseObjectType passed");
 		}
 
-		final IIdentifier key = nodeType.getIdentifier();
+		final IIdentifier key = dboType.getIdentifier();
 		ObjectTreeTabbedPane tabPane = (ObjectTreeTabbedPane)_tabbedPanes.get(key);
 		if (tabPane == null)
 		{

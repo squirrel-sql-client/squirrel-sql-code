@@ -22,6 +22,7 @@ import java.util.List;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -33,7 +34,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 public class ObjectTreeNode extends DefaultMutableTreeNode
 {
 	/** Node type */
-	private ObjectTreeNodeType _nodeType;
+//	private ObjectTreeNodeType _nodeType;
 
 	/** Current session. */
 	private final ISession _session;
@@ -71,7 +72,7 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 		_session = session;
 		_dboInfo = dboInfo;
 		
-		_nodeType = ObjectTreeNodeType.get(dboInfo.getDatabaseObjectType());
+//		_nodeType = ObjectTreeNodeType.get(dboInfo.getDatabaseObjectType());
 	}
 
 	/**
@@ -94,13 +95,13 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 	}
 
 	/**
-	 * Get the type of this node. @see ObjectTreeNodeType.
+	 * Convenience method to get the database object type for this node.
 	 * 
-	 * @return	the type of this node.
+	 * @return	the database object type of this node.
 	 */
-	public ObjectTreeNodeType getNodeType()
+	public DatabaseObjectType getDatabaseObjectType()
 	{
-		return _nodeType;
+		return _dboInfo.getDatabaseObjectType();
 	}
 
 	/**
@@ -111,14 +112,14 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if null ObjectTreeNodeType passed.
 	 */
-	public void setNodeType(ObjectTreeNodeType value)
-	{
-		if (value == null)
-		{
-			throw new IllegalArgumentException("ObjectTreeNodeType == null");
-		}
-		_nodeType = value;
-	}
+//	public void setNodeType(ObjectTreeNodeType value)
+//	{
+//		if (value == null)
+//		{
+//			throw new IllegalArgumentException("ObjectTreeNodeType == null");
+//		}
+//		_nodeType = value;
+//	}
 
 	/**
 	 * Returns <TT>true</TT> if this node can have children.

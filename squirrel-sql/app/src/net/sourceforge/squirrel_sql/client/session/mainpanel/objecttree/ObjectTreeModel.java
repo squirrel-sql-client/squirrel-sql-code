@@ -77,60 +77,57 @@ public class ObjectTreeModel extends DefaultTreeModel
 		_session = session;
 
 		// Standard expanders.
-		final IObjectTreeAPI api = session.getObjectTreeAPI(session.getApplication().getDummyAppPlugin());
-		final DatabaseObjectType tableGroupType = api.getTableGroupDatabaseObjectType();
-		final DatabaseObjectType procGroupType = api.getProcedureGroupType();
-		final DatabaseObjectType udtGroupType = api.getUDTGroupType();
 		final INodeExpander expander = new DatabaseExpander(session);
-		registerExpander(ObjectTreeNodeType.get(DatabaseObjectType.DATABASE), expander);
-		registerExpander(ObjectTreeNodeType.get(DatabaseObjectType.CATALOG), expander);
-		registerExpander(ObjectTreeNodeType.get(DatabaseObjectType.SCHEMA), expander);
-		registerExpander(ObjectTreeNodeType.get(tableGroupType), new TableTypeExpander());
-		registerExpander(ObjectTreeNodeType.get(udtGroupType), new UDTTypeExpander());
-		registerExpander(ObjectTreeNodeType.get(procGroupType), new ProcedureTypeExpander());
+		registerExpander(DatabaseObjectType.DATABASE, expander);
+		registerExpander(DatabaseObjectType.CATALOG, expander);
+		registerExpander(DatabaseObjectType.SCHEMA, expander);
+		registerExpander(IObjectTreeAPI.TABLE_TYPE_DBO, new TableTypeExpander());
+		registerExpander(IObjectTreeAPI.PROC_TYPE_DBO, new ProcedureTypeExpander());
+		registerExpander(IObjectTreeAPI.UDT_TYPE_DBO, new UDTTypeExpander());
 	}
 
 	/**
 	 * Register an expander for the specified database object type in the
 	 * object tree.
 	 * 
-	 * @param	nodeType	Database object type.
-	 *						@see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode.IObjectTreeNodeType
+	 * @param	dboType		Database object type.
 	 * @param	expander	Expander called to add children to a parent node.
 	 * 
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>INodeExpander</TT> or
 	 * 			<TT>ObjectTreeNodeType</TT> passed.
 	 */
-	public synchronized void registerExpander(ObjectTreeNodeType nodeType,
+	public synchronized void registerExpander(DatabaseObjectType dboType,
 												INodeExpander expander)
 	{
+		if (dboType == null)
+		{
+			throw new IllegalArgumentException("Null DatabaseObjectType passed");
+		}
 		if (expander == null)
 		{
 			throw new IllegalArgumentException("Null INodeExpander passed");
 		}
-		if (nodeType == null)
-		{
-			throw new IllegalArgumentException("Null ObjectTreeNodeType passed");
-		}
-		getExpandersList(nodeType).add(expander);
+		getExpandersList(dboType).add(expander);
 	}
 
 	/**
-	 * Return an array of the node expanders for the passed node type.
+	 * Return an array of the node expanders for the passed database object type.
 	 * 
+	 * @param	dboType		Database object type.
+
 	 * @return	an array of the node expanders for the passed database object type.
 	 * 
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if null ObjectTreeNodeType passed.
 	 */
-	public synchronized INodeExpander[] getExpanders(ObjectTreeNodeType nodeType)
+	public synchronized INodeExpander[] getExpanders(DatabaseObjectType dboType)
 	{
-		if (nodeType == null)
+		if (dboType == null)
 		{
-			throw new IllegalArgumentException("Null ObjectTreeNodeType passed");
+			throw new IllegalArgumentException("Null DatabaseObjectType passed");
 		}
-		List list = getExpandersList(nodeType);
+		List list = getExpandersList(dboType);
 		return (INodeExpander[])list.toArray(new INodeExpander[list.size()]);
 	}
 
@@ -147,14 +144,16 @@ public class ObjectTreeModel extends DefaultTreeModel
 	/**
 	 * Get the collection of expanders for the passed node type. If one
 	 * doesn't exist then create an empty one.
+	 * 
+	 * @param	dboType		Database object type.
 	 */
-	private List getExpandersList(ObjectTreeNodeType nodeType)
+	private List getExpandersList(DatabaseObjectType dboType)
 	{
-		if (nodeType == null)
+		if (dboType == null)
 		{
-			throw new IllegalArgumentException("Null ObjectTreeNodeType passed");
+			throw new IllegalArgumentException("Null DatabaseObjectType passed");
 		}
-		IIdentifier key = nodeType.getIdentifier();
+		IIdentifier key = dboType.getIdentifier();
 		List list = (List)_expanders.get(key);
 		if (list == null)
 		{

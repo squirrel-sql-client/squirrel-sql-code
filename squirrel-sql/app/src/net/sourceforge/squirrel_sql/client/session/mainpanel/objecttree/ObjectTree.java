@@ -122,7 +122,7 @@ class ObjectTree extends JTree
 
 		// Add actions to the popup menu.
 		ActionCollection actions = session.getApplication().getActionCollection();
-		addToPopup(ObjectTreeNodeType.get(DatabaseObjectType.TABLE), actions.get(DropSelectedTablesAction.class));
+		addToPopup(DatabaseObjectType.TABLE, actions.get(DropSelectedTablesAction.class));
 
 		// Global menu.
 		addToPopup(actions.get(RefreshObjectTreeAction.class));
@@ -290,8 +290,8 @@ class ObjectTree extends JTree
 		{
 			// Add together the standard expanders for this node type and any
 			// individual expanders that there are for the node and process them.
-			final ObjectTreeNodeType nodeType = node.getNodeType();
-			INodeExpander[] stdExpanders = _model.getExpanders(nodeType);
+			final DatabaseObjectType dboType = node.getDatabaseObjectType();
+			INodeExpander[] stdExpanders = _model.getExpanders(dboType);
 			INodeExpander[] extraExpanders = node.getExpanders();
 			if (stdExpanders.length > 0 || extraExpanders.length > 0)
 			{
@@ -320,25 +320,25 @@ class ObjectTree extends JTree
 	 * Add an item to the popup menu for the specified node type in the object
 	 * tree.
 	 * 
-	 * @param	nodeType	Object Tree node type.
+	 * @param	dboType		Database Object Type.
 	 * @param	action		Action to add to menu.
 	 * 
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> or
-	 *			<TT>ObjectTreeNodeType</TT>thrown.
+	 *			<TT>DatabaseObjectType</TT>thrown.
 	 */
-	void addToPopup(ObjectTreeNodeType nodeType, Action action)
+	void addToPopup(DatabaseObjectType dboType, Action action)
 	{
-		if (nodeType == null)
+		if (dboType == null)
 		{
-			throw new IllegalArgumentException("Null ObjectTreeNodeType passed");
+			throw new IllegalArgumentException("Null DatabaseObjectType passed");
 		}
 		if (action == null)
 		{
 			throw new IllegalArgumentException("Null Action passed");
 		}
 
-		JPopupMenu pop = getPopup(nodeType, true);
+		JPopupMenu pop = getPopup(dboType, true);
 		pop.add(action);
 	}
 
@@ -367,16 +367,24 @@ class ObjectTree extends JTree
 	}
 
 	/**
-	 * Get the popup menu for the passed node type. If one
+	 * Get the popup menu for the passed database object type. If one
 	 * doesn't exist then create one if requested to do so.
+
+	 * @param	dboType		Database Object Type.
+	 * @param	create		If <TT>true</TT> popup will eb created if it
+	 *						doesn't exist.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> or
+	 *			<TT>DatabaseObjectType</TT>thrown.
 	 */
-	private JPopupMenu getPopup(ObjectTreeNodeType nodeType, boolean create)
+	private JPopupMenu getPopup(DatabaseObjectType dboType, boolean create)
 	{
-		if (nodeType == null)
+		if (dboType == null)
 		{
-			throw new IllegalArgumentException("Null ObjectTreeNodeType passed");
+			throw new IllegalArgumentException("Null DatabaseObjectType passed");
 		}
-		IIdentifier key = nodeType.getIdentifier();
+		IIdentifier key = dboType.getIdentifier();
 		JPopupMenu pop = (JPopupMenu)_popups.get(key);
 		if (pop == null && create)
 		{
@@ -447,10 +455,10 @@ class ObjectTree extends JTree
 		{
 			// See if all selected nodes are of the same type.
 			boolean sameType = true;
-			final ObjectTreeNodeType nodeType = selObj[0].getNodeType();
+			final DatabaseObjectType dboType = selObj[0].getDatabaseObjectType();
 			for (int i = 1; i < selObj.length; ++i)
 			{
-				if (selObj[i].getNodeType() != nodeType)
+				if (selObj[i].getDatabaseObjectType() != dboType)
 				{
 					sameType = false;
 					break;
@@ -460,7 +468,7 @@ class ObjectTree extends JTree
 			JPopupMenu pop = null; 
 			if (sameType)
 			{
-				pop = getPopup(nodeType, false);
+				pop = getPopup(dboType, false);
 			}
 			if (pop == null)
 			{
@@ -615,7 +623,7 @@ class ObjectTree extends JTree
 			for (int i = 0; i < _expanders.length; ++i)
 			{
 				boolean nodeTypeAllowsChildren = false;
-				ObjectTreeNodeType lastNodeType = null;
+				DatabaseObjectType lastDboType = null;
 				List list = _expanders[i].createChildren(_session, _parentNode);
 				Iterator it = list.iterator();
 				while (it.hasNext())
@@ -630,11 +638,11 @@ class ObjectTree extends JTree
 						}
 						else
 						{
-							ObjectTreeNodeType childNodeType = childNode.getNodeType();
-							if (childNodeType != lastNodeType)
+							DatabaseObjectType childNodeDboType = childNode.getDatabaseObjectType();
+							if (childNodeDboType != lastDboType)
 							{
-								lastNodeType = childNodeType;
-								if (_model.getExpanders(childNodeType).length > 0)
+								lastDboType = childNodeDboType;
+								if (_model.getExpanders(childNodeDboType).length > 0)
 								{
 									nodeTypeAllowsChildren = true;
 								}
