@@ -181,6 +181,11 @@ public class SQLPropertiesPanel
 
 			++gbc.gridy;
 			add(createFontPanel(), gbc);
+
+			gbc.gridx = 0;
+			++gbc.gridy;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
+			add(new MultipleLineLabel(i18n.PERF_WARNING), gbc);
 		}
 
 		private JPanel createSQLPanel(IApplication app) {
@@ -264,11 +269,6 @@ public class SQLPropertiesPanel
 			pnl.add(new JLabel(warnIcon), gbc);
 			++gbc.gridy;
 			pnl.add(new JLabel(warnIcon), gbc);
-
-			gbc.gridx = 0;
-			gbc.gridy = gbc.RELATIVE;
-			gbc.gridwidth = GridBagConstraints.REMAINDER;
-			pnl.add(new MultipleLineLabel(i18n.PERF_WARNING), gbc);
 
 			return pnl;
 		}
