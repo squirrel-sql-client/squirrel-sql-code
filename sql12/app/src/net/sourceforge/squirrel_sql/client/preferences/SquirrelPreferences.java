@@ -48,8 +48,8 @@ public class SquirrelPreferences implements Serializable
 	{
 		String ACTION_KEYS = "actionKeys";
 		String ALIASES_SELECTED_INDEX = "aliasesSelectdIndex";
-		String DEBUG_JDBC = "debugJdbc";
 		String DRIVERS_SELECTED_INDEX = "driversSelectdIndex";
+		String JDBC_DEBUG_TYPE = "jdbcDebugtype";
 		String LOGIN_TIMEOUT = "loginTimeout";
 		String MAIN_FRAME_STATE = "mainFrameWindowState";
 		String MAXIMIMIZE_SESSION_SHEET_ON_OPEN = "maximizeSessionSheetOnOpen";
@@ -65,6 +65,13 @@ public class SquirrelPreferences implements Serializable
 		String SHOW_MAIN_TOOL_BAR = "showMainToolBar";
 		String SHOW_TOOLTIPS = "showToolTips";
 		String SHOW_COLOR_ICONS_IN_TOOLBAR="showColorIconsInToolbars";
+	}
+
+	public interface IJdbcDebugTypes
+	{
+		int NONE = 0;
+		int TO_STREAM = 1;
+		int TO_WRITER = 2;
 	}
 
 	/** Internationalized strings for this class. */
@@ -87,8 +94,8 @@ public class SquirrelPreferences implements Serializable
 	 */
 	private boolean _showContentsWhenDragging = false;
 
-	/** Debug JDBC */
-	private boolean _debugJdbc = false;
+	/** JDBC Debug Type. */
+	private int _jdbcDebugType = IJdbcDebugTypes.NONE;
 
 	/** Login timeout (seconds). */
 	private int _loginTimeout = 30;
@@ -281,16 +288,23 @@ public class SquirrelPreferences implements Serializable
 											oldValue, _loginTimeout);
 	}
 
-	public boolean getDebugJdbc()
+	public int getJdbcDebugType()
 	{
-		return _debugJdbc;
+		return _jdbcDebugType;
 	}
 
-	public synchronized void setDebugJdbc(boolean data)
+	public synchronized void setJdbcDebugType(int data)
 	{
-		final boolean oldValue = _debugJdbc;
-		_debugJdbc = data;
-		getPropertyChangeReporter().firePropertyChange(IPropertyNames.DEBUG_JDBC, oldValue, _debugJdbc);
+		if (data < IJdbcDebugTypes.NONE || data > IJdbcDebugTypes.TO_WRITER)
+		{
+			throw new IllegalArgumentException("Invalid setDebugJdbcToStream of :" + data);
+		}
+
+		final int oldValue = _jdbcDebugType;
+		_jdbcDebugType = data;
+		getPropertyChangeReporter().firePropertyChange(
+				IPropertyNames.JDBC_DEBUG_TYPE, oldValue,
+				_jdbcDebugType);
 	}
 
 	public boolean getShowToolTips()
@@ -544,6 +558,54 @@ public class SquirrelPreferences implements Serializable
 			return obj;
 		}
 	*/
+
+	/**
+	 * Helper method.
+	 */
+	public boolean isJdbcDebugToStream()
+	{
+		return _jdbcDebugType == IJdbcDebugTypes.TO_STREAM;
+	}
+
+	/**
+	 * Helper method.
+	 */
+	public boolean isJdbcDebugToWriter()
+	{
+		return _jdbcDebugType == IJdbcDebugTypes.TO_WRITER;
+	}
+
+	/**
+	 * Helper method.
+	 */
+	public boolean isJdbcDebugDontDebug()
+	{
+		return !(isJdbcDebugToStream() || isJdbcDebugToWriter());
+	}
+
+	/**
+	 * Helper method.
+	 */
+	public void doJdbcDebugToStream()
+	{
+		_jdbcDebugType = IJdbcDebugTypes.TO_STREAM;
+	}
+
+	/**
+	 * Helper method.
+	 */
+	public void doJdbcDebugToWriter()
+	{
+		_jdbcDebugType = IJdbcDebugTypes.TO_WRITER;
+	}
+
+	/**
+	 * Helper method.
+	 */
+	public void dontDoJdbcDebug()
+	{
+		_jdbcDebugType = IJdbcDebugTypes.NONE;
+	}
 
 	public static SquirrelPreferences load()
 	{
