@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -18,20 +18,19 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.swing.JComboBox;
 
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-
 /**
  * This <TT>JComboBox</TT> will display all the catalogs
  * in an SQL connection.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SQLCatalogsComboBox extends JComboBox
 {
@@ -47,12 +46,12 @@ public class SQLCatalogsComboBox extends JComboBox
 	 * Set the <TT>SQLConnection</TT> for this control. Clear control
 	 * and place all the catalog names from the connection in it in alphabetic
 	 * sequence. Select the first catalog.
-	 * 
-	 * @param	conn	<TT>SQLConnection</TT>  to retrieve catalog names from.
-	 * 
+	 *
+	 * @param	conn	<TT>SQLConnection</TT> to retrieve catalog names from.
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>SQLConnection</TT> passed.
-	 * 
+	 *
 	 * @throws	SQLException
 	 * 			Thrown if an SQL exception occurs.
 	 */
@@ -64,13 +63,13 @@ public class SQLCatalogsComboBox extends JComboBox
 		}
 
 		super.removeAllItems();
-		SQLDatabaseMetaData md = conn.getSQLMetaData();
+		final SQLDatabaseMetaData md = conn.getSQLMetaData();
 		if (md.supportsCatalogs())
 		{
-			String[] catalogs = md.getCatalogs();
+			final String[] catalogs = md.getCatalogs();
 			if (catalogs != null)
 			{
-				Map map = new HashMap();
+				final Map map = new TreeMap();
 				for (int i = 0; i < catalogs.length; ++i)
 				{
 					map.put(catalogs[i], catalogs[i]);
