@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -21,6 +21,8 @@ import java.awt.Rectangle;
 
 import net.sourceforge.squirrel_sql.fw.gui.WindowState;
 import net.sourceforge.squirrel_sql.fw.util.beanwrapper.RectangleWrapper;
+
+import net.sourceforge.squirrel_sql.client.gui.WindowManager;
 /**
  * This bean describes the state of the main window.
  *
@@ -28,6 +30,7 @@ import net.sourceforge.squirrel_sql.fw.util.beanwrapper.RectangleWrapper;
  */
 public class MainFrameWindowState extends WindowState
 {
+	// JASON: Messages height should be stored with this.
 	public interface IPropertyNames
 	{
 		String ALIASES_WINDOW_STATE = "aliasesWindowState";
@@ -37,7 +40,7 @@ public class MainFrameWindowState extends WindowState
 	private WindowState _driversWindowState = new WindowState();
 	private WindowState _aliasesWindowState = new WindowState();
 
-	private MainFrame _frame;
+	private WindowManager _mgr;
 
 	public MainFrameWindowState()
 	{
@@ -46,10 +49,10 @@ public class MainFrameWindowState extends WindowState
 		_aliasesWindowState.setBounds(new RectangleWrapper(new Rectangle(400, 5, 250, 250)));
 	}
 
-	public MainFrameWindowState(MainFrame frame)
+	public MainFrameWindowState(WindowManager mgr)
 	{
-		super(frame);
-		_frame = frame;
+		super(mgr.getMainFrame());
+		_mgr = mgr;
 	}
 
 	/**
@@ -86,19 +89,19 @@ public class MainFrameWindowState extends WindowState
 
 	private void refresh()
 	{
-		if (_frame != null)
+		if (_aliasesWindowState == null)
 		{
-			if (_aliasesWindowState == null)
-			{
-				_aliasesWindowState = new WindowState();
-			}
-			if (_driversWindowState == null)
-			{
-				_driversWindowState = new WindowState();
-			}
+			_aliasesWindowState = new WindowState();
+		}
+		if (_driversWindowState == null)
+		{
+			_driversWindowState = new WindowState();
+		}
 
-			_aliasesWindowState.copyFrom(_frame.getAliasesWindowState());
-			_driversWindowState.copyFrom(_frame.getDriversWindowState());
+		if (_mgr != null)
+		{
+			_aliasesWindowState.copyFrom(_mgr.getAliasesWindowState());
+			_driversWindowState.copyFrom(_mgr.getDriversWindowState());
 		}
 	}
 }

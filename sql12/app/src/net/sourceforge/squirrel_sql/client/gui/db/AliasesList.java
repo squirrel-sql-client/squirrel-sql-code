@@ -1,6 +1,24 @@
-package net.sourceforge.squirrel_sql.client.mainframe;
+package net.sourceforge.squirrel_sql.client.gui.db;
+
+import java.awt.BorderLayout;
+import java.awt.event.MouseEvent;
+
+import javax.swing.JList;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+
+import net.sourceforge.squirrel_sql.fw.gui.ModifiedDefaultListCellRenderer;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,46 +35,25 @@ package net.sourceforge.squirrel_sql.client.mainframe;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
-import javax.swing.JList;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-import javax.swing.ToolTipManager;
-
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 /**
- * This is a <CODE>JList</CODE> that dispays all the <CODE>ISQLDriver</CODE>
+ * This is a <TT>JList</TT> that displays all the <TT>ISQLAlias</TT>
  * objects.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class DriversList extends JList
+public class AliasesList extends JList implements IAliasesList
 {
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(AliasesList.class);
+
 	/** Application API. */
-	private IApplication _app;
+	private final IApplication _app;
 
 	/** Model for this component. */
-	private DriversListModel _model;
+	private final AliasesListModel _model;
 
-	/**
-	 * Ctor specifying Application API object.
-	 *
-	 * @param	app		Application API.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> <TT>IApplication</TT> passed.
-	 */
-	public DriversList(IApplication app) throws IllegalArgumentException
+	public AliasesList(IApplication app)
 	{
 		super();
 		if (app == null)
@@ -64,48 +61,37 @@ public class DriversList extends JList
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
 		_app = app;
-		_model = new DriversListModel(_app);
+		_model = new AliasesListModel(_app);
 		setModel(_model);
 		setLayout(new BorderLayout());
 		getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-		SquirrelResources res = _app.getResources();
-		setCellRenderer(new DriverListCellRenderer(res.getIcon("list.driver.found"),res.getIcon("list.driver.notfound")));
+		setCellRenderer(new ModifiedDefaultListCellRenderer());
 
-		propertiesChanged(null);
-
-		final int selDriverIdx = app.getSquirrelPreferences().getDriversSelectedIndex();
+		final int selAliasIdx = app.getSquirrelPreferences().getAliasesSelectedIndex();
 		final int size = getModel().getSize();
-		if (selDriverIdx > -1 && selDriverIdx < size)
+		if (selAliasIdx > -1 && selAliasIdx < size)
 		{
-			setSelectedIndex(selDriverIdx);
+			setSelectedIndex(selAliasIdx);
 		}
 		else
 		{
 			setSelectedIndex(0);
 		}
 
-		_app.getSquirrelPreferences().addPropertyChangeListener(new PropertyChangeListener()
-		{
-			public void propertyChange(PropertyChangeEvent evt)
-			{
-				final String propName = evt != null ? evt.getPropertyName() : null;
-				propertiesChanged(propName);
-			}
-		});
-
 		_model.addListDataListener(new ListDataListener()
 		{
 			public void contentsChanged(ListDataEvent evt)
 			{
-				// Unused.
+				// Not required.
 			}
 			public void intervalAdded(ListDataEvent evt)
 			{
 				final int idx = evt.getIndex0();
 				SwingUtilities.invokeLater(new Runnable()
 				{
-					public void run() {
+					public void run()
+					{
 						clearSelection();
 						setSelectedIndex(idx);
 					}
@@ -126,7 +112,7 @@ public class DriversList extends JList
 						}
 						else if (modelSize > 0)
 						{
-							setSelectedIndex(modelSize - 1);
+							setSelectedIndex(size - 1);
 						}
 					}
 				});
@@ -156,23 +142,23 @@ public class DriversList extends JList
 	}
 
 	/**
-	 * Return the <CODE>DriversListModel</CODE> that controls this list.
+	 * Return the <TT>AliasesListModel</TT> that controls this list.
 	 */
-	public DriversListModel getTypedModel()
+	public AliasesListModel getTypedModel()
 	{
 		return _model;
 	}
 
 	/**
-	 * Return the <CODE>ISQLDriver</CODE> that is currently selected.
+	 * Return the <TT>ISQLAlias</TT> that is currently selected.
 	 */
-	public ISQLDriver getSelectedDriver()
+	public ISQLAlias getSelectedAlias()
 	{
-		return (ISQLDriver)getSelectedValue();
+		return (ISQLAlias)getSelectedValue();
 	}
 
 	/**
-	 * Return the description for the driver that the mouse is currently
+	 * Return the description for the alias that the mouse is currently
 	 * over as the tooltip text.
 	 *
 	 * @param	event	Used to determine the current mouse position.
@@ -183,7 +169,7 @@ public class DriversList extends JList
 		final int idx = locationToIndex(evt.getPoint());
 		if (idx != -1)
 		{
-			tip = ((ISQLDriver)getModel().getElementAt(idx)).getName();
+			tip = ((ISQLAlias)getModel().getElementAt(idx)).getName();
 		}
 		else
 		{
@@ -198,23 +184,6 @@ public class DriversList extends JList
 	 */
 	public String getToolTipText()
 	{
-		return "List of database drivers that can be used to configure an alias"; //i18n
-	}
-
-	/**
-	 * Application properties have changed so update this object.
-	 *
-	 * @param	propName	Name of property that has changed or <TT>null</TT>
-	 * 						if multiple properties have changed.
-	 */
-	private void propertiesChanged(String propName)
-	{
-		if (propName == null
-			|| propName.equals(SquirrelPreferences.IPropertyNames.SHOW_LOADED_DRIVERS_ONLY))
-		{
-			boolean show = _app.getSquirrelPreferences().getShowLoadedDriversOnly();
-			_model.setShowLoadedDriversOnly(show);
-		}
+		return s_stringMgr.getString("AliasesList.tooltip");
 	}
 }
-

@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.mainframe;
+package net.sourceforge.squirrel_sql.client.gui.db;
 /*
  * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -42,16 +42,15 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.DeleteAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyAliasAction;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 /**
- * JASON: Rename to AliasesToolInternalFrame
  * This window shows all the database aliases defined in the system.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class AliasesToolWindow extends BaseToolWindow
+public class AliasesListInternalFrame extends BaseListInternalFrame
 {
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(AliasesToolWindow.class);
+		StringManagerFactory.getStringManager(AliasesListInternalFrame.class);
 
 	/** Application API. */
 	private IApplication _app;
@@ -62,12 +61,12 @@ public class AliasesToolWindow extends BaseToolWindow
 	/**
 	 * Default ctor.
 	 */
-	public AliasesToolWindow(IApplication app)
+	public AliasesListInternalFrame(IApplication app)
 	{
 		super(new UserInterfaceFactory(app));
 		_app = app;
 		_uiFactory = (UserInterfaceFactory) getUserInterfaceFactory();
-//		_uiFactory.setAliasesToolWindow(this);
+//		_uiFactory.setAliasesListInternalFrame(this);
 
 		// Enable/disable actions depending on whether an item is selected in
 		// the list.
@@ -107,13 +106,13 @@ public class AliasesToolWindow extends BaseToolWindow
 	}
 
 	private static final class UserInterfaceFactory
-		implements BaseToolWindow.IUserInterfaceFactory
+		implements BaseListInternalFrame.IUserInterfaceFactory
 	{
 		private IApplication _app;
 		private AliasesList _aliasesList;
 		private ToolBar _tb;
 		private BasePopupMenu _pm = new BasePopupMenu();
-//		private AliasesToolWindow _tw;
+//		private AliasesListInternalFrame _tw;
 		private ConnectToAliasAction _connectToAliasAction;
 		private CopyAliasAction _copyAliasAction;
 		private CreateAliasAction _createAliasAction;
@@ -165,7 +164,7 @@ public class AliasesToolWindow extends BaseToolWindow
 
 		public String getWindowTitle()
 		{
-			return s_stringMgr.getString("AliasesToolWindow.windowtitle");
+			return s_stringMgr.getString("AliasesListInternalFrame.windowtitle");
 		}
 
 		public ICommand getDoubleClickCommand()
@@ -205,7 +204,7 @@ public class AliasesToolWindow extends BaseToolWindow
 			_modifyAliasAction.setEnabled(enable);
 		}
 
-//		void setAliasesToolWindow(AliasesToolWindow tw)
+//		void setAliasesListInternalFrame(AliasesListInternalFrame tw)
 //		{
 //			_tw = tw;
 //		}

@@ -20,7 +20,7 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
 import net.sourceforge.squirrel_sql.fw.gui.action.SelectInternalFrameAction;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.mainframe.DriversToolWindow;
+import net.sourceforge.squirrel_sql.client.gui.db.DriversListInternalFrame;
 /**
  * This <CODE>Action</CODE> displays the Drivers Tool Window.
  *
@@ -35,7 +35,7 @@ public class ViewDriversAction extends SelectInternalFrameAction
 	 *			Thrown if <TT>null</TT> <TT>DriversToolWindow</TT> or
 	 *			<TT>IApplication</TT> object passed.
 	 */
-	public ViewDriversAction(IApplication app, DriversToolWindow window)
+	public ViewDriversAction(IApplication app, DriversListInternalFrame window)
 	{
 		super(window);
 		if (app == null)

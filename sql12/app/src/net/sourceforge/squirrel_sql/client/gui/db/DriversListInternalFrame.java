@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.mainframe;
+package net.sourceforge.squirrel_sql.client.gui.db;
 /*
  * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
@@ -45,17 +45,16 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyDriverCommand;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ShowLoadedDriversOnlyAction;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 /**
- * JASON: Rename to DriversToolInternalFrame
  * This windows displays a list of JDBC drivers and allows the user
  * to maintain their details, add new ones etc.
  *
  * @author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class DriversToolWindow extends BaseToolWindow
+public class DriversListInternalFrame extends BaseListInternalFrame
 {
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(DriversToolWindow.class);
+		StringManagerFactory.getStringManager(BaseListInternalFrame.class);
 
 	/** Application API. */
 	private IApplication _app;
@@ -66,12 +65,12 @@ public class DriversToolWindow extends BaseToolWindow
 	/**
 	 * Default ctor.
 	 */
-	public DriversToolWindow(IApplication app)
+	public DriversListInternalFrame(IApplication app)
 	{
 		super(new UserInterfaceFactory(app));
 		_app = app;
 		_uiFactory = (UserInterfaceFactory)getUserInterfaceFactory();
-		_uiFactory.setDriversToolWindow(this);
+		_uiFactory.setDriversListInternalFrame(this);
 
 		// Enable/disable actions depending on whether an item is selected in
 		// the list.
@@ -98,13 +97,13 @@ public class DriversToolWindow extends BaseToolWindow
 	}
 
 	private final static class UserInterfaceFactory
-		implements BaseToolWindow.IUserInterfaceFactory
+		implements BaseListInternalFrame.IUserInterfaceFactory
 	{
 		private IApplication _app;
 		private DriversList _driversList;
 		private ToolBar _tb;
 		private BasePopupMenu _pm = new BasePopupMenu();
-		private DriversToolWindow _tw;
+		private DriversListInternalFrame _tw;
 		private CopyDriverAction _copyDriverAction;
 		private CreateDriverAction _createDriverAction;
 		private DeleteDriverAction _deleteDriverAction;
@@ -144,7 +143,7 @@ public class DriversToolWindow extends BaseToolWindow
 
 		public String getWindowTitle()
 		{
-			return s_stringMgr.getString("DriversToolWindow.windowtitle");
+			return s_stringMgr.getString("DriversListInternalFrame.windowtitle");
 		}
 
 		public ICommand getDoubleClickCommand()
@@ -184,7 +183,7 @@ public class DriversToolWindow extends BaseToolWindow
 			_modifyDriverAction.setEnabled(enable);
 		}
 
-		void setDriversToolWindow(DriversToolWindow tw)
+		void setDriversListInternalFrame(DriversListInternalFrame tw)
 		{
 			_tw = tw;
 			propertiesChanged(null);

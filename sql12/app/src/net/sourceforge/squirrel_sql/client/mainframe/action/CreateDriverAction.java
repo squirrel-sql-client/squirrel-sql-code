@@ -25,7 +25,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.mainframe.DriversToolWindow;
+import net.sourceforge.squirrel_sql.client.gui.db.DriversListInternalFrame;
 /**
  * This <CODE>Action</CODE> allows the user to create a new <TT>ISQLDriver</TT>.
  *
@@ -55,7 +55,7 @@ public class CreateDriverAction extends SquirrelAction
 	public void actionPerformed(ActionEvent evt)
 	{
 		IApplication app = getApplication();
-		DriversToolWindow tw = app.getMainFrame().getDriversToolWindow();
+		DriversListInternalFrame tw = app.getWindowManager().getDriversListInternalFrame();
 		tw.moveToFront();
 		try
 		{

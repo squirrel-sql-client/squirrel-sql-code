@@ -25,8 +25,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.mainframe.AliasesToolWindow;
-
+import net.sourceforge.squirrel_sql.client.gui.db.AliasesListInternalFrame;
 /**
  * This <CODE>Action</CODE> allows the user to create a new <TT>ISQLAlias</TT>.
  *
@@ -56,7 +55,7 @@ public class CreateAliasAction extends SquirrelAction
 	public void actionPerformed(ActionEvent evt)
 	{
 		IApplication app = getApplication();
-		AliasesToolWindow tw = app.getMainFrame().getAliasesToolWindow();
+		AliasesListInternalFrame tw = app.getWindowManager().getAliasesListInternalFrame();
 		tw.moveToFront();
 		try
 		{

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -26,8 +26,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.mainframe.AliasesList;
-import net.sourceforge.squirrel_sql.client.mainframe.AliasesToolWindow;
+import net.sourceforge.squirrel_sql.client.gui.db.AliasesListInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.db.IAliasesList;
 /**
  * This <CODE>Action</CODE> allows the user to delete an <TT>ISQLAlias</TT>.
  *
@@ -42,7 +42,7 @@ public class DeleteAliasAction extends SquirrelAction
 	/**
 	 * List of all the users aliases.
 	 */
-	private AliasesList _aliases;
+	private IAliasesList _aliases;
 
 	/**
 	 * Ctor specifying the list of aliases.
@@ -53,7 +53,7 @@ public class DeleteAliasAction extends SquirrelAction
 	 * @throws	IllegalArgumentException
 	 *			thrown if a <TT>null</TT> <TT>AliasesList</TT> passed.
 	 */
-	public DeleteAliasAction(IApplication app, AliasesList list)
+	public DeleteAliasAction(IApplication app, IAliasesList list)
 	{
 		super(app);
 		if (list == null)
@@ -71,7 +71,7 @@ public class DeleteAliasAction extends SquirrelAction
 	public void actionPerformed(ActionEvent evt)
 	{
 		IApplication app = getApplication();
-		AliasesToolWindow tw = app.getMainFrame().getAliasesToolWindow();
+		AliasesListInternalFrame tw = app.getWindowManager().getAliasesListInternalFrame();
 		tw.moveToFront();
 		try
 		{

@@ -220,11 +220,12 @@ class Application implements IApplication
 		_pluginManager.unloadPlugins();
 
 		// Remember the currently selected entries in the
-		// aliases and drivers windows,
-		final MainFrame mf = _windowManager.getMainFrame();
-		int idx = mf.getAliasesToolWindow().getSelectedIndex();
+		// aliases and drivers windows.
+		// JASON: Do in WindowManager and do much better
+//		final MainFrame mf = _windowManager.getMainFrame();
+		int idx = _windowManager.getAliasesListInternalFrame().getSelectedIndex();
 		_prefs.setAliasesSelectedIndex(idx);
-		idx = mf.getDriversToolWindow().getSelectedIndex();
+		idx = _windowManager.getDriversListInternalFrame().getSelectedIndex();
 		_prefs.setDriversSelectedIndex(idx);
 
 		// No longer the first run of SQuirrel.

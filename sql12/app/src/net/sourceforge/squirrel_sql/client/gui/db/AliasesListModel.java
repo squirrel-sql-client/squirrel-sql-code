@@ -1,6 +1,16 @@
-package net.sourceforge.squirrel_sql.client.mainframe;
+package net.sourceforge.squirrel_sql.client.gui.db;
+
+import java.util.Iterator;
+
+import net.sourceforge.squirrel_sql.fw.gui.SortedListModel;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
+import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeEvent;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,14 +27,6 @@ package net.sourceforge.squirrel_sql.client.mainframe;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.util.Iterator;
-
-import net.sourceforge.squirrel_sql.fw.gui.SortedListModel;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
-import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
-import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeEvent;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
 /**
  * Model for an <TT>AliasesList</TT> object.
  *

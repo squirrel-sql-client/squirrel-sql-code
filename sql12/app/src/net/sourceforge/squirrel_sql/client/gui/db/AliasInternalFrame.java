@@ -71,7 +71,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
-import net.sourceforge.squirrel_sql.client.mainframe.DriverListCellRenderer;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;

@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.mainframe;
+package net.sourceforge.squirrel_sql.client.gui.db;
 /*
  * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
@@ -40,8 +40,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
 
-// JASON: Rename to BaseToolInternalFrame
-abstract class BaseToolWindow extends BaseInternalFrame
+abstract class BaseListInternalFrame extends BaseInternalFrame
 {
 	protected interface IUserInterfaceFactory
 	{
@@ -54,7 +53,8 @@ abstract class BaseToolWindow extends BaseInternalFrame
 	}
 
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(BaseToolWindow.class);
+	private static ILogger s_log =
+			LoggerController.createLogger(BaseListInternalFrame.class);
 
 	private IUserInterfaceFactory _uiFactory;
 
@@ -68,7 +68,7 @@ abstract class BaseToolWindow extends BaseInternalFrame
 
 	private boolean _hasBeenSized = false;
 
-	public BaseToolWindow(IUserInterfaceFactory uiFactory)
+	public BaseListInternalFrame(IUserInterfaceFactory uiFactory)
 	{
 		super("", true, true);
 		if (uiFactory == null)

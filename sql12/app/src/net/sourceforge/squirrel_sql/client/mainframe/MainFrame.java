@@ -49,16 +49,13 @@ import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.fw.gui.CascadeInternalFramePositioner;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.IInternalFramePositioner;
-import net.sourceforge.squirrel_sql.fw.gui.WindowState;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Version;
-import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.ScrollableDesktopPane;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ViewAliasesAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ViewDriversAction;
+import net.sourceforge.squirrel_sql.client.gui.WindowManager;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.MessagePanel;
@@ -77,8 +74,8 @@ public class MainFrame extends JFrame //BaseMDIParentFrame
 	/** Application API. */
 	private final IApplication _app;
 
-	private AliasesToolWindow _aliasesToolWindow;
-	private DriversToolWindow _driversToolWindow;
+//	private AliasesListInternalFrame _aliasesListWindow;
+//	private DriversListInternalFrame _driversListWindow;
 
 	/** Toolbar at top of window. */
 	private MainFrameToolBar _toolBar;
@@ -219,28 +216,28 @@ public class MainFrame extends JFrame //BaseMDIParentFrame
 	/**
 	 * Return the Drivers tool window.
 	 */
-	public DriversToolWindow getDriversToolWindow()
-	{
-		return _driversToolWindow;
-	}
-
-	/**
-	 * Return the Aliases tool window.
-	 */
-	public AliasesToolWindow getAliasesToolWindow()
-	{
-		return _aliasesToolWindow;
-	}
-
-	WindowState getAliasesWindowState()
-	{
-		return new WindowState(_aliasesToolWindow);
-	}
-
-	WindowState getDriversWindowState()
-	{
-		return new WindowState(_driversToolWindow);
-	}
+//	public DriversListInternalFrame getDriversToolWindow()
+//	{
+//		return _driversToolWindow;
+//	}
+//
+//	/**
+//	 * Return the Aliases tool window.
+//	 */
+//	public AliasesListInternalFrame getAliasesToolWindow()
+//	{
+//		return _aliasesToolWindow;
+//	}
+//
+//	WindowState getAliasesWindowState()
+//	{
+//		return new WindowState(_aliasesToolWindow);
+//	}
+//
+//	WindowState getDriversWindowState()
+//	{
+//		return new WindowState(_driversToolWindow);
+//	}
 
 	public JMenu getSessionMenu()
 	{
@@ -390,10 +387,10 @@ public class MainFrame extends JFrame //BaseMDIParentFrame
 
 		final Container content = getContentPane();
 
-		_aliasesToolWindow = new AliasesToolWindow(_app);
-		_driversToolWindow = new DriversToolWindow(_app);
+//		_aliasesToolWindow = new AliasesListInternalFrame(_app);
+//		_driversToolWindow = new DriversListInternalFrame(_app);
 
-		preLoadActions();
+//		preLoadActions();
 		content.setLayout(new BorderLayout());
 		final JScrollPane sp = new JScrollPane(getDesktopPane());
 		sp.setBorder(BorderFactory.createEmptyBorder());
@@ -445,26 +442,24 @@ public class MainFrame extends JFrame //BaseMDIParentFrame
 		});
 	}
 
-	private void preLoadActions()
-	{
-		ActionCollection actions = _app.getActionCollection();
-
-		if (actions == null)
-		{
-			throw new IllegalStateException("ActionCollection hasn't been created.");
-		}
-		if (_aliasesToolWindow == null)
-		{
-			throw new IllegalStateException("AliasesToolWindow hasn't been created.");
-		}
-		if (_driversToolWindow == null)
-		{
-			throw new IllegalStateException("DriversToolWindow hasn't been created.");
-		}
-
-		actions.add(new ViewAliasesAction(_app, _aliasesToolWindow));
-		actions.add(new ViewDriversAction(_app, _driversToolWindow));
-	}
+	// JASON: Move functionality to WindowManager
+//	private void preLoadActions()
+//	{
+//		final ActionCollection actions = _app.getActionCollection();
+//		if (actions == null)
+//		{
+//			throw new IllegalStateException("ActionCollection hasn't been created.");
+//		}
+//
+//		final WindowManager mgr = _app.getWindowManager();
+//		if (mgr == null)
+//		{
+//			throw new IllegalStateException("WindowManager hasn't been created.");
+//		}
+//
+//		actions.add(new ViewAliasesAction(_app, mgr.getAliasesListInternalFrame()));
+//		actions.add(new ViewDriversAction(_app, mgr.getDriversListInternalFrame()));
+//	}
 
 	private void setupFromPreferences()
 	{
@@ -479,40 +474,46 @@ public class MainFrame extends JFrame //BaseMDIParentFrame
 			setLocation(new Point(10, 10));
 		}
 
-		addInternalFrame(_driversToolWindow, false, null);
-		WindowState toolWs = ws.getDriversWindowState();
-		_driversToolWindow.setBounds(toolWs.getBounds().createRectangle());
-		_driversToolWindow.setVisible(toolWs.isVisible());
-		try
-		{
-			_driversToolWindow.setSelected(true);
-		}
-		catch (PropertyVetoException ex)
-		{
-			s_log.error("Error selecting window", ex);
-		}
+		final WindowManager mgr = _app.getWindowManager();
 
-		addInternalFrame(_aliasesToolWindow, false, null);
-		toolWs = ws.getAliasesWindowState();
-		_aliasesToolWindow.setBounds(toolWs.getBounds().createRectangle());
-		if (toolWs.isVisible())
-		{
-			_aliasesToolWindow.setVisible(true);
-			try
-			{
-				_aliasesToolWindow.setSelected(true);
-			}
-			catch (PropertyVetoException ex)
-			{
-				s_log.error("Error selecting window", ex);
-			}
-		}
-		else
-		{
-			_aliasesToolWindow.setVisible(false);
-		}
+		// JASON: Move functionality to WindowManager
+//		DriversListInternalFrame dlif = mgr.getDriversListInternalFrame();
+//		addInternalFrame(dlif, false, null);
+//		WindowState toolWs = ws.getDriversWindowState();
+//		dlif.setBounds(toolWs.getBounds().createRectangle());
+//		dlif.setVisible(toolWs.isVisible());
+//		try
+//		{
+//			dlif.setSelected(true);
+//		}
+//		catch (PropertyVetoException ex)
+//		{
+//			s_log.error("Error selecting window", ex);
+//		}
 
-		prefs.setMainFrameWindowState(new MainFrameWindowState(this));
+		// JASON: Move functionality to WindowManager
+//		AliasesListInternalFrame alif = mgr.getAliasesListInternalFrame();
+//		addInternalFrame(alif, false, null);
+//		toolWs = ws.getAliasesWindowState();
+//		alif.setBounds(toolWs.getBounds().createRectangle());
+//		if (toolWs.isVisible())
+//		{
+//			alif.setVisible(true);
+//			try
+//			{
+//				alif.setSelected(true);
+//			}
+//			catch (PropertyVetoException ex)
+//			{
+//				s_log.error("Error selecting window", ex);
+//			}
+//		}
+//		else
+//		{
+//			alif.setVisible(false);
+//		}
+
+//		prefs.setMainFrameWindowState(new MainFrameWindowState(_app.getWindowManager()));
 	}
 
 	/**
