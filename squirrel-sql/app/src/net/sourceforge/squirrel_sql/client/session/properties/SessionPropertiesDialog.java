@@ -33,7 +33,7 @@ import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.OkClosePanel;
 import net.sourceforge.squirrel_sql.fw.gui.OkClosePanelEvent;
-import net.sourceforge.squirrel_sql.fw.gui.OkClosePanelListener;
+import net.sourceforge.squirrel_sql.fw.gui.IOkClosePanelListener;
 
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -118,7 +118,7 @@ public class SessionPropertiesDialog extends JDialog {
         GUIUtils.centerWithinParent(this);
     }
 
-    private final class MyOkCancelPanelListener implements OkClosePanelListener {
+    private final class MyOkCancelPanelListener implements IOkClosePanelListener {
         public void okPressed(OkClosePanelEvent evt) {
             performOk();
         }
