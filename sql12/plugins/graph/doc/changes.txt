@@ -1,0 +1,6 @@
+Graph plugin
+===========================
+
+0.01
+====
+- Initial release
