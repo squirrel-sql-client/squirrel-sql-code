@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.jedit;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -389,64 +389,5 @@ public class JeditPlugin extends DefaultSessionPlugin
 				}
 			}
 		}
-	}
-	private class TestTab extends BaseTablePanelTab
-	{
-		private TestTabPanel _comp;
-
-		public void clear()
-		{
-		}
-
-		public synchronized Component getComponent()
-		{
-			if (_comp == null)
-			{
-				_comp = new TestTabPanel();
-			}
-			return _comp;
-		}
-
-		public String getHint()
-		{
-			return "Test tab";
-		}
-
-		public String getTitle()
-		{
-			return "Test";
-		}
-
-		protected void refreshComponent() throws DataSetException
-		{
-			ITableInfo ti = getTableInfo();
-			if (ti != null)
-			{
-				_comp._lbl.setText(ti.getQualifiedName());
-			}
-			else
-			{
-				_comp._lbl.setText("??");
-			}
-		}
-
-		private class TestTabPanel extends JPanel
-		{
-			JLabel _lbl = new JLabel("No table selected");
-
-			TestTabPanel()
-			{
-				super();
-				add(_lbl);
-			}
-		}
-
-	}
-
-	public boolean sessionStarted(ISession session)
-	{
-		super.sessionStarted(session);
-		session.addTablePanelTab(new TestTab());
-		return true;
 	}
 }
