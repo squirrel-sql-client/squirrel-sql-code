@@ -6,7 +6,7 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 
 
-public class ZoomableColumnTextArea extends JPanel implements IColumnTextArea
+public class ZoomableColumnTextArea extends JPanel
 {
    private TableToolTipProvider _toolTipProvider;
    private ColumnInfo[] _columnInfos;

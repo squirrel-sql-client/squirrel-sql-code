@@ -86,28 +86,10 @@ public class GraphDesktopController
          }
       };
 
-      PageCountCallBack pccb = new PageCountCallBack()
-      {
-         public int getPageCountHorizontal(double pageWidthInPixel)
-         {
-            return roundPageCount(_desktopPane.getRequiredSize().width / pageWidthInPixel);
-         }
-
-         public int getPageCountVertical(double pageHeightInPixel)
-         {
-            return roundPageCount(_desktopPane.getRequiredSize().height / pageHeightInPixel);
-         }
-      };
-
-      _zoomPrintController = new ZoomPrintController(zoomerXmlBean, printXmlBean, edgesListener, _desktopPane, _session, _plugin, pccb);
+      _zoomPrintController = new ZoomPrintController(zoomerXmlBean, printXmlBean, edgesListener, _desktopPane, _session, _plugin);
       _graphPanel.add(_zoomPrintController.getPanel(), BorderLayout.SOUTH);
       _mnuZoomPrint.setSelected(_zoomPrintController.getZoomer().isEnabled());
       onZoomPrint();
-   }
-
-   private int roundPageCount(double d)
-   {
-      return 0 < d - (int)d ? (int)(d+1) : (int)d;
    }
 
    private void onEdgesGraphComponentChanged(EdgesGraphComponent edgesGraphComponent, boolean put)

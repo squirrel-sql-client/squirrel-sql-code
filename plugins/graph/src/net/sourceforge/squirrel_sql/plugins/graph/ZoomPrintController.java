@@ -25,14 +25,12 @@ public class ZoomPrintController
    private FormatController _formatController;
    private EdgesListener _edgesListener;
    private EdgesGraphComponent _edgesGraphComponent;
-   private JComponent _toPrint;
-   private PageCountCallBack _pageCountCallBack;
    private GraphPlugin _plugin;
+   private GraphPrintable _printable;
 
-   public ZoomPrintController(ZoomerXmlBean zoomerXmlBean, PrintXmlBean printXmlBean, EdgesListener edgesListener, JComponent toPrint, ISession session, GraphPlugin plugin, PageCountCallBack pageCountCallBack)
+   public ZoomPrintController(ZoomerXmlBean zoomerXmlBean, PrintXmlBean printXmlBean, EdgesListener edgesListener, GraphPrintable printable, ISession session, GraphPlugin plugin)
    {
-      _toPrint = toPrint;
-      _pageCountCallBack = pageCountCallBack;
+      _printable = printable;
       _plugin = plugin;
 
       initZoom(session, zoomerXmlBean);
@@ -154,10 +152,12 @@ public class ZoomPrintController
 
    private void onPrint()
    {
-      GraphPrintable graphPrintable = new GraphPrintable((FormatXmlBean)_panel.cboFormat.getSelectedItem(), _toPrint, _panel.sldEdges.getValue() / 100.0, _pageCountCallBack);
+      FormatXmlBean format = (FormatXmlBean)_panel.cboFormat.getSelectedItem();
+
+      _printable.initPrint(format.getWidth(), format.getHeight(), _panel.sldEdges.getValue() / 100.0);
 
       PrinterJob printJob = PrinterJob.getPrinterJob();
-      printJob.setPrintable(graphPrintable);
+      printJob.setPrintable(_printable);
       if (printJob.printDialog())
       {
          try
