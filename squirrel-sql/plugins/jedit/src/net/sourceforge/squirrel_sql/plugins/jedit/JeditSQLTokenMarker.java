@@ -208,7 +208,7 @@ public class JeditSQLTokenMarker extends SQLTokenMarker
 		keywords.add("TIME", Token.KEYWORD1);
 		keywords.add("TO", Token.KEYWORD1);
 		keywords.add("TRANSACTION", Token.KEYWORD1);
-		keywords.add("TRANSLATION", Token.KEYWORD1);
+		keywords.add("TRIGGER", Token.KEYWORD1);
 		keywords.add("TRUE", Token.KEYWORD1);
 		keywords.add("UNCOMMITTED", Token.KEYWORD1);
 		keywords.add("UNION", Token.KEYWORD1);
