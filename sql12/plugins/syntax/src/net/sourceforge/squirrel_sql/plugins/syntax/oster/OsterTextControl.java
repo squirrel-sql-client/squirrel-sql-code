@@ -187,7 +187,6 @@ public class OsterTextControl extends JTextPane
 		_currentErrorInfos.addAll(Arrays.asList(errorInfos));
       int beg = Math.max(0, getCaretPosition() - 5);
       int len = Math.min(10, getDocument().getLength() - getCaretPosition());
-
       color(beg, len, false);
 	}
 
@@ -713,6 +712,8 @@ public class OsterTextControl extends JTextPane
 							t = getNextToken(si);
 						}
 						newPositions.add(dpStart);
+                  ErrorInfo[] errInfoClone = (ErrorInfo[]) _currentErrorInfos.toArray(new ErrorInfo[0]);
+                  SimpleAttributeSet errStyle = getMyStyle(IConstants.IStyleNames.ERROR);
 						while (!done && t != null)
 						{
 							// this is the actual command that colors the stuff.
@@ -753,10 +754,31 @@ public class OsterTextControl extends JTextPane
 //										t.getCharEnd() - t.getCharBegin(),
 //										getMyStyle(type), true);
 
+                           SimpleAttributeSet myStyle = null;
+                           for (int i = 0; i < errInfoClone.length; i++)
+                           {
+                              int errLen = errInfoClone[i].endPos - errInfoClone[i].beginPos;
+                              if(0 < errLen)
+                              {
+                                 if(t.getCharBegin() <= errInfoClone[i].beginPos && errInfoClone[i].beginPos <= t.getCharEnd() )
+                                 {
+                                    myStyle = errStyle;
+                                    change = 0;
+                                    break;
+                                 }
+                              }
+                           }
+
+                           if(null == myStyle)
+                           {
+                              myStyle = getMyStyle(type);
+                           }
+
+
                            setCharacterAttributes(
 										t.getCharBegin() + change,
 										t.getCharEnd() - t.getCharBegin(),
-										getMyStyle(type), true);
+										myStyle, true);
 									// record the position of the last bit of text that we colored
 									dpEnd =
 										new DocPosition(t.getCharEnd());
@@ -859,31 +881,6 @@ public class OsterTextControl extends JTextPane
 				asleep = true;
 				if (!tryAgain)
 				{
-               synchronized (doclock)
-               {
-                  ////////////////////////////////////////////////////////////
-                  // If all coloring is done, we color errors
-                  ErrorInfo[] errInfoClone = (ErrorInfo[]) _currentErrorInfos.toArray(new ErrorInfo[0]);
-                  for (int i = 0; i < errInfoClone.length; i++)
-                  {
-                     int begin = errInfoClone[i].beginPos - 1;
-                     int len = errInfoClone[i].endPos - errInfoClone[i].beginPos;
-                     if(0 < len)
-                     {
-//                        document.setCharacterAttributes(begin,
-//                                                        len + 1,
-//                                                        getMyStyle(IConstants.IStyleNames.ERROR),
-//                                                        true);
-                        setCharacterAttributes(begin,
-                                               len + 1,
-                                               getMyStyle(IConstants.IStyleNames.ERROR),
-                                               true);
-                     }
-                  }
-                  //
-                  /////////////////////////////////////////////////////////
-               }
-
 					try
 					{
 						sleep(0xffffff);
