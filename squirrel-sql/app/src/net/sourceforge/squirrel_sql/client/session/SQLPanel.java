@@ -239,10 +239,11 @@ class SQLPanel extends JPanel {
 //		pnl.setRows(3);
 		pnl.setTabSize(4);
 		final int pos = _splitPane.getDividerLocation();
+		SQLEntryState state = new SQLEntryState(_sqlEntry);
+		state.restoreState(pnl);
 		if (_sqlEntry != null) {
 			_sqlEntry.removeMouseListener(_sqlEntryMouseListener);
 			_splitPane.remove(_sqlEntry.getComponent());
-			pnl.setText(_sqlEntry.getText());
 		}
 		_splitPane.add(pnl.getComponent(), JSplitPane.LEFT);
 		_splitPane.setDividerLocation(pos);
@@ -639,11 +640,12 @@ class SQLPanel extends JPanel {
 		JPanel mid = new JPanel(new BorderLayout());
 		mid.add(_splitPane, BorderLayout.CENTER);
 
+		replaceSQLEntryPanel(app.getSQLEntryPanelFactory().createSQLEntryPanel(_session));
 		//JScrollPane inSp = new JScrollPane();
-		_sqlEntry.setRows(3);
-		_sqlEntry.setTabSize(4);
+		//_sqlEntry.setRows(3);
+		//_sqlEntry.setTabSize(4);
 		//inSp.setViewportView(_sqlEntry);
-		_splitPane.add(_sqlEntry.getComponent(), JSplitPane.LEFT);
+		//_splitPane.add(_sqlEntry.getComponent(), JSplitPane.LEFT);
 		_splitPane.add(_tabbedResultsPanel, JSplitPane.RIGHT);
 
 		add(_splitPane, BorderLayout.CENTER);
@@ -657,7 +659,14 @@ class SQLPanel extends JPanel {
 		// Add mouse listener for displaying popup menu.
 		_nbrRows.addMouseListener(new MyMouseListener());
 		_sqlEntry.addMouseListener(new MyMouseListener());
-	}
+
+		// Set focus to the SQL entry panel.
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				_sqlEntry.getComponent().requestFocus();
+			}
+		});
+}
 
 	private final class MyMouseListener extends MouseAdapter {
 		public void mousePressed(MouseEvent evt) {
@@ -802,6 +811,38 @@ class SQLPanel extends JPanel {
 				if (_propsListener != null) {
 					_propsListener.startListening();
 				}
+			}
+		}
+	}
+
+	private class SQLEntryState {
+		private boolean _saved = false;
+		private String _text;
+		private int _caretPos;
+		private int _selStart;
+		private int _selEnd;
+
+		SQLEntryState(ISQLEntryPanel pnl) {
+			super();
+			saveState(pnl);
+		}
+
+		void saveState(ISQLEntryPanel pnl) {
+			if (pnl != null) {
+				_saved = true;
+				_text = pnl.getText();
+//				_selStart = pnl.getSelectionStart();
+//				_selEnd = pnl.getSelectionEnd();
+//				_caretPos = pnl.getCaretPosition();
+			}
+		}
+		
+		void restoreState(ISQLEntryPanel pnl) {
+			if (_saved && pnl != null) {
+				pnl.setText(_text);
+//				pnl.setSelectionStart(_selStart);
+//				pnl.setSelectionEnd(_selEnd);
+//				pnl.setCaretPosition(_caretPosition);
 			}
 		}
 	}
