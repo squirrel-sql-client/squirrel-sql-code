@@ -121,10 +121,20 @@ class Session implements ISession {
 		putPluginObject(plugin, ISessionKeys.TABLE_DETAIL_PANEL_KEY, new TablePanel(this));
 	}
 
+	/**
+	 * Return the unique identifier for this session.
+	 *
+	 * @return	the unique identifier for this session.
+	 */
 	public IIdentifier getIdentifier() {
 		return _id;
 	}
 
+	/**
+	 * Return the Application API object.
+	 *
+	 * @return	the Application API object.
+	 */
 	public IApplication getApplication() {
 		return _app;
 	}
