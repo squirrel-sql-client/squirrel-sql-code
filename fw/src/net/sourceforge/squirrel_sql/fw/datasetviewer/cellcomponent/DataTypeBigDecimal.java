@@ -38,6 +38,7 @@ import java.sql.ResultSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 //??import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
 
 /**
  * @author gwg
@@ -151,7 +152,7 @@ public class DataTypeBigDecimal
 	public JTextField getJTextField() {
 		_textComponent = new RestorableJTextField();
 		
-		// special handling of operations while editing Integers
+		// special handling of operations while editing this data type
 		((RestorableJTextField)_textComponent).addKeyListener(new KeyTextHandler());
 				
 		//
@@ -179,7 +180,7 @@ public class DataTypeBigDecimal
 	}
 
 	/**
-	 * Implement the interface for validating and converting to Integer object.
+	 * Implement the interface for validating and converting to internal object.
 	 * Null is a valid successful return, so errors are indicated only by
 	 * existance or not of a message in the messageBuffer.
 	 */
@@ -242,11 +243,11 @@ public class DataTypeBigDecimal
 	 public JTextArea getJTextArea(Object value) {
 		_textComponent = new RestorableJTextArea();
 		
-		// value is a simple string representation of the integer,
+		// value is a simple string representation of the data,
 		// the same one used in Text and in-cell operations.
 		((RestorableJTextArea)_textComponent).setText(renderObject(value));
 		
-		// special handling of operations while editing Integers
+		// special handling of operations while editing this data type
 		((RestorableJTextArea)_textComponent).addKeyListener(new KeyTextHandler());
 		
 		return (RestorableJTextArea)_textComponent;
@@ -363,7 +364,8 @@ public class DataTypeBigDecimal
 	  * On input from the DB, read the data from the ResultSet into the appropriate
 	  * type of object to be stored in the table cell.
 	  */
-	public Object readResultSet(ResultSet rs, int index)
+	public Object readResultSet(ResultSet rs, int index,
+		LargeResultSetObjectInfo largeObjInfo)
 		throws java.sql.SQLException {
 		
 		BigDecimal data = rs.getBigDecimal(index);
@@ -435,7 +437,7 @@ public class DataTypeBigDecimal
 	  * 
 	  * <P>
 	  * File is assumed to be and ASCII string of digits
-	  * representing an integer value.
+	  * representing a value of this data type.
 	  */
 	public String importObject(FileInputStream inStream)
 	 	throws IOException {
@@ -463,19 +465,19 @@ public class DataTypeBigDecimal
 	 		fileText = new String(charBuf, 0, count-1);
 	 	else fileText = new String(charBuf);
 	 	
-	 	// test that the string correctly represents an integer
-	 	// by convertng it into one
+	 	// test that the string is valid by converting it into an
+	 	// object of this data type
 	 	StringBuffer messageBuffer = new StringBuffer();
 	 	validateAndConvertInPopup(fileText, messageBuffer);
 	 	if (messageBuffer.length() > 0) {;
 	 		// convert number conversion issue into IO issue for consistancy
 	 		throw new IOException(
-	 			"Failed to convert text into integer.  Text was:\n"+
-	 			fileText);
+	 			"Text does not represent data of type "+getClassName()+
+	 			".  Text was:\n"+fileText);
 	 	}
 	 	
 	 	// return the text from the file since it does
-	 	// represent a valid integer value
+	 	// represent a valid value of this data type
 	 	return fileText;
 	}
 
@@ -497,7 +499,7 @@ public class DataTypeBigDecimal
 	  * 
 	  * <P>
 	  * File is assumed to be and ASCII string of digits
-	  * representing an integer value.
+	  * representing a value of this data type.
 	  */
 	 public void exportObject(FileOutputStream outStream, String text)
 	 	throws IOException {
@@ -512,7 +514,7 @@ public class DataTypeBigDecimal
 	 		throw new IOException(new String(messageBuffer));
 	 	}
 	 	
-	 	// for integer, just send the text to the output file
+	 	// just send the text to the output file
 		outWriter.write(text);
 		outWriter.flush();
 		outWriter.close();
