@@ -23,7 +23,8 @@ import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 public class SquirrelResources extends Resources {
 
-	public final static int S_SPLASH_IMAGE_BACKGROUND = 0xADAFC4;
+	//public final static int S_SPLASH_IMAGE_BACKGROUND = 0xADAFC4;
+	public final static int S_SPLASH_IMAGE_BACKGROUND = 0xAEB0C5;
 
 	private final String _defaultsPath;
 
@@ -55,7 +56,7 @@ public class SquirrelResources extends Resources {
 	}
 
 	public URL getCreditsURL() {
-		return getClass().getResource("credits.html");
+		return getClass().getResource(getBundle().getString("Credits.file"));
 	}
 }
 
