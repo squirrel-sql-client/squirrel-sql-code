@@ -51,6 +51,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.mssql.action.GenerateSqlAction;
 import net.sourceforge.squirrel_sql.plugins.mssql.action.IndexDefragAction;
 import net.sourceforge.squirrel_sql.plugins.mssql.action.ScriptProcedureAction;
+import net.sourceforge.squirrel_sql.plugins.mssql.action.ScriptProcedureExecAction;
 import net.sourceforge.squirrel_sql.plugins.mssql.action.ShowStatisticsAction;
 import net.sourceforge.squirrel_sql.plugins.mssql.action.ShrinkDatabaseAction;
 import net.sourceforge.squirrel_sql.plugins.mssql.action.ShrinkDatabaseFileAction;
@@ -148,6 +149,7 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
         
         coll.add(new GenerateSqlAction(app, _resources, this));
         coll.add(new ScriptProcedureAction(app, _resources, this));
+        coll.add(new ScriptProcedureExecAction(app, _resources, this));
         coll.add(new ShrinkDatabaseAction(app, _resources, this));
         coll.add(new TruncateLogAction(app, _resources, this));
         coll.add(new UpdateStatisticsAction(app, _resources, this));
@@ -379,6 +381,7 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
                         coll.add(shrinkDatabaseFileAction);
                         _resources.addToMenu(shrinkDatabaseFileAction,menu);
                     }
+                    menu.addSeparator();
                     files = info.getLogFiles();
                     for (int i = 0; i < files.length; i++) {
                         DatabaseFile file = (DatabaseFile) files[i];
@@ -414,6 +417,7 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
             mssqlMenu = menu;
         
         _resources.addToMenu(coll.get(ScriptProcedureAction.class),mssqlMenu);
+        _resources.addToMenu(coll.get(ScriptProcedureExecAction.class),mssqlMenu);
 
 		return mssqlMenu;
     }
