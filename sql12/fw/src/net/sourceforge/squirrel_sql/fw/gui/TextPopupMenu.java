@@ -21,6 +21,8 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 
+import javax.swing.Action;
+import javax.swing.JMenuItem;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
@@ -32,7 +34,19 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableModel;
 
 public class TextPopupMenu extends BasePopupMenu
 {
+	public interface IOptionTypes
+	{
+		int CUT = 0;
+		int COPY = 1;
+		int PASTE = 2;
+		int CLEAR = 3;
+		int SELECT_ALL = 4;
+		int LAST_ENTRY = 4;
+	}
+
 	private JTextComponent _comp;
+
+	private final JMenuItem[] _menuItems = new JMenuItem[IOptionTypes.LAST_ENTRY + 1];
 
 	private CutAction _cut = new CutAction();
 	private CopyAction _copy = new CopyAction();
@@ -44,7 +58,6 @@ public class TextPopupMenu extends BasePopupMenu
 	// The following pointer is needed to allow the "Make Editable button
 	// to tell the application to set up an editable display panel
 	private IDataSetUpdateableModel _updateableModel = null;
-
 
 	/**
 	 * Default constructor which does not allow user to request that the
@@ -68,29 +81,45 @@ public class TextPopupMenu extends BasePopupMenu
 	public TextPopupMenu(boolean allowEditing,
 		IDataSetUpdateableModel updateableModel)
 	{
-			
 		super();
-		
+	
 		// save the pointer needed to enable editing of data on-demand
 		_updateableModel = updateableModel;
-		
+	
 		addMenuEntries(allowEditing);
 	}
-	
+
+	protected void setItemAction(int optionType, Action action)
+	{
+		if (optionType < 0 || optionType > IOptionTypes.LAST_ENTRY)
+		{
+			throw new IllegalArgumentException("Invalid option type: " + optionType);
+		}
+		if (action == null)
+		{
+			throw new IllegalArgumentException("Action == null");
+		}
+
+		final int idx = getComponentIndex(_menuItems[optionType]);
+		remove(idx);
+		insert(action, idx);
+		_menuItems[optionType] = (JMenuItem)getComponent(idx);
+	}
+
 	private void addMenuEntries(boolean allowEditing)
 	{
-		add(_cut);
-		add(_copy);
-		add(_paste);
+		_menuItems[IOptionTypes.CUT] = add(_cut);
+		_menuItems[IOptionTypes.COPY] = add(_copy);
+		_menuItems[IOptionTypes.PASTE] = add(_paste);
 		addSeparator();
-		add(_clear);
+		_menuItems[IOptionTypes.CLEAR] = add(_clear);
 		if (allowEditing)
 		{
 			addSeparator();
 			add(_makeEditable);
 		}
 		addSeparator();
-		add(_select);
+		_menuItems[IOptionTypes.SELECT_ALL] = add(_select);
 	}
 
 	public void setTextComponent(JTextComponent value)
@@ -120,9 +149,9 @@ public class TextPopupMenu extends BasePopupMenu
 		_paste.setEnabled(isEditable);
 	}
 
-	private class ClearAction extends BaseAction
+	protected class ClearAction extends BaseAction
 	{
-		ClearAction()
+		protected ClearAction()
 		{
 			super("Clear");
 		}
@@ -143,7 +172,7 @@ public class TextPopupMenu extends BasePopupMenu
 		}
 	}
 
-	private class CutAction extends BaseAction
+	protected class CutAction extends BaseAction
 	{
 		CutAction()
 		{
@@ -159,7 +188,7 @@ public class TextPopupMenu extends BasePopupMenu
 		}
 	}
 
-	private class CopyAction extends BaseAction
+	protected class CopyAction extends BaseAction
 	{
 		CopyAction()
 		{
@@ -175,7 +204,7 @@ public class TextPopupMenu extends BasePopupMenu
 		}
 	}
 
-	private class PasteAction extends BaseAction
+	protected class PasteAction extends BaseAction
 	{
 		PasteAction()
 		{
@@ -191,7 +220,7 @@ public class TextPopupMenu extends BasePopupMenu
 		}
 	}
 
-	private class MakeEditableAction extends BaseAction
+	protected class MakeEditableAction extends BaseAction
 	{
 		MakeEditableAction()
 		{
@@ -207,7 +236,7 @@ public class TextPopupMenu extends BasePopupMenu
 		}
 	}
 
-	private class SelectAllAction extends BaseAction
+	protected class SelectAllAction extends BaseAction
 	{
 		SelectAllAction()
 		{
