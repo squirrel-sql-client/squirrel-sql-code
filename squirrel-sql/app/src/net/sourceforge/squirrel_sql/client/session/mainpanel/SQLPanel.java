@@ -122,8 +122,7 @@ public class SQLPanel extends JPanel
 	private IntegerIdentifierFactory _idFactory = new IntegerIdentifierFactory();
 
 	/** Listens to caret events in data entry area. */
-	private DataEntryAreaCaretListener _dataEntryCaretListener =
-		new DataEntryAreaCaretListener();
+	private final DataEntryAreaCaretListener _dataEntryCaretListener = new DataEntryAreaCaretListener();
 
 	/**
 	 * Ctor.
@@ -992,11 +991,10 @@ public class SQLPanel extends JPanel
 	{
 		public void caretUpdate(CaretEvent evt)
 		{
-			_session.getSessionSheet().setStatusBarMessage(
-				""
-					+ _sqlEntry.getCaretLineNumber()
-					+ ","
-					+ SQLPanel.this._sqlEntry.getCaretLinePosition());
+			final StringBuffer msg = new StringBuffer();
+			msg.append(_sqlEntry.getCaretLineNumber() + 1)
+				.append(",").append(_sqlEntry.getCaretLinePosition() + 1);
+			_session.getSessionSheet().setStatusBarMessage(msg.toString());
 		}
 	}
 }

@@ -131,6 +131,11 @@ public class MainFrame extends BaseMDIParentFrame
 	{
 	}
 
+	public IApplication getApplication()
+	{
+		return _app;
+	}
+
 	public void addInternalFrame(
 		JInternalFrame child,
 		boolean addToWindowMenu,

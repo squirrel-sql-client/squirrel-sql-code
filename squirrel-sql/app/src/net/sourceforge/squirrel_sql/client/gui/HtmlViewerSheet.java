@@ -19,12 +19,18 @@ package net.sourceforge.squirrel_sql.client.gui;
  */
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -39,6 +45,9 @@ import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 /**
  * This sheet shows the contents of a HTML file.
  *
@@ -50,20 +59,38 @@ public class HtmlViewerSheet extends BaseSheet
 	private final static ILogger s_log =
 		LoggerController.createLogger(HtmlViewerSheet.class);
 
+	/** Application API. */
+	private final IApplication _app;
+
+	/** Toolbar for window. */
+	private ToolBar _toolBar;
+
 	/** URL being displayed. */
-	private URL _url;
+	private URL _documentURL;
 	
 	/** Text area containing the HTML. */
 	private JEditorPane _contentsTxt = new JEditorPane();
 
-  	public HtmlViewerSheet(String title) throws IOException
+	/** History of links. */
+	private List _history = new LinkedList();
+
+	/** Current index into <TT>_history</TT>. */
+	private int _historyIndex = -1;
+
+  	public HtmlViewerSheet(IApplication app, String title) throws IOException
 	{
-		this(title, null);
+		this(app, title, null);
 	}
 
-  	public HtmlViewerSheet(String title, URL url) throws IOException
+  	public HtmlViewerSheet(IApplication app, String title, URL url)
+		throws IOException
 	{
 		super(title, true, true, true, true);
+		if (app == null)
+		{
+			throw new IllegalArgumentException("IApplication == null");
+		}
+		_app = app;
 		createUserInterface();
 		if (url != null)
 		{
@@ -78,7 +105,7 @@ public class HtmlViewerSheet extends BaseSheet
 			throw new IllegalArgumentException("URL == null");
 		}
 
-		_url = url;
+		_documentURL = url;
 
 		CursorChanger cursorChg = new CursorChanger(this);
 		cursorChg.show();
@@ -88,6 +115,8 @@ public class HtmlViewerSheet extends BaseSheet
 			try
 			{
 				_contentsTxt.setPage(url);
+				_history.add(url);
+				_historyIndex = 0;
 			}
 			catch (IOException ex)
 			{
@@ -107,7 +136,37 @@ public class HtmlViewerSheet extends BaseSheet
 	 */
 	public URL getURL()
 	{
-		return _url;
+		return _documentURL;
+	}
+
+	private void goBack()
+	{
+		if (_historyIndex > 0 && _historyIndex < _history.size())
+		{
+			try
+			{
+				_contentsTxt.setPage((URL)_history.get(--_historyIndex));
+			}
+			catch (IOException ex)
+			{
+				s_log.error(ex);
+			}
+		}
+	}
+
+	private void goForward()
+	{
+		if (_historyIndex > -1 && _historyIndex < _history.size() - 1)
+		{
+			try
+			{
+				_contentsTxt.setPage((URL)_history.get(++_historyIndex));
+			}
+			catch (IOException ex)
+			{
+				s_log.error(ex);
+			}
+		}
 	}
 
 	/**
@@ -118,18 +177,22 @@ public class HtmlViewerSheet extends BaseSheet
 		GUIUtils.makeToolWindow(this, true);
 		Container contentPane = getContentPane();
 		contentPane.setLayout(new BorderLayout());
-		contentPane.add(createToolBar(), BorderLayout.NORTH);
 		contentPane.add(createMainPanel(), BorderLayout.CENTER);
+		contentPane.add(createToolBar(), BorderLayout.NORTH);
 		pack();
 	}
 
 	private ToolBar createToolBar()
 	{
-		final ToolBar tb = new ToolBar();
-		tb.setBorder(BorderFactory.createEtchedBorder());
-		tb.setUseRolloverButtons(true);
-		tb.setFloatable(false);
-		return tb;
+		_toolBar = new ToolBar();
+		_toolBar.setBorder(BorderFactory.createEtchedBorder());
+		_toolBar.setUseRolloverButtons(true);
+		_toolBar.setFloatable(false);
+		_toolBar.add(new BackAction(_app));
+		_toolBar.add(new ForwardAction(_app));
+		JButton btn = _toolBar.add(new CloseAction(_app));
+		btn.setAlignmentX(btn.RIGHT_ALIGNMENT);
+		return _toolBar;
 	}
 
 	/**
@@ -162,7 +225,7 @@ public class HtmlViewerSheet extends BaseSheet
 		return pnl;
 	}
 
-	public HyperlinkListener createHyperLinkListener()
+	private HyperlinkListener createHyperLinkListener()
 	{
 		return new HyperlinkListener()
 		{
@@ -178,7 +241,17 @@ public class HtmlViewerSheet extends BaseSheet
 					{
 						try
 						{
-							_contentsTxt.setPage(e.getURL());
+							final URL url = e.getURL();
+
+							ListIterator it = _history.listIterator(_historyIndex + 1);
+							while (it.hasNext())
+							{
+								it.next();
+								it.remove();
+							}
+							_history.add(url);
+							_historyIndex = _history.size() - 1;
+							_contentsTxt.setPage(url);
 						}
 						catch (IOException ioe)
 						{
@@ -188,4 +261,58 @@ public class HtmlViewerSheet extends BaseSheet
 				}
 			}
 		};
-	}}
+	}
+
+	private final class CloseAction extends SquirrelAction
+	{
+		public CloseAction(IApplication app)
+		{
+			super(app);
+			if (app == null)
+			{
+				throw new IllegalArgumentException("Null IApplication passed");
+			}
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			dispose();
+		}
+	}
+
+	private final class BackAction extends SquirrelAction
+	{
+		public BackAction(IApplication app)
+		{
+			super(app);
+			if (app == null)
+			{
+				throw new IllegalArgumentException("Null IApplication passed");
+			}
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			goBack();
+		}
+	}
+
+	private final class ForwardAction extends SquirrelAction
+	{
+		public ForwardAction(IApplication app)
+		{
+			super(app);
+			if (app == null)
+			{
+				throw new IllegalArgumentException("Null IApplication passed");
+			}
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			goForward();
+		}
+	}
+
+}
+	

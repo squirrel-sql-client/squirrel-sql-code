@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -24,22 +24,26 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
-public class SQLTab extends BaseMainPanelTab {
+public class SQLTab extends BaseMainPanelTab
+{
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
-	private interface i18n {
+	private interface i18n
+	{
 		String TAB_TITLE = "SQL";
 		String TAB_DESC = "Execute SQL statements";
 	}
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(SQLTab.class);
+	private final static ILogger s_log =
+						LoggerController.createLogger(SQLTab.class);
 
 	/** Component to be displayed. */
 	private SQLPanel _comp;
 
-	public SQLTab(ISession session) {
+	public SQLTab(ISession session)
+	{
 		super();
 		setSession(session);
 	}
@@ -47,14 +51,16 @@ public class SQLTab extends BaseMainPanelTab {
 	/**
 	 * @see IMainPanelTab#getTitle()
 	 */
-	public String getTitle() {
+	public String getTitle()
+	{
 		return i18n.TAB_TITLE;
 	}
 
 	/**
 	 * @see IMainPanelTab#getHint()
 	 */
-	public String getHint() {
+	public String getHint()
+	{
 		return i18n.TAB_DESC;
 	}
 
@@ -63,8 +69,10 @@ public class SQLTab extends BaseMainPanelTab {
 	 *
 	 * @return	The component to be displayed in the panel.
 	 */
-	public synchronized Component getComponent() {
-		if (_comp == null) {
+	public synchronized Component getComponent()
+	{
+		if (_comp == null)
+		{
 			_comp = new SQLPanel(getSession());
 		}
 		return _comp;
@@ -73,7 +81,8 @@ public class SQLTab extends BaseMainPanelTab {
 	/**
 	 * @see IMainPanelTab#setSession(ISession)
 	 */
-	public void setSession(ISession session) {
+	public void setSession(ISession session)
+	{
 		super.setSession(session);
 		getSQLPanel().setSession(session);
 	}
@@ -81,20 +90,24 @@ public class SQLTab extends BaseMainPanelTab {
 	/**
 	 * @see IMainPanelTab#select()
 	 */
-	public synchronized void refreshComponent() {
+	public synchronized void refreshComponent()
+	{
 		getSQLPanel().selected();
 	}
 
 	/**
 	 * Sesssion is ending.
 	 */
-	public void sessionClosing(ISession session) {
-		if (_comp != null) {
+	public void sessionClosing(ISession session)
+	{
+		if (_comp != null)
+		{
 			_comp.sessionClosing();
 		}
 	}
 
-	public SQLPanel getSQLPanel() {
+	public SQLPanel getSQLPanel()
+	{
 		return (SQLPanel)getComponent();
 	}
 }

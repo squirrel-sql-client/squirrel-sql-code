@@ -6,6 +6,8 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Add toolbar to HTML Viewer with back, forward and close buttons.
+- Documentation updated.
 - Allow Squirrel to be run from directories other than the current
   directory (Tim Shadel).
 - Treat Types.OTHER columns as strings when displaying data.
@@ -25,6 +27,8 @@ Enhancements
 
 Bug Fixes
 ---------
+- The line/column number displayed for the SQL entry area
+  now starts from 1,1 not 0,0
 - Make multiple line label use the same font as static text controls not
   editable text controls.
 - Links in the Help file now work (Victor Ott).

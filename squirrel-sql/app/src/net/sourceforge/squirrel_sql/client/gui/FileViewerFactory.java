@@ -95,7 +95,8 @@ public class FileViewerFactory
 		HtmlViewerSheet viewer = (HtmlViewerSheet)_sheets.get(url.toString());
 		if (viewer == null)
 		{
-			viewer = new HtmlViewerSheet(url.toString(), url);
+			viewer = new HtmlViewerSheet(parent.getApplication(),
+											url.toString(), url);
 			viewer.addInternalFrameListener(_lis);
 			viewer.setSize(600, 400);
 			parent.addInternalFrame(viewer, true, null);
