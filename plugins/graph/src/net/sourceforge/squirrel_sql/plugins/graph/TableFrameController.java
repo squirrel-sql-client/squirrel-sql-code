@@ -103,6 +103,7 @@ public class TableFrameController
                ColumnInfo colInfo = new ColumnInfo(columnName, columnType, columnSize, nullable);
                colInfosBuf.add(colInfo);
             }
+            res.close();
             _colInfos = (ColumnInfo[]) colInfosBuf.toArray(new ColumnInfo[colInfosBuf.size()]);
 
             res = metaData.getPrimaryKeys(_catalog, _schema, _tableName);
@@ -117,6 +118,7 @@ public class TableFrameController
 
                }
             }
+            res.close();
 
             res = metaData.getImportedKeys(_catalog, _schema, _tableName);
             while(res.next())
@@ -133,6 +135,7 @@ public class TableFrameController
                }
                constraintData.addColumnInfo(colInfo);
             }
+            res.close();
 
             ConstraintData[] buf = (ConstraintData[]) constaintInfosByConstraintName.values().toArray(new ConstraintData[0]);
 
