@@ -131,6 +131,11 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 		return _allowsChildren;
 	}
 
+	public boolean isLeaf()
+	{
+		return !_allowsChildren;
+	}
+
 	/**
 	 * Return the expanders for this node. Remember that these are in addition
 	 * to the standard expanders stored in the object tree model. Normally

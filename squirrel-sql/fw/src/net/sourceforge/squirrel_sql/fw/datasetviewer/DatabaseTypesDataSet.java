@@ -106,7 +106,26 @@ public class DatabaseTypesDataSet implements IDataSet
 								_row[i] = buf.toString();
 								break;
 
-							case 7 :
+							case 3:
+							case 14:
+							case 15:
+							case 18:
+								_row[i] = _rs.getObject(idx);
+								if (_row[i] != null
+									&& !(_row[i] instanceof Integer))
+								{
+									if (_row[i] instanceof Number)
+									{
+										_row[i] = new Integer(((Number)_row[i]).intValue());
+									}
+									else
+									{
+										_row[i] = new Integer(_row[i].toString());
+									}
+								}
+								break;
+
+							case 7:
 								// NULLABLE column of result set.
 								short nullable = _rs.getShort(idx);
 								switch (nullable)
@@ -126,10 +145,10 @@ public class DatabaseTypesDataSet implements IDataSet
 								}
 								break;
 
-							case 8 :
-							case 10 :
-							case 11 :
-							case 12 :
+							case 8:
+							case 10:
+							case 11:
+							case 12:
 								// boolean columns
 //								_row[i] = _rs.getBoolean(idx) ? "true" : "false";
 								_row[i] = _rs.getObject(idx);
@@ -154,7 +173,7 @@ public class DatabaseTypesDataSet implements IDataSet
 								}
 								break;
 
-							case 9 :
+							case 9:
 								// SEARCHABLE column of result set.
 								short searchable = _rs.getShort(idx);
 								switch (searchable)
@@ -175,6 +194,11 @@ public class DatabaseTypesDataSet implements IDataSet
 										_row[i] = searchable + "[error]";
 										break;
 								}
+								break;
+
+							case 16:
+							case 17:
+								// ignore - unused.
 								break;
 
 							default :

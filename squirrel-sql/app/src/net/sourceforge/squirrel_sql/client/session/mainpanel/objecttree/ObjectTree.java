@@ -35,6 +35,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
@@ -42,6 +44,7 @@ import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectTypes;
+import net.sourceforge.squirrel_sql.fw.util.EnumerationIterator;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -55,7 +58,7 @@ import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeItemAction;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ObjectTree extends JTree
+class ObjectTree extends JTree
 {
 	/** Logger for this class. */
 	private static final ILogger s_log =
@@ -85,6 +88,24 @@ public class ObjectTree extends JTree
 	private final int _dummyNodeType;
 
 	/**
+	 * Object to synchronize on so that only one node can be expanded at any
+	 * one time.
+	 */
+	private Object _syncObject = new Object();
+
+	/**
+	 * String representation of the <TT>TreePath</TT> objects that have been
+	 * expanded. The key is <TT>Treepath.toString()</TT> and the value
+	 * is <TT>null</TT>.
+	 */
+	private Map _expandedPathNames = new HashMap();
+
+	/**
+	 * Array of the <TT>TreePath</TT> objects that are currently selected.
+	 */
+//	private TreePath[] _selectedPaths = new TreePath[0];
+
+	/**
 	 * ctor specifying session.
 	 * 
 	 * @param	session	Current session.
@@ -94,24 +115,21 @@ public class ObjectTree extends JTree
 	 */
 	ObjectTree(ISession session)
 	{
-		super();
+		super(new ObjectTreeModel(session));
 		if (session == null)
 		{
 			throw new IllegalArgumentException("ISession == null");
 		}
 		_session = session;
+		_model = (ObjectTreeModel)getModel();
+		setModel(_model);
 
 		_dummyNodeType = _session.getObjectTreeAPI().getNextAvailableNodeype();
 
-		_model = new ObjectTreeModel(session);
-		//		((BaseNode)_model.getRoot()).addBaseNodeExpandListener(this);
-		//		_model.addTreeLoadedListener(this);
-		//		_model.fillTree();
-
 		addTreeExpansionListener(new NodeExpansionListener());
+//		addTreeSelectionListener(new NodeSelectionListener());
 
 		setShowsRootHandles(true);
-		setModel(_model);
 
 		// Add actions to the popup menu.
 		ActionCollection actions = session.getApplication().getActionCollection();
@@ -139,6 +157,8 @@ public class ObjectTree extends JTree
 				}
 			}
 		});
+
+		startExpandingTree(_model.getRootObjectTreeNode(), true, null);
 	}
 
 	/**
@@ -198,41 +218,92 @@ public class ObjectTree extends JTree
 	 */
 	public void refresh()
 	{
-		// TODO: Put in Johans code to save/restore state of tree.
-//		TreePath[] paths = getSelectionPaths();
-//		List l = _model.refresh();
-//		if (l != null)
-//		{
-//			for (int i = 0, limit = l.size(); i < limit; ++i)
-//			{
-//				ObjectTreeNode node = (ObjectTreeNode)l.get(i);
-//				node.addBaseNodeExpandListener(this);
-//				TreePath path = new TreePath(_model.getPathToRoot(node));
-//				expandPath(path);
-//			}
-//		}
-//		setSelectionPaths(paths);
+		final TreePath[] selectedPaths = getSelectionPaths();
+		final Map selectedPathNames = new HashMap();
+		for (int i = 0; i < selectedPaths.length; ++i)
+		{
+			selectedPathNames.put(selectedPaths[i].toString(), null);
+		}
 
-		ObjectTreeNode root = getTypedModel().getRootObjectTreeNode();
+		ObjectTreeNode root = _model.getRootObjectTreeNode();
 		root.removeAllChildren();
-		expandNode(root, true);
+		startExpandingTree(root, false, selectedPathNames);
 	}
 
-	private void expandNode(ObjectTreeNode parentNode, boolean selectParentNode)
+	/**
+	 * Restore the expansion state of the tree starting at the passed node.
+	 * The passed node is always expanded.
+	 * 
+	 * @param	node	Node to restore expansion state from.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if null ObjectTreeNode passed.
+	 */
+	private void restoreExpansionState(ObjectTreeNode node,
+		Map previouslySelectedTreePathNames, List selectedTreePaths)
 	{
-		if (parentNode == null)
+		if (node == null)
 		{
 			throw new IllegalArgumentException("ObjectTreeNode == null");
 		}
 
+		final TreePath nodePath = new TreePath(node.getPath());
+		if (previouslySelectedTreePathNames.containsKey(nodePath.toString()))
+		{
+			selectedTreePaths.add(nodePath);
+		}		
+		expandPath(nodePath);
+
+		// Go through each child of the parent and see if it was previously
+		// expanded. If it was recursively call this method in order to expand
+		// the child.
+		Iterator it = new EnumerationIterator(node.children());
+		while (it.hasNext())
+		{
+			final ObjectTreeNode child = (ObjectTreeNode)it.next();
+			final TreePath childPath = new TreePath(child.getPath());
+			final String childPathName = childPath.toString();
+
+			if (previouslySelectedTreePathNames.containsKey(childPathName))
+			{
+				selectedTreePaths.add(childPath);
+			}		
+
+			if (_expandedPathNames.containsKey(childPathName))
+			{
+				restoreExpansionState(child, previouslySelectedTreePathNames, selectedTreePaths);
+			}
+		}
+	}
+
+	private void startExpandingTree(ObjectTreeNode node, boolean selectNode,
+										Map selectedPathNames)
+	{
+		ExpansionController exp = new ExpansionController(node, selectNode, selectedPathNames);
+		if (SwingUtilities.isEventDispatchThread())
+		{
+			_session.getApplication().getThreadPool().addTask(exp);
+		}
+		else
+		{
+			exp.run();
+		}
+	}
+
+	private void expandNode(ObjectTreeNode node, boolean selectNode)
+	{
+		if (node == null)
+		{
+			throw new IllegalArgumentException("ObjectTreeNode == null");
+		}
 		// If node hasn't already been expanded.
-		if (parentNode.getChildCount() == 0)
+		if (node.getChildCount() == 0)
 		{
 			// Add together the standard expanders for this node type and any
 			// individual expanders that there are for the node and process them.
-			int nodeType = parentNode.getNodeType();
+			int nodeType = node.getNodeType();
 			INodeExpander[] stdExpanders = _model.getExpanders(nodeType);
-			INodeExpander[] extraExpanders = parentNode.getExpanders();
+			INodeExpander[] extraExpanders = node.getExpanders();
 			if (stdExpanders.length > 0 || extraExpanders.length > 0)
 			{
 				INodeExpander[] expanders = null;
@@ -251,9 +322,7 @@ public class ObjectTree extends JTree
 					System.arraycopy(extraExpanders, 0, expanders, stdExpanders.length,
 										extraExpanders.length);
 				}
-				TreeLoader loader = new TreeLoader(parentNode, expanders,
-													selectParentNode);
-				_session.getApplication().getThreadPool().addTask(loader);
+				new TreeLoader(node, expanders, selectNode).execute();
 			}
 		}
 	}
@@ -408,17 +477,36 @@ public class ObjectTree extends JTree
 		public void treeExpanded(TreeExpansionEvent evt)
 		{
 			// Get the node to be expanded.
-			Object parentObj = evt.getPath().getLastPathComponent();
+			final TreePath path = evt.getPath();
+			final Object parentObj = path.getLastPathComponent();
 			if (parentObj instanceof ObjectTreeNode)
 			{
-				ObjectTree.this.expandNode((ObjectTreeNode)parentObj, false);
+				startExpandingTree((ObjectTreeNode)parentObj, false, null);
+				_expandedPathNames.put(path.toString(), null);
 			}
 		}
 
 		public void treeCollapsed(TreeExpansionEvent evt)
 		{
+			_expandedPathNames.remove(evt.getPath().toString());
 		}
 	}
+
+//	private final class NodeSelectionListener implements TreeSelectionListener
+//	{
+//		public void valueChanged(TreeSelectionEvent evt)
+//		{
+//			final TreePath[] paths = getSelectionPaths();
+//			if (paths != null && paths.length > 0)
+//			{
+//				_selectedPaths = paths;
+//			}
+//			else
+//			{
+//				_selectedPaths = new TreePath[0];
+//			}
+//		}
+//	}
 
 	/**
 	 * This class is used to sort the nodes by their title.
@@ -431,10 +519,49 @@ public class ObjectTree extends JTree
 		}
 	}
 
+	private class ExpansionController implements Runnable
+	{
+		private final ObjectTreeNode _node;
+		private final boolean _selectNode;
+		private final Map _selectedPathNames;
+
+		ExpansionController(ObjectTreeNode node, boolean selectNode,
+					Map selectedPathNames)
+		{
+			super();
+			_node = node;
+			_selectNode = selectNode;
+			_selectedPathNames = selectedPathNames;
+		}
+		
+		public void run()
+		{
+			synchronized (ObjectTree.this._syncObject)
+			{
+				CursorChanger cursorChg = new CursorChanger(ObjectTree.this);
+				cursorChg.show();
+				try
+				{
+					expandNode(_node, _selectNode);
+					if (_selectedPathNames != null)
+					{
+						List newlySelectedTreepaths = new ArrayList();
+						restoreExpansionState(_node, _selectedPathNames, newlySelectedTreepaths);
+						setSelectionPaths((TreePath[])newlySelectedTreepaths.toArray(new TreePath[newlySelectedTreepaths.size()]));
+					}
+				}
+				finally
+				{
+					cursorChg.restore();
+				}
+			}
+		}
+	}
+
 	/**
 	 * This class actually loads the tree.
 	 */
-	private final class TreeLoader implements Runnable
+	private final class TreeLoader
 	{
 		private ObjectTreeNode _parentNode;
 		private INodeExpander[] _expanders;
@@ -449,35 +576,29 @@ public class ObjectTree extends JTree
 			_selectParentNode= selectParentNode;
 		}
 
-		public void run()
+		void execute()
 		{
 			try
 			{
-				synchronized (ObjectTree.this)
+				try
 				{
-					CursorChanger cursorChg = new CursorChanger(ObjectTree.this);
-					cursorChg.show();
+					ObjectTreeNode loadingNode = showLoadingNode();
 					try
 					{
-						ObjectTreeNode loadingNode = showLoadingNode();
-						try
-						{
-							loadChildren();
-						}
-						finally
-						{
-							_parentNode.remove(loadingNode);
-						}
+						loadChildren();
 					}
 					finally
 					{
-						nodeStructureChanged(_parentNode);
-						if (_selectParentNode)
-						{
-							clearSelection();
-							setSelectionPath(new TreePath(_parentNode.getPath()));
-						}
-						cursorChg.restore();
+						_parentNode.remove(loadingNode);
+					}
+				}
+				finally
+				{
+					fireStructureChanged(_parentNode);
+					if (_selectParentNode)
+					{
+						clearSelection();
+						setSelectionPath(new TreePath(_parentNode.getPath()));
 					}
 				}
 			}
@@ -500,7 +621,7 @@ public class ObjectTree extends JTree
 								_session.getSQLConnection());
 			ObjectTreeNode loadingNode = new ObjectTreeNode(_session, doi);
 			_parentNode.add(loadingNode);
-			nodeStructureChanged(_parentNode);
+			fireStructureChanged(_parentNode);
 			return loadingNode;
 		}
 
@@ -551,7 +672,7 @@ public class ObjectTree extends JTree
 		/**
 		 * Let the object tree model know that its structure has changed.
 		 */
-		private void nodeStructureChanged(ObjectTreeNode node)
+		private void fireStructureChanged(final ObjectTreeNode node)
 		{
 			ObjectTree.this._model.nodeStructureChanged(node);
 		}

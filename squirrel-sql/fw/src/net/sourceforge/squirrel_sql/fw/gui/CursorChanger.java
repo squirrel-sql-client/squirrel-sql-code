@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -20,23 +20,26 @@ package net.sourceforge.squirrel_sql.fw.gui;
 import java.awt.Component;
 import java.awt.Cursor;
 
-public class CursorChanger {
-
+public class CursorChanger
+{
 	private final Component _comp;
 	private final Cursor _newCursor;
-	private Cursor _origCursor;
 
-	public CursorChanger(Component comp) {
+	public CursorChanger(Component comp)
+	{
 		this(comp, Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 	}
 
-	public CursorChanger(Component comp, Cursor newCursor) {
+	public CursorChanger(Component comp, Cursor newCursor)
+	{
 		super();
 
-		if (newCursor == null) {
+		if (newCursor == null)
+		{
 			throw new IllegalArgumentException("null Cursor passed");
 		}
-		if (comp == null) {
+		if (comp == null)
+		{
 			throw new IllegalArgumentException("null Component passed");
 		}
 
@@ -44,16 +47,14 @@ public class CursorChanger {
 		_newCursor = newCursor;
 	}
 
-	public void show() {
-		if (_origCursor == null) {
-			_origCursor = _comp.getCursor();
-		}
+	public void show()
+	{
 		_comp.setCursor(_newCursor);
 	}
 
-	public void restore() {
-		_comp.setCursor(_origCursor);
-		_origCursor = null;
+	public void restore()
+	{
+		_comp.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	}
 
 }
