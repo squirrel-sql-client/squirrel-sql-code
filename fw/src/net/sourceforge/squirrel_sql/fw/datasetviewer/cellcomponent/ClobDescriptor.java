@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,12 +17,10 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
- 
 import java.sql.Clob;
 
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
 /**
  * @author gwg
  *
@@ -40,24 +38,24 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  * make a copy of the appropriate information here.
  */
 public class ClobDescriptor {
-	
+
 	/**
 	 * The java.sql.Clob object that was read.
 	 */
 	Clob _clob;
-	
+
 	/**
 	 * The data read from the Clob.
 	 */
 	String _data = null;
-	
+
 	/**
 	 * If <TT>_clobRead</TT> is <TT>true</TT> then at least some
 	 * of the data in the CLOB should have been read.  If <TT>false</TT>,
 	 * then we have not even tried to read the data.
 	 */
 	private boolean _clobRead = false;
-	
+
 	/**
 	 * If <TT>_wholeClobRead</TT> is <TT>true</TT> then all of the
 	 * data in this CLOB has been read into _data..
@@ -69,16 +67,16 @@ public class ClobDescriptor {
 	 * set by the user for how much to read.
 	 */
 	private int _userSetClobLimit;
-	
+
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(ClobDescriptor.class);
-	
+
 	/**
 	 * Ctor
 	 */
 	public ClobDescriptor (
-		Clob clob, String data, 
+		Clob clob, String data,
 		boolean clobRead, boolean wholeClobRead, int userSetClobLimit) {
 		_clob = clob;
 		_data = data;
@@ -86,7 +84,7 @@ public class ClobDescriptor {
 		_wholeClobRead = wholeClobRead;
 		_userSetClobLimit = userSetClobLimit;
 	}
-	
+
 	/**
 	 * Equals for Clobs means that the internal strings are identical,
 	 * including their length.
@@ -105,50 +103,58 @@ public class ClobDescriptor {
 			else
 				return false;
 		}
-		
+
 		if (c.getClobRead() == false) {
 			// the other obj has not read the data yet.
 			if (_clobRead == true)
 				return false;	// we have read data, so that is not the same state
 			else return true;	//  odd-ball case: assume if neither has read data that they are equal
 		}
-		
+
 		// the other object has real data
 		if (_clobRead == false)
 			return false;	// this one does not, so they are not equal
-		
+
 		// both have actual data, so compare the strings
 		// Note that if one has read all of the data and the other has read only part
 		// of the data that we will say that they are NOT equal.
 		return c.getData().equals(_data);
 	}
-	
+
 	/**
 	 * toString means print the data string, unless the data has not been
 	 * read at all.
 	 */
-	public String toString() {
-		if (_clobRead) {
+	public String toString()
+	{
+		if (_clobRead)
+		{
+			if (_data == null)
+			{
+				return s_stringMgr.getString("ClobDescriptor.null");
+			}
 			if (_wholeClobRead || _userSetClobLimit > _data.length())
+			{
 				return _data;	// we have the whole contents of the CLOB
-			else return _data+"...";	// tell user the data is truncated
+			}
+			return _data + "...";	// tell user the data is truncated
 		}
-		else return s_stringMgr.getString("ClobDescriptor.clob");
+		return s_stringMgr.getString("ClobDescriptor.clob");
 	}
-	
-	/* 
+
+	/*
 	 * Getters and Setters
 	 */
-	 
+
 	public Clob getClob(){return _clob;}
 	public void setClob(Clob clob){_clob = clob;}
-	 
+
 	public String getData(){return _data;}
 	public void setData(String data){_data = data;}
-	
+
 	public boolean getClobRead(){return _clobRead;}
 	public void setClobRead(boolean clobRead){_clobRead = clobRead;}
-	 
+
 	public boolean getWholeClobRead(){return _wholeClobRead;}
 	public void setWholeClobRead(boolean wholeClobRead){_wholeClobRead = wholeClobRead;}
 
