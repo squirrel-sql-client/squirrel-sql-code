@@ -17,19 +17,18 @@ package net.sourceforge.squirrel_sql.plugins.oracle.expander;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.math.BigDecimal;
-import java.sql.Date;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+
 import net.sourceforge.squirrel_sql.plugins.oracle.IObjectTypes;
 /**
  * This class stores information about an Oracle Trigger parent. This just
  * stores info about the table that the trigger relates to.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class TriggerParentInfo extends DatabaseObjectInfo
 {

@@ -3,19 +3,19 @@ package net.sourceforge.squirrel_sql.plugins.oracle.expander;
  * Copyright (C) 2002 Colin Bell
  * colbell@users.sourceforge.net
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -36,7 +36,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTr
 /**
  * This class handles the expanding of an Oracle specific object type node.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ObjectTypeExpander implements INodeExpander
 {
@@ -54,9 +54,9 @@ public class ObjectTypeExpander implements INodeExpander
 
 	/**
 	 * Ctor.
-	 * 
+	 *
 	 * @param	objectType	Object type to be displayed.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> objectType passed.
 	 */
@@ -74,10 +74,10 @@ public class ObjectTypeExpander implements INodeExpander
 	 * Create the child nodes for the passed parent node and return them. Note
 	 * that this method should <B>not</B> actually add the child nodes to the
 	 * parent node as this is taken care of in the caller.
-	 * 
+	 *
 	 * @param	session	Current session.
 	 * @param	node	Node to be expanded.
-	 * 
+	 *
 	 * @return	A list of <TT>ObjectTreeNode</TT> objects representing the child
 	 *			nodes for the passed node.
 	 */
@@ -115,8 +115,6 @@ public class ObjectTypeExpander implements INodeExpander
 										schemaName, rs.getString(1),
 										_objectType._childDboType, md);
 				childNodes.add(new ObjectTreeNode(session, dbinfo));
-//System.out.println("Function:     " + (_objectType._childDboType == IObjectTypes.FUNCTION));
-//System.out.println("Function Grp: " + (_objectType._childDboType == IObjectTypes.FUNCTION_GRP));
 			}
 		}
 		finally

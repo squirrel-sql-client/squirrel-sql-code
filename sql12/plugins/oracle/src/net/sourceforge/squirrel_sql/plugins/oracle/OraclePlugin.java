@@ -3,44 +3,57 @@ package net.sourceforge.squirrel_sql.plugins.oracle;
  * Copyright (C) 2002 Colin Bell
  * colbell@users.sourceforge.net
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.plugins.oracle.expander.*;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.*;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
+
+import net.sourceforge.squirrel_sql.plugins.oracle.expander.DatabaseExpander;
+import net.sourceforge.squirrel_sql.plugins.oracle.expander.InstanceParentExpander;
+import net.sourceforge.squirrel_sql.plugins.oracle.expander.PackageExpander;
+import net.sourceforge.squirrel_sql.plugins.oracle.expander.SchemaExpander;
+import net.sourceforge.squirrel_sql.plugins.oracle.expander.SessionParentExpander;
+import net.sourceforge.squirrel_sql.plugins.oracle.expander.TableExpander;
+import net.sourceforge.squirrel_sql.plugins.oracle.expander.TriggerParentExpander;
+import net.sourceforge.squirrel_sql.plugins.oracle.expander.UserParentExpander;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.InstanceDetailsTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.ObjectSourceTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.OptionsTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.SequenceDetailsTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.SessionDetailsTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.SessionStatisticsTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.TriggerColumnInfoTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.TriggerDetailsTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.TriggerSourceTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.UserDetailsTab;
 /**
  * Oracle plugin class.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class OraclePlugin extends DefaultSessionPlugin
 {
@@ -53,13 +66,10 @@ public class OraclePlugin extends DefaultSessionPlugin
 	/** API for the Obejct Tree. */
 	private IObjectTreeAPI _treeAPI;
 
-	/** Package Group Database object type. */
-	private DatabaseObjectType _packageGroupType;
-
 	/**
 	 * Return the internal name of this plugin.
 	 *
-	 * @return  the internal name of this plugin.
+	 * @return	the internal name of this plugin.
 	 */
 	public String getInternalName()
 	{
@@ -69,7 +79,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 	/**
 	 * Return the descriptive name of this plugin.
 	 *
-	 * @return  the descriptive name of this plugin.
+	 * @return	the descriptive name of this plugin.
 	 */
 	public String getDescriptiveName()
 	{
@@ -79,7 +89,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 	/**
 	 * Returns the current version of this plugin.
 	 *
-	 * @return  the current version of this plugin.
+	 * @return	the current version of this plugin.
 	 */
 	public String getVersion()
 	{
@@ -89,7 +99,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 	/**
 	 * Returns the authors name.
 	 *
-	 * @return  the authors name.
+	 * @return	the authors name.
 	 */
 	public String getAuthor()
 	{
@@ -123,23 +133,11 @@ public class OraclePlugin extends DefaultSessionPlugin
 	/**
 	 * Load this plugin.
 	 *
-	 * @param   app	 Application API.
+	 * @param	app	 Application API.
 	 */
 	public synchronized void load(IApplication app) throws PluginException
 	{
 		super.load(app);
-
-		// Folder within plugins folder that belongs to this
-		// plugin.
-		File pluginAppFolder = null;
-		try
-		{
-			pluginAppFolder = getPluginAppSettingsFolder();
-		}
-		catch (IOException ex)
-		{
-			throw new PluginException(ex);
-		}
 
 		// Folder to store user settings.
 		try
@@ -164,9 +162,9 @@ public class OraclePlugin extends DefaultSessionPlugin
 	 * Session has been started. If this is an Oracle session then
 	 * register an extra expander for the Schema nodes to show
 	 * Oracle Packages.
-	 * 
+	 *
 	 * @param	session		Session that has started.
-	 * 
+	 *
 	 * @return	<TT>true</TT> if session is Oracle in which case this plugin
 	 * 							is interested in it.
 	 */
