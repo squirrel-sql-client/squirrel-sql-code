@@ -111,6 +111,7 @@ public interface ISession extends IHasIdentifier {
 	IMessageHandler getMessageHandler();
 
 	String getEntireSQLScript();
+	String getSQLScriptToBeExecuted();
 	void setEntireSQLScript(String sqlScript);
 	void appendSQLScript(String sqlScript);
 

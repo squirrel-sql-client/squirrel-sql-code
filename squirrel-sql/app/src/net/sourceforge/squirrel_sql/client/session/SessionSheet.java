@@ -68,6 +68,7 @@ import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
 import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
+import net.sourceforge.squirrel_sql.client.session.action.ShowNativeSQLAction;
 import net.sourceforge.squirrel_sql.client.session.objectstree.DatabasePanel;
 import net.sourceforge.squirrel_sql.client.session.objectstree.ProcedurePanel;
 import net.sourceforge.squirrel_sql.client.session.objectstree.TablePanel;
@@ -159,12 +160,14 @@ public class SessionSheet extends JInternalFrame {
 		final String tabTitle = _tabPane.getTitleAt(_tabPane.getSelectedIndex());
 		if (tabTitle.equals(i18n.SQL_TAB_TITLE)) {
 			actions.get(ExecuteSqlAction.class).setEnabled(true);
+			actions.get(ShowNativeSQLAction.class).setEnabled(true);
 			boolean isAutoCommit = _session.getProperties().getAutoCommit();
 			actions.get(CommitAction.class).setEnabled(!isAutoCommit);
 			actions.get(RollbackAction.class).setEnabled(!isAutoCommit);
 			actions.get(RefreshTreeAction.class).setEnabled(false);
 		} else {
 			actions.get(ExecuteSqlAction.class).setEnabled(false);
+			actions.get(ShowNativeSQLAction.class).setEnabled(false);
 			actions.get(CommitAction.class).setEnabled(false);
 			actions.get(RollbackAction.class).setEnabled(false);
 			actions.get(RefreshTreeAction.class).setEnabled(true);
@@ -269,6 +272,10 @@ public class SessionSheet extends JInternalFrame {
 
 	String getEntireSQLScript() {
 		return _sqlPnl.getEntireSQLScript();
+	}
+
+	String getSQLScriptToBeExecuted() {
+		return _sqlPnl.getSQLScriptToBeExecuted();
 	}
 
 	void setEntireSQLScript(String sqlScript) {

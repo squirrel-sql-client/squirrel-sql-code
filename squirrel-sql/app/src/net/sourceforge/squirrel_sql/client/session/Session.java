@@ -215,6 +215,10 @@ class Session implements ISession {
 		return _sessionSheet.getEntireSQLScript();
 	}
 
+	public String getSQLScriptToBeExecuted() {
+		return _sessionSheet.getSQLScriptToBeExecuted();
+	}
+
 	public void setEntireSQLScript(String sqlScript) {
 		_sessionSheet.setEntireSQLScript(sqlScript);
 	}

@@ -220,22 +220,7 @@ class SQLPanel extends JPanel {
 	}
 
 	public void executeCurrentSQL() {
-		String sql = _sqlEntry.getSelectedText();
-		if(sql == null || sql.trim().length() == 0) {
-			sql = _sqlEntry.getText();
-
-			int iStartIndex = 0;
-			int iEndIndex = sql.length();
-
-			int iCaretPos = _sqlEntry.getCaretPosition();
-
-			int iIndex = sql.lastIndexOf("\n\n",iCaretPos);
-			if(iIndex >0) iStartIndex = iIndex;
-			iIndex = sql.indexOf("\n\n",iCaretPos);
-			if(iIndex >0) iEndIndex = iIndex;
-
-			sql = sql.substring(iStartIndex, iEndIndex).trim();
-		}
+		String sql = getSQLScriptToBeExecuted();
 		if(sql != null && sql.trim().length() > 0) {
 			SQLExecuterTask task = new SQLExecuterTask(this, _session, sql);
 			_session.getApplication().getThreadPool().addTask(task);
@@ -406,6 +391,26 @@ class SQLPanel extends JPanel {
 
 	String getEntireSQLScript() {
 		return _sqlEntry.getText();
+	}
+
+	String getSQLScriptToBeExecuted() {
+		String sql = _sqlEntry.getSelectedText();
+		if(sql == null || sql.trim().length() == 0) {
+			sql = _sqlEntry.getText();
+
+			int iStartIndex = 0;
+			int iEndIndex = sql.length();
+
+			int iCaretPos = _sqlEntry.getCaretPosition();
+
+			int iIndex = sql.lastIndexOf("\n\n",iCaretPos);
+			if(iIndex >0) iStartIndex = iIndex;
+			iIndex = sql.indexOf("\n\n",iCaretPos);
+			if(iIndex >0) iEndIndex = iIndex;
+
+			sql = sql.substring(iStartIndex, iEndIndex).trim();
+		}
+		return sql != null ? sql : "";
 	}
 
 	void setEntireSQLScript(String sqlScript) {
