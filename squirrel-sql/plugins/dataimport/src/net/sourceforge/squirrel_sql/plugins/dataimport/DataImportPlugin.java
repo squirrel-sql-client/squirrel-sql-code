@@ -34,15 +34,6 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public class DataImportPlugin extends DefaultSessionPlugin {
-    /**
-     * This interface defines locale specific strings. This should be
-     * replaced with a property file.
-     */
-    private interface i18n {
-        String TITLE = "Import Data";
-        String DESC = "Import csv files into database";
-    }
-
     /** Plugin preferences. */
 //    private Preferences _lafPrefs;
 
@@ -129,7 +120,7 @@ public class DataImportPlugin extends DefaultSessionPlugin {
      *          applicable to passed session.
      */
     public boolean sessionStarted(ISession session) {
-        session.addMainTab(i18n.TITLE, null, new FileImport(session), i18n.DESC);
+        session.addMainTab(new FileImportTab(session));
         return true;
     }
 
