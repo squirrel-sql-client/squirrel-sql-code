@@ -22,6 +22,7 @@ Enhancements
 
 Bug Fixes
 ---------
+- Allow for nulls when displayng Date, Time, and Tmestamp columns.
 - Remove <CTRL><SHIFT>L from Display Logs menu item as it is used by another
   menu item.
 - Remove the Filter option from the popup menu in the object tree as this

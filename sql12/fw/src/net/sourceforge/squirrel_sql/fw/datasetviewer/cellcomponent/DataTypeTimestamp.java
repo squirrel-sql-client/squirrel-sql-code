@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -71,7 +71,7 @@ import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
  * <LI> editing within a table cell
  * <LI> read-only or editing display within a separate window
  * </UL>
- * The class also contains 
+ * The class also contains
  * <UL>
  * <LI> a function to compare two display values
  * to see if they are equal.  This is needed because the display format
@@ -98,10 +98,10 @@ public class DataTypeTimestamp
 
 	/* table of which we are part (needed for creating popup dialog) */
 	private JTable _table;
-	
+
 	/* The JTextComponent that is being used for editing */
 	private IRestorableTextComponent _textComponent;
-	
+
 	/* The CellRenderer used for this data type */
 	//??? For now, use the same renderer as everyone else.
 	//??
@@ -126,28 +126,28 @@ public class DataTypeTimestamp
 	 */
 	 // flag for whether we have already loaded the properties or not
 	 private static boolean propertiesAlreadyLoaded = false;
-	 
+
 	 // flag for whether to use the default Java format (true)
 	 // or the Locale-dependent format (false)
 	 private static boolean useJavaDefaultFormat = true;
-	 
+
 	 // which locale-dependent format to use; short, medium, long, or full
 	 private static int localeFormat = DEFAULT_LOCALE_FORMAT;
-	 
+
 	 // Whether to force user to enter dates in exact format or use heuristics to guess it
 	 private static boolean lenient = true;
-	 
+
 	 // The DateFormat object to use for all locale-dependent formatting.
 	 // This is reset each time the user changes the previous settings.
 	 private static DateFormat dateFormat =
 	 	DateFormat.getDateTimeInstance(localeFormat, localeFormat);
-	 	
+
 	// values for how to use timestamps in WHERE clauses
 	 private static final int DO_NOT_USE = 0;
 	 private static final int USE_TIMESTAMP_FORMAT = 1;
 	 private static final int USE_STRING_FORMAT = 2;
 	// Define whether or not to use Timestamp in internally generated WHERE
-	// clauses, and if so what format to use. 
+	// clauses, and if so what format to use.
 	 private static int whereClauseUsage = USE_TIMESTAMP_FORMAT;
 
 
@@ -158,10 +158,10 @@ public class DataTypeTimestamp
 		_table = table;
 		_colDef = colDef;
 		_isNullable = colDef.isNullable();
-		
+
 		loadProperties();
 	}
-	
+
 	/** Internal function to get the user-settable properties from the DTProperties,
 	 * if they exist, and to ensure that defaults are set if the properties have
 	 * not yet been created.
@@ -172,7 +172,7 @@ public class DataTypeTimestamp
 	 * the first time we are called.
 	 */
 	private static void loadProperties() {
-		
+
 		//set the property values
 		// Note: this may have already been done by another instance of
 		// this DataType created to handle a different column.
@@ -183,21 +183,21 @@ public class DataTypeTimestamp
 				thisClassName, "useJavaDefaultFormat");
 			if (useJavaDefaultFormatString != null && useJavaDefaultFormatString.equals("false"))
 				useJavaDefaultFormat =false;
-			
+
 			// get which locale-dependent format to use
 			localeFormat =DateFormat.SHORT;	// set to use the Java default
 			String localeFormatString = DTProperties.get(
 				thisClassName, "localeFormat");
 			if (localeFormatString != null)
 				localeFormat = Integer.parseInt(localeFormatString);
-				
+
 			// use lenient input or force user to enter exact format
 			lenient = true;	// set to allow less stringent input
 			String lenientString = DTProperties.get(
 				thisClassName, "lenient");
 			if (lenientString != null && lenientString.equals("false"))
 				lenient =false;
-			
+
 			// how to use Timestamp in WHERE clauses
 			whereClauseUsage = USE_TIMESTAMP_FORMAT;	// default to SQL standard
 			String whereClauseUsageString = DTProperties.get(
@@ -206,7 +206,7 @@ public class DataTypeTimestamp
 				whereClauseUsage = Integer.parseInt(whereClauseUsageString);
 		}
 	}
-	
+
 	/**
 	 * Return the name of the java class used to hold this data type.
 	 */
@@ -225,24 +225,24 @@ public class DataTypeTimestamp
 	/*
 	 * First we have the methods for in-cell and Text-table operations
 	 */
-	 
+
 	/**
 	 * Render a value into text for this DataType.
 	 */
 	public String renderObject(Object value) {
 		// use the Java default date-to-string
-		if (useJavaDefaultFormat == true)
+		if (useJavaDefaultFormat == true || value == null)
 			return (String)_renderer.renderObject(value);
-			
+
 		// use a date formatter
 		return (String)_renderer.renderObject(dateFormat.format(value));
 	}
-	
+
 	/**
 	 * This Data Type can be edited in a table cell.
 	 */
 	public boolean isEditableInCell(Object originalValue) {
-		return true;	
+		return true;
 	}
 
 	/**
@@ -257,16 +257,16 @@ public class DataTypeTimestamp
 		// so there is no need to re-read the complete data later
 		return false;
 	}
-	
+
 	/**
 	 * Return a JTextField usable in a CellEditor.
 	 */
 	public JTextField getJTextField() {
 		_textComponent = new RestorableJTextField();
-		
+
 		// special handling of operations while editing this data type
 		((RestorableJTextField)_textComponent).addKeyListener(new KeyTextHandler());
-				
+
 		//
 		// handle mouse events for double-click creation of popup dialog.
 		// This happens only in the JTextField, not the JTextArea, so we can
@@ -302,7 +302,7 @@ public class DataTypeTimestamp
 			return null;
 
 		// Do the conversion into the object in a safe manner
-		try {		
+		try {
 			if (useJavaDefaultFormat) {
 				Object obj = Timestamp.valueOf(value);
 				return obj;
@@ -337,12 +337,12 @@ public class DataTypeTimestamp
 	public boolean useBinaryEditingPanel() {
 		return false;
 	}
-	 
+
 
 	/*
 	 * Now the functions for the Popup-related operations.
 	 */
-	
+
 	/**
 	 * Returns true if data type may be edited in the popup,
 	 * false if not.
@@ -357,14 +357,14 @@ public class DataTypeTimestamp
 	 */
 	 public JTextArea getJTextArea(Object value) {
 		_textComponent = new RestorableJTextArea();
-		
+
 		// value is a simple string representation of the data,
 		// the same one used in Text and in-cell operations.
 		((RestorableJTextArea)_textComponent).setText(renderObject(value));
-		
+
 		// special handling of operations while editing this data type
 		((RestorableJTextArea)_textComponent).addKeyListener(new KeyTextHandler());
-		
+
 		return (RestorableJTextArea)_textComponent;
 	 }
 
@@ -377,8 +377,8 @@ public class DataTypeTimestamp
 
 	/*
 	 * The following is used in both cell and popup operations.
-	 */	
-	
+	 */
+
 	/*
 	 * Internal class for handling key events during editing
 	 * of both JTextField and JTextArea.
@@ -386,14 +386,14 @@ public class DataTypeTimestamp
 	 private class KeyTextHandler extends KeyAdapter {
 	 	public void keyTyped(KeyEvent e) {
 				char c = e.getKeyChar();
-				
+
 				// as a coding convenience, create a reference to the text component
 				// that is typecast to JTextComponent.  this is not essential, as we
 				// could typecast every reference, but this makes the code cleaner
 				JTextComponent _theComponent = (JTextComponent)DataTypeTimestamp.this._textComponent;
 				String text = _theComponent.getText();
-	
-												
+
+
 				// tabs and newlines get put into the text before this check,
 				// so remove them
 				// This only applies to Popup editing since these chars are
@@ -463,19 +463,17 @@ public class DataTypeTimestamp
 		}
 
 
-	
-	
 	/*
 	 * DataBase-related functions
 	 */
-	 
+
 	 /**
 	  * On input from the DB, read the data from the ResultSet into the appropriate
 	  * type of object to be stored in the table cell.
 	  */
 	public Object readResultSet(ResultSet rs, int index, boolean limitDataRead)
 		throws java.sql.SQLException {
-		
+
 		Timestamp data = rs.getTimestamp(index);
 		if (rs.wasNull())
 			return null;
@@ -506,8 +504,8 @@ public class DataTypeTimestamp
 			else
 				return _colDef.getLabel() + "='" + value.toString() +"'";
 	}
-	
-	
+
+
 	/**
 	 * When updating the database, insert the appropriate datatype into the
 	 * prepared statment at the given variable position.
@@ -521,7 +519,7 @@ public class DataTypeTimestamp
 			pstmt.setTimestamp(position, ((Timestamp)value));
 		}
 	}
-	
+
 	/**
 	 * Get a default value for the table used to input data for a new row
 	 * to be inserted into the DB.
@@ -531,28 +529,28 @@ public class DataTypeTimestamp
 			// try to use the DB default value
 			StringBuffer mbuf = new StringBuffer();
 			Object newObject = validateAndConvert(dbDefaultValue, null, mbuf);
-			
+
 			// if there was a problem with converting, then just fall through
 			// and continue as if there was no default given in the DB.
 			// Otherwise, use the converted object
 			if (mbuf.length() == 0)
 				return newObject;
 		}
-		
+
 		// no default in DB.  If nullable, use null.
 		if (_isNullable)
 			return null;
-		
+
 		// field is not nullable, so create a reasonable default value
 		return new Timestamp(new java.util.Date().getTime());
 	}
-	
-	
+
+
 	/*
 	 * File IO related functions
 	 */
-	 
-	 
+
+
 	 /**
 	  * Say whether or not object can be exported to and imported from
 	  * a file.  We put both export and import together in one test
@@ -561,7 +559,7 @@ public class DataTypeTimestamp
 	 public boolean canDoFileIO() {
 	 	return true;
 	 }
-	 
+
 	 /**
 	  * Read a file and construct a valid object from its contents.
 	  * Errors are returned by throwing an IOException containing the
@@ -572,28 +570,28 @@ public class DataTypeTimestamp
 	  * a text string that can be used in the Popup window text area.
 	  * This object-to-text conversion is the same as is done by
 	  * the DataType object internally in the getJTextArea() method.
-	  * 
+	  *
 	  * <P>
 	  * File is assumed to be and ASCII string of digits
 	  * representing a value of this data type.
 	  */
 	public String importObject(FileInputStream inStream)
 	 	throws IOException {
-	 	
+
 	 	InputStreamReader inReader = new InputStreamReader(inStream);
-	 	
+
 	 	int fileSize = inStream.available();
-	 	
+
 	 	char charBuf[] = new char[fileSize];
-	 	
+
 	 	int count = inReader.read(charBuf, 0, fileSize);
-	 	
+
 	 	if (count != fileSize)
 	 		throw new IOException(
 	 			"Could read only "+ count +
 	 			" chars from a total file size of " + fileSize +
 	 			". Import failed.");
-	 	
+
 	 	// convert file text into a string
 	 	// Special case: some systems tack a newline at the end of
 	 	// the text read.  Assume that if last char is a newline that
@@ -602,7 +600,7 @@ public class DataTypeTimestamp
 	 	if (charBuf[count-1] == KeyEvent.VK_ENTER)
 	 		fileText = new String(charBuf, 0, count-1);
 	 	else fileText = new String(charBuf);
-	 	
+
 	 	// test that the string is valid by converting it into an
 	 	// object of this data type
 	 	StringBuffer messageBuffer = new StringBuffer();
@@ -613,13 +611,13 @@ public class DataTypeTimestamp
 	 			"Text does not represent data of type "+getClassName()+
 	 			".  Text was:\n"+fileText);
 	 	}
-	 	
+
 	 	// return the text from the file since it does
 	 	// represent a valid data value
 	 	return fileText;
 	}
 
-	 	 
+
 	 /**
 	  * Construct an appropriate external representation of the object
 	  * and write it to a file.
@@ -634,16 +632,16 @@ public class DataTypeTimestamp
 	  * The DataType object must flush and close the output stream before returning.
 	  * Typically it will create another object (e.g. an OutputWriter), and
 	  * that is the object that must be flushed and closed.
-	  * 
+	  *
 	  * <P>
 	  * File is assumed to be and ASCII string of digits
 	  * representing a value of this data type.
 	  */
 	 public void exportObject(FileOutputStream outStream, String text)
 	 	throws IOException {
-	 	
+
 	 	OutputStreamWriter outWriter = new OutputStreamWriter(outStream);
-	 	
+
 	 	// check that the text is a valid representation
 	 	StringBuffer messageBuffer = new StringBuffer();
 	 	validateAndConvertInPopup(text, null, messageBuffer);
@@ -651,23 +649,23 @@ public class DataTypeTimestamp
 	 		// there was an error in the conversion
 	 		throw new IOException(new String(messageBuffer));
 	 	}
-	 	
+
 	 	// just send the text to the output file
 		outWriter.write(text);
 		outWriter.flush();
 		outWriter.close();
 	 }
 
-	
+
 
 	/*
 	 * Property change control panel
-	 */	  
-	 
+	 */
+
 	 /**
 	  * Generate a JPanel containing controls that allow the user
 	  * to adjust the properties for this DataType.
-	  * All properties are static accross all instances of this DataType. 
+	  * All properties are static accross all instances of this DataType.
 	  * However, the class may choose to apply the information differentially,
 	  * such as keeping a list (also entered by the user) of table/column names
 	  * for which certain properties should be used.
@@ -681,7 +679,7 @@ public class DataTypeTimestamp
 	  * but the Interface does not seem to like static methods.
 	  */
 	 public static OkJPanel getControlPanel() {
-	 	
+
 		/*
 		 * If you add this method to one of the standard DataTypes in the
 		 * fw/datasetviewer/cellcomponent directory, you must also add the name
@@ -693,11 +691,11 @@ public class DataTypeTimestamp
 		 * factory method getDataTypeObject, then it does need to be explicitly listed
 		 * in the getControlPanels method also.
 		 */
-		 
+
 		 // if this panel is called before any instances of the class have been
 		 // created, we need to load the properties from the DTProperties.
 		 loadProperties();
-		 
+
 		return new BlobOkJPanel();
 	 }
 
@@ -706,16 +704,16 @@ public class DataTypeTimestamp
 	{
 		public DateFormatTypeCombo()
 		{
-			addItem("Full (" + 
+			addItem("Full (" +
 				DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).format(new java.util.Date()) + ")"  );
-			addItem("Long (" + 
+			addItem("Long (" +
 				DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG).format(new java.util.Date()) + ")"  );
-			addItem("Medium (" + 
-				DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new java.util.Date()) + ")"  );											
-			addItem("Short (" + 
+			addItem("Medium (" +
+				DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new java.util.Date()) + ")"  );
+			addItem("Short (" +
 				DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(new java.util.Date()) + ")" );
 		}
-		
+
 		public void setSelectedIndex(int option) {
 			if (option == DateFormat.SHORT)
 				super.setSelectedIndex(3);
@@ -725,7 +723,7 @@ public class DataTypeTimestamp
 				super.setSelectedIndex(1);
 			else super.setSelectedIndex(0);
 		}
-		
+
 		public int getValue() {
 			if (getSelectedIndex() == 3)
 				return DateFormat.SHORT;
@@ -735,9 +733,9 @@ public class DataTypeTimestamp
 				return DateFormat.LONG;
 			else return DateFormat.FULL;
 		}
-	}	 
-	 
-	 
+	}
+
+
 	 /**
 	  * Inner class that extends OkJPanel so that we can call the ok()
 	  * method to save the data when the user is happy with it.
@@ -747,20 +745,20 @@ public class DataTypeTimestamp
 		 * GUI components - need to be here because they need to be
 		 * accessible from the event handlers to alter each other's state.
 		 */
-	   // check box for whether to use Java Default or a Locale-dependent format
+		// check box for whether to use Java Default or a Locale-dependent format
 		private JCheckBox useJavaDefaultFormatChk = new JCheckBox(
-			"Use default format (" + 
+			"Use default format (" +
 			new Timestamp(new java.util.Date().getTime()).toString() + ")");
-		
+
 		// label for the date format combo, used to enable/disable text
 		private RightLabel dateFormatTypeDropLabel = new RightLabel(" or locale-dependent format:");
-				
+
 		// Combo box for read-all/read-part of blob
 		private DateFormatTypeCombo dateFormatTypeDrop = new DateFormatTypeCombo();
 
 		// checkbox for whether to interpret input leniently or not
 		private JCheckBox lenientChk = new JCheckBox("allow inexact format on input");
-		
+
 		// Objects needed to handle radio buttons
 		private JRadioButton doNotUseButton =
 			new JRadioButton("Do not use Timstamp in WHERE clause");
@@ -777,46 +775,46 @@ public class DataTypeTimestamp
 			useTimestampFormatButton.getModel(),
 			useStringFormatButton.getModel() };
 		private ButtonGroup whereClauseUsageGroup = new ButtonGroup();
-	   
+
 
 		public BlobOkJPanel() {
-		 	 
+
 			/* set up the controls */
 			// checkbox for Java default/non-default format
 			useJavaDefaultFormatChk.setSelected(useJavaDefaultFormat);
 			useJavaDefaultFormatChk.addChangeListener(new ChangeListener(){
-				public void stateChanged(ChangeEvent e) {		
+				public void stateChanged(ChangeEvent e) {
 					dateFormatTypeDrop.setEnabled( ! useJavaDefaultFormatChk.isSelected());
 					dateFormatTypeDropLabel.setEnabled( ! useJavaDefaultFormatChk.isSelected());
-					lenientChk.setEnabled( ! useJavaDefaultFormatChk.isSelected());	
+					lenientChk.setEnabled( ! useJavaDefaultFormatChk.isSelected());
 				}
 			});
-		
+
 			// Combo box for read-all/read-part of blob
 			dateFormatTypeDrop = new DateFormatTypeCombo();
 			dateFormatTypeDrop.setSelectedIndex( localeFormat );
 
 			// lenient checkbox
 			lenientChk.setSelected(lenient);
-			
+
 			// where clause usage group
 			whereClauseUsageGroup.add(doNotUseButton);
 			whereClauseUsageGroup.add(useTimestampFormatButton);
 			whereClauseUsageGroup.add(useStringFormatButton);
 			whereClauseUsageGroup.setSelected(radioButtonModels[whereClauseUsage], true);
 
-	 	 
+
 			// handle cross-connection between fields
 			dateFormatTypeDrop.setEnabled( ! useJavaDefaultFormatChk.isSelected());
 			dateFormatTypeDropLabel.setEnabled( ! useJavaDefaultFormatChk.isSelected());
-			lenientChk.setEnabled( ! useJavaDefaultFormatChk.isSelected());	
+			lenientChk.setEnabled( ! useJavaDefaultFormatChk.isSelected());
 
 			/*
 			  * Create the panel and add the GUI items to it
 			 */
-	 	  
+
 			setLayout(new GridBagLayout());
-	 	
+
 			setBorder(BorderFactory.createTitledBorder("Timestamp   (SQL type 93)"));
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -840,7 +838,7 @@ public class DataTypeTimestamp
 			gbc.gridx = 0;
 			++gbc.gridy;
 			add(lenientChk, gbc);
-			
+
 			// add label for the radio button group
 			gbc.gridx = 0;
 			++gbc.gridy;
@@ -858,8 +856,8 @@ public class DataTypeTimestamp
 
 
 		} // end of constructor for inner class
-	 
-	 
+
+
 		/**
 		  * User has clicked OK in the surrounding JPanel,
 		  * so save the current state of all variables
@@ -870,20 +868,20 @@ public class DataTypeTimestamp
 			DTProperties.put(
 				thisClassName,
 				"useJavaDefaultFormat", new Boolean(useJavaDefaultFormat).toString());
-			
-		
+
+
 			localeFormat = dateFormatTypeDrop.getValue();
 			dateFormat = DateFormat.getDateTimeInstance(localeFormat, localeFormat);	// lenient is set next
 			DTProperties.put(
 				thisClassName,
-				"localeFormat", Integer.toString(localeFormat));	
-		
+				"localeFormat", Integer.toString(localeFormat));
+
 			lenient = lenientChk.isSelected();
 			dateFormat.setLenient(lenient);
 			DTProperties.put(
 				thisClassName,
 				"lenient", new Boolean(lenient).toString());
-			
+
 			//WARNING: this depends on entires in ButtonGroup being in the same order
 			// as the values for whereClauseUsage
 			int buttonIndex;
@@ -898,7 +896,7 @@ public class DataTypeTimestamp
 				thisClassName,
 				"whereClauseUsage", Integer.toString(whereClauseUsage));
 		}
-	 
-	 } // end of inner class	 
-	 
+
+	 } // end of inner class
+
 }
