@@ -37,7 +37,9 @@ public class SchemaInfo
 	private final List _keywords = new ArrayList();
 	private final List _dataTypes = new ArrayList();
 	private final List _functions = new ArrayList();
- 
+	private final List _tables = new ArrayList();
+	private final List _columns = new ArrayList();
+
 	/** Logger for this class. */
 	private static final ILogger s_log =
 				LoggerController.createLogger(SchemaInfo.class);
@@ -79,7 +81,9 @@ public class SchemaInfo
 
 			try
 			{
-				loadKeywords(conn, dmd);
+				s_log.debug("Loading keywords");
+				loadKeywords(dmd);
+				s_log.debug("Keywords loaded");
 			}
 			catch (Exception ex)
 			{
@@ -88,7 +92,7 @@ public class SchemaInfo
 
 			try
 			{
-				loadDataTypes(conn, dmd);
+				loadDataTypes(dmd);
 			}
 			catch (Exception ex)
 			{
@@ -97,11 +101,24 @@ public class SchemaInfo
 
 			try
 			{
-				loadFunctions(conn, dmd);
+				s_log.debug("Loading functions");
+				loadFunctions(dmd);
+				s_log.debug("Functions loaded");
 			}
 			catch (Exception ex)
 			{
 				s_log.error("Error loading functions", ex);
+			}
+
+			try
+			{
+				s_log.debug("Loading tables");
+				loadTables(dmd);
+				s_log.debug("Tables loaded");
+			}
+			catch (Exception ex)
+			{
+				s_log.error("Error loading tables", ex);
 			}
 		}
 		finally
@@ -112,9 +129,9 @@ public class SchemaInfo
 
 	/**
 	 * Retrieve whether the passed string is a keyword.
-	 * 
+	 *
 	 * @param	keyword		String to check.
-	 * 
+	 *
 	 * @return	<TT>true</TT> if a keyword.
 	 */
 	public boolean isKeyword(String data)
@@ -128,9 +145,9 @@ public class SchemaInfo
 
 	/**
 	 * Retrieve whether the passed string is a data type.
-	 * 
+	 *
 	 * @param	keyword		String to check.
-	 * 
+	 *
 	 * @return	<TT>true</TT> if a data type.
 	 */
 	public boolean isDataType(String data)
@@ -144,9 +161,9 @@ public class SchemaInfo
 
 	/**
 	 * Retrieve whether the passed string is a function.
-	 * 
+	 *
 	 * @param	keyword		String to check.
-	 * 
+	 *
 	 * @return	<TT>true</TT> if a function.
 	 */
 	public boolean isFunction(String data)
@@ -158,7 +175,39 @@ public class SchemaInfo
 		return false;
 	}
 
-	private void loadKeywords(SQLConnection conn, DatabaseMetaData dmd)
+	/**
+	 * Retrieve whether the passed string is a table.
+	 *
+	 * @param	keyword		String to check.
+	 *
+	 * @return	<TT>true</TT> if a table.
+	 */
+	public boolean isTable(String data)
+	{
+		if (!_loading && data != null)
+		{
+			return _tables.contains(data.toUpperCase());
+		}
+		return false;
+	}
+
+	/**
+	 * Retrieve whether the passed string is a column.
+	 *
+	 * @param	keyword		String to check.
+	 *
+	 * @return	<TT>true</TT> if a column.
+	 */
+	public boolean isColumn(String data)
+	{
+		if (!_loading && data != null)
+		{
+			return _columns.contains(data.toUpperCase());
+		}
+		return false;
+	}
+
+	private void loadKeywords(DatabaseMetaData dmd)
 	{
 		try
 		{
@@ -361,7 +410,7 @@ public class SchemaInfo
 		}
 	}
 
-	private void loadDataTypes(SQLConnection conn, DatabaseMetaData dmd)
+	private void loadDataTypes(DatabaseMetaData dmd)
 	{
 		try
 		{
@@ -384,7 +433,7 @@ public class SchemaInfo
 		}
 	}
 
-	private void loadFunctions(SQLConnection conn, DatabaseMetaData dmd)
+	private void loadFunctions(DatabaseMetaData dmd)
 	{
 		StringBuffer buf = new StringBuffer(1024);
 
@@ -444,5 +493,21 @@ public class SchemaInfo
 		}
 	}
 
-
+	private void loadTables(DatabaseMetaData dmd)
+	{
+		try
+		{
+			// TODO: Use table types from meta data?
+			final ResultSet rs = dmd.getTables(null, null, null,
+					new String[] { "TABLE", "VIEW" });
+			while (rs.next())
+			{
+				_tables.add(rs.getString(3).toUpperCase());
+			}
+		}
+		catch (Throwable th)
+		{
+			s_log.error("failed to load table names", th);
+		}
+	}
 }
