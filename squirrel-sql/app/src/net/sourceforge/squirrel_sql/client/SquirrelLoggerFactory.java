@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -20,70 +20,72 @@ package net.sourceforge.squirrel_sql.client;
 import java.io.IOException;
 import java.util.Calendar;
 
-import org.apache.log4j.PropertyConfigurator;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.Log4jLoggerFactory;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Category;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.PatternLayout;
-
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.Log4jLoggerFactory;
+import org.apache.log4j.PropertyConfigurator;
 
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 
-public class SquirrelLoggerFactory extends Log4jLoggerFactory {
+public class SquirrelLoggerFactory extends Log4jLoggerFactory
+{
 	private static ILogger s_log = null;
 
-	public SquirrelLoggerFactory() throws IllegalArgumentException {
+	public SquirrelLoggerFactory() throws IllegalArgumentException
+	{
 		super(false);
 		String configFileName = ApplicationArguments.getInstance().getLoggingConfigFileName();
-		if (configFileName != null) {
+		if (configFileName != null)
+		{
 			PropertyConfigurator.configure(configFileName);
-		} else {
+		}
+		else
+		{
 			Category.getRoot().removeAllAppenders();
-			try {
-				final String logFileName = new ApplicationFiles().getExecutionLogFile().getPath();
-				final PatternLayout layout = new PatternLayout("%-4r [%t] %-5p %c %x - %m%n");
-				FileAppender fa = new FileAppender(layout, logFileName);
-				fa.setFile(logFileName);
+			try
+			{
+//				final String logFileName = new ApplicationFiles().getExecutionLogFile().getPath();
+//				final PatternLayout layout = new PatternLayout("%-4r [%t] %-5p %c %x - %m%n");
+//				FileAppender fa = new FileAppender(layout, logFileName);
+//				fa.setFile(logFileName);
+				SquirrelAppender fa = new SquirrelAppender();
+
 				BasicConfigurator.configure(fa);
 				final ILogger log = createLogger(getClass());
-				log.warn("No logger configuration file passed on command line arguments");
-			} catch (IOException ex) {
+				log.warn(
+					"No logger configuration file passed on command line arguments. Using default log file: "
+						+ fa.getFile() /*logFileName*/);
+			}
+			catch (IOException ex)
+			{
 				final ILogger log = createLogger(getClass());
-				log.error("Error occured configuring logging", ex);
+				log.error("Error occured configuring logging. Now logging to standard output", ex);
 				BasicConfigurator.configure();
 			}
 		}
 		doStartupLogging();
 	}
 
-	private void doStartupLogging() {
+	private void doStartupLogging()
+	{
 		final ILogger log = createLogger(getClass());
 		log.info("=======================================================");
 		log.info("=======================================================");
 		log.info("=======================================================");
-		log.info(Version.getVersion() + " started: " +
-		Calendar.getInstance().getTime());
+		log.info(Version.getVersion() + " started: " + Calendar.getInstance().getTime());
 		log.info(Version.getCopyrightStatement());
-		log.info("java.vendor: " +
-		System.getProperty("java.vendor"));
-		log.info("java.version: " +
-		System.getProperty("java.version"));
-		log.info("java.runtime.name: " +
-		System.getProperty("java.runtime.name"));
-		log.info("os.name: " +
-		System.getProperty("os.name"));
-		log.info("os.version: " +
-		System.getProperty("os.version"));
-		log.info("os.arch: " +
-		System.getProperty("os.arch"));
-		log.info("user.dir: " +
-		System.getProperty("user.dir"));
-		log.info("user.home: " +
-		System.getProperty("user.home"));
-		log.info("java.home: " +
-		System.getProperty("java.home"));
-		log.info("java.class.path: " +
-		System.getProperty("java.class.path")); 	}
+		log.info("java.vendor: " + System.getProperty("java.vendor"));
+		log.info("java.version: " + System.getProperty("java.version"));
+		log.info("java.runtime.name: " + System.getProperty("java.runtime.name"));
+		log.info("os.name: " + System.getProperty("os.name"));
+		log.info("os.version: " + System.getProperty("os.version"));
+		log.info("os.arch: " + System.getProperty("os.arch"));
+		log.info("user.dir: " + System.getProperty("user.dir"));
+		log.info("user.home: " + System.getProperty("user.home"));
+		log.info("java.home: " + System.getProperty("java.home"));
+		log.info("java.class.path: " + System.getProperty("java.class.path"));
+	}
 }

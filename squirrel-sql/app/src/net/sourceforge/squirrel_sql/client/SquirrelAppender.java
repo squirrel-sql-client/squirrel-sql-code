@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -20,7 +20,7 @@ package net.sourceforge.squirrel_sql.client;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.log4j.FileAppender;
+import org.apache.log4j.DailyRollingFileAppender;
 import org.apache.log4j.PatternLayout;
 
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
@@ -30,18 +30,24 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SquirrelAppender extends FileAppender {
-
-	public SquirrelAppender() throws IOException, IllegalStateException {
-		super(new PatternLayout("%-4r [%t] %-5p %c %x - %m%n"), getLogFile().getAbsolutePath());
+public class SquirrelAppender extends DailyRollingFileAppender
+{
+	public SquirrelAppender() throws IOException
+	{
+		super(
+			new PatternLayout("%-4r [%t] %-5p %c %x - %m%n"),
+			getLogFile().getAbsolutePath(),
+			//"'.'yyyy-ww");
+			"'.'yyyy-MM-dd-HH-mm");
 	}
 
-	private static File getLogFile() throws IllegalStateException {
+	private static File getLogFile()
+	{
 		final File logFile = new ApplicationFiles().getExecutionLogFile();
-		if (logFile == null) {
+		if (logFile == null)
+		{
 			throw new IllegalStateException("null ExecutionLogFile in ApplicationFiles");
 		}
 		return logFile;
 	}
 }
-
