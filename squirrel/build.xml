@@ -6,7 +6,7 @@
   <!ENTITY local              SYSTEM "file:./local.xml">
 ]>
 
-<!--  $Id: build.xml,v 1.5 2001-11-20 20:13:46 placson Exp $               -->
+<!--  $Id: build.xml,v 1.6 2001-11-20 20:26:12 placson Exp $               -->
 <!-- ===================================================================== -->
 <!--                                                                       -->
 <!--  Build file (for use w/Ant & BuildMagic modifications)                -->
@@ -245,7 +245,7 @@
       <arg value="${izpack.kind}" />
 
       <arg value="-o" />
-      <arg value="${basedir}/${project.name}-${project.version}.jar" />
+      <arg value="${basedir}/${project.name}-${project.version}-install.jar" />
 
     </java>
   </target>
