@@ -18,7 +18,7 @@ import java.util.HashMap;
  * SQL token marker.
  *
  * @author mike dillon
- * @version $Id: SQLTokenMarker.java,v 1.2 2002-01-26 00:15:01 joco01 Exp $
+ * @version $Id: SQLTokenMarker.java,v 1.3 2002-01-29 09:45:29 joco01 Exp $
  */
 public class SQLTokenMarker extends TokenMarker
 {
@@ -208,7 +208,6 @@ loop:
 				addToken(lastKeyword - lastOffset,Token.NULL);
 			addToken(len,keyword.id);
 			lastOffset = pos;
-			System.out.println("Token added: " + keyword);
 			if(_dmd != null && keyword.id == Token.TABLE)
 			{
 				if(!_hmTableColumns.containsKey(keyword.keyword))
