@@ -315,6 +315,7 @@ public class PopupEditableIOPanel extends JPanel
 		catch (Exception e) {
 			messageBuffer.append(
 				"Failed to convert binary text; error was:\n"+e.getMessage());
+			return null;
 		}
 		return CellComponentFactory.validateAndConvertInPopup(_colDef,
 					text, messageBuffer);
@@ -898,6 +899,12 @@ public class PopupEditableIOPanel extends JPanel
 	 * we may need to do a conversion on the way.
 	 */
 	private String getTextAreaCannonicalForm() {
+		// handle null
+		if (_ta.getText() == null ||
+			_ta.getText().equals("<null>") ||
+			_ta.getText().length() == 0)
+			return _ta.getText();
+		
 		// if the data is not binary, then there is no need for conversion.
 		// if the data is Hex with ASCII not shown as chars, then no conversion needed.
 		if (radixList == null ||

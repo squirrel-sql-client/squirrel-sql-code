@@ -91,6 +91,10 @@ public class BinaryDisplayConverter {
 	 * Convert from an array of Bytes into a string.
 	 */
 	public static String convertToString(Byte[] data, int base, boolean showAscii) {
+		
+		// handle null
+		if (data == null)
+			return "<null>";
 
 		StringBuffer buf = new StringBuffer();
 		
@@ -104,9 +108,10 @@ public class BinaryDisplayConverter {
 			// if user wants to see ASCII chars as characters,
 			// see if this is one that should be displayed that way
 			if (showAscii) {
-if (printable.indexOf((char)value) > -1) {
-	s = new Character((char)value) + "          ".substring(10-(convConst.width-1));
-}
+				if (printable.indexOf((char)value) > -1) {
+					s = new Character((char)value) + 
+						"          ".substring(10-(convConst.width-1));
+				}
 			}
 			
 			// if use is not looking for ASCII chars, or if this one is one that
