@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.plugin;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -49,7 +49,7 @@ public class PluginInfoArrayDataSet implements IDataSet
 		PluginInfoArrayDataSetI18n.CONTRIBUTORS,
 	};
 
-	private final static int[] s_hdgWidths = new int[] { 30, 10, 10, 30, 30 };
+	private final static int[] s_hdgWidths = new int[] { 30, 10, 10, 25, 25 };
 
 	private PluginInfo _curRow;
 	private int _curIndex = -1;

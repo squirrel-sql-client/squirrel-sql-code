@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.plugin;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,26 +17,20 @@ package net.sourceforge.squirrel_sql.client.plugin;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 
-import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
-import net.sourceforge.squirrel_sql.client.plugin.PluginInfoArrayDataSet;
-
-public class PluginSummaryPanel extends DataSetViewerTablePanel {
-
+public class PluginSummaryPanel extends DataSetViewerTablePanel
+{
 	public PluginSummaryPanel(PluginInfo[] pluginInfo)
-			throws DataSetException, IllegalArgumentException {
+		throws DataSetException
+	{
 		super();
-		if (pluginInfo == null) {
+		if (pluginInfo == null)
+		{
 			throw new IllegalArgumentException("Null Pluginnfo[] passed");
 		}
 
 		show(new PluginInfoArrayDataSet(pluginInfo));
 	}
 }
-
-

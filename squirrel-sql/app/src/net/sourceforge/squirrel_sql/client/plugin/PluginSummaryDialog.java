@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.plugin;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -28,49 +28,52 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
-import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 
 /**
  * This dialog displays a summary of all plugins.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class PluginSummaryDialog extends JDialog {
+public class PluginSummaryDialog extends JDialog
+{
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
-	private interface i18n {
+	private interface i18n
+	{
 		String TITLE = "Plugin Summary";
 	}
 
 	public PluginSummaryDialog(IApplication app, Frame owner)
-			throws DataSetException {
+		throws DataSetException
+	{
 		super(owner, i18n.TITLE, true);
 		createUserInterface(app);
 	}
 
-	private void createUserInterface(IApplication app)
-			throws DataSetException {
+	private void createUserInterface(IApplication app) throws DataSetException
+	{
 		final Container contentPane = getContentPane();
 
 		contentPane.setLayout(new BorderLayout());
 
 		PluginInfo[] pluginInfo = app.getPluginManager().getPluginInformation();
-		contentPane.add(new JScrollPane(new PluginSummaryPanel(pluginInfo).getComponent()), BorderLayout.CENTER);
+		contentPane.add(
+			new JScrollPane(new PluginSummaryPanel(pluginInfo).getComponent()),
+			BorderLayout.CENTER);
 
 		// Ok button at bottom of dialog.
 		JPanel btnsPnl = new JPanel();
 		JButton okBtn = new JButton("OK");
-		okBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
+		okBtn.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent evt)
+			{
 				dispose();
 			}
 		});
@@ -79,10 +82,9 @@ public class PluginSummaryDialog extends JDialog {
 
 		getRootPane().setDefaultButton(okBtn);
 
-//	  pack();
+		//	  pack();
 		setSize(600, 400);
 		GUIUtils.centerWithinParent(this);
-		setResizable(false);
+		setResizable(true);
 	}
 }
-
