@@ -564,16 +564,15 @@ public class ResultSetReader
 					case Types.LONGVARCHAR:
 					case -9:
 					case -8:
+					// binary types
+					case Types.BINARY:
+					case Types.VARBINARY:
+					case Types.LONGVARBINARY:
 row[i] = CellComponentFactory.readResultSet(colDefs[i], _rs, idx);
 
 						break;
 
-					case Types.BINARY:
-					case Types.VARBINARY:
-					case Types.LONGVARBINARY:
-						row[i] = _rs.getString(idx);
-						break;
-
+// the following are not yet converted to new DataType mechanism
 					case Types.BLOB:
 						if (_largeObjInfo.getReadBlobs())
 						{
