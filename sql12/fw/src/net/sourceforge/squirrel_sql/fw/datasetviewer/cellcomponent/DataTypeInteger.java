@@ -160,10 +160,14 @@ public class DataTypeInteger
 	}
 
 	/*
-	 * Return a JTextArea usable in the CellPopupDialog.
+	 * Return a JTextArea usable in the CellPopupDialog
+	 * and fill in the value.
 	 */
-	 public JTextArea getJTextArea() {
+	 public JTextArea getJTextArea(Object value) {
 		_textComponent = new RestorableJTextArea();
+		
+		// value is a simple string representation of the integer
+		((RestorableJTextArea)_textComponent).setText(renderObject(value));
 		
 		// special handling of operations while editing Integers
 		((RestorableJTextArea)_textComponent).addKeyListener(new KeyTextHandler());
