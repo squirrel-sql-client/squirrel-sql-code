@@ -11,20 +11,13 @@
 <body>
 	<table border="0"cellpadding="0" cellspacing="0" width="100%">
 		<tr>
-			<td align="left">
-				&nbsp;
-				<img border="0" src="images/nuts.jpg" width="114" height="56">
-				<img border="0" src="images/small_title.jpg" width="136" height="56">
-			</td>
-			<td align="right">
-				<img border="0" src="images/squirrel.jpg" width="158" height="59">
-				&nbsp;
-			</td>
+			<td align="left">&nbsp;<img border="0" src="images/nuts.jpg" width="114" height="56"><img border="0" src="images/small_title.jpg" width="136" height="56"></td>
+			<td align="right"><img border="0" src="images/squirrel.jpg" width="158" height="59">&nbsp;</td>
 		</tr>
 	</table>
 	<div align="left">
 		<table border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr>
+	<tr>
 	<td width="220" valign="top">
 	<table border="0" cellpadding="0" cellspacing="0" width="220">
 		<tr>
@@ -165,10 +158,10 @@
 			<td class="body_left_border">&nbsp;</td>
 			<td width='100%' bgcolor="white" valign="top">
 				<h1 class="body">Latest News</h1>
-				<p>26 May 2002 - Latest Plugins Release. 
-				  <a href="http://sourceforge.net/forum/forum.php?forum_id=180976">More >></a>
-				<p>26 May 2002 - 1.1beta3 has been released. 
-				  <a href="http://sourceforge.net/forum/forum.php?forum_id=180975">More >></a>
+				<p>10 July 2002 - Latest Plugins Release. 
+				  <a href="http://sourceforge.net/forum/forum.php?forum_id=192908">More >></a>
+				<p>28 May 2002 - 1.1beta4 has been released. 
+				  <a href="http://sourceforge.net/forum/forum.php?forum_id=181487">More >></a>
 			</td>
 			<td class="body_right_border">&nbsp;</td>
 		</tr>
@@ -191,13 +184,17 @@
 				<h1 class="body">Overview</h1>
 				<p>SQuirreL SQL Client is a graphical Java program that will allow
 				you to view the structure of a JDBC compliant database, browse the
-				data in tables, issue SQL commands etc.</p>
+				data in tables, issue SQL commands etc. Version 1.0 requires JDK1.2 to work but prefers
+				JDK1.3. while Version 1.1 and above requires
+				JDK1.3.</p>
+
 				<p>It was originally released under the
 				<a href="http://www.gnu.org/licenses/licenses.html#GPL">GNU General Public License</a>. 
 				Since version 1.1beta2 it has been released under the 
 				<a href="http://www.gnu.org/licenses/licenses.html#LGPL">GNU Lesser General Public License</a>.
 				The <a href= "changes.txt">change log</a> gives the history
 				so far.</p>
+
 				<p>If you have any queries or issues about SQuirreL, please post
 				them to the <a href="mailto:squirrel-sql-users@lists.sourceforge.net">
 				Users Mailing list</a>.</p>
@@ -220,42 +217,24 @@
 		<tr>
 			<td class="body_left_border">&nbsp;</td>
 			<td width='100%' bgcolor="white" valign="top">
-				<h1 class="body">Requirements</h1>
-				<p>SQuirreL SQL Client 1.0 requires JDK1.2 to work but prefers
-				JDK1.3. </p>
-				<p>SQuirreL SQL Client 1.1 and above require JDK1.3. </p>
-			</td>
-			<td class="body_right_border">&nbsp;</td>
-		</tr>
-		<tr>
-			<td width='10' height='10'><img border="0" src="images/border_bl.gif" width="10" height="10"></td>
-			<td width='100%' height='10'><img border="0" src="images/border_b.gif" width="100%" height="10"></td>
-			<td width='10' height='10'><img border="0" src="images/border_br.gif" width="10" height="10"></td>
-		</tr>
-	</table>
-	<p class="menu_divider"></p>
-	<table border="0" cellpadding="0" cellspacing="0" width="100%">
-		<tr>
-			<td width='10' height='10'><img border="0" src="images/border_tl.gif" width="10" height="10"></td>
-			<td width='100%' height='10'><img border="0" src="images/border_t.gif" width="100%" height="10"></td>
-			<td width='10' height='10'><img border="0" src="images/border_tr.gif" width="10" height="10"></td>
-		</tr>
-		<tr>
-			<td class="body_left_border">&nbsp;</td>
-			<td width='100%' bgcolor="white" valign="top">
 				<h1 class="body">Installation</h1>
 				<p>The SQuirreL SQL Client is installed with the IzPack Java
-				installer. Download the file <span class="code">squirrel-sql-&lt;version&gt;-install.jar</span> and execute it using the following command:<p class="code">java
-				-jar squirrel-sql-&lt;version&gt;-install.jar</p>
+				installer.
+				<a href="http://sourceforge.net/project/showfiles.php?group_id=28383">Download</A>
+				the file
+				<span class="code">squirrel-sql-&lt;version&gt;-install.jar</span>
+				and execute it using the following command:
+				<p class="code">java -jar squirrel-sql-&lt;version&gt;-install.jar</p>
+				<p>Make sure that you have sufficent rights to the directory
+				that you want to install into.</P>
 				<p>Note that some browsers may attempt to open this
-				file rather than download it. In this case, right-click on the download link and click your browser's equivalent of the
+				file rather than download it. In this case, right-click on
+				the download link and click your browser's equivalent of the
 				&quot;Save as...&quot; menu item.
 				<p>On Windows, execute the file <span class="code">squirrel-sql.bat</span> to run the
 				application. On Unix, the file is <span class="code">squirrel-sql.sh</span>.
-				<p>To install plug-ins for SQuirreL SQL Client
-				1.1 and above, you need to download the appropriate <span class="code">.zip</span> or <span class="code">.tar.gz</span> file and unpack it into the plugins directory
-				within the SQuirreL SQL Client application directory. Please be sure that you select the &quot;use folder names&quot;
-				option. Source for each plug-in is also supplied within the file.
+				<p>See the <A HREF="plugins.html">plugins</A>
+				page for instructions on installing plugins.</P>
 			</td>
 			<td class="body_right_border">&nbsp;</td>
 		</tr>
@@ -265,6 +244,7 @@
 			<td width='10' height='10'><img border="0" src="images/border_br.gif" width="10" height="10"></td>
 		</tr>
 	</table>
+
 	<p class="menu_divider"></p>
 	<table border="0" cellpadding="0" cellspacing="0" width="100%">
 		<tr>
@@ -275,9 +255,18 @@
 		<tr>
 			<td class="body_left_border">&nbsp;</td>
 			<td width='100%' bgcolor="white" valign="top">
-				<h1 class="body">Downloads</h1>
-				<p>The project is hosted at <a href="http://sourceforge.net/projects/squirrel-sql/">SourceForge.net</a>
-				with downloadable source and executable files <a href="http://sourceforge.net/project/showfiles.php?group_id=28383">here</a>.
+				<h1 class="body">Of Interest</h1>
+
+				<p><A HREF="http://jfacedbc.sourceforge.net/">JFaceDbc</A>
+				is another SQL client tool which uses the low level SQL code
+				from SQuirreL. Rather than the standard Java Swing GUI toolkit
+				it uses the GUI toolkit from the
+				<A HREF="http://www.eclipse.org">Eclipse</A> project.</P>
+
+				<P>The
+				<A HREF="http://www.sunopsis.com/corporate/us/products/jdbcforxml/">Sunopsis XML Driver (JDBC™ Edition)</A>
+				uses SQuirreL SQL Client as its ISQL tool.</P>
+
 			</td>
 			<td class="body_right_border">&nbsp;</td>
 		</tr>
@@ -287,13 +276,15 @@
 			<td width='10' height='10'><img border="0" src="images/border_br.gif" width="10" height="10"></td>
 		</tr>
 	</table>
+
 </td>
 </table>
 </div>
 <table border="0"cellpadding="0" cellspacing="0" width="100%">
-  <tr>
 
-    <td align="right">
+<tr>
+
+   <td align="right">
     	<script language=javascript src="http://ss.webring.com/navbar?f=j;y=colbelloz;u=10027361"></script>
 		<noscript>
 			<center>
@@ -326,6 +317,7 @@ This site is a member of WebRing. To browse visit <a href="http://ss.webring.com
       <a target="_top" href="http://t.extreme-dm.com/?login=colbell">
         <img name=im src="http://t1.extreme-dm.com/i.gif" height=38 border=0 width=41 alt="">
       </a>
+
       <script language="javascript" type="text/javascript">
       <!--
 an=navigator.appName;d=document;function
@@ -354,3 +346,4 @@ r=41;d.images?r=d.im.width:z=0;pr();
 </table>
 </body>
 </html>
+
