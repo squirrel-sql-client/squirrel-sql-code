@@ -6,7 +6,7 @@
   <!ENTITY local              SYSTEM "file:./local.xml">
 ]>
 
-<!--  $Id: build.xml,v 1.3 2001-11-20 18:00:41 placson Exp $               -->
+<!--  $Id: build.xml,v 1.4 2001-11-20 19:48:51 placson Exp $               -->
 <!-- ===================================================================== -->
 <!--                                                                       -->
 <!--  Build file (for use w/Ant & BuildMagic modifications)                -->
@@ -230,6 +230,23 @@
     <jar jarfile="${release.target.jarfile}" compress="true">
       <fileset dir="${release.root}" includes="${release.target}/**"/>
     </jar>
+  </target>
+
+  <target name="izpack" depends="plugins" description="Private/Internal target">
+    <java dir="${izpack.bin}" jar="${izpack.compiler}" 
+          fork="yes">
+      <arg value="${izpack.xml}" />
+
+      <arg value="-b" />
+      <arg value="${izpack.base}" />
+
+      <arg value="-k" />
+      <arg value="${izpack.kind}" />
+
+      <arg value="-o" />
+      <arg value="${basedir}/${project.name}-${project.version}.jar" />
+
+    </java>
   </target>
 
 
