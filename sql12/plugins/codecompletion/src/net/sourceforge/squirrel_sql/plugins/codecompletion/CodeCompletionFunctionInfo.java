@@ -26,7 +26,7 @@ public class CodeCompletionFunctionInfo extends CodeCompletionInfo
       _function = function;
    }
 
-   public String getCompletionString()
+   public String getCompareString()
    {
       return _function;
    }

@@ -38,7 +38,7 @@ public class CodeCompletionColumnInfo extends CodeCompletionInfo
       _toString = _columnName + "  " + _columnType + "(" + _columnSize + ") " + (_nullable? "NULL": "NOT NULL");
    }
 
-   public String getCompletionString()
+   public String getCompareString()
    {
       return _columnName;
    }

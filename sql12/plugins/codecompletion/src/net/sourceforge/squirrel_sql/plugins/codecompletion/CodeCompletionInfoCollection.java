@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.plugins.codecompletion;
 import net.sourceforge.squirrel_sql.client.session.ExtendedTableInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 
 import javax.swing.*;
 import java.util.Collections;
@@ -61,6 +62,19 @@ public class CodeCompletionInfoCollection
          {
             completionInfos.add(new CodeCompletionTableInfo(tables[i].getTableName(), tables[i].getTableType()));
          }
+
+         IProcedureInfo[] storedProceduresInfos = _session.getSchemaInfo(catalog, schema).getStoredProceduresInfos();
+         for (int i = 0; i < storedProceduresInfos.length; i++)
+         {
+            CodeCompletionStoredProcedureInfo buf =
+               new CodeCompletionStoredProcedureInfo(storedProceduresInfos[i].getSimpleName(), 
+                                                     storedProceduresInfos[i].getType(),
+                                                     _session,
+                                                     catalog,
+                                                     schema);
+            completionInfos.add(buf);
+         }
+
 
          if(null == catalog && null == schema)
          {
@@ -178,7 +192,7 @@ public class CodeCompletionInfoCollection
       for (int i = 0; i < _catalogs.size(); i++)
       {
          CodeCompletionCatalogInfo info = (CodeCompletionCatalogInfo) _catalogs.get(i);
-         if(info.getCompletionString().equalsIgnoreCase(name))
+         if(info.getCompareString().equalsIgnoreCase(name))
          {
             return true;
          }
@@ -191,7 +205,7 @@ public class CodeCompletionInfoCollection
       for (int i = 0; i < _schemas.size(); i++)
       {
          CodeCompletionSchemaInfo info = (CodeCompletionSchemaInfo) _schemas.get(i);
-         if(info.getCompletionString().equalsIgnoreCase(name))
+         if(info.getCompareString().equalsIgnoreCase(name))
          {
             return true;
          }

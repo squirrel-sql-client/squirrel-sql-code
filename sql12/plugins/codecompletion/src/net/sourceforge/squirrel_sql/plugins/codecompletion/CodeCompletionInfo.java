@@ -24,7 +24,12 @@ public abstract class CodeCompletionInfo implements Comparable
 {
    private String _upperCaseCompletionString;
 
-   public abstract String getCompletionString();
+   public abstract String getCompareString();
+
+   public String getCompletionString()
+   {
+      return getCompareString();
+   }
 
    public int compareTo(Object obj)
    {
@@ -32,12 +37,12 @@ public abstract class CodeCompletionInfo implements Comparable
 
       if(null == _upperCaseCompletionString)
       {
-         _upperCaseCompletionString = getCompletionString().toUpperCase();
+         _upperCaseCompletionString = getCompareString().toUpperCase();
       }
 
       if(null == other._upperCaseCompletionString)
       {
-         other._upperCaseCompletionString = other.getCompletionString().toUpperCase();
+         other._upperCaseCompletionString = other.getCompareString().toUpperCase();
       }
 
       return _upperCaseCompletionString.compareTo(other._upperCaseCompletionString);
@@ -50,7 +55,7 @@ public abstract class CodeCompletionInfo implements Comparable
    {
       if(null == _upperCaseCompletionString)
       {
-         _upperCaseCompletionString = getCompletionString().toUpperCase();
+         _upperCaseCompletionString = getCompareString().toUpperCase();
       }
 
       return _upperCaseCompletionString.startsWith(testString);
@@ -63,7 +68,7 @@ public abstract class CodeCompletionInfo implements Comparable
    {
       if(null == _upperCaseCompletionString)
       {
-         _upperCaseCompletionString = getCompletionString().toUpperCase();
+         _upperCaseCompletionString = getCompareString().toUpperCase();
       }
 
       return _upperCaseCompletionString.equals(testString);

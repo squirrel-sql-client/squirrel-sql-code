@@ -28,7 +28,7 @@ public class CodeCompletionKeywordInfo extends CodeCompletionInfo
       _keyword = keyword;
    }
 
-   public String getCompletionString()
+   public String getCompareString()
    {
       return _keyword;
    }
