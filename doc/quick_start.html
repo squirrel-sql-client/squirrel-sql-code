@@ -32,6 +32,7 @@
 	<TR><TD><A HREF="#editingdata">Editing Data in the Contents Tab</A></TD></TR>
 	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#enablingediting">Enabling Editing</A></TD></TR>
 	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#howtoedit">How To Edit</A></TD></TR>
+	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#UsingPopup">Using the Popup Window</A></TD></TR>
 	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#Limitations">Limitations</A></TD></TR>
 	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#summary_of_how_it_works">Summary of How it works (and why you may care)</A></TD></TR>
 	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#quirks">Quirks, Oddities and Known Bugs and work-arounds</A></TD></TR>
@@ -357,13 +358,20 @@ results from the tabbed folder and display it in its own window.</P>
 
 <P>SQuirreL allows you to easily change the data in a table. Data may
 be changed just by typing the new values when you are viewing the table
-in the Contents tab under the Objects view.</P>
+in the Contents tab under the Objects view.
+The data may also be viewed and edited in a larger popup window,
+which has more capabilities,
+by double-clicking on the cell.
+There are some small differences between the in-cell editing and
+editing in the Popup, so be sure to read the
+<A HREF="#UsingPopup">Using the Popup Window</A> information.
+</P>
 
 <A NAME="enablingediting"><h3>Enabling Editing</h3></A>
 
-<P>When initially set up, the Contents Tab may be set in a read-only
-mode. This is a safety precaution. Once a table is made editable, any
-change that you make is made immediately in the database. While
+<P>When SQuirreL is initially set up, the Contents Tab will be set in a read-only
+mode. This is a safety precaution. Once a table is made editable, 
+changing the contents of a cell causes the database to be immediately updated. While
 extremely convenient, this is dangerous. With this capability enabled,
 it becomes very easy to accidentally destroy data, violate some
 consistancy checks, mis-direct references between tables, etc. On the
@@ -376,10 +384,9 @@ can enable editing on a specific table as you are working on it. Either
 option may be set as your default mode of operation, and either option
 may be selected for use on a specific table.</P>
 
-<P>Editing may only be done in the Object view, not on the results of
-manually entered SQL queries run under the SQL view. At this time the
-only data that may be edited is the Contents tab of individual
-tables.</P>
+<P>Editing may only be done in Contents tab in the Object view, not on the results of
+manually entered SQL queries run under the SQL view. 
+</P>
 
 <a name="Setting_the_Editing_Mode"><h4>Setting the Editing Mode</h4></a>
 
@@ -455,7 +462,8 @@ model for the data in the Contents tab by the <em>Session
 </ol>
 
 <P>If the data in the cell gets really messed up and you are confused about
-what is going on, press the <DELETE> key. If that doesn't work then close the
+what is going on, press the <DELETE> key until the origianl data appears (see below).s
+ If that doesn't work then immediately close the
 database connection without leaving the cell (&lt;ctrl&gt;W or click the close
 button).  This will abort the operation and avoid changing the DB.</P>
 
@@ -487,11 +495,63 @@ continually pressing the delete key causes a cycle:</P>
 <P>&nbsp;&nbsp;&nbsp; original data -&gt; delete data -&gt; blank cell -&gt;
 original data</P>
 
-<P>Thus, if you mess up the contents of a cell, just press the delete key
+<P>Thus, if you mess up the contents of a cell, repeatedly press the delete key
 until you see the original data reappear.</P>
 
 <P>When leaving the cell, if the cell data is identical to the original contents
 of the cell, the DB will not be updated.</P>
+
+
+<h3><a name="UsingPopup"></a>Using the Popup Window</h3>
+<P>When you double-click in a cell, a Popup window is displayed.
+For simple data (e.g. integers, floats, or simple strings)
+you will be able to edit the data directly in the cell,
+but there are some times when you will need to use the Popup:
+
+<ul>
+
+	<li> when the data is too long to comfortably work with
+	in the space provided by the cell
+	</li>
+
+	<li> 
+	when the data contains newlines or tabs (which are used as
+	control characters by the in-cell editor and are not displayed correctly there)
+	</li>
+
+	<li> 
+	when the data must be represented in a complex way, such as
+	needing multiple lines (e.g. an Array type)
+	</li>
+
+	<li> 
+	when the data is potentially so large or complex that loading it
+	into the table cells in a printable form might significantly
+	delay the display of the table.
+	In this case, the cell may display just the name of the data type,  something like "&lt;BLOB&gt;",
+	while the Popup window would show the actual contents of that field.
+	</li>
+
+</ul>
+For these reasons the data may not be editable in the cell but still be editable in the Popup.
+If the data is not editable in the cell
+(i.e. the background does not change color when you click on it),
+you will need to bring up the Popup window to know whether the data can be edited there.
+
+
+<P>To use the Popup, double-click in the cell to start the Popup,
+then edit the text in the text window.
+Editing uses the same mechanism as the in-cell editing
+where repeatedly typeing the backspace key eventually restores the original data in the window.
+One difference from the in-cell editing is that you may enter newline and tab characters
+into strings when in the Popup.
+When you are done editing, click on the "Update DB" button to put the changed data into the Database.
+The "Cancel" button closes the Popup without changing the Database.
+
+<P>The Popup window provides line-wrap and word-wrap functions.
+These are accessed in the menu brought up by right-clicking in the text area.
+Both of these options are toggle-switches that flip from on to off or off to on each time you click on them.
+The word-wrap function operates only when the line-wrap function is on.
 
 <h3><a name="Limitations"></a>Limitations</h3>
 
@@ -514,15 +574,6 @@ to the user with the information that the DB has not been updated.</P>
 that may be set to null cannot be set to the string value
 "&lt;null&gt; " without the quotes. VARCHAR fields in the database may
 include those values as long as you do not try to edit them.</P>
-
-<P>If you have the "Show String Data" function disabled for any data
-type (e.g. the table shows "&lt;BINARY&gt;" rather than the actual
-data), you may not be able to make changes in tables using that data
-type. This has not been tested, so we don't know if it will work
-or not.</P>
-
-<P>The pop-up window that is created when you double-click on a cell is
-not editable. We hope to make it editable in the future.</P>
 
 <A NAME="summary_of_how_it_works"><h3>Summary of How it works (and why
 		you may care)</h3></A>
@@ -564,7 +615,7 @@ update &lt;table&gt; set c=66 where
 a pseudo-column to uniquely identify each row (such as Oracle's ROWID) has
 that pseudo-column included in all querys.</P>
 
-<P>The problem with this is that some columns cannot be handled in this
+<P>The problem with this is that some columns cannot be differentiated in this
 way, most notably BLOBs and CLOBs. Thus, if your table contains
 BLOB or CLOB columns, SQuirreL may think that rows are identical because
 all of the non-BLOB/CLOB fields are identical, but the rows are actually
@@ -636,8 +687,8 @@ determine how to display the column.</P>
 	column data is converted to a string which is then parsed as a <EM>BigDecimal</EM>.
 
 	<DT><B>java.sql.Types.INTEGER, java.sql.Types.SMALLINT, java.sql.Types.TINYINT</B>
-	<DD>If the retrieved column type is a <EM>java.lang.Integer</EM> or a
-	<EM>java.lang.Number</EM> then it is stored as a <EM>java.lang.Integer</EM>
+	<DD>If the retrieved column type is a <EM>java.lang.Integer</EM> 
+	then it is stored as a <EM>java.lang.Integer</EM>
 	and displayed as a string representation of the <EM>Integer</EM>. Otherwise the
 	column data is converted to a string which is then parsed as a <EM>Integer</EM>.
 
@@ -645,10 +696,8 @@ determine how to display the column.</P>
 	<DD>The column data is displayed as a string.
 
 	<DT><B>java.sql.Types.BINARY, java.sql.Types.VARBINARY, java.sql.Types.LONGVARBINARY</B>
-	<DD>If the appropriate <A HREF="#session_props_sql_data_types">session property</A> says
-	to retrieve data of this type then the column data is displayed as a string
-	otherwise one of <EM>&lt;Binary&gt;</EM>, <EM>&lt;Varbinary&gt;</EM> or
-	<EM>&lt;Longvarbinary&gt;</EM> is displayed.
+	<DD>
+	The column data is displayed as a string.
 
 	<DT><B>java.sql.Types.BLOB</B>
 	<DD>If the <A HREF="#session_props_sql_data_types">session property</A>
