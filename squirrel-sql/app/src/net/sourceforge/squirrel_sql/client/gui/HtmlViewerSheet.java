@@ -232,7 +232,9 @@ public class HtmlViewerSheet extends BaseSheet
 		final JPanel pnl = new JPanel(new BorderLayout());
 		_contentsTxt.setBorder(BorderFactory.createEmptyBorder(0, 1, 0, 0));
 		_contentsTxt.addHyperlinkListener(createHyperLinkListener());
-		_contentsScrollPane = new JScrollPane(_contentsTxt);
+		_contentsScrollPane = new JScrollPane(_contentsTxt,
+									JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+									JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		pnl.add(_contentsScrollPane, BorderLayout.CENTER);
 
 		return pnl;
