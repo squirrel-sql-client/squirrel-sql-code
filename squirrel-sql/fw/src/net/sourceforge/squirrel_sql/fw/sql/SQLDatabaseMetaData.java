@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -891,13 +892,34 @@ public class SQLDatabaseMetaData
 												ti.getSimpleName());
 	}
 
-	// TODO: Write a version that returns an array of data objects.
 	public ResultSet getColumns(ITableInfo ti)
 		throws SQLException
 	{
 		return getJDBCMetaData().getColumns(ti.getCatalogName(),
 											ti.getSchemaName(),
 											ti.getSimpleName(), "%");
+	}
+
+	public TableColumnInfo[] getColumnInfo(ITableInfo ti)
+		throws SQLException
+	{
+		final ResultSetColumnReader rdr = new ResultSetColumnReader(getColumns(ti));
+		final Map columns = new TreeMap();
+		while (rdr.next())
+		{
+			final TableColumnInfo tci = new TableColumnInfo(rdr.getString(1),
+						rdr.getString(2), rdr.getString(3), rdr.getString(4),
+						rdr.getLong(5).intValue(), rdr.getString(6),
+						rdr.getLong(7).intValue(), rdr.getLong(9).intValue(),
+						rdr.getLong(10).intValue(), rdr.getLong(11).intValue(),
+						rdr.getString(12), rdr.getString(13),
+						rdr.getLong(16).intValue(), rdr.getLong(17).intValue(),
+						rdr.getString(18), this);
+			columns.put(new Integer(tci.getOrdinalPosition()), tci);
+		}
+
+		return (TableColumnInfo[])columns.values().toArray(
+									new TableColumnInfo[columns.size()]);
 	}
 
 	private static String[] makeArray(String data)

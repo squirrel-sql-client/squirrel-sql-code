@@ -37,6 +37,9 @@ public class DatabaseObjectType implements IHasIdentifier
 	/** Catalog. */
 	public final static DatabaseObjectType CATALOG = createNewDatabaseObjectType();
 
+	/** Column. */
+	public final static DatabaseObjectType COLUMN = createNewDatabaseObjectType();
+
 	/** Database. */
 	public final static DatabaseObjectType SESSION = createNewDatabaseObjectType();
 
