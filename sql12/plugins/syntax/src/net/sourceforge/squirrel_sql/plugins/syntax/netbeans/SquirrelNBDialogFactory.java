@@ -59,7 +59,10 @@ public class SquirrelNBDialogFactory extends WindowAdapter implements DialogSupp
 
       if(false == _findHintProvided && "find".equalsIgnoreCase(title))
       {
-         ISession[] activeSessions = _plugin.getApplication().getSessionManager().getActiveSessions();
+         //ISession[] activeSessions = _plugin.getApplication().getSessionManager().getActiveSessions();
+         ISession[] activeSessions = new ISession[]{_plugin.getApplication().getSessionManager().getActiveSession()};
+
+
          for (int i = 0; i < activeSessions.length; i++)
          {
             activeSessions[i].getMessageHandler().showMessage("Press F3 to go to next result. Press Ctrl+Shift+F7 to toggle highlight search.");
