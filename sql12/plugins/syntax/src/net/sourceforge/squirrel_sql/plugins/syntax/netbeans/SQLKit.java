@@ -3,11 +3,14 @@ package net.sourceforge.squirrel_sql.plugins.syntax.netbeans;
 import org.netbeans.editor.Syntax;
 import org.netbeans.editor.ext.ExtKit;
 
+import javax.swing.*;
 import javax.swing.text.Document;
+import javax.swing.text.TextAction;
 
 public class SQLKit extends ExtKit
 {
    private SyntaxFactory _syntaxFactory;
+   public static final String duplicateLineAction = "duplicate-line-action";
 
 
    public SQLKit(SyntaxFactory syntaxFactory)
@@ -25,4 +28,15 @@ public class SQLKit extends ExtKit
    {
       return _syntaxFactory.getSyntax(doc);
    }
+
+
+   protected Action[] createActions()
+   {
+      Action[] javaActions = new Action[]
+      {
+         new DuplicateLineActionAction(),
+      };
+      return TextAction.augmentList(super.createActions(), javaActions);
+   }
+
 }

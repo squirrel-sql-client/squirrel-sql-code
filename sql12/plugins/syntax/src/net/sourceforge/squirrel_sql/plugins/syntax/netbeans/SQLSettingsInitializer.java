@@ -3,14 +3,20 @@ package net.sourceforge.squirrel_sql.plugins.syntax.netbeans;
 import org.netbeans.editor.*;
 import org.netbeans.editor.ext.ExtSettingsNames;
 import org.netbeans.editor.ext.ExtSettingsDefaults;
+import org.netbeans.editor.ext.ExtKit;
 import org.netbeans.editor.ext.java.JavaLayerTokenContext;
 import org.netbeans.editor.ext.java.JavaSettingsDefaults;
 import org.netbeans.editor.ext.java.JavaSettingsNames;
 
 import java.util.Map;
+import java.awt.event.KeyEvent;
+import java.awt.event.InputEvent;
 
 import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.SQLSettingsDefaults;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
+import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPugin;
+
+import javax.swing.*;
 
 
 public class SQLSettingsInitializer extends Settings.AbstractInitializer
@@ -24,17 +30,23 @@ public class SQLSettingsInitializer extends Settings.AbstractInitializer
    private Class sqlKitClass;
    private SyntaxPreferences _syntaxPreferences;
 
+   private static int MENU_MASK = java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+   private SyntaxPugin _plugin;
+
+
    /**
     * Construct new java-settings-initializer.
     *
     * @param sqlKitClass the real kit class for which the settings are created.
     * @param syntaxPreferences
+    * @param plugin
     */
-   public SQLSettingsInitializer(Class sqlKitClass, SyntaxPreferences syntaxPreferences)
+   public SQLSettingsInitializer(Class sqlKitClass, SyntaxPreferences syntaxPreferences, SyntaxPugin plugin)
    {
       super(NAME);
       this.sqlKitClass = sqlKitClass;
       _syntaxPreferences = syntaxPreferences;
+      _plugin = plugin;
    }
 
    /**
@@ -56,7 +68,12 @@ public class SQLSettingsInitializer extends Settings.AbstractInitializer
          new SQLSettingsDefaults.SQLTokenColoringInitializer(_syntaxPreferences).updateSettingsMap(kitClass, settingsMap);
          new SQLSettingsDefaults.SQLLayerTokenColoringInitializer().updateSettingsMap(kitClass, settingsMap);
 
+         SettingsUtil.updateListSetting(settingsMap, SettingsNames.KEY_BINDING_LIST, squirrelKeyBindings);
+
+         settingsMap.put(JavaSettingsNames.FIND_HIGHLIGHT_SEARCH, Boolean.FALSE);
       }
+
+
 
       if (kitClass == sqlKitClass)
       {
@@ -73,27 +90,25 @@ public class SQLSettingsInitializer extends Settings.AbstractInitializer
 
          // List of the additional colorings
          SettingsUtil.updateListSetting(settingsMap, SettingsNames.COLORING_NAME_LIST,
-                                        new String[] {
-                                            ExtSettingsNames.HIGHLIGHT_CARET_ROW_COLORING,
-                                            ExtSettingsNames.HIGHLIGHT_MATCH_BRACE_COLORING,
-                                        }
-                                       );
+            new String[]{
+               ExtSettingsNames.HIGHLIGHT_CARET_ROW_COLORING,
+               ExtSettingsNames.HIGHLIGHT_MATCH_BRACE_COLORING,
+            });
 
          // ExtCaret highlighting options
          settingsMap.put(ExtSettingsNames.HIGHLIGHT_CARET_ROW,
-                         ExtSettingsDefaults.defaultHighlightCaretRow);
+            ExtSettingsDefaults.defaultHighlightCaretRow);
          settingsMap.put(ExtSettingsNames.HIGHLIGHT_MATCH_BRACE,
-                         ExtSettingsDefaults.defaultHighlightMatchBrace);
+            ExtSettingsDefaults.defaultHighlightMatchBrace);
 
          // ExtCaret highlighting colorings
          SettingsUtil.setColoring(settingsMap, ExtSettingsNames.HIGHLIGHT_CARET_ROW_COLORING,
-                                  ExtSettingsDefaults.defaultHighlightCaretRowColoring);
+            ExtSettingsDefaults.defaultHighlightCaretRowColoring);
          SettingsUtil.setColoring(settingsMap, ExtSettingsNames.HIGHLIGHT_MATCH_BRACE_COLORING,
-                                  ExtSettingsDefaults.defaultHighlightMatchBraceColoring);
+            ExtSettingsDefaults.defaultHighlightMatchBraceColoring);
 
 
-
-         settingsMap.put(SettingsNames.ABBREV_MAP, JavaSettingsDefaults.getJavaAbbrevMap());
+         settingsMap.put(SettingsNames.ABBREV_MAP, SQLSettingsDefaults.getAbbrevMap(_plugin));
 
          settingsMap.put(SettingsNames.MACRO_MAP, JavaSettingsDefaults.getJavaMacroMap());
 
@@ -149,7 +164,41 @@ public class SQLSettingsInitializer extends Settings.AbstractInitializer
          settingsMap.put(JavaSettingsNames.GOTO_CLASS_SHOW_LIBRARY_CLASSES,
             JavaSettingsDefaults.defaultGotoClassShowLibraryClasses);
       }
-
    }
+
+
+   public static final MultiKeyBinding[] squirrelKeyBindings =
+
+      new MultiKeyBinding[]
+      {
+         new MultiKeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_F, MENU_MASK),
+            ExtKit.findAction),
+         new MultiKeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_FIND, 0),
+            ExtKit.findAction),
+         new MultiKeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_H, MENU_MASK),
+            ExtKit.replaceAction),
+         new MultiKeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK),
+            ExtKit.gotoAction),
+         new MultiKeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+            ExtKit.escapeAction),
+//         new MultiKeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_OPEN_BRACKET, MENU_MASK),
+//            ExtKit.matchBraceAction),
+//         new MultiKeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_OPEN_BRACKET, MENU_MASK | InputEvent.SHIFT_MASK),
+//            ExtKit.selectionMatchBraceAction),
+//         new MultiKeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_F10, InputEvent.SHIFT_MASK),
+//            ExtKit.showPopupMenuAction),
+
+         new MultiKeyBinding(
+            KeyStroke.getKeyStroke(KeyEvent.VK_F7, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK),
+            BaseKit.toggleHighlightSearchAction),
+
+         new MultiKeyBinding(
+            KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_MASK),
+            SQLKit.duplicateLineAction),
+
+
+      };
+
+
 
 }
