@@ -118,6 +118,9 @@ public class DataTypeString
 	private static boolean _makeNewlinesVisibleInCell = true;
 
 
+//private static int limitReadLength = 3;
+
+
 	/**
 	 * Constructor - save the data needed by this data type.
 	 */
@@ -199,7 +202,22 @@ public class DataTypeString
  		if (originalValue != null && ((String)originalValue).indexOf('\n') > -1)
 			 return false;
 		else return true;
+	}
 
+	/**
+	 * See if a value in a column has been limited in some way and
+	 * needs to be re-read before being used for editing.
+	 * For read-only tables this may actually return true since we want
+	 * to be able to view the entire contents of the cell even if it was not
+	 * completely loaded during the initial table setup.
+	 */
+	public boolean needToReRead(Object originalValue) {
+		// this DataType does not limit the data read during the initial load of the table,
+		// so there is no need to re-read the complete data later
+
+//??if (((String)originalValue).length() < limitReadLength)
+	return false;
+//??else return true;
 	}
 		
 	/**
@@ -278,7 +296,9 @@ public class DataTypeString
 	 * false if not.
 	 */
 	public boolean isEditableInPopup(Object originalValue) {
+//??if (((String)originalValue).length() < limitReadLength)
 		return true;
+//??else return false;
 	}
 	
 	/*
@@ -406,13 +426,19 @@ public class DataTypeString
 	  * On input from the DB, read the data from the ResultSet into the appropriate
 	  * type of object to be stored in the table cell.
 	  */
-	public Object readResultSet(ResultSet rs, int index)
+	public Object readResultSet(ResultSet rs, int index, boolean limitDataRead)
 		throws java.sql.SQLException {
 		
 		String data = rs.getString(index);
 		if (rs.wasNull())
 			return null;
-		else return data;
+		else {
+//??if (limitDataRead == true && (data.length() > limitReadLength)) {
+//??	data = data.substring(0, limitReadLength);
+//??}
+			return data;
+
+		}
 	}
 
 	/**
@@ -431,8 +457,11 @@ public class DataTypeString
 	public String getWhereClauseValue(Object value) {
 		if (value == null || value.toString() == null )
 			return _colDef.getLabel() + " IS NULL";
-		else
+		else {
+//??if (((String)value).length() < limitReadLength)			
 			return _colDef.getLabel() + "='" + value.toString() + "'";
+//??else return "";
+		}
 	}
 	
 	
