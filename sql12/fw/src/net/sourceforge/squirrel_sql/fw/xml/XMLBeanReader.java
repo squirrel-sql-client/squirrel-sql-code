@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.xml;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -39,9 +39,9 @@ import net.n3.nanoxml.StdXMLReader;
 import net.n3.nanoxml.XMLParserFactory;
 
 import net.sourceforge.squirrel_sql.fw.util.EnumerationIterator;
+import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
 
 public class XMLBeanReader
 {
@@ -58,6 +58,10 @@ public class XMLBeanReader
 		{
 			"com.bigfoot.colbell.fw",
 			"net.sourceforge.squirrel_sql.fw"
+		},
+		{
+			"net.sourceforge.squirrel_sql.client.mainframe.MainFrameWindowState",
+			"net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrameWindowState"
 		}
 	};
 
@@ -189,7 +193,7 @@ public class XMLBeanReader
 					loadProperty(bean, curProp, propElem);
 				}
 			}
-			
+
 			return bean;
 		}
 		catch (Exception ex)
@@ -219,10 +223,10 @@ public class XMLBeanReader
 					// In XMLBeanWriter method ProcessProperty an array of
 					// Strings is turned into a list of StringWrapper objects
 					// in the XML (presumably so that when reading them back
-					// we have a class that we can call setters on).  Thus,
+					// we have a class that we can call setters on). Thus,
 					// when reading back an array of Strings we actually read
 					// an array of StringWrappers, which gives a type mis-match
-					// in the following arrayCopy.  Therefore we need to convert
+					// in the following arrayCopy. Therefore we need to convert
 					// the data that is currently in the StringWrapper objects
 					// into actual Strings.
 					if (arrayType.getName().equals("java.lang.String")) {
@@ -232,7 +236,7 @@ public class XMLBeanReader
 							stringData[i] = ((StringWrapper)data[i]).getString();
 						data = stringData;
 					}
-					
+
 					Object obj = Array.newInstance(arrayType, data.length);
 					System.arraycopy(data, 0, obj, 0, data.length);
 					setter.invoke(bean, new Object[] { obj });
