@@ -2,21 +2,18 @@ package net.sourceforge.squirrel_sql.plugins.graph;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
-import net.sourceforge.squirrel_sql.fw.xml.XMLException;
+import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.FormatXmlBean;
 
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.ListSelectionEvent;
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.event.*;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Vector;
-import java.util.Iterator;
-import java.io.IOException;
 import java.io.File;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Vector;
 
 
 public class FormatController
@@ -29,6 +26,7 @@ public class FormatController
 
    private FormatControllerListener _listener;
    private JPopupMenu m_lstPopup;
+   private Unit m_currentUnit;
 
    public FormatController(ISession session, GraphPlugin plugin, FormatControllerListener listener)
    {
@@ -70,11 +68,12 @@ public class FormatController
 
       if(null == _dlg.txtName.getText() || "".equals(_dlg.txtName.getText().trim()))
       {
-         JOptionPane.showInternalMessageDialog(_dlg, "Invalid name");
+         JOptionPane.showMessageDialog(_dlg, "Invalid name");
          return;
       }
       String name = _dlg.txtName.getText().trim();
 
+      Unit selUnit = (Unit) _dlg.cboUnit.getSelectedItem();
 
       double height;
       double width;
@@ -83,30 +82,32 @@ public class FormatController
       buf = _dlg.txtHeight.getText();
       try
       {
-         height = Double.parseDouble(buf);
+         height = Double.parseDouble(buf) * selUnit.getInCm();
       }
       catch (NumberFormatException e)
       {
-         JOptionPane.showInternalMessageDialog(_dlg, "Invalid height");
+         JOptionPane.showMessageDialog(_dlg, "Invalid height");
          return;
       }
 
       buf = _dlg.txtWidth.getText();
       try
       {
-         width = Double.parseDouble(buf);
+         width = Double.parseDouble(buf) * selUnit.getInCm();
       }
       catch (NumberFormatException e)
       {
-         JOptionPane.showInternalMessageDialog(_dlg, "Invalid width");
+         JOptionPane.showMessageDialog(_dlg, "Invalid width");
          return;
       }
+
+      boolean isLandscape = _dlg.chkIsLandscape.isSelected();
 
       FormatXmlBean selBean = (FormatXmlBean) _dlg.lstFormats.getSelectedValue();
 
       if(null == selBean)
       {
-         selBean = new FormatXmlBean(name, width, height, false);
+         selBean = new FormatXmlBean(name, width, height, false,isLandscape);
          Vector v = new Vector();
          v.addAll(Arrays.asList(_formats));
          v.add(selBean);
@@ -120,11 +121,11 @@ public class FormatController
          selBean.setName(name);
          selBean.setWidth(width);
          selBean.setHeight(height);
+         selBean.setLandscape(isLandscape);
          _dlg.lstFormats.repaint();
       }
 
       _listener.formatsChanged((FormatXmlBean)_dlg.lstFormats.getSelectedValue());
-
       saveFormats();
    }
 
@@ -171,17 +172,19 @@ public class FormatController
       }
       else
       {
+         _dlg.txtName.setText(selBean.getName());
+         _dlg.chkIsLandscape.setSelected(selBean.isLandscape());
+
          Unit unit = (Unit) _dlg.cboUnit.getSelectedItem();
+
 
          if(_dlg.cboUnit.getSelectedItem() == Unit.UNIT_CM)
          {
-            _dlg.txtName.setText(selBean.getName());
             _dlg.txtHeight.setText("" + selBean.getHeight());
             _dlg.txtWidth.setText("" + selBean.getWidth());
          }
          else
          {
-            _dlg.txtName.setText(selBean.getName());
             _dlg.txtHeight.setText("" +  selBean.getHeight() / unit.getInCm());
             _dlg.txtWidth.setText("" + selBean.getWidth() / unit.getInCm());
          }
@@ -193,9 +196,9 @@ public class FormatController
       return new
          FormatXmlBean[]
       {
-         new FormatXmlBean("Din A 3", 29.7, 42.0, false),
-         new FormatXmlBean("Din A 4", 21.0, 29.7, false),
-         new FormatXmlBean("Din A 5", 14.8, 21.0, true)
+         new FormatXmlBean("Din A 3", 29.7, 42.0, false, false),
+         new FormatXmlBean("Din A 4", 21.0, 29.7, false, false),
+         new FormatXmlBean("Din A 5", 14.8, 21.0, true, false)
       };
    }
 
@@ -215,6 +218,7 @@ public class FormatController
 
          _dlg.cboUnit.addItem(Unit.UNIT_CM);
          _dlg.cboUnit.addItem(Unit.UNIT_INCH);
+          m_currentUnit = Unit.UNIT_CM;
          _dlg.cboUnit.setSelectedItem(Unit.UNIT_CM);
 
          _dlg.lstFormats.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -243,6 +247,7 @@ public class FormatController
          });
 
          m_lstPopup = new JPopupMenu();
+
          JMenuItem mnuDeleteFomat = new JMenuItem("delete");
          mnuDeleteFomat.addActionListener(new ActionListener()
          {
@@ -252,6 +257,17 @@ public class FormatController
             }
          });
          m_lstPopup.add(mnuDeleteFomat);
+
+
+         JMenuItem mnuLandscape = new JMenuItem("landscape");
+         mnuLandscape.addActionListener(new ActionListener()
+         {
+            public void actionPerformed(ActionEvent e)
+            {
+               onLandscape();
+            }
+         });
+         m_lstPopup.add(mnuLandscape);
 
          _dlg.btnNew.addActionListener(new ActionListener()
          {
@@ -290,6 +306,31 @@ public class FormatController
       GUIUtils.centerWithinParent(_dlg);
 
       _dlg.setVisible(b);
+   }
+
+   private void onLandscape()
+   {
+      FormatXmlBean selBean = (FormatXmlBean) _dlg.lstFormats.getSelectedValue();
+
+      if(null == selBean)
+      {
+         return;
+      }
+
+      FormatXmlBean lsBean = new FormatXmlBean(selBean.getName() + " (LS)", selBean.getHeight(), selBean.getWidth(), false, true);
+
+      Vector v = new Vector();
+      v.addAll(Arrays.asList(_formats));
+      v.add(lsBean);
+      _formats = (FormatXmlBean[]) v.toArray(new FormatXmlBean[v.size()]);
+
+      _dlg.lstFormats.setListData(_formats);
+      _dlg.lstFormats.setSelectedValue(lsBean, true);
+
+      _listener.formatsChanged((FormatXmlBean)_dlg.lstFormats.getSelectedValue());
+
+      _dlg.lstFormats.repaint();
+
    }
 
    private void onDeleteSeletedListItems()
@@ -343,7 +384,44 @@ public class FormatController
    {
       if(ItemEvent.SELECTED == e.getStateChange())
       {
-         updateRightSideControls();
+         double widht;
+         double height;
+
+         Unit selUnit = (Unit) _dlg.cboUnit.getSelectedItem();
+
+         if(selUnit == m_currentUnit)
+         {
+            return;
+         }
+
+
+         try
+         {
+            widht = Double.parseDouble(_dlg.txtWidth.getText());
+            height = Double.parseDouble(_dlg.txtHeight.getText());
+         }
+         catch (NumberFormatException e1)
+         {
+            JOptionPane.showMessageDialog(_dlg, "Invalid number format. Can not calculate new unit.");
+
+            SwingUtilities.invokeLater(new Runnable()
+            {
+               public void run()
+               {
+                  _dlg.cboUnit.setSelectedItem(m_currentUnit);
+               }
+            });
+
+            return;
+         }
+
+
+         widht *=  m_currentUnit.getInCm() / selUnit.getInCm();
+         height *=  m_currentUnit.getInCm() / selUnit.getInCm();
+         _dlg.txtWidth.setText("" + widht);
+         _dlg.txtHeight.setText("" + height);
+
+         m_currentUnit = selUnit;
       }
    }
 

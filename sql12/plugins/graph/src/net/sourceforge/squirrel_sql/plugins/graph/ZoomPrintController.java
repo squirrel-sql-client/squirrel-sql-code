@@ -13,6 +13,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 import java.awt.print.PrinterJob;
+import java.awt.print.PageFormat;
+import java.awt.print.Paper;
 
 
 public class ZoomPrintController
@@ -157,7 +159,18 @@ public class ZoomPrintController
       _printable.initPrint(format.getWidth(), format.getHeight(), _panel.sldEdges.getValue() / 100.0);
 
       PrinterJob printJob = PrinterJob.getPrinterJob();
-      printJob.setPrintable(_printable);
+      PageFormat pf = new PageFormat();
+
+      if(format.isLandscape())
+      {
+         pf.setOrientation(PageFormat.LANDSCAPE);
+      }
+      else
+      {
+         pf.setOrientation(PageFormat.PORTRAIT);
+      }
+
+      printJob.setPrintable(_printable, pf);
       if (printJob.printDialog())
       {
          try
