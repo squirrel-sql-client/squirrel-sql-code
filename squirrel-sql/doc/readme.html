@@ -27,6 +27,7 @@
 	<TR><TD><B>Contents</B></TD></TR>
 	<TR><TD><A HREF="#introduction">Introduction</A></TD></TR>
 	<TR><TD><A HREF="#installation">Installation</A></TD></TR>
+	<TR><TD><A HREF="#cmd_line_options">Command Line Options</A></TD></TR>
 	<TR><TD><A HREF="#jdbc_drivers">JDBC Drivers</A></TD></TR>
 	<TR><TD><A HREF="#look_and_feel">Look and Feel Implementations</A></TD></TR>
 	<TR><TD><A HREF="#home_page">Home Page</A></TD></TR>
@@ -68,17 +69,35 @@ the appropriate file for your operating system (*.gz for Uniz,
 <P>For Windows the file squirrel-sql.bat will run the application. For Unix
 the file is squirrel-sql.sh.</P>
 
-<P>The command line option <TT>-nosplash</TT> can be passed to the
-main class in order to start SQuirreL without the splash screen appearing. E.G.</P>
-
-<PRE>
-java &lt;removed&gt; net.sourceforge.squirrel_sql.client.Main -nosplash
-</PRE>
-
 <P>Some people have reported core dumps with the Sun JDK1.3.1 running under
 Linux. If this happens passing the -classic flag to the java executable
 appears to fix the problem. No similar problems have been reported with
 any other JDK on Linux.</P>
+
+
+<A NAME="cmd_line_options"><H2>Command Line Options</H2></A>
+
+<P>The command line option <TT>-nosplash</TT> can be passed to the
+main class in order to start SQuirreL without the splash screen appearing. E.G.</P>
+
+<PRE>
+java net.sourceforge.squirrel_sql.client.Main -nosplash
+</PRE>
+
+<P>The user settings directory can be overridden by the <TT>-settingsdir</TT>
+option. E.G.</P>
+
+<PRE>
+java net.sourceforge.squirrel_sql.client.Main -settingsdir=c:\my-squirrel-settings
+</PRE>
+
+<P>The configuration file for <TT>log4j</TT> is specifed by the <TT>loggingConfigFile</TT>
+option. E.G.</P>
+
+<PRE>
+java net.sourceforge.squirrel_sql.client.Main -loggingConfigFile=c:\config.properties
+</PRE>
+
 
 <A NAME="jdbc_drivers"><H2>JDBC Drivers</H2></A>
 
