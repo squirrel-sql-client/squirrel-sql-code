@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -75,7 +75,7 @@ public class MainFrame extends BaseMDIParentFrame {
 	private DriversToolWindow _driversToolWindow;
 
 	/** Status bar at bottom of window. */
-	private StatusBar _statusBar = new StatusBar(true);
+	private MainFrameStatusBar _statusBar;
 
 	private JInternalFrame _activeInternalFrame;
 
@@ -114,6 +114,7 @@ public class MainFrame extends BaseMDIParentFrame {
 		}
 	}
 
+	//??Why
 	public void pack() {
 	}
 
@@ -178,6 +179,15 @@ public class MainFrame extends BaseMDIParentFrame {
 		return _activeInternalFrame;
 	}
 
+	/**
+	 * Return the statusbar.
+	 * 
+	 * @return	the statusbar.
+	 */
+	public MainFrameStatusBar getStatusBar() {
+		return _statusBar;
+	}
+
 	public void addToMenu(int menuId, JMenu menu) {
 		if (menu == null) {
 			throw new IllegalArgumentException("Null JMenu passed");
@@ -239,6 +249,7 @@ public class MainFrame extends BaseMDIParentFrame {
 								ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		content.add(sp, BorderLayout.CENTER);
 
+		_statusBar = new MainFrameStatusBar(true);
 		Font fn = _app.getFontInfoStore().getStatusBarFontInfo().createFont();
 		_statusBar.setFont(fn);
 		content.add(_statusBar, BorderLayout.SOUTH);
