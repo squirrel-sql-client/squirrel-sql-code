@@ -21,12 +21,15 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
 
 import javax.swing.Icon;
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
@@ -34,9 +37,11 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
+import net.sourceforge.squirrel_sql.fw.gui.SQLCatalogsComboBox;
 import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -246,7 +251,7 @@ public class SessionSheet extends BaseSheet {
 
 		Container content = getContentPane();
 		content.setLayout(new BorderLayout());
-		content.add(new MyToolBar(this), BorderLayout.NORTH);
+		content.add(new MyToolBar(_session, this), BorderLayout.NORTH);
 
 		MessagePanel msgPnl = new MessagePanel(_session.getApplication());
 		_session.setMessageHandler(msgPnl);
@@ -284,8 +289,37 @@ public class SessionSheet extends BaseSheet {
 	}
 
 	private class MyToolBar extends ToolBar {
-		MyToolBar(SessionSheet frame) {
+		MyToolBar(ISession session, SessionSheet frame) {
 			super();
+
+			// If DBMS supports catalogs then place combo box of catalogs
+			// in toolbar.
+			SQLConnection conn = session.getSQLConnection();
+			try {
+				if (conn.supportsCatalogs()) {
+					final SQLCatalogsComboBox cmb = new SQLCatalogsComboBox();
+					cmb.setConnection(conn);
+					cmb.setSelectedCatalog(conn.getCatalog());
+					cmb.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent evt) {
+							String catalog = cmb.getSelectedCatalog();
+							if (catalog != null) {
+								try {
+									_session.getSQLConnection().setCatalog(catalog);
+								} catch (BaseSQLException ex) {
+									_session.getMessageHandler().showMessage(ex);
+								}
+							}
+						}
+					});
+					add(new JLabel(" Catalog: "));
+					add(cmb);
+					addSeparator();
+				}
+			} catch (BaseSQLException ex) {
+				s_log.error("Unable to retrieve catalog info", ex);
+			}
+
 			ActionCollection actions = _session.getApplication().getActionCollection();
 			setUseRolloverButtons(true);
 			setFloatable(false);
