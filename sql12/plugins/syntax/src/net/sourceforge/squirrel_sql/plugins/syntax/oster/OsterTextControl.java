@@ -21,31 +21,10 @@ package net.sourceforge.squirrel_sql.plugins.syntax.oster;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.Color;
-import java.awt.Component;
-import java.io.IOException;
-import java.io.Reader;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.Vector;
-
-import javax.swing.JTextPane;
-import javax.swing.plaf.ComponentUI;
-import javax.swing.text.AbstractDocument;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultEditorKit;
-import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-
 import com.Ostermiller.Syntax.Lexer.Lexer;
-import com.Ostermiller.Syntax.Lexer.Token;
 import com.Ostermiller.Syntax.Lexer.SQLLexer;
+import com.Ostermiller.Syntax.Lexer.Token;
+import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
 import net.sourceforge.squirrel_sql.client.session.SchemaInfo;
@@ -54,11 +33,6 @@ import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
-import net.sourceforge.squirrel_sql.client.session.SchemaInfo;
-
 import net.sourceforge.squirrel_sql.plugins.syntax.IConstants;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxStyle;
@@ -122,6 +96,7 @@ public class OsterTextControl extends JTextPane
 
 	private Vector _sqlTokenListeners = new Vector();
 	private Vector _currentErrorInfos = new Vector();
+   private Vector _oldErrorInfos = new Vector();
 
 
    OsterTextControl(ISession session, SyntaxPreferences prefs)
@@ -164,31 +139,54 @@ public class OsterTextControl extends JTextPane
 
 	private void onErrorsFound(ErrorInfo[] errorInfos)
 	{
-		if(_currentErrorInfos.size() == errorInfos.length)
-		{
-			boolean errorsChanged = false;
-			for (int i = 0; i < errorInfos.length; i++)
-			{
-				if(false == errorInfos[i].equals(_currentErrorInfos.get(i)))
-				{
-					errorsChanged = true;
-					break;
-				}
-			}
+      boolean errorsChanged = false;
+      if(_currentErrorInfos.size() == errorInfos.length)
+      {
+         for (int i = 0; i < errorInfos.length; i++)
+         {
+            if(false == errorInfos[i].equals(_currentErrorInfos.get(i)))
+            {
+               errorsChanged = true;
+               break;
+            }
+         }
+      }
+      else
+      {
+         errorsChanged = true;
+      }
 
-			if(false == errorsChanged)
-			{
-				return;
-			}
+      if(errorsChanged)
+      {
+         _oldErrorInfos.clear();
+         _oldErrorInfos.addAll(_currentErrorInfos);
 
-		}
+         _currentErrorInfos.clear();
+         _currentErrorInfos.addAll(Arrays.asList(errorInfos));
 
-		_currentErrorInfos.clear();
-		_currentErrorInfos.addAll(Arrays.asList(errorInfos));
-      int beg = Math.max(0, getCaretPosition() - 5);
-      int len = Math.min(10, getDocument().getLength() - getCaretPosition());
-      color(beg, len, false);
+         int heuristicDist = 20;
+
+         for (int i = 0; i < errorInfos.length; i++)
+         {
+            int colBegin = Math.max(errorInfos[i].beginPos - heuristicDist, 0);
+            int colLen = Math.min(errorInfos[i].endPos - errorInfos[i].beginPos + 2*heuristicDist, getDocument().getLength() - colBegin);
+            color(colBegin, colLen, false, null);
+         }
+
+         for (int i = 0; i < _oldErrorInfos.size(); i++)
+         {
+            ErrorInfo errorInfo = (ErrorInfo) _oldErrorInfos.elementAt(i);
+            int colBegin = Math.max(errorInfo.beginPos - heuristicDist, 0);
+            int colLen = Math.min(errorInfo.endPos - errorInfo.beginPos + 2*heuristicDist, getDocument().getLength() - colBegin);
+            color(colBegin, colLen, false, null);
+         }
+      }
 	}
+
+   public void endColorerThread()
+   {
+      colorer.endThread();
+   }
 
 	// This stops the text control from line wrapping.
 	public boolean getScrollableTracksViewportWidth()
@@ -268,7 +266,7 @@ public class OsterTextControl extends JTextPane
 	 */
 	public void colorAll()
 	{
-		color(0, document.getLength(), false);
+		color(0, document.getLength(), false, null);
 	}
 
 	/**
@@ -281,9 +279,9 @@ public class OsterTextControl extends JTextPane
 	 * @param adjustment	amount of text inserted or removed
 	 *						at the starting point.
 	 */
-	public void color(int position, int adjustment, boolean fireTableOrViewFoundEvent)
+	public void color(int position, int adjustment, boolean fireTableOrViewFoundEvent, String change)
 	{
-		colorer.color(position, adjustment, fireTableOrViewFoundEvent);
+		colorer.color(position, adjustment, fireTableOrViewFoundEvent, change);
 	}
 
 	/**
@@ -298,7 +296,7 @@ public class OsterTextControl extends JTextPane
 		return ((SimpleAttributeSet)styles.get(styleName));
 	}
 
-	private Token getNextToken(SchemaInfo si) throws IOException
+	private Token getNextToken() throws IOException
 	{
       return syntaxLexer.getNextToken();
 	}
@@ -494,40 +492,27 @@ public class OsterTextControl extends JTextPane
 	private class Colorer extends Thread
 	{
 
-		/**
-		 * Keep a list of places in the file that it is safe to restart the
-		 * highlighting. This happens whenever the lexer reports that it has
-		 * returned to its initial state. Since this list needs to be sorted
-		 * and we need to be able to retrieve ranges from it, it is stored in a
-		 * balanced tree.
-		 */
-		private TreeSet iniPositions =
-			new TreeSet(new DocPositionComparator());
+      private boolean _endThread;
+      private Vector _currentLiteralAndCommentIntervals = new Vector();
+      private Hashtable _knownTables = new Hashtable();
 
-		/**
-		 * As we go through and remove invalid positions we will also be finding
-		 * new valid positions.
-		 * Since the position list cannot be deleted from and written to at the same
-		 * time, we will keep a list of the new positions and simply add it to the
-		 * list of positions once all the old positions have been removed.
-		 */
-		private HashSet newPositions = new HashSet();
-
-		/**
+      /**
 		 * A simple wrapper representing something that needs to be colored.
 		 * Placed into an object so that it can be stored in a Vector.
 		 */
 		private class RecolorEvent
 		{
-			public int position;
-			public int adjustment;
+			private int position;
+			private int adjustment;
          private boolean fireTableOrViewFoundEvent;
+         private String change;
 
-         public RecolorEvent(int position, int adjustment, boolean fireTableOrViewFoundEvent)
+         public RecolorEvent(int position, int adjustment, boolean fireTableOrViewFoundEvent, String change)
 			{
 				this.position = position;
 				this.adjustment = adjustment;
             this.fireTableOrViewFoundEvent = fireTableOrViewFoundEvent;
+            this.change = change;
 			}
 		}
 
@@ -536,16 +521,10 @@ public class OsterTextControl extends JTextPane
 		 */
 		private volatile Vector recolorEventQueue = new Vector();
 
-		/**
-		 * The amount of change that has occurred before the place in the
-		 * document that we are currently highlighting (lastPosition).
-		 */
-		private volatile int change = 0;
 
 		/**
 		 * The last position colored
 		 */
-		private volatile int lastPosition = -1;
 
 		private volatile boolean asleep = false;
 
@@ -561,31 +540,27 @@ public class OsterTextControl extends JTextPane
 		 * section of the document. It will process this as a FIFO.
 		 * This method should be done inside a doclock.
 		 */
-		public void color(int position, int adjustment, boolean fireTableOrViewFoundEvent)
+		public void color(int position, int adjustment, boolean fireTableOrViewFoundEvent, String change)
 		{
-			// figure out if this adjustment effects the current run.
-			// if it does, then adjust the place in the document
-			// that gets highlighted.
-			if (position < lastPosition)
-			{
-				if (lastPosition < position - adjustment)
-				{
-					change -= lastPosition - position;
-				}
-				else
-				{
-					change += adjustment;
-				}
-			}
 			synchronized (lock)
 			{
-				recolorEventQueue.add(new RecolorEvent(position, adjustment, fireTableOrViewFoundEvent));
+				recolorEventQueue.add(new RecolorEvent(position, adjustment, fireTableOrViewFoundEvent, change));
 				if (asleep)
 				{
 					this.interrupt();
 				}
 			}
 		}
+
+      public void endThread()
+      {
+         _endThread = true;
+         if (asleep)
+         {
+            this.interrupt();
+         }
+      }
+
 
 		/**
 		 * The colorer runs forever and may sleep for long
@@ -594,8 +569,8 @@ public class OsterTextControl extends JTextPane
 		 */
 		public void run()
 		{
-			int position = -1;
-			int adjustment = 0;
+			int colorStartPos = -1;
+			int colorLen = 0;
          boolean fireTableOrViewFoundEvent = true;
 			// if we just finish, we can't go to sleep until we
 			// ensure there is nothing else for us to do.
@@ -609,112 +584,84 @@ public class OsterTextControl extends JTextPane
 					{
 						RecolorEvent re = (RecolorEvent) (recolorEventQueue.elementAt(0));
 						recolorEventQueue.removeElementAt(0);
-						position = re.position;
-						adjustment = re.adjustment;
+
+                  if(null != re.change)
+                  {
+                     // Only if the text did really changed (null != re.change) Intervals
+                     // must be adopted.
+                     // If the text did not change there is nothing to adopt.
+                     adoptIntervalsToAdjustment(re);
+                  }
+
+                  colorStartPos = getColorStartPos(re);
+                  colorLen = getColorLen(colorStartPos, re);
+
+
+                  if(null != re.change)
+                  {
+                     if(   -1 != re.change.indexOf('\'')
+                        || -1 != re.change.indexOf('/')
+                        || -1 != re.change.indexOf('*')
+                        || -1 != re.change.indexOf('-')
+                        || null != getInvolvedLiteralOrCommentInterval(re.position))
+                     {
+                        reinitLiteralAndCommentIntervals();
+
+                        int colorStartPos2 = getColorStartPos(re);
+                        int colorLen2 = getColorLen(colorStartPos, re);
+
+                        int newStartPos = Math.min(colorStartPos, colorStartPos2);
+                        int newEndPos = Math.max(colorStartPos2 + colorLen2, colorStartPos + colorLen);
+
+                        colorStartPos = newStartPos;
+                        colorLen = newEndPos - newStartPos;
+                     }
+                  }
+
+
                   fireTableOrViewFoundEvent = re.fireTableOrViewFoundEvent;
 					}
 					else
 					{
 						tryAgain = false;
-						position = -1;
-						adjustment = 0;
+						colorStartPos = -1;
+						colorLen = 0;
                   fireTableOrViewFoundEvent = false;
 
 					}
 				}
-				if (position != -1)
+				if (colorStartPos != -1)
 				{
-					SortedSet workingSet;
-					Iterator workingIt;
-					DocPosition startRequest =
-						new DocPosition(position);
-					DocPosition endRequest =
-						new DocPosition(
-							position
-								+ ((adjustment >= 0) ? adjustment : -adjustment));
-					DocPosition dp;
-					DocPosition dpStart = null;
-					DocPosition dpEnd = null;
-
-					// find the starting position. We must start at least one
-					// token before the current position
-					try
-					{
-						// all the good positions before
-						workingSet = iniPositions.headSet(startRequest);
-						// the last of the stuff before
-						dpStart = ((DocPosition) workingSet.last());
-					}
-					catch (NoSuchElementException x)
-					{
-						// if there were no good positions before the requested start,
-						// we can always start at the very beginning.
-						dpStart = new DocPosition(0);
-					}
-
-					// if stuff was removed, take any removed positions off the list.
-					if (adjustment < 0)
-					{
-						workingSet =
-							iniPositions.subSet(startRequest, endRequest);
-						workingIt = workingSet.iterator();
-						while (workingIt.hasNext())
-						{
-							workingIt.next();
-							workingIt.remove();
-						}
-					}
-
-					// adjust the positions of everything after the insertion/removal.
-					workingSet = iniPositions.tailSet(startRequest);
-					workingIt = workingSet.iterator();
-					while (workingIt.hasNext())
-					{
-						((DocPosition) workingIt.next()).adjustPosition(
-							adjustment);
-					}
-
-					// now go through and highlight as much as needed
-					workingSet = iniPositions.tailSet(dpStart);
-					workingIt = workingSet.iterator();
-					dp = null;
-					if (workingIt.hasNext())
-					{
-						dp = (DocPosition) workingIt.next();
-					}
 					try
 					{
 						final SchemaInfo si = _session.getSchemaInfo();
 						Token t;
-						boolean done = false;
-						dpEnd = dpStart;
 						synchronized (doclock)
 						{
 							// we are playing some games with the lexer for efficiency.
 							// we could just create a new lexer each time here, but instead,
 							// we will just reset it so that it thinks it is starting at the
-							// beginning of the document but reporting a funny start position.
+							// beginning of the document but reporting a funny start colorStartPos.
 							// Reseting the lexer causes the close() method on the reader
 							// to be called but because the close() method has no effect on the
 							// DocumentReader, we can do this.
 							syntaxLexer.reset(
 								documentReader,
 								0,
-								dpStart.getPosition(),
+								colorStartPos,
 								0);
 							// After the lexer has been set up, scroll the reader so that it
 							// is in the correct spot as well.
-							documentReader.seek(dpStart.getPosition());
+							documentReader.seek(colorStartPos);
 							// we will highlight tokens until we reach a good stopping place.
 							// the first obvious stopping place is the end of the document.
 							// the lexer will return null at the end of the document and wee
 							// need to stop there.
-							t = getNextToken(si);
+							t = getNextToken();
 						}
-						newPositions.add(dpStart);
-                  ErrorInfo[] errInfoClone = (ErrorInfo[]) _currentErrorInfos.toArray(new ErrorInfo[0]);
                   SimpleAttributeSet errStyle = getMyStyle(IConstants.IStyleNames.ERROR);
-						while (!done && t != null)
+                  ErrorInfo[] errInfoClone = (ErrorInfo[]) _currentErrorInfos.toArray(new ErrorInfo[0]);
+						while (t != null && t.getCharEnd() <= colorStartPos + colorLen + 1)
 						{
 							// this is the actual command that colors the stuff.
 							// Color stuff with the description of the style matched
@@ -732,8 +679,16 @@ public class OsterTextControl extends JTextPane
 											type = IConstants.IStyleNames.TABLE;
                                  if(fireTableOrViewFoundEvent)
                                  {
-											fireTableOrViewFound(t.getContents());
-										}
+											   fireTableOrViewFound(t.getContents());
+										   }
+
+                                 String upperCaseTableName = data.toUpperCase();
+                                 if(false == _knownTables.contains(upperCaseTableName))
+                                 {
+                                    _knownTables.put(upperCaseTableName, upperCaseTableName);
+                                    recolorColumns(upperCaseTableName);
+                                 }
+
 										}
 										else if (si.isColumn(data))
 										{
@@ -749,23 +704,16 @@ public class OsterTextControl extends JTextPane
 										}
 									}
 
-//									document.setCharacterAttributes(
-//										t.getCharBegin() + change,
-//										t.getCharEnd() - t.getCharBegin(),
-//										getMyStyle(type), true);
+                           int begin = t.getCharBegin();
+                           int len = t.getCharEnd() - t.getCharBegin();
 
                            SimpleAttributeSet myStyle = null;
                            for (int i = 0; i < errInfoClone.length; i++)
                            {
-                              int errLen = errInfoClone[i].endPos - errInfoClone[i].beginPos;
-                              if(0 < errLen)
+                              if (    isBetween(errInfoClone[i].beginPos, errInfoClone[i].endPos, begin)
+                                   && isBetween(errInfoClone[i].beginPos, errInfoClone[i].endPos, (begin + len - 1)) )
                               {
-                                 if(t.getCharBegin() <= errInfoClone[i].beginPos && errInfoClone[i].beginPos <= t.getCharEnd() )
-                                 {
-                                    myStyle = errStyle;
-                                    change = 0;
-                                    break;
-                                 }
+                                 myStyle = errStyle;
                               }
                            }
 
@@ -774,110 +722,33 @@ public class OsterTextControl extends JTextPane
                               myStyle = getMyStyle(type);
                            }
 
-
                            setCharacterAttributes(
-										t.getCharBegin() + change,
-										t.getCharEnd() - t.getCharBegin(),
+										begin,
+										len,
 										myStyle, true);
-									// record the position of the last bit of text that we colored
-									dpEnd =
-										new DocPosition(t.getCharEnd());
+									// record the colorStartPos of the last bit of text that we colored
 								}
-								lastPosition = (t.getCharEnd() + change);
-							}
-							// The other more complicated reason for doing no more highlighting
-							// is that all the colors are the same from here on out anyway.
-							// We can detect this by seeing if the place that the lexer returned
-							// to the initial state last time we highlighted is the same as the
-							// place that returned to the initial state this time.
-							// As long as that place is after the last changed text, everything
-							// from there on is fine already.
-							if (t.getState() == Token.INITIAL_STATE)
-							{
-								//System.out.println(t);
-								// look at all the positions from last time that are less than or
-								// equal to the current position
-								while (dp != null
-									&& dp.getPosition() <= t.getCharEnd())
-								{
-									if (dp.getPosition() == t.getCharEnd()
-										&& dp.getPosition()
-											>= endRequest.getPosition())
-									{
-										// we have found a state that is the same
-										done = true;
-										dp = null;
-									}
-									else if (workingIt.hasNext())
-									{
-										// didn't find it, try again.
-										dp =
-											(DocPosition) workingIt.next();
-									}
-									else
-									{
-										// didn't find it, and there is no more info from last
-										// time. This means that we will just continue
-										// until the end of the document.
-										dp = null;
-									}
-								}
-								// so that we can do this check next time, record all the
-								// initial states from this time.
-								newPositions.add(dpEnd);
 							}
 							synchronized (doclock)
 							{
-								t = getNextToken(si);
+								t = getNextToken();
 							}
 						}
 
-						// remove all the old initial positions from the place where
-						// we started doing the highlighting right up through the last
-						// bit of text we touched.
-						workingIt =
-							iniPositions.subSet(dpStart, dpEnd).iterator();
-						while (workingIt.hasNext())
-						{
-							workingIt.next();
-							workingIt.remove();
-						}
-
-						// Remove all the positions that are after the end of the file.:
-						workingIt =
-							iniPositions
-								.tailSet(
-									new DocPosition(document.getLength()))
-								.iterator();
-						while (workingIt.hasNext())
-						{
-							workingIt.next();
-							workingIt.remove();
-						}
-
-						// and put the new initial positions that we have found on the list.
-						iniPositions.addAll(newPositions);
-						newPositions.clear();
-
-						/*workingIt = iniPositions.iterator();
-						while (workingIt.hasNext()){
-							System.out.println(workingIt.next());
-						}
-
-						System.out.println("Started: " + dpStart.getPosition() + " Ended: " + dpEnd.getPosition());*/
 					}
 					catch (IOException x)
 					{
-					}
-					synchronized (doclock)
-					{
-						lastPosition = -1;
-						change = 0;
 					}
 					// since we did something, we should check that there is
 					// nothing else to do before going back to sleep.
 					tryAgain = true;
 				}
+
+            if(_endThread)
+            {
+               break;
+            }
+
 				asleep = true;
 				if (!tryAgain)
 				{
@@ -890,9 +761,259 @@ public class OsterTextControl extends JTextPane
 					}
 
 				}
+            if(_endThread)
+            {
+               break;
+            }
+
 				asleep = false;
 			}
 		}
+
+      private void adoptIntervalsToAdjustment(RecolorEvent re)
+      {
+         for (int i = 0; i < _currentLiteralAndCommentIntervals.size(); i++)
+         {
+            int[] interval = (int[]) _currentLiteralAndCommentIntervals.elementAt(i);
+
+            if(re.position < interval[0])
+            {
+               interval[0] += re.adjustment;
+            }
+            if(re.position < interval[1])
+            {
+               interval[1] += re.adjustment;
+            }
+         }
+      }
+
+      private void recolorColumns(String tableName)
+      {
+         String text = getText().toUpperCase();
+
+         ExtendedColumnInfo[] cols = _session.getSchemaInfo().getExtendedColumnInfos(tableName);
+
+         for (int i = 0; i < cols.length; i++)
+         {
+            String upperCaseColName = cols[i].getColumnName().toUpperCase();
+
+            int fromIndex = 0;
+            for (;;)
+            {
+               fromIndex = text.indexOf(upperCaseColName, fromIndex);
+
+               if(-1 == fromIndex)
+               {
+                  break;
+               }
+
+               color(fromIndex, upperCaseColName.length(), false, null);
+               ++fromIndex;
+
+
+            }
+         }
+      }
+
+      private void reinitLiteralAndCommentIntervals()
+      {
+         try
+         {
+            _currentLiteralAndCommentIntervals.clear();
+
+            Document doc = getDocument();
+            int docLen = doc.getLength();
+
+            int[] curInterval = null;
+            boolean inMultiLineComment = false;
+            boolean inSinglLineComment = false;
+            boolean inLiteral = false;
+            for(int i=0; i < docLen; ++i)
+            {
+               if(i < docLen + 1 && "/*".equals(doc.getText(i,2))
+                  && false == inMultiLineComment && false == inSinglLineComment && false == inLiteral)
+               {
+                  curInterval = new int[2];
+                  curInterval[0] = i;
+                  curInterval[1] = docLen;
+                  inMultiLineComment = true;
+                  ++i;
+                  continue;
+               }
+
+               if(i < docLen + 1 && "--".equals(doc.getText(i,2))
+                  && false == inMultiLineComment && false == inSinglLineComment && false == inLiteral)
+               {
+                  curInterval = new int[2];
+                  curInterval[0] = i;
+                  curInterval[1] = docLen;
+                  inSinglLineComment = true;
+                  ++i;
+                  continue;
+               }
+
+               if('\'' == doc.getText(i,1).charAt(0)
+                  && false == inMultiLineComment && false == inSinglLineComment && false == inLiteral)
+               {
+                  curInterval = new int[2];
+                  curInterval[0] = i;
+                  curInterval[1] = docLen;
+                  inLiteral = true;
+                  continue;
+               }
+
+
+
+               if(i < docLen + 1 && "*/".equals(doc.getText(i,2)) && inMultiLineComment)
+               {
+                  curInterval[1] = i+1;
+                  _currentLiteralAndCommentIntervals.add(curInterval);
+                  curInterval = null;
+                  inMultiLineComment = false;
+                  ++i;
+               }
+
+               if('\n' == doc.getText(i,1).charAt(0) && inSinglLineComment)
+               {
+                  curInterval[1] = i;
+                  _currentLiteralAndCommentIntervals.add(curInterval);
+                  curInterval = null;
+                  inSinglLineComment = false;
+               }
+
+               if('\'' == doc.getText(i,1).charAt(0) && inLiteral)
+               {
+                  if( i < docLen + 1 && '\'' == doc.getText(i+1,1).charAt(0))
+                  {
+                     ++i;
+                  }
+                  else
+                  {
+                     curInterval[1] = i;
+                     _currentLiteralAndCommentIntervals.add(curInterval);
+                     curInterval = null;
+                     inLiteral = false;
+                  }
+
+               }
+            }
+
+            if(null != curInterval)
+            {
+               _currentLiteralAndCommentIntervals.add(curInterval);
+            }
+         }
+         catch (BadLocationException e)
+         {
+            throw new RuntimeException(e);
+         }
+      }
+
+      private int getColorLen(int begin, RecolorEvent re)
+      {
+         try
+         {
+            int reBegin = Math.min(re.position, re.position + re.adjustment);
+            reBegin = Math.max(0, reBegin);
+
+            int end = begin + (reBegin - begin) + Math.max(0, re.adjustment);
+
+            int docLen = getDocument().getLength();
+
+            if(end > docLen -1)
+            {
+               return docLen - begin;
+            }
+
+            for(;end < docLen -1; ++end)
+            {
+               if(Character.isWhitespace(getDocument().getText(end,1).charAt(0)))
+               {
+                  break;
+               }
+            }
+
+            int[] interval = getInvolvedLiteralOrCommentInterval(end);
+
+            if(null != interval)
+            {
+               return Math.max(end-begin, interval[1] - begin);
+            }
+            else
+            {
+               return end - begin;
+            }
+         }
+         catch (BadLocationException e)
+         {
+            throw new RuntimeException(e);
+         }
+      }
+
+      private int getColorStartPos(RecolorEvent re)
+      {
+         try
+         {
+            int startPos = Math.min(re.position, re.position + re.adjustment);
+
+            if(0 > startPos)
+            {
+               return 0;
+            }
+
+            for (; startPos > 0; --startPos)
+            {
+               if(Character.isWhitespace(getDocument().getText(startPos-1,1).charAt(0)))
+               {
+                  break;
+               }
+            }
+
+            int[] interval = getInvolvedLiteralOrCommentInterval(startPos);
+
+            if(null != interval)
+            {
+               return Math.min(startPos, interval[0]);
+            }
+            else
+            {
+               return startPos;
+            }
+
+
+
+         }
+         catch (BadLocationException e)
+         {
+            throw new RuntimeException(e);
+         }
+      }
+
+      private int[] getInvolvedLiteralOrCommentInterval(int pos)
+      {
+         for (int i = 0; i < _currentLiteralAndCommentIntervals.size(); i++)
+         {
+            int[] interval = (int[]) _currentLiteralAndCommentIntervals.elementAt(i);
+
+            if(interval[0]-1 <= pos && pos <= interval[1]+1)
+            {
+               // The Interval is involved even if pos lied one point before
+               // or after the interval.
+               // This way for example we get
+               // -- Select ...
+               // out of comment coloring when the first "-" is removed.
+
+               return interval;
+            }
+         }
+         return null;
+      }
+
+
+      private boolean isBetween(int beg, int end, int p)
+      {
+         return beg <= p && p <= end;
+      }
 
 
       private void setCharacterAttributes(final int offset, final int length, final AttributeSet s, final boolean replace)
@@ -973,7 +1094,7 @@ public class OsterTextControl extends JTextPane
 //			synchronized (doclock)
 //			{
 				super.insertString(offs, str, a);
-				color(offs, str.length(), true);
+				color(offs, str.length(), true, str);
 				documentReader.update(offs, str.length());
 //			}
 		}
@@ -982,12 +1103,13 @@ public class OsterTextControl extends JTextPane
 		{
 //			synchronized (doclock)
 //			{
+            String change = getText(offs, len);
 				super.remove(offs, len);
-				color(offs, -len, true);
+				color(offs, -len, true, change);
 				documentReader.update(offs, -len);
 //			}
 		}
-	}
+   }
 
 	class DocumentReader extends Reader
 	{

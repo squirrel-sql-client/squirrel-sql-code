@@ -223,6 +223,12 @@ public class SyntaxPugin extends DefaultSessionPlugin
 	public void sessionEnding(ISession session)
 	{
 		super.sessionEnding(session);
+
+      if(session.getSQLEntryPanel() instanceof OsterSQLEntryPanel)
+      {
+         ((OsterSQLEntryPanel)session.getSQLEntryPanel()).endColorerThread();
+      }
+
 		session.removePluginObject(this, IConstants.ISessionKeys.PREFS);
 		_prefListeners.remove(session.getIdentifier());
 	}

@@ -81,6 +81,13 @@ public class OsterSQLEntryPanel extends BaseSQLEntryPanel
 		_textArea.addMouseListener(_sqlEntryMouseListener);
 	}
 
+
+   public void endColorerThread()
+   {
+      _textArea.endColorerThread();
+   }
+
+
 	/**
 	 * @see ISQLEntryPanel#gettextComponent()
 	 */
@@ -382,11 +389,24 @@ public class OsterSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public int getCaretLinePosition()
 	{
-		final int pos = getCaretPosition();
-		final Document doc = _textArea.getStyledDocument();
-		final Element docElem = doc.getDefaultRootElement();
-		final Element lineElem = docElem.getElement(getCaretLineNumber());
-		return lineElem.getElementIndex(pos);
+      String textTillCarret = getText().substring(0, getCaretPosition());
+
+      int lineFeedIndex = textTillCarret.lastIndexOf('\n');
+      if(- 1 == lineFeedIndex)
+      {
+         return getCaretPosition();
+      }
+      else
+      {
+         return getCaretPosition() - lineFeedIndex - 1;
+      }
+
+// this didn't work      
+//		final int pos = getCaretPosition();
+//		final Document doc = _textArea.getStyledDocument();
+//		final Element docElem = doc.getDefaultRootElement();
+//		final Element lineElem = docElem.getElement(getCaretLineNumber());
+//		return lineElem.getElementIndex(pos);
 	}
 
 	/**
