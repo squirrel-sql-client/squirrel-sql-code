@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <Beans>
+    <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+        <driverClassName>com.mimer.jdbc.Driver</driverClassName>
+        <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+            <string>-12</string>
+        </identifier>
+        <jarFileName/>
+        <jarFileNames Indexed="true"/>
+        <name>Mimer SQL</name>
+        <url>jdbc:mimer:/&lt;dbname&gt;</url>
+    </Bean>
+
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
 		<driverClassName>com.microsoft.jdbc.sqlserver.SQLServerDriver</driverClassName>
 		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
@@ -16,14 +27,7 @@
 		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
 			<string>-10</string>
 		</identifier>
-		<jarFileNames Indexed="true">
-			<Bean Class="net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper">
-				<string>snpsxml.zip</string>
-			</Bean>
-			<Bean Class="net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper">
-				<string>xerces.jar</string>
-			</Bean>
-		</jarFileNames>
+		<jarFileNames Indexed="true"/>
 		<name>Sunopsis XML</name>
 		<url>jdbc:snps:xml?f=&lt;file-name&gt;&amp;ro=true</url>
 	</Bean>

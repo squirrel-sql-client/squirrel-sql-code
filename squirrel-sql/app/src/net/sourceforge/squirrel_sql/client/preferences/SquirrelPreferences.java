@@ -80,7 +80,7 @@ public class SquirrelPreferences implements Serializable
 	private boolean _showToolTips = true;
 
 	/** Use scrollable tabbed panes. JDK 1.4 and above only. */
-	private boolean _useScrollableTabbedPanes;
+	private boolean _useScrollableTabbedPanes = false;
 
 	/** Show main statusbar. */
 	private boolean _showMainStatusBar = true;
@@ -316,7 +316,6 @@ public class SquirrelPreferences implements Serializable
 		_propChgReporter.firePropertyChange(IPropertyNames.SCROLLABLE_TABBED_PANES,
 											oldValue, _useScrollableTabbedPanes);
 	}
-
 	/*
 	public synchronized PluginObjectWrapper[] getPluginObjects() {
 		//	  return (Folder[])_subFolders.toArray(new Folder[_subFolders.size()]);
