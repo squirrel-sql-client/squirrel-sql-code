@@ -25,6 +25,9 @@ import javax.swing.JOptionPane;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+
+import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
+import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
@@ -32,7 +35,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
- * @version 	$Id: DropTableAction.java,v 1.3 2002-04-13 01:30:13 colbell Exp $
+ * @version 	$Id: DropTableAction.java,v 1.4 2002-07-25 10:24:54 colbell Exp $
  * @author		Johan Compagner
  */
 public class DropTableAction extends SquirrelAction implements ISessionAction
@@ -40,37 +43,65 @@ public class DropTableAction extends SquirrelAction implements ISessionAction
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(DropTableAction.class);
 
+	/** Title for confirmation dialog. */
+	private static final String TITLE = "Dropping table(s)";
+
+	/** Message for confirmation dialog. */
+	private static final String MSG = "Are you sure?";
+
+	/** Current session. */
 	private ISession _session;
 
 	/**
-	 * Constructor for DropTableAction.
-	 * @param app
+	 * @param	app	Application API.
+	 * 
 	 * @throws IllegalArgumentException
 	 */
-	public DropTableAction(IApplication app) throws IllegalArgumentException
+	public DropTableAction(IApplication app)
 	{
 		super(app);
 	}
 
-	/*
-	 * @see ActionListener#actionPerformed(ActionEvent)
+	/**
+	 * Drop selected tables in the object tree.
 	 */
 	public void actionPerformed(ActionEvent e)
 	{
 		IDatabaseObjectInfo[] selected = _session.getSelectedDatabaseObjects();
-		if(selected != null && selected.length > 0)
+		if (selected != null && selected.length > 0)
 		{
-			int option = JOptionPane.showInternalConfirmDialog(_session.getSessionSheet(),"Are you sure?","Dropping table(s)",JOptionPane.YES_NO_OPTION);
-			if(option == JOptionPane.YES_OPTION)
+//			int option = JOptionPane.showInternalConfirmDialog(_session.getSessionSheet(),"Are you sure?","Dropping table(s)",JOptionPane.YES_NO_OPTION);
+			boolean ok = Dialogs.showYesNo(_session.getSessionSheet(), MSG, TITLE);
+			if (ok)
 			{
+				final char sepChar = _session.getProperties().getSQLStatementSeparatorChar();
+				StringBuffer buf = new StringBuffer();
+				for (int i = 0; i < selected.length; i++)
+				{
+					buf.append("drop table ")
+						.append(selected[i].getQualifiedName())
+						.append(sepChar).append('\n');
+				}
+				_session.executeSQL(buf.toString());
 				try
+				{
+					_session.getSessionSheet().refreshTree();
+				}
+				catch(BaseSQLException ex)
+				{
+					final String msg = "Dropping tables failed: ";
+					_session.getMessageHandler().showMessage(msg + ex.toString());
+					s_log.error(msg, ex);
+				}
+/*
+ 				try
 				{
 					SQLConnection connection = _session.getSQLConnection();
 					Statement statement = connection.createStatement();
 					try {
 						for (int i = 0; i < selected.length; i++)
 						{
-							String name = selected[i].getSimpleName();
+							String name = selected[i].getQualifiedName();
 							_session.getMessageHandler().showMessage("dropping table " + name);
 							statement.executeUpdate("drop table " + name);
 						}
@@ -83,6 +114,7 @@ public class DropTableAction extends SquirrelAction implements ISessionAction
 					_session.getMessageHandler().showMessage("dropping table(s) failed: " + ex.getMessage());
 					s_log.error("Dropping table(s) failed",ex);
 				}
+*/
 			}
 		}
 	}
