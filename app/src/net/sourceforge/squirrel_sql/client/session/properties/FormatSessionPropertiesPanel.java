@@ -150,7 +150,7 @@ public class FormatSessionPropertiesPanel
 			gbc.gridy = 0;
 
 			JScrollPane sp = new JScrollPane(createDataTypesPanel());
-			sp.setPreferredSize(new Dimension(550, 450));
+			sp.setPreferredSize(new Dimension(600, 450));
 			add(sp, gbc);
 
 		}
