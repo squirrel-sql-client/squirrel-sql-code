@@ -62,32 +62,46 @@ public class SearchAndReplaceKernel
 			ret.append("(\\s|\\A)");
 		}
 
-		if(_lastFindConfig.matchCase)
+		for (int i = 0; i < _lastFindConfig.toSearch.length(); i++)
 		{
-			ret.append(_lastFindConfig.toSearch);
-		}
-		else
-		{
-			for (int i = 0; i < _lastFindConfig.toSearch.length(); i++)
+			if('.' == _lastFindConfig.toSearch.charAt(i))
 			{
-				if('.' == _lastFindConfig.toSearch.charAt(i))
-				{
-					ret.append("(\\.)");
-				}
-				else if('^' == _lastFindConfig.toSearch.charAt(i))
-				{
-					ret.append("(\\^)");
-				}
-				else if('$' == _lastFindConfig.toSearch.charAt(i))
-				{
-					ret.append("(\\$)");
-				}
-				else
-				{
-					char lc = Character.toLowerCase(_lastFindConfig.toSearch.charAt(i));
-					char uc = Character.toUpperCase(_lastFindConfig.toSearch.charAt(i));
-					ret.append('(').append(lc).append('|').append(uc).append(')');
-				}
+				ret.append("(\\.)");
+			}
+			else if('^' == _lastFindConfig.toSearch.charAt(i))
+			{
+				ret.append("(\\^)");
+			}
+			else if('$' == _lastFindConfig.toSearch.charAt(i))
+			{
+				ret.append("(\\$)");
+			}
+//			else if('\\' == _lastFindConfig.toSearch.charAt(i) && i+1 < _lastFindConfig.toSearch.length() && 'n' == _lastFindConfig.toSearch.charAt(i+1))
+//			{
+//				ret.append("(\\n)");
+//				++i;
+//			}
+			else if('(' == _lastFindConfig.toSearch.charAt(i))
+			{
+				ret.append("(\\()");
+			}
+			else if(')' == _lastFindConfig.toSearch.charAt(i))
+			{
+				ret.append("(\\))");
+			}
+			else if('\\' == _lastFindConfig.toSearch.charAt(i))
+			{
+				ret.append("(\\\\)");
+			}
+			else if(!_lastFindConfig.matchCase)
+			{
+				char lc = Character.toLowerCase(_lastFindConfig.toSearch.charAt(i));
+				char uc = Character.toUpperCase(_lastFindConfig.toSearch.charAt(i));
+				ret.append('(').append(lc).append('|').append(uc).append(')');
+			}
+			else
+			{
+				ret.append(_lastFindConfig.toSearch.charAt(i));
 			}
 		}
 
