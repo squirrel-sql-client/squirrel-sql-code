@@ -143,7 +143,7 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 	 */
 	public String getLicenceFileName()
 	{
-		return "licences.html";
+		return "licence.txt";
 	}
 
 	/**
