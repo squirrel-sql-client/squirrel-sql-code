@@ -34,7 +34,8 @@ public class CodeCompletor
 		KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, false),
 		KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false),
 		KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0, false),
-		KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0, false)
+		KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0, false),
+		KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0, false)
 	};
 
 
@@ -99,7 +100,7 @@ public class CodeCompletor
 			}
 			//removeLastCharInTextComponent();
 		}
-		else if(e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT)
+		else if(e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_TAB)
 		{
 			// do nothing
 		}
