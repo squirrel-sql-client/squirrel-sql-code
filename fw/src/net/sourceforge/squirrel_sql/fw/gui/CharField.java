@@ -46,6 +46,12 @@ public class CharField extends JTextField
 		super("" + ch);
 	}
 
+	/**
+	 * Retrieve the contents of this field as a <TT>char</TT>. If it
+	 * is empty then return a single blank character.
+	 * 
+	 * @return	the contents of this field as an <TT>char</TT>.
+	 */
 	public char getChar()
 	{
 		final String text = getText();
@@ -56,16 +62,30 @@ public class CharField extends JTextField
 		return text.charAt(0);
 	}
 
+	/**
+	 * Set the contents of this field to the passed <TT>char</TT>.
+	 * 
+	 * @param	value	The new value for this field.
+	 */
 	public void setChar(char ch)
 	{
-		setText("" + ch);
+		setText(String.valueOf(ch));
 	}
 
+	/**
+	 * Create a new document model for this control that only accepts
+	 * a single character..
+	 * 
+	 * @return	The new document model.
+	 */
 	protected Document createDefaultModel()
 	{
 		return new CharacterDocument();
 	}
 
+	/**
+	 * This document only allows ia single character to be stored.
+	 */
 	static class CharacterDocument extends PlainDocument
 	{
 		public void insertString(int offs, String str, AttributeSet a)
@@ -75,7 +95,7 @@ public class CharField extends JTextField
 			{
 				char ch = str.length() > 0 ? str.charAt(0) : ' ';
 				super.remove(0, getLength());
-				super.insertString(0, "" + ch, a);
+				super.insertString(0, String.valueOf(ch), a);
 			}
 		}
 	}

@@ -1,6 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <Beans>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-27</string>
+		</identifier>
+		<url>jdbc:mysql://&lt;hostname&gt;[,&lt;failoverhost&gt;][&lt;:3306&gt;]/&lt;dbname&gt;[?&lt;param1&gt;=&lt;value1&gt;][&amp;&lt;param2&gt;=&lt;value2&gt;]</url>
+		<usesClassPath>true</usesClassPath>
+		<jarFileNames Indexed="true"/>
+		<driverClassName>com.mysql.jdbc.Driver</driverClassName>
+		<name>MySQL Driver</name>
+	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<driverClassName>net.sourceforge.jtds.jdbc.Driver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-26</string>
+		</identifier>
+		<jarFileName/>
+		<jarFileNames Indexed="true"/>
+		<name>jTDS Sybase</name>
+		<url>jdbc:jtds:sybase://&lt;hostname&gt;[:&lt;4100&gt;]/&lt;dbname&gt;[;&lt;property&gt;=&lt;value&gt;[;...]]</url>
+	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<driverClassName>net.sourceforge.jtds.jdbc.Driver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-25</string>
+		</identifier>
+		<jarFileName/>
+		<jarFileNames Indexed="true"/>
+		<name>jTDS Microsoft SQL</name>
+		<url>jdbc:jtds:sqlserver://&lt;hostname&gt;[:&lt;1433&gt;]/&lt;dbname&gt;[;&lt;property&gt;=&lt;value&gt;[;...]]</url>
+	</Bean>
+
     <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
         <driverClassName>COM.ibm.db2.jdbc.app.DB2Driver</driverClassName>
         <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
@@ -161,7 +195,7 @@
 		</identifier>
 		<jarFileNames Indexed="true"/>
 		<name>Sunopsis XML</name>
-		<url>jdbc:snps:xml?f=&lt;file-name&gt;&amp;ro=true</url>
+		<url>jdbc:snps:xml?f=&lt;file-name&gt;&amp;s=&lt;schema-name&gt;</url>
 	</Bean>
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
 		<usesClassPath>true</usesClassPath>
@@ -200,7 +234,7 @@
 		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
 			<string>-6</string>
 		</identifier>
-		<url>jdbc:mysql://&lt;hostname&gt;[&lt;:3360&gt;]/&lt;dbname&gt;</url>
+		<url>jdbc:mysql://&lt;hostname&gt;[&lt;:3306&gt;]/&lt;dbname&gt;</url>
 		<usesClassPath>true</usesClassPath>
 		<jarFileNames Indexed="true"/>
 		<driverClassName>org.gjt.mm.mysql.Driver</driverClassName>

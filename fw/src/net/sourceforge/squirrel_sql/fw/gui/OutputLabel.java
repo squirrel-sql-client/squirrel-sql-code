@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -26,14 +26,16 @@ import javax.swing.JLabel;
  * 
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class OutputLabel extends JLabel {
+public class OutputLabel extends JLabel
+{
 	/** Default preferred width. */
 	public static final int PREF_WIDTH = 200;
 
 	/**
 	 * Default ctor.
 	 */
-	public OutputLabel() {
+	public OutputLabel()
+	{
 		super();
 		commonCtor();
 	}
@@ -43,7 +45,8 @@ public class OutputLabel extends JLabel {
 	 * 
 	 * @param	text	text to display in label.
 	 */
-	public OutputLabel(String text) {
+	public OutputLabel(String text)
+	{
 		super(text);
 		commonCtor();
 		setToolTipText(text);
@@ -54,7 +57,8 @@ public class OutputLabel extends JLabel {
 	 * 
 	 * @param	text	New text for label.
 	 */
-	public void setText(String text) {
+	public void setText(String text)
+	{
 		super.setText(text);
 		setToolTipText(text);
 	}
@@ -62,7 +66,8 @@ public class OutputLabel extends JLabel {
 	/**
 	 * Common ctor code.
 	 */
-	private void commonCtor() {
+	private void commonCtor()
+	{
 		Dimension ps = getPreferredSize();
 		ps.width = PREF_WIDTH;
 		setPreferredSize(ps);

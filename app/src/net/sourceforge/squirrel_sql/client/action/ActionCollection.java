@@ -53,6 +53,8 @@ import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsA
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultWindowsAction;
 import net.sourceforge.squirrel_sql.client.session.action.CloseSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
+import net.sourceforge.squirrel_sql.client.session.action.CopyQualifiedObjectNameAction;
+import net.sourceforge.squirrel_sql.client.session.action.CopySimpleObjectNameAction;
 import net.sourceforge.squirrel_sql.client.session.action.DropSelectedTablesAction;
 import net.sourceforge.squirrel_sql.client.session.action.DumpSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
@@ -386,6 +388,8 @@ public final class ActionCollection
 		add(new CloseAllSQLResultWindowsAction(_app));
 		add(new CloseSessionAction(_app));
 		add(new CommitAction(_app));
+		add(new CopyQualifiedObjectNameAction(_app));
+		add(new CopySimpleObjectNameAction(_app));
 		add(new DisplayPluginSummaryAction(_app));
 		add(new DropSelectedTablesAction(_app));
 		add(new DumpApplicationAction(_app));

@@ -48,6 +48,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.CopyQualifiedObjectNameAction;
+import net.sourceforge.squirrel_sql.client.session.action.CopySimpleObjectNameAction;
 import net.sourceforge.squirrel_sql.client.session.action.DropSelectedTablesAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeItemAction;
@@ -142,6 +144,9 @@ class ObjectTree extends JTree
 			// Assume DBMS doesn't support catalogs.
 			s_log.debug(th);
 		}
+
+		addToPopup(actions.get(CopySimpleObjectNameAction.class));
+		addToPopup(actions.get(CopyQualifiedObjectNameAction.class));
 
 		// Mouse listener used to display popup menu.
 		addMouseListener(new MouseAdapter()
