@@ -99,7 +99,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		// we need to table column model to be able to add CellEditors to the
 		// individual columns
 		TableColumnModel columnModel = table.getColumnModel();
-cellPopupMenu = new TablePopupMenu(getUpdateableModel(), this);
+		cellPopupMenu = new TablePopupMenu(getUpdateableModel(), this, table);
 		
 		for (int i=0; i < _colDefs.length; i++) {
 			// use factory to get the appropriate editor
@@ -107,26 +107,26 @@ cellPopupMenu = new TablePopupMenu(getUpdateableModel(), this);
 				CellComponentFactory.getInCellEditor(table, _colDefs[i]);
 			
 			// add right-click menu to cell editor
-editor.getComponent().addMouseListener(
-new MouseAdapter()
-			{
-				public void mousePressed(MouseEvent evt)
+			editor.getComponent().addMouseListener(
+				new MouseAdapter()
 				{
-					if (evt.isPopupTrigger())
+					public void mousePressed(MouseEvent evt)
 					{
-						DataSetViewerEditableTablePanel.this.cellPopupMenu.show(
-							evt.getComponent(), evt.getX(), evt.getY());
+						if (evt.isPopupTrigger())
+						{
+							DataSetViewerEditableTablePanel.this.cellPopupMenu.show(
+								evt.getComponent(), evt.getX(), evt.getY());
+						}
 					}
-				}
-				public void mouseReleased(MouseEvent evt)
-				{
-					if (evt.isPopupTrigger())
+					public void mouseReleased(MouseEvent evt)
 					{
-						DataSetViewerEditableTablePanel.this.cellPopupMenu.show(
-							evt.getComponent(), evt.getX(), evt.getY());
+						if (evt.isPopupTrigger())
+						{
+							DataSetViewerEditableTablePanel.this.cellPopupMenu.show(
+								evt.getComponent(), evt.getX(), evt.getY());
+						}
 					}
-				}
-			});
+				});
 			columnModel.getColumn(i).setCellEditor(editor);
 		}
 	}
