@@ -98,9 +98,10 @@ public class TableFrameController
                String columnName = res.getString("COLUMN_NAME");
                String columnType = res.getString("TYPE_NAME");
                int columnSize = res.getInt("COLUMN_SIZE");
+               int decimalDigits = res.getInt("DECIMAL_DIGITS");
                boolean nullable = "YES".equals(res.getString("IS_NULLABLE"));
 
-               ColumnInfo colInfo = new ColumnInfo(columnName, columnType, columnSize, nullable);
+               ColumnInfo colInfo = new ColumnInfo(columnName, columnType, columnSize, decimalDigits,nullable);
                colInfosBuf.add(colInfo);
             }
             res.close();

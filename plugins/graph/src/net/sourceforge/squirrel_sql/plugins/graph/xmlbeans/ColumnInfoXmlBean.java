@@ -12,6 +12,7 @@ public class ColumnInfoXmlBean
    private String toString;
    private String constraintName;
    private boolean isPrimaryKey;
+   private int decimalDigits;
 
    public String getColumnName()
    {
@@ -101,5 +102,15 @@ public class ColumnInfoXmlBean
    public void setPrimaryKey(boolean primaryKey)
    {
       isPrimaryKey = primaryKey;
+   }
+
+   public int getDecimalDigits()
+   {
+      return decimalDigits;
+   }
+
+   public void setDecimalDigits(int decimalDigits)
+   {
+      this.decimalDigits = decimalDigits;
    }
 }
