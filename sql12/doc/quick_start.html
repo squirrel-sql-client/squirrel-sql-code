@@ -33,6 +33,8 @@
 	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#enablingediting">Enabling Editing</A></TD></TR>
 	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#howtoedit">How To Edit</A></TD></TR>
 	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#UsingPopup">Using the Popup Window</A></TD></TR>
+	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#EditingInPopup">Editing Within the Popup</A></TD></TR>
+	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#ImportExport">Import, Export and Editing with an External Command</A></TD></TR>
 	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#Limitations">Limitations</A></TD></TR>
 	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#summary_of_how_it_works">Summary of How it works (and why you may care)</A></TD></TR>
 	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#quirks">Quirks, Oddities and Known Bugs and work-arounds</A></TD></TR>
@@ -503,6 +505,8 @@ of the cell, the DB will not be updated.</P>
 
 
 <h3><a name="UsingPopup"></a>Using the Popup Window</h3>
+<h4><a name="EditingInPopup"></a>Editing within the Popup</h4>
+
 <P>When you double-click in a cell, a Popup window is displayed.
 For simple data (e.g. integers, floats, or simple strings)
 you will be able to edit the data directly in the cell,
@@ -552,6 +556,82 @@ The "Cancel" button closes the Popup without changing the Database.
 These are accessed in the menu brought up by right-clicking in the text area.
 Both of these options are toggle-switches that flip from on to off or off to on each time you click on them.
 The word-wrap function operates only when the line-wrap function is on.
+
+
+<h4><a name="ImportExport"></a>Import, Export and Editing with an External Command</h4>
+
+<P>The Popup window also allows you to import data into a cell,
+export data from the cell to a file, and operate on the data using an external command.
+
+<P>
+<DL>
+<DT><B>Importing data into a cell:</B>
+<DD>Enter the name of the file containing the data in the "File:" field,
+then click on "Import".
+
+<DT><B>Exporting data from the cell into a file:</B>
+<DD>Enter the name of the target file in the "File:" field,
+then click on "Export".
+Note that the default value of the "File:" field is "&lt;Temp File&gt;", and if 
+you do not change that entry the system will put the data into a new temp file
+and tell you the name of that file after it has been written.
+
+<DT><B>Operating on the data with an External Command:</B>
+<DD>This function provides a single-click operation to export the data to a file,
+operate on that file with an external process (e.g. MS Word, VI, various graphical editors, etc.),
+then read the result back from the file when editing is completed.
+To do this you must:
+<DL>
+<LI>
+Enter a file name in the "File:" field or leave it set to "&lt;Temp File&gt;".
+If you leave it set to "&lt;Temp File&gt;", a temporary file will be created for you.
+If you enter your own file name, be warned that the file will be deleted after
+the data is read back when editing is completed.
+<LI>
+Enter a command in the "Command:" field.
+This field is a Combo box where the drop-down list contains all of the commands you have used
+for editing other fields, so you can just choose one of them.
+The command will typically need the name of the file to edit.
+This may be done by using "%f" where you want the name of the file to go in that command,
+so, for example, instead of typing:
+<PRE>
+	xterm -e vi myfilename
+</PRE>
+you could type
+<PRE>
+	xterm -e vi %f
+</PRE>
+which makes the command more general and avoids the need for you to edit the command for each file.
+<LI>
+Click on "Execute".
+This causes the cell data to be exported to the selected file and the command to be executed.
+When the external process exits, SQuirreL imports the data from that same file back
+into the popup and deletes the file.
+IMPORTANT: SQuirreL does NOT automatically update the database with this data.
+To put the edited data into the database, click on the "Update DB" button.
+
+</DL>
+
+<P>Note: SQuirrel does not provide a window for the command to operate in,
+so you may need to provide for that as part of the command.
+For example, to run VI on Linux you may need to enter the command:
+<PRE>
+	xterm -e vi %f
+</PRE>
+to have VI run in a window visible to you.
+If you just enter "vi %f" as the command, you will not get a window to operate in.
+Other commands (e.g. gimp) provide their own windows, so the extra step will not be necessary for them.
+</DL>
+
+<P>
+In all of the above cases, the entries you make in the "File:" and "Command" fields
+will be associated with that column so that you do not need to re-type them the next time
+that you edit that field.  You may, of course, change those values at any time.
+<P>
+Also, if you just want to set the default values for a particular column,
+you can enter the "File:" and "Command:" field information and click on "Apply".
+
+
 
 <h3><a name="Limitations"></a>Limitations</h3>
 
