@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.client.util;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 
@@ -51,6 +52,21 @@ public class SquirrelLogger extends Logger {
      */
     public SquirrelLogger(String fileName) throws IllegalArgumentException, IOException {
         super(fileName);
+        writeInitialisationInfo();
+    }
+
+    /**
+     * Creates a logger that logs to the specified file.
+     *
+     * @param   file    File to log to.
+     *
+     * @throws  IllegalArgumentException
+     *          <TT>null</TT> <TT>File</TT> passed.
+     * @throws  IOException
+     *          Unable to write to the specified file.
+     */
+    public SquirrelLogger(File file) throws IllegalArgumentException, IOException {
+        super(file);
         writeInitialisationInfo();
     }
 

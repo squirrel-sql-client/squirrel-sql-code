@@ -22,6 +22,7 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
 import java.beans.SimpleBeanInfo;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.sql.DriverManager;
@@ -323,9 +324,10 @@ public class SquirrelPreferences implements Serializable {
 */
 
     public void load() {
+    	File prefsFile = _app.getApplicationFiles().getUserPreferencesFile();
         try {
             XMLBeanReader doc = new XMLBeanReader();
-            doc.load(ApplicationFiles.USER_PREFS_FILE_NAME);
+            doc.load(prefsFile);
             Iterator it = doc.iterator();
             if (it.hasNext()) {
                 assignFrom((SquirrelPreferences)it.next());
@@ -335,7 +337,7 @@ public class SquirrelPreferences implements Serializable {
         } catch(Exception ex) {
             Logger logger = _app.getLogger();
             logger.showMessage(Logger.ILogTypes.ERROR, "Error occured reading from preferences file: "
-                                                + ApplicationFiles.USER_PREFS_FILE_NAME); //i18n
+                                                + prefsFile.getPath()); //i18n
             logger.showMessage(Logger.ILogTypes.ERROR, ex);
         }
         loadDefaults();
@@ -345,13 +347,14 @@ public class SquirrelPreferences implements Serializable {
      * Save preferences to disk.
      */
     public synchronized void save() {
+    	File prefsFile = _app.getApplicationFiles().getUserPreferencesFile();
         try {
             XMLBeanWriter wtr = new XMLBeanWriter(this);
-            wtr.save(ApplicationFiles.USER_PREFS_FILE_NAME);
+            wtr.save(prefsFile);
         } catch(Exception ex) {
             Logger logger = _app.getLogger();
             logger.showMessage(Logger.ILogTypes.ERROR, "Error occured writing to preferences file: "
-                                                + ApplicationFiles.USER_PREFS_FILE_NAME); //i18n
+                                                + prefsFile.getPath()); //i18n
             logger.showMessage(Logger.ILogTypes.ERROR, ex);
         }
     }

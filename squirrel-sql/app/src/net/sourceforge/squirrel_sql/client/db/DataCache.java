@@ -20,13 +20,13 @@ package net.sourceforge.squirrel_sql.client.db;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
-import java.io.IOException;
+//import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.xml.XMLException;
+//import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeListener;
@@ -95,22 +95,20 @@ public class DataCache {
      */
     public void save() {
         final Logger logger = _app.getLogger();
+
+        final File driversFile = _app.getApplicationFiles().getDatabaseDriversFile();
         try {
-            _cache.saveAllForClass(ApplicationFiles.USER_DRIVER_FILE_NAME, SQL_DRIVER_IMPL);
-        } catch (IOException ex) {
-            logger.showMessage(Logger.ILogTypes.ERROR, "Error occured saving drivers to " + ApplicationFiles.USER_DRIVER_FILE_NAME);
-            logger.showMessage(Logger.ILogTypes.ERROR, ex);
-        } catch (XMLException ex) {
-            logger.showMessage(Logger.ILogTypes.ERROR, "Error occured saving drivers to " + ApplicationFiles.USER_DRIVER_FILE_NAME);
+            _cache.saveAllForClass(driversFile.getPath(), SQL_DRIVER_IMPL);
+        } catch (Exception ex) {
+            logger.showMessage(Logger.ILogTypes.ERROR, "Error occured saving drivers to " + driversFile.getPath());
             logger.showMessage(Logger.ILogTypes.ERROR, ex);
         }
+
+        final File aliasesFile = _app.getApplicationFiles().getDatabaseAliasesFile();
         try {
-            _cache.saveAllForClass(ApplicationFiles.USER_ALIAS_FILE_NAME, SQL_ALIAS_IMPL);
-        } catch (IOException ex) {
-            logger.showMessage(Logger.ILogTypes.ERROR, "Error occured saving aliases to " + ApplicationFiles.USER_ALIAS_FILE_NAME);
-            logger.showMessage(Logger.ILogTypes.ERROR, ex);
-        } catch (XMLException ex) {
-            logger.showMessage(Logger.ILogTypes.ERROR, "Error occured saving aliases to " + ApplicationFiles.USER_ALIAS_FILE_NAME);
+            _cache.saveAllForClass(aliasesFile.getPath(), SQL_ALIAS_IMPL);
+        } catch (Exception ex) {
+            logger.showMessage(Logger.ILogTypes.ERROR, "Error occured saving aliases to " + aliasesFile.getPath());
             logger.showMessage(Logger.ILogTypes.ERROR, ex);
         }
     }
@@ -191,23 +189,19 @@ public class DataCache {
      */
     private void loadDrivers() {
         final Logger logger = _app.getLogger();
+
+        final File driversFile = _app.getApplicationFiles().getDatabaseDriversFile();
         try {
-            _cache.load(ApplicationFiles.USER_DRIVER_FILE_NAME);
+            _cache.load(driversFile.getPath());
             if (!drivers().hasNext()) {
                 loadDefaultDrivers();
             }
         } catch (FileNotFoundException ex) {
             loadDefaultDrivers();// first time user has run pgm.
-        } catch (XMLException ex) {
+        } catch (Exception ex) {
             logger.showMessage(Logger.ILogTypes.ERROR, "Error loading driver file: "
-                        + ApplicationFiles.USER_DRIVER_FILE_NAME
+                        + driversFile.getPath()
                         + ". Default drivers loaded instead.");
-            logger.showMessage(Logger.ILogTypes.ERROR, ex);
-            loadDefaultDrivers();
-        } catch (DuplicateObjectException ex) {
-            logger.showMessage(Logger.ILogTypes.ERROR, "Error loading driver file: "
-                        + ApplicationFiles.USER_DRIVER_FILE_NAME
-                        + "Default drivers loaded instead.");
             logger.showMessage(Logger.ILogTypes.ERROR, ex);
             loadDefaultDrivers();
         }
@@ -256,14 +250,12 @@ public class DataCache {
 
     private void loadAliases() {
         final Logger logger = _app.getLogger();
+        final File aliasesFile = _app.getApplicationFiles().getDatabaseAliasesFile();
         try {
-            _cache.load(ApplicationFiles.USER_ALIAS_FILE_NAME);
+            _cache.load(aliasesFile.getPath());
         } catch (FileNotFoundException ignore) { // first time user has run pgm.
-        } catch (XMLException ex) {
-            logger.showMessage(Logger.ILogTypes.ERROR, "Error loading aliases file: " + ApplicationFiles.USER_ALIAS_FILE_NAME);
-            logger.showMessage(Logger.ILogTypes.ERROR, ex);
-        } catch (DuplicateObjectException ex) {
-            logger.showMessage(Logger.ILogTypes.ERROR, "Error loading aliases file: " + ApplicationFiles.USER_ALIAS_FILE_NAME);
+        } catch (Exception ex) {
+            logger.showMessage(Logger.ILogTypes.ERROR, "Error loading aliases file: " + aliasesFile.getPath());
             logger.showMessage(Logger.ILogTypes.ERROR, ex);
         }
     }

@@ -20,43 +20,92 @@ package net.sourceforge.squirrel_sql.client.util;
 import java.io.File;
 
 import net.sourceforge.squirrel_sql.fw.util.IJavaPropertyNames;
+import net.sourceforge.squirrel_sql.fw.util.Logger;
+
+import net.sourceforge.squirrel_sql.client.ApplicationArguments;
+import net.sourceforge.squirrel_sql.client.IApplication;
 
 public class ApplicationFiles {
-    /** Name of folder to contain users settings. */
-    public static final String USER_SETTINGS_FOLDER =
-                            System.getProperty(IJavaPropertyNames.USER_HOME) +
-                            File.separator + ".squirrel-sql";
+	/** Name of directory to contain users settings. */
+	private String _userSettingsDir;
 
-    /** Name of folder that contains Squirrel app. */
-    public static final String SQUIRREL_FOLDER = System.getProperty(IJavaPropertyNames.USER_DIR);
+	/** Name of folder that contains Squirrel app. */
+	public static final String SQUIRREL_FOLDER = System.getProperty(IJavaPropertyNames.USER_DIR);
 
-    /** Name of folder that contains Squirrel libraries. */
-    public static final String SQUIRREL_LIB_FOLDER = SQUIRREL_FOLDER + File.separator + "lib";
+	/** Name of folder that contains Squirrel libraries. */
+	public static final String SQUIRREL_LIB_FOLDER = SQUIRREL_FOLDER + File.separator + "lib";
 
-    /** Name of folder that contains plugins. */
-    public static final String SQUIRREL_PLUGINS_FOLDER = SQUIRREL_FOLDER + File.separator + "plugins";
+	/** Name of folder that contains plugins. */
+	public static final String SQUIRREL_PLUGINS_FOLDER = SQUIRREL_FOLDER + File.separator + "plugins";
 
-    /** Name of file that contains database aliases. */
-    public static final String USER_ALIAS_FILE_NAME = USER_SETTINGS_FOLDER + File.separator + "SQLAliases.xml";
-
-    /** Name of file that contains user settings. */
-    public static final String USER_PREFS_FILE_NAME = USER_SETTINGS_FOLDER + File.separator + "prefs.xml";
-
-    /** Name of file that contains users database driver information. */
-    public static final String USER_DRIVER_FILE_NAME = USER_SETTINGS_FOLDER + File.separator + "SQLDrivers.xml";
-
-    /** Flle to log execution information to. */
-    public static final String EXECUTION_LOG_FILE = USER_SETTINGS_FOLDER + File.separator + "squirrel-sql.log";
-    //private static ApplicationFiles _instance = new ApplicationFiles();
-
-    /** Name of folder that contains plugin specific user settings. */
-    public static final String PLUGINS_USER_SETTINGS_FOLDER = USER_SETTINGS_FOLDER + File.separator + "plugins";
-
-    static {
-        new File(USER_SETTINGS_FOLDER).mkdir();
-    }
-
-    private ApplicationFiles() {
-        super();
-    }
+	/**
+	 * Ctor.
+	 * 
+	 * @param	app	Application API
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>IApplication</TT>
+	 * 			passed in.
+	 */
+	public ApplicationFiles(IApplication app)
+			throws IllegalArgumentException {
+		super();
+		if (app == null) {
+			throw new IllegalArgumentException("Null IApplication passed");
+		}
+		
+		ApplicationArguments args = app.getArguments();
+		
+		_userSettingsDir = args.getUserSettingsDirectoryOverride();
+		if (_userSettingsDir == null) {
+			_userSettingsDir = System.getProperty(IJavaPropertyNames.USER_HOME) +
+									File.separator + ".squirrel-sql";
+		}
+		try {
+			new File(_userSettingsDir).mkdirs();
+		} catch (Exception ex) {
+			app.getLogger().showMessage(Logger.ILogTypes.ERROR,
+				"Error creating user settings directory: " + _userSettingsDir);
+			app.getLogger().showMessage(Logger.ILogTypes.ERROR, ex);
+		}
+	}
+	
+	public File getUserSettingsDirectory() {
+		return new File(_userSettingsDir);
+	}
+	
+	/**
+	 * @return file that contains database aliases.
+	 */
+	public File getDatabaseAliasesFile() {
+		return new File(_userSettingsDir + File.separator + "SQLAliases.xml");
+	}
+	
+	/**
+	 * @return file that contains JDBC driver definitions.
+	 */
+	public File getDatabaseDriversFile() {
+		return new File(_userSettingsDir + File.separator + "SQLDrivers.xml");
+	}
+	
+	/**
+	 * @return file that contains JDBC driver definitions.
+	 */
+	public File getUserPreferencesFile() {
+		return new File(_userSettingsDir + File.separator + "prefs.xml");
+	}
+	
+	/**
+	 * @return file to log execution information to.
+	 */
+	public File getExecutionLogFile() {
+		return new File(_userSettingsDir + File.separator + "squirrel-sql.log");
+	}
+	
+	/**
+	 * @return directory that contains plugin specific user settings
+	 */
+	public File getPluginsUserSettingsDirectory() {
+		return new File(_userSettingsDir + File.separator + "plugins");
+	}
 }

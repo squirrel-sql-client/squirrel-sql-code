@@ -64,18 +64,31 @@ public class Logger implements IMessageHandler {
      *          Unable to write to the specified file.
      */
     public Logger(String fileName) throws IllegalArgumentException, IOException {
+        this(new File(validateFileName(fileName)));
+    }
+
+    /**
+     * Creates a logger that logs to the specified file.
+     *
+     * @param   fileName    File to log to.
+     *
+     * @throws  IllegalArgumentException
+     *          <TT>null</TT> <TT>File</TT> passed.
+     * @throws  IOException
+     *          Unable to write to the specified file.
+     */
+    public Logger(File file) throws IllegalArgumentException, IOException {
         super();
-        if (fileName == null || fileName.trim().length() == 0) {
-            throw new IllegalArgumentException("Null or empty file name passed");
+        if (file == null) {
+            throw new IllegalArgumentException("Null File passed");
         }
-        File file = new File(fileName);
         if (!file.exists()) {
             file.createNewFile();
         }
         if (!file.canWrite()) {
-            throw new IOException("Cannot write to file: " + fileName);
+            throw new IOException("Cannot write to file: " + file.getPath());
         }
-        _wtr = new BufferedWriter(new FileWriter(fileName, true));
+        _wtr = new BufferedWriter(new FileWriter(file.getPath(), true));
     }
 
     protected void finalize() throws Throwable {
@@ -159,5 +172,22 @@ public class Logger implements IMessageHandler {
                 return ILogTypeDescriptions.UNKNOWN;
             }
         }
+    }
+
+    /**
+     * Validate the passed file name.
+     *
+     * @param   fileName    Name of file to validate.
+     * 
+     * @return	The passed file name.
+     *
+     * @throws  IllegalArgumentException
+     *          <TT>null</TT> or empty file name passed.
+     */
+    private static String validateFileName(String fileName) throws IllegalArgumentException, IOException {
+        if (fileName == null || fileName.trim().length() == 0) {
+            throw new IllegalArgumentException("Null or empty file name passed");
+        }
+        return fileName;
     }
 }

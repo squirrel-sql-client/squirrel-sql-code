@@ -79,7 +79,8 @@ public class ApplicationArguments {
 	}
 
 	/**
-	 *  @return override for the user settings directory. Can be <TT>null</TT>.
+	 *  @return	override for the user settings directory. Will be
+	 * 			<TT>null</TT> if not overridden.
 	 */
 	public boolean getShowSplashScreen() {
 		return _showSplashScreen;

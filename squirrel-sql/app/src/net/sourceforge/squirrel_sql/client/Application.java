@@ -43,8 +43,6 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.client.util.SplashScreen;
 import net.sourceforge.squirrel_sql.client.util.SquirrelLogger;
-import net.sourceforge.squirrel_sql.fw.util.*;
-
 
 /**
  * Defines the API to do callbacks on the application.
@@ -54,6 +52,8 @@ import net.sourceforge.squirrel_sql.fw.util.*;
 class Application implements IApplication {
     /** Application arguments. */
     private ApplicationArguments _args;
+    
+    private ApplicationFiles _appFiles;
     
     /** Splash screen used during startup process. */
     private SplashScreen _splash;
@@ -86,6 +86,7 @@ class Application implements IApplication {
     public Application(ApplicationArguments args) {
         super();
         _args = args;
+        _appFiles = new ApplicationFiles(this);
     }
 
     public void startup() {
@@ -104,11 +105,13 @@ class Application implements IApplication {
                 // Create a logger object that logs to a text file in the users
                 // preferences directory. If that fails log to standard output.
                 indicateNewStartupTask("Creating logger...");
+                File logFile = _appFiles.getExecutionLogFile();
                 try {
-                    _logger = new SquirrelLogger(ApplicationFiles.EXECUTION_LOG_FILE);
+                    _logger = new SquirrelLogger(logFile);
                 } catch (IOException ex) {
                     _logger = new Logger();
-                    _logger.showMessage(Logger.ILogTypes.ERROR, "Unable to write to log file: " + ApplicationFiles.EXECUTION_LOG_FILE);
+                    _logger.showMessage(Logger.ILogTypes.ERROR, "Unable to write to log file: " + logFile.getPath());
+                    _logger.showMessage(Logger.ILogTypes.ERROR, "Logging to standard output");
                     _logger.showMessage(Logger.ILogTypes.ERROR, ex);
                 }
 
@@ -204,6 +207,24 @@ class Application implements IApplication {
     public TaskThreadPool getThreadPool() {
     	return _threadPool;
     }
+
+	/**
+	 * Return the arguments passed in from the command line.
+	 * 
+	 * @return the arguments passed in from the command line.
+	 */
+	public ApplicationArguments getArguments() {
+		return _args;
+	}
+
+	/**
+	 * Return the application files object
+	 * 
+	 * @return the application files object.
+	 */
+	public ApplicationFiles getApplicationFiles() {
+		return _appFiles;
+	}
 
     public synchronized void addToMenu(int menuId, JMenu menu) {
         if (_mainFrame != null) {

@@ -34,8 +34,7 @@ import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.fw.util.*;
-
+import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 
 /**
  * Defines the API to do callbacks on the application. I'm not sure
@@ -73,6 +72,20 @@ public interface IApplication {
 	 * @return	the thread pool for this app.
 	 */
     TaskThreadPool getThreadPool();
+
+	/**
+	 * Return the arguments passed in from the command line.
+	 * 
+	 * @return the arguments passed in from the command line.
+	 */
+	public ApplicationArguments getArguments();
+
+	/**
+	 * Return the application files object
+	 * 
+	 * @return the application files object.
+	 */
+	public ApplicationFiles getApplicationFiles();
 
 	/**
 	 * Add a hierarchical menu to a menu.

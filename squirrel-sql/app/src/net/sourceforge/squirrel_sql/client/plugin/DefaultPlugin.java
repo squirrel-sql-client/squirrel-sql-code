@@ -131,7 +131,7 @@ public abstract class DefaultPlugin implements IPlugin {
         if (internalName == null || internalName.trim().length() == 0) {
             throw new IllegalStateException("IPlugin doesn't have a valid internal name");
         }
-        String name = ApplicationFiles.PLUGINS_USER_SETTINGS_FOLDER +
+        String name = getApplication().getApplicationFiles().getPluginsUserSettingsDirectory() +
                         File.separator + internalName + File.separator;
         File file = new File(name);
         if (!file.exists()) {
