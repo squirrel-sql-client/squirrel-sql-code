@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -35,7 +36,11 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
+/**
+ * A dialog allow selection and a font and its associated info.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
 public class FontChooser extends JDialog
 {
 	/**
@@ -48,32 +53,117 @@ public class FontChooser extends JDialog
 		String OK = "OK";
 	}
 
-//	private static int[] FONT_STYLES = { Font.PLAIN, Font.BOLD, Font.ITALIC };
+	private final boolean _selectStyles;
+
 	private JComboBox _fontNamesCmb;
-	private JComboBox _fontSizesCmb =
-		new JComboBox(new String[] { "8", "9", "10", "12", "14" });
-	private JCheckBox _boldChk = new JCheckBox("Bold");
-	private JCheckBox _italicChk = new JCheckBox("Italic");
-	private JLabel _previewLbl =
-		new JLabel("The quick brown fox jumped over the lazy dog");
+	private final JComboBox _fontSizesCmb = new JComboBox(new String[]
+												{ "8", "9", "10", "12", "14" });
+	private final JCheckBox _boldChk = new JCheckBox("Bold");
+	private final JCheckBox _italicChk = new JCheckBox("Italic");
+	private final JLabel _previewLbl = new JLabel("select * from tab01");
 
 	private Font _font;
 
+	private ActionListener _previewUpdater;
+
+	/**
+	 * Default ctor.
+	 */
 	public FontChooser()
 	{
-		this((Frame) null);
+		this((Frame)null);
 	}
 
+	/**
+	 * ctor specifying whether styles can be selected.
+	 * 
+	 * @param	selectStyles	If <TT>true</TT> bold and italic checkboxes displayed.
+	 */
+	public FontChooser(boolean selectStyles)
+	{
+		this((Frame)null, selectStyles);
+	}
+
+	/**
+	 * ctor specifying the parent frame.
+	 * 
+	 * @param	owner	Parent frame.
+	 */
 	public FontChooser(Frame owner)
 	{
 		super(owner, i18n.TITLE, true);
+		_selectStyles = true;
 		createUserInterface();
 	}
 
+	/**
+	 * ctor specifying the parent frame and whether styles can be selected.
+	 * 
+	 * @param	owner			Parent frame.
+	 * @param	selectStyles	If <TT>true</TT> bold and italic checkboxes displayed.
+	 */
+	public FontChooser(Frame owner, boolean selectStyles)
+	{
+		super(owner, i18n.TITLE, true);
+		_selectStyles = selectStyles;
+		createUserInterface();
+	}
+
+	/**
+	 * ctor specifying the parent dialog.
+	 * 
+	 * @param	owner	Parent frame.
+	 */
 	public FontChooser(Dialog owner)
 	{
 		super(owner, i18n.TITLE, true);
+		_selectStyles = true;
 		createUserInterface();
+	}
+
+	/**
+	 * ctor specifying the parent dialog and whether styles can be selected.
+	 * 
+	 * @param	owner	Parent frame.
+	 * @param	selectStyles	If <TT>true</TT> bold and italic checkboxes displayed.
+	 */
+	public FontChooser(Dialog owner, boolean selectStyles)
+	{
+		super(owner, i18n.TITLE, true);
+		_selectStyles = selectStyles;
+		createUserInterface();
+	}
+
+	/**
+	 * Component is being added to its parent.
+	 */
+	public void addNotify()
+	{
+		super.addNotify();
+		if (_previewUpdater == null)
+		{
+			_previewUpdater = new PreviewLabelUpdater();
+			_fontNamesCmb.addActionListener(_previewUpdater);
+			_fontSizesCmb.addActionListener(_previewUpdater);
+			_boldChk.addActionListener(_previewUpdater);
+			_italicChk.addActionListener(_previewUpdater);
+		}
+	}
+
+	/**
+	 * Component is being removed from its parent.
+	 */
+	public void removeNotify()
+	{
+		super.removeNotify();
+		if (_previewUpdater != null)
+		{
+			_fontNamesCmb.removeActionListener(_previewUpdater);
+			_fontSizesCmb.removeActionListener(_previewUpdater);
+			_boldChk.removeActionListener(_previewUpdater);
+			_italicChk.removeActionListener(_previewUpdater);
+			_previewUpdater = null;
+		}
 	}
 
 	public Font showDialog()
@@ -81,14 +171,19 @@ public class FontChooser extends JDialog
 		return showDialog(null);
 	}
 
+	/**
+	 * Show dialog defaulting to the passed font.
+	 * 
+	 * @param	font	The font to default to.
+	 */
 	public Font showDialog(Font font)
 	{
 		if (font != null)
 		{
 			_fontNamesCmb.setSelectedItem(font.getName());
 			_fontSizesCmb.setSelectedItem("" + font.getSize());
-			_boldChk.setSelected(font.isBold());
-			_italicChk.setSelected(font.isItalic());
+			_boldChk.setSelected(_selectStyles && font.isBold());
+			_italicChk.setSelected(_selectStyles && font.isItalic());
 		}
 		else
 		{
@@ -118,7 +213,7 @@ public class FontChooser extends JDialog
 		{
 		}
 		FontInfo fi = new FontInfo();
-		fi.setFamily((String) _fontNamesCmb.getSelectedItem());
+		fi.setFamily((String)_fontNamesCmb.getSelectedItem());
 		fi.setSize(size);
 		fi.setIsBold(_boldChk.isSelected());
 		fi.setIsItalic(_italicChk.isSelected());
@@ -127,16 +222,15 @@ public class FontChooser extends JDialog
 
 	private void createUserInterface()
 	{
-		final JPanel content = new JPanel();
-		setContentPane(content);
-		final GridBagLayout gbl = new GridBagLayout();
+		final JPanel content = new JPanel(new GridBagLayout());
 		final GridBagConstraints gbc = new GridBagConstraints();
-		content.setLayout(gbl);
 
+		setContentPane(content);
 		content.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
 		gbc.anchor = GridBagConstraints.WEST;
 		gbc.insets = new Insets(2, 2, 2, 2);
+		gbc.fill = gbc.HORIZONTAL;
 
 		gbc.gridx = gbc.gridy = 0;
 		content.add(new JLabel("Font"), gbc);
@@ -144,68 +238,56 @@ public class FontChooser extends JDialog
 		++gbc.gridx;
 		content.add(new JLabel("Size"), gbc);
 
-		++gbc.gridx;
-		content.add(new JLabel("Style"), gbc);
+		if (_selectStyles)
+		{
+			++gbc.gridx;
+			content.add(new JLabel("Style"), gbc);
+		}
 
 		++gbc.gridy;
 		gbc.gridx = 0;
 		_fontNamesCmb = new JComboBox(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
-		_fontNamesCmb.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent evt)
-			{
-				setupPreviewLabel();
-			}
-		});
 		content.add(_fontNamesCmb, gbc);
 
 		++gbc.gridx;
 		_fontSizesCmb.setEditable(true);
-		_fontSizesCmb.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent evt)
-			{
-				setupPreviewLabel();
-			}
-		});
 		content.add(_fontSizesCmb, gbc);
 
-		++gbc.gridx;
-		_boldChk.addActionListener(new ActionListener()
+		if (_selectStyles)
 		{
-			public void actionPerformed(ActionEvent evt)
-			{
-				setupPreviewLabel();
-			}
-		});
-		content.add(_boldChk, gbc);
-		++gbc.gridy;
-		_italicChk.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent evt)
-			{
-				setupPreviewLabel();
-			}
-		});
-		content.add(_italicChk, gbc);
+			++gbc.gridx;
+			content.add(_boldChk, gbc);
+			++gbc.gridy;
+			content.add(_italicChk, gbc);
+		}
 
-		Dimension prefSize = _previewLbl.getPreferredSize();
-		prefSize.height = 50;
-		_previewLbl.setPreferredSize(prefSize);
 		gbc.gridx = 0;
 		++gbc.gridy;
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		content.add(_previewLbl, gbc);
+		gbc.fill = gbc.BOTH;
+		gbc.anchor = GridBagConstraints.CENTER;
+		content.add(createPreviewPanel(), gbc);
 
 		++gbc.gridy;
-		gbc.anchor = GridBagConstraints.CENTER;
+		gbc.fill = gbc.HORIZONTAL;
 		content.add(createButtonsPanel(), gbc);
-
-		setupPreviewLabel();
 
 		pack();
 		GUIUtils.centerWithinParent(this);
-		setResizable(false);
+		setResizable(true);
+	}
+
+	private JPanel createPreviewPanel()
+	{
+		final JPanel pnl = new JPanel(new BorderLayout());
+		pnl.setBorder(BorderFactory.createTitledBorder("Preview"));
+		Dimension prefSize = _previewLbl.getPreferredSize();
+		prefSize.height = 50;
+		_previewLbl.setPreferredSize(prefSize);
+		pnl.add(_previewLbl, BorderLayout.CENTER);
+		setupPreviewLabel();
+
+		return pnl;
 	}
 
 	private JPanel createButtonsPanel()
@@ -245,4 +327,13 @@ public class FontChooser extends JDialog
 		setupFontFromDialog();
 		_previewLbl.setFont(_font);
 	}
+
+	private final class PreviewLabelUpdater implements ActionListener
+	{
+		public void actionPerformed(ActionEvent evt)
+		{
+			setupPreviewLabel();
+		}
+	}
+
 }
