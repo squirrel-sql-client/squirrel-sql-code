@@ -767,25 +767,58 @@ you can enter the "File:" and "Command:" field information and click on "Apply".
 
 <h3><a name="Limitations"></a>Limitations</h3>
 
-<P>Editing only works for JDBC types of INTEGER, SMALLINT, TINYINT,
-CHAR, VARCHAR, LONGCHAR and JDBC codes -8 and -9. It has not been
-tested with TINYINT, LONGCHAR or types -8 and -9. Other types will be
-included in the future.</P>
+<P>
+Some DBMSs implement "standard" data types in non-standard ways.
+For example, we know that many DBMSs claim to implement the BLOB data type,
+but they actually store that data using a BINARY or LONGVARBINARY field.
+SQuirreL uses the <I>actual</I> data type as defined in the DATA_TYPE field
+in the Columns tab for the table, not the TYPE_NAME.
+Thus it is possible that you may think you are working with one type of data,
+but actually using something else,
+so controls and limitations on specific data types
+(e.g. limiting the data read when loading the Contents tab)
+may not work as expected.
+
+<P>SQuirreL allows editing only on cells that are defined using the
+basic standard SQL data types
+(see <a href="#data_types">Data Types</a>).
+If your DBMS provides other data types, you can create a plug-in that supports them
+(see the file
+net/sourceforge/squirrel_sql/fw/datasetviewer/cellcomponent/CellComponentFactory for more information).
+</P>
 
 <P>Some attempt has been made to validate user input for each of the
 types. For example, INTEGER fields allow only digits and '-' as input.
 However, not all of the necessary information is supplied by all DBMSs,
 so we cannot do a complete validation of user input in all cases. For
 example, we cannot check that a value entered for a SMALLINT field
-will fit into a SMALLINT column in this DBMS. The "validation of last
+will fit into a SMALLINT column in a specific DBMS. Also, the drivers for
+each DBMS provide different amounts of information for the same field type
+in different situation, and SQuirreL cannot validate the input when such data is
+missing.
+The "validation of last
 resort" is done when we try to do an update on the DB. The DBMS either
 succeeds or it fails, and if there is an error we display that message
 to the user with the information that the DB has not been updated.</P>
 
-<P>VARCHAR fields cannot include tab or newline. VARCHAR fields
+<P>VARCHAR fields containing tabs or newlines may only be edited in the Popup
+window.
+Fields that can only be edited in the Popup are displayed with a cyan background.
+
+<P>VARCHAR fields
 that may be set to null cannot be set to the string value
-"&lt;null&gt; " without the quotes. VARCHAR fields in the database may
-include those values as long as you do not try to edit them.</P>
+"&lt;null&gt; " (without the quotes). VARCHAR fields in the database may
+include that value as long as you do not try to edit them.
+
+</P>
+Tables with a large number of columns or with a column containing a very
+long value (not includeing BLOB/CLOB data types) may get an error when
+trying to update the DB because the WHERE clause is too long.  In this case
+you should open the table in a session, go to the <B>Session</B> menu in the
+main window, and select the entry "Limit cell edit WHERE clause size".
+That tool lets you specify which columns SQuirrel should use in the WHERE clause
+when doing the requested update on the cell contents.
+See <a href=#session_menu>Session Menu</a>.
 
 <A NAME="summary_of_how_it_works"><h3>Summary of How it works (and why
 		you may care)</h3></A>
@@ -1320,6 +1353,32 @@ display a dialog box showing the plugins currently installed.</P>
 	<DT><B>Close All SQL Result Windows</B>
 	<DD>Close all SQL results windows &quot;torn off&quot; from the tabbed folder
 	for the current session.
+
+	<DT><B>Limit cell edit WHERE clause size</B>
+	<DD>This allows you to select specific columns to use as the key fields
+	when updating the DB after you edit a cell in a table. The purpose of this
+	is to reduce the size of the WHERE clause, which normally includes all fields
+	in the table.  For tables with many columns, or with columns containing long
+	data entries (not includeing BLOB/CLOB fields, which are handled differently),
+	the automatically generated WHERE clause may exceed the DBMS length limitiation.
+	<BR> 
+	You may move column names between the "use columns" and "not use columns" boxes
+	by selecting the names and using the arrow buttons to move them to the other box.
+	You must leave at least one column in the "use columns" box, and the columns
+	in the "use columns" box must be sufficient to uniquely identify each row
+	in the table, e.g. the primary key fields for the table.
+	The "Reset" button restores the column name lists to the way they were when
+	you opened the window.
+	<BR>
+	Remember to click "OK" when you are done.
+	<BR>
+	If you define a set of columns to use in the WHERE clause and then edit some
+	other column, SQuirreL will warn you that "1 duplicate row" is about to be
+	created.  Since you have told SQuirreL to not look at the edited column,
+	it does not
+	recognize that the new data is different than the old data so it
+	gives you a warning.  In this case there is no problem and you should just
+	tell SQuirreL to go ahead with the update.
 </DL>
 
 <A NAME="windows_menu"><H3>Windows Menu</H3></A>
