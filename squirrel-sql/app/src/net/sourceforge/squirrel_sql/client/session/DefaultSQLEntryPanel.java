@@ -24,6 +24,7 @@ import java.awt.event.MouseListener;
 
 import javax.swing.Action;
 import javax.swing.JComponent;
+import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.event.UndoableEditListener;
@@ -41,6 +42,9 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel {
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(SQLPanel.class);
 
+	/** Application API. */
+	private IApplication _app;
+
 	/** Text area control. */
 	private MyTextArea _comp;
 
@@ -55,6 +59,11 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel {
 
 	public DefaultSQLEntryPanel(IApplication app) {
 		super();
+		if (app == null) {
+			throw new IllegalArgumentException("IApplication == null");
+		}
+
+		_app = app;
 		_comp = new MyTextArea(app, this);
 		_scroller = new JScrollPane(_comp);
 	}
@@ -81,8 +90,8 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel {
 	 */
 	public void setUndoActions(Action undo, Action redo) {
 		_textPopupMenu.addSeparator();
-		_textPopupMenu.add(undo);
-		_textPopupMenu.add(redo);
+		_app.getResources().addToPopupMenu(undo, _textPopupMenu);
+		_app.getResources().addToPopupMenu(redo, _textPopupMenu);
 	}
 
 	/**
@@ -242,5 +251,4 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel {
 			super.removeNotify();
 		}
 	}
-
 }

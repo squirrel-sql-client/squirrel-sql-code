@@ -29,6 +29,7 @@ import javax.swing.text.PlainDocument;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.session.BaseSQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -44,6 +45,9 @@ import net.sourceforge.squirrel_sql.plugins.jedit.textarea.Token;
 class JeditSQLEntryPanel extends BaseSQLEntryPanel {
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(JeditSQLEntryPanel.class);
+
+	/** Application API. */
+	private IApplication _app;
 
 	/** Text component. */
 	private JEditTextArea _jeditTextArea;
@@ -66,6 +70,7 @@ class JeditSQLEntryPanel extends BaseSQLEntryPanel {
 			throw new IllegalArgumentException("Null JeditPreferences passed");
 		}
 
+		_app = session.getApplication();
 		_prefs = (JeditPreferences)session.getPluginObject(plugin, JeditConstants.ISessionKeys.PREFS);
 		_jeditTextArea = new JEditTextArea(new JeditTextAreaDefaults(_prefs));
 		_jeditTextArea.setTokenMarker(new JeditSQLTokenMarker(session.getSQLConnection()));
@@ -206,8 +211,7 @@ class JeditSQLEntryPanel extends BaseSQLEntryPanel {
 		return _jeditTextArea;
 	}
 
-	void updateFromPreferences(JeditPreferences prefs)
-			throws IllegalArgumentException {
+	void updateFromPreferences(JeditPreferences prefs) {
 		if (prefs == null) {
 			throw new IllegalArgumentException("Null JEditPreferences passed");
 		}
@@ -254,8 +258,8 @@ class JeditSQLEntryPanel extends BaseSQLEntryPanel {
 	 */
 	public void setUndoActions(Action undo, Action redo) {
 		_jeditPopup.addSeparator();
-		_jeditPopup.add(undo);
-		_jeditPopup.add(redo);
+		_app.getResources().addToPopupMenu(undo, _jeditPopup);
+		_app.getResources().addToPopupMenu(redo, _jeditPopup);
 	}
 }
 
