@@ -131,10 +131,20 @@ public class DataTypeString
 	
 	/**
 	 * This Data Type can be edited in a table cell.
+	 * <P>
+	 * If the data includes newlines, the user must not be allowed to edit it
+	 * in the cell because the CellEditor uses a JTextField which filters out newlines.
+	 * If we try to use anything other than a JTextField, or use a JTextField with no
+	 * newline filtering, the text is not visible in the cell, so the user cannot even read
+	 * the text, much less edit it.  The simplest solution is to allow editing of multi-line
+	 * text only in the Popup window.
 	 */
 	public boolean isEditableInCell(Object originalValue) {
-		return true;
-	
+		//			prevent editing if text contains newlines
+ 		if (originalValue != null && ((String)originalValue).indexOf('\n') > -1)
+			 return false;
+		else return true;
+
 	}
 		
 	/**
