@@ -59,7 +59,7 @@ public class MainFrame extends BaseMDIParentFrame
 {
 	public interface IMenuIDs extends MainFrameMenuBar.IMenuIDs
 	{
-		// EMpty body.
+		// Empty body.
 	}
 
 	/** Logger for this class. */
@@ -126,8 +126,8 @@ public class MainFrame extends BaseMDIParentFrame
 
 	public void dispose()
 	{
-		closeAllToolWindows();
 		_app.shutdown();
+		closeAllToolWindows();
 		super.dispose();
 		System.exit(0);
 	}
@@ -438,7 +438,7 @@ public class MainFrame extends BaseMDIParentFrame
 		addInternalFrame(_driversToolWindow, false, null);
 		WindowState toolWs = ws.getDriversWindowState();
 		_driversToolWindow.setBounds(toolWs.getBounds().createRectangle());
-		_driversToolWindow.setVisible(true);
+		_driversToolWindow.setVisible(toolWs.isVisible());
 		try
 		{
 			_driversToolWindow.setSelected(true);
@@ -451,14 +451,21 @@ public class MainFrame extends BaseMDIParentFrame
 		addInternalFrame(_aliasesToolWindow, false, null);
 		toolWs = ws.getAliasesWindowState();
 		_aliasesToolWindow.setBounds(toolWs.getBounds().createRectangle());
-		_aliasesToolWindow.setVisible(true);
-		try
+		if (toolWs.isVisible())
 		{
-			_aliasesToolWindow.setSelected(true);
+			_aliasesToolWindow.setVisible(true);
+			try
+			{
+				_aliasesToolWindow.setSelected(true);
+			}
+			catch (PropertyVetoException ex)
+			{
+				s_log.error("Error selecting window", ex);
+			}
 		}
-		catch (PropertyVetoException ex)
+		else
 		{
-			s_log.error("Error selecting window", ex);
+			_aliasesToolWindow.setVisible(false);
 		}
 
 		prefs.setMainFrameWindowState(new MainFrameWindowState(this));

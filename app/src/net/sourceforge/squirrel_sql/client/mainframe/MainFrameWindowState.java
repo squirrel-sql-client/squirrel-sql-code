@@ -24,7 +24,7 @@ import net.sourceforge.squirrel_sql.fw.util.beanwrapper.RectangleWrapper;
 /**
  * This bean describes the state of the main window.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class MainFrameWindowState extends WindowState
 {
@@ -96,8 +96,9 @@ public class MainFrameWindowState extends WindowState
 			{
 				_driversWindowState = new WindowState();
 			}
-			_aliasesWindowState.setBounds(_frame.getAliasesWindowState().getBounds());
-			_driversWindowState.setBounds(_frame.getDriversWindowState().getBounds());
+
+			_aliasesWindowState.copyFrom(_frame.getAliasesWindowState());
+			_driversWindowState.copyFrom(_frame.getDriversWindowState());
 		}
 	}
 }

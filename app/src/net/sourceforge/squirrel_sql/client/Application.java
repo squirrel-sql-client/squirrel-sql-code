@@ -4,7 +4,7 @@ package net.sourceforge.squirrel_sql.client;
  */
 
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -76,8 +76,6 @@ import net.sourceforge.squirrel_sql.client.session.SessionWindowManager;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
-
-
 /**
  * Defines the API to do callbacks on the application.
  *
@@ -267,13 +265,13 @@ class Application implements IApplication
 
 		// Save Application level SQL history.
 		saveSQLHistory();
-		
+
 		// Save options selected for Cell Import Export operations
 		saveCellImportExportInfo();
-		
+
 		// Save options selected for Edit Where Columns
 		saveEditWhereColsInfo();
-		
+
 		// Save options selected for DataType-specific properties
 		saveDTProperties();
 
@@ -582,16 +580,16 @@ class Application implements IApplication
 
 		indicateNewStartupTask(splash, "Loading SQL history...");
 		loadSQLHistory();
-		
+
 		indicateNewStartupTask(splash, "Loading Cell Import/Export selections...");
 		loadCellImportExportInfo();
-				
+
 		indicateNewStartupTask(splash, "Loading Edit 'Where' Columns selections...");
 		loadEditWhereColsInfo();
-				
+
 		indicateNewStartupTask(splash, "Loading Data Type Properties...");
 		loadDTProperties();
-		
+
 		indicateNewStartupTask(splash, "Showing main window...");
 		_mainFrame.setVisible(true);
 
@@ -722,7 +720,7 @@ class Application implements IApplication
 			CellImportExportInfoSaver.setInstance(saverInstance);
 		}
 	}
-	
+
 	/**
 	 * Save the options selected by user for Cell Import Export.
 	 */
@@ -738,7 +736,7 @@ class Application implements IApplication
 			s_log.error("Unable to write Cell Import/Export options to persistant storage.", ex);
 		}
 	}
-	
+
 	/**
 	 * Load the options previously selected by user for specific cols to use
 	 * in WHERE clause when editing cells.
@@ -770,7 +768,7 @@ class Application implements IApplication
 			// nothing needed here??
 		}
 	}
-	
+
 	/**
 	 * Save the options selected by user for Cell Import Export.
 	 */
@@ -786,8 +784,7 @@ class Application implements IApplication
 			s_log.error("Unable to write Edit Where Cols options to persistant storage.", ex);
 		}
 	}
-	
-	
+
 	/**
 	 * Load the options previously selected by user for specific cols to use
 	 * in WHERE clause when editing cells.
@@ -819,7 +816,7 @@ class Application implements IApplication
 			// nothing needed here??
 		}
 	}
-	
+
 	/**
 	 * Save the options selected by user for Cell Import Export.
 	 */
@@ -865,10 +862,10 @@ class Application implements IApplication
 	{
 		// If logging has changed.
 		if (_jdbcDebugType != _prefs.getJdbcDebugType())
-		{	
+		{
 			final ApplicationFiles appFiles = new ApplicationFiles();
 			final File outFile = appFiles.getJDBCDebugLogFile();
-	
+
 			// Close any previous logging.
 			DriverManager.setLogStream(null);
 			if (_jdbcDebugOutputStream != null)
@@ -900,7 +897,7 @@ class Application implements IApplication
 					DriverManager.setLogStream(System.out);
 				}
 			}
-	
+
 			if (_prefs.isJdbcDebugToWriter())
 			{
 				try

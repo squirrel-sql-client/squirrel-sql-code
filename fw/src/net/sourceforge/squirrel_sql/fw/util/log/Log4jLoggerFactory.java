@@ -18,7 +18,6 @@ package net.sourceforge.squirrel_sql.fw.util.log;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.LogManager;
 
 public class Log4jLoggerFactory implements ILoggerFactory
 {
@@ -44,6 +43,5 @@ public class Log4jLoggerFactory implements ILoggerFactory
 
 	public void shutdown()
 	{
-		LogManager.shutdown();
 	}
 }
