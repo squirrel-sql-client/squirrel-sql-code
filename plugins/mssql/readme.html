@@ -103,6 +103,14 @@ to email me with feature requests.
 			<dd>
 				Copies the selected procedure(s)' <font face="Courier, Courier New">CREATE PROCEDURE</font> scripts to the SQL pane.  Does not execute it.
 			</dd>
+            <dt>Execute Procedure</dt>
+			<dd>
+				Creates variable declarations and an <font face="Courier, Courier New">EXECUTE</font> statement for the selected procedure(s).
+                <br>
+                <i>NOTE: Since JDBC considers a user-defined function to be a procedure, they can be acted upon in this manner, but the plugin will only script out a comment about it.</i>
+                <br>
+                <i>WARNING: Since <font face="Courier, Courier New">output</font> parameters are not required to be called as <font face="Courier, Courier New">output</font>, the plugin does not script those parameters for output.</i>
+			</dd>
 		</dl>
 	</li>
 	<li>
