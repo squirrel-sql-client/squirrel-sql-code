@@ -19,11 +19,17 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  */
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import java.awt.event.MouseEvent;
+import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.List;
 
+import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -40,6 +46,9 @@ public class ObjectTree extends JTree {
 	/** Model for this tree. */
 	private ObjectTreeModel _model;
 
+	/** Current session. */
+	private ISession _session;
+
 	/**
 	 * ctor specifying session.
 	 * 
@@ -53,13 +62,17 @@ public class ObjectTree extends JTree {
 		if (session == null) {
 			throw new IllegalArgumentException("ISession == null");
 		}
-
+		_session = session;
 		_model = new ObjectTreeModel(session);
 //		((BaseNode)_model.getRoot()).addBaseNodeExpandListener(this);
 //		_model.addTreeLoadedListener(this);
 //		_model.fillTree();
+
+		addTreeExpansionListener(new NodeExpansionListener());
+
 		setShowsRootHandles(true);
 		setModel(_model);
+		expandNode((ObjectTreeNode)_model.getRoot());
 		setSelectionRow(0);
 	}
 
@@ -103,6 +116,62 @@ public class ObjectTree extends JTree {
 			tip = getToolTipText();
 		}
 		return tip;
+	}
+
+	public void expandNode(ObjectTreeNode parentNode)
+	{
+		//parentNode.addBaseNodeExpandListener(ObjectsTree.this);
+		INodeExpander expander = parentNode.getExpander();
+		if (parentNode.getChildCount() == 0 && expander != null)
+		{
+			try
+			{
+				List list = expander.expand(_session, parentNode);
+				Iterator it = list.iterator();
+				while (it.hasNext())
+				{
+					Object nextObj = it.next();
+					if (nextObj instanceof ObjectTreeNode)
+					{
+						ObjectTreeNode nextNode = (ObjectTreeNode)nextObj;
+						parentNode.add(nextNode);
+					}
+				}
+			}
+			catch (SQLException ex)
+			{
+				ex.printStackTrace();
+				//??
+			}
+			catch (BaseSQLException ex)
+			{
+				ex.printStackTrace();
+				//??
+			}
+			finally
+			{
+				_model.nodeStructureChanged(parentNode);
+			}
+		}
+	}
+	
+	private final class NodeExpansionListener implements TreeExpansionListener
+	{
+		public void treeExpanded(TreeExpansionEvent evt)
+		{
+			// Get the node to be expanded.
+			Object parentObj = evt.getPath().getLastPathComponent();
+			if (parentObj instanceof ObjectTreeNode)
+			{
+				ObjectTree.this.expandNode((ObjectTreeNode)parentObj);
+			}
+		}
+
+
+		public void treeCollapsed(TreeExpansionEvent evt)
+		{
+		}
+
 	}
 }
 

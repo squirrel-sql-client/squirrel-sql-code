@@ -54,6 +54,11 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo
 		_dboType = dboType;
 	}
 
+	public String toString()
+	{
+		return getSimpleName();
+	}
+
 	public String getCatalogName()
 	{
 		return _catalog;

@@ -17,12 +17,24 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.sql.SQLException;
+import java.util.List;
+
+import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
+
+import net.sourceforge.squirrel_sql.client.session.ISession;
+
 public interface INodeExpander
 {
 	/**
 	 * Expand the passed node.
 	 * 
+	 * @param	session	Current session.
 	 * @param	node	Node to be expanded.
+	 * 
+	 * @return	A list of <TT>ObjectTreeNode</TT> objects representing the child
+	 *			nodes for the passed node.
 	 */
-	void expand(ObjectTreeNode node);
+	List expand(ISession session, ObjectTreeNode node)
+			throws SQLException, BaseSQLException;
 }
