@@ -27,6 +27,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyVetoException;
 import java.sql.SQLException;
 
 import javax.swing.Icon;
@@ -141,11 +142,32 @@ public class SessionSheet extends BaseSheet
 			_hasBeenVisible = true;
 			_msgSplit.setDividerLocation(0.9d);
 			_msgSplit.setResizeWeight(1.0);
-			
+
 			// Done this late so that plugins have time to register expanders
 			// with the object tree prior to it being built.
 			_session.getObjectTreeAPI(_session.getApplication().getDummyAppPlugin()).refreshTree();
 		}
+	}
+
+	public void setSelected(boolean selected)
+			throws PropertyVetoException
+	{
+		super.setSelected(selected);
+
+		// TODO:
+		// Without this when using alt left/right to move
+		// bwtween sessions the focus is left in the SQL
+		// entry area of the previouis session.
+//		if (selected)
+//		{
+//			SwingUtilities.invokeLater(new Runnable()
+//			{
+//				public void run()
+//				{
+//					getSQLEntryPanel().requestFocus();
+//				}
+//			});
+//		}
 	}
 
 	public boolean hasConnection()
@@ -188,10 +210,10 @@ public class SessionSheet extends BaseSheet
 	/**
 	 * Select a tab in the main tabbed pane.
 	 *
-	 * @param	tabIndex   The tab to select. @see #IMainTabIndexes
+	 * @param	tabIndex	The tab to select. @see #IMainTabIndexes
 	 *
-	 * @throws  llegalArgumentException
-	 *		  Thrown if an invalid <TT>tabIndex</TT> passed.
+	 * @throws	llegalArgumentException
+	 *			Thrown if an invalid <TT>tabIndex</TT> passed.
 	 */
 	public void selectMainTab(int tabIndex)
 	{

@@ -28,7 +28,6 @@ import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.event.ISessionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-
 /**
  * The current session. This is a "subset" of the real session which can be
  * used by plugins.
@@ -115,7 +114,7 @@ public interface ISession extends IHasIdentifier
 	/**
 	 * Select a tab in the main tabbed pane.
 	 *
-	 * @param	tabIndex   The tab to select. @see #IMainTabIndexes
+	 * @param	tabIndex	The tab to select. @see #IMainTabIndexes
 	 *
 	 * @throws	IllegalArgumentException
 	 *			Thrown if an invalid <TT>tabIndex</TT> passed.

@@ -18,6 +18,9 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import javax.swing.Action;
+import javax.swing.JMenu;
+
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
@@ -25,7 +28,7 @@ import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
  * This interface defines the API through which plugins can work with the SQL
  * panel.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public interface ISQLPanelAPI
 {
@@ -66,7 +69,7 @@ public interface ISQLPanelAPI
 	/**
 	 * Add a listener for events in this SQL Panel.
 	 *
-	 * @param   lis	 Listener
+	 * @param	lis	 Listener
 	 *
 	 * @throws	IllegalArgumentException
 	 *			If a null <TT>ISQLPanelListener</TT> passed.
@@ -133,7 +136,7 @@ public interface ISQLPanelAPI
 	 * Replace the contents of the SQL entry area with the passed
 	 * SQL script without selecting it.
 	 * 
-	 * @param	sqlScript	The script to be placed in the SQL entry area..
+	 * @param	sqlScript	The script to be placed in the SQL entry area.
 	 */
 	void setEntireSQLScript(String sqlScript);
 
@@ -233,11 +236,26 @@ public interface ISQLPanelAPI
 
 	/**
 	 * The passed SQL should be added to the SQL history.
-	 *  
+	 *
 	 * @param	sql		SQL to be added to history.
 	 * 
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>sql</TT> passed.
 	 */
 	void addSQLToHistory(String sql);
+
+	/**
+	 * Add a hierarchical menu to the SQL Entry Area popup menu.
+	 *
+	 * @param	menu	The menu that will be added.
+	 */
+	void addToSQLEntryAreaMenu(JMenu menu);
+
+	/**
+	 * Add an <TT>Action</TT> to the SQL Entry Area popup menu.
+	 *
+	 * @param	action	The action to be added.
+	 */
+	void addToSQLEntryAreaMenu(Action action);
 }
+

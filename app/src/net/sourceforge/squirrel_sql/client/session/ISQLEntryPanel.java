@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -22,6 +22,7 @@ import java.awt.event.MouseListener;
 
 import javax.swing.Action;
 import javax.swing.JComponent;
+import javax.swing.JMenu;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
 
@@ -117,6 +118,20 @@ public interface ISQLEntryPanel
 
 	void setFont(Font font);
 	void setTabSize(int tabSize);
+
+	/**
+	 * Add a hierarchical menu to the SQL Entry Area popup menu.
+	 *
+	 * @param	menu	The menu that will be added.
+	 */
+	void addToSQLEntryAreaMenu(JMenu menu);
+
+	/**
+	 * Add an <TT>Action</TT> to the SQL Entry Area popup menu.
+	 *
+	 * @param	action	The action to be added.
+	 */
+	void addToSQLEntryAreaMenu(Action action);
 
 	void addMouseListener(MouseListener lis);
 	void removeMouseListener(MouseListener lis);

@@ -18,6 +18,9 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import javax.swing.Action;
+import javax.swing.JMenu;
+
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
@@ -25,27 +28,27 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 /**
  * This class is the API through which plugins can work with the SQL Panel.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SQLPanelAPI implements ISQLPanelAPI
 {
-	/** Session containing the object tree. */
+	/** Session containing the SQL Panel. */
 	private IClientSession _session;
 
 	/**
 	 * Ctor specifying the session.
 	 * 
-	 * @param	session	<TT>ISession</TT> containing the SQL Panel.
+	 * @param	session	<TT>IClientSession</TT> containing the SQL Panel.
 	 * 
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if <T>null</TT> <TT>ISession</TT> passed.
+	 * 			Thrown if <T>null</TT> <TT>IClientSession</TT> passed.
 	 */
 	SQLPanelAPI(IClientSession session)
 	{
 		super();
 		if (session == null)
 		{
-			throw new IllegalArgumentException("ISession == null");
+			throw new IllegalArgumentException("IClientSession == null");
 		}
 		_session = session;
 	}
@@ -115,7 +118,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	/**
 	 * Add a listener for events in this SQL Panel.
 	 *
-	 * @param   lis	 Listener
+	 * @param	lis	 Listener
 	 *
 	 * @throws	IllegalArgumentException
 	 *			If a null <TT>ISQLPanelListener</TT> passed.
@@ -149,7 +152,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	/**
 	 * Replace the SQL entry area with the passed one.
 	 * 
-	 * @param	pnl	New SQL entry area.
+	 * @param	pnl		New SQL entry area.
 	 */
 	public synchronized void installSQLEntryPanel(ISQLEntryPanel pnl)
 	{
@@ -214,7 +217,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 * Replace the contents of the SQL entry area with the passed
 	 * SQL script without selecting it.
 	 * 
-	 * @param	sqlScript	The script to be placed in the SQL entry area..
+	 * @param	sqlScript	The script to be placed in the SQL entry area.
 	 */
 	public synchronized void setEntireSQLScript(String sqlScript)
 	{
@@ -225,7 +228,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 * Replace the contents of the SQL entry area with the passed
 	 * SQL script and specify whether to select it.
 	 * 
-	 * @param	sqlScript	The script to be placed in the SQL entry area..
+	 * @param	sqlScript	The script to be placed in the SQL entry area.
 	 * @param	select		If <TT>true</TT> then select the passed script
 	 * 						in the sql entry area.
 	 */
@@ -242,7 +245,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 * @param	select		If <TT>true</TT> then select the passed script
 	 * 						in the sql entry area.
 	 */
-	public void replaceSelectedSQLScript(String sqlScript, boolean select)
+	public synchronized void replaceSelectedSQLScript(String sqlScript, boolean select)
 	{
 		if (sqlScript == null)
 		{
@@ -273,7 +276,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 				pnl.setSelectionEnd(selEnd);
 			}
 		}
-		
+
 	}
 
 	/**
@@ -406,7 +409,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 
 	/**
 	 * The passed SQL should be added to the SQL history.
-	 *  
+	 *
 	 * @param	sql		SQL to be added to history.
 	 * 
 	 * @throws	IllegalArgumentException
@@ -427,4 +430,38 @@ public class SQLPanelAPI implements ISQLPanelAPI
 		_session.getSessionSheet().getSQLPanel().addSQLToHistory(shi);
 	}
 
+	/**
+	 * Add a hierarchical menu to the SQL Entry Area popup menu.
+	 *
+	 * @param	menu	The menu that will be added.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>Menu</TT> passed.
+	 */
+	public void addToSQLEntryAreaMenu(JMenu menu)
+	{
+		if (menu == null)
+		{
+			throw new IllegalArgumentException("Menu == null");
+		}
+		_session.getSessionSheet().getSQLPanel().addToSQLEntryAreaMenu(menu);
+	}
+
+	/**
+	 * Add an <TT>Action</TT> to the SQL Entry Area popup menu.
+	 *
+	 * @param	action	The action to be added.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>Action</TT> passed.
+	 */
+	public void addToSQLEntryAreaMenu(Action action)
+	{
+		if (action == null)
+		{
+			throw new IllegalArgumentException("Action == null");
+		}
+		_session.getSessionSheet().getSQLPanel().addToSQLEntryAreaMenu(action);
+	}
 }
+

@@ -24,6 +24,7 @@ import java.awt.event.MouseListener;
 
 import javax.swing.Action;
 import javax.swing.JComponent;
+import javax.swing.JMenu;
 import javax.swing.JTextArea;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
@@ -235,6 +236,42 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	public void setFont(Font font)
 	{
 		_comp.setFont(font);
+	}
+
+	/**
+	 * Add a hierarchical menu to the SQL Entry Area popup menu.
+	 *
+	 * @param	menu	The menu that will be added.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>Menu</TT> passed.
+	 */
+	public void addToSQLEntryAreaMenu(JMenu menu)
+	{
+		if (menu == null)
+		{
+			throw new IllegalArgumentException("Menu == null");
+		}
+
+		_textPopupMenu.add(menu);
+	}
+
+	/**
+	 * Add an <TT>Action</TT> to the SQL Entry Area popup menu.
+	 *
+	 * @param	action	The action to be added.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>Action</TT> passed.
+	 */
+	public void addToSQLEntryAreaMenu(Action action)
+	{
+		if (action == null)
+		{
+			throw new IllegalArgumentException("Action == null");
+		}
+
+		_textPopupMenu.add(action);
 	}
 
 	/**
