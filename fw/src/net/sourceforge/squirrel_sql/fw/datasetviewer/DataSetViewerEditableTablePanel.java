@@ -76,11 +76,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		if ( ((IDataSetUpdateableTableModel)getUpdateableModel()).getRowidCol() == col)
 			return false;
 
-		if (_colDefs[col].getClassName().equals("java.lang.Object"))
-			return false;
-		
-		// the class is not the "unknown" class, so it must be editable
-		return true;
+		return CellComponentFactory.isEditableInCell(_colDefs[col]);
 	}
 	
 	/**
@@ -260,7 +256,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 			//?? is this always true, or could the data be updated with a warning?
 			return false;
 		}
-		
+
 		// no problems, so indicate a successful update of the underlying data
 		return true;
 	}
