@@ -128,7 +128,7 @@ public class DatabaseNode extends BaseNode
 				boolean supportsCatalogs = false;
 				try
 				{
-					supportsCatalogs = conn.supportsCatalogsInTableDefinitions();
+					supportsCatalogs = conn.supportsCatalogs();
 				}
 				catch (BaseSQLException ex)
 				{
@@ -137,7 +137,7 @@ public class DatabaseNode extends BaseNode
 				boolean supportsSchemas = false;
 				try
 				{
-					supportsSchemas = conn.supportsSchemasInTableDefinitions();
+					supportsSchemas = conn.supportsSchemas();
 				}
 				catch (BaseSQLException ex)
 				{
