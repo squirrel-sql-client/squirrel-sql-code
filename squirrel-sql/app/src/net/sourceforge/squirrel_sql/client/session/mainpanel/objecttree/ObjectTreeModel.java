@@ -25,12 +25,14 @@ import java.util.Map;
 
 import javax.swing.tree.DefaultTreeModel;
 
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectTypes;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.DatabaseExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ProcedureTypeExpander;
@@ -68,16 +70,24 @@ public class ObjectTreeModel extends DefaultTreeModel
 	public ObjectTreeModel(ISession session)
 	{
 		super(createRootNode(session), true);
+		if (session == null)
+		{
+			throw new IllegalArgumentException("ISession == null");
+		}
 		_session = session;
 
 		// Standard expanders.
-		INodeExpander expander = new DatabaseExpander(session);
-		registerExpander(ObjectTreeNode.IObjectTreeNodeType.DATABASE, expander);
-		registerExpander(ObjectTreeNode.IObjectTreeNodeType.CATALOG, expander);
-		registerExpander(ObjectTreeNode.IObjectTreeNodeType.SCHEMA, expander);
-		registerExpander(ObjectTreeNode.IObjectTreeNodeType.TABLE_TYPE_NODE, new TableTypeExpander());
-		registerExpander(ObjectTreeNode.IObjectTreeNodeType.UDT_TYPE_NODE, new UDTTypeExpander());
-		registerExpander(ObjectTreeNode.IObjectTreeNodeType.PROCEDURE_TYPE_NODE, new ProcedureTypeExpander());
+		final IObjectTreeAPI api = session.getObjectTreeAPI(session.getApplication().getDummyAppPlugin());
+		final DatabaseObjectType tableGroupType = api.getTableGroupDatabaseObjectType();
+		final DatabaseObjectType procGroupType = api.getProcedureGroupType();
+		final DatabaseObjectType udtGroupType = api.getUDTGroupType();
+		final INodeExpander expander = new DatabaseExpander(session);
+		registerExpander(ObjectTreeNodeType.get(DatabaseObjectType.DATABASE), expander);
+		registerExpander(ObjectTreeNodeType.get(DatabaseObjectType.CATALOG), expander);
+		registerExpander(ObjectTreeNodeType.get(DatabaseObjectType.SCHEMA), expander);
+		registerExpander(ObjectTreeNodeType.get(tableGroupType), new TableTypeExpander());
+		registerExpander(ObjectTreeNodeType.get(udtGroupType), new UDTTypeExpander());
+		registerExpander(ObjectTreeNodeType.get(procGroupType), new ProcedureTypeExpander());
 	}
 
 	/**
@@ -89,14 +99,19 @@ public class ObjectTreeModel extends DefaultTreeModel
 	 * @param	expander	Expander called to add children to a parent node.
 	 * 
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>INodeExpander</TT> thrown.
+	 * 			Thrown if a <TT>null</TT> <TT>INodeExpander</TT> or
+	 * 			<TT>ObjectTreeNodeType</TT> passed.
 	 */
-	public synchronized void registerExpander(int nodeType,
+	public synchronized void registerExpander(ObjectTreeNodeType nodeType,
 												INodeExpander expander)
 	{
 		if (expander == null)
 		{
 			throw new IllegalArgumentException("Null INodeExpander passed");
+		}
+		if (nodeType == null)
+		{
+			throw new IllegalArgumentException("Null ObjectTreeNodeType passed");
 		}
 		getExpandersList(nodeType).add(expander);
 	}
@@ -105,9 +120,16 @@ public class ObjectTreeModel extends DefaultTreeModel
 	 * Return an array of the node expanders for the passed node type.
 	 * 
 	 * @return	an array of the node expanders for the passed database object type.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if null ObjectTreeNodeType passed.
 	 */
-	public synchronized INodeExpander[] getExpanders(int nodeType)
+	public synchronized INodeExpander[] getExpanders(ObjectTreeNodeType nodeType)
 	{
+		if (nodeType == null)
+		{
+			throw new IllegalArgumentException("Null ObjectTreeNodeType passed");
+		}
 		List list = getExpandersList(nodeType);
 		return (INodeExpander[])list.toArray(new INodeExpander[list.size()]);
 	}
@@ -126,9 +148,13 @@ public class ObjectTreeModel extends DefaultTreeModel
 	 * Get the collection of expanders for the passed node type. If one
 	 * doesn't exist then create an empty one.
 	 */
-	private List getExpandersList(int nodeType)
+	private List getExpandersList(ObjectTreeNodeType nodeType)
 	{
-		Integer key = new Integer(nodeType);
+		if (nodeType == null)
+		{
+			throw new IllegalArgumentException("Null ObjectTreeNodeType passed");
+		}
+		IIdentifier key = nodeType.getIdentifier();
 		List list = (List)_expanders.get(key);
 		if (list == null)
 		{
@@ -165,8 +191,8 @@ public class ObjectTreeModel extends DefaultTreeModel
 		private static final IDatabaseObjectInfo createDbo(ISession session)
 		{
 			return new DatabaseObjectInfo(null, null, session.getAlias().getName(),
-											IDatabaseObjectTypes.DATABASE,
-											session.getSQLConnection());
+											DatabaseObjectType.DATABASE,
+											session.getSQLConnection().getSQLMetaData());
 		}
 	}
 }

@@ -25,7 +25,7 @@ public interface IDatabaseObjectInfo extends Comparable
 	String getQualifiedName();
 
 	/**
-	 * Return the type for this object. @see IDatabaseObjectTypes.
+	 * Return the type for this object. @see DatabaseObjectType.
 	 */
-	int getDatabaseObjectType();
+	DatabaseObjectType getDatabaseObjectType();
 }

@@ -21,10 +21,12 @@ package net.sourceforge.squirrel_sql.client.session;
 import javax.swing.Action;
 import javax.swing.event.TreeModelListener;
 
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNodeType;
 import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.IObjectPanelTab;
 /**
  * This interface defines the API through which plugins can work with the object
@@ -38,13 +40,13 @@ public interface IObjectTreeAPI
 	 * Register an expander for the specified object tree node type.
 	 * 
 	 * @param	nodeType	Object Tree node type.
-	 *						@see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode.IObjectTreeNodeType
 	 * @param	expander	Expander called to add children to a parent node.
 	 * 
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>INodeExpander</TT> thrown.
+	 * 			Thrown if a <TT>null</TT> <TT>ObjectTreeNodeType</TT> or
+	 * 			<TT>INodeExpander</TT> thrown.
 	 */
-	void registerExpander(int nodeType, INodeExpander expander);
+	void registerExpander(ObjectTreeNodeType nodeType, INodeExpander expander);
 
 	/**
 	 * Register a tab to be displayed in the detail panel for the passed
@@ -54,9 +56,10 @@ public interface IObjectTreeAPI
 	 * @param	tab			Tab to be displayed.
 	 * 
 	 * @throws	IllegalArgumentException
-	 * 			Thrown when a <TT>null</TT> <TT>IObjectPanelTab</TT> passed.
+	 * 			Thrown when a <TT>null</TT> <TT>ObjectTreeNodeType</TT> or
+	 *			<TT>IObjectPanelTab</TT> passed.
 	 */
-	void registerDetailTab(int nodeType, IObjectPanelTab tab);
+	void registerDetailTab(ObjectTreeNodeType nodeType, IObjectPanelTab tab);
 
 	/**
 	 * Add a listener to the object tree for structure changes. I.E nodes
@@ -83,13 +86,13 @@ public interface IObjectTreeAPI
 	 * Add an item to the popup menu for the specified node type.
 	 * 
 	 * @param	nodeType	Object Tree node type.
-	 *						@see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode.IObjectTreeNodeType
 	 * @param	action		Action to add to menu.
 	 * 
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> thrown.
+	 * 			Thrown if a <TT>null</TT> <TT>ObjectTreeNodeType</TT> or
+	 * 			<TT>Action</TT> thrown.
 	 */
-	void addToPopup(int nodeType, Action action);
+	void addToPopup(ObjectTreeNodeType nodeType, Action action);
 
 	/**
 	 * Add an item to the popup menu for all node types.
@@ -108,7 +111,7 @@ public interface IObjectTreeAPI
 	 * 
 	 * @return	Return the next unused "ObjectTree node type".
 	 */
-	int getNextAvailableNodeype();
+	//	int getNextAvailableNodeype();
 
 	/**
 	 * Return an array of the selected nodes in the tree. This is guaranteed
@@ -141,4 +144,27 @@ public interface IObjectTreeAPI
 	 */
 	void removeNodes(ObjectTreeNode[] nodes);
 
+	/**
+	 * Return the database object type for a "Table Type" node. Some examples
+	 * are "TABLE", "SYSTEM TABLE", "VIEW" etc.
+	 * 
+	 * @return	The database object type.
+	 */
+	DatabaseObjectType getTableGroupDatabaseObjectType();
+
+	/**
+	 * Return the database object type for a "Procedure Type" node. There is
+	 * only one node of this type in the object tree and it says "PROCEDURE".
+	 * 
+	 * @return	The database object type.
+	 */
+	DatabaseObjectType getProcedureGroupType();
+
+	/**
+	 * Return the database object type for a "UDT" node. There is only one
+	 * node of this type in the object tree and it says "UDT".
+	 * 
+	 * @return	The database object type.
+	 */
+	DatabaseObjectType getUDTGroupType();
 }

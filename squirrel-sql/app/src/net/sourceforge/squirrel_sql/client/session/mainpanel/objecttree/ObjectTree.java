@@ -40,9 +40,10 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectTypes;
 import net.sourceforge.squirrel_sql.fw.util.EnumerationIterator;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -83,9 +84,6 @@ class ObjectTree extends JTree
 
 	private final List _globalActions = new ArrayList();
 
-	/** This is a dummy node type that will <B>never</B> be in the object tree. */
-	private final int _dummyNodeType;
-
 	/**
 	 * Object to synchronize on so that only one node can be expanded at any
 	 * one time.
@@ -98,11 +96,6 @@ class ObjectTree extends JTree
 	 * is <TT>null</TT>.
 	 */
 	private Map _expandedPathNames = new HashMap();
-
-	/**
-	 * Array of the <TT>TreePath</TT> objects that are currently selected.
-	 */
-//	private TreePath[] _selectedPaths = new TreePath[0];
 
 	/**
 	 * ctor specifying session.
@@ -123,16 +116,13 @@ class ObjectTree extends JTree
 		_model = (ObjectTreeModel)getModel();
 		setModel(_model);
 
-		_dummyNodeType = _session.getObjectTreeAPI(_session.getApplication().getDummyAppPlugin()).getNextAvailableNodeype();
-
 		addTreeExpansionListener(new NodeExpansionListener());
-//		addTreeSelectionListener(new NodeSelectionListener());
 
 		setShowsRootHandles(true);
 
 		// Add actions to the popup menu.
 		ActionCollection actions = session.getApplication().getActionCollection();
-		addToPopup(ObjectTreeNode.IObjectTreeNodeType.TABLE, actions.get(DropSelectedTablesAction.class));
+		addToPopup(ObjectTreeNodeType.get(DatabaseObjectType.TABLE), actions.get(DropSelectedTablesAction.class));
 
 		// Global menu.
 		addToPopup(actions.get(RefreshObjectTreeAction.class));
@@ -300,7 +290,7 @@ class ObjectTree extends JTree
 		{
 			// Add together the standard expanders for this node type and any
 			// individual expanders that there are for the node and process them.
-			int nodeType = node.getNodeType();
+			final ObjectTreeNodeType nodeType = node.getNodeType();
 			INodeExpander[] stdExpanders = _model.getExpanders(nodeType);
 			INodeExpander[] extraExpanders = node.getExpanders();
 			if (stdExpanders.length > 0 || extraExpanders.length > 0)
@@ -331,18 +321,23 @@ class ObjectTree extends JTree
 	 * tree.
 	 * 
 	 * @param	nodeType	Object Tree node type.
-	 *						@see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode.IObjectTreeNodeType
 	 * @param	action		Action to add to menu.
 	 * 
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> thrown.
+	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> or
+	 *			<TT>ObjectTreeNodeType</TT>thrown.
 	 */
-	void addToPopup(int nodeType, Action action)
+	void addToPopup(ObjectTreeNodeType nodeType, Action action)
 	{
+		if (nodeType == null)
+		{
+			throw new IllegalArgumentException("Null ObjectTreeNodeType passed");
+		}
 		if (action == null)
 		{
 			throw new IllegalArgumentException("Null Action passed");
 		}
+
 		JPopupMenu pop = getPopup(nodeType, true);
 		pop.add(action);
 	}
@@ -375,9 +370,13 @@ class ObjectTree extends JTree
 	 * Get the popup menu for the passed node type. If one
 	 * doesn't exist then create one if requested to do so.
 	 */
-	private JPopupMenu getPopup(int nodeType, boolean create)
+	private JPopupMenu getPopup(ObjectTreeNodeType nodeType, boolean create)
 	{
-		Integer key = new Integer(nodeType);
+		if (nodeType == null)
+		{
+			throw new IllegalArgumentException("Null ObjectTreeNodeType passed");
+		}
+		IIdentifier key = nodeType.getIdentifier();
 		JPopupMenu pop = (JPopupMenu)_popups.get(key);
 		if (pop == null && create)
 		{
@@ -448,7 +447,7 @@ class ObjectTree extends JTree
 		{
 			// See if all selected nodes are of the same type.
 			boolean sameType = true;
-			final int nodeType = selObj[0].getNodeType();
+			final ObjectTreeNodeType nodeType = selObj[0].getNodeType();
 			for (int i = 1; i < selObj.length; ++i)
 			{
 				if (selObj[i].getNodeType() != nodeType)
@@ -490,22 +489,6 @@ class ObjectTree extends JTree
 			_expandedPathNames.remove(evt.getPath().toString());
 		}
 	}
-
-//	private final class NodeSelectionListener implements TreeSelectionListener
-//	{
-//		public void valueChanged(TreeSelectionEvent evt)
-//		{
-//			final TreePath[] paths = getSelectionPaths();
-//			if (paths != null && paths.length > 0)
-//			{
-//				_selectedPaths = paths;
-//			}
-//			else
-//			{
-//				_selectedPaths = new TreePath[0];
-//			}
-//		}
-//	}
 
 	/**
 	 * This class is used to sort the nodes by their title.
@@ -616,8 +599,8 @@ class ObjectTree extends JTree
 		private ObjectTreeNode showLoadingNode()
 		{
 			IDatabaseObjectInfo doi = new DatabaseObjectInfo(null, null,
-								"Loading...", IDatabaseObjectTypes.GENERIC_LEAF,
-								_session.getSQLConnection());
+								"Loading...", DatabaseObjectType.OTHER,
+								_session.getSQLConnection().getSQLMetaData());
 			ObjectTreeNode loadingNode = new ObjectTreeNode(_session, doi);
 			_parentNode.add(loadingNode);
 			fireStructureChanged(_parentNode);
@@ -632,7 +615,7 @@ class ObjectTree extends JTree
 			for (int i = 0; i < _expanders.length; ++i)
 			{
 				boolean nodeTypeAllowsChildren = false;
-				int lastNodeType = _dummyNodeType;
+				ObjectTreeNodeType lastNodeType = null;
 				List list = _expanders[i].createChildren(_session, _parentNode);
 				Iterator it = list.iterator();
 				while (it.hasNext())
@@ -647,7 +630,7 @@ class ObjectTree extends JTree
 						}
 						else
 						{
-							int childNodeType = childNode.getNodeType();
+							ObjectTreeNodeType childNodeType = childNode.getNodeType();
 							if (childNodeType != lastNodeType)
 							{
 								lastNodeType = childNodeType;

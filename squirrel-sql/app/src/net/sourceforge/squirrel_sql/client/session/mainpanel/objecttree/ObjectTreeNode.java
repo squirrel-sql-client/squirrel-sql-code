@@ -23,7 +23,6 @@ import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectTypes;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
@@ -33,32 +32,20 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  */
 public class ObjectTreeNode extends DefaultMutableTreeNode
 {
-	public interface IObjectTreeNodeType extends IDatabaseObjectTypes
-	{
-		int GENERIC_OBJECT_TYPE_NODE = LAST_USED_OBJECT_TYPE + 1;
-		int TABLE_TYPE_NODE = LAST_USED_OBJECT_TYPE + 2;
-		int PROCEDURE_TYPE_NODE = LAST_USED_OBJECT_TYPE + 3;
-		int UDT_TYPE_NODE = LAST_USED_OBJECT_TYPE + 4;
-
-		int LAST_USED_NODE_TYPE = LAST_USED_OBJECT_TYPE + 1024;
-	}
-
-	/** Node type; */
-	private int _nodeType;
+	/** Node type */
+	private ObjectTreeNodeType _nodeType;
 
 	/** Current session. */
-	private ISession _session;
-
-	/** The type of this node. See IObjectTreeNodeType. */
+	private final ISession _session;
 	
 	/** Describes the database object represented by this node. */
-	private IDatabaseObjectInfo _dbinfo;
+	private final IDatabaseObjectInfo _dboInfo;
 
 	/** If <TT>true</TT> node can be expanded. */
 	private boolean _allowsChildren = true;
 
 	/** Collection of <TT>INodeExpander</TT> objects for this node. */
-	private List _expanders = new ArrayList();
+	private final List _expanders = new ArrayList();
 
 	/**
 	 * Ctor that assumes node cannot have children.
@@ -70,16 +57,21 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 	 * 			Thrown if <TT>null</TT> <TT>ISession</TT> or
 	 *			<TT>IDatabaseObjectInfo</TT> passed.
 	 */
-	public ObjectTreeNode(ISession session, IDatabaseObjectInfo dbinfo)
+	public ObjectTreeNode(ISession session, IDatabaseObjectInfo dboInfo)
 	{
-		super(getNodeTitle(dbinfo));
+		super(getNodeTitle(dboInfo));
 		if (session == null)
 		{
 			throw new IllegalArgumentException("ISession == null");
 		}
+		if (dboInfo == null)
+		{
+			throw new IllegalArgumentException("IDatabaseObjectInfo == null");
+		}
 		_session = session;
-		_dbinfo = dbinfo;
-		_nodeType = dbinfo.getDatabaseObjectType();
+		_dboInfo = dboInfo;
+		
+		_nodeType = ObjectTreeNodeType.get(dboInfo.getDatabaseObjectType());
 	}
 
 	/**
@@ -98,26 +90,33 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 	 */
 	public IDatabaseObjectInfo getDatabaseObjectInfo()
 	{
-		return _dbinfo;
+		return _dboInfo;
 	}
 
 	/**
-	 * Get the type of this node. @see IObjectTreeNodeTypes.
+	 * Get the type of this node. @see ObjectTreeNodeType.
 	 * 
 	 * @return	the type of this node.
 	 */
-	public int getNodeType()
+	public ObjectTreeNodeType getNodeType()
 	{
 		return _nodeType;
 	}
 
 	/**
-	 * Set the type of this node. @see IObjectTreeNodeTypes.
+	 * Set the type of this node. @see ObjectTreeNodeType.
 	 * 
 	 * @param	value	the new type of this node.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if null ObjectTreeNodeType passed.
 	 */
-	public void setNodeType(int value)
+	public void setNodeType(ObjectTreeNodeType value)
 	{
+		if (value == null)
+		{
+			throw new IllegalArgumentException("ObjectTreeNodeType == null");
+		}
 		_nodeType = value;
 	}
 

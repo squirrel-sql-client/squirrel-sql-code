@@ -23,16 +23,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectTypes;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNodeType;
 /**
  * This class handles the expanding of database, catalog and schema nodes
  * in the object tree.
@@ -114,7 +116,7 @@ public class DatabaseExpander implements INodeExpander
 
 		List childNodes = new ArrayList();
 
-		if (parentDbinfo.getDatabaseObjectType() == IDatabaseObjectTypes.DATABASE)
+		if (parentDbinfo.getDatabaseObjectType() == DatabaseObjectType.DATABASE)
 		{
 			if (supportsCatalogs)
 			{
@@ -129,7 +131,7 @@ public class DatabaseExpander implements INodeExpander
 				childNodes.addAll(createObjectTypeNodes(session, null, null));
 			}
 		}
-		else if (parentDbinfo.getDatabaseObjectType() == IDatabaseObjectTypes.CATALOG)
+		else if (parentDbinfo.getDatabaseObjectType() == DatabaseObjectType.CATALOG)
 		{
 			final String catalogName = parentDbinfo.getSimpleName();
 			if (supportsSchemas)
@@ -141,7 +143,7 @@ public class DatabaseExpander implements INodeExpander
 				childNodes.addAll(createObjectTypeNodes(session, catalogName, null));
 			}
 		}
-		else if (parentDbinfo.getDatabaseObjectType() == IDatabaseObjectTypes.SCHEMA)
+		else if (parentDbinfo.getDatabaseObjectType() == DatabaseObjectType.SCHEMA)
 		{
 			final String catalogName = parentDbinfo.getCatalogName();
 			final String schemaName = parentDbinfo.getSimpleName();
@@ -161,8 +163,8 @@ public class DatabaseExpander implements INodeExpander
 		{
 			IDatabaseObjectInfo dbo = new DatabaseObjectInfo(null, null,
 											catalogs[i],
-											IDatabaseObjectTypes.CATALOG,
-											conn);
+											DatabaseObjectType.CATALOG,
+											md);
 			childNodes.add(new ObjectTreeNode(session, dbo));
 		}
 		return childNodes;
@@ -178,7 +180,7 @@ public class DatabaseExpander implements INodeExpander
 		{
 			IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName, null,
 											schemas[i],
-											IDatabaseObjectTypes.SCHEMA, md);
+											DatabaseObjectType.SCHEMA, md);
 			childNodes.add(new ObjectTreeNode(session, dbo));
 		}
 		return childNodes;
@@ -191,6 +193,15 @@ public class DatabaseExpander implements INodeExpander
 		final SQLDatabaseMetaData md = conn.getSQLMetaData();
 		final List list = new ArrayList();
 
+		final IObjectTreeAPI api = session.getObjectTreeAPI(session.getApplication().getDummyAppPlugin());
+		final DatabaseObjectType tableGroupType = api.getTableGroupDatabaseObjectType();
+		final DatabaseObjectType procGroupType = api.getProcedureGroupType();
+		final DatabaseObjectType udtGroupType = api.getUDTGroupType();
+
+		final ObjectTreeNodeType tableGroupNodeType = ObjectTreeNodeType.get(tableGroupType);
+		final ObjectTreeNodeType procGroupNodeType = ObjectTreeNodeType.get(procGroupType);
+		final ObjectTreeNodeType udtGroupNodeType = ObjectTreeNodeType.get(udtGroupType);
+
 		// Add table types to list.
 		if (_tableTypes.length > 0)
 		{
@@ -198,10 +209,9 @@ public class DatabaseExpander implements INodeExpander
 			{
 				IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName,
 												schemaName, _tableTypes[i],
-												IDatabaseObjectTypes.GENERIC_FOLDER,
-												conn);
+												tableGroupType, md);
 				ObjectTreeNode child = new ObjectTreeNode(session, dbo);
-				child.setNodeType(ObjectTreeNode.IObjectTreeNodeType.TABLE_TYPE_NODE);
+				child.setNodeType(tableGroupNodeType);
 				list.add(child);
 			}
 		}
@@ -209,23 +219,10 @@ public class DatabaseExpander implements INodeExpander
 		{
 			s_log.debug("List of table types is empty so trying null table type to load all tables");
 			IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName,
-											schemaName, null,
-											IDatabaseObjectTypes.GENERIC_FOLDER,
-											conn);
+											schemaName, null, tableGroupType, md);
 			ObjectTreeNode child = new ObjectTreeNode(session, dbo);
 			child.setUserObject("TABLE");
-			child.setNodeType(ObjectTreeNode.IObjectTreeNodeType.TABLE_TYPE_NODE);
-			list.add(child);
-		}
-
-		// Add UDT parent node.
-		{
-			IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName,
-										schemaName, "UDT",
-										IDatabaseObjectTypes.GENERIC_FOLDER,
-										conn);
-			ObjectTreeNode child = new ObjectTreeNode(session, dbo);
-			child.setNodeType(ObjectTreeNode.IObjectTreeNodeType.UDT_TYPE_NODE);
+			child.setNodeType(tableGroupNodeType);
 			list.add(child);
 		}
 
@@ -243,10 +240,18 @@ public class DatabaseExpander implements INodeExpander
 		{
 			IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName,
 												schemaName, "PROCEDURE",
-												IDatabaseObjectTypes.GENERIC_FOLDER,
-												conn);
+												procGroupType, md);
 			ObjectTreeNode child = new ObjectTreeNode(session, dbo);
-			child.setNodeType(ObjectTreeNode.IObjectTreeNodeType.PROCEDURE_TYPE_NODE);
+			child.setNodeType(procGroupNodeType);
+			list.add(child);
+		}
+
+		// Add UDT parent node.
+		{
+			IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName,
+										schemaName, "UDT", udtGroupType, md);
+			ObjectTreeNode child = new ObjectTreeNode(session, dbo);
+			child.setNodeType(udtGroupNodeType);
 			list.add(child);
 		}
 

@@ -46,7 +46,7 @@ class ProcedureInfo extends DatabaseObjectInfo implements IProcedureInfo
 							String remarks, int procType,
 							SQLDatabaseMetaData md) throws SQLException
 	{
-		super(catalog, schema, simpleName, IDatabaseObjectTypes.PROCEDURE, md);
+		super(catalog, schema, simpleName, DatabaseObjectType.PROCEDURE, md);
 		_remarks = remarks;
 		_procType = procType;
 	}

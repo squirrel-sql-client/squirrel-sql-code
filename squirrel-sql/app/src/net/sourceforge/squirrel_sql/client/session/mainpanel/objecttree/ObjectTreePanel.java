@@ -34,10 +34,11 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode.IObjectTreeNodeType;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.DataTypesTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.DateTimeFunctionsTab;
@@ -121,49 +122,57 @@ public class ObjectTreePanel extends JPanel
 //		registerDetailTab(new DatabaseObjectInfoTab());
 
 		// Register tabs to display in the details panel for database nodes.
-		registerDetailTab(IObjectTreeNodeType.DATABASE, new MetaDataTab());
-		registerDetailTab(IObjectTreeNodeType.DATABASE, new TableTypesTab());
-		registerDetailTab(IObjectTreeNodeType.DATABASE, new DataTypesTab());
-		registerDetailTab(IObjectTreeNodeType.DATABASE, new NumericFunctionsTab());
-		registerDetailTab(IObjectTreeNodeType.DATABASE, new StringFunctionsTab());
-		registerDetailTab(IObjectTreeNodeType.DATABASE, new SystemFunctionsTab());
-		registerDetailTab(IObjectTreeNodeType.DATABASE, new DateTimeFunctionsTab());
-		registerDetailTab(IObjectTreeNodeType.DATABASE, new KeywordsTab());
+		final ObjectTreeNodeType db = ObjectTreeNodeType.get(DatabaseObjectType.DATABASE);
+		registerDetailTab(db, new MetaDataTab());
+		registerDetailTab(db, new TableTypesTab());
+		registerDetailTab(db, new DataTypesTab());
+		registerDetailTab(db, new NumericFunctionsTab());
+		registerDetailTab(db, new StringFunctionsTab());
+		registerDetailTab(db, new SystemFunctionsTab());
+		registerDetailTab(db, new DateTimeFunctionsTab());
+		registerDetailTab(db, new KeywordsTab());
 
 		// Register tabs to display in the details panel for table nodes.
-		registerDetailTab(IObjectTreeNodeType.TABLE, new TableInfoTab());
-		registerDetailTab(IObjectTreeNodeType.TABLE, new ContentsTab());
-		registerDetailTab(IObjectTreeNodeType.TABLE, new ColumnsTab());
-		registerDetailTab(IObjectTreeNodeType.TABLE, new PrimaryKeyTab());
-		registerDetailTab(IObjectTreeNodeType.TABLE, new ExportedKeysTab());
-		registerDetailTab(IObjectTreeNodeType.TABLE, new ImportedKeysTab());
-		registerDetailTab(IObjectTreeNodeType.TABLE, new IndexesTab());
-		registerDetailTab(IObjectTreeNodeType.TABLE, new TablePriviligesTab());
-		registerDetailTab(IObjectTreeNodeType.TABLE, new ColumnPriviligesTab());
-		registerDetailTab(IObjectTreeNodeType.TABLE, new RowIDTab());
-		registerDetailTab(IObjectTreeNodeType.TABLE, new VersionColumnsTab());
+		final ObjectTreeNodeType tbl = ObjectTreeNodeType.get(DatabaseObjectType.TABLE);
+		registerDetailTab(tbl, new TableInfoTab());
+		registerDetailTab(tbl, new ContentsTab());
+		registerDetailTab(tbl, new ColumnsTab());
+		registerDetailTab(tbl, new PrimaryKeyTab());
+		registerDetailTab(tbl, new ExportedKeysTab());
+		registerDetailTab(tbl, new ImportedKeysTab());
+		registerDetailTab(tbl, new IndexesTab());
+		registerDetailTab(tbl, new TablePriviligesTab());
+		registerDetailTab(tbl, new ColumnPriviligesTab());
+		registerDetailTab(tbl, new RowIDTab());
+		registerDetailTab(tbl, new VersionColumnsTab());
 
 		// Register tabs to display in the details panel for procedure nodes.
-		registerDetailTab(IObjectTreeNodeType.PROCEDURE, new ProcedureInfoTab());
-		registerDetailTab(IObjectTreeNodeType.PROCEDURE, new ProcedureColumnsTab());
+		final ObjectTreeNodeType proc = ObjectTreeNodeType.get(DatabaseObjectType.PROCEDURE);
+		registerDetailTab(proc, new ProcedureInfoTab());
+		registerDetailTab(proc, new ProcedureColumnsTab());
 
 		// Register tabs to display in the details panel for UDT nodes.
 		// TODO: get rid of this once all nodes have a DatabaseObjectInfoTab tab.
-		registerDetailTab(IObjectTreeNodeType.UDT, new DatabaseObjectInfoTab());
+		final ObjectTreeNodeType udt = ObjectTreeNodeType.get(DatabaseObjectType.UDT);
+		registerDetailTab(udt, new DatabaseObjectInfoTab());
 	}
 
 	/**
 	 * Register an expander for the specified object tree node type.
 	 * 
 	 * @param	nodeType	Object Tree node type.
-	 *						@see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode.IObjectTreeNodeType
 	 * @param	expander	Expander called to add children to a parent node.
 	 * 
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>INodeExpander</TT> thrown.
+	 * 			Thrown if a <TT>null</TT> <TT>ObjectTreeNodeType</TT>
+	 * 			or <TT>INodeExpander</TT> passed.
 	 */
-	public void registerExpander(int nodeType, INodeExpander expander)
+	public void registerExpander(ObjectTreeNodeType nodeType, INodeExpander expander)
 	{
+		if (nodeType == null)
+		{
+			throw new IllegalArgumentException("Null ObjectTreeNodeType passed");
+		}
 		if (expander == null)
 		{
 			throw new IllegalArgumentException("Null INodeExpander passed");
@@ -204,10 +213,15 @@ public class ObjectTreePanel extends JPanel
 	 * @param	tab			Tab to be displayed.
 	 * 
 	 * @throws	IllegalArgumentException
-	 * 			Thrown when a <TT>null</TT> <TT>IObjectPanelTab</TT> passed.
+	 * 			Thrown when a <TT>null</TT> <TT>ObjectTreeNodeType</TT> or
+	 * 			<TT>IObjectPanelTab</TT> passed.
 	 */
-	public void registerDetailTab(int nodeType, IObjectPanelTab tab)
+	public void registerDetailTab(ObjectTreeNodeType nodeType, IObjectPanelTab tab)
 	{
+		if (nodeType == null)
+		{
+			throw new IllegalArgumentException("Null ObjectTreeNodeType passed");
+		}
 		if (tab == null)
 		{
 			throw new IllegalArgumentException("IObjectPanelTab == null");
@@ -256,14 +270,17 @@ public class ObjectTreePanel extends JPanel
 	 * tree.
 	 * 
 	 * @param	nodeType	Object Tree node type.
-	 *						@see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode.IObjectTreeNodeType
-	 * @param	action		Action to add to menu.
 	 * 
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> thrown.
+	 * 			Thrown if a <TT>null</passed> <TT>ObjectTreeNodeType</TT>
+	 * 			or <TT>Action</TT> passed.
 	 */
-	public void addToObjectTreePopup(int nodeType, Action action)
+	public void addToObjectTreePopup(ObjectTreeNodeType nodeType, Action action)
 	{
+		if (nodeType == null)
+		{
+			throw new IllegalArgumentException("Null ObjectTreeNodeType passed");
+		}
 		if (action == null)
 		{
 			throw new IllegalArgumentException("Null Action passed");
@@ -278,7 +295,7 @@ public class ObjectTreePanel extends JPanel
 	 * @param	action		Action to add to menu.
 	 * 
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> thrown.
+	 * 			Thrown if a <TT>null</TT> <TT>Action</TT> passed.
 	 */
 	public void addToObjectTreePopup(Action action)
 	{
@@ -418,9 +435,9 @@ public class ObjectTreePanel extends JPanel
 	 * @return	the <TT>ObjectTreeTabbedPane</TT> for the passed object
 	 *			tree node type.
 	 */
-	private ObjectTreeTabbedPane getObjectPanelTabbedPane(int nodeType)
+	private ObjectTreeTabbedPane getObjectPanelTabbedPane(ObjectTreeNodeType nodeType)
 	{
-		return (ObjectTreeTabbedPane)_tabbedPanes.get(String.valueOf(nodeType));
+		return (ObjectTreeTabbedPane)_tabbedPanes.get(nodeType.getIdentifier());
 	}
 
 	/**
@@ -433,9 +450,14 @@ public class ObjectTreePanel extends JPanel
 	 * @return	the <TT>List</TT> containing all the <TT>IObjectPanelTab</TT>
 	 * 			instances for the passed object tree node type.
 	 */
-	private ObjectTreeTabbedPane getOrCreateObjectPanelTabbedPane(int nodeType)
+	private ObjectTreeTabbedPane getOrCreateObjectPanelTabbedPane(ObjectTreeNodeType nodeType)
 	{
-		final String key = String.valueOf(nodeType);
+		if (nodeType == null)
+		{
+			throw new IllegalArgumentException("Null ObjectTreeNodeType passed");
+		}
+
+		final IIdentifier key = nodeType.getIdentifier();
 		ObjectTreeTabbedPane tabPane = (ObjectTreeTabbedPane)_tabbedPanes.get(key);
 		if (tabPane == null)
 		{
@@ -472,7 +494,6 @@ public class ObjectTreePanel extends JPanel
 		_splitPane.add(sp, JSplitPane.LEFT);
 		add(_splitPane, BorderLayout.CENTER);
 
-//		setSelectedObjectPanel(_emptyTabPane);
 		_tree.addTreeSelectionListener(new ObjectTreeSelectionListener());
 
 		setSelectedObjectPanel(_emptyTabPane);
@@ -491,34 +512,4 @@ public class ObjectTreePanel extends JPanel
 			setSelectedObjectPanel(evt.getNewLeadSelectionPath());
 		}
 	}
-
-//	private final class EmptyTab implements IObjectPanelTab
-//	{
-//		public void clear()
-//		{
-//		}
-//
-//		public Component getComponent()
-//		{
-//			return _emptyPnl;
-//		}
-//
-//		public String getHint()
-//		{
-//			return "";
-//		}
-//
-//		public String getTitle()
-//		{
-//			return "";
-//		}
-//
-//		public void select()
-//		{
-//		}
-//
-//		public void setSession(ISession session)
-//		{
-//		}
-//	}
 }

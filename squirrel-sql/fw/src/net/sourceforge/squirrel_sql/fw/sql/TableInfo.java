@@ -36,7 +36,7 @@ class TableInfo extends DatabaseObjectInfo implements ITableInfo
 							String tableType, String remarks,
 							SQLDatabaseMetaData md) throws SQLException
 	{
-		super(catalog, schema, simpleName, IDatabaseObjectTypes.TABLE, md);
+		super(catalog, schema, simpleName, DatabaseObjectType.TABLE, md);
 		_remarks = remarks;
 		_tableType = tableType;
 	}

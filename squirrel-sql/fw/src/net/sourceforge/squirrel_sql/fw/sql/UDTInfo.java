@@ -34,7 +34,7 @@ class UDTInfo extends DatabaseObjectInfo implements IUDTInfo
 			String dataType, String remarks, SQLDatabaseMetaData md)
 		throws SQLException
 	{
-		super(catalog, schema, simpleName, IDatabaseObjectTypes.UDT, md);
+		super(catalog, schema, simpleName, DatabaseObjectType.UDT, md);
 		_javaClassName = javaClassName;
 		_dataType = dataType;
 		_remarks = remarks;

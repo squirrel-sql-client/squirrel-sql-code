@@ -36,7 +36,6 @@ import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.session.ISession.ISessionKeys;
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
@@ -130,16 +129,16 @@ class Session implements IClientSession
 		// areas of the session.
 		_objectTreeAPI = new ObjectTreeAPI(this);
 		_sqlPanelAPI = new SQLPanelAPI(this);
-
-		final IPlugin plugin = getApplication().getDummyAppPlugin();
-
-		//TODO: This crap should be done better.
-		putPluginObject(plugin, ISessionKeys.DATABASE_DETAIL_PANEL_KEY,
-						new DatabasePanel(this));
-		putPluginObject(plugin, ISessionKeys.PROCEDURE_DETAIL_PANEL_KEY,
-						new ProcedurePanel(this));
-		putPluginObject(plugin, ISessionKeys.TABLE_DETAIL_PANEL_KEY,
-						new TablePanel(this));
+//
+//		final IPlugin plugin = getApplication().getDummyAppPlugin();
+//
+//		//TODO: This crap should be done better.
+//		putPluginObject(plugin, ISessionKeys.DATABASE_DETAIL_PANEL_KEY,
+//						new DatabasePanel(this));
+//		putPluginObject(plugin, ISessionKeys.PROCEDURE_DETAIL_PANEL_KEY,
+//						new ProcedurePanel(this));
+//		putPluginObject(plugin, ISessionKeys.TABLE_DETAIL_PANEL_KEY,
+//						new TablePanel(this));
 	}
 
 	/**
@@ -390,61 +389,4 @@ class Session implements IClientSession
 	{
 		_sessionSheet.addMainTab(tab);
 	}
-
-	/**
-	 * Add a tab to the panel shown when the database selected in the
-	 * object tree. If a tab with this title already exists it is
-	 * removed from the tabbed pane and the passed tab inserted in its
-	 * place. New tabs are inserted at the end.
-	 *
-	 * @param	tab	 The tab to be added.
-	 *
-	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>ITablePanelTab</TT> passed.
-	 */
-	public void addDatabasePanelTab(IDatabasePanelTab tab)
-	{
-		_sessionSheet.getDatabasePanel().addDatabasePanelTab(tab);
-	}
-
-	/**
-	 * Add a tab to the panel shown when a table selected in the
-	 * object tree. If a tab with this title already exists it is
-	 * removed from the tabbed pane and the passed tab inserted in its
-	 * place. New tabs are inserted at the end.
-	 *
-	 * @param	tab	 The tab to be added.
-	 *
-	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>ITablePanelTab</TT> passed.
-	 */
-	public void addTablePanelTab(ITablePanelTab tab)
-	{
-		if (tab == null)
-		{
-			throw new IllegalArgumentException("Null ITablePanelTab passed");
-		}
-		_sessionSheet.getTablePanel().addTablePanelTab(tab);
-	}
-
-	/**
-	 * Add a tab to the panel shown when a procedure selected in the
-	 * object tree. If a tab with this title already exists it is
-	 * removed from the tabbed pane and the passed tab inserted in its
-	 * place. New tabs are inserted at the end.
-	 *
-	 * @param	tab	 The tab to be added.
-	 *
-	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>IProcedurePanelTab</TT> passed.
-	 */
-	public void addProcedurePanelTab(IProcedurePanelTab tab)
-	{
-		if (tab == null)
-		{
-			throw new IllegalArgumentException("Null IProcedurePanelTab passed");
-		}
-		_sessionSheet.getProcedurePanel().addProcedurePanelTab(tab);
-	}
-
 }

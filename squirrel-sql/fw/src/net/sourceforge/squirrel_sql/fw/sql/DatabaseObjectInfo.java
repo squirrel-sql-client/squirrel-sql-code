@@ -33,30 +33,17 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo
 	/** Fully qualified name for this object. */
 	private final String _qualifiedName;
 
-	/** Object type. @see IDatabaseObjectType.*/
-	private int _dboType = IDatabaseObjectTypes.GENERIC_LEAF;
+	/** Object type. @see DatabaseObjectType.*/
+	private DatabaseObjectType _dboType = DatabaseObjectType.OTHER;
 
-	// TODO: Delete this ctor.
 	public DatabaseObjectInfo(String catalog, String schema, String simpleName,
-								int dboType, SQLConnection conn)
+								DatabaseObjectType dboType, SQLDatabaseMetaData md)
 	{
 		super();
-		if (conn == null)
+		if (dboType == null)
 		{
-			throw new IllegalArgumentException("Null SQLConnection passed");
+			throw new IllegalArgumentException("Null DatabaseObjectType passed");
 		}
-
-		_catalog = catalog;
-		_schema = schema;
-		_simpleName = simpleName;
-		_qualifiedName = generateQualifiedName(conn);
-		_dboType = dboType;
-	}
-
-	public DatabaseObjectInfo(String catalog, String schema, String simpleName,
-								int dboType, SQLDatabaseMetaData md)
-	{
-		super();
 		if (md == null)
 		{
 			throw new IllegalArgumentException("Null SQLDatabaseMetaData passed");
@@ -94,7 +81,7 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo
 		return _qualifiedName;
 	}
 
-	public int getDatabaseObjectType()
+	public DatabaseObjectType getDatabaseObjectType()
 	{
 		return _dboType;
 	}

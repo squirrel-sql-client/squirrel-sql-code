@@ -20,19 +20,23 @@ package net.sourceforge.squirrel_sql.fw.id;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.UidIdentifier;
 
-public class IntegerIdentifierFactory {
+public class IntegerIdentifierFactory
+{
 	private int _next;
 
-	public IntegerIdentifierFactory() {
+	public IntegerIdentifierFactory()
+	{
 		this(0);
 	}
 
-	public IntegerIdentifierFactory(int initialValue) {
+	public IntegerIdentifierFactory(int initialValue)
+	{
 		super();
 		_next = initialValue;
 	}
 
-	public synchronized IntegerIdentifier createIdentifier() {
+	public synchronized IntegerIdentifier createIdentifier()
+	{
 		return new IntegerIdentifier(_next++);
 	}
 }
