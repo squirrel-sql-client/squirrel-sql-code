@@ -26,6 +26,7 @@ import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 //??import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
@@ -332,7 +333,15 @@ public class DataTypeInteger
 	  * On input from the DB, read the data from the ResultSet into the appropriate
 	  * type of object to be stored in the table cell.
 	  */
-//??????????????????????????????
+	public Object readResultSet(ColumnDisplayDefinition colDef,
+		ResultSet rs, int index)
+		throws java.sql.SQLException {
+		
+		int data = rs.getInt(index);
+		if (rs.wasNull())
+			return null;
+		else return new Integer(data);
+	}
 
 	/**
 	 * When updating the database, generate a string form of this object value
