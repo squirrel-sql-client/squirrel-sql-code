@@ -46,7 +46,6 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponent
  */
 public class CellDataPopup
 {
-		
 	/**
 	 * function to create the popup display when called from JTable
 	 */
@@ -61,8 +60,8 @@ public class CellDataPopup
 
 	private void createAndShowDialog(JTable table, MouseEvent evt,
 		ColumnDisplayDefinition colDef, boolean isModelEditable)
-	{	
-				
+	{
+
 		ILogger s_log = LoggerController.createLogger(CellDataPopup.class);
 
 		Point pt = evt.getPoint();
@@ -70,7 +69,7 @@ public class CellDataPopup
 		int col = table.columnAtPoint(pt);
 
 		Object obj = table.getValueAt(row, col);
-			
+
 		// since user is now using popup, stop editing
 		// using the in-cell editor, if any
 		CellEditor editor = table.getCellEditor(row, col);
@@ -84,7 +83,7 @@ public class CellDataPopup
 		// and instanceof BaseMDIParentFrame.
 		// If SwingTUilities.getRoot(table) returns and instance of Dialog or
 		// Frame, then other code must be used.
-		TextAreaInternalFrame taif = 
+		TextAreaInternalFrame taif =
 			new TextAreaInternalFrame(table.getColumnName(col), colDef, obj,
 				row, col, isModelEditable, table);
 		((BaseMDIParentFrame)comp).addInternalFrame(taif, false);
@@ -122,12 +121,10 @@ public class CellDataPopup
 		{
 			pt = SwingUtilities.convertPoint((Component) evt.getSource(), pt, comp);
 			pt.y -= dim.height;
-			if (pt.y < 0)
-				pt.y = 0;	// fudge for larger inset windows
 		}
 		else
 		{
-			// getRoot() doesn't appear to return the deepest Window, but the first one. 
+			// getRoot() doesn't appear to return the deepest Window, but the first one.
 			// If you have a dialog owned by a window you get the dialog, not the window.
 			Component parent = SwingUtilities.windowForComponent(comp);
 			while ((parent != null) &&
@@ -140,7 +137,12 @@ public class CellDataPopup
 			comp = (parent != null) ? parent : comp;
 			pt = SwingUtilities.convertPoint((Component) evt.getSource(), pt, comp);
 		}
-			
+
+		if (pt.y < 0)
+		{
+			pt.y = 0;	// fudge for larger inset windows
+		}
+
 		// Determine the position to place the new internal frame. Ensure that the right end
 		// of the internal frame doesn't exend past the right end the parent frame.	Use a
 		// fudge factor as the dim.width doesn't appear to get the final width of the internal
@@ -154,7 +156,7 @@ public class CellDataPopup
 			pt.x = fudgeFactor / 2;
 			newComp.setSize(dim);
 		}
-		else 
+		else
 		{
 			if ((pt.x + dim.width + fudgeFactor) > (parentBounds.width))
 			{
@@ -186,10 +188,10 @@ public class CellDataPopup
 
 			if (tableIsEditable &&
 				CellComponentFactory.isEditableInPopup(colDef, cellContents)) {
-					
+
 				// data is editable in popup
 				ioPanel = new PopupEditableIOPanel(colDef, cellContents, true);
-				
+
 				// Since data is editable, we need to add control panel
 				// to manage user requests for DB update, file IO, etc.
 				JPanel editingControls = createPopupEditingControls(ioPanel, colDef);
@@ -203,20 +205,20 @@ public class CellDataPopup
 			add(ioPanel, BorderLayout.CENTER);
 
 		}
-		
+
 		/**
 		 * Set up user controls to stop editing and update DB.
 		 */
 		private JPanel createPopupEditingControls(PopupEditableIOPanel ioPanel,
 			ColumnDisplayDefinition colDef) {
-				
+
 			final ColumnDisplayDefinition _colDef = colDef;
-				
+
 			JPanel panel = new JPanel(new BorderLayout());
-			
+
 			// create update/cancel controls using default layout
 			JPanel updateControls = new JPanel();
-			
+
 			// set up Update button
 			JButton updateButton = new JButton("Update Data");
 			updateButton.addActionListener(new ActionListener() {
@@ -249,7 +251,7 @@ _table.setValueAt(newValue, _row, _col);
 					}
 				}
 			});
-			
+
 			// set up Cancel button
 			JButton cancelButton = new JButton("Cancel");
 			cancelButton.addActionListener(new ActionListener() {
@@ -258,17 +260,17 @@ _table.setValueAt(newValue, _row, _col);
 					ColumnDataPopupPanel.this._parentFrame.dispose();
 				}
 			});
-			
+
 			// add buttons to button panel
 			updateControls.add(updateButton);
 			updateControls.add(cancelButton);
-			
+
 			// add button panel to main panel
 			panel.add(updateControls, BorderLayout.SOUTH);
-			
+
 			return panel;
 		}
-		
+
 		/*
 		 * Save various information which is needed to do Update & Cancel.
 		 */
@@ -279,13 +281,13 @@ _table.setValueAt(newValue, _row, _col);
 		 	_col = col;
 		 	_table = table;
 		 }
-		 
+
 
 	}
 
 
 
-	// The following is only useable for a root type of InternalFrame.  If the
+	// The following is only useable for a root type of InternalFrame. If the
 	// root type is Dialog or Frame, then other code must be used.
 	class TextAreaInternalFrame extends JInternalFrame
 	{
