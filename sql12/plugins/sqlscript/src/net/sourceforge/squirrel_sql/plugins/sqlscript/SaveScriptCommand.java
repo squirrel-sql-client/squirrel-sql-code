@@ -185,9 +185,11 @@ public class SaveScriptCommand
 			try
 			{
 				fos = new FileOutputStream(file);
-//                String sScript = _session.getEntireSQLScript();
-				String sScript = _session.getSQLPanelAPI(_plugin).getEntireSQLScript();
-				fos.write(sScript.getBytes());
+
+            //String sScript = _session.getSQLPanelAPI(_plugin).getEntireSQLScript();
+            String sScript = FrameWorkAcessor.getSQLPanelAPI(_session, _plugin).getEntireSQLScript();
+
+            fos.write(sScript.getBytes());
 				_session.getMessageHandler().showMessage(
 						"SQL script saved to " + file.getAbsolutePath());
 			}
