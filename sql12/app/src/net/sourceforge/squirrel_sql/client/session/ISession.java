@@ -88,11 +88,11 @@ public interface ISession extends IHasIdentifier
 
 	/**
 	 * Return the API object for the Object Tree.
-	 * 
+	 *
 	 * @param	plugin	Plugin requesting the API.
-	 * 
+	 *
 	 * @return	the API object for the Object Tree.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if null IPlugin passed.
 	 */
@@ -100,11 +100,11 @@ public interface ISession extends IHasIdentifier
 
 	/**
 	 * Return the API object for the SQL panel.
-	 * 
+	 *
 	 * @param	plugin	Plugin requesting the API.
-	 * 
+	 *
 	 * @return	the API object for the SQL panel.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if null IPlugin passed.
 	 */
@@ -141,9 +141,9 @@ public interface ISession extends IHasIdentifier
 
 	/**
 	 * Add a listener to this session
-	 * 
+	 *
 	 * @param	lis		The listener to add.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> listener passed.
 	 */
@@ -151,9 +151,9 @@ public interface ISession extends IHasIdentifier
 
 	/**
 	 * Remove a listener from this session
-	 * 
+	 *
 	 * @param	lis		The listener to remove.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> listener passed.
 	 */
