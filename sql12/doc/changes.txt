@@ -6,6 +6,7 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Added a statusbar to the Help Viewer.
 - New session property "Abort On Error".
 
 
