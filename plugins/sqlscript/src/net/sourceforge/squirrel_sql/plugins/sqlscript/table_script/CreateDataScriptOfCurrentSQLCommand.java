@@ -47,7 +47,7 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
     */
    public CreateDataScriptOfCurrentSQLCommand(ISession session, SQLScriptPlugin plugin)
    {
-      super(session, plugin);
+      super(session, plugin, false);
       _plugin = plugin;
    }
 

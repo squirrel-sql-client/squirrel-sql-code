@@ -1,6 +1,8 @@
 Change Log
 ==========
-
+- Feature Request: [ 976569 ] SQL Scripts enhancements
+  In right mouse menu of a table in the object tree there is a new entry 'Create Template Data Script'
+- Apostrophes in strings were escaped by "\'". The right way to escape is "''"
 - Bug #779866 Create table on JDBC-ODBC Bridge: Works a bit better now. But the driver is to bad to really work.
 - Toolbar buttons for saving and loading scripts
 - Read statement deliniter from preferences

@@ -27,7 +27,7 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 
-public class CreateDataScriptAction extends SquirrelAction implements ISessionAction {
+public class CreateTemplateDataScriptAction extends SquirrelAction implements ISessionAction {
 
     /** Current session. */
     private ISession _session;
@@ -35,14 +35,14 @@ public class CreateDataScriptAction extends SquirrelAction implements ISessionAc
 	/** Current plugin. */
 	private final SQLScriptPlugin _plugin;
 
-    public CreateDataScriptAction(IApplication app, Resources rsrc, SQLScriptPlugin plugin) {
+    public CreateTemplateDataScriptAction(IApplication app, Resources rsrc, SQLScriptPlugin plugin) {
         super(app, rsrc);
         _plugin = plugin;
     }
 
     public void actionPerformed(ActionEvent evt) {
         if (_session != null) {
-            new CreateDataScriptCommand(_session, _plugin, false).execute();
+            new CreateDataScriptCommand(_session, _plugin, true).execute();
         }
     }
 
