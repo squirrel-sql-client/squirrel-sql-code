@@ -240,12 +240,17 @@ public class DataTypeString
 
 			// check for max size reached (only works when DB provides non-zero scale info
 			if (DataTypeString.this._columnSize > 0 &&
-				text.length() == DataTypeString.this._columnSize &&
+				text.length()>= DataTypeString.this._columnSize &&
 				c != KeyEvent.VK_BACK_SPACE &&
 				c != KeyEvent.VK_DELETE) {
 				// max size reached
 				e.consume();
 				_theComponent.getToolkit().beep();
+								
+				// tabs and newlines get put into the text before this check,
+				// so remove them
+				if (c == KeyEvent.VK_TAB || c == KeyEvent.VK_ENTER)
+					((IRestorableTextComponent)_theComponent).updateText(text.substring(0, text.length()-1));
 			}
 
 			// handle cases of null
