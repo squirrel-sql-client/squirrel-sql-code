@@ -31,6 +31,9 @@ Enhancements
   the Popup.
 - Data containing newlines now shows the newlines explicitly in the in-cell
   view, i.e. as "\n".
+- User may identify specific columns to use in WHERE clause when editing
+  cells in table by using the "Limit cell edit WHERE clause size" entry in
+  the Session menu.
 
 Bug Fixes
 ---------
@@ -43,6 +46,8 @@ Bug Fixes
 - Strings (VARCHAR and CLOB) fields containing newlines would loose those
   newlines if edited within the cell.  In-cell editing of that data is now
   blocked.
+- Tables with many columns should now allow editing by useing the
+  "Limit cell edit WHERE clause size" session tool.
 
 Other
 -----
