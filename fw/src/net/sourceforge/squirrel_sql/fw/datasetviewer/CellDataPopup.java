@@ -25,15 +25,9 @@ import java.awt.event.MouseEvent;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
-import javax.swing.JInternalFrame;
-import javax.swing.JLayeredPane;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.SwingUtilities;
-import javax.swing.JButton;
-import javax.swing.CellEditor;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.fw.gui.BaseMDIParentFrame;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -300,6 +294,20 @@ _table.setValueAt(newValue, _row, _col);
 				new ColumnDataPopupPanel(value, colDef, isModelEditable);
 			popup.setUserActionInfo(this, row, col, table);
 			setContentPane(popup);
+
+         AbstractAction closeAction = new AbstractAction()
+         {
+            public void actionPerformed(ActionEvent actionEvent)
+            {
+               setVisible(false);
+               dispose();
+            }
+         };
+         KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+         getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(escapeStroke, "CloseAction");
+         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "CloseAction");
+         getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escapeStroke, "CloseAction");
+         getRootPane().getActionMap().put("CloseAction", closeAction);
 		}
 	}
 
