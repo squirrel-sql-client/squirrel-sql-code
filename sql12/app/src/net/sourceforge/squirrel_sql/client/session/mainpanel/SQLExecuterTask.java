@@ -25,49 +25,48 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
-import java.sql.PreparedStatement;
-import java.sql.DatabaseMetaData;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.HashMap;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.swing.JOptionPane;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
 public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 {
-	
 	/**
 	 * We need to save the name of the SessionProperties display class at the time
 	 * that the table was forced into edit mode so that if the properties get changed
@@ -83,12 +82,12 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 	boolean editModeForced = false;
 
 	/**
-	 * Defines the object that info is to be displayed for. 
+	 * Defines the object that info is to be displayed for.
 	 * This only applys for SELECTs with only one table
 	 * (which may need to allow editing).
 	 */
 	private TableInfo ti = null;
-	
+
 	/**
 	 * Remember which column contains the rowID; if no rowID, this is -1
 	 * which does not match any legal column index.
@@ -97,13 +96,12 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 	 * ResultSet, and thus we never have any legal column index here.
 	 */
 	int _rowIDcol = -1;
-	
+
 	/**
 	 * This is the long name of the current table including everything that might be able to distinguish it
 	 * from another table of the same name in a different DB.
 	 */
 	String fullTableName = null;
-	
 
 	/** Logger for this class. */
 	private static final ILogger s_log =
@@ -129,9 +127,9 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 	private int _currentQueryIndex = 0;
 
 	private boolean _cancelPanelRemoved = false;
-	
+
 	// string to be passed to user when table name is not found or is ambiguous
-	private final String TI_ERROR_MESSAGE = 
+	private final String TI_ERROR_MESSAGE =
 		"Cannot edit table because table cannot be found\nor table name is not unique in DB.";
 
 	/**
@@ -185,8 +183,17 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 				// Allow plugins to modify the requested SQL prior to execution.
 				queryStrings = _sqlPanel.fireAllSQLToBeExecutedEvent(queryStrings);
 
+				{
+					final int queryCount = queryStrings.size();
+					SwingUtilities.invokeLater(new Runnable()
+					{
+						public void run()
+						{
+							_cancelPanel.setQueryCount(queryCount);
+						}
+					});
+				}
 
-				_cancelPanel.setQueryCount(queryStrings.size());
 				_currentQueryIndex = 0;
 
 				// Process each individual query.
@@ -294,13 +301,19 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 		}
 	}
 
-	private boolean processQuery(String querySql)
+	private boolean processQuery(final String querySql)
 		throws SQLException, DataSetException
 	{
 		++_currentQueryIndex;
 
-		_cancelPanel.setSQL(StringUtilities.cleanString(querySql));
-		_cancelPanel.setStatusLabel("Executing SQL...");
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				_cancelPanel.setSQL(StringUtilities.cleanString(querySql));
+				_cancelPanel.setStatusLabel("Executing SQL...");
+			}
+		});
 
 		final SQLExecutionInfo exInfo = new SQLExecutionInfo(_currentQueryIndex, querySql);
 		boolean firstResultIsResultSet = _stmt.execute(querySql);
@@ -404,7 +417,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 			.append(", Building output: ")
 			.append(nbrFmt.format(outputLength));
 		_session.getMessageHandler().showMessage(buf.toString());
-		
+
 		// if the sql contains  results from only one table, the user
 		// may choose to edit it later.  If so, we need to have the
 		// full name of the table available.
@@ -434,7 +447,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 		if (allowEditing) {
 			// Get a list of all tables matching this name in DB
 			ti = getTableName(tableNameFromSQL);
-		}	
+		}
 		return true;
 	}
 
@@ -457,11 +470,21 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 										final SQLExecutionInfo exInfo)
 		throws DataSetException
 	{
-		_cancelPanel.setStatusLabel("Building output...");
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				_cancelPanel.setStatusLabel("Building output...");
+			}
+		});
+
 		ResultSetDataSet rsds = new ResultSetDataSet();
 		_results.add(rsds);
 //		SessionProperties props = _session.getProperties();
-		rsds.setResultSet(rs, null);
+//		rsds.setResultSet(rs, null);
+
+//TODO: Change name of setContentsTabResultSet to something reasonable.
+		rsds.setContentsTabResultSet(rs, (String)null);
 		if (_stopExecution)
 		{
 			return false;
@@ -659,16 +682,16 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 
 
 	/*
-	 * 
-	 * 
+	 *
+	 *
 	 * Implement IDataSetUpdateableModel interface
 	 * and IDataSetUpdateableTableModel interface
-	 * 
-	 * THIS CODE WAS COPIED FROM ContentsTab.  IT SHOULD PROBABLY
+	 *
+	 * TODO: THIS CODE WAS COPIED FROM ContentsTab.  IT SHOULD PROBABLY
 	 * BE PUT INTO A COMMON LOCATION AND SHARED BY BOTH THIS
 	 * CLASS AND ContentsTab.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 
 
@@ -677,7 +700,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 	 * including the same DB on different machines.
 	 * This function is static because it is used elsewhere to generate the same
 	 * name as is used within instances of this class.
-	 * 
+	 *
 	 * @return the name of the table that is unique for this DB access
 	 */
 	public static String getUnambiguousTableName(ISession session, String name) {
@@ -706,7 +729,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 	public void forceEditMode(boolean mode)
 	{
 		editModeForced = mode;
-		sqlOutputClassNameAtTimeOfForcedEdit = 
+		sqlOutputClassNameAtTimeOfForcedEdit =
 			_session.getProperties().getTableContentsOutputClassName();
 
 		/**
@@ -718,7 +741,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 		 */
 		_session.getProperties().forceTableContentsOutputClassNameChange();
 	}
-	
+
 	/**
 	 * The fw needs to know whether we are in forced edit mode or not
 	 * so it can decide whether or not to let the user undo that mode.
@@ -755,7 +778,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 	 * in the current data that the user needs to be aware of before updating.
 	 */
 	public String getWarningOnCurrentData(
-		Object[] values, 
+		Object[] values,
 		ColumnDisplayDefinition[] colDefs,
 		int col,
 		Object oldValue)
@@ -827,7 +850,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 		// if we could not identify which table to edit, tell user
 		if (ti == null)
 			return TI_ERROR_MESSAGE;
-			
+
 		String whereClause = getWhereClause(values, colDefs, col, newValue);
 
 		final ISession session = _session;
@@ -903,11 +926,11 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 		ColumnDisplayDefinition[] colDefs,
 		int col,
 		StringBuffer message) {
-			
+
 		// if we could not identify which table to edit, tell user
 		if (ti == null)
-			return TI_ERROR_MESSAGE;		
-			
+			return TI_ERROR_MESSAGE;
+
 		// get WHERE clause
 		// The -1 says to ignore the last arg and use the contents of the values array
 		// for the column that we care about.  However, since the data in
@@ -921,7 +944,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 
 		final ISession session = _session;
 		final SQLConnection conn = session.getSQLConnection();
-		
+
 		Object wholeDatum = null;
 
 		try
@@ -934,14 +957,14 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 			try
 			{
 				ResultSet rs = stmt.executeQuery(queryString);
-				
+
 				// There should be one row in the data, so try to move to it
 				if (rs.next() == false) {
 					// no first row, so we cannot retrieve the data
 					throw new SQLException(
 						"Could not find any row in DB matching current row in table");
 				}
-				
+
 				// we have at least one row, so try to retrieve the object
 				// Do Not limit the read of this data
 				wholeDatum = CellComponentFactory.readResultSet(colDefs[col], rs, 1, false);
@@ -954,7 +977,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 					wholeDatum = null;
 					throw new SQLException(
 						"Muliple rows in DB match current row in table - cannot re-read data.");
-				}				
+				}
 			}
 			finally
 			{
@@ -966,7 +989,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 			message.append(
 				"There was a problem reported while re-reading the DB.  The DB message was:\n"+
 				ex.getMessage());
-			
+
 			// It would be nice to tell the user what happened, but if we try to
 			// put up a dialog box at this point, we run into trouble in some
 			// cases where the field continually tries to re-read after the dialog
@@ -975,7 +998,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 
 
 		// return the whole contents of this column in the DB
-		return wholeDatum; 
+		return wholeDatum;
 	};
 
 	/**
@@ -991,7 +1014,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 		// if we could not identify which table to edit, tell user
 		if (ti == null)
 			return TI_ERROR_MESSAGE;
-			
+
 		// get WHERE clause using original value
 		String whereClause = getWhereClause(values, colDefs, col, oldValue);
 
@@ -1061,13 +1084,13 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 		Object colValue)
 	{
 		StringBuffer whereClause = new StringBuffer("");
-		
+
 		// For tables that have a lot of columns, the user may have limited the set of columns
 		// to use in the where clause, so see if there is a table of col names
 		HashMap colNames = (EditWhereCols.get(getFullTableName()));
 
 		for (int i=0; i< colDefs.length; i++) {
-			
+
 			// if the user has said to not use this column, then skip it
 			if (colNames != null) {
 				// the user has restricted the set of columns to use.
@@ -1089,7 +1112,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 				value = null;
 
 			// do different things depending on data type
-			String clause = CellComponentFactory.getWhereClauseValue(colDefs[i], value);	
+			String clause = CellComponentFactory.getWhereClauseValue(colDefs[i], value);
 
 			if (clause != null && clause.length() > 0)
 				if (whereClause.length() == 0)
@@ -1119,11 +1142,11 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 	 * so they are either all done or all not done.
 	 */
 	public String deleteRows(Object[][] rowData, ColumnDisplayDefinition[] colDefs) {
-		
+
 		// if we could not identify which table to edit, tell user
 		if (ti == null)
 			return TI_ERROR_MESSAGE;
-			
+
 		// get the SQL session
 		final ISession session = _session;
 		final SQLConnection conn = session.getSQLConnection();
@@ -1143,17 +1166,23 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 			// count how many rows this WHERE matches
 			try {
 				// do the delete and add the number of rows deleted to the count
-				Statement stmt = conn.createStatement();
+				final Statement stmt = conn.createStatement();
+				try
+				{
+					ResultSet rs = stmt.executeQuery("SELECT count(*) FROM " +
+						ti.getSimpleName()+whereClause);
 
-				ResultSet rs = stmt.executeQuery("SELECT count(*) FROM " +
-					ti.getSimpleName()+whereClause);
-
-				rs.next();
-				if (rs.getInt(1) != 1) {
-					if (rs.getInt(1) == 0)
-						rowCountErrorMessage += "\n   Row "+ (i+1) +" did not match any row in DB";
-					else
-						rowCountErrorMessage += "\n   Row "+ (i+1) +" matched "+rs.getInt(1)+" rows in DB";
+					rs.next();
+					if (rs.getInt(1) != 1) {
+						if (rs.getInt(1) == 0)
+							rowCountErrorMessage += "\n   Row "+ (i+1) +" did not match any row in DB";
+						else
+							rowCountErrorMessage += "\n   Row "+ (i+1) +" matched "+rs.getInt(1)+" rows in DB";
+					}
+				}
+				finally
+				{
+					stmt.close();
 				}
 			}
 			catch (Exception e) {
@@ -1166,13 +1195,13 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 		// really want to do delete
 		if (rowCountErrorMessage.length() > 0) {
 			int option = JOptionPane.showConfirmDialog(null,
-				"There may be a mismatch between the table and the DB:\n"+ 
+				"There may be a mismatch between the table and the DB:\n"+
 				rowCountErrorMessage +
 				"\nDo you wish to proceed with the deletes anyway?",
 				"Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 			if ( option != JOptionPane.YES_OPTION) {
 				return "Delete canceled at user request.";
-			} 
+			}
 		}
 
 		// for each row in table, do delete and add to number of rows deleted from DB
@@ -1185,104 +1214,117 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 			// try to delete
 			try {
 				// do the delete and add the number of rows deleted to the count
-				Statement stmt = conn.createStatement();
-
-				stmt.executeUpdate("DELETE FROM " +
-					ti.getSimpleName()+whereClause);
+				final Statement stmt = conn.createStatement();
+				try
+				{
+					stmt.executeUpdate("DELETE FROM " +
+						ti.getSimpleName()+whereClause);
+				}
+				finally
+				{
+					stmt.close();
+				}
 			}
 			catch (Exception e) {
 				// some kind of problem - tell user
 				return "One of the delete operations failed with exception:\n" + e +
 						"\nDatabase is in an unknown state and may be corrupted.";
-			}	
+			}
 		}
 
 		return null;	// hear no evil, see no evil
 	}
-	
-	
+
 	/**
 	 * Let fw get the list of default values for the columns
 	 * to be used when creating a new row
 	 */
 	public String[] getDefaultValues(ColumnDisplayDefinition[] colDefs) {
-		
+
 		// we return something valid even if there is a DB error
-		String[] defaultValues = new String[colDefs.length];	
-		
+		final String[] defaultValues = new String[colDefs.length];
+
 		// if we could not identify which table to edit, just return
 		if (ti == null)
-			return defaultValues;	
-		
+		{
+			return defaultValues;
+		}
+
 		final ISession session = _session;
 		final SQLConnection conn = session.getSQLConnection();
-		
+
 		DatabaseMetaData dmd = null;
 		try
 		{
 			dmd = conn.getSQLMetaData().getJDBCMetaData();
-			ResultSet rs =
+			final ResultSet rs =
 				dmd.getColumns(ti.getCatalogName(), ti.getSchemaName(),
 					ti.getSimpleName(), "");
-			
-			// read the DB MetaData info and fill in the value, if any
-			// Note that the ResultSet info and the colDefs should be
-			// in the same order, but we cannot guarantee that.
-			int expectedColDefIndex = 0;
-			while (rs.next()) {
-				// get the column name
-				String colName = rs.getString(4);
-				
-				// get the default value
-				String defValue = rs.getString(13);
-				
-				// if value was null, we do not need to do
-				// anything else with this column.
-				// Also assume that a value of "" is equivilent to null
-				if (defValue != null &&  defValue.length() > 0) {
-					// find the entry in colDefs matching this column
-					if (colDefs[expectedColDefIndex].getLabel().equals(colName)) {
-						// DB cols are in same order as colDefs
-						defaultValues[expectedColDefIndex] = defValue;
-					}
-					else {
-						// colDefs not in same order as DB, so search for
-						// matching colDef entry
-						// Note: linear search here will NORMALLY be not too bad
-						// because most tables do not have huge numbers of columns.
-						for (int i=0; i<colDefs.length; i++) {
-							if (colDefs[i].getLabel().equals(colName)) {
-								defaultValues[i] = defValue;
-								break;
+			try
+			{
+				// read the DB MetaData info and fill in the value, if any
+				// Note that the ResultSet info and the colDefs should be
+				// in the same order, but we cannot guarantee that.
+				int expectedColDefIndex = 0;
+				while (rs.next()) {
+					// get the column name
+					String colName = rs.getString(4);
+
+					// get the default value
+					String defValue = rs.getString(13);
+
+					// if value was null, we do not need to do
+					// anything else with this column.
+					// Also assume that a value of "" is equivilent to null
+					if (defValue != null &&  defValue.length() > 0) {
+						// find the entry in colDefs matching this column
+						if (colDefs[expectedColDefIndex].getLabel().equals(colName)) {
+							// DB cols are in same order as colDefs
+							defaultValues[expectedColDefIndex] = defValue;
+						}
+						else {
+							// colDefs not in same order as DB, so search for
+							// matching colDef entry
+							// Note: linear search here will NORMALLY be not too bad
+							// because most tables do not have huge numbers of columns.
+							for (int i=0; i<colDefs.length; i++) {
+								if (colDefs[i].getLabel().equals(colName)) {
+									defaultValues[i] = defValue;
+									break;
+								}
 							}
 						}
 					}
-				}
-				
-				// assuming that the columns in table match colDefs,
-				// bump the index to point to the next colDef entry
-				expectedColDefIndex++;
+
+					// assuming that the columns in table match colDefs,
+					// bump the index to point to the next colDef entry
+					expectedColDefIndex++;
+				} // while
+			}
+			finally
+			{
+				rs.close();
 			}
 		}
 		catch (Exception ex)
 		{
 			s_log.error("Error retrieving default column values", ex);
 		}
-		
+
 		return defaultValues;
 	}
-	
-	
+
+
 	/**
 	 * Insert a row into the DB.
 	 * If the insert succeeds this returns a null string.
 	 */
 	public String insertRow(Object[] values, ColumnDisplayDefinition[] colDefs) {
-		
+
 		// if we could not identify which table to edit, tell user
 		if (ti == null)
 			return TI_ERROR_MESSAGE;
-		
+
 		final ISession session = _session;
 		final SQLConnection conn = session.getSQLConnection();
 
@@ -1290,20 +1332,19 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 
 		try
 		{
-			
 			// start the string for use in the prepared statment
 			StringBuffer buf = new StringBuffer(
 				"INSERT INTO " + ti.getQualifiedName() + " VALUES (");
-			
+
 			// add a variable position for each of the columns
 			for (int i=0; i<colDefs.length; i++) {
 				if (i != _rowIDcol)
 					buf.append(" ?,");
 			}
-			
+
 			// replace the last "," with ")"
 			buf.setCharAt(buf.length()-1, ')');
-			
+
 			final PreparedStatement pstmt = conn.prepareStatement(buf.toString());
 
 			try
@@ -1332,13 +1373,13 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 
 		if (count != 1)
 			return "Unknown problem during update.\nNo count of inserted rows was returned.\nDatabase may be corrupted!";
-			
+
 		// insert succeeded
 		return null;
 	}
 
 
-   /**
+	/**
 	* Get the full name info for the table that is being referred to in the
 	* SQL query.
 	* Since we do not know the catalog, schema, or the actual name used in
@@ -1349,25 +1390,23 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 	* with that name or multiple objects with that name, we do not allow editing.
 	* This method was originally copied from TableTypeExpander.createChildren
 	* and heavilly modified.
-	* 
+	*
 	* @param	tableNameInSQL	Name of the table as typed by the user in the SQL query.
-	* 
+	*
 	* @return	A  <TT>TableInfo</TT> object for the only DB object
 	* 	with the given name, or null if there is none or more than one with that name.
 	*/
-
-   public TableInfo getTableName(String tableNameFromSQL)
-   {
-	   final List childNodes = new ArrayList();
-	   Statement stmt = null;
-	   TableInfo table = null;
-	   int count = 0;
-	   try
-	   {
-		   final SQLConnection conn = _session.getSQLConnection();
-		   final SQLDatabaseMetaData md = conn.getSQLMetaData();
-//		   final ITableInfo[] tables = md.getTables(null, null, "%", null);
-		   final ITableInfo[] tables = md.getAllTables();
+	public TableInfo getTableName(String tableNameFromSQL)
+	{
+		final List childNodes = new ArrayList();
+		TableInfo table = null;
+		int count = 0;
+		try
+		{
+			final SQLConnection conn = _session.getSQLConnection();
+			final SQLDatabaseMetaData md = conn.getSQLMetaData();
+//			final ITableInfo[] tables = md.getTables(null, null, "%", null);
+			final ITableInfo[] tables = md.getAllTables();
 
 			// filter the list of all DB objects looking for things with the given name
 			for (int i = 0; i < tables.length; ++i)
@@ -1385,30 +1424,14 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 		catch (Exception e) {
 			count = 0;
 		}
-		finally
-		{
-			if (stmt != null)
-			{
-				try
-				{
-					stmt.close();
-				}
-				catch (SQLException ex)
-				{
-					s_log.error("Error closing Statement", ex);
-				}
-			}
-		}
- 
+
 		// if there are no objects with that name, we cannot edit.
 		// if there are multiple objects with that name, we cannot edit
 		//  because we do not know which object to work on.
 		if (count != 1)
 			return null;
- 			
+
 		// we have the one and only table
 		return table;
-   }
-
-
+	}
 }

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,40 +17,41 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.*;
-import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
-
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.IOException;
-
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
-import javax.swing.text.JTextComponent;
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
-
+import java.io.StringReader;
+import java.sql.Clob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Clob;
-import java.io.StringReader;
+
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.text.JTextComponent;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-
-import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
-import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
-import net.sourceforge.squirrel_sql.fw.gui.ReadTypeCombo;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
-
+import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
+import net.sourceforge.squirrel_sql.fw.gui.ReadTypeCombo;
+import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
 /**
  * @author gwg
  *
@@ -62,10 +63,10 @@ import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
  * <LI> editing within a table cell
  * <LI> read-only or editing display within a separate window
  * </UL>
- * The class also contains 
+ * The class also contains
  * <UL>
  * <LI> a function to compare two display values
- * to see if they are equal.  This is needed because the display format
+ * to see if they are equal. This is needed because the display format
  * may not be the same as the internal format, and all internal object
  * types may not provide an appropriate equals() function.
  * <LI> a function to return a printable text form of the cell contents,
@@ -74,10 +75,9 @@ import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
  * <P>
  * The components returned from this class extend RestorableJTextField
  * and RestorableJTextArea for use in editing table cells that
- * contain values of this data type.  It provides the special behavior for null
+ * contain values of this data type. It provides the special behavior for null
  * handling and resetting the cell to the original value.
  */
-
 public class DataTypeClob
 	implements IDataTypeComponent
 {
@@ -89,10 +89,10 @@ public class DataTypeClob
 
 	/* table of which we are part (needed for creating popup dialog) */
 	private JTable _table;
-	
+
 	/* The JTextComponent that is being used for editing */
 	private IRestorableTextComponent _textComponent;
-	
+
 	/* The CellRenderer used for this data type */
 	//??? For now, use the same renderer as everyone else.
 	//??
@@ -111,15 +111,15 @@ public class DataTypeClob
 
 	/** Default length of CLOB to read */
 	private static int LARGE_COLUMN_DEFAULT_READ_LENGTH = 255;
-	
+
 	/*
 	 * Properties settable by the user
 	 */
 	// flag for whether we have already loaded the properties or not
 	private static boolean propertiesAlreadyLoaded = false;
-	  
+
 	/** Read the contents of Clobs from Result sets when first loading the tables. */
-	private static  boolean _readClobs = false;
+	private static boolean _readClobs = false;
 
 	/**
 	 * If <TT>_readClobs</TT> is <TT>true</TT> this specifies if the complete
@@ -132,7 +132,7 @@ public class DataTypeClob
 	 * is <tt>false</TT> then this specifies the number of characters to read.
 	 */
 	private static int _readClobsSize = LARGE_COLUMN_DEFAULT_READ_LENGTH;
-	
+
 	/**
 	 * If <tt>true</tt> then show newlines as "\n" for the in-cell display,
 	 * otherwise do not display newlines in the in-cell display
@@ -148,22 +148,22 @@ public class DataTypeClob
 		_table = table;
 		_colDef = colDef;
 		_isNullable = colDef.isNullable();
-		
+
 		loadProperties();
 	}
-	
-	
+
+
 	/** Internal function to get the user-settable properties from the DTProperties,
 	 * if they exist, and to ensure that defaults are set if the properties have
 	 * not yet been created.
 	 * <P>
 	 * This method may be called from different places depending on whether
 	 * an instance of this class is created before the user brings up the Session
-	 * Properties window.  In either case, the data is static and is set only
+	 * Properties window. In either case, the data is static and is set only
 	 * the first time we are called.
 	 */
 	private static void loadProperties() {
-		
+
 		if (propertiesAlreadyLoaded == false) {
 			// get parameters previously set by user, or set default values
 			_readClobs = false;	// set to the default
@@ -175,7 +175,7 @@ public class DataTypeClob
 			String readCompleteClobsString = DTProperties.get(thisClassName, "readCompleteClobs");
 			if (readCompleteClobsString != null && readCompleteClobsString.equals("true"))
 				_readClobs = true;
-		
+
 			_readClobsSize = LARGE_COLUMN_DEFAULT_READ_LENGTH;	// set to default
 			String readClobsSizeString = DTProperties.get(thisClassName, "readClobsSize");
 			if (readClobsSizeString != null)
@@ -185,11 +185,11 @@ public class DataTypeClob
 			String makeNewlinesVisibleString = DTProperties.get(thisClassName, "makeNewlinesVisibleInCell");
 			if (makeNewlinesVisibleString != null && makeNewlinesVisibleString.equals("false"))
 				_makeNewlinesVisibleInCell = false;
-			
+
 			propertiesAlreadyLoaded = true;
 		}
 	}
-	
+
 	/**
 	 * Return the name of the java class used to hold this data type.
 	 */
@@ -204,7 +204,7 @@ public class DataTypeClob
 	public boolean areEqual(Object obj1, Object obj2) {
 		if (obj1 == obj2)
 			return true;
-		
+
 		// if both objs are null, then they matched in the previous test,
 		// so at this point we know that at least one of them (or both) is not null.
 		// However, one of them may still be null, and we cannot call equals() on
@@ -219,7 +219,7 @@ public class DataTypeClob
 	/*
 	 * First we have the methods for in-cell and Text-table operations
 	 */
-	 
+
 	/**
 	 * Render a value into text for this DataType.
 	 */
@@ -242,10 +242,10 @@ public class DataTypeClob
 			 	index++;
 			 }
 			 text = buf.toString();
-		}	 
+		}
 		return text;
 	}
-	
+
 	/**
 	 * This Data Type can be edited in a table cell.
 	 * This function is not called during the initial table load, or during
@@ -263,13 +263,13 @@ public class DataTypeClob
 	 * in the cell because the CellEditor uses a JTextField which filters out newlines.
 	 * If we try to use anything other than a JTextField, or use a JTextField with no
 	 * newline filtering, the text is not visible in the cell, so the user cannot even read
-	 * the text, much less edit it.  The simplest solution is to allow editing of multi-line
+	 * the text, much less edit it. The simplest solution is to allow editing of multi-line
 	 * text only in the Popup window.
 	 */
 	public boolean isEditableInCell(Object originalValue) {
 		// for convenience, cast the value object to its type
 		ClobDescriptor cdesc = (ClobDescriptor)originalValue;
-		
+
 		if (wholeClobRead(cdesc)) {
 			// all the data from the clob has been read.
 			// make sure there are no newlines in it
@@ -277,7 +277,7 @@ public class DataTypeClob
 					return false;
 				else return true;
 		}
-		
+
 		// since we do not have all of the data from the clob, we cannot allow editing
 		return false;
 	}
@@ -292,26 +292,26 @@ public class DataTypeClob
 	public boolean needToReRead(Object originalValue) {
 		// CLOBs are different from normal data types in that what is actually
 		// read from the DB is a descriptor pointing to the data rather than the
-		// data itself.  During the initial load of the table, the values read from the
+		// data itself. During the initial load of the table, the values read from the
 		// descriptor may have been limited, but the descriptor itself has been
-		// completely read,  Therefore we do not need to re-read the datum
+		// completely read, Therefore we do not need to re-read the datum
 		// from the Database because we know that we have the entire
-		// descriptor.  If the contents of the CLOB have been limited during
+		// descriptor. If the contents of the CLOB have been limited during
 		// the initial table load, that will be discovered when we check if
 		// the cell is editable and the full data will be read at that time using
 		// this descriptor.
 		return false;
 	}
-	
+
 	/**
 	 * Return a JTextField usable in a CellEditor.
 	 */
 	public JTextField getJTextField() {
 		_textComponent = new RestorableJTextField();
-		
+
 		// special handling of operations while editing this data type
 		((RestorableJTextField)_textComponent).addKeyListener(new KeyTextHandler());
-				
+
 		//
 		// handle mouse events for double-click creation of popup dialog.
 		// This happens only in the JTextField, not the JTextArea, so we can
@@ -348,7 +348,7 @@ public class DataTypeClob
 		// handle null, which is shown as the special string "<null>"
 		if (value.equals("<null>"))
 			return null;
-			
+
 		// Do the conversion into the object in a safe manner
 
 		// if the original object is not null, then it contains a Clob object
@@ -363,10 +363,10 @@ public class DataTypeClob
 		else {
 			// for convenience, cast the existing object
 			cdesc = (ClobDescriptor)originalValue;
-			
+
 			// create new object to hold the different value, but use the same internal CLOB pointer
 			// as the original
-			cdesc = new ClobDescriptor(cdesc.getClob(),value, 
+			cdesc = new ClobDescriptor(cdesc.getClob(),value,
 				true, true, 0);
 		}
 		return cdesc;
@@ -389,12 +389,12 @@ public class DataTypeClob
 	public boolean useBinaryEditingPanel() {
 		return false;
 	}
-	 
+
 
 	/*
 	 * Now the functions for the Popup-related operations.
 	 */
-	
+
 	/**
 	 * Returns true if data type may be edited in the popup,
 	 * false if not.
@@ -411,17 +411,17 @@ public class DataTypeClob
 	 */
 	 public JTextArea getJTextArea(Object value) {
 		_textComponent = new RestorableJTextArea();
-			
+
 		// value is a simple string representation of the data,
 		// but NOT the same one used in the Text and in-cell operations.
 		// The in-cell version may replace newline chars with "\n" while this version
 		// does not.  In other respects it is the same as the in-cell version because both
 		// use the _renderer object to do the rendering.
 		((RestorableJTextArea)_textComponent).setText((String)_renderer.renderObject(value));
-		
+
 		// special handling of operations while editing this data type
 		((RestorableJTextArea)_textComponent).addKeyListener(new KeyTextHandler());
-		
+
 		return (RestorableJTextArea)_textComponent;
 	 }
 
@@ -434,8 +434,8 @@ public class DataTypeClob
 
 	/*
 	 * The following is used in both cell and popup operations.
-	 */	
-	
+	 */
+
 	/*
 	 * Internal class for handling key events during editing
 	 * of both JTextField and JTextArea.
@@ -443,7 +443,7 @@ public class DataTypeClob
 	 private class KeyTextHandler extends KeyAdapter {
 	 	public void keyTyped(KeyEvent e) {
 				char c = e.getKeyChar();
-				
+
 				// as a coding convenience, create a reference to the text component
 				// that is typecast to JTextComponent.  this is not essential, as we
 				// could typecast every reference, but this makes the code cleaner
@@ -507,20 +507,20 @@ public class DataTypeClob
 	private boolean wholeClobRead(ClobDescriptor cdesc) {
 		if (cdesc == null)
 			return true;	// can use an empty clob for editing
-			
+
 		if (cdesc.getWholeClobRead())
 			return true;	// the whole clob has been previously read in
 
 		// data was not fully read in before, so try to do that now
 		try {
 			String data = cdesc.getClob().getSubString(1, (int)cdesc.getClob().length());
-			
+
 			// read succeeded, so reset the ClobDescriptor to match
 			cdesc.setClobRead(true);
 			cdesc.setData(data);
 			cdesc.setWholeClobRead(true);
 			cdesc.setUserSetClobLimit(0);
-			
+
 			// we successfully read the whole thing
 			 return true;
 		}
@@ -531,20 +531,20 @@ public class DataTypeClob
 			//?? What to do with this error?
 			//?? error message = "Could not read the complete data. Error was: "+ex.getMessage());
 			return false;
-		}	
+		}
 	}
 
 	/*
 	 * DataBase-related functions
 	 */
-	 
+
 	 /**
 	  * On input from the DB, read the data from the ResultSet into the appropriate
 	  * type of object to be stored in the table cell.
 	  */
 	public Object readResultSet(ResultSet rs, int index, boolean limitDataRead)
 		throws java.sql.SQLException {
-		
+
 		// We always get the CLOB, even when we are not reading the contents.
 		// Since the CLOB is just a pointer to the CLOB data rather than the
 		// data itself, this operation should not take much time (as opposed
@@ -553,7 +553,7 @@ public class DataTypeClob
 
 		if (rs.wasNull())
 			return null;
-		
+
 		// CLOB exists, so try to read the data from it
 		// based on the user's directions
 		if (_readClobs)
@@ -577,13 +577,15 @@ public class DataTypeClob
 					clobData = clob.getSubString(1, charsToRead);
 				}
 			}
-			
+
 			// determine whether we read all there was in the clob or not
 			boolean wholeClobRead = false;
-			if (_readCompleteClobs ||
+			if (_readCompleteClobs || clobData == null ||
 				clobData.length() < _readClobsSize)
+			{
 				wholeClobRead = true;
-				
+			}
+
 			return new ClobDescriptor(clob, clobData, true, wholeClobRead,
 				_readClobsSize);
 		}
@@ -614,8 +616,7 @@ public class DataTypeClob
 		else
 			return "";	// CLOB cannot be used in WHERE clause
 	}
-	
-	
+
 	/**
 	 * When updating the database, insert the appropriate datatype into the
 	 * prepared statment at the given variable position.
@@ -628,17 +629,17 @@ public class DataTypeClob
 		else {
 			// for convenience cast the object to ClobDescriptor
 			ClobDescriptor cdesc = (ClobDescriptor)value;
-			
+
 			// There are a couple of possible ways to update the data in the DB.
 			// The first is to use setString like this:
 			//		cdesc.getClob().setString(0, cdesc.getData());
 			// However, the DB2 driver throws an exception saying that that function
-			// is not implemented, so we have to use the other method, which is to use a stream.		
+			// is not implemented, so we have to use the other method, which is to use a stream.
 			pstmt.setCharacterStream(position, new StringReader(cdesc.getData()),
 				cdesc.getData().length());
 		}
 	}
-	
+
 	/**
 	 * Get a default value for the table used to input data for a new row
 	 * to be inserted into the DB.
@@ -648,28 +649,28 @@ public class DataTypeClob
 			// try to use the DB default value
 			StringBuffer mbuf = new StringBuffer();
 			Object newObject = validateAndConvert(dbDefaultValue, null, mbuf);
-			
+
 			// if there was a problem with converting, then just fall through
 			// and continue as if there was no default given in the DB.
 			// Otherwise, use the converted object
 			if (mbuf.length() == 0)
 				return newObject;
 		}
-		
+
 		// no default in DB.  If nullable, use null.
 		if (_isNullable)
 			return null;
-		
+
 		// field is not nullable, so create a reasonable default value
 		return null;
 	}
-	
-	
+
+
 	/*
 	 * File IO related functions
 	 */
-	 
-	 
+
+
 	 /**
 	  * Say whether or not object can be exported to and imported from
 	  * a file.  We put both export and import together in one test
@@ -678,7 +679,7 @@ public class DataTypeClob
 	 public boolean canDoFileIO() {
 	 	return true;
 	 }
-	 
+
 	 /**
 	  * Read a file and construct a valid object from its contents.
 	  * Errors are returned by throwing an IOException containing the
@@ -689,28 +690,28 @@ public class DataTypeClob
 	  * a text string that can be used in the Popup window text area.
 	  * This object-to-text conversion is the same as is done by
 	  * the DataType object internally in the getJTextArea() method.
-	  * 
+	  *
 	  * <P>
 	  * File is assumed to be and ASCII string of digits
 	  * representing a value of this data type.
 	  */
 	public String importObject(FileInputStream inStream)
 	 	throws IOException {
-	 	
+
 	 	InputStreamReader inReader = new InputStreamReader(inStream);
-	 	
+
 	 	int fileSize = inStream.available();
-	 	
+
 	 	char charBuf[] = new char[fileSize];
-	 	
+
 	 	int count = inReader.read(charBuf, 0, fileSize);
-	 	
+
 	 	if (count != fileSize)
 	 		throw new IOException(
 	 			"Could read only "+ count +
 	 			" chars from a total file size of " + fileSize +
 	 			". Import failed.");
-	 	
+
 	 	// convert file text into a string
 	 	// Special case: some systems tack a newline at the end of
 	 	// the text read.  Assume that if last char is a newline that
@@ -719,7 +720,7 @@ public class DataTypeClob
 	 	if (charBuf[count-1] == KeyEvent.VK_ENTER)
 	 		fileText = new String(charBuf, 0, count-1);
 	 	else fileText = new String(charBuf);
-	 	
+
 	 	// test that the string is valid by converting it into an
 	 	// object of this data type
 	 	StringBuffer messageBuffer = new StringBuffer();
@@ -730,13 +731,13 @@ public class DataTypeClob
 	 			"Text does not represent data of type "+getClassName()+
 	 			".  Text was:\n"+fileText);
 	 	}
-	 	
+
 	 	// return the text from the file since it does
 	 	// represent a valid data value
 	 	return fileText;
 	}
 
-	 	 
+
 	 /**
 	  * Construct an appropriate external representation of the object
 	  * and write it to a file.
@@ -751,16 +752,16 @@ public class DataTypeClob
 	  * The DataType object must flush and close the output stream before returning.
 	  * Typically it will create another object (e.g. an OutputWriter), and
 	  * that is the object that must be flushed and closed.
-	  * 
+	  *
 	  * <P>
 	  * File is assumed to be and ASCII string of digits
 	  * representing a value of this data type.
 	  */
 	 public void exportObject(FileOutputStream outStream, String text)
 	 	throws IOException {
-	 	
+
 	 	OutputStreamWriter outWriter = new OutputStreamWriter(outStream);
-	 	
+
 	 	// check that the text is a valid representation
 	 	StringBuffer messageBuffer = new StringBuffer();
 	 	validateAndConvertInPopup(text, null, messageBuffer);
@@ -768,7 +769,7 @@ public class DataTypeClob
 	 		// there was an error in the conversion
 	 		throw new IOException(new String(messageBuffer));
 	 	}
-	 	
+
 	 	// just send the text to the output file
 		outWriter.write(text);
 		outWriter.flush();
@@ -778,12 +779,12 @@ public class DataTypeClob
 
 	/*
 	 * Property change control panel
-	 */	  
-	 
+	 */
+
 	 /**
 	  * Generate a JPanel containing controls that allow the user
 	  * to adjust the properties for this DataType.
-	  * All properties are static accross all instances of this DataType. 
+	  * All properties are static accross all instances of this DataType.
 	  * However, the class may choose to apply the information differentially,
 	  * such as keeping a list (also entered by the user) of table/column names
 	  * for which certain properties should be used.
@@ -797,7 +798,7 @@ public class DataTypeClob
 	  * but the Interface does not seem to like static methods.
 	  */
 	 public static OkJPanel getControlPanel() {
-	 	
+
 		/*
 		 * If you add this method to one of the standard DataTypes in the
 		 * fw/datasetviewer/cellcomponent directory, you must also add the name
@@ -809,16 +810,16 @@ public class DataTypeClob
 		 * factory method getDataTypeObject, then it does need to be explicitly listed
 		 * in the getControlPanels method also.
 		 */
-		 
+
 		 // if this panel is called before any instances of the class have been
 		 // created, we need to load the properties from the DTProperties.
 		 loadProperties();
-		 
+
 		return new ClobOkJPanel();
 	 }
-	 
-	 
-	 
+
+
+
 	 /**
 	  * Inner class that extends OkJPanel so that we can call the ok()
 	  * method to save the data when the user is happy with it.
@@ -830,52 +831,52 @@ public class DataTypeClob
 		 */
 		// check box for whether to read contents during table load or not
 		private JCheckBox _showClobChk = new JCheckBox("Read contents when table is first loaded;");
-		
+
 		// label for type combo - used to enable/disable text associated with the combo
 		private RightLabel _typeDropLabel = new RightLabel("Read");
-		
+
 		// Combo box for read-all/read-part of blob
 		private ReadTypeCombo _clobTypeDrop = new ReadTypeCombo();
 
 		// text field for how many bytes of Blob to read
 		private IntegerField _showClobSizeField = new IntegerField(5);
-		
+
 		// check box for whether to show newlines as "\n" for in-cell display
 		private JCheckBox _makeNewlinesVisibleInCellChk =
 			new JCheckBox("Show newlines as \\n within cells");
-	   
+
 
 		public ClobOkJPanel() {
-		 	 
+
 			/* set up the controls */
 			// checkbox for read/not-read on table load
 			_showClobChk.setSelected(_readClobs);
 			_showClobChk.addChangeListener(new ChangeListener(){
-				public void stateChanged(ChangeEvent e) {		
+				public void stateChanged(ChangeEvent e) {
 					_clobTypeDrop.setEnabled(_showClobChk.isSelected());
 					_typeDropLabel.setEnabled(_showClobChk.isSelected());
 					_showClobSizeField.setEnabled(_showClobChk.isSelected() &&
-					 (_clobTypeDrop.getSelectedIndex()== 0));	
+					 (_clobTypeDrop.getSelectedIndex()== 0));
 				}
 			});
-		
+
 			// Combo box for read-all/read-part of blob
 			_clobTypeDrop = new ReadTypeCombo();
 			_clobTypeDrop.setSelectedIndex( (_readCompleteClobs) ? 1 : 0 );
 			_clobTypeDrop.addActionListener(new ActionListener(){
-				public void actionPerformed(ActionEvent e) {		
-					_showClobSizeField.setEnabled(_clobTypeDrop.getSelectedIndex()== 0);	
+				public void actionPerformed(ActionEvent e) {
+					_showClobSizeField.setEnabled(_clobTypeDrop.getSelectedIndex()== 0);
 				}
 			});
 
 			// field for size of text to read
-			_showClobSizeField = new IntegerField(5);	
+			_showClobSizeField = new IntegerField(5);
 			_showClobSizeField.setInt(_readClobsSize);
-			
+
 			// checkbox for displaying newlines as \n in-cell
 			_makeNewlinesVisibleInCellChk.setSelected(_makeNewlinesVisibleInCell);
 
-	 	 
+
 			// handle cross-connection between fields
 			_clobTypeDrop.setEnabled(_readClobs);
 			_typeDropLabel.setEnabled(_readClobs);
@@ -884,9 +885,9 @@ public class DataTypeClob
 			/*
 			 * Create the panel and add the GUI items to it
 			  */
-	 	  
+
 			setLayout(new GridBagLayout());
-	 	
+
 			setBorder(BorderFactory.createTitledBorder("CLOB   (SQL type 2005)"));
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -907,15 +908,15 @@ public class DataTypeClob
 
 			++gbc.gridx;
 			add(_showClobSizeField, gbc);
-			
+
 			++gbc.gridy;
 			gbc.gridx = 0;
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			add(_makeNewlinesVisibleInCellChk, gbc);
 
 		} // end of constructor for inner class
-	 
-	 
+
+
 		/**
 		  * User has clicked OK in the surrounding JPanel,
 		 * so save the current state of all variables
@@ -926,12 +927,12 @@ public class DataTypeClob
 			DTProperties.put(
 				thisClassName,
 				"readClobs", new Boolean(_readClobs).toString());
-			
+
 			_readCompleteClobs = (_clobTypeDrop.getSelectedIndex() == 0) ? false : true;
 			DTProperties.put(
 				thisClassName,
-				"readCompleteClobs", new Boolean(_readCompleteClobs).toString());	
-		
+				"readCompleteClobs", new Boolean(_readCompleteClobs).toString());
+
 			_readClobsSize = _showClobSizeField.getInt();
 			DTProperties.put(
 				thisClassName,
@@ -942,6 +943,6 @@ public class DataTypeClob
 				thisClassName,
 				"makeNewlinesVisibleInCell", new Boolean(_makeNewlinesVisibleInCell).toString());
 		}
-	 
+
 	 } // end of inner class
 }
