@@ -65,6 +65,8 @@
 		<echo message="	jar_source: Jars the source for the framework and application to:"/>
 		<echo message="					 ${core_dist_dir}/src}"/>
 		<echo message=""/>
+		<echo message=" javadoc: Compiles the javadoc from the app/ and fw/ sources."/>
+		<echo message=""/>
 		<echo message="	make_dist:  Executes jar_source."/>
 		<echo message="				Eventually this should run an Ant Task to generate the IzPack JAR."/>
 		<echo message=""/>
@@ -195,6 +197,25 @@
 		<echo message="Unzip your plugins here" 
 			file="${core_dist_dir}/plugins/readme.txt">
 		</echo>
+	</target>
+
+	<!--
+	==================================================================
+	Build the JavaDoc
+	No parameters
+	==================================================================
+	-->
+	<target name="javadoc">
+		<mkdir dir="${basedir}/../javadoc"/>
+		<javadoc	packagenames="net.sourceforge.squirrel_sql.*"
+					sourcepath="${basedir}/app/src;${basedir}/fw/src"
+					destdir="${basedir}/../javadoc">
+			<classpath>
+				<fileset dir="fw/lib">
+					<include name="**/*.*"/>
+				</fileset>
+			</classpath>
+		</javadoc>
 	</target>
 
 	<!--
