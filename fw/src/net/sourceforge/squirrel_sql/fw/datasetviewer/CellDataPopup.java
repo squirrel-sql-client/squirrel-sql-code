@@ -197,7 +197,9 @@ public class CellDataPopup
 		{
 			super(new BorderLayout());
 
-			if (tableIsEditable && CellComponentFactory.isEditableInPopup(colDef)) {
+			if (tableIsEditable &&
+				CellComponentFactory.isEditableInPopup(colDef, cellContents)) {
+					
 				// data is editable in popup
 				ioPanel = new PopupEditableIOPanel(colDef, cellContents, true);
 				
