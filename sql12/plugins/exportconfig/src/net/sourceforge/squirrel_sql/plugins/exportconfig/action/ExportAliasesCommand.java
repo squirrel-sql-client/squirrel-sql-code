@@ -21,11 +21,11 @@ import java.awt.Frame;
 import java.io.File;
 import java.io.IOException;
 
+import net.sourceforge.squirrel_sql.fw.sql.DataCache;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 
-import net.sourceforge.squirrel_sql.client.db.DataCache;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 
 import net.sourceforge.squirrel_sql.plugins.exportconfig.ExportConfigPlugin;
@@ -92,5 +92,4 @@ class ExportAliasesCommand extends AbstractSaveCommand
 	{
 		return "Database Aliases";
 	}
-
 }
