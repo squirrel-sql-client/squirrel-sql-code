@@ -240,7 +240,6 @@ public class CreateTableScriptCommand implements ICommand
    {
       StringBuffer sbToAppend = new StringBuffer();
       DatabaseMetaData metaData = _session.getSQLConnection().getConnection().getMetaData();
-      ResultSet indexInfo = metaData.getIndexInfo(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName(), false, false);
       ResultSet primaryKeys = metaData.getPrimaryKeys(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName());
 
       Vector pkCols = new Vector();
@@ -254,6 +253,8 @@ public class CreateTableScriptCommand implements ICommand
 
       Hashtable buf = new Hashtable();
 
+      ResultSet indexInfo = metaData.getIndexInfo(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName(), false, false);
+      
       boolean unique = false;
       while(indexInfo.next())
       {
