@@ -43,14 +43,13 @@ public class LargeResultSetObjectInfo implements Cloneable, Serializable
 	/** Object to handle property change events. */
 	private PropertyChangeReporter _propChgReporter = new PropertyChangeReporter(this);
 
-	/** Read binary from Result sets. */
-	private boolean _readBinary = false;
-
-	/** Read varbinary from Result sets. */
-	private boolean _readVarBinary = false;
-
-	/** Read longvarbinary from Result sets. */
-	private boolean _readLongVarBinary = false;
+	/*
+	 * Note: we used to have properties for read/do-not-read BINARY, VARBINARY and
+	 * LONGVARBINARY here.  However,tests on several DBMSs showed that the data for
+	 * those fields is always read from the DBMS whether we display it as a string or
+	 * just show "<BINARY>" in the cell.  Since there was no time savings seen by
+	 * not displaying the contents as a string, the option of displaying only the
+	 * type of data (without showing the actual data) was removed.
 
 	/** Read blobs from Result sets. */
 	private boolean _readBlobs = false;
@@ -107,54 +106,6 @@ public class LargeResultSetObjectInfo implements Cloneable, Serializable
 		catch (CloneNotSupportedException ex)
 		{
 			throw new InternalError(ex.getMessage());   // Impossible.
-		}
-	}
-
-	public boolean getReadBinary()
-	{
-		return _readBinary;
-	}
-
-	public void setReadBinary(boolean value)
-	{
-		if (_readBinary != value)
-		{
-			final boolean oldValue = _readBinary;
-			_readBinary = value;
-			_propChgReporter.firePropertyChange(IPropertyNames.READ_BINARY,
-												oldValue, _readBinary);
-		}
-	}
-
-	public boolean getReadVarBinary()
-	{
-		return _readVarBinary;
-	}
-
-	public void setReadVarBinary(boolean value)
-	{
-		if (_readVarBinary != value)
-		{
-			final boolean oldValue = _readVarBinary;
-			_readVarBinary = value;
-			_propChgReporter.firePropertyChange(IPropertyNames.READ_VARBINARY,
-												oldValue, _readVarBinary);
-		}
-	}
-
-	public boolean getReadLongVarBinary()
-	{
-		return _readLongVarBinary;
-	}
-
-	public void setReadLongVarBinary(boolean value)
-	{
-		if (_readLongVarBinary != value)
-		{
-			final boolean oldValue = _readLongVarBinary;
-			_readLongVarBinary = value;
-			_propChgReporter.firePropertyChange(IPropertyNames.READ_LONGVARBINARY,
-												oldValue, _readLongVarBinary);
 		}
 	}
 
