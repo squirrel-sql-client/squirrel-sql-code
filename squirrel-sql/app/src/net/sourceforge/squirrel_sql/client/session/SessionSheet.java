@@ -383,7 +383,6 @@ public class SessionSheet extends JInternalFrame {
 				}
 			}
 		});
-
 		validate();
 	}
 
