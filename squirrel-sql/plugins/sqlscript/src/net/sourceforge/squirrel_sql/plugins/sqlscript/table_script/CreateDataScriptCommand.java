@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.awt.BorderLayout;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -145,6 +146,14 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
 	{
 		ResultSetMetaData metaData = srcResult.getMetaData();
 
+		int iColumnCount = metaData.getColumnCount();
+		String[][] typeAndName = new String[iColumnCount][2];
+		
+		for (int i = 1; i <= iColumnCount; i++)
+		{
+			typeAndName[i-1][0] = metaData.getColumnTypeName(i).toUpperCase();
+			typeAndName[i-1][1] = metaData.getColumnName(i);
+		}
 		while (srcResult.next())
 		{
 			if(_bStop) break;
@@ -153,42 +162,47 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
 			sbRows.append(sTable);
 			sbRows.append(" (");
 			sbValues.append(" values (");
-			for (int i = 1; i < metaData.getColumnCount() + 1; i++)
+			for (int i = 0; i < iColumnCount; i++)
 			{
-				if (i > 1)
-				{
-					sbValues.append(",");
-					sbRows.append(",");
-				}
-				String sColumnTypeName = metaData.getColumnTypeName(i);
-				String sName = metaData.getColumnName(i);
+				String sColumnTypeName = typeAndName[i][0];
+				String sName = typeAndName[i][1];
 				int iIndexPoint = sName.lastIndexOf('.');
 				sName = sName.substring(iIndexPoint + 1);
 				sbRows.append(sName);
 
-				if (sColumnTypeName.equalsIgnoreCase("INTEGER")
-					|| sColumnTypeName.equalsIgnoreCase("COUNTER")
-					|| sColumnTypeName.equalsIgnoreCase("LONG")
-					|| sColumnTypeName.equalsIgnoreCase("DOUBLE")
-					|| sColumnTypeName.equalsIgnoreCase("NUMERIC")
-					|| sColumnTypeName.equalsIgnoreCase("DECIMAL")
-					|| sColumnTypeName.equalsIgnoreCase("NUMBER")
-					|| sColumnTypeName.equalsIgnoreCase("TINY")
-					|| sColumnTypeName.equalsIgnoreCase("SHORT")
-					|| sColumnTypeName.equalsIgnoreCase("FLOAT"))
+				if (sColumnTypeName.equals("INTEGER")
+					|| sColumnTypeName.equals("COUNTER")
+					|| sColumnTypeName.equals("LONG")
+					|| sColumnTypeName.equals("DOUBLE")
+					|| sColumnTypeName.equals("NUMERIC")
+					|| sColumnTypeName.equals("DECIMAL")
+					|| sColumnTypeName.equals("NUMBER")
+					|| sColumnTypeName.equals("TINY")
+					|| sColumnTypeName.equals("SHORT")
+					|| sColumnTypeName.equals("FLOAT"))
 				{
-					Object value = srcResult.getObject(i);
+					Object value = srcResult.getObject(i+1);
 					sbValues.append(value);
 				}
-				else if (sColumnTypeName.equalsIgnoreCase("DATE"))
+				else if (sColumnTypeName.equals("DATE")
+					|| sColumnTypeName.equals("TIME")
+					|| sColumnTypeName.equals("TIMESTAMP"))
 				{
-					sbValues.append("\'");
-					sbValues.append(srcResult.getDate(i));
-					sbValues.append("\'");
+					Date date = srcResult.getDate(i+1);
+					if(date == null)
+					{
+						sbValues.append("null");
+					}
+					else
+					{
+						sbValues.append("\'");
+						sbValues.append(date);
+						sbValues.append("\'");
+					}
 				}
-				else if (sColumnTypeName.equalsIgnoreCase("BIT"))
+				else if (sColumnTypeName.equals("BIT"))
 				{
-					boolean iBoolean = srcResult.getBoolean(i);
+					boolean iBoolean = srcResult.getBoolean(i+1);
 					if (iBoolean)
 					{
 						sbValues.append(1);
@@ -200,7 +214,7 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
 				}
 				else
 				{
-					String sResult = srcResult.getString(i);
+					String sResult = srcResult.getString(i+1);
 					if (sResult == null)
 					{
 						sbValues.append("null");
@@ -226,12 +240,39 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
 							sb.append(sResult.substring(iPrev));
 							sResult = sb.toString();
 						}
+						
+						iIndex = sResult.indexOf('\n');
+						if (iIndex != -1)
+						{
+							int iPrev = 0;
+							StringBuffer sb = new StringBuffer();
+							sb.append(sResult.substring(iPrev, iIndex));
+							sb.append("\\n");
+							iPrev = iIndex+1;
+							iIndex = sResult.indexOf('\n', iPrev + 1);
+							while (iIndex != -1)
+							{
+								sb.append(sResult.substring(iPrev, iIndex));
+								sb.append("\\n");
+								iPrev = iIndex+1;
+								iIndex = sResult.indexOf('\n', iPrev + 1);
+							}
+							sb.append(sResult.substring(iPrev));
+							sResult = sb.toString();
+						}
 						sbValues.append("\'");
 						sbValues.append(sResult);
 						sbValues.append("\'");
 					}
 				}
+				sbValues.append(",");
+				sbRows.append(",");
 			}
+			// delete last ','
+			sbValues.setLength(sbValues.length()-1);
+			sbRows.setLength(sbRows.length()-1);
+			
+			// close it.
 			sbValues.append(");\n");
 			sbRows.append(")");
 			sbRows.append(sbValues.toString());
