@@ -34,12 +34,13 @@ import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
-import net.sourceforge.squirrel_sql.fw.gui.IGUIExecutionTask;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.fw.util.*;
 
-public class SQLExecuterTask implements IGUIExecutionTask {
+
+public class SQLExecuterTask implements Runnable {
 	private SQLPanel _sqlPanel;
 	private ISession _session;
 	private String _sql;
@@ -54,7 +55,7 @@ public class SQLExecuterTask implements IGUIExecutionTask {
 		_sql = sql;
 	}
 
-	public void execute() {
+	public void run() {
 		try {
 			_sqlPanel.setCancelPanel(_cancelPanel);
 			boolean bCancelPanelRemoved = false;
@@ -107,9 +108,8 @@ public class SQLExecuterTask implements IGUIExecutionTask {
 				showMessage(
 					_session,
 					"Elapsed time for query(milliseconds) : " + (finish - start));
-					
 				//  i18n
-			} catch (SQLException ex) {
+			} catch (Throwable ex) {
 				showMessage(_session, ex);
 			} finally {
 				if (_bStopExecution || !bCancelPanelRemoved) {
@@ -122,7 +122,7 @@ public class SQLExecuterTask implements IGUIExecutionTask {
 					_stmt = null;
 				}
 			}
-		} catch (Exception ex) {
+		} catch (Throwable ex) {
 			showMessage(_session, ex);
 		}
 	}
@@ -140,8 +140,6 @@ public class SQLExecuterTask implements IGUIExecutionTask {
 			try {
 				if (_stmt != null) {
 					_stmt.cancel();
-					// Maybe just close it??
-					// _stmt.close();
 				}
 			} catch (Throwable th) {
 				th.printStackTrace();
@@ -149,10 +147,10 @@ public class SQLExecuterTask implements IGUIExecutionTask {
 		}
 	}
 
-	private void showMessage(final ISession session, final Exception ex) {
+	private void showMessage(final ISession session, final Throwable th) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				session.getMessageHandler().showMessage(ex);
+				session.getMessageHandler().showMessage(th);
 			}
 		});
 	}
@@ -160,7 +158,6 @@ public class SQLExecuterTask implements IGUIExecutionTask {
 	private void showMessage(final ISession session, final String sMessage) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-
 				session.getMessageHandler().showMessage(sMessage);
 			}
 		});
