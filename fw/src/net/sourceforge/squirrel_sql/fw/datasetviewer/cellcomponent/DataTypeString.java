@@ -36,7 +36,7 @@ import java.sql.ResultSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
+
 
 /**
  * @author gwg
@@ -346,8 +346,7 @@ public class DataTypeString
 	  * On input from the DB, read the data from the ResultSet into the appropriate
 	  * type of object to be stored in the table cell.
 	  */
-	public Object readResultSet(ResultSet rs, int index,
-		LargeResultSetObjectInfo largeObjInfo)
+	public Object readResultSet(ResultSet rs, int index)
 		throws java.sql.SQLException {
 		
 		String data = rs.getString(index);
