@@ -176,8 +176,6 @@
 				<include name="**/*.*"/>
 			</fileset>
 		</copy>
-		<fixcrlf srcdir="." includes="*.bat" eol="crlf"/>
-		<fixcrlf srcdir="." includes="*.sh" eol="lf"/>
 
 		<copy todir="${core_dist_doc_dir}" >
 			<fileset dir="doc" >
