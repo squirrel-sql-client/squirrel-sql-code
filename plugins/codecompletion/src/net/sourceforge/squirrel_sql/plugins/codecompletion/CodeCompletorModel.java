@@ -18,17 +18,16 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
-import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsListener;
 import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsAdapter;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
-import net.sourceforge.squirrel_sql.plugins.codecompletion.CodeCompletionInfo;
-import net.sourceforge.squirrel_sql.plugins.codecompletion.CodeCompletionInfoCollection;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import java.util.*;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 public class CodeCompletorModel
 {
@@ -153,7 +152,7 @@ public class CodeCompletorModel
 			{
 				try
 				{
-					return infos[i].getColumns(_session.getSQLConnection().getSQLMetaData().getJDBCMetaData(), catalog, schema, colNamePat);
+					return infos[i].getColumns(_session.getSchemaInfo(catalog, schema), colNamePat);
 				}
 				catch(SQLException e)
 				{
