@@ -53,6 +53,7 @@ public class TruncateLogCommand implements ICommand {
 			}
             _session.getSQLPanelAPI(_plugin).appendSQLScript(buf.toString(), true);
             _session.getSQLPanelAPI(_plugin).executeCurrentSQL();
+            _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
 		}
 	}
 }
