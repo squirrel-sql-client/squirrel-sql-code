@@ -24,3 +24,10 @@
 #DEFAULT (echo ""; id; echo %s; date; cat) >> $CVSROOT/CVSROOT/commitlog
 # or
 #DEFAULT (echo ""; id; echo %{sVv}; date; cat) >> $CVSROOT/CVSROOT/commitlog
+
+
+# Synmail setup for squirrel-project (setup 11/21/2001)
+CVSROOT $CVSROOT/CVSROOT/syncmail %{sVv} colbelloz@bigpond.com
+CVSROOT $CVSROOT/CVSROOT/syncmail %{sVv} patrick@lacson.org
+
+DEFAULT $CVSROOT/CVSROOT/syncmail %{sVv} squirrel-sql-commits@lists.sourceforge.net 
