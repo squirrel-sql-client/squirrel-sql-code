@@ -19,16 +19,13 @@ package net.sourceforge.squirrel_sql.fw.gui.sql;
  */
 import java.awt.Dialog;
 import java.awt.Frame;
-import java.sql.Driver;
-import java.sql.DriverPropertyInfo;
-import java.sql.SQLException;
 import java.util.EventObject;
 
 import javax.swing.JDialog;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.sql.event.IDriverPropertiesPanelListener;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDriverProperty;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 /**
  * This dialog allows the user to review and maintain
  * the properties for a JDBC driver.
@@ -41,94 +38,46 @@ public class DriverPropertiesDialog extends JDialog
 	private IDriverPropertiesPanelListener _propsPnlLis;
 
 	/** The driver properties. This is only available once OK pressed. */
-	private DriverPropertyInfo[] _driverPropInfo;
+	private SQLDriverPropertyCollection _driverPropInfo;
 
-	/**
-	 * Show a modal dialog for the passed driver and URL and if OK
-	 * pressed then return the driver properties else 
-	 * return <TT>null</TT>.
-	 *
-	 * @param	owner		Owning frame.
-	 * @param	driver		JDBC driver.
-	 * @param	url			URL to the database.
-	 * @param	override	Used to override the value of some or all
-	 * 						of the properties instead of using the 
-	 * 						default values.
-	 *
-	 * @throws	SQLException
-	 * 			Thrown if an SQL error occurs.
-	 */
-	public static DriverPropertyInfo[] showDialog(Frame owner,
-								Driver driver, String url,
-								SQLDriverProperty[] override)
-		throws SQLException
+	public static SQLDriverPropertyCollection showDialog(Dialog owner,
+									SQLDriverPropertyCollection props)
 	{
-		final DriverPropertiesDialog dlog = new DriverPropertiesDialog(owner,
-							driver, url, override);
+		final DriverPropertiesDialog dlog = new DriverPropertiesDialog(owner, props);
 		dlog.setModal(true);
 		dlog.setVisible(true);
-		return dlog.getDriverPropertyInfo();
+		return dlog.getSQLDriverPropertyCollection();
 	}
 
-	/**
-	 * Show a modal dialog for the passed driver and URL and if OK
-	 * pressed then return the driver properties else 
-	 * return <TT>null</TT>.
-	 *
-	 * @param	owner		Owning dialog.
-	 * @param	driver		JDBC driver.
-	 * @param	url			URL to the database.
-	 * @param	override	Used to override the value of some or all
-	 * 						of the properties instead of using the 
-	 * 						default values.
-	 *
-	 * @throws	SQLException
-	 * 			Thrown if an SQL error occurs.
-	 */
-	public static DriverPropertyInfo[] showDialog(Dialog owner,
-								Driver driver, String url,
-								SQLDriverProperty[] override)
-		throws SQLException
+	public static SQLDriverPropertyCollection showDialog(Frame owner,
+									SQLDriverPropertyCollection props)
 	{
-		final DriverPropertiesDialog dlog = new DriverPropertiesDialog(owner,
-							driver, url, override);
+		final DriverPropertiesDialog dlog = new DriverPropertiesDialog(owner, props);
 		dlog.setModal(true);
 		dlog.setVisible(true);
-		return dlog.getDriverPropertyInfo();
+		return dlog.getSQLDriverPropertyCollection();
 	}
 
-	public DriverPropertiesDialog(Dialog owner, Driver driver, String url,
-									SQLDriverProperty[] override)
-		throws SQLException
+	public DriverPropertiesDialog(Dialog owner, SQLDriverPropertyCollection props)
 	{
 		super(owner, "Driver Properties");
-		if (driver == null)
+		if (props == null)
 		{
-			throw new IllegalArgumentException("Driver == null");
-		}
-		if (url == null)
-		{
-			throw new IllegalArgumentException("url == null");
+			throw new IllegalArgumentException("SQLDriverPropertyCollection == null");
 		}
 
-		createUserInterface(driver, url, override);
+		createUserInterface(props);
 	}
 
-	public DriverPropertiesDialog(Frame owner, Driver driver, String url,
-									SQLDriverProperty[] override)
-		throws SQLException
+	public DriverPropertiesDialog(Frame owner, SQLDriverPropertyCollection props)
 	{
 		super(owner, "Driver Properties");
-		if (driver == null)
+		if (props == null)
 		{
-			throw new IllegalArgumentException("Driver == null");
-		}
-		if (url == null)
-		{
-			throw new IllegalArgumentException("url == null");
+			throw new IllegalArgumentException("SQLDriverPropertyCollection == null");
 		}
 
-		createUserInterface(driver, url, override);
+		createUserInterface(props);
 	}
 
 	public void dispose()
@@ -170,16 +119,14 @@ public class DriverPropertiesDialog extends JDialog
 	 *
 	 * @return		the database driver properties.
 	 */
-	public DriverPropertyInfo[] getDriverPropertyInfo()
+	public SQLDriverPropertyCollection getSQLDriverPropertyCollection()
 	{
 		return _driverPropInfo;
 	}
 
-	private void createUserInterface(Driver driver, String url,
-									SQLDriverProperty[] override)
-		throws SQLException
+	private void createUserInterface(SQLDriverPropertyCollection props)
 	{
-		_propsPnl = new DriverPropertiesPanel(driver, url, override);
+		_propsPnl = new DriverPropertiesPanel(props);
 		_propsPnlLis = new PropertiesPanelListener();
 		addDriverPropertiesPanelListener(_propsPnlLis);
 		setContentPane(_propsPnl);
@@ -195,7 +142,7 @@ public class DriverPropertiesDialog extends JDialog
 
 	private void performOk()
 	{
-		_driverPropInfo = _propsPnl.getDriverPropertyInfo();
+		_driverPropInfo = _propsPnl.getSQLDriverProperties();
 		dispose();
 	}
 

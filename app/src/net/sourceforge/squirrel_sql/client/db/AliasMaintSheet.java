@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -58,6 +59,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverProperty;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
@@ -167,8 +169,8 @@ public class AliasMaintSheet extends BaseSheet
 	/** Button that brings up the driver properties dialog. */
 	private final JButton _driverPropsBtn = new JButton("Properties");
 
-	/** Array of the driver properties. */
-	private SQLDriverProperty[] _sqlDriverProps;
+	/** Collection of the driver properties. */
+	private SQLDriverPropertyCollection _sqlDriverProps;
 
 	/**
 	 * Ctor.
@@ -283,6 +285,7 @@ public class AliasMaintSheet extends BaseSheet
 			{
 				_url.setText(driver.getUrl());
 			}
+			_sqlDriverProps = new SQLDriverPropertyCollection();
 		}
 	}
 
@@ -356,16 +359,10 @@ public class AliasMaintSheet extends BaseSheet
 			{
 				throw new BaseException("Cannot determine driver properties as the driver cannot be loaded.");
 			}
-			DriverPropertyInfo[] infoAr = DriverPropertiesDialog.showDialog(owner, driver, _url.getText(), _sqlDriverProps);
-			if (infoAr != null)
-			{
-				_sqlDriverProps = new SQLDriverProperty[infoAr.length];
-				for (int i = 0; i < infoAr.length; ++i)
-				{
-					DriverPropertyInfo info = infoAr[i];
-					_sqlDriverProps[i] = new SQLDriverProperty(info.name, info.value);
-				}
-			}
+
+			DriverPropertyInfo[] infoAr = driver.getPropertyInfo(_url.getText(), new Properties());
+			_sqlDriverProps.applyDriverPropertynfo(infoAr);
+			DriverPropertiesDialog.showDialog(owner, _sqlDriverProps);
 		}
 		catch (Exception ex)
 		{

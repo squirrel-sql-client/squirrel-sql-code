@@ -17,14 +17,10 @@ package net.sourceforge.squirrel_sql.fw.gui.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.Driver;
-import java.sql.DriverPropertyInfo;
-import java.sql.SQLException;
-import java.util.Properties;
-
 import javax.swing.table.AbstractTableModel;
 
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverProperty;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -32,60 +28,65 @@ class DriverPropertiesTableModel extends AbstractTableModel
 {
 	interface IColumnIndexes
 	{
-		int NAME = 0;
-		int REQUIRED = 1;
-		int VALUE = 2;
-		int DESCRIPTION = 3;
+		int IDX_SPECIFY = 0;
+		int IDX_NAME = 1;
+		int IDX_REQUIRED = 2;
+		int IDX_VALUE = 3;
+		int IDX_DESCRIPTION = 4;
 	}
 
 	/** Number of columns in model. */
-	private final int COLUMN_COUNT = 4;
+	private final int COLUMN_COUNT = 5;
 	
 	/** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(DriverPropertiesTableModel.class);
 
-	private DriverPropertyInfo[] _props = new DriverPropertyInfo[0];
+	private SQLDriverPropertyCollection _props = new SQLDriverPropertyCollection();
+//	
+//	DriverPropertiesTableModel(DriverPropertyInfo[] props)
+//	{
+//		super();
+//		load(props, null);
+//	}
 
-	DriverPropertiesTableModel(DriverPropertyInfo[] props)
+//	DriverPropertiesTableModel(Driver driver, String url)
+//		throws SQLException
+//	{
+//		this(driver, url, null);
+//	}
+
+	DriverPropertiesTableModel(SQLDriverPropertyCollection props)
 	{
 		super();
-		load(props);
-	}
-
-	DriverPropertiesTableModel(Driver driver, String url)
-		throws SQLException
-	{
-		this(driver, url, null);
-	}
-
-	DriverPropertiesTableModel(Driver driver, String url,
-								SQLDriverProperty[] override)
-		throws SQLException
-	{
-		if (driver == null)
+		if (props == null)
 		{
-			throw new IllegalArgumentException("Driver == null");
+			throw new IllegalArgumentException("SQLDriverPropertyCollection[] == null");
 		}
 
-		load(driver, url, override);
+		load(props);
 	}
 
 	public Object getValueAt(int row, int col)
 	{
+		final SQLDriverProperty sdp = _props.getDriverProperty(row);
 		switch (col)
 		{
-			case IColumnIndexes.NAME:
-				return _props[row].name;
-			case IColumnIndexes.REQUIRED:
-			
+			case IColumnIndexes.IDX_SPECIFY:
+				// Use valueof when min supported JDK is 1.4
+				return new Boolean(sdp.isSpecified());
+
+			case IColumnIndexes.IDX_NAME:
+				return sdp.getDriverPropertyInfo().name;
+
+			case IColumnIndexes.IDX_REQUIRED:
 				// Use valueof when min supported JDK is 1.4
 				//return Boolean.valueOf(_props[row].required);
-				return new Boolean(_props[row].required);
-			case IColumnIndexes.VALUE:
-				return _props[row].value;
-			case IColumnIndexes.DESCRIPTION:
-				return _props[row].description;
+				return new Boolean(sdp.getDriverPropertyInfo().required);
+			case IColumnIndexes.IDX_VALUE:
+				return sdp.getDriverPropertyInfo().value;
+			case IColumnIndexes.IDX_DESCRIPTION:
+				return sdp.getDriverPropertyInfo().description;
 			default:
 				s_log.error("Invalid column index: " + col);
 				return "???????";
@@ -94,7 +95,7 @@ class DriverPropertiesTableModel extends AbstractTableModel
 
 	public int getRowCount()
 	{
-		return _props.length;
+		return _props.size();
 	}
 
 	public int getColumnCount()
@@ -106,13 +107,15 @@ class DriverPropertiesTableModel extends AbstractTableModel
 	{
 		switch (col)
 		{
-			case IColumnIndexes.NAME:
-				return String.class;
-			case IColumnIndexes.REQUIRED:
+			case IColumnIndexes.IDX_SPECIFY:
 				return Boolean.class;
-			case IColumnIndexes.VALUE:
+			case IColumnIndexes.IDX_NAME:
 				return String.class;
-			case IColumnIndexes.DESCRIPTION:
+			case IColumnIndexes.IDX_REQUIRED:
+				return Boolean.class;
+			case IColumnIndexes.IDX_VALUE:
+				return String.class;
+			case IColumnIndexes.IDX_DESCRIPTION:
 				return String.class;
 			default:
 				s_log.error("Invalid column index: " + col);
@@ -122,69 +125,40 @@ class DriverPropertiesTableModel extends AbstractTableModel
 
 	public boolean isCellEditable(int row, int col)
 	{
-		return col == IColumnIndexes.VALUE;
+		return col == IColumnIndexes.IDX_SPECIFY || col == IColumnIndexes.IDX_VALUE;
 	}
 
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex)
 	{
-		if (columnIndex != IColumnIndexes.VALUE)
+		if (columnIndex == IColumnIndexes.IDX_VALUE)
 		{
-			throw new IllegalStateException("Can only edit value column. Trying to edit " + columnIndex);
+			final SQLDriverProperty sdp = _props.getDriverProperty(rowIndex);
+			sdp.setValue(aValue.toString());
 		}
-
-		_props[rowIndex].value = aValue.toString();
+		else if (columnIndex == IColumnIndexes.IDX_SPECIFY)
+		{
+			final SQLDriverProperty sdp = _props.getDriverProperty(rowIndex);
+			Boolean bool = Boolean.valueOf(aValue.toString());
+			sdp.setIsSpecified(bool.booleanValue());
+		}
+		else
+		{
+			throw new IllegalStateException("Can only edit value/specify column. Trying to edit " + columnIndex);
+		}
 	}
 
-	DriverPropertyInfo[] getDriverPropertyInfo()
+	SQLDriverPropertyCollection getSQLDriverProperties()
 	{
 		return _props;
 	}
 
-	final void load(Driver driver, String url)
-		throws SQLException
+//	synchronized SQLDriverProperty getSQLDriverProperty(String key)
+//	{
+//		return (SQLDriverProperty)_override.get(key);
+//	}
+
+	private final void load(SQLDriverPropertyCollection props)
 	{
-		if (driver == null)
-		{
-			throw new IllegalArgumentException("Driver == null");
-		}
-		load(driver, url, null);
-	}
-
-	final void load(Driver driver, String url,
-					SQLDriverProperty[] override)
-		throws SQLException
-	{
-		if (driver == null)
-		{
-			throw new IllegalArgumentException("Driver == null");
-		}
-
-		final Properties props = new Properties();
-		if (override != null)
-		{
-			for (int i = 0; i < override.length; ++i)
-			{
-				final String key = override[i].getKey();
-				if (key != null)
-				{
-					final String value = override[i].getValue();
-					if (value != null)
-					{
-						props.setProperty(key, value);
-					}
-				}
-			}
-		}
-		load(driver.getPropertyInfo(url, props));
-	}
-
-	final void load(DriverPropertyInfo[] props)
-	{
-		if (props == null)
-		{
-			throw new IllegalArgumentException("DriverPropertyInfo[] == null");
-		}
-
 		final int origSize = getRowCount();
 		if (origSize > 0)
 		{
@@ -192,9 +166,10 @@ class DriverPropertiesTableModel extends AbstractTableModel
 		}
 
 		_props = props;
-		if (_props.length > 0)
+		final int newSize = getRowCount();
+		if (newSize > 0)
 		{
-			fireTableRowsInserted(0, _props.length - 1);
+			fireTableRowsInserted(0, newSize - 1);
 		}
 	}
 }
