@@ -68,11 +68,12 @@ public class ResultSetDataSet implements IDataSet
 	/**
 	 * Form used by ContentsTab
 	 */
-	public void setContentsTabResultSet(ResultSet rs, LargeResultSetObjectInfo largeObjInfo)
+	public void setContentsTabResultSet(ResultSet rs, 
+		String fullTableName,
+		LargeResultSetObjectInfo largeObjInfo)
 		throws DataSetException
 	{
-//??		setResultSet(rs, largeObjInfo, null, false);
-setResultSet(rs, largeObjInfo, null, false, true);
+			setResultSet(rs, fullTableName, largeObjInfo, null, false, true);
 	}
 
 	public void setResultSet(ResultSet rs, int[] columnIndices)
@@ -91,30 +92,15 @@ setResultSet(rs, largeObjInfo, null, false, true);
  				 int[] columnIndices, boolean computeWidths)
  			throws DataSetException
 	{
-		setResultSet(rs, largeObjInfo, columnIndices, computeWidths, false);
+		setResultSet(rs, null, largeObjInfo, columnIndices, computeWidths, false);
 	}
 
-	/**
-	 * External method to read the contents of a ResultSet that is used by
-	 * ContentsTab.  It reads the data into internal objects of the type
-	 * needed to hold the data (e.g. byte[], Blob, etc) rather than turning
-	 * everything into strings.  This allows appropriate editing to be done
-	 * on the object values as controled by the DataType objects.
-	 */
-/****
- * 	public void setContentsTabResultSet(ResultSet rs, LargeResultSetObjectInfo largeObjInfo,
- 				 int[] columnIndices, boolean computeWidths)
- 			throws DataSetException
-	{
-		setResultSet(rs, largeObjInfo, columnIndices, computeWidths, true);
-	}
-****/
 
 	/**
 	 * Internal method to read the contents of a ResultSet that is used by
 	 * all Tab classes
 	 */
-	private void setResultSet(ResultSet rs, LargeResultSetObjectInfo largeObjInfo,
+	private void setResultSet(ResultSet rs, String fullTableName, LargeResultSetObjectInfo largeObjInfo,
  				 int[] columnIndices, boolean computeWidths, boolean isContentsTab)
  			throws DataSetException
 	{
@@ -143,22 +129,22 @@ setResultSet(rs, largeObjInfo, null, false, true);
 				// reading the data from the ResultSet Oracle throws a NullPointerException
 				// when processing ResultSetMetaData methods for the ResultSet returned for
 				// DatabasemetaData.getExportedKeys.
-				ColumnDisplayDefinition[] colDefs = createColumnDefinitions(md, columnIndices, computeWidths);
+				ColumnDisplayDefinition[] colDefs =
+					createColumnDefinitions(md, fullTableName, columnIndices, computeWidths);
 				_dataSetDefinition = new DataSetDefinition(colDefs);
 
  				// Read the entire row, since some drivers complain if columns are read out of sequence
  				ResultSetReader rdr = new ResultSetReader(rs, largeObjInfo, null);
 				Object[] row = null;
-//				while ((row = rdr.readRow()) != null)
-//				{
-while (true) {
-	if (isContentsTab)
-		row = rdr.readRow(colDefs);
-	else
-		row = rdr.readRow();
+
+				while (true) {
+					if (isContentsTab)
+						row = rdr.readRow(colDefs);
+					else
+						row = rdr.readRow();
 		
-	if (row == null)
-		break;
+					if (row == null)
+						break;
 		
 					if (_cancel)
 					{
@@ -230,7 +216,7 @@ while (true) {
 
  	// SS: Modified to auto-compute column widths if <computeWidths> is true
 	private ColumnDisplayDefinition[] createColumnDefinitions(ResultSetMetaData md,
- 			int[] columnIndices, boolean computeWidths) throws SQLException
+ 			String fullTableName, int[] columnIndices, boolean computeWidths) throws SQLException
 	{
 		// TODO?? ColumnDisplayDefinition should also have the Type (String, Date, Double,Integer,Boolean)
  		int[] colWidths = null;
@@ -291,6 +277,7 @@ while (true) {
 			columnDefs[i] =
  					new ColumnDisplayDefinition(
  					computeWidths ? colWidths[i] : md.getColumnDisplaySize(idx),
+					fullTableName+":"+md.getColumnLabel(idx),
  					md.getColumnLabel(idx),
  					md.getColumnType(idx),
  					isNullable,

@@ -35,6 +35,8 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.OrderByClausePanel;
@@ -172,13 +174,6 @@ public class ContentsTab extends BaseTableTab
 				 */
 				String pseudoColumn = "";
 
-				//??????????????????????????????????
-				//??  The following has not been tested because I cannot find a free db on Linux
-				//??  that has a getBestRowIdentifier that provides this info.  GWG
-				//??????????????????????????????????
-
-				//?? Tested and it works on oracle - Col ??
-
 				try
 				{
 					ResultSet rowIdentifierRS = conn.getSQLMetaData().getBestRowIdentifier(ti);
@@ -299,7 +294,20 @@ public class ContentsTab extends BaseTableTab
 				}
 
 				final ResultSetDataSet rsds = new ResultSetDataSet();
-				rsds.setContentsTabResultSet(rs, props.getLargeResultSetObjectInfo());
+
+				// to allow the fw to save and reload user options related to
+				// specific columns, we construct a unique name for the table
+				// so the column can be associcated with only that table.
+				// Some drivers do not provide the catalog or schema info, so
+				// those parts of the name will end up as null.  That's ok since
+				// this string is never viewed by the user and is just used to
+				// distinguish this table from other tables in the DB.
+				// We also include the URL used to connect to the DB so that
+				// the same table/DB on different machines is treated differently.
+				String fullTableName = session.getAlias().getUrl()+":"+
+					ti.getCatalogName()+":"+ti.getSchemaName()+
+					":"+ti.getSimpleName();
+				rsds.setContentsTabResultSet(rs, fullTableName, props.getLargeResultSetObjectInfo());
 
 				// KLUDGE:
 				// We want some info about the columns to be available for validating the

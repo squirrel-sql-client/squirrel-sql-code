@@ -1,5 +1,22 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer;
-
+/*
+ * Copyright (C) 2001 Colin Bell
+ * colbell@users.sourceforge.net
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import java.awt.event.MouseAdapter;
@@ -175,12 +192,20 @@ public class PopupEditableIOPanel extends JPanel
 		eiPanel.add(externalCommandButton, gbc);
 		
 		// add note to user about including file name in command
-//		gbc.gridx++;
-gbc.gridy++;
-gbc.gridx = 0;
+		gbc.gridy++;
+		gbc.gridx = 0;
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
 		eiPanel.add(new JLabel("(In command, the string "+FILE_REPLACE_FLAG+
 			" is replaced by the file name when Executed.)"), gbc);
+
+		// load filename and command with previously entered info
+		// if not the default
+		CellImportExportInfo info = CellImportExportInfoSaver.get(_colDef.getFullTableColumnName());
+		if (info != null) {
+			// load the info into the text fields
+			fileNameField.setText(info.getFileName());
+			externalCommandField.setText(info.getCommand());
+		}
 		
 		return eiPanel;
 	}
@@ -271,6 +296,11 @@ gbc.gridx = 0;
 			// as the file it exported into).
 			importData(file);
 
+			// save the data - we know that it is not the default
+			// because we do not allow importing from "temp file"
+			CellImportExportInfoSaver.save(_colDef.getFullTableColumnName(),
+				fileNameField.getText(), externalCommandField.getText());
+	
  		}
 
 		else {
@@ -407,6 +437,14 @@ gbc.gridx = 0;
 				return;
 			}
 
+			// if user did anything other than default, then save
+			// their options
+			if ( ! fileNameField.getText().equals(TEMP_FILE_FLAG) ||
+				(externalCommandField.getText() != null &&
+				externalCommandField.getText().length() > 0)) {		
+			CellImportExportInfoSaver.save(_colDef.getFullTableColumnName(),
+				fileNameField.getText(), externalCommandField.getText());
+			}
 			
 			if (e.getActionCommand().equals("export")) {
 				

@@ -30,6 +30,9 @@ public class ColumnDisplayDefinition
 {
 	/** Number of characters to display. */
 	private int _displayWidth;
+	
+	/** Full name of the column, including the table Catalog, Schema and Table names. */
+	private String _fullTableColumnName;
 
 	/** Column heading. */
 	private String _label;
@@ -87,7 +90,7 @@ public class ColumnDisplayDefinition
 	public ColumnDisplayDefinition(int displayWidth, String label)
 	{
 		super();
-		init(displayWidth, label, Types.NULL, true, 0, 0, 0, true, false);
+		init(displayWidth, null, label, Types.NULL, true, 0, 0, 0, true, false);
 	}
 
 	/**
@@ -97,11 +100,13 @@ public class ColumnDisplayDefinition
 	 * @param	label			Column heading.
 	 * @param	className		Name of the class for the type of data in the column.
 	 */
-	public ColumnDisplayDefinition(int displayWidth, String label, int sqlType,
+	public ColumnDisplayDefinition(int displayWidth, String fullTableColumnName,
+				String label, int sqlType,
 				boolean isNullable, int columnSize, int precision, int scale,
 				boolean isSigned, boolean isCurrency) {
 		super();
-		init(displayWidth, label, sqlType, isNullable, columnSize, precision, scale,
+		init(displayWidth, fullTableColumnName, label, sqlType, isNullable,
+			columnSize, precision, scale,
 			isSigned, isCurrency);
 	}
 
@@ -113,6 +118,16 @@ public class ColumnDisplayDefinition
 	public int getDisplayWidth()
 	{
 		return _displayWidth;
+	}
+
+	/**
+	 * Return the full name of the column including the table Catalog, Schema and Table names.
+	 *
+	 * @return	The full table name.
+	 */
+	public String getFullTableColumnName()
+	{
+		return _fullTableColumnName;
 	}
 
 	/**
@@ -213,7 +228,7 @@ public class ColumnDisplayDefinition
 	 * @param	label			Column heading.
 	 * @param	sqlType			Type of data (from java.sql.Types).
 	 */
-	private void init(int displayWidth, String label, int sqlType,
+	private void init(int displayWidth, String fullTableColumnName, String label, int sqlType,
 		boolean isNullable, int columnSize, int precision, int scale,
 		boolean isSigned, boolean isCurrency)
 	{
@@ -226,6 +241,7 @@ public class ColumnDisplayDefinition
 		{
 			_displayWidth = label.length();
 		}
+		_fullTableColumnName = fullTableColumnName;
 		_label = label;
 		_sqlType = sqlType;
 		_isNullable = isNullable;
