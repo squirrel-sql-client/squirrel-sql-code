@@ -567,10 +567,17 @@ public class PopupEditableIOPanel extends JPanel
 			if ( ! fileNameField.getText().equals(TEMP_FILE_FLAG) ||
 				(((String)externalCommandCombo.getEditor().getItem()) != null &&
 				((String)externalCommandCombo.getEditor().getItem()).length() > 0)) {	
+				
+				// This may be called either when the table is editable or when it is
+				// read-only.  When it is read-only, there is no command to be saved,
+				// but when it is editable, there may be a command.
+				String commandString = null;
+				if (externalCommandCombo != null)
+					commandString = (String)(externalCommandCombo.getEditor().getItem());
 						
 				CellImportExportInfoSaver.getInstance().save(
 					_colDef.getFullTableColumnName(), fileNameField.getText(),
-					((String)externalCommandCombo.getEditor().getItem()));
+					commandString);
 			}
 			
 			if (e.getActionCommand().equals("export")) {
