@@ -32,7 +32,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 public class JeditSQLTokenMarker extends SQLTokenMarker
 {
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(JeditSQLTokenMarker.class);
+	private static final ILogger s_log =
+				LoggerController.createLogger(JeditSQLTokenMarker.class);
 
 	private KeywordMap _keywords;
 
@@ -79,6 +80,7 @@ public class JeditSQLTokenMarker extends SQLTokenMarker
 	private static KeywordMap createKeywordMap(SQLConnection conn)
 	{
 		KeywordMap keywords = new KeywordMap(true);
+		keywords = new KeywordMap(true);
 
 		try
 		{
@@ -302,7 +304,7 @@ public class JeditSQLTokenMarker extends SQLTokenMarker
 		{
 			// all table types, everything. TODO:
 			ResultSet rs = dmd.getTables(null, null, null,
-					new String[] { "TABLE" });
+					new String[] { "TABLE", "VIEW" });
 
 			while (rs.next())
 			{

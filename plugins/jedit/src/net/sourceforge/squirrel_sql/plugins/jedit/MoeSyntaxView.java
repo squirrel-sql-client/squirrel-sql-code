@@ -44,7 +44,7 @@ import org.gjt.sp.jedit.syntax.TokenMarker;
  * @author Bruce Quig
  * @author Michael Kolling
  *
- * @version $Id: MoeSyntaxView.java,v 1.3 2003-03-05 10:27:55 colbell Exp $
+ * @version $Id: MoeSyntaxView.java,v 1.4 2003-06-10 11:25:06 colbell Exp $
  */
 public class MoeSyntaxView extends PlainView
 {
@@ -240,7 +240,7 @@ public class MoeSyntaxView extends PlainView
 			// Get the width of this token.
 			styles[id].setGraphicsFlags(g, defaultFont);
 			final int textWidth = Utilities.getTabbedTextWidth(line,
-					g.getFontMetrics(), x, this, offset);
+					/*g.getFontMetrics()*/styles[id].getFontMetrics(defaultFont), x, this, offset);
 
 			// Paint background color.
 			g.setXORMode(getContainer().getBackground());

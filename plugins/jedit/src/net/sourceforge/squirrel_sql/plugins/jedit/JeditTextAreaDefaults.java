@@ -112,7 +112,7 @@ class JeditTextAreaDefaults extends TextAreaDefaults
 			syntaxDoc.setStyles(styles);
 		}
 
-		textArea.setCaret(blockCaret ? new BlockCaret() : _defaultCaret);
+//		textArea.setCaret(blockCaret ? new BlockCaret() : _defaultCaret);
 		textArea.setCaretColor(caretColor);
 		textArea.getCaret().setBlinkRate(caretBlinks ? _defaultCaretBlinkRate : 0);
 		textArea.setSelectionColor(selectionColor);

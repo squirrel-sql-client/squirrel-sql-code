@@ -351,8 +351,8 @@ public class JeditPreferencesPanel
 		{
 			setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.anchor = gbc.WEST;
-			gbc.fill = gbc.HORIZONTAL;
+			gbc.anchor = GridBagConstraints.WEST;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
 
 			_activeChk.addChangeListener(new ChangeListener()
@@ -367,7 +367,7 @@ public class JeditPreferencesPanel
 			gbc.gridy = 0;
 			add(_activeChk, gbc);
 
-			gbc.fill = gbc.BOTH;
+			gbc.fill = GridBagConstraints.BOTH;
 
 			gbc.gridx = 0;
 			++gbc.gridy;
@@ -396,7 +396,7 @@ public class JeditPreferencesPanel
 			pnl.setBorder(BorderFactory.createTitledBorder("General"));
 			pnl.setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.fill = gbc.HORIZONTAL;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(2, 4, 2, 4);
 
 			gbc.gridx = 0;
@@ -484,7 +484,7 @@ public class JeditPreferencesPanel
 				_sel = new ColorSelector(rsrc);
 
 				final GridBagConstraints gbc = new GridBagConstraints();
-				gbc.fill = gbc.HORIZONTAL;
+				gbc.fill = GridBagConstraints.HORIZONTAL;
 				gbc.insets = new Insets(2, 0, 2, 0);
 	
 				gbc.weightx = 1.0;

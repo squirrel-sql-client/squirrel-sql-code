@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.jedit;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -39,11 +39,10 @@ import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPane
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SessionSheet;
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
 /**
  * The jEdit plugin class. This plugin replaces the standard SQL entry text area
- * with the jEdit edia area.
+ * with the jEdit edit area.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
@@ -117,7 +116,7 @@ public class JeditPlugin extends DefaultSessionPlugin
 	 */
 	public String getContributors()
 	{
-		return "Greg Mackness";
+		return "Greg Mackness, Gerd Wagner";
 	}
 
 	/**
@@ -356,14 +355,9 @@ public class JeditPlugin extends DefaultSessionPlugin
 			{
 				synchronized (_session)
 				{
-					SessionSheet sheet = _session.getSessionSheet();
-
-					if (sheet != null)
-					{
-						ISQLEntryPanelFactory factory = _plugin.getJeditFactory();
-						ISQLEntryPanel pnl = factory.createSQLEntryPanel(_session);
-						sheet.replaceSQLEntryPanel(pnl);
-					}
+					ISQLEntryPanelFactory factory = _plugin.getJeditFactory();
+					ISQLEntryPanel pnl = factory.createSQLEntryPanel(_session);
+					_session.getSQLPanelAPI(_plugin).installSQLEntryPanel(pnl);
 				}
 			}
 
