@@ -205,19 +205,39 @@ class Session implements IClientSession
 
 	/**
 	 * Return the API for the Object Tree.
+	 * 
+	 * @param	plugin	Plugin requesting the API.
+	 * 
+	 * @return	the API object for the Object Tree.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if null IPlugin passed.
 	 */
-	public IObjectTreeAPI getObjectTreeAPI()
+	public IObjectTreeAPI getObjectTreeAPI(IPlugin plugin)
 	{
+		if (plugin == null)
+		{
+			throw new IllegalArgumentException("IPlugin == null");
+		}
 		return _objectTreeAPI;
 	}
 
 	/**
 	 * Return the API object for the SQL panel.
 	 * 
+	 * @param	plugin	Plugin requesting the API.
+	 * 
 	 * @return	the API object for the SQL panel.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if null IPlugin passed.
 	 */
-	public ISQLPanelAPI getSQLPanelAPI()
+	public ISQLPanelAPI getSQLPanelAPI(IPlugin plugin)
 	{
+		if (plugin == null)
+		{
+			throw new IllegalArgumentException("IPlugin == null");
+		}
 		return _sqlPanelAPI;
 	}
 

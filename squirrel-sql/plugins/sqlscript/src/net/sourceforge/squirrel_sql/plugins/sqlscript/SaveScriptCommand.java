@@ -140,7 +140,7 @@ public class SaveScriptCommand implements ICommand {
             try {
                 fos = new FileOutputStream(file);
 //                String sScript = _session.getEntireSQLScript();
-                String sScript = _session.getSQLPanelAPI().getEntireSQLScript();
+                String sScript = _session.getSQLPanelAPI(_plugin).getEntireSQLScript();
                 fos.write(sScript.getBytes());
                 _session.getMessageHandler().showMessage(
                     "SQL script saved to " + file.getAbsolutePath());

@@ -28,16 +28,21 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
 {
+	/** Current plugin. */
+	private final SQLScriptPlugin _plugin;
+
     /**
      * Ctor specifying the current session.
      */
-    public CreateDataScriptOfCurrentSQLCommand(ISession session) {
-        super(session);
+    public CreateDataScriptOfCurrentSQLCommand(ISession session, SQLScriptPlugin plugin) {
+        super(session, plugin);
+        _plugin = plugin;
     }
 
     /**
@@ -51,7 +56,7 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
             {
                 SQLConnection conn = _session.getSQLConnection();
 //                String selectSQL = _session.getSQLScriptToBeExecuted();
-                String selectSQL = _session.getSQLPanelAPI().getSQLScriptToBeExecuted();
+                String selectSQL = _session.getSQLPanelAPI(_plugin).getSQLScriptToBeExecuted();
                 final StringBuffer sbRows = new StringBuffer(1000);
                 try
                 {
@@ -96,7 +101,7 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
                         if(sbRows.length() > 0)
                         {
 //                            _session.setEntireSQLScript(sbRows.toString());
-                            _session.getSQLPanelAPI().appendSQLScript(sbRows.toString(), true);
+                            _session.getSQLPanelAPI(_plugin).appendSQLScript(sbRows.toString(), true);
                             _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
                         }
                         hideAbortFrame();

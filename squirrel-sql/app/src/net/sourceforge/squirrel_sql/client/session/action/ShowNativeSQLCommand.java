@@ -22,6 +22,7 @@ import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
+import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
@@ -60,7 +61,8 @@ public class ShowNativeSQLCommand implements ICommand
 		Connection conn = _session.getSQLConnection().getConnection();
 		try
 		{
-			ISQLPanelAPI api = _session.getSQLPanelAPI();
+			IPlugin plugin = _session.getApplication().getDummyAppPlugin();
+			ISQLPanelAPI api = _session.getSQLPanelAPI(plugin);
 			String sql = conn.nativeSQL(api.getSQLScriptToBeExecuted());
 			if (sql.length() > 0)
 			{

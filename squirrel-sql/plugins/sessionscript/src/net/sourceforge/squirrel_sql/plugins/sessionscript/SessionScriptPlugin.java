@@ -172,7 +172,7 @@ public class SessionScriptPlugin extends DefaultSessionPlugin
 			if (sql != null && sql.length() > 0)
 			{
 				rc = true;
-				ISQLPanelAPI api = session.getSQLPanelAPI();
+				ISQLPanelAPI api = session.getSQLPanelAPI(this);
 				api.setEntireSQLScript(sql);
 				api.executeCurrentSQL();
 			}

@@ -113,7 +113,7 @@ public class LoadScriptCommand implements ICommand {
 				iRead = bis.read(bytes);
 			}
 //			_session.setEntireSQLScript(sb.toString());
-			_session.getSQLPanelAPI().appendSQLScript(sb.toString(), true);
+			_session.getSQLPanelAPI(_plugin).appendSQLScript(sb.toString(), true);
 			_session.putPluginObject(_plugin, ISessionKeys.SAVE_SCRIPT_FILE_PATH_KEY, file.getAbsolutePath());
 		} catch(java.io.IOException io) {
 			_session.getMessageHandler().showMessage(io);

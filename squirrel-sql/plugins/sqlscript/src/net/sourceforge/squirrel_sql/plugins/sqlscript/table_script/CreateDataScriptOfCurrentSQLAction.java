@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
@@ -31,13 +32,18 @@ public class CreateDataScriptOfCurrentSQLAction extends SquirrelAction implement
     /** Current session. */
     private ISession _session;
 
-    public CreateDataScriptOfCurrentSQLAction(IApplication app, Resources rsrc) {
+	/** Current plugin. */
+	private final SQLScriptPlugin _plugin;
+
+    public CreateDataScriptOfCurrentSQLAction(IApplication app, Resources rsrc,
+    											SQLScriptPlugin plugin) {
         super(app, rsrc);
+        _plugin = plugin;
     }
 
     public void actionPerformed(ActionEvent evt) {
         if (_session != null) {
-            new CreateDataScriptOfCurrentSQLCommand(_session).execute();
+            new CreateDataScriptOfCurrentSQLCommand(_session, _plugin).execute();
         }
     }
 

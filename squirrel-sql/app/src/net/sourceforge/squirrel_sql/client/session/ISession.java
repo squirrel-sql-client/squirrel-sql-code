@@ -106,16 +106,26 @@ public interface ISession extends IHasIdentifier
 	/**
 	 * Return the API object for the Object Tree.
 	 * 
+	 * @param	plugin	Plugin requesting the API.
+	 * 
 	 * @return	the API object for the Object Tree.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if null IPlugin passed.
 	 */
-	IObjectTreeAPI getObjectTreeAPI();
+	IObjectTreeAPI getObjectTreeAPI(IPlugin plugin);
 
 	/**
 	 * Return the API object for the SQL panel.
 	 * 
+	 * @param	plugin	Plugin requesting the API.
+	 * 
 	 * @return	the API object for the SQL panel.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if null IPlugin passed.
 	 */
-	ISQLPanelAPI getSQLPanelAPI();
+	ISQLPanelAPI getSQLPanelAPI(IPlugin plugin);
 
 	/**
 	 * Return an array of <TT>IDatabaseObjectInfo</TT> objects representing all

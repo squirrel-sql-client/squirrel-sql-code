@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
+import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionPropertiesSheetFactory;
 
@@ -55,6 +56,7 @@ public class RefreshObjectTreeCommand implements ICommand
 	 */
 	public void execute()
 	{
-		_session.getObjectTreeAPI().refreshTree();
+		IPlugin plugin = _session.getApplication().getDummyAppPlugin();
+		_session.getObjectTreeAPI(plugin).refreshTree();
 	}
 }

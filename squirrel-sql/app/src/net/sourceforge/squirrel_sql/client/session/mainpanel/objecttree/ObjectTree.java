@@ -123,7 +123,7 @@ class ObjectTree extends JTree
 		_model = (ObjectTreeModel)getModel();
 		setModel(_model);
 
-		_dummyNodeType = _session.getObjectTreeAPI().getNextAvailableNodeype();
+		_dummyNodeType = _session.getObjectTreeAPI(_session.getApplication().getDummyAppPlugin()).getNextAvailableNodeype();
 
 		addTreeExpansionListener(new NodeExpansionListener());
 //		addTreeSelectionListener(new NodeSelectionListener());

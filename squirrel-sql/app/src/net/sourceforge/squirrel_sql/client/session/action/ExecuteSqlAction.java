@@ -23,6 +23,7 @@ import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.IClientSession;
 
 public class ExecuteSqlAction extends SquirrelAction implements IClientSessionAction
@@ -47,7 +48,8 @@ public class ExecuteSqlAction extends SquirrelAction implements IClientSessionAc
 			cursorChg.show();
 			try
 			{
-				_session.getSQLPanelAPI().executeCurrentSQL();
+				IPlugin plugin = _session.getApplication().getDummyAppPlugin();
+				_session.getSQLPanelAPI(plugin).executeCurrentSQL();
 			}
 			finally
 			{

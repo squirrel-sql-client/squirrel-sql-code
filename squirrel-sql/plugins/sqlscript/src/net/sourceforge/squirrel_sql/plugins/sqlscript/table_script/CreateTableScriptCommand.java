@@ -25,6 +25,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -33,12 +34,16 @@ public class CreateTableScriptCommand implements ICommand {
     /** Current session. */
     private ISession _session;
 
+	/** Current plugin. */
+	private final SQLScriptPlugin _plugin;
+
     /**
      * Ctor specifying the current session.
      */
-    public CreateTableScriptCommand(ISession session) {
+    public CreateTableScriptCommand(ISession session, SQLScriptPlugin plugin) {
         super();
         _session = session;
+        _plugin = plugin;
     }
 
     /**
@@ -54,7 +59,7 @@ public class CreateTableScriptCommand implements ICommand {
             	// TODO: Comment this line and uncomment the next 2 to work
 				// with the new object tree.
 //                IDatabaseObjectInfo[] dbObjs = _session.getSelectedDatabaseObjects();
-				IObjectTreeAPI api = _session.getObjectTreeAPI();
+				IObjectTreeAPI api = _session.getObjectTreeAPI(_plugin);
                 IDatabaseObjectInfo[] dbObjs = api.getSelectedDatabaseObjects();
 
                 for (int k = 0; k < dbObjs.length; k++) {
@@ -165,7 +170,7 @@ public class CreateTableScriptCommand implements ICommand {
             _session.getMessageHandler().showMessage(e);
         }
 //        _session.setEntireSQLScript(sbScript.toString());
-        _session.getSQLPanelAPI().appendSQLScript(sbScript.toString(), true);
+        _session.getSQLPanelAPI(_plugin).appendSQLScript(sbScript.toString(), true);
         _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
     }
 }

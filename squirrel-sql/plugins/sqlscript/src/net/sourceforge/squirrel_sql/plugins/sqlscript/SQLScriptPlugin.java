@@ -150,9 +150,9 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 		ActionCollection coll = app.getActionCollection();
 		coll.add(new SaveScriptAction(app, _resources, this));
 		coll.add(new LoadScriptAction(app, _resources, this));
-		coll.add(new CreateTableScriptAction(app, _resources));
-		coll.add(new CreateDataScriptAction(app, _resources));
-		coll.add(new CreateDataScriptOfCurrentSQLAction(app, _resources));
+		coll.add(new CreateTableScriptAction(app, _resources, this));
+		coll.add(new CreateDataScriptAction(app, _resources, this));
+		coll.add(new CreateDataScriptOfCurrentSQLAction(app, _resources, this));
 		createMenu();
 	}
 
@@ -175,7 +175,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 	 */
 	public boolean sessionStarted(ISession session) {
 		ActionCollection coll = getApplication().getActionCollection();
-		IObjectTreeAPI api = session.getObjectTreeAPI();
+		IObjectTreeAPI api = session.getObjectTreeAPI(this);
 		api.addToPopup(ObjectTreeNode.IObjectTreeNodeType.TABLE,
 							coll.get(CreateTableScriptAction.class));
 		api.addToPopup(ObjectTreeNode.IObjectTreeNodeType.TABLE,
