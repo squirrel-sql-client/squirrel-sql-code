@@ -41,9 +41,11 @@ import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.Str
 import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.SystemFunctionsTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
-public class DatabasePanel extends SquirrelTabbedPane {
+public class DatabasePanel extends SquirrelTabbedPane
+{
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(DatabasePanel.class);
+	private static ILogger s_log =
+		LoggerController.createLogger(DatabasePanel.class);
 
 	/** Current session. */
 	private ISession _session;
@@ -62,10 +64,11 @@ public class DatabasePanel extends SquirrelTabbedPane {
 	 *
 	 * @param	session		Current session.
 	 *
-	 * @throws	IllegalArgumentException	If a <TT>null</TT>
-											<TT>ISession</TT> passed.
+	 * @throws	IllegalArgumentException
+	 *			If a <TT>null</TT> <TT>ISession</TT> passed.
 	 */
-	public DatabasePanel(ISession session) {
+	public DatabasePanel(ISession session)
+	{
 		super(getPreferences(session));
 
 		_session = session;
@@ -86,32 +89,48 @@ public class DatabasePanel extends SquirrelTabbedPane {
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>IDatabasePanelTab</TT> passed.
 	 */
-	public void addDatabasePanelTab(IDatabasePanelTab tab) {
-		if (tab == null) {
+	public void addDatabasePanelTab(IDatabasePanelTab tab)
+	{
+		if (tab == null)
+		{
 			throw new IllegalArgumentException("Null IDatabasePanelTab passed");
 		}
 		tab.setSession(_session);
 		final String title = tab.getTitle();
 		int idx = indexOfTab(title);
-		if (idx != -1) {
+		if (idx != -1)
+		{
 			removeTabAt(idx);
 			_tabs.set(idx, tab);
-		} else {
+		}
+		else
+		{
 			idx = getTabCount();
 			_tabs.add(tab);
 		}
 		insertTab(title, null, tab.getComponent(), tab.getHint(), idx);
 	}
 
-	private void propertiesHaveChanged(String propName) {
-		if (propName == null ||
-				propName.equals(SessionProperties.IPropertyNames.META_DATA_OUTPUT_CLASS_NAME)) {
-			addDatabasePanelTab(new MetaDataTab());
-			addDatabasePanelTab(new DataTypesTab());
+	private void propertiesHaveChanged(String propName)
+	{
+		if (propName == null
+			|| propName.equals(SessionProperties.IPropertyNames.META_DATA_OUTPUT_CLASS_NAME))
+		{
+			addTabs();
 		}
 	}
 
-	private void createUserInterface() {
+	private void createUserInterface()
+	{
+		addTabs();
+		_propsListener = new MyPropertiesListener();
+		_session.getProperties().addPropertyChangeListener(_propsListener);
+
+		addChangeListener(new TabbedPaneListener());
+	}
+
+	private void addTabs()
+	{
 		addDatabasePanelTab(new MetaDataTab());
 		addDatabasePanelTab(new DataTypesTab());
 		addDatabasePanelTab(new NumericFunctionsTab());
@@ -119,33 +138,36 @@ public class DatabasePanel extends SquirrelTabbedPane {
 		addDatabasePanelTab(new SystemFunctionsTab());
 		addDatabasePanelTab(new DateTimeFunctionsTab());
 		addDatabasePanelTab(new KeywordsTab());
-
-		_propsListener = new MyPropertiesListener();
-		_session.getProperties().addPropertyChangeListener(_propsListener);
-
-		addChangeListener(new TabbedPaneListener());
 	}
 
-	private static SquirrelPreferences getPreferences(ISession session) {
-		if (session == null) {
+	private static SquirrelPreferences getPreferences(ISession session)
+	{
+		if (session == null)
+		{
 			throw new IllegalArgumentException("ISession == null");
 		}
 		return session.getApplication().getSquirrelPreferences();
 	}
 
-	private class MyPropertiesListener implements PropertyChangeListener {
-		public void propertyChange(PropertyChangeEvent evt) {
+	private class MyPropertiesListener implements PropertyChangeListener
+	{
+		public void propertyChange(PropertyChangeEvent evt)
+		{
 			DatabasePanel.this.propertiesHaveChanged(evt.getPropertyName());
 		}
 	}
 
-	private class TabbedPaneListener implements ChangeListener {
-		public void stateChanged(ChangeEvent evt) {
+	private class TabbedPaneListener implements ChangeListener
+	{
+		public void stateChanged(ChangeEvent evt)
+		{
 			Object src = evt.getSource();
-			if (src instanceof SquirrelTabbedPane) {
-				int idx = ((SquirrelTabbedPane)src).getSelectedIndex();
-				if (idx != -1) {
-					((IDatabasePanelTab)_tabs.get(getSelectedIndex())).select();
+			if (src instanceof SquirrelTabbedPane)
+			{
+				int idx = ((SquirrelTabbedPane) src).getSelectedIndex();
+				if (idx != -1)
+				{
+					((IDatabasePanelTab) _tabs.get(getSelectedIndex())).select();
 				}
 			}
 		}
