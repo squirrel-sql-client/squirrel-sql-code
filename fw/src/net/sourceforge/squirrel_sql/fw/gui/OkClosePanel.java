@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -25,7 +25,8 @@ import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.event.EventListenerList;
 
-public class OkClosePanel extends JPanel {
+public class OkClosePanel extends JPanel
+{
 	private boolean _executingMode;
 
 	/** Listeners for this object. */
@@ -35,7 +36,8 @@ public class OkClosePanel extends JPanel {
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
-	private interface i18n {
+	private interface i18n
+	{
 		String CANCEL = "Cancel";
 		String CLOSE = "Close";
 		String OK = "OK";
@@ -44,21 +46,25 @@ public class OkClosePanel extends JPanel {
 	private JButton _okBtn = new JButton(i18n.OK);
 	private JButton _closeBtn = new JButton(i18n.CLOSE);
 
-	public OkClosePanel() {
+	public OkClosePanel()
+	{
 		super();
 		createUserInterface();
 	}
 
 	/**
-	 * When in <EM>executing mode</TT> the OK button is disabled
+	 * When in <EM>executing mode</EM> the OK button is disabled
 	 * and the Close button is retitled as Cancel.
 	 */
-	public void setExecuting(boolean executingMode) {
-		if (executingMode != _executingMode) {
+	public void setExecuting(boolean executingMode)
+	{
+		if (executingMode != _executingMode)
+		{
 			_executingMode = executingMode;
 			_okBtn.setEnabled(!executingMode);
 			_closeBtn.setText(executingMode ? i18n.CANCEL : i18n.CLOSE);
-			if (!executingMode) {
+			if (!executingMode)
+			{
 				_closeBtn.setEnabled(true);
 			}
 		}
@@ -69,7 +75,8 @@ public class OkClosePanel extends JPanel {
 	 *
 	 * @param	enable	<TT>true</TT> to enable else <TT>false</TT> to disable.
 	 */
-	public void enableCloseButton(boolean enable) {
+	public void enableCloseButton(boolean enable)
+	{
 		_closeBtn.setEnabled(enable);
 	}
 
@@ -79,7 +86,8 @@ public class OkClosePanel extends JPanel {
 	 * @param	lis		<TT>OkClosePanelListener</TT> that will be notified when
 	 *					actions are performed in this panel.
 	 */
-	public synchronized void addListener(IOkClosePanelListener lis) {
+	public synchronized void addListener(IOkClosePanelListener lis)
+	{
 		_listenerList.add(IOkClosePanelListener.class, lis);
 	}
 
@@ -94,56 +102,74 @@ public class OkClosePanel extends JPanel {
 	 * 			hasn't been added to a frame, dialog etc.
 	 */
 	public synchronized void makeOKButtonDefault()
-			throws IllegalStateException {
+			throws IllegalStateException
+	{
 		JRootPane root = getRootPane();
-		if (root == null) {
+		if (root == null)
+		{
 			throw new IllegalStateException("Null RootPane so cannot set default button");
 		}
 		root.setDefaultButton(_okBtn);
 	}
 
-	public JButton getCloseButton() {
+	public JButton getCloseButton()
+	{
 		return _closeBtn;
 	}
 
-	public JButton getOKButton() {
+	public JButton getOKButton()
+	{
 		return _okBtn;
 	}
 
-	private void fireButtonPressed(JButton btn) {
+	private void fireButtonPressed(JButton btn)
+	{
 		// Guaranteed to be non-null.
 		Object[] listeners = _listenerList.getListenerList();
 		// Process the listeners last to first, notifying
 		// those that are interested in this event.
 		OkClosePanelEvent evt = null;
-		for (int i = listeners.length - 2; i >= 0; i-=2 ) {
-			if (listeners[i] == IOkClosePanelListener.class) {
+		for (int i = listeners.length - 2; i >= 0; i-=2 )
+		{
+			if (listeners[i] == IOkClosePanelListener.class)
+			{
 				// Lazily create the event:
-				if (evt == null) {
+				if (evt == null)
+				{
 					evt = new OkClosePanelEvent(this);
 				}
 				IOkClosePanelListener lis = (IOkClosePanelListener)listeners[i + 1];
-				if (btn == _okBtn) {
+				if (btn == _okBtn)
+				{
 					lis.okPressed(evt);
-				} else if (_executingMode) {
+				}
+				else if (_executingMode)
+				{
 					lis.cancelPressed(evt);
-				} else {
+				}
+				else
+				{
 					lis.closePressed(evt);
 				}
 			}
 		}
 	}
 
-	private void createUserInterface() {
+	private void createUserInterface()
+	{
 		add(_okBtn);
 		add(_closeBtn);
-		_okBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
+		_okBtn.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent evt)
+			{
 				fireButtonPressed(_okBtn);
 			}
 		});
-		_closeBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
+		_closeBtn.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent evt)
+			{
 				fireButtonPressed(_closeBtn);
 			}
 		});

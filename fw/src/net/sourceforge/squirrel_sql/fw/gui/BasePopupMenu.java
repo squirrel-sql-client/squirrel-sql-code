@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -24,15 +24,16 @@ import javax.swing.JPopupMenu;
 
 import com.ice.util.JFCUtilities;
 
-public class BasePopupMenu extends JPopupMenu {
-
+public class BasePopupMenu extends JPopupMenu
+{
 	/**
 	 * Safely position this popup menu so that it doesn't vanish off
 	 * the screen.
 	 *
 	 * @param   evt	 <TT>MouseEvent</TT> asking to display this popup.
 	 */
-	public void show(MouseEvent evt) {
+	public void show(MouseEvent evt)
+	{
 		Point pt = JFCUtilities.computePopupLocation(evt, evt.getComponent(), this);
 		show(evt.getComponent(), pt.x, pt.y);
 	}
