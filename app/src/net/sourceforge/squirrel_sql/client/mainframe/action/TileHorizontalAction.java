@@ -23,7 +23,6 @@ import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.action.TileInternalFramesAction;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-
 /**
  * This <CODE>Action</CODE> horizontally tiles across the internal frames.
  *
@@ -43,15 +42,21 @@ public class TileHorizontalAction extends TileInternalFramesAction
 	{
 		super();
 		_app = app;
-		app.getResources().setupAction(this, _app.getSquirrelPreferences().getShowColoriconsInToolbar());
+		app.getResources().setupAction(
+			this,
+			_app.getSquirrelPreferences().getShowColoriconsInToolbar());
 	}
 
-	public void actionPerformed(ActionEvent evt) {
+	public void actionPerformed(ActionEvent evt)
+	{
 		CursorChanger cursorChg = new CursorChanger(_app.getMainFrame());
 		cursorChg.show();
-		try {
+		try
+		{
 			super.actionPerformed(evt);
-		} finally {
+		}
+		finally
+		{
 			cursorChg.restore();
 		}
 	}

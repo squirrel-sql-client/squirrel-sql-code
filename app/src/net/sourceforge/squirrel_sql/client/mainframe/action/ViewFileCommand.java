@@ -23,6 +23,8 @@ import java.net.URL;
 
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -36,6 +38,10 @@ import net.sourceforge.squirrel_sql.client.gui.HtmlViewerSheet;
  */
 public class ViewFileCommand implements ICommand
 {
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ViewFileCommand.class);
+
 	/** Logger for this class. */
 	private static ILogger s_log =
 		LoggerController.createLogger(ViewFileCommand.class);
@@ -86,7 +92,7 @@ public class ViewFileCommand implements ICommand
 		}
 		catch (IOException ex)
 		{
-			final String msg = "Error occured reading file: " + _file.getAbsolutePath();
+			final String msg = s_stringMgr.getString("ViewFileCommand.error.reading" + _file.getAbsolutePath());
 			s_log.error(msg, ex);
 			throw new BaseException(ex);
 		}

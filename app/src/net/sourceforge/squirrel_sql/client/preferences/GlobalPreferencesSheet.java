@@ -17,7 +17,6 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -33,15 +32,16 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
-import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
+import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
  * This sheet allows the user to maintain global preferences.
  *
@@ -49,14 +49,9 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
  */
 public class GlobalPreferencesSheet extends BaseSheet
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
-	{
-		String TITLE = "Global Preferences";
-	}
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(GlobalPreferencesSheet.class);
 
 	/** Logger for this class. */
 	private final static ILogger s_log =
@@ -87,7 +82,7 @@ public class GlobalPreferencesSheet extends BaseSheet
 	 */
 	private GlobalPreferencesSheet(IApplication app)
 	{
-		super(i18n.TITLE, true);
+		super(s_stringMgr.getString("GlobalPreferencesSheet.title"), true);
 		if (app == null)
 		{
 			throw new IllegalArgumentException("IApplication == null");
@@ -145,18 +140,15 @@ public class GlobalPreferencesSheet extends BaseSheet
 					}
 					catch (Throwable th)
 					{
-						final String msg = "Error occured loading " + pnl.getTitle();
+						final String msg = s_stringMgr.getString("GlobalPreferencesSheet.error.loading", pnl.getTitle());
 						s_log.error(msg, th);
 						_app.showErrorDialog(msg, th);
 					}
 					if (isDebug)
 					{
-						s_log.debug(
-							"Panel "
-								+ pnl.getTitle()
+						s_log.debug("Panel " + pnl.getTitle()
 								+ " initialized in "
-								+ (System.currentTimeMillis() - start)
-								+ "ms");
+								+ (System.currentTimeMillis() - start) + "ms");
 					}
 				}
 				pack();
@@ -205,25 +197,22 @@ public class GlobalPreferencesSheet extends BaseSheet
 				{
 					start = System.currentTimeMillis();
 				}
-				IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel) it.next();
+				IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel)it.next();
 				try
 				{
 					pnl.applyChanges();
 				}
 				catch (Throwable th)
 				{
-					final String msg = "Error occured saving " + pnl.getTitle();
+					final String msg = s_stringMgr.getString("GlobalPreferencesSheet.error.saving", pnl.getTitle());
 					s_log.error(msg, th);
 					_app.showErrorDialog(msg, th);
 				}
 				if (isDebug)
 				{
-					s_log.debug(
-						"Panel "
-							+ pnl.getTitle()
-							+ " applied changes in "
-							+ (System.currentTimeMillis() - start)
-							+ "ms");
+					s_log.debug("Panel " + pnl.getTitle()
+								+ " applied changes in "
+								+ (System.currentTimeMillis() - start) + "ms");
 				}
 			}
 		}
@@ -317,7 +306,7 @@ public class GlobalPreferencesSheet extends BaseSheet
 	{
 		JPanel pnl = new JPanel();
 
-		JButton okBtn = new JButton("OK");
+		JButton okBtn = new JButton(s_stringMgr.getString("GlobalPreferencesSheet.ok"));
 		okBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
@@ -325,7 +314,7 @@ public class GlobalPreferencesSheet extends BaseSheet
 				performOk();
 			}
 		});
-		JButton closeBtn = new JButton("Close");
+		JButton closeBtn = new JButton(s_stringMgr.getString("GlobalPreferencesSheet.close"));
 		closeBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
@@ -342,22 +331,5 @@ public class GlobalPreferencesSheet extends BaseSheet
 		getRootPane().setDefaultButton(okBtn);
 
 		return pnl;
-	}
-
-	/**
-	 * Get the main frame from the passed <TT>IApplication</TT> object.
-	 *
-	 * @return	The main frame.
-	 *
-	 * @throws	IllegalArgumentException
-	 *			If <TT>null</TT> <TT>IApplication</TT> passed.
-	 */
-	private static Frame getFrame(IApplication app)
-	{
-		if (app == null)
-		{
-			throw new IllegalArgumentException("Null IApplication passed");
-		}
-		return app.getMainFrame();
 	}
 }

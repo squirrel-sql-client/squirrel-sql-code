@@ -25,9 +25,15 @@ import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public abstract class DefaultPlugin implements IPlugin
 {
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(DefaultPlugin.class);
+
 	/** Current application API. */
 	private IApplication _app;
 
@@ -161,8 +167,7 @@ public abstract class DefaultPlugin implements IPlugin
 
 		if (!file.isDirectory())
 		{
-			throw new IOException(
-				"Cannot create directory as a file of the same name already exists: " + file.getAbsolutePath());
+			throw new IOException(s_stringMgr.getString("DefaultPlugin.error.cannotcreate", file.getAbsolutePath()));
 		}
 
 		return file;
@@ -205,8 +210,7 @@ public abstract class DefaultPlugin implements IPlugin
 
 		if (!file.isDirectory())
 		{
-			throw new IOException(
-				"Cannot create directory as a file of the same name already exists: " + name);
+			throw new IOException(s_stringMgr.getString("DefaultPlugin.error.cannotcreate", name));
 		}
 
 		return file;

@@ -26,6 +26,8 @@ import java.util.Iterator;
 
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.ProxySettings;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
@@ -64,6 +66,10 @@ public class SquirrelPreferences implements Serializable
 		String SHOW_TOOLTIPS = "showToolTips";
 		String SHOW_COLOR_ICONS_IN_TOOLBAR="showColorIconsInToolbars";
 	}
+
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(SquirrelPreferences.class);
 
 	/** Logger for this class. */
 	private final static ILogger s_log =
@@ -560,8 +566,7 @@ public class SquirrelPreferences implements Serializable
 		}
 		catch (Exception ex)
 		{
-			s_log.error("Error occured reading from preferences file: " + prefsFile.getPath(), ex);
-			//i18n
+			s_log.error(s_stringMgr.getString("SquirrelPreferences.error.reading", prefsFile.getPath()), ex);
 		}
 		return new SquirrelPreferences();
 	}
@@ -579,8 +584,8 @@ public class SquirrelPreferences implements Serializable
 		}
 		catch (Exception ex)
 		{
-			s_log.error("Error occured writing to preferences file: " + prefsFile.getPath(), ex);
-			//i18n
+			s_log.error(s_stringMgr.getString("SquirrelPreferences.error.writing",
+												prefsFile.getPath()), ex);
 		}
 	}
 

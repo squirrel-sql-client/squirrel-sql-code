@@ -31,18 +31,17 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.ProxySettings;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 class ProxyPreferencesPanel implements IGlobalPreferencesPanel
 {
-	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(ProxyPreferencesPanel.class);
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ProxyPreferencesPanel.class);
 
 	/** Panel to be displayed in preferences dialog. */
 	private MyPanel _myPanel;
@@ -86,39 +85,23 @@ class ProxyPreferencesPanel implements IGlobalPreferencesPanel
 
 	public String getTitle()
 	{
-		return MyPanel.i18n.TAB_TITLE;
+		return s_stringMgr.getString("ProxyPreferencesPanel.title");
 	}
 
 	public String getHint()
 	{
-		return MyPanel.i18n.TAB_HINT;
+		return s_stringMgr.getString("ProxyPreferencesPanel.hint");
 	}
 
 	private static final class MyPanel extends JPanel
 	{
-		/**
-		 * This interface defines locale specific strings. This should be
-		 * replaced with a property file.
-		 */
-		interface i18n
-		{
-			String USE_HTTP_PROXY = "Use Proxy";
-			String USE_SOCKS_PROXY = "Use Proxy";
-			String TAB_HINT = "Proxy Server Settings";
-			String TAB_TITLE = "Proxy";
-			String NOTES = "Separate entries in the 'No Proxy For' field with |. "
-					+ "If using a proxy for Internet access you may need to "
-					+ "enter your database server names in the 'No Proxy For' "
-					+ "field in order to access them.";
-		}
-
-		private JCheckBox _httpUseProxyChk = new JCheckBox(i18n.USE_HTTP_PROXY);
+		private JCheckBox _httpUseProxyChk = new JCheckBox(s_stringMgr.getString("ProxyPreferencesPanel.useproxy"));
 		private JTextField _httpProxyServer = new JTextField();
 		private JTextField _httpProxyPort = new JTextField();
 		private JTextField _httpNonProxyHosts = new JTextField();
 		private JTextField _httpProxyUser = new JTextField();
 		private JPasswordField _httpProxyPassword = new JPasswordField();
-		private JCheckBox _socksUseProxyChk = new JCheckBox(i18n.USE_SOCKS_PROXY);
+		private JCheckBox _socksUseProxyChk = new JCheckBox(s_stringMgr.getString("ProxyPreferencesPanel.useproxy"));
 		private JTextField _socksProxyServer = new JTextField();
 		private JTextField _socksProxyPort = new JTextField();
 
@@ -201,7 +184,7 @@ class ProxyPreferencesPanel implements IGlobalPreferencesPanel
 		{
 
 			JPanel pnl = new JPanel(new GridBagLayout());
-			pnl.setBorder(BorderFactory.createTitledBorder("HTTP Proxy"));
+			pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("ProxyPreferencesPanel.httpproxy")));
 
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.anchor = GridBagConstraints.WEST;
@@ -212,24 +195,24 @@ class ProxyPreferencesPanel implements IGlobalPreferencesPanel
 
 			gbc.fill = GridBagConstraints.HORIZONTAL;
 			++gbc.gridx;
-			pnl.add(new JLabel("Server:", JLabel.RIGHT), gbc);
+			pnl.add(new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.server"), JLabel.RIGHT), gbc);
 
 			++gbc.gridy;
-			pnl.add(new JLabel("Port:", JLabel.RIGHT), gbc);
+			pnl.add(new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.port"), JLabel.RIGHT), gbc);
 
 			++gbc.gridy;
-			pnl.add(new JLabel("User:", JLabel.RIGHT), gbc);
+			pnl.add(new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.user"), JLabel.RIGHT), gbc);
 
 			++gbc.gridy;
-			pnl.add(new JLabel("Password:", JLabel.RIGHT), gbc);
+			pnl.add(new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.password"), JLabel.RIGHT), gbc);
 
 			++gbc.gridy;
-			pnl.add(new JLabel("No Proxy For:", JLabel.RIGHT), gbc);
+			pnl.add(new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.noproxyfor"), JLabel.RIGHT), gbc);
 
 			++gbc.gridy;
 			--gbc.gridx;
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
-			pnl.add(new MultipleLineLabel(i18n.NOTES), gbc);
+			pnl.add(new MultipleLineLabel(s_stringMgr.getString("ProxyPreferencesPane.notes")), gbc);
 			gbc.gridwidth = 1;
 			++gbc.gridx;
 
@@ -256,7 +239,7 @@ class ProxyPreferencesPanel implements IGlobalPreferencesPanel
 		private JPanel createSOCKSPanel()
 		{
 			JPanel pnl = new JPanel(new GridBagLayout());
-			pnl.setBorder(BorderFactory.createTitledBorder("SOCKS Proxy"));
+			pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("ProxyPreferencesPanel.socksproxy")));
 
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.anchor = GridBagConstraints.WEST;
@@ -267,16 +250,16 @@ class ProxyPreferencesPanel implements IGlobalPreferencesPanel
 
 			gbc.fill = GridBagConstraints.HORIZONTAL;
 			++gbc.gridx;
-			pnl.add(new JLabel("Server:", JLabel.RIGHT), gbc);
+			pnl.add(new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.server"), JLabel.RIGHT), gbc);
 
 			++gbc.gridy;
-			pnl.add(new JLabel("Port:", JLabel.RIGHT), gbc);
+			pnl.add(new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.port"), JLabel.RIGHT), gbc);
 
 			++gbc.gridx;
 			gbc.gridy = 0;
 			gbc.weightx = 1;
 			pnl.add(_socksProxyServer, gbc);
-			
+
 			++gbc.gridy;
 			pnl.add(_socksProxyPort, gbc);
 

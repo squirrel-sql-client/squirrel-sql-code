@@ -22,35 +22,30 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * Array dataset showing information about plugins.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class PluginInfoArrayDataSet implements IDataSet
 {
-	private interface PluginInfoArrayDataSetI18n
-	{
-		String NAME = "Name";
-		String AUTHOR = "Author";
-		String CONTRIBUTORS = "Contributors";
-		String LOADED = "Loaded";
-		String VERSION = "Version";
-		String UNKNOWN = "<Unknown>";
-		String TRUE = "true";
-		String FALSE = "false";
-	}
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(PluginInfoArrayDataSet.class);
 
+	private static final String UNKNOWN = s_stringMgr.getString("PluginInfoArrayDataSet.unknown");
 	private PluginInfo[] _src;
 	private DataSetDefinition _dsDef;
 
 	private final static String[] s_hdgs = new String[]
 	{
-		PluginInfoArrayDataSetI18n.NAME,
-		PluginInfoArrayDataSetI18n.LOADED,
-		PluginInfoArrayDataSetI18n.VERSION,
-		PluginInfoArrayDataSetI18n.AUTHOR,
-		PluginInfoArrayDataSetI18n.CONTRIBUTORS,
+		s_stringMgr.getString("PluginInfoArrayDataSet.name"),
+		s_stringMgr.getString("PluginInfoArrayDataSet.Loaded"),
+		s_stringMgr.getString("PluginInfoArrayDataSet.version"),
+		s_stringMgr.getString("PluginInfoArrayDataSet.author"),
+		s_stringMgr.getString("PluginInfoArrayDataSet.contributors"),
 	};
 
 	private final static int[] s_hdgWidths = new int[] { 30, 10, 10, 25, 25 };
@@ -103,25 +98,17 @@ public class PluginInfoArrayDataSet implements IDataSet
 		switch (columnIndex)
 		{
 			case 0 :
-				return plugin != null
-					? plugin.getDescriptiveName()
-					: PluginInfoArrayDataSetI18n.UNKNOWN;
+				return plugin != null ? plugin.getDescriptiveName() : UNKNOWN;
 			case 1 :
 				return _curRow.isLoaded()
-					? PluginInfoArrayDataSetI18n.TRUE
-					: PluginInfoArrayDataSetI18n.FALSE;
+					? s_stringMgr.getString("PluginInfoArrayDataSet.true")
+					: s_stringMgr.getString("PluginInfoArrayDataSet.false");
 			case 2 :
-				return plugin != null
-					? plugin.getVersion()
-					: PluginInfoArrayDataSetI18n.UNKNOWN;
+				return plugin != null ? plugin.getVersion() : UNKNOWN;
 			case 3 :
-				return plugin != null
-					? plugin.getAuthor()
-					: PluginInfoArrayDataSetI18n.UNKNOWN;
+				return plugin != null ? plugin.getAuthor() : UNKNOWN;
 			case 4 :
-				return plugin != null
-					? plugin.getContributors()
-					: PluginInfoArrayDataSetI18n.UNKNOWN;
+				return plugin != null ? plugin.getContributors() : UNKNOWN;
 			default :
 				throw new IndexOutOfBoundsException("" + columnIndex);
 		}

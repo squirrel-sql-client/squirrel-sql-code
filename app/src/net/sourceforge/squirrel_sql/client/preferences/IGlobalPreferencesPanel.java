@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.preferences;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.preferences;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.util.IOptionPanel;
 
-public interface IGlobalPreferencesPanel extends IOptionPanel {
+public interface IGlobalPreferencesPanel extends IOptionPanel
+{
 	void initialize(IApplication app);
 }

@@ -28,22 +28,21 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
-import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
+import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * This preferences panel allows maintenance of SQL preferences.
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 {
-	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(SQLPreferencesPanel.class);
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(SQLPreferencesPanel.class);
 
 	/** Panel to be displayed in preferences dialog. */
 	private SQLPrefsPanel _myPanel;
@@ -61,9 +60,9 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 
 	/**
 	 * Initialize this panel. Called prior to it being displayed.
-	 * 
+	 *
 	 * @param	app	Application API.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			if <TT>null</TT> <TT>IApplication</TT> passed.
 	 */
@@ -96,12 +95,12 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 
 	public String getTitle()
 	{
-		return SQLPrefsPanel.SQLPrefsPanelI18n.TAB_TITLE;
+		return s_stringMgr.getString("SQLPreferencesPanel.title");
 	}
 
 	public String getHint()
 	{
-		return SQLPrefsPanel.SQLPrefsPanelI18n.TAB_HINT;
+		return s_stringMgr.getString("SQLPreferencesPanel.hint");
 	}
 
 	private static final class SQLPrefsPanel extends JPanel
@@ -112,14 +111,14 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 		 */
 		interface SQLPrefsPanelI18n
 		{
-			String DEBUG_JDBC = "JDBC Debug (can slow application)";
-			String LOGIN_TIMEOUT = "Login Timeout (secs):";
-			String TAB_HINT = "SQL";
-			String TAB_TITLE = "SQL";
+//			String DEBUG_JDBC = "JDBC Debug (can slow application)";
+//			String LOGIN_TIMEOUT = "Login Timeout (secs):";
+//			String TAB_HINT = "SQL";
+//			String TAB_TITLE = "SQL";
 		}
 
 		private IntegerField _loginTimeout = new IntegerField();
-		private JCheckBox _debugJdbc = new JCheckBox(SQLPrefsPanelI18n.DEBUG_JDBC);
+		private JCheckBox _debugJdbc = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebug"));
 		private JLabel _jdbcDebugLogFileNameLbl = new OutputLabel(" ");
 
 		SQLPrefsPanel()
@@ -158,7 +157,7 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 		private JPanel createGeneralPanel()
 		{
 			JPanel pnl = new JPanel(new GridBagLayout());
-			pnl.setBorder(BorderFactory.createTitledBorder("General"));
+			pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("SQLPreferencesPanel.general")));
 
 			_loginTimeout.setColumns(4);
 
@@ -169,14 +168,14 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 
 			gbc.gridx = 0;
 			gbc.gridy = 0;
-			pnl.add(new JLabel(SQLPrefsPanelI18n.LOGIN_TIMEOUT), gbc);
+			pnl.add(new JLabel(s_stringMgr.getString("SQLPreferencesPanel.logintimeout")), gbc);
 
 			++gbc.gridx;
 			pnl.add(_loginTimeout, gbc);
 
 			++gbc.gridx;
 			gbc.weightx = 1;
-			pnl.add(new JLabel("Zero means unlimited"), gbc);
+			pnl.add(new JLabel(s_stringMgr.getString("SQLPreferencesPanel.zerounlimited")), gbc);
 
 			return pnl;
 		}
@@ -184,7 +183,7 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 		private JPanel createDebugPanel()
 		{
 			JPanel pnl = new JPanel(new GridBagLayout());
-			pnl.setBorder(BorderFactory.createTitledBorder("Debug"));
+			pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("SQLPreferencesPanel.debug")));
 
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.anchor = GridBagConstraints.WEST;
@@ -201,7 +200,7 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 			gbc.gridx = 0;
 			++gbc.gridy;
 			gbc.gridwidth = 1;
-			pnl.add(new JLabel("JDBC Debug File:", SwingConstants.RIGHT), gbc);
+			pnl.add(new JLabel(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebugfile"), SwingConstants.RIGHT), gbc);
 
 			++gbc.gridx;
 			gbc.weightx = 1;

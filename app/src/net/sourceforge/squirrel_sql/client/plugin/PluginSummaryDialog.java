@@ -34,6 +34,8 @@ import javax.swing.JScrollPane;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
@@ -45,20 +47,14 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
  */
 public class PluginSummaryDialog extends JFrame
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
-	{
-		String CLOSE = "Close";
-		String TITLE = "SQuirreL SQL Client Plugin Summary";
-	}
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(PluginSummaryDialog.class);
 
 	public PluginSummaryDialog(IApplication app, Frame owner)
 		throws DataSetException
 	{
-		super(i18n.TITLE);
+		super(s_stringMgr.getString("PluginSummaryDialog.title"));
 		createGUI(app);
 	}
 
@@ -77,8 +73,8 @@ public class PluginSummaryDialog extends JFrame
 		contentPane.setLayout(new BorderLayout());
 
 		// Label containing the location of the plugins at top of dialog.
-		final JLabel pluginLoc = new JLabel("Plugins location: "
-			+ new ApplicationFiles().getPluginsDirectory().getAbsolutePath());
+		final JLabel pluginLoc = new JLabel(s_stringMgr.getString("PluginSummaryDialog.pluginloc",
+					new ApplicationFiles().getPluginsDirectory().getAbsolutePath()));
 		pluginLoc.setBorder(BorderFactory.createEmptyBorder(1, 4, 1, 4));
 
 		contentPane.add(pluginLoc, BorderLayout.NORTH);
@@ -90,7 +86,7 @@ public class PluginSummaryDialog extends JFrame
 
 		// Ok button at bottom of dialog.
 		JPanel btnsPnl = new JPanel();
-		JButton closeBtn = new JButton(i18n.CLOSE);
+		JButton closeBtn = new JButton(s_stringMgr.getString("PluginSummaryDialog.close"));
 		closeBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)

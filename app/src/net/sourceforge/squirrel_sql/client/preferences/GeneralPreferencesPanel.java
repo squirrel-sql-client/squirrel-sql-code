@@ -28,19 +28,18 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 {
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(GeneralPreferencesPanel.class);
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(GeneralPreferencesPanel.class);
 
 	/** Panel to be displayed in preferences dialog. */
 	private MyPanel _myPanel;
@@ -84,47 +83,27 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 
 	public String getTitle()
 	{
-		return MyPanel.i18n.TAB_TITLE;
+		return s_stringMgr.getString("GeneralPreferencesPanel.tabtitle");
 	}
 
 	public String getHint()
 	{
-		return MyPanel.i18n.TAB_HINT;
+		return s_stringMgr.getString("GeneralPreferencesPanel.tabhint");
 	}
 
 	private static final class MyPanel extends JPanel
 	{
-		/**
-		 * This interface defines locale specific strings. This should be
-		 * replaced with a property file.
-		 */
-		interface i18n
-		{
-			String DEBUG_JDBC = "JDBC Debug (can slow application)";
-			String LOGIN_TIMEOUT = "Login Timeout (Seconds):";
-			String MAXIMIZE_SESSION_SHEET = "Maximize Session Sheet on Open";
-			String SHOW_ALIASES_WINDOW_TOOLBAR = "Show Aliases Toolbar";
-			String SHOW_CONTENTS = "Show Window Contents While Dragging";
-			String SHOW_DRIVERS_WINDOW_TOOLBAR = "Show Drivers Toolbar";
-			String SHOW_MAIN_STATUS_BAR = "Show Main Window Status Bar";
-			String SHOW_MAIN_TOOL_BAR = "Show Main Window Tool Bar";
-			String SHOW_TOOLTIPS = "Show Tooltips";
-			String SHOW_COLOR_ICONS_IN_TOOLBAR = "Show Color Icons In Toolbars";
-			String TAB_HINT = "General";
-			String TAB_TITLE = "General";
-			String USE_SCROLLABLE_TABS = "Use Scrollable Tabbed Panes (JDK1.4 and above)";
-		}
 
-		private JCheckBox _showAliasesToolBar = new JCheckBox(i18n.SHOW_ALIASES_WINDOW_TOOLBAR);
-		private JCheckBox _showDriversToolBar = new JCheckBox(i18n.SHOW_DRIVERS_WINDOW_TOOLBAR);
-		private JCheckBox _showMainStatusBar = new JCheckBox(i18n.SHOW_MAIN_STATUS_BAR);
-		private JCheckBox _showMainToolBar = new JCheckBox(i18n.SHOW_MAIN_TOOL_BAR);
-		private JCheckBox _showContents = new JCheckBox(i18n.SHOW_CONTENTS);
-		private JCheckBox _showToolTips = new JCheckBox(i18n.SHOW_TOOLTIPS);
-		private JCheckBox _useScrollableTabbedPanes = new JCheckBox(i18n.USE_SCROLLABLE_TABS);
-		private JCheckBox _maximimizeSessionSheet = new JCheckBox(i18n.MAXIMIZE_SESSION_SHEET);
+		private JCheckBox _showAliasesToolBar = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showaliasestoolbar"));
+		private JCheckBox _showDriversToolBar = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showdriverstoolbar"));
+		private JCheckBox _showMainStatusBar = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showmainwinstatusbar"));
+		private JCheckBox _showMainToolBar = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showmainwintoolbar"));
+		private JCheckBox _showContents = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showwindowcontents"));
+		private JCheckBox _showToolTips = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showtooltips"));
+		private JCheckBox _useScrollableTabbedPanes = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.usescrolltabs"));
+		private JCheckBox _maximimizeSessionSheet = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.maxonopen"));
 
-		private JCheckBox _showColoriconsInToolbar = new JCheckBox(i18n.SHOW_COLOR_ICONS_IN_TOOLBAR);
+		private JCheckBox _showColoriconsInToolbar = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showcoloricons"));
 		private JLabel _executionLogFileNameLbl = new OutputLabel(" ");
 		// Must have at least 1 blank otherwise width gets set to zero.
 		private JLabel _logConfigFileNameLbl = new OutputLabel(" ");
@@ -152,7 +131,9 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			_executionLogFileNameLbl.setText(appFiles.getExecutionLogFile().getPath());
 
 			String configFile = ApplicationArguments.getInstance().getLoggingConfigFileName();
-			_logConfigFileNameLbl.setText(configFile != null ? configFile : "<unspecified>"); //i18n.
+			_logConfigFileNameLbl.setText(
+				configFile != null	? configFile
+									: s_stringMgr.getString("GeneralPreferencesPanel.unspecified"));
 		}
 
 		void applyChanges(SquirrelPreferences prefs)
@@ -184,7 +165,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 		private JPanel createAppearancePanel()
 		{
 			JPanel pnl = new JPanel(new GridBagLayout());
-			pnl.setBorder(BorderFactory.createTitledBorder("Appearance"));
+			pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("GeneralPreferencesPanel.appearance")));
 
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -216,7 +197,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 		private JPanel createLoggingPanel()
 		{
 			JPanel pnl = new JPanel();
-			pnl.setBorder(BorderFactory.createTitledBorder("Logging"));
+			pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("GeneralPreferencesPanel.logging")));
 
 			pnl.setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
@@ -225,10 +206,10 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 
 			gbc.gridx = 0;
 			gbc.gridy = 0;
-			pnl.add(new JLabel("Execution Log File:", SwingConstants.RIGHT), gbc);
+			pnl.add(new JLabel(s_stringMgr.getString("GeneralPreferencesPanel.execlogfile"), SwingConstants.RIGHT), gbc);
 
 			++gbc.gridy;
-			pnl.add(new JLabel("Configuration File:", SwingConstants.RIGHT), gbc);
+			pnl.add(new JLabel(s_stringMgr.getString("GeneralPreferencesPanel.configfile"), SwingConstants.RIGHT), gbc);
 
 			gbc.weightx = 1.0;
 
@@ -243,4 +224,3 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 		}
 	}
 }
-

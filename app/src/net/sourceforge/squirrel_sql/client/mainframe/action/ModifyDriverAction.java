@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -26,13 +26,13 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.mainframe.DriversList;
 import net.sourceforge.squirrel_sql.client.mainframe.DriversToolWindow;
-
 /**
  * This <CODE>Action</CODE> allows the user to maintain an <TT>ISQLDriver</TT>.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ModifyDriverAction extends SquirrelAction {
+public class ModifyDriverAction extends SquirrelAction
+{
 	/**
 	 * List of all the users drivers.
 	 */
@@ -41,16 +41,18 @@ public class ModifyDriverAction extends SquirrelAction {
 	/**
 	 * Ctor specifying the list of drivers.
 	 *
-	 * @param   app		Application API.
-	 * @param   list	List of <TT>ISQLDriver</TT> objects.
+	 * @param	app		Application API.
+	 * @param	list	List of <TT>ISQLDriver</TT> objects.
 	 *
-	 * @throws  IllegalArgumentException
+	 * @throws	IllegalArgumentException
 	 *			thrown if a <TT>null</TT> <TT>DriversList</TT> passed.
 	 */
 	public ModifyDriverAction(IApplication app, DriversList list)
-			throws IllegalArgumentException {
+		throws IllegalArgumentException
+	{
 		super(app);
-		if (list == null) {
+		if (list == null)
+		{
 			throw new IllegalArgumentException("Null DriversList passed");
 		}
 		_drivers = list;
@@ -60,18 +62,23 @@ public class ModifyDriverAction extends SquirrelAction {
 	 * Perform this action. Retrieve the current driver from the list and
 	 * allow the user to maintain it.
 	 *
-	 * @param   evt	 The current event.
+	 * @param	evt	 The current event.
 	 */
-	public void actionPerformed(ActionEvent evt) {
+	public void actionPerformed(ActionEvent evt)
+	{
 		IApplication app = getApplication();
 		DriversToolWindow tw = app.getMainFrame().getDriversToolWindow();
 		tw.moveToFront();
-		try {
+		try
+		{
 			tw.setSelected(true);
-		} catch (PropertyVetoException ignore) {
+		}
+		catch (PropertyVetoException ignore)
+		{
 		}
 		ISQLDriver driver = _drivers.getSelectedDriver();
-		if (driver != null) {
+		if (driver != null)
+		{
 			new ModifyDriverCommand(driver).execute();
 		}
 	}
