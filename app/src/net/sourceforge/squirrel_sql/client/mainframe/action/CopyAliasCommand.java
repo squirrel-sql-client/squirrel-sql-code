@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,8 +19,6 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  */
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.db.AliasMaintSheetFactory;
 /**
@@ -31,10 +29,6 @@ import net.sourceforge.squirrel_sql.client.db.AliasMaintSheetFactory;
  */
 public class CopyAliasCommand implements ICommand
 {
-	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(CopyAliasCommand.class);
-
 	/** <TT>ISQLAlias</TT> to be copied. */
 	private final ISQLAlias _sqlAlias;
 

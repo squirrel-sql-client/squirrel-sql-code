@@ -31,6 +31,7 @@ public class AliasGroupBeanInfo extends SimpleBeanInfo
 
 	private static interface IPropertyNames extends AliasGroup.IPropertyNames
 	{
+		// Empty body.
 	}
 	
 	private static PropertyDescriptor[] s_descr;

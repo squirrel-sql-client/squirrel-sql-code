@@ -19,14 +19,10 @@ package net.sourceforge.squirrel_sql.client.gui;
  */
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.io.IOException;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
@@ -37,23 +33,18 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
  */
 public class HtmlViewerSheet extends JFrame
 {
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(HtmlViewerSheet.class);
-
 	/** Application API. */
 	private final IApplication _app;
 
 	/** Original URL (home). */
 	private URL _documentURL;
 
- 	public HtmlViewerSheet(IApplication app, String title) throws IOException
+ 	public HtmlViewerSheet(IApplication app, String title)
 	{
 		this(app, title, null);
 	}
 
  	public HtmlViewerSheet(IApplication app, String title, URL url)
-		throws IOException
 	{
 		super(title);//, true, true, true, true);
 		if (app == null)
@@ -78,12 +69,12 @@ public class HtmlViewerSheet extends JFrame
 	/**
 	 * Create user interface.
 	 */
-	private void createGUI() throws IOException
+	private void createGUI() //throws IOException
 	{
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		Container contentPane = getContentPane();
 		contentPane.setLayout(new BorderLayout());
-		contentPane.add(new HtmlViewerPanel(_app, _documentURL), BorderLayout.CENTER);
+		contentPane.add(new HtmlViewerPanel(_documentURL), BorderLayout.CENTER);
 		final SquirrelResources rsrc = _app.getResources();
 		final ImageIcon icon = rsrc.getIcon(SquirrelResources.IImageNames.APPLICATION_ICON);
 		if (icon != null)

@@ -66,11 +66,11 @@ public class AliasesList extends JList
 
 		setCellRenderer(new ModifiedDefaultListCellRenderer());
 
-		final int idx = app.getSquirrelPreferences().getAliasesSelectedIndex();
+		final int selAliasIdx = app.getSquirrelPreferences().getAliasesSelectedIndex();
 		final int size = getModel().getSize();
-		if (idx > -1 && idx < size)
+		if (selAliasIdx > -1 && selAliasIdx < size)
 		{
-			setSelectedIndex(idx);
+			setSelectedIndex(selAliasIdx);
 		}
 		else
 		{
@@ -81,6 +81,7 @@ public class AliasesList extends JList
 		{
 			public void contentsChanged(ListDataEvent evt)
 			{
+				// Not required.
 			}
 			public void intervalAdded(ListDataEvent evt)
 			{
@@ -102,12 +103,12 @@ public class AliasesList extends JList
 					public void run()
 					{
 						clearSelection();
-						int size = getModel().getSize();
-						if (idx < size)
+						int modelSize = getModel().getSize();
+						if (idx < modelSize)
 						{
 							setSelectedIndex(idx);
 						}
-						else if (size > 0)
+						else if (modelSize > 0)
 						{
 							setSelectedIndex(size - 1);
 						}

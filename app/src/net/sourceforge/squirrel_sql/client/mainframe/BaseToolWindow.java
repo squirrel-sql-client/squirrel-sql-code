@@ -38,7 +38,6 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
 
 abstract class BaseToolWindow extends BaseSheet
@@ -56,9 +55,6 @@ abstract class BaseToolWindow extends BaseSheet
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(BaseToolWindow.class);
 
-	/** Application API. */
-	private IApplication _app;
-
 	private IUserInterfaceFactory _uiFactory;
 
 	/** Popup menu for the list. */
@@ -71,18 +67,13 @@ abstract class BaseToolWindow extends BaseSheet
 
 	private boolean _hasBeenSized = false;
 
-	public BaseToolWindow(IApplication app, IUserInterfaceFactory uiFactory)
+	public BaseToolWindow(IUserInterfaceFactory uiFactory)
 	{
 		super("", true, true);
-		if (app == null)
-		{
-			throw new IllegalArgumentException("Null IApplication passed");
-		}
 		if (uiFactory == null)
 		{
 			throw new IllegalArgumentException("Null IUserInterfaceFactory passed");
 		}
-		_app = app;
 		_uiFactory = uiFactory;
 
 		createUserInterface();
@@ -164,27 +155,14 @@ abstract class BaseToolWindow extends BaseSheet
 		final Container content = getContentPane();
 		content.setLayout(new BorderLayout());
 
-		String title = _uiFactory.getWindowTitle();
-		if (title != null)
+		String winTitle = _uiFactory.getWindowTitle();
+		if (winTitle != null)
 		{
-			setTitle(title);
+			setTitle(winTitle);
 		}
 
 		// Put toolbar at top of window.
 		setToolBar(_uiFactory.getToolBar());
-//		if (_toolBar != null)
-//		{
-//			String title = _uiFactory.getWindowTitle();
-//			if (title != null)
-//			{
-//				final JLabel lbl = new JLabel(title, SwingConstants.CENTER);
-//				lbl.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
-//				_toolBar.add(lbl, 0);
-//				_toolBar.add(new JToolBar.Separator(), 1);
-//				setTitle(title);
-//			}
-//			content.add(_toolBar, BorderLayout.NORTH);
-//		}
 
 		// The main list for window.
 		final JList list = _uiFactory.getList();
@@ -254,6 +232,7 @@ abstract class BaseToolWindow extends BaseSheet
 			}
 			public void contentsChanged(ListDataEvent evt)
 			{
+				// Unused.
 			}
 		});
 

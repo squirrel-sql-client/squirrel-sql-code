@@ -42,9 +42,8 @@ public class TileHorizontalAction extends TileInternalFramesAction
 	{
 		super();
 		_app = app;
-		app.getResources().setupAction(
-			this,
-			_app.getSquirrelPreferences().getShowColoriconsInToolbar());
+		app.getResources().setupAction(this,
+					_app.getSquirrelPreferences().getShowColoriconsInToolbar());
 	}
 
 	public void actionPerformed(ActionEvent evt)

@@ -255,14 +255,14 @@ public class ConnectionSheet extends BaseSheet
 			}
 		};
 
-		JRootPane rootPane = super.createRootPane();
+		final JRootPane pane = super.createRootPane();
 
 		KeyStroke ks = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(escapeListener, ks, WHEN_IN_FOCUSED_WINDOW);
+		pane.registerKeyboardAction(escapeListener, ks, WHEN_IN_FOCUSED_WINDOW);
 		ks = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(enterListener, ks, WHEN_IN_FOCUSED_WINDOW);
+		pane.registerKeyboardAction(enterListener, ks, WHEN_IN_FOCUSED_WINDOW);
 
-		return rootPane;
+		return pane;
 	}
 
 	/**
@@ -324,8 +324,9 @@ public class ConnectionSheet extends BaseSheet
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		GUIUtils.makeToolWindow(this, true);
 
-		final String title = s_stringMgr.getString("ConnectionSheet.title", _alias.getName());
-		setTitle(title);
+		final String winTitle =
+			s_stringMgr.getString("ConnectionSheet.title", _alias.getName());
+		setTitle(winTitle);
 
 		JPanel content = new JPanel(new BorderLayout());
 		content.add(createMainPanel(), BorderLayout.CENTER);

@@ -230,7 +230,6 @@ public final class ActionCollection
 	 */
 	public void internalFrameDeactivated(JInternalFrame frame)
 	{
-//		internalFrameActivated(null);
 		for (Iterator it = actions(); it.hasNext();)
 		{
 			final Action act = (Action) it.next();
@@ -238,10 +237,6 @@ public final class ActionCollection
 			{
 				((ISessionAction)act).setSession(null);
 			}
-//			if (act instanceof IClientSessionAction)
-//			{
-//				((IClientSessionAction)act).setClientSession(null);
-//			}
 		}
 	}
 
@@ -265,10 +260,6 @@ public final class ActionCollection
 			{
 				((ISessionAction)act).setSession(session);
 			}
-//			if (act instanceof IClientSessionAction)
-//			{
-//				((IClientSessionAction)act).setClientSession(session);
-//			}
 		}
 	}
 

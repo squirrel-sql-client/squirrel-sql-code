@@ -356,10 +356,17 @@ public class AliasMaintSheet extends BaseSheet
 		// This is a tool window.
 		GUIUtils.makeToolWindow(this, true);
 
-		final String title = _maintType == IMaintenanceType.MODIFY
-							? s_stringMgr.getString("AliasMaintSheet.changealias", _sqlAlias.getName())
-							: s_stringMgr.getString("AliasMaintSheet.addalias");
-		setTitle(title);
+		String winTitle; 
+		if (_maintType == IMaintenanceType.MODIFY)
+		{
+			winTitle = s_stringMgr.getString("AliasMaintSheet.changealias",
+											_sqlAlias.getName());
+		}
+		else
+		{
+			winTitle = s_stringMgr.getString("AliasMaintSheet.addalias");
+		}
+		setTitle(winTitle);
 
 		_aliasName.setColumns(COLUMN_COUNT);
 		_url.setColumns(COLUMN_COUNT);
@@ -548,9 +555,9 @@ public class AliasMaintSheet extends BaseSheet
 				try
 				{
 					applyFromDialog(testAlias);
+					ConnectionCallBack cb = new ConnectionCallBack(_app, testAlias);
 					ConnectToAliasCommand cmd = new ConnectToAliasCommand(_app,
-											_app.getMainFrame(), testAlias, false,
-											new ConnectionCallBack(_app, testAlias));
+													testAlias, false, cb);
 					cmd.execute();
 				}
 				catch (ValidationException ex)

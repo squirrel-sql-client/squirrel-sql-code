@@ -18,7 +18,6 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Frame;
 import java.sql.SQLException;
 
 import javax.swing.SwingUtilities;
@@ -69,9 +68,6 @@ public class ConnectToAliasCommand implements ICommand
 	/** Application API. */
 	private IApplication _app;
 
-	/** Owner of the connection internal frame. */
-	private Frame _frame;
-
 	/** The <TT>ISQLAlias</TT> to connect to. */
 	private ISQLAlias _sqlAlias;
 
@@ -85,32 +81,31 @@ public class ConnectToAliasCommand implements ICommand
 	 * Ctor. This ctor will create a new session as well as opening a connection.
 	 *
 	 * @param	app		The <TT>IApplication</TT> that defines app API.
-	 * @param	frame	Owner of the connection internal frame.
 	 * @param	alias	The <TT>ISQLAlias</TT> to connect to.
 	 *
 	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> or <TT>ISQLAlias</TT> passed.
+	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> or
+	 *			<TT>ISQLAlias</TT> passed.
 	 */
-	public ConnectToAliasCommand(IApplication app, Frame frame,
-									ISQLAlias sqlAlias)
+	public ConnectToAliasCommand(IApplication app, ISQLAlias sqlAlias)
 	{
-		this(app, frame, sqlAlias, true, null);
+		this(app, sqlAlias, true, null);
 	}
 
 	/**
 	 * Ctor.
 	 *
 	 * @param	app				The <TT>IApplication</TT> that defines app API.
-	 * @param	frame			Owner of the connection internal frame.
 	 * @param	alias			The <TT>ISQLAlias</TT> to connect to.
-	 * @param	createSession	If <TT>true</TT> then create a session as well as connecting
-	 * 							to the database.
-	 * @param	callback		Callback for client code to be informed of the progress of this command.
+	 * @param	createSession	If <TT>true</TT> then create a session as well
+	 *							as connecting to the database.
+	 * @param	callback		Callback for client code to be informed of the
+	 *							progress of this command.
 	 *
-	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> or <TT>ISQLAlias</TT> passed.
+	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> or
+	 *			<TT>ISQLAlias</TT> passed.
 	 */
-	public ConnectToAliasCommand(IApplication app, Frame frame, ISQLAlias sqlAlias,
+	public ConnectToAliasCommand(IApplication app, ISQLAlias sqlAlias,
 						boolean createSession, ICompletionCallback callback)
 	{
 		super();
@@ -123,7 +118,6 @@ public class ConnectToAliasCommand implements ICommand
 			throw new IllegalArgumentException("Null ISQLAlias passed");
 		}
 		_app = app;
-		_frame = frame;
 		_sqlAlias = sqlAlias;
 		_createSession = createSession;
 		_callback = callback != null ? callback : new ClientCallback(app, _sqlAlias);
@@ -174,6 +168,7 @@ public class ConnectToAliasCommand implements ICommand
 		 */
 		public void connected(SQLConnection conn)
 		{
+			// Empty.
 		}
 
 		/**
@@ -181,6 +176,7 @@ public class ConnectToAliasCommand implements ICommand
 		 */
 		public void sessionCreated(ISession session)
 		{
+			// Empty.
 		}
 
 		/**
@@ -352,6 +348,7 @@ public class ConnectToAliasCommand implements ICommand
 		 */
 		public void performClose(ConnectionSheet connSheet)
 		{
+			// Empty.
 		}
 
 		/**
@@ -399,9 +396,6 @@ public class ConnectToAliasCommand implements ICommand
 			{
 				_connSheet.executed(false);
 				_callback.errorOccured(ex);
-			}
-			finally
-			{
 			}
 		}
 

@@ -21,6 +21,8 @@ import java.awt.event.ActionEvent;
 import java.beans.PropertyVetoException;
 
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
@@ -33,6 +35,10 @@ import net.sourceforge.squirrel_sql.client.mainframe.AliasesToolWindow;
  */
 public class ConnectToAliasAction extends SquirrelAction
 {
+	/** Logger for this class. */
+	private static ILogger s_log =
+		LoggerController.createLogger(ConnectToAliasAction.class);
+
 	/**
 	 * List of all the users aliases.
 	 */
@@ -58,20 +64,21 @@ public class ConnectToAliasAction extends SquirrelAction
 	 */
 	public void actionPerformed(ActionEvent evt)
 	{
-		IApplication app = getApplication();
-		AliasesToolWindow tw = app.getMainFrame().getAliasesToolWindow();
+		final IApplication app = getApplication();
+		final AliasesToolWindow tw = app.getMainFrame().getAliasesToolWindow();
 		tw.moveToFront();
 		try
 		{
 			tw.setSelected(true);
 		}
-		catch (PropertyVetoException ignore)
+		catch (PropertyVetoException ex)
 		{
+			s_log.error("Error selecting window", ex);
 		}
 		final ISQLAlias alias = _aliases.getSelectedAlias();
 		if (alias != null)
 		{
-			new ConnectToAliasCommand(app, getParentFrame(evt), alias).execute();
+			new ConnectToAliasCommand(app, alias).execute();
 		}
 	}
 }

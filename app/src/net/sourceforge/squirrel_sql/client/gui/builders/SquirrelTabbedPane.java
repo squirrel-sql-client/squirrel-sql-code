@@ -39,6 +39,7 @@ class SquirrelTabbedPane extends JTabbedPane
 	private interface IAppPrefPropertynames
 							extends SquirrelPreferences.IPropertyNames
 	{
+		// Empty block.
 	}
 
 	SquirrelTabbedPane(SquirrelPreferences prefs)
@@ -64,15 +65,19 @@ class SquirrelTabbedPane extends JTabbedPane
 		}
 		catch (IllegalAccessException ex)
 		{
+			// Running an old versin of Java.
 		}
 		catch (NoSuchFieldException ex)
 		{
+			// Running an old versin of Java.
 		}
 		catch (NoSuchMethodException ex)
 		{
+			// Running an old versin of Java.
 		}
 		catch (InvocationTargetException ex)
 		{
+			// Running an old versin of Java.
 		}
 	}
 
@@ -118,9 +123,11 @@ class SquirrelTabbedPane extends JTabbedPane
 					}
 					catch (IllegalAccessException ex)
 					{
+						// Running an old versin of Java.
 					}
 					catch (InvocationTargetException ex)
 					{
+						// Running an old versin of Java.
 					}
 				}
 			}

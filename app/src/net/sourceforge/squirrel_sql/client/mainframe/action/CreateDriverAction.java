@@ -20,20 +20,27 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyVetoException;
 
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.mainframe.DriversToolWindow;
 /**
  * This <CODE>Action</CODE> allows the user to create a new <TT>ISQLDriver</TT>.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class CreateDriverAction extends SquirrelAction
 {
+	/** Logger for this class. */
+	private static ILogger s_log =
+		LoggerController.createLogger(ConnectToAliasAction.class);
+
 	/**
 	 * Ctor.
 	 *
-	 * @param   app	 Application API.
+	 * @param	app	 Application API.
 	 */
 	public CreateDriverAction(IApplication app)
 	{
@@ -43,7 +50,7 @@ public class CreateDriverAction extends SquirrelAction
 	/**
 	 * Perform this action. Execute the create driver command.
 	 *
-	 * @param   evt	 The current event.
+	 * @param	evt	 The current event.
 	 */
 	public void actionPerformed(ActionEvent evt)
 	{
@@ -54,8 +61,9 @@ public class CreateDriverAction extends SquirrelAction
 		{
 			tw.setSelected(true);
 		}
-		catch (PropertyVetoException ignore)
+		catch (PropertyVetoException ex)
 		{
+			s_log.error("Error selecting window", ex);
 		}
 		new CreateDriverCommand().execute();
 	}
