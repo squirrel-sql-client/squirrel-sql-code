@@ -1,6 +1,15 @@
 Change Log
 ==========
 
+1.1beta3
+========
+
+Enhancements
+------------
+- Now shows catalogs in object tree for MySQL.
+- Can now select the current catalog via a dropdown for those DBMS's
+  that support catalogs.
+
 
 1.1beta2
 ========
