@@ -63,9 +63,13 @@ public class GlobalPreferencesSheet extends BaseSheet {
 	/** Application API. */
 	private IApplication _app;
 
+	/**
+	 * List of all the panels (instances of
+	 * <TT>IGlobalPreferencesPanel</TT> objects in shhet.
+	 */
 	private List _panels = new ArrayList();
 
-	/** Frame title. */
+	/** Sheet title. */
 	private JLabel _titleLbl = new JLabel();
 
 	/**
@@ -177,6 +181,7 @@ public class GlobalPreferencesSheet extends BaseSheet {
 
 		// Add panels for core Squirrel functionality.
 		_panels.add(new GeneralPreferencesPanel());
+		_panels.add(new SQLPreferencesPanel());
 
 		// Go thru all loaded plugins asking for panels.
 		PluginInfo[] plugins = _app.getPluginManager().getPluginInformation();
