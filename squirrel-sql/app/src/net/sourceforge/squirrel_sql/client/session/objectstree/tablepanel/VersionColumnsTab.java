@@ -42,47 +42,47 @@ import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.*;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class VersionColumnsTab extends BaseTablePanelTab {
-    /**
-     * This interface defines locale specific strings. This should be
-     * replaced with a property file.
-     */
-    private interface i18n {
-        String TITLE = "Versions";
-        String HINT = "Show columns that are automatically updated when row updated";
-    }
+	/**
+	 * This interface defines locale specific strings. This should be
+	 * replaced with a property file.
+	 */
+	private interface i18n {
+		String TITLE = "Versions";
+		String HINT = "Show columns that are automatically updated when row updated";
+	}
 
-    /** Component to be displayed. */
-    private ResultSetPanel _comp;
+	/** Component to be displayed. */
+	private ResultSetPanel _comp;
 
-    /**
-     * Return the title for the tab.
-     *
-     * @return    The title for the tab.
-     */
-    public String getTitle() {
-        return i18n.TITLE;
-    }
+	/**
+	 * Return the title for the tab.
+	 *
+	 * @return	The title for the tab.
+	 */
+	public String getTitle() {
+		return i18n.TITLE;
+	}
 
-    /**
-     * Return the hint for the tab.
-     *
-     * @return    The hint for the tab.
-     */
-    public String getHint() {
-        return i18n.HINT;
-    }
+	/**
+	 * Return the hint for the tab.
+	 *
+	 * @return	The hint for the tab.
+	 */
+	public String getHint() {
+		return i18n.HINT;
+	}
 
-    /**
-     * Return the component to be displayed in the panel.
-     *
-     * @return    The component to be displayed in the panel.
-     */
-    public synchronized Component getComponent() {
-        if (_comp == null) {
-            _comp = new ResultSetPanel();
-        }
-        return _comp;
-    }
+	/**
+	 * Return the component to be displayed in the panel.
+	 *
+	 * @return	The component to be displayed in the panel.
+	 */
+	public synchronized Component getComponent() {
+		if (_comp == null) {
+			_comp = new ResultSetPanel();
+		}
+		return _comp;
+	}
 
 	/**
 	 * @see BaseObjectPanelTab#clear()
@@ -92,26 +92,26 @@ public class VersionColumnsTab extends BaseTablePanelTab {
 		((ResultSetPanel)getComponent()).clear();
 	}
 	
-    /**
-     * Refresh the component displaying the <TT>ITableInfo</TT> object.
-     */
-    public synchronized void refreshComponent() throws IllegalStateException {
-        ISession session = getSession();
-        if (session == null) {
-            throw new IllegalStateException("Null ISession");
-        }
-        ITableInfo ti = getTableInfo();
-        if ( ti == null) {
-            throw new IllegalStateException("Null ITableInfo");
-        }
-        String destClassName = session.getProperties().getVersionsOutputClassName();
-        try {
-            ResultSet rs = session.getSQLConnection().getVersionColumns(ti);
-            // ResultSetPanel is thread save
-            ((ResultSetPanel)getComponent()).load(session, rs, null, destClassName);
-        } catch (Exception ex) {
-            session.getMessageHandler().showMessage(ex);
-        }
-    }
+	/**
+	 * Refresh the component displaying the <TT>ITableInfo</TT> object.
+	 */
+	public synchronized void refreshComponent() throws IllegalStateException {
+		ISession session = getSession();
+		if (session == null) {
+			throw new IllegalStateException("Null ISession");
+		}
+		ITableInfo ti = getTableInfo();
+		if ( ti == null) {
+			throw new IllegalStateException("Null ITableInfo");
+		}
+		String destClassName = session.getProperties().getVersionsOutputClassName();
+		try {
+			ResultSet rs = session.getSQLConnection().getVersionColumns(ti);
+			// ResultSetPanel is thread save
+			((ResultSetPanel)getComponent()).load(session, rs, null, destClassName);
+		} catch (Exception ex) {
+			session.getMessageHandler().showMessage(ex);
+		}
+	}
 }
 

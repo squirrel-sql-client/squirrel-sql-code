@@ -108,7 +108,8 @@ public class ColumnPriviligesTab extends BaseTablePanelTab {
         try {
             ResultSet rs = session.getSQLConnection().getColumnPrivileges(ti);
             // ResultSetPanel is thread save
-            ((ResultSetPanel)getComponent()).load(session, rs, new int[] {4,5,6,7,8}, destClassName);
+//            ((ResultSetPanel)getComponent()).load(session, rs, new int[] {4,5,6,7,8}, destClassName);
+            ((ResultSetPanel)getComponent()).load(session, rs, null, destClassName);
         } catch (Exception ex) {
             session.getMessageHandler().showMessage(ex);
         }
