@@ -208,4 +208,15 @@ public class ConstraintGraph
 
    }
 
+   public GraphLine getMainLine()
+   {
+      if(0 == _foldingPoints.size())
+      {
+         return new GraphLine(_pkGatherPoint, _fkGatherPoint);
+      }
+      else
+      {
+         return new GraphLine((Point) _foldingPoints.get(0), _fkGatherPoint);
+      }
+   }
 }
