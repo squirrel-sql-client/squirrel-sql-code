@@ -32,5 +32,9 @@
 
 #DEFAULT $CVSROOT/CVSROOT/syncmail %{sVv} squirrel-sql-commits@lists.sourceforge.net 
 
-squirrel/ $CVSROOT/syncmail %{sVv} squirrel-sql-commits@lists.sourceforge.net
-squirrel-sql/ $CVSROOT/syncmail %{sVv} squirrel-sql-commits@lists.sourceforge.net
+#squirrel/ $CVSROOT/syncmail %{sVv} squirrel-sql-commits@lists.sourceforge.net
+#squirrel-sql/ $CVSROOT/syncmail %{sVv} squirrel-sql-commits@lists.sourceforge.net
+
+# New setup 2 Apr 2004. Now using the centralized SF script.
+CVSROOT /cvsroot/sitedocs/CVSROOT/cvstools/syncmail %{sVv} colbell@users.sourceforge.net
+DEFAULT /cvsroot/sitedocs/CVSROOT/cvstools/syncmail %{sVv} squirrel-sql-commits@lists.sourceforge.net
