@@ -48,8 +48,15 @@ public class ShowStatisticsCommand implements ICommand {
 	public void execute() {
         StringBuffer sqlBuffer = new StringBuffer();
         final String sqlSep = _session.getProperties().getSQLStatementSeparator();
-        sqlBuffer.append("DBCC SHOW_STATISTICS(" + _tableInfo.getSimpleName() + "," + _indexName + ")");
-        sqlBuffer.append(" " + sqlSep + " \n");
+        sqlBuffer.append("DBCC SHOW_STATISTICS([");
+        sqlBuffer.append(_tableInfo.getCatalogName());
+        sqlBuffer.append(".");
+        sqlBuffer.append(_tableInfo.getSchemaName());
+        sqlBuffer.append(".");
+        sqlBuffer.append(_tableInfo.getSimpleName());
+        sqlBuffer.append("],");
+        sqlBuffer.append(_indexName);
+        sqlBuffer.append(") " + sqlSep + " \n");
         
         _session.getSQLPanelAPI(_plugin).appendSQLScript(sqlBuffer.toString(), true);
 		_session.getSQLPanelAPI(_plugin).executeCurrentSQL();
