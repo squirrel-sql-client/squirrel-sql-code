@@ -46,11 +46,9 @@ data in tables, issue SQL commands etc.</P>
 <P>It is free software, and you are welcome to redistribute it under the
 terms of the <A HREF="licences/squirrel_licence.txt">GNU General Public License</A>.</P>
 
-<P>SQuirreL SQL Client requires JDK1.2 to work but prefers 1.3. If you are using JDK1.4 make
-sure you are using at least JDK1.4beta 3.</P>
-
-<P>Most testing for this product has been with Oracle and InstantDB. As I
-find the time I hope to add other database products to this list.</P>
+<P>From version 1.1 on SQuirreL SQL Client requires JDK1.3 to work. If you need a version
+compatible with JDK1.2 download SquirreL SQL Client 1.0. If you are using JDK1.4 make
+sure you are using at least JDK1.4 release candidate 1.</P>
 
 <A NAME="installation"><H2>Installation</H2></A>
 
@@ -82,6 +80,13 @@ main class in order to start SQuirreL without the splash screen appearing. E.G.<
 
 <PRE>
 java net.sourceforge.squirrel_sql.client.Main -nosplash
+</PRE>
+
+<P>The command line option <TT>-noplugins</TT> can be passed to the
+main class in order to start SQuirreL without loading any of the plugins.
+
+<PRE>
+java net.sourceforge.squirrel_sql.client.Main -noplugins
 </PRE>
 
 <P>The user settings directory can be overridden by the <TT>-settingsdir</TT>
