@@ -28,10 +28,11 @@ public class Version
 	private static final String APP_NAME = "SQuirreL SQL Client";
 	private static final int MAJOR_VERSION = 1;
 	private static final int MINOR_VERSION = 1;
-	//	private static final String TYPE = "alpha";
-	private static final String TYPE = "beta";
-	//  private static final String TYPE = "final";
-	private static final int RELEASE = 7;
+	//private static final String TYPE = "alpha";
+	//private static final String TYPE = "beta";
+	private static final String TYPE = "rc";
+	//private static final String TYPE = "final";
+	private static final int RELEASE = 1;
 
 	private static final String COPYRIGHT = "Copyright (c) 2001 - 2002 Colin Bell";
 

@@ -24,9 +24,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.swing.Action;
 import javax.swing.JInternalFrame;
@@ -38,6 +41,7 @@ import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
+import net.sourceforge.squirrel_sql.fw.util.ProxySettings;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -474,6 +478,73 @@ class Application implements IApplication
 		{
 			DriverManager.setLoginTimeout(_prefs.getLoginTimeout());
 		}
+
+		if (propName == null || propName == SquirrelPreferences.IPropertyNames.PROXY)
+		{
+			final Properties props = System.getProperties();
+			final ProxySettings proxy = _prefs.getProxySettings();
+
+			final boolean http = proxy.getHttpUseProxy();
+			if (http)
+			{
+				props.put("proxySet", "true");
+				props.put("http.proxyHost", proxy.getHttpProxyServer());
+				props.put("http.proxyPort", proxy.getHttpProxyPort());
+				final String user = proxy.getHttpProxyUser();
+				String password = proxy.getHttpProxyPassword();
+				if (password == null)
+				{
+					password = "";
+				}
+				if (user != null && user.length() > 0)
+				{
+					s_log.debug("Using HTTP proxy with security");
+					Authenticator.setDefault(new MyAuthenticator(user, password));
+				}
+				else
+				{
+					s_log.debug("Using HTTP proxy without security");
+					Authenticator.setDefault(null);
+				}
+			}
+			else
+			{
+				s_log.debug("Not using HTTP proxy");
+				props.remove("proxySet");
+				props.remove("http.proxyHost");
+				props.remove("http.proxyPort");
+				Authenticator.setDefault(null);
+			}
+
+			final boolean socks = proxy.getSocksUseProxy();
+			if (socks)
+			{
+				props.put("socksProxyHost", proxy.getSocksProxyServer());
+				props.put("socksProxyPort", proxy.getSocksProxyPort());
+			}
+			else
+			{
+				props.remove("socksProxyHost");
+				props.remove("socksProxyPort");
+			}
+		}
+	}
+
+	private final static class MyAuthenticator extends Authenticator
+	{
+		private PasswordAuthentication _password;
+
+		public MyAuthenticator(String user, String password)
+		{
+			super();
+			_password = new PasswordAuthentication(user, password.toCharArray());
+
+		}
+
+		protected PasswordAuthentication getPasswordAuthentication()
+		{
+System.out.println("Authenticating");
+			return _password;
+		}
 	}
 }
-
