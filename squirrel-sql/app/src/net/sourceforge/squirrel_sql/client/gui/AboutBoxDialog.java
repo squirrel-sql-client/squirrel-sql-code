@@ -207,19 +207,25 @@ public class AboutBoxDialog extends JDialog {
 			final URL url = app.getResources().getCreditsURL();
 			StringBuffer buf = new StringBuffer(2048);
 
-			try {
-				BufferedReader rdr = new BufferedReader(new InputStreamReader(url.openStream()));
+			if (url != null) {
 				try {
-					String line = null;
-					while ((line = rdr.readLine()) != null) {
-						buf.append(line);
+					BufferedReader rdr = new BufferedReader(new InputStreamReader(url.openStream()));
+					try {
+						String line = null;
+						while ((line = rdr.readLine()) != null) {
+							buf.append(line);
+						}
+						credits.setText(buf.toString());
+					} finally {
+						rdr.close();
 					}
-					credits.setText(buf.toString());
-				} finally {
-					rdr.close();
+				} catch (IOException ex) {
+					s_log.error("Error reading credits file", ex);
+					credits.setText("Error reading credits file: " + ex.toString());
 				}
-			} catch (IOException ex) {
-				s_log.error("Error reading credits file", ex);
+			} else {
+				s_log.error("Couldn't retrieve Credits File URL");
+				credits.setText("Couldn't retrieve Credits File URL");
 			}
 
 			// Get list of all plugin developers names and place in credits. Make sure that
