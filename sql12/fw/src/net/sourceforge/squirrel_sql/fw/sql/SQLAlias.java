@@ -61,6 +61,9 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 	/** Name of user for connection. */
 	private String _userName;
 
+	/** If <TT>true</TT> then use drver properties. */
+	private boolean _useDriverProperties = false;
+
 	/** Object to handle property change events. */
 	private transient PropertyChangeReporter _propChgReporter;
 
@@ -104,6 +107,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 		setDriverIdentifier(rhs.getDriverIdentifier());
 		setUrl(rhs.getUrl());
 		setUserName(rhs.getUserName());
+		setUseDriverProperties(rhs.getUseDriverProperties());
 	}
 
 	/**
@@ -210,6 +214,14 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 		return _userName;
 	}
 
+	/**
+	 * Returns whether this alias uses driver properties.
+	 */
+	public boolean getUseDriverProperties()
+	{
+		return _useDriverProperties;
+	}
+
 	public void setIdentifier(IIdentifier id)
 	{
 		_id = id;
@@ -272,6 +284,17 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 			_userName = data;
 			getPropertyChangeReporter().firePropertyChange(ISQLAlias.IPropertyNames.USER_NAME,
 												oldValue, _userName);
+		}
+	}
+
+	public void setUseDriverProperties(boolean value) throws ValidationException
+	{
+		if (_useDriverProperties != value)
+		{
+			final boolean oldValue = _useDriverProperties;
+			_useDriverProperties = value;
+			getPropertyChangeReporter().firePropertyChange(ISQLAlias.IPropertyNames.USE_DRIVER_PROPERTIES,
+												oldValue, _useDriverProperties);
 		}
 	}
 

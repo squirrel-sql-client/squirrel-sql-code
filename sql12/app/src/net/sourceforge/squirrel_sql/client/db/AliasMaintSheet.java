@@ -18,6 +18,8 @@ package net.sourceforge.squirrel_sql.client.db;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -25,6 +27,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.sql.Driver;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -35,6 +39,7 @@ import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -44,12 +49,13 @@ import javax.swing.SwingConstants;
 
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
+import net.sourceforge.squirrel_sql.fw.gui.sql.DriverPropertiesDialog;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeEvent;
 import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeListener;
@@ -123,6 +129,12 @@ public class AliasMaintSheet extends BaseSheet
 	/** User name */
 	private final JTextField _userName = new JTextField();
 
+	/** If checked use the extended driver properties. */
+	private final JCheckBox _useDriverPropsChk = new JCheckBox("Use Driver Properties");
+
+	/** Button that brings up the driver properties dialog. */
+	private final JButton _driverPropsBtn = new JButton("Properties");
+
 	/**
 	 * Ctor.
 	 *
@@ -148,16 +160,14 @@ public class AliasMaintSheet extends BaseSheet
 		if (maintType < MaintenanceType.NEW
 			|| maintType > MaintenanceType.COPY)
 		{
-			throw new IllegalArgumentException(
-				"Illegal value of "
-					+ maintType
-					+ " passed for Maintenance type");
+			final String msg = "Illegal value of " + maintType
+								+ " passed for Maintenance type";
+			throw new IllegalArgumentException(msg);
 		}
 
 		_app = app;
 		_sqlAlias = sqlAlias;
 		_maintType = maintType;
-
 		createUserInterface();
 		loadData();
 		pack();
@@ -187,8 +197,10 @@ public class AliasMaintSheet extends BaseSheet
 
 	private void loadData()
 	{
+		_driverPropsBtn.setEnabled(_sqlAlias.getUseDriverProperties());
 		_aliasName.setText(_sqlAlias.getName());
 		_userName.setText(_sqlAlias.getUserName());
+		_useDriverPropsChk.setSelected(_sqlAlias.getUseDriverProperties());
 		if (_maintType != MaintenanceType.NEW)
 		{
 			_drivers.setSelectedItem(_sqlAlias.getDriverIdentifier());
@@ -246,11 +258,28 @@ public class AliasMaintSheet extends BaseSheet
 		alias.setDriverIdentifier(_drivers.getSelectedDriver().getIdentifier());
 		alias.setUrl(_url.getText().trim());
 		alias.setUserName(_userName.getText().trim());
+		alias.setUseDriverProperties(_useDriverPropsChk.isSelected());
 	}
 
 	private void showNewDriverDialog()
 	{
 		DriverMaintSheetFactory.getInstance().showCreateSheet();
+	}
+
+	private void showDriverPropertiesDialog()
+	{
+		try
+		{
+			final SQLDriverManager mgr = _app.getSQLDriverManager();
+			final Driver driver = mgr.getJDBCDriver(_sqlAlias.getDriverIdentifier());
+			final DriverPropertiesDialog dlog = new DriverPropertiesDialog((Frame)null, driver, _url.getText());
+			dlog.setModal(true);
+			dlog.setVisible(true);
+		}
+		catch (SQLException ex)
+		{
+			ex.printStackTrace(System.out);
+		}
 	}
 
 	private void createUserInterface()
@@ -299,37 +328,39 @@ public class AliasMaintSheet extends BaseSheet
 		gbc.insets = new Insets(0, 10, 5, 10);
 		contentPane.add(new JSeparator(), gbc);
 
-		PropertyPanel dataEntryPnl = new PropertyPanel();
+//		PropertyPanel dataEntryPnl = new PropertyPanel();
+//
+//		JLabel lbl = new JLabel(i18n.NAME, SwingConstants.RIGHT);
+//		dataEntryPnl.add(lbl, _aliasName);
+//
+//		_drivers = new DriversCombo();
+//		_drivers.addItemListener(new DriversComboItemListener());
+//		lbl = new JLabel(i18n.DRIVER, SwingConstants.RIGHT);
+//		JPanel driverPnl = new JPanel(new BorderLayout());
+//		driverPnl.add(_drivers, BorderLayout.CENTER);
+//		JButton newDriverBtn = new JButton("New");
+//		newDriverBtn.addActionListener(new ActionListener()
+//		{
+//			public void actionPerformed(ActionEvent evt)
+//			{
+//				showNewDriverDialog();
+//			}
+//		});
+//		driverPnl.add(newDriverBtn, BorderLayout.EAST);
+//		dataEntryPnl.add(lbl, driverPnl);
+//
+//		lbl = new JLabel(i18n.URL, SwingConstants.RIGHT);
+//		dataEntryPnl.add(lbl, _url);
+//
+//		lbl = new JLabel(i18n.USER_NAME, SwingConstants.RIGHT);
+//		dataEntryPnl.add(lbl, _userName);
+//
+//		gbc.insets = new Insets(0, 10, 0, 10);
+//		++gbc.gridy;
+//		gbc.weighty = 1;
+//		contentPane.add(dataEntryPnl, gbc);
 
-		JLabel lbl = new JLabel(i18n.NAME, SwingConstants.RIGHT);
-		dataEntryPnl.add(lbl, _aliasName);
-
-		_drivers = new DriversCombo();
-		_drivers.addItemListener(new DriversComboItemListener());
-		lbl = new JLabel(i18n.DRIVER, SwingConstants.RIGHT);
-		JPanel driverPnl = new JPanel(new BorderLayout());
-		driverPnl.add(_drivers, BorderLayout.CENTER);
-		JButton newDriverBtn = new JButton("New");
-		newDriverBtn.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent evt)
-			{
-				showNewDriverDialog();
-			}
-		});
-		driverPnl.add(newDriverBtn, BorderLayout.EAST);
-		dataEntryPnl.add(lbl, driverPnl);
-
-		lbl = new JLabel(i18n.URL, SwingConstants.RIGHT);
-		dataEntryPnl.add(lbl, _url);
-
-		lbl = new JLabel(i18n.USER_NAME, SwingConstants.RIGHT);
-		dataEntryPnl.add(lbl, _userName);
-
-		gbc.insets = new Insets(0, 10, 0, 10);
-		++gbc.gridy;
-		gbc.weighty = 1;
-		contentPane.add(dataEntryPnl, gbc);
+		contentPane.add(createDataEntryPanel(), gbc);
 
 		// Separated by a line.
 		gbc.weighty = 0;
@@ -355,6 +386,87 @@ public class AliasMaintSheet extends BaseSheet
 				_drivers.removeItem(evt.getObject());
 			}
 		});
+	}
+
+	private JPanel createDataEntryPanel()
+	{
+		_driverPropsBtn.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent evt)
+			{
+				showDriverPropertiesDialog();
+			}
+			
+		});
+
+		_useDriverPropsChk.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent evt)
+			{
+				_driverPropsBtn.setEnabled(_useDriverPropsChk.isSelected());
+			}
+			
+		});
+
+		final JPanel pnl = new JPanel(new GridBagLayout());
+
+		final GridBagConstraints gbc = new GridBagConstraints();
+		gbc.fill = gbc.HORIZONTAL;
+		gbc.anchor = gbc.WEST;
+		gbc.insets = new Insets(4, 4, 4, 4);
+		gbc.weightx = 1.0;
+
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		pnl.add(new JLabel(i18n.NAME, SwingConstants.RIGHT), gbc);
+
+		++gbc.gridx;
+		pnl.add(_aliasName, gbc);
+
+		_drivers = new DriversCombo();
+		_drivers.addItemListener(new DriversComboItemListener());
+
+		final JPanel driverPnl = new JPanel(new BorderLayout());
+		driverPnl.add(_drivers, BorderLayout.CENTER);
+		JButton newDriverBtn = new JButton("New");
+		newDriverBtn.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent evt)
+			{
+				showNewDriverDialog();
+			}
+		});
+		driverPnl.add(newDriverBtn, BorderLayout.EAST);
+
+		gbc.gridx = 0;
+		++gbc.gridy;
+		pnl.add(new JLabel(i18n.DRIVER, SwingConstants.RIGHT), gbc);
+
+		++gbc.gridx;
+		pnl.add(driverPnl, gbc);
+
+		gbc.gridx = 0;
+		++gbc.gridy;
+		pnl.add(new JLabel(i18n.URL, SwingConstants.RIGHT), gbc);
+
+		++gbc.gridx;
+		pnl.add(_url, gbc);
+
+		gbc.gridx = 0;
+		++gbc.gridy;
+		pnl.add(new JLabel(i18n.USER_NAME, SwingConstants.RIGHT), gbc);
+
+		++gbc.gridx;
+		pnl.add(_userName, gbc);
+
+		JPanel propsPnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		propsPnl.add(_useDriverPropsChk);
+		propsPnl.add(_driverPropsBtn);
+
+		++gbc.gridy;
+		pnl.add(propsPnl, gbc);
+
+		return pnl;
 	}
 
 	private JPanel createButtonsPanel()
@@ -410,8 +522,7 @@ public class AliasMaintSheet extends BaseSheet
 		pnl.add(closeBtn);
 		pnl.add(testBtn);
 
-		GUIUtils.setJButtonSizesTheSame(
-			new JButton[] { okBtn, closeBtn, testBtn });
+		GUIUtils.setJButtonSizesTheSame(new JButton[] { okBtn, closeBtn, testBtn });
 		getRootPane().setDefaultButton(okBtn);
 
 		return pnl;
@@ -471,7 +582,7 @@ public class AliasMaintSheet extends BaseSheet
 				return o1.toString().compareToIgnoreCase(o2.toString());
 			}
 
-}
+		}
 	}
 
 	private final class ConnectionCallBack
@@ -508,4 +619,7 @@ public class AliasMaintSheet extends BaseSheet
 			s_log.error("Test Button has created a session, this is a programming error");
 		}
 	}
+
+
 }
+
