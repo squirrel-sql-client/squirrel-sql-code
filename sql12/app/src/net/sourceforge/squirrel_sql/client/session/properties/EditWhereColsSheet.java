@@ -26,13 +26,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.SortedSet;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
@@ -40,13 +34,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
@@ -54,7 +43,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
-import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ContentsTab;
 /**
@@ -83,19 +71,10 @@ public class EditWhereColsSheet extends BaseSheet
 	/** A reference to a class containing information about the database metadata. */
 	private IDatabaseObjectInfo _objectInfo;
 
-	/** A list of panels that make up this sheet. */
-	private List _panels = new ArrayList();
-
-	/** A variable that contains a value that indicates which tab currently has focus. */
-	private int _tabSelected;
-
 	/** Frame title. */
 	private JLabel _titleLbl = new JLabel();
 
-	/** A button used to trigger the clearing of the information. */
-	private JButton _clearFilter = new JButton();
-
-	/** A reference to a panel for the Where Clause list. */
+	/** A reference to a panel for the EditWhereCols list. */
 	private EditWhereColsPanel _editWhereColsPanel = null;
 
 
@@ -136,24 +115,22 @@ public class EditWhereColsSheet extends BaseSheet
 			{
 				final boolean isDebug = s_log.isDebugEnabled();
 				long start = 0;
-				for (Iterator it = _panels.iterator(); it.hasNext();)
+
+				if (isDebug)
 				{
-					EditWhereColsPanel pnl = (EditWhereColsPanel)it.next();
-					if (isDebug)
-					{
-						start = System.currentTimeMillis();
-					}
-					pnl.initialize(_session);
-					if (isDebug)
-					{
-						s_log.debug(
-							"Panel "
-								+ pnl.getTitle()
-								+ " initialized in "
-								+ (System.currentTimeMillis() - start)
-								+ "ms");
-					}
+					start = System.currentTimeMillis();
 				}
+
+				if (isDebug)
+				{
+					s_log.debug(
+						"Panel "
+						+ _editWhereColsPanel.getTitle()
+						+ " initialized in "
+						+ (System.currentTimeMillis() - start)
+						+ "ms");
+				}
+
 				pack();
 				/*
 				 * KLUDGE: For some reason, I am not able to get the sheet to
@@ -208,33 +185,42 @@ public class EditWhereColsSheet extends BaseSheet
 	{
 		return _objectInfo;
 	}
+	
+	/**
+	 * Reset button pressed.  Reset the data to the way it was when we started
+	 * this round of editing.
+	 *
+	 */
+	private void performReset()
+	{
+		_editWhereColsPanel.reset();
+	}
 
 	/**
-	 * OK button pressed. Edit data and if ok save to aliases model and
+	 * OK button pressed. Save data to EditWhereCols repository
 	 * then close dialog.
 	 */
 	private void performOk()
 	{
-		
-		//?????????????????????????????????????????
-
-		dispose();
+		// try to save the selection.
+		// do not dispose of this panel if there is a problem
+		if (_editWhereColsPanel.ok())
+			dispose();
 	}
 
 	/**
-	 * Create the GUI elements for the sheet.
+	 * Create the GUI elements for the sheet and pass in the setup data to the panel.
 	 */
 	private void createGUI()
 	{
 		SortedSet columnNames = new TreeSet();
-		Map textColumns = new TreeMap();
 
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setTitle(getTitle());
 
 		// This is a tool window.
 		GUIUtils.makeToolWindow(this, true);
-/*********************************************************************
+
 		try
 		{
 			SQLConnection sqlConnection = _session.getSQLConnection();
@@ -243,17 +229,6 @@ public class EditWhereColsSheet extends BaseSheet
 			while (rs.next())
 			{
 				columnNames.add(rs.getString("COLUMN_NAME"));
-				int dataType = rs.getInt("DATA_TYPE");
-
-				if ((dataType == Types.CHAR)
-					|| (dataType == Types.CLOB)
-					|| (dataType == Types.LONGVARCHAR)
-					|| (dataType == Types.VARCHAR))
-				{
-					textColumns.put(
-						rs.getString("COLUMN_NAME"),
-						new Boolean(true));
-				}
 			}
 		}
 		catch (SQLException ex)
@@ -263,28 +238,15 @@ public class EditWhereColsSheet extends BaseSheet
 		}
 
 		_editWhereColsPanel =
-			new EditWhereColsPanel(columnNames, textColumns, _objectInfo.getQualifiedName());
-		_panels.add(_editWhereColsPanel);
+			new EditWhereColsPanel(columnNames,  _objectInfo.getQualifiedName(),
+				ContentsTab.getUnambiguousTableName(_session, _objectInfo.getQualifiedName()));
 
-		JTabbedPane tabPane = UIFactory.getInstance().createTabbedPane();
-		for (Iterator it = _panels.iterator(); it.hasNext();)
-		{
-			EditWhereColsPanel pnl = (EditWhereColsPanel)it.next();
-			String pnlTitle = pnl.getTitle();
-			String hint = pnl.getHint();
-			final JScrollPane sp = new JScrollPane(pnl.getPanelComponent());
-			sp.setBorder(BorderFactory.createEmptyBorder());
-			tabPane.addTab(pnlTitle, null, sp, hint);
-		}
 
-		tabPane.addChangeListener(new ChangeListener()
-		{
-			public void stateChanged(ChangeEvent event)
-			{
-				_clearFilter.setText("Clear ");
-			}
-		});
-*******************************************/
+		String pnlTitle = _editWhereColsPanel.getTitle();
+		String hint = _editWhereColsPanel.getHint();
+		final JScrollPane sp = new JScrollPane(_editWhereColsPanel);
+		sp.setBorder(BorderFactory.createEmptyBorder());
+
 		final JPanel contentPane = new JPanel(new GridBagLayout());
 		contentPane.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 		setContentPane(contentPane);
@@ -302,37 +264,37 @@ public class EditWhereColsSheet extends BaseSheet
 
 		gbc.fill = GridBagConstraints.NONE;
 		gbc.gridx = GridBagConstraints.REMAINDER;
-		_clearFilter.setText("Clear ");
-		_tabSelected = 0;
-		_clearFilter.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent evt)
-			{
-				clearFilter();
-			}
-		});
-//??		contentPane.add(_clearFilter);
+		
+		// leave a blank line just to make it look a bit nicer
+		gbc.gridx = 0;
+		++gbc.gridy;
+		contentPane.add(new JLabel(" "), gbc);
+		
+		gbc.gridx = 0;
+		++gbc.gridy;
+		contentPane.add(
+			new JLabel("Limit the size of the WHERE clause used behind the scenes when editing cell contents."), gbc);
+		gbc.gridx = 0;
+		++gbc.gridy;
+		contentPane.add(
+			new JLabel("The 'use' window should include at least the primary keys for the table."), gbc);
+
+		// leave a blank line just to make it look a bit nicer
+		gbc.gridx = 0;
+		++gbc.gridy;
+		contentPane.add(new JLabel(" "), gbc);
 
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.gridwidth = 2;
 		gbc.gridx = 0;
 		++gbc.gridy;
 		gbc.weighty = 1;
-//?????		contentPane.add(tabPane, gbc);
-contentPane.add(new JLabel("This panel not yet implemented."), gbc);
+		contentPane.add(_editWhereColsPanel, gbc);
 
 		++gbc.gridy;
 		gbc.gridwidth = 2;
 		gbc.weighty = 0;
 		contentPane.add(createButtonsPanel(), gbc);
-	}
-
-	/**
-	 * Clear out the SQL Filter information for the appropriate tab.
-	 */
-	private void clearFilter()
-	{
-		_editWhereColsPanel.clearFilter();
 	}
 
 	/**
@@ -353,6 +315,14 @@ contentPane.add(new JLabel("This panel not yet implemented."), gbc);
 				performOk();
 			}
 		});
+		JButton resetBtn = new JButton("Reset");
+		resetBtn.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent evt)
+			{
+				performReset();
+			}
+		});
 		JButton closeBtn = new JButton("Close");
 		closeBtn.addActionListener(new ActionListener()
 		{
@@ -363,9 +333,10 @@ contentPane.add(new JLabel("This panel not yet implemented."), gbc);
 		});
 
 		pnl.add(okBtn);
+		pnl.add(resetBtn);
 		pnl.add(closeBtn);
 
-		GUIUtils.setJButtonSizesTheSame(new JButton[] { okBtn, closeBtn });
+		GUIUtils.setJButtonSizesTheSame(new JButton[] { okBtn, resetBtn, closeBtn });
 		getRootPane().setDefaultButton(okBtn);
 
 		return pnl;
