@@ -3,6 +3,9 @@ Change Log
 
 1.1 continuation
 ================
+- More configuration options for the jEdit plugin.
+- New application argument -noplugins which will run SQuirreL without
+  any plugins being loaded.
 - Undo/redo support now added to the SQL entry area (Johan Compagner).
 - Copying SQL results now includes the column headings (Johan Compagner).
 - New "Copy as HTML" option for SQL results (Johan Compagner).
