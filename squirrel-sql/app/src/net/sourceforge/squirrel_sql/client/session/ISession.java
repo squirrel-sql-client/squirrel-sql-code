@@ -21,6 +21,7 @@ import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
@@ -35,6 +36,19 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
  * The current session.
  */
 public interface ISession extends IHasIdentifier {
+    /**
+     * IDs of tabs in the main tabbed pane.
+     */
+    public interface IMainTabIndexes extends SessionSheet.IMainTabIndexes {
+    }
+
+    /**
+     * Close the current connection to the database.
+     * 
+     * @throws	SQLException	if an SQL error occurs.
+     */
+    void closeSQLConnection() throws SQLException;
+
     /**
      * Return the Application API object.
      *
@@ -70,8 +84,6 @@ public interface ISession extends IHasIdentifier {
      */
     SessionProperties getProperties();
 
-    void closeSQLConnection() throws SQLException;
-
     Object getPluginObject(IPlugin plugin, String key);
     Object putPluginObject(IPlugin plugin, String key, Object obj);
 
@@ -81,8 +93,17 @@ public interface ISession extends IHasIdentifier {
     String getSQLScript();
     void setSQLScript(String sqlScript);
 
+    /**
+     * Return an array of <TT>IDatabaseObjectInfo</TT> objects representing all
+     * the objects selected in the objects tree.
+     * 
+     * @return	array of <TT>IDatabaseObjectInfo</TT> objects.
+     */
+    IDatabaseObjectInfo[] getSelectedDatabaseObjects();
+
     void setSessionSheet(SessionSheet child);
     SessionSheet getSessionSheet();
+
     /**
      * Add a listener listening for SQL Execution.
      *
@@ -92,7 +113,7 @@ public interface ISession extends IHasIdentifier {
      *              If a null <TT>ISQLExecutionListener</TT> passed.
      */
     public void addSQLExecutionListener(ISQLExecutionListener lis)
-                    throws IllegalArgumentException;
+        throws IllegalArgumentException;
 
     /**
      * Remove an SQL execution listener.
@@ -103,7 +124,17 @@ public interface ISession extends IHasIdentifier {
      *              If a null <TT>ISQLExecutionListener</TT> passed.
      */
     public void removeSQLExecutionListener(ISQLExecutionListener lis)
-                    throws IllegalArgumentException;
+        throws IllegalArgumentException;
+
+    /**
+     * Select a tab in the main tabbed pane.
+     * 
+     * @param	tabIndex	The tab to select. @see #IMainTabIndexes
+     * 
+     * @throws	IllegalArgumentException
+     * 			Thrown if an invalid <TT>tabIndex</TT> passed.
+     */
+    void selectMainTab(int tabIndex) throws IllegalArgumentException;
 
     /**
      * Execute the current SQL.

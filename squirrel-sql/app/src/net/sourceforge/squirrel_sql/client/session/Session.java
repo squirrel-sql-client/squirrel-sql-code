@@ -3,6 +3,9 @@ package net.sourceforge.squirrel_sql.client.session;
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net
  *
+ * Modifications copyright (C) 2001 Johan Compagner
+ * jcompagner@j-com.nl
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -22,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
@@ -41,6 +45,7 @@ class Session implements ISession {
     /** The <TT>IIdentifier</TT> that uniquely identifies this object. */
     private IIdentifier _id = IdentifierFactory.getInstance().createIdentifier();
 
+    /** Application API. */
     private IApplication _app;
 
     /** Connection to database. */
@@ -74,7 +79,11 @@ class Session implements ISession {
      *
      * @throws IllegalArgumentException if any parameter is null.
      */
-    public Session(IApplication app, ISQLDriver driver, ISQLAlias alias, SQLConnection conn) {
+    public Session(
+        IApplication app,
+        ISQLDriver driver,
+        ISQLAlias alias,
+        SQLConnection conn) {
         super();
         if (app == null) {
             throw new IllegalArgumentException("null IApplication passed");
@@ -130,6 +139,16 @@ class Session implements ISession {
         return _props;
     }
 
+    /**
+     * Return an array of <TT>IDatabaseObjectInfo</TT> objects representing all
+     * the objects selected in the objects tree.
+     * 
+     * @return	array of <TT>IDatabaseObjectInfo</TT> objects.
+     */
+    public IDatabaseObjectInfo[] getSelectedDatabaseObjects() {
+        return _sessionSheet.getObjectPanel().getSelectedDatabaseObjects();
+    }
+
     public synchronized Object getPluginObject(IPlugin plugin, String key) {
         if (plugin == null) {
             throw new IllegalArgumentException("Null IPlugin passed");
@@ -137,7 +156,7 @@ class Session implements ISession {
         if (key == null) {
             throw new IllegalArgumentException("Null key passed");
         }
-        Map map = (Map)_pluginObjects.get(plugin.getInternalName());
+        Map map = (Map) _pluginObjects.get(plugin.getInternalName());
         if (map == null) {
             map = new HashMap();
             _pluginObjects.put(plugin.getInternalName(), map);
@@ -145,14 +164,17 @@ class Session implements ISession {
         return map.get(key);
     }
 
-    public synchronized Object putPluginObject(IPlugin plugin, String key, Object value) {
+    public synchronized Object putPluginObject(
+        IPlugin plugin,
+        String key,
+        Object value) {
         if (plugin == null) {
             throw new IllegalArgumentException("Null IPlugin passed");
         }
         if (key == null) {
             throw new IllegalArgumentException("Null key passed");
         }
-        Map map = (Map)_pluginObjects.get(plugin.getInternalName());
+        Map map = (Map) _pluginObjects.get(plugin.getInternalName());
         if (map == null) {
             map = new HashMap();
             _pluginObjects.put(plugin.getInternalName(), map);
@@ -203,6 +225,18 @@ class Session implements ISession {
     }
 
     /**
+     * Select a tab in the main tabbed pane.
+     * 
+     * @param	tabIndex	The tab to select. @see ISession.IMainTabIndexes
+     * 
+     * @throws	IllegalArgumentException
+     * 			Thrown if an invalid <TT>tabId</TT> passed.
+     */
+    public void selectMainTab(int tabIndex) throws IllegalArgumentException {
+        _sessionSheet.selectMainTab(tabIndex);
+    }
+
+    /**
      * Execute the current SQL.
      */
     public void executeCurrentSQL() {
@@ -241,7 +275,7 @@ class Session implements ISession {
      *              If a null <TT>ISQLExecutionListener</TT> passed.
      */
     public void addSQLExecutionListener(ISQLExecutionListener lis)
-            throws IllegalArgumentException {
+        throws IllegalArgumentException {
         if (lis == null) {
             throw new IllegalArgumentException("null ISQLExecutionListener passed");
         }
@@ -257,12 +291,11 @@ class Session implements ISession {
      *              If a null <TT>ISQLExecutionListener</TT> passed.
      */
     public void removeSQLExecutionListener(ISQLExecutionListener lis)
-            throws IllegalArgumentException {
+        throws IllegalArgumentException {
         if (lis == null) {
             throw new IllegalArgumentException("null ISQLExecutionListener passed");
         }
         _sessionSheet.getSQLPanel().removeSQLExecutionListener(lis);
     }
 }
-
 
