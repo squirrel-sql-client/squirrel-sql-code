@@ -164,7 +164,7 @@ public class PopupEditableIOPanel extends JPanel
 		scrollPane = new JScrollPane(_ta);
 		scrollPane.setWheelScrollingEnabled(true);
 		displayPanel.add(scrollPane, BorderLayout.CENTER);
-		if (CellComponentFactory.getClassName(colDef).equals("[Ljava.lang.Byte")) {
+		if (CellComponentFactory.useBinaryEditingPanel(colDef)) {
 			// this is a binary field, so allow for multiple viewing options
 			
 			String[] radixListData = { "Hex", "Decimal", "Octal", "Binary" };
