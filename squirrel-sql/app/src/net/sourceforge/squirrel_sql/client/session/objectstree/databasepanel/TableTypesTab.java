@@ -18,7 +18,6 @@ package net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DatabaseTypesDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ObjectArrayDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
@@ -66,13 +65,7 @@ public class TableTypesTab extends BaseDatabasePanelTab
 	{
 		try
 		{
-			String[] ar = session.getSQLConnection().getTableTypes();
-			Object[][] dsInfo = new Object[ar.length][1];
-			for (int i = 0; i < ar.length; ++i)
-			{
-				dsInfo[i][0] = ar[i];
-			}
-			return new ObjectArrayDataSet(dsInfo);
+			return new ObjectArrayDataSet(session.getSQLConnection().getTableTypes());
 		}
 		catch (BaseSQLException ex)
 		{

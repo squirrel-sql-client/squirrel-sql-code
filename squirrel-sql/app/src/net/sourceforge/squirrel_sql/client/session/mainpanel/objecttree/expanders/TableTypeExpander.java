@@ -70,7 +70,8 @@ public class TableTypeExpander implements INodeExpander
 			final String schemaName = parentDbinfo.getSchemaName();
 			final String tableType = parentDbinfo.getSimpleName();
 			final ITableInfo[] tables = conn.getTables(catalogName, schemaName,
-										"%", new String[]{tableType});
+						"%",
+						tableType != null ? new String[]{tableType} : null);
 			if (session.getProperties().getShowRowCount()) {
 				stmt = conn.createStatement();
 			}

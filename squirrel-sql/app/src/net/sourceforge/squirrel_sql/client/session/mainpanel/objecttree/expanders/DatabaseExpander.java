@@ -191,14 +191,28 @@ public class DatabaseExpander implements INodeExpander
 		final List list = new ArrayList();
 
 		// Add table types to list.
-		for (int i = 0; i < _tableTypes.length; ++i)
+		if (_tableTypes.length > 0)
 		{
-			IDatabaseObjectInfo dbo = new DatabaseObjectInfo(
-											catalogName, schemaName,
-											_tableTypes[i],
+			for (int i = 0; i < _tableTypes.length; ++i)
+			{
+				IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName,
+												schemaName, _tableTypes[i],
+												IDatabaseObjectTypes.GENERIC_FOLDER,
+												conn);
+				ObjectTreeNode child = new ObjectTreeNode(session, dbo);
+				child.setNodeType(ObjectTreeNode.IObjectTreeNodeType.TABLE_TYPE_NODE);
+				list.add(child);
+			}
+		}
+		else
+		{
+			s_log.debug("List of table types is empty so trying null table type to load all tables");
+			IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName,
+											schemaName, null,
 											IDatabaseObjectTypes.GENERIC_FOLDER,
 											conn);
 			ObjectTreeNode child = new ObjectTreeNode(session, dbo);
+			child.setUserObject("TABLE");
 			child.setNodeType(ObjectTreeNode.IObjectTreeNodeType.TABLE_TYPE_NODE);
 			list.add(child);
 		}
