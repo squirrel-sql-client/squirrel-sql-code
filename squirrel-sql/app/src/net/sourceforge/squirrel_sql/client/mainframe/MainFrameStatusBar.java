@@ -30,6 +30,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 
@@ -40,9 +41,6 @@ import net.sourceforge.squirrel_sql.fw.gui.TimePanel;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class MainFrameStatusBar extends JPanel {
-	/** If <TT>true</TT> the current time should be shown. */
-//	private boolean _showClock;
-
 	/** Label showing the message in the statusbar. */
 	private JLabel _textLbl = new JLabel();
 
@@ -53,13 +51,11 @@ public class MainFrameStatusBar extends JPanel {
 	private TimePanel _tp;
 
 	/**
-	 * Ctor specifying whether time should be displayed.
-	 * 
-	 * @param	showClock	If <TT>true</TT> time should be displayed.
+	 * Default ctor.
 	 */
-	public MainFrameStatusBar(boolean showClock) {
+	public MainFrameStatusBar() {
 		super(new GridBagLayout());
-		createUserInterface(showClock);
+		createUserInterface();
 	}
 
 	/**
@@ -75,34 +71,6 @@ public class MainFrameStatusBar extends JPanel {
 		}
 		super.setFont(font);
 		updateContainerFont(this, font);
-	}
- 
-	/**
-	 * Show/hide the time.
-	 * 
-	 * @param	value	If <TT>true</TT> time should be displayed.
-	 */
-	public synchronized void showClock(boolean value) {
-//		if (value != _showClock) {
-//			if (value) {
-//				_clockLbl = new MessageLabel();
-//				_clockLbl.setFont(_font);
-
-//				add(_clockLbl, new ClockConstraints());
-//				startClockThread();
-//			} else {
-//				stopClockThread();
-//			}
-//			_showClock = value;
-//		}
-	}
-
-	/**
-	 * @return	<TT>true</TT> if clock is showing else <TT>false</TT>.
-	 */
-	public boolean isClockShowing() {
-		return false;
-//		return _showClock;
 	}
 
 	/**
@@ -126,7 +94,7 @@ public class MainFrameStatusBar extends JPanel {
 		_textLbl.setText(" ");
 	}
 
-	private void createUserInterface(boolean showClock) {
+	private void createUserInterface() {
 		clearText();
 
 		GridBagConstraints gbc = new GridBagConstraints();
@@ -152,15 +120,6 @@ public class MainFrameStatusBar extends JPanel {
 		++gbc.gridx;
 		add(_tp, gbc);
 
-	}
-
-	private synchronized void startClockThread() {
-	}
-
-	private synchronized void stopClockThread() {
-	}
-
-	private synchronized void setTime(Date time) {
 	}
 
 	public static Border createComponentBorder() {

@@ -223,7 +223,7 @@ public class MainFrame extends BaseMDIParentFrame {
 				getContentPane().remove(_statusBar);
 				_statusBar = null;
 			} else if (show && _statusBar == null) {
-				_statusBar = new MainFrameStatusBar(true);
+				_statusBar = new MainFrameStatusBar();
 				Font fn = _app.getFontInfoStore().getStatusBarFontInfo().createFont();
 				_statusBar.setFont(fn);
 				getContentPane().add(_statusBar, BorderLayout.SOUTH);
