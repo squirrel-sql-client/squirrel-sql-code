@@ -10,7 +10,7 @@ public class SqlScriptAcessor
 {
    public static void scriptTablesToSQLEntryArea(ISession session, ITableInfo[] tableInfos)
    {
-      ScriptInterface si = null; //(ScriptInterface) session.getApplication().getPluginManager().bindPluginService("sqlscript", ScriptInterface.class);
+      ScriptInterface si = (ScriptInterface) session.getApplication().getPluginManager().bindExternalPluginService("sqlscript", ScriptInterface.class);
       if (null == si)
       {
          String msg = "Scripting is only available with the SQL Scripts Plugin.\n Get the plugin from www.squirrelsql.org. It's free.";
