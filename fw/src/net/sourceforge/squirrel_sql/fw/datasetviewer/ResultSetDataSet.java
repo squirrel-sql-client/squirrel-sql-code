@@ -223,6 +223,16 @@ public class ResultSetDataSet implements IDataSet
 				precis = Integer.MAX_VALUE;	// Oracle throws this ex on BLOB data types
 			}
 
+			boolean isSigned = true;
+			try
+			{
+				isSigned = md.isSigned(idx); // HSQLDB 1.7.1 throws error.
+			}
+			catch (SQLException ignore)
+			{
+				// Empty block
+			}
+
 			columnDefs[i] =
  					new ColumnDisplayDefinition(
  					computeWidths ? colWidths[i] : md.getColumnDisplaySize(idx),
@@ -232,7 +242,7 @@ public class ResultSetDataSet implements IDataSet
  					md.getColumnDisplaySize(idx),
  					precis,
  					md.getScale(idx),
- 					md.isSigned(idx),
+ 					isSigned,
  					md.isCurrency(idx));
 		}
 		return columnDefs;
