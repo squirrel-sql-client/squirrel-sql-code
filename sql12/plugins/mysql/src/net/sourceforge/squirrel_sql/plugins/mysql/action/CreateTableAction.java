@@ -51,7 +51,14 @@ public class CreateTableAction extends SquirrelAction implements ISessionAction
 	{
 		if (_session != null)
 		{
-			new CreateTableCommand(_session, _plugin).execute();
+			try
+			{
+				new CreateTableCommand(_session, _plugin).execute();
+			}
+			catch (Throwable th)
+			{
+				_session.getMessageHandler().showErrorMessage(th);
+			}
 		}
 	}
 

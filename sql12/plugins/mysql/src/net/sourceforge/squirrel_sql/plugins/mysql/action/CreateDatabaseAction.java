@@ -18,15 +18,14 @@ package net.sourceforge.squirrel_sql.plugins.mysql.action;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
+
+import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
-
-import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 /**
  * CreateDatabaseAction.java
  *
@@ -57,9 +56,9 @@ public class CreateDatabaseAction	extends SquirrelAction
 			{
 				new CreateDatabaseCommand(_session, _plugin).execute();
 			}
-			catch (BaseException ex)
+			catch (Throwable th)
 			{
-				_session.getMessageHandler().showErrorMessage(ex);
+				_session.getMessageHandler().showErrorMessage(th);
 			}
 		}
 	}

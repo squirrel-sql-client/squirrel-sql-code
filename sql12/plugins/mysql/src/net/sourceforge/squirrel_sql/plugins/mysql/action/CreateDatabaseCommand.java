@@ -18,11 +18,12 @@ package net.sourceforge.squirrel_sql.plugins.mysql.action;
  */
 import javax.swing.JOptionPane;
 
+import net.sourceforge.squirrel_sql.fw.util.ICommand;
+
+import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
+
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
-import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 /*
  * CreateDatabaseCommand.java
  *
@@ -48,7 +49,7 @@ public class CreateDatabaseCommand implements ICommand
 		_plugin = plugin;
 	}
 
-	public void execute() throws BaseException
+	public void execute()
 	{
 		String dbName = JOptionPane.showInputDialog("Enter database name");
 		if (dbName != null)

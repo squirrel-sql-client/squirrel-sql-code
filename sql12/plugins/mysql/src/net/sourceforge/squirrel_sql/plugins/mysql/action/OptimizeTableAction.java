@@ -19,15 +19,14 @@ package net.sourceforge.squirrel_sql.plugins.mysql.action;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
+
+import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
-
-import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 /**
  * This <TT>Action</TT> will run a &quot;CHECK TABLE&quot; over the
  * currently selected tables.
@@ -50,7 +49,7 @@ public class OptimizeTableAction extends SquirrelAction implements ISessionActio
 	 * @param	plugin		This plugin.
 	 *
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>IApplication</TT>,
+	 * 			Thrown if a <TT>null</TT> <TT>IApplication</TT>,
 	 * 			<TT>Resources</TT> or <TT>MysqlPlugin</TT> passed.
 	 *
 	 * @throws	IllegalArgumentException
@@ -84,9 +83,9 @@ public class OptimizeTableAction extends SquirrelAction implements ISessionActio
 			{
 				new OptimizeTableCommand(_session, _plugin).execute();
 			}
-			catch (BaseException ex)
+			catch (Throwable th)
 			{
-				_session.getMessageHandler().showErrorMessage(ex);
+				_session.getMessageHandler().showErrorMessage(th);
 			}
 		}
 	}

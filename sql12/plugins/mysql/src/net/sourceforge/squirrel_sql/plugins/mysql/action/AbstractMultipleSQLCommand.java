@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.plugins.mysql.action;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 /**
@@ -63,7 +62,7 @@ abstract class AbstractMultipleSQLCommand implements ICommand
 	/**
 	 * Execute this command.
 	 */
-	public void execute() throws BaseException
+	public void execute()
 	{
 		final StringBuffer buf = new StringBuffer(2048);
 		final String sep = " " + _session.getProperties().getSQLStatementSeparator();
