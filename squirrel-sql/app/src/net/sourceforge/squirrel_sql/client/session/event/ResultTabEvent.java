@@ -18,7 +18,9 @@ package net.sourceforge.squirrel_sql.client.session.event;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.ResultTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.ResultTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.*;
+
 
 public class ResultTabEvent {
 	private ISession _session;

@@ -22,7 +22,7 @@ import java.awt.Frame;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.ResultFrame;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.ResultFrame;
 
 /**
  * This <CODE>ICommand</CODE> closes all the torn off SQL Results

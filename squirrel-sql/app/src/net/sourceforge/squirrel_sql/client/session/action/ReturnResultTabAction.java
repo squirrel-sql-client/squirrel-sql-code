@@ -22,7 +22,9 @@ import java.awt.event.ActionEvent;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.ResultFrame;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.ResultFrame;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.*;
+
 
 public class ReturnResultTabAction extends SquirrelAction {
 	/** Current session. */

@@ -25,7 +25,7 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
-import net.sourceforge.squirrel_sql.client.session.ResultFrame;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.ResultFrame;
 
 /**
  * This command will convert the current SQL into native
