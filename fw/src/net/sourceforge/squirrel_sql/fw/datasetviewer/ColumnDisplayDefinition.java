@@ -21,7 +21,7 @@ import java.sql.Types;
 /**
  * This defines the display information for a column.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ColumnDisplayDefinition
 {
@@ -66,7 +66,7 @@ public class ColumnDisplayDefinition
 	/**
 	 * Return the number of characters to display.
 	 *
-	 * @return  The number of characters to display.
+	 * @return	The number of characters to display.
 	 */
 	public int getDisplayWidth()
 	{
@@ -76,23 +76,23 @@ public class ColumnDisplayDefinition
 	/**
 	 * Return the column heading.
 	 *
-	 * @return  The column heading.
+	 * @return	The column heading.
 	 */
 	public String getLabel()
 	{
 		return _label;
 	}
-	
+
 	/**
 	 * Return the column data type, which may be Types.NULL.
 	 *
-	 * @return  The type of data in the column (may be Types.NULL).
+	 * @return	The type of data in the column (may be Types.NULL).
 	 */
 	public int getSqlType()
 	{
 		return _sqlType;
 	}
-	
+
 	/**
 	 * Return the class name associated with the sql data type.
 	 * When the type is unknown or cannot be edited we return
@@ -106,7 +106,7 @@ public class ColumnDisplayDefinition
 		{
 			case Types.NULL:	// should never happen
 				return "java.lang.Object";
-					
+
 			// TODO: When JDK1.4 is the earliest JDK supported
 			// by Squirrel then remove the hardcoding of the
 			// boolean data type.
@@ -183,10 +183,14 @@ public class ColumnDisplayDefinition
 	 *
 	 * @param	displayWidth	Number of characters to display.
 	 * @param	label			Column heading.
-	 * @param   sqlType			Type of data (from java.sql.Types).
+	 * @param	sqlType			Type of data (from java.sql.Types).
 	 */
 	private void init(int displayWidth, String label, int sqlType)
 	{
+		if (label == null)
+		{
+			label = "";	// Some drivers will give null.
+		}
 		_displayWidth = displayWidth;
 		if (_displayWidth < label.length())
 		{
@@ -196,3 +200,4 @@ public class ColumnDisplayDefinition
 		_sqlType = sqlType;
 	}
 }
+

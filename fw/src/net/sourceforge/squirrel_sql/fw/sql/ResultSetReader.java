@@ -375,7 +375,12 @@ public class ResultSetReader
 					case Types.OTHER:
 						if (_largeObjInfo.getReadSQLOther())
 						{
-							row[i] = _rs.getObject(idx);
+							// Running getObject on a java class attempts
+							// to load the class in memory which we don't want.
+							// getString() just gets the value without loading
+							// the class (at least under PostgreSQL).
+							//row[i] = _rs.getObject(idx);
+							row[i] = _rs.getString(idx);
 						}
 						else
 						{

@@ -6,6 +6,7 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Display warnings issued by SQL statements in the message panel.
 - Can now specify session sheets to be opened maximized.
 - Show as much as possible of the SQL statement in the SQL history
   dropdown and show it all in the tooltip.
@@ -61,6 +62,8 @@ Enhancements
 
 Bug Fixes
 ---------
+- Fix to be able to display data in PostgreSQL UDT columns.
+- Fix for single character separator at end of line/document
 - Fix NullPointer exception when updating caret position in statusbar.
 - Clear all metadata result sets when finished with them.
 - Default catalogs dropdown to the correct catalog when session opened.
@@ -387,7 +390,7 @@ Bug Fixes
 Bug Fixes
 ---------
 - Windows batch file now allows for spaces in the classpath (Bruno Haas).
-- Windows batch file now passes the -classic flag  to the VM to stop
+- Windows batch file now passes the -classic flag to the VM to stop
   plugins looking for files in the "Colin Bell" or "Johan Compagner"
   directories instead of the plugins private directory.
 - "Torn off" SQL results windows are now closed when the session is
