@@ -163,6 +163,10 @@ public class SessionSheet extends JInternalFrame {
 		}
 	}
 
+	public void replaceSQLEntryPanel(ISQLEntryPanel pnl) {
+		_sqlPnl.replaceSQLEntryPanel(pnl);
+	}
+
 	ObjectsPanel getObjectPanel() {
 		return _objectsPnl;
 	}

@@ -97,6 +97,8 @@ class SQLPanel extends JPanel {
 
 	/** Listeners */
 	private EventListenerList _listeners = new EventListenerList();
+	
+	private MouseAdapter _sqlEntryMouseListener = new MyMouseListener();
 
 	/**
 	 * Ctor.
@@ -227,6 +229,25 @@ class SQLPanel extends JPanel {
 			SQLExecuterTask task = new SQLExecuterTask(this, _session, sql);
 			_session.getApplication().getThreadPool().addTask(task);
 		}
+	}
+	
+	void replaceSQLEntryPanel(ISQLEntryPanel pnl) {
+		if (pnl == null) {
+			throw new IllegalArgumentException("Null ISQLEntryPanel passed");
+		}
+
+//		pnl.setRows(3);
+		pnl.setTabSize(4);
+		final int pos = _splitPane.getDividerLocation();
+		if (_sqlEntry != null) {
+			_sqlEntry.removeMouseListener(_sqlEntryMouseListener);
+			_splitPane.remove(_sqlEntry.getComponent());
+			pnl.setText(_sqlEntry.getText());
+		}
+		_splitPane.add(pnl.getComponent(), JSplitPane.LEFT);
+		_splitPane.setDividerLocation(pos);
+		pnl.addMouseListener(_sqlEntryMouseListener);
+		_sqlEntry = pnl;
 	}
 
 	/**
@@ -595,7 +616,7 @@ class SQLPanel extends JPanel {
 		final IApplication app = _session.getApplication();
 		setLayout(new BorderLayout());
 
-		 _sqlEntry = app.getSQLEntryPanelFactory().createSQLEntryPanel();
+		 _sqlEntry = app.getSQLEntryPanelFactory().createSQLEntryPanel(_session);
 
 		_nbrRows.setColumns(8);
 
