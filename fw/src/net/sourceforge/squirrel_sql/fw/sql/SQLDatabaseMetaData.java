@@ -819,7 +819,7 @@ public class SQLDatabaseMetaData
 
 		Map nameMap = null;
 		ResultSet superTabResult = null;
-		ResultSet tabResult = md.getTables(catalog, schemaPattern, tableNamePattern, types);
+		ResultSet tabResult = null;
 		try
 		{
 			try
@@ -855,6 +855,7 @@ public class SQLDatabaseMetaData
 			}
 
 			// store all plain table info we have.
+         tabResult = md.getTables(catalog, schemaPattern, tableNamePattern, types);
 			while (tabResult.next())
 			{
 				ITableInfo tabInfo = new TableInfo(tabResult.getString(1),
@@ -891,7 +892,10 @@ public class SQLDatabaseMetaData
 		}
 		finally
 		{
-			tabResult.close();
+         if(tabResult != null)
+         {
+			   tabResult.close();
+         }
 			if (superTabResult != null)
 			{
 				superTabResult.close();
