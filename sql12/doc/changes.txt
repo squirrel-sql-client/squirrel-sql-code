@@ -11,6 +11,19 @@ Enhancements
 - User may identify specific columns to use in WHERE clause when editing
   cells in table by using the "Limit cell edit WHERE clause size" entry in
   the Session menu (Glenn Griffin).
+- All tables may be printed.  Use right mouse click, "print".  Large tables
+  are automatically split across multiple pages both horizontally and
+  vertically.
+- The "Session Properties"->"Format" screen has been moved to "Global
+  Preferences"->"Data Type Controls", and many new controls have been added
+  to adjust how specific data types are used or displayed.  Examples:
+    - Some DBs do not allow LONGVARCHAR to be used in the WHERE clause,
+      so this may now be disabled
+    - Dates, Times and Timestamps may be displayed and entered in a
+      user-selected format
+    - Strings containing newlines may display the newlines as "\n" or
+      not show them as selected by the user.
+    
 
 Bug Fixes
 ---------
