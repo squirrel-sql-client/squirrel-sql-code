@@ -26,7 +26,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
-public class DateTimeFunctionsTab extends BaseDatabasePanelTab
+class DateTimeFunctionsTab extends BaseDatabasePanelTab
 {
 	/**
 	 * This interface defines locale specific strings. This should be
@@ -64,14 +64,15 @@ public class DateTimeFunctionsTab extends BaseDatabasePanelTab
 
 	protected IDataSet createDataSet(ISession session) throws DataSetException
 	{
-		try
-		{
-			return session.getSQLConnection().createDateTimeFunctionsDataSet(
-				session.getMessageHandler());
-		}
-		catch (SQLException ex)
-		{
-			throw new DataSetException(ex);
-		}
+		return null;
+//		try
+//		{
+//			return session.getSQLConnection().createDateTimeFunctionsDataSet(
+//				session.getMessageHandler());
+//		}
+//		catch (SQLException ex)
+//		{
+//			throw new DataSetException(ex);
+//		}
 	}
 }

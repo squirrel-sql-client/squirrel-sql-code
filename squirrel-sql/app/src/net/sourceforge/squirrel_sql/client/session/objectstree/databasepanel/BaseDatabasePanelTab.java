@@ -36,7 +36,7 @@ import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.BaseO
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public abstract class BaseDatabasePanelTab extends BaseObjectPanelTab
+abstract class BaseDatabasePanelTab extends BaseObjectPanelTab
 												implements IDatabasePanelTab
 {
 	/** Logger for this class. */

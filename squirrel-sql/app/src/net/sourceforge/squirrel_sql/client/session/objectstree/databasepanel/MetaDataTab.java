@@ -27,11 +27,12 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 /**
+ * TODO: Delete me
  * This tab shows the meta data in the database.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class MetaDataTab extends BaseDatabasePanelTab
+class MetaDataTab extends BaseDatabasePanelTab
 {
 	/**
 	 * This interface defines locale specific strings. This should be
@@ -69,14 +70,15 @@ public class MetaDataTab extends BaseDatabasePanelTab
 
 	protected IDataSet createDataSet(ISession session) throws DataSetException
 	{
-		try
-		{
-			return session.getSQLConnection().createMetaDataDataSet(
-				session.getMessageHandler());
-		}
-		catch (SQLException ex)
-		{
-			throw new DataSetException(ex);
-		}
+		return null;
+//		try
+//		{
+//			return session.getSQLConnection().createMetaDataDataSet(
+//				session.getMessageHandler());
+//		}
+//		catch (SQLException ex)
+//		{
+//			throw new DataSetException(ex);
+//		}
 	}
 }

@@ -26,5 +26,5 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public interface IDatabasePanelTab extends IObjectPanelTab {
+interface IDatabasePanelTab extends IObjectPanelTab {
 }

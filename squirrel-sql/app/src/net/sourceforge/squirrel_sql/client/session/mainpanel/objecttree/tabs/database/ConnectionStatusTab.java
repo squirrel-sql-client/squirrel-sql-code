@@ -1,6 +1,6 @@
-package net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel;
+package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,27 +17,46 @@ package net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.BorderLayout;
+import java.awt.Component;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.Date;
 
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
+
+import net.sourceforge.squirrel_sql.fw.datasetviewer.BaseDataSetViewerDestination;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetScrollingPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.JavabeanDataSet;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.MetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-// TODO: Delete me
-class ConnectionStatusTab extends BaseDatabasePanelTab
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseDataSetTab;
+import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.BaseObjectPanelTab;
+
+/**
+ * This is the tab displaying connection status information.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
+public class ConnectionStatusTab extends BaseDataSetTab
 {
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
-	private interface i18n
+	private interface I18n
 	{
 		String TITLE = "Status";
 		String HINT = "Connection Status";
@@ -54,7 +73,7 @@ class ConnectionStatusTab extends BaseDatabasePanelTab
 	 */
 	public String getTitle()
 	{
-		return i18n.TITLE;
+		return I18n.TITLE;
 	}
 
 	/**
@@ -64,16 +83,23 @@ class ConnectionStatusTab extends BaseDatabasePanelTab
 	 */
 	public String getHint()
 	{
-		return i18n.HINT;
+		return I18n.HINT;
 	}
 
-	protected IDataSet createDataSet(ISession session) throws DataSetException
+	/**
+	 * Create the <TT>IDataSet</TT> to be displayed in this tab.
+	 */
+	protected IDataSet createDataSet() throws DataSetException
 	{
+		final ISession session = getSession();
 		final SQLConnection conn = session.getSQLConnection();
 		final IMessageHandler msgHandler = session.getMessageHandler();
 		return new JavabeanDataSet(new ConnectionInfo(conn, msgHandler));
 	}
 
+	/**
+	 * Java bean containing connection status information.
+	 */
 	public static final class ConnectionInfo
 	{
 		private String _catalog;
@@ -81,7 +107,6 @@ class ConnectionStatusTab extends BaseDatabasePanelTab
 		private boolean _isClosed;
 		private boolean _autoCommit;
 		private Date _timeOpened;
-		private Date _timeClosed;
 		private String _transIsol;
 
 		ConnectionInfo(SQLConnection conn, IMessageHandler msgHandler)
@@ -156,7 +181,6 @@ class ConnectionStatusTab extends BaseDatabasePanelTab
 			}
 
 			_timeOpened = conn.getTimeOpened();
-			_timeClosed = conn.getTimeClosed();
 		}
 
 		public String getCatalog()
@@ -184,16 +208,9 @@ class ConnectionStatusTab extends BaseDatabasePanelTab
 			return _timeOpened;
 		}
 
-		public Date getTimeClosed()
-		{
-			return _timeClosed;
-		}
-
 		public String getTransactionisolationLevel()
 		{
 			return _transIsol;
 		}
-
 	}
-
 }

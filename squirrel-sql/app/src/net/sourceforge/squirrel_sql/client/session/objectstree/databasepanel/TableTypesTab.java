@@ -30,7 +30,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class TableTypesTab extends BaseDatabasePanelTab
+class TableTypesTab extends BaseDatabasePanelTab
 {
 	/**
 	 * This interface defines locale specific strings. This should be

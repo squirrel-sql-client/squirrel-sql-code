@@ -17,69 +17,73 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
 import java.awt.Component;
 
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
-
-import net.sourceforge.squirrel_sql.fw.datasetviewer.BaseDataSetViewerDestination;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetScrollingPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.JavabeanDataSet;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.BaseObjectPanelTab;
 
-/**
- * This is the tab displaying information about a database object.
- *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
- */
-public class DatabaseObjectInfoTab extends BaseDataSetTab
+public abstract class BaseDataSetTab extends BaseObjectPanelTab
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface TableInfoi18n
-	{
-		String TITLE = "Info";
-		String HINT = "Basic information";
-	}
-
 	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(DatabaseObjectInfoTab.class);
+	private static final ILogger s_log =
+		LoggerController.createLogger(BaseDataSetTab.class);
+
+	/** Component to display in tab. */
+	private DataSetScrollingPanel _comp;
 
 	/**
-	 * Return the title for the tab.
+	 * Return the component to be displayed in the panel.
 	 *
-	 * @return	The title for the tab.
+	 * @return	The component to be displayed in the panel.
 	 */
-	public String getTitle()
+	public synchronized Component getComponent()
 	{
-		return TableInfoi18n.TITLE;
+		if (_comp == null)
+		{
+			_comp = new DataSetScrollingPanel();
+		}
+		return _comp;
 	}
 
 	/**
-	 * Return the hint for the tab.
-	 *
-	 * @return	The hint for the tab.
+	 * Rebuild the tab. This usually means that some kind of configuration
+	 * data has changed (I.E. the output type has changed from text to table).
 	 */
-	public String getHint()
+	public void rebuild()
 	{
-		return TableInfoi18n.HINT;
+		super.rebuild();
+		_comp = null;
 	}
 
-	protected IDataSet createDataSet() throws DataSetException
+	/**
+	 * @see BaseObjectPanelTab#clear()
+	 */
+	public void clear()
 	{
-		return new JavabeanDataSet(getDatabaseObjectInfo());
+		((DataSetScrollingPanel)getComponent()).clear();
 	}
+
+	/**
+	 * Refresh the component displaying the database object.
+	 */
+	public synchronized void refreshComponent() throws DataSetException
+	{
+		ISession session = getSession();
+		if (session == null)
+		{
+			throw new IllegalStateException("Null ISession");
+		}
+		String destClassName = session.getProperties().getMetaDataOutputClassName();
+		IDataSet ds = createDataSet();
+		((DataSetScrollingPanel)getComponent()).load(ds, destClassName);
+	}
+
+	protected abstract IDataSet createDataSet() throws DataSetException;
+
 }

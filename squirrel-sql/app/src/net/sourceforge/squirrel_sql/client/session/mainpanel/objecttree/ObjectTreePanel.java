@@ -40,15 +40,15 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.ConnectionStatusTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.DataTypesTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.DateTimeFunctionsTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.KeywordsTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.MetaDataTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.NumericFunctionsTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.StringFunctionsTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.SystemFunctionsTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.TableTypesTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.ConnectionStatusTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.DataTypesTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.KeywordsTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.MetaDataTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.NumericFunctionsTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.StringFunctionsTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.SystemFunctionsTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.TableTypesTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.TimeDateFunctionsTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.IObjectPanelTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.procedurepanel.ProcedureColumnsTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel.ColumnPriviligesTab;
@@ -126,7 +126,7 @@ public class ObjectTreePanel extends JPanel
 		addDetailTab(DatabaseObjectType.DATABASE, new NumericFunctionsTab());
 		addDetailTab(DatabaseObjectType.DATABASE, new StringFunctionsTab());
 		addDetailTab(DatabaseObjectType.DATABASE, new SystemFunctionsTab());
-		addDetailTab(DatabaseObjectType.DATABASE, new DateTimeFunctionsTab());
+		addDetailTab(DatabaseObjectType.DATABASE, new TimeDateFunctionsTab());
 		addDetailTab(DatabaseObjectType.DATABASE, new KeywordsTab());
 
 		// Register tabs to display in the details panel for catalog nodes.

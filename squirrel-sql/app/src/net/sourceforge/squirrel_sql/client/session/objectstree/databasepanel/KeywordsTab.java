@@ -26,7 +26,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
-public class KeywordsTab extends BaseDatabasePanelTab
+class KeywordsTab extends BaseDatabasePanelTab
 {
 	/**
 	 * This interface defines locale specific strings. This should be
@@ -65,14 +65,6 @@ public class KeywordsTab extends BaseDatabasePanelTab
 
 	protected IDataSet createDataSet(ISession session) throws DataSetException
 	{
-		try
-		{
-			return session.getSQLConnection().createSQLKeywordsDataSet(
-				session.getMessageHandler());
-		}
-		catch (SQLException ex)
-		{
-			throw new DataSetException(ex);
-		}
+		return null;
 	}
 }

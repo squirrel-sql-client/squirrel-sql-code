@@ -32,7 +32,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
-public class DatabasePanelTabComponent extends JPanel
+class DatabasePanelTabComponent extends JPanel
 {
 	/** Logger for this class. */
 	private final static ILogger s_log =

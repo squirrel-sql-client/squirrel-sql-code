@@ -31,22 +31,25 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.DataTypesTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.DateTimeFunctionsTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.IDatabasePanelTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.KeywordsTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.MetaDataTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.NumericFunctionsTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.StringFunctionsTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.SystemFunctionsTab;
-import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.TableTypesTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.MetaDataTab;
+//import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.DataTypesTab;
+//import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.DateTimeFunctionsTab;
+//import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.IDatabasePanelTab;
+//import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.KeywordsTab;
+//import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.NumericFunctionsTab;
+//import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.StringFunctionsTab;
+//import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.SystemFunctionsTab;
+//import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.TableTypesTab;
+import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.IObjectPanelTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+
+// TODO: Delete this class.
 
 public class DatabasePanel extends SquirrelTabbedPane
 {
 	/** Logger for this class. */
 	private static ILogger s_log =
-		LoggerController.createLogger(DatabasePanel.class);
+		LoggerController.createLogger(SquirrelTabbedPane.class);
 
 	/** Current session. */
 	private ISession _session;
@@ -77,7 +80,7 @@ public class DatabasePanel extends SquirrelTabbedPane
 		createUserInterface();
 
 		// Refresh the currently selected tab.
-		((IDatabasePanelTab)_tabs.get(getSelectedIndex())).select();
+		//((IDatabasePanelTab)_tabs.get(getSelectedIndex())).select();
 	}
 
 	/**
@@ -88,35 +91,39 @@ public class DatabasePanel extends SquirrelTabbedPane
 	 * @param	tab	 The tab to be added.
 	 *
 	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>IDatabasePanelTab</TT> passed.
+	 *			Thrown if a <TT>null</TT> <TT>IObjectPanelTab</TT> passed.
 	 */
-	public void addDatabasePanelTab(IDatabasePanelTab tab)
+//	public void addDatabasePanelTab(IDatabasePanelTab tab)
+	public void addDatabasePanelTab(IObjectPanelTab tab)
 	{
 		if (tab == null)
 		{
-			throw new IllegalArgumentException("Null IDatabasePanelTab passed");
+			throw new IllegalArgumentException("Null IObjectPanelTab passed");
 		}
 		tab.setSession(_session);
 		final String title = tab.getTitle();
-		int idx = indexOfTab(title);
-		if (idx != -1)
-		{
-			removeTabAt(idx);
-			_tabs.set(idx, tab);
-		}
-		else
-		{
-			idx = getTabCount();
-			_tabs.add(tab);
-		}
-		insertTab(title, null, tab.getComponent(), tab.getHint(), idx);
+//		int idx = indexOfTab(title);
+//		if (idx != -1)
+//		{
+//			removeTabAt(idx);
+//			_tabs.set(idx, tab);
+//		}
+//		else
+//		{
+//			idx = getTabCount();
+//			_tabs.add(tab);
+//		}
+//		insertTab(title, null, tab.getComponent(), tab.getHint(), idx);
+		addTab(title, null, tab.getComponent(), tab.getHint());
 	}
 
 	private void propertiesHaveChanged(String propName)
 	{
+System.out.println("0");
 		if (propName == null
 			|| propName.equals(SessionProperties.IPropertyNames.META_DATA_OUTPUT_CLASS_NAME))
 		{
+System.out.println("1");
 			addTabs();
 		}
 	}
@@ -132,14 +139,14 @@ public class DatabasePanel extends SquirrelTabbedPane
 
 	private void addTabs()
 	{
-		addDatabasePanelTab(new MetaDataTab());
-		addDatabasePanelTab(new TableTypesTab());
-		addDatabasePanelTab(new DataTypesTab());
-		addDatabasePanelTab(new NumericFunctionsTab());
-		addDatabasePanelTab(new StringFunctionsTab());
-		addDatabasePanelTab(new SystemFunctionsTab());
-		addDatabasePanelTab(new DateTimeFunctionsTab());
-		addDatabasePanelTab(new KeywordsTab());
+//		addDatabasePanelTab(new MetaDataTab());
+//		addDatabasePanelTab(new TableTypesTab());
+//		addDatabasePanelTab(new DataTypesTab());
+//		addDatabasePanelTab(new NumericFunctionsTab());
+//		addDatabasePanelTab(new StringFunctionsTab());
+//		addDatabasePanelTab(new SystemFunctionsTab());
+//		addDatabasePanelTab(new DateTimeFunctionsTab());
+//		addDatabasePanelTab(new KeywordsTab());
 	}
 
 	private static SquirrelPreferences getPreferences(ISession session)
@@ -155,6 +162,7 @@ public class DatabasePanel extends SquirrelTabbedPane
 	{
 		public void propertyChange(PropertyChangeEvent evt)
 		{
+System.out.println("3");
 			DatabasePanel.this.propertiesHaveChanged(evt.getPropertyName());
 		}
 	}
@@ -169,7 +177,7 @@ public class DatabasePanel extends SquirrelTabbedPane
 				int idx = ((SquirrelTabbedPane) src).getSelectedIndex();
 				if (idx != -1)
 				{
-					((IDatabasePanelTab) _tabs.get(getSelectedIndex())).select();
+//					((IDatabasePanelTab) _tabs.get(getSelectedIndex())).select();
 				}
 			}
 		}
