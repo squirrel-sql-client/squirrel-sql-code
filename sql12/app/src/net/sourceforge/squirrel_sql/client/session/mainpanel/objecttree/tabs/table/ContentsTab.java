@@ -816,11 +816,21 @@ public class ContentsTab extends BaseTableTab
 			}
 		}
 
-
-// temp code - do not allow delete for the time being
-//return "Delete function has not been implemented yet.  It should be here any day now.";
-
 		return null;	// hear no evil, see no evil
+	}
+	
+	
+	/**
+	 * Insert a row into the DB.
+	 * If the insert succeeds this returns a null string.
+	 */
+	public String insertRow(Object[] values, ColumnDisplayDefinition[] colDefs) {
+		
+//??????? insert data into DB. - use prepared statement
+System.out.println("in DB call");
+		
+		// insert succeeded
+		return null;
 	}
 
 }
