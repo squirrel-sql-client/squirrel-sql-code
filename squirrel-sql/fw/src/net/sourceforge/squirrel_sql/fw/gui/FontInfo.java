@@ -19,7 +19,7 @@ package net.sourceforge.squirrel_sql.fw.gui;
  */
 import java.awt.Font;
 
-public class FontInfo {
+public class FontInfo implements Cloneable {
 
 	public interface IPropertyNames {
 		String FAMILY = "family";
@@ -41,23 +41,23 @@ public class FontInfo {
 		setSize(12);
 	}
 
-	public FontInfo(FontInfo rhs) {
-		super();
-		if (rhs == null) {
-			throw new IllegalArgumentException("Null FontInfo passed");
-		}
-		setFamily(rhs.getFamily());
-		setIsBold(rhs.isBold());
-		setIsItalic(rhs.isItalic());
-		setSize(rhs.getSize());
-	}
-
 	public FontInfo(Font font) {
 		super();
 		if (font == null) {
 			throw new IllegalArgumentException("Null Font passed");
 		}
 		setFont(font);
+	}
+
+	/**
+	 * Return a copy of this object.
+	 */
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch(CloneNotSupportedException ex) {
+			throw new InternalError(ex.getMessage());   // Impossible.
+		}
 	}
 
 	public String getFamily() {
