@@ -152,13 +152,16 @@ public class SQLPanel extends JPanel
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
 	 */
-	public void setSession(ISession session)
+	public synchronized void setSession(ISession session)
 	{
 		if (session == null)
 		{
 			throw new IllegalArgumentException("Null ISession passed");
 		}
+		sessionClosing();
 		_session = session;
+		_propsListener = new MyPropertiesListener();
+		_session.getProperties().addPropertyChangeListener(_propsListener);
 	}
 
 	/**
@@ -686,7 +689,6 @@ public class SQLPanel extends JPanel
 				}
 			}
 		}
-
 		if (propName == null || propName.equals(SessionProperties.IPropertyNames.SQL_LIMIT_ROWS))
 		{
 			_limitRowsChk.setSelected(props.getSQLLimitRows());
@@ -745,7 +747,7 @@ public class SQLPanel extends JPanel
 
 		add(_splitPane, BorderLayout.CENTER);
 
-		propertiesHaveChanged(null);
+//		propertiesHaveChanged(null);
 
 		_sqlCombo.addActionListener(_sqlComboItemListener);
 		_limitRowsChk.addChangeListener(new LimitRowsCheckBoxListener());

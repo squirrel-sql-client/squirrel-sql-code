@@ -39,6 +39,7 @@ import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.Met
 import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.NumericFunctionsTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.StringFunctionsTab;
 import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.SystemFunctionsTab;
+import net.sourceforge.squirrel_sql.client.session.objectstree.databasepanel.TableTypesTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
 public class DatabasePanel extends SquirrelTabbedPane
@@ -132,6 +133,7 @@ public class DatabasePanel extends SquirrelTabbedPane
 	private void addTabs()
 	{
 		addDatabasePanelTab(new MetaDataTab());
+		addDatabasePanelTab(new TableTypesTab());
 		addDatabasePanelTab(new DataTypesTab());
 		addDatabasePanelTab(new NumericFunctionsTab());
 		addDatabasePanelTab(new StringFunctionsTab());
