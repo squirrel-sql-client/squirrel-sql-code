@@ -26,8 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.squirrel_sql.fw.sql.SQLAlias;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.MyURLClassLoader;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -179,8 +177,7 @@ public class PluginManager {
 		return (PluginInfo[])_plugins.toArray(new PluginInfo[_plugins.size()]);
 	}
 
-	public synchronized SessionPluginInfo[] getPluginInformation(ISession session)
-			throws IllegalArgumentException {
+	public synchronized SessionPluginInfo[] getPluginInformation(ISession session) {
 		if (session == null) {
 			throw new IllegalArgumentException("Null ISession passed");
 		}
