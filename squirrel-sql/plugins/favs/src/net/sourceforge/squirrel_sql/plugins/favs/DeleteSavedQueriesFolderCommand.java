@@ -24,13 +24,6 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
-import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
-
-import net.sourceforge.squirrel_sql.client.db.AliasMaintDialog;
-import net.sourceforge.squirrel_sql.client.db.DataCache;
-import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 
 public class DeleteSavedQueriesFolderCommand {
 	/**
@@ -44,7 +37,8 @@ public class DeleteSavedQueriesFolderCommand {
 	private QueryTree _tree;
 	private TreePath _path;
 
-	public DeleteSavedQueriesFolderCommand(Frame frame, QueryTree tree, TreePath path) {
+	public DeleteSavedQueriesFolderCommand(Frame frame, QueryTree tree,
+											TreePath path) {
 		super();
 		_frame = frame;
 		_tree = tree;
