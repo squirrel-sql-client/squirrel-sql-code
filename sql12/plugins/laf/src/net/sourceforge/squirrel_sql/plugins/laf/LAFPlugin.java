@@ -100,7 +100,7 @@ public class LAFPlugin extends DefaultPlugin
 	 */
 	public String getVersion()
 	{
-		return "0.31";
+		return "0.32";
 	}
 
 	/**
