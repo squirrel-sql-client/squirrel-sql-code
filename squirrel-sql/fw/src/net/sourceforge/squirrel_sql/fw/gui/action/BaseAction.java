@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -31,8 +31,20 @@ import javax.swing.JPopupMenu;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public abstract class BaseAction extends AbstractAction {
-	protected BaseAction() {
+public abstract class BaseAction extends AbstractAction
+{
+	/** Names of properties stored in action. */
+	public interface IBaseActionPropertyNames
+	{
+		String DISABLED_ICON = "squirrelDisabledIcon";
+		String ROLLOVER_ICON = "squirrelRolloverIcon";
+	}
+
+	/**
+	 * Default ctor.
+	 */
+	protected BaseAction()
+	{
 		super();
 	}
 
@@ -41,7 +53,8 @@ public abstract class BaseAction extends AbstractAction {
 	 *
 	 * @param   title   Title for this action.
 	 */
-	protected BaseAction(String title) {
+	protected BaseAction(String title)
+	{
 		super(title);
 	}
 
@@ -51,8 +64,29 @@ public abstract class BaseAction extends AbstractAction {
 	 * @param   title   Title for this action.
 	 * @param   icon	Icon for this action.
 	 */
-	protected BaseAction(String title, Icon icon) {
+	protected BaseAction(String title, Icon icon)
+	{
 		super(title, icon);
+	}
+
+	/**
+	 * Set the default icon for this action.
+	 * 
+	 * @param	icon	The new icon.
+	 */
+	public void setIcon(Icon icon)
+	{
+		putValue(Action.SMALL_ICON, icon);
+	}
+
+	/**
+	 * Set the "rollover" icon for this action.
+	 * 
+	 * @param	icon	The new icon.
+	 */
+	public void setRolloverIcon(Icon icon)
+	{
+		putValue(IBaseActionPropertyNames.ROLLOVER_ICON, icon);
 	}
 
 	/**
@@ -62,27 +96,32 @@ public abstract class BaseAction extends AbstractAction {
 	 *
 	 * @return  <COD>Frame</CODE> or <CODE>null</CODE> if none found.
 	 */
-	protected Frame getParentFrame(ActionEvent evt) {
+	protected Frame getParentFrame(ActionEvent evt)
+	{
 		Frame parent = null;
-		if (evt != null) {
+		if (evt != null)
+		{
 			Object src = evt.getSource();
-			if (src instanceof Component) {
-				Component comp = (Component)src;
-				while(comp != null && parent == null) {
-					if (comp instanceof Frame) {
-						parent = (Frame)comp;
-					} else if (comp instanceof JPopupMenu) {
-						comp = ((JPopupMenu)comp).getInvoker();
-					} else {
+			if (src instanceof Component)
+			{
+				Component comp = (Component) src;
+				while (comp != null && parent == null)
+				{
+					if (comp instanceof Frame)
+					{
+						parent = (Frame) comp;
+					}
+					else if (comp instanceof JPopupMenu)
+					{
+						comp = ((JPopupMenu) comp).getInvoker();
+					}
+					else
+					{
 						comp = comp.getParent();
 					}
 				}
 			}
 		}
 		return parent;
-	}
-
-	protected void setIcon(Icon icon) {
-		putValue(Action.SMALL_ICON, icon);
 	}
 }
