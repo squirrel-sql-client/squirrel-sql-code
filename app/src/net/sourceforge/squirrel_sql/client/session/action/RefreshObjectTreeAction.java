@@ -19,27 +19,25 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import java.awt.event.ActionEvent;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.IClientSession;
-
 /**
  * This <CODE>Action</CODE> will refresh the object tree.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class RefreshObjectTreeAction extends SquirrelAction implements IClientSessionAction
+public class RefreshObjectTreeAction extends SquirrelAction implements ISessionAction
 {
 	/** Logger for this class. */
 	private static ILogger s_log =
 		LoggerController.createLogger(RefreshObjectTreeAction.class);
 
 	/** Current session. */
-	private IClientSession _session;
+	private ISession _session;
 
 	/**
 	 * Ctor specifying application API.
@@ -49,7 +47,7 @@ public class RefreshObjectTreeAction extends SquirrelAction implements IClientSe
 		super(app);
 	}
 
-	public void setClientSession(IClientSession session)
+	public void setSession(ISession session)
 	{
 		_session = session;
 	}
@@ -60,7 +58,7 @@ public class RefreshObjectTreeAction extends SquirrelAction implements IClientSe
 		{
 			CursorChanger cursorChg = new CursorChanger(_session.getApplication().getMainFrame());
 			cursorChg.show();
-			
+
 			try
 			{
 				new RefreshObjectTreeCommand(_session).execute();

@@ -49,7 +49,7 @@ public class SessionInternalFrame extends BaseSheet
 
 	private SessionSheet _sessionPanel;
 
-	SessionInternalFrame(IClientSession session)
+	SessionInternalFrame(ISession session)
 	{
 		super(createTitle(session), true, true, true, true);
 		_app = session.getApplication();
@@ -58,34 +58,34 @@ public class SessionInternalFrame extends BaseSheet
 		createGUI(session);
 	}
 
-	public void dispose()
-	{
-		final SessionManager mgr = _app.getSessionManager();
-		if (_sessionId != null)
-		{
-			final IClientSession session = (IClientSession)mgr.getSession(_sessionId);
-			_sessionId = null;
-			if (session != null)
-			{
-				try
-				{
-					mgr.closeSession(session);
-				}
-				catch (SQLException ex)
-				{
-					s_log.error("SQL error closing session", ex);
-				}
-			}
-		}
-		super.dispose();
-	}
+//	public void dispose()
+//	{
+//		final SessionManager mgr = _app.getSessionManager();
+//		if (_sessionId != null)
+//		{
+//			final ISession session = (ISession)mgr.getSession(_sessionId);
+//			_sessionId = null;
+//			if (session != null)
+//			{
+//				try
+//				{
+//					mgr.closeSession(session);
+//				}
+//				catch (SQLException ex)
+//				{
+//					s_log.error("SQL error closing session", ex);
+//				}
+//			}
+//		}
+//		super.dispose();
+//	}
 
-	public IClientSession getSession()
+	public ISession getSession()
 	{
 		final SessionManager mgr = _app.getSessionManager();
 		if (_sessionId != null)
 		{
-			return (IClientSession)mgr.getSession(_sessionId);
+			return mgr.getSession(_sessionId);
 		}
 		return null;
 	}
@@ -115,7 +115,7 @@ public class SessionInternalFrame extends BaseSheet
 		}
 	}
 
-	private void createGUI(IClientSession session)
+	private void createGUI(ISession session)
 	{
 		setVisible(false);
 		final IApplication app = session.getApplication();
@@ -155,7 +155,7 @@ public class SessionInternalFrame extends BaseSheet
 		validate();
 	}
 
-	private static String createTitle(IClientSession session)
+	private static String createTitle(ISession session)
 	{
 		StringBuffer title = new StringBuffer();
 		title.append(session.getAlias().getName());

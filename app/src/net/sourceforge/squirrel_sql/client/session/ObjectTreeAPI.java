@@ -47,7 +47,7 @@ class ObjectTreeAPI implements IObjectTreeAPI
 		LoggerController.createLogger(ObjectTreeAPI.class);
 
 	/** Session containing the object tree. */
-	private IClientSession _session;
+	private ISession _session;
 
 	/** <TT>true</TT> until the object tree has been built the first time. */
 	private boolean _firstRefresh = true;
@@ -60,7 +60,7 @@ class ObjectTreeAPI implements IObjectTreeAPI
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <T>null</TT> <TT>ISession</TT> passed.
 	 */
-	ObjectTreeAPI(IClientSession session)
+	ObjectTreeAPI(ISession session)
 	{
 		super();
 		if (session == null)

@@ -23,7 +23,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 /**
  * This <CODE>ICommand</CODE> allows the user to close all open sessions.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class CloseAllSessionsCommand implements ICommand
 {
@@ -55,6 +55,6 @@ public class CloseAllSessionsCommand implements ICommand
 	 */
 	public void execute()
 	{
-		_app.getSessionManager().closeAllSessions();
+		_app.getSessionWindowManager().closeAllSessions();
 	}
 }

@@ -19,23 +19,22 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.session.IClientSession;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 
-public class RollbackAction extends SquirrelAction implements IClientSessionAction
+public class RollbackAction extends SquirrelAction implements ISessionAction
 {
-	private IClientSession _session;
+	private ISession _session;
 
 	public RollbackAction(IApplication app)
 	{
 		super(app);
 	}
 
-	public void setClientSession(IClientSession session)
+	public void setSession(ISession session)
 	{
 		_session = session;
 	}

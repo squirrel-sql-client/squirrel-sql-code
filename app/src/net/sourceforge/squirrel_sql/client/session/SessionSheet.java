@@ -71,7 +71,7 @@ public class SessionSheet extends JPanel
 	private final IApplication _app;
 
 	/** Session for this window. */
-//	private IClientSession _session;
+//	private ISession _session;
 
 	/** ID of the session for this window. */
 	private IIdentifier _sessionId;
@@ -90,13 +90,13 @@ public class SessionSheet extends JPanel
 
 	private boolean _buildingListOfCatalogs = false;
 
-	public SessionSheet(IClientSession session)
+	public SessionSheet(ISession session)
 	{
 		super(new BorderLayout());
 
 		if (session == null)
 		{
-			throw new IllegalArgumentException("IClientSession == null");
+			throw new IllegalArgumentException("ISession == null");
 		}
 
 		_app = session.getApplication();
@@ -139,9 +139,9 @@ public class SessionSheet extends JPanel
 	 *
 	 * @return	the session attached to this window.
 	 */
-	public IClientSession getSession()
+	public ISession getSession()
 	{
-		return (IClientSession)_app.getSessionManager().getSession(_sessionId);
+		return (ISession)_app.getSessionManager().getSession(_sessionId);
 	}
 
 	public void updateState()
@@ -151,7 +151,7 @@ public class SessionSheet extends JPanel
 
 	void sessionHasClosed()
 	{
-		final IClientSession session = getSession();
+		final ISession session = getSession();
 		if (session != null)
 		{
 			if (_propsListener != null)
@@ -288,7 +288,7 @@ public class SessionSheet extends JPanel
 
 	private void propertiesHaveChanged(String propertyName)
 	{
-		final IClientSession session = getSession();
+		final ISession session = getSession();
 		final SessionProperties props = session.getProperties();
 		if (propertyName == null
 			|| propertyName.equals(
@@ -364,7 +364,7 @@ public class SessionSheet extends JPanel
 		private SQLCatalogsComboBox _catalogsCmb;
 		private IObjectTreeListener _lis;
 
-		MyToolBar(IClientSession session)
+		MyToolBar(ISession session)
 		{
 			super();
 			createGUI(session);

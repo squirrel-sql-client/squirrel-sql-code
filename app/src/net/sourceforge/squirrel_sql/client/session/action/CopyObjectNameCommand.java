@@ -27,14 +27,13 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.session.IClientSession;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
  * This <CODE>Action</CODE> will copy the object names of all objects
  * currently in the object tree and place on the system clipboard.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class CopyObjectNameCommand implements ICommand
 {
@@ -57,19 +56,19 @@ public class CopyObjectNameCommand implements ICommand
 
 	/**
 	 * Ctor specifying copy type.
-	 * 
+	 *
 	 * @param	copyType	Type of copy to do. @see ICopyTypes.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>IClientSession</TT> or an invalid
+	 * 			Thrown if a <TT>null</TT> <TT>ISession</TT> or an invalid
 				<TT>copyType</TT> passed.
 	 */
-	public CopyObjectNameCommand(IClientSession session, int copyType)
+	public CopyObjectNameCommand(ISession session, int copyType)
 	{
 		super();
 		if (session == null)
 		{
-			throw new IllegalArgumentException("IClientSession == null");
+			throw new IllegalArgumentException("ISession == null");
 		}
 		if (copyType < ICopyTypes.SIMPLE_NAME || copyType > ICopyTypes.QUALIFIED_NAME)
 		{

@@ -17,6 +17,8 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.sql.SQLException;
+
 import javax.swing.JComponent;
 
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
@@ -40,6 +42,13 @@ public interface ISession extends IHasIdentifier
 	public interface IMainPanelTabIndexes extends MainPanel.ITabIndexes
 	{
 	}
+
+	/**
+	 * Retrieve whether this session has been closed.
+	 * 
+	 * @return	<TT>true</TT> if session closed else <TT>false</TT>.
+	 */
+	boolean isClosed();
 
 	/**
 	 * Return the Application API object.
@@ -75,6 +84,29 @@ public interface ISession extends IHasIdentifier
 	 * @return the properties for this session.
 	 */
 	SessionProperties getProperties();
+	/**
+	 * Close this session.
+	 * 
+	 * @throws	SQLException
+	 * 			Thrown if an error closing the SQL connection. The session
+	 * 			will still be closed even though the connection may not have
+	 *			been.
+	 */
+	void close() throws SQLException;
+
+	/**
+	 * Close the current connection to the database.
+	 *
+	 * @throws	SQLException  if an SQL error occurs.
+	 */
+	void closeSQLConnection() throws SQLException;
+
+	/**
+	 * Set the session sheet for this session.
+	 * 
+	 * @param	sheet	Sheet for this session.
+	 */
+	void setSessionSheet(SessionSheet child);
 
 	/**
 	 * Reconnect to the database.

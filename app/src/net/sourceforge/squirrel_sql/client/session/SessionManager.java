@@ -69,7 +69,7 @@ public class SessionManager
 	 *			Thrown if IApplication, ISQLDriver, ISQLAlias,
 	 * 			or SQLConnection is passed as null.
 	 */
-	public synchronized IClientSession createSession(IApplication app,
+	public synchronized ISession createSession(IApplication app,
 									ISQLDriver driver, ISQLAlias alias,
 									SQLConnection conn, String user,
 									String password)
@@ -91,84 +91,41 @@ public class SessionManager
 			throw new IllegalArgumentException("null SQLConnection passed");
 		}
 
-		IClientSession sess = new Session(app, driver, alias, conn, user, password);
+		ISession sess = new Session(app, driver, alias, conn, user, password);
 		_sessionsList.addLast(sess);
 		_sessionsById.put(sess.getIdentifier(), sess);
 
 		return sess;
 	}
-
-	/**
-	 * Close all sessions.
-	 */
-	public synchronized void closeAllSessions()
-	{
-		final IClientSession[] sessions = getActiveSessions();
-		for (int i = 0; i < sessions.length; ++i)
-		{
-			try
-			{
-				closeSession(sessions[i]);
-			}
-			catch (Throwable th)
-			{
-				s_log.error("Error closing session", th);
-			}
-		}
-	}
-
-	/**
-	 * Close a session.
-	 *
-	 * @param	session		Session to close.
-	 *
-	 * @throws	IllegalArgumentException
-	 *			Thrown if <TT>null</TT>IClientSession passed.
-	 *
-	 * @throws	SQLException
-	 * 			Thrown if an error closing the SQL connection. The session
-	 * 			will still be closed even though the connection may not have
-	 *			been.
-	 */
-	public synchronized void closeSession(IClientSession session)
-		throws SQLException
-	{
-		if (session == null)
-		{
-			throw new IllegalArgumentException("IClientSession == null");
-		}
-
-		if (!session.isClosed())
-		{
-			if (!_sessionsList.remove(session))
-			{
-				s_log.error("SessionManager.closeSession()-> Session " +
-						session.getIdentifier() +
-						" not found in _sessionsList when trying to remove it.");
-			}
-			if (_sessionsById.remove(session.getIdentifier()) == null)
-			{
-				s_log.error("SessionManager.closeSession()-> Session " +
-						session.getIdentifier() +
-						" not found in _sessionsById when trying to remove it.");
-			}
-		}
-
-		// TODO: Should have session listeners instead of these calls.
-		session.getApplication().getPluginManager().sessionEnding(session);
-
-		session.close();
-	}
+//
+//	/**
+//	 * Close all sessions.
+//	 */
+//	synchronized void closeAllSessions()
+//	{
+//		final ISession[] sessions = getActiveSessions();
+//		for (int i = 0; i < sessions.length; ++i)
+//		{
+//			try
+//			{
+//				closeSession(sessions[i]);
+//			}
+//			catch (Throwable th)
+//			{
+//				s_log.error("Error closing session", th);
+//			}
+//		}
+//	}
 
 	/**
 	 * Retrieve an array of all the sessions currently active.
 	 *
 	 * @return	array of all active sessions.
 	 */
-	public synchronized IClientSession[] getActiveSessions()
+	public synchronized ISession[] getActiveSessions()
 	{
-		IClientSession[] ar = new IClientSession[_sessionsList.size()];
-		return (IClientSession[])_sessionsList.toArray(ar);
+		ISession[] ar = new ISession[_sessionsList.size()];
+		return (ISession[])_sessionsList.toArray(ar);
 	}
 
 	/**
@@ -235,14 +192,57 @@ public class SessionManager
 
 	/**
 	 * Retrieve the session for the passed identifier.
-	 * 
+	 *
 	 * @param	sessionID	ID of session we are trying to retrieve.
-	 * 
+	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>IIdentifier</TT> passed.
 	 */
 	public ISession getSession(IIdentifier sessionID)
 	{
-		return (ISession)_sessionsById.get(sessionID);		
+		return (ISession)_sessionsById.get(sessionID);
+	}
+
+	/**
+	 * Close a session.
+	 *
+	 * @param	session		Session to close.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if <TT>null</TT>ISession passed.
+	 *
+	 * @throws	SQLException
+	 * 			Thrown if an error closing the SQL connection. The session
+	 * 			will still be closed even though the connection may not have
+	 *			been.
+	 */
+	synchronized void closeSession(ISession session)
+		throws SQLException
+	{
+		if (session == null)
+		{
+			throw new IllegalArgumentException("ISession == null");
+		}
+
+		if (!session.isClosed())
+		{
+			if (!_sessionsList.remove(session))
+			{
+				s_log.error("SessionManager.closeSession()-> Session " +
+						session.getIdentifier() +
+						" not found in _sessionsList when trying to remove it.");
+			}
+			if (_sessionsById.remove(session.getIdentifier()) == null)
+			{
+				s_log.error("SessionManager.closeSession()-> Session " +
+						session.getIdentifier() +
+						" not found in _sessionsById when trying to remove it.");
+			}
+		}
+
+		// TODO: Should have session listeners instead of these calls.
+		session.getApplication().getPluginManager().sessionEnding(session);
+
+		session.close();
 	}
 }

@@ -46,7 +46,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.TileHorizontalAction
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileVerticalAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewHelpAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewLogsAction;
-import net.sourceforge.squirrel_sql.client.session.IClientSession;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsAction;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultWindowsAction;
@@ -60,7 +60,6 @@ import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.FilterObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.GotoNextResultsTabAction;
 import net.sourceforge.squirrel_sql.client.session.action.GotoPreviousResultsTabAction;
-import net.sourceforge.squirrel_sql.client.session.action.IClientSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.NextSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.PreviousSessionAction;
@@ -232,18 +231,17 @@ public final class ActionCollection
 	public void internalFrameDeactivated(JInternalFrame frame)
 	{
 //		internalFrameActivated(null);
-		IClientSession session = null;
 		for (Iterator it = actions(); it.hasNext();)
 		{
 			final Action act = (Action) it.next();
 			if (act instanceof ISessionAction)
 			{
-				((ISessionAction)act).setSession(session);
+				((ISessionAction)act).setSession(null);
 			}
-			if (act instanceof IClientSessionAction)
-			{
-				((IClientSessionAction)act).setClientSession(session);
-			}
+//			if (act instanceof IClientSessionAction)
+//			{
+//				((IClientSessionAction)act).setClientSession(null);
+//			}
 		}
 	}
 
@@ -255,7 +253,7 @@ public final class ActionCollection
 	 */
 	public synchronized void internalFrameActivated(JInternalFrame frame)
 	{
-		IClientSession session = null;
+		ISession session = null;
 		if (frame instanceof SessionInternalFrame)
 		{
 			session = ((SessionInternalFrame)frame).getSession();
@@ -267,10 +265,10 @@ public final class ActionCollection
 			{
 				((ISessionAction)act).setSession(session);
 			}
-			if (act instanceof IClientSessionAction)
-			{
-				((IClientSessionAction)act).setClientSession(session);
-			}
+//			if (act instanceof IClientSessionAction)
+//			{
+//				((IClientSessionAction)act).setClientSession(session);
+//			}
 		}
 	}
 

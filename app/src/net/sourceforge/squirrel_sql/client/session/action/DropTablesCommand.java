@@ -17,16 +17,15 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.session.IClientSession;
 /**
- * @version 	$Id: DropTablesCommand.java,v 1.2 2003-05-18 12:30:14 colbell Exp $
+ * @version 	$Id: DropTablesCommand.java,v 1.3 2003-09-13 22:50:29 colbell Exp $
  * @author		Johan Compagner
  */
 public class DropTablesCommand implements ICommand
@@ -36,7 +35,7 @@ public class DropTablesCommand implements ICommand
 		LoggerController.createLogger(DropTablesCommand.class);
 
 	/** Current session. */
-	private final IClientSession _session;
+	private final ISession _session;
 
 	/** Tables to be deleted. */
 	private final IDatabaseObjectInfo[] _tables;
@@ -51,12 +50,12 @@ public class DropTablesCommand implements ICommand
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
 	 */
-	public DropTablesCommand(IClientSession session, IDatabaseObjectInfo[] tables)
+	public DropTablesCommand(ISession session, IDatabaseObjectInfo[] tables)
 	{
 		super();
 		if (session == null)
 		{
-			throw new IllegalArgumentException("IClientSession == null");
+			throw new IllegalArgumentException("ISession == null");
 		}
 		if (tables == null)
 		{

@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -25,16 +26,14 @@ import javax.swing.JInternalFrame;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionPropertiesSheet;
+import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterSheet;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
-import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionPropertiesSheet;
-import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterSheet;
 /**
  * This class manages the windows for sessions.
  *
@@ -58,16 +57,19 @@ public class SessionWindowManager
 	 */
 	private final Map _sessionPropertySheets = new HashMap();
 
-	private final Map _sheets = new HashMap();
+	private final Map _sqlFilterSheets = new HashMap();
 
 	/** Listens to sessions waiting for them to close. */
-	private final MySessionListener _sessionListener = new MySessionListener();
+//	private final MySessionListener _sessionListener = new MySessionListener();
 
 	/** Listens to session properties dialogs waiting for them to close. */
 	private final PropertiesSheetListener _sessionPropertiesDialogListener = new PropertiesSheetListener();
 
 	/** Listens to SQL filter dialogs waiting for them to close. */
 	private final SQLFilterDialogListener _sqlFilterDialogListener = new SQLFilterDialogListener();
+
+	/** Listenys to Session internal frames waiting for them to close. */
+	private final SessionInternalFrameListener _sessionInternalFrameListener = new SessionInternalFrameListener();
 
 	/**
 	 * Ctor.
@@ -96,7 +98,7 @@ public class SessionWindowManager
 	 * @throws	IllegalArgumentException
 	 *			Thrown if ISession is passed as null.
 	 */
-	public synchronized SessionInternalFrame createInternalFrame(IClientSession session)
+	public synchronized SessionInternalFrame createInternalFrame(ISession session)
 	{
 		if (session == null)
 		{
@@ -105,7 +107,8 @@ public class SessionWindowManager
 
 		SessionInternalFrame sif = new SessionInternalFrame(session);
 		_internalFrames.put(session.getIdentifier(), sif);
-		session.addSessionListener(_sessionListener);
+//		session.addSessionListener(_sessionListener);
+		sif.addInternalFrameListener(_sessionInternalFrameListener);
 
 		return sif;
 	}
@@ -122,10 +125,37 @@ public class SessionWindowManager
 	{
 		if (session == null)
 		{
-			throw new IllegalArgumentException("null ISession passed");
+			throw new IllegalArgumentException("ISession == null");
 		}
 
 		return (JInternalFrame)_internalFrames.get(session.getIdentifier());
+	}
+
+	/**
+	 * Retrieve the session for the passed internal frame.
+	 * 
+	 * @param	sif		Internal frame to retrieve session for.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if ISession is passed as null.
+	 */
+	public synchronized ISession getSession(JInternalFrame sif)
+	{
+		if (sif == null)
+		{
+			throw new IllegalArgumentException("JInternalFrame == null");
+		}
+
+		for (Iterator it = _internalFrames.keySet().iterator(); it.hasNext();)
+		{
+			IIdentifier key = (IIdentifier)it.next();
+			if (_internalFrames.get(key) == sif)
+			{
+				return _app.getSessionManager().getSession(key);
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -197,6 +227,41 @@ public class SessionWindowManager
 		return sqlFilterSheet;
 	}
 
+	/**
+	 * Close all sessions.
+	 */
+	public synchronized void closeAllSessions()
+	{
+		SessionInternalFrame[] ar = new SessionInternalFrame[_internalFrames.size()];
+		_internalFrames.values().toArray(ar);
+		for (int i = 0; i < ar.length; ++i)
+		{
+			final ISession session = getSession(ar[i]);
+			if (session != null)
+			{
+				closeSession(session);
+			}
+		}
+	}
+
+	/**
+	 * Close the passed session.
+	 * 
+	 * @param	session		Session to be closed.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if ISession is passed as null.
+	 */
+	public synchronized void closeSession(ISession session)
+	{
+		if (session == null)
+		{
+			throw new IllegalArgumentException("ISession == null");
+		}
+
+		getInternalFrame(session).dispose();
+	}
+
 	private SessionPropertiesSheet getSessionPropertiesDialog(ISession session)
 	{
 		return (SessionPropertiesSheet)_sessionPropertySheets.get(session.getIdentifier());
@@ -210,11 +275,11 @@ public class SessionWindowManager
 
 	private Map getAllSQLFilterSheets(ISession session)
 	{
-		Map map = (Map)_sheets.get(session.getIdentifier());
+		Map map = (Map)_sqlFilterSheets.get(session.getIdentifier());
 		if (map == null)
 		{
 			map = new HashMap();
-			_sheets.put(session.getIdentifier(), map);
+			_sqlFilterSheets.put(session.getIdentifier(), map);
 		}
 		return map;
 	}
@@ -226,6 +291,26 @@ public class SessionWindowManager
 		jif.moveToFront();
 	}
 
+	private synchronized void privateCloseSession(ISession session)
+	{
+		Map map = getAllSQLFilterSheets(session);
+		for (Iterator it = map.values().iterator(); it.hasNext();)
+		{
+			((JInternalFrame)it.next()).dispose();
+		}
+		map.clear(); //TODO: This map should be removed from its containing map.
+
+		final SessionManager mgr = _app.getSessionManager();
+		try
+		{
+			mgr.closeSession(session);
+		}
+		catch (SQLException ex)
+		{
+			s_log.error("SQL error closing session", ex);
+		}
+	}
+
 	private synchronized void sqlFilterDialogClosed(SQLFilterSheet sfs)
 	{
 		if (sfs != null)
@@ -235,9 +320,17 @@ public class SessionWindowManager
 			String key = sfs.getDatabaseObjectInfo().getQualifiedName();
 			if (map.remove(key) == null)
 			{
-				s_log.error("Unable to find SQLFilterSheete for " + key);
+				s_log.error("Unable to find SQLFilterSheet for " + key);
 			}
 		}
+	}
+
+	private synchronized void sessionInternalFrameClosed(SessionInternalFrame sif)
+	{
+		ISession session = getSession(sif);
+		_internalFrames.remove(session.getIdentifier());
+		sif.removeInternalFrameListener(_sessionInternalFrameListener);
+		privateCloseSession(session);
 	}
 
 	private synchronized void sessionPropertiesDialogClosed(SessionPropertiesSheet sps)
@@ -248,42 +341,42 @@ public class SessionWindowManager
 			_sessionPropertySheets.remove(sps.getSession().getIdentifier());
 		}
 	}
+	
+//	private synchronized void sessionHasClosed(ISession session)
+//	{
+//		JInternalFrame jif = getSessionPropertiesDialog(session);
+//		if (jif != null)
+//		{
+//			jif.dispose();
+//		}
+//
+//		Map map = getAllSQLFilterSheets(session);
+//		for (Iterator it = map.values().iterator(); it.hasNext();)
+//		{
+//			((JInternalFrame)it.next()).dispose();
+//		}
+//		map.clear(); //TODO: This map should be removed from its containing map.
+//
+//		session.removeSessionListener(_sessionListener);
+//		jif = (JInternalFrame)_internalFrames.remove(session.getIdentifier());
+//		if (jif != null)
+//		{
+//			jif.dispose();
+//		}
+//	}
 
-	private synchronized void sessionHasClosed(ISession session)
-	{
-		JInternalFrame jif = getSessionPropertiesDialog(session);
-		if (jif != null)
-		{
-			jif.dispose();
-		}
-
-		Map map = getAllSQLFilterSheets(session);
-		for (Iterator it = map.values().iterator(); it.hasNext();)
-		{
-			((JInternalFrame)it.next()).dispose();
-		}
-		map.clear(); //TODO: This map should be removed from its containing map.
-
-		session.removeSessionListener(_sessionListener);
-		jif = (JInternalFrame)_internalFrames.remove(session.getIdentifier());
-		if (jif != null)
-		{
-			jif.dispose();
-		}
-	}
-
-	private final class MySessionListener extends SessionAdapter
-	{
-		/**
-		 * The session has been closed.
-		 *
-		 * @param	evt		The event that has just occured.
-		 */
-		public void sessionClosed(SessionEvent evt)
-		{
-			SessionWindowManager.this.sessionHasClosed(evt.getSession());
-		}
-	}
+//	private final class MySessionListener extends SessionAdapter
+//	{
+//		/**
+//		 * The session has been closed.
+//		 *
+//		 * @param	evt		The event that has just occured.
+//		 */
+//		public void sessionClosed(SessionEvent evt)
+//		{
+//			SessionWindowManager.this.sessionHasClosed(evt.getSession());
+//		}
+//	}
 
 	private final class PropertiesSheetListener extends InternalFrameAdapter
 	{
@@ -300,6 +393,15 @@ public class SessionWindowManager
 		{
 			SQLFilterSheet sfs = (SQLFilterSheet)evt.getInternalFrame();
 			SessionWindowManager.this.sqlFilterDialogClosed(sfs);
+		}
+	}
+
+	private final class SessionInternalFrameListener extends InternalFrameAdapter
+	{
+		public void internalFrameClosed(InternalFrameEvent evt)
+		{
+			SessionInternalFrame sif = (SessionInternalFrame)evt.getInternalFrame();
+			SessionWindowManager.this.sessionInternalFrameClosed(sif);
 		}
 	}
 }

@@ -38,7 +38,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.db.ConnectionSheet;
 import net.sourceforge.squirrel_sql.client.db.ConnectionSheet.IConnectionSheetHandler;
-import net.sourceforge.squirrel_sql.client.session.IClientSession;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
 /**
@@ -52,7 +52,7 @@ public class ConnectToAliasCommand implements ICommand
 	public interface ICompletionCallback
 	{
 		void connected(SQLConnection conn);
-		void sessionCreated(IClientSession session);
+		void sessionCreated(ISession session);
 		void errorOccured(Throwable th);
 	}
 
@@ -173,7 +173,7 @@ public class ConnectToAliasCommand implements ICommand
 		/**
 		 * @see CompletionCallback#sessionCreated(ISession)
 		 */
-		public void sessionCreated(IClientSession session)
+		public void sessionCreated(ISession session)
 		{
 		}
 
@@ -414,11 +414,11 @@ public class ConnectToAliasCommand implements ICommand
 			}
 		}
 
-		private IClientSession createSession(ISQLDriver sqlDriver,
+		private ISession createSession(ISQLDriver sqlDriver,
 												SQLConnection conn)
 		{
 			SessionManager sm = _app.getSessionManager();
-			final IClientSession session = sm.createSession(_app, sqlDriver,
+			final ISession session = sm.createSession(_app, sqlDriver,
 												_alias, conn, _user, _password);
 			_callback.sessionCreated(session);
 			SwingUtilities.invokeLater(new Runner(session, _connSheet));
@@ -428,10 +428,10 @@ public class ConnectToAliasCommand implements ICommand
 
 	private static final class Runner implements Runnable
 	{
-		private final IClientSession _session;
+		private final ISession _session;
 		private final ConnectionSheet _connSheet;
 
-		Runner(IClientSession session, ConnectionSheet connSheet)
+		Runner(ISession session, ConnectionSheet connSheet)
 		{
 			super();
 			_session = session;

@@ -20,17 +20,16 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.IClientSession;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
- * @version 	$Id: DropTableAction.java,v 1.3 2003-03-05 10:27:53 colbell Exp $
+ * @version 	$Id: DropTableAction.java,v 1.4 2003-09-13 22:50:29 colbell Exp $
  * @author		Johan Compagner
  */
-public class DropTableAction extends SquirrelAction implements IClientSessionAction
+public class DropTableAction extends SquirrelAction implements ISessionAction
 {
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(DropTableAction.class);
@@ -42,7 +41,7 @@ public class DropTableAction extends SquirrelAction implements IClientSessionAct
 	private static final String MSG = "Are you sure?";
 
 	/** Current session. */
-	private IClientSession _session;
+	private ISession _session;
 
 	/**
 	 * @param	app	Application API.
@@ -90,7 +89,7 @@ public class DropTableAction extends SquirrelAction implements IClientSessionAct
 */
 	}
 
-	public void setClientSession(IClientSession session)
+	public void setSession(ISession session)
 	{
 		_session = session;
 	}
