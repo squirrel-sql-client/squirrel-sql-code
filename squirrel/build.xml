@@ -6,7 +6,7 @@
   <!ENTITY local              SYSTEM "file:./local.xml">
 ]>
 
-<!--  $Id: build.xml,v 1.7 2001-11-20 22:15:14 placson Exp $               -->
+<!--  $Id: build.xml,v 1.8 2001-11-20 22:44:37 placson Exp $               -->
 <!-- ===================================================================== -->
 <!--                                                                       -->
 <!--  Build file (for use w/Ant & BuildMagic modifications)                -->
@@ -69,6 +69,7 @@
 	<include name="**/*.properties"/>
 	<include name="**/*.jpg"/>
 	<include name="**/*.gif"/>
+	<include name="**/*.xml"/>
       </fileset>
     </copy>
     
@@ -105,7 +106,7 @@
 
     <!-- build a jar containing all classes -->
     <jar jarfile="${project.name}-${project.version}.jar" basedir="${build.classes}">
-      <include name="**/**" />
+      <include name="**" />
     </jar>
   </target>
 
