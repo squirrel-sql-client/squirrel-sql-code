@@ -23,6 +23,7 @@ import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Frame;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
@@ -44,7 +45,7 @@ import net.sourceforge.squirrel_sql.fw.util.Debug;
 public class GUIUtils {
 	/**
 	 * Centers <CODE>wind</CODE> within its parent. If it has no parent then
-	 * center within desktop.
+	 * center within tge screen.
 	 *
 	 * @param   wind	The Window to be centered.
 	 *
@@ -60,33 +61,51 @@ public class GUIUtils {
 			center(wind, new Rectangle(parent.getLocationOnScreen(),
 											parent.getSize()));
 		} else {
-			centerWithinDesktop(wind);
+			centerWithinScreen(wind);
 		}
 	}
 
 	/**
-	 * Centers <CODE>wind</CODE> within desktop.
+	 * Centers passed internal frame within its desktop area.
+	 *
+	 * @param   frame	The internal frame to be centered.
+	 *
+	 * @throws IllegalArgumentException	 If <TT>frame</TT> is <TT>null</TT>.
+	 */
+	public static void centerWithinDesktop(JInternalFrame frame)
+			throws IllegalArgumentException {
+		if (frame == null) {
+			throw new IllegalArgumentException("null JInternalFrame passed");
+		}
+		Container parent = frame.getDesktopPane();
+		if (parent != null && parent.isVisible()) {
+			center(frame, new Rectangle(new Point(0, 0), parent.getSize()));
+		}
+	}
+
+	/**
+	 * Centers <CODE>wind</CODE> within the screen.
 	 *
 	 * @param   wind	The Window to be centered.
 	 *
 	 * @throws IllegalArgumentException	 If <TT>wind</TT> is <TT>null</TT>.
 	 */
-	public static void centerWithinDesktop(Window wind)
+	public static void centerWithinScreen(Window wind)
 			throws IllegalArgumentException {
 		if (wind == null) {
 			throw new IllegalArgumentException("null Window passed");
 		}
 		Toolkit toolKit = Toolkit.getDefaultToolkit();
-		Rectangle rcDesk = new Rectangle(toolKit.getScreenSize() );
+		Rectangle rcScreen = new Rectangle(toolKit.getScreenSize() );
 		Dimension windSize  = wind.getSize();
-		Dimension parentSize= new Dimension(rcDesk.width, rcDesk.height);
+		Dimension parentSize= new Dimension(rcScreen.width, rcScreen.height);
 		if (windSize.height > parentSize.height) {
 			windSize.height = parentSize.height;
 		}
 		if (windSize.width > parentSize.width) {
 			windSize.width = parentSize.width;
 		}
-		center(wind, rcDesk);
+		center(wind, rcScreen);
 	}
 
 	/**
