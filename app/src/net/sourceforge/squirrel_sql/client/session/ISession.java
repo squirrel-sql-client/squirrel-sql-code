@@ -109,7 +109,15 @@ public interface ISession extends IHasIdentifier
 	 */
 	ISQLPanelAPI getSQLPanelAPI(IPlugin plugin);
 
-
+	/**
+	 * Get the opened sequence for this session.
+	 * 
+	 * @return	The opened sequence for this session.
+	 * 
+	 * TODO: This should not be a attribute of the session
+	 * but instead should be stored externally. We need a sessiion manager.
+	 */
+//	int getOpenedSequence();
 
 	SessionSheet getSessionSheet();
 

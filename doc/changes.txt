@@ -6,6 +6,15 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Added Next and Previous Session commands to the
+  Session menu (Gerd Wagner).
+- Allow user to store a password in the Alias
+  definition (Gerd Wagner).
+- Allow user to define an Alias to logon
+  automatically (Gerd Wagner).
+- Do a better job of handling schemas and/or catalogs
+  when building the object tree for DBMS's/drivers that
+  misreport catalog/schema information (Gerd Wagner).
 - Allow for multiple result sets returned from
   an SQL statement.
 - Add "Goto Next Result Tab" and "Goto Previous

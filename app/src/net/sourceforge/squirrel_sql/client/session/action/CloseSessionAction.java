@@ -19,6 +19,9 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import java.awt.event.ActionEvent;
 
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.IClientSession;
@@ -26,6 +29,10 @@ import net.sourceforge.squirrel_sql.client.session.IClientSession;
 public class CloseSessionAction extends SquirrelAction
 									implements IClientSessionAction
 {
+	/** Logger for this class. */
+	private final static ILogger s_log =
+		LoggerController.createLogger(DumpSessionAction.class);
+
 	private IClientSession _session;
 
 	public CloseSessionAction(IApplication app)
@@ -42,7 +49,16 @@ public class CloseSessionAction extends SquirrelAction
 	{
 		if (_session != null)
 		{
-			new CloseSessionCommand(_session).execute();
+			try
+			{
+				new CloseSessionCommand(_session).execute();
+			}
+			catch (Throwable ex)
+			{
+				final String msg = "Error occured closing session";
+				_session.getMessageHandler().showErrorMessage(msg + ": " + ex);
+				s_log.error(msg, ex);
+			}
 		}
 	}
 }

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * Modifications copyright (C) 2001 Johan Compagner
@@ -80,11 +80,16 @@ class Session implements IClientSession
 
 	private IMessageHandler _msgHandler = NullMessageHandler.getInstance();
 
+	//private int _openedSequence;
+
 	/** API for the object tree. */
 	private final IObjectTreeAPI _objectTreeAPI;
 
 	/** API object for the SQL panel. */
 	private final ISQLPanelAPI _sqlPanelAPI;
+
+	/** Set to <TT>true</TT> once session closed. */
+	private boolean _closed;
 
 	/**
 	 * Create a new session.
@@ -95,11 +100,13 @@ class Session implements IClientSession
 	 * @param	conn		Connection to database.
 	 * @param	user		User name connected with.
 	 * @param	password	Password for <TT>user</TT>
+	 * @param	openedSeq	The sequence that this session was opened.
 	 *
 	 * @throws IllegalArgumentException if any parameter is null.
 	 */
 	public Session(IApplication app, ISQLDriver driver, ISQLAlias alias,
 					SQLConnection conn, String user, String password)
+//					int openedSeq)
 	{
 		super();
 		if (app == null)
@@ -125,6 +132,7 @@ class Session implements IClientSession
 		_conn = conn;
 		_user = user;
 		_password = password;
+//		_openedSequence = openedSeq;
 
 		_props = (SessionProperties)_app.getSquirrelPreferences().getSessionProperties().clone();
 
@@ -136,13 +144,33 @@ class Session implements IClientSession
 
 	/**
 	 * Close this session.
+	 * 
+	 * @throws	SQLException
+	 * 			Thrown if an error closing the SQL connection. The session
+	 * 			will still be closed even though the connection may not have
+	 *			been.
 	 */
-	public void close()
+	public synchronized void close() throws SQLException
 	{
-		if (_sessionSheet != null)
+		if (!_closed)
 		{
-			_sessionSheet.dispose();
-			_sessionSheet = null;
+			s_log.debug("Closing session: " + _id);
+			try
+			{
+				closeSQLConnection();
+			}
+			finally
+			{
+				// This is set here as SessionSheet.dispose() will attempt
+				// to close the session.
+				_closed = true;
+				if (_sessionSheet != null)
+				{
+					_sessionSheet.dispose();
+					_sessionSheet = null;
+				}
+			}
+			s_log.debug("Successfully closed session: " + _id);
 		}
 	}
 
@@ -154,6 +182,16 @@ class Session implements IClientSession
 	public IIdentifier getIdentifier()
 	{
 		return _id;
+	}
+
+	/**
+	 * Retrieve whether this session has been closed.
+	 * 
+	 * @return	<TT>true</TT> if session closed else <TT>false</TT>.
+	 */
+	public boolean isClosed()
+	{
+		return _closed;
 	}
 
 	/**
@@ -232,6 +270,19 @@ class Session implements IClientSession
 		}
 		return _sqlPanelAPI;
 	}
+
+	/**
+	 * Get the opened sequence for this session.
+	 * 
+	 * @return	The opened sequence for this session.
+	 * 
+	 * TODO: This should not be a attribute of the session
+	 * but instead should be stored externally. We need a sessiion manager.
+	 */
+//	public int getOpenedSequence()
+//	{
+//		return _openedSequence;
+//	}
 
 	public synchronized Object getPluginObject(IPlugin plugin, String key)
 	{
@@ -333,8 +384,7 @@ class Session implements IClientSession
 				s_log.error("Unexpected SQLException", ex);
 			}
 		}
-		final OpenConnectionCommand cmd =
-			new OpenConnectionCommand(_app, _alias, _user, _password);
+		OpenConnectionCommand cmd = new OpenConnectionCommand(_app, _alias, _user, _password);
 		try
 		{
 			closeSQLConnection();

@@ -24,6 +24,9 @@ import javax.swing.JPopupMenu;
 
 import com.ice.util.JFCUtilities;
 
+// TODO: Once we're happy that JFCUtilities is no longer required
+// then remove it and this class.
+// JDK 1.4.1 works, don't know about 1.4.0. 1.3.1 doesn't work.
 public class BasePopupMenu extends JPopupMenu
 {
 	/**
@@ -35,6 +38,7 @@ public class BasePopupMenu extends JPopupMenu
 	public void show(MouseEvent evt)
 	{
 		Point pt = JFCUtilities.computePopupLocation(evt, evt.getComponent(), this);
+//		Point pt = new Point( evt.getX(), evt.getY() );
 		show(evt.getComponent(), pt.x, pt.y);
 	}
 }

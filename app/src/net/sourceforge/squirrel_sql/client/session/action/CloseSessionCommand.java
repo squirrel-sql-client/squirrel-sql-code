@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,6 +17,9 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.sql.SQLException;
+
+import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.session.IClientSession;
@@ -49,10 +52,17 @@ public class CloseSessionCommand implements ICommand
 	}
 
 	/**
-	 * Display the Dialog
+	 * Close the session.
 	 */
-	public void execute()
+	public void execute() throws BaseException
 	{
-		_session.close();
+		try
+		{
+			_session.close();
+		}
+		catch (SQLException ex)
+		{
+			throw new BaseException(ex);
+		}
 	}
 }
