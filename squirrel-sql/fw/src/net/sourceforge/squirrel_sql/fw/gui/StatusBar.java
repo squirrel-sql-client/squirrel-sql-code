@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -71,6 +72,10 @@ public class StatusBar extends JPanel {
 		if (value != _showClock) {
 			if (value) {
 				_clockLbl = new MyLabel();
+				Font old = _clockLbl.getFont();
+				Font nw = new Font(old.getName(),old.getStyle(),10);
+				_clockLbl.setFont(nw);
+				
 				add(_clockLbl, new ClockConstraints());
 				startClockThread();
 			} else {
@@ -112,7 +117,11 @@ public class StatusBar extends JPanel {
 		}
 	}
 
-	private void createUserInterface(boolean showClock) {
+	private void createUserInterface(boolean showClock) 
+	{
+		Font old = _textLbl.getFont();
+		Font nw = new Font(old.getName(),old.getStyle(),10);
+		_textLbl.setFont(nw);
 		setLayout(new GridBagLayout());
 		add(_textLbl, new TextConstraints());
 		showClock(showClock);
@@ -122,6 +131,8 @@ public class StatusBar extends JPanel {
 	private synchronized void startClockThread() {
 		if (_clockTask == null) {
 			_clockTask = new ClockTask(this);
+			
+			// TODO??? Why not use the thread pool of Squirrel itself..
 			new Thread(_clockTask).start();
 		}
 	}
@@ -179,7 +190,7 @@ public class StatusBar extends JPanel {
 					Thread.yield();
 				} catch(Exception ignore) {
 				}
-				break;
+//				break;
 			}
 		}
 	}
@@ -189,7 +200,7 @@ public class StatusBar extends JPanel {
 			super();
 			setBorder(BorderFactory.createCompoundBorder(
 						BorderFactory.createBevelBorder(BevelBorder.LOWERED),
-						BorderFactory.createEmptyBorder(2, 4, 2, 4)));
+						BorderFactory.createEmptyBorder(0, 4, 0, 4)));
 		}
 	}
 
