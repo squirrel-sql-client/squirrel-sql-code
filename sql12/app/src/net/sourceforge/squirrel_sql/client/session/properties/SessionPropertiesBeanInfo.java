@@ -40,7 +40,7 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 		super();
 		if (s_dscrs == null)
 		{
-			s_dscrs = new PropertyDescriptor[26];
+			s_dscrs = new PropertyDescriptor[25];
 			s_dscrs[0] = new PropertyDescriptor(IPropNames.AUTO_COMMIT,
 									CLAZZ, "getAutoCommit", "setAutoCommit");
 			s_dscrs[1] = new PropertyDescriptor(IPropNames.COMMIT_ON_CLOSING_CONNECTION,
@@ -65,33 +65,33 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 									CLAZZ, "getSQLStatementSeparator", "setSQLStatementSeparator");
 			s_dscrs[11] = new PropertyDescriptor(IPropNames.SQL_RESULTS_OUTPUT_CLASS_NAME,
 									CLAZZ, "getSQLResultsOutputClassName", "setSQLResultsOutputClassName");
-			s_dscrs[12] = new PropertyDescriptor(IPropNames.LARGE_RESULT_SET_OBJECT_INFO,
-									CLAZZ, "getLargeResultSetObjectInfo", "setLargeResultSetObjectInfo");
-			s_dscrs[13] = new PropertyDescriptor(IPropNames.SQL_START_OF_LINE_COMMENT,
+//??			s_dscrs[12] = new PropertyDescriptor(IPropNames.LARGE_RESULT_SET_OBJECT_INFO,
+//??									CLAZZ, "getLargeResultSetObjectInfo", "setLargeResultSetObjectInfo");
+			s_dscrs[12] = new PropertyDescriptor(IPropNames.SQL_START_OF_LINE_COMMENT,
 									CLAZZ, "getStartOfLineComment", "setStartOfLineComment");
-			s_dscrs[14] = new PropertyDescriptor(IPropNames.LIMIT_SQL_ENTRY_HISTORY_SIZE,
+			s_dscrs[13] = new PropertyDescriptor(IPropNames.LIMIT_SQL_ENTRY_HISTORY_SIZE,
 									CLAZZ, "getLimitSQLEntryHistorySize", "setLimitSQLEntryHistorySize");
-			s_dscrs[15] = new PropertyDescriptor(IPropNames.SQL_ENTRY_HISTORY_SIZE,
+			s_dscrs[14] = new PropertyDescriptor(IPropNames.SQL_ENTRY_HISTORY_SIZE,
 									CLAZZ, "getSQLEntryHistorySize", "setSQLEntryHistorySize");
-			s_dscrs[16] = new PropertyDescriptor(IPropNames.SQL_SHARE_HISTORY,
+			s_dscrs[15] = new PropertyDescriptor(IPropNames.SQL_SHARE_HISTORY,
 									CLAZZ, "getSQLShareHistory", "setSQLShareHistory");
-			s_dscrs[17] = new PropertyDescriptor(IPropNames.MAIN_TAB_PLACEMENT,
+			s_dscrs[16] = new PropertyDescriptor(IPropNames.MAIN_TAB_PLACEMENT,
 									CLAZZ, "getMainTabPlacement", "setMainTabPlacement");
-			s_dscrs[18] = new PropertyDescriptor(IPropNames.OBJECT_TAB_PLACEMENT,
+			s_dscrs[17] = new PropertyDescriptor(IPropNames.OBJECT_TAB_PLACEMENT,
 									CLAZZ, "getObjectTabPlacement", "setObjectTabPlacement");
-			s_dscrs[19] = new PropertyDescriptor(IPropNames.SQL_EXECUTION_TAB_PLACEMENT,
+			s_dscrs[18] = new PropertyDescriptor(IPropNames.SQL_EXECUTION_TAB_PLACEMENT,
 									CLAZZ, "getSQLExecutionTabPlacement", "setSQLExecutionTabPlacement");
-			s_dscrs[20] = new PropertyDescriptor(IPropNames.SQL_RESULTS_TAB_PLACEMENT,
+			s_dscrs[19] = new PropertyDescriptor(IPropNames.SQL_RESULTS_TAB_PLACEMENT,
 									CLAZZ, "getSQLResultsTabPlacement", "setSQLResultsTabPlacement");
-			s_dscrs[21] = new PropertyDescriptor(IPropNames.TABLE_CONTENTS_OUTPUT_CLASS_NAME,
+			s_dscrs[20] = new PropertyDescriptor(IPropNames.TABLE_CONTENTS_OUTPUT_CLASS_NAME,
 									CLAZZ, "getTableContentsOutputClassName", "setTableContentsOutputClassName");
-			s_dscrs[22] = new PropertyDescriptor(IPropNames.ABORT_ON_ERROR,
+			s_dscrs[21] = new PropertyDescriptor(IPropNames.ABORT_ON_ERROR,
 									CLAZZ, "getAbortOnError", "setAbortOnError");
-			s_dscrs[23] = new PropertyDescriptor(IPropNames.SCHEMA_PREFIX_LIST,
+			s_dscrs[22] = new PropertyDescriptor(IPropNames.SCHEMA_PREFIX_LIST,
 									CLAZZ, "getSchemaPrefixList", "setSchemaPrefixList");
-			s_dscrs[24] = new PropertyDescriptor(IPropNames.LOAD_SCHEMAS_CATALOGS,
+			s_dscrs[23] = new PropertyDescriptor(IPropNames.LOAD_SCHEMAS_CATALOGS,
 									CLAZZ, "getLoadSchemasCatalogs", "setLoadSchemasCatalogs");		
-			s_dscrs[25] = new PropertyDescriptor(IPropNames.SHOW_RESULTS_META_DATA,
+			s_dscrs[24] = new PropertyDescriptor(IPropNames.SHOW_RESULTS_META_DATA,
 									CLAZZ, "getShowResultsMetaData", "setShowResultsMetaData");		
 		}
 	}
