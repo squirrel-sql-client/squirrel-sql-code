@@ -33,6 +33,10 @@ import net.sourceforge.squirrel_sql.fw.gui.action.TableSelectAllCellsCommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
+
+//?????
+import net.sourceforge.squirrel_sql.fw.datasetviewer.MyTableModel;
 
 public class TablePopupMenu extends BasePopupMenu
 {
@@ -58,11 +62,17 @@ public class TablePopupMenu extends BasePopupMenu
 	private PasteAction _paste = new PasteAction();
 	//	private ClearAction _clear = new ClearAction();
 	private MakeEditableAction _makeEditable = new MakeEditableAction();
+	private DeleteRowsAction _deleteRows = new DeleteRowsAction();
+	private InsertRowAction _insertRow = new InsertRowAction();
 	private SelectAllAction _select = new SelectAllAction();
 
 	// The following pointer is needed to allow the "Make Editable button
 	// to tell the application to set up an editable display panel
 	private IDataSetUpdateableModel _updateableModel = null;
+	
+	// pointer to the viewer
+	// This is needed for insert and delete operations
+	private DataSetViewerTablePanel _viewer = null;
 
 	/**
 	 * Constructor used when caller wants to be able to make table editable.
@@ -72,13 +82,40 @@ public class TablePopupMenu extends BasePopupMenu
 	 * The caller needs to determine whether or not to allow a request for edit mode.
 	 */
 	public TablePopupMenu(boolean allowEditing,
-			IDataSetUpdateableModel updateableModel)
+			IDataSetUpdateableModel updateableModel,
+			DataSetViewerTablePanel viewer)
 	{
 		super();
 		// save the pointer needed to enable editing of data on-demand
 		_updateableModel = updateableModel;
+		
+		// save the pointer needed for insert and delete operations
+		_viewer = viewer;
 
 		addMenuItems(allowEditing);
+	}
+	
+	/**
+	 * Constructor used when creating menu for use in cell editor.
+	 */
+	public TablePopupMenu(IDataSetUpdateableModel updateableModel,
+			DataSetViewerTablePanel viewer)
+	{
+		super();
+		// save the pointer needed to enable editing of data on-demand
+		_updateableModel = updateableModel;
+		
+		// save the pointer needed for insert and delete operations
+		_viewer = viewer;
+
+// Cut and Paste need to be worked on, so for now do not include them
+//		add(_cut);
+		add(_copy);
+		add(_copyHtml);
+//		add(_paste);
+		addSeparator();
+		add(_insertRow);
+		add(_deleteRows);
 	}
 
 	public void setTable(JTable value)
@@ -101,6 +138,7 @@ public class TablePopupMenu extends BasePopupMenu
 		super.show(evt);
 	}
 
+/*
 	protected void setItemAction(int optionType, Action action)
 	{
 		if (optionType < 0 || optionType > IOptionTypes.LAST_ENTRY)
@@ -117,6 +155,7 @@ public class TablePopupMenu extends BasePopupMenu
 		insert(action, idx);
 		_menuItems[optionType] = (JMenuItem)getComponent(idx);
 	}
+*/
 
 	protected void updateActions()
 	{
@@ -136,6 +175,14 @@ public class TablePopupMenu extends BasePopupMenu
 		}
 		addSeparator();
 		_menuItems[IOptionTypes.SELECT_ALL] = add(_select);
+
+		// add entries for insert and delete rows
+		// only if table is updateable and already editable (ie. allowEditing is false)
+		if (_updateableModel != null && allowEditing==false) {
+			addSeparator();
+			add(_insertRow);
+			add(_deleteRows);
+		}
 	}
 
 //	private class ClearAction extends BaseAction
@@ -228,6 +275,39 @@ public class TablePopupMenu extends BasePopupMenu
 			{
 				new MakeEditableCommand(_updateableModel).execute();
 			}
+		}
+	}
+	
+	private class DeleteRowsAction extends BaseAction
+	{
+		DeleteRowsAction()
+		{
+			super(s_stringMgr.getString("TablePopupMenu.deleterows"));
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			if (_table != null)
+			{
+				int selectedRows[] = _table.getSelectedRows();
+			
+				// Tell the DataSetViewer to delete the rows
+				// Note: rows are indexes in the SORTABLE model, not the ACTUAL model
+				_viewer.deleteRows(selectedRows);
+			}
+		}
+	}
+	
+	private class InsertRowAction extends BaseAction
+	{
+		InsertRowAction()
+		{
+			super(s_stringMgr.getString("TablePopupMenu.insertrow"));
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			_viewer.insertRow();
 		}
 	}
 

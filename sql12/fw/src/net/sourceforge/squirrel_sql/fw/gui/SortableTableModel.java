@@ -28,6 +28,8 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.MyTableModel;
+
 public class SortableTableModel extends AbstractTableModel
 {
 	private MyTableModelListener _actualModelLis = new MyTableModelListener();
@@ -138,6 +140,19 @@ public class SortableTableModel extends AbstractTableModel
 	public Class getColumnClass(int col)
 	{
 		return _actualModel.getColumnClass(col);
+	}
+	
+	/**
+	 * Delete the selected rows in the actual table.
+	 * 
+	 * @param	rows[]	List of row indexes in sorted model
+	 */
+	public void deleteRows(int[] rows) {
+		int[] actualRows = new int[rows.length];
+		for (int i=0; i< rows.length; i++) {
+			actualRows[i] = _indexes[rows[i]].intValue();
+		}
+		((MyTableModel)_actualModel).deleteRows(actualRows);
 	}
 	
 	/**
