@@ -18,12 +18,17 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
  * This provides base behaviour for implemtations of <TT>IDataSetViewerDestination</TT>.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public abstract class BaseDataSetViewerDestination implements IDataSetViewer {
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(BaseDataSetViewerDestination.class);
+
 	/** Specifies whether to show the column headings. */
 	private boolean _showHeadings = true;
 
@@ -102,19 +107,17 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer {
 	 * If no instance can be made then the default
 	 * will be returned.
 	 */
-	public static IDataSetViewer getInstance(String sName)
-	{
+	public static IDataSetViewer getInstance(String sName) {
 		IDataSetViewer dsv = null;
-		try
-		{
+		try {
 			Class cls = Class.forName(sName);
 			dsv = (IDataSetViewer)cls.newInstance();
+		} catch(Exception e) {
+			s_log.error("Error", e);
 		}
-		catch(Exception e)
-		{
-			// Log Exception????
+		if(dsv == null) {
+			dsv = new DataSetViewerTablePanel();
 		}
-		if(dsv == null) return new DataSetViewerTablePanel();
 		return dsv;
 	}
 }
