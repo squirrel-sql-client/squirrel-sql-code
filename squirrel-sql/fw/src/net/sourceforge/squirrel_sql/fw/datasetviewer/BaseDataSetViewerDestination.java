@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -25,9 +25,11 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public abstract class BaseDataSetViewerDestination implements IDataSetViewer {
+public abstract class BaseDataSetViewerDestination implements IDataSetViewer
+{
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(BaseDataSetViewerDestination.class);
+	private static ILogger s_log =
+		LoggerController.createLogger(BaseDataSetViewerDestination.class);
 
 	/** Specifies whether to show the column headings. */
 	private boolean _showHeadings = true;
@@ -40,7 +42,8 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer {
 	 *
 	 * @param	hdgs	Column definitions to use.
 	 */
-	public void setColumnDefinitions(ColumnDisplayDefinition[] colDefs) {
+	public void setColumnDefinitions(ColumnDisplayDefinition[] colDefs)
+	{
 		_colDefs = colDefs != null ? colDefs : new ColumnDisplayDefinition[0];
 	}
 
@@ -49,7 +52,8 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer {
 	 *
 	 * @return the column definitions to use.
 	 */
-	public ColumnDisplayDefinition[] getColumnDefinitions() {
+	public ColumnDisplayDefinition[] getColumnDefinitions()
+	{
 		return _colDefs;
 	}
 
@@ -58,7 +62,8 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer {
 	 *
 	 * @param	show	<TT>true</TT> if headibgs to be shown else <TT>false</TT>.
 	 */
-	public void showHeadings(boolean show) {
+	public void showHeadings(boolean show)
+	{
 		_showHeadings = show;
 	}
 
@@ -67,36 +72,38 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer {
 	 *
 	 * @return whether to show the column headings.
 	 */
-	public boolean getShowHeadings() {
+	public boolean getShowHeadings()
+	{
 		return _showHeadings;
 	}
 
-	public synchronized void show(IDataSet ds) throws DataSetException {
+	public synchronized void show(IDataSet ds) throws DataSetException
+	{
 		show(ds, null);
 	}
 
-	public synchronized void show(IDataSet ds, IMessageHandler msgHandler) throws DataSetException {
+	public synchronized void show(IDataSet ds, IMessageHandler msgHandler)
+		throws DataSetException
+	{
 		clear();
 		setColumnDefinitions(ds.getDataSetDefinition().getColumnDefinitions());
 		final int colCount = ds.getColumnCount();
-		while (ds.next(msgHandler)) {
+		while (ds.next(msgHandler))
+		{
 			addRow(ds, colCount);
 		}
 		allRowsAdded();
 		moveToTop();
 	}
 
-	protected void addRow(IDataSet ds, int columnCount) throws DataSetException {
+	protected void addRow(IDataSet ds, int columnCount) throws DataSetException
+	{
 		Object[] row = new Object[columnCount];
-		for (int i = 0; i < columnCount; ++i) {
-			row[i] = formatValue(ds.get(i));
+		for (int i = 0; i < columnCount; ++i)
+		{
+			row[i] = ds.get(i);
 		}
 		addRow(row);
-	}
-
-	protected Object formatValue(Object object)
-	{
-		return object;
 	}
 
 	protected abstract void allRowsAdded();
@@ -107,18 +114,22 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer {
 	 * If no instance can be made then the default
 	 * will be returned.
 	 */
-	public static IDataSetViewer getInstance(String sName) {
+	public static IDataSetViewer getInstance(String sName)
+	{
 		IDataSetViewer dsv = null;
-		try {
+		try
+		{
 			Class cls = Class.forName(sName);
-			dsv = (IDataSetViewer)cls.newInstance();
-		} catch(Exception e) {
+			dsv = (IDataSetViewer) cls.newInstance();
+		}
+		catch (Exception e)
+		{
 			s_log.error("Error", e);
 		}
-		if(dsv == null) {
+		if (dsv == null)
+		{
 			dsv = new DataSetViewerTablePanel();
 		}
 		return dsv;
 	}
 }
-

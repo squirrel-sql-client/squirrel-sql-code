@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.properties;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -36,9 +36,11 @@ import net.sourceforge.squirrel_sql.client.session.SessionSheet;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SessionPropertiesSheetFactory {
+public class SessionPropertiesSheetFactory
+{
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(SessionPropertiesSheetFactory.class);
+	private static ILogger s_log =
+		LoggerController.createLogger(SessionPropertiesSheetFactory.class);
 
 	/** Application API. */
 	private IApplication _app;
@@ -50,12 +52,14 @@ public class SessionPropertiesSheetFactory {
 	private Map _sheets = new HashMap();
 
 	/** Singleton instance of this class. */
-	private static SessionPropertiesSheetFactory s_instance = new SessionPropertiesSheetFactory();
+	private static SessionPropertiesSheetFactory s_instance =
+		new SessionPropertiesSheetFactory();
 
 	/**
 	 * ctor. Private as class is a singleton.
 	 */
-	private SessionPropertiesSheetFactory() {
+	private SessionPropertiesSheetFactory()
+	{
 		super();
 	}
 
@@ -64,14 +68,16 @@ public class SessionPropertiesSheetFactory {
 	 *
 	 * @return	the single instance of this class.
 	 */
-	public static SessionPropertiesSheetFactory getInstance() {
+	public static SessionPropertiesSheetFactory getInstance()
+	{
 		return s_instance;
 	}
 
 	/**
 	 * Initialize this class. This <EM>must</EM> be called prior to using this class.
 	 */
-	public static void initialize(IApplication app) {
+	public static void initialize(IApplication app)
+	{
 		getInstance()._app = app;
 	}
 
@@ -86,33 +92,27 @@ public class SessionPropertiesSheetFactory {
 	 *
 	 * @throws	IllegalArgumentException	if a <TT>null</TT> <TT>ISession</TT> passed.
 	 */
-	public synchronized SessionPropertiesSheet showSheet(ISession session) {
-		if (session == null) {
+	public synchronized SessionPropertiesSheet showSheet(ISession session)
+	{
+		if (session == null)
+		{
 			throw new IllegalArgumentException("ISession == null");
 		}
 
 		SessionPropertiesSheet propsSheet = get(session);
-		if (propsSheet == null) {
-			 propsSheet = new SessionPropertiesSheet(session);
+		if (propsSheet == null)
+		{
+			propsSheet = new SessionPropertiesSheet(session);
 			_sheets.put(session.getIdentifier(), propsSheet);
 			_app.getMainFrame().addInternalFrame(propsSheet, true, null);
 
-			session.getSessionSheet().addInternalFrameListener(new SessionSheetListener());
+			// When properties sheet is closed remove it from the list
+			// of property sheets.
+			propsSheet.addInternalFrameListener(new PropertiesSheetListener());
 
 			// When the	session is closed close its properties sheet.
 			SessionSheet sessionSheet = session.getSessionSheet();
-			sessionSheet.addInternalFrameListener(new InternalFrameAdapter() {
-				public void internalFrameClosed(InternalFrameEvent evt) {
-					synchronized(SessionPropertiesSheetFactory.getInstance()) {
-						SessionSheet sessionSheet = (SessionSheet)evt.getInternalFrame();
-						SessionPropertiesSheet propsSheet = (SessionPropertiesSheet)_sheets.remove(sessionSheet.getSession().getIdentifier());
-						if (propsSheet != null) {
-							propsSheet.dispose();
-						}
-						sessionSheet.removeInternalFrameListener(this);
-					}
-				}
-			});
+			sessionSheet.addInternalFrameListener(new SessionSheetListener());
 
 			positionSheet(propsSheet);
 		}
@@ -122,26 +122,58 @@ public class SessionPropertiesSheetFactory {
 		return propsSheet;
 	}
 
-	private SessionPropertiesSheet get(ISession session) {
-		return (SessionPropertiesSheet)_sheets.get(session.getIdentifier());
+	private SessionPropertiesSheet get(ISession session)
+	{
+		return (SessionPropertiesSheet) _sheets.get(session.getIdentifier());
 	}
 
-	private void positionSheet(SessionPropertiesSheet sheet) {
+	private void positionSheet(SessionPropertiesSheet sheet)
+	{
 		GUIUtils.centerWithinDesktop(sheet);
 		sheet.setVisible(true);
 		sheet.moveToFront();
 	}
 
-	private final class SessionSheetListener extends InternalFrameAdapter {
-		public void internalFrameClosed(InternalFrameEvent evt) {
-			synchronized(SessionPropertiesSheetFactory.getInstance()) {
-				SessionSheet sessionSheet = (SessionSheet)evt.getInternalFrame();
-				SessionPropertiesSheet propsSheet = (SessionPropertiesSheet)_sheets.remove(sessionSheet.getSession().getIdentifier());
-				if (propsSheet != null) {
+	private final class SessionSheetListener extends InternalFrameAdapter
+	{
+		public void internalFrameClosed(InternalFrameEvent evt)
+		{
+			synchronized (SessionPropertiesSheetFactory.getInstance())
+			{
+				SessionSheet sessionSheet = (SessionSheet) evt.getInternalFrame();
+				SessionPropertiesSheet propsSheet =
+					(SessionPropertiesSheet) _sheets.remove(
+						sessionSheet.getSession().getIdentifier());
+				if (propsSheet != null)
+				{
 					propsSheet.dispose();
 				}
 				sessionSheet.removeInternalFrameListener(this);
 			}
 		}
 	}
+
+	private final class PropertiesSheetListener extends InternalFrameAdapter
+	{
+		public void internalFrameClosed(InternalFrameEvent evt)
+		{
+			synchronized (SessionPropertiesSheetFactory.getInstance())
+			{
+				SessionPropertiesSheet propsSheet =
+					(SessionPropertiesSheet) evt.getInternalFrame();
+				if (propsSheet != null)
+				{
+					propsSheet.removeInternalFrameListener(this);
+					Object sheet = _sheets.remove(propsSheet.getSession().getIdentifier());
+					if (sheet == null)
+					{
+						s_log.error(
+							"SessionPropertiesSheet not found for session: "
+								+ propsSheet.getSession().getIdentifier());
+					}
+				}
+			}
+		}
+	}
+
 }

@@ -26,11 +26,13 @@ import javax.swing.JComboBox;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class DirectoryListComboBox extends JComboBox {
+public class DirectoryListComboBox extends JComboBox
+{
 	/**
 	 * Default ctor.
 	 */
-	public DirectoryListComboBox() {
+	public DirectoryListComboBox()
+	{
 		super();
 	}
 
@@ -41,7 +43,8 @@ public class DirectoryListComboBox extends JComboBox {
 	 * 					directory to be listed. If <TT>null</TT>
 	 * 					the combobox is cleared.
 	 */
-	public void load(File dir) {
+	public void load(File dir)
+	{
 		load(dir, null);
 	}
 
@@ -54,19 +57,24 @@ public class DirectoryListComboBox extends JComboBox {
 	 * 					the combobox is cleared.
 	 * @param	filter	Filter specifying the subset of files to load.
 	 */
-	public void load(File dir, FilenameFilter filter) {
+	public void load(File dir, FilenameFilter filter)
+	{
 		removeAllItems();
-		if (dir != null && dir.isDirectory() && dir.canRead()) {
+		if (dir != null && dir.isDirectory() && dir.canRead())
+		{
 			String[] files = null;
-			if (filter != null) {
+			if (filter == null)
+			{
 				files = dir.list();
-			} else {
+			}
+			else
+			{
 				files = dir.list(filter);
 			}
-			for (int i = 0; i < files.length; ++i) {
+			for (int i = 0; i < files.length; ++i)
+			{
 				addItem(files[i]);
 			}
 		}
 	}
 }
-

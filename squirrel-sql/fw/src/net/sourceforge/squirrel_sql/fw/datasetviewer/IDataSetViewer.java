@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -18,12 +18,12 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Component;
-import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
-public interface IDataSetViewer {
-	final static int MAX_COLUMN_WIDTH = 50;
+public interface IDataSetViewer
+{
+	int MAX_COLUMN_WIDTH = 50;
 
 	/**
 	 * Get the rowcount of the DataSet

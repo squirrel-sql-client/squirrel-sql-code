@@ -24,6 +24,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 import javax.swing.JButton;
@@ -153,8 +154,13 @@ public class SQLExecuterTask implements Runnable
 				}
 			}
 		}
+		catch (SQLException ex)
+		{
+			_session.getMessageHandler().showMessage(ex);
+		}
 		catch (Throwable ex)
 		{
+			s_log.error("Error occured executing SQL", ex);
 			_session.getMessageHandler().showMessage(ex);
 		}
 		finally

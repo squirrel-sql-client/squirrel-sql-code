@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.preferences;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -46,17 +46,20 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class GlobalPreferencesSheet extends BaseSheet {
+public class GlobalPreferencesSheet extends BaseSheet
+{
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
-	private interface i18n {
+	private interface i18n
+	{
 		String TITLE = "Global Preferences";
 	}
 
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(GlobalPreferencesSheet.class);
+	private static ILogger s_log =
+		LoggerController.createLogger(GlobalPreferencesSheet.class);
 
 	/** Singleton instance of this class. */
 	private static GlobalPreferencesSheet s_instance;
@@ -81,9 +84,11 @@ public class GlobalPreferencesSheet extends BaseSheet {
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>IApplication passed.
 	 */
-	private GlobalPreferencesSheet(IApplication app) {
+	private GlobalPreferencesSheet(IApplication app)
+	{
 		super(i18n.TITLE);
-		if (app == null) {
+		if (app == null)
+		{
 			throw new IllegalArgumentException("IApplication == null");
 		}
 
@@ -99,34 +104,58 @@ public class GlobalPreferencesSheet extends BaseSheet {
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>IApplication</TT> object passed.
 	 */
-	public static synchronized void showSheet(IApplication app) {
-		if (s_instance == null) {
+	public static synchronized void showSheet(IApplication app)
+	{
+		if (s_instance == null)
+		{
 			s_instance = new GlobalPreferencesSheet(app);
 			app.getMainFrame().addInternalFrame(s_instance, true, null);
 		}
 		s_instance.setVisible(true);
 	}
 
-	public synchronized void setVisible(boolean show) {
-		if (show) {
-			if (!isVisible()) {
+	public void dispose()
+	{
+		synchronized (getClass())
+		{
+			s_instance = null;
+		}
+		super.dispose();
+	}
+
+	public synchronized void setVisible(boolean show)
+	{
+		if (show)
+		{
+			if (!isVisible())
+			{
 				final boolean isDebug = s_log.isDebugEnabled();
 				long start = 0;
-				for (Iterator it = _panels.iterator(); it.hasNext();) {
-					IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel)it.next();
-					if (isDebug) {
+				for (Iterator it = _panels.iterator(); it.hasNext();)
+				{
+					IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel) it.next();
+					if (isDebug)
+					{
 						start = System.currentTimeMillis();
 					}
-					try {
+					try
+					{
 						pnl.initialize(_app);
-					} catch (Throwable th) {
+					}
+					catch (Throwable th)
+					{
 						final String msg = "Error occured loading " + pnl.getTitle();
 						s_log.error(msg, th);
 						_app.showErrorDialog(msg, th);
 					}
-					if (isDebug) {
-						s_log.debug("Panel " + pnl.getTitle() + " initialized in "
-									+ (System.currentTimeMillis() - start) + "ms");
+					if (isDebug)
+					{
+						s_log.debug(
+							"Panel "
+								+ pnl.getTitle()
+								+ " initialized in "
+								+ (System.currentTimeMillis() - start)
+								+ "ms");
 					}
 				}
 				pack();
@@ -144,56 +173,73 @@ public class GlobalPreferencesSheet extends BaseSheet {
 	 *
 	 * @param	title	New title text.
 	 */
-	public void setTitle(String title) {
+	public void setTitle(String title)
+	{
 		super.setTitle(title);
 		_titleLbl.setText(title);
 	}
 
 	/**
-	 * Close this sheet by making it invisible.
+	 * Close this sheet.
 	 */
-	private void performClose() {
-		setVisible(false);
+	private void performClose()
+	{
+		dispose();
 	}
 
 	/**
 	 * OK button pressed so save changes.
 	 */
-	private void performOk() {
+	private void performOk()
+	{
 		CursorChanger cursorChg = new CursorChanger(_app.getMainFrame());
 		cursorChg.show();
-		try {
+		try
+		{
 			final boolean isDebug = s_log.isDebugEnabled();
 			long start = 0;
-			for (Iterator it = _panels.iterator(); it.hasNext();) {
-				if (isDebug) {
+			for (Iterator it = _panels.iterator(); it.hasNext();)
+			{
+				if (isDebug)
+				{
 					start = System.currentTimeMillis();
 				}
-				IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel)it.next();
-				try {
+				IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel) it.next();
+				try
+				{
 					pnl.applyChanges();
-				} catch (Throwable th) {
+				}
+				catch (Throwable th)
+				{
 					final String msg = "Error occured saving " + pnl.getTitle();
 					s_log.error(msg, th);
 					_app.showErrorDialog(msg, th);
 				}
-				if (isDebug) {
-					s_log.debug("Panel " + pnl.getTitle() + " applied changes in "
-								+ (System.currentTimeMillis() - start) + "ms");
+				if (isDebug)
+				{
+					s_log.debug(
+						"Panel "
+							+ pnl.getTitle()
+							+ " applied changes in "
+							+ (System.currentTimeMillis() - start)
+							+ "ms");
 				}
 			}
-		} finally {
+		}
+		finally
+		{
 			cursorChg.restore();
 		}
 
-		setVisible(false);
+		dispose();
 	}
 
 	/**
 	 * Create user interface.
 	 */
-	private void createUserInterface() {
-		setDefaultCloseOperation(HIDE_ON_CLOSE);
+	private void createUserInterface()
+	{
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
 		// This is a tool window.
 		GUIUtils.makeToolWindow(this, true);
@@ -204,12 +250,16 @@ public class GlobalPreferencesSheet extends BaseSheet {
 
 		// Go thru all loaded plugins asking for panels.
 		PluginInfo[] plugins = _app.getPluginManager().getPluginInformation();
-		for (int plugIdx = 0; plugIdx < plugins.length; ++plugIdx) {
+		for (int plugIdx = 0; plugIdx < plugins.length; ++plugIdx)
+		{
 			PluginInfo pi = plugins[plugIdx];
-			if (pi.isLoaded()) {
+			if (pi.isLoaded())
+			{
 				IGlobalPreferencesPanel[] pnls = pi.getPlugin().getGlobalPreferencePanels();
-				if (pnls != null && pnls.length > 0) {
-					for (int pnlIdx = 0; pnlIdx < pnls.length; ++pnlIdx) {
+				if (pnls != null && pnls.length > 0)
+				{
+					for (int pnlIdx = 0; pnlIdx < pnls.length; ++pnlIdx)
+					{
 						_panels.add(pnls[pnlIdx]);
 					}
 				}
@@ -217,9 +267,11 @@ public class GlobalPreferencesSheet extends BaseSheet {
 		}
 
 		// Add all panels to the tabbed pane.
-		SquirrelTabbedPane tabPane = new SquirrelTabbedPane(_app.getSquirrelPreferences());
-		for (Iterator it = _panels.iterator(); it.hasNext();) {
-			IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel)it.next();
+		SquirrelTabbedPane tabPane =
+			new SquirrelTabbedPane(_app.getSquirrelPreferences());
+		for (Iterator it = _panels.iterator(); it.hasNext();)
+		{
+			IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel) it.next();
 			String title = pnl.getTitle();
 			String hint = pnl.getHint();
 			tabPane.addTab(title, null, pnl.getPanelComponent(), hint);
@@ -254,23 +306,28 @@ public class GlobalPreferencesSheet extends BaseSheet {
 	/**
 	 * Create panel at bottom containing the buttons.
 	 */
-	private JPanel createButtonsPanel() {
+	private JPanel createButtonsPanel()
+	{
 		JPanel pnl = new JPanel();
 
 		JButton okBtn = new JButton("OK");
-		okBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
+		okBtn.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent evt)
+			{
 				performOk();
 			}
 		});
 		JButton closeBtn = new JButton("Close");
-		closeBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
+		closeBtn.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent evt)
+			{
 				performClose();
 			}
 		});
 
-		GUIUtils.setJButtonSizesTheSame(new JButton[] {okBtn, closeBtn});
+		GUIUtils.setJButtonSizesTheSame(new JButton[] { okBtn, closeBtn });
 
 		pnl.add(okBtn);
 		pnl.add(closeBtn);
@@ -288,8 +345,10 @@ public class GlobalPreferencesSheet extends BaseSheet {
 	 * @throws	IllegalArgumentException
 	 *			If <TT>null</TT> <TT>IApplication</TT> passed.
 	 */
-	private static Frame getFrame(IApplication app) {
-		if (app == null) {
+	private static Frame getFrame(IApplication app)
+	{
+		if (app == null)
+		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
 		return app.getMainFrame();

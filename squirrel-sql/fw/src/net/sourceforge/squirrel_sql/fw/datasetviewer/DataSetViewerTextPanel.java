@@ -72,19 +72,18 @@ public class DataSetViewerTextPanel extends BaseDataSetViewerDestination
 		ColumnDisplayDefinition[] colDefs = getColumnDefinitions();
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < row.length; ++i) {
-			buf.append(format(row[i].toString(), colDefs[i].getDisplayWidth(), ' '));
+			Object obj = row[i];
+			if (obj == null)
+			{
+				obj = "<null>";
+			}
+			buf.append(format(obj.toString(), colDefs[i].getDisplayWidth(), ' '));
 		}
 		addLine(buf.toString());
 	}
 
 	public void moveToTop() {
 		_outText.select(0, 0);
-	}
-
-	protected Object formatValue(Object object)
-	{
-		if(object != null) return object.toString();
-		return "<null>";
 	}
 
 	/*
@@ -115,9 +114,6 @@ public class DataSetViewerTextPanel extends BaseDataSetViewerDestination
 	}
 
 	protected String format(String data, int displaySize, char fillChar) {
-		if (data == null) {
-			data = "";
-		}
 		data = data.replace('\n', ' ');
 		data = data.replace('\r', ' ');
 		StringBuffer output = new StringBuffer(data);

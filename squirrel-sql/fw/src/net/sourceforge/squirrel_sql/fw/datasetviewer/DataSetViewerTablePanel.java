@@ -41,6 +41,7 @@ import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -312,6 +313,8 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 
 		private TableColumnModel createColumnModel(ColumnDisplayDefinition[] colDefs)
 		{
+			CellRenderer renderer = new CellRenderer();
+
 			//_colDefs = hdgs;
 			TableColumnModel cm = new DefaultTableColumnModel();
 			for (int i = 0; i < colDefs.length; ++i)
@@ -322,7 +325,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 				{
 					colWidth = MAX_COLUMN_WIDTH * _multiplier;
 				}
-				TableColumn col = new TableColumn(i, colWidth);
+				TableColumn col = new TableColumn(i, colWidth, renderer, null);
 				col.setHeaderValue(colDef.getLabel());
 				cm.addColumn(col);
 			}
@@ -405,6 +408,21 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 			area.setEditable(false);
 			JScrollPane pane = new JScrollPane(area);
 			con.add(pane,BorderLayout.CENTER);
+		}
+	}
+
+	private static final class CellRenderer extends DefaultTableCellRenderer
+	{
+		public void setValue(Object value)
+		{
+			if (value == null)
+			{
+				super.setValue("<null>");
+			}
+			else
+			{
+				super.setValue(value);
+			}
 		}
 	}
 }

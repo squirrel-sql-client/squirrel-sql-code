@@ -2,6 +2,22 @@
 
 <Beans>
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<driverClassName>com.sunopsis.jdbc.driver.xml.SnpsXmlDriver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-10</string>
+		</identifier>
+		<jarFileNames Indexed="true">
+			<Bean Class="net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper">
+				<string>snpsxml.zip</string>
+			</Bean>
+			<Bean Class="net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper">
+				<string>xerces.jar</string>
+			</Bean>
+		</jarFileNames>
+		<name>Sunopsis XML</name>
+		<url>jdbc:snps:xml?f=&lt;file-name&gt;&amp;ro=true</url>
+	</Bean>
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
 		<usesClassPath>true</usesClassPath>
 		<jarFileNames Indexed="true"/>
 		<url>jdbc:sybase:Tds:&lt;host&gt;:&lt;port&gt;/&lt;DBNAME&gt;</url>;
