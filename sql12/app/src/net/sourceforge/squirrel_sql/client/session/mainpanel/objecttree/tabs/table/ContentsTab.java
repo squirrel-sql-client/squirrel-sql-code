@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -225,6 +225,7 @@ public class ContentsTab extends BaseTableTab
 	{
 		final ISession session = getSession();
 		final SQLConnection conn = session.getSQLConnection();
+		final SQLDatabaseMetaData md = conn.getSQLMetaData();
 //		final SQLFilterClauses sqlFilterClauses = session.getSQLFilterClauses();
 
 		try
