@@ -102,7 +102,6 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 		_treeActions = new JPopupMenu();
 		_treeActions.add(new JMenuItem(actions.get(RefreshTreeItemAction.class)));
 		_treeActions.add(new JMenuItem(actions.get(DropTableAction.class)));
-		;
 		/*
 		session.getApplication().getPluginManager();
 		_treeActions.add(XXXXX);
@@ -125,7 +124,6 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 
 	void refresh() throws BaseSQLException 
 	{
-//		ise
 		List l = _model.refresh();
 		if(l != null)
 		{
