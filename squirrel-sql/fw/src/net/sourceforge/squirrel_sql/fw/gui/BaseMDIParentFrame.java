@@ -69,7 +69,8 @@ public class BaseMDIParentFrame extends JFrame {
 	}
 
 	/**
-	 * Add the passed internal frame to this MDI frame.
+	 * Add the passed internal frame to this MDI frame. If it is not a tool
+	 * window <TT>GUIUtils.isToolWindow()</TT> then position it.
 	 * 
 	 * @param	child			The internal frame to be added.
 	 * @param	createMenuItem	If <TT>true</TT> add an item to the MDI
@@ -90,16 +91,8 @@ public class BaseMDIParentFrame extends JFrame {
 		child.setTitle(createTitleForChild(child));
 		_desktop.add(child);
 		if (!GUIUtils.isToolWindow(child)) {
-//			positionNewInternalFrame(child);
-//			final JMenu menu = getWindowsMenu();
-//			JMenuItem menuItem = null;
-//			if (menu != null) {
-//				menuItem = menu.add(new SelectInternalFrameAction(child));
-//			}
-//			_children.put(child.getTitle(), new ChildInfo(child, menuItem));
-//			child.addInternalFrameListener(_childListener);
+			positionNewInternalFrame(child);
 		}
-		positionNewInternalFrame(child);
 
 		JMenuItem menuItem = null;
 		if (createMenuItem) {
@@ -116,16 +109,14 @@ public class BaseMDIParentFrame extends JFrame {
 	}
 
 	public void internalFrameClosed(JInternalFrame child) {
-//		if (!GUIUtils.isToolWindow(child)) {
-			child.removeInternalFrameListener(_childListener);
-			ChildInfo ci = (ChildInfo)_children.remove(child.getTitle());
-			if (ci != null && ci._menuItem != null) {
-				final JMenu menu = getWindowsMenu();
-				if (menu != null) {
-					menu.remove(ci._menuItem);
-				}
+		child.removeInternalFrameListener(_childListener);
+		ChildInfo ci = (ChildInfo)_children.remove(child.getTitle());
+		if (ci != null && ci._menuItem != null) {
+			final JMenu menu = getWindowsMenu();
+			if (menu != null) {
+				menu.remove(ci._menuItem);
 			}
-//		}
+		}
 	}
 
 	public JDesktopPane getDesktopPane() {
