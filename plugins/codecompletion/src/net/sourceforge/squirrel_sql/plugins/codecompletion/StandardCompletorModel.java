@@ -141,7 +141,10 @@ public class StandardCompletorModel
             }
 
          }
-         ret.addAll(Arrays.asList(getColumnsForName(null, null, tableNamePat1, colNamePat1)));
+         else
+         {
+            ret.addAll(Arrays.asList(getColumnsForName(null, null, tableNamePat1, colNamePat1)));
+         }
       }
 
       CodeCompletionInfo[] ccis = (CodeCompletionInfo[]) ret.toArray(new CodeCompletionInfo[ret.size()]);

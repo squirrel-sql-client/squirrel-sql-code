@@ -28,13 +28,45 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
    private String _tableName;
    private String _tableType;
    private CodeCompletionColumnInfo[] _colInfos;
+   private String _toString;
+   private String _catalog;
+   private String _schema;
 
 
-   public CodeCompletionTableInfo(String tableName, String tableType)
+   public CodeCompletionTableInfo(String tableName, String tableType, String catalog, String schema)
    {
       _tableName = tableName;
       _tableType = tableType;
+      _catalog = catalog;
+      _schema = schema;
+
+
+      if(null != _tableType && !"TABLE".equals(_tableType))
+      {
+         _toString = _tableName  + " (" + _tableType + ")";
+      }
+      else
+      {
+         _toString = _tableName;
+      }
    }
+
+   void setHasDuplicateNameInDfifferentSchemas()
+   {
+
+      String tabNameWithSchemaHint = _tableName + (null == _catalog ? "": " catalog=" + _catalog) + (null == _schema ? "":" schema=" + _schema);
+
+      if(null != _tableType && !"TABLE".equals(_tableType))
+      {
+         _toString = tabNameWithSchemaHint  + " (" + _tableType + ")";
+      }
+      else
+      {
+         _toString = tabNameWithSchemaHint;
+      }
+
+   }
+
 
    public String getCompareString()
    {
@@ -46,20 +78,25 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
    {
       if(null == _colInfos)
       {
-         ExtendedColumnInfo[] schnemColInfos = schemaInfo.getExtendedColumnInfos(_tableName);
+         ExtendedColumnInfo[] schemColInfos = schemaInfo.getExtendedColumnInfos(_tableName);
 
-         _colInfos = new CodeCompletionColumnInfo[schnemColInfos.length];
-         for (int i = 0; i < schnemColInfos.length; i++)
+
+         Vector colInfosBuf = new Vector();
+         for (int i = 0; i < schemColInfos.length; i++)
          {
-            String columnName = schnemColInfos[i].getColumnName();
-            String columnType = schnemColInfos[i].getColumnType();
-            int columnSize = schnemColInfos[i].getColumnSize();
-            int decimalDigits = schnemColInfos[i].getDecimalDigits();
-            boolean nullable = schnemColInfos[i].isNullable();
-            CodeCompletionColumnInfo buf = new CodeCompletionColumnInfo(columnName, columnType, columnSize, decimalDigits, nullable);
-            _colInfos[i] = buf;
-
+            if(("" + _catalog).equals("" + schemColInfos[i].getCatalog()) && ("" + _schema).equals("" + schemColInfos[i].getSchema()))
+            {
+               String columnName = schemColInfos[i].getColumnName();
+               String columnType = schemColInfos[i].getColumnType();
+               int columnSize = schemColInfos[i].getColumnSize();
+               int decimalDigits = schemColInfos[i].getDecimalDigits();
+               boolean nullable = schemColInfos[i].isNullable();
+               CodeCompletionColumnInfo buf = new CodeCompletionColumnInfo(columnName, columnType, columnSize, decimalDigits, nullable);
+               colInfosBuf.add(buf);
+            }
          }
+
+         _colInfos = (CodeCompletionColumnInfo[]) colInfosBuf.toArray(new CodeCompletionColumnInfo[colInfosBuf.size()]);
       }
 
       String upperCaseColNamePattern = colNamePattern.toUpperCase().trim();
@@ -89,13 +126,6 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
 
    public String toString()
    {
-      if(null != _tableType && !"TABLE".equals(_tableType))
-      {
-         return _tableName  + " (" + _tableType + ")";
-      }
-      else
-      {
-         return _tableName;
-      }
+      return _toString;
    }
 }
