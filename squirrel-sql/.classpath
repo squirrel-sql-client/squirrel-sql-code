@@ -12,5 +12,6 @@
     <classpathentry kind="src" path="plugins/laf/src"/>
     <classpathentry kind="src" path="plugins/sessionscript/src"/>
     <classpathentry kind="src" path="plugins/sqlscript/src"/>
+    <classpathentry kind="src" path="plugins/oracle/src"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
