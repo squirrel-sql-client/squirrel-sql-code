@@ -105,9 +105,6 @@ public class SQLDatabaseMetaData
 		_conn = conn;
 
 		_lrsi = new LargeResultSetObjectInfo();
-		_lrsi.setReadBinary(true);
-		_lrsi.setReadLongVarBinary(true);
-		_lrsi.setReadVarBinary(true);
 		_lrsi.setReadAllOther(true);
 		_lrsi.setReadSQLOther(true);
 	}
