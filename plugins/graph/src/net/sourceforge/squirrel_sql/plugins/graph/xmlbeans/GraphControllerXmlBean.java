@@ -7,6 +7,8 @@ public class GraphControllerXmlBean
    private TableFrameControllerXmlBean[] tableFrameControllerXmls;
    private boolean showConstraintNames;
    private ZoomerXmlBean zoomerXmlBean;
+   private PrintXmlBean printXmlBean;
+
 
    public String getTitle()
    {
@@ -48,4 +50,13 @@ public class GraphControllerXmlBean
       this.zoomerXmlBean = zoomerXmlBean;
    }
 
+   public PrintXmlBean getPrintXmlBean()
+   {
+      return printXmlBean;
+   }
+
+   public void setPrintXmlBean(PrintXmlBean printXmlBean)
+   {
+      this.printXmlBean = printXmlBean;
+   }
 }

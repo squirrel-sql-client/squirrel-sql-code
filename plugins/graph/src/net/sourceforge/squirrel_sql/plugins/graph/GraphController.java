@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTr
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.GraphControllerXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.GraphXmlSerializer;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameControllerXmlBean;
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.FormatXmlBean;
 
 import javax.swing.*;
 import java.awt.*;
@@ -53,7 +54,7 @@ public class GraphController
 
       };
 
-      _desktopController = new GraphDesktopController(_graphDesktopListener, _session);
+      _desktopController = new GraphDesktopController(_graphDesktopListener, _session, _plugin);
       _graphPane = new GraphMainPanelTab(_desktopController);
 
       if(null == xmlSerializer)
@@ -87,13 +88,13 @@ public class GraphController
       {
          graphControllerXmlBean = _xmlSerializer.read();
          _graphPane.setTitle(graphControllerXmlBean.getTitle());
-         _desktopController.initZoomer(graphControllerXmlBean.getZoomerXmlBean());
+         _desktopController.initZoomer(graphControllerXmlBean.getZoomerXmlBean(), graphControllerXmlBean.getPrintXmlBean());
          _desktopController.setShowConstraintNames(graphControllerXmlBean.isShowConstraintNames());
       }
       else
       {
          _graphPane.setTitle(_plugin.patchName(_graphPane.getTitle(), _session));
-         _desktopController.initZoomer(null);
+         _desktopController.initZoomer(null, null);
       }
 
       _session.getSessionSheet().addMainTab(_graphPane);
@@ -104,12 +105,8 @@ public class GraphController
          for (int i = 0; i < tableFrameControllerXmls.length; i++)
          {
             addTableIntern(null, null, tableFrameControllerXmls[i]);
-
          }
-
       }
-
-
    }
 
    private void removeGraph()
@@ -140,6 +137,7 @@ public class GraphController
       xmlBean.setTitle(_graphPane.getTitle());
       xmlBean.setShowConstraintNames(_desktopController.isShowConstraintNames());
       xmlBean.setZoomerXmlBean(_desktopController.getZoomer().getXmlBean());
+      xmlBean.setPrintXmlBean(_desktopController.getZoomPrintController().getPrintXmlBean());
 
       TableFrameControllerXmlBean[] frameXmls = new TableFrameControllerXmlBean[_openTableFrameCtrls.size()];
 
@@ -347,6 +345,11 @@ public class GraphController
    public String toString()
    {
       return getTitle();
+   }
+
+   public void sessionEnding()
+   {
+      _desktopController.sessionEnding();
    }
 }
 

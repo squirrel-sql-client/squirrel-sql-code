@@ -12,11 +12,13 @@ public class ZoomableColumnTextArea extends JPanel implements IColumnTextArea
    private ColumnInfo[] _columnInfos;
    private Zoomer _zoomer;
 
-   public ZoomableColumnTextArea(TableToolTipProvider toolTipProvider, Zoomer zoomer)
+   public ZoomableColumnTextArea(TableToolTipProvider toolTipProvider, Zoomer zoomer, Font zoomColumsFont)
    {
       _toolTipProvider = toolTipProvider;
       _zoomer = zoomer;
       setToolTipText("Just to make getToolTiptext() to be called");
+
+      setFont(zoomColumsFont);
    }
 
    public String getToolTipText(MouseEvent event)
@@ -34,25 +36,33 @@ public class ZoomableColumnTextArea extends JPanel implements IColumnTextArea
    {
       super.paint(g);
 
-
       Graphics2D g2d = (Graphics2D) g;
+
       AffineTransform origTrans = g2d.getTransform();
+      Font origFont = g2d.getFont();
 
-      AffineTransform at = new AffineTransform(origTrans);
-      at.scale(_zoomer.getZoom(), _zoomer.getZoom());
-      g2d.setTransform(at);
-
-      int textHeight = getTextHeight();
-
-      int curBaseLine = textHeight - 3;
-      for (int i = 0; i < _columnInfos.length; i++)
+      try
       {
-         g2d.drawString(_columnInfos[i].toString(), 0, curBaseLine);
-         curBaseLine += textHeight;
+         g2d.setFont(getFont());
+         AffineTransform at = new AffineTransform(origTrans);
+         at.scale(_zoomer.getZoom(), _zoomer.getZoom());
+         g2d.setTransform(at);
+
+         int textHeight = getTextHeight();
+
+         int curBaseLine = textHeight - 3;
+         for (int i = 0; i < _columnInfos.length; i++)
+         {
+            g2d.drawString(_columnInfos[i].toString(), 0, curBaseLine);
+            curBaseLine += textHeight;
+         }
       }
+      finally
+      {
+         g2d.setTransform(origTrans);
+         g2d.setFont(origFont);
 
-
-      g2d.setTransform(origTrans);
+      }
    }
 
    private int getTextHeight()

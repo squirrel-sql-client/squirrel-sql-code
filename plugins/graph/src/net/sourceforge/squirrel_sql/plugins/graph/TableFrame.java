@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.plugins.graph;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameXmlBean;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 import java.awt.*;
@@ -20,12 +21,10 @@ public class TableFrame extends JInternalFrame
 
    public TableFrame(String tableName, TableFrameXmlBean xmlBean, TableToolTipProvider toolTipProvider, Zoomer zoomer)
    {
-      txtColumsFactory = new GraphTextAreaFactory(toolTipProvider, zoomer);
       _zoomer = zoomer;
 
       scrollPane = new JScrollPane();
       
-      scrollPane.setViewportView(txtColumsFactory.getComponent(zoomer.isEnabled()));
       getContentPane().add(scrollPane);
 
       setMaximizable(false);
@@ -43,6 +42,9 @@ public class TableFrame extends JInternalFrame
       _myUI = new MyUI(this);
       setUI(_myUI);
 
+      txtColumsFactory = new GraphTextAreaFactory(toolTipProvider, zoomer, _myUI.getTitlePane().getFont());
+      scrollPane.setViewportView(txtColumsFactory.getComponent(zoomer.isEnabled()));
+      
       if(null != xmlBean)
       {
          double zoom = _zoomer.getZoom();
@@ -71,6 +73,9 @@ public class TableFrame extends JInternalFrame
          {
          }
       };
+
+
+      setBorder(new LineBorder(Color.BLACK));
    }
 
    public void setVisible(boolean b)
@@ -80,6 +85,7 @@ public class TableFrame extends JInternalFrame
          if (b)
          {
             _zoomer.addZoomListener(_zoomerListener);
+            onZoomEnabled(_zoomer.isEnabled());
          }
          else
          {

@@ -31,6 +31,12 @@ public class GraphDesktopPane extends ScrollableDesktopPane
 
       for (int i = 0; i < _graphComponents.size(); i++)
       {
+         GraphComponent comp = (GraphComponent)_graphComponents.elementAt(i);
+         if(comp instanceof EdgesGraphComponent)
+         {
+            ((EdgesGraphComponent)comp).setBounds(getWidth(), getHeight());
+         }
+         
          ((GraphComponent)_graphComponents.elementAt(i)).paint(g);
       }
 

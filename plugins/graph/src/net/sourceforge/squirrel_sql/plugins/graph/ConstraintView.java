@@ -196,7 +196,12 @@ public class ConstraintView implements GraphComponent
 
    public void setConnectionPoints(ConnectionPoints fkPoints, ConnectionPoints pkPoints, TableFrameController pkFramePointingTo, ConstraintViewListener constraintViewListener)
    {
-      double zoom = _desktopController.getZoomer().getZoom();
+      double zoom = 1;
+
+      if(null != _desktopController.getZoomer())
+      {
+         zoom = _desktopController.getZoomer().getZoom();
+      }
 
       _pkFramePointingTo = pkFramePointingTo;
       addConstraintViewListener(constraintViewListener);

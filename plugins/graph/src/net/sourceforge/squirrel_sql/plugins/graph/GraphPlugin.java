@@ -197,10 +197,10 @@ public class GraphPlugin extends DefaultSessionPlugin
    {
       GraphController[] controllers = (GraphController[]) _grapControllersBySessionID.remove(session.getIdentifier());
 
-//      for (int i = 0; i < controllers.length; i++)
-//      {
-//         controllers[i].saveGraph();
-//      }
+      for (int i = 0; i < controllers.length; i++)
+      {
+         controllers[i].sessionEnding();
+      }
    }
 
    public GraphController[] getGraphControllers(ISession session)
