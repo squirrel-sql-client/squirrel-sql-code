@@ -1,0 +1,384 @@
+<HTML xmlns:fo = "http://www.w3.org/1999/XSL/Format"><BODY bgColor=#ffffff leftMargin=2 topMargin=2 marginwidth="2" marginheight="2">
+<TABLE cellSpacing=0 cellPadding=0 width="100%" border=0>
+  <TBODY> 
+  <TR vAlign=top> 
+
+    <TD><SPAN class=atitle><font face="Arial, Helvetica, sans-serif"><b><font size="4"> 
+      <hr size=2>
+      SQuirreL SQL Client: A Single, Open Source Front End to Interact with Your 
+      Heterogeneous Database Environment <br><hr size=2>
+      </font></b></font></SPAN></TD>
+
+  </TR>
+
+  </TBODY> 
+</TABLE>
+<TABLE cellSpacing=0 cellPadding=0 width="100%" border=0>
+  <TBODY> 
+  <TR vAlign=top> 
+    <TD width=5><IMG height=1 alt="" 
+      src="images/c.gif" 
+      width=5 border=0></TD>
+    <TD width="100%"> 
+      <P><font face="Arial, Helvetica, sans-serif"><A 
+      href="http://www-106.ibm.com/developerworks/db2/library/techarticle/dm-0312bhogal/index.html#author1"><NAME></NAME></A>First 
+	  published by IBM developerWorks at <A
+	  HREF="http://www-106.ibm.com/developerworks/db2/library/techarticle/dm-0312bhogal/">http://www-106.ibm.com/developerworks/db2/library/techarticle/dm-0312bhogal/<br>
+        </font></P>
+      <P><font face="Arial, Helvetica, sans-serif"><A 
+      href="mailto:kbhogal@us.ibm.com?cc=&subject=SQuirreL%20SQL%20Client:%20A%20Single,%20Open%20Source%20Front%20End%20to%20Interact%20with%20Your%20Heterogeneous%20Database%20Environment"><NAME><b>Kulvir 
+        Singh Bhogal</b></NAME></A> <BR>
+        IBM Software Services for WebSphere<BR>
+        December 3, 2003</font></P>
+      <BLOCKQUOTE><font face="Arial, Helvetica, sans-serif">This article describes 
+        an open source application called SQuirreL SQL Client that provides an 
+        easy-to-use interface to DB2 UDB as well as a number of other vendor databases 
+        like Oracle and SQL Server. If your job requires you to interface with 
+        many different databases in the course of a day, this may be the tool 
+        for you. </font></BLOCKQUOTE>
+      <P><font face="Arial, Helvetica, sans-serif"><A><SPAN class=atitle2><b>Do 
+        You Speak Database?</b></SPAN></A><BR>
+        On my consulting engagements, I typically find myself interacting with 
+        way more databases then I'd prefer... IBM DB2, Microsoft SQL Server, Oracle, 
+        Sybase, to name just a few. Each of these databases has its own database 
+        client tools which are all different. Wouldn't it be nice to have a single, 
+        simple front end application that you can use to interact with the myriad 
+        of database flavors you have to have your taste of throughout the day? 
+        Life would even be sweeter if such an application were free. In this article, 
+        we'll take a look at SQuirreL SQL Client which lets a user interact with 
+        various databases, including DB2 via JDBC. </font></P>
+      <P><font face="Arial, Helvetica, sans-serif"><i>Did I mention it is free?</i></font></P>
+      <P><font face="Arial, Helvetica, sans-serif"><A><B>Figure 1. The SQuirreL 
+        SQL Client splash screen</B></A><BR>
+        <IMG height=444 
+      alt="Figure 1. The SQuirreL SQL Client splash screen" 
+      src="images/fig-1-346x444.jpg" 
+      width=346 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/"></font></P>
+      <P><font face="Arial, Helvetica, sans-serif"><SPAN class=atitle2><b>SQuirreL 
+        SQL Client</b></SPAN><BR>
+        SQuirreL SQL Client is a program written in Java that allows you to view 
+        the contents of a database, issue SQL commands, and as you will see, perform 
+        a number of other functions. The graphical front end is built to support 
+        JDBC-compliant databases. This article demonstrates SQuirreL being used 
+        with DB2 UDB. </font></P>
+      <P><font face="Arial, Helvetica, sans-serif"><A><SPAN class=atitle2><b>Supported 
+        Java versions</b></SPAN></A><BR>
+        To run SQuirreL SQL Client, you need to have a Java 1.3 installed. According 
+        to the SQuirreL SQL Client Home Page, there have been problems reported 
+        with using SQuirrel Client with version 1.3.0 of Java. While the application 
+        works fine in Java 1.3.1, the "preferred" Java version is 1.4. Being a 
+        Java program, SQuirreL carries with it the inherent ability to be run 
+        on multiple platforms/operating systems. In this article, I'll specifically 
+        address running SQuirreL in Windows. </font></P>
+      <P><font face="Arial, Helvetica, sans-serif"><A><SPAN class=atitle2><b>Installing 
+        &amp; firing up SQuirreL</b></SPAN></A><BR>
+        SQuirreL uses the IzPack Java Installer which makes the installation of 
+        SQuirreL quite easy. At the time of writing this article, SQuirreL SQL 
+        client was in version 1.1. Download the install JAR from <A href="http://squirrel-sql.sourceforge.net/" 
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/">http://squirrel-sql.sourceforge.net/</A> 
+        and issue the command:</font></P>
+      <P><font face="Arial, Helvetica, sans-serif"><CODE>java -jar squirrel-sql-&lt;version&gt;-install.jar</CODE></font></P>
+      <P><font face="Arial, Helvetica, sans-serif">Doing so will bring up a pretty 
+        straightforward installation GUI that by default will install SQuirreL 
+        to the directory: <CODE>C:\Program Files\SQuirreL SQL Client</CODE>. The 
+        installation program will also allow you to add a shortcut to SQuirreL 
+        to your Windows Start menu.</font></P>
+      <P><font face="Arial, Helvetica, sans-serif"><A><SPAN class=atitle2><b>A 
+        database to play with</b></SPAN></A><BR>
+        Before we start talking about the usage of SQuirreL, let's hit the DB2 
+        command line processor to create a database that we can use to see what 
+        SQuirreL can do for us:</font></P>
+      <P><font face="Arial, Helvetica, sans-serif"><CODE>db2 =&gt; create db squirrel</CODE></font></P>
+      <P><font face="Arial, Helvetica, sans-serif">Next, connect to the database. 
+        I'll assume that your username and password are db2admin and db2admin 
+        respectively:</font></P>
+      <P><font face="Arial, Helvetica, sans-serif"><CODE>db2 =&gt; connect to 
+        squirrel user db2admin using db2admin</CODE></font></P>
+      <P><font face="Arial, Helvetica, sans-serif">Next, we'll create a table. 
+        For demonstration purposes, the table will be kept simple. The variety 
+        of column types in the table is intentional to show you the ability of 
+        SQuirreL to distinguish between the different column types.</font></P>
+      <P><font face="Arial, Helvetica, sans-serif"><CODE>db2 =&gt; create table 
+        accttable(ssn varchar(9) not null primary key, lastname varchar(30) not 
+        null, firstname varchar(30) not null, balance decimal(7,2) not null)</CODE></font></P>
+      <P><font face="Arial, Helvetica, sans-serif">Let's add a few sample records 
+        in our new table:<BR 
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/">
+        <CODE>insert into accttable values ('111111111','Washington','George',1.00)<BR 
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/">
+        insert into accttable values ('222222222','Jefferson','Thomas',2.00)<BR 
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/">
+        insert into accttable values('555555555','Lincoln','Abraham',5.00)</CODE></font></P>
+      <P><font face="Arial, Helvetica, sans-serif"><A><SPAN class=atitle2><b>Using 
+        SQuirreL</b></SPAN></A><BR>
+        When you start up SQuirreL SQL Client, you'll see a Drivers window that 
+        shows you the myriad of databases that the Client supports. SQuirreL intelligently 
+        detects if the JDBC driver for a given database is in your classpath; 
+        if not, you'll see an "X" next to the driver.</font></P>
+      <P><font face="Arial, Helvetica, sans-serif">When you installed DB2, the 
+        DB2 JDBC driver, db2java.zip, should have been added to your classpath 
+        automatically. If you are using DB2 V8, this db2java.zip file will be 
+        the correct driver. If you are using DB2 7.2, you may need to run the 
+        usejdbc2 script file to change the default JDBC level of the driver from 
+        JDBC 1.0 to 2.0. SQuirreL detects the existence of db2java.zip in your 
+        classpath; consequently, you should see a check mark by IBM DB2 App Driver 
+        in the drivers list (see <A 
+      href="#fig2" 
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/">Figure 2</A>).</font></P>
+      <P><font face="Arial, Helvetica, sans-serif"><A name=fig2><B>Figure 2. IBM 
+        DB2 App Driver</B></A><BR>
+        <IMG 
+      height=375 alt="Figure 2. IBM DB2 App Driver" 
+      src="images/fig2.gif" 
+      width=532 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/"></font></P>
+      <P><font face="Arial, Helvetica, sans-serif">To interact with databases 
+        using SQuirreL, you have to create an alias. Choose the <B xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/">Aliases</B> option from the 
+        Menu Bar and then the <B 
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/">New Alias</B> option.</font></P>
+      <P><font face="Arial, Helvetica, sans-serif"><A name=IDAZG00><B>Figure 3. 
+        Create a new alias</B></A><BR>
+        <IMG 
+      height=411 alt="Figure 3. Create a new alias" 
+      src="images/fig3.gif" 
+      width=604 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/"></font></P>
+      <P><font face="Arial, Helvetica, sans-serif">In SQuirreL, you define "aliases" 
+        for each database you want to interact with. We'll go ahead and create 
+        an alias for the database we created earlier in this article. </font></P>
+      <P><font face="Arial, Helvetica, sans-serif">As <A 
+      href="fig4" 
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/">Figure 4</A> shows, name the 
+        alias "DB2 Squirrel DB" Choose the "IBM DB2 App Driver" from the list 
+        of Drivers. Next you'll need to modify the URL. By default, after you 
+        choose the IBM DB2 App Driver, you'll be given a URL of "jdbc:db2:&lt;dbname&gt;" 
+        Change the &lt;dbname&gt; to squirrel (that is, the name of the database 
+        we created).</font></P>
+      <P><font face="Arial, Helvetica, sans-serif"><A name=fig4><B>Figure 4. Specifying 
+        alias options</B></A><BR>
+        <IMG 
+      height=411 alt="Figure 4. Specifying alias options" 
+      src="images/fig4.gif" 
+      width=604 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/"></font></P>
+      <P><font face="Arial, Helvetica, sans-serif">When you click <B xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/">OK</B>, you will be asked 
+        to provide a password for the User Name you supplied. Enter your password 
+        and click <B xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/">OK</B>.</font></P>
+      <P><font face="Arial, Helvetica, sans-serif">After successfully connecting, 
+        you will be shown a new window in which you will be able to interact with 
+        the database. Clicking the icon next to the alias name expands and contracts 
+        the information associated with the database. Shown in <A 
+      href="#fig5" 
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/">Figure 5</A>, you'll see that 
+        the ACCTTABLE of the DB2ADMIN schema has been selected.</font></P>
+      <font face="Arial, Helvetica, sans-serif"><A xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/"></A> </font> 
+      <P><font face="Arial, Helvetica, sans-serif"><A name=fig5><B>Figure 5. Drilling 
+        down to the ACCTTABLE</B></A><BR>
+        <IMG height=387 
+      alt="Figure 5. Drilling down to the ACCTTABLE" 
+      src="images/fig-5-600x387.jpg" 
+      width=600 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/"></font></P>
+      <P><font face="Arial, Helvetica, sans-serif">Choosing the <B xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/">Content</B> tab, you can view 
+        the rows that we inserted into the ACCTTABLE earlier (see <A 
+      href="#fig6" 
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/">Figure 6</A>). </font></P>
+      <font face="Arial, Helvetica, sans-serif"><A xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/"></A> </font> 
+      <P><font face="Arial, Helvetica, sans-serif"><A name=IDAER00><B>Figure 6. 
+        Viewing the Table Contents</B></A><BR>
+        <IMG 
+      height=129 alt="Figure 6. Viewing the Table Contents" 
+      src="images/fig6.gif" 
+      width=578 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/"></font></P>
+      <P><font face="Arial, Helvetica, sans-serif">Take some time to see what 
+        information is offered through the various tabs. Some of these tabs include 
+        the <B 
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/">Row Count</B> tab (which gives 
+        us the row count of a given table-- for this table, the number you should 
+        see is 3) and the <B 
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/">Primary Key</B> tab (which 
+        lets us know what Primary Keys exist for a given table-- for the ACCTTABLE, 
+        you should see that the SSN column acts as the primary key of the ACCTTABLE).</font></P>
+      <P><font face="Arial, Helvetica, sans-serif">Other extremely useful information 
+        is provided via the <B 
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/">Columns</B> tab. Notice in 
+        <A 
+      href="#fig7" 
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/">Figure 7</A> that we are provided 
+        with the column type as well as other useful information.</font></P>
+      <P><font face="Arial, Helvetica, sans-serif"><A name=fig7><B>Figure 7. Viewing 
+        column properties</B></A><BR>
+        <IMG 
+      height=76 alt="Figure 7. Viewing column properties" 
+      src="images/fig-7-600x76.jpg" 
+      width=600 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/"></font></P>
+      <P><font face="Arial, Helvetica, sans-serif"><A><SPAN class=atitle2><b>Executing 
+        SQL </b></SPAN></A><BR>
+        Another quite powerful SQuirreL SQL Client offering is the ability to 
+        issue SQL commands directly from the SQuirreL GUI. To do this, choose 
+        the <B xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/">SQL</B> tab as shown in <A 
+      href="#fig8" 
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/">Figure 8</A>.</font></P>
+      <P><font face="Arial, Helvetica, sans-serif"><A name=fig8><B>Figure 8. Choosing 
+        the Execute SQL statements tab</B></A><BR>
+        <IMG height=217 
+      alt="Figure 8. Choosing the Execute SQL statements tab" 
+      src="images/fig8.gif" 
+      width=343 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/"></font></P>
+      <P><font face="Arial, Helvetica, sans-serif">You will then be presented 
+        with a window in which you can enter SQL statements. Shown below, I have 
+        issued the statement: <CODE>select * from ACCTTABLE where balance&gt;1.50</CODE>. 
+        To execute the SQL statement, simply click the running man icon as shown 
+        in <A 
+      href="#fig9" 
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/">Figure 9</A>.</font></P>
+      <P><font face="Arial, Helvetica, sans-serif"><A name=fig9><B>Figure 9. Running 
+        Your SQL Command</B></A><BR>
+        <IMG 
+      height=437 alt="Figure 9. Running Your SQL Command" 
+      src="images/fig9.gif" 
+      width=479 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/"></font></P>
+      <P><font face="Arial, Helvetica, sans-serif">The figure below shows the 
+        results of the query we issued. Notice that the results of the query are 
+        shown in table form. Particularly nice is the ability to copy the results 
+        to the clipboard in HTML form. To do this, simply right click on the results 
+        and choose the "Copy as HTML" option from the context menu.</font></P>
+      <P><font face="Arial, Helvetica, sans-serif"><A name=fig10><B>Figure 10. 
+        Results of your SQL command</B></A><BR>
+        <IMG height=541 
+      alt="Figure 10. Results of your SQL command" 
+      src="images/fig10.gif" 
+      width=590 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/"></font></P>
+      <P><font face="Arial, Helvetica, sans-serif">Also, take a look at the <B 
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/">MetaData</B> tab. The information 
+        provided by SQuirreL SQL client can be particularly useful for the Java 
+        programmer who wishes to interact with a database. In this tab, you will 
+        see the appropriate Java datatypes (such as java.lang.String, java.math.BigDecimal, 
+        etc.) that map to a given database table's columns. </font></P>
+      <P><font face="Arial, Helvetica, sans-serif"><A><b><SPAN class=atitle3>This 
+        SQuirreL plays well with others</SPAN></b></A><BR>
+        The SQuirreL client leverages a database's JDBC driver to facilitate conversation 
+        with a database. Officially, the client supports a myriad of database 
+        products, including the major players: IBM DB2, Oracle, Microsoft SQL 
+        Server, Informix, Sybase, and MySQL. The beauty of the client is that 
+        in the rare instance that you are dealing with a database that SQuirreL 
+        client does not support "out of the box," you are not out of luck. If 
+        there is a JDBC 2.0 available driver for your database, you can register 
+        the database manually with the client.</font></P>
+      <P><font face="Arial, Helvetica, sans-serif">The ability to interact with 
+        databases of different vendors via a single interface is one of the key 
+        offerings of SQuirreL. In <a href="#fig11">Figure 11</a> you can see a 
+        typical enterprise environment where the SQuirreL SQL client might be 
+        used. As it is quite likely that the databases you are dealing with will 
+        not reside on the same physical machine, SQuirreL client has built in 
+        support for using HTTP proxies and SOCKS proxies to interact with databases 
+        that might reside somewhere on the Internet.</font></P>
+      <P><font face="Arial, Helvetica, sans-serif"><A name=fig11><B>Figure 11. 
+        Typical hetergeneous database environment supported by SQuirreL</B></A><BR>
+        <IMG height=438 
+      alt="Figure 11. Typical hetergeneous database environment supported by SQuirreL" 
+      src="images/fig11.gif" 
+      width=539 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/"></font></P>
+      <P><font face="Arial, Helvetica, sans-serif"><A><b><SPAN class=atitle2>Support 
+        for plugins</SPAN></b></A><BR>
+        SQuirreL SQL Client allows for users to install and create plugins that 
+        are designed to augment the functionality of the base application. There 
+        are a number of plugins available for download on the SQuirreL SQL Client 
+        Home Page. One of the plugins I found quite interesting was developed 
+        by the head developer, Colin Bell. The plugin, called SQL Validator, allows 
+        you to validate the SQL commands you issue against the ISO SQL standard. 
+        The plugin interacts with a Web Service to do its validation work.</font></P>
+      <P><font face="Arial, Helvetica, sans-serif"><A><SPAN class=atitle2><b>Conclusion</b></SPAN></A><BR>
+        I was quite impressed by the ease of install of the SQuirreL Client. I 
+        was up and running in a matter of 5 minutes. This was a considerable feat 
+        considering the fact that I didn't read the manual. As I work with a number 
+        of database flavors in any given day, SQuirreL Client is a blessing. The 
+        application has been successfully tested with a number of database vendors, 
+        including IBM DB2. It is pretty fast and not too big or resource hungry. 
+        Support for the client can be acquired through mailing lists which can 
+        one can subscribe to via the SQuirrel Client home page.</font></P>
+      <P><font face="Arial, Helvetica, sans-serif"><A><SPAN class=atitle2><b>Look 
+        for More . . .</b></SPAN></A><BR>
+        SQuirreL Client has the backing of a number of developers who offer their 
+        philanthropic coding talent to enhance the application. The open source 
+        application is under constant construction and improvement. As it is already 
+        a powerful offering, it will be interesting to see what future versions 
+        of the application will bring. The development team for the SQuirreL Client 
+        openly solicits new contributors to join the development effort. Another 
+        interesting open source project that is closely associated with SQuirreL 
+        is called JFaceDbc. You can learn more about this project on the JFaceDbc 
+        home page at <A 
+      href="http://jfacedbc.sourceforge.net/" 
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/">http://jfacedbc.sourceforge.net/</A>. 
+        The JFaceDbc SQL client tool is powered by the low level SQL code of SQuirreL 
+        and instead of using the Java Swing API for its visual display, uses the 
+        Standard Widget Toolkit (SWT) of the Eclipse Project. </font></P>
+      <P><font face="Arial, Helvetica, sans-serif"><A><SPAN class=atitle3><b>Acknowledgement</b></SPAN></A><BR>
+        The author would like to thank Colin Bell, the head developer of the SQuirreL 
+        SQL Client for his help in the review of this article.</font></P>
+      <P><font face="Arial, Helvetica, sans-serif"><A><b><SPAN class=atitle3>Resources</SPAN></b></A><BR>
+        SQuirreL SQL Client home page: <A href="http://squirrel-sql.sourceforge.net/" 
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:dw="http://www.ibm.com/developerWorks/">http://squirrel-sql.sourceforge.net/</A></font></P>
+      <TABLE cellSpacing=0 cellPadding=0 width="100%" border=0>
+        <TBODY> 
+        <TR> 
+          <TD><font face="Arial, Helvetica, sans-serif"><SPAN class=atitle2><b>About 
+            the author</b></SPAN><BR>
+            </font> 
+            <P><font face="Arial, Helvetica, sans-serif"><IMG height=141 alt="Photo: Kulvir Singh Bhogal" hspace=10 
+            src="images/kulvir.jpg" 
+            width=100 align=left 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xmlns:dw="http://www.ibm.com/developerWorks/"><B 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xmlns:dw="http://www.ibm.com/developerWorks/">Kulvir Singh Bhogal</B> 
+              works as an IBM consultant, devising and implementing Java-centric 
+              solutions at customer sites across the nation. You can reach Kulvir 
+              at <A href="mailto:kbhogal@us.ibm.com" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xmlns:dw="http://www.ibm.com/developerWorks/">kbhogal@us.ibm.com</A>.</font></P>
+          </TD>
+        </TR>
+        </TBODY> 
+      </TABLE>
+    </TD>
+    <TD width=1><IMG height=1 alt="" 
+      src="images/c.gif" 
+      width=1 border=0></TD>
+  </TR>
+  </TBODY>
+</TABLE>
+<NOSCRIPT></NOSCRIPT> 
+</BODY></HTML>

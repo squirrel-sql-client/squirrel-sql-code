@@ -19,6 +19,11 @@
 						with Microsoft SQL Server</a></li>
 					<li><a href="#faq4">I don't see an object tree with PostgreSQL</a></li>
 					<li><a href="#faq5">I get a &quot;NullPointerException&quot; at <TT>BaseSQLEntryPanel.java:23</TT></a></li>
+					<li><a href="#faq6">Ingres reports "Error: contsbt:
+						ca.edbc.util.EdbcEx: No MST is currently in progress,
+						cannot declare another cursor." when I connect and
+						nothing is listed under the schema name in the Object
+						Tree.</TT></a></li>
 				</ul>
 			</p>
 		</td>
@@ -77,25 +82,28 @@
 			drivers/DBMS's are fully complient with the JDBC 2.0 specification. People have reported SQuirreL
 			working with the following:</p>
 			<UL>
-			<LI><A HREF="http://axion.tigris.org/">Axion Java RDBMS</A>.</LI> 
+			<LI><A HREF="http://axion.tigris.org/">Axion Java RDBMS</A>.</LI>
+			<LI><A HREF="http://www.fujitsu-siemens.com/rl/products/software/sesamsql.html">Fujitsu Siemens SESAM/SQL-Server</A>
+						with the <A HREF="http://www.fujitsu-siemens.com/rl/products/software/sesamsqljdbc.html">SESAM/SQL</A> JDBC driver.
 			<LI><A HREF="http://hsqldb.sourceforge.net/">HSQL</A>.</LI>
 			<LI><A HREF="http://hsql.sourceforge.net/">Hypersonic SQL</A>.</LI>
 			<LI><A HREF="http://www.ibm.com/">IBM DB2</A> for Linux, OS/400 and Windows.</LI>
 			<LI><A HREF="http://www.informix.com/">Informix</A>.</LI>
+			<LI><A HREF="http://www.ingres.com/">CA Ingres</A> 2.6 SP2 with EDBC driver v1.8 (probably works with Caribou Lake driver too).</LI>
 			<LI><A HREF="http://www.lutris.com/">InstantDB</A>.</LI>
 			<LI><A HREF="http://www.interbase.com/">Interbase</A> with the <A HREF="http://www.interbase.com/">Interclient</A> JDBC driver.</LI>
 			<LI><A HREF="http://mckoi.com/database/">Mckoi SQL</A>.</LI>
 			<LI><A HREF="http://www.microsoft.com">Microsoft Access</A> with the JDBC/ODBC bridge.</LI>
-			<LI><A HREF="http://www.microsoft.com">Microsoft SQL Server</A> with the Microsoft, 
+			<LI><A HREF="http://www.microsoft.com">Microsoft SQL Server</A> with the Microsoft,
 					<A HREF="http://www.weblogic.com">WebLogic</A> and
 					<A HREF="http://jtds.sourceforge.net">jTDS</A>
 					JDBC drivers.</LI>
-			<LI><A HREF="http://www.mimer.com/">Mimer SQL</A></LI> 
+			<LI><A HREF="http://www.mimer.com/">Mimer SQL</A></LI>
 			<LI><A HREF="http://www.mysql.com">MySQL</A> with the <A HREF="http://mmmysql.sourceforge.net/">MM MySQL</A> JDBC driver.</LI>
 			<LI><A HREF="http://www.oracle.com">Oracle 8</A> with the Oracle thin and OCI drivers.</LI>
 			<LI><A HREF="http://www.pointbase.com">Pointbase</A>.</LI>
 			<LI><A HREF="http://www.postgresql.org">PostgreSQL 7.1.3 and higher.</A>.</LI>
-			<LI><A HREF="http://www.sapdb.org">SAPDB</A>.
+			<LI><A HREF="http://www.sapdb.org">SAPDB</A>.</LI>
 			<LI><A HREF="http://www.sybase.com">Sybase</A> with the <A HREF="http://www.sybase.com">JConnect</A> JDBC driver.
 					There are currently some issues with Sybase JConnect 5.5 and
 					SQuirreL 1.1 although JConnect 4.5 seems to work.</LI>
@@ -105,27 +113,27 @@
 			<p class="answer">Please send us an <A HREF="mailto:colbell@users.sourceforge.net">email</A> if you have used SQuirreL
 			successfully with other products.</p>
 			<p><A HREF="#top">Top</A><HR SIZE=1></HR></p>
-							
+
 			<h1 class="question"><A NAME="faq1">SQuirreL doesn't work with JDK 1.2</A></h1>
 			<p class="answer">From version 1.1beta1 SQuirreL requires at least JDK 1.3. In the future we intend to
 			keep SQuirreL compatible with the latest stable version of the JDK and the one prior to it. Currently the
 			stable version is JDK 1.4 so we are staying compatible with JDK 1.3 as well. When JDK 1.5 is
 			released we will drop compatibility with 1.3.</p>
-			
+
 			<p><A HREF="#top">Top</A><HR SIZE=1></HR></p>
 
 			<h1 class="question"><A NAME="faq2">I get a &quot;Segmentation fault&quot; on Linux</A></h1>
 			<p class="answer">Early versions of the Sun 1.3.0 VM on Linux throw a segmentation fault when running SQuirreL. Either
 			update to the latest 1.3.1 VM or pass the -classic flag to the Java executable - i.e.</p>
 			<p class="code">java -classic -cp...</p>
-			
+
 			<p><A HREF="#top">Top</A><HR SIZE=1></HR></p>
 
 			<h1 class="question"><A NAME="faq3">I get a &quot;Login has timed out&quot; error with Microsoft SQL Server</A></h1>
 			<p class="answer">Early beta versions of the Microsoft type 4 JDBC driver had a bug which would cause this
 			error when trying to connect. Go to the General Tab in the Global Preferences dialog and
 			change the SQL Login Timeout to 0.</p>
-			
+
 			<p><A HREF="#top">Top</A><HR SIZE=1></HR></p>
 
 			<h1 class="question"><A NAME="faq3_1">I get a &quot;Can't start a
@@ -141,12 +149,20 @@
 			<h1 class="question"><A NAME="faq4">I don't see an object tree with PostgreSQL</A></h1>
 			<p class="answer">Versions of PostgreSQL prior to 7.1.3 didn't supply sufficent metadata to build the object
 			tree in SQuirreL. A fix has been put into SQuirreL so that it would work with PostgreSQL 7.1.2.</p>
-			
+
 			<p><A HREF="#top">Top</A><HR SIZE=1></HR></P>
 
 			<h1 class="question"><A NAME="faq5">I get a &quot;NullPointerException&quot; at <TT>BaseSQLEntryPanel.java:23</TT></A></h1>
 			<p class="answer">This is a know problem with JDK1.3.0 on some platforms. Upgrade your Java version to 1.3.1 or better.</p>
-			
+
+			<p><A HREF="#top">Top</A><HR SIZE=1></HR></P>
+
+			<h1 class="question"><A NAME="faq6">Ingres reports "Error: contsbt:
+						ca.edbc.util.EdbcEx: No MST is currently in progress,
+						cannot declare another cursor." when I connect and
+						nothing is listed under the schema name in the Object
+						Tree</A></h1>
+			<p class="answer">Right-click on the schema in the explorer and select refresh, objects should appear as normal.</p>
 			<p><A HREF="#top">Top</A></P>
 		</td>
 		<td class="body_right_border">&nbsp;</td>
@@ -188,7 +204,7 @@
 			<h1 class="question"><A NAME="plug2">I can't see any &quot;Look and Feel&quot; files.</A></h1>
 			<p class="answer">This can be caused by the <A HREF="#plug1">What are these directories &quot;Colin Bell&quot; and
 						&quot;Johan Compagner&quot; in the plugins directory?</A> problem.</p>
-			
+
 			<p><A HREF="#top">Top</A></P>
 
 			<h1 class="question"><a name="plug3">I get a java.lang.NoClassDefFoundError:
@@ -202,7 +218,7 @@
 						directory &lt;squirrel-sql&gt;/plugins/sqlval/lib. For
 						xml-xerces this should be xerces.jar and for JAXP 1.1 reference implementation this should be
 						crimson.jar and jaxp.jar.</p>
-			
+
 			<p><A HREF="#top">Top</A></P>
 		</td>
 		<td class="body_right_border">&nbsp;</td>
