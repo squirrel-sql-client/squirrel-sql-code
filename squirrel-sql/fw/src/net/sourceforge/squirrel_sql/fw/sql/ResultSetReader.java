@@ -34,7 +34,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 public class ResultSetReader
 {
 	/** Logger for this class. */
-	private ILogger s_log =
+	private final static ILogger s_log =
 		LoggerController.createLogger(ResultSetReader.class);
 
 	/** The <TT>ResultSet</TT> being read. */
@@ -146,7 +146,8 @@ public class ResultSetReader
 			int idx = _columnIndices != null ? _columnIndices[i] : i + 1;
 			try
 			{
-				switch (_rsmd.getColumnType(idx))
+				final int columnType = _rsmd.getColumnType(idx);
+				switch (columnType)
 				{
 					case Types.NULL:
 						row[i] = null;
@@ -362,6 +363,10 @@ public class ResultSetReader
 						{
 							row[i] = "<Clob>";
 						}
+						break;
+
+					case Types.OTHER:
+						row[i] = _rs.getObject(idx);
 						break;
 
 					default :

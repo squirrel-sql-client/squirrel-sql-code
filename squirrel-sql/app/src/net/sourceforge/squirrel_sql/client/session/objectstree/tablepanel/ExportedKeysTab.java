@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.session.objectstree.tablepanel;
 import java.awt.Component;
 import java.sql.ResultSet;
 
+import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -84,7 +85,7 @@ public class ExportedKeysTab extends BaseTablePanelTab
 	 */
 	public void clear()
 	{
-		((ResultSetPanel) getComponent()).clear();
+		((ResultSetPanel)getComponent()).clear();
 	}
 
 	/**
@@ -102,12 +103,11 @@ public class ExportedKeysTab extends BaseTablePanelTab
 		{
 			throw new IllegalStateException("Null ITableInfo");
 		}
-		String destClassName =
-			session.getProperties().getMetaDataOutputClassName();
+		String destClassName = session.getProperties().getMetaDataOutputClassName();
 		try
 		{
 			ResultSet rs = session.getSQLConnection().getSQLMetaData().getExportedKeys(ti);
-			((ResultSetPanel) getComponent()).load(session, rs, null, destClassName);
+			((ResultSetPanel)getComponent()).load(session, rs, null, destClassName);
 		}
 		catch (Exception ex)
 		{

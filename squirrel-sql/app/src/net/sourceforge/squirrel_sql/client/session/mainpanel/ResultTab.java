@@ -26,27 +26,22 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
 import java.util.Date;
 
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.BaseDataSetViewerDestination;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetListModel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
-import net.sourceforge.squirrel_sql.fw.gui.ButtonTableHeader;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
-import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
@@ -59,9 +54,11 @@ import net.sourceforge.squirrel_sql.client.gui.SquirrelTabbedPane;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
-public class ResultTab extends JPanel implements IHasIdentifier {
+public class ResultTab extends JPanel implements IHasIdentifier
+{
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(ResultTab.class);
+	private final static ILogger s_log =
+		LoggerController.createLogger(ResultTab.class);
 
 	/** Uniquely identifies this ResultTab. */
 	private IIdentifier _id;
@@ -111,15 +108,19 @@ public class ResultTab extends JPanel implements IHasIdentifier {
 	 *			<<TT>SQLPanel</TT> or <TT>IIdentifier</TT> passed.
 	 */
 	public ResultTab(ISession session, SQLPanel sqlPanel, IIdentifier id)
-			throws IllegalArgumentException {
+		throws IllegalArgumentException
+	{
 		super();
-		if (session == null) {
+		if (session == null)
+		{
 			throw new IllegalArgumentException("Null ISession passed");
 		}
-		if (sqlPanel == null) {
+		if (sqlPanel == null)
+		{
 			throw new IllegalArgumentException("Null SQLPanel passed");
 		}
-		if (id == null) {
+		if (id == null)
+		{
 			throw new IllegalArgumentException("Null IIdentifier passed");
 		}
 
@@ -139,7 +140,10 @@ public class ResultTab extends JPanel implements IHasIdentifier {
 	 * @param	ds	<TT>IDataSet</TT> to show results for.
 	 * @param	sql	SQL script that generated <TT>IDataSet</TT>.
 	 */
-	public void showResults(ResultSetDataSet rsds, ResultSetMetaDataDataSet mdds, String sql) throws DataSetException {
+	public void showResults(ResultSetDataSet rsds, ResultSetMetaDataDataSet mdds,
+								String sql)
+		throws DataSetException
+	{
 		_sql = sql;
 		_currentSqlLbl.setText(Utilities.cleanString(sql));
 
@@ -156,8 +160,10 @@ public class ResultTab extends JPanel implements IHasIdentifier {
 	/**
 	 * Clear results and current SQL script.
 	 */
-	public void clear() {
-		if (_metaDataOutput != null) {
+	public void clear()
+	{
+		if (_metaDataOutput != null)
+		{
 			_metaDataOutput.clear();
 		}
 		if (_resultSetOutput != null)
@@ -173,7 +179,8 @@ public class ResultTab extends JPanel implements IHasIdentifier {
 	 *
 	 * @return  Current SQL script.
 	 */
-	public String getSqlString() {
+	public String getSqlString()
+	{
 		return _sql;
 	}
 
@@ -182,34 +189,42 @@ public class ResultTab extends JPanel implements IHasIdentifier {
 	 *
 	 * @return  Current SQL script.
 	 */
-	public String getViewableSqlString() {
+	public String getViewableSqlString()
+	{
 		return Utilities.cleanString(_sql);
 	}
 
 	/**
 	 * Return the title for this tab.
 	 */
-	public String getTitle() {
+	public String getTitle()
+	{
 		String title = _currentSqlLbl.getText();
-		if (title.length() < 20) {
+		if (title.length() < 20)
+		{
 			return title;
 		}
 		return title.substring(0, 15);
 	}
 
-	private class MyPropertiesListener implements PropertyChangeListener {
+	private class MyPropertiesListener implements PropertyChangeListener
+	{
 		private boolean _listening = true;
 
-		void stopListening() {
+		void stopListening()
+		{
 			_listening = false;
 		}
 
-		void startListening() {
+		void startListening()
+		{
 			_listening = true;
 		}
 
-		public void propertyChange(PropertyChangeEvent evt) {
-			if (_listening) {
+		public void propertyChange(PropertyChangeEvent evt)
+		{
+			if (_listening)
+			{
 				propertiesHaveChanged(evt.getPropertyName());
 			}
 		}
@@ -218,12 +233,14 @@ public class ResultTab extends JPanel implements IHasIdentifier {
 	/**
 	 * Close this tab.
 	 */
-	public void closeTab() {
+	public void closeTab()
+	{
 		add(_tp, BorderLayout.CENTER);
 		_sqlPanel.closeTab(this);
 	}
 
-	public void returnToTabbedPane() {
+	public void returnToTabbedPane()
+	{
 		add(_tp, BorderLayout.CENTER);
 		_sqlPanel.returnToTabbedPane(this);
 	}
@@ -232,37 +249,46 @@ public class ResultTab extends JPanel implements IHasIdentifier {
 	 * Insert the method's description here.
 	 * Creation date: (20-10-2001 1:23:16)
 	 */
-	private void createWindow() {
+	private void createWindow()
+	{
 		_sqlPanel.createWindow(this);
 	}
 
-	public Component getOutputComponent() {
+	public Component getOutputComponent()
+	{
 		return _tp;
 	}
 
-	private void propertiesHaveChanged(String propertyName) {
+	private void propertiesHaveChanged(String propertyName)
+	{
 		final SessionProperties props = _session.getProperties();
 
-		if (propertyName == null ||
-			propertyName.equals(SessionProperties.IPropertyNames.SQL_RESULTS_OUTPUT_CLASS_NAME))
+		if (propertyName == null
+			|| propertyName.equals(SessionProperties.IPropertyNames.SQL_RESULTS_OUTPUT_CLASS_NAME))
 		{
-			_resultSetOutput = BaseDataSetViewerDestination.getInstance(props.getSQLResultsOutputClassName());
+			_resultSetOutput =
+				BaseDataSetViewerDestination.getInstance(
+					props.getSQLResultsOutputClassName());
 			_resultSetSp.setViewportView(_resultSetOutput.getComponent());
 			_resultSetSp.setRowHeader(null);
 		}
 
-		if (propertyName == null ||
-			propertyName.equals(SessionProperties.IPropertyNames.META_DATA_OUTPUT_CLASS_NAME))
+		if (propertyName == null
+			|| propertyName.equals(
+				SessionProperties.IPropertyNames.META_DATA_OUTPUT_CLASS_NAME))
 		{
-			_metaDataOutput = BaseDataSetViewerDestination.getInstance(props.getMetaDataOutputClassName());
+			_metaDataOutput =
+				BaseDataSetViewerDestination.getInstance(
+					props.getMetaDataOutputClassName());
 			_metaDataSp.setViewportView(_metaDataOutput.getComponent());
 			_metaDataSp.setRowHeader(null);
 		}
 
 	}
 
-	private void createUserInterface() {
-//	final Resources rsrc = _session.getApplication().getResources();
+	private void createUserInterface()
+	{
+		//	final Resources rsrc = _session.getApplication().getResources();
 		setLayout(new BorderLayout());
 
 		_tp = new SquirrelTabbedPane(_session.getApplication().getSquirrelPreferences());
@@ -270,46 +296,60 @@ public class ResultTab extends JPanel implements IHasIdentifier {
 
 		JPanel panel1 = new JPanel();
 		JPanel panel2 = new JPanel();
-		panel2.setLayout(new GridLayout(1,2,0,0));
+		panel2.setLayout(new GridLayout(1, 2, 0, 0));
 		panel2.add(new TabButton(new CreateResultTabFrameAction(_session.getApplication())));
 		panel2.add(new TabButton(new CloseAction()));
 		panel1.setLayout(new BorderLayout());
-		panel1.add(panel2,BorderLayout.EAST);
-		panel1.add(_currentSqlLbl,BorderLayout.CENTER);
-		add(panel1,BorderLayout.NORTH);
+		panel1.add(panel2, BorderLayout.EAST);
+		panel1.add(_currentSqlLbl, BorderLayout.CENTER);
+		add(panel1, BorderLayout.NORTH);
 		add(_tp, BorderLayout.CENTER);
 
+		_resultSetSp.setBorder(BorderFactory.createEmptyBorder());
+		_metaDataSp.setBorder(BorderFactory.createEmptyBorder());
 		_tp.addTab("Results", _resultSetSp);
 		_tp.addTab("MetaData", _metaDataSp);
-		_tp.addTab("Info", new JScrollPane(_queryInfoPanel));
+
+		final JScrollPane sp = new JScrollPane(_queryInfoPanel);
+		sp.setBorder(BorderFactory.createEmptyBorder());
+		_tp.addTab("Info", sp);
 	}
 
-	private final class TabButton extends JButton {
-		TabButton(Action action) {
+	private final class TabButton extends JButton
+	{
+		TabButton(Action action)
+		{
 			super(action);
-			setMargin(new Insets(0,0,0,0));
+			setMargin(new Insets(0, 0, 0, 0));
 			setBorderPainted(false);
 			setText("");
 		}
 	}
 
-	private class CloseAction extends SquirrelAction {
-		CloseAction() {
-			super(_session.getApplication(), _session.getApplication().getResources());
+	private class CloseAction extends SquirrelAction
+	{
+		CloseAction()
+		{
+			super(
+				_session.getApplication(),
+				_session.getApplication().getResources());
 		}
 
-		public void actionPerformed(ActionEvent evt) {
+		public void actionPerformed(ActionEvent evt)
+		{
 			closeTab();
 		}
 	}
 
-
-	private class CreateResultTabFrameAction extends SquirrelAction {
-		CreateResultTabFrameAction(IApplication app) {
+	private class CreateResultTabFrameAction extends SquirrelAction
+	{
+		CreateResultTabFrameAction(IApplication app)
+		{
 			super(app, app.getResources());
 		}
 
-		public void actionPerformed(ActionEvent evt) {
+		public void actionPerformed(ActionEvent evt)
+		{
 			_sqlPanel.createWindow(ResultTab.this);
 		}
 	}
@@ -317,26 +357,32 @@ public class ResultTab extends JPanel implements IHasIdentifier {
 	/**
 	 * @see IHasIdentifier#getIdentifier()
 	 */
-	public IIdentifier getIdentifier() {
+	public IIdentifier getIdentifier()
+	{
 		return _id;
 	}
-	private static class QueryInfoPanel extends JPanel {
+
+	private static class QueryInfoPanel extends JPanel
+	{
 		private MultipleLineLabel _queryLbl = new MultipleLineLabel();
 		private JLabel _rowCountLbl = new JLabel();
 		private JLabel _executedLbl = new JLabel();
 
-		QueryInfoPanel() {
+		QueryInfoPanel()
+		{
 			super();
 			createUserInterface();
 		}
 
-		void load(ResultSetDataSet rsds, String sql, int rowCount) {
+		void load(ResultSetDataSet rsds, String sql, int rowCount)
+		{
 			_queryLbl.setText(sql);
 			_rowCountLbl.setText("" + rowCount);
 			_executedLbl.setText(new Date().toString());
 		}
 
-		private void createUserInterface() {
+		private void createUserInterface()
+		{
 			setLayout(new GridBagLayout());
 			GridBagConstraints gbc = new GridBagConstraints();
 
@@ -371,7 +417,3 @@ public class ResultTab extends JPanel implements IHasIdentifier {
 		}
 	}
 }
-
-
-
-

@@ -29,20 +29,25 @@ public class ApplicationFiles
 	private String _userSettingsDir;
 
 	/** Name of folder that contains Squirrel app. */
-	public static final String SQUIRREL_FOLDER =
-		System.getProperty(IJavaPropertyNames.USER_DIR);
+	private final String _squirrelHomeDir;
+//	public static final String SQUIRREL_FOLDER =
+//		System.getProperty(IJavaPropertyNames.USER_DIR);
 
 	/** Name of folder that contains Squirrel libraries. */
-	public static final String SQUIRREL_LIB_FOLDER =
-		SQUIRREL_FOLDER + File.separator + "lib";
+	private final String _squirrelLibrariesDir;
+
+//	public static final String SQUIRREL_LIB_FOLDER =
+//		SQUIRREL_FOLDER + File.separator + "lib";
 
 	/** Name of folder that contains plugins. */
-	public static final String SQUIRREL_PLUGINS_FOLDER =
-		SQUIRREL_FOLDER + File.separator + "plugins";
+//	public static final String SQUIRREL_PLUGINS_FOLDER =
+//		SQUIRREL_FOLDER + File.separator + "plugins";
+	private String _squirrelPluginsDir;
 
 	/** Documentation folder. */
-	private static final String DOCUMENTATION_FOLDER = SQUIRREL_FOLDER +
-			File.separator + "doc";
+	private String _documentationDir;
+//	private static final String DOCUMENTATION_FOLDER = SQUIRREL_FOLDER +
+//			File.separator + "doc";
 
 	/**
 	 * Ctor.
@@ -51,6 +56,13 @@ public class ApplicationFiles
 	{
 		super();
 		ApplicationArguments args = ApplicationArguments.getInstance();
+
+		final String homeDir = args.getSquirrelHomeDirectory();
+		_squirrelHomeDir = homeDir != null ? homeDir : System.getProperty(IJavaPropertyNames.USER_DIR);
+		_squirrelPluginsDir = _squirrelHomeDir + File.separator + "plugins";
+		_squirrelLibrariesDir = _squirrelHomeDir + File.separator + "lib";
+		_documentationDir = _squirrelHomeDir + File.separator + "doc";
+
 		_userSettingsDir = args.getUserSettingsDirectoryOverride();
 		if (_userSettingsDir == null)
 		{
@@ -82,6 +94,11 @@ public class ApplicationFiles
 	public File getUserSettingsDirectory()
 	{
 		return new File(_userSettingsDir);
+	}
+
+	public File getPluginsDirectory()
+	{
+		return new File(_squirrelPluginsDir);
 	}
 
 	/**
@@ -147,7 +164,7 @@ public class ApplicationFiles
 	 */
 	public File getQuickStartGuideFile()
 	{
-		return new File(DOCUMENTATION_FOLDER + File.separator + "quick_start.html");
+		return new File(_documentationDir + File.separator + "quick_start.html");
 	}
 
 	/**
@@ -155,7 +172,7 @@ public class ApplicationFiles
 	 */
 	public File getChangeLogFile()
 	{
-		return new File(DOCUMENTATION_FOLDER + File.separator + "changes.txt");
+		return new File(_documentationDir + File.separator + "changes.txt");
 	}
 
 	/**
@@ -163,6 +180,6 @@ public class ApplicationFiles
 	 */
 	public File getLicenceFile()
 	{
-		return new File(DOCUMENTATION_FOLDER + File.separator + "licences/squirrel_licence.txt");
+		return new File(_documentationDir + File.separator + "licences/squirrel_licence.txt");
 	}
 }

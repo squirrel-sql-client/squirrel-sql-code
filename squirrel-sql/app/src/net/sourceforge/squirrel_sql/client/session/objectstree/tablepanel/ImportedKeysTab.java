@@ -84,7 +84,7 @@ public class ImportedKeysTab extends BaseTablePanelTab
 	 */
 	public void clear()
 	{
-		((ResultSetPanel) getComponent()).clear();
+		((ResultSetPanel)getComponent()).clear();
 	}
 
 	/**
@@ -102,8 +102,7 @@ public class ImportedKeysTab extends BaseTablePanelTab
 		{
 			throw new IllegalStateException("Null ITableInfo");
 		}
-		String destClassName =
-			session.getProperties().getMetaDataOutputClassName();
+		String destClassName = session.getProperties().getMetaDataOutputClassName();
 		try
 		{
 			ResultSet rs = session.getSQLConnection().getSQLMetaData().getImportedKeys(ti);

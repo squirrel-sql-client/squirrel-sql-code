@@ -19,4 +19,6 @@ else
     TMP_CP=$TMP_CP:$CLASSPATH
 fi
 
-$JAVA -cp $TMP_CP net.sourceforge.squirrel_sql.client.Main -loggingConfigFile=$SQUIRREL_SQL_HOME/log4j.properties
+$JAVA -cp $TMP_CP net.sourceforge.squirrel_sql.client.Main -loggingConfigFile=$SQUIRREL_SQL_HOME/log4j.properties -squirrelHome=$SQUIRREL_SQL_HOME
+
+

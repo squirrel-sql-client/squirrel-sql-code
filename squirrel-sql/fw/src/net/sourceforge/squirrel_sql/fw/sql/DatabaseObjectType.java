@@ -38,10 +38,13 @@ public class DatabaseObjectType implements IHasIdentifier
 	public final static DatabaseObjectType CATALOG = createNewDatabaseObjectType();
 
 	/** Database. */
-	public final static DatabaseObjectType DATABASE = createNewDatabaseObjectType();
+	public final static DatabaseObjectType SESSION = createNewDatabaseObjectType();
 
 	/** Standard datatype. */
 	public final static DatabaseObjectType DATATYPE = createNewDatabaseObjectType();
+
+	/** Foreign Key relationship. */
+	public final static DatabaseObjectType FOREIGN_KEY = createNewDatabaseObjectType();
 
 	/** Function. */
 	public final static DatabaseObjectType FUNCTION = createNewDatabaseObjectType();

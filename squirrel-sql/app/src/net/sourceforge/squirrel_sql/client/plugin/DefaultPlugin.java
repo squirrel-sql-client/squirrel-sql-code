@@ -152,12 +152,8 @@ public abstract class DefaultPlugin implements IPlugin
 		{
 			throw new IllegalStateException("IPlugin doesn't have a valid internal name");
 		}
-		final String name =
-			ApplicationFiles.SQUIRREL_PLUGINS_FOLDER
-				+ File.separator
-				+ internalName
-				+ File.separator;
-		final File file = new File(name);
+		final File pluginDir = new ApplicationFiles().getPluginsDirectory();
+		final File file = new File(pluginDir, internalName);
 		if (!file.exists())
 		{
 			file.mkdirs();
@@ -166,7 +162,7 @@ public abstract class DefaultPlugin implements IPlugin
 		if (!file.isDirectory())
 		{
 			throw new IOException(
-				"Cannot create directory as a file of the same name already exists: " + name);
+				"Cannot create directory as a file of the same name already exists: " + file.getAbsolutePath());
 		}
 
 		return file;

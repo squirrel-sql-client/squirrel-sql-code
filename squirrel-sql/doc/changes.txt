@@ -6,7 +6,12 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
-- Cleanup ResultSetMetaData handling.
+- Allow Squirrel to be run from directories other than the current
+  directory (Tim Shadel).
+- Treat Types.OTHER columns as strings when displaying data.
+- Add plugins location to plugin summary dialog.
+- Add plugins location to application dump.
+- Cleanup component borders.
 - Create Windows shortcut in installer.
 - Make shell script executable in installer.
 - Add icons for program shortcuts (Greg Mackness).
@@ -16,10 +21,12 @@ Enhancements
 - Remove unnecessary borders on UI components.
 - Add HSQL and jTDS to list of default drivers.
 - The "Start of line comment" characters can now be
-  specified instead of just using '--'.
+  specified in preferences instead of just using '--'.
 
 Bug Fixes
 ---------
+- Make multiple line label use the same font as static text controls not
+  editable text controls.
 - Links in the Help file now work (Victor Ott).
 - Fix deadlock when viewing logs.
 - Add missing "contributors" file for About Box.
@@ -29,6 +36,8 @@ Plugin API
 
 Other
 -----
+- Cleanup ResultSetMetaData handling.
+- Move metadata methods to metadata classes.
 
 
 1.1beta6

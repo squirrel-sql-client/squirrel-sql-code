@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,30 +17,36 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.util.StringTokenizer;
-
 import javax.swing.JTextArea;
 import javax.swing.LookAndFeel;
 
-public class MultipleLineLabel extends JTextArea {
+public class MultipleLineLabel extends JTextArea
+{
 
-	public MultipleLineLabel() {
+	public MultipleLineLabel()
+	{
 		this("");
 	}
 
-	public MultipleLineLabel(String title) {
+	public MultipleLineLabel(String title)
+	{
 		super();
 		setText(title);
 	}
 
-	public void updateUI() {
-		super.updateUI();
+	public void updateUI()
+	{
+		// installColorsAndFont needs to be run twice. Background and foreground
+		// colors only work if run after the super call but font only works if run
+		// before the super call. May be a bug in JDK 1.4
 		setEditable(false);
 		setLineWrap(true);
 		setWrapStyleWord(true);
 		LookAndFeel.installBorder(this, "Label.border");
-		LookAndFeel.installColorsAndFont(this, "Label.background",
-											"Label.foreground",
+		LookAndFeel.installColorsAndFont(this, "Label.background", "Label.foreground",
+											"Label.font");
+		super.updateUI();
+		LookAndFeel.installColorsAndFont(this, "Label.background", "Label.foreground",
 											"Label.font");
 	}
 }

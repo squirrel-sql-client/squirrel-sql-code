@@ -271,7 +271,7 @@ public class PluginManager
 	public void loadPlugins()
 	{
 		List pluginUrls = new ArrayList();
-		File dir = new File(ApplicationFiles.SQUIRREL_PLUGINS_FOLDER);
+		File dir = new ApplicationFiles().getPluginsDirectory();
 		if (dir.isDirectory())
 		{
 			File[] files = dir.listFiles();

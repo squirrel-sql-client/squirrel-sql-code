@@ -11,6 +11,7 @@ Ken Arway
 Mike Daughton
 Patrick Lacson
 Sergio Ballestrero
+Tim Shadel
 Todd Larsen
 Udi Ipalawatte
 Victor Ott

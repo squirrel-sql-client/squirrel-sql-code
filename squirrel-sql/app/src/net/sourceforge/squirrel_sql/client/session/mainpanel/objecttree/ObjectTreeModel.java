@@ -78,7 +78,7 @@ public class ObjectTreeModel extends DefaultTreeModel
 
 		// Standard expanders.
 		final INodeExpander expander = new DatabaseExpander(session);
-		addExpander(DatabaseObjectType.DATABASE, expander);
+		addExpander(DatabaseObjectType.SESSION, expander);
 		addExpander(DatabaseObjectType.CATALOG, expander);
 		addExpander(DatabaseObjectType.SCHEMA, expander);
 		addExpander(IObjectTreeAPI.TABLE_TYPE_DBO, new TableTypeExpander());
@@ -190,7 +190,7 @@ public class ObjectTreeModel extends DefaultTreeModel
 		private static final IDatabaseObjectInfo createDbo(ISession session)
 		{
 			return new DatabaseObjectInfo(null, null, session.getAlias().getName(),
-											DatabaseObjectType.DATABASE,
+											DatabaseObjectType.SESSION,
 											session.getSQLConnection().getSQLMetaData());
 		}
 	}

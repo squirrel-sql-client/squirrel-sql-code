@@ -738,8 +738,6 @@ public class SQLPanel extends JPanel
 
 		_splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		_splitPane.setOneTouchExpandable(true);
-		JPanel mid = new JPanel(new BorderLayout());
-		mid.add(_splitPane, BorderLayout.CENTER);
 
 		replaceSQLEntryPanel(app.getSQLEntryPanelFactory().createSQLEntryPanel(_session));
 		_splitPane.add(_tabbedResultsPanel, JSplitPane.RIGHT);

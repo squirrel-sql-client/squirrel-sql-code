@@ -51,6 +51,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.DumpSessionCommand;
+import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 
 /**
  * This <CODE>ICommand</CODE> will dump the status of the application.
@@ -131,7 +132,7 @@ public class DumpApplicationCommand implements ICommand
 				_msgHandler.showMessage(th);
 				s_log.error(msg, th);
 			}
-	
+
 			// Dump System Properties.
 			try
 			{
@@ -148,7 +149,7 @@ public class DumpApplicationCommand implements ICommand
 				_msgHandler.showMessage(th);
 				s_log.error(msg, th);
 			}
-		
+
 			// Dump drivers
 			try
 			{
@@ -164,7 +165,7 @@ public class DumpApplicationCommand implements ICommand
 				_msgHandler.showMessage(th);
 				s_log.error(msg, th);
 			}
-			
+
 			// Dump aliases.
 			try
 			{
@@ -203,8 +204,6 @@ public class DumpApplicationCommand implements ICommand
 					s_log.error(msg, th);
 				}
 			}
-			
-			// Dump thread store.
 		}			
 			
 		combineTempFiles(titles, files);
@@ -284,6 +283,7 @@ public class DumpApplicationCommand implements ICommand
 		private PluginInfo[] _plugins;
 		private String[] _appArgs;
 		private String _version;
+		private String _pluginLoc;
 
 		public ApplicationStatusBean()
 		{
@@ -296,6 +296,7 @@ public class DumpApplicationCommand implements ICommand
 			_plugins = app.getPluginManager().getPluginInformation();
 			_appArgs = ApplicationArguments.getInstance().getRawArguments();
 			_version = Version.getVersion();
+			_pluginLoc = new ApplicationFiles().getPluginsDirectory().getAbsolutePath();
 		}
 
 		public String getVersion()
@@ -306,6 +307,11 @@ public class DumpApplicationCommand implements ICommand
 		public SquirrelPreferences getPreferences()
 		{
 			return _prefs;
+		}
+
+		public String getPluginLocation()
+		{
+			return _pluginLoc;
 		}
 
 		public PluginInfo[] getPluginInfo()

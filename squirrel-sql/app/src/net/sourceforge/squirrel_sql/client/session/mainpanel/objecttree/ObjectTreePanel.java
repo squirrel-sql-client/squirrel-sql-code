@@ -120,15 +120,15 @@ public class ObjectTreePanel extends JPanel
 		createUserInterface();
 
 		// Register tabs to display in the details panel for database nodes.
-		addDetailTab(DatabaseObjectType.DATABASE, new MetaDataTab());
-		addDetailTab(DatabaseObjectType.DATABASE, new ConnectionStatusTab());
-		addDetailTab(DatabaseObjectType.DATABASE, new TableTypesTab());
-		addDetailTab(DatabaseObjectType.DATABASE, new DataTypesTab());
-		addDetailTab(DatabaseObjectType.DATABASE, new NumericFunctionsTab());
-		addDetailTab(DatabaseObjectType.DATABASE, new StringFunctionsTab());
-		addDetailTab(DatabaseObjectType.DATABASE, new SystemFunctionsTab());
-		addDetailTab(DatabaseObjectType.DATABASE, new TimeDateFunctionsTab());
-		addDetailTab(DatabaseObjectType.DATABASE, new KeywordsTab());
+		addDetailTab(DatabaseObjectType.SESSION, new MetaDataTab());
+		addDetailTab(DatabaseObjectType.SESSION, new ConnectionStatusTab());
+		addDetailTab(DatabaseObjectType.SESSION, new TableTypesTab());
+		addDetailTab(DatabaseObjectType.SESSION, new DataTypesTab());
+		addDetailTab(DatabaseObjectType.SESSION, new NumericFunctionsTab());
+		addDetailTab(DatabaseObjectType.SESSION, new StringFunctionsTab());
+		addDetailTab(DatabaseObjectType.SESSION, new SystemFunctionsTab());
+		addDetailTab(DatabaseObjectType.SESSION, new TimeDateFunctionsTab());
+		addDetailTab(DatabaseObjectType.SESSION, new KeywordsTab());
 
 		// Register tabs to display in the details panel for catalog nodes.
 		addDetailTab(DatabaseObjectType.CATALOG, new DatabaseObjectInfoTab());

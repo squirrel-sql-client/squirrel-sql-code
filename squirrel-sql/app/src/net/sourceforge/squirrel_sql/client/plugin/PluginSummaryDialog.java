@@ -18,13 +18,16 @@ package net.sourceforge.squirrel_sql.client.plugin;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -32,6 +35,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 
 /**
  * This dialog displays a summary of all plugins.
@@ -62,10 +66,17 @@ public class PluginSummaryDialog extends JDialog
 
 		contentPane.setLayout(new BorderLayout());
 
-		PluginInfo[] pluginInfo = app.getPluginManager().getPluginInformation();
-		contentPane.add(
-			new JScrollPane(new PluginSummaryPanel(pluginInfo).getComponent()),
-			BorderLayout.CENTER);
+		// Label containing the location of the plugins at top of dialog.
+		final JLabel pluginLoc = new JLabel("Plugins location: "
+			+ new ApplicationFiles().getPluginsDirectory().getAbsolutePath());
+		pluginLoc.setBorder(BorderFactory.createEmptyBorder(1, 4, 1, 4));
+
+		contentPane.add(pluginLoc, BorderLayout.NORTH);
+		
+		// Table of loaded plugins in centre of dialog.
+		final PluginInfo[] pluginInfo = app.getPluginManager().getPluginInformation();
+		final Component pluginPnl = new PluginSummaryPanel(pluginInfo).getComponent();
+		contentPane.add(new JScrollPane(pluginPnl), BorderLayout.CENTER);
 
 		// Ok button at bottom of dialog.
 		JPanel btnsPnl = new JPanel();

@@ -35,6 +35,9 @@ public class ApplicationArguments
 	/** &quot;Raw&quot; arguments straight from the command line. */
 	private String[] _rawArgs;
 
+	/** Squirrels home directory. */
+	private String _squirrelHome = null;
+
 	/** <TT>true</TT> if splashscreen should be shown. */
 	private boolean _showSplashScreen = true;
 
@@ -82,6 +85,10 @@ public class ApplicationArguments
 			if (parm.equalsIgnoreCase("-nosplash"))
 			{
 				_showSplashScreen = false;
+			}
+			else if (parm.equalsIgnoreCase("-squirrelHome"))
+			{
+				_squirrelHome = value;
 			}
 			else if (parm.equalsIgnoreCase("-settingsdir"))
 			{
@@ -146,7 +153,16 @@ public class ApplicationArguments
 	}
 
 	/**
-	 *  @return <TT>true</TT> if splashscreen should be shown.
+	 *  @return	override for the user settings directory. Will be
+	 * 				<TT>null</TT> if not overridden.
+	 */
+	public String getSquirrelHomeDirectory()
+	{
+		return _squirrelHome;
+	}
+
+	/**
+	 *  @return The name of the directory that Squirrel is installed into.
 	 */
 	public String getUserSettingsDirectoryOverride()
 	{
@@ -154,8 +170,7 @@ public class ApplicationArguments
 	}
 
 	/**
-	 *  @return	override for the user settings directory. Will be
-	 * 			<TT>null</TT> if not overridden.
+	 *  @return <TT>true</TT> if splashscreen should be shown.
 	 */
 	public boolean getShowSplashScreen()
 	{

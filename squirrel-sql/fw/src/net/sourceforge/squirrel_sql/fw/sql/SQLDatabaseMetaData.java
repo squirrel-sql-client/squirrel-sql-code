@@ -25,6 +25,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,7 +38,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * This class represents the metadata for a database. It is essentially
  * a wrapper around <TT>java.sql.DatabaseMetaData</TT>.
  * 
- * <P>. From the JavaDoc for <TT>java.sql.DatabaseMetaData</TT>. &quot;Some
+ * <P>From the JavaDoc for <TT>java.sql.DatabaseMetaData</TT>. &quot;Some
  * methods take arguments that are String patterns. These arguments all
  * have names such as fooPattern. Within a pattern String, "%" means match any
  * substring of 0 or more characters, and "_" means match any one character. Only
@@ -446,7 +447,7 @@ public class SQLDatabaseMetaData
 	}
 
 	/**
-	 * Retrive information about the stored procedures in the system
+	 * Retrieve information about the stored procedures in the system
 	 * 
 	 * @param	catalog		The name of the catalog to retrieve procedures
 	 *						for. An empty string will return those without a
@@ -574,7 +575,7 @@ public class SQLDatabaseMetaData
 		Map nameMap = null;
 		try
 		{
-			//TODO: Put remove reflection once we only support JDK1.4
+			//TODO: remove reflection once we only support JDK1.4
 			//superTabResult = md.getSuperTables(catalog, schemaPattern,
 			//									   tableNamePattern);
 			Class clazz = md.getClass();
@@ -758,13 +759,83 @@ public class SQLDatabaseMetaData
 			ti.getSimpleName());
 	}
 
-	// TODO: Write a version that returns an array of data objects.
 	public ResultSet getImportedKeys(ITableInfo ti)
 		throws SQLException
 	{
 		return getJDBCMetaData().getImportedKeys(
 			ti.getCatalogName(), ti.getSchemaName(),
 			ti.getSimpleName());
+	}
+
+	public ForeignKeyInfo[] getImportedKeysInfo(ITableInfo ti)
+		throws SQLException
+	{
+		return getForeignKeyInfo(getJDBCMetaData().getImportedKeys(ti.getCatalogName(),
+								ti.getSchemaName(), ti.getSimpleName()));
+	}
+
+	public ForeignKeyInfo[] getExportedKeysInfo(ITableInfo ti)
+		throws SQLException
+	{
+		return getForeignKeyInfo(getJDBCMetaData().getExportedKeys(ti.getCatalogName(),
+								ti.getSchemaName(), ti.getSimpleName()));
+	}
+
+	public ForeignKeyInfo[] getForeignKeyInfo(ResultSet rs)
+		throws SQLException
+	{
+		final ResultSetColumnReader rdr = new ResultSetColumnReader(rs);
+		final Map keys = new HashMap();
+		final Map columns = new HashMap();
+		while (rdr.next())
+		{
+			final ForeignKeyInfo fki = new ForeignKeyInfo(rdr.getString(1),
+						rdr.getString(2), rdr.getString(3), rdr.getString(5),
+						rdr.getString(6), rdr.getString(7),
+						rdr.getLong(10).intValue(), rdr.getLong(11).intValue(),
+						rdr.getString(12), rdr.getString(13),
+						rdr.getLong(14).intValue(), null, this);
+			final String key = createForeignKeyInfoKey(fki);
+			if (!keys.containsKey(key))
+			{
+				keys.put(key, fki);
+				columns.put(key, new ArrayList());
+			}
+
+			ForeignKeyColumnInfo fkiCol = new ForeignKeyColumnInfo(rdr.getString(8),
+													rdr.getString(8),
+													rdr.getLong(9).intValue());
+			((List)columns.get(key)).add(fkiCol);
+		}
+
+		final ForeignKeyInfo[] results = new ForeignKeyInfo[keys.size()];
+		Iterator it = keys.values().iterator();
+		int idx = 0;
+		while (it.hasNext())
+		{
+			final ForeignKeyInfo fki = (ForeignKeyInfo)it.next();
+			final String key = createForeignKeyInfoKey(fki);
+			final List colsList = (List)columns.get(key);
+			final ForeignKeyColumnInfo[] fkiCol = (ForeignKeyColumnInfo[])colsList.toArray(new ForeignKeyColumnInfo[colsList.size()]);
+			fki.setForeignKeyColumnInfo(fkiCol);
+			results[idx++] = fki;
+		}
+		
+		return results;
+	}
+	
+	private String createForeignKeyInfoKey(ForeignKeyInfo fki)
+	{
+		StringBuffer buf = new StringBuffer();
+		buf.append(fki.getForeignKeyCatalogName())
+			.append(fki.getForeignKeySchemaName())
+			.append(fki.getForeignKeyTableName())
+			.append(fki.getForeignKeyName())
+			.append(fki.getPrimaryKeyCatalogName())
+			.append(fki.getPrimaryKeySchemaName())
+			.append(fki.getPrimaryKeyTableName())
+			.append(fki.getPrimaryKeyName());
+		return buf.toString();
 	}
 
 	// TODO: Write a version that returns an array of data objects.

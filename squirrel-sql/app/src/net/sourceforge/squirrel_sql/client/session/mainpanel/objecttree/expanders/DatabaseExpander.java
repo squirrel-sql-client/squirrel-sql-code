@@ -115,7 +115,7 @@ public class DatabaseExpander implements INodeExpander
 
 		List childNodes = new ArrayList();
 
-		if (parentDbinfo.getDatabaseObjectType() == DatabaseObjectType.DATABASE)
+		if (parentDbinfo.getDatabaseObjectType() == DatabaseObjectType.SESSION)
 		{
 			if (supportsCatalogs)
 			{
