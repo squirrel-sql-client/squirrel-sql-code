@@ -37,6 +37,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.SQLCatalogsComboBox;
 import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
@@ -275,9 +276,15 @@ public class SessionPanel extends JPanel
 		return _mainTabPane.removeMainPanelTab(tab);
 	}
 
-	public void setStatusBarMessage(String msg)
+	public void setStatusBarMessage(final String msg)
 	{
-		_statusBar.setText(msg);
+		GUIUtils.processOnSwingEventThread(new Runnable()
+		{
+			public void run()
+			{
+				_statusBar.setText(msg);
+			}
+		});
 	}
 
 	SQLPanel getSQLPanel()

@@ -57,7 +57,6 @@ import net.sourceforge.squirrel_sql.client.gui.db.ConnectionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.db.DriverWindowFactory;
 import net.sourceforge.squirrel_sql.client.gui.db.DriversList;
 import net.sourceforge.squirrel_sql.client.gui.db.DriversListInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.db.IAliasesList;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrameWindowState;
 import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
@@ -124,7 +123,7 @@ public class WindowManager
 	private final IApplication _app;
 
 	/** Applications main frame. */
-	private final MainFrame _mainFrame;
+	private MainFrame _mainFrame;
 
 	private AliasesListInternalFrame _aliasesListWindow;
 	private DriversListInternalFrame _driversListWindow;
@@ -179,19 +178,16 @@ public class WindowManager
 
 		_app = app;
 
-		createAliasesListUI(app);
-		createDriversListUI(app);
-
-		preLoadActions();
-
-		_app.getSessionManager().addSessionListener(_sessionListener);
-
 		_aliasWinFactory = new AliasWindowFactory(_app);
 		_driverWinFactory = new DriverWindowFactory(_app);
 
-		_mainFrame = new MainFrame(app);
-
-		setupFromPreferences();
+		GUIUtils.processOnSwingEventThread(new Runnable()
+		{
+			public void run()
+			{
+				initialize();
+			}
+		}, true);
 	}
 
 	/**
@@ -258,15 +254,25 @@ public class WindowManager
 		return null;
 	}
 
-	public void showConnectionInternalFrame(ISQLAlias sqlAlias,
-							ConnectionInternalFrame.IHandler handler)
+	public void showConnectionInternalFrame(final ISQLAlias alias,
+							final ConnectionInternalFrame.IHandler handler)
 	{
-		ConnectionInternalFrame sheet = new ConnectionInternalFrame(_app, sqlAlias,
-																	handler);
-		_app.getMainFrame().addInternalFrame(sheet, true, null);
-		GUIUtils.centerWithinDesktop(sheet);
-		sheet.moveToFront();
-		sheet.setVisible(true);
+		if (alias == null)
+		{
+			throw new IllegalArgumentException("ISQLAlias == null");
+		}
+
+		GUIUtils.processOnSwingEventThread(new Runnable()
+		{
+			public void run()
+			{
+				ConnectionInternalFrame cif = new ConnectionInternalFrame(
+													_app, alias, handler);
+				_app.getMainFrame().addInternalFrame(cif, true, null);
+				GUIUtils.centerWithinDesktop(cif);
+				moveToFront(cif);
+			}
+		});
 	}
 
 	/**
@@ -279,9 +285,15 @@ public class WindowManager
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
 	 */
-	public void showModifyAliasInternalFrame(ISQLAlias alias)
+	public void showModifyAliasInternalFrame(final ISQLAlias alias)
 	{
-		moveToFront(_aliasWinFactory.showModifySheet(alias));
+		GUIUtils.processOnSwingEventThread(new Runnable()
+		{
+			public void run()
+			{
+				moveToFront(_aliasWinFactory.showModifySheet(alias));
+			}
+		});
 	}
 
 	/**
@@ -290,7 +302,13 @@ public class WindowManager
 	 */
 	public void showNewAliasInternalFrame()
 	{
-		moveToFront(_aliasWinFactory.showCreateSheet());
+		GUIUtils.processOnSwingEventThread(new Runnable()
+		{
+			public void run()
+			{
+				moveToFront(_aliasWinFactory.showCreateSheet());
+			}
+		});
 	}
 
 	/**
@@ -299,11 +317,23 @@ public class WindowManager
 	 *
 	 * @return	The new maintenance sheet.
 	 *
-	 * @throws	IllegalArgumentException	if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
+	 * @throws	IllegalArgumentException
+	 *			Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
 	 */
-	public void showCopyAliasInternalFrame(ISQLAlias alias)
+	public void showCopyAliasInternalFrame(final ISQLAlias alias)
 	{
-		moveToFront(_aliasWinFactory.showCopySheet(alias));
+		if (alias == null)
+		{
+			throw new IllegalArgumentException("ISQLAlias == null");
+		}
+
+		GUIUtils.processOnSwingEventThread(new Runnable()
+		{
+			public void run()
+			{
+				moveToFront(_aliasWinFactory.showCopySheet(alias));
+			}
+		});
 	}
 
 	/**
@@ -316,9 +346,20 @@ public class WindowManager
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ISQLDriver</TT> passed.
 	 */
-	public void showModifyDriverInternalFrame(ISQLDriver alias)
+	public void showModifyDriverInternalFrame(final ISQLDriver driver)
 	{
-		moveToFront(_driverWinFactory.showModifySheet(alias));
+		if (driver == null)
+		{
+			throw new IllegalArgumentException("ISQLDriver == null");
+		}
+
+		GUIUtils.processOnSwingEventThread(new Runnable()
+		{
+			public void run()
+			{
+				moveToFront(_driverWinFactory.showModifySheet(driver));
+			}
+		});
 	}
 
 	/**
@@ -327,7 +368,13 @@ public class WindowManager
 	 */
 	public void showNewDriverInternalFrame()
 	{
-		moveToFront(_driverWinFactory.showCreateSheet());
+		GUIUtils.processOnSwingEventThread(new Runnable()
+		{
+			public void run()
+			{
+				moveToFront(_driverWinFactory.showCreateSheet());
+			}
+		});
 	}
 
 	/**
@@ -339,9 +386,20 @@ public class WindowManager
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ISQLDriver</TT> passed.
 	 */
-	public void showCopyDriverInternalFrame(ISQLDriver driver)
+	public void showCopyDriverInternalFrame(final ISQLDriver driver)
 	{
-		moveToFront(_driverWinFactory.showCopySheet(driver));
+		if (driver == null)
+		{
+			throw new IllegalArgumentException("ISQLDriver == null");
+		}
+
+		GUIUtils.processOnSwingEventThread(new Runnable()
+		{
+			public void run()
+			{
+				moveToFront(_driverWinFactory.showCopySheet(driver));
+			}
+		});
 	}
 
 	/**
@@ -711,29 +769,41 @@ public class WindowManager
 		return editWhereColsSheet;
 	}
 
-	public void moveToFront(Window win)
+	public void moveToFront(final Window win)
 	{
 		if (win != null)
 		{
-			win.toFront();
-			win.setVisible(true);
+			GUIUtils.processOnSwingEventThread(new Runnable()
+			{
+				public void run()
+				{
+					win.toFront();
+					win.setVisible(true);
+				}
+			});
 		}
 	}
 
-	public void moveToFront(JInternalFrame fr)
+	public void moveToFront(final JInternalFrame fr)
 	{
 		if (fr != null)
 		{
-			fr.moveToFront();
-			fr.setVisible(true);
-			try
+			GUIUtils.processOnSwingEventThread(new Runnable()
 			{
-				fr.setSelected(true);
-			}
-			catch (PropertyVetoException ex)
-			{
-				s_log.error("Error bringing internal frame to the front", ex);
-			}
+				public void run()
+				{
+					fr.moveToFront();
+					fr.setVisible(true);
+					try
+					{
+						fr.setSelected(true);
+					}
+					catch (PropertyVetoException ex)
+					{
+						s_log.error("Error bringing internal frame to the front", ex);
+					}
+				}
+			});
 		}
 	}
 
@@ -833,9 +903,24 @@ public class WindowManager
 		}
 	}
 
-	private void createAliasesListUI(IApplication app)
+	private void initialize()
 	{
-		final AliasesList al = new AliasesList(app);
+		createAliasesListUI();
+		createDriversListUI();
+		preLoadActions();
+		_app.getSessionManager().addSessionListener(_sessionListener);
+		createMainFrame();
+		setupFromPreferences();
+	}
+
+	private void createMainFrame()
+	{
+		_mainFrame = new MainFrame(_app);
+	}
+
+	private void createAliasesListUI()
+	{
+		final AliasesList al = new AliasesList(_app);
 
 		final ActionCollection actions = _app.getActionCollection();
 		actions.add(new ModifyAliasAction(_app, al));
@@ -847,11 +932,11 @@ public class WindowManager
 		_aliasesListWindow = new AliasesListInternalFrame(_app, al);
 	}
 
-	private void createDriversListUI(IApplication app)
+	private void createDriversListUI()
 	{
-		final DriversList dl = new DriversList(app);
+		final DriversList dl = new DriversList(_app);
 
-		final ActionCollection actions = app.getActionCollection();
+		final ActionCollection actions = _app.getActionCollection();
 		actions.add(new ModifyDriverAction(_app, dl));
 		actions.add(new DeleteDriverAction(_app, dl));
 		actions.add(new CopyDriverAction(_app, dl));
@@ -871,7 +956,7 @@ public class WindowManager
 		actions.add(new ViewAliasesAction(_app, getAliasesListInternalFrame()));
 		actions.add(new ViewDriversAction(_app, getDriversListInternalFrame()));
 
-		IAliasesList al = getAliasesListInternalFrame().getAliasesList();
+//		IAliasesList al = getAliasesListInternalFrame().getAliasesList();
 	}
 
 	private void setupFromPreferences()
@@ -912,7 +997,6 @@ public class WindowManager
 			_aliasesListWindow.setVisible(false);
 		}
 		prefs.setMainFrameWindowState(new MainFrameWindowState(this));
-
 	}
 
 	// JASON: Needs to be done elsewhere
@@ -1082,7 +1166,13 @@ public class WindowManager
 			}
 
 			// Make sure that the session menu is enabled.
-			getMainFrame().getSessionMenu().setEnabled(true);
+			GUIUtils.processOnSwingEventThread(new Runnable()
+			{
+				public void run()
+				{
+					getMainFrame().getSessionMenu().setEnabled(true);
+				}
+			});
 		}
 
 		/**
