@@ -383,6 +383,14 @@ public class ObjectTreePanel extends JPanel
 	}
 
 	/**
+	 * Refresh the nodes currently selected in the object tree.
+	 */
+	public void refreshSelectedNodes()
+	{
+		_tree.refreshSelectedNodes();
+	}
+
+	/**
 	 * Remove one or more nodes from the tree.
 	 * 
 	 * @param	nodes	Array of nodes to be removed.

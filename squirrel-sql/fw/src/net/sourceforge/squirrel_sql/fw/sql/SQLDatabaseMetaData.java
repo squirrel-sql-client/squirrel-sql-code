@@ -228,7 +228,8 @@ public class SQLDatabaseMetaData
 		boolean hasGuest = false;
 		final String dbProductName = getDatabaseProductName();
 		final boolean isMSSQLorSYBASE = dbProductName.equals("Microsoft SQL Server") ||
-											dbProductName.equals("SQL Server");
+											dbProductName.equals("Sybase SQL Server") ||
+											dbProductName.equals("SQL Server"); // Old Sybase
 		final ArrayList list = new ArrayList();
 		final ResultSetReader rdr = new ResultSetReader(getJDBCMetaData().getSchemas());
 		Object[] row = null;

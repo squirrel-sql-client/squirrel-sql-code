@@ -27,6 +27,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -37,6 +38,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.beanwrapper.URLWrapper;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
@@ -284,6 +286,7 @@ public class DumpApplicationCommand implements ICommand
 		private String[] _appArgs;
 		private String _version;
 		private String _pluginLoc;
+		private URLWrapper[] _pluginURLs;
 
 		public ApplicationStatusBean()
 		{
@@ -297,6 +300,12 @@ public class DumpApplicationCommand implements ICommand
 			_appArgs = ApplicationArguments.getInstance().getRawArguments();
 			_version = Version.getVersion();
 			_pluginLoc = new ApplicationFiles().getPluginsDirectory().getAbsolutePath();
+			URL[] urls = app.getPluginManager().getPluginURLs();
+			_pluginURLs = new URLWrapper[urls.length];
+			for (int i = 0; i < urls.length; ++i)
+			{
+				_pluginURLs[i] = new URLWrapper(urls[i]);
+			}
 		}
 
 		public String getVersion()
@@ -317,6 +326,11 @@ public class DumpApplicationCommand implements ICommand
 		public PluginInfo[] getPluginInfo()
 		{
 			return _plugins;
+		}
+
+		public URLWrapper[] getPluginURLs()
+		{
+			return _pluginURLs;
 		}
 
 		public PluginInfo getPluginInfo(int idx)

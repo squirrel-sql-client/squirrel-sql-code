@@ -52,7 +52,9 @@ import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.DropSelectedTablesAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeAction;
+import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeItemAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeItemAction;
+import net.sourceforge.squirrel_sql.client.session.action.SetDefaultCatalogAction;
 /**
  * This is the tree showing the structure of objects in the database.
  *
@@ -124,9 +126,25 @@ class ObjectTree extends JTree
 		ActionCollection actions = session.getApplication().getActionCollection();
 		addToPopup(DatabaseObjectType.TABLE, actions.get(DropSelectedTablesAction.class));
 
-		// Global menu.
+		// Options for global popup menu.
 		addToPopup(actions.get(RefreshObjectTreeAction.class));
-		addToPopup(actions.get(RefreshTreeItemAction.class));
+		addToPopup(actions.get(RefreshObjectTreeItemAction.class));
+
+		// Option to select default catalog only applies to sessions
+		// that support catalogs.
+		try
+		{
+			if (_session.getSQLConnection().getSQLMetaData().supportsCatalogs())
+			{
+				addToPopup(DatabaseObjectType.CATALOG,
+							actions.get(SetDefaultCatalogAction.class));
+			}
+		}
+		catch (Throwable th)
+		{
+			// Assume DBMS doesn't support catalogs.
+			s_log.debug(th);
+		}
 
 		// Mouse listener used to display popup menu.
 		addMouseListener(new MouseAdapter()
@@ -217,6 +235,29 @@ class ObjectTree extends JTree
 		ObjectTreeNode root = _model.getRootObjectTreeNode();
 		root.removeAllChildren();
 		startExpandingTree(root, false, selectedPathNames);
+	}
+
+	/**
+	 * Refresh the nodes currently selected in the object tree.
+	 * TODO: Make this work with multiple nodes. Currently multiple threads
+	 * will be created (one for each node selected) and it will be very
+	 * very very bad.
+	 */
+	public void refreshSelectedNodes()
+	{
+		final TreePath[] selectedPaths = getSelectionPaths();
+		ObjectTreeNode[] nodes = getSelectedNodes();
+		final Map selectedPathNames = new HashMap();
+		if (selectedPaths != null)
+		{
+			for (int i = 0; i < selectedPaths.length; ++i)
+			{
+				selectedPathNames.put(selectedPaths[i].toString(), null);
+			}
+		}
+		clearSelection();
+		nodes[0].removeAllChildren();
+		startExpandingTree(nodes[0], false, selectedPathNames);
 	}
 
 	/**

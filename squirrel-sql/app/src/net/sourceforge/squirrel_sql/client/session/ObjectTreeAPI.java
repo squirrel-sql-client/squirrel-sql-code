@@ -273,6 +273,14 @@ class ObjectTreeAPI implements IObjectTreeAPI
 	}
 
 	/**
+	 * Refresh the nodes currently selected in the object tree.
+	 */
+	public void refreshSelectedNodes()
+	{
+		_session.getSessionSheet().getObjectTreePanel().refreshSelectedNodes();
+	}
+
+	/**
 	 * Remove one or more nodes from the tree.
 	 * 
 	 * @param	nodes	Array of nodes to be removed.

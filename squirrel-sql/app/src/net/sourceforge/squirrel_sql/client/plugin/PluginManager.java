@@ -265,6 +265,17 @@ public class PluginManager
 	}
 
 	/**
+	 * Retrieve an array of all the <TT>URL</TT> objects that are
+	 * used to find plugin classes.
+	 * 
+	 * @return		<TT>URL[]</TT>.
+	 */
+	public URL[] getPluginURLs()
+	{
+		return _pluginsClassLoader.getURLs();
+	}
+
+	/**
 	 * TODO: Clean this mess up!!!!
 	 * Load plugins. Load all plugin jars into class loader.
 	 */

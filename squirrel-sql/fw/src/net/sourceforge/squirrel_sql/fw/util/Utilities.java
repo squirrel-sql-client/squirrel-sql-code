@@ -165,6 +165,24 @@ public class Utilities
 	}
 
 	/**
+	 * Return whether the 2 passed strings are equal. This function
+	 * allows for <TT>null</TT> strings. If <TT>s1</TT> and <TT>s1</TT> are
+	 * both <TT>null</TT> they are considered equal.
+	 */
+	public static boolean areStringsEqual(String s1, String s2)
+	{
+		if (s1 == null && s2 == null)
+		{
+			return true;
+		}
+		if (s1 != null)
+		{
+			return s1.equals(s2);
+		}
+		return s2.equals(s1);
+	}
+
+	/**
 	 * Return the suffix of the passed file name.
 	 *
 	 * @param	fileName	File name to retrieve suffix for.

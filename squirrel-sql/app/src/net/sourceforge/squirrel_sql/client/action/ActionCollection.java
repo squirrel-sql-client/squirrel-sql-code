@@ -59,9 +59,10 @@ import net.sourceforge.squirrel_sql.client.session.action.IClientSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.ReconnectAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeAction;
-import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeItemAction;
+import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeItemAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
 import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
+import net.sourceforge.squirrel_sql.client.session.action.SetDefaultCatalogAction;
 import net.sourceforge.squirrel_sql.client.session.action.ShowNativeSQLAction;
 
 /**
@@ -391,9 +392,10 @@ public final class ActionCollection
 		add(new NewSessionPropertiesAction(_app));
 		add(new ReconnectAction(_app));
 		add(new RefreshObjectTreeAction(_app));
-		add(new RefreshTreeItemAction(_app));
+		add(new RefreshObjectTreeItemAction(_app));
 		add(new RollbackAction(_app));
 		add(new SessionPropertiesAction(_app));
+		add(new SetDefaultCatalogAction(_app));
 		add(new ShowNativeSQLAction(_app));
 		add(new TileAction(_app));
 		add(new ViewFAQAction(_app));

@@ -164,6 +164,11 @@ public interface IObjectTreeAPI
 	void refreshTree();
 
 	/**
+	 * Refresh the nodes currently selected in the object tree.
+	 */
+	void refreshSelectedNodes();
+
+	/**
 	 * Remove one or more nodes from the tree.
 	 * 
 	 * @param	nodes	Array of nodes to be removed.

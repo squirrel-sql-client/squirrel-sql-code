@@ -6,6 +6,8 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Add default catalog selection to popup menu
+- Add plugin class path to application dump.
 - Allow for some drivers that don't return 'guest'
   as a schema for Microsoft SQL and Sybase.
 - Catalogs and Schemas tabs added to the session
@@ -15,6 +17,11 @@ Enhancements
 
 Bug Fixes
 ---------
+- Fix Copy cmd in tables so that if only a single
+  column selected it doesn't put all the rows on one
+  line.
+- Make tree node refresh work.
+- Fix line wrapping in multiple line labels.
 - Allow for spaces in %CLASSPATH% in
   squirrel-sql.bat (again).
 - Save and restore current catalog, transaction

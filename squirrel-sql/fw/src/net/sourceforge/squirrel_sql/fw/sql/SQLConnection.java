@@ -17,21 +17,29 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.beans.PropertyChangeListener;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
 import java.util.Calendar;
 import java.util.Date;
 
+import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class SQLConnection
 {
+	public interface IPropertyNames
+	{
+		String AUTO_COMMIT = "autocommit";
+		String CATALOG = "catalog";
+	}
+
 	private final static ILogger s_log =
 		LoggerController.createLogger(SQLConnection.class);
 
@@ -43,8 +51,11 @@ public class SQLConnection
 
 	private boolean _autoCommitOnClose = false;
 
-	private Date _timeOpened = Calendar.getInstance().getTime();
+	private Date _timeOpened;
 	private Date _timeClosed;
+
+	/** Object to handle property change events. */
+	private transient PropertyChangeReporter _propChgReporter;
 
 	public SQLConnection(Connection conn)
 	{
@@ -54,6 +65,7 @@ public class SQLConnection
 			throw new IllegalArgumentException("SQLConnection == null");
 		}
 		_conn = conn;
+		_timeOpened = Calendar.getInstance().getTime();
 	}
 
 	public void close() throws SQLException
@@ -114,7 +126,14 @@ public class SQLConnection
 	public void setAutoCommit(boolean value) throws SQLException
 	{
 		validateConnection();
-		_conn.setAutoCommit(value);
+		final Connection conn = getConnection();
+		final boolean oldValue = conn.getAutoCommit();
+		if (oldValue != value)
+		{
+			_conn.setAutoCommit(value);
+			getPropertyChangeReporter().firePropertyChange(IPropertyNames.AUTO_COMMIT,
+												oldValue, value);
+		}
 	}
 
 	public boolean getCommitOnClose()
@@ -217,7 +236,15 @@ public class SQLConnection
 		throws SQLException
 	{
 		validateConnection();
-		getConnection().setCatalog(catalogName);
+		validateConnection();
+		final Connection conn = getConnection();
+		final String oldValue = conn.getCatalog();
+		if (!Utilities.areStringsEqual(oldValue, catalogName))
+		{
+			conn.setCatalog(catalogName);
+			getPropertyChangeReporter().firePropertyChange(IPropertyNames.CATALOG,
+												oldValue, catalogName);
+		}
 	}
 
 	public SQLWarning getWarnings() throws SQLException
@@ -226,11 +253,46 @@ public class SQLConnection
 		return _conn.getWarnings();
 	}
 
+	/**
+	 * Add a listener for property change events.
+	 *
+	 * @param	lis		The new listener.
+	 */
+	public void addPropertyChangeListener(PropertyChangeListener listener)
+	{
+		getPropertyChangeReporter().addPropertyChangeListener(listener);
+	}
+
+	/**
+	 * Remove a property change listener.
+	 *
+	 * @param	lis		The listener to be removed.
+	 */
+	public void removePropertyChangeListener(PropertyChangeListener listener)
+	{
+		getPropertyChangeReporter().removePropertyChangeListener(listener);
+	}
+
 	protected void validateConnection() throws SQLException
 	{
 		if (_conn == null)
 		{
 			throw new SQLException("No connection");
 		}
+	}
+
+	/**
+	 * Retrieve the object that reports on property change events. If it
+	 * doesn't exist then create it.
+	 *
+	 * @return	PropertyChangeReporter object.
+	 */
+	private synchronized PropertyChangeReporter getPropertyChangeReporter()
+	{
+		if (_propChgReporter == null)
+		{
+			_propChgReporter = new PropertyChangeReporter(this); 
+		}
+		return _propChgReporter;
 	}
 }

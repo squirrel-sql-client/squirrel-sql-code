@@ -22,7 +22,6 @@ import javax.swing.LookAndFeel;
 
 public class MultipleLineLabel extends JTextArea
 {
-
 	public MultipleLineLabel()
 	{
 		this("");
@@ -31,6 +30,9 @@ public class MultipleLineLabel extends JTextArea
 	public MultipleLineLabel(String title)
 	{
 		super();
+		setEditable(false);
+		setLineWrap(true);
+		setWrapStyleWord(true);
 		setText(title);
 	}
 
@@ -39,9 +41,6 @@ public class MultipleLineLabel extends JTextArea
 		// installColorsAndFont needs to be run twice. Background and foreground
 		// colors only work if run after the super call but font only works if run
 		// before the super call. May be a bug in JDK 1.4
-		setEditable(false);
-		setLineWrap(true);
-		setWrapStyleWord(true);
 		LookAndFeel.installBorder(this, "Label.border");
 		LookAndFeel.installColorsAndFont(this, "Label.background", "Label.foreground",
 											"Label.font");

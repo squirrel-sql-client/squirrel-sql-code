@@ -46,7 +46,6 @@
 	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#help_menu">Help Menu</A></TD></TR>
 </TABLE>
 
-
 <A NAME="introduction"><H2>Introduction</H2></A>
 
 <P>SQuirreL SQL Client is a graphical Java program that will allow you
@@ -92,7 +91,6 @@ more information.</P>
 under Linux. If this happens passing the -classic flag to the java
 executable appears to fix the problem. No similar problems have been
 reported with any other JDK on Linux.</P>
-
 
 <A NAME="cmd_line_options"><H2>Command Line Options</H2></A>
 
@@ -150,16 +148,13 @@ driver to use and the alias specifies the connection parameters.
 
 <A NAME="the_driver"><H2>The Driver</H2></A>
 
-
 <P>A number of default driver definitions ship with SQuirreL SQL Client.
 These are added to the Drivers List window (<EM>View Drivers</EM> option
 on the <EM>Windows</EM> menu) when you first start up
 SQuirreL SQL Client.</P>
 
-<P ALIGN="LEFT"><IMG SRC="images/drivers_tool_window_1.png" BORDER="0"
-					ALT="Drivers List Window"></P>
-
-<!-- TODO: Align following paragraphs to the right of the graphic.  --> 
+<IMG SRC="images/drivers_tool_window_1.png" BORDER="0"
+ALIGN="LEFT" ALT="Drivers List Window">
 
 <P>The
 <IMG ALIGN="CENTER" SRC="images/ok_st_obj.gif" BORDER="0" ALT="Blue Tick">
@@ -176,13 +171,13 @@ more information on this). If this is not the case you will need to
 modify the driver definition to point to the jar file or the classes
 directory that contains these classes.
 
+<BR CLEAR="LEFT">
+
 <P>You can create new driver definitions using the <EM>New Driver</EM>
 option on the <EM>Drivers</EM> menu.</P>
 
-<P ALIGN="LEFT"><IMG SRC="images/chg_driver_1.png" BORDER="0"
-	ALT="Change Driver dialog (Java Class Path tab)"></A>
-
-<!-- TODO: Align following paragraphs to the right of the graphic.  --> 
+<IMG ALIGN="LEFT" SRC="images/chg_driver_1.png"
+BORDER="0" ALT="Change Driver dialog (Java Class Path tab)"></A>
 
 <P>This is an example of a driver definition. This dialog can be
 displayed by selecting a driver definition in the Drivers List window
@@ -207,14 +202,18 @@ driver. Either select an existing entry in the dropdown or key in the
 class name of the JDBC driver (it can normally be found in the
 documentation that comes with the driver).
 
-<P ALIGN="LEFT"><IMG SRC="images/chg_driver_2.png" BORDER="0"
-	ALT="Change Driver dialog (Extra Class Path tab)"></A>
+<BR CLEAR="LEFT">
 
-<!-- TODO: Align following paragraphs to the right of the graphic.  --> 
+<P>&nbsp;</P>
 
 <P>The <EM>Extra Class Path</EM> tab allows you to select a JDBC
 driver that is in a jar file or a directory that is not in the current
-class path. The <EM>Add</EM> button will display a File Open dialog
+class path.
+
+<IMG SRC="images/chg_driver_2.png" BORDER="0" ALIGN="LEFT" ALT="Change
+Driver dialog (Extra Class Path tab)"></A>
+
+<P>The <EM>Add</EM> button will display a File Open dialog
 allowing you to select one or more jar files or directories. The
 <EM>Delete</EM> button allows you to remove a jar file or directory
 from the list. The <EM>Up</EM> and <EM>Down</EM> buttons allow you to
@@ -226,29 +225,28 @@ selected jar file into the <EM>Class Name</EM> dropdown.</P>
 window or the <EM>Close</EM> button to close the window without saving
 any changes.</P>
 
+<BR CLEAR="LEFT">
 
 <A NAME="the_alias"><H2>The Alias</H2></A>
 
 <P>Now you need to create an alias to your database.</P>
 
-<P ALIGN="LEFT"><IMG SRC="images/aliases_tool_window_1.png" BORDER="0"
-			ALT="Aliases List Window"></P>
+<P>Display the Aliases List window (<TT>View Aliases</TT>
+option on the <TT>Windows</TT> menu).  When you run SQuirreL SQL
+Client for the first time this window will be empty.</P>
 
-<!-- TODO: Align following paragraphs to the right of the graphic.  --> 
+<IMG SRC="images/aliases_tool_window_1.png" BORDER="0" ALT="Aliases
+List Window">
 
-<P>Display the Aliases List window (View Aliases option on the Windows
-menu).  When you run SQuirreL SQL Client for the first time this
-window will be empty.</P>
+<P>&nbsp;</P>
 
 <P>Take the <EM>New Alias</EM> option from the <EM>Aliases</EM> menu
 and the following dialog will be displayed.</P>
 
-<P ALIGN="LEFT"><IMG SRC="images/add_alias_1.png" BORDER="0"
-			ALT="Add New Alias Window"></P>
+<IMG SRC="images/add_alias_1.png" BORDER="0" ALT="Add New Alias
+Window" ALIGN="LEFT">
 
-<!-- TODO: Align following paragraphs to the right of the graphic.  --> 
-
-<P>Enter a easy to remember name in the <EM>Name</EM> field for this
+<P>Enter an easy to remember name in the <EM>Name</EM> field for this
 database URL. This is the text that will be displayed in the Aliases
 List Window.</P>
 
@@ -269,17 +267,14 @@ correct.</P>
 window or the <EM>Close</EM> button to close the window without saving
 any changes.</P>
 
+<BR CLEAR="LEFT">
+
 <A NAME="connecting"><H2>Connecting</H2></A>
 
 <P>The new alias should now appear in the <EM>Connect To</EM>
 dropdown.  Select it in the dropdown and enter your user name and
 password in the connection dialog, press OK and you should be
 connected.</P>
-
-<P ALIGN="CENTER"><IMG SRC="images/connect_window.png" BORDER="0"
-			ALT="Connection Window"></P>
-
-<P ALIGN="CENTER"><B>The Connection Window</B></P>
 
 <A NAME="sessionwindow"><H2>Session Window</H2></A>
 
@@ -288,8 +283,6 @@ shown.
 
 <P ALIGN="LEFT"><IMG SRC="images/session_1.png" BORDER="0"
 			ALT="Session Window"></P>
-
-<!-- TODO: Align following paragraphs to the right of the graphic.  --> 
 
 <P>The Object Tree on the left shows the structure of the database.
 Clicking on various nodes within this object tree will show further
@@ -300,8 +293,6 @@ tabular displays in SQuirreL.</P>
 
 <P ALIGN="LEFT"><IMG SRC="images/session_2.png" BORDER="0"
 			ALT="Session Window Showing a Table"></P>
-
-<!-- TODO: Align following paragraphs to the right of the graphic.  --> 
 
 <P>This shows the data displayed when a table is selected in the
 Object Tree.</P>
@@ -357,9 +348,6 @@ application.</P>
 
 <H3>General Tab (Appearance)</H3>
 
-<!-- TODO: Put in screen dump of general tab and put following
-paragraphs on the right of the screen dump. -->
-
 <P><B>Show Window Contents While Dragging</B> - If checked this shows
 the contents of windows as they are being dragged. If unchecked only
 the outline of the window will be shown. Uncheck for a speed
@@ -397,54 +385,76 @@ SQuirreL. For more information see <A HREF="#logs">Logs</A>.</P>
 
 <H3>SQL Tab</H3>
 
-<P><B>Login Timeout</B> -</P>
+<P><B>Login Timeout</B> - Sets the maximum time in seconds that a
+JDBC driver will wait while attempting to connect to the database.</P>
 
-<P><B>JDBC Debug</B> -</P>
+<P><B>JDBC Debug</B> - If checked tells the JDBC drivers to write
+debugging information to the JDBC Debug File. Depending on the JDBC
+driver you are using this may generate a lot of output and
+significantly slow down the your queries.</P>
 
-<P><B>JDBC Debug File</B> -</P>
+<P><B>JDBC Debug File</B> - If JDBC Debug is checked then this
+(display only) setting is the file that the debug information will be
+written out to. If the file name is too long for the label then the
+full name will be displayed in a tooltip.</P>
 
 <H3>Proxy Tab (HTTP Proxy)</H3>
 
-<P><B>Use Proxy</B> -</P>
+<P><B>Use Proxy</B> - If checked then a HTTP proxy server will be used
+for connecting to servers.</P>
 
-<P><B>Server</B> -</P>
+<P><B>Server</B> - The name (or IP address) of your proxy server.</P>
 
-<P><B>Port</B> -</P>
+<P><B>Port</B> - The port number to use on the proxy server.</P>
 
-<P><B>User</B> -</P>
+<P><B>User</B> - The user name to use to log onto the proxy
+server.</P>
 
-<P><B>Password</B> -</P>
+<P><B>Password</B> - The password to use to log onto the proxy
+server.</P>
 
-<P><B>No Proxy For</B> -</P>
+<P><B>No Proxy For</B> - A list of servers (separated by |) that do
+not need to be accessed through your proxy server.</P>
 
 <H3>Proxy Tab (SOCKS Proxy)</H3>
 
-<P><B>Use Proxy</B> -</P>
+<P><B>Use Proxy</B> - If checked then a SOCKS proxy server will be
+used for connecting to servers.</P>
 
-<P><B>Server</B> -</P>
+<P><B>Server</B> - The name (or IP address) of your proxy server.</P>
 
-<P><B>Port</B> -</P>
-
+<P><B>Port</B> - The port number to use on the proxy server.</P>
 
 <A NAME="session_props"><H2>New Session and Session Properties</H2></A>
 
 <H3>General Tab (General)</H3>
 
-<P><B>Show Tool Bar</B> -</P>
+<P><B>Show Tool Bar</B> - If checked then display a toolbar on the
+session window.</P>
 
 <H3>General Tab (Output)</H3>
 
-<P><B>Meta Data</B> -</P>
+<P><B>Meta Data</B> - Specify the output type for meta data displays.</P>
 
-<P><B>SQL Results</B> -</P>
+<P><B>SQL Results</B> Specify the output type for SQL result displays.</P>
 
 <H3>SQL Tab (SQL)</H3>
 
-<P><B>Auto Commit</B> -</P>
+<P><B>Auto Commit</B> - If checked then all SQL will be automatically
+commited after it is executed. If unchecked then you will be able to
+use the &quot;Commit&quot; and &quot;Rollback&quot; options on the
+&quot;Session&quot; menu.</P>
 
-<P><B>Commit on Closing Session</B> -</P>
+<P><B>Commit on Closing Session</B> - If &quot;Auto Commit&quot; is
+not checked then this option controls whether or not a
+&quot;Commit&quot; is issued prior to closing a session. If this
+option is not checked then you will lose all uncommited work when the
+session is closed. Only applicable if &quot;Auto Commit&quot; is not
+checked.</P>
 
-<P><B>Show Row Count for Tables</B> -</P>
+<P><B>Show Row Count for Tables</B> - Show the number of rows for each
+table in the object tree. This will slow down the building of the
+object tree.</P>
 
 <P><B>Contents - Limit Rows/Number of Rows</B> -</P>
 
@@ -470,31 +480,31 @@ SQuirreL. For more information see <A HREF="#logs">Logs</A>.</P>
 
 <P><B>Font</B> -</P>
 
-
 <A NAME="plugins"><H2>Plugins</H2></A>
 
-<P>A plugin is an application written in Java that runs within SQuirreL. This
-allows developers to enhance the functionality of SQuirreL without having to
-rebuild the SQuirreL application itself. It also allows you to &quot;pick and
-choose&quot; the functionality that you want in SQuirreL. For instance if
-you don't use Oracle then you don't need the Oracle specific functionality
-supplied by the Oracle plugin.</P>
+<P>A plugin is an application written in Java that runs within
+SQuirreL. This allows developers to enhance the functionality of
+SQuirreL without having to rebuild the SQuirreL application itself. It
+also allows you to &quot;pick and choose&quot; the functionality that
+you want in SQuirreL. For instance if you don't use Oracle then you
+don't need the Oracle specific functionality supplied by the Oracle
+plugin.</P>
 
-<P>Plugins can be downloaded from the SQuirreL web site http://squirrel-sql.sf.net</P>
+<P>Plugins can be downloaded from the SQuirreL web site
+http://squirrel-sql.sf.net</P>
 
-<P>To install a plugin unpack the zip or gz file into the plugins directory
-within the SQuirreL SQL Client application directory keeping the directory
-structure. To use the plugin you will need to restart SQuirreL.</P>
+<P>To install a plugin unpack the zip or gz file into the plugins
+directory within the SQuirreL SQL Client application directory keeping
+the directory structure. To use the plugin you will need to restart
+SQuirreL.</P>
 
-<P>The &quot;Summary&quot; option on the &quot;Plugins&quot; menu will show
-a dialog box of the plugins currently installed.</P>
+<P>The &quot;Summary&quot; option on the &quot;Plugins&quot; menu will
+display a dialog box showing the plugins currently installed.</P>
 
 <P ALIGN="CENTER"><IMG SRC="images/plugins_1.png" BORDER="0"
 	ALT="Plugins Summary"></P>
 
-
 <A NAME="logs"><H2>Logs</H2></A>
-
 
 <A NAME="menus"><H2>Menus</H2></A>
 
@@ -509,10 +519,10 @@ a dialog box of the plugins currently installed.</P>
 	<DD>
 
 	<DT><B>Dump Application</B>
-	<DD>This option will dump some internal structures of the application to 
-		a text file along with a <A HREF="#dump_session">dump</A> of all
-		the currently open sessions.
-		This may be useful for debugging problems with SQuirreL.
+	<DD>This option will dump some internal structures of the
+	application to a text file along with a <A
+	HREF="#dump_session">dump</A> of all the currently open sessions.
+	This may be useful for debugging problems with SQuirreL.
 
 	<DT><B>Exit</B>
 	<DD>Exit the application after closing all sessions.
@@ -571,43 +581,39 @@ a dialog box of the plugins currently installed.</P>
 
 <DL>
 	<DT><B>Session Properties</B>
-	<DD>This option will display the Session Properties dialog allowing you
-		configure your current session. <A HREF="#session_props">More</A>.
+	<DD>This option will display the Session Properties dialog
+	allowing you configure your current session. <A
+	HREF="#session_props">More</A>.
 
 	<DT><B><A NAME="dump_session">Dump Session</A></B>
-	<DD>This option will dump some internal structures of the current session to 
-		a text file. This may be useful for debugging problems with SQuirreL.
+	<DD>This option will dump some internal structures of the current
+	session to a text file. This may be useful for debugging problems
+	with SQuirreL.
 
 	<DT><B>Refresh Tree</B>
 	<DD>This option will refresh the object tree. 
 
 	<DT><B>Run SQL</B>
 	<DD>This option will run the current SQL in the SQL entry area.
-		<A HREF="#executing">More</A>.
+	<A HREF="#executing">More</A>.
 
 	<DT><B>Commit</B>
-	<DD>This option will commit the current SQL transaction. This is only
-		applicable if &quot;Auto Commit&quot; has been turned off in the
-		<A HREF="#session_props">Session Properties</A>.
+	<DD>This option will commit the current SQL transaction. This is
+	only applicable if &quot;Auto Commit&quot; has been turned off in
+	the <A HREF="#session_props">Session Properties</A>.
 
 	<DT><B>Rollback</B>
-	<DD>This option will rollback the current SQL transaction. This is only
-		applicable if &quot;Auto Commit&quot; has been turned off in the
-		<A HREF="#session_props">Session Properties</A>.
+	<DD>This option will rollback the current SQL transaction. This is
+	only applicable if &quot;Auto Commit&quot; has been turned off in
+	the <A HREF="#session_props">Session Properties</A>.
 
 	<DT><B>Show Native SQL</B>
-	<DD>This option will append the native SQL for the current JDBC SQL into the
-		SQL entry area. E.G.
-		If you enter the following in an Oracle session
-<pre>
-    select * from table1
-	where entered_date = {d '2002-12-01'} 
-</pre>
-		then the following will be appended to the SQL entry area.
-<pre>
-    select * from table1 where
-		entered_date = TO_DATE ('2002-12-01', 'YYYY-MM-DD') 
-</pre>
+	<DD>This option will append the native SQL for the current JDBC
+	SQL into the SQL entry area. E.G.  If you enter the following in
+	an Oracle session <pre> select * from table1 where entered_date =
+	{d '2002-12-01'} </pre> then the following will be appended to the
+	SQL entry area.  <pre> select * from table1 where entered_date =
+	TO_DATE ('2002-12-01', 'YYYY-MM-DD') </pre>
 
 	<DT><B>Reconnect</B>
 	<DD>

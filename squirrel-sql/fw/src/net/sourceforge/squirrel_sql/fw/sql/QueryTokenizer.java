@@ -81,6 +81,7 @@ public class QueryTokenizer
 		{
 			iQuoteCount = 0;
 			iIndex1 = _sQuerys.indexOf(_querySepChar,iIndex1+1);
+
 			if(iIndex1 != -1)
 			{
 				int iIndex2 = _sQuerys.lastIndexOf('\'',iIndex1);
