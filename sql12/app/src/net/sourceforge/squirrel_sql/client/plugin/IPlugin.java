@@ -176,4 +176,12 @@ public interface IPlugin
 	 * 			An error occured retrieving/creating the folder.
 	 */
 	File getPluginUserSettingsFolder() throws IllegalStateException, IOException;
+
+   /**
+    * Allows a plugin to provide services to other plugins.
+    * @see PluginManager.bindExternalPluginService();
+    */
+   Object getExternalService();
+   
+
 }
