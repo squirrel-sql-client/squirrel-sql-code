@@ -302,8 +302,14 @@ public class ConnectionSheet extends BaseSheet {
 		gbl.setConstraints(dataEntryPnl, gbc);
 		contentPane.add(dataEntryPnl);
 
-		// Separated by a line.
+		// Next the case-sensitivity warning.
 		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.insets = new Insets(5, 10, 5, 10);
+		lbl = new JLabel("Warning - Caps lock may interfere with passwords");
+		gbl.setConstraints(lbl, gbc);
+		contentPane.add(lbl);
+
+		// Separated by a line.
 		sep = new JSeparator();
 		gbc.insets = new Insets(5, 10, 5, 10);
 		gbl.setConstraints(sep, gbc);
