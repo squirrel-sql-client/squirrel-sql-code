@@ -34,6 +34,7 @@ import javax.swing.JPanel;
 import javax.swing.MutableComboBoxModel;
 import javax.swing.SwingConstants;
 
+import net.sourceforge.squirrel_sql.fw.gui.DirectoryListComboBox;
 import net.sourceforge.squirrel_sql.fw.gui.LookAndFeelComboBox;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
@@ -161,7 +162,7 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
 			String THEMEPACK_LOC = "Skin Theme Packs:";
 		}
 		private LookAndFeelComboBox _lafCmb = new LookAndFeelComboBox();
-		private ThemePackComboBox _themePackCmb;
+		private DirectoryListComboBox _themePackCmb;
 
 		private LAFPlugin _plugin;
 		private LAFRegister _lafRegister;
@@ -224,6 +225,12 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
 		}
 
 		private JPanel createLookAndFeelPanel() {
+//			_themePackCmb = new ThemePackComboBox(_plugin.getSkinThemePackFolder());
+			_themePackCmb = new DirectoryListComboBox();
+			_themePackCmb.load(_plugin.getSkinThemePackFolder(),
+								new FileExtensionFilter("JAR files", new String[] { ".jar", ".zip" }));
+			_themePackCmb.setEnabled(false);
+
 			_lafCmb.setSelectedLookAndFeelClassName(_prefs.getLookAndFeelClassName());
 			_lafCmb.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
@@ -232,9 +239,6 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
 							_lafRegister.getSkinnableLookAndFeelName()));
 				}
 			});
-
-			_themePackCmb = new ThemePackComboBox(_plugin.getSkinThemePackFolder());
-			_themePackCmb.setEnabled(false);
 
 			JPanel pnl = new JPanel();
 			pnl.setBorder(BorderFactory.createTitledBorder("Look and Feel"));
@@ -274,6 +278,7 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
 			return pnl;
 		}
 
+/*
 		private class ThemePackComboBox extends JComboBox {
 			ThemePackComboBox(File themePackFolder) {
 				super();
@@ -291,5 +296,6 @@ public class LAFPreferencesPanel implements IGlobalPreferencesPanel {
 				}
 			}
 		}
+*/
 	}
 }

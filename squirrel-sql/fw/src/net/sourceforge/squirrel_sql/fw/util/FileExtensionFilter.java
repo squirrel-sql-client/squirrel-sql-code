@@ -18,9 +18,11 @@ package net.sourceforge.squirrel_sql.fw.util;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.io.File;
+import java.io.FilenameFilter;
 
-public class FileExtensionFilter extends javax.swing.filechooser.FileFilter
-				implements java.io.FileFilter {
+public class FileExtensionFilter
+				extends javax.swing.filechooser.FileFilter
+				implements java.io.FileFilter, FilenameFilter {
 
 	private String _description;
 	private String[] _exts;
@@ -40,22 +42,27 @@ public class FileExtensionFilter extends javax.swing.filechooser.FileFilter
 		_description = buf.toString();
 	}
 
+	public boolean accept(File dir, String name) {
+		return checkFileName(name.toLowerCase());
+	}
+
 	public boolean accept(File file) {
 		if (file.isDirectory()) {
 			return true;
 		}
+		return checkFileName(file.getName().toLowerCase());
+	}
 
-		String name = file.getName().toLowerCase();
+	public String getDescription() {
+		return _description;
+	}
+
+	private boolean checkFileName(String name) {
 		for (int i = 0; i < _exts.length; ++i) {
 			if (name.endsWith(_exts[i])) {
 				return true;
 			}
 		}
-
 		return false;
-	}
-
-	public String getDescription() {
-		return _description;
 	}
 }

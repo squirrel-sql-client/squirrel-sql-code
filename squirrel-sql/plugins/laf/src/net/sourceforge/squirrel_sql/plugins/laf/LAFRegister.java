@@ -323,7 +323,7 @@ class LAFRegister implements LAFConstants {
 						UIManager.installLookAndFeel(info);
 						lafNames.add(lafClass.getName());
 						if (lafClass.getName().equals(this.SKINNABLE_LAF_CLASS_NAME)) {
-							//??_skinLookAndFeelName = laf.getName();
+							_skinLookAndFeelName = laf.getName();
 						}
 					}
 				} catch (Throwable th) {
