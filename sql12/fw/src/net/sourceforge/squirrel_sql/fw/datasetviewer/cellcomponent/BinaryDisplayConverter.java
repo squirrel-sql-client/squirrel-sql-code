@@ -91,10 +91,6 @@ public class BinaryDisplayConverter {
 	 * Convert from an array of Bytes into a string.
 	 */
 	public static String convertToString(Byte[] data, int base, boolean showAscii) {
-		
-		// handle null
-		if (data == null)
-			return "<null>";
 
 		StringBuffer buf = new StringBuffer();
 		
@@ -108,10 +104,10 @@ public class BinaryDisplayConverter {
 			// if user wants to see ASCII chars as characters,
 			// see if this is one that should be displayed that way
 			if (showAscii) {
-				if (printable.indexOf((char)value) > -1) {
-					s = new Character((char)value) + 
-						"          ".substring(10-(convConst.width-1));
-				}
+if (printable.indexOf((char)value) > -1) {
+	s = new Character((char)value) +
+		"          ".substring(10-(convConst.width - 1));
+}
 			}
 			
 			// if use is not looking for ASCII chars, or if this one is one that
@@ -119,17 +115,17 @@ public class BinaryDisplayConverter {
 			if (s == null) {
 				switch (base) {
 					case DECIMAL:	
+						// convert signed to unsigned
 						if (value < 0)
 							value = 256 + value;
-						s = Integer.toString(value);
-						break;
+						s = Integer.toString(value); break;
 					case OCTAL:		s = Integer.toOctalString(value); break;
 					case BINARY:	s = Integer.toBinaryString(value); break;
 					case HEX:	// fall through to default
 					default:
 						s = Integer.toHexString(value);
 				}
-				// some formats (e.g. hex) extend a negative number to multiple places
+				// some formats (e.g. hex & octal) extend a negative number to multiple places
 				// (e.g. FC becomes FFFC), so chop off extra stuff in front
 				if (s.length() > convConst.width)
 					s = s.substring(s.length() - convConst.width);
@@ -167,15 +163,13 @@ public class BinaryDisplayConverter {
 			// get the text to be converted
 			String s = data.substring(stringIndex, stringIndex+convConst.width);
 			
-			// If the user is displaying ASCII chars as chars, then we need to
-			// convert the char into its numeric value.
-			// In all cases the display width is larger than 1, so if the
-			// byte is being displayed as a single ascii char, then the second
-			// char in the string will be a blank.  If it is being displayed
-			// as a numeric value, then the second char will not be a blank
-			// irrespective of what radix is being used.
+			// handle ASCII chars
+			// Irrespective of the radix, the second byte will always
+			// be a space when the data is displayed as a single ASCII character.
 			if (showAscii && s.charAt(1) == ' ') {
-				bytes[byteIndex++] = new Byte((byte)s.charAt(0));
+				// convert the char into its numeric value
+				bytes[byteIndex++] =
+					new Byte((byte)s.charAt(0));
 			}
 			else {
 
@@ -186,8 +180,8 @@ public class BinaryDisplayConverter {
 				// To get around this, we up-size the conversion to Integer, then 
 				// truncate that to a byte, and finally convert the byte to a Byte.  Yech.
 				bytes[byteIndex++] = new Byte(
-					(byte)(Integer.valueOf(s, convConst.radix)).intValue());
-			}		
+					(byte)(Integer.valueOf(s, convConst.radix)).intValue());	
+			}	
 
 			stringIndex += convConst.width + 2;
 		}
