@@ -13,7 +13,7 @@
 	<target name="init">
 		<tstamp/>
 		<property name="name" value="squirrel-sql"/>
-		<property name="version" value="1.2beta3"/>
+		<property name="version" value="1.2beta4"/>
 
 		<property name="dist_dir" value="${basedir}/../squirrel-sql-dist/${name}-${version}"/>
 		<property name="core_dist_dir" value="${dist_dir}/core/dist"/>
@@ -31,7 +31,7 @@
 		<property name="debug" value="on"/>
 		<property name="optimize" value="off"/>
 		<property name="deprecation" value="on"/>
-		
+
 		<property environment="env"/>
 		<echo message="ANT HOME: ${env.ANT_HOME}"/>
 		<echo message="JAVA HOME: ${env.JAVA_HOME}"/>
@@ -77,7 +77,7 @@
 		<echo message="--------------------------------------------------------"/>
 		<echo message=""/>
 	</target>
-		
+
 	<!--
 	==================================================================
 	Setup
@@ -112,7 +112,7 @@
 				</fileset>
 			</classpath>
 		</javac>
-			
+
 		<copy todir="${core_obj_dir}" >
 			<fileset dir="fw/src" >
 				<include name="**/*.gif"/>
@@ -124,7 +124,7 @@
 				<include name="**/*.properties"/>
 			</fileset>
 		</copy>
-			
+
 		<copy todir="${core_dist_lib_dir}">
 			<fileset dir="fw/lib">
 				<include name="**/*.*"/>
@@ -157,6 +157,9 @@
 				<fileset dir="fw/lib">
 					<include name="**/*.*"/>
 				</fileset>
+				<fileset dir="app/lib">
+					<include name="**/*.*"/>
+				</fileset>
 			</classpath>
 		</javac>
 		<copy todir="${core_obj_dir}" >
@@ -169,6 +172,12 @@
 				<include name="**/*.xml"/>
 				<include name="**/*.properties"/>
 				<include name="**/*.txt"/>
+			</fileset>
+		</copy>
+
+		<copy todir="${core_dist_lib_dir}">
+			<fileset dir="app/lib">
+				<include name="**/*.*"/>
 			</fileset>
 		</copy>
 
@@ -198,7 +207,7 @@
 			</fileset>
 		</copy>
 
-		<echo message="Unzip your plugins here" 
+		<echo message="Unzip your plugins here"
 			file="${core_dist_dir}/plugins/readme.txt">
 		</echo>
 	</target>
@@ -216,6 +225,9 @@
 					destdir="${basedir}/../javadoc">
 			<classpath>
 				<fileset dir="fw/lib">
+					<include name="**/*.*"/>
+				</fileset>
+				<fileset dir="app/lib">
 					<include name="**/*.*"/>
 				</fileset>
 			</classpath>
@@ -329,7 +341,7 @@
 		<delete file="${dist_dir}/${name}-src-${version}.tar"/>
 
 	</target>
-	
+
 	<!--
 	==================================================================
 	Make the distribution.
@@ -373,7 +385,7 @@
 	<target name="build_plugin">
 		<property name="lcl_this_plugin_src_dir" value="${plugins_src_dir}/${p_internal_name}"/>
 		<property name="lcl_this_plugin_dist_dir" value="${plugins_dist_dir}/${p_internal_name}"/>
-		
+
 		<mkdir dir="${lcl_this_plugin_dist_dir}/work"/>
 		<mkdir dir="${lcl_this_plugin_dist_dir}/dist/${p_internal_name}"/>
 		<ant	inheritAll="false" dir="${lcl_this_plugin_src_dir}"
@@ -399,7 +411,7 @@
 			src="${dist_dir}/${p_internal_name}.tar">
 		</gzip>
 		<delete file="${dist_dir}/${p_internal_name}.tar"/>
-		
+
 	</target>
 
 	<target name="make_jws" depends="compile_app">
