@@ -168,11 +168,18 @@ public interface IDataTypeComponent
 	
 	/**
 	 * When updating the database, insert the appropriate datatype into the
-	 * prepared statment at variable position 1.
+	 * prepared statment at the given variable position.
 	 */
-	public void setPreparedStatementValue(PreparedStatement pstmt, Object value)
+	public void setPreparedStatementValue(PreparedStatement pstmt, Object value, int position)
 		throws java.sql.SQLException;
 
+
+	/**
+	 * Get a default value for the table used to input data for a new row
+	 * to be inserted into the DB.
+	 */
+	public Object getDefaultValue(String dbDefaultValue);
+	
 
 	/*
 	 * File IO related functions
