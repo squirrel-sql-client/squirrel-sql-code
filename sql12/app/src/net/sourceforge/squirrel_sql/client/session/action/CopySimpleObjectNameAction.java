@@ -19,28 +19,27 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.IClientSession;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
  * This <CODE>Action</CODE> will copy the simple object names of all objects
  * currently in the object tree and place on the system clipboard.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class CopySimpleObjectNameAction
 	extends SquirrelAction
-	implements IClientSessionAction, CopyObjectNameCommand.ICopyTypes	
+	implements ISessionAction, CopyObjectNameCommand.ICopyTypes
 {
 	/** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(CopySimpleObjectNameAction.class);
 
 	/** Current session. */
-	private IClientSession _session;
+	private ISession _session;
 
 	/**
 	 * Ctor.
@@ -57,7 +56,7 @@ public class CopySimpleObjectNameAction
 	 *
 	 * @param	session		The current session.
 	 */
-	public void setClientSession(IClientSession session)
+	public void setSession(ISession session)
 	{
 		_session = session;
 	}

@@ -17,19 +17,18 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
-
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.session.IClientSession;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.util.ICommand;
 /**
  * This <CODE>ICommand</CODE> commits the current SQL transaction.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class CommitCommand implements ICommand
 {
 	/** Current session. */
-	private IClientSession _session;
+	private ISession _session;
 
 	/**
 	 * Ctor.
@@ -39,7 +38,7 @@ public class CommitCommand implements ICommand
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
 	 */
-	public CommitCommand(IClientSession session)
+	public CommitCommand(ISession session)
 	{
 		super();
 		if (session == null)

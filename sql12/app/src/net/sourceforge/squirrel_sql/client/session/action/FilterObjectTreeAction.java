@@ -19,13 +19,12 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.IClientSession;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeFilterDialog;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
  * This <CODE>Action</CODE> allows the user to filter the objects displayed
  * in the object tree.
@@ -33,14 +32,14 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTr
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class FilterObjectTreeAction extends SquirrelAction
-									implements IClientSessionAction
+									implements ISessionAction
 {
 	/** Logger for this class. */
 	private static ILogger s_log =
 		LoggerController.createLogger(FilterObjectTreeAction.class);
 
 	/** Current session. */
-	private IClientSession _session;
+	private ISession _session;
 
 	/**
 	 * Ctor.
@@ -57,7 +56,7 @@ public class FilterObjectTreeAction extends SquirrelAction
 	 *
 	 * @param	session		The current session.
 	 */
-	public void setClientSession(IClientSession session)
+	public void setSession(ISession session)
 	{
 		_session = session;
 	}

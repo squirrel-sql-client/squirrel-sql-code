@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,31 +19,28 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.session.IClientSession;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
  * This <CODE>Action</CODE> will set the default catalog for the session.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SetDefaultCatalogAction extends SquirrelAction
-									implements IClientSessionAction
+									implements ISessionAction
 {
 	/** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(SetDefaultCatalogAction.class);
 
 	/** Current session. */
-	private IClientSession _session;
+	private ISession _session;
 
 	/**
 	 * Ctor.
@@ -60,7 +57,7 @@ public class SetDefaultCatalogAction extends SquirrelAction
 	 *
 	 * @param	session	The current session.
 	 */
-	public void setClientSession(IClientSession session)
+	public void setSession(ISession session)
 	{
 		_session = session;
 	}
@@ -72,45 +69,37 @@ public class SetDefaultCatalogAction extends SquirrelAction
 	 */
 	public void actionPerformed(ActionEvent evt)
 	{
-			final IPlugin plugin = _session.getApplication().getDummyAppPlugin();
-			final IObjectTreeAPI treeAPI = _session.getObjectTreeAPI(plugin);
-			IDatabaseObjectInfo[] catalogs = treeAPI.getSelectedDatabaseObjects();
-			if (catalogs.length == 1)
-			{
-				String catalog = catalogs[0].getSimpleName();
-				try
-				{
-					new SetDefaultCatalogCommand(_session, catalog).execute();
-				}
-				catch (Throwable th)
-				{
-					_session.getMessageHandler().showErrorMessage(th);
-					s_log.error("Error occured setting session catalog to " + catalog, th);
-				}
-			}
-			else
-			{
-				_session.getApplication().showErrorDialog("Must select a single catalog");
-			}
-
-
-
-
-
-
-
-
-
-		IApplication app = getApplication();
-		CursorChanger cursorChg = new CursorChanger(app.getMainFrame());
-		cursorChg.show();
-		try
+		final IPlugin plugin = _session.getApplication().getDummyAppPlugin();
+		final IObjectTreeAPI treeAPI = _session.getObjectTreeAPI(plugin);
+		IDatabaseObjectInfo[] catalogs = treeAPI.getSelectedDatabaseObjects();
+		if (catalogs.length == 1)
 		{
-			new ShowNativeSQLCommand(_session).execute();
+			String catalog = catalogs[0].getSimpleName();
+			try
+			{
+				new SetDefaultCatalogCommand(_session, catalog).execute();
+			}
+			catch (Throwable th)
+			{
+				_session.getMessageHandler().showErrorMessage(th);
+				s_log.error("Error occured setting session catalog to " + catalog, th);
+			}
 		}
-		finally
+		else
 		{
-			cursorChg.restore();
+			_session.getApplication().showErrorDialog("Must select a single catalog");
 		}
+
+//		IApplication app = getApplication();
+//		CursorChanger cursorChg = new CursorChanger(app.getMainFrame());
+//		cursorChg.show();
+//		try
+//		{
+//			new ShowNativeSQLCommand(_session).execute();
+//		}
+//		finally
+//		{
+//			cursorChg.restore();
+//		}
 	}
 }

@@ -23,9 +23,9 @@ import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.IClientSession;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 
-public class ReconnectAction extends SquirrelAction implements IClientSessionAction
+public class ReconnectAction extends SquirrelAction implements ISessionAction
 {
 	private interface i18n
 	{
@@ -33,7 +33,7 @@ public class ReconnectAction extends SquirrelAction implements IClientSessionAct
 	}
 
 	/** Current session. */
-	private IClientSession _session;
+	private ISession _session;
 
 	/**
 	 * Ctor.
@@ -45,7 +45,7 @@ public class ReconnectAction extends SquirrelAction implements IClientSessionAct
 		super(app);
 	}
 
-	public void setClientSession(IClientSession session)
+	public void setSession(ISession session)
 	{
 		_session = session;
 	}
@@ -54,7 +54,7 @@ public class ReconnectAction extends SquirrelAction implements IClientSessionAct
 	 * Perform this action. Prompt the user and if they confirm then close the
 	 * current connection to the database and open a new one.
 	 *
-	 * @param   evt	 The current event.
+	 * @param	evt	 The current event.
 	 */
 	public void actionPerformed(ActionEvent evt) {
 		IApplication app = getApplication();

@@ -39,6 +39,8 @@ import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.ProxyHandler;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -76,6 +78,10 @@ class Application implements IApplication
 {
 	/** Logger for this class. */
 	private static ILogger s_log;
+
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(Application.class);
 
 	private SquirrelPreferences _prefs;
 	private SQLDriverManager _driverMgr;
@@ -116,7 +122,7 @@ class Application implements IApplication
 	private SQLHistory _sqlHistory;
 
 	/**
-	 * ctor.
+	 * Default ctor.
 	 */
 	Application()
 	{
@@ -181,9 +187,10 @@ class Application implements IApplication
 	 */
 	public void shutdown()
 	{
-		s_log.info("Application shutting down " + Calendar.getInstance().getTime());
+		s_log.info(s_stringMgr.getString("Application.shutdown",
+									Calendar.getInstance().getTime()));
 
-		_sessionManager.closeAllSessions();
+		_sessionWindowManager.closeAllSessions();
 		_pluginManager.unloadPlugins();
 
 		// Remember the currently selected entries in the
@@ -206,7 +213,8 @@ class Application implements IApplication
 		}
 		catch (Throwable th)
 		{
-			String msg = "Error occured saving Driver Definitions";
+			String msg = s_stringMgr.getString("Application.error.driversave",
+												th.getMessage());
 			showErrorDialog(msg, th);
 			s_log.error(msg, th);
 		}
@@ -218,7 +226,13 @@ class Application implements IApplication
 		}
 		catch (Throwable th)
 		{
-			String msg = "Error occured saving Alias Definitions";
+			String thMsg = th.getMessage();
+			if (thMsg == null)
+			{
+				thMsg = "";
+			}
+			String msg = s_stringMgr.getString("Application.error.aliassave",
+												th.getMessage());
 			showErrorDialog(msg, th);
 			s_log.error(msg, th);
 		}
@@ -232,7 +246,9 @@ class Application implements IApplication
 		// Save Application level SQL history.
 		saveSQLHistory();
 
-		s_log.info("Application shutdown complete " + Calendar.getInstance().getTime());
+		String msg = s_stringMgr.getString("Application.shutdowncomplete",
+										Calendar.getInstance().getTime());
+		s_log.info(msg);
 		LoggerController.shutdown();
 	}
 
@@ -391,7 +407,7 @@ class Application implements IApplication
 		}
 		else
 		{
-			throw new IllegalStateException("Cannot add items to menus prior to menu being created.");
+			throw new IllegalStateException(s_stringMgr.getString("Application.error.menuadding"));
 		}
 	}
 
@@ -403,7 +419,7 @@ class Application implements IApplication
 		}
 		else
 		{
-			throw new IllegalStateException("Cannot add items to menus prior to menu being created.");
+			throw new IllegalStateException(s_stringMgr.getString("Application.error.menuadding"));
 		}
 	}
 
@@ -420,7 +436,7 @@ class Application implements IApplication
 		}
 		else
 		{
-			throw new IllegalStateException("Cannot add items to mainframe prior to it being created.");
+			throw new IllegalStateException(s_stringMgr.getString("Application.error.compadding"));
 		}
 	}
 
@@ -437,7 +453,7 @@ class Application implements IApplication
 		}
 		else
 		{
-			throw new IllegalStateException("Cannot remove items from mainframe prior to it being created.");
+			throw new IllegalStateException(s_stringMgr.getString("Application.error.compremoving"));
 		}
 	}
 
@@ -459,14 +475,14 @@ class Application implements IApplication
 			throw new IllegalArgumentException("ApplicationArguments == null");
 		}
 
-		indicateNewStartupTask(splash, "Initializing UI factories...");
+		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.uifactoryinit"));
 		AliasMaintSheetFactory.initialize(this);
 		DriverMaintSheetFactory.initialize(this);
 //		SessionPropertiesSheetFactory.initialize(this);
 //		SQLFilterSheetFactory.initialize(this);
 		_sessionWindowManager = new SessionWindowManager(this);
 
-		indicateNewStartupTask(splash, "Loading preferences...");
+		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadingprefs"));
 		_prefs = SquirrelPreferences.load();
 		preferencesHaveChanged(null);
 		_prefs.addPropertyChangeListener(
@@ -482,9 +498,16 @@ class Application implements IApplication
 		UIFactory.initialize(_prefs);
 
 		final boolean loadPlugins = args.getLoadPlugins();
-		indicateNewStartupTask(splash, loadPlugins ? "Loading plugins..." : "No Plugins are to be loaded...");
-		_pluginManager = new PluginManager(this);
 		if (loadPlugins)
+		{
+			indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadingplugins"));
+		}
+		else
+		{
+			indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.notloadingplugins"));
+		}
+		_pluginManager = new PluginManager(this);
+		if (args.getLoadPlugins())
 		{
 			_pluginManager.loadPlugins();
 		}

@@ -19,35 +19,34 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import java.awt.event.ActionEvent;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.IClientSession;
 /**
  * This <TT>Action</TT> will display the next results tab for the
  * current session.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class GotoNextResultsTabAction extends SquirrelAction
-									implements IClientSessionAction
+									implements ISessionAction
 {
 	/** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(GotoNextResultsTabAction.class);
 
 	/** Current session. */
-	private IClientSession _session;
+	private ISession _session;
 
 	/** Command that will be executed by this action. */
 	private ICommand _cmd;
 
 	/**
 	 * Ctor specifying Application API.
-	 * 
+	 *
 	 * @param	app	Application API.
 	 */
 	public GotoNextResultsTabAction(IApplication app)
@@ -57,10 +56,10 @@ public class GotoNextResultsTabAction extends SquirrelAction
 
 	/**
 	 * A new session has been activated.
-	 * 
+	 *
 	 * @param	session	The new session.
 	 */
-	public void setClientSession(IClientSession session)
+	public void setSession(ISession session)
 	{
 		_session = session;
 		_cmd = null;
@@ -68,7 +67,7 @@ public class GotoNextResultsTabAction extends SquirrelAction
 
 	/**
 	 * Display the next results tab.
-	 * 
+	 *
 	 * @param	evt		Event being executed.
 	 */
 	public synchronized void actionPerformed(ActionEvent evt)

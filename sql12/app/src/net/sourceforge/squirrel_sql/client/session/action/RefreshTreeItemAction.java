@@ -26,19 +26,19 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.IClientSession;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
- * @version 	$Id: RefreshTreeItemAction.java,v 1.3 2003-03-05 10:27:53 colbell Exp $
+ * @version 	$Id: RefreshTreeItemAction.java,v 1.4 2003-09-13 22:50:29 colbell Exp $
  * @author		Johan Compagner
  */
 public class RefreshTreeItemAction extends SquirrelAction
-										implements IClientSessionAction
+										implements ISessionAction
 {
 	/** Logger for this class. */
 	private static ILogger s_log =
 		LoggerController.createLogger(RefreshTreeItemAction.class);
 
-	private IClientSession _session;
+	private ISession _session;
 
 	/**
 	 * Constructor for DropTableAction.
@@ -82,7 +82,7 @@ public class RefreshTreeItemAction extends SquirrelAction
 	/*
 	 * @see IClientSessionAction#setSession(ISession)
 	 */
-	public void setClientSession(IClientSession session)
+	public void setSession(ISession session)
 	{
 		_session = session;
 	}

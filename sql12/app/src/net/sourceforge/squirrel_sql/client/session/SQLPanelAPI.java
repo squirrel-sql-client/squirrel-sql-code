@@ -33,22 +33,22 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 public class SQLPanelAPI implements ISQLPanelAPI
 {
 	/** Session containing the SQL Panel. */
-	private IClientSession _session;
+	private ISession _session;
 
 	/**
 	 * Ctor specifying the session.
 	 *
-	 * @param	session	<TT>IClientSession</TT> containing the SQL Panel.
+	 * @param	session	<TT>ISession</TT> containing the SQL Panel.
 	 *
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if <T>null</TT> <TT>IClientSession</TT> passed.
+	 * 			Thrown if <T>null</TT> <TT>ISession</TT> passed.
 	 */
-	SQLPanelAPI(IClientSession session)
+	SQLPanelAPI(ISession session)
 	{
 		super();
 		if (session == null)
 		{
-			throw new IllegalArgumentException("IClientSession == null");
+			throw new IllegalArgumentException("ISession == null");
 		}
 		_session = session;
 	}

@@ -57,7 +57,7 @@ import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-class Session implements IClientSession
+class Session implements ISession
 {
 	/** Logger for this class. */
 	private static final ILogger s_log =
@@ -194,13 +194,9 @@ class Session implements IClientSession
 			}
 			finally
 			{
-				
-				
-
 				// This is set here as SessionSheet.dispose() will attempt
 				// to close the session.
 				_closed = true;
-
 
 				fireSessionClosedEvent();
 

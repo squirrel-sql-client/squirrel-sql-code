@@ -24,23 +24,23 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.IClientSession;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public class CloseSessionAction extends SquirrelAction
-									implements IClientSessionAction
+									implements ISessionAction
 {
 	/** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(DumpSessionAction.class);
 
-	private IClientSession _session;
+	private ISession _session;
 
 	public CloseSessionAction(IApplication app)
 	{
 		super(app);
 	}
 
-	public void setClientSession(IClientSession session)
+	public void setSession(ISession session)
 	{
 		_session = session;
 	}

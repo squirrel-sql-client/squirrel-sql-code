@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -24,12 +24,11 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import net.sourceforge.squirrel_sql.client.session.IClientSession;
-
+import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
  * This command will set the default catalog for a session.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SetDefaultCatalogCommand implements ICommand
 {
@@ -38,7 +37,7 @@ public class SetDefaultCatalogCommand implements ICommand
 		LoggerController.createLogger(SetDefaultCatalogCommand.class);
 
 	/** Current session. */
-	private final IClientSession _session;
+	private final ISession _session;
 
 	/** Catalog. */
 	private final String _catalog;
@@ -52,12 +51,12 @@ public class SetDefaultCatalogCommand implements ICommand
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> or <TT>catalog</TT> passed.
 	 */
-	public SetDefaultCatalogCommand(IClientSession session, String catalog)
+	public SetDefaultCatalogCommand(ISession session, String catalog)
 	{
 		super();
 		if (session == null)
 		{
-			throw new IllegalArgumentException("IClientSession == null");
+			throw new IllegalArgumentException("ISession == null");
 		}
 		if (catalog == null)
 		{

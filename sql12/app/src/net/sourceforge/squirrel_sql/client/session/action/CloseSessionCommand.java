@@ -17,21 +17,19 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.SQLException;
-
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
-import net.sourceforge.squirrel_sql.client.session.IClientSession;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
  * This <CODE>ICommand</CODE> closes the specified session.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class CloseSessionCommand implements ICommand
 {
 	/** Session to be closed. */
-	private IClientSession _session;
+	private ISession _session;
 
 	/**
 	 * Ctor.
@@ -41,7 +39,7 @@ public class CloseSessionCommand implements ICommand
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
 	 */
-	public CloseSessionCommand(IClientSession session)
+	public CloseSessionCommand(ISession session)
 	{
 		super();
 		if (session == null)
@@ -56,13 +54,13 @@ public class CloseSessionCommand implements ICommand
 	 */
 	public void execute() throws BaseException
 	{
-		try
-		{
-			_session.close();
-		}
-		catch (SQLException ex)
-		{
-			throw new BaseException(ex);
-		}
+//		try
+//		{
+			_session.getApplication().getSessionWindowManager().closeSession(_session);
+//		}
+//		catch (SQLException ex)
+//		{
+//			throw new BaseException(ex);
+//		}
 	}
 }

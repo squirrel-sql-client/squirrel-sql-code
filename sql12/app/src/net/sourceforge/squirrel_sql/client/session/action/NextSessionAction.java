@@ -25,7 +25,6 @@ import net.sourceforge.squirrel_sql.fw.gui.action.SelectInternalFrameCommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.IClientSession;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
  * This action will bring the window for the <EM>next</EM> session
@@ -34,16 +33,16 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  * @author Gerd Wagner
  */
 public class NextSessionAction extends SquirrelAction
-								implements IClientSessionAction
+								implements ISessionAction
 {
-	private IClientSession _session;
+	private ISession _session;
 
 	public NextSessionAction(IApplication app)
 	{
 		super(app);
 	}
 
-	public void setClientSession(IClientSession session)
+	public void setSession(ISession session)
 	{
 		_session = session;
 	}

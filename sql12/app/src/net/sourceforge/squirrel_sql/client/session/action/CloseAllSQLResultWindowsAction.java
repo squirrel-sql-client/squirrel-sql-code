@@ -19,22 +19,21 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.IClientSession;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 /**
  * This <CODE>Action</CODE> allows the user to close all the SQL
  * result windows for the current session.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class CloseAllSQLResultWindowsAction extends SquirrelAction
-												implements IClientSessionAction
+												implements ISessionAction
 {
 	/** Current session. */
-	private IClientSession _session;
+	private ISession _session;
 
 	/**
 	 * Ctor.
@@ -51,7 +50,7 @@ public class CloseAllSQLResultWindowsAction extends SquirrelAction
 	 *
 	 * @param	session		The current session.
 	 */
-	public void setClientSession(IClientSession session)
+	public void setSession(ISession session)
 	{
 		_session = session;
 	}
