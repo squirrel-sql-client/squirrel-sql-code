@@ -51,8 +51,8 @@ public abstract class AbstractJoin extends CodeCompletionFunction
          Vector tables = new Vector();
          while(st.hasMoreTokens())
          {
-            String table = st.nextToken().trim();
-            if(false == _session.getSchemaInfo().isTable(table))
+            String table = _session.getSchemaInfo().getCaseSensitiveTableName(st.nextToken().trim());
+            if(null == table)
             {
                _session.getMessageHandler().showMessage("unknown table " + table);
                return null;
@@ -66,6 +66,7 @@ public abstract class AbstractJoin extends CodeCompletionFunction
          ResultSet resSchema = jdbcMetaData.getTables(catalog, null, (String) tables.get(0), new String[]{"TABLE"});
          resSchema.next();
          String schema = resSchema.getString("TABLE_SCHEM");
+         resSchema.close();
 
 
          Vector completions = new Vector();
@@ -78,9 +79,11 @@ public abstract class AbstractJoin extends CodeCompletionFunction
             ResultSet res;
             res = jdbcMetaData.getImportedKeys(catalog, schema, (String) tables.get(i-1));
             fillConditionByFkName(res, (String)tables.get(i-1), (String)tables.get(i), conditionByFkName, colBuffersByFkName);
+            res.close();
 
             res = jdbcMetaData.getExportedKeys(catalog, schema, (String) tables.get(i-1));
             fillConditionByFkName(res, (String)tables.get(i-1), (String)tables.get(i), conditionByFkName, colBuffersByFkName);
+            res.close();
 
 
             Vector twoTableCompletions = new Vector();
