@@ -25,7 +25,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 /**
- * This tab shows the column privilige info for the currently selected table.
+ * This tab shows the column privilege info for the currently selected table.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
@@ -37,7 +37,7 @@ public class ColumnPriviligesTab extends BaseTableTab
 	 */
 	private interface i18n
 	{
-		String TITLE = "Column Priviliges";
+		String TITLE = "Column Privileges";
 		String HINT = "Show access rights for columns";
 	}
 

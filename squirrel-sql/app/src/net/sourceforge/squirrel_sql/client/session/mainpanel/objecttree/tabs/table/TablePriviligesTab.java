@@ -25,7 +25,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 /**
- * This tab shows the table privilige info for the currently selected table.
+ * This tab shows the table privilege info for the currently selected table.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
@@ -37,7 +37,7 @@ public class TablePriviligesTab extends BaseTableTab
 	 */
 	private interface i18n
 	{
-		String TITLE = "Priviliges";
+		String TITLE = "Privileges";
 		String HINT = "Show access rights for table";
 	}
 
