@@ -3,19 +3,19 @@ package net.sourceforge.squirrel_sql.plugins.jedit;
  * Copyright (C) 2002 Colin Bell
  * colbell@users.sourceforge.net
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -35,16 +35,15 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 public class BlockCaret extends DefaultCaret
 {
 	/** Logger for this class. */
-	private static final ILogger s_log =
-						LoggerController.createLogger(BlockCaret.class);
+	private static final ILogger s_log = LoggerController.createLogger(BlockCaret.class);
 
 	/** Width of caret. */
 	private int _caretWidth = -1;
 
 	/**
 	 * Paint this caret.
-	 * 
-	 * g	Graphics environment to paint into.
+	 *
+	 * @param    g    Graphics environment to paint into.
 	 */
 	public void paint(Graphics g)
 	{
@@ -56,13 +55,14 @@ public class BlockCaret extends DefaultCaret
 				final int dot = getDot();
 				final FontMetrics fm = g.getFontMetrics();
 				_caretWidth = fm.charWidth('w');
+
 				final Rectangle rc = textArea.modelToView(dot);
 				g.setColor(textArea.getCaretColor());
 				g.drawRect(rc.x, rc.y, _caretWidth, rc.height - 1);
 			}
-			catch (BadLocationException e)
+			catch (BadLocationException ex)
 			{
-				System.err.println(e);
+				s_log.error("BadLocationException when drawing caret", ex);
 			}
 		}
 	}

@@ -16,11 +16,12 @@
 * License along with this library; if not, write to the Free Software
 * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 */
-
 package org.gjt.sp.jedit.syntax;
 
-import javax.swing.text.*;
 import java.awt.Color;
+
+import javax.swing.text.*;
+
 
 /**
 * Class with several segment and bracket matching functions used by
@@ -28,229 +29,269 @@ import java.awt.Color;
 * the default color table.
 *
 * @author Slava Pestov
-* @version $Id: SyntaxUtilities.java,v 1.1 2002-12-06 22:50:19 colbell Exp $
+* @version $Id: SyntaxUtilities.java,v 1.2 2002-12-21 00:34:18 colbell Exp $
 */
 public class SyntaxUtilities
 {
-    /**
-     * Checks if a subregion of a <code>Segment</code> is equal to a
-     * string.
-     * @param ignoreCase True if case should be ignored, false otherwise
-     * @param text The segment
-     * @param offset The offset into the segment
-     * @param match The string to match
-     */
-    public static boolean regionMatches(boolean ignoreCase, Segment text,
-                                        int offset, String match)
-    {
-        int length = offset + match.length();
-        char[] textArray = text.array;
-        if(length > textArray.length)
-            return false;
-        for(int i = offset, j = 0; i < length; i++, j++)
-            {
-                char c1 = textArray[i];
-                char c2 = match.charAt(j);
-                if(ignoreCase)
-                    {
-                        c1 = Character.toUpperCase(c1);
-                        c2 = Character.toUpperCase(c2);
-                    }
-                if(c1 != c2)
-                    return false;
-            }
-        return true;
-    }
+	// private members
+	private SyntaxUtilities() {}
 
-    /**
-     * Checks if a subregion of a <code>Segment</code> is equal to a
-     * character array.
-     * @param ignoreCase True if case should be ignored, false otherwise
-     * @param text The segment
-     * @param offset The offset into the segment
-     * @param match The character array to match
-     */
-    public static boolean regionMatches(boolean ignoreCase, Segment text,
-                                        int offset, char[] match)
-    {
-        int length = offset + match.length;
-        char[] textArray = text.array;
-        if(length > textArray.length)
-            return false;
-        for(int i = offset, j = 0; i < length; i++, j++)
-            {
-                char c1 = textArray[i];
-                char c2 = match[j];
-                if(ignoreCase)
-                    {
-                        c1 = Character.toUpperCase(c1);
-                        c2 = Character.toUpperCase(c2);
-                    }
-                if(c1 != c2)
-                    return false;
-            }
-        return true;
-    }
+	/**
+ * Checks if a subregion of a <code>Segment</code> is equal to a
+ * string.
+ * @param ignoreCase True if case should be ignored, false otherwise
+ * @param text The segment
+ * @param offset The offset into the segment
+ * @param match The string to match
+ */
+	public static boolean regionMatches(boolean ignoreCase, Segment text,
+		int offset, String match)
+	{
+		int length = offset + match.length();
+		char[] textArray = text.array;
 
-    /**
-     * Finds the previous instance of an opening bracket in the buffer.
-     * The closing bracket is needed as well to handle nested brackets
-     * properly.
-     * @param doc The document to search in
-     * @param dot The starting position
-     * @param openBracket The opening bracket
-     * @param closeBracket The closing bracket
-     * @exception BadLocationException if `dot' is out of range
-     */
-    public static int locateBracketBackward(Document doc, int dot,
-                                            char openBracket, char closeBracket)
-         throws BadLocationException
-    {
-        int count;
-        Element map = doc.getDefaultRootElement();
+		if (length > textArray.length)
+		{
+			return false;
+		}
 
-        // check current line
-        int lineNo = map.getElementIndex(dot);
-        Element lineElement = map.getElement(lineNo);
-        int start = lineElement.getStartOffset();
-        int offset = scanBackwardLine(doc.getText(start,dot - start),
-                                      openBracket,closeBracket,0);
-        count = -offset - 1;
-        if(offset >= 0)
-            return start + offset;
+		for (int i = offset, j = 0; i < length; i++, j++)
+		{
+			char c1 = textArray[i];
+			char c2 = match.charAt(j);
 
-        // check previous lines
-        for(int i = lineNo - 1; i >= 0; i--)
-            {
-                lineElement = map.getElement(i);
-                start = lineElement.getStartOffset();
-                offset = scanBackwardLine(doc.getText(start,
-                                                      lineElement.getEndOffset() - start),
-                                          openBracket,closeBracket,count);
-                count = -offset - 1;
-                if(offset >= 0)
-                    return start + offset;
-            }
+			if (ignoreCase)
+			{
+				c1 = Character.toUpperCase(c1);
+				c2 = Character.toUpperCase(c2);
+			}
 
-        // not found
-        return -1;
-    }
+			if (c1 != c2)
+			{
+				return false;
+			}
+		}
 
-    /**
-     * Finds the next instance of a closing bracket in the buffer.
-     * The opening bracket is needed as well to handle nested brackets
-     * properly.
-     * @param doc The document to search in
-     * @param dot The starting position
-     * @param openBracket The opening bracket
-     * @param closeBracket The closing bracket
-     * @exception BadLocationException if `dot' is out of range
-     */
-    public static int locateBracketForward(Document doc, int dot,
-                                           char openBracket, char closeBracket)
-         throws BadLocationException
-    {
-        int count;
-        Element map = doc.getDefaultRootElement();
+		return true;
+	}
 
-        // check current line
-        int lineNo = map.getElementIndex(dot);
-        Element lineElement = map.getElement(lineNo);
-        int start = lineElement.getStartOffset();
-        int end = lineElement.getEndOffset();
-        int offset = scanForwardLine(doc.getText(dot + 1,end - (dot + 1)),
-                                     openBracket,closeBracket,0);
-        count = -offset - 1;
-        if(offset >= 0)
-            return dot + offset + 1;
+	/**
+ * Checks if a subregion of a <code>Segment</code> is equal to a
+ * character array.
+ * @param ignoreCase True if case should be ignored, false otherwise
+ * @param text The segment
+ * @param offset The offset into the segment
+ * @param match The character array to match
+ */
+	public static boolean regionMatches(boolean ignoreCase, Segment text,
+		int offset, char[] match)
+	{
+		int length = offset + match.length;
+		char[] textArray = text.array;
 
-        // check following lines
-        for(int i = lineNo + 1; i < map.getElementCount(); i++)
-            {
-                lineElement = map.getElement(i);
-                start = lineElement.getStartOffset();
-                offset = scanForwardLine(doc.getText(start,
-                                                     lineElement.getEndOffset() - start),
-                                         openBracket,closeBracket,count);
-                count = -offset - 1;
-                if(offset >= 0)
-                    return start + offset;
-            }
+		if (length > textArray.length)
+		{
+			return false;
+		}
 
-        // not found
-        return -1;
-    }
+		for (int i = offset, j = 0; i < length; i++, j++)
+		{
+			char c1 = textArray[i];
+			char c2 = match[j];
 
-    /**
-     * Returns the default color table. This can be passed to the
-     * <code>setColors()</code> method of <code>SyntaxDocument</code>
-     * to use the default syntax colors.
-     */
-    public static Color[] getDefaultSyntaxColors()
-    {
-        Color[] colors = new Color[Token.ID_COUNT];
+			if (ignoreCase)
+			{
+				c1 = Character.toUpperCase(c1);
+				c2 = Character.toUpperCase(c2);
+			}
 
-        colors[Token.COMMENT1] = new Color(0x1a1a80);    // private comment
-        colors[Token.COMMENT2] = colors[Token.COMMENT1]; // javadoc comment
-        colors[Token.COMMENT3] = colors[Token.COMMENT1]; // stand-out comment
-        colors[Token.KEYWORD1] = new Color(0xcc0033);    // red(ish)
-        colors[Token.KEYWORD2] = new Color(0xcc8033);
-        colors[Token.KEYWORD3] = new Color(0x996699);
-        colors[Token.LITERAL1] = new Color(0x339933);     // string, green(ish)
-        colors[Token.LITERAL2] = new Color(0x338033);
-        colors[Token.LABEL] = new Color(0x990000);
-        colors[Token.OPERATOR] = new Color(0xcc9900);
-        colors[Token.INVALID] = new Color(0xff3300);
-		colors[Token.TABLE] = Color.yellow;
-		colors[Token.COLUMN] = Color.blue;
+			if (c1 != c2)
+			{
+				return false;
+			}
+		}
 
-        return colors;
-    }
+		return true;
+	}
 
-    // private members
-    private SyntaxUtilities() {}
-    private static Color[] COLORS;
+	/**
+ * Finds the previous instance of an opening bracket in the buffer.
+ * The closing bracket is needed as well to handle nested brackets
+ * properly.
+ * @param doc The document to search in
+ * @param dot The starting position
+ * @param openBracket The opening bracket
+ * @param closeBracket The closing bracket
+ * @exception BadLocationException if `dot' is out of range
+ */
+	public static int locateBracketBackward(Document doc, int dot,
+		char openBracket, char closeBracket) throws BadLocationException
+	{
+		int count;
+		Element map = doc.getDefaultRootElement();
 
-    // the return value is as follows:
-    // >= 0: offset in line where bracket was found
-    // < 0: -1 - count
-    private static int scanBackwardLine(String line, char openBracket,
-                                        char closeBracket, int count)
-    {
-        for(int i = line.length() - 1; i >= 0; i--)
-            {
-                char c = line.charAt(i);
-                if(c == closeBracket)
-                    count++;
-                else if(c == openBracket)
-                    {
-                        if(--count < 0)
-                            return i;
-                    }
-            }
-        return -1 - count;
-    }
+		// check current line
+		int lineNo = map.getElementIndex(dot);
+		Element lineElement = map.getElement(lineNo);
+		int start = lineElement.getStartOffset();
+		int offset = scanBackwardLine(doc.getText(start, dot - start),
+				openBracket, closeBracket, 0);
+		count = -offset - 1;
 
-    // the return value is as follows:
-    // >= 0: offset in line where bracket was found
-    // < 0: -1 - count
-    private static int scanForwardLine(String line, char openBracket,
-                                       char closeBracket, int count)
-    {
-        for(int i = 0; i < line.length(); i++)
-            {
-                char c = line.charAt(i);
-                if(c == openBracket)
-                    count++;
-                else if(c == closeBracket)
-                    {
-                        if(--count < 0)
-                            return i;
-                    }
-            }
-        return -1 - count;
-    }
+		if (offset >= 0)
+		{
+			return start + offset;
+		}
+
+		// check previous lines
+		for (int i = lineNo - 1; i >= 0; i--)
+		{
+			lineElement = map.getElement(i);
+			start = lineElement.getStartOffset();
+			offset = scanBackwardLine(doc.getText(start,
+						lineElement.getEndOffset() - start), openBracket,
+					closeBracket, count);
+			count = -offset - 1;
+
+			if (offset >= 0)
+			{
+				return start + offset;
+			}
+		}
+
+		// not found
+		return -1;
+	}
+
+	/**
+ * Finds the next instance of a closing bracket in the buffer.
+ * The opening bracket is needed as well to handle nested brackets
+ * properly.
+ * @param doc The document to search in
+ * @param dot The starting position
+ * @param openBracket The opening bracket
+ * @param closeBracket The closing bracket
+ * @exception BadLocationException if `dot' is out of range
+ */
+	public static int locateBracketForward(Document doc, int dot,
+		char openBracket, char closeBracket) throws BadLocationException
+	{
+		int count;
+		Element map = doc.getDefaultRootElement();
+
+		// check current line
+		int lineNo = map.getElementIndex(dot);
+		Element lineElement = map.getElement(lineNo);
+		int start = lineElement.getStartOffset();
+		int end = lineElement.getEndOffset();
+		int offset = scanForwardLine(doc.getText(dot + 1, end - (dot + 1)),
+				openBracket, closeBracket, 0);
+		count = -offset - 1;
+
+		if (offset >= 0)
+		{
+			return dot + offset + 1;
+		}
+
+		// check following lines
+		for (int i = lineNo + 1; i < map.getElementCount(); i++)
+		{
+			lineElement = map.getElement(i);
+			start = lineElement.getStartOffset();
+			offset = scanForwardLine(doc.getText(start,
+						lineElement.getEndOffset() - start), openBracket,
+					closeBracket, count);
+			count = -offset - 1;
+
+			if (offset >= 0)
+			{
+				return start + offset;
+			}
+		}
+
+		// not found
+		return -1;
+	}
+
+	/**
+ * Returns the default style table. This can be passed to the
+ * <code>setStyles()</code> method of <code>SyntaxDocument</code>
+ * to use the default syntax styles.
+ */
+	public static SyntaxStyle[] getDefaultSyntaxStyles()
+	{
+		SyntaxStyle[] styles = new SyntaxStyle[Token.ID_COUNT];
+
+		styles[Token.NULL] = new SyntaxStyle(Color.black, false, false);
+		styles[Token.COMMENT1] = new SyntaxStyle(Color.black, true, false);
+		styles[Token.COMMENT2] = new SyntaxStyle(new Color(0x990033), true, false);
+		styles[Token.KEYWORD] = new SyntaxStyle(Color.black, false, true);
+		styles[Token.DATA_TYPE] = new SyntaxStyle(Color.magenta, false, false);
+		styles[Token.FUNCTION] = new SyntaxStyle(new Color(0x009600), false, false);
+		styles[Token.LITERAL1] = new SyntaxStyle(new Color(0x650099), false, false);
+		styles[Token.LITERAL2] = new SyntaxStyle(new Color(0x650099), false, true);
+		styles[Token.LABEL] = new SyntaxStyle(new Color(0x990033), false, true);
+		styles[Token.OPERATOR] = new SyntaxStyle(Color.black, false, true);
+		styles[Token.INVALID] = new SyntaxStyle(Color.red, false, true);
+		styles[Token.TABLE] = new SyntaxStyle(new Color(0, 153, 153), false, false);
+		styles[Token.COLUMN] = new SyntaxStyle(Color.blue, false, false);
+
+		return styles;
+	}
+
+	// the return value is as follows:
+	// >= 0: offset in line where bracket was found
+	// < 0: -1 - count
+	private static int scanBackwardLine(String line, char openBracket,
+		char closeBracket, int count)
+	{
+		for (int i = line.length() - 1; i >= 0; i--)
+		{
+			char c = line.charAt(i);
+
+			if (c == closeBracket)
+			{
+				count++;
+			}
+			else if (c == openBracket)
+			{
+				if (--count < 0)
+				{
+					return i;
+				}
+			}
+		}
+
+		return -1 - count;
+	}
+
+	// the return value is as follows:
+	// >= 0: offset in line where bracket was found
+	// < 0: -1 - count
+	private static int scanForwardLine(String line, char openBracket,
+		char closeBracket, int count)
+	{
+		for (int i = 0; i < line.length(); i++)
+		{
+			char c = line.charAt(i);
+
+			if (c == openBracket)
+			{
+				count++;
+			}
+			else if (c == closeBracket)
+			{
+				if (--count < 0)
+				{
+					return i;
+				}
+			}
+		}
+
+		return -1 - count;
+	}
 }
+
 
 /*
 * ChangeLog:

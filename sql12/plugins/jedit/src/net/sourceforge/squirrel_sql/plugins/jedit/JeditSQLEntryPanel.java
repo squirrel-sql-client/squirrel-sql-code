@@ -3,19 +3,19 @@ package net.sourceforge.squirrel_sql.plugins.jedit;
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
@@ -23,11 +23,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
-import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
 
@@ -46,8 +46,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 public class JeditSQLEntryPanel extends BaseSQLEntryPanel
 {
 	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(JeditSQLEntryPanel.class);
+	private static final ILogger s_log = LoggerController.createLogger(JeditSQLEntryPanel.class);
 
 	/** Application API. */
 	private IApplication _app;
@@ -55,7 +54,7 @@ public class JeditSQLEntryPanel extends BaseSQLEntryPanel
 	/** Text component. */
 	private MyTextArea _textArea;
 
-	/** Scroll pane for text control. */
+	/** Scroller wrapped around the text component. */
 	private JScrollPane _scroller;
 
 	/** Popup menu for this component. */
@@ -64,17 +63,21 @@ public class JeditSQLEntryPanel extends BaseSQLEntryPanel
 	/** Listener for displaying the popup menu. */
 	private MouseListener _sqlEntryMouseListener = new MyMouseListener();
 
-	JeditSQLEntryPanel(ISession session, JeditPlugin plugin, JeditPreferences prefs)
+	JeditSQLEntryPanel(ISession session, JeditPlugin plugin,
+						JeditPreferences prefs)
 	{
 		super();
+
 		if (session == null)
 		{
 			throw new IllegalArgumentException("Null ISession passed");
 		}
+
 		if (plugin == null)
 		{
 			throw new IllegalArgumentException("Null JeditPlugin passed");
 		}
+
 		if (prefs == null)
 		{
 			throw new IllegalArgumentException("Null JeditPreferences passed");
@@ -84,6 +87,7 @@ public class JeditSQLEntryPanel extends BaseSQLEntryPanel
 
 		_textArea = new MyTextArea(session.getSQLConnection(), prefs);
 		_scroller = new JScrollPane(_textArea);
+		_scroller.setBorder(BorderFactory.createEmptyBorder());
 	}
 
 	/**
@@ -102,6 +106,11 @@ public class JeditSQLEntryPanel extends BaseSQLEntryPanel
 		return _textArea.getText();
 	}
 
+	public void setFont(Font font)
+	{
+		_textArea.setFont(font);
+	}
+
 	/**
 	 * @see ISQLEntryPanel#getSelectedText()
 	 */
@@ -113,7 +122,7 @@ public class JeditSQLEntryPanel extends BaseSQLEntryPanel
 	/**
 	 * Replace the contents of the SQL entry area with the passed
 	 * SQL script without selecting it.
-	 * 
+	 *
 	 * @param	sqlScript	The script to be placed in the SQL entry area..
 	 */
 	public void setText(String text)
@@ -124,10 +133,10 @@ public class JeditSQLEntryPanel extends BaseSQLEntryPanel
 	/**
 	 * Replace the contents of the SQL entry area with the passed
 	 * SQL script and specify whether to select it.
-	 * 
+	 *
 	 * @param	sqlScript	The script to be placed in the SQL entry area..
-	 * @param	select		If <TT>true</TT> then select the passed script
-	 * 						in the sql entry area.
+	 * @param 	select		If <TT>true</TT> then select the passed script
+	 *						in the sql entry area.
 	 */
 	public void setText(String text, boolean select)
 	{
@@ -139,8 +148,8 @@ public class JeditSQLEntryPanel extends BaseSQLEntryPanel
 	/**
 	 * Append the passed SQL script to the SQL entry area but don't select
 	 * it.
-	 * 
-	 * @param	sqlScript	The script to be appended.
+	 *
+	 * @param    sqlScript    The script to be appended.
 	 */
 	public void appendText(String sqlScript)
 	{
@@ -150,26 +159,31 @@ public class JeditSQLEntryPanel extends BaseSQLEntryPanel
 	/**
 	 * Append the passed SQL script to the SQL entry area and specify
 	 * whether it should be selected.
-	 * 
-	 * @param	sqlScript	The script to be appended.
-	 * @param	select		If <TT>true</TT> then select the passed script
-	 * 						in the sql entry area.
+	 *
+	 * @param    sqlScript    The script to be appended.
+	 * @param    select        If <TT>true</TT> then select the passed script
+	 *                         in the sql entry area.
 	 */
 	public void appendText(String sqlScript, boolean select)
 	{
 		Document doc = _textArea.getDocument();
+
 		try
 		{
 			if (!getText().endsWith("\n") && !sqlScript.startsWith("\n"))
 			{
 				doc.insertString(doc.getLength(), "\n", null);
 			}
+
 			int start = 0;
+
 			if (select)
 			{
 				start = doc.getLength();
 			}
+
 			doc.insertString(doc.getLength(), sqlScript, null);
+
 			if (select)
 			{
 				setSelectionEnd(doc.getLength());
@@ -202,12 +216,7 @@ public class JeditSQLEntryPanel extends BaseSQLEntryPanel
 	public void setTabSize(int tabSize)
 	{
 		_textArea.getDocument().putProperty(PlainDocument.tabSizeAttribute,
-													new Integer(tabSize));
-	}
-
-	public void setFont(Font font)
-	{
-		_textArea.setFont(font);
+												new Integer(tabSize));
 	}
 
 	/**
@@ -279,7 +288,7 @@ public class JeditSQLEntryPanel extends BaseSQLEntryPanel
 		_textArea.updateFromPreferences();
 	}
 
-	/*
+	/**
 	 * @see ISQLEntryPanel#hasOwnUndoableManager()
 	 */
 	public boolean hasOwnUndoableManager()
@@ -287,7 +296,7 @@ public class JeditSQLEntryPanel extends BaseSQLEntryPanel
 		return false;
 	}
 
-	/*
+	/**
 	 * @see ISQLEntryPanel#addUndoableEditListener(UndoableEditListener)
 	 */
 	public void addUndoableEditListener(UndoableEditListener listener)
@@ -295,7 +304,7 @@ public class JeditSQLEntryPanel extends BaseSQLEntryPanel
 		_textArea.getDocument().addUndoableEditListener(listener);
 	}
 
-	/*
+	/**
 	 * @see ISQLEntryPanel#removeUndoableEditListener(UndoableEditListener)
 	 */
 	public void removeUndoableEditListener(UndoableEditListener listener)
@@ -313,7 +322,7 @@ public class JeditSQLEntryPanel extends BaseSQLEntryPanel
 		_app.getResources().addToPopupMenu(redo, _textPopupMenu);
 	}
 
-	/*
+	/**
 	 * @see ISQLEntryPanel#getCaretLineNumber()
 	 */
 	public int getCaretLineNumber()
@@ -321,7 +330,7 @@ public class JeditSQLEntryPanel extends BaseSQLEntryPanel
 		return _textArea.getLineOfOffset(_textArea.getCaretPosition());
 	}
 
-	/*
+	/**
 	 * @see ISQLEntryPanel#getCaretLinePosition()
 	 */
 	public int getCaretLinePosition()
@@ -329,10 +338,11 @@ public class JeditSQLEntryPanel extends BaseSQLEntryPanel
 		int caretPos = _textArea.getCaretPosition();
 		int caretLineOffset = caretPos;
 		caretLineOffset = _textArea.getLineStartOffset(getCaretLineNumber());
+
 		return caretPos - caretLineOffset;
 	}
 
-	/*
+	/**
 	 * @see ISQLEntryPanel#addCaretListener(CaretListener)
 	 */
 	public void addCaretListener(CaretListener lis)
@@ -340,7 +350,7 @@ public class JeditSQLEntryPanel extends BaseSQLEntryPanel
 		_textArea.addCaretListener(lis);
 	}
 
-	/*
+	/**
 	 * @see ISQLEntryPanel#removeCaretListener(CaretListener)
 	 */
 	public void removeCaretListener(CaretListener lis)
@@ -352,19 +362,18 @@ public class JeditSQLEntryPanel extends BaseSQLEntryPanel
 	{
 		private final JeditPreferences _prefs;
 		private final JeditTextAreaDefaults _taDfts;
-	
+
 		MyTextArea(SQLConnection conn, JeditPreferences prefs)
 		{
 			super();
-
+			setEditorKit(new MoeSyntaxEditorKit(prefs));
 			_prefs = prefs;
 			_taDfts = new JeditTextAreaDefaults(this, prefs);
-
 
 			final SyntaxDocument doc = getSyntaxDocument();
 			doc.setTokenMarker(new JeditSQLTokenMarker(conn));
 			doc.setTextAreaDefaults(_taDfts);
-			
+
 			updateFromPreferences();
 		}
 
@@ -382,8 +391,8 @@ public class JeditSQLEntryPanel extends BaseSQLEntryPanel
 
 		public void removeNotify()
 		{
-			JeditSQLEntryPanel.this.removeMouseListener(_sqlEntryMouseListener);
 			super.removeNotify();
+			JeditSQLEntryPanel.this.removeMouseListener(_sqlEntryMouseListener);
 		}
 	}
 
@@ -396,6 +405,7 @@ public class JeditSQLEntryPanel extends BaseSQLEntryPanel
 				displayPopupMenu(evt);
 			}
 		}
+
 		public void mouseReleased(MouseEvent evt)
 		{
 			if (evt.isPopupTrigger())
@@ -403,11 +413,11 @@ public class JeditSQLEntryPanel extends BaseSQLEntryPanel
 				displayPopupMenu(evt);
 			}
 		}
+
 		private void displayPopupMenu(MouseEvent evt)
 		{
 			_textPopupMenu.setTextComponent(_textArea);
 			_textPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
 		}
 	}
-
 }

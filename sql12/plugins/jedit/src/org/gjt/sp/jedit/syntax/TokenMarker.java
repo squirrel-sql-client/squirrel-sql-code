@@ -18,8 +18,10 @@
  */
 package org.gjt.sp.jedit.syntax;
 
-import javax.swing.text.Segment;
 import java.util.*;
+
+import javax.swing.text.Segment;
+
 
 /**
  * A token marker that splits lines of text into tokens. Each token carries
@@ -32,18 +34,56 @@ import java.util.*;
  * cached.
  *
  * @author Slava Pestov
- * @version $Id: TokenMarker.java,v 1.1 2002-12-06 22:50:19 colbell Exp $
+ * @version $Id: TokenMarker.java,v 1.2 2002-12-21 00:34:18 colbell Exp $
  *
  * @see org.gjt.sp.jedit.syntax.Token
  */
 public abstract class TokenMarker
 {
+	// protected members
+
 	/**
-	 * A wrapper for the lower-level <code>markTokensImpl</code> method
-	 * that is called to split a line up into tokens.
-	 * @param line The line
-	 * @param lineIndex The line number
-	 */
+ * The first token in the list. This should be used as the return
+ * value from <code>markTokens()</code>.
+ */
+	protected Token firstToken;
+
+	/**
+ * The last token in the list. New tokens are added here.
+ * This should be set to null before a new line is to be tokenized.
+ */
+	protected Token lastToken;
+
+	/**
+ * An array for storing information about lines. It is enlarged and
+ * shrunk automatically by the <code>insertLines()</code> and
+ * <code>deleteLines()</code> methods.
+ */
+	protected LineInfo[] lineInfo;
+
+	/**
+ * The length of the <code>lineInfo</code> array.
+ */
+	protected int length;
+
+	/**
+ * True if the next line should be painted.
+ */
+	protected boolean nextLineRequested;
+
+	/**
+ * Creates a new <code>TokenMarker</code>. This DOES NOT create
+ * a lineInfo array; an initial call to <code>insertLines()</code>
+ * does that.
+ */
+	protected TokenMarker() {}
+
+	/**
+ * A wrapper for the lower-level <code>markTokensImpl</code> method
+ * that is called to split a line up into tokens.
+ * @param line The line
+ * @param lineIndex The line number
+ */
 	public Token markTokens(Segment line, int lineIndex)
 	{
 		lastToken = null;
@@ -51,174 +91,144 @@ public abstract class TokenMarker
 		LineInfo info = lineInfo[lineIndex];
 		byte oldToken = info.token;
 
-		byte token = markTokensImpl((lineIndex == 0 ?
-			Token.NULL : lineInfo[lineIndex -1].token),
-			line,lineIndex);
+		byte token = markTokensImpl(((lineIndex == 0) ? Token.NULL
+													  : lineInfo[lineIndex - 1].token),
+				line, lineIndex);
 
 		info.token = token;
 		nextLineRequested = (oldToken != token);
 
-		addToken(0,Token.END);
+		addToken(0, Token.END);
 
 		return firstToken;
 	}
 
 	/**
-	 * An abstract method that splits a line up into tokens. It
-	 * should parse the line, and call <code>addToken()</code> to
-	 * add syntax tokens to the token list. Then, it should return
-	 * the initial token type for the next line.<p>
-	 *
-	 * For example if the current line contains the start of a 
-	 * multiline comment that doesn't end on that line, this method
-	 * should return the comment token type so that it continues on
-	 * the next line.
-	 *
-	 * @param token The initial token type for this line
-	 * @param line The line to be tokenized
-	 * @param lineIndex The index of the line in the document,
-	 * starting at 0
-	 * @return The initial token type for the next line
-	 */
+ * An abstract method that splits a line up into tokens. It
+ * should parse the line, and call <code>addToken()</code> to
+ * add syntax tokens to the token list. Then, it should return
+ * the initial token type for the next line.<p>
+ *
+ * For example if the current line contains the start of a 
+ * multiline comment that doesn't end on that line, this method
+ * should return the comment token type so that it continues on
+ * the next line.
+ *
+ * @param token The initial token type for this line
+ * @param line The line to be tokenized
+ * @param lineIndex The index of the line in the document,
+ * starting at 0
+ * @return The initial token type for the next line
+ */
 	protected abstract byte markTokensImpl(byte token, Segment line,
 		int lineIndex);
 
 	/**
-	 * Informs the token marker that lines have been inserted into
-	 * the document. This inserts a gap in the <code>lineInfo</code>
-	 * array.
-	 * @param index The first line number
-	 * @param lines The number of lines 
-	 */
+ * Informs the token marker that lines have been inserted into
+ * the document. This inserts a gap in the <code>lineInfo</code>
+ * array.
+ * @param index The first line number
+ * @param lines The number of lines 
+ */
 	public void insertLines(int index, int lines)
 	{
-		if(lines <= 0)
+		if (lines <= 0)
+		{
 			return;
+		}
+
 		length += lines;
 		ensureCapacity(length);
-		int len = index + lines;
-		System.arraycopy(lineInfo,index,lineInfo,len,
-			lineInfo.length - len);
 
-		for(int i = index + lines - 1; i >= index; i--)
+		int len = index + lines;
+		System.arraycopy(lineInfo, index, lineInfo, len, lineInfo.length - len);
+
+		for (int i = (index + lines) - 1; i >= index; i--)
+		{
 			lineInfo[i] = new LineInfo();
+		}
 	}
-	
+
 	/**
-	 * Informs the token marker that line have been deleted from
-	 * the document. This removes the lines in question from the
-	 * <code>lineInfo</code> array.
-	 * @param index The first line number
-	 * @param lines The number of lines
-	 */
+ * Informs the token marker that line have been deleted from
+ * the document. This removes the lines in question from the
+ * <code>lineInfo</code> array.
+ * @param index The first line number
+ * @param lines The number of lines
+ */
 	public void deleteLines(int index, int lines)
 	{
 		if (lines <= 0)
+		{
 			return;
+		}
+
 		int len = index + lines;
 		length -= lines;
-		System.arraycopy(lineInfo,len,lineInfo,
-			index,lineInfo.length - len);
+		System.arraycopy(lineInfo, len, lineInfo, index, lineInfo.length - len);
 	}
 
 	/**
-	 * Returns true if the next line should be repainted. This
-	 * will return true after a line has been tokenized that starts
-	 * a multiline token that continues onto the next line.
-	 */
+ * Returns true if the next line should be repainted. This
+ * will return true after a line has been tokenized that starts
+ * a multiline token that continues onto the next line.
+ */
 	public boolean isNextLineRequested()
 	{
 		return nextLineRequested;
 	}
 
-	// protected members
-
 	/**
-	 * The first token in the list. This should be used as the return
-	 * value from <code>markTokens()</code>.
-	 */
-	protected Token firstToken;
-
-	/**
-	 * The last token in the list. New tokens are added here.
-	 * This should be set to null before a new line is to be tokenized.
-	 */
-	protected Token lastToken;
-
-	/**
-	 * An array for storing information about lines. It is enlarged and
-	 * shrunk automatically by the <code>insertLines()</code> and
-	 * <code>deleteLines()</code> methods.
-	 */
-	protected LineInfo[] lineInfo;
-
-	/**
-	 * The length of the <code>lineInfo</code> array.
-	 */
-	protected int length;
-
-	/**
-	 * True if the next line should be painted.
-	 */
-	protected boolean nextLineRequested;
-
-	/**
-	 * Creates a new <code>TokenMarker</code>. This DOES NOT create
-	 * a lineInfo array; an initial call to <code>insertLines()</code>
-	 * does that.
-	 */
-	protected TokenMarker()
-	{
-	}
-
-	/**
-	 * Ensures that the <code>lineInfo</code> array can contain the
-	 * specified index. This enlarges it if necessary. No action is
-	 * taken if the array is large enough already.<p>
-	 *
-	 * It should be unnecessary to call this under normal
-	 * circumstances; <code>insertLine()</code> should take care of
-	 * enlarging the line info array automatically.
-	 *
-	 * @param index The array index
-	 */
+ * Ensures that the <code>lineInfo</code> array can contain the
+ * specified index. This enlarges it if necessary. No action is
+ * taken if the array is large enough already.<p>
+ *
+ * It should be unnecessary to call this under normal
+ * circumstances; <code>insertLine()</code> should take care of
+ * enlarging the line info array automatically.
+ *
+ * @param index The array index
+ */
 	protected void ensureCapacity(int index)
 	{
-		if(lineInfo == null)
+		if (lineInfo == null)
+		{
 			lineInfo = new LineInfo[index + 1];
-		else if(lineInfo.length <= index)
+		}
+		else if (lineInfo.length <= index)
 		{
 			LineInfo[] lineInfoN = new LineInfo[(index + 1) * 2];
-			System.arraycopy(lineInfo,0,lineInfoN,0,
-					 lineInfo.length);
+			System.arraycopy(lineInfo, 0, lineInfoN, 0, lineInfo.length);
 			lineInfo = lineInfoN;
 		}
 	}
 
 	/**
-	 * Adds a token to the token list.
-	 * @param length The length of the token
-	 * @param id The id of the token
-	 */
+ * Adds a token to the token list.
+ * @param length The length of the token
+ * @param id The id of the token
+ */
 	protected void addToken(int length, byte id)
 	{
-		if(id >= Token.INTERNAL_FIRST && id <= Token.INTERNAL_LAST)
-			throw new InternalError("Invalid id: " + id);
-
-		if(firstToken == null)
+		if ((id >= Token.INTERNAL_FIRST) && (id <= Token.INTERNAL_LAST))
 		{
-			firstToken = new Token(length,id);
+			throw new InternalError("Invalid id: " + id);
+		}
+
+		if (firstToken == null)
+		{
+			firstToken = new Token(length, id);
 			lastToken = firstToken;
 		}
-		else if(lastToken == null)
+		else if (lastToken == null)
 		{
 			lastToken = firstToken;
 			firstToken.length = length;
 			firstToken.id = id;
 		}
-		else if(lastToken.next == null)
+		else if (lastToken.next == null)
 		{
-			lastToken.next = new Token(length,id);
+			lastToken.next = new Token(length, id);
 			lastToken = lastToken.next;
 		}
 		else
@@ -230,42 +240,41 @@ public abstract class TokenMarker
 	}
 
 	/**
-	 * Inner class for storing information about tokenized lines.
-	 */
+ * Inner class for storing information about tokenized lines.
+ */
 	public class LineInfo
 	{
 		/**
-		 * Creates a new LineInfo object with token = Token.NULL
-		 * and obj = null.
-		 */
-		public LineInfo()
-		{
-		}
+ * The id of the last token of the line.
+ */
+		public byte token;
 
 		/**
-		 * Creates a new LineInfo object with the specified
-		 * parameters.
-		 */
+ * This is for use by the token marker implementations
+ * themselves. It can be used to store anything that
+ * is an object and that needs to exist on a per-line
+ * basis.
+ */
+		public Object obj;
+
+		/**
+ * Creates a new LineInfo object with token = Token.NULL
+ * and obj = null.
+ */
+		public LineInfo() {}
+
+		/**
+ * Creates a new LineInfo object with the specified
+ * parameters.
+ */
 		public LineInfo(byte token, Object obj)
 		{
 			this.token = token;
 			this.obj = obj;
 		}
-
-		/**
-		 * The id of the last token of the line.
-		 */
-		public byte token;
-
-		/**
-		 * This is for use by the token marker implementations
-		 * themselves. It can be used to store anything that
-		 * is an object and that needs to exist on a per-line
-		 * basis.
-		 */
-		public Object obj;
 	}
 }
+
 
 /*
  * ChangeLog:
