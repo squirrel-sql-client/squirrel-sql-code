@@ -1,7 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 
-import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -13,7 +11,7 @@ public class TableScriptConfigFrame extends JDialog
    JCheckBox constToTablesNotInScript;
    JButton btnOk;
 
-   public TableScriptConfigFrame(MainFrame mainFrame)
+   public TableScriptConfigFrame(JFrame mainFrame)
    {
       super(mainFrame, "Configuration of multi table scripts", true);
 
