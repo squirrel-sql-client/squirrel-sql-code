@@ -21,8 +21,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
@@ -49,10 +47,6 @@ public class InstanceDetailsTab extends BasePreparedStatementTab
 			+ " logins, shutdown_pending, database_status, instance_role"
 			+ " from sys.v_$instance"
 			+ " where instance_number = ?";
-
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(SessionDetailsTab.class);
 
 	public InstanceDetailsTab()
 	{

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.oracle.tab;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -21,8 +21,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
@@ -49,10 +47,6 @@ public class SessionStatisticsTab extends BasePreparedStatementTab
 			+ " where ss.sid = ?"
 			+ " and ss.statistic# = sn.statistic#";
 
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(SessionStatisticsTab.class);
-
 	public SessionStatisticsTab()
 	{
 		super(i18n.TITLE, i18n.HINT);
@@ -63,7 +57,7 @@ public class SessionStatisticsTab extends BasePreparedStatementTab
 		ISession session = getSession();
 		PreparedStatement pstmt = session.getSQLConnection().prepareStatement(SQL);
 		IDatabaseObjectInfo doi = getDatabaseObjectInfo();
-				pstmt.setLong(1, Long.parseLong(doi.getSimpleName()));
+		pstmt.setLong(1, Long.parseLong(doi.getSimpleName()));
 		return pstmt;
 	}
 }

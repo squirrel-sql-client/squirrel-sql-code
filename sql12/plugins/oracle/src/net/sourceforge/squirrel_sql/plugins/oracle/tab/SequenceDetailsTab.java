@@ -18,8 +18,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
@@ -46,10 +44,6 @@ public class SequenceDetailsTab extends BasePreparedStatementTab
 			+ " from all_sequences"
 			+ " where sequence_owner = ?"
 			+ " and sequence_name = ?";
-
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(SequenceDetailsTab.class);
 
 	public SequenceDetailsTab()
 	{

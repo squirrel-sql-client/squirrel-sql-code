@@ -53,10 +53,6 @@ public class ObjectType
 	 *									to this object types children.
 	 * @param	childDboType			Database object type to use for child
 	 *									nodes.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> <TT>objectTypeColumnData</TT> or
-	 * 			<TT>DatabaseObjectType</TT> passed.
 	 */
 	public ObjectType(DatabaseObjectType dboType, String objectTypeColumnData,
 				DatabaseObjectType childDboType)

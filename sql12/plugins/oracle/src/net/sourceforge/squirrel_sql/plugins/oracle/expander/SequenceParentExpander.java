@@ -28,13 +28,12 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
+
+import net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin;
 /**
  * This class handles the expanding of the "Sequence Group"
  * node. It will give a list of all the Sequences available in the schema.
@@ -49,28 +48,12 @@ public class SequenceParentExpander implements INodeExpander
 			+ " from all_sequences"
 			+ " where sequence_owner = ?";
 
-	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(SequenceParentExpander.class);
-
-	/** The plugin. */
-	private final OraclePlugin _plugin;
-
 	/**
-	 * Ctor.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> <TT>OraclePlugin</TT> passed.
+	 * Default ctor.
 	 */
-	SequenceParentExpander(OraclePlugin plugin)
+	public SequenceParentExpander(OraclePlugin plugin)
 	{
 		super();
-		if (plugin == null)
-		{
-			throw new IllegalArgumentException("OraclePlugin == null");
-		}
-
-		_plugin = plugin;
 	}
 
 	/**
@@ -94,17 +77,24 @@ public class SequenceParentExpander implements INodeExpander
 		final String catalogName = parentDbinfo.getCatalogName();
 		final String schemaName = parentDbinfo.getSchemaName();
 
-		PreparedStatement pstmt = conn.prepareStatement(SQL);
+		final PreparedStatement pstmt = conn.prepareStatement(SQL);
 		try
 		{
 			pstmt.setString(1, schemaName);
 			ResultSet rs = pstmt.executeQuery();
-			while (rs.next())
+			try
 			{
-				IDatabaseObjectInfo si = new DatabaseObjectInfo(catalogName,
-											schemaName, rs.getString(1),
-											DatabaseObjectType.SEQUENCE, md);
-				childNodes.add(new ObjectTreeNode(session, si));
+				while (rs.next())
+				{
+					IDatabaseObjectInfo si = new DatabaseObjectInfo(catalogName,
+												schemaName, rs.getString(1),
+												DatabaseObjectType.SEQUENCE, md);
+					childNodes.add(new ObjectTreeNode(session, si));
+				}
+			}
+			finally
+			{
+				rs.close();
 			}
 		}
 		finally

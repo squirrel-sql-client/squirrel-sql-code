@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.oracle.tab;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -22,8 +22,6 @@ import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
@@ -39,10 +37,6 @@ public class ObjectSourceTab extends BaseSourceTab
 			+ " and owner = ? and name = ? order by line";
 
 	private final String _columnData;
-
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(ObjectSourceTab.class);
 
 	public ObjectSourceTab(String columnData, String hint)
 	{

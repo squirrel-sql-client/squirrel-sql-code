@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.oracle.expander;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,7 +17,6 @@ package net.sourceforge.squirrel_sql.plugins.oracle.expander;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,8 +24,6 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
@@ -42,10 +39,6 @@ import net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin;
  */
 public class SchemaExpander implements INodeExpander
 {
-	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(SchemaExpander.class);
-
 	/** The plugin. */
 	private OraclePlugin _plugin;
 
@@ -74,7 +67,6 @@ public class SchemaExpander implements INodeExpander
 	 *			nodes for the passed node.
 	 */
 	public List createChildren(ISession session, ObjectTreeNode parentNode)
-		throws SQLException
 	{
 		final List childNodes = new ArrayList();
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
@@ -86,7 +78,7 @@ public class SchemaExpander implements INodeExpander
 											schemaName, "PACKAGE",
 											IObjectTypes.PACKAGE_PARENT, md);
 		ObjectTreeNode child = new ObjectTreeNode(session, dbinfo);
-		child.addExpander(new PackageParentExpander(_plugin));
+		child.addExpander(new PackageParentExpander());
 		childNodes.add(child);
 
 		ObjectType objType;

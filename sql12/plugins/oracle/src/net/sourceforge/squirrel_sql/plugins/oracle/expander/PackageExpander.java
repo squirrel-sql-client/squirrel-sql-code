@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.oracle.expander;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -23,10 +23,7 @@ import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
@@ -39,10 +36,6 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTr
  */
 public class PackageExpander implements INodeExpander
 {
-	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(PackageExpander.class);
-
 	/**
 	 * Create the child nodes for the passed parent node and return them. Note
 	 * that this method should <B>not</B> actually add the child nodes to the
@@ -55,15 +48,9 @@ public class PackageExpander implements INodeExpander
 	 *			nodes for the passed node.
 	 */
 	public List createChildren(ISession session, ObjectTreeNode parentNode)
-		throws SQLException
 	{
-		final List childNodes = new ArrayList();
-		final IDatabaseObjectInfo parentDbinfo =
-			parentNode.getDatabaseObjectInfo();
-		final SQLConnection conn = session.getSQLConnection();
-		final String catalogName = parentDbinfo.getCatalogName();
+		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
 		final String schemaName = parentDbinfo.getSchemaName();
-
 		final String packageName = parentDbinfo.getSimpleName();
 		return createProcedureNodes(session, packageName, schemaName);
 	}
@@ -89,5 +76,4 @@ public class PackageExpander implements INodeExpander
 		}
 		return childNodes;
 	}
-
 }

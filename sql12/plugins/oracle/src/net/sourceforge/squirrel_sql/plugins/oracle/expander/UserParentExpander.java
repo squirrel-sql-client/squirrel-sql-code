@@ -29,8 +29,6 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 
-import net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
@@ -48,23 +46,12 @@ public class UserParentExpander implements INodeExpander
 			" temporary_tablespace, created, initial_rsrc_consumer_group," +
 			" external_name from user_users order by username";
 
-	/** Logger for this class. */
-//	private static final ILogger s_log =
-//		LoggerController.createLogger(UserParentExpander.class);
-
 	/**
-	 * Ctor.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> <TT>OraclePlugin</TT> passed.
+	 * Default ctor.
 	 */
-	public UserParentExpander(OraclePlugin plugin)
+	public UserParentExpander()
 	{
 		super();
-		if (plugin == null)
-		{
-			throw new IllegalArgumentException("OraclePlugin == null");
-		}
 	}
 
 	/**
@@ -91,11 +78,18 @@ public class UserParentExpander implements INodeExpander
 		try
 		{
 			ResultSet rs = pstmt.executeQuery();
-			while (rs.next())
+			try
 			{
-				IDatabaseObjectInfo doi = new DatabaseObjectInfo(null, schemaName,
-											rs.getString(1), DatabaseObjectType.USER, md);
-				childNodes.add(new ObjectTreeNode(session, doi));
+				while (rs.next())
+				{
+					IDatabaseObjectInfo doi = new DatabaseObjectInfo(null, schemaName,
+												rs.getString(1), DatabaseObjectType.USER, md);
+					childNodes.add(new ObjectTreeNode(session, doi));
+				}
+			}
+			finally
+			{
+				rs.close();
 			}
 		}
 		finally
