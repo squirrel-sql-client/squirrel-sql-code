@@ -32,6 +32,6 @@ public class GlobalPreferencesAction extends SquirrelAction {
     }
 
     public void actionPerformed(ActionEvent evt) {
-        new GlobalPreferencesDialog(getApplication(), getParentFrame(evt)).setVisible(true);
+        GlobalPreferencesDialog.showPreferencesDialog(getApplication());
     }
 }

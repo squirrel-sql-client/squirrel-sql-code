@@ -45,112 +45,148 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.properties.SQLPropertiesPanel;
 
 public class GlobalPreferencesDialog extends JDialog {
-    /**
-     * This interface defines locale specific strings. This should be
-     * replaced with a property file.
-     */
-    private interface i18n {
-        String TITLE = "Global Preferences";
-        String NEW_SESSION_SQL = "New Session SQL";
-        String NEW_SESSION_OUTPUT = "New Session Output";
-    }
+	/**
+	 * This interface defines locale specific strings. This should be
+	 * replaced with a property file.
+	 */
+	private interface i18n {
+		String TITLE = "Global Preferences";
+		String NEW_SESSION_SQL = "New Session SQL";
+		String NEW_SESSION_OUTPUT = "New Session Output";
+	}
+   
+	/** Singleton instance of this class. */
+	private static GlobalPreferencesDialog s_instance;
 
-    private IApplication _app;
-    private List _panels = new ArrayList();
+	private IApplication _app;
+	private List _panels = new ArrayList();
 
-    /**
-     * Default properties for new sessions.
-     */
-    private SessionProperties _sessionProperties;
+	/**
+	 * Default properties for new sessions.
+	 */
+	private SessionProperties _sessionProperties;
 
-    public GlobalPreferencesDialog(IApplication app, Frame owner)
-            throws IllegalArgumentException {
-        super(owner, i18n.TITLE);
-        if (app == null) {
-            throw new IllegalArgumentException("Null IApplication passed");
-        }
-        _app = app;
-        createUserInterface();
-    }
+	private GlobalPreferencesDialog(IApplication app)
+			throws IllegalArgumentException {
+		super(getFrame(app), i18n.TITLE);
+		_app = app;
+		setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+		createUserInterface();
+	}
 
-    private void performCancel() {
-        dispose();
-    }
+	/**
+	 * Show the Preferences dialog
+	 * 
+	 * @param	app		Application API.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT> <TT>IApplication</TT> object passed.
+	 */
+	public static synchronized void showPreferencesDialog(IApplication app)
+			throws IllegalArgumentException {
+		if (s_instance == null) {
+			s_instance = new GlobalPreferencesDialog(app);
+		}
+		s_instance.setVisible(true);
+	}
 
-    /**
-     * OK button pressed so save changes.
-     */
-    private void performOk() {
-        for (Iterator it = _panels.iterator(); it.hasNext();) {
-            ((IGlobalPreferencesPanel)it.next()).applyChanges();
-        }
+	public void setVisible(boolean show) {
+		if (show) {
+			// Initialize all panels.
+			JTabbedPane tabPane = new JTabbedPane();
+			for (Iterator it = _panels.iterator(); it.hasNext();) {
+				IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel)it.next();
+				pnl.initialize(_app);
+			}
+		}
+		super.setVisible(show);
+	}
 
-        dispose();
-    }
+	private void performCancel() {
+		setVisible(false);
+	}
 
-    private void createUserInterface() {
-        final SquirrelPreferences prefs = _app.getSquirrelPreferences();
-        final SessionProperties props = prefs.getSessionProperties();
+	/**
+	 * OK button pressed so save changes.
+	 */
+	private void performOk() {
+		for (Iterator it = _panels.iterator(); it.hasNext();) {
+			((IGlobalPreferencesPanel)it.next()).applyChanges();
+		}
 
-        // Add panels for core Squirrel functionality.
-        _panels.add(new GeneralPreferencesPanel());
-        _panels.add(new LoggingPreferencesPanel());
-        _panels.add(new SQLPropertiesPanel(i18n.NEW_SESSION_SQL, i18n.NEW_SESSION_SQL));
-        _panels.add(new OutputPropertiesPanel(i18n.NEW_SESSION_OUTPUT, i18n.NEW_SESSION_OUTPUT));
+		setVisible(false);
+	}
 
-        // Go thru all loaded plugins asking for panels.
-        PluginInfo[] plugins = _app.getPluginManager().getPluginInformation();
-        for (int plugIdx = 0; plugIdx < plugins.length; ++plugIdx) {
-            PluginInfo pi = plugins[plugIdx];
-            if (pi.isLoaded()) {
-                IGlobalPreferencesPanel[] pnls = pi.getPlugin().getGlobalPreferencePanels();
-                if (pnls != null && pnls.length > 0) {
-                    for (int pnlIdx = 0; pnlIdx < pnls.length; ++pnlIdx) {
-                        _panels.add(pnls[pnlIdx]);
-                    }
-                }
-            }
-        }
+	private void createUserInterface() {
+		final SquirrelPreferences prefs = _app.getSquirrelPreferences();
+		final SessionProperties props = prefs.getSessionProperties();
 
-        // Initialize all panels and add them to the dialog.
-        JTabbedPane tabPane = new JTabbedPane();
-        for (Iterator it = _panels.iterator(); it.hasNext();) {
-            IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel)it.next();
-            pnl.initialize(_app);
-            String title = pnl.getTitle();
-            String hint = pnl.getHint();
-            tabPane.addTab(title, null, pnl.getPanelComponent(), hint);
-        }
+		// Add panels for core Squirrel functionality.
+		_panels.add(new GeneralPreferencesPanel());
+		_panels.add(new LoggingPreferencesPanel(_app));
+		_panels.add(new SQLPropertiesPanel(_app, i18n.NEW_SESSION_SQL, i18n.NEW_SESSION_SQL));
+		_panels.add(new OutputPropertiesPanel(i18n.NEW_SESSION_OUTPUT, i18n.NEW_SESSION_OUTPUT));
 
-        // Ok and cancel buttons at bottom of dialog.
-        OkClosePanel btnsPnl = new OkClosePanel();
-        btnsPnl.addListener(new MyOkCancelPanelListener());
+		// Go thru all loaded plugins asking for panels.
+		PluginInfo[] plugins = _app.getPluginManager().getPluginInformation();
+		for (int plugIdx = 0; plugIdx < plugins.length; ++plugIdx) {
+			PluginInfo pi = plugins[plugIdx];
+			if (pi.isLoaded()) {
+				IGlobalPreferencesPanel[] pnls = pi.getPlugin().getGlobalPreferencePanels();
+				if (pnls != null && pnls.length > 0) {
+					for (int pnlIdx = 0; pnlIdx < pnls.length; ++pnlIdx) {
+						_panels.add(pnls[pnlIdx]);
+					}
+				}
+			}
+		}
 
-        final Container contentPane = getContentPane();
-        contentPane.setLayout(new BorderLayout());
+		// Add all panels to the tabbed pane.
+		JTabbedPane tabPane = new JTabbedPane();
+		for (Iterator it = _panels.iterator(); it.hasNext();) {
+			IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel)it.next();
+			String title = pnl.getTitle();
+			String hint = pnl.getHint();
+			tabPane.addTab(title, null, pnl.getPanelComponent(), hint);
+		}
 
-        contentPane.add(tabPane, BorderLayout.NORTH);
-        contentPane.add(btnsPnl, BorderLayout.CENTER);
+		// Ok and cancel buttons at bottom of dialog.
+		OkClosePanel btnsPnl = new OkClosePanel();
+		btnsPnl.addListener(new MyOkCancelPanelListener());
 
-        btnsPnl.makeOKButtonDefault();
+		final Container contentPane = getContentPane();
+		contentPane.setLayout(new BorderLayout());
 
-        pack();
-        GUIUtils.centerWithinParent(this);
-        setResizable(false);
-        setModal(true);
-    }
+		contentPane.add(tabPane, BorderLayout.NORTH);
+		contentPane.add(btnsPnl, BorderLayout.CENTER);
 
-    private final class MyOkCancelPanelListener implements IOkClosePanelListener {
-        public void okPressed(OkClosePanelEvent evt) {
-            performOk();
-        }
+		btnsPnl.makeOKButtonDefault();
 
-        public void closePressed(OkClosePanelEvent evt) {
-            performCancel();
-        }
+		pack();
+		GUIUtils.centerWithinParent(this);
+		setResizable(false);
+		setModal(true);
+	}
 
-        public void cancelPressed(OkClosePanelEvent evt) {
-            performCancel();
-        }
-    }
+	private static Frame getFrame(IApplication app)
+			throws IllegalArgumentException {
+		if (app == null) {
+			throw new IllegalArgumentException("Null IApplication passed");
+		}
+		return app.getMainFrame();
+	}
+
+	private final class MyOkCancelPanelListener implements IOkClosePanelListener {
+		public void okPressed(OkClosePanelEvent evt) {
+			performOk();
+		}
+
+		public void closePressed(OkClosePanelEvent evt) {
+			performCancel();
+		}
+
+		public void cancelPressed(OkClosePanelEvent evt) {
+			performCancel();
+		}
+	}
 }
