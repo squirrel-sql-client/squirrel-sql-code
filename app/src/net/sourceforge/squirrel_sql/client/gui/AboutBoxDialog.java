@@ -381,6 +381,8 @@ public class AboutBoxDialog extends JDialog
 			ta.append(Version.getVersion());
 			ta.append("\n");
 			ta.append(Version.getCopyrightStatement());
+			ta.append("\n");
+			ta.append(Version.getWebSite());
 			ta.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 			add(BorderLayout.SOUTH, ta);
 		}
