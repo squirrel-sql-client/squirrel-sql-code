@@ -20,7 +20,7 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesDialog;
+import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesSheet;
 
 /**
  * This <CODE>ICommand</CODE> displays the Global Preferences dialog..
@@ -51,7 +51,7 @@ public class GlobalPreferencesCommand {
 	 * Display the Dialog
 	 */
 	public void execute() {
-		GlobalPreferencesDialog.showDialog(_app);
+		GlobalPreferencesSheet.showSheet(_app);
 	}
 }
 
