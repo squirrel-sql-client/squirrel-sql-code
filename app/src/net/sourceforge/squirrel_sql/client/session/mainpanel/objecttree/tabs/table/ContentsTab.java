@@ -865,34 +865,57 @@ public class ContentsTab extends BaseTableTab
 	 * so they are either all done or all not done.
 	 */
 	public String deleteRows(Object[][] rowData, ColumnDisplayDefinition[] colDefs) {
-		
-		int deletedRowCount = 0;	// track how many rows have been deleted
-		boolean autoCommitWasOn;
 
 		// get the SQL session
 		final ISession session = getSession();
 		final SQLConnection conn = session.getSQLConnection();
-		
-		// save the current transaction mode
-		try {
-			autoCommitWasOn = conn.getAutoCommit();
-		}
-		catch (SQLException e) {
-			return "Could not get the autocommit mode from the database connection."+
-				"The rows have not been deleted from the database.";
-		}
-		
-		// set transaction mode to not autocommit
-		if (autoCommitWasOn) {
+
+		// string used as error indicator and description of problems seen
+		// when checking for 0 or mulitple matches in DB
+		String rowCountErrorMessage = "";
+
+		// for each row in table, count how many rows match where clause
+		// if not exactly one, generate message describing situation
+		for (int i = 0; i < rowData.length; i++) {
+			// get WHERE clause for the selected row
+			// the -1 says to just use the contents of the values without
+			// any substitutions
+			String whereClause = getWhereClause(rowData[i], colDefs, -1, null);
+
+			// count how many rows this WHERE matches
 			try {
-				conn.setAutoCommit(false);
+				// do the delete and add the number of rows deleted to the count
+				Statement stmt = conn.createStatement();
+
+				ResultSet rs = stmt.executeQuery("SELECT count(*) FROM " +
+					getTableInfo().getSimpleName()+whereClause);
+
+				rs.next();
+				if (rs.getInt(1) != 1) {
+					if (rs.getInt(1) == 0)
+						rowCountErrorMessage += "\n   Row "+ (i+1) +" did not match any row in DB";
+					else
+						rowCountErrorMessage += "\n   Row "+ (i+1) +" matched "+rs.getInt(1)+" rows in DB";
+				}
 			}
-			catch (SQLException e) {
-				return "Could not set the autocommit mode on the database connection."+
-					"The rows have not been deleted from the database.";
+			catch (Exception e) {
+				// some kind of problem - tell user
+				return "While preparing for delete, saw exception:\n" + e;
 			}
 		}
 
+		// if the rows do not match 1-for-1 to DB, ask user if they
+		// really want to do delete
+		if (rowCountErrorMessage.length() > 0) {
+			int option = JOptionPane.showConfirmDialog(null,
+				"There may be a mismatch between the table and the DB:\n"+ 
+				rowCountErrorMessage +
+				"\nDo you wish to proceed with the deletes anyway?",
+				"Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+			if ( option != JOptionPane.YES_OPTION) {
+				return "Delete canceled at user request.";
+			} 
+		}
 
 		// for each row in table, do delete and add to number of rows deleted from DB
 		for (int i = 0; i < rowData.length; i++) {
@@ -906,118 +929,14 @@ public class ContentsTab extends BaseTableTab
 				// do the delete and add the number of rows deleted to the count
 				Statement stmt = conn.createStatement();
 
-				deletedRowCount += stmt.executeUpdate("DELETE FROM " +
+				stmt.executeUpdate("DELETE FROM " +
 					getTableInfo().getSimpleName()+whereClause);
 			}
 			catch (Exception e) {
-				// some kind of problem - rollback!
-				try {
-					conn.rollback();
-				}
-				catch (SQLException e1) {
-					return "Delete failed with exception: " + e +
-						"\nRollback of deletes failed with exception: " + e1 +
+				// some kind of problem - tell user
+				return "One of the delete operations failed with exception:\n" + e +
 						"\nDatabase is in an unknown state and may be corrupted.";
-				}
-
-				// restore the original transaction mode if necessary
-				if (autoCommitWasOn) {
-					try {
-						conn.setAutoCommit(true);
-					}
-					catch (SQLException e1) {
-						return "Delete failed with exception: " + e +
-							"The rows have not been deleted from the database,"+
-							"\nbut trying to turn autocommit back on failed." +
-							"Your connection now does not autocommit your changes";
-					}
-				}
-
-				// tell user no data deleted from DB
-				return "Delete failed with exception:\n" + e;	
-			}
-					
-		}
-
-		// check that the number of rows actually deleted
-		// matches the number we expected to delete
-		if (deletedRowCount != rowData.length) {
-			// something odd happened - ask use if it is ok
-			// Normally we would return a message to the calling code and let
-			// it handle the user interaction, but because we are in the middle
-			// of a transaction which we might need to rollback, and because the
-			// normal transaction mode might be autocommit (which we will need
-			// to restore when we are done), it gets very messy if we do not
-			// complete the operation in this same method.
-			int option = JOptionPane.showConfirmDialog(null,
-				"The number of rows deleted from the DB was "+ deletedRowCount +
-				", but you asked to delete "+ rowData.length +
-				" rows from the table.\nDo you wish to commit these deletes in the DB?",
-				"Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-			if ( option != JOptionPane.YES_OPTION)
-			{
-				// user does not want deletes to happen, so roll back
-				try {
-					conn.rollback();
-				}
-				catch (SQLException e) {
-					return "Rollback of deletes failed with exception: " + e +
-						"\nDatabase is in an unknown state and may be corrupted.";
-				}
-
-				// restore the original transaction mode if necessary
-				if (autoCommitWasOn) {
-					try {
-						conn.setAutoCommit(true);
-					}
-					catch (SQLException e) {
-						return "The rows have not been deleted from the database,"+
-							"\nbut trying to turn autocommit back on failed." +
-							"Your connection now does not autocommit your changes";
-					}
-				}
-
-				// tell user no data deleted from DB
-				return "The rows have not been deleted from the database";	
-			}
-		}
-		
-		// commit the transaction
-		try {
-			conn.commit();
-		}
-		catch (SQLException e) {
-			// if commit fails, try rollback
-			try {
-				conn.rollback();
-				// if rollback worked, tell user about it
-				return "Commit of deletes failed with exception: " + e +
-					"\nDeletes rolled back successfully.  Database has not been changed.";
-			}
-			catch (SQLException e1) {
-				// nothing worked right, so just tell user DB may be messed up
-				return "Commit of deletes failed with exception: " + e +
-					"\n\nAttempt to rollback failed with exception: " + e1 +
-					"\n\nDatabase is in an unknown state and may be corrupted.";
-			}
-		}
-
-		// restore the original transaction mode
-		if (autoCommitWasOn) {
-			try {
-				conn.setAutoCommit(true);
-			}
-			catch (SQLException e) {
-				// this is a pretty weird case.  We cannot return a message
-				// to the caller for display since that is taken to mean
-				// that the deletes failed, whereas in this case the commit
-				// was successful.  So we just have to tell the user what's
-				// going on ourselves.
-				JOptionPane.showMessageDialog(null,
-					"The deletes have been successfully made in the database," +
-					"\nbut trying to turn autocommit back on failed." +
-					"Your connection now does not autocommit your changes");
-			}
+			}	
 		}
 
 		return null;	// hear no evil, see no evil
