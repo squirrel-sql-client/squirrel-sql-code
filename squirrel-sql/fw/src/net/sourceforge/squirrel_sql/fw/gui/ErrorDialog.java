@@ -31,85 +31,101 @@ import javax.swing.JDialog;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 public class ErrorDialog extends JDialog {
-    /**
-     * This interface defines locale specific strings. This should be
-     * replaced with a property file.
-     */
-    private interface i18n {
-        String ERROR = "Error";
-        String OK = "OK";
-    }
+	/**
+	 * This interface defines locale specific strings. This should be
+	 * replaced with a property file.
+	 */
+	private interface i18n {
+		String ERROR = "Error";
+		String OK = "OK";
+	}
 
-    public ErrorDialog(Throwable th) {
-        this((Frame)null, th);
-    }
+	public ErrorDialog(Throwable th) {
+		this((Frame)null, th);
+	}
 
-    public ErrorDialog(Frame owner, Throwable th) {
-        super(owner, i18n.ERROR);
-        commonCtor(th);
-    }
+	public ErrorDialog(Frame owner, Throwable th) {
+		super(owner, i18n.ERROR,true);
+		commonCtor(th);
+	}
 
-    public ErrorDialog(Dialog owner, Throwable th) {
-        super(owner, i18n.ERROR);
-        commonCtor(th);
-    }
+	public ErrorDialog(Dialog owner, Throwable th) {
+		super(owner, i18n.ERROR,true);
+		commonCtor(th);
+	}
 
-    public ErrorDialog(Frame owner, String msg) {
-        super(owner, i18n.ERROR);
-        commonCtor(msg);
-    }
+	public ErrorDialog(Frame owner, String msg) {
+		super(owner, i18n.ERROR,true);
+		commonCtor(msg);
+	}
 
-    public ErrorDialog(Dialog owner, String msg) {
-        super(owner, i18n.ERROR);
-        commonCtor(msg);
-    }
+	public ErrorDialog(Dialog owner, String msg) {
+		super(owner, i18n.ERROR, true);
+		commonCtor(msg);
+	}
 
-    private void commonCtor(Throwable ex) {
-        String msg = ex.getMessage();
-        if (msg == null || msg.length() == 0) {
-            msg = ex.toString();
-        }
-        commonCtor(msg);
-    }
+	private void commonCtor(Throwable ex) {
+		String msg = ex.getMessage();
+		if (msg == null || msg.length() == 0) {
+			msg = ex.toString();
+		}
+		commonCtor(msg);
+	}
 
-    private void commonCtor(String msg) {
-        createUserInterface(msg);
-    }
+	private void commonCtor(String msg) {
+		createUserInterface(msg);
+	}
 
-    private void createUserInterface(String msg) {
-        JPanel mainPnl = new JPanel();
-        mainPnl.setLayout(new GridLayout(0, 1));
-        mainPnl.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-        JTextArea ta = new JTextArea(msg);
-        ta.setEditable(false);
-        mainPnl.add(ta);
-
-        JPanel btnsPnl = new JPanel();
-        btnsPnl.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-
-        JButton okBtn = new JButton(i18n.OK);
-        okBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                dispose();
-            }
-        });
-        btnsPnl.add(okBtn);
-
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(mainPnl, BorderLayout.CENTER);
-        getContentPane().add(btnsPnl, BorderLayout.SOUTH);
-
-        getRootPane().setDefaultButton(okBtn);
-
-        pack();
-        GUIUtils.centerWithinParent(this);
-        setResizable(false);
-    }
+	private void createUserInterface(String msg)
+	{
+		msg = "<html><body>" + msg + "</body></html>";
+		int iDialogWidth = 350;
+		int iDialogHeight = 150;
+		
+		JPanel mainPnl = new JPanel();
+		mainPnl.setLayout(new GridLayout(0, 1));
+		//		mainPnl.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+		JLabel ta = new JLabel(msg);
+		ta.setVerticalTextPosition(SwingConstants.TOP);
+		//		ta.setEditable(false);
+		Dimension dim = ta.getPreferredSize();
+		if (dim.width > iDialogWidth)
+		{
+			int widthMinScrollbar = (iDialogWidth-20); // 20 should not be guessed
+			dim.height = dim.height * (dim.width / widthMinScrollbar);
+			dim.width = widthMinScrollbar;
+		}
+		ta.setPreferredSize(dim);
+		JScrollPane scroller = new JScrollPane(ta,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+										JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		mainPnl.add(scroller);
+		JPanel btnsPnl = new JPanel();
+		//		btnsPnl.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+		JButton okBtn = new JButton(i18n.OK);
+		okBtn.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent evt)
+			{
+				dispose();
+			}
+		});
+		btnsPnl.add(okBtn);
+		getContentPane().setLayout(new BorderLayout());
+		getContentPane().add(mainPnl, BorderLayout.CENTER);
+		getContentPane().add(btnsPnl, BorderLayout.SOUTH);
+		getRootPane().setDefaultButton(okBtn);
+		setSize(iDialogWidth, iDialogHeight);
+		GUIUtils.centerWithinParent(this);
+		setResizable(false);
+	}
 }
