@@ -100,18 +100,19 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 	
 	/**
 	 * Call the underlaying object to update the data represented by the JTable.
+	 * Both the old and the new value are objects of the appropriate
+	 * Data Type for the column.  The newValue has been validated as part of
+	 * the conversion from the external user representation (a String) into the
+	 * internal object.
 	 */
 	public boolean changeUnderlyingValueAt(
 		int row,
 		int col,
-		Object newValueString,
+		Object newValue,
 		Object oldValue)
 	{
 		String message = null;
 
-		//
-		// On entry: oldValue is an object of arbitrary type (e.g. java.lang.Integer)
-		// while newValue is a string showing what the user entered in the cell text field.
 		//
 		// Special case: When we have to force the string representation of the data in
 		// the JTextField to "<null>", the oldValue may be passed as that string rather
@@ -120,7 +121,8 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 			if (oldValue.toString().equals("<null>"))
 				oldValue = null;
 		}
-		
+
+/*	
 		// Validate and Convert the newValue to an object
 		//
 		// This operation is a bit different than the others in this function in that
@@ -151,6 +153,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 				
 			return false;
 		}
+*/
 
 		// At this point the user input has been validated and both the
 		// new and old values are objects of the appropriate data type.

@@ -28,6 +28,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
  *
  * These are the calls needed to support the various ways of
  * displaying and editing data for each data type.
+ * 
+ *
  */
 public interface IDataTypeComponent
 {
@@ -36,6 +38,10 @@ public interface IDataTypeComponent
 	 * in the application.
 	 */
 	public String getClassName();
+	
+	/*
+	 * Cell related methods come next.
+	 */
 	
 	/**
 	 * Convert the given object into its printable String value for use
@@ -58,6 +64,24 @@ public interface IDataTypeComponent
 	public JTextField getJTextField();
 	
 	/**
+	 * Validate that the contents of a cell is in the right form for this data type
+	 * and convert that text into an object of the correct (Java) type for the column
+	 * Ideally this should be a static function, but the mechanics of using CellComponentFactory
+	 * and the constraints of the Java language make that difficult.
+	 */
+	public Object validateAndConvert(String value, StringBuffer messageBuffer);
+	
+	/*
+	 * Now the Popup-related methods.
+	 */
+	
+	/**
+	 * Convert the given object into its printable String value for use
+	 * in Text output and the in-cell representations (CellRenderer and CellEditor).
+	 */
+//	public String renderObjectInPopup(Object object);
+	
+	/**
 	 * Returns true if data type may be edited in the popup,
 	 * false if not.
 	 */
@@ -66,6 +90,9 @@ public interface IDataTypeComponent
 	/**
 	 * Get the JTextArea component for this data type to be used in the CellPopupDialog
 	 * and fill in the initial value in the appropriate representation.
+	 * That representation may be the same as is renderObject(), or it may
+	 * be different (e.g. a BLOB may have renderObject=>"<BLOB>" but fill in
+	 * the actual value in the Popup TextArea).
 	 */
 	public JTextArea getJTextArea(Object value);
 	
@@ -75,5 +102,5 @@ public interface IDataTypeComponent
 	 * Ideally this should be a static function, but the mechanics of using CellComponentFactory
 	 * and the constraints of the Java language make that difficult.
 	 */
-	public Object validateAndConvert(String value, StringBuffer messageBuffer);
+	public Object validateAndConvertInPopup(String value, StringBuffer messageBuffer);
 }

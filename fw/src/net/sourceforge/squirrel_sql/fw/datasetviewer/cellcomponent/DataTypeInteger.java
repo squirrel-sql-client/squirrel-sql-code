@@ -103,7 +103,12 @@ public class DataTypeInteger
 	public String getClassName() {
 		return "java.lang.Integer";
 	}
-	
+
+
+	/*
+	 * First we have the methods for in-cell and Text-table operations
+	 */
+	 
 	/**
 	 * Render a value into text for this DataType.
 	 */
@@ -152,32 +157,6 @@ public class DataTypeInteger
 	}
 
 	/**
-	 * Returns true if data type may be edited in the popup,
-	 * false if not.
-	 */
-	public boolean isEditableInPopup() {
-		return true;
-	}
-
-	/*
-	 * Return a JTextArea usable in the CellPopupDialog
-	 * and fill in the value.
-	 */
-	 public JTextArea getJTextArea(Object value) {
-		_textComponent = new RestorableJTextArea();
-		
-		// value is a simple string representation of the integer
-		((RestorableJTextArea)_textComponent).setText(renderObject(value));
-		
-		// special handling of operations while editing Integers
-		((RestorableJTextArea)_textComponent).addKeyListener(new KeyTextHandler());
-		
-		return (RestorableJTextArea)_textComponent;
-	 }
-
-
-
-	/**
 	 * Implement the interface for validating and converting to Integer object.
 	 * Null is a valid successful return, so errors are indicated only by
 	 * existance or not of a message in the messageBuffer.
@@ -199,7 +178,46 @@ public class DataTypeInteger
 			return null;
 		}
 	}
+
+	/*
+	 * Now the functions for the Popup-related operations.
+	 */
 	
+	/**
+	 * Returns true if data type may be edited in the popup,
+	 * false if not.
+	 */
+	public boolean isEditableInPopup() {
+		return true;
+	}
+
+	/*
+	 * Return a JTextArea usable in the CellPopupDialog
+	 * and fill in the value.
+	 */
+	 public JTextArea getJTextArea(Object value) {
+		_textComponent = new RestorableJTextArea();
+		
+		// value is a simple string representation of the integer,
+		// the same one used in Text and in-cell operations.
+		((RestorableJTextArea)_textComponent).setText(renderObject(value));
+		
+		// special handling of operations while editing Integers
+		((RestorableJTextArea)_textComponent).addKeyListener(new KeyTextHandler());
+		
+		return (RestorableJTextArea)_textComponent;
+	 }
+
+	/**
+	 * Validating and converting in Popup is identical to cell-related operation.
+	 */
+	public Object validateAndConvertInPopup(String value, StringBuffer messageBuffer) {
+		return validateAndConvert(value, messageBuffer);
+	}
+
+	/*
+	 * The following is used in both cell and popup operations.
+	 */	
 	
 	/*
 	 * Internal class for handling key events during editing

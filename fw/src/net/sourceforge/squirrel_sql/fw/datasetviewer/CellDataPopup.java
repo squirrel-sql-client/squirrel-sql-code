@@ -86,14 +86,6 @@ public class CellDataPopup
 		int col = table.columnAtPoint(pt);
 
 		Object obj = table.getValueAt(row, col);
-		if (obj != null)
-		{
-			obj = obj.toString();
-		}
-		else
-		{
-			obj = "";
-		}
 			
 		// since user is now using popup, stop editing
 		// using the in-cell editor, if any
@@ -256,7 +248,7 @@ public class CellDataPopup
 					// instance of type of data object being held in the table cell
 					StringBuffer messageBuffer = new StringBuffer();
 					Object newValue =
-						CellComponentFactory.validateAndConvert(
+						CellComponentFactory.validateAndConvertInPopup(
 							_colDef,
 							ColumnDataPopupPanel.this._ta.getText(),
 							messageBuffer);
@@ -275,7 +267,8 @@ public class CellDataPopup
 					}
 					else {
 						// no problem in conversion - proceed with update
-						_table.setValueAt(newValue, _row, _col);
+						((DataSetViewerTablePanel.MyJTable)_table).setConvertedValueAt(
+							newValue, _row, _col);
 						ColumnDataPopupPanel.this._parentFrame.setVisible(false);
 						ColumnDataPopupPanel.this._parentFrame.dispose();
 					}
