@@ -6,12 +6,19 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Added "Reformat XML" popup menu option to show formatted XML in a column
+  (Gerd Wagner).
 - User may identify specific columns to use in WHERE clause when editing
   cells in table by using the "Limit cell edit WHERE clause size" entry in
-  the Session menu.
+  the Session menu (Glenn Griffin).
 
 Bug Fixes
 ---------
+- Fixed bug where setting the statement separator to an empty string then
+  wouldn't allow you to change it to anything else (Gerd Wagner).
+- Fixed bug where minimized session windows weren't restored correctly (Gerd
+  Wagner).
+- Improved Undo handing (Gerd Wagner).
 - Fix NullPointerException when starting an Oracle 8.1.7.4 session (Gerd
   Wagner).
 - Fix bug under Linux where sometimes the SQL history combobox would fill the
@@ -20,7 +27,7 @@ Bug Fixes
   (Gerd Wagner).
 - Fixed incorrect handling of the "log-config-file" argument (Kevin Gilpin)
 - Tables with many columns should now allow editing by using the "Limit cell
-  edit WHERE clause size" session tool.
+  edit WHERE clause size" session tool (Glenn Griffin).
 
 
 1.2beta5

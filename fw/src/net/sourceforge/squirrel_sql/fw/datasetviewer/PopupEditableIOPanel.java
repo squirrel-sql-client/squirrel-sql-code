@@ -196,8 +196,8 @@ public class PopupEditableIOPanel extends JPanel
 		
 		_popupMenu.add(new LineWrapAction());
 		_popupMenu.add(new WordWrapAction());
+		_popupMenu.add(new XMLReformatAction());
 		_popupMenu.setTextComponent(_ta);
-		
 	}
 	
 	/**
@@ -889,18 +889,33 @@ public class PopupEditableIOPanel extends JPanel
 			}
 		}
 	}
-		
-		
+
+	private class XMLReformatAction extends BaseAction
+	{
+		XMLReformatAction()
+		{
+			super("Reformat XML");
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			if (_ta != null)
+			{
+				_ta.setText(XmlRefomatter.reformatXml(_ta.getText()));
+			}
+		}
+	}
+
 	/**
-	 * Helper function that ensures that the data is acceptable to the DataType object.
-	 * The issue addressed here is that Binary data can be represented in multiple
-	 * formats (Hex, Octal, etc), and to keep the DataTypes simple we assume that
-	 * they get only Hex data with ASCII chars shown as their numeric value.
-	 * This makes sense from the point of view that the different formats are
-	 * temporary views handled by this class rather than permanent settings
-	 * applied to either the column or the DataType.
-	 * Therefore, when we pass the data from the TextArea into the DataType,
-	 * we may need to do a conversion on the way.
+	 * Helper function that ensures that the data is acceptable to the DataType
+	 * object. The issue addressed here is that Binary data can be represented
+	 * in multiple formats (Hex, Octal, etc), and to keep the DataTypes simple
+	 * we assume that they get only Hex data with ASCII chars shown as their
+	 * numeric value. This makes sense from the point of view that the different
+	 * formats are temporary views handled by this class rather than permanent
+	 * settings applied to either the column or the DataType. Therefore, when we
+	 * pass the data from the TextArea into the DataType, we may need to do a
+	 * conversion on the way.
 	 */
 	private String getTextAreaCannonicalForm() {
 		// handle null

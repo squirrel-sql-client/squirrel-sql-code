@@ -37,7 +37,7 @@ public class Version
 	private static final String TYPE = "beta";
 	//private static final String TYPE = "rc";
 	//private static final String TYPE = "final";
-	private static final int RELEASE = 5;
+	private static final int RELEASE = 6;
 
 	private static final String COPYRIGHT = s_stringMgr.getString("Version.copyright");
 

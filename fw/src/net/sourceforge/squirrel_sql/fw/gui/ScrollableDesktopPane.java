@@ -39,10 +39,10 @@ public class ScrollableDesktopPane extends JDesktopPane
 		super();
 	}
 
-	public void paint(Graphics g)
+	protected void paintComponent(Graphics g)
 	{
 		setPreferredSize(getRequiredSize());
-		super.paint(g);
+		super.paintComponent(g);
 	}
 
 	public void remove(Component comp)
