@@ -21,7 +21,9 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.awt.BorderLayout;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,6 +31,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -46,7 +50,10 @@ import net.sourceforge.squirrel_sql.fw.util.EnumerationIterator;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.DropTableAction;
+import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeItemAction;
 import net.sourceforge.squirrel_sql.client.session.objectstree.BaseNode;
 import net.sourceforge.squirrel_sql.client.session.objectstree.BaseNodeExpandedListener;
 import net.sourceforge.squirrel_sql.client.session.objectstree.ObjectsTreeModel;
@@ -60,6 +67,11 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 	private ObjectsTreeModel _model;
 	
 	private CursorChanger _cursorChg;
+	
+	/*
+	 * popupmenu for the actions (also plugins can add actions to this later on?)
+	 */
+	private JPopupMenu _treeActions;
 
 	private static DatabaseObjectSimpleNameInfoComparator s_comparator = new DatabaseObjectSimpleNameInfoComparator();
 
@@ -69,6 +81,7 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 		_cursorChg = new CursorChanger(this);
 		_cursorChg.show();
 		_model = new ObjectsTreeModel(session);
+		((BaseNode)_model.getRoot()).addBaseNodeExpandListener(this);
 		_model.addTreeLoadedListener(this);
 		_model.fillTree();
 		setModel(_model);
@@ -83,13 +96,47 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 
 		clearSelection();
 		addSelectionRow(0);
-	}
+		
+		ActionCollection actions = _session.getApplication().getActionCollection();
+		
+		_treeActions = new JPopupMenu();
+		_treeActions.add(new JMenuItem(actions.get(RefreshTreeItemAction.class)));
+		_treeActions.add(new JMenuItem(actions.get(DropTableAction.class)));
+		;
+		/*
+		session.getApplication().getPluginManager();
+		_treeActions.add(XXXXX);
+		*/
+		
+		addMouseListener(new MouseAdapter() 
+		{
+				public void mousePressed(MouseEvent evt) {
+					if (evt.isPopupTrigger()) {
+						_treeActions.show(ObjectsTree.this,evt.getX(),evt.getY());
+					}
+				}
+				public void mouseReleased(MouseEvent evt) {
+					if (evt.isPopupTrigger()) {
+						_treeActions.show(ObjectsTree.this,evt.getX(),evt.getY());
+					}
+				}
+			});
+		}
 
-	void refresh() throws BaseSQLException {
-		SavedExpansionState es = new SavedExpansionState(this);
-		_model.refresh();
-		es.restore();
-		_model.reload();
+	void refresh() throws BaseSQLException 
+	{
+		List l = _model.refresh();
+		if(l != null)
+		{
+			
+			for (int i=0;i<l.size();i++)
+			{
+				BaseNode node = (BaseNode)l.get(i);
+				node.addBaseNodeExpandListener(this);
+				TreePath path = new TreePath(_model.getPathToRoot(node));
+				expandPath(path);
+			}
+		}
 	}
 	/*
 	 * @see BaseNodeExpandedListener#nodeExpanded(BaseNode)
@@ -224,6 +271,7 @@ class ObjectsTree extends JTree implements BaseNodeExpandedListener, TreeLoadedL
 			// Loop through all expanded nodes off the root node.
 			final TreeModel model = _tree.getModel();
 			TreeNode rootNode = (TreeNode)model.getRoot();
+
 			TreePath rootPath = new TreePath(rootNode);
 			Iterator it = new EnumerationIterator(_tree.getExpandedDescendants(rootPath));
 			if (it != null) {
