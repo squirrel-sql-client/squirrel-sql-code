@@ -112,7 +112,7 @@ public class SessionPropertiesDialog extends JDialog {
         JTabbedPane tabPane = new JTabbedPane();
         for (Iterator it = _panels.iterator(); it.hasNext();) {
             ISessionPropertiesPanel pnl = (ISessionPropertiesPanel)it.next();
-            pnl.initialize(_session.getApplication(), props);
+            pnl.initialize(_session.getApplication(), _session);
             String title = pnl.getTitle();
             String hint = pnl.getHint();
             tabPane.addTab(title, null, pnl.getPanelComponent(), hint);

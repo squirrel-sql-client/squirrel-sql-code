@@ -30,6 +30,7 @@ import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public class OutputPropertiesPanel implements IGlobalPreferencesPanel, ISessionPropertiesPanel {
 	private String _title;
@@ -50,20 +51,23 @@ public class OutputPropertiesPanel implements IGlobalPreferencesPanel, ISessionP
 		if (app == null) {
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
-		initialize(app, app.getSquirrelPreferences().getSessionProperties());
+
+		_app = app;
+		_props = app.getSquirrelPreferences().getSessionProperties();
+		_myPanel.loadData(_props);
 	}
 
-	public void initialize(IApplication app, SessionProperties props)
+	public void initialize(IApplication app, ISession session)
 			throws IllegalArgumentException {
 		if (app == null) {
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
-		if (props == null) {
-			throw new IllegalArgumentException("Null SessionProperties passed");
+		if (session == null) {
+			throw new IllegalArgumentException("Null ISession passed");
 		}
 
 		_app = app;
-		_props = props;
+		_props = session.getProperties();
 
 		_myPanel.loadData(_props);
 	}
