@@ -27,10 +27,18 @@ public interface ISQLEntryPanel {
 	String getText();
 	String getSelectedText();
 
+	int getSelectionStart();
+	void setSelectionStart(int pos);
+
+	int getSelectionEnd();
+	void setSelectionEnd(int pos);
+
 	int getCaretPosition();
 	void setCaretPosition(int pos);
 
-	void setRows(int rowCount);
+	boolean hasFocus();
+	void requestFocus();
+
 	void setTabSize(int tabSize);
 
 	void setText(String text);

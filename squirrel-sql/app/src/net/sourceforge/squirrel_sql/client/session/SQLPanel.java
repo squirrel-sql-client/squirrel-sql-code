@@ -32,6 +32,7 @@ import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.JCheckBox;
+import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -236,11 +237,9 @@ class SQLPanel extends JPanel {
 			throw new IllegalArgumentException("Null ISQLEntryPanel passed");
 		}
 
-//		pnl.setRows(3);
+		SQLEntryState state = new SQLEntryState(this, _sqlEntry);
 		pnl.setTabSize(4);
 		final int pos = _splitPane.getDividerLocation();
-		SQLEntryState state = new SQLEntryState(_sqlEntry);
-		state.restoreState(pnl);
 		if (_sqlEntry != null) {
 			_sqlEntry.removeMouseListener(_sqlEntryMouseListener);
 			_splitPane.remove(_sqlEntry.getComponent());
@@ -248,6 +247,7 @@ class SQLPanel extends JPanel {
 		_splitPane.add(pnl.getComponent(), JSplitPane.LEFT);
 		_splitPane.setDividerLocation(pos);
 		pnl.addMouseListener(_sqlEntryMouseListener);
+		state.restoreState(pnl);
 		_sqlEntry = pnl;
 	}
 
@@ -816,33 +816,44 @@ class SQLPanel extends JPanel {
 	}
 
 	private class SQLEntryState {
+		private SQLPanel _sqlPnl;
 		private boolean _saved = false;
 		private String _text;
 		private int _caretPos;
 		private int _selStart;
 		private int _selEnd;
+		private boolean _hasFocus;
 
-		SQLEntryState(ISQLEntryPanel pnl) {
+		SQLEntryState(SQLPanel sqlPnl, ISQLEntryPanel pnl) {
 			super();
-			saveState(pnl);
-		}
-
-		void saveState(ISQLEntryPanel pnl) {
+			_sqlPnl = sqlPnl;
 			if (pnl != null) {
 				_saved = true;
 				_text = pnl.getText();
-//				_selStart = pnl.getSelectionStart();
-//				_selEnd = pnl.getSelectionEnd();
-//				_caretPos = pnl.getCaretPosition();
+				_selStart = pnl.getSelectionStart();
+				_selEnd = pnl.getSelectionEnd();
+				_caretPos = pnl.getCaretPosition();
+//??
+//				_hasFocus = SwingUtilities.findFocusOwner(sqlPnl) == pnl.getComponent();
+//				_hasFocus = pnl.hasFocus();
+//				_hasFocus = sqlPnl.f pnl.hasFocus();
+				_hasFocus = true;
 			}
 		}
 		
-		void restoreState(ISQLEntryPanel pnl) {
+		void restoreState(final ISQLEntryPanel pnl) {
 			if (_saved && pnl != null) {
 				pnl.setText(_text);
-//				pnl.setSelectionStart(_selStart);
-//				pnl.setSelectionEnd(_selEnd);
-//				pnl.setCaretPosition(_caretPosition);
+				pnl.setSelectionStart(_selStart);
+				pnl.setSelectionEnd(_selEnd);
+				//pnl.setCaretPosition(_caretPos);
+//				if (_hasFocus) {
+//					SwingUtilities.invokeLater(new Runnable() {
+//						public void run() {
+//							pnl.requestFocus();
+//						}
+//					});
+//				}
 			}
 		}
 	}

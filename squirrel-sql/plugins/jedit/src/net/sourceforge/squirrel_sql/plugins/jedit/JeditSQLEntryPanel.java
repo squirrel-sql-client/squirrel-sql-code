@@ -105,17 +105,52 @@ class JeditSQLEntryPanel implements ISQLEntryPanel {
     }
 
 	/**
-	 * @see ISQLEntryPanel#setRows(int)
-	 */
-	public void setRows(int rowCount) {
-		//??
-	}
-
-	/**
 	 * @see ISQLEntryPanel#setTabSize(int)
 	 */
 	public void setTabSize(int tabSize) {
 		//??
+	}
+
+	/**
+	 * @see ISQLEntryPanel#getSelectionStart()
+	 */
+	public int getSelectionStart() {
+		return _jeditTextArea.getSelectionStart();
+	}
+
+	/**
+	 * @see ISQLEntryPanel#setSelectionStart(int)
+	 */
+	public void setSelectionStart(int pos) {
+		_jeditTextArea.setSelectionStart(pos);
+	}
+
+	/**
+	 * @see ISQLEntryPanel#getSelectionEnd()
+	 */
+	public int getSelectionEnd() {
+		return _jeditTextArea.getSelectionEnd();
+	}
+
+	/**
+	 * @see ISQLEntryPanel#setSelectionEnd(int)
+	 */
+	public void setSelectionEnd(int pos) {
+		_jeditTextArea.setSelectionEnd(pos);
+	}
+
+	/**
+	 * @see ISQLEntryPanel#hasFocus()
+	 */
+	public boolean hasFocus() {
+		return _jeditTextArea.hasFocus();
+	}
+
+	/**
+	 * @see ISQLEntryPanel#requestFocus()
+	 */
+	public void requestFocus() {
+		_jeditTextArea.requestFocus();
 	}
 
 	/**

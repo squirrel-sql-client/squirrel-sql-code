@@ -74,13 +74,6 @@ public class DefaultSQLEntryPanel implements ISQLEntryPanel {
 	}
 
 	/**
-	 * @see ISQLEntryPanel#setRows(int)
-	 */
-	public void setRows(int rowCount) {
-		_comp.setRows(rowCount);
-	}
-
-	/**
 	 * @see ISQLEntryPanel#setTabSize(int)
 	 */
 	public void setTabSize(int tabSize) {
@@ -108,5 +101,46 @@ public class DefaultSQLEntryPanel implements ISQLEntryPanel {
 		_comp.setCaretPosition(pos);
 	}
 
+	/**
+	 * @see ISQLEntryPanel#getSelectionStart()
+	 */
+	public int getSelectionStart() {
+		return _comp.getSelectionStart();
+	}
+
+	/**
+	 * @see ISQLEntryPanel#setSelectionStart(int)
+	 */
+	public void setSelectionStart(int pos) {
+		_comp.setSelectionStart(pos);
+	}
+
+	/**
+	 * @see ISQLEntryPanel#getSelectionEnd()
+	 */
+	public int getSelectionEnd() {
+		return _comp.getSelectionEnd();
+	}
+
+	/**
+	 * @see ISQLEntryPanel#setSelectionEnd(int)
+	 */
+	public void setSelectionEnd(int pos) {
+		_comp.setSelectionEnd(pos);
+	}
+
+	/**
+	 * @see ISQLEntryPanel#hasFocus()
+	 */
+	public boolean hasFocus() {
+		return _comp.hasFocus();
+	}
+
+	/**
+	 * @see ISQLEntryPanel#requestFocus()
+	 */
+	public void requestFocus() {
+		_comp.requestFocus();
+	}
 }
 
