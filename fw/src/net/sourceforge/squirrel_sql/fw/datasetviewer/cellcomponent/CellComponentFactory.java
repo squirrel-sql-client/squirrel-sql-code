@@ -7,6 +7,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 import java.awt.Component;
 import java.sql.Types;
 import java.sql.PreparedStatement;
@@ -18,8 +20,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 
 import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Arrays;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DefaultColumnRenderer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
@@ -652,7 +658,66 @@ public class CellComponentFactory {
 	 		throw new ClassNotFoundException("Could not locate class "+dataTypeObjectName);
 	 	}
 	 }
+	 
 
+	/*
+	 * Get control panels to let user adjust properties
+	 * on DataType classes.
+	 */
+	 
+	 /**
+	  * Get the Control Panels (JPanels containing controls) that let the
+	  * user adjust the properties of static properties in specific DataTypes.
+	  * The only DataType objects checked for here are:
+	  * 	- those that are registered through the registerDataType method, and
+	  * 	- those that are specifically listed in the variable initialClassNameList
+	  */
+	 public static JPanel[] getControlPanels() {
+		ArrayList panelList = new ArrayList();
+		
+		/*
+		 * This is the list of names of classes that:
+		 * 	- support standard SQL type codes and thus do not need to be registered
+		 * 	- provide the getControlPanel method to allow manipulation of properties
+		 * These classes should all be named
+		 * 	net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeXXXX
+		 * because they are part of the standard delivery of the product, and thus should
+		 * be local to this directory.
+		 */
+		String [] initialClassNameList = {
+			"net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeBlob",
+			"net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeClob",
+			"net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeOther",
+			"net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeUnknown",
+			 };
+		
+		// make a single list of all class names that we need to check.
+		// Start with the names of known, standard classes that provide Control Panels
+		ArrayList classNameList = new ArrayList(Arrays.asList(initialClassNameList));
+		
+		// add to that the list of all names that have been registered by plugins
+		Iterator classNames = _registeredDataTypes.keySet().iterator();
+		while (classNames.hasNext())
+			classNameList.add(classNames.next());
+		
+		// Now go through the list in the given order to get the panels
+		for (int i=0; i< classNameList.size(); i++) {
+			String className = (String)classNameList.get(i);
+			Class[] parameterTypes = new Class[0];
+			try {
+				Method panelMethod =
+					Class.forName(className).getMethod("getControlPanel", parameterTypes);
+					
+				JPanel panel = (JPanel)panelMethod.invoke(null, null);
+				panelList.add(panel);
+			}
+			catch (Exception e) {
+				// assume that errors here are not fatal and ignore them??
+			}
+		}
+		
+		return (JPanel[])panelList.toArray(new JPanel[0]);
+	}
 
 
 	/*
