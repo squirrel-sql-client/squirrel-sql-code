@@ -33,6 +33,10 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 
 public class MyURLClassLoader extends URLClassLoader
 {
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(MyURLClassLoader.class);
+
 	private Map _classes = new HashMap();
 
 	public MyURLClassLoader(String fileName) throws IOException
@@ -68,12 +72,13 @@ public class MyURLClassLoader extends URLClassLoader
 				}
 				catch (IOException ex)
 				{
-					logger.error("Error occured trying to load: " + file.getAbsolutePath(),
-									ex);
+					Object[] args = {file.getAbsolutePath(),};
+					String msg = s_stringMgr.getString(
+									"MyURLClassLoader.errorLoadingFile", args);
+					logger.error(msg, ex);
 				}
 				for (Iterator it = new EnumerationIterator(zipFile.entries());
-					it.hasNext();
-					)
+						it.hasNext();)
 				{
 					Class cls = null;
 					String entryName = ((ZipEntry) it.next()).getName();
@@ -87,8 +92,10 @@ public class MyURLClassLoader extends URLClassLoader
 						}
 						catch (Throwable th)
 						{
-							logger.error("Error loading class " + className,
-											th);
+							Object[] args = {className};
+							String msg = s_stringMgr.getString(
+											"MyURLClassLoader.errorLoadingClass", args);
+							logger.error(msg, th);
 						}
 						if (cls != null)
 						{
