@@ -24,7 +24,7 @@ import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
-public class SessionSheetProperties implements Serializable {
+public class SessionProperties implements Serializable {
     public interface IDataSetDestinations {
         String TEXT = net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel.class.getName();
         String TABLE = net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel.class.getName();
@@ -101,11 +101,11 @@ public class SessionSheetProperties implements Serializable {
 
     private char _sqlStmtSepChar = ';';
 
-    public SessionSheetProperties() {
+    public SessionProperties() {
         super();
     }
 
-    public void assignFrom(SessionSheetProperties rhs) {
+    public void assignFrom(SessionProperties rhs) {
         setAutoCommit(rhs.getAutoCommit());
         setColumnsOutputClassName(rhs.getColumnsOutputClassName());
         setCommitOnClosingConnection(rhs.getCommitOnClosingConnection());

@@ -38,7 +38,7 @@ import net.sourceforge.squirrel_sql.fw.gui.OkCancelPanelListener;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
-public class SessionSheetPropertiesDialog extends JDialog {
+public class SessionPropertiesDialog extends JDialog {
 
     /**
      * This interface defines locale specific strings. This should be
@@ -56,7 +56,7 @@ public class SessionSheetPropertiesDialog extends JDialog {
     //private SQLPropertiesPanel _sqlPnl;
     //private OutputPropertiesPanel _outputPnl;
 
-    public SessionSheetPropertiesDialog(Frame frame, ISession session) {
+    public SessionPropertiesDialog(Frame frame, ISession session) {
         super(frame, i18n.TITLE);
         if (session == null) {
             throw new IllegalArgumentException("Null ISession passed");
@@ -75,14 +75,14 @@ public class SessionSheetPropertiesDialog extends JDialog {
      */
     private void performOk() {
         for (Iterator it = _panels.iterator(); it.hasNext();) {
-            ((ISessionSheetPropertiesPanel)it.next()).applyChanges();
+            ((ISessionPropertiesPanel)it.next()).applyChanges();
         }
 
         dispose();
     }
 
     private void createUserInterface() {
-        final SessionSheetProperties props = _session.getProperties();
+        final SessionProperties props = _session.getProperties();
 
         _panels.add(new SQLPropertiesPanel(i18n.SQL, i18n.SQL));
         _panels.add(new OutputPropertiesPanel(i18n.OUTPUT, i18n.OUTPUT));
@@ -101,7 +101,7 @@ public class SessionSheetPropertiesDialog extends JDialog {
         // Initialize all panels and add them to the dialog.
         JTabbedPane tabPane = new JTabbedPane();
         for (Iterator it = _panels.iterator(); it.hasNext();) {
-            ISessionSheetPropertiesPanel pnl = (ISessionSheetPropertiesPanel)it.next();
+            ISessionPropertiesPanel pnl = (ISessionPropertiesPanel)it.next();
             pnl.initialize(_session.getApplication(), props);
             String title = pnl.getTitle();
             String hint = pnl.getHint();
