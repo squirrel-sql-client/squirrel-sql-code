@@ -8,11 +8,13 @@ public class FormatDlg extends JDialog
 {
    JList lstFormats;
    JTextField txtName;
-   JTextField txtHeight;
    JTextField txtWidth;
+   JTextField txtHeight;
+   JCheckBox chkIsLandscape;
    JButton btnSave;
    JButton btnNew;
    JComboBox cboUnit;
+
 
    public FormatDlg(JFrame parent)
    {
@@ -25,7 +27,7 @@ public class FormatDlg extends JDialog
 
       JPanel pnlEdit = new JPanel();
 
-      pnlEdit.setLayout(new GridLayout(4,1));
+      pnlEdit.setLayout(new GridLayout(5,1));
 
       JPanel pnlName = new JPanel(new BorderLayout());
       JLabel lblName = new JLabel("Name");
@@ -35,14 +37,6 @@ public class FormatDlg extends JDialog
 
       pnlEdit.add(pnlName);
 
-      JPanel pnlHeight = new JPanel(new BorderLayout());
-      JLabel lblHeight = new JLabel("Height");
-      pnlHeight.add(lblHeight, BorderLayout.WEST);
-      txtHeight = new JTextField();
-      pnlHeight.add(txtHeight, BorderLayout.CENTER);
-
-      pnlEdit.add(pnlHeight);
-
       JPanel pnlWidth = new JPanel(new BorderLayout());
       JLabel lblWidth = new JLabel("Width");
       pnlWidth.add(lblWidth, BorderLayout.WEST);
@@ -50,6 +44,15 @@ public class FormatDlg extends JDialog
       pnlWidth.add(txtWidth, BorderLayout.CENTER);
 
       pnlEdit.add(pnlWidth);
+
+
+      JPanel pnlHeight = new JPanel(new BorderLayout());
+      JLabel lblHeight = new JLabel("Height");
+      pnlHeight.add(lblHeight, BorderLayout.WEST);
+      txtHeight = new JTextField();
+      pnlHeight.add(txtHeight, BorderLayout.CENTER);
+
+      pnlEdit.add(pnlHeight);
 
       JPanel pnlUnit = new JPanel(new BorderLayout());
       JLabel lblUnit = new JLabel("Unit");
@@ -59,6 +62,9 @@ public class FormatDlg extends JDialog
 
       pnlEdit.add(pnlUnit);
 
+      chkIsLandscape = new JCheckBox("Landscape");
+      pnlEdit.add(chkIsLandscape);
+      
 
       lblName.setPreferredSize(lblHeight.getPreferredSize());
       lblWidth.setPreferredSize(lblHeight.getPreferredSize());
