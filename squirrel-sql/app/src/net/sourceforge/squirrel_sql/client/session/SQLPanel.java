@@ -23,8 +23,8 @@ package net.sourceforge.squirrel_sql.client.session;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+//import java.awt.event.MouseAdapter;
+//import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.MemoryComboBox;
-import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
+//import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
@@ -92,7 +92,7 @@ class SQLPanel extends JPanel {
 	private DataSetViewer _viewer = new DataSetViewer();
 
 	/** Popup menu for text component. */
-	private TextPopupMenu _textPopupMenu = new TextPopupMenu();
+//	private TextPopupMenu _textPopupMenu = new TextPopupMenu();
 
 	/** Each tab is a <TT>ResultTab</TT> showing the results of a query. */
 	private JTabbedPane _tabbedResultsPanel = new JTabbedPane();
@@ -120,7 +120,7 @@ class SQLPanel extends JPanel {
 	/** Listeners */
 	private EventListenerList _listeners = new EventListenerList();
 	
-	private MouseAdapter _sqlEntryMouseListener = new MyMouseListener();
+//	private MouseAdapter _sqlEntryMouseListener = new MyMouseListener();
 
 	private UndoManager _undoManager = new UndoManager();
 
@@ -265,12 +265,13 @@ class SQLPanel extends JPanel {
 		pnl.setTabSize(4);
 		final int pos = _splitPane.getDividerLocation();
 		if (_sqlEntry != null) {
-			_sqlEntry.removeMouseListener(_sqlEntryMouseListener);
-			_splitPane.remove(_sqlEntry.getComponent());
+			//_sqlEntry.removeMouseListener(_sqlEntryMouseListener);
+			_sqlEntry.removeUndoableEditListener(_undoManager);
+			_splitPane.remove(_sqlEntry.getJComponent());
 		}
-		_splitPane.add(pnl.getComponent(), JSplitPane.LEFT);
+		_splitPane.add(pnl.getJComponent(), JSplitPane.LEFT);
 		_splitPane.setDividerLocation(pos);
-		pnl.addMouseListener(_sqlEntryMouseListener);
+		//pnl.addMouseListener(_sqlEntryMouseListener);
 		state.restoreState(pnl);
 		_sqlEntry = pnl;
 		
@@ -278,16 +279,16 @@ class SQLPanel extends JPanel {
 		{
 			IApplication app = _session.getApplication();
 			Resources res = app.getResources();
-			UndoAction undo = new UndoAction(app,_undoManager);
-			RedoAction redo = new RedoAction(app,_undoManager);
+			UndoAction undo = new UndoAction(app, _undoManager);
+			RedoAction redo = new RedoAction(app, _undoManager);
 			
-			_textPopupMenu.addSeparator();
-			_textPopupMenu.add(undo);
-			_textPopupMenu.add(redo);
+			//_textPopupMenu.addSeparator();
+			//_textPopupMenu.add(undo);
+			//_textPopupMenu.add(redo);
 			
-			// Whe should also register them as a action to the textarea or this panel!?
-			this.registerKeyboardAction(undo, res.getKeyStroke(undo), this.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-			this.registerKeyboardAction(redo, res.getKeyStroke(redo), this.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+			_sqlEntry.getJComponent().registerKeyboardAction(undo, res.getKeyStroke(undo), this.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+			_sqlEntry.getJComponent().registerKeyboardAction(redo, res.getKeyStroke(redo), this.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+			_sqlEntry.setUndoActions(undo, redo);
 			
 			_sqlEntry.addUndoableEditListener(_undoManager);
 		}
@@ -403,12 +404,16 @@ class SQLPanel extends JPanel {
 
 	}
 
-	public String getSQLScript() {
+	String getEntireSQLScript() {
 		return _sqlEntry.getText();
 	}
 
-	public void setSQLScript(String sqlScript) {
+	void setEntireSQLScript(String sqlScript) {
 		_sqlEntry.setText(sqlScript);
+	}
+
+	void appendSQLScript(String sqlScript) {
+		_sqlEntry.appendText(sqlScript);
 	}
 
 	protected void fireTabAddedEvent(ResultTab tab) {
@@ -675,17 +680,18 @@ class SQLPanel extends JPanel {
 		_nbrRows.getDocument().addDocumentListener(new LimitRowsTextBoxListener());
 
 		// Add mouse listener for displaying popup menu.
-		_nbrRows.addMouseListener(new MyMouseListener());
-		_sqlEntry.addMouseListener(new MyMouseListener());
+//		_nbrRows.addMouseListener(new MyMouseListener());
+		//_sqlEntry.addMouseListener(new MyMouseListener());
 
 		// Set focus to the SQL entry panel.
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				_sqlEntry.getComponent().requestFocus();
+				_sqlEntry.getJComponent().requestFocus();
 			}
 		});
 	}
 
+/*
 	private final class MyMouseListener extends MouseAdapter {
 		public void mousePressed(MouseEvent evt) {
 			if (evt.isPopupTrigger()) {
@@ -705,7 +711,7 @@ class SQLPanel extends JPanel {
 			}
 		}
 	}
-
+*/
 	private class MyPropertiesListener implements PropertyChangeListener {
 		private boolean _listening = true;
 

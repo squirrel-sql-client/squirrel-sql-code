@@ -3,6 +3,11 @@ Change Log
 
 1.1 continuation
 ================
+- Ctrl/Enter now works in jEdit plugin.
+- Undo/Redo now works in the jEdit plugin.
+- Keyboard shortcuts for edit options now work in the jEdit plugin.
+- jEdit plugin now has a popup menu.
+- New API ISession.removePluginObject(IPlugin plugin, String key);
 - New API added to IPlugin - INewSessionPropertiesPanel[] getNewSessionPropertiesPanels();
 - New Session options moved from Global Prefernces dialog to new Session Properties dialog.
 - New options on the session menu - Close all result tabs and close all Result windows.
