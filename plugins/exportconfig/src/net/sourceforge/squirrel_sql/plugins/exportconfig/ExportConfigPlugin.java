@@ -18,12 +18,16 @@ package net.sourceforge.squirrel_sql.plugins.exportconfig;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Iterator;
 
 import javax.swing.JMenu;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
+import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
@@ -32,6 +36,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 
 import net.sourceforge.squirrel_sql.plugins.exportconfig.action.ExportAliasesAction;
+import net.sourceforge.squirrel_sql.plugins.exportconfig.action.ExportConfigurationAction;
 import net.sourceforge.squirrel_sql.plugins.exportconfig.action.ExportDriversAction;
 import net.sourceforge.squirrel_sql.plugins.exportconfig.action.ExportSettingsAction;
 /**
@@ -44,6 +49,9 @@ public class ExportConfigPlugin extends DefaultPlugin
 	/** Logger for this class. */
 	private final static ILogger s_log = LoggerController.createLogger(ExportConfigPlugin.class);
 
+	/** Name of preferences file. */
+	private static final String USER_PREFS_FILE_NAME = "prefs.xml";
+
 	/** Folder to store user settings in. */
 	private File _userSettingsFolder;
 
@@ -52,6 +60,9 @@ public class ExportConfigPlugin extends DefaultPlugin
 
 	/** Export menu. */
 	private JMenu _exportMenu;
+
+	/** Plugin preferences. */
+	private ExportConfigPreferences _prefs;
 
 	/**
 	 * Return the internal name of this plugin.
@@ -156,11 +167,82 @@ public class ExportConfigPlugin extends DefaultPlugin
 		final ActionCollection coll = app.getActionCollection();
 
 		coll.add(new ExportAliasesAction(app, _resources, this));
+		coll.add(new ExportConfigurationAction(app, _resources, this));
 		coll.add(new ExportDriversAction(app, _resources, this));
 		coll.add(new ExportSettingsAction(app, _resources, this));
 
+		// Load plugin preferences.
+		loadPrefs();
+
 		_exportMenu = createExportMenu();
 		app.addToMenu(IApplication.IMenuIDs.PLUGINS_MENU, _exportMenu);
+	}
+
+	/**
+	 * Application is shutting down so save preferences.
+	 */
+	public void unload()
+	{
+		savePrefs();
+		super.unload();
+	}
+
+	/**
+	 * Retrieve the plugin preferences.
+	 *
+	 * @erturn	The plugin preferences.
+	 */
+	public ExportConfigPreferences getPreferences()
+	{
+		return _prefs;
+	}
+
+	/**
+	 * Load from preferences file.
+	 */
+	private void loadPrefs()
+	{
+		try
+		{
+			XMLBeanReader doc = new XMLBeanReader();
+			doc.load(new File(_userSettingsFolder, USER_PREFS_FILE_NAME),
+								getClass().getClassLoader());
+			final Iterator it = doc.iterator();
+			if (it.hasNext())
+			{
+				_prefs = (ExportConfigPreferences)it.next();
+			}
+		}
+		catch (FileNotFoundException ignore)
+		{
+			s_log.info(USER_PREFS_FILE_NAME + " not found - will be created");
+		}
+		catch (Exception ex)
+		{
+			s_log.error("Error occured reading from preferences file: "
+					+ USER_PREFS_FILE_NAME, ex);
+		}
+		if (_prefs == null)
+		{
+			_prefs = new ExportConfigPreferences();
+		}
+	}
+
+	/**
+	 * Save preferences to disk.
+	 */
+	private void savePrefs()
+	{
+		try
+		{
+			XMLBeanWriter wtr = new XMLBeanWriter(_prefs);
+			wtr.save(new File(_userSettingsFolder, USER_PREFS_FILE_NAME));
+		}
+		catch (Exception ex)
+		{
+			s_log.error("Error occured writing to preferences file: "
+					+ USER_PREFS_FILE_NAME, ex);
+		}
 	}
 
 	/**
@@ -174,6 +256,7 @@ public class ExportConfigPlugin extends DefaultPlugin
 		final ActionCollection coll = app.getActionCollection();
 
 		final JMenu exportMenu = _resources.createMenu(ExportConfigResources.IMenuResourceKeys.EXPORT);
+		_resources.addToMenu(coll.get(ExportConfigurationAction.class), exportMenu);
 		_resources.addToMenu(coll.get(ExportAliasesAction.class), exportMenu);
 		_resources.addToMenu(coll.get(ExportDriversAction.class), exportMenu);
 		_resources.addToMenu(coll.get(ExportSettingsAction.class), exportMenu);
