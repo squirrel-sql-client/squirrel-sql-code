@@ -46,6 +46,11 @@
             <file targetdir="$INSTALL_PATH/plugins" src="..\squirrel-sql-dist\squirrel-sql-1.1alpha3\plugins\dbinfo\dist\dbinfo.jar"/>
             <file targetdir="$INSTALL_PATH/plugins" src="..\squirrel-sql-dist\squirrel-sql-1.1alpha3\plugins\dbinfo\dist\dbinfo\"/>
         </pack>
+        <pack required="no" name="Plugin - jEdit Text Component">
+            <description>This component allows syntax highlighting etc. in the SQL entry area.</description>
+            <file targetdir="$INSTALL_PATH/plugins" src="..\squirrel-sql-dist\squirrel-sql-1.1alpha3\plugins\jedit\dist\jedit.jar"/>
+            <file targetdir="$INSTALL_PATH/plugins" src="..\squirrel-sql-dist\squirrel-sql-1.1alpha3\plugins\jedit\dist\jedit\"/>
+        </pack>
         <pack required="no" name="Plugin - Look and Feel">
             <description>Allows the Look and Feel of the application to be changed.</description>
             <file targetdir="$INSTALL_PATH/plugins" src="..\squirrel-sql-dist\squirrel-sql-1.1alpha3\plugins\laf\dist\laf.jar"/>
