@@ -25,9 +25,6 @@ public class LargeResultSetObjectInfo implements Cloneable, Serializable
 {
 	public interface IPropertyNames
 	{
-		String READ_BINARY = "readBinary";
-		String READ_VARBINARY = "readVarBinary";
-		String READ_LONGVARBINARY = "readLongVarBinary";
 		String READ_BLOBS = "readBlobs";
 		String READ_BLOBS_COMPLETE = "readCompleteBlobs";
 		String READ_BLOBS_SIZE = "readBlobsSize";
