@@ -49,7 +49,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 public class SQLExecuterTask implements Runnable
 {
 	/** Logger for this class. */
-	private static ILogger s_log =
+	private static final ILogger s_log =
 		LoggerController.createLogger(SQLExecuterTask.class);
 
 	/**
@@ -87,7 +87,7 @@ public class SQLExecuterTask implements Runnable
 		_cancelPanelRemoved = false;
 		try
 		{
-			SessionProperties props = _session.getProperties();
+			final SessionProperties props = _session.getProperties();
 			_stmt = _session.getSQLConnection().createStatement();
 			try
 			{
@@ -104,18 +104,13 @@ public class SQLExecuterTask implements Runnable
 				}
 
 				// Retrieve all the statements to execute.
-				QueryTokenizer qt = new QueryTokenizer(_sql,
+				final QueryTokenizer qt = new QueryTokenizer(_sql,
 										props.getSQLStatementSeparatorChar(),
 										props.getStartOfLineComment());
-				List queryStrings = new ArrayList();
+				final List queryStrings = new ArrayList();
 				while (qt.hasQuery())
 				{
-					final String querySql = qt.nextQuery();
-					// ignore commented lines.
-//					if (!querySql.startsWith("--"))
-//					{
-						queryStrings.add(querySql);
-//					}
+					queryStrings.add(qt.nextQuery());
 				}
 
 				_cancelPanel.setQueryCount(queryStrings.size());
@@ -182,11 +177,6 @@ public class SQLExecuterTask implements Runnable
 	private boolean processQuery(String querySql)
 		throws SQLException, DataSetException
 	{
-//		long executionStart = System.currentTimeMillis();
-//		long executionEnd = 0;
-//		long outputStart = 0;
-//		long outputEnd = 0;
-
 		++_currentQueryIndex;
 
 		_cancelPanel.setSQL(querySql);
@@ -195,10 +185,8 @@ public class SQLExecuterTask implements Runnable
 		final SQLExecutionInfo exInfo = new SQLExecutionInfo(_currentQueryIndex, querySql);
 		boolean rc = _stmt.execute(querySql);
 		exInfo.sqlExecutionComplete();
-//		executionEnd = System.currentTimeMillis();
 		if (rc)
 		{
-//			outputStart = System.currentTimeMillis();
 			if (_stopExecution)
 			{
 				return false;
@@ -242,8 +230,6 @@ public class SQLExecuterTask implements Runnable
 					rs.close();
 				}
 			}
-//			outputEnd = System.currentTimeMillis();
-//			exInfo.resultsProcessingComplete();
 		}
 		else
 		{

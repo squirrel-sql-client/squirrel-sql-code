@@ -26,7 +26,11 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
-
+/**
+ * This class represents the settings for a session.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
 public class SessionProperties implements Cloneable, Serializable
 {
 	public interface IDataSetDestinations
@@ -44,7 +48,9 @@ public class SessionProperties implements Cloneable, Serializable
 		String CONTENTS_NBR_ROWS_TO_SHOW = "contentsNbrOfRowsToShow";
 		String FONT_INFO = "fontInfo";
 		String LARGE_RESULT_SET_OBJECT_INFO = "largeResultSetObjectInfo";
+		String LIMIT_SQL_ENTRY_HISTORY_SIZE = "limitSqlEntryHistorySize";
 		String META_DATA_OUTPUT_CLASS_NAME = "metaDataOutputClassName";
+		String SQL_ENTRY_HISTORY_SIZE = "sqlEntryHistorySize";
 		String SHOW_ROW_COUNT = "showRowCount";
 		String SHOW_TOOL_BAR = "showToolBar";
 		String SQL_LIMIT_ROWS = "sqlLimitRows";
@@ -100,6 +106,15 @@ public class SessionProperties implements Cloneable, Serializable
 	/** Font information for the jEdit text area. */
 	private FontInfo _fi;
 
+	/** Should the number of SQL statements to save in execution history be limited?. */
+	private boolean _limitSqlEntryHistorySize = false;
+
+	/**
+	 * Number of SQL statements to save in execution history. Only applicable
+	 * if <TT>_limitSqlEntryHistorySize</TT> is true.
+	 */
+	private int _sqlEntryHistorySize = 100;
+
 	private LargeResultSetObjectInfo _largeObjectInfo = new LargeResultSetObjectInfo();
 
 	public SessionProperties()
@@ -114,16 +129,15 @@ public class SessionProperties implements Cloneable, Serializable
 	{
 		try
 		{
-			SessionProperties props = (SessionProperties) super.clone();
+			SessionProperties props = (SessionProperties)super.clone();
 			props._propChgReporter = null;
 			if (_fi != null)
 			{
-				props.setFontInfo((FontInfo) _fi.clone());
+				props.setFontInfo((FontInfo)_fi.clone());
 			}
 			if (_largeObjectInfo != null)
 			{
-				props.setLargeResultSetObjectInfo(
-					(LargeResultSetObjectInfo) _largeObjectInfo.clone());
+				props.setLargeResultSetObjectInfo((LargeResultSetObjectInfo)_largeObjectInfo.clone());
 			}
 
 			return props;
@@ -149,8 +163,6 @@ public class SessionProperties implements Cloneable, Serializable
 	{
 		return IDataSetDestinations.EDITABLE_TABLE;
 	}
-
-
 
 	public void addPropertyChangeListener(PropertyChangeListener listener)
 	{
@@ -252,6 +264,8 @@ public class SessionProperties implements Cloneable, Serializable
 	 *
 	 * This is not a very nice way to cause the interface to be updated,
 	 * but it was the simplest one that I could find.  GWG 10/30/02
+	 *
+	 * CB TODO: (Move this elsewhere).
 	 */
 	public void forceSQLOutputClassNameChange()
 	{
@@ -482,8 +496,34 @@ public class SessionProperties implements Cloneable, Serializable
 		_largeObjectInfo = data;
 		getPropertyChangeReporter().firePropertyChange(
 			IPropertyNames.LARGE_RESULT_SET_OBJECT_INFO,
-			oldValue,
-			_largeObjectInfo);
+			oldValue, _largeObjectInfo);
+	}
+
+	public boolean getLimitSQLEntryHistorySize()
+	{
+		return _limitSqlEntryHistorySize;
+	}
+
+	public void setLimitSQLEntryHistorySize(boolean data)
+	{
+		final boolean oldValue = _limitSqlEntryHistorySize;
+		_limitSqlEntryHistorySize = data;
+		getPropertyChangeReporter().firePropertyChange(IPropertyNames.LIMIT_SQL_ENTRY_HISTORY_SIZE,
+									oldValue, _limitSqlEntryHistorySize);
+	}
+
+	public int getSQLEntryHistorySize()
+	{
+		return _sqlEntryHistorySize;
+	}
+
+	public void setSQLEntryHistorySize(int data)
+	{
+		final int oldValue = _sqlEntryHistorySize;
+		_sqlEntryHistorySize = data;
+		getPropertyChangeReporter().firePropertyChange(
+			IPropertyNames.SQL_ENTRY_HISTORY_SIZE,
+			oldValue, _sqlEntryHistorySize);
 	}
 
 	private synchronized PropertyChangeReporter getPropertyChangeReporter()

@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.client.session.properties;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.beans.SimpleBeanInfo;
-
 /**
  * This is the <CODE>BeanInfo</CODE> class for <CODE>SessionProperties</CODE>.
  *
@@ -29,99 +28,51 @@ import java.beans.SimpleBeanInfo;
 public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 {
 	private static PropertyDescriptor[] s_dscrs;
-	private static Class cls = SessionProperties.class;
+	private static Class CLAZZ = SessionProperties.class;
+
+	private interface IPropNames extends SessionProperties.IPropertyNames
+	{
+	}
 
 	public SessionPropertiesBeanInfo() throws IntrospectionException
 	{
 		super();
 		if (s_dscrs == null)
 		{
-			s_dscrs = new PropertyDescriptor[14];
+			s_dscrs = new PropertyDescriptor[16];
 			int i = 0;
-			s_dscrs[i++] =
-				new PropertyDescriptor(
-					SessionProperties.IPropertyNames.AUTO_COMMIT,
-					cls,
-					"getAutoCommit",
-					"setAutoCommit");
-			s_dscrs[i++] =
-				new PropertyDescriptor(
-					SessionProperties.IPropertyNames.COMMIT_ON_CLOSING_CONNECTION,
-					cls,
-					"getCommitOnClosingConnection",
-					"setCommitOnClosingConnection");
-			s_dscrs[i++] =
-				new PropertyDescriptor(
-					SessionProperties.IPropertyNames.CONTENTS_LIMIT_ROWS,
-					cls,
-					"getContentsLimitRows",
-					"setContentsLimitRows");
-			s_dscrs[i++] =
-				new PropertyDescriptor(
-					SessionProperties.IPropertyNames.CONTENTS_NBR_ROWS_TO_SHOW,
-					cls,
-					"getContentsNbrRowsToShow",
-					"setContentsNbrRowsToShow");
-			s_dscrs[i++] =
-				new PropertyDescriptor(
-					SessionProperties.IPropertyNames.FONT_INFO,
-					cls,
-					"getFontInfo",
-					"setFontInfo");
-			s_dscrs[i++] =
-				new PropertyDescriptor(
-					SessionProperties.IPropertyNames.META_DATA_OUTPUT_CLASS_NAME,
-					cls,
-					"getMetaDataOutputClassName",
-					"setMetaDataOutputClassName");
-			s_dscrs[i++] =
-				new PropertyDescriptor(
-					SessionProperties.IPropertyNames.SHOW_ROW_COUNT,
-					cls,
-					"getShowRowCount",
-					"setShowRowCount");
-			s_dscrs[i++] =
-				new PropertyDescriptor(
-					SessionProperties.IPropertyNames.SHOW_TOOL_BAR,
-					cls,
-					"getShowToolBar",
-					"setShowToolBar");
-			s_dscrs[i++] =
-				new PropertyDescriptor(
-					SessionProperties.IPropertyNames.SQL_LIMIT_ROWS,
-					cls,
-					"getSQLLimitRows",
-					"setSQLLimitRows");
-			s_dscrs[i++] =
-				new PropertyDescriptor(
-					SessionProperties.IPropertyNames.SQL_NBR_ROWS_TO_SHOW,
-					cls,
-					"getSQLNbrRowsToShow",
-					"setSQLNbrRowsToShow");
-			s_dscrs[i++] =
-				new PropertyDescriptor(
-					SessionProperties.IPropertyNames.SQL_STATEMENT_SEPARATOR,
-					cls,
-					"getSQLStatementSeparatorChar",
-					"setSQLStatementSeparatorChar");
-			s_dscrs[i++] =
-				new PropertyDescriptor(
-					SessionProperties.IPropertyNames.SQL_RESULTS_OUTPUT_CLASS_NAME,
-					cls,
-					"getSQLResultsOutputClassName",
-					"setSQLResultsOutputClassName");
-			s_dscrs[i++] =
-				new PropertyDescriptor(
-					SessionProperties.IPropertyNames.LARGE_RESULT_SET_OBJECT_INFO,
-					cls,
-					"getLargeResultSetObjectInfo",
-					"setLargeResultSetObjectInfo");
-			s_dscrs[i++] =
-				new PropertyDescriptor(
-					SessionProperties.IPropertyNames.SQL_START_OF_LINE_COMMENT,
-					cls,
-					"getStartOfLineComment",
-					"setStartOfLineComment");
+			s_dscrs[0] = new PropertyDescriptor(IPropNames.AUTO_COMMIT,
+									CLAZZ, "getAutoCommit", "setAutoCommit");
+			s_dscrs[1] = new PropertyDescriptor(IPropNames.COMMIT_ON_CLOSING_CONNECTION,
+									CLAZZ, "getCommitOnClosingConnection", "setCommitOnClosingConnection");
+			s_dscrs[2] = new PropertyDescriptor(IPropNames.CONTENTS_LIMIT_ROWS,
+									CLAZZ, "getContentsLimitRows", "setContentsLimitRows");
+			s_dscrs[3] = new PropertyDescriptor(IPropNames.CONTENTS_NBR_ROWS_TO_SHOW,
+									CLAZZ, "getContentsNbrRowsToShow", "setContentsNbrRowsToShow");
+			s_dscrs[4] = new PropertyDescriptor(IPropNames.FONT_INFO,
+									CLAZZ, "getFontInfo", "setFontInfo");
+			s_dscrs[5] = new PropertyDescriptor(IPropNames.META_DATA_OUTPUT_CLASS_NAME,
+									CLAZZ, "getMetaDataOutputClassName", "setMetaDataOutputClassName");
+			s_dscrs[6] = new PropertyDescriptor(IPropNames.SHOW_ROW_COUNT,
+									CLAZZ, "getShowRowCount", "setShowRowCount");
+			s_dscrs[7] = new PropertyDescriptor(IPropNames.SHOW_TOOL_BAR,
+									CLAZZ, "getShowToolBar", "setShowToolBar");
+			s_dscrs[8] = new PropertyDescriptor(IPropNames.SQL_LIMIT_ROWS,
+									CLAZZ, "getSQLLimitRows", "setSQLLimitRows");
+			s_dscrs[9] = new PropertyDescriptor(IPropNames.SQL_NBR_ROWS_TO_SHOW,
+									CLAZZ, "getSQLNbrRowsToShow", "setSQLNbrRowsToShow");
+			s_dscrs[10] = new PropertyDescriptor(IPropNames.SQL_STATEMENT_SEPARATOR,
+									CLAZZ, "getSQLStatementSeparatorChar", "setSQLStatementSeparatorChar");
+			s_dscrs[11] = new PropertyDescriptor(IPropNames.SQL_RESULTS_OUTPUT_CLASS_NAME,
+									CLAZZ, "getSQLResultsOutputClassName", "setSQLResultsOutputClassName");
+			s_dscrs[12] = new PropertyDescriptor(IPropNames.LARGE_RESULT_SET_OBJECT_INFO,
+									CLAZZ, "getLargeResultSetObjectInfo", "setLargeResultSetObjectInfo");
+			s_dscrs[13] = new PropertyDescriptor(IPropNames.SQL_START_OF_LINE_COMMENT,
+									CLAZZ, "getStartOfLineComment", "setStartOfLineComment");
+			s_dscrs[14] = new PropertyDescriptor(IPropNames.LIMIT_SQL_ENTRY_HISTORY_SIZE,
+									CLAZZ, "getLimitSQLEntryHistorySize", "setLimitSQLEntryHistorySize");
+			s_dscrs[15] = new PropertyDescriptor(IPropNames.SQL_ENTRY_HISTORY_SIZE,
+									CLAZZ, "getSQLEntryHistorySize", "setSQLEntryHistorySize");
 		}
 	}
 
