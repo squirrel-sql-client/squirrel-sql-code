@@ -29,8 +29,11 @@
 	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#the_alias">The Alias</A></TD></TR>
 	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#connecting">Connecting</A></TD></TR>
 	<TR><TD><A HREF="#executing">Executing SQL</A></TD></TR>
-	<TR><TD><A HREF="#editingdata">Editing Data in the Contents Tab</A></TD></TR>
+	<TR><TD><A HREF="#ContentsTab">The Contents Tab and Editing Data</A></TD></TR>
+	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#ViewingDataInContentsTab">Viewing Data in the Contents Tab</A></TD></TR>
 	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#enablingediting">Enabling Editing</A></TD></TR>
+	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#Setting_the_Editing_Mode">Setting the Format and Editing Mode</A></TD></TR>
+
 	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#howtoedit">How To Edit</A></TD></TR>
 	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#UsingPopup">Using the Popup Window</A></TD></TR>
 	<TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#EditingInPopup">Editing Within the Popup</A></TD></TR>
@@ -356,9 +359,10 @@ results from the tabbed folder and display it in its own window.</P>
 <P ALIGN="CENTER"><IMG SRC="images/sql_2.png" BORDER="0"
 			ALT="&quot;Torn off&quot; query results"></P>
 
-<A NAME="editingdata"><h2>Editing Data in the Contents Tab</h2></A>
+<P>
+<A NAME="ContentsTab"><h2>The Contents Tab and Editing Data</h2></A>
 
-<P>SQuirreL allows you to easily change the data in a table. Data may
+<P>SQuirreL allows you to easily view and change the data in a single table. Data may
 be changed just by typing the new values when you are viewing the table
 in the Contents tab under the Objects view.
 The data may also be viewed and edited in a larger popup window,
@@ -367,6 +371,108 @@ by double-clicking on the cell.
 There are some small differences between the in-cell editing and
 editing in the Popup, so be sure to read the
 <A HREF="#UsingPopup">Using the Popup Window</A> information.
+
+<P>
+<A NAME="ViewingDataInContentsTab"><h3>Viewing Data in the Contents Tab</h3></A>
+After connecting to a database, you may view the data in a single table
+by using the Contents Tab.
+<P>
+To get to the contents tab, first select the Objects view.
+Next, look under the tree in the window on the left.
+The exact organization of this window is different for each DBMS,
+so you may have to do a bit of exploring.
+What you are looking for is a list of table names,
+and they are usually found under a heading labeled "TABLE" or "TABLES".
+The "TABLE" heading may itself be under another heading, such as
+the name of the database instance.
+When you find the list of table names,
+click on the name of the table that you wish to view,
+and then in the window on the right click on the tab labeled "Contents".
+<P>
+The data in the table will be displayed in rows and columns
+based on the format selected (see 
+<a href="#Setting_the_Editing_Mode">Setting the Format and Editing Mode</a>).
+
+<P>
+The column ordering is the order of the rows in the table definition.
+That order may be changed by drag-and-drop,
+which means clicking on the column header and holding the mouse button down
+while dragging the column horizontally to another location.
+Columns are initially displayed with a moderate width so that you can
+see a reasonable amount of data in as many columns as possible
+within the limited window space.
+You may increase or decrease a column's width by click-and-hold on the
+space between two columns, then moving the mouse left or right to change
+the column widths.
+
+<P>
+The rows are initally unordered.
+However, after retrieving the data, you may sort the rows based on the
+values in a column by single-clicking on a column header.
+That will sort the rows into an order with the values in the selected
+columns starting with the "smallest" value.
+Clicking on the same column header again will reverse the order
+("largest" first).
+You can limit the number of rows retrieved
+(see the Session Properties, Object Tree).
+
+<P>
+There are a few special cases for how data is displayed.
+<UL>
+	<LI>
+	If a cell contains Newlines
+	(which is possible in the various VARCHAR and CLOB data types),
+	the cell background is colored Cyan and the Newline characters are
+	explicitly shown as "\n".
+	If the table is editable,
+	the Cyan background means that the cell contents cannot be edited
+	in the cell as displayed in the table, but can be edited using the
+	Popup window (see <a href="#UsingPopup">Using the Popup Window</a>).
+	</LI>
+	<LI>
+	BLOB (Binary Large OBject) and CLOB (Character Large Object) fields
+	are initially displayed as "&lt;Blob&gt;" and "&lt;Clob&gt;" respecively.
+	This is done for performance reasons, since those data types are
+	often quite large.
+	When you select the Blob or Clob field, the entire data is read in
+	and displayed in the cell.<BR>
+	Alternatively, you may use the Session Properties -> Format screen
+	to limit the amount of the Blob/Clob data read and displayed when
+	the Contents Tab is first displayed, in which case the number of
+	characters you have selected will be displayed in each Blob or
+	Clob cell.  This may be necessary when the Blob or Clob contains
+	data needed to identify specific rows in the table.
+	When there is more Blob/Clob data for a cell than is displayed
+	in that cell, an elipsis ("...") is added to the end of the displayed
+	data so you know that the data has been truncated for display.
+	As before, when you select the cell, the whole Blob or Clob will
+	be read and displayed.
+	</LI>
+</UL>
+
+<P>
+One word of warning.
+Some DBMSs that claim to have BLOB and CLOB data types actually implement
+those types using BINARY, VARCHAR, or other types of fields.
+In those cases, the cells will act as they would for the BINARY, VARCHAR, etc.,
+data types, and not as described above for the BLOB/CLOB types.
+(There is a functional difference in that "real" BLOB/CLOB types
+return a "locator" or "reference" object rather than the actual data.
+Using the locator allows SQuirreL to defer reading the actual data until
+you need it rather than reading it all during the initial display of
+the Contents Tab.)
+To see if your DBMS uses real BLOB/CLOB types, go to the Objects view,
+then select the top element in the tree in the left window and "Data Types"
+in the right window.
+In the column labeled "DATA_TYPE", real BLOBs will have the value 2004
+and real CLOBs will show 2005.
+If your DBMS does not have 2004 and 2005 listed under the "DATA_TYPE" field,
+then it does not support the BLOB/CLOB functionality provided by SQuirreL.
+As an example, the MySQL DBMS claims to support BLOBS,
+but in the "Data Types" table it shows that the "TYPE_NAME" of "BLOB"
+is actually using the "DATA_TYPE" of "-4 [LONGVARBINARY]",
+so a "BLOB" field in MySQL will be treated by SQuirreL as a LONGVARBINARY
+and not as a "BLOB".
 </P>
 
 <A NAME="enablingediting"><h3>Enabling Editing</h3></A>
@@ -390,12 +496,12 @@ may be selected for use on a specific table.</P>
 manually entered SQL queries run under the SQL view. 
 </P>
 
-<a name="Setting_the_Editing_Mode"><h4>Setting the Editing Mode</h4></a>
+<a name="Setting_the_Editing_Mode"><h4>Setting the Format and Editing Mode</h4></a>
 
-<P>To set the default format for the Contents Tab for new sessions take
+<P>To set the default format and edting mode for the Contents Tab for new sessions take
 the <em>New Session Properties</em> option from the <em>File</em> and
 click on the <EM>General</EM> tab. The <b>Table Contents</b> dropdown
-list gives three options for the format of the Comtemts Tab:</P>
+list gives the following options:</P>
 
 <dl>
 	<dt>Table</dt>
@@ -420,8 +526,8 @@ list gives three options for the format of the Comtemts Tab:</P>
 	made to the data in this view are made to the database.</dd>
 </dl>
 
-<P>After you have connected with a database, you may change the default
-model for the data in the Contents tab by the <em>Session
+<P>After you have connected with a database, you may change the format
+or editing mode for the data in the Contents tab by the <em>Session
 	Properties</em> option from the <em>Session</em> and clicking on the
 <EM>General</EM> tab and changing the selection for <em>Table
 	Contents</em>.</P>
@@ -437,7 +543,7 @@ model for the data in the Contents tab by the <em>Session
 		<EM>Contents</EM> tab to view the data.</li>
 
 	<li>Make sure the table is editable. See <a
-		href="#Setting_the_Editing_Mode">Setting the Editing
+		href="#Setting_the_Editing_Mode">Setting the Format and Editing
 		Mode</a> above.</li>
 
 	<li>Select the cell that you want to edit. This may be done
@@ -446,8 +552,18 @@ model for the data in the Contents tab by the <em>Session
 		mouse. Note that if a cell cannot be edited (see <a
 			href="#Limitations">Limitations</a>) you may select the cell,
 		but you will not be allowed to edit the data.</li>
-		When a cell is editable, its background will change to Yellow to
+		When a cell is being edited, its background will change to Yellow to
 		let you know that you may be changing the contents of the database.
+		Cells with a Cyan background may be edited only by using the
+		Popup window (see <a href="#UsingPopup">Using the Popup Window</a>).
+
+	<li>If you select the cell using the mouse, the background immediately turns Yellow
+		and the cursor is set to the place where you clicked in the cell.
+		If you select the cell by using the tab or enter keys, the
+		background remains white until you type the first character
+		to be added (or use the delete key).  That character is added to
+		(or deleted from) the end of the text displayed in the cell,
+		and the cell background changes to Yellow.
 
 	<li>Change the data in the cell to look the way that you want it
 		to. Editing is done in the usual way by typing characters,
@@ -472,7 +588,12 @@ button).  This will abort the operation and avoid changing the DB.</P>
 <P>If the cell contains a NULL value, that is shown as the string
 "&lt;null&gt;". To change that to a non-null value, just type the
 new data. When you enter the first character of the data, the
-"&lt;null&gt;" will be replaced by that character.</P>
+"&lt;null&gt;" will be replaced by that character.<BR>
+NOTE: This means that SQuirreL will not allow you to enter a string with the
+value "&lt;null&gt;" into a nullable column, since that string will be interpreted by SQuirreL
+to be the null value.  Also, if you have a field in the database containing
+the string "&lt;null&gt;", do not edit that field using SQuirreL since the
+value will be replaced by the null value.</P>
 
 <P>To change the value of a nullable cell to NULL, just delete all of the data
 in that cell. When you delete all of the data in a cell, the contents of
@@ -532,7 +653,7 @@ but there are some times when you will need to use the Popup:
 	when the data is potentially so large or complex that loading it
 	into the table cells in a printable form might significantly
 	delay the display of the table.
-	In this case, the cell may display just the name of the data type,  something like "&lt;BLOB&gt;",
+	In this case, the cell may display just the name of the data type,  something like "&lt;Blob&gt;",
 	while the Popup window would show the actual contents of that field.
 	</li>
 
