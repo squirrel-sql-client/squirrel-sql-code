@@ -72,7 +72,7 @@ public abstract class CodeCompletionInfo implements Comparable
    /**
     * Default implementation
     */
-   public CodeCompletionInfo[] getColumns(DatabaseMetaData jdbcMetaData, String colNamePattern) throws SQLException
+   public CodeCompletionInfo[] getColumns(DatabaseMetaData jdbcMetaData, String catalog, String schema, String colNamePattern) throws SQLException
    {
       return new CodeCompletionInfo[0];
    }

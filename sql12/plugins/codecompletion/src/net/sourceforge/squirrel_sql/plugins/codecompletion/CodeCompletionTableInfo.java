@@ -43,13 +43,13 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
       return _tableName;
    }
 
-   public CodeCompletionInfo[] getColumns(DatabaseMetaData jdbcMetaData, String colNamePattern)
+   public CodeCompletionInfo[] getColumns(DatabaseMetaData jdbcMetaData, String catalog, String schema, String colNamePattern)
       throws SQLException
    {
       if(null == _colInfos)
       {
          Vector infos = new Vector();
-         ResultSet res = jdbcMetaData.getColumns(null, null, _tableName, "%");
+         ResultSet res = jdbcMetaData.getColumns(catalog, schema, _tableName, "%");
          while(res.next())
          {
             String columnName = res.getString("COLUMN_NAME");

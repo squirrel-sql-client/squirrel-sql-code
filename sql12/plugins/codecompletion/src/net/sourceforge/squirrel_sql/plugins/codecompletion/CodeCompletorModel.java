@@ -21,6 +21,9 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
+import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsListener;
+import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsAdapter;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.CodeCompletionInfo;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.CodeCompletionInfoCollection;
 
@@ -33,9 +36,6 @@ public class CodeCompletorModel
    private ILogger _log = LoggerController.createLogger(CodeCompletorModel.class);
    private CodeCompletionInfoCollection _codeCompletionInfos;
 
-	// The methods performTableOrViewFound() and setLastSelectedCompletion() take care
-	// that only one of these two attributes is not null.
-   private CodeCompletionInfo _lastSelectedCompletion;
 	private String _lastSelectedCompletionName;
 
    CodeCompletorModel(ISession session, CodeCompletionInfoCollection codeCompletionInfos)
@@ -44,6 +44,14 @@ public class CodeCompletorModel
       {
          _session = session;
          _codeCompletionInfos = codeCompletionInfos;
+
+			_session.getParserEventsProcessor().addParserEventsListener(new ParserEventsAdapter()
+			{
+				public void aliasesFound(TableAliasInfo[] aliasInfos)
+				{
+					onAliasesFound(aliasInfos);
+				}
+			});
       }
       catch(Exception e)
       {
@@ -51,7 +59,12 @@ public class CodeCompletorModel
       }
    }
 
-   CodeCompletionInfo[] getCompletionInfos(String beginning)
+	private void onAliasesFound(TableAliasInfo[] aliasInfos)
+	{
+		_codeCompletionInfos.replaceLastAliasInfos(aliasInfos);
+	}
+
+	CodeCompletionInfo[] getCompletionInfos(String beginning)
    {
       StringTokenizer st = new StringTokenizer(beginning, ".");
       Vector buf = new Vector();
@@ -60,41 +73,127 @@ public class CodeCompletorModel
          buf.add(st.nextToken());
       }
 
-      String tableNamePat = "";
-      String colNamePat = null;
 
-      if(1 < buf.size())
+      if(beginning.endsWith(".") || 0 == buf.size())
       {
-         tableNamePat = (String)buf.get(buf.size() - 2);
-         colNamePat = (String)buf.get(buf.size() - 1);
+         buf.add("");
       }
-      else if( 1 == buf.size())
+
+      if(1 == buf.size())
       {
-         tableNamePat = (String)buf.get(0);
-         if(beginning.endsWith("."))
+         Vector ret = new Vector();
+
+         ///////////////////////////////////////////////////////////////////////////////
+         // The colums of the last completed table/view that match the tableNamePat
+         // will be returned on top of the collection
+         ret.addAll( Arrays.asList(getColumnsFromLastSelectionStartingWith((String)buf.get(0))) );
+         //
+         //////////////////////////////////////////////////////////////////////////////
+
+         ret.addAll( Arrays.asList(_codeCompletionInfos.getInfosStartingWith(null, null, (String)buf.get(0))) );
+         return (CodeCompletionInfo[])ret.toArray(new CodeCompletionInfo[0]);
+      }
+      else // 1 < buf.size()
+      {
+         String catalog = null;
+         int catAndSchemCount = 0;
+         if(_codeCompletionInfos.isCatalog((String)buf.get(0)))
          {
-            colNamePat = "";
+            catalog = (String)buf.get(0);
+            catAndSchemCount = 1;
          }
+
+         String schema = null;
+         if(_codeCompletionInfos.isSchema((String)buf.get(0)))
+         {
+            schema = (String)buf.get(0);
+            catAndSchemCount = 1;
+         }
+         else if(_codeCompletionInfos.isSchema((String)buf.get(1)))
+         {
+            schema = (String)buf.get(1);
+            catAndSchemCount = 2;
+         }
+
+         // Might also be a catalog or a schema name
+         String tableNamePat1 = (String)buf.get(buf.size() - 2);
+         String colNamePat1 = (String)buf.get(buf.size() - 1);
+
+         Vector ret = new Vector();
+
+         if(0 < catAndSchemCount)
+         {
+            String tableNamePat2 = (String)buf.get(catAndSchemCount);
+
+            if(buf.size() > catAndSchemCount + 1)
+            {
+               String colNamePat2 = (String)buf.get(catAndSchemCount+1);
+               ret.addAll(Arrays.asList(getColumnsForName(catalog, schema, tableNamePat2, colNamePat2)));
+            }
+            else
+            {
+               ret.addAll(Arrays.asList(_codeCompletionInfos.getInfosStartingWith(catalog, schema, tableNamePat2)));
+            }
+
+         }
+         ret.addAll(Arrays.asList(getColumnsForName(null, null, tableNamePat1, colNamePat1)));
+
+
+         return (CodeCompletionInfo[]) ret.toArray(new CodeCompletionInfo[ret.size()]);
       }
 
-      if(null == colNamePat)
-      {
-			// The colums of the last completed table/view that match the tableNamePat
-			// will be returned on top of the collection
-			Vector ret = new Vector();
-			ret.addAll( Arrays.asList(getColumnsFromLasteSelectionStartingWith(tableNamePat)) );
-			ret.addAll( Arrays.asList(_codeCompletionInfos.getInfosStartingWith(tableNamePat)) );
-			return (CodeCompletionInfo[])ret.toArray(new CodeCompletionInfo[0]);
-      }
-      else
-      {
-			return getColumnsForName(tableNamePat, colNamePat);
-      }
+
+
+
+
+
+
+
+
+
+
+
+
+//      String tableNamePat = "";
+//      String colNamePat = null;
+//
+//      if(1 < buf.size())
+//      {
+//         tableNamePat = (String)buf.get(buf.size() - 2);
+//         colNamePat = (String)buf.get(buf.size() - 1);
+//      }
+//      else if( 1 == buf.size())
+//      {
+//         tableNamePat = (String)buf.get(0);
+//         if(beginning.endsWith("."))
+//         {
+//            colNamePat = "";
+//         }
+//      }
+//
+//      if(null == colNamePat)
+//      {
+//			Vector ret = new Vector();
+//
+//         ///////////////////////////////////////////////////////////////////////////////
+//         // The colums of the last completed table/view that match the tableNamePat
+//         // will be returned on top of the collection
+//			ret.addAll( Arrays.asList(getColumnsFromLastSelectionStartingWith(tableNamePat)) );
+//         //
+//         //////////////////////////////////////////////////////////////////////////////
+//
+//			ret.addAll( Arrays.asList(_codeCompletionInfos.getInfosStartingWith(tableNamePat)) );
+//			return (CodeCompletionInfo[])ret.toArray(new CodeCompletionInfo[0]);
+//      }
+//      else
+//      {
+//			return getColumnsForName(tableNamePat, colNamePat);
+//      }
    }
 
-	private CodeCompletionInfo[] getColumnsForName(String name, String colNamePat)
+	private CodeCompletionInfo[] getColumnsForName(String catalog, String schema, String name, String colNamePat)
 	{
-		CodeCompletionInfo[] infos = _codeCompletionInfos.getInfosStartingWith(name);
+		CodeCompletionInfo[] infos = _codeCompletionInfos.getInfosStartingWith(catalog, schema, name);
 		String upperCaseTableNamePat = name.toUpperCase();
 		for(int i=0; i < infos.length; ++i)
 		{
@@ -102,7 +201,7 @@ public class CodeCompletorModel
 			{
 				try
 				{
-					return infos[i].getColumns(_session.getSQLConnection().getSQLMetaData().getJDBCMetaData(), colNamePat);
+					return infos[i].getColumns(_session.getSQLConnection().getSQLMetaData().getJDBCMetaData(), catalog, schema, colNamePat);
 				}
 				catch(SQLException e)
 				{
@@ -115,36 +214,16 @@ public class CodeCompletorModel
 
 
 
-   private CodeCompletionInfo[] getColumnsFromLasteSelectionStartingWith(String colNamePat)
+   private CodeCompletionInfo[] getColumnsFromLastSelectionStartingWith(String colNamePat)
    {
-      try
+      if(null != _lastSelectedCompletionName)
       {
-			if(null != _lastSelectedCompletion)
-			{
-				return _lastSelectedCompletion.getColumns(_session.getSQLConnection().getSQLMetaData().getJDBCMetaData(), colNamePat);
-			}
-			else if(null != _lastSelectedCompletionName)
-			{
-				return getColumnsForName(_lastSelectedCompletionName, colNamePat);
-			}
+         return getColumnsForName(null, null, _lastSelectedCompletionName, colNamePat);
+      }
 
-			return new CodeCompletionInfo[0];
-      }
-      catch(SQLException e)
-      {
-         _log.error("Error retrieving columns", e);
-         return new CodeCompletionInfo[0];
-      }
+      return new CodeCompletionInfo[0];
    }
 
-   public void setLastSelectedCompletion(CodeCompletionInfo lastSelectedCompletion)
-   {
-      if(lastSelectedCompletion.hasColumns())
-      {
-			_lastSelectedCompletionName = null;
-         _lastSelectedCompletion = lastSelectedCompletion;
-      }
-   }
 
 	public SQLTokenListener getSQLTokenListener()
 	{
@@ -158,7 +237,6 @@ public class CodeCompletorModel
 
 	private void performTableOrViewFound(String name)
 	{
-		_lastSelectedCompletion = null;
    	_lastSelectedCompletionName = name;
 	}
 
