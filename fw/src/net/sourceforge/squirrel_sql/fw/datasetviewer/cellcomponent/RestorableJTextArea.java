@@ -31,6 +31,7 @@ public class RestorableJTextArea extends JTextArea
 			_originalValue = "<null>";
 		else _originalValue = originalValue;
 		super.setText(_originalValue);
+		setCaretPosition(0);
 	}
 
 	/*
@@ -39,6 +40,7 @@ public class RestorableJTextArea extends JTextArea
 	 */
 	public void updateText(String newText) {
 		super.setText(newText);
+		setCaretPosition(0);
 	}
 	
 	/*
@@ -46,5 +48,6 @@ public class RestorableJTextArea extends JTextArea
 	 */
 	 public void restoreText() {
 	 	super.setText(_originalValue);
+		setCaretPosition(0);
 	 }
 }
