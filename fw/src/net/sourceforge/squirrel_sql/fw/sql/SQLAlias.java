@@ -9,7 +9,7 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANT_Y; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
@@ -262,18 +262,15 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 	 * Set the password for this alias.
 	 * 
 	 * @param	password	The new password.
-	 * 
-	 * @throws	ValidationException
-	 * 			TODO: What conditions?
 	 */
-	public void setPassword(String password) throws ValidationException
+	public void setPassword(String password)
 	{
 		String data = getString(password);
 		if (_password != data)
 		{
 			final String oldValue = _password;
 			_password = data;
-			_propChgReporter.firePropertyChange(ISQLAlias.IPropertyNames.PASSWORD,
+			getPropertyChangeReporter().firePropertyChange(ISQLAlias.IPropertyNames.PASSWORD,
 												oldValue, _password);
 		}
 	}
@@ -282,16 +279,13 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 	 * Set whether a password has been saved for his alias.
 	 * 
 	 * @param	passwordSaved	<TT>true</TT> if password saved else <TT>false</TT>.
-	 * 
-	 * @throws	ValidationException
-	 * 			TODO: What conditions?
 	 */
-	public void setPasswordSaved(boolean passwordSaved) throws ValidationException
+	public void setPasswordSaved(boolean passwordSaved)
 	{
 		if (_passwordSaved != passwordSaved)
 		{
 			_passwordSaved = passwordSaved;
-			_propChgReporter.firePropertyChange(ISQLAlias.IPropertyNames.PASSWORD_SAVED,
+			getPropertyChangeReporter().firePropertyChange(ISQLAlias.IPropertyNames.PASSWORD_SAVED,
 												!_passwordSaved, _passwordSaved);
 		}
 	}
@@ -311,14 +305,14 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
 	 * Set whether this alias should be logged on automatically.
 	 * 
 	 * @param	value	<TT>true</TT> if alias should be autologged on
-	 * 					else <TT>false</TT..
+	 * 					else <TT>false</TT.
 	 */
 	public void setAutoLogon(boolean value)
 	{
 		if (_autoLogon != value)
 		{
 			_autoLogon = value;
-			_propChgReporter.firePropertyChange(ISQLAlias.IPropertyNames.AUTO_LOGON,
+			getPropertyChangeReporter().firePropertyChange(ISQLAlias.IPropertyNames.AUTO_LOGON,
 												!_autoLogon, _autoLogon);
 		}
 	}
