@@ -29,13 +29,12 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
 /**
  * Application arguments.
  *
  * <B>Note:</B> <EM>This class <B>cannot</B> use the logging package as this
- * class is used to initialize the logging package.</EM>
+ * class is used to initialize the logging package. Nor can it use any classes
+ * that themselves use the logging package.</EM>
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
@@ -298,7 +297,7 @@ public class ApplicationArguments
 	private Option createAnOption(String[] argInfo)
 	{
 		Option opt = new Option(argInfo[0], argInfo[2]);
-		if (!Utilities.isStringEmpty(argInfo[1]))
+		if (!isStringEmpty(argInfo[1]))
 		{
 			opt.setLongOpt(argInfo[1]);
 		}
@@ -312,10 +311,15 @@ public class ApplicationArguments
 		OptionBuilder.hasArg();
 		OptionBuilder.withDescription(argInfo[2]);
 		Option opt = OptionBuilder.create( argInfo[0]);
-		if (!Utilities.isStringEmpty(argInfo[1]))
+		if (!isStringEmpty(argInfo[1]))
 		{
 			opt.setLongOpt(argInfo[1]);
 		}
 		return opt;
+	}
+
+	private static boolean isStringEmpty(String str)
+	{
+		return str == null || str.length() == 0;
 	}
 }
