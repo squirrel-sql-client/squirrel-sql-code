@@ -20,10 +20,13 @@ package net.sourceforge.squirrel_sql.plugins.oracle.tab;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
 /**
  * This class will display the source for an Oracle trigger.
  *
@@ -31,14 +34,15 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  */
 public class TriggerSourceTab extends BaseSourceTab
 {
+
 	/** SQL that retrieves the source of a stored procedure. */
 	private static String SQL =
 		"select trigger_body from sys.all_triggers"
 			+ " where owner = ? and trigger_name = ?";
 
-	public TriggerSourceTab(String hint)
+	public TriggerSourceTab()
 	{
-		super(hint);
+		super("Show trigger source");
 	}
 
 	protected PreparedStatement createStatement() throws SQLException

@@ -19,6 +19,12 @@ package net.sourceforge.squirrel_sql.plugins.oracle.tab;
  */
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
+
 /**
  * This tab will display the database options.
  *
