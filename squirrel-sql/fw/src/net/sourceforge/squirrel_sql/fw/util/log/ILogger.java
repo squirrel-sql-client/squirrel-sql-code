@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.util.log;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -23,7 +23,8 @@ package net.sourceforge.squirrel_sql.fw.util.log;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public interface ILogger {
+public interface ILogger
+{
 	public void debug(Object message);
 	public void debug(Object message, Throwable th);
 	public void info(Object message);
