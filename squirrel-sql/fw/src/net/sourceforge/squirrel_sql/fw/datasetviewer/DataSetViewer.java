@@ -66,7 +66,7 @@ public class DataSetViewer {
     }
 
     protected void addRow(IDataSet ds, int columnCount) throws DataSetException {
-        String[] row = new String[columnCount];
+        Object[] row = new Object[columnCount];
         for (int i = 0; i < columnCount; ++i) {
             IColumnRenderer renderer = getColumnRenderer(i);
             if (renderer != null) {
@@ -81,7 +81,7 @@ public class DataSetViewer {
         addRow(row);
     }
 
-    protected void addRow(String[] row) {
+    protected void addRow(Object[] row) {
         _dest.addRow(row);
     }
 
@@ -90,10 +90,10 @@ public class DataSetViewer {
     }
 
     protected static class DefaultColumnRenderer implements IColumnRenderer {
-        public String renderObject(Object obj) {
+        public Object renderObject(Object obj) {
             return obj.toString();
         }
-        public String renderNull() {
+        public Object renderNull() {
             return "<null>"; // i18n
         }
 
@@ -109,7 +109,7 @@ public class DataSetViewer {
         public void showHeadings(boolean show) {
         }
 
-        public void addRow(String[] row) {
+        public void addRow(Object[] row) {
         }
 
         public void allRowsAdded() {
