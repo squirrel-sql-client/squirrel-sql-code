@@ -17,11 +17,18 @@ package net.sourceforge.squirrel_sql.client.plugin;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 
+import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+
 public abstract class DefaultPlugin implements IPlugin {
+	/** Current application API. */
     private IApplication _app;
 
     /**
@@ -57,9 +64,87 @@ public abstract class DefaultPlugin implements IPlugin {
         return Version.getWebSite();
     }
 
-    protected final IApplication getApplication() {
+	/**
+	 * Return the current application API.
+	 * 
+	 * @return	The current application API.
+	 */
+    public final IApplication getApplication() {
         return _app;
     }
+
+	/**
+	 * Return the folder with the Squirrel application folder
+	 * that belongs to this plugin. If it doesn't exist then
+	 * create it. This would normally be
+	 * <PRE>
+	 * &lt;squirrel_app&gt;/plugins/&lt;plugin_internal_name&gt;
+	 * </PRE>
+	 * 
+	 * @return	Plugins application folder.
+	 * 
+	 * @throws	IllegalStateException
+	 *			if plugin doesn't have an internal name.
+	 * 
+	 * @throws	IOException
+	 * 			An error occured retrieving/creating the folder.
+	 */
+    public synchronized File getPluginAppSettingsFolder()
+            throws IllegalStateException, IOException {
+        final String internalName = getInternalName();
+        if (internalName == null || internalName.trim().length() == 0) {
+            throw new IllegalStateException("IPlugin doesn't have a valid internal name");
+        }
+        final String name = ApplicationFiles.SQUIRREL_PLUGINS_FOLDER +
+                        	File.separator + internalName + File.separator;
+        final File file = new File(name);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+
+        if (!file.isDirectory()) {
+            throw new IOException("Cannot create directory as a file of the same name already exists: " + name);
+        }
+
+        return file;
+    }
+
+	/**
+	 * Return the folder with the users home directory
+	 * that belongs to this plugin. If it doesn't exist then
+	 * create it. This would normally be
+	 * <PRE>
+	 * &lt;user_home&gt;/.squirrel-sql/plugins/&lt;plugin_internal_name&gt;
+	 * </PRE>
+	 * 
+	 * @return	Plugins user folder.
+	 * 
+	 * @throws	IllegalStateException
+	 *			if plugin doesn't have an internal name.
+	 * 
+	 * @throws	IOException
+	 * 			An error occured retrieving/creating the folder.
+	 */
+    public synchronized File getPluginUserSettingsFolder()
+            throws IllegalStateException, IOException {
+        final String internalName = getInternalName();
+        if (internalName == null || internalName.trim().length() == 0) {
+            throw new IllegalStateException("IPlugin doesn't have a valid internal name");
+        }
+        String name = ApplicationFiles.PLUGINS_USER_SETTINGS_FOLDER +
+                        File.separator + internalName + File.separator;
+        File file = new File(name);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+
+        if (!file.isDirectory()) {
+            throw new IOException("Cannot create directory as a file of the same name already exists: " + name);
+        }
+
+        return file;
+    }
+
 
     /**
      * Create panels for the Global Preferences dialog.

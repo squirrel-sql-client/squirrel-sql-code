@@ -17,6 +17,9 @@ package net.sourceforge.squirrel_sql.client.plugin;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import java.io.File;
+import java.io.IOException;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 
@@ -84,5 +87,43 @@ public interface IPlugin {
      *          any panels in the Global Preferences Dialog.
      */
     IGlobalPreferencesPanel[] getGlobalPreferencePanels();
+
+	/**
+	 * Return the folder with the Squirrel application folder
+	 * that belongs to this plugin. If it doesn't exist then
+	 * create it. This would normally be
+	 * <PRE>
+	 * &lt;squirrel_app&gt;/plugins/&lt;plugin_internal_name&gt;
+	 * </PRE>
+	 * 
+	 * @return	Plugins application folder.
+	 * 
+	 * @throws	IllegalStateException
+	 *			if plugin doesn't have an internal name.
+	 * 
+	 * @throws	IOException
+	 * 			An error occured retrieving/creating the folder.
+	 */
+    File getPluginAppSettingsFolder()
+		throws IOException, IllegalStateException;
+
+	/**
+	 * Return the folder with the users home directory
+	 * that belongs to this plugin. If it doesn't exist then
+	 * create it. This would normally be
+	 * <PRE>
+	 * &lt;user_home&gt;/.squirrel-sql/plugins/&lt;plugin_internal_name&gt;
+	 * </PRE>
+	 * 
+	 * @return	Plugins user folder.
+	 * 
+	 * @throws	IllegalStateException
+	 *			if plugin doesn't have an internal name.
+	 * 
+	 * @throws	IOException
+	 * 			An error occured retrieving/creating the folder.
+	 */
+    public File getPluginUserSettingsFolder()
+            throws IllegalStateException, IOException;
 }
 

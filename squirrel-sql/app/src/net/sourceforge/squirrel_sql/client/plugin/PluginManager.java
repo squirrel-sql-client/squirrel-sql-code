@@ -164,54 +164,6 @@ public class PluginManager {
         return (IPluginDatabaseObjectType[])objTypesList.toArray(new IPluginDatabaseObjectType[objTypesList.size()]);
     }
 
-    public synchronized File getPluginAppSettingsFolder(IPlugin plugin)
-            throws IllegalArgumentException, IOException {
-        if (plugin == null) {
-            throw new IllegalArgumentException("Null IPlugin passed");
-        }
-        final String pluginInternalName = plugin.getInternalName();
-        if (pluginInternalName == null || pluginInternalName.trim().length() == 0) {
-            throw new IllegalStateException("IPlugin doesn't have a valid internal name");
-        }
-        String name = ApplicationFiles.SQUIRREL_PLUGINS_FOLDER +
-                        File.separator + pluginInternalName +
-                        File.separator;
-        File file = new File(name);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-
-        if (!file.isDirectory()) {
-            throw new IOException("Cannot create directory as a file of the same name already exists: " + name);
-        }
-
-        return file;
-    }
-
-    public synchronized File getPluginUserSettingsFolder(IPlugin plugin)
-            throws IllegalArgumentException, IOException {
-        if (plugin == null) {
-            throw new IllegalArgumentException("Null IPlugin passed");
-        }
-        final String pluginInternalName = plugin.getInternalName();
-        if (pluginInternalName == null || pluginInternalName.trim().length() == 0) {
-            throw new IllegalStateException("IPlugin doesn't have a valid internal name");
-        }
-        String name = ApplicationFiles.PLUGINS_USER_SETTINGS_FOLDER +
-                        File.separator + pluginInternalName +
-                        File.separator;
-        File file = new File(name);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-
-        if (!file.isDirectory()) {
-            throw new IOException("Cannot create directory as a file of the same name already exists: " + name);
-        }
-
-        return file;
-    }
-
     /**
      * Load plugins. Load all plugin jars into class loader.
      */
