@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.laf;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -355,15 +355,21 @@ class LAFRegister
 	 */
 	void updateAllFrames()
 	{
-		Frame[] frames = Frame.getFrames();
-		if (frames != null)
+		SwingUtilities.invokeLater(new Runnable()
 		{
-			for (int i = 0; i < frames.length; ++i)
+			public void run()
 			{
-				SwingUtilities.updateComponentTreeUI(frames[i]);
-				frames[i].pack();
+				Frame[] frames = Frame.getFrames();
+				if (frames != null)
+				{
+					for (int i = 0; i < frames.length; ++i)
+					{
+						SwingUtilities.updateComponentTreeUI(frames[i]);
+						frames[i].pack();
+					}
+				}
 			}
-		}
+		});
 	}
 
 	/**
