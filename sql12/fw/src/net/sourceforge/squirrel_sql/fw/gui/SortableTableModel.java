@@ -1,9 +1,9 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2002 Johan Compagner
+ * Copyright (C) 2002-2004 Johan Compagner
  * jcompagner@j-com.nl
  *
- * Modifications copyright (C) 2002 Colin Bell
+ * Modifications copyright (C) 2002-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.text.Collator;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -37,7 +38,7 @@ public class SortableTableModel extends AbstractTableModel
 	/** Column currently being sorted by. -1 means unsorted. */
 	protected int _iColumn = -1;
 
-	protected boolean _bAscending;
+	private boolean _bAscending;
 
 	/** The autal model that this model is wrapped around. */
 	private TableModel _actualModel;
@@ -54,11 +55,6 @@ public class SortableTableModel extends AbstractTableModel
 	 * will contain <TT>{1,0}</TT>.
 	 */
 	private Integer[] _indexes = new Integer[0];
-
-	public SortableTableModel()
-	{
-		this(null);
-	}
 
 	public SortableTableModel(TableModel model)
 	{
@@ -141,24 +137,27 @@ public class SortableTableModel extends AbstractTableModel
 	{
 		return _actualModel.getColumnClass(col);
 	}
-	
+
 	/**
 	 * Delete the selected rows in the actual table.
-	 * 
+	 *
 	 * @param	rows[]	List of row indexes in sorted model
 	 */
-	public void deleteRows(int[] rows) {
+	public void deleteRows(int[] rows)
+	{
 		int[] actualRows = new int[rows.length];
-		for (int i=0; i< rows.length; i++) {
+		for (int i=0; i< rows.length; ++i)
+		{
 			actualRows[i] = _indexes[rows[i]].intValue();
 		}
 		((MyTableModel)_actualModel).deleteRows(actualRows);
 	}
-	
+
 	/**
 	 * Insert a new row into the table.
 	 */
-	public void insertRow(Object[] values) {
+	public void insertRow(Object[] values)
+	{
 		// first attempt to add data to underlying table model
 		((MyTableModel)_actualModel).addRow(values);
 
@@ -178,9 +177,7 @@ public class SortableTableModel extends AbstractTableModel
 		((MyTableModel)_actualModel).fireTableChanged(new TableModelEvent(_actualModel));
 		fireTableChanged(new TableModelEvent(this));
 	}
-	
-	
-	
+
 	/**
 	 * The actual model may or may not be editable, so return
 	 * the value returned by the model when asked if this
@@ -190,7 +187,7 @@ public class SortableTableModel extends AbstractTableModel
 	 * @param	col		Column to return data for.
 	 *
 	 * @return	value returned by actual model
-	 */ 
+	 */
 	public boolean isCellEditable(int row, int col)
 	{
 		return _actualModel.isCellEditable(row,col);
@@ -222,19 +219,25 @@ public class SortableTableModel extends AbstractTableModel
 	{
 		_iColumn = column;
 		_bAscending = ascending;
-		TableModelComparator comparator =
-			new TableModelComparator(column, ascending);
+		TableModelComparator comparator = new TableModelComparator(column, ascending);
 		// Should the data be first cloned so that the sorting doesn't take place
 		// on the array that is used in getValue()
-		// This is a must if sorting is done in a thread! ??
+		// TODO: This is a must if sorting is done in a thread! ??
 		Arrays.sort(_indexes, comparator);
 		fireTableDataChanged();
+	}
+
+	public boolean isSortedAscending()
+	{
+		return _bAscending;
 	}
 
 	class TableModelComparator implements Comparator
 	{
 		private int _iColumn;
 		private int _iAscending;
+ 		private final Collator _collator = Collator.getInstance();
+ 		private boolean _allDataIsString = true;
 
 		public TableModelComparator(int iColumn)
 		{
@@ -252,6 +255,18 @@ public class SortableTableModel extends AbstractTableModel
 			{
 				_iAscending = -1;
 			}
+ 			_collator.setStrength(Collator.PRIMARY);
+ 			_collator.setStrength(Collator.TERTIARY);
+
+ 			for (int i = 0, limit = _actualModel.getRowCount(); i < limit; ++i)
+ 			{
+ 				final Object data = _actualModel.getValueAt(i, _iColumn);
+ 				if (!(data instanceof String))
+ 				{
+ 					_allDataIsString = false;
+ 					break;
+ 				}
+ 			}
 		}
 
 		/*
@@ -278,8 +293,16 @@ public class SortableTableModel extends AbstractTableModel
 				{
 					return -1 * _iAscending;
 				}
-				Comparable c1 = (Comparable)data1;
-				return c1.compareTo(data2) * _iAscending;
+//				Comparable c1 = (Comparable)data1;
+//				return c1.compareTo(data2) * _iAscending;
+
+ 				if (!_allDataIsString)
+ 				{
+ 					final Comparable c1 = (Comparable)data1;
+ 					return c1.compareTo(data2) * _iAscending;
+ 				}
+ //				return _collator.compare(data1.toString(), data2.toString()) * _iAscending;
+ 				return _collator.compare((String)data1, (String)data2) * _iAscending;
 			}
 			catch (ClassCastException ex)
 			{
