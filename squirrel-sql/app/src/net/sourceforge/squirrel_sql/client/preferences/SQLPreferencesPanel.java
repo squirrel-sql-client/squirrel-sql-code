@@ -113,7 +113,7 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 		interface SQLPrefsPanelI18n
 		{
 			String DEBUG_JDBC = "JDBC Debug (can slow application)";
-			String LOGIN_TIMEOUT = "Login Timeout (Seconds):";
+			String LOGIN_TIMEOUT = "Login Timeout (secs):";
 			String TAB_HINT = "SQL";
 			String TAB_TITLE = "SQL";
 		}
@@ -144,70 +144,40 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 
 		private void createUserInterface()
 		{
-			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.fill = gbc.HORIZONTAL;
-			gbc.insets = new Insets(4, 4, 4, 4);
-			gbc.gridx = 0;
-			gbc.gridy = 0;
-			gbc.weightx = 1;
-			add(createSQLPanel(), gbc);
-			++gbc.gridy;
-			add(createJDBCDebugPanel(), gbc);
-		}
-
-		private JPanel createSQLPanel()
-		{
 			_loginTimeout.setColumns(4);
 
-			JPanel pnl = new JPanel();
-			pnl.setBorder(BorderFactory.createTitledBorder("SQL"));
-
-			pnl.setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.insets = new Insets(4, 4, 4, 4);
 			gbc.anchor = gbc.WEST;
+			gbc.fill = gbc.NONE;
+			gbc.insets = new Insets(4, 4, 4, 4);
+			gbc.weightx = 0;
 
 			gbc.gridx = 0;
 			gbc.gridy = 0;
-			pnl.add(new JLabel(SQLPrefsPanelI18n.LOGIN_TIMEOUT), gbc);
+			add(new JLabel(SQLPrefsPanelI18n.LOGIN_TIMEOUT), gbc);
 
 			++gbc.gridx;
-			pnl.add(_loginTimeout, gbc);
+			add(_loginTimeout, gbc);
 
 			++gbc.gridx;
-			gbc.weightx = 1.0;
-			pnl.add(new JLabel("Zero means unlimited"), gbc);
+			add(new JLabel("Zero means unlimited"), gbc);
 
-			return pnl;
-		}
-
-		private JPanel createJDBCDebugPanel()
-		{
-			JPanel pnl = new JPanel();
-			pnl.setBorder(BorderFactory.createTitledBorder("JDBC Debug"));
-
-			pnl.setLayout(new GridBagLayout());
-			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = gbc.HORIZONTAL;
-			gbc.insets = new Insets(4, 4, 4, 4);
-			gbc.anchor = gbc.WEST;
-
 			gbc.gridx = 0;
-			gbc.gridy = 0;
-			gbc.gridwidth = 2;
-			pnl.add(_debugJdbc, gbc);
+			++gbc.gridy;
+			gbc.gridwidth = gbc.REMAINDER;
+			add(_debugJdbc, gbc);
 
 			gbc.gridx = 0;
 			++gbc.gridy;
 			gbc.gridwidth = 1;
-			pnl.add(new JLabel("JDBC Debug File:", SwingConstants.RIGHT), gbc);
+			add(new JLabel("JDBC Debug File:", SwingConstants.RIGHT), gbc);
 
 			++gbc.gridx;
 			gbc.weightx = 1;
-			pnl.add(_jdbcDebugLogFileNameLbl, gbc);
-
-			return pnl;
+			gbc.gridwidth = gbc.REMAINDER;
+			add(_jdbcDebugLogFileNameLbl, gbc);
 		}
-	}
 
+	}
 }

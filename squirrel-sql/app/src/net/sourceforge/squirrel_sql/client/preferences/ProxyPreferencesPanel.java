@@ -30,6 +30,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.ProxySettings;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -104,11 +105,16 @@ class ProxyPreferencesPanel implements IGlobalPreferencesPanel
 			String USE_SOCKS_PROXY = "Use Proxy";
 			String TAB_HINT = "Proxy Server Settings";
 			String TAB_TITLE = "Proxy";
+			String NOTES = "Separate entries in the 'No Proxy For' field with |. "
+					+ "If using a proxy for Internet access you may need to "
+					+ "enter your database server names in the 'No Proxy For' "
+					+ "field in order to access them.";
 		}
 
 		private JCheckBox _httpUseProxyChk = new JCheckBox(i18n.USE_HTTP_PROXY);
 		private JTextField _httpProxyServer = new JTextField();
 		private JTextField _httpProxyPort = new JTextField();
+		private JTextField _httpNonProxyHosts = new JTextField();
 		private JTextField _httpProxyUser = new JTextField();
 		private JTextField _httpProxyPassword = new JTextField();
 		private JCheckBox _socksUseProxyChk = new JCheckBox(i18n.USE_SOCKS_PROXY);
@@ -128,6 +134,7 @@ class ProxyPreferencesPanel implements IGlobalPreferencesPanel
 			_httpUseProxyChk.setSelected(proxySettings.getHttpUseProxy());
 			_httpProxyServer.setText(proxySettings.getHttpProxyServer());
 			_httpProxyPort.setText(proxySettings.getHttpProxyPort());
+			_httpNonProxyHosts.setText(proxySettings.getHttpNonProxyHosts());
 			_httpProxyUser.setText(proxySettings.getHttpProxyUser());
 			_httpProxyPassword.setText(proxySettings.getHttpProxyPassword());
 
@@ -145,6 +152,7 @@ class ProxyPreferencesPanel implements IGlobalPreferencesPanel
 			proxySettings.setHttpUseProxy(_httpUseProxyChk.isSelected());
 			proxySettings.setHttpProxyServer(_httpProxyServer.getText());
 			proxySettings.setHttpProxyPort(_httpProxyPort.getText());
+			proxySettings.setHttpNonProxyHosts(_httpNonProxyHosts.getText());
 			proxySettings.setHttpProxyUser(_httpProxyUser.getText());
 			proxySettings.setHttpProxyPassword(_httpProxyPassword.getText());
 
@@ -160,6 +168,7 @@ class ProxyPreferencesPanel implements IGlobalPreferencesPanel
 			final boolean http = _httpUseProxyChk.isSelected();
 			_httpProxyServer.setEnabled(http);
 			_httpProxyPort.setEnabled(http);
+			_httpNonProxyHosts.setEnabled(http);
 			_httpProxyUser.setEnabled(http);
 			_httpProxyPassword.setEnabled(http);
 
@@ -176,16 +185,16 @@ class ProxyPreferencesPanel implements IGlobalPreferencesPanel
 			gbc.gridx = 0;
 			gbc.gridy = 0;
 			gbc.weightx = 1;
-			add(createHttpPanel(), gbc);
+			add(createHTTPPanel(), gbc);
 			++gbc.gridy;
-			add(createSocksPanel(), gbc);
+			add(createSOCKSPanel(), gbc);
 
 			final ActionListener lis = new MyActionHandler();
 			_httpUseProxyChk.addActionListener(lis);
 			_socksUseProxyChk.addActionListener(lis);
 		}
 
-		private JPanel createHttpPanel()
+		private JPanel createHTTPPanel()
 		{
 
 			JPanel pnl = new JPanel(new GridBagLayout());
@@ -211,24 +220,37 @@ class ProxyPreferencesPanel implements IGlobalPreferencesPanel
 			++gbc.gridy;
 			pnl.add(new JLabel("Password:", JLabel.RIGHT), gbc);
 
+			++gbc.gridy;
+			pnl.add(new JLabel("No Proxy For:", JLabel.RIGHT), gbc);
+
+			++gbc.gridy;
+			--gbc.gridx;
+			gbc.gridwidth = gbc.REMAINDER;
+			pnl.add(new MultipleLineLabel(i18n.NOTES), gbc);
+			gbc.gridwidth = 1;
+			++gbc.gridx;
+
 			++gbc.gridx;
 			gbc.gridy = 0;
 			gbc.weightx = 1;
 			pnl.add(_httpProxyServer, gbc);
-			
+
 			++gbc.gridy;
 			pnl.add(_httpProxyPort, gbc);
-			
+
 			++gbc.gridy;
 			pnl.add(_httpProxyUser, gbc);
-			
+
 			++gbc.gridy;
 			pnl.add(_httpProxyPassword, gbc);
+
+			++gbc.gridy;
+			pnl.add(_httpNonProxyHosts, gbc);
 
 			return pnl;
 		}
 
-		private JPanel createSocksPanel()
+		private JPanel createSOCKSPanel()
 		{
 			JPanel pnl = new JPanel(new GridBagLayout());
 			pnl.setBorder(BorderFactory.createTitledBorder("SOCKS Proxy"));

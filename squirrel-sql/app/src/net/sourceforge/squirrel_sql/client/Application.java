@@ -17,38 +17,32 @@ package net.sourceforge.squirrel_sql.client;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
 import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import javax.swing.Action;
 import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
-import net.sourceforge.squirrel_sql.fw.util.ProxySettings;
+import net.sourceforge.squirrel_sql.fw.util.ProxyHandler;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.action.ActionKeys;
 import net.sourceforge.squirrel_sql.client.db.AliasMaintSheetFactory;
 import net.sourceforge.squirrel_sql.client.db.DataCache;
 import net.sourceforge.squirrel_sql.client.db.DriverMaintSheetFactory;
@@ -127,14 +121,6 @@ class Application implements IApplication
 		if (!args.useDefaultMetalTheme())
 		{
 			MetalLookAndFeel.setCurrentTheme(new AllBluesBoldMetalTheme());
-			try
-			{
-				UIManager.setLookAndFeel(MetalLookAndFeel.class.getName());
-			}
-			catch (Exception ex)
-			{
-				s_log.error("Error setting Metal LAF", ex);
-			}
 		}
 
 		_resources = new SquirrelResources("net.sourceforge.squirrel_sql.client.resources.squirrel");
@@ -196,22 +182,6 @@ class Application implements IApplication
 
 				indicateNewStartupTask("Initializing plugins...");
 				_pluginManager.initializePlugins();
-
-//Action act =
-//	_actions.get("net.sourceforge.squirrel_sql.client.mainframe.action.ExitAction");
-//ActionKeys ak =
-//	new ActionKeys(
-//		"net.sourceforge.squirrel_sql.client.mainframe.action.ExitAction",
-//		null,
-//			KeyEvent.VK_T);
-//_prefs.setActionKeys(new ActionKeys[] {ak});
-				
-
-
-
-
-
-
 
 				indicateNewStartupTask("Showing main window...");
 				_mainFrame.setVisible(true);
@@ -490,70 +460,7 @@ class Application implements IApplication
 
 		if (propName == null || propName == SquirrelPreferences.IPropertyNames.PROXY)
 		{
-			final Properties props = System.getProperties();
-			final ProxySettings proxy = _prefs.getProxySettings();
-
-			final boolean http = proxy.getHttpUseProxy();
-			if (http)
-			{
-				props.put("proxySet", "true");
-				props.put("http.proxyHost", proxy.getHttpProxyServer());
-				props.put("http.proxyPort", proxy.getHttpProxyPort());
-				final String user = proxy.getHttpProxyUser();
-				String password = proxy.getHttpProxyPassword();
-				if (password == null)
-				{
-					password = "";
-				}
-				if (user != null && user.length() > 0)
-				{
-					s_log.debug("Using HTTP proxy with security");
-					Authenticator.setDefault(new MyAuthenticator(user, password));
-				}
-				else
-				{
-					s_log.debug("Using HTTP proxy without security");
-					Authenticator.setDefault(null);
-				}
-			}
-			else
-			{
-				s_log.debug("Not using HTTP proxy");
-				props.remove("proxySet");
-				props.remove("http.proxyHost");
-				props.remove("http.proxyPort");
-				Authenticator.setDefault(null);
-			}
-
-			final boolean socks = proxy.getSocksUseProxy();
-			if (socks)
-			{
-				props.put("socksProxyHost", proxy.getSocksProxyServer());
-				props.put("socksProxyPort", proxy.getSocksProxyPort());
-			}
-			else
-			{
-				props.remove("socksProxyHost");
-				props.remove("socksProxyPort");
-			}
-		}
-	}
-
-	private final static class MyAuthenticator extends Authenticator
-	{
-		private PasswordAuthentication _password;
-
-		public MyAuthenticator(String user, String password)
-		{
-			super();
-			_password = new PasswordAuthentication(user, password.toCharArray());
-
-		}
-
-		protected PasswordAuthentication getPasswordAuthentication()
-		{
-System.out.println("Authenticating");
-			return _password;
+			new ProxyHandler().apply(_prefs.getProxySettings());
 		}
 	}
 }
