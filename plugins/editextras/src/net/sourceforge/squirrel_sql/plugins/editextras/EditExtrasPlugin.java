@@ -260,6 +260,7 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 		api.addToSQLEntryAreaMenu(actions.get(InQuotesAction.class));
 		api.addToSQLEntryAreaMenu(actions.get(RemoveQuotesAction.class));
 		api.addToSQLEntryAreaMenu(actions.get(ConvertToStringBufferAction.class));
+		api.addToSQLEntryAreaMenu(actions.get(FormatSQLAction.class));
 	}
 
 	private class SQLPanelListener extends SQLPanelAdapter
