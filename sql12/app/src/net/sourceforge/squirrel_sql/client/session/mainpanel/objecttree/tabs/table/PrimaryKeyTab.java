@@ -73,7 +73,7 @@ public class PrimaryKeyTab extends BaseTableTab
 			try
 			{
 				final ResultSetDataSet rsds = new ResultSetDataSet();
- 				rsds.setResultSet(rs, getSession().getProperties().getLargeResultSetObjectInfo(), new int[] { 6, 5, 4 }, true);
+ 				rsds.setResultSet(rs, new int[] { 6, 5, 4 }, true);
 				return rsds;
 			}
 			finally

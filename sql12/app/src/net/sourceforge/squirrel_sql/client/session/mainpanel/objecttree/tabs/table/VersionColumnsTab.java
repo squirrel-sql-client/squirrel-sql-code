@@ -73,7 +73,7 @@ public class VersionColumnsTab extends BaseTableTab
 			try
 			{
 				final ResultSetDataSet rsds = new ResultSetDataSet();
-				rsds.setResultSet(rs, getSession().getProperties().getLargeResultSetObjectInfo());
+				rsds.setResultSet(rs);
 				return rsds;
 			}
 			finally

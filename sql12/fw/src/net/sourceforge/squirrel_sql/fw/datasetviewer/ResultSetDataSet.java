@@ -51,35 +51,30 @@ public class ResultSetDataSet implements IDataSet
 		super();
 	}
 
-	public void setResultSet(ResultSet rs) throws DataSetException
-	{
- 		setResultSet(rs, null, null, false);
-	}
 
 	/**
 	 * Form used by Tabs other than ContentsTab
 	 */
-	public void setResultSet(ResultSet rs, LargeResultSetObjectInfo largeObjInfo)
+	public void setResultSet(ResultSet rs)
 		throws DataSetException
 	{
- 		setResultSet(rs, largeObjInfo, null, false);
+ 		setResultSet(rs, null, false);
 	}
 	
 	/**
 	 * Form used by ContentsTab
 	 */
 	public void setContentsTabResultSet(ResultSet rs, 
-		String fullTableName,
-		LargeResultSetObjectInfo largeObjInfo)
+		String fullTableName)
 		throws DataSetException
 	{
-			setResultSet(rs, fullTableName, largeObjInfo, null, false, true);
+			setResultSet(rs, fullTableName, null, false, true);
 	}
 
 	public void setResultSet(ResultSet rs, int[] columnIndices)
 		throws DataSetException
 	{
- 		setResultSet(rs, null, columnIndices, false);
+ 		setResultSet(rs, columnIndices, false);
 	}
 
 
@@ -88,11 +83,11 @@ public class ResultSetDataSet implements IDataSet
 	 * all Tab classes except ContentsTab.  This tunrs all the data into strings
 	 * for simplicity of operation.
 	 */
-	public void setResultSet(ResultSet rs, LargeResultSetObjectInfo largeObjInfo,
+	public void setResultSet(ResultSet rs,
  				 int[] columnIndices, boolean computeWidths)
  			throws DataSetException
 	{
-		setResultSet(rs, null, largeObjInfo, columnIndices, computeWidths, false);
+		setResultSet(rs, null, columnIndices, computeWidths, false);
 	}
 
 
@@ -100,16 +95,11 @@ public class ResultSetDataSet implements IDataSet
 	 * Internal method to read the contents of a ResultSet that is used by
 	 * all Tab classes
 	 */
-	private void setResultSet(ResultSet rs, String fullTableName, LargeResultSetObjectInfo largeObjInfo,
+	private void setResultSet(ResultSet rs, String fullTableName, 
  				 int[] columnIndices, boolean computeWidths, boolean isContentsTab)
  			throws DataSetException
 	{
 		reset();
-
-		if (largeObjInfo == null)
-		{
-			largeObjInfo = new LargeResultSetObjectInfo();
-		}
 
 		if (columnIndices != null && columnIndices.length == 0)
 		{
@@ -134,7 +124,7 @@ public class ResultSetDataSet implements IDataSet
 				_dataSetDefinition = new DataSetDefinition(colDefs);
 
  				// Read the entire row, since some drivers complain if columns are read out of sequence
- 				ResultSetReader rdr = new ResultSetReader(rs, largeObjInfo, null);
+ 				ResultSetReader rdr = new ResultSetReader(rs, null);
 				Object[] row = null;
 
 				while (true) {

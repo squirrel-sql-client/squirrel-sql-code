@@ -27,7 +27,6 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -55,8 +54,6 @@ public class ResultSetReader
 	 */
 	private final int[] _columnIndices;
 
-	/** Describes how to handle "blob" type data. */
-	private final LargeResultSetObjectInfo _largeObjInfo;
 
 	/**
 	 * The number of columns to read. This may or may not be the same as the
@@ -70,24 +67,15 @@ public class ResultSetReader
 	/** Metadata for the <TT>ResultSet</TT>. */
 	private ResultSetMetaData _rsmd;
 
-	public ResultSetReader(ResultSet rs) throws SQLException
-	{
-		this(rs, null, null);
-	}
-
-	public ResultSetReader(ResultSet rs, LargeResultSetObjectInfo largeObjInfo)
+	public ResultSetReader(ResultSet rs)
 		throws SQLException
 	{
-		this(rs, largeObjInfo, null);
+		this(rs, null);
 	}
+
+
 
 	public ResultSetReader(ResultSet rs, int[] columnIndices) throws SQLException
-	{
-		this(rs, null, columnIndices);
-	}
-
-	public ResultSetReader(ResultSet rs, LargeResultSetObjectInfo largeObjInfo,
-							int[] columnIndices) throws SQLException
 	{
 		super();
 		if (rs == null)
@@ -96,8 +84,6 @@ public class ResultSetReader
 		}
 
 		_rs = rs;
-
-		_largeObjInfo = largeObjInfo != null ? largeObjInfo : new LargeResultSetObjectInfo();
 
 		if (columnIndices != null && columnIndices.length == 0)
 		{
@@ -178,6 +164,8 @@ public class ResultSetReader
 	/**
 	 * Method used to read data for all Tabs except the ContentsTab, where
 	 * the data is used only for reading.
+	 * The only data read in the non-ContentsTab tabs is Meta-data about the DB,
+	 * which means that there should be no BLOBs, CLOBs, or unknown fields.
 	 */
 	private Object[] doRead()
 	{
@@ -337,37 +325,45 @@ public class ResultSetReader
 						break;
 
 					case Types.BLOB:
-						if (_largeObjInfo.getReadBlobs())
-						{
+						//	Since we are reading Meta-data about the DB, we should
+						// never see a BLOB.   If we do, the contents are not interpretable
+						// by Squirrel, so just tell the user that it is a BLOB and that it
+						// has data.
+//??						if (_largeObjInfo.getReadBlobs())
+//??						{
 							row[i] = null;
 							Blob blob = _rs.getBlob(idx);
 							if (blob != null)
 							{
-								int len = (int)blob.length();
-								if (len > 0)
-								{
-									int bytesToRead = len;
-									if (!_largeObjInfo.getReadCompleteBlobs())
-									{
-										bytesToRead = _largeObjInfo.getReadBlobsSize();
-									}
-									if (bytesToRead > len)
-									{
-										bytesToRead = len;
-									}
-									row[i] = new String(blob.getBytes(1, bytesToRead));
-								}
-							}
-						}
-						else
-						{
+//??								int len = (int)blob.length();
+//??								if (len > 0)
+//??								{
+//??									int bytesToRead = len;
+//??									if (!_largeObjInfo.getReadCompleteBlobs())
+//??									{
+//??										bytesToRead = _largeObjInfo.getReadBlobsSize();
+//??									}
+//??									if (bytesToRead > len)
+//??									{
+//??										bytesToRead = len;
+//??									}
+//??									row[i] = new String(blob.getBytes(1, bytesToRead));
+//??								}
+//??							}
+//??						}
+//??						else
+//??						{
 							row[i] = s_stringMgr.getString("ResultSetReader.blob");
 						}
 						break;
 
 					case Types.CLOB:
-						if (_largeObjInfo.getReadClobs())
-						{
+						// Since we are reading Meta-data about the DB, we should
+						// never see a CLOB.  However, if we do we assume that
+						// it is printable text and that the user wants to see it, so
+						// read in the entire thing.
+//??						if (_largeObjInfo.getReadClobs())
+//??						{
 							row[i] = null;
 							Clob clob = _rs.getClob(idx);
 							if (clob != null)
@@ -376,49 +372,57 @@ public class ResultSetReader
 								if (len > 0)
 								{
 									int charsToRead = len;
-									if (!_largeObjInfo.getReadCompleteClobs())
-									{
-										charsToRead = _largeObjInfo.getReadClobsSize();
-									}
-									if (charsToRead > len)
-									{
-										charsToRead = len;
-									}
+//??									if (!_largeObjInfo.getReadCompleteClobs())
+//??									{
+//??										charsToRead = _largeObjInfo.getReadClobsSize();
+//??									}
+//??									if (charsToRead > len)
+//??									{
+//??										charsToRead = len;
+//??									}
 									row[i] = clob.getSubString(1, charsToRead);
 								}
 							}
-						}
-						else
-						{
-							row[i] = s_stringMgr.getString("ResultSetReader.clob");
-						}
+//??						}
+//??						else
+//??						{
+//??							row[i] = s_stringMgr.getString("ResultSetReader.clob");
+//??						}
 						break;
 
 					case Types.OTHER:
-						if (_largeObjInfo.getReadSQLOther())
-						{
-							// Running getObject on a java class attempts
-							// to load the class in memory which we don't want.
-							// getString() just gets the value without loading
-							// the class (at least under PostgreSQL).
-							//row[i] = _rs.getObject(idx);
-							row[i] = _rs.getString(idx);
-						}
-						else
-						{
+						// Since we are reading Meta-data, there really should never be
+						// a field with SQL type Other (1111).
+						// If there is, we REALLY do not know how to handle it,
+						// so do not attempt to read.
+//??						if (_largeObjInfo.getReadSQLOther())
+//??						{
+//??							// Running getObject on a java class attempts
+//??							// to load the class in memory which we don't want.
+//??							// getString() just gets the value without loading
+//??							// the class (at least under PostgreSQL).
+//??							//row[i] = _rs.getObject(idx);
+//??							row[i] = _rs.getString(idx);
+//??						}
+//??						else
+//??						{
 							row[i] = s_stringMgr.getString("ResultSetReader.other");
-						}
+//??						}
 						break;
 
 					default:
-						if (_largeObjInfo.getReadAllOther())
-						{
-							row[i] = _rs.getObject(idx);
-						}
-						else
-						{
+						// Since we are reading Meta-data, there should never be a
+						// field with an unknown data type.
+						// If there is, then we REALLY do not know how to handle it,
+						// so do not attempt to read.
+//??						if (_largeObjInfo.getReadAllOther())
+//??						{
+//??							row[i] = _rs.getObject(idx);
+//??						}
+//??						else
+//??						{
 							row[i] = s_stringMgr.getString("ResultSetReader.unknown", new Object[] {new Integer(columnType)});
-						}
+	//??					}
 				}
 			}
 			catch (Throwable th)
@@ -500,7 +504,7 @@ public class ResultSetReader
 
 					default:
 						row[i] = CellComponentFactory.readResultSet(
-								colDefs[i], _rs, idx, _largeObjInfo);
+								colDefs[i], _rs, idx);
 
 						break;
 

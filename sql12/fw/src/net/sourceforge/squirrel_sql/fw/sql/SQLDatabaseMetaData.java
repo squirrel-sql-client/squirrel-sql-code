@@ -33,7 +33,6 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.LargeResultSetObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -90,8 +89,6 @@ public class SQLDatabaseMetaData
 	 */
 	private Map _cache = new HashMap();
 
-	/** Defines how to handle result sets. */
-	private LargeResultSetObjectInfo _lrsi;
 
 	/**
 	 * ctor specifying the connection that we are retrieving metadata for.
@@ -110,9 +107,6 @@ public class SQLDatabaseMetaData
 		}
 		_conn = conn;
 
-		_lrsi = new LargeResultSetObjectInfo();
-		_lrsi.setReadAllOther(true);
-		_lrsi.setReadSQLOther(true);
 	}
 
 	/**
@@ -278,7 +272,7 @@ public class SQLDatabaseMetaData
 		ResultSet rs = privateGetJDBCMetaData().getSchemas();
 		try
 		{
-			final ResultSetReader rdr = new ResultSetReader(rs, _lrsi);
+			final ResultSetReader rdr = new ResultSetReader(rs);
 			Object[] row = null;
 			while ((row = rdr.readRow()) != null)
 			{
@@ -446,7 +440,7 @@ public class SQLDatabaseMetaData
 		ResultSet rs = privateGetJDBCMetaData().getCatalogs();
 		try
 		{
-			final ResultSetReader rdr = new ResultSetReader(rs, _lrsi);
+			final ResultSetReader rdr = new ResultSetReader(rs);
 			Object[] row = null;
 			while ((row = rdr.readRow()) != null)
 			{

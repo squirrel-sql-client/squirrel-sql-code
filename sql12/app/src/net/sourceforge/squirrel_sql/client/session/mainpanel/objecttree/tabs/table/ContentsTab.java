@@ -397,7 +397,7 @@ public class ContentsTab extends BaseTableTab
 				// distinguish this table from other tables in the DB.
 				// We also include the URL used to connect to the DB so that
 				// the same table/DB on different machines is treated differently.
-				rsds.setContentsTabResultSet(rs, getFullTableName(), props.getLargeResultSetObjectInfo());
+				rsds.setContentsTabResultSet(rs, getFullTableName());
 
 				// KLUDGE:
 				// We want some info about the columns to be available for validating the
