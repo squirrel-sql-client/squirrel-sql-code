@@ -50,6 +50,9 @@ import javax.swing.table.TableCellEditor;	//?? May not be needed??
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+//??import javax.swing.event.TableModelListener;
+//??import javax.swing.event.TableModelEvent;
+
 import net.sourceforge.squirrel_sql.fw.gui.BaseMDIParentFrame;
 import net.sourceforge.squirrel_sql.fw.gui.ButtonTableHeader;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
@@ -90,6 +93,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		_typedModel.clear();
 		_typedModel.fireTableDataChanged();
 	}
+	
 
 	public void setColumnDefinitions(ColumnDisplayDefinition[] colDefs)
 	{
@@ -271,6 +275,10 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 			
 			// just in case table is editable, call creator to set up cell editors
 			_creator.setCellEditors(this);
+		}
+		
+		public IDataSetTableControls getCreator() {
+			return _creator;
 		}
 
 		// JTable is inconsistant with passing events such as key strokes
