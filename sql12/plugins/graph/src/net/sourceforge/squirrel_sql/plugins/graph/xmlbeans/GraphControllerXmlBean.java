@@ -5,6 +5,7 @@ public class GraphControllerXmlBean
 {
    private String title;
    private TableFrameControllerXmlBean[] tableFrameControllerXmls;
+   private boolean showConstraintNames;
 
    public String getTitle()
    {
@@ -24,5 +25,15 @@ public class GraphControllerXmlBean
    public void setTableFrameControllerXmls(TableFrameControllerXmlBean[] tableFrameControllerXmls)
    {
       this.tableFrameControllerXmls = tableFrameControllerXmls;
+   }
+
+   public boolean isShowConstraintNames()
+   {
+      return showConstraintNames;
+   }
+
+   public void setShowConstraintNames(boolean showConstraintNames)
+   {
+      this.showConstraintNames = showConstraintNames;
    }
 }
