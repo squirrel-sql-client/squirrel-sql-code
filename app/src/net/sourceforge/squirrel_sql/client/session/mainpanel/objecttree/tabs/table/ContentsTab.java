@@ -123,17 +123,34 @@ public class ContentsTab extends BaseTableTab
 	}
 	
 	/**
+	 * return the name of the table that is unambiguous across DB accesses,
+	 * including the same DB on different machines.
+	 * This function is static because it is used elsewhere to generate the same
+	 * name as is used within instances of this class.
+	 * 
+	 * @return the name of the table that is unique for this DB access
+	 */
+	public static String getUnambiguousTableName(ISession session, String name) {
+		return session.getAlias().getUrl()+":"+name;
+	}
+	
+	/**
 	 * Get the full name of this table, creating that name the first time we are called
 	 */
 	private String getFullTableName() {
 		if (fullTableName == null) {
 			try {
 				final ISession session = getSession();
+				final String name = getTableInfo().getQualifiedName();
+				fullTableName = getUnambiguousTableName(session, name);
+/***
+				final ISession session = getSession();
 				final ITableInfo ti = getTableInfo();
 				
 				fullTableName = session.getAlias().getUrl()+":"+
 					ti.getCatalogName()+":"+ti.getSchemaName()+
 					":"+ti.getSimpleName();
+****/
 			}
 			catch (Exception e) {
 					// not sure what to do with this exception???
@@ -141,6 +158,7 @@ public class ContentsTab extends BaseTableTab
 		}
 		return fullTableName;
 	}
+	
 
 	/**
 	 * Create the <TT>IDataSet</TT> to be displayed in this tab.
@@ -643,7 +661,7 @@ public class ContentsTab extends BaseTableTab
 		
 		// For tables that have a lot of columns, the user may have limited the set of columns
 		// to use in the where clause, so see if there is a table of col names
-		HashMap colNames = (EditWhereCols.getInstance()).get(getFullTableName());
+		HashMap colNames = (EditWhereCols.get(getFullTableName()));
 
 		for (int i=0; i< colDefs.length; i++) {
 			
