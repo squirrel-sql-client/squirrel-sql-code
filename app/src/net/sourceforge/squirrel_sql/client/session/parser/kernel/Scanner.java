@@ -158,7 +158,7 @@ public class Scanner
 		if (ch == '-') {
 			NextCh();
 			for(;;) {
-				if (ch == 13) {
+				if (ch == 10) {
 					level--;
 					if (level == 0) {NextCh(); return true;}
 					NextCh();
