@@ -127,14 +127,6 @@ public class JeditPlugin extends DefaultSessionPlugin {
 		TextAreaDefaults dfts = TextAreaDefaults.getDefaults();
 		dfts.inputHandler = new JeditInputHandler();
 
-		// Fix for the jEdit control under JDK1.4.
-		try {
-			if (Class.forName("java.awt.KeyboardFocusManager") != null) {
-				Java14.init();
-			}
-		} catch (Throwable ignore) {
-		}
-
 		// Install the jEdit factory for creating SQL entry text controls.
 		ISQLEntryPanelFactory originalFactory = getApplication().getSQLEntryPanelFactory();
 		_jeditFactory = new JeditSQLEntryPanelFactory(this, originalFactory);

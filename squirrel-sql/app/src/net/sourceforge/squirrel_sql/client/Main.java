@@ -37,6 +37,18 @@ public class Main {
      * @param   args    Arguments passed on command line.
      */
     public static void main(String[] args) {
+		// Fix for the jEdit control under JDK1.4. This cannot be called from
+		// within the jEdit plugin as the keyboard focus initialisation code doesn't
+		// work when run that late in the application startup. The sympton of it being
+		// run too late is tabbing no longer changes focus within components
+		// inside JInternalFrames.
+		try {
+			if (Class.forName("java.awt.KeyboardFocusManager") != null) {
+				Java14.init();
+			}
+		} catch (Throwable ignore) {
+		}
+
 		ApplicationArguments.initialize(args);
         new Application().startup();
     }

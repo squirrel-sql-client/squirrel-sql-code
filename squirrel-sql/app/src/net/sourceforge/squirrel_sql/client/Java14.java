@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.jedit;
+package net.sourceforge.squirrel_sql.client;
 /*
  * Java14.java - Java 2 version 1.4 API calls
  *
@@ -25,9 +25,9 @@ import java.awt.KeyboardFocusManager;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
 
-import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
+import javax.swing.JInternalFrame;
 
-import net.sourceforge.squirrel_sql.plugins.jedit.textarea.JEditTextArea;
+import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
 
 /**
  * This file must be compiled with a JDK 1.4 or higher javac. If you are using
@@ -38,7 +38,7 @@ import net.sourceforge.squirrel_sql.plugins.jedit.textarea.JEditTextArea;
  */
 public class Java14 {
 	public static void init() {
-		KeyboardFocusManager.setCurrentKeyboardFocusManager(new DefaultKeyboardFocusManager() {
+ 		KeyboardFocusManager.setCurrentKeyboardFocusManager(new DefaultKeyboardFocusManager() {
 			public boolean postProcessKeyEvent(KeyEvent evt) {
 				if(!evt.isConsumed()) {
 					Component comp = (Component)evt.getSource();
@@ -56,6 +56,7 @@ public class Java14 {
 	
 				return super.postProcessKeyEvent(evt);
 			}
+
 		});
 	}
 }
