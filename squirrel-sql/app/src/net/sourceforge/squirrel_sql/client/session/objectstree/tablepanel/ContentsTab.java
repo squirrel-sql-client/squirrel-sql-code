@@ -111,7 +111,13 @@ public class ContentsTab extends BaseTablePanelTab {
 			try {
 				SessionProperties props = session.getProperties();
 				if (props.getContentsLimitRows()) {
-					stmt.setMaxRows(props.getContentsNbrRowsToShow());
+					try
+					{
+						stmt.setMaxRows(props.getContentsNbrRowsToShow());
+					} catch(Exception e)
+					{
+						//log it???
+					}
 				}
 				ResultSet rs = stmt.executeQuery("select * from " + ti.getQualifiedName());
 				try {
