@@ -26,7 +26,6 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNodeType;
 import net.sourceforge.squirrel_sql.client.session.objectstree.objectpanel.IObjectPanelTab;
 /**
  * This class is the API through which plugins can work with the object tree.
@@ -56,9 +55,6 @@ class ObjectTreeAPI implements IObjectTreeAPI
 	 */
 	private final DatabaseObjectType _udtGroupType;
 
-	//	private int _lastUsedNodeType =
-	//		ObjectTreeNode.IObjectTreeNodeType.LAST_USED_NODE_TYPE;
-
 	/**
 	 * Ctor specifying the session.
 	 * 
@@ -87,52 +83,52 @@ class ObjectTreeAPI implements IObjectTreeAPI
 	/**
 	 * Register an expander for the specified object tree node type.
 	 * 
-	 * @param	nodeType	Object Tree node type.
+	 * @param	dboType		Database object type.
 	 * @param	expander	Expander called to add children to a parent node.
 	 * 
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>ObjectTreeNodeType</TT> or
+	 * 			Thrown if a <TT>null</TT> <TT>DatabaseObjectType</TT> or
 	 * 			<TT>INodeExpander</TT> thrown.
 	 */
-	public synchronized void registerExpander(ObjectTreeNodeType nodeType,
+	public synchronized void registerExpander(DatabaseObjectType dboType,
 													INodeExpander expander)
 	{
-		if (nodeType == null)
+		if (dboType == null)
 		{
-			throw new IllegalArgumentException("ObjectTreeNodeType == null");
+			throw new IllegalArgumentException("DatabaseObjectType == null");
 		}
 		if (expander == null)
 		{
 			throw new IllegalArgumentException("INodeExpander == null");
 		}
 		_session.getSessionSheet().getObjectTreePanel().registerExpander(
-											nodeType, expander);
+											dboType, expander);
 	}
 
 	/**
 	 * Register a tab to be displayed in the detail panel for the passed
 	 * object tree node type.
 	 * 
-	 * @param	nodeType	Node type.
+	 * @param	dboType		Database object type.
 	 * @param	tab			Tab to be displayed.
 	 * 
 	 * @throws	IllegalArgumentException
-	 * 			Thrown when a <TT>null</TT> <TT>ObjectTreeNodeType</TT> or
+	 * 			Thrown when a <TT>null</TT> <TT>DatabaseObjectType</TT> or
 	 * 			<TT>IObjectPanelTab</TT> passed.
 	 */
-	public void registerDetailTab(ObjectTreeNodeType nodeType,
+	public void registerDetailTab(DatabaseObjectType dboType,
 									IObjectPanelTab tab)
 	{
-		if (nodeType == null)
+		if (dboType == null)
 		{
-			throw new IllegalArgumentException("ObjectTreeNodeType == null");
+			throw new IllegalArgumentException("DatabaseObjectType == null");
 		}
 		if (tab == null)
 		{
 			throw new IllegalArgumentException("IObjectPanelTab == null");
 		}
 		_session.getSessionSheet().getObjectTreePanel().registerDetailTab(
-			nodeType,
+			dboType,
 			tab);
 	}
 
@@ -175,25 +171,25 @@ class ObjectTreeAPI implements IObjectTreeAPI
 	/**
 	 * Add an item to the popup menu for the specified node type.
 	 * 
-	 * @param	nodeType	Object Tree node type.
+	 * @param	dboType		Database object type.
 	 * @param	action		Action to add to menu.
 	 * 
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>ObjectTreeNodeType</TT>
+	 * 			Thrown if a <TT>null</TT> <TT>DatabaseObjectType</TT>
 	 * 			<TT>Action</TT> thrown.
 	 */
-	public synchronized void addToPopup(ObjectTreeNodeType nodeType, Action action)
+	public synchronized void addToPopup(DatabaseObjectType dboType, Action action)
 	{
-		if (nodeType == null)
+		if (dboType == null)
 		{
-			throw new IllegalArgumentException("ObjectTreeNodeType == null");
+			throw new IllegalArgumentException("DatabaseObjectType == null");
 		}
 		if (action == null)
 		{
 			throw new IllegalArgumentException("Action == null");
 		}
 		_session.getSessionSheet().getObjectTreePanel().addToObjectTreePopup(
-			nodeType,
+			dboType,
 			action);
 	}
 
@@ -214,18 +210,6 @@ class ObjectTreeAPI implements IObjectTreeAPI
 		_session.getSessionSheet().getObjectTreePanel().addToObjectTreePopup(
 			action);
 	}
-
-	/**
-	 * Return the next unused "ObjectTree node type". This can be used by
-	 * pluigns to identify groups of nodes. I.E you may use this to identify
-	 * all Oracle Consumer group nodes.
-	 * 
-	 * @return	Return the next unused "ObjectTree node type".
-	 */
-	//	public synchronized int getNextAvailableNodeype()
-	//	{
-	//		return ++_lastUsedNodeType;
-	//	}
 
 	/**
 	 * Return an array of the selected nodes in the tree. This is guaranteed
@@ -275,35 +259,12 @@ class ObjectTreeAPI implements IObjectTreeAPI
 	}
 
 	/**
-	 * Return the database object type for a "Table Type" node. Some examples
-	 * are "TABLE", "SYSTEM TABLE", "VIEW" etc.
+	 * Create a new <TT>DatabaseObjectType</TT>
 	 * 
-	 * @return	The database object type.
+	 * @return	a new <TT>DatabaseObjectType</TT>
 	 */
-	public DatabaseObjectType getTableGroupDatabaseObjectType()
+	public DatabaseObjectType createNewDatabaseObjectType()
 	{
-		return _tableGroupType;
-	}
-
-	/**
-	 * Return the database object type for a "Procedure Type" node. There is
-	 * only one node of this type in the object tree and it says "PROCEDURE".
-	 * 
-	 * @return	The database object type.
-	 */
-	public DatabaseObjectType getProcedureGroupType()
-	{
-		return _procGroupType;
-	}
-
-	/**
-	 * Return the database object type for a "UDT" node. There is only one
-	 * node of this type in the object tree and it says "UDT".
-	 * 
-	 * @return	The database object type.
-	 */
-	public DatabaseObjectType getUDTGroupType()
-	{
-		return _udtGroupType;
+		return DatabaseObjectType.createNewDatabaseObjectType();
 	}
 }
