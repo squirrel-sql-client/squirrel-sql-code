@@ -208,7 +208,9 @@ public class DataTypeTime
 			return (String)_renderer.renderObject(value);
 
 		// use a date formatter
-		return (String)_renderer.renderObject(dateFormat.format(value));
+		if (value == null)
+			return (String)_renderer.renderObject(value);
+		else return (String)_renderer.renderObject(dateFormat.format(value));
 	}
 
 	/**
@@ -483,7 +485,7 @@ public class DataTypeTime
 		if (value == null || value.toString() == null || value.toString().length() == 0)
 			return _colDef.getLabel() + " IS NULL";
 		else
-			return _colDef.getLabel() + "='" + value.toString() +"'";
+			return _colDef.getLabel() + "={t '" + value.toString() +"'}";
 	}
 
 
