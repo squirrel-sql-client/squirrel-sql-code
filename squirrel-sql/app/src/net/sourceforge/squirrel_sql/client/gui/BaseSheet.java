@@ -105,23 +105,15 @@ public class BaseSheet extends JInternalFrame {
 		super(title, resizable, closable, maximizable, iconifiable);
 	}
 
-	public void moveToFront() {
-		super.moveToFront();
-		try {
-			setSelected(true);
-		} catch (PropertyVetoException ignore) {
-		}
-	}
-
 	/**
-	 * Forwards key events directly to the input handler.
-	 * This is slightly faster than using a KeyListener
-	 * because some Swing overhead is avoided.
 	 * 
 	 * Modifed version of code from Slavas View class in jEdit.
 	 */
 	public void processKeyEvent(KeyEvent evt) {
-		if (isClosed())
+		// Superclass method is protected.
+		super.processKeyEvent(evt);
+/*
+ * 		if (isClosed())
 			return;
 	
 		// JTextComponents don't consume events...
@@ -136,7 +128,7 @@ public class BaseSheet extends JInternalFrame {
 						return;
 				}
 			}
-	
+
 			Keymap keymap = ((JTextComponent) getFocusOwner()).getKeymap();
 			if (keymap.getAction(KeyStroke.getKeyStrokeForEvent(evt)) != null)
 				return;
@@ -147,6 +139,7 @@ public class BaseSheet extends JInternalFrame {
 	
 		if (!evt.isConsumed())
 			super.processKeyEvent(evt);
+*/
 	}
 
 }
