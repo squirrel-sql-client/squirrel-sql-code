@@ -51,7 +51,8 @@ public class DefaultSQLEntryPanel implements ISQLEntryPanel {
 	}
 	
 	/**
-	 * Return the text area control. In this case an instance of <TT>JTextArea</TT>.
+	 * Return the text area control. In this case a <TT>JScrollPane</TT> wrapped
+	 * around an instance of <TT>JTextArea</TT>.
 	 * 
 	 * @return	an instance of <TT>JTextArea</TT>.
 	 */
