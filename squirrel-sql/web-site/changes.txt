@@ -1,12 +1,66 @@
 Change Log
 ==========
 
+1.1beta3
+========
+
+Enhancements
+------------
+- Add Sybase drivers to list of default drivers.
+- Windows batch file now uses Java in %JAVAHOME% if it is defined else
+  uses the current path.
+- Windows batch file now loads all jars from /lib directory.
+- Unix shell script now uses Java in $JAVAHOME if it is defined else
+  uses the current path (Sergio Ballestrero).
+- Unix shell script now loads all jars from /lib
+  directory (Sergio Ballestrero)
+- Commit/Rollback options added to the session menu.
+- Session Sheet can show/hide its toolbar.
+- Aliases and Drivers can show/hide their toolbars.
+- Aliases and Drivers windows can now be resized.
+- The toolbar in the main window can now be hidden.
+- Multiple jars can now be specified for an SQL driver.
+- You can now search a jar in the classpath for a JDBC driver.
+- Row count is only shown on the Table Info tab if "Show Row Count"
+  is specified in session properties.
+- New "Refresh Row Count" button on the Table Information tab.
+- Updated to use Apache log4j 1.2.
+- The log file is now rotated.
+- Log files are now written to the logs subirectory within user home.
+- When resizing a session window the SQL results now gets any extra space.
+- Error Dialog controls have better sizing.
+- The default Metal Look and Feel now has a blue theme (Karsten Lentzsch)
+- Error message dialog can now show the stack trace if available.
+- New status bar in main window.
+- SQL settings moved from the General tab in the Global Preferences
+  dialog to its own SQL tab.
+- Nullable, Searchable and boolean columns in Data Types display
+  now show meaningful text.
+- The squirrel-sql.jar file is now executable.
+- Function and keyword lists moved out of the main metadata tab and
+  placed in their own tabs (David MacLean).
+- The DATA_TYPE column in the metadata tab now has a descriptive entry
+  as well as the numeric code (David MacLean).
+- Now shows catalogs in object tree for more DBMS's.
+- Can now select the current catalog via a dropdown for those DBMS's
+  that support catalogs.
+- Now shows table hierarchies if the JDBC driver supports them (Henner Zeller).
+
+Bug Fixes
+---------
+- Show main window scrollbars at startup if tool windows are offscreen.
+- Don't show error dialog until it is properly positioned.
+- All SQL statements now get saved into the history.
+- Load images correctly in framework classes.
+- Use correct background color in Splash Screen and About Box to match
+  the graphic.
+
 
 1.1beta2
 ========
 
 Bug Fixes
-------------
+---------
 - Windows batch file now allows for spaces in the classpath (Bruno Haas).
 - Windows batch file now passes the -classic flag  to the VM to stop
   plugins looking for files in the "Colin Bell" or "Johan Compagner"
@@ -35,8 +89,6 @@ Enhancements
 - Drop table menu item on the ObjectTree (Johan Compagner)
 - Full column data can be displayed in a popup window if you double click on
   it (Johan Compagner)
-- If selected String are longer then 50 chars then 45 chars + "......" 
-  will be displayed. (Johan Compagner)
 - If only one cell selected in table when pressing copy then no header 
   will be appended. (Johan Compagner)
 - Icon shown for drivers that are loaded or not (Johan Compagner/Henner Zeller) 
@@ -196,7 +248,7 @@ Bug Fixes
 ------------
 - If a connection failed to open the error wasn't always displayed.
 - If an image couldn't be found for an Action the application wouldn't load.
-- Changing the class name of a driver wouldn't always take effect util 
+- Changing the class name of a driver wouldn't always take effect until 
   Squirrel-SQL was restarted.
 - The session properties dialog is now correctly positioned on screen.
 - The Class Loader used for the JDBC drivers wasn't searching for classes
