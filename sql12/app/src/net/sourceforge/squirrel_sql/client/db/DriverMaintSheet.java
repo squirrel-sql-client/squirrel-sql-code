@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.db;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -28,6 +28,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URL;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -43,6 +44,8 @@ import javax.swing.ListModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -442,7 +445,8 @@ public class DriverMaintSheet extends BaseSheet
 	private JPanel createJavaClassPathPanel()
 	{
 		_javaClasspathListDriversBtn = new ListDriversButton(_javaClassPathList);
-		_javaClassPathList.addListSelectionListener(new JavaClassPathListBoxListener());
+		_javaClasspathListDriversBtn.setEnabled(_javaClassPathList.getModel().getSize() > 0);
+//		_javaClassPathList.addListSelectionListener(new JavaClassPathListBoxListener());
 
 		IFileListBoxModel model = _javaClassPathList.getTypedModel();
 		if (model.getSize() > 0)
@@ -490,6 +494,7 @@ public class DriverMaintSheet extends BaseSheet
 	{
 		_extraClasspathListDriversBtn = new ListDriversButton(_extraClassPathList);
 		_extraClassPathList.addListSelectionListener(new ExtraClassPathListBoxListener());
+		_extraClassPathList.getModel().addListDataListener(new ExtraClassPathListDataListener());
 
 		_extraClasspathUpBtn = new JButton(s_stringMgr.getString("DriverMaintSheet.up"));
 		_extraClasspathUpBtn.setEnabled(false);
@@ -672,12 +677,21 @@ public class DriverMaintSheet extends BaseSheet
 		public void actionPerformed(ActionEvent e)
 		{
 			_driverClassCmb.removeAllItems();
-			File file = _listBox.getSelectedFile();
-			if (file != null)
+//			File file = _listBox.getSelectedFile();
+			String[] fileNames = _listBox.getTypedModel().getFileNames();
+
+//			if (file != null)
+			if (fileNames.length > 0)
 			{
 				try
 				{
-					SQLDriverClassLoader cl = new SQLDriverClassLoader(file.toURL());
+					final URL[] urls = new URL[fileNames.length];
+					for (int i = 0; i < fileNames.length; ++i)
+					{
+						urls[i] = new File(fileNames[i]).toURL();
+					}
+//					SQLDriverClassLoader cl = new SQLDriverClassLoader(file.toURL());
+					SQLDriverClassLoader cl = new SQLDriverClassLoader(urls);
 					Class[] classes = cl.getDriverClasses(s_log);
 					for (int i = 0; i < classes.length; ++i)
 					{
@@ -697,23 +711,43 @@ public class DriverMaintSheet extends BaseSheet
 
 	}
 
-	private class JavaClassPathListBoxListener implements ListSelectionListener
-	{
-		public void valueChanged(ListSelectionEvent evt)
-		{
-			final int selIdx = _javaClassPathList.getSelectedIndex();
-			_javaClasspathListDriversBtn.setEnabled(selIdx != -1);
-			boolean enable = false;
-			if (selIdx != -1)
-			{
-				File file = _javaClassPathList.getSelectedFile();
-				if (file != null)
-				{
-					enable = file.isFile();
-				}
-			}
-			_javaClasspathListDriversBtn.setEnabled(enable);
+//	private class JavaClassPathListBoxListener implements ListSelectionListener
+//	{
+//		public void valueChanged(ListSelectionEvent evt)
+//		{
+//			final int selIdx = _javaClassPathList.getSelectedIndex();
+//			_javaClasspathListDriversBtn.setEnabled(selIdx != -1);
+//			boolean enable = false;
+//			if (selIdx != -1)
+//			{
+//				File file = _javaClassPathList.getSelectedFile();
+//				if (file != null)
+//				{
+//					enable = file.isFile();
+//				}
+//			}
+//			_javaClasspathListDriversBtn.setEnabled(enable);
+//		}
+//	}
 
+	private class ExtraClassPathListDataListener implements ListDataListener
+	{
+		public void contentsChanged(ListDataEvent evt)
+		{
+			final boolean enable = _extraClassPathList.getModel().getSize() > 0;
+			_extraClasspathListDriversBtn.setEnabled(enable);
+		}
+
+		public void intervalAdded(ListDataEvent evt)
+		{
+			final boolean enable = _extraClassPathList.getModel().getSize() > 0;
+			_extraClasspathListDriversBtn.setEnabled(enable);
+		}
+
+		public void intervalRemoved(ListDataEvent evt)
+		{
+			final boolean enable = _extraClassPathList.getModel().getSize() > 0;
+			_extraClasspathListDriversBtn.setEnabled(enable);
 		}
 	}
 
@@ -728,17 +762,17 @@ public class DriverMaintSheet extends BaseSheet
 
 			_extraClasspathUpBtn.setEnabled(selIdx > 0 && model.getSize() > 1);
 			_extraClasspathDownBtn.setEnabled(selIdx > -1 && selIdx < (model.getSize() - 1));
-
-			boolean enable = false;
-			if (selIdx != -1)
-			{
-				File file = _extraClassPathList.getSelectedFile();
-				if (file != null)
-				{
-					enable = file.isFile();
-				}
-			}
-			_extraClasspathListDriversBtn.setEnabled(enable);
+//
+//			boolean enable = false;
+//			if (selIdx != -1)
+//			{
+//				File file = _extraClassPathList.getSelectedFile();
+//				if (file != null)
+//				{
+//					enable = file.isFile();
+//				}
+//			}
+//			_extraClasspathListDriversBtn.setEnabled(enable);
 		}
 	}
 }
