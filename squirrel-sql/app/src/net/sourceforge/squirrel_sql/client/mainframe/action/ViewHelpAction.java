@@ -73,7 +73,7 @@ public class ViewHelpAction extends SquirrelAction
 		}
 		catch (BaseException ex)
 		{
-			getApplication().showErrorDialog("Error viewing change log", ex);
+			getApplication().showErrorDialog("Error viewing help file", ex);
 		}
 	}
 }
