@@ -24,7 +24,7 @@ public class DefaultSQLEntryPanelFactory implements ISQLEntryPanelFactory {
 	 * @see ISQLEntryPanelFactory#createSQLEntryPanel()
 	 */
 	public ISQLEntryPanel createSQLEntryPanel(ISession session) {
-		return new DefaultSQLEntryPanel();
+		return new DefaultSQLEntryPanel(session.getApplication());
 	}
 }
 

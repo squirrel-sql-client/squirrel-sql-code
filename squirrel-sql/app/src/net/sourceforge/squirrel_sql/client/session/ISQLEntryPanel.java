@@ -17,14 +17,14 @@ package net.sourceforge.squirrel_sql.client.session;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.Component;
 import java.awt.event.MouseListener;
 
+import javax.swing.Action;
+import javax.swing.JComponent;
 import javax.swing.event.UndoableEditListener;
 
 public interface ISQLEntryPanel {
-
-	Component getComponent();
+	JComponent getJComponent();
 	
 	String getText();
 	String getSelectedText();
@@ -50,9 +50,11 @@ public interface ISQLEntryPanel {
 	void removeMouseListener(MouseListener lis);
 
 	boolean hasOwnUndoableManager();
-		
+
 	void addUndoableEditListener(UndoableEditListener listener);
 
 	void removeUndoableEditListener(UndoableEditListener listener);
+
+	void setUndoActions(Action undo, Action redo);
 }
 

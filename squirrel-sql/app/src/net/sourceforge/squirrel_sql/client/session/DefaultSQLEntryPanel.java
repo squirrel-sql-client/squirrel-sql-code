@@ -17,46 +17,91 @@ package net.sourceforge.squirrel_sql.client.session;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.Component;
-
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import javax.swing.Action;
+import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.event.UndoableEditListener;
-import javax.swing.undo.UndoManager;
+//import javax.swing.undo.UndoManager;
+
+import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
+import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+//import net.sourceforge.squirrel_sql.client.session.action.RedoAction;
+//import net.sourceforge.squirrel_sql.client.session.action.UndoAction;
 
 public class DefaultSQLEntryPanel implements ISQLEntryPanel {
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(SQLPanel.class);
+
 	/** Text area control. */
-	private JTextArea _comp;
+	private MyTextArea _comp;
 
 	/** Scroll pane for text control. */
 	private JScrollPane _scroller;
-	
-	public DefaultSQLEntryPanel()
-	{
-		 _comp = new JTextArea();
-		 _scroller = new JScrollPane(_comp);
-	}
-	
-	
-	public void addUndoableEditListener(UndoableEditListener listener)
-	{
-		_comp.getDocument().addUndoableEditListener(listener);
+
+	/** Popup menu for this component. */
+	private TextPopupMenu _textPopupMenu = new TextPopupMenu();
+
+	/** Listener for displaying the popup menu. */
+	private MouseListener _sqlEntryMouseListener = new MyMouseListener();
+
+	/** Undo manager for this component. */
+//	private UndoManager _undoManager = new UndoManager();
+
+	public DefaultSQLEntryPanel(IApplication app) {
+		super();
+
+//		UndoAction undo = new UndoAction(app, _undoManager);
+//		RedoAction redo = new RedoAction(app, _undoManager);
+
+//		_textPopupMenu.add(undo);
+//		_textPopupMenu.add(redo);
+
+		_comp = new MyTextArea(app);//, undo, redo);
+		_scroller = new JScrollPane(_comp);
 	}
 
-	public void removeUndoableEditListener(UndoableEditListener listener)
-	{
-		_comp.getDocument().removeUndoableEditListener(listener);
+	public void addUndoableEditListener(UndoableEditListener lis) {
+		_comp.getDocument().addUndoableEditListener(lis);
+		
 	}
-	
+
+	public void removeUndoableEditListener(UndoableEditListener lis) {
+		_comp.getDocument().removeUndoableEditListener(lis);
+	}
+
+	/*
+	 * @see ISQLEntryPanel#hasOwnUndoableManager()
+	 */
+	public boolean hasOwnUndoableManager()
+	{
+		return false;
+	}
+
+	/**
+	 * @see ISQLEntryPanel#setUndoActions(Action, Action)
+	 */
+	public void setUndoActions(Action undo, Action redo) {
+		_textPopupMenu.addSeparator();
+		_textPopupMenu.add(undo);
+		_textPopupMenu.add(redo);
+	}
+
 	/**
 	 * Return the text area control. In this case a <TT>JScrollPane</TT> wrapped
 	 * around an instance of <TT>JTextArea</TT>.
 	 * 
-	 * @return	an instance of <TT>JTextArea</TT>.
+	 * @return	an instance of <TT>JScrollPane</TT>.
 	 */
-	public Component getComponent() {
+	public JComponent getJComponent() {
 		return _scroller;
 	}
 
@@ -163,13 +208,55 @@ public class DefaultSQLEntryPanel implements ISQLEntryPanel {
 	public void requestFocus() {
 		_comp.requestFocus();
 	}
-	/*
-	 * @see ISQLEntryPanel#hasOwnUndoableManager()
-	 */
-	public boolean hasOwnUndoableManager()
-	{
-		return false;
+
+	private final class MyMouseListener extends MouseAdapter {
+		public void mousePressed(MouseEvent evt) {
+			if (evt.isPopupTrigger()) {
+				displayPopupMenu(evt);
+			}
+		}
+		public void mouseReleased(MouseEvent evt) {
+			if (evt.isPopupTrigger()) {
+				displayPopupMenu(evt);
+			}
+		}
+		private void displayPopupMenu(MouseEvent evt) {
+			_textPopupMenu.setTextComponent(_comp);
+			_textPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+		}
+	}
+
+	private class MyTextArea extends JTextArea {
+		private IApplication _app;
+//		private UndoAction _undo;
+		//private RedoAction _redo;
+
+		private MyTextArea(IApplication app) {//, UndoAction undo, RedoAction redo) {
+			super();
+			_app = app;
+//			_undo = undo;
+//			_redo = redo;
+		}
+
+		public void addNotify() {
+			super.addNotify();
+
+			DefaultSQLEntryPanel.this.addMouseListener(_sqlEntryMouseListener);
+	
+			//Resources res = _app.getResources();
+				
+			// ??Whe should also register them as a action to the textarea or this panel!?
+//			registerKeyboardAction(_undo, res.getKeyStroke(_undo), _comp.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+//			registerKeyboardAction(_redo, res.getKeyStroke(_redo), _comp.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+				
+	//		_sqlEntry.addUndoableEditListener(_undoManager);
+//			_comp.getDocument().addUndoableEditListener(_undoManager);
+		}
+
+		public void removeNotify() {
+			DefaultSQLEntryPanel.this.removeMouseListener(_sqlEntryMouseListener);
+			super.removeNotify();
+		}
 	}
 
 }
-
