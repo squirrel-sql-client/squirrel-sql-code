@@ -16,21 +16,21 @@ public class AutoCorrectDlg extends JDialog
 
    public AutoCorrectDlg(JFrame parent)
    {
-      super(parent, "Configure auto correct");
+      super(parent, "Configure auto correct /abreviation");
       tblAutoCorrects = new JTable();
 
       getContentPane().setLayout(new BorderLayout());
       getContentPane().add(new JScrollPane(tblAutoCorrects), BorderLayout.CENTER);
 
       JPanel pnlNorth = new JPanel(new GridLayout(3,1));
-      JLabel lblNote = new JLabel("Note: Auto corrects will work only with the Netbeans editor.");
+      JLabel lblNote = new JLabel("Note: Auto corrects / abreviations will work only with the Netbeans editor.");
       lblNote.setForeground(Color.red);
       pnlNorth.add(lblNote);
       lblNote = new JLabel("See menu File --> New Session Properties --> Syntax");
       lblNote.setForeground(Color.red);
       pnlNorth.add(lblNote);
 
-      chkEnable = new JCheckBox("Enable auto correct");
+      chkEnable = new JCheckBox("Enable auto correct / abreviation");
       pnlNorth.add(chkEnable);
 
       getContentPane().add(pnlNorth, BorderLayout.NORTH);

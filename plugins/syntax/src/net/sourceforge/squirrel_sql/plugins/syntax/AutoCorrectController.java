@@ -47,8 +47,8 @@ public class AutoCorrectController
 
 
       Vector colHeaders = new Vector();
-      colHeaders.add("error");
-      colHeaders.add("correction");
+      colHeaders.add("error / abreviation");
+      colHeaders.add("correction / extension");
 
 
       DefaultTableModel dtm = new DefaultTableModel();

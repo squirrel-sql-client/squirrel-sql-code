@@ -126,7 +126,7 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 
                if(_isFirstAutocorrectInSession)
                {
-                  _session.getMessageHandler().showMessage(autoCorrCandidate + " has been auto corrected to " + corr + ". To configure auto correct see Menu Session --> Syntax --> Configure auto correct");
+                  _session.getMessageHandler().showMessage(autoCorrCandidate + " has been auto corrected / extended to " + corr + ". To configure auto correct / abreviations see Menu Session --> Syntax --> Configure auto correct / abreviation");
                   _isFirstAutocorrectInSession = false;
                }
 
@@ -158,7 +158,7 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
          int begPos = text.length();
          for(int i=text.length()-1; 0 <= i; --i)
          {
-            if(false == Character.isJavaIdentifierStart(text.charAt(i)))
+            if(Character.isWhitespace(text.charAt(i)))
             {
                break;
             }
