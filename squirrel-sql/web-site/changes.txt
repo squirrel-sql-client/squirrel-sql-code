@@ -1,6 +1,82 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+1.1rc1
+======
+
+Enhancements
+------------
+- Information windows (such as Help) can now be moved
+  outside of the main window.
+- Add home toolbar button to the HTML Viewer.
+- Fix Refresh in HtmlViewer.
+- Change icons for commit/rollback. The old icons were
+  too similar and confused people.
+- Add Proxy settings to Application Preferences.
+- Add file sizes into SQuirreL Logs dropdown.
+- Sort the driver names in dropdown box in a
+  case-insensitive manner.
+- Make all windows resizeable.
+- Add Refresh button to HTLM Viewer toolbar.
+- Add FAQ to the Help menu.
+- Added "Install Default Drivers" menu option which will
+  copy driver definitions from the default drivers file to
+  the drivers list.
+- Add SAPDB, DB2 and PointBase to default drivers.
+- Add HSQL to list of default drivers (Glenn Griffin).
+- Cleanup example URLs for many of the default drivers (Glenn Griffin).
+- Add toolbar to HTML Viewer with back, forward and close buttons.
+- Documentation updated.
+- Allow Squirrel to be run from directories other than the current
+  directory (Tim Shadel).
+- Treat Types.OTHER columns as strings when displaying data.
+- Add plugins location to plugin summary dialog.
+- Add plugins location to application dump.
+- Create Windows shortcut in installer.
+- Make shell script executable in installer.
+- Add icons for program shortcuts (Greg Mackness).
+- Add an icon to the main window (Greg Mackness).
+- The name of the item selected in the object tree will
+  be displayed in the statusbar.
+- Remove unnecessary borders on UI components.
+- Add jTDS to list of default drivers.
+- The "Start of line comment" characters can now be
+  specified in preferences instead of just using '--'.
+
+Bug Fixes
+---------
+- Reload Metal Look and Feel when first loading
+  SQuirreL so that the "Blue" theme is used.
+- Position focus to the text area when first displaying
+  the HTML viewer window.
+- Stop driver maintenance window from resizing when jars
+  added/removed.
+- Improve error handling when loading drivers and aliases.
+- Incorrect error message was displayed in View Help
+  command (Glenn Griffin).
+- Fix Nullpointer exception in HTML viewer under JDK1.3.
+- CLOB/BLOB columns weren't handled correctly on metadata and
+  Content tabs.
+- The line/column number displayed for the SQL entry area
+  now starts from 1,1 not 0,0
+- Make multiple line label use the same font as static text controls not
+  editable text controls.
+- Links in the Help file now work (Victor Ott).
+- Fix deadlock when viewing logs.
+- Add missing "contributors" file for About Box.
+
+Plugin API
+----------
+- Move metadata methods to metadata classes.
+
+Other
+-----
+- Add build directory to source distribution.
+- Don't display icons in menus.
+- Cleanup ResultSetMetaData handling.
+- Make the installation window resizeable.
+
+
 1.1beta6
 ========
 
@@ -57,9 +133,6 @@ Enhancements
 - Display more information about the executing query on the
   execution panel.
 - Split query execution times into "sql execution" and "building
-
-Enhancements
-------------
 - Add handling of blob, clob, binary, varbinary and longvarbinary
   columns.
 - Allow for some combinations of the JDBC/ODBC bridge and MSSQL
