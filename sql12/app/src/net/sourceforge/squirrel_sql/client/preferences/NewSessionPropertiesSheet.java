@@ -33,6 +33,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -47,14 +49,18 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionSQLProperti
 
 public class NewSessionPropertiesSheet extends BaseSheet
 {
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(NewSessionPropertiesSheet.class);
+
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
-	private interface NewSessionPropertiesSheetI18n
-	{
-		String TITLE = "New Session Properties";
-	}
+//	private interface NewSessionPropertiesSheetI18n
+//	{
+//		String TITLE = "New Session Properties";
+//	}
 
 	/** Logger for this class. */
 	private static final ILogger s_log =
@@ -71,7 +77,7 @@ public class NewSessionPropertiesSheet extends BaseSheet
 
 	private NewSessionPropertiesSheet(IApplication app)
 	{
-		super(NewSessionPropertiesSheetI18n.TITLE, true);
+		super(s_stringMgr.getString("NewSessionPropertiesSheet.title"), true);
 		_app = app;
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		createGUI();
@@ -246,7 +252,7 @@ public class NewSessionPropertiesSheet extends BaseSheet
 	{
 		JPanel pnl = new JPanel();
 
-		JButton okBtn = new JButton("OK");
+		JButton okBtn = new JButton(s_stringMgr.getString("NewSessionPropertiesSheet.ok"));
 		okBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
@@ -254,7 +260,7 @@ public class NewSessionPropertiesSheet extends BaseSheet
 				performOk();
 			}
 		});
-		JButton closeBtn = new JButton("Close");
+		JButton closeBtn = new JButton(s_stringMgr.getString("NewSessionPropertiesSheet.close"));
 		closeBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)

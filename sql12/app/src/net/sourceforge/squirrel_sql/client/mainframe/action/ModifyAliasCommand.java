@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -21,14 +21,14 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.db.AliasMaintSheetFactory;
-
 /**
  * This <CODE>ICommand</CODE> allows the user to modify an existing
  * <TT>ISQLAlias</TT>.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ModifyAliasCommand implements ICommand {
+public class ModifyAliasCommand implements ICommand
+{
 	/** <TT>ISQLAlias</TT> to be modified. */
 	private ISQLAlias _sqlAlias;
 
@@ -40,9 +40,11 @@ public class ModifyAliasCommand implements ICommand {
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
 	 */
-	public ModifyAliasCommand(ISQLAlias sqlAlias) {
+	public ModifyAliasCommand(ISQLAlias sqlAlias)
+	{
 		super();
-		if (sqlAlias == null) {
+		if (sqlAlias == null)
+		{
 			throw new IllegalArgumentException("Null ISQLAlias passed");
 		}
 
@@ -52,7 +54,8 @@ public class ModifyAliasCommand implements ICommand {
 	/**
 	 * Display a dialog allowing user to maintain the <TT>ISQLAlias</TT>.
 	 */
-	public void execute() {
+	public void execute()
+	{
 		AliasMaintSheetFactory.getInstance().showModifySheet(_sqlAlias);
 	}
 }

@@ -21,20 +21,26 @@ import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * This <CODE>Action</CODE> will show/hide drivers in the Drivers List
  * that cannot be loaded.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ShowLoadedDriversOnlyAction extends SquirrelAction
 {
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ShowLoadedDriversOnlyAction.class);
+
 	/**
 	 * Ctor.
 	 *
-	 * @param   app	 Application API.
+	 * @param	app	 Application API.
 	 *
-	 * @throws  IllegalArgumentException
+	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> passed.
 	 */
 	public ShowLoadedDriversOnlyAction(IApplication app)
@@ -49,7 +55,7 @@ public class ShowLoadedDriversOnlyAction extends SquirrelAction
 	/**
 	 * Perform this action.
 	 *
-	 * @param   evt	 The current event.
+	 * @param	evt	 The current event.
 	 */
 	public void actionPerformed(ActionEvent evt)
 	{
@@ -59,7 +65,7 @@ public class ShowLoadedDriversOnlyAction extends SquirrelAction
 		}
 		catch (Exception ex)
 		{
-			getApplication().showErrorDialog("Error", ex);
+			getApplication().showErrorDialog(s_stringMgr.getString("ShowLoadedDriversOnlyAction.error"), ex);
 		}
 	}
 }

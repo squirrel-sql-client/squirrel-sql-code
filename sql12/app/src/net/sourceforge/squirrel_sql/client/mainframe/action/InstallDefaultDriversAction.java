@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -79,7 +79,7 @@ public class InstallDefaultDriversAction extends SquirrelAction
 			}
 			catch (BaseException ex)
 			{
-				app.showErrorDialog("Error occured installing default drivers", ex);
+				app.showErrorDialog(s_stringMgr.getString("InstallDefaultDriversAction.error.install"), ex);
 			}
 		}
 	}

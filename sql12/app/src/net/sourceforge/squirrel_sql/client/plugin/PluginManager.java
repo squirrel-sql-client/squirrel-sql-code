@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.squirrel_sql.fw.util.MyURLClassLoader;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -41,6 +43,10 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
  */
 public class PluginManager
 {
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(PluginManager.class);
+
 	/** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(PluginManager.class);
 
@@ -126,8 +132,8 @@ public class PluginManager
 			}
 			catch (Throwable th)
 			{
-				String msg = "Error occured in IPlugin.sessionCreated() for "
-								+ spi.getPlugin().getDescriptiveName();
+				String msg = s_stringMgr.getString("PluginManager.error.sessioncreated",
+								spi.getPlugin().getDescriptiveName());
 				s_log.error(msg, th);
 				_app.showErrorDialog(msg, th);
 			}
@@ -162,8 +168,8 @@ public class PluginManager
 			}
 			catch (Throwable th)
 			{
-				String msg = "Error occured in IPlugin.sessionStarted() for "
-								+ spi.getPlugin().getDescriptiveName();
+				String msg = s_stringMgr.getString("PluginManager.error.sessionstarted",
+								spi.getPlugin().getDescriptiveName());
 				s_log.error(msg, th);
 				_app.showErrorDialog(msg, th);
 			}
@@ -197,8 +203,8 @@ public class PluginManager
 				}
 				catch (Throwable th)
 				{
-					String msg =
-						"Error occured in IPlugin.sessionEnding() for " + spi.getPlugin().getDescriptiveName();
+					String msg = s_stringMgr.getString("PluginManager.error.sessionended",
+									spi.getPlugin().getDescriptiveName());
 					s_log.error(msg, th);
 					_app.showErrorDialog(msg, th);
 				}
@@ -220,7 +226,8 @@ public class PluginManager
 			}
 			catch (Throwable th)
 			{
-				String msg = "Error ocured unloading plugin: " + plugin.getInternalName();
+				String msg = s_stringMgr.getString("PluginManager.error.unloading",
+								plugin.getInternalName());
 				s_log.error(msg, th);
 				_app.showErrorDialog(msg, th);
 			}
@@ -304,7 +311,7 @@ public class PluginManager
 						{
 							if (fileName.toLowerCase().endsWith("jedit.jar"))
 							{
-								_app.showErrorDialog("jEdit plugin is no longer supported.");
+								_app.showErrorDialog(s_stringMgr.getString("PluginManager.error.jedit"));
 							}
 							else
 							{
@@ -330,7 +337,7 @@ public class PluginManager
 												}
 												catch (IOException ex)
 												{
-													String msg = "Unable to load plugin library file: " + fn;
+													String msg = s_stringMgr.getString("PluginManager.error.loadlib", fn);
 													s_log.error(msg, ex);
 													_app.showErrorDialog(msg, ex);
 												}
@@ -342,7 +349,7 @@ public class PluginManager
 						}
 						catch (IOException ex)
 						{
-							String msg = "Unable to load plugin jar: " + fileName;
+							String msg = s_stringMgr.getString("PluginManager.error.loadplugin", fileName);
 							s_log.error(msg, ex);
 							_app.showErrorDialog(msg, ex);
 						}
@@ -373,7 +380,7 @@ public class PluginManager
 				}
 				catch (Throwable th)
 				{
-					String msg = "Error occured loading plugin class: " + clazz.getName();
+					String msg = s_stringMgr.getString("PluginManager.error.loadpluginclass", clazz.getName());
 					s_log.error(msg, th);
 					_app.showErrorDialog(msg, th);
 				}
@@ -381,7 +388,7 @@ public class PluginManager
 		}
 		catch (IOException ex)
 		{
-			String msg = "Error occured retrieving plugins. No plugins have been loaded.";
+			String msg = s_stringMgr.getString("PluginManager.error.noplugins");
 			s_log.error(msg, ex);
 			_app.showErrorDialog(msg, ex);
 		}
@@ -404,7 +411,7 @@ public class PluginManager
 			}
 			catch (Throwable th)
 			{
-				String msg = "Error ocured initializing plugin: " + plugin.getInternalName();
+				String msg = s_stringMgr.getString("PluginManager.error.initplugin", plugin.getInternalName());
 				s_log.error(msg, th);
 				_app.showErrorDialog(msg, th);
 			}
@@ -448,7 +455,8 @@ public class PluginManager
 		}
 		catch (Throwable th)
 		{
-			String msg = "Error occured loading class " + pluginClass.getName() + " from plugin";
+			String msg = s_stringMgr.getString("PluginManager.error.loadpluginclass",
+												pluginClass.getName());
 			s_log.error(msg, th);
 			_app.showErrorDialog(msg, th);
 		}

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.plugin;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,13 +19,15 @@ package net.sourceforge.squirrel_sql.client.plugin;
  */
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 
-public class PluginException extends BaseException {
-
-	public PluginException(String msg) {
+public class PluginException extends BaseException
+{
+	public PluginException(String msg)
+	{
 		super(msg);
 	}
-	public PluginException(Exception wrapee) {
+
+	public PluginException(Exception wrapee)
+	{
 		super(wrapee);
 	}
 }
-
