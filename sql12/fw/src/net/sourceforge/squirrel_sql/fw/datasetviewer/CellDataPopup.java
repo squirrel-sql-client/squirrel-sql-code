@@ -112,9 +112,9 @@ public class CellDataPopup
 			dim.width = 300;
 			dimChanged = true;
 		}
-		if (dim.height < 200)
+		if (dim.height < 300)
 		{
-			dim.height = 200;
+			dim.height = 300;
 			dimChanged = true;
 		}
 		if (dim.width > 600)
@@ -122,9 +122,9 @@ public class CellDataPopup
 			dim.width = 600;
 			dimChanged = true;
 		}
-		if (dim.height > 400)
+		if (dim.height > 500)
 		{
-			dim.height = 400;
+			dim.height = 500;
 			dimChanged = true;
 		}
 		if (dimChanged)
@@ -135,6 +135,8 @@ public class CellDataPopup
 		{
 			pt = SwingUtilities.convertPoint((Component) evt.getSource(), pt, comp);
 			pt.y -= dim.height;
+			if (pt.y < 0)
+				pt.y = 0;	// fudge for larger inset windows
 		}
 		else
 		{
@@ -172,6 +174,7 @@ public class CellDataPopup
 				pt.x -= (pt.x + dim.width + fudgeFactor) - parentBounds.width;
 			}
 		}
+
 		newComp.setLocation(pt);
 		newComp.setVisible(true);
 	}
