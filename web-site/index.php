@@ -15,17 +15,44 @@
 			<td width="20">&nbsp;&nbsp;</td>
 			<td width="100%" valign="top">
 <?php
-	$page = $_GET['page'];
-	if (is_null($page))
+	$pageKey = $_GET['page'];
+	$pageFileName = '';
+	if (is_null($pageKey))
 	{
-		$page = 'home.html';
+		$pageKey = 'home';
 	}
-	if (ereg('.txt$', $page))
+
+	switch ($pageKey)
+	{
+		case 'home':
+			$pageFileName = 'home.html';
+			break;
+		case 'plugins':
+			$pageFileName = 'plugins.html';
+			break;
+		case 'screenshots':
+			$pageFileName = 'screenshots.html';
+			break;
+		case 'faq':
+			$pageFileName = 'faq.html';
+			break;
+		case 'old':
+			$pageFileName = 'old.html';
+			break;
+		case 'changes':
+			$pageFileName = 'latest-changes.html';
+			break;
+		default:
+			$pageFileName = 'home.html';
+			break;
+	}
+	
+	if (ereg('.txt$', $pageFileName))
 	{
 		echo("<PRE>");
 	}
-	include $page;
-	if (ereg('.txt$', $page))
+	include $pageFileName;
+	if (ereg('.txt$', $pageFileName))
 	{
 		echo("</PRE>");
 	}
