@@ -175,6 +175,20 @@ public class SessionSheet extends JInternalFrame {
 		_sqlPnl.replaceSQLEntryPanel(pnl);
 	}
 
+	/**
+	 * Close all the Results frames.
+	 */
+	public void closeAllSQLResultFrames() {
+		_sqlPnl.closeAllSQLResultFrames();
+	}
+
+	/**
+	 * Close all the Results tabs.
+	 */
+	public void closeAllSQLResultTabs() {
+		_sqlPnl.closeAllSQLResultTabs();
+	}
+
 	ObjectsPanel getObjectPanel() {
 		return _objectsPnl;
 	}

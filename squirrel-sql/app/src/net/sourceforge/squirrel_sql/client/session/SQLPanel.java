@@ -35,9 +35,6 @@ import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.JCheckBox;
-import javax.swing.JInternalFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -101,12 +98,6 @@ class SQLPanel extends JPanel {
 	private JTabbedPane _tabbedResultsPanel = new JTabbedPane();
 
 	/**
-	 * List of <TT>ResultTabInfo</TT> objects for SQL Result tabs
-	 * that are currently visible.
-	 */
-//	private List _usedTabs = new ArrayList();
-
-	/**
 	 * Collection of <TT>ResultTabInfo</TT> objects for all
 	 * <TT>ResultTab</TT> objects that have been created. Keyed
 	 * by <TT>ResultTab.getIdentifier()</TT>.
@@ -114,9 +105,14 @@ class SQLPanel extends JPanel {
 	private Map _allTabs = new HashMap();
 
 	/**
-	 * Pool of <TT>ResultTab</TT> objects available for use.
+	 * Pool of <TT>ResultTabInfo</TT> objects available for use.
 	 */
 	private List _availableTabs = new ArrayList();
+
+	/**
+	 * Pool of <TT>ResultTabInfo</TT> objects currently being used.
+	 */
+	private List _usedTabs = new ArrayList();
 
 	private boolean _hasBeenVisible = false;
 	private JSplitPane _splitPane;
@@ -171,8 +167,7 @@ class SQLPanel extends JPanel {
 	 * @throws  IllegalArgumentException
 	 *			  If a null <TT>ISQLExecutionListener</TT> passed.
 	 */
-	public synchronized void addSQLExecutionListener(ISQLExecutionListener lis)
-		throws IllegalArgumentException {
+	public synchronized void addSQLExecutionListener(ISQLExecutionListener lis) {
 		if (lis == null) {
 			throw new IllegalArgumentException("null ISQLExecutionListener passed");
 		}
@@ -187,8 +182,7 @@ class SQLPanel extends JPanel {
 	 * @throws	IllegalArgumentException
 	 *			If a null <TT>ISQLExecutionListener</TT> passed.
 	 */
-	public synchronized void removeSQLExecutionListener(ISQLExecutionListener lis)
-		throws IllegalArgumentException {
+	public synchronized void removeSQLExecutionListener(ISQLExecutionListener lis) {
 		if (lis == null) {
 			throw new IllegalArgumentException("null ISQLExecutionListener passed");
 		}
@@ -203,8 +197,7 @@ class SQLPanel extends JPanel {
 	 * @throws	IllegalArgumentException
 	 *			If a null <TT>IResultTabListener</TT> passed.
 	 */
-	public synchronized void addResultTabListener(IResultTabListener lis)
-			throws IllegalArgumentException {
+	public synchronized void addResultTabListener(IResultTabListener lis) {
 		if (lis == null) {
 			throw new IllegalArgumentException("null IResultTabListener passed");
 		}
@@ -219,8 +212,7 @@ class SQLPanel extends JPanel {
 	 * @throws	IllegalArgumentException
 	 *			If a null <TT>IResultTabListener</TT> passed.
 	 */
-	public synchronized void removeResultTabListener(IResultTabListener lis)
-			throws IllegalArgumentException {
+	public synchronized void removeResultTabListener(IResultTabListener lis) {
 		if (lis == null) {
 			throw new IllegalArgumentException("null IResultTabListener passed");
 		}
@@ -261,16 +253,7 @@ class SQLPanel extends JPanel {
 			_propsListener = null;
 		}
 
-		for (Iterator it = _allTabs.entrySet().iterator(); it.hasNext();) {
-			Map.Entry entry = (Map.Entry)it.next();
-			ResultTabInfo ti = (ResultTabInfo)entry.getValue();
-			if (ti._resultFrame != null) {
-				ti._resultFrame.dispose();
-				ti._resultFrame = null;
-			}
-		}
-
-		super.removeNotify();
+		closeAllSQLResultFrames();
 	}
 	
 	void replaceSQLEntryPanel(ISQLEntryPanel pnl) {
@@ -311,108 +294,30 @@ class SQLPanel extends JPanel {
 	}
 
 	/**
-	 * Execute the current SQL.
+	 * Close all the Results frames.
 	 */
-/*
-	void executeCurrentSQL() {
-		try {
-			String sql = _sqlEntry.getSelectedText();
-			if (sql == null || sql.length() == 0) {
-				sql = _sqlEntry.getText();
-				int iStartIndex = 0;
-				int iEndIndex = sql.length();
-
-				int iCaretPos = _sqlEntry.getCaretPosition();
-
-				int iIndex = sql.lastIndexOf("\n\n", iCaretPos);
-				if (iIndex > 0)
-					iStartIndex = iIndex;
-				iIndex = sql.indexOf("\n\n", iCaretPos);
-				if (iIndex > 0)
-					iEndIndex = iIndex;
-
-				sql = sql.substring(iStartIndex, iEndIndex).trim();
-
+	synchronized void closeAllSQLResultFrames() {
+		for (Iterator it = _usedTabs.iterator(); it.hasNext();) {
+			ResultTabInfo ti = (ResultTabInfo)it.next();
+			if (ti._resultFrame != null) {
+				ti._resultFrame.dispose();
+				ti._resultFrame = null;
 			}
-
-			final long start = System.currentTimeMillis();
-			SessionProperties props = _session.getProperties();
-			final Statement stmt = _session.getSQLConnection().createStatement();
-			try {
-				if (props.getSqlLimitRows()) {
-					stmt.setMaxRows(props.getSqlNbrRowsToShow());
-				}
-
-				if (props.getSqlReuseOutputTabs()) {
-					_availableTabs.addAll(_usedTabs);
-					_usedTabs.clear();
-					_tabbedResultsPanel.removeAll();
-				}
-
-				QueryTokenizer qt =
-					new QueryTokenizer(sql, props.getSqlStatementSeparatorChar());
-				while (qt.hasQuery()) {
-					String origQrySql = qt.nextQuery();
-
-					// Allow plugins the opportunity to modify this
-					// SQL statement prior to it being executed.
-					String qrySqlToExecute = modifyIndividualScript(origQrySql);
-
-					if (qrySqlToExecute != null) {
-
-						_sqlComboItemListener.stopListening();
-						try {
-							_sqlCombo.addItem(new SqlComboItem(origQrySql));
-						} finally {
-							_sqlComboItemListener.startListening();
-						}
-
-						if (stmt.execute(qrySqlToExecute)) {
-							ResultSet rs = stmt.getResultSet();
-							if (rs != null) {
-								try {
-									ResultTab tab = null;
-									if (_availableTabs.size() > 0) {
-										tab = (ResultTab) _availableTabs.remove(0);
-									}
-									if (tab == null) {
-										tab = new ResultTab(_session, this);
-										_usedTabs.add(tab);
-									}
-									origQrySql = Utilities.cleanString(origQrySql);
-									tab.show(new ResultSetDataSet(rs), origQrySql);
-									String sTitle = origQrySql;
-									if (sTitle.length() > 10) {
-										sTitle = sTitle.substring(0, 15);
-									}
-									if (_tabbedResultsPanel.indexOfComponent(tab) == -1) {
-										_tabbedResultsPanel.addTab(sTitle, null, tab, origQrySql);
-									} else {
-										tab.setName(sTitle);
-									}
-									_tabbedResultsPanel.setSelectedComponent(tab);
-								} finally {
-									rs.close();
-								}
-							}
-						} else {
-							_session.getMessageHandler().showMessage(
-								stmt.getUpdateCount() + " Rows Updated");
-						}
-					}
-				}
-				final long finish = System.currentTimeMillis();
-				_session.getMessageHandler().showMessage(
-					"Elapsed time for query (milliseconds): " + (finish - start));
-				//  i18n
-			} finally {
-				stmt.close();
-			}
-		} catch (Throwable th) {
-			_session.getMessageHandler().showMessage(th);
 		}
 	}
-*/
+
+	/**
+	 * Close all the Results tabs.
+	 */
+	synchronized void closeAllSQLResultTabs() {
+		for (Iterator it = _usedTabs.iterator(); it.hasNext();) {
+			ResultTabInfo ti = (ResultTabInfo)it.next();
+			if (ti._resultFrame == null) {
+				closeTab(ti._tab);
+			}
+		}
+	}
+
 	/**
 	 * Close the passed <TT>ResultTab</TT>. This is done by clearing
 	 * all data from the tab, removing it from the tabbed panel
@@ -421,15 +326,16 @@ class SQLPanel extends JPanel {
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ResultTab</TT> passed.
 	 */
-	public void closeTab(ResultTab tab) throws IllegalArgumentException {
+	public void closeTab(ResultTab tab) {
 		if (tab == null) {
 			throw new IllegalArgumentException("Null ResultTab passed");
 		}
 		s_log.debug("SQLPanel.closeTab(" + tab.getIdentifier().toString() + ")");
 		tab.clear();
 		_tabbedResultsPanel.remove(tab);
-		_availableTabs.add(tab);
 		ResultTabInfo tabInfo = (ResultTabInfo)_allTabs.get(tab.getIdentifier());
+		_availableTabs.add(tabInfo);
+		_usedTabs.remove(tabInfo);
 		tabInfo._resultFrame = null;
 		fireTabRemovedEvent(tab);
 	}
@@ -445,7 +351,7 @@ class SQLPanel extends JPanel {
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ResultTab</TT> passed.
 	 */
-	public void createWindow(ResultTab tab) throws IllegalArgumentException {
+	public void createWindow(ResultTab tab) {
 		if (tab == null) {
 			throw new IllegalArgumentException("Null ResultTab passed");
 		}
@@ -588,18 +494,18 @@ class SQLPanel extends JPanel {
 						ResultSetMetaDataDataSet mdds,
 						final JPanel cancelPanel) {
 		final ResultTab tab;
-		//final String sTitle;
 		if (_availableTabs.size() > 0) {
-			tab = (ResultTab) _availableTabs.remove(0);
+			ResultTabInfo ti = (ResultTabInfo) _availableTabs.remove(0);
+			_usedTabs.add(ti);
+			tab = ti._tab;
+			s_log.debug("Using tab " + tab.getIdentifier().toString() + " for results.");
 		} else {
 			tab = new ResultTab(_session, this, _idFactory.createIdentifier());
-			_allTabs.put(tab.getIdentifier(), new ResultTabInfo(tab));
+			ResultTabInfo ti = new ResultTabInfo(tab);
+			_allTabs.put(tab.getIdentifier(), ti);
+			_usedTabs.add(ti);
+			s_log.debug("Created new tab " + tab.getIdentifier().toString() + " for results.");
 		}
-		//if (sToken.length() > 15) {
-		//	sTitle = sToken.substring(0, 15);
-		//} else {
-		//	sTitle = sToken;
-		//}
 
 		try {
 			tab.showResults(rsds, mdds, sToken);
@@ -931,7 +837,7 @@ class SQLPanel extends JPanel {
 		final ResultTab _tab;
 		ResultFrame _resultFrame;
 
-		ResultTabInfo(ResultTab tab) throws IllegalArgumentException {
+		ResultTabInfo(ResultTab tab) {
 			if (tab == null) {
 				throw new IllegalArgumentException("Null ResultTab passed");
 			}
