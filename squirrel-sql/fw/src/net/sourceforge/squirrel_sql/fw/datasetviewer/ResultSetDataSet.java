@@ -81,12 +81,19 @@ public class ResultSetDataSet implements IDataSet {
 								row[i] = new Boolean(rs.getBoolean(idx));
 								break;
 							case Types.TIME:
+								row[i] = rs.getTime(idx);
+								break;
 							case Types.DATE:
-							case Types.TIMESTAMP:
 								row[i] = rs.getDate(idx);
 								break;
+							case Types.TIMESTAMP:
+								row[i] = rs.getTimestamp(idx);
+								break;
 							case Types.BIGINT:
-								row[i] = new Long(rs.getLong(idx));
+								// TODO: Fix this - CB
+								// Oracle throws an Invalid Column Type exception on getLong().
+								//row[i] = new Long(rs.getLong(idx));
+								row[i] = rs.getString(idx);
 								break;
 							case Types.DECIMAL:
 							case Types.DOUBLE:
