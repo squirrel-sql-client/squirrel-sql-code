@@ -34,11 +34,12 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 /**
+ * TODO: Move all code other than for window creation up to AliasWindowManager
  * Factory to handle creation of maintenance sheets for SQL Alias objects.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
+class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
 {
 	/** Logger for this class. */
 	private static final ILogger s_log =
@@ -55,6 +56,11 @@ public class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
 
 	/**
 	 * ctor.
+	 *
+	 * @param	app		Application API.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if <tt>null</tt> <tt>IApplication</tt> passed.
 	 */
 	public AliasWindowFactory(IApplication app)
 	{
@@ -79,7 +85,7 @@ public class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
 	 */
-	public synchronized AliasInternalFrame showModifySheet(ISQLAlias alias)
+	public synchronized AliasInternalFrame getModifySheet(ISQLAlias alias)
 	{
 		if (alias == null)
 		{
@@ -111,11 +117,12 @@ public class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
 	}
 
 	/**
-	 * Create and show a new maintenance sheet to allow the user to create a new alias.
+	 * Create and show a new maintenance sheet to allow the user to create a new
+	 * alias.
 	 *
 	 * @return	The new maintenance sheet.
 	 */
-	public AliasInternalFrame showCreateSheet()
+	public AliasInternalFrame getCreateSheet()
 	{
 		final DataCache cache = _app.getDataCache();
 		final IIdentifierFactory factory = IdentifierFactory.getInstance();
@@ -132,9 +139,10 @@ public class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
 	 *
 	 * @return	The new maintenance sheet.
 	 *
-	 * @throws	IllegalArgumentException	if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
+	 * @throws	IllegalArgumentException
+	 *			Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
 	 */
-	public AliasInternalFrame showCopySheet(ISQLAlias alias)
+	public AliasInternalFrame getCopySheet(ISQLAlias alias)
 	{
 		if (alias == null)
 		{

@@ -28,6 +28,7 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.geom.Rectangle2D;
+import java.beans.PropertyVetoException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,8 @@ import javax.swing.JInternalFrame;
 import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.fw.util.BaseRuntimeException;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
  * Common GUI utilities accessed via static methods.
  *
@@ -44,6 +47,10 @@ import net.sourceforge.squirrel_sql.fw.util.BaseRuntimeException;
  */
 public class GUIUtils
 {
+	/** Logger for this class. */
+	private static final ILogger s_log =
+		LoggerController.createLogger(GUIUtils.class);
+
 	/**
 	 * Centers <CODE>wind</CODE> within its parent. If it has no parent then
 	 * center within the screen. If centering would cause the title bar to go
@@ -121,6 +128,29 @@ public class GUIUtils
 			windSize.width = parentSize.width;
 		}
 		center(wind, rcScreen);
+	}
+
+	public static void moveToFront(final JInternalFrame fr)
+	{
+		if (fr != null)
+		{
+			processOnSwingEventThread(new Runnable()
+			{
+				public void run()
+				{
+					fr.moveToFront();
+					fr.setVisible(true);
+					try
+					{
+						fr.setSelected(true);
+					}
+					catch (PropertyVetoException ex)
+					{
+						s_log.error("Error bringing internal frame to the front", ex);
+					}
+				}
+			});
+		}
 	}
 
 	/**

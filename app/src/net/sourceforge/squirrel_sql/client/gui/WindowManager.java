@@ -51,11 +51,11 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.gui.db.AliasWindowFactory;
+import net.sourceforge.squirrel_sql.client.gui.db.AliasWindowManager;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasesList;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasesListInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.db.ConnectionInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.db.DriverWindowFactory;
+import net.sourceforge.squirrel_sql.client.gui.db.DriverWindowManager;
 import net.sourceforge.squirrel_sql.client.gui.db.DriversList;
 import net.sourceforge.squirrel_sql.client.gui.db.DriversListInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
@@ -99,9 +99,6 @@ import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterSheet;
  * Do we still want to do this? Remember in the future there will probably be
  * an SDI as well as MDI version of the windows.
  *
- * JASON: Rename class to WindowManager as I intend it to manage all windows,
- * not just session ones.
- *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  * @author <A HREF="mailto:jmheight@users.sourceforge.net">Jason Height</A>
  */
@@ -124,17 +121,23 @@ public class WindowManager
 	/** Application API. */
 	private final IApplication _app;
 
+	/** Window manager for driver windows. */
+	private DriverWindowManager _driverWinMgr;
+
+	/** Window manager for aliases windows. */
+	private AliasWindowManager _aliasWinMgr;
+
 	/** Applications main frame. */
 	private MainFrame _mainFrame;
 
+	/** Window containing list of database aliases. */
 	private AliasesListInternalFrame _aliasesListWindow;
+
+	/** Window containing list of JDBC driver definitions. */
 	private DriversListInternalFrame _driversListWindow;
 
 	/** Window Factory for alias maintenace windows. */
-	private final AliasWindowFactory _aliasWinFactory;
-
-	/** Window Factory for driver maintenace windows. */
-	private final DriverWindowFactory _driverWinFactory;
+//	private final AliasWindowFactory _aliasWinFactory;
 
 	/**
 	 * Map of windows(s) that are currently open for a session, keyed by
@@ -180,8 +183,8 @@ public class WindowManager
 
 		_app = app;
 
-		_aliasWinFactory = new AliasWindowFactory(_app);
-		_driverWinFactory = new DriverWindowFactory(_app);
+		_aliasWinMgr = new AliasWindowManager(_app);
+		_driverWinMgr = new DriverWindowManager(_app);
 
 		GUIUtils.processOnSwingEventThread(new Runnable()
 		{
@@ -255,13 +258,12 @@ public class WindowManager
 	 */
 	public void showModifyAliasInternalFrame(final ISQLAlias alias)
 	{
-		GUIUtils.processOnSwingEventThread(new Runnable()
+		if (alias == null)
 		{
-			public void run()
-			{
-				moveToFront(_aliasWinFactory.showModifySheet(alias));
-			}
-		});
+			throw new IllegalArgumentException("ISQLAlias == null");
+		}
+
+		_aliasWinMgr.showModifyAliasInternalFrame(alias);
 	}
 
 	/**
@@ -270,13 +272,7 @@ public class WindowManager
 	 */
 	public void showNewAliasInternalFrame()
 	{
-		GUIUtils.processOnSwingEventThread(new Runnable()
-		{
-			public void run()
-			{
-				moveToFront(_aliasWinFactory.showCreateSheet());
-			}
-		});
+		_aliasWinMgr.showNewAliasInternalFrame();
 	}
 
 	/**
@@ -295,13 +291,7 @@ public class WindowManager
 			throw new IllegalArgumentException("ISQLAlias == null");
 		}
 
-		GUIUtils.processOnSwingEventThread(new Runnable()
-		{
-			public void run()
-			{
-				moveToFront(_aliasWinFactory.showCopySheet(alias));
-			}
-		});
+		_aliasWinMgr.showCopyAliasInternalFrame(alias);
 	}
 
 	/**
@@ -321,13 +311,7 @@ public class WindowManager
 			throw new IllegalArgumentException("ISQLDriver == null");
 		}
 
-		GUIUtils.processOnSwingEventThread(new Runnable()
-		{
-			public void run()
-			{
-				moveToFront(_driverWinFactory.showModifySheet(driver));
-			}
-		});
+		_driverWinMgr.showModifyDriverInternalFrame(driver);
 	}
 
 	/**
@@ -336,13 +320,7 @@ public class WindowManager
 	 */
 	public void showNewDriverInternalFrame()
 	{
-		GUIUtils.processOnSwingEventThread(new Runnable()
-		{
-			public void run()
-			{
-				moveToFront(_driverWinFactory.showCreateSheet());
-			}
-		});
+		_driverWinMgr.showNewDriverInternalFrame();
 	}
 
 	/**
@@ -361,13 +339,7 @@ public class WindowManager
 			throw new IllegalArgumentException("ISQLDriver == null");
 		}
 
-		GUIUtils.processOnSwingEventThread(new Runnable()
-		{
-			public void run()
-			{
-				moveToFront(_driverWinFactory.showCopySheet(driver));
-			}
-		});
+		_driverWinMgr.showCopyDriverInternalFrame(driver);
 	}
 
 	/**
@@ -673,7 +645,7 @@ public class WindowManager
 	{
 		final SessionManager sessMgr = _app.getSessionManager();
 		final ISession currSession = sessMgr.getActiveSession();
-		
+
 		ISession nextSession = null;
 		if (currSession == null)
 		{
