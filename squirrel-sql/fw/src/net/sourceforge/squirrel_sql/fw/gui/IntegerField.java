@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -26,51 +26,66 @@ import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
 
 /**
- * This class is a <CODE>TextField</CODE> that only allows integral
+ * This class is a <CODE>TextField</CODE> that only allows integer
  * values to be entered into it.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class IntegerField extends JTextField {
+public class IntegerField extends JTextField
+{
 	/**
 	 * Default ctor.
 	 */
-	public IntegerField() {
+	public IntegerField()
+	{
 		super();
 	}
 
 	/**
 	 * Ctor specifying the field width.
+	 * 
+	 * @param	cols	Number of columns.
 	 */
-	public IntegerField(int cols) {
+	public IntegerField(int cols)
+	{
 		super(cols);
 	}
 
-	public int getInt() {
+	public int getInt()
+	{
 		final String text = getText();
-		if (text == null || text.length() == 0) {
+		if (text == null || text.length() == 0)
+		{
 			return 0;
 		}
 		return Integer.parseInt(text);
 	}
 
-	public void setInt(int value) {
-		setText("" + value);
+	public void setInt(int value)
+	{
+		setText(String.valueOf(value));
 	}
 
-	protected Document createDefaultModel() {
+	protected Document createDefaultModel()
+	{
 		return new IntegerDocument();
 	}
 
-	static class IntegerDocument extends PlainDocument {
+	static class IntegerDocument extends PlainDocument
+	{
 
 		public void insertString(int offs, String str, AttributeSet a)
-				throws BadLocationException {
-			if (str != null) {
-				try {
+			throws BadLocationException
+		{
+			if (str != null)
+			{
+				try
+				{
 					Integer.decode(str);
 					super.insertString(offs, str, a);
-				} catch (NumberFormatException ex) {
+				}
+				catch (NumberFormatException ex)
+				{
 					Toolkit.getDefaultToolkit().beep();
 				}
 			}

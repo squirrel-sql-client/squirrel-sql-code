@@ -133,12 +133,12 @@ public class SessionSQLPropertiesPanel
 
 		private JCheckBox _autoCommitChk = new JCheckBox(SQLPropertiesPanelI18n.AUTO_COMMIT);
 		private JCheckBox _commitOnClose = new JCheckBox(SQLPropertiesPanelI18n.COMMIT_ON_CLOSE);
-		private IntegerField _contentsNbrRowsToShowField = new IntegerField();
+		private IntegerField _contentsNbrRowsToShowField = new IntegerField(5);
 		private JCheckBox _contentsLimitRowsChk = new JCheckBox(SQLPropertiesPanelI18n.LIMIT_ROWS_CONTENTS);
 		private JCheckBox _showRowCount = new JCheckBox(SQLPropertiesPanelI18n.SHOW_ROW_COUNT);
-		private IntegerField _sqlNbrRowsToShowField = new IntegerField();
+		private IntegerField _sqlNbrRowsToShowField = new IntegerField(5);
 		private JCheckBox _sqlLimitRows = new JCheckBox(SQLPropertiesPanelI18n.LIMIT_ROWS_SQL);
-		private CharField _stmtSepChar = new CharField();
+		private CharField _stmtSepChar = new CharField(' ');
 
 		private JCheckBox _showBinaryChk = new JCheckBox(SQLPropertiesPanelI18n.BINARY);
 		private JCheckBox _showVarBinaryChk = new JCheckBox(SQLPropertiesPanelI18n.VARBINARY);
@@ -147,8 +147,8 @@ public class SessionSQLPropertiesPanel
 		private JCheckBox _showBlobChk = new JCheckBox(SQLPropertiesPanelI18n.BLOB);
 		private JCheckBox _showClobChk = new JCheckBox(SQLPropertiesPanelI18n.CLOB);
 
-		private IntegerField _showBlobSize = new IntegerField();
-		private IntegerField _showClobSize = new IntegerField();
+		private IntegerField _showBlobSize = new IntegerField(5);
+		private IntegerField _showClobSize = new IntegerField(5);
 
 		/** Label displaying the selected font. */
 		private JLabel _fontLbl = new JLabel();
