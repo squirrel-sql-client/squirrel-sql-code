@@ -1,7 +1,9 @@
 package net.sourceforge.squirrel_sql.client.plugin;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
+ *
+ * Modifications Copyright (c) 2004 Jason Height.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -296,6 +298,17 @@ public class PluginManager
 	public synchronized void setPluginStatuses(PluginStatus[] values)
 	{
 		_app.getSquirrelPreferences().setPluginStatuses(values);
+	}
+
+	/**
+	 * Retrieve loaded session plugins
+	 *
+	 * @return	<TT>Iterator</TT> over a collection of
+	 * 			<TT>ISessionPlugin</TT> objects.
+	 */
+	public Iterator getSessionPluginIterator()
+	{
+		return _sessionPlugins.iterator();
 	}
 
 	/**

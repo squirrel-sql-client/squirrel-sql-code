@@ -1,8 +1,10 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
 /*
- * Copyright (C) 2002 Colin Bell and Johan Compagner
+ * Copyright (C) 2002-2004 Colin Bell and Johan Compagner
  * colbell@users.sourceforge.net
  * jcompagner@j-com.nl
+ *
+ * Modifications Copyright (c) 2004 Jason Height.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,6 +23,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,6 +36,9 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
+import net.sourceforge.squirrel_sql.client.plugin.ISessionPlugin;
+import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
+import net.sourceforge.squirrel_sql.client.plugin.SessionPluginInfo;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.DatabaseExpander;
@@ -76,9 +82,46 @@ public class ObjectTreeModel extends DefaultTreeModel
 		addExpander(DatabaseObjectType.SESSION, expander);
 		addExpander(DatabaseObjectType.CATALOG, expander);
 		addExpander(DatabaseObjectType.SCHEMA, expander);
-		addExpander(IObjectTreeAPI.TABLE_TYPE_DBO, new TableTypeExpander());
-		addExpander(IObjectTreeAPI.PROC_TYPE_DBO, new ProcedureTypeExpander());
-		addExpander(IObjectTreeAPI.UDT_TYPE_DBO, new UDTTypeExpander());
+
+		boolean foundTableExp = false;
+		boolean foundProcExp = false;
+		boolean foundUDTExp = false;
+		final PluginManager pmgr = session.getApplication().getPluginManager();
+		for (Iterator pluginItr = pmgr.getSessionPluginIterator(); pluginItr.hasNext();)
+		{
+			ISessionPlugin p = ((SessionPluginInfo)pluginItr.next()).getSessionPlugin();
+			INodeExpander tableExp = p.getDefaultNodeExpander(session, IObjectTreeAPI.TABLE_TYPE_DBO);
+			if (tableExp != null)
+			{
+				foundTableExp = true;
+				addExpander(IObjectTreeAPI.TABLE_TYPE_DBO, tableExp);
+			}
+			INodeExpander procExp = p.getDefaultNodeExpander(session, IObjectTreeAPI.PROC_TYPE_DBO);
+			if (procExp != null)
+			{
+				foundProcExp = true;
+				addExpander(IObjectTreeAPI.PROC_TYPE_DBO, procExp);
+			}
+			INodeExpander udtExp = p.getDefaultNodeExpander(session, IObjectTreeAPI.UDT_TYPE_DBO);
+			if (udtExp != null)
+			{
+				foundUDTExp = true;
+				addExpander(IObjectTreeAPI.UDT_TYPE_DBO, udtExp);
+			}
+		}
+
+		if (!foundTableExp) 
+		{
+			addExpander(IObjectTreeAPI.TABLE_TYPE_DBO, new TableTypeExpander());
+		}
+		if (!foundProcExp)
+		{
+			addExpander(IObjectTreeAPI.PROC_TYPE_DBO, new ProcedureTypeExpander());
+		}
+		if (!foundUDTExp)
+		{
+			addExpander(IObjectTreeAPI.UDT_TYPE_DBO, new UDTTypeExpander());
+		}
 	}
 
 	/**
