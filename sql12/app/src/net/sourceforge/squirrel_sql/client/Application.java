@@ -20,11 +20,13 @@ package net.sourceforge.squirrel_sql.client;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.sql.DriverManager;
 import java.util.Calendar;
+import java.util.Iterator;
 
 import javax.swing.Action;
 import javax.swing.JMenu;
@@ -39,6 +41,8 @@ import net.sourceforge.squirrel_sql.fw.util.ProxyHandler;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
+import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.db.AliasMaintSheetFactory;
@@ -56,12 +60,14 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionPropertiesSheetFactory;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 /**
  * Defines the API to do callbacks on the application.
  *
  *@author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ *@author	Lynn Pye
  */
 class Application implements IApplication
 {
@@ -99,6 +105,9 @@ class Application implements IApplication
 
 	/** Contains info about fonts for squirrel. */
 	private final FontInfoStore _fontInfoStore = new FontInfoStore();
+
+	/** Application level SQL History. */
+	private SQLHistory _sqlHistory;
 
 	/**
 	 * ctor.
@@ -225,8 +234,11 @@ class Application implements IApplication
 			_jdbcDebugOutput = null;
 		}
 
+		// Save Application level SQL history.
+		saveSQLHistory();
+
 		s_log.info("Application shutdown complete " + Calendar.getInstance().getTime());
-		_loggerFactory.shutdown();
+		LoggerController.shutdown();
 	}
 
 	public PluginManager getPluginManager()
@@ -360,6 +372,16 @@ class Application implements IApplication
 	}
 
 	/**
+	 * Retrieve the application level SQL History object.
+	 * 
+	 * @return		the application level SQL History object.
+	 */
+	public SQLHistory getSQLHistory()
+	{
+		return _sqlHistory;
+	}
+
+	/**
 	 * Return an array of all the sessions currently active.
 	 * 
 	 * @return	array of all active sessions.
@@ -464,10 +486,12 @@ class Application implements IApplication
 		indicateNewStartupTask(splash, "Initializing plugins...");
 		_pluginManager.initializePlugins();
 
+		indicateNewStartupTask(splash, "Loading SQL history...");
+		loadSQLHistory();
+
 		indicateNewStartupTask(splash, "Showing main window...");
 		_mainFrame.setVisible(true);
 
-		indicateNewStartupTask(splash, "Connecting to startup aliases...");
 		new ConnectToStartupAliasesCommand(this).execute();
 	}
 
@@ -530,6 +554,55 @@ class Application implements IApplication
 		if (propName == null || propName == SquirrelPreferences.IPropertyNames.PROXY)
 		{
 			new ProxyHandler().apply(_prefs.getProxySettings());
+		}
+	}
+
+	/**
+	 * Load application level SQL History for the current user.
+	 */
+	private void loadSQLHistory()
+	{
+		try
+		{
+			XMLBeanReader doc = new XMLBeanReader();
+			doc.load(new ApplicationFiles().getUserSQLHistoryFile());
+			Iterator it = doc.iterator();
+			if (it.hasNext())
+			{
+				_sqlHistory = (SQLHistory)it.next();
+			}
+		}
+		catch (FileNotFoundException ignore)
+		{
+			// History file not found for user - first time user ran pgm.
+		}
+		catch (Exception ex)
+		{
+			s_log.error("Unable to load SQL history from persistant storage.", ex);
+		}
+		finally
+		{
+			if (_sqlHistory == null)
+			{
+				_sqlHistory = new SQLHistory();
+			}
+		}
+	}
+
+	/**
+	 * Save application level SQL history for current user.
+	 */
+	private void saveSQLHistory()
+	{
+		// Get the history into an array.
+		try
+		{
+			XMLBeanWriter wtr = new XMLBeanWriter(_sqlHistory);
+			wtr.save(new ApplicationFiles().getUserSQLHistoryFile());
+		}
+		catch (Exception ex)
+		{
+			s_log.error("Unable to write SQL queries to persistant storage.", ex);
 		}
 	}
 }

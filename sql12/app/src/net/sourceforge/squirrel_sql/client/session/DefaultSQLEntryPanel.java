@@ -31,7 +31,6 @@ import javax.swing.event.UndoableEditListener;
 import javax.swing.text.BadLocationException;
 
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
-import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -44,8 +43,8 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	private static ILogger s_log =
 		LoggerController.createLogger(DefaultSQLEntryPanel.class);
 
-	/** Application API. */
-	private IApplication _app;
+	/** Current session. */
+	private ISession _session;
 
 	/** Text area control. */
 	private MyTextArea _comp;
@@ -54,28 +53,28 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	private JScrollPane _scroller;
 
 	/** Popup menu for this component. */
-	private TextPopupMenu _textPopupMenu = new TextPopupMenu();
+	private SessionTextEditPopupMenu _textPopupMenu;
 
 	/** Listener for displaying the popup menu. */
 	private MouseListener _sqlEntryMouseListener = new MyMouseListener();
 
-	public DefaultSQLEntryPanel(IApplication app)
+	public DefaultSQLEntryPanel(ISession session)
 	{
 		super();
-		if (app == null)
+		if (session == null)
 		{
-			throw new IllegalArgumentException("IApplication == null");
+			throw new IllegalArgumentException("ISession == null");
 		}
 
-		_app = app;
-		_comp = new MyTextArea(app, this);
+		_session = session;
+		_textPopupMenu = new SessionTextEditPopupMenu(session);
+		_comp = new MyTextArea(session, this);
 		_scroller = new JScrollPane(_comp);
 	}
 
 	public void addUndoableEditListener(UndoableEditListener lis)
 	{
 		_comp.getDocument().addUndoableEditListener(lis);
-
 	}
 
 	public void removeUndoableEditListener(UndoableEditListener lis)
@@ -97,8 +96,9 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	public void setUndoActions(Action undo, Action redo)
 	{
 		_textPopupMenu.addSeparator();
-		_app.getResources().addToPopupMenu(undo, _textPopupMenu);
-		_app.getResources().addToPopupMenu(redo, _textPopupMenu);
+		final IApplication app = _session.getApplication();
+		app.getResources().addToPopupMenu(undo, _textPopupMenu);
+		app.getResources().addToPopupMenu(redo, _textPopupMenu);
 	}
 
 	/**
@@ -360,15 +360,15 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 
 	private static class MyTextArea extends JTextArea
 	{
-		private IApplication _app;
+		private ISession _session;
 		private DefaultSQLEntryPanel _pnl;
 
-		private MyTextArea(IApplication app, DefaultSQLEntryPanel pnl)
+		private MyTextArea(ISession session, DefaultSQLEntryPanel pnl)
 		{
 			super();
-			_app = app;
+			_session = session;
 			_pnl = pnl;
-			SessionProperties props = app.getSquirrelPreferences().getSessionProperties();
+			SessionProperties props = session.getProperties();
 			FontInfo fi = props.getFontInfo();
 			if (fi != null)
 			{

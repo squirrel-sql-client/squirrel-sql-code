@@ -39,7 +39,7 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 		super();
 		if (s_dscrs == null)
 		{
-			s_dscrs = new PropertyDescriptor[16];
+			s_dscrs = new PropertyDescriptor[17];
 			s_dscrs[0] = new PropertyDescriptor(IPropNames.AUTO_COMMIT,
 									CLAZZ, "getAutoCommit", "setAutoCommit");
 			s_dscrs[1] = new PropertyDescriptor(IPropNames.COMMIT_ON_CLOSING_CONNECTION,
@@ -72,6 +72,8 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 									CLAZZ, "getLimitSQLEntryHistorySize", "setLimitSQLEntryHistorySize");
 			s_dscrs[15] = new PropertyDescriptor(IPropNames.SQL_ENTRY_HISTORY_SIZE,
 									CLAZZ, "getSQLEntryHistorySize", "setSQLEntryHistorySize");
+			s_dscrs[16] = new PropertyDescriptor(IPropNames.SQL_SHARE_HISTORY,
+									CLAZZ, "getSQLShareHistory", "setSQLShareHistory");
 		}
 	}
 

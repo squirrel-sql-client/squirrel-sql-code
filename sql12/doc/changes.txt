@@ -6,6 +6,8 @@ SQuirreL SQL Client Change Log
 
 Enhancements
 ------------
+- Added quote/unquote items to popup menu in the
+  SQL entry area (Gerd Wagner).
 - You can now specify an Alias to connect when
   SQuirreL starts up.
 - You can now display only loaded JDBC drivers
@@ -45,6 +47,12 @@ Enhancements
 
 Bug Fixes
 ---------
+- Allow for drivers that return null for getTableTypes().
+- Clear data in output tabs before writing. This
+  stops the problem of seeing data related to the
+  previously selected object in the object tree if
+  you are not authorised to the newly selected object
+  in the tree.
 - Fix bug where sorting by clicking in the column
   header for a table wouldn't work correctly when
   the columns had been resequenced by dragging

@@ -569,19 +569,19 @@ public class SQLDatabaseMetaData
 		// JDBC/ODBC return multiple copies of each table type.
 		final Set tableTypes = new TreeSet();
 		final ResultSet rs = md.getTableTypes();
-		try
+		if (rs != null)
 		{
-			if (rs != null)
+			try
 			{
 				while (rs.next())
 				{
 					tableTypes.add(rs.getString(1).trim());
 				}
 			}
-		}
-		finally
-		{
-			rs.close();
+			finally
+			{
+				rs.close();
+			}
 		}
 
 		final String dbProductName = getDatabaseProductName();

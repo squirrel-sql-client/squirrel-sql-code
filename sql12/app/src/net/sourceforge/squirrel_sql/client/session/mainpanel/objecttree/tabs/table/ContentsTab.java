@@ -43,7 +43,6 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 public class ContentsTab extends BaseTableTab
 	implements IDataSetUpdateableTableModel
 {
-
 	/**
 	 * Name of the table that this tab displayed last time it was loaded.
 	 * This is needed to prevent an on-demand edit operation from turning
@@ -141,7 +140,8 @@ public class ContentsTab extends BaseTableTab
 				 * to another table, that new table should not be editable.
 				 */
 				final String currentTableName = ti.getQualifiedName();
-				if ( ! currentTableName.equals(previousTableName)){
+				if ( ! currentTableName.equals(previousTableName))
+				{
 					previousTableName = currentTableName;	// needed to prevent an infinite loop
 					editModeForced = false;	// edit mode applied only to previous table
 					
@@ -167,17 +167,32 @@ public class ContentsTab extends BaseTableTab
 				//??  The following has not been tested because I cannot find a free db on Linux
 				//??  that has a getBestRowIdentifier that provides this info.  GWG
 				//??????????????????????????????????
+
+				//?? Tested and it works on oracle - Col ??
+
 				ResultSet rowIdentifierRS = conn.getSQLMetaData().getBestRowIdentifier(ti);
-				while (rowIdentifierRS.next()) {
-					// according to spec, col 8 is indicator of pseudo/not-pseudo
-					// and col 2 is name of rowid column
-					short pseudo = rowIdentifierRS.getShort(8);
-					if (pseudo == DatabaseMetaData.bestRowPseudo) {
-						pseudoColumn = " ," + rowIdentifierRS.getString(2);
-						break;
+				try
+				{
+					while (rowIdentifierRS.next())
+					{
+						// according to spec, col 8 is indicator of pseudo/not-pseudo
+						// and col 2 is name of rowid column
+						short pseudo = rowIdentifierRS.getShort(8);
+						if (pseudo == DatabaseMetaData.bestRowPseudo)
+						{
+							pseudoColumn = " ," + rowIdentifierRS.getString(2);
+							break;
+						}
 					}
 				}
+				finally
+				{
+					rowIdentifierRS.close();
+				}
 
+				// TODO: - Col - Add method to Databasemetadata that returns array
+				// of objects for getBestRowIdentifier. For PostgreSQL put this kludge in
+				// the new function. THis way all the kludges are kept in one place.
 				//
 				// KLUDGE!!!!!!
 				//
@@ -186,22 +201,36 @@ public class ContentsTab extends BaseTableTab
 				// implemented.  This kludge hardcodes the knowledge that specific
 				// DBs use a specific pseudo-column.
 				//
-				if (pseudoColumn.length() == 0) {
+				if (pseudoColumn.length() == 0)
+				{
 					String dbName = conn.getSQLMetaData().getDatabaseProductName().toUpperCase();
-					if (dbName.equals("POSTGRESQL")) {
+					if (dbName.equals("POSTGRESQL"))
+					{
 						pseudoColumn = ", oid";
 					}
 				}
 
-				final ResultSet rs = stmt.executeQuery("select *" + pseudoColumn+ " from "
-													+ ti.getQualifiedName());
+				// Note. Some DBMSs such as Oracle do not allow:
+				// "select *, rowid from table"
+				// You cannot have any column name in the columns clause if you
+				// have * in there. Aliasing the table name seems to be the best
+				// way to get around the problem.
+				StringBuffer buf = new StringBuffer();
+				buf.append("select tbl.*")
+					.append(pseudoColumn)
+					.append(" from ")
+					.append(ti.getQualifiedName())
+					.append(" tbl");
+				final ResultSet rs = stmt.executeQuery(buf.toString());
 				final ResultSetDataSet rsds = new ResultSetDataSet();
 				rsds.setResultSet(rs, props.getLargeResultSetObjectInfo());
-				
+
 				//?? remember which column is the rowID (if any) so we can
 				//?? prevent editing on it
 				if (pseudoColumn.length() > 0)
+				{
 					_rowIDcol = rsds.getColumnCount() - 1;
+				}
 
 				return rsds;
 			}
@@ -479,7 +508,6 @@ public class ContentsTab extends BaseTableTab
 					//??
 					break;
 
-					
 				// TODO: When JDK1.4 is the earliest JDK supported
 				// by Squirrel then remove the hardcoding of the
 				// boolean data type.

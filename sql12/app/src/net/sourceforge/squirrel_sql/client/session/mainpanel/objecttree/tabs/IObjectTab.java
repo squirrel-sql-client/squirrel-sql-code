@@ -72,7 +72,7 @@ public interface IObjectTab
 	void select();
 
 	/**
-	 * Clears the current view, is called right before select()
+	 * Clears the current view.
 	 */
 	void clear();
 

@@ -185,4 +185,14 @@ public interface ISQLPanelAPI
 	 * Display the previous tab in the SQL results.
 	 */
 	void gotoPreviousResultsTab();
+
+	/**
+	 * The passed SQL should be added to the SQL history.
+	 *  
+	 * @param	sql		SQL to be added to history.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>sql</TT> passed.
+	 */
+	void addSQLToHistory(String sql);
 }
