@@ -23,6 +23,7 @@ import java.sql.SQLException;
 
 import javax.swing.SwingUtilities;
 
+import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
@@ -154,15 +155,19 @@ public class ConnectToAliasCommand implements ICommand {
 		 */
 		public void errorOccured(Throwable th) {
 			if (th instanceof BaseSQLException) {
-				showErrorDialog("Unable to open SQL Connection:<br>" + th.getMessage());
+				String msg = "Unable to open SQL Connection";
+				showErrorDialog(msg, th);
 			} else if (th instanceof ClassNotFoundException) {
-				showErrorDialog("JDBC Driver class not found:<br>" + th.getMessage());
+				String msg = "JDBC Driver class not found";
+				showErrorDialog(msg, th);
 			} else if (th instanceof NoClassDefFoundError) {
+				String msg = "JDBC Driver class not found";
 				s_log.error("JDBC Driver class not found", th);
-				showErrorDialog("JDBC Driver class not found:<br>" + th.getMessage());
+				showErrorDialog(msg, th);
 			} else {
-				s_log.error("Unexpected Error occured attempting to open an SQL connection.", th);
-				showErrorDialog(th.toString());
+				String msg = "Unexpected Error occured attempting to open an SQL connection.";
+				s_log.error(msg, th);
+				showErrorDialog(msg, th);
 			}
 		}
 
@@ -170,11 +175,11 @@ public class ConnectToAliasCommand implements ICommand {
 			return _app;
 		}
 
-		protected void showErrorDialog(final String msg) {
+		protected void showErrorDialog(final String msg, final Throwable th) {
 			synchronized (this) {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
-						_app.showErrorDialog(msg);
+						new ErrorDialog(_app.getMainFrame(), msg, th).show();
 					}
 				});
 			}
