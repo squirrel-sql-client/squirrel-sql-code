@@ -74,29 +74,9 @@ import net.sourceforge.squirrel_sql.client.session.objectstree.DatabasePanel;
 import net.sourceforge.squirrel_sql.client.session.objectstree.ProcedurePanel;
 import net.sourceforge.squirrel_sql.client.session.objectstree.TablePanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.*;
 
 public class SessionSheet extends JInternalFrame {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n {
-		String SQL_TAB_TITLE = "SQL";
-		String SQL_TAB_DESC = "Execute SQL statements";
-		String OBJ_TAB_TITLE = "Objects";
-		String OBJ_TAB_DESC = "Show database objects";
-		String IMPORT_TAB_TITLE = "Import Data";
-		String IMPORT_TAB_DESC = "Import csv files into database";
-	}
-
-	/**
-	 * IDs of tabs in the main tabbed pane.
-	 */
-	public interface IMainTabIndexes {
-		int OBJECT_TREE_TAB = 0;
-		int SQL_TAB = 1;
-	}
-
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(SessionSheet.class);
 
@@ -105,13 +85,11 @@ public class SessionSheet extends JInternalFrame {
 	/** Listener to the sessions properties. */
 	private PropertyChangeListener _propsListener;
 
-	private JTabbedPane _tabPane = new JTabbedPane();
-	private SQLPanel _sqlPnl;
-	private ObjectsPanel _objectsPnl;
+	private MainPanel _mainTabPane;
 	private JSplitPane _msgSplit;
 	private MyStatusBar _statusBar = new MyStatusBar();
-
-	private boolean _hasBeenVisible = false;
+	
+	private boolean _hasBeenVisible;
 
 	public SessionSheet(ISession session) {
 		super(createTitle(session), true, true, true, true);
@@ -138,11 +116,18 @@ public class SessionSheet extends JInternalFrame {
 			_session.getProperties().removePropertyChangeListener(_propsListener);
 			_propsListener = null;
 		}
-		_objectsPnl.sessionEnding();
-		_sqlPnl.sessionEnding();
+		_mainTabPane.sessionClosing(_session);
 		_session.getApplication().getPluginManager().sessionEnding(_session);
 		closeConnection();
 		super.dispose();
+	}
+
+	public void setVisible(boolean value) {
+		super.setVisible(value);
+		if (!_hasBeenVisible && value == true) {
+			_msgSplit.setDividerLocation(0.9d);
+			_hasBeenVisible = true;
+		}
 	}
 
 	public boolean hasConnection() {
@@ -154,12 +139,14 @@ public class SessionSheet extends JInternalFrame {
 	}
 
 	public void refreshTree() throws BaseSQLException {
-		_objectsPnl.refreshTree();
+		_mainTabPane.getObjectsPanel().refresh();
 	}
 
 	public void updateState() {
+		_mainTabPane.updateState();
+/*
 		ActionCollection actions = _session.getApplication().getActionCollection();
-		final String tabTitle = _tabPane.getTitleAt(_tabPane.getSelectedIndex());
+		final String tabTitle = _mainTabPane.getTitleAt(_mainTabPane.getSelectedIndex());
 		if (tabTitle.equals(i18n.SQL_TAB_TITLE)) {
 			actions.get(ExecuteSqlAction.class).setEnabled(true);
 			actions.get(ShowNativeSQLAction.class).setEnabled(true);
@@ -174,10 +161,11 @@ public class SessionSheet extends JInternalFrame {
 			actions.get(RollbackAction.class).setEnabled(false);
 			actions.get(RefreshTreeAction.class).setEnabled(true);
 		}
+*/
 	}
 
 	public void replaceSQLEntryPanel(ISQLEntryPanel pnl) {
-		_sqlPnl.replaceSQLEntryPanel(pnl);
+		_mainTabPane.getSQLPanel().replaceSQLEntryPanel(pnl);
 	}
 
 	/**
@@ -195,7 +183,7 @@ public class SessionSheet extends JInternalFrame {
 //	}
 
 	ObjectsPanel getObjectPanel() {
-		return _objectsPnl;
+		return _mainTabPane.getObjectsPanel();
 	}
 
 	DatabasePanel getDatabasePanel() {
@@ -221,16 +209,6 @@ public class SessionSheet extends JInternalFrame {
 		}
 	}
 
-	public void setVisible(boolean value) {
-		super.setVisible(value);
-		// Required under JDK1.2. Without it the divider location is reset to 0.
-		if (!_hasBeenVisible && value == true) {
-			_objectsPnl.fixDividerLocation();
-			_msgSplit.setDividerLocation(0.9d);
-			_hasBeenVisible = true;
-		}
-	}
-
 	/**
 	 * Select a tab in the main tabbed pane.
 	 *
@@ -239,14 +217,14 @@ public class SessionSheet extends JInternalFrame {
 	 * @throws  llegalArgumentException
 	 *		  Thrown if an invalid <TT>tabIndex</TT> passed.
 	 */
-	public void selectMainTab(int tabIndex) throws IllegalArgumentException {
-		if (tabIndex >= _tabPane.getTabCount()) {
+	public void selectMainTab(int tabIndex) {
+		if (tabIndex >= _mainTabPane.getTabCount()) {
 			throw new IllegalArgumentException(
 				"" + tabIndex + " is not a valid index into the main tabbed pane.");
 		}
 
-		if (_tabPane.getSelectedIndex() != tabIndex) {
-			_tabPane.setSelectedIndex(tabIndex);
+		if (_mainTabPane.getSelectedIndex() != tabIndex) {
+			_mainTabPane.setSelectedIndex(tabIndex);
 		}
 	}
 
@@ -261,51 +239,27 @@ public class SessionSheet extends JInternalFrame {
 	 * @throws  IllegalArgumentException
 	 *		  If <TT>title</TT> or <TT>comp</TT> is <TT>null</TT>.
 	 */
-	public void addMainTab(String title, Icon icon, Component comp, String tip)
-			throws IllegalArgumentException {
-		if (title == null) {
-			throw new IllegalArgumentException("Null title passed");
+	public void addMainTab(IMainPanelTab tab) {
+		if (tab == null) {
+			throw new IllegalArgumentException("IMainPanelTab == null");
 		}
-		if (comp == null) {
-			throw new IllegalArgumentException("Null Component passed");
-		}
-		_tabPane.addTab(title, icon, comp, tip);
+		_mainTabPane.addMainPanelTab(tab);
 	}
 
 	public void setStatusBarMessage(String msg) {
 		_statusBar.setText(msg);
 	}
 
-//	String getEntireSQLScript() {
-//		return _sqlPnl.getEntireSQLScript();
-//	}
-
-//	String getSQLScriptToBeExecuted() {
-//		return _sqlPnl.getSQLScriptToBeExecuted();
-//	}
-
-//	void setEntireSQLScript(String sqlScript) {
-//		_sqlPnl.setEntireSQLScript(sqlScript);
-//	}
-
-//	void appendSQLScript(String sqlScript) {
-//		_sqlPnl.appendSQLScript(sqlScript);
-//	}
-
 	SQLPanel getSQLPanel() {
-		return _sqlPnl;
+		return _mainTabPane.getSQLPanel();
 	}
 
 	ISQLEntryPanel getSQLEntryPanel() {
-		return _sqlPnl.getSQLEntryPanel();
+		return getSQLPanel().getSQLEntryPanel();
 	}
 
-//	void executeCurrentSQL() {
-//		_sqlPnl.executeCurrentSQL();
-//	}
-
 	private static String createTitle(ISession session) {
-		StringBuffer title = new StringBuffer();//"Session: ");
+		StringBuffer title = new StringBuffer();
 		title.append(session.getAlias().getName());
 		String user = null;
 		try {
@@ -336,24 +290,25 @@ public class SessionSheet extends JInternalFrame {
 
 	private void createUserInterface() {
 		setVisible(false);
-		Icon icon =
-			_session.getApplication().getResources().getIcon(getClass(), "frameIcon");
+		Icon icon = _session.getApplication().getResources().getIcon(getClass(), "frameIcon");
 		//i18n
 		if (icon != null) {
 			setFrameIcon(icon);
 		}
 
-		_sqlPnl = new SQLPanel(_session);
-		_objectsPnl = new ObjectsPanel(_session);
+		_mainTabPane = new MainPanel(_session);
 
-		_tabPane.addTab(i18n.OBJ_TAB_TITLE, null, _objectsPnl, i18n.OBJ_TAB_DESC);
-		_tabPane.addTab(i18n.SQL_TAB_TITLE, null, _sqlPnl, i18n.SQL_TAB_DESC);
+//		_sqlPnl = new SQLPanel(_session);
+		//_objectsPnl = new ObjectsPanel(_session);
 
-		_tabPane.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent evt) {
-				updateState();
-			}
-		});
+//		_mainTabPane.addTab(i18n.OBJ_TAB_TITLE, null, _objectsPnl, i18n.OBJ_TAB_DESC);
+//		_mainTabPane.addTab(i18n.SQL_TAB_TITLE, null, _sqlPnl, i18n.SQL_TAB_DESC);
+
+//		_mainTabPane.addChangeListener(new ChangeListener() {
+//			public void stateChanged(ChangeEvent evt) {
+//				updateState();
+//			}
+//		});
 
 		Container content = getContentPane();
 		content.setLayout(new BorderLayout());
@@ -366,7 +321,7 @@ public class SessionSheet extends JInternalFrame {
 
 		_msgSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		_msgSplit.setOneTouchExpandable(true);
-		_msgSplit.add(_tabPane, JSplitPane.LEFT);
+		_msgSplit.add(_mainTabPane, JSplitPane.LEFT);
 		_msgSplit.add(new JScrollPane(msgPnl), JSplitPane.RIGHT);
 		content.add(_msgSplit, BorderLayout.CENTER);
 
@@ -377,7 +332,7 @@ public class SessionSheet extends JInternalFrame {
 		// See bug ID 4309079 on the JavaSoft bug parade (plus others).
 		addInternalFrameListener(new InternalFrameAdapter() {
 			public void internalFrameActivated(InternalFrameEvent evt) {
-				Window window = SwingUtilities.windowForComponent(SessionSheet.this._sqlPnl);
+				Window window = SwingUtilities.windowForComponent(SessionSheet.this.getSQLPanel());
 				Component focusOwner = (window != null) ? window.getFocusOwner() : null;
 				if (focusOwner != null) {
 					FocusEvent lost = new FocusEvent(focusOwner, FocusEvent.FOCUS_LOST);
