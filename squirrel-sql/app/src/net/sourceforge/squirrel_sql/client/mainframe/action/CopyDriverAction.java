@@ -72,7 +72,7 @@ public class CopyDriverAction extends SquirrelAction {
 		}
         ISQLDriver driver = _drivers.getSelectedDriver();
         if (driver != null) {
-            new CopyDriverCommand(app, getParentFrame(evt), driver).execute();
+            new CopyDriverCommand(driver).execute();
         }
     }
 }

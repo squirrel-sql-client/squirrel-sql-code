@@ -71,7 +71,7 @@ public class CopyAliasAction extends SquirrelAction {
 		}
 		ISQLAlias alias = _aliases.getSelectedAlias();
 		if (alias != null) {
-			new CopyAliasCommand(app, getParentFrame(evt), alias).execute();
+			new CopyAliasCommand(alias).execute();
 		}
 	}
 }

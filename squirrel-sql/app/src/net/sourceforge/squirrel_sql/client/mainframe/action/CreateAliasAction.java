@@ -54,6 +54,6 @@ public class CreateAliasAction extends SquirrelAction {
 			tw.setSelected(true);
 		} catch (PropertyVetoException ignore) {
 		}
-		new CreateAliasCommand(app, getParentFrame(evt)).execute();
+		new CreateAliasCommand().execute();
 	}
 }

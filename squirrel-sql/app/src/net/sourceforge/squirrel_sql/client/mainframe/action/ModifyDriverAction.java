@@ -72,7 +72,7 @@ public class ModifyDriverAction extends SquirrelAction {
 		}
         ISQLDriver driver = _drivers.getSelectedDriver();
         if (driver != null) {
-            new ModifyDriverCommand(app, getParentFrame(evt), driver).execute();
+            new ModifyDriverCommand(driver).execute();
         }
     }
 }

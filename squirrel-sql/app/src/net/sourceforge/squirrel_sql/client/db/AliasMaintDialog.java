@@ -17,10 +17,13 @@ package net.sourceforge.squirrel_sql.client.db;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+//?? Rename to ALiasMaintSheet.
+
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Container;
-import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -32,31 +35,37 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
+import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.OkClosePanelEvent;
-import net.sourceforge.squirrel_sql.fw.gui.IOkClosePanelListener;
 import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeEvent;
 import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeListener;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 
-public class AliasMaintDialog extends JDialog {
+public class AliasMaintDialog extends JInternalFrame {
 	/**
 	 * Maintenance types.
 	 */
@@ -79,11 +88,17 @@ public class AliasMaintDialog extends JDialog {
 		String USER_NAME = "User Name:";
 	}
 
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(AliasMaintDialog.class);
+
 	/** Application API. */
 	private IApplication _app;
 
 	/** The <TT>ISQLAlias</TT> being maintained. */
 	private ISQLAlias _sqlAlias;
+
+	/** Frame title. */
+	private JLabel _titleLbl = new JLabel();
 
 	/**
 	 * The requested type of maintenace.
@@ -107,15 +122,23 @@ public class AliasMaintDialog extends JDialog {
 	 * Ctor.
 	 *
 	 * @param	app			Application API.
-	 * @param	owner		The owning <TT>Frame</TT>.
 	 * @param	sqlAlias	The <TT>ISQLAlias</TT> to be maintained.
 	 * @param	maintType	The maintenance type.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> passed for <TT>app</TT> or <TT>ISQLAlias</TT> or
+	 * 			an invalid value passed for <TT>maintType</TT>.
 	 */
-	public AliasMaintDialog(IApplication app, Frame owner, ISQLAlias sqlAlias,
-								int maintType) {
-		super(owner, maintType == MaintenanceType.MODIFY ? i18n.CHANGE : i18n.ADD, true);
+	AliasMaintDialog(IApplication app, ISQLAlias sqlAlias, int maintType) {
+		super();
 		if (app == null) {
-			throw new IllegalArgumentException("Null IApplication passed");
+			throw new IllegalArgumentException("IApplication == null");
+		}
+		if (sqlAlias == null) {
+			throw new IllegalArgumentException("ISQLAlias == null");
+		}
+		if (maintType < MaintenanceType.NEW || maintType > MaintenanceType.COPY) {
+			throw new IllegalArgumentException("Illegal value of " + maintType + " passed for Maintenance type");
 		}
 
 		_app = app;
@@ -124,6 +147,26 @@ public class AliasMaintDialog extends JDialog {
 
 		createUserInterface();
 		loadData();
+	}
+
+	/**
+	 * Set title of this frame. Ensure that the title label
+	 * matches the frame title.
+	 * 
+	 * @param	title	New title text.
+	 */
+	public void setTitle(String title) {
+		super.setTitle(title);
+		_titleLbl.setText(title);
+	}
+
+	/**
+	 * Return the alias that is being maintained.
+	 * 
+	 * @return	the alias that is being maintained.
+	 */
+	ISQLAlias getSQLAlias() {
+		return _sqlAlias;
 	}
 
 	private void loadData() {
@@ -140,7 +183,7 @@ public class AliasMaintDialog extends JDialog {
 		}
 	}
 
-	private void performCancel() {
+	private void performClose() {
 		dispose();
 	}
 
@@ -151,16 +194,15 @@ public class AliasMaintDialog extends JDialog {
 	private void performOk() {
 		try {
 			applyFromDialog(_sqlAlias);
-			_sqlAlias.assignFrom(_sqlAlias);
 			if (_maintType == MaintenanceType.NEW ||
 					_maintType == MaintenanceType.COPY) {
 				_app.getDataCache().addAlias(_sqlAlias);
 			}
 			dispose();
 		} catch(ValidationException ex) {
-			new ErrorDialog(this, ex).show();
+			new ErrorDialog(_app.getMainFrame(), ex).show();
 		} catch(DuplicateObjectException ex) {
-			new ErrorDialog(this, ex).show();
+			new ErrorDialog(_app.getMainFrame(), ex).show();
 		}
 	}
 
@@ -177,16 +219,48 @@ public class AliasMaintDialog extends JDialog {
 	}
 
 	private void showNewDriverDialog() {
-		final DataCache cache = _app.getDataCache();
-		final IdentifierFactory idFactory = IdentifierFactory.getInstance();
-		final ISQLDriver driver = cache.createDriver(idFactory.createIdentifier());
-		DriverMaintDialog dlog = new DriverMaintDialog(_app, GUIUtils.getOwningFrame(this), driver,
-									DriverMaintDialog.MaintenanceType.NEW);
-		dlog.show();
+		DriverMaintDialogFactory.getInstance().showCreateSheet();
 	}
 
 	private void createUserInterface() {
-		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+        // This is a tool window.
+        GUIUtils.makeToolWindow(this, true);
+
+		final String title = _maintType == MaintenanceType.MODIFY
+										? (i18n.CHANGE + " " + _sqlAlias.getName())
+										: i18n.ADD;
+		setTitle(title);
+
+		// This seems to be necessary to get background colours
+		// correct. Without it labels added to the content pane
+		// have a dark background while those added to a JPanel
+		// in the content pane have a light background under
+		// the java look and feel. Similar effects occur for other
+		// look and feels.
+		final JPanel contentPane = new JPanel();
+		contentPane.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+		setContentPane(contentPane);
+
+		GridBagConstraints gbc = new GridBagConstraints();
+		contentPane.setLayout(new GridBagLayout());
+
+		gbc.anchor = GridBagConstraints.NORTHWEST;
+		gbc.gridwidth = GridBagConstraints.REMAINDER;
+		gbc.weightx = gbc.weighty = 1;
+
+		// Title label at top.
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.insets = new Insets(5, 10, 5, 10);
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		contentPane.add(_titleLbl, gbc);
+
+		// Separated by a line.
+		++gbc.gridy;
+		gbc.insets = new Insets(0, 10, 5, 10);
+		contentPane.add(new JSeparator(), gbc);
 
 		PropertyPanel dataEntryPnl = new PropertyPanel();
 
@@ -213,14 +287,32 @@ public class AliasMaintDialog extends JDialog {
 		lbl = new JLabel(i18n.USER_NAME, SwingConstants.RIGHT);
 		dataEntryPnl.add(lbl, _userName);
 
-		final Container contentPane = getContentPane();
-		contentPane.setLayout(new BorderLayout());
-		contentPane.add(dataEntryPnl, BorderLayout.NORTH);
-		contentPane.add(createButtonsPanel(), BorderLayout.CENTER);
+		gbc.insets = new Insets(0, 10, 0, 10);
+		++gbc.gridy;
+		contentPane.add(dataEntryPnl, gbc);
+
+		// Separated by a line.
+		++gbc.gridy;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.insets = new Insets(5, 10, 5, 10);
+		contentPane.add(new JSeparator(), gbc);
+
+		gbc.insets = new Insets(0, 0, 0, 0);
+		
+		// Next the buttons.
+		++gbc.gridy;
+		contentPane.add(createButtonsPanel(), gbc);
 
 		pack();
-		GUIUtils.centerWithinParent(this);
-		setResizable(false);
+
+		_app.getDataCache().addDriversListener(new ObjectCacheChangeListener() {
+		    public void objectAdded(ObjectCacheChangeEvent evt) {
+		    	_drivers.addItem(evt.getObject());
+		    }
+		    public void objectRemoved(ObjectCacheChangeEvent evt) {
+		    	_drivers.removeItem(evt.getObject());
+		    }
+		});
 	}
 
 	private JPanel createButtonsPanel() {
@@ -232,34 +324,37 @@ public class AliasMaintDialog extends JDialog {
 				performOk();			
 			}
 		});
-		JButton cancelBtn = new JButton("Cancel");
-		cancelBtn.addActionListener(new ActionListener() {
+		JButton closeBtn = new JButton("Close");
+		closeBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				performCancel();			
+				performClose();			
+			}
+		});
+
+		JButton testBtn = new JButton("Test");
+		testBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				final DataCache cache =_app.getDataCache();
+				final IdentifierFactory factory = IdentifierFactory.getInstance();
+				final ISQLAlias testAlias = cache.createAlias(factory.createIdentifier());
+				try {
+					applyFromDialog(testAlias);
+					new ConnectToAliasCommand(_app, _app.getMainFrame(), testAlias, false,
+												new ConnectionCallBack(_app)).execute();
+				} catch (ValidationException ex) {
+					new ErrorDialog(_app.getMainFrame(), ex).show();
+				}
 			}
 		});
 
 		pnl.add(okBtn);
-		pnl.add(cancelBtn);		
+		pnl.add(closeBtn);
+		pnl.add(testBtn);
 
-		GUIUtils.setJButtonSizesTheSame(new JButton[] {okBtn, cancelBtn});
+		GUIUtils.setJButtonSizesTheSame(new JButton[] {okBtn, closeBtn, testBtn});
 		getRootPane().setDefaultButton(okBtn);
 
 		return pnl;
-	}
-
-	private final class MyOkCancelPanelListener implements IOkClosePanelListener {
-		public void okPressed(OkClosePanelEvent evt) {
-			performOk();
-		}
-
-		public void closePressed(OkClosePanelEvent evt) {
-			performCancel();
-		}
-
-		public void cancelPressed(OkClosePanelEvent evt) {
-			performCancel();
-		}
 	}
 
 	private final class DriversComboItemListener implements ItemListener {
@@ -288,14 +383,37 @@ public class AliasMaintDialog extends JDialog {
 			}
 		}
 
-
 		void setSelectedItem(IIdentifier id) {
 			super.setSelectedItem(_map.get(id));
 		}
 
-
 		ISQLDriver getSelectedDriver() {
 			return (ISQLDriver)getSelectedItem();
+		}
+	}
+
+	private final class ConnectionCallBack extends ConnectToAliasCommand.ClientCallback {
+		private ConnectionCallBack(IApplication app) {
+			super(app);
+		}
+
+		/**
+		 * @see CompletionCallback#connected(SQLConnection)
+		 */
+		public void connected(SQLConnection conn) {
+			try {
+				conn.close();
+			} catch (Throwable th) {
+				s_log.error("Error closing Connection", th);
+				new ErrorDialog(/*AliasMaintDialog.this*/_app.getMainFrame(), "Error closing opened connection: " + th.toString()).show();
+			}
+			Dialogs.showOk(AliasMaintDialog.this, "Connection successful");
+		}
+		/**
+		 * @see CompletionCallback#sessionCreated(ISession)
+		 */
+		public void sessionCreated(ISession session) {
+			s_log.error("Test Button has created a session, this is a programming error");
 		}
 	}
 }

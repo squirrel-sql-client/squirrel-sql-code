@@ -72,7 +72,7 @@ public class ModifyAliasAction extends SquirrelAction {
 		}
 		final ISQLAlias alias = _aliases.getSelectedAlias();
 		if (alias != null) {
-			new ModifyAliasCommand(app, getParentFrame(evt), alias).execute();
+			new ModifyAliasCommand(alias).execute();
 		}
 	}
 }

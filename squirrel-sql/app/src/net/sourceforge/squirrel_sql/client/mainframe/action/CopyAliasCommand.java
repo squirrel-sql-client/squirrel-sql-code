@@ -17,19 +17,12 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.Frame;
-
-import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.db.AliasMaintDialog;
-import net.sourceforge.squirrel_sql.client.db.DataCache;
-import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
-
+import net.sourceforge.squirrel_sql.client.db.AliasMaintDialogFactory;
 
 /**
  * This <CODE>ICommand</CODE> allows the user to copy an existing
@@ -41,54 +34,27 @@ public class CopyAliasCommand implements ICommand {
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(CopyAliasCommand.class);
 
-    /** Application API. */
-    private final IApplication _app;
+	/** <TT>ISQLAlias</TT> to be copied. */
+	private final ISQLAlias _sqlAlias;
 
-    /** Owner of the maintenance dialog. */
-    private final Frame _frame;
+	/**
+	 * Ctor.
+	 *
+	 * @param	sqlAlias	<TT>ISQLAlias</TT> to be copied.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
+	 */
+	public CopyAliasCommand(ISQLAlias sqlAlias) {
+		super();
+		if (sqlAlias == null) {
+			throw new IllegalArgumentException("Null ISQLAlias passed");
+		}
 
-    /** <TT>ISQLAlias</TT> to be copied. */
-    private final ISQLAlias _sqlAlias;
+		_sqlAlias = sqlAlias;
+	}
 
-    /**
-     * Ctor.
-     *
-     * @param   app         Application API.
-     * @param   frame       Owning <TT>Frame</TT>.
-     * @param   sqlAlias    <TT>ISQLAlias</TT> to be copied.
-     *
-     * @throws  IllegalArgumentException
-     *              Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> or <TT>null</TT>
-     *              <TT>IApplication</TT> passed.
-     */
-    public CopyAliasCommand(IApplication app, Frame frame, ISQLAlias sqlAlias)
-            throws IllegalArgumentException {
-        super();
-        if (app == null) {
-            throw new IllegalArgumentException("Null IApplication passed");
-        }
-        if (sqlAlias == null) {
-            throw new IllegalArgumentException("Null ISQLAlias passed");
-        }
-
-        _app = app;
-        _frame = frame;
-        _sqlAlias = sqlAlias;
-    }
-
-    /**
-     * Copy the current >ISQLAlias</TT> and then display a dialog allowing user
-     * to maintain the new one.
-     */
-    public void execute() {
-        final DataCache cache = _app.getDataCache();
-        final IdentifierFactory factory = IdentifierFactory.getInstance();
-        ISQLAlias newAlias = cache.createAlias(factory.createIdentifier());
-        try {
-            newAlias.assignFrom(_sqlAlias);
-        } catch (ValidationException ex) {
-            s_log.error("Error occured copying the alias", ex);
-        }
-        new AliasMaintDialog(_app, _frame, newAlias, AliasMaintDialog.MaintenanceType.COPY).show();
-    }
+	public void execute() {
+		AliasMaintDialogFactory.getInstance().showCopySheet(_sqlAlias);
+	}
 }

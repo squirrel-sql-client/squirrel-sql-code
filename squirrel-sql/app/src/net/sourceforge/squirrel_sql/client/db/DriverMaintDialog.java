@@ -17,8 +17,8 @@ package net.sourceforge.squirrel_sql.client.db;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -34,10 +34,11 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JCheckBox;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -60,7 +61,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class DriverMaintDialog extends JDialog {
+public class DriverMaintDialog extends /*JDialog*/JInternalFrame {
 	/** Different types of maintenance that can be done. */
 	public interface MaintenanceType {
 		int NEW = 1;
@@ -94,6 +95,9 @@ public class DriverMaintDialog extends JDialog {
 	/** Type of maintenance being done. @see MaintenanceType. */
 	private int _maintType;
 
+	/** Frame title. */
+	private JLabel _titleLbl = new JLabel();
+
 	/** Control for the <TT>ISQLDriver.IPropertyNames.NAME</TT> property. */
 	private JTextField _driverName = new JTextField(); 
 
@@ -122,7 +126,6 @@ public class DriverMaintDialog extends JDialog {
 	 * Ctor.
 	 * 
 	 * @param	app			Application API.
-	 * @param	owner		Owning frame.
 	 * @param	sqlDriver	JDBC driver definition to be maintained.
 	 * @param	maintType	Maintenance type. @see MaintenanceType.
 	 * 
@@ -130,9 +133,8 @@ public class DriverMaintDialog extends JDialog {
 	 * 			Thrown if <TT>null</TT> passed for <TT>app</TT> or <TT>sqlDriver</TT> or
 	 * 			an invalid value passed for <TT>maintType</TT>.
 	 */
-	public DriverMaintDialog(IApplication app, Frame owner, ISQLDriver sqlDriver, int maintType)
-			throws IllegalArgumentException {
-		super(owner, maintType == MaintenanceType.MODIFY ? i18n.CHANGE : i18n.ADD, true);
+	DriverMaintDialog(IApplication app, ISQLDriver sqlDriver, int maintType) {
+		super();
 		if (app == null) {
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
@@ -144,12 +146,31 @@ public class DriverMaintDialog extends JDialog {
 		}
 
 		_app = app;
-		String jarFileName = sqlDriver.getJarFileName();
 		_sqlDriver = sqlDriver;
 		_maintType = maintType;
 
 		createUserInterface();
 		loadData();
+	}
+
+	/**
+	 * Set title of this frame. Ensure that the title label
+	 * matches the frame title.
+	 * 
+	 * @param	title	New title text.
+	 */
+	public void setTitle(String title) {
+		super.setTitle(title);
+		_titleLbl.setText(title);
+	}
+
+	/**
+	 * Return the driver that is being maintained.
+	 * 
+	 * @return	the driver that is being maintained.
+	 */
+	ISQLDriver getSQLDriver() {
+		return _sqlDriver;
 	}
 
 	/**
@@ -164,9 +185,9 @@ public class DriverMaintDialog extends JDialog {
 	}
 
 	/**
-	 * User has requested cancel so get rid of this maintenance dialog.
+	 * User has requested close so get rid of this maintenance dialog.
 	 */
-	private void performCancel() {
+	private void performClose() {
 		dispose();
 	}
 
@@ -237,37 +258,68 @@ public class DriverMaintDialog extends JDialog {
 	 *				  message.
 	 */
 	private void displayErrorMessage(final Exception ex) {
-		final DriverMaintDialog typedThis = this;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				new ErrorDialog(typedThis, ex).show();
+				new ErrorDialog(_app.getMainFrame(), ex).show();
 			}
 		});
 	}
 
 	private void createUserInterface() {
-		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
+        // This is a tool window.
+        GUIUtils.makeToolWindow(this, true);
+
+		final String title = _maintType == MaintenanceType.MODIFY
+										? (i18n.CHANGE + " " + _sqlDriver.getName())
+										: i18n.ADD;
+		setTitle(title);
+
+		// This seems to be necessary to get background colours
+		// correct. Without it labels added to the content pane
+		// have a dark background while those added to a JPanel
+		// in the content pane have a light background under
+		// the java look and feel. Similar effects occur for other
+		// look and feels.
 		final JPanel contentPane = new JPanel();
-		contentPane.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 		setContentPane(contentPane);
+		contentPane.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
+		GridBagConstraints gbc = new GridBagConstraints();
 		contentPane.setLayout(new GridBagLayout());
-		final GridBagConstraints gbc = new GridBagConstraints();
-		gbc.anchor = gbc.WEST;
-		gbc.fill = gbc.HORIZONTAL;
 
+		gbc.anchor = GridBagConstraints.NORTHWEST;
+		gbc.gridwidth = GridBagConstraints.REMAINDER;
+		gbc.weightx = gbc.weighty = 1;
+
+		// Title label at top.
 		gbc.gridx = 0;
 		gbc.gridy = 0;
+		gbc.insets = new Insets(5, 10, 5, 10);
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		contentPane.add(_titleLbl, gbc);
+
+		// Separated by a line.
+		++gbc.gridy;
+		gbc.insets = new Insets(0, 10, 5, 10);
+		contentPane.add(new JSeparator(), gbc);
+
+		++gbc.gridy;
 		contentPane.add(createDriverPanel(), gbc);
 		++gbc.gridy;
 		contentPane.add(createLocationPanel(), gbc);
+
+		// Separated by a line.
+		++gbc.gridy;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.insets = new Insets(5, 10, 5, 10);
+		contentPane.add(new JSeparator(), gbc);
+
 		++gbc.gridy;
 		contentPane.add(createButtonsPanel(), gbc);
 
 		pack();
-		GUIUtils.centerWithinParent(this);
-		setResizable(false);
 	}
 
 	private JPanel createButtonsPanel() {
@@ -279,17 +331,17 @@ public class DriverMaintDialog extends JDialog {
 				performOk();			
 			}
 		});
-		JButton cancelBtn = new JButton("Cancel");
-		cancelBtn.addActionListener(new ActionListener() {
+		JButton closeBtn = new JButton("Close");
+		closeBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				performCancel();			
+				performClose();			
 			}
 		});
 
 		pnl.add(okBtn);
-		pnl.add(cancelBtn);		
+		pnl.add(closeBtn);		
 
-		GUIUtils.setJButtonSizesTheSame(new JButton[] {okBtn, cancelBtn});
+		GUIUtils.setJButtonSizesTheSame(new JButton[] {okBtn, closeBtn});
 		getRootPane().setDefaultButton(okBtn);
 
 		return pnl;

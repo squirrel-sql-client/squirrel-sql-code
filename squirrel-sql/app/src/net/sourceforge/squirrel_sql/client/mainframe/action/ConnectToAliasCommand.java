@@ -35,13 +35,11 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.db.ConnectionSheet;
+import net.sourceforge.squirrel_sql.client.db.ConnectionSheet.IConnectionSheetHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionFactory;
 import net.sourceforge.squirrel_sql.client.session.SessionSheet;
-import net.sourceforge.squirrel_sql.client.db.ConnectionSheet;
-import net.sourceforge.squirrel_sql.client.db.ConnectionSheet.IConnectionSheetHandler;
-import net.sourceforge.squirrel_sql.client.db.DataCache;
-import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
 
 /**
  * This <CODE>ICommand</CODE> allows the user to connect to
@@ -50,6 +48,12 @@ import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
  * @author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ConnectToAliasCommand implements ICommand {
+	public interface ICompletionCallback {
+		void connected(SQLConnection conn);
+		void sessionCreated(ISession session);
+		void errorOccured(Throwable th);
+	}
+
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(ConnectToAliasCommand.class);
 
@@ -61,19 +65,42 @@ public class ConnectToAliasCommand implements ICommand {
 
 	/** The <TT>ISQLAlias</TT> to connect to. */
 	private ISQLAlias _sqlAlias;
-	
+
+	/** If <TT>true</TT> a session is to be created as well as connecting to database. */
+	private boolean _createSession;
+
+	/** Callback to notify client on the progress of this command. */
+	private ICompletionCallback _callback;
+
 	/**
-	 * Ctor.
+	 * Ctor. This ctor will create a new session as well as opening a connection.
 	 *
 	 * @param	app		The <TT>IApplication</TT> that defines app API.
 	 * @param	frame	Owner of the connection internal frame.
 	 * @param	alias	The <TT>ISQLAlias</TT> to connect to.
 	 *
 	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
+	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> or <TT>ISQLAlias</TT> passed.
 	 */
-	public ConnectToAliasCommand(IApplication app, Frame frame, ISQLAlias sqlAlias)
-			throws IllegalArgumentException {
+	public ConnectToAliasCommand(IApplication app, Frame frame, ISQLAlias sqlAlias) {
+		this(app, frame, sqlAlias, true, null);
+	}
+
+	/**
+	 * Ctor.
+	 *
+	 * @param	app				The <TT>IApplication</TT> that defines app API.
+	 * @param	frame			Owner of the connection internal frame.
+	 * @param	alias			The <TT>ISQLAlias</TT> to connect to.
+	 * @param	createSession	If <TT>true</TT> then create a session as well as connecting
+	 * 							to the database.
+	 * @param	callback		Callback for client code to be informed of the progress of this command.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> or <TT>ISQLAlias</TT> passed.
+	 */
+	public ConnectToAliasCommand(IApplication app, Frame frame, ISQLAlias sqlAlias,
+									boolean createSession, ICompletionCallback callback) {
 		super();
 		if (app == null) {
 			throw new IllegalArgumentException("Null IApplication passed");
@@ -84,17 +111,75 @@ public class ConnectToAliasCommand implements ICommand {
 		_app = app;
 		_frame = frame;
 		_sqlAlias = sqlAlias;
+		_createSession = createSession;
+		_callback = callback != null ? callback : new ClientCallback(app);
 	}
 
 	/**
 	 * Display connection internal frame.
 	 */
 	public void execute() {
-		ConnectionSheet sheet = new ConnectionSheet(_app, _frame, _sqlAlias,
-											new SheetHandler(_app, _sqlAlias));
+		SheetHandler hdl = new SheetHandler(_app, _sqlAlias, _createSession, _callback);
+		ConnectionSheet sheet = new ConnectionSheet(_app, /*_frame,*/ _sqlAlias, hdl);
 		_app.getMainFrame().addInternalFrame(sheet, true, null);
 		GUIUtils.centerWithinDesktop(sheet);
+		sheet.moveToFront();
 		sheet.setVisible(true);
+	}
+
+
+	public static class ClientCallback implements ICompletionCallback {
+		private IApplication _app;
+		public ClientCallback(IApplication app) {
+			super();
+			if (app == null) {
+				throw new IllegalArgumentException("IApplication == null");
+			}
+			_app = app;
+		}
+
+		/**
+		 * @see CompletionCallback#connected(SQLConnection)
+		 */
+		public void connected(SQLConnection conn) {
+		}
+	
+		/**
+		 * @see CompletionCallback#sessionCreated(ISession)
+		 */
+		public void sessionCreated(ISession session) {
+		}
+			
+		/**
+		 * @see CompletionCallback#errorOccured(Throwable)
+		 */
+		public void errorOccured(Throwable th) {
+			if (th instanceof BaseSQLException) {
+				showErrorDialog("Unable to open SQL Connection:<br>" + th.getMessage());
+			} else if (th instanceof ClassNotFoundException) {
+				showErrorDialog("JDBC Driver class not found:<br>" + th.getMessage());
+			} else if (th instanceof NoClassDefFoundError) {
+				s_log.error("JDBC Driver class not found", th);
+				showErrorDialog("JDBC Driver class not found:<br>" + th.getMessage());
+			} else {
+				s_log.error("Unexpected Error occured attempting to open an SQL connection.", th);
+				showErrorDialog(th.toString());
+			}
+		}
+
+		protected IApplication getApplication() {
+			return _app;
+		}
+
+		protected void showErrorDialog(final String msg) {
+			synchronized (this) {
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						new ErrorDialog(_app.getMainFrame(), msg).show();
+					}
+				});
+			}
+		}
 	}
 
 	/**
@@ -110,6 +195,9 @@ public class ConnectToAliasCommand implements ICommand {
 		/** <TT>ISQLAlias</TT> to connect to. */
 		private ISQLAlias _alias;
 
+		/** If <TT>true</TT> a session is to be created as well as connecting to database. */
+		private boolean _createSession;
+
 		/** User name to use to connect to alias. */
 		private String _user;
 
@@ -119,27 +207,37 @@ public class ConnectToAliasCommand implements ICommand {
 		/** If <TT>true</TT> user has requested cancellation of the connection attempt. */
 		private boolean _stopConnection;
 
+		/** Callback to notify client on the progress of this command. */
+		private ICompletionCallback _callback;
+
 		/**
 		 * Ctor.
 		 * 
-		 * @param	app			Application API.
-		 * @param	alias		Database alias to connect to.
+		 * @param	app				Application API.
+		 * @param	alias			Database alias to connect to.
+		 * @param	createSession	If <TT>true</TT> a session should be created.
+		 * @param	cmd				Command executing this handler.
 		 * 
 		 * @throws	IllegalArgumentException
-		 * 			Thrown if <TT>null</TT>IApplication</TT>, or <TT>ISQLAlias</TT>
-		 *			passed.
+		 * 			Thrown if <TT>null</TT>IApplication</TT>, <TT>ISQLAlias</TT>,
+		 * 			or <TT>ICompletionCallback</TT> passed.
 		 */
-		SheetHandler(IApplication app, ISQLAlias alias)
-				throws IllegalArgumentException {
+		private SheetHandler(IApplication app, ISQLAlias alias, boolean createSession,
+								ICompletionCallback callback) {
 			super();
 			if (app == null) {
-				throw new IllegalArgumentException("Null IApplication passed");
+				throw new IllegalArgumentException("IApplication == null");
 			}
 			if (alias == null) {
-				throw new IllegalArgumentException("Null ISQLAlias passed");
+				throw new IllegalArgumentException("ISQLAlias == null");
+			}
+			if (alias == null) {
+				throw new IllegalArgumentException("ICompletionCallback == null");
 			}
 			_app = app;
 			_alias = alias;
+			_createSession = createSession;
+			_callback = callback;
 		}
 
 		/**
@@ -199,71 +297,30 @@ public class ConnectToAliasCommand implements ICommand {
 						}
 					} else {
 						// After this it can't be stopped anymore!
-						final ISession session = SessionFactory.createSession(_app, sqlDriver, _alias, conn);
-						SwingUtilities.invokeLater(new Runnable() {
-							public void run() {
-								IApplication app = session.getApplication();
-								app.getPluginManager().sessionCreated(session);
-								final SessionSheet child = new SessionSheet(session);
-								session.setSessionSheet(child);
-								app.getPluginManager().sessionStarted(session);
-								app.getMainFrame().addInternalFrame(child, true, null);
-								child.setVisible(true);
-								_connSheet.executed(true);
-							}
-						});
+						_callback.connected(conn);
+						if (_createSession) {
+							final ISession session = SessionFactory.createSession(_app, sqlDriver, _alias, conn);
+							_callback.sessionCreated(session);
+							SwingUtilities.invokeLater(new Runnable() {
+								public void run() {
+									IApplication app = session.getApplication();
+									app.getPluginManager().sessionCreated(session);
+									final SessionSheet child = new SessionSheet(session);
+									session.setSessionSheet(child);
+									app.getPluginManager().sessionStarted(session);
+									app.getMainFrame().addInternalFrame(child, true, null);
+									child.setVisible(true);
+									_connSheet.executed(true);
+								}
+							});
+						} else {
+							_connSheet.executed(true);
+						}
 					}
 				}
-			} catch (BaseSQLException ex) {
-				showErrorDialog("Unable to open SQL Connection:<br>" + ex.getMessage());
-			} catch (ClassNotFoundException ex) {
-				showErrorDialog("JDBC Driver class not found:<br>" + ex.getMessage());
-				log(ex, "JDBC Driver class not found");
-			} catch (NoClassDefFoundError ex) {
-				showErrorDialog("JDBC Driver class not found:<br>" + ex.getMessage());
-				log(ex, "JDBC Driver class not found");
 			} catch (Throwable ex) {
-				log(ex, "Unexpected Error occured attempting to open an SQL connection.");
-				closeConnection(conn);
-				showErrorDialog(ex);
-			}
-		}
-
-		protected void showErrorDialog(final String msg) {
-			synchronized (this) {
-				//if(!_stopConnection) {
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							new ErrorDialog(_app.getMainFrame(), msg).show();
-							_connSheet.executed(false);
-						}
-					});
-				//}
-			}
-		}
-
-		protected void showErrorDialog(final Throwable th) {
-			synchronized (this) {
-				//if(!_stopConnection) {
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							new ErrorDialog(_app.getMainFrame(), th).show();
-							_connSheet.executed(false);
-						}
-					});
-				//}
-			}
-		}
-
-		protected void log(final Throwable th, final String msg) {
-			synchronized (this) {
-				//if(!_stopConnection) {
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							s_log.error(msg, th);
-						}
-					});
-				//}
+				_connSheet.executed(false);
+				_callback.errorOccured(ex);
 			}
 		}
 
@@ -277,4 +334,5 @@ public class ConnectToAliasCommand implements ICommand {
 			}
 		}
 	}
+
 }

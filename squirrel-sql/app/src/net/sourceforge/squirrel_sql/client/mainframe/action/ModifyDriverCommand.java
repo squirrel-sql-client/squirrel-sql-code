@@ -17,14 +17,9 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.event.ActionEvent;
-import java.awt.Frame;
-
+import net.sourceforge.squirrel_sql.client.db.DriverMaintDialogFactory;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.db.DriverMaintDialog;
 
 /**
  * This <CODE>ICommand</CODE> allows the user to modify an existing
@@ -33,44 +28,30 @@ import net.sourceforge.squirrel_sql.client.db.DriverMaintDialog;
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class ModifyDriverCommand implements ICommand {
-    /** Application API. */
-    private final IApplication _app;
+	/** <TT>ISQLDriver</TT> to be modified. */
+	private ISQLDriver _driver;
 
-    /** Owner of the maintenance dialog. */
-    private Frame _frame;
+	/**
+	 * Ctor.
+	 *
+	 * @param	sqlDriver	<TT>ISQLDriver</TT> to be modified.
+	 *
+	 * @throws	IllegalArgumentException
+	 *			Thrown if a <TT>null</TT> <TT>ISQLDriver</TT> passed.
+	 */
+	public ModifyDriverCommand(ISQLDriver driver) {
+		super();
+		if (driver == null) {
+			throw new IllegalArgumentException("ISQLDriver == null");
+		}
 
-    /** <TT>ISQLDriver</TT> to be modified. */
-    private ISQLDriver _driver;
+		_driver = driver;
+	}
 
-    /**
-     * Ctor.
-     *
-     * @param   app         Application API.
-     * @param   frame       Owning <TT>Frame</TT>.
-     * @param   sqlDriver   <TT>ISQLDriver</TT> to be modified.
-     *
-     * @throws  IllegalArgumentException
-     *              Thrown if a <TT>null</TT> <TT>ISQLDriver</TT> or
-     *              <TT>IApplication</TT> passed.
-     */
-    public ModifyDriverCommand(IApplication app, Frame frame, ISQLDriver driver)
-            throws IllegalArgumentException {
-        super();
-        if (app == null) {
-            throw new IllegalArgumentException("Null IApplication passed");
-        }
-        if (driver == null) {
-            throw new IllegalArgumentException("Null ISQLDriver passed");
-        }
-        _app = app;
-        _frame = frame;
-        _driver = driver;
-    }
-    /**
-     * Display a dialog allowing user to maintain the <TT>ISQLDriver</TT>.
-     */
-    public void execute() {
-        new DriverMaintDialog(_app, _frame, _driver,
-                DriverMaintDialog.MaintenanceType.MODIFY).show();
-    }
+	/**
+	 * Display a dialog allowing user to maintain the <TT>ISQLDriver</TT>.
+	 */
+	public void execute() {
+		DriverMaintDialogFactory.getInstance().showModifySheet(_driver);
+	}
 }

@@ -111,7 +111,7 @@ public class DriversToolWindow extends BaseToolWindow {
             ICommand cmd = null;
             ISQLDriver driver = _driversList.getSelectedDriver();
             if (driver != null) {
-                cmd = new ModifyDriverCommand(_app, GUIUtils.getOwningFrame(_tw), driver);
+                cmd = new ModifyDriverCommand(driver);
             }
             return cmd;
         }

@@ -55,6 +55,6 @@ public class CreateDriverAction extends SquirrelAction {
 			tw.setSelected(true);
 		} catch (PropertyVetoException ignore) {
 		}
-        new CreateDriverCommand(app, getParentFrame(evt)).execute();
+        new CreateDriverCommand().execute();
     }
 }
