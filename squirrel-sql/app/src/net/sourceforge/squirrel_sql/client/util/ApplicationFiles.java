@@ -40,6 +40,10 @@ public class ApplicationFiles
 	public static final String SQUIRREL_PLUGINS_FOLDER =
 		SQUIRREL_FOLDER + File.separator + "plugins";
 
+	/** Documentation folder. */
+	private static final String DOCUMENTATION_FOLDER = SQUIRREL_FOLDER +
+			File.separator + "doc";
+
 	/**
 	 * Ctor.
 	 */
@@ -142,5 +146,13 @@ public class ApplicationFiles
 	public File getPluginsUserSettingsDirectory()
 	{
 		return new File(_userSettingsDir + File.separator + "plugins");
+	}
+
+	/**
+	 * @return the quickstart guide.
+	 */
+	public File getQuickStartGuideFile()
+	{
+		return new File(DOCUMENTATION_FOLDER + File.separator + "quick_start.html");
 	}
 }

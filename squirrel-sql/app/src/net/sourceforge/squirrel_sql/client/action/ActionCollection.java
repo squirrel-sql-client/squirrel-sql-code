@@ -40,6 +40,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.GlobalPreferencesAct
 import net.sourceforge.squirrel_sql.client.mainframe.action.MaximizeAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.NewSessionPropertiesAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ViewHelpAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewLogsAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionSheet;
@@ -295,6 +296,7 @@ public final class ActionCollection
 		add(new SessionPropertiesAction(_app));
 		add(new ShowNativeSQLAction(_app));
 		add(new TileAction(_app));
+		add(new ViewHelpAction(_app));
 		add(new ViewLogsAction(_app));
 	}
 }
