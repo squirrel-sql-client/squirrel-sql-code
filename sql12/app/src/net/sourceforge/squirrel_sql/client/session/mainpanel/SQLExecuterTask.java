@@ -432,7 +432,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 		boolean allowEditing = false;
 		String tableNameFromSQL = "";
 		String sqlString = exInfo != null ? exInfo.getSQL() : null;
-		if (sqlString != null) {
+		if (sqlString != null && sqlString.trim().substring(0, "SELECT".length()).equalsIgnoreCase("SELECT")) {
 			sqlString = sqlString.toUpperCase();
 			int selectIndex = sqlString.indexOf("SELECT");
 			int fromIndex = sqlString.indexOf("FROM");
