@@ -23,8 +23,6 @@ package net.sourceforge.squirrel_sql.client.session;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-//import java.awt.event.MouseAdapter;
-//import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -44,7 +42,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.EventListenerList;
-import javax.swing.text.JTextComponent;
 import javax.swing.undo.UndoManager;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
@@ -53,7 +50,6 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.MemoryComboBox;
-//import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.sql.BaseSQLException;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
@@ -91,9 +87,6 @@ class SQLPanel extends JPanel {
 
 	private DataSetViewer _viewer = new DataSetViewer();
 
-	/** Popup menu for text component. */
-//	private TextPopupMenu _textPopupMenu = new TextPopupMenu();
-
 	/** Each tab is a <TT>ResultTab</TT> showing the results of a query. */
 	private JTabbedPane _tabbedResultsPanel = new JTabbedPane();
 
@@ -119,8 +112,6 @@ class SQLPanel extends JPanel {
 
 	/** Listeners */
 	private EventListenerList _listeners = new EventListenerList();
-	
-//	private MouseAdapter _sqlEntryMouseListener = new MyMouseListener();
 
 	private UndoManager _undoManager = new UndoManager();
 
@@ -219,11 +210,40 @@ class SQLPanel extends JPanel {
 		_listeners.remove(IResultTabListener.class, lis);
 	}
 
+	public ISQLEntryPanel getSQLEntryPanel() {
+		return _sqlEntry;
+	}
+
 	public void executeCurrentSQL() {
-		String sql = getSQLScriptToBeExecuted();
+		String sql = getSQLEntryPanel().getSQLToBeExecuted();
 		if(sql != null && sql.trim().length() > 0) {
 			SQLExecuterTask task = new SQLExecuterTask(this, _session, sql);
 			_session.getApplication().getThreadPool().addTask(task);
+		}
+	}
+
+	/**
+	 * Close all the Results frames.
+	 */
+	public synchronized void closeAllSQLResultFrames() {
+		for (Iterator it = _usedTabs.iterator(); it.hasNext();) {
+			ResultTabInfo ti = (ResultTabInfo)it.next();
+			if (ti._resultFrame != null) {
+				ti._resultFrame.dispose();
+				ti._resultFrame = null;
+			}
+		}
+	}
+
+	/**
+	 * Close all the Results tabs.
+	 */
+	public synchronized void closeAllSQLResultTabs() {
+		for (Iterator it = _usedTabs.iterator(); it.hasNext();) {
+			ResultTabInfo ti = (ResultTabInfo)it.next();
+			if (ti._resultFrame == null) {
+				closeTab(ti._tab);
+			}
 		}
 	}
 
@@ -247,16 +267,13 @@ class SQLPanel extends JPanel {
 		}
 
 		SQLEntryState state = new SQLEntryState(this, _sqlEntry);
-		pnl.setTabSize(4);
 		final int pos = _splitPane.getDividerLocation();
 		if (_sqlEntry != null) {
-			//_sqlEntry.removeMouseListener(_sqlEntryMouseListener);
 			_sqlEntry.removeUndoableEditListener(_undoManager);
 			_splitPane.remove(_sqlEntry.getJComponent());
 		}
 		_splitPane.add(pnl.getJComponent(), JSplitPane.LEFT);
 		_splitPane.setDividerLocation(pos);
-		//pnl.addMouseListener(_sqlEntryMouseListener);
 		state.restoreState(pnl);
 		_sqlEntry = pnl;
 		
@@ -267,40 +284,11 @@ class SQLPanel extends JPanel {
 			UndoAction undo = new UndoAction(app, _undoManager);
 			RedoAction redo = new RedoAction(app, _undoManager);
 			
-			//_textPopupMenu.addSeparator();
-			//_textPopupMenu.add(undo);
-			//_textPopupMenu.add(redo);
-			
 			_sqlEntry.getJComponent().registerKeyboardAction(undo, res.getKeyStroke(undo), this.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 			_sqlEntry.getJComponent().registerKeyboardAction(redo, res.getKeyStroke(redo), this.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 			_sqlEntry.setUndoActions(undo, redo);
 			
 			_sqlEntry.addUndoableEditListener(_undoManager);
-		}
-	}
-
-	/**
-	 * Close all the Results frames.
-	 */
-	synchronized void closeAllSQLResultFrames() {
-		for (Iterator it = _usedTabs.iterator(); it.hasNext();) {
-			ResultTabInfo ti = (ResultTabInfo)it.next();
-			if (ti._resultFrame != null) {
-				ti._resultFrame.dispose();
-				ti._resultFrame = null;
-			}
-		}
-	}
-
-	/**
-	 * Close all the Results tabs.
-	 */
-	synchronized void closeAllSQLResultTabs() {
-		for (Iterator it = _usedTabs.iterator(); it.hasNext();) {
-			ResultTabInfo ti = (ResultTabInfo)it.next();
-			if (ti._resultFrame == null) {
-				closeTab(ti._tab);
-			}
 		}
 	}
 
@@ -389,37 +377,17 @@ class SQLPanel extends JPanel {
 
 	}
 
-	String getEntireSQLScript() {
-		return _sqlEntry.getText();
-	}
+//	String getEntireSQLScript() {
+//		return _sqlEntry.getText();
+//	}
 
-	String getSQLScriptToBeExecuted() {
-		String sql = _sqlEntry.getSelectedText();
-		if(sql == null || sql.trim().length() == 0) {
-			sql = _sqlEntry.getText();
+//	void setEntireSQLScript(String sqlScript) {
+//		_sqlEntry.setText(sqlScript);
+//	}
 
-			int iStartIndex = 0;
-			int iEndIndex = sql.length();
-
-			int iCaretPos = _sqlEntry.getCaretPosition();
-
-			int iIndex = sql.lastIndexOf("\n\n",iCaretPos);
-			if(iIndex >0) iStartIndex = iIndex;
-			iIndex = sql.indexOf("\n\n",iCaretPos);
-			if(iIndex >0) iEndIndex = iIndex;
-
-			sql = sql.substring(iStartIndex, iEndIndex).trim();
-		}
-		return sql != null ? sql : "";
-	}
-
-	void setEntireSQLScript(String sqlScript) {
-		_sqlEntry.setText(sqlScript);
-	}
-
-	void appendSQLScript(String sqlScript) {
-		_sqlEntry.appendText(sqlScript);
-	}
+//	void appendSQLScript(String sqlScript) {
+//		_sqlEntry.appendText(sqlScript);
+//	}
 
 	protected void fireTabAddedEvent(ResultTab tab) {
 		// Guaranteed to be non-null.
@@ -570,7 +538,7 @@ class SQLPanel extends JPanel {
 		return sql;
 	}
 
-	private void propertiesHaveChanged(String propertyName) {
+	private void propertiesHaveChanged(String propName) {
 		final SessionProperties props = _session.getProperties();
 		/*
 				if (propertyName == null || propertyName.equals(
@@ -610,8 +578,8 @@ class SQLPanel extends JPanel {
 		//		  }
 		//	  }
 
-		if (propertyName == null
-			|| propertyName.equals(SessionProperties.IPropertyNames.AUTO_COMMIT)) {
+		if (propName == null
+				|| propName.equals(SessionProperties.IPropertyNames.AUTO_COMMIT)) {
 			final SQLConnection conn = _session.getSQLConnection();
 			if (conn != null) {
 				boolean auto = true;
@@ -630,15 +598,20 @@ class SQLPanel extends JPanel {
 			}
 		}
 
-		if (propertyName == null
-			|| propertyName.equals(SessionProperties.IPropertyNames.SQL_LIMIT_ROWS)) {
+		if (propName == null
+				|| propName.equals(SessionProperties.IPropertyNames.SQL_LIMIT_ROWS)) {
 			_limitRowsChk.setSelected(props.getSqlLimitRows());
 		}
 
-		if (propertyName == null
-			|| propertyName.equals(SessionProperties.IPropertyNames.SQL_NBR_ROWS_TO_SHOW)) {
+		if (propName == null
+				|| propName.equals(SessionProperties.IPropertyNames.SQL_NBR_ROWS_TO_SHOW)) {
 			_nbrRows.setInt(props.getSqlNbrRowsToShow());
 		}
+
+		if (propName == null || propName.equals(SessionProperties.IPropertyNames.FONT_INFO)) {
+			_sqlEntry.setFont(props.getFontInfo().createFont());
+		}
+
 	}
 
 	private void createUserInterface() {
@@ -684,10 +657,6 @@ class SQLPanel extends JPanel {
 		_limitRowsChk.addChangeListener(new LimitRowsCheckBoxListener());
 		_nbrRows.getDocument().addDocumentListener(new LimitRowsTextBoxListener());
 
-		// Add mouse listener for displaying popup menu.
-//		_nbrRows.addMouseListener(new MyMouseListener());
-		//_sqlEntry.addMouseListener(new MyMouseListener());
-
 		// Set focus to the SQL entry panel.
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -696,27 +665,6 @@ class SQLPanel extends JPanel {
 		});
 	}
 
-/*
-	private final class MyMouseListener extends MouseAdapter {
-		public void mousePressed(MouseEvent evt) {
-			if (evt.isPopupTrigger()) {
-				displayPopupMenu(evt);
-			}
-		}
-		public void mouseReleased(MouseEvent evt) {
-			if (evt.isPopupTrigger()) {
-				displayPopupMenu(evt);
-			}
-		}
-		private void displayPopupMenu(MouseEvent evt) {
-			Object src = evt.getSource();
-			if (src instanceof JTextComponent) {
-				_textPopupMenu.setTextComponent((JTextComponent) src);
-				_textPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
-			}
-		}
-	}
-*/
 	private class MyPropertiesListener implements PropertyChangeListener {
 		private boolean _listening = true;
 
@@ -750,7 +698,6 @@ class SQLPanel extends JPanel {
 			if (_listening) {
 				SqlComboItem item = (SqlComboItem) _sqlCombo.getSelectedItem();
 				if (item != null) {
-					//				  _sqlEntry.setText(item.getText());
 					_sqlEntry.appendText("\n\n" + item.getText());
 					_sqlEntry.setCaretPosition(_sqlEntry.getText().length() - 1);
 				}
