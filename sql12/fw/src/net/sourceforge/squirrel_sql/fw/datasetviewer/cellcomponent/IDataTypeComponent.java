@@ -18,11 +18,17 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
  
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.JTable;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 
 /**
@@ -121,8 +127,7 @@ public interface IDataTypeComponent
 	  * On input from the DB, read the data from the ResultSet into the appropriate
 	  * type of object to be stored in the table cell.
 	  */
-	public Object readResultSet(ColumnDisplayDefinition colDef,
-		ResultSet rs, int index)
+	public Object readResultSet(ResultSet rs, int index)
 		throws java.sql.SQLException;
 
 	/**
@@ -138,15 +143,59 @@ public interface IDataTypeComponent
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
-	public String getWhereClauseValue(ColumnDisplayDefinition colDef, Object value);
+	public String getWhereClauseValue(Object value);
 	
 	
 	/**
 	 * When updating the database, insert the appropriate datatype into the
 	 * prepared statment at variable position 1.
 	 */
-	public void setPreparedStatementValue(ColumnDisplayDefinition colDef, 
-		PreparedStatement pstmt, Object value)
+	public void setPreparedStatementValue(PreparedStatement pstmt, Object value)
 		throws java.sql.SQLException;
 
+
+	/*
+	 * File IO related functions
+	 */
+	 
+	 /**
+	  * Say whether or not object can be exported to and imported from
+	  * a file.  We put both export and import together in one test
+	  * on the assumption that all conversions can be done both ways.
+	  */
+	 public boolean canDoFileIO();
+	 
+	 /**
+	  * Read a file and construct a valid object from its contents.
+	  * Errors are returned by throwing an IOException containing the
+	  * cause of the problem as its message.
+	  * <P>
+	  * DataType is responsible for validating that the imported
+	  * data can be converted to an object, and then must return
+	  * a text string that can be used in the Popup window text area.
+	  * This object-to-text conversion is the same as is done by
+	  * the DataType object internally in the getJTextArea() method.
+	  */
+	 public String importObject(FileInputStream inStream)
+	 	throws IOException;
+	 
+	 	 
+	 /**
+	  * Read a file and construct a valid object from its contents.
+	  * Errors are returned by throwing an IOException containing the
+	  * cause of the problem as its message.
+	  * <P>
+	  * DataType is responsible for validating that the given text
+	  * text from a Popup JTextArea can be converted to an object.
+	  * This text-to-object conversion is the same as validateAndConvertInPopup,
+	  * which may be used internally by the object to do the validation.
+	  * <P>
+	  * The DataType object must flush and close the output stream before returning.
+	  * Typically it will create another object (e.g. an OutputWriter), and
+	  * that is the object that must be flushed and closed.
+	  */
+	 public void exportObject(FileOutputStream outStream, String text)
+	 	throws IOException;
+	 
+	 
 }

@@ -19,6 +19,13 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  */
 import java.awt.event.*;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.IOException;
+
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.DefaultCellEditor;
@@ -315,8 +322,7 @@ public class DataTypeString
 	  * On input from the DB, read the data from the ResultSet into the appropriate
 	  * type of object to be stored in the table cell.
 	  */
-	public Object readResultSet(ColumnDisplayDefinition colDef,
-		ResultSet rs, int index)
+	public Object readResultSet(ResultSet rs, int index)
 		throws java.sql.SQLException {
 		
 		String data = rs.getString(index);
@@ -338,11 +344,11 @@ public class DataTypeString
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
-	public String getWhereClauseValue(ColumnDisplayDefinition colDef, Object value) {
+	public String getWhereClauseValue(Object value) {
 		if (value == null || value.toString() == null )
-			return colDef.getLabel() + " IS NULL";
+			return _colDef.getLabel() + " IS NULL";
 		else
-			return colDef.getLabel() + "='" + value.toString() + "'";
+			return _colDef.getLabel() + "='" + value.toString() + "'";
 	}
 	
 	
@@ -350,15 +356,113 @@ public class DataTypeString
 	 * When updating the database, insert the appropriate datatype into the
 	 * prepared statment at variable position 1.
 	 */
-	public void setPreparedStatementValue(ColumnDisplayDefinition colDef,
-		PreparedStatement pstmt, Object value)
+	public void setPreparedStatementValue(PreparedStatement pstmt, Object value)
 		throws java.sql.SQLException {
 		if (value == null) {
-			pstmt.setNull(1, colDef.getSqlType());
+			pstmt.setNull(1, _colDef.getSqlType());
 		}
 		else {
 			pstmt.setString(1, ((String)value));
 		}
 	}
+	
+	
+	/*
+	 * File IO related functions
+	 */
+	 
+	 
+	 /**
+	  * Say whether or not object can be exported to and imported from
+	  * a file.  We put both export and import together in one test
+	  * on the assumption that all conversions can be done both ways.
+	  */
+	 public boolean canDoFileIO() {
+	 	return true;
+	 }
+	 
+	 /**
+	  * Read a file and construct a valid object from its contents.
+	  * Errors are returned by throwing an IOException containing the
+	  * cause of the problem as its message.
+	  * <P>
+	  * DataType is responsible for validating that the imported
+	  * data can be converted to an object, and then must return
+	  * a text string that can be used in the Popup window text area.
+	  * This object-to-text conversion is the same as is done by
+	  * the DataType object internally in the getJTextArea() method.
+	  * 
+	  * <P>
+	  * File is assumed to be printable text characters,
+	  * possibly including newlines and tabs but not characters
+	  * that would require a binary representation to display
+	  * to user.
+	  */
+	public String importObject(FileInputStream inStream)
+	 	throws IOException {
+	 	
+	 	InputStreamReader inReader = new InputStreamReader(inStream);
+	 	
+	 	int fileSize = inStream.available();
+	 	
+	 	char charBuf[] = new char[fileSize];
+	 	
+	 	int count = inReader.read(charBuf, 0, fileSize);
+	 	
+	 	if (count != fileSize)
+	 		throw new IOException(
+	 			"Could read only "+ count +
+	 			" chars from a total file size of " + fileSize +
+	 			". Import failed.");
+	 	
+	 	// convert to string
+	 	// Special case: some systems tack a newline at the end of
+	 	// the text read.  Assume that if last char is a newline that
+	 	// we want everything else in the line.
+	 	String fileText;
+	 	if (charBuf[count-1] == KeyEvent.VK_ENTER)
+	 		fileText = new String(charBuf, 0, count-1);
+	 	else fileText = new String(charBuf);
+	 	
+	 	// data must fit into the column's max size
+	 	if (_columnSize > 0 && fileText.length() > _columnSize)
+	 		throw new IOException(
+	 			"File contains "+fileText.length()+
+	 			" characters which exceeds this column's limit of "+
+	 			_columnSize+".\nImport Aborted.");	 	
+	 	
+	 	return fileText;
+	}
 
+	 	 
+	 /**
+	  * Read a file and construct a valid object from its contents.
+	  * Errors are returned by throwing an IOException containing the
+	  * cause of the problem as its message.
+	  * <P>
+	  * DataType is responsible for validating that the given text
+	  * text from a Popup JTextArea can be converted to an object.
+	  * This text-to-object conversion is the same as validateAndConvertInPopup,
+	  * which may be used internally by the object to do the validation.
+	  * <P>
+	  * The DataType object must flush and close the output stream before returning.
+	  * Typically it will create another object (e.g. an OutputWriter), and
+	  * that is the object that must be flushed and closed.
+	  * 
+	  * <P>
+	  * File is assumed to be printable text characters,
+	  * possibly including newlines and tabs but not characters
+	  * that would require a binary representation to display
+	  * to user.
+	  */
+	 public void exportObject(FileOutputStream outStream, String text)
+	 	throws IOException {
+	 	
+	 	OutputStreamWriter outWriter = new OutputStreamWriter(outStream);
+
+	 	// for string, just send the text to the output file
+	 	outWriter.write(text);
+		outWriter.flush();
+		outWriter.close();
+	 }		 
 }

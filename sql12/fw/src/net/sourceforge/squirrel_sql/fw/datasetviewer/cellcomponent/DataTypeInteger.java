@@ -19,6 +19,12 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  */
 import java.awt.event.*;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.IOException;
+
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -343,8 +349,7 @@ public class DataTypeInteger
 	  * On input from the DB, read the data from the ResultSet into the appropriate
 	  * type of object to be stored in the table cell.
 	  */
-	public Object readResultSet(ColumnDisplayDefinition colDef,
-		ResultSet rs, int index)
+	public Object readResultSet(ResultSet rs, int index)
 		throws java.sql.SQLException {
 		
 		int data = rs.getInt(index);
@@ -366,11 +371,11 @@ public class DataTypeInteger
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
-	public String getWhereClauseValue(ColumnDisplayDefinition colDef, Object value) {
+	public String getWhereClauseValue(Object value) {
 		if (value == null || value.toString() == null || value.toString().length() == 0)
-			return colDef.getLabel() + " IS NULL";
+			return _colDef.getLabel() + " IS NULL";
 		else
-			return colDef.getLabel() + "=" + value.toString();
+			return _colDef.getLabel() + "=" + value.toString();
 	}
 	
 	
@@ -378,15 +383,125 @@ public class DataTypeInteger
 	 * When updating the database, insert the appropriate datatype into the
 	 * prepared statment at variable position 1.
 	 */
-	public void setPreparedStatementValue(ColumnDisplayDefinition colDef,
-		PreparedStatement pstmt, Object value)
+	public void setPreparedStatementValue(PreparedStatement pstmt, Object value)
 		throws java.sql.SQLException {
 		if (value == null) {
-			pstmt.setNull(1, colDef.getSqlType());
+			pstmt.setNull(1, _colDef.getSqlType());
 		}
 		else {
 			pstmt.setInt(1, ((Integer)value).intValue());
 		}
 	}
+	
+	
+	/*
+	 * File IO related functions
+	 */
+	 
+	 
+	 /**
+	  * Say whether or not object can be exported to and imported from
+	  * a file.  We put both export and import together in one test
+	  * on the assumption that all conversions can be done both ways.
+	  */
+	 public boolean canDoFileIO() {
+	 	return true;
+	 }
+	 
+	 /**
+	  * Read a file and construct a valid object from its contents.
+	  * Errors are returned by throwing an IOException containing the
+	  * cause of the problem as its message.
+	  * <P>
+	  * DataType is responsible for validating that the imported
+	  * data can be converted to an object, and then must return
+	  * a text string that can be used in the Popup window text area.
+	  * This object-to-text conversion is the same as is done by
+	  * the DataType object internally in the getJTextArea() method.
+	  * 
+	  * <P>
+	  * File is assumed to be and ASCII string of digits
+	  * representing an integer value.
+	  */
+	public String importObject(FileInputStream inStream)
+	 	throws IOException {
+	 	
+	 	InputStreamReader inReader = new InputStreamReader(inStream);
+	 	
+	 	int fileSize = inStream.available();
+	 	
+	 	char charBuf[] = new char[fileSize];
+	 	
+	 	int count = inReader.read(charBuf, 0, fileSize);
+	 	
+	 	if (count != fileSize)
+	 		throw new IOException(
+	 			"Could read only "+ count +
+	 			" chars from a total file size of " + fileSize +
+	 			". Import failed.");
+	 	
+	 	// convert file text into a string
+	 	// Special case: some systems tack a newline at the end of
+	 	// the text read.  Assume that if last char is a newline that
+	 	// we want everything else in the line.
+	 	String fileText;
+	 	if (charBuf[count-1] == KeyEvent.VK_ENTER)
+	 		fileText = new String(charBuf, 0, count-1);
+	 	else fileText = new String(charBuf);
+	 	
+	 	// test that the string correctly represents an integer
+	 	// by convertng it into one
+	 	Integer testInteger;
+	 	try {
+	 		testInteger = Integer.valueOf(fileText);
+	 	}
+	 	catch (Exception e) {
+	 		// convert number conversion issue into IO issue for consistancy
+	 		throw new IOException(
+	 			"Failed to convert text into integer.  Text was:\n"+
+	 			fileText);
+	 	}
+	 	
+	 	// return the text from the file since it does
+	 	// represent a valid integer value
+	 	return fileText;
+	}
 
+	 	 
+	 /**
+	  * Read a file and construct a valid object from its contents.
+	  * Errors are returned by throwing an IOException containing the
+	  * cause of the problem as its message.
+	  * <P>
+	  * DataType is responsible for validating that the given text
+	  * text from a Popup JTextArea can be converted to an object.
+	  * This text-to-object conversion is the same as validateAndConvertInPopup,
+	  * which may be used internally by the object to do the validation.
+	  * <P>
+	  * The DataType object must flush and close the output stream before returning.
+	  * Typically it will create another object (e.g. an OutputWriter), and
+	  * that is the object that must be flushed and closed.
+	  * 
+	  * <P>
+	  * File is assumed to be and ASCII string of digits
+	  * representing an integer value.
+	  */
+	 public void exportObject(FileOutputStream outStream, String text)
+	 	throws IOException {
+	 	
+	 	OutputStreamWriter outWriter = new OutputStreamWriter(outStream);
+	 	
+	 	// check that the text is a valid representation
+	 	StringBuffer messageBuffer = new StringBuffer();
+	 	validateAndConvertInPopup(text, messageBuffer);
+	 	if (messageBuffer.length() > 0) {
+	 		// there was an error in the conversion
+	 		throw new IOException(new String(messageBuffer));
+	 	}
+	 	
+	 	// for integer, just send the text to the output file
+		outWriter.write(text);
+		outWriter.flush();
+		outWriter.close();
+	 }
 }
