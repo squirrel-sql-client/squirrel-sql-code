@@ -17,6 +17,9 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -32,43 +35,23 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 	/** Current session. */
 	private ISession _session;
 
-	/** <TT>true</TT> if node can have children. */
-	boolean _allowsChildren;
-
 	/** Describes the database object represented by this node. */
 	private IDatabaseObjectInfo _dbinfo;
 
-	/** Expander for this node (can be null). */
-	private INodeExpander _expander;
+	/** Collection of <TT>INodeExpander</TT> objects for this node. */
+	private List _expanders = new ArrayList();
 
 	/**
 	 * Ctor that assumes node cannot have children.
 	 * 
-	 * @param	session		Current session.
-	 * @param	dbinfo			Describes this object in the database.
-	 * 
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> <TT>ISession</TT> passed.
-	 */
-	public ObjectTreeNode(ISession session, IDatabaseObjectInfo dbinfo)
-	{
-		this(session, dbinfo, false);
-	}
-
-	/**
-	 * Ctor.
-	 * 
-	 * @param	session		Current session.
-	 * @param	dbinfo		Describes this object in the database.
-	 * @param	allowsChildren	<TT>true</TT> if node can have children.
+	 * @param	session	Current session.
+	 * @param	dbinfo	Describes this object in the database.
 	 * 
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>ISession</TT> or
-	 * 			<TT>IDatabaseObjectInfo</TT> passed.
+	 *			<TT>IDatabaseObjectInfo</TT> passed.
 	 */
-//??TODO: Get rid of this ctor.
-	private ObjectTreeNode(ISession session, IDatabaseObjectInfo dbinfo,
-							boolean allowsChildren)
+	public ObjectTreeNode(ISession session, IDatabaseObjectInfo dbinfo)
 	{
 		super(getNodeTitle(dbinfo));
 		if (session == null)
@@ -76,7 +59,6 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 			throw new IllegalArgumentException("ISession == null");
 		}
 		_session = session;
-		_allowsChildren = false; // Let setting the expander take care of this. allowsChildren;
 		_dbinfo = dbinfo;
 	}
 
@@ -90,40 +72,52 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 		return _session;
 	}
 
+	/**
+	 * Return the <TT>IDatabaseObjectInfo</TT> object that describes the
+	 * database object represented by this node.
+	 */
 	public IDatabaseObjectInfo getDatabaseObjectInfo()
 	{
 		return _dbinfo;
 	}
 
 	/**
-	 * Return <TT>true</TT> to indicate that this node can have children.
+	 * Returns <TT>true</TT> if this node can have children. If there are
+	 * expanders for this node then <TT>true</TT> is returned.
 	 * 
-	 * @return	<TT>true</TT> to indicate that this node can have children.
+	 * @return	<TT>true</TT> if this node can have children.
 	 */
 	public boolean getAllowsChildren()
 	{
-		return _allowsChildren;
+		return _expanders.size() != 0;
 	}
 
 	/**
-	 * Return the expander for this node. May be null.
+	 * Return the expanders for this node..
 	 * 
-	 * @return	The <TT>INodeExpander</TT> for this node. May be <TT>null</TT>.
+	 * @return	The <TT>INodeExpander</TT> objects for this node.
 	 */
-	public INodeExpander getExpander()
+	public INodeExpander[] getExpanders()
 	{
-		return _expander;
+		return (INodeExpander[])_expanders.toArray(new INodeExpander[_expanders.size()]);
 	}
 
 	/**
-	 * Set the expander for this node. May be null.
+	 * Adds an expander to this node.
 	 * 
 	 * @param	value	New <TT>INodeExpander</TT> for this node.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if a <TT>null</TT>INodeExpander</TT> passed.
 	 */
-	public void setExpander(INodeExpander value)
+	public void addExpander(INodeExpander value)
 	{
-		_expander = value;
-		_allowsChildren = (_expander != null);
+		if (value == null)
+		{
+			throw new IllegalArgumentException("INodeExpander == null");
+		}
+
+		_expanders.add(value);
 	}
 
 	private static String getNodeTitle(IDatabaseObjectInfo dbinfo)

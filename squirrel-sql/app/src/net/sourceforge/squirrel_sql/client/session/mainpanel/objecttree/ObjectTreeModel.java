@@ -80,7 +80,7 @@ public class ObjectTreeModel extends DefaultTreeModel
 		RootNode(ISession session)
 		{
 			super(session, createDbo(session));
-			setExpander(new DatabaseExpander(session));
+			addExpander(new DatabaseExpander(session));
 		}
 
 		private static final IDatabaseObjectInfo createDbo(ISession session)

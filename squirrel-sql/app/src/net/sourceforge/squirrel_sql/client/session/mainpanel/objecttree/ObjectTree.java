@@ -130,10 +130,10 @@ public class ObjectTree extends JTree {
 		}
 
 		//parentNode.addBaseNodeExpandListener(ObjectsTree.this);
-		INodeExpander expander = parentNode.getExpander();
-		if (parentNode.getChildCount() == 0 && expander != null)
+		INodeExpander[] expanders = parentNode.getExpanders();
+		if (parentNode.getChildCount() == 0 && expanders.length > 0)
 		{
-			TreeLoader loader = new TreeLoader(parentNode, expander);
+			TreeLoader loader = new TreeLoader(parentNode, expanders);
 			_session.getApplication().getThreadPool().addTask(loader);
 		}
 	}
@@ -159,13 +159,13 @@ public class ObjectTree extends JTree {
 	private final class TreeLoader implements Runnable
 	{
 		private ObjectTreeNode _parentNode;
-		private INodeExpander _expander;
+		private INodeExpander[] _expanders;
 
-		TreeLoader(ObjectTreeNode parentNode, INodeExpander expander)
+		TreeLoader(ObjectTreeNode parentNode, INodeExpander[] expanders)
 		{
 			super();
 			_parentNode = parentNode;
-			_expander = expander;
+			_expanders = expanders;
 		}
 
 		public void run()
@@ -190,15 +190,18 @@ public class ObjectTree extends JTree {
 						{
 							// Show the loading node.
 							ObjectTree.this._model.nodeStructureChanged(_parentNode);
-							List list = _expander.createChildren(_session, _parentNode);
-							Iterator it = list.iterator();
-							while (it.hasNext())
+							for (int i = 0; i < _expanders.length; ++i)
 							{
-								Object nextObj = it.next();
-								if (nextObj instanceof ObjectTreeNode)
+								List list = _expanders[i].createChildren(_session, _parentNode);
+								Iterator it = list.iterator();
+								while (it.hasNext())
 								{
-									ObjectTreeNode nextNode = (ObjectTreeNode)nextObj;
-									_parentNode.add(nextNode);
+									Object nextObj = it.next();
+									if (nextObj instanceof ObjectTreeNode)
+									{
+										ObjectTreeNode nextNode = (ObjectTreeNode)nextObj;
+										_parentNode.add(nextNode);
+									}
 								}
 							}
 						}

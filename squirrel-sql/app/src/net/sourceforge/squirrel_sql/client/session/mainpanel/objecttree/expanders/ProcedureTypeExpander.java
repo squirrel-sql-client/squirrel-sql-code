@@ -172,7 +172,7 @@ public class ProcedureTypeExpander implements INodeExpander
 										conn);
 		ObjectTreeNode child = new ObjectTreeNode(session, dbinfo);
 		child.setUserObject("Standalone");
-		child.setExpander(this);
+		child.addExpander(this);
 		childNodes.add(child);
 
 		// Add node for each package.
@@ -188,7 +188,7 @@ public class ProcedureTypeExpander implements INodeExpander
 										IDatabaseObjectTypes.ORACLE_PACKAGE,
 										conn);
 				child = new ObjectTreeNode(session, dbinfo);
-				child.setExpander(this);
+				child.addExpander(this);
 				childNodes.add(child);
 			}
 		}
