@@ -1,6 +1,6 @@
-package net.sourceforge.squirrel_sql.client.mainframe.action;
+package net.sourceforge.squirrel_sql.client.session.event;
 /*
- * Copyright (C) 2002-2003 Colin Bell
+ * Copyright (C) 2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,47 +17,47 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.ActionEvent;
-import java.io.File;
+import java.util.EventObject;
 
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
- * This <CODE>Action</CODE> displays a licence file.
+ * This class is an event fired for session events.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ViewLicenceAction extends SquirrelAction
+public class SessionEvent extends EventObject
 {
-	private File _file;
+	/** The <CODE>ISession</CODE> involved. */
+	private ISession _session;
 
 	/**
 	 * Ctor.
+	 *
+	 * @param	source	The <CODE>ISession</CODE> that change has happened to.
 	 * 
-	 * @param	app		Application API.
-	 * @param	file	Licence file.
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT>ISession/TT> passed.
 	 */
-	public ViewLicenceAction(IApplication app, File file)
+	public SessionEvent(ISession source)
 	{
-		super(app);
-		_file = file;
-		app.getResources().setupAction(this);
+		super(checkParams(source));
+		_session = source;
 	}
 
 	/**
-	 * Display the licence window.
+	 * Return the <CODE>ISession</CODE>.
 	 */
-	public void actionPerformed(ActionEvent evt)
+	public ISession getSession()
 	{
-		try
+		return _session;
+	}
+
+	private static ISession checkParams(ISession source)
+	{
+		if (source == null)
 		{
-			new ViewFileCommand(getApplication(), _file).execute();
+			throw new IllegalArgumentException("ISession == null");
 		}
-		catch (BaseException ex)
-		{
-			getApplication().showErrorDialog("Error viewing licence file", ex);
-		}
+		return source;
 	}
 }

@@ -206,6 +206,17 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	}
 
 	/**
+	 * Replace the currently selected text in the SQL entry area
+	 * with the passed text.
+	 * 
+	 * @param	sqlScript	The script to be placed in the SQL entry area.
+	 */
+	public void replaceSelection(String sqlScript)
+	{
+		_comp.replaceSelection(sqlScript);
+	}
+
+	/**
 	 * @see ISQLEntryPanel#getCaretPosition()
 	 */
 	public int getCaretPosition()

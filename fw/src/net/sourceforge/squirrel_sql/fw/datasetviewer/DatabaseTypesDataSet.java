@@ -77,153 +77,157 @@ public class DatabaseTypesDataSet implements IDataSet
 		return _dataSetDefinition;
 	}
 
+	/**
+	 * Point to the next data type. If there are no more data types
+	 * then close the ResultSet.
+	 * 
+	 * @return	<TT>true</TT> if there is another data type.	
+	 */
 	public synchronized boolean next(IMessageHandler msgHandler)
 		throws DataSetException
 	{
-		boolean rc = false;
-
 //TODO: Replace with ResultSetReader once we have column renderers.
 		try
 		{
-			rc = _rs.next();
-			if (rc)
+			if (!_rs.next())
 			{
-				for (int i = 0; i < _columnCount; ++i)
+				_rs.close();
+				return false;
+			}
+
+			for (int i = 0; i < _columnCount; ++i)
+			{
+				int idx = _columnIndices != null ? _columnIndices[i] : i + 1;
+				try
 				{
-					int idx = _columnIndices != null ? _columnIndices[i] : i + 1;
-					try
+					switch (idx)
 					{
-						switch (idx)
-						{
 
-							case 2 :
-								// DATA_TYPE column of result set.
-								int data = _rs.getInt(idx);
-								StringBuffer buf = new StringBuffer();
-								buf.append(String.valueOf(data))
-									.append(" [")
-									.append(JDBCTypeMapper.getJdbcTypeName(data))
-									.append("]");
-								_row[i] = buf.toString();
-								break;
+						case 2 :
+							// DATA_TYPE column of result set.
+							int data = _rs.getInt(idx);
+							StringBuffer buf = new StringBuffer();
+							buf.append(String.valueOf(data))
+								.append(" [")
+								.append(JDBCTypeMapper.getJdbcTypeName(data))
+								.append("]");
+							_row[i] = buf.toString();
+							break;
 
-							case 3:
-							case 14:
-							case 15:
-							case 18:
-								_row[i] = _rs.getObject(idx);
-								if (_row[i] != null
-									&& !(_row[i] instanceof Integer))
+						case 3:
+						case 14:
+						case 15:
+						case 18:
+							_row[i] = _rs.getObject(idx);
+							if (_row[i] != null
+								&& !(_row[i] instanceof Integer))
+							{
+								if (_row[i] instanceof Number)
 								{
-									if (_row[i] instanceof Number)
-									{
-										_row[i] = new Integer(((Number)_row[i]).intValue());
-									}
-									else
-									{
-										_row[i] = new Integer(_row[i].toString());
-									}
+									_row[i] = new Integer(((Number)_row[i]).intValue());
 								}
-								break;
-
-							case 7:
-								// NULLABLE column of result set.
-								short nullable = _rs.getShort(idx);
-								switch (nullable)
+								else
 								{
-									case DatabaseMetaData.typeNoNulls :
-										_row[i] = "false";
-										break;
-									case DatabaseMetaData.typeNullable :
-										_row[i] = "true";
-										break;
-									case DatabaseMetaData.typeNullableUnknown :
-										_row[i] = "unknown";
-										break;
-									default :
-										_row[i] = nullable + "[error]";
-										break;
+									_row[i] = new Integer(_row[i].toString());
 								}
-								break;
+							}
+							break;
 
-							case 8:
-							case 10:
-							case 11:
-							case 12:
-								// boolean columns
+						case 7:
+							// NULLABLE column of result set.
+							short nullable = _rs.getShort(idx);
+							switch (nullable)
+							{
+								case DatabaseMetaData.typeNoNulls :
+									_row[i] = "false";
+									break;
+								case DatabaseMetaData.typeNullable :
+									_row[i] = "true";
+									break;
+								case DatabaseMetaData.typeNullableUnknown :
+									_row[i] = "unknown";
+									break;
+								default :
+									_row[i] = nullable + "[error]";
+									break;
+							}
+							break;
+
+						case 8:
+						case 10:
+						case 11:
+						case 12:
+							// boolean columns
 //								_row[i] = _rs.getBoolean(idx) ? "true" : "false";
-								_row[i] = _rs.getObject(idx);
-								if (_row[i] != null
-									&& !(_row[i] instanceof Boolean))
+							_row[i] = _rs.getObject(idx);
+							if (_row[i] != null
+								&& !(_row[i] instanceof Boolean))
+							{
+								if (_row[i] instanceof Number)
 								{
-									if (_row[i] instanceof Number)
+									if (((Number) _row[i]).intValue() == 0)
 									{
-										if (((Number) _row[i]).intValue() == 0)
-										{
-											_row[i] = Boolean.FALSE;
-										}
-										else
-										{
-											_row[i] = Boolean.TRUE;
-										}
+										_row[i] = Boolean.FALSE;
 									}
 									else
 									{
-										_row[i] = Boolean.valueOf(_row[i].toString());
+										_row[i] = Boolean.TRUE;
 									}
 								}
-								break;
-
-							case 9:
-								// SEARCHABLE column of result set.
-								short searchable = _rs.getShort(idx);
-								switch (searchable)
+								else
 								{
-									case DatabaseMetaData.typePredNone :
-										_row[i] = "no support";
-										break;
-									case DatabaseMetaData.typePredChar :
-										_row[i] = "only supports 'WHERE...like'";
-										break;
-									case DatabaseMetaData.typePredBasic :
-										_row[i] = "supports all except 'WHERE...LIKE'";
-										break;
-									case DatabaseMetaData.typeSearchable :
-										_row[i] = "supports all WHERE";
-										break;
-									default :
-										_row[i] = searchable + "[error]";
-										break;
+									_row[i] = Boolean.valueOf(_row[i].toString());
 								}
-								break;
+							}
+							break;
 
-							case 16:
-							case 17:
-								// ignore - unused.
-								break;
+						case 9:
+							// SEARCHABLE column of result set.
+							short searchable = _rs.getShort(idx);
+							switch (searchable)
+							{
+								case DatabaseMetaData.typePredNone :
+									_row[i] = "no support";
+									break;
+								case DatabaseMetaData.typePredChar :
+									_row[i] = "only supports 'WHERE...like'";
+									break;
+								case DatabaseMetaData.typePredBasic :
+									_row[i] = "supports all except 'WHERE...LIKE'";
+									break;
+								case DatabaseMetaData.typeSearchable :
+									_row[i] = "supports all WHERE";
+									break;
+								default :
+									_row[i] = searchable + "[error]";
+									break;
+							}
+							break;
 
-							default :
-								_row[i] = _rs.getString(idx);
-								break;
+						case 16:
+						case 17:
+							// ignore - unused.
+							break;
 
-						}
+						default :
+							_row[i] = _rs.getString(idx);
+							break;
+
 					}
-					catch (Throwable th)
+				}
+				catch (Throwable th)
+				{
+					if (msgHandler != null)
 					{
-						if (msgHandler != null)
-						{
-							_row[i] = "<error>"; //i18n
-							msgHandler.showMessage(th);
-						}
-						else
-						{
-							throw new DataSetException(th);
-						}
+						_row[i] = "<error>"; //i18n
+						msgHandler.showMessage(th);
+					}
+					else
+					{
+						throw new DataSetException(th);
 					}
 				}
 			}
-
-			return rc;
 
 		}
 		catch (SQLException ex)
@@ -238,7 +242,7 @@ public class DatabaseTypesDataSet implements IDataSet
 			}
 		}
 
-		return rc;
+		return true;
 	}
 
 	public Object get(int columnIndex)

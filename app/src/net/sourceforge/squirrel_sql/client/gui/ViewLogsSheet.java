@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -198,7 +198,7 @@ public class ViewLogsSheet extends BaseSheet
 			}
 			catch (Exception ex)
 			{
-				s_log.error(ex);
+				s_log.error("Error", ex);
 			}
 			final File logFile = (File)_logDirCmb.getSelectedItem();
 			if (logFile != null)

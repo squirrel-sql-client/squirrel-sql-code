@@ -1,6 +1,6 @@
-package net.sourceforge.squirrel_sql.client.mainframe.action;
+package net.sourceforge.squirrel_sql.client.gui;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,45 +17,46 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.ActionEvent;
-import java.io.File;
-
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
-
+import java.util.EventObject;
 /**
- * This <CODE>Action</CODE> displays the Squirrel FAQ.
+ * This class is an event fired for changes in the HtmlViewerPanel.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ViewFAQAction extends SquirrelAction
+public class HtmlViewerPanelListenerEvent extends EventObject
 {
+	/** The <CODE>HtmlViewerPanel</CODE> involved. */
+	private HtmlViewerPanel _pnl;
+
 	/**
 	 * Ctor.
+	 *
+	 * @param	source	The <CODE>HtmlViewerPanel</CODE> that change has
+	 *					happened to.
 	 * 
-	 * @param	app		Application API.
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT>HtmlViewerPanel/TT> passed.
 	 */
-	public ViewFAQAction(IApplication app)
+	HtmlViewerPanelListenerEvent(HtmlViewerPanel source)
 	{
-		super(app);
+		super(checkParams(source));
+		_pnl = source;
 	}
 
 	/**
-	 * Display the help window.
+	 * Return the <CODE>HtmlViewerPanel</CODE>.
 	 */
-	public void actionPerformed(ActionEvent evt)
+	public HtmlViewerPanel getHtmlViewerPanel()
 	{
-		try
+		return _pnl;
+	}
+
+	private static HtmlViewerPanel checkParams(HtmlViewerPanel source)
+	{
+		if (source == null)
 		{
-			final File file = new ApplicationFiles().getFAQFile();
-			new ViewFileCommand(getApplication(), file).execute();
+			throw new IllegalArgumentException("HtmlViewerPanel == null");
 		}
-		catch (BaseException ex)
-		{
-			getApplication().showErrorDialog("Error viewing FAQ", ex);
-		}
+		return source;
 	}
 }

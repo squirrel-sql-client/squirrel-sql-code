@@ -25,6 +25,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -35,6 +36,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 /**
  * This dialog displays a summary of all plugins.
@@ -50,7 +52,7 @@ public class PluginSummaryDialog extends JFrame
 	private interface i18n
 	{
 		String CLOSE = "Close";
-		String TITLE = "Plugin Summary";
+		String TITLE = "SQuirreL SQL Client Plugin Summary";
 	}
 
 	public PluginSummaryDialog(IApplication app, Frame owner)
@@ -63,6 +65,13 @@ public class PluginSummaryDialog extends JFrame
 	private void createGUI(IApplication app) throws DataSetException
 	{
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+		final SquirrelResources rsrc = app.getResources();
+		final ImageIcon icon = rsrc.getIcon(SquirrelResources.IImageNames.PLUGINS);
+		if (icon != null)
+		{
+			setIconImage(icon.getImage());
+		}
 
 		final Container contentPane = getContentPane();
 		contentPane.setLayout(new BorderLayout());

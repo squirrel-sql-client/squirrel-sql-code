@@ -70,7 +70,9 @@ import net.sourceforge.squirrel_sql.client.session.action.RedoAction;
 import net.sourceforge.squirrel_sql.client.session.action.UndoAction;
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
+import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
 import net.sourceforge.squirrel_sql.client.session.event.ResultTabEvent;
+import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 /**
  * This is the panel where SQL scripts can be entered and executed.
@@ -206,6 +208,40 @@ public class SQLPanel extends JPanel
 	}
 
 	/**
+	 * Add a listener to this panel.
+	 *
+	 * @param   lis	 Listener
+	 *
+	 * @throws	IllegalArgumentException
+	 *			If a null <TT>ISQLPanelListener</TT> passed.
+	 */
+	public synchronized void addSQLPanelListener(ISQLPanelListener lis)
+	{
+		if (lis == null)
+		{
+			throw new IllegalArgumentException("null ISQLPanelListener passed");
+		}
+		_listeners.add(ISQLPanelListener.class, lis);
+	}
+
+	/**
+	 * Remove a listener.
+	 *
+	 * @param	lis	Listener
+	 *
+	 * @throws	IllegalArgumentException
+	 *			If a null <TT>ISQLPanelListener</TT> passed.
+	 */
+	public synchronized void removeSQLPanelListener(ISQLPanelListener lis)
+	{
+		if (lis == null)
+		{
+			throw new IllegalArgumentException("null ISQLPanelListener passed");
+		}
+		_listeners.remove(ISQLPanelListener.class, lis);
+	}
+
+	/**
 	 * Add a listener listening for events on result tabs.
 	 *
 	 * @param	lis	Listener
@@ -319,7 +355,7 @@ public class SQLPanel extends JPanel
 		closeAllSQLResultFrames();
 	}
 
-	public void replaceSQLEntryPanel(ISQLEntryPanel pnl)
+	public void installSQLEntryPanel(ISQLEntryPanel pnl)
 	{
 		if (pnl == null)
 		{
@@ -374,6 +410,8 @@ public class SQLPanel extends JPanel
 
 			_sqlEntry.addUndoableEditListener(_undoManager);
 		}
+
+		fireSQLEntryAreaInstalled();
 	}
 
 	/**
@@ -503,6 +541,27 @@ public class SQLPanel extends JPanel
 		}
 	}
 
+	protected void fireSQLEntryAreaInstalled()
+	{
+		// Guaranteed to be non-null.
+		Object[] listeners = _listeners.getListenerList();
+		// Process the listeners last to first, notifying
+		// those that are interested in this event.
+		SQLPanelEvent evt = null;
+		for (int i = listeners.length - 2; i >= 0; i -= 2)
+		{
+			if (listeners[i] == ISQLPanelListener.class)
+			{
+				// Lazily create the event:
+				if (evt == null)
+				{
+					evt = new SQLPanelEvent(_session, this);
+				}
+				((ISQLPanelListener)listeners[i + 1]).sqlEntryAreaInstalled(evt);
+			}
+		}
+	}
+
 	protected void fireTabAddedEvent(ResultTab tab)
 	{
 		// Guaranteed to be non-null.
@@ -519,7 +578,7 @@ public class SQLPanel extends JPanel
 				{
 					evt = new ResultTabEvent(_session, tab);
 				}
-				((IResultTabListener) listeners[i + 1]).resultTabAdded(evt);
+				((IResultTabListener)listeners[i + 1]).resultTabAdded(evt);
 			}
 		}
 	}
@@ -828,7 +887,7 @@ public class SQLPanel extends JPanel
 		_splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		_splitPane.setOneTouchExpandable(true);
 
-		replaceSQLEntryPanel(app.getSQLEntryPanelFactory().createSQLEntryPanel(_session));
+		installSQLEntryPanel(app.getSQLEntryPanelFactory().createSQLEntryPanel(_session));
 		_splitPane.add(_tabbedResultsPanel, JSplitPane.RIGHT);
 
 		add(_splitPane, BorderLayout.CENTER);

@@ -84,6 +84,14 @@ public interface ISQLEntryPanel
 	 */
 	void appendText(String sqlScript, boolean select);
 
+	/**
+	 * Replace the currently selected text in the SQL entry area
+	 * with the passed text.
+	 * 
+	 * @param	sqlScript	The script to be placed in the SQL entry area.
+	 */
+	void replaceSelection(String sqlScript);
+
 	String getSQLToBeExecuted();
 
 	int getSelectionStart();

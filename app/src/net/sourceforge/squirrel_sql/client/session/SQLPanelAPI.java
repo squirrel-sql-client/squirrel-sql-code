@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
+import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 /**
  * This class is the API through which plugins can work with the SQL Panel.
@@ -112,6 +113,50 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	}
 
 	/**
+	 * Add a listener for events in this SQL Panel.
+	 *
+	 * @param   lis	 Listener
+	 *
+	 * @throws	IllegalArgumentException
+	 *			If a null <TT>ISQLPanelListener</TT> passed.
+	 */
+	public synchronized void addSQLPanelListener(ISQLPanelListener lis)
+	{
+		if (lis == null)
+		{
+			throw new IllegalArgumentException("null ISQLPanelListener passed");
+		}
+		_session.getSessionSheet().getSQLPanel().addSQLPanelListener(lis);
+	}
+
+	/**
+	 * Remove a listener.
+	 *
+	 * @param	lis	Listener
+	 *
+	 * @throws	IllegalArgumentException
+	 *			If a null <TT>ISQLPanelListener</TT> passed.
+	 */
+	public synchronized void removeSQLPanelListener(ISQLPanelListener lis)
+	{
+		if (lis == null)
+		{
+			throw new IllegalArgumentException("null ISQLPanelListener passed");
+		}
+		_session.getSessionSheet().getSQLPanel().removeSQLPanelListener(lis);
+	}
+
+	/**
+	 * Replace the SQL entry area with the passed one.
+	 * 
+	 * @param	pnl	New SQL entry area.
+	 */
+	public synchronized void installSQLEntryPanel(ISQLEntryPanel pnl)
+	{
+		_session.getSessionSheet().installSQLEntryPanel(pnl);
+	}
+
+	/**
 	 * Return the entire contents of the SQL entry area.
 	 * 
 	 * @return	the entire contents of the SQL entry area.
@@ -119,6 +164,16 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	public synchronized String getEntireSQLScript()
 	{
 		return _session.getSessionSheet().getSQLEntryPanel().getText();
+	}
+
+	/**
+	 * Return the selected contents of the SQL entry area.
+	 * 
+	 * @return	the selected contents of the SQL entry area.
+	 */
+	public String getSelectedSQLScript()
+	{
+		return _session.getSessionSheet().getSQLEntryPanel().getSelectedText();
 	}
 
 	/**
@@ -177,6 +232,48 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	public synchronized void setEntireSQLScript(String sqlScript, boolean select)
 	{
 		_session.getSessionSheet().getSQLEntryPanel().setText(sqlScript, select);
+	}
+
+	/**
+	 * Replace the currently selected text in the SQL entry area
+	 * with the passed text.
+	 * 
+	 * @param	sqlScript	The script to be placed in the SQL entry area.
+	 * @param	select		If <TT>true</TT> then select the passed script
+	 * 						in the sql entry area.
+	 */
+	public void replaceSelectedSQLScript(String sqlScript, boolean select)
+	{
+		if (sqlScript == null)
+		{
+			sqlScript = "";
+		}
+		ISQLEntryPanel pnl = _session.getSessionSheet().getSQLEntryPanel();
+		int selStart = -1;
+		if (select)
+		{
+			selStart = pnl.getSelectionStart();
+		}
+		pnl.replaceSelection(sqlScript);
+		if (select)
+		{
+			int entireLen = getEntireSQLScript().length();
+			if (selStart == -1)
+			{
+				selStart = 0;
+			}
+			int selEnd = selStart + sqlScript.length() - 1;
+			if (selEnd > entireLen - 1)
+			{
+				selEnd = entireLen - 1;
+			}
+			if (selStart <= selEnd)
+			{
+				pnl.setSelectionStart(selStart);
+				pnl.setSelectionEnd(selEnd);
+			}
+		}
+		
 	}
 
 	/**

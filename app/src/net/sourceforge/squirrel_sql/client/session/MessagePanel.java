@@ -268,7 +268,7 @@ class MessagePanel extends JTextArea implements IMessageHandler
 				}
 				catch (BadLocationException ex)
 				{
-					s_log.error(ex);
+					s_log.error("Error clearing document", ex);
 				}
 				MessagePanel.this.setBackground(Color.white);
 			}

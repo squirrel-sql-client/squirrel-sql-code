@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -41,7 +41,9 @@ public class DataSetScrollingPanel extends JScrollPane
 		super();
 	}
 
-	public DataSetScrollingPanel(String destClassName, IDataSetUpdateableModel updateableModel) throws DataSetException
+	public DataSetScrollingPanel(String destClassName,
+									IDataSetUpdateableModel updateableModel)
+		throws DataSetException
 	{
 		super();
 		createUserInterface(destClassName, updateableModel);
@@ -99,6 +101,10 @@ public class DataSetScrollingPanel extends JScrollPane
 
 	private final static class UIUpdater implements Runnable
 	{
+		/** Logger for this class. */
+		private static final ILogger s_log =
+			LoggerController.createLogger(UIUpdater.class);
+
 		private final IDataSetViewer _viewer;
 		private final IDataSet _ds;
 
@@ -115,9 +121,9 @@ public class DataSetScrollingPanel extends JScrollPane
 			{
 				_viewer.show(_ds);
 			}
-			catch (DataSetException ex)
+			catch (Throwable th)
 			{
-				//TODO: Handle error.
+				s_log.error("Error processing a DataSet", th);
 			}
 		}
 	}

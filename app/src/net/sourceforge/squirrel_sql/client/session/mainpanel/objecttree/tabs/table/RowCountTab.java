@@ -39,7 +39,7 @@ public class RowCountTab extends BaseTableTab
 	private interface i18n
 	{
 		String TITLE = "Row Count";
-		String HINT = "Number if rows in table";
+		String HINT = "Number of rows in table";
 	}
 
 	/**

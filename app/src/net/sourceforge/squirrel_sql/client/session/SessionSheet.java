@@ -163,9 +163,9 @@ public class SessionSheet extends BaseSheet
 		_mainTabPane.updateState();
 	}
 
-	public void replaceSQLEntryPanel(ISQLEntryPanel pnl)
+	void installSQLEntryPanel(ISQLEntryPanel pnl)
 	{
-		_mainTabPane.getSQLPanel().replaceSQLEntryPanel(pnl);
+		_mainTabPane.getSQLPanel().installSQLEntryPanel(pnl);
 	}
 
 	ObjectTreePanel getObjectTreePanel()
