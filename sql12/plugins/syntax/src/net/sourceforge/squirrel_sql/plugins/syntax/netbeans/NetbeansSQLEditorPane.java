@@ -24,7 +24,6 @@ import java.awt.event.MouseEvent;
 
 public class NetbeansSQLEditorPane extends JEditorPane
 {
-   private SQLKit _sqlKit;
    private boolean _parsingInitialized;
    private ISession _session;
    private ErrorInfo[] _currentErrorInfos = new ErrorInfo[0];
@@ -56,8 +55,7 @@ public class NetbeansSQLEditorPane extends JEditorPane
 
       //////////////////////////////////////////////////////////////////////////////////////////
       //Needs to be done at this moment. That's why we can't call updateFromPreferences() here.
-      _sqlKit = new SQLKit(syntaxFactory);
-      setEditorKit(_sqlKit);
+      setEditorKit(new SQLKit(syntaxFactory));
       //
       //////////////////////////////////////////////////////////////////////////////////////////
 
