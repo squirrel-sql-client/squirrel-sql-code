@@ -77,11 +77,12 @@ public class SessionScriptCache {
             logger.showMessage(Logger.ILogTypes.ERROR, "Error loading aliases file: " + _scriptsFileName);
             logger.showMessage(Logger.ILogTypes.ERROR, ex);
         }
-        try {
-SessionScript ss = new SessionScript();
-ss.setScript("set dateformat(\"*DMY\")");
-_cache.add(ss);
-        } catch(Exception ignore) {}
+// Create dummy script for testing purposes.
+//        try {
+//SessionScript ss = new SessionScript();
+//ss.setScript("set dateformat(\"*DMY\")");
+//_cache.add(ss);
+//        } catch(Exception ignore) {}
     }
 
     /**
