@@ -28,6 +28,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -124,6 +126,7 @@ public class SessionObjectTreePropertiesPanel
 		interface i18n
 		{
 			String LIMIT_ROWS_CONTENTS = "Contents - Limit rows";
+			String SCHEMA_PREFIX = "Limit Schema Objects using these comma-delimited prefixes:";
 			String SHOW_ROW_COUNT = "Show Row Count for Tables (can slow application)";
 			String OBJECT_TREE = "Object Tree";
 		}
@@ -131,6 +134,7 @@ public class SessionObjectTreePropertiesPanel
 		private IntegerField _contentsNbrRowsToShowField = new IntegerField(5);
 		private JCheckBox _contentsLimitRowsChk = new JCheckBox(i18n.LIMIT_ROWS_CONTENTS);
 		private JCheckBox _showRowCountChk = new JCheckBox(i18n.SHOW_ROW_COUNT);
+		private JTextField _schemaPrefixField = new JTextField(20);
 
 		/**
 		 * This object will update the status of the GUI controls as the user
@@ -149,6 +153,7 @@ public class SessionObjectTreePropertiesPanel
 			_contentsNbrRowsToShowField.setInt(props.getContentsNbrRowsToShow());
 			_contentsLimitRowsChk.setSelected(props.getContentsLimitRows());
 			_showRowCountChk.setSelected(props.getShowRowCount());
+			_schemaPrefixField.setText(props.getSchemaPrefixList());
 
 			updateControlStatus();
 		}
@@ -158,6 +163,7 @@ public class SessionObjectTreePropertiesPanel
 			props.setContentsNbrRowsToShow(_contentsNbrRowsToShowField.getInt());
 			props.setContentsLimitRows(_contentsLimitRowsChk.isSelected());
 			props.setShowRowCount(_showRowCountChk.isSelected());
+			props.setSchemaPrefixList(_schemaPrefixField.getText());
 		}
 
 		private void updateControlStatus()
@@ -176,6 +182,9 @@ public class SessionObjectTreePropertiesPanel
 			gbc.gridx = 0;
 			gbc.gridy = 0;
 			add(createSQLPanel(), gbc);
+
+			++gbc.gridy;
+			add(createFilterPanel(), gbc);
 		}
 
 		private JPanel createSQLPanel()
@@ -206,6 +215,25 @@ public class SessionObjectTreePropertiesPanel
 			++gbc.gridx;
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			pnl.add(new JLabel("rows"), gbc);
+
+			return pnl;
+		}
+		private JPanel createFilterPanel()
+		{
+			JPanel pnl = new JPanel(new GridBagLayout());
+			pnl.setBorder(BorderFactory.createTitledBorder("Filters"));
+
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = GridBagConstraints.HORIZONTAL;
+			gbc.anchor = GridBagConstraints.WEST;
+			gbc.insets = new Insets(4, 4, 4, 4);
+			gbc.weightx = 1.0;
+
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			pnl.add(new JLabel(i18n.SCHEMA_PREFIX, SwingConstants.RIGHT));
+			++gbc.gridy;
+			pnl.add(_schemaPrefixField, gbc);
 
 			return pnl;
 		}

@@ -23,7 +23,7 @@ import java.beans.SimpleBeanInfo;
 /**
  * This is the <CODE>BeanInfo</CODE> class for <CODE>SessionProperties</CODE>.
  *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 {
@@ -39,7 +39,7 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 		super();
 		if (s_dscrs == null)
 		{
-			s_dscrs = new PropertyDescriptor[23];
+			s_dscrs = new PropertyDescriptor[24];
 			s_dscrs[0] = new PropertyDescriptor(IPropNames.AUTO_COMMIT,
 									CLAZZ, "getAutoCommit", "setAutoCommit");
 			s_dscrs[1] = new PropertyDescriptor(IPropNames.COMMIT_ON_CLOSING_CONNECTION,
@@ -86,6 +86,8 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 									CLAZZ, "getTableContentsOutputClassName", "setTableContentsOutputClassName");
 			s_dscrs[22] = new PropertyDescriptor(IPropNames.ABORT_ON_ERROR,
 									CLAZZ, "getAbortOnError", "setAbortOnError");
+			s_dscrs[23] = new PropertyDescriptor(IPropNames.SCHEMA_PREFIX_LIST,
+									CLAZZ, "getSchemaPrefixList", "setSchemaPrefixList");
 		}
 	}
 
