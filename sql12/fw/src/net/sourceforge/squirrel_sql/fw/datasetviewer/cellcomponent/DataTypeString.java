@@ -436,7 +436,8 @@ public class DataTypeString
 
 	 	 
 	 /**
-	  * Read a file and construct a valid object from its contents.
+	  * Construct an appropriate external representation of the object
+	  * and write it to a file.
 	  * Errors are returned by throwing an IOException containing the
 	  * cause of the problem as its message.
 	  * <P>
