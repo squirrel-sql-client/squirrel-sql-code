@@ -55,7 +55,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.client.gui.ScrollableDesktopPane;
-import net.sourceforge.squirrel_sql.client.gui.WindowManager;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.MessagePanel;
@@ -474,7 +473,7 @@ public class MainFrame extends JFrame //BaseMDIParentFrame
 			setLocation(new Point(10, 10));
 		}
 
-		final WindowManager mgr = _app.getWindowManager();
+//		final WindowManager mgr = _app.getWindowManager();
 
 		// JASON: Move functionality to WindowManager
 //		DriversListInternalFrame dlif = mgr.getDriversListInternalFrame();

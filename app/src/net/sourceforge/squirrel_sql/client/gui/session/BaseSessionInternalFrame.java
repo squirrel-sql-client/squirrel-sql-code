@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.session;
+package net.sourceforge.squirrel_sql.client.gui.session;
 /*
  * Copyright (C) 2003-2004 Jason Height
  * jmheight@users.sourceforge.net
@@ -21,6 +21,7 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
  * Base functionality for Squirrels internal frames that are attached directly
  * to a session.
@@ -61,8 +62,7 @@ public class BaseSessionInternalFrame extends BaseInternalFrame
 	 * @param	title		Title for internal frame.
 	 * @param	resizable	<TT>true</TT> if frame can be resized.
 	 */
-	public BaseSessionInternalFrame(ISession session, String title,
-									boolean resizable)
+	public BaseSessionInternalFrame(ISession session, String title, boolean resizable)
 	{
 		super(title, resizable);
 		setupSheet(session);
@@ -77,8 +77,8 @@ public class BaseSessionInternalFrame extends BaseInternalFrame
 	 * @param	resizable	<TT>true</TT> if frame can be resized.
 	 * @param	closeable	<TT>true</TT> if frame can be closed.
 	 */
-	public BaseSessionInternalFrame(ISession session, String title,
-								boolean resizable, boolean closable)
+	public BaseSessionInternalFrame(ISession session, String title, boolean resizable,
+		boolean closable)
 	{
 		super(title, resizable, closable);
 		setupSheet(session);
@@ -93,9 +93,8 @@ public class BaseSessionInternalFrame extends BaseInternalFrame
 	 * @param	closeable	<TT>true</TT> if frame can be closed.
 	 * @param	maximizable	<TT>true</TT> if frame can be maximized.
 	 */
-	public BaseSessionInternalFrame(ISession session, String title,
-							boolean resizable, boolean closable,
-							boolean maximizable)
+	public BaseSessionInternalFrame(ISession session, String title, boolean resizable,
+			boolean closable, boolean maximizable)
 	{
 		super(title, resizable, closable, maximizable);
 		setupSheet(session);
@@ -112,9 +111,8 @@ public class BaseSessionInternalFrame extends BaseInternalFrame
 	 * @param	maximizable	<TT>true</TT> if frame can be maximized.
 	 * @param	iconifiable	<TT>true</TT> if frame can be iconified.
 	 */
-	public BaseSessionInternalFrame(ISession session, String title,
-							boolean resizable, boolean closable,
-							boolean maximizable, boolean iconifiable)
+	public BaseSessionInternalFrame(ISession session, String title, boolean resizable,
+			boolean closable, boolean maximizable, boolean iconifiable)
 	{
 		super(title, resizable, closable, maximizable, iconifiable);
 		setupSheet(session);

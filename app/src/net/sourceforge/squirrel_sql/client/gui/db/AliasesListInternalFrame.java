@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -59,14 +59,13 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
 	private UserInterfaceFactory _uiFactory;
 
 	/**
-	 * Default ctor.
+	 * ctor.
 	 */
-	public AliasesListInternalFrame(IApplication app)
+	public AliasesListInternalFrame(IApplication app, AliasesList list)
 	{
-		super(new UserInterfaceFactory(app));
+		super(new UserInterfaceFactory(app, list));
 		_app = app;
-		_uiFactory = (UserInterfaceFactory) getUserInterfaceFactory();
-//		_uiFactory.setAliasesListInternalFrame(this);
+		_uiFactory = (UserInterfaceFactory)getUserInterfaceFactory();
 
 		// Enable/disable actions depending on whether an item is selected in
 		// the list.
@@ -105,45 +104,49 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
 		return _uiFactory._aliasesList.getSelectedIndex();
 	}
 
+	public IAliasesList getAliasesList()
+	{
+		return _uiFactory._aliasesList;
+	}
+
 	private static final class UserInterfaceFactory
 		implements BaseListInternalFrame.IUserInterfaceFactory
 	{
 		private IApplication _app;
-		private AliasesList _aliasesList;
+		private final AliasesList _aliasesList;
 		private ToolBar _tb;
 		private BasePopupMenu _pm = new BasePopupMenu();
-//		private AliasesListInternalFrame _tw;
-		private ConnectToAliasAction _connectToAliasAction;
-		private CopyAliasAction _copyAliasAction;
-		private CreateAliasAction _createAliasAction;
-		private DeleteAliasAction _deleteAliasAction;
-		private ModifyAliasAction _modifyAliasAction;
 
-		UserInterfaceFactory(IApplication app) throws IllegalArgumentException
+		UserInterfaceFactory(IApplication app, AliasesList list)
+				throws IllegalArgumentException
 		{
 			super();
 			if (app == null)
 			{
-				throw new IllegalArgumentException("Null IApplication passed");
+				throw new IllegalArgumentException("IApplication == null");
 			}
-			_app = app;
-			_aliasesList = new AliasesList(app);
+			if (list == null)
+			{
+				throw new IllegalArgumentException("AliasesList == null");
+			}
 
-			preloadActions();
+			_app = app;
+			_aliasesList = list;
 
 			if (_app.getSquirrelPreferences().getShowAliasesToolBar())
 			{
 				createToolBar();
 			}
 
-			_pm.add(_connectToAliasAction);
+			final ActionCollection actions = _app.getActionCollection();
+			_pm.add(actions.get(ConnectToAliasAction.class));
 			_pm.addSeparator();
-			_pm.add(_createAliasAction);
+			_pm.add(actions.get(CreateAliasAction.class));
 			_pm.addSeparator();
-			_pm.add(_modifyAliasAction);
-			_pm.add(_copyAliasAction);
+			_pm.add(actions.get(ModifyAliasAction.class));
+			_pm.add(actions.get(CopyAliasAction.class));
 			_pm.addSeparator();
-			_pm.add(_deleteAliasAction);
+			_pm.add(actions.get(DeleteAliasAction.class));
 			_pm.addSeparator();
 		}
 
@@ -198,25 +201,12 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
 				// at javax.swing.JList.getSelectedValue(JList.java:1397)
 				// at net.sourceforge.squirrel_sql.mainframe.AliasesList.getSelectedAlias(AliasesList.java:77)
 			}
-			_connectToAliasAction.setEnabled(enable);
-			_copyAliasAction.setEnabled(enable);
-			_deleteAliasAction.setEnabled(enable);
-			_modifyAliasAction.setEnabled(enable);
-		}
 
-//		void setAliasesListInternalFrame(AliasesListInternalFrame tw)
-//		{
-//			_tw = tw;
-//		}
-
-		private void preloadActions()
-		{
-			ActionCollection actions = _app.getActionCollection();
-			actions.add(_modifyAliasAction = new ModifyAliasAction(_app, _aliasesList));
-			actions.add(_deleteAliasAction = new DeleteAliasAction(_app, _aliasesList));
-			actions.add(_copyAliasAction = new CopyAliasAction(_app, _aliasesList));
-			actions.add(_connectToAliasAction = new ConnectToAliasAction(_app, _aliasesList));
-			actions.add(_createAliasAction = new CreateAliasAction(_app));
+			final ActionCollection actions = _app.getActionCollection();
+			actions.get(ConnectToAliasAction.class).setEnabled(enable);
+			actions.get(CopyAliasAction.class).setEnabled(enable);
+			actions.get(DeleteAliasAction.class).setEnabled(enable);
+			actions.get(ModifyAliasAction.class).setEnabled(enable);
 		}
 
 		private void createToolBar()
@@ -229,12 +219,13 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
 			lbl.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
 			_tb.add(lbl, 0);
 
-			_tb.add(_connectToAliasAction);
+			final ActionCollection actions = _app.getActionCollection();
+			_tb.add(actions.get(ConnectToAliasAction.class));
 			_tb.addSeparator();
-			_tb.add(_createAliasAction);
-			_tb.add(_modifyAliasAction);
-			_tb.add(_copyAliasAction);
-			_tb.add(_deleteAliasAction);
+			_tb.add(actions.get(CreateAliasAction.class));
+			_tb.add(actions.get(ModifyAliasAction.class));
+			_tb.add(actions.get(CopyAliasAction.class));
+			_tb.add(actions.get(DeleteAliasAction.class));
 		}
 	}
 }

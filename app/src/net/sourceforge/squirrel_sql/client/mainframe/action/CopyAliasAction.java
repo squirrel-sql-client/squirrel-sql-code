@@ -26,8 +26,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.gui.db.AliasesList;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasesListInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.db.IAliasesList;
 /**
  * This <CODE>Action</CODE> allows the user to copy an <TT>ISQLAlias</TT>
  * and maintain the newly copied one.
@@ -43,7 +43,7 @@ public class CopyAliasAction extends SquirrelAction
 	/**
 	 * List of all the users aliases.
 	 */
-	private final AliasesList _aliases;
+	private final IAliasesList _aliases;
 
 	/**
 	 * Ctor specifying the list of aliases.
@@ -54,7 +54,7 @@ public class CopyAliasAction extends SquirrelAction
 	 * @throws	IllegalArgumentException
 	 *			thrown if a <TT>null</TT> <TT>AliasesList</TT> passed.
 	 */
-	public CopyAliasAction(IApplication app, AliasesList list)
+	public CopyAliasAction(IApplication app, IAliasesList list)
 	{
 		super(app);
 		if (list == null)

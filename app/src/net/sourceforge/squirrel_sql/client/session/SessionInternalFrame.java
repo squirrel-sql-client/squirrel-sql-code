@@ -30,6 +30,7 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
 
 public class SessionInternalFrame extends BaseSessionInternalFrame
 					implements ISQLInternalFrame, IObjectTreeInternalFrame

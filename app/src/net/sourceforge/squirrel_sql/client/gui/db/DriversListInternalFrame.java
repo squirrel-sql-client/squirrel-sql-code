@@ -65,9 +65,9 @@ public class DriversListInternalFrame extends BaseListInternalFrame
 	/**
 	 * Default ctor.
 	 */
-	public DriversListInternalFrame(IApplication app)
+	public DriversListInternalFrame(IApplication app, DriversList list)
 	{
-		super(new UserInterfaceFactory(app));
+		super(new UserInterfaceFactory(app, list));
 		_app = app;
 		_uiFactory = (UserInterfaceFactory)getUserInterfaceFactory();
 		_uiFactory.setDriversListInternalFrame(this);
@@ -104,25 +104,30 @@ public class DriversListInternalFrame extends BaseListInternalFrame
 		private ToolBar _tb;
 		private BasePopupMenu _pm = new BasePopupMenu();
 		private DriversListInternalFrame _tw;
-		private CopyDriverAction _copyDriverAction;
-		private CreateDriverAction _createDriverAction;
-		private DeleteDriverAction _deleteDriverAction;
-		private ModifyDriverAction _modifyDriverAction;
 
-		UserInterfaceFactory(IApplication app)
+		UserInterfaceFactory(IApplication app, DriversList list)
 		{
 			super();
+			if (app == null)
+			{
+				throw new IllegalArgumentException("IApplication == null");
+			}
+			if (list == null)
+			{
+				throw new IllegalArgumentException("DriversList == null");
+			}
+
 			_app = app;
-			_driversList = new DriversList(app);
+//			_driversList = new DriversList(app);
+			_driversList = list;
 
-			preloadActions(app);
-
-			_pm.add(_createDriverAction);
+			final ActionCollection actions = app.getActionCollection();
+			_pm.add(actions.get(CreateDriverAction.class));
 			_pm.addSeparator();
-			_pm.add(_modifyDriverAction);
-			_pm.add(_copyDriverAction);
+			_pm.add(actions.get(ModifyDriverAction.class));
+			_pm.add(actions.get(CopyDriverAction.class));
 			_pm.addSeparator();
-			_pm.add(_deleteDriverAction);
+			_pm.add(actions.get(DeleteDriverAction.class));
 			_pm.addSeparator();
 		}
 
@@ -178,9 +183,11 @@ public class DriversListInternalFrame extends BaseListInternalFrame
 				// at javax.swing.JList.getSelectedValue(JList.java:1397)
 				// at net.sourceforge.squirrel_sql.client.mainframe.DriversList.getSelectedDriver(DriversList.java:77)
 			}
-			_copyDriverAction.setEnabled(enable);
-			_deleteDriverAction.setEnabled(enable);
-			_modifyDriverAction.setEnabled(enable);
+
+			final ActionCollection actions = _app.getActionCollection();
+			actions.get(CopyDriverAction.class).setEnabled(enable);
+			actions.get(DeleteDriverAction.class).setEnabled(enable);
+			actions.get(ModifyDriverAction.class).setEnabled(enable);
 		}
 
 		void setDriversListInternalFrame(DriversListInternalFrame tw)
@@ -207,19 +214,8 @@ public class DriversListInternalFrame extends BaseListInternalFrame
 			}
 		}
 
-		private void preloadActions(IApplication app)
-		{
-			ActionCollection actions = app.getActionCollection();
-			actions.add(_modifyDriverAction = new ModifyDriverAction(_app, _driversList));
-			actions.add(_deleteDriverAction = new DeleteDriverAction(_app, _driversList));
-			actions.add(_copyDriverAction = new CopyDriverAction(_app, _driversList));
-			actions.add(_createDriverAction = new CreateDriverAction(_app));
-		}
-
 		private void createToolBar()
 		{
-			final ActionCollection actions = _app.getActionCollection();
-
 			_tb = new ToolBar();
 			_tb.setUseRolloverButtons(true);
 			_tb.setFloatable(false);
@@ -228,10 +224,11 @@ public class DriversListInternalFrame extends BaseListInternalFrame
 			lbl.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
 			_tb.add(lbl, 0);
 
-			_tb.add(_createDriverAction);
-			_tb.add(_modifyDriverAction);
-			_tb.add(_copyDriverAction);
-			_tb.add(_deleteDriverAction);
+			final ActionCollection actions = _app.getActionCollection();
+			_tb.add(actions.get(CreateDriverAction.class));
+			_tb.add(actions.get(ModifyDriverAction.class));
+			_tb.add(actions.get(CopyDriverAction.class));
+			_tb.add(actions.get(DeleteDriverAction.class));
 			_tb.addSeparator();
 			_tb.add(actions.get(InstallDefaultDriversAction.class));
 			_tb.addSeparator();
