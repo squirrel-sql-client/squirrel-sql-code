@@ -81,11 +81,28 @@ public class CreateTableScriptCommand implements ICommand {
                             //						int iType = rsColumns.getInt()
                             String sType = rsColumns.getString(6);
                             sbScript.append(sType);
-                            if (sType.toLowerCase().indexOf("char") != -1) {
+                            String sLower = sType.toLowerCase();
+							if (sLower.indexOf("char") != -1) {
                                 sbScript.append("(");
                                 sbScript.append(rsColumns.getString(7));
                                 sbScript.append(")");
                             }
+                         else if(sLower.equals("numeric"))
+                          	{
+                                sbScript.append("(");
+                                sbScript.append(rsColumns.getString(7));
+                                sbScript.append(",");
+                                sbScript.append(rsColumns.getString(9));
+                                sbScript.append(")");
+                          	}
+                         else if(sLower.equals("decimal"))
+                          	{
+                                sbScript.append("(");
+                                sbScript.append(rsColumns.getString(7));
+                                sbScript.append(",");
+                                sbScript.append(rsColumns.getString(9));
+                                sbScript.append(")");
+                          	}
                             if (pks.size() == 1 && pks.get(0).equals(sColumnName)) {
                                 sbScript.append(" PRIMARY KEY");
                             }
