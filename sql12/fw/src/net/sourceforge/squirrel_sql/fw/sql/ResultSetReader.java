@@ -290,36 +290,9 @@ public class ResultSetReader
 						break;
 
 					case Types.BINARY:
-						if (_largeObjInfo.getReadBinary())
-						{
-							row[i] = _rs.getString(idx);
-						}
-						else
-						{
-							row[i] = "<Binary>";
-						}
-						break;
-
 					case Types.VARBINARY:
-						if (_largeObjInfo.getReadVarBinary())
-						{
-							row[i] = _rs.getString(idx);
-						}
-						else
-						{
-							row[i] = "<VarBinary>";
-						}
-						break;
-
 					case Types.LONGVARBINARY:
-						if (_largeObjInfo.getReadLongVarBinary())
-						{
-							row[i] = _rs.getString(idx);
-						}
-						else
-						{
-							row[i] = "<LongVarBinary>";
-						}
+						row[i] = _rs.getString(idx);
 						break;
 
 					case Types.BLOB:
