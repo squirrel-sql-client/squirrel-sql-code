@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
+import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
 /**
@@ -81,4 +82,41 @@ public interface ISession extends IHasIdentifier {
     void setSQLScript(String sqlScript);
 
     void setSessionSheet(SessionSheet child);
+    SessionSheet getSessionSheet();
+    /**
+     * Add a listener listening for SQL Execution.
+     *
+     * @param   lis     Listener
+     *
+     * @throws  IllegalArgumentException
+     *              If a null <TT>ISQLExecutionListener</TT> passed.
+     */
+    public void addSQLExecutionListener(ISQLExecutionListener lis)
+                    throws IllegalArgumentException;
+
+    /**
+     * Remove an SQL execution listener.
+     *
+     * @param   lis     Listener
+     *
+     * @throws  IllegalArgumentException
+     *              If a null <TT>ISQLExecutionListener</TT> passed.
+     */
+    public void removeSQLExecutionListener(ISQLExecutionListener lis)
+                    throws IllegalArgumentException;
+
+    /**
+     * Execute the current SQL.
+     */
+    void executeCurrentSQL();
+
+    /**
+     * Commit the current SQL transaction.
+     */
+    void commit();
+
+    /**
+     * Rollback the current SQL transaction.
+     */
+    void rollback();
 }

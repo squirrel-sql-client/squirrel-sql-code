@@ -26,26 +26,26 @@ import net.sourceforge.squirrel_sql.fw.util.Logger;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
-import net.sourceforge.squirrel_sql.client.session.SessionSheet;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 
-public class RefreshTreeAction extends SquirrelAction implements ISessionSheetAction {
+public class RefreshTreeAction extends SquirrelAction implements ISessionAction {
 
-    private SessionSheet _sheet;
+    private ISession _session;
 
     public RefreshTreeAction(IApplication app) {
         super(app);
     }
 
-    public void setSessionSheet(SessionSheet sheet) {
-        _sheet = sheet;
+    public void setSession(ISession session) {
+        _session = session;
     }
 
     public void actionPerformed(ActionEvent evt) {
-        if (_sheet != null) {
+        if (_session != null) {
             CursorChanger cursorChg = new CursorChanger(MainFrame.getInstance());
             cursorChg.show();
             try {
-                _sheet.refreshTree();
+                _session.getSessionSheet().refreshTree();
             } catch (BaseSQLException ex) {
                 getApplication().getLogger().showMessage(Logger.ILogTypes.ERROR,
                                     "Error occured refreshing the objects tree");

@@ -17,8 +17,8 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import net.sourceforge.squirrel_sql.client.session.SessionSheet;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 
-public interface ISessionSheetAction {
-    void setSessionSheet(SessionSheet sheet);
+public interface ISessionAction {
+    void setSession(ISession session);
 }

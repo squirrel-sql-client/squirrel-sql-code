@@ -31,6 +31,7 @@ import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 
@@ -195,6 +196,72 @@ class Session implements ISession {
 
     public void setSessionSheet(SessionSheet child) {
         _sessionSheet = child;
+    }
+
+    public SessionSheet getSessionSheet() {
+        return _sessionSheet;
+    }
+
+    /**
+     * Execute the current SQL.
+     */
+    public void executeCurrentSQL() {
+        _sessionSheet.executeCurrentSQL();
+    }
+
+    /**
+     * Commit the current SQL transaction.
+     */
+    public void commit() {
+        try {
+            getSQLConnection().commit();
+            getMessageHandler().showMessage("Commit completed normally."); // i18n
+        } catch (Exception ex) {
+            getMessageHandler().showMessage(ex);
+        }
+    }
+
+    /**
+     * Rollback the current SQL transaction.
+     */
+    public void rollback() {
+        try {
+            getSQLConnection().rollback();
+            getMessageHandler().showMessage("Rollback completed normally."); // i18n
+        } catch (Exception ex) {
+            getMessageHandler().showMessage(ex);
+        }
+    }
+    /**
+     * Add a listener listening for SQL Execution.
+     *
+     * @param   lis     Listener
+     *
+     * @throws  IllegalArgumentException
+     *              If a null <TT>ISQLExecutionListener</TT> passed.
+     */
+    public void addSQLExecutionListener(ISQLExecutionListener lis)
+            throws IllegalArgumentException {
+        if (lis == null) {
+            throw new IllegalArgumentException("null ISQLExecutionListener passed");
+        }
+        _sessionSheet.getSQLPanel().addSQLExecutionListener(lis);
+    }
+
+    /**
+     * Remove an SQL execution listener.
+     *
+     * @param   lis     Listener
+     *
+     * @throws  IllegalArgumentException
+     *              If a null <TT>ISQLExecutionListener</TT> passed.
+     */
+    public void removeSQLExecutionListener(ISQLExecutionListener lis)
+            throws IllegalArgumentException {
+        if (lis == null) {
+            throw new IllegalArgumentException("null ISQLExecutionListener passed");
+        }
+        _sessionSheet.getSQLPanel().removeSQLExecutionListener(lis);
     }
 }
 

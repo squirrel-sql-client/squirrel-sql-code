@@ -118,11 +118,7 @@ public class SessionSheet extends JInternalFrame {
     public boolean hasConnection() {
         return _session.getSQLConnection() != null;
     }
-
-    public void executeCurrentSql() {
-        _sqlPnl.executeCurrentSql();
-    }
-
+/*
     public void commit() {
         _sqlPnl.commit();
     }
@@ -130,7 +126,7 @@ public class SessionSheet extends JInternalFrame {
     public void rollback() {
         _sqlPnl.rollback();
     }
-
+*/
     public ISession getSession() {
         return _session;
     }
@@ -174,12 +170,20 @@ public class SessionSheet extends JInternalFrame {
         }
     }
 
-    public String getSQLScript() {
+    String getSQLScript() {
         return _sqlPnl.getSQLScript();
     }
 
-    public void setSQLScript(String sqlScript) {
+    void setSQLScript(String sqlScript) {
         _sqlPnl.setSQLScript(sqlScript);
+    }
+
+    SQLPanel getSQLPanel() {
+        return _sqlPnl;
+    }
+
+    void executeCurrentSQL() {
+        _sqlPnl.executeCurrentSQL();
     }
 
     private static String createTitle(ISession session) {

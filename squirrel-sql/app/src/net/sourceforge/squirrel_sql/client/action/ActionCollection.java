@@ -30,6 +30,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.mainframe.action.*;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionSheet;
 import net.sourceforge.squirrel_sql.client.session.action.*;
 import net.sourceforge.squirrel_sql.fw.util.Logger;
@@ -170,11 +171,14 @@ public final class ActionCollection {
      * @param   frame   The <TT>JInternalFrame</TT> activated.
      */
     public synchronized void internalFrameActivated(JInternalFrame frame) {
-        final boolean isSessionSheet = frame instanceof SessionSheet;
+        ISession session = null;
+        if (frame instanceof SessionSheet) {
+            session = ((SessionSheet)frame).getSession();
+        }
         for (Iterator it = actions(); it.hasNext();) {
             final Action act = (Action)it.next();
-            if (act instanceof ISessionSheetAction) {
-                ((ISessionSheetAction)act).setSessionSheet(isSessionSheet ? (SessionSheet)frame : null);
+            if (act instanceof ISessionAction) {
+                ((ISessionAction)act).setSession(session);
             }
         }
     }

@@ -21,22 +21,22 @@ import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.SessionSheet;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 
-public class SessionPropertiesAction extends SquirrelAction implements ISessionSheetAction {
+public class SessionPropertiesAction extends SquirrelAction implements ISessionAction {
 
-    private SessionSheet _sheet;
+    private ISession _session;
 
     public SessionPropertiesAction(IApplication app) {
         super(app);
     }
 
-    public void setSessionSheet(SessionSheet sheet) {
-        _sheet = sheet;
+    public void setSession(ISession session) {
+        _session = session;
     }
     public void actionPerformed(ActionEvent evt) {
-        if (_sheet != null) {
-            new SessionPropertiesCommand(this.getParentFrame(evt), _sheet.getSession()).execute();
+        if (_session != null) {
+            new SessionPropertiesCommand(this.getParentFrame(evt), _session).execute();
         }
     }
 }

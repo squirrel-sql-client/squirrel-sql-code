@@ -33,12 +33,12 @@ import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
+import javax.swing.JCheckBox;import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -66,9 +66,15 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
+import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.util.Logger;
 
+/**
+ * This is the panel where SQL scripts can be entered and executed.
+ *
+ * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ */
 class SQLPanel extends JPanel {
     /** Current session. */
     private ISession _session;
@@ -98,6 +104,7 @@ class SQLPanel extends JPanel {
     private boolean _hasBeenVisible = false;
     private JSplitPane _splitPane;
 
+    private ArrayList _sqlExecutionListeners = new ArrayList(); 
     /**
      * Ctor.
      *
@@ -116,6 +123,38 @@ class SQLPanel extends JPanel {
         createUserInterface();
 
         propertiesHaveChanged(null);
+    }
+
+    /**
+     * Add a listener listening for SQL Execution.
+     *
+     * @param   lis     Listener
+     *
+     * @throws  IllegalArgumentException
+     *              If a null <TT>ISQLExecutionListener</TT> passed.
+     */
+    public synchronized void addSQLExecutionListener(ISQLExecutionListener lis)
+            throws IllegalArgumentException {
+        if (lis == null) {
+            throw new IllegalArgumentException("null ISQLExecutionListener passed");
+        }
+        _sqlExecutionListeners.add(lis);
+    }
+
+    /**
+     * Remove an SQL execution listener.
+     *
+     * @param   lis     Listener
+     *
+     * @throws  IllegalArgumentException
+     *              If a null <TT>ISQLExecutionListener</TT> passed.
+     */
+    public synchronized void removeSQLExecutionListener(ISQLExecutionListener lis)
+            throws IllegalArgumentException {
+        if (lis == null) {
+            throw new IllegalArgumentException("null ISQLExecutionListener passed");
+        }
+        _sqlExecutionListeners.remove(lis);
     }
 
     /**
@@ -145,39 +184,21 @@ class SQLPanel extends JPanel {
     /**
      * Commit the current SQL transaction.
      */
-    public void commit() {
-        try {
-            // Why clear??
-//          for (int i = 0; i < _usedTabs.size(); i++) {
-//              ((ResultTab)_usedTabs.get(i)).clear();
-//          }
-            _session.getSQLConnection().commit();
-            _session.getMessageHandler().showMessage("Commit completed normally."); // i18n
-        } catch (Exception ex) {
-            _session.getMessageHandler().showMessage(ex);
-        }
-    }
+//    public void commit() {
+//        _session.commit();
+//    }
 
     /**
      * Rollback the current SQL transaction.
      */
-    public void rollback() {
-        try {
-            // Why clear??
-//          for (int i = 0; i < _usedTabs.size(); i++) {
-//              ((ResultTab)_usedTabs.get(i)).clear();
-//          }
-            _session.getSQLConnection().rollback();
-            _session.getMessageHandler().showMessage("Rollback completed normally."); // i18n
-        } catch (Exception ex) {
-            _session.getMessageHandler().showMessage(ex);
-        }
-    }
+//    public void rollback() {
+//        _session.rollBack();
+//    }
 
     /**
      * Execute the current SQL.
      */
-    public void executeCurrentSql() {
+    void executeCurrentSQL() {
         try {
             String sql = _sqlEntry.getSelectedText();
             if (sql == null || sql.length() == 0) {
@@ -206,7 +227,6 @@ class SQLPanel extends JPanel {
             SessionProperties props = _session.getProperties();
             final Statement stmt = _session.getSQLConnection().createStatement();
             try {
-//              String sToken = sql;
                 if (props.getSqlLimitRows()) {
                     stmt.setMaxRows(props.getSqlNbrRowsToShow());
                 }
@@ -217,42 +237,45 @@ class SQLPanel extends JPanel {
                     _tabbedResultsPanel.removeAll();
                 }
 
+                // Allow plugins the opportunity to modify the entire
+                // SQL script prior to it being executed.
+                sql = modifyEntireScript(sql);
+                
                 QueryTokenizer qt = new QueryTokenizer(sql, props.getSqlStatementSeparatorChar());
                 while (qt.hasQuery()) {
-                    String sToken = qt.nextQuery();
+                    String qrySql = qt.nextQuery();
+
+                    // Allow plugins the opportunity to modify this
+                    // SQL statement prior to it being executed.
+                    qrySql = modifyIndividualScript(qrySql);
+
                     _sqlComboItemListener.stopListening();
                     try {
-                        _sqlCombo.addItem(new SqlComboItem(sToken));
+                        _sqlCombo.addItem(new SqlComboItem(qrySql));
                     } finally {
                         _sqlComboItemListener.startListening();
                     }
 
-                    if (stmt.execute(sToken)) {
+                    if (stmt.execute(qrySql)) {
                         ResultSet rs = stmt.getResultSet();
                         if (rs != null) {
                             try {
                                 ResultTab tab = null;
-                                //if (props.getSqlReuseOutputTabs()) {
                                     if (_availableTabs.size() > 0) {
                                         tab = (ResultTab)_availableTabs.remove(0);
                                     }
-                                //} else {
-                                    //if (_usedTabs.size() > 0) {
-                                    //  tab = (ResultTab)_usedTabs.get(0);
-                                    //}
-                                //}
                                 if (tab == null) {
                                     tab = new ResultTab(_session,this);
                                     _usedTabs.add(tab);
                                 }
-                                sToken = Utilities.cleanString(sToken);
-                                tab.show(new ResultSetDataSet(rs),sToken);
-                                String sTitle = sToken;
+                                qrySql = Utilities.cleanString(qrySql);
+                                tab.show(new ResultSetDataSet(rs),qrySql);
+                                String sTitle = qrySql;
                                 if (sTitle.length() > 10) {
                                     sTitle = sTitle.substring(0,15);
                                 }
                                 if (_tabbedResultsPanel.indexOfComponent(tab) == -1) {
-                                    _tabbedResultsPanel.addTab(sTitle, null, tab, sToken);
+                                    _tabbedResultsPanel.addTab(sTitle, null, tab, qrySql);
                                 } else {
                                     tab.setName(sTitle);
                                 }
@@ -335,6 +358,32 @@ class SQLPanel extends JPanel {
         _sqlEntry.setText(sqlScript);
     }
 
+    private String modifyEntireScript(String sql) {
+        List list = null;
+        synchronized (this) {
+            list = (ArrayList)_sqlExecutionListeners.clone();
+        }
+        
+        for (int i = 0; i < list.size(); ++i) {
+            sql = ((ISQLExecutionListener)list.get(i)).entireScriptExecuting(sql);
+        }
+        
+        return sql;
+    }
+
+    private String modifyIndividualScript(String sql) {
+        List list = null;
+        synchronized (this) {
+            list = (ArrayList)_sqlExecutionListeners.clone();
+        }
+        
+        for (int i = 0; i < list.size(); ++i) {
+            sql = ((ISQLExecutionListener)list.get(i)).individualStatementExecuting(sql);
+        }
+        
+        return sql;
+    }
+    
     private void propertiesHaveChanged(String propertyName) {
         final SessionProperties props = _session.getProperties();
 /*
@@ -403,10 +452,6 @@ class SQLPanel extends JPanel {
             _nbrRows.setInt(props.getSqlNbrRowsToShow());
         }
     }
-
-    /**
-     * Display the popup menu for this component.
-     */
 
     private void createUserInterface() {
         setLayout(new BorderLayout());

@@ -24,26 +24,26 @@ import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.mainframe.MainFrame;
-import net.sourceforge.squirrel_sql.client.session.SessionSheet;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 
-public class RollbackAction extends SquirrelAction implements ISessionSheetAction {
+public class RollbackAction extends SquirrelAction implements ISessionAction {
 
-    private SessionSheet _frame;
+    private ISession _session;
 
     public RollbackAction(IApplication app) {
         super(app);
     }
 
-    public void setSessionSheet(SessionSheet frame) {
-        _frame = frame;
+    public void setSession(ISession session) {
+        _session = session;
     }
 
     public void actionPerformed(ActionEvent evt) {
-        if (_frame != null) {
+        if (_session != null) {
             CursorChanger cursorChg = new CursorChanger(MainFrame.getInstance());
             cursorChg.show();
             try {
-                _frame.rollback();
+                _session.rollback();
             } finally {
                 cursorChg.restore();
             }

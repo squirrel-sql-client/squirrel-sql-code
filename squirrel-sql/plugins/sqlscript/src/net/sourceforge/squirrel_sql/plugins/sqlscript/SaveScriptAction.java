@@ -25,10 +25,9 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SessionSheet;
-import net.sourceforge.squirrel_sql.client.session.action.ISessionSheetAction;
+import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 
-public class SaveScriptAction extends SquirrelAction implements ISessionSheetAction {
+public class SaveScriptAction extends SquirrelAction implements ISessionAction {
 
     private ISession _session;
     private SQLScriptPlugin _plugin;
@@ -48,7 +47,7 @@ public class SaveScriptAction extends SquirrelAction implements ISessionSheetAct
         }
     }
 
-    public void setSessionSheet(SessionSheet frame) {
-        _session = frame != null ? frame.getSession() : null;
+    public void setSession(ISession session) {
+        _session = session;
     }
 }
