@@ -17,15 +17,6 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JTable;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
-
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -36,32 +27,44 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.net.URL;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JTable;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
+
+import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 /**
- * @version 	$Id: ButtonTableHeader.java,v 1.6 2002-03-26 12:15:34 colbell Exp $
+ * @version 	$Id: ButtonTableHeader.java,v 1.7 2002-04-06 12:09:44 colbell Exp $
  * @author		Johan Compagner
  */
 public class ButtonTableHeader extends JTableHeader
 {
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(ButtonTableHeader.class);
+
 	protected boolean _bDragged;
 	protected boolean _bPressed;
 	protected int _iPressed;
-	private static ImageIcon desc;
-	private static ImageIcon asc;
+	private static Icon desc;
+	private static Icon asc;
 
-	protected ImageIcon current;
-	static
-	{
-		// HARDWIRED path names!! Should be in Resource/Settings file??
-		try
-		{
-			URL url = ClassLoader.getSystemResource("net/sourceforge/squirrel_sql/fw/gui/image/stock_down_arrow.png");
-			desc = new ImageIcon(url);
-		} catch(Exception e){}
-		try
-		{
-			URL url = ClassLoader.getSystemResource("net/sourceforge/squirrel_sql/fw/gui/image/stock_up_arrow.png");
-			asc = new ImageIcon(url);
-		} catch(Exception e){}
+	protected Icon current;
+
+	static {
+		try {
+			LibraryResources rsrc = new LibraryResources();
+			desc = rsrc.getIcon(LibraryResources.IImageNames.TABLE_DESCENDING);
+			asc = rsrc.getIcon(LibraryResources.IImageNames.TABLE_ASCENDING);
+		} catch (Exception ex) {
+			s_log.error("Error retrieving icons", ex);
+		}
 	}
 	/**
 	 * Constructor for ButtonTableHeader.
