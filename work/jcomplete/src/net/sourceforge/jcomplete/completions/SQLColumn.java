@@ -18,7 +18,7 @@
  *
  * created by cse, 24.09.2002 16:00:59
  *
- * @version $Id: SQLColumn.java,v 1.5 2002-10-10 22:33:49 csell Exp $
+ * @version $Id: SQLColumn.java,v 1.6 2002-10-11 20:42:49 csell Exp $
  */
 package net.sourceforge.jcomplete.completions;
 
@@ -31,7 +31,7 @@ import net.sourceforge.jcomplete.SQLSchema;
 public class SQLColumn extends SQLCompletion
 {
     private String column;
-    private String alias;
+    private String qualifier;
 
     private boolean isRepeatable = true;
     private SQLStatementContext parent;
@@ -56,22 +56,22 @@ public class SQLColumn extends SQLCompletion
         this.parent = parent;
     }
 
-    public void setAlias(String alias, int pos)
+    public void setQualifier(String alias, int pos)
     {
-        this.alias = alias;
+        this.qualifier = alias;
         this.afterSeparatorPos = pos+alias.length()+1;
         setEndPosition(afterSeparatorPos);
         System.out.println("setAlias: s="+startPosition+" e="+endPosition);
     }
 
-    public void setAlias(String alias)
+    public void setQualifier(String alias)
     {
-        this.alias = alias;
+        this.qualifier = alias;
     }
 
-    public String getAlias()
+    public String getQualifier()
     {
-        return alias;
+        return qualifier;
     }
 
     public void setColumn(String name, int pos)
@@ -90,19 +90,23 @@ public class SQLColumn extends SQLCompletion
         return column;
     }
 
-    public SQLSchema.Table getTable()
-    {
-        return alias != null ? parent.getStatement().getTableForAlias(alias) : null;
-    }
-
+    /**
+     * check whether a table assignment exists at the given cursor position. A table assignment
+     * exists in the following cases:<br>
+     * <ul><li>if the parent statement has only one table</li>
+     * <li>if the cursor is placed immediately after the qualifier separator. It does not
+     * exist if the column is not qualified (by alias or table name), or if the cursor is placed
+     * inside the qualifier.</li>
+     * @param position the caret position
+     * @return whether a table assignment exists
+     */
     public boolean hasTable(int position)
     {
-        return position >= afterSeparatorPos && position <= endPosition && getTable() != null;
-    }
-
-    public boolean hasAlias()
-    {
-        return alias != null;
+        return
+              (qualifier == null &&  parent.getStatement().getTable() != null) ||
+              (qualifier != null &&
+              position >= afterSeparatorPos && position <= endPosition &&
+              parent.getStatement().getTableForAlias(qualifier) != null);
     }
 
     public SQLStatement getStatement()
@@ -112,7 +116,7 @@ public class SQLColumn extends SQLCompletion
 
     public String getText()
     {
-        String text = alias != null ? alias+"."+column : column;
+        String text = qualifier != null ? qualifier+"."+column : column;
 
         if(hasTextPosition()) {
             int oldDataPos = endPosition - startPosition;
@@ -133,29 +137,37 @@ public class SQLColumn extends SQLCompletion
             return option;
         }
         else if(mustReplace(position) || isOther(position)) {
-            return alias != null ? alias+"."+option : option;
+            return qualifier != null ? qualifier+"."+option : option;
         }
         else {
-            String text = alias != null ? alias+"."+option : option;
+            String text = qualifier != null ? qualifier+"."+option : option;
             int oldDataPos = endPosition - position;
             return text.substring(oldDataPos, text.length());
         }
     }
 
+    // check if this completion request is outside the original definition point
     private boolean isOther(int position)
     {
-        return position < startPosition || position > endPosition;
+        return endPosition == NO_LIMIT || position < startPosition || position > endPosition;
     }
 
     public String[] getCompletions(int position)
     {
-        //try to treat alias as alias
-        SQLSchema.Table table = getStatement().getTableForAlias(alias);
+        SQLSchema.Table table = null;
 
-        //it could also be a table name
-        if(table == null)
-            table = getStatement().getTable(null, null, alias);
+        if(qualifier != null) {
+            // try as an alias
+            table = getStatement().getTableForAlias(qualifier);
 
+            // could also be a table name
+            if(table == null) table = getStatement().getTable(null, null, qualifier);
+        }
+        else
+            // see if its a one-table statement
+            table = getStatement().getTable();
+
+        // now match the columns
         if(table != null) {
             String col = null;
             if(position > afterSeparatorPos && column != null) {

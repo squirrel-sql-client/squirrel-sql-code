@@ -1,7 +1,7 @@
 /**
  * Compiler for the SQL language, with semantic actions that support code completion
  *
- * @version $Id: SquirrelSQL.atg,v 1.5 2002-10-11 07:58:59 csell Exp $
+ * @version $Id: SquirrelSQL.atg,v 1.6 2002-10-11 20:42:49 csell Exp $
  */
 PACKAGE "net.sourceforge.jcomplete.parser"
 IMPORT "net.sourceforge.jcomplete.completions.*", "net.sourceforge.jcomplete.*"
@@ -88,22 +88,30 @@ SetOperator
     = ("UNION" | "EXCEPT" | "INTERSECT" | "MINUS") [ "ALL" ]
     .
 
-UpdateStmt =
-    "UPDATE"
+UpdateStmt              (.  SQLModifyingStatement statement = new SQLModifyingStatement(t.pos);
+                            SQLTable table = new SQLTable(statement, scanner.pos+1);
+                            statement.addTable(table);
+                            pushContext(statement);
+                        .)
+    =
+    "UPDATE"            (.  table.setName(t.str, t.pos); .)
     Table <null>
     "SET"
-    UpdateFieldList  [WhereClause]
-    .
-
-UpdateField =
-    ColumnName "=" Expression
+    UpdateFieldList
+    [WhereClause]       (.  statement.setEndPosition(token.pos);
+                            popContext();
+                        .)
     .
 
 UpdateFieldList =
     UpdateField  { ItemSeparator UpdateField  }
     .
 
-InsertStmt              (.  SQLStatement statement = new SQLStatement(t.pos);
+UpdateField =
+    ColumnName "=" Expression
+    .
+
+InsertStmt              (.  SQLModifyingStatement statement = new SQLModifyingStatement(t.pos);
                             pushContext(statement);
                         .)
     =
@@ -111,6 +119,7 @@ InsertStmt              (.  SQLStatement statement = new SQLStatement(t.pos);
                             statement.addTable(table);
                         .)
     "INTO"              (.  SQLColumn column = new SQLColumn(statement, scanner.pos+1);
+                            table.setName(t.str, t.pos);
                             column.setRepeatable(true);
                             statement.addColumn(column);
                         .)
@@ -124,14 +133,18 @@ InsertStmt              (.  SQLStatement statement = new SQLStatement(t.pos);
                         .)
     .
 
-DeleteStmt              (.  SQLStatement statement = new SQLStatement(t.pos);
+DeleteStmt              (.  SQLModifyingStatement statement = new SQLModifyingStatement(t.pos);
                             pushContext(statement);
                         .)
     =
-    "DELETE"
-    "FROM"
-    Table <null>
-    [WhereClause]       (. popContext(); .)
+    "DELETE"            (.  SQLTable table = new SQLTable(statement, scanner.pos+1);
+                            statement.addTable(table);
+                        .)
+    "FROM"              (.  table.setName(t.str, t.pos); .)
+    Table <table>
+    [WhereClause]       (.  statement.setEndPosition(token.pos);
+                            popContext();
+                        .)
     .
 
 SimpleSelect            (.  SQLSelectStatement statement = new SQLSelectStatement(t.pos);
@@ -275,7 +288,7 @@ ColumnName              (.  SQLStatementContext context = getContext();
                             SQLColumn column = new SQLColumn(context, t.pos);
                             context.addColumn(column);
                             if(scanner.ch == '.')
-                                column.setAlias(t.str, t.pos);
+                                column.setQualifier(t.str, t.pos);
                             else
                                 column.setColumn(t.str, t.pos);
                         .)

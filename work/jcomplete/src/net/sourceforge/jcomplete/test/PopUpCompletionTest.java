@@ -96,8 +96,8 @@ public class PopUpCompletionTest extends JFrame
         JTextArea textArea = new JTextArea();
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
-        textArea.setRows(12);
-        textArea.setColumns(80);
+        textArea.setRows(15);
+        textArea.setColumns(50);
         textArea.addCaretListener(new CaretListener() {
             public void caretUpdate(CaretEvent e)
             {
@@ -106,8 +106,8 @@ public class PopUpCompletionTest extends JFrame
         });
 
         final JTextArea errorArea = new JTextArea();
-        errorArea.setRows(4);
-        errorArea.setColumns(80);
+        errorArea.setRows(5);
+        errorArea.setColumns(50);
         errorArea.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e)
             {
@@ -124,6 +124,7 @@ public class PopUpCompletionTest extends JFrame
         splitPane.setTopComponent(textScroller);
         splitPane.setBottomComponent(errScroller);
         splitPane.setDividerSize(5);
+        splitPane.setResizeWeight(0.8);
 
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(labelArea, BorderLayout.NORTH);

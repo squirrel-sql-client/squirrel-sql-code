@@ -60,7 +60,7 @@ public class TableColumnChooser extends JDialog
         this.completor = completor;
         this.sqlColumn = sqlColumn;
 
-        String existingAlias = sqlColumn.getAlias();
+        String existingAlias = sqlColumn.getQualifier();
         String existingColumn = sqlColumn.getColumn();
         if(existingAlias != null || existingColumn != null)
             existingCompleted = false;
@@ -261,7 +261,7 @@ public class TableColumnChooser extends JDialog
             {
                 SQLColumn col = (!existingCompleted && index == 0) ? sqlColumn : newCol;
                 col.setColumn((String)cols[index++]);
-                if(alias.length() > 0) col.setAlias(alias);
+                if(alias.length() > 0) col.setQualifier(alias);
                 needsSeparator = true;
                 return col;
             }

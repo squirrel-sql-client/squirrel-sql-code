@@ -18,7 +18,7 @@
  *
  * created by cse, 10.10.2002 14:29:20
  *
- * @version $Id: SQLWhere.java,v 1.1 2002-10-10 22:33:49 csell Exp $
+ * @version $Id: SQLWhere.java,v 1.2 2002-10-11 20:42:49 csell Exp $
  */
 package net.sourceforge.jcomplete.completions;
 
@@ -56,9 +56,9 @@ public class SQLWhere extends SQLCompletion implements SQLStatementContext
         if(super.getCompletion(position) != null) {
             Iterator it = children.iterator();
             while(it.hasNext()) {
-                SQLColumn col = (SQLColumn)it.next();
-                SQLCompletion comp = col.getCompletion(position);
-                if(comp != null) return comp;
+                SQLCompletion comp = (SQLCompletion)it.next();
+                if((comp = comp.getCompletion(position)) != null)
+                    return comp;
             }
             SQLColumn col = new SQLColumn(this, position);
             col.setRepeatable(false);

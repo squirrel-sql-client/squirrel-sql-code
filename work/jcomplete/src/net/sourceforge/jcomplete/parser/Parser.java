@@ -894,13 +894,9 @@ public List statements = new ArrayList();
 		}
 	}
 
-	private final void ItemSeparator() {
-		ExpectWeak(101, 14);
-	}
-
 	private final void Expression() {
 		SimpleExpression();
-		while (StartOf(15)) {
+		while (StartOf(14)) {
 			Relation();
 			SimpleExpression();
 		}
@@ -911,7 +907,7 @@ public List statements = new ArrayList();
 		SQLColumn column = new SQLColumn(context, t.pos);
 		context.addColumn(column);
 		if(scanner.ch == '.')
-		    column.setAlias(t.str, t.pos);
+		    column.setQualifier(t.str, t.pos);
 		else
 		    column.setColumn(t.str, t.pos);
 		
@@ -925,6 +921,10 @@ public List statements = new ArrayList();
 				Get();
 			} else Error(139);
 		}
+	}
+
+	private final void ItemSeparator() {
+		ExpectWeak(101, 15);
 	}
 
 	private final void UpdateField() {
@@ -1040,30 +1040,45 @@ public List statements = new ArrayList();
 	}
 
 	private final void DeleteStmt() {
-		SQLStatement statement = new SQLStatement(t.pos);
+		SQLModifyingStatement statement = new SQLModifyingStatement(t.pos);
 		pushContext(statement);
 		
 		Expect(18);
+		SQLTable table = new SQLTable(statement, scanner.pos+1);
+		statement.addTable(table);
+		
 		Expect(19);
-		Table(null);
+		table.setName(t.str, t.pos);
+		Table(table);
 		if (t.kind == 34) {
 			WhereClause();
 		}
+		statement.setEndPosition(token.pos);
 		popContext();
+		
 	}
 
 	private final void UpdateStmt() {
+		SQLModifyingStatement statement = new SQLModifyingStatement(t.pos);
+		SQLTable table = new SQLTable(statement, scanner.pos+1);
+		statement.addTable(table);
+		pushContext(statement);
+		
 		Expect(12);
+		table.setName(t.str, t.pos);
 		Table(null);
 		Expect(13);
 		UpdateFieldList();
 		if (t.kind == 34) {
 			WhereClause();
 		}
+		statement.setEndPosition(token.pos);
+		popContext();
+		
 	}
 
 	private final void InsertStmt() {
-		SQLStatement statement = new SQLStatement(t.pos);
+		SQLModifyingStatement statement = new SQLModifyingStatement(t.pos);
 		pushContext(statement);
 		
 		Expect(15);
@@ -1072,6 +1087,7 @@ public List statements = new ArrayList();
 		
 		Expect(16);
 		SQLColumn column = new SQLColumn(statement, scanner.pos+1);
+		table.setName(t.str, t.pos);
 		column.setRepeatable(true);
 		statement.addColumn(column);
 		
@@ -1199,10 +1215,10 @@ public List statements = new ArrayList();
 	 x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x},
 	{T,x,x,x, x,x,T,T, T,T,T,x, T,x,T,T, x,T,T,T, T,x,x,T, T,T,T,T, T,T,T,x, x,x,T,T, x,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, T,x,T,T, T,T,T,x,
 	 x,x,T,T, T,T,T,x, x,T,T,x, x,x,x,x, x,x,x,x, x,T,x,x, x,T,x,x, x,x,x,x, x,T,x,x, T,x,T,x, x,T,T,x, x},
-	{T,T,T,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, x,T,T,T, T,T,T,T, T,T,T,T, T,T,x,x, T,T,T,x, x,x,x,x,
-	 x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, T,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x},
 	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x,
 	 x,x,T,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x},
+	{T,T,T,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, x,T,T,T, T,T,T,T, T,T,T,T, T,T,x,x, T,T,T,x, x,x,x,x,
+	 x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, T,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x},
 	{x,x,x,x, x,x,x,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x,
 	 x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x},
 	{x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,T, x,x,T,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x,

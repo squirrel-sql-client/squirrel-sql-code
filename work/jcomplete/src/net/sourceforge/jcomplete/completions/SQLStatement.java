@@ -18,7 +18,7 @@
  *
  * created 24.09.2002 12:27:12
  *
- * @version $Id: SQLStatement.java,v 1.5 2002-10-10 22:33:49 csell Exp $
+ * @version $Id: SQLStatement.java,v 1.6 2002-10-11 20:42:49 csell Exp $
  */
 package net.sourceforge.jcomplete.completions;
 
@@ -36,6 +36,7 @@ public class SQLStatement extends SQLCompletion implements SQLSchema, SQLStateme
 {
     private List children;
     protected SQLSchema sqlSchema;
+
 
     public SQLStatement(int start)
     {
@@ -134,5 +135,14 @@ public class SQLStatement extends SQLCompletion implements SQLSchema, SQLStateme
     protected Iterator getChildren()
     {
         return children != null ? children.iterator() : Collections.EMPTY_LIST.iterator();
+    }
+
+    /**
+     * @return the unique table assigned to this statement, or <em>null</em> if this statement
+     * can hold multiple tables, or no table was assigned. By default, <em>null</em>.
+     */
+    public Table getTable()
+    {
+        return null;
     }
 }

@@ -33,31 +33,7 @@ import net.sourceforge.jcomplete.SQLSchema;
  */
 public class SQLTable extends SQLCompletion
 {
-    public void setCatalog(String catalog, int pos)
-    {
-        this.catalog = catalog;
-        setEndPosition(pos+catalog.length());
-    }
-
-    public void setSchema(String schema, int pos)
-    {
-        this.schema = schema;
-        setEndPosition(pos+schema.length());
-    }
-
-    public void setName(String name, int pos)
-    {
-        this.name = name;
-        setEndPosition(pos+name.length());
-    }
-
-    public void setAlias(String alias, int pos)
-    {
-        this.alias = alias;
-        setEndPosition(pos+alias.length());
-    }
-
-   public String catalog;
+    public String catalog;
     public String schema;
     public String name;
     public String alias;
@@ -82,6 +58,30 @@ public class SQLTable extends SQLCompletion
     public SQLStatement getStatement()
     {
         return statement;
+    }
+
+    public void setCatalog(String catalog, int pos)
+    {
+        this.catalog = catalog;
+        setEndPosition(pos+catalog.length());
+    }
+
+    public void setSchema(String schema, int pos)
+    {
+        this.schema = schema;
+        setEndPosition(pos+schema.length());
+    }
+
+    public void setName(String name, int pos)
+    {
+        this.name = name;
+        setEndPosition(pos+name.length());
+    }
+
+    public void setAlias(String alias, int pos)
+    {
+        this.alias = alias;
+        setEndPosition(pos+alias.length());
     }
 
     public SQLSchema.Table[] getCompletions(int position)
