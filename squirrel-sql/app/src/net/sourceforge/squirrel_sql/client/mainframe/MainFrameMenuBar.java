@@ -54,9 +54,10 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.ViewDriversAction;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsAction;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultWindowsAction;
+import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
-import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.ShowNativeSQLAction;
 
 /**
  * Menu bar for <CODE>MainFrame</CODE>.
@@ -183,6 +184,7 @@ final class MainFrameMenuBar extends JMenuBar {
 		menu.addSeparator();
 		addToMenu(rsrc, RefreshTreeAction.class, menu);
 		addToMenu(rsrc, ExecuteSqlAction.class, menu);
+		addToMenu(rsrc, ShowNativeSQLAction.class, menu);
 		menu.addSeparator();
 		menu.add(createSQLResultsCloseMenu(rsrc));
 		menu.addSeparator();

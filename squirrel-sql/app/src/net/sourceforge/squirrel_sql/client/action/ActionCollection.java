@@ -243,6 +243,7 @@ public final class ActionCollection {
 		add(new RefreshTreeAction(_app));
 		add(new RollbackAction(_app));
 		add(new SessionPropertiesAction(_app));
+		add(new ShowNativeSQLAction(_app));
 		add(new TileAction(_app));
 	}
 }
