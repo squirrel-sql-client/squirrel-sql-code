@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe;
 /*
- * Copyright (C) 2001 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,13 +19,11 @@ package net.sourceforge.squirrel_sql.client.mainframe;
  */
 import java.awt.BorderLayout;
 import java.awt.event.MouseEvent;
-import java.util.Iterator;
 
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
-
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 

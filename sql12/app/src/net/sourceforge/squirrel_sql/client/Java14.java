@@ -3,7 +3,7 @@ package net.sourceforge.squirrel_sql.client;
  * Java14.java - Java 2 version 1.4 API calls
  *
  * Copyright (C) 2001, 2002 Slava Pestov
- * Modifications copyright (C) 2002 Colin Bell
+ * Modifications copyright (C) 2002-2003 Colin Bell
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,8 +24,6 @@ import java.awt.DefaultKeyboardFocusManager;
 import java.awt.KeyboardFocusManager;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
-
-import javax.swing.JInternalFrame;
 
 import net.sourceforge.squirrel_sql.client.gui.BaseSheet;
 

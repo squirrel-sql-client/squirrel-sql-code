@@ -26,8 +26,6 @@ import javax.swing.Action;
 import javax.swing.JInternalFrame;
 import javax.swing.KeyStroke;
 
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 

@@ -42,7 +42,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
 
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 /**
  * XML cache of JDBC drivers and aliases.
@@ -51,7 +50,10 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
  */
 public class DataCache
 {
+	/** Class for objects that define aliases to JDBC data sources. */
 	private final static Class SQL_ALIAS_IMPL = SQLAlias.class;
+
+	/** Class for objects that define JDBC drivers. */
 	private final static Class SQL_DRIVER_IMPL = SQLDriver.class;
 
 	/** Logger for this class. */
@@ -65,23 +67,36 @@ public class DataCache
 
 	/**
 	 * Ctor. Loads drivers and aliases from the XML document.
+	 * 
+	 * @param	driverMgr		Manages JDBC drivers.
+	 * @param	dftDriversURL	URL that the default rivers can be loaded from.
+	 * @param	msgHandler		Message handler to report on errors in this object.
 	 *
-	 * @throws	IllegalStateException
-	 *			Thrown if null <TT>SQLDriverManager</TT> passed.
+	 * @throws	IllegalArgumentException
+	 *			Thrown if null <TT>SQLDriverManager</TT> or
+	 * 			<TT>dftDriversURL</TT> passed.
 	 */
-	public DataCache(SQLDriverManager driverMgr, SquirrelResources rsrc,
+	public DataCache(SQLDriverManager driverMgr, URL dftDriversURL,
 						IMessageHandler msgHandler)
 	{
 		super();
 		if (driverMgr == null)
 		{
-			throw new IllegalArgumentException("Null SQLDriverManager passed");
+			throw new IllegalArgumentException("SQLDriverManager == null");
+		}
+		if (dftDriversURL == null)
+		{
+			throw new IllegalArgumentException("dftDriversURL == null");
 		}
 
 		_driverMgr = driverMgr;
 
-		final IMessageHandler myMsgHandler = msgHandler != null ? msgHandler : NullMessageHandler.getInstance();
-		loadDrivers(rsrc, myMsgHandler);
+		IMessageHandler myMsgHandler = msgHandler;
+		if (myMsgHandler == null)
+		{
+			myMsgHandler = NullMessageHandler.getInstance();
+		}
+		loadDrivers(dftDriversURL, myMsgHandler);
 		loadAliases(myMsgHandler);
 	}
 
@@ -97,8 +112,7 @@ public class DataCache
 	 * @throws	XMLException
 	 * 			Thrown if an error occurs translating drivers to XML.
 	 */
-	public void saveDrivers(File file)
-		throws IOException, XMLException
+	public void saveDrivers(File file) throws IOException, XMLException
 	{
 		if (file == null)
 		{
@@ -119,8 +133,7 @@ public class DataCache
 	 * @throws	XMLException
 	 * 			Thrown if an error occurs translating aliases to XML.
 	 */
-	public void saveAliases(File file)
-		throws IOException, XMLException
+	public void saveAliases(File file) throws IOException, XMLException
 	{
 		if (file == null)
 		{
@@ -130,18 +143,42 @@ public class DataCache
 	}
 
 	/**
-	 * Return the <TT>ISQLDriver</TT> for the passed identifier.
+	 * Retrieve the <TT>ISQLDriver</TT> for the passed identifier.
+	 * 
+	 * @param	id	Identifier to retrieve driver for.
+	 * 
+	 * @return	the <TT>ISQLDriver</TT> for the passed identifier.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>ISQLDriver</TT> passed.
 	 */
 	public ISQLDriver getDriver(IIdentifier id)
 	{
-		return (ISQLDriver) _cache.get(SQL_DRIVER_IMPL, id);
+		if (id == null)
+		{
+			throw new IllegalArgumentException("ISQLDriver == null");
+		}
+
+		return (ISQLDriver)_cache.get(SQL_DRIVER_IMPL, id);
 	}
 
+	/**
+	 * Add a driver to the cache.
+	 * 
+	 * @param	sqlDriver	The driver to add.
+	 * 
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>ISQLDriver</TT> is null.
+	 */
 	public void addDriver(ISQLDriver sqlDriver)
 		throws ClassNotFoundException, IllegalAccessException,
 				InstantiationException, DuplicateObjectException,
 				MalformedURLException
 	{
+		if (sqlDriver == null)
+		{
+			throw new IllegalArgumentException("ISQLDriver == null");
+		}
 		_driverMgr.registerSQLDriver(sqlDriver);
 		_cache.add(sqlDriver);
 	}
@@ -214,11 +251,10 @@ public class DataCache
 	/**
 	 * Load <TT>IISqlDriver</TT> objects from XML file.
 	 */
-	private void loadDrivers(SquirrelResources rsrc, IMessageHandler msgHandler)
+	private void loadDrivers(URL dftDriversURL, IMessageHandler msgHandler)
 	{
 		final ApplicationFiles appFiles = new ApplicationFiles();
 		final File driversFile = appFiles.getDatabaseDriversFile();
-		final URL dftDriversURL = rsrc.getDefaultDriversUrl();
 		try
 		{
 			try
@@ -334,7 +370,8 @@ public class DataCache
 	/**
 	 * In 1.1beta? the jar file for a driver was changed from only one allowed
 	 * to multiple ones allowed. This method changes the driver from the old
-	 * version to the new one.
+	 * version to the new one to allow for loading old versions of the
+	 * SQLDrivers.xml file.
 	 */
 	private void fixupDrivers()
 	{

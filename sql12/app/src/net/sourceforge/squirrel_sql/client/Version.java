@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client;
 /*
- * Copyright (C) 2001-2002 Colin Bell
+ * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@ public class Version
 	//private static final String TYPE = "beta";
 	//private static final String TYPE = "rc";
 	//private static final String TYPE = "final";
-	private static final int RELEASE = 1;
+	private static final int RELEASE = 2;
 
 	private static final String COPYRIGHT = "Copyright (c) 2001 - 2003 Colin Bell and others";
 
