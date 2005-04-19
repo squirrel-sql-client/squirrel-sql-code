@@ -142,6 +142,7 @@ public class BaseSessionInternalFrame extends BaseInternalFrame
 	{
 		public void internalFrameActivated(InternalFrameEvent e)
 		{
+         _session.setActiveSessionWindow((BaseSessionInternalFrame)e.getInternalFrame());
 			_session.getApplication().getSessionManager().setActiveSession(_session);
 		}
 	}

@@ -45,6 +45,6 @@ public class NextSessionAction extends SquirrelAction
 
 	public void actionPerformed(ActionEvent evt)
 	{
-		getApplication().getWindowManager().activateNextSession();
+		getApplication().getWindowManager().activateNextSessionWindow();
 	}
 }

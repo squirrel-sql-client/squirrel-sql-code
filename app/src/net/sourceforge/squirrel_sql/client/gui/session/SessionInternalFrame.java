@@ -135,4 +135,10 @@ public class SessionInternalFrame extends BaseSessionInternalFrame
 		setContentPane(_sessionPanel);
 		validate();
 	}
+
+   public void requestFocus()
+   {
+      _sessionPanel.getSQLEntryPanel().requestFocus();
+   }
+
 }

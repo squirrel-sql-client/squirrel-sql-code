@@ -19,7 +19,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
  */
 import java.beans.PropertyVetoException;
 
-import javax.swing.JInternalFrame;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
@@ -52,6 +52,7 @@ public class SelectInternalFrameCommand implements ICommand
 					_child.setIcon(false);
 				}
 				_child.setSelected(true);
+            _child.requestFocus();
 			}
 		}
 		catch (PropertyVetoException ignore)

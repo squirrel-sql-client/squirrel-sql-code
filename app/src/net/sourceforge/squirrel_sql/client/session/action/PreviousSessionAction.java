@@ -45,6 +45,6 @@ public class PreviousSessionAction extends SquirrelAction
 
 	public void actionPerformed(ActionEvent evt)
 	{
-		getApplication().getWindowManager().activatePreviousSession();
+		getApplication().getWindowManager().activatePreviousSessionWindow();
 	}
 }

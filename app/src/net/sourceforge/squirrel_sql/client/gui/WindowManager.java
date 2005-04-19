@@ -19,25 +19,26 @@ package net.sourceforge.squirrel_sql.client.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Window;
-import java.beans.PropertyVetoException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.Action;
-import javax.swing.JDesktopPane;
-import javax.swing.JInternalFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.RepaintManager;
-import javax.swing.SwingUtilities;
-import javax.swing.event.EventListenerList;
-import javax.swing.event.InternalFrameEvent;
-import javax.swing.event.InternalFrameListener;
-
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.gui.db.*;
+import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
+import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrameWindowState;
+import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.util.ThreadCheckingRepaintManager;
+import net.sourceforge.squirrel_sql.client.mainframe.action.*;
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SessionManager;
+import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
+import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
+import net.sourceforge.squirrel_sql.client.session.properties.EditWhereColsSheet;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionPropertiesSheet;
+import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterSheet;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.WindowState;
 import net.sourceforge.squirrel_sql.fw.gui.action.SelectInternalFrameAction;
@@ -49,42 +50,12 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.gui.db.AliasWindowManager;
-import net.sourceforge.squirrel_sql.client.gui.db.AliasesList;
-import net.sourceforge.squirrel_sql.client.gui.db.AliasesListInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.db.ConnectionInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.db.DriverWindowManager;
-import net.sourceforge.squirrel_sql.client.gui.db.DriversList;
-import net.sourceforge.squirrel_sql.client.gui.db.DriversListInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
-import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrameWindowState;
-import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.util.ThreadCheckingRepaintManager;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.CopyAliasAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.CopyDriverAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.CreateAliasAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.CreateDriverAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.DeleteAliasAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.DeleteDriverAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyAliasAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyDriverAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ViewAliasesAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ViewDriversAction;
-import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SessionManager;
-import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
-import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
-import net.sourceforge.squirrel_sql.client.session.properties.EditWhereColsSheet;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionPropertiesSheet;
-import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterSheet;
+import javax.swing.*;
+import javax.swing.event.EventListenerList;
+import javax.swing.event.InternalFrameEvent;
+import javax.swing.event.InternalFrameListener;
+import java.awt.*;
+import java.beans.PropertyVetoException;
 /**
  * This class manages the windows for the application.
  *
@@ -143,7 +114,7 @@ public class WindowManager
 	 * Map of windows(s) that are currently open for a session, keyed by
 	 * session ID.
 	 */
-	private final Map _sessionWindows = new HashMap();
+	private final SessionWindowsHolder _sessionWindows = new SessionWindowsHolder();
 
 	private final SessionWindowListener _windowListener = new SessionWindowListener();
 
@@ -354,18 +325,11 @@ public class WindowManager
 		final IIdentifier sessionIdentifier = sheet.getSession().getIdentifier();
 
 		// Store ptr to newly open window in list of windows per session.
-		List windowList = (List)_sessionWindows.get(sessionIdentifier);
-		if (windowList == null)
-		{
-			windowList = new ArrayList();
-			_sessionWindows.put(sessionIdentifier, windowList);
-		}
-		windowList.add(sheet);
+   	final int idx = _sessionWindows.addFrame(sessionIdentifier, sheet);
 
 		// For all windows (other than the first one opened) for a session
 		// add a number on the end of the title to differentiate them in
 		// menus etc.
-		final int idx = windowList.size();
 		if ( idx > 1)
 		{
 			sheet.setTitle(sheet.getTitle() + " (" + idx + ")");
@@ -453,6 +417,7 @@ public class WindowManager
 			public void run()
 			{
 				sif.setVisible(true);
+            sif.requestFocus();
 			}
 		});
 
@@ -641,54 +606,54 @@ public class WindowManager
 		}
 	}
 
-	public void activateNextSession()
+	public void activateNextSessionWindow()
 	{
 		final SessionManager sessMgr = _app.getSessionManager();
-		final ISession currSession = sessMgr.getActiveSession();
+		final ISession sess = sessMgr.getActiveSession();
 
-		ISession nextSession = null;
-		if (currSession == null)
+		if (sess == null)
 		{
-			final ISession[] sessions = sessMgr.getConnectedSessions();
-			if (sessions != null && sessions.length > 0)
-			{
-				nextSession = sessions[sessions.length - 1]; // Last session.
-			}
+         return;
 		}
-		else
+
+      BaseSessionInternalFrame activeSessionWindow = sess.getActiveSessionWindow();
+
+      if(null == activeSessionWindow)
+      {
+         throw new IllegalStateException("Active Session with no active window ???");
+      }
+
+      BaseSessionInternalFrame nextSessionWindow = _sessionWindows.getNextSessionWindow(activeSessionWindow);
+
+		if (false == activeSessionWindow.equals(nextSessionWindow))
 		{
-			nextSession = sessMgr.getNextSession(currSession);
-		}
-		if (nextSession != null)
-		{
-			final JInternalFrame sif = getInternalFrameForSession(nextSession);
-			new SelectInternalFrameCommand(sif).execute();
+			new SelectInternalFrameCommand(nextSessionWindow).execute();
 		}
 	}
 
-	public void activatePreviousSession()
+	public void activatePreviousSessionWindow()
 	{
-		final SessionManager sessMgr = _app.getSessionManager();
-		final ISession currSession = sessMgr.getActiveSession();
-		ISession prevSession = null;
+      final SessionManager sessMgr = _app.getSessionManager();
+      final ISession sess = sessMgr.getActiveSession();
 
-		if (currSession == null)
-		{
-			final ISession[] sessions = sessMgr.getConnectedSessions();
-			if (sessions != null && sessions.length > 0)
-			{
-				prevSession = sessions[0]; // First session.
-			}
-		}
-		else
-		{
-			prevSession = sessMgr.getPreviousSession(currSession);
-		}
-		if (prevSession != null)
-		{
-			final JInternalFrame sif = getInternalFrameForSession(prevSession);
-			new SelectInternalFrameCommand(sif).execute();
-		}
+      if (sess == null)
+      {
+         return;
+      }
+
+      BaseSessionInternalFrame activeSessionWindow = sess.getActiveSessionWindow();
+
+      if(null == activeSessionWindow)
+      {
+         throw new IllegalStateException("Active Session with no active window ???");
+      }
+
+      BaseSessionInternalFrame previousSessionWindow = _sessionWindows.getPreviousSessionWindow(activeSessionWindow);
+
+      if (false == activeSessionWindow.equals(previousSessionWindow))
+      {
+         new SelectInternalFrameCommand(previousSessionWindow).execute();
+      }
 	}
 
 	protected void refireSessionSheetOpened(InternalFrameEvent evt)
@@ -799,16 +764,16 @@ public class WindowManager
 
 	private SessionPropertiesSheet getSessionPropertiesDialog(ISession session)
 	{
-		List sheets = (List)_sessionWindows.get(session.getIdentifier());
-		if (sheets != null)
-		{
-			for (Iterator sheetItr = sheets.iterator(); sheetItr.hasNext();)
-			{
-				Object sheet = sheetItr.next();
-				if (sheet instanceof SessionPropertiesSheet)
-					return (SessionPropertiesSheet)sheet;
-			}
-		}
+
+      BaseSessionInternalFrame[] framesOfSession = _sessionWindows.getFramesOfSession(session.getIdentifier());
+
+      for (int i = 0; i < framesOfSession.length; i++)
+      {
+         if (framesOfSession[i] instanceof SessionPropertiesSheet)
+         {
+            return (SessionPropertiesSheet)framesOfSession[i];
+         }
+      }
 		return null;
 	}
 
@@ -816,23 +781,22 @@ public class WindowManager
 												IDatabaseObjectInfo objectInfo)
 	{
 		final ISession session = tree.getSession();
-		final List sheets = (List)_sessionWindows.get(session.getIdentifier());
-		if (sheets != null)
-		{
-			for (Iterator it = sheets.iterator(); it.hasNext();)
-			{
-				final Object sheet = it.next();
-				if (sheet instanceof SQLFilterSheet)
-				{
-					final SQLFilterSheet sfs = (SQLFilterSheet)sheet;
-					if (sfs.getObjectTree() == tree &&
-							objectInfo.equals(sfs.getDatabaseObjectInfo()))
-					{
-						return sfs;
-					}
-				}
-			}
-		}
+
+      BaseSessionInternalFrame[] framesOfSession = _sessionWindows.getFramesOfSession(session.getIdentifier());
+
+      for (int i = 0; i < framesOfSession.length; i++)
+      {
+         if (framesOfSession[i] instanceof SQLFilterSheet)
+         {
+            final SQLFilterSheet sfs = (SQLFilterSheet)framesOfSession[i];
+            if (sfs.getObjectTree() == tree &&
+                  objectInfo.equals(sfs.getDatabaseObjectInfo()))
+            {
+               return sfs;
+            }
+         }
+      }
+
 		return null;
 	}
 
@@ -841,24 +805,22 @@ public class WindowManager
 	{
 //		final Map map = getAllEditWhereColsSheets(tree);
 //		return (EditWhereColsSheet)map.get(objectInfo.getQualifiedName());
-		final List sheets = (List)_sessionWindows.get(session.getIdentifier());
-		if (sheets != null)
-		{
-			for (Iterator it = sheets.iterator(); it.hasNext();)
-			{
-				final Object sheet = it.next();
-				if (sheet instanceof EditWhereColsSheet)
-				{
-					final EditWhereColsSheet sfs = (EditWhereColsSheet)sheet;
+
+      BaseSessionInternalFrame[] framesOfSession = _sessionWindows.getFramesOfSession(session.getIdentifier());
+
+      for (int i = 0; i < framesOfSession.length; i++)
+      {
+         if (framesOfSession[i] instanceof EditWhereColsSheet)
+         {
+            final EditWhereColsSheet sfs = (EditWhereColsSheet)framesOfSession[i];
 //					if (sfs.getObjectTree() == tree &&
 //							objectInfo.equals(sfs.getDatabaseObjectInfo()))
-					if (objectInfo.equals(sfs.getDatabaseObjectInfo()))
-					{
-						return sfs;
-					}
-				}
-			}
-		}
+            if (objectInfo.equals(sfs.getDatabaseObjectInfo()))
+            {
+               return sfs;
+            }
+         }
+      }
 		return null;
 	}
 
@@ -1005,26 +967,23 @@ public class WindowManager
 		}
 
 		JInternalFrame firstWindow = null;
-		final List sheets = (List)_sessionWindows.get(session.getIdentifier());
-		if (sheets != null)
-		{
-			for (Iterator it = sheets.iterator(); it.hasNext();)
-			{
-				final Object sheet = it.next();
-				if (sheet instanceof BaseSessionInternalFrame)
-				{
-					firstWindow = (BaseSessionInternalFrame)sheet;
-				}
-				if (sheet instanceof SessionInternalFrame)
-				{
-					final SessionInternalFrame sif = (SessionInternalFrame)sheet;
-					if (sif.getSession().equals(session))
-					{
-						return sif;
-					}
-				}
-			}
-		}
+
+      BaseSessionInternalFrame[] framesOfSession = _sessionWindows.getFramesOfSession(session.getIdentifier());
+      for (int i = 0; i < framesOfSession.length; i++)
+      {
+         if (framesOfSession[i] instanceof BaseSessionInternalFrame)
+         {
+            firstWindow = (BaseSessionInternalFrame)framesOfSession[i];
+         }
+         if (framesOfSession[i] instanceof SessionInternalFrame)
+         {
+            final SessionInternalFrame sif = (SessionInternalFrame)framesOfSession[i];
+            if (sif.getSession().equals(session))
+            {
+               return sif;
+            }
+         }
+      }
 		return firstWindow;
 	}
 
@@ -1095,21 +1054,17 @@ public class WindowManager
 				{
 					final BaseSessionInternalFrame sessionJIF = (BaseSessionInternalFrame)jif;
 					final IIdentifier sessionID = sessionJIF.getSession().getIdentifier();
-					List sessionSheets = (List)_sessionWindows.get(sessionID);
-					if (sessionSheets != null)
-					{
-						for (Iterator sheetItr = sessionSheets.iterator();
-								sheetItr.hasNext();)
-						{
-							Object sheet = sheetItr.next();
-							if (sheet == sessionJIF)
-							{
-								sheetItr.remove();
-								WindowManager.this.selectFrontWindow();
-								break;
-							}
-						}
-					}
+               BaseSessionInternalFrame[] sessionSheets = _sessionWindows.getFramesOfSession(sessionID);
+
+               for (int i = 0; i < sessionSheets.length; i++)
+               {
+                  if (sessionSheets[i] == sessionJIF)
+                  {
+                     _sessionWindows.removeWindow(sessionSheets[i]);
+                     WindowManager.this.selectFrontWindow();
+                     break;
+                  }
+               }
 				}
 			}
 
@@ -1219,36 +1174,18 @@ public class WindowManager
 			// Close all sheets for the session.
 			_sessionClosing = true;
 			IIdentifier sessionId = evt.getSession().getIdentifier();
-			List sessionSheets = (List)_sessionWindows.get(sessionId);
-			if (sessionSheets != null)
-			{
-				for (Iterator sheetItr = sessionSheets.iterator();
-						sheetItr.hasNext();)
-				{
-					((BaseSessionInternalFrame)sheetItr.next()).dispose();
-				}
-			}
-			_sessionWindows.remove(sessionId);
+
+         BaseSessionInternalFrame[] framesOfSession = _sessionWindows.getFramesOfSession(sessionId);
+         for (int i = 0; i < framesOfSession.length; i++)
+         {
+            framesOfSession[i].dispose();
+         }
+
+			_sessionWindows.removeAllWindows(sessionId);
 
 			selectFrontWindow();
 
 			_sessionClosing = false;
 		}
-
-		public void sessionClosed(SessionEvent evt)
-		{
-			// Check that we have no sheets left open (coding error).
-			// TODO: Better error msg
-			final IIdentifier sessionId = evt.getSession().getIdentifier();
-			final List sessionSheets = (List)_sessionWindows.get(sessionId);
-			if ((sessionSheets != null) && (sessionSheets.size() > 0))
-			{
-				throw new RuntimeException("Coding error");
-			}
-
-			// Then remove the list.
-			_sessionWindows.remove(sessionId);
-		}
 	}
-
 }
