@@ -21,8 +21,7 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 import java.sql.SQLException;
 
-import javax.swing.Action;
-import javax.swing.JComponent;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
@@ -33,6 +32,7 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.session.MainPanel;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
+import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
@@ -42,7 +42,8 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
  */
 public interface ISession extends IHasIdentifier
 {
-	public interface IMainPanelTabIndexes extends MainPanel.ITabIndexes
+
+   public interface IMainPanelTabIndexes extends MainPanel.ITabIndexes
 	{
 		// Empty body.
 	}
@@ -226,4 +227,9 @@ public interface ISession extends IHasIdentifier
 	 * TODO: Javadoc
 	 */
 	IParserEventsProcessor getParserEventsProcessor();
+
+   void setActiveSessionWindow(BaseSessionInternalFrame activeActiveSessionWindow);
+
+   BaseSessionInternalFrame getActiveSessionWindow();
+
 }

@@ -69,6 +69,8 @@ class MainFrameToolBar extends ToolBar
 	private CommitAction _sessionCommit;
 	private RollbackAction _sessionRollback;
 
+   private boolean _dontReactToSessionDropDownAction = false;
+
 	/**
 	 * ctor.
 	 *
@@ -348,11 +350,11 @@ class MainFrameToolBar extends ToolBar
 	/**
 	 * Dropdown holding all the current active <TT>ISession</TT> objects.
 	 */
-	private static class SessionDropDown extends JComboBox
+	private class SessionDropDown extends JComboBox
 										implements ActionListener
 	{
 		private IApplication _app;
-		private boolean closing = false;
+		private boolean _closing = false;
 
 		SessionDropDown(IApplication app)
 		{
@@ -392,7 +394,7 @@ class MainFrameToolBar extends ToolBar
 		 */
 		public void actionPerformed(ActionEvent evt)
 		{
-			if (!closing)
+			if (!_closing && !_dontReactToSessionDropDownAction)
 			{
 				final Object obj = getSelectedItem();
 				if (obj instanceof ISession)
@@ -461,22 +463,22 @@ class MainFrameToolBar extends ToolBar
 	 * Listener to changes in <TT>SessionManager</TT>. As sessions are
 	 * added to/removed from <TT>SessionManager</TT> this model is updated.
 	 */
-	private static class MySessionListener extends SessionAdapter
+	private class MySessionListener extends SessionAdapter
 	{
 		/** Model that is listening. */
 		private final SessionDropDownModel _model;
 
 		/** Control for _model. */
-		private final SessionDropDown _control;
+		private final SessionDropDown _sessionDropDown;
 
-		/**
+      /**
 		 * Ctor specifying the model and control that is listening.
 		 */
 		MySessionListener(SessionDropDownModel model, SessionDropDown control)
 		{
 			super();
 			_model = model;
-			_control = control;
+			_sessionDropDown = control;
 		}
 
 		public void sessionConnected(SessionEvent evt)
@@ -487,7 +489,7 @@ class MainFrameToolBar extends ToolBar
 				public void run()
 				{
 					_model.addSession(session);
-					_control.setEnabled(true);
+					_sessionDropDown.setEnabled(true);
 				}
 			});
 		}
@@ -499,13 +501,13 @@ class MainFrameToolBar extends ToolBar
 			{
 				public void run()
 				{
-					_control.closing = true;
+					_sessionDropDown._closing = true;
 					_model.removeSession(session);
 					if (_model.getSize() == 0)
 					{
-						_control.setEnabled(false);
+						_sessionDropDown.setEnabled(false);
 					}
-					_control.closing = false;
+					_sessionDropDown._closing = false;
 				}
 			});
 		}
@@ -513,13 +515,15 @@ class MainFrameToolBar extends ToolBar
 		public void sessionActivated(SessionEvent evt)
 		{
 			final ISession session = evt.getSession();
-			GUIUtils.processOnSwingEventThread(new Runnable()
-			{
-				public void run()
-				{
-					_control.setSelectedItem(session);
-				}
-			});
-		}
+         try
+         {
+            _dontReactToSessionDropDownAction = true;
+            _sessionDropDown.setSelectedItem(session);
+         }
+         finally
+         {
+            _dontReactToSessionDropDownAction = false;
+         }
+      }
 	}
 }

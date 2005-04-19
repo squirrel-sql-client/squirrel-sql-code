@@ -122,6 +122,18 @@ public class SQLInternalFrame extends BaseSessionInternalFrame
 		validate();
 	}
 
+   public void requestFocus()
+   {
+      SwingUtilities.invokeLater(new Runnable()
+      {
+         public void run()
+         {
+            _sqlPanel.getSQLEntryPanel().requestFocus();
+         }
+      });
+
+   }
+
 	/** The class representing the toolbar at the top of a sql internal frame*/
 	private class SQLToolBar extends ToolBar
 	{

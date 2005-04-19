@@ -31,8 +31,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import javax.swing.Action;
-import javax.swing.JComponent;
+import javax.swing.*;
+
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
@@ -47,6 +47,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
+import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.mainframe.action.OpenConnectionCommand;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
@@ -124,7 +125,9 @@ class Session implements ISession
 
 	private SQLConnectionListener _connLis = null;
 
-	/**
+   private BaseSessionInternalFrame _activeActiveSessionWindow;
+
+   /**
 	 * Create a new session.
 	 *
 	 * @param	app			Application API.
@@ -680,7 +683,17 @@ class Session implements ISession
 		return _parserEventsProcessor;
 	}
 
-	private class SQLConnectionListener implements PropertyChangeListener
+   public void setActiveSessionWindow(BaseSessionInternalFrame activeActiveSessionWindow)
+   {
+      _activeActiveSessionWindow = activeActiveSessionWindow;
+   }
+
+   public BaseSessionInternalFrame getActiveSessionWindow()
+   {
+      return _activeActiveSessionWindow;
+   }
+
+   private class SQLConnectionListener implements PropertyChangeListener
 	{
 		public void propertyChange(PropertyChangeEvent evt)
 		{
