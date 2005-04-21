@@ -24,10 +24,9 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Window;
 import java.awt.event.FocusEvent;
+import java.util.Vector;
 
-import javax.swing.Icon;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
@@ -134,7 +133,15 @@ public class SQLInternalFrame extends BaseSessionInternalFrame
 
    }
 
-	/** The class representing the toolbar at the top of a sql internal frame*/
+   public void addToToolbar(Action action)
+   {
+      if (null != _toolBar)
+      {
+         _toolBar.add(action);
+      }
+   }
+
+   /** The class representing the toolbar at the top of a sql internal frame*/
 	private class SQLToolBar extends ToolBar
 	{
 		SQLToolBar(ISession session, ISQLPanelAPI panel)

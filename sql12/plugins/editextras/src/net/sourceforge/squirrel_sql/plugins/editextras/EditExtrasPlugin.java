@@ -18,9 +18,14 @@ package net.sourceforge.squirrel_sql.plugins.editextras;
  */
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
@@ -28,10 +33,8 @@ import net.sourceforge.squirrel_sql.client.session.event.SQLPanelAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.editextras.searchandreplace.*;
 
 import javax.swing.*;
-import java.util.Hashtable;
 /**
  * The plugin class.
  *
@@ -57,7 +60,6 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 	/** Listener to the SQL panel. */
 	private ISQLPanelListener _lis = new SQLPanelListener();
 
-	private Hashtable _searchAndReplaceKernelsBySessionID = new Hashtable();
 
 	/**
 	 * Return the internal name of this plugin.
@@ -157,46 +159,56 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 	 * Session has been started.
 	 * 
 	 * @param	session		Session that has started.
-	 */
-	public boolean sessionStarted(ISession session)
+    */
+	public PluginSessionCallback sessionStarted(ISession session)
 	{
-		if (super.sessionStarted(session))
-		{
+      ISQLPanelAPI sqlPanelAPI = FrameWorkAcessor.getSQLPanelAPI(session, this);
+      initEditExtras(sqlPanelAPI);
 
-         ActionCollection coll = getApplication().getActionCollection();
+      PluginSessionCallback ret = new PluginSessionCallback()
+      {
+         public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+         {
+            initEditExtras(sqlInternalFrame.getSQLPanelAPI());
+         }
 
-//         session.addToToolbar(coll.get(FindAction.class));
-//         session.addToToolbar(coll.get(ReplaceAction.class));
+         public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+         {
+         }
+      };
 
-			//session.getSQLPanelAPI(this).addSQLPanelListener(_lis);
-			FrameWorkAcessor.getSQLPanelAPI(session, this).addSQLPanelListener(_lis);
-
-         setupSQLEntryArea(session);
-
-
-			//ISQLPanelAPI api = session.getSQLPanelAPI(this);
-         ISQLPanelAPI api = FrameWorkAcessor.getSQLPanelAPI(session, this);
-
-			_searchAndReplaceKernelsBySessionID.put(session.getIdentifier(),
-					new SearchAndReplaceKernel(api));
-
-			return true;
-		}
-		return false;
+      return ret;
 	}
 
-	/**
+   private void initEditExtras(ISQLPanelAPI sqlPanelAPI)
+   {
+      sqlPanelAPI.addSQLPanelListener(_lis);
+      createSQLEntryAreaPopMenuItems(sqlPanelAPI);
+   }
+
+   /**
 	 * Called when a session shutdown.
 	 *
 	 * @param	session	The session that is ending.
 	 */
 	public void sessionEnding(ISession session)
 	{
-		//session.getSQLPanelAPI(this).removeSQLPanelListener(_lis);
-      FrameWorkAcessor.getSQLPanelAPI(session, this).removeSQLPanelListener(_lis);
+      BaseSessionInternalFrame[] frames = 
+         session.getApplication().getWindowManager().getAllFramesOfSession(session.getIdentifier());
 
+      for (int i = 0; i < frames.length; i++)
+      {
+         if(frames[i] instanceof SQLInternalFrame)
+         {
+            ((SQLInternalFrame)frames[i]).getSQLPanelAPI().removeSQLPanelListener(_lis);
+         }
 
-		_searchAndReplaceKernelsBySessionID.remove(session.getIdentifier());
+         if(frames[i] instanceof SessionInternalFrame)
+         {
+            ((SessionInternalFrame)frames[i]).getSQLPanelAPI().removeSQLPanelListener(_lis);
+         }
+      }
+
 		super.sessionEnding(session);
 	}
 
@@ -210,12 +222,7 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 		return _resources;
 	}
 
-	public SearchAndReplaceKernel getSearchAndReplaceKernel(ISession sess)
-	{
-		return (SearchAndReplaceKernel)_searchAndReplaceKernelsBySessionID.get(sess.getIdentifier());
-	}
-
-	private void createMenu() 
+   private void createMenu()
 	{
 		IApplication app = getApplication();
 		ActionCollection coll = app.getActionCollection();
@@ -239,32 +246,14 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 		coll.add(act);
 		_resources.addToMenu(act, menu);
 
-//		act = new FindAction(getApplication(), _resources, this);
-//		coll.add(act);
-//		_resources.addToMenu(act, menu);
-
-//		act = new RepeatLastFindAction(getApplication(), _resources, this);
-//		coll.add(act);
-//		_resources.addToMenu(act, menu);
-
-//		act = new FindSelectedAction(getApplication(), _resources, this);
-//		coll.add(act);
-//		_resources.addToMenu(act, menu);
-
-//		act = new ReplaceAction(getApplication(), _resources, this);
-//		coll.add(act);
-//		_resources.addToMenu(act, menu);
 
       act = new EscapeDateAction(getApplication(), _resources);
       coll.add(act);
       _resources.addToMenu(act, menu);
 	}
 
-	private void setupSQLEntryArea(ISession session)
+	private void createSQLEntryAreaPopMenuItems(ISQLPanelAPI api)
 	{
-		//ISQLPanelAPI api = session.getSQLPanelAPI(this);
-		ISQLPanelAPI api = FrameWorkAcessor.getSQLPanelAPI(session, this);
-      
 		ActionCollection actions = getApplication().getActionCollection();
 		api.addToSQLEntryAreaMenu(actions.get(InQuotesAction.class));
 		api.addToSQLEntryAreaMenu(actions.get(RemoveQuotesAction.class));
@@ -277,7 +266,7 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 	{
 		public void sqlEntryAreaReplaced(SQLPanelEvent evt)
 		{
-			setupSQLEntryArea(evt.getSession());
+			createSQLEntryAreaPopMenuItems(evt.getSQLPanel());
 		}
 	}
 }

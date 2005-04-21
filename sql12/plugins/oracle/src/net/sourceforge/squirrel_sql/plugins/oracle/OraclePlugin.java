@@ -22,6 +22,8 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISQLInternalFrame;
@@ -58,6 +60,7 @@ import net.sourceforge.squirrel_sql.plugins.oracle.tab.UserDetailsTab;
 
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
@@ -188,8 +191,27 @@ public class OraclePlugin extends DefaultSessionPlugin
 		{
 		super.unload();
 	}
-        
-        /**
+
+   public PluginSessionCallback sessionStarted(ISession session)
+   {
+      PluginSessionCallback ret = new PluginSessionCallback()
+      {
+         public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+         {
+            // TODO
+            // Plugin supports only the main session window
+         }
+
+         public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+         {
+            // TODO
+            // Plugin supports only the main session window
+         }
+      };
+      return ret;
+   }
+
+   /**
          * Return a node expander for the object tree for a particular default node type.
          * <p/> A plugin could return non null here if they wish to override the default node
          * expander bahaviour. Most plugins should return null here.

@@ -51,8 +51,8 @@ public class IndexDefragCommand implements ICommand {
         sqlBuffer.append("DBCC INDEXDEFRAG(" + _tableInfo.getCatalogName() + "," + _tableInfo.getSimpleName() + "," + _indexName + ")");
         sqlBuffer.append(" " + sqlSep + " \n");
         
-        _session.getSQLPanelAPI(_plugin).appendSQLScript(sqlBuffer.toString(), true);
-		_session.getSQLPanelAPI(_plugin).executeCurrentSQL();
+        _session.getSessionInternalFrame().getSQLPanelAPI().appendSQLScript(sqlBuffer.toString(), true);
+		_session.getSessionInternalFrame().getSQLPanelAPI().executeCurrentSQL();
 		_session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
 	}
 }

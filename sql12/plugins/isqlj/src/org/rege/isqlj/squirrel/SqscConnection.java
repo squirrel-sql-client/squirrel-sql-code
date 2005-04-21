@@ -75,14 +75,14 @@ public class SqscConnection
 
 	public ResultSet executeQuery( String sql) throws SQLException
 	{
-		session.getSQLPanelAPI( plugin).executeSQL( sql);
+		session.getSessionInternalFrame().getSQLPanelAPI().executeSQL( sql);
 		return null;
 	}
 
 	public int executeUpdate( String sql) 
 			throws SQLException
 	{
-		session.getSQLPanelAPI( plugin).executeSQL( sql);
+		session.getSessionInternalFrame().getSQLPanelAPI().executeSQL( sql);
 		return 0;
 	}
 

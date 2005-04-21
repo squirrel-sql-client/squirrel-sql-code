@@ -23,6 +23,7 @@ import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -161,36 +162,26 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 	 * 
 	 * @param	session		Session that has started.
 	 */
-	public boolean sessionStarted(final ISession session)
+	public PluginSessionCallback sessionStarted(final ISession session)
 	{
       ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getSQLPaneAPI();
 
       initCodeCompletion(sqlPaneAPI, session);
 
-
-      session.getApplication().getWindowManager().addSessionSheetListener(new InternalFrameAdapter()
+      PluginSessionCallback ret = new PluginSessionCallback()
       {
-         public void internalFrameOpened(InternalFrameEvent e)
+         public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
          {
-            onInternalFrameOpened(e, session);
+            initCodeCompletion(sqlInternalFrame.getSQLPanelAPI(), sess);
          }
-      });
 
+         public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+         {
+         }
+      };
 
-		return true;
+		return ret;
 	}
-
-   private void onInternalFrameOpened(InternalFrameEvent e, ISession session)
-   {
-      JInternalFrame frame = e.getInternalFrame();
-
-      if(frame instanceof SQLInternalFrame)
-      {
-         ISQLPanelAPI sqlPanelAPI = ((SQLInternalFrame)frame).getSQLPanelAPI();
-         initCodeCompletion(sqlPanelAPI, session);
-      }
-
-   }
 
    private void initCodeCompletion(ISQLPanelAPI sqlPaneAPI, ISession session)
    {
@@ -199,7 +190,6 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
       JMenuItem item = sqlPaneAPI.addToSQLEntryAreaMenu(cca);
 
       _resources.configureMenuItem(cca, item);
-
 
       JComponent comp = sqlPaneAPI.getSQLEntryPanel().getTextComponent();
       comp.registerKeyboardAction(cca, _resources.getKeyStroke(cca), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);

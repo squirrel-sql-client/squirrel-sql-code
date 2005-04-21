@@ -37,6 +37,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.mainframe.action.AboutAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CascadeAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CloseAllSessionsAction;
@@ -290,9 +291,9 @@ public final class ActionCollection
 		final boolean isSessionInternalFrame = (frame instanceof SessionInternalFrame);
 
 		ISession session = null;
-		if (frame instanceof SessionInternalFrame)
+		if (frame instanceof BaseSessionInternalFrame)
 		{
-			session = ((SessionInternalFrame)frame).getSession();
+			session = ((BaseSessionInternalFrame)frame).getSession();
 		}
 
 		for (Iterator it = actions(); it.hasNext();)

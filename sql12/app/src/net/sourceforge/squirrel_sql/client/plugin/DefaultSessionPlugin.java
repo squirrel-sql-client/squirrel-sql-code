@@ -43,19 +43,6 @@ public abstract class DefaultSessionPlugin extends DefaultPlugin
 	}
 
 	/**
-	 * Called when a session started.
-	 *
-	 * @param	session	The session that is starting.
-	 *
-	 * @return	<TT>true</TT> to indicate that this plugin is
-	 *			applicable to passed session.
-	 */
-	public boolean sessionStarted(ISession session)
-	{
-		return true;
-	}
-
-	/**
 	 * Called when a session shutdown.
 	 *
 	 * @param	session	The session that is ending.

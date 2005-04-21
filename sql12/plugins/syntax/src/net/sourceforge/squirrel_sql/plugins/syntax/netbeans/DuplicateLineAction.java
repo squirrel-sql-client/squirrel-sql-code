@@ -7,10 +7,10 @@ import javax.swing.text.BadLocationException;
 import java.awt.event.ActionEvent;
 
 
-public class DuplicateLineActionAction extends BaseAction
+public class DuplicateLineAction extends BaseAction
 {
 
-   public DuplicateLineActionAction()
+   public DuplicateLineAction()
    {
       super(SQLKit.duplicateLineAction, CLEAR_STATUS_TEXT);
    }

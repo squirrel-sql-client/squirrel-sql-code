@@ -26,6 +26,8 @@ import java.util.List;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import javax.swing.*;
+
 public class TaskThreadPool
 {
 	/** Logger for this class. */
@@ -41,31 +43,7 @@ public class TaskThreadPool
 	private List _tasks = new ArrayList();
 
 	private MyCallback _callback = new MyCallback();
-
-	/**
-	 * Default ctor.
-	 */
-	public TaskThreadPool()
-	{
-		this(0);
-	}
-
-	/**
-	 * Ctor specifying the max number of threads.
-	 *
-	 * @param	maxThreads	Maximum number of threads. Zero means nomax.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			If maxThreads < 0
-	 */
-	public TaskThreadPool(int maxThreads) throws IllegalArgumentException
-	{
-		super();
-		if (maxThreads < 0)
-		{
-			throw new IllegalArgumentException("Negative maxThreads passed");
-		}
-	}
+   private JFrame _parentForMessages = null;
 
 	/**
 	 * Add a task to be executed by the next available thread
@@ -101,7 +79,12 @@ public class TaskThreadPool
 		}
 	}
 
-	private final class MyCallback implements ITaskThreadPoolCallback
+   public void setParentForMessages(JFrame parentForMessages)
+   {
+      _parentForMessages = parentForMessages;
+   }
+
+   private final class MyCallback implements ITaskThreadPoolCallback
 	{
 		public void incrementFreeThreadCount()
 		{
@@ -124,10 +107,17 @@ public class TaskThreadPool
 			return null;
 		}
 
-		// TODO: Show to user
-		public void showMessage(Throwable th)
+		public void showMessage(final Throwable th)
 		{
-			s_log.error("Error", th);
+         s_log.error("Error", th);
+         SwingUtilities.invokeLater(new Runnable()
+         {
+            public void run()
+            {
+               JOptionPane.showMessageDialog(_parentForMessages, "Error ocured during task execution:\n" + th.getMessage());
+               throw new RuntimeException(th);
+            }
+         });
 		}
 	}
 }

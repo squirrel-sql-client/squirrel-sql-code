@@ -67,7 +67,7 @@ abstract class AbstractMultipleSQLCommand implements ICommand
 		final StringBuffer buf = new StringBuffer(2048);
 		final String sep = " " + _session.getProperties().getSQLStatementSeparator();
 
-		final IObjectTreeAPI api = _session.getObjectTreeAPI(_plugin);
+		final IObjectTreeAPI api = _session.getSessionInternalFrame().getObjectTreeAPI();
 		final IDatabaseObjectInfo[] dbObjs = api.getSelectedDatabaseObjects();
 
 		for (int i = 0; i < dbObjs.length; ++i)
@@ -82,8 +82,8 @@ abstract class AbstractMultipleSQLCommand implements ICommand
 		// Execute the SQL command in the SQL tab and then display the SQL tab.
 		if (buf.length() > 0)
 		{
-			_session.getSQLPanelAPI(_plugin).appendSQLScript(buf.toString(), true);
-			_session.getSQLPanelAPI(_plugin).executeCurrentSQL();
+			_session.getSessionInternalFrame().getSQLPanelAPI().appendSQLScript(buf.toString(), true);
+			_session.getSessionInternalFrame().getSQLPanelAPI().executeCurrentSQL();
 			_session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
 		}
 	}

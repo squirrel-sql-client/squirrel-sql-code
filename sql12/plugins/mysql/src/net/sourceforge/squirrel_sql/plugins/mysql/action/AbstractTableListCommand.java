@@ -66,7 +66,7 @@ abstract class AbstractTableListCommand implements ICommand
 	 */
 	public void execute()
 	{
-		final IObjectTreeAPI api = _session.getObjectTreeAPI(_plugin);
+		final IObjectTreeAPI api = _session.getSessionInternalFrame().getObjectTreeAPI();
 		final IDatabaseObjectInfo[] dbObjs = api.getSelectedDatabaseObjects();
 
 		// Get the names of all the selected tables in a comma separated list,
@@ -88,8 +88,8 @@ abstract class AbstractTableListCommand implements ICommand
 		final String cmdStr = checkSQL(cmd.toString());
 		if (cmdStr != null && cmdStr.length() > 0)
 		{
-			_session.getSQLPanelAPI(_plugin).appendSQLScript(cmdStr, true);
-			_session.getSQLPanelAPI(_plugin).executeCurrentSQL();
+			_session.getSessionInternalFrame().getSQLPanelAPI().appendSQLScript(cmdStr, true);
+			_session.getSessionInternalFrame().getSQLPanelAPI().executeCurrentSQL();
 			_session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
 		}
 	}

@@ -19,10 +19,13 @@ package net.sourceforge.squirrel_sql.plugins.userscript;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
@@ -173,7 +176,7 @@ public class UserScriptPlugin extends DefaultSessionPlugin
     * @return <TT>true</TT> to indicate that this plugin is
     *         applicable to passed session.
     */
-   public boolean sessionStarted(ISession session)
+   public PluginSessionCallback sessionStarted(ISession session)
    {
       ActionCollection coll = getApplication().getActionCollection();
 
@@ -188,7 +191,21 @@ public class UserScriptPlugin extends DefaultSessionPlugin
       UserScriptAdmin adm = new UserScriptAdmin(this, session);
       _userScriptAdminsBySessionId.put(session.getIdentifier(), adm);
 
-      return true;
+      PluginSessionCallback ret = new PluginSessionCallback()
+      {
+         public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+         {
+            // TODO
+            // Plugin supports only the main session window
+         }
+
+         public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+         {
+            // TODO
+            // Plugin supports only the main session window
+         }
+      };
+      return ret;
    }
 
 

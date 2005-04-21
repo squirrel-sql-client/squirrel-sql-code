@@ -18,11 +18,10 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
-import net.sourceforge.squirrel_sql.client.plugin.PluginException;
-import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
-import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.plugin.*;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -217,12 +216,13 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 	 * @return  <TT>true</TT> to indicate that this plugin is
 	 *		  applicable to passed session.
 	 */
-	public boolean sessionStarted(ISession session) {
-		ActionCollection coll = getApplication().getActionCollection();
+	public PluginSessionCallback sessionStarted(ISession session)
+   {
+		final ActionCollection coll = getApplication().getActionCollection();
 
       //IObjectTreeAPI api = session.getObjectTreeAPI(this);
       IObjectTreeAPI api = FrameWorkAcessor.getObjectTreeAPI(session, this);
-		
+
       api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTableScriptAction.class));
 		api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateDataScriptAction.class));
 		api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTemplateDataScriptAction.class));
@@ -230,7 +230,23 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 		session.addToToolbar(coll.get(LoadScriptAction.class));
 		session.addToToolbar(coll.get(SaveScriptAction.class));
 
-		return true;
+      PluginSessionCallback ret = new PluginSessionCallback()
+      {
+         public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+         {
+            sqlInternalFrame.addToToolbar(coll.get(LoadScriptAction.class));
+            sqlInternalFrame.addToToolbar(coll.get(SaveScriptAction.class));
+         }
+
+         public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+         {
+            objectTreeInternalFrame.getObjectTreeAPI().addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTableScriptAction.class));
+            objectTreeInternalFrame.getObjectTreeAPI().addToPopup(DatabaseObjectType.TABLE, coll.get(CreateDataScriptAction.class));
+            objectTreeInternalFrame.getObjectTreeAPI().addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTemplateDataScriptAction.class));
+         }
+      };
+
+      return ret;
 	}
 
 	/**

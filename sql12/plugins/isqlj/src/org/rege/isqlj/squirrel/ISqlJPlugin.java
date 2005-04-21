@@ -42,11 +42,10 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
-import net.sourceforge.squirrel_sql.client.plugin.PluginException;
-import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
-import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.plugin.*;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -100,11 +99,27 @@ public class ISqlJPlugin extends DefaultSessionPlugin
 		createMenu();
 	}
 
-	public boolean sessionStarted(ISession session) 
+	public PluginSessionCallback sessionStarted(ISession session)
 	{
 		ActionCollection coll = getApplication().getActionCollection();
-		IObjectTreeAPI api = session.getObjectTreeAPI(this);
-		return true;
+		IObjectTreeAPI api = session.getSessionInternalFrame().getObjectTreeAPI();
+
+      PluginSessionCallback ret = new PluginSessionCallback()
+      {
+         public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+         {
+            // TODO
+            // Plugin supports only the main session window
+         }
+
+         public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+         {
+            // TODO
+            // Plugin supports only the main session window
+         }
+      };
+      return ret;
+      
 	}
 
 

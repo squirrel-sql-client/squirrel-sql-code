@@ -46,8 +46,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
-import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.*;
 import net.sourceforge.squirrel_sql.client.mainframe.action.OpenConnectionCommand;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
@@ -126,6 +125,7 @@ class Session implements ISession
 	private SQLConnectionListener _connLis = null;
 
    private BaseSessionInternalFrame _activeActiveSessionWindow;
+   private SessionInternalFrame _sessionInternalFrame;
 
    /**
 	 * Create a new session.
@@ -465,7 +465,7 @@ class Session implements ISession
 		}
 	}
 
-	/**
+   /**
 	 * Reconnect to the database.
 	 */
 	public void reconnect()
@@ -543,6 +543,27 @@ class Session implements ISession
 			}
 		}
 	}
+
+   public synchronized void setSessionInternalFrame(SessionInternalFrame sif)
+   {
+      _sessionInternalFrame = sif;
+
+      // This is a reasonable default and makes initialization code run well
+      _activeActiveSessionWindow = sif;
+
+      _sessionSheet = sif.getSessionPanel();
+      final ListIterator it = _statusBarToBeAdded.listIterator();
+      while (it.hasNext())
+      {
+         addToStatusBar((JComponent)it.next());
+         it.remove();
+      }
+   }
+
+   public SessionInternalFrame getSessionInternalFrame()
+   {
+      return _sessionInternalFrame;
+   }
 
 	public SessionPanel getSessionSheet()
 	{
@@ -678,6 +699,15 @@ class Session implements ISession
 		_title = _id + " - " + title;
 	}
 
+   /**
+    * The code in any SQLEditor is parsed in the background. You may attach a listener to the ParserEventsProcessor
+    * to get to know about the results of parsing. The events are passed synchron with the event queue
+    * (via SwingUtils.invokeLater()). At the moment events are produced for errors in the SQLScript
+    * which are highlighted in the syntax plugin and for aliases of table names which are used in the
+    * code completion plugin.
+    * <p>
+    * If you want the ParserEventsProcessor to produce further events feel free to contact gerdwagner@users.sourceforge.net.
+    */
 	public IParserEventsProcessor getParserEventsProcessor()
 	{
 		return _parserEventsProcessor;
@@ -692,6 +722,57 @@ class Session implements ISession
    {
       return _activeActiveSessionWindow;
    }
+
+   /**
+    *
+    * @throws IllegalStateException if ActiveSessionWindow doesn't provide an SQLPanelAPI
+    * for example if it is an ObjectTreeInternalFrame
+    */
+   public ISQLPanelAPI getSQLPanelAPIOfActiveSessionWindow()
+   {
+      ISQLPanelAPI sqlPanelAPI;
+      if(_activeActiveSessionWindow instanceof SessionInternalFrame)
+      {
+         sqlPanelAPI = ((SessionInternalFrame)_activeActiveSessionWindow).getSQLPanelAPI();
+      }
+      else if(_activeActiveSessionWindow instanceof SQLInternalFrame)
+      {
+         sqlPanelAPI = ((SQLInternalFrame)_activeActiveSessionWindow).getSQLPanelAPI();
+      }
+      else
+      {
+         throw new IllegalStateException("SQLPanelApi can only be provided for SessionInternalFrame or SQLInternalFrame");
+      }
+
+      return sqlPanelAPI;
+   }
+
+   /**
+    *
+    * @throws IllegalStateException if ActiveSessionWindow doesn't provide an IObjectTreeAPI
+    * for example if it is an SQLInternalFrame
+    */
+   public IObjectTreeAPI getObjectTreeAPIOfActiveSessionWindow()
+   {
+      IObjectTreeAPI objectTreeAPI;
+      if(_activeActiveSessionWindow instanceof SessionInternalFrame)
+      {
+         objectTreeAPI = ((SessionInternalFrame)_activeActiveSessionWindow).getObjectTreeAPI();
+      }
+      else if(_activeActiveSessionWindow instanceof ObjectTreeInternalFrame)
+      {
+         objectTreeAPI = ((ObjectTreeInternalFrame)_activeActiveSessionWindow).getObjectTreeAPI();
+      }
+      else
+      {
+         throw new IllegalStateException("ObjectTreeApi can only be provided for SessionInternalFrame or ObjectTreeInternalFrame");
+      }
+
+      return objectTreeAPI;
+   }
+
+
+
 
    private class SQLConnectionListener implements PropertyChangeListener
 	{

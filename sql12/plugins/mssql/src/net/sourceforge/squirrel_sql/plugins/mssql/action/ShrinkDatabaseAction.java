@@ -45,7 +45,7 @@ public class ShrinkDatabaseAction extends SquirrelAction implements ISessionActi
 	public void actionPerformed(ActionEvent evt) {
 		if (_session != null) {
 			IPlugin plugin = _session.getApplication().getDummyAppPlugin();
-			IObjectTreeAPI treeAPI = _session.getObjectTreeAPI(plugin);
+			IObjectTreeAPI treeAPI = _session.getSessionInternalFrame().getObjectTreeAPI();
 			IDatabaseObjectInfo[] dbs = treeAPI.getSelectedDatabaseObjects();
 			ObjectTreeNode[] nodes = treeAPI.getSelectedNodes();
 			if (dbs.length > 0)

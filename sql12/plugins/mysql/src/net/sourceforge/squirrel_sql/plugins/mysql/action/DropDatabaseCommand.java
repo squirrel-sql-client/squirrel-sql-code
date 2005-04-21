@@ -80,7 +80,7 @@ public class DropDatabaseCommand implements ICommand
 					.append(" ")
 					.append('\n');
 			}
-			_session.getSQLPanelAPI(_plugin).executeSQL(buf.toString());
+			_session.getSessionInternalFrame().getSQLPanelAPI().executeSQL(buf.toString());
 		}
 	}
 }

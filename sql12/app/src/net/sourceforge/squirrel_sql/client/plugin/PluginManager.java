@@ -19,18 +19,12 @@ package net.sourceforge.squirrel_sql.client.plugin;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.util.MyURLClassLoader;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -38,9 +32,16 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import javax.swing.*;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.net.URL;
+import java.util.*;
 /**
  * Manages plugins for the application.
  *
@@ -93,7 +94,9 @@ public class PluginManager
 	 */
 	private final Map _pluginLoadInfoColl = new HashMap();
 
-	/**
+   private HashMap _pluginSessionCallbacksBySessionID = new HashMap();
+
+   /**
 	 * Ctor.
 	 *
 	 * @param	app		Application API.
@@ -166,8 +169,18 @@ public class PluginManager
 			SessionPluginInfo spi = (SessionPluginInfo) it.next();
 			try
 			{
-				if (spi.getSessionPlugin().sessionStarted(session))
+            PluginSessionCallback pluginSessionCallback = spi.getSessionPlugin().sessionStarted(session);
+
+            if (null != pluginSessionCallback)
 				{
+               List list = (List) _pluginSessionCallbacksBySessionID.get(session.getIdentifier());
+               if(null == list)
+               {
+                  list = new ArrayList();
+                  _pluginSessionCallbacksBySessionID.put(session.getIdentifier(), list);
+               }
+               list.add(pluginSessionCallback);
+
 					plugins.add(spi);
 				}
 			}
@@ -214,6 +227,7 @@ public class PluginManager
 					_app.showErrorDialog(msg, th);
 				}
 			}
+         _pluginSessionCallbacksBySessionID.remove(session.getIdentifier());
 		}
 	}
 
@@ -430,6 +444,14 @@ public class PluginManager
 	 */
 	public void initializePlugins()
 	{
+      _app.getWindowManager().addSessionSheetListener(new InternalFrameAdapter()
+      {
+         public void internalFrameOpened(InternalFrameEvent e)
+         {
+            onInternalFrameOpened(e);
+         }
+      });
+
 		for (Iterator it = _loadedPlugins.values().iterator(); it.hasNext();)
 		{
 			IPlugin plugin = (IPlugin) it.next();
@@ -448,6 +470,38 @@ public class PluginManager
 			}
 		}
 	}
+
+
+   private void onInternalFrameOpened(InternalFrameEvent e)
+   {
+      JInternalFrame frame = e.getInternalFrame();
+
+      if(frame instanceof BaseSessionInternalFrame)
+      {
+         ISession session = ((BaseSessionInternalFrame)frame).getSession();
+
+         List list =(List) _pluginSessionCallbacksBySessionID.get(session.getIdentifier());
+
+         if(null != list)
+         {
+            for (int i = 0; i < list.size(); i++)
+            {
+               PluginSessionCallback psc = (PluginSessionCallback) list.get(i);
+
+               if(frame instanceof SQLInternalFrame)
+               {
+                  psc.sqlInternalFrameOpened((SQLInternalFrame)frame, session);
+               }
+               else if(frame instanceof ObjectTreeInternalFrame)
+               {
+                  psc.objectTreeInternalFrameOpened((ObjectTreeInternalFrame)frame, session);
+               }
+            }
+         }
+      }
+   }
+
+
 
 	/**
 	 * Retrieve information about plugin load times

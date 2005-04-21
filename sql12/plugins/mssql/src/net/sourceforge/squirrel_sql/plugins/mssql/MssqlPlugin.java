@@ -30,11 +30,10 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
-import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.plugin.PluginException;
-import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.plugin.*;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
@@ -173,7 +172,7 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
         super.sessionEnding(iSession);
     }
     
-    public boolean sessionStarted(net.sourceforge.squirrel_sql.client.session.ISession iSession) {
+    public PluginSessionCallback sessionStarted(net.sourceforge.squirrel_sql.client.session.ISession iSession) {
         boolean isMssql = false;
         String productName;
         try {
@@ -184,8 +183,8 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
         }
         isMssql = productName.equals("Microsoft SQL Server");
         
-		if (super.sessionStarted(iSession) && isMssql) {
-            _treeAPI = iSession.getObjectTreeAPI(this);
+		if (isMssql) {
+            _treeAPI = iSession.getSessionInternalFrame().getObjectTreeAPI();
             final ActionCollection coll = getApplication().getActionCollection();
 
             _treeAPI.addToPopup(DatabaseObjectType.CATALOG, addToMssqlCatalogMenu(null));
@@ -196,11 +195,25 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
             
             MonitorPanel monitorPanel = new MonitorPanel();
             iSession.addMainTab(monitorPanel);
-            
-            return true;
+
+            PluginSessionCallback ret = new PluginSessionCallback()
+            {
+               public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+               {
+                  // TODO
+                  // Plugin supports only the main session window
+               }
+
+               public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+               {
+                  // TODO
+                  // Plugin supports only the main session window
+               }
+            };
+            return ret;
 		}
 
-        return false;
+        return null;
     }
     
     public void unload() {
