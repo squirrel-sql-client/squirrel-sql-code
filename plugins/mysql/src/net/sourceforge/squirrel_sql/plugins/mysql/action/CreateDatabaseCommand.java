@@ -56,8 +56,8 @@ public class CreateDatabaseCommand implements ICommand
 		{
 			final StringBuffer buf = new StringBuffer();
 			buf.append("create database ").append(dbName);
-			_session.getSQLPanelAPI(_plugin).executeSQL(buf.toString());
-			IObjectTreeAPI api = _session.getObjectTreeAPI(_plugin);
+			_session.getSessionInternalFrame().getSQLPanelAPI().executeSQL(buf.toString());
+			IObjectTreeAPI api = _session.getSessionInternalFrame().getObjectTreeAPI();
 			api.refreshTree();
 		}
 

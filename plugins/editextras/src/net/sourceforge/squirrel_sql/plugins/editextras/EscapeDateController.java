@@ -74,7 +74,7 @@ public class EscapeDateController
                             prefixNulls(_frame.txtMinute.getText(), 2) + ":" +
                             prefixNulls(_frame.txtSecond.getText(),2) + "'}";
 
-      _session.getSQLEntryPanel().replaceSelection(esc);
+      _session.getSQLPanelAPIOfActiveSessionWindow().getSQLEntryPanel().replaceSelection(esc);
       _frame.setVisible(false);
       _frame.dispose();
    }
@@ -85,7 +85,7 @@ public class EscapeDateController
                             prefixNulls(_frame.txtMonth.getText(), 2) + "-" +
                             prefixNulls(_frame.txtDay.getText(), 2) + "'}";
 
-      _session.getSQLEntryPanel().replaceSelection(esc);
+      _session.getSQLPanelAPIOfActiveSessionWindow().getSQLEntryPanel().replaceSelection(esc);
       _frame.setVisible(false);
       _frame.dispose();
    }
@@ -99,7 +99,7 @@ public class EscapeDateController
                              prefixNulls(_frame.txtMinute.getText(), 2) + ":" +
                              prefixNulls(_frame.txtSecond.getText(), 2) + "'}";
 
-      _session.getSQLEntryPanel().replaceSelection(esc);
+      _session.getSQLPanelAPIOfActiveSessionWindow().getSQLEntryPanel().replaceSelection(esc);
       _frame.setVisible(false);
       _frame.dispose();
    }

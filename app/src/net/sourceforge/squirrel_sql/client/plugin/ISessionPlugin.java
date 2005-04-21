@@ -45,10 +45,11 @@ public interface ISessionPlugin extends IPlugin
 	 *
 	 * @param	session	The session that is starting.
 	 *
-	 * @return	<TT>true</TT> if plugin is applicable to passed
-	 *			session else <TT>false</TT>.
+	 * @return  An implementation of PluginSessionCallback that requires the plugin to
+    * adequately work with multible session windows.
+    * Returning null tells the that the plugin is not applicable to this Session. 
 	 */
-	boolean sessionStarted(ISession session);
+	PluginSessionCallback sessionStarted(ISession session);
 
 	/**
 	 * Called when a session shutdown.

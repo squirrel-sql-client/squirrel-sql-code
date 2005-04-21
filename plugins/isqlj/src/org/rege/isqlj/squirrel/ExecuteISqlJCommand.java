@@ -73,7 +73,7 @@ public class ExecuteISqlJCommand
 	{
         if( session != null) 
 		{
-			String str = session.getSQLPanelAPI( plugin).getSQLScriptToBeExecuted();
+			String str = session.getSessionInternalFrame().getSQLPanelAPI().getSQLScriptToBeExecuted();
 			try
 			{
 				JavaSql sqlj = new JavaSql();

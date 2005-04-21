@@ -85,6 +85,6 @@ public class RenameTableCommand
 	{
 		String cmd = s_stringMgr.getString("RenameTableCommand.cmd",
 						new Object[]{_ti.getQualifiedName(), _newTableName});
-		_session.getSQLPanelAPI(_plugin).executeSQL(cmd);
+		_session.getSessionInternalFrame().getSQLPanelAPI().executeSQL(cmd);
 	}
 }

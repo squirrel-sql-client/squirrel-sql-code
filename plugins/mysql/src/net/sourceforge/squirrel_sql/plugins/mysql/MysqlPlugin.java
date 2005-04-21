@@ -53,10 +53,13 @@ import net.sourceforge.squirrel_sql.plugins.mysql.tab.TableStatusTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.UserGrantsTab;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
@@ -222,52 +225,71 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	 * @return	<TT>true</TT> if session is MySQL in which case this plugin
 	 * 			is interested in it.
 	 */
-	public boolean sessionStarted(ISession session)
+	public PluginSessionCallback sessionStarted(ISession session)
 	{
-		boolean isMysql = false;
-		if (super.sessionStarted(session))
-		{
-			isMysql = isMysql(session);
-			if (isMysql)
-			{
-				_treeAPI = session.getObjectTreeAPI(this);
-				final ActionCollection coll = getApplication().getActionCollection();
+      boolean isMysql = false;
+      isMysql = isMysql(session);
+      if (isMysql)
+      {
+         _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
+         final ActionCollection coll = getApplication().getActionCollection();
 
-				// Show users in the object tee.
-				_treeAPI.addExpander(DatabaseObjectType.SESSION, new SessionExpander());
-				_treeAPI.addExpander(IObjectTypes.USER_PARENT, new UserParentExpander(this));
+         // Show users in the object tee.
+         _treeAPI.addExpander(DatabaseObjectType.SESSION, new SessionExpander());
+         _treeAPI.addExpander(IObjectTypes.USER_PARENT, new UserParentExpander(this));
 
-				// Tabs to add to the database node.
-				_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new DatabaseStatusTab());
-				_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ProcessesTab());
-				_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowVariablesTab());
-				_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowLogsTab());
-				_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowMasterStatusTab());
-				_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowMasterLogsTab());
-				_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowSlaveStatusTab());
+         // Tabs to add to the database node.
+         _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new DatabaseStatusTab());
+         _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ProcessesTab());
+         _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowVariablesTab());
+         _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowLogsTab());
+         _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowMasterStatusTab());
+         _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowMasterLogsTab());
+         _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowSlaveStatusTab());
 
-				// Tabs to add to the catalog nodes.
-				_treeAPI.addDetailTab(DatabaseObjectType.CATALOG, new OpenTablesTab());
-				_treeAPI.addDetailTab(DatabaseObjectType.CATALOG, new TableStatusTab());
+         // Tabs to add to the catalog nodes.
+         _treeAPI.addDetailTab(DatabaseObjectType.CATALOG, new OpenTablesTab());
+         _treeAPI.addDetailTab(DatabaseObjectType.CATALOG, new TableStatusTab());
 
-				// Tabs to add to the table nodes.
-				_treeAPI.addDetailTab(DatabaseObjectType.TABLE, new ShowColumnsTab());
-				_treeAPI.addDetailTab(DatabaseObjectType.TABLE, new ShowIndexesTab());
+         // Tabs to add to the table nodes.
+         _treeAPI.addDetailTab(DatabaseObjectType.TABLE, new ShowColumnsTab());
+         _treeAPI.addDetailTab(DatabaseObjectType.TABLE, new ShowIndexesTab());
 
-				// Tabs to add to the user nodes.
-				_treeAPI.addDetailTab(DatabaseObjectType.USER, new UserGrantsTab());
+         // Tabs to add to the user nodes.
+         _treeAPI.addDetailTab(DatabaseObjectType.USER, new UserGrantsTab());
 
-				// Options in popup menu.
-				_treeAPI.addToPopup(coll.get(CreateDatabaseAction.class));
+         // Options in popup menu.
+         _treeAPI.addToPopup(coll.get(CreateDatabaseAction.class));
 
 //				_treeAPI.addToPopup(DatabaseObjectType.SESSION, coll.get(CreateTableAction.class));
 //				_treeAPI.addToPopup(DatabaseObjectType.CATALOG, coll.get(CreateTableAction.class));
-				_treeAPI.addToPopup(DatabaseObjectType.CATALOG, coll.get(DropDatabaseAction.class));
+         _treeAPI.addToPopup(DatabaseObjectType.CATALOG, coll.get(DropDatabaseAction.class));
 
-				_treeAPI.addToPopup(DatabaseObjectType.TABLE, createMysqlTableMenu());
-			}
-		}
-		return isMysql;
+         _treeAPI.addToPopup(DatabaseObjectType.TABLE, createMysqlTableMenu());
+      }
+
+      if(isMysql)
+      {
+         PluginSessionCallback ret = new PluginSessionCallback()
+         {
+            public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+            {
+               // TODO
+               // Plugin supports only the main session window
+            }
+
+            public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+            {
+               // TODO
+               // Plugin supports only the main session window
+            }
+         };
+         return ret;
+      }
+      else
+      {
+         return null;
+      }
 	}
 
 	/**

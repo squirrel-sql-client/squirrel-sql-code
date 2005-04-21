@@ -58,7 +58,7 @@ public class AlterTableAction extends SquirrelAction implements ISessionAction
 	{
 		if (_session != null)
 		{
-			IObjectTreeAPI treeAPI = _session.getObjectTreeAPI(_plugin);
+			IObjectTreeAPI treeAPI = _session.getSessionInternalFrame().getObjectTreeAPI();
 			IDatabaseObjectInfo[] tables = treeAPI.getSelectedDatabaseObjects();
 			if (tables.length == 1 && tables[0] instanceof ITableInfo)
 			{

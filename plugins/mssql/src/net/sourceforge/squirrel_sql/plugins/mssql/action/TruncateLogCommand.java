@@ -51,8 +51,8 @@ public class TruncateLogCommand implements ICommand {
 				buf.append("BACKUP LOG " + ti.getSimpleName() + " WITH TRUNCATE_ONLY");
 				buf.append(" " + sqlSep + " \n");
 			}
-            _session.getSQLPanelAPI(_plugin).appendSQLScript(buf.toString(), true);
-            _session.getSQLPanelAPI(_plugin).executeCurrentSQL();
+            _session.getSessionInternalFrame().getSQLPanelAPI().appendSQLScript(buf.toString(), true);
+            _session.getSessionInternalFrame().getSQLPanelAPI().executeCurrentSQL();
             _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
 		}
 	}

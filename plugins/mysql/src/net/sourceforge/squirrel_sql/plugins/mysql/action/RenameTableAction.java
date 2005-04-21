@@ -69,7 +69,7 @@ public class RenameTableAction extends SquirrelAction
 	{
 		if (_session != null)
 		{
-			final IObjectTreeAPI treeAPI = _session.getObjectTreeAPI(_plugin);
+			final IObjectTreeAPI treeAPI = _session.getSessionInternalFrame().getObjectTreeAPI();
 			final IDatabaseObjectInfo[] tables = treeAPI.getSelectedDatabaseObjects();
 			if (tables.length == 1)
 			{

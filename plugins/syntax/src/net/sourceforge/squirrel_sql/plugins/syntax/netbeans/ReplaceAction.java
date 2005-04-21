@@ -1,8 +1,11 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.netbeans;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPluginResources;
 
@@ -23,7 +26,9 @@ public class ReplaceAction extends SquirrelAction implements ISessionAction
 	{
       if(null != _session)
       {
-         if(false == _session.getSQLEntryPanel() instanceof NetbeansSQLEntryPanel)
+         ISQLEntryPanel sqlEntryPanel = _session.getSQLPanelAPIOfActiveSessionWindow().getSQLEntryPanel();
+
+         if(false == sqlEntryPanel instanceof NetbeansSQLEntryPanel)
          {
             String msg =
                "Replace is only available when the Netbeans editor is used.\n" +
@@ -32,12 +37,9 @@ public class ReplaceAction extends SquirrelAction implements ISessionAction
             return;
          }
 
-         NetbeansSQLEntryPanel nsep = (NetbeansSQLEntryPanel) _session.getSQLEntryPanel();
+         NetbeansSQLEntryPanel nsep = (NetbeansSQLEntryPanel) sqlEntryPanel;
          nsep.showReplaceDialog(evt);
-
-
       }
-
 	}
 
 	public void setSession(ISession session)

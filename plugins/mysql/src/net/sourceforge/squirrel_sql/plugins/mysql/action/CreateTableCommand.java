@@ -430,7 +430,7 @@ public class CreateTableCommand extends JDialog implements ICommand
 		{
 			Statement stmt = con.createStatement();
 			stmt.execute(query);
-			_session.getObjectTreeAPI(_plugin).refreshTree();
+			_session.getSessionInternalFrame().getObjectTreeAPI().refreshTree();
 			jd.setVisible(false);
 			jd.dispose();
 			JOptionPane.showMessageDialog(

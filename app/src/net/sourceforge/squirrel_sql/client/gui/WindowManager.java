@@ -374,7 +374,7 @@ public class WindowManager
 
 		final SessionInternalFrame sif = new SessionInternalFrame(session);
 
-		session.setSessionSheet(sif.getSessionPanel());
+		session.setSessionInternalFrame(sif);
 		_app.getPluginManager().sessionStarted(session);
 		_app.getMainFrame().addInternalFrame(sif, true, null);
 
@@ -986,6 +986,11 @@ public class WindowManager
       }
 		return firstWindow;
 	}
+
+   public BaseSessionInternalFrame[] getAllFramesOfSession(IIdentifier sessionIdentifier)
+   {
+      return _sessionWindows.getFramesOfSession(sessionIdentifier);
+   }
 
 	// JASON: Needs to be done elsewhere
 //	private synchronized void editWhereColsDialogClosed(EditWhereColsSheet sfs)

@@ -619,6 +619,9 @@ class Application implements IApplication
 
 		indicateNewStartupTask(splash, "Showing main window...");
 		_windowManager.moveToFront(_windowManager.getMainFrame());
+      _threadPool.setParentForMessages(_windowManager.getMainFrame());
+
+
 //		_mainFrame.setVisible(true);
 //		_mainFrame.toFront();	// Required on Linux
 

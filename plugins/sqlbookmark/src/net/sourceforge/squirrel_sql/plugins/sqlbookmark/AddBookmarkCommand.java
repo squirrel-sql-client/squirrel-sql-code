@@ -96,7 +96,7 @@ public class AddBookmarkCommand implements ICommand {
 	    if (name == null || name.length() == 0)
 		return;
 	    
-	    String sql = session.getSQLPanelAPI(plugin).getEntireSQLScript();
+	    String sql = session.getSessionInternalFrame().getSQLPanelAPI().getEntireSQLScript();
 	    
 	    logger.info("bookmark name: " + name);
 	    logger.info("bookmark sql: " + sql);

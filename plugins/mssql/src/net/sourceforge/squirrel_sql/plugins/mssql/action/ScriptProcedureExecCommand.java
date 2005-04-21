@@ -123,7 +123,7 @@ public class ScriptProcedureExecCommand implements ICommand {
                     buf.append(procExec);
                 }
 
-                _session.getSQLPanelAPI(_plugin).appendSQLScript(buf.toString());
+                _session.getSessionInternalFrame().getSQLPanelAPI().appendSQLScript(buf.toString());
                 _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
             }
         }

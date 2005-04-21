@@ -44,7 +44,7 @@ public class GenerateSqlAction extends SquirrelAction implements ISessionAction 
 
 	public void actionPerformed(ActionEvent evt) {
 		if (_session != null) {
-			IObjectTreeAPI treeAPI = _session.getObjectTreeAPI(_plugin);
+			IObjectTreeAPI treeAPI = _session.getSessionInternalFrame().getObjectTreeAPI();
 			IDatabaseObjectInfo[] dbObjs = treeAPI.getSelectedDatabaseObjects();
             try {
                 new GenerateSqlCommand(_session, _plugin, dbObjs).execute();

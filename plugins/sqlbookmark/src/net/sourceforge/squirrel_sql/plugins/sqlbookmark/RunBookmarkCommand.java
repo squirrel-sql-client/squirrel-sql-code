@@ -107,7 +107,7 @@ public class RunBookmarkCommand implements ICommand {
 	    logger.info("running sql: " + bookmark.getSql());
 	    String sql = parseAndLoadSql(bookmark.getSql());
 	    
-	    session.getSQLPanelAPI(plugin).setEntireSQLScript(sql);
+	    session.getSessionInternalFrame().getSQLPanelAPI().setEntireSQLScript(sql);
         }
     }
 

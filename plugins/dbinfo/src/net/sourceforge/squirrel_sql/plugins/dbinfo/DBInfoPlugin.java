@@ -23,10 +23,14 @@ import java.io.IOException;
 import javax.swing.Action;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 
@@ -120,4 +124,23 @@ public class DBInfoPlugin extends DefaultSessionPlugin {
         coll.add(action);
         app.addToMenu(IApplication.IMenuIDs.PLUGINS_MENU, action);
     }
+
+   public PluginSessionCallback sessionStarted(ISession session)
+   {
+      PluginSessionCallback ret = new PluginSessionCallback()
+      {
+         public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+         {
+            // TODO
+            // Plugin supports only the main session window
+         }
+
+         public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+         {
+            // TODO
+            // Plugin supports only the main session window
+         }
+      };
+      return ret;
+   }
 }

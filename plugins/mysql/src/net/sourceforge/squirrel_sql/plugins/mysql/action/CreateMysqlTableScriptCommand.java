@@ -74,7 +74,7 @@ class CreateMysqlTableScriptCommand implements ICommand
 			final Statement stmt = conn.createStatement();
 			try
 			{
-				IObjectTreeAPI api = _session.getObjectTreeAPI(_plugin);
+				IObjectTreeAPI api = _session.getSessionInternalFrame().getObjectTreeAPI();
 				IDatabaseObjectInfo[] dbObjs = api.getSelectedDatabaseObjects();
 				for (int i = 0; i < dbObjs.length; ++i)
 				{
@@ -105,7 +105,7 @@ class CreateMysqlTableScriptCommand implements ICommand
 				}
 			}
 
-			_session.getSQLPanelAPI(_plugin).appendSQLScript(buf.toString(), true);
+			_session.getSessionInternalFrame().getSQLPanelAPI().appendSQLScript(buf.toString(), true);
 			_session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
 		}
 		catch (SQLException ex)

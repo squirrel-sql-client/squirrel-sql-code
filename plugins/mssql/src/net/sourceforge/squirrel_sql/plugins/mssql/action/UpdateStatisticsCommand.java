@@ -41,7 +41,7 @@ public class UpdateStatisticsCommand implements ICommand {
 
 	public void execute() {
         final String sqlSep = _session.getProperties().getSQLStatementSeparator();
-        final IObjectTreeAPI api = _session.getObjectTreeAPI(_plugin);
+        final IObjectTreeAPI api = _session.getSessionInternalFrame().getObjectTreeAPI();
 		final IDatabaseObjectInfo[] dbObjs = api.getSelectedDatabaseObjects();
 
 		// Get the names of all the selected tables in a comma separated list,
@@ -57,8 +57,8 @@ public class UpdateStatisticsCommand implements ICommand {
 		}
 
         if (cmd != null && cmd.length() > 0) {
-			_session.getSQLPanelAPI(_plugin).appendSQLScript(cmd.toString(), true);
-			_session.getSQLPanelAPI(_plugin).executeCurrentSQL();
+			_session.getSessionInternalFrame().getSQLPanelAPI().appendSQLScript(cmd.toString(), true);
+			_session.getSessionInternalFrame().getSQLPanelAPI().executeCurrentSQL();
 			_session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
 		}
 	}

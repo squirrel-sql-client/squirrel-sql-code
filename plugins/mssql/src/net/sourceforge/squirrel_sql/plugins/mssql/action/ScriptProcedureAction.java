@@ -46,7 +46,7 @@ public class ScriptProcedureAction extends SquirrelAction implements ISessionAct
 	public void actionPerformed(ActionEvent evt) {
 		if (_session != null) {
 			IPlugin plugin = _session.getApplication().getDummyAppPlugin();
-			IObjectTreeAPI treeAPI = _session.getObjectTreeAPI(plugin);
+			IObjectTreeAPI treeAPI = _session.getSessionInternalFrame().getObjectTreeAPI();
 			final IDatabaseObjectInfo[] dbObjs = treeAPI.getSelectedDatabaseObjects();
             
 			if (dbObjs.length > 0) {

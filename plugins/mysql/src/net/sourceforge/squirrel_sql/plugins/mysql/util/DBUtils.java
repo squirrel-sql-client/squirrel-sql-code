@@ -69,7 +69,7 @@ public class DBUtils
 
 		SQLConnection conn = _session.getSQLConnection();
 		SQLDatabaseMetaData dmd = conn.getSQLMetaData();
-		IObjectTreeAPI treeAPI = _session.getObjectTreeAPI(_plugin);
+		IObjectTreeAPI treeAPI = _session.getSessionInternalFrame().getObjectTreeAPI();
 		IDatabaseObjectInfo[] dbInfo = treeAPI.getSelectedDatabaseObjects();
 
 		if (dbInfo[0] instanceof ITableInfo)

@@ -33,6 +33,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.session.MainPanel;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
@@ -117,12 +118,7 @@ public interface ISession extends IHasIdentifier
 	 */
 	void closeSQLConnection() throws SQLException;
 
-	/**
-	 * Set the session sheet for this session.
-	 *
-	 * @param	sheet	Sheet for this session.
-	 */
-	void setSessionSheet(SessionPanel child);
+   void setSessionInternalFrame(SessionInternalFrame sif);
 
 	/**
 	 * Reconnect to the database.
@@ -137,6 +133,8 @@ public interface ISession extends IHasIdentifier
 	IMessageHandler getMessageHandler();
 
 	SessionPanel getSessionSheet();
+
+   SessionInternalFrame getSessionInternalFrame();
 
 // JASON:
 //	SQLFilterClauses getSQLFilterClauses();
@@ -217,19 +215,54 @@ public interface ISession extends IHasIdentifier
 	ISQLEntryPanel getSQLEntryPanel();
 
 	/**
-	 * Add the passed action to the session toolbar.
+	 * Add the passed action to the toolbar of the sessions main window.
 	 *
 	 * @param	action	Action to be added.
 	 */
 	void addToToolbar(Action action);
 
 	/**
-	 * TODO: Javadoc
+	 * The code in any SQLEditor is parsed in the background. You may attach a listener to the ParserEventsProcessor
+    * to get to know about the results of parsing. The events are passed synchron with the event queue
+    * (via SwingUtils.invokeLater()). At the moment events are produced for errors in the SQLScript
+    * which are highlighted in the syntax plugin and for aliases of table names which are used in the
+    * code completion plugin.
+    * <p>
+    * If you want the ParserEventsProcessor to produce further events feel free to contact gerdwagner@users.sourceforge.net.
 	 */
 	IParserEventsProcessor getParserEventsProcessor();
 
    void setActiveSessionWindow(BaseSessionInternalFrame activeActiveSessionWindow);
 
+   /**
+    * Hint for plugins:
+    * When ISessionPlugin.sessionStarted is called the active session window is
+    * always the SessionInternalFrame which provides an SQLPanelAPI. This might help to simplyfy
+    * the code in the sessionStarted() method of a plugin.
+    */
    BaseSessionInternalFrame getActiveSessionWindow();
+
+   /**
+    * Hint for plugins:
+    * When ISessionPlugin.sessionStarted is called the active session window is
+    * always the SessionInternalFrame which provides an SQLPanelAPI. This might help to simplyfy
+    * the code in the sessionStarted() method of a plugin.
+    *
+    * @throws IllegalStateException if ActiveSessionWindow doesn't provide an SQLPanelAPI
+    * for example if it is an ObjectTreeInternalFrame
+    */
+   ISQLPanelAPI getSQLPanelAPIOfActiveSessionWindow();
+
+   /**
+    *
+    * Hint for plugins:
+    * When ISessionPlugin.sessionStarted is called the active session window is
+    * always the SessionInternalFrame which provides an SQLPanelAPI. This might help to simplyfy
+    * the code in the sessionStarted() method of a plugin.
+    *
+    * @throws IllegalStateException if ActiveSessionWindow doesn't provide an IObjectTreeAPI
+    * for example if it is an SQLInternalFrame
+    */
+   IObjectTreeAPI getObjectTreeAPIOfActiveSessionWindow();
 
 }

@@ -34,7 +34,7 @@ public class SQLKit extends ExtKit
    {
       Action[] javaActions = new Action[]
       {
-         new DuplicateLineActionAction(),
+         new DuplicateLineAction(),
       };
       return TextAction.augmentList(super.createActions(), javaActions);
    }

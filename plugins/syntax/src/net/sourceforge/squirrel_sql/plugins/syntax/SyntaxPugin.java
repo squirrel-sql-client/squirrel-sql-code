@@ -18,10 +18,13 @@ package net.sourceforge.squirrel_sql.plugins.syntax;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -233,10 +236,6 @@ public class SyntaxPugin extends DefaultSessionPlugin
 	 */
 	public void sessionCreated(ISession session)
 	{
-		super.sessionCreated(session);
-
-      //nbedit.NbEditTest._editTest = new nbedit.NbEditTest(session);
-
 		SyntaxPreferences prefs = null;
 
 		try
@@ -257,21 +256,41 @@ public class SyntaxPugin extends DefaultSessionPlugin
 	}
 
 
-   public boolean sessionStarted(ISession session)
+   public PluginSessionCallback sessionStarted(ISession session)
    {
-      if(super.sessionStarted(session))
+      PluginSessionCallback ret = new PluginSessionCallback()
       {
-         ActionCollection coll = getApplication().getActionCollection();
-         session.addToToolbar(coll.get(FindAction.class));
-         session.addToToolbar(coll.get(ReplaceAction.class));
+         public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+         {
+            initSyntax(sess, sqlInternalFrame);
+         }
 
-         return true;
-      }
+         public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+         {
+         }
+      };
 
-      return false;
+      ActionCollection coll = getApplication().getActionCollection();
+      session.addToToolbar(coll.get(FindAction.class));
+      session.addToToolbar(coll.get(ReplaceAction.class));
+
+      return ret;
    }
 
-	/**
+   private void initSyntax(ISession sess, SQLInternalFrame sqlInternalFrame)
+   {
+      ActionCollection coll = getApplication().getActionCollection();
+      FindAction findAction = ((FindAction) coll.get(FindAction.class));
+      findAction.setSession(sess);
+
+      ReplaceAction replaceAction = (ReplaceAction) coll.get(ReplaceAction.class);
+      replaceAction.setSession(sess);
+
+      sqlInternalFrame.addToToolbar(findAction);
+      sqlInternalFrame.addToToolbar(replaceAction);
+   }
+
+   /**
 	 * Called when a session shutdown.
 	 *
 	 * @param	session	The session that is ending.

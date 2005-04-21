@@ -72,7 +72,7 @@ public class ScriptProcedureCommand implements ICommand {
                     buf.append("\nGO\n\n");
                 }
 
-                _session.getSQLPanelAPI(_plugin).appendSQLScript(buf.toString());
+                _session.getSessionInternalFrame().getSQLPanelAPI().appendSQLScript(buf.toString());
                 _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
             }
         }
