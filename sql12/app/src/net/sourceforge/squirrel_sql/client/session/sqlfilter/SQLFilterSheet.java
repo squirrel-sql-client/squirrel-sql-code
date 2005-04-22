@@ -204,7 +204,12 @@ public class SQLFilterSheet extends BaseSessionInternalFrame
 	 */
 	public void setTitle(String title)
 	{
-		_titleLbl.setText(title + ": " + _objectInfo.getSimpleName());
+      if(null != _titleLbl)
+      {
+         // this method is called from the super class's constructor
+         // therfore _titleLbl is null for that call. 
+		   _titleLbl.setText(title + ": " + _objectInfo.getSimpleName());
+      }
 	}
 
 	/**

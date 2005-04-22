@@ -94,21 +94,30 @@ public class SQLInternalFrame extends BaseSessionInternalFrame
 		{
 			public void internalFrameActivated(InternalFrameEvent evt)
 			{
-				Window window = SwingUtilities
-						.windowForComponent(SQLInternalFrame.this.getSQLPanel());
-				Component focusOwner = (window != null) ? window
-						.getFocusOwner() : null;
-				if (focusOwner != null)
-				{
-					FocusEvent lost = new FocusEvent(focusOwner,
-							FocusEvent.FOCUS_LOST);
-					FocusEvent gained = new FocusEvent(focusOwner,
-							FocusEvent.FOCUS_GAINED);
-					window.dispatchEvent(lost);
-					window.dispatchEvent(gained);
-					window.dispatchEvent(lost);
-					focusOwner.requestFocus();
-				}
+//				Window window = SwingUtilities
+//						.windowForComponent(SQLInternalFrame.this.getSQLPanel());
+//				Component focusOwner = (window != null) ? window
+//						.getFocusOwner() : null;
+//				if (focusOwner != null)
+//				{
+//					FocusEvent lost = new FocusEvent(focusOwner,
+//							FocusEvent.FOCUS_LOST);
+//					FocusEvent gained = new FocusEvent(focusOwner,
+//							FocusEvent.FOCUS_GAINED);
+//					window.dispatchEvent(lost);
+//					window.dispatchEvent(gained);
+//					window.dispatchEvent(lost);
+//					focusOwner.requestFocus();
+//				}
+
+            SwingUtilities.invokeLater(new Runnable()
+            {
+               public void run()
+               {
+                  _sqlPanel.getSQLEntryPanel().getTextComponent().requestFocus();
+               }
+            });
+
 			}
 		});
 

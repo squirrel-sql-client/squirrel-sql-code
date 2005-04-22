@@ -105,11 +105,9 @@ public class SessionWindowsHolder
       }
       else
       {
-         int prevIx = _framesInOpeningSequence.indexOf(sessionWindow) - 1;
-
-         if( 0 <= prevIx)
+         if(1 < _framesInOpeningSequence.size())
          {
-            return (BaseSessionInternalFrame) _framesInOpeningSequence.get(prevIx);
+            return (BaseSessionInternalFrame) _framesInOpeningSequence.get(0);
          }
          else
          {
@@ -128,15 +126,14 @@ public class SessionWindowsHolder
       }
       else
       {
-         int nextIx = _framesInOpeningSequence.indexOf(sessionWindow) + 1;
 
-         if(nextIx < _framesInOpeningSequence.size())
+         if(1 < _framesInOpeningSequence.size())
          {
-            return (BaseSessionInternalFrame) _framesInOpeningSequence.get(nextIx);
+            return (BaseSessionInternalFrame) _framesInOpeningSequence.get(_framesInOpeningSequence.size() - 1);
          }
          else
          {
-               return sessionWindow;
+            return sessionWindow;
          }
       }
    }
