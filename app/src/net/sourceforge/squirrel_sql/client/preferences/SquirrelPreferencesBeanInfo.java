@@ -38,55 +38,55 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
 		super();
 		if (s_dscrs == null)
 		{
-			s_dscrs = new PropertyDescriptor[23];
-			s_dscrs[0] = new PropertyDescriptor(SESSION_PROPERTIES, CLS,
-									"getSessionProperties", "setSessionProperties");
-			s_dscrs[1] = new PropertyDescriptor(MAIN_FRAME_STATE, CLS,
-								"getMainFrameWindowState", "setMainFrameWindowState");
-			s_dscrs[2] = new PropertyDescriptor(SHOW_CONTENTS_WHEN_DRAGGING, CLS,
-								"getShowContentsWhenDragging", "setShowContentsWhenDragging");
-			s_dscrs[3] = new PropertyDescriptor(LOGIN_TIMEOUT, CLS,
-								"getLoginTimeout", "setLoginTimeout");
-			s_dscrs[4] = new PropertyDescriptor(JDBC_DEBUG_TYPE, CLS,
-									"getJdbcDebugType", "setJdbcDebugType");
-			s_dscrs[5] = new PropertyDescriptor(SHOW_MAIN_STATUS_BAR, CLS,
-								"getShowMainStatusBar", "setShowMainStatusBar");
-			s_dscrs[6] = new PropertyDescriptor(SHOW_MAIN_TOOL_BAR, CLS,
-								"getShowMainToolBar", "setShowMainToolBar");
-			s_dscrs[7] = new PropertyDescriptor(SHOW_ALIASES_TOOL_BAR, CLS,
-								"getShowAliasesToolBar", "setShowAliasesToolBar");
-			s_dscrs[8] = new PropertyDescriptor(SHOW_DRIVERS_TOOL_BAR, CLS,
-								"getShowDriversToolBar", "setShowDriversToolBar");
-			s_dscrs[9] = new PropertyDescriptor(SHOW_TOOLTIPS, CLS,
-								"getShowToolTips", "setShowToolTips");
-			s_dscrs[10] = new PropertyDescriptor(SCROLLABLE_TABBED_PANES, CLS,
-								"useScrollableTabbedPanes", "setUseScrollableTabbedPanes");
-			s_dscrs[11] = new IndexedPropertyDescriptor(ACTION_KEYS, CLS,
-									"getActionKeys", "setActionKeys",
-									"getActionKeys", "setActionKeys");
-			s_dscrs[12] = new PropertyDescriptor(PROXY, CLS,
-								"getProxySettings", "setProxySettings");
-			s_dscrs[13] = new PropertyDescriptor(ALIASES_SELECTED_INDEX, CLS,
-								"getAliasesSelectedIndex", "setAliasesSelectedIndex");
-			s_dscrs[14] = new PropertyDescriptor(DRIVERS_SELECTED_INDEX, CLS,
-								"getDriversSelectedIndex", "setDriversSelectedIndex");
-			s_dscrs[15] = new PropertyDescriptor(SHOW_LOADED_DRIVERS_ONLY, CLS,
-								"getShowLoadedDriversOnly", "setShowLoadedDriversOnly");
-			s_dscrs[16] = new PropertyDescriptor(MAXIMIMIZE_SESSION_SHEET_ON_OPEN, CLS,
-								"getMaximizeSessionSheetOnOpen", "setMaximizeSessionSheetOnOpen");
-			s_dscrs[17] = new PropertyDescriptor(SHOW_COLOR_ICONS_IN_TOOLBAR, CLS,
-								"getShowColoriconsInToolbar", "setShowColoriconsInToolbar");
- 			s_dscrs[18] = new PropertyDescriptor(FIRST_RUN, CLS,
-								"isFirstRun", "setFirstRun");
- 			s_dscrs[19] = new PropertyDescriptor(CONFIRM_SESSION_CLOSE, CLS,
-					"getConfirmSessionClose", "setConfirmSessionClose");
-			s_dscrs[20] = new IndexedPropertyDescriptor(PLUGIN_STATUSES, CLS,
-								"getPluginStatuses", "setPluginStatuses",
-								"getPluginStatus", "setPluginStatus");
- 			s_dscrs[21] = new PropertyDescriptor(SHOW_ACTION_TOOL_BAR, CLS,
-					"getShowActionToolBar", "setShowActionToolBar");
- 			s_dscrs[22] = new PropertyDescriptor(NEW_SESSION_VIEW, CLS,
-					"getNewSessionView", "setNewSessionView");
+         s_dscrs = new PropertyDescriptor[]
+         {
+            new PropertyDescriptor(SESSION_PROPERTIES, CLS,
+               "getSessionProperties", "setSessionProperties"),
+            new PropertyDescriptor(MAIN_FRAME_STATE, CLS,
+               "getMainFrameWindowState", "setMainFrameWindowState"),
+            new PropertyDescriptor(SHOW_CONTENTS_WHEN_DRAGGING, CLS,
+               "getShowContentsWhenDragging", "setShowContentsWhenDragging"),
+            new PropertyDescriptor(LOGIN_TIMEOUT, CLS,
+               "getLoginTimeout", "setLoginTimeout"),
+            new PropertyDescriptor(JDBC_DEBUG_TYPE, CLS,
+               "getJdbcDebugType", "setJdbcDebugType"),
+            new PropertyDescriptor(SHOW_MAIN_STATUS_BAR, CLS,
+               "getShowMainStatusBar", "setShowMainStatusBar"),
+            new PropertyDescriptor(SHOW_MAIN_TOOL_BAR, CLS,
+               "getShowMainToolBar", "setShowMainToolBar"),
+            new PropertyDescriptor(SHOW_ALIASES_TOOL_BAR, CLS,
+               "getShowAliasesToolBar", "setShowAliasesToolBar"),
+            new PropertyDescriptor(SHOW_DRIVERS_TOOL_BAR, CLS,
+               "getShowDriversToolBar", "setShowDriversToolBar"),
+            new PropertyDescriptor(SHOW_TOOLTIPS, CLS,
+               "getShowToolTips", "setShowToolTips"),
+            new PropertyDescriptor(SCROLLABLE_TABBED_PANES, CLS,
+               "useScrollableTabbedPanes", "setUseScrollableTabbedPanes"),
+            new IndexedPropertyDescriptor(ACTION_KEYS, CLS,
+               "getActionKeys", "setActionKeys",
+               "getActionKeys", "setActionKeys"),
+            new PropertyDescriptor(PROXY, CLS,
+               "getProxySettings", "setProxySettings"),
+            new PropertyDescriptor(ALIASES_SELECTED_INDEX, CLS,
+               "getAliasesSelectedIndex", "setAliasesSelectedIndex"),
+            new PropertyDescriptor(DRIVERS_SELECTED_INDEX, CLS,
+               "getDriversSelectedIndex", "setDriversSelectedIndex"),
+            new PropertyDescriptor(SHOW_LOADED_DRIVERS_ONLY, CLS,
+               "getShowLoadedDriversOnly", "setShowLoadedDriversOnly"),
+            new PropertyDescriptor(MAXIMIMIZE_SESSION_SHEET_ON_OPEN, CLS,
+               "getMaximizeSessionSheetOnOpen", "setMaximizeSessionSheetOnOpen"),
+            new PropertyDescriptor(SHOW_COLOR_ICONS_IN_TOOLBAR, CLS,
+               "getShowColoriconsInToolbar", "setShowColoriconsInToolbar"),
+            new PropertyDescriptor(FIRST_RUN, CLS,
+               "isFirstRun", "setFirstRun"),
+            new PropertyDescriptor(CONFIRM_SESSION_CLOSE, CLS,
+               "getConfirmSessionClose", "setConfirmSessionClose"),
+            new IndexedPropertyDescriptor(PLUGIN_STATUSES, CLS,
+               "getPluginStatuses", "setPluginStatuses",
+               "getPluginStatus", "setPluginStatus"),
+            new PropertyDescriptor(NEW_SESSION_VIEW, CLS,
+               "getNewSessionView", "setNewSessionView")
+         };
 		}
 	}
 

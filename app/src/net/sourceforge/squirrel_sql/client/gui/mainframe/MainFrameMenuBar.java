@@ -66,23 +66,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsAction;
-import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultWindowsAction;
-import net.sourceforge.squirrel_sql.client.session.action.CloseSessionAction;
-import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
-import net.sourceforge.squirrel_sql.client.session.action.DumpSessionAction;
-import net.sourceforge.squirrel_sql.client.session.action.EditWhereColsAction;
-import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
-import net.sourceforge.squirrel_sql.client.session.action.GotoNextResultsTabAction;
-import net.sourceforge.squirrel_sql.client.session.action.GotoPreviousResultsTabAction;
-import net.sourceforge.squirrel_sql.client.session.action.NextSessionAction;
-import net.sourceforge.squirrel_sql.client.session.action.PreviousSessionAction;
-import net.sourceforge.squirrel_sql.client.session.action.ReconnectAction;
-import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeAction;
-import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
-import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
-import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
-import net.sourceforge.squirrel_sql.client.session.action.ShowNativeSQLAction;
+import net.sourceforge.squirrel_sql.client.session.action.*;
 /**
  * Menu bar for <CODE>MainFrame</CODE>.
  *
@@ -339,6 +323,9 @@ final class MainFrameMenuBar extends JMenuBar
 		menu.addSeparator();
 		addToMenu(rsrc, EditWhereColsAction.class, menu);
 		menu.addSeparator();
+      addToMenu(rsrc, NewSQLWorksheetAction.class, menu);
+      addToMenu(rsrc, NewObjectTreeAction.class, menu);
+
 		menu.setEnabled(false);
 		return menu;
 	}

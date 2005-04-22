@@ -79,8 +79,6 @@ public class MainFrame extends JFrame //BaseMDIParentFrame
 	/** Toolbar at top of window. */
 	private MainFrameToolBar _toolBar;
 
-	/** ActionBar at right of window. */
-	private MainFrameActionBar _actionBar;
 
 	/** Status bar at bottom of window. */
 	private MainFrameStatusBar _statusBar;
@@ -294,35 +292,7 @@ public class MainFrame extends JFrame //BaseMDIParentFrame
 		_statusBar.remove(comp);
 	}
 
-	/**
-	 * Add action to the action bar.
-	 *
-	 * @param	act	Action to add.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> <TT>Action</TT> passed.
-	 */
-	public void addToActionBar(Action act)
-	{
-			if (act == null)
-			{
-					throw new IllegalArgumentException("Action == null");
-			}
-			_actionBar.add(act);
-			_lastActionWasSeparator = false;
-	}
-
-	public void addActionBarSeparator()
-	{
-		// Dont allow for two separators in a row, just doesnt make any sense.
-		if (!_lastActionWasSeparator)
-		{
-			_actionBar.addSeparator();
-			_lastActionWasSeparator = true;
-		}
-	}
-
-	public MessagePanel getMessagePanel()
+   public MessagePanel getMessagePanel()
 	{
 		return _msgPnl;
 	}
@@ -378,21 +348,6 @@ public class MainFrame extends JFrame //BaseMDIParentFrame
 			}
 		}
 
-		if (propName == null
-				|| propName.equals(SquirrelPreferences.IPropertyNames.SHOW_ACTION_TOOL_BAR))
-		{
-			final boolean show = prefs.getShowActionToolBar();
-			if (!show && _actionBar != null)
-			{
-				getContentPane().remove(_actionBar);
-				_actionBar = null;
-			}
-			else if (show && _actionBar == null)
-			{
-				_actionBar = new MainFrameActionBar(_app, this);
-				getContentPane().add(_actionBar, BorderLayout.WEST);
-			}
-		}
 	}
 
 	private void closeAllToolWindows()

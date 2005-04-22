@@ -66,8 +66,7 @@ public class SquirrelPreferences implements Serializable
 		String PROXY = "proxyPerferences";
 		String SCROLLABLE_TABBED_PANES = "useScrollableTabbedPanes";
 		String SESSION_PROPERTIES = "sessionProperties";
-		String SHOW_ACTION_TOOL_BAR = "showMainActionBar";
-		String SHOW_ALIASES_TOOL_BAR = "showAliasesToolBar";
+      String SHOW_ALIASES_TOOL_BAR = "showAliasesToolBar";
 		String SHOW_CONTENTS_WHEN_DRAGGING = "showContentsWhenDragging";
 		String SHOW_DRIVERS_TOOL_BAR = "showDriversToolBar";
 		String SHOW_LOADED_DRIVERS_ONLY = "showLoadedDriversOnly";
@@ -211,21 +210,7 @@ public class SquirrelPreferences implements Serializable
 		}
 	}
 
-	public boolean getShowActionToolBar()
-	{
-		return _showActionToolBar;
-	}
-
-	public synchronized void setShowActionToolBar(boolean data)
-	{
-		final boolean oldValue = _showActionToolBar;
-		_showActionToolBar = data;
-		getPropertyChangeReporter().firePropertyChange(
-							IPropertyNames.SHOW_ACTION_TOOL_BAR, oldValue, 
-							_showActionToolBar);
-	}
-
-	public SessionProperties getSessionProperties()
+   public SessionProperties getSessionProperties()
 	{
 		return _sessionProps;
 	}
