@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.parser;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.ParserThread;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.ParsingFinishedListener;
@@ -20,10 +21,12 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 	private ParserThread _parserThread;
 	private Vector _listeners = new Vector();
 	private ISession _session;
+   private ISQLPanelAPI _sqlPanelApi;
 
-	public ParserEventsProcessor(ISession session)
+   public ParserEventsProcessor(ISQLPanelAPI sqlPanelApi, ISession session)
 	{
       _session = session;
+      _sqlPanelApi = sqlPanelApi;
 
 		ActionListener al = new ActionListener()
 		{
@@ -81,7 +84,7 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 
 		for (int i = 0; i < clone.length; i++)
 		{
-			clone[i].aliasesFound(aliasInfos);
+			clone[i].aliasesFound( aliasInfos);
 			clone[i].errorsFound(errorInfos);
 		}
 
@@ -90,7 +93,7 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 
 	private void onTimerStart()
 	{
-		if(null == _session.getSQLEntryPanel() || null == _session.getSchemaInfo() || false == _session.getSchemaInfo().isLoaded())
+		if(null == _sqlPanelApi.getSQLEntryPanel() || null == _session.getSchemaInfo() || false == _session.getSchemaInfo().isLoaded())
 		{
 			// Entry panel or schema info not yet available, try again next time.
 			//System.out.println("ParserEventsProcessor.onTimerStart entry panel not yet set");
@@ -98,7 +101,7 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 		}
 
 		initParserThread();
-		_parserThread.notifyParser(_session.getSQLEntryPanel().getText());
+		_parserThread.notifyParser(_sqlPanelApi.getSQLEntryPanel().getText());
 	}
 
 	private void initParserThread()
@@ -110,7 +113,7 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 
 		_parserThread = new ParserThread(new SQLSchemaImpl(_session));
 
-      _session.getSQLEntryPanel().getTextComponent().addKeyListener(new KeyAdapter()
+      _sqlPanelApi.getSQLEntryPanel().getTextComponent().addKeyListener(new KeyAdapter()
       {
          public void keyTyped(KeyEvent e)
          {

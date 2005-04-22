@@ -8,6 +8,7 @@ import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
 import net.sourceforge.squirrel_sql.plugins.syntax.KeyManager;
 import net.sourceforge.squirrel_sql.plugins.syntax.KeyManager;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPugin;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 
 import javax.swing.*;
 import javax.swing.event.UndoableEditListener;
@@ -21,6 +22,7 @@ import org.netbeans.editor.ext.ExtSettingsInitializer;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.Vector;
 
 
 public class NetbeansSQLEditorPane extends JEditorPane
@@ -32,12 +34,15 @@ public class NetbeansSQLEditorPane extends JEditorPane
    private SyntaxFactory _syntaxFactory;
    private SyntaxPugin _plugin;
 
-   public NetbeansSQLEditorPane(ISession session, SyntaxPreferences prefs, SyntaxFactory syntaxFactory, SyntaxPugin plugin)
+   private IIdentifier _sqlEntryPanelIdentifier;
+
+   public NetbeansSQLEditorPane(ISession session, SyntaxPreferences prefs, SyntaxFactory syntaxFactory, SyntaxPugin plugin, IIdentifier sqlEntryPanelIdentifier)
    {
       _session = session;
       _prefs = prefs;
       _syntaxFactory = syntaxFactory;
       _plugin = plugin;
+      _sqlEntryPanelIdentifier = sqlEntryPanelIdentifier;
 
       _syntaxFactory.putEditorPane(_session, this);
 
@@ -134,10 +139,10 @@ public class NetbeansSQLEditorPane extends JEditorPane
 
    private void initParsing()
    {
-      if(false == _parsingInitialized && null != _session.getParserEventsProcessor())
+      if(false == _parsingInitialized && null != _session.getParserEventsProcessor(_sqlEntryPanelIdentifier))
       {
          _parsingInitialized = true;
-         _session.getParserEventsProcessor().addParserEventsListener(new ParserEventsAdapter()
+         _session.getParserEventsProcessor(_sqlEntryPanelIdentifier).addParserEventsListener(new ParserEventsAdapter()
          {
             public void errorsFound(ErrorInfo[] errorInfos)
             {
@@ -162,4 +167,10 @@ public class NetbeansSQLEditorPane extends JEditorPane
       getDocument().addUndoableEditListener(um);
       getDocument().putProperty( BaseDocument.UNDO_MANAGER_PROP, um );
    }
+
+   public IIdentifier getSqlEntryPanelIdentifier()
+   {
+      return _sqlEntryPanelIdentifier;
+   }
+
 }

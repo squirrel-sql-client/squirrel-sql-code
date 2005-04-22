@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 
 
 public class CodeCompletorModel
@@ -27,10 +28,10 @@ public class CodeCompletorModel
    private CompletionFunctionsModel _completionFunctionsModel;
    private boolean _functionsAdded;
 
-   CodeCompletorModel(ISession session, CodeCompletionInfoCollection codeCompletionInfos)
+   CodeCompletorModel(ISession session, CodeCompletionInfoCollection codeCompletionInfos, IIdentifier sqlEntryPanelIdentifier)
    {
       _completionFunctionsModel = new CompletionFunctionsModel(session);
-      _standardCompletorModel = new StandardCompletorModel(session, codeCompletionInfos);
+      _standardCompletorModel = new StandardCompletorModel(session, codeCompletionInfos, sqlEntryPanelIdentifier);
 
    }
 

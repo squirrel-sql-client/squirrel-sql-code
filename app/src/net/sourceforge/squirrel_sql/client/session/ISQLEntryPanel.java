@@ -17,6 +17,8 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
+
 import java.awt.Font;
 import java.awt.event.MouseListener;
 
@@ -27,7 +29,7 @@ import javax.swing.JMenuItem;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
 
-public interface ISQLEntryPanel
+public interface ISQLEntryPanel extends IHasIdentifier
 {
 	/**
 	 * Retrieve the text area component. Normally this would be a subclass

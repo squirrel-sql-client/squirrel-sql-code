@@ -53,13 +53,13 @@ public class SQLSyntax extends Syntax
    private static final int ISA_DOT = 33; // after '.'
 
    private ISession _sess;
-   private JEditorPane _editorPane;
+   private NetbeansSQLEditorPane _editorPane;
    private Hashtable _knownTables = new Hashtable();
    private Vector _currentErrorInfos = new Vector();
    private boolean _parsingInitialized;
    private Vector _sqlTokenListeners = new Vector();
 
-   public SQLSyntax(ISession sess, JEditorPane editorPane)
+   public SQLSyntax(ISession sess, NetbeansSQLEditorPane editorPane)
    {
       _sess = sess;
       _editorPane = editorPane;
@@ -68,10 +68,10 @@ public class SQLSyntax extends Syntax
 
    private void initParsing()
    {
-      if(false == _parsingInitialized && null != _sess.getParserEventsProcessor())
+      if(false == _parsingInitialized && null != _sess.getParserEventsProcessor(_editorPane.getSqlEntryPanelIdentifier()))
       {
          _parsingInitialized = true;
-         _sess.getParserEventsProcessor().addParserEventsListener(new ParserEventsAdapter()
+         _sess.getParserEventsProcessor(_editorPane.getSqlEntryPanelIdentifier()).addParserEventsListener(new ParserEventsAdapter()
          {
             public void errorsFound(ErrorInfo[] errorInfos)
             {

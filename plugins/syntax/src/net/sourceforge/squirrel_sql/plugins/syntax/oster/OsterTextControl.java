@@ -33,6 +33,7 @@ import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.plugins.syntax.IConstants;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxStyle;
@@ -100,7 +101,7 @@ public class OsterTextControl extends JTextPane
    private Vector _oldErrorInfos = new Vector();
 
 
-   OsterTextControl(ISession session, SyntaxPreferences prefs)
+   OsterTextControl(ISession session, SyntaxPreferences prefs, IIdentifier sqlEntryPanelIdentifier)
 	{
 		super();
 		_session = session;
@@ -127,7 +128,7 @@ public class OsterTextControl extends JTextPane
 
 		updateFromPreferences();
 
-		session.getParserEventsProcessor().addParserEventsListener(new ParserEventsAdapter()
+		session.getParserEventsProcessor(sqlEntryPanelIdentifier).addParserEventsListener(new ParserEventsAdapter()
 		{
 			public void errorsFound(ErrorInfo[] errorInfos)
 			{
