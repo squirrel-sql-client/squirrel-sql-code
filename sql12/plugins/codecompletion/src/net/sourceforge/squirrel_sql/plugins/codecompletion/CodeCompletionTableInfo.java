@@ -84,7 +84,8 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
          Vector colInfosBuf = new Vector();
          for (int i = 0; i < schemColInfos.length; i++)
          {
-            if(("" + _catalog).equals("" + schemColInfos[i].getCatalog()) && ("" + _schema).equals("" + schemColInfos[i].getSchema()))
+            if(   (null == _catalog || ("" + _catalog).equals("" + schemColInfos[i].getCatalog()))
+               && (null == _schema || ("" + _schema).equals("" + schemColInfos[i].getSchema()))   )
             {
                String columnName = schemColInfos[i].getColumnName();
                String columnType = schemColInfos[i].getColumnType();

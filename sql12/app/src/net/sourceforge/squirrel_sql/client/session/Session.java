@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import javax.swing.*;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
@@ -120,12 +122,12 @@ class Session implements ISession
 	private boolean _closed;
 
 	private List _statusBarToBeAdded = new ArrayList();
-	private ParserEventsProcessor _parserEventsProcessor;
 
 	private SQLConnectionListener _connLis = null;
 
    private BaseSessionInternalFrame _activeActiveSessionWindow;
    private SessionInternalFrame _sessionInternalFrame;
+   private Hashtable _parserEventsProcessorsByEntryPanelIdentifier = new Hashtable();
 
    /**
 	 * Create a new session.
@@ -179,8 +181,6 @@ class Session implements ISession
 		_props = (SessionProperties)_app.getSquirrelPreferences().getSessionProperties().clone();
 //		_sqlFilterClauses = new SQLFilterClauses();
 
-		_parserEventsProcessor = new ParserEventsProcessor(this);
-
 		_connLis = new SQLConnectionListener();
 		_conn.addPropertyChangeListener(_connLis);
 
@@ -213,15 +213,23 @@ class Session implements ISession
 			_conn.removePropertyChangeListener(_connLis);
 			_connLis = null;
 
-			try
-			{
-				_parserEventsProcessor.endProcessing();
-				_parserEventsProcessor = null;
-			}
-			catch(Exception e)
-			{
-				s_log.info("Error stopping parser event processor", e);
-			}
+
+         ParserEventsProcessor[] procs =
+            (ParserEventsProcessor[]) _parserEventsProcessorsByEntryPanelIdentifier.values().toArray(new ParserEventsProcessor[0]);
+
+
+         for (int i = 0; i < procs.length; i++)
+         {
+            try
+            {
+               procs[i].endProcessing();
+            }
+            catch(Exception e)
+            {
+               s_log.info("Error stopping parser event processor", e);
+            }
+         }
+
 
 			try
 			{
@@ -426,31 +434,7 @@ class Session implements ISession
 		}
 	}
 
-	/**
-	 * Return the object that handles the SQL entry
-	 * component.
-	 *
-	 * @return	<TT>ISQLEntryPanel</TT> object.
-	 */
-	public ISQLEntryPanel getSQLEntryPanel()
-	{
-		if (null == _sessionSheet)
-		{
-			return null;
-		}
-		return _sessionSheet.getSQLEntryPanel();
-	}
-
-	public ObjectTreePanel getObjectTreePanel()
-	{
-		if (null == _sessionSheet)
-		{
-			return null;
-		}
-		return _sessionSheet.getObjectTreePanel();
-	}
-
-	public synchronized void closeSQLConnection() throws SQLException
+   public synchronized void closeSQLConnection() throws SQLException
 	{
 		if (_conn != null)
 		{
@@ -708,10 +692,49 @@ class Session implements ISession
     * <p>
     * If you want the ParserEventsProcessor to produce further events feel free to contact gerdwagner@users.sourceforge.net.
     */
-	public IParserEventsProcessor getParserEventsProcessor()
+	public IParserEventsProcessor getParserEventsProcessor(IIdentifier entryPanelIdentifier)
 	{
-		return _parserEventsProcessor;
+      ParserEventsProcessor pep = (ParserEventsProcessor) _parserEventsProcessorsByEntryPanelIdentifier.get(entryPanelIdentifier);
+
+      if(null == pep)
+      {
+         pep = new ParserEventsProcessor(getSqlPanelApi(entryPanelIdentifier), this);
+         _parserEventsProcessorsByEntryPanelIdentifier.put(entryPanelIdentifier, pep);
+      }
+      return pep;
 	}
+
+   private ISQLPanelAPI getSqlPanelApi(IIdentifier entryPanelIdentifier)
+   {
+      BaseSessionInternalFrame[] frames = getApplication().getWindowManager().getAllFramesOfSession(getIdentifier());
+
+      for (int i = 0; i < frames.length; i++)
+      {
+         if(frames[i] instanceof SQLInternalFrame)
+         {
+            ISQLPanelAPI sqlPanelAPI = ((SQLInternalFrame)frames[i]).getSQLPanelAPI();
+            IIdentifier id = sqlPanelAPI.getSQLEntryPanel().getIdentifier();
+
+            if(id.equals(entryPanelIdentifier))
+            {
+               return sqlPanelAPI;
+            }
+         }
+
+         if(frames[i] instanceof SessionInternalFrame)
+         {
+            ISQLPanelAPI sqlPanelAPI = ((SessionInternalFrame)frames[i]).getSQLPanelAPI();
+            IIdentifier id = sqlPanelAPI.getSQLEntryPanel().getIdentifier();
+
+            if(id.equals(entryPanelIdentifier))
+            {
+               return sqlPanelAPI;
+            }
+         }
+      }
+
+      throw new IllegalStateException("Session has no entry panel for ID=" + entryPanelIdentifier);
+   }
 
    public void setActiveSessionWindow(BaseSessionInternalFrame activeActiveSessionWindow)
    {

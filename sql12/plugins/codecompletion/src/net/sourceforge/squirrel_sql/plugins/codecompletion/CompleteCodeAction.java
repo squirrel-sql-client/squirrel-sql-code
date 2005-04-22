@@ -40,7 +40,7 @@ public class CompleteCodeAction extends SquirrelAction
       super(app, rsrc);
       _sqlEntryPanel = sqlEntryPanel;
 
-		CodeCompletorModel model = new CodeCompletorModel(session, codeCompletionInfos);
+		CodeCompletorModel model = new CodeCompletorModel(session, codeCompletionInfos, sqlEntryPanel.getIdentifier());
       _cc = new CodeCompletor((JTextComponent)_sqlEntryPanel.getTextComponent(), model);
 		_sqlEntryPanel.addSQLTokenListener(model.getSQLTokenListener());
 

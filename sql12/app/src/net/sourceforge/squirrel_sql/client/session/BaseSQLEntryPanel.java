@@ -1,4 +1,8 @@
 package net.sourceforge.squirrel_sql.client.session;
+
+import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+
 /*
  * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -21,7 +25,20 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
 {
 	protected final static String LINE_SEPARATOR = "\n";
 
-	protected final static String SQL_STMT_SEP = LINE_SEPARATOR + LINE_SEPARATOR; 
+	protected final static String SQL_STMT_SEP = LINE_SEPARATOR + LINE_SEPARATOR;
+
+   public static final IntegerIdentifierFactory ENTRY_PANEL_IDENTIFIER_FACTORY = new IntegerIdentifierFactory();
+   private IIdentifier _entryPanelIdentifier;
+
+   protected BaseSQLEntryPanel()
+   {
+      _entryPanelIdentifier = ENTRY_PANEL_IDENTIFIER_FACTORY.createIdentifier();
+   }
+
+   public IIdentifier getIdentifier()
+   {
+      return _entryPanelIdentifier;
+   }
 
 	public String getSQLToBeExecuted()
 	{

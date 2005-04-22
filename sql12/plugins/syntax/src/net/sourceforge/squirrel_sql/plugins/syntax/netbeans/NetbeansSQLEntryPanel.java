@@ -82,7 +82,7 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 
 		_app = session.getApplication();
 
-		_textArea = new NetbeansSQLEditorPane(session, prefs, syntaxFactory, _plugin);
+		_textArea = new NetbeansSQLEditorPane(session, prefs, syntaxFactory, _plugin, getIdentifier());
 
 		_textPopupMenu = new SessionTextEditPopupMenu();
 		_textArea.addMouseListener(_sqlEntryMouseListener);

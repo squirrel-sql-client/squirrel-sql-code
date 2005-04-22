@@ -24,6 +24,7 @@ import java.sql.SQLException;
 import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
@@ -212,9 +213,7 @@ public interface ISession extends IHasIdentifier
 	 */
 	String getTitle();
 
-	ISQLEntryPanel getSQLEntryPanel();
-
-	/**
+   /**
 	 * Add the passed action to the toolbar of the sessions main window.
 	 *
 	 * @param	action	Action to be added.
@@ -230,7 +229,7 @@ public interface ISession extends IHasIdentifier
     * <p>
     * If you want the ParserEventsProcessor to produce further events feel free to contact gerdwagner@users.sourceforge.net.
 	 */
-	IParserEventsProcessor getParserEventsProcessor();
+	IParserEventsProcessor getParserEventsProcessor(IIdentifier sqlEntryPanelIdentifier);
 
    void setActiveSessionWindow(BaseSessionInternalFrame activeActiveSessionWindow);
 
