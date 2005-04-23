@@ -187,6 +187,12 @@ public class SessionPanel extends JPanel
 		}
 	}
 
+   public void sessionWindowClosing()
+   {
+      _mainTabPane.sessionWindowClosing();
+   }
+
+
 	void installSQLEntryPanel(ISQLEntryPanel pnl)
 	{
 		_mainTabPane.getSQLPanel().installSQLEntryPanel(pnl);

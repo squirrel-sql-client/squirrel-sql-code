@@ -25,6 +25,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.prefs.Preferences;
 
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -94,6 +95,8 @@ public class MainPanel extends JPanel
 	 * this tabbed panel.
 	 */
 	private List _tabs = new ArrayList();
+
+   private static final String PREFS_KEY_SELECTED_TAB_IX = "squirrelSql_mainPanel_sel_tab_ix";
 
 	/**
 	 * ctor specifying the current session.
@@ -200,6 +203,13 @@ public class MainPanel extends JPanel
 			_tabs.add(tab);
 		}
 		_tabPnl.insertTab(title, null, tab.getComponent(), tab.getHint(), idx);
+
+      int prefIx = Preferences.userRoot().getInt(PREFS_KEY_SELECTED_TAB_IX, ITabIndexes.OBJECT_TREE_TAB);
+      if(idx == prefIx)
+      {
+         _tabPnl.setSelectedIndex(prefIx);
+      }
+
       return idx;
 	}
 
@@ -310,6 +320,19 @@ public class MainPanel extends JPanel
 			}
 		}
 	}
+
+
+   public void sessionWindowClosing()
+   {
+      getSQLPanel().sessionWindowClosing();
+      int selIx = _tabPnl.getSelectedIndex();
+
+      if(selIx == ITabIndexes.OBJECT_TREE_TAB || selIx == ITabIndexes.SQL_TAB)
+      {
+         Preferences.userRoot().putInt(PREFS_KEY_SELECTED_TAB_IX, selIx);
+      }
+   }
+
 
 	/**
 	 * Session properties have changed so update GUI if required.

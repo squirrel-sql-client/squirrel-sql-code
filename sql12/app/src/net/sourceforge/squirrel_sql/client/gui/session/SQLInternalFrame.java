@@ -117,11 +117,19 @@ public class SQLInternalFrame extends BaseSessionInternalFrame
                   _sqlPanel.getSQLEntryPanel().getTextComponent().requestFocus();
                }
             });
-
 			}
+
+         public void internalFrameClosing(InternalFrameEvent e)
+         {
+            _sqlPanel.sessionWindowClosing();
+         }
 		});
 
 		_sqlPanel = new SQLPanel(getSession());
+
+      // Needed to make the panel set the divider location from preferences
+      _sqlPanel.setVisible(true);
+
 		_toolBar = new SQLToolBar(getSession(), _sqlPanel.getSQLPanelAPI());
 		JPanel contentPanel = new JPanel(new BorderLayout());
 		contentPanel.add(_toolBar, BorderLayout.NORTH);

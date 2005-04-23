@@ -126,6 +126,7 @@ public class SessionInternalFrame extends BaseSessionInternalFrame
 				final ISession mySession = getSession();
 				if (mySession != null)
 				{
+               _sessionPanel.sessionWindowClosing();
 					_app.getSessionManager().closeSession(mySession);
 				}
 			}
