@@ -489,28 +489,4 @@ public class SessionManager
 							session.getTitle());
 		return Dialogs.showYesNo(_app.getMainFrame(), msg);
 	}
-
-	/**
-	 * This listener enables/disables the default actions attached to
-	 * the session
-	 */
-	// JASON: Do this stuff elsewhere
-	private class SessionActionEnabler extends SessionAdapter
-	{
-		public void sessionActivated(SessionEvent evt)
-		{
-			final ISession session = evt.getSession();
-			final boolean isAutoCommit = session.getProperties().getAutoCommit();
-			final ActionCollection actions = session.getApplication().getActionCollection();
-			actions.get(CommitAction.class).setEnabled(!isAutoCommit);
-			actions.get(RollbackAction.class).setEnabled(!isAutoCommit);
-		}
-
-		public void sessionClosing(SessionEvent evt)
-		{
-			final ActionCollection actions = evt.getSession().getApplication().getActionCollection();
-			actions.get(CommitAction.class).setEnabled(false);
-			actions.get(RollbackAction.class).setEnabled(false);
-		}
-	}
 }
