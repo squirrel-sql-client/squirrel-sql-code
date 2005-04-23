@@ -17,7 +17,7 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Rectangle;
+import java.awt.*;
 import java.beans.PropertyVetoException;
 
 import javax.swing.JInternalFrame;
@@ -44,19 +44,31 @@ public class CascadeInternalFramePositioner implements IInternalFramePositioner
 		{
 			throw new IllegalArgumentException("null JInternalFrame passed");
 		}
+
+      boolean toInitialPos = false;
+
 		if (!child.isClosed())
 		{
 			if (child.getParent() != null)
 			{
-				Rectangle parentBounds = child.getParent().getBounds();
-				if (_x >= (parentBounds.width - MOVE))
-				{
-					_x = INITIAL_POS;
-				}
-				if (_y >= (parentBounds.height - MOVE))
-				{
-					_y = INITIAL_POS;
-				}
+            Dimension childSize = child.getSize();
+
+            if(0 == childSize.width || 0 == childSize.height)
+            {
+               toInitialPos = true;
+            }
+            else
+            {
+               Rectangle parentBounds = child.getParent().getBounds();
+               if (_x + MOVE  + childSize.width >= parentBounds.width)
+               {
+                  _x = INITIAL_POS;
+               }
+               if (_y + MOVE + childSize.height >= parentBounds.height)
+               {
+                  _y = INITIAL_POS;
+               }
+            }
 			}
 			if (child.isIcon())
 			{
@@ -80,13 +92,17 @@ public class CascadeInternalFramePositioner implements IInternalFramePositioner
 					// Ignore.
 				}
 			}
-			child.setBounds(_x, _y, child.getWidth(), child.getHeight());
-			_x += MOVE;
-			_y += MOVE;
-			/*try {
-				child.setSelected(true);
-			} catch (PropertyVetoException ignore) {
-			}*/
+
+         if(toInitialPos)
+         {
+            child.setBounds(INITIAL_POS, INITIAL_POS, child.getWidth(), child.getHeight());
+         }
+         else
+         {
+            child.setBounds(_x, _y, child.getWidth(), child.getHeight());
+            _x += MOVE;
+            _y += MOVE;
+         }
 		}
 	}
 }

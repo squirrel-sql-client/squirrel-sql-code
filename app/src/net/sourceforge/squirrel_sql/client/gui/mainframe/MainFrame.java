@@ -95,9 +95,7 @@ public class MainFrame extends JFrame //BaseMDIParentFrame
 	private final IInternalFramePositioner _internalFramePositioner = new CascadeInternalFramePositioner();
 //	private Map _children = new HashMap();
 
-	private boolean _lastActionWasSeparator = false;
-
-	/**
+   /**
 	 * Ctor.
 	 *
 	 * @param	app	 Application API.

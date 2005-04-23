@@ -33,6 +33,7 @@ import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.prefs.Preferences;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -165,6 +166,9 @@ public class SQLPanel extends JPanel
 	private SQLResultExecuterPanel _sqlExecPanel;
 
 	private ISQLPanelAPI _panelAPI;
+
+   private static final String PREFS_KEY_SPLIT_DIVIDER_LOC = "squirrelSql_sqlPanel_divider_loc";
+
 
 	/**
 	 * Ctor.
@@ -477,6 +481,16 @@ public class SQLPanel extends JPanel
 //		closeAllSQLResultFrames();
 	}
 
+   public void sessionWindowClosing()
+   {
+      if(_hasBeenVisible)
+      {
+         int dividerLoc = _splitPane.getDividerLocation();
+         Preferences.userRoot().putInt(PREFS_KEY_SPLIT_DIVIDER_LOC, dividerLoc);
+      }
+   }
+
+
 	public void installSQLEntryPanel(ISQLEntryPanel pnl)
 	{
 		if (pnl == null)
@@ -621,12 +635,21 @@ public class SQLPanel extends JPanel
 
 	public void setVisible(boolean value)
 	{
-		super.setVisible(value);
-		if (!_hasBeenVisible && value == true)
-		{
-			_splitPane.setDividerLocation(0.2d);
-			_hasBeenVisible = true;
-		}
+      super.setVisible(value);
+      if (!_hasBeenVisible && value == true)
+      {
+         final int dividerLoc = Preferences.userRoot().getInt(PREFS_KEY_SPLIT_DIVIDER_LOC, _splitPane.getMaximumDividerLocation() / 4);
+
+         SwingUtilities.invokeLater(new Runnable()
+         {
+            public void run()
+            {
+               _splitPane.setDividerLocation(dividerLoc);
+            }
+         });
+
+         _hasBeenVisible = true;
+      }
 	}
 
 	/**

@@ -119,9 +119,9 @@ class MainFrameToolBar extends ToolBar
 		JLabel lbl2 = new JLabel(" " + s_stringMgr.getString("MainFrameToolBar.activeSession") + " ");
 		lbl.setAlignmentY(0.5f);
 		add(lbl2);
-		SessionDropDown session = new SessionDropDown(app);
-		session.setAlignmentY(0.5f);
-		add(session);
+		SessionDropDown sessionDropDown = new SessionDropDown(app);
+		sessionDropDown.setAlignmentY(0.5f);
+		add(sessionDropDown);
 
 		_sessionCommit = new CommitAction(_app);
 		_sessionCommit.setEnabled(false);
@@ -584,6 +584,7 @@ class MainFrameToolBar extends ToolBar
 		public void sessionConnected(SessionEvent evt)
 		{
 			final ISession session = evt.getSession();
+         // Needes to be done via event queque because method is not called from the event disptach thread.
 			GUIUtils.processOnSwingEventThread(new Runnable()
 			{
 				public void run()
@@ -612,18 +613,29 @@ class MainFrameToolBar extends ToolBar
 			});
 		}
 
-		public void sessionActivated(SessionEvent evt)
-		{
-			final ISession session = evt.getSession();
-         try
+      public void sessionActivated(SessionEvent evt)
+      {
+         final ISession session = evt.getSession();
+
+         // Needes to be done via event queque because adding the session to the
+         // drop down happens via the event queue too.
+         GUIUtils.processOnSwingEventThread(new Runnable()
          {
-            _dontReactToSessionDropDownAction = true;
-            _sessionDropDown.setSelectedItem(session);
-         }
-         finally
-         {
-            _dontReactToSessionDropDownAction = false;
-         }
+            public void run()
+            {
+               try
+               {
+                  _dontReactToSessionDropDownAction = true;
+                  _sessionDropDown.setSelectedItem(session);
+               }
+               finally
+               {
+                  _dontReactToSessionDropDownAction = false;
+               }
+            }
+         });
       }
-	}
+
+   }
 }
+
