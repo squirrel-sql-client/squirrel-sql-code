@@ -204,7 +204,7 @@ class MainFrameToolBar extends ToolBar
             {
                _sessionCommit.setSession(sess);
                _sessionRollback.setSession(sess);
-               if(false == _currentSession.getProperties().getAutoCommit())
+               if(false == sess.getProperties().getAutoCommit())
                {
                   _sessionCommit.setEnabled(true);
                   _sessionRollback.setEnabled(true);
@@ -483,7 +483,6 @@ class MainFrameToolBar extends ToolBar
 			addActionListener(this);
 			setMaximumSize(getPreferredSize());
 
-			// JASON: Is this listner cleaned up when session closed?
 			sessionManager.addSessionListener(new MySessionListener(model, this));
 		}
 
@@ -611,6 +610,7 @@ class MainFrameToolBar extends ToolBar
 					_sessionDropDown._closing = false;
 				}
 			});
+
 		}
 
       public void sessionActivated(SessionEvent evt)

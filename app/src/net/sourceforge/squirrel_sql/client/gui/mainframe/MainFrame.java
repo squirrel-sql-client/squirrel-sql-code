@@ -182,19 +182,32 @@ public class MainFrame extends JFrame //BaseMDIParentFrame
 	public void addInternalFrame(JInternalFrame child, boolean addToWindowMenu,
 									Action action)
 	{
-		oldAddInternalFrame(child, addToWindowMenu, action);
+      if (!GUIUtils.isToolWindow(child))
+      {
+         Dimension cs = getDesktopPane().getSize();
+         // Cast to int required as Dimension::setSize(double,double)
+         // doesn't appear to do anything in JDK1.2.2.
+         cs.setSize((int) (cs.width * 0.8d), (int) (cs.height * 0.8d));
+         child.setSize(cs);
+      }
+
+
+      if (child == null)
+      {
+         throw new IllegalArgumentException("Null JInternalFrame added");
+      }
+
+      _desktop.add(child);
+      if (!GUIUtils.isToolWindow(child))
+      {
+         positionNewInternalFrame(child);
+      }
 //		JInternalFrame[] frames = GUIUtils.getOpenNonToolWindows(getDesktopPane().getAllFrames());
 //		_app.getActionCollection().internalFrameOpenedOrClosed(frames.length);
 
 		// Size non-tool child window.
 		if (!GUIUtils.isToolWindow(child))
 		{
-			Dimension cs = child.getParent().getSize();
-			// Cast to int required as Dimension::setSize(double,double)
-			// doesn't appear to do anything in JDK1.2.2.
-			cs.setSize((int) (cs.width * 0.8d), (int) (cs.height * 0.8d));
-			child.setSize(cs);
-
 			if (child.isMaximizable() &&
 					_app.getSquirrelPreferences().getMaximizeSessionSheetOnOpen())
 			{
@@ -498,38 +511,7 @@ public class MainFrame extends JFrame //BaseMDIParentFrame
 //		prefs.setMainFrameWindowState(new MainFrameWindowState(_app.getWindowManager()));
 	}
 
-	/**
-	 * Add the passed internal frame to this MDI frame. If it is not a tool
-	 * window <TT>GUIUtils.isToolWindow()</TT> then position it.
-	 *
-	 * @param	child			The internal frame to be added.
-	 * @param	createMenuItem	If <TT>true</TT> add an item to the MDI
-	 * 							Window menu to select the passed internal frame.
-	 * @param	action			Action to be added to this MDI frames Window menu to
-	 *							select this internal frame. If <TT>null</TT> and
-	 *							<TT>createMenuItem</TT> is <TT>true</TT> then an
-	 * 							instance of <TT>SelectInternalFrameAction</TT>
-	 * 							will be used.
-	 *
-	 * @throws	IllegalArgumentException if null <TT>JInternalFrame</TT> passed.
-	 */
-	private void oldAddInternalFrame(JInternalFrame child, boolean createMenuItem,
-									Action action)
-	{
-		// JASON: Move code to Windowmanager
-		if (child == null)
-		{
-			throw new IllegalArgumentException("Null JInternalFrame added");
-		}
-
-		_desktop.add(child);
-		if (!GUIUtils.isToolWindow(child))
-		{
-			positionNewInternalFrame(child);
-		}
-	}
-
-	private void positionNewInternalFrame(JInternalFrame child)
+   private void positionNewInternalFrame(JInternalFrame child)
 	{
 		_internalFramePositioner.positionInternalFrame(child);
 	}
