@@ -19,23 +19,19 @@ package net.sourceforge.squirrel_sql.client.gui.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.sql.SQLException;
-import java.util.Vector;
-
-import javax.swing.Action;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.TreePath;
-
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeAction;
+import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
+import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.*;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.SQLCatalogsComboBox;
 import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
@@ -48,25 +44,17 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
-import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
-import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeAction;
-import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
-import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
-import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.IObjectTreeListener;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeAdapter;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeListenerEvent;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import javax.swing.*;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreePath;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.sql.SQLException;
+import java.util.Vector;
 
 public class SessionPanel extends JPanel
 {
@@ -505,11 +493,11 @@ public class SessionPanel extends JPanel
 			addSeparator();
 			add(actions.get(ExecuteSqlAction.class));
 			addSeparator();
-			add(actions.get(CommitAction.class));
-			add(actions.get(RollbackAction.class));
+//			add(actions.get(CommitAction.class));
+//			add(actions.get(RollbackAction.class));
 			actions.get(ExecuteSqlAction.class).setEnabled(false);
-			actions.get(CommitAction.class).setEnabled(false);
-			actions.get(RollbackAction.class).setEnabled(false);
+//			actions.get(CommitAction.class).setEnabled(false);
+//			actions.get(RollbackAction.class).setEnabled(false);
 			addSeparator();
 			add(actions.get(SQLFilterAction.class));
 			actions.get(SQLFilterAction.class).setEnabled(false);

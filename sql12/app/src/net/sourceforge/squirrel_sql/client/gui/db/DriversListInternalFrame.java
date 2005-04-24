@@ -19,6 +19,8 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  */
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.beans.VetoableChangeListener;
+import java.beans.PropertyVetoException;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -75,6 +77,18 @@ public class DriversListInternalFrame extends BaseListInternalFrame
 		// Enable/disable actions depending on whether an item is selected in
 		// the list.
 		_uiFactory.enableDisableActions();
+
+      addVetoableChangeListener(new VetoableChangeListener()
+      {
+         public void vetoableChange(PropertyChangeEvent evt) throws PropertyVetoException
+         {
+            if(IS_CLOSED_PROPERTY.equals(evt.getPropertyName()) && Boolean.TRUE.equals(evt.getNewValue()))
+            {
+               throw new PropertyVetoException("Propably closed by the ctrl F4 key. See BasicDesktopPaneUi.CloseAction", evt);
+            }
+         }
+      });
+
 
 		_app.getSquirrelPreferences().addPropertyChangeListener(new PropertyChangeListener()
 		{
