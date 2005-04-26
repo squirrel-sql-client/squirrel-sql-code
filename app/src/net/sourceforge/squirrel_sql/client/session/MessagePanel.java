@@ -26,8 +26,7 @@ import java.sql.DataTruncation;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 
-import javax.swing.JTextPane;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.SimpleAttributeSet;
@@ -120,6 +119,11 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 			privateShowMessage(th, null);
 		}
 	}
+
+   public void addToMessagePanelPopup(Action act)
+   {
+      _popupMenu.add(act);   
+   }
 
 	/**
 	 * Show a message.

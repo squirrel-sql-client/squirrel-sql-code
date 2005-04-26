@@ -177,7 +177,7 @@ public class SessionProperties implements Cloneable, Serializable
 	 * Placement of tabs displayed for SQL execution results.
 	 * See javax.swing.SwingConstants for valid values.
 	 */
-	private int _sqlResultsTabPlacement = SwingConstants.BOTTOM;
+	private int _sqlResultsTabPlacement = SwingConstants.TOP;
 
 	/**
 	 * If <TT>true</TT> then don't execute any further SQL if an error occurs in one.
@@ -704,7 +704,7 @@ public class SessionProperties implements Cloneable, Serializable
 
 	public void setSQLResultsTabPlacement(int value)
 	{
-		if (_sqlExecutionTabPlacement != value)
+		if (_sqlResultsTabPlacement != value)
 		{
 			final int oldValue = _sqlResultsTabPlacement;
 			_sqlResultsTabPlacement = value;

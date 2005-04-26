@@ -22,10 +22,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FontMetrics;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -139,7 +136,16 @@ public class SQLPanel extends JPanel
 //	private ArrayList _usedTabs = new ArrayList();
 
 	/** Each tab is a <TT>ExecuterTab</TT> showing an installed executer. */
+
+   /**
+    * Is the bottom component of the split.
+    * Holds the _simpleExecuterPanel if there is just one entry in _executors,
+    * holds the _tabbedExecuterPanel if there is more that one element in _executors, 
+    */
+   private JPanel _executerPanleHolder;
+
 	private JTabbedPane _tabbedExecuterPanel;
+	private JPanel _simpleExecuterPanel;
 
 	private boolean _hasBeenVisible = false;
 	private JSplitPane _splitPane;
@@ -161,7 +167,7 @@ public class SQLPanel extends JPanel
 	/** Listens to caret events in data entry area. */
 	private final DataEntryAreaCaretListener _dataEntryCaretListener = new DataEntryAreaCaretListener();
 
-	private final List executors = new ArrayList();
+	private final List _executors = new ArrayList();
 
 	private SQLResultExecuterPanel _sqlExecPanel;
 
@@ -227,15 +233,38 @@ public class SQLPanel extends JPanel
 
 	public void addExecutor(ISQLResultExecuter exec)
 	{
-		executors.add(exec);
+		_executors.add(exec);
 
-		_tabbedExecuterPanel.addTab(exec.getTitle(), null, exec.getComponent(), exec.getTitle());
+      if(1 == _executors.size())
+      {
+         _executerPanleHolder.remove(_tabbedExecuterPanel);
+         _executerPanleHolder.add(_simpleExecuterPanel);
+      }
+      else if(2 == _executors.size())
+      {
+         _executerPanleHolder.remove(_simpleExecuterPanel);
+         _executerPanleHolder.add(_tabbedExecuterPanel);
+         _executors.get(0);
+         ISQLResultExecuter buf = (ISQLResultExecuter) _executors.get(0);
+         _tabbedExecuterPanel.addTab(buf.getTitle(), null, buf.getComponent(), buf.getTitle());
+      }
+
+
+      if( 1 < _executors.size())
+      {
+         _tabbedExecuterPanel.addTab(exec.getTitle(), null, exec.getComponent(), exec.getTitle());
+      }
+      else
+      {
+         _simpleExecuterPanel.add(exec.getComponent());
+      }
+
 		this.fireExecuterTabAdded(exec);
 	}
 
 	public void removeExecutor(ISQLResultExecuter exec)
 	{
-		executors.remove(exec);
+		_executors.remove(exec);
 	}
 
 	public SQLResultExecuterPanel getSQLExecPanel()
@@ -460,9 +489,17 @@ public class SQLPanel extends JPanel
 
 	public void runCurrentExecuter()
 	{
-		int selectedIndex = _tabbedExecuterPanel.getSelectedIndex();
-		ISQLResultExecuter exec = (ISQLResultExecuter)executors.get(selectedIndex);
-		exec.execute(_sqlEntry);
+      if(1 == _executors.size())
+      {
+         ISQLResultExecuter exec = (ISQLResultExecuter) _executors.get(0);
+         exec.execute(_sqlEntry);
+      }
+      else
+      {
+         int selectedIndex = _tabbedExecuterPanel.getSelectedIndex();
+         ISQLResultExecuter exec = (ISQLResultExecuter)_executors.get(selectedIndex);
+         exec.execute(_sqlEntry);
+      }
 	}
 
 	/**
@@ -1199,7 +1236,12 @@ public class SQLPanel extends JPanel
 
 		installSQLEntryPanel(app.getSQLEntryPanelFactory().createSQLEntryPanel(_session));
 //		_splitPane.add(_tabbedResultsPanel, JSplitPane.RIGHT);
-		_splitPane.add(_tabbedExecuterPanel, JSplitPane.RIGHT);
+//		_splitPane.add(_tabbedExecuterPanel, JSplitPane.RIGHT);
+
+      _executerPanleHolder = new JPanel(new GridLayout(1,1));
+      _simpleExecuterPanel = new JPanel(new GridLayout(1,1));
+      _executerPanleHolder.add(_simpleExecuterPanel);
+      _splitPane.add(_executerPanleHolder, JSplitPane.RIGHT);
 
 		add(_splitPane, BorderLayout.CENTER);
 
@@ -1233,7 +1275,7 @@ public class SQLPanel extends JPanel
 			int index = pane.getSelectedIndex();
 			if (index != -1)
 			{
-				fireExecuterTabActivated((ISQLResultExecuter)executors.get(index));
+				fireExecuterTabActivated((ISQLResultExecuter)_executors.get(index));
 			}
 		}
 	}
