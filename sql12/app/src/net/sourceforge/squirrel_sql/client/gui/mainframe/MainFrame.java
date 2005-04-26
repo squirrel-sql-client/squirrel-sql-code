@@ -25,26 +25,13 @@ import java.awt.Dimension;
 import java.awt.Event;
 import java.awt.Font;
 import java.awt.Point;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
+import java.util.prefs.Preferences;
 
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.DefaultDesktopManager;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JDesktopPane;
-import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
-import javax.swing.JMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.fw.gui.CascadeInternalFramePositioner;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -94,6 +81,9 @@ public class MainFrame extends JFrame //BaseMDIParentFrame
 
 	private final IInternalFramePositioner _internalFramePositioner = new CascadeInternalFramePositioner();
 //	private Map _children = new HashMap();
+
+   private static final String PREFS_KEY_MESSAGEPANEL_SPLIT_DIVIDER_LOC = "squirrelSql_msgPanel_divider_loc";
+
 
    /**
 	 * Ctor.
@@ -393,10 +383,44 @@ public class MainFrame extends JFrame //BaseMDIParentFrame
 		_msgPnl = new MessagePanel();
 		_msgPnl.setEditable(false);
 
-		JSplitPane splitPn = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+		final JSplitPane splitPn = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		splitPn.add(sp);
 		splitPn.add(new JScrollPane(_msgPnl));
-		splitPn.setResizeWeight(0.9);
+
+      int prefDivLoc = Preferences.userRoot().getInt(PREFS_KEY_MESSAGEPANEL_SPLIT_DIVIDER_LOC, -1);
+      if(-1 == prefDivLoc)
+      {
+   		splitPn.setResizeWeight(0.9);
+      }
+      else
+      {
+         splitPn.setDividerLocation(prefDivLoc);
+      }
+
+      Action splitDividerLocAction = new AbstractAction("Save size")
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            int divLoc = splitPn.getDividerLocation();
+            Preferences.userRoot().putInt(PREFS_KEY_MESSAGEPANEL_SPLIT_DIVIDER_LOC, divLoc);
+         }
+      };
+      _msgPnl.addToMessagePanelPopup(splitDividerLocAction);
+
+      Action setSplitDividerLocAction = new AbstractAction("Restore saved size")
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            int prefDivLoc = Preferences.userRoot().getInt(PREFS_KEY_MESSAGEPANEL_SPLIT_DIVIDER_LOC, -1);
+            if(-1 != prefDivLoc)
+            {
+               splitPn.setDividerLocation(prefDivLoc);
+            }
+         }
+      };
+      _msgPnl.addToMessagePanelPopup(setSplitDividerLocAction);
+
+
 
 		content.add(splitPn, BorderLayout.CENTER);
 
