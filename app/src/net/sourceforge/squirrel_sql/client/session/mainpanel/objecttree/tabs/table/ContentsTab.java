@@ -551,6 +551,9 @@ public class ContentsTab extends BaseTableTab
 		}
 		catch (SQLException ex)
 		{
+         s_log.info("Exception occured during data update with where clause: "+ whereClause, ex);
+         ex.printStackTrace();
+
 			return "Exception seen during check on DB.  Exception was:\n"+
 				ex.getMessage() +
 				"\nUpdate is probably not safe to do.\nDo you wish to proceed?";
