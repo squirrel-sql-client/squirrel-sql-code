@@ -162,7 +162,7 @@ public class SessionPropertiesSheet extends BaseSessionInternalFrame
 		// Property panels for SQuirreL.
 		_panels.add(new GeneralSessionPropertiesPanel());
 		_panels.add(new SessionObjectTreePropertiesPanel(app));
-		_panels.add(new SessionSQLPropertiesPanel(app));
+		_panels.add(new SessionSQLPropertiesPanel(app, false));
 
 		// Go thru all plugins attached to this session asking for panels.
 		SessionPluginInfo[] plugins = app.getPluginManager().getPluginInformation(getSession());

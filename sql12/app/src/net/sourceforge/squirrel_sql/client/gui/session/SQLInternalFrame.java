@@ -37,7 +37,6 @@ import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.session.ISQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.ExecuteAllSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.GotoNextResultsTabAction;
 import net.sourceforge.squirrel_sql.client.session.action.GotoPreviousResultsTabAction;
@@ -174,7 +173,6 @@ public class SQLInternalFrame extends BaseSessionInternalFrame
 			setUseRolloverButtons(true);
 			setFloatable(false);
 			add(actions.get(ExecuteSqlAction.class));
-			add(actions.get(ExecuteAllSqlAction.class));
 			addSeparator();
 			add(actions.get(SQLFilterAction.class));
 			actions.get(SQLFilterAction.class).setEnabled(true);
@@ -198,7 +196,6 @@ public class SQLInternalFrame extends BaseSessionInternalFrame
 			final ActionCollection actions = getSession().getApplication()
 					.getActionCollection();
 			actions.get(ExecuteSqlAction.class).setEnabled(false);
-			actions.get(ExecuteAllSqlAction.class).setEnabled(false);
 			actions.get(GotoNextResultsTabAction.class).setEnabled(false);
 			actions.get(GotoPreviousResultsTabAction.class).setEnabled(false);
 			actions.get(ShowNativeSQLAction.class).setEnabled(false);

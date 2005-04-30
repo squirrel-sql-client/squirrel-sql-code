@@ -228,12 +228,7 @@ public interface ISQLPanelAPI
 	 */
 	void executeCurrentSQL();
 
- 	/**
- 	 * Executes the individual SQL statements in order.
-	 */
-	void executeAllSQL();
-
-	/**
+   /**
 	 * Close all the SQL result tabs.
 	 */
 	void closeAllSQLResultTabs();

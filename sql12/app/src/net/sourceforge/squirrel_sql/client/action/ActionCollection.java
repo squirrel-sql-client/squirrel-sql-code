@@ -63,7 +63,6 @@ import net.sourceforge.squirrel_sql.client.session.action.CopyQualifiedObjectNam
 import net.sourceforge.squirrel_sql.client.session.action.CopySimpleObjectNameAction;
 import net.sourceforge.squirrel_sql.client.session.action.DropSelectedTablesAction;
 import net.sourceforge.squirrel_sql.client.session.action.DumpSessionAction;
-import net.sourceforge.squirrel_sql.client.session.action.ExecuteAllSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.GotoNextResultsTabAction;
 import net.sourceforge.squirrel_sql.client.session.action.GotoPreviousResultsTabAction;
@@ -440,7 +439,6 @@ public final class ActionCollection
 		add(new DropSelectedTablesAction(_app));
 		add(new DumpApplicationAction(_app));
 		add(new DumpSessionAction(_app));
-		add(new ExecuteAllSqlAction(_app));
 		add(new ExecuteSqlAction(_app));
 		add(new ExitAction(_app));
 		add(new GlobalPreferencesAction(_app));
