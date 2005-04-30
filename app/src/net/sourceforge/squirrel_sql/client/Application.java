@@ -78,6 +78,7 @@ import net.sourceforge.squirrel_sql.client.session.DefaultSQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 /**
@@ -722,6 +723,20 @@ class Application implements IApplication
 		// Get the history into an array.
 		try
 		{
+         if(_prefs.getSessionProperties().getLimitSQLEntryHistorySize());
+         {
+            SQLHistoryItem[] data = _sqlHistory.getData();
+
+            int maxSize = _prefs.getSessionProperties().getSQLEntryHistorySize();
+            if(data.length > maxSize)
+            {
+               SQLHistoryItem[] reducedData = new SQLHistoryItem[maxSize];
+               System.arraycopy(data, data.length - maxSize, reducedData, 0, maxSize);
+               _sqlHistory.setData(reducedData);
+            }
+         }
+         
+
 			XMLBeanWriter wtr = new XMLBeanWriter(_sqlHistory);
 			wtr.save(new ApplicationFiles().getUserSQLHistoryFile());
 		}

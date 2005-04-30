@@ -392,19 +392,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 		_panel.runCurrentExecuter();
 	}
 
-	/**
-	 * Executes all the SQL script(s) in the SQL Panel.
-	 * Not <TT>synchronized</TT> as multiple SQL statements
-	 * can be executed simultaneously.
-	 */
-	public void executeAllSQL()
-	{
-//		_session.getSessionSheet().getSQLPanel().executeSQL(sql);
-		// JASON: To be implemented
-		_panel.getSession().getMessageHandler().showMessage("JASON: To Be Implemented");
-	}
-
-	/**
+   /**
 	 * Execute the passed SQL. Not <TT>synchronized</TT> as multiple SQL statements
 	 * can be executed simultaneously.
 	 *

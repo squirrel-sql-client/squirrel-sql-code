@@ -66,7 +66,7 @@ public class SessionSQLPropertiesPanel
 	/** Session properties object being maintained. */
 	private SessionProperties _props;
 
-	/**
+   /**
 	 * ctor specifying the Application API.
 	 *
 	 * @param	app		Application API.
@@ -75,15 +75,15 @@ public class SessionSQLPropertiesPanel
 	 * 			Thrown if <tt>null</tt> <tt>IApplication</tt>
 	 * 			passed.
 	 */
-	public SessionSQLPropertiesPanel(IApplication app) throws IllegalArgumentException
+	public SessionSQLPropertiesPanel(IApplication app, boolean newSessionProperties) throws IllegalArgumentException
 	{
 		super();
-		if (app == null)
+      if (app == null)
 		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
 		_app = app;
-		_myPanel = new SQLPropertiesPanel(app);
+		_myPanel = new SQLPropertiesPanel(app, newSessionProperties);
 	}
 
 
@@ -150,11 +150,13 @@ public class SessionSQLPropertiesPanel
 		 * makes changes.
 		 */
 		private final ControlMediator _controlMediator = new ControlMediator();
+      private boolean _newSessionProperties;
 
-		SQLPropertiesPanel(IApplication app)
+      SQLPropertiesPanel(IApplication app, boolean newSessionProperties)
 		{
 			super();
-			createGUI();
+         _newSessionProperties = newSessionProperties;
+         createGUI();
 		}
 
 		void loadData(SessionProperties props)
@@ -211,9 +213,18 @@ public class SessionSQLPropertiesPanel
 			// If this session doesn't share SQL history with other sessions
 			// then disable the controls that relate to SQL History.
 			final boolean shareSQLHistory = _shareSQLHistoryChk.isSelected();
-			_limitSQLHistoryComboSizeChk.setEnabled(!shareSQLHistory);
-			_limitSQLHistoryComboSizeField.setEnabled(!shareSQLHistory &&
-								_limitSQLHistoryComboSizeChk.isSelected());
+
+         if(_newSessionProperties)
+         {
+            _limitSQLHistoryComboSizeChk.setEnabled(true);
+            _limitSQLHistoryComboSizeField.setEnabled(_limitSQLHistoryComboSizeChk.isSelected());
+         }
+         else
+         {
+            _limitSQLHistoryComboSizeChk.setEnabled(!shareSQLHistory);
+            _limitSQLHistoryComboSizeField.setEnabled(!shareSQLHistory &&
+                           _limitSQLHistoryComboSizeChk.isSelected());
+         }
 		}
 
 		private void createGUI()
