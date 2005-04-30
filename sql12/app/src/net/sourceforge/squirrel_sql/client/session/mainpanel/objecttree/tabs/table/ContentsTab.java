@@ -811,56 +811,66 @@ public class ContentsTab extends BaseTableTab
 		Object colValue)
 	{
 
-		StringBuffer whereClause = new StringBuffer("");
-		
-		// For tables that have a lot of columns, the user may have limited the set of columns
-		// to use in the where clause, so see if there is a table of col names
-		HashMap colNames = (EditWhereCols.get(getFullTableName()));
+      try
+      {
+         StringBuffer whereClause = new StringBuffer("");
 
-		for (int i=0; i< colDefs.length; i++) {
-			
-			// if the user has said to not use this column, then skip it
-			if (colNames != null) {
-				// the user has restricted the set of columns to use.
-				// If this name is NOT in the list, then skip it; otherwise we fall through
-				// and use the column in the WHERE clause
-				if (colNames.get(colDefs[i].getLabel()) == null)
-					continue;	// go on to the next item
-			}
+         // For tables that have a lot of columns, the user may have limited the set of columns
+         // to use in the where clause, so see if there is a table of col names
+         HashMap colNames = (EditWhereCols.get(getFullTableName()));
 
-			// for the column that is being changed, use the value
-			// passed in by the caller (which may be either the
-			// current value or the new replacement value)
-			Object value = values[i];
-			if (i == col)
-				value = colValue;
+         for (int i=0; i< colDefs.length; i++) {
 
-			// convert user representation of null into an actual null
-			if (value != null && value.toString().equals("<null>"))
-				value = null;
+            // if the user has said to not use this column, then skip it
+            if (colNames != null) {
+               // the user has restricted the set of columns to use.
+               // If this name is NOT in the list, then skip it; otherwise we fall through
+               // and use the column in the WHERE clause
+               if (colNames.get(colDefs[i].getLabel()) == null)
+                  continue;	// go on to the next item
+            }
 
-			// do different things depending on data type
-			String clause = CellComponentFactory.getWhereClauseValue(colDefs[i], value);	
+            // for the column that is being changed, use the value
+            // passed in by the caller (which may be either the
+            // current value or the new replacement value)
+            Object value = values[i];
+            if (i == col)
+               value = colValue;
 
-			if (clause != null && clause.length() > 0)
-				if (whereClause.length() == 0)
-				{
-					whereClause.append(clause);
-				}
-				else
-				{
-					whereClause.append(" AND ");
-					whereClause.append(clause);
-				}
-		}
+            // convert user representation of null into an actual null
+            if (value != null && value.toString().equals("<null>"))
+               value = null;
 
-		// insert the "WHERE" at the front if there is anything in the clause
-		if (whereClause.length() == 0)
-			return "";
+            // do different things depending on data type
+            String clause = CellComponentFactory.getWhereClauseValue(colDefs[i], value);
 
-		whereClause.insert(0, " WHERE ");
-		return whereClause.toString();
-	}
+            if (clause != null && clause.length() > 0)
+               if (whereClause.length() == 0)
+               {
+                  whereClause.append(clause);
+               }
+               else
+               {
+                  whereClause.append(" AND ");
+                  whereClause.append(clause);
+               }
+         }
+
+         // insert the "WHERE" at the front if there is anything in the clause
+         if (whereClause.length() == 0)
+            return "";
+
+         whereClause.insert(0, " WHERE ");
+
+         String databaseProductName = getSession().getSQLConnection().getSQLMetaData().getDatabaseProductName();
+
+         return DatabaseSpecificEscape.escapeSQL(whereClause.toString(), databaseProductName);
+      }
+      catch (SQLException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
 
 
 	/**
