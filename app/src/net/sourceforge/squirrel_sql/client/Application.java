@@ -557,7 +557,9 @@ class Application implements IApplication
 		{
 			indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.notloadingplugins"));
 		}
-		_pluginManager = new PluginManager(this);
+
+      UIFactory.initialize(_prefs);
+      _pluginManager = new PluginManager(this);
 		if (args.getLoadPlugins())
 		{
 			_pluginManager.loadPlugins();
@@ -587,7 +589,6 @@ class Application implements IApplication
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.uifactoryinit"));
 //		AliasMaintSheetFactory.initialize(this);
 //		DriverMaintSheetFactory.initialize(this);
-		UIFactory.initialize(_prefs);
 
 		indicateNewStartupTask(splash, loadPlugins ? "Initializing plugins..." : "No Plugins are to be loaded...");
 		if (loadPlugins)
