@@ -25,7 +25,7 @@ import java.util.Iterator;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 
-import com.jgoodies.plaf.Options;
+import com.jgoodies.looks.Options;
 
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -211,8 +211,8 @@ public class LAFPlugin extends DefaultPlugin
 		loadPrefs();
 
 		// Setup preferences to make jGoodies LAF look better.
-		UIManager.put(Options.USE_SYSTEM_FONTS_APP_KEY, Boolean.TRUE);
-		UIManager.put(Options.USE_NARROW_BUTTONS_KEY, Boolean.TRUE);
+//		UIManager.put(Options.USE_SYSTEM_FONTS_APP_KEY, Boolean.TRUE);
+//		UIManager.put(Options.USE_NARROW_BUTTONS_KEY, Boolean.TRUE);
 
 		// Create the Look and Feel register.
 		_lafRegister = new LAFRegister(app, this);

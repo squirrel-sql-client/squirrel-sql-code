@@ -44,16 +44,16 @@ class PlasticLookAndFeelController extends AbstractPlasticController
 	 */
 	static final String[] LAF_CLASS_NAMES = new String[]
 	{
-		"com.jgoodies.plaf.plastic.PlasticLookAndFeel",
-		"com.jgoodies.plaf.plastic.Plastic3DLookAndFeel",
-		"com.jgoodies.plaf.plastic.PlasticXPLookAndFeel",
+		"com.jgoodies.looks.plastic.PlasticLookAndFeel",
+		"com.jgoodies.looks.plastic.Plastic3DLookAndFeel",
+		"com.jgoodies.looks.plastic.PlasticXPLookAndFeel",
 	};
 
 	/** Name of package that contains Plastic Themes. */
-	private static final String THEME_PACKAGE = "com.jgoodies.plaf.plastic.theme";
+	private static final String THEME_PACKAGE = "com.jgoodies.looks.plastic.theme";
 
 	/** Base class for all Plastic themes. */
-	private static final String THEME_BASE_CLASS = "com.jgoodies.plaf.plastic.PlasticTheme";
+	private static final String THEME_BASE_CLASS = "com.jgoodies.looks.plastic.PlasticTheme";
 
 	/** Preferences for this LAF. */
 	private PlasticThemePreferences _prefs;
