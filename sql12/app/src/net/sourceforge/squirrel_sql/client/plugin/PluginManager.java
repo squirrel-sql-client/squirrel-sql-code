@@ -433,6 +433,7 @@ public class PluginManager
 			catch (Throwable th)
 			{
 				String msg = s_stringMgr.getString("PluginManager.error.loadpluginclass", clazz.getName());
+            th.printStackTrace();
 				s_log.error(msg, th);
 				_app.showErrorDialog(msg, th);
 			}
@@ -542,6 +543,7 @@ public class PluginManager
 		{
 			String msg = s_stringMgr.getString("PluginManager.error.loadpluginclass",
 												pluginClass.getName());
+         th.printStackTrace();
 			s_log.error(msg, th);
 			_app.showErrorDialog(msg, th);
 		}
