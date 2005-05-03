@@ -33,7 +33,7 @@ import net.sourceforge.squirrel_sql.fw.gui.BaseMDIParentFrame;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
-import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
+//import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 
 /**
  * Generate a popup window to display and manipulate the
@@ -81,7 +81,7 @@ public class CellDataPopup
 		TextAreaInternalFrame taif =
 			new TextAreaInternalFrame(table.getColumnName(col), colDef, obj,
 				row, col, isModelEditable, table);
-		((MainFrame)comp).addInternalFrame(taif, false);
+		((IMainFrame)comp).addInternalFrame(taif, false);
 		taif.setLayer(JLayeredPane.POPUP_LAYER);
 		taif.pack();
 		newComp = taif;
