@@ -39,6 +39,8 @@ import net.sourceforge.squirrel_sql.fw.gui.IInternalFramePositioner;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IMainFrame;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.client.gui.ScrollableDesktopPane;
@@ -47,7 +49,7 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.MessagePanel;
 
-public class MainFrame extends JFrame //BaseMDIParentFrame
+public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 {
 	public interface IMenuIDs extends MainFrameMenuBar.IMenuIDs
 	{
