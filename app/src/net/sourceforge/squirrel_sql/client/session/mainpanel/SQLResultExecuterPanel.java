@@ -767,7 +767,8 @@ public class SQLResultExecuterPanel extends JPanel
 		 */
 		ResultSetDataSet rsds = null;
 
-		public void sqlResultSetAvailable(ResultSet rs, SQLExecutionInfo info)
+		public void sqlResultSetAvailable(ResultSet rs, SQLExecutionInfo info,
+				IDataSetUpdateableTableModel model)
 		{
 			_cancelPanel.setStatusLabel("Building output...");
 			rsds = new ResultSetDataSet();
@@ -786,7 +787,7 @@ public class SQLResultExecuterPanel extends JPanel
 			}
 			// JASON: Shouldn't be null for the last argument. We need an
 			// instance of IDataSetUpdateableTableModel
-			addResultsTab(info, rsds, rsmdds, _cancelPanel, null);
+			addResultsTab(info, rsds, rsmdds, _cancelPanel, model);
 			rsds = null;
 		}
 

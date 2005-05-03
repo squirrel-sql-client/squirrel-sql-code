@@ -21,6 +21,8 @@ import java.sql.ResultSet;
 import java.sql.SQLWarning;
 
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
+
 /**
  * This interface is the call back interface used during execution
  * of SQl via the SQLExecuter
@@ -58,7 +60,8 @@ public interface ISQLExecuterHandler
 	 * <p/>This callback is called from the thread that the SQLExecuter is running on.
 	 * It may or may not be the Swing thread so card should be taken with any gui actions 
 	 */
-	public void sqlResultSetAvailable(ResultSet rst, SQLExecutionInfo info);
+	public void sqlResultSetAvailable(ResultSet rst, SQLExecutionInfo info,
+			IDataSetUpdateableTableModel model);
 
 	/** Called when the SQLExecutor succesfully completes execution of a sql
 	 *  statement.
