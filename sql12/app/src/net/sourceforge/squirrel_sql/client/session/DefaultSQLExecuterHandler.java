@@ -20,6 +20,8 @@ import java.sql.ResultSet;
 import java.sql.SQLWarning;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
+
 /**
  * This default implementation of the sql executer handler simply notifies the
  * message handler when events occur.
@@ -47,7 +49,8 @@ public class DefaultSQLExecuterHandler implements ISQLExecuterHandler
 	{
 	}
 
-	public void sqlResultSetAvailable(ResultSet rst, SQLExecutionInfo info)
+	public void sqlResultSetAvailable(ResultSet rst, SQLExecutionInfo info,
+			IDataSetUpdateableTableModel model)
 	{
 	}
 
