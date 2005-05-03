@@ -72,7 +72,7 @@ public class AutoCorrectProviderImpl
       ret.put("SLECT", "SELECT");
       ret.put("FORM", "FROM");
       ret.put("WERE", "WHERE");
-      ret.put("S*F", "SELECT * FROM ");
+      ret.put("SF", "SELECT * FROM");
 
       return new AutoCorrectData(ret, true);
 

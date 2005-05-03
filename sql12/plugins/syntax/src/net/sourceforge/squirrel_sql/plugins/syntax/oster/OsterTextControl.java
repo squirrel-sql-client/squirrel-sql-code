@@ -101,7 +101,7 @@ public class OsterTextControl extends JTextPane
    private Vector _oldErrorInfos = new Vector();
 
 
-   OsterTextControl(ISession session, SyntaxPreferences prefs, IIdentifier sqlEntryPanelIdentifier)
+   OsterTextControl(ISession session, SyntaxPreferences prefs, final IIdentifier sqlEntryPanelIdentifier)
 	{
 		super();
 		_session = session;
@@ -128,18 +128,29 @@ public class OsterTextControl extends JTextPane
 
 		updateFromPreferences();
 
-		session.getParserEventsProcessor(sqlEntryPanelIdentifier).addParserEventsListener(new ParserEventsAdapter()
+      SwingUtilities.invokeLater(new Runnable()
+      {
+         public void run()
+         {
+            initParser(_session, sqlEntryPanelIdentifier);
+         }
+      });
+
+      new KeyManager(this);
+	}
+
+   private void initParser(ISession session, IIdentifier sqlEntryPanelIdentifier)
+   {
+      session.getParserEventsProcessor(sqlEntryPanelIdentifier).addParserEventsListener(new ParserEventsAdapter()
 		{
 			public void errorsFound(ErrorInfo[] errorInfos)
 			{
 				onErrorsFound(errorInfos);
 			}
 		});
-      
-      new KeyManager(this);
-	}
+   }
 
-	private void onErrorsFound(ErrorInfo[] errorInfos)
+   private void onErrorsFound(ErrorInfo[] errorInfos)
 	{
       boolean errorsChanged = false;
       if(_currentErrorInfos.size() == errorInfos.length)

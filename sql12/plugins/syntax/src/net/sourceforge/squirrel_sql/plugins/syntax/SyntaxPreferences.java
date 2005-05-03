@@ -65,8 +65,8 @@ public class SyntaxPreferences implements Serializable, Cloneable
 	private transient PropertyChangeReporter _propChgReporter;
 
 	/** If <TT>true</TT> use the Oster text control else use the standard Java control. */
-	private boolean _useOsterTextControl = true;
-   private boolean _useNetbeansTextControl = false;
+	private boolean _useOsterTextControl = false;
+   private boolean _useNetbeansTextControl = true;
    private boolean _usePlainTextControl = false;
 
 	/** If <TT>true</TT> use the block caret. */
@@ -111,15 +111,15 @@ public class SyntaxPreferences implements Serializable, Cloneable
 	{
 		super();
 
-		_columnStyle.setName(IConstants.IStyleNames.COMMENT);
+		_columnStyle.setName(IConstants.IStyleNames.COLUMN);
 		_columnStyle.setBackgroundRGB(Color.white.getRGB());
-		_columnStyle.setTextRGB(0x00FFFF);
+		_columnStyle.setTextRGB(-10066432);
 		_columnStyle.setBold(false);
 		_columnStyle.setItalic(false);
 
 		_commentStyle.setName(IConstants.IStyleNames.COMMENT);
 		_commentStyle.setBackgroundRGB(Color.white.getRGB());
-		_commentStyle.setTextRGB(Color.green.darker().getRGB());
+		_commentStyle.setTextRGB(Color.lightGray.darker().getRGB());
 		_commentStyle.setBold(false);
 		_commentStyle.setItalic(false);
 
@@ -149,7 +149,7 @@ public class SyntaxPreferences implements Serializable, Cloneable
 
 		_literalStyle.setName(IConstants.IStyleNames.LITERAL);
 		_literalStyle.setBackgroundRGB(Color.white.getRGB());
-		_literalStyle.setTextRGB(0xB03060); // Maroon.
+		_literalStyle.setTextRGB(11546720);
 		_literalStyle.setBold(false);
 		_literalStyle.setItalic(false);
 
@@ -173,7 +173,7 @@ public class SyntaxPreferences implements Serializable, Cloneable
 
 		_tableStyle.setName(IConstants.IStyleNames.TABLE);
 		_tableStyle.setBackgroundRGB(Color.white.getRGB());
-		_tableStyle.setTextRGB(0x00FFFF);
+		_tableStyle.setTextRGB(-16738048);
 		_tableStyle.setBold(false);
 		_tableStyle.setItalic(false);
 

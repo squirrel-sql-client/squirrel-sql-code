@@ -112,19 +112,19 @@ public class SQLSettingsDefaults extends ExtSettingsDefaults
 
       }
 
-      private Coloring createColoringFromStyle(SyntaxStyle tableStyle)
+      private Coloring createColoringFromStyle(SyntaxStyle style)
       {
-         if(tableStyle.isBold())
+         if(style.isBold())
          {
-            return new Coloring(boldFont, Coloring.FONT_MODE_APPLY_STYLE, new Color(tableStyle.getTextRGB()), new Color(tableStyle.getBackgroundRGB()));
+            return new Coloring(boldFont, Coloring.FONT_MODE_APPLY_STYLE, new Color(style.getTextRGB()), new Color(style.getBackgroundRGB()));
          }
-         else if(tableStyle.isItalic())
+         else if(style.isItalic())
          {
-            return new Coloring(italicFont, Coloring.FONT_MODE_APPLY_STYLE, new Color(tableStyle.getTextRGB()), new Color(tableStyle.getBackgroundRGB()));
+            return new Coloring(italicFont, Coloring.FONT_MODE_APPLY_STYLE, new Color(style.getTextRGB()), new Color(style.getBackgroundRGB()));
          }
          else
          {
-            return new Coloring(null, Coloring.FONT_MODE_APPLY_STYLE, new Color(tableStyle.getTextRGB()), new Color(tableStyle.getBackgroundRGB()));
+            return new Coloring(null, Coloring.FONT_MODE_APPLY_STYLE, new Color(style.getTextRGB()), new Color(style.getBackgroundRGB()));
          }
       }
 
