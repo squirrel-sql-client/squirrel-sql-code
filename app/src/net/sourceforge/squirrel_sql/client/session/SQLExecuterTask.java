@@ -397,7 +397,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 			if (selectIndex > -1 && fromIndex > -1 && selectIndex < fromIndex) {
 				int whereIndex = sqlString.indexOf("WHERE");
 				if (whereIndex == -1)
-					whereIndex = sqlString.length() -1;
+					whereIndex = sqlString.length();	//???need -1?
 				if (sqlString.substring(fromIndex+4, whereIndex).indexOf(',') == -1)
 					allowEditing = true;	// no comma, so only one table selected from
 					tableNameFromSQL = sqlString.substring(fromIndex+4, whereIndex).trim();
@@ -1249,9 +1249,11 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 					count++;
 					table = (TableInfo)tables[i];
 				}
+/***
 				else {
 					tables[i] = null;
 				}
+*****/
 			}
 
 		}
