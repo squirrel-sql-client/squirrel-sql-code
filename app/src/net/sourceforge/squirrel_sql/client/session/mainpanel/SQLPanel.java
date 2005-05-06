@@ -75,13 +75,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.action.RedoAction;
 import net.sourceforge.squirrel_sql.client.session.action.UndoAction;
-import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
-import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
-import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
-import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
-import net.sourceforge.squirrel_sql.client.session.event.ResultTabEvent;
-import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
-import net.sourceforge.squirrel_sql.client.session.event.SQLResultExecuterTabEvent;
+import net.sourceforge.squirrel_sql.client.session.event.*;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 /**
  * This is the panel where SQL scripts can be entered and executed.
@@ -920,47 +914,7 @@ public class SQLPanel extends JPanel
 		}
 	}
 
-	protected List fireAllSQLToBeExecutedEvent(List sql)
-	{
-		// Guaranteed to be non-null.
-		Object[] listeners = _listeners.getListenerList();
-		// Process the listeners last to first, notifying
-		// those that are interested in this event.
-		for (int i = listeners.length - 2; i >= 0; i -= 2)
-		{
-			if (listeners[i] == ISQLExecutionListener.class)
-			{
-				((ISQLExecutionListener)listeners[i + 1]).allStatementsExecuting(sql);
-				if (sql.size() == 0)
-				{
-					break;
-				}
-			}
-		}
-		return sql;
-	}
-
-	protected String fireSQLToBeExecutedEvent(String sql)
-	{
-		// Guaranteed to be non-null.
-		Object[] listeners = _listeners.getListenerList();
-		// Process the listeners last to first, notifying
-		// those that are interested in this event.
-		for (int i = listeners.length - 2; i >= 0; i -= 2)
-		{
-			if (listeners[i] == ISQLExecutionListener.class)
-			{
-				sql = ((ISQLExecutionListener)listeners[i + 1]).statementExecuting(sql);
-				if (sql == null)
-				{
-					break;
-				}
-			}
-		}
-		return sql;
-	}
-
-	protected void fireExecuterTabAdded(ISQLResultExecuter exec)
+   protected void fireExecuterTabAdded(ISQLResultExecuter exec)
 	{
 		// Guaranteed to be non-null.
 		Object[] listeners = _listeners.getListenerList();
@@ -1557,15 +1511,11 @@ public class SQLPanel extends JPanel
 	 * This class is responsible for listening for sql that executes
 	 * for a SQLExecuterPanel and adding it to the SQL history.
 	 */
-	private class SQLExecutorHistoryListener implements ISQLExecutionListener
+	private class SQLExecutorHistoryListener extends SQLExecutionAdapter
 	{
-		public void allStatementsExecuting(List sql)
-		{
-		}
-		public String statementExecuting(String sql)
-		{
-			_panelAPI.addSQLToHistory(sql);
-			return sql;
-		}
+      public void statementExecuted(String sql)
+      {
+         _panelAPI.addSQLToHistory(sql);
+      }
 	}
 }

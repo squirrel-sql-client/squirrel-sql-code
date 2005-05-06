@@ -28,16 +28,6 @@ import java.util.List;
  */
 public class SQLExecutionAdapter implements ISQLExecutionListener
 {
-	/**
-	 * Called prior to any statement being executed.
-	 *
-	 * @param	sql		Collection of Strign objects, each is an SQL script to
-	 *					be executing.
-	 */
-	public void allStatementsExecuting(List sql)
-	{
-		// Empty nody.
-	}
 
 	/**
 	 * Called prior to an individual statement being executed. If you modify the
@@ -52,4 +42,8 @@ public class SQLExecutionAdapter implements ISQLExecutionListener
 	{
 		return sql;
 	}
+
+   public void statementExecuted(String sql)
+   {
+   }
 }

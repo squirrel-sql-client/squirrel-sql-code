@@ -11,7 +11,7 @@ package net.sourceforge.squirrel_sql.client.session;
  *
  * Modifications copyright (C) 2001-2005 Glenn Griffin
  * gwghome@users.sourceforge.net
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terdims of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -27,33 +27,21 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.swing.JOptionPane;
-
+import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
+import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import javax.swing.*;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 //JASON: Check the Old SQLExecutertask class against this one.
 /**
@@ -64,7 +52,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
  */
 public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 {
-	
+
 	/**
 	 * We need to save the name of the SessionProperties display class at the time
 	 * that the table was forced into edit mode so that if the properties get changed
@@ -100,12 +88,12 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 	 * from another table of the same name in a different DB.
 	 */
 	String fullTableName = null;
-	
+
 	// string to be passed to user when table name is not found or is ambiguous
 	private final String TI_ERROR_MESSAGE =
 		"Cannot edit table because table cannot be found\nor table name is not unique in DB.";
-	
-	
+
+
 	/** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(SQLExecuterTask.class);
 
@@ -121,17 +109,22 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 	private boolean _stopExecution = false;
 
 	private int _currentQueryIndex = 0;
+   private ISQLExecutionListener[] _executionListeners;
 
-	public SQLExecuterTask(ISession session, String sql,
-			ISQLExecuterHandler handler)
+   public SQLExecuterTask(ISession session, String sql,ISQLExecuterHandler handler)
 	{
-		super();
-		_session = session;
-		_sql = sql;
-		_handler = handler;
+      this(session, sql, handler, new ISQLExecutionListener[0]);
 	}
 
-	public void run()
+   public SQLExecuterTask(ISession session, String sql, ISQLExecuterHandler handler, ISQLExecutionListener[] executionListeners)
+   {
+      _session = session;
+      _sql = sql;
+      _handler = handler;
+      _executionListeners = executionListeners;
+   }
+
+   public void run()
 	{
 		try
 		{
@@ -163,13 +156,13 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 				{
 					queryStrings.add(qt.nextQuery());
 				}
-				
+
 				/**
 				 * ?? The following code was in the original version of this
 				 * file and was removed at some point.  It appears to implement
 				 * a potentially useful functionality, and there does not seem to be any
 				 * corresponding mechanism that does not use the sqlPanel
-				 * variable which is not present any more. 
+				 * variable which is not present any more.
 				 * The mechanism is to let a plugin review/modify as a single
 				 * batch ALL of the
 				 * sql statements that are about to be executed.
@@ -179,7 +172,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 				 * but that is not the same as operating on all of them
 				 * in one group (eg: plugin may want to add or remove statements
 				 * depending on what else is happening in the SQL).
-				 * 
+				 *
 				 * Do we need to re-add this? -- GWG, May 2005
 
 				//	Allow plugins to modify the requested SQL prior to execution.
@@ -259,14 +252,6 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 									throw ex;
 								}
 							}
-							catch (DataSetException ex)
-							{
-								handleError(ex);
-								if (props.getAbortOnError())
-								{
-									throw ex;
-								}
-							}
 						}
 					}
 				}
@@ -314,30 +299,23 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 		_stopExecution = true;
 	}
 
-	private boolean processQuery(String querySql) throws SQLException,
-			DataSetException
+	private boolean processQuery(String sql) throws SQLException
 	{
 		++_currentQueryIndex;
 
-		final SQLExecutionInfo exInfo = new SQLExecutionInfo(
-				_currentQueryIndex, querySql, _stmt.getMaxRows());
-		boolean rc = _stmt.execute(querySql);
+		final SQLExecutionInfo exInfo = new SQLExecutionInfo(	_currentQueryIndex, sql, _stmt.getMaxRows());
+      boolean firstResultIsResultSet = _stmt.execute(sql);
 		exInfo.sqlExecutionComplete();
 
 		// Display any warnings generated by the SQL execution.
 		handleAllWarnings(_session.getSQLConnection(), _stmt);
 
-		// If no ResultSet was returned by the executed query, see if any rows
-		// were modified.
-		int updateCount = -1;
-		if (!rc)
-		{
-			updateCount = _stmt.getUpdateCount();
-		}
+      boolean supportsMultipleResultSets = _session.getSQLConnection().getSQLMetaData().supportsMultipleResultSets();
+      boolean inFirstLoop = true;
 
-		// Loop while we either have a ResultSet to process or rows have
-		// been updated/inserted/deleted.
-		while (rc || (updateCount != -1))
+      // Loop while we either have a ResultSet to process or rows have
+      // been updated/inserted/deleted.
+		while (true)
 		{
 			// User has cancelled the query execution.
 			if (_stopExecution)
@@ -345,76 +323,138 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 				return false;
 			}
 
-			// We have a ResultSet to process.
-			if (rc)
-			{
-				final ResultSet rs = _stmt.getResultSet();
-				if (rs != null)
-				{
-					if (!processResultSet(rs, exInfo))
-					{
-						return false;
-					}
-				}
-			}
 
-			// No ResultSet returned so rows must have been modified.
-			else
-			{
-				if (_handler != null)
-					_handler.sqlDataUpdated(updateCount);
-			}
+         int updateCount = _stmt.getUpdateCount();
 
-			// Are there any more results to process?
-			rc = _stmt.getMoreResults();
-			if (!rc)
-			{
-				updateCount = _stmt.getUpdateCount();
-			}
+         ResultSet res = null;
+         if (inFirstLoop && firstResultIsResultSet)
+         {
+            res = _stmt.getResultSet();
+         }
+         else if(false == inFirstLoop)
+         {
+            res = _stmt.getResultSet();
+         }
+
+
+         if (-1 != updateCount)
+         {
+            if (_handler != null)
+            {
+               _handler.sqlDataUpdated(updateCount);
+            }
+         }
+         if (null != res)
+         {
+            if (!processResultSet(res, exInfo))
+            {
+               return false;
+            }
+         }
+
+         if (false == supportsMultipleResultSets)
+         {
+            // This is (a logically not sufficent) try to cope with the problem that there are the following
+            // contradictory rules in the JDBC API Doc:
+            // Statement.getResultSet():
+            // This method should be called only once per result.
+            // Statement.getUpdateCount():
+            // This method should be called only once per result.
+            // Statement.getMoreResults():
+            // There are no more results when the following is true: (!getMoreResults() && (getUpdateCount() == -1)
+            //
+            // If getMoreResults() returns false, we don't know if we have more results, we only know that it isn't
+            // a result set. Since we called getUpdateCount() before getMoreResults() because we would like to know
+            // the update count of the first result, we might not be allowed to call getUpdateCount() again.
+            //
+            // The Intersystems Cache Driver for example always returns the same updateCount on simple
+            // INSERT, UPDATE, DELETE statements not matter if getMoreResults() was called. So updateCount never
+            // gets -1 and this will loop forever. When I discussed the issue with the Intersystems people they
+            // just told me not to call getUpdateCount() twice. That simple. My hope is that this will cure
+            // problems with DBs that just don't care for multiple result sets.
+            try
+            {
+               res.close();
+            }
+            catch (Throwable th)
+            {
+               s_log.error("Error closing ResultSet", th);
+            }
+            break;
+         }
+
+         if (!_stmt.getMoreResults() && -1 == updateCount)
+         {
+            // There is no need to close result sets if we call _stmt.getMoreResults() because it
+            // implicitly closes any current ResultSet.
+            // ON DB2 version 7.1 it is even harmful to close a ResultSet explicitly.
+            // _stmt.getMoreResults() will never return true anymore if you do.
+            break;
+         }
+         inFirstLoop = false;
 		}
 
-		if (_handler != null)
-			_handler.sqlExecutionComplete(exInfo);
-		
-		
-		// if the sql contains  results from only one table, the user
-		// may choose to edit it later.  If so, we need to have the
-		// full name of the table available.
-		// First determine if the SQL is a query on only one table
-		// The following assumes SQL is either:
-		//		select <fields> FROM <tables>
-		//	or
-		//		select <fields> FROM <tables> WHERE <etc>
-		// and that the presence of multiple tables is indicated by
-		// a comma separating the table names
-		boolean allowEditing = false;
-		String tableNameFromSQL = "";
-		String sqlString = exInfo != null ? exInfo.getSQL() : null;
-		if (sqlString != null && sqlString.trim().substring(0, "SELECT".length()).equalsIgnoreCase("SELECT")) {
-			sqlString = sqlString.toUpperCase();
-			int selectIndex = sqlString.indexOf("SELECT");
-			int fromIndex = sqlString.indexOf("FROM");
-			if (selectIndex > -1 && fromIndex > -1 && selectIndex < fromIndex) {
-				int whereIndex = sqlString.indexOf("WHERE");
-				if (whereIndex == -1)
-					whereIndex = sqlString.length();	//???need -1?
-				if (sqlString.substring(fromIndex+4, whereIndex).indexOf(',') == -1)
-					allowEditing = true;	// no comma, so only one table selected from
-					tableNameFromSQL = sqlString.substring(fromIndex+4, whereIndex).trim();
-			}
-		}
-		if (allowEditing) {
-			// Get a list of all tables matching this name in DB
-			ti = getTableName(tableNameFromSQL);
-		}		
-		
-		
+      fireExecutionListeners(sql);
+
+      if (_handler != null)
+      {
+         _handler.sqlExecutionComplete(exInfo);
+      }
+
+
+
+      // if the sql contains  results from only one table, the user
+      // may choose to edit it later.  If so, we need to have the
+      // full name of the table available.
+      // First determine if the SQL is a query on only one table
+      // The following assumes SQL is either:
+      //		select <fields> FROM <tables>
+      //	or
+      //		select <fields> FROM <tables> WHERE <etc>
+      // and that the presence of multiple tables is indicated by
+      // a comma separating the table names
+      boolean allowEditing = false;
+      String tableNameFromSQL = "";
+      String sqlString = exInfo != null ? exInfo.getSQL() : null;
+      if (sqlString != null && sqlString.trim().substring(0, "SELECT".length()).equalsIgnoreCase("SELECT")) {
+         sqlString = sqlString.toUpperCase();
+         int selectIndex = sqlString.indexOf("SELECT");
+         int fromIndex = sqlString.indexOf("FROM");
+         if (selectIndex > -1 && fromIndex > -1 && selectIndex < fromIndex) {
+            int whereIndex = sqlString.indexOf("WHERE");
+            if (whereIndex == -1)
+               whereIndex = sqlString.length();	//???need -1?
+            if (sqlString.substring(fromIndex+4, whereIndex).indexOf(',') == -1)
+               allowEditing = true;	// no comma, so only one table selected from
+               tableNameFromSQL = sqlString.substring(fromIndex+4, whereIndex).trim();
+         }
+      }
+      if (allowEditing) {
+         // Get a list of all tables matching this name in DB
+         ti = getTableName(tableNameFromSQL);
+      }
+
 
 		return true;
 	}
 
-	private boolean processResultSet(final ResultSet rs,
-			final SQLExecutionInfo exInfo) throws DataSetException
+   private void fireExecutionListeners(final String sql)
+   {
+      // This method is called from a thread.
+      // In case listeners update Swing controls we invoke later here.
+      SwingUtilities.invokeLater(new Runnable()
+      {
+         public void run()
+         {
+            for (int i = 0; i < _executionListeners.length; i++)
+            {
+               _executionListeners[i].statementExecuted(sql);
+            }
+         }
+      });
+   }
+
+   private boolean processResultSet(final ResultSet rs, final SQLExecutionInfo exInfo)
 	{
 		if (_stopExecution)
 		{
@@ -511,9 +551,9 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 		if (_handler != null)
 			_handler.sqlExecutionException(th);
 	}
-	
-	
-	
+
+
+
 
 	/*
 	 *
@@ -1269,8 +1309,5 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 
 		// we have the one and only table
 		return table;
-	}	
-	
-	
-
+   }
 }

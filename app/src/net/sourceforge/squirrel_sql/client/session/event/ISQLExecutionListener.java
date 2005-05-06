@@ -30,15 +30,8 @@ import java.util.List;
  */
 public interface ISQLExecutionListener extends EventListener
 {
-	/**
-	 * Called prior to any statement being executed.
-	 *
-	 * @param	sql		Collection of Strign objects, each is an SQL script to
-	 *					be executing.
-	 */
-	void allStatementsExecuting(List sql);
 
-	/**
+   /**
 	 * Called prior to an individual statement being executed. If you modify the
 	 * script remember to return it so that the caller knows about the
 	 * modifications.
@@ -49,4 +42,12 @@ public interface ISQLExecutionListener extends EventListener
 	 *			statement will not be executed.
 	 */
 	String statementExecuting(String sql);
+
+   /**
+	 * Called after the statement was executed.
+	 *
+	 * @param	sql	The SQL that was executed.
+	 *
+	 */
+   void statementExecuted(String sql);
 }
