@@ -490,7 +490,7 @@ public class DataTypeTimestamp
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
-	public String getWhereClauseValue(Object value) {
+	public String getWhereClauseValue(Object value, String databaseProductName) {
 		if (whereClauseUsage == DO_NOT_USE)
 			return "";
 		if (value == null || value.toString() == null || value.toString().length() == 0)

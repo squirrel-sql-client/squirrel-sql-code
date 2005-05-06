@@ -168,7 +168,7 @@ public interface IDataTypeComponent
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
-	public String getWhereClauseValue(Object value);
+	public String getWhereClauseValue(Object value, String databaseProductName);
 	
 	
 	/**
