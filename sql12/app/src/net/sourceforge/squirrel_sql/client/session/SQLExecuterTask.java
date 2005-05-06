@@ -721,75 +721,84 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 		int col,
 		Object newValue)
 	{
-		// if we could not identify which table to edit, tell user
-		if (ti == null)
-			return TI_ERROR_MESSAGE;
+      try
+      {
+         // if we could not identify which table to edit, tell user
+         if (ti == null)
+            return TI_ERROR_MESSAGE;
 
-		String whereClause = getWhereClause(values, colDefs, col, newValue);
+         String whereClause = getWhereClause(values, colDefs, col, newValue);
 
-		final ISession session = _session;
-		final SQLConnection conn = session.getSQLConnection();
+         final ISession session = _session;
+         final SQLConnection conn = session.getSQLConnection();
 
-		int count = -1;	// start with illegal number of rows matching query
+         int count = -1;	// start with illegal number of rows matching query
 
-		try
-		{
-			final Statement stmt = conn.createStatement();
-			try
-			{
-				final ResultSet rs = stmt.executeQuery("select count(*) from "
-									+ ti.getQualifiedName() + whereClause);
-				rs.next();
-				count = rs.getInt(1);
-			}
-			finally
-			{
-				stmt.close();
-			}
-		}
-		catch (SQLException ex)
-		{
-			return "Exception seen during check on DB.  Exception was:\n"+
-				ex.getMessage() +
-				"\nUpdate is probably not safe to do.\nDo you wish to proceed?";
-		}
+         try
+         {
+            final Statement stmt = conn.createStatement();
+            try
+            {
+               final ResultSet rs = stmt.executeQuery("select count(*) from "
+                              + ti.getQualifiedName() + whereClause);
+               rs.next();
+               count = rs.getInt(1);
+            }
+            finally
+            {
+               stmt.close();
+            }
+         }
+         catch (SQLException ex)
+         {
+            return "Exception seen during check on DB.  Exception was:\n"+
+               ex.getMessage() +
+               "\nUpdate is probably not safe to do.\nDo you wish to proceed?";
+         }
 
-		if (count == -1)
-			return "Unknown error during check on DB.  Update is probably not safe.\nDo you wish to proceed?";
+         if (count == -1)
+            return "Unknown error during check on DB.  Update is probably not safe.\nDo you wish to proceed?";
 
-		// There are some fields that cannot be used in a WHERE clause, either
-		// because there cannot be an exact match (e.g. REAL, FLOAT), or
-		// because we may not have the actual data in hand (BLOB/CLOB), or
-		// because the data cannot be expressed in a string form (e.g. BINARY).
-		// An update to one of those fields
-		// will look like we are replacing one row with an identical row (because
-		// we can only "see" the fields that we know how to do WHEREs on).  Therefore,
-		// when we are updating them, there should be exactly one row that matches
-		// all of our other fields, and when we are not updating one of these
-		// special types of fields, there should be
-		// no rows that exactly match our criteria (we hope).
-		//
-		// We determine whether this field is one that cannot be used in the WHERE
-		// clause by checking the value returned for that field to use in the
-		// WHERE clause.  Any field that can be used there will return something
-		// of the form "<fieldName> = <value>", and a field that cannot be
-		// used will return a null or zero-length string.
-		if (CellComponentFactory.getWhereClauseValue(colDefs[col], values[col]) == null ||
-			CellComponentFactory.getWhereClauseValue(colDefs[col], values[col]).length() == 0) {
-				if (count > 1)
-					return "This operation will result in " + count +" identical rows.\nDo you wish to proceed?";
-		}
-		else {
-			// the field being updated is one whose contents
-			//should be visible in the WHERE clause
-			if (count > 0)
-				return "This operation will result in " + count + " identical rows.\nDo you wish to proceed?";
-		}
+         // There are some fields that cannot be used in a WHERE clause, either
+         // because there cannot be an exact match (e.g. REAL, FLOAT), or
+         // because we may not have the actual data in hand (BLOB/CLOB), or
+         // because the data cannot be expressed in a string form (e.g. BINARY).
+         // An update to one of those fields
+         // will look like we are replacing one row with an identical row (because
+         // we can only "see" the fields that we know how to do WHEREs on).  Therefore,
+         // when we are updating them, there should be exactly one row that matches
+         // all of our other fields, and when we are not updating one of these
+         // special types of fields, there should be
+         // no rows that exactly match our criteria (we hope).
+         //
+         // We determine whether this field is one that cannot be used in the WHERE
+         // clause by checking the value returned for that field to use in the
+         // WHERE clause.  Any field that can be used there will return something
+         // of the form "<fieldName> = <value>", and a field that cannot be
+         // used will return a null or zero-length string.
+         String databaseProductName = _session.getSQLConnection().getSQLMetaData().getDatabaseProductName();
 
-		// no problems found, so do not return a warning message.
-		return null;	// nothing for user to worry about
+         if (CellComponentFactory.getWhereClauseValue(colDefs[col], values[col], databaseProductName) == null ||
+            CellComponentFactory.getWhereClauseValue(colDefs[col], values[col], databaseProductName).length() == 0) {
+               if (count > 1)
+                  return "This operation will result in " + count +" identical rows.\nDo you wish to proceed?";
+         }
+         else {
+            // the field being updated is one whose contents
+            //should be visible in the WHERE clause
+            if (count > 0)
+               return "This operation will result in " + count + " identical rows.\nDo you wish to proceed?";
+         }
 
-	}
+         // no problems found, so do not return a warning message.
+         return null;	// nothing for user to worry about
+      }
+      catch (SQLException e)
+      {
+         throw new  RuntimeException(e);
+      }
+
+   }
 
 	/**
 	 * Re-read the value for a single cell in the table, if possible.
@@ -957,56 +966,64 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 		int col,
 		Object colValue)
 	{
-		StringBuffer whereClause = new StringBuffer("");
+      try
+      {
+         StringBuffer whereClause = new StringBuffer("");
 
-		// For tables that have a lot of columns, the user may have limited the set of columns
-		// to use in the where clause, so see if there is a table of col names
-		HashMap colNames = (EditWhereCols.get(getFullTableName()));
+         // For tables that have a lot of columns, the user may have limited the set of columns
+         // to use in the where clause, so see if there is a table of col names
+         HashMap colNames = (EditWhereCols.get(getFullTableName()));
 
-		for (int i=0; i< colDefs.length; i++) {
+         for (int i=0; i< colDefs.length; i++) {
 
-			// if the user has said to not use this column, then skip it
-			if (colNames != null) {
-				// the user has restricted the set of columns to use.
-				// If this name is NOT in the list, then skip it; otherwise we fall through
-				// and use the column in the WHERE clause
-				if (colNames.get(colDefs[i].getLabel()) == null)
-					continue;	// go on to the next item
-			}
+            // if the user has said to not use this column, then skip it
+            if (colNames != null) {
+               // the user has restricted the set of columns to use.
+               // If this name is NOT in the list, then skip it; otherwise we fall through
+               // and use the column in the WHERE clause
+               if (colNames.get(colDefs[i].getLabel()) == null)
+                  continue;	// go on to the next item
+            }
 
-			// for the column that is being changed, use the value
-			// passed in by the caller (which may be either the
-			// current value or the new replacement value)
-			Object value = values[i];
-			if (i == col)
-				value = colValue;
+            // for the column that is being changed, use the value
+            // passed in by the caller (which may be either the
+            // current value or the new replacement value)
+            Object value = values[i];
+            if (i == col)
+               value = colValue;
 
-			// convert user representation of null into an actual null
-			if (value != null && value.toString().equals("<null>"))
-				value = null;
+            // convert user representation of null into an actual null
+            if (value != null && value.toString().equals("<null>"))
+               value = null;
 
-			// do different things depending on data type
-			String clause = CellComponentFactory.getWhereClauseValue(colDefs[i], value);
+            // do different things depending on data type
+            String databaseProductName = _session.getSQLConnection().getSQLMetaData().getDatabaseProductName();
+            String clause = CellComponentFactory.getWhereClauseValue(colDefs[i], value, databaseProductName);
 
-			if (clause != null && clause.length() > 0)
-				if (whereClause.length() == 0)
-				{
-					whereClause.append(clause);
-				}
-				else
-				{
-					whereClause.append(" AND ");
-					whereClause.append(clause);
-				}
-		}
+            if (clause != null && clause.length() > 0)
+               if (whereClause.length() == 0)
+               {
+                  whereClause.append(clause);
+               }
+               else
+               {
+                  whereClause.append(" AND ");
+                  whereClause.append(clause);
+               }
+         }
 
-		// insert the "WHERE" at the front if there is anything in the clause
-		if (whereClause.length() == 0)
-			return "";
+         // insert the "WHERE" at the front if there is anything in the clause
+         if (whereClause.length() == 0)
+            return "";
 
-		whereClause.insert(0, " WHERE ");
-		return whereClause.toString();
-	}
+         whereClause.insert(0, " WHERE ");
+         return whereClause.toString();
+      }
+      catch (SQLException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
 
 
 	/**
@@ -1272,7 +1289,6 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 	*/
 	public TableInfo getTableName(String tableNameFromSQL)
 	{
-		final List childNodes = new ArrayList();
 		TableInfo table = null;
 		int count = 0;
 		try
@@ -1285,7 +1301,16 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 			// filter the list of all DB objects looking for things with the given name
 			for (int i = 0; i < tables.length; ++i)
 			{
-				if (tables[i].getSimpleName().toUpperCase().equals(tableNameFromSQL)) {
+
+            String simpleName = tables[i].getSimpleName().toUpperCase();
+            String nameWithSchema = (tables[i].getSchemaName() + "." + tables[i].getSimpleName()).toUpperCase();
+            String nameWithSchemaAndCatalog = (tables[i].getSchemaName() + "." + tables[i].getSchemaName() + "." + tables[i].getSimpleName()).toUpperCase();
+
+
+            if (   simpleName.equals(tableNameFromSQL)
+                || nameWithSchema.equals(tableNameFromSQL)
+                || nameWithSchemaAndCatalog.equals(tableNameFromSQL))
+            {
 					count++;
 					table = (TableInfo)tables[i];
 				}

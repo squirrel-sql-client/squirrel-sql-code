@@ -594,7 +594,7 @@ public class DataTypeString
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
-	public String getWhereClauseValue(Object value) {
+	public String getWhereClauseValue(Object value, String databaseProductName) {
 		// first do special check to see if we should use LONGVARCHAR
 		// in the WHERE clause.
 		// (Oracle does not allow this.)
@@ -609,7 +609,7 @@ public class DataTypeString
 			// Since being truncated is the same as needing to re-read,
 			// only use this in the WHERE clause if we do not need to re-read
 			if ( ! needToReRead(value))		
-				return _colDef.getLabel() + "='" + escapeLine(value.toString()) + "'";
+				return _colDef.getLabel() + "='" + escapeLine(value.toString(), databaseProductName) + "'";
 			else return "";	// value is truncated, so do not use in WHERE clause
 		}
 	}
@@ -660,7 +660,7 @@ public class DataTypeString
 	 * single quote used by SQL.  The escape sequence is that a single quote
 	 * is represented by two single quotes in a row.
 	 */
-	static public String escapeLine(String s) {
+	static public String escapeLine(String s, String databaseProductName) {
 		String retvalue = s;
 		if (s.indexOf ("'") != -1 ) {
 			StringBuffer hold = new StringBuffer();
@@ -675,7 +675,7 @@ public class DataTypeString
 			}
 			retvalue = hold.toString();
 		}
-		return retvalue;
+		return DatabaseSpecificEscape.escapeSQL(retvalue, databaseProductName);
 	}
 	
 	/*

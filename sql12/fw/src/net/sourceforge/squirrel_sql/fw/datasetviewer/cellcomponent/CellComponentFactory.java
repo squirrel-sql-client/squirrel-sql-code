@@ -522,12 +522,12 @@ public class CellComponentFactory {
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
-	public static String getWhereClauseValue(ColumnDisplayDefinition colDef, Object value) {
+	public static String getWhereClauseValue(ColumnDisplayDefinition colDef, Object value, String databaseProductName) {
 		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
 
 		if (dataTypeObject != null) {
 			// we have an appropriate data type object
-			return dataTypeObject.getWhereClauseValue(value);
+			return dataTypeObject.getWhereClauseValue(value, databaseProductName);
 		}
 		
 		// if no object for this data type, then cannot use value in where clause

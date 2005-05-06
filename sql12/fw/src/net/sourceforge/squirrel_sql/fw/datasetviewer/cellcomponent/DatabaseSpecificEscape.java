@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table;
+package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
 /*
  * Copyright (C) 2005 Gerd Wagner, Adin Aronson
@@ -21,7 +21,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.ta
 
 public class DatabaseSpecificEscape
 {
-   public static final IEscape[] _escapes = 
+   private static final IEscape[] _escapes =
       new IEscape[]
       {
          new PostgreSQLEscape(),
@@ -48,7 +48,7 @@ public class DatabaseSpecificEscape
       return sql;
    }
 
-   public static class PostgreSQLEscape implements IEscape
+   private static class PostgreSQLEscape implements IEscape
    {
       public boolean productMatches(String databaseProductName)
       {
@@ -61,7 +61,7 @@ public class DatabaseSpecificEscape
       }
    }
 
-   public static class MckoiSQLEscape implements IEscape
+   private static class MckoiSQLEscape implements IEscape
    {
       public boolean productMatches(String databaseProductName)
       {

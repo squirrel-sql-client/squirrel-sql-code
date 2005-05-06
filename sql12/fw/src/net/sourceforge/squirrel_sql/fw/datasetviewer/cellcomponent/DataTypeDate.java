@@ -475,7 +475,7 @@ public class DataTypeDate
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
-	public String getWhereClauseValue(Object value) {
+	public String getWhereClauseValue(Object value, String databaseProductName) {
 		if (value == null || value.toString() == null || value.toString().length() == 0)
 			return _colDef.getLabel() + " IS NULL";
 		else

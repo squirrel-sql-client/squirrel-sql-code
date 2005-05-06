@@ -583,72 +583,80 @@ public class ContentsTab extends BaseTableTab
 		Object newValue)
 	{
 
-		String whereClause = getWhereClause(values, colDefs, col, newValue);
+      try
+      {
+         String whereClause = getWhereClause(values, colDefs, col, newValue);
 
-		final ISession session = getSession();
-		final SQLConnection conn = session.getSQLConnection();
+         final ISession session = getSession();
+         final SQLConnection conn = session.getSQLConnection();
 
-		int count = -1;	// start with illegal number of rows matching query
+         int count = -1;	// start with illegal number of rows matching query
 
-		try
-		{
-			final Statement stmt = conn.createStatement();
-			try
-			{
-				final ITableInfo ti = getTableInfo();
-				final ResultSet rs = stmt.executeQuery("select count(*) from "
-									+ ti.getQualifiedName() + whereClause);
-				rs.next();
-				count = rs.getInt(1);
-			}
-			finally
-			{
-				stmt.close();
-			}
-		}
-		catch (SQLException ex)
-		{
-			return "Exception seen during check on DB.  Exception was:\n"+
-				ex.getMessage() +
-				"\nUpdate is probably not safe to do.\nDo you wish to proceed?";
-		}
+         try
+         {
+            final Statement stmt = conn.createStatement();
+            try
+            {
+               final ITableInfo ti = getTableInfo();
+               final ResultSet rs = stmt.executeQuery("select count(*) from "
+                              + ti.getQualifiedName() + whereClause);
+               rs.next();
+               count = rs.getInt(1);
+            }
+            finally
+            {
+               stmt.close();
+            }
+         }
+         catch (SQLException ex)
+         {
+            return "Exception seen during check on DB.  Exception was:\n"+
+               ex.getMessage() +
+               "\nUpdate is probably not safe to do.\nDo you wish to proceed?";
+         }
 
-		if (count == -1)
-			return "Unknown error during check on DB.  Update is probably not safe.\nDo you wish to proceed?";
+         if (count == -1)
+            return "Unknown error during check on DB.  Update is probably not safe.\nDo you wish to proceed?";
 
-		// There are some fields that cannot be used in a WHERE clause, either
-		// because there cannot be an exact match (e.g. REAL, FLOAT), or
-		// because we may not have the actual data in hand (BLOB/CLOB), or
-		// because the data cannot be expressed in a string form (e.g. BINARY).
-		// An update to one of those fields
-		// will look like we are replacing one row with an identical row (because
-		// we can only "see" the fields that we know how to do WHEREs on).  Therefore,
-		// when we are updating them, there should be exactly one row that matches
-		// all of our other fields, and when we are not updating one of these
-		// special types of fields, there should be
-		// no rows that exactly match our criteria (we hope).
-		//
-		// We determine whether this field is one that cannot be used in the WHERE
-		// clause by checking the value returned for that field to use in the
-		// WHERE clause.  Any field that can be used there will return something
-		// of the form "<fieldName> = <value>", and a field that cannot be
-		// used will return a null or zero-length string.
-		if (CellComponentFactory.getWhereClauseValue(colDefs[col], values[col]) == null ||
-		 	CellComponentFactory.getWhereClauseValue(colDefs[col], values[col]).length() == 0) {
-				if (count > 1)
-					return "This operation will result in " + count +" identical rows.\nDo you wish to proceed?";
-		}
-		else {
-			// the field being updated is one whose contents
-			//should be visible in the WHERE clause
-			if (count > 0)
-				return "This operation will result in " + count + " identical rows.\nDo you wish to proceed?";
-		}
+         // There are some fields that cannot be used in a WHERE clause, either
+         // because there cannot be an exact match (e.g. REAL, FLOAT), or
+         // because we may not have the actual data in hand (BLOB/CLOB), or
+         // because the data cannot be expressed in a string form (e.g. BINARY).
+         // An update to one of those fields
+         // will look like we are replacing one row with an identical row (because
+         // we can only "see" the fields that we know how to do WHEREs on).  Therefore,
+         // when we are updating them, there should be exactly one row that matches
+         // all of our other fields, and when we are not updating one of these
+         // special types of fields, there should be
+         // no rows that exactly match our criteria (we hope).
+         //
+         // We determine whether this field is one that cannot be used in the WHERE
+         // clause by checking the value returned for that field to use in the
+         // WHERE clause.  Any field that can be used there will return something
+         // of the form "<fieldName> = <value>", and a field that cannot be
+         // used will return a null or zero-length string.
+         String databaseProductName = getSession().getSQLConnection().getSQLMetaData().getDatabaseProductName();
+         if (CellComponentFactory.getWhereClauseValue(colDefs[col], values[col], databaseProductName) == null ||
+             CellComponentFactory.getWhereClauseValue(colDefs[col], values[col], databaseProductName).length() == 0) {
+               if (count > 1)
+                  return "This operation will result in " + count +" identical rows.\nDo you wish to proceed?";
+         }
+         else {
+            // the field being updated is one whose contents
+            //should be visible in the WHERE clause
+            if (count > 0)
+               return "This operation will result in " + count + " identical rows.\nDo you wish to proceed?";
+         }
 
-		// no problems found, so do not return a warning message.
-		return null;	// nothing for user to worry about
+         // no problems found, so do not return a warning message.
+         return null;	// nothing for user to worry about
+      }
+      catch (SQLException e)
+      {
+         throw new RuntimeException(e);
+      }
 
-	}
+   }
 
 	/**
 	 * Re-read the value for a single cell in the table, if possible.
@@ -819,10 +827,12 @@ public class ContentsTab extends BaseTableTab
          // to use in the where clause, so see if there is a table of col names
          HashMap colNames = (EditWhereCols.get(getFullTableName()));
 
-         for (int i=0; i< colDefs.length; i++) {
+         for (int i = 0; i < colDefs.length; i++)
+         {
 
             // if the user has said to not use this column, then skip it
-            if (colNames != null) {
+            if (colNames != null)
+            {
                // the user has restricted the set of columns to use.
                // If this name is NOT in the list, then skip it; otherwise we fall through
                // and use the column in the WHERE clause
@@ -842,7 +852,8 @@ public class ContentsTab extends BaseTableTab
                value = null;
 
             // do different things depending on data type
-            String clause = CellComponentFactory.getWhereClauseValue(colDefs[i], value);
+            String databaseProductName = getSession().getSQLConnection().getSQLMetaData().getDatabaseProductName();
+            String clause = CellComponentFactory.getWhereClauseValue(colDefs[i], value, databaseProductName);
 
             if (clause != null && clause.length() > 0)
                if (whereClause.length() == 0)
@@ -862,9 +873,7 @@ public class ContentsTab extends BaseTableTab
 
          whereClause.insert(0, " WHERE ");
 
-         String databaseProductName = getSession().getSQLConnection().getSQLMetaData().getDatabaseProductName();
-
-         return DatabaseSpecificEscape.escapeSQL(whereClause.toString(), databaseProductName);
+         return whereClause.toString();
       }
       catch (SQLException e)
       {

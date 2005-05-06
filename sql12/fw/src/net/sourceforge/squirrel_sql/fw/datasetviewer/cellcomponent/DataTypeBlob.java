@@ -579,7 +579,7 @@ public class DataTypeBlob
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
-	public String getWhereClauseValue(Object value) {
+	public String getWhereClauseValue(Object value, String databaseProductName) {
 		if (value == null || ((BlobDescriptor)value).getData() == null)
 			return _colDef.getLabel() + " IS NULL";
 		else

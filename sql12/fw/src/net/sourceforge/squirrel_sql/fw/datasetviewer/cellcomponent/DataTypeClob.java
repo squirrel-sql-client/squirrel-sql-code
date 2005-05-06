@@ -610,7 +610,7 @@ public class DataTypeClob
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
-	public String getWhereClauseValue(Object value) {
+	public String getWhereClauseValue(Object value, String databaseProductName) {
 		if (value == null || ((ClobDescriptor)value).getData() == null)
 			return _colDef.getLabel() + " IS NULL";
 		else
