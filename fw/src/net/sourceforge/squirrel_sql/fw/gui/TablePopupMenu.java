@@ -26,12 +26,7 @@ import java.awt.print.PrinterJob;
 import javax.swing.JMenuItem;
 import javax.swing.JTable;
 
-import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
-import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyCommand;
-import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyHtmlCommand;
-import net.sourceforge.squirrel_sql.fw.gui.action.MakeEditableCommand;
-import net.sourceforge.squirrel_sql.fw.gui.action.UndoMakeEditableCommand;
-import net.sourceforge.squirrel_sql.fw.gui.action.TableSelectAllCellsCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.*;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableModel;
@@ -48,8 +43,9 @@ public class TablePopupMenu extends BasePopupMenu
 	{
 		int COPY = 0;
 		int COPY_HTML = 1;
-		int SELECT_ALL = 2;
-		int LAST_ENTRY = 2;
+		int COPY_IN_STATEMENT = 2;
+		int SELECT_ALL = 3;
+		int LAST_ENTRY = 3;
 	}
 
 	private final JMenuItem[] _menuItems = new JMenuItem[IOptionTypes.LAST_ENTRY + 1];
@@ -59,6 +55,7 @@ public class TablePopupMenu extends BasePopupMenu
 	private CutAction _cut = new CutAction();
 	private CopyAction _copy = new CopyAction();
 	private CopyHtmlAction _copyHtml = new CopyHtmlAction();
+	private CopyInStatementAction _copyInStatement = new CopyInStatementAction();
 	private PasteAction _paste = new PasteAction();
 	//	private ClearAction _clear = new ClearAction();
 	private MakeEditableAction _makeEditable = new MakeEditableAction();
@@ -97,6 +94,7 @@ public class TablePopupMenu extends BasePopupMenu
 		// add the menu items to the menu
 		_menuItems[IOptionTypes.COPY] = add(_copy);
 		_menuItems[IOptionTypes.COPY_HTML] = add(_copyHtml);
+		_menuItems[IOptionTypes.COPY_IN_STATEMENT] = add(_copyInStatement);
 		if (allowEditing)
 		{
 			addSeparator();
@@ -262,6 +260,24 @@ public class TablePopupMenu extends BasePopupMenu
 			}
 		}
 	}
+
+   private class CopyInStatementAction extends BaseAction
+   {
+      CopyInStatementAction()
+      {
+         super(s_stringMgr.getString("TablePopupMenu.copyasinstatement"));
+      }
+
+      public void actionPerformed(ActionEvent evt)
+      {
+         if (_table != null)
+         {
+            new TableCopyInStatementCommand(_table).execute();
+         }
+      }
+   }
+
+
 
 	private class PasteAction extends BaseAction
 	{
