@@ -29,11 +29,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -245,9 +241,10 @@ public class SQLResultExecuterPanel extends JPanel
 	{
 		if (sql != null && sql.trim().length() > 0)
 		{
-			fireSQLToBeExecutedEvent(sql);
-			_executer = new SQLExecuterTask(_session, sql,
-													new SQLExecutionHandler());
+			sql = fireSQLToBeExecutedEvent(sql);
+         ISQLExecutionListener[] executionListeners =
+            (ISQLExecutionListener[]) _listeners.getListeners(ISQLExecutionListener.class);
+         _executer = new SQLExecuterTask(_session, sql, new SQLExecutionHandler(), executionListeners);
 			_session.getApplication().getThreadPool().addTask(_executer);
 		}
 	}
@@ -452,7 +449,7 @@ public class SQLResultExecuterPanel extends JPanel
 		}
 	}
 
-	protected List fireAllSQLToBeExecutedEvent(List sql)
+   protected String fireSQLToBeExecutedEvent(String sql)
 	{
 		// Guaranteed to be non-null.
 		Object[] listeners = _listeners.getListenerList();
@@ -462,29 +459,7 @@ public class SQLResultExecuterPanel extends JPanel
 		{
 			if (listeners[i] == ISQLExecutionListener.class)
 			{
-				((ISQLExecutionListener)listeners[i + 1])
-						.allStatementsExecuting(sql);
-				if (sql.size() == 0)
-				{
-					break;
-				}
-			}
-		}
-		return sql;
-	}
-
-	protected String fireSQLToBeExecutedEvent(String sql)
-	{
-		// Guaranteed to be non-null.
-		Object[] listeners = _listeners.getListenerList();
-		// Process the listeners last to first, notifying
-		// those that are interested in this event.
-		for (int i = listeners.length - 2; i >= 0; i -= 2)
-		{
-			if (listeners[i] == ISQLExecutionListener.class)
-			{
-				sql = ((ISQLExecutionListener)listeners[i + 1])
-						.statementExecuting(sql);
+				sql = ((ISQLExecutionListener)listeners[i + 1]).statementExecuting(sql);
 				if (sql == null)
 				{
 					break;
@@ -632,30 +607,7 @@ public class SQLResultExecuterPanel extends JPanel
 				.getViewableSqlString());
 	}
 
-	/** JASON: This is a dead method it isnt called anywhere*/
-	private String modifyIndividualScript(String sql)
-	{
-		// Guaranteed to be non-null.
-		Object[] listeners = _listeners.getListenerList();
-		// Process the listeners last to first, notifying
-		// those that are interested in this event.
-		for (int i = listeners.length - 2; i >= 0; i -= 2)
-		{
-			if (listeners[i] == ISQLExecutionListener.class)
-			{
-				sql = ((ISQLExecutionListener)listeners[i])
-						.statementExecuting(sql);
-				if (sql == null)
-				{
-					break;
-				}
-			}
-		}
-
-		return sql;
-	}
-
-	private void propertiesHaveChanged(String propName)
+   private void propertiesHaveChanged(String propName)
 	{
 		final SessionProperties props = _session.getProperties();
 
