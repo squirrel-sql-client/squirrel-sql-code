@@ -44,7 +44,6 @@ public class LoadScriptAction extends SquirrelAction implements ISessionAction
 			throw new IllegalArgumentException("null IPlugin passed");
 		}
 		_plugin = plugin;
-		setEnabled(false);
 	}
 
 	public void actionPerformed(ActionEvent evt)
@@ -58,14 +57,5 @@ public class LoadScriptAction extends SquirrelAction implements ISessionAction
 	public void setSession(ISession session)
 	{
 		_session = session;
-		if(null == _session)
-		{
-			setEnabled(false);
-		}
-		else
-		{
-			setEnabled(true);
-		}
-
 	}
 }

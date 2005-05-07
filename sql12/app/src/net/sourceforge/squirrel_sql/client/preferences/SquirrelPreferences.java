@@ -138,7 +138,7 @@ public class SquirrelPreferences implements Serializable
 	private boolean _showAliasesToolBar = true;
 
 	/** Show color icons in toolbars. */
-	private boolean _showColorIconsInToolbars = false;
+	private boolean _showColorIconsInToolbars = true;
 
 	/** Accelerators and mnemonics for actions. */
 	private ActionKeys[] _actionsKeys = new ActionKeys[0];

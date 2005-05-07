@@ -145,7 +145,7 @@ public class SessionProperties implements Cloneable, Serializable
 	private FontInfo _fi = (FontInfo)DEFAULT_FONT_INFO.clone();
 
 	/** Should the number of SQL statements to save in execution history be limited?. */
-	private boolean _limitSqlEntryHistorySize = false;
+	private boolean _limitSqlEntryHistorySize = true;
 
 	/**
 	 * Does this session share its SQL History with other sessions?
