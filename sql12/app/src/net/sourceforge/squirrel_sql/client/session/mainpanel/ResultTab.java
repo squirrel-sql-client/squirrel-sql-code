@@ -33,21 +33,9 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
 
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.BaseDataSetViewerDestination;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -58,6 +46,7 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
+import net.sourceforge.squirrel_sql.client.session.EditableSqlCheck;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
 public class ResultTab extends JPanel implements IHasIdentifier
@@ -101,7 +90,11 @@ public class ResultTab extends JPanel implements IHasIdentifier
 	/** Listener to the sessions properties. */
 	private PropertyChangeListener _propsListener;
 
-	/**
+   private boolean _allowEditing;
+   private IDataSetUpdateableTableModel _creator;
+   private ResultSetDataSet _rsds;
+
+   /**
 	 * Ctor.
 	 *
 	 * @param	session		Current session.
@@ -135,12 +128,21 @@ public class ResultTab extends JPanel implements IHasIdentifier
 		_session = session;
 		_sqlPanel = sqlPanel;
 		_id = id;
+      _creator = creator;
 
-		createGUI(exInfo, creator);
+      _creator.addListener(new DataSetUpdateableTableModelListener()
+      {
+         public void forceEditMode(boolean mode)
+         {
+            onForceEditMode(mode);
+         }
+      });
+
+		createGUI(exInfo);
 		propertiesHaveChanged(null);
 	}
 
-	/**
+   /**
 	 * Panel is being added to its parent. Setup any required listeners.
 	 */
 	public void addNotify()
@@ -152,7 +154,7 @@ public class ResultTab extends JPanel implements IHasIdentifier
 			{
 				public void propertyChange(PropertyChangeEvent evt)
 				{
-					propertiesHaveChanged(evt.getPropertyName());
+					propertiesHaveChanged(evt);
 				}
 			};
 			_session.getProperties().addPropertyChangeListener(_propsListener);
@@ -194,6 +196,8 @@ public class ResultTab extends JPanel implements IHasIdentifier
 
 		// Display the result set.
 		_resultSetOutput.show(rsds, null);
+      _rsds = rsds;
+
 		final int rowCount = _resultSetOutput.getRowCount();
 
 		final int maxRows =_exInfo.getMaxRows(); 
@@ -298,18 +302,59 @@ public class ResultTab extends JPanel implements IHasIdentifier
 	 *
 	 * @param	propertyName	Name of property that has changed.
 	 */
-	private void propertiesHaveChanged(String propertyName)
+	private void propertiesHaveChanged(PropertyChangeEvent evt)
 	{
-		SessionProperties props = _session.getProperties();
-		if (propertyName == null
-			|| propertyName.equals(
-				SessionProperties.IPropertyNames.SQL_RESULTS_TAB_PLACEMENT))
-		{
-			_tp.setTabPlacement(props.getSQLResultsTabPlacement());
-		}
-	}
+      SessionProperties props = _session.getProperties();
+      if (evt == null
+         || evt.getPropertyName().equals(
+            SessionProperties.IPropertyNames.SQL_RESULTS_TAB_PLACEMENT))
+      {
+         _tp.setTabPlacement(props.getSQLResultsTabPlacement());
+      }
+   }
 
-	private void createGUI(SQLExecutionInfo exInfo, IDataSetUpdateableTableModel creator)
+
+   private void onForceEditMode(boolean editable)
+   {
+      try
+      {
+         if(editable)
+         {
+            if (_allowEditing)
+            {
+               _resultSetOutput = BaseDataSetViewerDestination.getInstance(SessionProperties.IDataSetDestinations.EDITABLE_TABLE, _creator);
+               _resultSetSp.setViewportView(_resultSetOutput.getComponent());
+               _resultSetSp.setRowHeader(null);
+               _rsds.resetCursor();
+               _resultSetOutput.show(_rsds, null);
+            }
+            else
+            {
+               String msg = "This SQL can not be edited.";
+               JOptionPane.showMessageDialog(_session.getApplication().getMainFrame(), msg);
+            }
+         }
+         else
+         {
+            SessionProperties props = _session.getProperties();
+
+            String readOnlyOutput = props.getReadOnlySQLResultsOutputClassName();
+
+            _resultSetOutput = BaseDataSetViewerDestination.getInstance(readOnlyOutput, _creator);
+            _resultSetSp.setViewportView(_resultSetOutput.getComponent());
+            _resultSetSp.setRowHeader(null);
+            _rsds.resetCursor();
+            _resultSetOutput.show(_rsds, null);
+         }
+      }
+      catch (DataSetException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+
+	private void createGUI(SQLExecutionInfo exInfo)
 	{
 		//	final Resources rsrc = _session.getApplication().getResources();
 		setLayout(new BorderLayout());
@@ -338,32 +383,11 @@ public class ResultTab extends JPanel implements IHasIdentifier
 
 		final SessionProperties props = _session.getProperties();
 
-		// if the sql contains results from only one table, allow it to be
-		// editable (if selected by the user).  otherwise, force it to be
-		// read-only.
-		// The following assumes SQL is either:
-		//		select <fields> FROM <tables>
-		//	or
-		//		select <fields> FROM <tables> WHERE <etc>
-		// and that the presence of multiple tables is indicated by
-		// a comma separating the table names
-		boolean allowEditing = false;
-		String sqlString = exInfo != null ? exInfo.getSQL() : null;
-		if (sqlString != null) {
-			sqlString = sqlString.toUpperCase();
-			int selectIndex = sqlString.indexOf("SELECT");
-			int fromIndex = sqlString.indexOf("FROM");
-			if (selectIndex > -1 && fromIndex > -1 && selectIndex < fromIndex) {
-				int whereIndex = sqlString.indexOf("WHERE");
-				if (whereIndex == -1)
-					whereIndex = sqlString.length() -1;
-				if (sqlString.substring(fromIndex+4, whereIndex).indexOf(',') == -1)
-					allowEditing = true;	// no comma, so only one table selected from
-			}
-		}
-		if (allowEditing) {
-				_resultSetOutput = BaseDataSetViewerDestination.getInstance(
-					props.getSQLResultsOutputClassName(), creator);
+      _allowEditing = new EditableSqlCheck(exInfo).allowsEditing();
+
+		if (_allowEditing) {
+			_resultSetOutput = BaseDataSetViewerDestination.getInstance(props.getSQLResultsOutputClassName(), _creator);
+
 		}
 		else {
 			// sql contains columns from multiple tables,

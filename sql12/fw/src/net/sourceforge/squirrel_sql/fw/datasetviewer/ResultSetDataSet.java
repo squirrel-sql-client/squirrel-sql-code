@@ -289,4 +289,10 @@ public class ResultSetDataSet implements IDataSet
 		_dataSetDefinition = null;
 		_alData = null;
 	}
+
+   public void resetCursor()
+   {
+      _iCurrent = -1;
+      _currentRow = null;
+   }
 }
