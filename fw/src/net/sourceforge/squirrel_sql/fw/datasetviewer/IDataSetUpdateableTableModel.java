@@ -94,4 +94,7 @@ public interface IDataSetUpdateableTableModel extends IDataSetUpdateableModel
 	 * If the insert succeeds this returns a null string.
 	 */
 	public String insertRow(Object[] values, ColumnDisplayDefinition[] colDefs);
+
+   void addListener(DataSetUpdateableTableModelListener l);
+   void removeListener(DataSetUpdateableTableModelListener l);
 }

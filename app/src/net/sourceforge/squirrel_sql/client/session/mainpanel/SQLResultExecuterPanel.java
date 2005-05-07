@@ -737,8 +737,7 @@ public class SQLResultExecuterPanel extends JPanel
 				getSession().getMessageHandler().showMessage(ex);
 				return;
 			}
-			// JASON: Shouldn't be null for the last argument. We need an
-			// instance of IDataSetUpdateableTableModel
+
 			addResultsTab(info, rsds, rsmdds, _cancelPanel, model);
 			rsds = null;
 		}

@@ -32,6 +32,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -42,6 +43,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Vector;
+import java.util.regex.Pattern;
 
 //JASON: Check the Old SQLExecutertask class against this one.
 /**
@@ -110,6 +113,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 
 	private int _currentQueryIndex = 0;
    private ISQLExecutionListener[] _executionListeners;
+   private Vector _dataSetUpdateableTableModelListener = new Vector();
 
    public SQLExecuterTask(ISession session, String sql,ISQLExecuterHandler handler)
 	{
@@ -401,37 +405,12 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
          _handler.sqlExecutionComplete(exInfo);
       }
 
+      EditableSqlCheck edittableCheck = new EditableSqlCheck(exInfo); 
 
 
-      // if the sql contains  results from only one table, the user
-      // may choose to edit it later.  If so, we need to have the
-      // full name of the table available.
-      // First determine if the SQL is a query on only one table
-      // The following assumes SQL is either:
-      //		select <fields> FROM <tables>
-      //	or
-      //		select <fields> FROM <tables> WHERE <etc>
-      // and that the presence of multiple tables is indicated by
-      // a comma separating the table names
-      boolean allowEditing = false;
-      String tableNameFromSQL = "";
-      String sqlString = exInfo != null ? exInfo.getSQL() : null;
-      if (sqlString != null && sqlString.trim().substring(0, "SELECT".length()).equalsIgnoreCase("SELECT")) {
-         sqlString = sqlString.toUpperCase();
-         int selectIndex = sqlString.indexOf("SELECT");
-         int fromIndex = sqlString.indexOf("FROM");
-         if (selectIndex > -1 && fromIndex > -1 && selectIndex < fromIndex) {
-            int whereIndex = sqlString.indexOf("WHERE");
-            if (whereIndex == -1)
-               whereIndex = sqlString.length();	//???need -1?
-            if (sqlString.substring(fromIndex+4, whereIndex).indexOf(',') == -1)
-               allowEditing = true;	// no comma, so only one table selected from
-               tableNameFromSQL = sqlString.substring(fromIndex+4, whereIndex).trim();
-         }
-      }
-      if (allowEditing) {
+      if (edittableCheck.allowsEditing()) {
          // Get a list of all tables matching this name in DB
-         ti = getTableName(tableNameFromSQL);
+         ti = getTableName(edittableCheck.getTableNameFromSQL());
       }
 
 
@@ -606,6 +585,15 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 		sqlOutputClassNameAtTimeOfForcedEdit =
 			_session.getProperties().getTableContentsOutputClassName();
 
+      DataSetUpdateableTableModelListener[] listeners =
+         (DataSetUpdateableTableModelListener[]) _dataSetUpdateableTableModelListener.toArray(new DataSetUpdateableTableModelListener[0]);
+
+      for (int i = 0; i < listeners.length; i++)
+      {
+         listeners[i].forceEditMode(mode);
+      }
+
+
 		/**
 		 * Tell the GUI to rebuild itself.
 		 * This is not a clean way to do that, since we are telling the
@@ -613,7 +601,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 		 * in reality none of them have done so, but this does cause the
 		 * GUI to be rebuilt.
 		 */
-		_session.getProperties().forceTableContentsOutputClassNameChange();
+//		_session.getProperties().forceTableContentsOutputClassNameChange();
 	}
 
 	/**
@@ -1269,8 +1257,18 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 		return null;
 	}
 
+   public void addListener(DataSetUpdateableTableModelListener l)
+   {
+      _dataSetUpdateableTableModelListener.add(l);
+   }
 
-	/**
+   public void removeListener(DataSetUpdateableTableModelListener l)
+   {
+      _dataSetUpdateableTableModelListener.remove(l);
+   }
+
+
+   /**
 	* Get the full name info for the table that is being referred to in the
 	* SQL query.
 	* Since we do not know the catalog, schema, or the actual name used in

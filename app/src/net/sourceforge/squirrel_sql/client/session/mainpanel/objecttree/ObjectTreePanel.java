@@ -43,6 +43,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -193,8 +194,18 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 
 		// Register tabs to display in the details panel for table nodes.
 		addDetailTab(DatabaseObjectType.TABLE, new DatabaseObjectInfoTab());
-		addDetailTab(DatabaseObjectType.TABLE, new ContentsTab());
-		addDetailTab(DatabaseObjectType.TABLE, new RowCountTab());
+
+      ContentsTab conttentsTab = new ContentsTab();
+      conttentsTab.addListener(new DataSetUpdateableTableModelListener()
+      {
+         public void forceEditMode(boolean mode)
+         {
+            onForceEditMode(mode);
+         }
+      });
+      addDetailTab(DatabaseObjectType.TABLE, conttentsTab);
+
+      addDetailTab(DatabaseObjectType.TABLE, new RowCountTab());
 		addDetailTab(DatabaseObjectType.TABLE, new ColumnsTab());
 		addDetailTab(DatabaseObjectType.TABLE, new PrimaryKeyTab());
 		addDetailTab(DatabaseObjectType.TABLE, new ExportedKeysTab());
@@ -213,7 +224,7 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 		addDetailTab(DatabaseObjectType.UDT, new DatabaseObjectInfoTab());
 	}
 
-	/**
+   /**
 	 * Return the unique identifier for this object.
 	 *
 	 * @return the unique identifier for this object.
@@ -782,6 +793,20 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 			}
 		}
 	}
+
+
+   private void onForceEditMode(boolean editable)
+   {
+      Iterator it = _tabbedPanes.values().iterator();
+      while (it.hasNext())
+      {
+         ObjectTreeTabbedPane pane = (ObjectTreeTabbedPane)it.next();
+         pane.rebuild();
+
+      }
+   }
+
+
 
 	private void setupTabbedPane(ObjectTreeTabbedPane pane)
 	{

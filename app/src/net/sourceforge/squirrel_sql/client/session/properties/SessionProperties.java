@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 /**
  * This class represents the settings for a session.
  *
@@ -353,19 +354,19 @@ public class SessionProperties implements Cloneable, Serializable
 	 *
 	 * CB TODO: (Move this elsewhere).
 	 */
-	public void forceTableContentsOutputClassNameChange()
-	{
-		// We need the old value and the new value to be different, or the
-		// listeners will ignore our property change request (and not rebuild
-		// the GUI). We know that the current output class is a read-only one
-		// because this function is only called when the user requests that a
-		// single table be made editable.
-		final String oldValue = _tableContentsClassName;
-		getPropertyChangeReporter().firePropertyChange(
-			IPropertyNames.TABLE_CONTENTS_OUTPUT_CLASS_NAME,
-			IDataSetDestinations.EDITABLE_TABLE,
-			oldValue);
-	}
+//	public void forceTableContentsOutputClassNameChange()
+//	{
+//		// We need the old value and the new value to be different, or the
+//		// listeners will ignore our property change request (and not rebuild
+//		// the GUI). We know that the current output class is a read-only one
+//		// because this function is only called when the user requests that a
+//		// single table be made editable.
+//		final String oldValue = _tableContentsClassName;
+//		getPropertyChangeReporter().firePropertyChange(
+//			IPropertyNames.TABLE_CONTENTS_OUTPUT_CLASS_NAME,
+//			IDataSetDestinations.EDITABLE_TABLE,
+//			oldValue);
+//	}
 
 	public boolean getAutoCommit()
 	{
@@ -728,7 +729,7 @@ public class SessionProperties implements Cloneable, Serializable
 	 */
 	public String[] getSchemaPrefixArray()
 	{
-		return Utilities.splitString(_schemaPrefixList, ',', true);
+		return StringUtilities.split(_schemaPrefixList, ',', true);
 	}
 
 	/**
@@ -758,7 +759,7 @@ public class SessionProperties implements Cloneable, Serializable
 	 */
 	public String[] getCatalogPrefixArray()
 	{
-		return Utilities.splitString(_catalogPrefixList, ',', true);
+		return StringUtilities.split(_catalogPrefixList, ',', true);
 	}
 
 	/**

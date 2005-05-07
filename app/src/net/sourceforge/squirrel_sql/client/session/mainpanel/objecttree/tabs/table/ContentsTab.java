@@ -27,16 +27,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetScrollingPanel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -61,6 +56,12 @@ import net.sourceforge.squirrel_sql.client.session.sqlfilter.WhereClausePanel;
 public class ContentsTab extends BaseTableTab
 	implements IDataSetUpdateableTableModel
 {
+
+   public ContentsTab()
+   {
+   }
+
+
 	public static String TITLE = i18n.TITLE;
 
 	/**
@@ -99,8 +100,9 @@ public class ContentsTab extends BaseTableTab
 	int _rowIDcol = -1;
 	
 	private SQLFilterClauses _sqlFilterClauses = new SQLFilterClauses();
+   private Vector _dataSetUpdateableTableModelListener = new Vector();
 
-	/**
+   /**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
@@ -267,7 +269,7 @@ public class ContentsTab extends BaseTableTab
 					 * but we need to have reset the previousTableName before makeing
 					 * this call or we will be in an infinite loop.
 					 */
-					props.forceTableContentsOutputClassNameChange();
+					//props.forceTableContentsOutputClassNameChange();
 				}
 
 				/**
@@ -468,6 +470,15 @@ public class ContentsTab extends BaseTableTab
 		sqlOutputClassNameAtTimeOfForcedEdit = 
 			getSession().getProperties().getTableContentsOutputClassName();
 
+
+      DataSetUpdateableTableModelListener[] listeners =
+         (DataSetUpdateableTableModelListener[]) _dataSetUpdateableTableModelListener.toArray(new DataSetUpdateableTableModelListener[0]);
+
+      for (int i = 0; i < listeners.length; i++)
+      {
+         listeners[i].forceEditMode(mode);
+      }
+
 		/**
 		 * Tell the GUI to rebuild itself.
 		 * This is not a clean way to do that, since we are telling the
@@ -475,7 +486,7 @@ public class ContentsTab extends BaseTableTab
 		 * in reality none of them have done so, but this does cause the
 		 * GUI to be rebuilt.
 		 */
-		getSession().getProperties().forceTableContentsOutputClassNameChange();
+		//getSession().getProperties().forceTableContentsOutputClassNameChange();
 	}
 	
 	/**
@@ -1094,8 +1105,18 @@ public class ContentsTab extends BaseTableTab
 		// insert succeeded
 		return null;
 	}
-	
-	/**
+
+   public void addListener(DataSetUpdateableTableModelListener l)
+   {
+      _dataSetUpdateableTableModelListener.add(l);
+   }
+
+   public void removeListener(DataSetUpdateableTableModelListener l)
+   {
+      _dataSetUpdateableTableModelListener.remove(l);
+   }
+
+   /**
 	 * This inner class defines a pop-up menu with only one item, "insert", which
 	 * allows the user to add a new row to an empty table.
 	 */
