@@ -39,7 +39,6 @@ public class SaveScriptAction extends SquirrelAction implements ISessionAction
 	{
 		super(app, rsrc);
 		_plugin = plugin;
-		setEnabled(false);
 	}
 
 	public void actionPerformed(ActionEvent evt)
@@ -52,11 +51,6 @@ public class SaveScriptAction extends SquirrelAction implements ISessionAction
 		if(null != session)
 		{
 			_delegate = _plugin.getLoadAndSaveDelegate(session);
-			setEnabled(true);
-		}
-		else
-		{
-			setEnabled(false);
 		}
 	}
 }

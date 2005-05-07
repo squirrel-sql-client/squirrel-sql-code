@@ -273,6 +273,7 @@ public class SyntaxPugin extends DefaultSessionPlugin
       ActionCollection coll = getApplication().getActionCollection();
       session.addToToolbar(coll.get(FindAction.class));
       session.addToToolbar(coll.get(ReplaceAction.class));
+      session.addToToolbar(coll.get(ConfigureAutoCorrectAction.class));
 
       return ret;
    }
@@ -288,6 +289,7 @@ public class SyntaxPugin extends DefaultSessionPlugin
 
       sqlInternalFrame.addToToolbar(findAction);
       sqlInternalFrame.addToToolbar(replaceAction);
+      sqlInternalFrame.addToToolbar(coll.get(ConfigureAutoCorrectAction.class));
    }
 
    /**

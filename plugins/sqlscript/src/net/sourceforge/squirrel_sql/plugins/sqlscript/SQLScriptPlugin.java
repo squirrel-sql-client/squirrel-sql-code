@@ -229,6 +229,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 
 		session.addToToolbar(coll.get(LoadScriptAction.class));
 		session.addToToolbar(coll.get(SaveScriptAction.class));
+		session.addToToolbar(coll.get(SaveScriptAsAction.class));
 
       PluginSessionCallback ret = new PluginSessionCallback()
       {
@@ -236,6 +237,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
          {
             sqlInternalFrame.addToToolbar(coll.get(LoadScriptAction.class));
             sqlInternalFrame.addToToolbar(coll.get(SaveScriptAction.class));
+            sqlInternalFrame.addToToolbar(coll.get(SaveScriptAsAction.class));
          }
 
          public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
