@@ -397,6 +397,12 @@ class Session implements ISession
 		_sessionSheet.addToToolbar(action);
 	}
 
+   public void addSeparatorToToolbar()
+   {
+      _sessionSheet.addSeparatorToToolbar();
+   }
+
+
 	public synchronized Object putPluginObject(IPlugin plugin, String key,
 												Object value)
 	{

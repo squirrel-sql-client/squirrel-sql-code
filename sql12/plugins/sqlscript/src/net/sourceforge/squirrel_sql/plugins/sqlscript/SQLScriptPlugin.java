@@ -227,17 +227,21 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 		api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateDataScriptAction.class));
 		api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTemplateDataScriptAction.class));
 
+      session.addSeparatorToToolbar();
 		session.addToToolbar(coll.get(LoadScriptAction.class));
 		session.addToToolbar(coll.get(SaveScriptAction.class));
 		session.addToToolbar(coll.get(SaveScriptAsAction.class));
+		session.addToToolbar(coll.get(CreateTableOfCurrentSQLAction.class));
 
       PluginSessionCallback ret = new PluginSessionCallback()
       {
          public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
          {
+            sqlInternalFrame.addSeparatorToToolbar();
             sqlInternalFrame.addToToolbar(coll.get(LoadScriptAction.class));
             sqlInternalFrame.addToToolbar(coll.get(SaveScriptAction.class));
             sqlInternalFrame.addToToolbar(coll.get(SaveScriptAsAction.class));
+            sqlInternalFrame.addToToolbar(coll.get(CreateTableOfCurrentSQLAction.class));
          }
 
          public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)

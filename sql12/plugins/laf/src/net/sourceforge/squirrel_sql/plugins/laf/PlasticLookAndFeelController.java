@@ -49,6 +49,9 @@ class PlasticLookAndFeelController extends AbstractPlasticController
 		"com.jgoodies.looks.plastic.PlasticXPLookAndFeel",
 	};
 
+   public static final String DEFAULT_LOOK_AND_FEEL_CLASS_NAME = LAF_CLASS_NAMES[1];
+
+
 	/** Name of package that contains Plastic Themes. */
 	private static final String THEME_PACKAGE = "com.jgoodies.looks.plastic.theme";
 
@@ -58,7 +61,7 @@ class PlasticLookAndFeelController extends AbstractPlasticController
 	/** Preferences for this LAF. */
 	private PlasticThemePreferences _prefs;
 
-	/**
+   /**
 	 * Ctor specifying the Look and Feel plugin and register.
 	 * 
 	 * @param	plugin	The plugin that this controller is a part of.
@@ -67,27 +70,40 @@ class PlasticLookAndFeelController extends AbstractPlasticController
 	PlasticLookAndFeelController(LAFPlugin plugin,
 								LAFRegister lafRegister)
 	{
-		super(plugin, lafRegister);
+      super(plugin, lafRegister);
+      try
+      {
 
-		XMLObjectCache cache = plugin.getSettingsCache();
-		Iterator it = cache.getAllForClass(PlasticThemePreferences.class);
-		if (it.hasNext())
-		{
-			_prefs = (PlasticThemePreferences)it.next();
-		}
-		else
-		{
-			_prefs = new PlasticThemePreferences();
-			try
-			{
-				cache.add(_prefs);
-			}
-			catch (DuplicateObjectException ex)
-			{
-				s_log.error("PlasticThemePreferences object already in XMLObjectCache", ex);
-			}
-		}
-	}
+         XMLObjectCache cache = plugin.getSettingsCache();
+         Iterator it = cache.getAllForClass(PlasticThemePreferences.class);
+         if (it.hasNext())
+         {
+            _prefs = (PlasticThemePreferences) it.next();
+         }
+         else
+         {
+            _prefs = new PlasticThemePreferences();
+
+            ClassLoader cl = getLAFRegister().getLookAndFeelClassLoader();
+            Class clazz = cl.loadClass(AbstractPlasticController.DEFAULT_PLASTIC_THEME_CLASS_NAME);
+            MetalTheme theme = (MetalTheme) clazz.newInstance();
+            _prefs.setThemeName(theme.getName());
+
+            try
+            {
+               cache.add(_prefs);
+            }
+            catch (DuplicateObjectException ex)
+            {
+               s_log.error("PlasticThemePreferences object already in XMLObjectCache", ex);
+            }
+         }
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
 
 	/**
 	 * Retrieve the name of the current theme.
