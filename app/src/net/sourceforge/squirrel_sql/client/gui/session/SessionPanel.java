@@ -315,6 +315,12 @@ public class SessionPanel extends JPanel
 		}
 	}
 
+   public synchronized void addSeparatorToToolbar()
+   {
+      _toolBar.addSeparator();
+   }
+
+
 	/**
 	 * Add component to the session sheets status bar.
 	 *

@@ -149,6 +149,11 @@ public class SQLInternalFrame extends BaseSessionInternalFrame
 
    }
 
+   public void addSeparatorToToolbar()
+   {
+      _toolBar.addSeparator();
+   }
+
    public void addToToolbar(Action action)
    {
       if (null != _toolBar)

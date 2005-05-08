@@ -48,7 +48,7 @@ abstract class AbstractPlasticController extends DefaultLookAndFeelController
 	private static ILogger s_log =
 		LoggerController.createLogger(AbstractPlasticController.class);
 
-	/**
+   /**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
@@ -79,6 +79,8 @@ abstract class AbstractPlasticController extends DefaultLookAndFeelController
 		"com.jgoodies.looks.plastic.theme.SkyRed",
 		"com.jgoodies.looks.plastic.theme.SkyYellow",
 	};
+
+   public static final String DEFAULT_PLASTIC_THEME_CLASS_NAME = PLASTIC_THEME_CLASS_NAMES[11]; // SkyBluer
 
 	/** Look and Feel Plugin. */
 	private final LAFPlugin _lafPlugin;

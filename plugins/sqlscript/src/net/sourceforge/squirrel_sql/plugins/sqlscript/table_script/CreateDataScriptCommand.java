@@ -368,6 +368,7 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
             break;
          }
       }
+      srcResult.close();
    }
 
    private String getNullableComment(ResultSetMetaData metaData, int colIndex) throws SQLException

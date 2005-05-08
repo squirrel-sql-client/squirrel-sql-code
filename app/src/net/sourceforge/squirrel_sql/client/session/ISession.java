@@ -220,6 +220,8 @@ public interface ISession extends IHasIdentifier
 	 */
 	void addToToolbar(Action action);
 
+   public void addSeparatorToToolbar();
+
 	/**
 	 * The code in any SQLEditor is parsed in the background. You may attach a listener to the ParserEventsProcessor
     * to get to know about the results of parsing. The events are passed synchron with the event queue

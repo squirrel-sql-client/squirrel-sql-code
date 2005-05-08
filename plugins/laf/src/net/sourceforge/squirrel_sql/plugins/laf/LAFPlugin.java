@@ -357,6 +357,7 @@ public class LAFPlugin extends DefaultPlugin
 		if (_lafPrefs == null)
 		{
 			_lafPrefs = new LAFPreferences(IdentifierFactory.getInstance().createIdentifier());
+         _lafPrefs.setLookAndFeelClassName(PlasticLookAndFeelController.DEFAULT_LOOK_AND_FEEL_CLASS_NAME);
 			try
 			{
 				_settingsCache.add(_lafPrefs);
