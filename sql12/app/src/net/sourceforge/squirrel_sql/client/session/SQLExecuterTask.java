@@ -1049,7 +1049,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 				try
 				{
 					ResultSet rs = stmt.executeQuery("SELECT count(*) FROM " +
-						ti.getSimpleName()+whereClause);
+						ti.getQualifiedName()+whereClause);
 
 					rs.next();
 					if (rs.getInt(1) != 1) {
@@ -1097,7 +1097,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 				try
 				{
 					stmt.executeUpdate("DELETE FROM " +
-						ti.getSimpleName()+whereClause);
+						ti.getQualifiedName() + whereClause);
 				}
 				finally
 				{

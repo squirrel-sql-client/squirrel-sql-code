@@ -18,24 +18,15 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.Component;
-import java.awt.Point;
-import java.awt.Dimension;
-import java.awt.Rectangle;
-
-import javax.swing.JOptionPane;
-import javax.swing.JTable;
-import javax.swing.SwingUtilities;
-import javax.swing.table.TableColumnModel;
-import javax.swing.DefaultCellEditor;
-import javax.swing.JLayeredPane;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.*;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
-import net.sourceforge.squirrel_sql.fw.gui.BaseMDIParentFrame;
+
+import javax.swing.*;
+import javax.swing.table.TableColumnModel;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * @author gwg
@@ -340,7 +331,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		// If SwingTUilities.getRoot(table) returns and instance of Dialog or
 		// Frame, then other code must be used.
 		RowDataInputFrame rdif = new RowDataInputFrame(_colDefs, initialValues, this);
-		((BaseMDIParentFrame)comp).addInternalFrame(rdif, false);
+		((IMainFrame)comp).addInternalFrame(rdif, false);
 		rdif.setLayer(JLayeredPane.POPUP_LAYER);
 		rdif.pack();
 		newComp = rdif;
