@@ -29,11 +29,9 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.*;
 
-import net.sourceforge.squirrel_sql.fw.gui.BaseMDIParentFrame;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
-//import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 
 /**
  * Generate a popup window to display and manipulate the
@@ -112,7 +110,7 @@ public class CellDataPopup
 		{
 			newComp.setSize(dim);
 		}
-		if (comp instanceof BaseMDIParentFrame)
+		if (comp instanceof IMainFrame)
 		{
 			pt = SwingUtilities.convertPoint((Component) evt.getSource(), pt, comp);
 			pt.y -= dim.height;
@@ -123,7 +121,7 @@ public class CellDataPopup
 			// If you have a dialog owned by a window you get the dialog, not the window.
 			Component parent = SwingUtilities.windowForComponent(comp);
 			while ((parent != null) &&
-				!(parent instanceof BaseMDIParentFrame) &&
+				!(parent instanceof IMainFrame) &&
 				!(parent.equals(comp)))
 			{
 				comp = parent;

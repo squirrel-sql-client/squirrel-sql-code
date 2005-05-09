@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.session.properties;
 import java.awt.Font;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
+import java.util.prefs.Preferences;
 
 import javax.swing.SwingConstants;
 
@@ -707,6 +708,19 @@ public class SessionProperties implements Cloneable, Serializable
 	{
 		if (_sqlResultsTabPlacement != value)
 		{
+         if(value == SwingConstants.BOTTOM)
+         {
+            // Some way this property slipt into older Property files but it was never
+            // used earlier. We use this little (ugly) trick to keep users being confused by
+            // a bottom tab placing. This was introduced for 1.2 beta 7. 
+            // TODO: Remove some time later
+            if(Preferences.userRoot().getBoolean("Squirrel.TabPlacementCorrectionONFirstStartOf1_2_beta7", true))
+            {
+               value = SwingConstants.TOP;
+               Preferences.userRoot().putBoolean("Squirrel.TabPlacementCorrectionONFirstStartOf1_2_beta7", false);
+            }
+         }
+
 			final int oldValue = _sqlResultsTabPlacement;
 			_sqlResultsTabPlacement = value;
 			getPropertyChangeReporter().firePropertyChange(
