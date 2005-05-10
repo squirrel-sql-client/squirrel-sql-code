@@ -926,7 +926,7 @@ public class DataTypeString
 
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			add(_makeNewlinesVisibleInCellChk, gbc);
-			
+
 			gbc.gridx = 0;
 			gbc.gridy++;
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
@@ -949,7 +949,12 @@ public class DataTypeString
 			gbc.gridx++;
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			JScrollPane scrollPane = new JScrollPane();
-			scrollPane.setViewportView(_limitReadColumnNameTextArea);
+
+         // If we don't always show the scrollbars the whole DataTypePreferencesPanel is flickering like hell.
+         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+         scrollPane.setViewportView(_limitReadColumnNameTextArea);
 			add(scrollPane, gbc);
 			
 

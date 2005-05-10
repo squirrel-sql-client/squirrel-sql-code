@@ -142,7 +142,7 @@ public class DataTypePreferencesPanel implements  IGlobalPreferencesPanel
 //			JScrollPane sp = new JScrollPane(createDataTypesPanel());
 //			sp.setPreferredSize(new Dimension(600, 450));
 //			add(sp, gbc);
-add(createDataTypesPanel(), gbc);
+         add(createDataTypesPanel(), gbc);
 
 		}
 
@@ -167,7 +167,7 @@ add(createDataTypesPanel(), gbc);
 				++gbc.gridy;
 				pnl.add(dataTypePanels[i], gbc);
 			}
-			
+
 			return pnl;
 		}
 
