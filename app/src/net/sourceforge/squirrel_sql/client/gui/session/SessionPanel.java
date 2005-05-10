@@ -81,7 +81,7 @@ public class SessionPanel extends JPanel
 	/** Toolbar for window. */
 	private MyToolBar _toolBar;
 
-	private Vector _externallyAddedToolbarActions = new Vector();
+	private Vector _externallyAddedToolbarActionsAndSeparators = new Vector();
 
 	private StatusBar _statusBar = new StatusBar();
 	private boolean _hasBeenVisible;
@@ -308,7 +308,7 @@ public class SessionPanel extends JPanel
 	 */
 	public synchronized void addToToolbar(Action action)
 	{
-		_externallyAddedToolbarActions.add(action);
+		_externallyAddedToolbarActionsAndSeparators.add(action);
 		if (null != _toolBar)
 		{
 			_toolBar.add(action);
@@ -317,7 +317,11 @@ public class SessionPanel extends JPanel
 
    public synchronized void addSeparatorToToolbar()
    {
-      _toolBar.addSeparator();
+      _externallyAddedToolbarActionsAndSeparators.add(new SeparatorMarker());
+      if (null != _toolBar)
+      {
+         _toolBar.addSeparator();
+      }
    }
 
 
@@ -371,9 +375,16 @@ public class SessionPanel extends JPanel
 						if (_toolBar == null)
 						{
 							_toolBar = new MyToolBar(session);
-							for (int i = 0; i < _externallyAddedToolbarActions.size(); i++)
+							for (int i = 0; i < _externallyAddedToolbarActionsAndSeparators.size(); i++)
 							{
-								_toolBar.add((Action)_externallyAddedToolbarActions.get(i));
+                        if(_externallyAddedToolbarActionsAndSeparators.get(i) instanceof Action)
+                        {
+								   _toolBar.add((Action)_externallyAddedToolbarActionsAndSeparators.get(i));
+                        }
+                        else
+                        {
+                           _toolBar.addSeparator();
+                        }
 							}
 
 							add(_toolBar, BorderLayout.NORTH);
@@ -619,4 +630,9 @@ public class SessionPanel extends JPanel
 			}
 		}
 	}
+
+   private static class SeparatorMarker
+   {
+
+   }
 }
