@@ -26,12 +26,16 @@ public class SQLSettingsDefaults extends ExtSettingsDefaults
    public static final Boolean defaultJavaFormatSpaceAfterComma = Boolean.TRUE;
 
 
+
+
    static class SQLTokenColoringInitializer
       extends SettingsUtil.TokenColoringInitializer
    {
 
-      Font boldFont = SettingsDefaults.defaultFont.deriveFont(Font.BOLD);
-      Font italicFont = SettingsDefaults.defaultFont.deriveFont(Font.ITALIC);
+      Font boldFont;
+      Font italicFont;
+      Font normalFont;
+
       Settings.Evaluator boldSubst = new SettingsUtil.FontStylePrintColoringEvaluator(Font.BOLD);
       Settings.Evaluator italicSubst = new SettingsUtil.FontStylePrintColoringEvaluator(Font.ITALIC);
       Settings.Evaluator lightGraySubst = new SettingsUtil.ForeColorPrintColoringEvaluator(Color.lightGray);
@@ -41,10 +45,14 @@ public class SQLSettingsDefaults extends ExtSettingsDefaults
       Coloring numbersColoring = new Coloring(null, new Color(120, 0, 0), null);
       private SyntaxPreferences _syntaxPreferences;
 
-      public SQLTokenColoringInitializer(SyntaxPreferences syntaxPreferences)
+      public SQLTokenColoringInitializer(SyntaxPreferences syntaxPreferences, Font font)
       {
          super(SQLTokenContext.context);
          _syntaxPreferences = syntaxPreferences;
+
+         boldFont =  font.deriveFont(Font.BOLD);
+         italicFont = font.deriveFont(Font.ITALIC);
+         normalFont = font;
       }
 
       public Object getTokenColoring(TokenContextPath tokenContextPath,
@@ -116,15 +124,15 @@ public class SQLSettingsDefaults extends ExtSettingsDefaults
       {
          if(style.isBold())
          {
-            return new Coloring(boldFont, Coloring.FONT_MODE_APPLY_STYLE, new Color(style.getTextRGB()), new Color(style.getBackgroundRGB()));
+            return new Coloring(boldFont, Coloring.FONT_MODE_DEFAULT, new Color(style.getTextRGB()), new Color(style.getBackgroundRGB()));
          }
          else if(style.isItalic())
          {
-            return new Coloring(italicFont, Coloring.FONT_MODE_APPLY_STYLE, new Color(style.getTextRGB()), new Color(style.getBackgroundRGB()));
+            return new Coloring(italicFont, Coloring.FONT_MODE_DEFAULT, new Color(style.getTextRGB()), new Color(style.getBackgroundRGB()));
          }
          else
          {
-            return new Coloring(null, Coloring.FONT_MODE_APPLY_STYLE, new Color(style.getTextRGB()), new Color(style.getBackgroundRGB()));
+            return new Coloring(normalFont, Coloring.FONT_MODE_DEFAULT, new Color(style.getTextRGB()), new Color(style.getBackgroundRGB()));
          }
       }
 

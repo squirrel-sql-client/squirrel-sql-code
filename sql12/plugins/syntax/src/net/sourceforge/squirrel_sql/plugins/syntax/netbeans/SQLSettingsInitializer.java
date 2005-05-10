@@ -11,6 +11,7 @@ import org.netbeans.editor.ext.java.JavaSettingsNames;
 import java.util.Map;
 import java.awt.event.KeyEvent;
 import java.awt.event.InputEvent;
+import java.awt.*;
 
 import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.SQLSettingsDefaults;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
@@ -32,6 +33,7 @@ public class SQLSettingsInitializer extends Settings.AbstractInitializer
 
    private static int MENU_MASK = java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
    private SyntaxPugin _plugin;
+   private Font _font;
 
 
    /**
@@ -41,12 +43,13 @@ public class SQLSettingsInitializer extends Settings.AbstractInitializer
     * @param syntaxPreferences
     * @param plugin
     */
-   public SQLSettingsInitializer(Class sqlKitClass, SyntaxPreferences syntaxPreferences, SyntaxPugin plugin)
+   public SQLSettingsInitializer(Class sqlKitClass, SyntaxPreferences syntaxPreferences, Font font, SyntaxPugin plugin)
    {
       super(NAME);
       this.sqlKitClass = sqlKitClass;
       _syntaxPreferences = syntaxPreferences;
       _plugin = plugin;
+      _font = font;
    }
 
    /**
@@ -65,7 +68,7 @@ public class SQLSettingsInitializer extends Settings.AbstractInitializer
       if (kitClass == BaseKit.class)
       {
 
-         new SQLSettingsDefaults.SQLTokenColoringInitializer(_syntaxPreferences).updateSettingsMap(kitClass, settingsMap);
+         new SQLSettingsDefaults.SQLTokenColoringInitializer(_syntaxPreferences, _font).updateSettingsMap(kitClass, settingsMap);
          new SQLSettingsDefaults.SQLLayerTokenColoringInitializer().updateSettingsMap(kitClass, settingsMap);
 
          SettingsUtil.updateListSetting(settingsMap, SettingsNames.KEY_BINDING_LIST, squirrelKeyBindings);
@@ -163,6 +166,15 @@ public class SQLSettingsInitializer extends Settings.AbstractInitializer
 
          settingsMap.put(JavaSettingsNames.GOTO_CLASS_SHOW_LIBRARY_CLASSES,
             JavaSettingsDefaults.defaultGotoClassShowLibraryClasses);
+
+
+         Coloring col = new Coloring(_font, SettingsDefaults.defaultForeColor, SettingsDefaults.defaultBackColor);
+
+         SettingsUtil.setColoring(settingsMap,
+                                  SettingsNames.DEFAULT_COLORING, col);
+         
+
+
       }
    }
 
