@@ -22,6 +22,7 @@ import org.netbeans.editor.ext.ExtSettingsInitializer;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.*;
 import java.util.Vector;
 
 
@@ -58,7 +59,9 @@ public class NetbeansSQLEditorPane extends JEditorPane
       //
       /////////////////////////////////////////////////////////////////////////////
       Settings.removeInitializer(SQLSettingsInitializer.NAME);
-      Settings.addInitializer(new SQLSettingsInitializer(SQLKit.class, _prefs, _plugin));
+
+      Font font = _session.getProperties().getFontInfo().createFont();
+      Settings.addInitializer(new SQLSettingsInitializer(SQLKit.class, _prefs, font, _plugin));
 
 
       //////////////////////////////////////////////////////////////////////////////////////////
@@ -100,7 +103,9 @@ public class NetbeansSQLEditorPane extends JEditorPane
       //
       /////////////////////////////////////////////////////////////////////////////
       Settings.removeInitializer(SQLSettingsInitializer.NAME);
-      Settings.addInitializer(new SQLSettingsInitializer(SQLKit.class, _prefs, _plugin));
+
+      Font font = _session.getProperties().getFontInfo().createFont();
+      Settings.addInitializer(new SQLSettingsInitializer(SQLKit.class, _prefs, font, _plugin));
 
 
       //////////////////////////////////////////////////////////////////////////////////////////////////////////////
