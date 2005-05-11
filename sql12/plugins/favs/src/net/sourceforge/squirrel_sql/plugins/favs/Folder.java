@@ -30,13 +30,13 @@ import net.sourceforge.squirrel_sql.fw.persist.IValidatable;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
-import net.sourceforge.squirrel_sql.client.util.IHasName;
+//??import net.sourceforge.squirrel_sql.client.util.IHasName;
 
 /**
  * This class represents a folder within which queries that can be stored.
  */
 public final class Folder implements Cloneable, Serializable, IHasIdentifier,
-										IValidatable, IHasName {
+										IValidatable /*, IHasName*/ {
 	private static final String EMPTY_STRING = "";
 
 	/**
