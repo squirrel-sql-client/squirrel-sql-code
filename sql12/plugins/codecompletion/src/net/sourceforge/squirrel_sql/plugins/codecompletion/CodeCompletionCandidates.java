@@ -1,6 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
-import org.apache.xml.utils.XMLString;
 
 
 public class CodeCompletionCandidates
