@@ -192,6 +192,11 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 
          addMouseListener(new MouseAdapter()
          {
+            public void mousePressed(MouseEvent e)
+            {
+               _dragBeginPoint = e.getPoint();
+            }
+
             public void mouseReleased(MouseEvent e)
             {
                _dragBeginPoint = null;
