@@ -24,6 +24,7 @@ import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseMotionAdapter;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
@@ -159,8 +160,10 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		private TablePopupMenu _tablePopupMenu;
 		private ButtonTableHeader _bth;
 		private IDataSetTableControls _creator;
+      private Point _dragBeginPoint = null;
+      private Point _dragEndPoint = null;
 
-		MyJTable(IDataSetTableControls creator, 
+      MyJTable(IDataSetTableControls creator,
 			IDataSetUpdateableModel updateableObject)
 		{
 			super(new SortableTableModel(new MyTableModel(creator)));
@@ -186,9 +189,57 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 			* This should help handle some problems with navigation using tab & return
 			* to move through cells.
 			*/
+
+         addMouseListener(new MouseAdapter()
+         {
+            public void mouseReleased(MouseEvent e)
+            {
+               _dragBeginPoint = null;
+               _dragEndPoint = null;
+               repaint();
+            }
+         });
+
+         addMouseMotionListener(new MouseMotionAdapter()
+         {
+            public void mouseDragged(MouseEvent e)
+            {
+               onMouseDragged(e);
+               repaint();
+            }
+         });
+
 		}
-		
-		public IDataSetTableControls getCreator() {
+
+      private void onMouseDragged(MouseEvent e)
+      {
+         if(null == _dragBeginPoint)
+         {
+            _dragBeginPoint = e.getPoint();
+         }
+
+         _dragEndPoint = e.getPoint();
+      }
+
+      public void paint(Graphics g)
+      {
+         super.paint(g);
+
+         if(null != _dragBeginPoint && null != _dragEndPoint && false == _dragBeginPoint.equals(_dragEndPoint))
+         {
+            int x = Math.min(_dragBeginPoint.x,  _dragEndPoint.x);
+            int y = Math.min(_dragBeginPoint.y,  _dragEndPoint.y);
+            int width = Math.abs(_dragBeginPoint.x - _dragEndPoint.x);
+            int heigh = Math.abs(_dragBeginPoint.y - _dragEndPoint.y);
+
+            Color colBuf = g.getColor();
+            g.setColor(Color.blue);
+            g.drawRect(x,y,width,heigh);
+            g.setColor(colBuf);
+         }
+      }
+
+      public IDataSetTableControls getCreator() {
 			return _creator;
 		}
 

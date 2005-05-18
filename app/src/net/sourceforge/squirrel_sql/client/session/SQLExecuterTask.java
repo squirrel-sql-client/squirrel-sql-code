@@ -156,10 +156,16 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 						.getSQLStatementSeparator(), props
 						.getStartOfLineComment());
 				List queryStrings = new ArrayList();
-				while (qt.hasQuery())
+				boolean queriesFound = false;
+            while (qt.hasQuery())
 				{
+               queriesFound = true;
 					queryStrings.add(qt.nextQuery());
 				}
+            if(false == queriesFound)
+            {
+               throw new IllegalArgumentException("No SQL selected for execution.");
+            }
 
 				/**
 				 * ?? The following code was in the original version of this

@@ -26,6 +26,7 @@ import javax.swing.Box;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.table.TableCellEditor;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -77,6 +78,11 @@ public class DriverPropertiesPanel extends JPanel
 	 */
 	public SQLDriverPropertyCollection getSQLDriverProperties()
 	{
+      TableCellEditor cellEditor = _tbl.getCellEditor();
+      if(null != cellEditor)
+      {
+         cellEditor.stopCellEditing();
+      }
 		return _tbl.getTypedModel().getSQLDriverProperties();
 	}
 
