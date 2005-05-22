@@ -219,7 +219,9 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 
 	public void setFont(Font font)
 	{
-		_textArea.setFont(font);
+      // See SQLSettingsInitializer to find out how fonts are
+      // handled in the Netbeans editor.
+		// _textArea.setFont(font);
 	}
 
 	/**
