@@ -33,6 +33,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeClob;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeBlob;
 
 public class ResultSetReader
 {
@@ -329,32 +331,9 @@ public class ResultSetReader
 						// never see a BLOB. If we do, the contents are not interpretable
 						// by Squirrel, so just tell the user that it is a BLOB and that it
 						// has data.
-//??						if (_largeObjInfo.getReadBlobs())
-//??						{
-							row[i] = null;
-							Blob blob = _rs.getBlob(idx);
-							if (blob != null)
-							{
-//??								int len = (int)blob.length();
-//??								if (len > 0)
-//??								{
-//??									int bytesToRead = len;
-//??									if (!_largeObjInfo.getReadCompleteBlobs())
-//??									{
-//??										bytesToRead = _largeObjInfo.getReadBlobsSize();
-//??									}
-//??									if (bytesToRead > len)
-//??									{
-//??										bytesToRead = len;
-//??									}
-//??									row[i] = new String(blob.getBytes(1, bytesToRead));
-//??								}
-//??							}
-//??						}
-//??						else
-//??						{
-							row[i] = s_stringMgr.getString("ResultSetReader.blob");
-						}
+
+                  row[i] = DataTypeBlob.staticReadResultSet(_rs, idx); 
+
 						break;
 
 					case Types.CLOB:
@@ -362,32 +341,8 @@ public class ResultSetReader
 						// never see a CLOB. However, if we do we assume that
 						// it is printable text and that the user wants to see it, so
 						// read in the entire thing.
-//??						if (_largeObjInfo.getReadClobs())
-//??						{
-							row[i] = null;
-							Clob clob = _rs.getClob(idx);
-							if (clob != null)
-							{
-								int len = (int)clob.length();
-								if (len > 0)
-								{
-									int charsToRead = len;
-//??									if (!_largeObjInfo.getReadCompleteClobs())
-//??									{
-//??										charsToRead = _largeObjInfo.getReadClobsSize();
-//??									}
-//??									if (charsToRead > len)
-//??									{
-//??										charsToRead = len;
-//??									}
-									row[i] = clob.getSubString(1, charsToRead);
-								}
-							}
-//??						}
-//??						else
-//??						{
-//??							row[i] = s_stringMgr.getString("ResultSetReader.clob");
-//??						}
+                  row[i] = DataTypeClob.staticReadResultSet(_rs, idx); 
+
 						break;
 
 					case Types.OTHER:

@@ -132,6 +132,7 @@ class ObjectTree extends JTree
 		// Add actions to the popup menu.
 		ActionCollection actions = session.getApplication().getActionCollection();
 		addToPopup(DatabaseObjectType.TABLE, actions.get(DropSelectedTablesAction.class));
+		addToPopup(DatabaseObjectType.VIEW, actions.get(DropSelectedTablesAction.class));
 
 		// Options for global popup menu.
 		addToPopup(actions.get(RefreshObjectTreeAction.class));

@@ -35,7 +35,7 @@ public class TableInfo extends DatabaseObjectInfo implements ITableInfo
 							String tableType, String remarks,
 							SQLDatabaseMetaData md)
 	{
-		super(catalog, schema, simpleName, DatabaseObjectType.TABLE, md);
+		super(catalog, schema, simpleName, tableType.equalsIgnoreCase("VIEW") ? DatabaseObjectType.VIEW : DatabaseObjectType.TABLE, md);
 		_remarks = remarks;
 		_tableType = tableType;
 	}

@@ -508,12 +508,18 @@ public class DataTypeBlob
 	/*
 	 * DataBase-related functions
 	 */
-	 
+
+   public Object readResultSet(ResultSet rs, int index, boolean limitDataRead)
+      throws java.sql.SQLException {
+
+      return staticReadResultSet(rs, index);
+   }
+
 	 /**
 	  * On input from the DB, read the data from the ResultSet into the appropriate
 	  * type of object to be stored in the table cell.
 	  */
-	public Object readResultSet(ResultSet rs, int index, boolean limitDataRead)
+	public static Object staticReadResultSet(ResultSet rs, int index)
 		throws java.sql.SQLException {
 		
 		// We always get the BLOB, even when we are not reading the contents.
