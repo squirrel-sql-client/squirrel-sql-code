@@ -79,6 +79,8 @@ public class DatabaseObjectType implements IHasIdentifier
 	/** TABLE. */
 	public final static DatabaseObjectType TABLE = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.table"));
 
+   public static final DatabaseObjectType VIEW = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.view"));;
+
 	/** Trigger. */
 	public final static DatabaseObjectType TRIGGER = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.catalog"));
 
@@ -94,7 +96,7 @@ public class DatabaseObjectType implements IHasIdentifier
 	/** Describes this object type. */
 	private final String _name;
 
-	/**
+   /**
 	 * Default ctor.
 	 */
 	private DatabaseObjectType(String name)

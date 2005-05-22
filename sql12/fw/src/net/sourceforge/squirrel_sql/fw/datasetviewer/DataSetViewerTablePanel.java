@@ -238,7 +238,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
             int heigh = Math.abs(_dragBeginPoint.y - _dragEndPoint.y);
 
             Color colBuf = g.getColor();
-            g.setColor(Color.blue);
+            g.setColor(getForeground());
             g.drawRect(x,y,width,heigh);
             g.setColor(colBuf);
          }

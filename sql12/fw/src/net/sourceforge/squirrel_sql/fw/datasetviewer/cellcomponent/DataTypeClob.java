@@ -543,59 +543,66 @@ public class DataTypeClob
 	  * type of object to be stored in the table cell.
 	  */
 	public Object readResultSet(ResultSet rs, int index, boolean limitDataRead)
-		throws java.sql.SQLException {
-
-		// We always get the CLOB, even when we are not reading the contents.
-		// Since the CLOB is just a pointer to the CLOB data rather than the
-		// data itself, this operation should not take much time (as opposed
-		// to getting all of the data in the clob).
-		Clob clob = rs.getClob(index);
-
-		if (rs.wasNull())
-			return null;
-
-		// CLOB exists, so try to read the data from it
-		// based on the user's directions
-		if (_readClobs)
-		{
-			// User said to read at least some of the data from the clob
-			String clobData = null;
-			if (clob != null)
-			{
-				int len = (int)clob.length();
-				if (len > 0)
-				{
-					int charsToRead = len;
-					if ( ! _readCompleteClobs)
-					{
-						charsToRead = _readClobsSize;
-					}
-					if (charsToRead > len)
-					{
-						charsToRead = len;
-					}
-					clobData = clob.getSubString(1, charsToRead);
-				}
-			}
-
-			// determine whether we read all there was in the clob or not
-			boolean wholeClobRead = false;
-			if (_readCompleteClobs || clobData == null ||
-				clobData.length() < _readClobsSize)
-			{
-				wholeClobRead = true;
-			}
-
-			return new ClobDescriptor(clob, clobData, true, wholeClobRead,
-				_readClobsSize);
-		}
-		else
-		{
-			// user said not to read any of the data from the clob
-			return new ClobDescriptor(clob, null, false, false, 0);
-		}
-
+		throws java.sql.SQLException
+   {
+      return staticReadResultSet(rs, index);
 	}
+
+
+   public static Object staticReadResultSet(ResultSet rs, int index)
+      throws java.sql.SQLException
+   {
+      // We always get the CLOB, even when we are not reading the contents.
+      // Since the CLOB is just a pointer to the CLOB data rather than the
+      // data itself, this operation should not take much time (as opposed
+      // to getting all of the data in the clob).
+      Clob clob = rs.getClob(index);
+
+      if (rs.wasNull())
+         return null;
+
+      // CLOB exists, so try to read the data from it
+      // based on the user's directions
+      if (_readClobs)
+      {
+         // User said to read at least some of the data from the clob
+         String clobData = null;
+         if (clob != null)
+         {
+            int len = (int)clob.length();
+            if (len > 0)
+            {
+               int charsToRead = len;
+               if ( ! _readCompleteClobs)
+               {
+                  charsToRead = _readClobsSize;
+               }
+               if (charsToRead > len)
+               {
+                  charsToRead = len;
+               }
+               clobData = clob.getSubString(1, charsToRead);
+            }
+         }
+
+         // determine whether we read all there was in the clob or not
+         boolean wholeClobRead = false;
+         if (_readCompleteClobs || clobData == null ||
+            clobData.length() < _readClobsSize)
+         {
+            wholeClobRead = true;
+         }
+
+         return new ClobDescriptor(clob, clobData, true, wholeClobRead,
+            _readClobsSize);
+      }
+      else
+      {
+         // user said not to read any of the data from the clob
+         return new ClobDescriptor(clob, null, false, false, 0);
+      }
+   }
+
 
 	/**
 	 * When updating the database, generate a string form of this object value

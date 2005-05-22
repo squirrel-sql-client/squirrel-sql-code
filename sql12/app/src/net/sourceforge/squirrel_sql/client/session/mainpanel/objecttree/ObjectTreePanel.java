@@ -192,8 +192,21 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 		// Register tabs to display in the details panel for schema nodes.
 		addDetailTab(DatabaseObjectType.SCHEMA, new DatabaseObjectInfoTab());
 
-		// Register tabs to display in the details panel for table nodes.
-		addDetailTab(DatabaseObjectType.TABLE, new DatabaseObjectInfoTab());
+      addDetailTabForTableLikeObjects(DatabaseObjectType.TABLE);
+      addDetailTabForTableLikeObjects(DatabaseObjectType.VIEW);
+
+      // Register tabs to display in the details panel for procedure nodes.
+		addDetailTab(DatabaseObjectType.PROCEDURE, new DatabaseObjectInfoTab());
+		addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureColumnsTab());
+
+		// Register tabs to display in the details panel for UDT nodes.
+		addDetailTab(DatabaseObjectType.UDT, new DatabaseObjectInfoTab());
+	}
+
+   private void addDetailTabForTableLikeObjects(DatabaseObjectType type)
+   {
+      // Register tabs to display in the details panel for table nodes.
+      addDetailTab(type, new DatabaseObjectInfoTab());
 
       ContentsTab conttentsTab = new ContentsTab();
       conttentsTab.addListener(new DataSetUpdateableTableModelListener()
@@ -203,26 +216,19 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
             onForceEditMode(mode);
          }
       });
-      addDetailTab(DatabaseObjectType.TABLE, conttentsTab);
+      addDetailTab(type, conttentsTab);
 
-      addDetailTab(DatabaseObjectType.TABLE, new RowCountTab());
-		addDetailTab(DatabaseObjectType.TABLE, new ColumnsTab());
-		addDetailTab(DatabaseObjectType.TABLE, new PrimaryKeyTab());
-		addDetailTab(DatabaseObjectType.TABLE, new ExportedKeysTab());
-		addDetailTab(DatabaseObjectType.TABLE, new ImportedKeysTab());
-		addDetailTab(DatabaseObjectType.TABLE, new IndexesTab());
-		addDetailTab(DatabaseObjectType.TABLE, new TablePriviligesTab());
-		addDetailTab(DatabaseObjectType.TABLE, new ColumnPriviligesTab());
-		addDetailTab(DatabaseObjectType.TABLE, new RowIDTab());
-		addDetailTab(DatabaseObjectType.TABLE, new VersionColumnsTab());
-
-		// Register tabs to display in the details panel for procedure nodes.
-		addDetailTab(DatabaseObjectType.PROCEDURE, new DatabaseObjectInfoTab());
-		addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureColumnsTab());
-
-		// Register tabs to display in the details panel for UDT nodes.
-		addDetailTab(DatabaseObjectType.UDT, new DatabaseObjectInfoTab());
-	}
+      addDetailTab(type, new RowCountTab());
+      addDetailTab(type, new ColumnsTab());
+      addDetailTab(type, new PrimaryKeyTab());
+      addDetailTab(type, new ExportedKeysTab());
+      addDetailTab(type, new ImportedKeysTab());
+      addDetailTab(type, new IndexesTab());
+      addDetailTab(type, new TablePriviligesTab());
+      addDetailTab(type, new ColumnPriviligesTab());
+      addDetailTab(type, new RowIDTab());
+      addDetailTab(type, new VersionColumnsTab());
+   }
 
    /**
 	 * Return the unique identifier for this object.
