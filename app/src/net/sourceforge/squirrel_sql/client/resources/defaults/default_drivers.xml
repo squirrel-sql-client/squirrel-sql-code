@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <Beans>
+
+   <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+       <driverClassName>com.intersys.jdbc.CacheDriver</driverClassName>
+       <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+           <string>-29</string>
+       </identifier>
+       <jarFileNames Indexed="true"/>
+       <name>Intersystems Cache</name>
+       <url>jdbc:Cache://&lt;host&gt;:1972/&lt;database&gt;</url>
+   </Bean>
+
+
     <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
         <driverClassName>org.firebirdsql.jdbc.FBDriver</driverClassName>
         <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
