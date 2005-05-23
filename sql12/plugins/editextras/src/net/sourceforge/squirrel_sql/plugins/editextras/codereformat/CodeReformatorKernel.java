@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.plugins.editextras.codereformat;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.util.Vector;
+import java.util.Locale;
 
 public class CodeReformatorKernel
 {
@@ -37,7 +38,15 @@ public class CodeReformatorKernel
 		_statesOfPosition = getStatesOfPosition(in);
 
 		Vector ret = new Vector();
-		String upperIn = in.toUpperCase();
+
+      // toUpperCase replaces the German ß by ss.
+      // This will kill reformating later.
+      // Since upperIn is just for building pieces
+      // it is OK to place ß here. 
+      String upperIn = in.replaceAll("ß", "s");
+
+
+		upperIn = upperIn.toUpperCase();
 
 		int begin = 0;
 
