@@ -17,7 +17,6 @@
  */
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
-import net.sourceforge.squirrel_sql.plugins.codecompletion.CodeCompletionInfo;
 
 public class CodeCompletionTypeInfo extends CodeCompletionInfo
 {

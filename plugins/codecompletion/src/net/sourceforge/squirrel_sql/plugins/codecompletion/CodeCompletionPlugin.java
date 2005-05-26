@@ -60,7 +60,7 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 	 */
 	public String getInternalName()
 	{
-		return "codecompletion";
+		return "completion";
 	}
 
 	/**

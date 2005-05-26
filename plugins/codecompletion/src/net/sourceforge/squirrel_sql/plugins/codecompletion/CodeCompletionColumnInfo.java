@@ -17,6 +17,7 @@
  */
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
+
 import java.sql.Types;
 
 

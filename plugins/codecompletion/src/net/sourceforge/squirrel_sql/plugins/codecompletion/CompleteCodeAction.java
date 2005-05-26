@@ -22,6 +22,9 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.completion.Completor;
+import net.sourceforge.squirrel_sql.fw.completion.CompletorListener;
+import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
@@ -31,7 +34,7 @@ import java.awt.event.ActionEvent;
 public class CompleteCodeAction extends SquirrelAction
 {
    private ISQLEntryPanel _sqlEntryPanel;
-   private CodeCompletor _cc;
+   private Completor _cc;
 
 
 
@@ -41,15 +44,15 @@ public class CompleteCodeAction extends SquirrelAction
       _sqlEntryPanel = sqlEntryPanel;
 
 		CodeCompletorModel model = new CodeCompletorModel(session, codeCompletionInfos, sqlEntryPanel.getIdentifier());
-      _cc = new CodeCompletor((JTextComponent)_sqlEntryPanel.getTextComponent(), model);
+      _cc = new Completor((JTextComponent)_sqlEntryPanel.getTextComponent(), model);
 		_sqlEntryPanel.addSQLTokenListener(model.getSQLTokenListener());
 
       _cc.addCodeCompletorListener
       (
-         new CodeCompletorListener()
+         new CompletorListener()
          {
-            public void completionSelected(CodeCompletionInfo completion, int replaceBegin)
-            {performCompletionSelected(completion, replaceBegin);}
+            public void completionSelected(CompletionInfo completion, int replaceBegin)
+            {performCompletionSelected((CodeCompletionInfo) completion, replaceBegin);}
          }
       );
    }
