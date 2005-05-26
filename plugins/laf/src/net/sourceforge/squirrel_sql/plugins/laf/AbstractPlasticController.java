@@ -78,7 +78,6 @@ abstract class AbstractPlasticController extends DefaultLookAndFeelController
 		"com.jgoodies.looks.plastic.theme.SkyPink",
 		"com.jgoodies.looks.plastic.theme.SkyRed",
 		"com.jgoodies.looks.plastic.theme.SkyYellow",
-      "javax.swing.plaf.metal.OceanTheme"
 	};
 
    public static final String DEFAULT_PLASTIC_THEME_CLASS_NAME = PLASTIC_THEME_CLASS_NAMES[11]; // SkyBluer
