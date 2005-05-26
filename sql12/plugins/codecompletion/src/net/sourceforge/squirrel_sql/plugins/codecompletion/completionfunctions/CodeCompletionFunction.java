@@ -1,7 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion.completionfunctions;
 
 import net.sourceforge.squirrel_sql.plugins.codecompletion.CodeCompletionInfo;
-import net.sourceforge.squirrel_sql.plugins.codecompletion.CodeCompletionCandidates;
 
 
 public abstract class CodeCompletionFunction extends CodeCompletionInfo

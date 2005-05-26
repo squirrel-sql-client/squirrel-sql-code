@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
 
+
 public class CodeCompletionAutoCorrectInfo extends CodeCompletionInfo
 {
    private String _toCorrect;

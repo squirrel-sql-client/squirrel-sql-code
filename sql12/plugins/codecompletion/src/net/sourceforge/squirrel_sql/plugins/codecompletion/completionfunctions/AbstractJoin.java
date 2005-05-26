@@ -1,8 +1,8 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion.completionfunctions;
 
-import net.sourceforge.squirrel_sql.plugins.codecompletion.CodeCompletionInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
+import net.sourceforge.squirrel_sql.plugins.codecompletion.CodeCompletionInfo;
+import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 
 import java.util.*;
 import java.sql.SQLException;

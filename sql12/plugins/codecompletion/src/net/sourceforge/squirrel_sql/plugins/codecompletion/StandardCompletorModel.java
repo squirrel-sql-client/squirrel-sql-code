@@ -26,6 +26,7 @@ import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.completion.CompletionCandidates;
 
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -69,7 +70,7 @@ public class StandardCompletorModel
 		_codeCompletionInfos.replaceLastAliasInfos(aliasInfos);
 	}
 
-	CodeCompletionCandidates getCompletionCandidates(String textTillCarret)
+	CompletionCandidates getCompletionCandidates(String textTillCarret)
    {
       String stringToParse = getStringToParse(textTillCarret);
 
@@ -152,7 +153,7 @@ public class StandardCompletorModel
 
       int replacementStart = textTillCarret.length() - stringToReplace.length();
 
-      return new CodeCompletionCandidates(ccis, replacementStart, stringToReplace);
+      return new CompletionCandidates(ccis, replacementStart, stringToReplace);
    }
 
 

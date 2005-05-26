@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.completionfunctions.*;
+import net.sourceforge.squirrel_sql.fw.completion.CompletionCandidates;
 
 
 public class CompletionFunctionsModel
@@ -27,7 +28,7 @@ public class CompletionFunctionsModel
       return _completionFunctions;
    }
 
-   public CodeCompletionCandidates getCompletionCandidates(String textTillCarret)
+   public CompletionCandidates getCompletionCandidates(String textTillCarret)
    {
       int lastIndexOfLineFeed = textTillCarret.lastIndexOf('\n');
       int lastIndexOfHash = textTillCarret.lastIndexOf('#');
@@ -46,7 +47,7 @@ public class CompletionFunctionsModel
 
          if(null != functionResults)
          {
-            return new CodeCompletionCandidates(functionResults, lastIndexOfHash, functionSting);
+            return new CompletionCandidates(functionResults, lastIndexOfHash, functionSting);
          }
       }
       return null;

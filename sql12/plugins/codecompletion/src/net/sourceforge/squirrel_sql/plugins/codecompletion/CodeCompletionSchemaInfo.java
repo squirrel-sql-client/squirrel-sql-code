@@ -17,6 +17,7 @@
  */
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
+
 public class CodeCompletionSchemaInfo extends CodeCompletionInfo
 {
    private String _schema;
