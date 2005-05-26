@@ -18,8 +18,9 @@ package net.sourceforge.squirrel_sql.plugins.laf;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.util.Iterator;
+import java.util.Vector;
 
-import javax.swing.LookAndFeel;
+import javax.swing.*;
 import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.MetalTheme;
@@ -41,6 +42,18 @@ class MetalLookAndFeelController extends AbstractPlasticController
 		LoggerController.createLogger(MetalLookAndFeelController.class);
 
 	static final String METAL_LAF_CLASS_NAME = MetalLookAndFeel.class.getName();
+
+   protected static final String[] METAL_THEME_CLASS_NAMES = new String[]
+   {
+      "javax.swing.plaf.metal.OceanTheme", // Only available with JDK 1.5
+      "net.sourceforge.squirrel_sql.plugins.laf.swingsetthemes.AquaTheme",
+      "net.sourceforge.squirrel_sql.plugins.laf.swingsetthemes.CharcoalTheme",
+      "net.sourceforge.squirrel_sql.plugins.laf.swingsetthemes.ContrastTheme",
+      "net.sourceforge.squirrel_sql.plugins.laf.swingsetthemes.EmeraldTheme",
+      "net.sourceforge.squirrel_sql.plugins.laf.swingsetthemes.RubyTheme",
+   };
+
+
 
 	/** Preferences for this LAF. */
 	private MetalThemePreferences _prefs;
@@ -87,11 +100,42 @@ class MetalLookAndFeelController extends AbstractPlasticController
 	 */
 	MetalTheme[] getExtraThemes()
 	{
-		return new MetalTheme[] {_defaultMetalTheme};
+      ClassLoader cl = getLAFRegister().getLookAndFeelClassLoader();
+
+      Vector ret = new Vector();
+
+      boolean defaultThemeIsIncluded = false;
+
+      for (int i = 0; i < METAL_THEME_CLASS_NAMES.length; ++i)
+      {
+         try
+         {
+            Class clazz = cl.loadClass(METAL_THEME_CLASS_NAMES[i]);
+            ret.add((MetalTheme)clazz.newInstance());
+
+            if(null != _defaultMetalTheme && METAL_THEME_CLASS_NAMES[i].equals(_defaultMetalTheme.getClass().getName()))
+            {
+               defaultThemeIsIncluded = true;
+            }
+         }
+         catch (Throwable th)
+         {
+            s_log.error("Error loading theme " + METAL_THEME_CLASS_NAMES[i], th);
+         }
+      }
+
+      if(false == defaultThemeIsIncluded)
+      {
+         ret.add(_defaultMetalTheme);
+      }
+
+
+      return (MetalTheme[]) ret.toArray(new MetalTheme[ret.size()]);
 	}
 
 	void installCurrentTheme(LookAndFeel laf, MetalTheme theme)
 	{
+      UIManager.put("swing.boldMetal", Boolean.FALSE);
 		MetalLookAndFeel.setCurrentTheme(theme);
 	}
 
