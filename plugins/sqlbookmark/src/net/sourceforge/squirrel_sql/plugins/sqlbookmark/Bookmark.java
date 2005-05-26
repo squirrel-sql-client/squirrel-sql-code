@@ -29,7 +29,8 @@ public class Bookmark implements Cloneable {
     /** The name of the bookmark */
     protected String name;
 
-    /** The SQL for the bookmark */
+   private String description;
+   /** The SQL for the bookmark */
     protected String sql;
 
     public Bookmark() {
@@ -37,15 +38,20 @@ public class Bookmark implements Cloneable {
 	this.sql = null;
     }
 
-    public Bookmark(String name, String sql) {
-	this.name = name;
-	this.sql = sql;
+    public Bookmark(String name, String description ,String sql) {
+	   this.name = name;
+      this.description = description;
+      this.sql = sql;
     }
 
     public String getName() {
 	return name;
     }
-    
+
+    public String getDescription() {
+	return description;
+    }
+
     public String getSql() {
 	return sql;
     }
@@ -53,6 +59,10 @@ public class Bookmark implements Cloneable {
     public void setName(String name) {
 	this.name = name;
     }
+
+   public void setDescription(String description) {
+  this.description = description;
+   }
 
     public void setSql(String sql) {
 	this.sql = sql;

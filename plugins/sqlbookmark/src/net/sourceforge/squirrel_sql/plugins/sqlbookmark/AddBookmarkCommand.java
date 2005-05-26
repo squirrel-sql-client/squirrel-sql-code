@@ -26,6 +26,7 @@ import javax.swing.JOptionPane;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
@@ -44,9 +45,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * @author      Joseph Mocker
  **/
 public class AddBookmarkCommand implements ICommand {
-    private interface IAddKeys {
-	String BM_TITLE = "dialog.add.title";
-    }
 
     private static ILogger logger = 
 	LoggerController.createLogger(AddBookmarkCommand.class);
@@ -90,18 +88,19 @@ public class AddBookmarkCommand implements ICommand {
      */
     public void execute() {
         if (session != null) {
-	    String name = 
-		JOptionPane.showInputDialog(frame, plugin.getResourceString(IAddKeys.BM_TITLE));
-	    
-	    if (name == null || name.length() == 0)
-		return;
-	    
+           AddBookmarkDialog abd = new AddBookmarkDialog(frame, plugin);
+           GUIUtils.centerWithinParent(abd);
+           abd.setVisible(true);
+
+           if(false == abd.isOK())
+            return;
+
 	    String sql = session.getSessionInternalFrame().getSQLPanelAPI().getEntireSQLScript();
 	    
-	    logger.info("bookmark name: " + name);
+	    logger.info("bookmark name: " + abd.getName());
 	    logger.info("bookmark sql: " + sql);
 
-	    Bookmark bookmark = new Bookmark(name, sql);
+	    Bookmark bookmark = new Bookmark(abd.getBookmarkName(), abd.getDescription(), sql);
 	    
 	    if (!plugin.getBookmarkManager().add(bookmark))
 		plugin.addBookmarkItem(bookmark);

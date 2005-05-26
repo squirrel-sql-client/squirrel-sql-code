@@ -23,10 +23,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.util.Iterator;
+import java.util.prefs.Preferences;
 
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JSeparator;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
@@ -40,6 +39,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 
 /**
  * Main entry into the SQL Bookmark plugin. 
@@ -51,6 +51,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  * @author      Joseph Mocker
  **/
 public class SQLBookmarkPlugin extends DefaultSessionPlugin {
+   private static final String PREF_KEY_DEFAULT_BOOKMARKS_LOADED = "Squirrel.sqlbookmark.defaultbookmarksloaded";
 
    private interface IMenuResourceKeys {
 	String BOOKMARKS = "bookmarks";
@@ -73,8 +74,8 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin {
     /** The bookmark menu */
     private JMenu menu;
 
-    /** All the current bookmarks */
-    private BookmarkManager bookmarks;
+    /** All the current bookmarkManager */
+    private BookmarkManager bookmarkManager;
 
     /**
      * Returns the plugin version.
@@ -167,8 +168,8 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin {
      *
      * @return	the bookmark manager.
      */
-    protected BookmarkManager getBookmarkManager() {
-	return bookmarks;
+    BookmarkManager getBookmarkManager() {
+	return bookmarkManager;
     }
 
     /**
@@ -177,7 +178,7 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin {
      * @param bookmarks new manager to register.
      */
     protected void setBookmarkManager(BookmarkManager bookmarks) {
-	this.bookmarks = bookmarks;
+	this.bookmarkManager = bookmarks;
     }
     
     /**
@@ -208,14 +209,39 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin {
 	// Load resources such as menu items, etc...
 	resources = new SQLBookmarkResources(RESOURCE_PATH, this);
 	
-	bookmarks = new BookmarkManager(userSettingsFolder);
+	bookmarkManager = new BookmarkManager(userSettingsFolder);
 	// Load plugin preferences.
 	try {
-	    bookmarks.load();
+	    bookmarkManager.load();
+
+      if(false == Preferences.userRoot().getBoolean(PREF_KEY_DEFAULT_BOOKMARKS_LOADED, false))
+      {
+         Bookmark[] defaultBookmarks = DefaultBookmarksFactory.getDefaultBookmarks();
+
+         for (int i = 0; i < defaultBookmarks.length; i++)
+         {
+            if(null == bookmarkManager.get(defaultBookmarks[i].getName()))
+            {
+               bookmarkManager.add(defaultBookmarks[i]);
+            }
+            else
+            {
+               String altName = defaultBookmarks[i].getName() + "_1";
+               if(null == bookmarkManager.get(altName))
+               {
+                  defaultBookmarks[i].setName(altName);
+                  bookmarkManager.add(defaultBookmarks[i]);
+               }
+            }
+         }
+
+         Preferences.userRoot().putBoolean(PREF_KEY_DEFAULT_BOOKMARKS_LOADED, true);
+         getApplication().getMessageHandler().showMessage("Default bookmarks have been added. See menu File --> Global Preferences --> Bookmarks");
+      }
 	}
 	catch (IOException e) {
 	    if (!(e instanceof FileNotFoundException))
-		logger.error("Problem loading bookmarks", e);
+		logger.error("Problem loading bookmarkManager", e);
 	}
 	
 	ActionCollection coll = app.getActionCollection();
@@ -228,6 +254,22 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin {
 
    public PluginSessionCallback sessionStarted(ISession session)
    {
+
+      ISQLPanelAPI sqlPaneAPI = session.getSessionInternalFrame().getSQLPanelAPI();
+      CompleteBookmarkAction cba = new CompleteBookmarkAction(session.getApplication(), resources, sqlPaneAPI.getSQLEntryPanel(), session, this);
+
+      JMenuItem item = sqlPaneAPI.addToSQLEntryAreaMenu(cba);
+
+      ActionCollection coll = getApplication().getActionCollection();
+      session.addSeparatorToToolbar();
+      session.addToToolbar(coll.get(AddBookmarkAction.class));
+
+      resources.configureMenuItem(cba, item);
+      JComponent comp = sqlPaneAPI.getSQLEntryPanel().getTextComponent();
+      comp.registerKeyboardAction(cba, resources.getKeyStroke(cba), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+
+
       PluginSessionCallback ret = new PluginSessionCallback()
       {
          public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
@@ -257,7 +299,7 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin {
 	resources.addToMenu(coll.get(AddBookmarkAction.class), menu);
 	menu.add(new JSeparator());
 
-	for (Iterator i = bookmarks.iterator(); i.hasNext(); ) {
+	for (Iterator i = bookmarkManager.iterator(); i.hasNext(); ) {
 	    Object o = i.next();
 	    logger.error(o.getClass().getName());
 	    Bookmark bookmark = (Bookmark) o;

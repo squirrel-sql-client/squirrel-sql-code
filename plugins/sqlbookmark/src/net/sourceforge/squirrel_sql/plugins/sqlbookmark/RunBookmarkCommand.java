@@ -45,6 +45,7 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -106,10 +107,27 @@ public class RunBookmarkCommand implements ICommand {
         if (session != null) {
 	    logger.info("running sql: " + bookmark.getSql());
 	    String sql = parseAndLoadSql(bookmark.getSql());
-	    
-	    session.getSessionInternalFrame().getSQLPanelAPI().setEntireSQLScript(sql);
-        }
+
+       if(null != sql){
+
+       ISQLEntryPanel sqlEntryPanel = session.getSessionInternalFrame().getSQLPanelAPI().getSQLEntryPanel();
+       int caretPosition = sqlEntryPanel.getCaretPosition();
+       sqlEntryPanel.replaceSelection(sql);
+       sqlEntryPanel.setCaretPosition(caretPosition + sql.length());
+         }
+       }
     }
+
+   public String executeAndReturnSQL() {
+      if (session != null) {
+     logger.info("running sql: " + bookmark.getSql());
+     return parseAndLoadSql(bookmark.getSql());
+      }
+      else{
+         return null;
+      }
+   }
+
 
     /**
      * Parse the SQL and prompt the user for entry values.
@@ -176,11 +194,12 @@ public class RunBookmarkCommand implements ICommand {
 		parameters.add(parameter);
 	    if (parameter.id != null)
 		paramsById.put(parameter.id, parameter);
-	    
+
 	    itemsInSql.add(parameter);
 	}
 	itemsInSql.add(sql.substring(start));
 
+   DoneAction doneAction = null;
 	//
 	// If there are parameters in the SQL string, then we need
 	// to prompt for some answers.
@@ -189,13 +208,13 @@ public class RunBookmarkCommand implements ICommand {
 	    JDialog dialog = new JDialog(frame, "Query Parameters", true);
 	    Container contentPane = dialog.getContentPane();
 	    contentPane.setLayout(new BorderLayout());
-	    
+
 	    PropertyPanel propPane = new PropertyPanel();
 	    contentPane.add(propPane, BorderLayout.CENTER);
-	    
+
 	    for (idx = 0; idx < parameters.size(); idx++) {
 		Parameter parameter = (Parameter) parameters.get(idx);
-		
+
 		JLabel label = new JLabel(parameter.prompt + ":",
 					  SwingConstants.RIGHT);
 		if (parameter.tip != null)
@@ -203,39 +222,50 @@ public class RunBookmarkCommand implements ICommand {
 
 		JTextField value = new JTextField(20);
 		propPane.add(label, value);
-		
+
 		parameter.value = value;
 	    }
-	    
+
 	    JPanel actionPane = new JPanel();
 	    contentPane.add(actionPane, BorderLayout.SOUTH);
 	    JButton done = new JButton("OK");
 	    actionPane.add(done);
-	    done.addActionListener(new DoneAction(dialog));
+       doneAction = new DoneAction(dialog);
+       done.addActionListener(doneAction);
+       dialog.getRootPane().setDefaultButton(done);
 	    dialog.setLocationRelativeTo(frame);
 	    dialog.pack();
 	    dialog.setVisible(true);
 	}
 
-	//
-	// No go through the parse SQL and build the final SQL replacing
-	// parameters with values is goes.
-	//
-	StringBuffer sqlbuf = new StringBuffer();
-	for (idx = 0; idx < itemsInSql.size(); idx++) {
-	    Object item = itemsInSql.get(idx);
-	    if (item instanceof String) 
-		sqlbuf.append((String) item);
-	    if (item instanceof Parameter) {
-		Parameter parameter = (Parameter) item;
-		if (parameter.reference != null)
-		    parameter = (Parameter) paramsById.get(parameter.reference);
-		
-		sqlbuf.append(parameter.value.getText());
-	    }
-	}
+   if(null == doneAction || doneAction.actionExecuted())
+   {
+      //
+      // No go through the parse SQL and build the final SQL replacing
+      // parameters with values is goes.
+      //
+      StringBuffer sqlbuf = new StringBuffer();
+      for (idx = 0; idx < itemsInSql.size(); idx++) {
+          Object item = itemsInSql.get(idx);
+          if (item instanceof String)
+         sqlbuf.append((String) item);
+          if (item instanceof Parameter) {
+         Parameter parameter = (Parameter) item;
+         if (parameter.reference != null)
+             parameter = (Parameter) paramsById.get(parameter.reference);
 
-	return sqlbuf.toString();
+         sqlbuf.append(parameter.value.getText());
+          }
+      }
+
+      return sqlbuf.toString();
+
+   }
+   else
+   {
+      return null;
+   }
+
     }
 
     /**
@@ -255,15 +285,21 @@ public class RunBookmarkCommand implements ICommand {
     class DoneAction implements ActionListener {
 
 	JDialog dialog = null;
-	
-	public DoneAction(JDialog dialog) {
+       private boolean _actionExecuted;
+
+       public DoneAction(JDialog dialog) {
 	    super();
 	    this.dialog = dialog;
 	}
 	 
 	public void actionPerformed(ActionEvent e) {
-	    dialog.hide();
+	   _actionExecuted = true;
+      dialog.dispose();
 	}
+
+    public boolean actionExecuted(){
+       return _actionExecuted;
     }
+   }
 	
 }
