@@ -77,6 +77,10 @@ public class NetbeansSQLEditorPane extends JEditorPane
       // we must remove this binding here.
       KeyStroke ctrlEnterStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, java.awt.event.InputEvent.CTRL_MASK);
       getKeymap().removeKeyStrokeBinding(ctrlEnterStroke);
+
+      // Removed for the SQLBookmark Plugin
+      KeyStroke ctrlJStroke = KeyStroke.getKeyStroke(KeyEvent.VK_J, java.awt.event.InputEvent.CTRL_MASK);
+      getKeymap().removeKeyStrokeBinding(ctrlJStroke);
       //
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -115,6 +119,10 @@ public class NetbeansSQLEditorPane extends JEditorPane
       // we must remove this binding here.
       KeyStroke ctrlEnterStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, java.awt.event.InputEvent.CTRL_MASK);
       getKeymap().removeKeyStrokeBinding(ctrlEnterStroke);
+
+      // Removed for the SQLBookmark Plugin
+      KeyStroke ctrlJStroke = KeyStroke.getKeyStroke(KeyEvent.VK_J, java.awt.event.InputEvent.CTRL_MASK);
+      getKeymap().removeKeyStrokeBinding(ctrlJStroke);
       //
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
