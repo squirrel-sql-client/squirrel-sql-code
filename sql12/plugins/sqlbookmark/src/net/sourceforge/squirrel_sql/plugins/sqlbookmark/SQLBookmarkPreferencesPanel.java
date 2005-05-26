@@ -23,11 +23,7 @@ import java.util.Iterator;
 import java.util.ArrayList;
 import java.io.IOException;
 
-import java.awt.Frame;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.Box;
@@ -190,6 +186,11 @@ public class SQLBookmarkPreferencesPanel implements IGlobalPreferencesPanel {
 	JScrollPane viewport = new JScrollPane(markList);
 	main.add(viewport, BorderLayout.CENTER);
 
+   JLabel lblAccesshint = new JLabel(plugin.getResourceString(AddBookmarkDialog.BM_ACCESS_HINT));
+   lblAccesshint.setForeground(Color.red);
+   main.add(lblAccesshint, BorderLayout.SOUTH);
+
+
 	JPanel buttonPane = new JPanel(new GridLayout(0,1));
 	JButton up = new JButton(plugin.getResourceString(IPrefKeys.BM_UP));
 	buttonPane.add(up);
@@ -224,6 +225,7 @@ public class SQLBookmarkPreferencesPanel implements IGlobalPreferencesPanel {
     class EntryDialog extends JDialog {
 
 	JTextField name;
+	JTextField description;
 	JTextArea sql;
 	JButton action;
 	JButton cancel;
@@ -235,7 +237,7 @@ public class SQLBookmarkPreferencesPanel implements IGlobalPreferencesPanel {
 	 * @param    owner The frame the dialog will be centered in
 	 */
 	public EntryDialog(Frame owner) {
-	    super();
+	    super(owner);
 	    setModal(true);
 	    Container contentPane = getContentPane();
 	    contentPane.setLayout(new BorderLayout());
@@ -245,6 +247,9 @@ public class SQLBookmarkPreferencesPanel implements IGlobalPreferencesPanel {
 
 	    name = new JTextField(30);
 	    propPane.add(new JLabel("Name:"), name);
+
+       description = new JTextField();
+	    propPane.add(new JLabel("Description:"), description);
 
 	    sql = new JTextArea(5,30);
 	    sql.setLineWrap(true);
@@ -260,6 +265,8 @@ public class SQLBookmarkPreferencesPanel implements IGlobalPreferencesPanel {
 	    cancel = new JButton("Close");
 	    actionPane.add(cancel);
 	    cancel.addActionListener(new CancelAction(this));
+
+       getRootPane().setDefaultButton(action);
 
 	    pack();
 	}
@@ -346,6 +353,7 @@ public class SQLBookmarkPreferencesPanel implements IGlobalPreferencesPanel {
 	    if (item >= 0) {
 		mark = (Bookmark) admin.updatedMarks.get(item);
 		entryDialog.name.setText(mark.getName());
+		entryDialog.description.setText(mark.getDescription());
 		entryDialog.sql.setText(mark.getSql());
 	    }
 
@@ -377,6 +385,7 @@ public class SQLBookmarkPreferencesPanel implements IGlobalPreferencesPanel {
 	    
 	    mark = new Bookmark();
 	    mark.setName(entryDialog.name.getText());
+	    mark.setDescription(entryDialog.description.getText());
 	    mark.setSql(entryDialog.sql.getText());
 
 	    if (item < 0) {
@@ -410,6 +419,7 @@ public class SQLBookmarkPreferencesPanel implements IGlobalPreferencesPanel {
 	    if (entry()) return;
 	    
 	    mark.setName(entryDialog.name.getText());
+	    mark.setDescription(entryDialog.description.getText());
 	    mark.setSql(entryDialog.sql.getText());
 	    admin.markModel.setElementAt(mark.getName(), item);
 	}

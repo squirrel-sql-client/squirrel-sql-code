@@ -26,14 +26,14 @@ import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.Properties;
-import java.util.Iterator;
+import java.util.*;
 
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
+import net.sourceforge.squirrel_sql.fw.completion.ICompletorModel;
+import net.sourceforge.squirrel_sql.fw.completion.CompletionCandidates;
+import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 
 /**
  * Manages the users bookmarks. Including loading and saving to 
@@ -41,7 +41,10 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLException;
  *
  * @author      Joseph Mocker
  **/
-public class BookmarkManager {
+public class BookmarkManager implements ICompletorModel{
+
+    private static final char[] SEPARATORS = {' ', '\t', '\n' ,  ',', '('};
+
 
     /** The file to save/load bookmarks to/from */
     private File bookmarkFile;
@@ -133,4 +136,84 @@ public class BookmarkManager {
     protected Iterator iterator() {
 	return bookmarks.iterator();
     }
+
+   public CompletionCandidates getCompletionCandidates(String textTillCarret)
+   {
+      String stringToParse = getStringToParse(textTillCarret);
+      ArrayList ret = new ArrayList();
+
+      int maxNameLen = 0;
+      for (int i = 0; i < bookmarks.size(); i++)
+      {
+         Bookmark bookmark = (Bookmark) bookmarks.get(i);
+         if(bookmark.getName().startsWith(stringToParse))
+         {
+            ret.add(new BookmarkCompletionInfo(bookmark));
+            maxNameLen = Math.max(maxNameLen, bookmark.getName().length());
+         }
+      }
+
+      BookmarkCompletionInfo[] candidates = (BookmarkCompletionInfo[]) ret.toArray(new BookmarkCompletionInfo[ret.size()]);
+
+      for (int i = 0; i < candidates.length; i++)
+      {
+         candidates[i].setMaxCandidateNameLen(maxNameLen);
+
+      }
+
+      int replacementStart = textTillCarret.length() - stringToParse.length();
+
+      return new CompletionCandidates(candidates, replacementStart, "");
+   }
+
+
+   private String getStringToParse(String textTillCaret)
+   {
+
+      int lastIndexOfLineFeed = textTillCaret.lastIndexOf('\n');
+      String lineTillCaret;
+
+      if(-1 == lastIndexOfLineFeed)
+      {
+         lineTillCaret = textTillCaret;
+      }
+      else
+      {
+         lineTillCaret = textTillCaret.substring(lastIndexOfLineFeed);
+      }
+
+      String beginning = "";
+      if (0 != lineTillCaret.trim().length() && !Character.isWhitespace(lineTillCaret.charAt(lineTillCaret.length() - 1)))
+      {
+         String trimmedLineTillCaret = lineTillCaret.trim();
+
+         int lastSeparatorIndex = getLastSeparatorIndex(trimmedLineTillCaret);
+         if (-1 == lastSeparatorIndex)
+         {
+            beginning = trimmedLineTillCaret;
+         }
+         else
+         {
+            beginning = trimmedLineTillCaret.substring(lastSeparatorIndex + 1, trimmedLineTillCaret.length());
+         }
+      }
+
+      return beginning;
+   }
+
+   private int getLastSeparatorIndex(String str)
+   {
+      int lastSeparatorIndex = -1;
+      for(int i=0; i < SEPARATORS.length; ++i)
+      {
+         int buf = str.lastIndexOf(SEPARATORS[i]);
+         if(buf > lastSeparatorIndex)
+         {
+            lastSeparatorIndex = buf;
+         }
+      }
+      return lastSeparatorIndex;
+   }
+
+
 }
