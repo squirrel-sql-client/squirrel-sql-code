@@ -70,8 +70,9 @@ public class RunBookmarkCommand implements ICommand {
     
     /** The bookmark to run */
     private Bookmark bookmark;
+   private ISQLEntryPanel _sqlEntryPanel;
 
-    /**
+   /**
      * Ctor.
      *
      * @param   frame   Parent Frame.
@@ -79,15 +80,17 @@ public class RunBookmarkCommand implements ICommand {
      * @param   bookmark The bookmark to run.
      * @param   plugin  The current plugin.
      *
+     * @param sqlEntryPanel
      * @throws  IllegalArgumentException
      *          Thrown if a <TT>null</TT> <TT>ISession</TT> or <TT>IPlugin</TT>
      *          passed.
      */
-    public RunBookmarkCommand(Frame frame, ISession session, 
-			      Bookmark bookmark, SQLBookmarkPlugin plugin)
+    public RunBookmarkCommand(Frame frame, ISession session,
+                              Bookmark bookmark, SQLBookmarkPlugin plugin, ISQLEntryPanel sqlEntryPanel)
         throws IllegalArgumentException {
         super();
-        if (session == null) {
+      _sqlEntryPanel = sqlEntryPanel;
+      if (session == null) {
             throw new IllegalArgumentException("Null ISession passed");
         }
         if (plugin == null) {
@@ -110,23 +113,12 @@ public class RunBookmarkCommand implements ICommand {
 
        if(null != sql){
 
-       ISQLEntryPanel sqlEntryPanel = session.getSessionInternalFrame().getSQLPanelAPI().getSQLEntryPanel();
-       int caretPosition = sqlEntryPanel.getCaretPosition();
-       sqlEntryPanel.replaceSelection(sql);
-       sqlEntryPanel.setCaretPosition(caretPosition + sql.length());
+       int caretPosition = _sqlEntryPanel.getCaretPosition();
+       _sqlEntryPanel.replaceSelection(sql);
+       _sqlEntryPanel.setCaretPosition(caretPosition + sql.length());
          }
        }
     }
-
-   public String executeAndReturnSQL() {
-      if (session != null) {
-     logger.info("running sql: " + bookmark.getSql());
-     return parseAndLoadSql(bookmark.getSql());
-      }
-      else{
-         return null;
-      }
-   }
 
 
     /**

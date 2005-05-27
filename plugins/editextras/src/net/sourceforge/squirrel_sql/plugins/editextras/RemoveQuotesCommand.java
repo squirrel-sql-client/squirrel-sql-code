@@ -37,27 +37,24 @@ class RemoveQuotesCommand implements ICommand
 
 	public void execute() throws BaseException
 	{
-		String textToUnquote = _api.getSelectedSQLScript();
-		boolean isSelection = true;
-		if (null == textToUnquote)
-		{
-			textToUnquote = _api.getEntireSQLScript();
-			isSelection = false;
-		}
+      int[] bounds = _api.getSQLEntryPanel().getBoundsOfSQLToBeExecuted();
+
+      if(bounds[0] == bounds[1])
+      {
+         return;
+      }
+
+      String textToUnquote = _api.getSQLEntryPanel().getSQLToBeExecuted();
+
 		if (null == textToUnquote)
 		{
 			return;
 		}
 
-		String quotedText = Utilities.unquoteText(textToUnquote);
+		String unquotedText = Utilities.unquoteText(textToUnquote);
 
-		if (isSelection)
-		{
-			_api.replaceSelectedSQLScript(quotedText, true);
-		}
-		else
-		{
-			_api.setEntireSQLScript(quotedText);
-		}
+      _api.getSQLEntryPanel().setSelectionStart(bounds[0]);
+      _api.getSQLEntryPanel().setSelectionEnd(bounds[1]);
+      _api.getSQLEntryPanel().replaceSelection(unquotedText);
 	}
 }

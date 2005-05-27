@@ -26,8 +26,10 @@ public class DefaultBookmarksFactory
          "ALTER TABLE MyChild\n" +
          "ADD CONSTRAINT FK_MyParent\n" +
          "FOREIGN KEY (ParentPK1InChild, ParentPK2InChild)\n" +
-         "REFERENCES MyParent (ParentPK1, ParentPK2)\n"}
+         "REFERENCES MyParent (ParentPK1, ParentPK2)\n"},
 
+      {"paramexample", "bookmark with parameters",
+         "SELECT * FROM MyTable WHERE MyID1 = ${Value of MyID1}\n"}
    };
 
    static Bookmark[] getDefaultBookmarks()

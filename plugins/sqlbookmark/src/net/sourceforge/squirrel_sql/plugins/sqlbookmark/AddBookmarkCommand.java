@@ -32,6 +32,9 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -87,7 +90,26 @@ public class AddBookmarkCommand implements ICommand {
      * Execute the addition of the bookmark.
      */
     public void execute() {
-        if (session != null) {
+        if (session == null) {
+           return;
+        }
+
+       ISQLEntryPanel sqlEntryPanel;
+
+       if(session.getActiveSessionWindow() instanceof SessionInternalFrame)
+       {
+          sqlEntryPanel = ((SessionInternalFrame)session.getActiveSessionWindow()).getSQLPanelAPI().getSQLEntryPanel();
+       }
+       else if(session.getActiveSessionWindow() instanceof SQLInternalFrame)
+       {
+          sqlEntryPanel = ((SQLInternalFrame)session.getActiveSessionWindow()).getSQLPanelAPI().getSQLEntryPanel();
+       }
+       else
+       {
+          return;
+       }
+
+
            AddBookmarkDialog abd = new AddBookmarkDialog(frame, plugin);
            GUIUtils.centerWithinParent(abd);
            abd.setVisible(true);
@@ -95,7 +117,7 @@ public class AddBookmarkCommand implements ICommand {
            if(false == abd.isOK())
             return;
 
-	    String sql = session.getSessionInternalFrame().getSQLPanelAPI().getEntireSQLScript();
+	    String sql = sqlEntryPanel.getSQLToBeExecuted();
 	    
 	    logger.info("bookmark name: " + abd.getName());
 	    logger.info("bookmark sql: " + sql);
@@ -111,7 +133,6 @@ public class AddBookmarkCommand implements ICommand {
 	    catch (IOException e) {
 		logger.error("Problem saving bookmarks", e);
 	    }
-        }
     }
 
 }

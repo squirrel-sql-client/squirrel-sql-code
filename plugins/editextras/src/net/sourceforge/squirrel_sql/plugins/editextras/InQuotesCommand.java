@@ -37,13 +37,15 @@ class InQuotesCommand implements ICommand
 
 	public void execute() throws BaseException
 	{
-		String textToQuote = _api.getSelectedSQLScript();
-		boolean isSelection = true;
-		if (null == textToQuote)
-		{
-			textToQuote = _api.getEntireSQLScript();
-			isSelection = false;
-		}
+      int[] bounds = _api.getSQLEntryPanel().getBoundsOfSQLToBeExecuted();
+
+      if(bounds[0] == bounds[1])
+      {
+         return;
+      }
+
+      String textToQuote = _api.getSQLEntryPanel().getSQLToBeExecuted();
+
 		if (null == textToQuote)
 		{
 			return;
@@ -51,13 +53,8 @@ class InQuotesCommand implements ICommand
 
 		String quotedText = Utilities.quoteText(textToQuote, false);
 
-		if (isSelection)
-		{
-			_api.replaceSelectedSQLScript(quotedText, true);
-		}
-		else
-		{
-			_api.setEntireSQLScript(quotedText);
-		}
+      _api.getSQLEntryPanel().setSelectionStart(bounds[0]);
+      _api.getSQLEntryPanel().setSelectionEnd(bounds[1]);
+      _api.getSQLEntryPanel().replaceSelection(quotedText);
 	}
 }

@@ -233,6 +233,9 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 		session.addToToolbar(coll.get(SaveScriptAsAction.class));
 		session.addToToolbar(coll.get(CreateTableOfCurrentSQLAction.class));
 
+      session.getSessionInternalFrame().addToToolsPopUp("sql2table", coll.get(CreateTableOfCurrentSQLAction.class));
+      session.getSessionInternalFrame().addToToolsPopUp("sql2ins", coll.get(CreateDataScriptOfCurrentSQLAction.class));
+
       PluginSessionCallback ret = new PluginSessionCallback()
       {
          public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
@@ -242,6 +245,10 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
             sqlInternalFrame.addToToolbar(coll.get(SaveScriptAction.class));
             sqlInternalFrame.addToToolbar(coll.get(SaveScriptAsAction.class));
             sqlInternalFrame.addToToolbar(coll.get(CreateTableOfCurrentSQLAction.class));
+
+            sqlInternalFrame.addToToolsPopUp("sql2table", coll.get(CreateTableOfCurrentSQLAction.class));
+            sqlInternalFrame.addToToolsPopUp("sql2ins", coll.get(CreateDataScriptOfCurrentSQLAction.class));
+
          }
 
          public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)

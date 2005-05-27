@@ -20,29 +20,20 @@ package net.sourceforge.squirrel_sql.client.gui.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Window;
-import java.awt.event.FocusEvent;
-import java.util.Vector;
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.ISQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.*;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
+import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
-
-import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.session.ISQLInternalFrame;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
-import net.sourceforge.squirrel_sql.client.session.action.GotoNextResultsTabAction;
-import net.sourceforge.squirrel_sql.client.session.action.GotoPreviousResultsTabAction;
-import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
-import net.sourceforge.squirrel_sql.client.session.action.ShowNativeSQLAction;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
+import java.awt.*;
 
 /* JASON: Class*/
 public class SQLInternalFrame extends BaseSessionInternalFrame
@@ -55,7 +46,7 @@ public class SQLInternalFrame extends BaseSessionInternalFrame
 	/** Toolbar for window. */
 	private SQLToolBar _toolBar;
 
-	public SQLInternalFrame(ISession session)
+   public SQLInternalFrame(ISession session)
 	{
 		super(session, session.getTitle(), true, true, true, true);
 		_app = session.getApplication();
@@ -137,6 +128,7 @@ public class SQLInternalFrame extends BaseSessionInternalFrame
 		validate();
 	}
 
+
    public void requestFocus()
    {
       SwingUtilities.invokeLater(new Runnable()
@@ -163,6 +155,11 @@ public class SQLInternalFrame extends BaseSessionInternalFrame
       {
          _toolBar.add(action);
       }
+   }
+
+   public void addToToolsPopUp(String selectionString, Action action)
+   {
+      getSQLPanelAPI().addToToolsPopUp(selectionString, action);
    }
 
    /** The class representing the toolbar at the top of a sql internal frame*/

@@ -37,7 +37,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public abstract class Resources
 {
-	private interface ActionProperties
+   public static final String ACCELERATOR_STRING = "SQuirreLAcceleratorString";
+
+   private interface ActionProperties
 	{
 		String DISABLED_IMAGE = "disabledimage";
 		String IMAGE = "image";
@@ -96,6 +98,21 @@ public abstract class Resources
 		}
 		return null;
 	}
+
+   private String getAcceleratorString(Action action)
+   {
+      try
+      {
+         final String fullKey = Keys.MENU_ITEM + "." + action.getClass().getName();
+         return getResourceString(fullKey, MenuItemProperties.ACCELERATOR);
+      }
+      catch (MissingResourceException e)
+      {
+         return null;
+      }
+   }
+
+
 
 	public JMenuItem addToPopupMenu(Action action, JPopupMenu menu)
 		throws MissingResourceException
@@ -177,7 +194,14 @@ public abstract class Resources
 		action.putValue(Action.SHORT_DESCRIPTION,
 						getResourceString(key, ActionProperties.TOOLTIP));
 
-		Icon icon = null;
+      String accelerator = getAcceleratorString(action);
+      if(null != accelerator)
+      {
+         action.putValue(ACCELERATOR_STRING, accelerator);
+      }
+
+
+      Icon icon = null;
 		try
 		{
 			if (showColoricons == true)

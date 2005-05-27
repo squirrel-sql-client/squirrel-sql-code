@@ -43,10 +43,7 @@ import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
  **/
 public class BookmarkManager implements ICompletorModel{
 
-    private static final char[] SEPARATORS = {' ', '\t', '\n' ,  ',', '('};
-
-
-    /** The file to save/load bookmarks to/from */
+   /** The file to save/load bookmarks to/from */
     private File bookmarkFile;
 
     /** List of all the loaded bookmarks */
@@ -137,16 +134,15 @@ public class BookmarkManager implements ICompletorModel{
 	return bookmarks.iterator();
     }
 
-   public CompletionCandidates getCompletionCandidates(String textTillCarret)
+   public CompletionCandidates getCompletionCandidates(String bookmarkNameBegin)
    {
-      String stringToParse = getStringToParse(textTillCarret);
-      ArrayList ret = new ArrayList();
+      Vector ret = new Vector();
 
       int maxNameLen = 0;
       for (int i = 0; i < bookmarks.size(); i++)
       {
          Bookmark bookmark = (Bookmark) bookmarks.get(i);
-         if(bookmark.getName().startsWith(stringToParse))
+         if(bookmark.getName().startsWith(bookmarkNameBegin))
          {
             ret.add(new BookmarkCompletionInfo(bookmark));
             maxNameLen = Math.max(maxNameLen, bookmark.getName().length());
@@ -158,62 +154,8 @@ public class BookmarkManager implements ICompletorModel{
       for (int i = 0; i < candidates.length; i++)
       {
          candidates[i].setMaxCandidateNameLen(maxNameLen);
-
       }
 
-      int replacementStart = textTillCarret.length() - stringToParse.length();
-
-      return new CompletionCandidates(candidates, replacementStart, "");
+      return new CompletionCandidates(candidates);
    }
-
-
-   private String getStringToParse(String textTillCaret)
-   {
-
-      int lastIndexOfLineFeed = textTillCaret.lastIndexOf('\n');
-      String lineTillCaret;
-
-      if(-1 == lastIndexOfLineFeed)
-      {
-         lineTillCaret = textTillCaret;
-      }
-      else
-      {
-         lineTillCaret = textTillCaret.substring(lastIndexOfLineFeed);
-      }
-
-      String beginning = "";
-      if (0 != lineTillCaret.trim().length() && !Character.isWhitespace(lineTillCaret.charAt(lineTillCaret.length() - 1)))
-      {
-         String trimmedLineTillCaret = lineTillCaret.trim();
-
-         int lastSeparatorIndex = getLastSeparatorIndex(trimmedLineTillCaret);
-         if (-1 == lastSeparatorIndex)
-         {
-            beginning = trimmedLineTillCaret;
-         }
-         else
-         {
-            beginning = trimmedLineTillCaret.substring(lastSeparatorIndex + 1, trimmedLineTillCaret.length());
-         }
-      }
-
-      return beginning;
-   }
-
-   private int getLastSeparatorIndex(String str)
-   {
-      int lastSeparatorIndex = -1;
-      for(int i=0; i < SEPARATORS.length; ++i)
-      {
-         int buf = str.lastIndexOf(SEPARATORS[i]);
-         if(buf > lastSeparatorIndex)
-         {
-            lastSeparatorIndex = buf;
-         }
-      }
-      return lastSeparatorIndex;
-   }
-
-
 }

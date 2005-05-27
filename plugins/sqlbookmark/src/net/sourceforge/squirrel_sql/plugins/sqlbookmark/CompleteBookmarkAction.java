@@ -45,14 +45,14 @@ public class CompleteBookmarkAction extends SquirrelAction
       _session = session;
       _plugin = plugin;
 
-      _cc = new Completor((JTextComponent)_sqlEntryPanel.getTextComponent(), plugin.getBookmarkManager(), new Color(204,255,255));
+      _cc = new Completor((JTextComponent)_sqlEntryPanel.getTextComponent(), plugin.getBookmarkManager(), new Color(204,255,255), true);
 
       _cc.addCodeCompletorListener
       (
          new CompletorListener()
          {
             public void completionSelected(CompletionInfo completion, int replaceBegin)
-            {performCompletionSelected(completion, replaceBegin);}
+            {performCompletionSelected(completion);}
          }
       );
    }
@@ -65,18 +65,9 @@ public class CompleteBookmarkAction extends SquirrelAction
 
 
 
-   private void performCompletionSelected(CompletionInfo completion, int replaceBegin)
+   private void performCompletionSelected(CompletionInfo completion)
    {
       Bookmark bm = ((BookmarkCompletionInfo)completion).getBookmark();
-
-      String sql =
-         new RunBookmarkCommand(getApplication().getMainFrame(), _session, bm, _plugin).executeAndReturnSQL();
-
-      if(null != sql)
-      {
-         _sqlEntryPanel.setSelectionStart(replaceBegin);
-         _sqlEntryPanel.setSelectionEnd(_sqlEntryPanel.getCaretPosition());
-         _sqlEntryPanel.replaceSelection(sql);
-      }
+      new RunBookmarkCommand(getApplication().getMainFrame(), _session, bm, _plugin, _sqlEntryPanel).execute();
 	}
 }

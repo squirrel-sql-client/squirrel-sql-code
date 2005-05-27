@@ -24,8 +24,7 @@ import java.awt.Window;
 import java.awt.event.FocusEvent;
 import java.beans.PropertyVetoException;
 
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
@@ -66,6 +65,27 @@ public class SessionInternalFrame extends BaseSessionInternalFrame
 	{
 		return _sessionPanel.getObjectTreePanel();
 	}
+
+   /**
+	 * Add the passed action to the toolbar of the sessions main window.
+	 *
+	 * @param	action	Action to be added.
+	 */
+	void addToToolbar(Action action)
+   {
+      _sessionPanel.addToToolbar(action);
+   }
+
+   public void addSeparatorToToolbar()
+   {
+      _sessionPanel.addSeparatorToToolbar();
+   }
+
+   public void addToToolsPopUp(String selectionString, Action action)
+   {
+      _sessionPanel.addToToolsPopUp(selectionString, action);
+   }
+
 
 	public void setSelected(boolean selected)
 			throws PropertyVetoException

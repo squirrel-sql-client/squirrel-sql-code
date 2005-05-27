@@ -184,6 +184,13 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
    {
       sqlPanelAPI.addSQLPanelListener(_lis);
       createSQLEntryAreaPopMenuItems(sqlPanelAPI);
+
+      ActionCollection actions = getApplication().getActionCollection();
+      sqlPanelAPI.addToToolsPopUp("quote", actions.get(InQuotesAction.class));
+      sqlPanelAPI.addToToolsPopUp("unquote", actions.get(RemoveQuotesAction.class));
+      sqlPanelAPI.addToToolsPopUp("quotesb", actions.get(ConvertToStringBufferAction.class));
+      sqlPanelAPI.addToToolsPopUp("format", actions.get(FormatSQLAction.class));
+      sqlPanelAPI.addToToolsPopUp("date", actions.get(EscapeDateAction.class));
    }
 
    /**

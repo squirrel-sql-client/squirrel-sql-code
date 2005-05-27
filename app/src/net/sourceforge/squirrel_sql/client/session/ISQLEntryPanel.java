@@ -97,6 +97,8 @@ public interface ISQLEntryPanel extends IHasIdentifier
 	void replaceSelection(String sqlScript);
 
 	String getSQLToBeExecuted();
+   int[] getBoundsOfSQLToBeExecuted();
+
 
 	int getSelectionStart();
 	void setSelectionStart(int pos);

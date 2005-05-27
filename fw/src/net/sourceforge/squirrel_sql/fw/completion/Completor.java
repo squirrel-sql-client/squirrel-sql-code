@@ -37,7 +37,7 @@ public class Completor
 
 	private Rectangle _curCompletionPanelSize;
 	private PopupManager _popupMan;
-	private JTextComponent _txtComp;
+	private TextComponentProvider _txtComp;
 
 	private MouseAdapter _listMouseAdapter;
 	private KeyListener _listKeyListener;
@@ -63,12 +63,12 @@ public class Completor
 
    public Completor(JTextComponent txtComp, ICompletorModel model)
    {
-      this(txtComp, model, new Color(255,255,204)); // light yellow
+      this(txtComp, model, new Color(255,255,204), false); // light yellow
    }
 
-   public Completor(JTextComponent txtComp, ICompletorModel model, Color popUpBackGround)
+   public Completor(JTextComponent txtComp, ICompletorModel model, Color popUpBackGround, boolean useOwnFilterTextField)
 	{
-		_txtComp = txtComp;
+		_txtComp = new TextComponentProvider(txtComp, useOwnFilterTextField);
 		_model = model;
 
 		_completionPanel =
@@ -76,7 +76,7 @@ public class Completor
 			{
 				public void setSize(int width, int height)
 				{
-					// without this the completion pnels size will be weird
+					// without this the completion panel's size will be weird
 					super.setSize(_curCompletionPanelSize.width, _curCompletionPanelSize.height);
 				}
 			};
@@ -85,6 +85,15 @@ public class Completor
 		_completionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		_completionList.setBackground(popUpBackGround);
 
+      _completionList.addFocusListener(new FocusAdapter()
+      {
+         public void focusGained(FocusEvent e)
+         {
+            onCompletionListFocusGained(e);
+         }
+      });
+
+      
 		_listMouseAdapter =
 			new MouseAdapter()
 			{
@@ -98,13 +107,31 @@ public class Completor
 			};
 
 		_completionListScrollPane = new JScrollPane(_completionList);
-		_completionPanel.add(_completionListScrollPane, BorderLayout.CENTER);
+
+      if(_txtComp.editorEqualsFilter())
+      {
+		   _completionPanel.add(_completionListScrollPane, BorderLayout.CENTER);
+      }
+      else
+      {
+         _completionPanel.add(_txtComp.getFilter(), BorderLayout.NORTH);
+         _completionPanel.add(_completionListScrollPane, BorderLayout.CENTER);
+      }
+
 		_completionPanel.setVisible(false);
 
 		_popupMan = new PopupManager(txtComp);
 	}
 
-	private void onKeyPressedOnList(KeyEvent e)
+   private void onCompletionListFocusGained(FocusEvent e)
+   {
+      if(false == e.isTemporary() && false == _txtComp.editorEqualsFilter())
+      {
+         _txtComp.getFilter().requestFocusInWindow();
+      }
+   }
+
+   private void onKeyPressedOnList(KeyEvent e)
 	{
 		if(e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_TAB)
 		{
@@ -116,7 +143,7 @@ public class Completor
 		}
 		else if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE)
 		{
-			if(1 >= _currCandidates.getStringToReplace().length())
+			if(_txtComp.editorEqualsFilter() && 1 >= _currCandidates.getStringToReplace().length())
 			{
 				closePopup();
 			}
@@ -124,7 +151,6 @@ public class Completor
 			{
 				reInitList(false);
 			}
-			//removeLastCharInTextComponent();
 		}
 		else if(e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_TAB)
 		{
@@ -186,7 +212,7 @@ public class Completor
 			if(1 == listModel.size())
 			{
 				CompletionInfo info = (CompletionInfo) listModel.getElementAt(0);
-				if(_currCandidates.getStringToReplace().toUpperCase().startsWith(info.getCompareString().toUpperCase()))
+				if(_txtComp.editorEqualsFilter() && _currCandidates.getStringToReplace().toUpperCase().startsWith(info.getCompareString().toUpperCase()))
 				{
 					closePopup();
 				}
@@ -228,7 +254,7 @@ public class Completor
       {
          _currCandidates = _model.getCompletionCandidates(getTextTillCarret());
 
-         if(0 == _currCandidates.getCandidates().length)
+         if(0 == _currCandidates.getCandidates().length && _txtComp.editorEqualsFilter())
          {
             closePopup();
          }
@@ -243,10 +269,22 @@ public class Completor
       }
    }
 
+   /**
+    *
+    * @return If there is an extra filter text field the complete text in this text field is returned
+    * @throws BadLocationException
+    */
    private String getTextTillCarret()
       throws BadLocationException
    {
-      return _txtComp.getText(0, _txtComp.getCaretPosition());
+      if(_txtComp.editorEqualsFilter())
+      {
+         return _txtComp.getEditor().getText(0, _txtComp.getFilter().getCaretPosition());
+      }
+      else
+      {
+         return _txtComp.getFilter().getText();
+      }
    }
 
    private void onMousClicked(MouseEvent e)
@@ -259,39 +297,48 @@ public class Completor
 
 	private void completionSelected()
 	{
-		Object selected = _completionList.getSelectedValue();
+      Object selected = null;
+      if(0 < _completionList.getModel().getSize())
+      {
+         selected = _completionList.getSelectedValue();
+      }
+      closePopup();
 		if(null != selected && selected instanceof CompletionInfo)
 		{
 			fireEvent( (CompletionInfo)selected);
 		}
-		closePopup();
 	}
 
 	private void closePopup()
 	{
-		_txtComp.requestFocus();
-
 		_completionList.removeMouseListener(_listMouseAdapter);
-		_txtComp.removeKeyListener(_listKeyListener);
+		_txtComp.getFilter().removeKeyListener(_listKeyListener);
 		_completionPanel.setVisible(false);
 
-
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
-				Keymap km = _txtComp.getKeymap();
-				for (int i = 0; i < _keysToDisableWhenPopUpOpen.length; i++)
-				{
-					km.removeKeyStrokeBinding(_keysToDisableWhenPopUpOpen[i]);
-
-               if(null != _originalActions[i])
+      if(_txtComp.editorEqualsFilter())
+      {
+         SwingUtilities.invokeLater(new Runnable()
+         {
+            public void run()
+            {
+               Keymap km = _txtComp.getEditor().getKeymap();
+               for (int i = 0; i < _keysToDisableWhenPopUpOpen.length; i++)
                {
-                  km.addActionForKeyStroke(_keysToDisableWhenPopUpOpen[i], _originalActions[i]);
+                  km.removeKeyStrokeBinding(_keysToDisableWhenPopUpOpen[i]);
+
+                  if(null != _originalActions[i])
+                  {
+                     km.addActionForKeyStroke(_keysToDisableWhenPopUpOpen[i], _originalActions[i]);
+                  }
                }
-				}
-			}
-		});
+            }
+         });
+      }
+      else
+      {
+         _txtComp.getFilter().setText("");
+         _txtComp.getEditor().requestFocusInWindow();
+      }
 	}
 
 
@@ -311,9 +358,9 @@ public class Completor
 				return;
 			}
 
-         _txtComp.modelToView(_currCandidates.getReplacementStart());
+         _txtComp.getEditor().modelToView(_currCandidates.getReplacementStart());
 
-			_completionList.setFont(_txtComp.getFont());
+			_completionList.setFont(_txtComp.getEditor().getFont());
 			fillAndShowCompletionList(_currCandidates.getCandidates());
 		}
 		catch (BadLocationException e)
@@ -321,21 +368,6 @@ public class Completor
 			throw new RuntimeException(e);
 		}
 	}
-
-   private int getCarretLineBeg()
-   {
-      String textTillCarret = _txtComp.getText().substring(0, _txtComp.getCaretPosition());
-
-      int lineFeedIndex = textTillCarret.lastIndexOf('\n');
-      if(-1 == lineFeedIndex)
-      {
-         return 0;
-      }
-      else
-      {
-         return lineFeedIndex;
-      }
-   }
 
    private void fillAndShowCompletionList(CompletionInfo[] candidates)
 	{
@@ -353,42 +385,57 @@ public class Completor
             model.addElement(candidates[i]);
          }
 
-         _completionList.setSelectedIndex(0);
-
-         Rectangle caretBounds = _txtComp.modelToView(_currCandidates.getReplacementStart());
+         Rectangle caretBounds;
+         if(_txtComp.editorEqualsFilter())
+         {
+            caretBounds = _txtComp.getEditor().modelToView(_currCandidates.getReplacementStart());
+         }
+         else
+         {
+            caretBounds = _txtComp.getEditor().modelToView(_txtComp.getEditor().getCaretPosition());
+         }
 
          _popupMan.install(_completionPanel, caretBounds, PopupManager.BelowPreferred);
+
+         _completionList.setSelectedIndex(0);
+         _completionList.ensureIndexIsVisible(0);
          _completionPanel.setVisible(true);
 
          _completionList.removeMouseListener(_listMouseAdapter);
          _completionList.addMouseListener(_listMouseAdapter);
-         _txtComp.removeKeyListener(_listKeyListener);
-         _txtComp.addKeyListener(_listKeyListener);
+         _txtComp.getFilter().removeKeyListener(_listKeyListener);
+         _txtComp.getFilter().addKeyListener(_listKeyListener);
 
-         Action doNothingAction = new AbstractAction("doNothingAction")
+
+         if(_txtComp.editorEqualsFilter())
          {
-            public void actionPerformed(ActionEvent e)
+            Action doNothingAction = new AbstractAction("doNothingAction")
             {
+               public void actionPerformed(ActionEvent e)
+               {
+               }
+            };
+
+            Keymap km = _txtComp.getEditor().getKeymap();
+
+            if(null == _originalActions)
+            {
+               _originalActions = new Action[_keysToDisableWhenPopUpOpen.length];
+
+               for (int i = 0; i < _keysToDisableWhenPopUpOpen.length; i++)
+               {
+                  _originalActions[i] = km.getAction(_keysToDisableWhenPopUpOpen[i]);
+               }
             }
-         };
-
-         Keymap km = _txtComp.getKeymap();
-
-         if(null == _originalActions)
-         {
-            _originalActions = new Action[_keysToDisableWhenPopUpOpen.length];
 
             for (int i = 0; i < _keysToDisableWhenPopUpOpen.length; i++)
             {
-               _originalActions[i] = km.getAction(_keysToDisableWhenPopUpOpen[i]);
+               km.addActionForKeyStroke(_keysToDisableWhenPopUpOpen[i], doNothingAction);
             }
          }
-
-
-
-         for (int i = 0; i < _keysToDisableWhenPopUpOpen.length; i++)
+         else
          {
-            km.addActionForKeyStroke(_keysToDisableWhenPopUpOpen[i], doNothingAction);
+            _txtComp.getFilter().requestFocusInWindow();
          }
       }
       catch (BadLocationException e)
@@ -400,22 +447,30 @@ public class Completor
 
 	private Rectangle getCurCompletionPanelSize(CompletionInfo[] candidates)
 	{
-		FontMetrics fm = _txtComp.getGraphics().getFontMetrics(_txtComp.getFont());
-		int width = getMaxSize(candidates, fm) + 30;
+		FontMetrics fm = _txtComp.getEditor().getGraphics().getFontMetrics(_txtComp.getEditor().getFont());
+		int width = getCurCompletionPanelWidth(candidates, fm) + 30;
 		int height = (int)(Math.min(candidates.length,  MAX_ITEMS_IN_COMPLETION_LIST) * (fm.getHeight() + 2.3) + 3);
+
+
+      if(false == _txtComp.editorEqualsFilter())
+      {
+         height += _txtComp.getFilter().getSize().getHeight();
+      }
+
 		return new Rectangle(width, height);
 	}
 
-	private int getMaxSize(CompletionInfo[] infos, FontMetrics fontMetrics)
+	private int getCurCompletionPanelWidth(CompletionInfo[] infos, FontMetrics fontMetrics)
 	{
-		int maxSize = 0;
+      int maxSize = 0;
+      if(false == _txtComp.editorEqualsFilter() && null != _txtComp.getFilter().getText())
+      {
+         maxSize = Math.max(fontMetrics.stringWidth(_txtComp.getFilter().getText() + "   "), maxSize);
+      }
+
 		for (int i = 0; i < infos.length; i++)
 		{
-			int buf = fontMetrics.stringWidth(infos[i].toString());
-			if(maxSize < buf)
-			{
-				maxSize = buf;
-			}
+         maxSize = Math.max(fontMetrics.stringWidth(infos[i].toString()), maxSize);
 		}
 		return maxSize;
 
@@ -428,7 +483,15 @@ public class Completor
 
 		for (int i = 0; i < clone.size(); i++)
 		{
-			( (CompletorListener)clone.elementAt(i) ).completionSelected(completion, _currCandidates.getReplacementStart());
+         CompletorListener completorListener = (CompletorListener)clone.elementAt(i);
+         if(_txtComp.editorEqualsFilter())
+         {
+            completorListener.completionSelected(completion, _currCandidates.getReplacementStart());
+         }
+         else
+         {
+            completorListener.completionSelected(completion, -1);
+         }
 		}
 	}
 

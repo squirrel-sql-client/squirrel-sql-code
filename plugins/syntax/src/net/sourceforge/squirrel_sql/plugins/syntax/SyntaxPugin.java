@@ -36,6 +36,7 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.FindAction;
 import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.NetbeansSQLEntryPanel;
 import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.ReplaceAction;
+import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.DuplicateLineAction;
 import net.sourceforge.squirrel_sql.plugins.syntax.oster.OsterSQLEntryPanel;
 
 import javax.swing.*;
@@ -215,6 +216,10 @@ public class SyntaxPugin extends DefaultSessionPlugin
       coll.add(act);
       _resources.addToMenu(act, menu);
 
+      act = new DuplicateLineAction(getApplication(), _resources);
+      coll.add(act);
+      _resources.addToMenu(act, menu);
+
 
    }
 
@@ -276,6 +281,11 @@ public class SyntaxPugin extends DefaultSessionPlugin
       session.addToToolbar(coll.get(ReplaceAction.class));
       session.addToToolbar(coll.get(ConfigureAutoCorrectAction.class));
 
+      session.getSessionInternalFrame().addToToolsPopUp("find" , coll.get(FindAction.class));
+      session.getSessionInternalFrame().addToToolsPopUp("replace" , coll.get(ReplaceAction.class));
+      session.getSessionInternalFrame().addToToolsPopUp("autocorr" , coll.get(ConfigureAutoCorrectAction.class));
+      session.getSessionInternalFrame().addToToolsPopUp("duplicateline" , coll.get(DuplicateLineAction.class));
+
       return ret;
    }
 
@@ -292,6 +302,12 @@ public class SyntaxPugin extends DefaultSessionPlugin
       sqlInternalFrame.addToToolbar(findAction);
       sqlInternalFrame.addToToolbar(replaceAction);
       sqlInternalFrame.addToToolbar(coll.get(ConfigureAutoCorrectAction.class));
+
+      sqlInternalFrame.addToToolsPopUp("find" , coll.get(FindAction.class));
+      sqlInternalFrame.addToToolsPopUp("replace" , coll.get(ReplaceAction.class));
+      sqlInternalFrame.addToToolsPopUp("autocorr" , coll.get(ConfigureAutoCorrectAction.class));
+      sqlInternalFrame.addToToolsPopUp("duplicateline" , coll.get(DuplicateLineAction.class));
+
    }
 
    /**

@@ -45,30 +45,56 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
 		String sql = getSelectedText();
 		if (sql == null || sql.trim().length() == 0)
 		{
-			sql = getText();
+         sql = getText();
+         int[] bounds = getBoundsOfSQLToBeExecuted();
 
-			int iStartIndex = 0;
-			int iEndIndex = sql.length();
-
-			int iCaretPos = getCaretPosition() - 1;
-			if (iCaretPos < 0)
-			{
-				iCaretPos = 0;
-			}
-
-			int iIndex = sql.lastIndexOf(SQL_STMT_SEP, iCaretPos);
-			if (iIndex > 0)
-			{
-				iStartIndex = iIndex;
-			}
-			iIndex = sql.indexOf(SQL_STMT_SEP, iCaretPos);
-			if (iIndex > 0)
-			{
-				iEndIndex = iIndex;
-			}
-
-			sql = sql.substring(iStartIndex, iEndIndex).trim();
+         if(bounds[0] == bounds[1])
+         {
+            sql = "";
+         }
+         else
+         {
+            sql = sql.substring(bounds[0], bounds[1]).trim();
+         }
 		}
 		return sql != null ? sql : "";
 	}
+
+   public int[] getBoundsOfSQLToBeExecuted()
+   {
+      int[] bounds = new int[2];
+      bounds[0] = getSelectionStart();
+      bounds[1] = getSelectionEnd();
+
+      if(bounds[0] == bounds[1])
+      {
+         String sql = getText();
+         bounds[0] = 0;
+         bounds[1] = sql.length();
+
+         int iCaretPos = getCaretPosition() - 1;
+         if (iCaretPos < 0)
+         {
+            iCaretPos = 0;
+         }
+
+         int iIndex = sql.lastIndexOf(SQL_STMT_SEP, iCaretPos);
+         if (iIndex > 0)
+         {
+            bounds[0] = iIndex + SQL_STMT_SEP.length();
+         }
+         iIndex = sql.indexOf(SQL_STMT_SEP, iCaretPos);
+         if (iIndex > 0)
+         {
+            bounds[1] = iIndex;
+         }
+
+         if(bounds[0] > bounds[1])
+         {
+            bounds[0] = bounds[1];
+         }
+      }
+
+      return bounds;
+   }
 }

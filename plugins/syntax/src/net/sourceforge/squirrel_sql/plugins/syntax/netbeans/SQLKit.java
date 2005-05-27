@@ -7,6 +7,8 @@ import javax.swing.*;
 import javax.swing.text.Document;
 import javax.swing.text.TextAction;
 
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+
 public class SQLKit extends ExtKit
 {
    private SyntaxFactory _syntaxFactory;
@@ -34,7 +36,7 @@ public class SQLKit extends ExtKit
    {
       Action[] javaActions = new Action[]
       {
-         new DuplicateLineAction(),
+         new NetbeansDuplicateLineAction(),
       };
       return TextAction.augmentList(super.createActions(), javaActions);
    }

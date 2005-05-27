@@ -90,7 +90,7 @@ public class SessionPanel extends JPanel
 
 	private ObjectTreeSelectionListener _objTreeSelectionLis = null;
 
-	public SessionPanel(ISession session)
+   public SessionPanel(ISession session)
 	{
 		super(new BorderLayout());
 
@@ -102,6 +102,7 @@ public class SessionPanel extends JPanel
 		_app = session.getApplication();
 		_sessionId = session.getIdentifier();
 		createGUI(session);
+
 		propertiesHaveChanged(null);
 
 		_propsListener = new PropertyChangeListener()
@@ -113,6 +114,12 @@ public class SessionPanel extends JPanel
 		};
 		session.getProperties().addPropertyChangeListener(_propsListener);
 	}
+
+   public void addToToolsPopUp(String selectionString, Action action)
+   {
+      getSQLPaneAPI().addToToolsPopUp(selectionString, action);
+   }
+
 
 //	public void setVisible(boolean value)
 //	{
