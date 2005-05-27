@@ -25,9 +25,12 @@ import javax.swing.JMenuItem;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -71,8 +74,24 @@ public class RunBookmarkAction extends SquirrelAction
 		Bookmark bookmark = 
 		    plugin.getBookmarkManager().get(item.getText());
 
-		if (bookmark != null) 
-		    new RunBookmarkCommand(getParentFrame(evt), session, bookmark, plugin).execute();
+          ISQLEntryPanel sqlEntryPanel;
+
+          if(session.getActiveSessionWindow() instanceof SessionInternalFrame)
+          {
+             sqlEntryPanel = ((SessionInternalFrame)session.getActiveSessionWindow()).getSQLPanelAPI().getSQLEntryPanel();
+          }
+          else if(session.getActiveSessionWindow() instanceof SQLInternalFrame)
+          {
+             sqlEntryPanel = ((SQLInternalFrame)session.getActiveSessionWindow()).getSQLPanelAPI().getSQLEntryPanel();
+          }
+          else
+          {
+             return;
+          }
+
+
+		if (bookmark != null)
+		    new RunBookmarkCommand(getParentFrame(evt), session, bookmark, plugin, sqlEntryPanel).execute();
 	    }
 	}
     }

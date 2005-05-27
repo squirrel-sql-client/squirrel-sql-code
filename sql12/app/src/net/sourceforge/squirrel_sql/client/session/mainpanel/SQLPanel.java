@@ -168,9 +168,11 @@ public class SQLPanel extends JPanel
 	private ISQLPanelAPI _panelAPI;
 
    private static final String PREFS_KEY_SPLIT_DIVIDER_LOC = "squirrelSql_sqlPanel_divider_loc";
+   private UndoAction _undoAction;
+   private RedoAction _redoAction;
 
 
-	/**
+   /**
 	 * Ctor.
 	 *
 	 * @param	session	 Current session.
@@ -565,15 +567,15 @@ public class SQLPanel extends JPanel
 		{
 			IApplication app = _session.getApplication();
 			Resources res = app.getResources();
-			UndoAction undo = new UndoAction(app, _undoManager);
-			RedoAction redo = new RedoAction(app, _undoManager);
+			_undoAction = new UndoAction(app, _undoManager);
+			_redoAction = new RedoAction(app, _undoManager);
 
 			JComponent comp = _sqlEntry.getTextComponent();
-			comp.registerKeyboardAction(undo, res.getKeyStroke(undo),
+			comp.registerKeyboardAction(_undoAction, res.getKeyStroke(_undoAction),
 							WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-			comp.registerKeyboardAction(redo, res.getKeyStroke(redo),
+			comp.registerKeyboardAction(_redoAction, res.getKeyStroke(_redoAction),
 							WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-			_sqlEntry.setUndoActions(undo, redo);
+			_sqlEntry.setUndoActions(_undoAction, _redoAction);
 
 			_sqlEntry.addUndoableEditListener(_undoManager);
 		}
@@ -1217,7 +1219,17 @@ public class SQLPanel extends JPanel
 		});
 	}
 
-	/**
+   public Action getUndoAction()
+   {
+      return _undoAction;
+   }
+
+   public Action getRedoAction()
+   {
+      return _redoAction;
+   }
+
+   /**
 	 * Listens for changes in the execution jtabbedpane and then fires
 	 * activation events
 	 */

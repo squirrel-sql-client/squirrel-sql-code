@@ -193,6 +193,8 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 
       JComponent comp = sqlPaneAPI.getSQLEntryPanel().getTextComponent();
       comp.registerKeyboardAction(cca, _resources.getKeyStroke(cca), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+      sqlPaneAPI.addToToolsPopUp("completecode", cca);
    }
 
    /**

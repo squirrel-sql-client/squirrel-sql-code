@@ -273,5 +273,8 @@ public interface ISQLPanelAPI
 	JMenuItem addToSQLEntryAreaMenu(Action action);
 
 	ISession getSession();
+
+   void addToToolsPopUp(String selectionString, Action action);
+
 }
 

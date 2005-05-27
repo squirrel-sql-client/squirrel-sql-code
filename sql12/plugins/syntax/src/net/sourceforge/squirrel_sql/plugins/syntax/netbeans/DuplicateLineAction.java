@@ -1,68 +1,52 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.netbeans;
 
-import org.netbeans.editor.BaseAction;
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
+import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPluginResources;
 
+import javax.swing.*;
 import javax.swing.text.JTextComponent;
-import javax.swing.text.BadLocationException;
 import java.awt.event.ActionEvent;
 
 
-public class DuplicateLineAction extends BaseAction
+public class DuplicateLineAction  extends SquirrelAction implements ISessionAction
 {
+   private ISession _session;
 
-   public DuplicateLineAction()
-   {
-      super(SQLKit.duplicateLineAction, CLEAR_STATUS_TEXT);
-   }
+   public DuplicateLineAction(IApplication app, SyntaxPluginResources rsrc)
+			throws IllegalArgumentException
+	{
+		super(app, rsrc);
+	}
 
-   public void actionPerformed(ActionEvent evt, JTextComponent target)
-   {
-      try
+	public void actionPerformed(ActionEvent evt)
+	{
+      if(null != _session)
       {
-         if (target != null)
+
+         ISQLEntryPanel sqlEntryPanel = _session.getSQLPanelAPIOfActiveSessionWindow().getSQLEntryPanel();
+
+         if(false == sqlEntryPanel instanceof NetbeansSQLEntryPanel)
          {
-            int docLen = target.getDocument().getLength();
-            String text = target.getDocument().getText(0, target.getDocument().getLength());
-
-            int caretPosition = target.getCaretPosition();
-
-            int lineBeg = 0;
-            for(int i=caretPosition-1; i > 0; --i)
-            {
-               if(text.charAt(i) == '\n')
-               {
-                  lineBeg = i;
-                  break;
-               }
-            }
-
-            int lineEnd = target.getDocument().getLength();
-            for(int i=caretPosition; i < docLen ; ++i)
-            {
-               if(text.charAt(i) == '\n')
-               {
-                  lineEnd = i;
-                  break;
-               }
-            }
-
-            String line = text.substring(lineBeg, lineEnd);
-
-            if(0 == lineBeg)
-            {
-               line += "\n";
-            }
-
-
-            target.getDocument().insertString(lineBeg, line, null);
-
-
+            String msg =
+               "Duplicate line is only available when the Netbeans editor is used.\n" +
+               "See menu File --> New Session Properties --> Tab Syntax";
+            JOptionPane.showMessageDialog(_session.getApplication().getMainFrame(), msg);
+            return;
          }
-      }
-      catch (BadLocationException e)
-      {
-         throw new RuntimeException(e);
-      }
-   }
-}
 
+
+         new NetbeansDuplicateLineAction().actionPerformed(evt, (JTextComponent)sqlEntryPanel.getTextComponent());
+      }
+	}
+
+	public void setSession(ISession session)
+	{
+      _session = session;
+	}
+
+
+}

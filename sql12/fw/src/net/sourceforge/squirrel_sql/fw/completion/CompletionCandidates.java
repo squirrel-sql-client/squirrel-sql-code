@@ -14,6 +14,16 @@ public class CompletionCandidates
       _stringToReplace = stringToReplace;
    }
 
+   /**
+    * This ctor can be used when the completion uses its own filter text field.
+    * @param candidates
+    */
+   public CompletionCandidates(CompletionInfo[] candidates)
+   {
+      _candidates = candidates;
+   }
+
+
    public CompletionInfo[] getCandidates()
    {
       return _candidates;

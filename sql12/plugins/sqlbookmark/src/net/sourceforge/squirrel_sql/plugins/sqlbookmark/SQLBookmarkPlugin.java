@@ -255,18 +255,18 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin {
    public PluginSessionCallback sessionStarted(ISession session)
    {
 
-      ISQLPanelAPI sqlPaneAPI = session.getSessionInternalFrame().getSQLPanelAPI();
-      CompleteBookmarkAction cba = new CompleteBookmarkAction(session.getApplication(), resources, sqlPaneAPI.getSQLEntryPanel(), session, this);
-
-      JMenuItem item = sqlPaneAPI.addToSQLEntryAreaMenu(cba);
-
       ActionCollection coll = getApplication().getActionCollection();
       session.addSeparatorToToolbar();
       session.addToToolbar(coll.get(AddBookmarkAction.class));
+      session.getSessionInternalFrame().addToToolsPopUp("bookmarkadd", coll.get(AddBookmarkAction.class));
 
+      ISQLPanelAPI sqlPaneAPI = session.getSessionInternalFrame().getSQLPanelAPI();
+      CompleteBookmarkAction cba = new CompleteBookmarkAction(session.getApplication(), resources, sqlPaneAPI.getSQLEntryPanel(), session, this);
+      JMenuItem item = sqlPaneAPI.addToSQLEntryAreaMenu(cba);
       resources.configureMenuItem(cba, item);
       JComponent comp = sqlPaneAPI.getSQLEntryPanel().getTextComponent();
       comp.registerKeyboardAction(cba, resources.getKeyStroke(cba), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+      session.getSessionInternalFrame().addToToolsPopUp("bookmarkselect", cba);
 
 
 
@@ -274,14 +274,22 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin {
       {
          public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
          {
-            // TODO
-            // Plugin supports only the main session window
+            ActionCollection coll = getApplication().getActionCollection();
+            sqlInternalFrame.addSeparatorToToolbar();
+            sqlInternalFrame.addToToolbar(coll.get(AddBookmarkAction.class));
+            sqlInternalFrame.addToToolsPopUp("bookmarkadd", coll.get(AddBookmarkAction.class));
+
+            ISQLPanelAPI sqlPaneAPI = sqlInternalFrame.getSQLPanelAPI();
+            CompleteBookmarkAction cba = new CompleteBookmarkAction(sess.getApplication(), resources, sqlPaneAPI.getSQLEntryPanel(), sess, SQLBookmarkPlugin.this);
+            JMenuItem item = sqlPaneAPI.addToSQLEntryAreaMenu(cba);
+            resources.configureMenuItem(cba, item);
+            JComponent comp = sqlPaneAPI.getSQLEntryPanel().getTextComponent();
+            comp.registerKeyboardAction(cba, resources.getKeyStroke(cba), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+            sqlInternalFrame.addToToolsPopUp("bookmarkselect", cba);
          }
 
          public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
          {
-            // TODO
-            // Plugin supports only the main session window
          }
       };
       return ret;

@@ -20,9 +20,7 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import javax.swing.Action;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
@@ -31,6 +29,8 @@ import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabLi
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
+import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupAction;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 /**
  * This class is the API through which plugins can work with the SQL Panel.
  *
@@ -44,6 +44,8 @@ public class SQLPanelAPI implements ISQLPanelAPI
 
 	/** The SQL Panel. */
 	private SQLPanel _panel;
+
+   private ToolsPopupAction _toolsPopupAction;
 
 	/**
 	 * Ctor specifying the panel.
@@ -61,7 +63,27 @@ public class SQLPanelAPI implements ISQLPanelAPI
 			throw new IllegalArgumentException("SQLPanel == null");
 		}
 		_panel = panel;
+      createToolsPopup();
 	}
+
+
+   private void createToolsPopup()
+   {
+      _toolsPopupAction = new ToolsPopupAction(getSession().getApplication(), _panel, getSession());
+
+      JMenuItem item = getSQLEntryPanel().addToSQLEntryAreaMenu(_toolsPopupAction);
+
+      SquirrelResources resources = _panel.getSession().getApplication().getResources();
+      resources.configureMenuItem(_toolsPopupAction, item);
+      JComponent comp = getSQLEntryPanel().getTextComponent();
+      comp.registerKeyboardAction(_toolsPopupAction, resources. getKeyStroke(_toolsPopupAction), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+   }
+
+   public void addToToolsPopUp(String selectionString, Action action)
+   {
+      _toolsPopupAction.addAction(selectionString, action);
+   }
+
 
 	public void addExecutor(ISQLResultExecuter exec)
 	{

@@ -43,16 +43,17 @@ class FormatSQLCommand implements ICommand
 
 	public void execute() throws BaseException
 	{
-		//ISQLPanelAPI api = _session.getSQLPanelAPI(_plugin);
 		ISQLPanelAPI api = FrameWorkAcessor.getSQLPanelAPI(_session, _plugin);
       
-		String textToReformat = api.getSelectedSQLScript();
-		boolean isSelection = true;
-		if (null == textToReformat)
-		{
-			textToReformat = api.getEntireSQLScript();
-			isSelection = false;
-		}
+      int[] bounds = api.getSQLEntryPanel().getBoundsOfSQLToBeExecuted();
+
+      if(bounds[0] == bounds[1])
+      {
+         return;
+      }
+
+      String textToReformat = api.getSQLEntryPanel().getSQLToBeExecuted();
+
 		if (null == textToReformat)
 		{
 			return;
@@ -70,13 +71,10 @@ class FormatSQLCommand implements ICommand
 		CodeReformator cr = new CodeReformator(statementSep, commentSpecs);
 
 		String reformatedText = cr.reformat(textToReformat);
-		if (isSelection)
-		{
-			api.replaceSelectedSQLScript(reformatedText, true);
-		}
-		else
-		{
-			api.setEntireSQLScript(reformatedText);
-		}
+
+      api.getSQLEntryPanel().setSelectionStart(bounds[0]);
+      api.getSQLEntryPanel().setSelectionEnd(bounds[1]);
+      api.getSQLEntryPanel().replaceSelection(reformatedText);
+
 	}
 }
