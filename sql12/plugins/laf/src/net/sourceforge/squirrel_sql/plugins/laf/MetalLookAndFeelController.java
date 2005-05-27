@@ -135,8 +135,12 @@ class MetalLookAndFeelController extends AbstractPlasticController
 
 	void installCurrentTheme(LookAndFeel laf, MetalTheme theme)
 	{
+      // This works only on JDK 1.5
+      // With JDK 1.4.x fonts will be bold for all SwingSet themes.
+      // See also SwingSet2 demos in JDK 1.4 and JDK 1.5 
       UIManager.put("swing.boldMetal", Boolean.FALSE);
-		MetalLookAndFeel.setCurrentTheme(theme);
+
+      MetalLookAndFeel.setCurrentTheme(theme);
 	}
 
 	/**
