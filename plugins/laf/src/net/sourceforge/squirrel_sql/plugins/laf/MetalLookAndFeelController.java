@@ -46,11 +46,16 @@ class MetalLookAndFeelController extends AbstractPlasticController
    protected static final String[] METAL_THEME_CLASS_NAMES = new String[]
    {
       "javax.swing.plaf.metal.OceanTheme", // Only available with JDK 1.5
-      "net.sourceforge.squirrel_sql.plugins.laf.swingsetthemes.AquaTheme",
-      "net.sourceforge.squirrel_sql.plugins.laf.swingsetthemes.CharcoalTheme",
-      "net.sourceforge.squirrel_sql.plugins.laf.swingsetthemes.ContrastTheme",
-      "net.sourceforge.squirrel_sql.plugins.laf.swingsetthemes.EmeraldTheme",
-      "net.sourceforge.squirrel_sql.plugins.laf.swingsetthemes.RubyTheme",
+      "AquaTheme",
+      "CharcoalTheme",
+      "ContrastTheme",
+      "EmeraldTheme",
+      "RubyTheme",
+//      "net.sourceforge.squirrel_sql.plugins.laf.swingsetthemes.AquaTheme",
+//      "net.sourceforge.squirrel_sql.plugins.laf.swingsetthemes.CharcoalTheme",
+//      "net.sourceforge.squirrel_sql.plugins.laf.swingsetthemes.ContrastTheme",
+//      "net.sourceforge.squirrel_sql.plugins.laf.swingsetthemes.EmeraldTheme",
+//      "net.sourceforge.squirrel_sql.plugins.laf.swingsetthemes.RubyTheme",
    };
 
 
