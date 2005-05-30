@@ -454,7 +454,7 @@ public class Completor
 
       if(false == _txtComp.editorEqualsFilter())
       {
-         height += _txtComp.getFilter().getSize().getHeight();
+         height += _txtComp.getFilter().getPreferredSize().getHeight();
       }
 
 		return new Rectangle(width, height);
