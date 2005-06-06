@@ -78,7 +78,7 @@ public class GraphPlugin extends DefaultSessionPlugin
     */
    public String getDescriptiveName()
    {
-      return "Table graph";
+      return "Graph";
    }
 
    /**
@@ -88,7 +88,7 @@ public class GraphPlugin extends DefaultSessionPlugin
     */
    public String getVersion()
    {
-      return "0.01";
+      return "1.0";
    }
 
    /**
@@ -124,7 +124,7 @@ public class GraphPlugin extends DefaultSessionPlugin
     */
    public String getHelpFileName()
    {
-      return "readme.txt";
+      return "readme.html";
    }
 
    /**

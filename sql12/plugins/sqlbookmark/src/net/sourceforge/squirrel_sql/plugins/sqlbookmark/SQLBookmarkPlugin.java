@@ -83,7 +83,7 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin {
      * @return  the plugin version.
      */
     public String getVersion() {
-	return "0.43";
+	return "1.0";
     }
     
     /**
@@ -94,7 +94,13 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin {
     public String getAuthor() {
 	return "Joseph Mocker";
     }
-    
+
+   public String getContributors()
+   {
+      return "Gerd Wagner";
+   }
+
+
     /**
      * Return the internal name of this plugin.
      *

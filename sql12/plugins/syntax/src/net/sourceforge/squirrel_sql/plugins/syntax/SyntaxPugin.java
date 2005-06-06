@@ -108,7 +108,7 @@ public class SyntaxPugin extends DefaultSessionPlugin
 	 */
 	public String getVersion()
 	{
-		return "0.12";
+		return "1.0";
 	}
 
 	/**
@@ -120,6 +120,11 @@ public class SyntaxPugin extends DefaultSessionPlugin
 	{
 		return "Colin Bell";
 	}
+
+   public String getContributors()
+   {
+      return "Gerd Wagner";
+   }
 
 	/**
 	 * Returns the name of the change log for the plugin. This should

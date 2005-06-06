@@ -86,7 +86,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 	 * @return  the current version of this plugin.
 	 */
 	public String getVersion() {
-		return "0.22";
+		return "1.0";
 	}
 
 	/**
@@ -97,6 +97,8 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 	public String getAuthor() {
 		return "Johan Compagner";
 	}
+
+
 
 	/**
 	 * Returns the name of the change log for the plugin. This should
@@ -121,7 +123,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 	 */
 	public String getHelpFileName()
 	{
-		return "readme.txt";
+		return "readme.html";
 	}
 
 	/**
@@ -142,7 +144,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 	 */
 	public String getContributors()
 	{
-		return "John Murga";
+		return "Gerd Wagner, John Murga";
 	}
 
 	/**

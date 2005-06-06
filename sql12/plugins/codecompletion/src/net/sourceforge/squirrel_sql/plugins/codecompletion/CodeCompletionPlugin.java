@@ -60,7 +60,7 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 	 */
 	public String getInternalName()
 	{
-		return "completion";
+		return "codecompletion";
 	}
 
 	/**
@@ -80,7 +80,7 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 	 */
 	public String getVersion()
 	{
-		return "0.20";
+		return "1.0";
 	}
 
 
@@ -127,7 +127,7 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 	 */
 	public String getHelpFileName()
 	{
-		return "readme.txt";
+		return "readme.html";
 	}
 
 	/**

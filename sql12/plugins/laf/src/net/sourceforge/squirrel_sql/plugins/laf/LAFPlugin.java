@@ -108,7 +108,7 @@ public class LAFPlugin extends DefaultPlugin
 	 */
 	public String getVersion()
 	{
-		return "0.32";
+		return "1.0";
 	}
 
 	/**
@@ -144,7 +144,7 @@ public class LAFPlugin extends DefaultPlugin
 	 */
 	public String getHelpFileName()
 	{
-		return "readme.txt";
+		return "readme.html";
 	}
 
 	/**
