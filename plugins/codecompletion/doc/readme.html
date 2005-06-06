@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=iso-8859-15">
+	<TITLE></TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 1.1.4  (Linux)">
+	<META NAME="CREATED" CONTENT="20050606;22445200">
+	<META NAME="CHANGEDBY" CONTENT="Gerd Wagner">
+	<META NAME="CHANGED" CONTENT="20050606;22582800">
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<P><B>SQL Entry Code Completion 1.0</B> - Gerd Wagner</P>
+<P>This plugin provides completion of SQL code much the same way
+modern IDEs do. To invoke code completion hit the ctrl + space
+shortcut.</P>
+<P><IMG SRC="completionpopup.jpg" NAME="Graphic1" ALIGN=LEFT BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P>Completion works on almost all SQL and DDL constructs:</P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0cm; font-weight: medium">Key words,
+	this includes SQL standard keywords as well as those key words
+	delivered by the JDBC driver.</P>
+	<LI><P STYLE="margin-bottom: 0cm; font-weight: medium">Tables</P>
+	<LI><P STYLE="margin-bottom: 0cm; font-weight: medium">Columns</P>
+	<LI><P STYLE="margin-bottom: 0cm; font-weight: medium">Views</P>
+	<LI><P STYLE="margin-bottom: 0cm; font-weight: medium">Stored
+	procedures, completion generates the complete JDBC call syntax
+	including templates for parameters.</P>
+	<LI><P STYLE="margin-bottom: 0cm; font-weight: medium">Catalogs</P>
+	<LI><P STYLE="margin-bottom: 0cm; font-weight: medium">Schemas</P>
+</UL>
+<P STYLE="margin-bottom: 0cm; font-weight: medium"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm; font-weight: medium"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm; font-weight: medium">Beyond this the
+plugin offers so called completion functions that can be used to
+generate SQL Joins. To explain completion functions we have look at
+the tables BEST, BEST_LAGPL and LAGPL in figure below. To generate
+the Join from BEST to LAGPL you'd write the following expression:</P>
+<P STYLE="margin-bottom: 0cm; font-weight: medium"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm; font-weight: medium">#i,BEST,BEST_LAGPL,LAGPL,</P>
+<P STYLE="margin-bottom: 0cm; font-weight: medium"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm; font-weight: medium">If the cursor is
+positioned at the end of this expression and Code completion is
+called by the Ctrl + Space shortcut the plugin generates the
+following code for you:</P>
+<P STYLE="margin-bottom: 0cm; font-weight: medium"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm; font-weight: medium">INNER JOIN
+BEST_LAGPL ON BEST.BESTID = BEST_LAGPL.BESTID</P>
+<P STYLE="margin-bottom: 0cm; font-weight: medium">INNER JOIN LAGPL
+ON LAGPL.LAGPLID = BEST_LAGPL.LAGPLID</P>
+<P STYLE="margin-bottom: 0cm; font-weight: medium"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><SPAN STYLE="font-weight: medium">To
+preform this the plugin interprets the expression as follows: First
+the function #i which stands for 'INNER JOIN' is picked. Then the
+comma separated list of arguments is passed to the function. The
+function analyzes the foreign key relations between the tables in the
+list to generate the Join clause. If no foreign keys are found the
+clause is still generated just the columns are left blank to be
+provided later by the user. If there is more then one foreign key
+relation between two or more of the tables the possible Join clauses
+are shown in the completion pop up</SPAN> for the user to choose. 
+</P>
+<P STYLE="margin-bottom: 0cm; font-weight: medium"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm; font-weight: medium">Besides #i the
+commands #l for Left Join, #r for Right Join and #j for Join exist.
+All of these commands expect a comma separated list of tables. <SPAN STYLE="background: #ffff00"><U><I>Please
+note the comma at the end of the list</I>.</U></SPAN> The command #j
+generates a Left Join if the foreign key field allows NULL values
+else an Inner Join.</P>
+<P><BR><BR>
+</P>
+<P><IMG SRC="graph.jpg" NAME="Graphic2" ALIGN=LEFT BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P><BR><BR>
+</P>
+</BODY>
+</HTML>

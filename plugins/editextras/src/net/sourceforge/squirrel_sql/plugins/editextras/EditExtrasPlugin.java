@@ -88,7 +88,7 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 	 */
 	public String getVersion()
 	{
-		return "0.13";
+		return "1.0";
 	}
 
 	/**
@@ -124,7 +124,7 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 	 */
 	public String getHelpFileName()
 	{
-		return "readme.txt";
+		return "readme.html";
 	}
 
 	/**
