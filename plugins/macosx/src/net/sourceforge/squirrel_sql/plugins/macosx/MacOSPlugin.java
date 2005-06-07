@@ -6,17 +6,18 @@
 
 package net.sourceforge.squirrel_sql.plugins.macosx;
 
-import com.apple.eawt.ApplicationAdapter;
-import com.apple.eawt.ApplicationEvent;
-import com.apple.eawt.Application;
+//import com.apple.eawt.ApplicationAdapter;
+//import com.apple.eawt.ApplicationEvent;
+//import com.apple.eawt.Application;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.mainframe.action.AboutCommand;
-import net.sourceforge.squirrel_sql.client.mainframe.action.GlobalPreferencesCommand;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import java.lang.reflect.Proxy;
+import java.lang.reflect.Method;
 
 /**
  *
@@ -64,30 +65,86 @@ public class MacOSPlugin extends DefaultPlugin {
 
     public synchronized void initialize() throws PluginException
     {
-        super.initialize();
-        final IApplication app = getApplication();
-        Application fApplication = Application.getApplication();
-        fApplication.addApplicationListener(new com.apple.eawt.ApplicationAdapter() {
-            public void handleAbout(ApplicationEvent e) {
-                e.setHandled(true);
-                new AboutCommand(app).execute();
-            }
-            public void handleOpenApplication(ApplicationEvent e) {
-            }
-            public void handleOpenFile(ApplicationEvent e) {
-            }
-            public void handlePreferences(ApplicationEvent e) {
-                e.setHandled(true);
-                new GlobalPreferencesCommand(app).execute();
-            }
-            public void handlePrintFile(ApplicationEvent e) {
-            }
-            public void handleQuit(ApplicationEvent e) {
-                e.setHandled(true);
-                app.getMainFrame().dispose();
-            }
-        });
-        fApplication.addPreferencesMenuItem();
-        fApplication.setEnabledPreferencesMenu(true);
+       try
+       {
+          super.initialize();
+          final IApplication app = getApplication();
+
+
+          Class com_apple_eawt_Application;
+          try
+          {
+             com_apple_eawt_Application = Class.forName("com.apple.eawt.Application");
+          }
+          catch (ClassNotFoundException e)
+          {
+            return;
+          }
+
+          Method getApplication = com_apple_eawt_Application.getMethod("getApplication", new Class[0]);
+
+          Object applicationInstance = getApplication.invoke(com_apple_eawt_Application, new Object[0]);
+
+          Class com_apple_eawt_ApplicationListener = Class.forName("com.apple.eawt.ApplicationListener");
+
+          ApplicationListenerInvocationHandler handler = new ApplicationListenerInvocationHandler(app);
+          Object proxy = Proxy.newProxyInstance(IApplication.class.getClassLoader(), new Class[]{com_apple_eawt_ApplicationListener}, handler);
+
+//          com.apple.eawt.ApplicationAdapter applicationAdapter = new com.apple.eawt.ApplicationAdapter()
+//                 {
+//                    public void handleAbout(ApplicationEvent e)
+//                    {
+//                       e.setHandled(true);
+//                       new AboutCommand(app).execute();
+//                    }
+//
+//                    public void handleOpenApplication(ApplicationEvent e)
+//                    {
+//                    }
+//
+//                    public void handleOpenFile(ApplicationEvent e)
+//                    {
+//                    }
+//
+//                    public void handlePreferences(ApplicationEvent e)
+//                    {
+//                       e.setHandled(true);
+//                       new GlobalPreferencesCommand(app).execute();
+//                    }
+//
+//                    public void handlePrintFile(ApplicationEvent e)
+//                    {
+//                    }
+//
+//                    public void handleQuit(ApplicationEvent e)
+//                    {
+//                       e.setHandled(true);
+//                       app.getMainFrame().dispose();
+//                    }
+//                 };
+
+
+
+          Method addApplicationListener =
+             com_apple_eawt_Application.getMethod("addApplicationListener", new Class[]{com_apple_eawt_ApplicationListener});
+          addApplicationListener.invoke(applicationInstance, new Object[]{proxy});
+
+          Method addPreferencesMenuItem =
+             com_apple_eawt_Application.getMethod("addPreferencesMenuItem", new Class[0]);
+          addPreferencesMenuItem.invoke(applicationInstance, new Object[0]);
+
+          Method setEnabledPreferencesMenu =
+             com_apple_eawt_Application.getMethod("setEnabledPreferencesMenu", new Class[]{Boolean.TYPE});
+          setEnabledPreferencesMenu.invoke(applicationInstance, new Object[]{Boolean.TRUE});
+
+
+//          fApplication.addApplicationListener(applicationAdapter);
+//          fApplication.addPreferencesMenuItem();
+//          fApplication.setEnabledPreferencesMenu(true);
+       }
+       catch (Exception e)
+       {
+          throw new RuntimeException(e);
+       }
     }
 }
