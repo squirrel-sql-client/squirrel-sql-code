@@ -3,15 +3,21 @@
 	This is an Apache Ant build file to build the SQL Bookmark plugin
 	for distribution.
 -->
-<project name="plugin-session-script" default="build" basedir=".">
+<project name="plugin-sqlbookmark" default="build" basedir=".">
 	<target name="init">
 		<tstamp/>
 		<property name="internal_name" value="sqlbookmark"/>
-		<property name="version" value="0.43"/>
+		<property name="version" value="1.0"/>
 
 		<property name="debug" value="on"/>
 		<property name="optimize" value="off"/>
 		<property name="deprecation" value="on"/>
+
+      <!-- adopt these lines to your need -->
+      <property name="p_plugin.work_dir" value="/home/gerd/work/java/squirrel1_2/squirrel-sql-dist/squirrel-sql-2.0final/sqlbookmark"/>
+      <property name="p_plugin.core_libs_dir" value="/home/gerd/work/java/squirrel1_2/squirrel-sql-dist/squirrel-sql-2.0final/core/dist/lib"/>
+      <property name="p_plugin.dist_dir" value="/home/gerd/work/java/squirrel1_2/squirrel-sql-dist/squirrel-sql-2.0final/core/dist/plugins"/>
+
 
 		<echo message="---------------- ${internal_name} ${version} ----------------"/>
 		
