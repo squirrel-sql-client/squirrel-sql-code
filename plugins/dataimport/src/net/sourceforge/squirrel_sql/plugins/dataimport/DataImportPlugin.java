@@ -26,9 +26,12 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -120,9 +123,21 @@ public class DataImportPlugin extends DefaultSessionPlugin {
      * @return  <TT>true</TT> to indicate that this plugin is
      *          applicable to passed session.
      */
-    public boolean sessionStarted(ISession session) {
+    public PluginSessionCallback sessionStarted(ISession session) {
         session.addMainTab(new FileImportTab(session));
-        return true;
+
+       return new PluginSessionCallback()
+       {
+          public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+          {
+             // Only supports Session main window
+          }
+
+          public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+          {
+             // Only supports Session main window
+          }
+       };
     }
 
     /**
