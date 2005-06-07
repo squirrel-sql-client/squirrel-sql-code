@@ -26,8 +26,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
 
-class ScriptsSheet extends BaseSheet
+class ScriptsSheet extends BaseInternalFrame
 {
 	/** Logger for this class. */
 	private static ILogger s_log =

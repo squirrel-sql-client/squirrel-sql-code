@@ -166,19 +166,19 @@ public class OraclePlugin extends DefaultSessionPlugin
                 //Add the actions to the action bar.
                 _newDBOutputWorksheet = new NewDBOutputWorksheetAction(app, _resources);
                 _newDBOutputWorksheet.setEnabled(false);
-                app.getMainFrame().addToActionBar(_newDBOutputWorksheet);
+                app.getMainFrame().addToToolBar(_newDBOutputWorksheet);
 
                 _newInvalidObjectsWorksheet = new NewInvalidObjectsWorksheetAction(app, _resources);
                 _newInvalidObjectsWorksheet.setEnabled(false);
-                app.getMainFrame().addToActionBar(_newInvalidObjectsWorksheet);
+                app.getMainFrame().addToToolBar(_newInvalidObjectsWorksheet);
 
                 _newSessionInfoWorksheet = new NewSessionInfoWorksheetAction(app, _resources);
                 _newSessionInfoWorksheet.setEnabled(false);
-                app.getMainFrame().addToActionBar(_newSessionInfoWorksheet);
+                app.getMainFrame().addToToolBar(_newSessionInfoWorksheet);
 
                 _newSGATraceWorksheet = new NewSGATraceWorksheetAction(app, _resources);
                 _newSGATraceWorksheet.setEnabled(false);
-                app.getMainFrame().addToActionBar(_newSGATraceWorksheet);
+                app.getMainFrame().addToToolBar(_newSGATraceWorksheet);
 
 
                 app.getSessionManager().addSessionListener(new OraclePluginSessionListener());
