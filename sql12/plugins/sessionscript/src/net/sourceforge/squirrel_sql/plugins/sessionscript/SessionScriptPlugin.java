@@ -24,10 +24,13 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
@@ -191,7 +194,7 @@ public class SessionScriptPlugin extends DefaultSessionPlugin
 		super.unload();
 	}
 
-	public boolean sessionStarted(ISession session)
+	public PluginSessionCallback sessionStarted(ISession session)
 	{
 		boolean rc = false;
 
@@ -202,13 +205,29 @@ public class SessionScriptPlugin extends DefaultSessionPlugin
 			if (sql != null && sql.length() > 0)
 			{
 				rc = true;
-				ISQLPanelAPI api = session.getSQLPanelAPI(this);
+				ISQLPanelAPI api = session.getSessionInternalFrame().getSQLPanelAPI();
 				api.setEntireSQLScript(sql);
 				api.executeCurrentSQL();
 			}
 		}
 
-		return rc;
+		if(false == rc)
+      {
+         return null;
+      }
+
+      return new PluginSessionCallback()
+      {
+         public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+         {
+            // Supports main Session window only
+         }
+
+         public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+         {
+            // Supports main Session window only
+         }
+      };
 	}
 
 	/**

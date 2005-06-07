@@ -51,7 +51,7 @@ import net.sourceforge.squirrel_sql.client.session.MessagePanel;
 
 public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 {
-	public interface IMenuIDs extends MainFrameMenuBar.IMenuIDs
+   public interface IMenuIDs extends MainFrameMenuBar.IMenuIDs
 	{
 		// Empty body.
 	}
@@ -546,6 +546,12 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 	{
 		return ((MainFrameMenuBar)getJMenuBar()).getWindowsMenu();
 	}
+
+   public void addToToolBar(Action act)
+   {
+      _toolBar.add(act);
+   }
+
 
 	private class MyDesktopManager extends DefaultDesktopManager
 	{
