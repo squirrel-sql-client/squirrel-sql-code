@@ -14,9 +14,9 @@
 		<property name="deprecation" value="on"/>
 
       <!-- adopt these lines to your need -->
-      <property name="p_plugin.work_dir" value="/home/gerd/work/java/squirrel1_2/squirrel-sql-dist/squirrel-sql-2.0final/sqlbookmark"/>
-      <property name="p_plugin.core_libs_dir" value="/home/gerd/work/java/squirrel1_2/squirrel-sql-dist/squirrel-sql-2.0final/core/dist/lib"/>
-      <property name="p_plugin.dist_dir" value="/home/gerd/work/java/squirrel1_2/squirrel-sql-dist/squirrel-sql-2.0final/core/dist/plugins"/>
+      <property name="p_plugin.work_dir" value="/home/gerd/work/java/squirrel1_2/squirrel-sql-dist/squirrel-sql/sqlbookmark"/>
+      <property name="p_plugin.core_libs_dir" value="/home/gerd/work/java/squirrel1_2/squirrel-sql-dist/squirrel-sql/core/dist/lib"/>
+      <property name="p_plugin.dist_dir" value="/home/gerd/work/java/squirrel1_2/squirrel-sql-dist/squirrel-sql/core/dist/plugins"/>
 
 
 		<echo message="---------------- ${internal_name} ${version} ----------------"/>
