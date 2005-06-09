@@ -13,9 +13,8 @@
 	<target name="init">
 		<tstamp/>
 		<property name="name" value="squirrel-sql"/>
-		<property name="version" value="2.0final"/>
 
-		<property name="dist_dir" value="${basedir}/../squirrel-sql-dist/${name}-${version}"/>
+		<property name="dist_dir" value="${basedir}/../squirrel-sql-dist/${name}"/>
 		<property name="core_dist_dir" value="${dist_dir}/core/dist"/>
 		<property name="core_work_dir" value="${dist_dir}/core/work"/>
 		<property name="core_obj_dir" value="${core_work_dir}/obj"/>
@@ -45,7 +44,7 @@
 	-->
 	<target name="help" depends="init">
 		<echo message=""/>
-		<echo message="${name} ${version} Build tool"/>
+		<echo message="${name} Build tool"/>
 		<echo message="-------------------------------------------------------"/>
 		<echo message=" Usage:"/>
 		<echo message="   build &lt;target&gt;"/>
@@ -146,7 +145,7 @@
 	==================================================================
 	-->
 	<target name="compile_app" depends="compile_fw">
-		<echo message="---------------- ${name} ${version} ----------------"/>
+		<echo message="---------------- ${name} ----------------"/>
 		<javac	srcdir="app/src"
 				destdir="${core_obj_dir}"
 				deprecation="${deprecation}"
@@ -364,21 +363,21 @@
 			</fileset>
 		</copy>
 
-		<zip zipfile="${dist_dir}/${name}-src-${version}.zip" compress="true">
+		<zip zipfile="${dist_dir}/${name}-src.zip" compress="true">
 			<fileset dir="${core_dist_dir}/src">
 				<include name="**/*.*"/>
 			</fileset>
 		</zip>
 
-		<tar tarfile="${dist_dir}/${name}-src-${version}.tar">
+		<tar tarfile="${dist_dir}/${name}-src.tar">
 			<tarfileset dir="${core_dist_dir}/src">
 				<include name="**/*.*"/>
 			</tarfileset>
 		</tar>
-		<gzip zipfile="${dist_dir}/${name}-src-${version}.tar.gz"
-			src="${dist_dir}/${name}-src-${version}.tar">
+		<gzip zipfile="${dist_dir}/${name}-src.tar.gz"
+			src="${dist_dir}/${name}-src.tar">
 		</gzip>
-		<delete file="${dist_dir}/${name}-src-${version}.tar"/>
+		<delete file="${dist_dir}/${name}-src.tar"/>
 
 	</target>
 
@@ -509,7 +508,8 @@
                                <include name="**/README"/>
                         </fileset>
                 </copy>
-		<filter token="SquirrelVersion" value="${version}"/>
+		<!--<filter token="SquirrelVersion" value="${version}"/>-->
+
 		<copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app" filtering="true">
 			<fileset dir="${basedir}/mac">
 				<include name="**/Info.plist"/>
