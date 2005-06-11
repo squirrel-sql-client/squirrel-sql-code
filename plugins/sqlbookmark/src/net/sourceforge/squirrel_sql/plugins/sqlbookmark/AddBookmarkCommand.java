@@ -109,6 +109,14 @@ public class AddBookmarkCommand implements ICommand {
           return;
        }
 
+       String sql = sqlEntryPanel.getSQLToBeExecuted();
+       if(null == sql || 0 == sql.trim().length())
+       {
+          JOptionPane.showMessageDialog(frame, "No text to be added.");
+          return;
+       }
+
+
 
            AddBookmarkDialog abd = new AddBookmarkDialog(frame, plugin);
            GUIUtils.centerWithinParent(abd);
@@ -117,8 +125,6 @@ public class AddBookmarkCommand implements ICommand {
            if(false == abd.isOK())
             return;
 
-	    String sql = sqlEntryPanel.getSQLToBeExecuted();
-	    
 	    logger.info("bookmark name: " + abd.getName());
 	    logger.info("bookmark sql: " + sql);
 
