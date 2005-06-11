@@ -13,7 +13,8 @@
       desktop="yes"
       applications="no"
       startMenu="no"
-      startup="no">
+      startup="no"
+      type="Application"> 
       <createForPack name="Base"/>
    </shortcut>
 </shortcuts>
