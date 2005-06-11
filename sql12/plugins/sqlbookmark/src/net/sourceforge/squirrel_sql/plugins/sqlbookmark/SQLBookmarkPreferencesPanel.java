@@ -26,23 +26,13 @@ import java.io.IOException;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
-import javax.swing.JList;
-import javax.swing.JLabel;
-import javax.swing.JDialog;
-import javax.swing.DefaultListModel;
-import javax.swing.JScrollPane;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.IApplication;
+import com.sun.java.swing.plaf.windows.WindowsScrollBarUI;
 
 /**
  * Manage the bookmarks.
@@ -230,40 +220,53 @@ public class SQLBookmarkPreferencesPanel implements IGlobalPreferencesPanel {
 	JButton action;
 	JButton cancel;
 	boolean cancelled = false;
+       private JScrollPane sqlScroll;
 
-	/** 
+       /**
 	 * Create the entry dialog 
 	 *
 	 * @param    owner The frame the dialog will be centered in
 	 */
 	public EntryDialog(Frame owner) {
-	    super(owner);
-	    setModal(true);
+	    super(owner, "Edit bookmark", true);
+
 	    Container contentPane = getContentPane();
-	    contentPane.setLayout(new BorderLayout());
+	    contentPane.setLayout(new GridBagLayout());
 
-	    PropertyPanel propPane = new PropertyPanel();
-	    contentPane.add(propPane, BorderLayout.CENTER);
+      GridBagConstraints gbc;
 
-	    name = new JTextField(30);
-	    propPane.add(new JLabel("Name:"), name);
+      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      contentPane.add(new JLabel("Name:"), gbc);
 
-       description = new JTextField();
-	    propPane.add(new JLabel("Description:"), description);
+      name = new JTextField(30);
+      gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5),0,0);
+      contentPane.add(name, gbc);
 
-	    sql = new JTextArea(5,30);
-	    sql.setLineWrap(true);
-	    sql.setWrapStyleWord(true);
-	    propPane.add(new JLabel("Script:"), sql);
+      gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,5,5,5),0,0);
+      contentPane.add(new JLabel("Description:"), gbc);
 
-	    JPanel actionPane = new JPanel();
-	    contentPane.add(actionPane, BorderLayout.SOUTH);
-	    action = new JButton("OK");
-	    actionPane.add(action);
+      description = new JTextField();
+      gbc = new GridBagConstraints(1,1,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5),0,0);
+      contentPane.add(description, gbc);
+
+      gbc = new GridBagConstraints(0,2,2,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5),0,0);
+      contentPane.add(new JLabel("Script:"), gbc);
+
+      sql = new JTextArea(5,30);
+      gbc = new GridBagConstraints(0,3,2,1,1,1, GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, new Insets(0,5,5,5),0,0);
+          sqlScroll = new JScrollPane(sql);
+          contentPane.add(sqlScroll, gbc);
+
+
+      action = new JButton("OK");
+      gbc = new GridBagConstraints(0,4,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,5,5,5),0,0);
+      contentPane.add(action, gbc);
+
+      cancel = new JButton("Close");
+      gbc = new GridBagConstraints(1,4,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,5,5,5),0,0);
+      contentPane.add(cancel, gbc);
+
 	    action.addActionListener(new DoneAction(this));
-
-	    cancel = new JButton("Close");
-	    actionPane.add(cancel);
 	    cancel.addActionListener(new CancelAction(this));
 
        getRootPane().setDefaultButton(action);
