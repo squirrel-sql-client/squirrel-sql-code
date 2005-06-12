@@ -22,6 +22,9 @@ import javax.swing.event.InternalFrameEvent;
 
 import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+
+import java.io.FileOutputStream;
+import java.io.File;
 /**
  * Base functionality for Squirrels internal frames that are attached directly
  * to a session.
@@ -31,8 +34,10 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 public class BaseSessionInternalFrame extends BaseInternalFrame
 {
 	private ISession _session;
+   private String _titleWithoutFile;
+   private boolean _inSettingSqlFile;
 
-	/**
+   /**
 	 * Creates a non-resizable, non-closable, non-maximizable,
 	 * non-iconifiable JInternalFrame with no title.
 	 */
@@ -42,19 +47,7 @@ public class BaseSessionInternalFrame extends BaseInternalFrame
 		setupSheet(session);
 	}
 
-	/**
-	 * Creates a non-resizable, non-closable, non-maximizable,
-	 * non-iconifiable JInternalFrame with the specified title.
-	 *
-	 * @param	title	Title for internal frame.
-	 */
-	public BaseSessionInternalFrame(ISession session, String title)
-	{
-		super(title);
-		setupSheet(session);
-	}
-
-	/**
+   /**
 	 * Creates a non-closable, non-maximizable, non-iconifiable
 	 * JInternalFrame with the specified title and with
 	 * resizability specified.
@@ -65,42 +58,11 @@ public class BaseSessionInternalFrame extends BaseInternalFrame
 	public BaseSessionInternalFrame(ISession session, String title, boolean resizable)
 	{
 		super(title, resizable);
+      _titleWithoutFile = title;
 		setupSheet(session);
 	}
 
-	/**
-	 * Creates a non-maximizable, non-iconifiable JInternalFrame
-	 * with the specified title and with resizability and closability
-	 * specified.
-	 *
-	 * @param	title		Title for internal frame.
-	 * @param	resizable	<TT>true</TT> if frame can be resized.
-	 * @param	closeable	<TT>true</TT> if frame can be closed.
-	 */
-	public BaseSessionInternalFrame(ISession session, String title, boolean resizable,
-		boolean closable)
-	{
-		super(title, resizable, closable);
-		setupSheet(session);
-	}
-
-	/**
-	 * Creates a non-iconifiable JInternalFrame with the specified title
-	 * and with resizability, closability, and maximizability specified.
-	 *
-	 * @param	title		Title for internal frame.
-	 * @param	resizable	<TT>true</TT> if frame can be resized.
-	 * @param	closeable	<TT>true</TT> if frame can be closed.
-	 * @param	maximizable	<TT>true</TT> if frame can be maximized.
-	 */
-	public BaseSessionInternalFrame(ISession session, String title, boolean resizable,
-			boolean closable, boolean maximizable)
-	{
-		super(title, resizable, closable, maximizable);
-		setupSheet(session);
-	}
-
-	/**
+   /**
 	 * Creates a JInternalFrame with the specified title and with
 	 * resizability, closability, maximizability and
 	 * iconifability specified.
@@ -115,8 +77,22 @@ public class BaseSessionInternalFrame extends BaseInternalFrame
 			boolean closable, boolean maximizable, boolean iconifiable)
 	{
 		super(title, resizable, closable, maximizable, iconifiable);
+      _titleWithoutFile = title;
 		setupSheet(session);
 	}
+
+   public void setTitle(String title)
+   {
+      if(_inSettingSqlFile)
+      {
+         super.setTitle(_titleWithoutFile + "; SQL file: " + title);
+      }
+      else
+      {
+         _titleWithoutFile = title;
+         super.setTitle(_titleWithoutFile);
+      }
+   }
 
 	private final void setupSheet(ISession session)
 	{
@@ -134,7 +110,20 @@ public class BaseSessionInternalFrame extends BaseInternalFrame
 		return _session;
 	}
 
-	/**
+   public void setSqlFile(File sqlFile)
+   {
+      try
+      {
+         _inSettingSqlFile =true;
+         setTitle(sqlFile.getAbsolutePath());
+      }
+      finally
+      {
+         _inSettingSqlFile =false;
+      }
+   }
+
+   /**
 	 * Sets the session behind this sheet to the active session when the
 	 * frame is activated
 	 */

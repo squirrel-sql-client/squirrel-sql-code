@@ -34,7 +34,7 @@ public class SquirrelResources extends Resources
 		String CLOSE_ALL_SQL_RESULTS = "close_all_sql_results";
 		String DRIVERS = "drivers";
 //		String EDIT = "edit";
-		String FILE = "file";
+		String OSX_FILE = "osxFile";
 		String HELP = "help";
 		String PLUGINS = "plugins";
 		String PLUGIN_CHANGE_LOG = "pluginChangeLog";
@@ -42,7 +42,8 @@ public class SquirrelResources extends Resources
 		String PLUGIN_LICENCE = "pluginLicence";
 		String SESSION = "session";
 		String WINDOWS = "windows";
-	}
+      String FILE = "file";
+   }
 
 	public interface IImageNames
 	{

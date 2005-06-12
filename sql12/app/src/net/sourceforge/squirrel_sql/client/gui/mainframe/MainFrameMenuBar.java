@@ -131,7 +131,7 @@ final class MainFrameMenuBar extends JMenuBar
 		_app = app;
 		_osxPluginLoaded = isOsxPluginLoaded();
 
-		add(createFileMenu(rsrc));
+		add(createOsxFileMenu(rsrc));
 //		add(_editMenu = createEditMenu(rsrc));
 		add(createDriversMenu(rsrc));
 		add(createAliasesMenu(rsrc));
@@ -272,9 +272,9 @@ final class MainFrameMenuBar extends JMenuBar
 		}
 	}
 
-	private JMenu createFileMenu(Resources rsrc)
+	private JMenu createOsxFileMenu(Resources rsrc)
 	{
-		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.FILE);
+		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.OSX_FILE);
 		if (!_osxPluginLoaded)
 		{
 			addToMenu(rsrc, GlobalPreferencesAction.class, menu);
@@ -309,6 +309,8 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, RollbackAction.class, menu);
 		addToMenu(rsrc, SQLFilterAction.class, menu);
 		menu.addSeparator();
+      menu.add(createFileMenu(rsrc));
+      menu.addSeparator();
 		addToMenu(rsrc, GotoPreviousResultsTabAction.class, menu);
 		addToMenu(rsrc, GotoNextResultsTabAction.class, menu);
 		menu.addSeparator();
@@ -331,7 +333,8 @@ final class MainFrameMenuBar extends JMenuBar
 		return menu;
 	}
 
-	private JMenu createPluginsMenu(Resources rsrc)
+
+   private JMenu createPluginsMenu(Resources rsrc)
 	{
 		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.PLUGINS);
 		addToMenu(rsrc, DisplayPluginSummaryAction.class, menu);
@@ -407,6 +410,16 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, CloseAllSQLResultWindowsAction.class, menu);
 		return menu;
 	}
+
+   private Component createFileMenu(Resources rsrc)
+   {
+      JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.FILE);
+      addToMenu(rsrc, FileSaveAction.class, menu);
+      addToMenu(rsrc, FileSaveAsAction.class, menu);
+      addToMenu(rsrc, FileOpenAction.class, menu);
+      return menu;
+   }
+
 
 	private Action addDesktopPaneActionToMenu(Resources rsrc, Class actionClass,
 											JMenu menu, JDesktopPane desktopPane)

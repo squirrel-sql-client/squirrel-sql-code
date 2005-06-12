@@ -21,13 +21,10 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
@@ -35,6 +32,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 /**
  * This preferences panel allows maintenance of SQL preferences.
@@ -51,14 +49,17 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 
 	/** Application API. */
 	private IApplication _app;
+   private MainFrame _mainFrame;
 
-	/**
+   /**
 	 * Default ctor.
-	 */
-	public SQLPreferencesPanel()
+    * @param mainFrame
+    */
+	public SQLPreferencesPanel(MainFrame mainFrame)
 	{
 		super();
-	}
+      _mainFrame = mainFrame;
+   }
 
 	/**
 	 * Initialize this panel. Called prior to it being displayed.
@@ -77,11 +78,58 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 
 		_app = app;
 
-		SQLPrefsPanel pnl = (SQLPrefsPanel)getPanelComponent();
+		final SQLPrefsPanel pnl = (SQLPrefsPanel)getPanelComponent();
 		pnl.loadData(_app, _app.getSquirrelPreferences());
+
+      pnl._fileOpenInPreviousDir.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            updateFilePanel(pnl);
+         }
+      });
+
+      pnl._fileOpenInSpecifiedDir.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            updateFilePanel(pnl);
+         }
+      });
+
+      updateFilePanel(pnl);
+
+
+      pnl._fileChooseDir.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onChooseDir(pnl);
+         }
+      });
+
 	}
 
-	public synchronized Component getPanelComponent()
+
+   public void onChooseDir(SQLPrefsPanel pnl)
+   {
+      JFileChooser chooser = new JFileChooser(pnl._fileSpecifiedDir.getText());
+      chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+      int returnVal = chooser.showOpenDialog(_mainFrame);
+      if (returnVal == JFileChooser.APPROVE_OPTION)
+      {
+         pnl._fileSpecifiedDir.setText(chooser.getSelectedFile().getAbsolutePath());
+      }
+   }
+
+
+   private void updateFilePanel(SQLPrefsPanel pnl)
+   {
+      pnl._fileChooseDir.setEnabled(pnl._fileOpenInSpecifiedDir.isSelected());
+      pnl._fileSpecifiedDir.setEnabled(pnl._fileOpenInSpecifiedDir.isSelected());
+   }
+
+   public synchronized Component getPanelComponent()
 	{
 		if (_myPanel == null)
 		{
@@ -114,8 +162,12 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 		private JRadioButton _debugJdbcStream = new JRadioButton(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebugstream"));
 		private JRadioButton _debugJdbcWriter = new JRadioButton(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebugwriter"));
 		private JLabel _jdbcDebugLogFileNameLbl = new OutputLabel(" ");
+      private JRadioButton _fileOpenInPreviousDir = new JRadioButton(s_stringMgr.getString("SQLPreferencesPanel.fileOpenInPreviousDir"));
+      private JRadioButton _fileOpenInSpecifiedDir = new JRadioButton(s_stringMgr.getString("SQLPreferencesPanel.fileOpenInSpecifiedDir"));;
+      private JTextField _fileSpecifiedDir = new JTextField();
+      private JButton _fileChooseDir = new JButton("...");
 
-		SQLPrefsPanel()
+      SQLPrefsPanel()
 		{
 			super(new GridBagLayout());
 			createUserInterface();
@@ -129,6 +181,9 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 			_debugJdbcWriter.setSelected(prefs.isJdbcDebugToWriter());
 			_debugJdbcDont.setSelected(prefs.isJdbcDebugDontDebug());
 			_jdbcDebugLogFileNameLbl.setText(appFiles.getJDBCDebugLogFile().getPath());
+         _fileOpenInPreviousDir.setSelected(prefs.isFileOpenInPreviousDir());
+         _fileOpenInSpecifiedDir.setSelected(prefs.isFileOpenInSpecifiedDir());
+         _fileSpecifiedDir.setText(prefs.getFileSpecifiedDir());
 		}
 
 		void applyChanges(SquirrelPreferences prefs)
@@ -146,6 +201,13 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 			{
 				prefs.dontDoJdbcDebug();
 			}
+
+         prefs.setFileOpenInPreviousDir(_fileOpenInPreviousDir.isSelected());
+         prefs.setFileOpenInSpecifiedDir(_fileOpenInSpecifiedDir.isSelected());
+         String specDir = _fileSpecifiedDir.getText();
+         prefs.setFileSpecifiedDir(null == specDir ? "" : specDir);
+
+
 		}
 
 		private void createUserInterface()
@@ -159,9 +221,11 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 			add(createGeneralPanel(), gbc);
 			++gbc.gridy;
 			add(createDebugPanel(), gbc);
+         ++gbc.gridy;
+         add(createFilePanel(), gbc);
 		}
 
-		private JPanel createGeneralPanel()
+      private JPanel createGeneralPanel()
 		{
 			JPanel pnl = new JPanel(new GridBagLayout());
 			pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("SQLPreferencesPanel.general")));
@@ -227,6 +291,39 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 
 			return pnl;
 		}
+
+      private Component createFilePanel()
+      {
+         final ButtonGroup btnGroup = new ButtonGroup();
+         btnGroup.add(_fileOpenInPreviousDir);
+         btnGroup.add(_fileOpenInSpecifiedDir);
+
+         JPanel pnl = new JPanel(new GridBagLayout());
+         pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("SQLPreferencesPanel.file")));
+
+         GridBagConstraints gbc;
+
+         gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+         pnl.add(_fileOpenInPreviousDir, gbc);
+
+         gbc = new GridBagConstraints(1,0,2,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5),0,0);
+         pnl.add(new JPanel(), gbc);
+
+
+         gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5),0,0);
+         pnl.add(_fileOpenInSpecifiedDir, gbc);
+
+         gbc = new GridBagConstraints(1,1,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5),0,0);
+         pnl.add(_fileSpecifiedDir, gbc);
+
+         gbc = new GridBagConstraints(2,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5),0,0);
+         pnl.add(_fileChooseDir, gbc);
+
+         return pnl;
+
+      }
+
+
 	}
 }
 

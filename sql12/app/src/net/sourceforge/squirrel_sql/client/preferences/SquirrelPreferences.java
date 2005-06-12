@@ -19,15 +19,11 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.Serializable;
-import java.sql.DriverManager;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-
+import net.sourceforge.squirrel_sql.client.action.ActionKeys;
+import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrameWindowState;
+import net.sourceforge.squirrel_sql.client.plugin.PluginStatus;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.ProxySettings;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -37,11 +33,14 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
-import net.sourceforge.squirrel_sql.client.action.ActionKeys;
-import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrameWindowState;
-import net.sourceforge.squirrel_sql.client.plugin.PluginStatus;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.Serializable;
+import java.sql.DriverManager;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 /**
  * This class represents the application preferences.
  *
@@ -49,7 +48,8 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
  */
 public class SquirrelPreferences implements Serializable
 {
-	public interface IPropertyNames
+
+   public interface IPropertyNames
 	{
 		String ACTION_KEYS = "actionKeys";
 		String ALIASES_SELECTED_INDEX = "aliasesSelectdIndex";
@@ -74,7 +74,11 @@ public class SquirrelPreferences implements Serializable
 		String SHOW_MAIN_TOOL_BAR = "showMainToolBar";
 		String SHOW_TOOLTIPS = "showToolTips";
 		String SHOW_COLOR_ICONS_IN_TOOLBAR="showColorIconsInToolbars";
-	}
+      String FILE_OPEN_IN_PREVIOUS_DIR = "fileOpenInPreviousDir";
+      String FILE_OPEN_IN_SPECIFIED_DIR = "fileOpenInSpecifiedDir";
+      String FILE_SPECIFIED_DIR = "fileSpecifiedDir";
+      String FILE_PREVIOUS_DIR = "filePreviousdDir";
+   }
 
 	public interface IJdbcDebugTypes
 	{
@@ -102,6 +106,15 @@ public class SquirrelPreferences implements Serializable
 	 * dragging faster.
 	 */
 	private boolean _showContentsWhenDragging = false;
+
+
+   private boolean _fileOpenInPreviousDir = true;
+
+   private boolean _fileOpenInSpecifiedDir = false;
+
+   private String _fileSpecifiedDir = "";
+
+   private String _filePreviousDir = System.getProperty("user.home");
 
 	/** JDBC Debug Type. */
 	private int _jdbcDebugType = IJdbcDebugTypes.NONE;
@@ -643,97 +656,76 @@ public class SquirrelPreferences implements Serializable
  	}
 
 
-	/*
-	public synchronized PluginObjectWrapper[] getPluginObjects() {
-		//	return (Folder[])_subFolders.toArray(new Folder[_subFolders.size()]);
-		int pluginCount = _allPluginObjects.size();
-		PluginObjectWrapper[] wrappers = new PluginObjectWrapper[pluginCount];
-		int wrappersIdx = 0;
-		for (Iterator pluginIt = _allPluginObjects.keySet().iterator(); pluginIt.hasNext();) {
-			String pluginInternalName = (String)pluginIt.next();
-			PluginObjectWrapper pow = new PluginObjectWrapper();
-			pow.setPluginInternalName(pluginInternalName);
-			Map objsMap = (Map)_allPluginObjects.get(pluginInternalName);
-			//Object[] objsAr = objsMap.values().toArray(new Object[objsMap.size()]);
-			Set entrySet = objsMap.entrySet();
-			StringWrapper[] keysAr = new StringWrapper[entrySet.size()];
-			Object[] objsAr = new Object[entrySet.size()];
-			int entriesIdx = 0;
-			for (Iterator entryIt = entrySet.iterator(); entryIt.hasNext();) {
-				Map.Entry entry = (Map.Entry)entryIt.next();
-				keysAr[entriesIdx] = new StringWrapper((String)entry.getKey());
-				objsAr[entriesIdx++] = entry.getValue();
-			}
+   public boolean isFileOpenInPreviousDir()
+   {
+      return _fileOpenInPreviousDir;
+   }
 
-			pow.setKeys(keysAr);
-			pow.setObjects(objsAr);
-			wrappers[wrappersIdx++] = pow;
-		}
+   public synchronized void setFileOpenInPreviousDir(boolean data)
+   {
+      if (data != _fileOpenInPreviousDir)
+      {
+         final boolean oldValue = _fileOpenInPreviousDir;
+         _fileOpenInPreviousDir = data;
+         getPropertyChangeReporter().firePropertyChange(
+                              IPropertyNames.FILE_OPEN_IN_PREVIOUS_DIR,
+                              oldValue, _fileOpenInPreviousDir);
+      }
+   }
 
-		return wrappers;
-	}
-	*/
 
-	/*
-		public PluginObjectWrapper getPluginObjectByIndex(int idx) {
-			return null;
-		}
-	*/
+   public boolean isFileOpenInSpecifiedDir()
+   {
+      return _fileOpenInSpecifiedDir;
+   }
 
-	/*
-		public void setPluginObjects(PluginObjectWrapper[] parm) {
-			_allPluginObjects = new HashMap();
-			for (int i = 0; i < parm.length; ++i) {
-				Map map = new HashMap();
-				StringWrapper[] keys = parm[i].getKeys();
-				Object[] objects = parm[i].getObjects();
-				for (int j = 0; j < keys.length; ++j) {
-					map.put(keys[j], objects[j]);
-				}
-				_allPluginObjects.put(parm[i].getPluginInternalName(), map);
-			}
-		}
-	*/
+   public synchronized void setFileOpenInSpecifiedDir(boolean data)
+   {
+      if (data != _fileOpenInSpecifiedDir)
+      {
+         final boolean oldValue = _fileOpenInSpecifiedDir;
+         _fileOpenInSpecifiedDir = data;
+         getPropertyChangeReporter().firePropertyChange(
+                              IPropertyNames.FILE_OPEN_IN_SPECIFIED_DIR,
+                              oldValue, _fileOpenInSpecifiedDir);
+      }
+   }
 
-	/*
-		public void setPluginObjectByIndex(int idx, PluginObjectWrapper value) {
-			//_objects[idx] = value;
-		}
-	*/
+   public String getFileSpecifiedDir()
+   {
+      return _fileSpecifiedDir;
+   }
 
-	/*
-		public synchronized Object getPluginObject(IPlugin plugin, String key) {
-			String pluginName = plugin.getInternalName();
-			Map pluginValues = (Map)_allPluginObjects.get(pluginName);
-			if (pluginValues == null) {
-				pluginValues = new HashMap();
-				_allPluginObjects.put(pluginName, pluginValues);
-			}
-			return pluginValues.get(key);
-		}
-	*/
+   public synchronized void setFileSpecifiedDir(String data)
+   {
+      if (false == ("" + data).equals(_fileSpecifiedDir))
+      {
+         final String oldValue = _fileSpecifiedDir;
+         _fileSpecifiedDir = data;
+         getPropertyChangeReporter().firePropertyChange(
+                              IPropertyNames.FILE_SPECIFIED_DIR,
+                              oldValue, _fileSpecifiedDir);
+      }
+   }
 
-	/*
-		public synchronized Object putPluginObject(IPlugin plugin, String key, Object obj) {
-			String pluginName = plugin.getInternalName();
-			Map pluginValues = (Map)_allPluginObjects.get(pluginName);
-			if (pluginValues == null) {
-				pluginValues = new HashMap();
-				_allPluginObjects.put(pluginName, pluginValues);
-			}
-			return pluginValues.put(key, obj);
-		}
-	*/
+   public String getFilePreviousDir()
+   {
+      return _filePreviousDir;
+   }
 
-	/*
-		public synchronized Object removePluginObject(IPlugin plugin, String key) {
-			Object obj = getPluginObject(plugin, key);
-			if (obj != null) {
-				((Map)_allPluginObjects.get(plugin.getInternalName())).remove(obj);
-			}
-			return obj;
-		}
-	*/
+   public synchronized void setFilePreviousDir(String data)
+   {
+      if (false == ("" + data).equals(_filePreviousDir))
+      {
+         final String oldValue = _filePreviousDir;
+         _filePreviousDir = data;
+         getPropertyChangeReporter().firePropertyChange(
+                              IPropertyNames.FILE_PREVIOUS_DIR,
+                              oldValue, _filePreviousDir);
+      }
+   }
+
+
 
 	/**
 	 * Helper method.
@@ -843,87 +835,4 @@ public class SquirrelPreferences implements Serializable
 		return _propChgReporter;
 	}
 
-	/*
-		public static final class PluginObjectWrapper {
-			private String _pluginInternalName;
-			private StringWrapper[] _keys;
-			private Object[] _objects;
-
-			public String getPluginInternalName() {
-				return _pluginInternalName;
-			}
-
-
-			public void setPluginInternalName(String value) {
-				_pluginInternalName = value;
-			}
-
-
-			public Object[] getObjects() {
-				return _objects;
-			}
-
-
-			public Object getObjects(int idx) {
-				return _objects[idx];
-			}
-
-
-			public void setObjects(Object[] value) {
-				_objects = value;
-			}
-
-
-			public void setObjects(int idx, Object value) {
-				_objects[idx] = value;
-			}
-
-
-			public StringWrapper[] getKeys() {
-				return _keys;
-			}
-
-
-			public StringWrapper getKeys(int idx) {
-				return _keys[idx];
-			}
-
-
-			public void setKeys(StringWrapper[] value) {
-				_keys = value;
-			}
-
-
-			public void setKeys(int idx, StringWrapper value) {
-				_keys[idx] = value;
-			}
-		}
-
-
-		public class PluginObjectWrapperBeanInfo extends SimpleBeanInfo {
-			private static final String PLUGIN_INTERNAL_NAME = "pluginInternalName";
-			private static final String KEYS = "keys";
-			private static final String OBJECTS = "objects";
-
-
-			private PropertyDescriptor[] s_dscrs;
-
-			private Class cls = PluginObjectWrapper.class;
-
-			public PluginObjectWrapperBeanInfo() throws IntrospectionException {
-				super();
-				if (s_dscrs == null) {
-					s_dscrs = new PropertyDescriptor[3];
-					int idx = 0;
-					s_dscrs[idx++] = new PropertyDescriptor(PLUGIN_INTERNAL_NAME, cls, "getPluginInternalName", "setPluginInternalName");
-					s_dscrs[idx++] = new IndexedPropertyDescriptor(KEYS, cls, "getKeys", "setKeys", "getKeys", "setKeys");
-					s_dscrs[idx++] = new IndexedPropertyDescriptor(OBJECTS, cls, "getObjects", "setObjects", "getObjects", "setObjects");
-				}
-			}
-
-			public PropertyDescriptor[] getPropertyDescriptors() {
-				return s_dscrs;
-			}
-		}
-	*/
 }

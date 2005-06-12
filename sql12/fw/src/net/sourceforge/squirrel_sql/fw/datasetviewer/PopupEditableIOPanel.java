@@ -390,7 +390,7 @@ public class PopupEditableIOPanel extends JPanel
  
  		else if (e.getActionCommand().equals("import")) {
  			
- 			// IMPORT OBJECT FROM FILE
+ 			// IMPORT OBJECT FROM OSX_FILE
  			
  			if (fileNameField.getText() == null ||
  				fileNameField.getText().equals(TEMP_FILE_FLAG)) {
@@ -436,7 +436,7 @@ public class PopupEditableIOPanel extends JPanel
 
 		else {
 			
-			// GET FILE FOR EXPORT & EXTERNAL PROCESSING
+			// GET OSX_FILE FOR EXPORT & EXTERNAL PROCESSING
 			
 			String canonicalFilePathName = fileNameField.getText();
 			
@@ -588,7 +588,7 @@ public class PopupEditableIOPanel extends JPanel
 			
 			if (e.getActionCommand().equals("export")) {
 				
-				// EXPORT OBJECT TO FILE
+				// EXPORT OBJECT TO OSX_FILE
 
 				if (exportData(file, outStream, canonicalFilePathName) == true) {
 								
@@ -608,7 +608,7 @@ public class PopupEditableIOPanel extends JPanel
 		
 			else if (e.getActionCommand().equals("execute")) {
 				
-				// EXPORT OBJECT TO FILE, EXECUTE PROGRAM ON IT, IMPORT IT BACK
+				// EXPORT OBJECT TO OSX_FILE, EXECUTE PROGRAM ON IT, IMPORT IT BACK
 				
 				if (((String)externalCommandCombo.getEditor().getItem()) == null ||
 					((String)externalCommandCombo.getEditor().getItem()).length() == 0) {

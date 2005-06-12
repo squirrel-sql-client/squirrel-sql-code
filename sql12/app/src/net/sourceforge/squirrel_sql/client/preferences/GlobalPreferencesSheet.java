@@ -239,7 +239,7 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 
 		// Add panels for core Squirrel functionality.
 		_panels.add(new GeneralPreferencesPanel());
-		_panels.add(new SQLPreferencesPanel());
+		_panels.add(new SQLPreferencesPanel(_app.getMainFrame()));
 		_panels.add(new ProxyPreferencesPanel());
 		_panels.add(new DataTypePreferencesPanel());
 

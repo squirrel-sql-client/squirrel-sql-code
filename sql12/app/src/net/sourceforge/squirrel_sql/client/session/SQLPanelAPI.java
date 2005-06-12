@@ -46,8 +46,9 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	private SQLPanel _panel;
 
    private ToolsPopupAction _toolsPopupAction;
+   private FileManager _fileManager = new FileManager(this);
 
-	/**
+   /**
 	 * Ctor specifying the panel.
 	 *
 	 * @param	panel	<TT>SQLPanel</TT> is the SQL Panel.
@@ -84,8 +85,23 @@ public class SQLPanelAPI implements ISQLPanelAPI
       _toolsPopupAction.addAction(selectionString, action);
    }
 
+   public void fileSave()
+   {
+      _fileManager.save();
+   }
 
-	public void addExecutor(ISQLResultExecuter exec)
+   public void fileSaveAs()
+   {
+      _fileManager.saveAs();
+   }
+
+   public void fileOpen()
+   {
+      _fileManager.open();
+   }
+
+
+   public void addExecutor(ISQLResultExecuter exec)
 	{
 		_panel.addExecutor(exec);
 	}
