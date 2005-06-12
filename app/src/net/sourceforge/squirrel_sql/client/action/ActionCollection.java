@@ -55,33 +55,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.TileVerticalAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewHelpAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewLogsAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsAction;
-import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultWindowsAction;
-import net.sourceforge.squirrel_sql.client.session.action.CloseSessionAction;
-import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
-import net.sourceforge.squirrel_sql.client.session.action.CopyQualifiedObjectNameAction;
-import net.sourceforge.squirrel_sql.client.session.action.CopySimpleObjectNameAction;
-import net.sourceforge.squirrel_sql.client.session.action.DropSelectedTablesAction;
-import net.sourceforge.squirrel_sql.client.session.action.DumpSessionAction;
-import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
-import net.sourceforge.squirrel_sql.client.session.action.GotoNextResultsTabAction;
-import net.sourceforge.squirrel_sql.client.session.action.GotoPreviousResultsTabAction;
-import net.sourceforge.squirrel_sql.client.session.action.IObjectTreeAction;
-import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
-import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
-import net.sourceforge.squirrel_sql.client.session.action.NewObjectTreeAction;
-import net.sourceforge.squirrel_sql.client.session.action.NewSQLWorksheetAction;
-import net.sourceforge.squirrel_sql.client.session.action.NextSessionAction;
-import net.sourceforge.squirrel_sql.client.session.action.PreviousSessionAction;
-import net.sourceforge.squirrel_sql.client.session.action.ReconnectAction;
-import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeAction;
-import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeItemAction;
-import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
-import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
-import net.sourceforge.squirrel_sql.client.session.action.EditWhereColsAction;
-import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
-import net.sourceforge.squirrel_sql.client.session.action.SetDefaultCatalogAction;
-import net.sourceforge.squirrel_sql.client.session.action.ShowNativeSQLAction;
+import net.sourceforge.squirrel_sql.client.session.action.*;
 /**
  * This class represents a collection of <TT>Action</CODE> objects for the
  * application.
@@ -440,7 +414,10 @@ public final class ActionCollection
 		add(new DumpApplicationAction(_app));
 		add(new DumpSessionAction(_app));
 		add(new ExecuteSqlAction(_app));
-		add(new ExitAction(_app));
+      add(new ExitAction(_app));
+      add(new FileSaveAction(_app));
+      add(new FileSaveAsAction(_app));
+      add(new FileOpenAction(_app));
 		add(new GlobalPreferencesAction(_app));
 		add(new GotoNextResultsTabAction(_app));
 		add(new GotoPreviousResultsTabAction(_app));

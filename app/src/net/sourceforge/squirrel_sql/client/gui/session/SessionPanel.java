@@ -24,10 +24,7 @@ import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
-import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeAction;
-import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
-import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
+import net.sourceforge.squirrel_sql.client.session.action.*;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.*;
@@ -517,14 +514,13 @@ public class SessionPanel extends JPanel
 			addSeparator();
 			add(actions.get(ExecuteSqlAction.class));
 			addSeparator();
-//			add(actions.get(CommitAction.class));
-//			add(actions.get(RollbackAction.class));
 			actions.get(ExecuteSqlAction.class).setEnabled(false);
-//			actions.get(CommitAction.class).setEnabled(false);
-//			actions.get(RollbackAction.class).setEnabled(false);
-			addSeparator();
 			add(actions.get(SQLFilterAction.class));
 			actions.get(SQLFilterAction.class).setEnabled(false);
+         addSeparator();
+         add(actions.get(FileOpenAction.class));
+         add(actions.get(FileSaveAction.class));
+         add(actions.get(FileSaveAsAction.class));
 		}
 
 		private void setupCatalogsCombo()

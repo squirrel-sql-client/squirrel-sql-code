@@ -173,11 +173,14 @@ public class SQLInternalFrame extends BaseSessionInternalFrame
 
 		private void createGUI(ISession session, ISQLPanelAPI panel)
 		{
-			ActionCollection actions = session.getApplication()
-					.getActionCollection();
+			ActionCollection actions = session.getApplication().getActionCollection();
 			setUseRolloverButtons(true);
 			setFloatable(false);
 			add(actions.get(ExecuteSqlAction.class));
+         addSeparator();
+         add(actions.get(FileOpenAction.class));
+         add(actions.get(FileSaveAction.class));
+         add(actions.get(FileSaveAsAction.class));
 			addSeparator();
 			add(actions.get(SQLFilterAction.class));
 			actions.get(SQLFilterAction.class).setEnabled(true);

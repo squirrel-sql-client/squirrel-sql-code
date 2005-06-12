@@ -6,6 +6,9 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.FileOpenAction;
+import net.sourceforge.squirrel_sql.client.session.action.FileSaveAction;
+import net.sourceforge.squirrel_sql.client.session.action.FileSaveAsAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 import net.sourceforge.squirrel_sql.fw.completion.Completor;
@@ -47,6 +50,9 @@ public class ToolsPopupAction extends SquirrelAction
       addAction("undo", sqlPanel.getUndoAction());
       addAction("redo", sqlPanel.getRedoAction());
       addAction("runsql", ac.get(ExecuteSqlAction.class));
+      addAction("fileopen", ac.get(FileOpenAction.class));
+      addAction("filesave", ac.get(FileSaveAction.class));
+      addAction("filesaveas", ac.get(FileSaveAsAction.class));
    }
 
    private void onToolsPopupActionSelected(CompletionInfo completion)

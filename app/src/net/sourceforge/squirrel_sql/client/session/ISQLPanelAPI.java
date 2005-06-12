@@ -276,5 +276,10 @@ public interface ISQLPanelAPI
 
    void addToToolsPopUp(String selectionString, Action action);
 
+   void fileSave();
+
+   void fileSaveAs();
+
+   void fileOpen();
 }
 

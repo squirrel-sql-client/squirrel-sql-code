@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.client.preferences;
+
 /*
  * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
@@ -17,27 +18,29 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 import java.beans.IndexedPropertyDescriptor;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.beans.SimpleBeanInfo;
+
 /**
  * This is the <CODE>BeanInfo</CODE> class for <CODE>SquirrelPreferences</CODE>.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
-	implements SquirrelPreferences.IPropertyNames
+   implements SquirrelPreferences.IPropertyNames
 {
-	private static PropertyDescriptor[] s_dscrs;
+   private static PropertyDescriptor[] s_dscrs;
 
-	private static Class CLS = SquirrelPreferences.class;
+   private static Class CLS = SquirrelPreferences.class;
 
-	public SquirrelPreferencesBeanInfo() throws IntrospectionException
-	{
-		super();
-		if (s_dscrs == null)
-		{
+   public SquirrelPreferencesBeanInfo() throws IntrospectionException
+   {
+      super();
+      if (s_dscrs == null)
+      {
          s_dscrs = new PropertyDescriptor[]
          {
             new PropertyDescriptor(SESSION_PROPERTIES, CLS,
@@ -85,13 +88,23 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
                "getPluginStatuses", "setPluginStatuses",
                "getPluginStatus", "setPluginStatus"),
             new PropertyDescriptor(NEW_SESSION_VIEW, CLS,
-               "getNewSessionView", "setNewSessionView")
-         };
-		}
-	}
+               "getNewSessionView", "setNewSessionView"),
+            new PropertyDescriptor(FILE_OPEN_IN_PREVIOUS_DIR, CLS,
+               "isFileOpenInPreviousDir", "setFileOpenInPreviousDir"),
+            new PropertyDescriptor(FILE_OPEN_IN_SPECIFIED_DIR, CLS,
+               "isFileOpenInSpecifiedDir", "setFileOpenInSpecifiedDir"),
+            new PropertyDescriptor(FILE_SPECIFIED_DIR, CLS,
+               "getFileSpecifiedDir", "setFileSpecifiedDir"),
+            new PropertyDescriptor(FILE_PREVIOUS_DIR, CLS,
+               "getFilePreviousDir", "setFilePreviousDir")
 
-	public PropertyDescriptor[] getPropertyDescriptors()
-	{
-		return s_dscrs;
-	}
+
+         };
+      }
+   }
+
+   public PropertyDescriptor[] getPropertyDescriptors()
+   {
+      return s_dscrs;
+   }
 }

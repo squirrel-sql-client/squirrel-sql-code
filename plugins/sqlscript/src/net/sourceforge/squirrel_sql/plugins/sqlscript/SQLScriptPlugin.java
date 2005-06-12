@@ -49,10 +49,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(SQLScriptPlugin.class);
 
-	/** Plugin preferences. */
-	private SQLScriptPreferences _prefs;
-
-	/** The app folder for this plugin. */
+   /** The app folder for this plugin. */
 	private File _pluginAppFolder;
 
 	/** Folder to store user settings in. */
@@ -153,7 +150,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 	 * @return  Preferences panel.
 	 */
 	public IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
-		return new IGlobalPreferencesPanel[] { new SQLScriptPreferencesPanel(_prefs)};
+		return new IGlobalPreferencesPanel[0];
 	}
 
 	/**
@@ -185,13 +182,8 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 				"net.sourceforge.squirrel_sql.plugins.sqlscript.sqlscript",
 				this);
 
-		// Load plugin preferences.
-		loadPrefs();
 
 		ActionCollection coll = app.getActionCollection();
-		coll.add(new SaveScriptAction(app, _resources, this));
-		coll.add(new SaveScriptAsAction(app, _resources, this));
-		coll.add(new LoadScriptAction(app, _resources, this));
 		coll.add(new CreateTableScriptAction(app, _resources, this));
 		coll.add(new CreateDataScriptAction(app, _resources, this));
 		coll.add(new CreateTemplateDataScriptAction(app, _resources, this));
@@ -205,7 +197,6 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 	 */
 	public void unload()
    {
-		savePrefs();
 		super.unload();
 	}
 
@@ -230,9 +221,6 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 		api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTemplateDataScriptAction.class));
 
       session.addSeparatorToToolbar();
-		session.addToToolbar(coll.get(LoadScriptAction.class));
-		session.addToToolbar(coll.get(SaveScriptAction.class));
-		session.addToToolbar(coll.get(SaveScriptAsAction.class));
 		session.addToToolbar(coll.get(CreateTableOfCurrentSQLAction.class));
 
       session.getSessionInternalFrame().addToToolsPopUp("sql2table", coll.get(CreateTableOfCurrentSQLAction.class));
@@ -243,9 +231,6 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
          public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
          {
             sqlInternalFrame.addSeparatorToToolbar();
-            sqlInternalFrame.addToToolbar(coll.get(LoadScriptAction.class));
-            sqlInternalFrame.addToToolbar(coll.get(SaveScriptAction.class));
-            sqlInternalFrame.addToToolbar(coll.get(SaveScriptAsAction.class));
             sqlInternalFrame.addToToolbar(coll.get(CreateTableOfCurrentSQLAction.class));
 
             sqlInternalFrame.addToToolsPopUp("sql2table", coll.get(CreateTableOfCurrentSQLAction.class));
@@ -264,59 +249,11 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
       return ret;
 	}
 
-	/**
-	 * Load from preferences file.
-	 */
-	void loadPrefs() {
-		try {
-			XMLBeanReader doc = new XMLBeanReader();
-			doc.load(
-				new File(_userSettingsFolder, SQLScriptConstants.USER_PREFS_FILE_NAME),
-				getClass().getClassLoader());
-			Iterator it = doc.iterator();
-			if (it.hasNext()) {
-				_prefs = (SQLScriptPreferences) it.next();
-			}
-		} catch (FileNotFoundException ignore) {
-			// property file not found for user - first time user ran pgm.
-		} catch (Exception ex) {
-			s_log.error("Error occured reading from preferences file: "
-					+ SQLScriptConstants.USER_PREFS_FILE_NAME, ex);
-		}
-		if (_prefs == null) {
-			_prefs = new SQLScriptPreferences();
-		}
-	}
-
-	/**
-	 * Save preferences to disk.
-	 */
-	synchronized void savePrefs() {
-		if (_prefs != null) {
-			try {
-				XMLBeanWriter wtr = new XMLBeanWriter(_prefs);
-				wtr.save(
-					new File(_userSettingsFolder, SQLScriptConstants.USER_PREFS_FILE_NAME));
-			} catch (Exception ex) {
-				s_log.error("Error occured writing to preferences file: "
-						+ SQLScriptConstants.USER_PREFS_FILE_NAME, ex);
-				//i18n
-			}
-		}
-	}
-
-	SQLScriptPreferences getPreferences() {
-		return _prefs;
-	}
-
-	private void createMenu() {
+   private void createMenu() {
 		IApplication app = getApplication();
 		ActionCollection coll = app.getActionCollection();
 
 		JMenu menu = _resources.createMenu(IMenuResourceKeys.SCRIPTS);
-		_resources.addToMenu(coll.get(LoadScriptAction.class), menu);
-		_resources.addToMenu(coll.get(SaveScriptAction.class), menu);
-		_resources.addToMenu(coll.get(SaveScriptAsAction.class), menu);
 		_resources.addToMenu(coll.get(CreateDataScriptAction.class), menu);
 		_resources.addToMenu(coll.get(CreateTemplateDataScriptAction.class), menu);
 		_resources.addToMenu(coll.get(CreateTableScriptAction.class), menu);
@@ -324,23 +261,6 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
       _resources.addToMenu(coll.get(CreateTableOfCurrentSQLAction.class), menu);
 
 		app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, menu);
-	}
-
-   public void setLoadedFile(File file, ISession session)
-	{
-      getLoadAndSaveDelegate(session).setLoadedFile(file);
-	}
-
-	public SaveAndLoadScriptActionDelegate getLoadAndSaveDelegate(ISession session)
-	{
-		if(null == _saveAndLoadDelegates.get(session.getIdentifier()))
-		{
-			SaveAndLoadScriptActionDelegate deleg = new SaveAndLoadScriptActionDelegate(this);
-			deleg.setSession(session);
-			_saveAndLoadDelegates.put(session.getIdentifier(), deleg);
-		}
-		return (SaveAndLoadScriptActionDelegate)_saveAndLoadDelegates.get(session.getIdentifier());
-
 	}
 
    public Object getExternalService()
