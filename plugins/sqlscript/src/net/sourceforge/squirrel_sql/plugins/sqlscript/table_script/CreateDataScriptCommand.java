@@ -173,7 +173,7 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
 
       for (int i = 1; i <= iColumnCount; i++)
       {
-         colInfo[i-1] = new ColumnInfo(metaData.getColumnName(i), metaData.getColumnType(i), metaData.getColumnTypeName(i));
+         colInfo[i-1] = new ColumnInfo(metaData.getColumnName(i), metaData.getColumnType(i));
       }
 
       // Just a helper to make the fromResultSet ? ... below
@@ -480,14 +480,12 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
    private static class ColumnInfo
    {
       int sqlType; // As in java.sql.Types
-      private String columnTypeName;
       String columnName;
 
-      public ColumnInfo(String columnName, int sqlType, String columnTypeName)
+      public ColumnInfo(String columnName, int sqlType)
       {
          this.columnName = columnName;
          this.sqlType = sqlType;
-         this.columnTypeName = columnTypeName;
       }
    }
 
