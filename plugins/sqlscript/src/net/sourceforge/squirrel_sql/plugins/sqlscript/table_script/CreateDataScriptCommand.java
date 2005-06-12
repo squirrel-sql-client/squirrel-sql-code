@@ -168,12 +168,12 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
       ResultSetMetaData metaData = srcResult.getMetaData();
 
       int iColumnCount = metaData.getColumnCount();
-      String[][] typeAndName = new String[iColumnCount][2];
+      ColumnInfo[] colInfo = new ColumnInfo[iColumnCount];
+
 
       for (int i = 1; i <= iColumnCount; i++)
       {
-         typeAndName[i - 1][0] = metaData.getColumnTypeName(i).toUpperCase();
-         typeAndName[i - 1][1] = metaData.getColumnName(i);
+         colInfo[i-1] = new ColumnInfo(metaData.getColumnName(i), metaData.getColumnType(i), metaData.getColumnTypeName(i));
       }
 
       // Just a helper to make the fromResultSet ? ... below
@@ -194,41 +194,40 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
 
          for (int i = 0; i < iColumnCount; i++)
          {
-            String sColumnTypeName = typeAndName[i][0];
-            String sColumnName = typeAndName[i][1];
-            int iIndexPoint = sColumnName.lastIndexOf('.');
-            sColumnName = sColumnName.substring(iIndexPoint + 1);
-            sbRows.append(su.makeColumnNameUnique(sColumnName));
+            int iIndexPoint = colInfo[i].columnName.lastIndexOf('.');
+            sbRows.append(su.makeColumnNameUnique(colInfo[i].columnName.substring(iIndexPoint + 1)));
 
-            if (sColumnTypeName.equals("INTEGER")
-               || sColumnTypeName.equals("COUNTER")
-               || sColumnTypeName.equals("LONG")
-               || sColumnTypeName.equals("DOUBLE")
-               || sColumnTypeName.equals("NUMERIC")
-               || sColumnTypeName.equals("DECIMAL")
-               || sColumnTypeName.equals("NUMBER")
-               || sColumnTypeName.equals("TINY")
-               || sColumnTypeName.equals("SHORT")
-               || sColumnTypeName.equals("FLOAT"))
+            if (Types.TINYINT == colInfo[i].sqlType
+               || Types.BIGINT == colInfo[i].sqlType
+               || Types.SMALLINT == colInfo[i].sqlType
+               || Types.INTEGER == colInfo[i].sqlType
+               || Types.BIGINT == colInfo[i].sqlType
+               || Types.FLOAT == colInfo[i].sqlType
+               || Types.REAL == colInfo[i].sqlType
+               || Types.DOUBLE == colInfo[i].sqlType
+               || Types.NUMERIC == colInfo[i].sqlType
+               || Types.DECIMAL == colInfo[i].sqlType
+               || Types.NUMERIC == colInfo[i].sqlType
+               || Types.NUMERIC == colInfo[i].sqlType)
             {
                Object value = fromResultSet ? srcResult.getObject(i + 1) : "0" + getNullableComment(metaData, i+1);
                sbValues.append(value);
             }
-            else if (sColumnTypeName.equals("DATE")
-               || sColumnTypeName.equals("TIME")
-               || sColumnTypeName.equals("TIMESTAMP"))
+            else if (Types.DATE == colInfo[i].sqlType
+               || Types.TIME == colInfo[i].sqlType
+               || Types.TIMESTAMP == colInfo[i].sqlType)
             {
                Calendar calendar = Calendar.getInstance();
                java.util.Date timestamp = null;
-               if (sColumnTypeName.equals("DATE"))
+               if (Types.DATE == colInfo[i].sqlType)
                {
                   timestamp = fromResultSet ? srcResult.getDate(i + 1): new java.util.Date();
                }
-               else if (sColumnTypeName.equals("TIME"))
+               else if (Types.TIME == colInfo[i].sqlType)
                {
                   timestamp = fromResultSet ? srcResult.getTime(i + 1): new java.util.Date();
                }
-               else if (sColumnTypeName.equals("TIMESTAMP"))
+               else if (Types.TIMESTAMP == colInfo[i].sqlType)
                {
                   timestamp = fromResultSet ? srcResult.getTimestamp(i + 1): new java.util.Date();
                }
@@ -242,7 +241,7 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
                {
                   calendar.setTime(timestamp);
 
-                  if (sColumnTypeName.equals("DATE"))
+                  if (Types.DATE == colInfo[i].sqlType)
                   {
                      String esc = "{d '" + prefixNulls(calendar.get(Calendar.YEAR), 4) + "-" +
                         prefixNulls(calendar.get(Calendar.MONTH) + 1, 2) + "-" +
@@ -250,7 +249,7 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
                      esc = fromResultSet ? esc : esc + getNullableComment(metaData, i+1);
                      sbValues.append(esc);
                   }
-                  else if (sColumnTypeName.equals("TIME"))
+                  else if (Types.TIME == colInfo[i].sqlType)
                   {
                      String esc = "{t '" + prefixNulls(calendar.get(Calendar.HOUR_OF_DAY), 2) + ":" +
                         prefixNulls(calendar.get(Calendar.MINUTE), 2) + ":" +
@@ -258,7 +257,7 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
                      esc = fromResultSet ? esc : esc + getNullableComment(metaData, i+1);
                      sbValues.append(esc);
                   }
-                  else if (sColumnTypeName.equals("TIMESTAMP"))
+                  else if (Types.TIMESTAMP == colInfo[i].sqlType)
                   {
                      String esc = "{ts '" + prefixNulls(calendar.get(Calendar.YEAR), 4) + "-" +
                         prefixNulls(calendar.get(Calendar.MONTH) + 1, 2) + "-" +
@@ -272,10 +271,16 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
 
                }
             }
-            else if (sColumnTypeName.equals("BIT"))
+            else if (Types.BIT == colInfo[i].sqlType
+                     || Types.BOOLEAN == colInfo[i].sqlType)
             {
                boolean iBoolean = fromResultSet ? srcResult.getBoolean(i + 1) : false;
-               if (iBoolean)
+
+               if(fromResultSet && srcResult.wasNull())
+               {
+                  sbValues.append("null");
+               }
+               else if (iBoolean)
                {
                   sbValues.append(1);
                }
@@ -289,7 +294,20 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
                   sbValues.append(getNullableComment(metaData, i+1));
                }
             }
-            else
+            else // Types.CHAR,
+                 // Types.VARCHAR,
+                 // Types.LONGVARCHAR,
+                 // Types.BINARY,
+                 // Types.VARBINARY
+                 // Types.LONGVARBINARY
+                 // Types.NULL
+                 // Types.JAVA_OBJECT
+                 // Types.DISTINCT
+                 // Types.ARRAY
+                 // Types.BLOB
+                 // Types.CLOB
+                 // Types.REF
+                 // Types.DATALINK
             {
                String sResult = fromResultSet ? srcResult.getString(i + 1) : "s";
                if (sResult == null)
@@ -457,6 +475,20 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
     */
    public void internalFrameOpened(InternalFrameEvent e)
    {
+   }
+
+   private static class ColumnInfo
+   {
+      int sqlType; // As in java.sql.Types
+      private String columnTypeName;
+      String columnName;
+
+      public ColumnInfo(String columnName, int sqlType, String columnTypeName)
+      {
+         this.columnName = columnName;
+         this.sqlType = sqlType;
+         this.columnTypeName = columnTypeName;
+      }
    }
 
 }
