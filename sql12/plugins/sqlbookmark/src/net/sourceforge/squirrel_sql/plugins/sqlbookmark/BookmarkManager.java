@@ -158,4 +158,10 @@ public class BookmarkManager implements ICompletorModel{
 
       return new CompletionCandidates(candidates);
    }
+
+   public void removeAll()
+   {
+      bookmarks = new ArrayList();
+      bookmarkIdx = new HashMap();
+   }
 }
