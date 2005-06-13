@@ -34,8 +34,8 @@ import java.io.File;
 public class BaseSessionInternalFrame extends BaseInternalFrame
 {
 	private ISession _session;
-   private String _titleWithoutFile;
-   private boolean _inSettingSqlFile;
+   private String _titleWithoutFile = "";
+   private String _sqlFilePath = null;
 
    /**
 	 * Creates a non-resizable, non-closable, non-maximizable,
@@ -83,14 +83,16 @@ public class BaseSessionInternalFrame extends BaseInternalFrame
 
    public void setTitle(String title)
    {
-      if(_inSettingSqlFile)
+      _titleWithoutFile = title;
+
+
+      if(null == _sqlFilePath)
       {
-         super.setTitle(_titleWithoutFile + "; SQL file: " + title);
+         super.setTitle(_titleWithoutFile);
       }
       else
       {
-         _titleWithoutFile = title;
-         super.setTitle(_titleWithoutFile);
+         super.setTitle(_titleWithoutFile + "   SQL file: " + _sqlFilePath);
       }
    }
 
@@ -112,15 +114,8 @@ public class BaseSessionInternalFrame extends BaseInternalFrame
 
    public void setSqlFile(File sqlFile)
    {
-      try
-      {
-         _inSettingSqlFile =true;
-         setTitle(sqlFile.getAbsolutePath());
-      }
-      finally
-      {
-         _inSettingSqlFile =false;
-      }
+      _sqlFilePath = sqlFile.getAbsolutePath();
+      setTitle(_titleWithoutFile);
    }
 
    /**
