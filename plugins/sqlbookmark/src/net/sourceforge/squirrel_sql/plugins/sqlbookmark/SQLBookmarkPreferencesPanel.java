@@ -119,8 +119,8 @@ public class SQLBookmarkPreferencesPanel implements IGlobalPreferencesPanel {
      */
     public void applyChanges() {
 	// create a new bookmark manager
-	BookmarkManager bookmarks = 
-	    new BookmarkManager(plugin.userSettingsFolder);
+	BookmarkManager bookmarks = plugin.getBookmarkManager();
+//	    new BookmarkManager(plugin.userSettingsFolder);
 	
 	// load all the new changed bookmarks into it
 	for (Iterator i = updatedMarks.iterator(); i.hasNext(); ) {
@@ -129,7 +129,7 @@ public class SQLBookmarkPreferencesPanel implements IGlobalPreferencesPanel {
 	}
 	
 	// set it as the new bookmark manager.
-	plugin.setBookmarkManager(bookmarks);
+	//plugin.setBookmarkManager(bookmarks);
 	
 	// rebuild the bookmark menu.
 	plugin.rebuildMenu();
