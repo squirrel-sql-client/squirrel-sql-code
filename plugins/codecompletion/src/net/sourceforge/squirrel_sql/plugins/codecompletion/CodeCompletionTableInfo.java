@@ -78,7 +78,7 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
    {
       if(null == _colInfos)
       {
-         ExtendedColumnInfo[] schemColInfos = schemaInfo.getExtendedColumnInfos(_tableName);
+         ExtendedColumnInfo[] schemColInfos = schemaInfo.getExtendedColumnInfos(_catalog, _schema, _tableName);
 
 
          Vector colInfosBuf = new Vector();

@@ -34,6 +34,8 @@ public class CodeCompletionInfoCollection
    private Vector _catalogs = new Vector();
 
 	private ISession _session;
+   private static final int MAX_COMPLETION_INFOS = 300;
+   private static final String TOO_MANY_COMPLETION_INFOS = "Completion list truncated. Narrow by typing to get missing entries.";
 
    public CodeCompletionInfoCollection(ISession session)
 	{
@@ -55,7 +57,7 @@ public class CodeCompletionInfoCollection
 
          Vector completionInfos = new Vector();
 
-         ExtendedTableInfo[] tables = _session.getSchemaInfo(catalog, schema).getExtendedTableInfos();
+         ExtendedTableInfo[] tables = _session.getSchemaInfo().getExtendedTableInfos(catalog, schema);
 
          Hashtable completionInfoByUcTableName = new Hashtable();
          for (int i = 0; i < tables.length; i++)
@@ -79,7 +81,7 @@ public class CodeCompletionInfoCollection
             completionInfoByUcTableName.put(ucTableName, tableInfo);
          }
 
-         IProcedureInfo[] storedProceduresInfos = _session.getSchemaInfo(catalog, schema).getStoredProceduresInfos();
+         IProcedureInfo[] storedProceduresInfos = _session.getSchemaInfo().getStoredProceduresInfos(catalog, schema);
          for (int i = 0; i < storedProceduresInfos.length; i++)
          {
             CodeCompletionStoredProcedureInfo buf =
@@ -178,7 +180,18 @@ public class CodeCompletionInfoCollection
       {
 			Vector buf = new Vector();
 			buf.addAll(_aliasCompletionInfos);
-			buf.addAll(completionInfos);
+
+         if(MAX_COMPLETION_INFOS < completionInfos.size())
+         {
+            buf.addAll(completionInfos.subList(0,MAX_COMPLETION_INFOS));
+            _session.getMessageHandler().showMessage(TOO_MANY_COMPLETION_INFOS);
+         }
+         else
+         {
+            buf.addAll(completionInfos);
+         }
+
+
          return (CodeCompletionInfo[])buf.toArray(new CodeCompletionInfo[0]);
       }
 
@@ -200,6 +213,12 @@ public class CodeCompletionInfoCollection
          if(buf.upperCaseCompletionStringStartsWith(upperCasePrefix))
          {
             ret.add(buf);
+
+            if(MAX_COMPLETION_INFOS < ret.size())
+            {
+               _session.getMessageHandler().showMessage(TOO_MANY_COMPLETION_INFOS);
+               break;
+            }
          }
       }
 

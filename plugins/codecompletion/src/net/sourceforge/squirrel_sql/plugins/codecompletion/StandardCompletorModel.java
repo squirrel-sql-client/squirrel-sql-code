@@ -219,7 +219,7 @@ public class StandardCompletorModel
 			{
 				try
 				{
-					return infos[i].getColumns(_session.getSchemaInfo(catalog, schema), colNamePat);
+					return infos[i].getColumns(_session.getSchemaInfo(), colNamePat);
 				}
 				catch(SQLException e)
 				{
