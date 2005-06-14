@@ -82,8 +82,8 @@ public class TableCopyInStatementCommand implements ICommand
                colDef = ((ExtTableColumn) col).getColumnDisplayDefinition();
             }
 
+            int lastLength = buf.length();
             buf.append("(");
-            int lastLength = 0;
             for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx)
             {
                if(0 < rowIdx)

@@ -65,11 +65,8 @@ public class SQLBookmarkPreferencesPanel implements IGlobalPreferencesPanel {
     /** Handle to the plugin */
     protected SQLBookmarkPlugin plugin;
 
-    /** The original state of the bookmarks */
-    protected BookmarkManager originalMarks;
-
-    /** The working set of the updated bookmarks */
-    protected ArrayList updatedMarks;
+   /** The working set of the updated bookmarks */
+    protected ArrayList allMarksWorkCopy;
 
     /** The list representing the bookmark updates */
     protected JList markList;
@@ -80,8 +77,7 @@ public class SQLBookmarkPreferencesPanel implements IGlobalPreferencesPanel {
     /** Create the preferences */
     public SQLBookmarkPreferencesPanel(SQLBookmarkPlugin plugin) {
 	this.plugin = plugin;
-	this.originalMarks = plugin.getBookmarkManager();
-	updatedMarks = new ArrayList();
+	allMarksWorkCopy = new ArrayList();
     }
 
     /**
@@ -124,7 +120,7 @@ public class SQLBookmarkPreferencesPanel implements IGlobalPreferencesPanel {
 
        bookmarks.removeAll();
 	// load all the new changed bookmarks into it
-	for (Iterator i = updatedMarks.iterator(); i.hasNext(); ) {
+	for (Iterator i = allMarksWorkCopy.iterator(); i.hasNext(); ) {
 	    Bookmark mark = (Bookmark) i.next();
 	    bookmarks.add(mark);
 	}
@@ -166,10 +162,11 @@ public class SQLBookmarkPreferencesPanel implements IGlobalPreferencesPanel {
     protected void buildPanelComponent(JPanel main) {
 	
 	markModel = new DefaultListModel();
-	for (Iterator i = originalMarks.iterator(); i.hasNext(); ) {
+
+	for (Iterator i = plugin.getBookmarkManager().iterator(); i.hasNext(); ) {
 	    Bookmark mark = (Bookmark) i.next();
 	    markModel.addElement(mark.getName());
-	    updatedMarks.add((Bookmark) mark.clone());
+	    allMarksWorkCopy.add((Bookmark) mark.clone());
 	}
 	
 	markList = new JList(markModel);
@@ -355,7 +352,7 @@ public class SQLBookmarkPreferencesPanel implements IGlobalPreferencesPanel {
 	public boolean entry() {
 	    entryDialog = new EntryDialog(admin.app.getMainFrame());
 	    if (item >= 0) {
-		mark = (Bookmark) admin.updatedMarks.get(item);
+		mark = (Bookmark) admin.allMarksWorkCopy.get(item);
 		entryDialog.name.setText(mark.getName());
 		entryDialog.description.setText(mark.getDescription());
 		entryDialog.sql.setText(mark.getSql());
@@ -394,11 +391,11 @@ public class SQLBookmarkPreferencesPanel implements IGlobalPreferencesPanel {
 
 	    if (item < 0) {
 		admin.markModel.addElement(mark.getName());
-		admin.updatedMarks.add(mark);
-		admin.markList.setSelectedIndex(admin.updatedMarks.size() - 1);
+		admin.allMarksWorkCopy.add(mark);
+		admin.markList.setSelectedIndex(admin.allMarksWorkCopy.size() - 1);
 	    } else {
 		admin.markModel.insertElementAt(mark.getName(), item);
-		admin.updatedMarks.add(item, mark);
+		admin.allMarksWorkCopy.add(item, mark);
 		admin.markList.setSelectedIndex(item);
 	    }
 	}
@@ -446,7 +443,7 @@ public class SQLBookmarkPreferencesPanel implements IGlobalPreferencesPanel {
 	    if (item < 0) return;
 	    
 	    admin.markModel.removeElementAt(item);
-	    admin.updatedMarks.remove(item);
+	    admin.allMarksWorkCopy.remove(item);
 	}
     }
 
@@ -466,10 +463,10 @@ public class SQLBookmarkPreferencesPanel implements IGlobalPreferencesPanel {
 	    item = admin.markList.getSelectedIndex();
 	    if (item < 1) return;
 	    
-	    Bookmark mark1 = (Bookmark) admin.updatedMarks.get(item - 1);
-	    Bookmark mark2 = (Bookmark) admin.updatedMarks.get(item);
-	    admin.updatedMarks.set(item - 1, mark2);
-	    admin.updatedMarks.set(item, mark1);
+	    Bookmark mark1 = (Bookmark) admin.allMarksWorkCopy.get(item - 1);
+	    Bookmark mark2 = (Bookmark) admin.allMarksWorkCopy.get(item);
+	    admin.allMarksWorkCopy.set(item - 1, mark2);
+	    admin.allMarksWorkCopy.set(item, mark1);
 
 	    admin.markModel.setElementAt(mark2.getName(), item - 1);
 	    admin.markModel.setElementAt(mark1.getName(), item);
@@ -492,12 +489,12 @@ public class SQLBookmarkPreferencesPanel implements IGlobalPreferencesPanel {
 	
 	public void actionPerformed(ActionEvent e) {
 	    item = admin.markList.getSelectedIndex();
-	    if (item > (admin.updatedMarks.size() - 2)) return;
+	    if (item > (admin.allMarksWorkCopy.size() - 2)) return;
 	    
-	    mark = (Bookmark) admin.updatedMarks.get(item + 1);
-	    Bookmark mark2 = (Bookmark) admin.updatedMarks.get(item);
-	    admin.updatedMarks.set(item + 1, mark2);
-	    admin.updatedMarks.set(item, mark);
+	    mark = (Bookmark) admin.allMarksWorkCopy.get(item + 1);
+	    Bookmark mark2 = (Bookmark) admin.allMarksWorkCopy.get(item);
+	    admin.allMarksWorkCopy.set(item + 1, mark2);
+	    admin.allMarksWorkCopy.set(item, mark);
 
 	    admin.markModel.setElementAt(mark2.getName(), item + 1);
 	    admin.markModel.setElementAt(mark.getName(), item);
