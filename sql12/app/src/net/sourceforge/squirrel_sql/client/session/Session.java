@@ -114,11 +114,9 @@ class Session implements ISession
 	private IMessageHandler _msgHandler = NullMessageHandler.getInstance();
 
 	/** Xref info about the current connection. */
-	private final SchemaInfo _defaultSchemaInfo = new SchemaInfo();
+	private final SchemaInfo _schemaInfo = new SchemaInfo();
 
-	private final Hashtable _schemaInfosByCatalogAndSchema = new Hashtable();
-
-	/** Set to <TT>true</TT> once session closed. */
+   /** Set to <TT>true</TT> once session closed. */
 	private boolean _closed;
 
 	private List _statusBarToBeAdded = new ArrayList();
@@ -351,21 +349,7 @@ class Session implements ISession
 	 */
 	public SchemaInfo getSchemaInfo()
 	{
-		return _defaultSchemaInfo;
-	}
-
-	public SchemaInfo getSchemaInfo(String catalogName, String schemaName)
-	{
-		String key = (catalogName + "," + schemaName).toUpperCase();
-
-		SchemaInfo ret = (SchemaInfo) _schemaInfosByCatalogAndSchema.get(key);
-		if(null == ret)
-		{
-			ret = new SchemaInfo(getSQLConnection(), catalogName, schemaName);
-			_schemaInfosByCatalogAndSchema.put(key, ret);
-		}
-
-		return ret;
+		return _schemaInfo;
 	}
 
 	public synchronized Object getPluginObject(IPlugin plugin, String key)
@@ -645,7 +629,7 @@ class Session implements ISession
 	 */
 	private void loadTableInfo()
 	{
-		_defaultSchemaInfo.load(getSQLConnection());
+		_schemaInfo.load(getSQLConnection());
 	}
 
 	private void setupTitle()

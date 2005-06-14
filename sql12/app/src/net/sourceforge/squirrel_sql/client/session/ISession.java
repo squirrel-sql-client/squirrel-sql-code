@@ -145,12 +145,7 @@ public interface ISession extends IHasIdentifier
 	 */
 	SchemaInfo getSchemaInfo();
 
-	/**
-	 * TODO: Javadoc
-	 */
-	SchemaInfo getSchemaInfo(String catalogName, String schemaName);
-
-	/**
+   /**
 	 * Select a tab in the main tabbed pane.
 	 *
 	 * @param	tabIndex	The tab to select. @see #IMainTabIndexes

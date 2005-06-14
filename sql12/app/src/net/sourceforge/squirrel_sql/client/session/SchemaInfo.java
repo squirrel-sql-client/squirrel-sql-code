@@ -47,8 +47,6 @@ public class SchemaInfo
 	private final List _extendedtableInfos = new ArrayList();
 	private IProcedureInfo[] _procInfos = new IProcedureInfo[0];
 
-   private String _catalogName;
-   private String _schemaName;
 
 	/** Logger for this class. */
 	private static final ILogger s_log =
@@ -61,15 +59,6 @@ public class SchemaInfo
 
 	public SchemaInfo(SQLConnection conn)
 	{
-		this(conn, null, null);
-	}
-
-	public SchemaInfo(SQLConnection conn, String catalogName, String schemaName)
-	{
-		super();
-      _catalogName = catalogName;
-      _schemaName = schemaName;
-
 		if (conn == null)
 		{
 			throw new IllegalArgumentException("SQLConnection == null");
@@ -153,36 +142,10 @@ public class SchemaInfo
 			}
 
 
-         //////////////////////////////////////////////////////////////////////////////////////////////
-         // Set catalog and schema names in the same case sensitive way as they are stored in the DB
-         for (int i = 0; i < _catalogs.size(); i++)
-         {
-            String cat = (String) _catalogs.get(i);
-
-            if(("" + _catalogName).equalsIgnoreCase("" + cat))
-            {
-               _catalogName = cat;
-            }
-         }
-
-         for (int i = 0; i < _schemas.size(); i++)
-         {
-            String schem = (String) _schemas.get(i);
-
-            if(("" + _schemaName).equalsIgnoreCase("" + schem))
-            {
-               _schemaName = schem;
-            }
-         }
-         //
-         /////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
 			try
 			{
 				s_log.debug("Loading tables");
-				loadTables(_dmd, _catalogName, _schemaName);
+				loadTables(_dmd);
 				s_log.debug("Tables loaded");
 			}
 			catch (Exception ex)
@@ -193,7 +156,7 @@ public class SchemaInfo
 			try
 			{
 				s_log.debug("Loading stored procedures");
-				loadStoredProcedures(sqlDmd, _catalogName, _schemaName);
+				loadStoredProcedures(sqlDmd);
 				s_log.debug("stored procedures loaded");
 			}
 			catch (Exception ex)
@@ -208,12 +171,11 @@ public class SchemaInfo
 		}
 	}
 
-	private void loadStoredProcedures(SQLDatabaseMetaData dmd, String catalogName,
-										String schemaName)
+	private void loadStoredProcedures(SQLDatabaseMetaData dmd)
 	{
 		try
 		{
-			_procInfos = dmd.getProcedures(catalogName, schemaName, "%");
+			_procInfos = dmd.getProcedures(null, null, "%");
 		}
 		catch (Throwable th)
 		{
@@ -697,26 +659,95 @@ public class SchemaInfo
 
 	public ExtendedTableInfo[] getExtendedTableInfos()
 	{
-		return (ExtendedTableInfo[]) _extendedtableInfos.toArray(new ExtendedTableInfo[_extendedtableInfos.size()]);
+		return getExtendedTableInfos(null, null);
 	}
+
+   public ExtendedTableInfo[] getExtendedTableInfos(String catalog, String schema)
+   {
+      if(null == catalog && null == schema)
+      {
+         return (ExtendedTableInfo[]) _extendedtableInfos.toArray(new ExtendedTableInfo[_extendedtableInfos.size()]);
+      }
+      else
+      {
+         ArrayList ret = new ArrayList();
+
+         for (int i = 0; i < _extendedtableInfos.size(); i++)
+         {
+            ExtendedTableInfo extendedTableInfo = (ExtendedTableInfo) _extendedtableInfos.get(i);
+            boolean toAdd = true;
+            if(null != catalog && false == catalog.equalsIgnoreCase(extendedTableInfo.getCatalog()) )
+            {
+               toAdd = false;
+            }
+
+            if(null != schema && false == schema.equalsIgnoreCase(extendedTableInfo.getSchema()) )
+            {
+               toAdd = false;
+            }
+
+            if(toAdd)
+            {
+               ret.add(extendedTableInfo);
+            }
+         }
+
+         return (ExtendedTableInfo[]) ret.toArray(new ExtendedTableInfo[ret.size()]);
+      }
+   }
+
 
 	public IProcedureInfo[] getStoredProceduresInfos()
 	{
-		return _procInfos;
+		return getStoredProceduresInfos(null, null);
 	}
+
+   public IProcedureInfo[] getStoredProceduresInfos(String catalog, String schema)
+   {
+      if(null == catalog && null == schema)
+      {
+         return _procInfos;
+      }
+      else
+      {
+         ArrayList ret = new ArrayList();
+
+         for (int i = 0; i < _procInfos.length; i++)
+         {
+            boolean toAdd = true;
+            if(null != catalog && false == catalog.equalsIgnoreCase(_procInfos[i].getCatalogName()) )
+            {
+               toAdd = false;
+            }
+
+            if(null != schema && false == schema.equalsIgnoreCase(_procInfos[i].getSchemaName()) )
+            {
+               toAdd = false;
+            }
+
+            if(toAdd)
+            {
+               ret.add(_procInfos[i]);
+            }
+         }
+
+         return (IProcedureInfo[]) ret.toArray(new IProcedureInfo[ret.size()]);
+      }
+   }
+
 
 	public boolean isLoaded()
 	{
 		return _loaded;
 	}
 
-	private void loadTables(DatabaseMetaData dmd, String catalogName, String schemaName)
+	private void loadTables(DatabaseMetaData dmd)
 	{
 		try
 		{
 			// TODO: Use table types from meta data?
 			final String[] tabTypes = new String[] { "TABLE", "VIEW" };
-			final ResultSet rs = dmd.getTables(catalogName, schemaName, null, tabTypes);
+			final ResultSet rs = dmd.getTables(null, null, null, tabTypes);
 			try
 			{
 				while (rs.next())
@@ -754,10 +785,11 @@ public class SchemaInfo
          }
 
 
-         ResultSet rs = _dmd.getColumns(_catalogName, _schemaName, getCaseSensitiveTableName(tableName), null);
+         ResultSet rs = _dmd.getColumns(null, null
+            , getCaseSensitiveTableName(tableName), null);
          try
          {
-            Vector infos = new Vector();
+            ArrayList infos = new ArrayList();
 
             while (rs.next())
             {
@@ -789,19 +821,49 @@ public class SchemaInfo
 
    public ExtendedColumnInfo[] getExtendedColumnInfos(String tableName)
    {
+      return getExtendedColumnInfos(null, null, tableName);
+   }
+
+   public ExtendedColumnInfo[] getExtendedColumnInfos(String catalog, String schema, String tableName)
+   {
       String upperCaseTableName = tableName.toUpperCase();
       loadColumns(upperCaseTableName);
-      Vector ret = (Vector) _extendedColumnInfosByTableName.get(upperCaseTableName);
+      ArrayList extColInfo = (ArrayList) _extendedColumnInfosByTableName.get(upperCaseTableName);
 
-      if(null == ret)
+      if (null == extColInfo)
       {
          return new ExtendedColumnInfo[0];
       }
+
+      if (null == catalog && null == schema)
+      {
+         return (ExtendedColumnInfo[]) extColInfo.toArray(new ExtendedColumnInfo[extColInfo.size()]);
+      }
       else
       {
+         ArrayList ret = new ArrayList();
+
+         for (int i = 0; i < extColInfo.size(); i++)
+         {
+            ExtendedColumnInfo extendedColumnInfo = (ExtendedColumnInfo) extColInfo.get(i);
+            boolean toAdd = true;
+            if (null != catalog && false == catalog.equalsIgnoreCase(extendedColumnInfo.getCatalog()))
+            {
+               toAdd = false;
+            }
+
+            if (null != schema && false == schema.equalsIgnoreCase(extendedColumnInfo.getSchema()))
+            {
+               toAdd = false;
+            }
+
+            if (toAdd)
+            {
+               ret.add(extendedColumnInfo);
+            }
+         }
+
          return (ExtendedColumnInfo[]) ret.toArray(new ExtendedColumnInfo[ret.size()]);
       }
    }
-
-
 }

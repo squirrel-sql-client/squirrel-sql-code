@@ -60,7 +60,7 @@ public abstract class AbstractJoin extends CodeCompletionFunction
                schemas.put(schema, schema);
             }
 
-            table = _session.getSchemaInfo(catalog, schema).getCaseSensitiveTableName(table);
+            table = _session.getSchemaInfo().getCaseSensitiveTableName(table);
             if(null == table)
             {
                _session.getMessageHandler().showMessage("unknown table " + table);
