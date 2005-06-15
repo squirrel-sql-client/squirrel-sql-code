@@ -21,6 +21,9 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
+import java.awt.event.FocusListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusAdapter;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -106,6 +109,16 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
 				}
 			}
 		});
+
+
+      addFocusListener(new FocusAdapter()
+      {
+         public void focusGained(FocusEvent e)
+         {
+            _uiFactory._aliasesList.requestFocus();
+         }
+
+      });
 	}
 
 	/**
