@@ -22,18 +22,17 @@ import java.awt.event.ActionEvent;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
-public class ReconnectAction extends SquirrelAction implements ISessionAction
+public class ReconnectAction extends SquirrelAction
 {
 	private interface i18n
 	{
 		String MSG = "Close the current connection to the database and open a new one?";
 	}
-
-	/** Current session. */
-	private ISession _session;
 
 	/**
 	 * Ctor.
@@ -43,11 +42,6 @@ public class ReconnectAction extends SquirrelAction implements ISessionAction
 	public ReconnectAction(IApplication app)
 	{
 		super(app);
-	}
-
-	public void setSession(ISession session)
-	{
-		_session = session;
 	}
 
 	/**
@@ -60,7 +54,10 @@ public class ReconnectAction extends SquirrelAction implements ISessionAction
 		IApplication app = getApplication();
 		if(Dialogs.showYesNo(app.getMainFrame(), i18n.MSG))
 		{
-			_session.reconnect();
+         // Can't work with ISessionAction because if a result window is on top
+         // the session in a ISessionAction is null.
+         ISession activeSession = getApplication().getSessionManager().getActiveSession();
+			activeSession.reconnect();
 		}
 	}
 }
