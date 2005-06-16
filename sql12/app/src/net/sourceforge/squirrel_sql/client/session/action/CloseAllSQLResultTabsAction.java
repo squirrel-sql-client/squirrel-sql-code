@@ -59,6 +59,11 @@ public class CloseAllSQLResultTabsAction extends SquirrelAction
 	 */
 	public void actionPerformed(ActionEvent evt)
 	{
+      if(null == _panel)
+      {
+         return;
+      }
+
 		IApplication app = getApplication();
 		CursorChanger cursorChg = new CursorChanger(app.getMainFrame());
 		cursorChg.show();

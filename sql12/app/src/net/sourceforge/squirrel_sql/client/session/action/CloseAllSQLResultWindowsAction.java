@@ -24,8 +24,11 @@ import java.awt.event.ActionEvent;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
  * This <CODE>Action</CODE> allows the user to close all the SQL
  * result windows for the current session.
@@ -33,11 +36,8 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class CloseAllSQLResultWindowsAction extends SquirrelAction
-											implements ISQLPanelAction
 {
-	private ISQLPanelAPI _api;
-
-	/**
+   /**
 	 * Ctor.
 	 *
 	 * @param	app		Application API.
@@ -45,11 +45,6 @@ public class CloseAllSQLResultWindowsAction extends SquirrelAction
 	public CloseAllSQLResultWindowsAction(IApplication app)
 	{
 		super(app);
-	}
-
-	public void setSQLPanel(ISQLPanelAPI api)
-	{
-		_api = api;
 	}
 
 	/**
@@ -64,7 +59,14 @@ public class CloseAllSQLResultWindowsAction extends SquirrelAction
 		cursorChg.show();
 		try
 		{
-			new CloseAllSQLResultWindowsCommand(_api).execute();
+         ISession activeSession = getApplication().getSessionManager().getActiveSession();
+         if(   activeSession.getActiveSessionWindow() instanceof SessionInternalFrame
+            || activeSession.getActiveSessionWindow() instanceof SQLInternalFrame)
+         {
+            // Can't work with ISessionAction because if a result window is on top
+            // the session in a ISessionAction is null.
+			   new CloseAllSQLResultWindowsCommand(activeSession.getSQLPanelAPIOfActiveSessionWindow()).execute();
+         }
 		}
 		finally
 		{
