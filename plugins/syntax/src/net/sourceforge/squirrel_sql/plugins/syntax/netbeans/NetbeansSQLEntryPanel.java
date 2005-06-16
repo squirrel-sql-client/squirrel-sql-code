@@ -241,6 +241,7 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 	public void setText(String text)
 	{
 		setText(text, false);
+      _session.getParserEventsProcessor(getIdentifier()).triggerParser();
 	}
 
 	/**
@@ -256,6 +257,7 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 		_textArea.setText(text);
 		setSelectionEnd(_textArea.getDocument().getLength());
 		setSelectionStart(0);
+      _session.getParserEventsProcessor(getIdentifier()).triggerParser();
 	}
 
 	/**
@@ -296,6 +298,9 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 				setSelectionEnd(doc.getLength());
 				setSelectionStart(start);
 			}
+
+         _session.getParserEventsProcessor(getIdentifier()).triggerParser();
+
 		}
 		catch (Exception ex)
 		{
@@ -366,6 +371,8 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 	public void replaceSelection(String sqlScript)
 	{
 		_textArea.replaceSelection(sqlScript);
+      _session.getParserEventsProcessor(getIdentifier()).triggerParser();
+
 	}
 
 	/**

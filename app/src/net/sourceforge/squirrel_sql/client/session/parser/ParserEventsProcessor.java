@@ -63,6 +63,10 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 		_parserTimer.stop();
 	}
 
+   public void triggerParser()
+   {
+      _parserTimer.restart();
+   }
 
 	private void onParsingFinished()
 	{
