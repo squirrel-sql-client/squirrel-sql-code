@@ -104,6 +104,16 @@ public class ExportConfigPlugin extends DefaultPlugin
 		return "Colin Bell";
 	}
 
+    /**
+     * Returns a comma separated list of other contributors.
+     *
+     * @return      Contributors names.
+     */
+    public String getContributors()
+    {
+        return "Rob Manning";
+    }
+
 	/**
 	 * Load this plugin.
 	 *
