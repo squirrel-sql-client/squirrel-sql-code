@@ -67,7 +67,7 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
    private ISession _session;
    private SyntaxPugin _plugin;
    private int _autocorrectionsCount = 0;
-   private static final String PREFS_KEY_AUTO_COORECTIONS_COUNT = "squirrelSql_toolsPopup_ctrl_t_count";
+   private static final String PREFS_KEY_AUTO_COORECTIONS_COUNT = "squirrelSql_syntax_autocorrections_count";
 
    NetbeansSQLEntryPanel(ISession session, SyntaxPreferences prefs, SyntaxFactory syntaxFactory, SyntaxPugin plugin)
 	{
