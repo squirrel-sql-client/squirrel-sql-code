@@ -18,6 +18,7 @@ import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.prefs.Preferences;
 
 
 public class ToolsPopupAction extends SquirrelAction
@@ -26,6 +27,8 @@ public class ToolsPopupAction extends SquirrelAction
    private ISQLEntryPanel _sqlEntryPanel;
    private ISession _session;
    private Completor _toolsCompletor;
+   private static final String PREFS_KEY_CTRL_T_COUNT = "squirrelSql_toolsPopup_ctrl_t_count";
+   private int _ctrlTCount;
 
    public ToolsPopupAction(IApplication app, SQLPanel sqlPanel, ISession session)
    {
@@ -53,6 +56,13 @@ public class ToolsPopupAction extends SquirrelAction
       addAction("fileopen", ac.get(FileOpenAction.class));
       addAction("filesave", ac.get(FileSaveAction.class));
       addAction("filesaveas", ac.get(FileSaveAsAction.class));
+
+      _ctrlTCount = Preferences.userRoot().getInt(PREFS_KEY_CTRL_T_COUNT, 0);
+
+      if(3 > _ctrlTCount)
+      {
+         _session.getMessageHandler().showMessage("Please try out the Tools popup by hitting ctrl+t in the SQL Editor. Do it three times to stop this message.");
+      }
    }
 
    private void onToolsPopupActionSelected(CompletionInfo completion)
@@ -64,6 +74,12 @@ public class ToolsPopupAction extends SquirrelAction
 
    public void actionPerformed(ActionEvent evt)
    {
+      if(3 > _ctrlTCount)
+      {
+         int ctrlTCount = Preferences.userRoot().getInt(PREFS_KEY_CTRL_T_COUNT, 0);
+         Preferences.userRoot().putInt(PREFS_KEY_CTRL_T_COUNT, ++ctrlTCount);
+      }
+
       _toolsCompletor.show();
    }
 
