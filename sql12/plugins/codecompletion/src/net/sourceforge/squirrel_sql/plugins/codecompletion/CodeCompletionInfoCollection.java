@@ -108,7 +108,13 @@ public class CodeCompletionInfoCollection
             String[] dataTypes = _session.getSchemaInfo().getDataTypes();
             for (int i = 0; i < dataTypes.length; i++)
             {
-               completionInfos.add(new CodeCompletionTypeInfo(dataTypes[i]));
+
+               if(false == _session.getSchemaInfo().isTable(dataTypes[i]))
+               {
+                  // For example Postgres returns table names as datatypes.
+                  // In those cases this prevents to have the table names twice.
+                  completionInfos.add(new CodeCompletionTypeInfo(dataTypes[i]));
+               }
             }
 
             String[] functions = _session.getSchemaInfo().getFunctions();
