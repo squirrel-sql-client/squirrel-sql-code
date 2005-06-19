@@ -42,6 +42,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.ActionEvent;
 import java.util.Hashtable;
+import java.util.prefs.Preferences;
 
 import org.netbeans.editor.ext.ExtKit;
 
@@ -65,7 +66,8 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
    private SyntaxFactory _syntaxFactory;
    private ISession _session;
    private SyntaxPugin _plugin;
-   private boolean _isFirstAutocorrectInSession = true;
+   private int _autocorrectionsCount = 0;
+   private static final String PREFS_KEY_AUTO_COORECTIONS_COUNT = "squirrelSql_toolsPopup_ctrl_t_count";
 
    NetbeansSQLEntryPanel(ISession session, SyntaxPreferences prefs, SyntaxFactory syntaxFactory, SyntaxPugin plugin)
 	{
@@ -105,6 +107,8 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
             //To change body of implemented methods use File | Settings | File Templates.
          }
       });
+
+      _autocorrectionsCount = Preferences.userRoot().getInt(PREFS_KEY_AUTO_COORECTIONS_COUNT, 0);
 	}
 
    private void onInsertUpdate(DocumentEvent e)
@@ -127,10 +131,10 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
                setSelectionStart(e.getOffset() - autoCorrCandidate.length());
                setSelectionEnd(e.getOffset());
 
-               if(_isFirstAutocorrectInSession)
+               if(10 > _autocorrectionsCount)
                {
                   _session.getMessageHandler().showMessage(autoCorrCandidate + " has been auto corrected / extended to " + corr + ". To configure auto correct / abreviations see Menu Session --> Syntax --> Configure auto correct / abreviation");
-                  _isFirstAutocorrectInSession = false;
+                  Preferences.userRoot().putInt(PREFS_KEY_AUTO_COORECTIONS_COUNT, ++_autocorrectionsCount);
                }
 
                SwingUtilities.invokeLater(new Runnable()
