@@ -1,4 +1,7 @@
 package net.sourceforge.squirrel_sql.client;
+
+import javax.swing.*;
+
 /*
  * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -39,6 +42,13 @@ public class Main
 	 */
 	public static void main(String[] args)
 	{
+      if(false == Version.supportsUsedJDK())
+      {
+         JOptionPane.showMessageDialog(null, Version.getUnsupportedJDKMessage());
+         System.exit(-1);
+      }
+
+
 		if (ApplicationArguments.initialize(args))
 		{
 			final ApplicationArguments appArgs = ApplicationArguments.getInstance();

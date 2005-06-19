@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client;
  */
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.StringFunctionsTab;
 /**
  * Application version information.
  *
@@ -80,4 +81,33 @@ public class Version
 	{
 		return WEB_SITE;
 	}
+
+   public static boolean supportsUsedJDK()
+   {
+      String vmVer = System.getProperty("java.vm.version");
+
+      if(   vmVer.startsWith("0")
+         || vmVer.startsWith("1.0")
+         || vmVer.startsWith("1.1")
+         || vmVer.startsWith("1.2")
+         || vmVer.startsWith("1.3"))
+      {
+         return false;
+      }
+      else
+      {
+         return true;
+      }
+   }
+
+   public static String getUnsupportedJDKMessage()
+   {
+      String[] params = new String[]
+         {
+            System.getProperty("java.vm.version"),
+            System.getProperty("java.home")
+         };
+
+      return s_stringMgr.getString("Application.error.unsupportedJDKVersion", params);
+   }
 }
