@@ -547,7 +547,7 @@
                                 <include name="**/faq.html"/>
                         </fileset>
                 </copy>
-		<tar tarfile="${dist_dir}/SquirrelSQLMac.tar" basedir="${dist_dir}/mac"/>
-		<gzip zipfile="${dist_dir}/SquirrelSQLMac.tar.gz" src="${dist_dir}/SquirrelSQLMac.tar"/>
+		<!--<tar tarfile="${dist_dir}/SquirrelSQLMac.tar" basedir="${dist_dir}/mac"/>-->
+		<zip destfile="${dist_dir}/SquirrelSQLMac.zip" basedir="${dist_dir}/mac"/>
 	</target>
 </project>
