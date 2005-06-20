@@ -63,7 +63,9 @@ public class FileManager
       _sqlPanelAPI.getSession().selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
       if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
       {
-         loadScript(chooser.getSelectedFile());
+         File selectedFile = chooser.getSelectedFile();
+         loadScript(selectedFile);
+         prefs.setFilePreviousDir(selectedFile.getAbsolutePath());
       }
    }
 
