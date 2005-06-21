@@ -42,15 +42,15 @@ public class Main
 	 */
 	public static void main(String[] args)
 	{
-      if(false == Version.supportsUsedJDK())
-      {
-         JOptionPane.showMessageDialog(null, Version.getUnsupportedJDKMessage());
-         System.exit(-1);
-      }
-
-
 		if (ApplicationArguments.initialize(args))
 		{
+
+         if(false == Version.supportsUsedJDK())
+         {
+            JOptionPane.showMessageDialog(null, Version.getUnsupportedJDKMessage());
+            System.exit(-1);
+         }
+
 			final ApplicationArguments appArgs = ApplicationArguments.getInstance();
 			if (appArgs.getShowHelp())
 			{
