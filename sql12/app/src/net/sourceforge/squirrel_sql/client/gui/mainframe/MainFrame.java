@@ -485,22 +485,25 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
       {
          m_hasBeenVisible = true;
          final int prefMsgPanelHeight = Preferences.userRoot().getInt(PREFS_KEY_MESSAGEPANEL_HEIGHT, -1);
-         if(-1 == prefMsgPanelHeight)
+
+         SwingUtilities.invokeLater(new Runnable()
          {
-            _splitPn.setResizeWeight(0.9);
-         }
-         else
-         {
-            SwingUtilities.invokeLater(new Runnable()
+            public void run()
             {
-               public void run()
+               if (-1 == prefMsgPanelHeight)
+               {
+                  int divLoc = getDividerLocation(50, _splitPn);
+                  _splitPn.setDividerLocation(divLoc);
+               }
+               else
                {
                   int divLoc = getDividerLocation(prefMsgPanelHeight, _splitPn);
                   _splitPn.setDividerLocation(divLoc);
-               }
-            });
 
-         }
+               }
+            }
+         });
+            
       }
    }
 
