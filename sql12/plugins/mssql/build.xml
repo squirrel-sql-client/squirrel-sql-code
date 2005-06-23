@@ -4,16 +4,16 @@
 	<property name="build.dir" value="build"/>
 	<property name="build.classes" value="${build.dir}/classes"/>
 	<property name="build.lib" value="${build.dir}/lib"/>
-    <property name="squirrel.dir" value="g:/SQuirreL SQL Client" />
+    <property name="squirrel.dir" value="/home/gerd/work/java/squirrel1_2/squirrel-sql-dist/squirrel-sql/core/dist" />
     <property name="squirrel.lib" value="${squirrel.dir}/lib" />
     <property name="squirrel.plugins" value="${squirrel.dir}/plugins" />
 
     <path id="squirrel.libraries">
-        <pathelement location="${squirrel.dir}/squirrel-sql.jar" />
+        <pathelement location="${squirrel.lib}/squirrel-sql.jar" />
         <pathelement location="${squirrel.lib}/commons-cli.jar" />
-        <pathelement location="${squirrel.lib}/forms.jar "/>
-        <pathelement location="${squirrel.lib}/fw.jar "/>
-        <pathelement location="${squirrel.lib}/log4j.jar "/>
+        <pathelement location="${squirrel.lib}/forms.jar"/>
+        <pathelement location="${squirrel.lib}/fw.jar"/>
+        <pathelement location="${squirrel.lib}/log4j.jar"/>
         <pathelement location="${squirrel.lib}/nanoxml-2.1.jar"/>
     </path>
 
