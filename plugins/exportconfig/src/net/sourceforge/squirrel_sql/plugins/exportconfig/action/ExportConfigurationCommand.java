@@ -40,10 +40,6 @@ import net.sourceforge.squirrel_sql.plugins.exportconfig.gui.ExportDialog;
  */
 class ExportConfigurationCommand implements ICommand
 {
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(ExportConfigurationCommand.class);
-
 	/** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(ExportConfigurationCommand.class);
