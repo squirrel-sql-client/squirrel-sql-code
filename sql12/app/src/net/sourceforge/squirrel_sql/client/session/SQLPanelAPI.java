@@ -445,15 +445,20 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	/**
 	 * Close all the SQL result tabs.
 	 */
-	public synchronized void closeAllSQLResultTabs()
+	public void closeAllSQLResultTabs()
 	{
 		_panel.getSQLExecPanel().closeAllSQLResultTabs();
 	}
 
+   public void closeAllButCurrentResultTabs()
+   {
+      _panel.getSQLExecPanel().closeAllButCurrentResultTabs();
+   }
+
 	/**
 	 * Close all the "torn off" SQL result frames.
 	 */
-	public synchronized void closeAllSQLResultFrames()
+	public void closeAllSQLResultFrames()
 	{
 		_panel.getSQLExecPanel().closeAllSQLResultFrames();
 	}
@@ -469,7 +474,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	/**
 	 * Display the previous tab in the SQL results.
 	 */
-	public synchronized void gotoPreviousResultsTab()
+	public void gotoPreviousResultsTab()
 	{
 		_panel.getSQLExecPanel().gotoPreviousResultsTab();
 	}

@@ -29,9 +29,6 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 class SquirrelTabbedPane extends JTabbedPane
 {
 	private SquirrelPreferences _prefs;
-	private Method _setter;
-	private int SCROLL;
-	private int WRAP;
 
 	private PropsListener _prefsListener;
 
@@ -52,33 +49,8 @@ class SquirrelTabbedPane extends JTabbedPane
 		}
 		_prefs = prefs;
 
-		try
-		{
-			// Look for the new JDK 1.4 fields indicating tab types.
-			Class clazz = getClass();
-			SCROLL = clazz.getField("SCROLL_TAB_LAYOUT").getInt(this);
-			WRAP = clazz.getField("WRAP_TAB_LAYOUT").getInt(this);
-			_setter = clazz.getMethod("setTabLayoutPolicy", new Class[] { int.class });
-			Object[] parms = new Object[1];
-			parms[0] = new Integer(_prefs.useScrollableTabbedPanes() ? SCROLL : WRAP);
-			_setter.invoke(this, parms);
-		}
-		catch (IllegalAccessException ex)
-		{
-			// Running an old versin of Java.
-		}
-		catch (NoSuchFieldException ex)
-		{
-			// Running an old versin of Java.
-		}
-		catch (NoSuchMethodException ex)
-		{
-			// Running an old versin of Java.
-		}
-		catch (InvocationTargetException ex)
-		{
-			// Running an old versin of Java.
-		}
+      int tabLayoutPolicy = _prefs.useScrollableTabbedPanes() ? JTabbedPane.SCROLL_TAB_LAYOUT : JTabbedPane.WRAP_TAB_LAYOUT;
+      setTabLayoutPolicy(tabLayoutPolicy);
 	}
 
 	/**
@@ -111,26 +83,8 @@ class SquirrelTabbedPane extends JTabbedPane
 	{
 		if (propName == null || propName.equals(IAppPrefPropertynames.SCROLLABLE_TABBED_PANES))
 		{
-			if (_setter != null)
-			{
-				{
-					try
-					{
-						final Object[] parms = new Object[1];
-						final boolean scroll = _prefs.useScrollableTabbedPanes();
-						parms[0] = new Integer(scroll ? SCROLL : WRAP);
-						_setter.invoke(this, parms);
-					}
-					catch (IllegalAccessException ex)
-					{
-						// Running an old versin of Java.
-					}
-					catch (InvocationTargetException ex)
-					{
-						// Running an old versin of Java.
-					}
-				}
-			}
+         int tabLayoutPolicy = _prefs.useScrollableTabbedPanes() ? JTabbedPane.SCROLL_TAB_LAYOUT : JTabbedPane.WRAP_TAB_LAYOUT;
+         setTabLayoutPolicy(tabLayoutPolicy);
 		}
 	}
 
