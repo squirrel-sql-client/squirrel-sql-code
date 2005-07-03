@@ -59,6 +59,7 @@ public class ToolsPopupAction extends SquirrelAction
       addAction("tabprevious", ac.get(GotoPreviousResultsTabAction.class));
       addAction("tabcloseall", ac.get(CloseAllSQLResultTabsAction.class));
       addAction("tabcloseallbutcur", ac.get(CloseAllSQLResultTabsButCurrentAction.class));
+      addAction("tabsticky", ac.get(ToggleCurrentSQLResultTabStickyAction.class));
 
       _ctrlTCount = Preferences.userRoot().getInt(PREFS_KEY_CTRL_T_COUNT, 0);
 

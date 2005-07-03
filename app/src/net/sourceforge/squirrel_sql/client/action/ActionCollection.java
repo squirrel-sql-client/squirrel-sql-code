@@ -405,6 +405,7 @@ public final class ActionCollection
 		add(new CloseAllSessionsAction(_app));
 		add(new CloseAllSQLResultTabsAction(_app));
 		add(new CloseAllSQLResultTabsButCurrentAction(_app));
+		add(new ToggleCurrentSQLResultTabStickyAction(_app));
 		add(new CloseAllSQLResultWindowsAction(_app));
 		add(new CloseSessionAction(_app));
 		add(new CommitAction(_app));
