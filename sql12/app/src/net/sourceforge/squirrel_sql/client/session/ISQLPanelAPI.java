@@ -239,6 +239,12 @@ public interface ISQLPanelAPI
    void closeAllButCurrentResultTabs();
 
 
+   /**
+	 * Toggle if all further SQL resutls should go to the current tab.
+	 */
+   void toggleCurrentSQLResultTabSticky();
+
+
 	/**
 	 * Close all the "torn off" SQL result frames.
 	 */

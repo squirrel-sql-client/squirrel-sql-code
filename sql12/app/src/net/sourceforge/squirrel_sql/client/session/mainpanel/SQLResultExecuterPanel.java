@@ -45,12 +45,14 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
+import net.sourceforge.squirrel_sql.client.session.action.ToggleCurrentSQLResultTabStickyAction;
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ResultTabEvent;
@@ -94,8 +96,9 @@ public class SQLResultExecuterPanel extends JPanel
 
 	/** Factory for generating unique IDs for new <TT>ResultTab</TT> objects. */
 	private IntegerIdentifierFactory _idFactory = new IntegerIdentifierFactory();
+   private ResultTab _stickyTab;
 
-	/**
+   /**
 	 * Ctor.
 	 *
 	 * @param	session	 Current session.
@@ -294,6 +297,73 @@ public class SQLResultExecuterPanel extends JPanel
          }
       }
    }
+
+   public synchronized void toggleCurrentSQLResultTabSticky()
+   {
+      if (null != _stickyTab)
+      {
+         if(_stickyTab.equals(_tabbedResultsPanel.getSelectedComponent()))
+         {
+            // Sticky is turned off. Just remove sticky and return.
+            _stickyTab = null;
+            _tabbedResultsPanel.setIconAt(_tabbedResultsPanel.getSelectedIndex(), null);
+            return;
+
+         }
+         else
+         {
+            // remove old sticky tab
+            int indexOfStickyTab = getIndexOfStickyTab();
+            if(-1 != indexOfStickyTab)
+            {
+               _tabbedResultsPanel.setIconAt(indexOfStickyTab, null);
+            }
+            _stickyTab = null;
+         }
+      }
+
+      if(false == _tabbedResultsPanel.getSelectedComponent() instanceof ResultTab)
+      {
+         JOptionPane.showMessageDialog(_session.getApplication().getMainFrame(), "Cannot make a cancel panel sticky");
+         return;
+      }
+
+      _stickyTab = (ResultTab) _tabbedResultsPanel.getSelectedComponent();
+      int selectedIndex = _tabbedResultsPanel.getSelectedIndex();
+
+      ImageIcon icon = getStickyIcon();
+
+      _tabbedResultsPanel.setIconAt(selectedIndex, icon);
+   }
+
+   private ImageIcon getStickyIcon()
+   {
+      ActionCollection actionCollection = _session.getApplication().getActionCollection();
+
+      ImageIcon icon =
+         (ImageIcon) actionCollection.get(ToggleCurrentSQLResultTabStickyAction.class).getValue(Action.SMALL_ICON);
+      return icon;
+   }
+
+   private int getIndexOfStickyTab()
+   {
+      if(null == _stickyTab)
+      {
+         return -1;
+      }
+
+      for (int i = 0; i < _tabbedResultsPanel.getTabCount(); i++)
+      {
+         if (_stickyTab.equals(_tabbedResultsPanel.getComponentAt(i)))
+         {
+            return i;
+         }
+      }
+      _stickyTab = null;
+      return -1;
+   }
+
+
 
    public synchronized void closeCurrentResultTab()
    {
@@ -561,17 +631,6 @@ public class SQLResultExecuterPanel extends JPanel
 		}
 	}
 
-	void setCancelPanel(final JPanel panel)
-	{
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
-				_tabbedResultsPanel.addTab("Executing SQL", null, panel,	"Press Cancel to Stop");
-				_tabbedResultsPanel.setSelectedComponent(panel);
-			}
-		});
-	}
 
 	void addResultsTab(SQLExecutionInfo exInfo, ResultSetDataSet rsds,
 					ResultSetMetaDataDataSet mdds, final JPanel cancelPanel,
@@ -617,21 +676,50 @@ public class SQLResultExecuterPanel extends JPanel
 		}
 	}
 
-	void removeCancelPanel(final JPanel cancelPanel)
-	{
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
-				_tabbedResultsPanel.remove(cancelPanel);
-			}
-		});
-	}
+//	private void removeCancelPanel(final JPanel cancelPanel)
+//	{
+//		SwingUtilities.invokeLater(new Runnable()
+//		{
+//			public void run()
+//			{
+//				_tabbedResultsPanel.remove(cancelPanel);
+//			}
+//		});
+//	}
+//   private void setCancelPanel(final JPanel panel)
+//   {
+//      SwingUtilities.invokeLater(new Runnable()
+//      {
+//         public void run()
+//         {
+//            _tabbedResultsPanel.addTab("Executing SQL", null, panel,	"Press Cancel to Stop");
+//            _tabbedResultsPanel.setSelectedComponent(panel);
+//         }
+//      });
+//   }
 
 	private void addResultsTab(ResultTab tab)
 	{
-		_tabbedResultsPanel.addTab(tab.getTitle(), null, tab, tab
-				.getViewableSqlString());
+      if(null == _stickyTab)
+      {
+   		_tabbedResultsPanel.addTab(tab.getTitle(), null, tab, tab.getViewableSqlString());
+      }
+      else
+      {
+         int indexOfSticky = getIndexOfStickyTab();
+
+         if(-1 == indexOfSticky)
+         {
+            // sticky tab was closed
+            _stickyTab = null;
+            addResultsTab(tab);
+            return;
+         }
+
+         _tabbedResultsPanel.remove(indexOfSticky);
+         _tabbedResultsPanel.insertTab(tab.getTitle(), getStickyIcon(), tab, tab.getViewableSqlString(), indexOfSticky);
+         _stickyTab = tab;
+      }
 	}
 
    private void propertiesHaveChanged(String propName)
@@ -716,6 +804,15 @@ public class SQLResultExecuterPanel extends JPanel
       });
       popup.add(mnuCloseAll);
 
+      JMenuItem mnuToggleSticky = new JMenuItem("Toggle sticky");
+      mnuToggleSticky.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            toggleCurrentSQLResultTabSticky();
+         }
+      });
+      popup.add(mnuToggleSticky);
 
 
 
@@ -758,7 +855,7 @@ public class SQLResultExecuterPanel extends JPanel
 	{
 		private CancelPanel _cancelPanel = new CancelPanel();
 
-		public SQLExecutionHandler()
+      public SQLExecutionHandler()
 		{
 			super();
 			setCancelPanel(_cancelPanel);
@@ -843,7 +940,30 @@ public class SQLResultExecuterPanel extends JPanel
 			getSession().getMessageHandler().showErrorMessage("Error: " + th);
 		}
 
-		private final class CancelPanel extends JPanel
+
+      private void removeCancelPanel(final JPanel cancelPanel)
+      {
+         SwingUtilities.invokeLater(new Runnable()
+         {
+            public void run()
+            {
+               _tabbedResultsPanel.remove(cancelPanel);
+            }
+         });
+      }
+      private void setCancelPanel(final JPanel panel)
+      {
+         SwingUtilities.invokeLater(new Runnable()
+         {
+            public void run()
+            {
+               _tabbedResultsPanel.addTab("Executing SQL", null, panel,	"Press Cancel to Stop");
+               _tabbedResultsPanel.setSelectedComponent(panel);
+            }
+         });
+      }
+
+      private final class CancelPanel extends JPanel
 										implements ActionListener
 		{
 			private JLabel _sqlLbl = new JLabel();
