@@ -35,6 +35,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsButCurrentAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.AboutAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CascadeAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CloseAllSessionsAction;
@@ -407,6 +408,7 @@ final class MainFrameMenuBar extends JMenuBar
 	{
 		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.CLOSE_ALL_SQL_RESULTS);
 		addToMenu(rsrc, CloseAllSQLResultTabsAction.class, menu);
+		addToMenu(rsrc, CloseAllSQLResultTabsButCurrentAction.class, menu);
 		addToMenu(rsrc, CloseAllSQLResultWindowsAction.class, menu);
 		return menu;
 	}

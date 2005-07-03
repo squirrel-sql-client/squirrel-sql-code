@@ -17,12 +17,11 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.ResultSet;
@@ -30,13 +29,9 @@ import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.text.NumberFormat;
 import java.util.*;
+import java.util.List;
 
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.EventListenerList;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
@@ -282,11 +277,44 @@ public class SQLResultExecuterPanel extends JPanel
 		}
 	}
 
-	void selected()
-	{
-	}
+   public synchronized void closeAllButCurrentResultTabs()
+   {
+      Component selectedTab = _tabbedResultsPanel.getSelectedComponent();
 
-	/**
+      List tabs = (List)_usedTabs.clone();
+      for (Iterator it = tabs.iterator(); it.hasNext();)
+      {
+         ResultTabInfo ti = (ResultTabInfo)it.next();
+         if(false == ti._tab.equals(selectedTab))
+         {
+            if (ti._resultFrame == null)
+            {
+               closeTab(ti._tab);
+            }
+         }
+      }
+   }
+
+   public synchronized void closeCurrentResultTab()
+   {
+      Component selectedTab = _tabbedResultsPanel.getSelectedComponent();
+
+      List tabs = (List)_usedTabs.clone();
+      for (Iterator it = tabs.iterator(); it.hasNext();)
+      {
+         ResultTabInfo ti = (ResultTabInfo)it.next();
+         if(ti._tab.equals(selectedTab))
+         {
+            if (ti._resultFrame == null)
+            {
+               closeTab(ti._tab);
+            }
+         }
+      }
+   }
+
+
+   /**
 	 * Sesssion is ending.
 	 * Remove all listeners that this component has setup. Close all
 	 * torn off result tab windows.
@@ -539,8 +567,7 @@ public class SQLResultExecuterPanel extends JPanel
 		{
 			public void run()
 			{
-				_tabbedResultsPanel.addTab("Executing SQL", null, panel,
-						"Press Cancel to Stop");
+				_tabbedResultsPanel.addTab("Executing SQL", null, panel,	"Press Cancel to Stop");
 				_tabbedResultsPanel.setSelectedComponent(panel);
 			}
 		});
@@ -651,17 +678,80 @@ public class SQLResultExecuterPanel extends JPanel
 
 	private void createGUI()
 	{
-		final IApplication app = _session.getApplication();
+      final SessionProperties props = _session.getProperties();
+		_tabbedResultsPanel = UIFactory.getInstance().createTabbedPane(props.getSQLResultsTabPlacement());
 
-		_tabbedResultsPanel = UIFactory.getInstance().createTabbedPane();
+
+      final JPopupMenu popup = new JPopupMenu();
+
+
+      JMenuItem mnuClose = new JMenuItem("Close");
+      mnuClose.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            closeCurrentResultTab();
+         }
+      });
+      popup.add(mnuClose);
+
+      JMenuItem mnuCloseAllButThis = new JMenuItem("Close all but this");
+      mnuCloseAllButThis.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            closeAllButCurrentResultTabs();
+         }
+      });
+      popup.add(mnuCloseAllButThis);
+
+
+      JMenuItem mnuCloseAll = new JMenuItem("Close all");
+      mnuCloseAll.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            closeAllSQLResultTabs();
+         }
+      });
+      popup.add(mnuCloseAll);
+
+
+
+
+      _tabbedResultsPanel.addMouseListener(new MouseAdapter()
+      {
+         public void mousePressed(MouseEvent e)
+         {
+            maybeShowPopup(e, popup);
+         }
+
+         public void mouseReleased(MouseEvent e)
+         {
+            maybeShowPopup(e, popup);
+         }
+      });
+
+
 
 		setLayout(new BorderLayout());
-		final SessionProperties props = _session.getProperties();
 
 		add(_tabbedResultsPanel, BorderLayout.CENTER);
 	}
 
-	/** This class is the handler for the execution of sql against the SQLExecuterPanel
+   private void maybeShowPopup(MouseEvent e, JPopupMenu popup)
+   {
+      if (e.isPopupTrigger())
+      {
+         int tab = _tabbedResultsPanel.getUI().tabForCoordinate(_tabbedResultsPanel, e.getX(), e.getY());
+         if (-1 != tab)
+         {
+            popup.show(e.getComponent(), e.getX(), e.getY());
+         }
+      }
+   }
+
+   /** This class is the handler for the execution of sql against the SQLExecuterPanel
 	 *
 	 */
 	private class SQLExecutionHandler implements ISQLExecuterHandler

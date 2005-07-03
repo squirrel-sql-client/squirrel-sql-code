@@ -3,12 +3,10 @@ package net.sourceforge.squirrel_sql.client.gui.session;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsButCurrentAction;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
-import net.sourceforge.squirrel_sql.client.session.action.FileOpenAction;
-import net.sourceforge.squirrel_sql.client.session.action.FileSaveAction;
-import net.sourceforge.squirrel_sql.client.session.action.FileSaveAsAction;
+import net.sourceforge.squirrel_sql.client.session.action.*;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 import net.sourceforge.squirrel_sql.fw.completion.Completor;
@@ -56,6 +54,11 @@ public class ToolsPopupAction extends SquirrelAction
       addAction("fileopen", ac.get(FileOpenAction.class));
       addAction("filesave", ac.get(FileSaveAction.class));
       addAction("filesaveas", ac.get(FileSaveAsAction.class));
+
+      addAction("tabnext", ac.get(GotoNextResultsTabAction.class));
+      addAction("tabprevious", ac.get(GotoPreviousResultsTabAction.class));
+      addAction("tabcloseall", ac.get(CloseAllSQLResultTabsAction.class));
+      addAction("tabcloseallbutcur", ac.get(CloseAllSQLResultTabsButCurrentAction.class));
 
       _ctrlTCount = Preferences.userRoot().getInt(PREFS_KEY_CTRL_T_COUNT, 0);
 

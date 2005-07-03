@@ -233,6 +233,12 @@ public interface ISQLPanelAPI
 	 */
 	void closeAllSQLResultTabs();
 
+   /**
+	 * Close all the SQL result tabs except from the selected.
+	 */
+   void closeAllButCurrentResultTabs();
+
+
 	/**
 	 * Close all the "torn off" SQL result frames.
 	 */
