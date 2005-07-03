@@ -17,6 +17,26 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
+import net.sourceforge.squirrel_sql.client.session.*;
+import net.sourceforge.squirrel_sql.client.session.action.ToggleCurrentSQLResultTabStickyAction;
+import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
+import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
+import net.sourceforge.squirrel_sql.client.session.event.ResultTabEvent;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
+import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.*;
+import javax.swing.event.EventListenerList;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,33 +50,6 @@ import java.sql.SQLWarning;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
-
-import javax.swing.*;
-import javax.swing.event.EventListenerList;
-
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
-import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
-import net.sourceforge.squirrel_sql.client.session.ISQLExecuterHandler;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
-import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
-import net.sourceforge.squirrel_sql.client.session.action.ToggleCurrentSQLResultTabStickyAction;
-import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
-import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
-import net.sourceforge.squirrel_sql.client.session.event.ResultTabEvent;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 /**
  * This is the panel where SQL scripts are executed and results presented.
  *
@@ -676,28 +669,6 @@ public class SQLResultExecuterPanel extends JPanel
 		}
 	}
 
-//	private void removeCancelPanel(final JPanel cancelPanel)
-//	{
-//		SwingUtilities.invokeLater(new Runnable()
-//		{
-//			public void run()
-//			{
-//				_tabbedResultsPanel.remove(cancelPanel);
-//			}
-//		});
-//	}
-//   private void setCancelPanel(final JPanel panel)
-//   {
-//      SwingUtilities.invokeLater(new Runnable()
-//      {
-//         public void run()
-//         {
-//            _tabbedResultsPanel.addTab("Executing SQL", null, panel,	"Press Cancel to Stop");
-//            _tabbedResultsPanel.setSelectedComponent(panel);
-//         }
-//      });
-//   }
-
 	private void addResultsTab(ResultTab tab)
 	{
       if(null == _stickyTab)
@@ -770,8 +741,21 @@ public class SQLResultExecuterPanel extends JPanel
 		_tabbedResultsPanel = UIFactory.getInstance().createTabbedPane(props.getSQLResultsTabPlacement());
 
 
-      final JPopupMenu popup = new JPopupMenu();
+      createTabPopup();
 
+
+      setLayout(new BorderLayout());
+
+		add(_tabbedResultsPanel, BorderLayout.CENTER);
+	}
+
+
+   /**
+    * Due to JDK 1.4 Bug 4465870 this doesn't work with JDK 1.4. 
+    */
+   private void createTabPopup()
+   {
+      final JPopupMenu popup = new JPopupMenu();
 
       JMenuItem mnuClose = new JMenuItem("Close");
       mnuClose.addActionListener(new ActionListener()
@@ -828,13 +812,7 @@ public class SQLResultExecuterPanel extends JPanel
             maybeShowPopup(e, popup);
          }
       });
-
-
-
-		setLayout(new BorderLayout());
-
-		add(_tabbedResultsPanel, BorderLayout.CENTER);
-	}
+   }
 
    private void maybeShowPopup(MouseEvent e, JPopupMenu popup)
    {
