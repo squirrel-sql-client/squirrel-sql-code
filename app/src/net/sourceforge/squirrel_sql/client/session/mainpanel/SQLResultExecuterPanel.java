@@ -376,7 +376,6 @@ public class SQLResultExecuterPanel extends JPanel
       }
    }
 
-
    /**
 	 * Sesssion is ending.
 	 * Remove all listeners that this component has setup. Close all
@@ -687,11 +686,31 @@ public class SQLResultExecuterPanel extends JPanel
             return;
          }
 
-         _tabbedResultsPanel.remove(indexOfSticky);
+         closeResultTabAt(indexOfSticky);
          _tabbedResultsPanel.insertTab(tab.getTitle(), getStickyIcon(), tab, tab.getViewableSqlString(), indexOfSticky);
          _stickyTab = tab;
       }
 	}
+
+
+   private void closeResultTabAt(int index)
+   {
+      Component selectedTab = _tabbedResultsPanel.getComponentAt(index);
+
+      List tabs = (List)_usedTabs.clone();
+      for (Iterator it = tabs.iterator(); it.hasNext();)
+      {
+         ResultTabInfo ti = (ResultTabInfo)it.next();
+         if(ti._tab.equals(selectedTab))
+         {
+            if (ti._resultFrame == null)
+            {
+               closeTab(ti._tab);
+            }
+         }
+      }
+   }
+
 
    private void propertiesHaveChanged(String propName)
 	{
@@ -926,6 +945,12 @@ public class SQLResultExecuterPanel extends JPanel
             public void run()
             {
                _tabbedResultsPanel.remove(cancelPanel);
+               int indexOfSticky = getIndexOfStickyTab();
+               if(-1 != indexOfSticky)
+               {
+                  _tabbedResultsPanel.setSelectedIndex(indexOfSticky);
+               }
+
             }
          });
       }
