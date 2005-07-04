@@ -1,20 +1,20 @@
 <?xml version="1.0"?>
 <!--
-	This is an Apache Ant build file to build the SQL Bookmark plugin
+	This is an Apache Ant build file to build the MySQL plugin
 	for distribution.
 -->
-<project name="plugin-sqlbookmark" default="build" basedir=".">
+<project name="plugin-mssql" default="build" basedir=".">
 	<target name="init">
 		<tstamp/>
-		<property name="internal_name" value="sqlbookmark"/>
-		<property name="version" value="1.0"/>
+		<property name="internal_name" value="mssql"/>
+		<property name="version" value="0.10"/>
 
 		<property name="debug" value="on"/>
 		<property name="optimize" value="off"/>
 		<property name="deprecation" value="on"/>
 
 		<echo message="---------------- ${internal_name} ${version} ----------------"/>
-		
+
 		<property environment="env"/>
 	</target>
     <target name="initdirs" unless="p_plugin.work_dir">
@@ -32,7 +32,7 @@
 	-->
 	<target name="build" depends="init, initdirs">
 		<property name="obj_dir" value="${p_plugin.work_dir}/obj"/>
-		
+
         <mkdir dir="${obj_dir}"/>
         <mkdir dir="${p_plugin.dist_dir}"/>
 		
@@ -63,12 +63,9 @@
 				<include name="**/*.*"/>
 			</fileset>
 		</jar>
-		
-		<copy todir="${p_plugin.dist_dir}/${internal_name}" >
-			<fileset dir="doc" >
-				<include name="*.*"/>
-			</fileset>
-		</copy>
+
+
+      <mkdir dir="${p_plugin.dist_dir}/${internal_name}"/>
 
 		<jar jarfile="${p_plugin.dist_dir}/${internal_name}/src.jar" compress="false">
 			<fileset dir=".">
@@ -79,4 +76,3 @@
 	</target>
 
 </project>
-

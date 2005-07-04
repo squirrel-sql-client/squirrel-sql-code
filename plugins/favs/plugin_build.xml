@@ -16,17 +16,25 @@
         
         <property environment="env"/>
     </target>
+    <target name="initdirs" unless="p_plugin.work_dir">
+        <property name="dist_dir" value="../../../squirrel-sql-dist/squirrel-sql"/>
+        <property name="plugins_dist_dir" value="${dist_dir}/plugins"/>
+        <property name="p_plugin.work_dir" value="${plugins_dist_dir}/${internal_name}/work"/>
+        <property name="p_plugin.core_libs_dir" value="${dist_dir}/core/dist/lib"/>
+        <property name="p_plugin.dist_dir" value="${dist_dir}/core/dist/plugins"/>
+    </target>
     <!--
     ==================================================================
     Compile the plugin.
     No parameters.
     ==================================================================
     -->
-    <target name="build" depends="init">
+    <target name="build" depends="init, initdirs">
         <property name="obj_dir" value="${p_plugin.work_dir}/obj"/>
         
         <mkdir dir="${obj_dir}"/>
-
+        <mkdir dir="${p_plugin.dist_dir}"/>
+    	
         <javac  srcdir="src"
                 destdir="${obj_dir}"
                 deprecation="${deprecation}"
@@ -54,6 +62,9 @@
                 <include name="**/*.*"/>
             </fileset>
         </jar>
+
+        <mkdir dir="${p_plugin.dist_dir}/${internal_name}"/>
+
         <jar jarfile="${p_plugin.dist_dir}/${internal_name}/src.jar" compress="false">
             <fileset dir=".">
                 <include name="src/**/*.*"/>
