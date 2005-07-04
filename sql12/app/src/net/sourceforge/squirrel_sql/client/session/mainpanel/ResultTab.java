@@ -211,13 +211,9 @@ public class ResultTab extends JPanel implements IHasIdentifier
 		}
 
 		// Display the result set metadata.
-		if (mdds != null)
+		if (mdds != null && _metaDataOutput != null)
 		{
 			_metaDataOutput.show(mdds, null); // Why null??
-		}
-		else
-		{
-			_metaDataOutput.clear();
 		}
 
 		exInfo.resultsProcessingComplete();
@@ -372,10 +368,14 @@ public class ResultTab extends JPanel implements IHasIdentifier
 		add(panel1, BorderLayout.NORTH);
 		add(_tp, BorderLayout.CENTER);
 
-		_resultSetSp.setBorder(BorderFactory.createEmptyBorder());
-		_metaDataSp.setBorder(BorderFactory.createEmptyBorder());
-		_tp.addTab("Results", _resultSetSp);
-		_tp.addTab("MetaData", _metaDataSp);
+      _resultSetSp.setBorder(BorderFactory.createEmptyBorder());
+      _tp.addTab("Results", _resultSetSp);
+
+      if (_session.getProperties().getShowResultsMetaData())
+      {
+         _metaDataSp.setBorder(BorderFactory.createEmptyBorder());
+         _tp.addTab("MetaData", _metaDataSp);
+      }
 
 		final JScrollPane sp = new JScrollPane(_queryInfoPanel);
 		sp.setBorder(BorderFactory.createEmptyBorder());
@@ -399,12 +399,15 @@ public class ResultTab extends JPanel implements IHasIdentifier
 				props.getReadOnlySQLResultsOutputClassName(), null);
 		}
 
-		_resultSetSp.setViewportView(_resultSetOutput.getComponent());
-		_resultSetSp.setRowHeader(null);
+      _resultSetSp.setViewportView(_resultSetOutput.getComponent());
+      _resultSetSp.setRowHeader(null);
 
-		_metaDataOutput = BaseDataSetViewerDestination.getInstance(props.getMetaDataOutputClassName(), null);
-		_metaDataSp.setViewportView(_metaDataOutput.getComponent());
-		_metaDataSp.setRowHeader(null);
+      if (_session.getProperties().getShowResultsMetaData())
+      {
+         _metaDataOutput = BaseDataSetViewerDestination.getInstance(props.getMetaDataOutputClassName(), null);
+         _metaDataSp.setViewportView(_metaDataOutput.getComponent());
+         _metaDataSp.setRowHeader(null);
+      }
 	}
 
 	private final class TabButton extends JButton

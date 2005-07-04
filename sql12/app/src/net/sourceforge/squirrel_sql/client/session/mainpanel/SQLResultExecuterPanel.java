@@ -912,8 +912,10 @@ public class SQLResultExecuterPanel extends JPanel
 			ResultSetMetaDataDataSet rsmdds = null;
 			try
 			{
-//				rsds.setResultSet(rs, props.getLargeResultSetObjectInfo());
-            rsmdds = new ResultSetMetaDataDataSet(rs);
+            if (props.getShowResultsMetaData())
+            {
+               rsmdds = new ResultSetMetaDataDataSet(rs);
+            }
 				rsds.setResultSet(rs);
 			}
 			catch (DataSetException ex)
