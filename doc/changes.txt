@@ -1,22 +1,32 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+- Fix for not shown SQL result on derby DB
+- Right Mouse Menu on Tab.s (Not working on JDK 1.4 with scrollable tabbed panes due to Bug #4465870.)
+  Functions also available in tools popup
+- Fixed Bug #1234642 (Missing qeury numbers in message panel)
+- When executing a SQL batch (several SQL's separated by statement separator) and the 'Abort on error' property is set
+  in case of an error the errornous SQL is printed to the message panel
+
+
 2.0rc1
+======
 Most important changes:
-Multiple Session Windows: User may open extra Object Tree or SQL Window
-Tools popup in SQL Editor (Ctrl+T)
+-Multiple Session Windows: User may open extra Object Tree or SQL Window
+-Tools popup in SQL Editor (Ctrl+T)
 Standard and Base installation. Standard bundled with the following Plugins (See help for further details):
-Code Completion ? Offers code completion the same way as modern IDEs do.
-Syntax ? Syntax highlighting.
-Edit Extras ? Auxiliary functions to work with SQL code for example formatting
-Graph ? Create a chart of the tables and foreign-key relationships between them
-SQL Script ? Generation of SQL and DDL scripts
-SQL Bookmarks ? Managing SQL code templates
-Look and Feel ? Switching the look and feel
-Saving/Loading files integrated in SQuirreL's core
-Selected tab and slider location on the SQL tab are remembered
-Copy as SQL IN Statement function in tables
-Display text reminding the user if the results of a query have been limited to X rows
+-Code Completion: Offers code completion the same way as modern IDEs do.
+-Syntax: Syntax highlighting.
+-Edit Extras: Auxiliary functions to work with SQL code for example formatting
+-Graph: Create a chart of the tables and foreign-key relationships between them
+-SQL Script: Generation of SQL and DDL scripts
+-SQL Bookmarks: Managing SQL code templates
+-Look and Feel: Switching the look and feel
+
+-Saving/Loading files integrated in SQuirreL's core
+-Selected tab and slider location on the SQL tab are remembered
+-Copy as SQL IN Statement function in tables
+-Display text reminding the user if the results of a query have been limited to X rows
 
 
 
