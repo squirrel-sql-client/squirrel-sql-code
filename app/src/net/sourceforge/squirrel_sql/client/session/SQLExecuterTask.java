@@ -37,6 +37,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponent
 import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 import javax.swing.*;
 import java.sql.*;
@@ -130,11 +131,14 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 
    public void run()
 	{
+      String lastExecutedStatement = null;
+      int statementCount = 0;
+      final SessionProperties props = _session.getProperties();
 		try
 		{
 			final SQLConnection conn = _session.getSQLConnection();
-			final SessionProperties props = _session.getProperties();
 			_stmt = conn.createStatement();
+
 			try
 			{
 				final boolean correctlySupportsMaxRows = conn.getSQLMetaData()
@@ -205,64 +209,75 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 
 				// Process each individual query.
 				boolean maxRowsHasBeenSet = correctlySupportsMaxRows;
+            int processedStatementCount = 0;
+            statementCount = queryStrings.size();
+
+            _handler.sqlStatementCount(statementCount);
+
 				while (!queryStrings.isEmpty())
 				{
 					String querySql = (String)queryStrings.remove(0);
 					if (querySql != null)
 					{
+                  ++processedStatementCount;
 						if (_handler != null)
+                  {
 							_handler.sqlToBeExecuted(querySql);
-						if (querySql != null)
-						{
-							// Some driver don't correctly support setMaxRows. In
-							// these cases use setMaxRows only if this is a
-							// SELECT.
-							if (!correctlySupportsMaxRows
-									&& props.getSQLLimitRows())
-							{
-								if ("SELECT".length() < querySql.trim()
-										.length()
-										&& "SELECT".equalsIgnoreCase(querySql
-												.trim().substring(0,
-														"SELECT".length())))
-								{
-									if (!maxRowsHasBeenSet)
-									{
-										try
-										{
-											_stmt.setMaxRows(props
-													.getSQLNbrRowsToShow());
-										}
-										catch (Exception e)
-										{
-											s_log.error("Can't Set MaxRows", e);
-										}
-										maxRowsHasBeenSet = true;
-									}
-								}
-								else if (maxRowsHasBeenSet)
-								{
-									_stmt.close();
-									_stmt = conn.createStatement();
-									maxRowsHasBeenSet = false;
-								}
-							}
-							try
-							{
-								if (!processQuery(querySql))
-								{
-									break;
-								}
-							}
-							catch (SQLException ex)
-							{
-								handleError(ex);
-								if (props.getAbortOnError())
-								{
-									throw ex;
-								}
-							}
-						}
+                  }
+
+                  // Some driver don't correctly support setMaxRows. In
+                  // these cases use setMaxRows only if this is a
+                  // SELECT.
+                  if (!correctlySupportsMaxRows
+                        && props.getSQLLimitRows())
+                  {
+                     if ("SELECT".length() < querySql.trim()
+                           .length()
+                           && "SELECT".equalsIgnoreCase(querySql
+                                 .trim().substring(0,
+                                       "SELECT".length())))
+                     {
+                        if (!maxRowsHasBeenSet)
+                        {
+                           try
+                           {
+                              _stmt.setMaxRows(props
+                                    .getSQLNbrRowsToShow());
+                           }
+                           catch (Exception e)
+                           {
+                              s_log.error("Can't Set MaxRows", e);
+                           }
+                           maxRowsHasBeenSet = true;
+                        }
+                     }
+                     else if (maxRowsHasBeenSet)
+                     {
+                        _stmt.close();
+                        _stmt = conn.createStatement();
+                        maxRowsHasBeenSet = false;
+                     }
+                  }
+                  try
+                  {
+                     lastExecutedStatement = querySql;
+
+                     if (!processQuery(querySql, processedStatementCount, statementCount))
+                     {
+                        break;
+                     }
+                  }
+                  catch (SQLException ex)
+                  {
+                     if (props.getAbortOnError())
+                     {
+                        throw ex;
+                     }
+                     else
+                     {
+                        handleError(ex, null);
+                     }
+                  }
 					}
 				}
 
@@ -281,7 +296,14 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 		}
 		catch (Throwable ex)
 		{
-			handleError(ex);
+         if(props.getAbortOnError() && 1 < statementCount)
+         {
+            handleError(ex, "Error occured in:\n" + lastExecutedStatement);
+         }
+         else
+         {
+            handleError(ex, null);
+         }
 		}
 		finally
 		{
@@ -309,7 +331,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 		_stopExecution = true;
 	}
 
-	private boolean processQuery(String sql) throws SQLException
+	private boolean processQuery(String sql, int processedStatementCount, int statementCount) throws SQLException
 	{
 		++_currentQueryIndex;
 
@@ -408,7 +430,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 
       if (_handler != null)
       {
-         _handler.sqlExecutionComplete(exInfo);
+         _handler.sqlExecutionComplete(exInfo, processedStatementCount, statementCount);
       }
 
       EditableSqlCheck edittableCheck = new EditableSqlCheck(exInfo); 
@@ -531,10 +553,10 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 		}
 	}
 
-	private void handleError(Throwable th)
+	private void handleError(Throwable th, String postErrorString)
 	{
 		if (_handler != null)
-			_handler.sqlExecutionException(th);
+			_handler.sqlExecutionException(th, postErrorString);
 	}
 
 

@@ -184,7 +184,7 @@ public class SessionProperties implements Cloneable, Serializable
 	/**
 	 * If <TT>true</TT> then don't execute any further SQL if an error occurs in one.
 	 */
-	private boolean _abortOnError = false;
+	private boolean _abortOnError = true;
 
 	/**
 	 * Default ctor.
