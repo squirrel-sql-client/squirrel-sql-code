@@ -78,4 +78,8 @@ public class DefaultSQLExecuterHandler implements ISQLExecuterHandler
    public void sqlStatementCount(int statementCount)
    {
    }
+
+   public void sqlCloseExecutionHandler()
+   {
+   }
 }

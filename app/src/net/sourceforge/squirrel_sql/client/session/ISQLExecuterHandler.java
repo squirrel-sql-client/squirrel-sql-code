@@ -78,5 +78,12 @@ public interface ISQLExecuterHandler
    /**
     * To set the number of statements that will be executed
     */
-   void sqlStatementCount(int statementCount);
+   public void sqlStatementCount(int statementCount);
+
+   /**
+    * Tell the execution handler that we don't need it anymore
+    * In SQLExecutionHandler this will close the cancel panel.
+    *
+    */
+   public void sqlCloseExecutionHandler();
 }

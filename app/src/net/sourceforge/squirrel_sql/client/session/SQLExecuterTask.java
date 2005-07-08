@@ -310,7 +310,9 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 			if (_stopExecution)
 			{
 				if (_handler != null)
+            {
 					_handler.sqlExecutionCancelled();
+            }
 				try
 				{
 					if (_stmt != null)
@@ -323,6 +325,10 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 					s_log.error("Error occured cancelling SQL", th);
 				}
 			}
+         if (_handler != null)
+         {
+            _handler.sqlCloseExecutionHandler();
+         }
 		}
 	}
 
