@@ -858,18 +858,20 @@ public class SQLResultExecuterPanel extends JPanel
 			setCancelPanel(_cancelPanel);
 		}
 
-		public void sqlToBeExecuted(String sql)
+		public void sqlToBeExecuted(final String sql)
 		{
-			//JASON: Need to do something about this
-			//_cancelPanel.setQueryCount(queryStrings.size());
-			_cancelPanel.setSQL(StringUtilities.cleanString(sql));
-			_cancelPanel.setStatusLabel("Executing SQL...");
+         SwingUtilities.invokeLater(new Runnable()
+         {
+            public void run()
+            {
+               _cancelPanel.setSQL(StringUtilities.cleanString(sql));
+               _cancelPanel.setStatusLabel("Executing SQL...");
+            }
+         });
 		}
 
 		public void sqlExecutionComplete(SQLExecutionInfo exInfo, int processedStatementCount, int statementCount)
 		{
-			removeCancelPanel(_cancelPanel);
-
 			// i18n
 			final NumberFormat nbrFmt = NumberFormat.getNumberInstance();
 			double executionLength = exInfo.getSQLExecutionElapsedMillis() / 1000.0;
@@ -941,10 +943,13 @@ public class SQLResultExecuterPanel extends JPanel
          _cancelPanel.setQueryCount(statementCount);
       }
 
+      public void sqlCloseExecutionHandler()
+      {
+         removeCancelPanel(_cancelPanel);
+      }
+
       public void sqlExecutionException(Throwable th, String postErrorString)
 		{
-			removeCancelPanel(_cancelPanel);
-
          if(null == postErrorString)
          {
             getSession().getMessageHandler().showErrorMessage("Error: " + th);
