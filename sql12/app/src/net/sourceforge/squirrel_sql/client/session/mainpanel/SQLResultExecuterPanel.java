@@ -866,7 +866,7 @@ public class SQLResultExecuterPanel extends JPanel
 			_cancelPanel.setStatusLabel("Executing SQL...");
 		}
 
-		public void sqlExecutionComplete(SQLExecutionInfo exInfo)
+		public void sqlExecutionComplete(SQLExecutionInfo exInfo, int processedStatementCount, int statementCount)
 		{
 			removeCancelPanel(_cancelPanel);
 
@@ -875,9 +875,12 @@ public class SQLResultExecuterPanel extends JPanel
 			double executionLength = exInfo.getSQLExecutionElapsedMillis() / 1000.0;
 			double outputLength = exInfo.getResultsProcessingElapsedMillis() / 1000.0;
 			StringBuffer buf = new StringBuffer();
-			buf.append("Query ").append(" elapsed time (seconds) - Total: ")
-					.append(nbrFmt.format(executionLength + outputLength))
-					.append(", SQL query: ").append(
+			buf.append("Query ")
+            .append(processedStatementCount)
+            .append(" of ").append(statementCount)
+            .append(" elapsed time (seconds) - Total: ")
+				.append(nbrFmt.format(executionLength + outputLength))
+				.append(", SQL query: ").append(
 							nbrFmt.format(executionLength)).append(
 							", Building output: ").append(
 							nbrFmt.format(outputLength));
@@ -933,10 +936,23 @@ public class SQLResultExecuterPanel extends JPanel
 			getSession().getMessageHandler().showMessage(warn);
 		}
 
-		public void sqlExecutionException(Throwable th)
+      public void sqlStatementCount(int statementCount)
+      {
+         _cancelPanel.setQueryCount(statementCount);
+      }
+
+      public void sqlExecutionException(Throwable th, String postErrorString)
 		{
 			removeCancelPanel(_cancelPanel);
-			getSession().getMessageHandler().showErrorMessage("Error: " + th);
+
+         if(null == postErrorString)
+         {
+            getSession().getMessageHandler().showErrorMessage("Error: " + th);
+         }
+         else
+         {
+            getSession().getMessageHandler().showErrorMessage("Error: " + th + "\n" + postErrorString);
+         }
 		}
 
 

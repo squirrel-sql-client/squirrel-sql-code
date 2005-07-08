@@ -54,17 +54,28 @@ public class DefaultSQLExecuterHandler implements ISQLExecuterHandler
 	{
 	}
 
-	public void sqlExecutionComplete(SQLExecutionInfo info)
+	public void sqlExecutionComplete(SQLExecutionInfo info, int processedStatementCount, int statementCount)
 	{
 	}
 
-	public void sqlExecutionException(Throwable ex)
+	public void sqlExecutionException(Throwable ex, String postErrorString)
 	{
-		_session.getMessageHandler().showErrorMessage("Error: " + ex);
+      if(null == postErrorString)
+      {
+         _session.getMessageHandler().showErrorMessage("Error: " + ex);
+      }
+      else
+      {
+         _session.getMessageHandler().showErrorMessage("Error: " + ex + "\n" + postErrorString);
+      }
 	}
 
 	public void sqlExecutionWarning(SQLWarning warn)
 	{
 		_session.getMessageHandler().showMessage(warn);
 	}
+
+   public void sqlStatementCount(int statementCount)
+   {
+   }
 }
