@@ -45,7 +45,10 @@
                 includeJavaRuntime="yes">
            <classpath>
               <fileset dir="lafs">
-                 <include name="**/*.*"/>
+                 <include name="**/*.jar"/>
+              </fileset>
+              <fileset dir="lafs">
+                 <include name="**/*.zip"/>
               </fileset>
               <fileset dir="${p_plugin.core_libs_dir}">
                  <include name="**/*.*"/>
