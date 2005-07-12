@@ -214,7 +214,7 @@ public class NewSessionPropertiesSheet extends BaseInternalFrame
 			String hint = pnl.getHint();
 			final JScrollPane sp = new JScrollPane(pnl.getPanelComponent());
 			sp.setBorder(BorderFactory.createEmptyBorder());
-			sp.setPreferredSize(new Dimension(450, 350));
+			sp.setPreferredSize(new Dimension(450, 400));
 			tabPane.addTab(winTitle, null, sp/*pnl.getPanelComponent()*/, hint);
 		}
 

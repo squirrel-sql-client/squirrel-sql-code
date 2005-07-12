@@ -673,6 +673,7 @@ public class SQLResultExecuterPanel extends JPanel
       if(null == _stickyTab)
       {
    		_tabbedResultsPanel.addTab(tab.getTitle(), null, tab, tab.getViewableSqlString());
+         checkResultTabLimit();
       }
       else
       {
@@ -691,6 +692,16 @@ public class SQLResultExecuterPanel extends JPanel
          _stickyTab = tab;
       }
 	}
+
+   private void checkResultTabLimit()
+   {
+      SessionProperties props = _session.getProperties();
+
+      while(props.getLimitSQLResultTabs() && props.getSqlResultTabLimit() < _tabbedResultsPanel.getTabCount())
+      {
+         closeResultTabAt(0);
+      }
+   }
 
 
    private void closeResultTabAt(int index)
