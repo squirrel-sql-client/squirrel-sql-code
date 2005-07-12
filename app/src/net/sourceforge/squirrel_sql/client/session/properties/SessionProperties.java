@@ -47,6 +47,7 @@ public class SessionProperties implements Cloneable, Serializable
 
 	public interface IPropertyNames
 	{
+		String SQL_RESULT_TAB_LIMIT = "sqlResultTabLimit";
 		String ABORT_ON_ERROR = "abortOnError";
 		String AUTO_COMMIT = "autoCommit";
 		String CATALOG_PREFIX_LIST = "catalogPrefixList";
@@ -74,7 +75,8 @@ public class SessionProperties implements Cloneable, Serializable
 		String SQL_START_OF_LINE_COMMENT = "sqlStartOfLineComment";
 		String SQL_STATEMENT_SEPARATOR_STRING = "sqlStatementSeparatorString";
 		String TABLE_CONTENTS_OUTPUT_CLASS_NAME = "tableContentsOutputClassName";
-	}
+      String LIMIT_SQL_RESULT_TABS = "limitSqlResultTabs";
+   }
 
 	private static final FontInfo DEFAULT_FONT_INFO =
 									new FontInfo(new Font("Monospaced", 0, 12));
@@ -185,6 +187,17 @@ public class SessionProperties implements Cloneable, Serializable
 	 * If <TT>true</TT> then don't execute any further SQL if an error occurs in one.
 	 */
 	private boolean _abortOnError = true;
+
+
+   /** Should the number of SQL result tabs be limited?. */
+   private boolean _limitSqlResultTabs = true;
+
+
+   /**
+    * The maximum number of open result tabs.
+    * <= 0 means unlimited.
+    */
+   private int _sqlResultTabLimit = 15;
 
 	/**
 	 * Default ctor.
@@ -400,6 +413,39 @@ public class SessionProperties implements Cloneable, Serializable
 				!_abortOnError, _abortOnError);
 		}
 	}
+
+   public boolean getLimitSQLResultTabs()
+   {
+      return _limitSqlResultTabs;
+   }
+
+   public void setLimitSQLResultTabs(boolean data)
+   {
+      final boolean oldValue = _limitSqlResultTabs;
+      _limitSqlResultTabs = data;
+      getPropertyChangeReporter().firePropertyChange(IPropertyNames.LIMIT_SQL_RESULT_TABS,
+                           oldValue, _limitSqlResultTabs);
+   }
+
+
+
+   public int getSqlResultTabLimit()
+   {
+      return _sqlResultTabLimit;
+   }
+
+   public void setSqlResultTabLimit(int value)
+   {
+      if (_sqlResultTabLimit != value)
+      {
+         int oldValue = _sqlResultTabLimit;
+         _sqlResultTabLimit = value;
+         getPropertyChangeReporter().firePropertyChange(
+            IPropertyNames.SQL_RESULT_TAB_LIMIT,
+            oldValue, _sqlResultTabLimit);
+      }
+   }
+
 
 	public boolean getShowToolBar()
 	{

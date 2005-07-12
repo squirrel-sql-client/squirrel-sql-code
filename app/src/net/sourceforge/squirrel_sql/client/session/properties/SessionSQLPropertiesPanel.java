@@ -134,6 +134,9 @@ public class SessionSQLPropertiesPanel
 		private JTextField _stmtSepField = new JTextField(5);
 		private JTextField _solCommentField = new JTextField(2);
 
+      private JCheckBox _limitSQLResultTabsChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.limitsqlresulttabs"));
+      private IntegerField _limitSQLResultTabsField = new IntegerField(5);
+
 		/** Label displaying the selected font. */
 		private JLabel _fontLbl = new JLabel();
 
@@ -172,6 +175,10 @@ public class SessionSQLPropertiesPanel
 			_shareSQLHistoryChk.setSelected(props.getSQLShareHistory());
 			_limitSQLHistoryComboSizeChk.setSelected(props.getLimitSQLEntryHistorySize());
 			_limitSQLHistoryComboSizeField.setInt(props.getSQLEntryHistorySize());
+
+			_limitSQLResultTabsChk.setSelected(props.getLimitSQLResultTabs());
+			_limitSQLResultTabsField.setInt(props.getSqlResultTabLimit());
+
 			_showResultsMetaChk.setSelected(props.getShowResultsMetaData());
 
 			FontInfo fi = props.getFontInfo();
@@ -201,6 +208,17 @@ public class SessionSQLPropertiesPanel
 			props.setLimitSQLEntryHistorySize(_limitSQLHistoryComboSizeChk.isSelected());
 			props.setSQLEntryHistorySize(_limitSQLHistoryComboSizeField.getInt());
 
+			props.setLimitSQLResultTabs(_limitSQLResultTabsChk.isSelected());
+
+         if(0 >= _limitSQLResultTabsField.getInt())
+         {
+            props.setSqlResultTabLimit(15);
+         }
+         else
+         {
+            props.setSqlResultTabLimit(_limitSQLResultTabsField.getInt());
+         }
+
 			props.setShowResultsMetaData(_showResultsMetaChk.isSelected());
 		}
 
@@ -209,6 +227,8 @@ public class SessionSQLPropertiesPanel
 			_commitOnClose.setEnabled(!_autoCommitChk.isSelected());
 
 			_sqlNbrRowsToShowField.setEnabled(_sqlLimitRowsChk.isSelected());
+
+         _limitSQLResultTabsField.setEnabled(_limitSQLResultTabsChk.isSelected());
 
 			// If this session doesn't share SQL history with other sessions
 			// then disable the controls that relate to SQL History.
@@ -257,9 +277,12 @@ public class SessionSQLPropertiesPanel
 
 			_autoCommitChk.addChangeListener(_controlMediator);
 			_sqlLimitRowsChk.addChangeListener(_controlMediator);
-
 			_sqlNbrRowsToShowField.setColumns(5);
 			_stmtSepField.setColumns(5);
+
+         _limitSQLResultTabsChk.addChangeListener(_controlMediator);
+         _limitSQLResultTabsField.setColumns(5);
+
 
 			gbc.gridx = 0;
 			gbc.gridy = 0;
@@ -285,6 +308,18 @@ public class SessionSQLPropertiesPanel
 			++gbc.gridx;
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			pnl.add(new JLabel(s_stringMgr.getString("SessionSQLPropertiesPanel.rows")), gbc);
+
+         ++gbc.gridy; // new line
+         gbc.gridx = 0;
+         gbc.gridwidth = 2;
+         pnl.add(_limitSQLResultTabsChk, gbc);
+         gbc.gridwidth = 1;
+         gbc.gridx+=2;
+         pnl.add(_limitSQLResultTabsField, gbc);
+         ++gbc.gridx;
+         gbc.gridwidth = GridBagConstraints.REMAINDER;
+         pnl.add(new JLabel(s_stringMgr.getString("SessionSQLPropertiesPanel.tabs")), gbc);
+
 
 			++gbc.gridy; // new line
 			gbc.gridx = 0;
