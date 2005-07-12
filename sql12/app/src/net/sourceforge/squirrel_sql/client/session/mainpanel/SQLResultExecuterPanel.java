@@ -18,9 +18,12 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.*;
 import net.sourceforge.squirrel_sql.client.session.action.ToggleCurrentSQLResultTabStickyAction;
+import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsButCurrentAction;
+import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsAction;
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ResultTabEvent;
@@ -32,6 +35,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -787,6 +791,7 @@ public class SQLResultExecuterPanel extends JPanel
    {
       final JPopupMenu popup = new JPopupMenu();
 
+
       JMenuItem mnuClose = new JMenuItem("Close");
       mnuClose.addActionListener(new ActionListener()
       {
@@ -797,7 +802,7 @@ public class SQLResultExecuterPanel extends JPanel
       });
       popup.add(mnuClose);
 
-      JMenuItem mnuCloseAllButThis = new JMenuItem("Close all but this");
+      JMenuItem mnuCloseAllButThis = new JMenuItem("Close all but this" + getAccelerator(CloseAllSQLResultTabsButCurrentAction.class));
       mnuCloseAllButThis.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -808,7 +813,7 @@ public class SQLResultExecuterPanel extends JPanel
       popup.add(mnuCloseAllButThis);
 
 
-      JMenuItem mnuCloseAll = new JMenuItem("Close all");
+      JMenuItem mnuCloseAll = new JMenuItem("Close all" + getAccelerator(CloseAllSQLResultTabsAction.class));
       mnuCloseAll.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -818,7 +823,7 @@ public class SQLResultExecuterPanel extends JPanel
       });
       popup.add(mnuCloseAll);
 
-      JMenuItem mnuToggleSticky = new JMenuItem("Toggle sticky");
+      JMenuItem mnuToggleSticky = new JMenuItem("Toggle sticky" + getAccelerator(ToggleCurrentSQLResultTabStickyAction.class));
       mnuToggleSticky.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -842,6 +847,19 @@ public class SQLResultExecuterPanel extends JPanel
             maybeShowPopup(e, popup);
          }
       });
+   }
+
+   private String getAccelerator(Class actionClass)
+   {
+      Action action = _session.getApplication().getActionCollection().get(actionClass);
+
+      String accel = "";
+      if(   null != action.getValue(Resources.ACCELERATOR_STRING)
+         && 0 != action.getValue(Resources.ACCELERATOR_STRING).toString().trim().length())
+      {
+         accel = " (" + action.getValue(Resources.ACCELERATOR_STRING) + ")";
+      }
+      return accel;
    }
 
    private void maybeShowPopup(MouseEvent e, JPopupMenu popup)
