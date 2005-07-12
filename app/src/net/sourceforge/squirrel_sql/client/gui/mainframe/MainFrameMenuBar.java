@@ -409,6 +409,7 @@ final class MainFrameMenuBar extends JMenuBar
 	{
 		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.CLOSE_ALL_SQL_RESULTS);
 		addToMenu(rsrc, CloseAllSQLResultTabsAction.class, menu);
+		addToMenu(rsrc, CloseCurrentSQLResultTabAction.class, menu);
 		addToMenu(rsrc, CloseAllSQLResultTabsButCurrentAction.class, menu);
 		addToMenu(rsrc, CloseAllSQLResultWindowsAction.class, menu);
 		return menu;

@@ -18,12 +18,12 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.*;
-import net.sourceforge.squirrel_sql.client.session.action.ToggleCurrentSQLResultTabStickyAction;
-import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsButCurrentAction;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsAction;
+import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsButCurrentAction;
+import net.sourceforge.squirrel_sql.client.session.action.ToggleCurrentSQLResultTabStickyAction;
+import net.sourceforge.squirrel_sql.client.session.action.CloseCurrentSQLResultTabAction;
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ResultTabEvent;
@@ -34,8 +34,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -793,6 +793,7 @@ public class SQLResultExecuterPanel extends JPanel
 
 
       JMenuItem mnuClose = new JMenuItem("Close");
+      initAccelerator(CloseCurrentSQLResultTabAction.class, mnuClose);
       mnuClose.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -802,7 +803,8 @@ public class SQLResultExecuterPanel extends JPanel
       });
       popup.add(mnuClose);
 
-      JMenuItem mnuCloseAllButThis = new JMenuItem("Close all but this" + getAccelerator(CloseAllSQLResultTabsButCurrentAction.class));
+      JMenuItem mnuCloseAllButThis = new JMenuItem("Close all but this");
+      initAccelerator(CloseAllSQLResultTabsButCurrentAction.class, mnuCloseAllButThis);
       mnuCloseAllButThis.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -813,7 +815,8 @@ public class SQLResultExecuterPanel extends JPanel
       popup.add(mnuCloseAllButThis);
 
 
-      JMenuItem mnuCloseAll = new JMenuItem("Close all" + getAccelerator(CloseAllSQLResultTabsAction.class));
+      JMenuItem mnuCloseAll = new JMenuItem("Close all");
+      initAccelerator(CloseAllSQLResultTabsAction.class, mnuCloseAll);
       mnuCloseAll.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -823,7 +826,8 @@ public class SQLResultExecuterPanel extends JPanel
       });
       popup.add(mnuCloseAll);
 
-      JMenuItem mnuToggleSticky = new JMenuItem("Toggle sticky" + getAccelerator(ToggleCurrentSQLResultTabStickyAction.class));
+      JMenuItem mnuToggleSticky = new JMenuItem("Toggle sticky");
+      initAccelerator(ToggleCurrentSQLResultTabStickyAction.class, mnuToggleSticky);
       mnuToggleSticky.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -849,17 +853,16 @@ public class SQLResultExecuterPanel extends JPanel
       });
    }
 
-   private String getAccelerator(Class actionClass)
+   private void initAccelerator(Class actionClass, JMenuItem mnuItem)
    {
       Action action = _session.getApplication().getActionCollection().get(actionClass);
 
-      String accel = "";
-      if(   null != action.getValue(Resources.ACCELERATOR_STRING)
-         && 0 != action.getValue(Resources.ACCELERATOR_STRING).toString().trim().length())
+      String accel = (String) action.getValue(Resources.ACCELERATOR_STRING);
+      if(   null != accel
+         && 0 != accel.trim().length())
       {
-         accel = " (" + action.getValue(Resources.ACCELERATOR_STRING) + ")";
+         mnuItem.setAccelerator(KeyStroke.getKeyStroke(accel));
       }
-      return accel;
    }
 
    private void maybeShowPopup(MouseEvent e, JPopupMenu popup)

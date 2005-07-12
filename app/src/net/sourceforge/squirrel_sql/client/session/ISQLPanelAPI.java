@@ -238,6 +238,10 @@ public interface ISQLPanelAPI
 	 */
    void closeAllButCurrentResultTabs();
 
+   /**
+	 * Close the selected result tab.
+	 */
+   void closeCurrentResultTab();
 
    /**
 	 * Toggle if all further SQL resutls should go to the current tab.

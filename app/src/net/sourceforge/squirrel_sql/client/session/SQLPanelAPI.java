@@ -455,6 +455,11 @@ public class SQLPanelAPI implements ISQLPanelAPI
       _panel.getSQLExecPanel().closeAllButCurrentResultTabs();
    }
 
+   public void closeCurrentResultTab()
+   {
+      _panel.getSQLExecPanel().closeCurrentResultTab();
+   }
+
    public void toggleCurrentSQLResultTabSticky()
    {
       _panel.getSQLExecPanel().toggleCurrentSQLResultTabSticky();
