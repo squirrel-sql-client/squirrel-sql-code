@@ -4,7 +4,8 @@ SQuirreL SQL Client Change Log
 - Fix for not shown SQL result on derby DB
 - Right Mouse Menu on SQL result tabs (Not working on JDK 1.4 with scrollable tabbed panes due to Bug #4465870.)
   Functions also available in tools popup
-- Session property: Limit SQL result tabs  
+- Session property: Limit SQL result tabs.
+  By default limiting is switched on and set to 15 tabs.   
 - Fixed Bug #1234642 (Missing qeury numbers in message panel)
 - When executing a SQL batch (several SQL's separated by statement separator) and the 'Abort on error' property is set
   in case of an error the errornous SQL is printed to the message panel
