@@ -18,19 +18,32 @@ package net.sourceforge.squirrel_sql.plugins.oracle;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.sql.SQLException;
+
+import javax.swing.Action;
+import javax.swing.SwingUtilities;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
+import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
+import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
+import net.sourceforge.squirrel_sql.plugins.oracle.SGAtrace.NewSGATraceWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.dboutput.NewDBOutputWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.DatabaseExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.InstanceParentExpander;
@@ -44,7 +57,6 @@ import net.sourceforge.squirrel_sql.plugins.oracle.expander.UserParentExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.explainplan.ExplainPlanExecuter;
 import net.sourceforge.squirrel_sql.plugins.oracle.invalidobjects.NewInvalidObjectsWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.sessioninfo.NewSessionInfoWorksheetAction;
-import net.sourceforge.squirrel_sql.plugins.oracle.SGAtrace.NewSGATraceWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.IndexColumnInfoTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.IndexDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.InstanceDetailsTab;
@@ -57,18 +69,6 @@ import net.sourceforge.squirrel_sql.plugins.oracle.tab.TriggerColumnInfoTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.TriggerDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.TriggerSourceTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.UserDetailsTab;
-
-import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
-import net.sourceforge.squirrel_sql.client.plugin.PluginException;
-import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
-import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
 
 /**
  * Oracle plugin class.
@@ -149,8 +149,8 @@ public class OraclePlugin extends DefaultSessionPlugin
 	public String getLicenceFileName()
 	{
 		return "licence.txt";
-	}
-
+	}    
+    
         public void initialize() throws PluginException
 	{
                 super.initialize();
@@ -166,19 +166,19 @@ public class OraclePlugin extends DefaultSessionPlugin
                 //Add the actions to the action bar.
                 _newDBOutputWorksheet = new NewDBOutputWorksheetAction(app, _resources);
                 _newDBOutputWorksheet.setEnabled(false);
-                app.getMainFrame().addToToolBar(_newDBOutputWorksheet);
+                addToToolBar(_newDBOutputWorksheet);
 
                 _newInvalidObjectsWorksheet = new NewInvalidObjectsWorksheetAction(app, _resources);
                 _newInvalidObjectsWorksheet.setEnabled(false);
-                app.getMainFrame().addToToolBar(_newInvalidObjectsWorksheet);
+                addToToolBar(_newInvalidObjectsWorksheet);
 
                 _newSessionInfoWorksheet = new NewSessionInfoWorksheetAction(app, _resources);
                 _newSessionInfoWorksheet.setEnabled(false);
-                app.getMainFrame().addToToolBar(_newSessionInfoWorksheet);
+                addToToolBar(_newSessionInfoWorksheet);
 
                 _newSGATraceWorksheet = new NewSGATraceWorksheetAction(app, _resources);
                 _newSGATraceWorksheet.setEnabled(false);
-                app.getMainFrame().addToToolBar(_newSGATraceWorksheet);
+                addToToolBar(_newSGATraceWorksheet);
 
 
                 app.getSessionManager().addSessionListener(new OraclePluginSessionListener());
@@ -223,7 +223,25 @@ public class OraclePlugin extends DefaultSessionPlugin
           return null;
         }
         
+    /**
+     * Adds the specified action to the session main frame tool bar in such a 
+     * way that GUI work is done in the event dispatch thread.
+     * @param action
+     */
+    public void addToToolBar(final Action action) {
+        final IApplication app = getApplication();
+        if (SwingUtilities.isEventDispatchThread()) {
+            app.getMainFrame().addToToolBar(action);
+        } else {
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    app.getMainFrame().addToToolBar(action);
+                }
+            });
+        }        
+    }
 
+        
 	private boolean isOracle(ISession session)
 	{
 		final String ORACLE = "oracle";
