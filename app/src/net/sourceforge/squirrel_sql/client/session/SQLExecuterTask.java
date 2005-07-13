@@ -412,7 +412,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
             // problems with DBs that just don't care for multiple result sets.
             try
             {
-               if (res != null) {   
+               if (res != null) {
                    res.close();
                }
             }
