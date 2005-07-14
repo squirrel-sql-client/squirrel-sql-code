@@ -718,11 +718,12 @@ class ObjectTree extends JTree
 					if (_selectedPathNames != null)
 					{
 						final List newlySelectedTreepaths = new ArrayList();
-						restoreExpansionState(_node, _selectedPathNames, newlySelectedTreepaths);
+						
 						GUIUtils.processOnSwingEventThread(new Runnable()
 						{
 							public void run()
 							{
+                                restoreExpansionState(_node, _selectedPathNames, newlySelectedTreepaths);
 								setSelectionPaths((TreePath[])newlySelectedTreepaths.toArray(new TreePath[newlySelectedTreepaths.size()]));
 							}
 						});
