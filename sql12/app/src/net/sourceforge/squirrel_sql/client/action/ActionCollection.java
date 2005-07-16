@@ -408,6 +408,7 @@ public final class ActionCollection
 		add(new CloseCurrentSQLResultTabAction(_app));
 		add(new ToggleCurrentSQLResultTabStickyAction(_app));
 		add(new CloseAllSQLResultWindowsAction(_app));
+		add(new ViewObjectAtCursorInObjectTreeAction(_app));
 		add(new CloseSessionAction(_app));
 		add(new CommitAction(_app));
 		add(new CopyQualifiedObjectNameAction(_app));

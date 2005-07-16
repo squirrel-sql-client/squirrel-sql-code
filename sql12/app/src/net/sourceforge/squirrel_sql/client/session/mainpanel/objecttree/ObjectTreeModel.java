@@ -20,22 +20,6 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
-import javax.swing.tree.DefaultTreeModel;
-
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-
 import net.sourceforge.squirrel_sql.client.plugin.ISessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.plugin.SessionPluginInfo;
@@ -45,6 +29,17 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expander
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ProcedureTypeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableTypeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.UDTTypeExpander;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreePath;
+import java.util.*;
 /**
  * This is the model for the object tree.
  *
@@ -52,6 +47,10 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expander
  */
 public class ObjectTreeModel extends DefaultTreeModel
 {
+   private static ILogger logger =
+     LoggerController.createLogger(ObjectTreeModel.class);
+
+
 	/**
 	 * Collection of <TT>INodeExpander</TT> objects. Each entry is a <TT>List</TT>
 	 * of <TT>INodeExpander</TT> objects. The key to the list is the
@@ -236,7 +235,89 @@ public class ObjectTreeModel extends DefaultTreeModel
 		return new RootNode(session);
 	}
 
-	private static final class RootNode extends ObjectTreeNode
+   public TreePath getPathToDbInfo(IDatabaseObjectInfo dbObjectInfo, ObjectTreeNode startNode, boolean useExpanders)
+   {
+      if(dbObjectInfoEquals(dbObjectInfo, startNode.getDatabaseObjectInfo()))
+      {
+         return new TreePath(startNode.getPath());
+      }
+      else
+      {
+         if(useExpanders && 0 == startNode.getChildCount())
+         {
+            INodeExpander[] expanders = getExpanders(startNode.getDatabaseObjectType());
+
+
+            for (int i = 0; i < expanders.length; i++)
+            {
+               try
+               {
+                  List children = expanders[i].createChildren(startNode.getSession(), startNode);
+
+                  for (int j = 0; j < children.size(); j++)
+                  {
+                     ObjectTreeNode newChild = (ObjectTreeNode) children.get(j);
+                     if(0 == getExpanders(newChild.getDatabaseObjectType()).length)
+                     {
+                        newChild.setAllowsChildren(false);
+                     }
+                     else
+                     {
+                        newChild.setAllowsChildren(true);
+                     }
+
+                     startNode.add(newChild);
+                  }
+               }
+               catch (Exception e)
+               {
+                  String msg =
+                     "Error loading object type " +  startNode.getDatabaseObjectType() +
+                     ". Error: " + e.toString() +  ". See SQuirreL Logs for stackttrace.";
+                  startNode.getSession().getApplication().getMessageHandler().showErrorMessage(msg);
+
+                  e.printStackTrace();
+                  logger.error(msg, e);
+               }
+            }
+         }
+
+         for(int i=0; i < startNode.getChildCount(); ++i)
+         {
+            TreePath ret = getPathToDbInfo(dbObjectInfo, (ObjectTreeNode) startNode.getChildAt(i), useExpanders);
+            if(null != ret)
+            {
+               return ret;
+            }
+         }
+      }
+      return null;
+   }
+
+   private boolean dbObjectInfoEquals(IDatabaseObjectInfo doi1, IDatabaseObjectInfo doi2)
+   {
+      if(null == doi1 && null == doi2)
+      {
+         return true;
+      }
+      else if(null != doi1 && null == doi2)
+      {
+         return false;
+      }
+      else if(null == doi1 && null != doi2)
+      {
+         return false;
+      }
+      else
+      {
+         return
+               doi1.getDatabaseObjectType().equals(doi2.getDatabaseObjectType())
+            && doi1.getQualifiedName().equals(doi2.getQualifiedName());
+      }
+
+   }
+
+   private static final class RootNode extends ObjectTreeNode
 	{
 		RootNode(ISession session)
 		{
