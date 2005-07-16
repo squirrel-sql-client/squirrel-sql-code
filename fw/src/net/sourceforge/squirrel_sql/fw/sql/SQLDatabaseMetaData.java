@@ -731,8 +731,8 @@ public class SQLDatabaseMetaData
 			while ((row = rdr.readRow()) != null)
 			{
 				final int type = ((Number)row[4]).intValue();
-				list.add(new ProcedureInfo((String)row[0], (String)row[1],
-										(String)row[2], (String)row[3], type, this));
+				list.add(new ProcedureInfo(getAsString(row[0]), getAsString(row[1]),
+										getAsString(row[2]), getAsString(row[3]), type, this));
 			}
 		}
 		finally
@@ -985,8 +985,8 @@ public class SQLDatabaseMetaData
 			Object[] row = null;
 			while ((row = rdr.readRow()) != null)
 			{
-				list.add(new UDTInfo((String)row[0], (String)row[1], (String)row[2],
-									(String)row[3], (String)row[4], (String)row[5],
+				list.add(new UDTInfo(getAsString(row[0]), getAsString(row[1]), getAsString(row[2]),
+									getAsString(row[3]), getAsString(row[4]), getAsString(row[5]),
 									this));
 			}
 		}
@@ -998,7 +998,20 @@ public class SQLDatabaseMetaData
 		return (IUDTInfo[])list.toArray(new IUDTInfo[list.size()]);
 	}
 
-	/**
+   private String getAsString(Object val)
+   {
+      if(null == val)
+      {
+         return null;
+      }
+      else
+      {
+         return "" + val;
+      }
+
+   }
+
+   /**
 	 * Retrieve the names of the Numeric Functions that this DBMS supports.
 	 * Cached on first call.
 	 *
