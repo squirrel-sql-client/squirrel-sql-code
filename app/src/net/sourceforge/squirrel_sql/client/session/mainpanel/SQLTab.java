@@ -71,7 +71,7 @@ public class SQLTab extends BaseMainPanelTab
 	{
 		if (_comp == null)
 		{
-			_comp = new SQLPanel(getSession());
+			_comp = new SQLPanel(getSession(), true);
 		}
 		return _comp;
 	}

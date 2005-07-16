@@ -28,6 +28,7 @@ import javax.swing.event.TreeSelectionListener;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.IObjectTreeListener;
@@ -257,4 +258,11 @@ public interface IObjectTreeAPI extends IHasIdentifier
 	void addKnownDatabaseObjectType(DatabaseObjectType dboType);
 
 	IObjectTab getTabbedPaneIfSelected(DatabaseObjectType dbObjectType, String title);
+
+   /**
+    * Selects the given dbObjectInfo in the Object tree
+    *
+    * @return true if the Object was found and selected. 
+    */
+   boolean selectInObjectTree(IDatabaseObjectInfo dbObjectInfo);
 }

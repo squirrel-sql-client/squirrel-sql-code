@@ -35,6 +35,7 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeNode;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -604,7 +605,28 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 		return getTabbedPane(dbObjectType).getTabIfSelected(title);
 	}
 
-	/**
+   public boolean selectInObjectTree(IDatabaseObjectInfo dbObjectInfo)
+   {
+      ObjectTreeModel otm = (ObjectTreeModel) _tree.getModel();
+      TreePath treePath = otm.getPathToDbInfo(dbObjectInfo, (ObjectTreeNode) otm.getRoot(), false);
+      if(null == treePath)
+      {
+         treePath = otm.getPathToDbInfo(dbObjectInfo, (ObjectTreeNode) otm.getRoot(), true);
+      }
+
+      if(null != treePath)
+      {
+         _tree.setSelectionPath(treePath);
+         _tree.scrollPathToVisible(treePath);
+         return true;
+      }
+      else
+      {
+         return false;
+      }
+   }
+
+   /**
 	 * Add a known database object type to the object tree.
 	 *
 	 * @param	dboType		The new database object type.

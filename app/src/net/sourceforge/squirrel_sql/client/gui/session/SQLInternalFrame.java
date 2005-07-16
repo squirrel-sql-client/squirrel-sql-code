@@ -115,7 +115,7 @@ public class SQLInternalFrame extends BaseSessionInternalFrame
          }
 		});
 
-		_sqlPanel = new SQLPanel(getSession());
+		_sqlPanel = new SQLPanel(getSession(), false);
 
       // Needed to make the panel set the divider location from preferences
       _sqlPanel.setVisible(true);

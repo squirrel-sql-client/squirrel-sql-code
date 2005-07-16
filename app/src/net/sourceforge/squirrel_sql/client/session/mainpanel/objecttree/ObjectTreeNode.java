@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.MutableTreeNode;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
@@ -79,6 +80,12 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 		_sessionId = session.getIdentifier();
 		_dboInfo = dboInfo;
 	}
+
+   public void add(MutableTreeNode newChild)
+   {
+      super.add(newChild);
+      newChild.setParent(this);
+   }
 
 	/**
 	 * Return the current session.

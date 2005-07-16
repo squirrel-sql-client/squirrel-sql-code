@@ -62,6 +62,12 @@ public class ToolsPopupAction extends SquirrelAction
       addAction("tabclosecur", ac.get(CloseCurrentSQLResultTabAction.class));
       addAction("tabsticky", ac.get(ToggleCurrentSQLResultTabStickyAction.class));
 
+      if(sqlPanel.isInMainSessionWindow())
+      {
+         addAction("viewinobjecttree", ac.get(ViewObjectAtCursorInObjectTreeAction.class));
+      }
+
+
       _ctrlTCount = Preferences.userRoot().getInt(PREFS_KEY_CTRL_T_COUNT, 0);
 
       if(3 > _ctrlTCount)
