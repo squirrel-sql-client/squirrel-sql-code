@@ -235,9 +235,9 @@ public class ObjectTreeModel extends DefaultTreeModel
 		return new RootNode(session);
 	}
 
-   public TreePath getPathToDbInfo(IDatabaseObjectInfo dbObjectInfo, ObjectTreeNode startNode, boolean useExpanders)
+   public TreePath getPathToDbInfo(String catalog, String schema, String object, ObjectTreeNode startNode, boolean useExpanders)
    {
-      if(dbObjectInfoEquals(dbObjectInfo, startNode.getDatabaseObjectInfo()))
+      if(dbObjectInfoEquals(catalog, schema, object, startNode.getDatabaseObjectInfo()))
       {
          return new TreePath(startNode.getPath());
       }
@@ -284,7 +284,7 @@ public class ObjectTreeModel extends DefaultTreeModel
 
          for(int i=0; i < startNode.getChildCount(); ++i)
          {
-            TreePath ret = getPathToDbInfo(dbObjectInfo, (ObjectTreeNode) startNode.getChildAt(i), useExpanders);
+            TreePath ret = getPathToDbInfo(catalog, schema, object, (ObjectTreeNode) startNode.getChildAt(i), useExpanders);
             if(null != ret)
             {
                return ret;
@@ -294,27 +294,34 @@ public class ObjectTreeModel extends DefaultTreeModel
       return null;
    }
 
-   private boolean dbObjectInfoEquals(IDatabaseObjectInfo doi1, IDatabaseObjectInfo doi2)
+   private boolean dbObjectInfoEquals(String catalog, String schema, String object, IDatabaseObjectInfo doi)
    {
-      if(null == doi1 && null == doi2)
+      if(null != catalog)
       {
-         return true;
-      }
-      else if(null != doi1 && null == doi2)
-      {
-         return false;
-      }
-      else if(null == doi1 && null != doi2)
-      {
-         return false;
-      }
-      else
-      {
-         return
-               doi1.getDatabaseObjectType().equals(doi2.getDatabaseObjectType())
-            && doi1.getQualifiedName().equals(doi2.getQualifiedName());
+         if(false == catalog.equalsIgnoreCase(doi.getCatalogName()))
+         {
+            return false;
+         }
       }
 
+      if(null != schema)
+      {
+         if(false == schema.equalsIgnoreCase(doi.getSchemaName()))
+         {
+            return false;
+         }
+      }
+
+      if(null != object)
+      {
+         if(   false == object.equalsIgnoreCase(doi.getSimpleName())
+            && false == object.equalsIgnoreCase(doi.getQualifiedName()))
+         {
+            return false;
+         }
+      }
+
+      return true;
    }
 
    private static final class RootNode extends ObjectTreeNode

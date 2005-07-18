@@ -476,19 +476,9 @@ public class SQLPanel extends JPanel
 			_sqlEntry.addUndoableEditListener(_undoManager);
 		}
 
-      createStandardEntryAreaMenuItems();
-
       fireSQLEntryAreaInstalled();
 	}
 
-   private void createStandardEntryAreaMenuItems()
-   {
-      if(_inMainSessionWindow)
-      {
-         Action vioAction = _session.getApplication().getActionCollection().get(ViewObjectAtCursorInObjectTreeAction.class);
-         _sqlEntry.addToSQLEntryAreaMenu(vioAction);
-      }
-   }
 
 
    public void setVisible(boolean value)

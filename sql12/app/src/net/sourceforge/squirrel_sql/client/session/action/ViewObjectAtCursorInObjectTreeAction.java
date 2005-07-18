@@ -1,155 +1,182 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.sql.SQLException;
-import java.util.StringTokenizer;
-import java.util.Vector;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 
 public class ViewObjectAtCursorInObjectTreeAction extends SquirrelAction
-											implements ISQLPanelAction
+   implements ISQLPanelAction
 {
 
-	/** Current panel. */
-	private ISQLPanelAPI _panel;
+   /**
+    * Current panel.
+    */
+   private ISQLPanelAPI _panel;
 
 
-	/**
-	 * Ctor specifying Application API.
-	 *
-	 * @param	app	Application API.
-	 */
-	public ViewObjectAtCursorInObjectTreeAction(IApplication app)
-	{
-		super(app);
-	}
+   /**
+    * Ctor specifying Application API.
+    *
+    * @param	app	Application API.
+    */
+   public ViewObjectAtCursorInObjectTreeAction(IApplication app)
+   {
+      super(app);
+   }
 
-	public void setSQLPanel(ISQLPanelAPI panel)
-	{
-		_panel = panel;
-	}
+   public void setSQLPanel(ISQLPanelAPI panel)
+   {
+      _panel = panel;
+   }
 
-	/**
-	 * View the Object at cursor in the Object Tree
-	 *
-	 * @param	evt		Event being executed.
-	 */
-	public synchronized void actionPerformed(ActionEvent evt)
-	{
-      try
+   /**
+    * View the Object at cursor in the Object Tree
+    *
+    * @param	evt		Event being executed.
+    */
+   public synchronized void actionPerformed(ActionEvent evt)
+   {
+      if (_panel == null)
       {
-         if (_panel != null)
+         return;
+      }
+
+      ObjectCandidates candidates = getObjectCandidates();
+
+      IObjectTreeAPI objectTree = _panel.getSession().getObjectTreeAPIOfActiveSessionWindow();
+
+      boolean success = false;
+      while (candidates.hasNext())
+      {
+         String[] catSchemObj = candidates.next();
+         success = objectTree.selectInObjectTree(catSchemObj[0], catSchemObj[1], catSchemObj[2]);
+         if (success)
          {
-            String dbObjectStringAtCursor = getDbObjectStringAtCursor();
-
-            IDatabaseObjectInfo[] databaseObjectInfos = getMatchingDatabaseObjectInfos(dbObjectStringAtCursor);
-
-            if(0 == databaseObjectInfos.length)
-            {
-               String msg = "Could not find a database object for string " + dbObjectStringAtCursor;
-               JOptionPane.showMessageDialog(_panel.getSession().getApplication().getMainFrame(), msg);
-               return;
-            }
-            else if(1 < databaseObjectInfos.length)
-            {
-               String msg = "Found the following matching database objects matching " + dbObjectStringAtCursor + ".\n";
-
-               for (int i = 0; i < Math.min(5, databaseObjectInfos.length); i++)
-               {
-                  msg += databaseObjectInfos[i].getQualifiedName() + "\n";
-               }
-
-               if(databaseObjectInfos.length > 5)
-               {
-                  msg += "...\n";
-               }
-
-               msg += "Will select the first.";
-               JOptionPane.showMessageDialog(_panel.getSession().getApplication().getMainFrame(), msg);
-            }
-
             _panel.getSession().selectMainTab(ISession.IMainPanelTabIndexes.OBJECT_TREE_TAB);
-            boolean success = _panel.getSession().getObjectTreeAPIOfActiveSessionWindow().selectInObjectTree(databaseObjectInfos[0]);
-
-            if(false == success)
-            {
-               String msg = "Could not locate the database object " + databaseObjectInfos[0] + "in Object tree";
-               JOptionPane.showMessageDialog(_panel.getSession().getApplication().getMainFrame(), msg);
-            }
-
+            break;
          }
+
       }
-      catch (SQLException e)
+
+      if (false == success)
       {
-         throw new RuntimeException(e);
+         String msg = "Could not locate the database object '" + candidates.getSearchString() + "' in Object tree";
+         JOptionPane.showMessageDialog(_panel.getSession().getApplication().getMainFrame(), msg);
       }
+
    }
 
-   private IDatabaseObjectInfo[] getMatchingDatabaseObjectInfos(String dbObjectStringAtCursor) throws SQLException
+   private ObjectCandidates getObjectCandidates()
    {
-      if(null == dbObjectStringAtCursor)
+      String stringAtCursor = getStringAtCursor();
+
+      ObjectCandidates ret = new ObjectCandidates(stringAtCursor);
+
+      String[] splits = stringAtCursor.split("\\.");
+
+
+      for (int i = splits.length-1; i >=0 ; i--)
       {
-         return new IDatabaseObjectInfo[0];
+         String object = null;
+         String schema = null;
+         String catalog = null;
+
+         object = splits[i];
+
+         if (i+1 < splits.length)
+         {
+            schema = splits[i+1];
+         }
+
+         if (i+2 < splits.length)
+         {
+            catalog = splits[i+2];
+         }
+
+         ret.add(catalog, schema, object);
       }
 
-      String[] buf = dbObjectStringAtCursor.split("\\.");
-
-      String catalog = null;
-      String schema = null;
-      String object = null;
-
-      if(buf.length >= 3)
-      {
-         catalog = buf[buf.length-3];
-      }
-      if(buf.length >= 2)
-      {
-         schema = buf[buf.length-2];
-      }
-      if(buf.length >= 1)
-      {
-         object = buf[buf.length-1];
-      }
-
-      String caseBuf = _panel.getSession().getSchemaInfo().getCaseSensitiveTableName(object);
-
-      if(null != caseBuf)
-      {
-         object = caseBuf;
-      }
-
-      _panel.getSession().getSchemaInfo().getCaseSensitiveTableName(object);
-
-
-      return _panel.getSession().getSQLConnection().getSQLMetaData().getTables(catalog, schema, object, new String[]{"TABLE", "VIEW"});
-
+      return ret;
    }
 
-   private String getDbObjectStringAtCursor()
+   private String getStringAtCursor()
    {
-      String selectedText = _panel.getSQLEntryPanel().getSelectedText();
+      String text = _panel.getSQLEntryPanel().getText();
+      int caretPos = _panel.getSQLEntryPanel().getCaretPosition();
 
-      if(null != selectedText)
+      int lastIndexOfText = Math.max(0,text.length()-1);
+      int beginPos = Math.min(caretPos, lastIndexOfText); // The Math.min is for the Caret at the end of the text
+      while(0 < beginPos && false == isParseStop(text.charAt(beginPos), false))
       {
-         return selectedText;
+         --beginPos;
       }
-      else
-      {
-         
 
-         return null;
+      int endPos = caretPos;
+      while(endPos < text.length() && false == isParseStop(text.charAt(endPos), true))
+      {
+         ++endPos;
+      }
+
+      return text.substring(beginPos, endPos).trim();
+
+
+   }
+
+   private boolean isParseStop(char c, boolean treatDotAsStop)
+   {
+      return
+         '(' == c ||
+         ')' == c ||
+         '\'' == c ||
+         Character.isWhitespace(c) ||
+         (treatDotAsStop && '.' == c);
+
+   }
+
+   private static class ObjectCandidates
+   {
+      ArrayList _candidates = new ArrayList();
+
+      int _curIndex = 0;
+      private String _searchString;
+
+      public ObjectCandidates(String searchString)
+      {
+         _searchString = searchString;
+      }
+
+
+      public boolean hasNext()
+      {
+         return _curIndex < _candidates.size();
+      }
+
+      public String[] next()
+      {
+         ArrayList candidate =(ArrayList) _candidates.get(_curIndex++);
+         return (String[]) candidate.toArray(new String[candidate.size()]);
+      }
+
+      public String getSearchString()
+      {
+         return _searchString;
+      }
+
+      public void add(String catalog, String schema, String object)
+      {
+         ArrayList candidate = new ArrayList(3);
+         candidate.add(catalog);
+         candidate.add(schema);
+         candidate.add(object);
+         _candidates.add(candidate);
       }
    }
+
 }

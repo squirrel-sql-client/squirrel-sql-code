@@ -34,10 +34,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.*;
 import net.sourceforge.squirrel_sql.client.mainframe.action.AboutAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CascadeAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CloseAllSessionsAction;
