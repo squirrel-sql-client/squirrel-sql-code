@@ -19,7 +19,7 @@ import java.awt.event.ActionEvent;
 import java.util.prefs.Preferences;
 
 
-public class ToolsPopupAction extends SquirrelAction
+public class ToolsPopupAction extends SquirrelAction 
 {
    private ToolsPopupCompletorModel _toolsPopupCompletorModel;
    private ISQLEntryPanel _sqlEntryPanel;

@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabLi
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
+import net.sourceforge.squirrel_sql.client.session.action.ViewObjectAtCursorInObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupAction;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 /**
@@ -65,6 +66,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 		}
 		_panel = panel;
       createToolsPopup();
+      createStandardEntryAreaMenuItems();
 	}
 
 
@@ -77,8 +79,21 @@ public class SQLPanelAPI implements ISQLPanelAPI
       SquirrelResources resources = _panel.getSession().getApplication().getResources();
       resources.configureMenuItem(_toolsPopupAction, item);
       JComponent comp = getSQLEntryPanel().getTextComponent();
-      comp.registerKeyboardAction(_toolsPopupAction, resources. getKeyStroke(_toolsPopupAction), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+      comp.registerKeyboardAction(_toolsPopupAction, resources.getKeyStroke(_toolsPopupAction), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
    }
+
+
+   private void createStandardEntryAreaMenuItems()
+   {
+      if(_panel.isInMainSessionWindow())
+      {
+         Action vioAction = _panel.getSession().getApplication().getActionCollection().get(ViewObjectAtCursorInObjectTreeAction.class);
+         JMenuItem item = getSQLEntryPanel().addToSQLEntryAreaMenu(vioAction);
+         SquirrelResources resources = getSession().getApplication().getResources();
+         resources.configureMenuItem(vioAction, item);
+      }
+   }
+
 
    public void addToToolsPopUp(String selectionString, Action action)
    {

@@ -605,13 +605,22 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 		return getTabbedPane(dbObjectType).getTabIfSelected(title);
 	}
 
-   public boolean selectInObjectTree(IDatabaseObjectInfo dbObjectInfo)
+   /**
+    * Tries to locate the object given by the paramteres in the Object tree.
+    * The first matching object found is selected.
+    *
+    * @param catalog null means any catalog
+    * @param schema null means any schema
+    * @param table, view, ... but not a table or view column
+    * @return true if the Object was found and selected.
+    */
+   public boolean selectInObjectTree(String catalog, String schema, String object)
    {
       ObjectTreeModel otm = (ObjectTreeModel) _tree.getModel();
-      TreePath treePath = otm.getPathToDbInfo(dbObjectInfo, (ObjectTreeNode) otm.getRoot(), false);
+      TreePath treePath = otm.getPathToDbInfo(catalog, schema, object, (ObjectTreeNode) otm.getRoot(), false);
       if(null == treePath)
       {
-         treePath = otm.getPathToDbInfo(dbObjectInfo, (ObjectTreeNode) otm.getRoot(), true);
+         treePath = otm.getPathToDbInfo(catalog, schema, object, (ObjectTreeNode) otm.getRoot(), true);
       }
 
       if(null != treePath)
