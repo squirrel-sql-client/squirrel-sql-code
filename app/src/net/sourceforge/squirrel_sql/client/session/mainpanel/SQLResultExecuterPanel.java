@@ -22,8 +22,8 @@ import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.*;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsAction;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsButCurrentAction;
-import net.sourceforge.squirrel_sql.client.session.action.ToggleCurrentSQLResultTabStickyAction;
 import net.sourceforge.squirrel_sql.client.session.action.CloseCurrentSQLResultTabAction;
+import net.sourceforge.squirrel_sql.client.session.action.ToggleCurrentSQLResultTabStickyAction;
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ResultTabEvent;
@@ -94,6 +94,9 @@ public class SQLResultExecuterPanel extends JPanel
 	/** Factory for generating unique IDs for new <TT>ResultTab</TT> objects. */
 	private IntegerIdentifierFactory _idFactory = new IntegerIdentifierFactory();
    private ResultTab _stickyTab;
+
+   private ILogger _log = LoggerController.createLogger(SQLResultExecuterPanel.class);
+
 
    /**
 	 * Ctor.
@@ -1003,6 +1006,11 @@ public class SQLResultExecuterPanel extends JPanel
          }
 
          getSession().getMessageHandler().showErrorMessage(msg);
+
+         if(getSession().getProperties().getWriteSQLErrorsToLog())
+         {
+            _log.info(msg);   
+         }
 		}
 
 
