@@ -127,6 +127,7 @@ public class SessionSQLPropertiesPanel
 	private static final class SQLPropertiesPanel extends JPanel
 	{
 		private JCheckBox _abortOnErrorChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.abortonerror"));
+		private JCheckBox _writeSQLErrorsToLogChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.writesqlerrorstolog"));
 		private JCheckBox _autoCommitChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.autocommit"));
 		private JCheckBox _commitOnClose = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.commitonclose"));
 		private IntegerField _sqlNbrRowsToShowField = new IntegerField(5);
@@ -165,6 +166,7 @@ public class SessionSQLPropertiesPanel
 		void loadData(SessionProperties props)
 		{
 			_abortOnErrorChk.setSelected(props.getAbortOnError());
+			_writeSQLErrorsToLogChk.setSelected(props.getWriteSQLErrorsToLog());
 			_autoCommitChk.setSelected(props.getAutoCommit());
 			_commitOnClose.setSelected(props.getCommitOnClosingConnection());
 			_sqlNbrRowsToShowField.setInt(props.getSQLNbrRowsToShow());
@@ -195,6 +197,7 @@ public class SessionSQLPropertiesPanel
 		void applyChanges(SessionProperties props)
 		{
 			props.setAbortOnError(_abortOnErrorChk.isSelected());
+			props.setWriteSQLErrorsToLog(_writeSQLErrorsToLogChk.isSelected());
 			props.setAutoCommit(_autoCommitChk.isSelected());
 			props.setCommitOnClosingConnection(_commitOnClose.isSelected());
 			props.setSQLNbrRowsToShow(_sqlNbrRowsToShowField.getInt());
@@ -325,6 +328,11 @@ public class SessionSQLPropertiesPanel
 			gbc.gridx = 0;
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			pnl.add(_abortOnErrorChk, gbc);
+
+         ++gbc.gridy; // new line
+         gbc.gridx = 0;
+         gbc.gridwidth = GridBagConstraints.REMAINDER;
+         pnl.add(_writeSQLErrorsToLogChk, gbc);
 
 			++gbc.gridy; // new line
 			gbc.gridx = 0;
