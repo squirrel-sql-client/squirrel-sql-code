@@ -40,7 +40,10 @@ import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.oracle.SGAtrace.NewSGATraceWorksheetAction;
@@ -248,7 +251,13 @@ public class OraclePlugin extends DefaultSessionPlugin
 		String dbms = null;
 		try
 		{
-			dbms = session.getSQLConnection().getSQLMetaData().getDatabaseProductName();
+            SQLConnection con = session.getSQLConnection();
+            if (con != null) {
+                SQLDatabaseMetaData data = con.getSQLMetaData();
+                if (data != null) {
+                    dbms = data.getDatabaseProductName();
+                }
+            }
 		}
 		catch (SQLException ex)
 		{
@@ -257,18 +266,20 @@ public class OraclePlugin extends DefaultSessionPlugin
 		return dbms != null && dbms.toLowerCase().startsWith(ORACLE);
 	}
 
-        public class OraclePluginSessionListener extends SessionAdapter {
-          public void sessionActivated(SessionEvent evt) {
-            final ISession session = evt.getSession();
-
-            boolean enable = isOracle(session);
-            _newDBOutputWorksheet.setEnabled(enable);
-            _newInvalidObjectsWorksheet.setEnabled(enable);
-            _newSessionInfoWorksheet.setEnabled(enable);
-            _newSGATraceWorksheet.setEnabled(enable);
-          }
+    public class OraclePluginSessionListener extends SessionAdapter {
+        public void sessionActivated(SessionEvent evt) {
+          final ISession session = evt.getSession();
+          final boolean enable = isOracle(session);
+          GUIUtils.processOnSwingEventThread(new Runnable() {
+              public void run() {
+                  _newDBOutputWorksheet.setEnabled(enable);
+                  _newInvalidObjectsWorksheet.setEnabled(enable);
+                  _newSessionInfoWorksheet.setEnabled(enable);
+                  _newSGATraceWorksheet.setEnabled(enable);     
+              }
+          });
         }
-
+      }
         /** This class listens to new frames as they are opened and adds
          *  object from this plugins.
          */
