@@ -47,7 +47,6 @@ import java.util.List;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
-//JASON: Check the Old SQLExecutertask class against this one.
 /**
  * This class can be used to execute SQL.
  * <p/>It implements Runnable so it can be executed as a thread
@@ -170,40 +169,6 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
             {
                throw new IllegalArgumentException("No SQL selected for execution.");
             }
-
-				/**
-				 * ?? The following code was in the original version of this
-				 * file and was removed at some point.  It appears to implement
-				 * a potentially useful functionality, and there does not seem to be any
-				 * corresponding mechanism that does not use the sqlPanel
-				 * variable which is not present any more.
-				 * The mechanism is to let a plugin review/modify as a single
-				 * batch ALL of the
-				 * sql statements that are about to be executed.
-				 * There is a similar but not identical mechanism used further
-				 * down in the loop that seems to let plugins work on
-				 * individual SQL statements just before they are executed,
-				 * but that is not the same as operating on all of them
-				 * in one group (eg: plugin may want to add or remove statements
-				 * depending on what else is happening in the SQL).
-				 *
-				 * Do we need to re-add this? -- GWG, May 2005
-
-				//	Allow plugins to modify the requested SQL prior to execution.
-				queryStrings = _sqlPanel.fireAllSQLToBeExecutedEvent(queryStrings);
-
-				{
-					final int queryCount = queryStrings.size();
-					SwingUtilities.invokeLater(new Runnable()
-					{
-						public void run()
-						{
-							_cancelPanel.setQueryCount(queryCount);
-						}
-					});
-				}
-				??? END of missing code
-				**/
 
 				_currentQueryIndex = 0;
 

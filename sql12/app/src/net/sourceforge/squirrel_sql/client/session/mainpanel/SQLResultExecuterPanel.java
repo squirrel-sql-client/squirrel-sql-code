@@ -982,14 +982,27 @@ public class SQLResultExecuterPanel extends JPanel
 
       public void sqlExecutionException(Throwable th, String postErrorString)
 		{
-         if(null == postErrorString)
+         String msg = "Error: ";
+
+         if(th instanceof SQLException)
          {
-            getSession().getMessageHandler().showErrorMessage("Error: " + th);
+            SQLException sqlEx = (SQLException) th;
+            sqlEx.getSQLState();
+            sqlEx.getErrorCode();
+
+            msg += sqlEx + ", SQL State: " + sqlEx.getSQLState() + ", Error Code: " + sqlEx.getErrorCode();
          }
          else
          {
-            getSession().getMessageHandler().showErrorMessage("Error: " + th + "\n" + postErrorString);
+            msg += th;
          }
+
+         if(null != postErrorString)
+         {
+            msg += "\n" + postErrorString;
+         }
+
+         getSession().getMessageHandler().showErrorMessage(msg);
 		}
 
 
