@@ -240,7 +240,14 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
                      }
                      else
                      {
-                        handleError(ex, null);
+                        if(1 < statementCount)
+                        {
+                           handleError(ex, "Error occured in:\n" + lastExecutedStatement);
+                        }
+                        else
+                        {
+                           handleError(ex, null);
+                        }
                      }
                   }
 					}
