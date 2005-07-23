@@ -17,7 +17,6 @@
 		<property name="dist.dir" value="${cvs.dest.dir}/squirrel-sql-dist"/>
 		<property name="install.jar.file" 
 			      value="${dist.dir}/${name}-${appversion}-install.jar"/>
-		
 		<tstamp>
 		    <format property="touch.time" 
 		    	    pattern="yyyyMMdd_kkmm"
@@ -31,6 +30,8 @@
 		<property name="squirrel.version" value="Snapshot-${touch.time}"/>
 		<property name="install.jar.file.dist" 
 		          value="${dist.dir}/${name}-${squirrel.version}-install.jar"/>
+		<property name="source.zip.file"
+		          value="${dist.dir}/${name}-${squirrel.version}-src.zip"/>
 
 		<mkdir dir="${dist.dir}"/>
 		<mkdir dir="${dist.dir}/squirrel-sql"/>
@@ -65,6 +66,14 @@
 		        <pathelement path="${java.class.path}"/>
 		    </classpath>
 	    </java>					
+	</target>
+	
+	<!-- create the source archive for this snapshot -->
+	<target name="createsourcearchive" depends="cvsexport">
+		 <zip destfile="${source.zip.file}"
+		       basedir="${dist.dir}/src"
+		       update="true"
+		  />	
 	</target>
 	
 	<!-- This deletes the files that are in the cvs.dest.dir/project.module/build
@@ -103,6 +112,17 @@
 			 dest="${cvs.dest.dir}" 
 			 package="${project.module}"
 		/>	
+	</target>
+
+	<!-- exports the source (minus the CVS directories) from the repository. -->
+	<target name="cvsexport">
+		<mkdir dir="${dist.dir}/src"/>
+		<cvs command="export -r HEAD ${project.module}"
+			 reallyquiet="true"
+		     compressionlevel="3"
+			 cvsroot="${project.cvsroot}" 
+			 dest="${dist.dir}/src" 
+		/>		
 	</target>
 	
 	<!-- calls out to the squirrel trunk build.xml file in the temp build area
@@ -212,12 +232,6 @@
 			<param name="propertyvalue" value="${delete.dest.dir}"/>
 		</antcall>	
 		
-		<!-- TODO: Get Gerd to replace the main build.xml with this one -->
-		<!--
-		<copy file="build_trunk_plus_plugins.xml" 
-			  tofile="${build.file.dest.dir}/build.xml"/>
-		-->
-		
 		<antcall target="replaceversion"/>
 		
 		<antcall target="executebuild"/>
@@ -230,6 +244,7 @@
 		
 		<move file="${install.jar.file}" toFile="${install.jar.file.dist}"/>
 		
+		<antcall target="createsourcearchive"/>
 	</target>
 		
 </project>
