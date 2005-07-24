@@ -788,7 +788,7 @@ public class SQLResultExecuterPanel extends JPanel
 
 
    /**
-    * Due to JDK 1.4 Bug 4465870 this doesn't work with JDK 1.4. 
+    * Due to JDK 1.4 Bug 4465870 this doesn't work with JDK 1.4. when scrollable tabbed pane is used.
     */
    private void createTabPopup()
    {

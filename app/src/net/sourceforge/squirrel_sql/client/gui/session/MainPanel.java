@@ -19,16 +19,15 @@ package net.sourceforge.squirrel_sql.client.gui.session;
 * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.*;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ObjectTreeTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -256,36 +255,9 @@ public class MainPanel extends JPanel
 
 
 
-/** JASON: Remove this method.
-	*  @deprecated remove this method. Superceeded by listeners attached
-	*  to SQLInternalFrame
-	*/
-	void updateState()
+	private void updateState()
 	{
-		final ActionCollection actions = _session.getApplication().getActionCollection();
-		if (_tabPnl.getSelectedIndex() == ITabIndexes.SQL_TAB)
-		{
-			actions.get(ExecuteSqlAction.class).setEnabled(true);
-			actions.get(GotoNextResultsTabAction.class).setEnabled(true);
-			actions.get(GotoPreviousResultsTabAction.class).setEnabled(true);
-			actions.get(ShowNativeSQLAction.class).setEnabled(true);
-			actions.get(RefreshObjectTreeAction.class).setEnabled(false);
-			actions.get(SQLFilterAction.class).setEnabled(false);
-			actions.get(EditWhereColsAction.class).setEnabled(false);
-		}
-		else
-		{
-			actions.get(ExecuteSqlAction.class).setEnabled(false);
-			actions.get(GotoNextResultsTabAction.class).setEnabled(false);
-			actions.get(GotoPreviousResultsTabAction.class).setEnabled(false);
-			actions.get(ShowNativeSQLAction.class).setEnabled(false);
-			actions.get(RefreshObjectTreeAction.class).setEnabled(true);
-			actions.get(SQLFilterAction.class).setEnabled(true);
-			actions.get(EditWhereColsAction.class).setEnabled(true);
-		}
-//		final boolean isAutoCommit = _session.getProperties().getAutoCommit();
-//		actions.get(CommitAction.class).setEnabled(!isAutoCommit);
-//		actions.get(RollbackAction.class).setEnabled(!isAutoCommit);
+		_session.getApplication().getActionCollection().activationChanged(_session.getSessionInternalFrame());
 	}
 
 	/**

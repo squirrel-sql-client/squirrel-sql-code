@@ -56,6 +56,8 @@ public class EditWhereColsAction extends SquirrelAction
 	public void setObjectTree(IObjectTreeAPI tree)
 	{
 		_tree = tree;
+      setEnabled(null != _tree);
+      
 	}
 
 	/**

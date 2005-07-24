@@ -28,6 +28,7 @@ public class CloseCurrentSQLResultTabAction extends SquirrelAction
 	public void setSQLPanel(ISQLPanelAPI panel)
 	{
 		_panel = panel;
+      setEnabled(null != _panel);
 	}
 
 	/**

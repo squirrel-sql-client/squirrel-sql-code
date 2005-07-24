@@ -19,7 +19,7 @@ import java.awt.event.ActionEvent;
 import java.util.prefs.Preferences;
 
 
-public class ToolsPopupAction extends SquirrelAction 
+public class ToolsPopupController
 {
    private ToolsPopupCompletorModel _toolsPopupCompletorModel;
    private ISQLEntryPanel _sqlEntryPanel;
@@ -28,9 +28,8 @@ public class ToolsPopupAction extends SquirrelAction
    private static final String PREFS_KEY_CTRL_T_COUNT = "squirrelSql_toolsPopup_ctrl_t_count";
    private int _ctrlTCount;
 
-   public ToolsPopupAction(IApplication app, SQLPanel sqlPanel, ISession session)
+   public ToolsPopupController(IApplication app, SQLPanel sqlPanel, ISession session)
    {
-      super(app);
       _sqlEntryPanel = sqlPanel.getSQLEntryPanel();
       _session = session;
 
@@ -83,7 +82,7 @@ public class ToolsPopupAction extends SquirrelAction
    }
 
 
-   public void actionPerformed(ActionEvent evt)
+   public void showToolsPopup()
    {
       if(3 > _ctrlTCount)
       {

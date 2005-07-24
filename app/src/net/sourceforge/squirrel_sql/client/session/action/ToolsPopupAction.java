@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 /*
- * Copyright (C) 2003 Colin Bell
+ * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
  * Modifications Copyright (C) 2003-2004 Jason Height
@@ -21,38 +21,28 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 /**
- * This <TT>Action</TT> will display the next results tab for the
- * current session.
+ * This <CODE>Action</CODE> allows the user to close all the SQL
+ * result tabs for the current session.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class GotoNextResultsTabAction extends SquirrelAction
-										implements ISQLPanelAction
+public class ToolsPopupAction extends SquirrelAction
+											implements ISQLPanelAction
 {
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(GotoNextResultsTabAction.class);
-
-	/** Current panel. */
 	private ISQLPanelAPI _panel;
 
-	/** Command that will be executed by this action. */
-	private ICommand _cmd;
-
 	/**
-	 * Ctor specifying Application API.
+	 * Ctor.
 	 *
-	 * @param	app	Application API.
+	 * @param	app		Application API.
 	 */
-	public GotoNextResultsTabAction(IApplication app)
+	public ToolsPopupAction(IApplication app)
 	{
 		super(app);
 	}
@@ -60,33 +50,23 @@ public class GotoNextResultsTabAction extends SquirrelAction
 	public void setSQLPanel(ISQLPanelAPI panel)
 	{
 		_panel = panel;
-		_cmd = null;
-      setEnabled(null != _panel);
+      setEnabled(null != panel);
+
+
 	}
 
 	/**
-	 * Display the next results tab.
-	 *
-	 * @param	evt		Event being executed.
+	 * Perform this action. Use the <TT>CloseAllSQLResultTabsCommand</TT>.
+	 * 
+	 * @param	evt		The current event.
 	 */
-	public synchronized void actionPerformed(ActionEvent evt)
+	public void actionPerformed(ActionEvent evt)
 	{
-		if (_panel != null)
-		{
-			if (_cmd == null)
-			{
-				_cmd = new GotoNextResultsTabCommand(_panel);
-			}
-			try
-			{
-				_cmd.execute();
-			}
-			catch (Throwable ex)
-			{
-				final String msg = "Error occured seting current results tab";
-				_panel.getSession().getMessageHandler().showErrorMessage(msg + ": " + ex);
-				s_log.error(msg, ex);
-			}
-		}
+      if(null == _panel)
+      {
+         return;
+      }
+
+      _panel.showToolsPopup();
 	}
 }
