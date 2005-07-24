@@ -595,22 +595,12 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 		public void activateFrame(JInternalFrame f)
 		{
 			super.activateFrame(f);
-
-			_app.getActionCollection().internalFrameActivated(f);
-			if (f instanceof SessionInternalFrame)
-			{
-				((SessionInternalFrame)f).getSessionPanel().updateState();
-			}
+			_app.getActionCollection().activationChanged(f);
 		}
 		public void deactivateFrame(JInternalFrame f)
 		{
 			super.deactivateFrame(f);
-
-			_app.getActionCollection().internalFrameDeactivated(f);
-			if (f instanceof SessionInternalFrame)
-			{
-				((SessionInternalFrame)f).getSessionPanel().updateState();
-			}
+			_app.getActionCollection().deactivationChanged(f);
 		}
 	}
 }

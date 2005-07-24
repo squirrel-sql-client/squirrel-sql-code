@@ -153,11 +153,6 @@ public class SessionPanel extends JPanel
 		return _app.getSessionManager().getSession(_sessionId);
 	}
 
-	public void updateState()
-	{
-		_mainTabPane.updateState();
-	}
-
 	public void sessionHasClosed()
 	{
 		if (_objTreeSelectionLis != null)
@@ -405,7 +400,6 @@ public class SessionPanel extends JPanel
 				}
 			}
 		}
-		updateState();
 	}
 
 	private void setupCatalogsCombo()
@@ -442,7 +436,17 @@ public class SessionPanel extends JPanel
 		validate();
 	}
 
-	private class MyToolBar extends ToolBar
+   public boolean isSQLTabSelected()
+   {
+      return MainPanel.ITabIndexes.SQL_TAB ==_mainTabPane.getTabbedPane().getSelectedIndex();
+   }
+
+   public boolean isObjectTreeTabSelected()
+   {
+      return MainPanel.ITabIndexes.OBJECT_TREE_TAB ==_mainTabPane.getTabbedPane().getSelectedIndex();
+   }
+
+   private class MyToolBar extends ToolBar
 	{
 		private SQLCatalogsComboBox _catalogsCmb;
 		private IObjectTreeListener _lis;
@@ -514,9 +518,9 @@ public class SessionPanel extends JPanel
 			addSeparator();
 			add(actions.get(ExecuteSqlAction.class));
 			addSeparator();
-			actions.get(ExecuteSqlAction.class).setEnabled(false);
+//			actions.get(ExecuteSqlAction.class).setEnabled(false);
 			add(actions.get(SQLFilterAction.class));
-			actions.get(SQLFilterAction.class).setEnabled(false);
+//			actions.get(SQLFilterAction.class).setEnabled(false);
          addSeparator();
          add(actions.get(FileOpenAction.class));
          add(actions.get(FileSaveAction.class));

@@ -9,7 +9,7 @@ import java.awt.event.ActionEvent;
 
 public class FileSaveAction extends SquirrelAction  implements ISQLPanelAction
 {
-   private ISQLPanelAPI m_panel;
+   private ISQLPanelAPI _panel;
 
    public FileSaveAction(IApplication app)
    {
@@ -18,11 +18,12 @@ public class FileSaveAction extends SquirrelAction  implements ISQLPanelAction
 
    public void actionPerformed(ActionEvent e)
    {
-      m_panel.fileSave();
+      _panel.fileSave();
    }
 
    public void setSQLPanel(ISQLPanelAPI panel)
    {
-      m_panel = panel;
+      _panel = panel;
+      setEnabled(null != _panel);
    }
 }

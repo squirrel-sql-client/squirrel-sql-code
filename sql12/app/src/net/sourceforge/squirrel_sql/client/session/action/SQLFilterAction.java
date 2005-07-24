@@ -63,6 +63,7 @@ public class SQLFilterAction extends SquirrelAction implements IObjectTreeAction
 	public void setObjectTree(IObjectTreeAPI tree)
 	{
 		_tree = tree;
+      setEnabled(null != _tree);
 	}
 
 	/**

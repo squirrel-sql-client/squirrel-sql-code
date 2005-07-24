@@ -22,10 +22,7 @@ package net.sourceforge.squirrel_sql.client.gui.session;
  */
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
-import net.sourceforge.squirrel_sql.client.session.ISQLInternalFrame;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.*;
 import net.sourceforge.squirrel_sql.client.session.action.*;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
@@ -52,7 +49,6 @@ public class SQLInternalFrame extends BaseSessionInternalFrame
 		_app = session.getApplication();
 		setVisible(false);
 		createGUI(session);
-		addInternalFrameListener(new SQLActionEnabler());
 	}
 
 	public SQLPanel getSQLPanel()
@@ -185,30 +181,5 @@ public class SQLInternalFrame extends BaseSessionInternalFrame
 			add(actions.get(SQLFilterAction.class));
 			actions.get(SQLFilterAction.class).setEnabled(true);
 		}
-	}
-
-	private class SQLActionEnabler extends InternalFrameAdapter
-	{
-		public void internalFrameActivated(InternalFrameEvent evt)
-		{
-			final ActionCollection actions = _app.getActionCollection();
-			actions.get(ExecuteSqlAction.class).setEnabled(true);
-			actions.get(GotoNextResultsTabAction.class).setEnabled(true);
-			actions.get(GotoPreviousResultsTabAction.class).setEnabled(true);
-			actions.get(ShowNativeSQLAction.class).setEnabled(true);
-			actions.get(SQLFilterAction.class).setEnabled(false);
-		}
-
-		public void internalFrameDeactivated(InternalFrameEvent evt)
-		{
-			final ActionCollection actions = getSession().getApplication()
-					.getActionCollection();
-			actions.get(ExecuteSqlAction.class).setEnabled(false);
-			actions.get(GotoNextResultsTabAction.class).setEnabled(false);
-			actions.get(GotoPreviousResultsTabAction.class).setEnabled(false);
-			actions.get(ShowNativeSQLAction.class).setEnabled(false);
-			actions.get(SQLFilterAction.class).setEnabled(false);
-		}
-
 	}
 }

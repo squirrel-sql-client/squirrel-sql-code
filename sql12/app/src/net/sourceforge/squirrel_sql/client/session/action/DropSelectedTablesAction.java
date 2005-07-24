@@ -29,7 +29,7 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 /**
- * @version 	$Id: DropSelectedTablesAction.java,v 1.8 2005-05-22 11:14:59 gerdwagner Exp $
+ * @version 	$Id: DropSelectedTablesAction.java,v 1.9 2005-07-24 20:54:13 gerdwagner Exp $
  * @author		Johan Compagner
  */
 public class DropSelectedTablesAction extends SquirrelAction
@@ -60,6 +60,7 @@ public class DropSelectedTablesAction extends SquirrelAction
 	public void setObjectTree(IObjectTreeAPI tree)
 	{
 		_tree = tree;
+      setEnabled(null != _tree);
 	}
 
 	/**

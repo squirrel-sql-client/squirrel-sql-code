@@ -62,6 +62,7 @@ public class CopyQualifiedObjectNameAction
 	public void setObjectTree(IObjectTreeAPI tree)
 	{
 		_tree = tree;
+      setEnabled(null != _tree);
 	}
 
 	/**

@@ -48,6 +48,7 @@ public class RefreshObjectTreeAction extends SquirrelAction
 	public void setObjectTree(IObjectTreeAPI tree)
 	{
 		_tree = tree;
+      setEnabled(null != _tree);
 	}
 
 	public void actionPerformed(ActionEvent evt)

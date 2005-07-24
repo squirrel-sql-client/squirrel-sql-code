@@ -290,6 +290,8 @@ public interface ISQLPanelAPI
 
 	ISession getSession();
 
+   boolean isInMainSessionWindow();
+
    void addToToolsPopUp(String selectionString, Action action);
 
    void fileSave();
@@ -297,5 +299,7 @@ public interface ISQLPanelAPI
    void fileSaveAs();
 
    void fileOpen();
+
+   void showToolsPopup();
 }
 
