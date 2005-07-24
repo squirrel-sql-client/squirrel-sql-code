@@ -298,10 +298,7 @@ public class SyntaxPugin extends DefaultSessionPlugin
    {
       ActionCollection coll = getApplication().getActionCollection();
       FindAction findAction = ((FindAction) coll.get(FindAction.class));
-      findAction.setSession(sess);
-
       ReplaceAction replaceAction = (ReplaceAction) coll.get(ReplaceAction.class);
-      replaceAction.setSession(sess);
 
       sqlInternalFrame.addSeparatorToToolbar();
       sqlInternalFrame.addToToolbar(findAction);

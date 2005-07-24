@@ -24,14 +24,16 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
+import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
 /**
  * This action will remove &quot;quote&quot; from an SQL string.
  *
  * @author  Gerd Wagner
  */
 class RemoveQuotesAction extends SquirrelAction
-					implements ISessionAction
+					implements ISQLPanelAction
 {
 	/** Logger for this class. */
 	private static final ILogger s_log =
@@ -48,10 +50,19 @@ class RemoveQuotesAction extends SquirrelAction
 		_plugin = plugin;
 	}
 
-	public void setSession(ISession session)
-	{
-		_session = session;
-	}
+   public void setSQLPanel(ISQLPanelAPI panel)
+   {
+      if(null != panel)
+      {
+         _session = panel.getSession();
+      }
+      else
+      {
+         _session = null;
+      }
+      setEnabled(null != _session);
+   }
+
 
 	public void actionPerformed(ActionEvent evt)
 	{

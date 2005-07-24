@@ -4,7 +4,9 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
+import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPluginResources;
 
 import javax.swing.*;
@@ -12,7 +14,7 @@ import javax.swing.text.JTextComponent;
 import java.awt.event.ActionEvent;
 
 
-public class DuplicateLineAction  extends SquirrelAction implements ISessionAction
+public class DuplicateLineAction  extends SquirrelAction implements ISQLPanelAction
 {
    private ISession _session;
 
@@ -43,10 +45,16 @@ public class DuplicateLineAction  extends SquirrelAction implements ISessionActi
       }
 	}
 
-	public void setSession(ISession session)
-	{
-      _session = session;
-	}
-
-
+   public void setSQLPanel(ISQLPanelAPI panel)
+   {
+      if(null != panel)
+      {
+         _session = panel.getSession();
+      }
+      else
+      {
+         _session = null;
+      }
+      setEnabled(null != _session);
+   }
 }

@@ -27,9 +27,11 @@ import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
+import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
 
-public class CreateTableOfCurrentSQLAction extends SquirrelAction implements ISessionAction
+public class CreateTableOfCurrentSQLAction extends SquirrelAction implements ISQLPanelAction
 {
 
    /**
@@ -57,13 +59,16 @@ public class CreateTableOfCurrentSQLAction extends SquirrelAction implements ISe
       }
    }
 
-   /**
-    * Set the current session.
-    *
-    * @param	session		The current session.
-    */
-   public void setSession(ISession session)
+   public void setSQLPanel(ISQLPanelAPI panel)
    {
-      _session = session;
+      if(null != panel)
+      {
+         _session = panel.getSession();
+      }
+      else
+      {
+         _session = null;
+      }
+      setEnabled(null != _session);
    }
 }

@@ -31,72 +31,94 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
+import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
- * Initiates execution of a bookmark when user clicks on a bookmark 
+ * Initiates execution of a bookmark when user clicks on a bookmark
  * menu item.
  *
- * @author      Joseph Mocker
- **/
-public class RunBookmarkAction extends SquirrelAction 
-    implements ISessionAction {
-    
-    private static ILogger logger = 
-	LoggerController.createLogger(RunBookmarkAction.class);
+ * @author Joseph Mocker
+ */
+public class RunBookmarkAction extends SquirrelAction
+   implements ISQLPanelAction
+{
 
-    /** Current session to load the bookmark into */
-    private ISession session;
+   private static ILogger logger =
+      LoggerController.createLogger(RunBookmarkAction.class);
 
-    /** Handle to the main plugin object */
-    private SQLBookmarkPlugin plugin;
+   /**
+    * Current session to load the bookmark into
+    */
+   private ISession session;
 
-    public RunBookmarkAction(IApplication app, Resources rsrc, 
-			     SQLBookmarkPlugin plugin)
-            throws IllegalArgumentException {
-        super(app, rsrc);
-        if (plugin ==  null) {
-            throw new IllegalArgumentException("null IPlugin passed");
-        }
-        this.plugin = plugin;
-    }
+   /**
+    * Handle to the main plugin object
+    */
+   private SQLBookmarkPlugin plugin;
 
-    public void actionPerformed(ActionEvent evt) {
-	logger.info("::RunBookmarkAction.actionPerformed()");
-        if (session != null) {
-	    Object source = evt.getSource();
-	    if (source instanceof JMenuItem) {
-		JMenuItem item = (JMenuItem) source;
+   public RunBookmarkAction(IApplication app, Resources rsrc,
+                            SQLBookmarkPlugin plugin)
+      throws IllegalArgumentException
+   {
+      super(app, rsrc);
+      if (plugin == null)
+      {
+         throw new IllegalArgumentException("null IPlugin passed");
+      }
+      this.plugin = plugin;
+   }
 
-		Bookmark bookmark = 
-		    plugin.getBookmarkManager().get(item.getText());
+   public void actionPerformed(ActionEvent evt)
+   {
+      logger.info("::RunBookmarkAction.actionPerformed()");
+      if (session != null)
+      {
+         Object source = evt.getSource();
+         if (source instanceof JMenuItem)
+         {
+            JMenuItem item = (JMenuItem) source;
 
-          ISQLEntryPanel sqlEntryPanel;
+            Bookmark bookmark =
+               plugin.getBookmarkManager().get(item.getText());
 
-          if(session.getActiveSessionWindow() instanceof SessionInternalFrame)
-          {
-             sqlEntryPanel = ((SessionInternalFrame)session.getActiveSessionWindow()).getSQLPanelAPI().getSQLEntryPanel();
-          }
-          else if(session.getActiveSessionWindow() instanceof SQLInternalFrame)
-          {
-             sqlEntryPanel = ((SQLInternalFrame)session.getActiveSessionWindow()).getSQLPanelAPI().getSQLEntryPanel();
-          }
-          else
-          {
-             return;
-          }
+            ISQLEntryPanel sqlEntryPanel;
+
+            if (session.getActiveSessionWindow() instanceof SessionInternalFrame)
+            {
+               sqlEntryPanel = ((SessionInternalFrame) session.getActiveSessionWindow()).getSQLPanelAPI().getSQLEntryPanel();
+            }
+            else if (session.getActiveSessionWindow() instanceof SQLInternalFrame)
+            {
+               sqlEntryPanel = ((SQLInternalFrame) session.getActiveSessionWindow()).getSQLPanelAPI().getSQLEntryPanel();
+            }
+            else
+            {
+               return;
+            }
 
 
-		if (bookmark != null)
-		    new RunBookmarkCommand(getParentFrame(evt), session, bookmark, plugin, sqlEntryPanel).execute();
-	    }
-	}
-    }
+            if (bookmark != null)
+               new RunBookmarkCommand(getParentFrame(evt), session, bookmark, plugin, sqlEntryPanel).execute();
+         }
+      }
+   }
 
-    public void setSession(ISession session) {
-        this.session = session;
-    }
+   public void setSQLPanel(ISQLPanelAPI panel)
+   {
+      if(null != panel)
+      {
+         session = panel.getSession();
+      }
+      else
+      {
+         session = null;
+      }
+      setEnabled(null != session);
+   }
+   
 }

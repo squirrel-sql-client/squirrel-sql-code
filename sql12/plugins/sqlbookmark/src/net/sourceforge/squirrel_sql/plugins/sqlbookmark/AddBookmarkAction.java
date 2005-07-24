@@ -31,7 +31,9 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
+import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -39,37 +41,50 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
  * Prompt for name and add a new bookmark into the system.
  *
- *
- * @author      Joseph Mocker
- **/
-public class AddBookmarkAction extends SquirrelAction 
-    implements ISessionAction {
-    
-    private static ILogger logger = 
-	LoggerController.createLogger(AddBookmarkAction.class);
-    
-    private ISession session;
-    private SQLBookmarkPlugin plugin;
-    
-    public AddBookmarkAction(IApplication app, Resources rsrc, 
-			     SQLBookmarkPlugin plugin)
-	throws IllegalArgumentException {
-        super(app, rsrc);
-        if (plugin ==  null) {
-            throw new IllegalArgumentException("null IPlugin passed");
-        }
-        this.plugin = plugin;
-    }
-    
-    public void setSession(ISession session) {
-        this.session = session;
-    }
+ * @author Joseph Mocker
+ */
+public class AddBookmarkAction extends SquirrelAction
+   implements ISQLPanelAction
+{
 
-    public void actionPerformed(ActionEvent evt) {
-	logger.info("::AddBookmarkAction.actionPerformed()");
-        if (session != null) {
-	    new AddBookmarkCommand(getParentFrame(evt), session, plugin).execute();
-        }
-    }
-    
+   private static ILogger logger =
+      LoggerController.createLogger(AddBookmarkAction.class);
+
+   private ISession session;
+   private SQLBookmarkPlugin plugin;
+
+   public AddBookmarkAction(IApplication app, Resources rsrc,
+                            SQLBookmarkPlugin plugin)
+      throws IllegalArgumentException
+   {
+      super(app, rsrc);
+      if (plugin == null)
+      {
+         throw new IllegalArgumentException("null IPlugin passed");
+      }
+      this.plugin = plugin;
+   }
+
+
+   public void actionPerformed(ActionEvent evt)
+   {
+      logger.info("::AddBookmarkAction.actionPerformed()");
+      if (session != null)
+      {
+         new AddBookmarkCommand(getParentFrame(evt), session, plugin).execute();
+      }
+   }
+
+   public void setSQLPanel(ISQLPanelAPI panel)
+   {
+      if(null != panel)
+      {
+         session = panel.getSession();
+      }
+      else
+      {
+         session = null;
+      }
+      setEnabled(null != session);
+   }
 }
