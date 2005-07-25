@@ -87,21 +87,41 @@ public class QueryTokenizer
 			return null;
 		}
 		int iQuoteCount = 1;
-		int iIndex1 = -1;
+		int iIndex1 = -_querySep.length();
 		while (iQuoteCount % 2 != 0)
 		{
 			iQuoteCount = 0;
 
-			// A multiple character querySep is expected to be surounded by
-			// white spaces. A single character querySep is expected to be
-			// surrounded by whitespace unless it is at the end of a line.
 			iIndex1 = _sQuerys.indexOf(_querySep, iIndex1 + _querySep.length());
 
 			while (-1 != iIndex1)
 			{
-				boolean isSep = !((0 != iIndex1 && !Character.isWhitespace(_sQuerys.charAt(iIndex1 - 1)))
-					|| (_sQuerys.length() - _querySep.length() != iIndex1
-						&& !Character.isWhitespace(_sQuerys.charAt(iIndex1 + _querySep.length()))));
+//            boolean isSep =
+//                  !((0 != iIndex1 && !Character.isWhitespace(_sQuerys.charAt(iIndex1 - 1)))
+//               || (_sQuerys.length() - _querySep.length() != iIndex1
+//               && !Character.isWhitespace(_sQuerys.charAt(iIndex1 + _querySep.length()))));
+
+            boolean isSep = true;
+            if(1 < _querySep.length())
+            {
+               // A multiple character querySep is expected to be surounded by
+               // white spaces. We check this here
+               // For a single character querySep there are no such restrictions
+
+               if( 0 < iIndex1 && false == Character.isWhitespace(_sQuerys.charAt(iIndex1 - 1)) )
+               {
+                  isSep = false;
+               }
+
+               if( _sQuerys.length() < iIndex1 + _querySep.length() && false == Character.isWhitespace(_sQuerys.charAt(iIndex1 + _querySep.length())) )
+               {
+                  isSep = false;
+               }
+            }
+
+
+
+
 				if (!isSep && _querySep.length() == 1)
 				{
 					if (iIndex1 == (_sQuerys.length() - 1)
