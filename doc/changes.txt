@@ -13,7 +13,8 @@ SQuirreL SQL Client Change Log
   To do so use the ctrl+B shortcut or the right mous menu or the tools popup (ctrl+T)
 - New Session property: 'Write SQL Execution Errors to log file'.
   The execution errors of an SQL statement shown in the message panel
-  may now also be written to the squirrel-sql.log file 
+  may now also be written to the squirrel-sql.log file
+- Fixed bug #1244287
 
 
 2.0rc1
