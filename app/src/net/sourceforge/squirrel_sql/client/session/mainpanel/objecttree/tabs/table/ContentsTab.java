@@ -655,7 +655,7 @@ public class ContentsTab extends BaseTableTab
          else {
             // the field being updated is one whose contents
             //should be visible in the WHERE clause
-            if (count > 0)
+            if (count > 1)
                return "This operation will result in " + count + " identical rows.\nDo you wish to proceed?";
          }
 
