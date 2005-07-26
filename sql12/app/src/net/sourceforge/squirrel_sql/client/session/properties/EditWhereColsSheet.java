@@ -144,15 +144,15 @@ public class EditWhereColsSheet extends BaseSessionInternalFrame
 		super.setVisible(show);
 	}
 
-	/**
-	 * Set title of this frame. Ensure that the title label matches the frame title.
-	 *
-	 * @param	title	New title text.
-	 */
-	public void setTitle(String title)
-	{
-		_titleLbl.setText(title + ": " + _objectInfo.getSimpleName());
-	}
+//	/**
+//	 * Set title of this frame. Ensure that the title label matches the frame title.
+//	 *
+//	 * @param	title	New title text.
+//	 */
+//	public void setTitle(String title)
+//	{
+//      super
+//	}
 
 	/**
 	 * Dispose of the sheet.
@@ -197,7 +197,6 @@ public class EditWhereColsSheet extends BaseSessionInternalFrame
 		SortedSet columnNames = new TreeSet();
 
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		setTitle(getTitle());
 
 		// This is a tool window.
 		GUIUtils.makeToolWindow(this, true);
@@ -230,10 +229,11 @@ public class EditWhereColsSheet extends BaseSessionInternalFrame
 			new EditWhereColsPanel(columnNames,  _objectInfo.getQualifiedName(),
 				ContentsTab.getUnambiguousTableName(session, _objectInfo.getQualifiedName()));
 
-		String pnlTitle = _editWhereColsPanel.getTitle();
-		String hint = _editWhereColsPanel.getHint();
 		final JScrollPane sp = new JScrollPane(_editWhereColsPanel);
 		sp.setBorder(BorderFactory.createEmptyBorder());
+
+      _titleLbl.setText(getTitle() + ": " + _objectInfo.getSimpleName());
+
 
 		final JPanel contentPane = new JPanel(new GridBagLayout());
 		contentPane.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
