@@ -70,6 +70,19 @@ public class NetbeansSQLEditorPane extends JEditorPane
       //
       //////////////////////////////////////////////////////////////////////////////////////////
 
+      removeUnwantedKeyStrokes();
+
+      Document doc = getDocument();
+      _syntaxFactory.putDocument(_session, doc);
+
+
+      setToolTipText("Just to make getToolTiptext() to be called");
+
+      new KeyManager(this);
+   }
+
+   private void removeUnwantedKeyStrokes()
+   {
       //////////////////////////////////////////////////////////////////////////////////////////////////////////////
       // The ctrl enter short cut in the Netbeans editor is set in org.netbeans.editor.ext.BaseKit
       // to the org.netbeans.editor.ext.BaseKit.SplitLineAction.
@@ -85,16 +98,13 @@ public class NetbeansSQLEditorPane extends JEditorPane
       // Removed for the tools popup
       KeyStroke ctrlTStroke = KeyStroke.getKeyStroke(KeyEvent.VK_T, java.awt.event.InputEvent.CTRL_MASK);
       getKeymap().removeKeyStrokeBinding(ctrlTStroke);
+
+      // Removed for reformatting
+      KeyStroke ctrlShiftFStroke = KeyStroke.getKeyStroke(KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK | java.awt.event.InputEvent.SHIFT_MASK);
+      getKeymap().removeKeyStrokeBinding(ctrlShiftFStroke);
+
       //
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-      Document doc = getDocument();
-      _syntaxFactory.putDocument(_session, doc);
-
-
-      setToolTipText("Just to make getToolTiptext() to be called");
-
-      new KeyManager(this);
    }
 
    public void updateFromPreferences()
@@ -116,23 +126,7 @@ public class NetbeansSQLEditorPane extends JEditorPane
       Settings.addInitializer(new SQLSettingsInitializer(SQLKit.class, _prefs, font, _plugin));
 
 
-      //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      // The ctrl enter short cut in the Netbeans editor is set in org.netbeans.editor.ext.BaseKit
-      // to the org.netbeans.editor.ext.BaseKit.SplitLineAction.
-      // Since the ctrl enter shorcut is a basic SQuirreL short cut and is defined via the main menu action
-      // we must remove this binding here.
-      KeyStroke ctrlEnterStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, java.awt.event.InputEvent.CTRL_MASK);
-      getKeymap().removeKeyStrokeBinding(ctrlEnterStroke);
-
-      // Removed for the SQLBookmark Plugin
-      KeyStroke ctrlJStroke = KeyStroke.getKeyStroke(KeyEvent.VK_J, java.awt.event.InputEvent.CTRL_MASK);
-      getKeymap().removeKeyStrokeBinding(ctrlJStroke);
-
-      // Removed for the tools popup
-      KeyStroke ctrlTStroke = KeyStroke.getKeyStroke(KeyEvent.VK_T, java.awt.event.InputEvent.CTRL_MASK);
-      getKeymap().removeKeyStrokeBinding(ctrlTStroke);
-      //
-      ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+      removeUnwantedKeyStrokes();
 
       Document doc = getDocument();
       _syntaxFactory.putDocument(_session, doc);

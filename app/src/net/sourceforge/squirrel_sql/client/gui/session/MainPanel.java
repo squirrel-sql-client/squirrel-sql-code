@@ -105,8 +105,8 @@ public class MainPanel extends JPanel
 
 		_session = session;
 
-		addMainPanelTab(new ObjectTreeTab());
-		addMainPanelTab(new SQLTab(_session));
+		addMainPanelTab(new ObjectTreeTab(), new Integer('O'));
+		addMainPanelTab(new SQLTab(_session), new Integer('Q'));
 
 		add(_tabPnl, BorderLayout.CENTER);
 
@@ -171,7 +171,12 @@ public class MainPanel extends JPanel
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ITablePanelTab</TT> passed.
 	 */
-	public int addMainPanelTab(IMainPanelTab tab)
+   public int addMainPanelTab(IMainPanelTab tab)
+   {
+      return addMainPanelTab(tab, null);
+   }
+
+	public int addMainPanelTab(IMainPanelTab tab, Integer mnemonic)
 	{
 		if (tab == null)
 		{
@@ -196,6 +201,12 @@ public class MainPanel extends JPanel
       if(idx == prefIx)
       {
          _tabPnl.setSelectedIndex(prefIx);
+      }
+
+      if(null != mnemonic)
+      {
+         _tabPnl.setMnemonicAt(idx, mnemonic.intValue());
+
       }
 
       return idx;
