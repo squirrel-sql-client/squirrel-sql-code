@@ -12,8 +12,8 @@
 	-->
 	<target name="init">
 		<tstamp/>
+		<property file="${basedir}/build/build.properties"/>
 		<property name="name" value="squirrel-sql"/>
-
 		<property name="dist_dir" value="${basedir}/../squirrel-sql-dist/${name}"/>
 		<property name="core_dist_dir" value="${dist_dir}/core/dist"/>
 		<property name="core_work_dir" value="${dist_dir}/core/work"/>
@@ -384,6 +384,40 @@
 	<target name="make_dist" depends="compile_app,jar_source">
 	</target>
 
+	<!--
+	==================================================================
+	Make the install jar.  Need to have IzPack installed and build 
+	property izpack.home.dir should be set in build.properties to it's
+	location
+	
+	No parameters.
+	==================================================================
+	-->
+	<target name="make_install_jar" depends="clean, compile_app, compile_plugins, jar_source">
+		<java jar="${izpack.home.dir}/lib/compiler.jar"
+	          fork="true"
+	          failonerror="true"
+	          maxmemory="128m"
+	    >
+	
+	        <arg value="-HOME"/>
+	        <arg value="${izpack.home.dir}"/>
+		    
+			<arg value="${basedir}/build/${izpack.config.file}"/>
+		    <arg value="-b"/>
+		    <arg value="${basedir}/build"/>
+		    <arg value="-k"/>
+		    <arg value="standard-kunststoff"/>
+		    <arg value="-o"/>
+		    <arg value="${basedir}/../squirrel-sql-dist/${name}-${version}-install.jar"/>
+	
+		    <classpath>
+		        <pathelement location="${izpack.home.dir}/lib/compiler.jar"/>
+		        <pathelement path="${java.class.path}"/>
+		    </classpath>
+    	</java>		
+	</target>			
+	
 	<!--
 	==================================================================
 	Clean up.
