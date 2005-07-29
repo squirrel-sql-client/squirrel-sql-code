@@ -170,14 +170,27 @@ public class ViewLogsSheet extends BaseInternalFrame
 		}
 	}
 
+    /**
+     * Enables the log combo box and refresh button using the Swing event 
+     * thread.
+     */
+    private void enableComponents() 
+    {
+        GUIUtils.processOnSwingEventThread(new Runnable() {
+            public void run() {
+                _refreshBtn.setEnabled(false);
+                _logDirCmb.setEnabled(false);
+            }
+        });
+    }
+    
 	/**
 	 * Refresh the log.
 	 */
 	private void refreshLog()
 	{
-		_refreshBtn.setEnabled(false);
-		_logDirCmb.setEnabled(false);
-		CursorChanger cursorChg = new CursorChanger(this);
+	    enableComponents();
+        CursorChanger cursorChg = new CursorChanger(this);
 		cursorChg.show();
 		try
 		{
@@ -289,8 +302,7 @@ public class ViewLogsSheet extends BaseInternalFrame
 		}
 		finally
 		{
-			_refreshBtn.setEnabled(true);
-			_logDirCmb.setEnabled(true);
+            enableComponents();
 			_refreshing = false;
 			cursorChg.restore();
 		}
