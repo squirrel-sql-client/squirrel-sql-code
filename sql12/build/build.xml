@@ -33,7 +33,7 @@
 
 		<property environment="env"/>
 		<echo message="ANT HOME: ${env.ANT_HOME}"/>
-		<echo message="JAVA HOME: ${env.JAVA_HOME}"/>
+		<echo message="JAVA HOME: ${env.JAVA_HOME}"/>		
 	</target>
 
 	<!--
@@ -119,7 +119,7 @@
 				<include name="**/*.jpeg"/>
 				<include name="**/*.png"/>
 				<include name="**/*.html"/>
-				<include name="**/*.xml"/>
+			    <include name="**/*.xml"/>
 				<include name="**/*.properties"/>
 			</fileset>
 		</copy>
@@ -210,7 +210,7 @@
 			file="${core_dist_dir}/plugins/readme.txt">
 		</echo>
 	</target>
-
+	
 	<!--
 	==================================================================
 	Build the JavaDoc
@@ -243,84 +243,88 @@
 
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="codecompletion"/>
+			<param name="p_rebuild" value="${rebuild.plugin.codecompletion}"/>
 		</antcall>
-
-<!--
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="dataimport"/>
+			<param name="p_rebuild" value="${rebuild.plugin.dataimport}"/>	
 		</antcall>
--->
-
-<!--		<antcall target="build_plugin">
+	    <antcall target="build_plugin">
+		    <param name="p_internal_name" value="dbcopy"/>
+	        <param name="p_rebuild" value="${rebuild.plugin.dbcopy}"/>
+		</antcall>
+		<antcall target="build_plugin">
 			<param name="p_internal_name" value="dbinfo"/>
-		</antcall> 
--->
-
+        	<param name="p_rebuild" value="${rebuild.plugin.dbinfo}"/>
+		</antcall>
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="editextras"/>
+			<param name="p_rebuild" value="${rebuild.plugin.editextras}"/>
 		</antcall>
-
-<!--
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="exportconfig"/>
+			<param name="p_rebuild" value="${rebuild.plugin.exportconfig}"/>
+		</antcall>			
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="favs"/>
+			<param name="p_rebuild" value="${rebuild.plugin.favs}"/>
 		</antcall>
--->
-<!--
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="firebird"/>
+			<param name="p_rebuild" value="${rebuild.plugin.firebird}"/>
 		</antcall>
--->
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="graph"/>
+			<param name="p_rebuild" value="${rebuild.plugin.graph}"/>
 		</antcall>
-<!--
 		<antcall target="build_plugin">
-			<param name="p_internal_name" value="jedit"/>
-		</antcall>
--->
+			<param name="p_internal_name" value="isqlj"/>
+			<param name="p_rebuild" value="${rebuild.plugin.isqlj}"/>			
+		</antcall>		
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="laf"/>
+			<param name="p_rebuild" value="${rebuild.plugin.laf}"/>
 		</antcall>
-<!--
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="macosx"/>
+			<param name="p_rebuild" value="${rebuild.plugin.macosx}"/>
 		</antcall>
--->
-<!--
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="mssql"/>
+			<param name="p_rebuild" value="${rebuild.plugin.mssql}"/>
 		</antcall>
--->
-<!--
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="mysql"/>
+			<param name="p_rebuild" value="${rebuild.plugin.mysql}"/>
 		</antcall>
--->
-<!--
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="oracle"/>
+			<param name="p_rebuild" value="${rebuild.plugin.oracle}"/>
 		</antcall>
--->
-<!--
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="sessionscript"/>
+			<param name="p_rebuild" value="${rebuild.plugin.sessionscript}"/>
 		</antcall>
--->
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="sqlbookmark"/>
+			<param name="p_rebuild" value="${rebuild.plugin.sqlbookmark}"/>
 		</antcall>
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="sqlscript"/>
+			<param name="p_rebuild" value="${rebuild.plugin.sqlscript}"/>
 		</antcall>
-<!--
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="sqlval"/>
+			<param name="p_rebuild" value="${rebuild.plugin.sqlval}"/>
 		</antcall>
--->
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="syntax"/>
+			<param name="p_rebuild" value="${rebuild.plugin.syntax}"/>
 		</antcall>
-
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="userscript"/>
+			<param name="p_rebuild" value="${rebuild.plugin.userscript}"/>
+		</antcall>		
 	</target>
 
 	<!--
@@ -399,7 +403,7 @@
 	          failonerror="true"
 	          maxmemory="128m"
 	    >
-	
+
 	        <arg value="-HOME"/>
 	        <arg value="${izpack.home.dir}"/>
 		    
@@ -410,13 +414,14 @@
 		    <arg value="standard-kunststoff"/>
 		    <arg value="-o"/>
 		    <arg value="${basedir}/../squirrel-sql-dist/${name}-${version}-install.jar"/>
-	
+
 		    <classpath>
 		        <pathelement location="${izpack.home.dir}/lib/compiler.jar"/>
 		        <pathelement path="${java.class.path}"/>
 		    </classpath>
-    	</java>		
-	</target>			
+	    </java>		
+	</target>		
+
 	
 	<!--
 	==================================================================
@@ -441,7 +446,55 @@
 			</fileset>
 		</delete>
 	</target>
+	
+	<!--
+	==================================================================
+	Builds the plugin, if build.properties has this plugin's rebuild
+	set to true. This defines the property called "rebuild.plugin" 
+	if the parameter "p_rebuild" is true.
+	
+	p_rebuild           - the rebuild property value in build.properties
+	p_internal_name		- internal name of plugin to be build.
+	==================================================================
+	-->	
+	<target name="build_plugin">
+		<!-- see if build.properties wants to rebuild this plugin -->
+		<condition property="rebuild.plugin"> 
+			<istrue value="${p_rebuild}"/>
+		</condition>		
+		<antcall target="plugin_uptodate_check">
+			<param name="p_internal_name" value="${p_internal_name}"/>
+		</antcall>		
+	</target>
 
+	<!--
+	==================================================================
+	Builds the plugin, if the plugin's archive in squirrel-sql-dist/squirrel-sql
+	is older than the source files used to build it.  This sets the property 
+	called "build.notRequired" to true if the archive is newer than the source
+	and false otherwise.
+	
+	p_internal_name		- internal name of plugin to be build.
+	==================================================================
+	-->		
+	<target name="plugin_uptodate_check" if="rebuild.plugin">
+		<!-- see if the source is newer than the archive -->
+		<uptodate property="build.notRequired" 
+			      targetfile="${dist_dir}/${p_internal_name}.tar.gz"
+			      value="true">
+		    <srcfiles dir="${plugins_src_dir}/${p_internal_name}" />
+		</uptodate>	
+		<condition property="uptodate_message"
+		           value="skipping build of ${p_internal_name} - no files have changed since last build"
+				   else="files have changed since last build">
+			<istrue value="${build.notRequired}"/>
+		</condition>
+		<echo message="${uptodate_message}"/>
+		<antcall target="_build_plugin">
+			<param name="p_internal_name" value="${p_internal_name}"/>
+		</antcall>				
+	</target>
+	
 	<!--
 	==================================================================
 	Internal Target.
@@ -449,7 +502,7 @@
 	p_internal_name		- internal name of plugin to be build.
 	==================================================================
 	-->
-	<target name="build_plugin">
+	<target name="_build_plugin" unless="build.notRequired" >
 		<property name="lcl_this_plugin_src_dir" value="${plugins_src_dir}/${p_internal_name}"/>
 		<property name="lcl_this_plugin_dist_dir" value="${plugins_dist_dir}/${p_internal_name}"/>
 
@@ -458,6 +511,9 @@
 		<ant	inheritAll="false" dir="${lcl_this_plugin_src_dir}"
 				antfile="${plugins_src_dir}/${p_internal_name}/${plugin_build_file_name}"
 				target="${plugin_build_target_name}">
+			<property name="p_plugin.work_dir" value="${lcl_this_plugin_dist_dir}/work"/>
+			<property name="p_plugin.dist_dir" value="${lcl_this_plugin_dist_dir}/dist"/>
+			<property name="p_plugin.core_libs_dir" value="${core_dist_lib_dir}"/>			
 		</ant>
 
 		<zip zipfile="${dist_dir}/${p_internal_name}.zip" compress="true">
