@@ -33,7 +33,9 @@
 
 		<property environment="env"/>
 		<echo message="ANT HOME: ${env.ANT_HOME}"/>
-		<echo message="JAVA HOME: ${env.JAVA_HOME}"/>		
+		<echo message="JAVA HOME: ${env.JAVA_HOME}"/>	
+		<mkdir dir="${basedir}/../squirrel-sql-dist"/>
+		<mkdir dir="${basedir}/../squirrel-sql-dist/${name}"/>
 	</target>
 
 	<!--
@@ -439,11 +441,7 @@
 			</fileset>
 		</delete>
 		<delete includeEmptyDirs="true">
-			<fileset dir="${dist_dir}">
-				<exclude name="*.jar"/>
-				<exclude name="*.zip"/>
-				<exclude name="*.gz"/>
-			</fileset>
+			<fileset dir="${dist_dir}"/>
 		</delete>
 	</target>
 	
@@ -478,7 +476,6 @@
 	==================================================================
 	-->		
 	<target name="plugin_uptodate_check" if="rebuild.plugin">
-		<!-- see if the source is newer than the archive -->
 		<uptodate property="build.notRequired" 
 			      targetfile="${dist_dir}/${p_internal_name}.tar.gz"
 			      value="true">
@@ -494,7 +491,7 @@
 			<param name="p_internal_name" value="${p_internal_name}"/>
 		</antcall>				
 	</target>
-	
+
 	<!--
 	==================================================================
 	Internal Target.
@@ -511,9 +508,11 @@
 		<ant	inheritAll="false" dir="${lcl_this_plugin_src_dir}"
 				antfile="${plugins_src_dir}/${p_internal_name}/${plugin_build_file_name}"
 				target="${plugin_build_target_name}">
+			
 			<property name="p_plugin.work_dir" value="${lcl_this_plugin_dist_dir}/work"/>
 			<property name="p_plugin.dist_dir" value="${lcl_this_plugin_dist_dir}/dist"/>
 			<property name="p_plugin.core_libs_dir" value="${core_dist_lib_dir}"/>			
+			
 		</ant>
 
 		<zip zipfile="${dist_dir}/${p_internal_name}.zip" compress="true">
@@ -521,7 +520,8 @@
 				<include name="**/*.*"/>
 			</fileset>
 		</zip>
-
+		<unzip dest="${core_dist_dir}/plugins" 
+			   src="${dist_dir}/${p_internal_name}.zip"/>
 		<tar tarfile="${dist_dir}/${p_internal_name}.tar">
 			<tarfileset dir="${lcl_this_plugin_dist_dir}/dist">
 				<include name="**/*.*"/>
