@@ -74,6 +74,7 @@ public class SquirrelPreferences implements Serializable
 		String SHOW_MAIN_TOOL_BAR = "showMainToolBar";
 		String SHOW_TOOLTIPS = "showToolTips";
 		String SHOW_COLOR_ICONS_IN_TOOLBAR="showColorIconsInToolbars";
+        String SHOW_PLUGIN_FILES_IN_SPLASH_SCREEN="showPluginFilesInSplashScreen";
       String FILE_OPEN_IN_PREVIOUS_DIR = "fileOpenInPreviousDir";
       String FILE_OPEN_IN_SPECIFIED_DIR = "fileOpenInSpecifiedDir";
       String FILE_SPECIFIED_DIR = "fileSpecifiedDir";
@@ -153,6 +154,9 @@ public class SquirrelPreferences implements Serializable
 	/** Show color icons in toolbars. */
 	private boolean _showColorIconsInToolbars = true;
 
+    /** Show the name of each jar being loaded when loading plugins */
+    private boolean _showPluginFilesInSplashScreen = false;
+    
 	/** Accelerators and mnemonics for actions. */
 	private ActionKeys[] _actionsKeys = new ActionKeys[0];
 
@@ -349,6 +353,24 @@ public class SquirrelPreferences implements Serializable
 		}
 	}
 
+    public boolean getShowPluginFilesInSplashScreen()
+    {
+        return _showPluginFilesInSplashScreen;
+    }
+
+    public synchronized void setShowPluginFilesInSplashScreen(boolean data)
+    {
+        if (data != _showPluginFilesInSplashScreen)
+        {
+            final boolean oldValue = _showPluginFilesInSplashScreen;
+            _showPluginFilesInSplashScreen = data;
+            getPropertyChangeReporter().firePropertyChange(
+                            IPropertyNames.SHOW_PLUGIN_FILES_IN_SPLASH_SCREEN,
+                            oldValue, 
+                            _showPluginFilesInSplashScreen);
+        }
+    }    
+    
 	public int getLoginTimeout()
 	{
 		return _loginTimeout;

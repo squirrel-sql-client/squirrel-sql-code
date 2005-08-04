@@ -227,6 +227,47 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 		dispose();
 	}
 
+    private void performSave() {
+        CursorChanger cursorChg = new CursorChanger(_app.getMainFrame());
+        cursorChg.show();
+        try
+        {
+            final boolean isDebug = s_log.isDebugEnabled();
+            long start = 0;
+            for (Iterator it = _panels.iterator(); it.hasNext();)
+            {
+                if (isDebug)
+                {
+                    start = System.currentTimeMillis();
+                }
+                IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel)it.next();
+                try
+                {
+                    pnl.applyChanges();
+                }
+                catch (Throwable th)
+                {
+                    final String msg = s_stringMgr.getString("GlobalPreferencesSheet.error.saving", pnl.getTitle());
+                    s_log.error(msg, th);
+                    _app.showErrorDialog(msg, th);
+                }
+                if (isDebug)
+                {
+                    s_log.debug("Panel " + pnl.getTitle()
+                                + " applied changes in "
+                                + (System.currentTimeMillis() - start) + "ms");
+                }
+            }
+        }
+        finally
+        {
+            _app.getSquirrelPreferences().save();
+            cursorChg.restore();
+        }
+
+        dispose();        
+    }
+    
 	/**
 	 * Create user interface.
 	 */
@@ -319,6 +360,12 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 				performOk();
 			}
 		});
+        JButton saveBtn = new JButton(s_stringMgr.getString("GlobalPreferencesSheet.save"));
+        saveBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                performSave();
+            }
+        });
 		JButton closeBtn = new JButton(s_stringMgr.getString("GlobalPreferencesSheet.close"));
 		closeBtn.addActionListener(new ActionListener()
 		{
@@ -331,6 +378,7 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 		GUIUtils.setJButtonSizesTheSame(new JButton[] { okBtn, closeBtn });
 
 		pnl.add(okBtn);
+        pnl.add(saveBtn);
 		pnl.add(closeBtn);
 
 		getRootPane().setDefaultButton(okBtn);

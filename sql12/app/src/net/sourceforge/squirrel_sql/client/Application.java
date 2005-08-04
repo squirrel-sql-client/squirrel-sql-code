@@ -43,23 +43,6 @@ import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.CellImportExportInfoSaver;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DTProperties;
-import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
-import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
-import net.sourceforge.squirrel_sql.fw.sql.DataCache;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
-import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
-import net.sourceforge.squirrel_sql.fw.util.ProxyHandler;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
-import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
-
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.FileViewerFactory;
 import net.sourceforge.squirrel_sql.client.gui.SplashScreen;
@@ -81,6 +64,23 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.CellImportExportInfoSaver;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DTProperties;
+import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
+import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
+import net.sourceforge.squirrel_sql.fw.sql.DataCache;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
+import net.sourceforge.squirrel_sql.fw.util.BaseException;
+import net.sourceforge.squirrel_sql.fw.util.ClassLoaderListener;
+import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.ProxyHandler;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
+import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 /**
  * Defines the API to do callbacks on the application.
  *
@@ -164,11 +164,21 @@ class Application implements IApplication
 // TODO: Make properties file Application.properties so we can use class
 // name to generate properties file name.
 		_resources = new SquirrelResources("net.sourceforge.squirrel_sql.client.resources.squirrel");
-
+        _prefs = SquirrelPreferences.load();
+        preferencesHaveChanged(null);
+        _prefs.addPropertyChangeListener(
+            new PropertyChangeListener()
+            {
+                public void propertyChange(PropertyChangeEvent evt)
+                {
+                    preferencesHaveChanged(evt);
+                }
+            });
+        
 		SplashScreen splash = null;
 		if (args.getShowSplashScreen())
 		{
-			splash = new SplashScreen(_resources, 15);
+			splash = new SplashScreen(_resources, 15, _prefs);
 		}
 
 		try
@@ -537,16 +547,7 @@ class Application implements IApplication
 		_sessionManager = new SessionManager(this);
 
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadingprefs"));
-		_prefs = SquirrelPreferences.load();
-		preferencesHaveChanged(null);
-		_prefs.addPropertyChangeListener(
-			new PropertyChangeListener()
-			{
-				public void propertyChange(PropertyChangeEvent evt)
-				{
-					preferencesHaveChanged(evt);
-				}
-			});
+		
 
 		final boolean loadPlugins = args.getLoadPlugins();
 		if (loadPlugins)
@@ -562,6 +563,10 @@ class Application implements IApplication
       _pluginManager = new PluginManager(this);
 		if (args.getLoadPlugins())
 		{
+            if (_prefs.getShowPluginFilesInSplashScreen()) {
+                ClassLoaderListener listener = splash.getClassLoaderListener();
+                _pluginManager.setClassLoaderListener(listener);
+            }
 			_pluginManager.loadPlugins();
 		}
 

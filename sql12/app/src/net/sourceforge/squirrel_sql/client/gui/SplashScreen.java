@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client.gui;
  */
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.GridLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -28,13 +29,14 @@ import javax.swing.JProgressBar;
 import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 
+import net.sourceforge.squirrel_sql.client.Version;
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
+import net.sourceforge.squirrel_sql.fw.util.ClassLoaderListener;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.Version;
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 
 public class SplashScreen extends JWindow
 {
@@ -44,10 +46,17 @@ public class SplashScreen extends JWindow
 
 	private JProgressBar _progressBar;
 
-	public SplashScreen(SquirrelResources rsrc, int progressBarSize)
+    private JLabel pluginLabel;
+    
+    SquirrelPreferences _prefs;
+    
+	public SplashScreen(SquirrelResources rsrc, 
+                        int progressBarSize,
+                        SquirrelPreferences prefs)
 		throws IllegalArgumentException
 	{
 		super();
+        _prefs = prefs;
 		if (rsrc == null)
 		{
 			throw new IllegalArgumentException("Null Resources passed");
@@ -63,21 +72,37 @@ public class SplashScreen extends JWindow
 
 		Icon icon = rsrc.getIcon(SquirrelResources.IImageNames.SPLASH_SCREEN);
 		mainPnl.add(BorderLayout.NORTH, new JLabel(icon));
-
+		
 		MultipleLineLabel versionLbl = new MultipleLineLabel();
 		versionLbl.setOpaque(false);
 		versionLbl.append(Version.getVersion());
 		versionLbl.append("\n");
 		versionLbl.append(Version.getCopyrightStatement());
-		versionLbl.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		mainPnl.add(BorderLayout.CENTER, versionLbl);
 
-		_progressBar = new JProgressBar(0, progressBarSize);
-		_progressBar.setStringPainted(true);
-		_progressBar.setString("");
-		_progressBar.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		_progressBar.setBackground(bgColor);
-		_progressBar.setForeground(Color.blue);
+        _progressBar = new JProgressBar(0, progressBarSize);
+        _progressBar.setStringPainted(true);
+        _progressBar.setString("");
+        _progressBar.setBackground(bgColor);
+        _progressBar.setForeground(Color.blue);
+		
+
+        if (_prefs.getShowPluginFilesInSplashScreen()) {
+            _progressBar.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+            versionLbl.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+            JPanel centerPanel = new JPanel(new GridLayout(2,1));
+            centerPanel.setBackground(bgColor);
+            centerPanel.add(versionLbl);
+            pluginLabel = new JLabel();
+            pluginLabel.setForeground(new Color(71,73,139));
+            pluginLabel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+            centerPanel.add(pluginLabel);
+            mainPnl.add(BorderLayout.CENTER, centerPanel);
+        } else {
+            _progressBar.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+            versionLbl.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+            mainPnl.add(BorderLayout.CENTER, versionLbl);
+        }
+
 		mainPnl.add(BorderLayout.SOUTH, _progressBar);
 
 		mainPnl.setBorder(BorderFactory.createRaisedBevelBorder());
@@ -89,6 +114,27 @@ public class SplashScreen extends JWindow
 		setVisible(true);
 	}
 
+    public void indicateLoadingFile(final String filename) {
+        try
+        {
+            SwingUtilities.invokeAndWait(new Runnable()
+            {
+                public void run()
+                {
+                    if (filename != null) {
+                        pluginLabel.setText("Loading file - "+filename);
+                    } else {
+                        pluginLabel.setText("");
+                    }
+                    pluginLabel.validate();
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            s_log.error("Error occured updating progress bar", ex);
+        }        
+    }
 
 	public void indicateNewTask(final String text)
 	{
@@ -110,4 +156,15 @@ public class SplashScreen extends JWindow
 			s_log.error("Error occured updating progress bar", ex);
 		}
 	}
+    
+    public ClassLoaderListener getClassLoaderListener() {
+        return new ClassLoaderListener() {
+            public void loadedZipFile(String filename) {
+                indicateLoadingFile(filename);
+            }
+            public void finishedLoadingZipFiles() {
+                indicateLoadingFile(null);
+            }
+        };
+    }
 }

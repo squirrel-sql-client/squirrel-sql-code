@@ -96,9 +96,10 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
             new PropertyDescriptor(FILE_SPECIFIED_DIR, CLS,
                "getFileSpecifiedDir", "setFileSpecifiedDir"),
             new PropertyDescriptor(FILE_PREVIOUS_DIR, CLS,
-               "getFilePreviousDir", "setFilePreviousDir")
-
-
+               "getFilePreviousDir", "setFilePreviousDir"),
+            new PropertyDescriptor(SHOW_PLUGIN_FILES_IN_SPLASH_SCREEN, CLS,
+               "getShowPluginFilesInSplashScreen()", 
+               "setShowPluginFilesInSplashScreen")
          };
       }
    }
