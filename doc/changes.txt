@@ -14,11 +14,13 @@ SQuirreL SQL Client Change Log
 - New Session property: 'Write SQL Execution Errors to log file'.
   The execution errors of an SQL statement shown in the message panel
   may now also be written to the squirrel-sql.log file
-- Fixed bug #1244287
+- Fixed bug #1244287 (white space after statement)
+- Fixed bug #1217765 (Editing table data for tables with BIT column type)
 - Mnemonics for Main Tabbed Pain
 - Fixes in editing SQL Results:
   Editing didn't work when a column was in the select list twice
   Editing didn't work when a column was when the statement was like 'SELECT * FROM MyTable ORDER BY MyID'
+- Added new Global Preference to show the plugin files being loaded in Splash Screen on startup
 
 
 
