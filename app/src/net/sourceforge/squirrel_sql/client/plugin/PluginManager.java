@@ -19,29 +19,36 @@ package net.sourceforge.squirrel_sql.client.plugin;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
-import net.sourceforge.squirrel_sql.fw.util.MyURLClassLoader;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.*;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.JInternalFrame;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.SplashScreen;
+import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.fw.util.ClassLoaderListener;
+import net.sourceforge.squirrel_sql.fw.util.MyURLClassLoader;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
  * Manages plugins for the application.
  *
@@ -96,6 +103,10 @@ public class PluginManager
 
    private HashMap _pluginSessionCallbacksBySessionID = new HashMap();
 
+   /** The class that listens for notifications as archives are being loaded */
+   private ClassLoaderListener classLoaderListener = null;
+   
+   
    /**
 	 * Ctor.
 	 *
@@ -421,9 +432,9 @@ public class PluginManager
 			}
 		}
 		_pluginsClassLoader = new MyURLClassLoader(urls);
-
+        _pluginsClassLoader.addClassLoaderListener(classLoaderListener);
 		Class[] classes = _pluginsClassLoader.getAssignableClasses(IPlugin.class, s_log);
-		for (int i = 0; i < classes.length; ++i)
+        for (int i = 0; i < classes.length; ++i)
 		{
 			Class clazz = classes[i];
 			try
@@ -472,7 +483,16 @@ public class PluginManager
 		}
 	}
 
-
+    /**
+     * Sets the ClassLoaderListener to notify when archive files containing 
+     * classes are loaded.
+     * 
+     * @param listener a ClassLoaderListener implementation
+     */
+    public void setClassLoaderListener(ClassLoaderListener listener) {
+        classLoaderListener = listener;
+    }
+    
    private void onInternalFrameOpened(InternalFrameEvent e)
    {
       JInternalFrame frame = e.getInternalFrame();

@@ -105,6 +105,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 		private JCheckBox _maximimizeSessionSheet = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.maxonopen"));
 
 		private JCheckBox _showColoriconsInToolbar = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showcoloricons"));
+        private JCheckBox _showPluginFilesInSplashScreen = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showpluginfiles"));
 		private JLabel _executionLogFileNameLbl = new OutputLabel(" ");
 		// Must have at least 1 blank otherwise width gets set to zero.
 		private JLabel _logConfigFileNameLbl = new OutputLabel(" ");
@@ -130,6 +131,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			_showDriversToolBar.setSelected(prefs.getShowDriversToolBar());
 			_maximimizeSessionSheet.setSelected(prefs.getMaximizeSessionSheetOnOpen());
 			_showColoriconsInToolbar.setSelected(prefs.getShowColoriconsInToolbar());
+            _showPluginFilesInSplashScreen.setSelected(prefs.getShowPluginFilesInSplashScreen());
 			_executionLogFileNameLbl.setText(appFiles.getExecutionLogFile().getPath());
 
 			String configFile = ApplicationArguments.getInstance().getLoggingConfigFileName();
@@ -151,6 +153,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			prefs.setShowDriversToolBar(_showDriversToolBar.isSelected());
 			prefs.setMaximizeSessionSheetOnOpen(_maximimizeSessionSheet.isSelected());
 			prefs.setShowColoriconsInToolbar(_showColoriconsInToolbar.isSelected());
+            prefs.setShowPluginFilesInSplashScreen(_showPluginFilesInSplashScreen.isSelected());
 			prefs.setConfirmSessionClose(_confirmSessionCloseChk.isSelected());
 		}
 
@@ -201,6 +204,8 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			pnl.add(_maximimizeSessionSheet, gbc);
 			++gbc.gridy;
 			pnl.add(_showColoriconsInToolbar, gbc);
+            ++gbc.gridy;
+            pnl.add(_showPluginFilesInSplashScreen, gbc);
 
 			return pnl;
 		}

@@ -39,6 +39,8 @@ public class MyURLClassLoader extends URLClassLoader
 
 	private Map _classes = new HashMap();
 
+    ArrayList listeners = new ArrayList();
+    
 	public MyURLClassLoader(String fileName) throws IOException
 	{
 		this(new File(fileName).toURL());
@@ -54,6 +56,40 @@ public class MyURLClassLoader extends URLClassLoader
 		super(urls, ClassLoader.getSystemClassLoader());
 	}
 
+    public void addClassLoaderListener(ClassLoaderListener listener) {
+        if (listener != null) {
+            listeners.add(listener);
+        }
+    }
+    
+    /**
+     * Notify listeners that we're loading the specified file.
+     * 
+     * @param filename the name of the file (doesn't include path)
+     */
+    private void notifyListenersLoadedZipFile(String filename) {
+        Iterator i = listeners.iterator();
+        while (i.hasNext()) {
+            ClassLoaderListener listener = (ClassLoaderListener)i.next();
+            listener.loadedZipFile(filename);
+        }
+    }
+    
+    /**
+     * Notify listeners that we've finished loading files.
+     */
+    private void notifyListenersFinished() {
+        Iterator i = listeners.iterator();
+        while (i.hasNext()) {
+            ClassLoaderListener listener = (ClassLoaderListener)i.next();
+            listener.finishedLoadingZipFiles();
+        }        
+    }
+    
+    public void removeClassLoaderListener(ClassLoaderListener listener) {
+        listeners.remove(listener);
+    }
+    
 	public Class[] getAssignableClasses(Class type, ILogger logger)
 	{
 		List classes = new ArrayList();
@@ -76,6 +112,7 @@ public class MyURLClassLoader extends URLClassLoader
 									"MyURLClassLoader.errorLoadingFile", args);
 					logger.error(msg, ex);
 				}
+                notifyListenersLoadedZipFile(file.getName());
 				for (Iterator it = new EnumerationIterator(zipFile.entries());
 						it.hasNext();)
 				{
@@ -107,6 +144,7 @@ public class MyURLClassLoader extends URLClassLoader
 				}
 			}
 		}
+        notifyListenersFinished();
 		return (Class[]) classes.toArray(new Class[classes.size()]);
 	}
 
