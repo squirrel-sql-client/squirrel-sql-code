@@ -110,4 +110,18 @@ public class Version
 
       return s_stringMgr.getString("Application.error.unsupportedJDKVersion", params);
    }
+
+   public static boolean isJDK14()
+   {
+      String vmVer = System.getProperty("java.vm.version");
+
+      if(vmVer.startsWith("1.4"))
+      {
+         return true;
+      }
+      else
+      {
+         return false;
+      }
+   }
 }

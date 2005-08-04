@@ -22,24 +22,28 @@ import java.beans.PropertyChangeListener;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import javax.swing.JTabbedPane;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+import net.sourceforge.squirrel_sql.client.Version;
+import net.sourceforge.squirrel_sql.client.IApplication;
 
 class SquirrelTabbedPane extends JTabbedPane
 {
 	private SquirrelPreferences _prefs;
 
 	private PropsListener _prefsListener;
+   private IApplication _app;
+   private static boolean _jdk14SrollWarningWasIssued = false;
 
-	/** Convenient way to refer to Application Preferences property names. */
+   /** Convenient way to refer to Application Preferences property names. */
 	private interface IAppPrefPropertynames
 							extends SquirrelPreferences.IPropertyNames
 	{
 		// Empty block.
 	}
 
-	SquirrelTabbedPane(SquirrelPreferences prefs)
+	SquirrelTabbedPane(SquirrelPreferences prefs, IApplication app)
 	{
 		super();
 
@@ -48,12 +52,32 @@ class SquirrelTabbedPane extends JTabbedPane
 			throw new IllegalArgumentException("SquirrelPreferences == null");
 		}
 		_prefs = prefs;
+      _app = app;
 
       int tabLayoutPolicy = _prefs.useScrollableTabbedPanes() ? JTabbedPane.SCROLL_TAB_LAYOUT : JTabbedPane.WRAP_TAB_LAYOUT;
       setTabLayoutPolicy(tabLayoutPolicy);
+      maybeIssueJDK14SrollWarning();
 	}
 
-	/**
+   private void maybeIssueJDK14SrollWarning()
+   {
+      if(false == _jdk14SrollWarningWasIssued && Version.isJDK14() && getTabLayoutPolicy() == JTabbedPane.SCROLL_TAB_LAYOUT)
+      {
+         _jdk14SrollWarningWasIssued = true;
+         SwingUtilities.invokeLater(new Runnable()
+         {
+            public void run()
+            {
+               String msg = "Right mouse menu on tabbed panes won't work (JDK 1.4 bug #4465870). " +
+                  "Consider using JDK 1.5 or higher or " +
+                  "switch off scrollable tabbed panes. See menu File --> Global Preferences";
+               _app.getMessageHandler().showMessage(msg);
+            }
+         });
+      }
+   }
+
+   /**
 	 * Component is being added to its parent so add a property change
 	 * listener to application perferences.
 	 */
@@ -85,6 +109,7 @@ class SquirrelTabbedPane extends JTabbedPane
 		{
          int tabLayoutPolicy = _prefs.useScrollableTabbedPanes() ? JTabbedPane.SCROLL_TAB_LAYOUT : JTabbedPane.WRAP_TAB_LAYOUT;
          setTabLayoutPolicy(tabLayoutPolicy);
+         maybeIssueJDK14SrollWarning();
 		}
 	}
 

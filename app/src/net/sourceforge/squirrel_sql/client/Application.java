@@ -559,7 +559,7 @@ class Application implements IApplication
 			indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.notloadingplugins"));
 		}
 
-      UIFactory.initialize(_prefs);
+      UIFactory.initialize(_prefs, this);
       _pluginManager = new PluginManager(this);
 		if (args.getLoadPlugins())
 		{
