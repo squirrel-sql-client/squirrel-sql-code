@@ -197,8 +197,8 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
          final Statement stmt = conn.createStatement();
          try
          {
-            final ResultSet rs = stmt.executeQuery("select count(*) from "
-                           + ti.getQualifiedName() + whereClause);
+            String countSql = "select count(*) from " + ti.getQualifiedName() + whereClause;
+            final ResultSet rs = stmt.executeQuery(countSql);
             rs.next();
             count = rs.getInt(1);
          }
@@ -490,7 +490,15 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
          // to use in the where clause, so see if there is a table of col names
          HashMap colNames = (EditWhereCols.get(getFullTableName()));
 
+         ColumnDisplayDefinition editedCol = colDefs[col];
          for (int i=0; i< colDefs.length; i++) {
+
+            if(i != col && colDefs[i].getFullTableColumnName().equalsIgnoreCase(editedCol.getFullTableColumnName()))
+            {
+               // The edited column is in the resultset twice (example: SELECT MyName,* FROM MyTable).
+               // We won't add the this col to the where clause.
+               continue;
+            }
 
             // if the user has said to not use this column, then skip it
             if (colNames != null) {
