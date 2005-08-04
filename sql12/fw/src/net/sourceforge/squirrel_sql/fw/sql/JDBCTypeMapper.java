@@ -26,7 +26,9 @@ public class JDBCTypeMapper {
 			case Types.ARRAY:
 				typeName = "ARRAY";
 				break;
-
+            case Types.BOOLEAN:
+                typeName = "BOOLEAN";
+                break;
 			case Types.BIGINT:
 				typeName = "BIGINT";
 				break;
@@ -45,6 +47,9 @@ public class JDBCTypeMapper {
 			case Types.CLOB:
 				typeName = "CLOB";
 				break;
+            case Types.DATALINK:
+                typeName = "DATALINK";
+                break;            
 			case Types.DATE:
 				typeName = "DATE";
 				break;
