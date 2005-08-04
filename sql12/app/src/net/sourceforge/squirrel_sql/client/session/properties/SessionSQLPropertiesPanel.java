@@ -237,17 +237,17 @@ public class SessionSQLPropertiesPanel
 			// then disable the controls that relate to SQL History.
 			final boolean shareSQLHistory = _shareSQLHistoryChk.isSelected();
 
-         if(_newSessionProperties)
-         {
-            _limitSQLHistoryComboSizeChk.setEnabled(true);
-            _limitSQLHistoryComboSizeField.setEnabled(_limitSQLHistoryComboSizeChk.isSelected());
-         }
-         else
-         {
-            _limitSQLHistoryComboSizeChk.setEnabled(!shareSQLHistory);
-            _limitSQLHistoryComboSizeField.setEnabled(!shareSQLHistory &&
-                           _limitSQLHistoryComboSizeChk.isSelected());
-         }
+//         if(_newSessionProperties)
+//         {
+//            _limitSQLHistoryComboSizeChk.setEnabled(true);
+//            _limitSQLHistoryComboSizeField.setEnabled(_limitSQLHistoryComboSizeChk.isSelected());
+//         }
+//         else
+//         {
+//            _limitSQLHistoryComboSizeChk.setEnabled(!shareSQLHistory);
+//            _limitSQLHistoryComboSizeField.setEnabled(!shareSQLHistory &&
+//                           _limitSQLHistoryComboSizeChk.isSelected());
+//         }
 		}
 
 		private void createGUI()

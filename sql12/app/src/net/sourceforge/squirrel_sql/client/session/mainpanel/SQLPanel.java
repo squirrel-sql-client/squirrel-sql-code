@@ -531,6 +531,7 @@ public class SQLPanel extends JPanel
 			} while (beforeSize != afterSize);
 			_sqlCombo.insertItemAt(sql, afterSize);
 			_sqlCombo.setSelectedIndex(afterSize);
+         _sqlCombo.repaint();
 		}
 		finally
 		{
