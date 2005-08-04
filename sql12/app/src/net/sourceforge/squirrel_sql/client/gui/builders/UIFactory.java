@@ -21,6 +21,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.EventListenerList;
 
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+import net.sourceforge.squirrel_sql.client.IApplication;
 /**
  * This singleton factory creates UI objects.
  *
@@ -38,8 +39,9 @@ public class UIFactory
 	 * Collection of listeners for events in this object.
 	 */
 	private final EventListenerList _listenerList = new EventListenerList();
+   private IApplication _app;
 
-	/**
+   /**
 	 * Retrieve the single instance of this class.
 	 *
 	 * @return	the single instance of this class.
@@ -59,25 +61,26 @@ public class UIFactory
 	 *
 	 * @param	prefs	Application preferences.
 	 *
-	 * @throws	IllegalArgumentException
+	 * @param app
+    * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>SquirrelPreferences</TT> passed.
 	 *
 	 * @throws	IllegalStateException
 	 * 			Thrown if initialization has already been done.
 	 */
-	public synchronized static void initialize(SquirrelPreferences prefs)
+	public synchronized static void initialize(SquirrelPreferences prefs, IApplication app)
 	{
 		if (s_instance != null)
 		{
 			throw new IllegalStateException("UIFactory has alerady been initialized");
 		}
-		s_instance = new UIFactory(prefs);
+		s_instance = new UIFactory(prefs, app);
 	}
 
 	/**
 	 * Default ctor. private as class is a singleton.
 	 */
-	private UIFactory(SquirrelPreferences prefs)
+	private UIFactory(SquirrelPreferences prefs, IApplication app)
 	{
 		super();
 		if (prefs == null)
@@ -85,6 +88,7 @@ public class UIFactory
 			throw new IllegalArgumentException("SquirrelPreferences == null");
 		}
 		_prefs = prefs;
+      _app = app;
 	}
 
 	/**
@@ -107,7 +111,7 @@ public class UIFactory
 	 */
 	public JTabbedPane createTabbedPane(int tabPlacement)
 	{
-		final JTabbedPane pnl = new SquirrelTabbedPane(_prefs);
+		final JTabbedPane pnl = new SquirrelTabbedPane(_prefs, _app);
 		pnl.setTabPlacement(tabPlacement);
 		fireTabbedPaneCreated(pnl);
 
