@@ -139,10 +139,12 @@ public final class MyTableModel extends AbstractTableModel
 	 * then update the JTable as well.
 	 */
 	public void setValueAt(Object newValue, int row, int col) {
-		if ( _creator.changeUnderlyingValueAt(row, col, newValue, getValueAt(row, col)))
-		{
-			((Object[])_data.get(row))[col] = newValue;
-		}
+      int[] colsToUpdate = _creator.changeUnderlyingValueAt(row, col, newValue, getValueAt(row, col));
+
+      for (int i = 0; i < colsToUpdate.length; i++)
+      {
+         ((Object[])_data.get(row))[ colsToUpdate[i] ] = newValue;
+      }
 	}
 	
 	/**

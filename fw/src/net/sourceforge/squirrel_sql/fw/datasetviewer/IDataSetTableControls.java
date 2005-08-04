@@ -72,8 +72,10 @@ public interface IDataSetTableControls
 	/**
 	 * Call the object that represents the underlaying data model
 	 * to change the actual data (e.g. in a database).
+    *
+    * @return the column indexes to update with the new value
 	 */
-	public boolean changeUnderlyingValueAt(
+	public int[] changeUnderlyingValueAt(
 		int rowIndex,
 		int columnIndex,
 		Object newValue,

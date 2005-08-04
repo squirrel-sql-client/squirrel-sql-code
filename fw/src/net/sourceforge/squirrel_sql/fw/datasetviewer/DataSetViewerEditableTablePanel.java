@@ -27,6 +27,7 @@ import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 /**
  * @author gwg
@@ -130,7 +131,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 	 * the conversion from the external user representation (a String) into the
 	 * internal object.
 	 */
-	public boolean changeUnderlyingValueAt(
+	public int[] changeUnderlyingValueAt(
 		int row,
 		int col,
 		Object newValue,
@@ -145,7 +146,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		// if there is no updateable model, then we cannot update anything
 		// (should never happen - just being safe here)
 		if (getUpdateableModelReference() == null)
-			return false;	// no underlying data, so cannot be changed
+			return new int[0];	// no underlying data, so cannot be changed
 
 
 		// check to see if new data is same as old data, in which case we
@@ -163,7 +164,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		
 		// first look to see if they are identical objects, e.g. both null
 		if (newValue == oldValue)
-			return true;	// the caller does not need to know that nothing happened
+			return new int[0];	// the caller does not need to know that nothing happened
 
 		// if either of the values is null and the other is not, then the data has
 		// changed and we fall-through to the change process.  Otherwise, check
@@ -171,7 +172,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		if (oldValue != null && newValue != null) {
 			// ask the DataType object if the two values are the same
 			if (CellComponentFactory.areEqual( _colDefs[col], oldValue, newValue))
-				return true;	// the caller does not need to know that nothing happened
+				return new int[0];	// the caller does not need to know that nothing happened
 					
 			// if we reach this point, the value has been changed,
 			// so fall through to next section
@@ -192,7 +193,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 				JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 			if ( option != JOptionPane.YES_OPTION)
 			{
-				return false;	// no update done to underlying data
+				return new int[0];	// no update done to underlying data
 			}
 		}
 
@@ -211,7 +212,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 				JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 			if ( option != JOptionPane.YES_OPTION)
 			{
-				return false;	// no update done to underlying data
+				return new int[0];	// no update done to underlying data
 			}
 		}
 
@@ -232,11 +233,31 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 
 			// tell caller that the underlying data was not updated
 			//?? is this always true, or could the data be updated with a warning?
-			return false;
+			return new int[0];
 		}
 
-		// no problems, so indicate a successful update of the underlying data
-		return true;
+
+      // No problems, so indicate a successful update of the underlying data.
+      // In case we are editing an SQL result that contains the edited colum
+      // more than once, we need to tell the caller to update all columns.
+      // Otherwise generation of where clauses for further editing will fail. 
+      ArrayList buf = new ArrayList();
+      for (int i = 0; i < _colDefs.length; i++)
+      {
+         if(_colDefs[i].getFullTableColumnName().equalsIgnoreCase(_colDefs[col].getFullTableColumnName()))
+         {
+            buf.add(new Integer(i));
+         }
+      }
+
+      int[] ret = new int[buf.size()];
+
+      for (int i = 0; i < ret.length; i++)
+      {
+         ret[i] = ((Integer)buf.get(i)).intValue();
+      }
+
+		return ret;
 	}
 	
 	/**

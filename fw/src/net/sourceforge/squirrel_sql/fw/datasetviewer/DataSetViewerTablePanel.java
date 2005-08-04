@@ -532,13 +532,13 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 	 * Change the data in the permanent store that is represented by the JTable.
 	 * Does nothing in read-only table.
 	 */
-	public boolean changeUnderlyingValueAt(
+	public int[] changeUnderlyingValueAt(
 		int row,
 		int col,
 		Object newValue,
 		Object oldValue)
 	{
-		return false;	// underlaying data cannot be changed
+		return new int[0];	// underlaying data cannot be changed
 	}
 	
 	/**
