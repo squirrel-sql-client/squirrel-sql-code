@@ -6,15 +6,20 @@ SQuirreL SQL Client Change Log
   Functions also available in tools popup
 - Session property: Limit SQL result tabs.
   By default limiting is switched on and set to 15 tabs.   
-- Fixed Bug #1234642 (Missing qeury numbers in message panel)
-- When executing a SQL batch (several SQL's separated by statement separator) and the 'Abort on error' property is set
+- Fixed Bug #1234642 (Missing query numbers in message panel)
+- When executing a SQL batch (several SQL's separated by statement separator)
   in case of an error the errornous SQL is printed to the message panel.
 - From within the SQL Editor one can jump to the Object at cursor in the Object tree.
-  To do so use the ctrl+B shortcut or the right mous menu or the tools popup (ctrl+T)
+  To do so use the ctrl+B shortcut or the right mouse menu or the tools popup (ctrl+T)
 - New Session property: 'Write SQL Execution Errors to log file'.
   The execution errors of an SQL statement shown in the message panel
   may now also be written to the squirrel-sql.log file
 - Fixed bug #1244287
+- Mnemonics for Main Tabbed Pain
+- Fixes in editing SQL Results:
+  Editing didn't work when a column was in the select list twice
+  Editing didn't work when a column was when the statement was like 'SELECT * FROM MyTable ORDER BY MyID'
+
 
 
 2.0rc1
