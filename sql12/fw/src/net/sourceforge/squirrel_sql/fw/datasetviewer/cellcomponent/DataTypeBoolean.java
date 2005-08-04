@@ -298,14 +298,16 @@ public class DataTypeBoolean
 				if (c == KeyEvent.VK_TAB || c == KeyEvent.VK_ENTER) {
 					// remove all instances of the offending char
 					int index = text.indexOf(c);
-					if (index == text.length() -1) {
-						text = text.substring(0, text.length()-1);	// truncate string
-					}
-					else {
-						text = text.substring(0, index) + text.substring(index+1);
-					}
-					((IRestorableTextComponent)_theComponent).updateText( text);
-					_theComponent.getToolkit().beep();
+                    if (index != -1) {
+    					if (index == text.length() -1) {
+    						text = text.substring(0, text.length()-1);	// truncate string
+    					}
+    					else {
+    						text = text.substring(0, index) + text.substring(index+1);
+    					}
+    					((IRestorableTextComponent)_theComponent).updateText( text);
+    					_theComponent.getToolkit().beep();
+                    }
 					e.consume();
 				}
 
@@ -372,10 +374,22 @@ public class DataTypeBoolean
 	 * or whatever is appropriate for this column in the database.
 	 */
 	public String getWhereClauseValue(Object value, String databaseProductName) {
-		if (value == null || value.toString() == null || value.toString().length() == 0)
+		if (value == null 
+                || value.toString() == null 
+                || value.toString().length() == 0)
+        {
 			return _colDef.getLabel() + " IS NULL";
-		else
-			return _colDef.getLabel() + "=" + value.toString();
+		
+        } else {
+            String bitValue = value.toString();
+            if ("true".equalsIgnoreCase(value.toString())) {
+                bitValue = "1";
+            }
+            if ("false".equalsIgnoreCase(value.toString())) {
+                bitValue = "0";
+            }
+            return _colDef.getLabel() + "=" + bitValue;
+        }
 	}
 	
 	
