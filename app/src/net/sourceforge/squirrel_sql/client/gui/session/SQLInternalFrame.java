@@ -158,6 +158,12 @@ public class SQLInternalFrame extends BaseSessionInternalFrame
       getSQLPanelAPI().addToToolsPopUp(selectionString, action);
    }
 
+   public boolean hasSQLPanelAPI()
+   {
+      return true;
+   }
+
+
    /** The class representing the toolbar at the top of a sql internal frame*/
 	private class SQLToolBar extends ToolBar
 	{

@@ -22,6 +22,7 @@ import org.netbeans.editor.ext.ExtSettingsInitializer;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.ActionEvent;
 import java.awt.*;
 import java.util.Vector;
 
@@ -70,7 +71,7 @@ public class NetbeansSQLEditorPane extends JEditorPane
       //
       //////////////////////////////////////////////////////////////////////////////////////////
 
-      removeUnwantedKeyStrokes();
+      modifyKeyStrokes();
 
       Document doc = getDocument();
       _syntaxFactory.putDocument(_session, doc);
@@ -81,7 +82,7 @@ public class NetbeansSQLEditorPane extends JEditorPane
       new KeyManager(this);
    }
 
-   private void removeUnwantedKeyStrokes()
+   private void modifyKeyStrokes()
    {
       //////////////////////////////////////////////////////////////////////////////////////////////////////////////
       // The ctrl enter short cut in the Netbeans editor is set in org.netbeans.editor.ext.BaseKit
@@ -102,9 +103,33 @@ public class NetbeansSQLEditorPane extends JEditorPane
       // Removed for reformatting
       KeyStroke ctrlShiftFStroke = KeyStroke.getKeyStroke(KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK | java.awt.event.InputEvent.SHIFT_MASK);
       getKeymap().removeKeyStrokeBinding(ctrlShiftFStroke);
-
       //
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+      ////////////////////////////////////////////////////////////
+      // The parser didn't get triggered on shift+insert.
+      // We do it here by hand
+      KeyStroke ks = KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, Event.SHIFT_MASK);
+      final Action origAction = getKeymap().getAction(ks);
+      Action triggerParserAction = new AbstractAction()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            // This event does not always hit the righr editor !?
+            // That's why we can't use _sqlEntryPanelIdentifier
+            origAction.actionPerformed(e);
+            if(_session.getActiveSessionWindow().hasSQLPanelAPI())
+            {
+               IIdentifier entryPanelId = _session.getSQLPanelAPIOfActiveSessionWindow().getSQLEntryPanel().getIdentifier();
+               _session.getParserEventsProcessor(entryPanelId).triggerParser();
+            }
+         }
+      };
+      //
+      //////////////////////////////////////////////////////////
+
+      getKeymap().addActionForKeyStroke(ks, triggerParserAction);
    }
 
    public void updateFromPreferences()
@@ -126,7 +151,7 @@ public class NetbeansSQLEditorPane extends JEditorPane
       Settings.addInitializer(new SQLSettingsInitializer(SQLKit.class, _prefs, font, _plugin));
 
 
-      removeUnwantedKeyStrokes();
+      modifyKeyStrokes();
 
       Document doc = getDocument();
       _syntaxFactory.putDocument(_session, doc);

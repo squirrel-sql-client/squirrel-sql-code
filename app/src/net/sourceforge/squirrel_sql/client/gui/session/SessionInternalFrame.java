@@ -162,4 +162,9 @@ public class SessionInternalFrame extends BaseSessionInternalFrame
       _sessionPanel.getSQLEntryPanel().requestFocus();
    }
 
+   public boolean hasSQLPanelAPI()
+   {
+      return true;
+   }
+
 }

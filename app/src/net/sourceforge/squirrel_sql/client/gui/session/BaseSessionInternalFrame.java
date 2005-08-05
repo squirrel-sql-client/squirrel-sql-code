@@ -118,6 +118,11 @@ public class BaseSessionInternalFrame extends BaseInternalFrame
       setTitle(_titleWithoutFile);
    }
 
+   public boolean hasSQLPanelAPI()
+   {
+      return false;
+   }
+
    /**
 	 * Sets the session behind this sheet to the active session when the
 	 * frame is activated

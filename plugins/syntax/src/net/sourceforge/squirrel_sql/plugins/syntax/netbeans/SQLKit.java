@@ -7,7 +7,6 @@ import javax.swing.*;
 import javax.swing.text.Document;
 import javax.swing.text.TextAction;
 
-import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 
 public class SQLKit extends ExtKit
 {
