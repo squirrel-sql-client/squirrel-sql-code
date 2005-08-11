@@ -220,32 +220,6 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 		}
 	}
 
-	/**
-	 * Return the Drivers tool window.
-	 */
-//	public DriversListInternalFrame getDriversToolWindow()
-//	{
-//		return _driversToolWindow;
-//	}
-//
-//	/**
-//	 * Return the Aliases tool window.
-//	 */
-//	public AliasesListInternalFrame getAliasesToolWindow()
-//	{
-//		return _aliasesToolWindow;
-//	}
-//
-//	WindowState getAliasesWindowState()
-//	{
-//		return new WindowState(_aliasesToolWindow);
-//	}
-//
-//	WindowState getDriversWindowState()
-//	{
-//		return new WindowState(_driversToolWindow);
-//	}
-
 	public JMenu getSessionMenu()
 	{
 		return ((MainFrameMenuBar) getJMenuBar()).getSessionMenu();
@@ -411,6 +385,7 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 		_splitPn.add(sp);
 		_splitPn.add(new JScrollPane(_msgPnl));
 
+      _splitPn.setResizeWeight(1);
 
       Action splitDividerLocAction = new AbstractAction("Save size")
       {
@@ -531,47 +506,6 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 		{
 			setLocation(new Point(10, 10));
 		}
-
-//		final WindowManager mgr = _app.getWindowManager();
-
-		// JASON: Move functionality to WindowManager
-//		DriversListInternalFrame dlif = mgr.getDriversListInternalFrame();
-//		addInternalFrame(dlif, false, null);
-//		WindowState toolWs = ws.getDriversWindowState();
-//		dlif.setBounds(toolWs.getBounds().createRectangle());
-//		dlif.setVisible(toolWs.isVisible());
-//		try
-//		{
-//			dlif.setSelected(true);
-//		}
-//		catch (PropertyVetoException ex)
-//		{
-//			s_log.error("Error selecting window", ex);
-//		}
-
-		// JASON: Move functionality to WindowManager
-//		AliasesListInternalFrame alif = mgr.getAliasesListInternalFrame();
-//		addInternalFrame(alif, false, null);
-//		toolWs = ws.getAliasesWindowState();
-//		alif.setBounds(toolWs.getBounds().createRectangle());
-//		if (toolWs.isVisible())
-//		{
-//			alif.setVisible(true);
-//			try
-//			{
-//				alif.setSelected(true);
-//			}
-//			catch (PropertyVetoException ex)
-//			{
-//				s_log.error("Error selecting window", ex);
-//			}
-//		}
-//		else
-//		{
-//			alif.setVisible(false);
-//		}
-
-//		prefs.setMainFrameWindowState(new MainFrameWindowState(_app.getWindowManager()));
 	}
 
    private void positionNewInternalFrame(JInternalFrame child)
