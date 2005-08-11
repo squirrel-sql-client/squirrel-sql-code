@@ -269,18 +269,14 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 		try
 		{
 			// Check if document was cleared or if this is the first message being output.
-//			if (document.getLength() >= _lastLength && null != _lastMessage)
-//			{
-//				document.remove(_lastLength, _lastMessage.length());
-//				document.insertString(document.getLength(), _lastMessage, _lastSASet);
-//			}
-//			_lastLength = document.getLength();
-//			_lastMessage = string;
-//			_lastSASet = saSet;
-//       This code caused a BadLocationException when the first message was cleared
-//       after application start. (24 of July 2005)
-//       Remove this comment together with _lastLength, _lastMessage, _lastSASet
-//       when there are no further problems. 
+			if (document.getLength() >= _lastLength && null != _lastMessage)
+			{
+				document.remove(_lastLength, _lastMessage.length());
+				document.insertString(document.getLength(), _lastMessage, _lastSASet);
+			}
+			_lastLength = document.getLength();
+			_lastMessage = string;
+			_lastSASet = saSet;
 
 			document.insertString(document.getLength(), string,
 				saSet == _saSetError ? _saSetLastMessageError : _saSetLastMessage);
@@ -338,6 +334,7 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 				{
 					Document doc = MessagePanel.this.getDocument();
 					doc.remove(0, doc.getLength());
+               _lastMessage = null;
 				}
 				catch (BadLocationException ex)
 				{
