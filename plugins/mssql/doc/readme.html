@@ -1,0 +1,160 @@
+<html>
+<head>
+	<title>Microsoft SQL Server&trade; Assistant</title>
+</head>
+<body>
+
+<h1>Microsoft SQL Server&trade; Assistant</h1>
+<p>
+	A plugin for SQuirreL SQL Client (<a href="http://squirrel-sql.sourceforge.net">http://squirrel-sql.sourceforge.net</a>)<br>
+	Developed by Ryan Walberg &lt;<a href="mailto:generalpf@yahoo.com">generalpf@yahoo.com</a>&gt;<br>
+	With many thanks to Colin Bell<br>
+</p>
+
+<h2>Table of Contents</h2>
+<ol>
+	<li><a href="#INTRODUCTION">Introduction</a></li>
+	<li><a href="#FEATURES">Features</a></li>
+	<li><a href="#TODO">To Do</a></li>
+</ol>
+
+<hr>
+
+<a name="INTRODUCTION"></a>
+<h2>Introduction</h2>
+
+<p>
+Microsoft SQL Server&trade; Assistant is a plugin for the excellent SQuirreL SQL 
+Client.  It it designed for SQL Server 2000 and performs MSSQL-specific
+commands with a few clicks.  It is ultimately designed to incorporate all
+functionality from both SQL Enterprise Manager and Query Analyzer.
+</p>
+
+<p>
+The plugin does not interact with system tables, which are not guaranteed to
+stay the same between MSSQL versions.  Instead, it uses the system stored 
+procedures.
+</p>
+
+<p>
+The plugin has only been tested with the jTDS driver 
+(<a href="http://jtds.sourceforge.net">http://jtds.sourceforge.net</a>).  
+I assume it will work with <a href="http://www.microsoft.com/downloads/details.aspx?FamilyID=9f1874b6-f8e1-4bd6-947c-0fc5bf05bf71&DisplayLang=en">Microsoft's 
+JDBC driver</a>, but given that Microsoft's JDBC driver isn't fully functional, 
+I don't recommend it.
+</p>
+
+<p>
+I'd like to stress that this is <i>your</i> plugin; unless you tell me what you 
+want it to do, it may not ever get done.  Feel more than free 
+to email me with feature requests.
+</p>
+
+<hr>
+
+<a name="FEATURES"></a>
+<h2>Features</h2>
+
+<ul>
+	<li>
+		Right-clicking a database and selecting <font face="Courier, Courier New">SQL Server</font> brings up a 
+		submenu with the following options:
+		<dl>
+			<dt>Shrink Database</dt>
+			<dd>Performs a <font face="Courier, Courier New">DBCC SHRINKDATABASE</font> on the selected database(s).</dd>
+			<dt>Truncate Log</dt>
+			<dd>Performs a <font face="Courier, Courier New">BACKUP LOG ... WITH TRUNCATE_ONLY</font> on the selected database(s).</dd>
+            <dt>Shrink Database File</dt>
+            <dd>
+                Produces a dynamically-generated submenu containing a menu item for each data/log file in the database, along with its size.  
+                A separator bar divides the data files from the log files.
+				Performs a <font face="Courier, Courier New">DBCC SHRINKFILE</font> on the selected file.
+                <br>
+                <i>WARNING: Shrinking a log file will truncate it!</i>
+			</dd>
+		</dl>
+	</li>
+	<li>
+		Right-clicking a table and selecting <font face="Courier, Courier New">SQL Server</font> brings up a 
+		submenu with the following options:
+		<dl>
+			<dt>Update Statistics<dt>
+			<dd>
+				Performs an <font face="Courier, Courier New">UPDATE STATISTICS</font> on the selected table(s).  				
+				This only works if the active catalog is the table's catalog.
+			</dd>
+			<dt>Show Statistics</dt>
+			<dd>
+				Produces a dynamically-generated submenu containing a menu item for each index on the table.  
+				Performs a <font face="Courier, Courier New">DBCC SHOW_STATISTICS</font> on the selected index.
+			</dd>
+			<dt>Defragment Index</dt>
+			<dd>
+				Produces a dynamically-generated submenu containing a menu item for each index on the table.
+				Performs a <font face="Courier, Courier New">DBCC INDEXDEFRAG</font> on the selected index.
+			</dd>
+		</dl>
+	</li>
+	<li>
+		Right-clicking a procedure and selecting <font face="Courier, Courier New">SQL Server</font> brings up a 
+		submenu with the following options:
+		<dl>
+			<dt>Script Procedure</dt>
+			<dd>
+				Copies the selected procedure(s)' <font face="Courier, Courier New">CREATE PROCEDURE</font> scripts to the SQL pane.  Does not execute it.
+			</dd>
+            <dt>Execute Procedure</dt>
+			<dd>
+				Creates variable declarations and an <font face="Courier, Courier New">EXECUTE</font> statement for the selected procedure(s).
+                <br>
+                <i>NOTE: Since JDBC considers a user-defined function to be a procedure, they can be acted upon in this manner, but the plugin will only script out a comment about it.</i>
+                <br>
+                <i>WARNING: Since <font face="Courier, Courier New">output</font> parameters are not required to be called as <font face="Courier, Courier New">output</font>, the plugin does not script those parameters for output.</i>
+			</dd>
+		</dl>
+	</li>
+	<li>
+		When using a Microsoft SQL Server&trade; session, under the Session menu are the 
+		above options and more:
+		<dl>
+			<dt>Generate T-SQL Script</dt>
+			<dd>
+				Brings up a copy of the SQL Server Enterprise 
+				Manager's Generate SQL Script dialog.  All implemented options are 
+				enabled; disabled options aren't implemented yet.  See the <a href="#TODO">To Do</a> section 
+				for restrictions on this feature.
+			</dd>
+		</dl>
+	</li>
+</ul>
+
+<hr>
+
+<a name="TODO"></a>
+<h2>To Do</h2>
+
+<ol>
+	<li>
+		If your JDBC URL contains the DB name, you must have that same catalog
+		active to use the Generate T-SQL Script feature.  Most MSSQL system 
+		stored procedures will not work across catalogs, and for some reason, 
+		calling <font face="Courier, Courier New">setCatalog()</font> on the <font face="Courier, Courier New">java.sql.Connection</font> object will not alleviate this.
+		If you don't specify the DB name in the URL, the feature will only work
+		for that user's default database.  You'll get errors like "table 'foo'
+		does not exist in catalog 'quux'."  If anyone knows how I might fix this,
+		*please* let me know.  I've tried everything.
+	</li>
+	<li>
+		Generate T-SQL Script doesn't do column-level permissions (yet).
+	</li>
+	<li>
+		Generate T-SQL Script doesn't generate the <font face="Courier, Courier New">sp_dboption</font> statements (yet).
+	</li>
+	<li>
+		Generate T-SQL Script doesn't yet obey descending columns on primary keys.
+   		It does understand such columns on all other indexes, however.
+   	</li>
+</ol>
+   
+</body>
+</html>
