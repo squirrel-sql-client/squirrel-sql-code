@@ -290,7 +290,7 @@ public class ViewLogsSheet extends BaseInternalFrame
 			// Position to the start of the last line in log.
 			try
 			{
-				int pos = _logContentsTxt.getText().length() - 1;
+				int pos = Math.max(0, _logContentsTxt.getText().length() - 1);
 				int line = _logContentsTxt.getLineOfOffset(pos);
 				pos = _logContentsTxt.getLineStartOffset(line);
 				_logContentsTxt.setCaretPosition(pos);
