@@ -19,7 +19,7 @@ SET TMP_PARMS=--log-config-file "%SQUIRREL_SQL_HOME%\log4j.properties" --squirre
 @rem "%LOCAL_JAVA%" -cp %TMP_CP% net.sourceforge.squirrel_sql.client.Main %TMP_PARMS%
 
 @rem Run with no command window. This may not work with older versions of Windows. Use the command above then.
-start "SQuirreL SQL Client" /B "%LOCAL_JAVA%w" -cp %TMP_CP% net.sourceforge.squirrel_sql.client.Main %TMP_PARMS%
+start "SQuirreL SQL Client" /B "%LOCAL_JAVA%w" -Xmx256m -cp %TMP_CP% net.sourceforge.squirrel_sql.client.Main %TMP_PARMS%
 
 @rem Run the executable jar file with or without a cmd window. However the
 @rem classes from the %CLASSPATH% environment variable will not be available.
