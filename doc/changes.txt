@@ -1,6 +1,9 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+
+2.0 final
+=========
 - Fix for not shown SQL result on derby DB
 - Right Mouse Menu on SQL result tabs (Not working on JDK 1.4 with scrollable tabbed panes due to Bug #4465870.)
   Functions also available in tools popup
