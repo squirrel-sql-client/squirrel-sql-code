@@ -262,7 +262,13 @@ public class SQLValidatorPlugin extends DefaultSessionPlugin
 	public void sessionEnding(ISession session)
 	{
 		session.getSessionInternalFrame().getSQLPanelAPI().removeSQLPanelListener(_lis);
-		getWebServiceSessionProperties(session).getWebServiceSession().close();
+        WebServiceSessionProperties wssp = getWebServiceSessionProperties(session);
+        if (wssp != null) {
+            WebServiceSession wss = wssp.getWebServiceSession();
+            if (wss != null) {
+                wss.close();
+            }
+        }
 		session.removePluginObject(this, PREFS_KEY);
 		super.sessionEnding(session);
 	}
