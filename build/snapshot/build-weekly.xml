@@ -143,7 +143,7 @@
 	
 	<!-- Replaces the Version.java which comes with the trunk, with one that 
 	     has the snapshot build number in it. -->
-	<target name="replaceversion">
+	<target name="replaceversion" if="targettest">
 
 		<echo message="Deleting file ${version.dest.filename}"/>
 		<delete file="${version.dest.filename}"/>
@@ -232,7 +232,10 @@
 			<param name="propertyvalue" value="${delete.dest.dir}"/>
 		</antcall>	
 		
-		<antcall target="replaceversion"/>
+		<antcall target="testtrue">
+			<param name="targettocall" value="replaceversion"/>
+			<param name="propertyvalue" value="${replace.version}"/>
+		</antcall>			
 		
 		<antcall target="executebuild"/>
 			
